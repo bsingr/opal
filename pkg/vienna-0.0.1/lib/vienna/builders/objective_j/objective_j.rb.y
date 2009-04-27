@@ -15,6 +15,10 @@ class Vienna::ObjectiveJ
 
   token DECLSPEC DLLIMPORT DLLEXPORT IMPORT
 
+  #
+  # Objective-C 1.0/2.0 keywords
+  #
+
   token AT_INTERFACE AT_IMPLEMENTATION AT_PROTOCOL AT_END AT_CLASS
   token AT_PRIVATE AT_PUBLIC AT_PROTECTED
   token AT_ENCODE AT_SELECTOR
@@ -24,6 +28,12 @@ class Vienna::ObjectiveJ
   token AT_STRING_LITERAL
   token ID SEL BOOL UNICHAR CLASS
   token IN OUT INOUT BYREF BYCOPY ONEWAY
+  
+  #
+  # Javascript keywords
+  #
+  
+  toekn NEW FUNCTION
 
   rule
     target:
@@ -733,6 +743,14 @@ require 'strscan'
           @tokens << [:AT_OPTIONAL, nil]
         when scanner.scan(/@required/)
           @tokens << [:AT_REQUIRED, nil]
+          
+        #
+        # Javascript keywords
+        #
+        when scanner.scan(/new/)
+          @tokens << [:NEW, nil]
+        when scanner.scan(/function/)
+          @tokens << [:FUNCTION, nil]
 	      
 	      #
 	      # C constants, identifiers and string literals
@@ -853,8 +871,11 @@ require 'strscan'
           @tokens << ['|', '|']
 	      when scanner.scan(/\?/)
           @tokens << ['?', '?']
+        
+        
+        
 	      else
-	        puts "agagagagag"
+	        puts "Error: unkown token: #{scanner.peek(5)}"
 	      
 	      #when scanner.scan(/.*/)
   	      #puts "wow"
