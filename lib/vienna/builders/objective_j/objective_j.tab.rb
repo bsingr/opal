@@ -25,12 +25,15 @@ module_eval(<<'...end objective_j.rb.y/module_eval...', 'objective_j.rb.y', 605)
 	      # Pre-processor macros
 	      #
         when scanner.scan(/(#include|#import)/)
-          include_directive = scanner.scan_until(/.*/).strip!
-          puts " # Import Directive: #{include_directive}"
+          pp_directive = scanner.scan_until(/.*/).strip!
+          puts " # Import Directive: #{pp_directive}"
 	      
 	      when scanner.scan(/#define/)
-	        define_directive = scanner.scan_until(/.*/).strip!
-	        puts " # Define Directive: #{define_directive}" 
+	        pp_directive = scanner.scan_until(/.*/).strip!
+	        puts " # Define Directive: #{pp_directive}"
+	      when scanner.scan(/#undef/)
+	        pp_directive = scanner.scan_until(/.*/).strip!
+	        puts " # Undef Directive: #{pp_directive}" 
 	      
 	      when scanner.scan(/\n/)
 	        #do nothing on new line
