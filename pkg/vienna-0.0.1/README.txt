@@ -5,7 +5,7 @@ vienna
 
 == DESCRIPTION:
 
-FIXME (describe your package)
+Vienna runtime compiler
 
 == FEATURES/PROBLEMS:
 

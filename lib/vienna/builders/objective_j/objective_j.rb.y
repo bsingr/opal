@@ -72,6 +72,11 @@ class Vienna::ObjectiveJ
     	| '[' expression selector_with_arguments ']'
     	| AT_SELECTOR '(' selector ')'
     	| AT_ENCODE '(' type_name ')'
+    	# these two rules allow for Objc 3.0 style blocks, as well as js style closures.
+    	| '^' compound_statement
+    	| '^' '(' parameter_type_list ')' compound_statement
+    	#| FUNCTION '(' ')' compound_statement
+    	#| FUNCTION '(' parameter_type_list ')' compound_statement
     	;
 
     postfix_expression:
@@ -797,7 +802,7 @@ require 'strscan'
          @tokens << [:MOD_ASSIGN, nil]
         when scanner.scan(/&=/)
          @tokens << [:AND_ASSIGN, nil]
-        when scanner.scan(/^=/)
+        when scanner.scan(/\^=/)
          @tokens << [:XOR_ASSIGN, nil]
         when scanner.scan(/\|=/)
          @tokens << [:OR_ASSIGN, nil]
