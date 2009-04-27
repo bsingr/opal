@@ -5,4 +5,8 @@ require File.expand_path(
 
 # Put your code here
 
+if ARGV[0] == "build"
+  Vienna::Tools.build
+end
+
 # EOF
