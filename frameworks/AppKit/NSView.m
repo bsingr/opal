@@ -31,7 +31,12 @@ typedef NSInteger NSToolTipTag;
     NSRect          _bounds;
     id              _superview;
     id              _subviews;
-    NSWindow        *_window;
+    NSWindow       *_window;
+    
+#ifdef VIENNA_RENDER_CONTEXT_BROWSER_DOM
+    DOMElement      _DOMContainer;          // Usually an "outer div" to hold the graphics context aswell as subviews' containers
+    DOMElement      _DOMGraphicsContext;    // Rendering context. mainly canvas. could be a nested DIV tree if DOM drawing. or could be a textfield for nstextfield etc. but default it is a canvas
+#endif
 }
 
 - (id)initWithFrame:(NSRect)frameRect

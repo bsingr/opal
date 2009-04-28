@@ -214,7 +214,7 @@
 
 @end
 
-@implementation NSReponder (NSStandardKeyBindingMethods)
+@interface NSReponder (NSStandardKeyBindingMethods)
 
 // NSResponder does not implement any of these, and should be implmented by custom classes
 // Defining methods as they would appear in an interface means they are not implemented 
@@ -307,7 +307,7 @@
 
 @end
 
-@interface NSResponder (NSUndoSupport)
+@implementation NSResponder (NSUndoSupport)
 
 - (NSUndoManager *)undoManager
 {
@@ -316,7 +316,7 @@
 
 @end
 
-@interface NSResponder(NSErrorPresentation)
+@implementation NSResponder(NSErrorPresentation)
 
 - (void)presentError:(NSError *)error modalForWindow:(NSWindow *)window delegate:(id)delegate didPresentSelector:(SEL)didPresentSelector contextInfo:(void *)contextInfo
 {

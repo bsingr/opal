@@ -24,7 +24,7 @@
 {
     self = [super initWithFrame:frameRect];
     if (self) {
-        [self setCell:[[NSCell alloc] init]];
+        [self setCell:[[[self cellClass] alloc] init]];
     }
     
     return self;
@@ -414,11 +414,7 @@
 
 @end
 
-
-
-@implementation NSObject (NSControlSubclassDelegate)
-
-// These delegate and notification methods are sent from NSControl subclasses that allow text editing such as NSTextField and NSMatrix.  The classes that need to send these have delegates.  NSControl does not.
+@interface NSObject (NSControlSubclassDelegate)
 
 - (BOOL)control:(NSControl *)control textShouldBeginEditing:(NSText *)fieldEditor;
 - (BOOL)control:(NSControl *)control textShouldEndEditing:(NSText *)fieldEditor;
@@ -431,7 +427,6 @@
 
 @end
 
-								// userInfo keys:
 NSString *NSControlTextDidBeginEditingNotification = @"NSControlTextDidBeginEditingNotification";
 NSString *NSControlTextDidEndEditingNotification = @"NSControlTextDidEndEditingNotification";
 NSString *NSControlTextDidChangeNotification = @"NSControlTextDidChangeNotification";
