@@ -28,12 +28,6 @@ class Vienna::ObjectiveJ
   token AT_STRING_LITERAL
   token ID SEL BOOL UNICHAR CLASS
   token IN OUT INOUT BYREF BYCOPY ONEWAY
-  
-  #
-  # Javascript keywords
-  #
-  
-  toekn NEW FUNCTION
 
   rule
     target:
@@ -72,11 +66,9 @@ class Vienna::ObjectiveJ
     	| '[' expression selector_with_arguments ']'
     	| AT_SELECTOR '(' selector ')'
     	| AT_ENCODE '(' type_name ')'
-    	# these two rules allow for Objc 3.0 style blocks, as well as js style closures.
+    	# these two rules allow for Objc 3.0 style blocks
     	| '^' compound_statement
     	| '^' '(' parameter_type_list ')' compound_statement
-    	#| FUNCTION '(' ')' compound_statement
-    	#| FUNCTION '(' parameter_type_list ')' compound_statement
     	;
 
     postfix_expression:
@@ -752,13 +744,6 @@ require 'strscan'
         when scanner.scan(/@required/)
           @tokens << [:AT_REQUIRED, nil]
           
-        #
-        # Javascript keywords
-        #
-        when scanner.scan(/new/)
-          @tokens << [:NEW, nil]
-        when scanner.scan(/function/)
-          @tokens << [:FUNCTION, nil]
 	      
 	      #
 	      # C constants, identifiers and string literals

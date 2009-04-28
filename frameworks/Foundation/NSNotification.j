@@ -5,6 +5,7 @@
 @class NSString;
 
 // NSNotification default center
+id NSNotificationDefaultCenter = nil;
 
 @implementation	NSNotification : NSObject
 {
@@ -80,5 +81,3 @@
 - (id)initWithObserver:(id)notificationObserver selector:(SEL)notificationSelector name:(NSString *)notificationName object:(id)notificationSender;
 
 @end
-
-NSNotificationCenter *NSNotificationDefaultCenter = nil;
