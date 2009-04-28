@@ -3,8 +3,8 @@ module Vienna
   class Tools
     
     def self.build
-      parser = ObjectiveJ.new
-      parser.tokenize_file "MyFile.j"
+      parser = ObjectiveC.new
+      parser.tokenize_file "MyFile.m"
       parser.tokens.each do |first, second|
         puts "[#{first}, #{second}]"
       end

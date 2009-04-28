@@ -27,4 +27,6 @@ PROJ.rubyforge.name = 'vienna'
 
 PROJ.spec.opts << '--color'
 
+PROJ.ignore_file = '.gitignore'
+
 # EOF
