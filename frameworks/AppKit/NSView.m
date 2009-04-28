@@ -1,8 +1,8 @@
-#import <AppKit/NSResponder.j>
-#import <Foundation/NSGeometry.j>
-#import <Foundation/NSRange.j>
-#import <AppKit/NSGraphics.j>
-#import <AppKit/NSAnimation.j>
+#import <AppKit/NSResponder.m>
+#import <Foundation/NSGeometry.m>
+#import <Foundation/NSRange.m>
+#import <AppKit/NSGraphics.m>
+#import <AppKit/NSAnimation.m>
 
 enum {
     NSViewNotSizable    = 0,

@@ -1,6 +1,6 @@
-#import <Foudation/NSObject.j>
-#import <Foundation/NSArray.j>
-#import <Foundation/NSDictionary.j>
+#import <Foudation/NSObject.m>
+#import <Foundation/NSArray.m>
+#import <Foundation/NSDictionary.m>
 
 @class NSString;
 

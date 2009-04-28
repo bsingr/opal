@@ -1,7 +1,7 @@
-#import <Foundation/Foundation.j>
-#import <AppKit/NSView.j>
-#import <AppKit/NSCell.j>
-#import <AppKit/NSText.j>
+#import <Foundation/Foundation.m>
+#import <AppKit/NSView.m>
+#import <AppKit/NSCell.m>
+#import <AppKit/NSText.m>
 
 @implementation NSControl : NSView
 {

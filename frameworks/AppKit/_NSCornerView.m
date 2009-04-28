@@ -1,4 +1,4 @@
-#import <AppKit/NSView>
+#import <AppKit/NSView.m>
 
 @implementation _NSCornerView : NSView {
 

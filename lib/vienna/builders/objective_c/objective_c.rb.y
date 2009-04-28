@@ -1,4 +1,4 @@
-class Vienna::ObjectiveJ
+class Vienna::ObjectiveC
  
   token ';' '{' '}' ',' ':' '=' '(' ')' '[' ']' '.' '&' '!' '~' '-' '+' '*' '/' '%' '<' '>' '^' '|' '?'
 	token IDENTIFIER CONSTANT STRING_LITERAL SYSTEM_LOC SIZEOF

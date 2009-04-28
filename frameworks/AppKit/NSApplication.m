@@ -1,4 +1,4 @@
-#import <AppKit/NSResponder.j>
+#import <AppKit/NSResponder.m>
 
 NSString *NSModalPanelRunLoopMode = @"NSModalPanelRunLoopMode";
 NSString *NSEventTrackingRunLoopMode = @"NSEventTrackingRunLoopMode";

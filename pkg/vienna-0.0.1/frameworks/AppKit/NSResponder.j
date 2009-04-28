@@ -1,4 +1,4 @@
-#import <Foundation/NSObject.j>
+#import <Foundation/NSObject.m>
 
 @implementation NSResponder : NSObject <NSCoding>
 {

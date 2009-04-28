@@ -2,7 +2,7 @@ require 'racc/parser.rb'
 
 module Vienna
   
-  class ObjectiveJ < Racc::Parser
+  class ObjectiveC < Racc::Parser
     
     attr_reader :tokens
 
