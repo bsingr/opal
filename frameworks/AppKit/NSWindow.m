@@ -33,7 +33,50 @@ typedef NSUInteger NSWindowButton;
 
 @implementation NSWindow : NSResponder
 {
+    CGContextRef    _contextRef;
+    id              _gState;
+    id              _gCanvas;
+    id              _gBuffer;
     
+    NSPoint         _contentRectOrigin;
+	NSSize          _contentRectSize;
+	
+	BOOL            _hasShadow;
+	BOOL            _hidesOnDeactivate;
+	BOOL            _releasedWhenClosed;
+	NSUInteger     *_styleMask;
+	NSString       *_title;
+	BOOL            _visibleAtLaunch;
+	BOOL            _resizable;
+	
+	BOOL            _showNormalTitlebar;
+	BOOL            _unifiedTitleAndToolbar;
+	
+	NSToolbar      *_toolbar;
+	NSView         *_contentView;
+	
+	id              _delegate;
+	NSUInteger      _windowNumber;
+	
+	NSRect          _frame;
+    NSRect          _bounds;
+	BOOL            _visible;
+	
+	int             _level;
+	BOOL            _keyWindow;
+	BOOL            _mainWindow;
+	NSResponder    *_firstResponder;
+	
+	BOOL            _movableByWindowBackground;
+	//id _mouseMoveHandleCurrentX;
+	//id _mouseMoveHanldeCurrentY;
+    //id _mouseMoveHandle;
+    
+    //id _eventBindingCurrentX;
+    //id _eventBindingCurrentY;
+    
+    NSWindowTitleButton *_windowCloseButton;
+    NSText *_fieldEditor;
 }
 
 + (NSRect)frameRectForContentRect:(NSRect)cRect styleMask:(NSUInteger)aStyle
@@ -58,22 +101,46 @@ typedef NSUInteger NSWindowButton;
 
 - (NSRect)frameRectForContentRect:(NSRect)contentRect
 {
-    // TODO: Need to implement
+    
+#define WINDOW_BORDER_SIZE 1
+#define WINDOW_TITLEBAR_SIZE 20
+
+    if (_styleMask == 0)
+        return contentRect;
+        
+    NSInteger xOffset = 0;
+    NSInteger yOffset = 0;
+    NSInteger widthOffset = 0;
+    NSInteger heightOffset = 0;
+    
+    // Account for borders
+    xOffset -= WINDOW_BORDER_SIZE;
+    yOffset -= WINDOW_BORDER_SIZE;
+    widthOffset += 2 * WINDOW_BORDER_SIZE;
+    heightOffset += 2 * WINDOW_BORDER_SIZE;
+    
+    // Account for titlebar
+    heightOffset += WINDOW_TITLEBAR_SIZE
+    
+    return NSMakeRect (contentRect.origin.x + xOffset,
+                        contentRect.origin.y + yOffset,
+                        contentRect.size.width + widthOffset,
+                        contentRect.size.height + heightOffset);
 }
 
 - (NSRect)contentRectForFrameRect:(NSRect)frameRect
 {
-    // TODO: Need to implement
+    // FIXME: Need to check for style mask settings etc
+    //if (_styleMask == 0)
+        return NSMakeRect (0, 0, frameRect.sihe.width, frameRect.size.height);
 }
 
 - (id)init
 {
     self = [super init];
     if (self) {
-        // create gCanvas?
+        
     }
-    
-    return self;
 }
 
 - (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)aStyle backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag
@@ -81,7 +148,20 @@ typedef NSUInteger NSWindowButton;
     self = [self init];
     
     if (self) {
+        [self setFrame:contentRect display:YES];
         
+        _styleMask = aStyle;
+        _resizable = NO;
+        _firstResponder = self;
+        _movableByWindowBackground = YES;
+        
+        _hasShadow = YES;
+        _isVisible = YES;
+        
+        _contentView = [[NSView alloc] initWithFrame:contentRect];
+        [self setFrame:contentRect display:YES];
+        
+        _windowNumber = [[NSApplication sharedApplication] addWindow:self];
     }
     
     return self;
@@ -89,17 +169,82 @@ typedef NSUInteger NSWindowButton;
 
 - (id)initWithCoder:(NSCoder *)aCoder
 {
+    [super initWithCoder:aCoder];
     
+    _maxSize = [aCoder decodeSizeForKey:@"NSWindowContentSizeMax"];
+    _minSize = [aCoder decodeSizeForKey:@"NSWindowContentSizeMin"];
+    _wtFlags = [aCoder decodeIntForKey:@"NSWTFlags"];
+    _windowClass = [aCoder decodeStringForKey:@"NSWindowClass"];
+    _styleMask = [aCoder decodeIntForKey:@"NSWindowStyleMask"];
+    
+    _title = [aCoder decodeStringForKey:@"NSWindowTitle"];
+    _frame = [self frameRectForContentRect:[aCoder decodeRectForKey:@"NSWindowRect"]];
+    _contentView = [aCoder decodeObjectForKey:@"NSWindowView"];
+    
+    [self awakeAfterUsingCoder:aCoder];
+    
+    return self;
+}
+
+- (id)awakeAfterUsingCoder:(NSCoder *)aCoder
+{
+    _gCanvas = NSWindowServerCreateCanvas (self);
+    _gCanvas.width = _frame.size.width;
+    _gCanvas.height = _frame.size.height;
+    _windowNumber = [[NSApplication sharedApplication] addWindow:self];
+    
+    [_contentView viewWillMoveToWindow:self];
+    [_contentView viewDidMoveToWindow:self];
+    NSWindowServerSetOrigin(_gCanvas, _frame.origin);
+    [self makeKeyAndOrderFront:self];
+}
+
+- (void)mouseDown:(NSEvent *)theEvent
+{
+    [self makeMainWindow];
+    _eventBindingCurrentX = [theEvent locationInBase].x;
+    _eventBindingCurrentY = [theEvent locationInBase].y;
+    
+    [[NSApplication sharedApplication] nextEventMatchingMask:(NSLeftMouseUpMask | NSMouseMovedMask) 
+                                        untilDate:nil
+                                        inMode:nil
+                                        dequeue:nil
+                                        withTarget:self
+                                        withSelector:@selector(_mouseDownHandle:)];
+}
+
+- (void)_mouseDownHandle:(NSEvent *)theEvent
+{
+    if ([theEvent type] == NSLeftMouseUp) {
+        
+    }
+    else { // It will be a NSMouseMoved
+        NSInteger newX = ([theEvent locationInBase].x - _eventBindingCurrentX) +  _frame.origin.x;
+        NSInteger newY = ([theEvent locationInBase].y - _eventBindingCurrentY) +  _frame.origin.y;        
+    
+        [self setFrameOrigin:NSMakePoint(newX, newY)];
+        
+        _eventBindingCurrentX = [theEvent locationInBase].x;
+        _eventBindingCurrentY = [theEvent locationInBase].y;
+        
+        [[NSApplication sharedApplication] nextEventMatchingMask:(NSLeftMouseUpMask | NSMouseMovedMask) 
+                                            untilDate:nil
+                                            inMode:nil
+                                            dequeue:nil
+                                            withTarget:self
+                                            withSelector:@selector(_mouseDownHandle:)];
+    }
 }
 
 - (NSString *)title
 {
-    // TODO: Need to implement
+    return _title;
 }
 
 - (void)setTitle:(NSString *)aString
 {
-    // TODO: Need to implement
+    _title = [aString copy];
+    [self setNeedsDisplay:YES];
 }
 
 - (void)setRepresentedURL:(NSURL *)url
@@ -139,12 +284,25 @@ typedef NSUInteger NSWindowButton;
 
 - (void)setContentView:(NSView *)aView
 {
-    // TODO: Need to implement
+    if (_contentView)
+        [_contentView removeFromSuperview];
+    
+    _contentView = aView;
+    
+    [_contentView viewWillMoveToSuperview:nil];
+    [_contentView viewWillMoveToWindow:self];
+    
+    [_contentView setFrame:[self contentRectForFrameRect:_frame]];
+    
+    [_contentView viewDidMoveToSuperview:nil];
+    [_contentView viewDidMoveToWindow:self];
+    
+    [_contentView setNextResponder:self];
 }
 
 - (id)contentView
 {
-    // TODO: Need to implement
+    return _contentView;
 }
 
 - (void)setDelegate:(id)anObject
@@ -159,7 +317,7 @@ typedef NSUInteger NSWindowButton;
 
 - (NSInteger)windowNumber
 {
-    // TODO: Need to implement
+    return _windowNumber;
 }
 
 - (NSUInteger)styleMask
@@ -185,7 +343,7 @@ typedef NSUInteger NSWindowButton;
 
 - (void)setFrame:(NSRect)frameRect display:(BOOL)flag
 {
-    // TODO: Need to implement
+    
 }
 
 - (void)setContentSize:(NSSize)aSize
@@ -195,7 +353,10 @@ typedef NSUInteger NSWindowButton;
 
 - (void)setFrameOrigin:(NSPoint)aPoint
 {
-    // TODO: Need to implement
+    _frame.origin.x = point.x;
+	_frame.origin.y = point.y;
+    
+    NSWindowServerSetOrigin (_gCanvas, point);
 }
 
 - (void)setFrameTopLeftPoint:(NSPoint)aPoint
@@ -210,7 +371,7 @@ typedef NSUInteger NSWindowButton;
 
 - (NSRect)frame
 {
-    // TODO: Need to implement
+    return _frame;
 }
 
 
@@ -576,7 +737,7 @@ typedef NSUInteger NSWindowButton;
 
 - (BOOL)worksWhenModal
 {
-    // TODO: Need to implement
+    return NO;
 }
 
 - (NSPoint)convertBaseToScreen:(NSPoint)aPoint
