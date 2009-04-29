@@ -17,7 +17,35 @@ id NSApp = nil;
 
 @implementation NSApplication : NSResponder
 {
-    
+    NSString *_bob;
+}
+
+- (id)init
+{
+    self = [super init];
+    if (self) {
+        _windows = [NSMutableArray arrayWithCapacity:0];
+        
+        _eventQueue = [NSMutableArray arrayWithCapacity:0];
+        _eventBindingQueued = NO;
+        
+        NSBundle *mainBundle = [NSBundle mainBundle];
+        NSString *productName = [mainBundle objectForInfoDictionaryKey:@"CFBundleName"];
+        
+        NSRect *menuBarRect = NSMakeRect (0, 
+                        [[NSScreen mainScreen] frame].size.height - [NSMenu menuBarHeight],
+                        [[NSScreen mainScreen] frame].size.width,
+                        [NSMenu menuBarHeight]);
+
+    	_menuBar = [[NSMenuBar alloc] initWithContentRect:menuBarRect 
+    	                              styleMask:NSBorderlessWindowMask 
+    	                              backing:nil 
+    	                              defer:NO];
+    	                              
+        [_menuBar setLevel:NSMainMenuWindowLevel];
+        
+        return self;
+    }
 }
 
 + (NSApplication *)sharedApplication
@@ -62,17 +90,25 @@ id NSApp = nil;
 
 - (NSWindow *)windowWithWindowNumber:(NSInteger)windowNum
 {
-    // TODO: Need to implement
+    return [_windows objectAtIndex:windowNum];
 }
 
 - (NSWindow *)mainWindow
 {
-    // TODO: Need to implement
+    for (int i = 0; i < [_windows count]; i++)
+        if ([[_windows objectAtIndex:i] isMainWindow])
+        return [_windows objectAtIndex:i];
+    
+    return nil;
 }
 
 - (NSWindow *)keyWindow
 {
-    // TODO: Need to implement
+    for (int i = 0; i < [_windows count]; i++)
+        if ([[_windows objectAtIndex:i] isKeyWindow])
+        return [_windows objectAtIndex:i];
+    
+    return nil;
 }
 
 - (BOOL)isRunning

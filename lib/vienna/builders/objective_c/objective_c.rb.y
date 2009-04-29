@@ -1,5 +1,9 @@
 class Vienna::ObjectiveC
  
+  #
+  # C keywords and operators..
+  #
+ 
   token ';' '{' '}' ',' ':' '=' '(' ')' '[' ']' '.' '&' '!' '~' '-' '+' '*' '/' '%' '<' '>' '^' '|' '?'
 	token IDENTIFIER CONSTANT STRING_LITERAL SYSTEM_LOC SIZEOF
 	token PTR_OP INC_OP DEC_OP LEFT_OP RIGHT_OP LE_OP GE_OP EQ_OP NE_OP

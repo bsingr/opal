@@ -21,12 +21,31 @@ NSString *NSUnionOfSetsKeyValueOperator = @"NSUnionOfSetsKeyValueOperator";
 
 + (BOOL)accessInstanceVariablesDirectly
 {
-    // TODO: Need to implement
+    return YES;
 }
 
 - (id)valueForKey:(NSString *)key
 {
-    // TODO: Need to implement
+    // see if accessor method defined: -get<Key>, -<key>, or -is<Key>
+	NSString *accessorName = @"get" + aKey.charAt(0).toUpperCase() + aKey.substr(1);
+	if ([self respondsToSelector:NSSelectorFromString(accessorName)])
+        return [self performSelector:NSSelectorFromString(accessorName)];
+	
+	
+	accessorName = key;
+	if ([self respondsToSelector:NSSelectorFromString(accessorName)])
+        return [self performSelector:NSSelectorFromString(accessorName)];
+	
+	accessorName = "is" + aKey.charAt(0).toUpperCase() + aKey.substr(1);
+	if ([self respondsToSelector:NSSelectorFromString(accessorName)])
+        return [self performSelector:NSSelectorFromString(accessorName)];
+	
+	if ([self accessInstanceVariablesDirectly]) {
+	    
+	}
+	    
+    // If not found..
+    return [self valueForUndefinedKey:key];
 }
 
 - (void)setValue:(id)value forKey:(NSString *)key

@@ -29,14 +29,39 @@ typedef NSInteger NSToolTipTag;
 {
     NSRect          _frame;
     NSRect          _bounds;
-    id              _superview;
-    id              _subviews;
     NSWindow       *_window;
+    id           _gState
     
-#ifdef VIENNA_RENDER_CONTEXT_BROWSER_DOM
-    DOMElement      _DOMContainer;          // Usually an "outer div" to hold the graphics context aswell as subviews' containers
-    DOMElement      _DOMGraphicsContext;    // Rendering context. mainly canvas. could be a nested DIV tree if DOM drawing. or could be a textfield for nstextfield etc. but default it is a canvas
-#endif
+    NSMenu         *_menu;
+    NSView         *_superview;
+    NSMutableArray *_subviews;
+    
+    NSView         *_nextKeyView;
+    NSView         *_previousKeyView;
+    
+    BOOL            _isHidden;
+    BOOL            _postsNotificationOnFrameChange;
+    BOOL            _postsNotificationOnBoundsChange;
+    BOOL            _autoresizesSubviews;
+    BOOL            _inLiveResize;
+    unsigned        _autoresizingMask;
+    
+    int             _tag;
+    NSArray        *_draggedTypes;
+    NSToolTipTag    _defaultToolTipTag;
+    NSString       *_toolTip;
+
+    NSRect          _invalidRect;
+
+    BOOL              _validTransforms;
+    CGAffineTransform _transformFromWindow;
+    CGAffineTransform _transformToWindow;
+    NSRect            _visibleRect;
+   
+    // Usually an "outer div" to hold the graphics context aswell as subviews' containers
+    id              _DOMContainer;
+    // Rendering context. mainly canvas. could be a nested DIV tree if DOM drawing. or could be a textfield for nstextfield etc. but default it is a canvas
+    id              _DOMGraphicsContext;
 }
 
 - (id)initWithFrame:(NSRect)frameRect
@@ -50,6 +75,25 @@ typedef NSInteger NSToolTipTag;
     }
     
     return self;
+}
+
+- (id)initWithCoder:(NSCoder *)aCoder
+{
+    [super initWithCoder:aCoder];
+    
+    _frame = NSMakeRect (0,0,0,0);
+    _bounds = NSMakeRect (0,0,0,0);
+    
+    if ([aCoder containsValueForKey:@"NSFrame"])
+        _frame = [aCoder decodeRectForKey:@"NSFrame"];
+    else if ([aCoder containsValueForKey:@"NSFrameSize"])
+        _frame.size = [aCoder decodeSizeForKey:@"NSFrameSize"];
+    
+    _bounds.origin = NSMakePoint (0,0);
+    _bounds.size = _frame.size;
+    
+    _superview = nil;
+    _window = nil;
 }
 
 - (NSWindow *)window
