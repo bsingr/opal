@@ -283,18 +283,19 @@ class Vienna::ObjectiveC
     method_implementation_list:
     	  method_implementation
     	| method_implementation_list method_implementation
-    	| AT_PROPERTY '(' property_attributes_list ')' specifier_qualifier_list struct_declarator_list ';'
-    	| AT_PROPERTY specifier_qualifier_list struct_declarator_list ';'
     	;
 
     objc_declaration:
     	  AT_CLASS class_name_list ';'
     	| AT_PROTOCOL class_name_declaration AT_END
     	| AT_PROTOCOL class_name_declaration method_declaration_list AT_END
-    	| AT_IMPLEMENTATION class_name_declaration AT_END                               { result = Vienna::Node.new(:AT_IMPLEMENTATION, Vienna::Node.new(',', val[1], nil), nil) }
-    	| AT_IMPLEMENTATION class_name_declaration ivar_declaration_list AT_END         { result = Vienna::Node.new(:AT_IMPLEMENTATION, Vienna::Node.new(',', val[1], val[2]), nil) }
-    	| AT_IMPLEMENTATION class_name_declaration method_implementation_list AT_END    { result = Vienna::Node.new(:AT_IMPLEMENTATION, Vienna::Node.new(',', val[1], nil), val[2]) }
-    	| AT_IMPLEMENTATION class_name_declaration ivar_declaration_list method_implementation_list AT_END  { result = Vienna::Node.new(:AT_IMPLEMENTATION, Vienna::Node.new(',', val[1], val[2]), val[3]) }
+    	| AT_INTERFACE class_name_declaration AT_END
+    	| AT_INTERFACE class_name_declaration ivar_declaration_list method_declaration_list AT_END
+    	| AT_INTERFACE class_name_declaration ivar_declaration_list AT_END
+    	| AT_IMPLEMENTATION class_implementation AT_END                               { result = Vienna::Node.new(:AT_IMPLEMENTATION, Vienna::Node.new(',', val[1], nil), nil) }
+    	| AT_IMPLEMENTATION class_implementation ivar_declaration_list AT_END         { result = Vienna::Node.new(:AT_IMPLEMENTATION, Vienna::Node.new(',', val[1], val[2]), nil) }
+    	| AT_IMPLEMENTATION class_implementation method_implementation_list AT_END    { result = Vienna::Node.new(:AT_IMPLEMENTATION, Vienna::Node.new(',', val[1], nil), val[2]) }
+    	| AT_IMPLEMENTATION class_implementation ivar_declaration_list method_implementation_list AT_END  { result = Vienna::Node.new(:AT_IMPLEMENTATION, Vienna::Node.new(',', val[1], val[2]), val[3]) }
     	;
 
     declaration:
