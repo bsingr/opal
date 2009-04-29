@@ -1,99 +1,6 @@
-#import <Foundation/NSObject.m>
-#import <Foundation/NSGeometry.m>
-#import <AppKit/NSText.h>
+#import "NSCell.h"
 
-enum {
-    NSAnyType				        = 0,
-    NSIntType				        = 1,
-    NSPositiveIntType			    = 2,
-    NSFloatType				        = 3,
-    NSPositiveFloatType			    = 4,
-    NSDoubleType			        = 6,
-    NSPositiveDoubleType		    = 7
-};
-
-enum {
-    NSNullCellType			        = 0,
-    NSTextCellType			        = 1,
-    NSImageCellType			        = 2
-};
-typedef NSUInteger NSCellType;
-
-enum {
-    NSCellDisabled			        = 0,
-    NSCellState				        = 1,
-    NSPushInCell			        = 2,
-    NSCellEditable			        = 3,
-    NSChangeGrayCell			    = 4,
-    NSCellHighlighted			    = 5,
-    NSCellLightsByContents		    = 6,
-    NSCellLightsByGray			    = 7,
-    NSChangeBackgroundCell		    = 8,
-    NSCellLightsByBackground		= 9,
-    NSCellIsBordered			    = 10,
-    NSCellHasOverlappingImage		= 11,
-    NSCellHasImageHorizontal		= 12,
-    NSCellHasImageOnLeftOrBottom	= 13,
-    NSCellChangesContents		    = 14,
-    NSCellIsInsetButton			    = 15,
-    NSCellAllowsMixedState		    = 16
-};
-typedef NSUInteger NSCellAttribute;
-
-enum {
-    NSNoImage				        = 0,
-    NSImageOnly				        = 1,
-    NSImageLeft				        = 2,
-    NSImageRight			        = 3,
-    NSImageBelow			        = 4,
-    NSImageAbove			        = 5,
-    NSImageOverlaps			        = 6
-};
-typedef NSUInteger NSCellImagePosition;
-
-
-enum {
-    NSImageScaleProportionallyDown  = 0,
-    NSImageScaleAxesIndependently,
-    NSImageScaleNone,
-    NSImageScaleProportionallyUpOrDown
-};
-typedef NSUInteger NSImageScaling;
-
-enum {
-    NSMixedState                    = -1,
-    NSOffState                      = 0,
-    NSOnState                       = 1    
-};
-typedef NSInteger NSCellStateValue;
-
-enum {
-    NSNoCellMask			        = 0,
-    NSContentsCellMask			    = 1,
-    NSPushInCellMask			    = 2,
-    NSChangeGrayCellMask		    = 4,
-    NSChangeBackgroundCellMask		= 8
-};
-
-enum {
-    NSDefaultControlTint            = 0,
-    NSBlueControlTint               = 1,
-    NSGraphiteControlTint           = 6,
-    NSClearControlTint              = 7
-};
-typedef NSUInteger NSControlTint;
-
-enum {
-    NSRegularControlSize,
-    NSSmallControlSize,
-    NSMiniControlSize
-};
-typedef NSUInteger NSControlSize;
-
-@implementation NSCell : NSObject <NSCopying, NSCoding>
-{
-    
-}
+@implementation NSCell
 
 + (BOOL)prefersTrackingUntilMouseUp
 {
@@ -693,6 +600,7 @@ typedef NSUInteger NSControlSize;
 
 @end
 
+
 @implementation NSCell (NSKeyboardUI)
 
 - (void)setRefusesFirstResponder:(BOOL)flag
@@ -767,8 +675,8 @@ typedef NSUInteger NSControlSize;
     // TODO: Need to implement
 }
 
-
 @end
+
 
 @implementation NSCell (NSCellAttributedStringMethods)
 
@@ -804,6 +712,7 @@ typedef NSUInteger NSControlSize;
 
 @end
 
+
 @implementation NSCell (NSCellMixedState)
 
 - (void)setAllowsMixedState:(BOOL)flag
@@ -828,14 +737,7 @@ typedef NSUInteger NSControlSize;
 
 @end
 
-NSString *NSControlTintDidChangeNotification;
-
-enum {
-    NSCellHitNone               = 0,
-    NSCellHitContentArea        = 1 << 0,
-    NSCellHitEditableTextArea   = 1 << 1,
-    NSCellHitTrackableArea      = 1 << 2,
-};
+NSString *NSControlTintDidChangeNotification = @"NSControlTintDidChangeNotification";
 
 @implementation NSCell (NSCellHitTest)
 
@@ -845,6 +747,7 @@ enum {
 }
 
 @end
+
 
 @implementation NSCell (NSCellExpansion)
 
@@ -860,13 +763,6 @@ enum {
 
 @end
 
-enum {
-    NSBackgroundStyleLight = 0,
-    NSBackgroundStyleDark,
-    NSBackgroundStyleRaised,
-    NSBackgroundStyleLowered
-};
-typedef NSInteger NSBackgroundStyle;
 
 @implementation NSCell (NSCellBackgroundStyle)
 

@@ -1,68 +1,6 @@
-#import <AppKit/NSResponder.m>
-#import <Foundation/NSGeometry.m>
-#import <Foundation/NSRange.m>
-#import <AppKit/NSGraphics.m>
-#import <AppKit/NSAnimation.m>
+#import "NSView.h"
 
-enum {
-    NSViewNotSizable    = 0,
-    NSViewMinXMargin    = 1,
-    NSViewWidthSizable  = 2,
-    NSViewMaxXMargin    = 4,
-    NSViewMinYMargin    = 8,
-    NSViewHeightSizable = 16,
-    NSViewMaxYMargin    = 32
-};
-
-enum {
-    NSNoBorder          = 0,
-    NSLineBorder        = 1,
-    NSBezelBorder       = 2,
-    NSGrooveBorder      = 3
-};
-typedef NSUInteger NSBorderType;
-
-typedef NSInteger NSTrackingRectTag;
-typedef NSInteger NSToolTipTag;
-
-@implementation NSView : NSResponder
-{
-    NSRect          _frame;
-    NSRect          _bounds;
-    NSWindow       *_window;
-    id           _gState
-    
-    NSMenu         *_menu;
-    NSView         *_superview;
-    NSMutableArray *_subviews;
-    
-    NSView         *_nextKeyView;
-    NSView         *_previousKeyView;
-    
-    BOOL            _isHidden;
-    BOOL            _postsNotificationOnFrameChange;
-    BOOL            _postsNotificationOnBoundsChange;
-    BOOL            _autoresizesSubviews;
-    BOOL            _inLiveResize;
-    unsigned        _autoresizingMask;
-    
-    int             _tag;
-    NSArray        *_draggedTypes;
-    NSToolTipTag    _defaultToolTipTag;
-    NSString       *_toolTip;
-
-    NSRect          _invalidRect;
-
-    BOOL              _validTransforms;
-    CGAffineTransform _transformFromWindow;
-    CGAffineTransform _transformToWindow;
-    NSRect            _visibleRect;
-   
-    // Usually an "outer div" to hold the graphics context aswell as subviews' containers
-    id              _DOMContainer;
-    // Rendering context. mainly canvas. could be a nested DIV tree if DOM drawing. or could be a textfield for nstextfield etc. but default it is a canvas
-    id              _DOMGraphicsContext;
-}
+@implementation NSView
 
 - (id)initWithFrame:(NSRect)frameRect
 {
@@ -892,16 +830,8 @@ typedef NSInteger NSToolTipTag;
 
 @end
 
-@interface NSObject(NSToolTipOwner)
 
-- (NSString *)view:(NSView *)view stringForToolTip:(NSToolTipTag)tag point:(NSPoint)point userData:(void *)data
-{
-    // TODO: Need to implement
-}
-
-@end
-
-@interface NSView(NSKeyboardUI)
+@implementation NSView (NSKeyboardUI)
 
 - (BOOL)performMnemonic:(NSString *)theString
 {
@@ -960,7 +890,8 @@ typedef NSInteger NSToolTipTag;
 @end
 
 
-@interface NSView(NSDrag)
+@implementation NSView (NSDrag)
+
 - (void)dragImage:(NSImage *)anImage at:(NSPoint)viewLocation offset:(NSSize)initialOffset event:(NSEvent *)event pasteboard:(NSPasteboard *)pboard source:(id)sourceObj slideBack:(BOOL)slideFlag
 {
     // TODO: Need to implement

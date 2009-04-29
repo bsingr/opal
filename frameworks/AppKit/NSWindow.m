@@ -1,83 +1,6 @@
-#import <Foundation/NSGeometry.m>
-#import <AppKit/NSResponder.m>
-#import <AppKit/NSGraphics.m>
+#import "NSWindow.h"
 
-enum {
-    NSBorderlessWindowMask              = 0,
-    NSTitledWindowMask                  = 1 << 0,
-    NSClosableWindowMask                = 1 << 1,
-    NSMiniaturizableWindowMask          = 1 << 2,
-    NSResizableWindowMask               = 1 << 3,
-    NSTexturedBackgroundWindowMask      = 1 << 8,
-    NSUnifiedTitleAndToolbarWindowMask  = 1 << 12
-};
-
-#define NSNormalWindowLevel 10
-#define NSFloatingWindowLevel 10
-#define NSSubmenuWindowLevel 10
-#define NSTornOffMenuWindowLevel 10
-#define NSMainMenuWindowLevel 10
-#define NSStatusWindowLevel	10
-#define NSModalPanelWindowLevel 10
-#define NSPopUpMenuWindowLevel 10
-#define NSScreenSaverWindowLevel 10
-
-enum {
-    NSWindowCloseButton,
-    NSWindowMiniaturizeButton,
-    NSWindowZoomButton,
-    NSWindowToolbarButton,
-    NSWindowDocumentIconButton
-};
-typedef NSUInteger NSWindowButton;
-
-@implementation NSWindow : NSResponder
-{
-    CGContextRef    _contextRef;
-    id              _gState;
-    id              _gCanvas;
-    id              _gBuffer;
-    
-    NSPoint         _contentRectOrigin;
-	NSSize          _contentRectSize;
-	
-	BOOL            _hasShadow;
-	BOOL            _hidesOnDeactivate;
-	BOOL            _releasedWhenClosed;
-	NSUInteger     *_styleMask;
-	NSString       *_title;
-	BOOL            _visibleAtLaunch;
-	BOOL            _resizable;
-	
-	BOOL            _showNormalTitlebar;
-	BOOL            _unifiedTitleAndToolbar;
-	
-	NSToolbar      *_toolbar;
-	NSView         *_contentView;
-	
-	id              _delegate;
-	NSUInteger      _windowNumber;
-	
-	NSRect          _frame;
-    NSRect          _bounds;
-	BOOL            _visible;
-	
-	int             _level;
-	BOOL            _keyWindow;
-	BOOL            _mainWindow;
-	NSResponder    *_firstResponder;
-	
-	BOOL            _movableByWindowBackground;
-	//id _mouseMoveHandleCurrentX;
-	//id _mouseMoveHanldeCurrentY;
-    //id _mouseMoveHandle;
-    
-    //id _eventBindingCurrentX;
-    //id _eventBindingCurrentY;
-    
-    NSWindowTitleButton *_windowCloseButton;
-    NSText *_fieldEditor;
-}
+@implementation NSWindow
 
 + (NSRect)frameRectForContentRect:(NSRect)cRect styleMask:(NSUInteger)aStyle
 {
@@ -1214,60 +1137,20 @@ typedef NSUInteger NSWindowButton;
 
 @end
 
-
-@interface NSObject (NSWindowNotifications)
-
-- (void)windowDidResize:(NSNotification *)notification;
-- (void)windowDidExpose:(NSNotification *)notification;
-- (void)windowWillMove:(NSNotification *)notification;
-- (void)windowDidMove:(NSNotification *)notification;
-- (void)windowDidBecomeKey:(NSNotification *)notification;
-- (void)windowDidResignKey:(NSNotification *)notification;
-- (void)windowDidBecomeMain:(NSNotification *)notification;
-- (void)windowDidResignMain:(NSNotification *)notification;
-- (void)windowWillClose:(NSNotification *)notification;
-- (void)windowWillMiniaturize:(NSNotification *)notification;
-- (void)windowDidMiniaturize:(NSNotification *)notification;
-- (void)windowDidDeminiaturize:(NSNotification *)notification;
-- (void)windowDidUpdate:(NSNotification *)notification;
-- (void)windowDidChangeScreen:(NSNotification *)notification;
-- (void)windowDidChangeScreenProfile:(NSNotification *)notification;
-- (void)windowWillBeginSheet:(NSNotification *)notification;
-- (void)windowDidEndSheet:(NSNotification *)notification;
-
-@end
-
-@interface NSObject (NSWindowDelegate)
-
-- (BOOL)windowShouldClose:(id)sender;
-- (id)windowWillReturnFieldEditor:(NSWindow *)sender toObject:(id)client;
-- (NSSize)windowWillResize:(NSWindow *)sender toSize:(NSSize)frameSize;
-- (NSRect)windowWillUseStandardFrame:(NSWindow *)window defaultFrame:(NSRect)newFrame;
-- (BOOL)windowShouldZoom:(NSWindow *)window toFrame:(NSRect)newFrame;
-- (NSUndoManager *)windowWillReturnUndoManager:(NSWindow *)window;
-- (NSRect)window:(NSWindow *)window willPositionSheet:(NSWindow *)sheet usingRect:(NSRect)rect;
-
-- (BOOL)window:(NSWindow *)window shouldPopUpDocumentPathMenu:(NSMenu *)menu;
-
-- (BOOL)window:(NSWindow *)window shouldDragDocumentWithEvent:(NSEvent *)event from:(NSPoint)dragImageLocation withPasteboard:(NSPasteboard *)pasteboard;
-
-@end
-
-
-NSString *NSWindowDidBecomeKeyNotification;
-NSString *NSWindowDidBecomeMainNotification;
-NSString *NSWindowDidChangeScreenNotification;
-NSString *NSWindowDidDeminiaturizeNotification;
-NSString *NSWindowDidExposeNotification;
-NSString *NSWindowDidMiniaturizeNotification;
-NSString *NSWindowDidMoveNotification;
-NSString *NSWindowDidResignKeyNotification;
-NSString *NSWindowDidResignMainNotification;
-NSString *NSWindowDidResizeNotification;
-NSString *NSWindowDidUpdateNotification;
-NSString *NSWindowWillCloseNotification;
-NSString *NSWindowWillMiniaturizeNotification;
-NSString *NSWindowWillMoveNotification;
-NSString *NSWindowWillBeginSheetNotification;
-NSString *NSWindowDidEndSheetNotification;
-NSString *NSWindowDidChangeScreenProfileNotification;
+NSString *NSWindowDidBecomeKeyNotification = @"NSWindowDidBecomeKeyNotification";
+NSString *NSWindowDidBecomeMainNotification = @"NSWindowDidBecomeMainNotification";
+NSString *NSWindowDidChangeScreenNotification = @"NSWindowDidChangeScreenNotification";
+NSString *NSWindowDidDeminiaturizeNotification = @"NSWindowDidDeminiaturizeNotification";
+NSString *NSWindowDidExposeNotification = @"NSWindowDidExposeNotification";
+NSString *NSWindowDidMiniaturizeNotification = @"NSWindowDidMiniaturizeNotification";
+NSString *NSWindowDidMoveNotification = @"NSWindowDidMoveNotification";
+NSString *NSWindowDidResignKeyNotification = @"NSWindowDidResignKeyNotification";
+NSString *NSWindowDidResignMainNotification = @"NSWindowDidResignMainNotification";
+NSString *NSWindowDidResizeNotification = @"NSWindowDidResizeNotification";
+NSString *NSWindowDidUpdateNotification = @"NSWindowDidUpdateNotification";
+NSString *NSWindowWillCloseNotification = @"NSWindowWillCloseNotification";
+NSString *NSWindowWillMiniaturizeNotification = @"NSWindowWillMiniaturizeNotification";
+NSString *NSWindowWillMoveNotification = @"NSWindowWillMoveNotification";
+NSString *NSWindowWillBeginSheetNotification = @"NSWindowWillBeginSheetNotification";
+NSString *NSWindowDidEndSheetNotification = @"NSWindowDidEndSheetNotification";
+NSString *NSWindowDidChangeScreenProfileNotification = @"NSWindowDidChangeScreenProfileNotification";

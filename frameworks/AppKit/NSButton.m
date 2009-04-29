@@ -1,7 +1,6 @@
-#import <AppKit/NSControl.m>
-#import <AppKit/NSButtonCell.m>
+#import "NSButton.h"
 
-@implementation NSButton : NSControl
+@implementation NSButton
 {
     
 }
@@ -131,8 +130,8 @@
     
 }
 
-
 @end
+
 
 @implementation NSButton (NSKeyboardUI)
 
@@ -141,8 +140,8 @@
     
 }
 
-
 @end
+
 
 @implementation NSButton (NSButtonAttributedStringMethods)
 
@@ -171,7 +170,7 @@
 
 @implementation NSButton (NSButtonBezelStyles)
 
-- (void) setBezelStyle:(NSBezelStyle)bezelStyle
+- (void)setBezelStyle:(NSBezelStyle)bezelStyle
 {
     
 }
@@ -182,6 +181,7 @@
 }
 
 @end
+
 
 @implementation NSButton (NSButtonMixedState)
 
@@ -200,20 +200,19 @@
     
 }
 
-
 @end
+
 
 @implementation NSButton (NSButtonBorder)
 
-- (void) setShowsBorderOnlyWhileMouseInside:(BOOL)show
+- (void)setShowsBorderOnlyWhileMouseInside:(BOOL)show
 {
     
 }
 
-- (BOOL) showsBorderOnlyWhileMouseInside
+- (BOOL)showsBorderOnlyWhileMouseInside
 {
     
 }
-
 
 @end

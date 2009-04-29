@@ -1,24 +1,11 @@
-#import <AppKit/NSResponder.m>
+#import "NSApplication.h"
 
 NSString *NSModalPanelRunLoopMode = @"NSModalPanelRunLoopMode";
 NSString *NSEventTrackingRunLoopMode = @"NSEventTrackingRunLoopMode";
 
-enum {
-    NSRunStoppedResponse            = (-1000),
-    NSRunAbortedResponse            = (-1001),
-    NSRunContinuesResponse          = (-1002)
-};
-
-enum {
-    NSUpdateWindowsRunLoopOrdering  = 500000
-};
-
 id NSApp = nil;
 
-@implementation NSApplication : NSResponder
-{
-    NSString *_bob;
-}
+@implementation NSApplication
 
 - (id)init
 {
@@ -303,69 +290,6 @@ id NSApp = nil;
 }
 
 - (void)miniaturizeAll:(id)sender
-{
-    // TODO: Need to implement
-}
-
-@end
-
-@implementation NSObject (NSApplicationNotifications)
-
-- (void)applicationWillFinishLaunching:(NSNotification *)notification;
-- (void)applicationDidFinishLaunching:(NSNotification *)notification;
-- (void)applicationWillHide:(NSNotification *)notification;
-- (void)applicationDidHide:(NSNotification *)notification;
-- (void)applicationWillUnhide:(NSNotification *)notification;
-- (void)applicationDidUnhide:(NSNotification *)notification;
-- (void)applicationWillBecomeActive:(NSNotification *)notification;
-- (void)applicationDidBecomeActive:(NSNotification *)notification;
-- (void)applicationWillResignActive:(NSNotification *)notification;
-- (void)applicationDidResignActive:(NSNotification *)notification;
-- (void)applicationWillUpdate:(NSNotification *)notification;
-- (void)applicationDidUpdate:(NSNotification *)notification;
-- (void)applicationWillTerminate:(NSNotification *)notification;
-- (void)applicationDidChangeScreenParameters:(NSNotification *)notification;
-
-@end
-
-@implementation NSObject(NSApplicationDelegate)
-
-- (BOOL)application:(NSApplication *)sender openFile:(NSString *)filename;
-- (void)application:(NSApplication *)sender openFiles:(NSArray *)filenames;
-- (BOOL)application:(NSApplication *)sender openTempFile:(NSString *)filename;
-- (BOOL)applicationShouldOpenUntitledFile:(NSApplication *)sender;
-- (BOOL)applicationOpenUntitledFile:(NSApplication *)sender;
-- (BOOL)application:(id)sender openFileWithoutUI:(NSString *)filename;
-
-@end
-
-@implementation NSApplication (NSServicesMenu)
-
-- (void)setServicesMenu:(NSMenu *)aMenu
-{
-    // TODO: Need to implement
-}
-
-- (NSMenu *)servicesMenu
-{
-    // TODO: Need to implement
-}
-
-- (void)registerServicesMenuSendTypes:(NSArray *)sendTypes returnTypes:(NSArray *)returnTypes
-{
-    // TODO: Need to implement
-}
-
-@end
-
-@implementation NSObject (NSServicesRequests)
-
-- (BOOL)writeSelectionToPasteboard:(NSPasteboard *)pboard types:(NSArray *)types
-{
-    // TODO: Need to implement
-}
-
-- (BOOL)readSelectionFromPasteboard:(NSPasteboard *)pboard
 {
     // TODO: Need to implement
 }

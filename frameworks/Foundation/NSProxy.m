@@ -1,9 +1,6 @@
-#import <Foundation/NSObject.m>
+#import "NSProxy.h"
 
-@implementation NSProxy <NSObject>
-{
-    Class isa;
-}
+@implementation NSProxy
 
 + (id)alloc
 {
