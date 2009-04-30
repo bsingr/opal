@@ -20,7 +20,7 @@
 
 - (id)initWithCoder:(NSCoder *)aCoder
 {
-    self = [super initWithCoder:aCoder];
+    [super initWithCoder:aCoder];
     
     _value = [aCoder decodeStringForKey:@"NSContents"];
     NSInteger _flags = [aCoder decodeIntForKey:@"NSCellFlags"];
@@ -408,7 +408,7 @@
 
 - (NSRect)titleRectForBounds:(NSRect)theRect
 {
-    // TODO: Need to implement
+    return theRect;
 }
 
 - (NSRect)drawingRectForBounds:(NSRect)theRect
@@ -438,7 +438,18 @@
 
 - (NSText *)setUpFieldEditorAttributes:(NSText *)textObj
 {
-    // TODO: Need to implement
+    // [textObj setFont:[self font]];
+    [textObj setAlignment:[self alignment]];
+    [textObj setString:[self stringValue]];
+    [textObj setSelectable:[self isSelectable]];
+    [self setEditable:[self isEditable]];
+    
+    if ([self respondsToSelector:@selector(drawsBackground)])
+        [textObj setDrawsBackground:[self drawsBackground]];
+    if ([self respondsToSelector:@selector(backgroundColor)])
+        [textObj setBackgroundColor:[self backgroundColor]];
+        
+    return textObj;
 }
 
 - (void)drawInteriorWithFrame:(NSRect)cellFrame inView:(NSView *)controlView
@@ -448,12 +459,15 @@
 
 - (void)drawWithFrame:(NSRect)cellFrame inView:(NSView *)controlView
 {
-    // TODO: Need to implement
+    [self drawInteriorWithFrame:cellFrame inView:controlView];
 }
 
 - (void)highlight:(BOOL)flag withFrame:(NSRect)cellFrame inView:(NSView *)controlView
 {
-    // TODO: Need to implement
+    if ([self isHighlighted] != flag) {
+        [self setHighlighted:flag];
+        [self drawWithFrame:cellFrame inView:controlView];
+    }
 }
 
 - (NSInteger)mouseDownFlags
@@ -488,17 +502,33 @@
 
 - (void)editWithFrame:(NSRect)aRect inView:(NSView *)controlView editor:(NSText *)textObj delegate:(id)anObject event:(NSEvent *)theEvent
 {
-    // TODO: Need to implement
+    if (!_isEditable && !_isSelectable)
+        return;
+    
+    [textObj setFrame:[self titleRectForBounds:aRect]];
+    [controlView addSubview:textObj];
+    
+    [[controlView window] makeFirstResponder:textObj];
+    [textObj setDelegate:anObject];
+    [textObj mouseDown:theEvent];
 }
 
 - (void)selectWithFrame:(NSRect)aRect inView:(NSView *)controlView editor:(NSText *)textObj delegate:(id)anObject start:(NSInteger)selStart length:(NSInteger)selLength
 {
-    // TODO: Need to implement
+    if (!_isEditable && !_isSelectable)
+        return;
+    
+    [textObj setFrame:[self titleRectForBounds:aRect]];
+    [controlView addSubview:textObj];
+    
+    [[controlView window] makeFirstResponder:textObj];
+    [textObj setDelegate:anObject];
+    [textObj setSelectedRange:nil];
 }
 
 - (void)endEditing:(NSText *)textObj
 {
-    // TODO: Need to implement
+    [self setStringValue:[textObj string]];
 }
 
 - (void)resetCursorRect:(NSRect)cellFrame inView:(NSView *)controlView

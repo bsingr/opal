@@ -3,7 +3,6 @@ class Vienna::ObjectiveCParser
   #
   # C keywords and operators..
   #
- 
   token ';' '{' '}' ',' ':' '=' '(' ')' '[' ']' '.' '&' '!' '~' '-' '+' '*' '/' '%' '<' '>' '^' '|' '?'
 	token IDENTIFIER CONSTANT STRING_LITERAL SYSTEM_LOC SIZEOF
 	token PTR_OP INC_OP DEC_OP LEFT_OP RIGHT_OP LE_OP GE_OP EQ_OP NE_OP
@@ -22,7 +21,6 @@ class Vienna::ObjectiveCParser
   #
   # Objective-C 1.0/2.0 keywords
   #
-
   token AT_INTERFACE AT_IMPLEMENTATION AT_PROTOCOL AT_END AT_CLASS
   token AT_PRIVATE AT_PUBLIC AT_PROTECTED
   token AT_ENCODE AT_SELECTOR
@@ -32,6 +30,11 @@ class Vienna::ObjectiveCParser
   token AT_STRING_LITERAL
   token ID SEL BOOL UNICHAR CLASS
   token IN OUT INOUT BYREF BYCOPY ONEWAY
+  
+  #
+  # Javascript keyword additions
+  #
+  token NEW FUNCTION
 
   rule
     target:
@@ -212,35 +215,23 @@ class Vienna::ObjectiveCParser
     	;
 
     class_with_superclass:
-    	  IDENTIFIER                                                                    { result = Vienna::Node.new(',', val[0], nil) }
-    	| IDENTIFIER ':' IDENTIFIER                                                     { result = Vienna::Node.new(',', val[0], val[2]) }
+    	  IDENTIFIER
+    	| IDENTIFIER ':' IDENTIFIER
     	;
 
     category_name:
-    	  IDENTIFIER { 
-    	    result = val[0] 
-    	  }
+    	  IDENTIFIER
     	;
 
     inherited_protocols:
-    	  protocol_list {
-    	    result = val[0]
-    	  }
+    	  protocol_list
     	;
 
     class_name_declaration:
-    	  class_with_superclass {
-    	    result = Vienna::Node.new(',', val[0], nil)
-    	  }
-    	| class_with_superclass '<' inherited_protocols '>' {
-    	    result = Vienna::Node.new(',', val[0], Vienna::Node.new(',', val[2], nil))
-    	  }
-    	| class_with_superclass '(' category_name ')' {
-    	    result = Vienna::Node.new(',', val[0], Vienna::Node.new(',', nil, val[2]))
-    	  }
-    	| class_with_superclass '<' inherited_protocols '>' '(' category_name ')' {
-    	    result = Vienna::Node.new(',', val[0], Vienna::Node.new(',', val[2], val[5]))
-    	  }
+    	  class_with_superclass
+    	| class_with_superclass '<' inherited_protocols '>'
+    	| class_with_superclass '(' category_name ')'
+    	| class_with_superclass '<' inherited_protocols '>' '(' category_name ')'
     	;
 
     class_or_instance_method_specifier: 
@@ -274,15 +265,9 @@ class Vienna::ObjectiveCParser
     	;
 
     method_declaration:
-    	  class_or_instance_method_specifier '(' objc_declaration_specifiers ')' selector_with_argument_declaration {
-    	    result = Vienna::Node.new(',', Vienna::Node.new(',', val[0], val[2]), val[4])
-    	  }
-    	| AT_PROPERTY '(' property_attributes_list ')' specifier_qualifier_list struct_declarator_list {
-    	    result = Vienna::Node.new(:AT_PROPERTY, val[2], Vienna::Node.new(',', val[4],val[5]))
-    	  }
-      | AT_PROPERTY specifier_qualifier_list struct_declarator_list   {
-      	  result = Vienna::Node.new(:AT_PROPERTY, nil, Vienna::Node.new(',', val[1],val[2]))
-      	}
+    	  class_or_instance_method_specifier '(' objc_declaration_specifiers ')' selector_with_argument_declaration
+    	| AT_PROPERTY '(' property_attributes_list ')' specifier_qualifier_list struct_declarator_list
+      | AT_PROPERTY specifier_qualifier_list struct_declarator_list
       ;
 
     method_declaration_list:
@@ -293,102 +278,36 @@ class Vienna::ObjectiveCParser
     	;
 
     ivar_declaration_list:
-    	  '{' struct_declaration_list '}' {
-    	    result =  val[2]
-    	  }
+    	  '{' struct_declaration_list '}'
     	;
     
     class_implementation:
-    	  IDENTIFIER {
-    	    result = val[1]
-    	  }
-    	| IDENTIFIER '(' category_name ')' {
-    	    result = Vienna::Node.new(',', val[1], val[3])
-    	  }
+    	  IDENTIFIER
+    	| IDENTIFIER '(' category_name ')'
       ;
-    
-    method_implementation_declaration:
-        class_or_instance_method_specifier '(' objc_declaration_specifiers ')' selector_with_argument_declaration {
-  	      result = Vienna::Node.new(',', Vienna::Node.new(',', val[0], val[2]), val[4])
-  	    }
-  	  ;
-  	
+
     method_implementation:
-    	  method_implementation_declaration compound_statement {
-    	    the_parse_tree = Vienna::Node.new('M', val[0], val[1])
-    	    new_implementation = ObjectiveCMethod.new_from_parse_tree(the_parse_tree)
-    	    result = new_implementation
-    	  }
-    	| method_implementation_declaration ';' compound_statement {
-    	    the_parse_tree = Vienna::Node.new('M', val[0], val[2])
-    	    new_implementation = ObjectiveCMethod.new_from_parse_tree(the_parse_tree)
-    	    result = new_implementation
-    	  }
-    	| AT_SYNTHESIZE ivar_list ';' {
-    	    the_parse_tree = Vienna::Node.new(:AT_SYNTHESIZE, val[1], nil)
-    	    new_synthesize = ObjectiveCSynthesize.new_from_parse_tree(the_parse_tree)
-    	    result = new_synthesize
-    	  }
+    	  method_declaration compound_statement
+    	| method_declaration ';' compound_statement
+    	| AT_SYNTHESIZE ivar_list ';'
     	;
 
     method_implementation_list:
-    	  method_implementation {
-    	    result = val[0]
-    	  }
-    	| method_implementation_list method_implementation {
-    	    result = Vienna::Node.new(',', val[0], val[1])
-    	  }
+    	  method_implementation
+    	| method_implementation_list method_implementation
     	;
 
     objc_declaration:
-    	  AT_CLASS class_name_list ';' {
-      	  result = Vienna::Node.new(:AT_CLASS, val[1], nil)
-      	}
-    	| AT_PROTOCOL class_name_declaration AT_END {
-      	  result = Vienna::Node.new(:AT_PROTOCOL, val[1], nil)
-    	    new_protocol = ObjectiveCProtocol.new_from_parse_tree(result)
-    	    add_protocol_declaration(new_protocol)
-      	}
-    	| AT_PROTOCOL class_name_declaration method_declaration_list AT_END {
-    	    result = Vienna::Node.new(:AT_PROTOCOL, val[1], val[2])
-    	    new_protocol = ObjectiveCProtocol.new_from_parse_tree(result)
-    	    add_protocol_declaration(new_protocol)
-    	  }
-    	| AT_INTERFACE class_name_declaration AT_END {
-    	    result = Vienna::Node.new(:AT_INTERFACE, Vienna::Node.new(',', val[1], nil), nil)
-    	    new_interface = ObjectiveCInterface.new_from_parse_tree(result)
-    	    add_interface_declaration(new_interface)
-    	  }
-    	| AT_INTERFACE class_name_declaration ivar_declaration_list method_declaration_list AT_END {
-    	    result = Vienna::Node.new(:AT_INTERFACE, Vienna::Node.new(',', val[1], val[2]), val[3])
-    	    new_interface = ObjectiveCInterface.new_from_parse_tree(result)
-    	    add_interface_declaration(new_interface)
-    	  }
-    	| AT_INTERFACE class_name_declaration ivar_declaration_list AT_END {
-    	    result = Vienna::Node.new(:AT_INTERFACE, Vienna::Node.new(',', val[1], val[2]), nil)
-    	    new_interface = ObjectiveCInterface.new_from_parse_tree(result)
-    	    add_interface_declaration(new_interface)
-    	  }
-    	| AT_IMPLEMENTATION class_implementation AT_END { 
-    	    result = Vienna::Node.new(:AT_IMPLEMENTATION, Vienna::Node.new(',', val[1], nil), nil)
-    	    new_implementation = ObjectiveCImplementation.new_from_parse_tree(result)
-    	    add_implementation_defintion(new_implementation)
-    	  }
-    	| AT_IMPLEMENTATION class_implementation ivar_declaration_list AT_END {
-    	    result = Vienna::Node.new(:AT_IMPLEMENTATION, Vienna::Node.new(',', val[1], val[2]), nil)
-    	    new_implementation = ObjectiveCImplementation.new_from_parse_tree(result)
-    	    add_implementation_defintion(new_implementation)
-    	  }
-    	| AT_IMPLEMENTATION class_implementation method_implementation_list AT_END {
-    	    result = Vienna::Node.new(:AT_IMPLEMENTATION, Vienna::Node.new(',', val[1], nil), val[2])
-    	    new_implementation = ObjectiveCImplementation.new_from_parse_tree(result)
-    	    add_implementation_defintion(new_implementation)
-    	  }
-    	| AT_IMPLEMENTATION class_implementation ivar_declaration_list method_implementation_list AT_END {
-    	    result = Vienna::Node.new(:AT_IMPLEMENTATION, Vienna::Node.new(',', val[1], val[2]), val[3])
-    	    new_implementation = ObjectiveCImplementation.new_from_parse_tree(result)
-    	    add_implementation_defintion(new_implementation)
-    	  }
+    	  AT_CLASS class_name_list ';'
+    	| AT_PROTOCOL class_name_declaration AT_END
+    	| AT_PROTOCOL class_name_declaration method_declaration_list AT_END
+    	| AT_INTERFACE class_name_declaration AT_END
+    	| AT_INTERFACE class_name_declaration ivar_declaration_list method_declaration_list AT_END
+    	| AT_INTERFACE class_name_declaration ivar_declaration_list AT_END
+    	| AT_IMPLEMENTATION class_implementation AT_END
+    	| AT_IMPLEMENTATION class_implementation ivar_declaration_list AT_END
+    	| AT_IMPLEMENTATION class_implementation method_implementation_list AT_END
+    	| AT_IMPLEMENTATION class_implementation ivar_declaration_list method_implementation_list AT_END
     	;
 
     declaration:
@@ -427,8 +346,8 @@ class Vienna::ObjectiveCParser
     	;
 
     protocol_list:
-    	  IDENTIFIER                                                                    { result = val[0] }
-    	| protocol_list ',' IDENTIFIER                                                  { result = Vienna::Node.new(',', val[0], val[2]) }
+    	  IDENTIFIER
+    	| protocol_list ',' IDENTIFIER
 
     type_specifier:
     	  VOID
@@ -463,8 +382,8 @@ class Vienna::ObjectiveCParser
     	;
 
     struct_declaration_list:
-    	  struct_declaration                                                            { result = val[0] }
-    	| struct_declaration_list struct_declaration                                    { result = Vienna::Node.new(',', val[0], val[1]) }
+    	  struct_declaration
+    	| struct_declaration_list struct_declaration
     	;
 
     property_attributes_list:
@@ -673,13 +592,13 @@ class Vienna::ObjectiveCParser
     	;
 
     translation_unit:
-    	  external_declaration { result = val[0] }
-    	| translation_unit external_declaration { result = Vienna::Node.new ',', val[0], val[1] }
+    	  external_declaration
+    	| translation_unit external_declaration
     	;
 
     external_declaration:
-    	  function_definition { result = val[0] }
-    	| declaration { result = val[0] }
+    	  function_definition
+    	| declaration
     	;
 
     function_definition:

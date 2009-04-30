@@ -2,14 +2,45 @@ require 'racc/parser.rb'
 
 module Vienna
   
-  class ObjectiveC < Racc::Parser
+  class ObjectiveCParser < Racc::Parser
     
     attr_reader :tokens
 
   	def initialize
   	  @tokens = []
+  	  @interface_declarations = []
+  	  @category_declarations = []
+  	  @implementation_definitions = []
+  	  @protocol_declarations = []
+  	  @enum_declarations = []
+  	  @typedef_declrations = []
+  	  
   	 # make array of objective-c implmenetations
   	end
+  	
+  	def add_interface_declaration(interface)
+  	  
+	  end
+	  
+	  def add_category_declaration(category)
+	    
+	  end
+	  
+	  def add_implementation_defintion(implementation)
+      puts "Adding new imp"
+    end
+
+    def add_protocol_declaration(protocol)
+      
+    end
+    
+    def add_enum_declaration(enum)
+      
+    end
+    
+    def add_typedef_declaration(typedef)
+      
+    end
 
   	def on_error(error_token_id, error_value, value_stack)
       msg = "parse error "

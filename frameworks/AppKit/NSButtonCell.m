@@ -2,6 +2,19 @@
 
 @implementation NSButtonCell
 
+- (id)initWithCoder:(NSCoder *)aCoder
+{
+    [super initWithCoder:aCoder];
+    
+    NSUInteger flags = [aCoder decodeIntForKey:@"NSButtonFlags"];
+    NSUInteger flags2 = [aCoder decodeIntForKey:@"NSButtonFlags2"];
+    
+    _isBordered = (flags & 0x00800000) ? YES : NO;
+    _bezelStyle = ((flags2 & 0x7) | ((flags2 & 0x20) >> 2));
+    
+    return self;
+}
+
 - (NSString *)title
 {
     
@@ -150,6 +163,11 @@
     
 }
 
+- (void)drawInteriorWithFrame:(NSRect)cellFrame inView:(NSView *)controlView
+{
+    [self drawBezelWithFrame:cellFrame inView:controlView];
+    [self drawTitle:_value withFrame:cellFrame inView:controlView];
+}
 
 - (void)drawImage:(NSImage*)image withFrame:(NSRect)frame inView:(NSView*)controlView
 {
@@ -158,9 +176,18 @@
 
 - (NSRect)drawTitle:(NSAttributedString*)title withFrame:(NSRect)frame inView:(NSView*)controlView
 {
+    [NSGraphicsContext saveGraphicsState];
     
+    [[NSColor controlTextColor] set];
+    [[NSFont systemFontOfSize:[NSFont systemFontSize]] set];
+    
+    NSInteger titleOffset = frame.size.width - [_value sizeWithAttributes:nil].width;
+    NSInteger actualOffset = titleOffset / 2;
+    
+    [_value drawWithRect:NSMakeRect(actualOffset, 7, 40, 0) options:nil attributes:nil];
+    
+    [NSGraphicsContext restoreGraphicsState];
 }
-
 
 - (void)drawBezelWithFrame:(NSRect)frame inView:(NSView*)controlView
 {
