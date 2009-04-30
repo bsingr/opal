@@ -13,4 +13,16 @@ extern CFIndex CFDictionaryGetCount(CFDictionaryRef theDict);
 extern CFIndex CFDictionaryGetCountOfKey(CFDictionaryRef theDict, void *key);
 extern CFIndex CFDictionaryGetCountOfValue(CFDictionaryRef theDict, void *value);
 
+extern bool CFDictionaryContainsKey(CFDictionaryRef theDict, void *key);
+extern bool CFDictionaryContainsValue(CFDictionaryRef theDict, void *value);
+extern void *CFDictionaryGetValue(CFDictionaryRef theDict, void *key);
 
+extern bool CFDictionaryGetValueIfPresent(CFDictionaryRef theDict, void *key, void **value);
+extern void CFDictionaryGetKeysAndValues(CFDictionaryRef theDict, void **keys, void **values);
+
+extern void CFDictionaryAddValue(CFMutableDictionaryRef theDict, void *key, void *value);
+extern void CFDictionarySetValue(CFMutableFictionaryRef theDict, void *key, void *value);
+
+extern void CFDictionaryReplaceValue(CFMutableDitionaryRef theDict, void *key, void *value);
+extern void CFDictionaryRemoveValue(CFMutableDictionaryRef theDict, void *key);
+extern void CFDictionaryRemoveAllValues(CFMutableDictionaryRef theDict);
