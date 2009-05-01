@@ -2,6 +2,8 @@
 
 @class NSString, NSData, NSMutableData, NSMutableDictionary, NSMutableArray;
 
+extern NSString *NSInconsistentArchiveException;
+
 @interface NSArchiver : NSCoder
 {
     
@@ -32,11 +34,7 @@
 
 - (id)initForReadingWithData:(NSData *)data;
 
-- (void)setObjectZone:(NSZone *)zone;
-- (NSZone *)objectZone;
-
 - (BOOL)isAtEnd;
-- (unsigned)systemVersion;
 
 + (id)unarchiveObjectWithData:(NSData *)data;
 + (id)unarchiveObjectWithFile:(NSString *)path;
@@ -51,7 +49,6 @@
 
 @end
 
-extern NSString *NSInconsistentArchiveException;
 
 @interface NSObject (NSArchiverCallback)
 

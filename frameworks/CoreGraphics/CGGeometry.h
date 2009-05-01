@@ -64,5 +64,5 @@ extern CFDictionaryRef CGPointCreateDictionaryRepresentation(CGPoint point);
 extern bool CGPointMakeWithDictionaryRepresentation(CFDictionaryRef dict, CGPoint *point);
 extern CFDictionaryRef CGSizeCreateDictionaryRepresentation(CGSize size);
 extern bool CGSizeMakeWithDictionaryRepresentation(CFDictionaryRef dict, CGSize *size);
-extern CFDictionaryRef CGRectCreateDictionaryRepresentation(CGRect);
+extern CFDictionaryRef CGRectCreateDictionaryRepresentation(CGRect rect);
 extern bool CGRectMakeWithDictionaryRepresentation(CFDictionaryRef dict, CGRect *rect);

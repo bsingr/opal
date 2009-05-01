@@ -1,12 +1,19 @@
 #import <AppKit/NSView.m>
 
+@interface _NSCornerView : NSView {
+
+}
+
+@end
+
+
 @implementation _NSCornerView : NSView {
 
 }
 
 - (id)initWithCoder:(NSCoder *)aCoder
 {
-    self = [super initWithCoder:aCoder];
+    [super initWithCoder:aCoder];
     return self;	
 }
 

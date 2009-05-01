@@ -1,0 +1,15 @@
+#import <CoreGraphics/CGBase.h>
+#import <CoreGraphics/CGContext.h>
+
+extern CGContentRef CGBitmapContextCreate (void *data, size_t width, size_t height, size_t bitsPerComponent, size_t bytesPerRow, CGColorSpaceRef colorSpace, CGBitmapInfo bitmapInfo);
+extern void *CGBitmapContextGetData (CGContentRef c);
+
+extern size_t CGBitmapContextGetWidth(CGContextRef c);
+extern size_t CGBitmapContextGetHeight(CGContextRef c);
+extern size_t CGBitmapContextGetBitsPerComponent(CGContextRef c);
+extern size_t CGBitmapContextGetBytesPerRow(CGContextRef c);
+extern CGColorSpaceRef CGBitmapContextGetColorSpace(CGContextRef c);
+extern CGImageAlphaInfo CGBitmapContextGetAlphaInfo(CGContextRef c);
+extern CGBitmapInfo CGBitmapContextGetBitmapInfo(CGContextRef c);
+
+extern CGImageRef CGBitmapContextCreateImage(CGContextRef c);

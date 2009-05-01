@@ -1,0 +1,18 @@
+#import <CoreFoundation/CFBase.h>
+
+typedef struct __CFData *CFDataRef;
+typedef struct __CFData *CFMutableDataRef;
+
+extern CFDataRef CFDataCreate(void *bytes, CFIndex length);
+extern CFDataRef CFDataCreateCopy(CFDataRef theData);
+
+extern CFMutableDataRef CFDataCreateMutable(CFIndex capacity);
+extern CFMutableDataRef CFDataCreateMutableCopy(CFIndex capacity, CFDataRef theData);
+
+extern CFIndex CFDataGetLength(CFDataRef theData);
+
+extern void CFDataGetBytes(CFDataRef theData, CFRange range, void *buffer);
+
+extern void CFDataAppendBytes(CFMutableDataRef theData, void *bytes, CFIndex length);
+extern void CFDataReplaceBytes(CFMutableDataRef theData, CFRange range, void *newBytes, CFIndex newLength);
+extern void CFDataDeleteBytes(CFMutableDataRef theData, CFRange range);
