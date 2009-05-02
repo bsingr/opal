@@ -12,12 +12,10 @@
 
 + (void)load
 {
-    
 }
 
 + (void)initialize
-{
-    
+{   
 }
 
 - (id)init
@@ -32,77 +30,76 @@
 
 + (id)alloc
 {
-    
+    return class_createInstance(self);
 }
 
 - (void)dealloc
 {
-    
+    // Set self = NULL; ??   
 }
 
 - (void)finalize
-{
-    
+{   
 }
 
 - (id)copy
 {
-    
+    return self;
 }
 
 - (id)mutableCopy
 {
-    
+    return [self copy];
 }
 
 + (Class)superclass
 {
-    
+    return super_class;
 }
 
 + (Class)class
 {
-    
+    return isa;
 }
 
 + (BOOL)instancesRespondToSelector:(SEL)aSelector
 {
-    
+    return class_respondToSelector(self, aSelector);
 }
 
 + (BOOL)conformsToProtocol:(Protocol *)protocol
 {
-    
+    return class_conformsToProtocol(self, protocol);
 }
 
 - (IMP)methodForSelector:(SEL)aSelector
 {
-    
+    return class_getMethodImplementation(self, aSelector);
 }
 
 + (IMP)instanceMethodForSelector:(SEL)aSelector
 {
-    
+    return class_getInstanceMethod(self, aSelector);
 }
 
 - (void)doesNotRecognizeSelector:(SEL)aSelector
 {
-    
+    // Raise an NSException
 }
 
 - (void)forwardInvocation:(NSInvocation *)anInvocation
 {
-    
+    // Should call [self doesNotRecognizeSelector] with selector from anInvocation
 }
 
 - (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector
 {
-    
+    // Should return readble signature for selector
 }
 
 + (NSMethodSignature *)instanceMethodSignatureForSelector:(SEL)aSelector
 {
-    
+    // Should return readable sig for selector
 }
 
 + (BOOL)isSubclassOfClass:(Class)aClass
@@ -138,17 +135,17 @@
 
 - (id)performSelector:(SEL)aSelector
 {
-    
+    return objc_msgSend(self, aSelector);
 }
 
 - (id)performSelector:(SEL)aSelector withObject:(id)object
 {
-    
+    return objc_msgSend(self, aSelector, object);
 }
 
 - (id)performSelector:(SEL)aSelector withObject:(id)object1 withObject:(id)object2
 {
-    
+    return objc_msgSend(self, aSelector, object1, object2);
 }
 
 - (BOOL)isProxy
@@ -168,7 +165,7 @@
 
 - (BOOL)conformsToProtocol:(Protocol *)aProtocol
 {
-    
+    return class_conformsToProtocol(self, protocol);
 }
 
 - (BOOL)respondsToSelector:(SEL)aSelector
