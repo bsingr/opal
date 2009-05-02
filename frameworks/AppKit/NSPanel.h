@@ -1,3 +1,11 @@
+// 
+//  NSPanel.h
+//  vienna
+//  
+//  Created by Adam Beynon on 2009-05-02.
+//  Copyright 2009 Adam Beynon. All rights reserved.
+// 
+
 #import <AppKit/NSWindow.h>
 
 extern NSInteger NSRunAlertPanel(NSString *title, NSString *msgFormat, NSString *defaultButton, NSString *alternateButton, NSString *otherButton, ...);

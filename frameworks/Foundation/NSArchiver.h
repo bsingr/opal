@@ -1,3 +1,11 @@
+// 
+//  NSArchiver.h
+//  vienna
+//  
+//  Created by Adam Beynon on 2009-05-02.
+//  Copyright 2009 Adam Beynon. All rights reserved.
+// 
+
 #import <Foundation/NSCoder.h>
 
 @class NSString, NSData, NSMutableData, NSMutableDictionary, NSMutableArray;
@@ -5,9 +13,6 @@
 extern NSString *NSInconsistentArchiveException;
 
 @interface NSArchiver : NSCoder
-{
-    
-}
 
 - (id)initForWritingWithMutableData:(NSMutableData *)mdata;
     
@@ -28,9 +33,6 @@ extern NSString *NSInconsistentArchiveException;
 
 
 @interface NSUnarchiver : NSCoder
-{
-
-}
 
 - (id)initForReadingWithData:(NSData *)data;
 
