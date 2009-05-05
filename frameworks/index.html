@@ -1,20 +1,40 @@
 <html>
 <head>
-	<script src="vienna/frameworks/CoreFoundation/CFArray.js" type="text/javascript" charset="utf-8"></script>
-	<script src="vienna/frameworks/CoreFoundation/CFAttributedString.js" type="text/javascript" charset="utf-8"></script>
-	<script src="vienna/frameworks/CoreFoundation/CFBase.js" type="text/javascript" charset="utf-8"></script>
-	<script src="vienna/frameworks/CoreFoundation/CFData.js" type="text/javascript" charset="utf-8"></script>
-	<script src="vienna/frameworks/CoreFoundation/CFDate.js" type="text/javascript" charset="utf-8"></script>
-	<script src="vienna/frameworks/CoreFoundation/CFPropertyList.js" type="text/javascript" charset="utf-8"></script>
-	<script src="vienna/frameworks/CoreFoundation/CFString.js" type="text/javascript" charset="utf-8"></script>
-	<script src="vienna/frameworks/CoreFoundation/CFDictionary.js" type="text/javascript" charset="utf-8"></script>
+	<!-- ================== -->
+	<!-- = CoreFoundation = -->
+	<!-- ================== -->
+	<script src="CoreFoundation/CFArray.js" type="text/javascript" charset="utf-8"></script>
+	<script src="CoreFoundation/CFAttributedString.js" type="text/javascript" charset="utf-8"></script>
+	<script src="CoreFoundation/CFBase.js" type="text/javascript" charset="utf-8"></script>
+	<script src="CoreFoundation/CFData.js" type="text/javascript" charset="utf-8"></script>
+	<script src="CoreFoundation/CFDate.js" type="text/javascript" charset="utf-8"></script>
+	<script src="CoreFoundation/CFPropertyList.js" type="text/javascript" charset="utf-8"></script>
+	<script src="CoreFoundation/CFString.js" type="text/javascript" charset="utf-8"></script>
+	<script src="CoreFoundation/CFDictionary.js" type="text/javascript" charset="utf-8"></script>
 	
-	<script src="vienna/frameworks/objc/message.js" type="text/javascript" charset="utf-8"></script>
-	<script src="vienna/frameworks/objc/objc.js" type="text/javascript" charset="utf-8"></script>
-	<script src="vienna/frameworks/objc/runtime.js" type="text/javascript" charset="utf-8"></script>
+	<!-- ================ -->
+	<!-- = CoreGraphics = -->
+	<!-- ================ -->
+	<script src="CoreGraphics/CGAffineTransform.js" type="text/javascript" charset="utf-8"></script>
+	<script src="CoreGraphics/CGBitmapContext.js" type="text/javascript" charset="utf-8"></script>
+	<script src="CoreGraphics/CGContext.js" type="text/javascript" charset="utf-8"></script>
+	<script src="CoreGraphics/CGGeometry.js" type="text/javascript" charset="utf-8"></script>
+	<script src="CoreGraphics/CGDOMElement.js" type="text/javascript" charset="utf-8"></script>
+	<script src="CoreGraphics/CGImage.js" type="text/javascript" charset="utf-8"></script>
 	
+	<!-- ======== -->
+	<!-- = objc = -->
+	<!-- ======== -->
+	<script src="objc/message.js" type="text/javascript" charset="utf-8"></script>
+	<script src="objc/objc.js" type="text/javascript" charset="utf-8"></script>
+	<script src="objc/runtime.js" type="text/javascript" charset="utf-8"></script>
+	<script src="objc/objc-exception.js" type="text/javascript" charset="utf-8"></script>
+	
+	<!-- ====================== -->
+	<!-- = Testing frameworks = -->
+	<!-- ====================== -->
 	<script type="text/javascript" charset="utf-8">
-		//console.log(json_parse("{\"hey\":23, \"wow\":\"heyyyyyyyy\"}"));
+		console.log(json_parse("{\"hey\":23, \"wow\":\"heyyyyyyyy\", \"date\":\"2007-03-01T13:00:00Z\"}"));
 		
 		function main()
 		{
@@ -27,9 +47,12 @@
 			
 			class_addIvar(the_class, "age", "int");
 			
-			class_addMethod(the_class, "init:", function(self, _cmd, theAge) {
-				console.log(theAge);
+			class_addMethod(the_class, "init", function(self, _cmd) {
+				return self;
 			}, "id");
+			class_addMethod(meta_class, "alloc", function(self, _cmd) {
+				return class_createInstance(self);
+			});
 			
 			// ========================================================
 			// =              NSArray                                 =
@@ -52,13 +75,35 @@
 				return key;
 			}, "id");
 			
-			var myObject = class_createInstance(NSObject);
-			console.log(myObject);
 			
-			var myArray = class_createInstance(NSArray);
-			console.log(myArray);
+			// ====================================================
+			// =            NSDictionary                          =
+			// ====================================================
+			var the_class = objc_allocateClassPair(NSObject, "NSDictionary");
+			var meta_class = the_class.isa;
+			objc_registerClassPair(the_class);
+					
+			class_addMethod(the_class, "init", function(self, _cmd) {
+				self = objc_msgSendSuper({super_class:NSObject, receiver:self}, "init");
+				return self;
+			}, "id");
+				
+			class_addMethod(the_class, "initWithKeys:values:", function(self, _cmd, keys, values) {
+			}, "id");
 			
-			//objc_msgSend(myObject, "init", 12);
+			// =======================
+			// = NSMutableDictionary =
+			// =======================
+			var the_class = objc_allocateClassPair(NSDictionary, "NSMutableDictionary");
+			var meta_class = the_class.isa;
+			objc_registerClassPair(the_class);
+							
+			// =============================
+			// = Creating demo classes etc =
+			// =============================		
+			
+			var myDict = objc_msgSend(objc_msgSend(NSMutableDictionary, "alloc"), "init");
+			console.log(objc_msgSend(myDict, "valueForKey:", "heyaa"));
 		}
 	</script>
 </head>

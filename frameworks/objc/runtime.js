@@ -12,6 +12,7 @@
 //      const char *name;
 //      struct objc_ivar_list *ivars
 //      struct objc_method_list **method_list
+//      struct objc_method_list **method_table
 //      struct objc_protocol_list *protocols
 //      void *alloc;
 // };
@@ -23,6 +24,7 @@ function objc_class()
     this.name = null;
     this.ivars = [];
     this.method_list = [];
+    this.method_table = function() {};
     this.protocols = [];
     this.alloc = function() {};
     // cache
@@ -263,8 +265,8 @@ function class_copyIvarList(cls, outCount)
 // 
 function class_getInstanceMethod(cls, name)
 {
-    // FIXME: check by name, not first in list.
-    return cls.method_list[0];
+    var theMethod = cls.method_table.prototype[name];
+    return theMethod;
 }
 
 // extern Method class_getClassMethod(Class cls, SEL name);
@@ -343,17 +345,15 @@ function objc_allocateClassPair(superclass, name)
     
     if(superclass)
     {
+        // Copy Ivars...
         newClass.alloc.prototype = new superclass.alloc();
-        
-        // Add all instance variables of superclass
-        // for(var i = 0; i < superclass.method_list.length; i++)
-        //             newClass.method_list.push(superclass.method_list[i]);
-        
-        newClass.method_list = superclass.method_list;
+        // Copy instance methods...        
+        newClass.method_table.prototype = new superclass.method_table();
+        // Copy class methods
+        newMetaClass.method_table.prototype = new superclass.isa.method_table();
         
         newClass.super_class = superclass;
-        newMetaClass.super_class = superclass.isa;
-                
+        newMetaClass.super_class = superclass.isa;    
     }
     else
     {
@@ -393,6 +393,7 @@ function class_addMethod(cls, name, imp, types)
 {
     var newMethod = new objc_method(name, types, imp);
     cls.method_list.push(newMethod);
+    cls.method_table.prototype[name] = newMethod;
     return true;
 }
 

@@ -25,14 +25,14 @@ function objc_object()
 // 
 function sel_getName(sel)
 {
-    
+    return sel;
 }
 
 // extern SEL sel_registerName(const char *str);
 // 
 function sel_registerName(str)
 {
-    
+    return str;
 }
 
 // extern const char *object_getClassName(id obj);

@@ -19,7 +19,7 @@ function CGAffineTransform()
 // extern const CGAffineTransform CGAffineTransformIdentity;
 //
 var CGAffineTransformIdentity = {
-  a:0, b:0, c:0, d:0, tx:0, ty:0;  
+  a:0, b:0, c:0, d:0, tx:0, ty:0
 };
 
 // extern CGAffineTransform CGAffineTransformMake (CGFloat a, CGFloat b, CGFloat c, CGFloat d, CGFLoat tx, CGFloat ty);

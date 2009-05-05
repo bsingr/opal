@@ -11,6 +11,11 @@
 //     Class super_class;
 // };
 // 
+function objc_super(receiver, super_class)
+{
+    this.receiver = receiver;
+    this.super_class = super_class;
+}
 
 // extern id objc_msgSend(id self, SEL op, ...);
 // 
@@ -22,7 +27,9 @@ function objc_msgSend(self, op)
 
 // extern id objc_msgSendSuper(struct objc_super *super, SEL op, ...);
 // 
-function objc_msgSendSuper(superCls, op, arguments)
+function objc_msgSendSuper(superCls, op)
 {
-    
+    var theMethodImp = class_getMethodImplementation(superCls.super_class, op);
+    // We need to set args[0] to be 'self' and set it here to apply self to be function context
+    return theMethodImp.apply(arguments[0] = superCls.receiver, arguments);
 }
