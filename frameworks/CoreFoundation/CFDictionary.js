@@ -6,121 +6,178 @@
 //  Copyright 2009 Adam Beynon. All rights reserved.
 // 
 
+// typedef struct CFDictionaryRef {
+//     CFArrayRef _keys;
+//     CFArrayRef _values;
+//     CFIndex _count;
+// };
+// 
+function CFDictionaryRef()
+{
+    this._keys = [];
+    this._values = {};
+    this._count = 0;
+    return this;
+}
+
+// typedef struct *CFMutableDictionaryRef {
+//     CFArrayRef _keys;
+//     CFArrayRef _values;
+//     CFIndex _count;
+// };
+// 
+function CFMutableDictionaryRef()
+{
+    this._keys = [];
+    this._values = {};
+    this._count = 0;
+    return this;
+}
+
 // extern CFDictionaryRef CFDictionaryCreate(void **keys, void **values);
 // 
-var CFDictionaryCreate = function(keys, values)
+function CFDictionaryCreate(keys, values)
 {
+    var theDictionary = new CFDictionaryRef();
     
+    for(var i = 0; i < keys.length; i++)
+        CFDictionarySetValue(theDictionary, keys[i]. values[i]);
+    
+    return theDictionary;
 }
 
 // extern CFDictionaryRef CFDictionaryCreateCopy(CFDictionaryRef theDict);
 // 
-var CFDictionaryCreateCopy = function(theDict)
+function CFDictionaryCreateCopy(theDict)
 {
+    var newDictionary = new CFDictionaryRef();
+    newDictionary._count = theDict._count;
     
+    for (newKey in theDict._keys)
+        newDictionary._keys.push(newKey);
+    
+    for (newValue in theDict._values)
+        newDictionary._values.push(newKey);
+    
+    return newDictionary;
 }
 
 // extern CFMutableDictionaryRef CFDictionaryCreateMutable();
 // 
-var CFDictionaryCreateMutable = function()
+function CFDictionaryCreateMutable()
 {
-    
+    return new CFMutableDictionaryRef();
 }
 
 // extern CFMutableDictionaryRef CFDictionaryCreateMutableCopy(CFDictionaryRef theDict);
 // 
-var CFDictionaryCreateMutableCopy = function(theDict)
+function CFDictionaryCreateMutableCopy(theDict)
 {
+    var newDictionary = new CFMutableDictionaryRef();
+    newDictionary._count = theDict._count;
     
+    for (newKey in theDict._keys)
+        newDictionary._keys.push(newKey);
+    
+    for (newValue in theDict._values)
+        newDictionary._values.push(newKey);
+    
+    return newDictionary;    
 }
 
 // extern CFIndex CFDictionaryGetCount(CFDictionaryRef theDict);
 // 
-var CFDictionaryGetCount = function(theDict)
+function CFDictionaryGetCount(theDict)
 {
-    
+    return theDict._count;
 }
 
 // extern CFIndex CFDictionaryGetCountOfKey(CFDictionaryRef theDict, void *key);
 // 
-var CFDictionaryGetCounfOfKey = function (theDict, key)
+function CFDictionaryGetCountOfKey (theDict, key)
 {
     
 }
 
 // extern CFIndex CFDictionaryGetCountOfValue(CFDictionaryRef theDict, void *value);
 // 
-var CFDictionaryGetCountOfValue = function(theDict, value)
+function CFDictionaryGetCountOfValue(theDict, value)
 {
     
 }
 
 // extern bool CFDictionaryContainsKey(CFDictionaryRef theDict, void *key);
 // 
-var CFDictionaryContainsKey = function(theDict, key)
+function CFDictionaryContainsKey(theDict, key)
 {
-    
+    return (theDict._values[key]) != null;
 }
 
 // extern bool CFDictionaryContainsValue(CFDictionaryRef theDict, void *value);
 // 
-var CFDictionaryContainsValue = function(theDict, value)
+function CFDictionaryContainsValue(theDict, value)
 {
     
 }
 
 // extern void *CFDictionaryGetValue(CFDictionaryRef theDict, void *key);
 // 
-var CFDictionaryGetValue = function(theDict, key)
+function CFDictionaryGetValue(theDict, key)
 {
     
 }
 
 // extern bool CFDictionaryGetValueIfPresent(CFDictionaryRef theDict, void *key, void **value);
 // 
-var CFDictionaryGetValueIfPresent = function(theDict, key, value)
+function CFDictionaryGetValueIfPresent(theDict, key, value)
 {
     
 }
 
 // extern void CFDictionaryGetKeysAndValues(CFDictionaryRef theDict, void **keys, void **values);
 // 
-var CFDictionaryGetKeysAndValues = function(theDict, keys, values)
+function CFDictionaryGetKeysAndValues(theDict, keys, values)
 {
     
 }
 
 // extern void CFDictionaryAddValue(CFMutableDictionaryRef theDict, void *key, void *value);
 // 
-var CFDictionaryAddValue = function(theDict, key, value)
+function CFDictionaryAddValue(theDict, key, value)
 {
     
 }
 
 // extern void CFDictionarySetValue(CFMutableFictionaryRef theDict, void *key, void *value);
 // 
-var CFDictionarySetValue = function(theDict, key, value)
+function CFDictionarySetValue(theDict, key, value)
 {
-    
+    if (!CFDictionaryContainsKey(theDict, key))
+    {
+        theDict._keys.push(key);
+        theDict._count ++;
+    }
+
+    theDict._values[key] = value;
 }
 
 // extern void CFDictionaryReplaceValue(CFMutableDitionaryRef theDict, void *key, void *value);
 // 
-var CFDictionaryReplaceValue = function(theDict, key, value)
+function CFDictionaryReplaceValue(theDict, key, value)
 {
     
 }
 
 // extern void CFDictionaryRemoveValue(CFMutableDictionaryRef theDict, void *key);
 // 
-var CFDictionaryRemoveValue = function(theDict, key)
+function CFDictionaryRemoveValue(theDict, key)
 {
     
 }
 
 // extern void CFDictionaryRemoveAllValues(CFMutableDictionaryRef theDict);
 // 
-var CFDictionaryRemoveAllValues = function(theDict)
+function CFDictionaryRemoveAllValues(theDict)
 {
     
 }

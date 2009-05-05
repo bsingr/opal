@@ -6,15 +6,12 @@
 //  Copyright 2009 Adam Beynon. All rights reserved.
 // 
 
-//#import <objc/objc-api.h>
-
 typedef struct objc_class *Class;
 typedef struct objc_object {
 	Class isa;
 } *id;
 
 typedef struct objc_selector *SEL;
-//typedef id 			(*IMP)(id, SEL, ...); 
 typedef signed char BOOL;
 
 extern const char *sel_getName(SEL sel);

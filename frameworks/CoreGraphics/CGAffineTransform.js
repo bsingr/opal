@@ -11,7 +11,7 @@
 //     CGFloat tx, ty;
 // };
 // 
-var CGAffineTransform = function()
+function CGAffineTransform()
 {
     this.a = 0; this.b = 0; this.c = 0; this.d = 0; this.tx = 0; this.ty = 0;
 }
@@ -24,7 +24,7 @@ var CGAffineTransformIdentity = {
 
 // extern CGAffineTransform CGAffineTransformMake (CGFloat a, CGFloat b, CGFloat c, CGFloat d, CGFLoat tx, CGFloat ty);
 // 
-var CGAffineTransformMake = function(a, b, c, d, tx, ty)
+function CGAffineTransformMake(a, b, c, d, tx, ty)
 {
     var t = new CGAffineTransform();
     t.a = a; t.b = b; t.c = c; t.d = d; t.tx = tx; t.ty = ty;

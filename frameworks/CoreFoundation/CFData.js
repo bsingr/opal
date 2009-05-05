@@ -8,63 +8,63 @@
 
 // extern CFDataRef CFDataCreate(void *bytes, CFIndex length);
 // 
-var CFDataCreate = function(bytes, length)
+function CFDataCreate(bytes, length)
 {
     
 }
 
 // extern CFDataRef CFDataCreateCopy(CFDataRef theData);
 // 
-var CFDataCreateCopy = function(theData)
+function CFDataCreateCopy(theData)
 {
     
 }
 
 // extern CFMutableDataRef CFDataCreateMutable(CFIndex capacity);
 // 
-var CFDataCreateMutable = function(capacity)
+function CFDataCreateMutable(capacity)
 {
     
 }
 
 // extern CFMutableDataRef CFDataCreateMutableCopy(CFIndex capacity, CFDataRef theData);
 // 
-var CFDataCreateMutableCopy = function(capacity, theData)
+function CFDataCreateMutableCopy(capacity, theData)
 {
     
 }
 
 // extern CFIndex CFDataGetLength(CFDataRef theData);
 // 
-var CFDataGetLength = function(theData)
+function CFDataGetLength(theData)
 {
     
 }
 
 // extern void CFDataGetBytes(CFDataRef theData, CFRange range, void *buffer);
 // 
-var CFDataGetBytes = function(theData, range, buffer)
+function CFDataGetBytes(theData, range, buffer)
 {
     
 }
 
 // extern void CFDataAppendBytes(CFMutableDataRef theData, void *bytes, CFIndex length);
 // 
-var CFDataAppendCytes = function(theData, bytes, length)
+function CFDataAppendCytes(theData, bytes, length)
 {
     
 }
 
 // extern void CFDataReplaceBytes(CFMutableDataRef theData, CFRange range, void *newBytes, CFIndex newLength);
 // 
-var CFDataReplaceBytes = function(theData, range, newBytes, newLength)
+function CFDataReplaceBytes(theData, range, newBytes, newLength)
 {
     
 }
 
 // extern void CFDataDeleteBytes(CFMutableDataRef theData, CFRange range);
 // 
-var CFDataDeleteBytes = function(theData, range)
+function CFDataDeleteBytes(theData, range)
 {
     
 }

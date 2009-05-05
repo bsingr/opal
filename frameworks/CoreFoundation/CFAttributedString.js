@@ -8,133 +8,133 @@
 
 // extern CFAttributedStringRef CFAttributedStringCreate(CFStringRef str, CFDictionaryRef attributes);
 // 
-var CFAttributedStringCreate = function(str, attributes)
+function CFAttributedStringCreate(str, attributes)
 {
     
 }
 
 // extern CFAttributedStirngRef CFAttributedStringCreateWithSubstring(CFAttributedStringRef aStr, CFRange range);
 // 
-var CFAttributedStringCreateWithSubstring = function(aStr, range)
+function CFAttributedStringCreateWithSubstring(aStr, range)
 {
     
 }
 
 // extern CFAttributedStringRef CFAttributedStringCreateCopy(CFAttributedStringRef aStr);
 // 
-var CFAttributedStringCreateCopy = function(aStr)
+function CFAttributedStringCreateCopy(aStr)
 {
     
 }
 
 // extern CFStringRef CFAttributedStringGetString(CFAttributedStringRef aStr);
 // 
-var CFAttributedStringGetString = function(aStr)
+function CFAttributedStringGetString(aStr)
 {
     
 }
 
 // extern CFIndex CFAttributedStringGetLength(CFAttributedStringRef aStr);
 // 
-var CFAttributedStringGetLength = function(aStr)
+function CFAttributedStringGetLength(aStr)
 {
     
 }
 
 // extern CFDictionaryRef CFAttributedStringGetAttributes(CFAttributedStringRef aStr, CFIndex loc, CFRange *effectiveRange);
 // 
-var CFAttributedStringGetAttributes = function(aStr, loc, effectiveRange)
+function CFAttributedStringGetAttributes(aStr, loc, effectiveRange)
 {
     
 }
 
 // extern CFTypeRef CFAttributedStringGetAttribute(CFAttributedStringRef aStr, CFIndex loc, CFStringRef attrName, CFRange *effectiveRange);
 // 
-var CFAttributedStringGetAttribute = function(aStr, loc, attrName, effectiveRange)
+function CFAttributedStringGetAttribute(aStr, loc, attrName, effectiveRange)
 {
     
 }
 
 // extern CFDictionaryRef CFAttributedStringGetAttributesAndLongestEffectiveRange(CFAttributedStringRef aStr, CFIndex loc, CFRange inRange, CFRange *longestEffectiveRange);
 // 
-var CFAttributedStringGetAttributesAndLongestEffectiveRange = function(aStr, loc, inRange, longestEffectiveRange)
+function CFAttributedStringGetAttributesAndLongestEffectiveRange(aStr, loc, inRange, longestEffectiveRange)
 {
     
 }
 
 // extern CFTypeRef CFAttributedStringGetAttributeAndLongestEffectiveRange(CFAttributedStringRef aStr, CFIndex loc, CFStringRef attrName, CFRange inRange, CFRange *longestEffectiveRange);
 // 
-var CFAttributedStringGetAttributeAndLongestEffectiveRange = function(aStr, loc, attrName, inRange, longestEffectiveRange)
+function CFAttributedStringGetAttributeAndLongestEffectiveRange(aStr, loc, attrName, inRange, longestEffectiveRange)
 {
     
 }
 
 // extern CFMutableAttributedStringRef CFAttributedStringCreateMutableCopy(CFIndex maxLength, CFAttributedStringRef aStr);
 // 
-var CFAttributedStringCreateMutableCopy = function(maxLength, aStr)
+function CFAttributedStringCreateMutableCopy(maxLength, aStr)
 {
     
 }
 
 // extern CFMutableAttributedStringRef CFAttributedStringCreateMutable(CFIndex maxLength);
 // 
-var CFAttributedStringCreateMutable = function(maxLength)
+function CFAttributedStringCreateMutable(maxLength)
 {
     
 }
 
 // extern void CFAttributedStringReplaceString(CFMutableAttributedStringRef aStr, CFRange range, CFStringRef replacement);
 // 
-var CFAttributedStringReplaceString = function(aStr, range, replacement)
+function CFAttributedStringReplaceString(aStr, range, replacement)
 {
     
 }
 
 // extern CFMutableStringRef CFAttributedStringGetMutableString(CFMutableAttributedStringRef aStr);
 // 
-var CFAttributedStringGetMutableString = function(aStr)
+function CFAttributedStringGetMutableString(aStr)
 {
     
 }
 
 // extern void CFAttributedStringSetAttributes(CFMutableAttributedStringRef aStr, CFRange range, CFDictionaryRef replacement, Boolean clearOtherAttributes);
 // 
-var CFAttributedStringSetAttributes = function(aStr, range, replacement, clearOtherAttributes)
+function CFAttributedStringSetAttributes(aStr, range, replacement, clearOtherAttributes)
 {
     
 }
 
 // extern void CFAttributedStringSetAttribute(CFMutableAttributedStringRef aStr, CFRange range, CFStringRef attrName, CFTypeRef value);
 // 
-var CFAttributedStringSetAttribute = function(aStr, range, attrName, value)
+function CFAttributedStringSetAttribute(aStr, range, attrName, value)
 {
     
 }
 
 // extern void CFAttributedStringRemoveAttribute(CFMutableAttributedStringRef aStr, CFRange range, CFStringRef attrName);
 // 
-var CFAttributedStringRemoveAttribute = function(aStr, range, attrName)
+function CFAttributedStringRemoveAttribute(aStr, range, attrName)
 {
     
 }
 
 // extern void CFAttributedStringReplaceAttributedString(CFMutableAttributedStringRef aStr, CFRange range, CFAttributedStringRef replacement);
 // 
-var CFAttributedStringReplaceAttributedString = function(aStr, range, replacement)
+function CFAttributedStringReplaceAttributedString(aStr, range, replacement)
 {
     
 }
 
 // extern void CFAttributedStringBeginEditing(CFMutableAttributedStringRef aStr);
 // 
-var CFAttributedStringBeginEditing = function(aStr)
+function CFAttributedStringBeginEditing(aStr)
 {
     
 }
 
 // extern void CFAttributedStringEndEditing(CFMutableAttributedStringRef aStr);
 // 
-var CFAttributedStringEndEditing = function(aStr)
+function CFAttributedStringEndEditing(aStr)
 {
     
 }

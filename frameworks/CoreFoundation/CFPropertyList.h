@@ -20,6 +20,9 @@ typedef CFOptionFlags CFPropertyListMutabilityOptions;
 extern CFPropertyListRef CFPropertyListCreateFromXMLData(CFDataRef xmlData, CFOptionFlags mutabilityOption, CFStringRef *errorString);
 extern CFDataRef CFPropertyListCreateXMLData (CFPropertyListRef propertyList);
 
+extern CFPropertyListRef CFPropertyListCreateFromJSONData(CFDataRef jsonData, CFOptionFlags mutabilityOption, CFStringRef *errorString);
+extern CFDataRef CFPropertyListCreateJSONData (CFPropertyListRef propertyList);
+
 extern CFPropertyListRef CFPropertyListCreateDeepCopy (CFPropertyListRef propertyList, CFOptionFlags mutabilityOption);
 
 enum {

@@ -8,8 +8,17 @@
 
 #import <CoreFoundation/CFBase.h>
 
-typedef __CFDictionary *CFDictionaryRef;
-typedef __CFDictionary *CFMutableDictionaryRef;
+typedef struct {
+    CFStringRef _keys[];
+    void *_values[];
+    CFIndex _count;
+} CFDictionaryRef;
+
+typedef struct {
+    CFStringRef _keys[];
+    void *_values[];
+    CFIndex _count;
+} CFMutableDictionaryRef;
 
 extern CFDictionaryRef CFDictionaryCreate(void **keys, void **values);
 extern CFDictionaryRef CFDictionaryCreateCopy(CFDictionaryRef theDict);

@@ -5,7 +5,9 @@ typedef CFTimeInterval CFAbsoluteTime;
 
 extern CFAbsoluteTime CFAbsoluteTimeGetCurrent(void);
 
-typedef struct __CFDate *CFDataRef;
+typedef struct {
+    
+} CFDataRef;
 
 extern CFDateRef CFDateCreate(CFAbsoluteTime at);
 extern CFAbsoluteTime CFDateGetAbsoluteTime(CFDateRef theDate);

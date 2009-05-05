@@ -8,7 +8,7 @@
 
 // extern CGContentRef CGBitmapContextCreate (void *data, size_t width, size_t height, size_t bitsPerComponent, size_t bytesPerRow, CGColorSpaceRef colorSpace, CGBitmapInfo bitmapInfo);
 // 
-var CGBitmapContextCreate = function(data, width, height, bitsPerComponent, bytesPerRow, colorSpace, bitmapInfo)
+function CGBitmapContextCreate(data, width, height, bitsPerComponent, bytesPerRow, colorSpace, bitmapInfo)
 {
     // Essentially return a canvas element.
     var theContext = document.createElement("canvas");
@@ -20,63 +20,63 @@ var CGBitmapContextCreate = function(data, width, height, bitsPerComponent, byte
 
 // extern void *CGBitmapContextGetData (CGContentRef c);
 // 
-var CGBitmapContextGetData = function(c)
+function CGBitmapContextGetData(c)
 {
     
 }
 
 // extern size_t CGBitmapContextGetWidth(CGContextRef c);
 // 
-var CGBitmapContextGetWidth = function(c)
+function CGBitmapContextGetWidth(c)
 {
     
 }
 
 // extern size_t CGBitmapContextGetHeight(CGContextRef c);
 // 
-var CGBitmapContextGetHeight = function(c)
+function CGBitmapContextGetHeight(c)
 {
     
 }
 
 // extern size_t CGBitmapContextGetBitsPerComponent(CGContextRef c);
 // 
-var CGBitmapContextGetBitsPerComponent = function(c)
+function CGBitmapContextGetBitsPerComponent(c)
 {
     
 }
 
 // extern size_t CGBitmapContextGetBytesPerRow(CGContextRef c);
 // 
-var CGBitmapContextGetBytesPerRow = function(c)
+function CGBitmapContextGetBytesPerRow(c)
 {
     
 }
 
 // extern CGColorSpaceRef CGBitmapContextGetColorSpace(CGContextRef c);
 // 
-var CGBitmapContextGetColorSpace = function(c)
+function CGBitmapContextGetColorSpace(c)
 {
     
 }
 
 // extern CGImageAlphaInfo CGBitmapContextGetAlphaInfo(CGContextRef c);
 // 
-var CGBitmapContextGetAlphaInfo = function(c)
+function CGBitmapContextGetAlphaInfo(c)
 {
     
 }
 
 // extern CGBitmapInfo CGBitmapContextGetBitmapInfo(CGContextRef c);
 // 
-var CGBitmapContextGetBitmapInfo = function (c)
+function CGBitmapContextGetBitmapInfo (c)
 {
     
 }
 
 // extern CGImageRef CGBitmapContextCreateImage(CGContextRef c);
 // 
-var CGBitmapContextCreateImage = function (c)
+function CGBitmapContextCreateImage (c)
 {
     
 }

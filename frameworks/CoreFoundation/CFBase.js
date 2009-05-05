@@ -6,7 +6,7 @@
 //  Copyright 2009 Adam Beynon. All rights reserved.
 // 
 
-var CFRangeMake = function (loc, len)
+function CFRangeMake (loc, len)
 {
     var theRange = {
         location: loc,

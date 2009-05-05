@@ -1,0 +1,68 @@
+<html>
+<head>
+	<script src="vienna/frameworks/CoreFoundation/CFArray.js" type="text/javascript" charset="utf-8"></script>
+	<script src="vienna/frameworks/CoreFoundation/CFAttributedString.js" type="text/javascript" charset="utf-8"></script>
+	<script src="vienna/frameworks/CoreFoundation/CFBase.js" type="text/javascript" charset="utf-8"></script>
+	<script src="vienna/frameworks/CoreFoundation/CFData.js" type="text/javascript" charset="utf-8"></script>
+	<script src="vienna/frameworks/CoreFoundation/CFDate.js" type="text/javascript" charset="utf-8"></script>
+	<script src="vienna/frameworks/CoreFoundation/CFPropertyList.js" type="text/javascript" charset="utf-8"></script>
+	<script src="vienna/frameworks/CoreFoundation/CFString.js" type="text/javascript" charset="utf-8"></script>
+	<script src="vienna/frameworks/CoreFoundation/CFDictionary.js" type="text/javascript" charset="utf-8"></script>
+	
+	<script src="vienna/frameworks/objc/message.js" type="text/javascript" charset="utf-8"></script>
+	<script src="vienna/frameworks/objc/objc.js" type="text/javascript" charset="utf-8"></script>
+	<script src="vienna/frameworks/objc/runtime.js" type="text/javascript" charset="utf-8"></script>
+	
+	<script type="text/javascript" charset="utf-8">
+		//console.log(json_parse("{\"hey\":23, \"wow\":\"heyyyyyyyy\"}"));
+		
+		function main()
+		{
+			// =======================================================
+			// =                NSObject and co                      =
+			// =======================================================
+			var the_class = objc_allocateClassPair(null, "NSObject");
+			var meta_class = the_class.isa;
+			objc_registerClassPair(the_class);
+			
+			class_addIvar(the_class, "age", "int");
+			
+			class_addMethod(the_class, "init:", function(self, _cmd, theAge) {
+				console.log(theAge);
+			}, "id");
+			
+			// ========================================================
+			// =              NSArray                                 =
+			// ========================================================
+			var the_class = objc_allocateClassPair(NSObject, "NSArray");
+			var meta_class = the_class.isa;
+			objc_registerClassPair(the_class);
+			
+			class_addIvar(the_class, "arrayDepth", "int");
+			
+			class_addMethod(the_class, "count", function(self, _cmd) {
+				console.log("Returning count")
+			}, "id");
+			
+			// ========================================================
+			// =              NSKeyValueCoding                        =
+			// ========================================================
+			var the_class = NSObject;
+			class_addMethod(the_class, "valueForKey:", function(self, _cmd, key) {
+				return key;
+			}, "id");
+			
+			var myObject = class_createInstance(NSObject);
+			console.log(myObject);
+			
+			var myArray = class_createInstance(NSArray);
+			console.log(myArray);
+			
+			//objc_msgSend(myObject, "init", 12);
+		}
+	</script>
+</head>
+<body id="index" onload="javascript:main()">
+	
+</body>
+</html>
