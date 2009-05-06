@@ -20,11 +20,11 @@ module Vienna
   	  @scanners = []
 
   	  @interface_declarations = []
-  	  @category_declarations = []
   	  @implementation_definitions = []
   	  @protocol_declarations = []
   	  @enum_declarations = []
   	  @typedef_declrations = []
+  	  @struct_declarations = []
   	  
   	 # make array of objective-c implmenetations
   	end
@@ -66,6 +66,26 @@ module Vienna
     	puts msg
     	#raise ParseError, msg
     end
+    
+    def import_file(file_name, framework_name = nil)
+      
+      if framework_name.nil?
+        
+        # No framework, so look in local directory for files
+        f = File.new(file_name)
+        text = f.read
+        @scanners << StringScanner.new(text)
+        
+      else
+        
+        # Look in known framework directories
+        puts "Looking for framework #{framework_name} with header #{file_name}"
+        f = File.new(File.expand_path(File.join(File.dirname(__FILE__), %w[.. .. .. frameworks], framework_name, file_name)).to_s)
+        text = f.read
+        @scanners << StringScanner.new(text)
+      end
+      
+    end
 
     def tokenize_string(string)
       # parse string here
@@ -84,9 +104,28 @@ module Vienna
   	 puts "Finished parsing"
   	end
 
-  	# def next_token
-  	#      @tokens.shift
-  	#     end
+
+    # Look up the given identifier (type_name) and return its type for use in parser
+    # This checks through class interfaces, enums, structs, typedefs and @class
+    # declarations. The scope is dealt with on a per file basis. Also scopes can
+    # be removed. For example, a #define statement can also be #undef'd
+  	def lookup_type(type_name)
+  	 
+  	  if type_name == "BOOL"
+  	    puts "Returning BOOL for typename"
+  	    return type_name
+	    end
+  	 
+  	  @interface_declarations.each do |interface|
+  	    return interface if interface.name == type_name
+      end
+      
+      puts "Returning nil for symbol: #{type_name}"
+      
+      # If cant find the type, then return nil (i.e, use it as an identifier)
+      return nil
+  	 
+  	end
     
   end
   

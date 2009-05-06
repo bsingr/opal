@@ -8,7 +8,13 @@
 
 module Vienna
   
+  attr_reader :project_root
+  
   class Project
+    
+    def initialize(project_root)
+      @project_root = project_root
+    end
     
   end
   

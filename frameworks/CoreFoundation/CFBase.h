@@ -13,8 +13,8 @@ typedef signed long CFIndex;
 
 typedef const void *CFTypeRef;
 
-typedef __CFString *CFStringRef;
-typedef __CFString *CFMutableStringRef;
+typedef void *CFStringRef;
+typedef void *CFMutableStringRef;
 
 typedef CFTypeRef CFPropertyListRef;
 

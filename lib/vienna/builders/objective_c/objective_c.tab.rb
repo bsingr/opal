@@ -42,7 +42,19 @@ module_eval(<<'...end objective_c.rb.y/module_eval...', 'objective_c.rb.y', 699)
       when scanner.scan(/(#include|#import)/)
         pp_directive = scanner.scan_until(/.*/).strip!
         puts " # Import Directive: #{pp_directive}"
-        tokenize_file("MyFile.h")
+        re = /[\<|\"](.*)\/(.*\.h)[\>|\"]/
+        md = re.match(pp_directive)
+        if md
+          import_file(md[2], md[1])
+        else
+          re = /\"(.*\.h)\"/
+          md = re.match(pp_directive)
+          if md
+            import_file(md[1], nil)
+          else
+            puts "Should throw error: malformed import declaration"
+          end
+        end
         return next_token()
       
       when scanner.scan(/#define/)
@@ -67,9 +79,11 @@ module_eval(<<'...end objective_c.rb.y/module_eval...', 'objective_c.rb.y', 699)
       when scanner.scan(/\/\*/)
         # multi-line comment. scan input until end of multi line comment is found
         scanner.scan_until(/\*\//)
+        return next_token()
       when scanner.scan(/\/\//)
         #single line comment. scan all input (does not include new line char, so skips)
         scanner.scan_until(/.*/)
+        return next_token()
       when scanner.scan(/auto/)
         return [:AUTO, :AUTO]
       when scanner.scan(/break/)
@@ -185,9 +199,9 @@ module_eval(<<'...end objective_c.rb.y/module_eval...', 'objective_c.rb.y', 699)
       # C constants, identifiers and string literals
       #
       when match = scanner.scan(/[a-zA-Z_]([a-zA-Z_])*/)
-        return [:IDENTIFIER, match]
+        return (lookup_type(match) == nil) ? [:IDENTIFIER, match] : [:TYPE_NAME, match]  
       when match = scanner.scan(/[a-zA-Z_]([a-zA-Z_]|[0-9])*/)
-        return [:IDENTIFIER, match]
+        return (lookup_type(match) == nil) ? [:IDENTIFIER, match] : [:TYPE_NAME, match]
       when match = scanner.scan(/0[xX][a-fA-F0-9]+(u|U|l|L)?/)
         return [:CONSTANT, match]
       when match = scanner.scan(/0[0-9]+(u|U|l|L)?/)

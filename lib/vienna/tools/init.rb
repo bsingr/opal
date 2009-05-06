@@ -10,7 +10,9 @@ module Vienna
   
   class Tools
     
-    def init
+    def init(project_name)
+      
+      
       
     end
     
