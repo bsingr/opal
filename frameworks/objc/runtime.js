@@ -37,10 +37,10 @@ function objc_class()
 //     int ivar_offset;
 // };
 // 
-function objc_ivar(name, type)
+function objc_ivar()
 {
-    this.ivar_name = name;
-    this.ivar_typt = type;
+    this.ivar_name = null;
+    this.ivar_type = null;
 }
 
 // struct objc_method {
@@ -49,11 +49,11 @@ function objc_ivar(name, type)
 //     IMP method_imp;
 // };
 // 
-function objc_method(name, types, imp)
+function objc_method()
 {
-    this.method_name = name;
-    this.method_types = types;
-    this.method_imp = imp;
+    this.method_name = null;
+    this.method_types = [];
+    this.method_imp = null;
 }
 
 // extern id object_copy(id obj);
@@ -391,7 +391,11 @@ function objc_disposeClassPair(cls)
 // 
 function class_addMethod(cls, name, imp, types)
 {
-    var newMethod = new objc_method(name, types, imp);
+    var newMethod = new objc_method();
+    newMethod.method_name = name;
+    newMethod.method_types = types;
+    newMethod.method_imp = imp;
+    
     cls.method_list.push(newMethod);
     cls.method_table.prototype[name] = newMethod;
     return true;
@@ -410,7 +414,13 @@ function class_addIvar(cls, name, types)
 {
     var classPrototype = cls.alloc.prototype;
     classPrototype[name] = null;
-    cls.ivars.push(new objc_ivar(name, types));
+    
+    var newIvar = new objc_ivar();
+    newIvar.name = name;
+    newIvar.types = types;
+    
+    cls.ivars.push(newIvar);
+    
     return true;
 }
 

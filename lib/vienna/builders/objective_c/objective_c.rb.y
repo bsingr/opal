@@ -323,19 +323,13 @@ class Vienna::ObjectiveCParser
   	
     method_implementation:
     	  method_implementation_declaration compound_statement {
-    	    the_parse_tree = Vienna::Node.new('M', val[0], val[1])
-    	    new_implementation = ObjectiveCMethod.new_from_parse_tree(the_parse_tree)
-    	    result = new_implementation
+    	    result = Vienna::Node.new('M', val[0], val[1])
     	  }
     	| method_implementation_declaration ';' compound_statement {
-    	    the_parse_tree = Vienna::Node.new('M', val[0], val[2])
-    	    new_implementation = ObjectiveCMethod.new_from_parse_tree(the_parse_tree)
-    	    result = new_implementation
+    	    result = Vienna::Node.new('M', val[0], val[2])
     	  }
     	| AT_SYNTHESIZE ivar_list ';' {
-    	    the_parse_tree = Vienna::Node.new(:AT_SYNTHESIZE, val[1], nil)
-    	    new_synthesize = ObjectiveCSynthesize.new_from_parse_tree(the_parse_tree)
-    	    result = new_synthesize
+    	    result = Vienna::Node.new(:AT_SYNTHESIZE, val[1], nil)
     	  }
     	;
 
@@ -706,279 +700,297 @@ require 'strscan'
 	
 	attr_reader :result
 	
-	def make_tokens str
-	  scanner = StringScanner.new str
+	def next_token
 	  
-	  until scanner.empty?
-	    case
-	      #
-	      # Pre-processor macros
-	      #
-        when scanner.scan(/(#include|#import)/)
-          pp_directive = scanner.scan_until(/.*/).strip!
-          puts " # Import Directive: #{pp_directive}"
-	      
-	      when scanner.scan(/#define/)
-	        pp_directive = scanner.scan_until(/.*/).strip!
-	        puts " # Define Directive: #{pp_directive}"
-	      when scanner.scan(/#undef/)
-	        pp_directive = scanner.scan_until(/.*/).strip!
-	        puts " # Undef Directive: #{pp_directive}" 
-	      
-	      when scanner.scan(/\n/)
-	        #do nothing on new line
-	      when scanner.scan(/[ \t\v\f]/)
-	        #puts "hmm"
-	        # do nothing
-	      when scanner.scan(/[\t ]+/)
-	        #puts "hmmmmmm"
-	      #
-	      # Plain good old C key words
-	      #
-        when scanner.scan(/\/\*/)
-          # multi-line comment. scan input until end of multi line comment is found
-          scanner.scan_until(/\*\//)
-        when scanner.scan(/\/\//)
-          #single line comment. scan all input (does not include new line char, so skips)
-          scanner.scan_until(/.*/)
-	      when scanner.scan(/auto/)
-	        @tokens << [:AUTO, :AUTO]
-	      when scanner.scan(/break/)
-	        @tokens << [:BREAK, :BREAK]
-	      when scanner.scan(/case/)
-	        @tokens << [:CASE, :CASE]
-	      when scanner.scan(/char/)
-	        @tokens << [:CHAR, :CHAR]
-	      when scanner.scan(/const/)
-	        @tokens << [:CONST, :CONST]
-	      when scanner.scan(/continue/)
-	        @tokens << [:CONTINUE, :CONTINUE]
-	      when scanner.scan(/default/)
-	        @tokens << [:DEFAULT, :DEFAULT]
-	      when scanner.scan(/do/)
-	        @tokens << [:DO, :DO]
-	      when scanner.scan(/double/)
-	        @tokens << [:DOUBLE, :DOUBLE]
-	      when scanner.scan(/else/)
-	        @tokens << [:ELSE, :ELSE]
-	      when scanner.scan(/enum/)
-	        @tokens << [:ENUM, :ENUM]
-	      when scanner.scan(/extern/)
-	        @tokens << [:EXTERN, :EXTERN]
-	      when scanner.scan(/float/)
-	        @tokens << [:FLOAT, :FLOAT]
-	      when scanner.scan(/for/)
-	        @tokens << [:FOR, :FOR]
-	      when scanner.scan(/goto/)
-	        @tokens << [:GOTO, :GOTO]
-	      when scanner.scan(/if/)
-	        @tokens << [:IF, :IF]
-	      when scanner.scan(/int/)
-  	      @tokens << [:INT, :INT]
-	      when scanner.scan(/long/)
-	        @tokens << [:LONG, :LONG]
-	      when scanner.scan(/register/)
-	        @tokens << [:REGISTER, :REGISTER]
-	      when scanner.scan(/return/)
-	        @tokens << [:RETURN, :RETURN]
-	      when scanner.scan(/short/)
-	        @tokens << [:SHORT, :SHORT]
-	      when scanner.scan(/signed/)
-	        @tokens << [:SIGNED, :SIGNED]
-	      when scanner.scan(/sizeof/)
-	        @tokens << [:SIZEOF, :SIZEOF]
-	      when scanner.scan(/static/)
-	        @tokens << [:STATIC, :STATIC]
-	      when scanner.scan(/struct/)
-	        @tokens << [:STRUCT, :STRUCT]
-	      when scanner.scan(/switch/)
-	        @tokens << [:SWITCH, :SWITCH]
-	      when scanner.scan(/typedef/)
-	        @tokens << [:TYPEDEF, :TYPEDEF]
-	      when scanner.scan(/union/)
-	        @tokens << [:UNION, :UNION]
-	      when scanner.scan(/unsigned/)
-	        @tokens << [:SIGNED, :UNSIGNED]
-	      when scanner.scan(/void/)
-	        @tokens << [:VOID, :VOID]
-	      when scanner.scan(/volatile/)
-	        @tokens << [:VOLATILE, :VOLATILE]
-	      when scanner.scan(/while/)
-	        @tokens << [:WHILE, :WHILE]
-	        
-	      #  
-	      # Objective-C 1.0
-	      # 
-	      when scanner.scan(/@interface/)
-	        @tokens << [:AT_INTERFACE, :AT_INTERFACE]
-	      when scanner.scan(/@implementation/)
-	        @tokens << [:AT_IMPLEMENTATION, :AT_IMPLEMENTATION]  
-	      when scanner.scan(/@end/)
-	        @tokens << [:AT_END, :AT_END]
-	      when scanner.scan(/@class/)
-	        @tokens << [:AT_CLASS, :AT_CLASS]
-	      when scanner.scan(/@protocol/)
-	        @tokens << [:AT_PROTOCOL, :AT_PROTOCOL]
-	      when scanner.scan(/@selector/)
-	        @tokens << [:AT_SELECTOR, :AT_SELECTOR]
-	      when scanner.scan(/@encode/)
-	        @tokens << [:AT_ENCODE, :AT_ENCODE]
-	      when scanner.scan(/@try/)
-	        @tokens << [:AT_TRY, :AT_TRY]
-	      when scanner.scan(/@catch/)
-	        @tokens << [:AT_CATCH, :AT_CATCH]
-	      when scanner.scan(/@protected/)
-	        @tokens << [:AT_PROTECTED, :AT_PROTECTED]
-	      when scanner.scan(/@private/)
-	        @tokens << [:AT_PRIVATE, :AT_PRIVATE]
-	      when scanner.scan(/@public/)
-	        @tokens << [:AT_PUBLIC, :AT_PUBLIC]
-	
-        when match = scanner.scan(/@\"(\\.|[^\\"])*\"/)
-          @tokens << [:AT_STRING_LITERAL, match]
+	  if @scanners.size == 0
+	    puts" No more scanners"
+	    return [false, false]
+    end
+	  
+	  scanner = @scanners.last
+	  
+	  if !scanner
+      return [false, false]
+    end
+	  
+	  if scanner.empty?
+	    puts "Reached end of file. Swap to next file"
+	    @scanners.slice!(@scanners.size - 1)
+	    return next_token()
+	  end
+	  
+	  case
+      #
+      # Pre-processor macros
+      #
+      when scanner.scan(/(#include|#import)/)
+        pp_directive = scanner.scan_until(/.*/).strip!
+        puts " # Import Directive: #{pp_directive}"
+        tokenize_file("MyFile.h")
+        return next_token()
+      
+      when scanner.scan(/#define/)
+        pp_directive = scanner.scan_until(/.*/).strip!
+        puts " # Define Directive: #{pp_directive}"
+        return next_token()
         
-        when scanner.scan(/self/)
-	        @tokens << [:IDENTIFIER, "self"]
-	           
-	      #
-	      # Objective-C 2.0
-	      #
-        when scanner.scan(/@property/)
-          @tokens << [:AT_PROPERTY, :AT_PROPERTY]
-        when scanner.scan(/@synthesize/)
-          @tokens << [:AT_SYNTHESIZE, :AT_SYNTHESIZE]
-	      when scanner.scan(/@optional/)
-          @tokens << [:AT_OPTIONAL, :AT_OPTIONAL]
-        when scanner.scan(/@required/)
-          @tokens << [:AT_REQUIRED, :AT_REQUIRED]
-	      
-	      #
-	      # C constants, identifiers and string literals
-	      #
-	      when match = scanner.scan(/[a-zA-Z_]([a-zA-Z_])*/)
-	        @tokens << [:IDENTIFIER, match]
-	      when match = scanner.scan(/[a-zA-Z_]([a-zA-Z_]|[0-9])*/)
-	        @tokens << [:IDENTIFIER, match]
-        when match = scanner.scan(/0[xX][a-fA-F0-9]+(u|U|l|L)?/)
-          @tokens << [:CONSTANT, match]
-	      when match = scanner.scan(/0[0-9]+(u|U|l|L)?/)
-	        @tokens << [:CONSTANT, match]
-	      #when match = scanner.scan(//) # {D}+{IS}?
-	      #  @tokens << [:CONSTANT, match]
-	      #when match = scanner.scan(//) # L?'(\\.|[^\\'])+'
-	      #  @tokens << [:CONSTANT, match]
-	      #when match = scanner.scan(//) # {D}+{E}{FS}?
-	      #  @tokens << [:CONSTANT, match]
-	      #when match = scanner.scan(//) # {D}*"."{D}+({E})?{FS}?
-	      #  @tokens << [:CONSTANT, match]
-	      #when match = scanner.scan(//) # {D}+"."{D}*({E})?{FS}?
-	      #  @tokens << [:CONSTANT, match]
-	      #when match = scanner.scan(//) # L?\"(\\.|[^\\"])*\"
-	      #  @tokens << [:STRING_LITERAL, match]
-	      
-	      #
-	      # C operators, assignments and other syntactical bits and pieces
-	      #  
-        when scanner.scan(/\.\.\./)
-         @tokens << [:ELLIPSIS, :ELLIPSIS]
-        when scanner.scan(/>>=/)
-         @tokens << [:RIGHT_ASSIGN, :RIGHT_ASSIGN]
-        when scanner.scan(/<<=/)
-         @tokens << [:LEFT_ASSIGN, :LEFT_ASSIGN]
-        when scanner.scan(/\+=/)
-         @tokens << [:ADD_ASSIGN, :ADD_ASSIGN]
-        when scanner.scan(/-=/)
-         @tokens << [:SUB_ASSIGN, :SUB_ASSIGN]
-        when scanner.scan(/\*=/)
-         @tokens << [:MUL_ASSIGN, :MUL_ASSIGN]
-        when scanner.scan(/\/=/)
-         @tokens << [:DIV_ASSIGN, :DIV_ASSIGN]
-        when scanner.scan(/%=/)
-         @tokens << [:MOD_ASSIGN, :MOD_ASSIGN]
-        when scanner.scan(/&=/)
-         @tokens << [:AND_ASSIGN, :AND_ASSIGN]
-        when scanner.scan(/\^=/)
-         @tokens << [:XOR_ASSIGN, :XOR_ASSIGN]
-        when scanner.scan(/\|=/)
-         @tokens << [:OR_ASSIGN, :OR_ASSIGN]
-        when scanner.scan(/>>/)
-         @tokens << [:RIGHT_OP, :RIGHT_OP]
-        when scanner.scan(/<</)
-         @tokens << [:LEFT_OP, :LEFT_OP]
-        when scanner.scan(/\+\+/)
-         @tokens << [:INC_OP, :INC_OP]
-        when scanner.scan(/--/)
-         @tokens << [:DEC_OP, :DEC_OP]
-        when scanner.scan(/->/)
-         @tokens << [:PTR_OP, :PTR_OP]
-        when scanner.scan(/&&/)
-         @tokens << [:AND_OP, :AND_OP]
-        when scanner.scan(/\|\|/)
-         @tokens << [:OR_OP, :OR_OP]
-        when scanner.scan(/<=/)
-         @tokens << [:LE_OP, :LE_OP]
-        when scanner.scan(/>=/)
-         @tokens << [:GE_OP, :GE_OP]
-        when scanner.scan(/\=\=/)
-         @tokens << [:EQ_OP, :EQ_OP]
-        when scanner.scan(/\!\=/)
-         @tokens << [:NE_OP, :NE_OP]
-	      when scanner.scan(/;/)
-          @tokens << [';', ';']
-        when scanner.scan(/\{/)
-          @tokens << ['{', '{']
-        when scanner.scan(/\}/)
-          @tokens << ['}', '}']
-        when scanner.scan(/,/)
-          @tokens << [',', ',']  
-        when scanner.scan(/:/)
-          @tokens << [':', ':']    
-        when scanner.scan(/\=/)
-          @tokens << ['=', '=']    
-        when scanner.scan(/\(/)
-          @tokens << ['(', '(']
-        when scanner.scan(/\)/)
-          @tokens << [')', ')']
-        when scanner.scan(/\[/)
-          @tokens << ['[', '[']
-        when scanner.scan(/\]/)
-          @tokens << [']', ']']  
-        when scanner.scan(/\./)
-          @tokens << ['.', '.']  
-        when scanner.scan(/\&/)
-          @tokens << ['&', '&']  
-	      when scanner.scan(/\!/)
-          @tokens << ['!', '!']
-	      when scanner.scan(/\~/)
-          @tokens << ['~', '~']
-	      when scanner.scan(/\-/)
-          @tokens << ['-', '-']
-	      when scanner.scan(/\+/)
-          @tokens << ['+', '+']
-	      when scanner.scan(/\*/)
-          @tokens << ['*', '*']
-	      when scanner.scan(/\//)
-          @tokens << ['/', '/']
-	      when scanner.scan(/\%/)
-          @tokens << ['%', '%']
-	      when scanner.scan(/\</)
-          @tokens << ['<', '<']
-	      when scanner.scan(/\>/)
-          @tokens << ['>', '>']
-	      when scanner.scan(/\^/)
-          @tokens << ['^', '^']
-	      when scanner.scan(/\|/)
-          @tokens << ['|', '|']
-	      when scanner.scan(/\?/)
-          @tokens << ['?', '?']
+      when scanner.scan(/#undef/)
+        pp_directive = scanner.scan_until(/.*/).strip!
+        puts " # Undef Directive: #{pp_directive}" 
+      
+      when scanner.scan(/\n/)
+        return next_token()
+      when scanner.scan(/[ \t\v\f]/)
+        return next_token()
+      when scanner.scan(/[\t ]+/)
+        return next_token()
         
-	      else
-	        puts "Error: unkown token: #{scanner.peek(5)}"
-	      
-	      #when scanner.scan(/.*/)
-  	      #puts "wow"
-  	      # throw error: bad character
-	    end
+      #
+      # Plain good old C key words
+      #
+      when scanner.scan(/\/\*/)
+        # multi-line comment. scan input until end of multi line comment is found
+        scanner.scan_until(/\*\//)
+      when scanner.scan(/\/\//)
+        #single line comment. scan all input (does not include new line char, so skips)
+        scanner.scan_until(/.*/)
+      when scanner.scan(/auto/)
+        return [:AUTO, :AUTO]
+      when scanner.scan(/break/)
+        return [:BREAK, :BREAK]
+      when scanner.scan(/case/)
+        return [:CASE, :CASE]
+      when scanner.scan(/char/)
+        return [:CHAR, :CHAR]
+      when scanner.scan(/const/)
+        return [:CONST, :CONST]
+      when scanner.scan(/continue/)
+        return [:CONTINUE, :CONTINUE]
+      when scanner.scan(/default/)
+        return [:DEFAULT, :DEFAULT]
+      when scanner.scan(/do/)
+        return [:DO, :DO]
+      when scanner.scan(/double/)
+        return [:DOUBLE, :DOUBLE]
+      when scanner.scan(/else/)
+        return [:ELSE, :ELSE]
+      when scanner.scan(/enum/)
+        return [:ENUM, :ENUM]
+      when scanner.scan(/extern/)
+        return [:EXTERN, :EXTERN]
+      when scanner.scan(/float/)
+        return [:FLOAT, :FLOAT]
+      when scanner.scan(/for/)
+        return [:FOR, :FOR]
+      when scanner.scan(/goto/)
+        return [:GOTO, :GOTO]
+      when scanner.scan(/if/)
+        return [:IF, :IF]
+      when scanner.scan(/int/)
+	      return [:INT, :INT]
+      when scanner.scan(/long/)
+        return [:LONG, :LONG]
+      when scanner.scan(/register/)
+        return [:REGISTER, :REGISTER]
+      when scanner.scan(/return/)
+        return [:RETURN, :RETURN]
+      when scanner.scan(/short/)
+        return [:SHORT, :SHORT]
+      when scanner.scan(/signed/)
+        return [:SIGNED, :SIGNED]
+      when scanner.scan(/sizeof/)
+        return [:SIZEOF, :SIZEOF]
+      when scanner.scan(/static/)
+        return [:STATIC, :STATIC]
+      when scanner.scan(/struct/)
+        return [:STRUCT, :STRUCT]
+      when scanner.scan(/switch/)
+        return [:SWITCH, :SWITCH]
+      when scanner.scan(/typedef/)
+        return [:TYPEDEF, :TYPEDEF]
+      when scanner.scan(/union/)
+        return [:UNION, :UNION]
+      when scanner.scan(/unsigned/)
+        return [:SIGNED, :UNSIGNED]
+      when scanner.scan(/void/)
+        return [:VOID, :VOID]
+      when scanner.scan(/volatile/)
+        return [:VOLATILE, :VOLATILE]
+      when scanner.scan(/while/)
+        return [:WHILE, :WHILE]
+        
+      #  
+      # Objective-C 1.0
+      # 
+      when scanner.scan(/@interface/)
+        return [:AT_INTERFACE, :AT_INTERFACE]
+      when scanner.scan(/@implementation/)
+        return [:AT_IMPLEMENTATION, :AT_IMPLEMENTATION]  
+      when scanner.scan(/@end/)
+        return [:AT_END, :AT_END]
+      when scanner.scan(/@class/)
+        return [:AT_CLASS, :AT_CLASS]
+      when scanner.scan(/@protocol/)
+        return [:AT_PROTOCOL, :AT_PROTOCOL]
+      when scanner.scan(/@selector/)
+        return [:AT_SELECTOR, :AT_SELECTOR]
+      when scanner.scan(/@encode/)
+        return [:AT_ENCODE, :AT_ENCODE]
+      when scanner.scan(/@try/)
+        return [:AT_TRY, :AT_TRY]
+      when scanner.scan(/@catch/)
+        return [:AT_CATCH, :AT_CATCH]
+      when scanner.scan(/@protected/)
+        return [:AT_PROTECTED, :AT_PROTECTED]
+      when scanner.scan(/@private/)
+        return [:AT_PRIVATE, :AT_PRIVATE]
+      when scanner.scan(/@public/)
+        return [:AT_PUBLIC, :AT_PUBLIC]
+
+      when match = scanner.scan(/@\"(\\.|[^\\"])*\"/)
+        return [:AT_STRING_LITERAL, match]
+      
+      when scanner.scan(/self/)
+        return [:IDENTIFIER, "self"]
+           
+      #
+      # Objective-C 2.0
+      #
+      when scanner.scan(/@property/)
+        return [:AT_PROPERTY, :AT_PROPERTY]
+      when scanner.scan(/@synthesize/)
+        return [:AT_SYNTHESIZE, :AT_SYNTHESIZE]
+      when scanner.scan(/@optional/)
+        return [:AT_OPTIONAL, :AT_OPTIONAL]
+      when scanner.scan(/@required/)
+        return [:AT_REQUIRED, :AT_REQUIRED]
+      
+      #
+      # C constants, identifiers and string literals
+      #
+      when match = scanner.scan(/[a-zA-Z_]([a-zA-Z_])*/)
+        return [:IDENTIFIER, match]
+      when match = scanner.scan(/[a-zA-Z_]([a-zA-Z_]|[0-9])*/)
+        return [:IDENTIFIER, match]
+      when match = scanner.scan(/0[xX][a-fA-F0-9]+(u|U|l|L)?/)
+        return [:CONSTANT, match]
+      when match = scanner.scan(/0[0-9]+(u|U|l|L)?/)
+        return [:CONSTANT, match]
+      #when match = scanner.scan(//) # {D}+{IS}?
+      #  return [:CONSTANT, match]
+      #when match = scanner.scan(//) # L?'(\\.|[^\\'])+'
+      #  return [:CONSTANT, match]
+      #when match = scanner.scan(//) # {D}+{E}{FS}?
+      #  return [:CONSTANT, match]
+      #when match = scanner.scan(//) # {D}*"."{D}+({E})?{FS}?
+      #  return [:CONSTANT, match]
+      #when match = scanner.scan(//) # {D}+"."{D}*({E})?{FS}?
+      #  return [:CONSTANT, match]
+      #when match = scanner.scan(//) # L?\"(\\.|[^\\"])*\"
+      #  return [:STRING_LITERAL, match]
+      
+      #
+      # C operators, assignments and other syntactical bits and pieces
+      #  
+      when scanner.scan(/\.\.\./)
+       return [:ELLIPSIS, :ELLIPSIS]
+      when scanner.scan(/>>=/)
+       return [:RIGHT_ASSIGN, :RIGHT_ASSIGN]
+      when scanner.scan(/<<=/)
+       return [:LEFT_ASSIGN, :LEFT_ASSIGN]
+      when scanner.scan(/\+=/)
+       return [:ADD_ASSIGN, :ADD_ASSIGN]
+      when scanner.scan(/-=/)
+       return [:SUB_ASSIGN, :SUB_ASSIGN]
+      when scanner.scan(/\*=/)
+       return [:MUL_ASSIGN, :MUL_ASSIGN]
+      when scanner.scan(/\/=/)
+       return [:DIV_ASSIGN, :DIV_ASSIGN]
+      when scanner.scan(/%=/)
+       return [:MOD_ASSIGN, :MOD_ASSIGN]
+      when scanner.scan(/&=/)
+       return [:AND_ASSIGN, :AND_ASSIGN]
+      when scanner.scan(/\^=/)
+       return [:XOR_ASSIGN, :XOR_ASSIGN]
+      when scanner.scan(/\|=/)
+       return [:OR_ASSIGN, :OR_ASSIGN]
+      when scanner.scan(/>>/)
+       return [:RIGHT_OP, :RIGHT_OP]
+      when scanner.scan(/<</)
+       return [:LEFT_OP, :LEFT_OP]
+      when scanner.scan(/\+\+/)
+       return [:INC_OP, :INC_OP]
+      when scanner.scan(/--/)
+       return [:DEC_OP, :DEC_OP]
+      when scanner.scan(/->/)
+       return [:PTR_OP, :PTR_OP]
+      when scanner.scan(/&&/)
+       return [:AND_OP, :AND_OP]
+      when scanner.scan(/\|\|/)
+       return [:OR_OP, :OR_OP]
+      when scanner.scan(/<=/)
+       return [:LE_OP, :LE_OP]
+      when scanner.scan(/>=/)
+       return [:GE_OP, :GE_OP]
+      when scanner.scan(/\=\=/)
+       return [:EQ_OP, :EQ_OP]
+      when scanner.scan(/\!\=/)
+       return [:NE_OP, :NE_OP]
+      when scanner.scan(/;/)
+        return [';', ';']
+      when scanner.scan(/\{/)
+        return ['{', '{']
+      when scanner.scan(/\}/)
+        return ['}', '}']
+      when scanner.scan(/,/)
+        return [',', ',']  
+      when scanner.scan(/:/)
+        return [':', ':']    
+      when scanner.scan(/\=/)
+        return ['=', '=']    
+      when scanner.scan(/\(/)
+        return ['(', '(']
+      when scanner.scan(/\)/)
+        return [')', ')']
+      when scanner.scan(/\[/)
+        return ['[', '[']
+      when scanner.scan(/\]/)
+        return [']', ']']  
+      when scanner.scan(/\./)
+        return ['.', '.']  
+      when scanner.scan(/\&/)
+        return ['&', '&']  
+      when scanner.scan(/\!/)
+        return ['!', '!']
+      when scanner.scan(/\~/)
+        return ['~', '~']
+      when scanner.scan(/\-/)
+        return ['-', '-']
+      when scanner.scan(/\+/)
+        return ['+', '+']
+      when scanner.scan(/\*/)
+        return ['*', '*']
+      when scanner.scan(/\//)
+        return ['/', '/']
+      when scanner.scan(/\%/)
+        return ['%', '%']
+      when scanner.scan(/\</)
+        return ['<', '<']
+      when scanner.scan(/\>/)
+        return ['>', '>']
+      when scanner.scan(/\^/)
+        return ['^', '^']
+      when scanner.scan(/\|/)
+        return ['|', '|']
+      when scanner.scan(/\?/)
+        return ['?', '?']
+      
+      else
+        puts "Error: unkown token: #{scanner.peek(5)}"
+      
+      #when scanner.scan(/.*/)
+	      #puts "wow"
+	      # throw error: bad character
     end
 	end
   

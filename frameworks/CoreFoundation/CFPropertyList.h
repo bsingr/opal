@@ -28,7 +28,8 @@ extern CFPropertyListRef CFPropertyListCreateDeepCopy (CFPropertyListRef propert
 enum {
     kCFPropertyListOpenStepFormat = 1,
     kCFPropertyListXMLFormat_v1_0 = 100,
-    kCFPropertyListBinaryFormat_v1_0 = 200
+    kCFPropertyListBinaryFormat_v1_0 = 200,
+    kCFPropertyListJSONFormat_v1_0 = 300
 };
 typedef CFIndex CFPropertyListFormat;
 

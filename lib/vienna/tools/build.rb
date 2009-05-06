@@ -11,13 +11,15 @@ module Vienna
   class Tools
     
     def self.build
+      # parser = ObjectiveCParser.new
+      #       parser.tokenize_file "MyFile.m"
+      #       parser.tokens.each do |first, second|
+      #         #puts "[#{first}, #{second}]"
+      #       end
+      #       parser.parse
+      #       puts parser.result
       parser = ObjectiveCParser.new
-      parser.tokenize_file "MyFile.m"
-      parser.tokens.each do |first, second|
-        #puts "[#{first}, #{second}]"
-      end
-      parser.parse
-      puts parser.result
+      parser.parse_file_to_output("MyFile.m", "")
     end
     
   end

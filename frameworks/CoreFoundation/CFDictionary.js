@@ -124,7 +124,7 @@ function CFDictionaryContainsValue(theDict, value)
 // 
 function CFDictionaryGetValue(theDict, key)
 {
-    
+    return theDict._values[key];
 }
 
 // extern bool CFDictionaryGetValueIfPresent(CFDictionaryRef theDict, void *key, void **value);
@@ -138,7 +138,7 @@ function CFDictionaryGetValueIfPresent(theDict, key, value)
 // 
 function CFDictionaryGetKeysAndValues(theDict, keys, values)
 {
-    
+    keys = theDict._keys;
 }
 
 // extern void CFDictionaryAddValue(CFMutableDictionaryRef theDict, void *key, void *value);

@@ -11,6 +11,7 @@
 	<script src="CoreFoundation/CFPropertyList.js" type="text/javascript" charset="utf-8"></script>
 	<script src="CoreFoundation/CFString.js" type="text/javascript" charset="utf-8"></script>
 	<script src="CoreFoundation/CFDictionary.js" type="text/javascript" charset="utf-8"></script>
+	<script src="CoreFoundation/CFJSONParser.js" type="text/javascript" charset="utf-8"></script>
 	
 	<!-- ================ -->
 	<!-- = CoreGraphics = -->
@@ -21,6 +22,7 @@
 	<script src="CoreGraphics/CGGeometry.js" type="text/javascript" charset="utf-8"></script>
 	<script src="CoreGraphics/CGDOMElement.js" type="text/javascript" charset="utf-8"></script>
 	<script src="CoreGraphics/CGImage.js" type="text/javascript" charset="utf-8"></script>
+	<script src="CoreGraphics/CGDOMContext.js" type="text/javascript" charset="utf-8"></script>
 	
 	<!-- ======== -->
 	<!-- = objc = -->
@@ -34,7 +36,10 @@
 	<!-- = Testing frameworks = -->
 	<!-- ====================== -->
 	<script type="text/javascript" charset="utf-8">
-		console.log(json_parse("{\"hey\":23, \"wow\":\"heyyyyyyyy\", \"date\":\"2007-03-01T13:00:00Z\"}"));
+	
+		var theParser = CFJSONParserCreate('{"plist": {"version": "1.0","dict": {"CFBundleDevelopmentRegion": {"string": "English"},"CFBundleExecutable": {"string": "myApp"},"CFBundleIconFile": {"string": ""},"CFBundleIdentifier": {"string": "com.adambeynon.vienna"},"CFBundleInfoDictionaryVersion": {"string": "6.0"},"CFBundleName": {"string": "My Awesome application"},"CFBundlePackageType": {"string": "AAPL"},"CFBundleSignature": {"string": "????"},"CFBundleVersion": {"string": "1.0"},"NSMainNibFile": {"string": "MainMenu"},"NSPrincipalClass": {"string": "NSApplication"}}}}');
+		
+		CFJSONParserParse(theParser);
 		
 		function main()
 		{
@@ -104,6 +109,17 @@
 			
 			var myDict = objc_msgSend(objc_msgSend(NSMutableDictionary, "alloc"), "init");
 			console.log(objc_msgSend(myDict, "valueForKey:", "heyaa"));
+
+
+			// ========================
+			// = Playing with the DOM =
+			// ========================
+			
+			var theCanvas = CGDOMElementCreate("canvas");
+									CGDOMElementAppendChild(CGDOMElementGetRootElement(), theCanvas);
+									var theContext = CGDOMElementGetContext(theCanvas);
+									CGContextStrokeRect(theContext, CGRectMake(0.5,0.5,100,100));
+	
 		}
 	</script>
 </head>

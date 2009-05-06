@@ -303,21 +303,22 @@ function CGContextStrokePath(c)
 // 
 function CGContextFillRect(c, rect)
 {
-    
+    c.fillRect(rect.origin.x, c.canvas.height - rect.origin.y - rect.size.height, rect.size.width, rect.size.height);
 }
 
 // extern void CGContextFillRects(CGContextRef c, const CGRect rects[], size_t count);
 // 
 function CGContextFillRects(c, rects, count)
 {
-    
+    for (var i = 0; i < count; i ++)
+        CGContextFillRect(c, rects[i]);
 }
 
 // extern void CGContextStrokeRect(CGContextRef c, CGRect rect);
 // 
 function CGContextStrokeRect(c, rect)
 {
-    
+    c.strokeRect(rect.origin.x, c.canvas.height - rect.origin.y - rect.size.height, rect.size.width, rect.size.height);
 }
 
 // extern void CGContextStrokeRectWithWidth(CGContextRef c, CGRect rect, CGFloat width);

@@ -11,10 +11,10 @@
 //     Class super_class;
 // };
 // 
-function objc_super(receiver, super_class)
+function objc_super()
 {
-    this.receiver = receiver;
-    this.super_class = super_class;
+    this.receiver = null;
+    this.super_class = null;
 }
 
 // extern id objc_msgSend(id self, SEL op, ...);

@@ -75,3 +75,10 @@ function CGDOMElementSetAttribute(element, name, value)
 {
     element.setAttribute(name, value);
 }
+
+// extern CGContextRef CGDOMElementGetContext(CGDOMElementRef element);
+// 
+function CGDOMElementGetContext(element)
+{
+    return element.getContext("2d");
+}

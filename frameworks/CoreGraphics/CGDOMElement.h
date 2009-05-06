@@ -21,3 +21,5 @@ extern CFStringRef CGDOMElementGetAttribute(CGDOMElementRef element, CFStringRef
 extern bool CGDOMElementHasAttribute(CGDOMElementRef element, CFStringRef attribute);
 extern void CGDOMElementRemoveAttribute(CGDOMElementRef element, CFStringRef attribute);
 extern void CGDOMElementSetAttribute(CGDOMElementRef element, CFStringRef name, CFStringRef value);
+
+extern CGContextRef CGDOMElementGetContext(CGDOMElementRef element);

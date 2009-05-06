@@ -7,6 +7,7 @@
 # 
 
 require 'racc/parser.rb'
+require 'strscan'
 
 module Vienna
   
@@ -15,7 +16,9 @@ module Vienna
     attr_reader :tokens
 
   	def initialize
-  	  @tokens = []
+  	  
+  	  @scanners = []
+
   	  @interface_declarations = []
   	  @category_declarations = []
   	  @implementation_definitions = []
@@ -24,6 +27,11 @@ module Vienna
   	  @typedef_declrations = []
   	  
   	 # make array of objective-c implmenetations
+  	end
+  	
+  	def parse_file_to_output(source, output)
+  	  tokenize_file(source)
+  	  parse
   	end
   	
   	def add_interface_declaration(interface)
@@ -35,7 +43,7 @@ module Vienna
 	  end
 	  
 	  def add_implementation_defintion(implementation)
-      puts "Adding new imp"
+
     end
 
     def add_protocol_declaration(protocol)
@@ -61,14 +69,13 @@ module Vienna
 
     def tokenize_string(string)
       # parse string here
-      make_tokens(string)
-      @tokens << [false, false]
+      @scanners << StringScanner.new(string)
     end
 
     def tokenize_file(file)
       f = File.new(file)
       text = f.read
-      tokenize_string(text)
+      @scanners << StringScanner.new(text)
     end
 
   	def parse
@@ -77,9 +84,9 @@ module Vienna
   	 puts "Finished parsing"
   	end
 
-  	def next_token
-  	  @tokens.shift
-    end
+  	# def next_token
+  	#      @tokens.shift
+  	#     end
     
   end
   

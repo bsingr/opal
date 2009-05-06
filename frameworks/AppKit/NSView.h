@@ -174,6 +174,8 @@ typedef NSInteger NSToolTipTag;
 - (NSBitmapImageRep *)bitmapImageRepForCachingDisplayInRect:(NSRect)rect;
 - (void)cacheDisplayInRect:(NSRect)rect toBitmapImageRep:(NSBitmapImageRep *)bitmapImageRep;
 
+- (NSGraphicsContext *)graphicsContext;
+
 - (void)viewWillDraw;
 
 - (NSInteger)gState;

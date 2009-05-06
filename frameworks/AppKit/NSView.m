@@ -507,7 +507,15 @@
 }
 
 
-- (void)viewWillDraw;
+- (void)viewWillDraw
+{
+    
+}
+
+- (NSGraphicsContext *)graphicsContext
+{
+    
+}
 
 - (NSInteger)gState
 {
