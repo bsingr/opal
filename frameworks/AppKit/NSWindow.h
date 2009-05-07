@@ -6,9 +6,9 @@
 //  Copyright 2009 Adam Beynon. All rights reserved.
 // 
 
-#import <Foundation/NSGeometry.m>
-#import <AppKit/NSResponder.m>
-#import <AppKit/NSGraphics.m>
+#import <Foundation/NSGeometry.h>
+#import <AppKit/NSResponder.h>
+#import <AppKit/NSGraphics.h>
 
 enum {
     NSBorderlessWindowMask              = 0,

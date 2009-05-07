@@ -10,7 +10,10 @@
 #import <Foundation/NSEnumerator.h>
 #import <Foundation/NSRange.h>
 
-@class NSData, NSIndexSet, NSString, NSURL;
+@class NSData;
+@class NSIndexSet;
+@class NSString;
+@class NSURL;
 
 @interface NSArray : NSObject <NSCopying, NSMutableCopying, NSCoding, NSFastEnumeration>
 

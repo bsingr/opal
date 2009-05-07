@@ -6,9 +6,9 @@
 //  Copyright 2009 Adam Beynon. All rights reserved.
 // 
 
-#import <Foundation/NSArray.m>
-#import <Foundation/NSDictionary.m>
-#import <Foundation/NSSet.m>
+#import <Foundation/NSArray.h>
+#import <Foundation/NSDictionary.h>
+#import <Foundation/NSSet.h>
 
 @class NSError, NSString;
 

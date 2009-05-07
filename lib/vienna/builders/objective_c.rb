@@ -27,6 +27,7 @@ module Vienna
   	  @typedef_declarations = []
   	  @struct_declarations = []
   	  @at_class_list = []
+  	  @known_classes = []
   	  
   	 # make array of objective-c implmenetations
   	end
@@ -36,8 +37,8 @@ module Vienna
   	  parse
   	end
   	
-  	def add_interface_declaration(interface)
-  	  
+  	def deal_with_interface_declaration(interface)
+  	  @interface_declarations << ObjectiveCInterface.new(interface)
 	  end
 	  
 	  def add_category_declaration(category)
@@ -64,7 +65,11 @@ module Vienna
     # with, this list should really be cleared. For now it is maintained.
     # Also, this currently only holds one class, i.e. one per statement
     def deal_with_at_class(d)
-      puts @at_class_list << d.left
+      @at_class_list << d.left
+    end
+    
+    def register_class_name_from_declaration(class_name)
+      @known_classes << class_name
     end
     
     # This basically handles declarations sent straight from the parse tree, as
@@ -84,6 +89,7 @@ module Vienna
       end
     end
     
+    # Thrown on a parsing error
   	def on_error(error_token_id, error_value, value_stack)
       msg = "parse error "
     	msg << "after #{value_stack.last} " if value_stack.length > 1
@@ -96,7 +102,6 @@ module Vienna
     def import_file(file_name, framework_name = nil)
       
       if @imported_files.include? [framework_name, file_name]
-        puts "Already included header: #{file_name}"
         return
       end
       
@@ -135,7 +140,12 @@ module Vienna
     # This checks through class interfaces, enums, structs, typedefs and @class
     # declarations. The scope is dealt with on a per file basis. Also scopes can
     # be removed. For example, a #define statement can also be #undef'd
-  	def lookup_type(type_name)	 
+  	def lookup_type(type_name)
+  	  
+  	  @known_classes.each do |class_name|
+	      return class_name if class_name == type_name
+	    end
+  	   
       # Just go through interface class names and return that interface
   	  @interface_declarations.each do |interface|
   	    return interface if interface.name == type_name

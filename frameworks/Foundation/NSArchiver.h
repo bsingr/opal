@@ -8,7 +8,11 @@
 
 #import <Foundation/NSCoder.h>
 
-@class NSString, NSData, NSMutableData, NSMutableDictionary, NSMutableArray;
+@class NSString;
+@class NSData;
+@class NSMutableData;
+@class NSMutableDictionary;
+@class NSMutableArray;
 
 extern NSString *NSInconsistentArchiveException;
 

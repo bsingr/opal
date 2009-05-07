@@ -6,10 +6,10 @@
 //  Copyright 2009 Adam Beynon. All rights reserved.
 // 
 
-#import <Foundation/Foundation.m>
-#import <AppKit/NSView.m>
-#import <AppKit/NSCell.m>
-#import <AppKit/NSText.m>
+#import <Foundation/Foundation.h>
+#import <AppKit/NSView.h>
+#import <AppKit/NSCell.h>
+#import <AppKit/NSText.h>
 
 @implementation NSControl : NSView
 {

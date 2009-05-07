@@ -10,7 +10,9 @@
 #import <Foundation/NSDate.h>
 #import <Foundation/NSGeometry.h>
 
-@class NSGraphicsContext, NSWindow, NSTrackingArea;
+@class NSGraphicsContext;
+@class NSWindow;
+@class NSTrackingArea;
 
 enum {
     NSLeftMouseDown             = 1,
@@ -71,7 +73,7 @@ enum {
     NSCommandKeyMask            = 1 << 20,
     NSNumericPadKeyMask         = 1 << 21,
     NSHelpKeyMask               = 1 << 22,
-    NSFunctionKeyMask           = 1 << 23,
+    NSFunctionKeyMask           = 1 << 23
 };
 
 @interface NSEvent : NSObject <NSCopying, NSCoding>

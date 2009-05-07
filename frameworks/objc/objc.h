@@ -6,6 +6,9 @@
 //  Copyright 2009 Adam Beynon. All rights reserved.
 // 
 
+typedef void *Protocol;
+typedef void *IMP;
+
 typedef struct objc_class *Class;
 typedef struct objc_object {
 	Class isa;

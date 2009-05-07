@@ -6,7 +6,7 @@
 //  Copyright 2009 Adam Beynon. All rights reserved.
 // 
 
-#import <AppKit/NSView.m>
+#import <AppKit/NSView.h>
 
 @interface _NSCornerView : NSView {
 

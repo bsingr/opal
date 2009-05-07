@@ -8,13 +8,14 @@
 
 #import <Foundation/NSBundle.h>
 
-@class NSString, NSDictionary;
+@class NSString
+@class NSDictionary;
 
 @interface NSBundle (NSNibLoading)
 
-+ (BOOL)loadNibFile:(NSString *)fileName externalNameTable:(NSDictionary *)context withZone:(NSZone *)zone;
++ (BOOL)loadNibFile:(NSString *)fileName externalNameTable:(NSDictionary *)context;
 + (BOOL)loadNibNamed:(NSString *)nibName owner:(id)owner;
-- (BOOL)loadNibFile:(NSString *)fileName externalNameTable:(NSDictionary *)context withZone:(NSZone *)zone;
+- (BOOL)loadNibFile:(NSString *)fileName externalNameTable:(NSDictionary *)context;
 
 @end
 

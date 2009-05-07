@@ -6,8 +6,8 @@
 //  Copyright 2009 Adam Beynon. All rights reserved.
 // 
 
-#import <Foundation/NSObject.m>
-#import <Foundation/NSGeometry.m>
+#import <Foundation/NSObject.h>
+#import <Foundation/NSGeometry.h>
 #import <AppKit/NSText.h>
 
 enum {

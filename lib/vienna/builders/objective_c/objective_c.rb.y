@@ -215,20 +215,23 @@ class Vienna::ObjectiveCParser
     	;
 
     class_name_list:
-    	  IDENTIFIER
-    	| class_name_list ',' IDENTIFIER
+    	  class_identifier_or_type_name
+    	| class_name_list ',' class_identifier_or_type_name
     	;
 
     class_with_superclass:
-    	  IDENTIFIER                                                                    { result = Vienna::Node.new(',', val[0], nil) }
-    	| IDENTIFIER ':' IDENTIFIER                                                     { result = Vienna::Node.new(',', val[0], val[2]) }
+    	  class_identifier_or_type_name                     { result = Vienna::Node.new(',', val[0], nil) }
+    	| class_identifier_or_type_name ':' class_identifier_or_type_name  { result = Vienna::Node.new(',', val[0], val[2]) }
     	;
 
     category_name:
-    	  IDENTIFIER { 
-    	    result = val[0] 
-    	  }
+    	  class_identifier_or_type_name                     { result = val[0] }
     	;
+    
+    class_identifier_or_type_name:
+        IDENTIFIER                                        { result = val[0] }
+      | TYPE_NAME                                         { result = val[0] }
+      ;
 
     inherited_protocols:
     	  protocol_list {
@@ -239,15 +242,19 @@ class Vienna::ObjectiveCParser
     class_name_declaration:
     	  class_with_superclass {
     	    result = Vienna::Node.new(',', val[0], nil)
+    	    register_class_name_from_declaration(val[0].left)
     	  }
     	| class_with_superclass '<' inherited_protocols '>' {
     	    result = Vienna::Node.new(',', val[0], Vienna::Node.new(',', val[2], nil))
+    	    register_class_name_from_declaration(val[0].left)
     	  }
     	| class_with_superclass '(' category_name ')' {
     	    result = Vienna::Node.new(',', val[0], Vienna::Node.new(',', nil, val[2]))
+    	    register_class_name_from_declaration(val[0].left)
     	  }
     	| class_with_superclass '<' inherited_protocols '>' '(' category_name ')' {
     	    result = Vienna::Node.new(',', val[0], Vienna::Node.new(',', val[2], val[5]))
+    	    register_class_name_from_declaration(val[0].left)
     	  }
     	;
 
@@ -301,16 +308,15 @@ class Vienna::ObjectiveCParser
     	;
 
     ivar_declaration_list:
-    	  '{' struct_declaration_list '}' {
-    	    result =  val[2]
-    	  }
+    	  '{' struct_declaration_list '}'                   { result =  val[2] }
+    	| '{' '}'                                           { result =  nil }
     	;
     
     class_implementation:
-    	  IDENTIFIER {
+    	  class_identifier_or_type_name {
     	    result = val[1]
     	  }
-    	| IDENTIFIER '(' category_name ')' {
+    	| class_identifier_or_type_name '(' category_name ')' {
     	    result = Vienna::Node.new(',', val[1], val[3])
     	  }
       ;
@@ -359,18 +365,19 @@ class Vienna::ObjectiveCParser
     	  }
     	| AT_INTERFACE class_name_declaration AT_END {
     	    result = Vienna::Node.new(:AT_INTERFACE, Vienna::Node.new(',', val[1], nil), nil)
-    	    new_interface = ObjectiveCInterface.new_from_parse_tree(result)
-    	    add_interface_declaration(new_interface)
+    	    deal_with_interface_declaration(result)
     	  }
     	| AT_INTERFACE class_name_declaration ivar_declaration_list method_declaration_list AT_END {
     	    result = Vienna::Node.new(:AT_INTERFACE, Vienna::Node.new(',', val[1], val[2]), val[3])
-    	    new_interface = ObjectiveCInterface.new_from_parse_tree(result)
-    	    add_interface_declaration(new_interface)
+    	    deal_with_interface_declaration(result)
     	  }
     	| AT_INTERFACE class_name_declaration ivar_declaration_list AT_END {
     	    result = Vienna::Node.new(:AT_INTERFACE, Vienna::Node.new(',', val[1], val[2]), nil)
-    	    new_interface = ObjectiveCInterface.new_from_parse_tree(result)
-    	    add_interface_declaration(new_interface)
+    	    deal_with_interface_declaration(result)
+    	  }
+    	| AT_INTERFACE class_name_declaration method_declaration_list AT_END {
+    	    result = Vienna::Node.new(:AT_INTERFACE, Vienna::Node.new(',', val[1], nil), val[2])
+    	    deal_with_interface_declaration(result)
     	  }
     	| AT_IMPLEMENTATION class_implementation AT_END { 
     	    result = Vienna::Node.new(:AT_IMPLEMENTATION, Vienna::Node.new(',', val[1], nil), nil)
@@ -436,8 +443,8 @@ class Vienna::ObjectiveCParser
     	;
 
     protocol_list:
-    	  IDENTIFIER                                                                    { result = val[0] }
-    	| protocol_list ',' IDENTIFIER                                                  { result = Vienna::Node.new(',', val[0], val[2]) }
+    	  class_identifier_or_type_name                     { result = val[0] }
+    	| protocol_list ',' class_identifier_or_type_name   { result = Vienna::Node.new(',', val[0], val[2]) }
 
     type_specifier:
     	  VOID                                              { result = val[0] }
@@ -710,7 +717,6 @@ require 'strscan'
 	def next_token
 	  
 	  if @scanners.size == 0
-	    puts" No more scanners"
 	    return [false, false]
     end
 	  
@@ -721,7 +727,6 @@ require 'strscan'
     end
 	  
 	  if scanner.empty?
-	    puts "Reached end of file. Swap to next file"
 	    @scanners.slice!(@scanners.size - 1)
 	    return next_token()
 	  end
@@ -732,7 +737,6 @@ require 'strscan'
       #
       when scanner.scan(/(#include|#import)/)
         pp_directive = scanner.scan_until(/.*/).strip!
-        puts " # Import Directive: #{pp_directive}"
         re = /[\<|\"](.*)\/(.*\.h)[\>|\"]/
         md = re.match(pp_directive)
         if md
@@ -750,12 +754,12 @@ require 'strscan'
       
       when scanner.scan(/#define/)
         pp_directive = scanner.scan_until(/.*/).strip!
-        puts " # Define Directive: #{pp_directive}"
+        # puts " # Define Directive: #{pp_directive}"
         return next_token()
         
       when scanner.scan(/#undef/)
         pp_directive = scanner.scan_until(/.*/).strip!
-        puts " # Undef Directive: #{pp_directive}" 
+        # puts " # Undef Directive: #{pp_directive}" 
       
       when scanner.scan(/\n/)
         return next_token()

@@ -6,8 +6,8 @@
 //  Copyright 2009 Adam Beynon. All rights reserved.
 // 
 
-#import <AppKit/NSControl.m>
-#import <AppKit/NSButtonCell.m>
+#import <AppKit/NSControl.h>
+#import <AppKit/NSButtonCell.h>
 
 @interface NSButton : NSControl
 {

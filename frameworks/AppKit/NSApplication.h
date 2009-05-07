@@ -6,7 +6,7 @@
 //  Copyright 2009 Adam Beynon. All rights reserved.
 // 
 
-#import <AppKit/NSResponder.m>
+#import <AppKit/NSResponder.h>
 
 extern NSString *NSModalPanelRunLoopMode;
 extern NSString *NSEventTrackingRunLoopMode;

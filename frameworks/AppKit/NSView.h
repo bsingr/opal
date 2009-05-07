@@ -6,11 +6,11 @@
 //  Copyright 2009 Adam Beynon. All rights reserved.
 // 
 
-#import <AppKit/NSResponder.m>
-#import <Foundation/NSGeometry.m>
-#import <Foundation/NSRange.m>
-#import <AppKit/NSGraphics.m>
-#import <AppKit/NSAnimation.m>
+#import <AppKit/NSResponder.h>
+#import <Foundation/NSGeometry.h>
+#import <Foundation/NSRange.h>
+#import <AppKit/NSGraphics.h>
+#import <AppKit/NSAnimation.h>
 
 enum {
     NSViewNotSizable    = 0,

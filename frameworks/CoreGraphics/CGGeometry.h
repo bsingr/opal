@@ -8,23 +8,20 @@
 
 #include <CoreGraphics/CGBase.h>
 
-struct CGPoint {
+typedef struct _CGPoint {
     CGFloat x;
     CGFloat y;
-};
-typedef struct CGPoint CGPoint;
+} CGPoint;
 
-struct CGSize {
+typedef struct _CGSize {
     CGFloat width;
     CGFloat height;
-};
-typedef struct CGSize CGSize;
+} CGSize;
 
-struct CGRect {
+typedef struct _CGRect {
     CGPoint origin;
     CGSize size;
-};
-typedef struct CGRect CGRect;
+} CGRect;
 
 enum {
     CGRectMinXEdge,

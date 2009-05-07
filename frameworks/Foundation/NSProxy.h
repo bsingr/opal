@@ -6,7 +6,7 @@
 //  Copyright 2009 Adam Beynon. All rights reserved.
 // 
 
-#import <Foundation/NSObject.m>
+#import <Foundation/NSObject.h>
 
 @interface NSProxy <NSObject>
 {

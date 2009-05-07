@@ -8,7 +8,10 @@
 
 #import <Foundation/NSObject.h>
 
-@class NSArray, NSDictionary, NSString, NSError;
+@class NSArray;
+@class NSDictionary;
+@class NSString;
+@class NSError;
 
 @interface NSBundle : NSObject
 {

@@ -43,7 +43,7 @@ module Vienna
     attr_accessor :super_class
   
     def self.new_from_parse_tree(parsetree)
-      puts "Creating new Implementation"
+      
     end
   
     def self.allocate_class_pair(superclass, name)
@@ -124,8 +124,10 @@ module Vienna
   
   class ObjectiveCInterface
     
-    def self.new_from_parse_tree(parsetree)
-      puts "Creating new Interface"
+    attr_reader :name
+    
+    def initialize(parse_tree)
+      @name = parse_tree.left.left.left.left
     end
     
   end

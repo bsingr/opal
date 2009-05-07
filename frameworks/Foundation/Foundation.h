@@ -15,4 +15,5 @@
 #import <Foundation/NSBundle.h>
 #import <Foundation/NSCoder.h>
 #import <Foundation/NSData.h>
+#import <Foundation/NSDate.h>
 #import <Foundation/NSNotification.h>

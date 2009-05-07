@@ -8,6 +8,10 @@
 
 #import <Foundation/NSObjCRuntime.h>
 
+@class NSCoder;
+@class NSInvocation;
+@class NSMethodSignature;
+
 @protocol NSObject
 
 - (BOOL)isEqual:(id)object;
