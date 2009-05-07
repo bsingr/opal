@@ -6,8 +6,12 @@
 //  Copyright 2009 Adam Beynon. All rights reserved.
 // 
 
+// C defined types?????????
+typedef int size_t;
+typedef int bool;
+
 typedef unsigned long CFTypeID;
-typedef unsigned long CFOptionsFlags;
+typedef unsigned long CFOptionFlags;
 typedef unsigned long CFHashCode;
 typedef signed long CFIndex;
 

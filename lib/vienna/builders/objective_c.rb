@@ -18,13 +18,15 @@ module Vienna
   	def initialize
   	  
   	  @scanners = []
+  	  @imported_files = []
 
   	  @interface_declarations = []
   	  @implementation_definitions = []
   	  @protocol_declarations = []
   	  @enum_declarations = []
-  	  @typedef_declrations = []
+  	  @typedef_declarations = []
   	  @struct_declarations = []
+  	  @at_class_list = []
   	  
   	 # make array of objective-c implmenetations
   	end
@@ -55,9 +57,33 @@ module Vienna
     end
     
     def add_typedef_declaration(typedef)
-      
+      @typedef_declarations << typedef.right
     end
-
+    
+    # This handles @class myClass type declarations. As a new header is dealt 
+    # with, this list should really be cleared. For now it is maintained.
+    # Also, this currently only holds one class, i.e. one per statement
+    def deal_with_at_class(d)
+      puts @at_class_list << d.left
+    end
+    
+    # This basically handles declarations sent straight from the parse tree, as
+    # they are encountered. It is important to do this during the parse as we
+    # need to know new definitions as we encounter them.
+    # 
+    # This method only works out the type of declaration, and if (as some are
+    # not) relevat, then it passes the tree off to one of the above functions.
+    # For example, defining variables is not declaring a type, so these can be
+    # dealt with as we walk the tree through scope
+    # 
+    # declaration - of type Vienna::Node for the base of the declaration
+    # 
+    def deal_with_declaration(d)
+      if d.left.left == :TYPEDEF and d.right != nil
+        add_typedef_declaration(d)
+      end
+    end
+    
   	def on_error(error_token_id, error_value, value_stack)
       msg = "parse error "
     	msg << "after #{value_stack.last} " if value_stack.length > 1
@@ -69,22 +95,22 @@ module Vienna
     
     def import_file(file_name, framework_name = nil)
       
-      if framework_name.nil?
-        
-        # No framework, so look in local directory for files
-        f = File.new(file_name)
-        text = f.read
-        @scanners << StringScanner.new(text)
-        
-      else
-        
-        # Look in known framework directories
-        puts "Looking for framework #{framework_name} with header #{file_name}"
-        f = File.new(File.expand_path(File.join(File.dirname(__FILE__), %w[.. .. .. frameworks], framework_name, file_name)).to_s)
-        text = f.read
-        @scanners << StringScanner.new(text)
+      if @imported_files.include? [framework_name, file_name]
+        puts "Already included header: #{file_name}"
+        return
       end
       
+      @imported_files << [framework_name, file_name]
+      
+      the_file = framework_name.nil? ? file_name : File.expand_path(File.join(File.dirname(__FILE__), %w[.. .. .. frameworks], framework_name, file_name)).to_s
+      
+      if File.exists? the_file
+        f = File.new(the_file)
+        text = f.read
+        @scanners << StringScanner.new(text)
+      else
+        puts "Imported file #{file_name} does not exist"
+      end
     end
 
     def tokenize_string(string)
@@ -109,22 +135,22 @@ module Vienna
     # This checks through class interfaces, enums, structs, typedefs and @class
     # declarations. The scope is dealt with on a per file basis. Also scopes can
     # be removed. For example, a #define statement can also be #undef'd
-  	def lookup_type(type_name)
-  	 
-  	  if type_name == "BOOL"
-  	    puts "Returning BOOL for typename"
-  	    return type_name
-	    end
-  	 
+  	def lookup_type(type_name)	 
+      # Just go through interface class names and return that interface
   	  @interface_declarations.each do |interface|
   	    return interface if interface.name == type_name
       end
       
-      puts "Returning nil for symbol: #{type_name}"
+      @typedef_declarations.each do |typedef|
+        return typedef if typedef == type_name
+      end
+      
+      @at_class_list.each do |at_class|
+        return at_class if at_class == type_name
+      end
       
       # If cant find the type, then return nil (i.e, use it as an identifier)
       return nil
-  	 
   	end
     
   end

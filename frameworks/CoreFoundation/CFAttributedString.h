@@ -10,11 +10,11 @@
 #import <CoreFoundation/CFString.h>
 #import <CoreFoundation/CFDictionary.h>
 
-typedef const struct __CFAttributedString *CFAttributedStringRef;
-typedef struct __CFAttributedString *CFMutableAttributedString;
+typedef const void *CFAttributedStringRef;
+typedef void *CFMutableAttributedStringRef;
 
 extern CFAttributedStringRef CFAttributedStringCreate(CFStringRef str, CFDictionaryRef attributes);
-extern CFAttributedStirngRef CFAttributedStringCreateWithSubstring(CFAttributedStringRef aStr, CFRange range);
+extern CFAttributedStringRef CFAttributedStringCreateWithSubstring(CFAttributedStringRef aStr, CFRange range);
 
 extern CFAttributedStringRef CFAttributedStringCreateCopy(CFAttributedStringRef aStr);
 
@@ -28,12 +28,12 @@ extern CFDictionaryRef CFAttributedStringGetAttributesAndLongestEffectiveRange(C
 extern CFTypeRef CFAttributedStringGetAttributeAndLongestEffectiveRange(CFAttributedStringRef aStr, CFIndex loc, CFStringRef attrName, CFRange inRange, CFRange *longestEffectiveRange);
 
 
-extern CFMutableAttributedStringRef CFAttributedStringCreateMutableCopy(CFAllocatorRef alloc, CFIndex maxLength, CFAttributedStringRef aStr);
-extern CFMutableAttributedStringRef CFAttributedStringCreateMutable(CFAllocatorRef alloc, CFIndex maxLength);
+extern CFMutableAttributedStringRef CFAttributedStringCreateMutableCopy(CFIndex maxLength, CFAttributedStringRef aStr);
+extern CFMutableAttributedStringRef CFAttributedStringCreateMutable(CFIndex maxLength);
 extern void CFAttributedStringReplaceString(CFMutableAttributedStringRef aStr, CFRange range, CFStringRef replacement);
 extern CFMutableStringRef CFAttributedStringGetMutableString(CFMutableAttributedStringRef aStr);
 
-extern void CFAttributedStringSetAttributes(CFMutableAttributedStringRef aStr, CFRange range, CFDictionaryRef replacement, Boolean clearOtherAttributes);
+extern void CFAttributedStringSetAttributes(CFMutableAttributedStringRef aStr, CFRange range, CFDictionaryRef replacement, bool clearOtherAttributes);
 extern void CFAttributedStringSetAttribute(CFMutableAttributedStringRef aStr, CFRange range, CFStringRef attrName, CFTypeRef value);
 
 extern void CFAttributedStringRemoveAttribute(CFMutableAttributedStringRef aStr, CFRange range, CFStringRef attrName);

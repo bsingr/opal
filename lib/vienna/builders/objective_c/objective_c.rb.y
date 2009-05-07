@@ -345,6 +345,7 @@ class Vienna::ObjectiveCParser
     objc_declaration:
     	  AT_CLASS class_name_list ';' {
       	  result = Vienna::Node.new(:AT_CLASS, val[1], nil)
+      	  deal_with_at_class(result)
       	}
     	| AT_PROTOCOL class_name_declaration AT_END {
       	  result = Vienna::Node.new(:AT_PROTOCOL, val[1], nil)
@@ -394,29 +395,35 @@ class Vienna::ObjectiveCParser
     	;
 
     declaration:
-    	  declaration_specifiers ';'
-    	| declaration_specifiers init_declarator_list ';'
-    	| objc_declaration { 
-    	    result = val[0]
+    	  declaration_specifiers ';' {
+          # Normal declaration
+    	    result = Vienna::Node.new('d', val[0], nil)
+    	    deal_with_declaration(result)
     	  }
+    	| declaration_specifiers init_declarator_list ';'   {
+    	     # This will be like a typedef or something like extern const nsstring bob = @"hey";
+    	     result = Vienna::Node.new('d', val[0], val[1])
+    	     deal_with_declaration(result)
+    	  }  
+    	| objc_declaration                                  { result = val[0] }
     	;
 
     declaration_specifiers:
     	  storage_class_specifier                           { result = val[0] }
-    	| storage_class_specifier declaration_specifiers
-    	| type_specifier
-    	| type_specifier declaration_specifiers
-    	| type_qualifier
-    	| type_qualifier declaration_specifiers
+    	| storage_class_specifier declaration_specifiers    { result = Vienna::Node.new(',', val[0], val[1]) }
+    	| type_specifier                                    { result = val[0] }   # This will be a typename, void, int, id etc
+    	| type_specifier declaration_specifiers             { result = Vienna::Node.new(',', val[0], val[1]) }
+    	| type_qualifier                                    { result = val[0] }   # This will be const, volatile etc
+    	| type_qualifier declaration_specifiers             { result = Vienna::Node.new(',', val[0], val[1]) }
     	;
 
     init_declarator_list:
-    	  init_declarator
-    	| init_declarator_list ',' init_declarator
+    	  init_declarator                                   { result = val[0] }
+    	| init_declarator_list ',' init_declarator          { result = Vienna::Node.new(',', val[0], val[2]) }
     	;
 
     init_declarator:
-    	  declarator
+    	  declarator                                        { result = val[0] }
     	| declarator '=' initializer
     	;
 
@@ -433,24 +440,24 @@ class Vienna::ObjectiveCParser
     	| protocol_list ',' IDENTIFIER                                                  { result = Vienna::Node.new(',', val[0], val[2]) }
 
     type_specifier:
-    	  VOID
-    	| CHAR
-    	| SHORT
-    	| INT
-    	| LONG
-    	| FLOAT
-    	| DOUBLE
-    	| SIGNED
-    	| UNSIGNED
-    	| struct_or_union_specifier
-    	| enum_specifier
-    	| TYPE_NAME
-    	| ID
-    	| ID '<' protocol_list '>'
-    	| SEL
-    	| BOOL
-    	| UNICHAR
-    	| CLASS
+    	  VOID                                              { result = val[0] }
+    	| CHAR                                              { result = val[0] }
+    	| SHORT                                             { result = val[0] }
+    	| INT                                               { result = val[0] }
+    	| LONG                                              { result = val[0] }
+    	| FLOAT                                             { result = val[0] }
+    	| DOUBLE                                            { result = val[0] }
+    	| SIGNED                                            { result = val[0] }
+    	| UNSIGNED                                          { result = val[0] }
+    	| struct_or_union_specifier                         { result = val[0] }
+    	| enum_specifier                                    { result = val[0] }
+    	| TYPE_NAME                                         { result = val[0] }
+    	| ID                                                { result = val[0] }
+    	| ID '<' protocol_list '>'                          { result = val[0] }
+    	| SEL                                               { result = val[0] }
+    	| BOOL                                              { result = val[0] }
+    	| UNICHAR                                           { result = val[0] }
+    	| CLASS                                             { result = val[0] }
     	;
 
     struct_or_union_specifier:
@@ -508,35 +515,35 @@ class Vienna::ObjectiveCParser
     	;
 
     enum_specifier:
-    	  ENUM '{' enumerator_list '}'
-    	| ENUM IDENTIFIER '{' enumerator_list '}'
-    	| ENUM IDENTIFIER
+    	  ENUM '{' enumerator_list '}'                      { result = Vienna::Node.new('e', Vienna::Node.new(',', val[0], nil), val[2]) }
+    	| ENUM IDENTIFIER '{' enumerator_list '}'           { result = Vienna::Node.new('e', Vienna::Node.new(',', val[0], val[1]), val[3]) }
+    	| ENUM IDENTIFIER                                   { result = Vienna::Node.new('e', Vienna::Node.new(',', val[0], val[1]), nil) }
     	;
 
     enumerator_list:
-    	  enumerator
-    	| enumerator_list ',' enumerator
+    	  enumerator                                        { result = val[0] }
+    	| enumerator_list ',' enumerator                    { result = Vienna::Node.new(',', val[0], val[2]) }
     	;
 
     enumerator:
-    	  IDENTIFIER
-    	| IDENTIFIER '=' constant_expression
+    	  IDENTIFIER                                        { result = Vienna::Node.new('E', val[0], nil) }
+    	| IDENTIFIER '=' constant_expression                { result = Vienna::Node.new('E', val[0], val[3]) }
     	;
 
     type_qualifier:
-    	  CONST
-    	| VOLATILE
-    	| WEAK
-    	| STRONG
+    	  CONST                                             { result = val[0] }
+    	| VOLATILE                                          { result = val[0] }
+    	| WEAK                                              { result = val[0] }
+    	| STRONG                                            { result = val[0] }
     	;
 
     declarator:
-    	  pointer direct_declarator
-    	| direct_declarator
+    	  pointer direct_declarator                         { result = val[1] }   # For now ignore missing pointer ref's.
+    	| direct_declarator                                 { result = val[0] }
     	;
 
     direct_declarator:
-    	  IDENTIFIER
+    	  IDENTIFIER                                        { result = val[0] }
     	| '(' declarator ')'
     	| direct_declarator '[' constant_expression ']'
     	| direct_declarator '[' ']'
@@ -546,10 +553,10 @@ class Vienna::ObjectiveCParser
     	;
 
     pointer:
-    	  '*'
-    	| '*' type_qualifier_list
-    	| '*' pointer
-    	| '*' type_qualifier_list pointer
+    	  '*'                                               { result = nil }
+    	| '*' type_qualifier_list                           { result = val[1] }
+    	| '*' pointer                                       { result = val[1] }
+    	| '*' type_qualifier_list pointer                   { result = Vienna::Node.new(',', val[1], val[2]) }
     	;
 
     type_qualifier_list:
@@ -768,69 +775,69 @@ require 'strscan'
         #single line comment. scan all input (does not include new line char, so skips)
         scanner.scan_until(/.*/)
         return next_token()
-      when scanner.scan(/auto/)
+      when scanner.scan(/auto(?!([a-zA-Z_]|[0-9]))/)
         return [:AUTO, :AUTO]
-      when scanner.scan(/break/)
+      when scanner.scan(/break(?!([a-zA-Z_]|[0-9]))/)
         return [:BREAK, :BREAK]
-      when scanner.scan(/case/)
+      when scanner.scan(/case(?!([a-zA-Z_]|[0-9]))/)
         return [:CASE, :CASE]
-      when scanner.scan(/char/)
+      when scanner.scan(/char(?!([a-zA-Z_]|[0-9]))/)
         return [:CHAR, :CHAR]
-      when scanner.scan(/const/)
+      when scanner.scan(/const(?!([a-zA-Z_]|[0-9]))/)
         return [:CONST, :CONST]
-      when scanner.scan(/continue/)
+      when scanner.scan(/continue(?!([a-zA-Z_]|[0-9]))/)
         return [:CONTINUE, :CONTINUE]
-      when scanner.scan(/default/)
+      when scanner.scan(/default(?!([a-zA-Z_]|[0-9]))/)
         return [:DEFAULT, :DEFAULT]
-      when scanner.scan(/do/)
+      when scanner.scan(/do(?!([a-zA-Z_]|[0-9]))/)
         return [:DO, :DO]
-      when scanner.scan(/double/)
+      when scanner.scan(/double(?!([a-zA-Z_]|[0-9]))/)
         return [:DOUBLE, :DOUBLE]
-      when scanner.scan(/else/)
+      when scanner.scan(/else(?!([a-zA-Z_]|[0-9]))/)
         return [:ELSE, :ELSE]
-      when scanner.scan(/enum/)
+      when scanner.scan(/enum(?!([a-zA-Z_]|[0-9]))/)
         return [:ENUM, :ENUM]
-      when scanner.scan(/extern/)
+      when scanner.scan(/extern(?!([a-zA-Z_]|[0-9]))/)
         return [:EXTERN, :EXTERN]
-      when scanner.scan(/float/)
+      when scanner.scan(/float(?!([a-zA-Z_]|[0-9]))/)
         return [:FLOAT, :FLOAT]
-      when scanner.scan(/for/)
+      when scanner.scan(/for(?!([a-zA-Z_]|[0-9]))/)
         return [:FOR, :FOR]
-      when scanner.scan(/goto/)
+      when scanner.scan(/goto(?!([a-zA-Z_]|[0-9]))/)
         return [:GOTO, :GOTO]
-      when scanner.scan(/if/)
+      when scanner.scan(/if(?!([a-zA-Z_]|[0-9]))/)
         return [:IF, :IF]
-      when scanner.scan(/int/)
+      when scanner.scan(/int(?!([a-zA-Z_]|[0-9]))/)
 	      return [:INT, :INT]
-      when scanner.scan(/long/)
+      when scanner.scan(/long(?!([a-zA-Z_]|[0-9]))/)
         return [:LONG, :LONG]
-      when scanner.scan(/register/)
+      when scanner.scan(/register(?!([a-zA-Z_]|[0-9]))/)
         return [:REGISTER, :REGISTER]
-      when scanner.scan(/return/)
+      when scanner.scan(/return(?!([a-zA-Z_]|[0-9]))/)
         return [:RETURN, :RETURN]
-      when scanner.scan(/short/)
+      when scanner.scan(/short(?!([a-zA-Z_]|[0-9]))/)
         return [:SHORT, :SHORT]
-      when scanner.scan(/signed/)
+      when scanner.scan(/signed(?!([a-zA-Z_]|[0-9]))/)
         return [:SIGNED, :SIGNED]
-      when scanner.scan(/sizeof/)
+      when scanner.scan(/sizeof(?!([a-zA-Z_]|[0-9]))/)
         return [:SIZEOF, :SIZEOF]
-      when scanner.scan(/static/)
+      when scanner.scan(/static(?!([a-zA-Z_]|[0-9]))/)
         return [:STATIC, :STATIC]
-      when scanner.scan(/struct/)
+      when scanner.scan(/struct(?!([a-zA-Z_]|[0-9]))/)
         return [:STRUCT, :STRUCT]
-      when scanner.scan(/switch/)
+      when scanner.scan(/switch(?!([a-zA-Z_]|[0-9]))/)
         return [:SWITCH, :SWITCH]
-      when scanner.scan(/typedef/)
+      when scanner.scan(/typedef(?!([a-zA-Z_]|[0-9]))/)
         return [:TYPEDEF, :TYPEDEF]
-      when scanner.scan(/union/)
+      when scanner.scan(/union(?!([a-zA-Z_]|[0-9]))/)
         return [:UNION, :UNION]
-      when scanner.scan(/unsigned/)
+      when scanner.scan(/unsigned(?!([a-zA-Z_]|[0-9]))/)
         return [:SIGNED, :UNSIGNED]
-      when scanner.scan(/void/)
+      when scanner.scan(/void(?!([a-zA-Z_]|[0-9]))/)
         return [:VOID, :VOID]
-      when scanner.scan(/volatile/)
+      when scanner.scan(/volatile(?!([a-zA-Z_]|[0-9]))/)
         return [:VOLATILE, :VOLATILE]
-      when scanner.scan(/while/)
+      when scanner.scan(/while(?!([a-zA-Z_]|[0-9]))/)
         return [:WHILE, :WHILE]
         
       #  
@@ -882,16 +889,17 @@ require 'strscan'
       #
       # C constants, identifiers and string literals
       #
-      when match = scanner.scan(/[a-zA-Z_]([a-zA-Z_])*/)
-        return (lookup_type(match) == nil) ? [:IDENTIFIER, match] : [:TYPE_NAME, match]  
+        
       when match = scanner.scan(/[a-zA-Z_]([a-zA-Z_]|[0-9])*/)
+        return (lookup_type(match) == nil) ? [:IDENTIFIER, match] : [:TYPE_NAME, match]
+      when match = scanner.scan(/[a-zA-Z_]([a-zA-Z_])*/)
         return (lookup_type(match) == nil) ? [:IDENTIFIER, match] : [:TYPE_NAME, match]
       when match = scanner.scan(/0[xX][a-fA-F0-9]+(u|U|l|L)?/)
         return [:CONSTANT, match]
       when match = scanner.scan(/0[0-9]+(u|U|l|L)?/)
         return [:CONSTANT, match]
-      #when match = scanner.scan(//) # {D}+{IS}?
-      #  return [:CONSTANT, match]
+      when match = scanner.scan(/[0-9]+(u|U|l|L)?/) # {D}+{IS}?
+        return [:CONSTANT, match]
       #when match = scanner.scan(//) # L?'(\\.|[^\\'])+'
       #  return [:CONSTANT, match]
       #when match = scanner.scan(//) # {D}+{E}{FS}?

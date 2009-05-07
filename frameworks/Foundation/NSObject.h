@@ -6,6 +6,8 @@
 //  Copyright 2009 Adam Beynon. All rights reserved.
 // 
 
+#import <Foundation/NSObjCRuntime.h>
+
 @protocol NSObject
 
 - (BOOL)isEqual:(id)object;

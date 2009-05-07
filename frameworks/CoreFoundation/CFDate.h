@@ -2,12 +2,11 @@
 
 typedef double CFTimeInterval;
 typedef CFTimeInterval CFAbsoluteTime;
+typedef void *CFTimeZoneRef;
 
 extern CFAbsoluteTime CFAbsoluteTimeGetCurrent(void);
 
-typedef struct {
-    
-} CFDataRef;
+typedef void *CFDateRef;
 
 extern CFDateRef CFDateCreate(CFAbsoluteTime at);
 extern CFAbsoluteTime CFDateGetAbsoluteTime(CFDateRef theDate);

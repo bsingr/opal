@@ -8,10 +8,10 @@
 
 #import <CoreFoundation/CFBase.h>
 
-typedef __CFArray CFArrayRef;
-typedef __CFMutableArray CFMutableArrayRef;
+typedef void *CFArrayRef;
+typedef void *CFMutableArrayRef;
 
-extern CFArrayRef CFArrayCreate(void **values, numValues);
+extern CFArrayRef CFArrayCreate(void **values, size_t numValues);
 extern CFArrayRef CFArrayCreateCopy(CFArrayRef theArray);
 
 extern CFMutableArrayRef CFArrayCreateMutable(CFIndex capacity);

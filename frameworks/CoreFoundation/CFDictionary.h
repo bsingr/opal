@@ -38,8 +38,8 @@ extern bool CFDictionaryGetValueIfPresent(CFDictionaryRef theDict, void *key, vo
 extern void CFDictionaryGetKeysAndValues(CFDictionaryRef theDict, void **keys, void **values);
 
 extern void CFDictionaryAddValue(CFMutableDictionaryRef theDict, void *key, void *value);
-extern void CFDictionarySetValue(CFMutableFictionaryRef theDict, void *key, void *value);
+extern void CFDictionarySetValue(CFMutableDictionaryRef theDict, void *key, void *value);
 
-extern void CFDictionaryReplaceValue(CFMutableDitionaryRef theDict, void *key, void *value);
+extern void CFDictionaryReplaceValue(CFMutableDictionaryRef theDict, void *key, void *value);
 extern void CFDictionaryRemoveValue(CFMutableDictionaryRef theDict, void *key);
 extern void CFDictionaryRemoveAllValues(CFMutableDictionaryRef theDict);

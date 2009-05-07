@@ -8,5 +8,5 @@
 
 #import <CoreFoundation/CFBase.h>
 
-typedef const __CFBoolean *CFBooleanRef;
-typedef const __CFNumber *CFNumberRef;
+typedef const bool *CFBooleanRef;
+typedef const void *CFNumberRef;

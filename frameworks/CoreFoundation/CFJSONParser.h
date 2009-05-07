@@ -8,7 +8,7 @@
 
 typedef struct {
     CFDataRef jsonData;
-}CFJSONParserRef;
+} CFJSONParserRef;
 
 extern CFJSONParserRef CFJSONParserCreate(CFDataRef jsonData);
-extern bool CFJSONParserParse(CFJSONParseRef parser);
+extern bool CFJSONParserParse(CFJSONParserRef parser);

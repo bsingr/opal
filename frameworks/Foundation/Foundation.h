@@ -9,6 +9,7 @@
 #import <CoreFoundation/CoreFoundation.h>
 #import <objc/objc.h>
 
+#import <Foundation/NSObjCRuntime.h>
 #import <Foundation/NSArchiver.h>
 #import <Foundation/NSArray.h>
 #import <Foundation/NSBundle.h>
