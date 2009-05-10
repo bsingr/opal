@@ -8,7 +8,9 @@
 
 #import <AppKit/NSView.h>
 
-@class NSColor, NSFont, NSNotification;
+@class NSColor;
+@class NSFont;
+@class NSNotification;
 
 enum {
     NSEnterCharacter                = 0x0003,

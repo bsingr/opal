@@ -12,6 +12,16 @@
 #import <AppKit/NSGraphics.h>
 #import <AppKit/NSAnimation.h>
 
+@class CGAffineTransform;
+@class NSComparisonResult;
+@class NSBitmapImageRep;
+@class NSCursor;
+@class CALayer;
+@class CIFilter;
+@class NSShadow;
+@class NSTrackingArea;
+@class NSScrollView;
+
 enum {
     NSViewNotSizable    = 0,
     NSViewMinXMargin    = 1,
@@ -38,7 +48,7 @@ typedef NSInteger NSToolTipTag;
     NSRect          _frame;
     NSRect          _bounds;
     NSWindow       *_window;
-    id           _gState
+    id              _gState;
     
     NSMenu         *_menu;
     NSView         *_superview;
@@ -304,8 +314,8 @@ typedef NSInteger NSToolTipTag;
 
 @end
 
-NSString *NSViewFrameDidChangeNotification;
-NSString *NSViewFocusDidChangeNotification;
-NSString *NSViewBoundsDidChangeNotification;
-NSString *NSViewGlobalFrameDidChangeNotification;
-NSString *NSViewDidUpdateTrackingAreasNotification;
+extern NSString *NSViewFrameDidChangeNotification;
+extern NSString *NSViewFocusDidChangeNotification;
+extern NSString *NSViewBoundsDidChangeNotification;
+extern NSString *NSViewGlobalFrameDidChangeNotification;
+extern NSString *NSViewDidUpdateTrackingAreasNotification;

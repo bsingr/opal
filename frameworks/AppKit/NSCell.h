@@ -10,6 +10,10 @@
 #import <Foundation/NSGeometry.h>
 #import <AppKit/NSText.h>
 
+@class NSFormatter;
+@class NSLineBreakMode;
+@class NSAttributedString;
+
 enum {
     NSAnyType				        = 0,
     NSIntType				        = 1,
@@ -154,7 +158,7 @@ typedef NSUInteger NSControlSize;
 - (void)setFormatter:(NSFormatter *)newFormatter;
 - (id)formatter;
 - (id)objectValue;
-- (void)setObjectValue:(id <NSCopying>)obj;
+- (void)setObjectValue:(id)obj;
 - (BOOL)hasValidObjectValue;
 - (NSString *)stringValue;
 - (void)setStringValue:(NSString *)aString;
@@ -278,7 +282,7 @@ enum {
     NSCellHitNone               = 0,
     NSCellHitContentArea        = 1 << 0,
     NSCellHitEditableTextArea   = 1 << 1,
-    NSCellHitTrackableArea      = 1 << 2,
+    NSCellHitTrackableArea      = 1 << 2
 };
 
 @interface NSCell (NSCellHitTest)

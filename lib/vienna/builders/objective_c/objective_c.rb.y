@@ -241,7 +241,7 @@ class Vienna::ObjectiveCParser
 
     class_name_declaration:
     	  class_with_superclass {
-    	    result = Vienna::Node.new(',', val[0], nil)
+    	    result = Vienna::Node.new(',', val[0], Vienna::Node.new(',', nil, nil))
     	    register_class_name_from_declaration(val[0].left)
     	  }
     	| class_with_superclass '<' inherited_protocols '>' {
@@ -274,23 +274,23 @@ class Vienna::ObjectiveCParser
 
     objc_declaration_specifiers:
     	  do_atribute_specifier objc_declaration_specifiers
-    	| type_name
+    	| type_name                                                                             { result =  val[0] }
     	;
 
     selector_argument_declaration:
-    	  '(' objc_declaration_specifiers ')' IDENTIFIER
+    	  '(' objc_declaration_specifiers ')' IDENTIFIER                                        { result =  Vienna::Node.new(',', val[1], val[3]) }
     	;
 
     selector_with_argument_declaration:
-    	  IDENTIFIER
-    	| IDENTIFIER ':' selector_argument_declaration 
+    	  IDENTIFIER                                                                            { result =  val[0] }
+    	| IDENTIFIER ':' selector_argument_declaration                                          { result =  Vienna::Node.new(':', val[0], val[2]) }
     	| selector_with_argument_declaration selector_component selector_argument_declaration
     	| selector_with_argument_declaration ',' ELLIPSIS
     	;
 
     method_declaration:
     	  class_or_instance_method_specifier '(' objc_declaration_specifiers ')' selector_with_argument_declaration {
-    	    result = Vienna::Node.new(',', Vienna::Node.new(',', val[0], val[2]), val[4])
+    	    result = Vienna::Node.new('m', Vienna::Node.new(',', val[0], val[2]), val[4])
     	  }
     	| AT_PROPERTY '(' property_attributes_list ')' specifier_qualifier_list struct_declarator_list {
     	    result = Vienna::Node.new(:AT_PROPERTY, val[2], Vienna::Node.new(',', val[4],val[5]))
@@ -301,23 +301,23 @@ class Vienna::ObjectiveCParser
       ;
 
     method_declaration_list:
-    	  method_declaration ';'
-    	| AT_OPTIONAL method_declaration ';'
-    	| AT_REQUIRED method_declaration ';'
-    	| method_declaration_list method_declaration ';'
+    	  method_declaration ';'                            { result =  val[0] }
+    	| AT_OPTIONAL method_declaration ';'                { result =  Vienna::Node.new(:AT_OPTIONAL, val[1], nil) }
+    	| AT_REQUIRED method_declaration ';'                { result =  Vienna::Node.new(:AT_REQUIRED, val[1], nil) }
+    	| method_declaration_list method_declaration ';'    { result =  Vienna::Node.new(',', val[0], val[1]) }
     	;
 
     ivar_declaration_list:
-    	  '{' struct_declaration_list '}'                   { result =  val[2] }
+    	  '{' struct_declaration_list '}'                   { result =  val[1] }
     	| '{' '}'                                           { result =  nil }
     	;
     
     class_implementation:
     	  class_identifier_or_type_name {
-    	    result = val[1]
+    	    result = Vienna::Node.new(',', val[0], nil)
     	  }
     	| class_identifier_or_type_name '(' category_name ')' {
-    	    result = Vienna::Node.new(',', val[1], val[3])
+    	    result = Vienna::Node.new(',', val[0], val[2])
     	  }
       ;
     
@@ -360,8 +360,8 @@ class Vienna::ObjectiveCParser
       	}
     	| AT_PROTOCOL class_name_declaration method_declaration_list AT_END {
     	    result = Vienna::Node.new(:AT_PROTOCOL, val[1], val[2])
-    	    new_protocol = ObjectiveCProtocol.new_from_parse_tree(result)
-    	    add_protocol_declaration(new_protocol)
+    	    # new_protocol = ObjectiveCProtocol.new_from_parse_tree(result)
+    	    #          add_protocol_declaration(new_protocol)
     	  }
     	| AT_INTERFACE class_name_declaration AT_END {
     	    result = Vienna::Node.new(:AT_INTERFACE, Vienna::Node.new(',', val[1], nil), nil)
@@ -381,23 +381,19 @@ class Vienna::ObjectiveCParser
     	  }
     	| AT_IMPLEMENTATION class_implementation AT_END { 
     	    result = Vienna::Node.new(:AT_IMPLEMENTATION, Vienna::Node.new(',', val[1], nil), nil)
-    	    new_implementation = ObjectiveCImplementation.new_from_parse_tree(result)
-    	    add_implementation_defintion(new_implementation)
+    	    deal_with_implementation_declaration(result)
     	  }
     	| AT_IMPLEMENTATION class_implementation ivar_declaration_list AT_END {
     	    result = Vienna::Node.new(:AT_IMPLEMENTATION, Vienna::Node.new(',', val[1], val[2]), nil)
-    	    new_implementation = ObjectiveCImplementation.new_from_parse_tree(result)
-    	    add_implementation_defintion(new_implementation)
+    	    deal_with_implementation_declaration(result)
     	  }
     	| AT_IMPLEMENTATION class_implementation method_implementation_list AT_END {
     	    result = Vienna::Node.new(:AT_IMPLEMENTATION, Vienna::Node.new(',', val[1], nil), val[2])
-    	    new_implementation = ObjectiveCImplementation.new_from_parse_tree(result)
-    	    add_implementation_defintion(new_implementation)
+    	    deal_with_implementation_declaration(result)
     	  }
     	| AT_IMPLEMENTATION class_implementation ivar_declaration_list method_implementation_list AT_END {
     	    result = Vienna::Node.new(:AT_IMPLEMENTATION, Vienna::Node.new(',', val[1], val[2]), val[3])
-    	    new_implementation = ObjectiveCImplementation.new_from_parse_tree(result)
-    	    add_implementation_defintion(new_implementation)
+    	    deal_with_implementation_declaration(result)
     	  }
     	;
 
@@ -489,7 +485,7 @@ class Vienna::ObjectiveCParser
     	;
 
     struct_declaration:
-    	  specifier_qualifier_list struct_declarator_list ';'
+    	  specifier_qualifier_list struct_declarator_list ';'                           { result = Vienna::Node.new('i', val[0], val[1]) }
     	| AT_PRIVATE specifier_qualifier_list struct_declarator_list ';'
     	| AT_PUBLIC specifier_qualifier_list struct_declarator_list ';'
     	| AT_PROTECTED specifier_qualifier_list struct_declarator_list ';'
@@ -504,19 +500,19 @@ class Vienna::ObjectiveCParser
     	;
 
     specifier_qualifier_list:
-    	  type_specifier specifier_qualifier_list
-    	| type_specifier
-    	| type_qualifier specifier_qualifier_list
-    	| type_qualifier
+    	  type_specifier specifier_qualifier_list                                       { result = Vienna::Node.new(',', val[0], val[1]) }
+    	| type_specifier                                                                { result = val[0] }
+    	| type_qualifier specifier_qualifier_list                                       { result = Vienna::Node.new(',', val[0], val[1]) }
+    	| type_qualifier                                                                { result = val[0] }
     	;
 
     struct_declarator_list:
-    	  struct_declarator
-    	| struct_declarator_list ',' struct_declarator
+    	  struct_declarator                                                             { result = val[0] }
+    	| struct_declarator_list ',' struct_declarator                                  { result = Vienna::Node.new(',', val[0], val[2]) }
     	;
 
     struct_declarator:
-    	  declarator
+    	  declarator                                                                    { result = val[0] }
     	| ':' constant_expression
     	| declarator ':' constant_expression
     	;
@@ -716,20 +712,22 @@ require 'strscan'
 	
 	def next_token
 	  
-	  if @scanners.size == 0
+	  if @objc_files.size == 0
 	    return [false, false]
     end
 	  
-	  scanner = @scanners.last
+	  objc_file = @objc_files.last
 	  
-	  if !scanner
+	  if !objc_file
       return [false, false]
     end
 	  
-	  if scanner.empty?
-	    @scanners.slice!(@scanners.size - 1)
+	  if objc_file.scanner.empty?
+	    @objc_files.slice!(@objc_files.size - 1)
 	    return next_token()
 	  end
+	  
+	  scanner = objc_file.scanner
 	  
 	  case
       #
@@ -762,6 +760,7 @@ require 'strscan'
         # puts " # Undef Directive: #{pp_directive}" 
       
       when scanner.scan(/\n/)
+        @objc_files.last.current_line += 1
         return next_token()
       when scanner.scan(/[ \t\v\f]/)
         return next_token()
@@ -773,7 +772,8 @@ require 'strscan'
       #
       when scanner.scan(/\/\*/)
         # multi-line comment. scan input until end of multi line comment is found
-        scanner.scan_until(/\*\//)
+        match = scanner.scan_until(/\*\//)
+        @objc_files.last.current_line += match.scan(/\n/).size
         return next_token()
       when scanner.scan(/\/\//)
         #single line comment. scan all input (does not include new line char, so skips)

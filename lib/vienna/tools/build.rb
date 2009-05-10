@@ -19,7 +19,7 @@ module Vienna
       #       parser.parse
       #       puts parser.result
       parser = ObjectiveCParser.new
-      parser.parse_file_to_output("MyFile.m", "")
+      parser.parse_file_to_output("MyFile.m", "MyFile.js")
     end
     
   end

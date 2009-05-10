@@ -17,7 +17,7 @@ enum {
     NSRoundLineCapStyle     = 1,
     NSSquareLineCapStyle    = 2
 };
-typedef NSUinteger NSLineCapStyle;
+typedef NSUInteger NSLineCapStyle;
 
 enum {
     NSMiterLineJoinStyle    = 0,
@@ -111,20 +111,20 @@ typedef NSUInteger NSBezierPathElement;
 
 - (NSInteger)elementCount;
 
-- (NSBezierPathElement)elementAtIndex:(NSInteger)index associatedPoints:(NSPointArray)points;
+// - (NSBezierPathElement)elementAtIndex:(NSInteger)index associatedPoints:(NSPointArray)points;
 
 - (NSBezierPathElement)elementAtIndex:(NSInteger)index;
-- (void)setAssociatedPoints:(NSPointArray)points atIndex:(NSInteger)index;
+// - (void)setAssociatedPoints:(NSPointArray)points atIndex:(NSInteger)index;
 
 - (void)appendBezierPath:(NSBezierPath *)path;
 - (void)appendBezierPathWithRect:(NSRect)rect;
-- (void)appendBezierPathWithPoints:(NSPointArray)points count:(NSInteger)count;
+// - (void)appendBezierPathWithPoints:(NSPointArray)points count:(NSInteger)count;
 - (void)appendBezierPathWithOvalInRect:(NSRect)rect;
 - (void)appendBezierPathWithArcWithCenter:(NSPoint)center radius:(CGFloat)radius startAngle:(CGFloat)startAngle endAngle:(CGFloat)endAngle clockwise:(BOOL)clockwise;
 - (void)appendBezierPathWithArcWithCenter:(NSPoint)center radius:(CGFloat)radius startAngle:(CGFloat)startAngle endAngle:(CGFloat)endAngle;
 - (void)appendBezierPathWithArcFromPoint:(NSPoint)point1 toPoint:(NSPoint)point2 radius:(CGFloat)radius;
-- (void)appendBezierPathWithGlyph:(NSGlyph)glyph inFont:(NSFont *)font;
-- (void)appendBezierPathWithGlyphs:(NSGlyph *)glyphs count:(NSInteger)count inFont:(NSFont *)font;
+// - (void)appendBezierPathWithGlyph:(NSGlyph)glyph inFont:(NSFont *)font;
+// - (void)appendBezierPathWithGlyphs:(NSGlyph *)glyphs count:(NSInteger)count inFont:(NSFont *)font;
 - (void)appendBezierPathWithPackedGlyphs:(const char *)packedGlyphs;
 - (void)appendBezierPathWithRoundedRect:(NSRect)rect xRadius:(CGFloat)xRadius yRadius:(CGFloat)yRadius;
 

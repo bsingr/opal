@@ -8,7 +8,7 @@
 
 module Vienna
   
-  attr_reader :project_root
+  attr_accessor :project_root
   
   class Project
     

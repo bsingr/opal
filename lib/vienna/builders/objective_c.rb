@@ -11,13 +11,14 @@ require 'strscan'
 
 module Vienna
   
+  
   class ObjectiveCParser < Racc::Parser
     
     attr_reader :tokens
 
   	def initialize
   	  
-  	  @scanners = []
+  	  @objc_files = []
   	  @imported_files = []
 
   	  @interface_declarations = []
@@ -29,17 +30,15 @@ module Vienna
   	  @at_class_list = []
   	  @known_classes = []
   	  
-  	 # make array of objective-c implmenetations
   	end
   	
   	def parse_file_to_output(source, output)
   	  tokenize_file(source)
-  	  parse
+  	  parse  	  
+  	  f= File.new(output, 'w')
+      # f.write("hello")
+  	  f.close
   	end
-  	
-  	def deal_with_interface_declaration(interface)
-  	  @interface_declarations << ObjectiveCInterface.new(interface)
-	  end
 	  
 	  def add_category_declaration(category)
 	    
@@ -86,19 +85,40 @@ module Vienna
     def deal_with_declaration(d)
       if d.left.left == :TYPEDEF and d.right != nil
         add_typedef_declaration(d)
+      elsif d.left.left == :EXTERN
+        # Should we really need to deal with extern declaration here?!
+        # Maybe only during going through the parse tree. who knows?!
+      elsif d.left.value == "e"
+        add_enum_declaration(d)
+      else
+        puts "Should throw error: unable to determine declaration type"
       end
     end
     
-    # Thrown on a parsing error
+    # Thrown on a parsing error. Racc already ends the parsing and the error is
+    # printed to the user. This is currently fine for one file, but when dealing
+    # with projects, one failed build should end the whole build process and
+    # inform the user. This therefore needs to report back to the "project"
+    # object with news of what happened.
   	def on_error(error_token_id, error_value, value_stack)
-      msg = "parse error "
-    	msg << "after #{value_stack.last} " if value_stack.length > 1
-    	msg << "after #{value_stack.last} " unless value_stack.empty?
-    	msg << "on #{token_to_str(error_token_id)} #{error_value}"
-    	puts msg
-    	#raise ParseError, msg
+  	  msg = "#{@objc_files.last.file_path}"
+  	  msg << "(#{@objc_files.last.current_line})"
+      msg << " error: "
+    	# msg << "after #{value_stack.last} " if value_stack.length > 1
+    	#      msg << "after #{value_stack.last} " unless value_stack.empty?
+    	#      msg << "on #{token_to_str(error_token_id)} #{error_value}"
+    	msg << "was not expecting token #{error_value} of type #{token_to_str(error_token_id)}"
+    	
+      puts msg
+      # raise ParseError, msg
     end
     
+    # Imports a file both locally and from known framework directories. This
+    # should really check local files based on the current directory of the
+    # current file, and not hardcode framworks, but this will do for now.
+    # 
+    # On finding an error (file doesnt exist, etc) an error should be thrown
+    # and parsing should finish (this could be reduced to just a warning??).
     def import_file(file_name, framework_name = nil)
       
       if @imported_files.include? [framework_name, file_name]
@@ -106,27 +126,27 @@ module Vienna
       end
       
       @imported_files << [framework_name, file_name]
-      
       the_file = framework_name.nil? ? file_name : File.expand_path(File.join(File.dirname(__FILE__), %w[.. .. .. frameworks], framework_name, file_name)).to_s
+      new_objc = ObjectiveCFile.new(the_file)
       
-      if File.exists? the_file
-        f = File.new(the_file)
-        text = f.read
-        @scanners << StringScanner.new(text)
-      else
-        puts "Imported file #{file_name} does not exist"
+      if new_objc.valid?
+        @objc_files << new_objc
       end
     end
+
 
     def tokenize_string(string)
       # parse string here
       @scanners << StringScanner.new(string)
     end
 
+
     def tokenize_file(file)
-      f = File.new(file)
-      text = f.read
-      @scanners << StringScanner.new(text)
+      new_objc = ObjectiveCFile.new(file)
+      
+      if new_objc.valid?
+        @objc_files << new_objc
+      end
     end
 
   	def parse
@@ -162,7 +182,6 @@ module Vienna
       # If cant find the type, then return nil (i.e, use it as an identifier)
       return nil
   	end
-    
   end
   
 end

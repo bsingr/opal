@@ -8,8 +8,36 @@
 
 module Vienna
 
-  class Node
+  # This class is used to represent a file that is, or will be, parsed and 
+  # tokeniszed by the parser. This class holds references to scanners used
+  # to tokenize the file, the file's path, and other details that might be
+  # used at some point during parsing.
+  class ObjectiveCFile
     
+    attr_accessor :scanner, :file_path, :current_line
+    
+    def initialize(file_path)
+      @file_path = file_path
+      @valid_file = true
+      @current_line = 1
+      
+      if File.exists? file_path
+        f = File.new(file_path)
+        text = f.read
+        @scanner = StringScanner.new(text)
+      else
+        puts "Imported file #{file_path} does not exist"
+        @valid_file = false
+      end
+    end
+    
+    def valid?
+      @valid_file
+    end
+    
+  end
+
+  class Node
     attr_reader :value, :left, :right
     
     # Creates a binary tree from an array [value, left, right],
@@ -19,7 +47,7 @@ module Vienna
       @left = left
       @right = right
     end
-    
+  
     # returns true if this tree has no children
     def leaf?
       @left == nil and @right == nil      
@@ -27,164 +55,30 @@ module Vienna
     
     # returns the array representation of the tree
     def to_s
-      if leaf?
-        "#{@value}"
-      else
-        "['#{value}', '#{left}', '#{right}']"
-      end
+      leaf? ? "#{@value}" : "['#{value}', '#{left}', '#{right}']"
     end
-    
-  end
-
-  class ObjectiveCImplementation
-  
-    attr_reader :name, :ivar_list, :property_list, :method_list, :protocol_list
-    
-    attr_accessor :super_class
-  
-    def self.new_from_parse_tree(parsetree)
-      
-    end
-  
-    def self.allocate_class_pair(superclass, name)
-      new_class = self.new(name)
-      new_class.super_class = superclass
-      return new_class
-    end
-  
-    def initialize(name)
-      @name = name;
-      @isa = nil
-      @isa = self
-      @super_class = nil
-      @version = nil
-      @info = nil
-      @ivar_list = []
-      @method_list = []
-      @protocol_list = []
-      @property_list = []
-    end
-    
-    def meta_class?
-      false
-    end
-    
-    def instance_variable(name)
-      @ivar_list[name]
-    end
-    
-    def class_variable(name)
-      @ivar_list[name]
-    end
-    
-    # Add new instance variable to class
-    # returns true if everything is OK (i.e. false if class has variable already)
-    # name should be a string, type should also be a string
-    def add_ivar(name, type)
-      @ivar_list << ObjjIvar.new(name, type)
-    end
-    
-    def property(name)
-      
-    end
-    
-    def add_method(name, imp, types)
-      @method_list << ObjjMethod.new(name, imp, types)
-    end
-    
-    def instance_method(aSelector)
-      
-    end
-    
-    def class_method(aSelector)
-      
-    end
-    
-    def replace_method(name, imp, types)
-      
-    end
-    
-    def method_implementation(name)
-      @method_list[name].method_imp
-    end
-    
-    def responds_to_selector?(sel)
-      true
-    end
-    
-    def add_protocol(protocol)
-      @protocol_list << protocol
-    end
-    
-    def conforms_to_protocol?(protocol)
-      true
-    end
-    
   end
   
-  class ObjectiveCInterface
+  
+  class ObjectiveCIvar
     
-    attr_reader :name
+    attr_accessor :type, :name
     
-    def initialize(parse_tree)
-      @name = parse_tree.left.left.left.left
+    def initialize
+      @type = nil
+      @name = nil
     end
-    
   end
   
-  class ObjectiveCProtocol
-    
-    def self.new_from_parse_tree(parsetree)
-      
-    end
-    
-  end
   
   class ObjectiveCProperty
     
-    def self.new_from_parse_tree(parsetree)
-      
+    attr_accessor :type, :name
+    
+    def initialize
+      @name = nil
+      @type = nil
     end
-    
-  end
-  
-  class ObjectiveCSynthesize
-    
-    def self.new_from_parse_tree(parsetree)
-    
-    end
-    
-  end
-  
-  class ObjectiveCMethod
-    
-    def self.new_from_parse_tree(parsetree)
-      
-    end
-    
-  end
-  
-  class ObjjIvar
-    
-    attr_reader :name, :type
-    
-    def initialize(name, type)
-      @name = name
-      @type = type
-    end
-    
-  end
-  
-  class ObjjMethod
-    
-    attr_reader :name, :method_types, :method_imp
-    
-    def initialize(name, imp, types)
-      @name = name
-      @method_types = imp
-      @method_imp = types
-    end
-    
   end
   
 end

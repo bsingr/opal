@@ -8,6 +8,15 @@
 
 #import <Foundation/NSObject.h>
 
+@class NSEvent;
+@class NSMenu;
+@class NSUndoManager;
+@class NSWindow;
+@class NSGraphicsContext;
+@class NSImage;
+@class NSException;
+@class NSPasteboard;
+
 @interface NSResponder : NSObject <NSCoding>
 {
     id _nextResponder;
@@ -57,7 +66,7 @@
 @end
 
 
-@interface NSReponder (NSStandardKeyBindingMethods)
+@interface NSResponder (NSStandardKeyBindingMethods)
 
 // NSResponder does not implement any of these, and should be implmented by custom classes
 // Defining methods as they would appear in an interface means they are not implemented 
