@@ -1105,7 +1105,7 @@ racc_reduce_table = [
   4, 163, :_reduce_117,
   1, 164, :_reduce_118,
   3, 164, :_reduce_119,
-  3, 164, :_reduce_none,
+  3, 164, :_reduce_120,
   3, 164, :_reduce_none,
   5, 165, :_reduce_122,
   6, 165, :_reduce_123,
@@ -1989,7 +1989,12 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 285)
   end
 .,.,
 
-# reduce 120 omitted
+module_eval(<<'.,.,', 'objective_c.rb.y', 286)
+  def _reduce_120(val, _values, result)
+     result =  Vienna::Node.new(',', val[0], Vienna::Node.new(':', val[1], val[2])) 
+    result
+  end
+.,.,
 
 # reduce 121 omitted
 

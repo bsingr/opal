@@ -68,6 +68,8 @@ module Vienna
       
       interface.deal_with_method_list(method_declarations) unless method_declarations.nil?
       
+      puts interface
+      
 	  end
 	    
     # Returns the interface object, by name, in its entirety. Method returns nil
@@ -98,7 +100,16 @@ module Vienna
     # Over-rides to_s method to display class name and superclass, or just class
     # name if the class has no superclass (should just be NSObject...)
     def to_s
-      @super_class ? "#{@name} : #{@super_class}" : "#{@name}"
+      s = @super_class ? "#{@name} : #{@super_class}\n" : "#{@name}\n"
+      s << "  -Properties\n"
+      @properties.each do |p|
+         s << "     #{p.type} #{p.name}\n"
+      end
+      s << "  -Ivars\n"
+      @ivars.each do |i|
+        s << "     #{i.type} #{i.name}\n"
+      end
+      return s
     end
     
     # takes the parse tree of an ivar list, and adds each ivar to the object's
@@ -131,7 +142,12 @@ module Vienna
         deal_with_method_list(methods.left)
         deal_with_method_list(methods.right)
       elsif methods.value == "m"
-        # puts "Found method"
+        new_method = ObjectiveCMethod.new(methods)
+        if new_method.instance_method?
+          @instance_methods << new_method
+        else
+          @class_methods << new_method
+        end
       elsif methods.value == :AT_PROPERTY
         new_prop = ObjectiveCProperty.new
         new_prop.name = methods.right.right

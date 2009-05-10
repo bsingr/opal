@@ -37,8 +37,13 @@ module Vienna
     
   end
 
+
+  # Used to make a tree of the parsed progream for walking the tree. Value is the
+  # value returned by the parse tree, which should be an ParseValue type listed
+  # below. Left and right are links to the relevant Nodes, and may be nil (which)
+  # is often the case for leaves.
   class Node
-    attr_reader :value, :left, :right
+    attr_reader :value, :left, :right, :file_path, :line_number
     
     # Creates a binary tree from an array [value, left, right],
     # where left and right may themselves be values
@@ -46,6 +51,10 @@ module Vienna
       @value = value
       @left = left
       @right = right
+      # file that the Node was created in
+      @file_path = nil
+      # line number that the Node was created at
+      @line_number = nil
     end
   
     # returns true if this tree has no children

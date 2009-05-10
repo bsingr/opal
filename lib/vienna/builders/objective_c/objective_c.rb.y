@@ -284,7 +284,7 @@ class Vienna::ObjectiveCParser
     selector_with_argument_declaration:
     	  IDENTIFIER                                                                            { result =  val[0] }
     	| IDENTIFIER ':' selector_argument_declaration                                          { result =  Vienna::Node.new(':', val[0], val[2]) }
-    	| selector_with_argument_declaration selector_component selector_argument_declaration
+    	| selector_with_argument_declaration selector_component selector_argument_declaration   { result =  Vienna::Node.new(',', val[0], Vienna::Node.new(':', val[1], val[2])) }
     	| selector_with_argument_declaration ',' ELLIPSIS
     	;
 
