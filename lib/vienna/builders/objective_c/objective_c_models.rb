@@ -90,4 +90,52 @@ module Vienna
     end
   end
   
+  class ObjectiveCEnum
+    
+    attr_accessor :name, :enums
+    
+    def initialize
+      @name = nil
+      @enums = Hash.new
+      @current_enum_value = -1
+    end
+    
+    def deal_with_enum_list(list)
+      return unless list
+      
+      if list.value == ","
+        deal_with_enum_list(list.left)
+        deal_with_enum_list(list.right)
+      elsif list.value == "E"
+        if list.right.nil?
+          @enums.store(list.left, @current_enum_value = @current_enum_value.to_i + 1)
+        else
+          @current_enum_value = enum_evaluate(list.right)
+          @enums.store(list.left, @current_enum_value)
+        end
+      end
+    end
+    
+    def enum_evaluate(tree)
+            
+      if tree.class == String # or tree.class == Fixnum
+        return tree
+      end
+      
+      if tree.value == "("
+        return enum_evaluate(tree.left)
+      elsif tree.value == ","
+        if tree.left == "-"
+          return tree.right.to_i * -1
+        end
+        return 0
+      elsif tree.value == :LEFT_OP
+        return enum_evaluate(tree.left).to_i << enum_evaluate(tree.right).to_i
+      else
+        return tree
+      end
+    end
+    
+  end
+  
 end

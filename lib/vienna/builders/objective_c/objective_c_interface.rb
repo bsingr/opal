@@ -66,10 +66,7 @@ module Vienna
       
       interface.deal_with_ivar_list(ivar_list) unless ivar_list.nil?
       
-      interface.deal_with_method_list(method_declarations) unless method_declarations.nil?
-      
-      puts interface
-      
+      interface.deal_with_method_list(method_declarations) unless method_declarations.nil?     
 	  end
 	    
     # Returns the interface object, by name, in its entirety. Method returns nil

@@ -52,8 +52,10 @@ module Vienna
       
     end
     
-    def add_enum_declaration(enum)
-      
+    def deal_with_enum_declaration(enum)
+      new_enum = ObjectiveCEnum.new
+      new_enum.deal_with_enum_list(enum.left.right)
+      @enum_declarations << new_enum
     end
     
     def add_typedef_declaration(typedef)
@@ -89,7 +91,7 @@ module Vienna
         # Should we really need to deal with extern declaration here?!
         # Maybe only during going through the parse tree. who knows?!
       elsif d.left.value == "e"
-        add_enum_declaration(d)
+        deal_with_enum_declaration(d)
       else
         puts "Should throw error: unable to determine declaration type"
       end

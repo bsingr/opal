@@ -70,10 +70,10 @@ class Vienna::ObjectiveCParser
     	;
 
     primary_expression:
-    	  IDENTIFIER
-    	| CONSTANT
-    	| STRING_LITERAL
-    	| '(' expression ')'
+    	  IDENTIFIER                                        { result = val[0] }
+    	| CONSTANT                                          { result = val[0] }
+    	| STRING_LITERAL                                    { result = val[0] }
+    	| '(' expression ')'                                { result = Vienna::Node.new('(', val[1], nil) }
     	| AT_STRING_LITERAL
     	| '[' expression selector_with_arguments ']'
     	| AT_SELECTOR '(' selector ')'
@@ -84,7 +84,7 @@ class Vienna::ObjectiveCParser
     	;
 
     postfix_expression:
-    	  primary_expression
+    	  primary_expression                                { result = val[0] }
     	| postfix_expression '[' expression ']'
     	| postfix_expression '(' ')'
     	| postfix_expression '(' argument_expression_list ')'
@@ -100,94 +100,94 @@ class Vienna::ObjectiveCParser
     	;
 
     unary_expression:
-    	  postfix_expression
+    	  postfix_expression                                { result = val[0] }
     	| INC_OP unary_expression
     	| DEC_OP unary_expression
-    	| unary_operator cast_expression
+    	| unary_operator cast_expression                    { result = Vienna::Node.new(',', val[0], val[1]) }
     	| SIZEOF unary_expression
     	| SIZEOF '(' type_name ')'
     	;
 
     unary_operator:
-    	  '&'
-    	| '*'
-    	| '+'
-    	| '-'
-    	| '~'
-    	| '!'
+    	  '&'                                               { result = val[0] }
+    	| '*'                                               { result = val[0] }
+    	| '+'                                               { result = val[0] }
+    	| '-'                                               { result = val[0] }
+    	| '~'                                               { result = val[0] }
+    	| '!'                                               { result = val[0] }
     	;
 
     cast_expression:
-    	  unary_expression
+    	  unary_expression                                  { result = val[0] }
     	| '(' type_name ')' cast_expression
     	| '(' type_name ')' '{' struct_component_expression '}'	/* gcc extension to create a temporary struct */
     	;
 
     multiplicative_expression:
-    	  cast_expression
+    	  cast_expression                                   { result = val[0] }
     	| multiplicative_expression '*' cast_expression
     	| multiplicative_expression '/' cast_expression
     	| multiplicative_expression '%' cast_expression
     	;
 
     additive_expression:
-    	  multiplicative_expression
+    	  multiplicative_expression                         { result = val[0] }
     	| additive_expression '+' multiplicative_expression
     	| additive_expression '-' multiplicative_expression
     	;
 
     shift_expression:
-    	  additive_expression
-    	| shift_expression LEFT_OP additive_expression
-    	| shift_expression RIGHT_OP additive_expression
+    	  additive_expression                               { result = val[0] }
+    	| shift_expression LEFT_OP additive_expression      { result = Vienna::Node.new(:LEFT_OP, val[0], val[2]) }
+    	| shift_expression RIGHT_OP additive_expression     { result = Vienna::Node.new(:LEFT_OP, val[0], val[2]) }
     	;
 
     relational_expression:
-    	  shift_expression
+    	  shift_expression                                  { result = val[0] }
     	| relational_expression '<' shift_expression
     	| relational_expression '>' shift_expression
-    	| relational_expression LE_OP shift_expression
+    	| relational_expression LE_OP shift_expression      
     	| relational_expression GE_OP shift_expression
     	;
 
     equality_expression:
-    	  relational_expression
+    	  relational_expression                             { result = val[0] }
     	| equality_expression EQ_OP relational_expression
     	| equality_expression NE_OP relational_expression
     	;
 
     and_expression:
-    	  equality_expression
+    	  equality_expression                               { result = val[0] }
     	| and_expression '&' equality_expression
     	;
 
     exclusive_or_expression:
-    	  and_expression
+    	  and_expression                                    { result = val[0] }
     	| exclusive_or_expression '^' and_expression
     	;
 
     inclusive_or_expression:
-    	  exclusive_or_expression
+    	  exclusive_or_expression                           { result = val[0] }
     	| inclusive_or_expression '|' exclusive_or_expression
     	;
 
     logical_and_expression:
-    	  inclusive_or_expression
+    	  inclusive_or_expression                           { result = val[0] }
     	| logical_and_expression AND_OP inclusive_or_expression
     	;
 
     logical_or_expression:
-    	  logical_and_expression
+    	  logical_and_expression                            { result = val[0] }
     	| logical_or_expression OR_OP logical_and_expression
     	;
 
     conditional_expression:
-    	  logical_or_expression
+    	  logical_or_expression                             { result = val[0] }
     	| logical_or_expression '?' expression ':' conditional_expression
     	;
 
     assignment_expression:
-    	  conditional_expression
+    	  conditional_expression                            { result = val[0] }
     	| unary_expression assignment_operator assignment_expression
     	;
 
@@ -206,12 +206,12 @@ class Vienna::ObjectiveCParser
     	;
 
     expression:
-    	  assignment_expression
+    	  assignment_expression                             { result = val[0] }
     	| expression ',' assignment_expression
     	;
 
     constant_expression:
-    	  conditional_expression
+    	  conditional_expression                            { result = val[0] }
     	;
 
     class_name_list:
@@ -519,7 +519,7 @@ class Vienna::ObjectiveCParser
 
     enum_specifier:
     	  ENUM '{' enumerator_list '}'                      { result = Vienna::Node.new('e', Vienna::Node.new(',', val[0], nil), val[2]) }
-    	| ENUM IDENTIFIER '{' enumerator_list '}'           { result = Vienna::Node.new('e', Vienna::Node.new(',', val[0], val[1]), val[3]) }
+    	| ENUM IDENTIFIER '{' enumerator_list '}'           { result = Vienna::Node.new('e', Vienna::Node.new(',', val[0], val[1]), val[2]) }
     	| ENUM IDENTIFIER                                   { result = Vienna::Node.new('e', Vienna::Node.new(',', val[0], val[1]), nil) }
     	;
 
@@ -530,7 +530,7 @@ class Vienna::ObjectiveCParser
 
     enumerator:
     	  IDENTIFIER                                        { result = Vienna::Node.new('E', val[0], nil) }
-    	| IDENTIFIER '=' constant_expression                { result = Vienna::Node.new('E', val[0], val[3]) }
+    	| IDENTIFIER '=' constant_expression                { result = Vienna::Node.new('E', val[0], val[2]) }
     	;
 
     type_qualifier:
