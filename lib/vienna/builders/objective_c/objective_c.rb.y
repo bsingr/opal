@@ -73,7 +73,7 @@ class Vienna::ObjectiveCParser
     	  IDENTIFIER                                        { result = val[0] }
     	| CONSTANT                                          { result = val[0] }
     	| STRING_LITERAL                                    { result = val[0] }
-    	| '(' expression ')'                                { result = Vienna::Node.new('(', val[1], nil) }
+    	| '(' expression ')'                                { result = make_node('(', val[1], nil) }
     	| AT_STRING_LITERAL
     	| '[' expression selector_with_arguments ']'
     	| AT_SELECTOR '(' selector ')'
@@ -103,7 +103,7 @@ class Vienna::ObjectiveCParser
     	  postfix_expression                                { result = val[0] }
     	| INC_OP unary_expression
     	| DEC_OP unary_expression
-    	| unary_operator cast_expression                    { result = Vienna::Node.new(',', val[0], val[1]) }
+    	| unary_operator cast_expression                    { result = make_node(',', val[0], val[1]) }
     	| SIZEOF unary_expression
     	| SIZEOF '(' type_name ')'
     	;
@@ -119,90 +119,90 @@ class Vienna::ObjectiveCParser
 
     cast_expression:
     	  unary_expression                                  { result = val[0] }
-    	| '(' type_name ')' cast_expression
+    	| '(' type_name ')' cast_expression                 { result = make_node('c', val[1], val[3]) }
     	| '(' type_name ')' '{' struct_component_expression '}'	/* gcc extension to create a temporary struct */
     	;
 
     multiplicative_expression:
     	  cast_expression                                   { result = val[0] }
-    	| multiplicative_expression '*' cast_expression
-    	| multiplicative_expression '/' cast_expression
-    	| multiplicative_expression '%' cast_expression
+    	| multiplicative_expression '*' cast_expression     { result = make_node('*', val[0], val[2]) }
+    	| multiplicative_expression '/' cast_expression     { result = make_node('/', val[0], val[2]) }
+    	| multiplicative_expression '%' cast_expression     { result = make_node('%', val[0], val[2]) }
     	;
 
     additive_expression:
     	  multiplicative_expression                         { result = val[0] }
-    	| additive_expression '+' multiplicative_expression
-    	| additive_expression '-' multiplicative_expression
+    	| additive_expression '+' multiplicative_expression { result = make_node('+', val[0], val[2]) }
+    	| additive_expression '-' multiplicative_expression { result = make_node('-', val[0], val[2]) }
     	;
 
     shift_expression:
     	  additive_expression                               { result = val[0] }
-    	| shift_expression LEFT_OP additive_expression      { result = Vienna::Node.new(:LEFT_OP, val[0], val[2]) }
-    	| shift_expression RIGHT_OP additive_expression     { result = Vienna::Node.new(:LEFT_OP, val[0], val[2]) }
+    	| shift_expression LEFT_OP additive_expression      { result = make_node(:LEFT_OP, val[0], val[2]) }
+    	| shift_expression RIGHT_OP additive_expression     { result = make_node(:RIGHT_OP, val[0], val[2]) }
     	;
 
     relational_expression:
     	  shift_expression                                  { result = val[0] }
-    	| relational_expression '<' shift_expression
-    	| relational_expression '>' shift_expression
-    	| relational_expression LE_OP shift_expression      
-    	| relational_expression GE_OP shift_expression
+    	| relational_expression '<' shift_expression        { result = make_node('<', val[0], val[2]) }
+    	| relational_expression '>' shift_expression        { result = make_node('>', val[0], val[2]) }
+    	| relational_expression LE_OP shift_expression      { result = make_node(:LE_OP, val[0], val[2]) }
+    	| relational_expression GE_OP shift_expression      { result = make_node(:GE_OP, val[0], val[2]) }
     	;
 
     equality_expression:
     	  relational_expression                             { result = val[0] }
-    	| equality_expression EQ_OP relational_expression
-    	| equality_expression NE_OP relational_expression
+    	| equality_expression EQ_OP relational_expression   { result = make_node(:EQ_OP, val[0], val[2]) }
+    	| equality_expression NE_OP relational_expression   { result = make_node(:NE_OP, val[0], val[2]) }
     	;
 
     and_expression:
     	  equality_expression                               { result = val[0] }
-    	| and_expression '&' equality_expression
+    	| and_expression '&' equality_expression            { result = make_node('&', val[0], val[2]) }
     	;
 
     exclusive_or_expression:
     	  and_expression                                    { result = val[0] }
-    	| exclusive_or_expression '^' and_expression
+    	| exclusive_or_expression '^' and_expression        { result = make_node('^', val[0], val[2]) }
     	;
 
     inclusive_or_expression:
     	  exclusive_or_expression                           { result = val[0] }
-    	| inclusive_or_expression '|' exclusive_or_expression
+    	| inclusive_or_expression '|' exclusive_or_expression { result = make_node('|', val[0], val[2]) }
     	;
 
     logical_and_expression:
     	  inclusive_or_expression                           { result = val[0] }
-    	| logical_and_expression AND_OP inclusive_or_expression
+    	| logical_and_expression AND_OP inclusive_or_expression { result = make_node(:AND_OP, val[0], val[2]) }
     	;
 
     logical_or_expression:
     	  logical_and_expression                            { result = val[0] }
-    	| logical_or_expression OR_OP logical_and_expression
+    	| logical_or_expression OR_OP logical_and_expression  { result = make_node(:OR_OP, val[0], val[2]) }
     	;
 
     conditional_expression:
     	  logical_or_expression                             { result = val[0] }
-    	| logical_or_expression '?' expression ':' conditional_expression
+    	| logical_or_expression '?' expression ':' conditional_expression { result = make_node('?', val[0], make_node(',', val[2], val[4])) }
     	;
 
     assignment_expression:
     	  conditional_expression                            { result = val[0] }
-    	| unary_expression assignment_operator assignment_expression
+    	| unary_expression assignment_operator assignment_expression  { result = make_node(val[1], val[0], val[2]) }
     	;
 
     assignment_operator:
-    	  '='
-    	| MUL_ASSIGN
-    	| DIV_ASSIGN
-    	| MOD_ASSIGN
-    	| ADD_ASSIGN
-    	| SUB_ASSIGN
-    	| LEFT_ASSIGN
-    	| RIGHT_ASSIGN
-    	| AND_ASSIGN
-    	| XOR_ASSIGN
-    	| OR_ASSIGN
+    	  '='                                               { result = val[0] }
+    	| MUL_ASSIGN                                        { result = val[0] }
+    	| DIV_ASSIGN                                        { result = val[0] }
+    	| MOD_ASSIGN                                        { result = val[0] }
+    	| ADD_ASSIGN                                        { result = val[0] }
+    	| SUB_ASSIGN                                        { result = val[0] }
+    	| LEFT_ASSIGN                                       { result = val[0] }
+    	| RIGHT_ASSIGN                                      { result = val[0] }
+    	| AND_ASSIGN                                        { result = val[0] }
+    	| XOR_ASSIGN                                        { result = val[0] }
+    	| OR_ASSIGN                                         { result = val[0] }
     	;
 
     expression:
@@ -220,8 +220,8 @@ class Vienna::ObjectiveCParser
     	;
 
     class_with_superclass:
-    	  class_identifier_or_type_name                     { result = Vienna::Node.new(',', val[0], nil) }
-    	| class_identifier_or_type_name ':' class_identifier_or_type_name  { result = Vienna::Node.new(',', val[0], val[2]) }
+    	  class_identifier_or_type_name                     { result = make_node(',', val[0], nil) }
+    	| class_identifier_or_type_name ':' class_identifier_or_type_name  { result = make_node(',', val[0], val[2]) }
     	;
 
     category_name:
@@ -241,19 +241,19 @@ class Vienna::ObjectiveCParser
 
     class_name_declaration:
     	  class_with_superclass {
-    	    result = Vienna::Node.new(',', val[0], Vienna::Node.new(',', nil, nil))
+    	    result = make_node(',', val[0], make_node(',', nil, nil))
     	    register_class_name_from_declaration(val[0].left)
     	  }
     	| class_with_superclass '<' inherited_protocols '>' {
-    	    result = Vienna::Node.new(',', val[0], Vienna::Node.new(',', val[2], nil))
+    	    result = make_node(',', val[0], make_node(',', val[2], nil))
     	    register_class_name_from_declaration(val[0].left)
     	  }
     	| class_with_superclass '(' category_name ')' {
-    	    result = Vienna::Node.new(',', val[0], Vienna::Node.new(',', nil, val[2]))
+    	    result = make_node(',', val[0], make_node(',', nil, val[2]))
     	    register_class_name_from_declaration(val[0].left)
     	  }
     	| class_with_superclass '<' inherited_protocols '>' '(' category_name ')' {
-    	    result = Vienna::Node.new(',', val[0], Vienna::Node.new(',', val[2], val[5]))
+    	    result = make_node(',', val[0], make_node(',', val[2], val[5]))
     	    register_class_name_from_declaration(val[0].left)
     	  }
     	;
@@ -278,33 +278,33 @@ class Vienna::ObjectiveCParser
     	;
 
     selector_argument_declaration:
-    	  '(' objc_declaration_specifiers ')' IDENTIFIER                                        { result =  Vienna::Node.new(',', val[1], val[3]) }
+    	  '(' objc_declaration_specifiers ')' IDENTIFIER                                        { result =  make_node(',', val[1], val[3]) }
     	;
 
     selector_with_argument_declaration:
     	  IDENTIFIER                                                                            { result =  val[0] }
-    	| IDENTIFIER ':' selector_argument_declaration                                          { result =  Vienna::Node.new(':', val[0], val[2]) }
-    	| selector_with_argument_declaration selector_component selector_argument_declaration   { result =  Vienna::Node.new(',', val[0], Vienna::Node.new(':', val[1], val[2])) }
+    	| IDENTIFIER ':' selector_argument_declaration                                          { result =  make_node(':', val[0], val[2]) }
+    	| selector_with_argument_declaration selector_component selector_argument_declaration   { result =  make_node(',', val[0], make_node(':', val[1], val[2])) }
     	| selector_with_argument_declaration ',' ELLIPSIS
     	;
 
     method_declaration:
     	  class_or_instance_method_specifier '(' objc_declaration_specifiers ')' selector_with_argument_declaration {
-    	    result = Vienna::Node.new('m', Vienna::Node.new(',', val[0], val[2]), val[4])
+    	    result = make_node('m', make_node(',', val[0], val[2]), val[4])
     	  }
     	| AT_PROPERTY '(' property_attributes_list ')' specifier_qualifier_list struct_declarator_list {
-    	    result = Vienna::Node.new(:AT_PROPERTY, val[2], Vienna::Node.new(',', val[4],val[5]))
+    	    result = make_node(:AT_PROPERTY, val[2], make_node(',', val[4],val[5]))
     	  }
       | AT_PROPERTY specifier_qualifier_list struct_declarator_list   {
-      	  result = Vienna::Node.new(:AT_PROPERTY, nil, Vienna::Node.new(',', val[1],val[2]))
+      	  result = make_node(:AT_PROPERTY, nil, make_node(',', val[1],val[2]))
       	}
       ;
 
     method_declaration_list:
     	  method_declaration ';'                            { result =  val[0] }
-    	| AT_OPTIONAL method_declaration ';'                { result =  Vienna::Node.new(:AT_OPTIONAL, val[1], nil) }
-    	| AT_REQUIRED method_declaration ';'                { result =  Vienna::Node.new(:AT_REQUIRED, val[1], nil) }
-    	| method_declaration_list method_declaration ';'    { result =  Vienna::Node.new(',', val[0], val[1]) }
+    	| AT_OPTIONAL method_declaration ';'                { result =  make_node(:AT_OPTIONAL, val[1], nil) }
+    	| AT_REQUIRED method_declaration ';'                { result =  make_node(:AT_REQUIRED, val[1], nil) }
+    	| method_declaration_list method_declaration ';'    { result =  make_node(',', val[0], val[1]) }
     	;
 
     ivar_declaration_list:
@@ -314,28 +314,28 @@ class Vienna::ObjectiveCParser
     
     class_implementation:
     	  class_identifier_or_type_name {
-    	    result = Vienna::Node.new(',', val[0], nil)
+    	    result = make_node(',', val[0], nil)
     	  }
     	| class_identifier_or_type_name '(' category_name ')' {
-    	    result = Vienna::Node.new(',', val[0], val[2])
+    	    result = make_node(',', val[0], val[2])
     	  }
       ;
     
     method_implementation_declaration:
         class_or_instance_method_specifier '(' objc_declaration_specifiers ')' selector_with_argument_declaration {
-  	      result = Vienna::Node.new(',', Vienna::Node.new(',', val[0], val[2]), val[4])
+  	      result = make_node(',', make_node(',', val[0], val[2]), val[4])
   	    }
   	  ;
   	
     method_implementation:
     	  method_implementation_declaration compound_statement {
-    	    result = Vienna::Node.new('M', val[0], val[1])
+    	    result = make_node('M', val[0], val[1])
     	  }
     	| method_implementation_declaration ';' compound_statement {
-    	    result = Vienna::Node.new('M', val[0], val[2])
+    	    result = make_node('M', val[0], val[2])
     	  }
     	| AT_SYNTHESIZE ivar_list ';' {
-    	    result = Vienna::Node.new(:AT_SYNTHESIZE, val[1], nil)
+    	    result = make_node(:AT_SYNTHESIZE, val[1], nil)
     	  }
     	;
 
@@ -344,55 +344,55 @@ class Vienna::ObjectiveCParser
     	    result = val[0]
     	  }
     	| method_implementation_list method_implementation {
-    	    result = Vienna::Node.new(',', val[0], val[1])
+    	    result = make_node(',', val[0], val[1])
     	  }
     	;
 
     objc_declaration:
     	  AT_CLASS class_name_list ';' {
-      	  result = Vienna::Node.new(:AT_CLASS, val[1], nil)
+      	  result = make_node(:AT_CLASS, val[1], nil)
       	  deal_with_at_class(result)
       	}
     	| AT_PROTOCOL class_name_declaration AT_END {
-      	  result = Vienna::Node.new(:AT_PROTOCOL, val[1], nil)
+      	  result = make_node(:AT_PROTOCOL, val[1], nil)
     	    new_protocol = ObjectiveCProtocol.new_from_parse_tree(result)
     	    add_protocol_declaration(new_protocol)
       	}
     	| AT_PROTOCOL class_name_declaration method_declaration_list AT_END {
-    	    result = Vienna::Node.new(:AT_PROTOCOL, val[1], val[2])
+    	    result = make_node(:AT_PROTOCOL, val[1], val[2])
     	    # new_protocol = ObjectiveCProtocol.new_from_parse_tree(result)
     	    #          add_protocol_declaration(new_protocol)
     	  }
     	| AT_INTERFACE class_name_declaration AT_END {
-    	    result = Vienna::Node.new(:AT_INTERFACE, Vienna::Node.new(',', val[1], nil), nil)
+    	    result = make_node(:AT_INTERFACE, make_node(',', val[1], nil), nil)
     	    deal_with_interface_declaration(result)
     	  }
     	| AT_INTERFACE class_name_declaration ivar_declaration_list method_declaration_list AT_END {
-    	    result = Vienna::Node.new(:AT_INTERFACE, Vienna::Node.new(',', val[1], val[2]), val[3])
+    	    result = make_node(:AT_INTERFACE, make_node(',', val[1], val[2]), val[3])
     	    deal_with_interface_declaration(result)
     	  }
     	| AT_INTERFACE class_name_declaration ivar_declaration_list AT_END {
-    	    result = Vienna::Node.new(:AT_INTERFACE, Vienna::Node.new(',', val[1], val[2]), nil)
+    	    result = make_node(:AT_INTERFACE, make_node(',', val[1], val[2]), nil)
     	    deal_with_interface_declaration(result)
     	  }
     	| AT_INTERFACE class_name_declaration method_declaration_list AT_END {
-    	    result = Vienna::Node.new(:AT_INTERFACE, Vienna::Node.new(',', val[1], nil), val[2])
+    	    result = make_node(:AT_INTERFACE, make_node(',', val[1], nil), val[2])
     	    deal_with_interface_declaration(result)
     	  }
     	| AT_IMPLEMENTATION class_implementation AT_END { 
-    	    result = Vienna::Node.new(:AT_IMPLEMENTATION, Vienna::Node.new(',', val[1], nil), nil)
+    	    result = make_node(:AT_IMPLEMENTATION, make_node(',', val[1], nil), nil)
     	    deal_with_implementation_declaration(result)
     	  }
     	| AT_IMPLEMENTATION class_implementation ivar_declaration_list AT_END {
-    	    result = Vienna::Node.new(:AT_IMPLEMENTATION, Vienna::Node.new(',', val[1], val[2]), nil)
+    	    result = make_node(:AT_IMPLEMENTATION, make_node(',', val[1], val[2]), nil)
     	    deal_with_implementation_declaration(result)
     	  }
     	| AT_IMPLEMENTATION class_implementation method_implementation_list AT_END {
-    	    result = Vienna::Node.new(:AT_IMPLEMENTATION, Vienna::Node.new(',', val[1], nil), val[2])
+    	    result = make_node(:AT_IMPLEMENTATION, make_node(',', val[1], nil), val[2])
     	    deal_with_implementation_declaration(result)
     	  }
     	| AT_IMPLEMENTATION class_implementation ivar_declaration_list method_implementation_list AT_END {
-    	    result = Vienna::Node.new(:AT_IMPLEMENTATION, Vienna::Node.new(',', val[1], val[2]), val[3])
+    	    result = make_node(:AT_IMPLEMENTATION, make_node(',', val[1], val[2]), val[3])
     	    deal_with_implementation_declaration(result)
     	  }
     	;
@@ -400,29 +400,30 @@ class Vienna::ObjectiveCParser
     declaration:
     	  declaration_specifiers ';' {
           # Normal declaration
-    	    result = Vienna::Node.new('d', val[0], nil)
-    	    deal_with_declaration(result)
+    	    result = make_node('d', val[0], nil)
+          deal_with_declaration(result)
     	  }
-    	| declaration_specifiers init_declarator_list ';'   {
+    	| declaration_specifiers init_declarator_list ';' {
     	     # This will be like a typedef or something like extern const nsstring bob = @"hey";
-    	     result = Vienna::Node.new('d', val[0], val[1])
-    	     deal_with_declaration(result)
+    	     result = make_node('d', val[0], val[1])
+    	     puts result
+           deal_with_declaration(result)
     	  }  
     	| objc_declaration                                  { result = val[0] }
     	;
 
     declaration_specifiers:
     	  storage_class_specifier                           { result = val[0] }
-    	| storage_class_specifier declaration_specifiers    { result = Vienna::Node.new(',', val[0], val[1]) }
+    	| storage_class_specifier declaration_specifiers    { result = make_node(',', val[0], val[1]) }
     	| type_specifier                                    { result = val[0] }   # This will be a typename, void, int, id etc
-    	| type_specifier declaration_specifiers             { result = Vienna::Node.new(',', val[0], val[1]) }
+    	| type_specifier declaration_specifiers             { result = make_node(',', val[0], val[1]) }
     	| type_qualifier                                    { result = val[0] }   # This will be const, volatile etc
-    	| type_qualifier declaration_specifiers             { result = Vienna::Node.new(',', val[0], val[1]) }
+    	| type_qualifier declaration_specifiers             { result = make_node(',', val[0], val[1]) }
     	;
 
     init_declarator_list:
     	  init_declarator                                   { result = val[0] }
-    	| init_declarator_list ',' init_declarator          { result = Vienna::Node.new(',', val[0], val[2]) }
+    	| init_declarator_list ',' init_declarator          { result = make_node(',', val[0], val[2]) }
     	;
 
     init_declarator:
@@ -440,7 +441,7 @@ class Vienna::ObjectiveCParser
 
     protocol_list:
     	  class_identifier_or_type_name                     { result = val[0] }
-    	| protocol_list ',' class_identifier_or_type_name   { result = Vienna::Node.new(',', val[0], val[2]) }
+    	| protocol_list ',' class_identifier_or_type_name   { result = make_node(',', val[0], val[2]) }
 
     type_specifier:
     	  VOID                                              { result = val[0] }
@@ -476,7 +477,7 @@ class Vienna::ObjectiveCParser
 
     struct_declaration_list:
     	  struct_declaration                                                            { result = val[0] }
-    	| struct_declaration_list struct_declaration                                    { result = Vienna::Node.new(',', val[0], val[1]) }
+    	| struct_declaration_list struct_declaration                                    { result = make_node(',', val[0], val[1]) }
     	;
 
     property_attributes_list:
@@ -485,7 +486,7 @@ class Vienna::ObjectiveCParser
     	;
 
     struct_declaration:
-    	  specifier_qualifier_list struct_declarator_list ';'                           { result = Vienna::Node.new('i', val[0], val[1]) }
+    	  specifier_qualifier_list struct_declarator_list ';'                           { result = make_node('i', val[0], val[1]) }
     	| AT_PRIVATE specifier_qualifier_list struct_declarator_list ';'
     	| AT_PUBLIC specifier_qualifier_list struct_declarator_list ';'
     	| AT_PROTECTED specifier_qualifier_list struct_declarator_list ';'
@@ -500,15 +501,15 @@ class Vienna::ObjectiveCParser
     	;
 
     specifier_qualifier_list:
-    	  type_specifier specifier_qualifier_list                                       { result = Vienna::Node.new(',', val[0], val[1]) }
+    	  type_specifier specifier_qualifier_list                                       { result = make_node(',', val[0], val[1]) }
     	| type_specifier                                                                { result = val[0] }
-    	| type_qualifier specifier_qualifier_list                                       { result = Vienna::Node.new(',', val[0], val[1]) }
+    	| type_qualifier specifier_qualifier_list                                       { result = make_node(',', val[0], val[1]) }
     	| type_qualifier                                                                { result = val[0] }
     	;
 
     struct_declarator_list:
     	  struct_declarator                                                             { result = val[0] }
-    	| struct_declarator_list ',' struct_declarator                                  { result = Vienna::Node.new(',', val[0], val[2]) }
+    	| struct_declarator_list ',' struct_declarator                                  { result = make_node(',', val[0], val[2]) }
     	;
 
     struct_declarator:
@@ -518,19 +519,19 @@ class Vienna::ObjectiveCParser
     	;
 
     enum_specifier:
-    	  ENUM '{' enumerator_list '}'                      { result = Vienna::Node.new('e', Vienna::Node.new(',', val[0], nil), val[2]) }
-    	| ENUM IDENTIFIER '{' enumerator_list '}'           { result = Vienna::Node.new('e', Vienna::Node.new(',', val[0], val[1]), val[2]) }
-    	| ENUM IDENTIFIER                                   { result = Vienna::Node.new('e', Vienna::Node.new(',', val[0], val[1]), nil) }
+    	  ENUM '{' enumerator_list '}'                      { result = make_node('e', make_node(',', val[0], nil), val[2]) }
+    	| ENUM IDENTIFIER '{' enumerator_list '}'           { result = make_node('e', make_node(',', val[0], val[1]), val[2]) }
+    	| ENUM IDENTIFIER                                   { result = make_node('e', make_node(',', val[0], val[1]), nil) }
     	;
 
     enumerator_list:
     	  enumerator                                        { result = val[0] }
-    	| enumerator_list ',' enumerator                    { result = Vienna::Node.new(',', val[0], val[2]) }
+    	| enumerator_list ',' enumerator                    { result = make_node(',', val[0], val[2]) }
     	;
 
     enumerator:
-    	  IDENTIFIER                                        { result = Vienna::Node.new('E', val[0], nil) }
-    	| IDENTIFIER '=' constant_expression                { result = Vienna::Node.new('E', val[0], val[2]) }
+    	  IDENTIFIER                                        { result = make_node('E', val[0], nil) }
+    	| IDENTIFIER '=' constant_expression                { result = make_node('E', val[0], val[2]) }
     	;
 
     type_qualifier:
@@ -559,7 +560,7 @@ class Vienna::ObjectiveCParser
     	  '*'                                               { result = nil }
     	| '*' type_qualifier_list                           { result = val[1] }
     	| '*' pointer                                       { result = val[1] }
-    	| '*' type_qualifier_list pointer                   { result = Vienna::Node.new(',', val[1], val[2]) }
+    	| '*' type_qualifier_list pointer                   { result = make_node(',', val[1], val[2]) }
     	;
 
     type_qualifier_list:
@@ -686,7 +687,7 @@ class Vienna::ObjectiveCParser
 
     translation_unit:
     	  external_declaration { result = val[0] }
-    	| translation_unit external_declaration { result = Vienna::Node.new ',', val[0], val[1] }
+    	| translation_unit external_declaration { result = make_node ',', val[0], val[1] }
     	;
 
     external_declaration:
@@ -712,22 +713,8 @@ require 'strscan'
 	
 	def next_token
 	  
-	  if @objc_files.size == 0
-	    return [false, false]
-    end
-	  
-	  objc_file = @objc_files.last
-	  
-	  if !objc_file
-      return [false, false]
-    end
-	  
-	  if objc_file.scanner.empty?
-	    @objc_files.slice!(@objc_files.size - 1)
-	    return next_token()
-	  end
-	  
-	  scanner = objc_file.scanner
+	  scanner = current_scanner()
+	  return [false, false] if scanner.nil?
 	  
 	  case
       #

@@ -11,15 +11,18 @@ require 'strscan'
 
 module Vienna
   
-  
   class ObjectiveCParser < Racc::Parser
     
     attr_reader :tokens
 
   	def initialize
-  	  
+      # ObjectiveCFile objects of all imported objects, as well as starting file
   	  @objc_files = []
+      # an array of all imported files, of type [frameworkname, filename].
+      # frameworkname might be nil (look for files in same directory)
   	  @imported_files = []
+      # files left to parse. parse towards the end first
+  	  @parsing_stack = []
 
   	  @interface_declarations = []
   	  @implementation_definitions = []
@@ -29,8 +32,44 @@ module Vienna
   	  @struct_declarations = []
   	  @at_class_list = []
   	  @known_classes = []
-  	  
   	end
+  	
+  	def make_node(value, left, right)
+  	  Vienna::Node.new(value, left, right, current_file, current_line)
+  	end
+  	
+    # Returns the current file object being processed. This basically just returns
+    # the file at the top of the parsing stack. If a string is being processed, 
+    # then it must be simulated so that it responds like a file, so inserting the
+    # current file/line_number works as requested
+  	def current_file
+  	  @parsing_stack.last
+  	end
+  	
+    # If the parser is finished. i.e. if there is nothing left to parse on the
+    # parsing stack
+  	def finished_parsing?
+  	  @parsing_stack.empty?
+	  end
+  	
+    # Returns the current line that the parser is working on. (the file object at
+    # the top of the parsing stack)
+  	def current_line
+  	  finished_parsing? ? 1 : @parsing_stack.last.current_line
+  	end
+  	
+  	
+  	def current_scanner
+  	  return nil if finished_parsing?
+  	  
+  	  if @parsing_stack.last.scanner.empty?
+  	    @parsing_stack.slice!(@parsing_stack.size - 1)
+  	    return current_scanner()
+  	  end
+  	  
+  	  return @parsing_stack.last.scanner
+	  end
+  	
   	
   	def parse_file_to_output(source, output)
   	  tokenize_file(source)
@@ -40,23 +79,25 @@ module Vienna
   	  f.close
   	end
 	  
-	  def add_category_declaration(category)
-	    
+	  
+	  def add_category_declaration(category)  
 	  end
 	  
+	  
 	  def add_implementation_defintion(implementation)
-
     end
 
-    def add_protocol_declaration(protocol)
-      
+
+    def add_protocol_declaration(protocol)      
     end
+    
     
     def deal_with_enum_declaration(enum)
       new_enum = ObjectiveCEnum.new
       new_enum.deal_with_enum_list(enum.left.right)
       @enum_declarations << new_enum
     end
+    
     
     def add_typedef_declaration(typedef)
       @typedef_declarations << typedef.right
@@ -68,6 +109,7 @@ module Vienna
     def deal_with_at_class(d)
       @at_class_list << d.left
     end
+    
     
     def register_class_name_from_declaration(class_name)
       @known_classes << class_name
@@ -85,6 +127,7 @@ module Vienna
     # declaration - of type Vienna::Node for the base of the declaration
     # 
     def deal_with_declaration(d)
+          
       if d.left.left == :TYPEDEF and d.right != nil
         add_typedef_declaration(d)
       elsif d.left.left == :EXTERN
@@ -110,7 +153,6 @@ module Vienna
     	#      msg << "after #{value_stack.last} " unless value_stack.empty?
     	#      msg << "on #{token_to_str(error_token_id)} #{error_value}"
     	msg << "was not expecting token #{error_value} of type #{token_to_str(error_token_id)}"
-    	
       puts msg
       # raise ParseError, msg
     end
@@ -133,6 +175,7 @@ module Vienna
       
       if new_objc.valid?
         @objc_files << new_objc
+        @parsing_stack << new_objc
       end
     end
 
@@ -148,15 +191,16 @@ module Vienna
       
       if new_objc.valid?
         @objc_files << new_objc
+        @parsing_stack << new_objc
       end
     end
+
 
   	def parse
   	 #@tokens = tokens
   	 do_parse
   	 puts "Finished parsing"
   	end
-
 
     # Look up the given identifier (type_name) and return its type for use in parser
     # This checks through class interfaces, enums, structs, typedefs and @class
@@ -185,7 +229,6 @@ module Vienna
       return nil
   	end
   end
-  
 end
 
 

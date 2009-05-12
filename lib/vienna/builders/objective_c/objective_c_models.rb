@@ -43,18 +43,18 @@ module Vienna
   # below. Left and right are links to the relevant Nodes, and may be nil (which)
   # is often the case for leaves.
   class Node
-    attr_reader :value, :left, :right, :file_path, :line_number
+    attr_reader :value, :left, :right, :file, :line_number
     
     # Creates a binary tree from an array [value, left, right],
     # where left and right may themselves be values
-    def initialize(value, left, right)
+    def initialize(value, left, right, file = nil, line_number = nil)
       @value = value
       @left = left
       @right = right
-      # file that the Node was created in
-      @file_path = nil
+      # file that the Node was created in (ObjetiveCFile)
+      @file = file
       # line number that the Node was created at
-      @line_number = nil
+      @line_number = line_number
     end
   
     # returns true if this tree has no children
@@ -90,6 +90,15 @@ module Vienna
     end
   end
   
+  # This model represents an enum that was defined in either the main file, or 
+  # a header imported. Enums are not directly output to JS, so this class is
+  # responsible for parsing the values and storing int representations of each
+  # enum value. This can be accessed by :enums, which stores each name/value
+  # pair in a hash (@enums).
+  # 
+  # @current_enum_value is used to hold the current int, so that enums that do 
+  # not specify an int value can have values asigned automatically. This starts
+  # from 0, and increments by 1.
   class ObjectiveCEnum
     
     attr_accessor :name, :enums
@@ -100,6 +109,8 @@ module Vienna
       @current_enum_value = -1
     end
     
+    # Parse enum list.. elements begin with E, and multiple are seperated by a
+    # commar, ",".
     def deal_with_enum_list(list)
       return unless list
       
@@ -116,22 +127,29 @@ module Vienna
       end
     end
     
+    # Evalues the assign of an enum expression. Note: this is recursive upon 
+    # itself, if the value is complex. This parses any number of times until just
+    # an integer can be returned.
     def enum_evaluate(tree)
-            
+      # simply return if tree is a string(simple int, or similar)
       if tree.class == String # or tree.class == Fixnum
         return tree
       end
       
       if tree.value == "("
+        # expression, so parse expression (node.left)
         return enum_evaluate(tree.left)
       elsif tree.value == ","
+        # expression type. so go through. (-x)
         if tree.left == "-"
           return tree.right.to_i * -1
         end
         return 0
       elsif tree.value == :LEFT_OP
+        # x << y, so evaluate. each x/y might also need further parsing
         return enum_evaluate(tree.left).to_i << enum_evaluate(tree.right).to_i
       else
+        # return otherwise: likely an int.
         return tree
       end
     end

@@ -11,29 +11,15 @@ require 'strscan'
 module Vienna
   class ObjectiveCParser < Racc::Parser
 
-module_eval(<<'...end objective_c.rb.y/module_eval...', 'objective_c.rb.y', 709)
+module_eval(<<'...end objective_c.rb.y/module_eval...', 'objective_c.rb.y', 710)
 	# inside the class definition of ObjectiveCParser
 	
 	attr_reader :result
 	
 	def next_token
 	  
-	  if @objc_files.size == 0
-	    return [false, false]
-    end
-	  
-	  objc_file = @objc_files.last
-	  
-	  if !objc_file
-      return [false, false]
-    end
-	  
-	  if objc_file.scanner.empty?
-	    @objc_files.slice!(@objc_files.size - 1)
-	    return next_token()
-	  end
-	  
-	  scanner = objc_file.scanner
+	  scanner = current_scanner()
+	  return [false, false] if scanner.nil?
 	  
 	  case
       #
@@ -1032,51 +1018,51 @@ racc_reduce_table = [
   1, 139, :_reduce_44,
   1, 139, :_reduce_45,
   1, 140, :_reduce_46,
-  4, 140, :_reduce_none,
+  4, 140, :_reduce_47,
   6, 140, :_reduce_none,
   1, 141, :_reduce_49,
-  3, 141, :_reduce_none,
-  3, 141, :_reduce_none,
-  3, 141, :_reduce_none,
+  3, 141, :_reduce_50,
+  3, 141, :_reduce_51,
+  3, 141, :_reduce_52,
   1, 142, :_reduce_53,
-  3, 142, :_reduce_none,
-  3, 142, :_reduce_none,
+  3, 142, :_reduce_54,
+  3, 142, :_reduce_55,
   1, 143, :_reduce_56,
   3, 143, :_reduce_57,
   3, 143, :_reduce_58,
   1, 144, :_reduce_59,
-  3, 144, :_reduce_none,
-  3, 144, :_reduce_none,
-  3, 144, :_reduce_none,
-  3, 144, :_reduce_none,
+  3, 144, :_reduce_60,
+  3, 144, :_reduce_61,
+  3, 144, :_reduce_62,
+  3, 144, :_reduce_63,
   1, 145, :_reduce_64,
-  3, 145, :_reduce_none,
-  3, 145, :_reduce_none,
+  3, 145, :_reduce_65,
+  3, 145, :_reduce_66,
   1, 146, :_reduce_67,
-  3, 146, :_reduce_none,
+  3, 146, :_reduce_68,
   1, 147, :_reduce_69,
-  3, 147, :_reduce_none,
+  3, 147, :_reduce_70,
   1, 148, :_reduce_71,
-  3, 148, :_reduce_none,
+  3, 148, :_reduce_72,
   1, 149, :_reduce_73,
-  3, 149, :_reduce_none,
+  3, 149, :_reduce_74,
   1, 150, :_reduce_75,
-  3, 150, :_reduce_none,
+  3, 150, :_reduce_76,
   1, 129, :_reduce_77,
-  5, 129, :_reduce_none,
+  5, 129, :_reduce_78,
   1, 137, :_reduce_79,
-  3, 137, :_reduce_none,
-  1, 151, :_reduce_none,
-  1, 151, :_reduce_none,
-  1, 151, :_reduce_none,
-  1, 151, :_reduce_none,
-  1, 151, :_reduce_none,
-  1, 151, :_reduce_none,
-  1, 151, :_reduce_none,
-  1, 151, :_reduce_none,
-  1, 151, :_reduce_none,
-  1, 151, :_reduce_none,
-  1, 151, :_reduce_none,
+  3, 137, :_reduce_80,
+  1, 151, :_reduce_81,
+  1, 151, :_reduce_82,
+  1, 151, :_reduce_83,
+  1, 151, :_reduce_84,
+  1, 151, :_reduce_85,
+  1, 151, :_reduce_86,
+  1, 151, :_reduce_87,
+  1, 151, :_reduce_88,
+  1, 151, :_reduce_89,
+  1, 151, :_reduce_90,
+  1, 151, :_reduce_91,
   1, 127, :_reduce_92,
   3, 127, :_reduce_none,
   1, 152, :_reduce_94,
@@ -1721,7 +1707,7 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 74)
 
 module_eval(<<'.,.,', 'objective_c.rb.y', 75)
   def _reduce_17(val, _values, result)
-     result = Vienna::Node.new('(', val[1], nil) 
+     result = make_node('(', val[1], nil) 
     result
   end
 .,.,
@@ -1776,7 +1762,7 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 102)
 
 module_eval(<<'.,.,', 'objective_c.rb.y', 105)
   def _reduce_37(val, _values, result)
-     result = Vienna::Node.new(',', val[0], val[1]) 
+     result = make_node(',', val[0], val[1]) 
     result
   end
 .,.,
@@ -1834,7 +1820,12 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 120)
   end
 .,.,
 
-# reduce 47 omitted
+module_eval(<<'.,.,', 'objective_c.rb.y', 121)
+  def _reduce_47(val, _values, result)
+     result = make_node('c', val[1], val[3]) 
+    result
+  end
+.,.,
 
 # reduce 48 omitted
 
@@ -1845,11 +1836,26 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 126)
   end
 .,.,
 
-# reduce 50 omitted
+module_eval(<<'.,.,', 'objective_c.rb.y', 127)
+  def _reduce_50(val, _values, result)
+     result = make_node('*', val[0], val[2]) 
+    result
+  end
+.,.,
 
-# reduce 51 omitted
+module_eval(<<'.,.,', 'objective_c.rb.y', 128)
+  def _reduce_51(val, _values, result)
+     result = make_node('/', val[0], val[2]) 
+    result
+  end
+.,.,
 
-# reduce 52 omitted
+module_eval(<<'.,.,', 'objective_c.rb.y', 129)
+  def _reduce_52(val, _values, result)
+     result = make_node('%', val[0], val[2]) 
+    result
+  end
+.,.,
 
 module_eval(<<'.,.,', 'objective_c.rb.y', 133)
   def _reduce_53(val, _values, result)
@@ -1858,9 +1864,19 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 133)
   end
 .,.,
 
-# reduce 54 omitted
+module_eval(<<'.,.,', 'objective_c.rb.y', 134)
+  def _reduce_54(val, _values, result)
+     result = make_node('+', val[0], val[2]) 
+    result
+  end
+.,.,
 
-# reduce 55 omitted
+module_eval(<<'.,.,', 'objective_c.rb.y', 135)
+  def _reduce_55(val, _values, result)
+     result = make_node('-', val[0], val[2]) 
+    result
+  end
+.,.,
 
 module_eval(<<'.,.,', 'objective_c.rb.y', 139)
   def _reduce_56(val, _values, result)
@@ -1871,14 +1887,14 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 139)
 
 module_eval(<<'.,.,', 'objective_c.rb.y', 140)
   def _reduce_57(val, _values, result)
-     result = Vienna::Node.new(:LEFT_OP, val[0], val[2]) 
+     result = make_node(:LEFT_OP, val[0], val[2]) 
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'objective_c.rb.y', 141)
   def _reduce_58(val, _values, result)
-     result = Vienna::Node.new(:LEFT_OP, val[0], val[2]) 
+     result = make_node(:RIGHT_OP, val[0], val[2]) 
     result
   end
 .,.,
@@ -1890,13 +1906,33 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 145)
   end
 .,.,
 
-# reduce 60 omitted
+module_eval(<<'.,.,', 'objective_c.rb.y', 146)
+  def _reduce_60(val, _values, result)
+     result = make_node('<', val[0], val[2]) 
+    result
+  end
+.,.,
 
-# reduce 61 omitted
+module_eval(<<'.,.,', 'objective_c.rb.y', 147)
+  def _reduce_61(val, _values, result)
+     result = make_node('>', val[0], val[2]) 
+    result
+  end
+.,.,
 
-# reduce 62 omitted
+module_eval(<<'.,.,', 'objective_c.rb.y', 148)
+  def _reduce_62(val, _values, result)
+     result = make_node(:LE_OP, val[0], val[2]) 
+    result
+  end
+.,.,
 
-# reduce 63 omitted
+module_eval(<<'.,.,', 'objective_c.rb.y', 149)
+  def _reduce_63(val, _values, result)
+     result = make_node(:GE_OP, val[0], val[2]) 
+    result
+  end
+.,.,
 
 module_eval(<<'.,.,', 'objective_c.rb.y', 153)
   def _reduce_64(val, _values, result)
@@ -1905,9 +1941,19 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 153)
   end
 .,.,
 
-# reduce 65 omitted
+module_eval(<<'.,.,', 'objective_c.rb.y', 154)
+  def _reduce_65(val, _values, result)
+     result = make_node(:EQ_OP, val[0], val[2]) 
+    result
+  end
+.,.,
 
-# reduce 66 omitted
+module_eval(<<'.,.,', 'objective_c.rb.y', 155)
+  def _reduce_66(val, _values, result)
+     result = make_node(:NE_OP, val[0], val[2]) 
+    result
+  end
+.,.,
 
 module_eval(<<'.,.,', 'objective_c.rb.y', 159)
   def _reduce_67(val, _values, result)
@@ -1916,7 +1962,12 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 159)
   end
 .,.,
 
-# reduce 68 omitted
+module_eval(<<'.,.,', 'objective_c.rb.y', 160)
+  def _reduce_68(val, _values, result)
+     result = make_node('&', val[0], val[2]) 
+    result
+  end
+.,.,
 
 module_eval(<<'.,.,', 'objective_c.rb.y', 164)
   def _reduce_69(val, _values, result)
@@ -1925,7 +1976,12 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 164)
   end
 .,.,
 
-# reduce 70 omitted
+module_eval(<<'.,.,', 'objective_c.rb.y', 165)
+  def _reduce_70(val, _values, result)
+     result = make_node('^', val[0], val[2]) 
+    result
+  end
+.,.,
 
 module_eval(<<'.,.,', 'objective_c.rb.y', 169)
   def _reduce_71(val, _values, result)
@@ -1934,7 +1990,12 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 169)
   end
 .,.,
 
-# reduce 72 omitted
+module_eval(<<'.,.,', 'objective_c.rb.y', 170)
+  def _reduce_72(val, _values, result)
+     result = make_node('|', val[0], val[2]) 
+    result
+  end
+.,.,
 
 module_eval(<<'.,.,', 'objective_c.rb.y', 174)
   def _reduce_73(val, _values, result)
@@ -1943,7 +2004,12 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 174)
   end
 .,.,
 
-# reduce 74 omitted
+module_eval(<<'.,.,', 'objective_c.rb.y', 175)
+  def _reduce_74(val, _values, result)
+     result = make_node(:AND_OP, val[0], val[2]) 
+    result
+  end
+.,.,
 
 module_eval(<<'.,.,', 'objective_c.rb.y', 179)
   def _reduce_75(val, _values, result)
@@ -1952,7 +2018,12 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 179)
   end
 .,.,
 
-# reduce 76 omitted
+module_eval(<<'.,.,', 'objective_c.rb.y', 180)
+  def _reduce_76(val, _values, result)
+     result = make_node(:OR_OP, val[0], val[2]) 
+    result
+  end
+.,.,
 
 module_eval(<<'.,.,', 'objective_c.rb.y', 184)
   def _reduce_77(val, _values, result)
@@ -1961,7 +2032,12 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 184)
   end
 .,.,
 
-# reduce 78 omitted
+module_eval(<<'.,.,', 'objective_c.rb.y', 185)
+  def _reduce_78(val, _values, result)
+     result = make_node('?', val[0], make_node(',', val[2], val[4])) 
+    result
+  end
+.,.,
 
 module_eval(<<'.,.,', 'objective_c.rb.y', 189)
   def _reduce_79(val, _values, result)
@@ -1970,29 +2046,89 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 189)
   end
 .,.,
 
-# reduce 80 omitted
+module_eval(<<'.,.,', 'objective_c.rb.y', 190)
+  def _reduce_80(val, _values, result)
+     result = make_node(val[1], val[0], val[2]) 
+    result
+  end
+.,.,
 
-# reduce 81 omitted
+module_eval(<<'.,.,', 'objective_c.rb.y', 194)
+  def _reduce_81(val, _values, result)
+     result = val[0] 
+    result
+  end
+.,.,
 
-# reduce 82 omitted
+module_eval(<<'.,.,', 'objective_c.rb.y', 195)
+  def _reduce_82(val, _values, result)
+     result = val[0] 
+    result
+  end
+.,.,
 
-# reduce 83 omitted
+module_eval(<<'.,.,', 'objective_c.rb.y', 196)
+  def _reduce_83(val, _values, result)
+     result = val[0] 
+    result
+  end
+.,.,
 
-# reduce 84 omitted
+module_eval(<<'.,.,', 'objective_c.rb.y', 197)
+  def _reduce_84(val, _values, result)
+     result = val[0] 
+    result
+  end
+.,.,
 
-# reduce 85 omitted
+module_eval(<<'.,.,', 'objective_c.rb.y', 198)
+  def _reduce_85(val, _values, result)
+     result = val[0] 
+    result
+  end
+.,.,
 
-# reduce 86 omitted
+module_eval(<<'.,.,', 'objective_c.rb.y', 199)
+  def _reduce_86(val, _values, result)
+     result = val[0] 
+    result
+  end
+.,.,
 
-# reduce 87 omitted
+module_eval(<<'.,.,', 'objective_c.rb.y', 200)
+  def _reduce_87(val, _values, result)
+     result = val[0] 
+    result
+  end
+.,.,
 
-# reduce 88 omitted
+module_eval(<<'.,.,', 'objective_c.rb.y', 201)
+  def _reduce_88(val, _values, result)
+     result = val[0] 
+    result
+  end
+.,.,
 
-# reduce 89 omitted
+module_eval(<<'.,.,', 'objective_c.rb.y', 202)
+  def _reduce_89(val, _values, result)
+     result = val[0] 
+    result
+  end
+.,.,
 
-# reduce 90 omitted
+module_eval(<<'.,.,', 'objective_c.rb.y', 203)
+  def _reduce_90(val, _values, result)
+     result = val[0] 
+    result
+  end
+.,.,
 
-# reduce 91 omitted
+module_eval(<<'.,.,', 'objective_c.rb.y', 204)
+  def _reduce_91(val, _values, result)
+     result = val[0] 
+    result
+  end
+.,.,
 
 module_eval(<<'.,.,', 'objective_c.rb.y', 208)
   def _reduce_92(val, _values, result)
@@ -2016,14 +2152,14 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 213)
 
 module_eval(<<'.,.,', 'objective_c.rb.y', 222)
   def _reduce_97(val, _values, result)
-     result = Vienna::Node.new(',', val[0], nil) 
+     result = make_node(',', val[0], nil) 
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'objective_c.rb.y', 223)
   def _reduce_98(val, _values, result)
-     result = Vienna::Node.new(',', val[0], val[2]) 
+     result = make_node(',', val[0], val[2]) 
     result
   end
 .,.,
@@ -2059,7 +2195,7 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 237)
 
 module_eval(<<'.,.,', 'objective_c.rb.y', 243)
   def _reduce_103(val, _values, result)
-        	    result = Vienna::Node.new(',', val[0], Vienna::Node.new(',', nil, nil))
+        	    result = make_node(',', val[0], make_node(',', nil, nil))
     	    register_class_name_from_declaration(val[0].left)
     	  
     result
@@ -2068,7 +2204,7 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 243)
 
 module_eval(<<'.,.,', 'objective_c.rb.y', 247)
   def _reduce_104(val, _values, result)
-        	    result = Vienna::Node.new(',', val[0], Vienna::Node.new(',', val[2], nil))
+        	    result = make_node(',', val[0], make_node(',', val[2], nil))
     	    register_class_name_from_declaration(val[0].left)
     	  
     result
@@ -2077,7 +2213,7 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 247)
 
 module_eval(<<'.,.,', 'objective_c.rb.y', 251)
   def _reduce_105(val, _values, result)
-        	    result = Vienna::Node.new(',', val[0], Vienna::Node.new(',', nil, val[2]))
+        	    result = make_node(',', val[0], make_node(',', nil, val[2]))
     	    register_class_name_from_declaration(val[0].left)
     	  
     result
@@ -2086,7 +2222,7 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 251)
 
 module_eval(<<'.,.,', 'objective_c.rb.y', 255)
   def _reduce_106(val, _values, result)
-        	    result = Vienna::Node.new(',', val[0], Vienna::Node.new(',', val[2], val[5]))
+        	    result = make_node(',', val[0], make_node(',', val[2], val[5]))
     	    register_class_name_from_declaration(val[0].left)
     	  
     result
@@ -2120,7 +2256,7 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 276)
 
 module_eval(<<'.,.,', 'objective_c.rb.y', 280)
   def _reduce_117(val, _values, result)
-     result =  Vienna::Node.new(',', val[1], val[3]) 
+     result =  make_node(',', val[1], val[3]) 
     result
   end
 .,.,
@@ -2134,14 +2270,14 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 284)
 
 module_eval(<<'.,.,', 'objective_c.rb.y', 285)
   def _reduce_119(val, _values, result)
-     result =  Vienna::Node.new(':', val[0], val[2]) 
+     result =  make_node(':', val[0], val[2]) 
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'objective_c.rb.y', 286)
   def _reduce_120(val, _values, result)
-     result =  Vienna::Node.new(',', val[0], Vienna::Node.new(':', val[1], val[2])) 
+     result =  make_node(',', val[0], make_node(':', val[1], val[2])) 
     result
   end
 .,.,
@@ -2150,7 +2286,7 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 286)
 
 module_eval(<<'.,.,', 'objective_c.rb.y', 292)
   def _reduce_122(val, _values, result)
-        	    result = Vienna::Node.new('m', Vienna::Node.new(',', val[0], val[2]), val[4])
+        	    result = make_node('m', make_node(',', val[0], val[2]), val[4])
     	  
     result
   end
@@ -2158,7 +2294,7 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 292)
 
 module_eval(<<'.,.,', 'objective_c.rb.y', 295)
   def _reduce_123(val, _values, result)
-        	    result = Vienna::Node.new(:AT_PROPERTY, val[2], Vienna::Node.new(',', val[4],val[5]))
+        	    result = make_node(:AT_PROPERTY, val[2], make_node(',', val[4],val[5]))
     	  
     result
   end
@@ -2166,7 +2302,7 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 295)
 
 module_eval(<<'.,.,', 'objective_c.rb.y', 298)
   def _reduce_124(val, _values, result)
-          	  result = Vienna::Node.new(:AT_PROPERTY, nil, Vienna::Node.new(',', val[1],val[2]))
+          	  result = make_node(:AT_PROPERTY, nil, make_node(',', val[1],val[2]))
       	
     result
   end
@@ -2181,21 +2317,21 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 303)
 
 module_eval(<<'.,.,', 'objective_c.rb.y', 304)
   def _reduce_126(val, _values, result)
-     result =  Vienna::Node.new(:AT_OPTIONAL, val[1], nil) 
+     result =  make_node(:AT_OPTIONAL, val[1], nil) 
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'objective_c.rb.y', 305)
   def _reduce_127(val, _values, result)
-     result =  Vienna::Node.new(:AT_REQUIRED, val[1], nil) 
+     result =  make_node(:AT_REQUIRED, val[1], nil) 
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'objective_c.rb.y', 306)
   def _reduce_128(val, _values, result)
-     result =  Vienna::Node.new(',', val[0], val[1]) 
+     result =  make_node(',', val[0], val[1]) 
     result
   end
 .,.,
@@ -2216,7 +2352,7 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 311)
 
 module_eval(<<'.,.,', 'objective_c.rb.y', 316)
   def _reduce_131(val, _values, result)
-        	    result = Vienna::Node.new(',', val[0], nil)
+        	    result = make_node(',', val[0], nil)
     	  
     result
   end
@@ -2224,7 +2360,7 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 316)
 
 module_eval(<<'.,.,', 'objective_c.rb.y', 319)
   def _reduce_132(val, _values, result)
-        	    result = Vienna::Node.new(',', val[0], val[2])
+        	    result = make_node(',', val[0], val[2])
     	  
     result
   end
@@ -2232,7 +2368,7 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 319)
 
 module_eval(<<'.,.,', 'objective_c.rb.y', 325)
   def _reduce_133(val, _values, result)
-      	      result = Vienna::Node.new(',', Vienna::Node.new(',', val[0], val[2]), val[4])
+      	      result = make_node(',', make_node(',', val[0], val[2]), val[4])
   	    
     result
   end
@@ -2240,7 +2376,7 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 325)
 
 module_eval(<<'.,.,', 'objective_c.rb.y', 331)
   def _reduce_134(val, _values, result)
-        	    result = Vienna::Node.new('M', val[0], val[1])
+        	    result = make_node('M', val[0], val[1])
     	  
     result
   end
@@ -2248,7 +2384,7 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 331)
 
 module_eval(<<'.,.,', 'objective_c.rb.y', 334)
   def _reduce_135(val, _values, result)
-        	    result = Vienna::Node.new('M', val[0], val[2])
+        	    result = make_node('M', val[0], val[2])
     	  
     result
   end
@@ -2256,7 +2392,7 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 334)
 
 module_eval(<<'.,.,', 'objective_c.rb.y', 337)
   def _reduce_136(val, _values, result)
-        	    result = Vienna::Node.new(:AT_SYNTHESIZE, val[1], nil)
+        	    result = make_node(:AT_SYNTHESIZE, val[1], nil)
     	  
     result
   end
@@ -2272,7 +2408,7 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 343)
 
 module_eval(<<'.,.,', 'objective_c.rb.y', 346)
   def _reduce_138(val, _values, result)
-        	    result = Vienna::Node.new(',', val[0], val[1])
+        	    result = make_node(',', val[0], val[1])
     	  
     result
   end
@@ -2280,7 +2416,7 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 346)
 
 module_eval(<<'.,.,', 'objective_c.rb.y', 352)
   def _reduce_139(val, _values, result)
-          	  result = Vienna::Node.new(:AT_CLASS, val[1], nil)
+          	  result = make_node(:AT_CLASS, val[1], nil)
       	  deal_with_at_class(result)
       	
     result
@@ -2289,7 +2425,7 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 352)
 
 module_eval(<<'.,.,', 'objective_c.rb.y', 356)
   def _reduce_140(val, _values, result)
-          	  result = Vienna::Node.new(:AT_PROTOCOL, val[1], nil)
+          	  result = make_node(:AT_PROTOCOL, val[1], nil)
     	    new_protocol = ObjectiveCProtocol.new_from_parse_tree(result)
     	    add_protocol_declaration(new_protocol)
       	
@@ -2299,7 +2435,7 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 356)
 
 module_eval(<<'.,.,', 'objective_c.rb.y', 361)
   def _reduce_141(val, _values, result)
-        	    result = Vienna::Node.new(:AT_PROTOCOL, val[1], val[2])
+        	    result = make_node(:AT_PROTOCOL, val[1], val[2])
     	    # new_protocol = ObjectiveCProtocol.new_from_parse_tree(result)
     	    #          add_protocol_declaration(new_protocol)
     	  
@@ -2309,7 +2445,7 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 361)
 
 module_eval(<<'.,.,', 'objective_c.rb.y', 366)
   def _reduce_142(val, _values, result)
-        	    result = Vienna::Node.new(:AT_INTERFACE, Vienna::Node.new(',', val[1], nil), nil)
+        	    result = make_node(:AT_INTERFACE, make_node(',', val[1], nil), nil)
     	    deal_with_interface_declaration(result)
     	  
     result
@@ -2318,7 +2454,7 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 366)
 
 module_eval(<<'.,.,', 'objective_c.rb.y', 370)
   def _reduce_143(val, _values, result)
-        	    result = Vienna::Node.new(:AT_INTERFACE, Vienna::Node.new(',', val[1], val[2]), val[3])
+        	    result = make_node(:AT_INTERFACE, make_node(',', val[1], val[2]), val[3])
     	    deal_with_interface_declaration(result)
     	  
     result
@@ -2327,7 +2463,7 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 370)
 
 module_eval(<<'.,.,', 'objective_c.rb.y', 374)
   def _reduce_144(val, _values, result)
-        	    result = Vienna::Node.new(:AT_INTERFACE, Vienna::Node.new(',', val[1], val[2]), nil)
+        	    result = make_node(:AT_INTERFACE, make_node(',', val[1], val[2]), nil)
     	    deal_with_interface_declaration(result)
     	  
     result
@@ -2336,7 +2472,7 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 374)
 
 module_eval(<<'.,.,', 'objective_c.rb.y', 378)
   def _reduce_145(val, _values, result)
-        	    result = Vienna::Node.new(:AT_INTERFACE, Vienna::Node.new(',', val[1], nil), val[2])
+        	    result = make_node(:AT_INTERFACE, make_node(',', val[1], nil), val[2])
     	    deal_with_interface_declaration(result)
     	  
     result
@@ -2345,7 +2481,7 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 378)
 
 module_eval(<<'.,.,', 'objective_c.rb.y', 382)
   def _reduce_146(val, _values, result)
-        	    result = Vienna::Node.new(:AT_IMPLEMENTATION, Vienna::Node.new(',', val[1], nil), nil)
+        	    result = make_node(:AT_IMPLEMENTATION, make_node(',', val[1], nil), nil)
     	    deal_with_implementation_declaration(result)
     	  
     result
@@ -2354,7 +2490,7 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 382)
 
 module_eval(<<'.,.,', 'objective_c.rb.y', 386)
   def _reduce_147(val, _values, result)
-        	    result = Vienna::Node.new(:AT_IMPLEMENTATION, Vienna::Node.new(',', val[1], val[2]), nil)
+        	    result = make_node(:AT_IMPLEMENTATION, make_node(',', val[1], val[2]), nil)
     	    deal_with_implementation_declaration(result)
     	  
     result
@@ -2363,7 +2499,7 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 386)
 
 module_eval(<<'.,.,', 'objective_c.rb.y', 390)
   def _reduce_148(val, _values, result)
-        	    result = Vienna::Node.new(:AT_IMPLEMENTATION, Vienna::Node.new(',', val[1], nil), val[2])
+        	    result = make_node(:AT_IMPLEMENTATION, make_node(',', val[1], nil), val[2])
     	    deal_with_implementation_declaration(result)
     	  
     result
@@ -2372,7 +2508,7 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 390)
 
 module_eval(<<'.,.,', 'objective_c.rb.y', 394)
   def _reduce_149(val, _values, result)
-        	    result = Vienna::Node.new(:AT_IMPLEMENTATION, Vienna::Node.new(',', val[1], val[2]), val[3])
+        	    result = make_node(:AT_IMPLEMENTATION, make_node(',', val[1], val[2]), val[3])
     	    deal_with_implementation_declaration(result)
     	  
     result
@@ -2382,8 +2518,8 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 394)
 module_eval(<<'.,.,', 'objective_c.rb.y', 401)
   def _reduce_150(val, _values, result)
               # Normal declaration
-    	    result = Vienna::Node.new('d', val[0], nil)
-    	    deal_with_declaration(result)
+    	    result = make_node('d', val[0], nil)
+          deal_with_declaration(result)
     	  
     result
   end
@@ -2392,77 +2528,78 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 401)
 module_eval(<<'.,.,', 'objective_c.rb.y', 406)
   def _reduce_151(val, _values, result)
         	     # This will be like a typedef or something like extern const nsstring bob = @"hey";
-    	     result = Vienna::Node.new('d', val[0], val[1])
-    	     deal_with_declaration(result)
+    	     result = make_node('d', val[0], val[1])
+    	     puts result
+           deal_with_declaration(result)
     	  
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 410)
+module_eval(<<'.,.,', 'objective_c.rb.y', 411)
   def _reduce_152(val, _values, result)
      result = val[0] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 414)
+module_eval(<<'.,.,', 'objective_c.rb.y', 415)
   def _reduce_153(val, _values, result)
      result = val[0] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 415)
+module_eval(<<'.,.,', 'objective_c.rb.y', 416)
   def _reduce_154(val, _values, result)
-     result = Vienna::Node.new(',', val[0], val[1]) 
+     result = make_node(',', val[0], val[1]) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 416)
+module_eval(<<'.,.,', 'objective_c.rb.y', 417)
   def _reduce_155(val, _values, result)
      result = val[0] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 417)
+module_eval(<<'.,.,', 'objective_c.rb.y', 418)
   def _reduce_156(val, _values, result)
-     result = Vienna::Node.new(',', val[0], val[1]) 
+     result = make_node(',', val[0], val[1]) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 418)
+module_eval(<<'.,.,', 'objective_c.rb.y', 419)
   def _reduce_157(val, _values, result)
      result = val[0] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 419)
+module_eval(<<'.,.,', 'objective_c.rb.y', 420)
   def _reduce_158(val, _values, result)
-     result = Vienna::Node.new(',', val[0], val[1]) 
+     result = make_node(',', val[0], val[1]) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 423)
+module_eval(<<'.,.,', 'objective_c.rb.y', 424)
   def _reduce_159(val, _values, result)
      result = val[0] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 424)
+module_eval(<<'.,.,', 'objective_c.rb.y', 425)
   def _reduce_160(val, _values, result)
-     result = Vienna::Node.new(',', val[0], val[2]) 
+     result = make_node(',', val[0], val[2]) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 428)
+module_eval(<<'.,.,', 'objective_c.rb.y', 429)
   def _reduce_161(val, _values, result)
      result = val[0] 
     result
@@ -2471,175 +2608,175 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 428)
 
 # reduce 162 omitted
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 433)
+module_eval(<<'.,.,', 'objective_c.rb.y', 434)
   def _reduce_163(val, _values, result)
      result = val[0] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 434)
+module_eval(<<'.,.,', 'objective_c.rb.y', 435)
   def _reduce_164(val, _values, result)
      result = val[0] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 435)
+module_eval(<<'.,.,', 'objective_c.rb.y', 436)
   def _reduce_165(val, _values, result)
      result = val[0] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 436)
+module_eval(<<'.,.,', 'objective_c.rb.y', 437)
   def _reduce_166(val, _values, result)
      result = val[0] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 437)
+module_eval(<<'.,.,', 'objective_c.rb.y', 438)
   def _reduce_167(val, _values, result)
      result = val[0] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 441)
+module_eval(<<'.,.,', 'objective_c.rb.y', 442)
   def _reduce_168(val, _values, result)
      result = val[0] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 442)
+module_eval(<<'.,.,', 'objective_c.rb.y', 443)
   def _reduce_169(val, _values, result)
-     result = Vienna::Node.new(',', val[0], val[2]) 
+     result = make_node(',', val[0], val[2]) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 445)
+module_eval(<<'.,.,', 'objective_c.rb.y', 446)
   def _reduce_170(val, _values, result)
      result = val[0] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 446)
+module_eval(<<'.,.,', 'objective_c.rb.y', 447)
   def _reduce_171(val, _values, result)
      result = val[0] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 447)
+module_eval(<<'.,.,', 'objective_c.rb.y', 448)
   def _reduce_172(val, _values, result)
      result = val[0] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 448)
+module_eval(<<'.,.,', 'objective_c.rb.y', 449)
   def _reduce_173(val, _values, result)
      result = val[0] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 449)
+module_eval(<<'.,.,', 'objective_c.rb.y', 450)
   def _reduce_174(val, _values, result)
      result = val[0] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 450)
+module_eval(<<'.,.,', 'objective_c.rb.y', 451)
   def _reduce_175(val, _values, result)
      result = val[0] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 451)
+module_eval(<<'.,.,', 'objective_c.rb.y', 452)
   def _reduce_176(val, _values, result)
      result = val[0] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 452)
+module_eval(<<'.,.,', 'objective_c.rb.y', 453)
   def _reduce_177(val, _values, result)
      result = val[0] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 453)
+module_eval(<<'.,.,', 'objective_c.rb.y', 454)
   def _reduce_178(val, _values, result)
      result = val[0] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 454)
+module_eval(<<'.,.,', 'objective_c.rb.y', 455)
   def _reduce_179(val, _values, result)
      result = val[0] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 455)
+module_eval(<<'.,.,', 'objective_c.rb.y', 456)
   def _reduce_180(val, _values, result)
      result = val[0] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 456)
+module_eval(<<'.,.,', 'objective_c.rb.y', 457)
   def _reduce_181(val, _values, result)
      result = val[0] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 457)
+module_eval(<<'.,.,', 'objective_c.rb.y', 458)
   def _reduce_182(val, _values, result)
      result = val[0] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 458)
+module_eval(<<'.,.,', 'objective_c.rb.y', 459)
   def _reduce_183(val, _values, result)
      result = val[0] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 459)
+module_eval(<<'.,.,', 'objective_c.rb.y', 460)
   def _reduce_184(val, _values, result)
      result = val[0] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 460)
+module_eval(<<'.,.,', 'objective_c.rb.y', 461)
   def _reduce_185(val, _values, result)
      result = val[0] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 461)
+module_eval(<<'.,.,', 'objective_c.rb.y', 462)
   def _reduce_186(val, _values, result)
      result = val[0] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 462)
+module_eval(<<'.,.,', 'objective_c.rb.y', 463)
   def _reduce_187(val, _values, result)
      result = val[0] 
     result
@@ -2656,16 +2793,16 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 462)
 
 # reduce 192 omitted
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 477)
+module_eval(<<'.,.,', 'objective_c.rb.y', 478)
   def _reduce_193(val, _values, result)
      result = val[0] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 478)
+module_eval(<<'.,.,', 'objective_c.rb.y', 479)
   def _reduce_194(val, _values, result)
-     result = Vienna::Node.new(',', val[0], val[1]) 
+     result = make_node(',', val[0], val[1]) 
     result
   end
 .,.,
@@ -2674,9 +2811,9 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 478)
 
 # reduce 196 omitted
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 487)
+module_eval(<<'.,.,', 'objective_c.rb.y', 488)
   def _reduce_197(val, _values, result)
-     result = Vienna::Node.new('i', val[0], val[1]) 
+     result = make_node('i', val[0], val[1]) 
     result
   end
 .,.,
@@ -2697,49 +2834,49 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 487)
 
 # reduce 205 omitted
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 502)
+module_eval(<<'.,.,', 'objective_c.rb.y', 503)
   def _reduce_206(val, _values, result)
-     result = Vienna::Node.new(',', val[0], val[1]) 
+     result = make_node(',', val[0], val[1]) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 503)
+module_eval(<<'.,.,', 'objective_c.rb.y', 504)
   def _reduce_207(val, _values, result)
      result = val[0] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 504)
+module_eval(<<'.,.,', 'objective_c.rb.y', 505)
   def _reduce_208(val, _values, result)
-     result = Vienna::Node.new(',', val[0], val[1]) 
+     result = make_node(',', val[0], val[1]) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 505)
+module_eval(<<'.,.,', 'objective_c.rb.y', 506)
   def _reduce_209(val, _values, result)
      result = val[0] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 509)
+module_eval(<<'.,.,', 'objective_c.rb.y', 510)
   def _reduce_210(val, _values, result)
      result = val[0] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 510)
+module_eval(<<'.,.,', 'objective_c.rb.y', 511)
   def _reduce_211(val, _values, result)
-     result = Vienna::Node.new(',', val[0], val[2]) 
+     result = make_node(',', val[0], val[2]) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 514)
+module_eval(<<'.,.,', 'objective_c.rb.y', 515)
   def _reduce_212(val, _values, result)
      result = val[0] 
     result
@@ -2750,98 +2887,98 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 514)
 
 # reduce 214 omitted
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 520)
-  def _reduce_215(val, _values, result)
-     result = Vienna::Node.new('e', Vienna::Node.new(',', val[0], nil), val[2]) 
-    result
-  end
-.,.,
-
 module_eval(<<'.,.,', 'objective_c.rb.y', 521)
-  def _reduce_216(val, _values, result)
-     result = Vienna::Node.new('e', Vienna::Node.new(',', val[0], val[1]), val[2]) 
+  def _reduce_215(val, _values, result)
+     result = make_node('e', make_node(',', val[0], nil), val[2]) 
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'objective_c.rb.y', 522)
-  def _reduce_217(val, _values, result)
-     result = Vienna::Node.new('e', Vienna::Node.new(',', val[0], val[1]), nil) 
+  def _reduce_216(val, _values, result)
+     result = make_node('e', make_node(',', val[0], val[1]), val[2]) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 526)
+module_eval(<<'.,.,', 'objective_c.rb.y', 523)
+  def _reduce_217(val, _values, result)
+     result = make_node('e', make_node(',', val[0], val[1]), nil) 
+    result
+  end
+.,.,
+
+module_eval(<<'.,.,', 'objective_c.rb.y', 527)
   def _reduce_218(val, _values, result)
      result = val[0] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 527)
+module_eval(<<'.,.,', 'objective_c.rb.y', 528)
   def _reduce_219(val, _values, result)
-     result = Vienna::Node.new(',', val[0], val[2]) 
-    result
-  end
-.,.,
-
-module_eval(<<'.,.,', 'objective_c.rb.y', 531)
-  def _reduce_220(val, _values, result)
-     result = Vienna::Node.new('E', val[0], nil) 
+     result = make_node(',', val[0], val[2]) 
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'objective_c.rb.y', 532)
-  def _reduce_221(val, _values, result)
-     result = Vienna::Node.new('E', val[0], val[2]) 
+  def _reduce_220(val, _values, result)
+     result = make_node('E', val[0], nil) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 536)
+module_eval(<<'.,.,', 'objective_c.rb.y', 533)
+  def _reduce_221(val, _values, result)
+     result = make_node('E', val[0], val[2]) 
+    result
+  end
+.,.,
+
+module_eval(<<'.,.,', 'objective_c.rb.y', 537)
   def _reduce_222(val, _values, result)
      result = val[0] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 537)
+module_eval(<<'.,.,', 'objective_c.rb.y', 538)
   def _reduce_223(val, _values, result)
      result = val[0] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 538)
+module_eval(<<'.,.,', 'objective_c.rb.y', 539)
   def _reduce_224(val, _values, result)
      result = val[0] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 539)
+module_eval(<<'.,.,', 'objective_c.rb.y', 540)
   def _reduce_225(val, _values, result)
      result = val[0] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 543)
+module_eval(<<'.,.,', 'objective_c.rb.y', 544)
   def _reduce_226(val, _values, result)
      result = val[1] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 544)
+module_eval(<<'.,.,', 'objective_c.rb.y', 545)
   def _reduce_227(val, _values, result)
      result = val[0] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 548)
+module_eval(<<'.,.,', 'objective_c.rb.y', 549)
   def _reduce_228(val, _values, result)
      result = val[0] 
     result
@@ -2860,30 +2997,30 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 548)
 
 # reduce 234 omitted
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 558)
+module_eval(<<'.,.,', 'objective_c.rb.y', 559)
   def _reduce_235(val, _values, result)
      result = nil 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 559)
+module_eval(<<'.,.,', 'objective_c.rb.y', 560)
   def _reduce_236(val, _values, result)
      result = val[1] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 560)
+module_eval(<<'.,.,', 'objective_c.rb.y', 561)
   def _reduce_237(val, _values, result)
      result = val[1] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 561)
+module_eval(<<'.,.,', 'objective_c.rb.y', 562)
   def _reduce_238(val, _values, result)
-     result = Vienna::Node.new(',', val[1], val[2]) 
+     result = make_node(',', val[1], val[2]) 
     result
   end
 .,.,
@@ -3018,28 +3155,28 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 561)
 
 # reduce 303 omitted
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 687)
+module_eval(<<'.,.,', 'objective_c.rb.y', 688)
   def _reduce_304(val, _values, result)
      result = val[0] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 688)
+module_eval(<<'.,.,', 'objective_c.rb.y', 689)
   def _reduce_305(val, _values, result)
-     result = Vienna::Node.new ',', val[0], val[1] 
+     result = make_node ',', val[0], val[1] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 692)
+module_eval(<<'.,.,', 'objective_c.rb.y', 693)
   def _reduce_306(val, _values, result)
      result = val[0] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'objective_c.rb.y', 693)
+module_eval(<<'.,.,', 'objective_c.rb.y', 694)
   def _reduce_307(val, _values, result)
      result = val[0] 
     result
