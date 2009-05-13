@@ -46,7 +46,7 @@
 - (void)setFont:(NSFont *)fontObj;
 - (void)setFormatter:(NSFormatter *)newFormatter;
 - (id)formatter;
-- (void)setObjectValue:(id<NSCopying>)obj;
+- (void)setObjectValue:(id)obj;
 - (void)setStringValue:(NSString *)aString;
 - (void)setIntValue:(int)anInt;
 - (void)setFloatValue:(float)aFloat;
@@ -84,7 +84,7 @@
 
 @interface NSControl (NSKeyboardUI)
 
-- (void)performClick:sender;
+- (void)performClick:(id)sender;
 - (void)setRefusesFirstResponder:(BOOL)flag;
 - (BOOL)refusesFirstResponder;
 
@@ -108,8 +108,8 @@
 - (void)control:(NSControl *)control didFailToValidatePartialString:(NSString *)string errorDescription:(NSString *)error;
 - (BOOL)control:(NSControl *)control isValidObject:(id)obj;
 
-- (BOOL)control:(NSControl *)control textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector;
-- (NSArray *)control:(NSControl *)control textView:(NSTextView *)textView completions:(NSArray *)words forPartialWordRange:(NSRange)charRange indexOfSelectedItem:(NSInteger *)index;
+// - (BOOL)control:(NSControl *)control textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector;
+// - (NSArray *)control:(NSControl *)control textView:(NSTextView *)textView completions:(NSArray *)words forPartialWordRange:(NSRange)charRange indexOfSelectedItem:(NSInteger *)index;
 
 @end
 
@@ -119,7 +119,7 @@ extern NSString *NSControlTextDidChangeNotification;
 
 @interface NSControl (NSControlAttributedStringMethods)
 
-- (NSAttributedString *)attributedStringValue;
-- (void)setAttributedStringValue:(NSAttributedString *)obj;
+// - (NSAttributedString *)attributedStringValue;
+// - (void)setAttributedStringValue:(NSAttributedString *)obj;
 
 @end

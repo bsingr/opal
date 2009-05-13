@@ -18,7 +18,7 @@ enum {
 
 enum {
     NSTableViewSelectionHighlightStyleRegular       = 0,
-    NSTableViewSelectionHighlightStyleSourceList    = 1,
+    NSTableViewSelectionHighlightStyleSourceList    = 1
 };
 typedef NSInteger NSTableViewSelectionHighlightStyle;
 
@@ -180,7 +180,7 @@ typedef NSInteger NSTableViewSelectionHighlightStyle;
 - (void)tableView:(NSTableView *)tableView didDragTableColumn:(NSTableColumn *)tableColumn;
 
 
-- (NSString *)tableView:(NSTableView *)tableView toolTipForCell:(NSCell *)cell rect:(NSRectPointer)rect tableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row mouseLocation:(NSPoint)mouseLocation;
+// - (NSString *)tableView:(NSTableView *)tableView toolTipForCell:(NSCell *)cell rect:(NSRectPointer)rect tableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row mouseLocation:(NSPoint)mouseLocation;
 - (CGFloat)tableView:(NSTableView *)tableView heightOfRow:(NSInteger)row;
 - (NSString *)tableView:(NSTableView *)tableView typeSelectStringForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row;
 - (NSInteger)tableView:(NSTableView *)tableView nextTypeSelectMatchFromRow:(NSInteger)startRow toRow:(NSInteger)endRow forString:(NSString *)searchString;

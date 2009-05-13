@@ -25,10 +25,10 @@ module Vienna
     # thrown
     def deal_with_interface_declaration(parse_tree)
       # Get class info/values etc from the parse tree so they are easy to reference
-      name = parse_tree.left.left.left.left
-      super_class = parse_tree.left.left.left.right
+      name = parse_tree.left.left.left.left.value
+      super_class = parse_tree.left.left.left.right.value if parse_tree.left.left.left.right
       ivar_list = parse_tree.left.right
-      category = parse_tree.left.left.right.right
+      category = parse_tree.left.left.right.right.value if parse_tree.left.left.right.right
       method_declarations = parse_tree.right
         
       # set interface to be already existing interface, if it exsists

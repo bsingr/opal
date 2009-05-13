@@ -30,6 +30,7 @@ module Vienna
   	  @enum_declarations = []
   	  @typedef_declarations = []
   	  @struct_declarations = []
+  	  @extern_functions = []
   	  @at_class_list = []
   	  @known_classes = []
   	end
@@ -37,6 +38,18 @@ module Vienna
   	def make_node(value, left, right)
   	  Vienna::Node.new(value, left, right, current_file, current_line)
   	end
+  	
+  	def make_token(type, value)
+  	  the_token = Vienna::Node.new(value, nil, nil, current_file, current_line)
+  	  the_token.token = type
+  	  return [type, the_token]
+	  end
+	  
+	  def node_set_children(parent, left, right)
+	    parent.left = left if left
+	    parent.right = right if right
+	    return parent
+    end
   	
     # Returns the current file object being processed. This basically just returns
     # the file at the top of the parsing stack. If a string is being processed, 
@@ -92,22 +105,49 @@ module Vienna
     end
     
     
-    def deal_with_enum_declaration(enum)
-      new_enum = ObjectiveCEnum.new
-      new_enum.deal_with_enum_list(enum.left.right)
-      @enum_declarations << new_enum
+    def deal_with_enum(e)
+
     end
     
     
-    def add_typedef_declaration(typedef)
-      @typedef_declarations << typedef.right
+    def deal_with_typedef(t)
+      if t.right.value == '*'
+        @typedef_declarations << t.right.right.value
+      else
+        @typedef_declarations << t.right.value
+      end
+    end
+    
+    def deal_with_extern(e)
+      if e.right.value == "f"
+        # puts "Found function #{e.right.left.value}"
+        @extern_functions << e.right.left.value
+      elsif e.right.value == "*"
+        # puts "Found extern declaration1: #{e.right.right}"
+      else
+        # puts "Found extern declaration2: #{e.right.value}"
+      end
+    end
+    
+    def deal_with_struct(s)
+      
     end
     
     # This handles @class myClass type declarations. As a new header is dealt 
     # with, this list should really be cleared. For now it is maintained.
     # Also, this currently only holds one class, i.e. one per statement
     def deal_with_at_class(d)
-      @at_class_list << d.left
+      # @at_class_list << d.left.value
+      return if d.nil?
+      
+      if d.token == :AT_CLASS
+        deal_with_at_class d.left
+      elsif d.value == ","
+        deal_with_at_class d.left
+        deal_with_at_class d.right
+      else
+        @at_class_list << d.value
+      end
     end
     
     
@@ -127,16 +167,22 @@ module Vienna
     # declaration - of type Vienna::Node for the base of the declaration
     # 
     def deal_with_declaration(d)
-          
-      if d.left.left == :TYPEDEF and d.right != nil
-        add_typedef_declaration(d)
-      elsif d.left.left == :EXTERN
-        # Should we really need to deal with extern declaration here?!
-        # Maybe only during going through the parse tree. who knows?!
-      elsif d.left.value == "e"
-        deal_with_enum_declaration(d)
+      
+      if d.token == :AT_CLASS
+        deal_with_at_class d
+      elsif d.token == :AT_IMPLEMENTATION
+        deal_with_implementation d
+      elsif d.left.token == :ENUM
+        deal_with_enum d
+      elsif
+        d.left.token == :STRUCT
+        deal_with_struct d
+      elsif d.left.left.token == :TYPEDEF
+        deal_with_typedef d
+      elsif d.left.left.token == :EXTERN
+        deal_with_extern d
       else
-        puts "Should throw error: unable to determine declaration type"
+        # puts d
       end
     end
     
@@ -146,8 +192,8 @@ module Vienna
     # inform the user. This therefore needs to report back to the "project"
     # object with news of what happened.
   	def on_error(error_token_id, error_value, value_stack)
-  	  msg = "#{@objc_files.last.file_path}"
-  	  msg << "(#{@objc_files.last.current_line})"
+  	  msg = "#{@parsing_stack.last.file_path}"
+  	  msg << "(#{@parsing_stack.last.current_line})"
       msg << " error: "
     	# msg << "after #{value_stack.last} " if value_stack.length > 1
     	#      msg << "after #{value_stack.last} " unless value_stack.empty?

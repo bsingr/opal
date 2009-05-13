@@ -8,13 +8,13 @@
 
 #import <AppKit/NSText.h>
 
-// @class NSTextContainer;
-// @class NSTextStorage;
-// @class NSLayoutManager;
-// @class NSRulerView;
-// @class NSRulerMarker;
-// @class NSUndoManager;
-// @class NSParagraphStyle;
+@class NSTextContainer;
+@class NSTextStorage;
+@class NSLayoutManager;
+@class NSRulerView;
+@class NSRulerMarker;
+@class NSUndoManager;
+@class NSParagraphStyle;
 
 enum {
     NSSelectByCharacter                     = 0,
@@ -317,11 +317,11 @@ extern NSString *NSTextViewDidChangeTypingAttributesNotification;
 @interface NSObject (NSTextViewDelegate)
 
 - (BOOL)textView:(NSTextView *)textView clickedOnLink:(id)link atIndex:(NSUInteger)charIndex;
-- (void)textView:(NSTextView *)textView clickedOnCell:(id <NSTextAttachmentCell>)cell inRect:(NSRect)cellFrame atIndex:(NSUInteger)charIndex;
-- (void)textView:(NSTextView *)textView doubleClickedOnCell:(id <NSTextAttachmentCell>)cell inRect:(NSRect)cellFrame atIndex:(NSUInteger)charIndex;
-- (void)textView:(NSTextView *)view draggedCell:(id <NSTextAttachmentCell>)cell inRect:(NSRect)rect event:(NSEvent *)event atIndex:(NSUInteger)charIndex;
-- (NSArray *)textView:(NSTextView *)view writablePasteboardTypesForCell:(id <NSTextAttachmentCell>)cell atIndex:(NSUInteger)charIndex;
-- (BOOL)textView:(NSTextView *)view writeCell:(id <NSTextAttachmentCell>)cell atIndex:(NSUInteger)charIndex toPasteboard:(NSPasteboard *)pboard type:(NSString *)type ;
+- (void)textView:(NSTextView *)textView clickedOnCell:(id )cell inRect:(NSRect)cellFrame atIndex:(NSUInteger)charIndex;
+- (void)textView:(NSTextView *)textView doubleClickedOnCell:(id )cell inRect:(NSRect)cellFrame atIndex:(NSUInteger)charIndex;
+- (void)textView:(NSTextView *)view draggedCell:(id )cell inRect:(NSRect)rect event:(NSEvent *)event atIndex:(NSUInteger)charIndex;
+- (NSArray *)textView:(NSTextView *)view writablePasteboardTypesForCell:(id )cell atIndex:(NSUInteger)charIndex;
+- (BOOL)textView:(NSTextView *)view writeCell:(id )cell atIndex:(NSUInteger)charIndex toPasteboard:(NSPasteboard *)pboard type:(NSString *)type ;
 - (NSRange)textView:(NSTextView *)textView willChangeSelectionFromCharacterRange:(NSRange)oldSelectedCharRange toCharacterRange:(NSRange)newSelectedCharRange;
 - (NSArray *)textView:(NSTextView *)textView willChangeSelectionFromCharacterRanges:(NSArray *)oldSelectedCharRanges toCharacterRanges:(NSArray *)newSelectedCharRanges;
 

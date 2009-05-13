@@ -9,7 +9,8 @@
 #import <Foundation/NSObject.h>
 #import <Foundation/NSGeometry.h>
 
-@class NSColor, NSFont, NSStatusItem, NSMutableArray;
+@class NSColor, NSFont;
+@class NSStatusItem, NSMutableArray;
 
 @interface NSStatusBar : NSObject
 {

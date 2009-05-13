@@ -10,6 +10,8 @@
 typedef int size_t;
 typedef int bool;
 
+extern const int CFRangeMake;
+
 typedef unsigned long CFTypeID;
 typedef unsigned long CFOptionFlags;
 typedef unsigned long CFHashCode;

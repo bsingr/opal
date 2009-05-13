@@ -18,7 +18,7 @@ extern void NSBeginCriticalAlertSheet(NSString *title, NSString *defaultButton, 
 
 extern id NSGetAlertPanel(NSString *title, NSString *msgFormat, NSString *defaultButton, NSString *alternateButton, NSString *otherButton, ...);
 extern id NSGetInformationalAlertPanel(NSString *title, NSString *msgFormat, NSString *defaultButton, NSString *alternateButton, NSString *otherButton, ...);
-extern id NSGetCriticalAlertPanel(NSString *title, NSString *msgFormat, NSString *defaultButton, NSString *alternateButton, NSString *otherButton, ...);
+extern id NSGetCriticalAlertPanel(const NSString *title, NSString *msgFormat, NSString *defaultButton, NSString *alternateButton, NSString *otherButton, ...);
 
 extern void NSReleaseAlertPanel(id panel);
 

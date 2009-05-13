@@ -10,7 +10,10 @@
 #import <Foundation/NSGeometry.h>
 #import <AppKit/NSCell.h>
 
-@class NSDictionary, NSPasteBoard, NSImage, NSColorSpace;
+@class NSDictionary;
+@class NSPasteBoard;
+@class NSImage;
+@class NSColorSpace;
 
 @interface NSColor : NSObject <NSCopying, NSCoding>
 {
@@ -26,7 +29,7 @@
 + (NSColor *)colorWithDeviceCyan:(CGFloat)cyan magenta:(CGFloat)magenta yellow:(CGFloat)yellow black:(CGFloat)black alpha:(CGFloat)alpha;
 
 + (NSColor *)colorWithCatalogName:(NSString *)listName colorName:(NSString *)colorName;
-+ (NSColor *)colorWithColorSpace:(NSColorSpace *)space components:(const CGFloat *)components count:(NSInteger)numberOfComponents;
+// + (NSColor *)colorWithColorSpace:(NSColorSpace *)space components:(const CGFloat *)components count:(NSInteger)numberOfComponents;
 
 + (NSColor *)blackColor;
 + (NSColor *)darkGrayColor;
@@ -98,7 +101,7 @@
 - (NSString *)colorSpaceName;
 - (NSColor *)colorUsingColorSpaceName:(NSString *)colorSpace;
 - (NSColor *)colorUsingColorSpaceName:(NSString *)colorSpace device:(NSDictionary *)deviceDescription;
-- (NSColor *)colorUsingColorSpace:(NSColorSpace *)space;
+// - (NSColor *)colorUsingColorSpace:(NSColorSpace *)space;
 
 - (NSColor *)blendedColorWithFraction:(CGFloat)fraction ofColor:(NSColor *)color;
 - (NSColor *)colorWithAlphaComponent:(CGFloat)alpha;
@@ -123,14 +126,14 @@
 - (CGFloat)blackComponent;
 - (void)getCyan:(CGFloat *)cyan magenta:(CGFloat *)magenta yellow:(CGFloat *)yellow black:(CGFloat *)black alpha:(CGFloat *)alpha;
 
-- (NSColorSpace *)colorSpace;
+// - (NSColorSpace *)colorSpace;
 - (NSInteger)numberOfComponents;
 - (void)getComponents:(CGFloat *)components;
 
 - (CGFloat)alphaComponent;
 
-+ (NSColor *)colorFromPasteboard:(NSPasteboard *)pasteBoard;
-- (void)writeToPasteboard:(NSPasteboard *)pasteBoard;
+// + (NSColor *)colorFromPasteboard:(NSPasteboard *)pasteBoard;
+// - (void)writeToPasteboard:(NSPasteboard *)pasteBoard;
 
 + (NSColor *)colorWithPatternImage:(NSImage*)image;
 - (NSImage *)patternImage; 

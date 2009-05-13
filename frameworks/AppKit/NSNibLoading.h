@@ -8,7 +8,7 @@
 
 #import <Foundation/NSBundle.h>
 
-@class NSString
+@class NSString;
 @class NSDictionary;
 
 @interface NSBundle (NSNibLoading)

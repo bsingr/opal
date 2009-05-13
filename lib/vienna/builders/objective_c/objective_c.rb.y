@@ -72,10 +72,12 @@ class Vienna::ObjectiveCParser
     primary_expression:
     	  IDENTIFIER                                        { result = val[0] }
     	| CONSTANT                                          { result = val[0] }
+      # | TYPE_NAME                                         { result = val[0] }
     	| STRING_LITERAL                                    { result = val[0] }
     	| '(' expression ')'                                { result = make_node('(', val[1], nil) }
     	| AT_STRING_LITERAL
     	| '[' expression selector_with_arguments ']'
+      | '[' TYPE_NAME selector_with_arguments ']'
     	| AT_SELECTOR '(' selector ')'
     	| AT_ENCODE '(' type_name ')'
     	# these two rules allow for Objc 3.0 style blocks
@@ -86,10 +88,11 @@ class Vienna::ObjectiveCParser
     postfix_expression:
     	  primary_expression                                { result = val[0] }
     	| postfix_expression '[' expression ']'
-    	| postfix_expression '(' ')'
-    	| postfix_expression '(' argument_expression_list ')'
+    	| postfix_expression '(' ')'                        { result = make_node('f', val[0], nil) }
+    	| postfix_expression '(' argument_expression_list ')' { result = make_node('f', val[0], val[2]) }
     	| postfix_expression '.' IDENTIFIER
     	| postfix_expression PTR_OP IDENTIFIER
+    	| type_name IDENTIFIER                              { result = make_node('i', val[0], val[1]) }
     	| postfix_expression INC_OP
     	| postfix_expression DEC_OP
     	;
@@ -215,8 +218,8 @@ class Vienna::ObjectiveCParser
     	;
 
     class_name_list:
-    	  class_identifier_or_type_name
-    	| class_name_list ',' class_identifier_or_type_name
+    	  class_identifier_or_type_name                     { result = val[0] }
+    	| class_name_list ',' class_identifier_or_type_name { result = make_node(',', val[0], val[2]) }
     	;
 
     class_with_superclass:
@@ -242,19 +245,19 @@ class Vienna::ObjectiveCParser
     class_name_declaration:
     	  class_with_superclass {
     	    result = make_node(',', val[0], make_node(',', nil, nil))
-    	    register_class_name_from_declaration(val[0].left)
+    	    register_class_name_from_declaration(val[0].left.value)
     	  }
     	| class_with_superclass '<' inherited_protocols '>' {
     	    result = make_node(',', val[0], make_node(',', val[2], nil))
-    	    register_class_name_from_declaration(val[0].left)
+    	    register_class_name_from_declaration(val[0].left.value)
     	  }
     	| class_with_superclass '(' category_name ')' {
     	    result = make_node(',', val[0], make_node(',', nil, val[2]))
-    	    register_class_name_from_declaration(val[0].left)
+    	    register_class_name_from_declaration(val[0].left.value)
     	  }
     	| class_with_superclass '<' inherited_protocols '>' '(' category_name ')' {
     	    result = make_node(',', val[0], make_node(',', val[2], val[5]))
-    	    register_class_name_from_declaration(val[0].left)
+    	    register_class_name_from_declaration(val[0].left.value)
     	  }
     	;
 
@@ -328,96 +331,42 @@ class Vienna::ObjectiveCParser
   	  ;
   	
     method_implementation:
-    	  method_implementation_declaration compound_statement {
-    	    result = make_node('M', val[0], val[1])
-    	  }
-    	| method_implementation_declaration ';' compound_statement {
-    	    result = make_node('M', val[0], val[2])
-    	  }
-    	| AT_SYNTHESIZE ivar_list ';' {
-    	    result = make_node(:AT_SYNTHESIZE, val[1], nil)
-    	  }
+    	  method_implementation_declaration compound_statement      { result = make_node('M', val[0], val[1]) }
+    	| method_implementation_declaration ';' compound_statement  { result = make_node('M', val[0], val[2]) }
+    	| AT_SYNTHESIZE ivar_list ';'                               { result = make_node(:AT_SYNTHESIZE, val[1], nil) }
     	;
 
     method_implementation_list:
-    	  method_implementation {
-    	    result = val[0]
-    	  }
-    	| method_implementation_list method_implementation {
-    	    result = make_node(',', val[0], val[1])
-    	  }
+    	  method_implementation                             { result = val[0] }
+    	| method_implementation_list method_implementation  { result = make_node(',', val[0], val[1]) }
     	;
 
     objc_declaration:
-    	  AT_CLASS class_name_list ';' {
-      	  result = make_node(:AT_CLASS, val[1], nil)
-      	  deal_with_at_class(result)
-      	}
-    	| AT_PROTOCOL class_name_declaration AT_END {
-      	  result = make_node(:AT_PROTOCOL, val[1], nil)
-    	    new_protocol = ObjectiveCProtocol.new_from_parse_tree(result)
-    	    add_protocol_declaration(new_protocol)
-      	}
-    	| AT_PROTOCOL class_name_declaration method_declaration_list AT_END {
-    	    result = make_node(:AT_PROTOCOL, val[1], val[2])
-    	    # new_protocol = ObjectiveCProtocol.new_from_parse_tree(result)
-    	    #          add_protocol_declaration(new_protocol)
-    	  }
-    	| AT_INTERFACE class_name_declaration AT_END {
-    	    result = make_node(:AT_INTERFACE, make_node(',', val[1], nil), nil)
-    	    deal_with_interface_declaration(result)
-    	  }
-    	| AT_INTERFACE class_name_declaration ivar_declaration_list method_declaration_list AT_END {
-    	    result = make_node(:AT_INTERFACE, make_node(',', val[1], val[2]), val[3])
-    	    deal_with_interface_declaration(result)
-    	  }
-    	| AT_INTERFACE class_name_declaration ivar_declaration_list AT_END {
-    	    result = make_node(:AT_INTERFACE, make_node(',', val[1], val[2]), nil)
-    	    deal_with_interface_declaration(result)
-    	  }
-    	| AT_INTERFACE class_name_declaration method_declaration_list AT_END {
-    	    result = make_node(:AT_INTERFACE, make_node(',', val[1], nil), val[2])
-    	    deal_with_interface_declaration(result)
-    	  }
-    	| AT_IMPLEMENTATION class_implementation AT_END { 
-    	    result = make_node(:AT_IMPLEMENTATION, make_node(',', val[1], nil), nil)
-    	    deal_with_implementation_declaration(result)
-    	  }
-    	| AT_IMPLEMENTATION class_implementation ivar_declaration_list AT_END {
-    	    result = make_node(:AT_IMPLEMENTATION, make_node(',', val[1], val[2]), nil)
-    	    deal_with_implementation_declaration(result)
-    	  }
-    	| AT_IMPLEMENTATION class_implementation method_implementation_list AT_END {
-    	    result = make_node(:AT_IMPLEMENTATION, make_node(',', val[1], nil), val[2])
-    	    deal_with_implementation_declaration(result)
-    	  }
-    	| AT_IMPLEMENTATION class_implementation ivar_declaration_list method_implementation_list AT_END {
-    	    result = make_node(:AT_IMPLEMENTATION, make_node(',', val[1], val[2]), val[3])
-    	    deal_with_implementation_declaration(result)
-    	  }
+    	  AT_CLASS class_name_list ';'                                                                    { result = node_set_children(val[0], val[1], nil) }
+    	| AT_PROTOCOL class_name_declaration AT_END                                                       { result = node_set_children(val[0], val[1], nil)	}
+    	| AT_PROTOCOL class_name_declaration method_declaration_list AT_END                               { result = node_set_children(val[0], val[1], val[2]) }
+    	| AT_INTERFACE class_name_declaration AT_END                                                      { result = node_set_children(val[0], make_node(',', val[1], nil), nil) }
+    	| AT_INTERFACE class_name_declaration ivar_declaration_list method_declaration_list AT_END        { result = node_set_children(val[0], make_node(',', val[1], val[2]), val[3]) }
+    	| AT_INTERFACE class_name_declaration ivar_declaration_list AT_END                                { result = node_set_children(val[0], make_node(',', val[1], val[2]), nil) }
+    	| AT_INTERFACE class_name_declaration method_declaration_list AT_END                              { result = node_set_children(val[0], make_node(',', val[1], nil), val[2]) }
+    	| AT_IMPLEMENTATION class_implementation AT_END                                                   { result = node_set_children(val[0], make_node(',', val[1], nil), nil) }
+    	| AT_IMPLEMENTATION class_implementation ivar_declaration_list AT_END                             { result = node_set_children(val[0], make_node(',', val[1], val[2]), nil) }
+    	| AT_IMPLEMENTATION class_implementation method_implementation_list AT_END                        { result = node_set_children(val[0], make_node(',', val[1], nil), val[2]) }
+    	| AT_IMPLEMENTATION class_implementation ivar_declaration_list method_implementation_list AT_END  { result = node_set_children(val[0], make_node(',', val[1], val[2]), val[3]) }
     	;
 
     declaration:
-    	  declaration_specifiers ';' {
-          # Normal declaration
-    	    result = make_node('d', val[0], nil)
-          deal_with_declaration(result)
-    	  }
-    	| declaration_specifiers init_declarator_list ';' {
-    	     # This will be like a typedef or something like extern const nsstring bob = @"hey";
-    	     result = make_node('d', val[0], val[1])
-    	     puts result
-           deal_with_declaration(result)
-    	  }  
+    	  declaration_specifiers ';'                        { result = make_node('d', val[0], nil) }
+    	| declaration_specifiers init_declarator_list ';'   { result = make_node('d', val[0], val[1]) }  
     	| objc_declaration                                  { result = val[0] }
     	;
 
     declaration_specifiers:
     	  storage_class_specifier                           { result = val[0] }
     	| storage_class_specifier declaration_specifiers    { result = make_node(',', val[0], val[1]) }
-    	| type_specifier                                    { result = val[0] }   # This will be a typename, void, int, id etc
+    	| type_specifier                                    { result = val[0] }
     	| type_specifier declaration_specifiers             { result = make_node(',', val[0], val[1]) }
-    	| type_qualifier                                    { result = val[0] }   # This will be const, volatile etc
+    	| type_qualifier                                    { result = val[0] }
     	| type_qualifier declaration_specifiers             { result = make_node(',', val[0], val[1]) }
     	;
 
@@ -428,15 +377,15 @@ class Vienna::ObjectiveCParser
 
     init_declarator:
     	  declarator                                        { result = val[0] }
-    	| declarator '=' initializer
+    	| declarator '=' initializer                        { result = make_node('=', val[0], val[2]) }
     	;
 
     storage_class_specifier:
-    	  TYPEDEF   { result = val[0] }  
-    	| EXTERN    { result = val[0] }
-    	| STATIC    { result = val[0] }
-    	| AUTO      { result = val[0] }
-    	| REGISTER  { result = val[0] }
+    	  TYPEDEF                                           { result = val[0] }  
+    	| EXTERN                                            { result = val[0] }
+    	| STATIC                                            { result = val[0] }
+    	| AUTO                                              { result = val[0] }
+    	| REGISTER                                          { result = val[0] }
     	;
 
     protocol_list:
@@ -465,28 +414,28 @@ class Vienna::ObjectiveCParser
     	;
 
     struct_or_union_specifier:
-    	  struct_or_union IDENTIFIER '{' struct_declaration_list '}'
-    	| struct_or_union '{' struct_declaration_list '}'
-    	| struct_or_union IDENTIFIER
+    	  struct_or_union IDENTIFIER '{' struct_declaration_list '}'  { result = make_node(val[0], val[1], val[2]) }
+    	| struct_or_union '{' struct_declaration_list '}'             { result = make_node(val[0], nil, val[2]) }
+    	| struct_or_union IDENTIFIER                                  { result = make_node(val[0], val[1], nil) }
     	;
 
     struct_or_union:
-    	  STRUCT
-    	| UNION
+    	  STRUCT                                            { result = val[0] }
+    	| UNION                                             { result = val[0] }
     	;
 
     struct_declaration_list:
-    	  struct_declaration                                                            { result = val[0] }
-    	| struct_declaration_list struct_declaration                                    { result = make_node(',', val[0], val[1]) }
+    	  struct_declaration                                { result = val[0] }
+    	| struct_declaration_list struct_declaration        { result = make_node(',', val[0], val[1]) }
     	;
 
     property_attributes_list:
-    	  IDENTIFIER
-    	| IDENTIFIER ',' property_attributes_list
+    	  IDENTIFIER                                        { result = val[0] }
+    	| IDENTIFIER ',' property_attributes_list           { result = make_node(',', val[0], val[2]) }
     	;
 
     struct_declaration:
-    	  specifier_qualifier_list struct_declarator_list ';'                           { result = make_node('i', val[0], val[1]) }
+    	  specifier_qualifier_list struct_declarator_list ';'                                               { result = make_node('i', val[0], val[1]) }
     	| AT_PRIVATE specifier_qualifier_list struct_declarator_list ';'
     	| AT_PUBLIC specifier_qualifier_list struct_declarator_list ';'
     	| AT_PROTECTED specifier_qualifier_list struct_declarator_list ';'
@@ -496,32 +445,32 @@ class Vienna::ObjectiveCParser
     	;
 
     ivar_list:
-    	  ivar_list IDENTIFIER
-    	| IDENTIFIER
+    	  ivar_list IDENTIFIER                              { result = make_node(',', val[0], val[1]) }
+    	| IDENTIFIER                                        { result = val[0] }
     	;
 
     specifier_qualifier_list:
-    	  type_specifier specifier_qualifier_list                                       { result = make_node(',', val[0], val[1]) }
-    	| type_specifier                                                                { result = val[0] }
-    	| type_qualifier specifier_qualifier_list                                       { result = make_node(',', val[0], val[1]) }
-    	| type_qualifier                                                                { result = val[0] }
+    	  type_specifier specifier_qualifier_list           { result = make_node(',', val[0], val[1]) }
+    	| type_specifier                                    { result = val[0] }
+    	| type_qualifier specifier_qualifier_list           { result = make_node(',', val[0], val[1]) }
+    	| type_qualifier                                    { result = val[0] }
     	;
 
     struct_declarator_list:
-    	  struct_declarator                                                             { result = val[0] }
-    	| struct_declarator_list ',' struct_declarator                                  { result = make_node(',', val[0], val[2]) }
+    	  struct_declarator                                 { result = val[0] }
+    	| struct_declarator_list ',' struct_declarator      { result = make_node(',', val[0], val[2]) }
     	;
 
     struct_declarator:
-    	  declarator                                                                    { result = val[0] }
-    	| ':' constant_expression
-    	| declarator ':' constant_expression
+    	  declarator                                        { result = val[0] }
+    	| ':' constant_expression                           { result = make_node(':', nil, val[1]) }
+    	| declarator ':' constant_expression                { result = make_node(':', val[0], val[2]) }
     	;
 
     enum_specifier:
-    	  ENUM '{' enumerator_list '}'                      { result = make_node('e', make_node(',', val[0], nil), val[2]) }
-    	| ENUM IDENTIFIER '{' enumerator_list '}'           { result = make_node('e', make_node(',', val[0], val[1]), val[2]) }
-    	| ENUM IDENTIFIER                                   { result = make_node('e', make_node(',', val[0], val[1]), nil) }
+    	  ENUM '{' enumerator_list '}'                      { result = node_set_children(val[0], nil, val[2]) }
+    	| ENUM IDENTIFIER '{' enumerator_list '}'           { result = node_set_children(val[0], val[1], val[3]) }
+    	| ENUM IDENTIFIER                                   { result = node_set_children(val[0], val[1], nil) }
     	;
 
     enumerator_list:
@@ -530,8 +479,8 @@ class Vienna::ObjectiveCParser
     	;
 
     enumerator:
-    	  IDENTIFIER                                        { result = make_node('E', val[0], nil) }
-    	| IDENTIFIER '=' constant_expression                { result = make_node('E', val[0], val[2]) }
+    	  IDENTIFIER                                        { result = val[0] }
+    	| IDENTIFIER '=' constant_expression                { result = node_set_children(val[0], val[2], nil) }
     	;
 
     type_qualifier:
@@ -542,7 +491,7 @@ class Vienna::ObjectiveCParser
     	;
 
     declarator:
-    	  pointer direct_declarator                         { result = val[1] }   # For now ignore missing pointer ref's.
+    	  pointer direct_declarator                         { result = make_node('*', val[0], val[1]) }   # For now ignore missing pointer ref's.
     	| direct_declarator                                 { result = val[0] }
     	;
 
@@ -551,37 +500,37 @@ class Vienna::ObjectiveCParser
     	| '(' declarator ')'
     	| direct_declarator '[' constant_expression ']'
     	| direct_declarator '[' ']'
-    	| direct_declarator '(' parameter_type_list ')'
-    	| direct_declarator '(' identifier_list ')'
-    	| direct_declarator '(' ')'
+    	| direct_declarator '(' parameter_type_list ')'     { result = make_node('f', val[0], val[2]) }
+    	| direct_declarator '(' identifier_list ')'         { result = make_node('f', val[0], val[2]) }
+    	| direct_declarator '(' ')'                         { result = make_node('f', val[0], val[2]) }
     	;
 
     pointer:
-    	  '*'                                               { result = nil }
-    	| '*' type_qualifier_list                           { result = val[1] }
-    	| '*' pointer                                       { result = val[1] }
-    	| '*' type_qualifier_list pointer                   { result = make_node(',', val[1], val[2]) }
+    	  '*'                                               { result = val[0] }
+    	| '*' type_qualifier_list                           { result = make_node(val[0], val[1], nil) }
+    	| '*' pointer                                       { result = make_node(val[0], val[1], nil) }
+    	| '*' type_qualifier_list pointer                   { result = make_node(val[0], val[1], val[2]) }
     	;
 
     type_qualifier_list:
-    	  type_qualifier
-    	| type_qualifier_list type_qualifier
+    	  type_qualifier                                    { result = val[0] }
+    	| type_qualifier_list type_qualifier                { result = make_node(',', val[0], val[1]) }
     	;
 
     parameter_type_list:
-    	  parameter_list
-    	| parameter_list ',' ELLIPSIS
+    	  parameter_list                                    { result = val[0] }
+    	| parameter_list ',' ELLIPSIS                       { result = val[0] }
     	;
 
     parameter_list:
-    	  parameter_declaration
-    	| parameter_list ',' parameter_declaration
+    	  parameter_declaration                             { result = val[0] }
+    	| parameter_list ',' parameter_declaration          { result = make_node(',', val[0], val[2]) }
     	;
 
     parameter_declaration:
-    	  declaration_specifiers declarator
-    	| declaration_specifiers abstract_declarator
-    	| declaration_specifiers
+    	  declaration_specifiers declarator                 { result = node_set_children(val[0], val[1], nil) }
+    	| declaration_specifiers abstract_declarator        { result = node_set_children(val[0], val[1], nil) }
+    	| declaration_specifiers                            { result = val[0] }
     	;
 
     identifier_list:
@@ -686,13 +635,19 @@ class Vienna::ObjectiveCParser
     	;
 
     translation_unit:
-    	  external_declaration { result = val[0] }
-    	| translation_unit external_declaration { result = make_node ',', val[0], val[1] }
+    	  external_declaration                              { result = val[0] }
+    	| translation_unit external_declaration             { result = make_node ',', val[0], val[1] }
     	;
 
     external_declaration:
-    	  function_definition { result = val[0] }
-    	| declaration { result = val[0] }
+    	  function_definition { 
+    	    result = val[0]
+    	    deal_with_declaration(result)
+    	  }
+    	| declaration {
+    	    result = val[0]
+    	    deal_with_declaration(result)
+    	  }
     	;
 
     function_definition:
@@ -747,7 +702,7 @@ require 'strscan'
         # puts " # Undef Directive: #{pp_directive}" 
       
       when scanner.scan(/\n/)
-        @objc_files.last.current_line += 1
+        @parsing_stack.last.current_line += 1
         return next_token()
       when scanner.scan(/[ \t\v\f]/)
         return next_token()
@@ -760,243 +715,243 @@ require 'strscan'
       when scanner.scan(/\/\*/)
         # multi-line comment. scan input until end of multi line comment is found
         match = scanner.scan_until(/\*\//)
-        @objc_files.last.current_line += match.scan(/\n/).size
+        @parsing_stack.last.current_line += match.scan(/\n/).size
         return next_token()
       when scanner.scan(/\/\//)
         #single line comment. scan all input (does not include new line char, so skips)
         scanner.scan_until(/.*/)
         return next_token()
       when scanner.scan(/auto(?!([a-zA-Z_]|[0-9]))/)
-        return [:AUTO, :AUTO]
+        return make_token(:AUTO, :AUTO)
       when scanner.scan(/break(?!([a-zA-Z_]|[0-9]))/)
-        return [:BREAK, :BREAK]
+        return make_token(:BREAK, :BREAK)
       when scanner.scan(/case(?!([a-zA-Z_]|[0-9]))/)
-        return [:CASE, :CASE]
+        return make_token(:CASE, :CASE)
       when scanner.scan(/char(?!([a-zA-Z_]|[0-9]))/)
-        return [:CHAR, :CHAR]
+        return make_token(:CHAR, :CHAR)
       when scanner.scan(/const(?!([a-zA-Z_]|[0-9]))/)
-        return [:CONST, :CONST]
+        return make_token(:CONST, :CONST)
       when scanner.scan(/continue(?!([a-zA-Z_]|[0-9]))/)
-        return [:CONTINUE, :CONTINUE]
+        return make_token(:CONTINUE, :CONTINUE)
       when scanner.scan(/default(?!([a-zA-Z_]|[0-9]))/)
-        return [:DEFAULT, :DEFAULT]
+        return make_token(:DEFAULT, :DEFAULT)
       when scanner.scan(/do(?!([a-zA-Z_]|[0-9]))/)
-        return [:DO, :DO]
+        return make_token(:DO, :DO)
       when scanner.scan(/double(?!([a-zA-Z_]|[0-9]))/)
-        return [:DOUBLE, :DOUBLE]
+        return make_token(:DOUBLE, :DOUBLE)
       when scanner.scan(/else(?!([a-zA-Z_]|[0-9]))/)
-        return [:ELSE, :ELSE]
+        return make_token(:ELSE, :ELSE)
       when scanner.scan(/enum(?!([a-zA-Z_]|[0-9]))/)
-        return [:ENUM, :ENUM]
+        return make_token(:ENUM, :ENUM)
       when scanner.scan(/extern(?!([a-zA-Z_]|[0-9]))/)
-        return [:EXTERN, :EXTERN]
+        return make_token(:EXTERN, :EXTERN)
       when scanner.scan(/float(?!([a-zA-Z_]|[0-9]))/)
-        return [:FLOAT, :FLOAT]
+        return make_token(:FLOAT, :FLOAT)
       when scanner.scan(/for(?!([a-zA-Z_]|[0-9]))/)
-        return [:FOR, :FOR]
+        return make_token(:FOR, :FOR)
       when scanner.scan(/goto(?!([a-zA-Z_]|[0-9]))/)
-        return [:GOTO, :GOTO]
+        return make_token(:GOTO, :GOTO)
       when scanner.scan(/if(?!([a-zA-Z_]|[0-9]))/)
-        return [:IF, :IF]
+        return make_token(:IF, :IF)
       when scanner.scan(/int(?!([a-zA-Z_]|[0-9]))/)
-	      return [:INT, :INT]
+	      return make_token(:INT, :INT)
       when scanner.scan(/long(?!([a-zA-Z_]|[0-9]))/)
-        return [:LONG, :LONG]
+        return make_token(:LONG, :LONG)
       when scanner.scan(/register(?!([a-zA-Z_]|[0-9]))/)
-        return [:REGISTER, :REGISTER]
+        return make_token(:REGISTER, :REGISTER)
       when scanner.scan(/return(?!([a-zA-Z_]|[0-9]))/)
-        return [:RETURN, :RETURN]
+        return make_token(:RETURN, :RETURN)
       when scanner.scan(/short(?!([a-zA-Z_]|[0-9]))/)
-        return [:SHORT, :SHORT]
+        return make_token(:SHORT, :SHORT)
       when scanner.scan(/signed(?!([a-zA-Z_]|[0-9]))/)
-        return [:SIGNED, :SIGNED]
+        return make_token(:SIGNED, :SIGNED)
       when scanner.scan(/sizeof(?!([a-zA-Z_]|[0-9]))/)
-        return [:SIZEOF, :SIZEOF]
+        return make_token(:SIZEOF, :SIZEOF)
       when scanner.scan(/static(?!([a-zA-Z_]|[0-9]))/)
-        return [:STATIC, :STATIC]
+        return make_token(:STATIC, :STATIC)
       when scanner.scan(/struct(?!([a-zA-Z_]|[0-9]))/)
-        return [:STRUCT, :STRUCT]
+        return make_token(:STRUCT, :STRUCT)
       when scanner.scan(/switch(?!([a-zA-Z_]|[0-9]))/)
-        return [:SWITCH, :SWITCH]
+        return make_token(:SWITCH, :SWITCH)
       when scanner.scan(/typedef(?!([a-zA-Z_]|[0-9]))/)
-        return [:TYPEDEF, :TYPEDEF]
+        return make_token(:TYPEDEF, :TYPEDEF)
       when scanner.scan(/union(?!([a-zA-Z_]|[0-9]))/)
-        return [:UNION, :UNION]
+        return make_token(:UNION, :UNION)
       when scanner.scan(/unsigned(?!([a-zA-Z_]|[0-9]))/)
-        return [:SIGNED, :UNSIGNED]
+        return make_token(:UNSIGNED, :UNSIGNED)
       when scanner.scan(/void(?!([a-zA-Z_]|[0-9]))/)
-        return [:VOID, :VOID]
+        return make_token(:VOID, :VOID)
       when scanner.scan(/volatile(?!([a-zA-Z_]|[0-9]))/)
-        return [:VOLATILE, :VOLATILE]
+        return make_token(:VOLATILE, :VOLATILE)
       when scanner.scan(/while(?!([a-zA-Z_]|[0-9]))/)
-        return [:WHILE, :WHILE]
+        return make_token(:WHILE, :WHILE)
         
       #  
       # Objective-C 1.0
       # 
       when scanner.scan(/@interface/)
-        return [:AT_INTERFACE, :AT_INTERFACE]
+        return make_token(:AT_INTERFACE, :AT_INTERFACE)
       when scanner.scan(/@implementation/)
-        return [:AT_IMPLEMENTATION, :AT_IMPLEMENTATION]  
+        return make_token(:AT_IMPLEMENTATION, :AT_IMPLEMENTATION)
       when scanner.scan(/@end/)
-        return [:AT_END, :AT_END]
+        return make_token(:AT_END, :AT_END)
       when scanner.scan(/@class/)
-        return [:AT_CLASS, :AT_CLASS]
+        return make_token(:AT_CLASS, :AT_CLASS)
       when scanner.scan(/@protocol/)
-        return [:AT_PROTOCOL, :AT_PROTOCOL]
+        return make_token(:AT_PROTOCOL, :AT_PROTOCOL)
       when scanner.scan(/@selector/)
-        return [:AT_SELECTOR, :AT_SELECTOR]
+        return make_token(:AT_SELECTOR, :AT_SELECTOR)
       when scanner.scan(/@encode/)
-        return [:AT_ENCODE, :AT_ENCODE]
+        return make_token(:AT_ENCODE, :AT_ENCODE)
       when scanner.scan(/@try/)
-        return [:AT_TRY, :AT_TRY]
+        return make_token(:AT_TRY, :AT_TRY)
       when scanner.scan(/@catch/)
-        return [:AT_CATCH, :AT_CATCH]
+        return make_token(:AT_CATCH, :AT_CATCH)
       when scanner.scan(/@protected/)
-        return [:AT_PROTECTED, :AT_PROTECTED]
+        return make_token(:AT_PROTECTED, :AT_PROTECTED)
       when scanner.scan(/@private/)
-        return [:AT_PRIVATE, :AT_PRIVATE]
+        return make_token(:AT_PRIVATE, :AT_PRIVATE)
       when scanner.scan(/@public/)
-        return [:AT_PUBLIC, :AT_PUBLIC]
+        return make_token(:AT_PUBLIC, :AT_PUBLIC)
 
       when match = scanner.scan(/@\"(\\.|[^\\"])*\"/)
-        return [:AT_STRING_LITERAL, match]
+        return make_token(:AT_STRING_LITERAL, match)
       
-      when scanner.scan(/self/)
-        return [:IDENTIFIER, "self"]
+      # when scanner.scan(/self/)
+      #         return make_token(:IDENTIFIER, "self")
+        # return make_token(:IDENTIFIER, "self"]
            
       #
       # Objective-C 2.0
       #
       when scanner.scan(/@property/)
-        return [:AT_PROPERTY, :AT_PROPERTY]
+        return make_token(:AT_PROPERTY, :AT_PROPERTY)
       when scanner.scan(/@synthesize/)
-        return [:AT_SYNTHESIZE, :AT_SYNTHESIZE]
+        return make_token(:AT_SYNTHESIZE, :AT_SYNTHESIZE)
       when scanner.scan(/@optional/)
-        return [:AT_OPTIONAL, :AT_OPTIONAL]
+        return make_token(:AT_OPTIONAL, :AT_OPTIONAL)
       when scanner.scan(/@required/)
-        return [:AT_REQUIRED, :AT_REQUIRED]
+        return make_token(:AT_REQUIRED, :AT_REQUIRED)
       
       #
       # C constants, identifiers and string literals
       #
-        
       when match = scanner.scan(/[a-zA-Z_]([a-zA-Z_]|[0-9])*/)
-        return (lookup_type(match) == nil) ? [:IDENTIFIER, match] : [:TYPE_NAME, match]
+        return (lookup_type(match) == nil) ? make_token(:IDENTIFIER, match) : make_token(:TYPE_NAME, match)
       when match = scanner.scan(/[a-zA-Z_]([a-zA-Z_])*/)
-        return (lookup_type(match) == nil) ? [:IDENTIFIER, match] : [:TYPE_NAME, match]
+        return (lookup_type(match) == nil) ? make_token(:IDENTIFIER, match) : make_token(:TYPE_NAME, match)
       when match = scanner.scan(/0[xX][a-fA-F0-9]+(u|U|l|L)?/)
-        return [:CONSTANT, match]
+        return make_token(:CONSTANT, match)
       when match = scanner.scan(/0[0-9]+(u|U|l|L)?/)
-        return [:CONSTANT, match]
+        return make_token(:CONSTANT, match)
       when match = scanner.scan(/[0-9]+(u|U|l|L)?/) # {D}+{IS}?
-        return [:CONSTANT, match]
+        return make_token(:CONSTANT, match)
       #when match = scanner.scan(//) # L?'(\\.|[^\\'])+'
-      #  return [:CONSTANT, match]
+      #  return make_token(:CONSTANT, match]
       #when match = scanner.scan(//) # {D}+{E}{FS}?
-      #  return [:CONSTANT, match]
+      #  return make_token(:CONSTANT, match]
       #when match = scanner.scan(//) # {D}*"."{D}+({E})?{FS}?
-      #  return [:CONSTANT, match]
+      #  return make_token(:CONSTANT, match]
       #when match = scanner.scan(//) # {D}+"."{D}*({E})?{FS}?
-      #  return [:CONSTANT, match]
+      #  return make_token(:CONSTANT, match]
       #when match = scanner.scan(//) # L?\"(\\.|[^\\"])*\"
-      #  return [:STRING_LITERAL, match]
+      #  return make_token(:STRING_LITERAL, match]
       
       #
       # C operators, assignments and other syntactical bits and pieces
       #  
       when scanner.scan(/\.\.\./)
-       return [:ELLIPSIS, :ELLIPSIS]
+       return make_token(:ELLIPSIS, :ELLIPSES)
       when scanner.scan(/>>=/)
-       return [:RIGHT_ASSIGN, :RIGHT_ASSIGN]
+       return make_token(:RIGHT_ASSIGN, :RIGHT_ASSIGN)
       when scanner.scan(/<<=/)
-       return [:LEFT_ASSIGN, :LEFT_ASSIGN]
+       return make_token(:LEFT_ASSIGN, :LEFT_ASSIGN)
       when scanner.scan(/\+=/)
-       return [:ADD_ASSIGN, :ADD_ASSIGN]
+       return make_token(:ADD_ASSIGN, :ADD_ASSIGN)
       when scanner.scan(/-=/)
-       return [:SUB_ASSIGN, :SUB_ASSIGN]
+       return make_token(:SUB_ASSIGN, :SUB_ASSIGN)
       when scanner.scan(/\*=/)
-       return [:MUL_ASSIGN, :MUL_ASSIGN]
+       return make_token(:MUL_ASSIGN, :MUL_ASSIGN)
       when scanner.scan(/\/=/)
-       return [:DIV_ASSIGN, :DIV_ASSIGN]
+       return make_token(:DIV_ASSIGN, :DIV_ASSIGN)
       when scanner.scan(/%=/)
-       return [:MOD_ASSIGN, :MOD_ASSIGN]
+       return make_token(:MOD_ASSIGN, :MOD_ASSIGN)
       when scanner.scan(/&=/)
-       return [:AND_ASSIGN, :AND_ASSIGN]
+       return make_token(:AND_ASSIGN, :AND_ASSIGN)
       when scanner.scan(/\^=/)
-       return [:XOR_ASSIGN, :XOR_ASSIGN]
+       return make_token(:XOR_ASSIGN, :XOR_ASSIGN)
       when scanner.scan(/\|=/)
-       return [:OR_ASSIGN, :OR_ASSIGN]
+       return make_token(:OR_ASSIGN, :OR_ASSIGN)
       when scanner.scan(/>>/)
-       return [:RIGHT_OP, :RIGHT_OP]
+       return make_token(:RIGHT_OP, :RIGHT_OP)
       when scanner.scan(/<</)
-       return [:LEFT_OP, :LEFT_OP]
+       return make_token(:LEFT_OP, :LEFT_OP)
       when scanner.scan(/\+\+/)
-       return [:INC_OP, :INC_OP]
+       return make_token(:INC_OP, :INC_OP)
       when scanner.scan(/--/)
-       return [:DEC_OP, :DEC_OP]
+       return make_token(:DEC_OP, :DEC_OP)
       when scanner.scan(/->/)
-       return [:PTR_OP, :PTR_OP]
+       return make_token(:PTR_OP, :PTR_OP)
       when scanner.scan(/&&/)
-       return [:AND_OP, :AND_OP]
+       return make_token(:AND_OP, :AND_OP)
       when scanner.scan(/\|\|/)
-       return [:OR_OP, :OR_OP]
+       return make_token(:OR_OP, :OR_OP)
       when scanner.scan(/<=/)
-       return [:LE_OP, :LE_OP]
+       return make_token(:LE_OP, :LE_OP)
       when scanner.scan(/>=/)
-       return [:GE_OP, :GE_OP]
+       return make_token(:GE_OP, :GE_OP)
       when scanner.scan(/\=\=/)
-       return [:EQ_OP, :EQ_OP]
+       return make_token(:EQ_OP, :EQ_OP)
       when scanner.scan(/\!\=/)
-       return [:NE_OP, :NE_OP]
+       return make_token(:NE_OP, :NE_OP)
       when scanner.scan(/;/)
-        return [';', ';']
+        return make_token(';', ';')
       when scanner.scan(/\{/)
-        return ['{', '{']
+        return make_token('{', '{')
       when scanner.scan(/\}/)
-        return ['}', '}']
+        return make_token('}', '}')
       when scanner.scan(/,/)
-        return [',', ',']  
+        return make_token(',', ',')
       when scanner.scan(/:/)
-        return [':', ':']    
+        return make_token(':', ':')
       when scanner.scan(/\=/)
-        return ['=', '=']    
+        return make_token('=', '=')   
       when scanner.scan(/\(/)
-        return ['(', '(']
+        return make_token('(', '(')
       when scanner.scan(/\)/)
-        return [')', ')']
+        return make_token(')', ')')
       when scanner.scan(/\[/)
-        return ['[', '[']
+        return make_token('[', '[')
       when scanner.scan(/\]/)
-        return [']', ']']  
+        return make_token(']', ']')
       when scanner.scan(/\./)
-        return ['.', '.']  
+        return make_token('.', '.')
       when scanner.scan(/\&/)
-        return ['&', '&']  
+        return make_token('&', '&')
       when scanner.scan(/\!/)
-        return ['!', '!']
+        return make_token('!', '!')
       when scanner.scan(/\~/)
-        return ['~', '~']
+        return make_token('~', '~')
       when scanner.scan(/\-/)
-        return ['-', '-']
+        return make_token('-', '-')
       when scanner.scan(/\+/)
-        return ['+', '+']
+        return make_token('+', '+')
       when scanner.scan(/\*/)
-        return ['*', '*']
+        return make_token('*', '*')
       when scanner.scan(/\//)
-        return ['/', '/']
+        return make_token('/', '/')
       when scanner.scan(/\%/)
-        return ['%', '%']
+        return make_token('%', '%')
       when scanner.scan(/\</)
-        return ['<', '<']
+        return make_token('<', '<')
       when scanner.scan(/\>/)
-        return ['>', '>']
+        return make_token('>', '>')
       when scanner.scan(/\^/)
-        return ['^', '^']
+        return make_token('^', '^')
       when scanner.scan(/\|/)
-        return ['|', '|']
+        return make_token('|', '|')
       when scanner.scan(/\?/)
-        return ['?', '?']
+        return make_token('?', '?')
       
       else
         puts "Error: unkown token: #{scanner.peek(5)}"

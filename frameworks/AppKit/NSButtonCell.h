@@ -36,8 +36,7 @@ enum {
     NSTexturedRoundedBezelStyle     = 11,
     NSRoundRectBezelStyle           = 12,
     NSRecessedBezelStyle            = 13,
-    NSRoundedDisclosureBezelStyle   = 14,
-    
+    NSRoundedDisclosureBezelStyle   = 14    
 };
 typedef NSUInteger NSBezelStyle;
 

@@ -10,9 +10,11 @@
 #import <Foundation/NSGeometry.h>
 #import <Foundation/NSBundle.h>
 #import <AppKit/NSGraphics.h>
-#import <AppKit/NSBitmapImageRep.h>
+// #import <AppKit/NSBitmapImageRep.h>
 
-@class NSArray, NSColor, NSImageRep, NSPasteBoard, NSURL;
+@class NSArray, NSColor;
+@class NSImageRep;
+@class NSPasteBoard, NSURL;
 
 enum {
     NSImageLoadStatusCompleted,

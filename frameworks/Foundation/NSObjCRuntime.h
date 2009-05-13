@@ -11,7 +11,7 @@
 typedef long NSInteger;
 typedef unsigned long NSUInteger;
 
-@class NSString;
+@class NSString, NSObject;
 
 extern NSString *NSStringFromSelector(SEL aSelector);
 extern SEL NSSelectorFromString(NSString *aSelectorName);

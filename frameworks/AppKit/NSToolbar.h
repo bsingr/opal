@@ -8,7 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
-@class NSArray, NSDictionary, NSMutableArray, NSNotification, NSString, NSToolbarItem, NSWindow;
+@class NSArray, NSDictionary, NSMutableArray, NSNotification, NSString;
+@class NSToolbarItem, NSWindow;
 
 enum {
     NSToolbarDisplayModeDefault,

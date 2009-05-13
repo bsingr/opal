@@ -9,12 +9,15 @@
 #import <Foundation/NSObject.h>
 #import <Foundation/NSGeometry.h>
 
-@class NSTableView, NSCell, NSImage, NSSortDescriptor;
+@class NSTableView;
+@class NSCell;
+@class NSImage;
+@class NSSortDescriptor;
 
 enum {
     NSTableColumnNoResizing         = 0,
     NSTableColumnAutoresizingMask   = ( 1 << 0 ),
-    NSTableColumnUserResizingMask   = ( 1 << 1 ),
+    NSTableColumnUserResizingMask   = ( 1 << 1 )
 };
 
 @interface NSTableColumn : NSObject <NSCoding>

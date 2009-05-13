@@ -9,7 +9,10 @@
 #import <Foundation/NSObject.h>
 #import <Foundation/NSGeometry.h>
 
-@class NSArray, NSBezierPath, NSColor, NSColorSpace;
+@class NSArray;
+@class NSBezierPath;
+@class NSColor;
+@class NSColorSpace;
 
 typedef NSUInteger NSGradientDrawingOptions;
 

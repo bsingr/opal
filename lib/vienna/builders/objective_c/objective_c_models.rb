@@ -43,12 +43,13 @@ module Vienna
   # below. Left and right are links to the relevant Nodes, and may be nil (which)
   # is often the case for leaves.
   class Node
-    attr_reader :value, :left, :right, :file, :line_number
+    attr_accessor :value, :left, :right, :file, :line_number, :token
     
     # Creates a binary tree from an array [value, left, right],
     # where left and right may themselves be values
     def initialize(value, left, right, file = nil, line_number = nil)
       @value = value
+      @token = nil
       @left = left
       @right = right
       # file that the Node was created in (ObjetiveCFile)
@@ -64,7 +65,7 @@ module Vienna
     
     # returns the array representation of the tree
     def to_s
-      leaf? ? "#{@value}" : "['#{value}', '#{left}', '#{right}']"
+      leaf? ? "#{@value} (#{@token})" : "[#{@value}(#{@token}), #{@left}, #{@right}]"
     end
   end
   
@@ -119,10 +120,10 @@ module Vienna
         deal_with_enum_list(list.right)
       elsif list.value == "E"
         if list.right.nil?
-          @enums.store(list.left, @current_enum_value = @current_enum_value.to_i + 1)
+          @enums.store(list.left.value, @current_enum_value = @current_enum_value.to_i + 1)
         else
           @current_enum_value = enum_evaluate(list.right)
-          @enums.store(list.left, @current_enum_value)
+          @enums.store(list.left.value, @current_enum_value)
         end
       end
     end
@@ -132,8 +133,8 @@ module Vienna
     # an integer can be returned.
     def enum_evaluate(tree)
       # simply return if tree is a string(simple int, or similar)
-      if tree.class == String # or tree.class == Fixnum
-        return tree
+      if tree.value.class == String # or tree.class == Fixnum
+        return tree.value
       end
       
       if tree.value == "("
@@ -142,12 +143,12 @@ module Vienna
       elsif tree.value == ","
         # expression type. so go through. (-x)
         if tree.left == "-"
-          return tree.right.to_i * -1
+          return tree.right.value.to_i * -1
         end
         return 0
-      elsif tree.value == :LEFT_OP
+      elsif tree.token == :LEFT_OP
         # x << y, so evaluate. each x/y might also need further parsing
-        return enum_evaluate(tree.left).to_i << enum_evaluate(tree.right).to_i
+        return enum_evaluate(tree.left).value.to_i << enum_evaluate(tree.right).value.to_i
       else
         # return otherwise: likely an int.
         return tree

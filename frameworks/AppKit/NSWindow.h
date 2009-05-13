@@ -10,6 +10,13 @@
 #import <AppKit/NSResponder.h>
 #import <AppKit/NSGraphics.h>
 
+@class NSToolbar;
+@class NSWindowTitleButton;
+@class NSWindowDepth;
+@class NSScreen;
+@class NSWindowController;
+@class NSSelectionDirection;
+
 enum {
     NSBorderlessWindowMask              = 0,
     NSTitledWindowMask                  = 1 << 0,
@@ -41,7 +48,7 @@ typedef NSUInteger NSWindowButton;
 
 @interface NSWindow : NSResponder
 {
-    CGContextRef    _contextRef;
+    // CGContextRef    _contextRef;
     id              _gState;
     id              _gCanvas;
     id              _gBuffer;
@@ -362,20 +369,20 @@ typedef NSUInteger NSWindowButton;
 @end
 
 
-NSString *NSWindowDidBecomeKeyNotification;
-NSString *NSWindowDidBecomeMainNotification;
-NSString *NSWindowDidChangeScreenNotification;
-NSString *NSWindowDidDeminiaturizeNotification;
-NSString *NSWindowDidExposeNotification;
-NSString *NSWindowDidMiniaturizeNotification;
-NSString *NSWindowDidMoveNotification;
-NSString *NSWindowDidResignKeyNotification;
-NSString *NSWindowDidResignMainNotification;
-NSString *NSWindowDidResizeNotification;
-NSString *NSWindowDidUpdateNotification;
-NSString *NSWindowWillCloseNotification;
-NSString *NSWindowWillMiniaturizeNotification;
-NSString *NSWindowWillMoveNotification;
-NSString *NSWindowWillBeginSheetNotification;
-NSString *NSWindowDidEndSheetNotification;
-NSString *NSWindowDidChangeScreenProfileNotification;
+extern NSString *NSWindowDidBecomeKeyNotification;
+extern NSString *NSWindowDidBecomeMainNotification;
+extern NSString *NSWindowDidChangeScreenNotification;
+extern NSString *NSWindowDidDeminiaturizeNotification;
+extern NSString *NSWindowDidExposeNotification;
+extern NSString *NSWindowDidMiniaturizeNotification;
+extern NSString *NSWindowDidMoveNotification;
+extern NSString *NSWindowDidResignKeyNotification;
+extern NSString *NSWindowDidResignMainNotification;
+extern NSString *NSWindowDidResizeNotification;
+extern NSString *NSWindowDidUpdateNotification;
+extern NSString *NSWindowWillCloseNotification;
+extern NSString *NSWindowWillMiniaturizeNotification;
+extern NSString *NSWindowWillMoveNotification;
+extern NSString *NSWindowWillBeginSheetNotification;
+extern NSString *NSWindowDidEndSheetNotification;
+extern NSString *NSWindowDidChangeScreenProfileNotification;

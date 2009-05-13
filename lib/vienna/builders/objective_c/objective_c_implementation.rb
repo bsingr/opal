@@ -10,9 +10,10 @@ module Vienna
   
   class ObjectiveCParser
     
-    def deal_with_implementation_declaration(parse_tree)
-      name = parse_tree.left.left.left
+    def deal_with_implementation(parse_tree)
+      name = parse_tree.left.left.left.value
       category = parse_tree.left.left.right
+      category = category.value if category
       ivar_list = parse_tree.left.right
       method_definitions = parse_tree.right
       
@@ -24,8 +25,8 @@ module Vienna
       new_i.name = name
       new_i.category = category
       @implementation_definitions << new_i
-      
     end
+    
     
     def get_implementation_by_name(name, category = nil)
       @implementation_definitions.each do |i|
