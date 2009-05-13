@@ -19,8 +19,12 @@ module Vienna
       @name = ""
       @types = [parse_tree.left.right]
       @imp = nil
-      @instance_method = parse_tree.left.left == "-" ? true : false
+      @instance_method = parse_tree.left.left.value == "-" ? true : false
       parse_selector(parse_tree.right)
+    end
+    
+    def to_s
+      @name
     end
     
     # Parses the selector node. This could be a normal selector without params,
@@ -32,9 +36,9 @@ module Vienna
     def parse_selector(parse_tree)
       return unless parse_tree
       
-      if parse_tree.class == String
+      if parse_tree.leaf?
         # normal selector, like -(void)doSomething;
-        @name << parse_tree
+        @name << parse_tree.value
       elsif parse_tree.value == ","
         # split, so go left, then right
         parse_selector(parse_tree.left)

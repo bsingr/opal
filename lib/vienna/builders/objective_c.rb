@@ -87,9 +87,7 @@ module Vienna
   	def parse_file_to_output(source, output)
   	  tokenize_file(source)
   	  parse  	  
-  	  f= File.new(output, 'w')
-      # f.write("hello")
-  	  f.close
+  	  output_to_file(output)
   	end
 	  
 	  
@@ -172,6 +170,10 @@ module Vienna
         deal_with_at_class d
       elsif d.token == :AT_IMPLEMENTATION
         deal_with_implementation d
+      elsif d.token == :AT_INTERFACE
+        deal_with_interface d
+      elsif d.token == :AT_PROTOCOL
+        deal_with_protocol d
       elsif d.left.token == :ENUM
         deal_with_enum d
       elsif

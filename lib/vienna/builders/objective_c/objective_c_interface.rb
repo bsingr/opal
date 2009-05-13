@@ -23,7 +23,7 @@ module Vienna
     # example simpy add methods onto existing classes/interfaces. In such a case,
     # if the original interface can not be found, then an error should really be
     # thrown
-    def deal_with_interface_declaration(parse_tree)
+    def deal_with_interface(parse_tree)
       # Get class info/values etc from the parse tree so they are easy to reference
       name = parse_tree.left.left.left.left.value
       super_class = parse_tree.left.left.left.right.value if parse_tree.left.left.left.right
@@ -82,7 +82,7 @@ module Vienna
   
 
   class ObjectiveCInterface
-    attr_accessor :name, :super_class
+    attr_accessor :name, :super_class, :ivars
     
     def initialize
       @name = nil
@@ -99,11 +99,19 @@ module Vienna
       s = @super_class ? "#{@name} : #{@super_class}\n" : "#{@name}\n"
       s << "  -Properties\n"
       @properties.each do |p|
-         s << "     #{p.type} #{p.name}\n"
+        s << "     #{p.type} #{p.name}\n"
       end
       s << "  -Ivars\n"
       @ivars.each do |i|
         s << "     #{i.type} #{i.name}\n"
+      end
+      s << "  -Instance Methods\n"
+      @instance_methods.each do |i|
+        s << "     #{i}\n"
+      end
+       s << "  -Class Methods\n"
+      @class_methods.each do |c|
+        s << "     #{c}\n"
       end
       return s
     end
@@ -120,8 +128,9 @@ module Vienna
         deal_with_ivar_list(ivars.right)
       elsif ivars.value == "i"
         new_ivar = ObjectiveCIvar.new
-        new_ivar.type = ivars.left
-        new_ivar.name = ivars.right
+        new_ivar.type = ivars.left.value
+        new_ivar.name = ivars.right.leaf? ? ivars.right.value : ivars.right.right.value
+        # puts ivars.right
         @ivars << new_ivar
       end
     end
@@ -146,8 +155,8 @@ module Vienna
         end
       elsif methods.value == :AT_PROPERTY
         new_prop = ObjectiveCProperty.new
-        new_prop.name = methods.right.right
-        new_prop.type = methods.right.left
+        new_prop.name = methods.right.right.value
+        new_prop.type = methods.right.left.value
         @properties << new_prop
       else
         puts "unknown method declaration type"

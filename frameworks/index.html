@@ -55,6 +55,7 @@
 			class_addMethod(the_class, "init", function(self, _cmd) {
 				return self;
 			}, "id");
+			
 			class_addMethod(meta_class, "alloc", function(self, _cmd) {
 				return class_createInstance(self);
 			});

@@ -39,6 +39,27 @@ module Vienna
       # return nil if not found...
       return nil
     end
+    
+    # Outputs the implementation 'imp' to the file 'file'. At the moment no type
+    # checking or walking takes place, and everything it output assuming that
+    # the semantics are correct. Note: this means that properties/synthesizers
+    # are not working, so accessing properties will be seen as accessing struct
+    # values, and therefore might not be valid at runtime in Javascript.
+    def output_implementation(file, imp)
+      
+      the_interface = get_interface_by_name imp.name
+      if imp.category
+      
+	    else
+	      file.write "var the_class = objc_allocateClassPair(, \"#{imp.name}\");\n"
+        file.write "var meta_class = the_class.isa;\n"
+  			file.write "objc_registerClassPair(the_class);\n"
+
+  			the_interface.ivars.each do |i|
+  			  file.write "class_addIvar(the_class, \"#{i.name}\", \"#{i.type}\");\n"
+  		  end
+      end
+    end
   end
   
   # Represents an actual implementation block discovered in the code. It maintains

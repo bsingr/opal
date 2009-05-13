@@ -104,7 +104,7 @@ class Vienna::ObjectiveCParser
 
     unary_expression:
     	  postfix_expression                                { result = val[0] }
-    	| INC_OP unary_expression
+    	| INC_OP unary_expression                           
     	| DEC_OP unary_expression
     	| unary_operator cast_expression                    { result = make_node(',', val[0], val[1]) }
     	| SIZEOF unary_expression
@@ -237,9 +237,7 @@ class Vienna::ObjectiveCParser
       ;
 
     inherited_protocols:
-    	  protocol_list {
-    	    result = val[0]
-    	  }
+    	  protocol_list                                     {result = val[0] }
     	;
 
     class_name_declaration:
@@ -262,26 +260,26 @@ class Vienna::ObjectiveCParser
     	;
 
     class_or_instance_method_specifier: 
-        '+' 
-      | '-'
+        '+'                                               { result =  val[0] }
+      | '-'                                               { result =  val[0] }
       ;
 
     do_atribute_specifier:
-    	  ONEWAY
-    	| IN
-    	| OUT
-    	| INOUT
-    	| BYREF
-    	| BYCOPY
+    	  ONEWAY                                            { result =  val[0] }
+    	| IN                                                { result =  val[0] }
+    	| OUT                                               { result =  val[0] }
+    	| INOUT                                             { result =  val[0] }
+    	| BYREF                                             { result =  val[0] }
+    	| BYCOPY                                            { result =  val[0] }
     	;
 
     objc_declaration_specifiers:
     	  do_atribute_specifier objc_declaration_specifiers
-    	| type_name                                                                             { result =  val[0] }
+    	| type_name                                         { result =  val[0] }
     	;
 
     selector_argument_declaration:
-    	  '(' objc_declaration_specifiers ')' IDENTIFIER                                        { result =  make_node(',', val[1], val[3]) }
+    	  '(' objc_declaration_specifiers ')' IDENTIFIER    { result =  make_node(',', val[1], val[3]) }
     	;
 
     selector_with_argument_declaration:
@@ -316,12 +314,8 @@ class Vienna::ObjectiveCParser
     	;
     
     class_implementation:
-    	  class_identifier_or_type_name {
-    	    result = make_node(',', val[0], nil)
-    	  }
-    	| class_identifier_or_type_name '(' category_name ')' {
-    	    result = make_node(',', val[0], val[2])
-    	  }
+    	  class_identifier_or_type_name                       { result = make_node(',', val[0], nil) }
+    	| class_identifier_or_type_name '(' category_name ')' { result = make_node(',', val[0], val[2]) }
       ;
     
     method_implementation_declaration:
@@ -331,8 +325,8 @@ class Vienna::ObjectiveCParser
   	  ;
   	
     method_implementation:
-    	  method_implementation_declaration compound_statement      { result = make_node('M', val[0], val[1]) }
-    	| method_implementation_declaration ';' compound_statement  { result = make_node('M', val[0], val[2]) }
+    	  method_implementation_declaration compound_statement      { result = make_node('m', val[0], val[1]) }
+    	| method_implementation_declaration ';' compound_statement  { result = make_node('m', val[0], val[2]) }
     	| AT_SYNTHESIZE ivar_list ';'                               { result = make_node(:AT_SYNTHESIZE, val[1], nil) }
     	;
 
