@@ -78,11 +78,24 @@ module Vienna
       # return nil if not found...
       return nil
 	  end
+	  
+	  def get_method_by_selector(int, selector)
+      int.instance_methods.each do |i|
+        return i if i.name == selector
+      end
+      
+      int.class_methods.each do |i|
+        return i if i.name == selector
+      end
+      
+      return get_method_by_selector(get_interface_by_name(int.super_class), selector) if int.super_class
+      
+    end
   end
   
 
   class ObjectiveCInterface
-    attr_accessor :name, :super_class, :ivars
+    attr_accessor :name, :super_class, :ivars, :instance_methods, :class_methods
     
     def initialize
       @name = nil

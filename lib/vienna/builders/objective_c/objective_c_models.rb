@@ -31,6 +31,10 @@ module Vienna
       end
     end
     
+    def file_name
+      @file_path
+    end
+    
     def valid?
       @valid_file
     end

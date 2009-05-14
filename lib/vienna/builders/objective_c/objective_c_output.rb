@@ -12,6 +12,15 @@ module Vienna
     
     def output_to_file(file)
       f = File.new(file, 'w')
+      
+      # Add symbols to symbol table for walking
+      symbol_table_push()
+      
+      @interface_declarations.each do |i|
+        symbol_table_add(i.name, i)
+      end
+      
+      
       @implementation_definitions.each do |i|
         output_implementation(f, i)
       end
@@ -106,6 +115,7 @@ module Vienna
         file.write ";\n"
       else
         file.write "something else\n"
+        file.write statement
       end
     end
     
@@ -115,40 +125,95 @@ module Vienna
       
       if statement.value == 'M'
         output_objc_msgSend file, statement
+      elsif statement.value == "self"
+         file.write statement.value
+         return statement.value 
       elsif statement.token == :IDENTIFIER
+        the_symbol = lookup_symbol statement.value
+        parser_error_on_node(statement, "unknown symbol #{statement.value}") if the_symbol.nil?
         file.write statement.value
+        return statement.value
       elsif statement.token == :TYPE_NAME
         file.write statement.value
+        return statement.value
       elsif statement.token == :CONSTANT
         file.write statement.value
+        return statement.value
       elsif statement.token == :AT_STRING_LITERAL
         file.write statement.value.match(/@(\".*\")/)[1]
+        return statement.value
+      elsif statement.token == '='
+        output_assignment file, statement
       else
         file.write "Unhandled output_expression: #{statement}"
       end
     end
     
-    def output_objc_msgSend(file, statement)
-      file.write "objc_msgSend("
-      output_expression file, statement.left
+    def output_assignment(file, assignment)
+      output_expression file, assignment.left
+      file.write " = "
+      output_expression file, assignment.right
+    end
+    
+    
+    def output_objc_msgSendSuper(file, statement)
+      # FIXME: need to fix to get superclass of current self
+      super_class = "NSObject"
+      file.write "objc_msgSendSuper({super_class:#{super_class}, receiver:self}"
+      the_selector = get_objc_msgSend_selector(file, statement.right)
+      
       file.write ", \""
-      output_objc_msgSend_selector file, statement.right
+      file.write the_selector
       file.write "\""
       output_objc_msgSend_arguments file, statement.right
       file.write ")"
+
+      return super_class
     end
     
-    def output_objc_msgSend_selector(file, selector)
-      return unless selector
+    
+    def output_objc_msgSend(file, statement)
+      return output_objc_msgSendSuper(file, statement) if statement.left.value == "super"
+
+      file.write "objc_msgSend("
+      the_self = output_expression file, statement.left
+      self_symbol = lookup_symbol the_self
+      the_selector = get_objc_msgSend_selector(file, statement.right)
+      
+      if self_symbol.nil?
+        abort "#{the_self} does not exist"
+      end
+      
+      the_method = get_method_by_selector(self_symbol, the_selector)
+      if the_method.nil?
+        parser_warning_on_node statement, "#{the_self} may not respond to #{the_selector}"
+      end
+      
+      file.write ", \""
+      file.write the_selector
+      file.write "\""
+      output_objc_msgSend_arguments file, statement.right
+      file.write ")"
+      
+      # should really check here to see if its alloc/init, then return the_self
+      # otherwise return the return type from the method, types[0]. alloc init
+      # are different, as people use id as the return type, which will cause a
+      # lot of warnings, so we assume we return the same object
+      return the_self
+    end
+    
+    
+    def get_objc_msgSend_selector(file, selector)
+      return "" unless selector
       if selector.value == ':'
-        file.write "#{selector.left.value}:"
+        return "#{selector.left.value}:"
       elsif selector.value == ','
-        output_objc_msgSend_selector file, selector.left
-        output_objc_msgSend_selector file, selector.right
+        return get_objc_msgSend_selector(file, selector.left) + get_objc_msgSend_selector(file, selector.right)
       else
-        file.write selector.value
+        return selector.value
       end
     end
+    
     
     def output_objc_msgSend_arguments(file, selector)
       return unless selector

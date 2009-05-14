@@ -23,6 +23,8 @@ module Vienna
   	  @imported_files = []
       # files left to parse. parse towards the end first
   	  @parsing_stack = []
+  	  
+  	  @symbol_table = []
 
   	  @interface_declarations = []
   	  @implementation_definitions = []
@@ -34,6 +36,14 @@ module Vienna
   	  @at_class_list = []
   	  @known_classes = []
   	end
+  	
+  	def parser_warning_on_node(node, message)
+  	  puts "#{node.file.file_name}:#{node.line_number}:warning: #{message}"
+	  end
+	  
+	  def parser_error_on_node(node, message)
+	    abort "#{node.file.file_name}:#{node.line_number}:error: #{message}"
+    end
   	
   	def make_node(value, left, right)
   	  Vienna::Node.new(value, left, right, current_file, current_line)
@@ -86,10 +96,10 @@ module Vienna
   	
   	def parse_file_to_output(source, output)
   	  tokenize_file(source)
-  	  parse  	  
+  	  parse
+  	    	  
   	  output_to_file(output)
   	end
-	  
 	  
 	  def add_category_declaration(category)  
 	  end
@@ -247,7 +257,6 @@ module Vienna
   	def parse
   	 #@tokens = tokens
   	 do_parse
-  	 puts "Finished parsing"
   	end
 
     # Look up the given identifier (type_name) and return its type for use in parser
