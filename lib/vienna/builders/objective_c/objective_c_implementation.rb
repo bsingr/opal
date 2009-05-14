@@ -25,6 +25,8 @@ module Vienna
       new_i.name = name
       new_i.category = category
       @implementation_definitions << new_i
+      
+      new_i.deal_with_method_list(method_definitions) unless method_definitions.nil?
     end
     
     
@@ -39,27 +41,6 @@ module Vienna
       # return nil if not found...
       return nil
     end
-    
-    # Outputs the implementation 'imp' to the file 'file'. At the moment no type
-    # checking or walking takes place, and everything it output assuming that
-    # the semantics are correct. Note: this means that properties/synthesizers
-    # are not working, so accessing properties will be seen as accessing struct
-    # values, and therefore might not be valid at runtime in Javascript.
-    def output_implementation(file, imp)
-      
-      the_interface = get_interface_by_name imp.name
-      if imp.category
-      
-	    else
-	      file.write "var the_class = objc_allocateClassPair(, \"#{imp.name}\");\n"
-        file.write "var meta_class = the_class.isa;\n"
-  			file.write "objc_registerClassPair(the_class);\n"
-
-  			the_interface.ivars.each do |i|
-  			  file.write "class_addIvar(the_class, \"#{i.name}\", \"#{i.type}\");\n"
-  		  end
-      end
-    end
   end
   
   # Represents an actual implementation block discovered in the code. It maintains
@@ -70,6 +51,12 @@ module Vienna
     attr_accessor :name 
     # Implementation category, if one exists. This is nil most of the time
     attr_accessor :category
+    
+    attr_accessor :class_methods
+    
+    attr_accessor :instance_methods
+    
+    attr_accessor :synthesizers
     # ObjectiveCFile that implementation was found in. It must be noted that
     # it is very possible that an implementation can be distributed throughout
     # multiple files/frameworks. These though should have their respective
@@ -80,6 +67,9 @@ module Vienna
     def initialize
       @name = nil
       @category = nil
+      @class_methods = []
+      @instance_methods = []
+      @synthesizers = []
     end
     
     # Gets the instance of ObjectiveCInterface that is relevant to this object
@@ -91,6 +81,24 @@ module Vienna
     
     def to_s
       "#{@name} (#{@category})"
+    end
+    
+    
+    def deal_with_method_list(methods)
+      return unless methods
+      
+      if methods.value == ","
+        deal_with_method_list methods.left
+        deal_with_method_list methods.right
+      elsif methods.value == "m"
+        new_method = ObjectiveCMethodImplementation.new(methods)
+        if new_method.instance_method?
+          @instance_methods << new_method
+        else
+          @class_methods << new_method
+        end
+      elsif methods.value == :AT_SYNTHESIZE
+      end
     end
   end
 end

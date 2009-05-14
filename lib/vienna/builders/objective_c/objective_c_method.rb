@@ -8,16 +8,16 @@
 
 module Vienna
   
-  
   # Represents a method declaration in objc. note: does not handle method 
   # definitons yet, so parsing may cause unknown errors/parsing traits.
   class ObjectiveCMethod
     
-    attr_accessor :name, :types, :imp
+    attr_accessor :name, :types, :imp, :param_names
     
     def initialize(parse_tree)
       @name = ""
       @types = [parse_tree.left.right]
+      @param_names = []
       @imp = nil
       @instance_method = parse_tree.left.left.value == "-" ? true : false
       parse_selector(parse_tree.right)
@@ -47,6 +47,7 @@ module Vienna
         # actual selector part: withObject:(NSString *)myString
         @name << parse_tree.left.value << ":"
         @types << parse_tree.right.left.value
+        @param_names << parse_tree.right.right.value
       end
     end
     
@@ -62,7 +63,16 @@ module Vienna
     def instance_method?
       return @instance_method
     end
-    
   end
   
+  class ObjectiveCMethodImplementation < ObjectiveCMethod
+    def initialize(parse_tree)
+      @name = ""
+      @param_names = []
+      @types = [parse_tree.left.left.right]
+      @imp = parse_tree.right
+      @instance_method = parse_tree.left.left.left.value == "-" ? true : false
+      parse_selector(parse_tree.left.right)
+    end
+  end
 end

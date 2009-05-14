@@ -43,17 +43,20 @@ class Vienna::ObjectiveCParser
 
   rule
     target:
-       translation_unit                                        { @result = val[0] };
+       translation_unit                                   { @result = val[0] };
  
     selector_component:
-        IDENTIFIER ':'
-    	| ':'
+        IDENTIFIER ':'                                    { result = make_node(':', val[0], nil) }
+    	| ':'                                               { result = make_node(':', nil, nil) }
     	;
 
     selector_with_arguments: 
         IDENTIFIER
-    	| IDENTIFIER ':' expression 
-    	| selector_with_arguments selector_component expression
+    	| IDENTIFIER ':' expression                               { result = make_node(':', val[0], val[2]) }
+    	| selector_with_arguments selector_component expression   { 
+    	  val[1].right = val[2]
+    	  result = make_node(',', val[0], val[1])
+    	}
     	| selector_with_arguments ',' ELLIPSIS
     	;
 
@@ -70,29 +73,28 @@ class Vienna::ObjectiveCParser
     	;
 
     primary_expression:
-    	  IDENTIFIER                                        { result = val[0] }
-    	| CONSTANT                                          { result = val[0] }
-      # | TYPE_NAME                                         { result = val[0] }
-    	| STRING_LITERAL                                    { result = val[0] }
-    	| '(' expression ')'                                { result = make_node('(', val[1], nil) }
-    	| AT_STRING_LITERAL
-    	| '[' expression selector_with_arguments ']'
-      | '[' TYPE_NAME selector_with_arguments ']'
-    	| AT_SELECTOR '(' selector ')'
-    	| AT_ENCODE '(' type_name ')'
+    	  IDENTIFIER                                          { result = val[0] }
+    	| CONSTANT                                            { result = val[0] }
+    	| STRING_LITERAL                                      { result = val[0] }
+    	| '(' expression ')'                                  { result = make_node('(', val[1], nil) }
+    	| AT_STRING_LITERAL                                   { result = val[0] }
+    	| '[' expression selector_with_arguments ']'          { result = make_node('M', val[1], val[2]) }
+      | '[' TYPE_NAME selector_with_arguments ']'           { result = make_node('M', val[1], val[2]) }
+    	| AT_SELECTOR '(' selector ')'                        { result = node_set_children(val[0], val[2], nil) }
+    	| AT_ENCODE '(' type_name ')'                         { result = node_set_children(val[0], val[2], nil) }
     	# these two rules allow for Objc 3.0 style blocks
-    	| '^' compound_statement
-    	| '^' '(' parameter_type_list ')' compound_statement
+    	| '^' compound_statement                              { result = make_node('b', nil, val[1]) }
+    	| '^' '(' parameter_type_list ')' compound_statement  { result = make_node('b', val[2], val[4]) }
     	;
 
     postfix_expression:
-    	  primary_expression                                { result = val[0] }
+    	  primary_expression                                  { result = val[0] }
     	| postfix_expression '[' expression ']'
-    	| postfix_expression '(' ')'                        { result = make_node('f', val[0], nil) }
+    	| postfix_expression '(' ')'                          { result = make_node('f', val[0], nil) }
     	| postfix_expression '(' argument_expression_list ')' { result = make_node('f', val[0], val[2]) }
     	| postfix_expression '.' IDENTIFIER
     	| postfix_expression PTR_OP IDENTIFIER
-    	| type_name IDENTIFIER                              { result = make_node('i', val[0], val[1]) }
+    	| type_name IDENTIFIER                                { result = make_node('i', val[0], val[1]) }
     	| postfix_expression INC_OP
     	| postfix_expression DEC_OP
     	;
@@ -191,7 +193,7 @@ class Vienna::ObjectiveCParser
 
     assignment_expression:
     	  conditional_expression                            { result = val[0] }
-    	| unary_expression assignment_operator assignment_expression  { result = make_node(val[1], val[0], val[2]) }
+    	| unary_expression assignment_operator assignment_expression  { result = node_set_children(val[1], val[0], val[2]) }
     	;
 
     assignment_operator:
@@ -567,14 +569,15 @@ class Vienna::ObjectiveCParser
     	;
 
     statement:
-    	  labeled_statement
-    	| compound_statement
-    	| expression_statement
-    	| selection_statement
-    	| iteration_statement
-    	| jump_statement
-    	| AT_CATCH
-    	| AT_TRY
+    	  labeled_statement                                 { result = val[0] }
+    	# this ensures that compond statements get {} around them in js to protect scope
+    	| compound_statement                                { result = make_node('{', val[0], nil) } 
+    	| expression_statement                              { result = val[0] }
+    	| selection_statement                               { result = val[0] }
+    	| iteration_statement                               { result = val[0] }
+    	| jump_statement                                    { result = val[0] }
+    	| AT_CATCH                                          { result = val[0] }
+    	| AT_TRY                                            { result = val[0] }
     	;
 
     labeled_statement:
@@ -584,31 +587,31 @@ class Vienna::ObjectiveCParser
     	;
 
     compound_statement:
-    	  '{' '}'
-    	| '{' statement_list '}'
-    	| '{' declaration_list '}'
-    	| '{' declaration_list statement_list '}'
+    	  '{' '}'                                           { result = nil }
+    	| '{' statement_list '}'                            { result = val[1] }
+    	| '{' declaration_list '}'                          { result = val[1] }
+    	| '{' declaration_list statement_list '}'           { result = make_node(',', val[1], val[2]) }
     	;
 
     declaration_list:
-    	  declaration
-    	| declaration_list declaration
+    	  declaration                                       { result = val[0] }
+    	| declaration_list declaration                      { result = make_node(',', val[0], val[1]) }
     	;
 
     statement_list:
-    	  statement
-    	| statement_list statement
+    	  statement                                         { result = val[0] }
+    	| statement_list statement                          { result = make_node(',', val[0], val[1]) }
     	;
 
     expression_statement:
-    	  ';'
-    	| expression ';'
+    	  ';'                                               { result = node_set_children(val[0], nil, nil) }
+    	| expression ';'                                    { result = node_set_children(val[1], val[0], nil) }
     	;
 
     selection_statement:
-    	  IF '(' expression ')' statement
-    	| IF '(' expression ')' statement ELSE statement
-    	| SWITCH '(' expression ')' statement
+    	  IF '(' expression ')' statement                   { result = node_set_children(val[0], make_node(',', val[2], val[4]), nil) }
+    	| IF '(' expression ')' statement ELSE statement    { result = node_set_children(val[0], make_node(',', val[2], val[4]), node_set_children(val[5], val[6], nil)) }
+    	| SWITCH '(' expression ')' statement               { result = node_set_children(val[0], val[2], val[4]) }
     	;
 
     iteration_statement:
@@ -623,9 +626,9 @@ class Vienna::ObjectiveCParser
     jump_statement:
     	  GOTO IDENTIFIER ';'
     	| CONTINUE ';'
-    	| BREAK ';'
-    	| RETURN ';'
-    	| RETURN expression ';'
+    	| BREAK ';' 
+    	| RETURN ';'                                        { result = node_set_children(val[0], nil, nil) }
+    	| RETURN expression ';'                             { result = node_set_children(val[0], val[1], nil) }
     	;
 
     translation_unit:
@@ -722,7 +725,7 @@ require 'strscan'
       when scanner.scan(/case(?!([a-zA-Z_]|[0-9]))/)
         return make_token(:CASE, :CASE)
       when scanner.scan(/char(?!([a-zA-Z_]|[0-9]))/)
-        return make_token(:CHAR, :CHAR)
+        return make_token(:CHAR, "char")
       when scanner.scan(/const(?!([a-zA-Z_]|[0-9]))/)
         return make_token(:CONST, :CONST)
       when scanner.scan(/continue(?!([a-zA-Z_]|[0-9]))/)
@@ -740,7 +743,7 @@ require 'strscan'
       when scanner.scan(/extern(?!([a-zA-Z_]|[0-9]))/)
         return make_token(:EXTERN, :EXTERN)
       when scanner.scan(/float(?!([a-zA-Z_]|[0-9]))/)
-        return make_token(:FLOAT, :FLOAT)
+        return make_token(:FLOAT, "float")
       when scanner.scan(/for(?!([a-zA-Z_]|[0-9]))/)
         return make_token(:FOR, :FOR)
       when scanner.scan(/goto(?!([a-zA-Z_]|[0-9]))/)
@@ -748,7 +751,7 @@ require 'strscan'
       when scanner.scan(/if(?!([a-zA-Z_]|[0-9]))/)
         return make_token(:IF, :IF)
       when scanner.scan(/int(?!([a-zA-Z_]|[0-9]))/)
-	      return make_token(:INT, :INT)
+	      return make_token(:INT, "int")
       when scanner.scan(/long(?!([a-zA-Z_]|[0-9]))/)
         return make_token(:LONG, :LONG)
       when scanner.scan(/register(?!([a-zA-Z_]|[0-9]))/)
