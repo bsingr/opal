@@ -35,6 +35,14 @@ module Vienna
   	  @extern_functions = []
   	  @at_class_list = []
   	  @known_classes = []
+  	  
+      # this is for things that should be output, for example id NSApp = nil;
+      # should be output in the implementation file, but kept seperate from
+      # the extern declarations
+  	  @direct_declarations = []
+  	  
+      # list of resevred keywords that may cause issues in Javascript
+      @reserved_keywords = ["new", "function"]
   	end
   	
   	def parser_warning_on_node(node, message)
@@ -179,6 +187,11 @@ module Vienna
     # declaration - of type Vienna::Node for the base of the declaration
     # 
     def deal_with_declaration(d)
+      # if a direct declarator....
+      if d.left.token == :TYPE_NAME and d.value == "d"
+        @direct_declarations << d
+        return
+      end
       
       if d.token == :AT_CLASS
         deal_with_at_class d
@@ -190,8 +203,7 @@ module Vienna
         deal_with_protocol d
       elsif d.left.token == :ENUM
         deal_with_enum d
-      elsif
-        d.left.token == :STRUCT
+      elsif d.left.token == :STRUCT
         deal_with_struct d
       elsif d.left.left.token == :TYPEDEF
         deal_with_typedef d

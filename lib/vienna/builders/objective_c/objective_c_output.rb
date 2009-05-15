@@ -24,6 +24,11 @@ module Vienna
         symbol_table_add(t, t)
       end
       
+      
+      @direct_declarations.each do |d|
+        output_statement_list f, d
+      end
+      
       @implementation_definitions.each do |i|
         symbol_table_push()
         symbol_table_add("self", get_interface_by_name(i.name))
@@ -40,6 +45,8 @@ module Vienna
     # are not working, so accessing properties will be seen as accessing struct
     # values, and therefore might not be valid at runtime in Javascript.
     def output_implementation(file, imp)
+      
+      symbol_table_push()
       
       the_interface = get_interface_by_name imp.name
       
@@ -64,11 +71,20 @@ module Vienna
 
   			the_interface.ivars.each do |i|
   			  file.write "class_addIvar(the_class, \"#{i.name}\", \"#{i.type}\");\n"
+  			  symbol_table_add i.name, i.type
   		  end
   		  file.write "\n"
       end
       
       imp.instance_methods.each do |i|
+        # Setup: add each parameter to the symbol table, along with its type
+        symbol_table_push()
+        the_names = i.param_names
+        the_types = i.param_types
+        (0..(i.number_params - 1)).each do |j|
+          symbol_table_add the_names[j], the_types[j]
+        end
+        
         # basic call to add method def, by name, with self and _cmd attributes
         file.write "class_addMethod(the_class, \"#{i.name}\", function(self, _cmd"
         # add each parameter to the default objc ones, if any exist
@@ -81,9 +97,20 @@ module Vienna
         
         # end of method, so output types from array
         file.write "\n}, \"void\");\n\n"
+        
+        # Finish: pop symbol table to remove all local params to method
+        symbol_table_pop()
       end
       
       imp.class_methods.each do |c|
+        # Setup: add each parameter to the symbol table, along with its type
+        symbol_table_push()
+        the_names = c.param_names
+        the_types = c.param_types
+        (0..(c.number_params - 1)).each do |j|
+          symbol_table_add the_names[j], the_types[j]
+        end
+        
         # basic call to add method def, by name, with self and _cmd attributes
         file.write "class_addMethod(meta_class, \"#{c.name}\", function(self, _cmd"
         # add each parameter to the default objc ones, if any exist
@@ -96,7 +123,12 @@ module Vienna
         
         # end of method, so output types from array
         file.write "\n}, \"void\");\n\n"
+        
+        # Finish: pop symbol table to remove all local params to method
+        symbol_table_pop()
       end
+      
+      symbol_table_pop()
     end
     
     
@@ -125,6 +157,7 @@ module Vienna
         file.write "\n"
       elsif statement.value == "d"
         output_declaration_statement file, statement
+        file.write ";\n"
       else
         file.write "Unhandled output_statement_list: #{statement}"
       end
@@ -137,6 +170,9 @@ module Vienna
       if statement.value == 'M'
         output_objc_msgSend file, statement
       elsif statement.token == :IDENTIFIER
+        if @reserved_keywords.include? statement.value
+          parser_error_on_node statement, "cannot use word"
+        end
         the_symbol = lookup_symbol statement.value
         parser_error_on_node(statement, "unknown symbol #{statement.value}") if the_symbol.nil?
         file.write statement.value
@@ -163,11 +199,21 @@ module Vienna
       end
     end
     
-    def output_declaration_statement(file, declaration)
-      file.write declaration
-      file.write "\n"
-      file.write lookup_symbol(declaration.left.value)
-      file.write "\n"
+    def output_declaration_statement(file, d)
+      if d.right.left.value == "*"
+        if @reserved_keywords.include? d.right.left.right.value
+          parser_error_on_node d, "'#{d.right.left.right.value}' is a reserved word"
+        end
+        symbol_table_add(d.right.left.right.value, lookup_symbol(d.left.value))
+        file.write "var #{d.right.left.right.value} = "
+      else
+        if @reserved_keywords.include? d.right.left.value
+          parser_error_on_node d, "'#{d.right.left.value}' is a reserved word"
+        end
+        symbol_table_add(d.right.left.value, lookup_symbol(d.left.value))
+        file.write "var #{d.right.left.value} = "
+      end
+      output_expression file, d.right.right
     end
     
     def output_declaration(file, declaration)

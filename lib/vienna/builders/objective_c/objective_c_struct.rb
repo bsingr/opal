@@ -15,7 +15,7 @@ module Vienna
       new_struct = ObjectiveCStruct.new
       new_struct.name = parse_tree.left.value if parse_tree.left
       new_struct.deal_with_ivar_list parse_tree.right
-      puts new_struct.name
+      # puts parse_tree
       return new_struct
     end
     

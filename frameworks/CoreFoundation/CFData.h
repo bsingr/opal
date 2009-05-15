@@ -9,11 +9,11 @@
 #import <CoreFoundation/CFBase.h>
 
 typedef struct {
-	
+    char *theData;
 } CFDataRef;
 
 typedef struct {
-	
+    char *theData;
 } CFMutableDataRef;
 
 extern CFDataRef CFDataCreate(void *bytes, CFIndex length);

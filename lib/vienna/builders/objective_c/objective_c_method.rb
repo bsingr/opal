@@ -57,6 +57,14 @@ module Vienna
       @types.empty? ? nil : @types[0]
     end
     
+    def param_types
+      return @types.slice(1..(@types.size-1))
+    end
+    
+    def number_params
+      @param_names.size
+    end
+    
     # true if instance method, or false if class method. This is based on the
     # parsing. Note: this can only be checked once the tree has been parsed, 
     # so it defaults to true (instance method)

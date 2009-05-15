@@ -14,11 +14,11 @@
 #import <CoreFoundation/CFURL.h>
 
 typedef struct {
-	
+	char *name;
 } CFBundleRef;
 
 typedef struct {
-	
+	char *name;
 } CFPlugInRef;
 
 extern CFBundleRef CFBundleGetMainBundle(void);

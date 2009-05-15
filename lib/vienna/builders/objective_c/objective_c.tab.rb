@@ -1210,7 +1210,7 @@ racc_reduce_table = [
   4, 135, :_reduce_none,
   3, 135, :_reduce_27,
   4, 135, :_reduce_28,
-  3, 135, :_reduce_none,
+  3, 135, :_reduce_29,
   3, 135, :_reduce_none,
   2, 135, :_reduce_31,
   2, 135, :_reduce_none,
@@ -2018,7 +2018,12 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 93)
   end
 .,.,
 
-# reduce 29 omitted
+module_eval(<<'.,.,', 'objective_c.rb.y', 94)
+  def _reduce_29(val, _values, result)
+     result = node_set_children(val[1], val[0], val[2]) 
+    result
+  end
+.,.,
 
 # reduce 30 omitted
 
