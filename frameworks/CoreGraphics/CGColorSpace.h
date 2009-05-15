@@ -6,7 +6,9 @@
 //  Copyright 2009 Adam Beynon. All rights reserved.
 // 
 
-typedef struct CGColorSpace *CGColorSpaceRef;
+typedef struct CGColorSpace {
+
+} CGColorSpaceRef;
 
 #import <CoreGraphics/CGBase.h>
 #import <CoreGraphics/CGDataProvider.h>

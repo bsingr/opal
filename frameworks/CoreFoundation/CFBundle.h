@@ -13,8 +13,13 @@
 #import <CoreFoundation/CFString.h>
 #import <CoreFoundation/CFURL.h>
 
-typedef struct __CFBundle *CFBundleRef;
-typedef struct __CFBundle *CFPlugInRef;
+typedef struct {
+	
+} CFBundleRef;
+
+typedef struct {
+	
+} CFPlugInRef;
 
 extern CFBundleRef CFBundleGetMainBundle(void);
 

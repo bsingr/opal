@@ -410,9 +410,9 @@ class Vienna::ObjectiveCParser
     	;
 
     struct_or_union_specifier:
-    	  struct_or_union IDENTIFIER '{' struct_declaration_list '}'  { result = make_node(val[0], val[1], val[2]) }
-    	| struct_or_union '{' struct_declaration_list '}'             { result = make_node(val[0], nil, val[2]) }
-    	| struct_or_union IDENTIFIER                                  { result = make_node(val[0], val[1], nil) }
+    	  struct_or_union IDENTIFIER '{' struct_declaration_list '}'  { result = node_set_children(val[0], val[1], val[3]) }
+    	| struct_or_union '{' struct_declaration_list '}'             { result = node_set_children(val[0], nil, val[2]) }
+    	| struct_or_union IDENTIFIER                                  { result = node_set_children(val[0], val[1], nil) }
     	;
 
     struct_or_union:

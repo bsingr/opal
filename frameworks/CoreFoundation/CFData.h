@@ -8,8 +8,13 @@
 
 #import <CoreFoundation/CFBase.h>
 
-typedef struct __CFData *CFDataRef;
-typedef struct __CFData *CFMutableDataRef;
+typedef struct {
+	
+} CFDataRef;
+
+typedef struct {
+	
+} CFMutableDataRef;
 
 extern CFDataRef CFDataCreate(void *bytes, CFIndex length);
 extern CFDataRef CFDataCreateCopy(CFDataRef theData);

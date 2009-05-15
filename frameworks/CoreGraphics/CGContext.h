@@ -6,7 +6,7 @@
 //  Copyright 2009 Adam Beynon. All rights reserved.
 // 
 
-typedef struct CGContent *CGContextRef;
+typedef struct CGContext *CGContextRef;
 
 #import <CoreGraphics/CGBase.h>
 #import <CoreGraphics/CGAffineTransform.h>

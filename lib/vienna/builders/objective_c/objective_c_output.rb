@@ -123,6 +123,8 @@ module Vienna
       elsif statement.token == :IF
         output_if_statement file, statement
         file.write "\n"
+      elsif statement.value == "d"
+        output_declaration_statement file, statement
       else
         file.write "Unhandled output_statement_list: #{statement}"
       end
@@ -159,6 +161,13 @@ module Vienna
       else
         file.write "Unhandled output_expression: #{statement}"
       end
+    end
+    
+    def output_declaration_statement(file, declaration)
+      file.write declaration
+      file.write "\n"
+      file.write lookup_symbol(declaration.left.value)
+      file.write "\n"
     end
     
     def output_declaration(file, declaration)

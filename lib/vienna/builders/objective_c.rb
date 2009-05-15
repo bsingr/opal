@@ -119,6 +119,14 @@ module Vienna
     
     
     def deal_with_typedef(t)
+      # puts t
+      if t.left.right.token == :TYPE_NAME
+        # puts "new typename: #{t.right.value}"
+      elsif t.left.right.token == :STRUCT
+        # puts "new strurct: #{t}"
+        deal_with_struct(t.left.right)
+      end
+      
       if t.right.value == '*'
         @typedef_declarations << t.right.right.value
       else
@@ -135,10 +143,6 @@ module Vienna
       else
         # puts "Found extern declaration2: #{e.right.value}"
       end
-    end
-    
-    def deal_with_struct(s)
-      
     end
     
     # This handles @class myClass type declarations. As a new header is dealt 

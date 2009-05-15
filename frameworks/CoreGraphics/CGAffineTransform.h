@@ -6,15 +6,13 @@
 //  Copyright 2009 Adam Beynon. All rights reserved.
 // 
 
-typedef struct CGAffineTransform CGAffineTransform;
-
 #import <CoreGraphics/CGBase.h>
 #import <CoreGraphics/CGGeometry.h>
 
-struct CGAffineTransform {
+typedef struct _CGAffineTransform {
     CGFloat a, b, c, d;
     CGFloat tx, ty;
-};
+} CGAffineTransform;
 
 extern const CGAffineTransform CGAffineTransformIdentity;
 
