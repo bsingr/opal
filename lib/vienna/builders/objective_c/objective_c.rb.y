@@ -94,14 +94,14 @@ class Vienna::ObjectiveCParser
     	| postfix_expression '(' argument_expression_list ')' { result = make_node('f', val[0], val[2]) }
     	| postfix_expression '.' IDENTIFIER
     	| postfix_expression PTR_OP IDENTIFIER
-    	| type_name IDENTIFIER                                { result = make_node('i', val[0], val[1]) }
+      | type_name IDENTIFIER                                { result = make_node('d', val[0], val[1]) }
     	| postfix_expression INC_OP
     	| postfix_expression DEC_OP
     	;
 
     argument_expression_list:
-    	  assignment_expression
-    	| argument_expression_list ',' assignment_expression
+    	  assignment_expression                               { result = val[0] }
+    	| argument_expression_list ',' assignment_expression  { result = make_node(',', val[0], val[2]) }
     	;
 
     unary_expression:
@@ -476,7 +476,7 @@ class Vienna::ObjectiveCParser
 
     enumerator:
     	  IDENTIFIER                                        { result = val[0] }
-    	| IDENTIFIER '=' constant_expression                { result = node_set_children(val[0], val[2], nil) }
+    	| IDENTIFIER '=' constant_expression                { result = make_node('=', val[0], val[2]) }
     	;
 
     type_qualifier:
@@ -524,8 +524,8 @@ class Vienna::ObjectiveCParser
     	;
 
     parameter_declaration:
-    	  declaration_specifiers declarator                 { result = node_set_children(val[0], val[1], nil) }
-    	| declaration_specifiers abstract_declarator        { result = node_set_children(val[0], val[1], nil) }
+    	  declaration_specifiers declarator                 { result = make_node('d', val[0], val[1]) }
+    	| declaration_specifiers abstract_declarator        { result = make_node('d', val[0], val[1]) }
     	| declaration_specifiers                            { result = val[0] }
     	;
 

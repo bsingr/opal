@@ -72,13 +72,6 @@ module Vienna
       @synthesizers = []
     end
     
-    # Gets the instance of ObjectiveCInterface that is relevant to this object
-    # Should always return a value. Its not usual not to have an interface
-    # declared before the definition of the class
-    def interface
-      
-    end
-    
     def to_s
       "#{@name} (#{@category})"
     end

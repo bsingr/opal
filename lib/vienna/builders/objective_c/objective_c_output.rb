@@ -20,9 +20,16 @@ module Vienna
         symbol_table_add(i.name, i)
       end
       
+      @typedef_declarations.each do |t|
+        symbol_table_add(t, t)
+      end
       
       @implementation_definitions.each do |i|
+        symbol_table_push()
+        symbol_table_add("self", get_interface_by_name(i.name))
+        symbol_table_add("super", get_interface_by_name(get_interface_by_name(i.name).super_class))
         output_implementation(f, i)
+        symbol_table_pop()
       end
   	  f.close
     end
@@ -73,7 +80,7 @@ module Vienna
         output_compound_statement file, i.imp
         
         # end of method, so output types from array
-        file.write "}, \"void\");\n\n"
+        file.write "\n}, \"void\");\n\n"
       end
       
       imp.class_methods.each do |c|
@@ -113,9 +120,11 @@ module Vienna
       elsif statement.token == ";"
         output_expression file, statement.left
         file.write ";\n"
+      elsif statement.token == :IF
+        output_if_statement file, statement
+        file.write "\n"
       else
-        file.write "something else\n"
-        file.write statement
+        file.write "Unhandled output_statement_list: #{statement}"
       end
     end
     
@@ -125,9 +134,6 @@ module Vienna
       
       if statement.value == 'M'
         output_objc_msgSend file, statement
-      elsif statement.value == "self"
-         file.write statement.value
-         return statement.value 
       elsif statement.token == :IDENTIFIER
         the_symbol = lookup_symbol statement.value
         parser_error_on_node(statement, "unknown symbol #{statement.value}") if the_symbol.nil?
@@ -144,9 +150,21 @@ module Vienna
         return statement.value
       elsif statement.token == '='
         output_assignment file, statement
+      elsif statement.value == "d"
+        output_declaration file, statement
+      elsif statement.value == "?"
+        output_ternary_expression file, statement
+      elsif statement.value == "b"
+        output_block_expression file, statement
       else
         file.write "Unhandled output_expression: #{statement}"
       end
+    end
+    
+    def output_declaration(file, declaration)
+      symbol_table_add(declaration.right.value, lookup_symbol(declaration.left.value))
+      # puts (declaration.left.value)
+      file.write "var #{declaration.right.value}"
     end
     
     def output_assignment(file, assignment)
@@ -155,10 +173,36 @@ module Vienna
       output_expression file, assignment.right
     end
     
+    def output_block_expression(file, block)
+      file.write block
+    end
+    
+    def output_ternary_expression(file, statement)
+      output_expression file, statement.left
+      file.write " ? "
+      output_expression file, statement.right.left
+      file.write " : "
+      output_expression file, statement.right.right
+    end
+    
+    def output_if_statement(file, statement)
+      symbol_table_push()
+      file.write "if ("
+      output_expression file, statement.left.left
+      file.write ")\n"
+      output_statement_list file, statement.left.right
+      
+      if statement.right
+        file.write "else\n"
+        output_statement_list file, statement.right.left
+      end
+      symbol_table_pop()
+    end
+    
     
     def output_objc_msgSendSuper(file, statement)
       # FIXME: need to fix to get superclass of current self
-      super_class = "NSObject"
+      super_class = lookup_symbol("super").name
       file.write "objc_msgSendSuper({super_class:#{super_class}, receiver:self}"
       the_selector = get_objc_msgSend_selector(file, statement.right)
       

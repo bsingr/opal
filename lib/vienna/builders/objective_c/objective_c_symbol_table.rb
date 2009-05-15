@@ -23,7 +23,7 @@ module Vienna
       @symbol_table.push new_table
     end
     
-    def sumbol_table_pop
+    def symbol_table_pop
       @symbol_table.pop
     end
   end
