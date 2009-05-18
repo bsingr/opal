@@ -8,39 +8,6 @@
 
 module Vienna
 
-  # This class is used to represent a file that is, or will be, parsed and 
-  # tokeniszed by the parser. This class holds references to scanners used
-  # to tokenize the file, the file's path, and other details that might be
-  # used at some point during parsing.
-  class ObjectiveCFile
-    
-    attr_accessor :scanner, :file_path, :current_line
-    
-    def initialize(file_path)
-      @file_path = file_path
-      @valid_file = true
-      @current_line = 1
-      
-      if File.exists? file_path
-        f = File.new(file_path)
-        text = f.read
-        @scanner = StringScanner.new(text)
-      else
-        puts "Imported file #{file_path} does not exist"
-        @valid_file = false
-      end
-    end
-    
-    def file_name
-      @file_path
-    end
-    
-    def valid?
-      @valid_file
-    end
-    
-  end
-
 
   # Used to make a tree of the parsed progream for walking the tree. Value is the
   # value returned by the parse tree, which should be an ParseValue type listed

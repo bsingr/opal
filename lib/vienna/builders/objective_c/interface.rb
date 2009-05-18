@@ -61,8 +61,11 @@ module Vienna
         interface = ObjectiveCInterface.new
         interface.name = name
         interface.super_class = super_class
-        @interface_declarations << interface
+        current_file().interfaces << interface
+        symbol_table_add name, interface
+        # puts "Adding symbol: #{name} for object #{interface}"
       end
+      
                   
       interface.deal_with_ivar_list(ivar_list) unless ivar_list.nil?
       interface.deal_with_method_list(method_declarations) unless method_declarations.nil?
@@ -71,13 +74,10 @@ module Vienna
     # Returns the interface object, by name, in its entirety. Method returns nil
     # if such an interface can not be found
 	  def get_interface_by_name(name)
-      # Simpy go through each interface, and return it if a match is found
-	    @interface_declarations.each do |interface|
-  	    return interface if interface.name == name
-      end
-      # return nil if not found...
-      return nil
+      the_symbol = lookup_symbol name      
+      return the_symbol
 	  end
+	  
 	  
 	  def get_method_by_selector(int, selector)
       int.instance_methods.each do |i|
@@ -105,30 +105,7 @@ module Vienna
       @instance_methods = []
       @properties = []
     end
-    
-    # Over-rides to_s method to display class name and superclass, or just class
-    # name if the class has no superclass (should just be NSObject...)
-    def to_s
-      s = @super_class ? "#{@name} : #{@super_class}\n" : "#{@name}\n"
-      s << "  -Properties\n"
-      @properties.each do |p|
-        s << "     #{p.type} #{p.name}\n"
-      end
-      s << "  -Ivars\n"
-      @ivars.each do |i|
-        s << "     #{i.type} #{i.name}\n"
-      end
-      s << "  -Instance Methods\n"
-      @instance_methods.each do |i|
-        s << "     #{i}\n"
-      end
-       s << "  -Class Methods\n"
-      @class_methods.each do |c|
-        s << "     #{c}\n"
-      end
-      return s
-    end
-    
+      
     # takes the parse tree of an ivar list, and adds each ivar to the object's
     # array of ivars. at the moment it is assumed that no ivars are private
     # public or protected, and just adds them in the same way. In future this

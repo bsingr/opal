@@ -15,7 +15,14 @@ module Vienna
     
     attr_reader :tokens
 
-  	def initialize
+  	def initialize(source, dest, project)
+  	  
+  	  @source = source
+  	  @destination = dest
+  	  @project = project
+  	  
+  	  @this_file = ObjectiveCFile.new source, self
+  	  
       # ObjectiveCFile objects of all imported objects, as well as starting file
   	  @objc_files = []
       # an array of all imported files, of type [frameworkname, filename].
@@ -39,11 +46,24 @@ module Vienna
       # this is for things that should be output, for example id NSApp = nil;
       # should be output in the implementation file, but kept seperate from
       # the extern declarations
-  	  @direct_declarations = []
+      # @direct_declarations = []
   	  
       # list of resevred keywords that may cause issues in Javascript
-      @reserved_keywords = ["new", "function"]
+      @reserved_keywords = ["new", "function", "var"]
   	end
+  	
+  	def build!
+  	  symbol_table_push()
+  	  
+  	  puts "Building: #{@this_file.file_path}"
+  	  
+  	  @objc_files << @this_file
+      @parsing_stack << @this_file
+      do_parse
+
+  	  output_to_file @destination
+  	  symbol_table_pop()
+	  end
   	
   	def parser_warning_on_node(node, message)
   	  puts "#{node.file.file_name}:#{node.line_number}:warning: #{message}"
@@ -101,13 +121,6 @@ module Vienna
   	  return @parsing_stack.last.scanner
 	  end
   	
-  	
-  	def parse_file_to_output(source, output)
-  	  tokenize_file(source)
-  	  parse
-  	    	  
-  	  output_to_file(output)
-  	end
 	  
 	  def add_category_declaration(category)  
 	  end
@@ -136,9 +149,11 @@ module Vienna
       end
       
       if t.right.value == '*'
-        @typedef_declarations << t.right.right.value
+        current_file().typedefs << t.right.right.value
+        symbol_table_add t.right.right.value, t.right.right.value
       else
-        @typedef_declarations << t.right.value
+        current_file().typedefs << t.right.value
+        symbol_table_add t.right.value, t.right.value
       end
     end
     
@@ -166,6 +181,7 @@ module Vienna
         deal_with_at_class d.left
         deal_with_at_class d.right
       else
+        current_file().at_class_list << d.value
         @at_class_list << d.value
       end
     end
@@ -189,7 +205,7 @@ module Vienna
     def deal_with_declaration(d)
       # if a direct declarator....
       if d.left.token == :TYPE_NAME and d.value == "d"
-        @direct_declarations << d
+        # @direct_declarations << d
         return
       end
       
@@ -220,8 +236,9 @@ module Vienna
     # inform the user. This therefore needs to report back to the "project"
     # object with news of what happened.
   	def on_error(error_token_id, error_value, value_stack)
-  	  msg = "#{@parsing_stack.last.file_path}"
-  	  msg << "(#{@parsing_stack.last.current_line})"
+      msg = ""
+      # msg = "#{@parsing_stack.last.file_path}"
+      # msg << "(#{@parsing_stack.last.current_line})"
       msg << " error: "
     	# msg << "after #{value_stack.last} " if value_stack.length > 1
     	#      msg << "after #{value_stack.last} " unless value_stack.empty?
@@ -239,34 +256,53 @@ module Vienna
     # and parsing should finish (this could be reduced to just a warning??).
     def import_file(file_name, framework_name = nil)
       
-      if @imported_files.include? [framework_name, file_name]
-        return
-      end
+      return if @imported_files.include? [framework_name, file_name]
       
       @imported_files << [framework_name, file_name]
       the_file = framework_name.nil? ? file_name : File.expand_path(File.join(File.dirname(__FILE__), %w[.. .. .. frameworks], framework_name, file_name)).to_s
-      new_objc = ObjectiveCFile.new(the_file)
+                  
+      if @project.has_objc_file? the_file
+        objc_file = @project.get_objc_file the_file
+        add_objc_file objc_file  
+        return
+      end
+      
+      new_objc = ObjectiveCFile.new(the_file, self)
+      @project.add_objc_file new_objc
+      
+      current_file().imported_files << new_objc
       
       if new_objc.valid?
         @objc_files << new_objc
         @parsing_stack << new_objc
       end
     end
-
-
+    
+    # Adds an existing objc_file to the symbol table etc. Note, this recursively
+    # adds sub children's imported files and adds all their attributes to the
+    # symbol table
+    def add_objc_file(file)
+      
+      file.imported_files.each do |i|
+        add_objc_file i
+        
+        i.interfaces.each do |int|
+          symbol_table_add int.name, int
+        end
+        
+        @at_class_list + i.at_class_list
+        
+        i.typedefs.each do |typedef|
+          symbol_table_add typedef, typedef
+        end
+        
+      end
+    end
+    
+    
     def tokenize_string(string)
       # parse string here
       @scanners << StringScanner.new(string)
-    end
-
-
-    def tokenize_file(file)
-      new_objc = ObjectiveCFile.new(file)
-      
-      if new_objc.valid?
-        @objc_files << new_objc
-        @parsing_stack << new_objc
-      end
     end
 
 
@@ -297,6 +333,8 @@ module Vienna
       @at_class_list.each do |at_class|
         return at_class if at_class == type_name
       end
+      
+      return lookup_symbol(type_name) if lookup_symbol(type_name) 
       
       # If cant find the type, then return nil (i.e, use it as an identifier)
       return nil

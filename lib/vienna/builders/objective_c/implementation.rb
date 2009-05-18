@@ -22,9 +22,11 @@ module Vienna
       end
       
       new_i = ObjectiveCImplementation.new
-      new_i.name = name
-      new_i.category = category
-      @implementation_definitions << new_i
+        new_i.name = name
+        new_i.category = category
+
+      current_file().implementations << new_i
+      # @implementation_definitions << new_i
       
       new_i.deal_with_method_list(method_definitions) unless method_definitions.nil?
     end

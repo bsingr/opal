@@ -12,6 +12,12 @@ module Vienna
   
   class Tools
     
+    attr_accessor :bob
+    
+    def initialize
+      @bob = "hey"
+    end
+    
   end
   
 end

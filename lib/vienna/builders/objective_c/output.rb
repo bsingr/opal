@@ -16,26 +16,28 @@ module Vienna
       # Add symbols to symbol table for walking
       symbol_table_push()
       
-      @interface_declarations.each do |i|
-        symbol_table_add(i.name, i)
-      end
+      # @interface_declarations.each do |i|
+      #         symbol_table_add(i.name, i)
+      #       end
+      #       
+      #       @typedef_declarations.each do |t|
+      #         symbol_table_add(t, t)
+      #       end
       
-      @typedef_declarations.each do |t|
-        symbol_table_add(t, t)
-      end
       
+      # @direct_declarations.each do |d|
+      #         output_statement_list f, d
+      #       end
+      #       
       
-      @direct_declarations.each do |d|
-        output_statement_list f, d
-      end
-      
-      @implementation_definitions.each do |i|
+      @this_file.implementations.each do |i|
         symbol_table_push()
-        symbol_table_add("self", get_interface_by_name(i.name))
-        symbol_table_add("super", get_interface_by_name(get_interface_by_name(i.name).super_class))
+        symbol_table_add("self", lookup_symbol(i.name))
+        symbol_table_add("super", lookup_symbol(lookup_symbol(i.name).super_class))
         output_implementation(f, i)
         symbol_table_pop()
       end
+  	  
   	  f.close
     end
     
@@ -48,7 +50,7 @@ module Vienna
       
       symbol_table_push()
       
-      the_interface = get_interface_by_name imp.name
+      the_interface = lookup_symbol imp.name
       
       if imp.category
         # If the implementation is a cateogry, then just extend a class. This 
@@ -155,6 +157,9 @@ module Vienna
       elsif statement.token == :IF
         output_if_statement file, statement
         file.write "\n"
+      elsif statement.token == :RETURN
+        output_return_statement file, statement
+        file.write ";\n"
       elsif statement.value == "d"
         output_declaration_statement file, statement
         file.write ";\n"
@@ -194,10 +199,20 @@ module Vienna
         output_ternary_expression file, statement
       elsif statement.value == "b"
         output_block_expression file, statement
+      elsif statement.value == "."
+        output_dot_notation file, statement
+      elsif statement.value == "f"
+        output_function_call file, statement
       else
         file.write "Unhandled output_expression: #{statement}"
       end
     end
+    
+    def output_return_statement(file, statement)
+      file.write "return "
+      output_expression(file, statement.left) if statement.left
+    end
+    
     
     def output_declaration_statement(file, d)
       if d.right.left.value == "*"
@@ -252,6 +267,19 @@ module Vienna
         output_statement_list file, statement.right.left
       end
       symbol_table_pop()
+    end
+    
+    def output_dot_notation(file, statement)
+      output_expression file, statement.left
+      file.write "."
+      file.write statement.right.value
+    end
+    
+    def output_function_call(file, statement)
+      file.write statement.left.value
+      file.write "("
+      output_expression file, statement.right
+      file.write ")"
     end
     
     

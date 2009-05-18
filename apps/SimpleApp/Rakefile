@@ -1,0 +1,28 @@
+# 
+#  Rakefile
+#  vienna
+#  
+#  Created by Adam Beynon on 2009-05-18.
+#  Copyright 2009 Adam Beynon. All rights reserved.
+# 
+
+require 'vienna'
+
+
+desc "Task description"
+task :default => [:build]
+
+desc "build"
+task :build do
+  Rake::Task["build:something"].invoke
+end
+
+namespace :build do
+
+desc "something"
+task :something do
+  puts "he;lo"
+  puts ARGV
+end
+
+end
