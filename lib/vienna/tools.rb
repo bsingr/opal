@@ -11,12 +11,19 @@ require 'rake'
 module Vienna
   
   class Tools
-    
-    attr_accessor :bob
-    
     def initialize
-      @bob = "hey"
     end
+    
+    def project=(project)
+      @project = project
+    end
+    
+    def project
+      return @project if @project
+    end
+  end
+  
+  def self.config(name, opts={})
     
   end
   

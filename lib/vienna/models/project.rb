@@ -8,13 +8,16 @@
 
 module Vienna
   
-  attr_accessor :project_root
-  
   class Project
+    
+    attr_accessor :project_root
     
     def initialize(project_root)
       @project_root = project_root
       @cached_objc_files = Hash.new
+      
+      # require File.join(project_root, 'config')
+      
     end
     
     def build!

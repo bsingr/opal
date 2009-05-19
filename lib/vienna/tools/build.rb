@@ -20,8 +20,8 @@ module Vienna
       #       puts parser.result
       # parser = ObjectiveCParser.new
       # parser.parse_file_to_output("MyFile.m", "MyFile.js")
-      d = Dir.new(Dir.getwd)
-      p = Project.new d
+      # d = Dir.new(Dir.getwd)
+      p = Project.new Dir.getwd
       p.build!
     end
     

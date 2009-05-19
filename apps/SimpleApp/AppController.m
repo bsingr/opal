@@ -7,3 +7,9 @@
 // 
 
 #import "AppController.h"
+
+@implementation AppController
+
+@synthesize myAge;
+
+@end
