@@ -11,17 +11,8 @@ module Vienna
   class Tools
     
     def self.build
-      # parser = ObjectiveCParser.new
-      #       parser.tokenize_file "MyFile.m"
-      #       parser.tokens.each do |first, second|
-      #         #puts "[#{first}, #{second}]"
-      #       end
-      #       parser.parse
-      #       puts parser.result
-      # parser = ObjectiveCParser.new
-      # parser.parse_file_to_output("MyFile.m", "MyFile.js")
-      # d = Dir.new(Dir.getwd)
       p = Project.new Dir.getwd
+      p.prepare!
       p.build!
     end
     

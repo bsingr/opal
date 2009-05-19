@@ -6,6 +6,8 @@
 #  Copyright 2009 Adam Beynon. All rights reserved.
 # 
 
+require 'erb'
+
 module Vienna
   
   module Builder

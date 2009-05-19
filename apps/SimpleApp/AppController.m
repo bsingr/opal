@@ -12,4 +12,9 @@
 
 @synthesize myAge;
 
+- (id)method:(id)anArgument
+{
+   return 234567;
+}
+
 @end

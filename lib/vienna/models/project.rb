@@ -12,11 +12,27 @@ module Vienna
     
     attr_accessor :project_root
     
+    # Initialize with a string for the root of the project. This is used by all
+    # subprojects etc as a reference point
     def initialize(project_root)
+      # project root (string)
       @project_root = project_root
+      # cached files - saves them being processed more than once (on large builds)
       @cached_objc_files = Hash.new
-      
-      # require File.join(project_root, 'config')
+      # An array of frameworks (sub projects)
+      @frameworks = []
+      # Language packs (sub projects)
+      @languages = []
+      # Rakefile for project
+      @rakefile = nil
+    end
+    
+    def prepare!
+      rake = Rakefile.new
+      rake.load! "Rakefile"
+    end
+    
+    def is_prepared?
       
     end
     
@@ -24,10 +40,13 @@ module Vienna
       m_files = Dir.glob(File.join(%w[** *.m]))
       m_files.each do |m|
         source = File.expand_path(m)
-        destination = File.dirname(source) + "/" + File.basename(source, ".m") + ".js"
+        destination = File.dirname(source) + "/build/" + File.basename(source, ".m") + ".js"
         p = ObjectiveCParser.new source, destination, self
         p.build!
       end
+      
+      index_html = Vienna::Builder::Html.new(File.join(@project_root, '/index.html'), File.join(@project_root, '/build/index.html'), self)
+      index_html.build!
     end
     
     

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+	<!-- 
+	      index.html
+	      <%= project.name %>
+	      
+	      Created by <%= project.user %> on <%= project.date %>.
+	      Copyright <%= project.year %> <%= project.organization %>. All rights reserved.
+	 -->
+	
+	<head>
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+		<title><%= project.name %></title>
+		
+		<style type="text/css" media="screen">
+			body {
+				margin: 0;
+				padding:0;
+			}
+		</style>
+		
+		<script type="text/javascript" charset="utf-8">
+			// Bootstrap code
+			var __bootstrap_frameworks = ['objc', 'CoreFoundation', 'Foundation', 'CoreGraphics', 'AppKit'];
+			var __bootstrap_application = 'SimpleApp';
+			
+			function __bootstrap_link()
+			{
+				// slice array and add each framework to page, with onload to trigger this function again
+				// when all frameworks are done, add application, then call main() (after app loads)
+				var the_framework = __bootstrap_frameworks.shift();
+				
+				if (the_framework == null)
+				{
+					
+				}
+				else
+				{
+					console.log(the_framework);
+				}
+			}
+			
+			__bootstrap_link();
+		</script>
+		
+	</head>
+	<body>
+		
+	</body>
+</html>
