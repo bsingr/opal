@@ -23,10 +23,6 @@ module Vienna
     end
   end
   
-  def self.config(name, opts={})
-    
-  end
-  
 end
 
 Vienna.require_all_libs_relative_to(__FILE__)

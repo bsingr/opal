@@ -55,7 +55,7 @@ module Vienna
   	def build!
   	  symbol_table_push()
   	  
-  	  puts "Building: #{@this_file.file_path}"
+      # puts "Building: #{@this_file.file_path}"
   	  
   	  @objc_files << @this_file
       @parsing_stack << @this_file
