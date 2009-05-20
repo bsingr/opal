@@ -44,5 +44,15 @@ module Vienna
       config.merge!(@configs[config_name]) if @configs.has_key? config_name
       return config
     end
+    
+    
+    def namespace(name=nil, &block)
+      # puts "namespace: #{name}"
+    end
+    
+    def desc(description)
+      # puts "description"
+    end
+    
   end
 end

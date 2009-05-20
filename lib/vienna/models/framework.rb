@@ -33,8 +33,8 @@ module Vienna
     # 
     # Frameworks must be named that of its parent Folder
     def initialize(a_project, a_name)
-      @parent_project = a_project
-      @name = a_name
+       @parent_project = a_project
+       @name = a_name
     end
     
     def prepare!

@@ -1,0 +1,54 @@
+# 
+#  Rakefile
+#  vienna
+#  
+#  Created by Adam Beynon on 2009-05-20.
+#  Copyright 2009 Adam Beynon. All rights reserved.
+# 
+
+# This is the default Rakefile used by all applications/frameworks, and contains
+# default settings should they not be defined by the user. All these settings
+# can be over-ridden
+config :all,
+  
+config :debug,
+
+config :release,
+
+namespace :build do
+  
+  desc "build using the debug configuration"
+  task :debug do
+    
+  end
+  
+  desc "build using the release configuration"
+  task :release do
+    
+  end
+  
+end
+
+namespace :gen do
+  
+  desc "generate a new project"
+  task :project do
+    
+  end
+  
+  desc "generate a new class (that inherits from NSObject)"
+  task :class do
+    
+  end
+  
+  desc "generate a new view (that inherits from NSView)"
+  task :view do
+    
+  end
+  
+  desc "generate a new locale"
+  task :locale do
+    
+  end
+  
+end
