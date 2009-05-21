@@ -17,36 +17,17 @@ module Vienna
   # 
   # A framework has its own rakefiles which it can use to perform custom build
   # tasks and routines.
-  class Framework
-    
-    # initialize a framework. First looks in the project_root/frameworks dir,
-    # but if nothing found, then looks in the system frameworks dir. If nothing
-    # is found in this dir, then it is deemed that the framework does not exist.
-    # i.e. there are only 2 valid locations for frameworks.
-    # 
-    # Frameworks should also only be included once: that is, by this stage the
-    # project should filter out frameworks if they have already been included.
-    # 
-    # === Param
-    #  a_project:: Project object which is the parent
-    #  a_name::    Framework name (e.g.) AppKit, in which to look for
-    # 
-    # Frameworks must be named that of its parent Folder
-    def initialize(a_project, a_name)
-       @parent_project = a_project
-       @name = a_name
-    end
-    
+  class Framework  < Vienna::Bundle
+        
     def prepare!
-      
-    end
-    
-    def is_prepared?
-      
+      @prepared_status = true
+      FileUtils.mkdir_p(File.join(@project.tmp_prefix, bundle_name, 'objects'))
+      FileUtils.mkdir_p(File.join(@project.build_prefix, 'Frameworks', bundle_name))
     end
     
     def build!
-      
+      prepare! unless is_prepared?
+      puts "Building framework: #{bundle_name}"
     end
   end
 end

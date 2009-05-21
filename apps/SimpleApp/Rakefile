@@ -22,7 +22,7 @@ config :all,
   # 
   # These can be symbols (:Cocoa) or strings "Cocoa". If more than one is
   # required, then pass an array: [:Cocoa, :MyFramework, :OtherFramework]
-  :required => :Cocoa,
+  :required => [:Vienna, :AppKit, :Foundation],
   
   # Preferred lnaguage: default app language to suit English.lproj
   :preferred_language => :en,

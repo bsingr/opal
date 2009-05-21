@@ -6,7 +6,7 @@
 //  Copyright 2009 Adam Beynon. All rights reserved.
 // 
 
-#import <Cocoa/Cocoa.h>
+#import <Vienna/Vienna.h>
 
 @interface AppController : NSObject
 {

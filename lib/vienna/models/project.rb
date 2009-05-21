@@ -8,115 +8,39 @@
 
 module Vienna
   
-  class Project
+  class Project < Vienna::Bundle
     
     attr_accessor :project_root
     
     # Initialize with a string for the root of the project. This is used by all
     # subprojects etc as a reference point
     def initialize(project_root)
-      # project root (string)
-      @project_root = project_root
+      super
       # cached files - saves them being processed more than once (on large builds)
       @cached_objc_files = Hash.new
-      
-      puts objc_sources
-    end
-    
-    def rakefile
-      @rakefile ||= Rakefile.new.load!(@project_root)
-    end
-    
-    # Returns an array of all the frameworks required by this application. This
-    # might, but never should, be nil... so be careful when using and relying on
-    # contents
-    def frameworks
-      return @frameworks if @frameworks
-      
-      @frameworks = []
-      required.each do |f|
-        framework_dir = find_framework f
-        if framework_dir
-          @frameworks << Framework.new(@project_root, framework_dir)
-        else
-          puts "Error: cannot find framework named: #{f}"
-        end
-      end
-      return @frameworks
-    end
-    
-    # This looks in the project dir for all locale folders and makes an array
-    # of languages that need to be processed during the build stage
-    def locales
-      @locales ||= Dir.glob(File.join(project_root, '**/*.lproj'))
-    end
-    
-    # Gets a list of all Javascript source files to build. These do not really
-    # have to be processed, but out list will be passed on for combining
-    def javascript_sources
-      @javascript_soruces ||= Dir.glob(File.join(project_root, '**/*.js'))
-    end
-    
-    def objc_sources
-      @objc_sources ||= Dir.glob(File.join(project_root, '**/*.{m,c}'))
+      # cache built frameworks so we do not have to rebuild them more than once
+      @built_frameworks = []
     end
     
     def prepare!
+      # build paths
       FileUtils.mkdir_p(build_prefix)
+      FileUtils.mkdir_p(File.join(build_prefix, 'Frameworks'))
+      FileUtils.mkdir_p(File.join(build_prefix, 'Resources'))
       FileUtils.mkdir_p(tmp_prefix)
-    end
-    
-    def is_prepared?
-      
+      FileUtils.mkdir_p(File.join(tmp_prefix, bundle_root))
     end
     
     def build!
-      m_files = Dir.glob(File.join(%w[** *.m]))
-      m_files.each do |m|
-        source = File.expand_path(m)
-        destination = File.dirname(source) + "/build/" + File.basename(source, ".m") + ".js"
-        p = ObjectiveCParser.new source, destination, self
-        p.build!
+      prepare! unless is_prepared?
+      puts "Building #{bundle_root}"
+      
+      frameworks.each do |f|
+        f.build!
       end
       
-      index_html = Vienna::Builder::Html.new(File.join(@project_root, '/index.html'), File.join(@project_root, '/build/index.html'), self)
-      index_html.build!
-    end
-    
-    
-    def build_prefix
-      @build_prefix ||= (rakefile.config_for(build_mode)[:build_prefix] || 'build')
-    end
-    
-    def tmp_prefix
-      @tmp_prefix ||= (rakefile.config_for(build_mode)[:tmp_prefix] || 'build/tmp')
-    end
-    
-    def copyright_notice
-      @copyright_notice ||= (rakefile.config_for(build_mode)[:copyright_notice] || '')
-    end
-    
-    def user_name
-      @user_name ||= (rakefile.config_for(build_mode)[:user_name] || 'Your Name')
-    end
-    
-    def organization_name
-      @organization_name ||= (rakefile.config_for(build_mode)[:organization_name] || 'My Company')
-    end
-    
-    def required
-      return @required_frameworks if @required_frameworks
-      
-      r = rakefile.config_for(build_mode)[:required]
-      if r.class == Array
-        return r
-      elsif r.class == String or r.class == Symbol
-        return [r.to_s]
-      end
-      
-      return []
-    end
-    
+    end    
+        
     # Gets the build mode. If not set, defaults to debug
     def build_mode
       @build_mode ||= :debug
@@ -127,20 +51,12 @@ module Vienna
       @build_mode = build
     end
     
+    def add_framework(a_framework)
+      @built_frameworks << a_framework
+    end
     
-    def find_framework(name)
-      # normalize string
-      name = name.to_s.downcase!
-      system_frameworks = File.join(LIBPATH, '..', 'frameworks')
-      f = Dir.new(system_frameworks)
-      f.each do |x|
-        if x.downcase == name
-          return File.join(system_frameworks, x)
-        end
-      end
-      
-      # else, return nil: cant find framework
-      return nil
+    def has_framework?(a_framework)
+      @built_frameworks.include? a_framework
     end
     
     def add_objc_file(file)
