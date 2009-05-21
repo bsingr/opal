@@ -16,19 +16,10 @@ module Vienna
       # Add symbols to symbol table for walking
       symbol_table_push()
       
-      # @interface_declarations.each do |i|
-      #         symbol_table_add(i.name, i)
-      #       end
-      #       
-      #       @typedef_declarations.each do |t|
-      #         symbol_table_add(t, t)
-      #       end
-      
-      
-      # @direct_declarations.each do |d|
-      #         output_statement_list f, d
-      #       end
-      #       
+      symbol_table_add('id', lookup_symbol('NSObject'))
+      symbol_table_add('nil', lookup_symbol('NSObject'))
+      symbol_table_add("YES", 1)
+      symbol_table_add("NO", 1)
       
       @this_file.implementations.each do |i|
         symbol_table_push()
@@ -304,16 +295,20 @@ module Vienna
 
       file.write "objc_msgSend("
       the_self = output_expression file, statement.left
+      
       self_symbol = lookup_symbol the_self
+      
       the_selector = get_objc_msgSend_selector(file, statement.right)
       
       if self_symbol.nil?
         abort "#{the_self} does not exist"
       end
       
-      the_method = get_method_by_selector(self_symbol, the_selector)
-      if the_method.nil?
-        parser_warning_on_node statement, "#{the_self} may not respond to #{the_selector}"
+      unless self_symbol.class == String
+        the_method = get_method_by_selector(self_symbol, the_selector)
+        if the_method.nil?
+          parser_warning_on_node statement, "#{the_self} may not respond to #{the_selector}"
+        end
       end
       
       file.write ", \""

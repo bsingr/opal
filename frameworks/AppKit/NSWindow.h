@@ -9,8 +9,10 @@
 #import <Foundation/NSGeometry.h>
 #import <AppKit/NSResponder.h>
 #import <AppKit/NSGraphics.h>
+#import <AppKit/NSText.h>
+#import <AppKit/NSApplication.h>
 
-@class NSToolbar;
+@class NSToolbar, NSButton, NSButtonCell;
 @class NSWindowTitleButton;
 @class NSWindowDepth;
 @class NSScreen;
@@ -87,11 +89,16 @@ typedef NSUInteger NSWindowButton;
 	//id _mouseMoveHanldeCurrentY;
     //id _mouseMoveHandle;
     
-    //id _eventBindingCurrentX;
-    //id _eventBindingCurrentY;
+    id _eventBindingCurrentX;
+    id _eventBindingCurrentY;
     
     NSWindowTitleButton *_windowCloseButton;
     NSText *_fieldEditor;
+    
+    NSSize          _maxSize;
+    NSSize          _minSize;
+    NSUInteger      _wtFlags;
+    id             *_windowClass;
 }
 
 + (NSRect)frameRectForContentRect:(NSRect)cRect styleMask:(NSUInteger)aStyle;

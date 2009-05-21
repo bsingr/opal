@@ -45,10 +45,10 @@ id NSApp = nil;
 
 + (NSApplication *)sharedApplication
 {
-    if (!NSApp)
-        NSApp = [[NSApplication alloc] init];
-    
-    return NSApp;
+    // if (!NSApp)
+    //     NSApp = [[NSApplication alloc] init];
+    // 
+    // return NSApp;
 }
 
 - (void)setDelegate:(id)anObject
@@ -58,19 +58,19 @@ id NSApp = nil;
     
     NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
     
-    if (_delegate) {
-        [nc removeObserver:_delegate name:NSApplicationWillFinishLaunchingNotification object:self];
-        [nc removeObserver:_delegate name:NSApplicationDidFinishLaunchingNotification object:self];
-    }
+    // if (_delegate) {
+    //     [nc removeObserver:_delegate name:NSApplicationWillFinishLaunchingNotification object:self];
+    //     [nc removeObserver:_delegate name:NSApplicationDidFinishLaunchingNotification object:self];
+    // }
     
     _delegate = anObject;
     
-    if ([_delegate respondsToSelector:@selector(applicationWillFinishLaunching:)])
-        [nc addObserver:_delegate selector:@selector(applicationWillFinishLaunching:)];
-        
-    if ([_delegate respondsToSelector:@selector(applicationDidFinishLaunching:)])
-        [nc addObserver:_delegate selector:@selector(applicationDidFinishLaunching:)];
-    
+    // if ([_delegate respondsToSelector:@selector(applicationWillFinishLaunching:)])
+    //     [nc addObserver:_delegate selector:@selector(applicationWillFinishLaunching:) name:NSApplicationWillFinishLaunchingNotification object:self];
+    //     
+    // if ([_delegate respondsToSelector:@selector(applicationDidFinishLaunching:)])
+    //     [nc addObserver:_delegate selector:@selector(applicationDidFinishLaunching:) name:NSApplicationDidFinishLaunchingNotification object:self];
+    // 
 }
 
 - (id)delegate
@@ -113,9 +113,9 @@ id NSApp = nil;
 
 - (void)finishLaunching
 {
-    NSNotificationCenter nc = [NSNotificationCenter defaultCenter];
-    [ns postNotificationName:NSApplicationWillFinishLaunchingNotification object:self];
-    [nc postNotificationName:NSApplicationDidFinishLaunchingNotification object:self];
+    NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+    // [nc postNotificationName:NSApplicationWillFinishLaunchingNotification object:self];
+    //  [nc postNotificationName:NSApplicationDidFinishLaunchingNotification object:self];
 }
 
 - (void)run
@@ -171,7 +171,7 @@ id NSApp = nil;
     else if (([theEvent type] == NSKeyDown) || ([theEvent type] == NSKeyUp))
         [[self keyWindow] sendEvent:theEvent];
     else
-        [[anEvent window] sendEvent:anEvent];
+        [[theEvent window] sendEvent:theEvent];
 }
 
 - (void)preventWindowOrdering
@@ -319,10 +319,10 @@ id NSApp = nil;
 
 @end
 
-int NSApplicationMain(int argc, const char *argv[])
-{
-    
-}
+// int NSApplicationMain(int argc, const char *argv[])
+// {
+//     
+// }
 
 NSString *NSApplicationDidBecomeActiveNotification = @"NSApplicationDidBecomeActiveNotification";
 NSString *NSApplicationDidHideNotification = @"NSApplicationDidHideNotification";

@@ -6,5 +6,6 @@
 //  Copyright 2009 Adam Beynon. All rights reserved.
 // 
 
-#import <Vienna/Vienna.h>
+// #import <Vienna/Vienna.h>
 
+extern int myString;

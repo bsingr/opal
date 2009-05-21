@@ -58,12 +58,20 @@ module Vienna
       # to the array. Otherwise, we already have the interface, its name and
       # super_class, so we do not need to re-add it, or do anything special
       if interface.nil?
+        # puts "------------------ new interface: #{name} in file #{current_file.file_path}"
         interface = ObjectiveCInterface.new
         interface.name = name
         interface.super_class = super_class
         current_file().interfaces << interface
         symbol_table_add name, interface
         # puts "Adding symbol: #{name} for object #{interface}"
+        
+        # copy parent's ivars
+        if lookup_symbol(super_class)
+          lookup_symbol(super_class).ivars.each do |i|
+            interface.ivars << i
+          end
+        end
       end
       
                   
@@ -151,6 +159,14 @@ module Vienna
       else
         puts "unknown method declaration type"
       end
+    end
+    
+    def to_s
+      msg = @name << "\n"
+      @instance_methods.each do |i|
+        msg << i.name << "\n"
+      end
+      return msg
     end
     
   end

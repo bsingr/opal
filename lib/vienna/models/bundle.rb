@@ -31,24 +31,6 @@ module Vienna
       @bundle_root
     end
     
-    # Returns an array of all the frameworks required by this application. This
-    # might, but never should, be nil... so be careful when using and relying on
-    # contents
-    def frameworks
-      return @frameworks if @frameworks
-      
-      @frameworks = []
-      required.each do |f|
-        framework_dir = find_framework f
-        if framework_dir
-          @frameworks << Framework.new(framework_dir, self)
-        else
-          puts "Error: cannot find framework named: #{f}"
-        end
-      end
-      return @frameworks
-    end
-    
     # This looks in the project dir for all locale folders and makes an array
     # of languages that need to be processed during the build stage
     def locales
@@ -138,7 +120,7 @@ module Vienna
     
     def find_framework(name)
       # normalize string
-      name = name.to_s.downcase!
+      name = name.to_s.downcase
       system_frameworks = File.expand_path(File.join(LIBPATH, '..', 'frameworks'))
       f = Dir.new(system_frameworks)
       f.each do |x|

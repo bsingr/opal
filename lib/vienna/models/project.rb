@@ -23,23 +23,53 @@ module Vienna
     end
     
     def prepare!
+      @prepared_status = true
       # build paths
       FileUtils.mkdir_p(build_prefix)
       FileUtils.mkdir_p(File.join(build_prefix, 'Frameworks'))
       FileUtils.mkdir_p(File.join(build_prefix, 'Resources'))
       FileUtils.mkdir_p(tmp_prefix)
-      FileUtils.mkdir_p(File.join(tmp_prefix, bundle_root))
+      FileUtils.mkdir_p(File.join(tmp_prefix, bundle_name, 'objects'))
     end
     
     def build!
       prepare! unless is_prepared?
-      puts "Building #{bundle_root}"
+      puts "Building #{bundle_name}"
       
       frameworks.each do |f|
         f.build!
       end
       
+      objc_sources.each do |c|
+        ObjectiveCParser.new(c, File.join(tmp_prefix, bundle_name, 'objects', File.basename(c, '.m')) + '.js', self).build!
+      end
+      
+      javascript_sources.each do |j|
+        # puts j
+      end
+      
     end    
+    
+    # Returns an array of all the frameworks required by this application. This
+    # might, but never should, be nil... so be careful when using and relying on
+    # contents
+    def frameworks
+      return @frameworks if @frameworks
+      
+      @frameworks = []
+      required.each do |f|
+        framework_dir = find_framework f
+        if framework_dir #and should_build_framework?(f)
+          @frameworks << Framework.new(framework_dir, self) 
+          add_built_framework(f)
+        elsif framework_dir.nil?
+          puts "Error: cannot find framework named: #{f}"
+        else
+          puts "not building: #{f}"
+        end
+      end
+      return @frameworks
+    end
         
     # Gets the build mode. If not set, defaults to debug
     def build_mode
@@ -51,12 +81,12 @@ module Vienna
       @build_mode = build
     end
     
-    def add_framework(a_framework)
+    def add_built_framework(a_framework)
       @built_frameworks << a_framework
     end
     
-    def has_framework?(a_framework)
-      @built_frameworks.include? a_framework
+    def should_build_framework?(a_framework)
+      @built_frameworks.include? a_framework ? false : true
     end
     
     def add_objc_file(file)

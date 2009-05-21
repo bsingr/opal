@@ -6,7 +6,11 @@
 //  Copyright 2009 Adam Beynon. All rights reserved.
 // 
 
+#import <Foundation/Foundation.h>
 #import <AppKit/NSResponder.h>
+#import <AppKit/NSGraphicsContext.h>
+
+@class NSEvent, NSMenu, NSImage, NSException, NSPasteboard;
 
 extern NSString *NSModalPanelRunLoopMode;
 extern NSString *NSEventTrackingRunLoopMode;
@@ -25,7 +29,16 @@ extern id NSApp;
 
 @interface NSApplication : NSResponder
 {
-    NSString *_bob;
+    id               _delegate;
+    NSMutableArray  *_windows;
+    
+    NSEvent         *_currentEvent;
+    
+    // Event bindings
+    BOOL             _eventBindingQueued;
+    id               _eventBindingTarget;
+    SEL              _eventBindingSelector;
+    NSUInteger       _eventBindingMask;
 }
 
 + (NSApplication *)sharedApplication;

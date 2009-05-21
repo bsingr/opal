@@ -55,6 +55,20 @@ module Vienna
   	def build!
   	  symbol_table_push()
   	  
+  	  symbol_table_add("void", :VOID)
+  	  symbol_table_add("int", :INT)
+  	  symbol_table_add("struct", :STRUCT)
+  	  symbol_table_add("float", :FLOAT)
+  	  symbol_table_add("double", :DOUBLE)
+  	  symbol_table_add("char", :CHAR)
+  	  
+  	  symbol_table_add(:VOID, :VOID)
+  	  symbol_table_add(:INT, :INT)
+  	  symbol_table_add(:STRUCT, :STRUCT)
+  	  symbol_table_add(:FLOAT, :FLOAT)
+  	  symbol_table_add(:DOUBLE, :DOUBLE)
+  	  symbol_table_add(:CHAR, :CHAR)
+  	  
       # puts "Building: #{@this_file.file_path}"
   	  
   	  @objc_files << @this_file
@@ -135,14 +149,21 @@ module Vienna
     
     
     def deal_with_enum(e)
-
+      enum = ObjectiveCEnum.new
+      enum.deal_with_enum_list(e.left.right)
+      # puts e.left.right
+      # puts enum.enums.to_yaml
+      current_file.enums << enum
+      enum.enums.each do |key, value|
+        symbol_table_add key, value
+      end
     end
     
     
     def deal_with_typedef(t)
       # puts t
-      if t.left.right.token == :TYPE_NAME
-        # puts "new typename: #{t.right.value}"
+      if lookup_symbol(t.left.right.token)
+        # puts "new typename: #{t.right.value} #{t}"
       elsif t.left.right.token == :STRUCT
         # puts "new strurct: #{t}"
         deal_with_struct(t.left.right)
@@ -153,7 +174,7 @@ module Vienna
         symbol_table_add t.right.right.value, t.right.right.value
       else
         current_file().typedefs << t.right.value
-        symbol_table_add t.right.value, t.right.value
+        symbol_table_add t.right.value, t.left.right.token
       end
     end
     
@@ -188,7 +209,8 @@ module Vienna
     
     
     def register_class_name_from_declaration(class_name)
-      @known_classes << class_name
+      @at_class_list << class_name
+      current_file().at_class_list << class_name
     end
     
     # This basically handles declarations sent straight from the parse tree, as
@@ -203,8 +225,12 @@ module Vienna
     # declaration - of type Vienna::Node for the base of the declaration
     # 
     def deal_with_declaration(d)
+      # puts d
+      # puts "---- #{current_file.file_path}:#{current_file.current_line}"
+      #       puts d
       # if a direct declarator....
       if d.left.token == :TYPE_NAME and d.value == "d"
+        # These should be added to the file for generation (they are directly defining a variable and value, so output it!)
         # @direct_declarations << d
         return
       end
@@ -226,26 +252,14 @@ module Vienna
       elsif d.left.left.token == :EXTERN
         deal_with_extern d
       else
-        # puts d
+        abort "#{@parsing_stack.last.file_name}:#{@parsing_stack.last.current_line}:error: was not expecting declaration type: #{d}"
       end
     end
     
     # Thrown on a parsing error. Racc already ends the parsing and the error is
-    # printed to the user. This is currently fine for one file, but when dealing
-    # with projects, one failed build should end the whole build process and
-    # inform the user. This therefore needs to report back to the "project"
-    # object with news of what happened.
+    # printed to the user.
   	def on_error(error_token_id, error_value, value_stack)
-      msg = ""
-      # msg = "#{@parsing_stack.last.file_path}"
-      # msg << "(#{@parsing_stack.last.current_line})"
-      msg << " error: "
-    	# msg << "after #{value_stack.last} " if value_stack.length > 1
-    	#      msg << "after #{value_stack.last} " unless value_stack.empty?
-    	#      msg << "on #{token_to_str(error_token_id)} #{error_value}"
-    	msg << "was not expecting token #{error_value} of type #{token_to_str(error_token_id)}"
-      puts msg
-      # raise ParseError, msg
+  	  abort "#{@parsing_stack.last.file_name}:#{@parsing_stack.last.current_line}:error: was not expecting token #{error_value} after '#{value_stack.last.value}'"
     end
     
     # Imports a file both locally and from known framework directories. This
@@ -256,14 +270,19 @@ module Vienna
     # and parsing should finish (this could be reduced to just a warning??).
     def import_file(file_name, framework_name = nil)
       
-      return if @imported_files.include? [framework_name, file_name]
-      
-      @imported_files << [framework_name, file_name]
-      the_file = framework_name.nil? ? file_name : File.expand_path(File.join(File.dirname(__FILE__), %w[.. .. .. frameworks], framework_name, file_name)).to_s
+      # if @imported_files.include? [framework_name, file_name]
+      #   puts "Skippung for #{file_name}"
+      #   return
+      # end
+      # 
+      # @imported_files << [framework_name, file_name]
+      the_file = framework_name.nil? ? File.join(File.dirname(current_file.file_path), file_name) : File.expand_path(File.join(File.dirname(__FILE__), %w[.. .. .. frameworks], framework_name, file_name)).to_s
                   
       if @project.has_objc_file? the_file
         objc_file = @project.get_objc_file the_file
-        add_objc_file objc_file  
+        # puts "Returning with already used file: #{the_file}" 
+        add_objc_file objc_file 
+        current_file.imported_files << objc_file
         return
       end
       
@@ -271,7 +290,7 @@ module Vienna
       @project.add_objc_file new_objc
       
       current_file().imported_files << new_objc
-      
+      # puts "Importing new file: #{the_file}" 
       if new_objc.valid?
         @objc_files << new_objc
         @parsing_stack << new_objc
@@ -285,17 +304,29 @@ module Vienna
       
       file.imported_files.each do |i|
         add_objc_file i
-        
-        i.interfaces.each do |int|
-          symbol_table_add int.name, int
+        # puts "Re-impoerting: #{i.file_path} from #{file.file_path}"        
+      end
+      
+      file.typedefs.each do |typedef|
+        symbol_table_add typedef, typedef
+        # puts "Readding typedef: #{typedef}"
+      end
+      
+      file.interfaces.each do |int|
+        # puts "   - Adding #{int.name}"
+        symbol_table_add int.name, int
+        # puts "Readding interface #{int.name}"
+      end
+      
+      file.at_class_list.each do |c|
+        @at_class_list << c
+        # puts "Readding class #{c}"
+      end
+      
+      file.enums.each do |e|
+        e.enums.each do |key, value|
+          symbol_table_add key, value
         end
-        
-        @at_class_list + i.at_class_list
-        
-        i.typedefs.each do |typedef|
-          symbol_table_add typedef, typedef
-        end
-        
       end
     end
     
@@ -311,33 +342,23 @@ module Vienna
   	 do_parse
   	end
 
-    # Look up the given identifier (type_name) and return its type for use in parser
-    # This checks through class interfaces, enums, structs, typedefs and @class
-    # declarations. The scope is dealt with on a per file basis. Also scopes can
-    # be removed. For example, a #define statement can also be #undef'd
+    # Look up type from symbol table. Any known type will be in here. the @classes
+    # are checked as a last resort.. these also temporarily hold interface names
+    # before the whole interface is processed
   	def lookup_type(type_name)
-  	  
-  	  @known_classes.each do |class_name|
-	      return class_name if class_name == type_name
-	    end
-  	   
-      # Just go through interface class names and return that interface
-  	  @interface_declarations.each do |interface|
-  	    return interface if interface.name == type_name
-      end
-      
-      @typedef_declarations.each do |typedef|
-        return typedef if typedef == type_name
-      end
-      
+
       @at_class_list.each do |at_class|
-        return at_class if at_class == type_name
+        return make_token(:TYPE_NAME, type_name) if at_class == type_name
       end
       
-      return lookup_symbol(type_name) if lookup_symbol(type_name) 
+      the_symbol = lookup_symbol(type_name)
       
       # If cant find the type, then return nil (i.e, use it as an identifier)
-      return nil
+      return make_token(:IDENTIFIER, type_name) if the_symbol.nil?
+      
+      # if the_symbol
+      return make_token(:CONSTANT, the_symbol) if the_symbol.class == Fixnum
+      return make_token(:TYPE_NAME, type_name)
   	end
   end
 end

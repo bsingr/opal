@@ -40,7 +40,7 @@
 - (void)decodeArrayOfObjCType:(const char *)itemType count:(NSUInteger)count at:(void *)array;
 - (void *)decodeBytesWithReturnedLength:(NSUInteger *)lengthp;
 
-- (unsigned)systemVersion;
+- (unsigned int)systemVersion;
 
 - (BOOL)allowsKeyedCoding;
 

@@ -287,7 +287,7 @@ class Vienna::ObjectiveCParser
     selector_with_argument_declaration:
     	  IDENTIFIER                                                                            { result =  val[0] }
     	| IDENTIFIER ':' selector_argument_declaration                                          { result =  make_node(':', val[0], val[2]) }
-    	| selector_with_argument_declaration selector_component selector_argument_declaration   { result =  make_node(',', val[0], make_node(':', val[1], val[2])) }
+    	| selector_with_argument_declaration IDENTIFIER ':' selector_argument_declaration    { result =  make_node(',', val[0], make_node(':', val[1], val[3])) }
     	| selector_with_argument_declaration ',' ELLIPSIS
     	;
 
@@ -761,7 +761,8 @@ require 'strscan'
       when scanner.scan(/short(?!([a-zA-Z_]|[0-9]))/)
         return make_token(:SHORT, :SHORT)
       when scanner.scan(/signed(?!([a-zA-Z_]|[0-9]))/)
-        return make_token(:SIGNED, :SIGNED)
+      #        return make_token(:SIGNED, :SIGNED)
+          return next_token()
       when scanner.scan(/sizeof(?!([a-zA-Z_]|[0-9]))/)
         return make_token(:SIZEOF, :SIZEOF)
       when scanner.scan(/static(?!([a-zA-Z_]|[0-9]))/)
@@ -775,7 +776,8 @@ require 'strscan'
       when scanner.scan(/union(?!([a-zA-Z_]|[0-9]))/)
         return make_token(:UNION, :UNION)
       when scanner.scan(/unsigned(?!([a-zA-Z_]|[0-9]))/)
-        return make_token(:UNSIGNED, :UNSIGNED)
+              # return make_token(:UNSIGNED, :UNSIGNED)
+              return next_token()
       when scanner.scan(/void(?!([a-zA-Z_]|[0-9]))/)
         return make_token(:VOID, :VOID)
       when scanner.scan(/volatile(?!([a-zA-Z_]|[0-9]))/)
@@ -833,10 +835,14 @@ require 'strscan'
       #
       # C constants, identifiers and string literals
       #
+      when match = scanner.scan(/id(?!([a-zA-Z_]|[0-9]))/)
+       return make_token(:TYPE_NAME, match)
+      when match = scanner.scan(/BOOL(?!([a-zA-Z_]|[0-9]))/)
+        return make_token(:TYPE_NAME, match)
       when match = scanner.scan(/[a-zA-Z_]([a-zA-Z_]|[0-9])*/)
-        return (lookup_type(match) == nil) ? make_token(:IDENTIFIER, match) : make_token(:TYPE_NAME, match)
+        return lookup_type(match)
       when match = scanner.scan(/[a-zA-Z_]([a-zA-Z_])*/)
-        return (lookup_type(match) == nil) ? make_token(:IDENTIFIER, match) : make_token(:TYPE_NAME, match)
+        return lookup_type(match)
       when match = scanner.scan(/0[xX][a-fA-F0-9]+(u|U|l|L)?/)
         return make_token(:CONSTANT, match)
       when match = scanner.scan(/0[0-9]+(u|U|l|L)?/)
@@ -951,7 +957,7 @@ require 'strscan'
         return make_token('?', '?')
       
       else
-        puts "Error: unkown token: #{scanner.peek(5)}"
+        abort "#{current_file.file_name}:#{current_file.current_line}:error: unknown token type: #{scanner.peek(5)}"
       
       #when scanner.scan(/.*/)
 	      #puts "wow"

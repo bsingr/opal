@@ -6,12 +6,9 @@
 //  Copyright 2009 Adam Beynon. All rights reserved.
 // 
 
-#import <Foundation/Foundation.h>
-#import <AppKit/NSView.h>
-#import <AppKit/NSCell.h>
-#import <AppKit/NSText.h>
+#import "NSControl.h"
 
-@implementation NSControl : NSView
+@implementation NSControl
 {
     NSInteger       _tag;
     NSCell         *_cell;
@@ -24,7 +21,7 @@
 
 + (Class)cellClass
 {
-    return NSCell;
+    // return NSCell;
 }
 
 
@@ -178,9 +175,9 @@
     // TODO: Need to implement
 }
 
-- (void)setObjectValue:(id<NSCopying>)obj
+- (void)setObjectValue:(id)obj
 {
-    [_cell setObjectValue:aString];
+    [_cell setObjectValue:obj];
 }
 
 - (void)setStringValue:(NSString *)aString
@@ -326,7 +323,7 @@
     if (NSPointInRect (location, _bounds))
         [_cell highlight:YES withFrame:_bounds inView:self];
         
-    [[NSApplication sharedApplication] nextEventMatchingMask(NSLeftMouseUpMask | NSMouseMovedMask) untilDate:nil inMode:nil dequeue:nil withTarget:self withSelector:@selector(_mouseDownHandle:)];
+    [[NSApplication sharedApplication] nextEventMatchingMask:(NSLeftMouseUpMask | NSMouseMovedMask) untilDate:nil inMode:nil dequeue:nil withTarget:self withSelector:@selector(_mouseDownHandle:)];
     
     [self unlockFocus];
 }
@@ -345,7 +342,7 @@
             return;
         }
         else if ([theEvent type] == NSMouseMoved) {
-            [[NSApplication sharedApplication] nextEventMatchingMask(NSLeftMouseUpMask | NSMouseMovedMask) untilDate:nil inMode:nil dequeue:nil withTarget:self withSelector:@selector(_mouseDownHandle:)];
+            [[NSApplication sharedApplication] nextEventMatchingMask:(NSLeftMouseUpMask | NSMouseMovedMask) untilDate:nil inMode:nil dequeue:nil withTarget:self withSelector:@selector(_mouseDownHandle:)];
             return;
         }
     }
@@ -386,7 +383,7 @@
 
 @implementation NSControl (NSKeyboardUI)
 
-- (void)performClick:sender
+- (void)performClick:(id)sender
 {
     // TODO: Need to implement
 }
@@ -424,14 +421,14 @@
 
 @interface NSObject (NSControlSubclassDelegate)
 
-- (BOOL)control:(NSControl *)control textShouldBeginEditing:(NSText *)fieldEditor;
-- (BOOL)control:(NSControl *)control textShouldEndEditing:(NSText *)fieldEditor;
-- (BOOL)control:(NSControl *)control didFailToFormatString:(NSString *)string errorDescription:(NSString *)error;
-- (void)control:(NSControl *)control didFailToValidatePartialString:(NSString *)string errorDescription:(NSString *)error;
-- (BOOL)control:(NSControl *)control isValidObject:(id)obj;
-
-- (BOOL)control:(NSControl *)control textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector;
-- (NSArray *)control:(NSControl *)control textView:(NSTextView *)textView completions:(NSArray *)words forPartialWordRange:(NSRange)charRange indexOfSelectedItem:(NSInteger *)index;
+// - (BOOL)control:(NSControl *)control textShouldBeginEditing:(NSText *)fieldEditor;
+// - (BOOL)control:(NSControl *)control textShouldEndEditing:(NSText *)fieldEditor;
+// - (BOOL)control:(NSControl *)control didFailToFormatString:(NSString *)string errorDescription:(NSString *)error;
+// - (void)control:(NSControl *)control didFailToValidatePartialString:(NSString *)string errorDescription:(NSString *)error;
+// - (BOOL)control:(NSControl *)control isValidObject:(id)obj;
+// 
+// - (BOOL)control:(NSControl *)control textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector;
+// - (NSArray *)control:(NSControl *)control textView:(NSTextView *)textView completions:(NSArray *)words forPartialWordRange:(NSRange)charRange indexOfSelectedItem:(NSInteger *)index;
 
 @end
 

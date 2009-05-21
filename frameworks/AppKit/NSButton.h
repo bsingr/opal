@@ -9,6 +9,8 @@
 #import <AppKit/NSControl.h>
 #import <AppKit/NSButtonCell.h>
 
+@class NSImage;
+
 @interface NSButton : NSControl
 {
     

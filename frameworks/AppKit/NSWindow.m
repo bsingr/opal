@@ -51,7 +51,7 @@
     heightOffset += 2 * WINDOW_BORDER_SIZE;
     
     // Account for titlebar
-    heightOffset += WINDOW_TITLEBAR_SIZE
+    heightOffset += WINDOW_TITLEBAR_SIZE;
     
     return NSMakeRect (contentRect.origin.x + xOffset,
                         contentRect.origin.y + yOffset,
@@ -284,8 +284,8 @@
 
 - (void)setFrameOrigin:(NSPoint)aPoint
 {
-    _frame.origin.x = point.x;
-	_frame.origin.y = point.y;
+    _frame.origin.x = aPoint.x;
+	_frame.origin.y = aPoint.y;
     
     NSWindowServerSetOrigin (_gCanvas, point);
 }

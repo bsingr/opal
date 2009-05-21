@@ -41,123 +41,123 @@ NSString *NSKeyValueChangeOldKey = @"NSKeyValueChangeOldKey";
 NSString *NSKeyValueChangeIndexesKey = @"NSKeyValueChangeIndexesKey";
 NSString *NSKeyValueChangeNotificationIsPriorKey = @"NSKeyValueChangeNotificationIsPriorKey";
 
-@implementation NSObject (NSKeyValueObserving)
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-    // TODO: Need to implement
-}
-
-@end
-
-@implementation NSObject (NSKeyValueObserverRegistration)
-
-- (void)addObserver:(NSObject *)observer forKeyPath:(NSString *)keyPath options:(NSKeyValueObservingOptions)options context:(void *)context
-{
-    // TODO: Need to implement
-}
-
-- (void)removeObserver:(NSObject *)observer forKeyPath:(NSString *)keyPath
-{
-    // TODO: Need to implement
-}
-
-@end
-
-@implementation NSArray (NSKeyValueObserverRegistration)
-
-- (void)addObserver:(NSObject *)observer toObjectsAtIndexes:(NSIndexSet *)indexes forKeyPath:(NSString *)keyPath options:(NSKeyValueObservingOptions)options context:(void *)context
-{
-    // TODO: Need to implement
-}
-
-- (void)removeObserver:(NSObject *)observer fromObjectsAtIndexes:(NSIndexSet *)indexes forKeyPath:(NSString *)keyPath
-{
-    // TODO: Need to implement
-}
-
-- (void)addObserver:(NSObject *)observer forKeyPath:(NSString *)keyPath options:(NSKeyValueObservingOptions)options context:(void *)context
-{
-    // this should throw an error
-}
-
-- (void)removeObserver:(NSObject *)observer forKeyPath:(NSString *)keyPath
-{
-    // this should throw an error
-}
-
-@end
-
-
-@implementation NSSet (NSKeyValueObserverRegistration)
-
-- (void)addObserver:(NSObject *)observer forKeyPath:(NSString *)keyPath options:(NSKeyValueObservingOptions)options context:(void *)context
-{
-    // TODO: Need to implement
-}
-
-- (void)removeObserver:(NSObject *)observer forKeyPath:(NSString *)keyPath
-{
-    // TODO: Need to implement
-}
-
-@end
-
-
-@interface NSObject(NSKeyValueObserverNotification)
-
-- (void)willChangeValueForKey:(NSString *)key
-{
-    // TODO: Need to implement
-}
-
-- (void)didChangeValueForKey:(NSString *)key
-{
-    // TODO: Need to implement
-}
-
-- (void)willChange:(NSKeyValueChange)changeKind valuesAtIndexes:(NSIndexSet *)indexes forKey:(NSString *)key
-{
-    // TODO: Need to implement
-}
-
-- (void)didChange:(NSKeyValueChange)changeKind valuesAtIndexes:(NSIndexSet *)indexes forKey:(NSString *)key
-{
-    // TODO: Need to implement
-}
-
-- (void)willChangeValueForKey:(NSString *)key withSetMutation:(NSKeyValueSetMutationKind)mutationKind usingObjects:(NSSet *)objects
-{
-    // TODO: Need to implement
-}
-
-- (void)didChangeValueForKey:(NSString *)key withSetMutation:(NSKeyValueSetMutationKind)mutationKind usingObjects:(NSSet *)objects
-{
-    // TODO: Need to implement
-}
-
-@end
-
-@implementation NSObject(NSKeyValueObservingCustomization)
-
-+ (NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key
-{
-    // TODO: Need to implement
-}
-
-+ (BOOL)automaticallyNotifiesObserversForKey:(NSString *)key
-{
-    // TODO: Need to implement
-}
-
-- (void)setObservationInfo:(void *)observationInfo
-{
-    // TODO: Need to implement
-}
-
-- (void *)observationInfo
-{
-    // TODO: Need to implement
-}
-
-@end
+// @implementation NSObject (NSKeyValueObserving)
+// 
+// - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+// {
+//     // TODO: Need to implement
+// }
+// 
+// @end
+// 
+// @implementation NSObject (NSKeyValueObserverRegistration)
+// 
+// - (void)addObserver:(NSObject *)observer forKeyPath:(NSString *)keyPath options:(NSKeyValueObservingOptions)options context:(void *)context
+// {
+//     // TODO: Need to implement
+// }
+// 
+// - (void)removeObserver:(NSObject *)observer forKeyPath:(NSString *)keyPath
+// {
+//     // TODO: Need to implement
+// }
+// 
+// @end
+// 
+// @implementation NSArray (NSKeyValueObserverRegistration)
+// 
+// - (void)addObserver:(NSObject *)observer toObjectsAtIndexes:(NSIndexSet *)indexes forKeyPath:(NSString *)keyPath options:(NSKeyValueObservingOptions)options context:(void *)context
+// {
+//     // TODO: Need to implement
+// }
+// 
+// - (void)removeObserver:(NSObject *)observer fromObjectsAtIndexes:(NSIndexSet *)indexes forKeyPath:(NSString *)keyPath
+// {
+//     // TODO: Need to implement
+// }
+// 
+// - (void)addObserver:(NSObject *)observer forKeyPath:(NSString *)keyPath options:(NSKeyValueObservingOptions)options context:(void *)context
+// {
+//     // this should throw an error
+// }
+// 
+// - (void)removeObserver:(NSObject *)observer forKeyPath:(NSString *)keyPath
+// {
+//     // this should throw an error
+// }
+// 
+// @end
+// 
+// 
+// @implementation NSSet (NSKeyValueObserverRegistration)
+// 
+// - (void)addObserver:(NSObject *)observer forKeyPath:(NSString *)keyPath options:(NSKeyValueObservingOptions)options context:(void *)context
+// {
+//     // TODO: Need to implement
+// }
+// 
+// - (void)removeObserver:(NSObject *)observer forKeyPath:(NSString *)keyPath
+// {
+//     // TODO: Need to implement
+// }
+// 
+// @end
+// 
+// 
+// @interface NSObject(NSKeyValueObserverNotification)
+// 
+// - (void)willChangeValueForKey:(NSString *)key
+// {
+//     // TODO: Need to implement
+// }
+// 
+// - (void)didChangeValueForKey:(NSString *)key
+// {
+//     // TODO: Need to implement
+// }
+// 
+// - (void)willChange:(NSKeyValueChange)changeKind valuesAtIndexes:(NSIndexSet *)indexes forKey:(NSString *)key
+// {
+//     // TODO: Need to implement
+// }
+// 
+// - (void)didChange:(NSKeyValueChange)changeKind valuesAtIndexes:(NSIndexSet *)indexes forKey:(NSString *)key
+// {
+//     // TODO: Need to implement
+// }
+// 
+// - (void)willChangeValueForKey:(NSString *)key withSetMutation:(NSKeyValueSetMutationKind)mutationKind usingObjects:(NSSet *)objects
+// {
+//     // TODO: Need to implement
+// }
+// 
+// - (void)didChangeValueForKey:(NSString *)key withSetMutation:(NSKeyValueSetMutationKind)mutationKind usingObjects:(NSSet *)objects
+// {
+//     // TODO: Need to implement
+// }
+// 
+// @end
+// 
+// @implementation NSObject(NSKeyValueObservingCustomization)
+// 
+// + (NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key
+// {
+//     // TODO: Need to implement
+// }
+// 
+// + (BOOL)automaticallyNotifiesObserversForKey:(NSString *)key
+// {
+//     // TODO: Need to implement
+// }
+// 
+// - (void)setObservationInfo:(void *)observationInfo
+// {
+//     // TODO: Need to implement
+// }
+// 
+// - (void *)observationInfo
+// {
+//     // TODO: Need to implement
+// }
+// 
+// @end

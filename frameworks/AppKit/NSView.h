@@ -21,6 +21,7 @@
 @class NSShadow;
 @class NSTrackingArea;
 @class NSScrollView;
+@class NSWindow;
 
 enum {
     NSViewNotSizable    = 0,
@@ -62,7 +63,7 @@ typedef NSInteger NSToolTipTag;
     BOOL            _postsNotificationOnBoundsChange;
     BOOL            _autoresizesSubviews;
     BOOL            _inLiveResize;
-    unsigned        _autoresizingMask;
+    unsigned int    _autoresizingMask;
     
     int             _tag;
     NSArray        *_draggedTypes;

@@ -7,7 +7,9 @@
 // 
 
 #import <Foundation/NSObject.h>
+#import <Foundation/NSArray.h>
 
+@class NSError;
 @class NSEvent;
 @class NSMenu;
 @class NSUndoManager;

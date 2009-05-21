@@ -10,11 +10,14 @@
 #import <AppKit/NSView.h>
 #import <AppKit/NSCell.h>
 #import <AppKit/NSText.h>
+#import <AppKit/NSApplication.h>
 
 @interface NSControl : NSView
 {
     NSInteger       _tag;
     NSCell         *_cell;
+    
+    NSText         *_currentEditor;
 }
 
 + (void)setCellClass:(Class)factoryId;

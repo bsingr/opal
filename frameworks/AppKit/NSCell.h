@@ -5,14 +5,10 @@
 //  Created by Adam Beynon on 2009-05-02.
 //  Copyright 2009 Adam Beynon. All rights reserved.
 // 
-
-#import <Foundation/NSObject.h>
-#import <Foundation/NSGeometry.h>
+#import <Foundation/Foundation.h>
 #import <AppKit/NSText.h>
 
-@class NSFormatter;
-@class NSLineBreakMode;
-@class NSAttributedString;
+@class NSFormatter, NSLineBreakMode, NSAttributedString, NSImage, NSComparisonResult, NSEvent, NSMenu, NSUInteger, NSInteger;
 
 enum {
     NSAnyType				        = 0,
@@ -104,7 +100,22 @@ typedef NSUInteger NSControlSize;
 
 @interface NSCell : NSObject <NSCopying, NSCoding>
 {
+    id                  _value;
+    NSCellStateValue    _state;
+    BOOL                _isHighlighted;
+    BOOL                _isEnabled;
+    BOOL                _isEditable;
+    BOOL                _isBordered;
+    BOOL                _isBezeled;
+    BOOL                _isSelectable;
+    BOOL                _isScrollable;
+    NSUInteger          _alignment;
+    NSSize              _controlSize;
     
+    NSView              _controlView;
+    
+    id                  _target;
+    SEL                 _action;
 }
 
 + (BOOL)prefersTrackingUntilMouseUp;

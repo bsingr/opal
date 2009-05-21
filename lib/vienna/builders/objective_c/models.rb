@@ -89,12 +89,12 @@ module Vienna
       if list.value == ","
         deal_with_enum_list(list.left)
         deal_with_enum_list(list.right)
-      elsif list.value == "E"
+      elsif list.value == "="
         if list.right.nil?
           @enums.store(list.left.value, @current_enum_value = @current_enum_value.to_i + 1)
         else
           @current_enum_value = enum_evaluate(list.right)
-          @enums.store(list.left.value, @current_enum_value)
+          @enums.store(list.left.value, @current_enum_value.to_i)
         end
       end
     end
@@ -104,8 +104,8 @@ module Vienna
     # an integer can be returned.
     def enum_evaluate(tree)
       # simply return if tree is a string(simple int, or similar)
-      if tree.value.class == String # or tree.class == Fixnum
-        return tree.value
+      if tree.leaf? # or tree.class == Fixnum
+        return tree.value.to_i
       end
       
       if tree.value == "("
@@ -117,9 +117,9 @@ module Vienna
           return tree.right.value.to_i * -1
         end
         return 0
-      elsif tree.token == :LEFT_OP
+      elsif tree.value == :LEFT_OP
         # x << y, so evaluate. each x/y might also need further parsing
-        return enum_evaluate(tree.left).value.to_i << enum_evaluate(tree.right).value.to_i
+        return enum_evaluate(tree.left).to_i << enum_evaluate(tree.right).to_i
       else
         # return otherwise: likely an int.
         return tree

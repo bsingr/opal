@@ -8,6 +8,17 @@
 
 #import "NSView.h"
 
+@class CGAffineTransform;
+@class NSComparisonResult;
+@class NSBitmapImageRep;
+@class NSCursor;
+@class CALayer;
+@class CIFilter;
+@class NSShadow;
+@class NSTrackingArea;
+@class NSScrollView;
+@class NSWindow;
+
 @implementation NSView
 
 - (id)initWithFrame:(NSRect)frameRect
@@ -874,7 +885,10 @@
     // TODO: Need to implement
 }
 
-- (NSView *)previousValidKeyView;
+- (NSView *)previousValidKeyView
+{
+    
+}
 
 - (BOOL)canBecomeKeyView
 {

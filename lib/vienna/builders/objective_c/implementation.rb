@@ -24,7 +24,8 @@ module Vienna
       new_i = ObjectiveCImplementation.new
         new_i.name = name
         new_i.category = category
-
+        
+        
       current_file().implementations << new_i
       # @implementation_definitions << new_i
       

@@ -44,7 +44,7 @@
 
 id NSNotificationCenterDefault = nil;
 
-@implementation NSNotificationCenter : NSObject
+@implementation NSNotificationCenter
 
 + (id)defaultCenter
 {

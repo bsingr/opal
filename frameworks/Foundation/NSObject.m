@@ -54,7 +54,7 @@
 
 + (Class)superclass
 {
-    return super_class;
+    // return super_class;
 }
 
 + (Class)class
@@ -195,7 +195,7 @@
 
 - (NSString *)description
 {
-    return @"NSObject class description"
+    return @"NSObject class description";
 }
 
 @end

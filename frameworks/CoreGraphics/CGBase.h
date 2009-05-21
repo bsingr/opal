@@ -6,4 +6,6 @@
 //  Copyright 2009 Adam Beynon. All rights reserved.
 // 
 
+#import <CoreFoundation/CoreFoundation.h>
+
 typedef double CGFloat;

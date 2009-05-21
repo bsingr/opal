@@ -45,7 +45,7 @@ module Vienna
         parse_selector(parse_tree.right)
       elsif parse_tree.value == ":"
         # actual selector part: withObject:(NSString *)myString
-        @name << parse_tree.left.value << ":"
+        @name << "#{parse_tree.left.value}:"
         @types << parse_tree.right.left.value
         @param_names << parse_tree.right.right.value
       end

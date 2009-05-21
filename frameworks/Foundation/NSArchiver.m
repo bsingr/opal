@@ -6,6 +6,8 @@
 //  Copyright 2009 Adam Beynon. All rights reserved.
 // 
 
+#import "NSArchiver.h"
+
 NSString *NSInconsistentArchiveException = @"NSInconsistentArchiveException";
 
 @implementation NSArchiver

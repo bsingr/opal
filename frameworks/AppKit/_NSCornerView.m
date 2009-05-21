@@ -15,7 +15,8 @@
 @end
 
 
-@implementation _NSCornerView : NSView {
+@implementation _NSCornerView
+{
 
 }
 

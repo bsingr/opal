@@ -18,7 +18,7 @@ module Vienna
     
     attr_accessor :implementations, :interfaces, :protocols
     attr_accessor :functions, :typedefs, :structs, :defines
-    attr_accessor :at_class_list
+    attr_accessor :at_class_list, :enums
     
     attr_accessor :imported_files
     
@@ -31,6 +31,7 @@ module Vienna
       @typedefs = []
       @structs = []
       @defines = []
+      @enums = []
       
       @at_class_list = []
 
