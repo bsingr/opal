@@ -14,6 +14,8 @@
 
 @interface NSFont : NSObject <NSCopying, NSCoding>
 {
+    NSString    *_name;
+    CGFloat      _size;
 }
 
 + (NSFont *)fontWithName:(NSString *)fontName size:(CGFloat)fontSize;

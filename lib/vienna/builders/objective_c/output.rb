@@ -141,7 +141,8 @@ module Vienna
       return unless statement
 
       if statement.value == ","
-        puts "output_statement_list: branching.. shouldnt really branch here.."
+        output_statement_list file, statement.left
+        output_statement_list file, statement.right
       elsif statement.token == ";"
         output_expression file, statement.left
         file.write ";\n"
@@ -154,6 +155,12 @@ module Vienna
       elsif statement.value == "d"
         output_declaration_statement file, statement
         file.write ";\n"
+      elsif statement.value == "{"
+        file.write "{\n"
+        symbol_table_push()
+        output_statement_list file, statement.left
+        symbol_table_pop()
+        file.write "\n}\n"
       else
         file.write "Unhandled output_statement_list: #{statement}"
       end
@@ -269,8 +276,19 @@ module Vienna
     def output_function_call(file, statement)
       file.write statement.left.value
       file.write "("
-      output_expression file, statement.right
+      output_function_call_params file, statement.right
       file.write ")"
+    end
+    
+    def output_function_call_params(file, params)
+      return unless params
+      
+      if params.value == ","
+        output_function_call_params file, params.left
+        output_function_call_params file, params.right
+      else
+        output_expression file, params
+      end
     end
     
     
@@ -301,10 +319,10 @@ module Vienna
       the_selector = get_objc_msgSend_selector(file, statement.right)
       
       if self_symbol.nil?
-        abort "#{the_self} does not exist"
+        parser_warning_on_node statement, "#{the_self} may not respond to #{the_selector}"
       end
       
-      unless self_symbol.class == String
+      if self_symbol.class != String and self_symbol
         the_method = get_method_by_selector(self_symbol, the_selector)
         if the_method.nil?
           parser_warning_on_node statement, "#{the_self} may not respond to #{the_selector}"

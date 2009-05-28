@@ -287,7 +287,7 @@
     _frame.origin.x = aPoint.x;
 	_frame.origin.y = aPoint.y;
     
-    NSWindowServerSetOrigin (_gCanvas, point);
+    NSWindowServerSetOrigin (_gCanvas, aPoint);
 }
 
 - (void)setFrameTopLeftPoint:(NSPoint)aPoint

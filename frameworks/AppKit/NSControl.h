@@ -18,6 +18,8 @@
     NSCell         *_cell;
     
     NSText         *_currentEditor;
+    
+    id              _value;
 }
 
 + (void)setCellClass:(Class)factoryId;

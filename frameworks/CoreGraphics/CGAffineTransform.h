@@ -16,7 +16,7 @@ typedef struct _CGAffineTransform {
 
 extern const CGAffineTransform CGAffineTransformIdentity;
 
-extern CGAffineTransform CGAffineTransformMake (CGFloat a, CGFloat b, CGFloat c, CGFloat d, CGFLoat tx, CGFloat ty);
+extern CGAffineTransform CGAffineTransformMake (CGFloat a, CGFloat b, CGFloat c, CGFloat d, CGFloat tx, CGFloat ty);
 
 extern CGAffineTransform CGAffineTransformMakeTranslation(CGFloat tx, CGFloat ty);
 

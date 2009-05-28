@@ -13,6 +13,7 @@
 @class NSGraphicsContext;
 @class NSWindow;
 @class NSTrackingArea;
+@class NSApplication;
 
 enum {
     NSLeftMouseDown             = 1,
@@ -78,6 +79,24 @@ enum {
 
 @interface NSEvent : NSObject <NSCopying, NSCoding>
 {
+    id _type;
+    id _locationInWindow;
+    id _modifierFlags;
+    id _timestamp;
+    id _windowNumber;
+    id _context;
+    id _characters;
+    id _charactersIgnoringModifiers;
+    id _isARepeat;
+    id _keyCode;
+    id _window;
+    id _clickCount;
+    id _locationInBase;
+    id _eventRef;
+    id _buttonNumber;
+    id _deltaX;
+    id _deltaY;
+    id _deltaZ;
 }
 
 - (NSEventType)type;

@@ -302,6 +302,10 @@ module Vienna
     # symbol table
     def add_objc_file(file)
       
+      return if @objc_files.include? file
+      
+      @objc_files << file
+      
       file.imported_files.each do |i|
         add_objc_file i
         # puts "Re-impoerting: #{i.file_path} from #{file.file_path}"        

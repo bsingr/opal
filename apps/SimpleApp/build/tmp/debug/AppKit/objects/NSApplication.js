@@ -6,15 +6,29 @@ class_addIvar(the_class, "_nextResponder", "id");
 class_addIvar(the_class, "_delegate", "id");
 class_addIvar(the_class, "_windows", "NSMutableArray");
 class_addIvar(the_class, "_currentEvent", "NSEvent");
+class_addIvar(the_class, "_eventQueue", "NSMutableArray");
 class_addIvar(the_class, "_eventBindingQueued", "BOOL");
 class_addIvar(the_class, "_eventBindingTarget", "id");
 class_addIvar(the_class, "_eventBindingSelector", "SEL");
 class_addIvar(the_class, "_eventBindingMask", "NSUInteger");
+class_addIvar(the_class, "_menuBar", "NSMenuBar");
 
 class_addMethod(the_class, "init", function(self, _cmd) {
 self = objc_msgSendSuper({super_class:NSResponder, receiver:self}, "init");
 if (self)
-Unhandled output_statement_list: [{(), [,(), [,(), [,(), [,(), [,(), [,(), [,(), [,(), [;(;), [=(=), _windows (IDENTIFIER), [M(), NSMutableArray (TYPE_NAME), [:(), arrayWithCapacity (IDENTIFIER), 0 (CONSTANT)]]], ], [;(;), [=(=), _eventQueue (IDENTIFIER), [M(), NSMutableArray (TYPE_NAME), [:(), arrayWithCapacity (IDENTIFIER), 0 (CONSTANT)]]], ]], [;(;), [=(=), _eventBindingQueued (IDENTIFIER), NO (IDENTIFIER)], ]], [;(;), [=(=), [d(), NSBundle (TYPE_NAME), mainBundle (IDENTIFIER)], [M(), NSBundle (TYPE_NAME), mainBundle (IDENTIFIER)]], ]], [;(;), [=(=), [d(), NSString (TYPE_NAME), productName (IDENTIFIER)], [M(), mainBundle (IDENTIFIER), [:(), objectForInfoDictionaryKey (IDENTIFIER), @"CFBundleName" (AT_STRING_LITERAL)]]], ]], [;(;), [=(=), [d(), NSRect (TYPE_NAME), menuBarRect (IDENTIFIER)], [f(), NSMakeRect (IDENTIFIER), [,(), [,(), [,(), 0 (CONSTANT), [-(), [.(.), [.(.), [M(), [M(), NSScreen (IDENTIFIER), mainScreen (IDENTIFIER)], frame (IDENTIFIER)], size (IDENTIFIER)], height (IDENTIFIER)], [M(), NSMenu (TYPE_NAME), menuBarHeight (IDENTIFIER)]]], [.(.), [.(.), [M(), [M(), NSScreen (IDENTIFIER), mainScreen (IDENTIFIER)], frame (IDENTIFIER)], size (IDENTIFIER)], width (IDENTIFIER)]], [M(), NSMenu (TYPE_NAME), menuBarHeight (IDENTIFIER)]]]], ]], [;(;), [=(=), _menuBar (IDENTIFIER), [M(), [M(), NSMenuBar (IDENTIFIER), alloc (IDENTIFIER)], [,(), [,(), [,(), [:(), initWithContentRect (IDENTIFIER), menuBarRect (IDENTIFIER)], [:(), styleMask (IDENTIFIER), NSBorderlessWindowMask (IDENTIFIER)]], [:(), backing (IDENTIFIER), nil (IDENTIFIER)]], [:(), defer (IDENTIFIER), NO (IDENTIFIER)]]]], ]], [;(;), [M(), _menuBar (IDENTIFIER), [:(), setLevel (IDENTIFIER), NSMainMenuWindowLevel (IDENTIFIER)]], ]], [RETURN(RETURN), self (IDENTIFIER), ]], ]
+{
+_windows = objc_msgSend(NSMutableArray, "arrayWithCapacity:", 0);
+_eventQueue = objc_msgSend(NSMutableArray, "arrayWithCapacity:", 0);
+_eventBindingQueued = NO;
+var mainBundle = objc_msgSend(NSBundle, "mainBundle");
+var productName = objc_msgSend(mainBundle, "objectForInfoDictionaryKey:", "CFBundleName");
+var menuBarRect = NSMakeRect(0Unhandled output_expression: [-(), [.(.), [.(.), [M(), [M(), NSScreen (TYPE_NAME), mainScreen (IDENTIFIER)], frame (IDENTIFIER)], size (IDENTIFIER)], height (IDENTIFIER)], [M(), NSMenu (TYPE_NAME), menuBarHeight (IDENTIFIER)]]objc_msgSend(objc_msgSend(NSScreen, "mainScreen"), "frame").size.widthobjc_msgSend(NSMenu, "menuBarHeight"));
+_menuBar = objc_msgSend(objc_msgSend(NSMenuBar, "alloc"), "initWithContentRect:styleMask:backing:defer:", menuBarRect, 0, nil, NO);
+objc_msgSend(_menuBar, "setLevel:", 10);
+return self;
+
+}
+
 
 }, "void");
 
@@ -90,7 +104,22 @@ return _currentEvent;
 class_addMethod(the_class, "sendEvent:", function(self, _cmd, theEvent) {
 _currentEvent = theEvent;
 if (_eventBindingQueued)
-Unhandled output_statement_list: [{(), [,(), [IF(IF), [,(), [NE_OP(), [((), [&(), [((), [LEFT_OP(), 1 (CONSTANT), [M(), theEvent (IDENTIFIER), type (IDENTIFIER)]], ], _eventBindingMask (IDENTIFIER)], ], 0 (CONSTANT)], [{(), [,(), [;(;), [=(=), _eventBindingQueued (IDENTIFIER), NO (IDENTIFIER)], ], [;(;), [M(), _eventBindingTarget (IDENTIFIER), [,(), [:(), performSelector (IDENTIFIER), _eventBindingSelector (IDENTIFIER)], [:(), withObject (IDENTIFIER), theEvent (IDENTIFIER)]]], ]], ]], [ELSE(ELSE), { (), ]], RETURN (RETURN)], ]
+{
+if (Unhandled output_expression: [NE_OP(), [((), [&(), [((), [LEFT_OP(), 1 (CONSTANT), [M(), theEvent (IDENTIFIER), type (IDENTIFIER)]], ], _eventBindingMask (IDENTIFIER)], ], 0 (CONSTANT)])
+{
+_eventBindingQueued = NO;
+objc_msgSend(_eventBindingTarget, "performSelector:withObject:", _eventBindingSelector, theEvent);
+
+}
+else
+{
+
+}
+
+return ;
+
+}
+
 if (Unhandled output_expression: [EQ_OP(), [M(), theEvent (IDENTIFIER), type (IDENTIFIER)], NSLeftMouseDown (IDENTIFIER)])
 objc_msgSend(objc_msgSend(theEvent, "window"), "makeKeyAndOrderFront:", self);
 else

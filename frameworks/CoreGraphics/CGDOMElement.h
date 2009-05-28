@@ -8,6 +8,8 @@
 
 #import <CoreGraphics/CGBase.h>
 
+typedef struct CGContext *CGDOMElementRef;
+
 extern CGDOMElementRef CGDOMElementGetRootElement(void);
 
 extern CGDOMElementRef CGDOMElementCreate(CFStringRef type);

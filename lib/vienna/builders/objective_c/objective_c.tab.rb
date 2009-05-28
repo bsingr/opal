@@ -192,6 +192,10 @@ module_eval(<<'...end objective_c.rb.y/module_eval...', 'objective_c.rb.y', 662)
        return make_token(:TYPE_NAME, match)
       when match = scanner.scan(/BOOL(?!([a-zA-Z_]|[0-9]))/)
         return make_token(:TYPE_NAME, match)
+      when match = scanner.scan(/[0-9]*\.[0-9]+([Ee][+-]?[0-9]+)?(f|F|l|L)?/) # {D}*"."{D}+({E})?{FS}?
+       return make_token(:CONSTANT, match)
+      when match = scanner.scan(/[0-9]+\.[0-9]*([Ee][+-]?[0-9]+)?(f|F|l|L)?/) # {D}+"."{D}*({E})?{FS}?
+       return make_token(:CONSTANT, match)
       when match = scanner.scan(/[a-zA-Z_]([a-zA-Z_]|[0-9])*/)
         return lookup_type(match)
       when match = scanner.scan(/[a-zA-Z_]([a-zA-Z_])*/)
@@ -206,12 +210,8 @@ module_eval(<<'...end objective_c.rb.y/module_eval...', 'objective_c.rb.y', 662)
       #  return make_token(:CONSTANT, match]
       #when match = scanner.scan(//) # {D}+{E}{FS}?
       #  return make_token(:CONSTANT, match]
-      #when match = scanner.scan(//) # {D}*"."{D}+({E})?{FS}?
-      #  return make_token(:CONSTANT, match]
-      #when match = scanner.scan(//) # {D}+"."{D}*({E})?{FS}?
-      #  return make_token(:CONSTANT, match]
-      #when match = scanner.scan(//) # L?\"(\\.|[^\\"])*\"
-      #  return make_token(:STRING_LITERAL, match]
+      when match = scanner.scan(/[a-zA-Z_]?\"(\\.|[^\\"])*\"/) # L?\"(\\.|[^\\"])*\"
+       return make_token(:STRING_LITERAL, match)
       
       #
       # C operators, assignments and other syntactical bits and pieces

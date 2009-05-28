@@ -1,0 +1,94 @@
+var the_class = objc_allocateClassPair(NSControl, "NSColorWell");
+var meta_class = the_class.isa;
+objc_registerClassPair(the_class);
+class_addIvar(the_class, "isa", "Class");
+class_addIvar(the_class, "_nextResponder", "id");
+class_addIvar(the_class, "_frame", "NSRect");
+class_addIvar(the_class, "_bounds", "NSRect");
+class_addIvar(the_class, "_window", "NSWindow");
+class_addIvar(the_class, "_gState", "id");
+class_addIvar(the_class, "_menu", "NSMenu");
+class_addIvar(the_class, "_superview", "NSView");
+class_addIvar(the_class, "_subviews", "NSMutableArray");
+class_addIvar(the_class, "_nextKeyView", "NSView");
+class_addIvar(the_class, "_previousKeyView", "NSView");
+class_addIvar(the_class, "_isHidden", "BOOL");
+class_addIvar(the_class, "_postsNotificationOnFrameChange", "BOOL");
+class_addIvar(the_class, "_postsNotificationOnBoundsChange", "BOOL");
+class_addIvar(the_class, "_autoresizesSubviews", "BOOL");
+class_addIvar(the_class, "_inLiveResize", "BOOL");
+class_addIvar(the_class, "_autoresizingMask", "int");
+class_addIvar(the_class, "_tag", "int");
+class_addIvar(the_class, "_draggedTypes", "NSArray");
+class_addIvar(the_class, "_defaultToolTipTag", "NSToolTipTag");
+class_addIvar(the_class, "_toolTip", "NSString");
+class_addIvar(the_class, "_invalidRect", "NSRect");
+class_addIvar(the_class, "_validTransforms", "BOOL");
+class_addIvar(the_class, "_transformFromWindow", "CGAffineTransform");
+class_addIvar(the_class, "_transformToWindow", "CGAffineTransform");
+class_addIvar(the_class, "_visibleRect", "NSRect");
+class_addIvar(the_class, "_DOMContainer", "id");
+class_addIvar(the_class, "_DOMGraphicsContext", "id");
+class_addIvar(the_class, "_tag", "NSInteger");
+class_addIvar(the_class, "_cell", "NSCell");
+class_addIvar(the_class, "_currentEditor", "NSText");
+class_addIvar(the_class, "_value", "id");
+
+class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
+_value = objc_msgSend(NSColor, "colorWithCalibratedRed:green:blue:alpha:", 0, 0.3, 0.8, 1.0);
+objc_msgSendSuper({super_class:NSControl, receiver:self}, "initWithCoder:", aCoder);
+return self;
+
+}, "void");
+
+class_addMethod(the_class, "mouseDown:", function(self, _cmd, sender) {
+NSLog("NSColorWell - orderFront color picker");
+
+}, "void");
+
+class_addMethod(the_class, "mouseUp:", function(self, _cmd, sender) {
+
+}, "void");
+
+class_addMethod(the_class, "drawRect:", function(self, _cmd, bounds) {
+objc_msgSend(objc_msgSend(NSColor, "colorWithCalibratedRed:green:blue:alpha:", 0.851, 0.851, 0.851, 1.0), "set");
+objc_msgSend(NSBezierPath, "strokeRect:", NSMakeRect(Unhandled output_expression: [+(), [.(.), [.(.), bounds (IDENTIFIER), origin (IDENTIFIER)], x (IDENTIFIER)], 0.5 (CONSTANT)]Unhandled output_expression: [+(), [.(.), [.(.), bounds (IDENTIFIER), origin (IDENTIFIER)], y (IDENTIFIER)], 0.5 (CONSTANT)]Unhandled output_expression: [-(), [+(), [.(.), [.(.), bounds (IDENTIFIER), origin (IDENTIFIER)], x (IDENTIFIER)], [.(.), [.(.), bounds (IDENTIFIER), size (IDENTIFIER)], width (IDENTIFIER)]], 1 (CONSTANT)]Unhandled output_expression: [-(), [+(), [.(.), [.(.), bounds (IDENTIFIER), origin (IDENTIFIER)], y (IDENTIFIER)], [.(.), [.(.), bounds (IDENTIFIER), size (IDENTIFIER)], height (IDENTIFIER)]], 1 (CONSTANT)]));
+objc_msgSend(objc_msgSend(NSColor, "colorWithCalibratedRed:green:blue:alpha:", 0.996, 0.996, 0.996, 1.0), "set");
+objc_msgSend(NSBezierPath, "fillRect:", NSMakeRect(Unhandled output_expression: [+(), [.(.), [.(.), bounds (IDENTIFIER), origin (IDENTIFIER)], x (IDENTIFIER)], 1 (CONSTANT)]Unhandled output_expression: [+(), [.(.), [.(.), bounds (IDENTIFIER), origin (IDENTIFIER)], y (IDENTIFIER)], 1 (CONSTANT)]Unhandled output_expression: [-(), [+(), [.(.), [.(.), bounds (IDENTIFIER), origin (IDENTIFIER)], x (IDENTIFIER)], [.(.), [.(.), bounds (IDENTIFIER), size (IDENTIFIER)], width (IDENTIFIER)]], 2 (CONSTANT)]Unhandled output_expression: [-(), [+(), [.(.), [.(.), bounds (IDENTIFIER), origin (IDENTIFIER)], y (IDENTIFIER)], [.(.), [.(.), bounds (IDENTIFIER), size (IDENTIFIER)], height (IDENTIFIER)]], 2 (CONSTANT)]));
+objc_msgSend(_value, "set");
+objc_msgSend(NSBezierPath, "fillRect:", NSMakeRect(Unhandled output_expression: [+(), [.(.), [.(.), bounds (IDENTIFIER), origin (IDENTIFIER)], x (IDENTIFIER)], 4 (CONSTANT)]Unhandled output_expression: [+(), [.(.), [.(.), bounds (IDENTIFIER), origin (IDENTIFIER)], y (IDENTIFIER)], 4 (CONSTANT)]Unhandled output_expression: [-(), [+(), [.(.), [.(.), bounds (IDENTIFIER), origin (IDENTIFIER)], x (IDENTIFIER)], [.(.), [.(.), bounds (IDENTIFIER), size (IDENTIFIER)], width (IDENTIFIER)]], 8 (CONSTANT)]Unhandled output_expression: [-(), [+(), [.(.), [.(.), bounds (IDENTIFIER), origin (IDENTIFIER)], y (IDENTIFIER)], [.(.), [.(.), bounds (IDENTIFIER), size (IDENTIFIER)], height (IDENTIFIER)]], 8 (CONSTANT)]));
+
+}, "void");
+
+class_addMethod(the_class, "observeValueForKeyPath:ofObject:change:context:", function(self, _cmd, keyPath, object, change, context) {
+if (Unhandled output_expression: [EQ_OP(), context (IDENTIFIER), @"value" (AT_STRING_LITERAL)])
+{
+_value = objc_msgSend(object, "valueForKey:", keyPath);
+objc_msgSend(self, "setNeedsDisplay:", YES);
+
+}
+else
+if (Unhandled output_expression: [EQ_OP(), context (IDENTIFIER), @"hidden" (AT_STRING_LITERAL)])
+{
+objc_msgSend(_cell, "setHidden:", objc_msgSend(object, "valueForKey:", keyPath));
+objc_msgSend(self, "setNeedsDisplay:", YES);
+
+}
+else
+if (Unhandled output_expression: [EQ_OP(), context (IDENTIFIER), @"enabled" (AT_STRING_LITERAL)])
+{
+objc_msgSend(_cell, "setEnabled:", objc_msgSend(object, "valueForKey:", keyPath));
+objc_msgSend(self, "setNeedsDisplay:", YES);
+
+}
+else
+{
+objc_msgSendSuper({super_class:NSControl, receiver:self}, "observeValueForKeyPath:ofObject:change:context:", keyPath, object, change, context);
+
+}
+
+
+
+
+}, "void");
+

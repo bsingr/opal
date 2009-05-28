@@ -21,4 +21,4 @@ typedef int CGGradientDrawingOptions;
 extern CFTypeID CGGradientGetTypeID(void);
 
 extern CGGradientRef CGGradientCreateWithColorComponents(CGColorSpaceRef space, CGFloat components[], CGFloat locations[], size_t count);
-extern CGGradientRef CGGradientCreateWithColors(CGColorSpaceRef space, CGArrayRef colors, CGFloat locations[]);
+extern CGGradientRef CGGradientCreateWithColors(CGColorSpaceRef space, CFArrayRef colors, CGFloat locations[]);

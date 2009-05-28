@@ -6,14 +6,18 @@
 //  Copyright 2009 Adam Beynon. All rights reserved.
 // 
 
+#import <CoreGraphics/CoreGraphics.h>
 #import <AppKit/NSGraphics.h>
 #import <Foundation/NSGeometry.h>
 #import <Foundation/NSObject.h>
 
 @class NSDictionary, NSString, NSWindow, NSBitmapImageRep;
 
+extern id NSGraphicsContextCurrent;
+
 @interface NSGraphicsContext : NSObject
 {
+    CGContextRef    _graphicsPort;
 }
 
 + (NSGraphicsContext *)graphicsContextWithAttributes:(NSDictionary *)attributes;

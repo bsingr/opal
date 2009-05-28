@@ -26,6 +26,9 @@ module Vienna
     # file basis, so the most dependices from a class in a file results in all
     # objects in that file reaching their optimal peak requirement. Again, one
     # of these objects is needed per bundle.
+    # 
+    # This is stored in the temp build root for the framework as 
+    # FrameworkName.link
     class ObjectDependency
       
     end

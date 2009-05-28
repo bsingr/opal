@@ -33,15 +33,22 @@ class_addIvar(the_class, "_DOMGraphicsContext", "id");
 class_addMethod(the_class, "initWithFrame:", function(self, _cmd, frameRect) {
 self = objc_msgSend(self, "init");
 if (self)
-Unhandled output_statement_list: [{(), [,(), [,(), [,(), [;(;), [=(=), _frame (IDENTIFIER), frameRect (IDENTIFIER)], ], [;(;), [=(=), _bounds (IDENTIFIER), [f(), NSMakeRect (IDENTIFIER), [,(), [,(), [,(), 0 (CONSTANT), 0 (CONSTANT)], [.(.), [.(.), _frame (IDENTIFIER), size (IDENTIFIER)], width (IDENTIFIER)]], [.(.), [.(.), _frame (IDENTIFIER), size (IDENTIFIER)], height (IDENTIFIER)]]]], ]], [;(;), [=(=), _subviews (IDENTIFIER), [M(), NSMutableArray (TYPE_NAME), [:(), arrayWithCapacity (IDENTIFIER), 0 (CONSTANT)]]], ]], [;(;), [M(), self (IDENTIFIER), [:(), setFrame (IDENTIFIER), frameRect (IDENTIFIER)]], ]], ]
+{
+_frame = frameRect;
+_bounds = NSMakeRect(00_frame.size.width_frame.size.height);
+_subviews = objc_msgSend(NSMutableArray, "arrayWithCapacity:", 0);
+objc_msgSend(self, "setFrame:", frameRect);
+
+}
+
 return self;
 
 }, "void");
 
 class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
 objc_msgSendSuper({super_class:NSResponder, receiver:self}, "initWithCoder:", aCoder);
-_frame = NSMakeRect(Unhandled output_expression: [,(), [,(), [,(), 0 (CONSTANT), 0 (CONSTANT)], 0 (CONSTANT)], 0 (CONSTANT)]);
-_bounds = NSMakeRect(Unhandled output_expression: [,(), [,(), [,(), 0 (CONSTANT), 0 (CONSTANT)], 0 (CONSTANT)], 0 (CONSTANT)]);
+_frame = NSMakeRect(0000);
+_bounds = NSMakeRect(0000);
 if (objc_msgSend(aCoder, "containsValueForKey:", "NSFrame"))
 _frame = objc_msgSend(aCoder, "decodeRectForKey:", "NSFrame");
 else
@@ -49,7 +56,7 @@ if (objc_msgSend(aCoder, "containsValueForKey:", "NSFrameSize"))
 _frame.size = objc_msgSend(aCoder, "decodeSizeForKey:", "NSFrameSize");
 
 
-_bounds.origin = NSMakePoint(Unhandled output_expression: [,(), 0 (CONSTANT), 0 (CONSTANT)]);
+_bounds.origin = NSMakePoint(00);
 _bounds.size = _frame.size;
 _superview = nil;
 _window = nil;

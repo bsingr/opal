@@ -34,14 +34,31 @@ module Vienna
         f.build!
       end
       
+      # =======================================================================
+      # = Compiling stage - all files actually compiled and copied to tmp dir =
+      # =======================================================================
+      
       objc_sources.each do |c|
-        # puts " - Building file: #{File.basename(c)}"
+        puts " - Building file: #{File.basename(c)}"
         ObjectiveCParser.new(c, File.join(@parent.tmp_prefix, bundle_name, 'objects', File.basename(c, '.m')) + '.js', @parent).build!
       end
       
       javascript_sources.each do |j|
         Vienna::Builder::Javascript.new(j, File.join(@parent.tmp_prefix, bundle_name, 'objects', File.basename(j)), @parent).build!
       end
+      
+      # ==========================================================================
+      # = Linking stage - all object files linked into one file using dependency =
+      # ==========================================================================
+      
+      all_objects = Dir.glob(File.join(@parent.tmp_prefix, bundle_name, 'objects', '*.js'))
+      framework_out = File.new(File.join(@parent.build_prefix, 'Frameworks', bundle_name) + "/#{bundle_name}.js", 'w')
+      all_objects.each do |i|
+        f = File.new(i)
+        t = f.read
+        framework_out.write t
+      end
+      framework_out.close
     end
     
     # Returns an array of all the frameworks required by this application. This

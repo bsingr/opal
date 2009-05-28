@@ -39,7 +39,10 @@ return self;
 class_addMethod(the_class, "initWithFrame:", function(self, _cmd, frame) {
 self = objc_msgSendSuper({super_class:NSView, receiver:self}, "initWithFrame:", frame);
 if (self)
-Unhandled output_statement_list: { ()
+{
+
+}
+
 return self;
 
 }, "void");

@@ -6,7 +6,7 @@
 //  Copyright 2009 Adam Beynon. All rights reserved.
 // 
 
-#import <Foundation/NSObject.h>
+#import <Foundation/NSArray.h>
 #import <Foundation/NSGeometry.h>
 
 @class NSArray;
@@ -23,6 +23,7 @@ enum {
 
 @interface NSGradient : NSObject <NSCopying, NSCoding>
 {
+    NSMutableArray  *_theColors;
 }
 
 - (id)initWithStartingColor:(NSColor *)startingColor endingColor:(NSColor *)endingColor;

@@ -7,8 +7,9 @@
 // 
 
 #import <AppKit/NSControl.h>
+#import <AppKit/NSBezierPath.h>
 
-@interface NSColorWell : NSObject
+@interface NSColorWell : NSControl
 {
 }
 

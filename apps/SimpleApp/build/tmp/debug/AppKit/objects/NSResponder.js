@@ -16,7 +16,12 @@ _nextResponder = aResponder;
 
 class_addMethod(the_class, "tryToPerform:with:", function(self, _cmd, anAction, anObject) {
 if (objc_msgSend(self, "respondsToSelector:", anAction))
-Unhandled output_statement_list: [{(), [,(), [;(;), [M(), self (IDENTIFIER), [,(), [:(), performSelector (IDENTIFIER), anAction (IDENTIFIER)], [:(), with (IDENTIFIER), anObject (IDENTIFIER)]]], ], [RETURN(RETURN), YES (IDENTIFIER), ]], ]
+{
+objc_msgSend(self, "performSelector:with:", anAction, anObject);
+return YES;
+
+}
+
 return objc_msgSend(_nextResponder, "tryToPerform:with:", anAction, anObject);
 
 }, "void");
@@ -123,7 +128,10 @@ class_addMethod(the_class, "cursorUpdate:", function(self, _cmd, event) {
 
 class_addMethod(the_class, "noResponderFor:", function(self, _cmd, eventSelector) {
 if (Unhandled output_expression: [EQ_OP(), eventSelector (IDENTIFIER), [AT_SELECTOR(AT_SELECTOR), keyDown (IDENTIFIER), ]])
-Unhandled output_statement_list: { ()
+{
+
+}
+
 
 }, "void");
 

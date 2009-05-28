@@ -8,6 +8,7 @@ class_addIvar(the_class, "_gCanvas", "id");
 class_addIvar(the_class, "_gBuffer", "id");
 class_addIvar(the_class, "_contentRectOrigin", "NSPoint");
 class_addIvar(the_class, "_contentRectSize", "NSSize");
+class_addIvar(the_class, "_isVisible", "BOOL");
 class_addIvar(the_class, "_hasShadow", "BOOL");
 class_addIvar(the_class, "_hidesOnDeactivate", "BOOL");
 class_addIvar(the_class, "_releasedWhenClosed", "BOOL");
@@ -51,26 +52,42 @@ Unhandled output_expression: [SUB_ASSIGN(SUB_ASSIGN), yOffset (IDENTIFIER), WIND
 Unhandled output_expression: [ADD_ASSIGN(ADD_ASSIGN), widthOffset (IDENTIFIER), [*(), 2 (CONSTANT), WINDOW_BORDER_SIZE (IDENTIFIER)]];
 Unhandled output_expression: [ADD_ASSIGN(ADD_ASSIGN), heightOffset (IDENTIFIER), [*(), 2 (CONSTANT), WINDOW_BORDER_SIZE (IDENTIFIER)]];
 Unhandled output_expression: [ADD_ASSIGN(ADD_ASSIGN), heightOffset (IDENTIFIER), WINDOW_TITLEBAR_SIZE (IDENTIFIER)];
-return NSMakeRect(Unhandled output_expression: [,(), [,(), [,(), [+(), [.(.), [.(.), contentRect (IDENTIFIER), origin (IDENTIFIER)], x (IDENTIFIER)], xOffset (IDENTIFIER)], [+(), [.(.), [.(.), contentRect (IDENTIFIER), origin (IDENTIFIER)], y (IDENTIFIER)], yOffset (IDENTIFIER)]], [+(), [.(.), [.(.), contentRect (IDENTIFIER), size (IDENTIFIER)], width (IDENTIFIER)], widthOffset (IDENTIFIER)]], [+(), [.(.), [.(.), contentRect (IDENTIFIER), size (IDENTIFIER)], height (IDENTIFIER)], heightOffset (IDENTIFIER)]]);
+return NSMakeRect(Unhandled output_expression: [+(), [.(.), [.(.), contentRect (IDENTIFIER), origin (IDENTIFIER)], x (IDENTIFIER)], xOffset (IDENTIFIER)]Unhandled output_expression: [+(), [.(.), [.(.), contentRect (IDENTIFIER), origin (IDENTIFIER)], y (IDENTIFIER)], yOffset (IDENTIFIER)]Unhandled output_expression: [+(), [.(.), [.(.), contentRect (IDENTIFIER), size (IDENTIFIER)], width (IDENTIFIER)], widthOffset (IDENTIFIER)]Unhandled output_expression: [+(), [.(.), [.(.), contentRect (IDENTIFIER), size (IDENTIFIER)], height (IDENTIFIER)], heightOffset (IDENTIFIER)]);
 
 }, "void");
 
 class_addMethod(the_class, "contentRectForFrameRect:", function(self, _cmd, frameRect) {
-return NSMakeRect(Unhandled output_expression: [,(), [,(), [,(), 0 (CONSTANT), 0 (CONSTANT)], [.(.), [.(.), frameRect (IDENTIFIER), sihe (IDENTIFIER)], width (IDENTIFIER)]], [.(.), [.(.), frameRect (IDENTIFIER), size (IDENTIFIER)], height (IDENTIFIER)]]);
+return NSMakeRect(00frameRect.sihe.widthframeRect.size.height);
 
 }, "void");
 
 class_addMethod(the_class, "init", function(self, _cmd) {
 self = objc_msgSendSuper({super_class:NSResponder, receiver:self}, "init");
 if (self)
-Unhandled output_statement_list: { ()
+{
+
+}
+
 
 }, "void");
 
 class_addMethod(the_class, "initWithContentRect:styleMask:backing:defer:", function(self, _cmd, contentRect, aStyle, bufferingType, flag) {
 self = objc_msgSend(self, "init");
 if (self)
-Unhandled output_statement_list: [{(), [,(), [,(), [,(), [,(), [,(), [,(), [,(), [,(), [,(), [;(;), [M(), self (IDENTIFIER), [,(), [:(), setFrame (IDENTIFIER), contentRect (IDENTIFIER)], [:(), display (IDENTIFIER), YES (IDENTIFIER)]]], ], [;(;), [=(=), _styleMask (IDENTIFIER), aStyle (IDENTIFIER)], ]], [;(;), [=(=), _resizable (IDENTIFIER), NO (IDENTIFIER)], ]], [;(;), [=(=), _firstResponder (IDENTIFIER), self (IDENTIFIER)], ]], [;(;), [=(=), _movableByWindowBackground (IDENTIFIER), YES (IDENTIFIER)], ]], [;(;), [=(=), _hasShadow (IDENTIFIER), YES (IDENTIFIER)], ]], [;(;), [=(=), _isVisible (IDENTIFIER), YES (IDENTIFIER)], ]], [;(;), [=(=), _contentView (IDENTIFIER), [M(), [M(), NSView (TYPE_NAME), alloc (IDENTIFIER)], [:(), initWithFrame (IDENTIFIER), contentRect (IDENTIFIER)]]], ]], [;(;), [M(), self (IDENTIFIER), [,(), [:(), setFrame (IDENTIFIER), contentRect (IDENTIFIER)], [:(), display (IDENTIFIER), YES (IDENTIFIER)]]], ]], [;(;), [=(=), _windowNumber (IDENTIFIER), [M(), [M(), NSApplication (TYPE_NAME), sharedApplication (IDENTIFIER)], [:(), addWindow (IDENTIFIER), self (IDENTIFIER)]]], ]], ]
+{
+objc_msgSend(self, "setFrame:display:", contentRect, YES);
+_styleMask = aStyle;
+_resizable = NO;
+_firstResponder = self;
+_movableByWindowBackground = YES;
+_hasShadow = YES;
+_isVisible = YES;
+_contentView = objc_msgSend(objc_msgSend(NSView, "alloc"), "initWithFrame:", contentRect);
+objc_msgSend(self, "setFrame:display:", contentRect, YES);
+_windowNumber = objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "addWindow:", self);
+
+}
+
 return self;
 
 }, "void");
@@ -97,7 +114,7 @@ _gCanvas.height = _frame.size.height;
 _windowNumber = objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "addWindow:", self);
 objc_msgSend(_contentView, "viewWillMoveToWindow:", self);
 objc_msgSend(_contentView, "viewDidMoveToWindow:", self);
-NSWindowServerSetOrigin(Unhandled output_expression: [,(), _gCanvas (IDENTIFIER), [.(.), _frame (IDENTIFIER), origin (IDENTIFIER)]]);
+NSWindowServerSetOrigin(_gCanvas_frame.origin);
 objc_msgSend(self, "makeKeyAndOrderFront:", self);
 
 }, "void");
@@ -112,8 +129,20 @@ objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchin
 
 class_addMethod(the_class, "_mouseDownHandle:", function(self, _cmd, theEvent) {
 if (Unhandled output_expression: [EQ_OP(), [M(), theEvent (IDENTIFIER), type (IDENTIFIER)], NSLeftMouseUp (IDENTIFIER)])
-Unhandled output_statement_list: { ()else
-Unhandled output_statement_list: [{(), [,(), [,(), [d(), NSInteger (TYPE_NAME), [=(), newX (IDENTIFIER), [+(), [((), [-(), [.(.), [M(), theEvent (IDENTIFIER), locationInBase (IDENTIFIER)], x (IDENTIFIER)], _eventBindingCurrentX (IDENTIFIER)], ], [.(.), [.(.), _frame (IDENTIFIER), origin (IDENTIFIER)], x (IDENTIFIER)]]]], [d(), NSInteger (TYPE_NAME), [=(), newY (IDENTIFIER), [+(), [((), [-(), [.(.), [M(), theEvent (IDENTIFIER), locationInBase (IDENTIFIER)], y (IDENTIFIER)], _eventBindingCurrentY (IDENTIFIER)], ], [.(.), [.(.), _frame (IDENTIFIER), origin (IDENTIFIER)], y (IDENTIFIER)]]]]], [,(), [,(), [,(), [;(;), [M(), self (IDENTIFIER), [:(), setFrameOrigin (IDENTIFIER), [f(), NSMakePoint (IDENTIFIER), [,(), newX (IDENTIFIER), newY (IDENTIFIER)]]]], ], [;(;), [=(=), _eventBindingCurrentX (IDENTIFIER), [.(.), [M(), theEvent (IDENTIFIER), locationInBase (IDENTIFIER)], x (IDENTIFIER)]], ]], [;(;), [=(=), _eventBindingCurrentY (IDENTIFIER), [.(.), [M(), theEvent (IDENTIFIER), locationInBase (IDENTIFIER)], y (IDENTIFIER)]], ]], [;(;), [M(), [M(), NSApplication (TYPE_NAME), sharedApplication (IDENTIFIER)], [,(), [,(), [,(), [,(), [,(), [:(), nextEventMatchingMask (IDENTIFIER), [((), [|(), NSLeftMouseUpMask (IDENTIFIER), NSMouseMovedMask (IDENTIFIER)], ]], [:(), untilDate (IDENTIFIER), nil (IDENTIFIER)]], [:(), inMode (IDENTIFIER), nil (IDENTIFIER)]], [:(), dequeue (IDENTIFIER), nil (IDENTIFIER)]], [:(), withTarget (IDENTIFIER), self (IDENTIFIER)]], [:(), withSelector (IDENTIFIER), [AT_SELECTOR(AT_SELECTOR), _mouseDownHandle (IDENTIFIER), ]]]], ]]], ]
+{
+
+}
+else
+{
+var newX = Unhandled output_expression: [+(), [((), [-(), [.(.), [M(), theEvent (IDENTIFIER), locationInBase (IDENTIFIER)], x (IDENTIFIER)], _eventBindingCurrentX (IDENTIFIER)], ], [.(.), [.(.), _frame (IDENTIFIER), origin (IDENTIFIER)], x (IDENTIFIER)]];
+var newY = Unhandled output_expression: [+(), [((), [-(), [.(.), [M(), theEvent (IDENTIFIER), locationInBase (IDENTIFIER)], y (IDENTIFIER)], _eventBindingCurrentY (IDENTIFIER)], ], [.(.), [.(.), _frame (IDENTIFIER), origin (IDENTIFIER)], y (IDENTIFIER)]];
+objc_msgSend(self, "setFrameOrigin:", NSMakePoint(newXnewY));
+_eventBindingCurrentX = objc_msgSend(theEvent, "locationInBase").x;
+_eventBindingCurrentY = objc_msgSend(theEvent, "locationInBase").y;
+objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:untilDate:inMode:dequeue:withTarget:withSelector:", Unhandled output_expression: [((), [|(), NSLeftMouseUpMask (IDENTIFIER), NSMouseMovedMask (IDENTIFIER)], ], nil, nil, nil, self, Unhandled output_expression: [AT_SELECTOR(AT_SELECTOR), _mouseDownHandle (IDENTIFIER), ]);
+
+}
+
 
 }, "void");
 
@@ -215,7 +244,7 @@ class_addMethod(the_class, "setContentSize:", function(self, _cmd, aSize) {
 class_addMethod(the_class, "setFrameOrigin:", function(self, _cmd, aPoint) {
 _frame.origin.x = aPoint.x;
 _frame.origin.y = aPoint.y;
-NSWindowServerSetOrigin(Unhandled output_expression: [,(), _gCanvas (IDENTIFIER), point (IDENTIFIER)]);
+NSWindowServerSetOrigin(_gCanvasaPoint);
 
 }, "void");
 

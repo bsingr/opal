@@ -32,11 +32,16 @@ class_addIvar(the_class, "_DOMGraphicsContext", "id");
 class_addIvar(the_class, "_tag", "NSInteger");
 class_addIvar(the_class, "_cell", "NSCell");
 class_addIvar(the_class, "_currentEditor", "NSText");
+class_addIvar(the_class, "_value", "id");
 
 class_addMethod(the_class, "initWithFrame:", function(self, _cmd, frameRect) {
 self = objc_msgSendSuper({super_class:NSView, receiver:self}, "initWithFrame:", frameRect);
 if (self)
-Unhandled output_statement_list: [{(), [;(;), [M(), self (IDENTIFIER), [:(), setCell (IDENTIFIER), [M(), [M(), [M(), self (IDENTIFIER), cellClass (IDENTIFIER)], alloc (IDENTIFIER)], init (IDENTIFIER)]]], ], ]
+{
+objc_msgSend(self, "setCell:", objc_msgSend(objc_msgSend(objc_msgSend(self, "cellClass"), "alloc"), "init"));
+
+}
+
 return self;
 
 }, "void");
@@ -241,7 +246,12 @@ class_addMethod(the_class, "selectCell:", function(self, _cmd, aCell) {
 
 class_addMethod(the_class, "sendAction:to:", function(self, _cmd, theAction, theTarget) {
 if (Unhandled output_expression: [AND_OP(), theAction (IDENTIFIER), theTarget (IDENTIFIER)])
-Unhandled output_statement_list: [{(), [,(), [;(;), [M(), [M(), NSApplication (TYPE_NAME), sharedApplication (IDENTIFIER)], [,(), [,(), [:(), sendAction (IDENTIFIER), theAction (IDENTIFIER)], [:(), to (IDENTIFIER), theTarget (IDENTIFIER)]], [:(), from (IDENTIFIER), self (IDENTIFIER)]]], ], [RETURN(RETURN), YES (IDENTIFIER), ]], ]
+{
+objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "sendAction:to:from:", theAction, theTarget, self);
+return YES;
+
+}
+
 return NO;
 
 }, "void");
@@ -272,7 +282,12 @@ class_addMethod(the_class, "currentEditor", function(self, _cmd) {
 
 class_addMethod(the_class, "abortEditing", function(self, _cmd) {
 if (_currentEditor)
-Unhandled output_statement_list: [{(), [,(), [;(;), [M(), [M(), self (IDENTIFIER), window (IDENTIFIER)], [:(), endEditingFor (IDENTIFIER), self (IDENTIFIER)]], ], [;(;), [=(=), _currentEditor (IDENTIFIER), nil (IDENTIFIER)], ]], ]
+{
+objc_msgSend(objc_msgSend(self, "window"), "endEditingFor:", self);
+_currentEditor = nil;
+
+}
+
 return NO;
 
 }, "void");
@@ -287,7 +302,7 @@ return ;
 
 objc_msgSend(self, "lockFocus");
 var location = objc_msgSend(self, "convertPoint:fromView:", objc_msgSend(theEvent, "locationInWindow"), nil);
-if (NSPointInRect(Unhandled output_expression: [,(), location (IDENTIFIER), _bounds (IDENTIFIER)]))
+if (NSPointInRect(location_bounds))
 objc_msgSend(_cell, "highlight:withFrame:inView:", YES, _bounds, self);
 
 objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:untilDate:inMode:dequeue:withTarget:withSelector:", Unhandled output_expression: [((), [|(), NSLeftMouseUpMask (IDENTIFIER), NSMouseMovedMask (IDENTIFIER)], ], nil, nil, nil, self, Unhandled output_expression: [AT_SELECTOR(AT_SELECTOR), _mouseDownHandle (IDENTIFIER), ]);
@@ -297,8 +312,29 @@ objc_msgSend(self, "unlockFocus");
 
 class_addMethod(the_class, "_mouseDownHandle:", function(self, _cmd, theEvent) {
 var location = objc_msgSend(self, "convertPoint:fromView:", objc_msgSend(theEvent, "locationInWindow"), nil);
-if (NSPointInRect(Unhandled output_expression: [,(), location (IDENTIFIER), _bounds (IDENTIFIER)]))
-Unhandled output_statement_list: [{(), [IF(IF), [,(), [EQ_OP(), [M(), theEvent (IDENTIFIER), type (IDENTIFIER)], NSLeftMouseUp (IDENTIFIER)], [{(), [,(), [,(), [,(), [,(), [;(;), [M(), self (IDENTIFIER), [,(), [:(), sendAction (IDENTIFIER), [M(), self (IDENTIFIER), action (IDENTIFIER)]], [:(), to (IDENTIFIER), [M(), self (IDENTIFIER), target (IDENTIFIER)]]]], ], [;(;), [M(), self (IDENTIFIER), lockFocus (IDENTIFIER)], ]], [;(;), [M(), _cell (IDENTIFIER), [,(), [,(), [:(), highlight (IDENTIFIER), NO (IDENTIFIER)], [:(), withFrame (IDENTIFIER), _bounds (IDENTIFIER)]], [:(), inView (IDENTIFIER), self (IDENTIFIER)]]], ]], [;(;), [M(), self (IDENTIFIER), unlockFocus (IDENTIFIER)], ]], RETURN (RETURN)], ]], [ELSE(ELSE), [IF(IF), [,(), [EQ_OP(), [M(), theEvent (IDENTIFIER), type (IDENTIFIER)], NSMouseMoved (IDENTIFIER)], [{(), [,(), [;(;), [M(), [M(), NSApplication (TYPE_NAME), sharedApplication (IDENTIFIER)], [,(), [,(), [,(), [,(), [,(), [:(), nextEventMatchingMask (IDENTIFIER), [((), [|(), NSLeftMouseUpMask (IDENTIFIER), NSMouseMovedMask (IDENTIFIER)], ]], [:(), untilDate (IDENTIFIER), nil (IDENTIFIER)]], [:(), inMode (IDENTIFIER), nil (IDENTIFIER)]], [:(), dequeue (IDENTIFIER), nil (IDENTIFIER)]], [:(), withTarget (IDENTIFIER), self (IDENTIFIER)]], [:(), withSelector (IDENTIFIER), [AT_SELECTOR(AT_SELECTOR), _mouseDownHandle (IDENTIFIER), ]]]], ], RETURN (RETURN)], ]], ], ]], ]
+if (NSPointInRect(location_bounds))
+{
+if (Unhandled output_expression: [EQ_OP(), [M(), theEvent (IDENTIFIER), type (IDENTIFIER)], NSLeftMouseUp (IDENTIFIER)])
+{
+objc_msgSend(self, "sendAction:to:", objc_msgSend(self, "action"), objc_msgSend(self, "target"));
+objc_msgSend(self, "lockFocus");
+objc_msgSend(_cell, "highlight:withFrame:inView:", NO, _bounds, self);
+objc_msgSend(self, "unlockFocus");
+return ;
+
+}
+else
+if (Unhandled output_expression: [EQ_OP(), [M(), theEvent (IDENTIFIER), type (IDENTIFIER)], NSMouseMoved (IDENTIFIER)])
+{
+objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:untilDate:inMode:dequeue:withTarget:withSelector:", Unhandled output_expression: [((), [|(), NSLeftMouseUpMask (IDENTIFIER), NSMouseMovedMask (IDENTIFIER)], ], nil, nil, nil, self, Unhandled output_expression: [AT_SELECTOR(AT_SELECTOR), _mouseDownHandle (IDENTIFIER), ]);
+return ;
+
+}
+
+
+
+}
+
 objc_msgSend(self, "lockFocus");
 objc_msgSend(_cell, "highlight:withFrame:inView:", NO, _bounds, self);
 objc_msgSend(self, "unlockFocus");

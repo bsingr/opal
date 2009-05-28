@@ -393,7 +393,12 @@ objc_msgSend(self, "drawInteriorWithFrame:inView:", cellFrame, controlView);
 
 class_addMethod(the_class, "highlight:withFrame:inView:", function(self, _cmd, flag, cellFrame, controlView) {
 if (Unhandled output_expression: [NE_OP(), [M(), self (IDENTIFIER), isHighlighted (IDENTIFIER)], flag (IDENTIFIER)])
-Unhandled output_statement_list: [{(), [,(), [;(;), [M(), self (IDENTIFIER), [:(), setHighlighted (IDENTIFIER), flag (IDENTIFIER)]], ], [;(;), [M(), self (IDENTIFIER), [,(), [:(), drawWithFrame (IDENTIFIER), cellFrame (IDENTIFIER)], [:(), inView (IDENTIFIER), controlView (IDENTIFIER)]]], ]], ]
+{
+objc_msgSend(self, "setHighlighted:", flag);
+objc_msgSend(self, "drawWithFrame:inView:", cellFrame, controlView);
+
+}
+
 
 }, "void");
 

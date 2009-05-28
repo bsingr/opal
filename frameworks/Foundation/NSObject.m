@@ -165,7 +165,7 @@
 
 - (BOOL)conformsToProtocol:(Protocol *)aProtocol
 {
-    return class_conformsToProtocol(self, protocol);
+    return class_conformsToProtocol(self, aProtocol);
 }
 
 - (BOOL)respondsToSelector:(SEL)aSelector

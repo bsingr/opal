@@ -13,7 +13,9 @@
 
 @interface NSCursor : NSObject <NSCoding>
 {
+    NSString    *_cursor;
 }
+
 + (NSCursor *)currentCursor;
 + (NSCursor *)arrowCursor;
 + (NSCursor *)IBeamCursor;

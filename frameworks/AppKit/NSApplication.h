@@ -9,8 +9,9 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/NSResponder.h>
 #import <AppKit/NSGraphicsContext.h>
+#import <AppKit/NSWindow.h>
 
-@class NSEvent, NSMenu, NSImage, NSException, NSPasteboard;
+@class NSEvent, NSMenu, NSImage, NSException, NSPasteboard, NSScreen, NSMenuBar;
 
 extern NSString *NSModalPanelRunLoopMode;
 extern NSString *NSEventTrackingRunLoopMode;
@@ -33,12 +34,14 @@ extern id NSApp;
     NSMutableArray  *_windows;
     
     NSEvent         *_currentEvent;
+    NSMutableArray  *_eventQueue;
     
     // Event bindings
     BOOL             _eventBindingQueued;
     id               _eventBindingTarget;
     SEL              _eventBindingSelector;
     NSUInteger       _eventBindingMask;
+    NSMenuBar       *_menuBar;
 }
 
 + (NSApplication *)sharedApplication;

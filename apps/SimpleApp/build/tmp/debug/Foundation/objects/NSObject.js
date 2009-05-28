@@ -27,7 +27,7 @@ return objc_msgSend(self, "copy");
 }, "void");
 
 class_addMethod(the_class, "methodForSelector:", function(self, _cmd, aSelector) {
-return class_getMethodImplementation(Unhandled output_expression: [,(), self (IDENTIFIER), aSelector (IDENTIFIER)]);
+return class_getMethodImplementation(selfaSelector);
 
 }, "void");
 
@@ -57,17 +57,17 @@ return self;
 }, "void");
 
 class_addMethod(the_class, "performSelector:", function(self, _cmd, aSelector) {
-return objc_msgSend(Unhandled output_expression: [,(), self (IDENTIFIER), aSelector (IDENTIFIER)]);
+return objc_msgSend(selfaSelector);
 
 }, "void");
 
 class_addMethod(the_class, "performSelector:withObject:", function(self, _cmd, aSelector, object) {
-return objc_msgSend(Unhandled output_expression: [,(), [,(), self (IDENTIFIER), aSelector (IDENTIFIER)], object (IDENTIFIER)]);
+return objc_msgSend(selfaSelectorobject);
 
 }, "void");
 
 class_addMethod(the_class, "performSelector:withObject:withObject:", function(self, _cmd, aSelector, object1, object2) {
-return objc_msgSend(Unhandled output_expression: [,(), [,(), [,(), self (IDENTIFIER), aSelector (IDENTIFIER)], object1 (IDENTIFIER)], object2 (IDENTIFIER)]);
+return objc_msgSend(selfaSelectorobject1object2);
 
 }, "void");
 
@@ -85,7 +85,7 @@ class_addMethod(the_class, "isMemberOfClass:", function(self, _cmd, aClass) {
 }, "void");
 
 class_addMethod(the_class, "conformsToProtocol:", function(self, _cmd, aProtocol) {
-return class_conformsToProtocol(Unhandled output_expression: [,(), self (IDENTIFIER), protocol (IDENTIFIER)]);
+return class_conformsToProtocol(selfaProtocol);
 
 }, "void");
 
@@ -146,17 +146,17 @@ return isa;
 }, "void");
 
 class_addMethod(meta_class, "instancesRespondToSelector:", function(self, _cmd, aSelector) {
-return class_respondToSelector(Unhandled output_expression: [,(), self (IDENTIFIER), aSelector (IDENTIFIER)]);
+return class_respondToSelector(selfaSelector);
 
 }, "void");
 
 class_addMethod(meta_class, "conformsToProtocol:", function(self, _cmd, protocol) {
-return class_conformsToProtocol(Unhandled output_expression: [,(), self (IDENTIFIER), protocol (IDENTIFIER)]);
+return class_conformsToProtocol(selfprotocol);
 
 }, "void");
 
 class_addMethod(meta_class, "instanceMethodForSelector:", function(self, _cmd, aSelector) {
-return class_getInstanceMethod(Unhandled output_expression: [,(), self (IDENTIFIER), aSelector (IDENTIFIER)]);
+return class_getInstanceMethod(selfaSelector);
 
 }, "void");
 

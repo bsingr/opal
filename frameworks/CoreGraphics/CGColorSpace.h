@@ -7,7 +7,7 @@
 // 
 
 typedef struct CGColorSpace {
-
+    char *name;
 } CGColorSpaceRef;
 
 #import <CoreGraphics/CGBase.h>

@@ -32,6 +32,7 @@ class_addIvar(the_class, "_DOMGraphicsContext", "id");
 class_addIvar(the_class, "_tag", "NSInteger");
 class_addIvar(the_class, "_cell", "NSCell");
 class_addIvar(the_class, "_currentEditor", "NSText");
+class_addIvar(the_class, "_value", "id");
 
 class_addMethod(the_class, "title", function(self, _cmd) {
 

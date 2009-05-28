@@ -29,15 +29,17 @@ enum {
     NSUnifiedTitleAndToolbarWindowMask  = 1 << 12
 };
 
-#define NSNormalWindowLevel 10
-#define NSFloatingWindowLevel 10
-#define NSSubmenuWindowLevel 10
-#define NSTornOffMenuWindowLevel 10
-#define NSMainMenuWindowLevel 10
-#define NSStatusWindowLevel	10
-#define NSModalPanelWindowLevel 10
-#define NSPopUpMenuWindowLevel 10
-#define NSScreenSaverWindowLevel 10
+enum {
+    NSNormalWindowLevel =  10,
+    NSFloatingWindowLevel = 10,
+    NSSubmenuWindowLevel = 10,
+    NSTornOffMenuWindowLevel = 10,
+    NSMainMenuWindowLevel = 10,
+    NSStatusWindowLevel =	10,
+    NSModalPanelWindowLevel = 10,
+    NSPopUpMenuWindowLevel = 10,
+    NSScreenSaverWindowLevel = 10
+};
 
 enum {
     NSWindowCloseButton,
@@ -57,6 +59,8 @@ typedef NSUInteger NSWindowButton;
     
     NSPoint         _contentRectOrigin;
 	NSSize          _contentRectSize;
+	
+    BOOL            _isVisible;
 	
 	BOOL            _hasShadow;
 	BOOL            _hidesOnDeactivate;
