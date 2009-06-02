@@ -26,6 +26,15 @@ module Vienna
         new_i.category = category
         
         
+      @link_config["declarations"] << name unless @link_config["declarations"].include? name
+      
+      the_interface = get_interface_by_name(name)
+      the_super = the_interface.super_class if the_interface
+      
+      if the_super
+        @link_config["dependencies"] << the_super unless @link_config["dependencies"].include? the_super
+      end
+      
       current_file().implementations << new_i
       # @implementation_definitions << new_i
       

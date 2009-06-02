@@ -14,7 +14,7 @@
 
 @class NSArray, NSColor;
 @class NSImageRep;
-@class NSPasteBoard, NSURL;
+@class NSPasteboard, NSURL;
 
 enum {
     NSImageLoadStatusCompleted,

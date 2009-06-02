@@ -15,9 +15,6 @@
 	[self init];
     
     if (self) {
-        _DOMElement = [Element elementWithType:@"div" className:@"" owner:self];
-        [_DOMElement setValue:@"relative" forKey:@"position"];
-        [_DOMElement setValue:@"left" forKey:@"float"];
         _itemIdentifier = itemIdentifier;
         _minSize = NULL;
         _maxSize = NULL;
@@ -42,7 +39,7 @@
 
 - (void)setLeftOffset:(NSInteger)left
 {
-    _leftOffset = left;
+    // _leftOffset = left;
 }
 
 - (void)mouseDown:(NSEvent *)theEvent
@@ -187,17 +184,3 @@
 }
 
 @end
-
-@implementation NSToolbarSeparatorItem
-
-@end
-
-@implementation NSToolbarSpaceItem
-
-@end
-
-@implementation NSToolbarFlexibleSpaceItem
-
-@end
-
-

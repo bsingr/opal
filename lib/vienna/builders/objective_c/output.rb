@@ -16,8 +16,9 @@ module Vienna
       # Add symbols to symbol table for walking
       symbol_table_push()
       
-      symbol_table_add('id', lookup_symbol('NSObject'))
-      symbol_table_add('nil', lookup_symbol('NSObject'))
+      symbol_table_add('id', "NSObject")
+      symbol_table_add('nil', "NSObject")
+      symbol_table_add('NULL', "NSObject")
       symbol_table_add("YES", 1)
       symbol_table_add("NO", 1)
       
@@ -177,7 +178,7 @@ module Vienna
           parser_error_on_node statement, "cannot use word"
         end
         the_symbol = lookup_symbol statement.value
-        parser_error_on_node(statement, "unknown symbol #{statement.value}") if the_symbol.nil?
+        # parser_error_on_node(statement, "unknown symbol #{statement.value}") if the_symbol.nil?
         file.write statement.value
         return statement.value
       elsif statement.token == :TYPE_NAME
@@ -213,24 +214,45 @@ module Vienna
     
     
     def output_declaration_statement(file, d)
+      # puts d
+      # declaration: NSRect theRect; .. should really output empty object
+      if d.right.leaf?
+        # struct type declaration
+        if @reserved_keywords.include? d.right.value
+          parser_error_on_node d, "'#{d.right.value}' is a reserved word"
+        end
+        symbol_table_add(d.right.value, d.left.value)
+        file.write "var #{d.right.value}"
+        return
+      elsif d.right.right.leaf? and d.right.value == "*"
+        # type_name declaration with no initialixer: NSString *name;
+        if @reserved_keywords.include? d.right.right.value
+          parser_error_on_node d, "'#{d.right.right.value}' is a reserved word"
+        end
+        symbol_table_add(d.right.right.value, d.left.value)
+        file.write "var #{d.right.value}"
+        return
+      end
+      
+      
       if d.right.left.value == "*"
         if @reserved_keywords.include? d.right.left.right.value
           parser_error_on_node d, "'#{d.right.left.right.value}' is a reserved word"
         end
-        symbol_table_add(d.right.left.right.value, lookup_symbol(d.left.value))
+        symbol_table_add(d.right.left.right.value, d.left.value)
         file.write "var #{d.right.left.right.value} = "
       else
         if @reserved_keywords.include? d.right.left.value
           parser_error_on_node d, "'#{d.right.left.value}' is a reserved word"
         end
-        symbol_table_add(d.right.left.value, lookup_symbol(d.left.value))
+        symbol_table_add(d.right.left.value, d.left.value)
         file.write "var #{d.right.left.value} = "
       end
       output_expression file, d.right.right
     end
     
     def output_declaration(file, declaration)
-      symbol_table_add(declaration.right.value, lookup_symbol(declaration.left.value))
+      symbol_table_add(declaration.right.value, declaration.left.value)
       # puts (declaration.left.value)
       file.write "var #{declaration.right.value}"
     end
@@ -319,13 +341,13 @@ module Vienna
       the_selector = get_objc_msgSend_selector(file, statement.right)
       
       if self_symbol.nil?
-        parser_warning_on_node statement, "#{the_self} may not respond to #{the_selector}"
+        # parser_warning_on_node statement, "#{the_self} may not respond to #{the_selector} (Cannot locate symbol)"
       end
       
       if self_symbol.class != String and self_symbol
         the_method = get_method_by_selector(self_symbol, the_selector)
         if the_method.nil?
-          parser_warning_on_node statement, "#{the_self} may not respond to #{the_selector}"
+          # parser_warning_on_node statement, "#{the_self} may not respond to #{the_selector}"
         end
       end
       

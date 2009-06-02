@@ -10,8 +10,15 @@
 
 @class NSArray, NSBundle, NSData, NSDictionary, NSURL;
 
+@class NSKeyedUnarchiver;
+
 @interface NSNib : NSObject <NSCoding>
 {
+    NSData          *_data;
+	NSDictionary    *_connections;
+	NSDictionary    *_hierarchy;
+	NSDictionary    *_objects;
+	NSArray         *_topLevelObjects;
 }
 
 - (id)initWithContentsOfURL:(NSURL *)nibFileURL;

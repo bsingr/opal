@@ -21,6 +21,12 @@ module Vienna
       @bundle_root = bundle_root
       @parent = parent
       @prepared = false
+      
+      # Linking configuration
+      @link_config = {}
+      
+      # linked files
+      @linked_files = []
     end
 
     def rakefile

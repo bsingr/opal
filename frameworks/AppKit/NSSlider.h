@@ -39,8 +39,8 @@
 - (void)setNumberOfTickMarks:(NSInteger)count;
 - (NSInteger)numberOfTickMarks;
 
-- (void)setTickMarkPosition:(NSTickMarkPosition)position;
-- (NSTickMarkPosition)tickMarkPosition;
+// - (void)setTickMarkPosition:(NSTickMarkPosition)position;
+// - (NSTickMarkPosition)tickMarkPosition;
 
 - (void)setAllowsTickMarkValuesOnly:(BOOL)yorn;
 - (BOOL)allowsTickMarkValuesOnly;
@@ -49,5 +49,12 @@
 - (NSRect)rectOfTickMarkAtIndex:(NSInteger)index;
 - (NSInteger)indexOfTickMarkAtPoint:(NSPoint)point;
 - (double)closestTickMarkValueToValue:(double)value;
+
+@end
+
+@interface NSSliderCell : NSCell
+{
+    
+}
 
 @end

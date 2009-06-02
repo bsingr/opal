@@ -27,4 +27,22 @@ return objc_msgSend(objc_msgSend(NSGraphicsContext, "alloc"), "initWithGraphicsP
 }, "void");
 
 class_addMethod(meta_class, "currentContext", function(self, _cmd) {
-return 
+
+}, "void");
+
+class_addMethod(meta_class, "setCurrentContext:", function(self, _cmd, context) {
+
+}, "void");
+
+class_addMethod(meta_class, "saveGraphicsState", function(self, _cmd) {
+var ctx = objc_msgSend(objc_msgSend(NSGraphicsContext, "currentContext"), "graphicsPort");
+.();
+
+}, "void");
+
+class_addMethod(meta_class, "restoreGraphicsState", function(self, _cmd) {
+var ctx = objc_msgSend(objc_msgSend(NSGraphicsContext, "currentContext"), "graphicsPort");
+.();
+
+}, "void");
+

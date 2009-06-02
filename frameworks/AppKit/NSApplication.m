@@ -16,7 +16,7 @@ id NSApp = nil;
 @implementation NSApplication
 
 - (id)init
-{
+{   
     self = [super init];
     if (self) {
         _windows = [NSMutableArray arrayWithCapacity:0];
@@ -45,10 +45,10 @@ id NSApp = nil;
 
 + (NSApplication *)sharedApplication
 {
-    // if (!NSApp)
-    //     NSApp = [[NSApplication alloc] init];
-    // 
-    // return NSApp;
+    if (!NSApp)
+            NSApp = [[NSApplication alloc] init];
+        
+        return NSApp;
 }
 
 - (void)setDelegate:(id)anObject

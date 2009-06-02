@@ -1,0 +1,251 @@
+--- 
+NSScrollView.js: 
+  declarations: 
+  - NSScrollView
+  dependencies: 
+  - NSView
+NSMenuItem.js: 
+  declarations: 
+  - NSMenuItem
+  dependencies: 
+  - NSObject
+NSController.js: 
+  declarations: 
+  - NSController
+  dependencies: 
+  - NSObject
+NSClipView.js: 
+  declarations: 
+  - NSClipView
+  dependencies: 
+  - NSObject
+NSButton.js: 
+  declarations: 
+  - NSButton
+  dependencies: 
+  - NSControl
+NSToolbar.js: 
+  declarations: 
+  - NSToolbar
+  - NSToolbarView
+  dependencies: 
+  - NSObject
+  - NSView
+NSObjectController.js: 
+  declarations: 
+  - NSObjectController
+  dependencies: 
+  - NSController
+NSMenuItemCell.js: 
+  declarations: 
+  - NSMenuItemCell
+  dependencies: 
+  - NSButtonCell
+NSMenu.js: 
+  declarations: 
+  - NSMenu
+  dependencies: 
+  - NSObject
+NSImage.js: 
+  declarations: 
+  - NSImage
+  dependencies: 
+  - NSObject
+NSWindow.js: 
+  declarations: 
+  - NSWindow
+  dependencies: 
+  - NSResponder
+NSTextFieldCell.js: 
+  declarations: 
+  - NSTextFieldCell
+  dependencies: 
+  - NSCell
+NSTableHeaderCell.js: 
+  declarations: 
+  - NSTableHeaderCell
+  dependencies: 
+  - NSTextFieldCell
+NSTableColumn.js: 
+  declarations: 
+  - NSTableColumn
+  dependencies: 
+  - NSObject
+NSScroller.js: 
+  declarations: 
+  - NSScroller
+  dependencies: 
+  - NSControl
+NSGraphicsContext.js: 
+  declarations: 
+  - NSGraphicsContext
+  dependencies: 
+  - NSObject
+NSEvent.js: 
+  declarations: 
+  - NSEvent
+  dependencies: 
+  - NSObject
+NSOutlineView.js: 
+  declarations: 
+  - NSOutlineView
+  dependencies: 
+  - NSTableView
+NSNib.js: 
+  declarations: 
+  - NSNib
+  dependencies: 
+  - NSObject
+NSMenuWindow.js: 
+  declarations: 
+  - NSMenuWindow
+  dependencies: 
+  - NSWindow
+NSMenuView.js: 
+  declarations: 
+  - NSMenuView
+  dependencies: 
+  - NSView
+NSBezierPath.js: 
+  declarations: 
+  - NSBezierPath
+  dependencies: 
+  - NSObject
+NSTextView.js: 
+  declarations: 
+  - NSTextView
+  dependencies: 
+  - NSText
+NSColorWell.js: 
+  declarations: 
+  - NSColorWell
+  dependencies: 
+  - NSControl
+NSText.js: 
+  declarations: 
+  - NSText
+  dependencies: 
+  - NSView
+NSCell.js: 
+  declarations: 
+  - NSCell
+  dependencies: 
+  - NSObject
+NSApplication.js: 
+  declarations: 
+  - NSApplication
+  dependencies: 
+  - NSResponder
+NSWindowController.js: 
+  declarations: 
+  - NSWindowController
+  dependencies: 
+  - NSResponder
+NSView.js: 
+  declarations: 
+  - NSView
+  dependencies: 
+  - NSResponder
+NSTableHeaderView.js: 
+  declarations: 
+  - NSTableHeaderView
+  dependencies: 
+  - NSView
+NSSlider.js: 
+  declarations: 
+  - NSSlider
+  - NSSliderCell
+  dependencies: 
+  - NSControl
+  - NSCell
+NSScreen.js: 
+  declarations: 
+  - NSScreen
+  dependencies: 
+  - NSObject
+NSPanel.js: 
+  declarations: 
+  - NSPanel
+  dependencies: 
+  - NSWindow
+NSGradient.js: 
+  declarations: 
+  - NSGradient
+  dependencies: 
+  - NSObject
+NSCursor.js: 
+  declarations: 
+  - NSCursor
+  dependencies: 
+  - NSObject
+NSToolbarItem.js: 
+  declarations: 
+  - NSToolbarItem
+  dependencies: 
+  - NSObject
+NSShadow.js: 
+  declarations: 
+  - NSShadow
+  dependencies: 
+  - NSObject
+NSFont.js: 
+  declarations: 
+  - NSFont
+  dependencies: 
+  - NSObject
+NSColor.js: 
+  declarations: 
+  - NSColor
+  dependencies: 
+  - NSObject
+NSArrayController.js: 
+  declarations: 
+  - NSArrayController
+  dependencies: 
+  - NSObjectController
+_NSCornerView.js: 
+  declarations: 
+  - _NSCornerView
+  dependencies: 
+  - NSView
+NSTextField.js: 
+  declarations: 
+  - NSTextField
+  dependencies: 
+  - NSControl
+NSResponder.js: 
+  declarations: 
+  - NSResponder
+  dependencies: 
+  - NSObject
+NSMenuBar.js: 
+  declarations: 
+  - NSMenuBar
+  dependencies: 
+  - NSWindow
+NSButtonCell.js: 
+  declarations: 
+  - NSButtonCell
+  dependencies: 
+  - NSCell
+NSTableView.js: 
+  declarations: 
+  - NSTableView
+  dependencies: 
+  - NSControl
+NSStatusBar.js: 
+  declarations: 
+  - NSStatusBar
+  dependencies: 
+  - NSObject
+NSKeyValueBinding.js: 
+  declarations: 
+  - NSObject
+  dependencies: []
+
+NSControl.js: 
+  declarations: 
+  - NSControl
+  - NSObject
+  dependencies: 
+  - NSView

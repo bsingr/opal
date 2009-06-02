@@ -15,7 +15,6 @@
 	[super initWithFrame:aFrame];
 	
 	if (self) {
-        _DOMElement = [Element elementWithType:@"div" className:@"NSSlider" owner:self];
     }
     
 	return self;

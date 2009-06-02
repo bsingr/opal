@@ -97,15 +97,15 @@
     if (_headerClipView)
     {
         NSLog(@"got header clip view");
-        tilingRect = NSMakeRect (1, _frame.size.height - [_headerClipView bounds].size.height, _frame.size.width, [_headerClipView bounds].size.height);
-        [_headerClipView setFrame:tilingRect];
+        tilingFrame = NSMakeRect (1, _frame.size.height - [_headerClipView bounds].size.height, _frame.size.width, [_headerClipView bounds].size.height);
+        [_headerClipView setFrame:tilingFrame];
     }
     
     if (_clipView)
     {
         NSLog(@"got header clip view");
-        tilingRect = NSMakeRect (1, 1, _frame.size.width, [_clipView bounds].size.height);
-        [_clipView setFrame:tilingRect];
+        tilingFrame = NSMakeRect (1, 1, _frame.size.width, [_clipView bounds].size.height);
+        [_clipView setFrame:tilingFrame];
     }
     
 }

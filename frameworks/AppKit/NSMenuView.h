@@ -6,15 +6,29 @@
 //  Copyright 2009 Adam Beynon. All rights reserved.
 // 
 
+#import <AppKit/NSApplication.h>
 #import <AppKit/NSView.h>
 #import <AppKit/NSMenu.h>
 #import <AppKit/NSMenuItem.h>
 #import <AppKit/NSMenuItemCell.h>
+#import <AppKit/NSMenuWindow.h>
 
 @class NSScreen;
 
 @interface NSMenuView : NSView
 {
+    NSMenu      *_menu;
+    
+    BOOL            _isHorizontal;
+    NSInteger       _highlightedItemIndex;
+    NSMenuItemCell *_menuItemCell;
+    
+    NSMenuView     *_attatchedMenuView;
+    NSMenu         *_attatchedMenu;
+    
+    NSRect          _innerRect;
+    
+    NSMutableArray *_eventBindingMenuArray;
 }
 
 + (CGFloat)menuBarHeight;

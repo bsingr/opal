@@ -15,6 +15,7 @@
 @class NSRulerMarker;
 @class NSUndoManager;
 @class NSParagraphStyle;
+@class NSBezierPath;
 
 enum {
     NSSelectByCharacter                     = 0,

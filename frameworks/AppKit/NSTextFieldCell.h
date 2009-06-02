@@ -14,10 +14,16 @@ enum {
 };
 typedef NSUInteger NSTextFieldBezelStyle;
 
-@class NSColor;
+@class NSColor, NSBezierPath, NSGradient;
 
-@interface NSTextFieldCell : NSActionCell
+@interface NSTextFieldCell : NSCell
 {
+    NSString   *_placeholderString;
+    BOOL        _drawsBackground;
+    BOOL        _bezeled;
+    NSUInteger  _bezelStyle;
+    NSUInteger  _gBorderType;
+    NSColor    *_textColor;
 }
 
 - (void)setBackgroundColor:(NSColor *)color;

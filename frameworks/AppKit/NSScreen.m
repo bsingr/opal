@@ -18,12 +18,12 @@
 
 - (NSRect)frame
 {
-    return NSMakeRect (0,0,window.innerWidth, window.innerHeight);
+    // return NSMakeRect (0,0,window.innerWidth, window.innerHeight);
 }
 
 - (NSRect)visibleFrame
 {
-    return NSMakeRect (0,0,window.innerWidth, window.innerHeight - [NSMenu menuBarHeight]);
+    // return NSMakeRect (0,0,window.innerWidth, window.innerHeight - [NSMenu menuBarHeight]);
 }
 
 @end

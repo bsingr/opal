@@ -8,10 +8,11 @@
 
 #import <AppKit/NSView.h>
 
-@class NSTableView, NSColor, NSImage, NSCursor;
+@class NSTableView, NSColor, NSImage, NSCursor, NSGradient, NSBezierPath, NSTableColumn;
 
 @interface NSTableHeaderView : NSView
 {
+    NSTableView     *_tableView;
 }
 
 - (void)setTableView:(NSTableView *)tableView;

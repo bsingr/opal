@@ -9,6 +9,36 @@
 module Vienna
 
 
+  class ObjectiveCParser
+    
+    def deal_with_extern(e)
+      if e.right.value == "f"
+        # puts "Found function #{e.right.left.value}"
+        @extern_functions << e.right.left.value
+      elsif e.right.value == "*"
+        # puts "Found extern declaration1: #{e.right.right}"
+      else
+        # Extern to a non pointer (e.g. using id or similar)
+        # puts "Found extern declaration2: #{e.right.value}"
+        the_var = ObjectiveCExternVariable.new
+        the_var.name = e.right.value
+        the_var.type = e.left.right.value        
+        current_file().extern_variables << the_var
+        symbol_table_add the_var.name, the_var.type
+      end
+    end
+    
+  end
+  
+  class ObjectiveCExternVariable
+    attr_accessor :name, :type
+  end
+  
+  class ObjectiveCTypedef
+    attr_accessor :name, :type
+  end
+
+
   # Used to make a tree of the parsed progream for walking the tree. Value is the
   # value returned by the parse tree, which should be an ParseValue type listed
   # below. Left and right are links to the relevant Nodes, and may be nil (which)

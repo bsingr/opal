@@ -160,10 +160,7 @@
 }
 
 - (void)setTextColor:(NSColor *)aColor
-{
-    if( [Object isString:(aColor)])
-        aColor = [NSColor controlTextColor];
-       
+{   
     _textColor = aColor;
 }
 

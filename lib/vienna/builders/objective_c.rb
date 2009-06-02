@@ -13,7 +13,7 @@ module Vienna
   
   class ObjectiveCParser < Racc::Parser
     
-    attr_reader :tokens
+    attr_reader :tokens, :link_config
 
   	def initialize(source, dest, project)
   	  
@@ -50,6 +50,9 @@ module Vienna
   	  
       # list of resevred keywords that may cause issues in Javascript
       @reserved_keywords = ["new", "function", "var"]
+      
+      # Linking configuration
+      @link_config = { "declarations" => [], "dependencies" => [] }
   	end
   	
   	def build!
@@ -162,30 +165,27 @@ module Vienna
     
     def deal_with_typedef(t)
       # puts t
-      if lookup_symbol(t.left.right.token)
-        # puts "new typename: #{t.right.value} #{t}"
-      elsif t.left.right.token == :STRUCT
-        # puts "new strurct: #{t}"
-        deal_with_struct(t.left.right)
+      if t.left.right.token == :STRUCT
+        the_type = deal_with_struct(t.left.right)
+        # puts "Dealing and got struct: #{the_type.class}"
+      else
+        the_type = t.left.right.token
       end
       
       if t.right.value == '*'
-        current_file().typedefs << t.right.right.value
-        symbol_table_add t.right.right.value, t.right.right.value
+        # puts t
+        the_typedef = ObjectiveCTypedef.new
+        the_typedef.name = t.right.right.value
+        the_typedef.type = the_type
+        current_file().typedefs << the_typedef
+        symbol_table_add the_typedef.name, the_typedef.type
       else
-        current_file().typedefs << t.right.value
-        symbol_table_add t.right.value, t.left.right.token
-      end
-    end
-    
-    def deal_with_extern(e)
-      if e.right.value == "f"
-        # puts "Found function #{e.right.left.value}"
-        @extern_functions << e.right.left.value
-      elsif e.right.value == "*"
-        # puts "Found extern declaration1: #{e.right.right}"
-      else
-        # puts "Found extern declaration2: #{e.right.value}"
+        the_typedef = ObjectiveCTypedef.new
+        the_typedef.name = t.right.value
+        the_typedef.type = the_type
+        current_file().typedefs << the_typedef
+        symbol_table_add the_typedef.name, the_typedef.type
+        # puts "Adding #{the_typedef.name} for #{the_typedef.type.class}"
       end
     end
     
@@ -308,12 +308,12 @@ module Vienna
       
       file.imported_files.each do |i|
         add_objc_file i
-        # puts "Re-impoerting: #{i.file_path} from #{file.file_path}"        
+        # puts "Re-impoerting: #{i.file_path} from #{file.file_path}"
       end
       
       file.typedefs.each do |typedef|
-        symbol_table_add typedef, typedef
-        # puts "Readding typedef: #{typedef}"
+        symbol_table_add typedef.name, typedef.type
+        # puts "# Readding typedef: #{typedef.name} of type: #{typedef.type}"
       end
       
       file.interfaces.each do |int|
@@ -332,6 +332,11 @@ module Vienna
           symbol_table_add key, value
         end
       end
+      
+      file.extern_variables.each do |e|
+        symbol_table_add e.name, lookup_symbol(e.type)
+      end
+      
     end
     
     
@@ -351,17 +356,21 @@ module Vienna
     # before the whole interface is processed
   	def lookup_type(type_name)
 
+      # puts "Looking up type: #{type_name}"
+
       @at_class_list.each do |at_class|
         return make_token(:TYPE_NAME, type_name) if at_class == type_name
       end
       
       the_symbol = lookup_symbol(type_name)
-      
+                  
       # If cant find the type, then return nil (i.e, use it as an identifier)
       return make_token(:IDENTIFIER, type_name) if the_symbol.nil?
       
-      # if the_symbol
+      # enums integers etc..
       return make_token(:CONSTANT, the_symbol) if the_symbol.class == Fixnum
+      # variable declarations.. entry in table will be a string, e.g. "NSAppplication"
+      return make_token(:IDENTIFIER, the_symbol) if the_symbol.class == String
       return make_token(:TYPE_NAME, type_name)
   	end
   end

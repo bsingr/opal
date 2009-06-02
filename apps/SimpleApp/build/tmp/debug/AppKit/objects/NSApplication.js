@@ -193,6 +193,10 @@ class_addMethod(the_class, "reportException:", function(self, _cmd, theException
 }, "void");
 
 class_addMethod(meta_class, "sharedApplication", function(self, _cmd) {
+if (Unhandled output_expression: [,(), ! (!), NSApp (IDENTIFIER)])
+NSApp = objc_msgSend(objc_msgSend(NSApplication, "alloc"), "init");
+
+return NSApp;
 
 }, "void");
 

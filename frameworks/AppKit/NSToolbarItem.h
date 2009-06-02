@@ -30,6 +30,20 @@ extern NSString *NSToolbarPrintItemIdentifier;
 
 @interface NSToolbarItem : NSObject
 {
+    NSString    *_itemIdentifier;
+	NSToolbar   *_toolBar;
+	NSString    *_label;
+	NSString    *_toolTip;
+	NSUInteger  *_tag;
+	id           _target;
+	SEL          _action;
+	BOOL         _isEnabled;
+	NSImage     *_image;
+	NSView      *_view;
+	NSSize       _minSize;
+	NSSize       _maxSize;
+	
+	NSUInteger   _displayMode;
 }
 
 - (id)initWithItemIdentifier:(NSString *)itemIdentifier;

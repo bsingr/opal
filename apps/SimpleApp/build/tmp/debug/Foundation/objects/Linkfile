@@ -1,0 +1,45 @@
+--- 
+NSKeyValueCoding.js: 
+  declarations: []
+
+  dependencies: []
+
+NSCoder.js: 
+  declarations: 
+  - NSCoder
+  dependencies: 
+  - NSObject
+NSArchiver.js: 
+  declarations: 
+  - NSArchiver
+  - NSUnarchiver
+  dependencies: 
+  - NSCoder
+NSProxy.js: 
+  declarations: 
+  - NSProxy
+  dependencies: 
+  - NSObject
+NSKeyValueObserving.js: 
+  declarations: []
+
+  dependencies: []
+
+NSNotification.js: 
+  declarations: 
+  - NSNotification
+  - NSNotificationCenter
+  dependencies: 
+  - NSObject
+NSArray.js: 
+  declarations: 
+  - NSArray
+  - NSMutableArray
+  dependencies: 
+  - NSObject
+  - NSArray
+NSObject.js: 
+  declarations: 
+  - NSObject
+  dependencies: []
+

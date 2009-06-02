@@ -52,14 +52,13 @@
     return _tableView;
 }
 
-- (void)setWidth:(NSNumber)newWidth
+- (void)setWidth:(NSUInteger)newWidth
 {
     // from nib, it might be a string
-    newWidth = parseInt(newWidth) + 0;
     _width = newWidth;    
 }
 
-- (NSNumber)width
+- (NSUInteger)width
 {
     return _width;
 }

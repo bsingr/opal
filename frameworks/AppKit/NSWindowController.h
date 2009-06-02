@@ -6,6 +6,7 @@
 //  Copyright 2009 Adam Beynon. All rights reserved.
 // 
 
+#import <Foundation/Foundation.h>
 #import <AppKit/NSResponder.h>
 #import <AppKit/NSNibDeclarations.h>
 
@@ -13,6 +14,8 @@
 
 @interface NSWindowController : NSResponder <NSCoding>
 {
+    NSWindow    *_window;
+    id          *_owner;
 }
 
 - (id)initWithWindow:(NSWindow *)window;
@@ -50,7 +53,7 @@
 
 - (void)close;
     
-- (IBAction)showWindow:(id)sender;
+// - (IBAction)showWindow:(id)sender;
 
 
 - (BOOL)isWindowLoaded;

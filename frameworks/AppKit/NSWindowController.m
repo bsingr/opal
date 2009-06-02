@@ -27,10 +27,10 @@
     return self;
 }
 
-- (IBAction)showWindow:(id)sender
-{
-
-}
+// - (IBAction)showWindow:(id)sender
+// {
+// 
+// }
 
 - (NSWindow *)window
 {

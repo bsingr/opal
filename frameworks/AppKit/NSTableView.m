@@ -171,9 +171,6 @@
 
 - (void)setIntercellSpacing:(NSSize)aSize
 {
-    if ([Object isString:aSize])
-		aSize = NSSizeFromString(aSize);
-    
     _intercellSpacing = aSize;
 }
 
@@ -182,11 +179,11 @@
     return _intercellSpacing;
 }
 
-- (void)setRowHeight:(NSNumber)rowHeight
+- (void)setRowHeight:(NSInteger)rowHeight
 {
     _rowHeight = rowHeight;
 }
-- (NSNumber)rowHeight
+- (NSInteger)rowHeight
 {
     return _rowHeight;
 }
@@ -228,9 +225,9 @@
 
 - (void)setDataSource:(id)anObject
 {
-    if (![anObject respondsToSelector:@selector(numberOfRowsInTableView:)] || ![anObject respondsToSelector:@selector(tableView:objectValueForTableColumn:row:)])
-        NSLog(@"TableView datasource does not respond to one of the two data source methods");
-    
+    // if (![anObject respondsToSelector:@selector(numberOfRowsInTableView:)] || ![anObject respondsToSelector:@selector(tableView:objectValueForTableColumn:row:)])
+    //         NSLog(@"TableView datasource does not respond to one of the two data source methods");
+    //     
     _dataSource = anObject;
     [self reloadData];
 }

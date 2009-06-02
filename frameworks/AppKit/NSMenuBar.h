@@ -14,11 +14,13 @@
 #import <AppKit/NSStatusBarView.h>
 
 
+@class NSApplicationTitleView;
+
 @interface NSMenuBar : NSWindow {
     NSMenuView          *_mainMenuView;
-    NSStatusBarView         *_statusBarView;
-    
-    NSString                *_applicationTitleName;
+    NSView              *_statusBarView;
+    NSString            *_applicationTitleName;
+    NSView              *_applicationTitleView;
 }
 
 - (void)setMainMenuView:(NSMenuView *)aView;
@@ -27,7 +29,7 @@
 - (void)setApplicationTitleName:(NSString *)aString;
 - (NSString *)applicationTitleName;
 
-- (void)setStatusBarView:(NSStatusBarView *)aView;
-- (NSStatusBarView *)statusBarView;
+// - (void)setStatusBarView:(NSStatusBarView *)aView;
+// - (NSStatusBarView *)statusBarView;
 
 @end

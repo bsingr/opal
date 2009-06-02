@@ -45,6 +45,9 @@
 
 - (void)drawRect:(NSRect)dirtyRect
 {   
+    NSInteger NSWindowBorderSize = 20;
+    NSInteger NSPanelUtilityTitleBarSize = 22;
+    
     // Window background
     [[NSColor colorWithCalibratedRed:0 green:0 blue:0 alpha:0.7] set];
     [NSBezierPath fillRect:NSMakeRect(0.5, 0.5, _frame.size.width - 1, _frame.size.height - 1.5 - NSPanelUtilityTitleBarSize)];

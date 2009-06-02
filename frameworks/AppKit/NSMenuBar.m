@@ -115,13 +115,13 @@
 
 - (void)setStatusBarView:(NSStatusBarView *)aView
 {
-    return _statusBarView;
+    _statusBarView = aView;
+    [[self contentView] addSubview:aView];
 }
 
 - (NSStatusBarView *)statusBarView
 {
-    _statusBarView = aView;
-    [[self contentView] addSubview:aView];
+    return _statusBarView;
 }
 
 - (void)becomeKeyWindow

@@ -56,6 +56,24 @@ enum {
 
 @interface NSText : NSView
 {
+    NSString        *_string;
+    NSColor         *_backgroundColor;
+    BOOL             _drawsBackground;
+    BOOL             _isEditable;
+    BOOL             _isSelectable;
+    BOOL             _isFieldEditor;
+    BOOL             _isRichText;
+    BOOL             _importsGraphics;
+    BOOL             _usesFontPanel;
+    NSRange         *_selectedRange;
+    NSFont          *_font;
+    NSTextAlignment *_textAlignment;
+    NSColor         *_textColor;
+    NSSize           _maxSize;
+    NSSize           _minSize;
+    id               _delegate;
+    
+    CGContextRef     _gCanvas;
 }
 
 - (NSString *)string;

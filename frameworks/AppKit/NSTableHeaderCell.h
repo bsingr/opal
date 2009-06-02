@@ -7,9 +7,12 @@
 // 
 
 #import <AppKit/NSTextFieldCell.h>
+#import <AppKit/NSBezierPath.h>
+
 
 @interface NSTableHeaderCell : NSTextFieldCell
 {
+    id      _value;
 }
 
 - (void)drawSortIndicatorWithFrame:(NSRect)cellFrame inView:(NSView *)controlView ascending:(BOOL)ascending priority:(NSInteger)priority;

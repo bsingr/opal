@@ -14,6 +14,9 @@
 
 @interface NSShadow : NSObject <NSCopying, NSCoding>
 {
+    int          _shadowBlurRadius;
+    NSColor     *_shadowColor;
+    NSSize      *_shadowOffset;
 }
 
 - (id)init;

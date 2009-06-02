@@ -11,6 +11,7 @@
 #import <AppKit/NSGraphics.h>
 #import <AppKit/NSText.h>
 #import <AppKit/NSApplication.h>
+#import <AppKit/NSGradient.h>
 
 @class NSToolbar, NSButton, NSButtonCell;
 @class NSWindowTitleButton;

@@ -9,9 +9,14 @@
 #import <AppKit/NSButtonCell.h>
 #import <AppKit/NSMenu.h>
 #import <AppKit/NSMenuItem.h>
+#import <AppKit/NSGradient.h>
+
+@class NSMenuView;
 
 @interface NSMenuItemCell : NSButtonCell
 {
+    NSMenuItem      *_menuItem;
+    NSMenuView      *_menuView;
 }
 
 - (void)setMenuItem:(NSMenuItem *)item;

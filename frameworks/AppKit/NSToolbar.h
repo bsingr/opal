@@ -7,9 +7,10 @@
 // 
 
 #import <Foundation/Foundation.h>
+#import <AppKit/NSView.h>
 
 @class NSArray, NSDictionary, NSMutableArray, NSNotification, NSString;
-@class NSToolbarItem, NSWindow;
+@class NSToolbarItem, NSWindow, NSBezierPath;
 
 enum {
     NSToolbarDisplayModeDefault,
@@ -31,6 +32,19 @@ extern NSString *NSToolbarDidRemoveItemNotification;
 
 @interface NSToolbar : NSObject
 {
+    NSString                *_identifier;
+	NSToolbarDisplayMode     _displayMode;
+	BOOL                     _showsBaselineSeparator;
+	BOOL                     _visible;
+	id                       _delegate;
+    
+    NSView                  *_toolbarView;
+	
+	NSMutableArray           _itemIdentifiers;
+	NSMutableArray           _items;
+	NSMutableArray           _labels;
+	
+	NSUInteger               _height;
 }
 
 - (id)initWithIdentifier:(NSString *)identifier;

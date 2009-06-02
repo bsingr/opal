@@ -39,12 +39,22 @@ module Vienna
       # =======================================================================
       
       objc_sources.each do |c|
-        puts " - Building file: #{File.basename(c)}"
-        ObjectiveCParser.new(c, File.join(@parent.tmp_prefix, bundle_name, 'objects', File.basename(c, '.m')) + '.js', @parent).build!
+        # puts " - Building file: #{File.basename(c)}"
+        builder = ObjectiveCParser.new(c, File.join(@parent.tmp_prefix, bundle_name, 'objects', File.basename(c, '.m')) + '.js', @parent)
+        builder.build!
+        @link_config[File.basename(c, '.m') + '.js'] = builder.link_config
       end
       
       javascript_sources.each do |j|
         Vienna::Builder::Javascript.new(j, File.join(@parent.tmp_prefix, bundle_name, 'objects', File.basename(j)), @parent).build!
+      end
+      
+      # ======================================================================
+      # = Pre - linking all objects and making sure our link config is valid =
+      # ======================================================================
+      
+      File.open(File.join(@parent.tmp_prefix, bundle_name, 'objects') + '/Linkfile', 'w') do |out|
+        YAML.dump(@link_config, out)
       end
       
       # ==========================================================================
@@ -53,12 +63,39 @@ module Vienna
       
       all_objects = Dir.glob(File.join(@parent.tmp_prefix, bundle_name, 'objects', '*.js'))
       framework_out = File.new(File.join(@parent.build_prefix, 'Frameworks', bundle_name) + "/#{bundle_name}.js", 'w')
-      all_objects.each do |i|
-        f = File.new(i)
-        t = f.read
-        framework_out.write t
+      # all_objects.each do |i|
+      #         f = File.new(i)
+      #         t = f.read
+      #         framework_out.write t
+      #       end
+      
+      @link_config.each do |key, value|
+        link_object_file(key, framework_out)
       end
+      
       framework_out.close
+    end
+    
+    def link_object_file(file, out)
+      
+      return if @linked_files.include? file
+      
+      all_objects = Dir.glob(File.join(@parent.tmp_prefix, bundle_name, 'objects', '*.js'))
+      object_path = File.join(@parent.tmp_prefix, bundle_name, 'objects')
+      
+      return unless all_objects.include?(object_path + '/' + file)
+      
+      
+      @linked_files << file
+      
+      # puts @link_config[file]["dependencies"]
+      
+      @link_config[file]["dependencies"].each do |d|
+        link_object_file(d + '.js', out)
+      end
+      
+      puts "Writing content of #{file}"
+      
     end
     
     # Returns an array of all the frameworks required by this application. This

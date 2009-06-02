@@ -105,7 +105,7 @@
     [_cell setHighlighted:NO];
     [self setNeedsDisplay:YES];
 	if ([_cell action] && [_cell target])
-        [NSApp sendAction:[_cell action] to:[_cell target] from:self];
+        [[NSApplication sharedApplication] sendAction:[_cell action] to:[_cell target] from:self];
 }
 
 - (BOOL)drawsBackground {

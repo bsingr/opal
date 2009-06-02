@@ -11,11 +11,11 @@
 @implementation NSShadow
 
 - (void)set {
-    id ctx = [[NSGraphicsContext currentContext] graphicsPort];
-    ctx.shadowBlur = _shadowBlurRadius;
-    ctx.shadowColor = [_shadowColor rgbaString];
-    ctx.shadowOffsetX = _shadowOffset.width;
-    ctx.shadowOffsetY = _shadowOffset.height;
+    // id ctx = [[NSGraphicsContext currentContext] graphicsPort];
+    //     ctx.shadowBlur = _shadowBlurRadius;
+    //     ctx.shadowColor = [_shadowColor rgbaString];
+    //     ctx.shadowOffsetX = _shadowOffset.width;
+    //     ctx.shadowOffsetY = _shadowOffset.height;
 }
 
 - (void)setShadowBlurRadius:(int)val {

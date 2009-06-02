@@ -77,9 +77,9 @@
         }
     }
     
-    NSNotification *notification = [NSNotification notificationWithName:NSTextDidEndEditingNotification object:self userInfo:nil];
-    [[NSNotificationCenter defaultCenter] postNotification:notification];
-    
+    // NSNotification *notification = [NSNotification notificationWithName:NSTextDidEndEditingNotification object:self userInfo:nil];
+    //    [[NSNotificationCenter defaultCenter] postNotification:notification];
+    //    
     return YES;
 }
 
@@ -474,32 +474,32 @@
 
 - (void)setDelegate:(id)anObject
 {
-    NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
-    
-    if (_delegate == anObject)
-        return;
-    
-    if (_delegate)
-    {
-        [nc removeObserver:_delegate name:NSTextDidBeginEditingNotification object:self];
-        [nc removeObserver:_delegate name:NSTextDidEndEditingNotification object:self];
-        [nc removeObserver:_delegate name:NSTextDidChangeNotification object:self];
-        [nc removeObserver:_delegate name:NSTextViewDidChangeSelectionNotification object:self];
-    }
-    
-    _delegate = anObject;
-    
-    if ([_delegate respondsToSelector:@selector(textDidBeginEditing:)])
-        [nc addObserver:_delegate selector:@selector(textDidBeginEditing:) name:NSTextDidBeginEditingNotification object:self];
-
-    if ([_delegate respondsToSelector:@selector(textDidEndEditing:)])
-        [nc addObserver:_delegate selector:@selector(textDidEndEditing:) name:NSTextDidEndEditingNotification object:self];
-    
-    if ([_delegate respondsToSelector:@selector(textDidChange:)])
-        [nc addObserver:_delegate selector:@selector(textDidChange:) name:NSTextDidChangeNotification object:self];
-    
-    if ([_delegate respondsToSelector:@selector(textViewDidChangeSelection:)])
-        [nc addObserver:_delegate selector:@selector(textViewDidChangeSelection:) name:NSTextViewDidChangeSelectionNotification object:self];
+    // NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+    //     
+    //     if (_delegate == anObject)
+    //         return;
+    //     
+    //     if (_delegate)
+    //     {
+    //         [nc removeObserver:_delegate name:NSTextDidBeginEditingNotification object:self];
+    //         [nc removeObserver:_delegate name:NSTextDidEndEditingNotification object:self];
+    //         [nc removeObserver:_delegate name:NSTextDidChangeNotification object:self];
+    //         [nc removeObserver:_delegate name:NSTextViewDidChangeSelectionNotification object:self];
+    //     }
+    //     
+    //     _delegate = anObject;
+    //     
+    //     if ([_delegate respondsToSelector:@selector(textDidBeginEditing:)])
+    //         [nc addObserver:_delegate selector:@selector(textDidBeginEditing:) name:NSTextDidBeginEditingNotification object:self];
+    // 
+    //     if ([_delegate respondsToSelector:@selector(textDidEndEditing:)])
+    //         [nc addObserver:_delegate selector:@selector(textDidEndEditing:) name:NSTextDidEndEditingNotification object:self];
+    //     
+    //     if ([_delegate respondsToSelector:@selector(textDidChange:)])
+    //         [nc addObserver:_delegate selector:@selector(textDidChange:) name:NSTextDidChangeNotification object:self];
+    //     
+    //     if ([_delegate respondsToSelector:@selector(textViewDidChangeSelection:)])
+    //         [nc addObserver:_delegate selector:@selector(textViewDidChangeSelection:) name:NSTextViewDidChangeSelectionNotification object:self];
 }
 
 - (id)delegate
@@ -510,7 +510,7 @@
 // MARK: Posting notifications
 - (void)postTextDidChangeNotification
 {
-    [[NSNotificationCenter defaultCenter] postNotificationName:NSTextDidChangeNotification object:self];
+    // [[NSNotificationCenter defaultCenter] postNotificationName:NSTextDidChangeNotification object:self];
 }
 
 @end

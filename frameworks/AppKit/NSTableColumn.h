@@ -8,6 +8,7 @@
 
 #import <Foundation/NSObject.h>
 #import <Foundation/NSGeometry.h>
+#import <AppKit/NSTableHeaderCell.h>
 
 @class NSTableView;
 @class NSCell;
@@ -22,6 +23,17 @@ enum {
 
 @interface NSTableColumn : NSObject <NSCoding>
 {
+    NSString        *_identifier;
+    NSTableView     *_tableView;
+    
+    NSUInteger       _width;
+    NSUInteger       _minWidth;
+    NSUInteger       _maxWidth;
+    
+    NSCell          *_headerCell;
+    NSCell          *_dataCell;
+    BOOL             _editable;
+    BOOL             _hidden;
 }
 
 - (id)initWithIdentifier:(id)identifier;

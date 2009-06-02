@@ -13,6 +13,22 @@
 
 @interface NSMenuItem : NSObject
 {
+    NSMenu      *_menu;
+    NSMenu      *_subMenu;
+    NSString    *_title;
+    NSString    *_keyEquivalent;
+    NSUInteger   _keyEquivalentModifierMask;
+    NSInteger    _mnenomicLocation;
+    NSInteger    _state;
+    NSImage     *_onStateImage;
+    NSImage     *_offStateImage;
+    id           _target;
+    SEL          _action;
+    NSInteger    _tag;
+    id           _extraData;
+    
+    BOOL         _isEnabled;
+    BOOL         _isHidden;
 }
 
 + (void)setUsesUserKeyEquivalents:(BOOL)flag;

@@ -8,6 +8,8 @@
 
 #import "NSGraphicsContext.h"
 
+id NSGraphicsContextCurrent = nil;
+
 @implementation NSGraphicsContext
 
 + (NSGraphicsContext *)graphicsContextWithGraphicsPort:(void *)graphicsPort flipped:(BOOL)initialFlippedState
@@ -33,12 +35,12 @@
 
 + (NSGraphicsContext *)currentContext
 {
-    return NSGraphicsContextCurrent;
+    // return NSGraphicsContextCurrent;
 }
 
 + (void)setCurrentContext:(NSGraphicsContext *)context
 {
-    NSGraphicsContextCurrent = context;
+    // NSGraphicsContextCurrent = context;
 }
 
 + (void)saveGraphicsState {

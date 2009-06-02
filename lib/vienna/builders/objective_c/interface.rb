@@ -64,6 +64,7 @@ module Vienna
         interface.super_class = super_class
         current_file().interfaces << interface
         symbol_table_add name, interface
+        
         # puts "Adding symbol: #{name} for object #{interface}"
         
         # copy parent's ivars
@@ -88,6 +89,9 @@ module Vienna
 	  
 	  
 	  def get_method_by_selector(int, selector)
+	    
+	    return nil unless int
+	    
       int.instance_methods.each do |i|
         return i if i.name == selector
       end
