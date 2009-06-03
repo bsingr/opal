@@ -42,7 +42,7 @@
 - (void)drawInteriorWithFrame:(NSRect)cellFrame inView:(NSView *)controlView
 {
     // The text in the textfield
-    NSString *textToDraw;
+    NSString *textToDraw = @"";
     if (_value == @"") {
         textToDraw = _placeholderString;
         //[[NSColor disabledControlTextColor] set];

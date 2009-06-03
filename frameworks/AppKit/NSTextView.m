@@ -152,7 +152,7 @@
     // selected range: show either beam, or highlight
     if (_selectedRange.length == 0)
     {
-        NSString *stringBeforeLocation = _string.substr(0, _selectedRange.location);
+        // NSString *stringBeforeLocation = _string.substr(0, _selectedRange.location);
         NSInteger stringBeforeWidth = [stringBeforeLocation sizeWithAttributes:nil];
         
         [[NSColor textColor] set];
@@ -282,7 +282,7 @@
 
 - (void)replaceCharactersInRange:(NSRange)aRange withString:(NSString *)aString
 {
-    _string = _string.substr(0, aRange.location) + aString + _string.substr(aRange.location + aRange.length, _string.length);
+    // _string = _string.substr(0, aRange.location) + aString + _string.substr(aRange.location + aRange.length, _string.length);
     [self postTextDidChangeNotification];
     [self setNeedsDisplay:YES];
 }

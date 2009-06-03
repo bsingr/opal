@@ -25,7 +25,6 @@ objc_msgSend(_dataCell, "setSelectable:", YES);
 }
 
 return self;
-
 }, "void");
 
 class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
@@ -38,62 +37,50 @@ _minWidth = objc_msgSend(aCoder, "decodeIntForKey:", "NSMinWidth");
 _maxWidth = objc_msgSend(aCoder, "decodeIntForKey:", "NSMaxWidth");
 NSLog(_width);
 return self;
-
 }, "void");
 
 class_addMethod(the_class, "setTableView:", function(self, _cmd, aTableView) {
 _tableView = aTableView;
-
 }, "void");
 
 class_addMethod(the_class, "tableView", function(self, _cmd) {
 return _tableView;
-
 }, "void");
 
 class_addMethod(the_class, "setWidth:", function(self, _cmd, newWidth) {
 _width = newWidth;
-
 }, "void");
 
 class_addMethod(the_class, "width", function(self, _cmd) {
 return _width;
-
 }, "void");
 
 class_addMethod(the_class, "setHeaderCell:", function(self, _cmd, aCell) {
 _headerCell = aCell;
-
 }, "void");
 
 class_addMethod(the_class, "headerCell", function(self, _cmd) {
 return _headerCell;
-
 }, "void");
 
 class_addMethod(the_class, "setDataCell:", function(self, _cmd, aCell) {
 _dataCell = aCell;
-
 }, "void");
 
 class_addMethod(the_class, "dataCell", function(self, _cmd) {
 return _dataCell;
-
 }, "void");
 
 class_addMethod(the_class, "dataCellForRow:", function(self, _cmd, row) {
 return _dataCell;
-
 }, "void");
 
 class_addMethod(the_class, "setIdentifier:", function(self, _cmd, anObject) {
 _identifier = anObject;
-
 }, "void");
 
 class_addMethod(the_class, "identifier", function(self, _cmd) {
 return _identifier;
-
 }, "void");
 
 class_addMethod(the_class, "setEditable:", function(self, _cmd, flag) {
@@ -101,21 +88,17 @@ if (flag == 0)
 flag = NO;
 
 _editable = flag;
-
 }, "void");
 
 class_addMethod(the_class, "isEditable", function(self, _cmd) {
 return _editable;
-
 }, "void");
 
 class_addMethod(the_class, "isHidden", function(self, _cmd) {
 return _hidden;
-
 }, "void");
 
 class_addMethod(the_class, "setHidden:", function(self, _cmd, hidden) {
 _hidden = hidden;
-
 }, "void");
 

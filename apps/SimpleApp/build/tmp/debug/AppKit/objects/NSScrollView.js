@@ -42,32 +42,29 @@ class_addIvar(the_class, "_contentView", "NSView");
 class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
 objc_msgSendSuper({super_class:NSView, receiver:self}, "initWithCoder:", aCoder);
 var flags = objc_msgSend(aCoder, "decodeIntForKey:", "NSsFlags");
-if (Unhandled output_expression: [&(), flags (IDENTIFIER), 0x10 (CONSTANT)])
+if (flags & 0x10)
 _hasVerticalScroller = YES;
 else
 _hasVerticalScroller = NO;
 
-if (Unhandled output_expression: [&(), flags (IDENTIFIER), 0x20 (CONSTANT)])
+if (flags & 0x20)
 _hasHorizontalScroller = YES;
 else
 _hasHorizontalScroller = NO;
 
-_borderType = Unhandled output_expression: [&(), flags (IDENTIFIER), 0x303 (CONSTANT)];
-FOR (FOR)objc_msgSend(self, "tile");
+_borderType = flags & 0x303;
+/* for statement needs to go here*/objc_msgSend(self, "tile");
 return self;
-
 }, "void");
 
 class_addMethod(the_class, "initWithFrame:", function(self, _cmd, frameRect) {
 objc_msgSendSuper({super_class:NSView, receiver:self}, "initWithFrame:", frameRect);
-_contentView = objc_msgSend(objc_msgSend(NSView, "alloc"), "initWithFrame:", NSMakeRect(0000));
+_contentView = objc_msgSend(objc_msgSend(NSView, "alloc"), "initWithFrame:", NSMakeRect(0,0,0,0));
 return self;
-
 }, "void");
 
 class_addMethod(the_class, "resizeSubviewsWithOldSize:", function(self, _cmd, oldBoundsSize) {
 objc_msgSend(self, "tile");
-
 }, "void");
 
 class_addMethod(the_class, "tile", function(self, _cmd) {
@@ -75,7 +72,7 @@ var tilingFrame;
 if (_headerClipView)
 {
 NSLog("got header clip view");
-tilingFrame = NSMakeRect(1Unhandled output_expression: [-(), [.(.), [.(.), _frame (IDENTIFIER), size (IDENTIFIER)], height (IDENTIFIER)], [.(.), [.(.), [M(), _headerClipView (IDENTIFIER), bounds (IDENTIFIER)], size (IDENTIFIER)], height (IDENTIFIER)]]_frame.size.widthobjc_msgSend(_headerClipView, "bounds").size.height);
+tilingFrame = NSMakeRect(1,_frame.size.height - objc_msgSend(_headerClipView, "bounds").size.height,_frame.size.width,objc_msgSend(_headerClipView, "bounds").size.height);
 objc_msgSend(_headerClipView, "setFrame:", tilingFrame);
 
 }
@@ -83,17 +80,15 @@ objc_msgSend(_headerClipView, "setFrame:", tilingFrame);
 if (_clipView)
 {
 NSLog("got header clip view");
-tilingFrame = NSMakeRect(11_frame.size.widthobjc_msgSend(_clipView, "bounds").size.height);
+tilingFrame = NSMakeRect(1,1,_frame.size.width,objc_msgSend(_clipView, "bounds").size.height);
 objc_msgSend(_clipView, "setFrame:", tilingFrame);
 
 }
-
 
 }, "void");
 
 class_addMethod(the_class, "drawRect:", function(self, _cmd, dirtyRect) {
 objc_msgSend(objc_msgSend(NSColor, "colorWithCalibratedRed:green:blue:alpha:", 0.851, 0.851, 0.851, 1.0), "set");
-objc_msgSend(NSBezierPath, "strokeRect:", NSMakeRect(0.50.5Unhandled output_expression: [-(), [.(.), [.(.), _bounds (IDENTIFIER), size (IDENTIFIER)], width (IDENTIFIER)], 1 (CONSTANT)]Unhandled output_expression: [-(), [.(.), [.(.), _bounds (IDENTIFIER), size (IDENTIFIER)], height (IDENTIFIER)], 1 (CONSTANT)]));
-
+objc_msgSend(NSBezierPath, "strokeRect:", NSMakeRect(0.5,0.5,_bounds.size.width - 1,_bounds.size.height - 1));
 }, "void");
 

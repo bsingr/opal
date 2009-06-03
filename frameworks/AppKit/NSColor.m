@@ -164,14 +164,14 @@
     int redComponent = _red * 255;
     int blueComponent = _blue * 255;
     int greenComponent = _green * 255;
-    return "rgb(" + Math.round(redComponent) + "," + Math.round(greenComponent) + "," + Math.round(blueComponent) + ")";
+    return @"rgb";
 }
 
 - (NSString *)rgbaString {
     int redComponent = _red * 255;
     int blueComponent = _blue * 255;
     int greenComponent = _green * 255;
-    return "rgba(" + Math.round(redComponent) + "," + Math.round(greenComponent) + "," + Math.round(blueComponent) + "," + _alpha + ")";
+    return @"rgb";
 }
 
 @end

@@ -1466,10 +1466,10 @@ racc_reduce_table = [
   2, 124, :_reduce_307,
   1, 211, :_reduce_308,
   1, 211, :_reduce_309,
-  4, 212, :_reduce_none,
-  3, 212, :_reduce_none,
-  3, 212, :_reduce_none,
-  2, 212, :_reduce_none ]
+  4, 212, :_reduce_310,
+  3, 212, :_reduce_311,
+  3, 212, :_reduce_312,
+  2, 212, :_reduce_313 ]
 
 racc_reduce_n = 314
 
@@ -3711,13 +3711,33 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 644)
   end
 .,.,
 
-# reduce 310 omitted
+module_eval(<<'.,.,', 'objective_c.rb.y', 650)
+  def _reduce_310(val, _values, result)
+     puts "first" 
+    result
+  end
+.,.,
 
-# reduce 311 omitted
+module_eval(<<'.,.,', 'objective_c.rb.y', 651)
+  def _reduce_311(val, _values, result)
+     result = make_node('F', make_node(',', val[0], val[1]), val[2]) 
+    result
+  end
+.,.,
 
-# reduce 312 omitted
+module_eval(<<'.,.,', 'objective_c.rb.y', 652)
+  def _reduce_312(val, _values, result)
+     puts "third" 
+    result
+  end
+.,.,
 
-# reduce 313 omitted
+module_eval(<<'.,.,', 'objective_c.rb.y', 653)
+  def _reduce_313(val, _values, result)
+     puts "forth" 
+    result
+  end
+.,.,
 
 def _reduce_none(val, _values, result)
   val[0]

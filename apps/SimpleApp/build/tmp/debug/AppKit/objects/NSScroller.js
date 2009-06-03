@@ -37,13 +37,12 @@ class_addIvar(the_class, "_isVertical", "BOOL");
 
 class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
 objc_msgSendSuper({super_class:NSControl, receiver:self}, "initWithCoder:", aCoder);
-if (Unhandled output_expression: [<(), [.(.), [.(.), _bounds (IDENTIFIER), size (IDENTIFIER)], width (IDENTIFIER)], [.(.), [.(.), _bounds (IDENTIFIER), size (IDENTIFIER)], height (IDENTIFIER)]])
+if (_bounds.size.width < _bounds.size.height)
 _isVertical = YES;
 else
 _isVertical = NO;
 
 return self;
-
 }, "void");
 
 class_addMethod(the_class, "initWithFrame:", function(self, _cmd, frameRect) {
@@ -54,17 +53,14 @@ if (self)
 }
 
 return self;
-
 }, "void");
 
 class_addMethod(the_class, "drawRect:", function(self, _cmd, rect) {
 objc_msgSend(objc_msgSend(NSColor, "colorWithCalibratedRed:green:blue:alpha:", 0.4, 0.5, 0.4, 1), "set");
 objc_msgSend(NSBezierPath, "fillRect:", rect);
-
 }, "void");
 
 class_addMethod(the_class, "isVertical", function(self, _cmd) {
 return _isVertical;
-
 }, "void");
 

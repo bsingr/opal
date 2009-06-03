@@ -54,6 +54,5 @@ class_addIvar(the_class, "_alternatingRowBackground", "BOOL");
 class_addMethod(the_class, "initWithFrame:", function(self, _cmd, frameRect) {
 objc_msgSendSuper({super_class:NSTableView, receiver:self}, "initWithFrame:", frameRect);
 return self;
-
 }, "void");
 

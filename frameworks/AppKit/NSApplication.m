@@ -319,10 +319,10 @@ id NSApp = nil;
 
 @end
 
-// int NSApplicationMain(int argc, const char *argv[])
-// {
-//     
-// }
+int NSApplicationMain(int argc, const char *argv[])
+{
+    
+}
 
 NSString *NSApplicationDidBecomeActiveNotification = @"NSApplicationDidBecomeActiveNotification";
 NSString *NSApplicationDidHideNotification = @"NSApplicationDidHideNotification";

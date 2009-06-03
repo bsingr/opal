@@ -43,13 +43,11 @@ class_addMethod(the_class, "drawRect:", function(self, _cmd, aRect) {
 objc_msgSend(objc_msgSend(NSColor, "colorWithCalibratedRed:green:blue:alpha:", 1, 1, 1, 0.95), "set");
 objc_msgSend(NSBezierPath, "fillRect:", aRect);
 objc_msgSend(objc_msgSend(NSColor, "colorWithCalibratedRed:green:blue:alpha:", 0.698, 0.698, 0.698, 0.95), "set");
-objc_msgSend(NSBezierPath, "strokeRect:", NSMakeRect(Unhandled output_expression: [+(), [.(.), [.(.), aRect (IDENTIFIER), origin (IDENTIFIER)], x (IDENTIFIER)], 0.5 (CONSTANT)]Unhandled output_expression: [+(), [.(.), [.(.), aRect (IDENTIFIER), origin (IDENTIFIER)], y (IDENTIFIER)], 0.5 (CONSTANT)]Unhandled output_expression: [-(), [+(), [.(.), [.(.), aRect (IDENTIFIER), origin (IDENTIFIER)], x (IDENTIFIER)], [.(.), [.(.), aRect (IDENTIFIER), size (IDENTIFIER)], width (IDENTIFIER)]], 1 (CONSTANT)]Unhandled output_expression: [-(), [+(), [.(.), [.(.), aRect (IDENTIFIER), origin (IDENTIFIER)], y (IDENTIFIER)], [.(.), [.(.), aRect (IDENTIFIER), size (IDENTIFIER)], height (IDENTIFIER)]], 1 (CONSTANT)]));
-
+objc_msgSend(NSBezierPath, "strokeRect:", NSMakeRect(aRect.origin.x + 0.5,aRect.origin.y + 0.5,aRect.origin.x + aRect.size.width - 1,aRect.origin.y + aRect.size.height - 1));
 }, "void");
 
 class_addMethod(the_class, "isReleasedWhenClosed", function(self, _cmd) {
 return YES;
-
 }, "void");
 
 class_addMethod(the_class, "becomeKeyWindow", function(self, _cmd) {
@@ -57,12 +55,10 @@ if (objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "keyWindow"))
 objc_msgSend(objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "keyWindow"), "resignKeyWindow");
 
 _keyWindow = YES;
-
 }, "void");
 
 class_addMethod(the_class, "resignKeyWindow", function(self, _cmd) {
 _keyWindow = NO;
-
 }, "void");
 
 class_addMethod(the_class, "becomeMainWindow", function(self, _cmd) {
@@ -70,11 +66,9 @@ if (objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "mainWindow")
 objc_msgSend(objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "mainWindow"), "resignMainWindow");
 
 _mainWindow = YES;
-
 }, "void");
 
 class_addMethod(the_class, "resignMainWindow", function(self, _cmd) {
 _mainWindow = NO;
-
 }, "void");
 

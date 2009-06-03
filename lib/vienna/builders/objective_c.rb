@@ -237,6 +237,8 @@ module Vienna
       
       if d.token == :AT_CLASS
         deal_with_at_class d
+      elsif d.value == 'F'
+        current_file().functions << d
       elsif d.token == :AT_IMPLEMENTATION
         deal_with_implementation d
       elsif d.token == :AT_INTERFACE

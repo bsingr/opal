@@ -49,16 +49,14 @@ class_addIvar(the_class, "_gCanvas", "CGContextRef");
 
 class_addMethod(the_class, "setDelegate:", function(self, _cmd, anObject) {
 _delegate = anObject;
-
 }, "void");
 
 class_addMethod(the_class, "initWithFrame:", function(self, _cmd, aFrame) {
 objc_msgSend(self, "init");
 _frame = aFrame;
-_bounds = NSMakeRect(00_frame.size.width_frame.size.height);
+_bounds = NSMakeRect(0,0,_frame.size.width,_frame.size.height);
 _gCanvas = NSWindowServerCreateCanvas(self);
 _subviews = objc_msgSend(NSMutableArray, "arrayWithCapacity:", 0);
 return self;
-
 }, "void");
 

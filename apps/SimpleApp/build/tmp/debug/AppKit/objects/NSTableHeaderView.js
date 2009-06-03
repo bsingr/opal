@@ -34,7 +34,6 @@ class_addIvar(the_class, "_tableView", "NSTableView");
 class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
 objc_msgSendSuper({super_class:NSView, receiver:self}, "initWithCoder:", aCoder);
 return self;
-
 }, "void");
 
 class_addMethod(the_class, "initWithFrame:", function(self, _cmd, frameRect) {
@@ -45,43 +44,38 @@ if (self)
 }
 
 return self;
-
 }, "void");
 
 class_addMethod(the_class, "setTableView:", function(self, _cmd, aTableView) {
 _tableView = aTableView;
 objc_msgSend(self, "setNeedsDisplay:", YES);
-
 }, "void");
 
 class_addMethod(the_class, "tableView", function(self, _cmd) {
 return _tableView;
-
 }, "void");
 
 class_addMethod(the_class, "drawRect:", function(self, _cmd, rect) {
 var gradientTop = objc_msgSend(NSColor, "colorWithCalibratedRed:green:blue:alpha:", 1, 1, 1, 1.0);
 var gradientBottom = objc_msgSend(NSColor, "colorWithCalibratedRed:green:blue:alpha:", 0.902, 0.902, 0.902, 1.0);
 var backgroundGradient = objc_msgSend(objc_msgSend(NSGradient, "alloc"), "initWithStartingColor:endingColor:", gradientTop, gradientBottom);
-objc_msgSend(backgroundGradient, "drawInRect:angle:", NSMakeRect(rect.origin.xrect.origin.yrect.size.widthrect.size.height), 0);
+objc_msgSend(backgroundGradient, "drawInRect:angle:", NSMakeRect(rect.origin.x,rect.origin.y,rect.size.width,rect.size.height), 0);
 objc_msgSend(objc_msgSend(NSColor, "colorWithCalibratedRed:green:blue:alpha:", 0.851, 0.851, 0.851, 1), "set");
 var topBorder = objc_msgSend(NSBezierPath, "bezierPath");
-objc_msgSend(topBorder, "moveToPoint:", NSMakePoint(rect.origin.xUnhandled output_expression: [-(), [+(), [.(.), [.(.), rect (IDENTIFIER), origin (IDENTIFIER)], y (IDENTIFIER)], [.(.), [.(.), rect (IDENTIFIER), size (IDENTIFIER)], height (IDENTIFIER)]], 0.5 (CONSTANT)]));
-objc_msgSend(topBorder, "lineToPoint:", NSMakePoint(Unhandled output_expression: [+(), [.(.), [.(.), rect (IDENTIFIER), origin (IDENTIFIER)], x (IDENTIFIER)], [.(.), [.(.), rect (IDENTIFIER), size (IDENTIFIER)], width (IDENTIFIER)]]Unhandled output_expression: [-(), [+(), [.(.), [.(.), rect (IDENTIFIER), origin (IDENTIFIER)], y (IDENTIFIER)], [.(.), [.(.), rect (IDENTIFIER), size (IDENTIFIER)], height (IDENTIFIER)]], 0.5 (CONSTANT)]));
+objc_msgSend(topBorder, "moveToPoint:", NSMakePoint(rect.origin.x,rect.origin.y + rect.size.height - 0.5));
+objc_msgSend(topBorder, "lineToPoint:", NSMakePoint(rect.origin.x + rect.size.width,rect.origin.y + rect.size.height - 0.5));
 objc_msgSend(topBorder, "stroke");
 if (_tableView)
 {
 var tableColumns = objc_msgSend(_tableView, "tableColumns");
 var count = objc_msgSend(tableColumns, "count");
 var spacing = objc_msgSend(_tableView, "intercellSpacing");
-var columnRect = NSMakeRect(_bounds.origin.x_bounds.origin.y_bounds.size.width_bounds.size.height);
-FOR (FOR)
+var columnRect = NSMakeRect(_bounds.origin.x,_bounds.origin.y,_bounds.size.width,_bounds.size.height);
+/* for statement needs to go here*/
 }
-
 
 }, "void");
 
 class_addMethod(the_class, "headerRectOfColumn:", function(self, _cmd, columnIndex) {
-
 }, "void");
 

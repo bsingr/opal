@@ -21,169 +21,137 @@ objc_msgSend(self, "init");
 if (self)
 {
 _itemIdentifier = itemIdentifier;
-_minSize = NULL;
-_maxSize = NULL;
+_minSize = null;
+_maxSize = null;
 
 }
 
 return self;
-
 }, "void");
 
 class_addMethod(the_class, "drawRect:", function(self, _cmd, dirtyRect) {
-
 }, "void");
 
 class_addMethod(the_class, "setNeedsDisplay:", function(self, _cmd, flag) {
-objc_msgSend(self, "drawRect:", nil);
-
+objc_msgSend(self, "drawRect:", null);
 }, "void");
 
 class_addMethod(the_class, "setNeedsDisplayInRect:", function(self, _cmd, invalidRect) {
 objc_msgSend(self, "setNeedsDisplay:", YES);
-
 }, "void");
 
 class_addMethod(the_class, "setLeftOffset:", function(self, _cmd, left) {
-
 }, "void");
 
 class_addMethod(the_class, "mouseDown:", function(self, _cmd, theEvent) {
-NSLog(Unhandled output_expression: "[NSToolbarItem mouseDown]" (STRING_LITERAL));
-
+NSLog("[NSToolbarItem mouseDown]");
 }, "void");
 
 class_addMethod(the_class, "mouseUp:", function(self, _cmd, theEvent) {
-NSLog(Unhandled output_expression: "[NSToolbarItem mouseDown]" (STRING_LITERAL));
-
+NSLog("[NSToolbarItem mouseDown]");
 }, "void");
 
 class_addMethod(the_class, "displayMode", function(self, _cmd) {
 return _displayMode;
-
 }, "void");
 
 class_addMethod(the_class, "setDisplayMode:", function(self, _cmd, displayMode) {
 _displayMode = displayMode;
-
 }, "void");
 
 class_addMethod(the_class, "itemIdentifier", function(self, _cmd) {
 return _itemIdentifier;
-
 }, "void");
 
 class_addMethod(the_class, "toolbar", function(self, _cmd) {
 return _toolBar;
-
 }, "void");
 
 class_addMethod(the_class, "setToolbar:", function(self, _cmd, toolbar) {
 _toolBar = toolbar;
 objc_msgSend(self, "setNeedsDisplay:", YES);
-
 }, "void");
 
 class_addMethod(the_class, "label", function(self, _cmd) {
 return _label;
-
 }, "void");
 
 class_addMethod(the_class, "setLabel:", function(self, _cmd, label) {
 _label = label;
 objc_msgSend(self, "setNeedsDisplay:", YES);
-
 }, "void");
 
 class_addMethod(the_class, "toolTip", function(self, _cmd) {
 return _toolTip;
-
 }, "void");
 
 class_addMethod(the_class, "setToolTip:", function(self, _cmd, toolTip) {
 _toolTip = toolTip;
-
 }, "void");
 
 class_addMethod(the_class, "tag", function(self, _cmd) {
 return _tag;
-
 }, "void");
 
 class_addMethod(the_class, "setTag:", function(self, _cmd, tag) {
 _tag = tag;
-
 }, "void");
 
 class_addMethod(the_class, "target", function(self, _cmd) {
 return _target;
-
 }, "void");
 
 class_addMethod(the_class, "setTarget:", function(self, _cmd, target) {
 _target = target;
-
 }, "void");
 
 class_addMethod(the_class, "action", function(self, _cmd) {
 return _action;
-
 }, "void");
 
 class_addMethod(the_class, "setAction:", function(self, _cmd, action) {
 _action = action;
-
 }, "void");
 
 class_addMethod(the_class, "isEnabled", function(self, _cmd) {
 return _isEnabled;
-
 }, "void");
 
 class_addMethod(the_class, "setEnabled:", function(self, _cmd, enabled) {
 _isEnabled = enabled;
 objc_msgSend(self, "setNeedsDisplay:", YES);
-
 }, "void");
 
 class_addMethod(the_class, "image", function(self, _cmd) {
 return _image;
-
 }, "void");
 
 class_addMethod(the_class, "setImage:", function(self, _cmd, image) {
 _image = image;
 objc_msgSend(self, "setNeedsDisplay:", YES);
-
 }, "void");
 
 class_addMethod(the_class, "view", function(self, _cmd) {
 return _view;
-
 }, "void");
 
 class_addMethod(the_class, "setView:", function(self, _cmd, view) {
 _view = view;
-
 }, "void");
 
 class_addMethod(the_class, "minSize", function(self, _cmd) {
 return _minSize;
-
 }, "void");
 
 class_addMethod(the_class, "setMinSize:", function(self, _cmd, size) {
 _minSize = size;
-
 }, "void");
 
 class_addMethod(the_class, "maxSize", function(self, _cmd) {
 return _maxSize;
-
 }, "void");
 
 class_addMethod(the_class, "setMaxSize:", function(self, _cmd, size) {
 _maxSize = size;
-
 }, "void");
 

@@ -4,12 +4,11 @@ objc_registerClassPair(the_class);
 class_addIvar(the_class, "isa", "Class");
 
 class_addMethod(the_class, "init", function(self, _cmd) {
-if (Unhandled output_expression: [((), [=(=), self (IDENTIFIER), [M(), super (IDENTIFIER), init (IDENTIFIER)]], ])
+if ((self = objc_msgSendSuper({super_class:NSObject, receiver:self}, "init")))
 {
 
 }
 
 return self;
-
 }, "void");
 

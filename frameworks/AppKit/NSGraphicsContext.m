@@ -45,12 +45,12 @@ id NSGraphicsContextCurrent = nil;
 
 + (void)saveGraphicsState {
     id ctx = [[NSGraphicsContext currentContext] graphicsPort];
-    ctx.save();
+    // ctx.save();
 }
 
 + (void)restoreGraphicsState {
     id ctx = [[NSGraphicsContext currentContext] graphicsPort];
-    ctx.restore();
+    // ctx.restore();
 }
 
 @end

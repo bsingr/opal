@@ -72,7 +72,7 @@
         // Background.. for now, hard code that it must be alternating
         NSArray *backgroundColors = [NSColor controlAlternatingRowBackgroundColors];
         if (_rowHeight) {
-            NSUInteger rowsToDraw = Math.round(_bounds.size.height / _rowHeight) + 1;
+            // NSUInteger rowsToDraw = Math.round(_bounds.size.height / _rowHeight) + 1;
             
             BOOL oddRow = YES;
             NSColor colorToDraw;

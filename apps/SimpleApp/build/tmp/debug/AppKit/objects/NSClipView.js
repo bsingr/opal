@@ -8,7 +8,6 @@ class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
 objc_msgSendSuper({super_class:NSObject, receiver:self}, "initWithCoder:", aCoder);
 _docView = objc_msgSend(aCoder, "decodeObjectForKey:", "NSDocView");
 return self;
-
 }, "void");
 
 class_addMethod(the_class, "initWithFrame:", function(self, _cmd, frame) {
@@ -19,10 +18,8 @@ if (self)
 }
 
 return self;
-
 }, "void");
 
 class_addMethod(the_class, "drawRect:", function(self, _cmd, aRect) {
-
 }, "void");
 

@@ -42,7 +42,6 @@ if (self)
 }
 
 return self;
-
 }, "void");
 
 var the_class = objc_allocateClassPair(NSCell, "NSSliderCell");

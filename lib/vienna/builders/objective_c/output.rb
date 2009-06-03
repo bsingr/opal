@@ -29,8 +29,20 @@ module Vienna
         output_implementation(f, i)
         symbol_table_pop()
       end
+      
+      @this_file.functions.each do |func|
+        symbol_table_push()
+        output_function_definition(f, func)
+        symbol_table_pop()
+      end
   	  
   	  f.close
+    end
+    
+    def output_function_definition(file, func)
+      file.write "function #{func.left.right.left.value}()\n{\n"
+      output_statement_list file, func.right
+      file.write "}"
     end
     
     # Outputs the implementation 'imp' to the file 'file'. At the moment no type
@@ -90,7 +102,7 @@ module Vienna
         output_compound_statement file, i.imp
         
         # end of method, so output types from array
-        file.write "\n}, \"void\");\n\n"
+        file.write "}, \"void\");\n\n"
         
         # Finish: pop symbol table to remove all local params to method
         symbol_table_pop()
@@ -116,7 +128,7 @@ module Vienna
         output_compound_statement file, c.imp
         
         # end of method, so output types from array
-        file.write "\n}, \"void\");\n\n"
+        file.write "}, \"void\");\n\n"
         
         # Finish: pop symbol table to remove all local params to method
         symbol_table_pop()
@@ -179,6 +191,10 @@ module Vienna
         if @reserved_keywords.include? statement.value
           parser_error_on_node statement, "cannot use word"
         end
+        if statement.value == "nil" or statement.value == "NULL"
+          file.write "null"
+          return statement.value
+        end
         the_symbol = lookup_symbol statement.value
         # parser_error_on_node(statement, "unknown symbol #{statement.value}") if the_symbol.nil?
         file.write statement.value
@@ -191,6 +207,9 @@ module Vienna
         return statement.value
       elsif statement.token == :AT_STRING_LITERAL
         file.write statement.value.match(/@(\".*\")/)[1]
+        return statement.value
+      elsif statement.token == :STRING_LITERAL
+        file.write statement.value
         return statement.value
       elsif statement.token == '='
         output_assignment file, statement
@@ -208,15 +227,87 @@ module Vienna
         output_expression file, statement.left
         file.write " == "
         output_expression file, statement.right
+      elsif statement.value == :NE_OP
+        output_expression file, statement.left
+        file.write " != "
+        output_expression file, statement.right
+      elsif statement.value == :LEFT_OP
+        output_expression file, statement.left
+        file.write " << "
+        output_expression file, statement.right
+      elsif statement.value == :RIGHT_OP
+        output_expression file, statement.left
+        file.write " >> "
+        output_expression file, statement.right
+      elsif statement.value == :AND_OP
+        output_expression file, statement.left
+        file.write " && "
+        output_expression file, statement.right
+      elsif statement.value == :OR_OP
+        output_expression file, statement.left
+        file.write " || "
+        output_expression file, statement.right
+      elsif statement.value == :ADD_ASSIGN
+        output_expression file, statement.left
+        file.write " += "
+        output_expression file, statement.right
+      elsif statement.value == :SUB_ASSIGN
+        output_expression file, statement.left
+        file.write " -= "
+        output_expression file, statement.right
+      elsif statement.value == '-'
+        output_expression file, statement.left
+        file.write " - "
+        output_expression file, statement.right
+      elsif statement.value == '+'
+        output_expression file, statement.left
+        file.write " + "
+        output_expression file, statement.right
+      elsif statement.value == '*'
+        output_expression file, statement.left
+        file.write " * "
+        output_expression file, statement.right
+      elsif statement.value == '/'
+        output_expression file, statement.left
+        file.write " / "
+        output_expression file, statement.right
+      elsif statement.value == '>'
+        output_expression file, statement.left
+        file.write " > "
+        output_expression file, statement.right
+      elsif statement.value == '<'
+        output_expression file, statement.left
+        file.write " < "
+        output_expression file, statement.right
       elsif statement.value == :AT_SELECTOR
         output_at_selector file, statement
+      elsif statement.value == "("
+        file.write "("
+        output_expression file, statement.left
+        file.write ")"
+      elsif statement.value == "&"
+        output_expression file, statement.left
+        file.write " & "
+        output_expression file, statement.right
+       elsif statement.value == "|"
+          output_expression file, statement.left
+          file.write " | "
+          output_expression file, statement.right
+      elsif statement.value == ","
+        if statement.left.value == "!"
+          file.write "!"
+          output_expression file, statement.right
+        elsif statement.left.value == "-"
+          file.write "-"
+          output_expression file, statement.right
+        end
       else
         file.write "Unhandled output_expression: #{statement}"
       end
     end
     
     def output_for_statement(file, statement)
-      file.write statement
+      file.write "/* for statement needs to go here*/"
     end
     
     
@@ -310,7 +401,7 @@ module Vienna
     def output_dot_notation(file, statement)
       output_expression file, statement.left
       file.write "."
-      file.write statement.right.value
+      output_expression file, statement.right
     end
     
     def output_function_call(file, statement)
@@ -325,6 +416,7 @@ module Vienna
       
       if params.value == ","
         output_function_call_params file, params.left
+        file.write ","
         output_function_call_params file, params.right
       else
         output_expression file, params

@@ -47,8 +47,11 @@ module Vienna
       javascript_sources.each do |j|
         # puts j
       end
-      
-    end    
+    end  
+    
+    def clean!
+      puts "Cleaning project (Not yet implemented)"
+    end  
     
     # Returns an array of all the frameworks required by this application. This
     # might, but never should, be nil... so be careful when using and relying on

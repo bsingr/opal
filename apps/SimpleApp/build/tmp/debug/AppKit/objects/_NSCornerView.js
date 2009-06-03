@@ -33,7 +33,6 @@ class_addIvar(the_class, "_DOMGraphicsContext", "id");
 class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
 objc_msgSendSuper({super_class:NSView, receiver:self}, "initWithCoder:", aCoder);
 return self;
-
 }, "void");
 
 class_addMethod(the_class, "initWithFrame:", function(self, _cmd, frame) {
@@ -44,10 +43,8 @@ if (self)
 }
 
 return self;
-
 }, "void");
 
 class_addMethod(the_class, "drawRect:", function(self, _cmd, rect) {
-
 }, "void");
 

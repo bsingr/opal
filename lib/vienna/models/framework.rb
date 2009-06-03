@@ -63,19 +63,14 @@ module Vienna
       
       all_objects = Dir.glob(File.join(@parent.tmp_prefix, bundle_name, 'objects', '*.js'))
       framework_out = File.new(File.join(@parent.build_prefix, 'Frameworks', bundle_name) + "/#{bundle_name}.js", 'w')
-      # all_objects.each do |i|
-      #         f = File.new(i)
-      #         t = f.read
-      #         framework_out.write t
-      #       end
-      
-      # @link_config.each do |key, value|
-      #         link_object_file(key, framework_out)
-      #       end
       
       all_objects.each do |f|
         link_object_file(File.basename(f), framework_out)
       end
+      
+      # =====================================================================
+      # = Finished linking here. so compilation is (technically) completed! =
+      # =====================================================================
       
       framework_out.close
     end

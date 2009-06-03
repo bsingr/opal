@@ -28,36 +28,33 @@ class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
 objc_msgSendSuper({super_class:NSTextFieldCell, receiver:self}, "initWithCoder:", aCoder);
 _value = objc_msgSend(aCoder, "decodeStringForKey:", "NSContents");
 return self;
-
 }, "void");
 
 class_addMethod(the_class, "drawInteriorWithFrame:inView:", function(self, _cmd, cellFrame, controlView) {
 var borderBottom = objc_msgSend(NSBezierPath, "bezierPath");
 objc_msgSend(objc_msgSend(NSColor, "colorWithCalibratedRed:green:blue:alpha:", 0.702, 0.702, 0.702, 1.0), "set");
 objc_msgSend(borderBottom, "setLineWidth:", 1.0);
-objc_msgSend(borderBottom, "moveToPoint:", NSMakePoint(Unhandled output_expression: [+(), [.(.), [.(.), cellFrame (IDENTIFIER), origin (IDENTIFIER)], x (IDENTIFIER)], 0.5 (CONSTANT)]Unhandled output_expression: [+(), [.(.), [.(.), cellFrame (IDENTIFIER), origin (IDENTIFIER)], y (IDENTIFIER)], 0.5 (CONSTANT)]));
-objc_msgSend(borderBottom, "lineToPoint:", NSMakePoint(Unhandled output_expression: [+(), [.(.), [.(.), cellFrame (IDENTIFIER), origin (IDENTIFIER)], x (IDENTIFIER)], [.(.), [.(.), cellFrame (IDENTIFIER), size (IDENTIFIER)], width (IDENTIFIER)]]Unhandled output_expression: [+(), [.(.), [.(.), cellFrame (IDENTIFIER), origin (IDENTIFIER)], y (IDENTIFIER)], 0.5 (CONSTANT)]));
+objc_msgSend(borderBottom, "moveToPoint:", NSMakePoint(cellFrame.origin.x + 0.5,cellFrame.origin.y + 0.5));
+objc_msgSend(borderBottom, "lineToPoint:", NSMakePoint(cellFrame.origin.x + cellFrame.size.width,cellFrame.origin.y + 0.5));
 objc_msgSend(borderBottom, "stroke");
 var borderRight = objc_msgSend(NSBezierPath, "bezierPath");
 objc_msgSend(objc_msgSend(NSColor, "colorWithCalibratedRed:green:blue:alpha:", 0.702, 0.702, 0.702, 1.0), "set");
 objc_msgSend(borderRight, "setLineWidth:", 1.0);
-objc_msgSend(borderRight, "moveToPoint:", NSMakePoint(Unhandled output_expression: [-(), [+(), [.(.), [.(.), cellFrame (IDENTIFIER), origin (IDENTIFIER)], x (IDENTIFIER)], [.(.), [.(.), cellFrame (IDENTIFIER), size (IDENTIFIER)], width (IDENTIFIER)]], 0.5 (CONSTANT)]Unhandled output_expression: [+(), [.(.), [.(.), cellFrame (IDENTIFIER), origin (IDENTIFIER)], y (IDENTIFIER)], 1.5 (CONSTANT)]));
-objc_msgSend(borderRight, "lineToPoint:", NSMakePoint(Unhandled output_expression: [-(), [+(), [.(.), [.(.), cellFrame (IDENTIFIER), origin (IDENTIFIER)], x (IDENTIFIER)], [.(.), [.(.), cellFrame (IDENTIFIER), size (IDENTIFIER)], width (IDENTIFIER)]], 0.5 (CONSTANT)]Unhandled output_expression: [+(), [.(.), [.(.), cellFrame (IDENTIFIER), origin (IDENTIFIER)], y (IDENTIFIER)], [.(.), [.(.), cellFrame (IDENTIFIER), size (IDENTIFIER)], height (IDENTIFIER)]]));
+objc_msgSend(borderRight, "moveToPoint:", NSMakePoint(cellFrame.origin.x + cellFrame.size.width - 0.5,cellFrame.origin.y + 1.5));
+objc_msgSend(borderRight, "lineToPoint:", NSMakePoint(cellFrame.origin.x + cellFrame.size.width - 0.5,cellFrame.origin.y + cellFrame.size.height));
 objc_msgSend(borderRight, "stroke");
 objc_msgSend(NSGraphicsContext, "saveGraphicsState");
 objc_msgSend(objc_msgSend(NSColor, "colorWithCalibratedRed:green:blue:alpha:", 0.325, 0.325, 0.325, 1.0), "set");
 objc_msgSend(objc_msgSend(NSFont, "systemFontOfSize:", objc_msgSend(NSFont, "smallSystemFontSize")), "set");
 var titleShadow = objc_msgSend(objc_msgSend(NSShadow, "alloc"), "init");
-objc_msgSend(titleShadow, "setShadowOffset:", NSMakeSize(11));
+objc_msgSend(titleShadow, "setShadowOffset:", NSMakeSize(1,1));
 objc_msgSend(titleShadow, "setShadowBlurRadius:", 1);
 objc_msgSend(titleShadow, "setShadowColor:", objc_msgSend(NSColor, "colorWithCalibratedRed:green:blue:alpha:", 1, 1, 1, 0.5));
 objc_msgSend(titleShadow, "set");
-objc_msgSend(_value, "drawWithRect:options:attributes:", NSMakeRect(Unhandled output_expression: [+(), [.(.), [.(.), cellFrame (IDENTIFIER), origin (IDENTIFIER)], x (IDENTIFIER)], 4 (CONSTANT)]Unhandled output_expression: [+(), [.(.), [.(.), cellFrame (IDENTIFIER), origin (IDENTIFIER)], y (IDENTIFIER)], 4 (CONSTANT)]cellFrame.size.width0), nil, nil);
+objc_msgSend(_value, "drawWithRect:options:attributes:", NSMakeRect(cellFrame.origin.x + 4,cellFrame.origin.y + 4,cellFrame.size.width,0), null, null);
 objc_msgSend(NSGraphicsContext, "restoreGraphicsState");
-
 }, "void");
 
 class_addMethod(the_class, "highlight:withFrame:inView:", function(self, _cmd, flag, cellFrame, controlView) {
-
 }, "void");
 

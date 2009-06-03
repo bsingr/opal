@@ -13,68 +13,52 @@ _cursor = cursor;
 }
 
 return self;
-
 }, "void");
 
 class_addMethod(the_class, "set", function(self, _cmd) {
-
 }, "void");
 
 class_addMethod(meta_class, "currentCursor", function(self, _cmd) {
-
 }, "void");
 
 class_addMethod(meta_class, "arrowCursor", function(self, _cmd) {
 return objc_msgSend(objc_msgSend(NSCursor, "alloc"), "initWithCursorString:", "default");
-
 }, "void");
 
 class_addMethod(meta_class, "closedHandCursor", function(self, _cmd) {
-
 }, "void");
 
 class_addMethod(meta_class, "crosshairCursor", function(self, _cmd) {
-
 }, "void");
 
 class_addMethod(meta_class, "disappearingItemCursor", function(self, _cmd) {
-
 }, "void");
 
 class_addMethod(meta_class, "IBeamCursor", function(self, _cmd) {
 return objc_msgSend(objc_msgSend(NSCursor, "alloc"), "initWithCursorString:", "text");
-
 }, "void");
 
 class_addMethod(meta_class, "openHandCursor", function(self, _cmd) {
-
 }, "void");
 
 class_addMethod(meta_class, "pointingHandCursor", function(self, _cmd) {
-
 }, "void");
 
 class_addMethod(meta_class, "resizeDownCursor", function(self, _cmd) {
-
 }, "void");
 
 class_addMethod(meta_class, "resizeLeftCursor", function(self, _cmd) {
-
 }, "void");
 
 class_addMethod(meta_class, "resizeLeftRightCursor", function(self, _cmd) {
-
 }, "void");
 
 class_addMethod(meta_class, "resizeRightCursor", function(self, _cmd) {
-
 }, "void");
 
 class_addMethod(meta_class, "resizeUpCursor", function(self, _cmd) {
-
 }, "void");
 
 class_addMethod(meta_class, "resizeUpDownCursor", function(self, _cmd) {
-
 }, "void");
 

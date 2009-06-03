@@ -648,10 +648,10 @@ class Vienna::ObjectiveCParser
     	;
 
     function_definition:
-    	  declaration_specifiers declarator declaration_list compound_statement
-    	| declaration_specifiers declarator compound_statement
-    	| declarator declaration_list compound_statement
-    	| declarator compound_statement
+    	  declaration_specifiers declarator declaration_list compound_statement { puts "first" }
+    	| declaration_specifiers declarator compound_statement                  { result = make_node('F', make_node(',', val[0], val[1]), val[2]) }
+    	| declarator declaration_list compound_statement                        { puts "third" }
+    	| declarator compound_statement                                         { puts "forth" }
     	;
     
 end

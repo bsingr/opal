@@ -38,16 +38,15 @@ class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
 objc_msgSendSuper({super_class:NSControl, receiver:self}, "initWithCoder:", aCoder);
 if (objc_msgSend(self, "isEditable"))
 {
-_frame.origin.x = Unhandled output_expression: [-(), [.(.), [.(.), _frame (IDENTIFIER), origin (IDENTIFIER)], x (IDENTIFIER)], 3 (CONSTANT)];
-_frame.origin.y = Unhandled output_expression: [-(), [.(.), [.(.), _frame (IDENTIFIER), origin (IDENTIFIER)], y (IDENTIFIER)], 3 (CONSTANT)];
-_frame.size.width = Unhandled output_expression: [+(), [.(.), [.(.), _frame (IDENTIFIER), size (IDENTIFIER)], width (IDENTIFIER)], 6 (CONSTANT)];
-_frame.size.height = Unhandled output_expression: [+(), [.(.), [.(.), _frame (IDENTIFIER), size (IDENTIFIER)], height (IDENTIFIER)], 6 (CONSTANT)];
+_frame.origin.x = _frame.origin.x - 3;
+_frame.origin.y = _frame.origin.y - 3;
+_frame.size.width = _frame.size.width + 6;
+_frame.size.height = _frame.size.height + 6;
 objc_msgSend(self, "setFrame:", _frame);
 
 }
 
 return self;
-
 }, "void");
 
 class_addMethod(the_class, "observeValueForKeyPath:ofObject:change:context:", function(self, _cmd, keyPath, object, change, context) {
@@ -87,28 +86,25 @@ objc_msgSendSuper({super_class:NSControl, receiver:self}, "observeValueForKeyPat
 
 
 
-
 }, "void");
 
 class_addMethod(the_class, "becomeFirstResponder", function(self, _cmd) {
-objc_msgSend(self, "selectText:", nil);
+objc_msgSend(self, "selectText:", null);
 return YES;
-
 }, "void");
 
 class_addMethod(the_class, "acceptsFirstResponder", function(self, _cmd) {
 return YES;
-
 }, "void");
 
 class_addMethod(the_class, "selectText:", function(self, _cmd, sender) {
 NSLog("oh yeah");
-if (Unhandled output_expression: [,(), ! (!), [M(), _cell (IDENTIFIER), isEnabled (IDENTIFIER)]])
+if (!objc_msgSend(_cell, "isEnabled"))
 return ;
 
-if (Unhandled output_expression: [OR_OP(), [M(), _cell (IDENTIFIER), isSelectable (IDENTIFIER)], [M(), _cell (IDENTIFIER), isEditable (IDENTIFIER)]])
+if (objc_msgSend(_cell, "isSelectable") || objc_msgSend(_cell, "isEditable"))
 {
-if (Unhandled output_expression: [,(), ! (!), _currentEditor (IDENTIFIER)])
+if (!_currentEditor)
 {
 _currentEditor = objc_msgSend(objc_msgSend(self, "window"), "fieldEditor:forObject:", YES, self);
 _currentEditor = objc_msgSend(_cell, "setUpFieldEditorAttributes:", _currentEditor);
@@ -119,17 +115,16 @@ objc_msgSend(_cell, "selectWithFrame:inView:editor:delegate:start:length:", _bou
 
 }
 
-
 }, "void");
 
 class_addMethod(the_class, "mouseDown:", function(self, _cmd, theEvent) {
 NSLog("hmm");
-if (Unhandled output_expression: [,(), ! (!), [M(), _cell (IDENTIFIER), isEnabled (IDENTIFIER)]])
+if (!objc_msgSend(_cell, "isEnabled"))
 return ;
 
-if (Unhandled output_expression: [OR_OP(), [M(), _cell (IDENTIFIER), isSelectable (IDENTIFIER)], [M(), _cell (IDENTIFIER), isEditable (IDENTIFIER)]])
+if (objc_msgSend(_cell, "isSelectable") || objc_msgSend(_cell, "isEditable"))
 {
-if (Unhandled output_expression: [,(), ! (!), _currentEditor (IDENTIFIER)])
+if (!_currentEditor)
 {
 NSLog("first one");
 _currentEditor = objc_msgSend(objc_msgSend(self, "window"), "fieldEditor:forObject:", YES, self);
@@ -143,22 +138,19 @@ objc_msgSend(_cell, "editWithFrame:inView:editor:delegate:event:", _bounds, self
 
 }
 
-
 }, "void");
 
 class_addMethod(the_class, "mouseUp:", function(self, _cmd, theEvent) {
 objc_msgSend(_cell, "setHighlighted:", NO);
 objc_msgSend(self, "setNeedsDisplay:", YES);
-if (Unhandled output_expression: [AND_OP(), [M(), _cell (IDENTIFIER), action (IDENTIFIER)], [M(), _cell (IDENTIFIER), target (IDENTIFIER)]])
+if (objc_msgSend(_cell, "action") && objc_msgSend(_cell, "target"))
 objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "sendAction:to:from:", objc_msgSend(_cell, "action"), objc_msgSend(_cell, "target"), self);
-
 
 }, "void");
 
 class_addMethod(the_class, "drawsBackground", function(self, _cmd) {
 if (_cell)
 return objc_msgSend(_cell, "drawsBackground");
-
 
 }, "void");
 
@@ -167,42 +159,36 @@ if (_cell)
 objc_msgSend(_cell, "setDrawsBackground:", flag);
 
 objc_msgSend(self, "setNeedsDisplay:", YES);
-
 }, "void");
 
 class_addMethod(the_class, "setBezeled:", function(self, _cmd, flag) {
 objc_msgSend(_cell, "setBezeled:", flag);
 objc_msgSend(self, "setNeedsDisplay:", YES);
-
 }, "void");
 
 class_addMethod(the_class, "isBezeled", function(self, _cmd) {
 return objc_msgSend(_cell, "isBezeled");
-
 }, "void");
 
 class_addMethod(the_class, "setBezelStyle:", function(self, _cmd, style) {
 objc_msgSend(_cell, "setBezelStyle:", style);
 objc_msgSend(self, "setNeedsDisplay:", YES);
-
 }, "void");
 
 class_addMethod(the_class, "bezelStyle", function(self, _cmd) {
 return objc_msgSend(_cell, "bezelStyle");
-
 }, "void");
 
 class_addMethod(the_class, "textDidEndEditing:", function(self, _cmd, aNotification) {
 NSLog("first");
 objc_msgSendSuper({super_class:NSControl, receiver:self}, "textDidEndEditing:", aNotification);
 NSLog("second");
-_currentEditor = nil;
+_currentEditor = null;
 NSLog("third");
 objc_msgSend(self, "lockFocus");
 NSLog("fourth");
 objc_msgSend(_cell, "highlight:withFrame:inView:", NO, _bounds, self);
 NSLog("fifth");
 objc_msgSend(self, "unlockFocus");
-
 }, "void");
 

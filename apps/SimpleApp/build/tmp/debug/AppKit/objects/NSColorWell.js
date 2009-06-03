@@ -38,26 +38,22 @@ class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
 _value = objc_msgSend(NSColor, "colorWithCalibratedRed:green:blue:alpha:", 0, 0.3, 0.8, 1.0);
 objc_msgSendSuper({super_class:NSControl, receiver:self}, "initWithCoder:", aCoder);
 return self;
-
 }, "void");
 
 class_addMethod(the_class, "mouseDown:", function(self, _cmd, sender) {
 NSLog("NSColorWell - orderFront color picker");
-
 }, "void");
 
 class_addMethod(the_class, "mouseUp:", function(self, _cmd, sender) {
-
 }, "void");
 
 class_addMethod(the_class, "drawRect:", function(self, _cmd, bounds) {
 objc_msgSend(objc_msgSend(NSColor, "colorWithCalibratedRed:green:blue:alpha:", 0.851, 0.851, 0.851, 1.0), "set");
-objc_msgSend(NSBezierPath, "strokeRect:", NSMakeRect(Unhandled output_expression: [+(), [.(.), [.(.), bounds (IDENTIFIER), origin (IDENTIFIER)], x (IDENTIFIER)], 0.5 (CONSTANT)]Unhandled output_expression: [+(), [.(.), [.(.), bounds (IDENTIFIER), origin (IDENTIFIER)], y (IDENTIFIER)], 0.5 (CONSTANT)]Unhandled output_expression: [-(), [+(), [.(.), [.(.), bounds (IDENTIFIER), origin (IDENTIFIER)], x (IDENTIFIER)], [.(.), [.(.), bounds (IDENTIFIER), size (IDENTIFIER)], width (IDENTIFIER)]], 1 (CONSTANT)]Unhandled output_expression: [-(), [+(), [.(.), [.(.), bounds (IDENTIFIER), origin (IDENTIFIER)], y (IDENTIFIER)], [.(.), [.(.), bounds (IDENTIFIER), size (IDENTIFIER)], height (IDENTIFIER)]], 1 (CONSTANT)]));
+objc_msgSend(NSBezierPath, "strokeRect:", NSMakeRect(bounds.origin.x + 0.5,bounds.origin.y + 0.5,bounds.origin.x + bounds.size.width - 1,bounds.origin.y + bounds.size.height - 1));
 objc_msgSend(objc_msgSend(NSColor, "colorWithCalibratedRed:green:blue:alpha:", 0.996, 0.996, 0.996, 1.0), "set");
-objc_msgSend(NSBezierPath, "fillRect:", NSMakeRect(Unhandled output_expression: [+(), [.(.), [.(.), bounds (IDENTIFIER), origin (IDENTIFIER)], x (IDENTIFIER)], 1 (CONSTANT)]Unhandled output_expression: [+(), [.(.), [.(.), bounds (IDENTIFIER), origin (IDENTIFIER)], y (IDENTIFIER)], 1 (CONSTANT)]Unhandled output_expression: [-(), [+(), [.(.), [.(.), bounds (IDENTIFIER), origin (IDENTIFIER)], x (IDENTIFIER)], [.(.), [.(.), bounds (IDENTIFIER), size (IDENTIFIER)], width (IDENTIFIER)]], 2 (CONSTANT)]Unhandled output_expression: [-(), [+(), [.(.), [.(.), bounds (IDENTIFIER), origin (IDENTIFIER)], y (IDENTIFIER)], [.(.), [.(.), bounds (IDENTIFIER), size (IDENTIFIER)], height (IDENTIFIER)]], 2 (CONSTANT)]));
+objc_msgSend(NSBezierPath, "fillRect:", NSMakeRect(bounds.origin.x + 1,bounds.origin.y + 1,bounds.origin.x + bounds.size.width - 2,bounds.origin.y + bounds.size.height - 2));
 objc_msgSend(_value, "set");
-objc_msgSend(NSBezierPath, "fillRect:", NSMakeRect(Unhandled output_expression: [+(), [.(.), [.(.), bounds (IDENTIFIER), origin (IDENTIFIER)], x (IDENTIFIER)], 4 (CONSTANT)]Unhandled output_expression: [+(), [.(.), [.(.), bounds (IDENTIFIER), origin (IDENTIFIER)], y (IDENTIFIER)], 4 (CONSTANT)]Unhandled output_expression: [-(), [+(), [.(.), [.(.), bounds (IDENTIFIER), origin (IDENTIFIER)], x (IDENTIFIER)], [.(.), [.(.), bounds (IDENTIFIER), size (IDENTIFIER)], width (IDENTIFIER)]], 8 (CONSTANT)]Unhandled output_expression: [-(), [+(), [.(.), [.(.), bounds (IDENTIFIER), origin (IDENTIFIER)], y (IDENTIFIER)], [.(.), [.(.), bounds (IDENTIFIER), size (IDENTIFIER)], height (IDENTIFIER)]], 8 (CONSTANT)]));
-
+objc_msgSend(NSBezierPath, "fillRect:", NSMakeRect(bounds.origin.x + 4,bounds.origin.y + 4,bounds.origin.x + bounds.size.width - 8,bounds.origin.y + bounds.size.height - 8));
 }, "void");
 
 class_addMethod(the_class, "observeValueForKeyPath:ofObject:change:context:", function(self, _cmd, keyPath, object, change, context) {
@@ -86,7 +82,6 @@ else
 objc_msgSendSuper({super_class:NSControl, receiver:self}, "observeValueForKeyPath:ofObject:change:context:", keyPath, object, change, context);
 
 }
-
 
 
 

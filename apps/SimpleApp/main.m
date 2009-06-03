@@ -8,4 +8,7 @@
 
 // #import <Vienna/Vienna.h>
 
-extern int myString;
+int main(int argc, char *argv[])
+{
+    return 3;
+}
