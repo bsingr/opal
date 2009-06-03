@@ -7,3 +7,8 @@ class_addMethod(the_class, "init", function(self, _cmd) {
 return null;
 }, "void");
 
+function main(argc,argv)
+{
+var myDict = objc_msgSend(objc_msgSend(NSMutableDictionary, "alloc"), "init");
+return NSApplicationMain();
+}

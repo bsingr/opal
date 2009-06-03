@@ -158,7 +158,7 @@ class_addMethod(the_class, "decodeDataObject", function(self, _cmd) {
 class_addMethod(the_class, "versionForClassName:", function(self, _cmd, className) {
 }, "void");
 
-var the_class = objc_allocateClassPair(NSCoder, "NSArchiver");
+[d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSInconsistentArchiveException (IDENTIFIER)], @"NSInconsistentArchiveException" (AT_STRING_LITERAL)]]var the_class = objc_allocateClassPair(NSCoder, "NSArchiver");
 var meta_class = the_class.isa;
 objc_registerClassPair(the_class);
 class_addIvar(the_class, "isa", "Class");
@@ -448,7 +448,153 @@ class_addMethod(the_class, "initWithCapacity:", function(self, _cmd, numItems) {
 class_addMethod(meta_class, "arrayWithCapacity:", function(self, _cmd, numItems) {
 }, "void");
 
-var the_class = objc_allocateClassPair(NSObject, "NSNotification");
+var the_class = objc_allocateClassPair(NSObject, "NSDictionary");
+var meta_class = the_class.isa;
+objc_registerClassPair(the_class);
+class_addIvar(the_class, "isa", "Class");
+
+class_addMethod(the_class, "init", function(self, _cmd) {
+return CFDictionaryCreateMutable();
+}, "void");
+
+class_addMethod(the_class, "count", function(self, _cmd) {
+}, "void");
+
+class_addMethod(the_class, "objectForKey:", function(self, _cmd, aKey) {
+}, "void");
+
+class_addMethod(the_class, "keyEnumerator", function(self, _cmd) {
+}, "void");
+
+var the_class = NSDictionary;
+var meta_class = the_class.isa;
+
+class_addMethod(the_class, "allKeys", function(self, _cmd) {
+}, "void");
+
+class_addMethod(the_class, "allKeysForObject:", function(self, _cmd, anObject) {
+}, "void");
+
+class_addMethod(the_class, "allValues", function(self, _cmd) {
+}, "void");
+
+class_addMethod(the_class, "description", function(self, _cmd) {
+}, "void");
+
+class_addMethod(the_class, "descriptionInStringsFileFormat", function(self, _cmd) {
+}, "void");
+
+class_addMethod(the_class, "descriptionWithLocale:", function(self, _cmd, locale) {
+}, "void");
+
+class_addMethod(the_class, "descriptionWithLocale:indent:", function(self, _cmd, locale, level) {
+}, "void");
+
+class_addMethod(the_class, "isEqualToDictionary:", function(self, _cmd, otherDictionary) {
+}, "void");
+
+class_addMethod(the_class, "objectEnumerator", function(self, _cmd) {
+}, "void");
+
+class_addMethod(the_class, "objectsForKeys:notFoundMarker:", function(self, _cmd, keys, marker) {
+}, "void");
+
+class_addMethod(the_class, "writeToFile:atomically:", function(self, _cmd, path, useAuxiliaryFile) {
+}, "void");
+
+class_addMethod(the_class, "writeToURL:atomically:", function(self, _cmd, url, atomically) {
+}, "void");
+
+class_addMethod(the_class, "keysSortedByValueUsingSelector:", function(self, _cmd, comparator) {
+}, "void");
+
+class_addMethod(the_class, "getObjects:andKeys:", function(self, _cmd, objects, keys) {
+}, "void");
+
+var the_class = NSDictionary;
+var meta_class = the_class.isa;
+
+class_addMethod(the_class, "initWithObjects:forKeys:count:", function(self, _cmd, objects, keys, cnt) {
+}, "void");
+
+class_addMethod(the_class, "initWithObjectsAndKeys:", function(self, _cmd, firstObject) {
+}, "void");
+
+class_addMethod(the_class, "initWithDictionary:", function(self, _cmd, otherDictionary) {
+}, "void");
+
+class_addMethod(the_class, "initWithDictionary:copyItems:", function(self, _cmd, otherDictionary, flag) {
+}, "void");
+
+class_addMethod(the_class, "initWithObjects:forKeys:", function(self, _cmd, objects, keys) {
+}, "void");
+
+class_addMethod(the_class, "initWithContentsOfFile:", function(self, _cmd, path) {
+}, "void");
+
+class_addMethod(the_class, "initWithContentsOfURL:", function(self, _cmd, url) {
+}, "void");
+
+class_addMethod(meta_class, "dictionary", function(self, _cmd) {
+}, "void");
+
+class_addMethod(meta_class, "dictionaryWithObject:forKey:", function(self, _cmd, object, key) {
+}, "void");
+
+class_addMethod(meta_class, "dictionaryWithObjects:forKeys:count:", function(self, _cmd, objects, keys, cnt) {
+}, "void");
+
+class_addMethod(meta_class, "dictionaryWithObjectsAndKeys:", function(self, _cmd, firstObject) {
+}, "void");
+
+class_addMethod(meta_class, "dictionaryWithDictionary:", function(self, _cmd, dict) {
+}, "void");
+
+class_addMethod(meta_class, "dictionaryWithObjects:forKeys:", function(self, _cmd, objects, keys) {
+}, "void");
+
+class_addMethod(meta_class, "dictionaryWithContentsOfFile:", function(self, _cmd, path) {
+}, "void");
+
+class_addMethod(meta_class, "dictionaryWithContentsOfURL:", function(self, _cmd, url) {
+}, "void");
+
+var the_class = objc_allocateClassPair(NSDictionary, "NSMutableDictionary");
+var meta_class = the_class.isa;
+objc_registerClassPair(the_class);
+class_addIvar(the_class, "isa", "Class");
+
+class_addMethod(the_class, "removeObjectForKey:", function(self, _cmd, aKey) {
+}, "void");
+
+class_addMethod(the_class, "setObject:forKey:", function(self, _cmd, anObject, aKey) {
+}, "void");
+
+var the_class = NSMutableDictionary;
+var meta_class = the_class.isa;
+
+class_addMethod(the_class, "addEntriesFromDictionary:", function(self, _cmd, otherDictionary) {
+}, "void");
+
+class_addMethod(the_class, "removeAllObjects", function(self, _cmd) {
+}, "void");
+
+class_addMethod(the_class, "removeObjectsForKeys:", function(self, _cmd, keyArray) {
+}, "void");
+
+class_addMethod(the_class, "setDictionary:", function(self, _cmd, otherDictionary) {
+}, "void");
+
+var the_class = NSMutableDictionary;
+var meta_class = the_class.isa;
+
+class_addMethod(the_class, "initWithCapacity:", function(self, _cmd, numItems) {
+}, "void");
+
+class_addMethod(meta_class, "dictionaryWithCapacity:", function(self, _cmd, numItems) {
+}, "void");
+
+[d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSUndefinedKeyException (IDENTIFIER)], @"NSUndefinedKeyException" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSAverageKeyValueOperator (IDENTIFIER)], @"NSAverageKeyValueOperator" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSCountKeyValueOperator (IDENTIFIER)], @"NSCountKeyValueOperator" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSDistinctUnionOfArraysKeyValueOperator (IDENTIFIER)], @"NSDistinctUnionOfArraysKeyValueOperator" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSDistinctUnionOfObjectsKeyValueOperator (IDENTIFIER)], @"NSDistinctUnionOfObjectsKeyValueOperator" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSDistinctUnionOfSetsKeyValueOperator (IDENTIFIER)], @"NSDistinctUnionOfSetsKeyValueOperator" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSMaximumKeyValueOperator (IDENTIFIER)], @"NSMaximumKeyValueOperator" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSMinimumKeyValueOperator (IDENTIFIER)], @"NSMinimumKeyValueOperator" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSSumKeyValueOperator (IDENTIFIER)], @"NSSumKeyValueOperator" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSUnionOfArraysKeyValueOperator (IDENTIFIER)], @"NSUnionOfArraysKeyValueOperator" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSUnionOfObjectsKeyValueOperator (IDENTIFIER)], @"NSUnionOfObjectsKeyValueOperator" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSUnionOfSetsKeyValueOperator (IDENTIFIER)], @"NSUnionOfSetsKeyValueOperator" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSKeyValueChangeKindKey (IDENTIFIER)], @"NSKeyValueChangeKindKey" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSKeyValueChangeNewKey (IDENTIFIER)], @"NSKeyValueChangeNewKey" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSKeyValueChangeOldKey (IDENTIFIER)], @"NSKeyValueChangeOldKey" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSKeyValueChangeIndexesKey (IDENTIFIER)], @"NSKeyValueChangeIndexesKey" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSKeyValueChangeNotificationIsPriorKey (IDENTIFIER)], @"NSKeyValueChangeNotificationIsPriorKey" (AT_STRING_LITERAL)]][d(), id (TYPE_NAME), [=(), NSNotificationCenterDefault (IDENTIFIER), nil (IDENTIFIER)]]var the_class = objc_allocateClassPair(NSObject, "NSNotification");
 var meta_class = the_class.isa;
 objc_registerClassPair(the_class);
 class_addIvar(the_class, "isa", "Class");
@@ -497,7 +643,10 @@ class_addMethod(the_class, "removeObserver:name:object:", function(self, _cmd, o
 class_addMethod(meta_class, "defaultCenter", function(self, _cmd) {
 }, "void");
 
-var the_class = objc_allocateClassPair(NSObject, "NSProxy");
+function NSLog(format)
+{
+printf(format);
+}var the_class = objc_allocateClassPair(NSObject, "NSProxy");
 var meta_class = the_class.isa;
 objc_registerClassPair(the_class);
 class_addIvar(the_class, "isa", "Class");

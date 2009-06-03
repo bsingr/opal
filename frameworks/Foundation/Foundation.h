@@ -16,6 +16,7 @@
 #import <Foundation/NSCoder.h>
 #import <Foundation/NSData.h>
 #import <Foundation/NSDate.h>
+#import <Foundation/NSDictionary.h>
 #import <Foundation/NSEnumerator.h>
 #import <Foundation/NSGeometry.h>
 #import <Foundation/NSNotification.h>

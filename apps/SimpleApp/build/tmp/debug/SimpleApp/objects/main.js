@@ -1,4 +1,5 @@
-function main()
+function main(argc,argv)
 {
-return 3;
+var myDict = objc_msgSend(objc_msgSend(NSMutableDictionary, "alloc"), "init");
+return NSApplicationMain();
 }

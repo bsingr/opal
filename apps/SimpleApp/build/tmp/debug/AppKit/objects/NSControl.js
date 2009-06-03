@@ -1,4 +1,4 @@
-var the_class = objc_allocateClassPair(NSView, "NSControl");
+[d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSControlTextDidBeginEditingNotification (IDENTIFIER)], @"NSControlTextDidBeginEditingNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSControlTextDidEndEditingNotification (IDENTIFIER)], @"NSControlTextDidEndEditingNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSControlTextDidChangeNotification (IDENTIFIER)], @"NSControlTextDidChangeNotification" (AT_STRING_LITERAL)]]var the_class = objc_allocateClassPair(NSView, "NSControl");
 var meta_class = the_class.isa;
 objc_registerClassPair(the_class);
 class_addIvar(the_class, "isa", "Class");

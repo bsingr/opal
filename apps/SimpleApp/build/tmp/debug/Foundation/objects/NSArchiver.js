@@ -1,4 +1,4 @@
-var the_class = objc_allocateClassPair(NSCoder, "NSArchiver");
+[d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSInconsistentArchiveException (IDENTIFIER)], @"NSInconsistentArchiveException" (AT_STRING_LITERAL)]]var the_class = objc_allocateClassPair(NSCoder, "NSArchiver");
 var meta_class = the_class.isa;
 objc_registerClassPair(the_class);
 class_addIvar(the_class, "isa", "Class");

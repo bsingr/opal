@@ -14,7 +14,7 @@
 		
 		<style type="text/css" media="screen">
 			body {
-				margin: 0;
+				margin:0;
 				padding:0;
 			}
 		</style>
@@ -24,10 +24,6 @@
 			var __bootstrap_frameworks = ['objc', 'CoreFoundation', 'Foundation', 'CoreGraphics', 'AppKit', 'Vienna'];
 			var __bootstrap_application = 'SimpleApp';
 			var __bootstrap_completed = false;
-			
-			
-			// should this be here???
-			// var __bootstrap_locale = <%= project.preferred_language %>
 			
 			function __bootstrap_link()
 			{
@@ -56,10 +52,10 @@
 				else
 				{
 					var e = document.createElement("script");
-					e.src = "Frameworks/" + the_framework + "/" + the_framework + ".js";
-					e.type = "text/javascript";
-					e.onload = function() { console.log(the_framework + " loaded"); __bootstrap_link(); };
-					document.getElementsByTagName("head")[0].appendChild(e);
+															e.src = "Frameworks/" + the_framework + "/" + the_framework + ".js";
+															e.type = "text/javascript";
+															e.onload = function() { console.log(the_framework + " loaded"); __bootstrap_link(); };
+															document.getElementsByTagName("head")[0].appendChild(e);
 				}
 			}
 			

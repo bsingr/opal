@@ -47,6 +47,18 @@ module Vienna
       javascript_sources.each do |j|
         # puts j
       end
+      
+      all_objects = Dir.glob(File.join(tmp_prefix, bundle_name, 'objects', '*.js'))
+      bundle_out = File.new(build_prefix + "/#{bundle_name}.js", 'w')
+      
+      all_objects.each do |o|
+        f = File.new o
+        t = f.read
+        bundle_out.write t
+      end
+      
+      bundle_out.close
+      
     end  
     
     def clean!

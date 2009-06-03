@@ -10,5 +10,9 @@
 
 @implementation AppController
 
+- (id)init
+{
+	return nil;
+}
 
 @end

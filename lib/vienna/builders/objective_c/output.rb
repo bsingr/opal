@@ -22,11 +22,9 @@ module Vienna
       symbol_table_add("YES", 1)
       symbol_table_add("NO", 1)
       
-      @this_file.implementations.each do |i|
+      @this_file.direct_declarations.each do |dec|
         symbol_table_push()
-        symbol_table_add("self", lookup_symbol(i.name))
-        symbol_table_add("super", lookup_symbol(lookup_symbol(i.name).super_class))
-        output_implementation(f, i)
+        output_direct_declaration(f, dec)
         symbol_table_pop()
       end
       
@@ -35,14 +33,44 @@ module Vienna
         output_function_definition(f, func)
         symbol_table_pop()
       end
+      
+      @this_file.implementations.each do |i|
+        symbol_table_push()
+        symbol_table_add("self", lookup_symbol(i.name))
+        symbol_table_add("super", lookup_symbol(lookup_symbol(i.name).super_class))
+        output_implementation(f, i)
+        symbol_table_pop()
+      end
   	  
   	  f.close
     end
     
+    def output_direct_declaration(file, dec)
+      file.write dec
+    end
+    
     def output_function_definition(file, func)
-      file.write "function #{func.left.right.left.value}()\n{\n"
+      file.write "function #{func.left.right.left.value}("
+      output_function_definition_params(file, func.left.right.right)
+      file.write ")\n{\n"
       output_statement_list file, func.right
       file.write "}"
+    end
+    
+    def output_function_definition_params(file, params)
+      return unless params
+      
+      if params.value == ","
+        output_function_definition_params file, params.left
+        file.write ","
+        output_function_definition_params file, params.right
+      elsif params.value == "d"
+        if params.right.value == "*"
+          file.write params.right.right.value
+        else
+          file.write params.right.value
+        end
+      end
     end
     
     # Outputs the implementation 'imp' to the file 'file'. At the moment no type

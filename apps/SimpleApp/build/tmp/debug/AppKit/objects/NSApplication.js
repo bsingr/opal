@@ -1,4 +1,9 @@
-var the_class = objc_allocateClassPair(NSResponder, "NSApplication");
+[d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSModalPanelRunLoopMode (IDENTIFIER)], @"NSModalPanelRunLoopMode" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSEventTrackingRunLoopMode (IDENTIFIER)], @"NSEventTrackingRunLoopMode" (AT_STRING_LITERAL)]][d(), id (TYPE_NAME), [=(), NSApp (IDENTIFIER), nil (IDENTIFIER)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSApplicationDidBecomeActiveNotification (IDENTIFIER)], @"NSApplicationDidBecomeActiveNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSApplicationDidHideNotification (IDENTIFIER)], @"NSApplicationDidHideNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSApplicationDidFinishLaunchingNotification (IDENTIFIER)], @"NSApplicationDidFinishLaunchingNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSApplicationDidResignActiveNotification (IDENTIFIER)], @"NSApplicationDidResignActiveNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSApplicationDidUnhideNotification (IDENTIFIER)], @"NSApplicationDidUnhideNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSApplicationDidUpdateNotification (IDENTIFIER)], @"NSApplicationDidUpdateNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSApplicationWillBecomeActiveNotification (IDENTIFIER)], @"NSApplicationWillBecomeActiveNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSApplicationWillHideNotification (IDENTIFIER)], @"NSApplicationWillHideNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSApplicationWillFinishLaunchingNotification (IDENTIFIER)], @"NSApplicationWillFinishLaunchingNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSApplicationWillResignActiveNotification (IDENTIFIER)], @"NSApplicationWillResignActiveNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSApplicationWillUnhideNotification (IDENTIFIER)], @"NSApplicationWillUnhideNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSApplicationWillUpdateNotification (IDENTIFIER)], @"NSApplicationWillUpdateNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSApplicationWillTerminateNotification (IDENTIFIER)], @"NSApplicationWillTerminateNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSApplicationDidChangeScreenParametersNotification (IDENTIFIER)], @"NSApplicationDidChangeScreenParametersNotification" (AT_STRING_LITERAL)]]function NSApplicationMain(argc,argv)
+{
+var theAppController = objc_msgSend(objc_msgSend(AppController, "alloc"), "init");
+var theApp = objc_msgSend(NSApplication, "sharedApplication");
+objc_msgSend(theApp, "setDelegate:", theAppController);
+}var the_class = objc_allocateClassPair(NSResponder, "NSApplication");
 var meta_class = the_class.isa;
 objc_registerClassPair(the_class);
 class_addIvar(the_class, "isa", "Class");
@@ -208,6 +213,3 @@ class_addMethod(the_class, "orderFrontStandardAboutPanel:", function(self, _cmd,
 class_addMethod(the_class, "orderFrontStandardAboutPanelWithOptions:", function(self, _cmd, optionsDictionary) {
 }, "void");
 
-function NSApplicationMain()
-{
-}

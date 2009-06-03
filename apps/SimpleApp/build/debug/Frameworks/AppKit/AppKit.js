@@ -162,7 +162,7 @@ class_addMethod(the_class, "presentError:", function(self, _cmd, error) {
 class_addMethod(the_class, "willPresentError:", function(self, _cmd, error) {
 }, "void");
 
-var the_class = objc_allocateClassPair(NSResponder, "NSView");
+[d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSViewFrameDidChangeNotification (IDENTIFIER)], @"NSViewFrameDidChangeNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSViewFocusDidChangeNotification (IDENTIFIER)], @"NSViewFocusDidChangeNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSViewBoundsDidChangeNotification (IDENTIFIER)], @"NSViewBoundsDidChangeNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSViewGlobalFrameDidChangeNotification (IDENTIFIER)], @"NSViewGlobalFrameDidChangeNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSViewDidUpdateTrackingAreasNotification (IDENTIFIER)], @"NSViewDidUpdateTrackingAreasNotification" (AT_STRING_LITERAL)]]var the_class = objc_allocateClassPair(NSResponder, "NSView");
 var meta_class = the_class.isa;
 objc_registerClassPair(the_class);
 class_addIvar(the_class, "isa", "Class");
@@ -800,7 +800,12 @@ return self;
 class_addMethod(the_class, "drawRect:", function(self, _cmd, rect) {
 }, "void");
 
-var the_class = objc_allocateClassPair(NSResponder, "NSApplication");
+[d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSModalPanelRunLoopMode (IDENTIFIER)], @"NSModalPanelRunLoopMode" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSEventTrackingRunLoopMode (IDENTIFIER)], @"NSEventTrackingRunLoopMode" (AT_STRING_LITERAL)]][d(), id (TYPE_NAME), [=(), NSApp (IDENTIFIER), nil (IDENTIFIER)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSApplicationDidBecomeActiveNotification (IDENTIFIER)], @"NSApplicationDidBecomeActiveNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSApplicationDidHideNotification (IDENTIFIER)], @"NSApplicationDidHideNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSApplicationDidFinishLaunchingNotification (IDENTIFIER)], @"NSApplicationDidFinishLaunchingNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSApplicationDidResignActiveNotification (IDENTIFIER)], @"NSApplicationDidResignActiveNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSApplicationDidUnhideNotification (IDENTIFIER)], @"NSApplicationDidUnhideNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSApplicationDidUpdateNotification (IDENTIFIER)], @"NSApplicationDidUpdateNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSApplicationWillBecomeActiveNotification (IDENTIFIER)], @"NSApplicationWillBecomeActiveNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSApplicationWillHideNotification (IDENTIFIER)], @"NSApplicationWillHideNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSApplicationWillFinishLaunchingNotification (IDENTIFIER)], @"NSApplicationWillFinishLaunchingNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSApplicationWillResignActiveNotification (IDENTIFIER)], @"NSApplicationWillResignActiveNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSApplicationWillUnhideNotification (IDENTIFIER)], @"NSApplicationWillUnhideNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSApplicationWillUpdateNotification (IDENTIFIER)], @"NSApplicationWillUpdateNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSApplicationWillTerminateNotification (IDENTIFIER)], @"NSApplicationWillTerminateNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSApplicationDidChangeScreenParametersNotification (IDENTIFIER)], @"NSApplicationDidChangeScreenParametersNotification" (AT_STRING_LITERAL)]]function NSApplicationMain(argc,argv)
+{
+var theAppController = objc_msgSend(objc_msgSend(AppController, "alloc"), "init");
+var theApp = objc_msgSend(NSApplication, "sharedApplication");
+objc_msgSend(theApp, "setDelegate:", theAppController);
+}var the_class = objc_allocateClassPair(NSResponder, "NSApplication");
 var meta_class = the_class.isa;
 objc_registerClassPair(the_class);
 class_addIvar(the_class, "isa", "Class");
@@ -1010,9 +1015,7 @@ class_addMethod(the_class, "orderFrontStandardAboutPanel:", function(self, _cmd,
 class_addMethod(the_class, "orderFrontStandardAboutPanelWithOptions:", function(self, _cmd, optionsDictionary) {
 }, "void");
 
-function NSApplicationMain()
-{
-}var the_class = objc_allocateClassPair(NSObject, "NSController");
+var the_class = objc_allocateClassPair(NSObject, "NSController");
 var meta_class = the_class.isa;
 objc_registerClassPair(the_class);
 class_addIvar(the_class, "isa", "Class");
@@ -1260,7 +1263,7 @@ var meta_class = the_class.isa;
 objc_registerClassPair(the_class);
 class_addIvar(the_class, "isa", "Class");
 
-var the_class = objc_allocateClassPair(NSView, "NSControl");
+[d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSControlTextDidBeginEditingNotification (IDENTIFIER)], @"NSControlTextDidBeginEditingNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSControlTextDidEndEditingNotification (IDENTIFIER)], @"NSControlTextDidEndEditingNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSControlTextDidChangeNotification (IDENTIFIER)], @"NSControlTextDidChangeNotification" (AT_STRING_LITERAL)]]var the_class = objc_allocateClassPair(NSView, "NSControl");
 var meta_class = the_class.isa;
 objc_registerClassPair(the_class);
 class_addIvar(the_class, "isa", "Class");
@@ -1764,7 +1767,7 @@ class_addMethod(the_class, "setShowsBorderOnlyWhileMouseInside:", function(self,
 class_addMethod(the_class, "showsBorderOnlyWhileMouseInside", function(self, _cmd) {
 }, "void");
 
-var the_class = objc_allocateClassPair(NSObject, "NSCell");
+[d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSControlTintDidChangeNotification (IDENTIFIER)], @"NSControlTintDidChangeNotification" (AT_STRING_LITERAL)]]var the_class = objc_allocateClassPair(NSObject, "NSCell");
 var meta_class = the_class.isa;
 objc_registerClassPair(the_class);
 class_addIvar(the_class, "isa", "Class");
@@ -2880,7 +2883,7 @@ class_addMethod(the_class, "drawInRect:angle:", function(self, _cmd, rect, angle
 class_addMethod(the_class, "drawInBezierPath:angle:", function(self, _cmd, path, angle) {
 }, "void");
 
-var the_class = objc_allocateClassPair(NSObject, "NSGraphicsContext");
+[d(), id (TYPE_NAME), [=(), NSGraphicsContextCurrent (IDENTIFIER), nil (IDENTIFIER)]]var the_class = objc_allocateClassPair(NSObject, "NSGraphicsContext");
 var meta_class = the_class.isa;
 objc_registerClassPair(the_class);
 class_addIvar(the_class, "isa", "Class");
@@ -3138,7 +3141,7 @@ class_addMethod(meta_class, "popUpContextMenu:withEvent:forView:", function(self
 class_addMethod(meta_class, "popUpContextMenu:withEvent:forView:withFont:", function(self, _cmd, menu, event, view, font) {
 }, "void");
 
-var the_class = objc_allocateClassPair(NSResponder, "NSWindow");
+[d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSWindowDidBecomeKeyNotification (IDENTIFIER)], @"NSWindowDidBecomeKeyNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSWindowDidBecomeMainNotification (IDENTIFIER)], @"NSWindowDidBecomeMainNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSWindowDidChangeScreenNotification (IDENTIFIER)], @"NSWindowDidChangeScreenNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSWindowDidDeminiaturizeNotification (IDENTIFIER)], @"NSWindowDidDeminiaturizeNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSWindowDidExposeNotification (IDENTIFIER)], @"NSWindowDidExposeNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSWindowDidMiniaturizeNotification (IDENTIFIER)], @"NSWindowDidMiniaturizeNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSWindowDidMoveNotification (IDENTIFIER)], @"NSWindowDidMoveNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSWindowDidResignKeyNotification (IDENTIFIER)], @"NSWindowDidResignKeyNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSWindowDidResignMainNotification (IDENTIFIER)], @"NSWindowDidResignMainNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSWindowDidResizeNotification (IDENTIFIER)], @"NSWindowDidResizeNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSWindowDidUpdateNotification (IDENTIFIER)], @"NSWindowDidUpdateNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSWindowWillCloseNotification (IDENTIFIER)], @"NSWindowWillCloseNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSWindowWillMiniaturizeNotification (IDENTIFIER)], @"NSWindowWillMiniaturizeNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSWindowWillMoveNotification (IDENTIFIER)], @"NSWindowWillMoveNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSWindowWillBeginSheetNotification (IDENTIFIER)], @"NSWindowWillBeginSheetNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSWindowDidEndSheetNotification (IDENTIFIER)], @"NSWindowDidEndSheetNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSWindowDidChangeScreenProfileNotification (IDENTIFIER)], @"NSWindowDidChangeScreenProfileNotification" (AT_STRING_LITERAL)]]var the_class = objc_allocateClassPair(NSResponder, "NSWindow");
 var meta_class = the_class.isa;
 objc_registerClassPair(the_class);
 class_addIvar(the_class, "isa", "Class");

@@ -19,7 +19,7 @@ module Vienna
     attr_accessor :implementations, :interfaces, :protocols
     attr_accessor :functions, :typedefs, :structs, :defines
     attr_accessor :extern_variables, :extern_functions
-    attr_accessor :at_class_list, :enums
+    attr_accessor :at_class_list, :enums, :direct_declarations
     
     attr_accessor :imported_files
     
@@ -33,6 +33,7 @@ module Vienna
       @structs = []
       @defines = []
       @enums = []
+      @direct_declarations = []
       
       @extern_variables = []
       @extern_functions = []

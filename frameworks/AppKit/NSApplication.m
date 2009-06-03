@@ -13,6 +13,8 @@ NSString *NSEventTrackingRunLoopMode = @"NSEventTrackingRunLoopMode";
 
 id NSApp = nil;
 
+@class AppController;
+
 @implementation NSApplication
 
 - (id)init
@@ -46,9 +48,9 @@ id NSApp = nil;
 + (NSApplication *)sharedApplication
 {
     if (!NSApp)
-            NSApp = [[NSApplication alloc] init];
+    	NSApp = [[NSApplication alloc] init];
         
-        return NSApp;
+    return NSApp;
 }
 
 - (void)setDelegate:(id)anObject
@@ -321,7 +323,9 @@ id NSApp = nil;
 
 int NSApplicationMain(int argc, const char *argv[])
 {
-    
+	id theAppController = [[AppController alloc] init];
+	NSApplication *theApp = [NSApplication sharedApplication];
+	[theApp setDelegate:theAppController];
 }
 
 NSString *NSApplicationDidBecomeActiveNotification = @"NSApplicationDidBecomeActiveNotification";

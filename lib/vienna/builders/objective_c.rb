@@ -230,6 +230,8 @@ module Vienna
       #       puts d
       # if a direct declarator....
       if d.left.token == :TYPE_NAME and d.value == "d"
+        puts d
+        current_file().direct_declarations << d
         # These should be added to the file for generation (they are directly defining a variable and value, so output it!)
         # @direct_declarations << d
         return

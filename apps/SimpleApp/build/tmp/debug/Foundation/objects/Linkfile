@@ -25,6 +25,11 @@ NSKeyValueObserving.js:
 
   dependencies: []
 
+NSObjCRuntime.js: 
+  declarations: []
+
+  dependencies: []
+
 NSNotification.js: 
   declarations: 
   - NSNotification
@@ -43,3 +48,10 @@ NSObject.js:
   - NSObject
   dependencies: []
 
+NSDictionary.js: 
+  declarations: 
+  - NSDictionary
+  - NSMutableDictionary
+  dependencies: 
+  - NSObject
+  - NSDictionary

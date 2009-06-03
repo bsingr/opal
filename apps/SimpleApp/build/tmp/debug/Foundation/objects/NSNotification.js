@@ -1,4 +1,4 @@
-var the_class = objc_allocateClassPair(NSObject, "NSNotification");
+[d(), id (TYPE_NAME), [=(), NSNotificationCenterDefault (IDENTIFIER), nil (IDENTIFIER)]]var the_class = objc_allocateClassPair(NSObject, "NSNotification");
 var meta_class = the_class.isa;
 objc_registerClassPair(the_class);
 class_addIvar(the_class, "isa", "Class");

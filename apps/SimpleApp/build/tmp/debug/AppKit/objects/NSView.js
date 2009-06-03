@@ -1,4 +1,4 @@
-var the_class = objc_allocateClassPair(NSResponder, "NSView");
+[d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSViewFrameDidChangeNotification (IDENTIFIER)], @"NSViewFrameDidChangeNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSViewFocusDidChangeNotification (IDENTIFIER)], @"NSViewFocusDidChangeNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSViewBoundsDidChangeNotification (IDENTIFIER)], @"NSViewBoundsDidChangeNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSViewGlobalFrameDidChangeNotification (IDENTIFIER)], @"NSViewGlobalFrameDidChangeNotification" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSViewDidUpdateTrackingAreasNotification (IDENTIFIER)], @"NSViewDidUpdateTrackingAreasNotification" (AT_STRING_LITERAL)]]var the_class = objc_allocateClassPair(NSResponder, "NSView");
 var meta_class = the_class.isa;
 objc_registerClassPair(the_class);
 class_addIvar(the_class, "isa", "Class");

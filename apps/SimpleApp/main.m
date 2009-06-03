@@ -6,9 +6,11 @@
 //  Copyright 2009 Adam Beynon. All rights reserved.
 // 
 
-// #import <Vienna/Vienna.h>
+#import <Vienna/Vienna.h>
 
 int main(int argc, char *argv[])
-{
-    return 3;
+{	
+	NSMutableDictionary *myDict = [[NSMutableDictionary alloc] init];
+	
+    return NSApplicationMain();
 }
