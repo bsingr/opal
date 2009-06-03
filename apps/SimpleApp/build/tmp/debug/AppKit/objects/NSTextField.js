@@ -51,28 +51,28 @@ return self;
 }, "void");
 
 class_addMethod(the_class, "observeValueForKeyPath:ofObject:change:context:", function(self, _cmd, keyPath, object, change, context) {
-if (Unhandled output_expression: [EQ_OP(), context (IDENTIFIER), @"value" (AT_STRING_LITERAL)])
+if (context == "value")
 {
 objc_msgSend(_cell, "setValue:", objc_msgSend(object, "valueForKeyPath:", keyPath));
 objc_msgSend(self, "setNeedsDisplay:", YES);
 
 }
 else
-if (Unhandled output_expression: [EQ_OP(), context (IDENTIFIER), @"hidden" (AT_STRING_LITERAL)])
+if (context == "hidden")
 {
 objc_msgSend(_cell, "setHidden:", objc_msgSend(object, "valueForKey:", keyPath));
 objc_msgSend(self, "setNeedsDisplay:", YES);
 
 }
 else
-if (Unhandled output_expression: [EQ_OP(), context (IDENTIFIER), @"enabled" (AT_STRING_LITERAL)])
+if (context == "enabled")
 {
 objc_msgSend(_cell, "setEnabled:", objc_msgSend(object, "valueForKey:", keyPath));
 objc_msgSend(self, "setNeedsDisplay:", YES);
 
 }
 else
-if (Unhandled output_expression: [EQ_OP(), context (IDENTIFIER), @"editable" (AT_STRING_LITERAL)])
+if (context == "editable")
 {
 objc_msgSend(_cell, "setEditable:", objc_msgSend(object, "valueForKey:", keyPath));
 objc_msgSend(self, "setNeedsDisplay:", YES);

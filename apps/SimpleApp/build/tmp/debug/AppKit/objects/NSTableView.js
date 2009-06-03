@@ -72,7 +72,7 @@ _cornerView = objc_msgSend(aCoder, "decodeObjectForKey:", "NSCornerView");
 _tableColumns = objc_msgSend(aCoder, "decodeObjectForKey:", "NSTableColumns");
 _numberOfRows = 0;
 _numberOfColumns = objc_msgSend(_tableColumns, "count");
-Unhandled output_statement_list: FOR (FOR)return self;
+FOR (FOR)return self;
 
 }, "void");
 
@@ -104,7 +104,7 @@ if (_rowHeight)
 var rowsToDraw = Unhandled output_expression: [+(), [f(), [.(.), Math (IDENTIFIER), round (IDENTIFIER)], [/(), [.(.), [.(.), _bounds (IDENTIFIER), size (IDENTIFIER)], height (IDENTIFIER)], _rowHeight (IDENTIFIER)]], 1 (CONSTANT)];
 var oddRow = YES;
 var colorToDraw;
-Unhandled output_statement_list: FOR (FOR)
+FOR (FOR)
 }
 
 
@@ -119,15 +119,15 @@ objc_msgSend(NSBezierPath, "fillRect:", dirtyRect);
 if (_selectedRowIndexes)
 {
 var theHighlightedRows = objc_msgSend(_selectedRowIndexes, "indexes");
-Unhandled output_statement_list: FOR (FOR)
+FOR (FOR)
 }
 
 if (Unhandled output_expression: [AND_OP(), _tableColumns (IDENTIFIER), _drawsGrid (IDENTIFIER)])
 {
-Unhandled output_statement_list: FOR (FOR)
+FOR (FOR)
 }
 
-Unhandled output_statement_list: FOR (FOR)
+FOR (FOR)
 }, "void");
 
 class_addMethod(the_class, "preparedCellAtColumn:row:", function(self, _cmd, column, row) {
@@ -185,7 +185,7 @@ return _rowHeight;
 class_addMethod(the_class, "addTableColumn:", function(self, _cmd, aColumn) {
 var i;
 var xOffset = 0;
-Unhandled output_statement_list: FOR (FOR)objc_msgSend(_tableColumns, "addObject:", aColumn);
+FOR (FOR)objc_msgSend(_tableColumns, "addObject:", aColumn);
 _numberOfColumns = objc_msgSend(_tableColumns, "count");
 objc_msgSend(self, "reloadData");
 
@@ -266,7 +266,7 @@ return NSMakeRect(columnRect.origin.xrowRect.origin.ycolumnRect.size.widthrowRec
 
 class_addMethod(the_class, "rectOfColumn:", function(self, _cmd, columnIndex) {
 var columnRect = NSMakeRect(_bounds.origin.x_bounds.origin.y0_bounds.size.height);
-Unhandled output_statement_list: FOR (FOR)columnRect.size.width = Unhandled output_expression: [+(), [M(), [M(), _tableColumns (IDENTIFIER), [:(), objectAtIndex (IDENTIFIER), columnIndex (IDENTIFIER)]], width (IDENTIFIER)], [.(.), _intercellSpacing (IDENTIFIER), width (IDENTIFIER)]];
+FOR (FOR)columnRect.size.width = Unhandled output_expression: [+(), [M(), [M(), _tableColumns (IDENTIFIER), [:(), objectAtIndex (IDENTIFIER), columnIndex (IDENTIFIER)]], width (IDENTIFIER)], [.(.), _intercellSpacing (IDENTIFIER), width (IDENTIFIER)]];
 return columnRect;
 
 }, "void");
@@ -282,7 +282,7 @@ return rowRect;
 }, "void");
 
 class_addMethod(the_class, "observeValueForKeyPath:ofObject:change:context:", function(self, _cmd, keyPath, object, change, context) {
-if (Unhandled output_expression: [EQ_OP(), context (IDENTIFIER), @"selectionIndexes" (AT_STRING_LITERAL)])
+if (context == "selectionIndexes")
 {
 if (Unhandled output_expression: [,(), ! (!), [M(), _selectedRowIndexes (IDENTIFIER), [:(), isEqualToIndexSet (IDENTIFIER), [M(), object (IDENTIFIER), [:(), valueForKeyPath (IDENTIFIER), keyPath (IDENTIFIER)]]]]])
 {
@@ -301,12 +301,12 @@ else
 }, "void");
 
 class_addMethod(the_class, "columnAtPoint:", function(self, _cmd, aPoint) {
-Unhandled output_statement_list: FOR (FOR)return Unhandled output_expression: [,(), - (-), 1 (CONSTANT)];
+FOR (FOR)return Unhandled output_expression: [,(), - (-), 1 (CONSTANT)];
 
 }, "void");
 
 class_addMethod(the_class, "rowAtPoint:", function(self, _cmd, aPoint) {
-Unhandled output_statement_list: FOR (FOR)return Unhandled output_expression: [,(), - (-), 1 (CONSTANT)];
+FOR (FOR)return Unhandled output_expression: [,(), - (-), 1 (CONSTANT)];
 
 }, "void");
 
@@ -350,7 +350,7 @@ objc_msgSend(self, "selectRowIndexes:byExtendingSelection:", objc_msgSend(objc_m
 
 }
 else
-if (Unhandled output_expression: [EQ_OP(), [M(), theEvent (IDENTIFIER), clickCount (IDENTIFIER)], 2 (CONSTANT)])
+if (objc_msgSend(theEvent, "clickCount") == 2)
 {
 if (objc_msgSend(objc_msgSend(_tableColumns, "objectAtIndex:", clickedColumnIndex), "isEditable"))
 {
@@ -473,7 +473,7 @@ objc_msgSend(self, "selectRowIndexes:byExtendingSelection:", objc_msgSend(objc_m
 
 class_addMethod(the_class, "selectAll:", function(self, _cmd, sender) {
 var newIndexSet = objc_msgSend(objc_msgSend(NSMutableIndexSet, "alloc"), "initWithIndex:", 0);
-Unhandled output_statement_list: FOR (FOR)objc_msgSend(self, "selectRowIndexes:byExtendingSelection:", newIndexSet, NO);
+FOR (FOR)objc_msgSend(self, "selectRowIndexes:byExtendingSelection:", newIndexSet, NO);
 
 }, "void");
 

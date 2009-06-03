@@ -62,7 +62,7 @@ return self;
 }, "void");
 
 class_addMethod(the_class, "setEnabled:", function(self, _cmd, flag) {
-if (Unhandled output_expression: [EQ_OP(), flag (IDENTIFIER), 0 (CONSTANT)])
+if (flag == 0)
 flag = NO;
 
 _isEnabled = flag;

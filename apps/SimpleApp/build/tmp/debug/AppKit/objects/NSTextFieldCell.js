@@ -53,7 +53,7 @@ _gBorderType = type;
 
 class_addMethod(the_class, "drawInteriorWithFrame:inView:", function(self, _cmd, cellFrame, controlView) {
 var *;
-if (Unhandled output_expression: [EQ_OP(), _value (IDENTIFIER), @"" (AT_STRING_LITERAL)])
+if (_value == "")
 {
 textToDraw = _placeholderString;
 
@@ -144,7 +144,7 @@ return _drawsBackground;
 
 class_addMethod(the_class, "setDrawsBackground:", function(self, _cmd, flag) {
 _drawsBackground = flag;
-if (Unhandled output_expression: [EQ_OP(), _drawsBackground (IDENTIFIER), 0 (CONSTANT)])
+if (_drawsBackground == 0)
 _drawsBackground = NO;
 
 

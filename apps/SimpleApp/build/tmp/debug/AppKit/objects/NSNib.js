@@ -30,7 +30,7 @@ _data = unarchiver.data;
 _objects = objc_msgSend(NSMutableDictionary, "dictionaryWithCapacity:", 0);
 _topLevelObjects = objc_msgSend(unarchiver, "decodeObjectForKey:", "IBDocument.RootObjects");
 _connections = objc_msgSend(unarchiver, "decodeConnectionObjects");
-Unhandled output_statement_list: FOR (FOR)return YES;
+FOR (FOR)return YES;
 
 }, "void");
 

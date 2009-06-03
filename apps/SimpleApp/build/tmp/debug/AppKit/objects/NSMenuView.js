@@ -50,7 +50,7 @@ return self;
 class_addMethod(the_class, "drawRect:", function(self, _cmd, aRect) {
 if (_menu)
 {
-Unhandled output_statement_list: FOR (FOR)
+FOR (FOR)
 }
 
 
@@ -64,15 +64,15 @@ objc_msgSend(_eventBindingMenuArray, "addObject:", self);
 objc_msgSend(self, "setHighlightedItemIndex:", selectedIndex);
 objc_msgSend(_eventBindingMenuArray, "addObject:", objc_msgSend(self, "attachSubmenuForItemAtIndex:", selectedIndex));
 objc_msgSend(self, "setNeedsDisplay:", YES);
-objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:untilDate:inMode:dequeue:withTarget:withSelector:", Unhandled output_expression: [((), [|(), NSLeftMouseUpMask (IDENTIFIER), NSMouseMovedMask (IDENTIFIER)], ], nil, nil, nil, self, Unhandled output_expression: [AT_SELECTOR(AT_SELECTOR), _mouseDownMenuHandle (IDENTIFIER), ]);
+objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:untilDate:inMode:dequeue:withTarget:withSelector:", Unhandled output_expression: [((), [|(), NSLeftMouseUpMask (IDENTIFIER), NSMouseMovedMask (IDENTIFIER)], ], nil, nil, nil, self, "selector:");
 
 }, "void");
 
 class_addMethod(the_class, "_mouseDownMenuHandle:", function(self, _cmd, theEvent) {
 var visibleMenus = objc_msgSend(_eventBindingMenuArray, "count");
-Unhandled output_statement_list: FOR (FOR)if (Unhandled output_expression: [EQ_OP(), [M(), theEvent (IDENTIFIER), type (IDENTIFIER)], NSMouseMoved (IDENTIFIER)])
+FOR (FOR)if (objc_msgSend(theEvent, "type") == NSMouseMoved)
 {
-objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:untilDate:inMode:dequeue:withTarget:withSelector:", Unhandled output_expression: [((), [|(), NSLeftMouseUpMask (IDENTIFIER), NSMouseMovedMask (IDENTIFIER)], ], nil, nil, nil, self, Unhandled output_expression: [AT_SELECTOR(AT_SELECTOR), _mouseDownMenuHandle (IDENTIFIER), ]);
+objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:untilDate:inMode:dequeue:withTarget:withSelector:", Unhandled output_expression: [((), [|(), NSLeftMouseUpMask (IDENTIFIER), NSMouseMovedMask (IDENTIFIER)], ], nil, nil, nil, self, "selector:");
 
 }
 
@@ -211,7 +211,7 @@ class_addMethod(the_class, "needsSizing", function(self, _cmd) {
 
 class_addMethod(the_class, "sizeToFit", function(self, _cmd) {
 var boundsRect = NSMakeRect(0000);
-Unhandled output_statement_list: FOR (FOR)_innerRect = boundsRect;
+FOR (FOR)_innerRect = boundsRect;
 objc_msgSend(self, "setFrame:", NSMakeRect(121_innerRect.size.width_innerRect.size.height));
 
 }, "void");
@@ -270,12 +270,12 @@ return itemRect;
 class_addMethod(the_class, "indexOfItemAtPoint:", function(self, _cmd, point) {
 if (objc_msgSend(self, "isHorizontal"))
 {
-Unhandled output_statement_list: FOR (FOR)return Unhandled output_expression: [,(), - (-), 1 (CONSTANT)];
+FOR (FOR)return Unhandled output_expression: [,(), - (-), 1 (CONSTANT)];
 
 }
 else
 {
-Unhandled output_statement_list: FOR (FOR)return Unhandled output_expression: [,(), - (-), 1 (CONSTANT)];
+FOR (FOR)return Unhandled output_expression: [,(), - (-), 1 (CONSTANT)];
 
 }
 

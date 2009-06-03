@@ -35,14 +35,14 @@ return _height;
 }, "void");
 
 class_addMethod(the_class, "reloadToolbarItems", function(self, _cmd) {
-if (objc_msgSend(_delegate, "respondsToSelector:", Unhandled output_expression: [AT_SELECTOR(AT_SELECTOR), toolbarDefaultItemIdentifiers (IDENTIFIER), ]))
+if (objc_msgSend(_delegate, "respondsToSelector:", "selector:"))
 _itemIdentifiers = objc_msgSend(_delegate, "toolbarDefaultItemIdentifiers:", self);
 else
 _itemIdentifiers = nil;
 
 var totalItems = objc_msgSend(_itemIdentifiers, "count");
 var i;
-Unhandled output_statement_list: FOR (FOR)
+FOR (FOR)
 }, "void");
 
 class_addMethod(the_class, "displayMode", function(self, _cmd) {

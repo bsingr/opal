@@ -75,7 +75,7 @@ var tableColumns = objc_msgSend(_tableView, "tableColumns");
 var count = objc_msgSend(tableColumns, "count");
 var spacing = objc_msgSend(_tableView, "intercellSpacing");
 var columnRect = NSMakeRect(_bounds.origin.x_bounds.origin.y_bounds.size.width_bounds.size.height);
-Unhandled output_statement_list: FOR (FOR)
+FOR (FOR)
 }
 
 

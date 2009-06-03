@@ -33,7 +33,7 @@ return self;
 }, "void");
 
 class_addMethod(the_class, "setDelegate:", function(self, _cmd, anObject) {
-if (Unhandled output_expression: [EQ_OP(), _delegate (IDENTIFIER), anObject (IDENTIFIER)])
+if (_delegate == anObject)
 return ;
 
 var nc = objc_msgSend(NSNotificationCenter, "defaultCenter");
@@ -56,12 +56,12 @@ return objc_msgSend(_windows, "objectAtIndex:", windowNum);
 }, "void");
 
 class_addMethod(the_class, "mainWindow", function(self, _cmd) {
-Unhandled output_statement_list: FOR (FOR)return nil;
+FOR (FOR)return nil;
 
 }, "void");
 
 class_addMethod(the_class, "keyWindow", function(self, _cmd) {
-Unhandled output_statement_list: FOR (FOR)return nil;
+FOR (FOR)return nil;
 
 }, "void");
 
@@ -120,7 +120,7 @@ return ;
 
 }
 
-if (Unhandled output_expression: [EQ_OP(), [M(), theEvent (IDENTIFIER), type (IDENTIFIER)], NSLeftMouseDown (IDENTIFIER)])
+if (objc_msgSend(theEvent, "type") == NSLeftMouseDown)
 objc_msgSend(objc_msgSend(theEvent, "window"), "makeKeyAndOrderFront:", self);
 else
 if (Unhandled output_expression: [OR_OP(), [((), [EQ_OP(), [M(), theEvent (IDENTIFIER), type (IDENTIFIER)], NSKeyDown (IDENTIFIER)], ], [((), [EQ_OP(), [M(), theEvent (IDENTIFIER), type (IDENTIFIER)], NSKeyUp (IDENTIFIER)], ]])

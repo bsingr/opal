@@ -305,7 +305,7 @@ var location = objc_msgSend(self, "convertPoint:fromView:", objc_msgSend(theEven
 if (NSPointInRect(location_bounds))
 objc_msgSend(_cell, "highlight:withFrame:inView:", YES, _bounds, self);
 
-objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:untilDate:inMode:dequeue:withTarget:withSelector:", Unhandled output_expression: [((), [|(), NSLeftMouseUpMask (IDENTIFIER), NSMouseMovedMask (IDENTIFIER)], ], nil, nil, nil, self, Unhandled output_expression: [AT_SELECTOR(AT_SELECTOR), _mouseDownHandle (IDENTIFIER), ]);
+objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:untilDate:inMode:dequeue:withTarget:withSelector:", Unhandled output_expression: [((), [|(), NSLeftMouseUpMask (IDENTIFIER), NSMouseMovedMask (IDENTIFIER)], ], nil, nil, nil, self, "selector:");
 objc_msgSend(self, "unlockFocus");
 
 }, "void");
@@ -314,7 +314,7 @@ class_addMethod(the_class, "_mouseDownHandle:", function(self, _cmd, theEvent) {
 var location = objc_msgSend(self, "convertPoint:fromView:", objc_msgSend(theEvent, "locationInWindow"), nil);
 if (NSPointInRect(location_bounds))
 {
-if (Unhandled output_expression: [EQ_OP(), [M(), theEvent (IDENTIFIER), type (IDENTIFIER)], NSLeftMouseUp (IDENTIFIER)])
+if (objc_msgSend(theEvent, "type") == NSLeftMouseUp)
 {
 objc_msgSend(self, "sendAction:to:", objc_msgSend(self, "action"), objc_msgSend(self, "target"));
 objc_msgSend(self, "lockFocus");
@@ -324,9 +324,9 @@ return ;
 
 }
 else
-if (Unhandled output_expression: [EQ_OP(), [M(), theEvent (IDENTIFIER), type (IDENTIFIER)], NSMouseMoved (IDENTIFIER)])
+if (objc_msgSend(theEvent, "type") == NSMouseMoved)
 {
-objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:untilDate:inMode:dequeue:withTarget:withSelector:", Unhandled output_expression: [((), [|(), NSLeftMouseUpMask (IDENTIFIER), NSMouseMovedMask (IDENTIFIER)], ], nil, nil, nil, self, Unhandled output_expression: [AT_SELECTOR(AT_SELECTOR), _mouseDownHandle (IDENTIFIER), ]);
+objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:untilDate:inMode:dequeue:withTarget:withSelector:", Unhandled output_expression: [((), [|(), NSLeftMouseUpMask (IDENTIFIER), NSMouseMovedMask (IDENTIFIER)], ], nil, nil, nil, self, "selector:");
 return ;
 
 }

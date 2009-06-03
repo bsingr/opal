@@ -97,7 +97,7 @@ return _identifier;
 }, "void");
 
 class_addMethod(the_class, "setEditable:", function(self, _cmd, flag) {
-if (Unhandled output_expression: [EQ_OP(), flag (IDENTIFIER), 0 (CONSTANT)])
+if (flag == 0)
 flag = NO;
 
 _editable = flag;

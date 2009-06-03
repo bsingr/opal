@@ -153,6 +153,8 @@ module Vienna
       elsif statement.token == :RETURN
         output_return_statement file, statement
         file.write ";\n"
+      elsif statement.token == :FOR
+        output_for_statement file, statement
       elsif statement.value == "d"
         output_declaration_statement file, statement
         file.write ";\n"
@@ -202,10 +204,26 @@ module Vienna
         output_dot_notation file, statement
       elsif statement.value == "f"
         output_function_call file, statement
+      elsif statement.value == :EQ_OP
+        output_expression file, statement.left
+        file.write " == "
+        output_expression file, statement.right
+      elsif statement.value == :AT_SELECTOR
+        output_at_selector file, statement
       else
         file.write "Unhandled output_expression: #{statement}"
       end
     end
+    
+    def output_for_statement(file, statement)
+      file.write statement
+    end
+    
+    
+    def output_at_selector(file, statement)
+      file.write "\"selector:\""
+    end
+    
     
     def output_return_statement(file, statement)
       file.write "return "

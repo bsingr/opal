@@ -69,8 +69,12 @@ module Vienna
       #         framework_out.write t
       #       end
       
-      @link_config.each do |key, value|
-        link_object_file(key, framework_out)
+      # @link_config.each do |key, value|
+      #         link_object_file(key, framework_out)
+      #       end
+      
+      all_objects.each do |f|
+        link_object_file(File.basename(f), framework_out)
       end
       
       framework_out.close
@@ -84,17 +88,21 @@ module Vienna
       object_path = File.join(@parent.tmp_prefix, bundle_name, 'objects')
       
       return unless all_objects.include?(object_path + '/' + file)
-      
-      
+
       @linked_files << file
       
       # puts @link_config[file]["dependencies"]
-      
-      @link_config[file]["dependencies"].each do |d|
-        link_object_file(d + '.js', out)
+      if @link_config[file]
+        # has linked files, so include (.m, not .js)
+        @link_config[file]["dependencies"].each do |d|
+          link_object_file(d + '.js', out)
+        end
       end
       
-      puts "Writing content of #{file}"
+      f = File.new(object_path + "/" + file)
+      t = f.read
+      out.write t
+      # puts "Writing content of #{file}"
       
     end
     

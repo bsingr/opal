@@ -68,7 +68,7 @@ objc_msgSend(self, "setNeedsDisplay:", YES);
 }, "void");
 
 class_addMethod(the_class, "moveLeft:", function(self, _cmd, sender) {
-if (Unhandled output_expression: [EQ_OP(), [.(.), _selectedRange (IDENTIFIER), location (IDENTIFIER)], 0 (CONSTANT)])
+if (_selectedRange.location == 0)
 return ;
 
 objc_msgSend(self, "setSelectedRange:", NSMakeRange(Unhandled output_expression: [-(), [.(.), _selectedRange (IDENTIFIER), location (IDENTIFIER)], 1 (CONSTANT)]0));
@@ -76,7 +76,7 @@ objc_msgSend(self, "setSelectedRange:", NSMakeRange(Unhandled output_expression:
 }, "void");
 
 class_addMethod(the_class, "moveRight:", function(self, _cmd, sender) {
-if (Unhandled output_expression: [EQ_OP(), [.(.), _selectedRange (IDENTIFIER), location (IDENTIFIER)], [.(.), _string (IDENTIFIER), length (IDENTIFIER)]])
+if (_selectedRange.location == _string.length)
 return ;
 
 objc_msgSend(self, "setSelectedRange:", NSMakeRange(Unhandled output_expression: [+(), [+(), [.(.), _selectedRange (IDENTIFIER), location (IDENTIFIER)], [.(.), _selectedRange (IDENTIFIER), length (IDENTIFIER)]], 1 (CONSTANT)]0));
@@ -106,9 +106,9 @@ objc_msgSend(self, "interpretKeyEvents:", objc_msgSend(NSArray, "arrayWithObject
 class_addMethod(the_class, "resignFirstResponder", function(self, _cmd) {
 if (_isEditable)
 {
-if (objc_msgSend(_delegate, "respondsToSelector:", Unhandled output_expression: [AT_SELECTOR(AT_SELECTOR), textShouldEndEditing (IDENTIFIER), ]))
+if (objc_msgSend(_delegate, "respondsToSelector:", "selector:"))
 {
-if (Unhandled output_expression: [EQ_OP(), [M(), _delegate (IDENTIFIER), [:(), textShouldEndEditing (IDENTIFIER), self (IDENTIFIER)]], NO (IDENTIFIER)])
+if (objc_msgSend(_delegate, "textShouldEndEditing:", self) == NO)
 return NO;
 
 
@@ -128,7 +128,7 @@ return YES;
 
 class_addMethod(the_class, "glyphIndexForPoint:", function(self, _cmd, point) {
 objc_msgSend(self, "lockFocus");
-Unhandled output_statement_list: FOR (FOR)objc_msgSend(self, "unlockFocus");
+FOR (FOR)objc_msgSend(self, "unlockFocus");
 return _string.length;
 
 }, "void");
@@ -158,7 +158,7 @@ objc_msgSend(objc_msgSend(NSFont, "systemFontOfSize:", objc_msgSend(NSFont, "sys
 var textRect = NSMakeRect(rect.origin.xUnhandled output_expression: [+(), [.(.), [.(.), rect (IDENTIFIER), origin (IDENTIFIER)], y (IDENTIFIER)], 1 (CONSTANT)]00);
 objc_msgSend(_string, "drawWithRect:options:attributes:", textRect, nil, nil);
 var fullStringWidth = objc_msgSend(_string, "sizeWithAttributes:", nil);
-if (Unhandled output_expression: [EQ_OP(), [.(.), _selectedRange (IDENTIFIER), length (IDENTIFIER)], 0 (CONSTANT)])
+if (_selectedRange.length == 0)
 {
 var stringBeforeLocation = .(0_selectedRange.location);
 var stringBeforeWidth = objc_msgSend(stringBeforeLocation, "sizeWithAttributes:", nil);

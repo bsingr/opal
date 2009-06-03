@@ -40,7 +40,7 @@ class_addIvar(the_class, "_wtFlags", "NSUInteger");
 class_addIvar(the_class, "_windowClass", "id");
 
 class_addMethod(the_class, "frameRectForContentRect:", function(self, _cmd, contentRect) {
-if (Unhandled output_expression: [EQ_OP(), _styleMask (IDENTIFIER), 0 (CONSTANT)])
+if (_styleMask == 0)
 return contentRect;
 
 var xOffset = 0;
@@ -123,12 +123,12 @@ class_addMethod(the_class, "mouseDown:", function(self, _cmd, theEvent) {
 objc_msgSend(self, "makeMainWindow");
 _eventBindingCurrentX = objc_msgSend(theEvent, "locationInBase").x;
 _eventBindingCurrentY = objc_msgSend(theEvent, "locationInBase").y;
-objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:untilDate:inMode:dequeue:withTarget:withSelector:", Unhandled output_expression: [((), [|(), NSLeftMouseUpMask (IDENTIFIER), NSMouseMovedMask (IDENTIFIER)], ], nil, nil, nil, self, Unhandled output_expression: [AT_SELECTOR(AT_SELECTOR), _mouseDownHandle (IDENTIFIER), ]);
+objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:untilDate:inMode:dequeue:withTarget:withSelector:", Unhandled output_expression: [((), [|(), NSLeftMouseUpMask (IDENTIFIER), NSMouseMovedMask (IDENTIFIER)], ], nil, nil, nil, self, "selector:");
 
 }, "void");
 
 class_addMethod(the_class, "_mouseDownHandle:", function(self, _cmd, theEvent) {
-if (Unhandled output_expression: [EQ_OP(), [M(), theEvent (IDENTIFIER), type (IDENTIFIER)], NSLeftMouseUp (IDENTIFIER)])
+if (objc_msgSend(theEvent, "type") == NSLeftMouseUp)
 {
 
 }
@@ -139,7 +139,7 @@ var newY = Unhandled output_expression: [+(), [((), [-(), [.(.), [M(), theEvent 
 objc_msgSend(self, "setFrameOrigin:", NSMakePoint(newXnewY));
 _eventBindingCurrentX = objc_msgSend(theEvent, "locationInBase").x;
 _eventBindingCurrentY = objc_msgSend(theEvent, "locationInBase").y;
-objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:untilDate:inMode:dequeue:withTarget:withSelector:", Unhandled output_expression: [((), [|(), NSLeftMouseUpMask (IDENTIFIER), NSMouseMovedMask (IDENTIFIER)], ], nil, nil, nil, self, Unhandled output_expression: [AT_SELECTOR(AT_SELECTOR), _mouseDownHandle (IDENTIFIER), ]);
+objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:untilDate:inMode:dequeue:withTarget:withSelector:", Unhandled output_expression: [((), [|(), NSLeftMouseUpMask (IDENTIFIER), NSMouseMovedMask (IDENTIFIER)], ], nil, nil, nil, self, "selector:");
 
 }
 

@@ -61,21 +61,21 @@ objc_msgSend(NSBezierPath, "fillRect:", NSMakeRect(Unhandled output_expression: 
 }, "void");
 
 class_addMethod(the_class, "observeValueForKeyPath:ofObject:change:context:", function(self, _cmd, keyPath, object, change, context) {
-if (Unhandled output_expression: [EQ_OP(), context (IDENTIFIER), @"value" (AT_STRING_LITERAL)])
+if (context == "value")
 {
 _value = objc_msgSend(object, "valueForKey:", keyPath);
 objc_msgSend(self, "setNeedsDisplay:", YES);
 
 }
 else
-if (Unhandled output_expression: [EQ_OP(), context (IDENTIFIER), @"hidden" (AT_STRING_LITERAL)])
+if (context == "hidden")
 {
 objc_msgSend(_cell, "setHidden:", objc_msgSend(object, "valueForKey:", keyPath));
 objc_msgSend(self, "setNeedsDisplay:", YES);
 
 }
 else
-if (Unhandled output_expression: [EQ_OP(), context (IDENTIFIER), @"enabled" (AT_STRING_LITERAL)])
+if (context == "enabled")
 {
 objc_msgSend(_cell, "setEnabled:", objc_msgSend(object, "valueForKey:", keyPath));
 objc_msgSend(self, "setNeedsDisplay:", YES);

@@ -372,10 +372,10 @@ objc_msgSend(textObj, "setAlignment:", objc_msgSend(self, "alignment"));
 objc_msgSend(textObj, "setString:", objc_msgSend(self, "stringValue"));
 objc_msgSend(textObj, "setSelectable:", objc_msgSend(self, "isSelectable"));
 objc_msgSend(self, "setEditable:", objc_msgSend(self, "isEditable"));
-if (objc_msgSend(self, "respondsToSelector:", Unhandled output_expression: [AT_SELECTOR(AT_SELECTOR), drawsBackground (IDENTIFIER), ]))
+if (objc_msgSend(self, "respondsToSelector:", "selector:"))
 objc_msgSend(textObj, "setDrawsBackground:", objc_msgSend(self, "drawsBackground"));
 
-if (objc_msgSend(self, "respondsToSelector:", Unhandled output_expression: [AT_SELECTOR(AT_SELECTOR), backgroundColor (IDENTIFIER), ]))
+if (objc_msgSend(self, "respondsToSelector:", "selector:"))
 objc_msgSend(textObj, "setBackgroundColor:", objc_msgSend(self, "backgroundColor"));
 
 return textObj;

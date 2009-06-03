@@ -127,7 +127,7 @@ class_addMethod(the_class, "cursorUpdate:", function(self, _cmd, event) {
 }, "void");
 
 class_addMethod(the_class, "noResponderFor:", function(self, _cmd, eventSelector) {
-if (Unhandled output_expression: [EQ_OP(), eventSelector (IDENTIFIER), [AT_SELECTOR(AT_SELECTOR), keyDown (IDENTIFIER), ]])
+if (eventSelector == "selector:")
 {
 
 }
@@ -152,7 +152,7 @@ return YES;
 
 class_addMethod(the_class, "interpretKeyEvents:", function(self, _cmd, eventArray) {
 var eventsCount = objc_msgSend(eventArray, "count");
-Unhandled output_statement_list: FOR (FOR)
+FOR (FOR)
 }, "void");
 
 class_addMethod(the_class, "flushBufferedKeyEvents", function(self, _cmd) {
