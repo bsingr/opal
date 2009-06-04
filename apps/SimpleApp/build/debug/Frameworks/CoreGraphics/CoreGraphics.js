@@ -151,12 +151,14 @@ function CGBitmapContextCreateImage (c)
 //     kCGLineJoinRound,
 //     kCGLineJoinBevel
 // };
+var CGLineJoinCanvas = ["miter", "round", "bevel"];
 
 // enum CGLineCap {
 //     kCGLineCapButt,
 //     kCGLineCapRound,
 //     kCGLineCapSquare
 // };
+var CGLineCapCanvas = ["butt", "round", "square"];
 
 // enum CGPathDrawingMode {
 //     kCGPathFill,
@@ -165,6 +167,7 @@ function CGBitmapContextCreateImage (c)
 //     kCGPathFillStroke,
 //     kCGEOFillStroke
 // };
+
  
 // enum CGTextDrawingMode {
 //     kCGTextFill,
@@ -184,35 +187,35 @@ function CGBitmapContextCreateImage (c)
 // 
 function CGContextSaveGState (c)
 {
-    
+    c.save();
 }
 
 // extern void CGContextRestoreGState(CGContextRef c);
 // 
 function CGContextRestoreGState (c)
 {
-    
+    c.restore();
 }
 
 // extern void CGContextScaleCTM(CGContextRef c, CGFloat sx, CGFloat sy);
 // 
 function CGContextScaleCTM(c, sx, sy)
 {
-    
+    c.scale(sx, sy);
 }
 
 // extern void CGContextTranslateCTM(CGContextRef c, CGFloat tx, CGFloat ty);
 // 
 function CGContextTranslateCTM(c, tx, ty)
 {
-    
+    c.translate(tx, ty);
 }
 
 // extern void CGContextRotateCTM(CGContextRef c, CGFloat angle);
 // 
 function CGContextRotateCTM(c, angle)
 {
-    
+    c.rotate(angle);
 }
 
 // extern void CGContextConcatCTM(CGContextRef c, CGAffineTransform transform);
@@ -233,28 +236,28 @@ function CGContextGetCTM(c)
 // 
 function CGContextSetLineWidth(c, width)
 {
-    
+    c.lineWidth = width;
 }
 
 // extern void CGContextSetLineCap(CGContextRef c, CGLineCap cap);
 // 
 function CGContextSetLineCap(c, cap)
 {
-    
+    c.lineCap = CGLineCapCanvas[cap];
 }
 
 // extern void CGContextSetLineJoin(CGContextRef c, CGLineJoin join);
 // 
 function CGContextSetLineJoin(c, join)
 {
-    
+    c.lineJoin = CGLineJoinCanvas[join];
 }
 
 // extern void CGContextSetMiterLimit(CGContextRef c, CGFloat limit);
 // 
 function CGContextSetMiterLimit(c, limit)
 {
-    
+    c.miterLimit = limit;
 }
 
 // extern void CGContextSetLineDash(CGContextRef c, CGFloat phase, const CGFloat lengths[], size_t count);
@@ -275,7 +278,7 @@ function CGContextSetFlatness(c, flatness)
 // 
 function CGContextSetAlpha(c, alpha)
 {
-    
+    c.globalAlpha = alpha;
 }
 
 // extern void CGContextSetBlendMode(CGContextRef context, CGBlendMode mode);

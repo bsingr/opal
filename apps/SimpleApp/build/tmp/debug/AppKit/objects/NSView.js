@@ -432,6 +432,9 @@ with(self) {
 
 class_addMethod(the_class, "setNeedsDisplay:", function(self, _cmd, flag) {
 with(self) {
+if (flag)
+objc_msgSend(self, "setNeedsDisplayInRect:", objc_msgSend(self, "bounds"));
+
 }
 }, "void");
 
@@ -487,6 +490,8 @@ with(self) {
 
 class_addMethod(the_class, "displayRect:", function(self, _cmd, rect) {
 with(self) {
+objc_msgSend(self, "viewWillDraw");
+objc_msgSend(self, "displayRectIgnoringOpacity:inContext:", rect, null);
 }
 }, "void");
 
@@ -512,6 +517,9 @@ with(self) {
 
 class_addMethod(the_class, "displayRectIgnoringOpacity:inContext:", function(self, _cmd, aRect, context) {
 with(self) {
+objc_msgSend(self, "lockFocus");
+objc_msgSend(self, "drawRect:", aRect);
+objc_msgSend(self, "unlcokFocus");
 }
 }, "void");
 

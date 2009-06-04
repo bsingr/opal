@@ -57,9 +57,12 @@ class_addIvar(the_class, "_wtFlags", "NSUInteger");
 class_addIvar(the_class, "_windowClass", "id");
 class_addIvar(the_class, "_DOMContainer", "CGDOMElementRef");
 class_addIvar(the_class, "_DOMGraphicsContext", "CGDOMElementRef");
+class_addIvar(the_class, "_graphicsContext", "NSGraphicsContext");
 
 class_addMethod(the_class, "frameRectForContentRect:", function(self, _cmd, contentRect) {
 with(self) {
+var WINDOW_BORDER_SIZE = 1;
+var WINDOW_TITLEBAR_SIZE = 20;
 if (_styleMask == 0)
 return contentRect;
 
@@ -112,6 +115,7 @@ _frame = objc_msgSend(self, "frameRectForContentRect:", contentRect);
 objc_msgSend(self, "setContentView:", objc_msgSend(objc_msgSend(NSView, "alloc"), "initWithFrame:", contentRect));
 _firstResponder = self;
 objc_msgSend(self, "setNextResponder:", objc_msgSend(NSApplication, "sharedApplication"));
+objc_msgSend(self, "setNeedsDisplay:", YES);
 
 }
 
@@ -315,6 +319,12 @@ with(self) {
 class_addMethod(the_class, "frame", function(self, _cmd) {
 with(self) {
 return _frame;
+}
+}, "void");
+
+class_addMethod(the_class, "bounds", function(self, _cmd) {
+with(self) {
+return NSMakeRect(0,0,_frame.size.width,_frame.size.height);
 }
 }, "void");
 
@@ -1164,14 +1174,15 @@ with(self) {
 
 class_addMethod(the_class, "setNeedsDisplay:", function(self, _cmd, flag) {
 with(self) {
-objc_msgSend(self, "lockFocus");
-objc_msgSend(self, "drawRect:", _bounds);
-objc_msgSend(self, "unlockFocus");
+if (flag)
+objc_msgSend(self, "setNeedsDisplayInRect:", objc_msgSend(self, "bounds"));
+
 }
 }, "void");
 
 class_addMethod(the_class, "setNeedsDisplayInRect:", function(self, _cmd, invalidRect) {
 with(self) {
+objc_msgSend(self, "displayRect:", invalidRect);
 }
 }, "void");
 
@@ -1182,11 +1193,18 @@ with(self) {
 
 class_addMethod(the_class, "lockFocus", function(self, _cmd) {
 with(self) {
+if (!_graphicsContext)
+_graphicsContext = objc_msgSend(NSGraphicsContext, "graphicsContextWithGraphicsPort:flipped:", CGDOMElementGetContext(_DOMGraphicsContext), NO);
+
+objc_msgSend(NSGraphicsContext, "setCurrentContext:", _graphicsContext);
+CGContextSaveGState(objc_msgSend(_graphicsContext, "graphicsPort"));
 }
 }, "void");
 
 class_addMethod(the_class, "unlockFocus", function(self, _cmd) {
 with(self) {
+CGContextRestoreGState(objc_msgSend(_graphicsContext, "graphicsPort"));
+objc_msgSend(NSGraphicsContext, "setCurrentContext:", null);
 }
 }, "void");
 
@@ -1200,7 +1218,70 @@ with(self) {
 }
 }, "void");
 
+class_addMethod(the_class, "display", function(self, _cmd) {
+with(self) {
+objc_msgSend(self, "displayRect:", objc_msgSend(self, "bounds"));
+}
+}, "void");
+
+class_addMethod(the_class, "displayIfNeeded", function(self, _cmd) {
+with(self) {
+if (objc_msgSend(self, "needsDisplay"))
+objc_msgSend(self, "displayRect:", objc_msgSend(self, "bounds"));
+
+}
+}, "void");
+
+class_addMethod(the_class, "displayIfNeededIgnoringOpacity", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "displayRect:", function(self, _cmd, rect) {
+with(self) {
+objc_msgSend(self, "displayRectIgnoringOpacity:inContext:", rect, null);
+}
+}, "void");
+
+class_addMethod(the_class, "displayIfNeededInRect:", function(self, _cmd, rect) {
+with(self) {
+if (objc_msgSend(self, "needsDisplay"))
+objc_msgSend(self, "displayRect:", objc_msgSend(self, "bounds"));
+
+}
+}, "void");
+
+class_addMethod(the_class, "displayRectIgnoringOpacity:", function(self, _cmd, rect) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "displayIfNeededInRectIgnoringOpacity:", function(self, _cmd, rect) {
+with(self) {
+}
+}, "void");
+
 class_addMethod(the_class, "drawRect:", function(self, _cmd, rect) {
+with(self) {
+var context = objc_msgSend(objc_msgSend(NSGraphicsContext, "currentContext"), "graphicsPort");
+NSLog(context);
+}
+}, "void");
+
+class_addMethod(the_class, "displayRectIgnoringOpacity:inContext:", function(self, _cmd, aRect, context) {
+with(self) {
+objc_msgSend(self, "lockFocus");
+objc_msgSend(self, "drawRect:", aRect);
+objc_msgSend(self, "unlockFocus");
+}
+}, "void");
+
+class_addMethod(the_class, "bitmapImageRepForCachingDisplayInRect:", function(self, _cmd, rect) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "cacheDisplayInRect:toBitmapImageRep:", function(self, _cmd, rect, bitmapImageRep) {
 with(self) {
 }
 }, "void");

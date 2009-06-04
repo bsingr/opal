@@ -53,10 +53,9 @@ class Vienna::ObjectiveCParser
     selector_with_arguments: 
         IDENTIFIER
     	| IDENTIFIER ':' expression                               { result = make_node(':', val[0], val[2]) }
-    	| selector_with_arguments selector_component expression   { 
-    	  val[1].right = val[2]
-    	  result = make_node(',', val[0], val[1])
-    	}
+    	| selector_with_arguments selector_component expression   { val[1].right = val[2]
+    	                                                            result = make_node(',', val[0], val[1])
+}
     	| selector_with_arguments ',' ELLIPSIS
     	;
 

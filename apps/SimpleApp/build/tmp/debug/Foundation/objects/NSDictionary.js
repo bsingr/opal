@@ -11,11 +11,13 @@ return CFDictionaryCreateMutable();
 
 class_addMethod(the_class, "count", function(self, _cmd) {
 with(self) {
+return CFDictionaryGetCount(self);
 }
 }, "void");
 
 class_addMethod(the_class, "objectForKey:", function(self, _cmd, aKey) {
 with(self) {
+return CFDictionaryGetValue(self,aKey);
 }
 }, "void");
 
@@ -24,6 +26,7 @@ with(self) {
 }
 }, "void");
 
+CFDictionaryRef.prototype.isa = NSDictionary;
 var the_class = NSDictionary;
 var meta_class = the_class.isa;
 
@@ -190,6 +193,7 @@ with(self) {
 }
 }, "void");
 
+CFMutableDictionaryRef.prototype.isa = NSMutableDictionary;
 var the_class = NSMutableDictionary;
 var meta_class = the_class.isa;
 

@@ -214,6 +214,7 @@ with(self) {
 
 class_addMethod(meta_class, "arrayWithObjects:", function(self, _cmd, firstObj) {
 with(self) {
+NSLog("Array with objects...");
 }
 }, "void");
 

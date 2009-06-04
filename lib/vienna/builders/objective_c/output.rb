@@ -521,6 +521,9 @@ module Vienna
       file.write the_selector
       file.write "\""
       output_objc_msgSend_arguments file, statement.right
+      if the_selector == "arrayWithObjects:"
+        # puts statement
+      end
       file.write ")"
       
       # should really check here to see if its alloc/init, then return the_self
@@ -532,6 +535,7 @@ module Vienna
     
     
     def get_objc_msgSend_selector(file, selector)
+      # puts selector
       return "" unless selector
       if selector.value == ':'
         return "#{selector.left.value}:"

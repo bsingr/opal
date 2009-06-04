@@ -192,7 +192,7 @@
 
 + (id)arrayWithObjects:(id)firstObj, ...
 {
-    
+	NSLog(@"Array with objects...");
 }
 
 + (id)arrayWithArray:(NSArray *)array

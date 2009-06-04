@@ -16,7 +16,10 @@
     
     if (self) {
         NSWindow *myWindow = [[NSWindow alloc] initWithContentRect:NSMakeRect(100,100,100,100) styleMask:10 backing:nil defer:false];
-    }
+    
+		
+		NSArray *myArray = [NSArray arrayWithObjects:20, 30];
+	}
     
 	return self;
 }

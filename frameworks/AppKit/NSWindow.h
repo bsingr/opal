@@ -53,7 +53,6 @@ typedef NSUInteger NSWindowButton;
 
 @interface NSWindow : NSResponder
 {
-    // CGContextRef    _contextRef;
     id              _gState;
     id              _gCanvas;
     id              _gBuffer;
@@ -75,6 +74,7 @@ typedef NSUInteger NSWindowButton;
 	BOOL            _unifiedTitleAndToolbar;
 	
 	NSToolbar      *_toolbar;
+	
 	NSView         *_contentView;
 	
 	id              _delegate;
@@ -109,6 +109,8 @@ typedef NSUInteger NSWindowButton;
     CGDOMElementRef   _DOMContainer;
     // Rendering context. mainly canvas. could be a nested DIV tree if DOM drawing. or could be a textfield for nstextfield etc. but default it is a canvas
     CGDOMElementRef   _DOMGraphicsContext;
+	// a cache of the actual graphics context (from canvas, or VML representation).
+	NSGraphicsContext      *_graphicsContext;
 }
 
 + (NSRect)frameRectForContentRect:(NSRect)cRect styleMask:(NSUInteger)aStyle;

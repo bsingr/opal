@@ -17,12 +17,12 @@
 
 - (NSUInteger)count
 {
-	
+	return CFDictionaryGetCount(self);
 }
 
 - (id)objectForKey:(id)aKey
 {
-	
+	return CFDictionaryGetValue(self, aKey);
 }
 
 - (NSEnumerator *)keyEnumerator
@@ -31,6 +31,7 @@
 }
 
 @end
+
 
 @implementation NSDictionary (NSExtendedDictionary)
 

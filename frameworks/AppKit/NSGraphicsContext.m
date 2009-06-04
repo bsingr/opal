@@ -35,22 +35,22 @@ id NSGraphicsContextCurrent = nil;
 
 + (NSGraphicsContext *)currentContext
 {
-    // return NSGraphicsContextCurrent;
+    return NSGraphicsContextCurrent;
 }
 
 + (void)setCurrentContext:(NSGraphicsContext *)context
 {
-    // NSGraphicsContextCurrent = context;
+    NSGraphicsContextCurrent = context;
 }
 
 + (void)saveGraphicsState {
-    id ctx = [[NSGraphicsContext currentContext] graphicsPort];
-    // ctx.save();
+    CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
+	CGContextSaveGState(ctx);
 }
 
 + (void)restoreGraphicsState {
-    id ctx = [[NSGraphicsContext currentContext] graphicsPort];
-    // ctx.restore();
+    CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
+    CGContextRestoreGState(ctx);
 }
 
 @end

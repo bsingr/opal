@@ -418,7 +418,8 @@
 
 - (void)setNeedsDisplay:(BOOL)flag
 {
-    // TODO: Need to implement
+    if (flag)
+		[self setNeedsDisplayInRect:[self bounds]];
 }
 
 - (void)setNeedsDisplayInRect:(NSRect)invalidRect
@@ -433,7 +434,7 @@
 
 - (void)lockFocus
 {
-    // TODO: Need to implement
+    
 }
 
 - (void)unlockFocus
@@ -480,7 +481,8 @@
 
 - (void)displayRect:(NSRect)rect
 {
-    // TODO: Need to implement
+	[self viewWillDraw];
+	[self displayRectIgnoringOpacity:rect inContext:nil];
 }
 
 - (void)displayIfNeededInRect:(NSRect)rect
@@ -505,7 +507,9 @@
 
 - (void)displayRectIgnoringOpacity:(NSRect)aRect inContext:(NSGraphicsContext *)context
 {
-    // TODO: Need to implement
+	[self lockFocus];
+	[self drawRect:aRect];
+	[self unlcokFocus];
 }
 
 

@@ -56,7 +56,9 @@ module Vienna
         # Must make all Arrays mutable.. only at runtime. compile time checking
         # will prevent unauthorized messages being sent to immutable arrays
         "NSMutableArray" => "Array",
-        "NSString" => "String"
+        "NSString" => "String",
+        "NSDictionary" => "CFDictionaryRef",
+        "NSMutableDictionary" => "CFMutableDictionaryRef"
       }
       
       # Linking configuration

@@ -40,6 +40,7 @@ class_addIvar(the_class, "_wtFlags", "NSUInteger");
 class_addIvar(the_class, "_windowClass", "id");
 class_addIvar(the_class, "_DOMContainer", "CGDOMElementRef");
 class_addIvar(the_class, "_DOMGraphicsContext", "CGDOMElementRef");
+class_addIvar(the_class, "_graphicsContext", "NSGraphicsContext");
 class_addIvar(the_class, "_mainMenuView", "NSMenuView");
 class_addIvar(the_class, "_statusBarView", "NSView");
 class_addIvar(the_class, "_applicationTitleName", "NSString");

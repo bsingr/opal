@@ -36,6 +36,9 @@
 #define WINDOW_BORDER_SIZE 1
 #define WINDOW_TITLEBAR_SIZE 20
 
+	NSUInteger WINDOW_BORDER_SIZE = 1;
+	NSUInteger WINDOW_TITLEBAR_SIZE = 20;
+
     if (_styleMask == 0)
         return contentRect;
         
@@ -93,18 +96,6 @@
         
         _frame = [self frameRectForContentRect:contentRect];
         
-        // [self setFrame:contentRect display:YES];
-        
-        
-        
-        // _resizable = NO;
-        // _firstResponder = self;
-        // _movableByWindowBackground = YES;
-        
-        // _hasShadow = YES;
-        // _isVisible = YES;
-        
-        
         [self setContentView:[[NSView alloc] initWithFrame:contentRect]];
         
         _firstResponder = self;
@@ -112,7 +103,7 @@
         
         // [self setFrame:contentRect display:NO];
         
-        
+		[self setNeedsDisplay:YES];
     }
     return self;
 }
@@ -322,6 +313,10 @@
     return _frame;
 }
 
+- (NSRect)bounds
+{
+	return NSMakeRect(0,0,_frame.size.width,_frame.size.height);
+}
 
 - (NSTimeInterval)animationResizeTime:(NSRect)newFrame
 {
@@ -1166,7 +1161,7 @@
 @end
 
 
-@implementation NSWindow (NSViewDrawingExtensions)
+@implementation NSWindow (ViennaWindowDrawingExtensions)
 
 - (BOOL)canDraw
 {
@@ -1175,14 +1170,13 @@
 
 - (void)setNeedsDisplay:(BOOL)flag
 {
-    [self lockFocus];
-    [self drawRect:_bounds];
-    [self unlockFocus];
+    if (flag)
+		[self setNeedsDisplayInRect:[self bounds]];
 }
 
 - (void)setNeedsDisplayInRect:(NSRect)invalidRect
 {
-    // TODO: Need to implement
+	[self displayRect:invalidRect];
 }
 
 - (BOOL)needsDisplay
@@ -1192,12 +1186,17 @@
 
 - (void)lockFocus
 {
-    // TODO: Need to implement
+    if (!_graphicsContext)
+		_graphicsContext = [NSGraphicsContext graphicsContextWithGraphicsPort:CGDOMElementGetContext(_DOMGraphicsContext) flipped:NO];
+	
+	[NSGraphicsContext setCurrentContext:_graphicsContext];
+	CGContextSaveGState([_graphicsContext graphicsPort]);
 }
 
 - (void)unlockFocus
 {
-    // TODO: Need to implement
+	CGContextRestoreGState([_graphicsContext graphicsPort]);
+	[NSGraphicsContext setCurrentContext:nil];
 }
 
 - (BOOL)lockFocusIfCanDraw
@@ -1210,7 +1209,63 @@
     // TODO: Need to implement
 }
 
+- (void)display
+{
+	[self displayRect:[self bounds]];
+}
+
+- (void)displayIfNeeded
+{
+    if ([self needsDisplay])
+		[self displayRect:[self bounds]];
+}
+
+- (void)displayIfNeededIgnoringOpacity
+{
+    // TODO: Need to implement
+}
+
+- (void)displayRect:(NSRect)rect
+{
+	// [self viewWillDraw];
+	[self displayRectIgnoringOpacity:rect inContext:nil];
+}
+
+- (void)displayIfNeededInRect:(NSRect)rect
+{
+    if ([self needsDisplay])
+		[self displayRect:[self bounds]];
+}
+
+- (void)displayRectIgnoringOpacity:(NSRect)rect
+{
+    // TODO: Need to implement
+}
+
+- (void)displayIfNeededInRectIgnoringOpacity:(NSRect)rect
+{
+    // TODO: Need to implement
+}
+
 - (void)drawRect:(NSRect)rect
+{
+	CGContextRef context = [[NSGraphicsContext currentContext] graphicsPort];
+	
+}
+
+- (void)displayRectIgnoringOpacity:(NSRect)aRect inContext:(NSGraphicsContext *)context
+{
+	[self lockFocus];
+	[self drawRect:aRect];
+	[self unlockFocus];
+}
+
+- (NSBitmapImageRep *)bitmapImageRepForCachingDisplayInRect:(NSRect)rect
+{
+    // TODO: Need to implement
+}
+
+- (void)cacheDisplayInRect:(NSRect)rect toBitmapImageRep:(NSBitmapImageRep *)bitmapImageRep
 {
     // TODO: Need to implement
 }
