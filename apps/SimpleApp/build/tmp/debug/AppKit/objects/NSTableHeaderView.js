@@ -27,16 +27,19 @@ class_addIvar(the_class, "_validTransforms", "BOOL");
 class_addIvar(the_class, "_transformFromWindow", "CGAffineTransform");
 class_addIvar(the_class, "_transformToWindow", "CGAffineTransform");
 class_addIvar(the_class, "_visibleRect", "NSRect");
-class_addIvar(the_class, "_DOMContainer", "id");
-class_addIvar(the_class, "_DOMGraphicsContext", "id");
+class_addIvar(the_class, "_DOMContainer", "CGDOMElementRef");
+class_addIvar(the_class, "_DOMGraphicsContext", "CGDOMElementRef");
 class_addIvar(the_class, "_tableView", "NSTableView");
 
 class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
+with(self) {
 objc_msgSendSuper({super_class:NSView, receiver:self}, "initWithCoder:", aCoder);
 return self;
+}
 }, "void");
 
 class_addMethod(the_class, "initWithFrame:", function(self, _cmd, frameRect) {
+with(self) {
 objc_msgSendSuper({super_class:NSView, receiver:self}, "initWithFrame:", frameRect);
 if (self)
 {
@@ -44,18 +47,24 @@ if (self)
 }
 
 return self;
+}
 }, "void");
 
 class_addMethod(the_class, "setTableView:", function(self, _cmd, aTableView) {
+with(self) {
 _tableView = aTableView;
 objc_msgSend(self, "setNeedsDisplay:", YES);
+}
 }, "void");
 
 class_addMethod(the_class, "tableView", function(self, _cmd) {
+with(self) {
 return _tableView;
+}
 }, "void");
 
 class_addMethod(the_class, "drawRect:", function(self, _cmd, rect) {
+with(self) {
 var gradientTop = objc_msgSend(NSColor, "colorWithCalibratedRed:green:blue:alpha:", 1, 1, 1, 1.0);
 var gradientBottom = objc_msgSend(NSColor, "colorWithCalibratedRed:green:blue:alpha:", 0.902, 0.902, 0.902, 1.0);
 var backgroundGradient = objc_msgSend(objc_msgSend(NSGradient, "alloc"), "initWithStartingColor:endingColor:", gradientTop, gradientBottom);
@@ -74,8 +83,11 @@ var columnRect = NSMakeRect(_bounds.origin.x,_bounds.origin.y,_bounds.size.width
 /* for statement needs to go here*/
 }
 
+}
 }, "void");
 
 class_addMethod(the_class, "headerRectOfColumn:", function(self, _cmd, columnIndex) {
+with(self) {
+}
 }, "void");
 

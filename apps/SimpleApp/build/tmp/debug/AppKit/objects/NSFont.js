@@ -6,6 +6,7 @@ class_addIvar(the_class, "_name", "NSString");
 class_addIvar(the_class, "_size", "CGFloat");
 
 class_addMethod(the_class, "initWithName:size:", function(self, _cmd, fontName, fontSize) {
+with(self) {
 objc_msgSend(self, "init");
 if (self)
 {
@@ -15,30 +16,43 @@ _size = fontSize;
 }
 
 return self;
+}
 }, "void");
 
 class_addMethod(the_class, "set", function(self, _cmd) {
+with(self) {
 var ctx = objc_msgSend(objc_msgSend(NSGraphicsContext, "currentContext"), "graphicsPort");
 ctx.font = _size + "px " + _name;
+}
 }, "void");
 
 class_addMethod(meta_class, "fontWithName:size:", function(self, _cmd, fontName, fontSize) {
+with(self) {
 return objc_msgSend(objc_msgSend(NSFont, "alloc"), "initWithName:size:", fontName, fontSize);
+}
 }, "void");
 
 class_addMethod(meta_class, "systemFontOfSize:", function(self, _cmd, fontSize) {
+with(self) {
 return objc_msgSend(NSFont, "fontWithName:size:", "Helvetica", fontSize);
+}
 }, "void");
 
 class_addMethod(meta_class, "titleBarFontOfSize:", function(self, _cmd, fontSize) {
+with(self) {
 return objc_msgSend(NSFont, "fontWithName:size:", "Helvetica", fontSize);
+}
 }, "void");
 
 class_addMethod(meta_class, "systemFontSize", function(self, _cmd) {
+with(self) {
 return 12;
+}
 }, "void");
 
 class_addMethod(meta_class, "smallSystemFontSize", function(self, _cmd) {
+with(self) {
 return 11;
+}
 }, "void");
 

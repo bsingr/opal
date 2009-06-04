@@ -10,14 +10,19 @@
 
 @implementation NSArray
 
++ (id)alloc
+{
+    return CFArrayCreateMutable(1);
+}
+
 - (NSUInteger)count
 {
-    
+    return CFArrayGetCount(self);
 }
 
 - (id)objectAtIndex:(NSUInteger)index
 {
-    
+    return CFArrayGetValueAtIndex(self, index);
 }
     
 @end
@@ -241,6 +246,11 @@
 
 @implementation NSMutableArray
 
++ (id)alloc
+{
+    return CFArrayCreateMutable(1);
+}
+
 - (void)addObject:(id)anObject
 {
     
@@ -369,12 +379,12 @@
 
 + (id)arrayWithCapacity:(NSUInteger)numItems
 {
-    
+    return [[self alloc] initWithCapacity:numItems];
 }
 
 - (id)initWithCapacity:(NSUInteger)numItems
 {
-    
+    return self;
 }
 
 @end

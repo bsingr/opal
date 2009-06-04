@@ -104,6 +104,11 @@ typedef NSUInteger NSWindowButton;
     NSSize          _minSize;
     NSUInteger      _wtFlags;
     id             *_windowClass;
+    
+    // Usually an "outer div" to hold the graphics context aswell as subviews' containers
+    CGDOMElementRef   _DOMContainer;
+    // Rendering context. mainly canvas. could be a nested DIV tree if DOM drawing. or could be a textfield for nstextfield etc. but default it is a canvas
+    CGDOMElementRef   _DOMGraphicsContext;
 }
 
 + (NSRect)frameRectForContentRect:(NSRect)cRect styleMask:(NSUInteger)aStyle;

@@ -27,8 +27,8 @@ class_addIvar(the_class, "_validTransforms", "BOOL");
 class_addIvar(the_class, "_transformFromWindow", "CGAffineTransform");
 class_addIvar(the_class, "_transformToWindow", "CGAffineTransform");
 class_addIvar(the_class, "_visibleRect", "NSRect");
-class_addIvar(the_class, "_DOMContainer", "id");
-class_addIvar(the_class, "_DOMGraphicsContext", "id");
+class_addIvar(the_class, "_DOMContainer", "CGDOMElementRef");
+class_addIvar(the_class, "_DOMGraphicsContext", "CGDOMElementRef");
 class_addIvar(the_class, "_verticalScroller", "NSView");
 class_addIvar(the_class, "_horizontalScroller", "NSView");
 class_addIvar(the_class, "_clipView", "NSView");
@@ -40,6 +40,7 @@ class_addIvar(the_class, "_borderType", "NSInteger");
 class_addIvar(the_class, "_contentView", "NSView");
 
 class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
+with(self) {
 objc_msgSendSuper({super_class:NSView, receiver:self}, "initWithCoder:", aCoder);
 var flags = objc_msgSend(aCoder, "decodeIntForKey:", "NSsFlags");
 if (flags & 0x10)
@@ -55,20 +56,26 @@ _hasHorizontalScroller = NO;
 _borderType = flags & 0x303;
 /* for statement needs to go here*/objc_msgSend(self, "tile");
 return self;
+}
 }, "void");
 
 class_addMethod(the_class, "initWithFrame:", function(self, _cmd, frameRect) {
+with(self) {
 objc_msgSendSuper({super_class:NSView, receiver:self}, "initWithFrame:", frameRect);
 _contentView = objc_msgSend(objc_msgSend(NSView, "alloc"), "initWithFrame:", NSMakeRect(0,0,0,0));
 return self;
+}
 }, "void");
 
 class_addMethod(the_class, "resizeSubviewsWithOldSize:", function(self, _cmd, oldBoundsSize) {
+with(self) {
 objc_msgSend(self, "tile");
+}
 }, "void");
 
 class_addMethod(the_class, "tile", function(self, _cmd) {
-var tilingFrame;
+with(self) {
+var tilingFrame = {origin:{x:0,y:0,},size:{width:0,height:0,},};
 if (_headerClipView)
 {
 NSLog("got header clip view");
@@ -85,10 +92,13 @@ objc_msgSend(_clipView, "setFrame:", tilingFrame);
 
 }
 
+}
 }, "void");
 
 class_addMethod(the_class, "drawRect:", function(self, _cmd, dirtyRect) {
+with(self) {
 objc_msgSend(objc_msgSend(NSColor, "colorWithCalibratedRed:green:blue:alpha:", 0.851, 0.851, 0.851, 1.0), "set");
 objc_msgSend(NSBezierPath, "strokeRect:", NSMakeRect(0.5,0.5,_bounds.size.width - 1,_bounds.size.height - 1));
+}
 }, "void");
 

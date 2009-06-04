@@ -27,8 +27,8 @@ class_addIvar(the_class, "_validTransforms", "BOOL");
 class_addIvar(the_class, "_transformFromWindow", "CGAffineTransform");
 class_addIvar(the_class, "_transformToWindow", "CGAffineTransform");
 class_addIvar(the_class, "_visibleRect", "NSRect");
-class_addIvar(the_class, "_DOMContainer", "id");
-class_addIvar(the_class, "_DOMGraphicsContext", "id");
+class_addIvar(the_class, "_DOMContainer", "CGDOMElementRef");
+class_addIvar(the_class, "_DOMGraphicsContext", "CGDOMElementRef");
 class_addIvar(the_class, "_menu", "NSMenu");
 class_addIvar(the_class, "_isHorizontal", "BOOL");
 class_addIvar(the_class, "_highlightedItemIndex", "NSInteger");
@@ -39,22 +39,27 @@ class_addIvar(the_class, "_innerRect", "NSRect");
 class_addIvar(the_class, "_eventBindingMenuArray", "NSMutableArray");
 
 class_addMethod(the_class, "initWithMenu:", function(self, _cmd, aMenu) {
+with(self) {
 objc_msgSend(self, "initWithFrame:", NSMakeRect(0,0,0,0));
 _menu = aMenu;
 _highlightedItemIndex = -1;
 objc_msgSend(self, "setMenuItemCell:forItemAtIndex:", objc_msgSend(objc_msgSend(NSMenuItemCell, "alloc"), "init"), 0);
 return self;
+}
 }, "void");
 
 class_addMethod(the_class, "drawRect:", function(self, _cmd, aRect) {
+with(self) {
 if (_menu)
 {
 /* for statement needs to go here*/
 }
 
+}
 }, "void");
 
 class_addMethod(the_class, "mouseDown:", function(self, _cmd, theEvent) {
+with(self) {
 var aPoint = objc_msgSend(self, "convertPoint:fromView:", objc_msgSend(theEvent, "locationInWindow"), _superview);
 var selectedIndex = objc_msgSend(self, "indexOfItemAtPoint:", aPoint);
 _eventBindingMenuArray = objc_msgSend(NSMutableArray, "arrayWithCapacity:", 0);
@@ -63,9 +68,11 @@ objc_msgSend(self, "setHighlightedItemIndex:", selectedIndex);
 objc_msgSend(_eventBindingMenuArray, "addObject:", objc_msgSend(self, "attachSubmenuForItemAtIndex:", selectedIndex));
 objc_msgSend(self, "setNeedsDisplay:", YES);
 objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:untilDate:inMode:dequeue:withTarget:withSelector:", (NSLeftMouseUpMask | NSMouseMovedMask), null, null, null, self, "selector:");
+}
 }, "void");
 
 class_addMethod(the_class, "_mouseDownMenuHandle:", function(self, _cmd, theEvent) {
+with(self) {
 var visibleMenus = objc_msgSend(_eventBindingMenuArray, "count");
 /* for statement needs to go here*/if (objc_msgSend(theEvent, "type") == NSMouseMoved)
 {
@@ -73,77 +80,117 @@ objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchin
 
 }
 
+}
 }, "void");
 
 class_addMethod(the_class, "setMenu:", function(self, _cmd, menu) {
+with(self) {
 _menu = menu;
+}
 }, "void");
 
 class_addMethod(the_class, "menu", function(self, _cmd) {
+with(self) {
 return _menu;
+}
 }, "void");
 
 class_addMethod(the_class, "setHorizontal:", function(self, _cmd, flag) {
+with(self) {
 _isHorizontal = flag;
+}
 }, "void");
 
 class_addMethod(the_class, "isHorizontal", function(self, _cmd) {
+with(self) {
 return _isHorizontal;
+}
 }, "void");
 
 class_addMethod(the_class, "setFont:", function(self, _cmd, font) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "font", function(self, _cmd) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "setHighlightedItemIndex:", function(self, _cmd, index) {
+with(self) {
 _highlightedItemIndex = index;
+}
 }, "void");
 
 class_addMethod(the_class, "highlightedItemIndex", function(self, _cmd) {
+with(self) {
 return _highlightedItemIndex;
+}
 }, "void");
 
 class_addMethod(the_class, "setMenuItemCell:forItemAtIndex:", function(self, _cmd, cell, index) {
+with(self) {
 _menuItemCell = cell;
 objc_msgSend(cell, "setMenuView:", self);
+}
 }, "void");
 
 class_addMethod(the_class, "menuItemCellForItemAtIndex:", function(self, _cmd, index) {
+with(self) {
 return _menuItemCell;
+}
 }, "void");
 
 class_addMethod(the_class, "attachedMenuView", function(self, _cmd) {
+with(self) {
 return _attatchedMenuView;
+}
 }, "void");
 
 class_addMethod(the_class, "attachedMenu", function(self, _cmd) {
+with(self) {
 return _attatchedMenu;
+}
 }, "void");
 
 class_addMethod(the_class, "isAttached", function(self, _cmd) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "isTornOff", function(self, _cmd) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "horizontalEdgePadding", function(self, _cmd) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "setHorizontalEdgePadding:", function(self, _cmd, pad) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "itemChanged:", function(self, _cmd, notification) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "itemAdded:", function(self, _cmd, notification) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "itemRemoved:", function(self, _cmd, notification) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "detachSubmenu", function(self, _cmd) {
+with(self) {
 if (objc_msgSend(self, "attachedMenu"))
 {
 objc_msgSend(_attatchedMenuView, "detachSubmenu");
@@ -153,9 +200,11 @@ _attatchedMenuView = null;
 
 }
 
+}
 }, "void");
 
 class_addMethod(the_class, "attachSubmenuForItemAtIndex:", function(self, _cmd, index) {
+with(self) {
 var theMenuItem = objc_msgSend(objc_msgSend(_menu, "itemArray"), "objectAtIndex:", index);
 var theSubmenu = objc_msgSend(theMenuItem, "submenu");
 if (!theSubmenu)
@@ -170,47 +219,71 @@ var _menuWindow = objc_msgSend(objc_msgSend(NSMenuWindow, "alloc"), "initWithCon
 objc_msgSend(_menuWindow, "setLevel:", 10);
 objc_msgSend(_menuWindow, "setContentView:", _attatchedMenuView);
 return _attatchedMenuView;
+}
 }, "void");
 
 class_addMethod(the_class, "update", function(self, _cmd) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "setNeedsSizing:", function(self, _cmd, flag) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "needsSizing", function(self, _cmd) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "sizeToFit", function(self, _cmd) {
+with(self) {
 var boundsRect = NSMakeRect(0,0,0,0);
 /* for statement needs to go here*/_innerRect = boundsRect;
 objc_msgSend(self, "setFrame:", NSMakeRect(12,1,_innerRect.size.width,_innerRect.size.height));
+}
 }, "void");
 
 class_addMethod(the_class, "stateImageOffset", function(self, _cmd) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "stateImageWidth", function(self, _cmd) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "imageAndTitleOffset", function(self, _cmd) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "imageAndTitleWidth", function(self, _cmd) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "keyEquivalentOffset", function(self, _cmd) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "keyEquivalentWidth", function(self, _cmd) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "innerRect", function(self, _cmd) {
+with(self) {
 return _innerRect;
+}
 }, "void");
 
 class_addMethod(the_class, "rectOfItemAtIndex:", function(self, _cmd, index) {
-var itemRect;
+with(self) {
+var itemRect = {origin:{x:0,y:0,},size:{width:0,height:0,},};
 if (objc_msgSend(self, "isHorizontal"))
 {
 var yOffset = 0;
@@ -228,9 +301,11 @@ itemRect = NSMakeRect(xOffset,yOffset,200,22);
 }
 
 return itemRect;
+}
 }, "void");
 
 class_addMethod(the_class, "indexOfItemAtPoint:", function(self, _cmd, point) {
+with(self) {
 if (objc_msgSend(self, "isHorizontal"))
 {
 /* for statement needs to go here*/return -1;
@@ -242,20 +317,31 @@ else
 
 }
 
+}
 }, "void");
 
 class_addMethod(the_class, "setNeedsDisplayForItemAtIndex:", function(self, _cmd, index) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "locationForSubmenu:", function(self, _cmd, aSubmenu) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "setWindowFrameForAttachingToRect:onScreen:preferredEdge:popUpSelectedItem:", function(self, _cmd, screenRect, screen, edge, selectedItemIndex) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "performActionWithHighlightingForItemAtIndex:", function(self, _cmd, index) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "trackWithEvent:", function(self, _cmd, event) {
+with(self) {
+}
 }, "void");
 

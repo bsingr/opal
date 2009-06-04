@@ -12,3 +12,9 @@ void NSLog(NSString *format)
 {
 	printf(format);
 }
+
+
+Class NSClassFromString(NSString *aClassName)
+{
+    return objc_getClass(aClassName);
+}

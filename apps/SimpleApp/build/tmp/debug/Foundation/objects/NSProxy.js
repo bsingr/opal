@@ -5,26 +5,42 @@ class_addIvar(the_class, "isa", "Class");
 class_addIvar(the_class, "isa", "Class");
 
 class_addMethod(the_class, "forwardInvocation:", function(self, _cmd, invocation) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "methodSignatureForSelector:", function(self, _cmd, sel) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "dealloc", function(self, _cmd) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "finalize", function(self, _cmd) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "description", function(self, _cmd) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(meta_class, "alloc", function(self, _cmd) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(meta_class, "class", function(self, _cmd) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(meta_class, "respondsToSelector:", function(self, _cmd, aSelector) {
+with(self) {
+}
 }, "void");
 

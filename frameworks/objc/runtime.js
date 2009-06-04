@@ -131,7 +131,7 @@ function object_getInstanceVariable(obj, name, outValue)
 // 
 function objc_getClass(name)
 {
-    // FIXME: return regiseterd class from name
+    eval(name);
 }
 
 // extern id objc_getMetaClass(const char *name);
@@ -282,6 +282,8 @@ function class_getMethodImplementation(cls, name)
 {
     // FIXME: check for instance/class methods
     var theMethod = class_getInstanceMethod(cls, name);
+    if (!theMethod)
+        console.log("[" + cls.name + " " + name + "] does not exist");
     return method_getImplementation(theMethod);
 }
 

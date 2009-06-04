@@ -916,6 +916,29 @@ function CGDOMElementSetAttribute(element, name, value)
     element.setAttribute(name, value);
 }
 
+// extern void CGDOMElementSetFrame(CGDOMElementRef element, CGRect frame);
+// 
+function CGDOMElementSetFrame(element, frame)
+{
+    element.bottom = frame.origin.x;
+    element.left = frame.origin.y;
+    element.height = frame.size.height;
+    element.width = frame.size.width;
+}
+
+// extern void CGDOMElementSetFrameOrigin(CGDOMElementRef element, CGPoint origin);
+function CGDOMElementSetFrameOrigin(element, origin)
+{
+    
+}
+
+// extern void CGDOMElementSetFrameSize(CGDOMElementRef element, CGSize size);
+// 
+function CGDOMElementSetFrameSize(element, size)
+{
+    
+}
+
 // extern CGContextRef CGDOMElementGetContext(CGDOMElementRef element);
 // 
 function CGDOMElementGetContext(element)

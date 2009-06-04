@@ -38,34 +38,47 @@ class_addIvar(the_class, "_maxSize", "NSSize");
 class_addIvar(the_class, "_minSize", "NSSize");
 class_addIvar(the_class, "_wtFlags", "NSUInteger");
 class_addIvar(the_class, "_windowClass", "id");
+class_addIvar(the_class, "_DOMContainer", "CGDOMElementRef");
+class_addIvar(the_class, "_DOMGraphicsContext", "CGDOMElementRef");
 
 class_addMethod(the_class, "initWithContentRect:styleMask:backing:defer:", function(self, _cmd, contentRect, windowStyle, bufferingType, deferCreation) {
+with(self) {
 objc_msgSendSuper({super_class:NSWindow, receiver:self}, "initWithContentRect:styleMask:backing:defer:", contentRect, windowStyle, bufferingType, deferCreation);
 return self;
+}
 }, "void");
 
 class_addMethod(the_class, "becomeKeyWindow", function(self, _cmd) {
+with(self) {
 if (objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "keyWindow"))
 objc_msgSend(objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "keyWindow"), "resignKeyWindow");
 
 _keyWindow = YES;
 objc_msgSend(self, "setLevel:", (10 + 5));
+}
 }, "void");
 
 class_addMethod(the_class, "resignKeyWindow", function(self, _cmd) {
+with(self) {
 _keyWindow = NO;
 objc_msgSend(self, "setLevel:", 10);
+}
 }, "void");
 
 class_addMethod(the_class, "makeKeyAndOrderFront:", function(self, _cmd, sender) {
+with(self) {
 objc_msgSend(self, "makeKeyWindow");
+}
 }, "void");
 
 class_addMethod(the_class, "canBecomeMainWindow", function(self, _cmd) {
+with(self) {
 return NO;
+}
 }, "void");
 
 class_addMethod(the_class, "drawRect:", function(self, _cmd, dirtyRect) {
+with(self) {
 var NSWindowBorderSize = 20;
 var NSPanelUtilityTitleBarSize = 22;
 objc_msgSend(objc_msgSend(NSColor, "colorWithCalibratedRed:green:blue:alpha:", 0, 0, 0, 0.7), "set");
@@ -100,9 +113,11 @@ objc_msgSend(NSGraphicsContext, "restoreGraphicsState");
 
 }
 
+}
 }, "void");
 
 class_addMethod(the_class, "frameRectForContentRect:", function(self, _cmd, windowContent) {
+with(self) {
 var xOffset = 0;
 var yOffset = 0;
 var widthOffset = 0;
@@ -114,9 +129,12 @@ heightOffset = heightOffset + (2 * NSWindowBorderSize);
 heightOffset = heightOffset + NSPanelUtilityTitleBarSize;
 var frameRect = NSMakeRect(windowContent.origin.x + xOffset,windowContent.origin.y + yOffset,windowContent.size.width + widthOffset,windowContent.size.height + heightOffset);
 return frameRect;
+}
 }, "void");
 
 class_addMethod(the_class, "canBecomeMainWindow", function(self, _cmd) {
+with(self) {
 return NO;
+}
 }, "void");
 

@@ -27,8 +27,8 @@ class_addIvar(the_class, "_validTransforms", "BOOL");
 class_addIvar(the_class, "_transformFromWindow", "CGAffineTransform");
 class_addIvar(the_class, "_transformToWindow", "CGAffineTransform");
 class_addIvar(the_class, "_visibleRect", "NSRect");
-class_addIvar(the_class, "_DOMContainer", "id");
-class_addIvar(the_class, "_DOMGraphicsContext", "id");
+class_addIvar(the_class, "_DOMContainer", "CGDOMElementRef");
+class_addIvar(the_class, "_DOMGraphicsContext", "CGDOMElementRef");
 class_addIvar(the_class, "_tag", "NSInteger");
 class_addIvar(the_class, "_cell", "NSCell");
 class_addIvar(the_class, "_currentEditor", "NSText");
@@ -52,6 +52,7 @@ class_addIvar(the_class, "_drawsGrid", "BOOL");
 class_addIvar(the_class, "_alternatingRowBackground", "BOOL");
 
 class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
+with(self) {
 objc_msgSendSuper({super_class:NSControl, receiver:self}, "initWithCoder:", aCoder);
 var flags = objc_msgSend(aCoder, "decodeIntForKey:", "NSTvFlags");
 if (flags & 0x20000000)
@@ -73,9 +74,11 @@ _tableColumns = objc_msgSend(aCoder, "decodeObjectForKey:", "NSTableColumns");
 _numberOfRows = 0;
 _numberOfColumns = objc_msgSend(_tableColumns, "count");
 /* for statement needs to go here*/return self;
+}
 }, "void");
 
 class_addMethod(the_class, "initWithFrame:", function(self, _cmd, frameRect) {
+with(self) {
 objc_msgSendSuper({super_class:NSControl, receiver:self}, "initWithFrame:", frameRect);
 if (self)
 {
@@ -91,9 +94,11 @@ _tableColumnViews = objc_msgSend(NSMutableArray, "arrayWithCapacity:", 0);
 }
 
 return self;
+}
 }, "void");
 
 class_addMethod(the_class, "drawRect:", function(self, _cmd, dirtyRect) {
+with(self) {
 if (_alternatingRowBackground)
 {
 var backgroundColors = objc_msgSend(NSColor, "controlAlternatingRowBackgroundColors");
@@ -124,9 +129,11 @@ if (_tableColumns && _drawsGrid)
 /* for statement needs to go here*/
 }
 
-/* for statement needs to go here*/}, "void");
+/* for statement needs to go here*/}
+}, "void");
 
 class_addMethod(the_class, "preparedCellAtColumn:row:", function(self, _cmd, column, row) {
+with(self) {
 var column = objc_msgSend(_tableColumns, "objectAtIndex:", column);
 var dataCell = objc_msgSend(column, "dataCellForRow:", row);
 objc_msgSend(dataCell, "setObjectValue:", objc_msgSend(_dataSource, "tableView:objectValueForTableColumn:row:", self, column, row));
@@ -142,76 +149,108 @@ objc_msgSend(dataCell, "setTextColor:", objc_msgSend(NSColor, "textColor"));
 }
 
 return dataCell;
+}
 }, "void");
 
 class_addMethod(the_class, "isRowSelected:", function(self, _cmd, rowIndex) {
+with(self) {
 if (objc_msgSend(_selectedRowIndexes, "containsIndex:", rowIndex))
 return YES;
 else
 return NO;
 
+}
 }, "void");
 
 class_addMethod(the_class, "tile", function(self, _cmd) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "setIntercellSpacing:", function(self, _cmd, aSize) {
+with(self) {
 _intercellSpacing = aSize;
+}
 }, "void");
 
 class_addMethod(the_class, "intercellSpacing", function(self, _cmd) {
+with(self) {
 return _intercellSpacing;
+}
 }, "void");
 
 class_addMethod(the_class, "setRowHeight:", function(self, _cmd, rowHeight) {
+with(self) {
 _rowHeight = rowHeight;
+}
 }, "void");
 
 class_addMethod(the_class, "rowHeight", function(self, _cmd) {
+with(self) {
 return _rowHeight;
+}
 }, "void");
 
 class_addMethod(the_class, "addTableColumn:", function(self, _cmd, aColumn) {
-var i;
+with(self) {
+var i = 0;
 var xOffset = 0;
 /* for statement needs to go here*/objc_msgSend(_tableColumns, "addObject:", aColumn);
 _numberOfColumns = objc_msgSend(_tableColumns, "count");
 objc_msgSend(self, "reloadData");
+}
 }, "void");
 
 class_addMethod(the_class, "removeTableColumn:", function(self, _cmd, aTableColumn) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "tableColumns", function(self, _cmd) {
+with(self) {
 return _tableColumns;
+}
 }, "void");
 
 class_addMethod(the_class, "numberOfRows", function(self, _cmd) {
+with(self) {
 return _numberOfRows;
+}
 }, "void");
 
 class_addMethod(the_class, "numberOfColumns", function(self, _cmd) {
+with(self) {
 return _numberOfColumns;
+}
 }, "void");
 
 class_addMethod(the_class, "setDataSource:", function(self, _cmd, anObject) {
+with(self) {
 _dataSource = anObject;
 objc_msgSend(self, "reloadData");
+}
 }, "void");
 
 class_addMethod(the_class, "dataSource", function(self, _cmd) {
+with(self) {
 return _dataSource;
+}
 }, "void");
 
 class_addMethod(the_class, "setDelegate:", function(self, _cmd, anObject) {
+with(self) {
 _delegate = anObject;
+}
 }, "void");
 
 class_addMethod(the_class, "delegate", function(self, _cmd) {
+with(self) {
 return _delegate;
+}
 }, "void");
 
 class_addMethod(the_class, "reloadData", function(self, _cmd) {
+with(self) {
 if (!_dataSource)
 return ;
 
@@ -223,39 +262,51 @@ objc_msgSend(self, "setNeedsDisplay:", YES);
 if (_headerView)
 objc_msgSend(_headerView, "setNeedsDisplay:", YES);
 
+}
 }, "void");
 
 class_addMethod(the_class, "setHeaderView:", function(self, _cmd, aHeaderView) {
+with(self) {
 _headerView = aHeaderView;
 objc_msgSend(_headerView, "setTableView:", self);
+}
 }, "void");
 
 class_addMethod(the_class, "headerView", function(self, _cmd) {
+with(self) {
 return _headerView;
+}
 }, "void");
 
 class_addMethod(the_class, "frameOfCellAtColumn:row:", function(self, _cmd, columnIndex, rowIndex) {
+with(self) {
 var columnRect = objc_msgSend(self, "rectOfColumn:", columnIndex);
 var rowRect = objc_msgSend(self, "rectOfRow:", rowIndex);
 return NSMakeRect(columnRect.origin.x,rowRect.origin.y,columnRect.size.width,rowRect.size.height);
+}
 }, "void");
 
 class_addMethod(the_class, "rectOfColumn:", function(self, _cmd, columnIndex) {
+with(self) {
 var columnRect = NSMakeRect(_bounds.origin.x,_bounds.origin.y,0,_bounds.size.height);
 /* for statement needs to go here*/columnRect.size.width = objc_msgSend(objc_msgSend(_tableColumns, "objectAtIndex:", columnIndex), "width") + _intercellSpacing.width;
 return columnRect;
+}
 }, "void");
 
 class_addMethod(the_class, "rectOfRow:", function(self, _cmd, rowIndex) {
+with(self) {
 var rowRect = NSMakeRect(_bounds.origin.x,_bounds.size.height + _bounds.origin.x,_bounds.size.width,_rowHeight);
 var eachRowHeight = 18;
 var yOffset = eachRowHeight * rowIndex;
 rowRect.origin.y = _bounds.size.height - yOffset - eachRowHeight - 1;
 rowRect.size.height = eachRowHeight + _intercellSpacing.height;
 return rowRect;
+}
 }, "void");
 
 class_addMethod(the_class, "observeValueForKeyPath:ofObject:change:context:", function(self, _cmd, keyPath, object, change, context) {
+with(self) {
 if (context == "selectionIndexes")
 {
 if (!objc_msgSend(_selectedRowIndexes, "isEqualToIndexSet:", objc_msgSend(object, "valueForKeyPath:", keyPath)))
@@ -271,17 +322,23 @@ else
 
 }
 
+}
 }, "void");
 
 class_addMethod(the_class, "columnAtPoint:", function(self, _cmd, aPoint) {
+with(self) {
 /* for statement needs to go here*/return -1;
+}
 }, "void");
 
 class_addMethod(the_class, "rowAtPoint:", function(self, _cmd, aPoint) {
+with(self) {
 /* for statement needs to go here*/return -1;
+}
 }, "void");
 
 class_addMethod(the_class, "mouseDown:", function(self, _cmd, theEvent) {
+with(self) {
 objc_msgSend(_window, "makeFirstResponder:", self);
 var location = objc_msgSend(self, "convertPoint:fromView:", objc_msgSend(theEvent, "locationInWindow"), null);
 var clickedColumnIndex = objc_msgSend(self, "columnAtPoint:", location);
@@ -333,12 +390,16 @@ objc_msgSend(self, "editColumn:row:withEvent:select:", clickedColumnIndex, click
 }
 
 
+}
 }, "void");
 
 class_addMethod(the_class, "mouseUp:", function(self, _cmd, theEvent) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "selectRowIndexes:byExtendingSelection:", function(self, _cmd, indexes, extend) {
+with(self) {
 if (extend)
 {
 objc_msgSend(_selectedRowIndexes, "addIndexes:", indexes);
@@ -352,14 +413,18 @@ objc_msgSend(_selectedRowIndexes, "addIndexes:", indexes);
 }
 
 objc_msgSend(self, "setNeedsDisplay:", YES);
+}
 }, "void");
 
 class_addMethod(the_class, "deselectRow:", function(self, _cmd, rowIndex) {
+with(self) {
 objc_msgSend(_selectedRowIndexes, "removeIndex:", rowIndex);
 objc_msgSend(self, "setNeedsDisplay:", YES);
+}
 }, "void");
 
 class_addMethod(the_class, "editColumn:row:withEvent:select:", function(self, _cmd, columnIndex, rowIndex, theEvent, flag) {
+with(self) {
 NSLog("editing tableview");
 var columnToEdit = objc_msgSend(_tableColumns, "objectAtIndex:", columnIndex);
 var cellToEdit;
@@ -386,52 +451,69 @@ else
 objc_msgSend(cellToEdit, "editWithFrame:inView:editor:delegate:event:", editingFrame, self, _currentEditor, self, theEvent);
 
 objc_msgSend(self, "setNeedsDisplay:", YES);
+}
 }, "void");
 
 class_addMethod(the_class, "editedColumn", function(self, _cmd) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "editedRow", function(self, _cmd) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "textDidEndEditing:", function(self, _cmd, aNotification) {
+with(self) {
 NSLog("i was called...");
+}
 }, "void");
 
 class_addMethod(the_class, "moveUp:", function(self, _cmd, sender) {
+with(self) {
 if (objc_msgSend(_selectedRowIndexes, "firstIndex") < 1)
 return ;
 
 var newIndex = objc_msgSend(_selectedRowIndexes, "firstIndex") - 1;
 objc_msgSend(self, "selectRowIndexes:byExtendingSelection:", objc_msgSend(objc_msgSend(NSIndexSet, "alloc"), "initWithIndex:", newIndex), NO);
+}
 }, "void");
 
 class_addMethod(the_class, "moveUpAndModifySelection:", function(self, _cmd, sender) {
+with(self) {
 if (objc_msgSend(_selectedRowIndexes, "firstIndex") < 1)
 return ;
 
 var newIndex = objc_msgSend(_selectedRowIndexes, "firstIndex") - 1;
 objc_msgSend(self, "selectRowIndexes:byExtendingSelection:", objc_msgSend(objc_msgSend(NSIndexSet, "alloc"), "initWithIndex:", newIndex), YES);
+}
 }, "void");
 
 class_addMethod(the_class, "moveDown:", function(self, _cmd, sender) {
+with(self) {
 if (_numberOfRows < (objc_msgSend(_selectedRowIndexes, "firstIndex") + 2))
 return ;
 
 var newIndex = objc_msgSend(_selectedRowIndexes, "firstIndex") + 1;
 objc_msgSend(self, "selectRowIndexes:byExtendingSelection:", objc_msgSend(objc_msgSend(NSIndexSet, "alloc"), "initWithIndex:", newIndex), NO);
+}
 }, "void");
 
 class_addMethod(the_class, "moveDownAndModifySelection:", function(self, _cmd, sender) {
+with(self) {
 if (_numberOfRows < (objc_msgSend(_selectedRowIndexes, "lastIndex") + 2))
 return ;
 
 var newIndex = objc_msgSend(_selectedRowIndexes, "lastIndex") + 1;
 objc_msgSend(self, "selectRowIndexes:byExtendingSelection:", objc_msgSend(objc_msgSend(NSIndexSet, "alloc"), "initWithIndex:", newIndex), YES);
+}
 }, "void");
 
 class_addMethod(the_class, "selectAll:", function(self, _cmd, sender) {
+with(self) {
 var newIndexSet = objc_msgSend(objc_msgSend(NSMutableIndexSet, "alloc"), "initWithIndex:", 0);
 /* for statement needs to go here*/objc_msgSend(self, "selectRowIndexes:byExtendingSelection:", newIndexSet, NO);
+}
 }, "void");
 

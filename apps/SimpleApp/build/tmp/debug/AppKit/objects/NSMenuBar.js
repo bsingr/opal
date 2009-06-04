@@ -38,24 +38,32 @@ class_addIvar(the_class, "_maxSize", "NSSize");
 class_addIvar(the_class, "_minSize", "NSSize");
 class_addIvar(the_class, "_wtFlags", "NSUInteger");
 class_addIvar(the_class, "_windowClass", "id");
+class_addIvar(the_class, "_DOMContainer", "CGDOMElementRef");
+class_addIvar(the_class, "_DOMGraphicsContext", "CGDOMElementRef");
 class_addIvar(the_class, "_mainMenuView", "NSMenuView");
 class_addIvar(the_class, "_statusBarView", "NSView");
 class_addIvar(the_class, "_applicationTitleName", "NSString");
 class_addIvar(the_class, "_applicationTitleView", "NSView");
 
 class_addMethod(the_class, "initWithContentRect:styleMask:backing:defer:", function(self, _cmd, contentRect, windowStyle, bufferingType, deferCreation) {
+with(self) {
 objc_msgSend(self, "init");
 if (self)
 {
+NSLog(contentRect);
 objc_msgSend(self, "setFrame:display:", contentRect, YES);
+NSLog("Hmmmmmm");
 _styleMask = windowStyle;
 _resizable = NO;
 _firstResponder = self;
 _movableByWindowBackground = YES;
 _applicationTitleName = "Hello :D";
+NSLog("Hmmmmmm1242qdqd");
 objc_msgSend(self, "setHasShadow:", YES);
-objc_msgSend(self, "setVisible:", YES);
+NSLog("Hmmmmmm :D :D :D :D");
+NSLog("Hmmmmmm2222");
 objc_msgSend(self, "setContentView:", objc_msgSend(objc_msgSend(NSView, "alloc"), "initWithFrame:", objc_msgSend(self, "contentRectForFrameRect:", contentRect)));
+NSLog("Hmmmqwdqwdqwdqdwwqdwdqwmmm");
 objc_msgSend(self, "setFrame:display:", contentRect, YES);
 NSWindowServerCreateCanvas(self);
 NSWindowServerAddCanvas(_gCanvas);
@@ -63,18 +71,24 @@ NSWindowServerAddCanvas(_gCanvas);
 }
 
 return self;
+}
 }, "void");
 
 class_addMethod(the_class, "setApplicationTitleName:", function(self, _cmd, aString) {
+with(self) {
 _applicationTitleName = aString;
 objc_msgSend(self, "setNeedsDisplay:", YES);
+}
 }, "void");
 
 class_addMethod(the_class, "applicationTitleName", function(self, _cmd) {
+with(self) {
 return _applicationTitleName;
+}
 }, "void");
 
 class_addMethod(the_class, "drawRect:", function(self, _cmd, rect) {
+with(self) {
 var backgroundColorTop = objc_msgSend(NSColor, "colorWithCalibratedRed:green:blue:alpha:", 1, 1, 1, 1.0);
 var backgroundColorBottom = objc_msgSend(NSColor, "colorWithCalibratedRed:green:blue:alpha:", 0.902, 0.902, 0.902, 1.0);
 var backgroundGradient = objc_msgSend(objc_msgSend(NSGradient, "alloc"), "initWithStartingColor:endingColor:", backgroundColorTop, backgroundColorBottom);
@@ -102,56 +116,77 @@ objc_msgSend(NSGraphicsContext, "restoreGraphicsState");
 
 }
 
+}
 }, "void");
 
 class_addMethod(the_class, "setMainMenuView:", function(self, _cmd, aView) {
+with(self) {
 _mainMenuView = aView;
 objc_msgSend(objc_msgSend(self, "contentView"), "addSubview:", aView);
 objc_msgSend(_mainMenuView, "setHorizontal:", YES);
 objc_msgSend(_mainMenuView, "sizeToFit");
+}
 }, "void");
 
 class_addMethod(the_class, "mainMenuView", function(self, _cmd) {
+with(self) {
 return _mainMenuView;
+}
 }, "void");
 
 class_addMethod(the_class, "setApplicationTitleView:", function(self, _cmd, aView) {
+with(self) {
 _applicationTitleView = aView;
 objc_msgSend(objc_msgSend(self, "contentView"), "addSubview:", aView);
+}
 }, "void");
 
 class_addMethod(the_class, "applicationTitleView", function(self, _cmd) {
+with(self) {
 return _applicationTitleView;
+}
 }, "void");
 
 class_addMethod(the_class, "setStatusBarView:", function(self, _cmd, aView) {
+with(self) {
 _statusBarView = aView;
 objc_msgSend(objc_msgSend(self, "contentView"), "addSubview:", aView);
+}
 }, "void");
 
 class_addMethod(the_class, "statusBarView", function(self, _cmd) {
+with(self) {
 return _statusBarView;
+}
 }, "void");
 
 class_addMethod(the_class, "becomeKeyWindow", function(self, _cmd) {
+with(self) {
 if (objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "keyWindow"))
 objc_msgSend(objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "keyWindow"), "resignKeyWindow");
 
 _keyWindow = YES;
+}
 }, "void");
 
 class_addMethod(the_class, "resignKeyWindow", function(self, _cmd) {
+with(self) {
 _keyWindow = NO;
+}
 }, "void");
 
 class_addMethod(the_class, "becomeMainWindow", function(self, _cmd) {
+with(self) {
 if (objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "mainWindow"))
 objc_msgSend(objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "mainWindow"), "resignMainWindow");
 
 _mainWindow = YES;
+}
 }, "void");
 
 class_addMethod(the_class, "resignMainWindow", function(self, _cmd) {
+with(self) {
 _mainWindow = NO;
+}
 }, "void");
 

@@ -24,6 +24,9 @@ extern id NSGraphicsContextCurrent;
 
 + (NSGraphicsContext *)graphicsContextWithWindow:(NSWindow *)window;
 
+// Added for Vienaa: more efficient than drawing all views to a window.
++ (NSGraphicsContext *)graphicsContextWithWindow:(NSView *)view;
+
 + (NSGraphicsContext *)graphicsContextWithBitmapImageRep:(NSBitmapImageRep *)bitmapRep;
 
 + (NSGraphicsContext *)graphicsContextWithGraphicsPort:(void *)graphicsPort flipped:(BOOL)initialFlippedState;

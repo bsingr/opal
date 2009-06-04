@@ -20,52 +20,81 @@ class_addIvar(the_class, "_menuItem", "NSMenuItem");
 class_addIvar(the_class, "_menuView", "NSMenuView");
 
 class_addMethod(the_class, "menuItem", function(self, _cmd) {
+with(self) {
 return _menuItem;
+}
 }, "void");
 
 class_addMethod(the_class, "setMenuItem:", function(self, _cmd, item) {
+with(self) {
 _menuItem = item;
+}
 }, "void");
 
 class_addMethod(the_class, "menuView", function(self, _cmd) {
+with(self) {
 return _menuView;
+}
 }, "void");
 
 class_addMethod(the_class, "setMenuView:", function(self, _cmd, menuView) {
+with(self) {
 _menuView = menuView;
+}
 }, "void");
 
 class_addMethod(the_class, "calcSize", function(self, _cmd) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "needsSizing", function(self, _cmd) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "setNeedsSizing:", function(self, _cmd, flag) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "imageWidth", function(self, _cmd) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "titleWidth", function(self, _cmd) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "keyEquivalentWidth", function(self, _cmd) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "stateImageWidth", function(self, _cmd) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "keyEquivalentRectForBounds:", function(self, _cmd, cellFrame) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "stateImageRectForBounds:", function(self, _cmd, cellFrame) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "titleRectForBounds:", function(self, _cmd, cellFrame) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "drawWithFrame:inView:", function(self, _cmd, cellFrame, controlView) {
+with(self) {
 if (!objc_msgSend(objc_msgSend(self, "menuItem"), "title"))
 {
 objc_msgSend(self, "drawSeparatorItemWithFrame:inView:", cellFrame, controlView);
@@ -79,9 +108,11 @@ objc_msgSend(self, "drawImageWithFrame:inView:", cellFrame, controlView);
 objc_msgSend(self, "drawKeyEquivalentWithFrame:inView:", cellFrame, controlView);
 objc_msgSend(self, "drawTitleWithFrame:inView:", cellFrame, controlView);
 objc_msgSend(NSGraphicsContext, "restoreGraphicsState");
+}
 }, "void");
 
 class_addMethod(the_class, "drawBorderAndBackgroundWithFrame:inView:", function(self, _cmd, cellFrame, controlView) {
+with(self) {
 if (objc_msgSend(self, "isHighlighted"))
 {
 var highlightTop = objc_msgSend(NSColor, "colorWithCalibratedRed:green:blue:alpha:", 0.663, 0.714, 0.765, 1.0);
@@ -106,21 +137,31 @@ objc_msgSend(bottomBorder, "stroke");
 
 }
 
+}
 }, "void");
 
 class_addMethod(the_class, "drawImageWithFrame:inView:", function(self, _cmd, cellFrame, controlView) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "drawKeyEquivalentWithFrame:inView:", function(self, _cmd, cellFrame, controlView) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "drawSeparatorItemWithFrame:inView:", function(self, _cmd, cellFrame, controlView) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "drawStateImageWithFrame:inView:", function(self, _cmd, cellFrame, controlView) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "drawTitleWithFrame:inView:", function(self, _cmd, cellFrame, controlView) {
+with(self) {
 var _title = objc_msgSend(objc_msgSend(self, "menuItem"), "title");
 if (!_title)
 return ;
@@ -152,14 +193,21 @@ objc_msgSend(_title, "drawWithRect:options:attributes:", NSMakeRect(cellFrame.or
 else
 objc_msgSend(_title, "drawWithRect:options:attributes:", NSMakeRect(cellFrame.origin.x + 25,cellFrame.origin.y + 6,40,0), null, null);
 
+}
 }, "void");
 
 class_addMethod(the_class, "needsDisplay", function(self, _cmd) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "setNeedsDisplay:", function(self, _cmd, flag) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "tag", function(self, _cmd) {
+with(self) {
+}
 }, "void");
 

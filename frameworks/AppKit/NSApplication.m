@@ -28,19 +28,15 @@ id NSApp = nil;
         
         NSBundle *mainBundle = [NSBundle mainBundle];
         NSString *productName = [mainBundle objectForInfoDictionaryKey:@"CFBundleName"];
-        
-        NSRect *menuBarRect = NSMakeRect (0, 
-                        [[NSScreen mainScreen] frame].size.height - [NSMenu menuBarHeight],
-                        [[NSScreen mainScreen] frame].size.width,
-                        [NSMenu menuBarHeight]);
-
-    	_menuBar = [[NSMenuBar alloc] initWithContentRect:menuBarRect 
-    	                              styleMask:NSBorderlessWindowMask 
-    	                              backing:nil 
-    	                              defer:NO];
-    	                              
-        [_menuBar setLevel:NSMainMenuWindowLevel];
-        
+        // NSRect *menuBarRect = NSMakeRect (0, 
+        //                         [[NSScreen mainScreen] frame].size.height - [NSMenu menuBarHeight],
+        //                         [[NSScreen mainScreen] frame].size.width,
+        //                         [NSMenu menuBarHeight]);
+        //      _menuBar = [[NSMenuBar alloc] initWithContentRect:menuBarRect 
+        //                                    styleMask:NSBorderlessWindowMask 
+        //                                    backing:nil 
+        //                                    defer:NO];
+        //         [_menuBar setLevel:NSMainMenuWindowLevel];
         return self;
     }
 }
@@ -108,6 +104,12 @@ id NSApp = nil;
     return nil;
 }
 
+- (void)addWindow:(NSWindow *)aWindow
+{
+    [_windows addObject:aWindow];
+            return [_windows count] - 1;
+}
+
 - (BOOL)isRunning
 {
     // TODO: Need to implement
@@ -117,7 +119,7 @@ id NSApp = nil;
 {
     NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
     // [nc postNotificationName:NSApplicationWillFinishLaunchingNotification object:self];
-    //  [nc postNotificationName:NSApplicationDidFinishLaunchingNotification object:self];
+    // [nc postNotificationName:NSApplicationDidFinishLaunchingNotification object:self];
 }
 
 - (void)run
@@ -323,9 +325,18 @@ id NSApp = nil;
 
 int NSApplicationMain(int argc, const char *argv[])
 {
-	id theAppController = [[AppController alloc] init];
-	NSApplication *theApp = [NSApplication sharedApplication];
-	[theApp setDelegate:theAppController];
+	// id theAppController = [[AppController alloc] init];
+	//     NSApplication *theApp = [NSApplication sharedApplication];
+	//     [theApp setDelegate:theAppController];
+	
+    NSBundle *mainBundle = [NSBundle mainBundle];
+    Class principalClass = [mainBundle principalClass];
+    
+    [[AppController alloc] init];
+    
+    [[principalClass sharedApplication] run];
+    
+    return 0;
 }
 
 NSString *NSApplicationDidBecomeActiveNotification = @"NSApplicationDidBecomeActiveNotification";

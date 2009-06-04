@@ -27,8 +27,8 @@ class_addIvar(the_class, "_validTransforms", "BOOL");
 class_addIvar(the_class, "_transformFromWindow", "CGAffineTransform");
 class_addIvar(the_class, "_transformToWindow", "CGAffineTransform");
 class_addIvar(the_class, "_visibleRect", "NSRect");
-class_addIvar(the_class, "_DOMContainer", "id");
-class_addIvar(the_class, "_DOMGraphicsContext", "id");
+class_addIvar(the_class, "_DOMContainer", "CGDOMElementRef");
+class_addIvar(the_class, "_DOMGraphicsContext", "CGDOMElementRef");
 class_addIvar(the_class, "_tag", "NSInteger");
 class_addIvar(the_class, "_cell", "NSCell");
 class_addIvar(the_class, "_currentEditor", "NSText");
@@ -52,7 +52,9 @@ class_addIvar(the_class, "_drawsGrid", "BOOL");
 class_addIvar(the_class, "_alternatingRowBackground", "BOOL");
 
 class_addMethod(the_class, "initWithFrame:", function(self, _cmd, frameRect) {
+with(self) {
 objc_msgSendSuper({super_class:NSTableView, receiver:self}, "initWithFrame:", frameRect);
 return self;
+}
 }, "void");
 

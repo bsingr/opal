@@ -14,7 +14,8 @@
 #import <CoreFoundation/CFURL.h>
 
 typedef struct {
-	char *name;
+	CFStringRef _path;
+    CFDictionaryRef _infoDictionary;
 } CFBundleRef;
 
 typedef struct {
@@ -25,3 +26,5 @@ extern CFBundleRef CFBundleGetMainBundle(void);
 
 extern CFBundleRef CFBundleGetBundleWithIdentifier(CFStringRef bundleID);
 extern CFArrayRef CFBundleGetAllBundles(void);
+
+// extern CFBundleRef CFBundleCreate(CFURLRef bundleURL);

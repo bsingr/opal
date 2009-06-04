@@ -22,6 +22,7 @@ class_addIvar(the_class, "_deltaY", "id");
 class_addIvar(the_class, "_deltaZ", "id");
 
 class_addMethod(the_class, "initKeyEventWithType:location:modifierFlags:timestamp:windowNumber:context:characters:charactersIgnoringModifiers:isARepeat:keyCode:", function(self, _cmd, type, location, flags, time, windowNum, context, characters, unmodCharacters, repeatKey, code) {
+with(self) {
 objc_msgSend(self, "init");
 if (self)
 {
@@ -39,9 +40,11 @@ _keyCode = code;
 }
 
 return self;
+}
 }, "void");
 
 class_addMethod(the_class, "initMouseEventWithType:location:modifierFlags:timestamp:windowNumber:context:eventNumber:clickCount:pressure:", function(self, _cmd, type, location, flags, time, windowNum, context, eventNumber, clickNumber, pressure) {
+with(self) {
 objc_msgSend(self, "init");
 if (self)
 {
@@ -69,97 +72,144 @@ NSLog("Control key was pressed");
 }
 
 return self;
+}
 }, "void");
 
 class_addMethod(the_class, "context", function(self, _cmd) {
+with(self) {
 return _context;
+}
 }, "void");
 
 class_addMethod(the_class, "locationInWindow", function(self, _cmd) {
+with(self) {
 return _locationInWindow;
+}
 }, "void");
 
 class_addMethod(the_class, "modifierFlags", function(self, _cmd) {
+with(self) {
 return _modifierFlags;
+}
 }, "void");
 
 class_addMethod(the_class, "timestamp", function(self, _cmd) {
+with(self) {
 return _timestamp;
+}
 }, "void");
 
 class_addMethod(the_class, "type", function(self, _cmd) {
+with(self) {
 return _type;
+}
 }, "void");
 
 class_addMethod(the_class, "window", function(self, _cmd) {
+with(self) {
 return _window;
+}
 }, "void");
 
 class_addMethod(the_class, "setWindow:", function(self, _cmd, aWindow) {
+with(self) {
 _window = aWindow;
+}
 }, "void");
 
 class_addMethod(the_class, "setLocationInBase:", function(self, _cmd, aPoint) {
+with(self) {
 _locationInBase = aPoint;
+}
 }, "void");
 
 class_addMethod(the_class, "locationInBase", function(self, _cmd) {
+with(self) {
 return _locationInBase;
+}
 }, "void");
 
 class_addMethod(the_class, "windowNumber", function(self, _cmd) {
+with(self) {
 return _windowNumber;
+}
 }, "void");
 
 class_addMethod(the_class, "eventRef", function(self, _cmd) {
+with(self) {
 return _eventRef;
+}
 }, "void");
 
 class_addMethod(the_class, "characters", function(self, _cmd) {
+with(self) {
 return _characters;
+}
 }, "void");
 
 class_addMethod(the_class, "charactersIgnoringModifiers", function(self, _cmd) {
+with(self) {
 return _charactersIgnoringModifiers;
+}
 }, "void");
 
 class_addMethod(the_class, "isARepeat", function(self, _cmd) {
+with(self) {
 return _isARepeat;
+}
 }, "void");
 
 class_addMethod(the_class, "keyCode", function(self, _cmd) {
+with(self) {
 return _keyCode;
+}
 }, "void");
 
 class_addMethod(the_class, "buttonNumber", function(self, _cmd) {
+with(self) {
 return _buttonNumber;
+}
 }, "void");
 
 class_addMethod(the_class, "clickCount", function(self, _cmd) {
+with(self) {
 return _clickCount;
+}
 }, "void");
 
 class_addMethod(the_class, "deltaX", function(self, _cmd) {
+with(self) {
 return _deltaX;
+}
 }, "void");
 
 class_addMethod(the_class, "deltaY", function(self, _cmd) {
+with(self) {
 return _deltaY;
+}
 }, "void");
 
 class_addMethod(the_class, "deltaZ", function(self, _cmd) {
+with(self) {
 return _deltaZ;
+}
 }, "void");
 
 class_addMethod(meta_class, "keyEventWithType:location:modifierFlags:timestamp:windowNumber:context:characters:charactersIgnoringModifiers:isARepeat:keyCode:", function(self, _cmd, type, location, flags, time, windowNum, context, characters, unmodCharacters, repeatKey, code) {
+with(self) {
 return objc_msgSend(objc_msgSend(NSEvent, "alloc"), "initKeyEventWithType:location:modifierFlags:timestamp:windowNumber:context:characters:charactersIgnoringModifiers:isARepeat:keyCode:", type, location, flags, time, windowNum, context, characters, unmodCharacters, repeatKey, code);
+}
 }, "void");
 
 class_addMethod(meta_class, "mouseEventWithType:location:modifierFlags:timestamp:windowNumber:context:eventNumber:clickCount:pressure:", function(self, _cmd, type, location, flags, time, windowNum, context, eventNumber, clickNumber, pressure) {
+with(self) {
 return objc_msgSend(objc_msgSend(NSEvent, "alloc"), "initMouseEventWithType:location:modifierFlags:timestamp:windowNumber:context:eventNumber:clickCount:pressure:", type, location, flags, time, windowNum, context, eventNumber, clickNumber, pressure);
+}
 }, "void");
 
 class_addMethod(meta_class, "mouseLocation", function(self, _cmd) {
+with(self) {
 return NSMakePoint(0,0);
+}
 }, "void");
 

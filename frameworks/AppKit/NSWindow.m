@@ -61,9 +61,7 @@
 
 - (NSRect)contentRectForFrameRect:(NSRect)frameRect
 {
-    // FIXME: Need to check for style mask settings etc
-    //if (_styleMask == 0)
-        return NSMakeRect (0, 0, frameRect.sihe.width, frameRect.size.height);
+    return NSMakeRect(100, 100, 100, 100);
 }
 
 - (id)init
@@ -72,29 +70,50 @@
     if (self) {
         
     }
+    return self;
 }
 
 - (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)aStyle backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag
 {
-    self = [self init];
+    self = [super init];
     
-    if (self) {
-        [self setFrame:contentRect display:YES];
-        
-        _styleMask = aStyle;
-        _resizable = NO;
-        _firstResponder = self;
-        _movableByWindowBackground = YES;
-        
-        _hasShadow = YES;
-        _isVisible = YES;
-        
-        _contentView = [[NSView alloc] initWithFrame:contentRect];
-        [self setFrame:contentRect display:YES];
+    if (self)
+    {
+        _DOMContainer = CGDOMElementCreate(@"div");
+        _DOMGraphicsContext = CGDOMElementCreate(@"canvas");
+        CGDOMElementAppendChild(_DOMContainer, _DOMGraphicsContext);
+        CGDOMElementAppendChild(CGDOMElementGetRootElement(), _DOMContainer);
         
         _windowNumber = [[NSApplication sharedApplication] addWindow:self];
+        _styleMask = aStyle;
+        _level = NSNormalWindowLevel;
+        
+        _minSize = NSMakeSize(0.0, 0.0);
+        _maxSize = NSMakeSize(9999.0, 9999.0);
+        
+        _frame = [self frameRectForContentRect:contentRect];
+        
+        // [self setFrame:contentRect display:YES];
+        
+        
+        
+        // _resizable = NO;
+        // _firstResponder = self;
+        // _movableByWindowBackground = YES;
+        
+        // _hasShadow = YES;
+        // _isVisible = YES;
+        
+        
+        [self setContentView:[[NSView alloc] initWithFrame:contentRect]];
+        
+        _firstResponder = self;
+        [self setNextResponder:[NSApplication sharedApplication]];
+        
+        // [self setFrame:contentRect display:NO];
+        
+        
     }
-    
     return self;
 }
 
@@ -222,12 +241,9 @@
     
     [_contentView viewWillMoveToSuperview:nil];
     [_contentView viewWillMoveToWindow:self];
-    
     [_contentView setFrame:[self contentRectForFrameRect:_frame]];
-    
-    [_contentView viewDidMoveToSuperview:nil];
-    [_contentView viewDidMoveToWindow:self];
-    
+    [_contentView viewDidMoveToSuperview];
+    [_contentView viewDidMoveToWindow];
     [_contentView setNextResponder:self];
 }
 
@@ -274,7 +290,8 @@
 
 - (void)setFrame:(NSRect)frameRect display:(BOOL)flag
 {
-    
+    CGDOMElementSetFrame(_DOMContainer, frameRect);
+    [self setNeedsDisplay:YES];
 }
 
 - (void)setContentSize:(NSSize)aSize
@@ -1012,10 +1029,13 @@
 
 - (NSGraphicsContext *)graphicsContext
 {
-    // TODO: Need to implement
+    // This essentially calls getContext("2d") on the canvas element represented
+    // by _DOMGraphicsContext
+    return CGDOMElementGetContext(_DOMGraphicsContext);
 }
 
 @end
+
 
 @implementation NSWindow (NSKeyboardUI)
 
@@ -1139,6 +1159,58 @@
 }
 
 - (void)unregisterDraggedTypes
+{
+    // TODO: Need to implement
+}
+
+@end
+
+
+@implementation NSWindow (NSViewDrawingExtensions)
+
+- (BOOL)canDraw
+{
+    // TODO: Need to implement
+}
+
+- (void)setNeedsDisplay:(BOOL)flag
+{
+    [self lockFocus];
+    [self drawRect:_bounds];
+    [self unlockFocus];
+}
+
+- (void)setNeedsDisplayInRect:(NSRect)invalidRect
+{
+    // TODO: Need to implement
+}
+
+- (BOOL)needsDisplay
+{
+    // TODO: Need to implement
+}
+
+- (void)lockFocus
+{
+    // TODO: Need to implement
+}
+
+- (void)unlockFocus
+{
+    // TODO: Need to implement
+}
+
+- (BOOL)lockFocusIfCanDraw
+{
+    // TODO: Need to implement
+}
+
+- (BOOL)lockFocusIfCanDrawInContext:(NSGraphicsContext *)context
+{
+    // TODO: Need to implement
+}
+
+- (void)drawRect:(NSRect)rect
 {
     // TODO: Need to implement
 }

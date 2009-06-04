@@ -27,3 +27,7 @@ typedef NSUInteger NSRectEdge;
 extern const NSPoint NSZeroPoint;
 extern const NSSize NSZeroSize;
 extern const NSRect NSZeroRect;
+
+extern NSPoint NSMakePoint(CGFloat x, CGFloat y);
+extern NSSize NSMakeSize(CGFloat w, CGFloat h);
+extern NSRect NSMakeRect(CGFloat x, CGFloat y, CGFloat w, CGFloat h);

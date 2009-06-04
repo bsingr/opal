@@ -46,7 +46,8 @@ module Vienna
     end
     
     def output_direct_declaration(file, dec)
-      file.write dec
+      output_declaration_statement file, dec
+      file.write ";\n"
     end
     
     def output_function_definition(file, func)
@@ -54,7 +55,7 @@ module Vienna
       output_function_definition_params(file, func.left.right.right)
       file.write ")\n{\n"
       output_statement_list file, func.right
-      file.write "}"
+      file.write "}\n"
     end
     
     def output_function_definition_params(file, params)
@@ -125,12 +126,12 @@ module Vienna
         i.param_names.each do |p|
           file.write ", #{p}"
         end
-        file.write ") {\n"
+        file.write ") {\nwith(self) {\n"
         
         output_compound_statement file, i.imp
         
         # end of method, so output types from array
-        file.write "}, \"void\");\n\n"
+        file.write "}\n}, \"void\");\n\n"
         
         # Finish: pop symbol table to remove all local params to method
         symbol_table_pop()
@@ -151,15 +152,23 @@ module Vienna
         c.param_names.each do |p|
           file.write ", #{p}"
         end
-        file.write ") {\n"
+        file.write ") {\nwith(self) {\n"
         
         output_compound_statement file, c.imp
         
         # end of method, so output types from array
-        file.write "}, \"void\");\n\n"
+        file.write "}\n}, \"void\");\n\n"
         
         # Finish: pop symbol table to remove all local params to method
         symbol_table_pop()
+      end
+      
+      # Toll free bridging. do once, only when not a category, i.e. main imp
+      # declaration
+      unless imp.category
+        if @toll_free_bridging.key? imp.name
+          file.write "#{@toll_free_bridging[imp.name]}.prototype.isa = #{imp.name};\n"
+        end
       end
       
       symbol_table_pop()
@@ -360,6 +369,11 @@ module Vienna
         end
         symbol_table_add(d.right.value, d.left.value)
         file.write "var #{d.right.value}"
+        the_type = lookup_symbol(d.left.value)
+        if the_type
+          file.write " = "
+          output_declaration_initializer_object file, the_type
+        end
         return
       elsif d.right.right.leaf? and d.right.value == "*"
         # type_name declaration with no initialixer: NSString *name;
@@ -386,6 +400,20 @@ module Vienna
         file.write "var #{d.right.left.value} = "
       end
       output_expression file, d.right.right
+    end
+    
+    def output_declaration_initializer_object(file, object)
+      if object.class == ObjectiveCStruct
+        file.write "{"
+        (0..object.types.length-1).each do |p|
+          file.write "#{object.properties[p]}:"
+          output_declaration_initializer_object file, lookup_symbol(object.types[p])
+          file.write ","
+        end
+        file.write "}"
+      else
+        file.write "0"
+      end
     end
     
     def output_declaration(file, declaration)

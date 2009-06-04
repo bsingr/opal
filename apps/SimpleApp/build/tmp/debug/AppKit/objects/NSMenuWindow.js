@@ -38,37 +38,51 @@ class_addIvar(the_class, "_maxSize", "NSSize");
 class_addIvar(the_class, "_minSize", "NSSize");
 class_addIvar(the_class, "_wtFlags", "NSUInteger");
 class_addIvar(the_class, "_windowClass", "id");
+class_addIvar(the_class, "_DOMContainer", "CGDOMElementRef");
+class_addIvar(the_class, "_DOMGraphicsContext", "CGDOMElementRef");
 
 class_addMethod(the_class, "drawRect:", function(self, _cmd, aRect) {
+with(self) {
 objc_msgSend(objc_msgSend(NSColor, "colorWithCalibratedRed:green:blue:alpha:", 1, 1, 1, 0.95), "set");
 objc_msgSend(NSBezierPath, "fillRect:", aRect);
 objc_msgSend(objc_msgSend(NSColor, "colorWithCalibratedRed:green:blue:alpha:", 0.698, 0.698, 0.698, 0.95), "set");
 objc_msgSend(NSBezierPath, "strokeRect:", NSMakeRect(aRect.origin.x + 0.5,aRect.origin.y + 0.5,aRect.origin.x + aRect.size.width - 1,aRect.origin.y + aRect.size.height - 1));
+}
 }, "void");
 
 class_addMethod(the_class, "isReleasedWhenClosed", function(self, _cmd) {
+with(self) {
 return YES;
+}
 }, "void");
 
 class_addMethod(the_class, "becomeKeyWindow", function(self, _cmd) {
+with(self) {
 if (objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "keyWindow"))
 objc_msgSend(objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "keyWindow"), "resignKeyWindow");
 
 _keyWindow = YES;
+}
 }, "void");
 
 class_addMethod(the_class, "resignKeyWindow", function(self, _cmd) {
+with(self) {
 _keyWindow = NO;
+}
 }, "void");
 
 class_addMethod(the_class, "becomeMainWindow", function(self, _cmd) {
+with(self) {
 if (objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "mainWindow"))
 objc_msgSend(objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "mainWindow"), "resignMainWindow");
 
 _mainWindow = YES;
+}
 }, "void");
 
 class_addMethod(the_class, "resignMainWindow", function(self, _cmd) {
+with(self) {
 _mainWindow = NO;
+}
 }, "void");
 

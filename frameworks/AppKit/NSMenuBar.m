@@ -16,8 +16,9 @@
 	[self init];
     
     if (self) {
+        NSLog(contentRect);
         [self setFrame:contentRect display:YES];
-        
+        NSLog(@"Hmmmmmm");
         _styleMask = windowStyle;
         
         _resizable = NO;
@@ -26,12 +27,13 @@
         _movableByWindowBackground = YES;
         
         _applicationTitleName = @"Hello :D";
-        
+        NSLog(@"Hmmmmmm1242qdqd");
         [self setHasShadow:YES];
-        [self setVisible:YES];
-        
+        NSLog(@"Hmmmmmm :D :D :D :D");
+        // [self setVisible:YES];
+        NSLog(@"Hmmmmmm2222");
         [self setContentView:[[NSView alloc] initWithFrame:[self contentRectForFrameRect:contentRect]]];
-        
+        NSLog(@"Hmmmqwdqwdqwdqdwwqdwdqwmmm");
         [self setFrame:contentRect display:YES];
         
         NSWindowServerCreateCanvas(self);

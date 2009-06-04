@@ -12,7 +12,13 @@
 
 - (id)init
 {
-	return nil;
+    [super init];
+    
+    if (self) {
+        NSWindow *myWindow = [[NSWindow alloc] initWithContentRect:NSMakeRect(100,100,100,100) styleMask:10 backing:nil defer:false];
+    }
+    
+	return self;
 }
 
 @end

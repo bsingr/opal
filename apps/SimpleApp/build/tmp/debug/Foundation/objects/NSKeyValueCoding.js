@@ -1,1 +1,12 @@
-[d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSUndefinedKeyException (IDENTIFIER)], @"NSUndefinedKeyException" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSAverageKeyValueOperator (IDENTIFIER)], @"NSAverageKeyValueOperator" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSCountKeyValueOperator (IDENTIFIER)], @"NSCountKeyValueOperator" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSDistinctUnionOfArraysKeyValueOperator (IDENTIFIER)], @"NSDistinctUnionOfArraysKeyValueOperator" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSDistinctUnionOfObjectsKeyValueOperator (IDENTIFIER)], @"NSDistinctUnionOfObjectsKeyValueOperator" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSDistinctUnionOfSetsKeyValueOperator (IDENTIFIER)], @"NSDistinctUnionOfSetsKeyValueOperator" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSMaximumKeyValueOperator (IDENTIFIER)], @"NSMaximumKeyValueOperator" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSMinimumKeyValueOperator (IDENTIFIER)], @"NSMinimumKeyValueOperator" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSSumKeyValueOperator (IDENTIFIER)], @"NSSumKeyValueOperator" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSUnionOfArraysKeyValueOperator (IDENTIFIER)], @"NSUnionOfArraysKeyValueOperator" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSUnionOfObjectsKeyValueOperator (IDENTIFIER)], @"NSUnionOfObjectsKeyValueOperator" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSUnionOfSetsKeyValueOperator (IDENTIFIER)], @"NSUnionOfSetsKeyValueOperator" (AT_STRING_LITERAL)]]
+var NSUndefinedKeyException = "NSUndefinedKeyException";
+var NSAverageKeyValueOperator = "NSAverageKeyValueOperator";
+var NSCountKeyValueOperator = "NSCountKeyValueOperator";
+var NSDistinctUnionOfArraysKeyValueOperator = "NSDistinctUnionOfArraysKeyValueOperator";
+var NSDistinctUnionOfObjectsKeyValueOperator = "NSDistinctUnionOfObjectsKeyValueOperator";
+var NSDistinctUnionOfSetsKeyValueOperator = "NSDistinctUnionOfSetsKeyValueOperator";
+var NSMaximumKeyValueOperator = "NSMaximumKeyValueOperator";
+var NSMinimumKeyValueOperator = "NSMinimumKeyValueOperator";
+var NSSumKeyValueOperator = "NSSumKeyValueOperator";
+var NSUnionOfArraysKeyValueOperator = "NSUnionOfArraysKeyValueOperator";
+var NSUnionOfObjectsKeyValueOperator = "NSUnionOfObjectsKeyValueOperator";
+var NSUnionOfSetsKeyValueOperator = "NSUnionOfSetsKeyValueOperator";

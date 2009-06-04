@@ -5,12 +5,15 @@ class_addIvar(the_class, "isa", "Class");
 class_addIvar(the_class, "_docView", "NSView");
 
 class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
+with(self) {
 objc_msgSendSuper({super_class:NSObject, receiver:self}, "initWithCoder:", aCoder);
 _docView = objc_msgSend(aCoder, "decodeObjectForKey:", "NSDocView");
 return self;
+}
 }, "void");
 
 class_addMethod(the_class, "initWithFrame:", function(self, _cmd, frame) {
+with(self) {
 self = objc_msgSendSuper({super_class:NSObject, receiver:self}, "initWithFrame:", frame);
 if (self)
 {
@@ -18,8 +21,11 @@ if (self)
 }
 
 return self;
+}
 }, "void");
 
 class_addMethod(the_class, "drawRect:", function(self, _cmd, aRect) {
+with(self) {
+}
 }, "void");
 

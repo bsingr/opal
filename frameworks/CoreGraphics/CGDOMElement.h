@@ -7,8 +7,9 @@
 // 
 
 #import <CoreGraphics/CGBase.h>
+#import <CoreGraphics/CGContext.h>
 
-typedef struct CGContext *CGDOMElementRef;
+typedef CGContextRef *CGDOMElementRef;
 
 extern CGDOMElementRef CGDOMElementGetRootElement(void);
 
@@ -23,5 +24,9 @@ extern CFStringRef CGDOMElementGetAttribute(CGDOMElementRef element, CFStringRef
 extern bool CGDOMElementHasAttribute(CGDOMElementRef element, CFStringRef attribute);
 extern void CGDOMElementRemoveAttribute(CGDOMElementRef element, CFStringRef attribute);
 extern void CGDOMElementSetAttribute(CGDOMElementRef element, CFStringRef name, CFStringRef value);
+
+extern void CGDOMElementSetFrame(CGDOMElementRef element, CGRect frame);
+extern void CGDOMElementSetFrameOrigin(CGDOMElementRef element, CGPoint origin);
+extern void CGDOMElementSetFrameSize(CGDOMElementRef element, CGSize size);
 
 extern CGContextRef CGDOMElementGetContext(CGDOMElementRef element);

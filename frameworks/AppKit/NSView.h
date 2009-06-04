@@ -78,9 +78,9 @@ typedef NSInteger NSToolTipTag;
     NSRect            _visibleRect;
    
     // Usually an "outer div" to hold the graphics context aswell as subviews' containers
-    id              _DOMContainer;
+    CGDOMElementRef   _DOMContainer;
     // Rendering context. mainly canvas. could be a nested DIV tree if DOM drawing. or could be a textfield for nstextfield etc. but default it is a canvas
-    id              _DOMGraphicsContext;
+    CGDOMElementRef   _DOMGraphicsContext;
 }
 
 - (id)initWithFrame:(NSRect)frameRect;

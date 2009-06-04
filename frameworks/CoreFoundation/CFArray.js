@@ -10,35 +10,40 @@
 // 
 function CFArrayCreate(values, numValues)
 {
-    
+    return CFArrayCreateCopy(values);
 }
 
 // extern CFArrayRef CFArrayCreateCopy(CFArrayRef theArray);
 // 
 function CFArrayCreateCopy(theArray)
 {
+    var new_array = CFArrayCreateMutable(0);
     
+    for(i in theArray)
+        CFArrayAppendValue(new_array, i);
+    
+    return new_array;
 }
 
 // extern CFMutableArrayRef CFArrayCreateMutable(CFIndex capacity);
 // 
 function CFArrayCreateMutable(capacity)
 {
-    
+    return new Array();
 }
 
 // extern CFMutableArrayRef CFArrayCreateMutableCopy(CFIndex capacity, CFArrayRef theArray);
 // 
 function CFArrayCreateMutableCopy(capacity, theArray)
 {
-    
+    return CFArrayCreateCopy(theArray);
 }
 
 // extern CFIndex CFArrayGetCount(CFArrayRef theArray);
 // 
 function CFArrayGetCount(theArray)
 {
-    
+    return theArray.length;
 }
 
 // extern CFIndex CFArrayGetCountOfValue(CFArrayRef theArray, CFRange range, void *value);

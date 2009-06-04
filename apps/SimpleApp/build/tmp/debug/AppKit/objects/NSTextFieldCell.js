@@ -24,6 +24,7 @@ class_addIvar(the_class, "_gBorderType", "NSUInteger");
 class_addIvar(the_class, "_textColor", "NSColor");
 
 class_addMethod(the_class, "init", function(self, _cmd) {
+with(self) {
 objc_msgSendSuper({super_class:NSCell, receiver:self}, "init");
 if (self)
 {
@@ -32,9 +33,11 @@ _textColor = objc_msgSend(NSColor, "controlTextColor");
 }
 
 return self;
+}
 }, "void");
 
 class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
+with(self) {
 objc_msgSendSuper({super_class:NSCell, receiver:self}, "initWithCoder:", aCoder);
 _value = objc_msgSend(aCoder, "decodeStringForKey:", "NSContents");
 if (!_value)
@@ -42,13 +45,17 @@ _value = " ";
 
 _drawsBackground = objc_msgSend(aCoder, "decodeBoolForKey:", "NSDrawsBackground");
 return self;
+}
 }, "void");
 
 class_addMethod(the_class, "setGBorderType:", function(self, _cmd, type) {
+with(self) {
 _gBorderType = type;
+}
 }, "void");
 
 class_addMethod(the_class, "drawInteriorWithFrame:inView:", function(self, _cmd, cellFrame, controlView) {
+with(self) {
 var textToDraw = "";
 if (_value == "")
 {
@@ -72,9 +79,11 @@ objc_msgSend(textToDraw, "drawWithRect:options:attributes:", titleRect, null, nu
 
 }
 
+}
 }, "void");
 
 class_addMethod(the_class, "drawWithFrame:inView:", function(self, _cmd, cellFrame, controlView) {
+with(self) {
 objc_msgSend(NSGraphicsContext, "saveGraphicsState");
 _controlView = controlView;
 if (_isBezeled)
@@ -130,44 +139,62 @@ objc_msgSend(NSGraphicsContext, "restoreGraphicsState");
 
 objc_msgSend(NSGraphicsContext, "restoreGraphicsState");
 objc_msgSend(self, "drawInteriorWithFrame:inView:", cellFrame, controlView);
+}
 }, "void");
 
 class_addMethod(the_class, "drawsBackground", function(self, _cmd) {
+with(self) {
 return _drawsBackground;
+}
 }, "void");
 
 class_addMethod(the_class, "setDrawsBackground:", function(self, _cmd, flag) {
+with(self) {
 _drawsBackground = flag;
 if (_drawsBackground == 0)
 _drawsBackground = NO;
 
+}
 }, "void");
 
 class_addMethod(the_class, "setBezeled:", function(self, _cmd, flag) {
+with(self) {
 _bezeled = flag;
+}
 }, "void");
 
 class_addMethod(the_class, "isBezeled", function(self, _cmd) {
+with(self) {
 return _bezeled;
+}
 }, "void");
 
 class_addMethod(the_class, "setBezelStyle:", function(self, _cmd, style) {
+with(self) {
 _bezelStyle = style;
+}
 }, "void");
 
 class_addMethod(the_class, "bezelStyle", function(self, _cmd) {
+with(self) {
 return _bezelStyle;
+}
 }, "void");
 
 class_addMethod(the_class, "setTextColor:", function(self, _cmd, aColor) {
+with(self) {
 _textColor = aColor;
+}
 }, "void");
 
 class_addMethod(the_class, "textColor", function(self, _cmd) {
+with(self) {
 return _textColor;
+}
 }, "void");
 
 class_addMethod(the_class, "titleRectForBounds:", function(self, _cmd, theRect) {
+with(self) {
 if (_isEditable)
 {
 var titleRect = NSMakeRect(theRect.origin.x + 4,theRect.origin.y + 4,theRect.size.width - 8,theRect.size.height - 9);
@@ -176,5 +203,6 @@ return titleRect;
 }
 
 return theRect;
+}
 }, "void");
 

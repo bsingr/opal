@@ -27,8 +27,8 @@ class_addIvar(the_class, "_validTransforms", "BOOL");
 class_addIvar(the_class, "_transformFromWindow", "CGAffineTransform");
 class_addIvar(the_class, "_transformToWindow", "CGAffineTransform");
 class_addIvar(the_class, "_visibleRect", "NSRect");
-class_addIvar(the_class, "_DOMContainer", "id");
-class_addIvar(the_class, "_DOMGraphicsContext", "id");
+class_addIvar(the_class, "_DOMContainer", "CGDOMElementRef");
+class_addIvar(the_class, "_DOMGraphicsContext", "CGDOMElementRef");
 class_addIvar(the_class, "_string", "NSString");
 class_addIvar(the_class, "_backgroundColor", "NSColor");
 class_addIvar(the_class, "_drawsBackground", "BOOL");
@@ -48,15 +48,19 @@ class_addIvar(the_class, "_delegate", "id");
 class_addIvar(the_class, "_gCanvas", "CGContextRef");
 
 class_addMethod(the_class, "setDelegate:", function(self, _cmd, anObject) {
+with(self) {
 _delegate = anObject;
+}
 }, "void");
 
 class_addMethod(the_class, "initWithFrame:", function(self, _cmd, aFrame) {
+with(self) {
 objc_msgSend(self, "init");
 _frame = aFrame;
 _bounds = NSMakeRect(0,0,_frame.size.width,_frame.size.height);
 _gCanvas = NSWindowServerCreateCanvas(self);
 _subviews = objc_msgSend(NSMutableArray, "arrayWithCapacity:", 0);
 return self;
+}
 }, "void");
 

@@ -10,35 +10,40 @@
 // 
 function CFArrayCreate(values, numValues)
 {
-    
+    return CFArrayCreateCopy(values);
 }
 
 // extern CFArrayRef CFArrayCreateCopy(CFArrayRef theArray);
 // 
 function CFArrayCreateCopy(theArray)
 {
+    var new_array = CFArrayCreateMutable(0);
     
+    for(i in theArray)
+        CFArrayAppendValue(new_array, i);
+    
+    return new_array;
 }
 
 // extern CFMutableArrayRef CFArrayCreateMutable(CFIndex capacity);
 // 
 function CFArrayCreateMutable(capacity)
 {
-    
+    return new Array();
 }
 
 // extern CFMutableArrayRef CFArrayCreateMutableCopy(CFIndex capacity, CFArrayRef theArray);
 // 
 function CFArrayCreateMutableCopy(capacity, theArray)
 {
-    
+    return CFArrayCreateCopy(theArray);
 }
 
 // extern CFIndex CFArrayGetCount(CFArrayRef theArray);
 // 
 function CFArrayGetCount(theArray)
 {
-    
+    return theArray.length;
 }
 
 // extern CFIndex CFArrayGetCountOfValue(CFArrayRef theArray, CFRange range, void *value);
@@ -295,6 +300,60 @@ function CFRangeMake (loc, len)
     
     return theRange;
 }// 
+//  CFBundle.js
+//  vienna
+//  
+//  Created by Adam Beynon on 2009-06-04.
+//  Copyright 2009 Adam Beynon. All rights reserved.
+// 
+
+// typedef struct {
+//  CFStringRef _path;
+//     CFDictionaryRef _infoDictionary;
+// } CFBundleRef;
+// 
+function CFBundleRef()
+{
+    this._path = "";
+    this._infoDictionary = new CFDictionaryRef();
+    return this;
+}
+
+// typedef struct {
+//  char *name;
+// } CFPlugInRef;
+// 
+// extern CFBundleRef CFBundleGetMainBundle(void);
+// 
+function CFBundleGetMainBundle()
+{
+    return CFBundleCreate("Info.plist");
+}
+
+// extern CFBundleRef CFBundleGetBundleWithIdentifier(CFStringRef bundleID);
+// 
+function CFBundleGetBundleWithIdentifier(bundleID)
+{
+    
+}
+
+// extern CFArrayRef CFBundleGetAllBundles(void);
+// 
+function CFBundleGetAllBundles()
+{
+    
+}
+
+// extern CFBundleRef CFBundleCreate(CFURLRef bundleURL);
+// 
+function CFBundleCreate(bundleURL)
+{
+    var the_bundle = __bootstrap_bundles["bundleURL"]
+    var bundle_object = new CFBundleRef();
+    bundle_object.path = bundleURL;
+    bundle_object._infoDictionary = the_bundle;
+}
+// 
 //  CFData.js
 //  vienna
 //  

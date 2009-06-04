@@ -27,136 +27,210 @@ class_addIvar(the_class, "_validTransforms", "BOOL");
 class_addIvar(the_class, "_transformFromWindow", "CGAffineTransform");
 class_addIvar(the_class, "_transformToWindow", "CGAffineTransform");
 class_addIvar(the_class, "_visibleRect", "NSRect");
-class_addIvar(the_class, "_DOMContainer", "id");
-class_addIvar(the_class, "_DOMGraphicsContext", "id");
+class_addIvar(the_class, "_DOMContainer", "CGDOMElementRef");
+class_addIvar(the_class, "_DOMGraphicsContext", "CGDOMElementRef");
 class_addIvar(the_class, "_tag", "NSInteger");
 class_addIvar(the_class, "_cell", "NSCell");
 class_addIvar(the_class, "_currentEditor", "NSText");
 class_addIvar(the_class, "_value", "id");
 
 class_addMethod(the_class, "title", function(self, _cmd) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "setTitle:", function(self, _cmd, aString) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "alternateTitle", function(self, _cmd) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "setAlternateTitle:", function(self, _cmd, aString) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "image", function(self, _cmd) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "setImage:", function(self, _cmd, image) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "alternateImage", function(self, _cmd) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "setAlternateImage:", function(self, _cmd, image) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "imagePosition", function(self, _cmd) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "setImagePosition:", function(self, _cmd, aPosition) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "setButtonType:", function(self, _cmd, aType) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "state", function(self, _cmd) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "setState:", function(self, _cmd, value) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "isBordered", function(self, _cmd) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "setBordered:", function(self, _cmd, flag) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "isTransparent", function(self, _cmd) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "setTransparent:", function(self, _cmd, flag) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "setPeriodicDelay:interval:", function(self, _cmd, delay, interval) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "getPeriodicDelay:interval:", function(self, _cmd, delay, interval) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "keyEquivalent", function(self, _cmd) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "setKeyEquivalent:", function(self, _cmd, charCode) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "keyEquivalentModifierMask", function(self, _cmd) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "setKeyEquivalentModifierMask:", function(self, _cmd, mask) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "highlight:", function(self, _cmd, flag) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "performKeyEquivalent:", function(self, _cmd, key) {
+with(self) {
+}
 }, "void");
 
 var the_class = NSButton;
 var meta_class = the_class.isa;
 
 class_addMethod(the_class, "setTitleWithMnemonic:", function(self, _cmd, stringWithAmpersand) {
+with(self) {
+}
 }, "void");
 
 var the_class = NSButton;
 var meta_class = the_class.isa;
 
 class_addMethod(the_class, "attributedTitle", function(self, _cmd) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "setAttributedTitle:", function(self, _cmd, aString) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "attributedAlternateTitle", function(self, _cmd) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "setAttributedAlternateTitle:", function(self, _cmd, obj) {
+with(self) {
+}
 }, "void");
 
 var the_class = NSButton;
 var meta_class = the_class.isa;
 
 class_addMethod(the_class, "setBezelStyle:", function(self, _cmd, bezelStyle) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "bezelStyle", function(self, _cmd) {
+with(self) {
+}
 }, "void");
 
 var the_class = NSButton;
 var meta_class = the_class.isa;
 
 class_addMethod(the_class, "setAllowsMixedState:", function(self, _cmd, flag) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "allowsMixedState", function(self, _cmd) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "setNextState", function(self, _cmd) {
+with(self) {
+}
 }, "void");
 
 var the_class = NSButton;
 var meta_class = the_class.isa;
 
 class_addMethod(the_class, "setShowsBorderOnlyWhileMouseInside:", function(self, _cmd, show) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "showsBorderOnlyWhileMouseInside", function(self, _cmd) {
+with(self) {
+}
 }, "void");
 

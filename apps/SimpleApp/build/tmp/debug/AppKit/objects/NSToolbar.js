@@ -14,6 +14,7 @@ class_addIvar(the_class, "_labels", "NSMutableArray");
 class_addIvar(the_class, "_height", "NSUInteger");
 
 class_addMethod(the_class, "initWithIdentifier:", function(self, _cmd, identifier) {
+with(self) {
 objc_msgSend(self, "init");
 if (self)
 {
@@ -26,13 +27,17 @@ _labels = objc_msgSend(objc_msgSend(NSMutableArray, "alloc"), "initWithCapacity:
 }
 
 return self;
+}
 }, "void");
 
 class_addMethod(the_class, "height", function(self, _cmd) {
+with(self) {
 return _height;
+}
 }, "void");
 
 class_addMethod(the_class, "reloadToolbarItems", function(self, _cmd) {
+with(self) {
 if (objc_msgSend(_delegate, "respondsToSelector:", "selector:"))
 _itemIdentifiers = objc_msgSend(_delegate, "toolbarDefaultItemIdentifiers:", self);
 else
@@ -40,68 +45,101 @@ _itemIdentifiers = null;
 
 var totalItems = objc_msgSend(_itemIdentifiers, "count");
 var i;
-/* for statement needs to go here*/}, "void");
+/* for statement needs to go here*/}
+}, "void");
 
 class_addMethod(the_class, "displayMode", function(self, _cmd) {
+with(self) {
 return _displayMode;
+}
 }, "void");
 
 class_addMethod(the_class, "setDisplayMode:", function(self, _cmd, displayMode) {
+with(self) {
 _displayMode = displayMode;
 _height = 56;
+}
 }, "void");
 
 class_addMethod(the_class, "showsBaselineSeparator", function(self, _cmd) {
+with(self) {
 return _showsBaselineSeparator;
+}
 }, "void");
 
 class_addMethod(the_class, "setShowsBaselineSeparator:", function(self, _cmd, flag) {
+with(self) {
 _showsBaselineSeparator = flag;
+}
 }, "void");
 
 class_addMethod(the_class, "identifier", function(self, _cmd) {
+with(self) {
 return _identifier;
+}
 }, "void");
 
 class_addMethod(the_class, "items", function(self, _cmd) {
+with(self) {
 return _items;
+}
 }, "void");
 
 class_addMethod(the_class, "visibleItems", function(self, _cmd) {
+with(self) {
 return _items;
+}
 }, "void");
 
 class_addMethod(the_class, "delegate", function(self, _cmd) {
+with(self) {
 return _delegate;
+}
 }, "void");
 
 class_addMethod(the_class, "setDelegate:", function(self, _cmd, delegate) {
+with(self) {
 _delegate = delegate;
 objc_msgSend(self, "reloadToolbarItems");
+}
 }, "void");
 
 class_addMethod(the_class, "insertItemWithItemIdentifier:atIndex:", function(self, _cmd, itemIdentifier, index) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "removeItemAtIndex:", function(self, _cmd, index) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "setSelectedItemIdentifier:", function(self, _cmd, itemIdentifier) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "selectedItemIdentifier", function(self, _cmd) {
+with(self) {
+}
 }, "void");
 
 class_addMethod(the_class, "isVisible", function(self, _cmd) {
+with(self) {
 return _visible;
+}
 }, "void");
 
 class_addMethod(the_class, "setVisible:", function(self, _cmd, shown) {
+with(self) {
 _visible = shown;
+}
 }, "void");
 
 class_addMethod(the_class, "toolbarView", function(self, _cmd) {
+with(self) {
 return _toolbarView;
+}
 }, "void");
 
 var the_class = objc_allocateClassPair(NSView, "NSToolbarView");
@@ -133,11 +171,12 @@ class_addIvar(the_class, "_validTransforms", "BOOL");
 class_addIvar(the_class, "_transformFromWindow", "CGAffineTransform");
 class_addIvar(the_class, "_transformToWindow", "CGAffineTransform");
 class_addIvar(the_class, "_visibleRect", "NSRect");
-class_addIvar(the_class, "_DOMContainer", "id");
-class_addIvar(the_class, "_DOMGraphicsContext", "id");
+class_addIvar(the_class, "_DOMContainer", "CGDOMElementRef");
+class_addIvar(the_class, "_DOMGraphicsContext", "CGDOMElementRef");
 class_addIvar(the_class, "name", "NSString");
 
 class_addMethod(the_class, "initWithFrame:", function(self, _cmd, frameRect) {
+with(self) {
 objc_msgSendSuper({super_class:NSView, receiver:self}, "initWithFrame:", frameRect);
 if (self)
 {
@@ -146,14 +185,17 @@ objc_msgSend(self, "setFrameSize:", NSMakeSize(300,56));
 }
 
 return self;
+}
 }, "void");
 
 class_addMethod(the_class, "drawRect:", function(self, _cmd, dirtyRect) {
+with(self) {
 var bottomPath = objc_msgSend(NSBezierPath, "bezierPath");
 objc_msgSend(bottomPath, "setLineWidth:", 1);
 objc_msgSend(objc_msgSend(NSColor, "colorWithCalibratedRed:green:blue:alpha:", 0.322, 0.322, 0.322, 1.0), "set");
 objc_msgSend(bottomPath, "moveToPoint:", NSMakePoint(0,_frame.size.height));
 objc_msgSend(bottomPath, "lineToPoint:", NSMakePoint(_frame.size.width,_frame.size.height));
 objc_msgSend(bottomPath, "stroke");
+}
 }, "void");
 

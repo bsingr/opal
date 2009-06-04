@@ -1,1 +1,5 @@
-[d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSKeyValueChangeKindKey (IDENTIFIER)], @"NSKeyValueChangeKindKey" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSKeyValueChangeNewKey (IDENTIFIER)], @"NSKeyValueChangeNewKey" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSKeyValueChangeOldKey (IDENTIFIER)], @"NSKeyValueChangeOldKey" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSKeyValueChangeIndexesKey (IDENTIFIER)], @"NSKeyValueChangeIndexesKey" (AT_STRING_LITERAL)]][d(), NSString (TYPE_NAME), [=(), [*(), * (*), NSKeyValueChangeNotificationIsPriorKey (IDENTIFIER)], @"NSKeyValueChangeNotificationIsPriorKey" (AT_STRING_LITERAL)]]
+var NSKeyValueChangeKindKey = "NSKeyValueChangeKindKey";
+var NSKeyValueChangeNewKey = "NSKeyValueChangeNewKey";
+var NSKeyValueChangeOldKey = "NSKeyValueChangeOldKey";
+var NSKeyValueChangeIndexesKey = "NSKeyValueChangeIndexesKey";
+var NSKeyValueChangeNotificationIsPriorKey = "NSKeyValueChangeNotificationIsPriorKey";

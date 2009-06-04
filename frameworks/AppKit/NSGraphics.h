@@ -7,6 +7,7 @@
 // 
 
 #import <Foundation/NSGeometry.h>
+#import <CoreGraphics/CoreGraphics.h>
 
 @class NSColor, NSView;
 

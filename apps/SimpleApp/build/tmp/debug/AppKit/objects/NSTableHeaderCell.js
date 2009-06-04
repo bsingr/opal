@@ -25,12 +25,15 @@ class_addIvar(the_class, "_textColor", "NSColor");
 class_addIvar(the_class, "_value", "id");
 
 class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
+with(self) {
 objc_msgSendSuper({super_class:NSTextFieldCell, receiver:self}, "initWithCoder:", aCoder);
 _value = objc_msgSend(aCoder, "decodeStringForKey:", "NSContents");
 return self;
+}
 }, "void");
 
 class_addMethod(the_class, "drawInteriorWithFrame:inView:", function(self, _cmd, cellFrame, controlView) {
+with(self) {
 var borderBottom = objc_msgSend(NSBezierPath, "bezierPath");
 objc_msgSend(objc_msgSend(NSColor, "colorWithCalibratedRed:green:blue:alpha:", 0.702, 0.702, 0.702, 1.0), "set");
 objc_msgSend(borderBottom, "setLineWidth:", 1.0);
@@ -53,8 +56,11 @@ objc_msgSend(titleShadow, "setShadowColor:", objc_msgSend(NSColor, "colorWithCal
 objc_msgSend(titleShadow, "set");
 objc_msgSend(_value, "drawWithRect:options:attributes:", NSMakeRect(cellFrame.origin.x + 4,cellFrame.origin.y + 4,cellFrame.size.width,0), null, null);
 objc_msgSend(NSGraphicsContext, "restoreGraphicsState");
+}
 }, "void");
 
 class_addMethod(the_class, "highlight:withFrame:inView:", function(self, _cmd, flag, cellFrame, controlView) {
+with(self) {
+}
 }, "void");
 

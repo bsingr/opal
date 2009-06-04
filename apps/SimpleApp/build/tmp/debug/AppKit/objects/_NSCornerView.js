@@ -27,15 +27,18 @@ class_addIvar(the_class, "_validTransforms", "BOOL");
 class_addIvar(the_class, "_transformFromWindow", "CGAffineTransform");
 class_addIvar(the_class, "_transformToWindow", "CGAffineTransform");
 class_addIvar(the_class, "_visibleRect", "NSRect");
-class_addIvar(the_class, "_DOMContainer", "id");
-class_addIvar(the_class, "_DOMGraphicsContext", "id");
+class_addIvar(the_class, "_DOMContainer", "CGDOMElementRef");
+class_addIvar(the_class, "_DOMGraphicsContext", "CGDOMElementRef");
 
 class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
+with(self) {
 objc_msgSendSuper({super_class:NSView, receiver:self}, "initWithCoder:", aCoder);
 return self;
+}
 }, "void");
 
 class_addMethod(the_class, "initWithFrame:", function(self, _cmd, frame) {
+with(self) {
 self = objc_msgSendSuper({super_class:NSView, receiver:self}, "initWithFrame:", frame);
 if (self)
 {
@@ -43,8 +46,11 @@ if (self)
 }
 
 return self;
+}
 }, "void");
 
 class_addMethod(the_class, "drawRect:", function(self, _cmd, rect) {
+with(self) {
+}
 }, "void");
 

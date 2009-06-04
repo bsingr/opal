@@ -51,6 +51,14 @@ module Vienna
       # list of resevred keywords that may cause issues in Javascript
       @reserved_keywords = ["new", "function", "var"]
       
+      # toll free bridgin to Javascript
+      @toll_free_bridging = {
+        # Must make all Arrays mutable.. only at runtime. compile time checking
+        # will prevent unauthorized messages being sent to immutable arrays
+        "NSMutableArray" => "Array",
+        "NSString" => "String"
+      }
+      
       # Linking configuration
       @link_config = { "declarations" => [], "dependencies" => [] }
   	end
@@ -60,6 +68,8 @@ module Vienna
   	  
   	  symbol_table_add("void", :VOID)
   	  symbol_table_add("int", :INT)
+  	  symbol_table_add("long", :LONG)
+  	  symbol_table_add("enum", :ENUM)
   	  symbol_table_add("struct", :STRUCT)
   	  symbol_table_add("float", :FLOAT)
   	  symbol_table_add("double", :DOUBLE)
@@ -67,6 +77,8 @@ module Vienna
   	  
   	  symbol_table_add(:VOID, :VOID)
   	  symbol_table_add(:INT, :INT)
+  	  symbol_table_add(:LONG, :LONG)
+  	  symbol_table_add(:ENUM, :ENUM)
   	  symbol_table_add(:STRUCT, :STRUCT)
   	  symbol_table_add(:FLOAT, :FLOAT)
   	  symbol_table_add(:DOUBLE, :DOUBLE)
@@ -169,7 +181,9 @@ module Vienna
         the_type = deal_with_struct(t.left.right)
         # puts "Dealing and got struct: #{the_type.class}"
       else
-        the_type = t.left.right.token
+        # the_type = t.left.right.token
+        # puts "the type is #{the_type} or it could be #{t.left.right.value} or #{lookup_symbol(t.left.right.value)}"
+        the_type = lookup_symbol(t.left.right.value)
       end
       
       if t.right.value == '*'
@@ -185,7 +199,7 @@ module Vienna
         the_typedef.type = the_type
         current_file().typedefs << the_typedef
         symbol_table_add the_typedef.name, the_typedef.type
-        # puts "Adding #{the_typedef.name} for #{the_typedef.type.class}"
+        # puts "Adding #{the_typedef.name} for #{the_typedef.type} after looking up #{t.left.right.value}"
       end
     end
     
@@ -230,7 +244,7 @@ module Vienna
       #       puts d
       # if a direct declarator....
       if d.left.token == :TYPE_NAME and d.value == "d"
-        puts d
+        # puts d
         current_file().direct_declarations << d
         # These should be added to the file for generation (they are directly defining a variable and value, so output it!)
         # @direct_declarations << d
@@ -369,12 +383,17 @@ module Vienna
       the_symbol = lookup_symbol(type_name)
                   
       # If cant find the type, then return nil (i.e, use it as an identifier)
-      return make_token(:IDENTIFIER, type_name) if the_symbol.nil?
+      if the_symbol.nil?
+        return make_token(:IDENTIFIER, type_name) 
+      end
       
       # enums integers etc..
       return make_token(:CONSTANT, the_symbol) if the_symbol.class == Fixnum
       # variable declarations.. entry in table will be a string, e.g. "NSAppplication"
-      return make_token(:IDENTIFIER, the_symbol) if the_symbol.class == String
+      if the_symbol.class == String
+        return make_token(:IDENTIFIER, the_symbol) 
+      end
+      
       return make_token(:TYPE_NAME, type_name)
   	end
   end

@@ -25,11 +25,21 @@ NSKeyValueObserving.js:
 
   dependencies: []
 
+NSGeometry.js: 
+  declarations: []
+
+  dependencies: []
+
 NSObjCRuntime.js: 
   declarations: []
 
   dependencies: []
 
+NSBundle.js: 
+  declarations: 
+  - NSBundle
+  dependencies: 
+  - NSObject
 NSNotification.js: 
   declarations: 
   - NSNotification

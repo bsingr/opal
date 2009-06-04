@@ -23,6 +23,8 @@
 
 - (id)initWithFrame:(NSRect)frameRect
 {
+    frameRect = NSMakeRect(0,0,100,100);
+    
     self = [self init];
     if (self) {
         _frame = frameRect;
@@ -525,7 +527,9 @@
 
 - (NSGraphicsContext *)graphicsContext
 {
-    
+    // This essentially calls getContext("2d") on the canvas element represented
+    // by _DOMGraphicsContext
+    return CGDOMElementGetContext(_DOMGraphicsContext);
 }
 
 - (NSInteger)gState
