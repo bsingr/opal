@@ -11,38 +11,38 @@
 
 @implementation NSMenuBar
 
-- (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)windowStyle backing:(int)bufferingType defer:(BOOL)deferCreation
-{
-	[self init];
-    
-    if (self) {
-        NSLog(contentRect);
-        [self setFrame:contentRect display:YES];
-        NSLog(@"Hmmmmmm");
-        _styleMask = windowStyle;
-        
-        _resizable = NO;
-        _firstResponder = self;
-        //_nextResponder = [NSApplication sharedApplication];
-        _movableByWindowBackground = YES;
-        
-        _applicationTitleName = @"Hello :D";
-        NSLog(@"Hmmmmmm1242qdqd");
-        [self setHasShadow:YES];
-        NSLog(@"Hmmmmmm :D :D :D :D");
-        // [self setVisible:YES];
-        NSLog(@"Hmmmmmm2222");
-        [self setContentView:[[NSView alloc] initWithFrame:[self contentRectForFrameRect:contentRect]]];
-        NSLog(@"Hmmmqwdqwdqwdqdwwqdwdqwmmm");
-        [self setFrame:contentRect display:YES];
-        
-        NSWindowServerCreateCanvas(self);
-        NSWindowServerAddCanvas (_gCanvas);
-        
-    }
-    
-	return self;
-}
+// - (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)windowStyle backing:(int)bufferingType defer:(BOOL)deferCreation
+// {
+//  [self init];
+//     
+//     if (self) {
+//         NSLog(contentRect);
+//         [self setFrame:contentRect display:YES];
+//         NSLog(@"Hmmmmmm");
+//         _styleMask = windowStyle;
+//         
+//         _resizable = NO;
+//         _firstResponder = self;
+//         //_nextResponder = [NSApplication sharedApplication];
+//         _movableByWindowBackground = YES;
+//         
+//         _applicationTitleName = @"Hello :D";
+//         NSLog(@"Hmmmmmm1242qdqd");
+//         [self setHasShadow:YES];
+//         NSLog(@"Hmmmmmm :D :D :D :D");
+//         // [self setVisible:YES];
+//         NSLog(@"Hmmmmmm2222");
+//         [self setContentView:[[NSView alloc] initWithFrame:[self contentRectForFrameRect:contentRect]]];
+//         NSLog(@"Hmmmqwdqwdqwdqdwwqdwdqwmmm");
+//         [self setFrame:contentRect display:YES];
+//         
+//         NSWindowServerCreateCanvas(self);
+//         NSWindowServerAddCanvas (_gCanvas);
+//         
+//     }
+//     
+//  return self;
+// }
 
 - (void)setApplicationTitleName:(NSString *)aString
 {

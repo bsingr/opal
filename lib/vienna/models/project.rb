@@ -30,6 +30,7 @@ module Vienna
       FileUtils.mkdir_p(File.join(build_prefix, 'Resources'))
       FileUtils.mkdir_p(tmp_prefix)
       FileUtils.mkdir_p(File.join(tmp_prefix, bundle_name, 'objects'))
+      FileUtils.mkdir_p(File.join(tmp_prefix, bundle_name, 'resources'))
     end
     
     def build!
@@ -46,6 +47,14 @@ module Vienna
       
       javascript_sources.each do |j|
         # puts j
+      end
+      
+      xib_sources.each do |x|
+        Vienna::Builder::Xib.new(x, File.join(tmp_prefix, bundle_name, 'resources', File.basename(x, '.xib')) + '.json', self).build!
+      end
+      
+      plist_sources.each do |x|
+        Vienna::Builder::Plist.new(x, File.join(tmp_prefix, bundle_name, 'resources', File.basename(x, '.plist')) + '.json', self).build!
       end
       
       all_objects = Dir.glob(File.join(tmp_prefix, bundle_name, 'objects', '*.js'))

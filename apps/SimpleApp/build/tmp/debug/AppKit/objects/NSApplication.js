@@ -48,10 +48,10 @@ _eventQueue = objc_msgSend(NSMutableArray, "arrayWithCapacity:", 0);
 _eventBindingQueued = NO;
 var mainBundle = objc_msgSend(NSBundle, "mainBundle");
 var productName = objc_msgSend(mainBundle, "objectForInfoDictionaryKey:", "CFBundleName");
-return self;
 
 }
 
+return self;
 }
 }, "void");
 

@@ -27,18 +27,9 @@ id NSApp = nil;
         _eventBindingQueued = NO;
         
         NSBundle *mainBundle = [NSBundle mainBundle];
-        NSString *productName = [mainBundle objectForInfoDictionaryKey:@"CFBundleName"];
-        // NSRect *menuBarRect = NSMakeRect (0, 
-        //                         [[NSScreen mainScreen] frame].size.height - [NSMenu menuBarHeight],
-        //                         [[NSScreen mainScreen] frame].size.width,
-        //                         [NSMenu menuBarHeight]);
-        //      _menuBar = [[NSMenuBar alloc] initWithContentRect:menuBarRect 
-        //                                    styleMask:NSBorderlessWindowMask 
-        //                                    backing:nil 
-        //                                    defer:NO];
-        //         [_menuBar setLevel:NSMainMenuWindowLevel];
-        return self;
+        NSString *productName = [mainBundle objectForInfoDictionaryKey:@"CFBundleName"];        
     }
+    return self;
 }
 
 + (NSApplication *)sharedApplication

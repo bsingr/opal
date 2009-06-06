@@ -8,31 +8,29 @@
 
 #import "NSView.h"
 
-@class CGAffineTransform;
-@class NSComparisonResult;
-@class NSBitmapImageRep;
-@class NSCursor;
-@class CALayer;
-@class CIFilter;
-@class NSShadow;
-@class NSTrackingArea;
-@class NSScrollView;
-@class NSWindow;
+@class CGAffineTransform, NSComparisonResult, NSBitmapImageRep, NSCursor;
+@class CALayer, CIFilter, NSShadow, NSTrackingArea;
+@class NSScrollView, NSWindow;
 
 @implementation NSView
 
-- (id)initWithFrame:(NSRect)frameRect
+- (CGDOMElementRef)DOMContainer
 {
-    frameRect = NSMakeRect(0,0,100,100);
-    
+    return _DOMContainer;
+}
+
+- (id)initWithFrame:(NSRect)frameRect
+{    
     self = [self init];
     if (self) {
-        _frame = frameRect;
-        _bounds = NSMakeRect (0, 0, _frame.size.width, _frame.size.height);
+        
+        _DOMContainer = CGDOMElementCreate(@"div");
+        _DOMGraphicsContext = CGDOMElementCreate(@"canvas");
+        CGDOMElementAppendChild(_DOMContainer, _DOMGraphicsContext);
+        
         _subviews = [NSMutableArray arrayWithCapacity:0];
         [self setFrame:frameRect];
     }
-    
     return self;
 }
 

@@ -279,7 +279,11 @@ module Vienna
     # Thrown on a parsing error. Racc already ends the parsing and the error is
     # printed to the user.
   	def on_error(error_token_id, error_value, value_stack)
-  	  abort "#{@parsing_stack.last.file_name}:#{@parsing_stack.last.current_line}:error: was not expecting token #{error_value} after '#{value_stack.last.value}'"
+  	  if value_stack.last
+  	    abort "#{@parsing_stack.last.file_name}:#{@parsing_stack.last.current_line}:error: was not expecting token #{error_value} after '#{value_stack.last.value}'"
+      else
+        abort "#{@parsing_stack.last.file_name}:#{@parsing_stack.last.current_line}:error: was not expecting token #{error_value}"
+      end
     end
     
     # Imports a file both locally and from known framework directories. This

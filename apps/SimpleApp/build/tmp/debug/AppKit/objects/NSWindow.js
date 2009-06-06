@@ -59,8 +59,15 @@ class_addIvar(the_class, "_DOMContainer", "CGDOMElementRef");
 class_addIvar(the_class, "_DOMGraphicsContext", "CGDOMElementRef");
 class_addIvar(the_class, "_graphicsContext", "NSGraphicsContext");
 
+class_addMethod(the_class, "DOMContainer", function(self, _cmd) {
+with(self) {
+return _DOMContainer;
+}
+}, "void");
+
 class_addMethod(the_class, "frameRectForContentRect:", function(self, _cmd, contentRect) {
 with(self) {
+return contentRect;
 var WINDOW_BORDER_SIZE = 1;
 var WINDOW_TITLEBAR_SIZE = 20;
 if (_styleMask == 0)
@@ -81,7 +88,7 @@ return NSMakeRect(contentRect.origin.x + xOffset,contentRect.origin.y + yOffset,
 
 class_addMethod(the_class, "contentRectForFrameRect:", function(self, _cmd, frameRect) {
 with(self) {
-return NSMakeRect(100,100,100,100);
+return frameRect;
 }
 }, "void");
 
@@ -115,6 +122,7 @@ _frame = objc_msgSend(self, "frameRectForContentRect:", contentRect);
 objc_msgSend(self, "setContentView:", objc_msgSend(objc_msgSend(NSView, "alloc"), "initWithFrame:", contentRect));
 _firstResponder = self;
 objc_msgSend(self, "setNextResponder:", objc_msgSend(NSApplication, "sharedApplication"));
+objc_msgSend(self, "setFrame:display:", objc_msgSend(self, "frameRectForContentRect:", contentRect), NO);
 objc_msgSend(self, "setNeedsDisplay:", YES);
 
 }
@@ -241,6 +249,7 @@ objc_msgSend(_contentView, "setFrame:", objc_msgSend(self, "contentRectForFrameR
 objc_msgSend(_contentView, "viewDidMoveToSuperview");
 objc_msgSend(_contentView, "viewDidMoveToWindow");
 objc_msgSend(_contentView, "setNextResponder:", self);
+CGDOMElementAppendChild(objc_msgSend(self, "DOMContainer"),objc_msgSend(_contentView, "DOMContainer"));
 }
 }, "void");
 
@@ -257,6 +266,7 @@ with(self) {
 
 class_addMethod(the_class, "delegate", function(self, _cmd) {
 with(self) {
+return _delegate;
 }
 }, "void");
 
@@ -268,6 +278,7 @@ return _windowNumber;
 
 class_addMethod(the_class, "styleMask", function(self, _cmd) {
 with(self) {
+return _styleMask;
 }
 }, "void");
 
@@ -288,7 +299,9 @@ with(self) {
 
 class_addMethod(the_class, "setFrame:display:", function(self, _cmd, frameRect, flag) {
 with(self) {
-CGDOMElementSetFrame(_DOMContainer,frameRect);
+_frame = frameRect;
+CGDOMElementSetFrame(_DOMContainer,_frame);
+CGDOMElementSetFrame(_DOMGraphicsContext,_frame);
 objc_msgSend(self, "setNeedsDisplay:", YES);
 }
 }, "void");
@@ -1264,7 +1277,7 @@ with(self) {
 class_addMethod(the_class, "drawRect:", function(self, _cmd, rect) {
 with(self) {
 var context = objc_msgSend(objc_msgSend(NSGraphicsContext, "currentContext"), "graphicsPort");
-NSLog(context);
+CGContextFillRect(context,rect);
 }
 }, "void");
 

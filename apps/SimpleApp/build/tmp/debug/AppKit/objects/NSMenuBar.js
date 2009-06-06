@@ -46,35 +46,6 @@ class_addIvar(the_class, "_statusBarView", "NSView");
 class_addIvar(the_class, "_applicationTitleName", "NSString");
 class_addIvar(the_class, "_applicationTitleView", "NSView");
 
-class_addMethod(the_class, "initWithContentRect:styleMask:backing:defer:", function(self, _cmd, contentRect, windowStyle, bufferingType, deferCreation) {
-with(self) {
-objc_msgSend(self, "init");
-if (self)
-{
-NSLog(contentRect);
-objc_msgSend(self, "setFrame:display:", contentRect, YES);
-NSLog("Hmmmmmm");
-_styleMask = windowStyle;
-_resizable = NO;
-_firstResponder = self;
-_movableByWindowBackground = YES;
-_applicationTitleName = "Hello :D";
-NSLog("Hmmmmmm1242qdqd");
-objc_msgSend(self, "setHasShadow:", YES);
-NSLog("Hmmmmmm :D :D :D :D");
-NSLog("Hmmmmmm2222");
-objc_msgSend(self, "setContentView:", objc_msgSend(objc_msgSend(NSView, "alloc"), "initWithFrame:", objc_msgSend(self, "contentRectForFrameRect:", contentRect)));
-NSLog("Hmmmqwdqwdqwdqdwwqdwdqwmmm");
-objc_msgSend(self, "setFrame:display:", contentRect, YES);
-NSWindowServerCreateCanvas(self);
-NSWindowServerAddCanvas(_gCanvas);
-
-}
-
-return self;
-}
-}, "void");
-
 class_addMethod(the_class, "setApplicationTitleName:", function(self, _cmd, aString) {
 with(self) {
 _applicationTitleName = aString;

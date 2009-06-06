@@ -10,6 +10,11 @@
 
 @implementation NSWindow
 
+- (CGDOMElementRef)DOMContainer
+{
+    return _DOMContainer;
+}
+
 + (NSRect)frameRectForContentRect:(NSRect)cRect styleMask:(NSUInteger)aStyle
 {
     // TODO: Need to implement
@@ -32,6 +37,7 @@
 
 - (NSRect)frameRectForContentRect:(NSRect)contentRect
 {
+    return contentRect;
     
 #define WINDOW_BORDER_SIZE 1
 #define WINDOW_TITLEBAR_SIZE 20
@@ -64,7 +70,7 @@
 
 - (NSRect)contentRectForFrameRect:(NSRect)frameRect
 {
-    return NSMakeRect(100, 100, 100, 100);
+    return frameRect;
 }
 
 - (id)init
@@ -101,7 +107,7 @@
         _firstResponder = self;
         [self setNextResponder:[NSApplication sharedApplication]];
         
-        // [self setFrame:contentRect display:NO];
+        [self setFrame:[self frameRectForContentRect:contentRect] display:NO];
         
 		[self setNeedsDisplay:YES];
     }
@@ -236,6 +242,8 @@
     [_contentView viewDidMoveToSuperview];
     [_contentView viewDidMoveToWindow];
     [_contentView setNextResponder:self];
+    
+    CGDOMElementAppendChild([self DOMContainer], [_contentView DOMContainer]);
 }
 
 - (id)contentView
@@ -250,7 +258,7 @@
 
 - (id)delegate
 {
-    // TODO: Need to implement
+    return _delegate;
 }
 
 - (NSInteger)windowNumber
@@ -260,7 +268,7 @@
 
 - (NSUInteger)styleMask
 {
-    // TODO: Need to implement
+    return _styleMask;
 }
 
 - (NSText *)fieldEditor:(BOOL)createFlag forObject:(id)anObject
@@ -281,7 +289,9 @@
 
 - (void)setFrame:(NSRect)frameRect display:(BOOL)flag
 {
-    CGDOMElementSetFrame(_DOMContainer, frameRect);
+    _frame = frameRect;
+    CGDOMElementSetFrame(_DOMContainer, _frame);
+    CGDOMElementSetFrame(_DOMGraphicsContext, _frame);
     [self setNeedsDisplay:YES];
 }
 
@@ -1251,6 +1261,7 @@
 {
 	CGContextRef context = [[NSGraphicsContext currentContext] graphicsPort];
 	
+    CGContextFillRect(context, rect);
 }
 
 - (void)displayRectIgnoringOpacity:(NSRect)aRect inContext:(NSGraphicsContext *)context

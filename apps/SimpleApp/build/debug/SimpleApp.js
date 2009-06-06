@@ -8,8 +8,7 @@ with(self) {
 objc_msgSendSuper({super_class:NSObject, receiver:self}, "init");
 if (self)
 {
-var myWindow = objc_msgSend(objc_msgSend(NSWindow, "alloc"), "initWithContentRect:styleMask:backing:defer:", NSMakeRect(100,100,100,100), 10, null, false);
-var myArray = objc_msgSend(NSArray, "arrayWithObjects:", 20);
+var myWindow = objc_msgSend(objc_msgSend(NSWindow, "alloc"), "initWithContentRect:styleMask:backing:defer:", NSMakeRect(100,100,100,100), (256 | 4), null, false);
 
 }
 

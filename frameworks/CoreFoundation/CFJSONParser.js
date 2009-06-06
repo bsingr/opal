@@ -42,12 +42,13 @@ function CFJSONParserParse(parser)
     
     var error = function(m)
     {
-        throw {
-            name:    'SyntaxError',
-            message: m,
-            at:      at,
-            text:    text
-        };
+        console.log("message:" + m + "...... at:" + at +  " /////// text:");
+        // throw {
+        //             name:    'SyntaxError',
+        //             message: m,
+        //             at:      at,
+        //             text:    text
+        //         };
     };
 
     var next = function(c)

@@ -6,6 +6,9 @@
 //  Copyright 2009 Adam Beynon. All rights reserved.
 // 
 
+#include "math.h"
+#include "stdarg.h"
+
 typedef void *Protocol;
 typedef void *IMP;
 

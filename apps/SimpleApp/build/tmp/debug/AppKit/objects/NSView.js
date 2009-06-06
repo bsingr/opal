@@ -35,14 +35,20 @@ class_addIvar(the_class, "_visibleRect", "NSRect");
 class_addIvar(the_class, "_DOMContainer", "CGDOMElementRef");
 class_addIvar(the_class, "_DOMGraphicsContext", "CGDOMElementRef");
 
+class_addMethod(the_class, "DOMContainer", function(self, _cmd) {
+with(self) {
+return _DOMContainer;
+}
+}, "void");
+
 class_addMethod(the_class, "initWithFrame:", function(self, _cmd, frameRect) {
 with(self) {
-frameRect = NSMakeRect(0,0,100,100);
 self = objc_msgSend(self, "init");
 if (self)
 {
-_frame = frameRect;
-_bounds = NSMakeRect(0,0,_frame.size.width,_frame.size.height);
+_DOMContainer = CGDOMElementCreate("div");
+_DOMGraphicsContext = CGDOMElementCreate("canvas");
+CGDOMElementAppendChild(_DOMContainer,_DOMGraphicsContext);
 _subviews = objc_msgSend(NSMutableArray, "arrayWithCapacity:", 0);
 objc_msgSend(self, "setFrame:", frameRect);
 

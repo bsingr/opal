@@ -53,6 +53,14 @@ module Vienna
       @objc_sources ||= Dir.glob(File.join(bundle_root, '*.{m,c}'))
     end
     
+    def xib_sources
+      @xib_sources ||= Dir.glob(File.join(bundle_root, '*.xib'))
+    end
+    
+    def plist_sources
+      @plist_sources ||= Dir.glob(File.join(bundle_root, '*.plist'))
+    end
+    
     def prepare!
       # build paths
       FileUtils.mkdir_p(build_prefix)
