@@ -5,12 +5,7 @@
 //  Created by Adam Beynon on 2009-06-04.
 //  Copyright 2009 Adam Beynon. All rights reserved.
 // 
-
-// typedef struct {
-//  CFStringRef _path;
-//     CFDictionaryRef _infoDictionary;
-// } CFBundleRef;
-// 
+ 
 function CFBundleRef()
 {
     this._path = "";
@@ -18,10 +13,6 @@ function CFBundleRef()
     return this;
 }
 
-// typedef struct {
-//  char *name;
-// } CFPlugInRef;
-// 
 // extern CFBundleRef CFBundleGetMainBundle(void);
 // 
 function CFBundleGetMainBundle()

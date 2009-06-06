@@ -39,7 +39,7 @@ function __bootstrap_main()
 // the plist instructs as to the name of the executable. Also, objc can then 
 // maintain a list of the classes belonging to respective bundles etc.
 // 
-function __bootstrap_link_bundle(bundle_url)
+function __bootstrap_link_executable(executable_path)
 {
     
 }
