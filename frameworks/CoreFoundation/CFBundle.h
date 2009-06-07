@@ -22,9 +22,21 @@ typedef struct {
 	char *name;
 } CFPlugInRef;
 
+extern CFStringRef kCFBundleInfoDictionaryVersionKey;
+extern CFStringRef kCFBundleExecutableKey;
+extern CFStringRef kCFBundleIdentifierKey;
+extern CFStringRef kCFBundleVersionKey;
+extern CFStringRef kCFBundleDevelopmentRegionKey;
+extern CFStringRef kCFBundleNameKey;
+extern CFStringRef kCFBundleLocalizationsKey;
+
 extern CFBundleRef CFBundleGetMainBundle(void);
 
 extern CFBundleRef CFBundleGetBundleWithIdentifier(CFStringRef bundleID);
 extern CFArrayRef CFBundleGetAllBundles(void);
 
-// extern CFBundleRef CFBundleCreate(CFURLRef bundleURL);
+// Creates a bundle asynchronously. This is not synchronous like cocoa, as the
+// bundle might need to be loaded from a url path on the internet with AJAX. The
+// callback block is called upon sucsessul (or failure) to alert the callee that
+// the referenced bundle has finished initialisation.
+extern CFBundleRef CFBundleCreate(CFStringRef bundleURL, void (^callback)(void));

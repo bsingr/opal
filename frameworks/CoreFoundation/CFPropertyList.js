@@ -30,33 +30,29 @@ function CFPropertyListCreateXMLData(propertyList)
 // 
 function CFPropertyListCreateFromJSONData(jsonData, mutabilityOption, errorString)
 {
-    var theResult = CFJSONParserCreate(jsonData);
+    var the_parser = CFJSONParserCreate(jsonData);
+    var the_result = CFJSONParserParse(the_parser);
     
-    if(!CFDictionaryContainsKey(theResult, "plist"))
-        return null;
-        
-    var plistElement = CFDictionaryGetValue(theResult, "plist");
-    if(!CFDictionaryContainsKey(plistElement, "dict"))
-        return null;
+    if(CFDictionaryContainsKey(the_result, "plist"))
+        the_result = CFDictionaryGetValue(CFDictionaryGetValue(the_result, "plist"), "dict");
     
-    var rootElement = CFDictionaryGetValue(plistElement, "dict");
-    _CFPropertyListReformatDictionary(rootElement);
+    _CFPropertyListReformatDictionary(the_result);
     
-    return theResult;
+    return the_result;
 }
 
 function _CFPropertyListReformatDictionary(theDict)
 {
-    var count = CFDictionaryGetCount(theDict);
-    var allKeys = [];
-    var allValues = [];
-    CFDictionaryGetKeysAndValues(theDict, allKeys, allValues);
+    var keys = [];
+    var values = [];
+    CFDictionaryGetKeysAndValues(theDict, keys, values);
     
-    console.log(allKeys);
-    
-    for(var i = 0; i < count; i++)
+    for(var i = 0; i < CFDictionaryGetCount(theDict); i++)
     {
-        
+        if(CFDictionaryContainsKey(values[i], "string"))
+            CFDictionarySetValue(theDict, keys[i], CFDictionaryGetValue(values[i], "string"));
+        else if(CFDictionaryContainsKey(values[i], "int"))
+                CFDictionarySetValue(theDict, keys[i], CFDictionaryGetValue(values[i], "int"));
     }
 }
 

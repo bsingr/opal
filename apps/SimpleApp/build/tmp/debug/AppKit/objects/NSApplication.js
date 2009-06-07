@@ -19,6 +19,7 @@ function NSApplicationMain(argc,argv)
 {
 var mainBundle = objc_msgSend(NSBundle, "mainBundle");
 var principalClass = objc_msgSend(mainBundle, "principalClass");
+objc_msgSend(NSBundle, "loadNibNamed:owner:", "MainMenu", objc_msgSend(principalClass, "sharedApplication"));
 objc_msgSend(objc_msgSend(AppController, "alloc"), "init");
 objc_msgSend(objc_msgSend(principalClass, "sharedApplication"), "run");
 return 0;

@@ -143,7 +143,7 @@ function CFJSONParserParse(parser)
         while (ch && ch <= ' ') {
             next();
         }
-    },
+    };
 
     var word = function ()
     {

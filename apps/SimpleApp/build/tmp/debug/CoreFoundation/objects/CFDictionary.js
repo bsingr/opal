@@ -138,7 +138,13 @@ function CFDictionaryGetValueIfPresent(theDict, key, value)
 // 
 function CFDictionaryGetKeysAndValues(theDict, keys, values)
 {
-    keys = theDict._keys;
+    for(i in theDict._keys)
+    {
+        keys.push(theDict._keys[i]);
+        values.push(CFDictionaryGetValue(theDict, theDict._keys[i]));
+    }
+    // keys = theDict._keys;
+    // value = theDict._values;
 }
 
 // extern void CFDictionaryAddValue(CFMutableDictionaryRef theDict, void *key, void *value);

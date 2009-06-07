@@ -307,11 +307,7 @@ function CFRangeMake (loc, len)
 //  Copyright 2009 Adam Beynon. All rights reserved.
 // 
 
-// typedef struct {
-//  CFStringRef _path;
-//     CFDictionaryRef _infoDictionary;
-// } CFBundleRef;
-// 
+ 
 function CFBundleRef()
 {
     this._path = "";
@@ -319,41 +315,52 @@ function CFBundleRef()
     return this;
 }
 
-// typedef struct {
-//  char *name;
-// } CFPlugInRef;
-// 
+var kCFBundleInfoDictionaryVersionKey = "";
+var kCFBundleExecutableKey = "CFBundleExecutable";
+var kCFBundleIdentifierKey = "";
+var kCFBundleVersionKey = "";
+var kCFBundleDevelopmentRegionKey = "";
+var kCFBundleNameKey = "";
+var kCFBundleLocalizationsKey = "";
+
 // extern CFBundleRef CFBundleGetMainBundle(void);
-// 
 function CFBundleGetMainBundle()
 {
-    return CFBundleCreate("Info.plist");
+    return __bootstrap_main_bundle;
 }
 
 // extern CFBundleRef CFBundleGetBundleWithIdentifier(CFStringRef bundleID);
-// 
 function CFBundleGetBundleWithIdentifier(bundleID)
 {
     
 }
 
 // extern CFArrayRef CFBundleGetAllBundles(void);
-// 
 function CFBundleGetAllBundles()
 {
     
 }
 
-// extern CFBundleRef CFBundleCreate(CFURLRef bundleURL);
-// 
-function CFBundleCreate(bundleURL)
+// extern CFBundleRef CFBundleCreate(CFStringRef bundleURL, void (^callback)(void));
+function CFBundleCreate(bundleURL, callback)
 {
-    var the_bundle = __bootstrap_bundles["bundleURL"]
-    var bundle_object = new CFBundleRef();
-    bundle_object.path = bundleURL;
-    bundle_object._infoDictionary = the_bundle;
-}
-// 
+    var the_bundle = new CFBundleRef();
+    the_bundle._path = bundleURL;
+    
+    var request = CFHTTPRequestCreate("GET", bundleURL, true, function(evt) {
+        switch (request.readyState)
+        {
+            case 4:
+                the_bundle._infoDictionary = CFPropertyListCreateFromJSONData(request.responseText);
+                callback();
+                break;
+        }
+    });
+    CFHTTPRequestSetMimeType(request, "text/javascript");
+    CFHTTPRequestSend(request, null);
+    
+    return the_bundle;
+}// 
 //  CFData.js
 //  vienna
 //  
@@ -361,11 +368,51 @@ function CFBundleCreate(bundleURL)
 //  Copyright 2009 Adam Beynon. All rights reserved.
 // 
 
+function CFDataRef()
+{
+    this._bytes = "";
+    return this;
+}
+
+// extern CFDataRef CFDataCreateFromURL(CFStringRef path, void (^callback)(void));
+function CFDataCreateFromURL(path, callback)
+{
+    if (CFDictionaryContainsKey(__bootstrap_files, path))
+    {
+        printf("Already have the file in cache: " + path);
+        callback();
+        return CFDictionaryGetValue(__bootstrap_files, path);
+    }
+
+    // Do not already have file, so download...........
+    printf ("Do not have the file...." + path);
+    
+    var the_data = new CFDataRef();
+    
+    CFDictionarySetValue(__bootstrap_files, path, the_data);
+    
+    var request = CFHTTPRequestCreate("GET", path, true, function(evt) {
+        switch (request.readyState)
+        {
+            case 4:
+                the_data._bytes = request.responseText;
+                callback();
+                break;
+        }
+    });
+    CFHTTPRequestSetMimeType(request, "text/plain");
+    CFHTTPRequestSend(request, null);
+    
+    return the_data;
+}
+
 // extern CFDataRef CFDataCreate(void *bytes, CFIndex length);
 // 
 function CFDataCreate(bytes, length)
 {
-    
+    var the_data = new CFDataRef();
+    the_data._bytes = bytes;
+    return the_data;
 }
 
 // extern CFDataRef CFDataCreateCopy(CFDataRef theData);
@@ -699,7 +746,13 @@ function CFDictionaryGetValueIfPresent(theDict, key, value)
 // 
 function CFDictionaryGetKeysAndValues(theDict, keys, values)
 {
-    keys = theDict._keys;
+    for(i in theDict._keys)
+    {
+        keys.push(theDict._keys[i]);
+        values.push(CFDictionaryGetValue(theDict, theDict._keys[i]));
+    }
+    // keys = theDict._keys;
+    // value = theDict._values;
 }
 
 // extern void CFDictionaryAddValue(CFMutableDictionaryRef theDict, void *key, void *value);
@@ -741,6 +794,31 @@ function CFDictionaryRemoveValue(theDict, key)
 function CFDictionaryRemoveAllValues(theDict)
 {
     
+}
+// 
+//  CFHTTPRequest.js
+//  vienna
+//  
+//  Created by Adam Beynon on 2009-06-06.
+//  Copyright 2009 Adam Beynon. All rights reserved.
+// 
+
+function CFHTTPRequestCreate(method, address, async, callback)
+{
+    var req =  new XMLHttpRequest();
+    req.open(method, address, async);
+    req.onreadystatechange = callback;
+    return req;
+}
+
+function CFHTTPRequestSetMimeType(request, mime)
+{
+    request.overrideMimeType(mime);
+}
+
+function CFHTTPRequestSend(request, data)
+{
+    request.send(data);
 }
 // 
 //  CFJSONParser.js
@@ -887,7 +965,7 @@ function CFJSONParserParse(parser)
         while (ch && ch <= ' ') {
             next();
         }
-    },
+    };
 
     var word = function ()
     {
@@ -1036,33 +1114,29 @@ function CFPropertyListCreateXMLData(propertyList)
 // 
 function CFPropertyListCreateFromJSONData(jsonData, mutabilityOption, errorString)
 {
-    var theResult = CFJSONParserCreate(jsonData);
+    var the_parser = CFJSONParserCreate(jsonData);
+    var the_result = CFJSONParserParse(the_parser);
     
-    if(!CFDictionaryContainsKey(theResult, "plist"))
-        return null;
-        
-    var plistElement = CFDictionaryGetValue(theResult, "plist");
-    if(!CFDictionaryContainsKey(plistElement, "dict"))
-        return null;
+    if(CFDictionaryContainsKey(the_result, "plist"))
+        the_result = CFDictionaryGetValue(CFDictionaryGetValue(the_result, "plist"), "dict");
     
-    var rootElement = CFDictionaryGetValue(plistElement, "dict");
-    _CFPropertyListReformatDictionary(rootElement);
+    _CFPropertyListReformatDictionary(the_result);
     
-    return theResult;
+    return the_result;
 }
 
 function _CFPropertyListReformatDictionary(theDict)
 {
-    var count = CFDictionaryGetCount(theDict);
-    var allKeys = [];
-    var allValues = [];
-    CFDictionaryGetKeysAndValues(theDict, allKeys, allValues);
+    var keys = [];
+    var values = [];
+    CFDictionaryGetKeysAndValues(theDict, keys, values);
     
-    console.log(allKeys);
-    
-    for(var i = 0; i < count; i++)
+    for(var i = 0; i < CFDictionaryGetCount(theDict); i++)
     {
-        
+        if(CFDictionaryContainsKey(values[i], "string"))
+            CFDictionarySetValue(theDict, keys[i], CFDictionaryGetValue(values[i], "string"));
+        else if(CFDictionaryContainsKey(values[i], "int"))
+                CFDictionarySetValue(theDict, keys[i], CFDictionaryGetValue(values[i], "int"));
     }
 }
 

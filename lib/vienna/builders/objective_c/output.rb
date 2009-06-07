@@ -60,7 +60,7 @@ module Vienna
     
     def output_function_definition_params(file, params)
       return unless params
-      
+            
       if params.value == ","
         output_function_definition_params file, params.left
         file.write ","
@@ -68,6 +68,8 @@ module Vienna
       elsif params.value == "d"
         if params.right.value == "*"
           file.write params.right.right.value
+        elsif params.right.value == "f"
+          file.write params.right.left.right.value
         else
           file.write params.right.value
         end
@@ -429,7 +431,12 @@ module Vienna
     end
     
     def output_block_expression(file, block)
-      file.write block
+      file.write "function("
+      output_function_definition_params file, block.left
+      file.write "){\n"
+      output_statement_list file, block.right
+      file.write "}"
+      # file.write block
     end
     
     def output_ternary_expression(file, statement)

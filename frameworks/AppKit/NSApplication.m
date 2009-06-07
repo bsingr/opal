@@ -323,6 +323,7 @@ int NSApplicationMain(int argc, const char *argv[])
     NSBundle *mainBundle = [NSBundle mainBundle];
     Class principalClass = [mainBundle principalClass];
     
+    [NSBundle loadNibNamed:@"MainMenu" owner:[principalClass sharedApplication]];
     [[AppController alloc] init];
     
     [[principalClass sharedApplication] run];

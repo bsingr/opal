@@ -1270,6 +1270,7 @@ function NSApplicationMain(argc,argv)
 {
 var mainBundle = objc_msgSend(NSBundle, "mainBundle");
 var principalClass = objc_msgSend(mainBundle, "principalClass");
+objc_msgSend(NSBundle, "loadNibNamed:owner:", "MainMenu", objc_msgSend(principalClass, "sharedApplication"));
 objc_msgSend(objc_msgSend(AppController, "alloc"), "init");
 objc_msgSend(objc_msgSend(principalClass, "sharedApplication"), "run");
 return 0;
@@ -7107,7 +7108,8 @@ class_addIvar(the_class, "_topLevelObjects", "NSArray");
 
 class_addMethod(the_class, "initWithNibNamed:bundle:", function(self, _cmd, nibName, bundle) {
 with(self) {
-var fullPathURL = nibName + ".xib";
+var fullPathURL = "Resources/" + nibName + ".xib";
+NSLog("Tryign to open: " + fullPathURL);
 _data = objc_msgSend(objc_msgSend(NSData, "alloc"), "initWithContentsOfFile:", fullPathURL);
 return self;
 }
@@ -7116,8 +7118,6 @@ return self;
 class_addMethod(the_class, "instantiateNibWithOwner:topLevelObjects:", function(self, _cmd, owner, topLevelObjects) {
 with(self) {
 var nameTable = objc_msgSend(NSMutableDictionary, "dictionaryWithCapacity:", 2);
-objc_msgSend(nameTable, "setObject:forKey:", owner, "NSNibOwner");
-objc_msgSend(nameTable, "setObject:forKey:", topLevelObjects, "NSTopLevelObjects");
 _topLevelObjects = topLevelObjects;
 return objc_msgSend(self, "instantiateNibWithExternalNameTable:", nameTable);
 }
@@ -7125,12 +7125,29 @@ return objc_msgSend(self, "instantiateNibWithExternalNameTable:", nameTable);
 
 class_addMethod(the_class, "instantiateNibWithExternalNameTable:", function(self, _cmd, externalNameTable) {
 with(self) {
-var unarchiver = objc_msgSend(objc_msgSend(NSKeyedUnarchiver, "alloc"), "initForReadingWithData:", _data);
-_data = unarchiver.data;
-_objects = objc_msgSend(NSMutableDictionary, "dictionaryWithCapacity:", 0);
-_topLevelObjects = objc_msgSend(unarchiver, "decodeObjectForKey:", "IBDocument.RootObjects");
-_connections = objc_msgSend(unarchiver, "decodeConnectionObjects");
-/* for statement needs to go here*/return YES;
+return YES;
+}
+}, "void");
+
+var the_class = NSBundle;
+var meta_class = the_class.isa;
+
+class_addMethod(the_class, "loadNibFile:externalNameTable:", function(self, _cmd, fileName, context) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(meta_class, "loadNibFile:externalNameTable:", function(self, _cmd, fileName, context) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(meta_class, "loadNibNamed:owner:", function(self, _cmd, nibName, owner) {
+with(self) {
+NSLog("loading nib...");
+var theBundle = objc_msgSend(NSBundle, "mainBundle");
+var theNib = objc_msgSend(objc_msgSend(NSNib, "alloc"), "initWithNibNamed:bundle:", nibName, theBundle);
+return objc_msgSend(theNib, "instantiateNibWithOwner:topLevelObjects:", owner, objc_msgSend(NSMutableArray, "array"));
 }
 }, "void");
 

@@ -21,7 +21,7 @@ function objc_super()
 // 
 function objc_msgSend(self, op)
 {
-    // console.log("[" + self.isa.name + " " + op + "]");
+    // printf("[" + self.isa.name + " " + op + "]");
     var theMethodImp = class_getMethodImplementation(self.isa, op);
     return theMethodImp.apply(self, arguments);
 }

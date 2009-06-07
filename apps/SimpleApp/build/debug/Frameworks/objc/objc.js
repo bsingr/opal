@@ -9,73 +9,79 @@
 // Bootstrap code has finished. this is used to identify when main() can be called
 var __bootstrap_completed = false;
 
-// a cache of any files that have been downloaded. Filename as key, and data as value
-// When a file is realeased, it is removed from the cache. So if it is not listed, then
-// it will need downloading.
-// 
-// Note: files are stored as data: i.e. a big string with all the contents of the file.
-var __bootstrap_files = {};
-
+// CFDictionaryRef for all the files that are downloaded (in cache).
+// If a file is not in this, then it needs to be downloaded..
+// keys => file path
+// values => CFDataRef of file
+var __bootstrap_files = null;
 
 var __bootstrap_bundles = {};
 var __bootstrap_bundles_for_class = {};
+
+// CFBundleRef for the main (application) bundle.
+var __bootstrap_main_bundle = null;
 
 // extern void __bootstrap_main(void);
 // 
 function __bootstrap_main()
 {
+    __bootstrap_files = CFDictionaryCreateMutable();
     __bootstrap_link();
-}
-
-
-// Path to the bundle. for example:
-// 
-// - "Info.plist" - this will load the main bundle (main application)
-// - "Frameworks/AppKit/Info.plist" - this will load the AppKit bundle
-// - "" - this is the same as "Info.plist"
-// - "Frameworks/AppKit" - this is the sane as "Frameworks/AppKit/Info.plist"
-// 
-// Info.plist (or json equivalent is loaded before the code for the bundle), as
-// the plist instructs as to the name of the executable. Also, objc can then 
-// maintain a list of the classes belonging to respective bundles etc.
-// 
-function __bootstrap_link_bundle(bundle_url)
-{
-    
 }
 
 function __bootstrap_link()
 {
-	// slice array and add each framework to page, with onload to trigger this function again
-	// when all frameworks are done, add application, then call main() (after app loads)
 	var the_framework = __bootstrap_frameworks.shift();
 									
 	if (the_framework == null)
 	{
 		if (__bootstrap_completed)
 		{
-			// all frameworks and app have loaded, so call main
-			// 
-			// By default, 1 argument, which is the app name (compatible c?!?!?!?!)
-			main(1, ['SimpleApp']);
+		    var main_bundle_dictionary = CFBundleGetMainBundle()._infoDictionary;
+		    		    
+		    if (CFDictionaryContainsKey(main_bundle_dictionary, "NSMainNibFile"))
+		    {
+		        var nib_data = CFDataCreateFromURL("Resources/" + CFDictionaryGetValue(main_bundle_dictionary, "NSMainNibFile") + ".xib", function() {
+		            	           
+                   // Once the main nib has loaded, we can now call main.
+                   // This avoids us calling main and then having to wait for the main nib file to load.
+                   // main(1, ['SimpleApp']);
+                   var new_data = CFDataCreateFromURL("Resources/" + CFDictionaryGetValue(main_bundle_dictionary, "NSMainNibFile") + ".xib", function() {
+
+                      // Once the main nib has loaded, we can now call main.
+                      // This avoids us calling main and then having to wait for the main nib file to load.
+                      // main(1, ['SimpleApp']);
+   		        });
+		        });
+		    }			
 		}
 		else
 		{
-			var e = document.createElement("script");
-			e.src = __bootstrap_application + ".js";
-			e.type = "text/javascript";
-			e.onload = function() { console.log(__bootstrap_application + " loaded"); __bootstrap_link(); };
-			__bootstrap_completed = true;
-			document.getElementsByTagName("head")[0].appendChild(e);
+		    var new_bundle = CFBundleCreate("Info.plist", function() {
+                // When plist is loaded....
+                __bootstrap_main_bundle = new_bundle;
+                
+                if(CFDictionaryContainsKey(new_bundle._infoDictionary, "CFBundleExecutable"))
+                {
+                    dlopen(CFDictionaryGetValue(new_bundle._infoDictionary, "CFBundleExecutable") + ".js", 0, function() {
+                        __bootstrap_completed = true;
+        		        __bootstrap_link();
+                    });
+                }	        
+		    });
 		}
 	}
 	else
 	{
-		var e = document.createElement("script");
-		e.src = "Frameworks/" + the_framework + "/" + the_framework + ".js";
-		e.type = "text/javascript";
-		e.onload = function() { console.log(the_framework + " loaded"); __bootstrap_link(); };
-		document.getElementsByTagName("head")[0].appendChild(e);
+	    var new_bundle = CFBundleCreate("Frameworks/" + the_framework + "/Info.plist", function() {
+            // When plist is loaded....
+            if(CFDictionaryContainsKey(new_bundle._infoDictionary, "CFBundleExecutable"))
+            {
+                dlopen("Frameworks/" + the_framework + "/" + CFDictionaryGetValue(new_bundle._infoDictionary, "CFBundleExecutable") + ".js", 0, function() {
+    		        __bootstrap_link();
+                });
+            }	        
+	    });
 	}
 }
 // 
@@ -96,6 +102,54 @@ var ROUND = Math.round;
 
 var MIN = Math.min;
 var MAX = Math.max;
+// 
+//  dlfcn.js
+//  vienna
+//  
+//  Created by Adam Beynon on 2009-06-06.
+//  Copyright 2009 Adam Beynon. All rights reserved.
+// 
+
+// typedef struct {
+//     const char  *dli_fname;
+//     void        *dli_fbase;
+//     const char  *dli_sname;
+//     void        *dli_saddr;
+// } Dl_info;
+ 
+// extern int dladdr(const void *, Dl_info *);
+function dladdr()
+{
+    
+}
+ 
+// extern int dlclose(void *module);
+function dlclose(module)
+{
+    
+}
+
+// extern char *dlerror(void);
+function dlerror()
+{
+    
+}
+
+// extern void *dlopen(const char *path, int mode, void *callback);
+function dlopen(path, mode, callback)
+{
+    var e = document.createElement("script");
+   	e.src = path + "?" + new Date().getTime();
+   	e.type = "text/javascript";
+   	e.onload = callback;
+   	document.getElementsByTagName("head")[0].appendChild(e);
+}
+
+// extern void *dlsym(void *module, const char *symbol);
+function dlsym(module, symbol)
+{
+    
+} 
 // 
 //  message.js
 //  vienna
@@ -119,7 +173,7 @@ function objc_super()
 // 
 function objc_msgSend(self, op)
 {
-    // console.log("[" + self.isa.name + " " + op + "]");
+    // printf("[" + self.isa.name + " " + op + "]");
     var theMethodImp = class_getMethodImplementation(self.isa, op);
     return theMethodImp.apply(self, arguments);
 }
@@ -851,3 +905,63 @@ function va_copy(dest, src)
 {
     // FIXME: Need to implemenet
 }
+// 
+//  stdio.js
+//  vienna
+//  
+//  Created by Adam Beynon on 2009-06-06.
+//  Copyright 2009 Adam Beynon. All rights reserved.
+// 
+
+// extern int fclose(FILE *stream);
+// extern int feof(FILE *stream);
+// extern int ferror(FILE *);
+// extern int fflush(FILE *);
+// extern int fgetc(FILE *);
+// extern int fgetpos(FILE * __restrict, int *);
+// extern char *fgets(char * __restrict, int, FILE *);
+// extern FILE *fopen(const char *filename, const char *mode);
+function fopen(filename, mode)
+{
+    
+}
+
+// extern int fprintf(FILE * __restrict, const char * __restrict, ...);
+// extern int fputc(int, FILE *);
+// extern int fputs(const char * __restrict, FILE * __restrict);
+// extern int fread(void *ptr, int size, int count, FILE *stream);
+function fread(ptr, size, count, stream)
+{
+    
+}
+
+// extern FILE *freopen(const char * __restrict, const char * __restrict, FILE * __restrict);
+// extern int fscanf(FILE * __restrict, const char * __restrict, ...);
+// extern int fseek(FILE *, long, int);
+// extern int fsetpos(FILE *, const int *);
+// extern long ftell(FILE *);
+// extern int fwrite(const void * __restrict, int, int, FILE * __restrict);
+// extern int getc(FILE *);
+// extern int getchar(void);
+// extern char *gets(char *);
+// extern void perror(const char *);
+// extern int printf(const char *format, ...);
+function printf(format)
+{
+    console.log(format);
+}
+
+// extern int putc(int, FILE *);
+// extern int putchar(int);
+// extern int puts(const char *);
+// extern int remove(const char *);
+// extern int rename (const char *, const char *);
+// extern void rewind(FILE *);
+// extern int scanf(const char * __restrict, ...);
+// extern void setbuf(FILE * __restrict, char * __restrict);
+// extern int setvbuf(FILE * __restrict, char * __restrict, int, int);
+// extern int sprintf(char * __restrict, const char * __restrict, ...);
+// extern int sscanf(const char * __restrict, const char * __restrict, ...);
+// extern FILE *tmpfile(void);
+// extern char *tmpnam(char *);
+// extern int ungetc(int, FILE *);

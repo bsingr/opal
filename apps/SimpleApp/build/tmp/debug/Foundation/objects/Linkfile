@@ -4,6 +4,13 @@ NSKeyValueCoding.js:
 
   dependencies: []
 
+NSData.js: 
+  declarations: 
+  - NSData
+  - NSMutableData
+  dependencies: 
+  - NSObject
+  - NSData
 NSCoder.js: 
   declarations: 
   - NSCoder

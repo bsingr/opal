@@ -10,7 +10,8 @@ class_addIvar(the_class, "_topLevelObjects", "NSArray");
 
 class_addMethod(the_class, "initWithNibNamed:bundle:", function(self, _cmd, nibName, bundle) {
 with(self) {
-var fullPathURL = nibName + ".xib";
+var fullPathURL = "Resources/" + nibName + ".xib";
+NSLog("Tryign to open: " + fullPathURL);
 _data = objc_msgSend(objc_msgSend(NSData, "alloc"), "initWithContentsOfFile:", fullPathURL);
 return self;
 }
@@ -19,8 +20,6 @@ return self;
 class_addMethod(the_class, "instantiateNibWithOwner:topLevelObjects:", function(self, _cmd, owner, topLevelObjects) {
 with(self) {
 var nameTable = objc_msgSend(NSMutableDictionary, "dictionaryWithCapacity:", 2);
-objc_msgSend(nameTable, "setObject:forKey:", owner, "NSNibOwner");
-objc_msgSend(nameTable, "setObject:forKey:", topLevelObjects, "NSTopLevelObjects");
 _topLevelObjects = topLevelObjects;
 return objc_msgSend(self, "instantiateNibWithExternalNameTable:", nameTable);
 }
@@ -28,12 +27,7 @@ return objc_msgSend(self, "instantiateNibWithExternalNameTable:", nameTable);
 
 class_addMethod(the_class, "instantiateNibWithExternalNameTable:", function(self, _cmd, externalNameTable) {
 with(self) {
-var unarchiver = objc_msgSend(objc_msgSend(NSKeyedUnarchiver, "alloc"), "initForReadingWithData:", _data);
-_data = unarchiver.data;
-_objects = objc_msgSend(NSMutableDictionary, "dictionaryWithCapacity:", 0);
-_topLevelObjects = objc_msgSend(unarchiver, "decodeObjectForKey:", "IBDocument.RootObjects");
-_connections = objc_msgSend(unarchiver, "decodeConnectionObjects");
-/* for statement needs to go here*/return YES;
+return YES;
 }
 }, "void");
 

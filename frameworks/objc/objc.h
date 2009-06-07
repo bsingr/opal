@@ -6,8 +6,11 @@
 //  Copyright 2009 Adam Beynon. All rights reserved.
 // 
 
+#include "curl.h"
+#include "dlfcn.h"
 #include "math.h"
 #include "stdarg.h"
+#include "stdio.h"
 
 typedef void *Protocol;
 typedef void *IMP;

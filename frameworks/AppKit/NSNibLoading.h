@@ -7,6 +7,7 @@
 // 
 
 #import <Foundation/NSBundle.h>
+#import <AppKit/NSNib.h>
 
 @class NSString;
 @class NSDictionary;

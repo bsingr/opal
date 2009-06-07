@@ -492,7 +492,7 @@ class Vienna::ObjectiveCParser
 
     direct_declarator:
     	  IDENTIFIER                                        { result = val[0] }
-    	| '(' declarator ')'
+    	| '(' declarator ')'                                { result = val[1] }
     	| direct_declarator '[' constant_expression ']'
     	| direct_declarator '[' ']'
     	| direct_declarator '(' parameter_type_list ')'     { result = make_node('f', val[0], val[2]) }
@@ -502,6 +502,7 @@ class Vienna::ObjectiveCParser
 
     pointer:
     	  '*'                                               { result = val[0] }
+    	| '^'
     	| '*' type_qualifier_list                           { result = make_node(val[0], val[1], nil) }
     	| '*' pointer                                       { result = make_node(val[0], val[1], nil) }
     	| '*' type_qualifier_list pointer                   { result = make_node(val[0], val[1], val[2]) }
@@ -539,7 +540,7 @@ class Vienna::ObjectiveCParser
     	;
 
     abstract_declarator:
-    	  pointer
+    	 pointer
     	| direct_abstract_declarator
     	| pointer direct_abstract_declarator
     	;

@@ -188,6 +188,11 @@ NSShadow.js:
   - NSShadow
   dependencies: 
   - NSObject
+NSNibLoading.js: 
+  declarations: 
+  - NSBundle
+  dependencies: 
+  - NSObject
 NSFont.js: 
   declarations: 
   - NSFont
