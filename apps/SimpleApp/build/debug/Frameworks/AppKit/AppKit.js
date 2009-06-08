@@ -302,7 +302,6 @@ return self;
 
 class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
 with(self) {
-objc_msgSendSuper({super_class:NSResponder, receiver:self}, "initWithCoder:", aCoder);
 _frame = NSMakeRect(0,0,0,0);
 _bounds = NSMakeRect(0,0,0,0);
 if (objc_msgSend(aCoder, "containsValueForKey:", "NSFrame"))
@@ -7109,15 +7108,16 @@ class_addIvar(the_class, "_topLevelObjects", "NSArray");
 class_addMethod(the_class, "initWithNibNamed:bundle:", function(self, _cmd, nibName, bundle) {
 with(self) {
 var fullPathURL = "Resources/" + nibName + ".xib";
-NSLog("Tryign to open: " + fullPathURL);
-_data = objc_msgSend(objc_msgSend(NSData, "alloc"), "initWithContentsOfFile:", fullPathURL);
+objc_msgSend(NSData, "dataWithContentsOfURL:didLoadBlock:", fullPathURL, function(data){
+_data = data;
+});
 return self;
 }
 }, "void");
 
 class_addMethod(the_class, "instantiateNibWithOwner:topLevelObjects:", function(self, _cmd, owner, topLevelObjects) {
 with(self) {
-var nameTable = objc_msgSend(NSMutableDictionary, "dictionaryWithCapacity:", 2);
+var nameTable = objc_msgSend(NSMutableDictionary, "dictionaryWithObjectsAndKeys:", owner,"NSNibOwner",topLevelObjects,"NSTopLevelObjects",null);
 _topLevelObjects = topLevelObjects;
 return objc_msgSend(self, "instantiateNibWithExternalNameTable:", nameTable);
 }
@@ -7125,6 +7125,9 @@ return objc_msgSend(self, "instantiateNibWithExternalNameTable:", nameTable);
 
 class_addMethod(the_class, "instantiateNibWithExternalNameTable:", function(self, _cmd, externalNameTable) {
 with(self) {
+var unarchiver = objc_msgSend(NSKeyedUnarchiver, "unarchiveObjectWithData:", _data);
+_topLevelObjects = objc_msgSend(unarchiver, "decodeObjectForKey:", "IBDocument.RootObjects");
+NSLog(_topLevelObjects);
 return YES;
 }
 }, "void");
@@ -7150,6 +7153,11 @@ var theNib = objc_msgSend(objc_msgSend(NSNib, "alloc"), "initWithNibNamed:bundle
 return objc_msgSend(theNib, "instantiateNibWithOwner:topLevelObjects:", owner, objc_msgSend(NSMutableArray, "array"));
 }
 }, "void");
+
+var the_class = objc_allocateClassPair(NSObject, "NSCustomObject");
+var meta_class = the_class.isa;
+objc_registerClassPair(the_class);
+class_addIvar(the_class, "isa", "Class");
 
 var the_class = objc_allocateClassPair(NSControl, "NSTableView");
 var meta_class = the_class.isa;
@@ -10000,6 +10008,50 @@ objc_msgSend(_window, "close");
 class_addMethod(the_class, "owner", function(self, _cmd) {
 with(self) {
 return _owner;
+}
+}, "void");
+
+var the_class = objc_allocateClassPair(NSObject, "NSWindowTemplate");
+var meta_class = the_class.isa;
+objc_registerClassPair(the_class);
+class_addIvar(the_class, "isa", "Class");
+class_addIvar(the_class, "_maxSize", "NSSize");
+class_addIvar(the_class, "_minSize", "NSSize");
+class_addIvar(the_class, "_screenRect", "NSRect");
+class_addIvar(the_class, "_viewClass", "id");
+class_addIvar(the_class, "_wtFlags", "NSUInteger");
+class_addIvar(the_class, "_windowBacking", "NSUInteger");
+class_addIvar(the_class, "_windowClass", "NSString");
+class_addIvar(the_class, "_windowRect", "NSRect");
+class_addIvar(the_class, "_windowTitle", "NSString");
+class_addIvar(the_class, "_windowView", "NSView");
+class_addIvar(the_class, "_styleMask", "int");
+class_addIvar(the_class, "_windowAutosave", "NSString");
+
+class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
+with(self) {
+_maxSize = objc_msgSend(aCoder, "decodeSizeForKey:", "NSMaxSize");
+_minSize = objc_msgSend(aCoder, "decodeSizeForKey:", "NSMinSize");
+_screenRect = objc_msgSend(aCoder, "decodeRectForKey:", "NSScreenRect");
+_viewClass = objc_msgSend(aCoder, "decodeObjectForKey:", "NSViewClass");
+_wtFlags = objc_msgSend(aCoder, "decodeIntForKey:", "NSWTFlags");
+_windowBacking = objc_msgSend(aCoder, "decodeIntForKey:", "NSWindowBacking");
+_windowClass = objc_msgSend(aCoder, "decodeObjectForKey:", "NSWindowClass");
+_windowRect = objc_msgSend(aCoder, "decodeRectForKey:", "NSWindowRect");
+_windowTitle = objc_msgSend(aCoder, "decodeObjectForKey:", "NSWindowTitle");
+_windowView = objc_msgSend(aCoder, "decodeObjectForKey:", "NSWindowView");
+_styleMask = objc_msgSend(aCoder, "decodeIntForKey:", "NSWindowStyleMask");
+_windowAutosave = objc_msgSend(aCoder, "decodeObjectForKey:", "NSFrameAutosaveName");
+return self;
+}
+}, "void");
+
+class_addMethod(the_class, "awakeAfterUsingCoder:", function(self, _cmd, aCoder) {
+with(self) {
+var theClass = NSClassFromString(_windowClass);
+NSLog(_windowRect);
+var theWindow = objc_msgSend(objc_msgSend(theClass, "alloc"), "initWithContentRect:styleMask:backing:defer:", NSMakeRect(300,300,300,300), 23, 1, NO);
+return theWindow;
 }
 }, "void");
 

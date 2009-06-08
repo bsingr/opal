@@ -131,7 +131,7 @@ function object_getInstanceVariable(obj, name, outValue)
 // 
 function objc_getClass(name)
 {
-    eval(name);
+    return eval(name);
 }
 
 // extern id objc_getMetaClass(const char *name);

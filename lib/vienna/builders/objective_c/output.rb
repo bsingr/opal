@@ -51,7 +51,14 @@ module Vienna
     end
     
     def output_function_definition(file, func)
-      file.write "function #{func.left.right.left.value}("
+      # puts func
+            file.write "function "
+            if func.left.right.value == "*"
+              file.write func.left.right.right.right.value
+            else
+        file.write func.left.right.left.value
+      end
+      file.write "("
       output_function_definition_params(file, func.left.right.right)
       file.write ")\n{\n"
       output_statement_list file, func.right
@@ -201,11 +208,16 @@ module Vienna
       elsif statement.token == :IF
         output_if_statement file, statement
         file.write "\n"
+      elsif statement.token == :WHILE
+        output_while_statement file, statement
+        file.write "\n"
       elsif statement.token == :RETURN
         output_return_statement file, statement
         file.write ";\n"
       elsif statement.token == :FOR
         output_for_statement file, statement
+      elsif statement.token == :IN
+        output_for_in_statement file, statement
       elsif statement.value == "d"
         output_declaration_statement file, statement
         file.write ";\n"
@@ -218,6 +230,25 @@ module Vienna
       else
         file.write "Unhandled output_statement_list: #{statement}"
       end
+    end
+    
+    def output_for_in_statement(file, statement)
+      file.write "var e = objc_msgSend("
+      output_expression file, statement.left.right
+      file.write ",\"objectEnumerator\");\n"
+      
+      file.write "while("
+      output_expression file, statement.left.left
+      
+      file.write " = objc_msgSend(e,\"nextObject\"))\n"
+      output_statement_list file, statement.right
+    end
+    
+    def output_while_statement(file, statement)
+      file.write "while("
+      output_expression file, statement.left
+      file.write ")"
+      output_statement_list file, statement.right
     end
     
     
@@ -339,6 +370,10 @@ module Vienna
         elsif statement.left.value == "-"
           file.write "-"
           output_expression file, statement.right
+        else
+          output_expression file, statement.left
+          file.write ","
+          output_expression file, statement.right
         end
       else
         file.write "Unhandled output_expression: #{statement}"
@@ -373,8 +408,12 @@ module Vienna
         file.write "var #{d.right.value}"
         the_type = lookup_symbol(d.left.value)
         if the_type
-          file.write " = "
-          output_declaration_initializer_object file, the_type
+          if the_type.class == ObjectiveCStruct and d.left.value == "va_list"
+            file.write " = {all:arguments, trailing:[]}"
+          else
+            file.write " = "
+            output_declaration_initializer_object file, the_type
+          end
         end
         return
       elsif d.right.right.leaf? and d.right.value == "*"
@@ -528,9 +567,6 @@ module Vienna
       file.write the_selector
       file.write "\""
       output_objc_msgSend_arguments file, statement.right
-      if the_selector == "arrayWithObjects:"
-        # puts statement
-      end
       file.write ")"
       
       # should really check here to see if its alloc/init, then return the_self

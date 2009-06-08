@@ -36,7 +36,7 @@
 
 - (id)initWithCoder:(NSCoder *)aCoder
 {
-    [super initWithCoder:aCoder];
+    // [super initWithCoder:aCoder];
     
     _frame = NSMakeRect (0,0,0,0);
     _bounds = NSMakeRect (0,0,0,0);

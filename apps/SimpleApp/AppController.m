@@ -12,10 +12,9 @@
 
 - (id)init
 {
-    [super init];
+    self = [super init];
     
     if (self) {
-        NSWindow *myWindow = [[NSWindow alloc] initWithContentRect:NSMakeRect(100,100,500,400) styleMask:(NSTexturedBackgroundWindowMask | NSMiniaturizableWindowMask) backing:nil defer:false];
 	}
     
 	return self;
@@ -30,7 +29,7 @@ void dome(int (*ptr)(int, float))
 
 void doSomething(void (^callback)(void))
 {
-    void a = ^(void){printf("ten");};
+    void *a = ^{printf("ten");};
     
     doThis(^(int age, int height){
         printf(age, height);

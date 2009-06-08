@@ -107,12 +107,12 @@
 
 - (id)lastObject
 {
-    
+    return [self objectAtIndex:[self count] - 1];
 }
 
 - (NSEnumerator *)objectEnumerator
 {
-    
+    return [[NSEnumerator alloc] initWithArray:[NSMutableArray arrayWithArray:self]];
 }
 
 - (NSEnumerator *)reverseObjectEnumerator
@@ -177,7 +177,7 @@
 
 + (id)array
 {
-    
+    return CFArrayCreateMutable();
 }
 
 + (id)arrayWithObject:(id)anObject
@@ -197,7 +197,7 @@
 
 + (id)arrayWithArray:(NSArray *)array
 {
-    
+    return CFArrayCreateCopy(array);
 }
 
 - (id)initWithObjects:(const id *)objects count:(NSUInteger)cnt
@@ -212,7 +212,7 @@
 
 - (id)initWithArray:(NSArray *)array
 {
-    
+    return CFArrayCreateCopy(array);
 }
 
 - (id)initWithArray:(NSArray *)array copyItems:(BOOL)flag
@@ -241,6 +241,19 @@
     
 }
 
+- (id)initWithCoder:(NSCoder *)aCoder
+{
+    NSArray *newObjects = [aCoder decodeObjectForKey:@"NS.objects"];
+    
+    id a;
+    for(a in newObjects)
+    {
+        [self addObject:a];
+    }
+    
+    return self;
+}
+
 @end
 
 
@@ -253,7 +266,7 @@
 
 - (void)addObject:(id)anObject
 {
-    
+    CFArrayAppendValue(self, anObject);
 }
 
 - (void)insertObject:(id)anObject atIndex:(NSUInteger)index
@@ -263,12 +276,12 @@
 
 - (void)removeLastObject
 {
-    
+    CFArrayRemoveValueAtIndex(self, [self count] - 1);
 }
 
 - (void)removeObjectAtIndex:(NSUInteger)index
 {
-    
+    CFArrayRemoveValueAtIndex(self, index);
 }
 
 - (void)replaceObjectAtIndex:(NSUInteger)index withObject:(id)anObject

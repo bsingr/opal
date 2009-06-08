@@ -21,3 +21,108 @@ r.size.width = w;
 r.size.height = h;
 return r;
 }
+function NSMaxX(aRect)
+{
+}
+function NSMaxY(aRect)
+{
+}
+function NSMidX(aRect)
+{
+}
+function NSMidY(aRect)
+{
+}
+function NSMinX(aRect)
+{
+}
+function NSMinY(aRect)
+{
+}
+function NSWidth(aRect)
+{
+}
+function NSHeight(aRect)
+{
+}
+function NSRectFromCGRect(cgrect)
+{
+}
+function NSRectToCGRect(nsrect)
+{
+}
+function NSPointFromCGPoint(cgpoint)
+{
+}
+function NSPointToCGPoint(nspoint)
+{
+}
+function NSSizeFromCGSize(cgsize)
+{
+}
+function NSSizeToCGSize(nssize)
+{
+}
+function NSEqualPoints(aPoint,bPoint)
+{
+}
+function NSEqualSizes(aSize,bSize)
+{
+}
+function NSEqualRects(aRect,bRect)
+{
+}
+function NSIsEmptyRect(aRect)
+{
+}
+function NSInsetRect(aRect,dX,dY)
+{
+}
+function NSIntegralRect(aRect)
+{
+}
+function NSUnionRect(aRect,bRect)
+{
+}
+function NSIntersectionRect(aRect,bRect)
+{
+}
+function NSOffsetRect(aRect,dX,dY)
+{
+}
+function NSDivideRect(inRect,slice,rem,amount,edge)
+{
+}
+function NSPointInRect(aPoint,aRect)
+{
+}
+function NSMouseInRect(aPoint,aRect,flipped)
+{
+}
+function NSContainsRect(aRect,bRect)
+{
+}
+function NSIntersectsRect(aRect,bRect)
+{
+}
+function d()
+{
+}
+function d()
+{
+}
+function d()
+{
+}
+function NSPointFromString(aString)
+{
+return aString;
+}
+function NSSizeFromString(aString)
+{
+return aString;
+}
+function NSRectFromString(aString)
+{
+return aString;
+}

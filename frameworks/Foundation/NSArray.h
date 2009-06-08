@@ -7,6 +7,7 @@
 // 
 
 #import <Foundation/NSObject.h>
+#import <Foundation/NSCoder.h>
 #import <Foundation/NSEnumerator.h>
 #import <Foundation/NSRange.h>
 

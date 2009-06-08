@@ -60,7 +60,6 @@ return self;
 
 class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
 with(self) {
-objc_msgSendSuper({super_class:NSResponder, receiver:self}, "initWithCoder:", aCoder);
 _frame = NSMakeRect(0,0,0,0);
 _bounds = NSMakeRect(0,0,0,0);
 if (objc_msgSend(aCoder, "containsValueForKey:", "NSFrame"))

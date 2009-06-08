@@ -33,3 +33,178 @@ NSRect NSMakeRect(CGFloat x, CGFloat y, CGFloat w, CGFloat h)
     r.size.height = h;
     return r;
 }
+
+CGFloat NSMaxX(NSRect aRect)
+{
+    
+}
+
+CGFloat NSMaxY(NSRect aRect)
+{
+    
+}
+
+CGFloat NSMidX(NSRect aRect)
+{
+    
+}
+
+CGFloat NSMidY(NSRect aRect)
+{
+    
+}
+
+CGFloat NSMinX(NSRect aRect)
+{
+    
+}
+
+CGFloat NSMinY(NSRect aRect)
+{
+    
+}
+
+CGFloat NSWidth(NSRect aRect)
+{
+    
+}
+
+CGFloat NSHeight(NSRect aRect)
+{
+    
+}
+
+
+NSRect NSRectFromCGRect(CGRect cgrect)
+{
+    
+}
+
+CGRect NSRectToCGRect(NSRect nsrect)
+{
+    
+}
+
+NSPoint NSPointFromCGPoint(CGPoint cgpoint)
+{
+    
+}
+
+
+CGPoint NSPointToCGPoint(NSPoint nspoint)
+{
+    
+}
+
+NSSize NSSizeFromCGSize(CGSize cgsize)
+{
+    
+}
+
+CGSize NSSizeToCGSize(NSSize nssize)
+{
+    
+}
+
+
+BOOL NSEqualPoints(NSPoint aPoint, NSPoint bPoint)
+{
+    
+}
+
+BOOL NSEqualSizes(NSSize aSize, NSSize bSize)
+{
+    
+}
+
+BOOL NSEqualRects(NSRect aRect, NSRect bRect)
+{
+    
+}
+
+BOOL NSIsEmptyRect(NSRect aRect)
+{
+    
+}
+
+
+NSRect NSInsetRect(NSRect aRect, CGFloat dX, CGFloat dY)
+{
+    
+}
+
+NSRect NSIntegralRect(NSRect aRect)
+{
+    
+}
+
+NSRect NSUnionRect(NSRect aRect, NSRect bRect)
+{
+    
+}
+
+NSRect NSIntersectionRect(NSRect aRect, NSRect bRect)
+{
+    
+}
+
+NSRect NSOffsetRect(NSRect aRect, CGFloat dX, CGFloat dY)
+{
+    
+}
+
+void NSDivideRect(NSRect inRect, NSRect *slice, NSRect *rem, CGFloat amount, NSRectEdge edge)
+{
+    
+}
+
+BOOL NSPointInRect(NSPoint aPoint, NSRect aRect)
+{
+    
+}
+
+BOOL NSMouseInRect(NSPoint aPoint, NSRect aRect, BOOL flipped)
+{
+    
+}
+
+BOOL NSContainsRect(NSRect aRect, NSRect bRect)
+{
+    
+}
+
+BOOL NSIntersectsRect(NSRect aRect, NSRect bRect)
+{
+    
+}
+
+
+NSString *NSStringFromPoint(NSPoint aPoint)
+{
+    
+}
+
+NSString *NSStringFromSize(NSSize aSize)
+{
+    
+}
+
+NSString *NSStringFromRect(NSRect aRect)
+{
+    
+}
+
+NSPoint NSPointFromString(NSString *aString)
+{
+    return aString;
+}
+
+NSSize NSSizeFromString(NSString *aString)
+{
+    return aString;
+}
+
+NSRect NSRectFromString(NSString *aString)
+{
+    return aString;
+}

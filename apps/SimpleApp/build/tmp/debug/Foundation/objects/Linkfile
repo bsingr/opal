@@ -32,6 +32,11 @@ NSKeyValueObserving.js:
 
   dependencies: []
 
+NSEnumerator.js: 
+  declarations: 
+  - NSEnumerator
+  dependencies: 
+  - NSObject
 NSGeometry.js: 
   declarations: []
 
@@ -53,6 +58,15 @@ NSNotification.js:
   - NSNotificationCenter
   dependencies: 
   - NSObject
+NSKeyedArchiver.js: 
+  declarations: 
+  - NSKeyedArchiver
+  - NSKeyedUnarchiver
+  - NSCoder
+  - NSObject
+  dependencies: 
+  - NSCoder
+  - NSObject
 NSArray.js: 
   declarations: 
   - NSArray
@@ -65,6 +79,11 @@ NSObject.js:
   - NSObject
   dependencies: []
 
+NSPropertyList.js: 
+  declarations: 
+  - NSPropertyListSerialization
+  dependencies: 
+  - NSObject
 NSDictionary.js: 
   declarations: 
   - NSDictionary

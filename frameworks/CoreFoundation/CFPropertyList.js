@@ -35,6 +35,8 @@ function CFPropertyListCreateFromJSONData(jsonData, mutabilityOption, errorStrin
     
     if(CFDictionaryContainsKey(the_result, "plist"))
         the_result = CFDictionaryGetValue(CFDictionaryGetValue(the_result, "plist"), "dict");
+    else if(CFDictionaryContainsKey(the_result, "archive"))
+        the_result = CFDictionaryGetValue(CFDictionaryGetValue(the_result, "archive"), "data");
     
     _CFPropertyListReformatDictionary(the_result);
     

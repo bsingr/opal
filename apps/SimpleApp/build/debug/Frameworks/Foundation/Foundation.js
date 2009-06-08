@@ -448,11 +448,13 @@ with(self) {
 
 class_addMethod(the_class, "lastObject", function(self, _cmd) {
 with(self) {
+return objc_msgSend(self, "objectAtIndex:", objc_msgSend(self, "count") - 1);
 }
 }, "void");
 
 class_addMethod(the_class, "objectEnumerator", function(self, _cmd) {
 with(self) {
+return objc_msgSend(objc_msgSend(NSEnumerator, "alloc"), "initWithArray:", objc_msgSend(NSMutableArray, "arrayWithArray:", self));
 }
 }, "void");
 
@@ -526,6 +528,7 @@ with(self) {
 
 class_addMethod(the_class, "initWithArray:", function(self, _cmd, array) {
 with(self) {
+return CFArrayCreateCopy(array);
 }
 }, "void");
 
@@ -544,8 +547,23 @@ with(self) {
 }
 }, "void");
 
+class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
+with(self) {
+var newObjects = objc_msgSend(aCoder, "decodeObjectForKey:", "NS.objects");
+var a = 0;
+var e = objc_msgSend(newObjects,"objectEnumerator");
+while(a = objc_msgSend(e,"nextObject"))
+{
+objc_msgSend(self, "addObject:", a);
+
+}
+return self;
+}
+}, "void");
+
 class_addMethod(meta_class, "array", function(self, _cmd) {
 with(self) {
+return CFArrayCreateMutable();
 }
 }, "void");
 
@@ -567,6 +585,7 @@ NSLog("Array with objects...");
 
 class_addMethod(meta_class, "arrayWithArray:", function(self, _cmd, array) {
 with(self) {
+return CFArrayCreateCopy(array);
 }
 }, "void");
 
@@ -587,6 +606,7 @@ class_addIvar(the_class, "isa", "Class");
 
 class_addMethod(the_class, "addObject:", function(self, _cmd, anObject) {
 with(self) {
+CFArrayAppendValue(self,anObject);
 }
 }, "void");
 
@@ -597,11 +617,13 @@ with(self) {
 
 class_addMethod(the_class, "removeLastObject", function(self, _cmd) {
 with(self) {
+CFArrayRemoveValueAtIndex(self,objc_msgSend(self, "count") - 1);
 }
 }, "void");
 
 class_addMethod(the_class, "removeObjectAtIndex:", function(self, _cmd, index) {
 with(self) {
+CFArrayRemoveValueAtIndex(self,index);
 }
 }, "void");
 
@@ -934,9 +956,11 @@ with(self) {
 
 class_addMethod(the_class, "bytes", function(self, _cmd) {
 with(self) {
+return _bytes;
 }
 }, "void");
 
+CFDataRef.prototype.isa = NSData;
 var the_class = NSData;
 var meta_class = the_class.isa;
 
@@ -1028,6 +1052,11 @@ with(self) {
 }
 }, "void");
 
+class_addMethod(the_class, "initWithContentsOfURL:didLoadBlock:", function(self, _cmd, url, block) {
+with(self) {
+}
+}, "void");
+
 class_addMethod(the_class, "initWithContentsOfMappedFile:", function(self, _cmd, path) {
 with(self) {
 }
@@ -1075,6 +1104,12 @@ with(self) {
 
 class_addMethod(meta_class, "dataWithContentsOfURL:", function(self, _cmd, url) {
 with(self) {
+}
+}, "void");
+
+class_addMethod(meta_class, "dataWithContentsOfURL:didLoadBlock:", function(self, _cmd, url, block) {
+with(self) {
+return CFDataCreateFromURL(url,block);
 }
 }, "void");
 
@@ -1171,7 +1206,7 @@ class_addIvar(the_class, "isa", "Class");
 
 class_addMethod(the_class, "init", function(self, _cmd) {
 with(self) {
-return CFDictionaryCreateMutable();
+return self;
 }
 }, "void");
 
@@ -1189,6 +1224,12 @@ return CFDictionaryGetValue(self,aKey);
 
 class_addMethod(the_class, "keyEnumerator", function(self, _cmd) {
 with(self) {
+}
+}, "void");
+
+class_addMethod(meta_class, "alloc", function(self, _cmd) {
+with(self) {
+return CFDictionaryCreateMutable();
 }
 }, "void");
 
@@ -1306,6 +1347,7 @@ with(self) {
 
 class_addMethod(meta_class, "dictionary", function(self, _cmd) {
 with(self) {
+return objc_msgSend(self, "alloc");
 }
 }, "void");
 
@@ -1321,11 +1363,30 @@ with(self) {
 
 class_addMethod(meta_class, "dictionaryWithObjectsAndKeys:", function(self, _cmd, firstObject) {
 with(self) {
+var the_dict = objc_msgSend(self, "alloc");
+var eachKey = 0;
+var eachObject = 0;
+var argumentList = {all:arguments, trailing:[]};
+if (firstObject)
+{
+va_start(argumentList,_cmd);
+while(eachObject = va_arg(argumentList,YES)){
+eachKey = va_arg(argumentList,YES);
+CFDictionarySetValue(the_dict,eachKey,eachObject);
+
+}
+
+va_end(argumentList);
+
+}
+
+return the_dict;
 }
 }, "void");
 
 class_addMethod(meta_class, "dictionaryWithDictionary:", function(self, _cmd, dict) {
 with(self) {
+return CFDictionaryCreateMutableCopy(dict);
 }
 }, "void");
 
@@ -1396,6 +1457,37 @@ with(self) {
 }
 }, "void");
 
+var the_class = objc_allocateClassPair(NSObject, "NSEnumerator");
+var meta_class = the_class.isa;
+objc_registerClassPair(the_class);
+class_addIvar(the_class, "isa", "Class");
+class_addIvar(the_class, "_array", "NSArray");
+class_addIvar(the_class, "_currentIndex", "NSUInteger");
+
+class_addMethod(the_class, "initWithArray:", function(self, _cmd, array) {
+with(self) {
+_array = array;
+_currentIndex = 0;
+return self;
+}
+}, "void");
+
+class_addMethod(the_class, "nextObject", function(self, _cmd) {
+with(self) {
+_currentIndex += 1;
+return objc_msgSend(_array, "objectAtIndex:", _currentIndex - 1);
+}
+}, "void");
+
+var the_class = NSEnumerator;
+var meta_class = the_class.isa;
+
+class_addMethod(the_class, "allObjects", function(self, _cmd) {
+with(self) {
+return _array;
+}
+}, "void");
+
 function NSMakePoint(x,y)
 {
 var p = {x:0,y:0,};
@@ -1419,6 +1511,436 @@ r.size.width = w;
 r.size.height = h;
 return r;
 }
+function NSMaxX(aRect)
+{
+}
+function NSMaxY(aRect)
+{
+}
+function NSMidX(aRect)
+{
+}
+function NSMidY(aRect)
+{
+}
+function NSMinX(aRect)
+{
+}
+function NSMinY(aRect)
+{
+}
+function NSWidth(aRect)
+{
+}
+function NSHeight(aRect)
+{
+}
+function NSRectFromCGRect(cgrect)
+{
+}
+function NSRectToCGRect(nsrect)
+{
+}
+function NSPointFromCGPoint(cgpoint)
+{
+}
+function NSPointToCGPoint(nspoint)
+{
+}
+function NSSizeFromCGSize(cgsize)
+{
+}
+function NSSizeToCGSize(nssize)
+{
+}
+function NSEqualPoints(aPoint,bPoint)
+{
+}
+function NSEqualSizes(aSize,bSize)
+{
+}
+function NSEqualRects(aRect,bRect)
+{
+}
+function NSIsEmptyRect(aRect)
+{
+}
+function NSInsetRect(aRect,dX,dY)
+{
+}
+function NSIntegralRect(aRect)
+{
+}
+function NSUnionRect(aRect,bRect)
+{
+}
+function NSIntersectionRect(aRect,bRect)
+{
+}
+function NSOffsetRect(aRect,dX,dY)
+{
+}
+function NSDivideRect(inRect,slice,rem,amount,edge)
+{
+}
+function NSPointInRect(aPoint,aRect)
+{
+}
+function NSMouseInRect(aPoint,aRect,flipped)
+{
+}
+function NSContainsRect(aRect,bRect)
+{
+}
+function NSIntersectsRect(aRect,bRect)
+{
+}
+function d()
+{
+}
+function d()
+{
+}
+function d()
+{
+}
+function NSPointFromString(aString)
+{
+return aString;
+}
+function NSSizeFromString(aString)
+{
+return aString;
+}
+function NSRectFromString(aString)
+{
+return aString;
+}
+var NSInvalidArchiveOperationException = "NSInvalidArchiveOperationException";
+var NSInvalidUnarchiveOperationException = "NSInvalidUnarchiveOperationException";
+var the_class = objc_allocateClassPair(NSCoder, "NSKeyedArchiver");
+var meta_class = the_class.isa;
+objc_registerClassPair(the_class);
+class_addIvar(the_class, "isa", "Class");
+
+class_addMethod(the_class, "initForWritingWithMutableData:", function(self, _cmd, data) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setDelegate:", function(self, _cmd, delegate) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "delegate", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setOutputFormat:", function(self, _cmd, format) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "outputFormat", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "finishEncoding", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setClassName:forClass:", function(self, _cmd, codedName, cls) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "classNameForClass:", function(self, _cmd, cls) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "encodeObject:forKey:", function(self, _cmd, objv, key) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "encodeConditionalObject:forKey:", function(self, _cmd, objv, key) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "encodeBool:forKey:", function(self, _cmd, boolv, key) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "encodeInt:forKey:", function(self, _cmd, intv, key) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "encodeInt32:forKey:", function(self, _cmd, intv, key) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "encodeInt64:forKey:", function(self, _cmd, intv, key) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "encodeFloat:forKey:", function(self, _cmd, realv, key) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "encodeDouble:forKey:", function(self, _cmd, realv, key) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "encodeBytes:length:forKey:", function(self, _cmd, bytesp, lenv, key) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(meta_class, "archivedDataWithRootObject:", function(self, _cmd, rootObject) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(meta_class, "archiveRootObject:toFile:", function(self, _cmd, rootObject, path) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(meta_class, "setClassName:forClass:", function(self, _cmd, codedName, cls) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(meta_class, "classNameForClass:", function(self, _cmd, cls) {
+with(self) {
+}
+}, "void");
+
+var the_class = objc_allocateClassPair(NSCoder, "NSKeyedUnarchiver");
+var meta_class = the_class.isa;
+objc_registerClassPair(the_class);
+class_addIvar(the_class, "isa", "Class");
+class_addIvar(the_class, "_delegate", "id");
+class_addIvar(the_class, "_data", "id");
+class_addIvar(the_class, "_rootDict", "NSMutableDictionary");
+class_addIvar(the_class, "_contextStack", "NSMutableArray");
+
+class_addMethod(the_class, "initForReadingWithData:", function(self, _cmd, data) {
+with(self) {
+self = objc_msgSend(self, "init");
+if (self)
+{
+_data = data;
+_rootDict = CFPropertyListCreateFromJSONData(objc_msgSend(_data, "bytes"),0,"");
+_contextStack = objc_msgSend(NSMutableArray, "array");
+objc_msgSend(_contextStack, "addObject:", _rootDict);
+
+}
+
+return self;
+}
+}, "void");
+
+class_addMethod(the_class, "setDelegate:", function(self, _cmd, delegate) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "delegate", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "finishDecoding", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setClass:forClassName:", function(self, _cmd, cls, codedName) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "classForClassName:", function(self, _cmd, codedName) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "containsValueForKey:", function(self, _cmd, key) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "decodeObjectForKey:", function(self, _cmd, key) {
+with(self) {
+var theContext = objc_msgSend(_contextStack, "lastObject");
+if (theContext.isa == NSClassFromString("NSMutableArray"))
+{
+var array = objc_msgSend(NSMutableArray, "array");
+var a = 0;
+var e = objc_msgSend(theContext,"objectEnumerator");
+while(a = objc_msgSend(e,"nextObject"))
+{
+objc_msgSend(_contextStack, "addObject:", a);
+objc_msgSend(array, "addObject:", objc_msgSend(self, "_decodeObject:", a));
+objc_msgSend(_contextStack, "removeLastObject");
+
+}
+return array;
+
+}
+
+var theObject = objc_msgSend(theContext, "objectForKey:", key);
+return objc_msgSend(self, "_decodeObject:", theObject);
+}
+}, "void");
+
+class_addMethod(the_class, "_decodeObject:", function(self, _cmd, theObject) {
+with(self) {
+if (!theObject)
+return null;
+
+if (objc_msgSend(theObject, "objectForKey:", "string"))
+return objc_msgSend(theObject, "objectForKey:", "string");
+
+if (CFDictionaryContainsKey(theObject,"nil"))
+return null;
+
+var theClass = NSClassFromString(objc_msgSend(theObject, "objectForKey:", "class"));
+var newObject = objc_msgSend(theClass, "alloc");
+if (objc_msgSend(theObject, "objectForKey:", "class") == "NSCustomObject")
+{
+objc_msgSend(newObject, "init");
+
+}
+else
+{
+objc_msgSend(_contextStack, "addObject:", objc_msgSend(theObject, "objectForKey:", "objects"));
+objc_msgSend(newObject, "initWithCoder:", self);
+objc_msgSend(_contextStack, "removeLastObject");
+
+}
+
+return objc_msgSend(newObject, "awakeAfterUsingCoder:", self);
+}
+}, "void");
+
+class_addMethod(the_class, "decodeBoolForKey:", function(self, _cmd, key) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "decodeIntForKey:", function(self, _cmd, key) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "decodeInt32ForKey:", function(self, _cmd, key) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "decodeInt64ForKey:", function(self, _cmd, key) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "decodeFloatForKey:", function(self, _cmd, key) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "decodeDoubleForKey:", function(self, _cmd, key) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "decodeBytesForKey:returnedLength:", function(self, _cmd, key, lengthp) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(meta_class, "unarchiveObjectWithData:", function(self, _cmd, data) {
+with(self) {
+return objc_msgSend(objc_msgSend(self, "alloc"), "initForReadingWithData:", data);
+}
+}, "void");
+
+class_addMethod(meta_class, "unarchiveObjectWithFile:", function(self, _cmd, path) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(meta_class, "setClass:forClassName:", function(self, _cmd, cls, codedName) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(meta_class, "classForClassName:", function(self, _cmd, codedName) {
+with(self) {
+}
+}, "void");
+
+var the_class = NSCoder;
+var meta_class = the_class.isa;
+
+class_addMethod(the_class, "encodePoint:forKey:", function(self, _cmd, point, key) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "encodeSize:forKey:", function(self, _cmd, size, key) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "encodeRect:forKey:", function(self, _cmd, rect, key) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "decodePointForKey:", function(self, _cmd, key) {
+with(self) {
+var thePoint = objc_msgSend(self, "decodeObjectForKey:", key);
+return NSPointFromString(thePoint);
+}
+}, "void");
+
+class_addMethod(the_class, "decodeSizeForKey:", function(self, _cmd, key) {
+with(self) {
+var theSize = objc_msgSend(self, "decodeObjectForKey:", key);
+return NSSizeFromString(theSize);
+}
+}, "void");
+
+class_addMethod(the_class, "decodeRectForKey:", function(self, _cmd, key) {
+with(self) {
+var theRect = objc_msgSend(self, "decodeObjectForKey:", key);
+return NSRectFromString(theRect);
+}
+}, "void");
+
+var the_class = NSObject;
+var meta_class = the_class.isa;
+
+class_addMethod(the_class, "awakeAfterUsingCoder:", function(self, _cmd, aCoder) {
+with(self) {
+return self;
+}
+}, "void");
+
 var NSUndefinedKeyException = "NSUndefinedKeyException";
 var NSAverageKeyValueOperator = "NSAverageKeyValueOperator";
 var NSCountKeyValueOperator = "NSCountKeyValueOperator";
@@ -1518,6 +2040,26 @@ function NSClassFromString(aClassName)
 {
 return objc_getClass(aClassName);
 }
+var the_class = objc_allocateClassPair(NSObject, "NSPropertyListSerialization");
+var meta_class = the_class.isa;
+objc_registerClassPair(the_class);
+class_addIvar(the_class, "isa", "Class");
+
+class_addMethod(meta_class, "propertyList:isValidForFormat:", function(self, _cmd, plist, format) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(meta_class, "dataFromPropertyList:format:errorDescription:", function(self, _cmd, plist, format, errorString) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(meta_class, "propertyListFromData:mutabilityOption:format:errorDescription:", function(self, _cmd, data, opt, format, errorString) {
+with(self) {
+}
+}, "void");
+
 var the_class = objc_allocateClassPair(NSObject, "NSProxy");
 var meta_class = the_class.isa;
 objc_registerClassPair(the_class);

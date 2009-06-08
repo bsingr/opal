@@ -19,8 +19,8 @@ function CFArrayCreateCopy(theArray)
 {
     var new_array = CFArrayCreateMutable(0);
     
-    for(i in theArray)
-        CFArrayAppendValue(new_array, i);
+    for(var i = 0; i < theArray.length; i++)
+        CFArrayAppendValue(new_array, theArray[i]);
     
     return new_array;
 }
@@ -64,7 +64,7 @@ function CFArrayContainsValue(theArray, theRange, value)
 // 
 function CFArrayGetValueAtIndex(theArray, idx)
 {
-    
+    return theArray[idx];
 }
 
 // extern void CFArrayGetValues(CFArrayRef theArray, CFRange range, void **values);
@@ -92,14 +92,14 @@ function CFArrayGetLastIndexOfValue(theArray, range, value)
 // 
 function CFArrayAppendValue(theArray, value)
 {
-    
+    theArray.push(value);
 }
 
 // extern void CFArrayInsertValueAtIndex(CFMutableArrayRef theArray, CFIndex idx, void *value);
 // 
 function CFArrayInsertValueAtIndex(theArray, idx, value)
 {
-    
+
 }
 
 // extern void CFArraySetValueAtIndex(CFMutableArrayRef theArray, CFIndex idx, void *value);
@@ -113,7 +113,7 @@ function CFArraySetValueAtIndex(theArray, idx, value)
 // 
 function CFArrayRemoveValueAtIndex(theArray, idx)
 {
-    
+    theArray.splice(idx, idx);
 }
 
 // extern void CFArrayRemoveAllValues(CFMutableArrayRef theArray);
@@ -379,16 +379,13 @@ function CFDataCreateFromURL(path, callback)
 {
     if (CFDictionaryContainsKey(__bootstrap_files, path))
     {
-        printf("Already have the file in cache: " + path);
-        callback();
+        callback(CFDictionaryGetValue(__bootstrap_files, path));
         return CFDictionaryGetValue(__bootstrap_files, path);
     }
 
-    // Do not already have file, so download...........
-    printf ("Do not have the file...." + path);
+    // Do not already have file, so download..
     
     var the_data = new CFDataRef();
-    
     CFDictionarySetValue(__bootstrap_files, path, the_data);
     
     var request = CFHTTPRequestCreate("GET", path, true, function(evt) {
@@ -1119,6 +1116,8 @@ function CFPropertyListCreateFromJSONData(jsonData, mutabilityOption, errorStrin
     
     if(CFDictionaryContainsKey(the_result, "plist"))
         the_result = CFDictionaryGetValue(CFDictionaryGetValue(the_result, "plist"), "dict");
+    else if(CFDictionaryContainsKey(the_result, "archive"))
+        the_result = CFDictionaryGetValue(CFDictionaryGetValue(the_result, "archive"), "data");
     
     _CFPropertyListReformatDictionary(the_result);
     

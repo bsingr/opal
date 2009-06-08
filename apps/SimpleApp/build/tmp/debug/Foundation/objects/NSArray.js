@@ -101,11 +101,13 @@ with(self) {
 
 class_addMethod(the_class, "lastObject", function(self, _cmd) {
 with(self) {
+return objc_msgSend(self, "objectAtIndex:", objc_msgSend(self, "count") - 1);
 }
 }, "void");
 
 class_addMethod(the_class, "objectEnumerator", function(self, _cmd) {
 with(self) {
+return objc_msgSend(objc_msgSend(NSEnumerator, "alloc"), "initWithArray:", objc_msgSend(NSMutableArray, "arrayWithArray:", self));
 }
 }, "void");
 
@@ -179,6 +181,7 @@ with(self) {
 
 class_addMethod(the_class, "initWithArray:", function(self, _cmd, array) {
 with(self) {
+return CFArrayCreateCopy(array);
 }
 }, "void");
 
@@ -197,8 +200,23 @@ with(self) {
 }
 }, "void");
 
+class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
+with(self) {
+var newObjects = objc_msgSend(aCoder, "decodeObjectForKey:", "NS.objects");
+var a = 0;
+var e = objc_msgSend(newObjects,"objectEnumerator");
+while(a = objc_msgSend(e,"nextObject"))
+{
+objc_msgSend(self, "addObject:", a);
+
+}
+return self;
+}
+}, "void");
+
 class_addMethod(meta_class, "array", function(self, _cmd) {
 with(self) {
+return CFArrayCreateMutable();
 }
 }, "void");
 
@@ -220,6 +238,7 @@ NSLog("Array with objects...");
 
 class_addMethod(meta_class, "arrayWithArray:", function(self, _cmd, array) {
 with(self) {
+return CFArrayCreateCopy(array);
 }
 }, "void");
 
@@ -240,6 +259,7 @@ class_addIvar(the_class, "isa", "Class");
 
 class_addMethod(the_class, "addObject:", function(self, _cmd, anObject) {
 with(self) {
+CFArrayAppendValue(self,anObject);
 }
 }, "void");
 
@@ -250,11 +270,13 @@ with(self) {
 
 class_addMethod(the_class, "removeLastObject", function(self, _cmd) {
 with(self) {
+CFArrayRemoveValueAtIndex(self,objc_msgSend(self, "count") - 1);
 }
 }, "void");
 
 class_addMethod(the_class, "removeObjectAtIndex:", function(self, _cmd, index) {
 with(self) {
+CFArrayRemoveValueAtIndex(self,index);
 }
 }, "void");
 

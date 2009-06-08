@@ -1,1 +1,427 @@
-{"archive":{"data":{"IBDocument.SystemTarget": {"int": "1050"},"IBDocument.SystemVersion": {"string": "9J61"},"IBDocument.InterfaceBuilderVersion": {"string": "677"},"IBDocument.AppKitVersion": {"string": "949.46"},"IBDocument.HIToolboxVersion": {"string": "353.00"},"IBDocument.EditedObjectIDs": {"class": "NSMutableArray","id": "", "objects":[{"integer": ""}]},"IBDocument.PluginDependencies": {"class": "NSArray","id": "", "objects":[{"string": "com.apple.InterfaceBuilder.CocoaPlugin"}]},"IBDocument.Metadata": {"class": "NSMutableDictionary","id": "", "objects":{"EncodedWithXMLCoder": {"bool": "YES"},"dict.sortedKeys": {"class": "NSArray","id": "", "objects":[]},"dict.values": {"class": "NSMutableArray","id": "", "objects":[]}}},"IBDocument.RootObjects": {"class": "NSMutableArray","id": "1048", "objects":[{"class": "NSCustomObject","id": "1021", "objects":{"NSClassName": {"string": "NSApplication"}}},{"class": "NSCustomObject","id": "1014", "objects":{"NSClassName": {"string": "FirstResponder"}}},{"class": "NSCustomObject","id": "1050", "objects":{"NSClassName": {"string": "NSApplication"}}},{"class": "NSCustomObject","id": "163992474", "objects":{"NSClassName": {"string": "NSFontManager"}}},{"class": "NSWindowTemplate","id": "513744381", "objects":{"NSWindowStyleMask": {"int": "15"},"NSWindowBacking": {"int": "2"},"NSWindowRect": {"string": "{{196, 240}, {480, 270}}"},"NSWTFlags": {"int": "603979776"},"NSWindowTitle": {"string": "Window"},"NSWindowClass": {"string": "NSWindow"},"NSViewClass": {"nil":""},"NSWindowContentMaxSize": {"string": "{3.40282e+38, 3.40282e+38}"},"NSWindowView": {"class": "NSView","id": "414427165", "objects":{"NSNextResponder": {"id":""},"NSvFlags": {"int": "256"},"NSFrameSize": {"string": "{480, 270}"},"NSSuperview": {"id":""}}},"NSScreenRect": {"string": "{{0, 0}, {1920, 1178}}"},"NSMaxSize": {"string": "{3.40282e+38, 3.40282e+38}"}}}]},"IBDocument.Objects": {"class": "IBObjectContainer","id": "", "objects":{"connectionRecords": {"class": "NSMutableArray","id": "", "objects":[]},"objectRecords": {"class": "IBMutableOrderedSet","id": "", "objects":{"orderedObjects": {"class": "NSArray","id": "", "objects":[{"class": "IBObjectRecord","id": "", "objects":{"objectID": {"int": "0"},"object": {"class": "NSArray","id": "1049", "objects":[]},"children": {"id":"1048"},"parent": {"nil":""}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": {"int": "-2"},"object": {"id":"1021"},"parent": {"id":"1049"},"objectName": {"string": "RmlsZSdzIE93bmVyA"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": {"int": "-1"},"object": {"id":"1014"},"parent": {"id":"1049"},"objectName": {"string": "First Responder"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": {"int": "-3"},"object": {"id":"1050"},"parent": {"id":"1049"},"objectName": {"string": "Application"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": {"int": "367"},"object": {"id":"513744381"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"414427165"}]},"parent": {"id":"1049"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": {"int": "368"},"object": {"id":"414427165"},"parent": {"id":"513744381"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": {"int": "373"},"object": {"id":"163992474"},"parent": {"id":"1049"}}}]}}},"flattenedProperties": {"class": "NSMutableDictionary","id": "", "objects":{"EncodedWithXMLCoder": {"bool": "YES"},"dict.sortedKeys": {"class": "NSMutableArray","id": "", "objects":[{"string": "-1.IBPluginDependency"},{"string": "-2.IBPluginDependency"},{"string": "-3.IBPluginDependency"},{"string": "367.IBEditorWindowLastContentRect"},{"string": "367.IBWindowTemplateEditedContentRect"},{"string": "367.NSWindowTemplate.visibleAtLaunch"},{"string": "367.editorWindowContentRectSynchronizationRect"},{"string": "368.IBPluginDependency"},{"string": "373.IBPluginDependency"}]},"dict.values": {"class": "NSMutableArray","id": "", "objects":[{"string": "com.apple.InterfaceBuilder.CocoaPlugin"},{"string": "com.apple.InterfaceBuilder.CocoaPlugin"},{"string": "com.apple.InterfaceBuilder.CocoaPlugin"},{"string": "{{101, 431}, {480, 270}}"},{"string": "{{101, 431}, {480, 270}}"},{"integer": ""},{"string": "{{11, 666}, {480, 270}}"},{"string": "com.apple.InterfaceBuilder.CocoaPlugin"},{"string": "com.apple.InterfaceBuilder.CocoaPlugin"}]}}},"unlocalizedProperties": {"class": "NSMutableDictionary","id": "", "objects":{"EncodedWithXMLCoder": {"bool": "YES"},"dict.sortedKeys": {"class": "NSArray","id": "", "objects":[]},"dict.values": {"class": "NSMutableArray","id": "", "objects":[]}}},"activeLocalization": {"nil":""},"localizations": {"class": "NSMutableDictionary","id": "", "objects":{"EncodedWithXMLCoder": {"bool": "YES"},"dict.sortedKeys": {"class": "NSArray","id": "", "objects":[]},"dict.values": {"class": "NSMutableArray","id": "", "objects":[]}}},"sourceID": {"nil":""},"maxID": {"int": "448"}}},"IBDocument.Classes": {"class": "IBClassDescriber","id": "", "objects":{}},"IBDocument.localizationMode": {"int": "0"},"IBDocument.LastKnownRelativeProjectPath": {"nil":""},"IBDocument.defaultPropertyAccessControl": {"int": "3"}}}}
+{
+    "archive": {
+        "data": {
+            "IBDocument.SystemTarget": {
+                "int": "1050"
+            },
+            "IBDocument.SystemVersion": {
+                "string": "9J61"
+            },
+            "IBDocument.InterfaceBuilderVersion": {
+                "string": "677"
+            },
+            "IBDocument.AppKitVersion": {
+                "string": "949.46"
+            },
+            "IBDocument.HIToolboxVersion": {
+                "string": "353.00"
+            },
+            "IBDocument.EditedObjectIDs": {
+                "class": "NSMutableArray",
+                "id": "",
+                "objects": [{
+                    "integer": ""
+                }]
+            },
+            "IBDocument.PluginDependencies": {
+                "class": "NSArray",
+                "id": "",
+                "objects": [{
+                    "string": "com.apple.InterfaceBuilder.CocoaPlugin"
+                }]
+            },
+            "IBDocument.Metadata": {
+                "class": "NSMutableDictionary",
+                "id": "",
+                "objects": {
+                    "EncodedWithXMLCoder": {
+                        "bool": "YES"
+                    },
+                    "dict.sortedKeys": {
+                        "class": "NSArray",
+                        "id": "",
+                        "objects": []
+                    },
+                    "dict.values": {
+                        "class": "NSMutableArray",
+                        "id": "",
+                        "objects": []
+                    }
+                }
+            },
+            "IBDocument.RootObjects": {
+                "class": "NSMutableArray",
+                "id": "1048",
+                "objects": [{
+                    "class": "NSCustomObject",
+                    "id": "1021",
+                    "objects": {
+                        "NSClassName": {
+                            "string": "NSApplication"
+                        }
+                    }
+                },
+                {
+                    "class": "NSCustomObject",
+                    "id": "1014",
+                    "objects": {
+                        "NSClassName": {
+                            "string": "FirstResponder"
+                        }
+                    }
+                },
+                {
+                    "class": "NSCustomObject",
+                    "id": "1050",
+                    "objects": {
+                        "NSClassName": {
+                            "string": "NSApplication"
+                        }
+                    }
+                },
+                {
+                    "class": "NSCustomObject",
+                    "id": "163992474",
+                    "objects": {
+                        "NSClassName": {
+                            "string": "NSFontManager"
+                        }
+                    }
+                },
+                {
+                    "class": "NSWindowTemplate",
+                    "id": "513744381",
+                    "objects": {
+                        "NSWindowStyleMask": {
+                            "int": "15"
+                        },
+                        "NSWindowBacking": {
+                            "int": "2"
+                        },
+                        "NSWindowRect": {
+                            "string": "{{196, 240}, {480, 270}}"
+                        },
+                        "NSWTFlags": {
+                            "int": "603979776"
+                        },
+                        "NSWindowTitle": {
+                            "string": "Window"
+                        },
+                        "NSWindowClass": {
+                            "string": "NSWindow"
+                        },
+                        "NSViewClass": {
+                            "nil": ""
+                        },
+                        "NSWindowContentMaxSize": {
+                            "string": "{3.40282e+38, 3.40282e+38}"
+                        },
+                        "NSWindowView": {
+                            "class": "NSView",
+                            "id": "414427165",
+                            "objects": {
+                                "NSNextResponder": {
+                                    "id": ""
+                                },
+                                "NSvFlags": {
+                                    "int": "256"
+                                },
+                                "NSFrameSize": {
+                                    "string": "{480, 270}"
+                                },
+                                "NSSuperview": {
+                                    "id": ""
+                                }
+                            }
+                        },
+                        "NSScreenRect": {
+                            "string": "{{0, 0}, {1920, 1178}}"
+                        },
+                        "NSMaxSize": {
+                            "string": "{3.40282e+38, 3.40282e+38}"
+                        }
+                    }
+                }]
+            },
+            "IBDocument.Objects": {
+                "class": "IBObjectContainer",
+                "id": "",
+                "objects": {
+                    "connectionRecords": {
+                        "class": "NSMutableArray",
+                        "id": "",
+                        "objects": []
+                    },
+                    "objectRecords": {
+                        "class": "IBMutableOrderedSet",
+                        "id": "",
+                        "objects": {
+                            "orderedObjects": {
+                                "class": "NSArray",
+                                "id": "",
+                                "objects": [{
+                                    "class": "IBObjectRecord",
+                                    "id": "",
+                                    "objects": {
+                                        "objectID": {
+                                            "int": "0"
+                                        },
+                                        "object": {
+                                            "class": "NSArray",
+                                            "id": "1049",
+                                            "objects": []
+                                        },
+                                        "children": {
+                                            "id": "1048"
+                                        },
+                                        "parent": {
+                                            "nil": ""
+                                        }
+                                    }
+                                },
+                                {
+                                    "class": "IBObjectRecord",
+                                    "id": "",
+                                    "objects": {
+                                        "objectID": {
+                                            "int": "-2"
+                                        },
+                                        "object": {
+                                            "id": "1021"
+                                        },
+                                        "parent": {
+                                            "id": "1049"
+                                        },
+                                        "objectName": {
+                                            "string": "RmlsZSdzIE93bmVyA"
+                                        }
+                                    }
+                                },
+                                {
+                                    "class": "IBObjectRecord",
+                                    "id": "",
+                                    "objects": {
+                                        "objectID": {
+                                            "int": "-1"
+                                        },
+                                        "object": {
+                                            "id": "1014"
+                                        },
+                                        "parent": {
+                                            "id": "1049"
+                                        },
+                                        "objectName": {
+                                            "string": "First Responder"
+                                        }
+                                    }
+                                },
+                                {
+                                    "class": "IBObjectRecord",
+                                    "id": "",
+                                    "objects": {
+                                        "objectID": {
+                                            "int": "-3"
+                                        },
+                                        "object": {
+                                            "id": "1050"
+                                        },
+                                        "parent": {
+                                            "id": "1049"
+                                        },
+                                        "objectName": {
+                                            "string": "Application"
+                                        }
+                                    }
+                                },
+                                {
+                                    "class": "IBObjectRecord",
+                                    "id": "",
+                                    "objects": {
+                                        "objectID": {
+                                            "int": "367"
+                                        },
+                                        "object": {
+                                            "id": "513744381"
+                                        },
+                                        "children": {
+                                            "class": "NSMutableArray",
+                                            "id": "",
+                                            "objects": [{
+                                                "id": "414427165"
+                                            }]
+                                        },
+                                        "parent": {
+                                            "id": "1049"
+                                        }
+                                    }
+                                },
+                                {
+                                    "class": "IBObjectRecord",
+                                    "id": "",
+                                    "objects": {
+                                        "objectID": {
+                                            "int": "368"
+                                        },
+                                        "object": {
+                                            "id": "414427165"
+                                        },
+                                        "parent": {
+                                            "id": "513744381"
+                                        }
+                                    }
+                                },
+                                {
+                                    "class": "IBObjectRecord",
+                                    "id": "",
+                                    "objects": {
+                                        "objectID": {
+                                            "int": "373"
+                                        },
+                                        "object": {
+                                            "id": "163992474"
+                                        },
+                                        "parent": {
+                                            "id": "1049"
+                                        }
+                                    }
+                                }]
+                            }
+                        }
+                    },
+                    "flattenedProperties": {
+                        "class": "NSMutableDictionary",
+                        "id": "",
+                        "objects": {
+                            "EncodedWithXMLCoder": {
+                                "bool": "YES"
+                            },
+                            "dict.sortedKeys": {
+                                "class": "NSMutableArray",
+                                "id": "",
+                                "objects": [{
+                                    "string": "-1.IBPluginDependency"
+                                },
+                                {
+                                    "string": "-2.IBPluginDependency"
+                                },
+                                {
+                                    "string": "-3.IBPluginDependency"
+                                },
+                                {
+                                    "string": "367.IBEditorWindowLastContentRect"
+                                },
+                                {
+                                    "string": "367.IBWindowTemplateEditedContentRect"
+                                },
+                                {
+                                    "string": "367.NSWindowTemplate.visibleAtLaunch"
+                                },
+                                {
+                                    "string": "367.editorWindowContentRectSynchronizationRect"
+                                },
+                                {
+                                    "string": "368.IBPluginDependency"
+                                },
+                                {
+                                    "string": "373.IBPluginDependency"
+                                }]
+                            },
+                            "dict.values": {
+                                "class": "NSMutableArray",
+                                "id": "",
+                                "objects": [{
+                                    "string": "com.apple.InterfaceBuilder.CocoaPlugin"
+                                },
+                                {
+                                    "string": "com.apple.InterfaceBuilder.CocoaPlugin"
+                                },
+                                {
+                                    "string": "com.apple.InterfaceBuilder.CocoaPlugin"
+                                },
+                                {
+                                    "string": "{{101, 431}, {480, 270}}"
+                                },
+                                {
+                                    "string": "{{101, 431}, {480, 270}}"
+                                },
+                                {
+                                    "integer": ""
+                                },
+                                {
+                                    "string": "{{11, 666}, {480, 270}}"
+                                },
+                                {
+                                    "string": "com.apple.InterfaceBuilder.CocoaPlugin"
+                                },
+                                {
+                                    "string": "com.apple.InterfaceBuilder.CocoaPlugin"
+                                }]
+                            }
+                        }
+                    },
+                    "unlocalizedProperties": {
+                        "class": "NSMutableDictionary",
+                        "id": "",
+                        "objects": {
+                            "EncodedWithXMLCoder": {
+                                "bool": "YES"
+                            },
+                            "dict.sortedKeys": {
+                                "class": "NSArray",
+                                "id": "",
+                                "objects": []
+                            },
+                            "dict.values": {
+                                "class": "NSMutableArray",
+                                "id": "",
+                                "objects": []
+                            }
+                        }
+                    },
+                    "activeLocalization": {
+                        "nil": ""
+                    },
+                    "localizations": {
+                        "class": "NSMutableDictionary",
+                        "id": "",
+                        "objects": {
+                            "EncodedWithXMLCoder": {
+                                "bool": "YES"
+                            },
+                            "dict.sortedKeys": {
+                                "class": "NSArray",
+                                "id": "",
+                                "objects": []
+                            },
+                            "dict.values": {
+                                "class": "NSMutableArray",
+                                "id": "",
+                                "objects": []
+                            }
+                        }
+                    },
+                    "sourceID": {
+                        "nil": ""
+                    },
+                    "maxID": {
+                        "int": "448"
+                    }
+                }
+            },
+            "IBDocument.Classes": {
+                "class": "IBClassDescriber",
+                "id": "",
+                "objects": {}
+            },
+            "IBDocument.localizationMode": {
+                "int": "0"
+            },
+            "IBDocument.LastKnownRelativeProjectPath": {
+                "nil": ""
+            },
+            "IBDocument.defaultPropertyAccessControl": {
+                "int": "3"
+            }
+        }
+    }
+}

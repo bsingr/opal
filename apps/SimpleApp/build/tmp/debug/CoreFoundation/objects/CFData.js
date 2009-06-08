@@ -17,16 +17,13 @@ function CFDataCreateFromURL(path, callback)
 {
     if (CFDictionaryContainsKey(__bootstrap_files, path))
     {
-        printf("Already have the file in cache: " + path);
-        callback();
+        callback(CFDictionaryGetValue(__bootstrap_files, path));
         return CFDictionaryGetValue(__bootstrap_files, path);
     }
 
-    // Do not already have file, so download...........
-    printf ("Do not have the file...." + path);
+    // Do not already have file, so download..
     
     var the_data = new CFDataRef();
-    
     CFDictionarySetValue(__bootstrap_files, path, the_data);
     
     var request = CFHTTPRequestCreate("GET", path, true, function(evt) {

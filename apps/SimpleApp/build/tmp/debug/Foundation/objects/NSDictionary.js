@@ -5,7 +5,7 @@ class_addIvar(the_class, "isa", "Class");
 
 class_addMethod(the_class, "init", function(self, _cmd) {
 with(self) {
-return CFDictionaryCreateMutable();
+return self;
 }
 }, "void");
 
@@ -23,6 +23,12 @@ return CFDictionaryGetValue(self,aKey);
 
 class_addMethod(the_class, "keyEnumerator", function(self, _cmd) {
 with(self) {
+}
+}, "void");
+
+class_addMethod(meta_class, "alloc", function(self, _cmd) {
+with(self) {
+return CFDictionaryCreateMutable();
 }
 }, "void");
 
@@ -140,6 +146,7 @@ with(self) {
 
 class_addMethod(meta_class, "dictionary", function(self, _cmd) {
 with(self) {
+return objc_msgSend(self, "alloc");
 }
 }, "void");
 
@@ -155,11 +162,30 @@ with(self) {
 
 class_addMethod(meta_class, "dictionaryWithObjectsAndKeys:", function(self, _cmd, firstObject) {
 with(self) {
+var the_dict = objc_msgSend(self, "alloc");
+var eachKey = 0;
+var eachObject = 0;
+var argumentList = {all:arguments, trailing:[]};
+if (firstObject)
+{
+va_start(argumentList,_cmd);
+while(eachObject = va_arg(argumentList,YES)){
+eachKey = va_arg(argumentList,YES);
+CFDictionarySetValue(the_dict,eachKey,eachObject);
+
+}
+
+va_end(argumentList);
+
+}
+
+return the_dict;
 }
 }, "void");
 
 class_addMethod(meta_class, "dictionaryWithDictionary:", function(self, _cmd, dict) {
 with(self) {
+return CFDictionaryCreateMutableCopy(dict);
 }
 }, "void");
 

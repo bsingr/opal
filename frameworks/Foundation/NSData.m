@@ -17,7 +17,7 @@
 
 - (const void *)bytes
 {
-    
+    return _bytes;
 }
 
 @end
@@ -121,6 +121,13 @@
     
 }
 
+// MARK: Added function for use with callback
++ (id)dataWithContentsOfURL:(NSURL *)url didLoadBlock:(void (^)(NSData *data))block
+{
+    // return [[NSData alloc] initWithContentsOfURL:url didLoadBlock:block];
+    return CFDataCreateFromURL(url, block);
+}
+
 + (id)dataWithContentsOfMappedFile:(NSString *)path
 {
     
@@ -157,6 +164,12 @@
 }
 
 - (id)initWithContentsOfURL:(NSURL *)url
+{
+    
+}
+
+// MARK: Added function for use with callback
+- (id)initWithContentsOfURL:(NSURL *)url didLoadBlock:(void (^)(NSData *data))block
 {
     
 }

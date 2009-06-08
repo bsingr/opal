@@ -45,13 +45,7 @@ function __bootstrap_link()
 		            	           
                    // Once the main nib has loaded, we can now call main.
                    // This avoids us calling main and then having to wait for the main nib file to load.
-                   // main(1, ['SimpleApp']);
-                   var new_data = CFDataCreateFromURL("Resources/" + CFDictionaryGetValue(main_bundle_dictionary, "NSMainNibFile") + ".xib", function() {
-
-                      // Once the main nib has loaded, we can now call main.
-                      // This avoids us calling main and then having to wait for the main nib file to load.
-                      // main(1, ['SimpleApp']);
-   		        });
+                   main(1, ['SimpleApp']);
 		        });
 		    }			
 		}
@@ -410,7 +404,7 @@ function object_getInstanceVariable(obj, name, outValue)
 // 
 function objc_getClass(name)
 {
-    eval(name);
+    return eval(name);
 }
 
 // extern id objc_getMetaClass(const char *name);

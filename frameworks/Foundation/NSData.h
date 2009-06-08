@@ -14,7 +14,7 @@
 @interface NSData : NSObject <NSCopying, NSMutableCopying, NSCoding>
 
 - (NSUInteger)length;
-- (const void *)bytes;
+- (const void *)_bytes;
 
 @end
 
@@ -45,6 +45,9 @@
 + (id)dataWithContentsOfURL:(NSURL *)url options:(NSUInteger)readOptionsMask error:(NSError **)errorPtr;
 + (id)dataWithContentsOfFile:(NSString *)path;
 + (id)dataWithContentsOfURL:(NSURL *)url;
+// MARK: Added function for use with callback
++ (id)dataWithContentsOfURL:(NSURL *)url didLoadBlock:(void (^)(NSData *data))block;
+
 + (id)dataWithContentsOfMappedFile:(NSString *)path;
 - (id)initWithBytes:(const void *)bytes length:(NSUInteger)length;
 - (id)initWithBytesNoCopy:(void *)bytes length:(NSUInteger)length;
@@ -53,6 +56,9 @@
 - (id)initWithContentsOfURL:(NSURL *)url options:(NSUInteger)readOptionsMask error:(NSError **)errorPtr;
 - (id)initWithContentsOfFile:(NSString *)path;
 - (id)initWithContentsOfURL:(NSURL *)url;
+// MARK: Added function for use with callback
+- (id)initWithContentsOfURL:(NSURL *)url didLoadBlock:(void (^)(NSData *data))block;
+
 - (id)initWithContentsOfMappedFile:(NSString *)path;
 - (id)initWithData:(NSData *)data;
 + (id)dataWithData:(NSData *)data;

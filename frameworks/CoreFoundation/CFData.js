@@ -17,7 +17,7 @@ function CFDataCreateFromURL(path, callback)
 {
     if (CFDictionaryContainsKey(__bootstrap_files, path))
     {
-        callback();
+        callback(CFDictionaryGetValue(__bootstrap_files, path));
         return CFDictionaryGetValue(__bootstrap_files, path);
     }
 

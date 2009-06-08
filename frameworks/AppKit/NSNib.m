@@ -13,22 +13,30 @@
 - (id)initWithNibNamed:(NSString *)nibName bundle:(NSBundle *)bundle
 {
     NSString *fullPathURL = "Resources/" + nibName + @".xib";
-    NSLog("Tryign to open: " + fullPathURL);
-    _data = [[NSData alloc] initWithContentsOfFile:fullPathURL];
+    
+    [NSData dataWithContentsOfURL:fullPathURL didLoadBlock:^(NSData *data) {
+        // data object is passed as parameter. Set here as return value is
+        // not set of NSData function until callback block is finished.
+        _data = data;
+    }];
+    
     return self;
 }
 
 - (BOOL)instantiateNibWithOwner:(id)owner topLevelObjects: (NSArray *)topLevelObjects
 {
-    NSMutableDictionary *nameTable = [NSMutableDictionary dictionaryWithCapacity:2];
-    // [nameTable setObject:owner forKey:@"NSNibOwner"];
-    // [nameTable setObject:topLevelObjects forKey:@"NSTopLevelObjects"];
+    NSMutableDictionary *nameTable = [NSMutableDictionary dictionaryWithObjectsAndKeys:owner, @"NSNibOwner", topLevelObjects, @"NSTopLevelObjects", nil];
     _topLevelObjects = topLevelObjects;
     return [self instantiateNibWithExternalNameTable:nameTable];
 }
 
 - (BOOL)instantiateNibWithExternalNameTable:(NSDictionary *)externalNameTable
 {
+    NSKeyedUnarchiver *unarchiver = [NSKeyedUnarchiver unarchiveObjectWithData:_data];
+    
+    _topLevelObjects = [unarchiver decodeObjectForKey:@"IBDocument.RootObjects"];
+    NSLog(_topLevelObjects);
+    
     // NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:_data];
     // _data = unarchiver.data;
     // 

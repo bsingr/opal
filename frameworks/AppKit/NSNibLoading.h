@@ -25,3 +25,9 @@
 - (void)awakeFromNib;
 
 @end
+
+@interface NSCustomObject : NSObject
+{
+}
+
+@end

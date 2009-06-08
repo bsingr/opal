@@ -58,7 +58,9 @@ module Vienna
         "NSMutableArray" => "Array",
         "NSString" => "String",
         "NSDictionary" => "CFDictionaryRef",
-        "NSMutableDictionary" => "CFMutableDictionaryRef"
+        "NSMutableDictionary" => "CFMutableDictionaryRef",
+        "NSData" => "CFDataRef",
+        # "NSMutableData" => "CFMutableDataRef"
       }
       
       # Linking configuration

@@ -191,6 +191,7 @@ NSShadow.js:
 NSNibLoading.js: 
   declarations: 
   - NSBundle
+  - NSCustomObject
   dependencies: 
   - NSObject
 NSFont.js: 
@@ -213,6 +214,11 @@ _NSCornerView.js:
   - _NSCornerView
   dependencies: 
   - NSView
+NSWindowTemplate.js: 
+  declarations: 
+  - NSWindowTemplate
+  dependencies: 
+  - NSObject
 NSTextField.js: 
   declarations: 
   - NSTextField

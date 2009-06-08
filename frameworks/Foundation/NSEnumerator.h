@@ -20,11 +20,18 @@ typedef struct {
 
 @end
 
-@interface NSEnumerator : NSObject <NSFastEnumeration>
 
+@interface NSEnumerator : NSObject <NSFastEnumeration>
+{
+    NSArray *_array;
+    NSUInteger _currentIndex;
+}
+
+- (id)initWithArray:(NSArray *)array;
 - (id)nextObject;
 
 @end
+
 
 @interface NSEnumerator (NSExtendedEnumerator)
 

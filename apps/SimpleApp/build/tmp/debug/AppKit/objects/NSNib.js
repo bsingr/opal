@@ -11,15 +11,16 @@ class_addIvar(the_class, "_topLevelObjects", "NSArray");
 class_addMethod(the_class, "initWithNibNamed:bundle:", function(self, _cmd, nibName, bundle) {
 with(self) {
 var fullPathURL = "Resources/" + nibName + ".xib";
-NSLog("Tryign to open: " + fullPathURL);
-_data = objc_msgSend(objc_msgSend(NSData, "alloc"), "initWithContentsOfFile:", fullPathURL);
+objc_msgSend(NSData, "dataWithContentsOfURL:didLoadBlock:", fullPathURL, function(data){
+_data = data;
+});
 return self;
 }
 }, "void");
 
 class_addMethod(the_class, "instantiateNibWithOwner:topLevelObjects:", function(self, _cmd, owner, topLevelObjects) {
 with(self) {
-var nameTable = objc_msgSend(NSMutableDictionary, "dictionaryWithCapacity:", 2);
+var nameTable = objc_msgSend(NSMutableDictionary, "dictionaryWithObjectsAndKeys:", owner,"NSNibOwner",topLevelObjects,"NSTopLevelObjects",null);
 _topLevelObjects = topLevelObjects;
 return objc_msgSend(self, "instantiateNibWithExternalNameTable:", nameTable);
 }
@@ -27,6 +28,9 @@ return objc_msgSend(self, "instantiateNibWithExternalNameTable:", nameTable);
 
 class_addMethod(the_class, "instantiateNibWithExternalNameTable:", function(self, _cmd, externalNameTable) {
 with(self) {
+var unarchiver = objc_msgSend(NSKeyedUnarchiver, "unarchiveObjectWithData:", _data);
+_topLevelObjects = objc_msgSend(unarchiver, "decodeObjectForKey:", "IBDocument.RootObjects");
+NSLog(_topLevelObjects);
 return YES;
 }
 }, "void");

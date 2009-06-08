@@ -20,10 +20,9 @@ class_addIvar(the_class, "isa", "Class");
 
 class_addMethod(the_class, "init", function(self, _cmd) {
 with(self) {
-objc_msgSendSuper({super_class:NSObject, receiver:self}, "init");
+self = objc_msgSendSuper({super_class:NSObject, receiver:self}, "init");
 if (self)
 {
-var myWindow = objc_msgSend(objc_msgSend(NSWindow, "alloc"), "initWithContentRect:styleMask:backing:defer:", NSMakeRect(100,100,500,400), (256 | 4), null, false);
 
 }
 

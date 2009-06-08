@@ -30,3 +30,7 @@
 }
 
 @end
+
+@implementation NSCustomObject
+
+@end

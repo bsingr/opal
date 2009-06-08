@@ -10,9 +10,11 @@ with(self) {
 
 class_addMethod(the_class, "bytes", function(self, _cmd) {
 with(self) {
+return _bytes;
 }
 }, "void");
 
+CFDataRef.prototype.isa = NSData;
 var the_class = NSData;
 var meta_class = the_class.isa;
 
@@ -104,6 +106,11 @@ with(self) {
 }
 }, "void");
 
+class_addMethod(the_class, "initWithContentsOfURL:didLoadBlock:", function(self, _cmd, url, block) {
+with(self) {
+}
+}, "void");
+
 class_addMethod(the_class, "initWithContentsOfMappedFile:", function(self, _cmd, path) {
 with(self) {
 }
@@ -151,6 +158,12 @@ with(self) {
 
 class_addMethod(meta_class, "dataWithContentsOfURL:", function(self, _cmd, url) {
 with(self) {
+}
+}, "void");
+
+class_addMethod(meta_class, "dataWithContentsOfURL:didLoadBlock:", function(self, _cmd, url, block) {
+with(self) {
+return CFDataCreateFromURL(url,block);
 }
 }, "void");
 

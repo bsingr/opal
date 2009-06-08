@@ -211,7 +211,7 @@ class Vienna::ObjectiveCParser
 
     expression:
     	  assignment_expression                             { result = val[0] }
-    	| expression ',' assignment_expression
+    	| expression ',' assignment_expression              { result = make_node(',', val[0], val[2]) }
     	;
 
     constant_expression:
@@ -615,12 +615,12 @@ class Vienna::ObjectiveCParser
     	;
 
     iteration_statement:
-    	  WHILE '(' expression ')' statement
+    	  WHILE '(' expression ')' statement                                              { result = node_set_children(val[0], val[2], val[4]) }
     	| DO statement WHILE '(' expression ')' ';'
     	| FOR '(' expression_statement expression_statement ')' statement
     	| FOR '(' expression_statement expression_statement expression ')' statement
     	| FOR '(' declaration expression_statement expression ')' statement	
-    	| FOR '(' declaration IN expression ')' statement
+    	| FOR '(' expression IN expression ')' statement                                 { result = node_set_children(val[3], make_node(',', val[2], val[4]), val[6]) }
     	;
 
     jump_statement:
@@ -751,6 +751,8 @@ require 'strscan'
         return make_token(:GOTO, :GOTO)
       when scanner.scan(/if(?!([a-zA-Z_]|[0-9]))/)
         return make_token(:IF, :IF)
+      when scanner.scan(/in(?!([a-zA-Z_]|[0-9]))/)
+        return make_token(:IN, :IN)
       when scanner.scan(/int(?!([a-zA-Z_]|[0-9]))/)
 	      return make_token(:INT, "int")
       when scanner.scan(/long(?!([a-zA-Z_]|[0-9]))/)
