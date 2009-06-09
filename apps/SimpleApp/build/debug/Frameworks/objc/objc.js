@@ -167,7 +167,7 @@ function objc_super()
 // 
 function objc_msgSend(self, op)
 {
-    // printf("[" + self.isa.name + " " + op + "]");
+    printf("[" + self.isa.name + " " + op + "]");
     var theMethodImp = class_getMethodImplementation(self.isa, op);
     return theMethodImp.apply(self, arguments);
 }
@@ -556,7 +556,8 @@ function class_getMethodImplementation(cls, name)
     // FIXME: check for instance/class methods
     var theMethod = class_getInstanceMethod(cls, name);
     if (!theMethod)
-        console.log("[" + cls.name + " " + name + "] does not exist");
+        printf("[" + cls.name + " " + name + "] does not exist.");
+
     return method_getImplementation(theMethod);
 }
 

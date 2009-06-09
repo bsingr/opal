@@ -52,9 +52,9 @@ return self;
 
 class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
 with(self) {
-_title = objc_msgSend(aCoder, "decodeStringForKey:", "NSTitle");
-_keyEquivalent = objc_msgSend(aCoder, "decodeStringForKey:", "NSKeyEquiv");
-_action = objc_msgSend(aCoder, "decodeStringForKey:", "NSAction");
+_title = objc_msgSend(aCoder, "decodeObjectForKey:", "NSTitle");
+_keyEquivalent = objc_msgSend(aCoder, "decodeObjectForKey:", "NSKeyEquiv");
+_action = objc_msgSend(aCoder, "decodeObjectForKey:", "NSAction");
 _target = objc_msgSend(aCoder, "decodeObjectForKey:", "NSTarget");
 _menu = objc_msgSend(aCoder, "decodeObjectForKey:", "NSMenu");
 _subMenu = objc_msgSend(aCoder, "decodeObjectForKey:", "NSSubmenu");

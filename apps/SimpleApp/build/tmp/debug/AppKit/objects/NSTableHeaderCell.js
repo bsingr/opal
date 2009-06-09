@@ -27,7 +27,7 @@ class_addIvar(the_class, "_value", "id");
 class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
 with(self) {
 objc_msgSendSuper({super_class:NSTextFieldCell, receiver:self}, "initWithCoder:", aCoder);
-_value = objc_msgSend(aCoder, "decodeStringForKey:", "NSContents");
+_value = objc_msgSend(aCoder, "decodeObjectForKey:", "NSContents");
 return self;
 }
 }, "void");

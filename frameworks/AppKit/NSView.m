@@ -37,7 +37,7 @@
 - (id)initWithCoder:(NSCoder *)aCoder
 {
     // [super initWithCoder:aCoder];
-    
+	NSLog(@"View init with coder..");
     _frame = NSMakeRect (0,0,0,0);
     _bounds = NSMakeRect (0,0,0,0);
     
@@ -46,6 +46,9 @@
     else if ([aCoder containsValueForKey:@"NSFrameSize"])
         _frame.size = [aCoder decodeSizeForKey:@"NSFrameSize"];
     
+	NSArray *subviews = [aCoder decodeObjectForKey:@"NSSubviews"];
+	NSLog(subviews);
+
     _bounds.origin = NSMakePoint (0,0);
     _bounds.size = _frame.size;
     
@@ -132,6 +135,9 @@
 {
     [aView viewWillMoveToSuperview:self];
     [aView viewWillMoveToWindow:_window];
+	
+	CGDOMElementAppendChild([self DOMContainer], [_contentView DOMContainer]);
+
     [aView viewDidMoveToSuperview:self];
     [aView viewDidMoveToWindow:_window];
     [self didAddSubview:aView];

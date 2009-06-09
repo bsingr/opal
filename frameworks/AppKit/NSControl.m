@@ -37,7 +37,7 @@
 
 - (id)initWithCoder:(NSCoder *)aCoder
 {
-    self = [super initWithCoder];
+	[super initWithCoder:aCoder];
     _cell = [aCoder decodeObjectForKey:@"NSCell"];
     return self;
 }

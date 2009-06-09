@@ -116,13 +116,22 @@ function d()
 }
 function NSPointFromString(aString)
 {
-return aString;
+if (!aString)
+return NSMakePoint(0,0);
+
+return CGPointFromString(aString);
 }
 function NSSizeFromString(aString)
 {
-return aString;
+if (!aString)
+return NSMakeSize(0,0);
+
+return CGSizeFromString(aString);
 }
 function NSRectFromString(aString)
 {
-return aString;
+if (!aString)
+return NSMakeRect(0,0,0,0);
+
+return CGRectFromString(aString);
 }

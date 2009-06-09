@@ -26,8 +26,8 @@ return self;
 
 class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
 with(self) {
-_title = objc_msgSend(aCoder, "decodeStringForKey:", "NSTitle");
-_name = objc_msgSend(aCoder, "decodeStringForKey:", "NSName");
+_title = objc_msgSend(aCoder, "decodeObjectForKey:", "NSTitle");
+_name = objc_msgSend(aCoder, "decodeObjectForKey:", "NSName");
 _itemArray = objc_msgSend(aCoder, "decodeObjectForKey:", "NSMenuItems");
 return self;
 }

@@ -31,7 +31,7 @@ with(self) {
 class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
 with(self) {
 objc_msgSendSuper({super_class:NSObject, receiver:self}, "initWithCoder:", aCoder);
-_value = objc_msgSend(aCoder, "decodeStringForKey:", "NSContents");
+_value = objc_msgSend(aCoder, "decodeObjectForKey:", "NSContents");
 var _flags = objc_msgSend(aCoder, "decodeIntForKey:", "NSCellFlags");
 var _flags2 = objc_msgSend(aCoder, "decodeIntForKey:", "NSCellFlags2");
 _state = (flags & 0x80000000) ? 1 : 0;

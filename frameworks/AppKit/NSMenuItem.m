@@ -46,9 +46,9 @@
 
 - (id)initWithCoder:(NSCoder *)aCoder
 {
-    _title = [aCoder decodeStringForKey:@"NSTitle"];
-    _keyEquivalent = [aCoder decodeStringForKey:@"NSKeyEquiv"];
-    _action = [aCoder decodeStringForKey:@"NSAction"];
+    _title = [aCoder decodeObjectForKey:@"NSTitle"];
+    _keyEquivalent = [aCoder decodeObjectForKey:@"NSKeyEquiv"];
+    _action = [aCoder decodeObjectForKey:@"NSAction"];
     _target = [aCoder decodeObjectForKey:@"NSTarget"];
     _menu = [aCoder decodeObjectForKey:@"NSMenu"];
     _subMenu = [aCoder decodeObjectForKey:@"NSSubmenu"];

@@ -14,7 +14,7 @@
 - (id)initWithCoder:(NSCoder *)aCoder
 {
     [super initWithCoder:aCoder];
-    _value = [aCoder decodeStringForKey:@"NSContents"];
+    _value = [aCoder decodeObjectForKey:@"NSContents"];
     
     return self;
 }

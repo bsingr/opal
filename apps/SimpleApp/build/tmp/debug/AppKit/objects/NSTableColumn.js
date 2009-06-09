@@ -32,7 +32,7 @@ return self;
 class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
 with(self) {
 objc_msgSendSuper({super_class:NSObject, receiver:self}, "initWithCoder:", aCoder);
-_identifier = objc_msgSend(aCoder, "decodeStringForKey:", "NSIdentifier");
+_identifier = objc_msgSend(aCoder, "decodeObjectForKey:", "NSIdentifier");
 _headerCell = objc_msgSend(aCoder, "decodeObjectForKey:", "NSHeaderCell");
 _dataCell = objc_msgSend(aCoder, "decodeObjectForKey:", "NSDataCell");
 _width = objc_msgSend(aCoder, "decodeIntForKey:", "NSWidth");

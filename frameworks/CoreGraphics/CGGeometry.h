@@ -71,3 +71,8 @@ extern CFDictionaryRef CGSizeCreateDictionaryRepresentation(CGSize size);
 extern bool CGSizeMakeWithDictionaryRepresentation(CFDictionaryRef dict, CGSize *size);
 extern CFDictionaryRef CGRectCreateDictionaryRepresentation(CGRect rect);
 extern bool CGRectMakeWithDictionaryRepresentation(CFDictionaryRef dict, CGRect *rect);
+
+extern CGRect CGRectFromString(CFStringRef aString);
+extern CGPoint CGPointFromString(CFStringRef aString);
+extern CGSize CGSizeFromString(CFStringRef aString);
+

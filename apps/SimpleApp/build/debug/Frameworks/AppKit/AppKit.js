@@ -302,6 +302,7 @@ return self;
 
 class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
 with(self) {
+NSLog("View init with coder..");
 _frame = NSMakeRect(0,0,0,0);
 _bounds = NSMakeRect(0,0,0,0);
 if (objc_msgSend(aCoder, "containsValueForKey:", "NSFrame"))
@@ -311,6 +312,8 @@ if (objc_msgSend(aCoder, "containsValueForKey:", "NSFrameSize"))
 _frame.size = objc_msgSend(aCoder, "decodeSizeForKey:", "NSFrameSize");
 
 
+var subviews = objc_msgSend(aCoder, "decodeObjectForKey:", "NSSubviews");
+NSLog(subviews);
 _bounds.origin = NSMakePoint(0,0);
 _bounds.size = _frame.size;
 _superview = null;
@@ -400,6 +403,7 @@ class_addMethod(the_class, "addSubview:", function(self, _cmd, aView) {
 with(self) {
 objc_msgSend(aView, "viewWillMoveToSuperview:", self);
 objc_msgSend(aView, "viewWillMoveToWindow:", _window);
+CGDOMElementAppendChild(objc_msgSend(self, "DOMContainer"),objc_msgSend(_contentView, "DOMContainer"));
 objc_msgSend(aView, "viewDidMoveToSuperview:", self);
 objc_msgSend(aView, "viewDidMoveToWindow:", _window);
 objc_msgSend(self, "didAddSubview:", aView);
@@ -2672,7 +2676,7 @@ with(self) {
 class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
 with(self) {
 objc_msgSendSuper({super_class:NSObject, receiver:self}, "initWithCoder:", aCoder);
-_value = objc_msgSend(aCoder, "decodeStringForKey:", "NSContents");
+_value = objc_msgSend(aCoder, "decodeObjectForKey:", "NSContents");
 var _flags = objc_msgSend(aCoder, "decodeIntForKey:", "NSCellFlags");
 var _flags2 = objc_msgSend(aCoder, "decodeIntForKey:", "NSCellFlags2");
 _state = (flags & 0x80000000) ? 1 : 0;
@@ -4364,8 +4368,8 @@ return self;
 
 class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
 with(self) {
-_title = objc_msgSend(aCoder, "decodeStringForKey:", "NSTitle");
-_name = objc_msgSend(aCoder, "decodeStringForKey:", "NSName");
+_title = objc_msgSend(aCoder, "decodeObjectForKey:", "NSTitle");
+_name = objc_msgSend(aCoder, "decodeObjectForKey:", "NSName");
 _itemArray = objc_msgSend(aCoder, "decodeObjectForKey:", "NSMenuItems");
 return self;
 }
@@ -4756,9 +4760,9 @@ objc_msgSendSuper({super_class:NSResponder, receiver:self}, "initWithCoder:", aC
 _maxSize = objc_msgSend(aCoder, "decodeSizeForKey:", "NSWindowContentSizeMax");
 _minSize = objc_msgSend(aCoder, "decodeSizeForKey:", "NSWindowContentSizeMin");
 _wtFlags = objc_msgSend(aCoder, "decodeIntForKey:", "NSWTFlags");
-_windowClass = objc_msgSend(aCoder, "decodeStringForKey:", "NSWindowClass");
+_windowClass = objc_msgSend(aCoder, "decodeObjectForKey:", "NSWindowClass");
 _styleMask = objc_msgSend(aCoder, "decodeIntForKey:", "NSWindowStyleMask");
-_title = objc_msgSend(aCoder, "decodeStringForKey:", "NSWindowTitle");
+_title = objc_msgSend(aCoder, "decodeObjectForKey:", "NSWindowTitle");
 _frame = objc_msgSend(self, "frameRectForContentRect:", objc_msgSend(aCoder, "decodeRectForKey:", "NSWindowRect"));
 _contentView = objc_msgSend(aCoder, "decodeObjectForKey:", "NSWindowView");
 objc_msgSend(self, "awakeAfterUsingCoder:", aCoder);
@@ -6136,9 +6140,9 @@ return self;
 
 class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
 with(self) {
-_title = objc_msgSend(aCoder, "decodeStringForKey:", "NSTitle");
-_keyEquivalent = objc_msgSend(aCoder, "decodeStringForKey:", "NSKeyEquiv");
-_action = objc_msgSend(aCoder, "decodeStringForKey:", "NSAction");
+_title = objc_msgSend(aCoder, "decodeObjectForKey:", "NSTitle");
+_keyEquivalent = objc_msgSend(aCoder, "decodeObjectForKey:", "NSKeyEquiv");
+_action = objc_msgSend(aCoder, "decodeObjectForKey:", "NSAction");
 _target = objc_msgSend(aCoder, "decodeObjectForKey:", "NSTarget");
 _menu = objc_msgSend(aCoder, "decodeObjectForKey:", "NSMenu");
 _subMenu = objc_msgSend(aCoder, "decodeObjectForKey:", "NSSubmenu");
@@ -8236,7 +8240,7 @@ return self;
 class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
 with(self) {
 objc_msgSendSuper({super_class:NSObject, receiver:self}, "initWithCoder:", aCoder);
-_identifier = objc_msgSend(aCoder, "decodeStringForKey:", "NSIdentifier");
+_identifier = objc_msgSend(aCoder, "decodeObjectForKey:", "NSIdentifier");
 _headerCell = objc_msgSend(aCoder, "decodeObjectForKey:", "NSHeaderCell");
 _dataCell = objc_msgSend(aCoder, "decodeObjectForKey:", "NSDataCell");
 _width = objc_msgSend(aCoder, "decodeIntForKey:", "NSWidth");
@@ -8381,7 +8385,7 @@ return self;
 class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
 with(self) {
 objc_msgSendSuper({super_class:NSCell, receiver:self}, "initWithCoder:", aCoder);
-_value = objc_msgSend(aCoder, "decodeStringForKey:", "NSContents");
+_value = objc_msgSend(aCoder, "decodeObjectForKey:", "NSContents");
 if (!_value)
 _value = " ";
 
@@ -8577,7 +8581,7 @@ class_addIvar(the_class, "_value", "id");
 class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
 with(self) {
 objc_msgSendSuper({super_class:NSTextFieldCell, receiver:self}, "initWithCoder:", aCoder);
-_value = objc_msgSend(aCoder, "decodeStringForKey:", "NSContents");
+_value = objc_msgSend(aCoder, "decodeObjectForKey:", "NSContents");
 return self;
 }
 }, "void");
@@ -10049,8 +10053,7 @@ return self;
 class_addMethod(the_class, "awakeAfterUsingCoder:", function(self, _cmd, aCoder) {
 with(self) {
 var theClass = NSClassFromString(_windowClass);
-NSLog(_windowRect);
-var theWindow = objc_msgSend(objc_msgSend(theClass, "alloc"), "initWithContentRect:styleMask:backing:defer:", NSMakeRect(300,300,300,300), 23, 1, NO);
+var theWindow = objc_msgSend(objc_msgSend(theClass, "alloc"), "initWithContentRect:styleMask:backing:defer:", _windowRect, _styleMask, 1, NO);
 return theWindow;
 }
 }, "void");

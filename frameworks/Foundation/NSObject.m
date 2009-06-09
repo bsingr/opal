@@ -199,3 +199,12 @@
 }
 
 @end
+
+@implementation NSObject (NSCoderExtended)
+
+- (id)initWithCoder:(NSCoder *)aCoder
+{
+	return self;
+}
+
+@end

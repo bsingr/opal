@@ -196,15 +196,24 @@ NSString *NSStringFromRect(NSRect aRect)
 
 NSPoint NSPointFromString(NSString *aString)
 {
-    return aString;
+	if (!aString)
+		return NSMakePoint(0,0);
+		
+    return CGPointFromString(aString);
 }
 
 NSSize NSSizeFromString(NSString *aString)
 {
-    return aString;
+	if (!aString)
+		return NSMakeSize(0,0);
+		
+	return CGSizeFromString(aString);
 }
 
 NSRect NSRectFromString(NSString *aString)
 {
-    return aString;
+	if (!aString)
+		return NSMakeRect(0,0,0,0);
+		
+    return CGRectFromString(aString);
 }

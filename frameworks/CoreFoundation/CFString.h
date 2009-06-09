@@ -62,8 +62,6 @@ extern CFArrayRef CFStringCreateArrayBySeparatingStrings(CFStringRef theString, 
 extern int CFStringGetIntValue(CFStringRef str);
 extern double CFStringGetDoubleValue(CFStringRef str);
 
-
-
 extern void CFStringAppend(CFMutableStringRef theString, CFStringRef appendedString);
 extern void CFStringAppendFormat(CFMutableStringRef theString, CFDictionaryRef formatOptions, CFStringRef format, ...);
 extern void CFStringAppendFormatAndArguments(CFMutableStringRef theString, CFDictionaryRef formatOptions, CFStringRef format, void *arguments);

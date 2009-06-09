@@ -121,10 +121,10 @@
     _maxSize = [aCoder decodeSizeForKey:@"NSWindowContentSizeMax"];
     _minSize = [aCoder decodeSizeForKey:@"NSWindowContentSizeMin"];
     _wtFlags = [aCoder decodeIntForKey:@"NSWTFlags"];
-    _windowClass = [aCoder decodeStringForKey:@"NSWindowClass"];
+    _windowClass = [aCoder decodeObjectForKey:@"NSWindowClass"];
     _styleMask = [aCoder decodeIntForKey:@"NSWindowStyleMask"];
     
-    _title = [aCoder decodeStringForKey:@"NSWindowTitle"];
+    _title = [aCoder decodeObjectForKey:@"NSWindowTitle"];
     _frame = [self frameRectForContentRect:[aCoder decodeRectForKey:@"NSWindowRect"]];
     _contentView = [aCoder decodeObjectForKey:@"NSWindowView"];
     

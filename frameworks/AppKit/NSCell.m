@@ -30,7 +30,7 @@
 {
     [super initWithCoder:aCoder];
     
-    _value = [aCoder decodeStringForKey:@"NSContents"];
+    _value = [aCoder decodeObjectForKey:@"NSContents"];
     NSInteger _flags = [aCoder decodeIntForKey:@"NSCellFlags"];
     NSInteger _flags2 = [aCoder decodeIntForKey:@"NSCellFlags2"];
     

@@ -12,18 +12,18 @@
 
 @implementation NSButtonCell
 
-// - (id)initWithCoder:(NSCoder *)aCoder
-// {
-//     [super initWithCoder:aCoder];
-//     
-//     NSUInteger flags = [aCoder decodeIntForKey:@"NSButtonFlags"];
-//     NSUInteger flags2 = [aCoder decodeIntForKey:@"NSButtonFlags2"];
-//     
-//     _isBordered = (flags & 0x00800000) ? YES : NO;
-//     _bezelStyle = ((flags2 & 0x7) | ((flags2 & 0x20) >> 2));
-//     
-//     return self;
-// }
+- (id)initWithCoder:(NSCoder *)aCoder
+{
+    [super initWithCoder:aCoder];
+    
+    NSUInteger flags = [aCoder decodeIntForKey:@"NSButtonFlags"];
+    NSUInteger flags2 = [aCoder decodeIntForKey:@"NSButtonFlags2"];
+    
+    _isBordered = (flags & 0x00800000) ? YES : NO;
+    _bezelStyle = ((flags2 & 0x7) | ((flags2 & 0x20) >> 2));
+    
+    return self;
+}
 // 
 // - (NSString *)title
 // {

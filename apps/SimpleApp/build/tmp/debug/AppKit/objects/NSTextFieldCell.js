@@ -39,7 +39,7 @@ return self;
 class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
 with(self) {
 objc_msgSendSuper({super_class:NSCell, receiver:self}, "initWithCoder:", aCoder);
-_value = objc_msgSend(aCoder, "decodeStringForKey:", "NSContents");
+_value = objc_msgSend(aCoder, "decodeObjectForKey:", "NSContents");
 if (!_value)
 _value = " ";
 

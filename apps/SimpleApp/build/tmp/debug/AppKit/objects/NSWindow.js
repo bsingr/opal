@@ -137,9 +137,9 @@ objc_msgSendSuper({super_class:NSResponder, receiver:self}, "initWithCoder:", aC
 _maxSize = objc_msgSend(aCoder, "decodeSizeForKey:", "NSWindowContentSizeMax");
 _minSize = objc_msgSend(aCoder, "decodeSizeForKey:", "NSWindowContentSizeMin");
 _wtFlags = objc_msgSend(aCoder, "decodeIntForKey:", "NSWTFlags");
-_windowClass = objc_msgSend(aCoder, "decodeStringForKey:", "NSWindowClass");
+_windowClass = objc_msgSend(aCoder, "decodeObjectForKey:", "NSWindowClass");
 _styleMask = objc_msgSend(aCoder, "decodeIntForKey:", "NSWindowStyleMask");
-_title = objc_msgSend(aCoder, "decodeStringForKey:", "NSWindowTitle");
+_title = objc_msgSend(aCoder, "decodeObjectForKey:", "NSWindowTitle");
 _frame = objc_msgSend(self, "frameRectForContentRect:", objc_msgSend(aCoder, "decodeRectForKey:", "NSWindowRect"));
 _contentView = objc_msgSend(aCoder, "decodeObjectForKey:", "NSWindowView");
 objc_msgSend(self, "awakeAfterUsingCoder:", aCoder);

@@ -37,8 +37,8 @@
 
 - (id)initWithCoder:(NSCoder *)aCoder
 {
-    _title = [aCoder decodeStringForKey:@"NSTitle"];
-    _name = [aCoder decodeStringForKey:@"NSName"];
+    _title = [aCoder decodeObjectForKey:@"NSTitle"];
+    _name = [aCoder decodeObjectForKey:@"NSName"];
     _itemArray = [aCoder decodeObjectForKey:@"NSMenuItems"];
     
     return self;

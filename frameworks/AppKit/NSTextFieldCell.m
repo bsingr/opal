@@ -24,7 +24,7 @@
 {
     [super initWithCoder:aCoder];
     
-    _value = [aCoder decodeStringForKey:@"NSContents"];
+    _value = [aCoder decodeObjectForKey:@"NSContents"];
     
     if (!_value)
         _value = @" ";

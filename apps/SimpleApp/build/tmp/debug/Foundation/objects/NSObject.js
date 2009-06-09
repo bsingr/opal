@@ -214,3 +214,12 @@ with(self) {
 }
 }, "void");
 
+var the_class = NSObject;
+var meta_class = the_class.isa;
+
+class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
+with(self) {
+return self;
+}
+}, "void");
+

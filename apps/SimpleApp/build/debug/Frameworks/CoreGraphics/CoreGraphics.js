@@ -1073,6 +1073,28 @@ function CGRectGetMidX(rect)
 // extern CFDictionaryRef CGRectCreateDictionaryRepresentation(CGRect rect);
 // extern bool CGRectMakeWithDictionaryRepresentation(CFDictionaryRef dict, CGRect *rect);
 
+// extern CGRect CGRectFromString(CFStringRef aString);
+function CGRectFromString(aString)
+{
+	var thePoint = CGPointFromString(aString.substr(1, aString.indexOf("},") - 1));
+	var theSize = CGSizeFromString(aString.substr(aString.indexOf("},") + 3, aString.length - 3));
+	return {
+		origin: thePoint,
+		size: theSize
+	};
+}
+
+// extern CGPoint CGPointFromString(CFStringRef aString);
+function CGPointFromString(aString)
+{
+	return CGPointMake(parseFloat(aString.substr(1, aString.indexOf(",") - 1)), parseFloat(aString.substr(aString.indexOf(",") + 1, aString.length - 1)));
+}
+
+// extern CGSize CGSizeFromString(CFStringRef aString);
+function CGSizeFromString(aString)
+{
+	return CGSizeMake(parseFloat(aString.substr(1, aString.indexOf(",") - 1)), parseFloat(aString.substr(aString.indexOf(",") + 1, aString.length-  1)));
+}
 // 
 //  CGGradient.js
 //  vienna

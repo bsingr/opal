@@ -60,6 +60,7 @@ return self;
 
 class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
 with(self) {
+NSLog("View init with coder..");
 _frame = NSMakeRect(0,0,0,0);
 _bounds = NSMakeRect(0,0,0,0);
 if (objc_msgSend(aCoder, "containsValueForKey:", "NSFrame"))
@@ -69,6 +70,8 @@ if (objc_msgSend(aCoder, "containsValueForKey:", "NSFrameSize"))
 _frame.size = objc_msgSend(aCoder, "decodeSizeForKey:", "NSFrameSize");
 
 
+var subviews = objc_msgSend(aCoder, "decodeObjectForKey:", "NSSubviews");
+NSLog(subviews);
 _bounds.origin = NSMakePoint(0,0);
 _bounds.size = _frame.size;
 _superview = null;
@@ -158,6 +161,7 @@ class_addMethod(the_class, "addSubview:", function(self, _cmd, aView) {
 with(self) {
 objc_msgSend(aView, "viewWillMoveToSuperview:", self);
 objc_msgSend(aView, "viewWillMoveToWindow:", _window);
+CGDOMElementAppendChild(objc_msgSend(self, "DOMContainer"),objc_msgSend(_contentView, "DOMContainer"));
 objc_msgSend(aView, "viewDidMoveToSuperview:", self);
 objc_msgSend(aView, "viewDidMoveToWindow:", _window);
 objc_msgSend(self, "didAddSubview:", aView);

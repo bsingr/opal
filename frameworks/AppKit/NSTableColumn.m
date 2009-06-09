@@ -29,7 +29,7 @@
 - (id)initWithCoder:(NSCoder *)aCoder
 {
     [super initWithCoder:aCoder];
-    _identifier = [aCoder decodeStringForKey:@"NSIdentifier"];
+    _identifier = [aCoder decodeObjectForKey:@"NSIdentifier"];
     _headerCell = [aCoder decodeObjectForKey:@"NSHeaderCell"];
     _dataCell = [aCoder decodeObjectForKey:@"NSDataCell"];
     _width = [aCoder decodeIntForKey:@"NSWidth"];

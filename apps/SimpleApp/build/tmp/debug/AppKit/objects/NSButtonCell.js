@@ -17,3 +17,14 @@ class_addIvar(the_class, "_controlView", "NSView");
 class_addIvar(the_class, "_target", "id");
 class_addIvar(the_class, "_action", "SEL");
 
+class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
+with(self) {
+objc_msgSendSuper({super_class:NSCell, receiver:self}, "initWithCoder:", aCoder);
+var flags = objc_msgSend(aCoder, "decodeIntForKey:", "NSButtonFlags");
+var flags2 = objc_msgSend(aCoder, "decodeIntForKey:", "NSButtonFlags2");
+_isBordered = (flags & 0x00800000) ? YES : NO;
+_bezelStyle = ((flags2 & 0x7) | ((flags2 & 0x20) >> 2));
+return self;
+}
+}, "void");
+

@@ -52,7 +52,7 @@ return self;
 
 class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
 with(self) {
-self = objc_msgSendSuper({super_class:NSView, receiver:self}, "initWithCoder");
+objc_msgSendSuper({super_class:NSView, receiver:self}, "initWithCoder:", aCoder);
 _cell = objc_msgSend(aCoder, "decodeObjectForKey:", "NSCell");
 return self;
 }

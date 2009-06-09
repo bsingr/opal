@@ -35,9 +35,7 @@
 {
     Class theClass = NSClassFromString(_windowClass);   
     
-    NSLog(_windowRect);
-    
-    NSWindow *theWindow = [[theClass alloc] initWithContentRect:NSMakeRect(300,300,300,300) styleMask:23 backing:1 defer:NO];
+    NSWindow *theWindow = [[theClass alloc] initWithContentRect:_windowRect styleMask:_styleMask backing:1 defer:NO];
     return theWindow;
 }
 

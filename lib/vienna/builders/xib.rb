@@ -46,7 +46,7 @@ module Vienna
           end
           file.write "}"
           
-        when "int", "integer", "string", "bool"
+        when "int", "integer", "string", "bool", "double"
           file.write "\"#{element.attribute "key"}\": " if element.attribute "key"
           file.write "{\"#{element.name}\": \"#{element.text}\"}"
           

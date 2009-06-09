@@ -36,8 +36,7 @@ return self;
 class_addMethod(the_class, "awakeAfterUsingCoder:", function(self, _cmd, aCoder) {
 with(self) {
 var theClass = NSClassFromString(_windowClass);
-NSLog(_windowRect);
-var theWindow = objc_msgSend(objc_msgSend(theClass, "alloc"), "initWithContentRect:styleMask:backing:defer:", NSMakeRect(300,300,300,300), 23, 1, NO);
+var theWindow = objc_msgSend(objc_msgSend(theClass, "alloc"), "initWithContentRect:styleMask:backing:defer:", _windowRect, _styleMask, 1, NO);
 return theWindow;
 }
 }, "void");

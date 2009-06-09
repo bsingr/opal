@@ -126,6 +126,82 @@
                                 "NSvFlags": {
                                     "int": "256"
                                 },
+                                "NSSubviews": {
+                                    "class": "NSMutableArray",
+                                    "id": "",
+                                    "objects": [{
+                                        "class": "NSButton",
+                                        "id": "807627904",
+                                        "objects": {
+                                            "NSNextResponder": {
+                                                "id": "414427165"
+                                            },
+                                            "NSvFlags": {
+                                                "int": "268"
+                                            },
+                                            "NSFrame": {
+                                                "string": "{{204, 79}, {118, 25}}"
+                                            },
+                                            "NSSuperview": {
+                                                "id": "414427165"
+                                            },
+                                            "NSEnabled": {
+                                                "bool": "YES"
+                                            },
+                                            "NSCell": {
+                                                "class": "NSButtonCell",
+                                                "id": "281914322",
+                                                "objects": {
+                                                    "NSCellFlags": {
+                                                        "int": "-2080244224"
+                                                    },
+                                                    "NSCellFlags2": {
+                                                        "int": "134217728"
+                                                    },
+                                                    "NSContents": {
+                                                        "string": "Round Textured"
+                                                    },
+                                                    "NSSupport": {
+                                                        "class": "NSFont",
+                                                        "id": "",
+                                                        "objects": {
+                                                            "NSName": {
+                                                                "string": "LucidaGrande"
+                                                            },
+                                                            "NSSize": {
+                                                                "double": "1.300000e+01"
+                                                            },
+                                                            "NSfFlags": {
+                                                                "int": "1044"
+                                                            }
+                                                        }
+                                                    },
+                                                    "NSControlView": {
+                                                        "id": "807627904"
+                                                    },
+                                                    "NSButtonFlags": {
+                                                        "int": "-2038152961"
+                                                    },
+                                                    "NSButtonFlags2": {
+                                                        "int": "163"
+                                                    },
+                                                    "NSAlternateContents": {
+                                                        "string": ""
+                                                    },
+                                                    "NSKeyEquivalent": {
+                                                        "string": ""
+                                                    },
+                                                    "NSPeriodicDelay": {
+                                                        "int": "400"
+                                                    },
+                                                    "NSPeriodicInterval": {
+                                                        "int": "75"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }]
+                                },
                                 "NSFrameSize": {
                                     "string": "{480, 270}"
                                 },
@@ -265,6 +341,13 @@
                                         "object": {
                                             "id": "414427165"
                                         },
+                                        "children": {
+                                            "class": "NSMutableArray",
+                                            "id": "",
+                                            "objects": [{
+                                                "id": "807627904"
+                                            }]
+                                        },
                                         "parent": {
                                             "id": "513744381"
                                         }
@@ -282,6 +365,43 @@
                                         },
                                         "parent": {
                                             "id": "1049"
+                                        }
+                                    }
+                                },
+                                {
+                                    "class": "IBObjectRecord",
+                                    "id": "",
+                                    "objects": {
+                                        "objectID": {
+                                            "int": "451"
+                                        },
+                                        "object": {
+                                            "id": "807627904"
+                                        },
+                                        "children": {
+                                            "class": "NSMutableArray",
+                                            "id": "",
+                                            "objects": [{
+                                                "id": "281914322"
+                                            }]
+                                        },
+                                        "parent": {
+                                            "id": "414427165"
+                                        }
+                                    }
+                                },
+                                {
+                                    "class": "IBObjectRecord",
+                                    "id": "",
+                                    "objects": {
+                                        "objectID": {
+                                            "int": "452"
+                                        },
+                                        "object": {
+                                            "id": "281914322"
+                                        },
+                                        "parent": {
+                                            "id": "807627904"
                                         }
                                     }
                                 }]
@@ -324,6 +444,12 @@
                                 },
                                 {
                                     "string": "373.IBPluginDependency"
+                                },
+                                {
+                                    "string": "451.IBPluginDependency"
+                                },
+                                {
+                                    "string": "452.IBPluginDependency"
                                 }]
                             },
                             "dict.values": {
@@ -339,16 +465,22 @@
                                     "string": "com.apple.InterfaceBuilder.CocoaPlugin"
                                 },
                                 {
-                                    "string": "{{101, 431}, {480, 270}}"
+                                    "string": "{{441, 674}, {480, 270}}"
                                 },
                                 {
-                                    "string": "{{101, 431}, {480, 270}}"
+                                    "string": "{{441, 674}, {480, 270}}"
                                 },
                                 {
                                     "integer": ""
                                 },
                                 {
                                     "string": "{{11, 666}, {480, 270}}"
+                                },
+                                {
+                                    "string": "com.apple.InterfaceBuilder.CocoaPlugin"
+                                },
+                                {
+                                    "string": "com.apple.InterfaceBuilder.CocoaPlugin"
                                 },
                                 {
                                     "string": "com.apple.InterfaceBuilder.CocoaPlugin"
@@ -404,7 +536,7 @@
                         "nil": ""
                     },
                     "maxID": {
-                        "int": "448"
+                        "int": "452"
                     }
                 }
             },
