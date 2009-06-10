@@ -81,6 +81,8 @@ typedef NSInteger NSToolTipTag;
     CGDOMElementRef   _DOMContainer;
     // Rendering context. mainly canvas. could be a nested DIV tree if DOM drawing. or could be a textfield for nstextfield etc. but default it is a canvas
     CGDOMElementRef   _DOMGraphicsContext;
+    
+    CGContextRef     _graphicsContext;
 }
 
 - (id)initWithFrame:(NSRect)frameRect;

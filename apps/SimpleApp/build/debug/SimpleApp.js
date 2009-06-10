@@ -30,6 +30,12 @@ return self;
 }
 }, "void");
 
+class_addMethod(the_class, "getIsa", function(self, _cmd) {
+with(self) {
+return isa;
+}
+}, "void");
+
 function main(argc,argv)
 {
 var myDict = objc_msgSend(objc_msgSend(NSMutableDictionary, "alloc"), "init");

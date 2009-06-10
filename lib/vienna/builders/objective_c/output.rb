@@ -415,6 +415,10 @@ module Vienna
             output_declaration_initializer_object file, the_type
           end
         end
+        # Toll free bridging
+        # if @toll_free_bridging.value? d.left.value
+        #           file.write "#{d.right.value}.isa = #{@toll_free_bridging.rassoc(d.left.value)[0]};\n"
+        #         end
         return
       elsif d.right.right.leaf? and d.right.value == "*"
         # type_name declaration with no initialixer: NSString *name;
@@ -422,7 +426,7 @@ module Vienna
           parser_error_on_node d, "'#{d.right.right.value}' is a reserved word"
         end
         symbol_table_add(d.right.right.value, d.left.value)
-        file.write "var #{d.right.value}"
+        file.write "var #{d.right.right.value}"
         return
       end
       

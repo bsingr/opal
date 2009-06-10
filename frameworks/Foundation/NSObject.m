@@ -170,7 +170,7 @@
 
 - (BOOL)respondsToSelector:(SEL)aSelector
 {
-    
+    return class_respondsToSelector(self.isa, aSelector);
 }
 
 - (id)retain

@@ -167,7 +167,7 @@ function objc_super()
 // 
 function objc_msgSend(self, op)
 {
-    printf("[" + self.isa.name + " " + op + "]");
+    // printf("[" + self.isa.name + " " + op + "]");
     var theMethodImp = class_getMethodImplementation(self.isa, op);
     return theMethodImp.apply(self, arguments);
 }
@@ -188,11 +188,29 @@ function objc_msgSendSuper(superCls, op)
 //  Copyright 2009 Adam Beynon. All rights reserved.
 // 
 
+function objc_exception()
+{
+    this._name = "";
+    this._reason = ""
+    this._userInfo = new CFDictionaryRef();
+    return this;
+}
+
+objc_exception.prototype.toString = function()
+{
+    return this._name + ": " + this._reason;
+}
+
+function objc_exception_create()
+{
+    return new objc_exception();
+}
+
 // extern void objc_exception_throw(id exception);
 // 
 function objc_exception_throw(exception)
 {
-    
+    throw exception;
 }
 
 // extern void objc_exception_try_enter(void *localExceptionData);
@@ -565,7 +583,11 @@ function class_getMethodImplementation(cls, name)
 // 
 function class_respondsToSelector(cls, sel)
 {
+    var theMethod = class_getInstanceMethod(cls, sel);
+    if(!theMethod)
+        return false;
     
+    return true;
 }
 
 // extern Method *class_copyMethodList(Class cls, unsigned int *outCount);

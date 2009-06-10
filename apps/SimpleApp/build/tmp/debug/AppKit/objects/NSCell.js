@@ -32,8 +32,8 @@ class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
 with(self) {
 objc_msgSendSuper({super_class:NSObject, receiver:self}, "initWithCoder:", aCoder);
 _value = objc_msgSend(aCoder, "decodeObjectForKey:", "NSContents");
-var _flags = objc_msgSend(aCoder, "decodeIntForKey:", "NSCellFlags");
-var _flags2 = objc_msgSend(aCoder, "decodeIntForKey:", "NSCellFlags2");
+var flags = objc_msgSend(aCoder, "decodeIntForKey:", "NSCellFlags");
+var flags2 = objc_msgSend(aCoder, "decodeIntForKey:", "NSCellFlags2");
 _state = (flags & 0x80000000) ? 1 : 0;
 _isHighlighted = (flags & 0x40000000) ? YES : NO;
 _isEnabled = (flags & 0x20000000) ? NO : YES;

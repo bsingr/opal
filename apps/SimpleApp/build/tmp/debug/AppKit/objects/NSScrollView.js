@@ -29,6 +29,7 @@ class_addIvar(the_class, "_transformToWindow", "CGAffineTransform");
 class_addIvar(the_class, "_visibleRect", "NSRect");
 class_addIvar(the_class, "_DOMContainer", "CGDOMElementRef");
 class_addIvar(the_class, "_DOMGraphicsContext", "CGDOMElementRef");
+class_addIvar(the_class, "_graphicsContext", "CGContextRef");
 class_addIvar(the_class, "_verticalScroller", "NSView");
 class_addIvar(the_class, "_horizontalScroller", "NSView");
 class_addIvar(the_class, "_clipView", "NSView");

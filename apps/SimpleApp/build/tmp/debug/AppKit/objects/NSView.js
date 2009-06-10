@@ -34,6 +34,7 @@ class_addIvar(the_class, "_transformToWindow", "CGAffineTransform");
 class_addIvar(the_class, "_visibleRect", "NSRect");
 class_addIvar(the_class, "_DOMContainer", "CGDOMElementRef");
 class_addIvar(the_class, "_DOMGraphicsContext", "CGDOMElementRef");
+class_addIvar(the_class, "_graphicsContext", "CGContextRef");
 
 class_addMethod(the_class, "DOMContainer", function(self, _cmd) {
 with(self) {
@@ -60,7 +61,9 @@ return self;
 
 class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
 with(self) {
-NSLog("View init with coder..");
+_DOMContainer = CGDOMElementCreate("div");
+_DOMGraphicsContext = CGDOMElementCreate("canvas");
+CGDOMElementAppendChild(_DOMContainer,_DOMGraphicsContext);
 _frame = NSMakeRect(0,0,0,0);
 _bounds = NSMakeRect(0,0,0,0);
 if (objc_msgSend(aCoder, "containsValueForKey:", "NSFrame"))
@@ -70,12 +73,25 @@ if (objc_msgSend(aCoder, "containsValueForKey:", "NSFrameSize"))
 _frame.size = objc_msgSend(aCoder, "decodeSizeForKey:", "NSFrameSize");
 
 
+_subviews = objc_msgSend(NSMutableArray, "array");
 var subviews = objc_msgSend(aCoder, "decodeObjectForKey:", "NSSubviews");
-NSLog(subviews);
+if (subviews)
+{
+var aSubview;
+var e = objc_msgSend(subviews,"objectEnumerator");
+while(aSubview = objc_msgSend(e,"nextObject"))
+{
+objc_msgSend(self, "addSubview:", aSubview);
+
+}
+
+}
+
 _bounds.origin = NSMakePoint(0,0);
 _bounds.size = _frame.size;
 _superview = null;
 _window = null;
+return self;
 }
 }, "void");
 
@@ -161,9 +177,9 @@ class_addMethod(the_class, "addSubview:", function(self, _cmd, aView) {
 with(self) {
 objc_msgSend(aView, "viewWillMoveToSuperview:", self);
 objc_msgSend(aView, "viewWillMoveToWindow:", _window);
-CGDOMElementAppendChild(objc_msgSend(self, "DOMContainer"),objc_msgSend(_contentView, "DOMContainer"));
-objc_msgSend(aView, "viewDidMoveToSuperview:", self);
-objc_msgSend(aView, "viewDidMoveToWindow:", _window);
+CGDOMElementAppendChild(objc_msgSend(self, "DOMContainer"),objc_msgSend(aView, "DOMContainer"));
+objc_msgSend(aView, "viewDidMoveToSuperview");
+objc_msgSend(aView, "viewDidMoveToWindow");
 objc_msgSend(self, "didAddSubview:", aView);
 objc_msgSend(_subviews, "addObject:", aView);
 }
@@ -181,6 +197,7 @@ with(self) {
 
 class_addMethod(the_class, "viewWillMoveToWindow:", function(self, _cmd, newWindow) {
 with(self) {
+_window = newWindow;
 }
 }, "void");
 
@@ -191,6 +208,7 @@ with(self) {
 
 class_addMethod(the_class, "viewWillMoveToSuperview:", function(self, _cmd, newSuperview) {
 with(self) {
+_superview = newSuperview;
 }
 }, "void");
 
@@ -211,6 +229,22 @@ with(self) {
 
 class_addMethod(the_class, "removeFromSuperview", function(self, _cmd) {
 with(self) {
+var theParentElement = {};
+if (_superview)
+{
+theParentElement = objc_msgSend(_superview, "DOMContainer");
+CGDOMElementRemoveChild(theParentElement,_DOMContainer);
+
+}
+else
+if (_window)
+{
+theParentElement = objc_msgSend(_window, "DOMContainer");
+CGDOMElementRemoveChild(theParentElement,_DOMContainer);
+
+}
+
+
 }
 }, "void");
 
@@ -276,6 +310,10 @@ with(self) {
 
 class_addMethod(the_class, "setFrame:", function(self, _cmd, frameRect) {
 with(self) {
+_frame = frameRect;
+CGDOMElementSetFrame(_DOMContainer,_frame);
+CGDOMElementSetFrame(_DOMGraphicsContext,_frame);
+objc_msgSend(self, "setNeedsDisplay:", YES);
 }
 }, "void");
 
@@ -346,6 +384,10 @@ with(self) {
 
 class_addMethod(the_class, "bounds", function(self, _cmd) {
 with(self) {
+if (_bounds)
+return _bounds;
+
+return NSMakeRect(0,0,_frame.size.width,_frame.size.height);
 }
 }, "void");
 
@@ -449,6 +491,7 @@ objc_msgSend(self, "setNeedsDisplayInRect:", objc_msgSend(self, "bounds"));
 
 class_addMethod(the_class, "setNeedsDisplayInRect:", function(self, _cmd, invalidRect) {
 with(self) {
+objc_msgSend(self, "displayRect:", invalidRect);
 }
 }, "void");
 
@@ -459,11 +502,18 @@ with(self) {
 
 class_addMethod(the_class, "lockFocus", function(self, _cmd) {
 with(self) {
+if (!_graphicsContext)
+_graphicsContext = objc_msgSend(NSGraphicsContext, "graphicsContextWithGraphicsPort:flipped:", CGDOMElementGetContext(_DOMGraphicsContext), NO);
+
+objc_msgSend(NSGraphicsContext, "setCurrentContext:", _graphicsContext);
+CGContextSaveGState(objc_msgSend(_graphicsContext, "graphicsPort"));
 }
 }, "void");
 
 class_addMethod(the_class, "unlockFocus", function(self, _cmd) {
 with(self) {
+CGContextRestoreGState(objc_msgSend(_graphicsContext, "graphicsPort"));
+objc_msgSend(NSGraphicsContext, "setCurrentContext:", null);
 }
 }, "void");
 
@@ -521,6 +571,8 @@ with(self) {
 
 class_addMethod(the_class, "drawRect:", function(self, _cmd, rect) {
 with(self) {
+var context = objc_msgSend(objc_msgSend(NSGraphicsContext, "currentContext"), "graphicsPort");
+CGContextFillRect(context,rect);
 }
 }, "void");
 
@@ -528,7 +580,7 @@ class_addMethod(the_class, "displayRectIgnoringOpacity:inContext:", function(sel
 with(self) {
 objc_msgSend(self, "lockFocus");
 objc_msgSend(self, "drawRect:", aRect);
-objc_msgSend(self, "unlcokFocus");
+objc_msgSend(self, "unlockFocus");
 }
 }, "void");
 

@@ -1,3 +1,11 @@
+function d()
+{
+return aSelector;
+}
+function NSSelectorFromString(aSelectorName)
+{
+return aSelectorName;
+}
 function NSLog(format)
 {
 printf(format);

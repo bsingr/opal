@@ -182,7 +182,12 @@ NSString *NSInvalidUnarchiveOperationException = @"NSInvalidUnarchiveOperationEx
 
 - (BOOL)containsValueForKey:(NSString *)key
 {
-    
+    id *theContext = [_contextStack lastObject];
+
+    if(CFDictionaryContainsKey(theContext, key))
+        return YES;
+        
+    return NO;
 }
 
 - (id)decodeObjectForKey:(NSString *)key
@@ -204,7 +209,7 @@ NSString *NSInvalidUnarchiveOperationException = @"NSInvalidUnarchiveOperationEx
     }
 
     id theObject = [theContext objectForKey:key];
-    
+
     return [self _decodeObject:theObject];
    
 }

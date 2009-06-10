@@ -11,6 +11,7 @@
 #include "math.h"
 #include "stdarg.h"
 #include "stdio.h"
+#include "objc_exception.h"
 
 typedef void *Protocol;
 typedef void *IMP;

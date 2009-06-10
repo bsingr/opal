@@ -30,3 +30,9 @@ return self;
 }
 }, "void");
 
+class_addMethod(the_class, "getIsa", function(self, _cmd) {
+with(self) {
+return isa;
+}
+}, "void");
+

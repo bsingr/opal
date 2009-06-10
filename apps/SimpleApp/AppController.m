@@ -20,6 +20,11 @@
 	return self;
 }
 
+- (Class)getIsa
+{
+    return isa;
+}
+
 @end
 
 void dome(int (*ptr)(int, float))

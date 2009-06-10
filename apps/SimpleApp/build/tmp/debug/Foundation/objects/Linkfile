@@ -1,9 +1,13 @@
 --- 
 NSKeyValueCoding.js: 
-  declarations: []
-
-  dependencies: []
-
+  declarations: 
+  - NSObject
+  - NSArray
+  - NSDictionary
+  - NSMutableDictionary
+  dependencies: 
+  - NSObject
+  - NSDictionary
 NSData.js: 
   declarations: 
   - NSData
@@ -42,6 +46,13 @@ NSGeometry.js:
 
   dependencies: []
 
+NSString.js: 
+  declarations: 
+  - NSString
+  - NSMutableString
+  dependencies: 
+  - NSObject
+  - NSString
 NSObjCRuntime.js: 
   declarations: []
 
@@ -50,6 +61,11 @@ NSObjCRuntime.js:
 NSBundle.js: 
   declarations: 
   - NSBundle
+  dependencies: 
+  - NSObject
+NSException.js: 
+  declarations: 
+  - NSException
   dependencies: 
   - NSObject
 NSNotification.js: 

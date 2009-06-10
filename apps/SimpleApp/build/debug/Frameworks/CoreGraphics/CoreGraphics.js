@@ -146,73 +146,30 @@ function CGBitmapContextCreateImage (c)
 //  Copyright 2009 Adam Beynon. All rights reserved.
 // 
 
-// enum CGLineJoin {
-//     kCGLineJoinMiter,
-//     kCGLineJoinRound,
-//     kCGLineJoinBevel
-// };
 var CGLineJoinCanvas = ["miter", "round", "bevel"];
 
-// enum CGLineCap {
-//     kCGLineCapButt,
-//     kCGLineCapRound,
-//     kCGLineCapSquare
-// };
 var CGLineCapCanvas = ["butt", "round", "square"];
 
-// enum CGPathDrawingMode {
-//     kCGPathFill,
-//     kCGPathEOFill,
-//     kCGPathStroke,
-//     kCGPathFillStroke,
-//     kCGEOFillStroke
-// };
-
- 
-// enum CGTextDrawingMode {
-//     kCGTextFill,
-//     kCGTextStroke,
-//     kCGFillStroke,
-//     kCGTextInvisible,
-//     kCGTextFillClip,
-//     kCGTextStrokeClip,
-//     kCGTextFillStrokeClip,
-//     kCGTextClip
-// };
-
-// extern CFTypeID CGContextGetTypeID(void);
-// 
-
-// extern void CGContextSaveGState(CGContextRef c);
-// 
 function CGContextSaveGState (c)
 {
     c.save();
 }
 
-// extern void CGContextRestoreGState(CGContextRef c);
-// 
 function CGContextRestoreGState (c)
 {
     c.restore();
 }
 
-// extern void CGContextScaleCTM(CGContextRef c, CGFloat sx, CGFloat sy);
-// 
 function CGContextScaleCTM(c, sx, sy)
 {
     c.scale(sx, sy);
 }
 
-// extern void CGContextTranslateCTM(CGContextRef c, CGFloat tx, CGFloat ty);
-// 
 function CGContextTranslateCTM(c, tx, ty)
 {
     c.translate(tx, ty);
 }
 
-// extern void CGContextRotateCTM(CGContextRef c, CGFloat angle);
-// 
 function CGContextRotateCTM(c, angle)
 {
     c.rotate(angle);
@@ -232,29 +189,21 @@ function CGContextGetCTM(c)
     
 }
 
-// extern void CGContextSetLineWidth(CGContextRef c, CGFloat width);
-// 
 function CGContextSetLineWidth(c, width)
 {
     c.lineWidth = width;
 }
 
-// extern void CGContextSetLineCap(CGContextRef c, CGLineCap cap);
-// 
 function CGContextSetLineCap(c, cap)
 {
     c.lineCap = CGLineCapCanvas[cap];
 }
 
-// extern void CGContextSetLineJoin(CGContextRef c, CGLineJoin join);
-// 
 function CGContextSetLineJoin(c, join)
 {
     c.lineJoin = CGLineJoinCanvas[join];
 }
 
-// extern void CGContextSetMiterLimit(CGContextRef c, CGFloat limit);
-// 
 function CGContextSetMiterLimit(c, limit)
 {
     c.miterLimit = limit;
@@ -274,8 +223,6 @@ function CGContextSetFlatness(c, flatness)
     
 }
 
-// extern void CGContextSetAlpha(CGContextRef c, CGFloat alpha);
-// 
 function CGContextSetAlpha(c, alpha)
 {
     c.globalAlpha = alpha;

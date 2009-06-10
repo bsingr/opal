@@ -31,8 +31,8 @@
     [super initWithCoder:aCoder];
     
     _value = [aCoder decodeObjectForKey:@"NSContents"];
-    NSInteger _flags = [aCoder decodeIntForKey:@"NSCellFlags"];
-    NSInteger _flags2 = [aCoder decodeIntForKey:@"NSCellFlags2"];
+    NSInteger flags = [aCoder decodeIntForKey:@"NSCellFlags"];
+    NSInteger flags2 = [aCoder decodeIntForKey:@"NSCellFlags2"];
     
     _state = (flags & 0x80000000) ? NSOnState : NSOffState;
     _isHighlighted = (flags & 0x40000000) ? YES : NO;

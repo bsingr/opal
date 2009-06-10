@@ -19,7 +19,9 @@
 #import <Foundation/NSDate.h>
 #import <Foundation/NSDictionary.h>
 #import <Foundation/NSEnumerator.h>
+#import <Foundation/NSException.h>
 #import <Foundation/NSGeometry.h>
+#import <Foundation/NSKeyValueCoding.h>
 #import <Foundation/NSNotification.h>
 #import <Foundation/NSPropertyList.h>
 #import <Foundation/NSProxy.h>

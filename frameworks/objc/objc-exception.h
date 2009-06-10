@@ -8,6 +8,12 @@
 
 #import <objc/objc.h>
 
+typedef struct {
+    void    *_name;
+    void    *_reason;
+    void    *_userInfo;
+} objc_exception;
+
 extern void objc_exception_throw(id exception);
 extern void objc_exception_try_enter(void *localExceptionData);
 extern void objc_exception_try_exit(void *localExceptionData);

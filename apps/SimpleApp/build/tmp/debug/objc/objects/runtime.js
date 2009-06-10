@@ -292,7 +292,11 @@ function class_getMethodImplementation(cls, name)
 // 
 function class_respondsToSelector(cls, sel)
 {
+    var theMethod = class_getInstanceMethod(cls, sel);
+    if(!theMethod)
+        return false;
     
+    return true;
 }
 
 // extern Method *class_copyMethodList(Class cls, unsigned int *outCount);

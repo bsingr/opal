@@ -192,7 +192,12 @@ function CFStringGetDoubleValue(str)
 // 
 function CFStringAppend(theString, appendedString)
 {
-    
+    theString = theString + appendedString;
+}
+
+function CFStringByAppendingStrings(theFirst, theSecond)
+{
+    return theFirst + theSecond;
 }
 
 // extern void CFStringAppendFormat(CFMutableStringRef theString, CFDictionaryRef formatOptions, CFStringRef format, ...);
@@ -283,5 +288,5 @@ function CFStringUppercase(theStirng, locale)
 // 
 function CFStringCapitalize(theString, locale)
 {
-    
+    return theString.charAt(0).toUpperCase() + theString.substr(1);
 }

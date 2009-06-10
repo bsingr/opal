@@ -162,6 +162,11 @@ with(self) {
 
 class_addMethod(the_class, "containsValueForKey:", function(self, _cmd, key) {
 with(self) {
+var theContext = objc_msgSend(_contextStack, "lastObject");
+if (CFDictionaryContainsKey(theContext,key))
+return YES;
+
+return NO;
 }
 }, "void");
 

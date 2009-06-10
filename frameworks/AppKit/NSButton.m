@@ -9,9 +9,6 @@
 #import "NSButton.h"
 
 @implementation NSButton
-{
-    
-}
 
 - (NSString *)title
 {

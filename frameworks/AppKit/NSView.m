@@ -23,11 +23,9 @@
 {    
     self = [self init];
     if (self) {
-        
         _DOMContainer = CGDOMElementCreate(@"div");
         _DOMGraphicsContext = CGDOMElementCreate(@"canvas");
         CGDOMElementAppendChild(_DOMContainer, _DOMGraphicsContext);
-        
         _subviews = [NSMutableArray arrayWithCapacity:0];
         [self setFrame:frameRect];
     }
@@ -37,23 +35,39 @@
 - (id)initWithCoder:(NSCoder *)aCoder
 {
     // [super initWithCoder:aCoder];
-	NSLog(@"View init with coder..");
+	_DOMContainer = CGDOMElementCreate(@"div");
+    _DOMGraphicsContext = CGDOMElementCreate(@"canvas");
+    CGDOMElementAppendChild(_DOMContainer, _DOMGraphicsContext);
+    
     _frame = NSMakeRect (0,0,0,0);
     _bounds = NSMakeRect (0,0,0,0);
     
+    
     if ([aCoder containsValueForKey:@"NSFrame"])
         _frame = [aCoder decodeRectForKey:@"NSFrame"];
-    else if ([aCoder containsValueForKey:@"NSFrameSize"])
+    else if([aCoder containsValueForKey:@"NSFrameSize"])
         _frame.size = [aCoder decodeSizeForKey:@"NSFrameSize"];
     
+    _subviews = [NSMutableArray array];
 	NSArray *subviews = [aCoder decodeObjectForKey:@"NSSubviews"];
-	NSLog(subviews);
+    
+    if(subviews)
+    {
+        NSView *aSubview;
+        for(aSubview in subviews)
+        {
+            [self addSubview:aSubview];
+        }
+    }
+    
 
     _bounds.origin = NSMakePoint (0,0);
     _bounds.size = _frame.size;
     
     _superview = nil;
     _window = nil;
+    
+    return self;
 }
 
 - (NSWindow *)window
@@ -135,11 +149,11 @@
 {
     [aView viewWillMoveToSuperview:self];
     [aView viewWillMoveToWindow:_window];
-	
-	CGDOMElementAppendChild([self DOMContainer], [_contentView DOMContainer]);
 
-    [aView viewDidMoveToSuperview:self];
-    [aView viewDidMoveToWindow:_window];
+	CGDOMElementAppendChild([self DOMContainer], [aView DOMContainer]);
+
+    [aView viewDidMoveToSuperview];
+    [aView viewDidMoveToWindow];
     [self didAddSubview:aView];
     [_subviews addObject:aView];
 }
@@ -156,7 +170,7 @@
 
 - (void)viewWillMoveToWindow:(NSWindow *)newWindow
 {
-    // TODO: Need to implement
+    _window = newWindow;
 }
 
 - (void)viewDidMoveToWindow
@@ -166,7 +180,7 @@
 
 - (void)viewWillMoveToSuperview:(NSView *)newSuperview
 {
-    // TODO: Need to implement
+    _superview = newSuperview;
 }
 
 - (void)viewDidMoveToSuperview
@@ -186,7 +200,18 @@
 
 - (void)removeFromSuperview
 {
-    // TODO: Need to implement
+    CGDOMElementRef theParentElement;
+    if(_superview)
+    {
+        theParentElement = [_superview DOMContainer];
+        CGDOMElementRemoveChild(theParentElement, _DOMContainer);
+    }
+    else if(_window)
+    {
+        theParentElement = [_window DOMContainer];
+        CGDOMElementRemoveChild(theParentElement, _DOMContainer);
+    }
+    
 }
 
 - (void)replaceSubview:(NSView *)oldView with:(NSView *)newView
@@ -252,7 +277,10 @@
 
 - (void)setFrame:(NSRect)frameRect
 {
-    // TODO: Need to implement
+    _frame = frameRect;
+    CGDOMElementSetFrame(_DOMContainer, _frame);
+    CGDOMElementSetFrame(_DOMGraphicsContext, _frame);
+    [self setNeedsDisplay:YES];
 }
 
 - (NSRect)frame
@@ -323,7 +351,10 @@
 
 - (NSRect)bounds
 {
-    // TODO: Need to implement
+    if(_bounds)
+        return _bounds;
+        
+    return NSMakeRect(0, 0, _frame.size.width, _frame.size.height);
 }
 
 
@@ -428,7 +459,7 @@
 
 - (void)setNeedsDisplayInRect:(NSRect)invalidRect
 {
-    // TODO: Need to implement
+    [self displayRect:invalidRect];
 }
 
 - (BOOL)needsDisplay
@@ -438,12 +469,17 @@
 
 - (void)lockFocus
 {
-    
+    if (!_graphicsContext)
+		_graphicsContext = [NSGraphicsContext graphicsContextWithGraphicsPort:CGDOMElementGetContext(_DOMGraphicsContext) flipped:NO];
+	
+	[NSGraphicsContext setCurrentContext:_graphicsContext];
+	CGContextSaveGState([_graphicsContext graphicsPort]);
 }
 
 - (void)unlockFocus
 {
-    // TODO: Need to implement
+    CGContextRestoreGState([_graphicsContext graphicsPort]);
+	[NSGraphicsContext setCurrentContext:nil];
 }
 
 - (BOOL)lockFocusIfCanDraw
@@ -506,14 +542,15 @@
 
 - (void)drawRect:(NSRect)rect
 {
-    // TODO: Need to implement
+    CGContextRef context = [[NSGraphicsContext currentContext] graphicsPort];
+    CGContextFillRect(context, rect);
 }
 
 - (void)displayRectIgnoringOpacity:(NSRect)aRect inContext:(NSGraphicsContext *)context
 {
 	[self lockFocus];
 	[self drawRect:aRect];
-	[self unlcokFocus];
+	[self unlockFocus];
 }
 
 

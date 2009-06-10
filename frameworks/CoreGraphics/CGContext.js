@@ -6,73 +6,30 @@
 //  Copyright 2009 Adam Beynon. All rights reserved.
 // 
 
-// enum CGLineJoin {
-//     kCGLineJoinMiter,
-//     kCGLineJoinRound,
-//     kCGLineJoinBevel
-// };
 var CGLineJoinCanvas = ["miter", "round", "bevel"];
 
-// enum CGLineCap {
-//     kCGLineCapButt,
-//     kCGLineCapRound,
-//     kCGLineCapSquare
-// };
 var CGLineCapCanvas = ["butt", "round", "square"];
 
-// enum CGPathDrawingMode {
-//     kCGPathFill,
-//     kCGPathEOFill,
-//     kCGPathStroke,
-//     kCGPathFillStroke,
-//     kCGEOFillStroke
-// };
-
- 
-// enum CGTextDrawingMode {
-//     kCGTextFill,
-//     kCGTextStroke,
-//     kCGFillStroke,
-//     kCGTextInvisible,
-//     kCGTextFillClip,
-//     kCGTextStrokeClip,
-//     kCGTextFillStrokeClip,
-//     kCGTextClip
-// };
-
-// extern CFTypeID CGContextGetTypeID(void);
-// 
-
-// extern void CGContextSaveGState(CGContextRef c);
-// 
 function CGContextSaveGState (c)
 {
     c.save();
 }
 
-// extern void CGContextRestoreGState(CGContextRef c);
-// 
 function CGContextRestoreGState (c)
 {
     c.restore();
 }
 
-// extern void CGContextScaleCTM(CGContextRef c, CGFloat sx, CGFloat sy);
-// 
 function CGContextScaleCTM(c, sx, sy)
 {
     c.scale(sx, sy);
 }
 
-// extern void CGContextTranslateCTM(CGContextRef c, CGFloat tx, CGFloat ty);
-// 
 function CGContextTranslateCTM(c, tx, ty)
 {
     c.translate(tx, ty);
 }
 
-// extern void CGContextRotateCTM(CGContextRef c, CGFloat angle);
-// 
 function CGContextRotateCTM(c, angle)
 {
     c.rotate(angle);
@@ -92,29 +49,21 @@ function CGContextGetCTM(c)
     
 }
 
-// extern void CGContextSetLineWidth(CGContextRef c, CGFloat width);
-// 
 function CGContextSetLineWidth(c, width)
 {
     c.lineWidth = width;
 }
 
-// extern void CGContextSetLineCap(CGContextRef c, CGLineCap cap);
-// 
 function CGContextSetLineCap(c, cap)
 {
     c.lineCap = CGLineCapCanvas[cap];
 }
 
-// extern void CGContextSetLineJoin(CGContextRef c, CGLineJoin join);
-// 
 function CGContextSetLineJoin(c, join)
 {
     c.lineJoin = CGLineJoinCanvas[join];
 }
 
-// extern void CGContextSetMiterLimit(CGContextRef c, CGFloat limit);
-// 
 function CGContextSetMiterLimit(c, limit)
 {
     c.miterLimit = limit;
@@ -134,8 +83,6 @@ function CGContextSetFlatness(c, flatness)
     
 }
 
-// extern void CGContextSetAlpha(CGContextRef c, CGFloat alpha);
-// 
 function CGContextSetAlpha(c, alpha)
 {
     c.globalAlpha = alpha;
@@ -148,53 +95,39 @@ function CGContextSetBlendMode(c, mode)
     
 }
 
-// extern void CGContextBeginPath(CGContextRef c);
-// 
 function CGContextBeginPath(c)
 {
-    
+    c.beginPath();
 }
 
-// extern void CGContextMoveToPoint(CGContextRef c, CGFloat x, CGFloat y);
-// 
 function CGContextMoveToPoint(c, x, y)
 {
-    
+    c.moveTo(x, y);
 }
 
-// extern void CGContextAddLineToPoint(CGContextRef c, CGFloat x, CGFloat y);
-// 
 function CGContextAddLineToPoint(c, x, y)
 {
-    
+    c.lineTo(x, y);
 }
 
-// extern void CGContextAddCurveToPoint(CGContextRef c, CGFloat cp1x, CGFloat cp1y, CGFloat cp2x, CGFloat cp2y, CGFloat x, CGFloat y);
-// 
 function CGContextAddCurveToPoint(c, cp1x, cp1y, cp2x, cp2y, x, y)
 {
-    
+    c.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y);
 }
 
-// extern void CGContextAddQuadCurveToPoint(CGContextRef c, CGFloat cpx, CGFloat cpy, CGFloat x, CGFloat y);
-// 
 function CGContextAddQuadCurveToPoint(c, cpx, cpy, x, y)
 {
-    
+    c.quadraticCurveTo(cpx, cpy, x, y);
 }
 
-// extern void CGContextClosePath(CGContextRef c);
-// 
 function CGContextClosePath(c)
 {
-    
+    c.closePath();
 }
 
-// extern void CGContextAddRect(CGContextRef c, CGRect rect);
-// 
 function CGContextAddRect(c, rect)
 {
-    
+    c.rect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
 }
 
 // extern void CGContextAddRects(CGContextRef c, const CGRect rects[], size_t count);
@@ -218,18 +151,14 @@ function CGContextAddEllipeInRect(c, rect)
     
 }
 
-// extern void CGContextAddArc(CGContextRef c, CGFloat x, CGFloat y, CGFloat radius, CGFloat startAngle, CGFloat endAngle, int clockwise);
-// 
 function CGContextAddArc(c, x, y, radius, startAngle, endAngle, clockwise)
 {
-    
+    c.arc(x, y, radius, startAngle, endAngle, clockwise);
 }
 
-// extern void CGContextAddArcToPoint(CGContextRef c, CGFloat x1, CGFloat y1, CGFloat x2, CGFloat y2, CGFloat radius);
-// 
 function CGContextAddArcToPoint(c, x1, y1, x2, y2, radius)
 {
-    
+    c.arcTo(x1, y1, x2, y2, radius);
 }
 
 // extern void CGContextAddPath(CGContextRef context, CGPathRef path);

@@ -242,7 +242,6 @@
     [_contentView viewDidMoveToSuperview];
     [_contentView viewDidMoveToWindow];
     [_contentView setNextResponder:self];
-    
     CGDOMElementAppendChild([self DOMContainer], [_contentView DOMContainer]);
 }
 
@@ -1259,9 +1258,10 @@
 
 - (void)drawRect:(NSRect)rect
 {
-	CGContextRef context = [[NSGraphicsContext currentContext] graphicsPort];
+	CGContextRef c = [[NSGraphicsContext currentContext] graphicsPort];
 	
-    CGContextFillRect(context, rect);
+    CGContextSetAlpha(c, 0.3);
+    CGContextFillRect(c, rect);
 }
 
 - (void)displayRectIgnoringOpacity:(NSRect)aRect inContext:(NSGraphicsContext *)context

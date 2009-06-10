@@ -110,6 +110,7 @@ return class_conformsToProtocol(self,aProtocol);
 
 class_addMethod(the_class, "respondsToSelector:", function(self, _cmd, aSelector) {
 with(self) {
+return class_respondsToSelector(self.isa,aSelector);
 }
 }, "void");
 

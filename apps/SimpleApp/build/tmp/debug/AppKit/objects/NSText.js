@@ -29,6 +29,7 @@ class_addIvar(the_class, "_transformToWindow", "CGAffineTransform");
 class_addIvar(the_class, "_visibleRect", "NSRect");
 class_addIvar(the_class, "_DOMContainer", "CGDOMElementRef");
 class_addIvar(the_class, "_DOMGraphicsContext", "CGDOMElementRef");
+class_addIvar(the_class, "_graphicsContext", "CGContextRef");
 class_addIvar(the_class, "_string", "NSString");
 class_addIvar(the_class, "_backgroundColor", "NSColor");
 class_addIvar(the_class, "_drawsBackground", "BOOL");

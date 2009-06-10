@@ -8,6 +8,16 @@
 
 #import "NSObjCRuntime.h"
 
+NSString *NSStringFromSelector(SEL aSelector)
+{
+    return aSelector;
+}
+
+SEL NSSelectorFromString(NSString *aSelectorName)
+{
+    return aSelectorName;
+}
+
 void NSLog(NSString *format)
 {
 	printf(format);

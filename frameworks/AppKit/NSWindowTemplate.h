@@ -6,7 +6,7 @@
 //  Copyright 2009 Adam Beynon. All rights reserved.
 // 
 
-#import <Foudation/Foundation.h>
+#import <Foundation/Foundation.h>
 #import <AppKit/NSView.h>
 
 @interface NSWindowTemplate : NSObject

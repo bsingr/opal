@@ -110,6 +110,7 @@ return class_conformsToProtocol(self,aProtocol);
 
 class_addMethod(the_class, "respondsToSelector:", function(self, _cmd, aSelector) {
 with(self) {
+return class_respondsToSelector(self.isa,aSelector);
 }
 }, "void");
 
@@ -1497,6 +1498,70 @@ return _array;
 }
 }, "void");
 
+var the_class = objc_allocateClassPair(NSObject, "NSException");
+var meta_class = the_class.isa;
+objc_registerClassPair(the_class);
+class_addIvar(the_class, "isa", "Class");
+
+class_addMethod(the_class, "initWithName:reason:userInfo:", function(self, _cmd, aName, aReason, aUserInfo) {
+with(self) {
+_name = aName;
+_reason = aReason;
+_userInfo = aUserInfo;
+return self;
+}
+}, "void");
+
+class_addMethod(the_class, "name", function(self, _cmd) {
+with(self) {
+return _name;
+}
+}, "void");
+
+class_addMethod(the_class, "reason", function(self, _cmd) {
+with(self) {
+return _reason;
+}
+}, "void");
+
+class_addMethod(the_class, "userInfo", function(self, _cmd) {
+with(self) {
+return _userInfo;
+}
+}, "void");
+
+class_addMethod(the_class, "raise", function(self, _cmd) {
+with(self) {
+objc_exception_throw(self);
+}
+}, "void");
+
+class_addMethod(meta_class, "alloc", function(self, _cmd) {
+with(self) {
+return objc_exception_create();
+}
+}, "void");
+
+class_addMethod(meta_class, "exceptionWithName:reason:userInfo:", function(self, _cmd, name, reason, userInfo) {
+with(self) {
+return objc_msgSend(objc_msgSend(self, "alloc"), "initWithName:reason:userInfo:", name, reason, userInfo);
+}
+}, "void");
+
+objc_exception.prototype.isa = NSException;
+var the_class = NSException;
+var meta_class = the_class.isa;
+
+class_addMethod(meta_class, "raise:format:", function(self, _cmd, name, format) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(meta_class, "raise:format:arguments:", function(self, _cmd, name, format, argList) {
+with(self) {
+}
+}, "void");
+
 function NSMakePoint(x,y)
 {
 var p = {x:0,y:0,};
@@ -1798,6 +1863,11 @@ with(self) {
 
 class_addMethod(the_class, "containsValueForKey:", function(self, _cmd, key) {
 with(self) {
+var theContext = objc_msgSend(_contextStack, "lastObject");
+if (CFDictionaryContainsKey(theContext,key))
+return YES;
+
+return NO;
 }
 }, "void");
 
@@ -1971,6 +2041,146 @@ var NSSumKeyValueOperator = "NSSumKeyValueOperator";
 var NSUnionOfArraysKeyValueOperator = "NSUnionOfArraysKeyValueOperator";
 var NSUnionOfObjectsKeyValueOperator = "NSUnionOfObjectsKeyValueOperator";
 var NSUnionOfSetsKeyValueOperator = "NSUnionOfSetsKeyValueOperator";
+var the_class = NSObject;
+var meta_class = the_class.isa;
+
+class_addMethod(the_class, "valueForKey:", function(self, _cmd, key) {
+with(self) {
+var accessorName = objc_msgSend("get", "stringByAppendingString:", objc_msgSend(key, "capitalizedString"));
+if (objc_msgSend(self, "respondsToSelector:", NSSelectorFromString(accessorName)))
+return objc_msgSend(self, "performSelector:", NSSelectorFromString(accessorName));
+
+accessorName = key;
+if (objc_msgSend(self, "respondsToSelector:", NSSelectorFromString(accessorName)))
+return objc_msgSend(self, "performSelector:", NSSelectorFromString(accessorName));
+
+accessorName = objc_msgSend("is", "stringByAppendingString:", objc_msgSend(key, "capitalizedString"));
+if (objc_msgSend(self, "respondsToSelector:", NSSelectorFromString(accessorName)))
+return objc_msgSend(self, "performSelector:", NSSelectorFromString(accessorName));
+
+if (objc_msgSend(self.isa, "accessInstanceVariablesDirectly"))
+{
+var theIvar = 0;
+accessorName = objc_msgSend("_", "stringByAppendingString:", key);
+if (theIvar = object_getInstanceVariable(self,accessorName))
+return theIvar;
+
+accessorName = objc_msgSend("_", "stringByAppendingString:", objc_msgSend("is", "stringByAppendingString:", objc_msgSend(key, "capitalizedString")));
+if (theIvar = object_getInstanceVariable(self,accessorName))
+return theIvar;
+
+accessorName = key;
+if (theIvar = object_getInstanceVariable(self,accessorName))
+return theIvar;
+
+accessorName = objc_msgSend("is", "stringByAppendingString:", objc_msgSend(key, "capitalizedString"));
+if (theIvar = object_getInstanceVariable(self,accessorName))
+return theIvar;
+
+
+}
+
+return objc_msgSend(self, "valueForUndefinedKey:", key);
+}
+}, "void");
+
+class_addMethod(the_class, "setValue:forKey:", function(self, _cmd, value, key) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "validateValue:forKey:error:", function(self, _cmd, ioValue, inKey, outError) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "mutableArrayValueForKey:", function(self, _cmd, key) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "valueForKeyPath:", function(self, _cmd, keyPath) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setValue:forKeyPath:", function(self, _cmd, value, keyPath) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "validateValue:forKeyPath:error:", function(self, _cmd, ioValue, inKeyPath, outError) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "mutableArrayValueForKeyPath:", function(self, _cmd, keyPath) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "valueForUndefinedKey:", function(self, _cmd, key) {
+with(self) {
+objc_msgSend(objc_msgSend(NSException, "exceptionWithName:reason:userInfo:", NSUndefinedKeyException, objc_msgSend("Undefined key was requested from object: ", "stringByAppendingString:", key), null), "raise");
+return null;
+}
+}, "void");
+
+class_addMethod(the_class, "setValue:forUndefinedKey:", function(self, _cmd, value, key) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setNilValueForKey:", function(self, _cmd, key) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "dictionaryWithValuesForKeys:", function(self, _cmd, keys) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setValuesForKeysWithDictionary:", function(self, _cmd, keyedValues) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(meta_class, "accessInstanceVariablesDirectly", function(self, _cmd) {
+with(self) {
+return YES;
+}
+}, "void");
+
+var the_class = NSArray;
+var meta_class = the_class.isa;
+
+class_addMethod(the_class, "valueForKey:", function(self, _cmd, key) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setValue:forKey:", function(self, _cmd, value, key) {
+with(self) {
+}
+}, "void");
+
+var the_class = NSDictionary;
+var meta_class = the_class.isa;
+
+class_addMethod(the_class, "valueForKey:", function(self, _cmd, key) {
+with(self) {
+}
+}, "void");
+
+var the_class = NSMutableDictionary;
+var meta_class = the_class.isa;
+
+class_addMethod(the_class, "setValue:forKey:", function(self, _cmd, value, key) {
+with(self) {
+}
+}, "void");
+
 var NSKeyValueChangeKindKey = "NSKeyValueChangeKindKey";
 var NSKeyValueChangeNewKey = "NSKeyValueChangeNewKey";
 var NSKeyValueChangeOldKey = "NSKeyValueChangeOldKey";
@@ -2050,6 +2260,14 @@ with(self) {
 }
 }, "void");
 
+function d()
+{
+return aSelector;
+}
+function NSSelectorFromString(aSelectorName)
+{
+return aSelectorName;
+}
 function NSLog(format)
 {
 printf(format);
@@ -2120,6 +2338,583 @@ with(self) {
 }, "void");
 
 class_addMethod(meta_class, "respondsToSelector:", function(self, _cmd, aSelector) {
+with(self) {
+}
+}, "void");
+
+var the_class = objc_allocateClassPair(NSObject, "NSString");
+var meta_class = the_class.isa;
+objc_registerClassPair(the_class);
+class_addIvar(the_class, "isa", "Class");
+
+class_addMethod(the_class, "length", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "characterAtIndex:", function(self, _cmd, index) {
+with(self) {
+}
+}, "void");
+
+String.prototype.isa = NSString;
+var the_class = NSString;
+var meta_class = the_class.isa;
+
+class_addMethod(the_class, "getCharacters:", function(self, _cmd, buffer) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "getCharacters:range:", function(self, _cmd, buffer, aRange) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "substringFromIndex:", function(self, _cmd, from) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "substringToIndex:", function(self, _cmd, to) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "substringWithRange:", function(self, _cmd, range) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "compare:", function(self, _cmd, string) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "compare:options:", function(self, _cmd, string, mask) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "compare:options:range:", function(self, _cmd, string, mask, compareRange) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "compare:options:range:locale:", function(self, _cmd, string, mask, compareRange, locale) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "caseInsensitiveCompare:", function(self, _cmd, string) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "localizedCompare:", function(self, _cmd, string) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "localizedCaseInsensitiveCompare:", function(self, _cmd, string) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "isEqualToString:", function(self, _cmd, aString) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "hasPrefix:", function(self, _cmd, aString) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "hasSuffix:", function(self, _cmd, aString) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "rangeOfString:", function(self, _cmd, aString) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "rangeOfString:options:", function(self, _cmd, aString, mask) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "rangeOfString:options:range:", function(self, _cmd, aString, mask, searchRange) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "rangeOfString:options:range:locale:", function(self, _cmd, aString, mask, searchRange, locale) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "rangeOfCharacterFromSet:", function(self, _cmd, aSet) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "rangeOfCharacterFromSet:options:", function(self, _cmd, aSet, mask) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "rangeOfCharacterFromSet:options:range:", function(self, _cmd, aSet, mask, searchRange) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "rangeOfComposedCharacterSequenceAtIndex:", function(self, _cmd, index) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "rangeOfComposedCharacterSequencesForRange:", function(self, _cmd, range) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "stringByAppendingString:", function(self, _cmd, aString) {
+with(self) {
+return CFStringByAppendingStrings(self,aString);
+}
+}, "void");
+
+class_addMethod(the_class, "stringByAppendingFormat:", function(self, _cmd, format) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "doubleValue", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "floatValue", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "intValue", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "integerValue", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "longLongValue", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "boolValue", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "componentsSeparatedByString:", function(self, _cmd, separator) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "componentsSeparatedByCharactersInSet:", function(self, _cmd, separator) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "commonPrefixWithString:options:", function(self, _cmd, aString, mask) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "uppercaseString", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "lowercaseString", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "capitalizedString", function(self, _cmd) {
+with(self) {
+return CFStringCapitalize(self,null);
+}
+}, "void");
+
+class_addMethod(the_class, "stringByTrimmingCharactersInSet:", function(self, _cmd, set) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "stringByPaddingToLength:withString:startingAtIndex:", function(self, _cmd, newLength, padString, padIndex) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "getLineStart:end:contentsEnd:forRange:", function(self, _cmd, startPtr, lineEndPtr, contentsEndPtr, range) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "lineRangeForRange:", function(self, _cmd, range) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "getParagraphStart:end:contentsEnd:forRange:", function(self, _cmd, startPtr, parEndPtr, contentsEndPtr, range) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "paragraphRangeForRange:", function(self, _cmd, range) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "description", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "hash", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "fastestEncoding", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "smallestEncoding", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "dataUsingEncoding:allowLossyConversion:", function(self, _cmd, encoding, lossy) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "dataUsingEncoding:", function(self, _cmd, encoding) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "canBeConvertedToEncoding:", function(self, _cmd, encoding) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "cStringUsingEncoding:", function(self, _cmd, encoding) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "getCString:maxLength:encoding:", function(self, _cmd, buffer, maxBufferCount, encoding) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "getBytes:maxLength:usedLength:encoding:options:range:remainingRange:", function(self, _cmd, buffer, maxBufferCount, usedBufferCount, encoding, options, range, leftover) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "maximumLengthOfBytesUsingEncoding:", function(self, _cmd, enc) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "lengthOfBytesUsingEncoding:", function(self, _cmd, enc) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "decomposedStringWithCanonicalMapping", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "precomposedStringWithCanonicalMapping", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "decomposedStringWithCompatibilityMapping", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "precomposedStringWithCompatibilityMapping", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "stringByFoldingWithOptions:locale:", function(self, _cmd, options, locale) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "stringByReplacingOccurrencesOfString:withString:options:range:", function(self, _cmd, target, replacement, options, searchRange) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "stringByReplacingOccurrencesOfString:withString:", function(self, _cmd, target, replacement) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "stringByReplacingCharactersInRange:withString:", function(self, _cmd, range, replacement) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "UTF8String", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "init", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "initWithCharactersNoCopy:length:freeWhenDone:", function(self, _cmd, characters, length, freeBuffer) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "initWithCharacters:length:", function(self, _cmd, characters, length) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "initWithUTF8String:", function(self, _cmd, nullTerminatedCString) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "initWithString:", function(self, _cmd, aString) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "initWithFormat:", function(self, _cmd, format) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "initWithFormat:arguments:", function(self, _cmd, format, argList) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "initWithFormat:locale:", function(self, _cmd, format, locale) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "initWithFormat:locale:arguments:", function(self, _cmd, format, locale, argList) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "initWithData:encoding:", function(self, _cmd, data, encoding) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "initWithBytes:length:encoding:", function(self, _cmd, bytes, len, encoding) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "initWithBytesNoCopy:length:encoding:freeWhenDone:", function(self, _cmd, bytes, len, encoding, freeBuffer) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "initWithCString:encoding:", function(self, _cmd, nullTerminatedCString, encoding) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "initWithContentsOfURL:encoding:error:", function(self, _cmd, url, enc, error) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "initWithContentsOfFile:encoding:error:", function(self, _cmd, path, enc, error) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "initWithContentsOfURL:usedEncoding:error:", function(self, _cmd, url, enc, error) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "initWithContentsOfFile:usedEncoding:error:", function(self, _cmd, path, enc, error) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "writeToURL:atomically:encoding:error:", function(self, _cmd, url, useAuxiliaryFile, enc, error) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "writeToFile:atomically:encoding:error:", function(self, _cmd, path, useAuxiliaryFile, enc, error) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(meta_class, "defaultCStringEncoding", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(meta_class, "availableStringEncodings", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(meta_class, "localizedNameOfStringEncoding:", function(self, _cmd, encoding) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(meta_class, "string", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(meta_class, "stringWithString:", function(self, _cmd, string) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(meta_class, "stringWithCharacters:length:", function(self, _cmd, characters, length) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(meta_class, "stringWithUTF8String:", function(self, _cmd, nullTerminatedCString) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(meta_class, "stringWithFormat:", function(self, _cmd, format) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(meta_class, "localizedStringWithFormat:", function(self, _cmd, format) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(meta_class, "stringWithCString:encoding:", function(self, _cmd, cString, enc) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(meta_class, "stringWithContentsOfURL:encoding:error:", function(self, _cmd, url, enc, error) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(meta_class, "stringWithContentsOfFile:encoding:error:", function(self, _cmd, path, enc, error) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(meta_class, "stringWithContentsOfURL:usedEncoding:error:", function(self, _cmd, url, enc, error) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(meta_class, "stringWithContentsOfFile:usedEncoding:error:", function(self, _cmd, path, enc, error) {
+with(self) {
+}
+}, "void");
+
+var the_class = objc_allocateClassPair(NSString, "NSMutableString");
+var meta_class = the_class.isa;
+objc_registerClassPair(the_class);
+class_addIvar(the_class, "isa", "Class");
+
+class_addMethod(the_class, "replaceCharactersInRange:withString:", function(self, _cmd, range, aString) {
+with(self) {
+}
+}, "void");
+
+var the_class = NSMutableString;
+var meta_class = the_class.isa;
+
+class_addMethod(the_class, "insertString:atIndex:", function(self, _cmd, aString, loc) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "deleteCharactersInRange:", function(self, _cmd, range) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "appendString:", function(self, _cmd, aString) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "appendFormat:", function(self, _cmd, format) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setString:", function(self, _cmd, aString) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "initWithCapacity:", function(self, _cmd, capacity) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "replaceOccurrencesOfString:withString:options:range:", function(self, _cmd, target, replacement, options, searchRange) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(meta_class, "stringWithCapacity:", function(self, _cmd, capacity) {
+with(self) {
+}
+}, "void");
+
+var the_class = NSString;
+var meta_class = the_class.isa;
+
+class_addMethod(the_class, "propertyList", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "propertyListFromStringsFileFormat", function(self, _cmd) {
 with(self) {
 }
 }, "void");

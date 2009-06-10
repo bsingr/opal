@@ -46,7 +46,11 @@ module Vienna
         deal_with_ivar_list list.right
       elsif list.value == "i"
         @types << list.left.value
-        @properties << list.right.value
+        if list.right.value == "*"
+          @properties << list.right.right.value
+        else
+          @properties << list.right.value
+        end
       end
     end
     

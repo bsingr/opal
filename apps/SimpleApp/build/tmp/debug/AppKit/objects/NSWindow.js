@@ -1276,8 +1276,9 @@ with(self) {
 
 class_addMethod(the_class, "drawRect:", function(self, _cmd, rect) {
 with(self) {
-var context = objc_msgSend(objc_msgSend(NSGraphicsContext, "currentContext"), "graphicsPort");
-CGContextFillRect(context,rect);
+var c = objc_msgSend(objc_msgSend(NSGraphicsContext, "currentContext"), "graphicsPort");
+CGContextSetAlpha(c,0.3);
+CGContextFillRect(c,rect);
 }
 }, "void");
 

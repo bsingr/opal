@@ -36,6 +36,9 @@
     Class theClass = NSClassFromString(_windowClass);   
     
     NSWindow *theWindow = [[theClass alloc] initWithContentRect:_windowRect styleMask:_styleMask backing:1 defer:NO];
+    
+    [theWindow setContentView:_windowView];
+    
     return theWindow;
 }
 

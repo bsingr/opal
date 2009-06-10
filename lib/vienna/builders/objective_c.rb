@@ -60,6 +60,7 @@ module Vienna
         "NSDictionary" => "CFDictionaryRef",
         "NSMutableDictionary" => "CFMutableDictionaryRef",
         "NSData" => "CFDataRef",
+        "NSException" => "objc_exception"
         # "NSMutableData" => "CFMutableDataRef"
       }
       
