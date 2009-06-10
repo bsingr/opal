@@ -139,6 +139,47 @@ function CGBitmapContextCreateImage (c)
     
 }
 // 
+//  CGColor.js
+//  vienna
+//  
+//  Created by Adam Beynon on 2009-06-10.
+//  Copyright 2009 Adam Beynon. All rights reserved.
+// 
+
+// extern CGColorRef CGColorCreate(CGColorSpaceRef space, CGFloat components[]);
+// 
+
+// extern CGColorRef CGColorCreateGenericGray(CGFloat gray, CGFloat alpha);
+// extern CGColorRef CGColorCreateGenericRGB(CGFloat red, CGFloat green, CGFloat blue, CGFloat alpha);
+function CGColorCreateGenericRGB(red, green, blue, alpha)
+{
+	return {
+		_red: red,
+		_blue: blue,
+		_green: green,
+		_alpha: alpha
+	};
+}
+// extern CGColorRef CGColorCreateGenericCMYK(CGFloat cyan, CGFloat magenta, CGFloat yellow, CGFloat black, CGFloat alpha);
+// extern CGColorRef CGColorGetConstantColor(CFStringRef colorName);
+// // extern CGColorRef CGColorCreateWithPattern(CGColorSpaceRef space, CGPatternRef pattern, CGFloat components[]);
+// extern CGColorRef CGColorCreateCopy(CGColorRef color);
+// extern CGColorRef CGColorCreateCopyWithAlpha(CGColorRef color, CGFloat alpha);
+// extern CGColorRef CGColorRetain(CGColorRef color);
+// extern void CGColorRelease(CGColorRef color);
+// extern bool CGColorEqualToColor(CGColorRef color1, CGColorRef color2);
+// extern size_t CGColorGetNumberOfComponents(CGColorRef color);
+// extern const CGFloat *CGColorGetComponents(CGColorRef color);
+// extern CGFloat CGColorGetAlpha(CGColorRef color);
+// extern CGColorSpaceRef CGColorGetColorSpace(CGColorRef color);
+// // extern CGPatternRef CGColorGetPattern(CGColorRef color);
+// extern CFTypeID CGColorGetTypeID(void);
+// 
+// extern CFStringRef kCGColorWhite;
+// extern CFStringRef kCGColorBlack;
+// extern CFStringRef kCGColorClear;
+// 
+// 
 //  CGContext.js
 //  vienna
 //  
@@ -235,53 +276,39 @@ function CGContextSetBlendMode(c, mode)
     
 }
 
-// extern void CGContextBeginPath(CGContextRef c);
-// 
 function CGContextBeginPath(c)
 {
-    
+    c.beginPath();
 }
 
-// extern void CGContextMoveToPoint(CGContextRef c, CGFloat x, CGFloat y);
-// 
 function CGContextMoveToPoint(c, x, y)
 {
-    
+    c.moveTo(x, y);
 }
 
-// extern void CGContextAddLineToPoint(CGContextRef c, CGFloat x, CGFloat y);
-// 
 function CGContextAddLineToPoint(c, x, y)
 {
-    
+    c.lineTo(x, y);
 }
 
-// extern void CGContextAddCurveToPoint(CGContextRef c, CGFloat cp1x, CGFloat cp1y, CGFloat cp2x, CGFloat cp2y, CGFloat x, CGFloat y);
-// 
 function CGContextAddCurveToPoint(c, cp1x, cp1y, cp2x, cp2y, x, y)
 {
-    
+    c.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y);
 }
 
-// extern void CGContextAddQuadCurveToPoint(CGContextRef c, CGFloat cpx, CGFloat cpy, CGFloat x, CGFloat y);
-// 
 function CGContextAddQuadCurveToPoint(c, cpx, cpy, x, y)
 {
-    
+    c.quadraticCurveTo(cpx, cpy, x, y);
 }
 
-// extern void CGContextClosePath(CGContextRef c);
-// 
 function CGContextClosePath(c)
 {
-    
+    c.closePath();
 }
 
-// extern void CGContextAddRect(CGContextRef c, CGRect rect);
-// 
 function CGContextAddRect(c, rect)
 {
-    
+    c.rect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
 }
 
 // extern void CGContextAddRects(CGContextRef c, const CGRect rects[], size_t count);
@@ -305,18 +332,14 @@ function CGContextAddEllipeInRect(c, rect)
     
 }
 
-// extern void CGContextAddArc(CGContextRef c, CGFloat x, CGFloat y, CGFloat radius, CGFloat startAngle, CGFloat endAngle, int clockwise);
-// 
 function CGContextAddArc(c, x, y, radius, startAngle, endAngle, clockwise)
 {
-    
+    c.arc(x, y, radius, startAngle, endAngle, clockwise);
 }
 
-// extern void CGContextAddArcToPoint(CGContextRef c, CGFloat x1, CGFloat y1, CGFloat x2, CGFloat y2, CGFloat radius);
-// 
 function CGContextAddArcToPoint(c, x1, y1, x2, y2, radius)
 {
-    
+    c.arcTo(x1, y1, x2, y2, radius);
 }
 
 // extern void CGContextAddPath(CGContextRef context, CGPathRef path);
@@ -389,23 +412,17 @@ function CGContextStrokePath(c)
     
 }
 
-// extern void CGContextFillRect(CGContextRef c, CGRect rect);
-// 
 function CGContextFillRect(c, rect)
 {
     c.fillRect(rect.origin.x, c.canvas.height - rect.origin.y - rect.size.height, rect.size.width, rect.size.height);
 }
 
-// extern void CGContextFillRects(CGContextRef c, const CGRect rects[], size_t count);
-// 
 function CGContextFillRects(c, rects, count)
 {
     for (var i = 0; i < count; i ++)
         CGContextFillRect(c, rects[i]);
 }
 
-// extern void CGContextStrokeRect(CGContextRef c, CGRect rect);
-// 
 function CGContextStrokeRect(c, rect)
 {
     c.strokeRect(rect.origin.x, c.canvas.height - rect.origin.y - rect.size.height, rect.size.width, rect.size.height);
@@ -487,18 +504,14 @@ function CGContextClipToRects(c, rects, count)
     
 }
 
-// extern void CGContextSetFillColorWithColor(CGContextRef c, CGColorRef color);
-// 
 function CGContextSetFillColorWithColor(c, color)
 {
-    
+    c.fillStyle = "rgba(" + parseInt(color._red * 255) + ","  + parseInt(color._green * 255) + ","  + parseInt(color._blue * 255) + ","  + color._alpha + ")";
 }
 
-// extern void CGContextSetStrokeColorWithColor(CGContextRef c, CGColorRef color);
-// 
-function CGContextSetStrokeColorWithColor (c, color)
+function CGContextSetStrokeColorWithColor(c, color)
 {
-    
+    c.strokeStyle = "rgba(" + parseInt(color._red * 255) + ","  + parseInt(color._green * 255) + ","  + parseInt(color._blue * 255) + ","  + color._alpha + ")";
 }
 
 // extern void CGContextSetFillColorSpace(CGContextRef c, CGColorSpaceRef colorspace);
@@ -515,18 +528,14 @@ function CGContextSetStrokeColorSpace(c, colorspace)
     
 }
 
-// extern void CGContextSetFillColor(CGContextRef c, const CGFloat components[]);
-// 
 function CGContextSetFillColor(c, componenets)
 {
-    
+    c.fillStyle = "rgba(" + parseInt(componenets[0] * 255) + ","  + parseInt(componenets[1] * 255) + ","  + parseInt(componenets[2] * 255) + ","  + componenets[3] + ")";
 }
 
-// extern void CGContextSetStrokeColor(CGContextRef c, const CGFloat components[]);
-// 
 function CGContextSetStrokeColor(c, componenets)
 {
-    
+    c.strokeStyle = "rgba(" + parseInt(componenets[0] * 255) + ","  + parseInt(componenets[1] * 255) + ","  + parseInt(componenets[2] * 255) + ","  + componenets[3] + ")";
 }
 
 // extern void CGContextSetFillPattern(CGContextRef c, CGPatternRef pattern, const CGFloat components[]);
@@ -549,33 +558,25 @@ function CGContextSetPatternPhase(c, phase)
 {
     
 }
-
-// extern void CGContextSetGrayFillColor(CGContextRef c, CGFloat gray, CGFloat alpha);
-// 
+ 
 function CGContextSetGrayFillColor(c, gray, alpha)
 {
-    
+	c.strokeStyle = "rgba(" + parseInt(gray * 255) + ","  + parseInt(gray * 255) + ","  + parseInt(gray * 255) + ","  + alpha + ")";
 }
 
-// extern void CGContextSetGrayStrokeColor(CGContextRef c, CGFloat gray, CGFloat alpha);
-// 
 function CGContextSetGrayStrokeColor(c, gray, alpha)
 {
-    
+    c.fillStyle = "rgba(" + parseInt(gray * 255) + ","  + parseInt(gray * 255) + ","  + parseInt(gray * 255) + ","  + alpha + ")";
 }
 
-// extern void CGContextSetRGBFillColor(CGContextRef c, CGFloat red, CGFloat green, CGFloat blue, CGFloat alpha);
-// 
 function CGContextSetRGBFillColor(c, red, green, blue, alpha)
 {
-    
+    c.fillStyle = "rgba(" + parseInt(red * 255) + ","  + parseInt(green * 255) + ","  + parseInt(blue * 255) + ","  + alpha + ")";    
 }
 
-// extern void CGContextSetRGBStrokeColor(CGContextRef c, CGFloat red, CGFloat green, CGFloat blue, CGFloat alpha);
-// 
 function CGContextSetRGBStrokeColor(c, red, green, blue, alpha)
 {
-    
+    c.strokeStyle = "rgba(" + parseInt(red * 255) + ","  + parseInt(green * 255) + ","  + parseInt(blue * 255) + ","  + alpha + ")"; 
 }
 
 // extern void CGContextSetCMYKFillColor(CGContextRef c, CGFloat cyan, CGFloat magenta, CGFloat yellow, CGFloat black, CGFloat alpha);
@@ -903,52 +904,24 @@ function CGDOMElementGetContext(element)
 //  Copyright 2009 Adam Beynon. All rights reserved.
 // 
 
-// struct CGPoint {
-//     CGFloat x;
-//     CGFloat y;
-// };
-// typedef struct CGPoint CGPoint;
-// 
 function CGPoint()
 {
     this.x = 0;
     this.y = 0;
 }
 
-// struct CGSize {
-//     CGFloat width;
-//     CGFloat height;
-// };
-// typedef struct CGSize CGSize;
-// 
 function CGSize()
 {
     this.width = 0;
     this.height = 0;
 }
 
-// struct CGRect {
-//     CGPoint origin;
-//     CGSize size;
-// };
-// typedef struct CGRect CGRect;
-// 
 function CGRect()
 {
     this.origin = new CGPoint();
     this.size = new CGSize();
 }
 
-// enum {
-//     CGRectMinXEdge,
-//     CGRectMinYEdge,
-//     CGRectMaxXEdge,
-//     CGRectMaxYEdge
-// };
-// typedef enum CGRectEdge CGRectEdge;
-
-// extern CGPoint CGPointMake(CGFloat x, CGFloat y);
-// 
 function CGPointMake(x, y)
 {
     return {
@@ -957,8 +930,6 @@ function CGPointMake(x, y)
     };
 }
 
-// extern CGSize CGSizeMake(CGFloat width, CGFloat height);
-// 
 function CGSizeMake(width, height)
 {
     return {
@@ -967,8 +938,6 @@ function CGSizeMake(width, height)
     };
 }
 
-// extern CGRect CGRectMake (CGFloat x, CGFloat y, CGFloat width, CGFloat height);
-// 
 function CGRectMake(x, y, width, height)
 {
     return {
@@ -977,50 +946,193 @@ function CGRectMake(x, y, width, height)
     };
 }
 
-// extern CGFloat CGRectGetMinX(CGRect rect);
-// 
 function CGRectGetMinX(rect)
 {
-    
+    return rect.origin.x;
 }
 
-// extern CGFloat CGRectGetMidX(CGRect rect);
-// 
 function CGRectGetMidX(rect)
 {
-    
+    return rect.origin.x + (rect.size.width / 2.0);
 }
 
-// extern CGFloat CGRectGetMaxX(CGRect rect);
-// extern CGFloat CGRectGetMinY(CGRect rect);
-// extern CGFloat CGRectGetMidY(CGRect rect);
-// extern CGFloat CGRectGetMaxY(CGRect rect);
-// extern CGFloat CGRectGetWidth(CGRect rect);
-// extern CGFloat CGRectGetHeight(CGRect rect);
-// extern bool CGPointEqualToPoint(CGPoint point1, CGPoint point2);
-// extern bool CGSizeEqualToSize(CGSize size1, CGSize size2);
-// extern bool CGRectEqualToRect(CGRect rect1, CGRect rect2);
-// extern CGRect CGRectStandardize(CGRect rect);
-// extern bool CGRectIsEmpty(CGRect rect);
-// extern bool CGRectIsNull(CGRect rect);
-// extern bool CGRectIsInfinite(CGRect rect);
-// extern CGRect CGRectInset(CGRect rect, CGFloat dx, CGFloat dy);
-// extern CGRect CGRectIntegral(CGRect rect);
-// extern CGRect CGRectUnion(CGRect r1, CGRect r2);
-// extern CGRect CGRectIntersection(CGRect r1, CGRect r2);
-// extern CGRect CGRectOffset(CGRect rect, CGFloat dx, CGFloat dy);
-// extern void CGRectDivide(CGRect rect, CGRect *slice, CGRect *remainder, CGFloat amount, CGRectEdge edge);
-// extern bool CGRectContainsPoint(CGRect rect, CGPoint point);
-// extern bool CGRectContainsRect(CGRect rect1, CGRect rect2);
-// extern bool CGRectIntersectsRect(CGRect rect1, CGRect rect2);
-// extern CFDictionaryRef CGPointCreateDictionaryRepresentation(CGPoint point);
-// extern bool CGPointMakeWithDictionaryRepresentation(CFDictionaryRef dict, CGPoint *point);
-// extern CFDictionaryRef CGSizeCreateDictionaryRepresentation(CGSize size);
-// extern bool CGSizeMakeWithDictionaryRepresentation(CFDictionaryRef dict, CGSize *size);
-// extern CFDictionaryRef CGRectCreateDictionaryRepresentation(CGRect rect);
-// extern bool CGRectMakeWithDictionaryRepresentation(CFDictionaryRef dict, CGRect *rect);
+function CGRectGetMaxX(rect)
+{
+	return rect.origin.x + rect.size.width;
+}
 
-// extern CGRect CGRectFromString(CFStringRef aString);
+function CGRectGetMinY(rect)
+{
+	return rect.origin.y;
+}
+
+function CGRectGetMidY(rect)
+{
+	return rect.origin.y + (rect.size.height / 2.0);
+}
+
+function CGRectGetMaxY(rect)
+{
+	return rect.origin.y + rect.size.height;
+}
+
+function CGRectGetWidth(rect)
+{
+	return rect.size.width;
+}
+
+function CGRectGetHeight(rect)
+{
+	return rect.size.height;
+}
+
+function CGPointEqualToPoint(point1, point2)
+{
+	return (point1.x == point2.x) && (point1.y == point2.y);
+}
+
+function CGSizeEqualToSize(size1, size2)
+{
+	return (size1.width == size2.width) && (size1.height == size2.height);
+}
+
+function CGRectEqualToRect(rect1, rect2)
+{
+	return CGPointEqualToPoint(rect1.origin, rect2.origin) && CGSizeEqualToSize(rect1.size, rect2.size);
+}
+
+function CGRectStandardize(rect)
+{
+	var newRect = CGRectMake(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+	// fix width/x
+	if(rect.size.width < 0)
+	{
+		newRect.size.width = rect.size.width * -1;
+		newRect.origin.x = rect.origin.x - newRect.size.width;
+	}
+	// fix height/y
+	if(rect.size.height < 0)
+	{
+		newRect.size.height = rect.size.height * -1;
+		newRect.origin.y = rect.origin.y - newRect.size.height;
+	}
+	
+	return newRect;
+}
+
+function CGRectIsEmpty(rect)
+{
+	if(CGRectIsNull(rect))
+		return true;
+		
+	return ((rect.size.height == 0) || (rect.size.width == 0));
+}
+
+function CGRectIsNull(rect)
+{
+	if(!(rect.size && rect.origin))
+		return false;
+	
+	if(!(rect.origin.x && rect.origin.y && rect.size.width && rect.size.height))
+		return false
+	
+	return true;
+}
+
+// extern bool CGRectIsInfinite(CGRect rect);
+function CGRectIsInfinite(rect)
+{
+	
+}
+
+function CGRectInset(rect, dx, dy)
+{
+	return CGRectMake(rect.origin.x + dx, rect.origin.y + dy, rect.size.width - (2 * dx), rect.size.height - (2 * dy));
+}
+
+function CGRectIntegral(rect)
+{
+	return CGRectMake(Math.floor(rect.origin.x), Math.floor(rect.origin.y), Math.ceil(rect.size.width), Math.ceil(rect.size.height));
+}
+
+// extern CGRect CGRectUnion(CGRect r1, CGRect r2);
+function CGRectUnion(r1, r2)
+{
+	
+}
+
+// extern CGRect CGRectIntersection(CGRect r1, CGRect r2);
+function CGRectIntersection(r1, r2)
+{
+	
+}
+
+// extern CGRect CGRectOffset(CGRect rect, CGFloat dx, CGFloat dy);
+function CGRectOffset(rect, dx, dy)
+{
+	
+}
+
+// extern void CGRectDivide(CGRect rect, CGRect *slice, CGRect *remainder, CGFloat amount, CGRectEdge edge);
+function CGRectDivide(rect, slice, remainder, amount, edge)
+{
+	
+}
+
+// extern bool CGRectContainsPoint(CGRect rect, CGPoint point);
+function CGRectContainsPoint(rect, point)
+{
+	return point.x >= CGRectGetMinX(rect) && point.y >= CGRectGetMinY(rect) && point.x < CGRectGetMaxX(rect) && point.y < CGRectGetMaxY(rect);
+}
+
+// extern bool CGRectContainsRect(CGRect rect1, CGRect rect2);
+function CGRectContainsRect(rect1, rect2)
+{
+	
+}
+
+// extern bool CGRectIntersectsRect(CGRect rect1, CGRect rect2);
+function CGRectIntersectsRect(rect1, rect2)
+{
+	
+}
+
+// extern CFDictionaryRef CGPointCreateDictionaryRepresentation(CGPoint point);
+function CGPointCreateDictionaryRepresentation(point)
+{
+	
+}
+
+// extern bool CGPointMakeWithDictionaryRepresentation(CFDictionaryRef dict, CGPoint *point);
+function CGPointMakeWithDictionaryRepresentation(dict, point)
+{
+	
+}
+
+// extern CFDictionaryRef CGSizeCreateDictionaryRepresentation(CGSize size);
+function CGSizeCreateDictionaryRepresentation(size)
+{
+	
+}
+
+// extern bool CGSizeMakeWithDictionaryRepresentation(CFDictionaryRef dict, CGSize *size);
+function CGSizeMakeWithDictionaryRepresentation(dict, size)
+{
+	
+}
+
+// extern CFDictionaryRef CGRectCreateDictionaryRepresentation(CGRect rect);
+function CGRectCreateDictionaryRepresentation(rect)
+{
+	
+}
+
+// extern bool CGRectMakeWithDictionaryRepresentation(CFDictionaryRef dict, CGRect *rect);
+function CGRectMakeWithDictionaryRepresentation(dict, rect)
+{
+	
+}
+
 function CGRectFromString(aString)
 {
 	var thePoint = CGPointFromString(aString.substr(1, aString.indexOf("},") - 1));
@@ -1031,13 +1143,11 @@ function CGRectFromString(aString)
 	};
 }
 
-// extern CGPoint CGPointFromString(CFStringRef aString);
 function CGPointFromString(aString)
 {
 	return CGPointMake(parseFloat(aString.substr(1, aString.indexOf(",") - 1)), parseFloat(aString.substr(aString.indexOf(",") + 1, aString.length - 1)));
 }
 
-// extern CGSize CGSizeFromString(CFStringRef aString);
 function CGSizeFromString(aString)
 {
 	return CGSizeMake(parseFloat(aString.substr(1, aString.indexOf(",") - 1)), parseFloat(aString.substr(aString.indexOf(",") + 1, aString.length-  1)));

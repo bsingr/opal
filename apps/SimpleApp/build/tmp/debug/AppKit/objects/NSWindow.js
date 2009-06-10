@@ -1278,7 +1278,13 @@ class_addMethod(the_class, "drawRect:", function(self, _cmd, rect) {
 with(self) {
 var c = objc_msgSend(objc_msgSend(NSGraphicsContext, "currentContext"), "graphicsPort");
 CGContextSetAlpha(c,0.3);
+CGContextSetFillColorWithColor(c,CGColorCreateGenericRGB(1,0,0.2,0.5));
 CGContextFillRect(c,rect);
+var newRect = CGRectInset(rect,5,5);
+NSLog(rect);
+NSLog(newRect);
+CGContextSetFillColorWithColor(c,CGColorCreateGenericRGB(0.3,0.8,0.2,0.5));
+CGContextFillRect(c,newRect);
 }
 }, "void");
 

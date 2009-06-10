@@ -95,53 +95,39 @@ function CGContextSetBlendMode(c, mode)
     
 }
 
-// extern void CGContextBeginPath(CGContextRef c);
-// 
 function CGContextBeginPath(c)
 {
-    
+    c.beginPath();
 }
 
-// extern void CGContextMoveToPoint(CGContextRef c, CGFloat x, CGFloat y);
-// 
 function CGContextMoveToPoint(c, x, y)
 {
-    
+    c.moveTo(x, y);
 }
 
-// extern void CGContextAddLineToPoint(CGContextRef c, CGFloat x, CGFloat y);
-// 
 function CGContextAddLineToPoint(c, x, y)
 {
-    
+    c.lineTo(x, y);
 }
 
-// extern void CGContextAddCurveToPoint(CGContextRef c, CGFloat cp1x, CGFloat cp1y, CGFloat cp2x, CGFloat cp2y, CGFloat x, CGFloat y);
-// 
 function CGContextAddCurveToPoint(c, cp1x, cp1y, cp2x, cp2y, x, y)
 {
-    
+    c.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y);
 }
 
-// extern void CGContextAddQuadCurveToPoint(CGContextRef c, CGFloat cpx, CGFloat cpy, CGFloat x, CGFloat y);
-// 
 function CGContextAddQuadCurveToPoint(c, cpx, cpy, x, y)
 {
-    
+    c.quadraticCurveTo(cpx, cpy, x, y);
 }
 
-// extern void CGContextClosePath(CGContextRef c);
-// 
 function CGContextClosePath(c)
 {
-    
+    c.closePath();
 }
 
-// extern void CGContextAddRect(CGContextRef c, CGRect rect);
-// 
 function CGContextAddRect(c, rect)
 {
-    
+    c.rect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
 }
 
 // extern void CGContextAddRects(CGContextRef c, const CGRect rects[], size_t count);
@@ -165,18 +151,14 @@ function CGContextAddEllipeInRect(c, rect)
     
 }
 
-// extern void CGContextAddArc(CGContextRef c, CGFloat x, CGFloat y, CGFloat radius, CGFloat startAngle, CGFloat endAngle, int clockwise);
-// 
 function CGContextAddArc(c, x, y, radius, startAngle, endAngle, clockwise)
 {
-    
+    c.arc(x, y, radius, startAngle, endAngle, clockwise);
 }
 
-// extern void CGContextAddArcToPoint(CGContextRef c, CGFloat x1, CGFloat y1, CGFloat x2, CGFloat y2, CGFloat radius);
-// 
 function CGContextAddArcToPoint(c, x1, y1, x2, y2, radius)
 {
-    
+    c.arcTo(x1, y1, x2, y2, radius);
 }
 
 // extern void CGContextAddPath(CGContextRef context, CGPathRef path);
@@ -249,23 +231,17 @@ function CGContextStrokePath(c)
     
 }
 
-// extern void CGContextFillRect(CGContextRef c, CGRect rect);
-// 
 function CGContextFillRect(c, rect)
 {
     c.fillRect(rect.origin.x, c.canvas.height - rect.origin.y - rect.size.height, rect.size.width, rect.size.height);
 }
 
-// extern void CGContextFillRects(CGContextRef c, const CGRect rects[], size_t count);
-// 
 function CGContextFillRects(c, rects, count)
 {
     for (var i = 0; i < count; i ++)
         CGContextFillRect(c, rects[i]);
 }
 
-// extern void CGContextStrokeRect(CGContextRef c, CGRect rect);
-// 
 function CGContextStrokeRect(c, rect)
 {
     c.strokeRect(rect.origin.x, c.canvas.height - rect.origin.y - rect.size.height, rect.size.width, rect.size.height);
@@ -347,18 +323,14 @@ function CGContextClipToRects(c, rects, count)
     
 }
 
-// extern void CGContextSetFillColorWithColor(CGContextRef c, CGColorRef color);
-// 
 function CGContextSetFillColorWithColor(c, color)
 {
-    
+    c.fillStyle = "rgba(" + parseInt(color._red * 255) + ","  + parseInt(color._green * 255) + ","  + parseInt(color._blue * 255) + ","  + color._alpha + ")";
 }
 
-// extern void CGContextSetStrokeColorWithColor(CGContextRef c, CGColorRef color);
-// 
-function CGContextSetStrokeColorWithColor (c, color)
+function CGContextSetStrokeColorWithColor(c, color)
 {
-    
+    c.strokeStyle = "rgba(" + parseInt(color._red * 255) + ","  + parseInt(color._green * 255) + ","  + parseInt(color._blue * 255) + ","  + color._alpha + ")";
 }
 
 // extern void CGContextSetFillColorSpace(CGContextRef c, CGColorSpaceRef colorspace);
@@ -375,18 +347,14 @@ function CGContextSetStrokeColorSpace(c, colorspace)
     
 }
 
-// extern void CGContextSetFillColor(CGContextRef c, const CGFloat components[]);
-// 
 function CGContextSetFillColor(c, componenets)
 {
-    
+    c.fillStyle = "rgba(" + parseInt(componenets[0] * 255) + ","  + parseInt(componenets[1] * 255) + ","  + parseInt(componenets[2] * 255) + ","  + componenets[3] + ")";
 }
 
-// extern void CGContextSetStrokeColor(CGContextRef c, const CGFloat components[]);
-// 
 function CGContextSetStrokeColor(c, componenets)
 {
-    
+    c.strokeStyle = "rgba(" + parseInt(componenets[0] * 255) + ","  + parseInt(componenets[1] * 255) + ","  + parseInt(componenets[2] * 255) + ","  + componenets[3] + ")";
 }
 
 // extern void CGContextSetFillPattern(CGContextRef c, CGPatternRef pattern, const CGFloat components[]);
@@ -409,33 +377,25 @@ function CGContextSetPatternPhase(c, phase)
 {
     
 }
-
-// extern void CGContextSetGrayFillColor(CGContextRef c, CGFloat gray, CGFloat alpha);
-// 
+ 
 function CGContextSetGrayFillColor(c, gray, alpha)
 {
-    
+	c.strokeStyle = "rgba(" + parseInt(gray * 255) + ","  + parseInt(gray * 255) + ","  + parseInt(gray * 255) + ","  + alpha + ")";
 }
 
-// extern void CGContextSetGrayStrokeColor(CGContextRef c, CGFloat gray, CGFloat alpha);
-// 
 function CGContextSetGrayStrokeColor(c, gray, alpha)
 {
-    
+    c.fillStyle = "rgba(" + parseInt(gray * 255) + ","  + parseInt(gray * 255) + ","  + parseInt(gray * 255) + ","  + alpha + ")";
 }
 
-// extern void CGContextSetRGBFillColor(CGContextRef c, CGFloat red, CGFloat green, CGFloat blue, CGFloat alpha);
-// 
 function CGContextSetRGBFillColor(c, red, green, blue, alpha)
 {
-    
+    c.fillStyle = "rgba(" + parseInt(red * 255) + ","  + parseInt(green * 255) + ","  + parseInt(blue * 255) + ","  + alpha + ")";    
 }
 
-// extern void CGContextSetRGBStrokeColor(CGContextRef c, CGFloat red, CGFloat green, CGFloat blue, CGFloat alpha);
-// 
 function CGContextSetRGBStrokeColor(c, red, green, blue, alpha)
 {
-    
+    c.strokeStyle = "rgba(" + parseInt(red * 255) + ","  + parseInt(green * 255) + ","  + parseInt(blue * 255) + ","  + alpha + ")"; 
 }
 
 // extern void CGContextSetCMYKFillColor(CGContextRef c, CGFloat cyan, CGFloat magenta, CGFloat yellow, CGFloat black, CGFloat alpha);
