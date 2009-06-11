@@ -6,11 +6,15 @@
 //  Copyright 2009 Adam Beynon. All rights reserved.
 // 
 
-typedef struct CGImage *CGImageRef;
-
 #import <CoreGraphics/CGColorSpace.h>
-#import <CoreGraphics/CGDataProvider.h>
+#import <CoreFoundation/CFData.h>
 #import <CoreGraphics/CGGeometry.h>
+
+typedef struct CGImage {
+    CFStringRef *_imageSource;
+    CFArrayRef  *_respresentations;
+    CFArrayRef  *_loadingStatus;
+} *CGImageRef;
 
 enum CGImageAlphaInfo {
     kCGImageAlphaNone,
@@ -36,27 +40,36 @@ enum {
 };
 typedef int CGBitmapInfo;
 
-// extern CGImageRef CGImageCreate(size_t width, size_t height, size_t bitsPerComponent, size_t bitsPerPixel, size_t bytesPerRow, CGColorSpaceRef colorspace, CGBitmapInfo bitmapInfo, CGDataProviderRef provider, const CGFloat decode[], bool shouldInterpolate, CGColorRenderingIntent intent);
-// extern CGImageRef CGImageMaskCreate(size_t width, size_t height, size_t bitsPerComponent, size_t bitsPerPixel, size_t bytesPerRow, CGDataProviderRef provider, const CGFloat decode[], bool shouldInterpolate);
-// extern CGImageRef CGImageCreateCopy(CGImageRef image);
-// extern CGImageRef CGImageCreateWithJPEGDataProvider(CGDataProviderRef source, const CGFloat decode[], bool shouldInterpolate, CGColorRenderingIntent intent);
-// extern CGImageRef CGImageCreateWithPNGDataProvider(CGDataProviderRef source, const CGFloat decode[], bool shouldInterpolate, CGColorRenderingIntent intent);
-// extern CGImageRef CGImageCreateWithImageInRect(CGImageRef image, CGRect rect);
-// extern CGImageRef CGImageCreateWithMask(CGImageRef image, CGImageRef mask);
-// extern CGImageRef CGImageCreateWithMaskingColors(CGImageRef image, const CGFloat components[]);
-// extern CGImageRef CGImageCreateCopyWithColorSpace(CGImageRef image, CGColorSpaceRef colorspace);
-// extern CGImageRef CGImageRetain(CGImageRef image);
-// extern void CGImageRelease(CGImageRef image);
-// extern bool CGImageIsMask(CGImageRef image);
-// extern size_t CGImageGetWidth(CGImageRef image);
-// extern size_t CGImageGetHeight(CGImageRef image);
-// extern size_t CGImageGetBitsPerComponent(CGImageRef image);
-// extern size_t CGImageGetBitsPerPixel(CGImageRef image);
-// extern size_t CGImageGetBytesPerRow(CGImageRef image);
-// extern CGColorSpaceRef CGImageGetColorSpace(CGImageRef image);
-// extern CGImageAlphaInfo CGImageGetAlphaInfo(CGImageRef image);
-// extern CGDataProviderRef CGImageGetDataProvider(CGImageRef image);
-// extern const CGFloat *CGImageGetDecode(CGImageRef image);
-// extern bool CGImageGetShouldInterpolate(CGImageRef image);
-// extern CGColorRenderingIntent CGImageGetRenderingIntent(CGImageRef image);
-// extern CGBitmapInfo CGImageGetBitmapInfo(CGImageRef image);
+extern CGImageRef CGImageCreate(int width, int height, int bitsPerComponent, int bitsPerPixel, int bytesPerRow, CGColorSpaceRef colorspace, CGBitmapInfo bitmapInfo, CFDataRef provider, const CGFloat decode[], bool shouldInterpolate, CGColorRenderingIntent intent);
+extern CGImageRef CGImageMaskCreate(int width, int height, int bitsPerComponent, int bitsPerPixel, int bytesPerRow, CFDataRef provider, const CGFloat decode[], bool shouldInterpolate);
+extern CGImageRef CGImageCreateCopy(CGImageRef image);
+extern CGImageRef CGImageCreateWithJPEGDataProvider(CFDataRef source, const CGFloat decode[], bool shouldInterpolate, CGColorRenderingIntent intent);
+extern CGImageRef CGImageCreateWithPNGDataProvider(CFDataRef source, const CGFloat decode[], bool shouldInterpolate, CGColorRenderingIntent intent);
+extern CGImageRef CGImageCreateWithImageInRect(CGImageRef image, CGRect rect);
+extern CGImageRef CGImageCreateWithMask(CGImageRef image, CGImageRef mask);
+extern CGImageRef CGImageCreateWithMaskingColors(CGImageRef image, const CGFloat components[]);
+extern CGImageRef CGImageCreateCopyWithColorSpace(CGImageRef image, CGColorSpaceRef colorspace);
+extern CGImageRef CGImageRetain(CGImageRef image);
+extern void CGImageRelease(CGImageRef image);
+extern bool CGImageIsMask(CGImageRef image);
+extern int CGImageGetWidth(CGImageRef image);
+extern int CGImageGetHeight(CGImageRef image);
+extern int CGImageGetBitsPerComponent(CGImageRef image);
+extern int CGImageGetBitsPerPixel(CGImageRef image);
+extern int CGImageGetBytesPerRow(CGImageRef image);
+extern CGColorSpaceRef CGImageGetColorSpace(CGImageRef image);
+extern CGImageAlphaInfo CGImageGetAlphaInfo(CGImageRef image);
+extern CFDataRef CGImageGetDataProvider(CGImageRef image);
+extern const CGFloat *CGImageGetDecode(CGImageRef image);
+extern bool CGImageGetShouldInterpolate(CGImageRef image);
+extern CGColorRenderingIntent CGImageGetRenderingIntent(CGImageRef image);
+extern CGBitmapInfo CGImageGetBitmapInfo(CGImageRef image);
+
+// ========================
+// = Vienna Added methods =
+// ========================
+
+extern CGImageRef CGImageCreateWithURLDataProvider(CFStringRef source);
+extern CGImageRef CGImageCreateWithFileDataProvider(CFStringRef source);
+
+extern BOOL CGImageDataRepresentationFinishedLoading(CGImageRef image);

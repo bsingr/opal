@@ -78,7 +78,7 @@ function CFArrayGetValues(theArray, range, values)
 // 
 function CFArrayGetFirstIndexOfValue(theArray, range, value)
 {
-    
+    return theArray.indexOf(value);
 }
 
 // extern CFIndex CFArrayGetLastIndexOfValue(CFArrayRef theArray, CFRange range, void *value);
@@ -113,7 +113,7 @@ function CFArraySetValueAtIndex(theArray, idx, value)
 // 
 function CFArrayRemoveValueAtIndex(theArray, idx)
 {
-    theArray.splice(idx, idx);
+    theArray.splice(idx, 1);
 }
 
 // extern void CFArrayRemoveAllValues(CFMutableArrayRef theArray);
@@ -360,7 +360,40 @@ function CFBundleCreate(bundleURL, callback)
     CFHTTPRequestSend(request, null);
     
     return the_bundle;
-}// 
+}
+
+
+
+// ========================
+// = Vienna added methods =
+// ========================
+
+// extern CFBundleRef CFBundleGetBundleForClass(Class aClass);
+function CFBundleGetBundleForClass(aClass)
+{
+    return __bootstrap_bundles_for_class[aClass.name];
+}
+
+// extern void CFBundleSetBundleForClass(CFBundleRef bundle, Class aClass);
+function CFBundleSetBundleForClass(bundle, aClass)
+{
+    __bootstrap_bundles_for_class[aClass.name] = bundle;
+}
+
+// extern void CFBundlePreloadResource(CFBundleRef bundle, CFStringRef resourceName, CFStringRef resourceType, CFStringRef subDirName);
+function CFBundlePreloadResource(bundle, resourceName, resourceType, subDirName)
+{
+    NSLog("Need to preload: " + resourceName + "." + resourceType);
+    
+    var theImage = new Image();
+    theImage.src = "file:///Users/adam/Sites/lumpy.png";
+    CFArrayAppendValue(__bootstrap_preload_files, theImage);
+    
+    theImage.onload =  function() {    	           
+       __bootstrap_preload_finished(theImage);
+    };
+}
+// 
 //  CFData.js
 //  vienna
 //  
@@ -810,7 +843,7 @@ function CFHTTPRequestCreate(method, address, async, callback)
 
 function CFHTTPRequestSetMimeType(request, mime)
 {
-    request.overrideMimeType(mime);
+    // request.overrideMimeType(mime);
 }
 
 function CFHTTPRequestSend(request, data)

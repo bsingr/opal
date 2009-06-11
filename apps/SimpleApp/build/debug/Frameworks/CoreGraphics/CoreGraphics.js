@@ -160,6 +160,8 @@ function CGColorCreateGenericRGB(red, green, blue, alpha)
 		_alpha: alpha
 	};
 }
+
+
 // extern CGColorRef CGColorCreateGenericCMYK(CGFloat cyan, CGFloat magenta, CGFloat yellow, CGFloat black, CGFloat alpha);
 // extern CGColorRef CGColorGetConstantColor(CFStringRef colorName);
 // // extern CGColorRef CGColorCreateWithPattern(CGColorSpaceRef space, CGPatternRef pattern, CGFloat components[]);
@@ -191,12 +193,12 @@ var CGLineJoinCanvas = ["miter", "round", "bevel"];
 
 var CGLineCapCanvas = ["butt", "round", "square"];
 
-function CGContextSaveGState (c)
+function CGContextSaveGState(c)
 {
     c.save();
 }
 
-function CGContextRestoreGState (c)
+function CGContextRestoreGState(c)
 {
     c.restore();
 }
@@ -439,7 +441,7 @@ function CGContextStrokeRectWithWidth(c, rect, width)
 // 
 function CGContextClearRect(c, rect)
 {
-    
+    c.clearRect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
 }
 
 // extern void CGContextFillEllipseInRect(CGContextRef context, CGRect rect);
@@ -603,7 +605,16 @@ function CGContextSetRenderingIntent(c, intent)
 // 
 function CGContextDrawImage(c, rect, image)
 {
+    c.drawImage(image._representations[0], rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
     
+    // if(CGImageDataRepresentationFinishedLoading(image) == 4)
+    //     {
+    //         NSLog("Image has loaded, so can draw...");
+    //     }
+    //     else
+    //     {
+    //         NSLog("Image has not loaded, so cannot draw");
+    //     }
 }
 
 // extern void CGContextDrawTiledImage(CGContextRef c, CGRect rect, CGImageRef image);
@@ -631,21 +642,33 @@ function CGContextSetInterpolationQuality(c, quality)
 // 
 function CGContextSetShadowWithColor(c, offset, blur, color)
 {
-    
+    c.shadowOffsetX = offset.width;
+    c.shadowOffsetY = offset.height;
+    c.shadowBlur = blur;
+    c.shadowColor = "rgba(" + parseInt(color._red * 255) + ","  + parseInt(color._green * 255) + ","  + parseInt(color._blue * 255) + ","  + color._alpha + ")";
 }
 
 // extern void CGContextSetShadow(CGContextRef context, CGSize offset, CGFloat blur);
 // 
 function CGContextSetShadow(c, offset, blur)
 {
-    
+    c.shadowOffsetX = offset.width;
+    c.shadowOffsetY = offset.height;
+    c.shadowBlur = blur;
+    c.shadowColor = "rgba(1,1,1,1)";
 }
 
 // extern void CGContextDrawLinearGradient(CGContextRef context, CGGradientRef gradient, CGPoint startPoint, CGPoint endPoint, CGGradientDrawingOptions options);
 // 
 function CGContextDrawLinearGradient(c, gradient, startPoint, endPoint, options)
 {
-    
+    var theGradient = c.createLinearGradient(startPoint.x, startPoint.y, 0, endPoint.y);
+    for(var i = 0; i < gradient._colors.length; i++)
+    {
+        theGradient.addColorStop(gradient._locations[i], CGContextRGBAStringFromColor(gradient._colors[i]));
+    }
+    c.fillStyle = theGradient;
+    c.fillRect();
 }
 
 // extern void CGContextDrawRadialGradient(CGContextRef context, CGGradientRef gradient, CGPoint startCenter, CGFloat startRadius, CGPoint endCenter, CGFloat endRadius, CGGradientDrawingOptions options);
@@ -710,7 +733,7 @@ function CGContextSetTextDrawingMode(c, mode)
 // 
 function CGContextSetFont(c, font)
 {
-    
+    c.font = CGFontGetStringRepresentation(font);
 }
 
 // extern void CGContextSetFontSize(CGContextRef c, CGFloat size);
@@ -745,7 +768,7 @@ function CGContextShowText(c, string, length)
 // 
 function CGContextShowTextAtPoint(c, x, y, string, length)
 {
-    
+    c.fillText(string, x, y);
 }
 
 // extern void CGContextShowGlyphs(CGContextRef c, const CGGlyph g[], size_t count);
@@ -789,6 +812,15 @@ function CGContextEndTransparencyLayer(c)
 {
     
 }
+
+// =========================
+// = Vienna added methods: =
+// =========================
+
+function CGContextRGBAStringFromColor(color)
+{
+    return "rgba(" + parseInt(color._red * 255) + ","  + parseInt(color._green * 255) + ","  + parseInt(color._blue * 255) + ","  + color._alpha + ")";
+}
 // 
 //  CGDOMElement.js
 //  vienna
@@ -808,7 +840,10 @@ function CGDOMElementGetRootElement()
 // 
 function CGDOMElementCreate(type)
 {
-    return document.createElement(type);
+    var theElement = document.createElement(type);
+    theElement.style.display = "block";
+    theElement.style.position = "absolute";
+    return theElement;
 }
 
 // extern CGDOMElementRef CGDOMElementCreateWithAttributes(CFStringRef type, CFDictionaryRef attributes);
@@ -871,8 +906,10 @@ function CGDOMElementSetAttribute(element, name, value)
 // 
 function CGDOMElementSetFrame(element, frame)
 {
-    element.bottom = frame.origin.x;
-    element.left = frame.origin.y;
+    element.style.bottom = frame.origin.x + "px";
+    element.style.left = frame.origin.y + "px";
+    element.style.width = frame.size.width + "px";
+    element.style.height = frame.size.height + "px";
     element.height = frame.size.height;
     element.width = frame.size.width;
 }
@@ -895,6 +932,56 @@ function CGDOMElementSetFrameSize(element, size)
 function CGDOMElementGetContext(element)
 {
     return element.getContext("2d");
+}
+// 
+//  CGFont.js
+//  vienna
+//  
+//  Created by Adam Beynon on 2009-06-10.
+//  Copyright 2009 Adam Beynon. All rights reserved.
+// 
+
+function CGFontRef()
+{
+    this._name = "Arial";
+    this._size = "10"
+    this._isBold = false;
+}
+
+function CGFontCreate(name, size, isBold)
+{
+    var theFont = new CGFontRef();
+    theFont._name = name;
+    theFont._size = size;
+    theFont._isBold = isBold;
+    return theFont;
+}
+
+function CGFontCreateWithFontName(name)
+{
+    var theFont = new CGFontRef();
+    theFont._name = name;
+    return theFont;
+}
+
+function CGFontGetFontName(font)
+{
+    return font._name;
+}
+
+function CGFontGetFontSize(font)
+{
+    return font._size;
+}
+
+function CGFontGetIsBold(font)
+{
+    return font._isBold;
+}
+
+function CGFontGetStringRepresentation(font)
+{
+    return (font._isBold ? "bold " : "") + Math.round(font._size) + "px '" + font._name + "'"; 
 }
 // 
 //  CGGeometry.js
@@ -1160,11 +1247,11 @@ function CGSizeFromString(aString)
 //  Copyright 2009 Adam Beynon. All rights reserved.
 // 
 
-// extern CFTypeID CGGradientGetTypeID(void);
-// 
-function CGGradientGetTypeID()
+function CGGradientRef()
 {
-    
+    this._colors = [];
+    this._locations = [];
+    return this;
 }
 
 // extern CGGradientRef CGGradientCreateWithColorComponents(CGColorSpaceRef space, CGFloat components[], CGFloat locations[], size_t count);
@@ -1178,7 +1265,10 @@ function CGGradientCreateWithColorComponenets(space, componenets, locations, cou
 // 
 function CGGradientCreateWithColors(space, colors, locations)
 {
-    
+    var theGradient = new CGGradientRef();
+    theGradient._colors = colors;
+    theGradient._locations = locations;
+    return theGradient;
 }
 // 
 //  CGImage.js
@@ -1189,6 +1279,14 @@ function CGGradientCreateWithColors(space, colors, locations)
 // 
 
 // need to add to Js's Image object prototype... ismask...colrospace, bitmapinfo, rendering intent etc
+
+function CGImageRef()
+{
+    this._imageSource = "";
+    this._representations = [];
+    this._loadingStatus = [0];
+    return this;
+}
 
 
 // extern CGImageRef CGImageCreate(size_t width, size_t height, size_t bitsPerComponent, size_t bitsPerPixel, size_t bytesPerRow, CGColorSpaceRef colorspace, CGBitmapInfo bitmapInfo, CGDataProviderRef provider, const CGFloat decode[], bool shouldInterpolate, CGColorRenderingIntent intent);
@@ -1319,7 +1417,7 @@ function CGImageGetDataProvider(image)
 
 // extern const CGFloat *CGImageGetDecode(CGImageRef image);
 // 
-function CGImageGetDecode (image)
+function CGImageGetDecode(image)
 {
     
 }
@@ -1343,6 +1441,34 @@ function CGImageGetBitmapInfo(image)
 {
     
 }
+
+// ========================
+// = Vienna Added methods =
+// ========================
+
+function CGImageCreateWithURLDataProvider(source)
+{
+    var theImage = new CGImageRef();
+    theImage._imageSource = source;
+    var theRepresentation = new Image();
+    theImage._representations[0] = theRepresentation;
+    theRepresentation.src = source;
+    
+    theRepresentation.onload = function() {
+        theImage._loadingStatus[0] == 4;
+    };
+    
+    return theImage;
+}
+
+// extern CGImageRef CGImageCreateWithFileDataProvider(CFStringRef source);
+
+// extern BOOL CGImageDataRepresentationFinishedLoading(CGImageRef image);
+function CGImageDataRepresentationFinishedLoading(image)
+{
+    return (image._loadingStatus[0] == 4);
+}
+
 // 
 //  CGPath.js
 //  vienna

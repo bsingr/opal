@@ -78,7 +78,7 @@ function CFArrayGetValues(theArray, range, values)
 // 
 function CFArrayGetFirstIndexOfValue(theArray, range, value)
 {
-    
+    return theArray.indexOf(value);
 }
 
 // extern CFIndex CFArrayGetLastIndexOfValue(CFArrayRef theArray, CFRange range, void *value);
@@ -113,7 +113,7 @@ function CFArraySetValueAtIndex(theArray, idx, value)
 // 
 function CFArrayRemoveValueAtIndex(theArray, idx)
 {
-    theArray.splice(idx, idx);
+    theArray.splice(idx, 1);
 }
 
 // extern void CFArrayRemoveAllValues(CFMutableArrayRef theArray);

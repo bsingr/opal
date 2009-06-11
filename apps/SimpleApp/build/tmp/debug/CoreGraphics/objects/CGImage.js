@@ -8,6 +8,14 @@
 
 // need to add to Js's Image object prototype... ismask...colrospace, bitmapinfo, rendering intent etc
 
+function CGImageRef()
+{
+    this._imageSource = "";
+    this._representations = [];
+    this._loadingStatus = [0];
+    return this;
+}
+
 
 // extern CGImageRef CGImageCreate(size_t width, size_t height, size_t bitsPerComponent, size_t bitsPerPixel, size_t bytesPerRow, CGColorSpaceRef colorspace, CGBitmapInfo bitmapInfo, CGDataProviderRef provider, const CGFloat decode[], bool shouldInterpolate, CGColorRenderingIntent intent);
 // 
@@ -137,7 +145,7 @@ function CGImageGetDataProvider(image)
 
 // extern const CGFloat *CGImageGetDecode(CGImageRef image);
 // 
-function CGImageGetDecode (image)
+function CGImageGetDecode(image)
 {
     
 }
@@ -161,3 +169,31 @@ function CGImageGetBitmapInfo(image)
 {
     
 }
+
+// ========================
+// = Vienna Added methods =
+// ========================
+
+function CGImageCreateWithURLDataProvider(source)
+{
+    var theImage = new CGImageRef();
+    theImage._imageSource = source;
+    var theRepresentation = new Image();
+    theImage._representations[0] = theRepresentation;
+    theRepresentation.src = source;
+    
+    theRepresentation.onload = function() {
+        theImage._loadingStatus[0] == 4;
+    };
+    
+    return theImage;
+}
+
+// extern CGImageRef CGImageCreateWithFileDataProvider(CFStringRef source);
+
+// extern BOOL CGImageDataRepresentationFinishedLoading(CGImageRef image);
+function CGImageDataRepresentationFinishedLoading(image)
+{
+    return (image._loadingStatus[0] == 4);
+}
+

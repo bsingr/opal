@@ -554,7 +554,7 @@ class_addMethod(the_class, "setFrame:", function(self, _cmd, frameRect) {
 with(self) {
 _frame = frameRect;
 CGDOMElementSetFrame(_DOMContainer,_frame);
-CGDOMElementSetFrame(_DOMGraphicsContext,_frame);
+CGDOMElementSetFrame(_DOMGraphicsContext,objc_msgSend(self, "bounds"));
 objc_msgSend(self, "setNeedsDisplay:", YES);
 }
 }, "void");
@@ -814,7 +814,7 @@ with(self) {
 class_addMethod(the_class, "drawRect:", function(self, _cmd, rect) {
 with(self) {
 var context = objc_msgSend(objc_msgSend(NSGraphicsContext, "currentContext"), "graphicsPort");
-CGContextFillRect(context,rect);
+CGContextFillRect(context,CGRectInset(rect,100,100));
 }
 }, "void");
 
@@ -5713,6 +5713,12 @@ return CGDOMElementGetContext(_DOMGraphicsContext);
 }
 }, "void");
 
+class_addMethod(meta_class, "load", function(self, _cmd) {
+with(self) {
+CFBundlePreloadResource(CFBundleGetBundleForClass(self),"lumpy","png","");
+}
+}, "void");
+
 class_addMethod(meta_class, "frameRectForContentRect:styleMask:", function(self, _cmd, cRect, aStyle) {
 with(self) {
 }
@@ -5967,14 +5973,20 @@ with(self) {
 class_addMethod(the_class, "drawRect:", function(self, _cmd, rect) {
 with(self) {
 var c = objc_msgSend(objc_msgSend(NSGraphicsContext, "currentContext"), "graphicsPort");
-CGContextSetAlpha(c,0.3);
-CGContextSetFillColorWithColor(c,CGColorCreateGenericRGB(1,0,0.2,0.5));
-CGContextFillRect(c,rect);
-var newRect = CGRectInset(rect,5,5);
-NSLog(rect);
-NSLog(newRect);
-CGContextSetFillColorWithColor(c,CGColorCreateGenericRGB(0.3,0.8,0.2,0.5));
-CGContextFillRect(c,newRect);
+CGContextClearRect(c,rect);
+CGContextSaveGState(c);
+CGContextSetFillColorWithColor(c,CGColorCreateGenericRGB(1,1,1,1.0));
+CGContextSetShadowWithColor(c,CGSizeMake(0,5),10,CGColorCreateGenericRGB(0,0,0,0.8));
+CGContextFillRect(c,CGRectInset(rect,20,20));
+CGContextRestoreGState(c);
+var theImage = CGImageCreateWithURLDataProvider("file:///Users/adam/Sites/lumpy.png");
+CGContextDrawImage(c,CGRectMake(20,20,rect.size.width - 40,56),theImage);
+CGContextSetFillColorWithColor(c,CGColorCreateGenericRGB(0.204,0.204,0.204,1.0));
+CGContextSetAlpha(c,1);
+var theFont = CGFontCreate("Arial",12,YES);
+CGContextSetFont(c,theFont);
+CGContextSetShadowWithColor(c,CGSizeMake(1,1),1,CGColorCreateGenericRGB(1,1,1,1));
+CGContextShowTextAtPoint(c,200,36,"Hello there!",20);
 }
 }, "void");
 

@@ -17,7 +17,10 @@ function CGDOMElementGetRootElement()
 // 
 function CGDOMElementCreate(type)
 {
-    return document.createElement(type);
+    var theElement = document.createElement(type);
+    theElement.style.display = "block";
+    theElement.style.position = "absolute";
+    return theElement;
 }
 
 // extern CGDOMElementRef CGDOMElementCreateWithAttributes(CFStringRef type, CFDictionaryRef attributes);
@@ -80,8 +83,10 @@ function CGDOMElementSetAttribute(element, name, value)
 // 
 function CGDOMElementSetFrame(element, frame)
 {
-    element.bottom = frame.origin.x;
-    element.left = frame.origin.y;
+    element.style.bottom = frame.origin.x + "px";
+    element.style.left = frame.origin.y + "px";
+    element.style.width = frame.size.width + "px";
+    element.style.height = frame.size.height + "px";
     element.height = frame.size.height;
     element.width = frame.size.width;
 }

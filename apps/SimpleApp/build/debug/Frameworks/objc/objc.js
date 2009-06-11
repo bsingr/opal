@@ -16,10 +16,20 @@ var __bootstrap_completed = false;
 var __bootstrap_files = null;
 
 var __bootstrap_bundles = {};
+// Hash of class object(the class, not a string version.)
 var __bootstrap_bundles_for_class = {};
+// current bundle that objc is processing
+var __bootstrap_bundles_current = null;
 
 // CFBundleRef for the main (application) bundle.
 var __bootstrap_main_bundle = null;
+
+// CFArrayRef of files to load. main() will not be called until all these images are loaded.
+// Custom views etc can use this to ensure that images are "ready to go" when ready to draw.
+// 
+// Trying to draw images otherwise may cause application to hang until images are downloaded..
+// This also stores the main xib file for the application, so this needs to be ready as well.
+var __bootstrap_preload_files = [];
 
 // extern void __bootstrap_main(void);
 // 
@@ -43,10 +53,10 @@ function __bootstrap_link()
 		    {
 		        var nib_data = CFDataCreateFromURL("Resources/" + CFDictionaryGetValue(main_bundle_dictionary, "NSMainNibFile") + ".xib", function() {
 		            	           
-                   // Once the main nib has loaded, we can now call main.
-                   // This avoids us calling main and then having to wait for the main nib file to load.
-                   main(1, ['SimpleApp']);
+                   __bootstrap_preload_finished(nib_data);
 		        });
+		        
+		        CFArrayAppendValue(__bootstrap_preload_files, nib_data);
 		    }			
 		}
 		else
@@ -57,6 +67,7 @@ function __bootstrap_link()
                 
                 if(CFDictionaryContainsKey(new_bundle._infoDictionary, "CFBundleExecutable"))
                 {
+                    __bootstrap_bundles_current = new_bundle;
                     dlopen(CFDictionaryGetValue(new_bundle._infoDictionary, "CFBundleExecutable") + ".js", 0, function() {
                         __bootstrap_completed = true;
         		        __bootstrap_link();
@@ -71,6 +82,7 @@ function __bootstrap_link()
             // When plist is loaded....
             if(CFDictionaryContainsKey(new_bundle._infoDictionary, "CFBundleExecutable"))
             {
+                __bootstrap_bundles_current = new_bundle;
                 dlopen("Frameworks/" + the_framework + "/" + CFDictionaryGetValue(new_bundle._infoDictionary, "CFBundleExecutable") + ".js", 0, function() {
     		        __bootstrap_link();
                 });
@@ -78,6 +90,19 @@ function __bootstrap_link()
 	    });
 	}
 }
+
+// We finished loading this item..
+function __bootstrap_preload_finished(item)
+{
+    NSLog(CFArrayGetCount(__bootstrap_preload_files));
+    CFArrayRemoveValueAtIndex(__bootstrap_preload_files, CFArrayGetFirstIndexOfValue(__bootstrap_preload_files, null, item));
+    
+    if((CFArrayGetCount(__bootstrap_preload_files) == 0) && __bootstrap_completed)
+    {
+        main(1, ["SimpleApp"]);
+    }
+}
+
 // 
 //  constants.js
 //  vienna
@@ -669,7 +694,7 @@ function objc_allocateClassPair(superclass, name)
 function objc_registerClassPair(cls)
 {
     window[cls.name] = cls;
-    // FIXME: Add To global list of Objective-C classes?
+    CFBundleSetBundleForClass(__bootstrap_bundles_current, cls);
 }
 
 // extern Class objc_duplicateClass(Class original, const char *name);
@@ -696,6 +721,10 @@ function class_addMethod(cls, name, imp, types)
     
     cls.method_list.push(newMethod);
     cls.method_table.prototype[name] = newMethod;
+    
+    if(name == "load")
+        imp(cls, "load");
+    
     return true;
 }
 
@@ -963,6 +992,18 @@ function fread(ptr, size, count, stream)
 // extern char *gets(char *);
 // extern void perror(const char *);
 // extern int printf(const char *format, ...);
+
+if (window.opera && !window.console) {
+    window.console = {};
+    var names = ["log", "debug", "info", "warn", "error", "assert", "dir", "dirxml",
+    "group", "groupEnd", "time", "timeEnd", "count", "trace", "profile", "profileEnd"];
+    for (var i = 0; i < names.length; ++i)
+        window.console[names[i]] = function() {}
+    window.console.info = function() {
+        opera.postError(arguments);
+    }
+}
+
 function printf(format)
 {
     console.log(format);

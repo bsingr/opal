@@ -279,7 +279,7 @@
 {
     _frame = frameRect;
     CGDOMElementSetFrame(_DOMContainer, _frame);
-    CGDOMElementSetFrame(_DOMGraphicsContext, _frame);
+    CGDOMElementSetFrame(_DOMGraphicsContext, [self bounds]);
     [self setNeedsDisplay:YES];
 }
 
@@ -543,7 +543,7 @@
 - (void)drawRect:(NSRect)rect
 {
     CGContextRef context = [[NSGraphicsContext currentContext] graphicsPort];
-    CGContextFillRect(context, rect);
+    CGContextFillRect(context, CGRectInset(rect, 100, 100));
 }
 
 - (void)displayRectIgnoringOpacity:(NSRect)aRect inContext:(NSGraphicsContext *)context

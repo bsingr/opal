@@ -16,7 +16,7 @@ function CFHTTPRequestCreate(method, address, async, callback)
 
 function CFHTTPRequestSetMimeType(request, mime)
 {
-    request.overrideMimeType(mime);
+    // request.overrideMimeType(mime);
 }
 
 function CFHTTPRequestSend(request, data)

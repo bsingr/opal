@@ -20,6 +20,8 @@ function CGColorCreateGenericRGB(red, green, blue, alpha)
 		_alpha: alpha
 	};
 }
+
+
 // extern CGColorRef CGColorCreateGenericCMYK(CGFloat cyan, CGFloat magenta, CGFloat yellow, CGFloat black, CGFloat alpha);
 // extern CGColorRef CGColorGetConstantColor(CFStringRef colorName);
 // // extern CGColorRef CGColorCreateWithPattern(CGColorSpaceRef space, CGPatternRef pattern, CGFloat components[]);

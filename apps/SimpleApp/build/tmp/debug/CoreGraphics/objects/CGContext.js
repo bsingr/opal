@@ -10,12 +10,12 @@ var CGLineJoinCanvas = ["miter", "round", "bevel"];
 
 var CGLineCapCanvas = ["butt", "round", "square"];
 
-function CGContextSaveGState (c)
+function CGContextSaveGState(c)
 {
     c.save();
 }
 
-function CGContextRestoreGState (c)
+function CGContextRestoreGState(c)
 {
     c.restore();
 }
@@ -258,7 +258,7 @@ function CGContextStrokeRectWithWidth(c, rect, width)
 // 
 function CGContextClearRect(c, rect)
 {
-    
+    c.clearRect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
 }
 
 // extern void CGContextFillEllipseInRect(CGContextRef context, CGRect rect);
@@ -422,7 +422,16 @@ function CGContextSetRenderingIntent(c, intent)
 // 
 function CGContextDrawImage(c, rect, image)
 {
+    c.drawImage(image._representations[0], rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
     
+    // if(CGImageDataRepresentationFinishedLoading(image) == 4)
+    //     {
+    //         NSLog("Image has loaded, so can draw...");
+    //     }
+    //     else
+    //     {
+    //         NSLog("Image has not loaded, so cannot draw");
+    //     }
 }
 
 // extern void CGContextDrawTiledImage(CGContextRef c, CGRect rect, CGImageRef image);
@@ -450,21 +459,33 @@ function CGContextSetInterpolationQuality(c, quality)
 // 
 function CGContextSetShadowWithColor(c, offset, blur, color)
 {
-    
+    c.shadowOffsetX = offset.width;
+    c.shadowOffsetY = offset.height;
+    c.shadowBlur = blur;
+    c.shadowColor = "rgba(" + parseInt(color._red * 255) + ","  + parseInt(color._green * 255) + ","  + parseInt(color._blue * 255) + ","  + color._alpha + ")";
 }
 
 // extern void CGContextSetShadow(CGContextRef context, CGSize offset, CGFloat blur);
 // 
 function CGContextSetShadow(c, offset, blur)
 {
-    
+    c.shadowOffsetX = offset.width;
+    c.shadowOffsetY = offset.height;
+    c.shadowBlur = blur;
+    c.shadowColor = "rgba(1,1,1,1)";
 }
 
 // extern void CGContextDrawLinearGradient(CGContextRef context, CGGradientRef gradient, CGPoint startPoint, CGPoint endPoint, CGGradientDrawingOptions options);
 // 
 function CGContextDrawLinearGradient(c, gradient, startPoint, endPoint, options)
 {
-    
+    var theGradient = c.createLinearGradient(startPoint.x, startPoint.y, 0, endPoint.y);
+    for(var i = 0; i < gradient._colors.length; i++)
+    {
+        theGradient.addColorStop(gradient._locations[i], CGContextRGBAStringFromColor(gradient._colors[i]));
+    }
+    c.fillStyle = theGradient;
+    c.fillRect();
 }
 
 // extern void CGContextDrawRadialGradient(CGContextRef context, CGGradientRef gradient, CGPoint startCenter, CGFloat startRadius, CGPoint endCenter, CGFloat endRadius, CGGradientDrawingOptions options);
@@ -529,7 +550,7 @@ function CGContextSetTextDrawingMode(c, mode)
 // 
 function CGContextSetFont(c, font)
 {
-    
+    c.font = CGFontGetStringRepresentation(font);
 }
 
 // extern void CGContextSetFontSize(CGContextRef c, CGFloat size);
@@ -564,7 +585,7 @@ function CGContextShowText(c, string, length)
 // 
 function CGContextShowTextAtPoint(c, x, y, string, length)
 {
-    
+    c.fillText(string, x, y);
 }
 
 // extern void CGContextShowGlyphs(CGContextRef c, const CGGlyph g[], size_t count);
@@ -607,4 +628,13 @@ function CGContextBeginTransparencyLayerWithRect(c, rect, auxiliaryInfo)
 function CGContextEndTransparencyLayer(c)
 {
     
+}
+
+// =========================
+// = Vienna added methods: =
+// =========================
+
+function CGContextRGBAStringFromColor(color)
+{
+    return "rgba(" + parseInt(color._red * 255) + ","  + parseInt(color._green * 255) + ","  + parseInt(color._blue * 255) + ","  + color._alpha + ")";
 }

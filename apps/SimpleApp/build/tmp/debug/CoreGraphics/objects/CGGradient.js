@@ -6,11 +6,11 @@
 //  Copyright 2009 Adam Beynon. All rights reserved.
 // 
 
-// extern CFTypeID CGGradientGetTypeID(void);
-// 
-function CGGradientGetTypeID()
+function CGGradientRef()
 {
-    
+    this._colors = [];
+    this._locations = [];
+    return this;
 }
 
 // extern CGGradientRef CGGradientCreateWithColorComponents(CGColorSpaceRef space, CGFloat components[], CGFloat locations[], size_t count);
@@ -24,5 +24,8 @@ function CGGradientCreateWithColorComponenets(space, componenets, locations, cou
 // 
 function CGGradientCreateWithColors(space, colors, locations)
 {
-    
+    var theGradient = new CGGradientRef();
+    theGradient._colors = colors;
+    theGradient._locations = locations;
+    return theGradient;
 }

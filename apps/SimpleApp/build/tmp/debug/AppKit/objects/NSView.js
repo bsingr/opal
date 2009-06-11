@@ -312,7 +312,7 @@ class_addMethod(the_class, "setFrame:", function(self, _cmd, frameRect) {
 with(self) {
 _frame = frameRect;
 CGDOMElementSetFrame(_DOMContainer,_frame);
-CGDOMElementSetFrame(_DOMGraphicsContext,_frame);
+CGDOMElementSetFrame(_DOMGraphicsContext,objc_msgSend(self, "bounds"));
 objc_msgSend(self, "setNeedsDisplay:", YES);
 }
 }, "void");
@@ -572,7 +572,7 @@ with(self) {
 class_addMethod(the_class, "drawRect:", function(self, _cmd, rect) {
 with(self) {
 var context = objc_msgSend(objc_msgSend(NSGraphicsContext, "currentContext"), "graphicsPort");
-CGContextFillRect(context,rect);
+CGContextFillRect(context,CGRectInset(rect,100,100));
 }
 }, "void");
 

@@ -40,3 +40,75 @@ extern CFArrayRef CFBundleGetAllBundles(void);
 // callback block is called upon sucsessul (or failure) to alert the callee that
 // the referenced bundle has finished initialisation.
 extern CFBundleRef CFBundleCreate(CFStringRef bundleURL, void (^callback)(void));
+
+extern CFArrayRef CFBundleCreateBundlesFromDirectory(CFURLRef directoryURL, CFStringRef bundleType);
+
+
+extern CFURLRef CFBundleCopyBundleURL(CFBundleRef bundle);
+
+extern CFTypeRef CFBundleGetValueForInfoDictionaryKey(CFBundleRef bundle, CFStringRef key);
+
+extern CFDictionaryRef CFBundleGetInfoDictionary(CFBundleRef bundle);
+
+extern CFDictionaryRef CFBundleGetLocalInfoDictionary(CFBundleRef bundle);
+
+
+extern CFStringRef CFBundleGetIdentifier(CFBundleRef bundle);
+
+extern int CFBundleGetVersionNumber(CFBundleRef bundle);
+
+extern CFStringRef CFBundleGetDevelopmentRegion(CFBundleRef bundle);
+
+extern CFURLRef CFBundleCopySupportFilesDirectoryURL(CFBundleRef bundle);
+
+extern CFURLRef CFBundleCopyResourcesDirectoryURL(CFBundleRef bundle);
+
+extern CFURLRef CFBundleCopyPrivateFrameworksURL(CFBundleRef bundle);
+
+extern CFURLRef CFBundleCopySharedFrameworksURL(CFBundleRef bundle);
+
+extern CFURLRef CFBundleCopySharedSupportURL(CFBundleRef bundle);
+
+extern CFURLRef CFBundleCopyBuiltInPlugInsURL(CFBundleRef bundle);
+
+
+
+
+extern CFURLRef CFBundleCopyResourceURL(CFBundleRef bundle, CFStringRef resourceName, CFStringRef resourceType, CFStringRef subDirName);
+
+extern CFArrayRef CFBundleCopyResourceURLsOfType(CFBundleRef bundle, CFStringRef resourceType, CFStringRef subDirName);
+
+extern CFStringRef CFBundleCopyLocalizedString(CFBundleRef bundle, CFStringRef key, CFStringRef value, CFStringRef tableName);
+
+
+extern CFArrayRef CFBundleCopyBundleLocalizations(CFBundleRef bundle);
+
+extern CFArrayRef CFBundleCopyPreferredLocalizationsFromArray(CFArrayRef locArray);
+
+extern CFArrayRef CFBundleCopyLocalizationsForPreferences(CFArrayRef locArray, CFArrayRef prefArray);
+
+extern CFURLRef CFBundleCopyResourceURLForLocalization(CFBundleRef bundle, CFStringRef resourceName, CFStringRef resourceType, CFStringRef subDirName, CFStringRef localizationName);
+
+extern CFArrayRef CFBundleCopyResourceURLsOfTypeForLocalization(CFBundleRef bundle, CFStringRef resourceType, CFStringRef subDirName, CFStringRef localizationName);
+
+extern CFDictionaryRef CFBundleCopyInfoDictionaryForURL(CFURLRef url);
+
+extern CFArrayRef CFBundleCopyLocalizationsForURL(CFURLRef url);
+
+extern CFURLRef CFBundleCopyExecutableURL(CFBundleRef bundle);
+
+// extern bool CFBundleLoadExecutableAndReturnError(CFBundleRef bundle, CFErrorRef *error);
+
+extern bool CFBundleLoadExecutable(CFBundleRef bundle);
+
+extern bool CFBundleIsExecutableLoaded(CFBundleRef bundle);
+
+
+// ==============================================================================
+// = Vienna added methods for associating classes with bundles, and preloading. =
+// ==============================================================================
+
+extern CFBundleRef CFBundleGetBundleForClass(Class aClass);
+extern void CFBundleSetBundleForClass(CFBundleRef bundle, Class aClass);
+
+extern void CFBundlePreloadResource(CFBundleRef bundle, CFStringRef resourceName, CFStringRef resourceType, CFStringRef subDirName);

@@ -10,6 +10,11 @@
 
 @implementation NSWindow
 
++ (void)load
+{
+    CFBundlePreloadResource(CFBundleGetBundleForClass(self), @"lumpy", @"png", @"");
+}
+
 - (CGDOMElementRef)DOMContainer
 {
     return _DOMContainer;
@@ -1198,6 +1203,7 @@
     if (!_graphicsContext)
 		_graphicsContext = [NSGraphicsContext graphicsContextWithGraphicsPort:CGDOMElementGetContext(_DOMGraphicsContext) flipped:NO];
 	
+    // CGContextClearRect(_graphicsContext, [self bounds]);
 	[NSGraphicsContext setCurrentContext:_graphicsContext];
 	CGContextSaveGState([_graphicsContext graphicsPort]);
 }
@@ -1259,16 +1265,29 @@
 - (void)drawRect:(NSRect)rect
 {
 	CGContextRef c = [[NSGraphicsContext currentContext] graphicsPort];
-	
-    CGContextSetAlpha(c, 0.3);
-	CGContextSetFillColorWithColor(c, CGColorCreateGenericRGB(1,0,0.2,0.5));
-    CGContextFillRect(c, rect);
-	
-	CGRect newRect = CGRectInset(rect, 5, 5);
-	NSLog(rect);
-	NSLog(newRect);
-	CGContextSetFillColorWithColor(c, CGColorCreateGenericRGB(0.3,0.8,0.2,0.5));
-    CGContextFillRect(c, newRect);
+    CGContextClearRect(c, rect);
+    // CGContextSetAlpha(c, 0.3);
+    CGContextSaveGState(c);
+    CGContextSetFillColorWithColor(c, CGColorCreateGenericRGB(1, 1, 1, 1.0));
+    CGContextSetShadowWithColor(c, CGSizeMake(0,5), 10, CGColorCreateGenericRGB(0,0,0,0.8));
+    CGContextFillRect(c, CGRectInset(rect, 20, 20));
+    CGContextRestoreGState(c);
+    CGImageRef theImage = CGImageCreateWithURLDataProvider(@"file:///Users/adam/Sites/lumpy.png");
+    
+    CGContextDrawImage(c, CGRectMake(20,20,rect.size.width - 40,56), theImage);
+    
+	// CGRect newRect = CGRectInset(rect, 5, 5);
+	//     CGContextSetFillColorWithColor(c, CGColorCreateGenericRGB(0.3,0.8,0.2,0.5));
+	//     CGContextFillRect(c, newRect);
+    
+    CGContextSetFillColorWithColor(c, CGColorCreateGenericRGB(0.204,0.204,0.204, 1.0));
+    CGContextSetAlpha(c, 1);
+    CGFontRef theFont = CGFontCreate(@"Arial", 12, YES);
+    CGContextSetFont(c, theFont);
+    
+    CGContextSetShadowWithColor(c, CGSizeMake(1,1), 1, CGColorCreateGenericRGB(1,1,1,1));
+    
+    CGContextShowTextAtPoint(c, 200, 36, @"Hello there!", 20);
 }
 
 - (void)displayRectIgnoringOpacity:(NSRect)aRect inContext:(NSGraphicsContext *)context

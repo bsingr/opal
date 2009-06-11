@@ -378,7 +378,7 @@ function objc_allocateClassPair(superclass, name)
 function objc_registerClassPair(cls)
 {
     window[cls.name] = cls;
-    // FIXME: Add To global list of Objective-C classes?
+    CFBundleSetBundleForClass(__bootstrap_bundles_current, cls);
 }
 
 // extern Class objc_duplicateClass(Class original, const char *name);
@@ -405,6 +405,10 @@ function class_addMethod(cls, name, imp, types)
     
     cls.method_list.push(newMethod);
     cls.method_table.prototype[name] = newMethod;
+    
+    if(name == "load")
+        imp(cls, "load");
+    
     return true;
 }
 

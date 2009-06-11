@@ -6,19 +6,20 @@
 //  Copyright 2009 Adam Beynon. All rights reserved.
 // 
 
-typedef struct CGGradient *CGGradientRef;
+#import <CoreGraphics/CGBase.h>
+#import <CoreGraphics/CGColorSpace.h>
+#import <CoreGraphics/CGContext.h>
+
+typedef struct CGGradient{
+    CFArrayRef  *_colors;
+    CFArrayRef  *_locations;
+} *CGGradientRef;
 
 enum {
     kCGGradientDrawsBeforeStartLocation = (1 << 0),
     kCGGradientDrawsAfterEndLocation    = (1 << 1)
 };
 typedef int CGGradientDrawingOptions;
-
-#import <CoreGraphics/CGBase.h>
-#import <CoreGraphics/CGColorSpace.h>
-#import <CoreGraphics/CGContext.h>
-
-extern CFTypeID CGGradientGetTypeID(void);
 
 extern CGGradientRef CGGradientCreateWithColorComponents(CGColorSpaceRef space, CGFloat components[], CGFloat locations[], size_t count);
 extern CGGradientRef CGGradientCreateWithColors(CGColorSpaceRef space, CFArrayRef colors, CGFloat locations[]);

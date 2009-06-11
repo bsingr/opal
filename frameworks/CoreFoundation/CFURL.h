@@ -6,4 +6,8 @@
 //  Copyright 2009 Adam Beynon. All rights reserved.
 // 
 
+#import <CoreFoundation/CFString.h>
 
+typedef struct CFURL {
+    CFStringRef *_url;
+} *CFURLRef;
