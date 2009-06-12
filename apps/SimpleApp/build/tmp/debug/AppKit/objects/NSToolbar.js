@@ -45,7 +45,25 @@ _itemIdentifiers = null;
 
 var totalItems = objc_msgSend(_itemIdentifiers, "count");
 var i;
-/* for statement needs to go here*/}
+for(i = 0;
+i < totalItems;
+i++){
+var identifier = objc_msgSend(_itemIdentifiers, "objectAtIndex:", i);
+var item = objc_msgSend(_delegate, "toolbar:itemForItemIdentifier:willBeInsertedIntoToolbar:", self, identifier, YES);
+objc_msgSend(item, "setDisplayMode:", _displayMode);
+if (!item)
+NSLog("Returned item was nil");
+else
+{
+objc_msgSend(_items, "addObject:", item);
+objc_msgSend(item, "setToolbar:", self);
+objc_msgSend(_DOMElement, "appendChild:", objc_msgSend(item, "DOMElement"));
+
+}
+
+
+}
+}
 }, "void");
 
 class_addMethod(the_class, "displayMode", function(self, _cmd) {

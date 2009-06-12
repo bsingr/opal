@@ -60,7 +60,7 @@ CGContextSetFillColorWithColor(c,CGColorCreateGenericRGB(0.204,0.204,0.204,1.0))
 CGContextSetShadowWithColor(c,CGSizeMake(1,1),1,CGColorCreateGenericRGB(1,1,1,1));
 var theFont = CGFontCreate("Arial",12,NO);
 CGContextSetFont(c,theFont);
-CGContextShowTextAtPoint(c,20,((cellFrame.size.height + 12) / 2),_value,14);
+CGContextShowTextAtPoint(c,5,((cellFrame.size.height + 12) / 2),_value,14);
 
 }
 else
@@ -69,7 +69,7 @@ CGContextSetFillColorWithColor(c,CGColorCreateGenericRGB(0.704,0.704,0.704,1.0))
 CGContextSetShadowWithColor(c,CGSizeMake(1,1),1,CGColorCreateGenericRGB(1,1,1,1));
 var theFont = CGFontCreate("Arial",12,NO);
 CGContextSetFont(c,theFont);
-CGContextShowTextAtPoint(c,20,((cellFrame.size.height + 12) / 2),_value,14);
+CGContextShowTextAtPoint(c,5,((cellFrame.size.height + 12) / 2),_value,14);
 
 }
 
@@ -84,6 +84,22 @@ if (objc_msgSend(self, "drawsBackground"))
 {
 CGContextSetFillColorWithColor(c,CGColorCreateGenericRGB(1,1,1,1.0));
 CGContextFillRect(c,cellFrame);
+
+}
+
+if (_isBezeled)
+{
+var theImage = CGImageCreateWithURLDataProvider("Resources/NSTextFieldBezelTopLeft.png");
+CGContextDrawImage(c,CGRectMake(0,0,2,2),theImage);
+var theImage = CGImageCreateWithURLDataProvider("Resources/NSTextFieldBezelTopMiddle.png");
+CGContextDrawImage(c,CGRectMake(2,0,cellFrame.size.width - 4,2),theImage);
+var theImage = CGImageCreateWithURLDataProvider("Resources/NSTextFieldBezelTopRight.png");
+CGContextDrawImage(c,CGRectMake(cellFrame.size.width - 2,0,2,2),theImage);
+var theImage = CGImageCreateWithURLDataProvider("Resources/NSTextFieldBezelSides.png");
+CGContextDrawImage(c,CGRectMake(0,2,1,cellFrame.size.height - 2),theImage);
+CGContextDrawImage(c,CGRectMake(cellFrame.size.width - 1,2,1,cellFrame.size.height - 2),theImage);
+var theImage = CGImageCreateWithURLDataProvider("Resources/NSTextFieldBezelBottom.png");
+CGContextDrawImage(c,CGRectMake(1,cellFrame.size.height - 1,cellFrame.size.width - 2,1),theImage);
 
 }
 
@@ -152,6 +168,16 @@ return titleRect;
 }
 
 return theRect;
+}
+}, "void");
+
+class_addMethod(meta_class, "load", function(self, _cmd) {
+with(self) {
+CFBundlePreloadResource(CFBundleGetBundleForClass(self),"NSTextFieldBezelTopLeft","png","");
+CFBundlePreloadResource(CFBundleGetBundleForClass(self),"NSTextFieldBezelTopMiddle","png","");
+CFBundlePreloadResource(CFBundleGetBundleForClass(self),"NSTextFieldBezelTopRight","png","");
+CFBundlePreloadResource(CFBundleGetBundleForClass(self),"NSTextFieldBezelSides","png","");
+CFBundlePreloadResource(CFBundleGetBundleForClass(self),"NSTextFieldBezelBottom","png","");
 }
 }, "void");
 

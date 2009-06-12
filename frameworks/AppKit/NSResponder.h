@@ -8,6 +8,7 @@
 
 #import <Foundation/NSObject.h>
 #import <Foundation/NSArray.h>
+#import <AppKit/NSEvent.h>
 
 @class NSError;
 @class NSEvent;

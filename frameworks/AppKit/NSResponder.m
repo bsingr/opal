@@ -164,21 +164,21 @@
     NSInteger eventsCount = [eventArray count];
     for (int i = 0; i < eventsCount; i++)
     {
-        NSEvent *event = [eventArray objectAtIndex:i];
-        NSString *eventString = [event charactersIgnoringModifiers];
-        
-        switch ([event keyCode]) {
-            case NSBackspaceKey:
-                if ([self respondsToSelector:@selector(deleteBackward:)])
-                    [self deleteBackward:event];
-                break;
-            case NSTabKey:
-                if ([self respondsToSelector:@selector(insertTab:)])
-                    [self insertTab:event];
-                break;
-            default:
-            NSLog(@"Does not respond to - interptretKeyEvents:");
-        }
+        // NSEvent *event = [eventArray objectAtIndex:i];
+        //         NSString *eventString = [event charactersIgnoringModifiers];
+        //         
+        //         switch ([event keyCode]) {
+        //             case NSBackspaceKey:
+        //                 if ([self respondsToSelector:@selector(deleteBackward:)])
+        //                     [self deleteBackward:event];
+        //                 break;
+        //             case NSTabKey:
+        //                 if ([self respondsToSelector:@selector(insertTab:)])
+        //                     [self insertTab:event];
+        //                 break;
+        //             default:
+        //             NSLog(@"Does not respond to - interptretKeyEvents:");
+        //         }
     }
 }
 

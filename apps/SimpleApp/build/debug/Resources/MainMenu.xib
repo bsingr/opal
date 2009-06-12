@@ -5,16 +5,28 @@
                 "int": "1050"
             },
             "IBDocument.SystemVersion": {
-                "string": "9J61"
+                "string": "10A380"
             },
             "IBDocument.InterfaceBuilderVersion": {
-                "string": "677"
+                "string": "731"
             },
             "IBDocument.AppKitVersion": {
-                "string": "949.46"
+                "string": "1025.2"
             },
             "IBDocument.HIToolboxVersion": {
-                "string": "353.00"
+                "string": "427.00"
+            },
+            "IBDocument.PluginVersions": {
+                "class": "NSMutableDictionary",
+                "id": "",
+                "objects": {
+                    "NS.key.0": {
+                        "string": "com.apple.InterfaceBuilder.CocoaPlugin"
+                    },
+                    "NS.object.0": {
+                        "string": "731"
+                    }
+                }
             },
             "IBDocument.EditedObjectIDs": {
                 "class": "NSMutableArray",
@@ -39,7 +51,7 @@
                     },
                     "dict.sortedKeys": {
                         "class": "NSArray",
-                        "id": "",
+                        "id": "0",
                         "objects": []
                     },
                     "dict.values": {
@@ -99,7 +111,7 @@
                             "int": "2"
                         },
                         "NSWindowRect": {
-                            "string": "{{196, 269}, {1030, 241}}"
+                            "string": "{{259, 135}, {946, 613}}"
                         },
                         "NSWTFlags": {
                             "int": "603979776"
@@ -114,7 +126,7 @@
                             "nil": ""
                         },
                         "NSWindowContentMaxSize": {
-                            "string": "{3.40282e+38, 3.40282e+38}"
+                            "string": "{1.79769e+308, 1.79769e+308}"
                         },
                         "NSWindowView": {
                             "class": "NSView",
@@ -140,7 +152,7 @@
                                                 "int": "268"
                                             },
                                             "NSFrame": {
-                                                "string": "{{554, 50}, {118, 25}}"
+                                                "string": "{{554, 422}, {118, 25}}"
                                             },
                                             "NSSuperview": {
                                                 "id": "414427165"
@@ -169,7 +181,7 @@
                                                                 "string": "LucidaGrande"
                                                             },
                                                             "NSSize": {
-                                                                "double": "1.300000e+01"
+                                                                "double": "13"
                                                             },
                                                             "NSfFlags": {
                                                                 "int": "1044"
@@ -212,7 +224,7 @@
                                                 "int": "268"
                                             },
                                             "NSFrame": {
-                                                "string": "{{554, 19}, {118, 25}}"
+                                                "string": "{{554, 391}, {118, 25}}"
                                             },
                                             "NSSuperview": {
                                                 "id": "414427165"
@@ -272,7 +284,7 @@
                                                 "int": "268"
                                             },
                                             "NSFrame": {
-                                                "string": "{{552, 83}, {122, 21}}"
+                                                "string": "{{552, 455}, {122, 21}}"
                                             },
                                             "NSSuperview": {
                                                 "id": "414427165"
@@ -301,7 +313,7 @@
                                                                 "string": "Helvetica"
                                                             },
                                                             "NSSize": {
-                                                                "double": "1.200000e+01"
+                                                                "double": "12"
                                                             },
                                                             "NSfFlags": {
                                                                 "int": "16"
@@ -312,16 +324,16 @@
                                                         "id": "481053202"
                                                     },
                                                     "NSMaxValue": {
-                                                        "double": "1.000000e+02"
+                                                        "double": "100"
                                                     },
                                                     "NSMinValue": {
-                                                        "double": "0.000000e+00"
+                                                        "double": "0.0"
                                                     },
                                                     "NSValue": {
-                                                        "double": "5.000000e+01"
+                                                        "double": "50"
                                                     },
                                                     "NSAltIncValue": {
-                                                        "double": "0.000000e+00"
+                                                        "double": "0.0"
                                                     },
                                                     "NSNumberOfTickMarks": {
                                                         "int": "0"
@@ -350,7 +362,7 @@
                                                 "int": "268"
                                             },
                                             "NSFrame": {
-                                                "string": "{{552, 106}, {122, 21}}"
+                                                "string": "{{552, 478}, {122, 21}}"
                                             },
                                             "NSSuperview": {
                                                 "id": "414427165"
@@ -378,16 +390,16 @@
                                                         "id": "257328319"
                                                     },
                                                     "NSMaxValue": {
-                                                        "double": "1.000000e+02"
+                                                        "double": "100"
                                                     },
                                                     "NSMinValue": {
-                                                        "double": "0.000000e+00"
+                                                        "double": "0.0"
                                                     },
                                                     "NSValue": {
-                                                        "double": "5.000000e+01"
+                                                        "double": "50"
                                                     },
                                                     "NSAltIncValue": {
-                                                        "double": "0.000000e+00"
+                                                        "double": "0.0"
                                                     },
                                                     "NSNumberOfTickMarks": {
                                                         "int": "0"
@@ -416,7 +428,7 @@
                                                 "int": "268"
                                             },
                                             "NSFrame": {
-                                                "string": "{{62, 116}, {109, 18}}"
+                                                "string": "{{62, 488}, {109, 18}}"
                                             },
                                             "NSSuperview": {
                                                 "id": "414427165"
@@ -497,7 +509,7 @@
                                                 "int": "268"
                                             },
                                             "NSFrame": {
-                                                "string": "{{62, 61}, {156, 18}}"
+                                                "string": "{{62, 433}, {156, 18}}"
                                             },
                                             "NSSuperview": {
                                                 "id": "414427165"
@@ -563,7 +575,7 @@
                                                 "int": "268"
                                             },
                                             "NSFrame": {
-                                                "string": "{{62, 30}, {185, 18}}"
+                                                "string": "{{62, 402}, {185, 18}}"
                                             },
                                             "NSSuperview": {
                                                 "id": "414427165"
@@ -629,7 +641,7 @@
                                                 "int": "268"
                                             },
                                             "NSFrame": {
-                                                "string": "{{62, 90}, {177, 18}}"
+                                                "string": "{{62, 462}, {177, 18}}"
                                             },
                                             "NSSuperview": {
                                                 "id": "414427165"
@@ -695,7 +707,7 @@
                                                 "int": "268"
                                             },
                                             "NSFrame": {
-                                                "string": "{{285, 116}, {109, 18}}"
+                                                "string": "{{285, 488}, {109, 18}}"
                                             },
                                             "NSSuperview": {
                                                 "id": "414427165"
@@ -776,7 +788,7 @@
                                                 "int": "268"
                                             },
                                             "NSFrame": {
-                                                "string": "{{285, 61}, {156, 18}}"
+                                                "string": "{{285, 433}, {156, 18}}"
                                             },
                                             "NSSuperview": {
                                                 "id": "414427165"
@@ -842,7 +854,7 @@
                                                 "int": "268"
                                             },
                                             "NSFrame": {
-                                                "string": "{{285, 30}, {185, 18}}"
+                                                "string": "{{285, 402}, {185, 18}}"
                                             },
                                             "NSSuperview": {
                                                 "id": "414427165"
@@ -908,7 +920,7 @@
                                                 "int": "268"
                                             },
                                             "NSFrame": {
-                                                "string": "{{285, 90}, {177, 18}}"
+                                                "string": "{{285, 462}, {177, 18}}"
                                             },
                                             "NSSuperview": {
                                                 "id": "414427165"
@@ -974,7 +986,7 @@
                                                 "int": "268"
                                             },
                                             "NSFrame": {
-                                                "string": "{{708, 106}, {106, 22}}"
+                                                "string": "{{708, 478}, {106, 22}}"
                                             },
                                             "NSSuperview": {
                                                 "id": "414427165"
@@ -1019,7 +1031,7 @@
                                                             },
                                                             "NSColor": {
                                                                 "class": "NSColor",
-                                                                "id": "",
+                                                                "id": "767154243",
                                                                 "objects": {
                                                                     "NSColorSpace": {
                                                                         "int": "3"
@@ -1073,7 +1085,7 @@
                                                 "int": "268"
                                             },
                                             "NSFrame": {
-                                                "string": "{{708, 74}, {106, 22}}"
+                                                "string": "{{708, 446}, {106, 22}}"
                                             },
                                             "NSSuperview": {
                                                 "id": "414427165"
@@ -1124,7 +1136,7 @@
                                                 "int": "268"
                                             },
                                             "NSFrame": {
-                                                "string": "{{713, 49}, {77, 17}}"
+                                                "string": "{{713, 421}, {77, 17}}"
                                             },
                                             "NSSuperview": {
                                                 "id": "414427165"
@@ -1166,13 +1178,13 @@
                                                             },
                                                             "NSColor": {
                                                                 "class": "NSColor",
-                                                                "id": "",
+                                                                "id": "978707676",
                                                                 "objects": {
                                                                     "NSColorSpace": {
                                                                         "int": "3"
                                                                     },
                                                                     "NSWhite": {
-                                                                        "bytes": "MC42NjY2NjY2OQA"
+                                                                        "bytes": "MC42NjY2NjY2NjY3AA"
                                                                     }
                                                                 }
                                                             }
@@ -1180,7 +1192,7 @@
                                                     },
                                                     "NSTextColor": {
                                                         "class": "NSColor",
-                                                        "id": "",
+                                                        "id": "349438052",
                                                         "objects": {
                                                             "NSColorSpace": {
                                                                 "int": "6"
@@ -1199,10 +1211,524 @@
                                                 }
                                             }
                                         }
+                                    },
+                                    {
+                                        "class": "NSScrollView",
+                                        "id": "1046343484",
+                                        "objects": {
+                                            "NSNextResponder": {
+                                                "id": "414427165"
+                                            },
+                                            "NSvFlags": {
+                                                "int": "268"
+                                            },
+                                            "NSSubviews": {
+                                                "class": "NSMutableArray",
+                                                "id": "",
+                                                "objects": [{
+                                                    "class": "NSClipView",
+                                                    "id": "851026919",
+                                                    "objects": {
+                                                        "NSNextResponder": {
+                                                            "id": "1046343484"
+                                                        },
+                                                        "NSvFlags": {
+                                                            "int": "2304"
+                                                        },
+                                                        "NSSubviews": {
+                                                            "class": "NSMutableArray",
+                                                            "id": "",
+                                                            "objects": [{
+                                                                "class": "NSTableView",
+                                                                "id": "113764896",
+                                                                "objects": {
+                                                                    "NSNextResponder": {
+                                                                        "id": "851026919"
+                                                                    },
+                                                                    "NSvFlags": {
+                                                                        "int": "256"
+                                                                    },
+                                                                    "NSFrameSize": {
+                                                                        "string": "{660, 304}"
+                                                                    },
+                                                                    "NSSuperview": {
+                                                                        "id": "851026919"
+                                                                    },
+                                                                    "NSEnabled": {
+                                                                        "bool": "YES"
+                                                                    },
+                                                                    "NSHeaderView": {
+                                                                        "class": "NSTableHeaderView",
+                                                                        "id": "694889459",
+                                                                        "objects": {
+                                                                            "NSNextResponder": {
+                                                                                "id": "324751276"
+                                                                            },
+                                                                            "NSvFlags": {
+                                                                                "int": "256"
+                                                                            },
+                                                                            "NSFrameSize": {
+                                                                                "string": "{660, 17}"
+                                                                            },
+                                                                            "NSSuperview": {
+                                                                                "id": "324751276"
+                                                                            },
+                                                                            "NSTableView": {
+                                                                                "id": "113764896"
+                                                                            }
+                                                                        }
+                                                                    },
+                                                                    "NSCornerView": {
+                                                                        "class": "_NSCornerView",
+                                                                        "id": "851977722",
+                                                                        "objects": {
+                                                                            "NSNextResponder": {
+                                                                                "id": "1046343484"
+                                                                            },
+                                                                            "NSvFlags": {
+                                                                                "int": "-2147483392"
+                                                                            },
+                                                                            "NSFrame": {
+                                                                                "string": "{{646, 0}, {16, 17}}"
+                                                                            },
+                                                                            "NSSuperview": {
+                                                                                "id": "1046343484"
+                                                                            }
+                                                                        }
+                                                                    },
+                                                                    "NSTableColumns": {
+                                                                        "class": "NSMutableArray",
+                                                                        "id": "",
+                                                                        "objects": [{
+                                                                            "class": "NSTableColumn",
+                                                                            "id": "714759181",
+                                                                            "objects": {
+                                                                                "NSWidth": {
+                                                                                    "double": "101"
+                                                                                },
+                                                                                "NSMinWidth": {
+                                                                                    "double": "40"
+                                                                                },
+                                                                                "NSMaxWidth": {
+                                                                                    "double": "1000"
+                                                                                },
+                                                                                "NSHeaderCell": {
+                                                                                    "class": "NSTableHeaderCell",
+                                                                                    "id": "",
+                                                                                    "objects": {
+                                                                                        "NSCellFlags": {
+                                                                                            "int": "75628096"
+                                                                                        },
+                                                                                        "NSCellFlags2": {
+                                                                                            "int": "2048"
+                                                                                        },
+                                                                                        "NSContents": {
+                                                                                            "string": ""
+                                                                                        },
+                                                                                        "NSSupport": {
+                                                                                            "class": "NSFont",
+                                                                                            "id": "26",
+                                                                                            "objects": {
+                                                                                                "NSName": {
+                                                                                                    "string": "LucidaGrande"
+                                                                                                },
+                                                                                                "NSSize": {
+                                                                                                    "double": "11"
+                                                                                                },
+                                                                                                "NSfFlags": {
+                                                                                                    "int": "3100"
+                                                                                                }
+                                                                                            }
+                                                                                        },
+                                                                                        "NSBackgroundColor": {
+                                                                                            "class": "NSColor",
+                                                                                            "id": "950935415",
+                                                                                            "objects": {
+                                                                                                "NSColorSpace": {
+                                                                                                    "int": "3"
+                                                                                                },
+                                                                                                "NSWhite": {
+                                                                                                    "bytes": "MC4zMzMzMzI5ODU2AA"
+                                                                                                }
+                                                                                            }
+                                                                                        },
+                                                                                        "NSTextColor": {
+                                                                                            "class": "NSColor",
+                                                                                            "id": "648206547",
+                                                                                            "objects": {
+                                                                                                "NSColorSpace": {
+                                                                                                    "int": "6"
+                                                                                                },
+                                                                                                "NSCatalogName": {
+                                                                                                    "string": "System"
+                                                                                                },
+                                                                                                "NSColorName": {
+                                                                                                    "string": "headerTextColor"
+                                                                                                },
+                                                                                                "NSColor": {
+                                                                                                    "id": "106532192"
+                                                                                                }
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                },
+                                                                                "NSDataCell": {
+                                                                                    "class": "NSTextFieldCell",
+                                                                                    "id": "171314503",
+                                                                                    "objects": {
+                                                                                        "NSCellFlags": {
+                                                                                            "int": "337772096"
+                                                                                        },
+                                                                                        "NSCellFlags2": {
+                                                                                            "int": "2048"
+                                                                                        },
+                                                                                        "NSContents": {
+                                                                                            "string": "Text Cell"
+                                                                                        },
+                                                                                        "NSSupport": {
+                                                                                            "id": "798430573"
+                                                                                        },
+                                                                                        "NSControlView": {
+                                                                                            "id": "113764896"
+                                                                                        },
+                                                                                        "NSBackgroundColor": {
+                                                                                            "class": "NSColor",
+                                                                                            "id": "446491913",
+                                                                                            "objects": {
+                                                                                                "NSColorSpace": {
+                                                                                                    "int": "6"
+                                                                                                },
+                                                                                                "NSCatalogName": {
+                                                                                                    "string": "System"
+                                                                                                },
+                                                                                                "NSColorName": {
+                                                                                                    "string": "controlBackgroundColor"
+                                                                                                },
+                                                                                                "NSColor": {
+                                                                                                    "id": "978707676"
+                                                                                                }
+                                                                                            }
+                                                                                        },
+                                                                                        "NSTextColor": {
+                                                                                            "id": "349438052"
+                                                                                        }
+                                                                                    }
+                                                                                },
+                                                                                "NSResizingMask": {
+                                                                                    "int": "3"
+                                                                                },
+                                                                                "NSIsResizeable": {
+                                                                                    "bool": "YES"
+                                                                                },
+                                                                                "NSIsEditable": {
+                                                                                    "bool": "YES"
+                                                                                },
+                                                                                "NSTableView": {
+                                                                                    "id": "113764896"
+                                                                                }
+                                                                            }
+                                                                        },
+                                                                        {
+                                                                            "class": "NSTableColumn",
+                                                                            "id": "1070288670",
+                                                                            "objects": {
+                                                                                "NSWidth": {
+                                                                                    "double": "553"
+                                                                                },
+                                                                                "NSMinWidth": {
+                                                                                    "double": "40"
+                                                                                },
+                                                                                "NSMaxWidth": {
+                                                                                    "double": "1000"
+                                                                                },
+                                                                                "NSHeaderCell": {
+                                                                                    "class": "NSTableHeaderCell",
+                                                                                    "id": "",
+                                                                                    "objects": {
+                                                                                        "NSCellFlags": {
+                                                                                            "int": "75628096"
+                                                                                        },
+                                                                                        "NSCellFlags2": {
+                                                                                            "int": "2048"
+                                                                                        },
+                                                                                        "NSContents": {
+                                                                                            "string": ""
+                                                                                        },
+                                                                                        "NSSupport": {
+                                                                                            "id": "26"
+                                                                                        },
+                                                                                        "NSBackgroundColor": {
+                                                                                            "id": "950935415"
+                                                                                        },
+                                                                                        "NSTextColor": {
+                                                                                            "id": "648206547"
+                                                                                        }
+                                                                                    }
+                                                                                },
+                                                                                "NSDataCell": {
+                                                                                    "class": "NSTextFieldCell",
+                                                                                    "id": "336333183",
+                                                                                    "objects": {
+                                                                                        "NSCellFlags": {
+                                                                                            "int": "337772096"
+                                                                                        },
+                                                                                        "NSCellFlags2": {
+                                                                                            "int": "2048"
+                                                                                        },
+                                                                                        "NSContents": {
+                                                                                            "string": "Text Cell"
+                                                                                        },
+                                                                                        "NSSupport": {
+                                                                                            "id": "798430573"
+                                                                                        },
+                                                                                        "NSControlView": {
+                                                                                            "id": "113764896"
+                                                                                        },
+                                                                                        "NSBackgroundColor": {
+                                                                                            "id": "446491913"
+                                                                                        },
+                                                                                        "NSTextColor": {
+                                                                                            "id": "349438052"
+                                                                                        }
+                                                                                    }
+                                                                                },
+                                                                                "NSResizingMask": {
+                                                                                    "int": "3"
+                                                                                },
+                                                                                "NSIsResizeable": {
+                                                                                    "bool": "YES"
+                                                                                },
+                                                                                "NSIsEditable": {
+                                                                                    "bool": "YES"
+                                                                                },
+                                                                                "NSTableView": {
+                                                                                    "id": "113764896"
+                                                                                }
+                                                                            }
+                                                                        }]
+                                                                    },
+                                                                    "NSIntercellSpacingWidth": {
+                                                                        "double": "3"
+                                                                    },
+                                                                    "NSIntercellSpacingHeight": {
+                                                                        "double": "2"
+                                                                    },
+                                                                    "NSBackgroundColor": {
+                                                                        "id": "767154243"
+                                                                    },
+                                                                    "NSGridColor": {
+                                                                        "class": "NSColor",
+                                                                        "id": "",
+                                                                        "objects": {
+                                                                            "NSColorSpace": {
+                                                                                "int": "6"
+                                                                            },
+                                                                            "NSCatalogName": {
+                                                                                "string": "System"
+                                                                            },
+                                                                            "NSColorName": {
+                                                                                "string": "gridColor"
+                                                                            },
+                                                                            "NSColor": {
+                                                                                "class": "NSColor",
+                                                                                "id": "",
+                                                                                "objects": {
+                                                                                    "NSColorSpace": {
+                                                                                        "int": "3"
+                                                                                    },
+                                                                                    "NSWhite": {
+                                                                                        "bytes": "MC41AA"
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    },
+                                                                    "NSRowHeight": {
+                                                                        "double": "17"
+                                                                    },
+                                                                    "NSTvFlags": {
+                                                                        "int": "-700448768"
+                                                                    },
+                                                                    "NSDelegate": {
+                                                                        "id": ""
+                                                                    },
+                                                                    "NSDataSource": {
+                                                                        "id": ""
+                                                                    },
+                                                                    "NSColumnAutoresizingStyle": {
+                                                                        "int": "4"
+                                                                    },
+                                                                    "NSDraggingSourceMaskForLocal": {
+                                                                        "int": "15"
+                                                                    },
+                                                                    "NSDraggingSourceMaskForNonLocal": {
+                                                                        "int": "0"
+                                                                    },
+                                                                    "NSAllowsTypeSelect": {
+                                                                        "bool": "YES"
+                                                                    },
+                                                                    "NSTableViewDraggingDestinationStyle": {
+                                                                        "int": "0"
+                                                                    }
+                                                                }
+                                                            }]
+                                                        },
+                                                        "NSFrame": {
+                                                            "string": "{{1, 17}, {660, 304}}"
+                                                        },
+                                                        "NSSuperview": {
+                                                            "id": "1046343484"
+                                                        },
+                                                        "NSNextKeyView": {
+                                                            "id": "113764896"
+                                                        },
+                                                        "NSDocView": {
+                                                            "id": "113764896"
+                                                        },
+                                                        "NSBGColor": {
+                                                            "id": "446491913"
+                                                        },
+                                                        "NScvFlags": {
+                                                            "int": "4"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "class": "NSScroller",
+                                                    "id": "545737063",
+                                                    "objects": {
+                                                        "NSNextResponder": {
+                                                            "id": "1046343484"
+                                                        },
+                                                        "NSvFlags": {
+                                                            "int": "-2147483392"
+                                                        },
+                                                        "NSFrame": {
+                                                            "string": "{{646, 17}, {15, 289}}"
+                                                        },
+                                                        "NSSuperview": {
+                                                            "id": "1046343484"
+                                                        },
+                                                        "NSTarget": {
+                                                            "id": "1046343484"
+                                                        },
+                                                        "NSAction": {
+                                                            "string": "_doScroller:"
+                                                        },
+                                                        "NSCurValue": {
+                                                            "double": "37"
+                                                        },
+                                                        "NSPercent": {
+                                                            "double": "0.1947367936372757"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "class": "NSScroller",
+                                                    "id": "938242616",
+                                                    "objects": {
+                                                        "NSNextResponder": {
+                                                            "id": "1046343484"
+                                                        },
+                                                        "NSvFlags": {
+                                                            "int": "-2147483392"
+                                                        },
+                                                        "NSFrame": {
+                                                            "string": "{{1, 306}, {645, 15}}"
+                                                        },
+                                                        "NSSuperview": {
+                                                            "id": "1046343484"
+                                                        },
+                                                        "NSsFlags": {
+                                                            "int": "1"
+                                                        },
+                                                        "NSTarget": {
+                                                            "id": "1046343484"
+                                                        },
+                                                        "NSAction": {
+                                                            "string": "_doScroller:"
+                                                        },
+                                                        "NSPercent": {
+                                                            "double": "0.57142859697341919"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "class": "NSClipView",
+                                                    "id": "324751276",
+                                                    "objects": {
+                                                        "NSNextResponder": {
+                                                            "id": "1046343484"
+                                                        },
+                                                        "NSvFlags": {
+                                                            "int": "2304"
+                                                        },
+                                                        "NSSubviews": {
+                                                            "class": "NSMutableArray",
+                                                            "id": "",
+                                                            "objects": [{
+                                                                "id": "694889459"
+                                                            }]
+                                                        },
+                                                        "NSFrame": {
+                                                            "string": "{{1, 0}, {660, 17}}"
+                                                        },
+                                                        "NSSuperview": {
+                                                            "id": "1046343484"
+                                                        },
+                                                        "NSNextKeyView": {
+                                                            "id": "694889459"
+                                                        },
+                                                        "NSDocView": {
+                                                            "id": "694889459"
+                                                        },
+                                                        "NSBGColor": {
+                                                            "id": "446491913"
+                                                        },
+                                                        "NScvFlags": {
+                                                            "int": "4"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "id": "851977722"
+                                                }]
+                                            },
+                                            "NSFrame": {
+                                                "string": "{{131, 45}, {662, 322}}"
+                                            },
+                                            "NSSuperview": {
+                                                "id": "414427165"
+                                            },
+                                            "NSNextKeyView": {
+                                                "id": "851026919"
+                                            },
+                                            "NSsFlags": {
+                                                "int": "562"
+                                            },
+                                            "NSVScroller": {
+                                                "id": "545737063"
+                                            },
+                                            "NSHScroller": {
+                                                "id": "938242616"
+                                            },
+                                            "NSContentView": {
+                                                "id": "851026919"
+                                            },
+                                            "NSHeaderClipView": {
+                                                "id": "324751276"
+                                            },
+                                            "NSCornerView": {
+                                                "id": "851977722"
+                                            },
+                                            "NSScrollAmts": {
+                                                "bytes": "QSAAAEEgAABBmAAAQZgAAA"
+                                            }
+                                        }
                                     }]
                                 },
                                 "NSFrameSize": {
-                                    "string": "{1030, 241}"
+                                    "string": "{946, 613}"
                                 },
                                 "NSSuperview": {
                                     "id": ""
@@ -1213,7 +1739,7 @@
                             "string": "{{0, 0}, {1920, 1178}}"
                         },
                         "NSMaxSize": {
-                            "string": "{3.40282e+38, 3.40282e+38}"
+                            "string": "{1.79769e+308, 1.79769e+308}"
                         }
                     }
                 }]
@@ -1242,9 +1768,7 @@
                                             "int": "0"
                                         },
                                         "object": {
-                                            "class": "NSArray",
-                                            "id": "1049",
-                                            "objects": []
+                                            "id": "0"
                                         },
                                         "children": {
                                             "id": "1048"
@@ -1265,10 +1789,10 @@
                                             "id": "1021"
                                         },
                                         "parent": {
-                                            "id": "1049"
+                                            "id": "0"
                                         },
                                         "objectName": {
-                                            "string": "RmlsZSdzIE93bmVyA"
+                                            "string": "File's Owner"
                                         }
                                     }
                                 },
@@ -1283,7 +1807,7 @@
                                             "id": "1014"
                                         },
                                         "parent": {
-                                            "id": "1049"
+                                            "id": "0"
                                         },
                                         "objectName": {
                                             "string": "First Responder"
@@ -1301,7 +1825,7 @@
                                             "id": "1050"
                                         },
                                         "parent": {
-                                            "id": "1049"
+                                            "id": "0"
                                         },
                                         "objectName": {
                                             "string": "Application"
@@ -1326,7 +1850,7 @@
                                             }]
                                         },
                                         "parent": {
-                                            "id": "1049"
+                                            "id": "0"
                                         }
                                     }
                                 },
@@ -1387,6 +1911,9 @@
                                             },
                                             {
                                                 "id": "669360788"
+                                            },
+                                            {
+                                                "id": "1046343484"
                                             }]
                                         },
                                         "parent": {
@@ -1405,7 +1932,7 @@
                                             "id": "163992474"
                                         },
                                         "parent": {
-                                            "id": "1049"
+                                            "id": "0"
                                         }
                                     }
                                 },
@@ -1963,6 +2490,181 @@
                                             "id": "669360788"
                                         }
                                     }
+                                },
+                                {
+                                    "class": "IBObjectRecord",
+                                    "id": "",
+                                    "objects": {
+                                        "objectID": {
+                                            "int": "519"
+                                        },
+                                        "object": {
+                                            "id": "1046343484"
+                                        },
+                                        "children": {
+                                            "class": "NSMutableArray",
+                                            "id": "",
+                                            "objects": [{
+                                                "id": "545737063"
+                                            },
+                                            {
+                                                "id": "938242616"
+                                            },
+                                            {
+                                                "id": "113764896"
+                                            },
+                                            {
+                                                "id": "694889459"
+                                            }]
+                                        },
+                                        "parent": {
+                                            "id": "414427165"
+                                        }
+                                    }
+                                },
+                                {
+                                    "class": "IBObjectRecord",
+                                    "id": "",
+                                    "objects": {
+                                        "objectID": {
+                                            "int": "520"
+                                        },
+                                        "object": {
+                                            "id": "545737063"
+                                        },
+                                        "parent": {
+                                            "id": "1046343484"
+                                        }
+                                    }
+                                },
+                                {
+                                    "class": "IBObjectRecord",
+                                    "id": "",
+                                    "objects": {
+                                        "objectID": {
+                                            "int": "521"
+                                        },
+                                        "object": {
+                                            "id": "938242616"
+                                        },
+                                        "parent": {
+                                            "id": "1046343484"
+                                        }
+                                    }
+                                },
+                                {
+                                    "class": "IBObjectRecord",
+                                    "id": "",
+                                    "objects": {
+                                        "objectID": {
+                                            "int": "522"
+                                        },
+                                        "object": {
+                                            "id": "113764896"
+                                        },
+                                        "children": {
+                                            "class": "NSMutableArray",
+                                            "id": "",
+                                            "objects": [{
+                                                "id": "714759181"
+                                            },
+                                            {
+                                                "id": "1070288670"
+                                            }]
+                                        },
+                                        "parent": {
+                                            "id": "1046343484"
+                                        }
+                                    }
+                                },
+                                {
+                                    "class": "IBObjectRecord",
+                                    "id": "",
+                                    "objects": {
+                                        "objectID": {
+                                            "int": "523"
+                                        },
+                                        "object": {
+                                            "id": "694889459"
+                                        },
+                                        "parent": {
+                                            "id": "1046343484"
+                                        }
+                                    }
+                                },
+                                {
+                                    "class": "IBObjectRecord",
+                                    "id": "",
+                                    "objects": {
+                                        "objectID": {
+                                            "int": "524"
+                                        },
+                                        "object": {
+                                            "id": "714759181"
+                                        },
+                                        "children": {
+                                            "class": "NSMutableArray",
+                                            "id": "",
+                                            "objects": [{
+                                                "id": "171314503"
+                                            }]
+                                        },
+                                        "parent": {
+                                            "id": "113764896"
+                                        }
+                                    }
+                                },
+                                {
+                                    "class": "IBObjectRecord",
+                                    "id": "",
+                                    "objects": {
+                                        "objectID": {
+                                            "int": "525"
+                                        },
+                                        "object": {
+                                            "id": "1070288670"
+                                        },
+                                        "children": {
+                                            "class": "NSMutableArray",
+                                            "id": "",
+                                            "objects": [{
+                                                "id": "336333183"
+                                            }]
+                                        },
+                                        "parent": {
+                                            "id": "113764896"
+                                        }
+                                    }
+                                },
+                                {
+                                    "class": "IBObjectRecord",
+                                    "id": "",
+                                    "objects": {
+                                        "objectID": {
+                                            "int": "526"
+                                        },
+                                        "object": {
+                                            "id": "336333183"
+                                        },
+                                        "parent": {
+                                            "id": "1070288670"
+                                        }
+                                    }
+                                },
+                                {
+                                    "class": "IBObjectRecord",
+                                    "id": "",
+                                    "objects": {
+                                        "objectID": {
+                                            "int": "527"
+                                        },
+                                        "object": {
+                                            "id": "171314503"
+                                        },
+                                        "parent": {
+                                            "id": "714759181"
+                                        }
+                                    }
                                 }]
                             }
                         }
@@ -1975,7 +2677,7 @@
                                 "bool": "YES"
                             },
                             "dict.sortedKeys": {
-                                "class": "NSMutableArray",
+                                "class": "NSArray",
                                 "id": "",
                                 "objects": [{
                                     "string": "-1.IBPluginDependency"
@@ -2093,6 +2795,33 @@
                                 },
                                 {
                                     "string": "510.IBPluginDependency"
+                                },
+                                {
+                                    "string": "519.IBPluginDependency"
+                                },
+                                {
+                                    "string": "520.IBPluginDependency"
+                                },
+                                {
+                                    "string": "521.IBPluginDependency"
+                                },
+                                {
+                                    "string": "522.IBPluginDependency"
+                                },
+                                {
+                                    "string": "523.IBPluginDependency"
+                                },
+                                {
+                                    "string": "524.IBPluginDependency"
+                                },
+                                {
+                                    "string": "525.IBPluginDependency"
+                                },
+                                {
+                                    "string": "526.IBPluginDependency"
+                                },
+                                {
+                                    "string": "527.IBPluginDependency"
                                 }]
                             },
                             "dict.values": {
@@ -2108,16 +2837,43 @@
                                     "string": "com.apple.InterfaceBuilder.CocoaPlugin"
                                 },
                                 {
-                                    "string": "{{205, 588}, {1030, 241}}"
+                                    "string": "{{254, 188}, {946, 613}}"
                                 },
                                 {
-                                    "string": "{{205, 588}, {1030, 241}}"
+                                    "string": "{{254, 188}, {946, 613}}"
                                 },
                                 {
                                     "integer": ""
                                 },
                                 {
                                     "string": "{{11, 666}, {480, 270}}"
+                                },
+                                {
+                                    "string": "com.apple.InterfaceBuilder.CocoaPlugin"
+                                },
+                                {
+                                    "string": "com.apple.InterfaceBuilder.CocoaPlugin"
+                                },
+                                {
+                                    "string": "com.apple.InterfaceBuilder.CocoaPlugin"
+                                },
+                                {
+                                    "string": "com.apple.InterfaceBuilder.CocoaPlugin"
+                                },
+                                {
+                                    "string": "com.apple.InterfaceBuilder.CocoaPlugin"
+                                },
+                                {
+                                    "string": "com.apple.InterfaceBuilder.CocoaPlugin"
+                                },
+                                {
+                                    "string": "com.apple.InterfaceBuilder.CocoaPlugin"
+                                },
+                                {
+                                    "string": "com.apple.InterfaceBuilder.CocoaPlugin"
+                                },
+                                {
+                                    "string": "com.apple.InterfaceBuilder.CocoaPlugin"
                                 },
                                 {
                                     "string": "com.apple.InterfaceBuilder.CocoaPlugin"
@@ -2226,9 +2982,7 @@
                                 "bool": "YES"
                             },
                             "dict.sortedKeys": {
-                                "class": "NSArray",
-                                "id": "",
-                                "objects": []
+                                "id": "0"
                             },
                             "dict.values": {
                                 "class": "NSMutableArray",
@@ -2248,9 +3002,7 @@
                                 "bool": "YES"
                             },
                             "dict.sortedKeys": {
-                                "class": "NSArray",
-                                "id": "",
-                                "objects": []
+                                "id": "0"
                             },
                             "dict.values": {
                                 "class": "NSMutableArray",
@@ -2263,7 +3015,7 @@
                         "nil": ""
                     },
                     "maxID": {
-                        "int": "510"
+                        "int": "527"
                     }
                 }
             },
@@ -2274,6 +3026,33 @@
             },
             "IBDocument.localizationMode": {
                 "int": "0"
+            },
+            "IBDocument.PluginDeclaredDependencies": {
+                "class": "NSMutableDictionary",
+                "id": "",
+                "objects": {
+                    "NS.key.0": {
+                        "string": "com.apple.InterfaceBuilder.CocoaPlugin.macosx"
+                    },
+                    "NS.object.0": {
+                        "integer": ""
+                    }
+                }
+            },
+            "IBDocument.PluginDeclaredDevelopmentDependencies": {
+                "class": "NSMutableDictionary",
+                "id": "",
+                "objects": {
+                    "NS.key.0": {
+                        "string": "com.apple.InterfaceBuilder.CocoaPlugin.InterfaceBuilder3"
+                    },
+                    "NS.object.0": {
+                        "integer": ""
+                    }
+                }
+            },
+            "IBDocument.PluginDeclaredDependenciesTrackSystemTargetVersion": {
+                "bool": "YES"
             },
             "IBDocument.LastKnownRelativeProjectPath": {
                 "nil": ""

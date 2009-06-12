@@ -79,24 +79,25 @@ enum {
 
 @interface NSEvent : NSObject <NSCopying, NSCoding>
 {
-    id _type;
-    id _locationInWindow;
-    id _modifierFlags;
-    id _timestamp;
-    id _windowNumber;
-    id _context;
-    id _characters;
-    id _charactersIgnoringModifiers;
-    id _isARepeat;
-    id _keyCode;
-    id _window;
-    id _clickCount;
-    id _locationInBase;
-    id _eventRef;
-    id _buttonNumber;
-    id _deltaX;
-    id _deltaY;
-    id _deltaZ;
+    NSEventType     _type;
+    NSPoint         _location;
+    int             _modifierFlags;
+    NSTimeInterval  _timestamp;
+    NSInteger       _windowNumber;
+    NSWindow       *_window;
+    id              _context;                         
+    id              _characters;                      
+    id              _charactersIgnoringModifiers;     
+    id              _isARepeat;                       
+    id              _keyCode;                         
+                                                 
+    id              _clickCount;                      
+    id              _locationInBase;                  
+    id              _eventRef;                        
+    id              _buttonNumber;                    
+    id              _deltaX;                          
+    id              _deltaY;                          
+    id              _deltaZ;                          
 }
 
 - (NSEventType)type;
@@ -140,3 +141,43 @@ enum {
 + (NSPoint)mouseLocation;
 
 @end
+
+enum {
+    NSUpArrowFunctionKey        = 0xF700,
+    NSDownArrowFunctionKey      = 0xF701,
+    NSLeftArrowFunctionKey      = 0xF702,
+    NSRightArrowFunctionKey     = 0xF703,
+    NSInsertFunctionKey         = 0xF727,
+    NSDeleteFunctionKey         = 0xF728,
+    NSHomeFunctionKey           = 0xF729,
+    NSBeginFunctionKey          = 0xF72A,
+    NSEndFunctionKey            = 0xF72B,
+    NSPageUpFunctionKey         = 0xF72C,
+    NSPageDownFunctionKey       = 0xF72D,
+    NSPrintScreenFunctionKey    = 0xF72E,
+    NSScrollLockFunctionKey     = 0xF72F,
+    NSPauseFunctionKey          = 0xF730,
+    NSSysReqFunctionKey         = 0xF731,
+    NSBreakFunctionKey          = 0xF732,
+    NSResetFunctionKey          = 0xF733,
+    NSStopFunctionKey           = 0xF734,
+    NSMenuFunctionKey           = 0xF735,
+    NSUserFunctionKey           = 0xF736,
+    NSSystemFunctionKey         = 0xF737,
+    NSPrintFunctionKey          = 0xF738,
+    NSClearLineFunctionKey      = 0xF739,
+    NSClearDisplayFunctionKey   = 0xF73A,
+    NSInsertLineFunctionKey     = 0xF73B,
+    NSDeleteLineFunctionKey     = 0xF73C,
+    NSInsertCharFunctionKey     = 0xF73D,
+    NSDeleteCharFunctionKey     = 0xF73E,
+    NSPrevFunctionKey           = 0xF73F,
+    NSNextFunctionKey           = 0xF740,
+    NSSelectFunctionKey         = 0xF741,
+    NSExecuteFunctionKey        = 0xF742,
+    NSUndoFunctionKey           = 0xF743,
+    NSRedoFunctionKey           = 0xF744,
+    NSFindFunctionKey           = 0xF745,
+    NSHelpFunctionKey           = 0xF746,
+    NSModeSwitchFunctionKey     = 0xF747
+};

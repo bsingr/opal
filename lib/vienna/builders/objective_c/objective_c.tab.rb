@@ -1214,8 +1214,8 @@ racc_reduce_table = [
   3, 135, :_reduce_29,
   3, 135, :_reduce_none,
   2, 135, :_reduce_31,
-  2, 135, :_reduce_none,
-  2, 135, :_reduce_none,
+  2, 135, :_reduce_32,
+  2, 135, :_reduce_33,
   1, 136, :_reduce_34,
   3, 136, :_reduce_35,
   1, 138, :_reduce_36,
@@ -1481,8 +1481,8 @@ racc_reduce_table = [
   5, 207, :_reduce_296,
   7, 207, :_reduce_none,
   6, 207, :_reduce_none,
-  7, 207, :_reduce_none,
-  7, 207, :_reduce_none,
+  7, 207, :_reduce_299,
+  7, 207, :_reduce_300,
   7, 207, :_reduce_301,
   3, 208, :_reduce_none,
   2, 208, :_reduce_none,
@@ -2036,9 +2036,19 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 95)
   end
 .,.,
 
-# reduce 32 omitted
+module_eval(<<'.,.,', 'objective_c.rb.y', 96)
+  def _reduce_32(val, _values, result)
+     result = node_set_children(val[1], val[0], nil) 
+    result
+  end
+.,.,
 
-# reduce 33 omitted
+module_eval(<<'.,.,', 'objective_c.rb.y', 97)
+  def _reduce_33(val, _values, result)
+     result = node_set_children(val[1], val[0], nil) 
+    result
+  end
+.,.,
 
 module_eval(<<'.,.,', 'objective_c.rb.y', 101)
   def _reduce_34(val, _values, result)
@@ -3697,9 +3707,19 @@ module_eval(<<'.,.,', 'objective_c.rb.y', 617)
 
 # reduce 298 omitted
 
-# reduce 299 omitted
+module_eval(<<'.,.,', 'objective_c.rb.y', 620)
+  def _reduce_299(val, _values, result)
+     result = node_set_children(val[0], make_node(',', make_node(',', val[2], val[3]), val[4]), val[6]) 
+    result
+  end
+.,.,
 
-# reduce 300 omitted
+module_eval(<<'.,.,', 'objective_c.rb.y', 621)
+  def _reduce_300(val, _values, result)
+     result = node_set_children(val[0], make_node(',', make_node(',', val[2], val[3]), val[4]), val[6]) 
+    result
+  end
+.,.,
 
 module_eval(<<'.,.,', 'objective_c.rb.y', 622)
   def _reduce_301(val, _values, result)

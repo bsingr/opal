@@ -10,7 +10,7 @@
 
 @class NSColor, NSNotification;
 
-@interface NSClipView : NSObject
+@interface NSClipView : NSView
 {
     NSView      *_docView;
 }

@@ -34,8 +34,8 @@
 - (void)drawRect:(NSRect)rect
 {
     // The blue-ish background
-    [[NSColor colorWithCalibratedRed:0.4 green:0.5 blue:0.4 alpha:1] set];
-    [NSBezierPath fillRect:rect];
+    // [[NSColor colorWithCalibratedRed:0.4 green:0.5 blue:0.4 alpha:1] set];
+    //     [NSBezierPath fillRect:rect];
 }
 
 - (BOOL)isVertical

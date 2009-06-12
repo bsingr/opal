@@ -301,6 +301,14 @@ module Vienna
         output_expression file, statement.left
         file.write " != "
         output_expression file, statement.right
+      elsif statement.value == :LE_OP
+        output_expression file, statement.left
+        file.write " <= "
+        output_expression file, statement.right
+      elsif statement.value == :GE_OP
+        output_expression file, statement.left
+        file.write " >= "
+        output_expression file, statement.right
       elsif statement.value == :LEFT_OP
         output_expression file, statement.left
         file.write " << "
@@ -325,6 +333,12 @@ module Vienna
         output_expression file, statement.left
         file.write " -= "
         output_expression file, statement.right
+      elsif statement.value == :INC_OP
+        output_expression file, statement.left
+        file.write "++"
+      elsif statement.value == :DEC_OP
+        output_expression file, statement.left
+        file.write "--"
       elsif statement.value == '-'
         output_expression file, statement.left
         file.write " - "
@@ -381,7 +395,12 @@ module Vienna
     end
     
     def output_for_statement(file, statement)
-      file.write "/* for statement needs to go here*/"
+      file.write "for("
+      output_statement_list file, statement.left.left.left
+      output_statement_list file, statement.left.left.right
+      output_expression file, statement.left.right
+      file.write ")"
+      output_statement_list file, statement.right
     end
     
     

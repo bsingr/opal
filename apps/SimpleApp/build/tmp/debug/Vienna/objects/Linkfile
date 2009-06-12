@@ -1,6 +1,6 @@
 --- 
 VNFlashView.js: 
-  declarations: 
-  - VNFlashView
   dependencies: 
   - NSView
+  declarations: 
+  - VNFlashView

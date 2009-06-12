@@ -374,7 +374,7 @@ var location = objc_msgSend(self, "convertPoint:fromView:", objc_msgSend(theEven
 if (NSPointInRect(location,_bounds))
 objc_msgSend(_cell, "highlight:withFrame:inView:", YES, _bounds, self);
 
-objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:untilDate:inMode:dequeue:withTarget:withSelector:", (NSLeftMouseUpMask | NSMouseMovedMask), null, null, null, self, "selector:");
+objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:untilDate:inMode:dequeue:withTarget:withSelector:", (4 | 32), null, null, null, self, "selector:");
 objc_msgSend(self, "unlockFocus");
 }
 }, "void");
@@ -384,7 +384,7 @@ with(self) {
 var location = objc_msgSend(self, "convertPoint:fromView:", objc_msgSend(theEvent, "locationInWindow"), null);
 if (NSPointInRect(location,_bounds))
 {
-if (objc_msgSend(theEvent, "type") == NSLeftMouseUp)
+if (objc_msgSend(theEvent, "type") == 2)
 {
 objc_msgSend(self, "sendAction:to:", objc_msgSend(self, "action"), objc_msgSend(self, "target"));
 objc_msgSend(self, "lockFocus");
@@ -394,9 +394,9 @@ return ;
 
 }
 else
-if (objc_msgSend(theEvent, "type") == NSMouseMoved)
+if (objc_msgSend(theEvent, "type") == 5)
 {
-objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:untilDate:inMode:dequeue:withTarget:withSelector:", (NSLeftMouseUpMask | NSMouseMovedMask), null, null, null, self, "selector:");
+objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:untilDate:inMode:dequeue:withTarget:withSelector:", (4 | 32), null, null, null, self, "selector:");
 return ;
 
 }

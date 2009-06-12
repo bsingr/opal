@@ -136,13 +136,13 @@ with(self) {
 objc_msgSend(self, "makeMainWindow");
 _eventBindingCurrentX = objc_msgSend(theEvent, "locationInBase").x;
 _eventBindingCurrentY = objc_msgSend(theEvent, "locationInBase").y;
-objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:untilDate:inMode:dequeue:withTarget:withSelector:", (NSLeftMouseUpMask | NSMouseMovedMask), null, null, null, self, "selector:");
+objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:untilDate:inMode:dequeue:withTarget:withSelector:", (4 | 32), null, null, null, self, "selector:");
 }
 }, "void");
 
 class_addMethod(the_class, "_mouseDownHandle:", function(self, _cmd, theEvent) {
 with(self) {
-if (objc_msgSend(theEvent, "type") == NSLeftMouseUp)
+if (objc_msgSend(theEvent, "type") == 2)
 {
 
 }
@@ -153,7 +153,7 @@ var newY = (objc_msgSend(theEvent, "locationInBase").y - _eventBindingCurrentY) 
 objc_msgSend(self, "setFrameOrigin:", NSMakePoint(newX,newY));
 _eventBindingCurrentX = objc_msgSend(theEvent, "locationInBase").x;
 _eventBindingCurrentY = objc_msgSend(theEvent, "locationInBase").y;
-objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:untilDate:inMode:dequeue:withTarget:withSelector:", (NSLeftMouseUpMask | NSMouseMovedMask), null, null, null, self, "selector:");
+objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:untilDate:inMode:dequeue:withTarget:withSelector:", (4 | 32), null, null, null, self, "selector:");
 
 }
 
@@ -930,6 +930,7 @@ with(self) {
 
 class_addMethod(the_class, "sendEvent:", function(self, _cmd, theEvent) {
 with(self) {
+NSLog("Window got event!");
 }
 }, "void");
 

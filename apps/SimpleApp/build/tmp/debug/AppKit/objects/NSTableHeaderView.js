@@ -35,6 +35,9 @@ class_addIvar(the_class, "_tableView", "NSTableView");
 class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
 with(self) {
 objc_msgSendSuper({super_class:NSView, receiver:self}, "initWithCoder:", aCoder);
+_tableView = objc_msgSend(aCoder, "decodeObjectForKey:", "NSTableView");
+NSLog("Decoded table view:");
+NSLog(_tableView);
 return self;
 }
 }, "void");
@@ -66,24 +69,14 @@ return _tableView;
 
 class_addMethod(the_class, "drawRect:", function(self, _cmd, rect) {
 with(self) {
-var gradientTop = objc_msgSend(NSColor, "colorWithCalibratedRed:green:blue:alpha:", 1, 1, 1, 1.0);
-var gradientBottom = objc_msgSend(NSColor, "colorWithCalibratedRed:green:blue:alpha:", 0.902, 0.902, 0.902, 1.0);
-var backgroundGradient = objc_msgSend(objc_msgSend(NSGradient, "alloc"), "initWithStartingColor:endingColor:", gradientTop, gradientBottom);
-objc_msgSend(backgroundGradient, "drawInRect:angle:", NSMakeRect(rect.origin.x,rect.origin.y,rect.size.width,rect.size.height), 0);
-objc_msgSend(objc_msgSend(NSColor, "colorWithCalibratedRed:green:blue:alpha:", 0.851, 0.851, 0.851, 1), "set");
-var topBorder = objc_msgSend(NSBezierPath, "bezierPath");
-objc_msgSend(topBorder, "moveToPoint:", NSMakePoint(rect.origin.x,rect.origin.y + rect.size.height - 0.5));
-objc_msgSend(topBorder, "lineToPoint:", NSMakePoint(rect.origin.x + rect.size.width,rect.origin.y + rect.size.height - 0.5));
-objc_msgSend(topBorder, "stroke");
-if (_tableView)
-{
-var tableColumns = objc_msgSend(_tableView, "tableColumns");
-var count = objc_msgSend(tableColumns, "count");
-var spacing = objc_msgSend(_tableView, "intercellSpacing");
-var columnRect = NSMakeRect(_bounds.origin.x,_bounds.origin.y,_bounds.size.width,_bounds.size.height);
-/* for statement needs to go here*/
-}
-
+NSLog("Drawing");
+var c = objc_msgSend(objc_msgSend(NSGraphicsContext, "currentContext"), "graphicsPort");
+CGContextSaveGState(c);
+CGContextSetFillColorWithColor(c,CGColorCreateGenericRGB(1,0,0,1.0));
+CGContextFillRect(c,rect);
+CGContextRestoreGState(c);
+NSLog(rect);
+NSLog(_bounds);
 }
 }, "void");
 

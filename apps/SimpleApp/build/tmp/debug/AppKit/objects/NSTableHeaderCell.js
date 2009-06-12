@@ -32,30 +32,18 @@ return self;
 }
 }, "void");
 
+class_addMethod(the_class, "drawWithFrame:inView:", function(self, _cmd, cellFrame, controlView) {
+with(self) {
+var c = objc_msgSend(objc_msgSend(NSGraphicsContext, "currentContext"), "graphicsPort");
+CGContextSaveGState(c);
+NSLog("Drawing table header cell");
+CGContextFillRect(c,CGRectMake(0,0,10000,10000));
+CGContextRestoreGState(c);
+}
+}, "void");
+
 class_addMethod(the_class, "drawInteriorWithFrame:inView:", function(self, _cmd, cellFrame, controlView) {
 with(self) {
-var borderBottom = objc_msgSend(NSBezierPath, "bezierPath");
-objc_msgSend(objc_msgSend(NSColor, "colorWithCalibratedRed:green:blue:alpha:", 0.702, 0.702, 0.702, 1.0), "set");
-objc_msgSend(borderBottom, "setLineWidth:", 1.0);
-objc_msgSend(borderBottom, "moveToPoint:", NSMakePoint(cellFrame.origin.x + 0.5,cellFrame.origin.y + 0.5));
-objc_msgSend(borderBottom, "lineToPoint:", NSMakePoint(cellFrame.origin.x + cellFrame.size.width,cellFrame.origin.y + 0.5));
-objc_msgSend(borderBottom, "stroke");
-var borderRight = objc_msgSend(NSBezierPath, "bezierPath");
-objc_msgSend(objc_msgSend(NSColor, "colorWithCalibratedRed:green:blue:alpha:", 0.702, 0.702, 0.702, 1.0), "set");
-objc_msgSend(borderRight, "setLineWidth:", 1.0);
-objc_msgSend(borderRight, "moveToPoint:", NSMakePoint(cellFrame.origin.x + cellFrame.size.width - 0.5,cellFrame.origin.y + 1.5));
-objc_msgSend(borderRight, "lineToPoint:", NSMakePoint(cellFrame.origin.x + cellFrame.size.width - 0.5,cellFrame.origin.y + cellFrame.size.height));
-objc_msgSend(borderRight, "stroke");
-objc_msgSend(NSGraphicsContext, "saveGraphicsState");
-objc_msgSend(objc_msgSend(NSColor, "colorWithCalibratedRed:green:blue:alpha:", 0.325, 0.325, 0.325, 1.0), "set");
-objc_msgSend(objc_msgSend(NSFont, "systemFontOfSize:", objc_msgSend(NSFont, "smallSystemFontSize")), "set");
-var titleShadow = objc_msgSend(objc_msgSend(NSShadow, "alloc"), "init");
-objc_msgSend(titleShadow, "setShadowOffset:", NSMakeSize(1,1));
-objc_msgSend(titleShadow, "setShadowBlurRadius:", 1);
-objc_msgSend(titleShadow, "setShadowColor:", objc_msgSend(NSColor, "colorWithCalibratedRed:green:blue:alpha:", 1, 1, 1, 0.5));
-objc_msgSend(titleShadow, "set");
-objc_msgSend(_value, "drawWithRect:options:attributes:", NSMakeRect(cellFrame.origin.x + 4,cellFrame.origin.y + 4,cellFrame.size.width,0), null, null);
-objc_msgSend(NSGraphicsContext, "restoreGraphicsState");
 }
 }, "void");
 

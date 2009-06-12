@@ -932,7 +932,7 @@
 
 - (void)sendEvent:(NSEvent *)theEvent
 {
-    // TODO: Need to implement
+    NSLog(@"Window got event!");
 }
 
 - (NSPoint)mouseLocationOutsideOfEventStream

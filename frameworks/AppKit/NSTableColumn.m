@@ -32,11 +32,9 @@
     _identifier = [aCoder decodeObjectForKey:@"NSIdentifier"];
     _headerCell = [aCoder decodeObjectForKey:@"NSHeaderCell"];
     _dataCell = [aCoder decodeObjectForKey:@"NSDataCell"];
-    _width = [aCoder decodeIntForKey:@"NSWidth"];
-    _minWidth = [aCoder decodeIntForKey:@"NSMinWidth"];
-    _maxWidth = [aCoder decodeIntForKey:@"NSMaxWidth"];
-    
-    NSLog(_width);
+    _width = [aCoder decodeDoubleForKey:@"NSWidth"];
+    _minWidth = [aCoder decodeDoubleForKey:@"NSMinWidth"];
+    _maxWidth = [aCoder decodeDoubleForKey:@"NSMaxWidth"];
     
     return self;
 }

@@ -245,6 +245,7 @@ NSString *NSInvalidUnarchiveOperationException = @"NSInvalidUnarchiveOperationEx
     }
 
     id newObject = [theClass alloc];
+    [_unarchivedObjects setObject:newObject forKey:[theObject objectForKey:@"id"]];
 
     if([theObject objectForKey:@"class"] == @"NSCustomObject")
     {
@@ -257,8 +258,10 @@ NSString *NSInvalidUnarchiveOperationException = @"NSInvalidUnarchiveOperationEx
         [_contextStack removeLastObject];
     }
     
+    newObject = [newObject awakeAfterUsingCoder:self];
+    
     [_unarchivedObjects setObject:newObject forKey:[theObject objectForKey:@"id"]];
-    return [newObject awakeAfterUsingCoder:self];
+    return newObject;
 }
 
 - (BOOL)decodeBoolForKey:(NSString *)key
@@ -291,12 +294,16 @@ NSString *NSInvalidUnarchiveOperationException = @"NSInvalidUnarchiveOperationEx
 
 - (float)decodeFloatForKey:(NSString *)key
 {
-    
+    id theContext = [_contextStack lastObject];
+    id theObject = [theContext objectForKey:key];
+    return parseFloat([theObject objectForKey:@"float"]);    
 }
 
 - (double)decodeDoubleForKey:(NSString *)key
 {
-    
+    id theContext = [_contextStack lastObject];
+    id theObject = [theContext objectForKey:key];
+    return parseFloat([theObject objectForKey:@"double"]);    
 }
 
 - (const int *)decodeBytesForKey:(NSString *)key returnedLength:(NSUInteger *)lengthp

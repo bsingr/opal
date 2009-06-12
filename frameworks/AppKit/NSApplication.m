@@ -77,6 +77,11 @@ id NSApp = nil;
     return [_windows objectAtIndex:windowNum];
 }
 
+- (NSWindow *)windowAtPoint:(NSPoint)point
+{
+    return [_windows objectAtIndex:0];
+}
+
 - (NSWindow *)mainWindow
 {
     for (int i = 0; i < [_windows count]; i++)

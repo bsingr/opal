@@ -35,10 +35,9 @@ objc_msgSendSuper({super_class:NSObject, receiver:self}, "initWithCoder:", aCode
 _identifier = objc_msgSend(aCoder, "decodeObjectForKey:", "NSIdentifier");
 _headerCell = objc_msgSend(aCoder, "decodeObjectForKey:", "NSHeaderCell");
 _dataCell = objc_msgSend(aCoder, "decodeObjectForKey:", "NSDataCell");
-_width = objc_msgSend(aCoder, "decodeIntForKey:", "NSWidth");
-_minWidth = objc_msgSend(aCoder, "decodeIntForKey:", "NSMinWidth");
-_maxWidth = objc_msgSend(aCoder, "decodeIntForKey:", "NSMaxWidth");
-NSLog(_width);
+_width = objc_msgSend(aCoder, "decodeDoubleForKey:", "NSWidth");
+_minWidth = objc_msgSend(aCoder, "decodeDoubleForKey:", "NSMinWidth");
+_maxWidth = objc_msgSend(aCoder, "decodeDoubleForKey:", "NSMaxWidth");
 return self;
 }
 }, "void");

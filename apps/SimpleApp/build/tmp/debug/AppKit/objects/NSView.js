@@ -73,7 +73,6 @@ if (objc_msgSend(aCoder, "containsValueForKey:", "NSFrameSize"))
 _frame.size = objc_msgSend(aCoder, "decodeSizeForKey:", "NSFrameSize");
 
 
-NSLog("Initiwhtframe: " + self.isa);
 objc_msgSend(self, "setFrame:", _frame);
 _subviews = objc_msgSend(NSMutableArray, "array");
 var subviews = objc_msgSend(aCoder, "decodeObjectForKey:", "NSSubviews");

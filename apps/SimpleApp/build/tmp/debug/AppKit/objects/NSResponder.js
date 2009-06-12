@@ -181,7 +181,12 @@ return YES;
 class_addMethod(the_class, "interpretKeyEvents:", function(self, _cmd, eventArray) {
 with(self) {
 var eventsCount = objc_msgSend(eventArray, "count");
-/* for statement needs to go here*/}
+for(var i = 0;
+i < eventsCount;
+i++){
+
+}
+}
 }, "void");
 
 class_addMethod(the_class, "flushBufferedKeyEvents", function(self, _cmd) {

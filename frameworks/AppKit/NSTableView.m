@@ -14,7 +14,7 @@
 - (id)initWithCoder:(NSCoder *)aCoder
 {
     [super initWithCoder:aCoder];
- 
+     
     NSInteger flags = [aCoder decodeIntForKey:@"NSTvFlags"];
     
     if (flags & 0x20000000)
@@ -26,22 +26,22 @@
         _alternatingRowBackground = YES;
     else
         _alternatingRowBackground = NO;
-    
+        
     _headerView = [aCoder decodeObjectForKey:@"NSHeaderView"];
     
     if(_headerView)
         [_headerView setTableView:self];
-    
+        
     _cornerView = [aCoder decodeObjectForKey:@"NSCornerView"];
-    
+        
     _tableColumns = [aCoder decodeObjectForKey:@"NSTableColumns"];
     
     _numberOfRows = 0;
     _numberOfColumns = [_tableColumns count];
     
-    for (int i =0; i < [_tableColumns count]; i++) {
-        [[_tableColumns objectAtIndex:i] setTableView:self];
-    }
+    // for (int i =0; i < [_tableColumns count]; i++) {
+    //         [[_tableColumns objectAtIndex:i] setTableView:self];
+    //     }
     return self;
 }
 
@@ -65,79 +65,87 @@
     return self;
 }
 
-- (void)drawRect:(NSRect)dirtyRect
-{      
-    if (_alternatingRowBackground)
-    {
-        // Background.. for now, hard code that it must be alternating
-        NSArray *backgroundColors = [NSColor controlAlternatingRowBackgroundColors];
-        if (_rowHeight) {
-            // NSUInteger rowsToDraw = Math.round(_bounds.size.height / _rowHeight) + 1;
-            
-            BOOL oddRow = YES;
-            NSColor colorToDraw;
-            
-            for (int i = 0; i < rowsToDraw; i++) {
-                if (oddRow) {
-                    colorToDraw = [backgroundColors objectAtIndex:0];
-                    oddRow = NO;
-                } else {
-                    colorToDraw = [backgroundColors objectAtIndex:1];
-                    oddRow = YES;
-                }
-                
-                [colorToDraw set];
-                [NSBezierPath fillRect:[self rectOfRow:i]];
-            }
-        }        
-    }
-    else
-    {
-        [[NSColor colorWithCalibratedRed:1 green:1 blue:1 alpha:1] set];
-        [NSBezierPath fillRect:dirtyRect];
-    }
+- (void)drawRect:(NSRect)rect
+{
+    CGContextRef c = [[NSGraphicsContext currentContext] graphicsPort];
+    CGContextClearRect(c, rect);
+    // CGContextSetAlpha(c, 0.3);
+    CGContextSaveGState(c);
+    CGContextSetFillColorWithColor(c, CGColorCreateGenericRGB(1, 1, 1, 1.0));
+    CGContextFillRect(c, CGRectInset(rect, 20, 20));
+    CGContextRestoreGState(c);
     
-    // Highlught selections
-    
-    if (_selectedRowIndexes)
-    {
-        NSArray theHighlightedRows = [_selectedRowIndexes indexes];
-        
-        for (int i = 0; i < [theHighlightedRows count]; i++) {
-            
-            if ([theHighlightedRows objectAtIndex:i] != -1)
-            {
-                [[NSColor colorWithCalibratedRed:0.467 green:0.553 blue:0.659 alpha:1.0] set];
-                [NSBezierPath fillRect:[self rectOfRow:[theHighlightedRows objectAtIndex:i]]];
-            }
-            
-        }
-    }
-    
-        
-    // Vertical Column lines
-    if (_tableColumns && _drawsGrid) {
-        for (int i = 0; i < [_tableColumns count]; i++) {
-            NSRect columnRect = [self rectOfColumn:i];
-            [[NSColor colorWithCalibratedRed:0.851 green:0.851 blue:0.851 alpha:1.0] set];
-            
-            NSBezierPath *borderRight = [NSBezierPath bezierPath];
-            [borderRight setLineWidth:1.0];
-            [borderRight moveToPoint:NSMakePoint (columnRect.origin.x + columnRect.size.width - 0.5, columnRect.origin.y + 0.5)];
-            [borderRight lineToPoint:NSMakePoint (columnRect.origin.x + columnRect.size.width - 0.5, columnRect.origin.y + columnRect.size.height)];
-            [borderRight stroke];
-        }
-    }
-    
-    // Draw cell data
-    for (int columnIndex = 0; columnIndex < _numberOfColumns; columnIndex++)
-    {
-        for (int rowIndex = 0; rowIndex < _numberOfRows; rowIndex++)
-        {
-            NSCell *dataCell = [self preparedCellAtColumn:columnIndex row:rowIndex];
-            [dataCell drawInteriorWithFrame:[self frameOfCellAtColumn:columnIndex row:rowIndex] inView:self];
-        }
-    }
+    // if (_alternatingRowBackground)
+    //     {
+    //         // Background.. for now, hard code that it must be alternating
+    //         NSArray *backgroundColors = [NSColor controlAlternatingRowBackgroundColors];
+    //         if (_rowHeight) {
+    //             // NSUInteger rowsToDraw = Math.round(_bounds.size.height / _rowHeight) + 1;
+    //             
+    //             BOOL oddRow = YES;
+    //             NSColor colorToDraw;
+    //             
+    //             for (int i = 0; i < rowsToDraw; i++) {
+    //                 if (oddRow) {
+    //                     colorToDraw = [backgroundColors objectAtIndex:0];
+    //                     oddRow = NO;
+    //                 } else {
+    //                     colorToDraw = [backgroundColors objectAtIndex:1];
+    //                     oddRow = YES;
+    //                 }
+    //                 
+    //                 [colorToDraw set];
+    //                 [NSBezierPath fillRect:[self rectOfRow:i]];
+    //             }
+    //         }        
+    //     }
+    //     else
+    //     {
+    //         [[NSColor colorWithCalibratedRed:1 green:1 blue:1 alpha:1] set];
+    //         [NSBezierPath fillRect:dirtyRect];
+    //     }
+    //     
+    //     // Highlught selections
+    //     
+    //     if (_selectedRowIndexes)
+    //     {
+    //         NSArray theHighlightedRows = [_selectedRowIndexes indexes];
+    //         
+    //         for (int i = 0; i < [theHighlightedRows count]; i++) {
+    //             
+    //             if ([theHighlightedRows objectAtIndex:i] != -1)
+    //             {
+    //                 [[NSColor colorWithCalibratedRed:0.467 green:0.553 blue:0.659 alpha:1.0] set];
+    //                 [NSBezierPath fillRect:[self rectOfRow:[theHighlightedRows objectAtIndex:i]]];
+    //             }
+    //             
+    //         }
+    //     }
+    //     
+    //         
+    //     // Vertical Column lines
+    //     if (_tableColumns && _drawsGrid) {
+    //         for (int i = 0; i < [_tableColumns count]; i++) {
+    //             NSRect columnRect = [self rectOfColumn:i];
+    //             [[NSColor colorWithCalibratedRed:0.851 green:0.851 blue:0.851 alpha:1.0] set];
+    //             
+    //             NSBezierPath *borderRight = [NSBezierPath bezierPath];
+    //             [borderRight setLineWidth:1.0];
+    //             [borderRight moveToPoint:NSMakePoint (columnRect.origin.x + columnRect.size.width - 0.5, columnRect.origin.y + 0.5)];
+    //             [borderRight lineToPoint:NSMakePoint (columnRect.origin.x + columnRect.size.width - 0.5, columnRect.origin.y + columnRect.size.height)];
+    //             [borderRight stroke];
+    //         }
+    //     }
+    //     
+    //     // Draw cell data
+    //     for (int columnIndex = 0; columnIndex < _numberOfColumns; columnIndex++)
+    //     {
+    //         for (int rowIndex = 0; rowIndex < _numberOfRows; rowIndex++)
+    //         {
+    //             NSCell *dataCell = [self preparedCellAtColumn:columnIndex row:rowIndex];
+    //             [dataCell drawInteriorWithFrame:[self frameOfCellAtColumn:columnIndex row:rowIndex] inView:self];
+    //         }
+    //     }
 }
 
 - (NSCell *)preparedCellAtColumn:(NSInteger)column row:(NSInteger)row

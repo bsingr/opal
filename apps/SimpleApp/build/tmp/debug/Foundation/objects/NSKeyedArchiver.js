@@ -219,6 +219,7 @@ return null;
 }
 
 var newObject = objc_msgSend(theClass, "alloc");
+objc_msgSend(_unarchivedObjects, "setObject:forKey:", newObject, objc_msgSend(theObject, "objectForKey:", "id"));
 if (objc_msgSend(theObject, "objectForKey:", "class") == "NSCustomObject")
 {
 objc_msgSend(newObject, "init");
@@ -232,8 +233,9 @@ objc_msgSend(_contextStack, "removeLastObject");
 
 }
 
+newObject = objc_msgSend(newObject, "awakeAfterUsingCoder:", self);
 objc_msgSend(_unarchivedObjects, "setObject:forKey:", newObject, objc_msgSend(theObject, "objectForKey:", "id"));
-return objc_msgSend(newObject, "awakeAfterUsingCoder:", self);
+return newObject;
 }
 }, "void");
 
@@ -268,11 +270,17 @@ with(self) {
 
 class_addMethod(the_class, "decodeFloatForKey:", function(self, _cmd, key) {
 with(self) {
+var theContext = objc_msgSend(_contextStack, "lastObject");
+var theObject = objc_msgSend(theContext, "objectForKey:", key);
+return parseFloat(objc_msgSend(theObject, "objectForKey:", "float"));
 }
 }, "void");
 
 class_addMethod(the_class, "decodeDoubleForKey:", function(self, _cmd, key) {
 with(self) {
+var theContext = objc_msgSend(_contextStack, "lastObject");
+var theObject = objc_msgSend(theContext, "objectForKey:", key);
+return parseFloat(objc_msgSend(theObject, "objectForKey:", "double"));
 }
 }, "void");
 

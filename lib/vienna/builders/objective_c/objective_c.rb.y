@@ -94,8 +94,8 @@ class Vienna::ObjectiveCParser
     	| postfix_expression '.' IDENTIFIER                   { result = node_set_children(val[1], val[0], val[2]) }
     	| postfix_expression PTR_OP IDENTIFIER
       | type_name IDENTIFIER                                { result = make_node('d', val[0], val[1]) }
-    	| postfix_expression INC_OP
-    	| postfix_expression DEC_OP
+    	| postfix_expression INC_OP                           { result = node_set_children(val[1], val[0], nil) }
+    	| postfix_expression DEC_OP                           { result = node_set_children(val[1], val[0], nil) }
     	;
 
     argument_expression_list:
@@ -618,9 +618,9 @@ class Vienna::ObjectiveCParser
     	  WHILE '(' expression ')' statement                                              { result = node_set_children(val[0], val[2], val[4]) }
     	| DO statement WHILE '(' expression ')' ';'
     	| FOR '(' expression_statement expression_statement ')' statement
-    	| FOR '(' expression_statement expression_statement expression ')' statement
-    	| FOR '(' declaration expression_statement expression ')' statement	
-    	| FOR '(' expression IN expression ')' statement                                 { result = node_set_children(val[3], make_node(',', val[2], val[4]), val[6]) }
+    	| FOR '(' expression_statement expression_statement expression ')' statement      { result = node_set_children(val[0], make_node(',', make_node(',', val[2], val[3]), val[4]), val[6]) }
+    	| FOR '(' declaration expression_statement expression ')' statement	              { result = node_set_children(val[0], make_node(',', make_node(',', val[2], val[3]), val[4]), val[6]) }
+    	| FOR '(' expression IN expression ')' statement                                  { result = node_set_children(val[3], make_node(',', val[2], val[4]), val[6]) }
     	;
 
     jump_statement:

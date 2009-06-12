@@ -141,7 +141,20 @@ return YES;
 class_addMethod(the_class, "glyphIndexForPoint:", function(self, _cmd, point) {
 with(self) {
 objc_msgSend(self, "lockFocus");
-/* for statement needs to go here*/objc_msgSend(self, "unlockFocus");
+for(var i = 0;
+i < _string.length;
+i++){
+var theGlyphLength = objc_msgSend(stringToCheck, "sizeWithAttributes:", null);
+var nextGlyphLength = objc_msgSend(nextStringToCheck, "sizeWithAttributes:", null);
+if ((theGlyphLength.width <= point.x) && (point.x <= nextGlyphLength.width))
+{
+return i;
+
+}
+
+
+}
+objc_msgSend(self, "unlockFocus");
 return _string.length;
 }
 }, "void");

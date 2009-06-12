@@ -48,7 +48,6 @@
     else if([aCoder containsValueForKey:@"NSFrameSize"])
         _frame.size = [aCoder decodeSizeForKey:@"NSFrameSize"];
     
-    NSLog(@"Initiwhtframe: " + self.isa);
     [self setFrame:_frame];
     
     _subviews = [NSMutableArray array];

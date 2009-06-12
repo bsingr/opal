@@ -85,13 +85,23 @@ return objc_msgSend(_windows, "objectAtIndex:", windowNum);
 
 class_addMethod(the_class, "mainWindow", function(self, _cmd) {
 with(self) {
-/* for statement needs to go here*/return null;
+for(var i = 0;
+i < objc_msgSend(_windows, "count");
+i++)if (objc_msgSend(objc_msgSend(_windows, "objectAtIndex:", i), "isMainWindow"))
+return objc_msgSend(_windows, "objectAtIndex:", i);
+
+return null;
 }
 }, "void");
 
 class_addMethod(the_class, "keyWindow", function(self, _cmd) {
 with(self) {
-/* for statement needs to go here*/return null;
+for(var i = 0;
+i < objc_msgSend(_windows, "count");
+i++)if (objc_msgSend(objc_msgSend(_windows, "objectAtIndex:", i), "isKeyWindow"))
+return objc_msgSend(_windows, "objectAtIndex:", i);
+
+return null;
 }
 }, "void");
 
@@ -165,10 +175,10 @@ return ;
 
 }
 
-if (objc_msgSend(theEvent, "type") == NSLeftMouseDown)
+if (objc_msgSend(theEvent, "type") == 1)
 objc_msgSend(objc_msgSend(theEvent, "window"), "makeKeyAndOrderFront:", self);
 else
-if ((objc_msgSend(theEvent, "type") == NSKeyDown) || (objc_msgSend(theEvent, "type") == NSKeyUp))
+if ((objc_msgSend(theEvent, "type") == 10) || (objc_msgSend(theEvent, "type") == 11))
 objc_msgSend(objc_msgSend(self, "keyWindow"), "sendEvent:", theEvent);
 else
 objc_msgSend(objc_msgSend(theEvent, "window"), "sendEvent:", theEvent);

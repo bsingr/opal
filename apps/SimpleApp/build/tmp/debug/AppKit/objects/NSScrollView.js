@@ -55,7 +55,13 @@ else
 _hasHorizontalScroller = NO;
 
 _borderType = flags & 0x303;
-/* for statement needs to go here*/objc_msgSend(self, "tile");
+_verticalScroller = objc_msgSend(aCoder, "decodeObjectForKey:", "NSVScroller");
+_horizontalScroller = objc_msgSend(aCoder, "decodeObjectForKey:", "NSHScroller");
+_clipView = objc_msgSend(aCoder, "decodeObjectForKey:", "NSContentView");
+_headerClipView = objc_msgSend(aCoder, "decodeObjectForKey:", "NSHeaderClipView");
+_cornerView = objc_msgSend(aCoder, "decodeObjectForKey:", "NSCornerView");
+NSLog(_subviews);
+objc_msgSend(self, "tile");
 return self;
 }
 }, "void");
@@ -87,7 +93,7 @@ objc_msgSend(_headerClipView, "setFrame:", tilingFrame);
 
 if (_clipView)
 {
-NSLog("got header clip view");
+NSLog("got clip view");
 tilingFrame = NSMakeRect(1,1,_frame.size.width,objc_msgSend(_clipView, "bounds").size.height);
 objc_msgSend(_clipView, "setFrame:", tilingFrame);
 
@@ -98,8 +104,6 @@ objc_msgSend(_clipView, "setFrame:", tilingFrame);
 
 class_addMethod(the_class, "drawRect:", function(self, _cmd, dirtyRect) {
 with(self) {
-objc_msgSend(objc_msgSend(NSColor, "colorWithCalibratedRed:green:blue:alpha:", 0.851, 0.851, 0.851, 1.0), "set");
-objc_msgSend(NSBezierPath, "strokeRect:", NSMakeRect(0.5,0.5,_bounds.size.width - 1,_bounds.size.height - 1));
 }
 }, "void");
 

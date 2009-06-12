@@ -94,8 +94,8 @@
     
     for (int i = 0; i < _string.length; i++)
     {
-        NSString *stringToCheck = _string.substr (0, i);
-        NSString *nextStringToCheck = _string.substr (0,i + 1);
+        // NSString *stringToCheck = _string.substr (0, i);
+        //         NSString *nextStringToCheck = _string.substr (0,i + 1);
         
         NSInteger theGlyphLength = [stringToCheck sizeWithAttributes:nil];
         NSInteger nextGlyphLength = [nextStringToCheck sizeWithAttributes:nil];

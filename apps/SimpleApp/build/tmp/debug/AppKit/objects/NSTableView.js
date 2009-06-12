@@ -75,7 +75,7 @@ _cornerView = objc_msgSend(aCoder, "decodeObjectForKey:", "NSCornerView");
 _tableColumns = objc_msgSend(aCoder, "decodeObjectForKey:", "NSTableColumns");
 _numberOfRows = 0;
 _numberOfColumns = objc_msgSend(_tableColumns, "count");
-/* for statement needs to go here*/return self;
+return self;
 }
 }, "void");
 
@@ -99,39 +99,15 @@ return self;
 }
 }, "void");
 
-class_addMethod(the_class, "drawRect:", function(self, _cmd, dirtyRect) {
+class_addMethod(the_class, "drawRect:", function(self, _cmd, rect) {
 with(self) {
-if (_alternatingRowBackground)
-{
-var backgroundColors = objc_msgSend(NSColor, "controlAlternatingRowBackgroundColors");
-if (_rowHeight)
-{
-var oddRow = YES;
-var colorToDraw;
-/* for statement needs to go here*/
+var c = objc_msgSend(objc_msgSend(NSGraphicsContext, "currentContext"), "graphicsPort");
+CGContextClearRect(c,rect);
+CGContextSaveGState(c);
+CGContextSetFillColorWithColor(c,CGColorCreateGenericRGB(1,1,1,1.0));
+CGContextFillRect(c,CGRectInset(rect,20,20));
+CGContextRestoreGState(c);
 }
-
-
-}
-else
-{
-objc_msgSend(objc_msgSend(NSColor, "colorWithCalibratedRed:green:blue:alpha:", 1, 1, 1, 1), "set");
-objc_msgSend(NSBezierPath, "fillRect:", dirtyRect);
-
-}
-
-if (_selectedRowIndexes)
-{
-var theHighlightedRows = objc_msgSend(_selectedRowIndexes, "indexes");
-/* for statement needs to go here*/
-}
-
-if (_tableColumns && _drawsGrid)
-{
-/* for statement needs to go here*/
-}
-
-/* for statement needs to go here*/}
 }, "void");
 
 class_addMethod(the_class, "preparedCellAtColumn:row:", function(self, _cmd, column, row) {
@@ -197,7 +173,13 @@ class_addMethod(the_class, "addTableColumn:", function(self, _cmd, aColumn) {
 with(self) {
 var i = 0;
 var xOffset = 0;
-/* for statement needs to go here*/objc_msgSend(_tableColumns, "addObject:", aColumn);
+for(i = 0;
+i < objc_msgSend(_tableColumns, "count");
+i++){
+xOffset = xOffset + objc_msgSend(objc_msgSend(_tableColumns, "objectAtIndex:", i), "width");
+
+}
+objc_msgSend(_tableColumns, "addObject:", aColumn);
 _numberOfColumns = objc_msgSend(_tableColumns, "count");
 objc_msgSend(self, "reloadData");
 }
@@ -291,7 +273,14 @@ return NSMakeRect(columnRect.origin.x,rowRect.origin.y,columnRect.size.width,row
 class_addMethod(the_class, "rectOfColumn:", function(self, _cmd, columnIndex) {
 with(self) {
 var columnRect = NSMakeRect(_bounds.origin.x,_bounds.origin.y,0,_bounds.size.height);
-/* for statement needs to go here*/columnRect.size.width = objc_msgSend(objc_msgSend(_tableColumns, "objectAtIndex:", columnIndex), "width") + _intercellSpacing.width;
+for(var i = 0;
+i < columnIndex;
+i++){
+var column = objc_msgSend(_tableColumns, "objectAtIndex:", i);
+columnRect.origin.x = columnRect.origin.x + objc_msgSend(objc_msgSend(_tableColumns, "objectAtIndex:", i), "width") + _intercellSpacing.width;
+
+}
+columnRect.size.width = objc_msgSend(objc_msgSend(_tableColumns, "objectAtIndex:", columnIndex), "width") + _intercellSpacing.width;
 return columnRect;
 }
 }, "void");
@@ -329,13 +318,29 @@ else
 
 class_addMethod(the_class, "columnAtPoint:", function(self, _cmd, aPoint) {
 with(self) {
-/* for statement needs to go here*/return -1;
+for(var i = 0;
+i < objc_msgSend(_tableColumns, "count");
+i++){
+if (NSPointInRect(aPoint,objc_msgSend(self, "rectOfColumn:", i)))
+return i;
+
+
+}
+return -1;
 }
 }, "void");
 
 class_addMethod(the_class, "rowAtPoint:", function(self, _cmd, aPoint) {
 with(self) {
-/* for statement needs to go here*/return -1;
+for(var i = 0;
+i < _numberOfRows;
+i++){
+if (NSPointInRect(aPoint,objc_msgSend(self, "rectOfRow:", i)))
+return i;
+
+
+}
+return -1;
 }
 }, "void");
 
@@ -349,12 +354,12 @@ var clickedColumn = objc_msgSend(_tableColumns, "objectAtIndex:", clickedColumnI
 var clickedCell = objc_msgSend(clickedColumn, "dataCellForRow:", clickedRowIndex);
 if (objc_msgSend(theEvent, "clickCount") < 2)
 {
-if (objc_msgSend(theEvent, "modifierFlags") & NSShiftKeyMask)
+if (objc_msgSend(theEvent, "modifierFlags") & 131072)
 {
 
 }
 else
-if (objc_msgSend(theEvent, "modifierFlags") & (NSCommandKeyMask | NSAlternateKeyMask))
+if (objc_msgSend(theEvent, "modifierFlags") & (1048576 | 524288))
 {
 if (objc_msgSend(self, "isRowSelected:", clickedRowIndex))
 {
@@ -515,7 +520,13 @@ objc_msgSend(self, "selectRowIndexes:byExtendingSelection:", objc_msgSend(objc_m
 class_addMethod(the_class, "selectAll:", function(self, _cmd, sender) {
 with(self) {
 var newIndexSet = objc_msgSend(objc_msgSend(NSMutableIndexSet, "alloc"), "initWithIndex:", 0);
-/* for statement needs to go here*/objc_msgSend(self, "selectRowIndexes:byExtendingSelection:", newIndexSet, NO);
+for(var i = 1;
+i < _numberOfRows;
+i++){
+objc_msgSend(newIndexSet, "addIndexes:", objc_msgSend(objc_msgSend(NSIndexSet, "alloc"), "initWithIndex:", i));
+
+}
+objc_msgSend(self, "selectRowIndexes:byExtendingSelection:", newIndexSet, NO);
 }
 }, "void");
 

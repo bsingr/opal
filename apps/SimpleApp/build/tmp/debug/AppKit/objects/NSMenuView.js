@@ -53,7 +53,21 @@ class_addMethod(the_class, "drawRect:", function(self, _cmd, aRect) {
 with(self) {
 if (_menu)
 {
-/* for statement needs to go here*/
+for(var i = 0;
+i < objc_msgSend(objc_msgSend(_menu, "itemArray"), "count");
+i++){
+var currentItemCell = objc_msgSend(self, "menuItemCellForItemAtIndex:", i);
+objc_msgSend(currentItemCell, "setMenuItem:", objc_msgSend(objc_msgSend(_menu, "itemArray"), "objectAtIndex:", i));
+objc_msgSend(currentItemCell, "setMenuView:", self);
+if (i == objc_msgSend(self, "highlightedItemIndex"))
+objc_msgSend(currentItemCell, "setHighlighted:", YES);
+else
+objc_msgSend(currentItemCell, "setHighlighted:", NO);
+
+objc_msgSend(currentItemCell, "drawWithFrame:inView:", objc_msgSend(self, "rectOfItemAtIndex:", i), self);
+
+}
+
 }
 
 }
@@ -68,16 +82,83 @@ objc_msgSend(_eventBindingMenuArray, "addObject:", self);
 objc_msgSend(self, "setHighlightedItemIndex:", selectedIndex);
 objc_msgSend(_eventBindingMenuArray, "addObject:", objc_msgSend(self, "attachSubmenuForItemAtIndex:", selectedIndex));
 objc_msgSend(self, "setNeedsDisplay:", YES);
-objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:untilDate:inMode:dequeue:withTarget:withSelector:", (NSLeftMouseUpMask | NSMouseMovedMask), null, null, null, self, "selector:");
+objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:untilDate:inMode:dequeue:withTarget:withSelector:", (4 | 32), null, null, null, self, "selector:");
 }
 }, "void");
 
 class_addMethod(the_class, "_mouseDownMenuHandle:", function(self, _cmd, theEvent) {
 with(self) {
 var visibleMenus = objc_msgSend(_eventBindingMenuArray, "count");
-/* for statement needs to go here*/if (objc_msgSend(theEvent, "type") == NSMouseMoved)
+for(var i = (visibleMenus - 1);
+-1 < i;
+i--){
+var menuToCheck = objc_msgSend(_eventBindingMenuArray, "objectAtIndex:", i);
+var pointInMenuView = objc_msgSend(menuToCheck, "convertPoint:fromView:", objc_msgSend(theEvent, "locationInWindow"), null);
+if (NSPointInRect(objc_msgSend(theEvent, "locationInBase"),objc_msgSend(objc_msgSend(menuToCheck, "window"), "frame")))
 {
-objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:untilDate:inMode:dequeue:withTarget:withSelector:", (NSLeftMouseUpMask | NSMouseMovedMask), null, null, null, self, "selector:");
+var theItemIndex = objc_msgSend(menuToCheck, "indexOfItemAtPoint:", pointInMenuView);
+if (objc_msgSend(theEvent, "type") == 2)
+{
+var theSelectedItem = objc_msgSend(objc_msgSend(menuToCheck, "menu"), "itemAtIndex:", theItemIndex);
+if (objc_msgSend(theSelectedItem, "isEnabled") && !objc_msgSend(theSelectedItem, "hasSubmenu"))
+{
+objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "sendAction:to:from:", objc_msgSend(theSelectedItem, "action"), objc_msgSend(theSelectedItem, "target"), self);
+
+}
+
+objc_msgSend(self, "detachSubmenu");
+_eventBindingMenuArray = null;
+objc_msgSend(self, "setHighlightedItemIndex:", (-1));
+objc_msgSend(self, "setNeedsDisplay:", YES);
+return ;
+
+}
+else
+if (objc_msgSend(theEvent, "type") == 5)
+{
+if (theItemIndex != objc_msgSend(menuToCheck, "highlightedItemIndex"))
+{
+objc_msgSend(_eventBindingMenuArray, "removeObject:", objc_msgSend(menuToCheck, "attachedMenuView"));
+objc_msgSend(menuToCheck, "detachSubmenu");
+objc_msgSend(menuToCheck, "setHighlightedItemIndex:", theItemIndex);
+if (theItemIndex != -1)
+{
+if (objc_msgSend(objc_msgSend(objc_msgSend(menuToCheck, "menu"), "itemAtIndex:", theItemIndex), "hasSubmenu"))
+{
+objc_msgSend(_eventBindingMenuArray, "addObject:", objc_msgSend(menuToCheck, "attachSubmenuForItemAtIndex:", theItemIndex));
+
+}
+
+
+}
+
+objc_msgSend(menuToCheck, "setNeedsDisplay:", YES);
+
+}
+
+objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:untilDate:inMode:dequeue:withTarget:withSelector:", (4 | 32), null, null, null, self, "selector:");
+
+}
+
+
+return ;
+
+}
+else
+if (objc_msgSend(theEvent, "type") == 2)
+{
+objc_msgSend(self, "detachSubmenu");
+objc_msgSend(self, "setHighlightedItemIndex:", (-1));
+objc_msgSend(self, "setNeedsDisplay:", YES);
+
+}
+
+
+
+}
+if (objc_msgSend(theEvent, "type") == 5)
+{
+objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:untilDate:inMode:dequeue:withTarget:withSelector:", (4 | 32), null, null, null, self, "selector:");
 
 }
 
@@ -241,7 +322,26 @@ with(self) {
 class_addMethod(the_class, "sizeToFit", function(self, _cmd) {
 with(self) {
 var boundsRect = NSMakeRect(0,0,0,0);
-/* for statement needs to go here*/_innerRect = boundsRect;
+for(var i = 0;
+i < objc_msgSend(objc_msgSend(_menu, "itemArray"), "count");
+i++){
+var currentMenuBounds = objc_msgSend(self, "rectOfItemAtIndex:", i);
+if (objc_msgSend(self, "isHorizontal"))
+{
+boundsRect.size.width = boundsRect.size.width + currentMenuBounds.size.width;
+boundsRect.size.height = objc_msgSend(NSMenu, "menuBarHeight");
+
+}
+else
+{
+boundsRect.size.height = boundsRect.size.height + currentMenuBounds.size.height;
+boundsRect.size.width = 200;
+
+}
+
+
+}
+_innerRect = boundsRect;
 objc_msgSend(self, "setFrame:", NSMakeRect(12,1,_innerRect.size.width,_innerRect.size.height));
 }
 }, "void");
@@ -309,12 +409,28 @@ class_addMethod(the_class, "indexOfItemAtPoint:", function(self, _cmd, point) {
 with(self) {
 if (objc_msgSend(self, "isHorizontal"))
 {
-/* for statement needs to go here*/return -1;
+for(var i = 0;
+i < objc_msgSend(objc_msgSend(_menu, "itemArray"), "count");
+i++){
+if (NSPointInRect(point,objc_msgSend(self, "rectOfItemAtIndex:", i)))
+return i;
+
+
+}
+return -1;
 
 }
 else
 {
-/* for statement needs to go here*/return -1;
+for(var i = 0;
+i < objc_msgSend(objc_msgSend(_menu, "itemArray"), "count");
+i++){
+if (NSPointInRect(point,objc_msgSend(self, "rectOfItemAtIndex:", i)))
+return i;
+
+
+}
+return -1;
 
 }
 

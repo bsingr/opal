@@ -49,6 +49,10 @@ extern id NSApp;
 - (id)delegate;
 - (NSGraphicsContext*)context;
 - (NSWindow *)windowWithWindowNumber:(NSInteger)windowNum;
+
+// Returns the front most window at the specified point (or nil as applicable)
+- (NSWindow *)windowAtPoint:(NSPoint)point;
+
 - (NSWindow *)mainWindow;
 - (NSWindow *)keyWindow;
 - (BOOL)isRunning;

@@ -1,109 +1,109 @@
 --- 
+NSPropertyList.js: 
+  dependencies: 
+  - NSObject
+  declarations: 
+  - NSPropertyListSerialization
+NSKeyValueObserving.js: 
+  dependencies: []
+
+  declarations: []
+
+NSData.js: 
+  dependencies: 
+  - NSObject
+  - NSData
+  declarations: 
+  - NSData
+  - NSMutableData
 NSKeyValueCoding.js: 
+  dependencies: 
+  - NSObject
+  - NSDictionary
   declarations: 
   - NSObject
   - NSArray
   - NSDictionary
   - NSMutableDictionary
-  dependencies: 
-  - NSObject
-  - NSDictionary
-NSData.js: 
-  declarations: 
-  - NSData
-  - NSMutableData
-  dependencies: 
-  - NSObject
-  - NSData
-NSCoder.js: 
-  declarations: 
-  - NSCoder
-  dependencies: 
-  - NSObject
 NSArchiver.js: 
+  dependencies: 
+  - NSCoder
   declarations: 
   - NSArchiver
   - NSUnarchiver
-  dependencies: 
-  - NSCoder
-NSProxy.js: 
-  declarations: 
-  - NSProxy
-  dependencies: 
-  - NSObject
-NSKeyValueObserving.js: 
-  declarations: []
-
-  dependencies: []
-
-NSEnumerator.js: 
-  declarations: 
-  - NSEnumerator
-  dependencies: 
-  - NSObject
-NSGeometry.js: 
-  declarations: []
-
-  dependencies: []
-
 NSString.js: 
+  dependencies: 
+  - NSObject
+  - NSString
   declarations: 
   - NSString
   - NSMutableString
+NSCoder.js: 
   dependencies: 
   - NSObject
-  - NSString
-NSObjCRuntime.js: 
-  declarations: []
-
-  dependencies: []
-
+  declarations: 
+  - NSCoder
 NSBundle.js: 
+  dependencies: 
+  - NSObject
   declarations: 
   - NSBundle
+NSGeometry.js: 
+  dependencies: []
+
+  declarations: []
+
+NSException.js: 
   dependencies: 
   - NSObject
-NSException.js: 
   declarations: 
   - NSException
+NSProxy.js: 
   dependencies: 
   - NSObject
+  declarations: 
+  - NSProxy
+NSObjCRuntime.js: 
+  dependencies: []
+
+  declarations: []
+
+NSEnumerator.js: 
+  dependencies: 
+  - NSObject
+  declarations: 
+  - NSEnumerator
 NSNotification.js: 
+  dependencies: 
+  - NSObject
   declarations: 
   - NSNotification
   - NSNotificationCenter
-  dependencies: 
-  - NSObject
 NSKeyedArchiver.js: 
+  dependencies: 
+  - NSCoder
+  - NSObject
   declarations: 
   - NSKeyedArchiver
   - NSKeyedUnarchiver
   - NSCoder
   - NSObject
-  dependencies: 
-  - NSCoder
-  - NSObject
 NSArray.js: 
+  dependencies: 
+  - NSObject
+  - NSArray
   declarations: 
   - NSArray
   - NSMutableArray
-  dependencies: 
-  - NSObject
-  - NSArray
 NSObject.js: 
-  declarations: 
-  - NSObject
   dependencies: []
 
-NSPropertyList.js: 
   declarations: 
-  - NSPropertyListSerialization
-  dependencies: 
   - NSObject
 NSDictionary.js: 
+  dependencies: 
+  - NSObject
+  - NSDictionary
   declarations: 
   - NSDictionary
   - NSMutableDictionary
-  dependencies: 
-  - NSObject
-  - NSDictionary
