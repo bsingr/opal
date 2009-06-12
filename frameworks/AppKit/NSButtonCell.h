@@ -8,6 +8,8 @@
 
 #import <AppKit/NSCell.h>
 
+@class NSImage;
+
 enum {
     NSMomentaryLightButton		    = 0,
     NSPushOnPushOffButton		    = 1,
@@ -51,7 +53,8 @@ typedef NSUInteger NSGradientType;
 
 @interface NSButtonCell : NSCell
 {
-    
+    NSImage     *_alternateImage;
+    NSImage     *_image;
 }
 
 - (NSString *)title;

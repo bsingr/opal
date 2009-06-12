@@ -585,7 +585,8 @@ function CGContextShowText(c, string, length)
 // 
 function CGContextShowTextAtPoint(c, x, y, string, length)
 {
-    c.fillText(string, x, y);
+    if (!window.opera)
+        c.fillText(string, x, y);
 }
 
 // extern void CGContextShowGlyphs(CGContextRef c, const CGGlyph g[], size_t count);

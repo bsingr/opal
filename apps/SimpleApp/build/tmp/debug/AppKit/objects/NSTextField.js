@@ -33,21 +33,12 @@ class_addIvar(the_class, "_graphicsContext", "CGContextRef");
 class_addIvar(the_class, "_tag", "NSInteger");
 class_addIvar(the_class, "_cell", "NSCell");
 class_addIvar(the_class, "_currentEditor", "NSText");
+class_addIvar(the_class, "_isEnabled", "BOOL");
 class_addIvar(the_class, "_value", "id");
 
 class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
 with(self) {
 objc_msgSendSuper({super_class:NSControl, receiver:self}, "initWithCoder:", aCoder);
-if (objc_msgSend(self, "isEditable"))
-{
-_frame.origin.x = _frame.origin.x - 3;
-_frame.origin.y = _frame.origin.y - 3;
-_frame.size.width = _frame.size.width + 6;
-_frame.size.height = _frame.size.height + 6;
-objc_msgSend(self, "setFrame:", _frame);
-
-}
-
 return self;
 }
 }, "void");

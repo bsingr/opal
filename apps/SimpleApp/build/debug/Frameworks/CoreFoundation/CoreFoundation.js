@@ -76,6 +76,18 @@ function CFArrayGetValues(theArray, range, values)
 
 // extern CFIndex CFArrayGetFirstIndexOfValue(CFArrayRef theArray, CFRange range, void *value);
 // 
+
+// Fix for IE not having indexOf property.
+if (!Array.prototype.indexOf) Array.prototype.indexOf = function(item, i)
+{
+    i || (i = 0);
+    var length = this.length;
+    if (i < 0) i = length + i;
+    for (; i < length; i++)
+        if (this[i] === item) return i;
+            return -1;
+};
+
 function CFArrayGetFirstIndexOfValue(theArray, range, value)
 {
     return theArray.indexOf(value);
@@ -382,15 +394,13 @@ function CFBundleSetBundleForClass(bundle, aClass)
 
 // extern void CFBundlePreloadResource(CFBundleRef bundle, CFStringRef resourceName, CFStringRef resourceType, CFStringRef subDirName);
 function CFBundlePreloadResource(bundle, resourceName, resourceType, subDirName)
-{
-    NSLog("Need to preload: " + resourceName + "." + resourceType);
-    
+{    
     var theImage = new Image();
-    theImage.src = "file:///Users/adam/Sites/lumpy.png";
+    theImage.src = "Resources/" + resourceName + "." + resourceType;
     CFArrayAppendValue(__bootstrap_preload_files, theImage);
     
     theImage.onload =  function() {    	           
-       __bootstrap_preload_finished(theImage);
+       __bootstrap_preload_item_finished(theImage);
     };
 }
 // 

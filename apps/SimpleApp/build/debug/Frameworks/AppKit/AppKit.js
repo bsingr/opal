@@ -315,6 +315,8 @@ if (objc_msgSend(aCoder, "containsValueForKey:", "NSFrameSize"))
 _frame.size = objc_msgSend(aCoder, "decodeSizeForKey:", "NSFrameSize");
 
 
+NSLog("Initiwhtframe: " + self.isa);
+objc_msgSend(self, "setFrame:", _frame);
 _subviews = objc_msgSend(NSMutableArray, "array");
 var subviews = objc_msgSend(aCoder, "decodeObjectForKey:", "NSSubviews");
 if (subviews)
@@ -456,6 +458,7 @@ _superview = newSuperview;
 
 class_addMethod(the_class, "viewDidMoveToSuperview", function(self, _cmd) {
 with(self) {
+objc_msgSend(self, "setNeedsDisplay:", YES);
 }
 }, "void");
 
@@ -813,8 +816,6 @@ with(self) {
 
 class_addMethod(the_class, "drawRect:", function(self, _cmd, rect) {
 with(self) {
-var context = objc_msgSend(objc_msgSend(NSGraphicsContext, "currentContext"), "graphicsPort");
-CGContextFillRect(context,CGRectInset(rect,100,100));
 }
 }, "void");
 
@@ -2013,6 +2014,7 @@ class_addIvar(the_class, "_graphicsContext", "CGContextRef");
 class_addIvar(the_class, "_tag", "NSInteger");
 class_addIvar(the_class, "_cell", "NSCell");
 class_addIvar(the_class, "_currentEditor", "NSText");
+class_addIvar(the_class, "_isEnabled", "BOOL");
 class_addIvar(the_class, "_value", "id");
 
 class_addMethod(the_class, "initWithFrame:", function(self, _cmd, frameRect) {
@@ -2032,6 +2034,7 @@ class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
 with(self) {
 objc_msgSendSuper({super_class:NSView, receiver:self}, "initWithCoder:", aCoder);
 _cell = objc_msgSend(aCoder, "decodeObjectForKey:", "NSCell");
+objc_msgSend(self, "setFrame:", _frame);
 return self;
 }
 }, "void");
@@ -2131,13 +2134,13 @@ with(self) {
 
 class_addMethod(the_class, "isEnabled", function(self, _cmd) {
 with(self) {
-return objc_msgSend(_cell, "isEnabled");
+return _isEnabled;
 }
 }, "void");
 
 class_addMethod(the_class, "setEnabled:", function(self, _cmd, flag) {
 with(self) {
-objc_msgSend(_cell, "setEnabled:", flag);
+_isEnabled = flag;
 }
 }, "void");
 
@@ -2266,6 +2269,15 @@ with(self) {
 
 class_addMethod(the_class, "selectCell:", function(self, _cmd, aCell) {
 with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "drawRect:", function(self, _cmd, rect) {
+with(self) {
+var c = objc_msgSend(objc_msgSend(NSGraphicsContext, "currentContext"), "graphicsPort");
+if (_cell)
+objc_msgSend(_cell, "drawWithFrame:inView:", objc_msgSend(self, "bounds"), self);
+
 }
 }, "void");
 
@@ -2496,7 +2508,15 @@ class_addIvar(the_class, "_graphicsContext", "CGContextRef");
 class_addIvar(the_class, "_tag", "NSInteger");
 class_addIvar(the_class, "_cell", "NSCell");
 class_addIvar(the_class, "_currentEditor", "NSText");
+class_addIvar(the_class, "_isEnabled", "BOOL");
 class_addIvar(the_class, "_value", "id");
+
+class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
+with(self) {
+objc_msgSendSuper({super_class:NSControl, receiver:self}, "initWithCoder:", aCoder);
+return self;
+}
+}, "void");
 
 class_addMethod(the_class, "title", function(self, _cmd) {
 with(self) {
@@ -3532,6 +3552,8 @@ class_addIvar(the_class, "_controlSize", "NSSize");
 class_addIvar(the_class, "_controlView", "NSView");
 class_addIvar(the_class, "_target", "id");
 class_addIvar(the_class, "_action", "SEL");
+class_addIvar(the_class, "_alternateImage", "NSImage");
+class_addIvar(the_class, "_image", "NSImage");
 
 class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
 with(self) {
@@ -3540,7 +3562,415 @@ var flags = objc_msgSend(aCoder, "decodeIntForKey:", "NSButtonFlags");
 var flags2 = objc_msgSend(aCoder, "decodeIntForKey:", "NSButtonFlags2");
 _isBordered = (flags & 0x00800000) ? YES : NO;
 _bezelStyle = ((flags2 & 0x7) | ((flags2 & 0x20) >> 2));
+_alternateImage = objc_msgSend(aCoder, "decodeObjectForKey:", "NSAlternateImage");
+if (_alternateImage)
+{
+_image = objc_msgSend(_alternateImage, "normalImage");
+_alternateImage = objc_msgSend(_alternateImage, "alternateImage");
+
+}
+
 return self;
+}
+}, "void");
+
+class_addMethod(the_class, "title", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setTitle:", function(self, _cmd, aString) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "alternateTitle", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setAlternateTitle:", function(self, _cmd, aString) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "alternateImage", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setAlternateImage:", function(self, _cmd, image) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "imagePosition", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setImagePosition:", function(self, _cmd, aPosition) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "imageScaling", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setImageScaling:", function(self, _cmd, scaling) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "highlightsBy", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setHighlightsBy:", function(self, _cmd, aType) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "showsStateBy", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setShowsStateBy:", function(self, _cmd, aType) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setButtonType:", function(self, _cmd, aType) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "isOpaque", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setFont:", function(self, _cmd, fontObj) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "isTransparent", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setTransparent:", function(self, _cmd, flag) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setPeriodicDelay:interval:", function(self, _cmd, delay, interval) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "getPeriodicDelay:interval:", function(self, _cmd, delay, interval) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "keyEquivalent", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setKeyEquivalent:", function(self, _cmd, aKeyEquivalent) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "keyEquivalentModifierMask", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setKeyEquivalentModifierMask:", function(self, _cmd, mask) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "keyEquivalentFont", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setKeyEquivalentFont:", function(self, _cmd, fontObj) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setKeyEquivalentFont:size:", function(self, _cmd, fontName, fontSize) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "performClick:", function(self, _cmd, sender) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "drawWithFrame:inView:", function(self, _cmd, cellFrame, controlView) {
+with(self) {
+var c = objc_msgSend(objc_msgSend(NSGraphicsContext, "currentContext"), "graphicsPort");
+CGContextClearRect(c,cellFrame);
+objc_msgSend(self, "drawBezelWithFrame:inView:", cellFrame, controlView);
+objc_msgSend(self, "drawInteriorWithFrame:inView:", cellFrame, controlView);
+objc_msgSend(self, "drawTitle:withFrame:inView:", _value, cellFrame, controlView);
+}
+}, "void");
+
+class_addMethod(the_class, "drawInteriorWithFrame:inView:", function(self, _cmd, cellFrame, controlView) {
+with(self) {
+if (_image)
+{
+if (_state == 1)
+objc_msgSend(self, "drawImage:withFrame:inView:", _alternateImage, CGRectMake(1,1,17,17), controlView);
+else
+objc_msgSend(self, "drawImage:withFrame:inView:", _image, CGRectMake(1,1,17,17), controlView);
+
+
+}
+
+}
+}, "void");
+
+class_addMethod(the_class, "drawImage:withFrame:inView:", function(self, _cmd, image, frame, controlView) {
+with(self) {
+var c = objc_msgSend(objc_msgSend(NSGraphicsContext, "currentContext"), "graphicsPort");
+CGContextSaveGState(c);
+if (!_isEnabled)
+CGContextSetAlpha(c,0.8);
+
+CGContextDrawImage(c,frame,image);
+CGContextRestoreGState(c);
+}
+}, "void");
+
+class_addMethod(the_class, "drawTitle:withFrame:inView:", function(self, _cmd, title, rect, controlView) {
+with(self) {
+var c = objc_msgSend(objc_msgSend(NSGraphicsContext, "currentContext"), "graphicsPort");
+CGContextSaveGState(c);
+if (_isEnabled)
+{
+CGContextSetFillColorWithColor(c,CGColorCreateGenericRGB(0.204,0.204,0.204,1.0));
+CGContextSetShadowWithColor(c,CGSizeMake(1,1),1,CGColorCreateGenericRGB(1,1,1,1));
+var theFont = CGFontCreate("Arial",12,NO);
+CGContextSetFont(c,theFont);
+CGContextShowTextAtPoint(c,20,((rect.size.height + 12) / 2) - 1,title,14);
+
+}
+else
+{
+CGContextSetFillColorWithColor(c,CGColorCreateGenericRGB(0.704,0.704,0.704,1.0));
+CGContextSetShadowWithColor(c,CGSizeMake(1,1),1,CGColorCreateGenericRGB(1,1,1,1));
+var theFont = CGFontCreate("Arial",12,NO);
+CGContextSetFont(c,theFont);
+CGContextShowTextAtPoint(c,20,((rect.size.height + 12) / 2) - 1,title,14);
+
+}
+
+CGContextRestoreGState(c);
+}
+}, "void");
+
+class_addMethod(the_class, "drawBezelWithFrame:inView:", function(self, _cmd, frame, controlView) {
+with(self) {
+var c = objc_msgSend(objc_msgSend(NSGraphicsContext, "currentContext"), "graphicsPort");
+CGContextSaveGState(c);
+if (_isEnabled && _isBordered)
+{
+var theImage = CGImageCreateWithURLDataProvider("Resources/NSButtonNormalLeft.png");
+CGContextDrawImage(c,CGRectMake(0,0,6,24),theImage);
+var theImage = CGImageCreateWithURLDataProvider("Resources/NSButtonNormalMiddle.png");
+CGContextDrawImage(c,CGRectMake(6,0,frame.size.width - 12,24),theImage);
+var theImage = CGImageCreateWithURLDataProvider("Resources/NSButtonNormalRight.png");
+CGContextDrawImage(c,CGRectMake(frame.size.width - 6,0,6,24),theImage);
+
+}
+else
+if (_isBordered)
+{
+CGContextSaveGState(c);
+CGContextSetAlpha(c,0.8);
+var theImage = CGImageCreateWithURLDataProvider("Resources/NSButtonNormalLeft.png");
+CGContextDrawImage(c,CGRectMake(0,0,6,24),theImage);
+var theImage = CGImageCreateWithURLDataProvider("Resources/NSButtonNormalMiddle.png");
+CGContextDrawImage(c,CGRectMake(6,0,frame.size.width - 12,24),theImage);
+var theImage = CGImageCreateWithURLDataProvider("Resources/NSButtonNormalRight.png");
+CGContextDrawImage(c,CGRectMake(frame.size.width - 6,0,6,24),theImage);
+CGContextRestoreGState(c);
+
+}
+
+
+CGContextRestoreGState(c);
+}
+}, "void");
+
+class_addMethod(meta_class, "load", function(self, _cmd) {
+with(self) {
+CFBundlePreloadResource(CFBundleGetBundleForClass(self),"NSButtonNormalLeft","png","");
+CFBundlePreloadResource(CFBundleGetBundleForClass(self),"NSButtonNormalMiddle","png","");
+CFBundlePreloadResource(CFBundleGetBundleForClass(self),"NSButtonNormalRight","png","");
+CFBundlePreloadResource(CFBundleGetBundleForClass(self),"NSSwitchNormal","png","");
+CFBundlePreloadResource(CFBundleGetBundleForClass(self),"NSSwitchAlternate","png","");
+CFBundlePreloadResource(CFBundleGetBundleForClass(self),"NSRadioButtonNormal","png","");
+CFBundlePreloadResource(CFBundleGetBundleForClass(self),"NSRadioButtonAlternate","png","");
+}
+}, "void");
+
+var the_class = NSButtonCell;
+var meta_class = the_class.isa;
+
+class_addMethod(the_class, "setTitleWithMnemonic:", function(self, _cmd, stringWithAmpersand) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setAlternateTitleWithMnemonic:", function(self, _cmd, stringWithAmpersand) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setAlternateMnemonicLocation:", function(self, _cmd, location) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "alternateMnemonicLocation", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "alternateMnemonic", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+var the_class = NSButtonCell;
+var meta_class = the_class.isa;
+
+class_addMethod(the_class, "gradientType", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setGradientType:", function(self, _cmd, type) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setImageDimsWhenDisabled:", function(self, _cmd, flag) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "imageDimsWhenDisabled", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setShowsBorderOnlyWhileMouseInside:", function(self, _cmd, show) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "showsBorderOnlyWhileMouseInside", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "mouseEntered:", function(self, _cmd, event) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "mouseExited:", function(self, _cmd, event) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "backgroundColor", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setBackgroundColor:", function(self, _cmd, color) {
+with(self) {
+}
+}, "void");
+
+var the_class = NSButtonCell;
+var meta_class = the_class.isa;
+
+class_addMethod(the_class, "attributedTitle", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setAttributedTitle:", function(self, _cmd, obj) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "attributedAlternateTitle", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setAttributedAlternateTitle:", function(self, _cmd, obj) {
+with(self) {
+}
+}, "void");
+
+var the_class = NSButtonCell;
+var meta_class = the_class.isa;
+
+class_addMethod(the_class, "setBezelStyle:", function(self, _cmd, bezelStyle) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "bezelStyle", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+var the_class = objc_allocateClassPair(NSObject, "NSButtonImageSource");
+var meta_class = the_class.isa;
+objc_registerClassPair(the_class);
+class_addIvar(the_class, "isa", "Class");
+class_addIvar(the_class, "_imageName", "NSImage");
+class_addIvar(the_class, "_images", "NSMutableDictionary");
+
+class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
+with(self) {
+_imageName = objc_msgSend(aCoder, "decodeObjectForKey:", "NSImageName");
+return self;
+}
+}, "void");
+
+class_addMethod(the_class, "normalImage", function(self, _cmd) {
+with(self) {
+var theImage = CGImageCreateWithURLDataProvider("Resources/" + _imageName + "Normal.png");
+return theImage;
+}
+}, "void");
+
+class_addMethod(the_class, "alternateImage", function(self, _cmd) {
+with(self) {
+var theImage = CGImageCreateWithURLDataProvider("Resources/" + _imageName + "Alternate.png");
+return theImage;
 }
 }, "void");
 
@@ -3823,6 +4253,7 @@ class_addIvar(the_class, "_graphicsContext", "CGContextRef");
 class_addIvar(the_class, "_tag", "NSInteger");
 class_addIvar(the_class, "_cell", "NSCell");
 class_addIvar(the_class, "_currentEditor", "NSText");
+class_addIvar(the_class, "_isEnabled", "BOOL");
 class_addIvar(the_class, "_value", "id");
 
 class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
@@ -4778,7 +5209,7 @@ return NSMakeRect(contentRect.origin.x + xOffset,contentRect.origin.y + yOffset,
 
 class_addMethod(the_class, "contentRectForFrameRect:", function(self, _cmd, frameRect) {
 with(self) {
-return frameRect;
+return CGRectMake(0,0,frameRect.size.width,frameRect.size.height);
 }
 }, "void");
 
@@ -4818,35 +5249,6 @@ objc_msgSend(self, "setNeedsDisplay:", YES);
 }
 
 return self;
-}
-}, "void");
-
-class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
-with(self) {
-objc_msgSendSuper({super_class:NSResponder, receiver:self}, "initWithCoder:", aCoder);
-_maxSize = objc_msgSend(aCoder, "decodeSizeForKey:", "NSWindowContentSizeMax");
-_minSize = objc_msgSend(aCoder, "decodeSizeForKey:", "NSWindowContentSizeMin");
-_wtFlags = objc_msgSend(aCoder, "decodeIntForKey:", "NSWTFlags");
-_windowClass = objc_msgSend(aCoder, "decodeObjectForKey:", "NSWindowClass");
-_styleMask = objc_msgSend(aCoder, "decodeIntForKey:", "NSWindowStyleMask");
-_title = objc_msgSend(aCoder, "decodeObjectForKey:", "NSWindowTitle");
-_frame = objc_msgSend(self, "frameRectForContentRect:", objc_msgSend(aCoder, "decodeRectForKey:", "NSWindowRect"));
-_contentView = objc_msgSend(aCoder, "decodeObjectForKey:", "NSWindowView");
-objc_msgSend(self, "awakeAfterUsingCoder:", aCoder);
-return self;
-}
-}, "void");
-
-class_addMethod(the_class, "awakeAfterUsingCoder:", function(self, _cmd, aCoder) {
-with(self) {
-_gCanvas = NSWindowServerCreateCanvas(self);
-_gCanvas.width = _frame.size.width;
-_gCanvas.height = _frame.size.height;
-_windowNumber = objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "addWindow:", self);
-objc_msgSend(_contentView, "viewWillMoveToWindow:", self);
-objc_msgSend(_contentView, "viewDidMoveToWindow:", self);
-NSWindowServerSetOrigin(_gCanvas,_frame.origin);
-objc_msgSend(self, "makeKeyAndOrderFront:", self);
 }
 }, "void");
 
@@ -4991,7 +5393,7 @@ class_addMethod(the_class, "setFrame:display:", function(self, _cmd, frameRect, 
 with(self) {
 _frame = frameRect;
 CGDOMElementSetFrame(_DOMContainer,_frame);
-CGDOMElementSetFrame(_DOMGraphicsContext,_frame);
+CGDOMElementSetFrame(_DOMGraphicsContext,CGRectMake(0,0,_frame.size.width,_frame.size.height));
 objc_msgSend(self, "setNeedsDisplay:", YES);
 }
 }, "void");
@@ -5715,7 +6117,7 @@ return CGDOMElementGetContext(_DOMGraphicsContext);
 
 class_addMethod(meta_class, "load", function(self, _cmd) {
 with(self) {
-CFBundlePreloadResource(CFBundleGetBundleForClass(self),"lumpy","png","");
+CFBundlePreloadResource(CFBundleGetBundleForClass(self),"NSWindowBackgroundMiddle","png","");
 }
 }, "void");
 
@@ -5975,11 +6377,11 @@ with(self) {
 var c = objc_msgSend(objc_msgSend(NSGraphicsContext, "currentContext"), "graphicsPort");
 CGContextClearRect(c,rect);
 CGContextSaveGState(c);
-CGContextSetFillColorWithColor(c,CGColorCreateGenericRGB(1,1,1,1.0));
-CGContextSetShadowWithColor(c,CGSizeMake(0,5),10,CGColorCreateGenericRGB(0,0,0,0.8));
+CGContextSetFillColorWithColor(c,CGColorCreateGenericRGB(0.944,0.944,0.944,1.0));
+CGContextSetShadowWithColor(c,CGSizeMake(0,5),10,CGColorCreateGenericRGB(0.2,0.2,0.2,0.8));
 CGContextFillRect(c,CGRectInset(rect,20,20));
 CGContextRestoreGState(c);
-var theImage = CGImageCreateWithURLDataProvider("file:///Users/adam/Sites/lumpy.png");
+var theImage = CGImageCreateWithURLDataProvider("Resources/NSWindowBackgroundMiddle.png");
 CGContextDrawImage(c,CGRectMake(20,20,rect.size.width - 40,56),theImage);
 CGContextSetFillColorWithColor(c,CGColorCreateGenericRGB(0.204,0.204,0.204,1.0));
 CGContextSetAlpha(c,1);
@@ -6554,6 +6956,8 @@ class_addIvar(the_class, "_controlSize", "NSSize");
 class_addIvar(the_class, "_controlView", "NSView");
 class_addIvar(the_class, "_target", "id");
 class_addIvar(the_class, "_action", "SEL");
+class_addIvar(the_class, "_alternateImage", "NSImage");
+class_addIvar(the_class, "_image", "NSImage");
 class_addIvar(the_class, "_menuItem", "NSMenuItem");
 class_addIvar(the_class, "_menuView", "NSMenuView");
 
@@ -7285,6 +7689,7 @@ class_addIvar(the_class, "_graphicsContext", "CGContextRef");
 class_addIvar(the_class, "_tag", "NSInteger");
 class_addIvar(the_class, "_cell", "NSCell");
 class_addIvar(the_class, "_currentEditor", "NSText");
+class_addIvar(the_class, "_isEnabled", "BOOL");
 class_addIvar(the_class, "_value", "id");
 class_addIvar(the_class, "_dataSource", "id");
 class_addIvar(the_class, "_delegate", "id");
@@ -7805,6 +8210,7 @@ class_addIvar(the_class, "_graphicsContext", "CGContextRef");
 class_addIvar(the_class, "_tag", "NSInteger");
 class_addIvar(the_class, "_cell", "NSCell");
 class_addIvar(the_class, "_currentEditor", "NSText");
+class_addIvar(the_class, "_isEnabled", "BOOL");
 class_addIvar(the_class, "_value", "id");
 class_addIvar(the_class, "_dataSource", "id");
 class_addIvar(the_class, "_delegate", "id");
@@ -8031,6 +8437,7 @@ class_addIvar(the_class, "_graphicsContext", "CGContextRef");
 class_addIvar(the_class, "_tag", "NSInteger");
 class_addIvar(the_class, "_cell", "NSCell");
 class_addIvar(the_class, "_currentEditor", "NSText");
+class_addIvar(the_class, "_isEnabled", "BOOL");
 class_addIvar(the_class, "_value", "id");
 class_addIvar(the_class, "_isVertical", "BOOL");
 
@@ -8260,6 +8667,7 @@ class_addIvar(the_class, "_graphicsContext", "CGContextRef");
 class_addIvar(the_class, "_tag", "NSInteger");
 class_addIvar(the_class, "_cell", "NSCell");
 class_addIvar(the_class, "_currentEditor", "NSText");
+class_addIvar(the_class, "_isEnabled", "BOOL");
 class_addIvar(the_class, "_value", "id");
 
 class_addMethod(the_class, "initWithFrame:", function(self, _cmd, aFrame) {
@@ -8292,6 +8700,34 @@ class_addIvar(the_class, "_controlSize", "NSSize");
 class_addIvar(the_class, "_controlView", "NSView");
 class_addIvar(the_class, "_target", "id");
 class_addIvar(the_class, "_action", "SEL");
+
+class_addMethod(the_class, "drawWithFrame:inView:", function(self, _cmd, cellFrame, controlView) {
+with(self) {
+var c = objc_msgSend(objc_msgSend(NSGraphicsContext, "currentContext"), "graphicsPort");
+CGContextSaveGState(c);
+if (!_isEnabled)
+CGContextSetAlpha(c,0.8);
+
+var theImage = CGImageCreateWithURLDataProvider("Resources/NSSliderHorizontalLeft.png");
+CGContextDrawImage(c,CGRectMake(0,8,5,5),theImage);
+var theImage = CGImageCreateWithURLDataProvider("Resources/NSSliderHorizontalMiddle.png");
+CGContextDrawImage(c,CGRectMake(5,8,cellFrame.size.width - 10,5),theImage);
+var theImage = CGImageCreateWithURLDataProvider("Resources/NSSliderHorizontalRight.png");
+CGContextDrawImage(c,CGRectMake(cellFrame.size.width - 5,8,5,5),theImage);
+var theImage = CGImageCreateWithURLDataProvider("Resources/NSSliderHorizontalKnobNormal.png");
+CGContextDrawImage(c,CGRectMake(20,2,17,17),theImage);
+CGContextRestoreGState(c);
+}
+}, "void");
+
+class_addMethod(meta_class, "load", function(self, _cmd) {
+with(self) {
+CFBundlePreloadResource(CFBundleGetBundleForClass(self),"NSSliderHorizontalLeft","png","");
+CFBundlePreloadResource(CFBundleGetBundleForClass(self),"NSSliderHorizontalMiddle","png","");
+CFBundlePreloadResource(CFBundleGetBundleForClass(self),"NSSliderHorizontalRight","png","");
+CFBundlePreloadResource(CFBundleGetBundleForClass(self),"NSSliderHorizontalKnobNormal","png","");
+}
+}, "void");
 
 var the_class = objc_allocateClassPair(NSObject, "NSStatusBar");
 var meta_class = the_class.isa;
@@ -8477,10 +8913,6 @@ return self;
 class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
 with(self) {
 objc_msgSendSuper({super_class:NSCell, receiver:self}, "initWithCoder:", aCoder);
-_value = objc_msgSend(aCoder, "decodeObjectForKey:", "NSContents");
-if (!_value)
-_value = " ";
-
 _drawsBackground = objc_msgSend(aCoder, "decodeBoolForKey:", "NSDrawsBackground");
 return self;
 }
@@ -8494,88 +8926,41 @@ _gBorderType = type;
 
 class_addMethod(the_class, "drawInteriorWithFrame:inView:", function(self, _cmd, cellFrame, controlView) {
 with(self) {
-var textToDraw = "";
-if (_value == "")
+var c = objc_msgSend(objc_msgSend(NSGraphicsContext, "currentContext"), "graphicsPort");
+CGContextSaveGState(c);
+if (_isEnabled)
 {
-textToDraw = _placeholderString;
+CGContextSetFillColorWithColor(c,CGColorCreateGenericRGB(0.204,0.204,0.204,1.0));
+CGContextSetShadowWithColor(c,CGSizeMake(1,1),1,CGColorCreateGenericRGB(1,1,1,1));
+var theFont = CGFontCreate("Arial",12,NO);
+CGContextSetFont(c,theFont);
+CGContextShowTextAtPoint(c,20,((cellFrame.size.height + 12) / 2),_value,14);
 
 }
 else
 {
-textToDraw = _value;
+CGContextSetFillColorWithColor(c,CGColorCreateGenericRGB(0.704,0.704,0.704,1.0));
+CGContextSetShadowWithColor(c,CGSizeMake(1,1),1,CGColorCreateGenericRGB(1,1,1,1));
+var theFont = CGFontCreate("Arial",12,NO);
+CGContextSetFont(c,theFont);
+CGContextShowTextAtPoint(c,20,((cellFrame.size.height + 12) / 2),_value,14);
 
 }
 
-if (textToDraw)
-{
-objc_msgSend(_textColor, "set");
-objc_msgSend(objc_msgSend(NSFont, "systemFontOfSize:", objc_msgSend(NSFont, "systemFontSize")), "set");
-var titleRect = objc_msgSend(self, "titleRectForBounds:", cellFrame);
-titleRect.origin.y = ((titleRect.size.height - 10) / 2) + titleRect.origin.y;
-titleRect.origin.x = titleRect.origin.x + 2;
-objc_msgSend(textToDraw, "drawWithRect:options:attributes:", titleRect, null, null);
-
-}
-
+CGContextRestoreGState(c);
 }
 }, "void");
 
 class_addMethod(the_class, "drawWithFrame:inView:", function(self, _cmd, cellFrame, controlView) {
 with(self) {
-objc_msgSend(NSGraphicsContext, "saveGraphicsState");
-_controlView = controlView;
-if (_isBezeled)
-{
-objc_msgSend(objc_msgSend(NSColor, "colorWithCalibratedRed:green:blue:alpha:", 0.439, 0.439, 0.439, 1.0), "set");
-var topOuterBorder = objc_msgSend(NSBezierPath, "bezierPath");
-objc_msgSend(topOuterBorder, "setLineWidth:", 1);
-objc_msgSend(topOuterBorder, "moveToPoint:", NSMakePoint(cellFrame.origin.x + 3.5,cellFrame.origin.y + cellFrame.size.height - 3.5));
-objc_msgSend(topOuterBorder, "lineToPoint:", NSMakePoint(cellFrame.origin.x + cellFrame.size.width - 3.5,cellFrame.origin.y + cellFrame.size.height - 3.5));
-objc_msgSend(topOuterBorder, "stroke");
-objc_msgSend(objc_msgSend(NSColor, "colorWithCalibratedRed:green:blue:alpha:", 0.851, 0.851, 0.851, 1.0), "set");
-var topInnerBorder = objc_msgSend(NSBezierPath, "bezierPath");
-objc_msgSend(topInnerBorder, "setLineWidth:", 1);
-objc_msgSend(topInnerBorder, "moveToPoint:", NSMakePoint(cellFrame.origin.x + 3.5,cellFrame.origin.y + cellFrame.size.height - 4.5));
-objc_msgSend(topInnerBorder, "lineToPoint:", NSMakePoint(cellFrame.origin.x + cellFrame.size.width - 3.5,cellFrame.origin.y + cellFrame.size.height - 4.5));
-objc_msgSend(topInnerBorder, "stroke");
-objc_msgSend(objc_msgSend(NSColor, "colorWithCalibratedRed:green:blue:alpha:", 0.808, 0.808, 0.808, 1.0), "set");
-var bottomOuterBorder = objc_msgSend(NSBezierPath, "bezierPath");
-objc_msgSend(bottomOuterBorder, "setLineWidth:", 1);
-objc_msgSend(bottomOuterBorder, "moveToPoint:", NSMakePoint(cellFrame.origin.x + 3.5,cellFrame.origin.y + 3.5));
-objc_msgSend(bottomOuterBorder, "lineToPoint:", NSMakePoint(cellFrame.origin.x + cellFrame.size.width - 3.5,cellFrame.origin.y + 3.5));
-objc_msgSend(bottomOuterBorder, "stroke");
-objc_msgSend(objc_msgSend(NSColor, "colorWithCalibratedRed:green:blue:alpha:", 0.671, 0.671, 0.671, 1.0), "set");
-var sideBorders = objc_msgSend(NSBezierPath, "bezierPath");
-objc_msgSend(sideBorders, "setLineWidth:", 1);
-objc_msgSend(sideBorders, "moveToPoint:", NSMakePoint(cellFrame.origin.x + 3.5,cellFrame.origin.y + 3.5));
-objc_msgSend(sideBorders, "lineToPoint:", NSMakePoint(cellFrame.origin.x + 3.5,cellFrame.origin.y + cellFrame.size.height - 3.5));
-objc_msgSend(sideBorders, "moveToPoint:", NSMakePoint(cellFrame.origin.x + cellFrame.size.width - 3.5,cellFrame.origin.y + 3.5));
-objc_msgSend(sideBorders, "lineToPoint:", NSMakePoint(cellFrame.origin.x + cellFrame.size.width - 3.5,cellFrame.origin.y + cellFrame.size.height - 3.5));
-objc_msgSend(sideBorders, "stroke");
-
-}
-
+var c = objc_msgSend(objc_msgSend(NSGraphicsContext, "currentContext"), "graphicsPort");
 if (objc_msgSend(self, "drawsBackground"))
 {
-objc_msgSend(NSGraphicsContext, "saveGraphicsState");
-if (objc_msgSend(self, "isHighlighted"))
-{
-var highlightShadow = objc_msgSend(objc_msgSend(NSShadow, "alloc"), "init");
-objc_msgSend(highlightShadow, "setShadowColor:", objc_msgSend(NSColor, "colorWithCalibratedRed:green:blue:alpha:", 0.239, 0.502, 0.875, 1.0));
-objc_msgSend(highlightShadow, "setShadowBlurRadius:", 6);
-objc_msgSend(highlightShadow, "setShadowOffset:", NSMakeSize(0,0));
-objc_msgSend(highlightShadow, "set");
+CGContextSetFillColorWithColor(c,CGColorCreateGenericRGB(1,1,1,1.0));
+CGContextFillRect(c,cellFrame);
 
 }
 
-objc_msgSend(objc_msgSend(NSColor, "colorWithCalibratedRed:green:blue:alpha:", 1, 1, 1, 1.0), "set");
-objc_msgSend(NSBezierPath, "fillRect:", NSMakeRect(cellFrame.origin.x + 4,cellFrame.origin.y + 4,cellFrame.size.width - 8,cellFrame.size.height - 9));
-;
-objc_msgSend(NSGraphicsContext, "restoreGraphicsState");
-
-}
-
-objc_msgSend(NSGraphicsContext, "restoreGraphicsState");
 objc_msgSend(self, "drawInteriorWithFrame:inView:", cellFrame, controlView);
 }
 }, "void");
@@ -8906,21 +9291,12 @@ class_addIvar(the_class, "_graphicsContext", "CGContextRef");
 class_addIvar(the_class, "_tag", "NSInteger");
 class_addIvar(the_class, "_cell", "NSCell");
 class_addIvar(the_class, "_currentEditor", "NSText");
+class_addIvar(the_class, "_isEnabled", "BOOL");
 class_addIvar(the_class, "_value", "id");
 
 class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
 with(self) {
 objc_msgSendSuper({super_class:NSControl, receiver:self}, "initWithCoder:", aCoder);
-if (objc_msgSend(self, "isEditable"))
-{
-_frame.origin.x = _frame.origin.x - 3;
-_frame.origin.y = _frame.origin.y - 3;
-_frame.size.width = _frame.size.width + 6;
-_frame.size.height = _frame.size.height + 6;
-objc_msgSend(self, "setFrame:", _frame);
-
-}
-
 return self;
 }
 }, "void");

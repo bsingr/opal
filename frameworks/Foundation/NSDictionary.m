@@ -221,7 +221,7 @@
 
 - (void)setObject:(id)anObject forKey:(id)aKey
 {
-	
+	CFDictionarySetValue(self, aKey, anObject);
 }
 
 @end

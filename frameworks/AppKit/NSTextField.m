@@ -14,15 +14,6 @@
 {
     [super initWithCoder:aCoder];
     
-    if ([self isEditable])
-    {
-        _frame.origin.x = _frame.origin.x - 3;
-        _frame.origin.y = _frame.origin.y - 3;
-        _frame.size.width = _frame.size.width + 6;
-        _frame.size.height = _frame.size.height + 6;
-        [self setFrame:_frame];
-    }
-    
     return self;
 }
 

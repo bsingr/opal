@@ -10,7 +10,5 @@
 
 int main(int argc, char *argv[])
 {	
-	NSMutableDictionary *myDict = [[NSMutableDictionary alloc] init];
-	
     return NSApplicationMain();
 }

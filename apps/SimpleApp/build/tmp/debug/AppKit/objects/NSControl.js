@@ -36,6 +36,7 @@ class_addIvar(the_class, "_graphicsContext", "CGContextRef");
 class_addIvar(the_class, "_tag", "NSInteger");
 class_addIvar(the_class, "_cell", "NSCell");
 class_addIvar(the_class, "_currentEditor", "NSText");
+class_addIvar(the_class, "_isEnabled", "BOOL");
 class_addIvar(the_class, "_value", "id");
 
 class_addMethod(the_class, "initWithFrame:", function(self, _cmd, frameRect) {
@@ -55,6 +56,7 @@ class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
 with(self) {
 objc_msgSendSuper({super_class:NSView, receiver:self}, "initWithCoder:", aCoder);
 _cell = objc_msgSend(aCoder, "decodeObjectForKey:", "NSCell");
+objc_msgSend(self, "setFrame:", _frame);
 return self;
 }
 }, "void");
@@ -154,13 +156,13 @@ with(self) {
 
 class_addMethod(the_class, "isEnabled", function(self, _cmd) {
 with(self) {
-return objc_msgSend(_cell, "isEnabled");
+return _isEnabled;
 }
 }, "void");
 
 class_addMethod(the_class, "setEnabled:", function(self, _cmd, flag) {
 with(self) {
-objc_msgSend(_cell, "setEnabled:", flag);
+_isEnabled = flag;
 }
 }, "void");
 
@@ -289,6 +291,15 @@ with(self) {
 
 class_addMethod(the_class, "selectCell:", function(self, _cmd, aCell) {
 with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "drawRect:", function(self, _cmd, rect) {
+with(self) {
+var c = objc_msgSend(objc_msgSend(NSGraphicsContext, "currentContext"), "graphicsPort");
+if (_cell)
+objc_msgSend(_cell, "drawWithFrame:inView:", objc_msgSend(self, "bounds"), self);
+
 }
 }, "void");
 

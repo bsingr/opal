@@ -18,7 +18,7 @@
     NSCell         *_cell;
     
     NSText         *_currentEditor;
-    
+    BOOL            _isEnabled;
     id              _value;
 }
 

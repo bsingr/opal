@@ -83,8 +83,8 @@ function CGDOMElementSetAttribute(element, name, value)
 // 
 function CGDOMElementSetFrame(element, frame)
 {
-    element.style.bottom = frame.origin.x + "px";
-    element.style.left = frame.origin.y + "px";
+    element.style.bottom = frame.origin.y + "px";
+    element.style.left = frame.origin.x + "px";
     element.style.width = frame.size.width + "px";
     element.style.height = frame.size.height + "px";
     element.height = frame.size.height;

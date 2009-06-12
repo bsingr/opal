@@ -59,6 +59,7 @@ extern NSString *NSInvalidUnarchiveOperationException;
     id                   _data;
     NSMutableDictionary *_rootDict;
     NSMutableArray      *_contextStack;
+    NSMutableDictionary *_unarchivedObjects;
 }
 
 + (id)unarchiveObjectWithData:(NSData *)data;

@@ -39,6 +39,8 @@
 {
 	[super initWithCoder:aCoder];
     _cell = [aCoder decodeObjectForKey:@"NSCell"];
+    
+    [self setFrame:_frame];
     return self;
 }
 
@@ -131,12 +133,12 @@
 
 - (BOOL)isEnabled
 {
-    return [_cell isEnabled];
+    return _isEnabled;
 }
 
 - (void)setEnabled:(BOOL)flag
 {
-    [_cell setEnabled:flag];
+    _isEnabled = flag;
 }
 
 - (void)setFloatingPointFormat:(BOOL)autoRange left:(NSUInteger)leftDigits right:(NSUInteger)rightDigits
@@ -253,6 +255,14 @@
 - (void)selectCell:(NSCell *)aCell
 {
     // TODO: Need to implement
+}
+
+- (void)drawRect:(NSRect)rect
+{
+    CGContextRef c = [[NSGraphicsContext currentContext] graphicsPort];
+    
+    if(_cell)
+        [_cell drawWithFrame:[self bounds] inView:self];
 }
 
 

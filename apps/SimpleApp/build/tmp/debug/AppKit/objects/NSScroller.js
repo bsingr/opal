@@ -33,6 +33,7 @@ class_addIvar(the_class, "_graphicsContext", "CGContextRef");
 class_addIvar(the_class, "_tag", "NSInteger");
 class_addIvar(the_class, "_cell", "NSCell");
 class_addIvar(the_class, "_currentEditor", "NSText");
+class_addIvar(the_class, "_isEnabled", "BOOL");
 class_addIvar(the_class, "_value", "id");
 class_addIvar(the_class, "_isVertical", "BOOL");
 

@@ -1,2 +1,6 @@
---- {}
-
+--- 
+VNFlashView.js: 
+  declarations: 
+  - VNFlashView
+  dependencies: 
+  - NSView

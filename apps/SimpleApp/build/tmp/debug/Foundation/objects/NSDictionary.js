@@ -216,6 +216,7 @@ with(self) {
 
 class_addMethod(the_class, "setObject:forKey:", function(self, _cmd, anObject, aKey) {
 with(self) {
+CFDictionarySetValue(self,aKey,anObject);
 }
 }, "void");
 

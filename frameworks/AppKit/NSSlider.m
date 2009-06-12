@@ -21,7 +21,3 @@
 }
 
 @end
-
-@implementation NSSliderCell
-
-@end

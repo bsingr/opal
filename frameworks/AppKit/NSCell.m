@@ -37,6 +37,7 @@
     _state = (flags & 0x80000000) ? NSOnState : NSOffState;
     _isHighlighted = (flags & 0x40000000) ? YES : NO;
     _isEnabled = (flags & 0x20000000) ? NO : YES;
+    
     _isEditable = (flags & 0x10000000) ? YES : NO;
     _isBordered = (flags & 0x00800000) ? YES : NO;
     _isBezeled = (flags & 0x00400000) ? YES : NO;

@@ -12,7 +12,7 @@
 
 + (void)load
 {
-    CFBundlePreloadResource(CFBundleGetBundleForClass(self), @"lumpy", @"png", @"");
+    CFBundlePreloadResource(CFBundleGetBundleForClass(self), @"NSWindowBackgroundMiddle", @"png", @"");
 }
 
 - (CGDOMElementRef)DOMContainer
@@ -75,7 +75,7 @@
 
 - (NSRect)contentRectForFrameRect:(NSRect)frameRect
 {
-    return frameRect;
+    return CGRectMake(0,0,frameRect.size.width, frameRect.size.height);
 }
 
 - (id)init
@@ -117,38 +117,6 @@
 		[self setNeedsDisplay:YES];
     }
     return self;
-}
-
-- (id)initWithCoder:(NSCoder *)aCoder
-{
-    [super initWithCoder:aCoder];
-    
-    _maxSize = [aCoder decodeSizeForKey:@"NSWindowContentSizeMax"];
-    _minSize = [aCoder decodeSizeForKey:@"NSWindowContentSizeMin"];
-    _wtFlags = [aCoder decodeIntForKey:@"NSWTFlags"];
-    _windowClass = [aCoder decodeObjectForKey:@"NSWindowClass"];
-    _styleMask = [aCoder decodeIntForKey:@"NSWindowStyleMask"];
-    
-    _title = [aCoder decodeObjectForKey:@"NSWindowTitle"];
-    _frame = [self frameRectForContentRect:[aCoder decodeRectForKey:@"NSWindowRect"]];
-    _contentView = [aCoder decodeObjectForKey:@"NSWindowView"];
-    
-    [self awakeAfterUsingCoder:aCoder];
-    
-    return self;
-}
-
-- (id)awakeAfterUsingCoder:(NSCoder *)aCoder
-{
-    _gCanvas = NSWindowServerCreateCanvas (self);
-    _gCanvas.width = _frame.size.width;
-    _gCanvas.height = _frame.size.height;
-    _windowNumber = [[NSApplication sharedApplication] addWindow:self];
-    
-    [_contentView viewWillMoveToWindow:self];
-    [_contentView viewDidMoveToWindow:self];
-    NSWindowServerSetOrigin(_gCanvas, _frame.origin);
-    [self makeKeyAndOrderFront:self];
 }
 
 - (void)mouseDown:(NSEvent *)theEvent
@@ -295,7 +263,7 @@
 {
     _frame = frameRect;
     CGDOMElementSetFrame(_DOMContainer, _frame);
-    CGDOMElementSetFrame(_DOMGraphicsContext, _frame);
+    CGDOMElementSetFrame(_DOMGraphicsContext, CGRectMake(0,0,_frame.size.width, _frame.size.height));
     [self setNeedsDisplay:YES];
 }
 
@@ -1268,13 +1236,13 @@
     CGContextClearRect(c, rect);
     // CGContextSetAlpha(c, 0.3);
     CGContextSaveGState(c);
-    CGContextSetFillColorWithColor(c, CGColorCreateGenericRGB(1, 1, 1, 1.0));
-    CGContextSetShadowWithColor(c, CGSizeMake(0,5), 10, CGColorCreateGenericRGB(0,0,0,0.8));
+    CGContextSetFillColorWithColor(c, CGColorCreateGenericRGB(0.944, 0.944, 0.944, 1.0));
+    CGContextSetShadowWithColor(c, CGSizeMake(0,5), 10, CGColorCreateGenericRGB(0.2,0.2,0.2,0.8));
     CGContextFillRect(c, CGRectInset(rect, 20, 20));
     CGContextRestoreGState(c);
-    CGImageRef theImage = CGImageCreateWithURLDataProvider(@"file:///Users/adam/Sites/lumpy.png");
-    
-    CGContextDrawImage(c, CGRectMake(20,20,rect.size.width - 40,56), theImage);
+    CGImageRef theImage = CGImageCreateWithURLDataProvider(@"Resources/NSWindowBackgroundMiddle.png");
+            
+            CGContextDrawImage(c, CGRectMake(20,20,rect.size.width - 40,56), theImage);
     
 	// CGRect newRect = CGRectInset(rect, 5, 5);
 	//     CGContextSetFillColorWithColor(c, CGColorCreateGenericRGB(0.3,0.8,0.2,0.5));

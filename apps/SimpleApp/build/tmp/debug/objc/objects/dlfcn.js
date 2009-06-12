@@ -38,6 +38,12 @@ function dlopen(path, mode, callback)
    	e.src = path + "?" + new Date().getTime();
    	e.type = "text/javascript";
    	e.onload = callback;
+   	e.onreadystatechange = function() {
+   	    if (this.readyState == 'loaded' && !window.opera)
+   	    {
+   	        callback();
+   	    }
+   	};
    	document.getElementsByTagName("head")[0].appendChild(e);
 }
 

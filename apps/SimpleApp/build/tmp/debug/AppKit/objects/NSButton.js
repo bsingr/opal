@@ -33,7 +33,15 @@ class_addIvar(the_class, "_graphicsContext", "CGContextRef");
 class_addIvar(the_class, "_tag", "NSInteger");
 class_addIvar(the_class, "_cell", "NSCell");
 class_addIvar(the_class, "_currentEditor", "NSText");
+class_addIvar(the_class, "_isEnabled", "BOOL");
 class_addIvar(the_class, "_value", "id");
+
+class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
+with(self) {
+objc_msgSendSuper({super_class:NSControl, receiver:self}, "initWithCoder:", aCoder);
+return self;
+}
+}, "void");
 
 class_addMethod(the_class, "title", function(self, _cmd) {
 with(self) {

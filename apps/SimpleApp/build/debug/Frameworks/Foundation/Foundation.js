@@ -1427,6 +1427,7 @@ with(self) {
 
 class_addMethod(the_class, "setObject:forKey:", function(self, _cmd, anObject, aKey) {
 with(self) {
+CFDictionarySetValue(self,aKey,anObject);
 }
 }, "void");
 
@@ -1819,6 +1820,7 @@ class_addIvar(the_class, "_delegate", "id");
 class_addIvar(the_class, "_data", "id");
 class_addIvar(the_class, "_rootDict", "NSMutableDictionary");
 class_addIvar(the_class, "_contextStack", "NSMutableArray");
+class_addIvar(the_class, "_unarchivedObjects", "NSMutableDictionary");
 
 class_addMethod(the_class, "initForReadingWithData:", function(self, _cmd, data) {
 with(self) {
@@ -1829,6 +1831,7 @@ _data = data;
 _rootDict = CFPropertyListCreateFromJSONData(objc_msgSend(_data, "bytes"),0,"");
 _contextStack = objc_msgSend(NSMutableArray, "array");
 objc_msgSend(_contextStack, "addObject:", _rootDict);
+_unarchivedObjects = objc_msgSend(NSMutableDictionary, "dictionary");
 
 }
 
@@ -1900,13 +1903,23 @@ with(self) {
 if (!theObject)
 return null;
 
-if (objc_msgSend(theObject, "objectForKey:", "string"))
+if (CFDictionaryContainsKey(theObject,"string"))
 return objc_msgSend(theObject, "objectForKey:", "string");
 
 if (CFDictionaryContainsKey(theObject,"nil"))
 return null;
 
 var theClass = NSClassFromString(objc_msgSend(theObject, "objectForKey:", "class"));
+if (!theClass)
+{
+if (CFDictionaryContainsKey(_unarchivedObjects,objc_msgSend(theObject, "objectForKey:", "id")))
+return objc_msgSend(_unarchivedObjects, "objectForKey:", objc_msgSend(theObject, "objectForKey:", "id"));
+else
+return null;
+
+
+}
+
 var newObject = objc_msgSend(theClass, "alloc");
 if (objc_msgSend(theObject, "objectForKey:", "class") == "NSCustomObject")
 {
@@ -1921,17 +1934,27 @@ objc_msgSend(_contextStack, "removeLastObject");
 
 }
 
+objc_msgSend(_unarchivedObjects, "setObject:forKey:", newObject, objc_msgSend(theObject, "objectForKey:", "id"));
 return objc_msgSend(newObject, "awakeAfterUsingCoder:", self);
 }
 }, "void");
 
 class_addMethod(the_class, "decodeBoolForKey:", function(self, _cmd, key) {
 with(self) {
+var theContext = objc_msgSend(_contextStack, "lastObject");
+var theObject = objc_msgSend(theContext, "objectForKey:", key);
+if (!theObject)
+return NO;
+
+return (objc_msgSend(theObject, "objectForKey:", "bool") == "YES") ? YES : NO;
 }
 }, "void");
 
 class_addMethod(the_class, "decodeIntForKey:", function(self, _cmd, key) {
 with(self) {
+var theContext = objc_msgSend(_contextStack, "lastObject");
+var theObject = objc_msgSend(theContext, "objectForKey:", key);
+return parseInt(objc_msgSend(theObject, "objectForKey:", "int"));
 }
 }, "void");
 

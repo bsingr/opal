@@ -116,6 +116,11 @@ NSTextView.js:
   - NSTextView
   dependencies: 
   - NSText
+NSSliderCell.js: 
+  declarations: 
+  - NSSliderCell
+  dependencies: 
+  - NSCell
 NSColorWell.js: 
   declarations: 
   - NSColorWell
@@ -154,10 +159,8 @@ NSTableHeaderView.js:
 NSSlider.js: 
   declarations: 
   - NSSlider
-  - NSSliderCell
   dependencies: 
   - NSControl
-  - NSCell
 NSScreen.js: 
   declarations: 
   - NSScreen
@@ -176,6 +179,11 @@ NSGradient.js:
 NSCursor.js: 
   declarations: 
   - NSCursor
+  dependencies: 
+  - NSObject
+NSButtonImageSource.js: 
+  declarations: 
+  - NSButtonImageSource
   dependencies: 
   - NSObject
 NSToolbarItem.js: 

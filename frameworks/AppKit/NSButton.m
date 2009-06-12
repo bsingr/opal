@@ -10,6 +10,13 @@
 
 @implementation NSButton
 
+- (id)initWithCoder:(NSCoder *)aCoder
+{
+    [super initWithCoder:aCoder];
+    
+    return self;
+}
+
 - (NSString *)title
 {
     

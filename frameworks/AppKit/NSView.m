@@ -48,6 +48,9 @@
     else if([aCoder containsValueForKey:@"NSFrameSize"])
         _frame.size = [aCoder decodeSizeForKey:@"NSFrameSize"];
     
+    NSLog(@"Initiwhtframe: " + self.isa);
+    [self setFrame:_frame];
+    
     _subviews = [NSMutableArray array];
 	NSArray *subviews = [aCoder decodeObjectForKey:@"NSSubviews"];
     
@@ -185,7 +188,7 @@
 
 - (void)viewDidMoveToSuperview
 {
-    // TODO: Need to implement
+    [self setNeedsDisplay:YES];
 }
 
 - (void)didAddSubview:(NSView *)subview
@@ -542,8 +545,7 @@
 
 - (void)drawRect:(NSRect)rect
 {
-    CGContextRef context = [[NSGraphicsContext currentContext] graphicsPort];
-    CGContextFillRect(context, CGRectInset(rect, 100, 100));
+
 }
 
 - (void)displayRectIgnoringOpacity:(NSRect)aRect inContext:(NSGraphicsContext *)context

@@ -141,6 +141,7 @@ NSString *NSInvalidUnarchiveOperationException = @"NSInvalidUnarchiveOperationEx
         _rootDict = CFPropertyListCreateFromJSONData([_data bytes], 0, @"");
         _contextStack = [NSMutableArray array];
         [_contextStack addObject:_rootDict];
+        _unarchivedObjects = [NSMutableDictionary dictionary];
     }
     return self;
 }
@@ -207,6 +208,10 @@ NSString *NSInvalidUnarchiveOperationException = @"NSInvalidUnarchiveOperationEx
         }
         return array;
     }
+    
+    // should look in cache
+    // if(CFDictionaryContainsKey(theContext, @"id"))
+    //         return nil;
 
     id theObject = [theContext objectForKey:key];
 
@@ -221,14 +226,23 @@ NSString *NSInvalidUnarchiveOperationException = @"NSInvalidUnarchiveOperationEx
         return nil;
     
     // If decodign a stirng, then just return it...
-    if([theObject objectForKey:@"string"])
+    if(CFDictionaryContainsKey(theObject, @"string"))
         return [theObject objectForKey:@"string"];
     
     // Check for nil key... return nil object
     if(CFDictionaryContainsKey(theObject, @"nil"))
         return nil;
+        
     
     Class theClass = NSClassFromString([theObject objectForKey:@"class"]);
+
+    if(!theClass)
+    {
+        if(CFDictionaryContainsKey(_unarchivedObjects, [theObject objectForKey:@"id"]))
+            return [_unarchivedObjects objectForKey:[theObject objectForKey:@"id"]];
+        else
+            return nil;
+    }
 
     id newObject = [theClass alloc];
 
@@ -243,17 +257,26 @@ NSString *NSInvalidUnarchiveOperationException = @"NSInvalidUnarchiveOperationEx
         [_contextStack removeLastObject];
     }
     
+    [_unarchivedObjects setObject:newObject forKey:[theObject objectForKey:@"id"]];
     return [newObject awakeAfterUsingCoder:self];
 }
 
 - (BOOL)decodeBoolForKey:(NSString *)key
 {
+    id theContext = [_contextStack lastObject];
+    id theObject = [theContext objectForKey:key];
     
+    if(!theObject)
+        return NO;
+    
+    return ([theObject objectForKey:@"bool"] == "YES") ? YES : NO;
 }
 
 - (int)decodeIntForKey:(NSString *)key
 {
-    
+    id theContext = [_contextStack lastObject];
+    id theObject = [theContext objectForKey:key];
+    return parseInt([theObject objectForKey:@"int"]);
 }
 
 - (int)decodeInt32ForKey:(NSString *)key

@@ -40,20 +40,17 @@ function fread(ptr, size, count, stream)
 // extern void perror(const char *);
 // extern int printf(const char *format, ...);
 
-if (window.opera && !window.console) {
-    window.console = {};
-    var names = ["log", "debug", "info", "warn", "error", "assert", "dir", "dirxml",
-    "group", "groupEnd", "time", "timeEnd", "count", "trace", "profile", "profileEnd"];
-    for (var i = 0; i < names.length; ++i)
-        window.console[names[i]] = function() {}
-    window.console.info = function() {
-        opera.postError(arguments);
-    }
-}
 
 function printf(format)
 {
-    console.log(format);
+    if (window.opera && !window.console)
+    {
+        opera.postError(format);
+    }
+    else
+    {
+        console.log(format);
+    }
 }
 
 // extern int putc(int, FILE *);

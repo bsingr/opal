@@ -73,6 +73,8 @@ if (objc_msgSend(aCoder, "containsValueForKey:", "NSFrameSize"))
 _frame.size = objc_msgSend(aCoder, "decodeSizeForKey:", "NSFrameSize");
 
 
+NSLog("Initiwhtframe: " + self.isa);
+objc_msgSend(self, "setFrame:", _frame);
 _subviews = objc_msgSend(NSMutableArray, "array");
 var subviews = objc_msgSend(aCoder, "decodeObjectForKey:", "NSSubviews");
 if (subviews)
@@ -214,6 +216,7 @@ _superview = newSuperview;
 
 class_addMethod(the_class, "viewDidMoveToSuperview", function(self, _cmd) {
 with(self) {
+objc_msgSend(self, "setNeedsDisplay:", YES);
 }
 }, "void");
 
@@ -571,8 +574,6 @@ with(self) {
 
 class_addMethod(the_class, "drawRect:", function(self, _cmd, rect) {
 with(self) {
-var context = objc_msgSend(objc_msgSend(NSGraphicsContext, "currentContext"), "graphicsPort");
-CGContextFillRect(context,CGRectInset(rect,100,100));
 }
 }, "void");
 

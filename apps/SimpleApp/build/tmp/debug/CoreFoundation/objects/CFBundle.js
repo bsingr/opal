@@ -81,14 +81,12 @@ function CFBundleSetBundleForClass(bundle, aClass)
 
 // extern void CFBundlePreloadResource(CFBundleRef bundle, CFStringRef resourceName, CFStringRef resourceType, CFStringRef subDirName);
 function CFBundlePreloadResource(bundle, resourceName, resourceType, subDirName)
-{
-    NSLog("Need to preload: " + resourceName + "." + resourceType);
-    
+{    
     var theImage = new Image();
-    theImage.src = "file:///Users/adam/Sites/lumpy.png";
+    theImage.src = "Resources/" + resourceName + "." + resourceType;
     CFArrayAppendValue(__bootstrap_preload_files, theImage);
     
     theImage.onload =  function() {    	           
-       __bootstrap_preload_finished(theImage);
+       __bootstrap_preload_item_finished(theImage);
     };
 }

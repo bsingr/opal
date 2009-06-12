@@ -16,6 +16,8 @@ class_addIvar(the_class, "_controlSize", "NSSize");
 class_addIvar(the_class, "_controlView", "NSView");
 class_addIvar(the_class, "_target", "id");
 class_addIvar(the_class, "_action", "SEL");
+class_addIvar(the_class, "_alternateImage", "NSImage");
+class_addIvar(the_class, "_image", "NSImage");
 class_addIvar(the_class, "_menuItem", "NSMenuItem");
 class_addIvar(the_class, "_menuView", "NSMenuView");
 

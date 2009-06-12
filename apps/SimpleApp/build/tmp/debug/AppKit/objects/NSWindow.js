@@ -88,7 +88,7 @@ return NSMakeRect(contentRect.origin.x + xOffset,contentRect.origin.y + yOffset,
 
 class_addMethod(the_class, "contentRectForFrameRect:", function(self, _cmd, frameRect) {
 with(self) {
-return frameRect;
+return CGRectMake(0,0,frameRect.size.width,frameRect.size.height);
 }
 }, "void");
 
@@ -128,35 +128,6 @@ objc_msgSend(self, "setNeedsDisplay:", YES);
 }
 
 return self;
-}
-}, "void");
-
-class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
-with(self) {
-objc_msgSendSuper({super_class:NSResponder, receiver:self}, "initWithCoder:", aCoder);
-_maxSize = objc_msgSend(aCoder, "decodeSizeForKey:", "NSWindowContentSizeMax");
-_minSize = objc_msgSend(aCoder, "decodeSizeForKey:", "NSWindowContentSizeMin");
-_wtFlags = objc_msgSend(aCoder, "decodeIntForKey:", "NSWTFlags");
-_windowClass = objc_msgSend(aCoder, "decodeObjectForKey:", "NSWindowClass");
-_styleMask = objc_msgSend(aCoder, "decodeIntForKey:", "NSWindowStyleMask");
-_title = objc_msgSend(aCoder, "decodeObjectForKey:", "NSWindowTitle");
-_frame = objc_msgSend(self, "frameRectForContentRect:", objc_msgSend(aCoder, "decodeRectForKey:", "NSWindowRect"));
-_contentView = objc_msgSend(aCoder, "decodeObjectForKey:", "NSWindowView");
-objc_msgSend(self, "awakeAfterUsingCoder:", aCoder);
-return self;
-}
-}, "void");
-
-class_addMethod(the_class, "awakeAfterUsingCoder:", function(self, _cmd, aCoder) {
-with(self) {
-_gCanvas = NSWindowServerCreateCanvas(self);
-_gCanvas.width = _frame.size.width;
-_gCanvas.height = _frame.size.height;
-_windowNumber = objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "addWindow:", self);
-objc_msgSend(_contentView, "viewWillMoveToWindow:", self);
-objc_msgSend(_contentView, "viewDidMoveToWindow:", self);
-NSWindowServerSetOrigin(_gCanvas,_frame.origin);
-objc_msgSend(self, "makeKeyAndOrderFront:", self);
 }
 }, "void");
 
@@ -301,7 +272,7 @@ class_addMethod(the_class, "setFrame:display:", function(self, _cmd, frameRect, 
 with(self) {
 _frame = frameRect;
 CGDOMElementSetFrame(_DOMContainer,_frame);
-CGDOMElementSetFrame(_DOMGraphicsContext,_frame);
+CGDOMElementSetFrame(_DOMGraphicsContext,CGRectMake(0,0,_frame.size.width,_frame.size.height));
 objc_msgSend(self, "setNeedsDisplay:", YES);
 }
 }, "void");
@@ -1025,7 +996,7 @@ return CGDOMElementGetContext(_DOMGraphicsContext);
 
 class_addMethod(meta_class, "load", function(self, _cmd) {
 with(self) {
-CFBundlePreloadResource(CFBundleGetBundleForClass(self),"lumpy","png","");
+CFBundlePreloadResource(CFBundleGetBundleForClass(self),"NSWindowBackgroundMiddle","png","");
 }
 }, "void");
 
@@ -1285,11 +1256,11 @@ with(self) {
 var c = objc_msgSend(objc_msgSend(NSGraphicsContext, "currentContext"), "graphicsPort");
 CGContextClearRect(c,rect);
 CGContextSaveGState(c);
-CGContextSetFillColorWithColor(c,CGColorCreateGenericRGB(1,1,1,1.0));
-CGContextSetShadowWithColor(c,CGSizeMake(0,5),10,CGColorCreateGenericRGB(0,0,0,0.8));
+CGContextSetFillColorWithColor(c,CGColorCreateGenericRGB(0.944,0.944,0.944,1.0));
+CGContextSetShadowWithColor(c,CGSizeMake(0,5),10,CGColorCreateGenericRGB(0.2,0.2,0.2,0.8));
 CGContextFillRect(c,CGRectInset(rect,20,20));
 CGContextRestoreGState(c);
-var theImage = CGImageCreateWithURLDataProvider("file:///Users/adam/Sites/lumpy.png");
+var theImage = CGImageCreateWithURLDataProvider("Resources/NSWindowBackgroundMiddle.png");
 CGContextDrawImage(c,CGRectMake(20,20,rect.size.width - 40,56),theImage);
 CGContextSetFillColorWithColor(c,CGColorCreateGenericRGB(0.204,0.204,0.204,1.0));
 CGContextSetAlpha(c,1);
