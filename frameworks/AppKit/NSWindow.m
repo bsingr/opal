@@ -667,12 +667,15 @@
 
 - (NSPoint)convertBaseToScreen:(NSPoint)aPoint
 {
-    // TODO: Need to implement
+    
 }
 
 - (NSPoint)convertScreenToBase:(NSPoint)aPoint
 {
-    // TODO: Need to implement
+    NSPoint newPoint;
+    newPoint.x = aPoint - _frame.origin.x;
+    newPoint.y = aPoint - _frame.origin.y;
+    return newPoint;
 }
 
 - (void)performClose:(id)sender
@@ -932,7 +935,46 @@
 
 - (void)sendEvent:(NSEvent *)theEvent
 {
-    NSLog(@"Window got event!");
+    NSView *hitTest;
+    if ([theEvent type] == NSLeftMouseDown)
+    {
+        hitTest = [_contentView hitTest:[theEvent locationInWindow]];
+        if (hitTest)
+        {
+            NSLog(@"Sending mouse down to:");
+            NSLog(hitTest.isa.name);
+            // [hitTest mouseDown:theEvent];
+        }
+            
+        else
+        {
+            NSLog(@"Sending mouse down to (else)");
+            NSLog([theEvent locationInWindow]);
+            // [self mouseDown:theEvent];
+        }
+    }
+    else if([theEvent valueForKey:@"type"] == NSLeftMouseUp)
+    {
+        // hitTest = [_contentView hitTest:[theEvent locationInWindow]];
+        // if (hitTest)
+        //     [hitTest mouseUp:theEvent];
+        // else
+        //     [self mouseUp:theEvent];
+    }
+    else if([theEvent valueForKey:@"type"] == NSKeyDown)
+    {
+        if (_firstResponder)
+        {
+            NSLog(@"sending keyDown to firstresponder");
+            NSLog(_firstResponder);
+            [_firstResponder keyDown:theEvent];
+        }
+            
+        else
+            NSLog(@"No key responder");
+    } else {
+        
+    }
 }
 
 - (NSPoint)mouseLocationOutsideOfEventStream

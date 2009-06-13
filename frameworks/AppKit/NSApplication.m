@@ -79,7 +79,15 @@ id NSApp = nil;
 
 - (NSWindow *)windowAtPoint:(NSPoint)point
 {
-    return [_windows objectAtIndex:0];
+    for (int i = 0; i < [_windows count]; i++)
+    {
+        if(NSPointInRect(point, [[_windows objectAtIndex:i] frame]))
+        {
+            return [_windows objectAtIndex:i];
+        }
+    }
+    
+    return nil;
 }
 
 - (NSWindow *)mainWindow
@@ -152,25 +160,25 @@ id NSApp = nil;
 
 - (void)sendEvent:(NSEvent *)theEvent
 {
-    _currentEvent = theEvent;
-    
-    if (_eventBindingQueued) {
-        if (((1 << [theEvent type]) & _eventBindingMask) != 0) {
-            _eventBindingQueued = NO;
-            [_eventBindingTarget performSelector:_eventBindingSelector withObject:theEvent];
-        }
-        else {
-            // FIXME: Need to implement
-        }
-        
-        return;
-    }
-    
-    if ([theEvent type] == NSLeftMouseDown)
-        [[theEvent window] makeKeyAndOrderFront:self];
-    else if (([theEvent type] == NSKeyDown) || ([theEvent type] == NSKeyUp))
-        [[self keyWindow] sendEvent:theEvent];
-    else
+    // _currentEvent = theEvent;
+    // 
+    // if (_eventBindingQueued) {
+    //     if (((1 << [theEvent type]) & _eventBindingMask) != 0) {
+    //         _eventBindingQueued = NO;
+    //         [_eventBindingTarget performSelector:_eventBindingSelector withObject:theEvent];
+    //     }
+    //     else {
+    //         // FIXME: Need to implement
+    //     }
+    //     
+    //     return;
+    // }
+    // 
+    // if ([theEvent type] == NSLeftMouseDown)
+    //     [[theEvent window] makeKeyAndOrderFront:self];
+    // else if (([theEvent type] == NSKeyDown) || ([theEvent type] == NSKeyUp))
+    //     [[self keyWindow] sendEvent:theEvent];
+    // else
         [[theEvent window] sendEvent:theEvent];
 }
 

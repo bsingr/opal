@@ -245,6 +245,21 @@ function CGRectFromString(aString)
 	};
 }
 
+function CGStringFromRect(aRect)
+{
+    return "{" + CGStringFromPoint(aRect.origin) + ", " + CGStringFromSize(aRect.size) + "}";
+}
+
+function CGStringFromPoint(aPoint)
+{
+    return "{" + aPoint.x + ", " + aPoint.y + "}";
+}
+
+function CGStringFromSize(aSize)
+{
+    return "{" + aSize.width + ", " + aSize.height + "}";
+}
+
 function CGPointFromString(aString)
 {
 	return CGPointMake(parseFloat(aString.substr(1, aString.indexOf(",") - 1)), parseFloat(aString.substr(aString.indexOf(",") + 1, aString.length - 1)));

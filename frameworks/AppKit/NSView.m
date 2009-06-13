@@ -383,7 +383,14 @@
 
 - (NSPoint)convertPoint:(NSPoint)aPoint fromView:(NSView *)aView
 {
-    // TODO: Need to implement
+    if (!aView)
+        return [self convertPointFromBase:aPoint];
+    
+    NSPoint newPoint = NSMakePoint (0, 0);
+    // FIXME: for now assume no rotation or scaling
+    newPoint.x = aPoint.x - _frame.origin.x;
+    newPoint.y = aPoint.y - _frame.origin.y;
+    return newPoint;
 }
 
 - (NSPoint)convertPoint:(NSPoint)aPoint toView:(NSView *)aView
@@ -424,7 +431,14 @@
 
 - (NSPoint)convertPointFromBase:(NSPoint)aPoint
 {
-    // TODO: Need to implement
+    if (_superview)
+    {
+        aPoint.x = aPoint.x - _frame.origin.x;
+        aPoint.y = aPoint.y - _frame.origin.y;
+        return [_superview convertPointFromBase:aPoint];
+    }
+    else
+        return aPoint;
 }
 
 - (NSSize)convertSizeToBase:(NSSize)aSize
@@ -637,7 +651,25 @@
 
 - (NSView *)hitTest:(NSPoint)aPoint
 {
-    // TODO: Need to implement
+    aPoint = [self convertPoint:aPoint fromView:_superview];
+    
+    if (!NSPointInRect(aPoint, _bounds))
+        return nil;
+    else
+    {
+        NSArray *subviews = _subviews;
+        NSInteger count = [subviews count];
+        
+        for (int i = 0; i < count; i++)
+        {
+            NSView *viewToCheck = [subviews objectAtIndex:i];
+            NSView *hitTest = [viewToCheck hitTest:aPoint];
+            
+            if (hitTest)
+                return hitTest;
+        }
+        return self;
+    }
 }
 
 - (BOOL)mouse:(NSPoint)aPoint inRect:(NSRect)aRect

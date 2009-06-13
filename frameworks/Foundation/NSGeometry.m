@@ -160,7 +160,7 @@ void NSDivideRect(NSRect inRect, NSRect *slice, NSRect *rem, CGFloat amount, NSR
 
 BOOL NSPointInRect(NSPoint aPoint, NSRect aRect)
 {
-    
+    return CGRectContainsPoint(aRect, aPoint);
 }
 
 BOOL NSMouseInRect(NSPoint aPoint, NSRect aRect, BOOL flipped)

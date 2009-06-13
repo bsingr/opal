@@ -1,3 +1,17 @@
+function NSEventMouseEventFromCGEvent()
+{
+var location = CGEventGetLocation(event);
+var windowNumber = 0;
+if (objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "windowAtPoint:", location))
+windowNumber = objc_msgSend(objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "windowAtPoint:", location), "windowNumber");
+else
+windowNumber = -1;
+
+NSLog(CGEventGetType(event));
+NSLog(objc_msgSend(objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "windowAtPoint:", location), "frame"));
+var theEvent = objc_msgSend(NSEvent, "mouseEventWithType:location:modifierFlags:timestamp:windowNumber:context:eventNumber:clickCount:pressure:", CGEventGetType(event), location, 0, 0, windowNumber, null, 1, 1, 1);
+objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "sendEvent:", theEvent);
+}
 var the_class = objc_allocateClassPair(NSObject, "NSEvent");
 var meta_class = the_class.isa;
 objc_registerClassPair(the_class);
@@ -23,6 +37,7 @@ class_addIvar(the_class, "_deltaZ", "id");
 
 class_addMethod(the_class, "type", function(self, _cmd) {
 with(self) {
+return _type;
 }
 }, "void");
 
@@ -70,6 +85,7 @@ with(self) {
 
 class_addMethod(the_class, "locationInWindow", function(self, _cmd) {
 with(self) {
+return _location;
 }
 }, "void");
 

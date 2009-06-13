@@ -662,6 +662,13 @@ with(self) {
 
 class_addMethod(the_class, "convertPoint:fromView:", function(self, _cmd, aPoint, aView) {
 with(self) {
+if (!aView)
+return objc_msgSend(self, "convertPointFromBase:", aPoint);
+
+var newPoint = NSMakePoint(0,0);
+newPoint.x = aPoint.x - _frame.origin.x;
+newPoint.y = aPoint.y - _frame.origin.y;
+return newPoint;
 }
 }, "void");
 
@@ -702,6 +709,16 @@ with(self) {
 
 class_addMethod(the_class, "convertPointFromBase:", function(self, _cmd, aPoint) {
 with(self) {
+if (_superview)
+{
+aPoint.x = aPoint.x - _frame.origin.x;
+aPoint.y = aPoint.y - _frame.origin.y;
+return objc_msgSend(_superview, "convertPointFromBase:", aPoint);
+
+}
+else
+return aPoint;
+
 }
 }, "void");
 
@@ -909,6 +926,27 @@ with(self) {
 
 class_addMethod(the_class, "hitTest:", function(self, _cmd, aPoint) {
 with(self) {
+aPoint = objc_msgSend(self, "convertPoint:fromView:", aPoint, _superview);
+if (!NSPointInRect(aPoint,_bounds))
+return null;
+else
+{
+var subviews = _subviews;
+var count = objc_msgSend(subviews, "count");
+for(var i = 0;
+i < count;
+i++){
+var viewToCheck = objc_msgSend(subviews, "objectAtIndex:", i);
+var hitTest = objc_msgSend(viewToCheck, "hitTest:", aPoint);
+if (hitTest)
+return hitTest;
+
+
+}
+return self;
+
+}
+
 }
 }, "void");
 
@@ -1395,6 +1433,23 @@ return objc_msgSend(_windows, "objectAtIndex:", windowNum);
 }
 }, "void");
 
+class_addMethod(the_class, "windowAtPoint:", function(self, _cmd, point) {
+with(self) {
+for(var i = 0;
+i < objc_msgSend(_windows, "count");
+i++){
+if (NSPointInRect(point,objc_msgSend(objc_msgSend(_windows, "objectAtIndex:", i), "frame")))
+{
+return objc_msgSend(_windows, "objectAtIndex:", i);
+
+}
+
+
+}
+return null;
+}
+}, "void");
+
 class_addMethod(the_class, "mainWindow", function(self, _cmd) {
 with(self) {
 for(var i = 0;
@@ -1469,33 +1524,7 @@ return _currentEvent;
 
 class_addMethod(the_class, "sendEvent:", function(self, _cmd, theEvent) {
 with(self) {
-_currentEvent = theEvent;
-if (_eventBindingQueued)
-{
-if (((1 << objc_msgSend(theEvent, "type")) & _eventBindingMask) != 0)
-{
-_eventBindingQueued = NO;
-objc_msgSend(_eventBindingTarget, "performSelector:withObject:", _eventBindingSelector, theEvent);
-
-}
-else
-{
-
-}
-
-return ;
-
-}
-
-if (objc_msgSend(theEvent, "type") == 1)
-objc_msgSend(objc_msgSend(theEvent, "window"), "makeKeyAndOrderFront:", self);
-else
-if ((objc_msgSend(theEvent, "type") == 10) || (objc_msgSend(theEvent, "type") == 11))
-objc_msgSend(objc_msgSend(self, "keyWindow"), "sendEvent:", theEvent);
-else
 objc_msgSend(objc_msgSend(theEvent, "window"), "sendEvent:", theEvent);
-
-
 }
 }, "void");
 
@@ -4457,6 +4486,20 @@ with(self) {
 }
 }, "void");
 
+function NSEventMouseEventFromCGEvent()
+{
+var location = CGEventGetLocation(event);
+var windowNumber = 0;
+if (objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "windowAtPoint:", location))
+windowNumber = objc_msgSend(objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "windowAtPoint:", location), "windowNumber");
+else
+windowNumber = -1;
+
+NSLog(CGEventGetType(event));
+NSLog(objc_msgSend(objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "windowAtPoint:", location), "frame"));
+var theEvent = objc_msgSend(NSEvent, "mouseEventWithType:location:modifierFlags:timestamp:windowNumber:context:eventNumber:clickCount:pressure:", CGEventGetType(event), location, 0, 0, windowNumber, null, 1, 1, 1);
+objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "sendEvent:", theEvent);
+}
 var the_class = objc_allocateClassPair(NSObject, "NSEvent");
 var meta_class = the_class.isa;
 objc_registerClassPair(the_class);
@@ -4482,6 +4525,7 @@ class_addIvar(the_class, "_deltaZ", "id");
 
 class_addMethod(the_class, "type", function(self, _cmd) {
 with(self) {
+return _type;
 }
 }, "void");
 
@@ -4529,6 +4573,7 @@ with(self) {
 
 class_addMethod(the_class, "locationInWindow", function(self, _cmd) {
 with(self) {
+return _location;
 }
 }, "void");
 
@@ -6060,7 +6105,54 @@ with(self) {
 
 class_addMethod(the_class, "sendEvent:", function(self, _cmd, theEvent) {
 with(self) {
-NSLog("Window got event!");
+var hitTest;
+NSLog(objc_msgSend(theEvent, "type"));
+NSLog(1);
+if (objc_msgSend(theEvent, "type") == 1)
+{
+hitTest = objc_msgSend(_contentView, "hitTest:", objc_msgSend(theEvent, "locationInWindow"));
+if (hitTest)
+{
+NSLog("Sending mouse down to:");
+NSLog(hitTest.isa.name);
+
+}
+else
+{
+NSLog("Sending mouse down to (else)");
+NSLog(objc_msgSend(theEvent, "locationInWindow"));
+
+}
+
+
+}
+else
+if (objc_msgSend(theEvent, "valueForKey:", "type") == 2)
+{
+
+}
+else
+if (objc_msgSend(theEvent, "valueForKey:", "type") == 10)
+{
+if (_firstResponder)
+{
+NSLog("sending keyDown to firstresponder");
+NSLog(_firstResponder);
+objc_msgSend(_firstResponder, "keyDown:", theEvent);
+
+}
+else
+NSLog("No key responder");
+
+
+}
+else
+{
+
+}
+
+
+
 }
 }, "void");
 

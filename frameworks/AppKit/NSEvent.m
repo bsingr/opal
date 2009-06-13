@@ -13,7 +13,7 @@
 
 - (NSEventType)type
 {
-    
+    return _type;
 }
 
 - (NSUInteger)modifierFlags
@@ -59,7 +59,7 @@
 
 - (NSPoint)locationInWindow
 {
-    
+    return _location;
 }
 
 - (CGFloat)deltaX
@@ -175,3 +175,33 @@
 
 
 @end
+
+// extern void NSEventMouseEventFromCGEvent(CGEventRef event);
+void NSEventMouseEventFromCGEvent(event)
+{
+    CGPoint location = CGEventGetLocation(event);
+    NSUInteger windowNumber;
+    
+    if([[NSApplication sharedApplication] windowAtPoint:location])
+        windowNumber = [[[NSApplication sharedApplication] windowAtPoint:location] windowNumber];
+    else
+        windowNumber = -1;
+    
+    
+    NSLog(CGEventGetType(event));
+    
+    NSLog([[[NSApplication sharedApplication] windowAtPoint:location] frame]);
+    
+    NSEvent *theEvent = [NSEvent mouseEventWithType:CGEventGetType(event)
+                                               location:location
+                                               modifierFlags:0
+                                               timestamp:0
+                                               windowNumber:windowNumber
+                                               context:nil
+                                               eventNumber:1
+                                               clickCount:1
+                                               pressure:1];
+        
+       [[NSApplication sharedApplication] sendEvent:theEvent];
+}
+

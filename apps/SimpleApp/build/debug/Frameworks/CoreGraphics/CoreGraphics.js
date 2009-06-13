@@ -1147,16 +1147,60 @@ if (navigator.appName == 'Microsoft Internet Explorer') {
 // =============================================================================
 // = Capture all window events for use in AppKit etc. some might return false  =
 // =============================================================================
-document.onmousedown = function(event) {    
-    var theEvent = objc_msgSend(NSEvent, "mouseEventWithType:location:modifierFlags:timestamp:windowNumber:context:eventNumber:clickCount:pressure:",
-    1, CGPointMake(event.clientX, event.clientY), null, null, 0, null, 1, 1, 1);
-
-    objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "sendEvent:", theEvent);
+document.onmousedown = function(event)
+{
+    NSEventMouseEventFromCGEvent(event);
+    // var theEvent = objc_msgSend(NSEvent, "mouseEventWithType:location:modifierFlags:timestamp:windowNumber:context:eventNumber:clickCount:pressure:",
+    //     1, CGPointMake(event.clientX, (window.innerHeight - event.clientY)), null, null, 0, null, 1, 1, 1);
+    // 
+    // objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "sendEvent:", theEvent);
 };
 
-document.onmouseup = function(event) {
-    printf("mouse up:(" + event.clientX + "," + event.clientY + ")");
+document.onmouseup = function(event)
+{
+    NSEventMouseEventFromCGEvent(event);
+    // var theEvent = objc_msgSend(NSEvent, "mouseEventWithType:location:modifierFlags:timestamp:windowNumber:context:eventNumber:clickCount:pressure:",
+    //     2, CGPointMake(event.clientX, (window.innerHeight - event.clientY)), null, null, 0, null, 1, 1, 1);
+    // 
+    // objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "sendEvent:", theEvent);
 };
+
+
+function CGEventScreenFrameRect()
+{
+    return CGRectMake(0, 0, window.innerWidth, window.innerHeight);
+}
+
+// extern CGEventType CGEventGetType(CGEventRef event);
+function CGEventGetType(event)
+{
+    if(event.type == "mousedown")
+        return 1;
+    else if(event.type == "mouseup")
+        return 2;
+    else return -1;
+}
+
+// extern CGPoint CGEventGetLocation(CGEventRef event);
+function CGEventGetLocation(event)
+{
+    return CGPointMake(event.clientX, (window.innerHeight - event.clientY));
+}
+
+// extern CGPoint CGEventGetUnflippedLocation(CGEventRef event);
+function CGEventGetUnflippedLocation(event)
+{
+    return CGPointMake(event.clientX, event.clientY);
+}
+
+// extern void CGEventSetLocation(CGEventRef event, CGPoint location);
+// 
+// extern CGEventFlags CGEventGetFlags(CGEventRef event);
+// extern void CGEventSetFlags(CGEventRef event, CGEventFlags flags);
+// 
+// extern void CGEventKeyboardGetUnicodeString(CGEventRef event, int maxStringLength, int actualStringLength, char unicodeString);
+// 
+// extern void CGEventKeyboardSetUnicodeString(CGEventRef event, int stringLength, const char unicodeString);
 // 
 //  CGFont.js
 //  vienna
@@ -1452,6 +1496,21 @@ function CGRectFromString(aString)
 		origin: thePoint,
 		size: theSize
 	};
+}
+
+function CGStringFromRect(aRect)
+{
+    return "{" + CGStringFromPoint(aRect.origin) + ", " + CGStringFromSize(aRect.size) + "}";
+}
+
+function CGStringFromPoint(aPoint)
+{
+    return "{" + aPoint.x + ", " + aPoint.y + "}";
+}
+
+function CGStringFromSize(aSize)
+{
+    return "{" + aSize.width + ", " + aSize.height + "}";
 }
 
 function CGPointFromString(aString)

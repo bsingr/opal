@@ -9,6 +9,7 @@
 #import <Foundation/NSObject.h>
 #import <Foundation/NSDate.h>
 #import <Foundation/NSGeometry.h>
+#import <CoreGraphics/CGEvent.h>
 
 @class NSGraphicsContext;
 @class NSWindow;
@@ -181,3 +182,9 @@ enum {
     NSHelpFunctionKey           = 0xF746,
     NSModeSwitchFunctionKey     = 0xF747
 };
+
+// =========================================================================
+// = Vienna Added methods: easier transition between CGEvents and NSEvents =
+// =========================================================================
+
+extern void NSEventMouseEventFromCGEvent(CGEventRef event);

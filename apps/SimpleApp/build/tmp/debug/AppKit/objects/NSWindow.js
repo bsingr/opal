@@ -930,7 +930,54 @@ with(self) {
 
 class_addMethod(the_class, "sendEvent:", function(self, _cmd, theEvent) {
 with(self) {
-NSLog("Window got event!");
+var hitTest;
+NSLog(objc_msgSend(theEvent, "type"));
+NSLog(1);
+if (objc_msgSend(theEvent, "type") == 1)
+{
+hitTest = objc_msgSend(_contentView, "hitTest:", objc_msgSend(theEvent, "locationInWindow"));
+if (hitTest)
+{
+NSLog("Sending mouse down to:");
+NSLog(hitTest.isa.name);
+
+}
+else
+{
+NSLog("Sending mouse down to (else)");
+NSLog(objc_msgSend(theEvent, "locationInWindow"));
+
+}
+
+
+}
+else
+if (objc_msgSend(theEvent, "valueForKey:", "type") == 2)
+{
+
+}
+else
+if (objc_msgSend(theEvent, "valueForKey:", "type") == 10)
+{
+if (_firstResponder)
+{
+NSLog("sending keyDown to firstresponder");
+NSLog(_firstResponder);
+objc_msgSend(_firstResponder, "keyDown:", theEvent);
+
+}
+else
+NSLog("No key responder");
+
+
+}
+else
+{
+
+}
+
+
+
 }
 }, "void");
 

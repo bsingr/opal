@@ -95,6 +95,7 @@ function NSDivideRect(inRect,slice,rem,amount,edge)
 }
 function NSPointInRect(aPoint,aRect)
 {
+return CGRectContainsPoint(aRect,aPoint);
 }
 function NSMouseInRect(aPoint,aRect,flipped)
 {

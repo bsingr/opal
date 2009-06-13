@@ -83,6 +83,23 @@ return objc_msgSend(_windows, "objectAtIndex:", windowNum);
 }
 }, "void");
 
+class_addMethod(the_class, "windowAtPoint:", function(self, _cmd, point) {
+with(self) {
+for(var i = 0;
+i < objc_msgSend(_windows, "count");
+i++){
+if (NSPointInRect(point,objc_msgSend(objc_msgSend(_windows, "objectAtIndex:", i), "frame")))
+{
+return objc_msgSend(_windows, "objectAtIndex:", i);
+
+}
+
+
+}
+return null;
+}
+}, "void");
+
 class_addMethod(the_class, "mainWindow", function(self, _cmd) {
 with(self) {
 for(var i = 0;
@@ -157,33 +174,7 @@ return _currentEvent;
 
 class_addMethod(the_class, "sendEvent:", function(self, _cmd, theEvent) {
 with(self) {
-_currentEvent = theEvent;
-if (_eventBindingQueued)
-{
-if (((1 << objc_msgSend(theEvent, "type")) & _eventBindingMask) != 0)
-{
-_eventBindingQueued = NO;
-objc_msgSend(_eventBindingTarget, "performSelector:withObject:", _eventBindingSelector, theEvent);
-
-}
-else
-{
-
-}
-
-return ;
-
-}
-
-if (objc_msgSend(theEvent, "type") == 1)
-objc_msgSend(objc_msgSend(theEvent, "window"), "makeKeyAndOrderFront:", self);
-else
-if ((objc_msgSend(theEvent, "type") == 10) || (objc_msgSend(theEvent, "type") == 11))
-objc_msgSend(objc_msgSend(self, "keyWindow"), "sendEvent:", theEvent);
-else
 objc_msgSend(objc_msgSend(theEvent, "window"), "sendEvent:", theEvent);
-
-
 }
 }, "void");
 

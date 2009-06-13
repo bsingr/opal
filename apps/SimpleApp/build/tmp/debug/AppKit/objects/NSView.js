@@ -415,6 +415,13 @@ with(self) {
 
 class_addMethod(the_class, "convertPoint:fromView:", function(self, _cmd, aPoint, aView) {
 with(self) {
+if (!aView)
+return objc_msgSend(self, "convertPointFromBase:", aPoint);
+
+var newPoint = NSMakePoint(0,0);
+newPoint.x = aPoint.x - _frame.origin.x;
+newPoint.y = aPoint.y - _frame.origin.y;
+return newPoint;
 }
 }, "void");
 
@@ -455,6 +462,16 @@ with(self) {
 
 class_addMethod(the_class, "convertPointFromBase:", function(self, _cmd, aPoint) {
 with(self) {
+if (_superview)
+{
+aPoint.x = aPoint.x - _frame.origin.x;
+aPoint.y = aPoint.y - _frame.origin.y;
+return objc_msgSend(_superview, "convertPointFromBase:", aPoint);
+
+}
+else
+return aPoint;
+
 }
 }, "void");
 
@@ -662,6 +679,27 @@ with(self) {
 
 class_addMethod(the_class, "hitTest:", function(self, _cmd, aPoint) {
 with(self) {
+aPoint = objc_msgSend(self, "convertPoint:fromView:", aPoint, _superview);
+if (!NSPointInRect(aPoint,_bounds))
+return null;
+else
+{
+var subviews = _subviews;
+var count = objc_msgSend(subviews, "count");
+for(var i = 0;
+i < count;
+i++){
+var viewToCheck = objc_msgSend(subviews, "objectAtIndex:", i);
+var hitTest = objc_msgSend(viewToCheck, "hitTest:", aPoint);
+if (hitTest)
+return hitTest;
+
+
+}
+return self;
+
+}
+
 }
 }, "void");
 
