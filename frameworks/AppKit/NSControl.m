@@ -133,12 +133,12 @@
 
 - (BOOL)isEnabled
 {
-    return _isEnabled;
+    return [_cell isEnabled];
 }
 
 - (void)setEnabled:(BOOL)flag
 {
-    _isEnabled = flag;
+    [_cell setEnabled:flag];
 }
 
 - (void)setFloatingPointFormat:(BOOL)autoRange left:(NSUInteger)leftDigits right:(NSUInteger)rightDigits
@@ -322,46 +322,9 @@
 }
 
 - (void)mouseDown:(NSEvent *)theEvent
-{
-    if (![self isEnabled])
-        return;
-        
-    [self lockFocus];
-    
-    NSPoint location = [self convertPoint:[theEvent locationInWindow] fromView:nil];
-    
-    if (NSPointInRect (location, _bounds))
-        [_cell highlight:YES withFrame:_bounds inView:self];
-        
-    [[NSApplication sharedApplication] nextEventMatchingMask:(NSLeftMouseUpMask | NSMouseMovedMask) untilDate:nil inMode:nil dequeue:nil withTarget:self withSelector:@selector(_mouseDownHandle:)];
-    
-    [self unlockFocus];
+{        
+    [_cell trackMouse:theEvent inRect:[self bounds] ofView:self untilMouseUp:YES];
 }
-
-// Private method used for handlign events until mouse leaves interest scope of control
-- (void)_mouseDownHandle:(NSEvent *)theEvent
-{
-    NSPoint location = [self convertPoint:[theEvent locationInWindow] fromView:nil];
-    
-    if (NSPointInRect (location, _bounds)) {
-        if ([theEvent type] == NSLeftMouseUp) {
-            [self sendAction:[self action] to:[self target]];
-            [self lockFocus];
-            [_cell highlight:NO withFrame:_bounds inView:self];
-            [self unlockFocus];
-            return;
-        }
-        else if ([theEvent type] == NSMouseMoved) {
-            [[NSApplication sharedApplication] nextEventMatchingMask:(NSLeftMouseUpMask | NSMouseMovedMask) untilDate:nil inMode:nil dequeue:nil withTarget:self withSelector:@selector(_mouseDownHandle:)];
-            return;
-        }
-    }
-    
-    [self lockFocus];
-    [_cell highlight:NO withFrame:_bounds inView:self];
-    [self unlockFocus];
-}
-
 
 - (NSWritingDirection)baseWritingDirection
 {

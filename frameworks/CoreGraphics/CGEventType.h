@@ -26,14 +26,14 @@ enum {
 typedef int CGScrollEventUnit;
 
 enum _CGEventFlags {
-    kCGEventFlagMaskAlphaShift  = 0,
-    kCGEventFlagMaskShift       = 0,
-    kCGEventFlagMaskControl     = 0,
-    kCGEventFlagMaskAlternate   = 0,
-    kCGEventFlagMaskCommand     = 0,
-    kCGEventFlagMaskHelp        = 0,
-    kCGEventFlagMaskSecondaryFn = 0,
-    kCGEventFlagMaskNumericPad  = 0
+    kCGEventFlagMaskAlphaShift  = 1 << 16,
+    kCGEventFlagMaskShift       = 1 << 17,
+    kCGEventFlagMaskControl     = 1 << 18,
+    kCGEventFlagMaskAlternate   = 1 << 19,
+    kCGEventFlagMaskCommand     = 1 << 20,
+    kCGEventFlagMaskHelp        = 1 << 21,
+    kCGEventFlagMaskSecondaryFn = 1 << 22,
+    kCGEventFlagMaskNumericPad  = 1 << 23
 };
 typedef int CGEventFlags;
 

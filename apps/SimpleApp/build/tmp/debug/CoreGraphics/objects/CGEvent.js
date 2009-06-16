@@ -11,21 +11,22 @@
 document.onmousedown = function(event)
 {
     NSEventMouseEventFromCGEvent(event);
-    // var theEvent = objc_msgSend(NSEvent, "mouseEventWithType:location:modifierFlags:timestamp:windowNumber:context:eventNumber:clickCount:pressure:",
-    //     1, CGPointMake(event.clientX, (window.innerHeight - event.clientY)), null, null, 0, null, 1, 1, 1);
-    // 
-    // objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "sendEvent:", theEvent);
 };
 
 document.onmouseup = function(event)
 {
     NSEventMouseEventFromCGEvent(event);
-    // var theEvent = objc_msgSend(NSEvent, "mouseEventWithType:location:modifierFlags:timestamp:windowNumber:context:eventNumber:clickCount:pressure:",
-    //     2, CGPointMake(event.clientX, (window.innerHeight - event.clientY)), null, null, 0, null, 1, 1, 1);
-    // 
-    // objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "sendEvent:", theEvent);
 };
 
+document.onmousemove = function(event)
+{
+    NSEventMouseEventFromCGEvent(event);
+};
+
+document.onkeypress = function(event)
+{
+    NSEventKeyEventFromCGEvent(event);
+};
 
 function CGEventScreenFrameRect()
 {
@@ -39,6 +40,8 @@ function CGEventGetType(event)
         return 1;
     else if(event.type == "mouseup")
         return 2;
+    else if(event.type == "mousemove")
+        return 5;
     else return -1;
 }
 
@@ -57,8 +60,40 @@ function CGEventGetUnflippedLocation(event)
 // extern void CGEventSetLocation(CGEventRef event, CGPoint location);
 // 
 // extern CGEventFlags CGEventGetFlags(CGEventRef event);
+function CGEventGetFlags(event)
+{
+    var modifierFlags = 1;
+    
+    if (event.metaKey)
+     modifierFlags = modifierFlags | (1 << 20);
+     
+     if (event.shiftKey)
+     modifierFlags = modifierFlags | (1 << 17);
+     
+     if (event.altKey)
+     modifierFlags = modifierFlags | (1 << 19);
+     
+     if (event.ctrlKey)
+     modifierFlags = modifierFlags | (1 << 18);
+    
+    return modifierFlags;
+}
+
 // extern void CGEventSetFlags(CGEventRef event, CGEventFlags flags);
 // 
 // extern void CGEventKeyboardGetUnicodeString(CGEventRef event, int maxStringLength, int actualStringLength, char unicodeString);
 // 
 // extern void CGEventKeyboardSetUnicodeString(CGEventRef event, int stringLength, const char unicodeString);
+
+// extern CFStringRef CGEventKeyGetUnicodeString(CGEventRef event);
+function CGEventKeyGetUnicodeString(event)
+{
+    var keyCode = event.charCode;
+    var theCharacters = String.fromCharCode(keyCode);
+
+    // if ( theCharacters.toUpperCase() === theCharacters && theCharacters.toLowerCase() !== theCharacters && !theCharacters.shiftKey ) {
+    //                     NSLog("caps: " + theCharacters);
+    //             }
+    
+    return theCharacters;
+}

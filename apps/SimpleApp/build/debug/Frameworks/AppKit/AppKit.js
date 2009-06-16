@@ -152,7 +152,7 @@ with(self) {
 
 class_addMethod(the_class, "noResponderFor:", function(self, _cmd, eventSelector) {
 with(self) {
-if (eventSelector == "selector:")
+if (eventSelector == "keyDown:")
 {
 
 }
@@ -323,6 +323,9 @@ _frame.size = objc_msgSend(aCoder, "decodeSizeForKey:", "NSFrameSize");
 objc_msgSend(self, "setFrame:", _frame);
 _subviews = objc_msgSend(NSMutableArray, "array");
 var subviews = objc_msgSend(aCoder, "decodeObjectForKey:", "NSSubviews");
+_superview = objc_msgSend(aCoder, "decodeObjectForKey:", "NSSuperview");
+;
+_window = null;
 if (subviews)
 {
 var aSubview;
@@ -337,8 +340,6 @@ objc_msgSend(self, "addSubview:", aSubview);
 
 _bounds.origin = NSMakePoint(0,0);
 _bounds.size = _frame.size;
-_superview = null;
-_window = null;
 return self;
 }
 }, "void");
@@ -446,6 +447,12 @@ with(self) {
 class_addMethod(the_class, "viewWillMoveToWindow:", function(self, _cmd, newWindow) {
 with(self) {
 _window = newWindow;
+for(var i = 0;
+i < objc_msgSend(_subviews, "count");
+i++){
+objc_msgSend(objc_msgSend(_subviews, "objectAtIndex:", i), "viewWillMoveToWindow:", newWindow);
+
+}
 }
 }, "void");
 
@@ -709,15 +716,28 @@ with(self) {
 
 class_addMethod(the_class, "convertPointFromBase:", function(self, _cmd, aPoint) {
 with(self) {
+var newPoint = NSMakePoint(0,0);
 if (_superview)
 {
-aPoint.x = aPoint.x - _frame.origin.x;
-aPoint.y = aPoint.y - _frame.origin.y;
-return objc_msgSend(_superview, "convertPointFromBase:", aPoint);
+newPoint.x = aPoint.x - _frame.origin.x;
+newPoint.y = aPoint.y - _frame.origin.y;
+return objc_msgSend(_superview, "convertPointFromBase:", newPoint);
 
 }
 else
+if (_window)
+{
+newPoint.x = aPoint.x - objc_msgSend(_window, "frame").origin.x;
+newPoint.y = aPoint.y - objc_msgSend(_window, "frame").origin.y;
+return newPoint;
+
+}
+else
+{
 return aPoint;
+
+}
+
 
 }
 }, "void");
@@ -773,6 +793,7 @@ _graphicsContext = objc_msgSend(NSGraphicsContext, "graphicsContextWithGraphicsP
 
 objc_msgSend(NSGraphicsContext, "setCurrentContext:", _graphicsContext);
 CGContextSaveGState(objc_msgSend(_graphicsContext, "graphicsPort"));
+CGContextClearRect(objc_msgSend(_graphicsContext, "graphicsPort"),objc_msgSend(self, "bounds"));
 }
 }, "void");
 
@@ -927,8 +948,11 @@ with(self) {
 class_addMethod(the_class, "hitTest:", function(self, _cmd, aPoint) {
 with(self) {
 aPoint = objc_msgSend(self, "convertPoint:fromView:", aPoint, _superview);
-if (!NSPointInRect(aPoint,_bounds))
+if (!NSPointInRect(aPoint,objc_msgSend(self, "bounds")))
+{
 return null;
+
+}
 else
 {
 var subviews = _subviews;
@@ -1385,7 +1409,7 @@ class_addIvar(the_class, "_currentEvent", "NSEvent");
 class_addIvar(the_class, "_eventQueue", "NSMutableArray");
 class_addIvar(the_class, "_eventBindingQueued", "BOOL");
 class_addIvar(the_class, "_eventBindingTarget", "id");
-class_addIvar(the_class, "_eventBindingSelector", "SEL");
+class_addIvar(the_class, "_eventBindingBlock", "SEL");
 class_addIvar(the_class, "_eventBindingMask", "NSUInteger");
 class_addIvar(the_class, "_menuBar", "NSMenuBar");
 
@@ -1397,6 +1421,9 @@ if (self)
 _windows = objc_msgSend(NSMutableArray, "arrayWithCapacity:", 0);
 _eventQueue = objc_msgSend(NSMutableArray, "arrayWithCapacity:", 0);
 _eventBindingQueued = NO;
+_eventBindingTarget = objc_msgSend(NSMutableArray, "array");
+_eventBindingBlock = objc_msgSend(NSMutableArray, "array");
+_eventBindingMask = objc_msgSend(NSMutableArray, "array");
 var mainBundle = objc_msgSend(NSBundle, "mainBundle");
 var productName = objc_msgSend(mainBundle, "objectForInfoDictionaryKey:", "CFBundleName");
 
@@ -1505,6 +1532,26 @@ _eventBindingMask = mask;
 }
 }, "void");
 
+class_addMethod(the_class, "nextEventMatchingMask:forObject:withBlock:", function(self, _cmd, mask, anObject, aBlock) {
+with(self) {
+_eventBindingQueued = YES;
+objc_msgSend(_eventBindingTarget, "addObject:", anObject);
+objc_msgSend(_eventBindingBlock, "addObject:", aBlock);
+objc_msgSend(_eventBindingMask, "addObject:", mask);
+}
+}, "void");
+
+class_addMethod(the_class, "discardEventsMatchingMaskRequest", function(self, _cmd) {
+with(self) {
+objc_msgSend(_eventBindingTarget, "removeLastObject");
+objc_msgSend(_eventBindingBlock, "removeLastObject");
+objc_msgSend(_eventBindingMask, "removeLastObject");
+if (objc_msgSend(_eventBindingTarget, "count") == 0)
+_eventBindingQueued = NO;
+
+}
+}, "void");
+
 class_addMethod(the_class, "discardEventsMatchingMask:beforeEvent:", function(self, _cmd, mask, lastEvent) {
 with(self) {
 }
@@ -1524,6 +1571,24 @@ return _currentEvent;
 
 class_addMethod(the_class, "sendEvent:", function(self, _cmd, theEvent) {
 with(self) {
+_currentEvent = theEvent;
+if (_eventBindingQueued)
+{
+if (((1 << objc_msgSend(theEvent, "type")) & objc_msgSend(_eventBindingMask, "lastObject")) != 0)
+{
+var theBlock = objc_msgSend(_eventBindingBlock, "lastObject");
+theBlock(objc_msgSend(_eventBindingTarget, "lastObject"),theEvent);
+
+}
+else
+{
+
+}
+
+return ;
+
+}
+
 objc_msgSend(objc_msgSend(theEvent, "window"), "sendEvent:", theEvent);
 }
 }, "void");
@@ -2177,13 +2242,13 @@ with(self) {
 
 class_addMethod(the_class, "isEnabled", function(self, _cmd) {
 with(self) {
-return _isEnabled;
+return objc_msgSend(_cell, "isEnabled");
 }
 }, "void");
 
 class_addMethod(the_class, "setEnabled:", function(self, _cmd, flag) {
 with(self) {
-_isEnabled = flag;
+objc_msgSend(_cell, "setEnabled:", flag);
 }
 }, "void");
 
@@ -2387,48 +2452,7 @@ with(self) {
 
 class_addMethod(the_class, "mouseDown:", function(self, _cmd, theEvent) {
 with(self) {
-if (!objc_msgSend(self, "isEnabled"))
-return ;
-
-objc_msgSend(self, "lockFocus");
-var location = objc_msgSend(self, "convertPoint:fromView:", objc_msgSend(theEvent, "locationInWindow"), null);
-if (NSPointInRect(location,_bounds))
-objc_msgSend(_cell, "highlight:withFrame:inView:", YES, _bounds, self);
-
-objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:untilDate:inMode:dequeue:withTarget:withSelector:", (4 | 32), null, null, null, self, "selector:");
-objc_msgSend(self, "unlockFocus");
-}
-}, "void");
-
-class_addMethod(the_class, "_mouseDownHandle:", function(self, _cmd, theEvent) {
-with(self) {
-var location = objc_msgSend(self, "convertPoint:fromView:", objc_msgSend(theEvent, "locationInWindow"), null);
-if (NSPointInRect(location,_bounds))
-{
-if (objc_msgSend(theEvent, "type") == 2)
-{
-objc_msgSend(self, "sendAction:to:", objc_msgSend(self, "action"), objc_msgSend(self, "target"));
-objc_msgSend(self, "lockFocus");
-objc_msgSend(_cell, "highlight:withFrame:inView:", NO, _bounds, self);
-objc_msgSend(self, "unlockFocus");
-return ;
-
-}
-else
-if (objc_msgSend(theEvent, "type") == 5)
-{
-objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:untilDate:inMode:dequeue:withTarget:withSelector:", (4 | 32), null, null, null, self, "selector:");
-return ;
-
-}
-
-
-
-}
-
-objc_msgSend(self, "lockFocus");
-objc_msgSend(_cell, "highlight:withFrame:inView:", NO, _bounds, self);
-objc_msgSend(self, "unlockFocus");
+objc_msgSend(_cell, "trackMouse:inRect:ofView:untilMouseUp:", theEvent, objc_msgSend(self, "bounds"), self, YES);
 }
 }, "void");
 
@@ -2618,11 +2642,13 @@ with(self) {
 
 class_addMethod(the_class, "state", function(self, _cmd) {
 with(self) {
+return objc_msgSend(_cell, "state");
 }
 }, "void");
 
 class_addMethod(the_class, "setState:", function(self, _cmd, value) {
 with(self) {
+objc_msgSend(_cell, "setState:", value);
 }
 }, "void");
 
@@ -2835,11 +2861,13 @@ with(self) {
 
 class_addMethod(the_class, "state", function(self, _cmd) {
 with(self) {
+return _state;
 }
 }, "void");
 
 class_addMethod(the_class, "setState:", function(self, _cmd, value) {
 with(self) {
+_state = value;
 }
 }, "void");
 
@@ -2894,11 +2922,13 @@ with(self) {
 
 class_addMethod(the_class, "isEnabled", function(self, _cmd) {
 with(self) {
+return _isEnabled;
 }
 }, "void");
 
 class_addMethod(the_class, "setEnabled:", function(self, _cmd, flag) {
 with(self) {
+_isEnabled = flag;
 }
 }, "void");
 
@@ -2929,11 +2959,13 @@ with(self) {
 
 class_addMethod(the_class, "isSelectable", function(self, _cmd) {
 with(self) {
+return _isSelectable;
 }
 }, "void");
 
 class_addMethod(the_class, "setSelectable:", function(self, _cmd, flag) {
 with(self) {
+_isSelectable = flag;
 }
 }, "void");
 
@@ -2969,11 +3001,13 @@ with(self) {
 
 class_addMethod(the_class, "isHighlighted", function(self, _cmd) {
 with(self) {
+return _isHighlighted;
 }
 }, "void");
 
 class_addMethod(the_class, "setHighlighted:", function(self, _cmd, flag) {
 with(self) {
+_isHighlighted = flag;
 }
 }, "void");
 
@@ -3099,6 +3133,7 @@ with(self) {
 
 class_addMethod(the_class, "setDoubleValue:", function(self, _cmd, aDouble) {
 with(self) {
+_value = aDouble;
 }
 }, "void");
 
@@ -3219,10 +3254,10 @@ objc_msgSend(textObj, "setAlignment:", objc_msgSend(self, "alignment"));
 objc_msgSend(textObj, "setString:", objc_msgSend(self, "stringValue"));
 objc_msgSend(textObj, "setSelectable:", objc_msgSend(self, "isSelectable"));
 objc_msgSend(self, "setEditable:", objc_msgSend(self, "isEditable"));
-if (objc_msgSend(self, "respondsToSelector:", "selector:"))
+if (objc_msgSend(self, "respondsToSelector:", "drawsBackground"))
 objc_msgSend(textObj, "setDrawsBackground:", objc_msgSend(self, "drawsBackground"));
 
-if (objc_msgSend(self, "respondsToSelector:", "selector:"))
+if (objc_msgSend(self, "respondsToSelector:", "backgroundColor"))
 objc_msgSend(textObj, "setBackgroundColor:", objc_msgSend(self, "backgroundColor"));
 
 return textObj;
@@ -3264,11 +3299,16 @@ with(self) {
 
 class_addMethod(the_class, "startTrackingAt:inView:", function(self, _cmd, startPoint, controlView) {
 with(self) {
+if (objc_msgSend(self, "isEnabled"))
+return YES;
+
+return NO;
 }
 }, "void");
 
 class_addMethod(the_class, "continueTracking:at:inView:", function(self, _cmd, lastPoint, currentPoint, controlView) {
 with(self) {
+return YES;
 }
 }, "void");
 
@@ -3279,6 +3319,77 @@ with(self) {
 
 class_addMethod(the_class, "trackMouse:inRect:ofView:untilMouseUp:", function(self, _cmd, theEvent, cellFrame, controlView, flag) {
 with(self) {
+objc_msgSend(controlView, "lockFocus");
+var location = objc_msgSend(controlView, "convertPoint:fromView:", objc_msgSend(theEvent, "locationInWindow"), null);
+if (!objc_msgSend(self, "startTrackingAt:inView:", objc_msgSend(theEvent, "locationInWindow"), controlView))
+{
+objc_msgSend(self, "drawWithFrame:inView:", cellFrame, controlView);
+objc_msgSend(controlView, "unlockFocus");
+return NO;
+
+}
+
+objc_msgSend(self, "highlight:withFrame:inView:", YES, objc_msgSend(controlView, "bounds"), controlView);
+objc_msgSend(controlView, "unlockFocus");
+objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:forObject:withBlock:", (4 | 32), self, function(object,theEvent){
+objc_msgSend(controlView, "lockFocus");
+var location = objc_msgSend(controlView, "convertPoint:fromView:", objc_msgSend(theEvent, "locationInWindow"), null);
+if (flag)
+{
+if (objc_msgSend(theEvent, "type") == 2)
+{
+objc_msgSend(self, "stopTracking:at:inView:mouseIsUp:", objc_msgSend(theEvent, "locationInWindow"), objc_msgSend(theEvent, "locationInWindow"), controlView, YES);
+objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "discardEventsMatchingMaskRequest");
+if (objc_msgSend(self, "state") == 0)
+_state = 1;
+else
+_state = 0;
+
+objc_msgSend(self, "setHighlighted:", NO);
+
+}
+else
+{
+if (NSPointInRect(location,cellFrame))
+{
+objc_msgSend(self, "setHighlighted:", YES);
+
+}
+else
+{
+objc_msgSend(self, "setHighlighted:", NO);
+
+}
+
+if (!objc_msgSend(self, "continueTracking:at:inView:", objc_msgSend(theEvent, "locationInWindow"), objc_msgSend(theEvent, "locationInWindow"), controlView))
+{
+objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "discardEventsMatchingMaskRequest");
+
+}
+
+
+}
+
+
+}
+else
+if (NSPointInRect(location,cellFrame))
+{
+NSLog("Got here thought... in frame");
+
+}
+else
+{
+NSLog("Moved out of frame");
+objc_msgSend(self, "stopTracking:at:inView:mouseIsUp:", objc_msgSend(theEvent, "locationInWindow"), objc_msgSend(theEvent, "locationInWindow"), controlView, NO);
+objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "discardEventsMatchingMaskRequest");
+
+}
+
+
+objc_msgSend(self, "drawWithFrame:inView:", cellFrame, controlView);
+objc_msgSend(controlView, "unlockFocus");
+});
 }
 }, "void");
 
@@ -3832,12 +3943,27 @@ var c = objc_msgSend(objc_msgSend(NSGraphicsContext, "currentContext"), "graphic
 CGContextSaveGState(c);
 if (_isEnabled && _isBordered)
 {
+if (_isHighlighted)
+{
+var theImage = CGImageCreateWithURLDataProvider("Resources/NSButtonHighlightedLeft.png");
+CGContextDrawImage(c,CGRectMake(0,0,6,24),theImage);
+var theImage = CGImageCreateWithURLDataProvider("Resources/NSButtonHighlightedMiddle.png");
+CGContextDrawImage(c,CGRectMake(6,0,frame.size.width - 12,24),theImage);
+var theImage = CGImageCreateWithURLDataProvider("Resources/NSButtonHighlightedRight.png");
+CGContextDrawImage(c,CGRectMake(frame.size.width - 6,0,6,24),theImage);
+
+}
+else
+{
 var theImage = CGImageCreateWithURLDataProvider("Resources/NSButtonNormalLeft.png");
 CGContextDrawImage(c,CGRectMake(0,0,6,24),theImage);
 var theImage = CGImageCreateWithURLDataProvider("Resources/NSButtonNormalMiddle.png");
 CGContextDrawImage(c,CGRectMake(6,0,frame.size.width - 12,24),theImage);
 var theImage = CGImageCreateWithURLDataProvider("Resources/NSButtonNormalRight.png");
 CGContextDrawImage(c,CGRectMake(frame.size.width - 6,0,6,24),theImage);
+
+}
+
 
 }
 else
@@ -3865,6 +3991,9 @@ with(self) {
 CFBundlePreloadResource(CFBundleGetBundleForClass(self),"NSButtonNormalLeft","png","");
 CFBundlePreloadResource(CFBundleGetBundleForClass(self),"NSButtonNormalMiddle","png","");
 CFBundlePreloadResource(CFBundleGetBundleForClass(self),"NSButtonNormalRight","png","");
+CFBundlePreloadResource(CFBundleGetBundleForClass(self),"NSButtonHighlightedLeft","png","");
+CFBundlePreloadResource(CFBundleGetBundleForClass(self),"NSButtonHighlightedMiddle","png","");
+CFBundlePreloadResource(CFBundleGetBundleForClass(self),"NSButtonHighlightedRight","png","");
 CFBundlePreloadResource(CFBundleGetBundleForClass(self),"NSSwitchNormal","png","");
 CFBundlePreloadResource(CFBundleGetBundleForClass(self),"NSSwitchAlternate","png","");
 CFBundlePreloadResource(CFBundleGetBundleForClass(self),"NSRadioButtonNormal","png","");
@@ -4486,19 +4615,35 @@ with(self) {
 }
 }, "void");
 
-function NSEventMouseEventFromCGEvent()
+function NSEventMouseEventFromCGEvent(event)
 {
 var location = CGEventGetLocation(event);
 var windowNumber = 0;
-if (objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "windowAtPoint:", location))
+var theWindow = objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "windowAtPoint:", location);
+if (theWindow)
 windowNumber = objc_msgSend(objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "windowAtPoint:", location), "windowNumber");
 else
 windowNumber = -1;
 
-NSLog(CGEventGetType(event));
-NSLog(objc_msgSend(objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "windowAtPoint:", location), "frame"));
 var theEvent = objc_msgSend(NSEvent, "mouseEventWithType:location:modifierFlags:timestamp:windowNumber:context:eventNumber:clickCount:pressure:", CGEventGetType(event), location, 0, 0, windowNumber, null, 1, 1, 1);
 objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "sendEvent:", theEvent);
+}
+function NSEventKeyEventFromCGEvent(event)
+{
+NSLog(CGEventKeyGetUnicodeString(event));
+var theFlags = CGEventGetFlags(event);
+if (theFlags & 131072)
+NSLog("Shift key");
+
+if (theFlags & 262144)
+NSLog("Control key");
+
+if (theFlags & 524288)
+NSLog("Alt key");
+
+if (theFlags & 1048576)
+NSLog("Cmd key");
+
 }
 var the_class = objc_allocateClassPair(NSObject, "NSEvent");
 var meta_class = the_class.isa;
@@ -4666,6 +4811,7 @@ return theEvent;
 
 class_addMethod(meta_class, "keyEventWithType:location:modifierFlags:timestamp:windowNumber:context:characters:charactersIgnoringModifiers:isARepeat:keyCode:", function(self, _cmd, type, location, flags, time, wNum, context, keys, ukeys, flag, code) {
 with(self) {
+var theEvent = objc_msgSend(objc_msgSend(NSEvent, "alloc"), "init");
 }
 }, "void");
 
@@ -5309,9 +5455,6 @@ return self;
 class_addMethod(the_class, "mouseDown:", function(self, _cmd, theEvent) {
 with(self) {
 objc_msgSend(self, "makeMainWindow");
-_eventBindingCurrentX = objc_msgSend(theEvent, "locationInBase").x;
-_eventBindingCurrentY = objc_msgSend(theEvent, "locationInBase").y;
-objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:untilDate:inMode:dequeue:withTarget:withSelector:", (4 | 32), null, null, null, self, "selector:");
 }
 }, "void");
 
@@ -5322,15 +5465,18 @@ if (objc_msgSend(theEvent, "type") == 2)
 
 }
 else
+if (objc_msgSend(theEvent, "type") == 5)
 {
-var newX = (objc_msgSend(theEvent, "locationInBase").x - _eventBindingCurrentX) + _frame.origin.x;
-var newY = (objc_msgSend(theEvent, "locationInBase").y - _eventBindingCurrentY) + _frame.origin.y;
-objc_msgSend(self, "setFrameOrigin:", NSMakePoint(newX,newY));
-_eventBindingCurrentX = objc_msgSend(theEvent, "locationInBase").x;
-_eventBindingCurrentY = objc_msgSend(theEvent, "locationInBase").y;
-objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:untilDate:inMode:dequeue:withTarget:withSelector:", (4 | 32), null, null, null, self, "selector:");
+var newX = ((objc_msgSend(theEvent, "locationInWindow").x) - _eventBindingCurrentX);
+var newY = ((objc_msgSend(theEvent, "locationInWindow").y) - _eventBindingCurrentY);
+objc_msgSend(self, "setFrameOrigin:", NSMakePoint(newX + _frame.origin.x,newY + _frame.origin.y));
+_eventBindingCurrentX = objc_msgSend(theEvent, "locationInWindow").x;
+_eventBindingCurrentY = objc_msgSend(theEvent, "locationInWindow").y;
+NSLog(newX + "," + newY);
+objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:untilDate:inMode:dequeue:withTarget:withSelector:", (4 | 32), null, null, null, self, "_mouseDownHandle:");
 
 }
+
 
 }
 }, "void");
@@ -5380,6 +5526,7 @@ with(self) {
 
 class_addMethod(the_class, "isExcludedFromWindowsMenu", function(self, _cmd) {
 with(self) {
+return NO;
 }
 }, "void");
 
@@ -5407,6 +5554,7 @@ return _contentView;
 
 class_addMethod(the_class, "setDelegate:", function(self, _cmd, anObject) {
 with(self) {
+_delegate = anObject;
 }
 }, "void");
 
@@ -5430,11 +5578,34 @@ return _styleMask;
 
 class_addMethod(the_class, "fieldEditor:forObject:", function(self, _cmd, createFlag, anObject) {
 with(self) {
+if (!_fieldEditor)
+{
+_fieldEditor = objc_msgSend(objc_msgSend(NSTextView, "alloc"), "initWithFrame:", NSMakeRect(0,0,0,0));
+objc_msgSend(_fieldEditor, "viewWillMoveToWindow:", self);
+return _fieldEditor;
+
+}
+else
+{
+if (objc_msgSend(_fieldEditor, "resignFirstResponder"))
+{
+return _fieldEditor;
+
+}
+
+_fieldEditor = objc_msgSend(objc_msgSend(NSTextView, "alloc"), "initWithFrame:", NSMakeRect(0,0,0,0));
+objc_msgSend(_fieldEditor, "viewWillMoveToWindow:", self);
+return _fieldEditor;
+
+}
+
 }
 }, "void");
 
 class_addMethod(the_class, "endEditingFor:", function(self, _cmd, anObject) {
 with(self) {
+objc_msgSend(_fieldEditor, "removeFromSuperview");
+objc_msgSend(_fieldEditor, "setString:", "");
 }
 }, "void");
 
@@ -5461,7 +5632,8 @@ class_addMethod(the_class, "setFrameOrigin:", function(self, _cmd, aPoint) {
 with(self) {
 _frame.origin.x = aPoint.x;
 _frame.origin.y = aPoint.y;
-NSWindowServerSetOrigin(_gCanvas,aPoint);
+NSLog(CGStringFromPoint(aPoint));
+CGDOMElementSetFrameOrigin(_DOMContainer,aPoint);
 }
 }, "void");
 
@@ -5850,6 +6022,10 @@ with(self) {
 
 class_addMethod(the_class, "convertScreenToBase:", function(self, _cmd, aPoint) {
 with(self) {
+var newPoint = {x:0,y:0,};
+newPoint.x = aPoint - _frame.origin.x;
+newPoint.y = aPoint - _frame.origin.y;
+return newPoint;
 }
 }, "void");
 
@@ -6106,21 +6282,17 @@ with(self) {
 class_addMethod(the_class, "sendEvent:", function(self, _cmd, theEvent) {
 with(self) {
 var hitTest;
-NSLog(objc_msgSend(theEvent, "type"));
-NSLog(1);
 if (objc_msgSend(theEvent, "type") == 1)
 {
 hitTest = objc_msgSend(_contentView, "hitTest:", objc_msgSend(theEvent, "locationInWindow"));
 if (hitTest)
 {
-NSLog("Sending mouse down to:");
-NSLog(hitTest.isa.name);
+objc_msgSend(hitTest, "mouseDown:", theEvent);
 
 }
 else
 {
 NSLog("Sending mouse down to (else)");
-NSLog(objc_msgSend(theEvent, "locationInWindow"));
 
 }
 
@@ -7339,7 +7511,7 @@ objc_msgSend(_eventBindingMenuArray, "addObject:", self);
 objc_msgSend(self, "setHighlightedItemIndex:", selectedIndex);
 objc_msgSend(_eventBindingMenuArray, "addObject:", objc_msgSend(self, "attachSubmenuForItemAtIndex:", selectedIndex));
 objc_msgSend(self, "setNeedsDisplay:", YES);
-objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:untilDate:inMode:dequeue:withTarget:withSelector:", (4 | 32), null, null, null, self, "selector:");
+objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:untilDate:inMode:dequeue:withTarget:withSelector:", (4 | 32), null, null, null, self, "_mouseDownMenuHandle:");
 }
 }, "void");
 
@@ -7393,7 +7565,7 @@ objc_msgSend(menuToCheck, "setNeedsDisplay:", YES);
 
 }
 
-objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:untilDate:inMode:dequeue:withTarget:withSelector:", (4 | 32), null, null, null, self, "selector:");
+objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:untilDate:inMode:dequeue:withTarget:withSelector:", (4 | 32), null, null, null, self, "_mouseDownMenuHandle:");
 
 }
 
@@ -7415,7 +7587,7 @@ objc_msgSend(self, "setNeedsDisplay:", YES);
 }
 if (objc_msgSend(theEvent, "type") == 5)
 {
-objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:untilDate:inMode:dequeue:withTarget:withSelector:", (4 | 32), null, null, null, self, "selector:");
+objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:untilDate:inMode:dequeue:withTarget:withSelector:", (4 | 32), null, null, null, self, "_mouseDownMenuHandle:");
 
 }
 
@@ -8112,7 +8284,7 @@ with(self) {
 if (!_dataSource)
 return ;
 
-if (!objc_msgSend(_dataSource, "respondsToSelector:", "selector:"))
+if (!objc_msgSend(_dataSource, "respondsToSelector:", "numberOfRowsInTableView:"))
 return ;
 
 _numberOfRows = objc_msgSend(_dataSource, "numberOfRowsInTableView:", self);
@@ -8684,7 +8856,7 @@ return self;
 
 class_addMethod(the_class, "initWithFrame:", function(self, _cmd, frameRect) {
 with(self) {
-objc_msgSendSuper({super_class:NSControl, receiver:self}, "initWithFrame:", frameRect);
+self = objc_msgSendSuper({super_class:NSControl, receiver:self}, "initWithFrame:", frameRect);
 if (self)
 {
 
@@ -8696,6 +8868,8 @@ return self;
 
 class_addMethod(the_class, "drawRect:", function(self, _cmd, rect) {
 with(self) {
+var c = objc_msgSend(objc_msgSend(NSGraphicsContext, "currentContext"), "graphicsPort");
+CGContextFillRect(c,rect);
 }
 }, "void");
 
@@ -9233,6 +9407,106 @@ return self;
 }
 }, "void");
 
+class_addMethod(the_class, "minValue", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setMinValue:", function(self, _cmd, aDouble) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "maxValue", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setMaxValue:", function(self, _cmd, aDouble) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setAltIncrementValue:", function(self, _cmd, incValue) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "altIncrementValue", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setTitleCell:", function(self, _cmd, aCell) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "titleCell", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setTitleColor:", function(self, _cmd, newColor) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "titleColor", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setTitleFont:", function(self, _cmd, fontObj) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "titleFont", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "title", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setTitle:", function(self, _cmd, aString) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setKnobThickness:", function(self, _cmd, aFloat) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "knobThickness", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setImage:", function(self, _cmd, backgroundImage) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "image", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "isVertical", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "acceptsFirstMouse:", function(self, _cmd, theEvent) {
+with(self) {
+}
+}, "void");
+
 var the_class = objc_allocateClassPair(NSCell, "NSSliderCell");
 var meta_class = the_class.isa;
 objc_registerClassPair(the_class);
@@ -9251,23 +9525,208 @@ class_addIvar(the_class, "_controlSize", "NSSize");
 class_addIvar(the_class, "_controlView", "NSView");
 class_addIvar(the_class, "_target", "id");
 class_addIvar(the_class, "_action", "SEL");
+class_addIvar(the_class, "_minValue", "DOUBLE");
+class_addIvar(the_class, "_maxValue", "DOUBLE");
+
+class_addMethod(the_class, "initWithCoder:", function(self, _cmd, aCoder) {
+with(self) {
+objc_msgSendSuper({super_class:NSCell, receiver:self}, "initWithCoder:", aCoder);
+_minValue = objc_msgSend(aCoder, "decodeDoubleForKey:", "NSMinValue");
+_maxValue = objc_msgSend(aCoder, "decodeDoubleForKey:", "NSMaxValue");
+_value = objc_msgSend(aCoder, "decodeDoubleForKey:", "NSValue");
+return aCoder;
+}
+}, "void");
 
 class_addMethod(the_class, "drawWithFrame:inView:", function(self, _cmd, cellFrame, controlView) {
 with(self) {
+var SLIDER_PADDING = 8.5;
+var KNOB_PADDING = 2;
 var c = objc_msgSend(objc_msgSend(NSGraphicsContext, "currentContext"), "graphicsPort");
 CGContextSaveGState(c);
 if (!_isEnabled)
 CGContextSetAlpha(c,0.8);
 
 var theImage = CGImageCreateWithURLDataProvider("Resources/NSSliderHorizontalLeft.png");
-CGContextDrawImage(c,CGRectMake(0,8,5,5),theImage);
+CGContextDrawImage(c,CGRectMake(KNOB_PADDING,8,5,5),theImage);
 var theImage = CGImageCreateWithURLDataProvider("Resources/NSSliderHorizontalMiddle.png");
-CGContextDrawImage(c,CGRectMake(5,8,cellFrame.size.width - 10,5),theImage);
+CGContextDrawImage(c,CGRectMake(5 + KNOB_PADDING,8,(cellFrame.size.width - 10) - (2 * KNOB_PADDING),5),theImage);
 var theImage = CGImageCreateWithURLDataProvider("Resources/NSSliderHorizontalRight.png");
-CGContextDrawImage(c,CGRectMake(cellFrame.size.width - 5,8,5,5),theImage);
+CGContextDrawImage(c,CGRectMake((cellFrame.size.width - 5) - KNOB_PADDING,8,5,5),theImage);
+var knobPosition = (((_value / (_maxValue - _minValue)) * ((cellFrame.size.width - (2 * SLIDER_PADDING)))));
 var theImage = CGImageCreateWithURLDataProvider("Resources/NSSliderHorizontalKnobNormal.png");
-CGContextDrawImage(c,CGRectMake(20,2,17,17),theImage);
+CGContextDrawImage(c,CGRectMake(knobPosition,2,17,17),theImage);
 CGContextRestoreGState(c);
+}
+}, "void");
+
+class_addMethod(the_class, "startTrackingAt:inView:", function(self, _cmd, startPoint, controlView) {
+with(self) {
+if (objc_msgSend(self, "isEnabled"))
+{
+var SLIDER_PADDING = 8.5;
+var location = objc_msgSend(controlView, "convertPoint:fromView:", startPoint, null);
+objc_msgSend(self, "setDoubleValue:", ((location.x - SLIDER_PADDING) / (objc_msgSend(controlView, "bounds").size.width - (2 * SLIDER_PADDING))) * (_maxValue - _minValue));
+objc_msgSend(self, "drawWithFrame:inView:", objc_msgSend(controlView, "bounds"), controlView);
+return YES;
+
+}
+
+return NO;
+}
+}, "void");
+
+class_addMethod(the_class, "setDoubleValue:", function(self, _cmd, aDouble) {
+with(self) {
+if (aDouble < _minValue)
+_value = _minValue;
+else
+if (aDouble > _maxValue)
+_value = _maxValue;
+else
+_value = aDouble;
+
+
+NSLog(_value);
+}
+}, "void");
+
+class_addMethod(the_class, "continueTracking:at:inView:", function(self, _cmd, lastPoint, currentPoint, controlView) {
+with(self) {
+var SLIDER_PADDING = 8.5;
+var location = objc_msgSend(controlView, "convertPoint:fromView:", currentPoint, null);
+objc_msgSend(self, "setDoubleValue:", ((location.x - SLIDER_PADDING) / (objc_msgSend(controlView, "bounds").size.width - (2 * SLIDER_PADDING))) * (_maxValue - _minValue));
+objc_msgSend(self, "drawWithFrame:inView:", objc_msgSend(controlView, "bounds"), controlView);
+return YES;
+}
+}, "void");
+
+class_addMethod(the_class, "stopTracking:at:inView:mouseIsUp:", function(self, _cmd, lastPoint, stopPoint, controlView, flag) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "minValue", function(self, _cmd) {
+with(self) {
+return _minValue;
+}
+}, "void");
+
+class_addMethod(the_class, "setMinValue:", function(self, _cmd, aDouble) {
+with(self) {
+_minValue = aDouble;
+}
+}, "void");
+
+class_addMethod(the_class, "maxValue", function(self, _cmd) {
+with(self) {
+return _maxValue;
+}
+}, "void");
+
+class_addMethod(the_class, "setMaxValue:", function(self, _cmd, aDouble) {
+with(self) {
+_maxValue = aDouble;
+}
+}, "void");
+
+class_addMethod(the_class, "setAltIncrementValue:", function(self, _cmd, incValue) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "altIncrementValue", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "isVertical", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setTitleColor:", function(self, _cmd, newColor) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "titleColor", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setTitleFont:", function(self, _cmd, fontObj) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "titleFont", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "title", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setTitle:", function(self, _cmd, aString) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setTitleCell:", function(self, _cmd, aCell) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "titleCell", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setKnobThickness:", function(self, _cmd, aFloat) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "knobThickness", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "knobRectFlipped:", function(self, _cmd, flipped) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "drawKnob:", function(self, _cmd, knobRect) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "drawKnob", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "drawBarInside:flipped:", function(self, _cmd, aRect, flipped) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "trackRect", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setSliderType:", function(self, _cmd, sliderType) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "sliderType", function(self, _cmd) {
+with(self) {
 }
 }, "void");
 
@@ -9277,6 +9736,11 @@ CFBundlePreloadResource(CFBundleGetBundleForClass(self),"NSSliderHorizontalLeft"
 CFBundlePreloadResource(CFBundleGetBundleForClass(self),"NSSliderHorizontalMiddle","png","");
 CFBundlePreloadResource(CFBundleGetBundleForClass(self),"NSSliderHorizontalRight","png","");
 CFBundlePreloadResource(CFBundleGetBundleForClass(self),"NSSliderHorizontalKnobNormal","png","");
+}
+}, "void");
+
+class_addMethod(meta_class, "prefersTrackingUntilMouseUp", function(self, _cmd) {
+with(self) {
 }
 }, "void");
 
@@ -9595,6 +10059,46 @@ return theRect;
 }
 }, "void");
 
+class_addMethod(the_class, "setUpFieldEditorAttributes:", function(self, _cmd, textObj) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setPlaceholderString:", function(self, _cmd, string) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "placeholderString", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setPlaceholderAttributedString:", function(self, _cmd, string) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "placeholderAttributedString", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setWantsNotificationForMarkedText:", function(self, _cmd, flag) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "allowedInputSourceLocales", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setAllowedInputSourceLocales:", function(self, _cmd, localeIdentifiers) {
+with(self) {
+}
+}, "void");
+
 class_addMethod(meta_class, "load", function(self, _cmd) {
 with(self) {
 CFBundlePreloadResource(CFBundleGetBundleForClass(self),"NSTextFieldBezelTopLeft","png","");
@@ -9807,7 +10311,6 @@ with(self) {
 objc_msgSend(self, "init");
 _frame = aFrame;
 _bounds = NSMakeRect(0,0,_frame.size.width,_frame.size.height);
-_gCanvas = NSWindowServerCreateCanvas(self);
 _subviews = objc_msgSend(NSMutableArray, "arrayWithCapacity:", 0);
 return self;
 }
@@ -10146,7 +10649,7 @@ class_addMethod(the_class, "resignFirstResponder", function(self, _cmd) {
 with(self) {
 if (_isEditable)
 {
-if (objc_msgSend(_delegate, "respondsToSelector:", "selector:"))
+if (objc_msgSend(_delegate, "respondsToSelector:", "textShouldEndEditing:"))
 {
 if (objc_msgSend(_delegate, "textShouldEndEditing:", self) == NO)
 return NO;
@@ -10627,7 +11130,7 @@ return _height;
 
 class_addMethod(the_class, "reloadToolbarItems", function(self, _cmd) {
 with(self) {
-if (objc_msgSend(_delegate, "respondsToSelector:", "selector:"))
+if (objc_msgSend(_delegate, "respondsToSelector:", "toolbarDefaultItemIdentifiers:"))
 _itemIdentifiers = objc_msgSend(_delegate, "toolbarDefaultItemIdentifiers:", self);
 else
 _itemIdentifiers = null;

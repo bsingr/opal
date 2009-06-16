@@ -25,17 +25,18 @@
 
 - (id)initWithFrame:(NSRect)frameRect
 {
-    [super initWithFrame:frameRect];
+    self = [super initWithFrame:frameRect];
+    
     if (self) {
     }
+    
     return self;
 }
 
 - (void)drawRect:(NSRect)rect
 {
-    // The blue-ish background
-    // [[NSColor colorWithCalibratedRed:0.4 green:0.5 blue:0.4 alpha:1] set];
-    //     [NSBezierPath fillRect:rect];
+    CGContextRef c = [[NSGraphicsContext currentContext] graphicsPort];
+    CGContextFillRect(c, rect);
 }
 
 - (BOOL)isVertical

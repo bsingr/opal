@@ -35,7 +35,7 @@ class_addIvar(the_class, "_currentEvent", "NSEvent");
 class_addIvar(the_class, "_eventQueue", "NSMutableArray");
 class_addIvar(the_class, "_eventBindingQueued", "BOOL");
 class_addIvar(the_class, "_eventBindingTarget", "id");
-class_addIvar(the_class, "_eventBindingSelector", "SEL");
+class_addIvar(the_class, "_eventBindingBlock", "SEL");
 class_addIvar(the_class, "_eventBindingMask", "NSUInteger");
 class_addIvar(the_class, "_menuBar", "NSMenuBar");
 
@@ -47,6 +47,9 @@ if (self)
 _windows = objc_msgSend(NSMutableArray, "arrayWithCapacity:", 0);
 _eventQueue = objc_msgSend(NSMutableArray, "arrayWithCapacity:", 0);
 _eventBindingQueued = NO;
+_eventBindingTarget = objc_msgSend(NSMutableArray, "array");
+_eventBindingBlock = objc_msgSend(NSMutableArray, "array");
+_eventBindingMask = objc_msgSend(NSMutableArray, "array");
 var mainBundle = objc_msgSend(NSBundle, "mainBundle");
 var productName = objc_msgSend(mainBundle, "objectForInfoDictionaryKey:", "CFBundleName");
 
@@ -155,6 +158,26 @@ _eventBindingMask = mask;
 }
 }, "void");
 
+class_addMethod(the_class, "nextEventMatchingMask:forObject:withBlock:", function(self, _cmd, mask, anObject, aBlock) {
+with(self) {
+_eventBindingQueued = YES;
+objc_msgSend(_eventBindingTarget, "addObject:", anObject);
+objc_msgSend(_eventBindingBlock, "addObject:", aBlock);
+objc_msgSend(_eventBindingMask, "addObject:", mask);
+}
+}, "void");
+
+class_addMethod(the_class, "discardEventsMatchingMaskRequest", function(self, _cmd) {
+with(self) {
+objc_msgSend(_eventBindingTarget, "removeLastObject");
+objc_msgSend(_eventBindingBlock, "removeLastObject");
+objc_msgSend(_eventBindingMask, "removeLastObject");
+if (objc_msgSend(_eventBindingTarget, "count") == 0)
+_eventBindingQueued = NO;
+
+}
+}, "void");
+
 class_addMethod(the_class, "discardEventsMatchingMask:beforeEvent:", function(self, _cmd, mask, lastEvent) {
 with(self) {
 }
@@ -174,6 +197,24 @@ return _currentEvent;
 
 class_addMethod(the_class, "sendEvent:", function(self, _cmd, theEvent) {
 with(self) {
+_currentEvent = theEvent;
+if (_eventBindingQueued)
+{
+if (((1 << objc_msgSend(theEvent, "type")) & objc_msgSend(_eventBindingMask, "lastObject")) != 0)
+{
+var theBlock = objc_msgSend(_eventBindingBlock, "lastObject");
+theBlock(objc_msgSend(_eventBindingTarget, "lastObject"),theEvent);
+
+}
+else
+{
+
+}
+
+return ;
+
+}
+
 objc_msgSend(objc_msgSend(theEvent, "window"), "sendEvent:", theEvent);
 }
 }, "void");

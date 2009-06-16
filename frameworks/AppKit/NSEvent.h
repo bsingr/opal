@@ -68,7 +68,7 @@ enum {
 extern NSUInteger NSEventMaskFromType(NSEventType type);
 
 enum {
-    NSAlphaShiftKeyMask         = 1 << 16,
+    NSAlphaShiftKeyMask         = 1 << 16, // Caps lock
     NSShiftKeyMask              = 1 << 17,
     NSControlKeyMask            = 1 << 18,
     NSAlternateKeyMask          = 1 << 19,

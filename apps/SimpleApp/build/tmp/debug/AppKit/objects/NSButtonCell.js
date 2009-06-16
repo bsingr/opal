@@ -253,12 +253,27 @@ var c = objc_msgSend(objc_msgSend(NSGraphicsContext, "currentContext"), "graphic
 CGContextSaveGState(c);
 if (_isEnabled && _isBordered)
 {
+if (_isHighlighted)
+{
+var theImage = CGImageCreateWithURLDataProvider("Resources/NSButtonHighlightedLeft.png");
+CGContextDrawImage(c,CGRectMake(0,0,6,24),theImage);
+var theImage = CGImageCreateWithURLDataProvider("Resources/NSButtonHighlightedMiddle.png");
+CGContextDrawImage(c,CGRectMake(6,0,frame.size.width - 12,24),theImage);
+var theImage = CGImageCreateWithURLDataProvider("Resources/NSButtonHighlightedRight.png");
+CGContextDrawImage(c,CGRectMake(frame.size.width - 6,0,6,24),theImage);
+
+}
+else
+{
 var theImage = CGImageCreateWithURLDataProvider("Resources/NSButtonNormalLeft.png");
 CGContextDrawImage(c,CGRectMake(0,0,6,24),theImage);
 var theImage = CGImageCreateWithURLDataProvider("Resources/NSButtonNormalMiddle.png");
 CGContextDrawImage(c,CGRectMake(6,0,frame.size.width - 12,24),theImage);
 var theImage = CGImageCreateWithURLDataProvider("Resources/NSButtonNormalRight.png");
 CGContextDrawImage(c,CGRectMake(frame.size.width - 6,0,6,24),theImage);
+
+}
+
 
 }
 else
@@ -286,6 +301,9 @@ with(self) {
 CFBundlePreloadResource(CFBundleGetBundleForClass(self),"NSButtonNormalLeft","png","");
 CFBundlePreloadResource(CFBundleGetBundleForClass(self),"NSButtonNormalMiddle","png","");
 CFBundlePreloadResource(CFBundleGetBundleForClass(self),"NSButtonNormalRight","png","");
+CFBundlePreloadResource(CFBundleGetBundleForClass(self),"NSButtonHighlightedLeft","png","");
+CFBundlePreloadResource(CFBundleGetBundleForClass(self),"NSButtonHighlightedMiddle","png","");
+CFBundlePreloadResource(CFBundleGetBundleForClass(self),"NSButtonHighlightedRight","png","");
 CFBundlePreloadResource(CFBundleGetBundleForClass(self),"NSSwitchNormal","png","");
 CFBundlePreloadResource(CFBundleGetBundleForClass(self),"NSSwitchAlternate","png","");
 CFBundlePreloadResource(CFBundleGetBundleForClass(self),"NSRadioButtonNormal","png","");

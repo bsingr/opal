@@ -117,7 +117,7 @@ class_addMethod(the_class, "resignFirstResponder", function(self, _cmd) {
 with(self) {
 if (_isEditable)
 {
-if (objc_msgSend(_delegate, "respondsToSelector:", "selector:"))
+if (objc_msgSend(_delegate, "respondsToSelector:", "textShouldEndEditing:"))
 {
 if (objc_msgSend(_delegate, "textShouldEndEditing:", self) == NO)
 return NO;

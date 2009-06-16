@@ -24,6 +24,8 @@ typedef NSUInteger NSSliderType;
 
 @interface NSSliderCell : NSCell
 {
+    double      _minValue;
+    double      _maxValue;
 }
 
 + (BOOL)prefersTrackingUntilMouseUp;

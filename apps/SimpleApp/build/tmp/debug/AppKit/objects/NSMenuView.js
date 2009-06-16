@@ -82,7 +82,7 @@ objc_msgSend(_eventBindingMenuArray, "addObject:", self);
 objc_msgSend(self, "setHighlightedItemIndex:", selectedIndex);
 objc_msgSend(_eventBindingMenuArray, "addObject:", objc_msgSend(self, "attachSubmenuForItemAtIndex:", selectedIndex));
 objc_msgSend(self, "setNeedsDisplay:", YES);
-objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:untilDate:inMode:dequeue:withTarget:withSelector:", (4 | 32), null, null, null, self, "selector:");
+objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:untilDate:inMode:dequeue:withTarget:withSelector:", (4 | 32), null, null, null, self, "_mouseDownMenuHandle:");
 }
 }, "void");
 
@@ -136,7 +136,7 @@ objc_msgSend(menuToCheck, "setNeedsDisplay:", YES);
 
 }
 
-objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:untilDate:inMode:dequeue:withTarget:withSelector:", (4 | 32), null, null, null, self, "selector:");
+objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:untilDate:inMode:dequeue:withTarget:withSelector:", (4 | 32), null, null, null, self, "_mouseDownMenuHandle:");
 
 }
 
@@ -158,7 +158,7 @@ objc_msgSend(self, "setNeedsDisplay:", YES);
 }
 if (objc_msgSend(theEvent, "type") == 5)
 {
-objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:untilDate:inMode:dequeue:withTarget:withSelector:", (4 | 32), null, null, null, self, "selector:");
+objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:untilDate:inMode:dequeue:withTarget:withSelector:", (4 | 32), null, null, null, self, "_mouseDownMenuHandle:");
 
 }
 

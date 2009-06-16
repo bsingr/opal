@@ -238,7 +238,7 @@ with(self) {
 if (!_dataSource)
 return ;
 
-if (!objc_msgSend(_dataSource, "respondsToSelector:", "selector:"))
+if (!objc_msgSend(_dataSource, "respondsToSelector:", "numberOfRowsInTableView:"))
 return ;
 
 _numberOfRows = objc_msgSend(_dataSource, "numberOfRowsInTableView:", self);

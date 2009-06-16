@@ -134,9 +134,6 @@ return self;
 class_addMethod(the_class, "mouseDown:", function(self, _cmd, theEvent) {
 with(self) {
 objc_msgSend(self, "makeMainWindow");
-_eventBindingCurrentX = objc_msgSend(theEvent, "locationInBase").x;
-_eventBindingCurrentY = objc_msgSend(theEvent, "locationInBase").y;
-objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:untilDate:inMode:dequeue:withTarget:withSelector:", (4 | 32), null, null, null, self, "selector:");
 }
 }, "void");
 
@@ -147,15 +144,18 @@ if (objc_msgSend(theEvent, "type") == 2)
 
 }
 else
+if (objc_msgSend(theEvent, "type") == 5)
 {
-var newX = (objc_msgSend(theEvent, "locationInBase").x - _eventBindingCurrentX) + _frame.origin.x;
-var newY = (objc_msgSend(theEvent, "locationInBase").y - _eventBindingCurrentY) + _frame.origin.y;
-objc_msgSend(self, "setFrameOrigin:", NSMakePoint(newX,newY));
-_eventBindingCurrentX = objc_msgSend(theEvent, "locationInBase").x;
-_eventBindingCurrentY = objc_msgSend(theEvent, "locationInBase").y;
-objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:untilDate:inMode:dequeue:withTarget:withSelector:", (4 | 32), null, null, null, self, "selector:");
+var newX = ((objc_msgSend(theEvent, "locationInWindow").x) - _eventBindingCurrentX);
+var newY = ((objc_msgSend(theEvent, "locationInWindow").y) - _eventBindingCurrentY);
+objc_msgSend(self, "setFrameOrigin:", NSMakePoint(newX + _frame.origin.x,newY + _frame.origin.y));
+_eventBindingCurrentX = objc_msgSend(theEvent, "locationInWindow").x;
+_eventBindingCurrentY = objc_msgSend(theEvent, "locationInWindow").y;
+NSLog(newX + "," + newY);
+objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:untilDate:inMode:dequeue:withTarget:withSelector:", (4 | 32), null, null, null, self, "_mouseDownHandle:");
 
 }
+
 
 }
 }, "void");
@@ -205,6 +205,7 @@ with(self) {
 
 class_addMethod(the_class, "isExcludedFromWindowsMenu", function(self, _cmd) {
 with(self) {
+return NO;
 }
 }, "void");
 
@@ -232,6 +233,7 @@ return _contentView;
 
 class_addMethod(the_class, "setDelegate:", function(self, _cmd, anObject) {
 with(self) {
+_delegate = anObject;
 }
 }, "void");
 
@@ -255,11 +257,34 @@ return _styleMask;
 
 class_addMethod(the_class, "fieldEditor:forObject:", function(self, _cmd, createFlag, anObject) {
 with(self) {
+if (!_fieldEditor)
+{
+_fieldEditor = objc_msgSend(objc_msgSend(NSTextView, "alloc"), "initWithFrame:", NSMakeRect(0,0,0,0));
+objc_msgSend(_fieldEditor, "viewWillMoveToWindow:", self);
+return _fieldEditor;
+
+}
+else
+{
+if (objc_msgSend(_fieldEditor, "resignFirstResponder"))
+{
+return _fieldEditor;
+
+}
+
+_fieldEditor = objc_msgSend(objc_msgSend(NSTextView, "alloc"), "initWithFrame:", NSMakeRect(0,0,0,0));
+objc_msgSend(_fieldEditor, "viewWillMoveToWindow:", self);
+return _fieldEditor;
+
+}
+
 }
 }, "void");
 
 class_addMethod(the_class, "endEditingFor:", function(self, _cmd, anObject) {
 with(self) {
+objc_msgSend(_fieldEditor, "removeFromSuperview");
+objc_msgSend(_fieldEditor, "setString:", "");
 }
 }, "void");
 
@@ -286,7 +311,8 @@ class_addMethod(the_class, "setFrameOrigin:", function(self, _cmd, aPoint) {
 with(self) {
 _frame.origin.x = aPoint.x;
 _frame.origin.y = aPoint.y;
-NSWindowServerSetOrigin(_gCanvas,aPoint);
+NSLog(CGStringFromPoint(aPoint));
+CGDOMElementSetFrameOrigin(_DOMContainer,aPoint);
 }
 }, "void");
 
@@ -675,6 +701,10 @@ with(self) {
 
 class_addMethod(the_class, "convertScreenToBase:", function(self, _cmd, aPoint) {
 with(self) {
+var newPoint = {x:0,y:0,};
+newPoint.x = aPoint - _frame.origin.x;
+newPoint.y = aPoint - _frame.origin.y;
+return newPoint;
 }
 }, "void");
 
@@ -931,21 +961,17 @@ with(self) {
 class_addMethod(the_class, "sendEvent:", function(self, _cmd, theEvent) {
 with(self) {
 var hitTest;
-NSLog(objc_msgSend(theEvent, "type"));
-NSLog(1);
 if (objc_msgSend(theEvent, "type") == 1)
 {
 hitTest = objc_msgSend(_contentView, "hitTest:", objc_msgSend(theEvent, "locationInWindow"));
 if (hitTest)
 {
-NSLog("Sending mouse down to:");
-NSLog(hitTest.isa.name);
+objc_msgSend(hitTest, "mouseDown:", theEvent);
 
 }
 else
 {
 NSLog("Sending mouse down to (else)");
-NSLog(objc_msgSend(theEvent, "locationInWindow"));
 
 }
 

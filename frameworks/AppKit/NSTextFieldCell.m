@@ -170,5 +170,45 @@
     return theRect;
 }
 
+- (NSText *)setUpFieldEditorAttributes:(NSText *)textObj
+{
+    
+}
+
+- (void)setPlaceholderString:(NSString*)string
+{
+    
+}
+
+- (NSString*)placeholderString
+{
+    
+}
+
+- (void)setPlaceholderAttributedString:(NSAttributedString*)string
+{
+    
+}
+
+- (NSAttributedString*)placeholderAttributedString
+{
+    
+}
+
+- (void)setWantsNotificationForMarkedText:(BOOL)flag
+{
+    
+}
+
+- (NSArray *)allowedInputSourceLocales
+{
+    
+}
+
+- (void)setAllowedInputSourceLocales:(NSArray *)localeIdentifiers
+{
+    
+}
+
 @end
 

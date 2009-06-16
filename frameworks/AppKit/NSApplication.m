@@ -20,11 +20,17 @@ id NSApp = nil;
 - (id)init
 {   
     self = [super init];
-    if (self) {
+    if (self)
+    {
         _windows = [NSMutableArray arrayWithCapacity:0];
         
         _eventQueue = [NSMutableArray arrayWithCapacity:0];
+        
+        // Event bindings
         _eventBindingQueued = NO;
+        _eventBindingTarget = [NSMutableArray array];
+        _eventBindingBlock = [NSMutableArray array];
+        _eventBindingMask = [NSMutableArray array];
         
         NSBundle *mainBundle = [NSBundle mainBundle];
         NSString *productName = [mainBundle objectForInfoDictionaryKey:@"CFBundleName"];        
@@ -135,11 +141,29 @@ id NSApp = nil;
 // to -(void)nextEventMatchingMask:untilDate:inMode:dequeue:withTarget:withSelector:
 // See documentation for more
 - (void)nextEventMatchingMask:(NSUInteger)mask untilDate:(NSDate *)expiration inMode:(NSString *)mode dequeue:(BOOL)deqFlag withTarget:(id)aTarget withSelector:(SEL)aSelector
-{
+{    
     _eventBindingQueued = YES;
     _eventBindingTarget = aTarget;
     _eventBindingSelector = aSelector;
     _eventBindingMask = mask;
+}
+
+- (void)nextEventMatchingMask:(NSUInteger)mask forObject:(id)anObject withBlock:(void (^)(id object, NSEvent *theEvent))aBlock
+{
+    _eventBindingQueued = YES;
+    [_eventBindingTarget addObject:anObject];
+    [_eventBindingBlock addObject:aBlock];
+    [_eventBindingMask addObject:mask];
+}
+
+- (void)discardEventsMatchingMaskRequest
+{
+    [_eventBindingTarget removeLastObject];
+    [_eventBindingBlock removeLastObject];
+    [_eventBindingMask removeLastObject];
+    
+    if([_eventBindingTarget count] == 0)
+        _eventBindingQueued = NO;
 }
 
 - (void)discardEventsMatchingMask:(NSUInteger)mask beforeEvent:(NSEvent *)lastEvent
@@ -160,20 +184,23 @@ id NSApp = nil;
 
 - (void)sendEvent:(NSEvent *)theEvent
 {
-    // _currentEvent = theEvent;
-    // 
-    // if (_eventBindingQueued) {
-    //     if (((1 << [theEvent type]) & _eventBindingMask) != 0) {
-    //         _eventBindingQueued = NO;
-    //         [_eventBindingTarget performSelector:_eventBindingSelector withObject:theEvent];
-    //     }
-    //     else {
-    //         // FIXME: Need to implement
-    //     }
-    //     
-    //     return;
-    // }
-    // 
+    _currentEvent = theEvent;
+    
+    if (_eventBindingQueued)
+    {        
+        if (((1 << [theEvent type]) & [_eventBindingMask lastObject]) != 0)
+        {
+            // [_eventBindingTarget performSelector:_eventBindingSelector withObject:theEvent];
+            id theBlock = [_eventBindingBlock lastObject];
+            theBlock([_eventBindingTarget lastObject], theEvent);
+        }
+        else
+        {
+            // FIXME: Need to implement
+        }
+        return;
+    }
+    
     // if ([theEvent type] == NSLeftMouseDown)
     //     [[theEvent window] makeKeyAndOrderFront:self];
     // else if (([theEvent type] == NSKeyDown) || ([theEvent type] == NSKeyUp))

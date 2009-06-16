@@ -154,7 +154,7 @@
 
 + (NSEvent *)keyEventWithType:(NSEventType)type location:(NSPoint)location modifierFlags:(NSUInteger)flags timestamp:(NSTimeInterval)time windowNumber:(NSInteger)wNum context:(NSGraphicsContext*)context characters:(NSString *)keys charactersIgnoringModifiers:(NSString *)ukeys isARepeat:(BOOL)flag keyCode:(unsigned short)code
 {
-    
+    NSEvent *theEvent = [[NSEvent alloc] init];
 }
 
 + (NSEvent *)enterExitEventWithType:(NSEventType)type location:(NSPoint)location modifierFlags:(NSUInteger)flags timestamp:(NSTimeInterval)time windowNumber:(NSInteger)wNum context:(NSGraphicsContext*)context eventNumber:(NSInteger)eNum trackingNumber:(NSInteger)tNum userData:(void *)data
@@ -177,31 +177,48 @@
 @end
 
 // extern void NSEventMouseEventFromCGEvent(CGEventRef event);
-void NSEventMouseEventFromCGEvent(event)
+void NSEventMouseEventFromCGEvent(CGEventRef event)
 {
     CGPoint location = CGEventGetLocation(event);
     NSUInteger windowNumber;
     
-    if([[NSApplication sharedApplication] windowAtPoint:location])
+    NSWindow *theWindow = [[NSApplication sharedApplication] windowAtPoint:location];
+    // If we have a window here, then we should chnage the point to be relative to the window.
+    
+    if(theWindow)
         windowNumber = [[[NSApplication sharedApplication] windowAtPoint:location] windowNumber];
     else
         windowNumber = -1;
     
-    
-    NSLog(CGEventGetType(event));
-    
-    NSLog([[[NSApplication sharedApplication] windowAtPoint:location] frame]);
-    
     NSEvent *theEvent = [NSEvent mouseEventWithType:CGEventGetType(event)
                                                location:location
-                                               modifierFlags:0
+                                               modifierFlags:CGEventGetFlags(event)
                                                timestamp:0
                                                windowNumber:windowNumber
                                                context:nil
                                                eventNumber:1
                                                clickCount:1
                                                pressure:1];
-        
+
        [[NSApplication sharedApplication] sendEvent:theEvent];
+}
+
+void NSEventKeyEventFromCGEvent(CGEventRef event)
+{
+    NSLog(CGEventKeyGetUnicodeString(event));
+    
+    NSUInteger theFlags = CGEventGetFlags(event);
+    
+    // if(theFlags & NSShiftKeyMask)
+    //     NSLog(@"Shift key");
+    // 
+    // if(theFlags & NSControlKeyMask)
+    //     NSLog(@"Control key");
+    // 
+    // if(theFlags & NSAlternateKeyMask)
+    //     NSLog(@"Alt key");
+    // 
+    // if(theFlags & NSCommandKeyMask)
+    //     NSLog(@"Cmd key");
 }
 

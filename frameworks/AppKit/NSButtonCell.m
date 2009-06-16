@@ -17,6 +17,10 @@
     CFBundlePreloadResource(CFBundleGetBundleForClass(self), @"NSButtonNormalLeft", @"png", @"");
     CFBundlePreloadResource(CFBundleGetBundleForClass(self), @"NSButtonNormalMiddle", @"png", @"");
     CFBundlePreloadResource(CFBundleGetBundleForClass(self), @"NSButtonNormalRight", @"png", @"");
+
+    CFBundlePreloadResource(CFBundleGetBundleForClass(self), @"NSButtonHighlightedLeft", @"png", @"");
+    CFBundlePreloadResource(CFBundleGetBundleForClass(self), @"NSButtonHighlightedMiddle", @"png", @"");
+    CFBundlePreloadResource(CFBundleGetBundleForClass(self), @"NSButtonHighlightedRight", @"png", @"");
     
     // NSSwitch (checkbox)
     CFBundlePreloadResource(CFBundleGetBundleForClass(self), @"NSSwitchNormal", @"png", @"");
@@ -200,7 +204,7 @@
 }
 
 - (void)drawWithFrame:(NSRect)cellFrame inView:(NSView *)controlView
-{
+{    
     CGContextRef c = [[NSGraphicsContext currentContext] graphicsPort];
     CGContextClearRect(c, cellFrame);
     
@@ -273,12 +277,24 @@
     
     if(_isEnabled && _isBordered)
     {
-        CGImageRef theImage = CGImageCreateWithURLDataProvider(@"Resources/NSButtonNormalLeft.png");
-        CGContextDrawImage(c, CGRectMake(0,0,6,24), theImage);
-        CGImageRef theImage = CGImageCreateWithURLDataProvider(@"Resources/NSButtonNormalMiddle.png");
-        CGContextDrawImage(c, CGRectMake(6,0,frame.size.width - 12,24), theImage);
-        CGImageRef theImage = CGImageCreateWithURLDataProvider(@"Resources/NSButtonNormalRight.png");
-        CGContextDrawImage(c, CGRectMake(frame.size.width-6,0,6,24), theImage);
+        if(_isHighlighted)
+        {
+            CGImageRef theImage = CGImageCreateWithURLDataProvider(@"Resources/NSButtonHighlightedLeft.png");
+            CGContextDrawImage(c, CGRectMake(0,0,6,24), theImage);
+            CGImageRef theImage = CGImageCreateWithURLDataProvider(@"Resources/NSButtonHighlightedMiddle.png");
+            CGContextDrawImage(c, CGRectMake(6,0,frame.size.width - 12,24), theImage);
+            CGImageRef theImage = CGImageCreateWithURLDataProvider(@"Resources/NSButtonHighlightedRight.png");
+            CGContextDrawImage(c, CGRectMake(frame.size.width-6,0,6,24), theImage);
+        }
+        else
+        {
+            CGImageRef theImage = CGImageCreateWithURLDataProvider(@"Resources/NSButtonNormalLeft.png");
+            CGContextDrawImage(c, CGRectMake(0,0,6,24), theImage);
+            CGImageRef theImage = CGImageCreateWithURLDataProvider(@"Resources/NSButtonNormalMiddle.png");
+            CGContextDrawImage(c, CGRectMake(6,0,frame.size.width - 12,24), theImage);
+            CGImageRef theImage = CGImageCreateWithURLDataProvider(@"Resources/NSButtonNormalRight.png");
+            CGContextDrawImage(c, CGRectMake(frame.size.width-6,0,6,24), theImage);
+        }
     }
     else if(_isBordered)
     {

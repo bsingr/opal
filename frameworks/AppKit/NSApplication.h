@@ -39,7 +39,7 @@ extern id NSApp;
     // Event bindings
     BOOL             _eventBindingQueued;
     id               _eventBindingTarget;
-    SEL              _eventBindingSelector;
+    SEL              _eventBindingBlock;
     NSUInteger       _eventBindingMask;
     NSMenuBar       *_menuBar;
 }

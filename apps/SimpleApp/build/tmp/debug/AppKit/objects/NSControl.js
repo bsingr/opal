@@ -156,13 +156,13 @@ with(self) {
 
 class_addMethod(the_class, "isEnabled", function(self, _cmd) {
 with(self) {
-return _isEnabled;
+return objc_msgSend(_cell, "isEnabled");
 }
 }, "void");
 
 class_addMethod(the_class, "setEnabled:", function(self, _cmd, flag) {
 with(self) {
-_isEnabled = flag;
+objc_msgSend(_cell, "setEnabled:", flag);
 }
 }, "void");
 
@@ -366,48 +366,7 @@ with(self) {
 
 class_addMethod(the_class, "mouseDown:", function(self, _cmd, theEvent) {
 with(self) {
-if (!objc_msgSend(self, "isEnabled"))
-return ;
-
-objc_msgSend(self, "lockFocus");
-var location = objc_msgSend(self, "convertPoint:fromView:", objc_msgSend(theEvent, "locationInWindow"), null);
-if (NSPointInRect(location,_bounds))
-objc_msgSend(_cell, "highlight:withFrame:inView:", YES, _bounds, self);
-
-objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:untilDate:inMode:dequeue:withTarget:withSelector:", (4 | 32), null, null, null, self, "selector:");
-objc_msgSend(self, "unlockFocus");
-}
-}, "void");
-
-class_addMethod(the_class, "_mouseDownHandle:", function(self, _cmd, theEvent) {
-with(self) {
-var location = objc_msgSend(self, "convertPoint:fromView:", objc_msgSend(theEvent, "locationInWindow"), null);
-if (NSPointInRect(location,_bounds))
-{
-if (objc_msgSend(theEvent, "type") == 2)
-{
-objc_msgSend(self, "sendAction:to:", objc_msgSend(self, "action"), objc_msgSend(self, "target"));
-objc_msgSend(self, "lockFocus");
-objc_msgSend(_cell, "highlight:withFrame:inView:", NO, _bounds, self);
-objc_msgSend(self, "unlockFocus");
-return ;
-
-}
-else
-if (objc_msgSend(theEvent, "type") == 5)
-{
-objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:untilDate:inMode:dequeue:withTarget:withSelector:", (4 | 32), null, null, null, self, "selector:");
-return ;
-
-}
-
-
-
-}
-
-objc_msgSend(self, "lockFocus");
-objc_msgSend(_cell, "highlight:withFrame:inView:", NO, _bounds, self);
-objc_msgSend(self, "unlockFocus");
+objc_msgSend(_cell, "trackMouse:inRect:ofView:untilMouseUp:", theEvent, objc_msgSend(self, "bounds"), self, YES);
 }
 }, "void");
 

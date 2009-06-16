@@ -38,7 +38,7 @@ return _height;
 
 class_addMethod(the_class, "reloadToolbarItems", function(self, _cmd) {
 with(self) {
-if (objc_msgSend(_delegate, "respondsToSelector:", "selector:"))
+if (objc_msgSend(_delegate, "respondsToSelector:", "toolbarDefaultItemIdentifiers:"))
 _itemIdentifiers = objc_msgSend(_delegate, "toolbarDefaultItemIdentifiers:", self);
 else
 _itemIdentifiers = null;

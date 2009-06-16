@@ -26,6 +26,11 @@
         _DOMContainer = CGDOMElementCreate(@"div");
         _DOMGraphicsContext = CGDOMElementCreate(@"canvas");
         CGDOMElementAppendChild(_DOMContainer, _DOMGraphicsContext);
+        
+        // _DOMContainer = CGDOMElementCreate(@"div");
+        // _DOMGraphicsContext = CGDOMElementCreate(@"div");
+        // CGDOMElementAppendChild(_DOMContainer, _DOMGraphicsContext);
+
         _subviews = [NSMutableArray arrayWithCapacity:0];
         [self setFrame:frameRect];
     }
@@ -35,9 +40,14 @@
 - (id)initWithCoder:(NSCoder *)aCoder
 {
     // [super initWithCoder:aCoder];
-	_DOMContainer = CGDOMElementCreate(@"div");
-    _DOMGraphicsContext = CGDOMElementCreate(@"canvas");
-    CGDOMElementAppendChild(_DOMContainer, _DOMGraphicsContext);
+    _DOMContainer = CGDOMElementCreate(@"div");
+        _DOMGraphicsContext = CGDOMElementCreate(@"canvas");
+        CGDOMElementAppendChild(_DOMContainer, _DOMGraphicsContext);
+    //     
+    // _DOMContainer = CGDOMElementCreate(@"div");
+    //     _DOMGraphicsContext = CGDOMElementCreate(@"div");
+    //     CGDOMElementAppendChild(_DOMContainer, _DOMGraphicsContext);    
+    
     
     _frame = NSMakeRect (0,0,0,0);
     _bounds = NSMakeRect (0,0,0,0);
@@ -52,6 +62,8 @@
     
     _subviews = [NSMutableArray array];
 	NSArray *subviews = [aCoder decodeObjectForKey:@"NSSubviews"];
+	_superview = [aCoder decodeObjectForKey:@"NSSuperview"];;
+    _window = nil;
     
     if(subviews)
     {
@@ -66,8 +78,7 @@
     _bounds.origin = NSMakePoint (0,0);
     _bounds.size = _frame.size;
     
-    _superview = nil;
-    _window = nil;
+    
     
     return self;
 }
@@ -173,6 +184,11 @@
 - (void)viewWillMoveToWindow:(NSWindow *)newWindow
 {
     _window = newWindow;
+    
+    for(int i = 0; i < [_subviews count]; i++)
+    {
+        [[_subviews objectAtIndex:i] viewWillMoveToWindow:newWindow];
+    }
 }
 
 - (void)viewDidMoveToWindow
@@ -213,7 +229,6 @@
         theParentElement = [_window DOMContainer];
         CGDOMElementRemoveChild(theParentElement, _DOMContainer);
     }
-    
 }
 
 - (void)replaceSubview:(NSView *)oldView with:(NSView *)newView
@@ -386,7 +401,7 @@
     if (!aView)
         return [self convertPointFromBase:aPoint];
     
-    NSPoint newPoint = NSMakePoint (0, 0);
+    NSPoint newPoint = NSMakePoint(0, 0);
     // FIXME: for now assume no rotation or scaling
     newPoint.x = aPoint.x - _frame.origin.x;
     newPoint.y = aPoint.y - _frame.origin.y;
@@ -431,14 +446,24 @@
 
 - (NSPoint)convertPointFromBase:(NSPoint)aPoint
 {
-    if (_superview)
+    NSPoint newPoint = NSMakePoint(0, 0);
+    
+    if(_superview)
     {
-        aPoint.x = aPoint.x - _frame.origin.x;
-        aPoint.y = aPoint.y - _frame.origin.y;
-        return [_superview convertPointFromBase:aPoint];
+        newPoint.x = aPoint.x - _frame.origin.x;
+        newPoint.y = aPoint.y - _frame.origin.y;
+        return [_superview convertPointFromBase:newPoint];
+    }
+    else if(_window)
+    {
+        newPoint.x = aPoint.x - [_window frame].origin.x;
+        newPoint.y = aPoint.y - [_window frame].origin.y;
+        return newPoint;
     }
     else
+    {
         return aPoint;
+    }
 }
 
 - (NSSize)convertSizeToBase:(NSSize)aSize
@@ -490,6 +515,7 @@
 	
 	[NSGraphicsContext setCurrentContext:_graphicsContext];
 	CGContextSaveGState([_graphicsContext graphicsPort]);
+	CGContextClearRect([_graphicsContext graphicsPort], [self bounds]);
 }
 
 - (void)unlockFocus
@@ -653,8 +679,10 @@
 {
     aPoint = [self convertPoint:aPoint fromView:_superview];
     
-    if (!NSPointInRect(aPoint, _bounds))
+    if (!NSPointInRect(aPoint, [self bounds]))
+    {
         return nil;
+    }
     else
     {
         NSArray *subviews = _subviews;

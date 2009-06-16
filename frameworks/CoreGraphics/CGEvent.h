@@ -37,3 +37,5 @@ extern void CGEventSetFlags(CGEventRef event, CGEventFlags flags);
 extern void CGEventKeyboardGetUnicodeString(CGEventRef event, int maxStringLength, int actualStringLength, char unicodeString);
 
 extern void CGEventKeyboardSetUnicodeString(CGEventRef event, int stringLength, const char unicodeString);
+
+extern CFStringRef CGEventKeyGetUnicodeString(CGEventRef event);

@@ -65,10 +65,9 @@ class Vienna::ObjectiveCParser
     	;
 
     selector:
-    	  IDENTIFIER
-    	| ':' 
-    	| IDENTIFIER ':'
-    	| selector ':'
+       IDENTIFIER                                           { result = val[0] }
+    	| selector_component                                  { result = val[0] }
+    	| selector selector_component                         { result = make_node(',', val[0], val[1]) }
     	;
 
     primary_expression:

@@ -59,7 +59,6 @@ with(self) {
 objc_msgSend(self, "init");
 _frame = aFrame;
 _bounds = NSMakeRect(0,0,_frame.size.width,_frame.size.height);
-_gCanvas = NSWindowServerCreateCanvas(self);
 _subviews = objc_msgSend(NSMutableArray, "arrayWithCapacity:", 0);
 return self;
 }

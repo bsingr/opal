@@ -78,14 +78,16 @@
     if (![_cell isEnabled])
         return;
     
-    if ([_cell isSelectable] || [_cell isEditable]) {
-        
-        if (!_currentEditor) {
+    if ([_cell isSelectable] || [_cell isEditable])
+    {    
+        if (!_currentEditor)
+        {
             NSLog(@"first one");
             _currentEditor = [[self window] fieldEditor:YES forObject:self];
             NSLog(@"second one");
             _currentEditor = [_cell setUpFieldEditorAttributes:_currentEditor];
         }
+        
         [_cell setHighlighted:YES];
         [_cell editWithFrame:_bounds inView:self editor:_currentEditor delegate:self event:theEvent];
     }

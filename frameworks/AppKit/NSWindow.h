@@ -53,64 +53,59 @@ typedef NSUInteger NSWindowButton;
 
 @interface NSWindow : NSResponder
 {
-    id              _gState;
-    id              _gCanvas;
-    id              _gBuffer;
+    id                   _gState;
+    id                   _gCanvas;
+    id                   _gBuffer;
     
-    NSPoint         _contentRectOrigin;
-	NSSize          _contentRectSize;
+    NSPoint              _contentRectOrigin;
+	NSSize               _contentRectSize;
 	
-    BOOL            _isVisible;
+    BOOL                 _isVisible;
 	
-	BOOL            _hasShadow;
-	BOOL            _hidesOnDeactivate;
-	BOOL            _releasedWhenClosed;
-	NSUInteger     *_styleMask;
-	NSString       *_title;
-	BOOL            _visibleAtLaunch;
-	BOOL            _resizable;
+	BOOL                 _hasShadow;
+	BOOL                 _hidesOnDeactivate;
+	BOOL                 _releasedWhenClosed;
+	NSUInteger          *_styleMask;
+	NSString            *_title;
+	BOOL                 _visibleAtLaunch;
+	BOOL                 _resizable;
 	
-	BOOL            _showNormalTitlebar;
-	BOOL            _unifiedTitleAndToolbar;
+	BOOL                 _showNormalTitlebar;
+	BOOL                 _unifiedTitleAndToolbar;
 	
-	NSToolbar      *_toolbar;
+	NSToolbar           *_toolbar;
 	
-	NSView         *_contentView;
+	NSView              *_contentView;
 	
-	id              _delegate;
-	NSUInteger      _windowNumber;
+	id                   _delegate;
+	NSUInteger           _windowNumber;
 	
-	NSRect          _frame;
-    NSRect          _bounds;
-	BOOL            _visible;
+	NSRect               _frame;
+    NSRect               _bounds;
+	BOOL                 _visible;
 	
-	int             _level;
-	BOOL            _keyWindow;
-	BOOL            _mainWindow;
-	NSResponder    *_firstResponder;
+	int                  _level;
+	BOOL                 _keyWindow;
+	BOOL                 _mainWindow;
+	NSResponder         *_firstResponder;
 	
-	BOOL            _movableByWindowBackground;
-	//id _mouseMoveHandleCurrentX;
-	//id _mouseMoveHanldeCurrentY;
-    //id _mouseMoveHandle;
+	BOOL                 _movableByWindowBackground;
     
-    id _eventBindingCurrentX;
-    id _eventBindingCurrentY;
+    id                   _eventBindingCurrentX;
+    id                   _eventBindingCurrentY;
     
     NSWindowTitleButton *_windowCloseButton;
-    NSText *_fieldEditor;
+    NSText              *_fieldEditor;
     
-    NSSize          _maxSize;
-    NSSize          _minSize;
-    NSUInteger      _wtFlags;
-    id             *_windowClass;
+    NSSize               _maxSize;
+    NSSize               _minSize;
+    NSUInteger           _wtFlags;
+    id                  *_windowClass;
     
-    // Usually an "outer div" to hold the graphics context aswell as subviews' containers
-    CGDOMElementRef   _DOMContainer;
-    // Rendering context. mainly canvas. could be a nested DIV tree if DOM drawing. or could be a textfield for nstextfield etc. but default it is a canvas
-    CGDOMElementRef   _DOMGraphicsContext;
-	// a cache of the actual graphics context (from canvas, or VML representation).
-	NSGraphicsContext      *_graphicsContext;
+    
+    CGDOMElementRef      _DOMContainer;         // Usually an "outer div" to hold the graphics context aswell as subviews' containers
+    CGDOMElementRef      _DOMGraphicsContext;   // Rendering context: usually a canvas (exceptions for DOM rendering and VML)
+	NSGraphicsContext   *_graphicsContext;      // a cache of the actual graphics context (from canvas, or VML representation).
 }
 
 + (NSRect)frameRectForContentRect:(NSRect)cRect styleMask:(NSUInteger)aStyle;

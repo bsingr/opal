@@ -171,6 +171,46 @@ return theRect;
 }
 }, "void");
 
+class_addMethod(the_class, "setUpFieldEditorAttributes:", function(self, _cmd, textObj) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setPlaceholderString:", function(self, _cmd, string) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "placeholderString", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setPlaceholderAttributedString:", function(self, _cmd, string) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "placeholderAttributedString", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setWantsNotificationForMarkedText:", function(self, _cmd, flag) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "allowedInputSourceLocales", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setAllowedInputSourceLocales:", function(self, _cmd, localeIdentifiers) {
+with(self) {
+}
+}, "void");
+
 class_addMethod(meta_class, "load", function(self, _cmd) {
 with(self) {
 CFBundlePreloadResource(CFBundleGetBundleForClass(self),"NSTextFieldBezelTopLeft","png","");

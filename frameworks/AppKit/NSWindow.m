@@ -97,6 +97,11 @@
         _DOMGraphicsContext = CGDOMElementCreate(@"canvas");
         CGDOMElementAppendChild(_DOMContainer, _DOMGraphicsContext);
         CGDOMElementAppendChild(CGDOMElementGetRootElement(), _DOMContainer);
+
+        // _DOMContainer = CGDOMElementCreate(@"div");
+        // _DOMGraphicsContext = CGDOMElementCreate(@"div");
+        // CGDOMElementAppendChild(_DOMContainer, _DOMGraphicsContext);
+        // CGDOMElementAppendChild(CGDOMElementGetRootElement(), _DOMContainer);
         
         _windowNumber = [[NSApplication sharedApplication] addWindow:self];
         _styleMask = aStyle;
@@ -122,30 +127,37 @@
 - (void)mouseDown:(NSEvent *)theEvent
 {
     [self makeMainWindow];
-    _eventBindingCurrentX = [theEvent locationInBase].x;
-    _eventBindingCurrentY = [theEvent locationInBase].y;
-    
-    [[NSApplication sharedApplication] nextEventMatchingMask:(NSLeftMouseUpMask | NSMouseMovedMask) 
-                                        untilDate:nil
-                                        inMode:nil
-                                        dequeue:nil
-                                        withTarget:self
-                                        withSelector:@selector(_mouseDownHandle:)];
+    // _eventBindingCurrentX = [theEvent locationInWindow].x;
+    // _eventBindingCurrentY = [theEvent locationInWindow].y;
+    // 
+    // NSLog(CGStringFromPoint([theEvent locationInWindow]));
+    // 
+    // [[NSApplication sharedApplication] nextEventMatchingMask:(NSLeftMouseUpMask | NSMouseMovedMask) 
+    //                                     untilDate:nil
+    //                                     inMode:nil
+    //                                     dequeue:nil
+    //                                     withTarget:self
+    //                                     withSelector:@selector(_mouseDownHandle:)];
 }
 
 - (void)_mouseDownHandle:(NSEvent *)theEvent
 {
-    if ([theEvent type] == NSLeftMouseUp) {
+    if ([theEvent type] == NSLeftMouseUp)
+    {
         
     }
-    else { // It will be a NSMouseMoved
-        NSInteger newX = ([theEvent locationInBase].x - _eventBindingCurrentX) +  _frame.origin.x;
-        NSInteger newY = ([theEvent locationInBase].y - _eventBindingCurrentY) +  _frame.origin.y;        
-    
-        [self setFrameOrigin:NSMakePoint(newX, newY)];
+    else if([theEvent type] == NSMouseMoved)
+    { // It will be a NSMouseMoved
+        NSInteger newX = (([theEvent locationInWindow].x) - _eventBindingCurrentX);// +  _frame.origin.x;
+        NSInteger newY = (([theEvent locationInWindow].y) - _eventBindingCurrentY);// +  _frame.origin.y;        
         
-        _eventBindingCurrentX = [theEvent locationInBase].x;
-        _eventBindingCurrentY = [theEvent locationInBase].y;
+        [self setFrameOrigin:NSMakePoint(newX + _frame.origin.x, newY + _frame.origin.y)];
+        
+        _eventBindingCurrentX = [theEvent locationInWindow].x;
+        _eventBindingCurrentY = [theEvent locationInWindow].y;
+        
+        
+        NSLog(newX + "," + newY);
         
         [[NSApplication sharedApplication] nextEventMatchingMask:(NSLeftMouseUpMask | NSMouseMovedMask) 
                                             untilDate:nil
@@ -199,7 +211,7 @@
 
 - (BOOL)isExcludedFromWindowsMenu
 {
-    // TODO: Need to implement
+    return NO;
 }
 
 - (void)setContentView:(NSView *)aView
@@ -225,7 +237,7 @@
 
 - (void)setDelegate:(id)anObject
 {
-    // TODO: Need to implement
+    _delegate = anObject;
 }
 
 - (id)delegate
@@ -245,12 +257,29 @@
 
 - (NSText *)fieldEditor:(BOOL)createFlag forObject:(id)anObject
 {
-    // TODO: Need to implement
+    if(!_fieldEditor)
+    {
+        _fieldEditor = [[NSTextView alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
+        [_fieldEditor viewWillMoveToWindow:self];
+        return _fieldEditor;
+    }
+    else
+    {
+        if([_fieldEditor resignFirstResponder])
+        {
+            return _fieldEditor;
+        }
+        
+        _fieldEditor = [[NSTextView alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
+        [_fieldEditor viewWillMoveToWindow:self];
+        return _fieldEditor;
+    }
 }
 
 - (void)endEditingFor:(id)anObject
 {
-    // TODO: Need to implement
+    [_fieldEditor removeFromSuperview];
+    [_fieldEditor setString:@""];
 }
 
 
@@ -276,8 +305,8 @@
 {
     _frame.origin.x = aPoint.x;
 	_frame.origin.y = aPoint.y;
-    
-    NSWindowServerSetOrigin (_gCanvas, aPoint);
+    NSLog(CGStringFromPoint(aPoint));
+    CGDOMElementSetFrameOrigin(_DOMContainer, aPoint);
 }
 
 - (void)setFrameTopLeftPoint:(NSPoint)aPoint
@@ -941,16 +970,12 @@
         hitTest = [_contentView hitTest:[theEvent locationInWindow]];
         if (hitTest)
         {
-            NSLog(@"Sending mouse down to:");
-            NSLog(hitTest.isa.name);
-            // [hitTest mouseDown:theEvent];
+            [hitTest mouseDown:theEvent];
         }
             
         else
         {
             NSLog(@"Sending mouse down to (else)");
-            NSLog([theEvent locationInWindow]);
-            // [self mouseDown:theEvent];
         }
     }
     else if([theEvent valueForKey:@"type"] == NSLeftMouseUp)

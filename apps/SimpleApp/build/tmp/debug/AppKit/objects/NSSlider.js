@@ -48,3 +48,103 @@ return self;
 }
 }, "void");
 
+class_addMethod(the_class, "minValue", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setMinValue:", function(self, _cmd, aDouble) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "maxValue", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setMaxValue:", function(self, _cmd, aDouble) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setAltIncrementValue:", function(self, _cmd, incValue) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "altIncrementValue", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setTitleCell:", function(self, _cmd, aCell) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "titleCell", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setTitleColor:", function(self, _cmd, newColor) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "titleColor", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setTitleFont:", function(self, _cmd, fontObj) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "titleFont", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "title", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setTitle:", function(self, _cmd, aString) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setKnobThickness:", function(self, _cmd, aFloat) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "knobThickness", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setImage:", function(self, _cmd, backgroundImage) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "image", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "isVertical", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "acceptsFirstMouse:", function(self, _cmd, theEvent) {
+with(self) {
+}
+}, "void");
+

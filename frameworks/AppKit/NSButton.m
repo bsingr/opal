@@ -74,12 +74,12 @@
 
 - (NSInteger)state
 {
-    
+    return [_cell state];
 }
 
 - (void)setState:(NSInteger)value
 {
-    
+    [_cell setState:value];
 }
 
 - (BOOL)isBordered

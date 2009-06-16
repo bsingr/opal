@@ -72,11 +72,13 @@ with(self) {
 
 class_addMethod(the_class, "state", function(self, _cmd) {
 with(self) {
+return _state;
 }
 }, "void");
 
 class_addMethod(the_class, "setState:", function(self, _cmd, value) {
 with(self) {
+_state = value;
 }
 }, "void");
 
@@ -131,11 +133,13 @@ with(self) {
 
 class_addMethod(the_class, "isEnabled", function(self, _cmd) {
 with(self) {
+return _isEnabled;
 }
 }, "void");
 
 class_addMethod(the_class, "setEnabled:", function(self, _cmd, flag) {
 with(self) {
+_isEnabled = flag;
 }
 }, "void");
 
@@ -166,11 +170,13 @@ with(self) {
 
 class_addMethod(the_class, "isSelectable", function(self, _cmd) {
 with(self) {
+return _isSelectable;
 }
 }, "void");
 
 class_addMethod(the_class, "setSelectable:", function(self, _cmd, flag) {
 with(self) {
+_isSelectable = flag;
 }
 }, "void");
 
@@ -206,11 +212,13 @@ with(self) {
 
 class_addMethod(the_class, "isHighlighted", function(self, _cmd) {
 with(self) {
+return _isHighlighted;
 }
 }, "void");
 
 class_addMethod(the_class, "setHighlighted:", function(self, _cmd, flag) {
 with(self) {
+_isHighlighted = flag;
 }
 }, "void");
 
@@ -336,6 +344,7 @@ with(self) {
 
 class_addMethod(the_class, "setDoubleValue:", function(self, _cmd, aDouble) {
 with(self) {
+_value = aDouble;
 }
 }, "void");
 
@@ -456,10 +465,10 @@ objc_msgSend(textObj, "setAlignment:", objc_msgSend(self, "alignment"));
 objc_msgSend(textObj, "setString:", objc_msgSend(self, "stringValue"));
 objc_msgSend(textObj, "setSelectable:", objc_msgSend(self, "isSelectable"));
 objc_msgSend(self, "setEditable:", objc_msgSend(self, "isEditable"));
-if (objc_msgSend(self, "respondsToSelector:", "selector:"))
+if (objc_msgSend(self, "respondsToSelector:", "drawsBackground"))
 objc_msgSend(textObj, "setDrawsBackground:", objc_msgSend(self, "drawsBackground"));
 
-if (objc_msgSend(self, "respondsToSelector:", "selector:"))
+if (objc_msgSend(self, "respondsToSelector:", "backgroundColor"))
 objc_msgSend(textObj, "setBackgroundColor:", objc_msgSend(self, "backgroundColor"));
 
 return textObj;
@@ -501,11 +510,16 @@ with(self) {
 
 class_addMethod(the_class, "startTrackingAt:inView:", function(self, _cmd, startPoint, controlView) {
 with(self) {
+if (objc_msgSend(self, "isEnabled"))
+return YES;
+
+return NO;
 }
 }, "void");
 
 class_addMethod(the_class, "continueTracking:at:inView:", function(self, _cmd, lastPoint, currentPoint, controlView) {
 with(self) {
+return YES;
 }
 }, "void");
 
@@ -516,6 +530,77 @@ with(self) {
 
 class_addMethod(the_class, "trackMouse:inRect:ofView:untilMouseUp:", function(self, _cmd, theEvent, cellFrame, controlView, flag) {
 with(self) {
+objc_msgSend(controlView, "lockFocus");
+var location = objc_msgSend(controlView, "convertPoint:fromView:", objc_msgSend(theEvent, "locationInWindow"), null);
+if (!objc_msgSend(self, "startTrackingAt:inView:", objc_msgSend(theEvent, "locationInWindow"), controlView))
+{
+objc_msgSend(self, "drawWithFrame:inView:", cellFrame, controlView);
+objc_msgSend(controlView, "unlockFocus");
+return NO;
+
+}
+
+objc_msgSend(self, "highlight:withFrame:inView:", YES, objc_msgSend(controlView, "bounds"), controlView);
+objc_msgSend(controlView, "unlockFocus");
+objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "nextEventMatchingMask:forObject:withBlock:", (4 | 32), self, function(object,theEvent){
+objc_msgSend(controlView, "lockFocus");
+var location = objc_msgSend(controlView, "convertPoint:fromView:", objc_msgSend(theEvent, "locationInWindow"), null);
+if (flag)
+{
+if (objc_msgSend(theEvent, "type") == 2)
+{
+objc_msgSend(self, "stopTracking:at:inView:mouseIsUp:", objc_msgSend(theEvent, "locationInWindow"), objc_msgSend(theEvent, "locationInWindow"), controlView, YES);
+objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "discardEventsMatchingMaskRequest");
+if (objc_msgSend(self, "state") == 0)
+_state = 1;
+else
+_state = 0;
+
+objc_msgSend(self, "setHighlighted:", NO);
+
+}
+else
+{
+if (NSPointInRect(location,cellFrame))
+{
+objc_msgSend(self, "setHighlighted:", YES);
+
+}
+else
+{
+objc_msgSend(self, "setHighlighted:", NO);
+
+}
+
+if (!objc_msgSend(self, "continueTracking:at:inView:", objc_msgSend(theEvent, "locationInWindow"), objc_msgSend(theEvent, "locationInWindow"), controlView))
+{
+objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "discardEventsMatchingMaskRequest");
+
+}
+
+
+}
+
+
+}
+else
+if (NSPointInRect(location,cellFrame))
+{
+NSLog("Got here thought... in frame");
+
+}
+else
+{
+NSLog("Moved out of frame");
+objc_msgSend(self, "stopTracking:at:inView:mouseIsUp:", objc_msgSend(theEvent, "locationInWindow"), objc_msgSend(theEvent, "locationInWindow"), controlView, NO);
+objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "discardEventsMatchingMaskRequest");
+
+}
+
+
+objc_msgSend(self, "drawWithFrame:inView:", cellFrame, controlView);
+objc_msgSend(controlView, "unlockFocus");
+});
 }
 }, "void");
 

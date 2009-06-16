@@ -918,7 +918,8 @@ function CGDOMElementSetFrame(element, frame)
 // extern void CGDOMElementSetFrameOrigin(CGDOMElementRef element, CGPoint origin);
 function CGDOMElementSetFrameOrigin(element, origin)
 {
-    
+    element.style.bottom = origin.y + "px";
+    element.style.left = origin.x + "px";
 }
 
 // extern void CGDOMElementSetFrameSize(CGDOMElementRef element, CGSize size);
@@ -933,6 +934,9 @@ function CGDOMElementSetFrameSize(element, size)
 function CGDOMElementGetContext(element)
 {
     return element.getContext("2d");
+    // var theContext = new CGDOMRenderingContext();
+    // theContext.canvas = element;
+    // return theContext;
 }
 // 
 //  CGDOMRenderingContext.js
@@ -942,202 +946,225 @@ function CGDOMElementGetContext(element)
 //  Copyright 2009 Adam Beynon. All rights reserved.
 // 
 
-if (navigator.appName == 'Microsoft Internet Explorer') {
-    Element.prototype.getContext = function(name) {
-        var theContext = {
-            // reference to rendering canvas
-            canvas: "",
-            
-            // state
-            save: function() {
-                
-            },
-            
-            restore: function() {
-                
-            },
-            
-            // transformation
-            scale: function(x, y) {
-                
-            },
-            
-            rotate: function(angle) {
-                
-            },
-            
-            translate: function(x, y) {
-                
-            },
-            
-            trasform: function(m11, m12, m21, m22, dx, dy) {
-                
-            },
-            
-            setTransform: function(m11, m21, m12, m22, dx, dy) {
-                
-            },
-            
-            // compositing
-            globalAlpha: 1.0,
-            
-            globalCompositeOperation: "source-over",
-            
-            // colors and styles
-            strokeStyle: "black",
-            
-            fillStyle: "black",
-            
-            createLinearGradient: function(x0, y0, x1, y1) {
-                
-            },
-            
-            createRadialGradient: function(x0, y0, r0, x1, y1, r1) {
-                
-            },
-            
-            createPattern: function(image, repetition) {
-                
-            },
+function CGDOMRenderingContext()
+{
+    this.canvas = null;
+    
+    // compositing
+    this.globalAlpha = 1.0;
+    this.globalCompositeOperation = "source-over";
+    
+    // colors and styles
+    this.strokeStyle = "black";
+    this.fillStyle = "black";
+    
+    // text
+    this.font = "10px Arial";
+    this.textAlign = "start";
+    this.textBaseline = "alphabetic";
+    
+    // line caps/joins
+    this.lineWidth = 1;
+    this.lineCap = "butt";
+    this.lineJoin = "miter";
+    this.miterLimit = 10;
 
-            // line caps/joins
-            lineWidth: 1,
-            
-            lineCap: "butt",
-            
-            lineJoin: "miter",
-            
-            miterLimit: 10,
+    // shadows
+    this.shadowOffsetX = 0;
+    this.shadowOffsetY = 0;
+    this.shadowBlur = 0;
+    this.shadowColor = "black";
+    return this;
+}
 
-            // shadows
-            shadowOffsetX: 0,
-            
-            shadowOffsetY: 0,
-            
-            shadowBlur: 0,
-            
-            shadowColor: "black",
+CGDOMRenderingContext.prototype.save = function()
+{
+    
+};
 
-            // rects
-            clearRect: function(x, y, w, h) {
-                
-            },
-            
-            fillRect: function(x, y, w, h) {
-                var theDiv = document.createElement("div");
-                theDiv.style.background = "black";// = this.fillStyle;
-                this.canvas.appendChild(theDiv);
-            },
-            
-            strokeRect: function(x, y, w, h) {
-                
-            },
+CGDOMRenderingContext.prototype.restore = function()
+{
+    
+};
 
-            // path API
-            beginPath: function() {
-                
-            },
-            
-            closePath: function() {
-                
-            },
-            
-            moveTo: function(x, y) {
-                
-            },
-            
-            lineTo: function(x, y) {
-                
-            },
-            
-            quadraticCurveTo: function(cpx, cpy, x, y) {
-                
-            },
-            
-            bezierCurveTo: function(cp1x, cp1y, cp2x, cp2y, x, y) {
-                
-            },
-            
-            arcTo: function(x1, y1, x2, y2, radius) {
-                
-            },
-            
-            rect: function(x, y, w, h) {
-                
-            },
-            
-            arc: function(x, y, radius, startAngle, endAngle, anticlockwise) {
-                
-            },
-            
-            fill: function() {
-                
-            },
-            
-            stroke: function() {
-                
-            },
-            
-            clip: function() {
-                
-            },
-            
-            isPointInPath: function(x, y) {
-                
-            },
+CGDOMRenderingContext.prototype.scale = function(x, y)
+{
+    
+};
 
-            // text
-            font: "10px Arial",
-            
-            textAlign: "start",
-            
-            textBaseline: "alphabetic",
-            
-            fillText: function(text, x, y, maxWidth) {
-                this.strokeText(text, x, y, maxWidth);
-            },
-            
-            strokeText: function(text, x, y, maxWidth) {
-                var theSpan = document.createElement("span");
-                theSpan.innerHTML = text;
-                theSpan.style.font = this.font;
-                this.canvas.appendChild(theSpan);
-            },
-            
-            measureText: function(text) {
-                
-            },
-            
-            // drawing images
-            drawImage: function(image, dx, dy,  dw, dh) {
-                
-            },
-            
-            drawImage: function(image, sx, sy, sw, sh, dx, dy, dw, dh) {
-                
-            },
+CGDOMRenderingContext.prototype.rotate = function(angle)
+{
+    
+};
 
-            // pixel manipulation
-            createImageData: function(sw, sh) {
-                
-            },
+CGDOMRenderingContext.prototype.translate = function(x, y)
+{
+    
+};
 
-            createImageData: function(imagedata) {
-                
-            },
+CGDOMRenderingContext.prototype.transform = function(m11, m12, m21, m22, dx, dy)
+{
+    
+};
+        
 
-            getImageData: function(sx, sy, sw, sh) {
+            
+CGDOMRenderingContext.prototype.setTransform = function(m11, m21, m12, m22, dx, dy)
+{
                 
-            },
+};
+            
+CGDOMRenderingContext.prototype.createLinearGradient = function(x0, y0, x1, y1)
+{
+                
+};
+            
+CGDOMRenderingContext.prototype.createRadialGradient =  function(x0, y0, r0, x1, y1, r1)
+{
+                
+};
+            
+CGDOMRenderingContext.prototype.createPattern = function(image, repetition)
+{
+                
+};
 
-            putImageData: function(imagedata, dx, dy,  dirtyX, dirtyY, dirtyWidth, dirtyHeight) {
+CGDOMRenderingContext.prototype.clearRect = function(x, y, w, h)
+{
+    if (this.canvas.hasChildNodes())
+    {
+        while (this.canvas.childNodes.length >= 1)
+        {
+            this.canvas.removeChild(this.canvas.firstChild);       
+        } 
+    }
+};
+            
+CGDOMRenderingContext.prototype.fillRect = function(x, y, w, h)
+{
+    var theDiv = document.createElement("div");
+    theDiv.style.height = h + 'px';
+    theDiv.style.width = w + 'px';
+    theDiv.style.background = "yellow";// = this.fillStyle;
+    this.canvas.appendChild(theDiv);
+};
+            
+CGDOMRenderingContext.prototype.strokeRect = function(x, y, w, h)
+{
                 
-            }
-        };
-        theContext.canvas = this;
-        return theContext;
-    };
-}// 
+};
+
+CGDOMRenderingContext.prototype.beginPath = function()
+{
+                
+};
+            
+CGDOMRenderingContext.prototype.closePath = function()
+{
+                
+};
+            
+CGDOMRenderingContext.prototype.moveTo = function(x, y)
+{
+                
+};
+            
+CGDOMRenderingContext.prototype.lineTo = function(x, y)
+{
+                
+};
+            
+CGDOMRenderingContext.prototype.quadraticCurveTo = function(cpx, cpy, x, y)
+{
+                
+};
+            
+CGDOMRenderingContext.prototype.bezierCurveTo = function(cp1x, cp1y, cp2x, cp2y, x, y)
+{
+                
+};
+            
+CGDOMRenderingContext.prototype.arcTo = function(x1, y1, x2, y2, radius)
+{
+                
+};
+            
+CGDOMRenderingContext.prototype.rect = function(x, y, w, h)
+{
+                
+};
+            
+CGDOMRenderingContext.prototype.arc = function(x, y, radius, startAngle, endAngle, anticlockwise)
+{
+
+};
+            
+CGDOMRenderingContext.prototype.fill = function()
+{
+                
+};
+            
+CGDOMRenderingContext.prototype.stroke = function()
+{
+                
+};
+            
+CGDOMRenderingContext.prototype.clip = function()
+{
+                
+};
+            
+CGDOMRenderingContext.prototype.isPointInPath = function(x, y)
+{
+                
+};
+            
+CGDOMRenderingContext.prototype.fillText = function(text, x, y, maxWidth)
+{
+    this.strokeText(text, x, y, maxWidth);
+};
+            
+CGDOMRenderingContext.prototype.strokeText = function(text, x, y, maxWidth)
+{
+    var theSpan = document.createElement("span");
+    theSpan.innerHTML = text;
+    theSpan.style.font = this.font;
+    this.canvas.appendChild(theSpan);
+};
+            
+CGDOMRenderingContext.prototype.measureText = function(text)
+{
+
+};
+
+CGDOMRenderingContext.prototype.drawImage = function(image, dx, dy,  dw, dh)
+{
+
+};
+
+CGDOMRenderingContext.prototype.drawImage = function(image, sx, sy, sw, sh, dx, dy, dw, dh)
+{
+
+};
+
+CGDOMRenderingContext.prototype.createImageData = function(sw, sh)
+{
+
+};
+CGDOMRenderingContext.prototype.createImageData = function(imagedata)
+{
+
+};
+CGDOMRenderingContext.prototype.getImageData = function(sx, sy, sw, sh)
+{
+
+};
+
+CGDOMRenderingContext.prototype.putImageData = function(imagedata, dx, dy,  dirtyX, dirtyY, dirtyWidth, dirtyHeight)
+{
+    
+};
+// 
 //  CGEvent.js
 //  vienna
 //  
@@ -1150,21 +1177,22 @@ if (navigator.appName == 'Microsoft Internet Explorer') {
 document.onmousedown = function(event)
 {
     NSEventMouseEventFromCGEvent(event);
-    // var theEvent = objc_msgSend(NSEvent, "mouseEventWithType:location:modifierFlags:timestamp:windowNumber:context:eventNumber:clickCount:pressure:",
-    //     1, CGPointMake(event.clientX, (window.innerHeight - event.clientY)), null, null, 0, null, 1, 1, 1);
-    // 
-    // objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "sendEvent:", theEvent);
 };
 
 document.onmouseup = function(event)
 {
     NSEventMouseEventFromCGEvent(event);
-    // var theEvent = objc_msgSend(NSEvent, "mouseEventWithType:location:modifierFlags:timestamp:windowNumber:context:eventNumber:clickCount:pressure:",
-    //     2, CGPointMake(event.clientX, (window.innerHeight - event.clientY)), null, null, 0, null, 1, 1, 1);
-    // 
-    // objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "sendEvent:", theEvent);
 };
 
+document.onmousemove = function(event)
+{
+    NSEventMouseEventFromCGEvent(event);
+};
+
+document.onkeypress = function(event)
+{
+    NSEventKeyEventFromCGEvent(event);
+};
 
 function CGEventScreenFrameRect()
 {
@@ -1178,6 +1206,8 @@ function CGEventGetType(event)
         return 1;
     else if(event.type == "mouseup")
         return 2;
+    else if(event.type == "mousemove")
+        return 5;
     else return -1;
 }
 
@@ -1196,12 +1226,43 @@ function CGEventGetUnflippedLocation(event)
 // extern void CGEventSetLocation(CGEventRef event, CGPoint location);
 // 
 // extern CGEventFlags CGEventGetFlags(CGEventRef event);
+function CGEventGetFlags(event)
+{
+    var modifierFlags = 1;
+    
+    if (event.metaKey)
+     modifierFlags = modifierFlags | (1 << 20);
+     
+     if (event.shiftKey)
+     modifierFlags = modifierFlags | (1 << 17);
+     
+     if (event.altKey)
+     modifierFlags = modifierFlags | (1 << 19);
+     
+     if (event.ctrlKey)
+     modifierFlags = modifierFlags | (1 << 18);
+    
+    return modifierFlags;
+}
+
 // extern void CGEventSetFlags(CGEventRef event, CGEventFlags flags);
 // 
 // extern void CGEventKeyboardGetUnicodeString(CGEventRef event, int maxStringLength, int actualStringLength, char unicodeString);
 // 
 // extern void CGEventKeyboardSetUnicodeString(CGEventRef event, int stringLength, const char unicodeString);
-// 
+
+// extern CFStringRef CGEventKeyGetUnicodeString(CGEventRef event);
+function CGEventKeyGetUnicodeString(event)
+{
+    var keyCode = event.charCode;
+    var theCharacters = String.fromCharCode(keyCode);
+
+    // if ( theCharacters.toUpperCase() === theCharacters && theCharacters.toLowerCase() !== theCharacters && !theCharacters.shiftKey ) {
+    //                     NSLog("caps: " + theCharacters);
+    //             }
+    
+    return theCharacters;
+}// 
 //  CGFont.js
 //  vienna
 //  

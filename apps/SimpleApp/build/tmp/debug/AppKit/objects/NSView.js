@@ -76,6 +76,9 @@ _frame.size = objc_msgSend(aCoder, "decodeSizeForKey:", "NSFrameSize");
 objc_msgSend(self, "setFrame:", _frame);
 _subviews = objc_msgSend(NSMutableArray, "array");
 var subviews = objc_msgSend(aCoder, "decodeObjectForKey:", "NSSubviews");
+_superview = objc_msgSend(aCoder, "decodeObjectForKey:", "NSSuperview");
+;
+_window = null;
 if (subviews)
 {
 var aSubview;
@@ -90,8 +93,6 @@ objc_msgSend(self, "addSubview:", aSubview);
 
 _bounds.origin = NSMakePoint(0,0);
 _bounds.size = _frame.size;
-_superview = null;
-_window = null;
 return self;
 }
 }, "void");
@@ -199,6 +200,12 @@ with(self) {
 class_addMethod(the_class, "viewWillMoveToWindow:", function(self, _cmd, newWindow) {
 with(self) {
 _window = newWindow;
+for(var i = 0;
+i < objc_msgSend(_subviews, "count");
+i++){
+objc_msgSend(objc_msgSend(_subviews, "objectAtIndex:", i), "viewWillMoveToWindow:", newWindow);
+
+}
 }
 }, "void");
 
@@ -462,15 +469,28 @@ with(self) {
 
 class_addMethod(the_class, "convertPointFromBase:", function(self, _cmd, aPoint) {
 with(self) {
+var newPoint = NSMakePoint(0,0);
 if (_superview)
 {
-aPoint.x = aPoint.x - _frame.origin.x;
-aPoint.y = aPoint.y - _frame.origin.y;
-return objc_msgSend(_superview, "convertPointFromBase:", aPoint);
+newPoint.x = aPoint.x - _frame.origin.x;
+newPoint.y = aPoint.y - _frame.origin.y;
+return objc_msgSend(_superview, "convertPointFromBase:", newPoint);
 
 }
 else
+if (_window)
+{
+newPoint.x = aPoint.x - objc_msgSend(_window, "frame").origin.x;
+newPoint.y = aPoint.y - objc_msgSend(_window, "frame").origin.y;
+return newPoint;
+
+}
+else
+{
 return aPoint;
+
+}
+
 
 }
 }, "void");
@@ -526,6 +546,7 @@ _graphicsContext = objc_msgSend(NSGraphicsContext, "graphicsContextWithGraphicsP
 
 objc_msgSend(NSGraphicsContext, "setCurrentContext:", _graphicsContext);
 CGContextSaveGState(objc_msgSend(_graphicsContext, "graphicsPort"));
+CGContextClearRect(objc_msgSend(_graphicsContext, "graphicsPort"),objc_msgSend(self, "bounds"));
 }
 }, "void");
 
@@ -680,8 +701,11 @@ with(self) {
 class_addMethod(the_class, "hitTest:", function(self, _cmd, aPoint) {
 with(self) {
 aPoint = objc_msgSend(self, "convertPoint:fromView:", aPoint, _superview);
-if (!NSPointInRect(aPoint,_bounds))
+if (!NSPointInRect(aPoint,objc_msgSend(self, "bounds")))
+{
 return null;
+
+}
 else
 {
 var subviews = _subviews;

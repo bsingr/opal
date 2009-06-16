@@ -405,9 +405,24 @@ module Vienna
     
     
     def output_at_selector(file, statement)
-      file.write "\"selector:\""
+      file.write "\""
+      output_at_selector_part file, statement.left
+      file.write "\""
     end
     
+    def output_at_selector_part(file, statement)
+      return unless statement
+      
+      if statement.value == ","
+        output_at_selector_part file, statement.left
+        output_at_selector_part file, statement.right
+      elsif statement.value == ":"
+        file.write statement.left.value
+        file.write ":"
+      else
+        file.write statement.value
+      end
+    end
     
     def output_return_statement(file, statement)
       file.write "return "

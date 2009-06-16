@@ -100,11 +100,13 @@ with(self) {
 
 class_addMethod(the_class, "state", function(self, _cmd) {
 with(self) {
+return objc_msgSend(_cell, "state");
 }
 }, "void");
 
 class_addMethod(the_class, "setState:", function(self, _cmd, value) {
 with(self) {
+objc_msgSend(_cell, "setState:", value);
 }
 }, "void");
 

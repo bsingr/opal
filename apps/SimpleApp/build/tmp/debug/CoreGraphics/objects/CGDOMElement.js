@@ -94,7 +94,8 @@ function CGDOMElementSetFrame(element, frame)
 // extern void CGDOMElementSetFrameOrigin(CGDOMElementRef element, CGPoint origin);
 function CGDOMElementSetFrameOrigin(element, origin)
 {
-    
+    element.style.bottom = origin.y + "px";
+    element.style.left = origin.x + "px";
 }
 
 // extern void CGDOMElementSetFrameSize(CGDOMElementRef element, CGSize size);
@@ -109,4 +110,7 @@ function CGDOMElementSetFrameSize(element, size)
 function CGDOMElementGetContext(element)
 {
     return element.getContext("2d");
+    // var theContext = new CGDOMRenderingContext();
+    // theContext.canvas = element;
+    // return theContext;
 }

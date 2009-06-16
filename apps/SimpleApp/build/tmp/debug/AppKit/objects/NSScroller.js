@@ -51,7 +51,7 @@ return self;
 
 class_addMethod(the_class, "initWithFrame:", function(self, _cmd, frameRect) {
 with(self) {
-objc_msgSendSuper({super_class:NSControl, receiver:self}, "initWithFrame:", frameRect);
+self = objc_msgSendSuper({super_class:NSControl, receiver:self}, "initWithFrame:", frameRect);
 if (self)
 {
 
@@ -63,6 +63,8 @@ return self;
 
 class_addMethod(the_class, "drawRect:", function(self, _cmd, rect) {
 with(self) {
+var c = objc_msgSend(objc_msgSend(NSGraphicsContext, "currentContext"), "graphicsPort");
+CGContextFillRect(c,rect);
 }
 }, "void");
 

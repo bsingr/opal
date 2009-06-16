@@ -72,12 +72,12 @@
 
 - (NSInteger)state
 {
-    // TODO: Need to implement
+    return _state;
 }
 
 - (void)setState:(NSInteger)value
 {
-    // TODO: Need to implement
+    _state = value;
 }
 
 - (id)target
@@ -127,12 +127,12 @@
 
 - (BOOL)isEnabled
 {
-    // TODO: Need to implement
+    return _isEnabled;
 }
 
 - (void)setEnabled:(BOOL)flag
 {
-    // TODO: Need to implement
+    _isEnabled = flag;
 }
 
 - (NSInteger)sendActionOn:(NSInteger)mask
@@ -162,12 +162,12 @@
 
 - (BOOL)isSelectable
 {
-    // TODO: Need to implement
+    return _isSelectable;
 }
 
 - (void)setSelectable:(BOOL)flag
 {
-    // TODO: Need to implement
+    _isSelectable = flag;
 }
 
 - (BOOL)isBordered
@@ -202,12 +202,12 @@
 
 - (BOOL)isHighlighted
 {
-    // TODO: Need to implement
+    return _isHighlighted;
 }
 
 - (void)setHighlighted:(BOOL)flag
 {
-    // TODO: Need to implement
+    _isHighlighted = flag;
 }
 
 - (NSTextAlignment)alignment
@@ -332,7 +332,7 @@
 
 - (void)setDoubleValue:(double)aDouble
 {
-    // TODO: Need to implement
+    _value = aDouble;
 }
 
 - (void)takeIntValueFrom:(id)sender
@@ -473,7 +473,8 @@
 
 - (void)highlight:(BOOL)flag withFrame:(NSRect)cellFrame inView:(NSView *)controlView
 {
-    if ([self isHighlighted] != flag) {
+    if ([self isHighlighted] != flag)
+    {
         [self setHighlighted:flag];
         [self drawWithFrame:cellFrame inView:controlView];
     }
@@ -491,22 +492,97 @@
 
 - (BOOL)startTrackingAt:(NSPoint)startPoint inView:(NSView *)controlView
 {
-    // TODO: Need to implement
+    // NSLog(@"Starting tracking at: " + CGStringFromPoint(startPoint));
+    if([self isEnabled])
+        return YES;
+
+    return NO;
 }
 
 - (BOOL)continueTracking:(NSPoint)lastPoint at:(NSPoint)currentPoint inView:(NSView *)controlView
 {
-    // TODO: Need to implement
+    return YES;
 }
 
 - (void)stopTracking:(NSPoint)lastPoint at:(NSPoint)stopPoint inView:(NSView *)controlView mouseIsUp:(BOOL)flag
 {
-    // TODO: Need to implement
+    // empty implementation
 }
 
 - (BOOL)trackMouse:(NSEvent *)theEvent inRect:(NSRect)cellFrame ofView:(NSView *)controlView untilMouseUp:(BOOL)flag
 {
-    // TODO: Need to implement
+    [controlView lockFocus];
+    
+    NSPoint location = [controlView convertPoint:[theEvent locationInWindow] fromView:nil];
+    
+    if(![self startTrackingAt:[theEvent locationInWindow] inView:controlView])
+    {
+        [self drawWithFrame:cellFrame inView:controlView];
+        [controlView unlockFocus];
+        return NO;
+    }
+        
+    [self highlight:YES withFrame:[controlView bounds] inView:controlView];
+    [controlView unlockFocus];
+     
+    // for each event...
+    [[NSApplication sharedApplication] nextEventMatchingMask:(NSLeftMouseUpMask | NSMouseMovedMask) forObject:self withBlock:^(id object, NSEvent *theEvent) {
+
+        [controlView lockFocus];
+        
+        NSPoint location = [controlView convertPoint:[theEvent locationInWindow] fromView:nil];
+        
+        if(flag)
+        {
+            if([theEvent type] == NSLeftMouseUp)
+            {
+                [self stopTracking:[theEvent locationInWindow] at:[theEvent locationInWindow] inView:controlView mouseIsUp:YES];
+                [[NSApplication sharedApplication] discardEventsMatchingMaskRequest];
+                
+                if([self state] == NSOffState)
+                    _state = NSOnState;
+                else
+                    _state = NSOffState;
+                
+                [self setHighlighted:NO];
+            }
+            else
+            {
+                if(NSPointInRect(location, cellFrame))
+                {
+                    [self setHighlighted:YES];
+                }
+                else
+                {
+                    [self setHighlighted:NO];
+                }
+                
+                if(![self continueTracking:[theEvent locationInWindow] at:[theEvent locationInWindow] inView:controlView])
+                {
+                    [[NSApplication sharedApplication] discardEventsMatchingMaskRequest];
+                }
+                
+                // if([self isContinous])
+                // {
+                //     // should keep sending action (values from slider, click on button etc)
+                // }
+            } 
+        }
+        else if(NSPointInRect(location, cellFrame))
+        {
+            NSLog(@"Got here thought... in frame");
+        }
+        else
+        {
+            NSLog(@"Moved out of frame");
+            [self stopTracking:[theEvent locationInWindow] at:[theEvent locationInWindow] inView:controlView mouseIsUp:NO];
+            [[NSApplication sharedApplication] discardEventsMatchingMaskRequest];
+        }
+        
+        [self drawWithFrame:cellFrame inView:controlView];
+        
+        [controlView unlockFocus];
+    }];
 }
 
 - (void)editWithFrame:(NSRect)aRect inView:(NSView *)controlView editor:(NSText *)textObj delegate:(id)anObject event:(NSEvent *)theEvent

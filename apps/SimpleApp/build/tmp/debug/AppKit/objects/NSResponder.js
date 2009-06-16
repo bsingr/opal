@@ -152,7 +152,7 @@ with(self) {
 
 class_addMethod(the_class, "noResponderFor:", function(self, _cmd, eventSelector) {
 with(self) {
-if (eventSelector == "selector:")
+if (eventSelector == "keyDown:")
 {
 
 }
