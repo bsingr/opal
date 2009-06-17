@@ -56,6 +56,16 @@
     CGContextRestoreGState(c);
 }
 
+- (void)drawBarInside:(NSRect)cellFrame flipped:(BOOL)flipped
+{
+    
+}
+
+- (void)drawKnob:(NSRect)rect
+{
+    
+}
+
 - (BOOL)startTrackingAt:(NSPoint)startPoint inView:(NSView *)controlView
 {
     if([self isEnabled])

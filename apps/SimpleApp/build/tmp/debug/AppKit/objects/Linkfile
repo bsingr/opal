@@ -97,6 +97,11 @@ NSMenuView.js:
   - NSView
   declarations: 
   - NSMenuView
+NSLayoutManager.js: 
+  dependencies: 
+  - NSObject
+  declarations: 
+  - NSLayoutManager
 NSImage.js: 
   dependencies: 
   - NSObject
@@ -152,6 +157,11 @@ NSColorWell.js:
   - NSControl
   declarations: 
   - NSColorWell
+NSTextStorage.js: 
+  dependencies: 
+  - NSAttributedString
+  declarations: 
+  - NSTextStorage
 NSText.js: 
   dependencies: 
   - NSView
@@ -278,3 +288,8 @@ NSArrayController.js:
   - NSObjectController
   declarations: 
   - NSArrayController
+NSTextContainer.js: 
+  dependencies: 
+  - NSObject
+  declarations: 
+  - NSTextContainer

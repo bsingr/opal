@@ -173,6 +173,7 @@ return theRect;
 
 class_addMethod(the_class, "setUpFieldEditorAttributes:", function(self, _cmd, textObj) {
 with(self) {
+return textObj;
 }
 }, "void");
 

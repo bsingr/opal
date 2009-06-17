@@ -3398,11 +3398,17 @@ with(self) {
 if (!_isEditable && !_isSelectable)
 return ;
 
+NSLog("Wowza");
 objc_msgSend(textObj, "setFrame:", objc_msgSend(self, "titleRectForBounds:", aRect));
+NSLog("Set frame");
 objc_msgSend(controlView, "addSubview:", textObj);
+NSLog("Added subview");
 objc_msgSend(objc_msgSend(controlView, "window"), "makeFirstResponder:", textObj);
+NSLog("made first responder");
 objc_msgSend(textObj, "setDelegate:", anObject);
+NSLog("Seyt delegate");
 objc_msgSend(textObj, "mouseDown:", theEvent);
+NSLog("Mouse down on the event");
 }
 }, "void");
 
@@ -4625,25 +4631,13 @@ windowNumber = objc_msgSend(objc_msgSend(objc_msgSend(NSApplication, "sharedAppl
 else
 windowNumber = -1;
 
-var theEvent = objc_msgSend(NSEvent, "mouseEventWithType:location:modifierFlags:timestamp:windowNumber:context:eventNumber:clickCount:pressure:", CGEventGetType(event), location, 0, 0, windowNumber, null, 1, 1, 1);
+var theEvent = objc_msgSend(NSEvent, "mouseEventWithType:location:modifierFlags:timestamp:windowNumber:context:eventNumber:clickCount:pressure:", CGEventGetType(event), location, CGEventGetFlags(event), 0, windowNumber, null, 1, 1, 1);
 objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "sendEvent:", theEvent);
 }
 function NSEventKeyEventFromCGEvent(event)
 {
 NSLog(CGEventKeyGetUnicodeString(event));
 var theFlags = CGEventGetFlags(event);
-if (theFlags & 131072)
-NSLog("Shift key");
-
-if (theFlags & 262144)
-NSLog("Control key");
-
-if (theFlags & 524288)
-NSLog("Alt key");
-
-if (theFlags & 1048576)
-NSLog("Cmd key");
-
 }
 var the_class = objc_allocateClassPair(NSObject, "NSEvent");
 var meta_class = the_class.isa;
@@ -5034,6 +5028,601 @@ with(self) {
 }, "void");
 
 class_addMethod(meta_class, "exposeBinding:", function(self, _cmd, binding) {
+with(self) {
+}
+}, "void");
+
+var the_class = objc_allocateClassPair(NSObject, "NSLayoutManager");
+var meta_class = the_class.isa;
+objc_registerClassPair(the_class);
+class_addIvar(the_class, "isa", "Class");
+
+class_addMethod(the_class, "init", function(self, _cmd) {
+with(self) {
+_typeSetter = objc_msgSend(objc_msgSend(NSTypesetter, "alloc"), "init");
+_glyphGenerator = objc_msgSend(NSGlyphGenerator, "sharedGlyphGenerator");
+_textContainers = objc_msgSend(NSMutableArray, "array");
+_layoutInvalid = YES;
+return self;
+}
+}, "void");
+
+class_addMethod(the_class, "textStorage", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setTextStorage:", function(self, _cmd, textStorage) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "attributedString", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "replaceTextStorage:", function(self, _cmd, newTextStorage) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "glyphGenerator", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setGlyphGenerator:", function(self, _cmd, glyphGenerator) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "typesetter", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setTypesetter:", function(self, _cmd, typesetter) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "delegate", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setDelegate:", function(self, _cmd, delegate) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "textContainers", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "addTextContainer:", function(self, _cmd, container) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "insertTextContainer:atIndex:", function(self, _cmd, container, index) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "removeTextContainerAtIndex:", function(self, _cmd, index) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "textContainerChangedGeometry:", function(self, _cmd, container) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "textContainerChangedTextView:", function(self, _cmd, container) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setBackgroundLayoutEnabled:", function(self, _cmd, flag) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "backgroundLayoutEnabled", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setUsesScreenFonts:", function(self, _cmd, flag) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "usesScreenFonts", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setShowsInvisibleCharacters:", function(self, _cmd, flag) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "showsInvisibleCharacters", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setShowsControlCharacters:", function(self, _cmd, flag) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "showsControlCharacters", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setHyphenationFactor:", function(self, _cmd, factor) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "hyphenationFactor", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setDefaultAttachmentScaling:", function(self, _cmd, scaling) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "defaultAttachmentScaling", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "layoutOptions", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setAllowsNonContiguousLayout:", function(self, _cmd, flag) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "allowsNonContiguousLayout", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "hasNonContiguousLayout", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "invalidateGlyphsForCharacterRange:changeInLength:actualCharacterRange:", function(self, _cmd, charRange, delta, actualCharRange) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "invalidateLayoutForCharacterRange:actualCharacterRange:", function(self, _cmd, charRange, actualCharRange) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "invalidateLayoutForCharacterRange:isSoft:actualCharacterRange:", function(self, _cmd, charRange, flag, actualCharRange) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "invalidateDisplayForCharacterRange:", function(self, _cmd, charRange) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "invalidateDisplayForGlyphRange:", function(self, _cmd, glyphRange) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "textStorage:edited:range:changeInLength:invalidatedRange:", function(self, _cmd, str, editedMask, newCharRange, delta, invalidatedCharRange) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "ensureGlyphsForCharacterRange:", function(self, _cmd, charRange) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "ensureGlyphsForGlyphRange:", function(self, _cmd, glyphRange) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "ensureLayoutForCharacterRange:", function(self, _cmd, charRange) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "ensureLayoutForGlyphRange:", function(self, _cmd, glyphRange) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "ensureLayoutForTextContainer:", function(self, _cmd, container) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "ensureLayoutForBoundingRect:inTextContainer:", function(self, _cmd, bounds, container) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "insertGlyphs:length:forStartingGlyphAtIndex:characterIndex:", function(self, _cmd, glyphs, length, glyphIndex, charIndex) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "insertGlyph:atGlyphIndex:characterIndex:", function(self, _cmd, glyph, glyphIndex, charIndex) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "replaceGlyphAtIndex:withGlyph:", function(self, _cmd, glyphIndex, newGlyph) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "deleteGlyphsInRange:", function(self, _cmd, glyphRange) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setCharacterIndex:forGlyphAtIndex:", function(self, _cmd, charIndex, glyphIndex) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setIntAttribute:value:forGlyphAtIndex:", function(self, _cmd, attributeTag, val, glyphIndex) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "invalidateGlyphsOnLayoutInvalidationForGlyphRange:", function(self, _cmd, glyphRange) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "numberOfGlyphs", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "glyphAtIndex:isValidIndex:", function(self, _cmd, glyphIndex, isValidIndex) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "glyphAtIndex:", function(self, _cmd, glyphIndex) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "isValidGlyphIndex:", function(self, _cmd, glyphIndex) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "characterIndexForGlyphAtIndex:", function(self, _cmd, glyphIndex) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "glyphIndexForCharacterAtIndex:", function(self, _cmd, charIndex) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "intAttribute:forGlyphAtIndex:", function(self, _cmd, attributeTag, glyphIndex) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "getGlyphs:range:", function(self, _cmd, glyphArray, glyphRange) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setTextContainer:forGlyphRange:", function(self, _cmd, container, glyphRange) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setLineFragmentRect:forGlyphRange:usedRect:", function(self, _cmd, fragmentRect, glyphRange, usedRect) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setExtraLineFragmentRect:usedRect:textContainer:", function(self, _cmd, fragmentRect, usedRect, container) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setLocation:forStartOfGlyphRange:", function(self, _cmd, location, glyphRange) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setLocations:startingGlyphIndexes:count:forGlyphRange:", function(self, _cmd, locations, glyphIndexes, count, glyphRange) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setNotShownAttribute:forGlyphAtIndex:", function(self, _cmd, flag, glyphIndex) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setDrawsOutsideLineFragment:forGlyphAtIndex:", function(self, _cmd, flag, glyphIndex) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setAttachmentSize:forGlyphRange:", function(self, _cmd, attachmentSize, glyphRange) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "getFirstUnlaidCharacterIndex:glyphIndex:", function(self, _cmd, charIndex, glyphIndex) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "firstUnlaidCharacterIndex", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "firstUnlaidGlyphIndex", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "textContainerForGlyphAtIndex:effectiveRange:", function(self, _cmd, glyphIndex, effectiveGlyphRange) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "usedRectForTextContainer:", function(self, _cmd, container) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "lineFragmentRectForGlyphAtIndex:effectiveRange:", function(self, _cmd, glyphIndex, effectiveGlyphRange) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "lineFragmentUsedRectForGlyphAtIndex:effectiveRange:", function(self, _cmd, glyphIndex, effectiveGlyphRange) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "lineFragmentRectForGlyphAtIndex:effectiveRange:withoutAdditionalLayout:", function(self, _cmd, glyphIndex, effectiveGlyphRange, flag) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "lineFragmentUsedRectForGlyphAtIndex:effectiveRange:withoutAdditionalLayout:", function(self, _cmd, glyphIndex, effectiveGlyphRange, flag) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "textContainerForGlyphAtIndex:effectiveRange:withoutAdditionalLayout:", function(self, _cmd, glyphIndex, effectiveGlyphRange, flag) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "extraLineFragmentRect", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "extraLineFragmentUsedRect", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "extraLineFragmentTextContainer", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "locationForGlyphAtIndex:", function(self, _cmd, glyphIndex) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "notShownAttributeForGlyphAtIndex:", function(self, _cmd, glyphIndex) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "drawsOutsideLineFragmentForGlyphAtIndex:", function(self, _cmd, glyphIndex) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "attachmentSizeForGlyphAtIndex:", function(self, _cmd, glyphIndex) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setLayoutRect:forTextBlock:glyphRange:", function(self, _cmd, rect, block, glyphRange) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setBoundsRect:forTextBlock:glyphRange:", function(self, _cmd, rect, block, glyphRange) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "layoutRectForTextBlock:glyphRange:", function(self, _cmd, block, glyphRange) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "boundsRectForTextBlock:glyphRange:", function(self, _cmd, block, glyphRange) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "layoutRectForTextBlock:atIndex:effectiveRange:", function(self, _cmd, block, glyphIndex, effectiveGlyphRange) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "boundsRectForTextBlock:atIndex:effectiveRange:", function(self, _cmd, block, glyphIndex, effectiveGlyphRange) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "glyphRangeForCharacterRange:actualCharacterRange:", function(self, _cmd, charRange, actualCharRange) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "characterRangeForGlyphRange:actualGlyphRange:", function(self, _cmd, glyphRange, actualGlyphRange) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "glyphRangeForTextContainer:", function(self, _cmd, container) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "rangeOfNominallySpacedGlyphsContainingIndex:", function(self, _cmd, glyphIndex) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "rectArrayForCharacterRange:withinSelectedCharacterRange:inTextContainer:rectCount:", function(self, _cmd, charRange, selCharRange, container, rectCount) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "rectArrayForGlyphRange:withinSelectedGlyphRange:inTextContainer:rectCount:", function(self, _cmd, glyphRange, selGlyphRange, container, rectCount) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "boundingRectForGlyphRange:inTextContainer:", function(self, _cmd, glyphRange, container) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "glyphRangeForBoundingRect:inTextContainer:", function(self, _cmd, bounds, container) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "glyphRangeForBoundingRectWithoutAdditionalLayout:inTextContainer:", function(self, _cmd, bounds, container) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "glyphIndexForPoint:inTextContainer:fractionOfDistanceThroughGlyph:", function(self, _cmd, point, container, partialFraction) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "glyphIndexForPoint:inTextContainer:", function(self, _cmd, point, container) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "fractionOfDistanceThroughGlyphForPoint:inTextContainer:", function(self, _cmd, point, container) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "getLineFragmentInsertionPointsForCharacterAtIndex:alternatePositions:inDisplayOrder:positions:characterIndexes:", function(self, _cmd, charIndex, aFlag, dFlag, positions, charIndexes) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "temporaryAttributesAtCharacterIndex:effectiveRange:", function(self, _cmd, charIndex, effectiveCharRange) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setTemporaryAttributes:forCharacterRange:", function(self, _cmd, attrs, charRange) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "addTemporaryAttributes:forCharacterRange:", function(self, _cmd, attrs, charRange) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "removeTemporaryAttribute:forCharacterRange:", function(self, _cmd, attrName, charRange) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "temporaryAttribute:atCharacterIndex:effectiveRange:", function(self, _cmd, attrName, location, range) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "temporaryAttribute:atCharacterIndex:longestEffectiveRange:inRange:", function(self, _cmd, attrName, location, range, rangeLimit) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "temporaryAttributesAtCharacterIndex:longestEffectiveRange:inRange:", function(self, _cmd, location, range, rangeLimit) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "addTemporaryAttribute:value:forCharacterRange:", function(self, _cmd, attrName, value, charRange) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "substituteFontForFont:", function(self, _cmd, originalFont) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "defaultLineHeightForFont:", function(self, _cmd, theFont) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "defaultBaselineOffsetForFont:", function(self, _cmd, theFont) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "usesFontLeading", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setUsesFontLeading:", function(self, _cmd, flag) {
 with(self) {
 }
 }, "void");
@@ -6299,12 +6888,12 @@ NSLog("Sending mouse down to (else)");
 
 }
 else
-if (objc_msgSend(theEvent, "valueForKey:", "type") == 2)
+if (objc_msgSend(theEvent, "type") == 2)
 {
 
 }
 else
-if (objc_msgSend(theEvent, "valueForKey:", "type") == 10)
+if (objc_msgSend(theEvent, "type") == 10)
 {
 if (_firstResponder)
 {
@@ -9560,6 +10149,16 @@ CGContextRestoreGState(c);
 }
 }, "void");
 
+class_addMethod(the_class, "drawBarInside:flipped:", function(self, _cmd, cellFrame, flipped) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "drawKnob:", function(self, _cmd, rect) {
+with(self) {
+}
+}, "void");
+
 class_addMethod(the_class, "startTrackingAt:inView:", function(self, _cmd, startPoint, controlView) {
 with(self) {
 if (objc_msgSend(self, "isEnabled"))
@@ -10061,6 +10660,7 @@ return theRect;
 
 class_addMethod(the_class, "setUpFieldEditorAttributes:", function(self, _cmd, textObj) {
 with(self) {
+return textObj;
 }
 }, "void");
 
@@ -10308,11 +10908,106 @@ _delegate = anObject;
 
 class_addMethod(the_class, "initWithFrame:", function(self, _cmd, aFrame) {
 with(self) {
-objc_msgSend(self, "init");
-_frame = aFrame;
-_bounds = NSMakeRect(0,0,_frame.size.width,_frame.size.height);
-_subviews = objc_msgSend(NSMutableArray, "arrayWithCapacity:", 0);
+self = objc_msgSendSuper({super_class:NSView, receiver:self}, "initWithFrame:", aFrame);
 return self;
+}
+}, "void");
+
+var the_class = objc_allocateClassPair(NSObject, "NSTextContainer");
+var meta_class = the_class.isa;
+objc_registerClassPair(the_class);
+class_addIvar(the_class, "isa", "Class");
+class_addIvar(the_class, "_layoutManager", "NSLayoutManager");
+class_addIvar(the_class, "_textView", "NSTextView");
+class_addIvar(the_class, "_size", "NSSize");
+class_addIvar(the_class, "_lineFragmentPadding", "CGFloat");
+
+class_addMethod(the_class, "initWithContainerSize:", function(self, _cmd, size) {
+with(self) {
+_size = size;
+_textView = null;
+_layoutManager = null;
+return self;
+}
+}, "void");
+
+class_addMethod(the_class, "layoutManager", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setLayoutManager:", function(self, _cmd, layoutManager) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "replaceLayoutManager:", function(self, _cmd, newLayoutManager) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "textView", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setTextView:", function(self, _cmd, textView) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setWidthTracksTextView:", function(self, _cmd, flag) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "widthTracksTextView", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setHeightTracksTextView:", function(self, _cmd, flag) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "heightTracksTextView", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setContainerSize:", function(self, _cmd, size) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "containerSize", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setLineFragmentPadding:", function(self, _cmd, pad) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "lineFragmentPadding", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "lineFragmentRectForProposedRect:sweepDirection:movementDirection:remainingRect:", function(self, _cmd, proposedRect, sweepDirection, movementDirection, remainingRect) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "isSimpleRectangularTextContainer", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "containsPoint:", function(self, _cmd, point) {
+with(self) {
 }
 }, "void");
 
@@ -10417,7 +11112,6 @@ return YES;
 
 class_addMethod(the_class, "selectText:", function(self, _cmd, sender) {
 with(self) {
-NSLog("oh yeah");
 if (!objc_msgSend(_cell, "isEnabled"))
 return ;
 
@@ -10439,7 +11133,6 @@ objc_msgSend(_cell, "selectWithFrame:inView:editor:delegate:start:length:", _bou
 
 class_addMethod(the_class, "mouseDown:", function(self, _cmd, theEvent) {
 with(self) {
-NSLog("hmm");
 if (!objc_msgSend(_cell, "isEnabled"))
 return ;
 
@@ -10447,15 +11140,18 @@ if (objc_msgSend(_cell, "isSelectable") || objc_msgSend(_cell, "isEditable"))
 {
 if (!_currentEditor)
 {
-NSLog("first one");
 _currentEditor = objc_msgSend(objc_msgSend(self, "window"), "fieldEditor:forObject:", YES, self);
-NSLog("second one");
+NSLog(_currentEditor);
 _currentEditor = objc_msgSend(_cell, "setUpFieldEditorAttributes:", _currentEditor);
+NSLog(_currentEditor);
 
 }
 
+NSLog("Finished loop");
 objc_msgSend(_cell, "setHighlighted:", YES);
+NSLog("Yarp");
 objc_msgSend(_cell, "editWithFrame:inView:editor:delegate:event:", _bounds, self, _currentEditor, self, theEvent);
+NSLog("Hermmm");
 
 }
 
@@ -10530,6 +11226,97 @@ objc_msgSend(self, "unlockFocus");
 }
 }, "void");
 
+var NSTextStorageWillProcessEditingNotification = "NSTextStorageWillProcessEditingNotification";
+var NSTextStorageDidProcessEditingNotification = "NSTextStorageDidProcessEditingNotification";
+var the_class = objc_allocateClassPair(NSAttributedString, "NSTextStorage");
+var meta_class = the_class.isa;
+objc_registerClassPair(the_class);
+class_addIvar(the_class, "isa", "Class");
+class_addIvar(the_class, "_editedRange", "NSRange");
+class_addIvar(the_class, "_editedDelta", "NSInteger");
+class_addIvar(the_class, "_layoutManagers", "NSMutableArray");
+class_addIvar(the_class, "_sideData", "id");
+
+class_addMethod(the_class, "init", function(self, _cmd) {
+with(self) {
+self = objc_msgSendSuper({super_class:NSAttributedString, receiver:self}, "init");
+_layoutManagers = objc_msgSend(NSMutableArray, "array");
+return self;
+}
+}, "void");
+
+class_addMethod(the_class, "addLayoutManager:", function(self, _cmd, aLayoutManager) {
+with(self) {
+objc_msgSend(_layoutManagers, "addObject:", aLayoutManager);
+objc_msgSend(aLayoutManager, "setTextStorage:", self);
+}
+}, "void");
+
+class_addMethod(the_class, "removeLayoutManager:", function(self, _cmd, aLayoutManager) {
+with(self) {
+objc_msgSend(_layoutManagers, "removeObject:", aLayoutManager);
+}
+}, "void");
+
+class_addMethod(the_class, "layoutManagers", function(self, _cmd) {
+with(self) {
+return _layoutManagers;
+}
+}, "void");
+
+class_addMethod(the_class, "edited:range:changeInLength:", function(self, _cmd, editedMask, range, delta) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "processEditing", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "invalidateAttributesInRange:", function(self, _cmd, range) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "ensureAttributesAreFixedInRange:", function(self, _cmd, range) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "fixesAttributesLazily", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "editedMask", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "editedRange", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "changeInLength", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "setDelegate:", function(self, _cmd, delegate) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "delegate", function(self, _cmd) {
+with(self) {
+}
+}, "void");
+
+var NSTextViewWillChangeNotifyingTextViewNotification = "NSTextViewWillChangeNotifyingTextViewNotification";
+var NSTextViewDidChangeSelectionNotification = "NSTextViewDidChangeSelectionNotification";
+var NSTextViewDidChangeTypingAttributesNotification = "NSTextViewDidChangeTypingAttributesNotification";
 var the_class = objc_allocateClassPair(NSText, "NSTextView");
 var meta_class = the_class.isa;
 objc_registerClassPair(the_class);
@@ -10580,512 +11367,300 @@ class_addIvar(the_class, "_minSize", "NSSize");
 class_addIvar(the_class, "_delegate", "id");
 class_addIvar(the_class, "_gCanvas", "CGContextRef");
 
-class_addMethod(the_class, "init", function(self, _cmd) {
+class_addMethod(the_class, "initWithFrame:textContainer:", function(self, _cmd, frameRect, container) {
 with(self) {
-objc_msgSendSuper({super_class:NSText, receiver:self}, "init");
+self = objc_msgSendSuper({super_class:NSText, receiver:self}, "initWithFrame:", frameRect);
+_textStorage = objc_msgSend(objc_msgSend(container, "layoutManager"), "textStorage");
+_textContainer = container;
+objc_msgSend(_textContainer, "setTextView:", self);
+_isEditable = YES;
+_isSelectable = YES;
+_isRichText = YES;
+_drawsBackground = YES;
+_textAlignment = 0;
 _selectedRange = NSMakeRange(0,0);
+return self;
 }
 }, "void");
 
-class_addMethod(the_class, "insertText:", function(self, _cmd, aString) {
+class_addMethod(the_class, "initWithFrame:", function(self, _cmd, frameRect) {
 with(self) {
-objc_msgSend(self, "replaceCharactersInRange:withString:", objc_msgSend(self, "selectedRange"), aString);
-objc_msgSend(self, "setSelectedRange:", NSMakeRange(_selectedRange.location + 1,0));
-}
-}, "void");
-
-class_addMethod(the_class, "deleteBackward:", function(self, _cmd, sender) {
-with(self) {
-objc_msgSend(self, "replaceCharactersInRange:withString:", NSMakeRange(objc_msgSend(self, "selectedRange").location - 1,1), "");
-objc_msgSend(self, "setSelectedRange:", NSMakeRange(_selectedRange.location - 1,0));
-objc_msgSend(self, "postTextDidChangeNotification");
-objc_msgSend(self, "setNeedsDisplay:", YES);
-}
-}, "void");
-
-class_addMethod(the_class, "moveLeft:", function(self, _cmd, sender) {
-with(self) {
-if (_selectedRange.location == 0)
-return ;
-
-objc_msgSend(self, "setSelectedRange:", NSMakeRange(_selectedRange.location - 1,0));
-}
-}, "void");
-
-class_addMethod(the_class, "moveRight:", function(self, _cmd, sender) {
-with(self) {
-if (_selectedRange.location == _string.length)
-return ;
-
-objc_msgSend(self, "setSelectedRange:", NSMakeRange(_selectedRange.location + _selectedRange.length + 1,0));
-}
-}, "void");
-
-class_addMethod(the_class, "scrollPageDown:", function(self, _cmd, sender) {
-with(self) {
-objc_msgSend(self, "setSelectedRange:", NSMakeRange(_string.length,0));
-}
-}, "void");
-
-class_addMethod(the_class, "scrollPageUp:", function(self, _cmd, sender) {
-with(self) {
-objc_msgSend(self, "setSelectedRange:", NSMakeRange(0,0));
-}
-}, "void");
-
-class_addMethod(the_class, "insertTab:", function(self, _cmd, sender) {
-with(self) {
-objc_msgSend(objc_msgSend(self, "window"), "makeFirstResponder:", objc_msgSend(self, "window"));
-}
-}, "void");
-
-class_addMethod(the_class, "keyDown:", function(self, _cmd, theEvent) {
-with(self) {
-objc_msgSend(self, "interpretKeyEvents:", objc_msgSend(NSArray, "arrayWithObject:", theEvent));
-}
-}, "void");
-
-class_addMethod(the_class, "resignFirstResponder", function(self, _cmd) {
-with(self) {
-if (_isEditable)
-{
-if (objc_msgSend(_delegate, "respondsToSelector:", "textShouldEndEditing:"))
-{
-if (objc_msgSend(_delegate, "textShouldEndEditing:", self) == NO)
-return NO;
-
-
-}
-
-
-}
-
-return YES;
-}
-}, "void");
-
-class_addMethod(the_class, "acceptsFirstResponder", function(self, _cmd) {
-with(self) {
-return YES;
-}
-}, "void");
-
-class_addMethod(the_class, "glyphIndexForPoint:", function(self, _cmd, point) {
-with(self) {
-objc_msgSend(self, "lockFocus");
-for(var i = 0;
-i < _string.length;
-i++){
-var theGlyphLength = objc_msgSend(stringToCheck, "sizeWithAttributes:", null);
-var nextGlyphLength = objc_msgSend(nextStringToCheck, "sizeWithAttributes:", null);
-if ((theGlyphLength.width <= point.x) && (point.x <= nextGlyphLength.width))
-{
-return i;
-
-}
-
-
-}
-objc_msgSend(self, "unlockFocus");
-return _string.length;
+var storage = objc_msgSend(objc_msgSend(NSTextStorage, "alloc"), "init");
+var layout = objc_msgSend(objc_msgSend(NSLayoutManager, "alloc"), "init");
+var container = objc_msgSend(objc_msgSend(NSTextContainer, "alloc"), "initWithContainerSize:", frameRect.size);
+objc_msgSend(storage, "addLayoutManager:", layout);
+objc_msgSend(layout, "addTextContainer:", container);
+self = objc_msgSend(self, "initWithFrame:textContainer:", frameRect, container);
+return self;
 }
 }, "void");
 
 class_addMethod(the_class, "mouseDown:", function(self, _cmd, theEvent) {
 with(self) {
-var location = objc_msgSend(self, "convertPoint:fromView:", objc_msgSend(theEvent, "locationInWindow"), null);
-var theRange = NSMakeRange(objc_msgSend(self, "glyphIndexForPoint:", location),0);
-objc_msgSend(self, "setSelectedRange:", theRange);
 }
 }, "void");
 
-class_addMethod(the_class, "mouseUp:", function(self, _cmd, theEvent) {
+class_addMethod(the_class, "textContainer", function(self, _cmd) {
 with(self) {
 }
 }, "void");
 
-class_addMethod(the_class, "drawRect:", function(self, _cmd, rect) {
+class_addMethod(the_class, "setTextContainer:", function(self, _cmd, container) {
 with(self) {
-if (_drawsBackground)
-{
-rect = NSMakeRect(rect.origin.x + 3,rect.origin.y + 3,rect.size.width - 6,rect.size.height - 6);
-objc_msgSend(objc_msgSend(NSColor, "colorWithCalibratedRed:green:blue:alpha:", 1, 1, 1, 1), "set");
-objc_msgSend(NSBezierPath, "fillRect:", rect);
-
-}
-
-objc_msgSend(objc_msgSend(NSColor, "textColor"), "set");
-objc_msgSend(objc_msgSend(NSFont, "systemFontOfSize:", objc_msgSend(NSFont, "systemFontSize")), "set");
-var textRect = NSMakeRect(rect.origin.x,rect.origin.y + 1,0,0);
-objc_msgSend(_string, "drawWithRect:options:attributes:", textRect, null, null);
-var fullStringWidth = objc_msgSend(_string, "sizeWithAttributes:", null);
-if (_selectedRange.length == 0)
-{
-var stringBeforeWidth = objc_msgSend(stringBeforeLocation, "sizeWithAttributes:", null);
-objc_msgSend(objc_msgSend(NSColor, "textColor"), "set");
-var blinkingCursor = objc_msgSend(NSBezierPath, "bezierPath");
-objc_msgSend(blinkingCursor, "moveToPoint:", NSMakePoint(rect.origin.x + stringBeforeWidth.width + 0.5,rect.origin.y - 1));
-objc_msgSend(blinkingCursor, "lineToPoint:", NSMakePoint(rect.origin.x + stringBeforeWidth.width + 0.5,rect.origin.y + rect.size.height));
-objc_msgSend(blinkingCursor, "stroke");
-
-}
-
-}
-}, "void");
-
-class_addMethod(the_class, "string", function(self, _cmd) {
-with(self) {
-return _string;
-}
-}, "void");
-
-class_addMethod(the_class, "setBackgroundColor:", function(self, _cmd, aColor) {
-with(self) {
-_backgroundColor = aColor;
-}
-}, "void");
-
-class_addMethod(the_class, "backgroundColor", function(self, _cmd) {
-with(self) {
-return _backgroundColor;
-}
-}, "void");
-
-class_addMethod(the_class, "setDrawsBackground:", function(self, _cmd, flag) {
-with(self) {
-_drawsBackground = flag;
-}
-}, "void");
-
-class_addMethod(the_class, "drawsBackground", function(self, _cmd) {
-with(self) {
-return _drawsBackground;
-}
-}, "void");
-
-class_addMethod(the_class, "setEditable:", function(self, _cmd, flag) {
-with(self) {
-_isEditable = flag;
-}
-}, "void");
-
-class_addMethod(the_class, "isEditable", function(self, _cmd) {
-with(self) {
-return _isEditable;
-}
-}, "void");
-
-class_addMethod(the_class, "setSelectable:", function(self, _cmd, flag) {
-with(self) {
-_isSelectable = flag;
-}
-}, "void");
-
-class_addMethod(the_class, "isSelectable", function(self, _cmd) {
-with(self) {
-return _isSelectable;
-}
-}, "void");
-
-class_addMethod(the_class, "setFieldEditor:", function(self, _cmd, flag) {
-with(self) {
-_isFieldEditor = flag;
-}
-}, "void");
-
-class_addMethod(the_class, "isFieldEditor", function(self, _cmd) {
-with(self) {
-return _isFieldEditor;
-}
-}, "void");
-
-class_addMethod(the_class, "setRichText:", function(self, _cmd, flag) {
-with(self) {
-_isRichText = flag;
-}
-}, "void");
-
-class_addMethod(the_class, "isRichText", function(self, _cmd) {
-with(self) {
-return _isRichText;
 }
 }, "void");
 
-class_addMethod(the_class, "setImportsGraphics:", function(self, _cmd, flag) {
+class_addMethod(the_class, "replaceTextContainer:", function(self, _cmd, newContainer) {
 with(self) {
-_importsGraphics = flag;
 }
 }, "void");
 
-class_addMethod(the_class, "importsGraphics", function(self, _cmd) {
+class_addMethod(the_class, "setTextContainerInset:", function(self, _cmd, inset) {
 with(self) {
-return _importsGraphics;
 }
 }, "void");
 
-class_addMethod(the_class, "setUsesFontPanel:", function(self, _cmd, flag) {
+class_addMethod(the_class, "textContainerInset", function(self, _cmd) {
 with(self) {
-_usesFontPanel = flag;
 }
 }, "void");
 
-class_addMethod(the_class, "usesFontPanel", function(self, _cmd) {
+class_addMethod(the_class, "textContainerOrigin", function(self, _cmd) {
 with(self) {
-return _usesFontPanel;
 }
 }, "void");
 
-class_addMethod(the_class, "toggleRuler:", function(self, _cmd, sender) {
+class_addMethod(the_class, "invalidateTextContainerOrigin", function(self, _cmd) {
 with(self) {
 }
 }, "void");
 
-class_addMethod(the_class, "isRulerVisible", function(self, _cmd) {
+class_addMethod(the_class, "layoutManager", function(self, _cmd) {
 with(self) {
 }
 }, "void");
 
-class_addMethod(the_class, "setSelectedRange:", function(self, _cmd, aRange) {
+class_addMethod(the_class, "textStorage", function(self, _cmd) {
 with(self) {
-_selectedRange = aRange;
-objc_msgSend(self, "setNeedsDisplay:", YES);
 }
 }, "void");
 
-class_addMethod(the_class, "selectedRange", function(self, _cmd) {
+class_addMethod(the_class, "insertText:", function(self, _cmd, insertString) {
 with(self) {
-return _selectedRange;
 }
 }, "void");
 
-class_addMethod(the_class, "replaceCharactersInRange:withRTF:", function(self, _cmd, aRange, rtfData) {
+class_addMethod(the_class, "setConstrainedFrameSize:", function(self, _cmd, desiredSize) {
 with(self) {
 }
 }, "void");
 
-class_addMethod(the_class, "replaceCharactersInRange:withRTFD:", function(self, _cmd, aRange, rtfdData) {
+class_addMethod(the_class, "setAlignment:range:", function(self, _cmd, alignment, range) {
 with(self) {
 }
 }, "void");
 
-class_addMethod(the_class, "replaceCharactersInRange:withString:", function(self, _cmd, aRange, aString) {
+class_addMethod(the_class, "setBaseWritingDirection:range:", function(self, _cmd, writingDirection, range) {
 with(self) {
-objc_msgSend(self, "postTextDidChangeNotification");
-objc_msgSend(self, "setNeedsDisplay:", YES);
 }
 }, "void");
 
-class_addMethod(the_class, "setString:", function(self, _cmd, aString) {
+class_addMethod(the_class, "turnOffKerning:", function(self, _cmd, sender) {
 with(self) {
-_string = aString;
 }
 }, "void");
 
-class_addMethod(the_class, "selectAll:", function(self, _cmd, sender) {
+class_addMethod(the_class, "tightenKerning:", function(self, _cmd, sender) {
 with(self) {
 }
 }, "void");
 
-class_addMethod(the_class, "copy:", function(self, _cmd, sender) {
+class_addMethod(the_class, "loosenKerning:", function(self, _cmd, sender) {
 with(self) {
 }
 }, "void");
 
-class_addMethod(the_class, "cut:", function(self, _cmd, sender) {
+class_addMethod(the_class, "useStandardKerning:", function(self, _cmd, sender) {
 with(self) {
 }
 }, "void");
 
-class_addMethod(the_class, "paste:", function(self, _cmd, sender) {
+class_addMethod(the_class, "turnOffLigatures:", function(self, _cmd, sender) {
 with(self) {
 }
 }, "void");
 
-class_addMethod(the_class, "copyFont:", function(self, _cmd, sender) {
+class_addMethod(the_class, "useStandardLigatures:", function(self, _cmd, sender) {
 with(self) {
 }
 }, "void");
 
-class_addMethod(the_class, "pasteFont:", function(self, _cmd, sender) {
+class_addMethod(the_class, "useAllLigatures:", function(self, _cmd, sender) {
 with(self) {
 }
 }, "void");
 
-class_addMethod(the_class, "copyRuler:", function(self, _cmd, sender) {
+class_addMethod(the_class, "raiseBaseline:", function(self, _cmd, sender) {
 with(self) {
 }
 }, "void");
 
-class_addMethod(the_class, "pasteRuler:", function(self, _cmd, sender) {
+class_addMethod(the_class, "lowerBaseline:", function(self, _cmd, sender) {
 with(self) {
 }
 }, "void");
 
-class_addMethod(the_class, "changeFont:", function(self, _cmd, sender) {
+class_addMethod(the_class, "toggleTraditionalCharacterShape:", function(self, _cmd, sender) {
 with(self) {
 }
 }, "void");
 
-class_addMethod(the_class, "setFont:", function(self, _cmd, aFont) {
+class_addMethod(the_class, "outline:", function(self, _cmd, sender) {
 with(self) {
-_font = aFont;
 }
 }, "void");
 
-class_addMethod(the_class, "setFont:range:", function(self, _cmd, aFont, aRange) {
+class_addMethod(the_class, "performFindPanelAction:", function(self, _cmd, sender) {
 with(self) {
 }
 }, "void");
 
-class_addMethod(the_class, "font", function(self, _cmd) {
+class_addMethod(the_class, "alignJustified:", function(self, _cmd, sender) {
 with(self) {
-return _font;
 }
 }, "void");
 
-class_addMethod(the_class, "setAlignment:", function(self, _cmd, mode) {
+class_addMethod(the_class, "changeColor:", function(self, _cmd, sender) {
 with(self) {
-_textAlignment = mode;
 }
 }, "void");
 
-class_addMethod(the_class, "alignCenter:", function(self, _cmd, sender) {
+class_addMethod(the_class, "changeAttributes:", function(self, _cmd, sender) {
 with(self) {
-objc_msgSend(self, "setAlignment:", 2);
 }
 }, "void");
 
-class_addMethod(the_class, "alignLeft:", function(self, _cmd, sender) {
+class_addMethod(the_class, "changeDocumentBackgroundColor:", function(self, _cmd, sender) {
 with(self) {
-objc_msgSend(self, "setAlignment:", 0);
 }
 }, "void");
 
-class_addMethod(the_class, "alignRight:", function(self, _cmd, sender) {
+class_addMethod(the_class, "toggleBaseWritingDirection:", function(self, _cmd, sender) {
 with(self) {
-objc_msgSend(self, "setAlignment:", 1);
 }
 }, "void");
 
-class_addMethod(the_class, "alignment", function(self, _cmd) {
+class_addMethod(the_class, "orderFrontSpacingPanel:", function(self, _cmd, sender) {
 with(self) {
-return _textAlignment;
 }
 }, "void");
 
-class_addMethod(the_class, "setTextColor:", function(self, _cmd, aColor) {
+class_addMethod(the_class, "orderFrontLinkPanel:", function(self, _cmd, sender) {
 with(self) {
-_textColor = aColor;
 }
 }, "void");
 
-class_addMethod(the_class, "setTextColor:range:", function(self, _cmd, aColor, aRange) {
+class_addMethod(the_class, "orderFrontListPanel:", function(self, _cmd, sender) {
 with(self) {
 }
 }, "void");
 
-class_addMethod(the_class, "textColor", function(self, _cmd) {
+class_addMethod(the_class, "orderFrontTablePanel:", function(self, _cmd, sender) {
 with(self) {
-return _textColor;
 }
 }, "void");
 
-class_addMethod(the_class, "baseWritingDirection", function(self, _cmd) {
+class_addMethod(the_class, "rulerView:didMoveMarker:", function(self, _cmd, ruler, marker) {
 with(self) {
 }
 }, "void");
 
-class_addMethod(the_class, "setBaseWritingDirection:", function(self, _cmd, writingDirection) {
+class_addMethod(the_class, "rulerView:didRemoveMarker:", function(self, _cmd, ruler, marker) {
 with(self) {
 }
 }, "void");
 
-class_addMethod(the_class, "superscript:", function(self, _cmd, sender) {
+class_addMethod(the_class, "rulerView:didAddMarker:", function(self, _cmd, ruler, marker) {
 with(self) {
 }
 }, "void");
 
-class_addMethod(the_class, "subscript:", function(self, _cmd, sender) {
+class_addMethod(the_class, "rulerView:shouldMoveMarker:", function(self, _cmd, ruler, marker) {
 with(self) {
 }
 }, "void");
 
-class_addMethod(the_class, "unscript:", function(self, _cmd, sender) {
+class_addMethod(the_class, "rulerView:shouldAddMarker:", function(self, _cmd, ruler, marker) {
 with(self) {
 }
 }, "void");
 
-class_addMethod(the_class, "underline:", function(self, _cmd, sender) {
+class_addMethod(the_class, "rulerView:willMoveMarker:toLocation:", function(self, _cmd, ruler, marker, location) {
 with(self) {
 }
 }, "void");
 
-class_addMethod(the_class, "setMaxSize:", function(self, _cmd, aSize) {
+class_addMethod(the_class, "rulerView:shouldRemoveMarker:", function(self, _cmd, ruler, marker) {
 with(self) {
-_maxSize = aSize;
 }
 }, "void");
 
-class_addMethod(the_class, "maxSize", function(self, _cmd) {
+class_addMethod(the_class, "rulerView:willAddMarker:atLocation:", function(self, _cmd, ruler, marker, location) {
 with(self) {
-return _maxSize;
 }
 }, "void");
 
-class_addMethod(the_class, "setMinSize:", function(self, _cmd, aSize) {
+class_addMethod(the_class, "rulerView:handleMouseDown:", function(self, _cmd, ruler, event) {
 with(self) {
-_minSize = aSize;
 }
 }, "void");
 
-class_addMethod(the_class, "minSize", function(self, _cmd) {
+class_addMethod(the_class, "setNeedsDisplayInRect:avoidAdditionalLayout:", function(self, _cmd, rect, flag) {
 with(self) {
-return _minSize;
 }
 }, "void");
 
-class_addMethod(the_class, "setVerticallyResizable:", function(self, _cmd, flag) {
+class_addMethod(the_class, "shouldDrawInsertionPoint", function(self, _cmd) {
 with(self) {
 }
 }, "void");
 
-class_addMethod(the_class, "isVerticallyResizable", function(self, _cmd) {
+class_addMethod(the_class, "drawInsertionPointInRect:color:turnedOn:", function(self, _cmd, rect, color, flag) {
 with(self) {
 }
 }, "void");
 
-class_addMethod(the_class, "setHorizontallyResizable:", function(self, _cmd, flag) {
+class_addMethod(the_class, "drawViewBackgroundInRect:", function(self, _cmd, rect) {
 with(self) {
 }
 }, "void");
 
-class_addMethod(the_class, "isHorizontallyResizable", function(self, _cmd) {
+class_addMethod(the_class, "updateRuler", function(self, _cmd) {
 with(self) {
 }
 }, "void");
 
-class_addMethod(the_class, "sizeToFit", function(self, _cmd) {
+class_addMethod(the_class, "updateFontPanel", function(self, _cmd) {
 with(self) {
 }
 }, "void");
 
-class_addMethod(the_class, "scrollRangeToVisible:", function(self, _cmd, aRange) {
+class_addMethod(the_class, "updateDragTypeRegistration", function(self, _cmd) {
 with(self) {
 }
 }, "void");
 
-class_addMethod(the_class, "setDelegate:", function(self, _cmd, anObject) {
+class_addMethod(the_class, "selectionRangeForProposedRange:granularity:", function(self, _cmd, proposedCharRange, granularity) {
 with(self) {
 }
 }, "void");
 
-class_addMethod(the_class, "delegate", function(self, _cmd) {
+class_addMethod(the_class, "clickedOnLink:atIndex:", function(self, _cmd, link, charIndex) {
 with(self) {
-return _delegate;
 }
 }, "void");
 
-class_addMethod(the_class, "postTextDidChangeNotification", function(self, _cmd) {
+class_addMethod(the_class, "characterIndexForInsertionAtPoint:", function(self, _cmd, point) {
 with(self) {
 }
 }, "void");

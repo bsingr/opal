@@ -17,10 +17,10 @@
 
 - (id)initWithFrame:(NSRect)aFrame
 {
-    [self init];
-    _frame = aFrame;
-    _bounds = NSMakeRect (0, 0, _frame.size.width, _frame.size.height);
-    _subviews = [NSMutableArray arrayWithCapacity:0];
+    self = [super initWithFrame:aFrame];
+    // _frame = aFrame;
+    // _bounds = NSMakeRect (0, 0, _frame.size.width, _frame.size.height);
+    // _subviews = [NSMutableArray arrayWithCapacity:0];
     return self;
 }
 

@@ -978,7 +978,7 @@
             NSLog(@"Sending mouse down to (else)");
         }
     }
-    else if([theEvent valueForKey:@"type"] == NSLeftMouseUp)
+    else if([theEvent type] == NSLeftMouseUp)
     {
         // hitTest = [_contentView hitTest:[theEvent locationInWindow]];
         // if (hitTest)
@@ -986,7 +986,7 @@
         // else
         //     [self mouseUp:theEvent];
     }
-    else if([theEvent valueForKey:@"type"] == NSKeyDown)
+    else if([theEvent type] == NSKeyDown)
     {
         if (_firstResponder)
         {

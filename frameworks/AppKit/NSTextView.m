@@ -8,510 +8,326 @@
 
 #import "NSTextView.h"
 
+NSString *NSTextViewWillChangeNotifyingTextViewNotification = @"NSTextViewWillChangeNotifyingTextViewNotification";
+NSString *NSTextViewDidChangeSelectionNotification = @"NSTextViewDidChangeSelectionNotification";
+NSString *NSTextViewDidChangeTypingAttributesNotification = @"NSTextViewDidChangeTypingAttributesNotification";
 
 @implementation NSTextView
 
-- (id)init
+- (id)initWithFrame:(NSRect)frameRect textContainer:(NSTextContainer *)container
 {
-    [super init];
-    _selectedRange = NSMakeRange(0,0);
-}
-
-- (void)insertText:(id *)aString
-{
-    [self replaceCharactersInRange:[self selectedRange] withString:aString];
-    [self setSelectedRange:NSMakeRange(_selectedRange.location + 1, 0)];
-}
-
-- (void)deleteBackward:(id)sender
-{
-    [self replaceCharactersInRange:NSMakeRange ([self selectedRange].location -1, 1) withString:@""];
-    [self setSelectedRange:NSMakeRange(_selectedRange.location - 1, 0)];
-    //_string = _string.slice(0, _string.length - 1);
-    [self postTextDidChangeNotification];
-    [self setNeedsDisplay:YES];
-}
-
-- (void)moveLeft:(id)sender
-{
-    if (_selectedRange.location == 0)
-        return;
+    self = [super initWithFrame:frameRect];
     
-    [self setSelectedRange:NSMakeRange(_selectedRange.location - 1, 0)];
-}
-
-- (void)moveRight:(id)sender
-{
-    if (_selectedRange.location == _string.length)
-        return;
+    _textStorage = [[container layoutManager] textStorage];
+    _textContainer = container;
+    [_textContainer setTextView:self];
     
-    [self setSelectedRange:NSMakeRange(_selectedRange.location + _selectedRange.length + 1, 0)];
+    _isEditable = YES;
+    _isSelectable = YES;
+    _isRichText = YES;
+    _drawsBackground = YES;
+    _textAlignment = NSLeftTextAlignment;
+    _selectedRange = NSMakeRange(0, 0);
+
+    return self;
 }
 
-- (void)scrollPageDown:(id)sender
+- (id)initWithFrame:(NSRect)frameRect
 {
-    [self setSelectedRange:NSMakeRange(_string.length, 0)];
-}
-
-- (void)scrollPageUp:(id)sender
-{
-    [self setSelectedRange:NSMakeRange(0, 0)];
-}
-
-- (void)insertTab:(id)sender
-{
-    [[self window] makeFirstResponder:[self window]];
-}
-
-- (void)keyDown:(NSEvent *)theEvent
-{
-    [self interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
-}
-
-- (BOOL)resignFirstResponder
-{
-    if (_isEditable) {
-        if ([_delegate respondsToSelector:@selector(textShouldEndEditing:)]) {
-            if ([_delegate textShouldEndEditing:self] == NO)
-                return NO;
-        }
-    }
+    NSTextStorage *storage = [[NSTextStorage alloc] init];
+    NSLayoutManager *layout = [[NSLayoutManager alloc] init];
+    NSTextContainer *container = [[NSTextContainer alloc] initWithContainerSize:frameRect.size];
     
-    // NSNotification *notification = [NSNotification notificationWithName:NSTextDidEndEditingNotification object:self userInfo:nil];
-    //    [[NSNotificationCenter defaultCenter] postNotification:notification];
-    //    
-    return YES;
-}
-
-- (void)acceptsFirstResponder
-{
-    return YES;
-}
-
-- (NSUInteger)glyphIndexForPoint:(NSPoint)point
-{
-    [self lockFocus];
+    [storage addLayoutManager:layout];
+    [layout addTextContainer:container];
     
-    for (int i = 0; i < _string.length; i++)
-    {
-        // NSString *stringToCheck = _string.substr (0, i);
-        //         NSString *nextStringToCheck = _string.substr (0,i + 1);
-        
-        NSInteger theGlyphLength = [stringToCheck sizeWithAttributes:nil];
-        NSInteger nextGlyphLength = [nextStringToCheck sizeWithAttributes:nil];
-        
-        if ((theGlyphLength.width <= point.x) && (point.x <=nextGlyphLength.width))
-        {
-            return i;
-        }
-        
-        //NSLog(theGlyphLength.width + "  " + nextGlyphLength.width + "  " + point.x);
-    }
+    self = [self initWithFrame:frameRect textContainer:container];
     
-    [self unlockFocus];
-    
-    return _string.length;
+    return self;
 }
 
 - (void)mouseDown:(NSEvent *)theEvent
 {
-    NSPoint location = [self convertPoint:[theEvent locationInWindow] fromView:nil];
-
-    NSRange theRange = NSMakeRange([self glyphIndexForPoint:location], 0);
     
-    [self setSelectedRange:theRange];
 }
 
-- (void)mouseUp:(NSEvent *)theEvent
+- (NSTextContainer *)textContainer
 {
     
 }
 
-- (void)drawRect:(NSRect)rect
+- (void)setTextContainer:(NSTextContainer *)container
 {
-    if (_drawsBackground) {
-        //[_backgroundColor setFill];
-        //[[NSColor colorWithCalibratedRed:0.710 green:0.835 blue:1.0 alpha:0.5] set];
-        
-        rect = NSMakeRect(rect.origin.x+3, rect.origin.y + 3, rect.size.width - 6, rect.size.height - 6);
-
-        
-        [[NSColor colorWithCalibratedRed:1 green:1 blue:1 alpha:1] set];
-        [NSBezierPath fillRect:rect];   
-    }
-    [[NSColor textColor] set];
-    [[NSFont systemFontOfSize:[NSFont systemFontSize]] set];
-
-    NSRect textRect = NSMakeRect(rect.origin.x, rect.origin.y + 1, 0, 0);
-    
-    [_string drawWithRect:textRect options:nil attributes: nil];
-    
-    NSInteger fullStringWidth = [_string sizeWithAttributes:nil];
-    
-    
-    // selected range: show either beam, or highlight
-    if (_selectedRange.length == 0)
-    {
-        // NSString *stringBeforeLocation = _string.substr(0, _selectedRange.location);
-        NSInteger stringBeforeWidth = [stringBeforeLocation sizeWithAttributes:nil];
-        
-        [[NSColor textColor] set];
-        NSBezierPath *blinkingCursor = [NSBezierPath bezierPath];
-        [blinkingCursor moveToPoint:NSMakePoint (rect.origin.x + stringBeforeWidth.width + 0.5, rect.origin.y - 1)];
-        [blinkingCursor lineToPoint:NSMakePoint (rect.origin.x + stringBeforeWidth.width + 0.5, rect.origin.y + rect.size.height)];
-        [blinkingCursor stroke];
-    }
     
 }
 
-- (NSString *)string
+- (void)replaceTextContainer:(NSTextContainer *)newContainer
 {
-    return _string;
+    
 }
 
-- (void)setBackgroundColor:(NSColor *)aColor
+- (void)setTextContainerInset:(NSSize)inset
 {
-    _backgroundColor = aColor;
+    
 }
 
-- (NSColor *)backgroundColor
+- (NSSize)textContainerInset
 {
-    return _backgroundColor;
+    
 }
 
-- (void)setDrawsBackground:(BOOL)flag
+- (NSPoint)textContainerOrigin
 {
-    _drawsBackground = flag;
+    
 }
 
-- (BOOL)drawsBackground
+- (void)invalidateTextContainerOrigin
 {
-    return _drawsBackground;
+    
 }
 
-- (void)setEditable:(BOOL)flag
+- (NSLayoutManager *)layoutManager
 {
-    _isEditable = flag;
+    
 }
 
-- (BOOL)isEditable
+- (NSTextStorage *)textStorage
 {
-    return _isEditable;
+    
 }
 
-- (void)setSelectable:(BOOL)flag
+- (void)insertText:(id)insertString
 {
-    _isSelectable = flag;
+    
 }
 
-- (BOOL)isSelectable
+
+- (void)setConstrainedFrameSize:(NSSize)desiredSize
 {
-    return _isSelectable;
+    
 }
 
-- (void)setFieldEditor:(BOOL)flag
+
+
+- (void)setAlignment:(NSTextAlignment)alignment range:(NSRange)range
 {
-    _isFieldEditor = flag;
+    
 }
 
-- (BOOL)isFieldEditor
+- (void)setBaseWritingDirection:(NSWritingDirection)writingDirection range:(NSRange)range
 {
-    return _isFieldEditor;
+    
 }
 
-- (void)setRichText:(BOOL)flag
+
+
+- (void)turnOffKerning:(id)sender
 {
-    _isRichText = flag;
+    
 }
 
-- (BOOL)isRichText
+- (void)tightenKerning:(id)sender
 {
-    return _isRichText;
+    
 }
 
-- (void)setImportsGraphics:(BOOL)flag
+- (void)loosenKerning:(id)sender
 {
-    _importsGraphics = flag;
+    
 }
 
-- (BOOL)importsGraphics
+- (void)useStandardKerning:(id)sender
 {
-    return _importsGraphics;
+    
 }
 
-- (void)setUsesFontPanel:(BOOL)flag
+- (void)turnOffLigatures:(id)sender
 {
-    _usesFontPanel = flag;
+    
 }
 
-- (BOOL)usesFontPanel
+- (void)useStandardLigatures:(id)sender
 {
-    return _usesFontPanel;
+    
 }
 
-- (void)toggleRuler:(id)sender
+- (void)useAllLigatures:(id)sender
 {
-    // TODO
+    
 }
 
-- (BOOL)isRulerVisible
+- (void)raiseBaseline:(id)sender
 {
-    // TODO
+    
 }
 
-- (void)setSelectedRange:(NSRange)aRange
+- (void)lowerBaseline:(id)sender
 {
-    _selectedRange = aRange;
-    [self setNeedsDisplay:YES];
+    
 }
 
-- (NSRange)selectedRange
+- (void)toggleTraditionalCharacterShape:(id)sender
 {
-    return _selectedRange;
+    
 }
 
-- (void)replaceCharactersInRange:(NSRange)aRange withRTF:(NSData *)rtfData
+- (void)outline:(id)sender
 {
-    // TODO
+    
 }
 
-- (void)replaceCharactersInRange:(NSRange)aRange withRTFD:(NSData *)rtfdData
+
+- (void)performFindPanelAction:(id)sender
 {
-    // TODO
+    
 }
 
-- (void)replaceCharactersInRange:(NSRange)aRange withString:(NSString *)aString
+
+- (void)alignJustified:(id)sender
 {
-    // _string = _string.substr(0, aRange.location) + aString + _string.substr(aRange.location + aRange.length, _string.length);
-    [self postTextDidChangeNotification];
-    [self setNeedsDisplay:YES];
+    
 }
 
-- (void)setString:(NSString *)aString
+- (void)changeColor:(id)sender
 {
-    _string = aString;
+    
 }
 
-- (void)selectAll:(id)sender
+- (void)changeAttributes:(id)sender
 {
-    // TODO
+    
 }
 
-- (void)copy:(id)sender
+- (void)changeDocumentBackgroundColor:(id)sender
 {
-    // TODO
+    
 }
 
-- (void)cut:(id)sender
+- (void)toggleBaseWritingDirection:(id)sender
 {
-    // TODO
+    
 }
 
-- (void)paste:(id)sender
+- (void)orderFrontSpacingPanel:(id)sender
 {
-    // TODO
+    
 }
 
-- (void)copyFont:(id)sender
+- (void)orderFrontLinkPanel:(id)sender
 {
-    // TODO
+    
 }
 
-- (void)pasteFont:(id)sender
+- (void)orderFrontListPanel:(id)sender
 {
-    // TODO
+    
 }
 
-- (void)copyRuler:(id)sender
+- (void)orderFrontTablePanel:(id)sender
 {
-    // TODO
+    
 }
 
-- (void)pasteRuler:(id)sender
+
+
+- (void)rulerView:(NSRulerView *)ruler didMoveMarker:(NSRulerMarker *)marker
 {
-    // TODO
+    
 }
 
-- (void)changeFont:(id)sender
+- (void)rulerView:(NSRulerView *)ruler didRemoveMarker:(NSRulerMarker *)marker
 {
-    // TODO
+    
 }
 
-- (void)setFont:(NSFont *)aFont
+- (void)rulerView:(NSRulerView *)ruler didAddMarker:(NSRulerMarker *)marker
 {
-    _font = aFont;
+    
 }
 
-- (void)setFont:(NSFont *)aFont range:(NSRange)aRange
+- (BOOL)rulerView:(NSRulerView *)ruler shouldMoveMarker:(NSRulerMarker *)marker
 {
-    // TODO
+    
 }
 
-- (NSFont *)font
+- (BOOL)rulerView:(NSRulerView *)ruler shouldAddMarker:(NSRulerMarker *)marker
 {
-    return _font;
+    
 }
 
-- (void)setAlignment:(NSTextAlignment)mode
+- (CGFloat)rulerView:(NSRulerView *)ruler willMoveMarker:(NSRulerMarker *)marker toLocation:(CGFloat)location
 {
-    _textAlignment = mode;
+    
 }
 
-- (void)alignCenter:(id)sender
+- (BOOL)rulerView:(NSRulerView *)ruler shouldRemoveMarker:(NSRulerMarker *)marker
 {
-    [self setAlignment:NSCenterTextAlignment];
+    
 }
 
-- (void)alignLeft:(id)sender
+- (CGFloat)rulerView:(NSRulerView *)ruler willAddMarker:(NSRulerMarker *)marker atLocation:(CGFloat)location
 {
-    [self setAlignment:NSLeftTextAlignment];
+    
 }
 
-- (void)alignRight:(id)sender
+- (void)rulerView:(NSRulerView *)ruler handleMouseDown:(NSEvent *)event
 {
-    [self setAlignment:NSRightTextAlignment];
+    
 }
 
-- (NSTextAlignment)alignment
+
+- (void)setNeedsDisplayInRect:(NSRect)rect avoidAdditionalLayout:(BOOL)flag
 {
-    return _textAlignment;
+    
 }
 
-- (void)setTextColor:(NSColor *)aColor
+- (BOOL)shouldDrawInsertionPoint
 {
-    _textColor = aColor;
+    
 }
 
-- (void)setTextColor:(NSColor *)aColor range:(NSRange)aRange
+- (void)drawInsertionPointInRect:(NSRect)rect color:(NSColor *)color turnedOn:(BOOL)flag
 {
-    // TODO
+    
 }
 
-- (NSColor *)textColor
+
+- (void)drawViewBackgroundInRect:(NSRect)rect
 {
-    return _textColor;
+    
 }
 
-- (NSWritingDirection)baseWritingDirection
+
+
+- (void)updateRuler
 {
-    // TODO
+    
 }
 
-- (void)setBaseWritingDirection:(NSWritingDirection)writingDirection
+- (void)updateFontPanel
 {
-    // TODO
+    
 }
 
-- (void)superscript:(id)sender
+
+- (void)updateDragTypeRegistration
 {
-    // TODO
+    
 }
 
-- (void)subscript:(id)sender
+- (NSRange)selectionRangeForProposedRange:(NSRange)proposedCharRange granularity:(NSSelectionGranularity)granularity
 {
-    // TODO
+    
 }
 
-- (void)unscript:(id)sender
+- (void)clickedOnLink:(id)link atIndex:(NSUInteger)charIndex
 {
-    // TODO
+    
 }
 
-- (void)underline:(id)sender
+- (NSUInteger)characterIndexForInsertionAtPoint:(NSPoint)point
 {
-    // TODO
-}
-
-- (void)setMaxSize:(NSSize)aSize
-{
-    _maxSize = aSize;
-}
-
-- (NSSize)maxSize
-{
-    return _maxSize;
-}
-
-- (void)setMinSize:(NSSize)aSize
-{
-    _minSize = aSize;
-}
-
-- (NSSize)minSize
-{
-    return _minSize;
-}
-
-- (void)setVerticallyResizable:(BOOL)flag
-{
-    // TODO
-}
-
-- (BOOL)isVerticallyResizable
-{
-    // TODO
-}
-
-- (void)setHorizontallyResizable:(BOOL)flag
-{
-    // TODO
-}
-
-- (BOOL)isHorizontallyResizable
-{
-    // TODO
-}
-
-- (void)sizeToFit
-{
-    // TODO
-}
-
-- (void)scrollRangeToVisible:(NSRange)aRange
-{
-    // TODO
-}
-
-- (void)setDelegate:(id)anObject
-{
-    // NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
-    //     
-    //     if (_delegate == anObject)
-    //         return;
-    //     
-    //     if (_delegate)
-    //     {
-    //         [nc removeObserver:_delegate name:NSTextDidBeginEditingNotification object:self];
-    //         [nc removeObserver:_delegate name:NSTextDidEndEditingNotification object:self];
-    //         [nc removeObserver:_delegate name:NSTextDidChangeNotification object:self];
-    //         [nc removeObserver:_delegate name:NSTextViewDidChangeSelectionNotification object:self];
-    //     }
-    //     
-    //     _delegate = anObject;
-    //     
-    //     if ([_delegate respondsToSelector:@selector(textDidBeginEditing:)])
-    //         [nc addObserver:_delegate selector:@selector(textDidBeginEditing:) name:NSTextDidBeginEditingNotification object:self];
-    // 
-    //     if ([_delegate respondsToSelector:@selector(textDidEndEditing:)])
-    //         [nc addObserver:_delegate selector:@selector(textDidEndEditing:) name:NSTextDidEndEditingNotification object:self];
-    //     
-    //     if ([_delegate respondsToSelector:@selector(textDidChange:)])
-    //         [nc addObserver:_delegate selector:@selector(textDidChange:) name:NSTextDidChangeNotification object:self];
-    //     
-    //     if ([_delegate respondsToSelector:@selector(textViewDidChangeSelection:)])
-    //         [nc addObserver:_delegate selector:@selector(textViewDidChangeSelection:) name:NSTextViewDidChangeSelectionNotification object:self];
-}
-
-- (id)delegate
-{
-    return _delegate;
-}
-
-// MARK: Posting notifications
-- (void)postTextDidChangeNotification
-{
-    // [[NSNotificationCenter defaultCenter] postNotificationName:NSTextDidChangeNotification object:self];
+    
 }
 
 @end
-

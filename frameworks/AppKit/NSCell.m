@@ -590,12 +590,18 @@
     if (!_isEditable && !_isSelectable)
         return;
     
-    [textObj setFrame:[self titleRectForBounds:aRect]];
-    [controlView addSubview:textObj];
+    NSLog(@"Wowza");
     
+    [textObj setFrame:[self titleRectForBounds:aRect]];
+    NSLog(@"Set frame");
+    [controlView addSubview:textObj];
+    NSLog(@"Added subview");
     [[controlView window] makeFirstResponder:textObj];
+    NSLog(@"made first responder");
     [textObj setDelegate:anObject];
+    NSLog(@"Seyt delegate");
     [textObj mouseDown:theEvent];
+    NSLog(@"Mouse down on the event");
 }
 
 - (void)selectWithFrame:(NSRect)aRect inView:(NSView *)controlView editor:(NSText *)textObj delegate:(id)anObject start:(NSInteger)selStart length:(NSInteger)selLength

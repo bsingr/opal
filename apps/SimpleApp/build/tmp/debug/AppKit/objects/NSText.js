@@ -56,10 +56,7 @@ _delegate = anObject;
 
 class_addMethod(the_class, "initWithFrame:", function(self, _cmd, aFrame) {
 with(self) {
-objc_msgSend(self, "init");
-_frame = aFrame;
-_bounds = NSMakeRect(0,0,_frame.size.width,_frame.size.height);
-_subviews = objc_msgSend(NSMutableArray, "arrayWithCapacity:", 0);
+self = objc_msgSendSuper({super_class:NSView, receiver:self}, "initWithFrame:", aFrame);
 return self;
 }
 }, "void");

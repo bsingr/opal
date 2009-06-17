@@ -107,3 +107,8 @@ NSDictionary.js:
   declarations: 
   - NSDictionary
   - NSMutableDictionary
+NSRange.js: 
+  dependencies: 
+  - NSObject
+  declarations: 
+  - NSValue

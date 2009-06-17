@@ -8,25 +8,13 @@ windowNumber = objc_msgSend(objc_msgSend(objc_msgSend(NSApplication, "sharedAppl
 else
 windowNumber = -1;
 
-var theEvent = objc_msgSend(NSEvent, "mouseEventWithType:location:modifierFlags:timestamp:windowNumber:context:eventNumber:clickCount:pressure:", CGEventGetType(event), location, 0, 0, windowNumber, null, 1, 1, 1);
+var theEvent = objc_msgSend(NSEvent, "mouseEventWithType:location:modifierFlags:timestamp:windowNumber:context:eventNumber:clickCount:pressure:", CGEventGetType(event), location, CGEventGetFlags(event), 0, windowNumber, null, 1, 1, 1);
 objc_msgSend(objc_msgSend(NSApplication, "sharedApplication"), "sendEvent:", theEvent);
 }
 function NSEventKeyEventFromCGEvent(event)
 {
 NSLog(CGEventKeyGetUnicodeString(event));
 var theFlags = CGEventGetFlags(event);
-if (theFlags & 131072)
-NSLog("Shift key");
-
-if (theFlags & 262144)
-NSLog("Control key");
-
-if (theFlags & 524288)
-NSLog("Alt key");
-
-if (theFlags & 1048576)
-NSLog("Cmd key");
-
 }
 var the_class = objc_allocateClassPair(NSObject, "NSEvent");
 var meta_class = the_class.isa;

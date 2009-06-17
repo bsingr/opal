@@ -10,7 +10,30 @@
 #import <Foundation/NSString.h>
 #import <AppKit/NSCell.h>
 
-@class NSAffineTransform, NSGraphicsContext;
+@class NSFontDescriptor, NSAffineTransform, NSGraphicsContext;
+
+typedef unsigned int NSGlyph;
+
+enum {
+    NSControlGlyph  = 0x00FFFFFF,
+    NSNullGlyph     = 0x0
+};
+
+extern const CGFloat *NSFontIdentityMatrix;
+
+enum {
+    NSNativeShortGlyphPacking = 5
+};
+typedef NSUInteger NSMultibyteGlyphPacking;
+
+enum {
+    NSFontDefaultRenderingMode                          = 0,
+    NSFontAntialiasedRenderingMode                      = 1,
+    NSFontIntegerAdvancementsRenderingMode              = 2,
+    NSFontAntialiasedIntegerAdvancementsRenderingMode   = 3
+};
+typedef NSUInteger NSFontRenderingMode;
+
 
 @interface NSFont : NSObject <NSCopying, NSCoding>
 {

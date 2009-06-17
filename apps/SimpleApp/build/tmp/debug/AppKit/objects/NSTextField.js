@@ -99,7 +99,6 @@ return YES;
 
 class_addMethod(the_class, "selectText:", function(self, _cmd, sender) {
 with(self) {
-NSLog("oh yeah");
 if (!objc_msgSend(_cell, "isEnabled"))
 return ;
 
@@ -121,7 +120,6 @@ objc_msgSend(_cell, "selectWithFrame:inView:editor:delegate:start:length:", _bou
 
 class_addMethod(the_class, "mouseDown:", function(self, _cmd, theEvent) {
 with(self) {
-NSLog("hmm");
 if (!objc_msgSend(_cell, "isEnabled"))
 return ;
 
@@ -129,15 +127,18 @@ if (objc_msgSend(_cell, "isSelectable") || objc_msgSend(_cell, "isEditable"))
 {
 if (!_currentEditor)
 {
-NSLog("first one");
 _currentEditor = objc_msgSend(objc_msgSend(self, "window"), "fieldEditor:forObject:", YES, self);
-NSLog("second one");
+NSLog(_currentEditor);
 _currentEditor = objc_msgSend(_cell, "setUpFieldEditorAttributes:", _currentEditor);
+NSLog(_currentEditor);
 
 }
 
+NSLog("Finished loop");
 objc_msgSend(_cell, "setHighlighted:", YES);
+NSLog("Yarp");
 objc_msgSend(_cell, "editWithFrame:inView:editor:delegate:event:", _bounds, self, _currentEditor, self, theEvent);
+NSLog("Hermmm");
 
 }
 

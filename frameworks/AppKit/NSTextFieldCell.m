@@ -166,13 +166,13 @@
         NSRect *titleRect = NSMakeRect (theRect.origin.x + 4, theRect.origin.y + 4, theRect.size.width - 8, theRect.size.height - 9);
         return titleRect;
     }
-    
+        
     return theRect;
 }
 
 - (NSText *)setUpFieldEditorAttributes:(NSText *)textObj
 {
-    
+    return textObj;
 }
 
 - (void)setPlaceholderString:(NSString*)string

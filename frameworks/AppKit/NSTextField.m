@@ -58,7 +58,6 @@
 
 - (void)selectText:(id)sender
 {
-    NSLog(@"oh yeah");
     if (![_cell isEnabled])
         return;
     
@@ -74,7 +73,6 @@
 
 - (void)mouseDown:(NSEvent *)theEvent
 {
-    NSLog(@"hmm");
     if (![_cell isEnabled])
         return;
     
@@ -82,14 +80,18 @@
     {    
         if (!_currentEditor)
         {
-            NSLog(@"first one");
             _currentEditor = [[self window] fieldEditor:YES forObject:self];
-            NSLog(@"second one");
+            NSLog(_currentEditor);
             _currentEditor = [_cell setUpFieldEditorAttributes:_currentEditor];
+            NSLog(_currentEditor);
         }
         
+        
+        NSLog(@"Finished loop");
         [_cell setHighlighted:YES];
+        NSLog(@"Yarp");
         [_cell editWithFrame:_bounds inView:self editor:_currentEditor delegate:self event:theEvent];
+        NSLog(@"Hermmm");
     }
 }
 

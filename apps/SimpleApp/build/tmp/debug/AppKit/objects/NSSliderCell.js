@@ -51,6 +51,16 @@ CGContextRestoreGState(c);
 }
 }, "void");
 
+class_addMethod(the_class, "drawBarInside:flipped:", function(self, _cmd, cellFrame, flipped) {
+with(self) {
+}
+}, "void");
+
+class_addMethod(the_class, "drawKnob:", function(self, _cmd, rect) {
+with(self) {
+}
+}, "void");
+
 class_addMethod(the_class, "startTrackingAt:inView:", function(self, _cmd, startPoint, controlView) {
 with(self) {
 if (objc_msgSend(self, "isEnabled"))

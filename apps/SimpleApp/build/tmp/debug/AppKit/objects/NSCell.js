@@ -609,11 +609,17 @@ with(self) {
 if (!_isEditable && !_isSelectable)
 return ;
 
+NSLog("Wowza");
 objc_msgSend(textObj, "setFrame:", objc_msgSend(self, "titleRectForBounds:", aRect));
+NSLog("Set frame");
 objc_msgSend(controlView, "addSubview:", textObj);
+NSLog("Added subview");
 objc_msgSend(objc_msgSend(controlView, "window"), "makeFirstResponder:", textObj);
+NSLog("made first responder");
 objc_msgSend(textObj, "setDelegate:", anObject);
+NSLog("Seyt delegate");
 objc_msgSend(textObj, "mouseDown:", theEvent);
+NSLog("Mouse down on the event");
 }
 }, "void");
 

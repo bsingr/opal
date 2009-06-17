@@ -978,12 +978,12 @@ NSLog("Sending mouse down to (else)");
 
 }
 else
-if (objc_msgSend(theEvent, "valueForKey:", "type") == 2)
+if (objc_msgSend(theEvent, "type") == 2)
 {
 
 }
 else
-if (objc_msgSend(theEvent, "valueForKey:", "type") == 10)
+if (objc_msgSend(theEvent, "type") == 10)
 {
 if (_firstResponder)
 {
