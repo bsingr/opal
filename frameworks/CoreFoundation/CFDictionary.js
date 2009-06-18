@@ -157,7 +157,7 @@ function CFDictionaryAddValue(theDict, key, value)
 // extern void CFDictionarySetValue(CFMutableFictionaryRef theDict, void *key, void *value);
 // 
 function CFDictionarySetValue(theDict, key, value)
-{
+{    
     if (!CFDictionaryContainsKey(theDict, key))
     {
         theDict._keys.push(key);

@@ -246,7 +246,7 @@ NSString *NSInvalidUnarchiveOperationException = @"NSInvalidUnarchiveOperationEx
 
     id newObject = [theClass alloc];
     [_unarchivedObjects setObject:newObject forKey:[theObject objectForKey:@"id"]];
-
+    
     if([theObject objectForKey:@"class"] == @"NSCustomObject")
     {
         [newObject init];

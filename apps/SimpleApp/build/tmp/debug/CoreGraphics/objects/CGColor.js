@@ -1,43 +1,48 @@
-// 
-//  CGColor.js
-//  vienna
-//  
-//  Created by Adam Beynon on 2009-06-10.
-//  Copyright 2009 Adam Beynon. All rights reserved.
-// 
-
-// extern CGColorRef CGColorCreate(CGColorSpaceRef space, CGFloat components[]);
-// 
-
-// extern CGColorRef CGColorCreateGenericGray(CGFloat gray, CGFloat alpha);
-// extern CGColorRef CGColorCreateGenericRGB(CGFloat red, CGFloat green, CGFloat blue, CGFloat alpha);
-function CGColorCreateGenericRGB(red, green, blue, alpha)
+var kCGColorWhite = "kCGColorWhite";
+var kCGColorBlack = "kCGColorBlack";
+var kCGColorClear = "kCGColorClear";
+function CGColorCreate(space,components)
 {
-	return {
-		_red: red,
-		_blue: blue,
-		_green: green,
-		_alpha: alpha
-	};
 }
-
-
-// extern CGColorRef CGColorCreateGenericCMYK(CGFloat cyan, CGFloat magenta, CGFloat yellow, CGFloat black, CGFloat alpha);
-// extern CGColorRef CGColorGetConstantColor(CFStringRef colorName);
-// // extern CGColorRef CGColorCreateWithPattern(CGColorSpaceRef space, CGPatternRef pattern, CGFloat components[]);
-// extern CGColorRef CGColorCreateCopy(CGColorRef color);
-// extern CGColorRef CGColorCreateCopyWithAlpha(CGColorRef color, CGFloat alpha);
-// extern CGColorRef CGColorRetain(CGColorRef color);
-// extern void CGColorRelease(CGColorRef color);
-// extern bool CGColorEqualToColor(CGColorRef color1, CGColorRef color2);
-// extern size_t CGColorGetNumberOfComponents(CGColorRef color);
-// extern const CGFloat *CGColorGetComponents(CGColorRef color);
-// extern CGFloat CGColorGetAlpha(CGColorRef color);
-// extern CGColorSpaceRef CGColorGetColorSpace(CGColorRef color);
-// // extern CGPatternRef CGColorGetPattern(CGColorRef color);
-// extern CFTypeID CGColorGetTypeID(void);
-// 
-// extern CFStringRef kCGColorWhite;
-// extern CFStringRef kCGColorBlack;
-// extern CFStringRef kCGColorClear;
-// 
+function CGColorCreateGenericGray(gray,alpha)
+{
+}
+function CGColorCreateGenericRGB(red,green,blue,alpha)
+{
+}
+function CGColorCreateGenericCMYK(cyan,magenta,yellow,black,alpha)
+{
+}
+function CGColorGetConstantColor(colorName)
+{
+}
+function CGColorCreateCopy(color)
+{
+}
+function CGColorCreateCopyWithAlpha(color,alpha)
+{
+}
+function CGColorRetain(color)
+{
+}
+function CGColorRelease(color)
+{
+}
+function CGColorEqualToColor(color1,color2)
+{
+}
+function CGColorGetNumberOfComponents(color)
+{
+}
+function d()
+{
+}
+function CGColorGetAlpha(color)
+{
+}
+function CGColorGetColorSpace(color)
+{
+}
+function CGColorGetTypeID()
+{
+}

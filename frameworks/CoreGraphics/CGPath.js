@@ -83,14 +83,14 @@ function CGPathAddRect(path, m, rect)
     
 }
 
-// extern void CGPathAddRects(CGMutablePathRef path, CGAffineTransform *m, CGRect rects[], size_t count);
+// extern void CGPathAddRects(CGMutablePathRef path, CGAffineTransform *m, CGRect rects[], int count);
 // 
 function CGPathAddRects(path, m, rects, count)
 {
     
 }
 
-// extern void CGPathAddLines(CGMutablePathRef path, CGAffineTransform *m, CGPoint points[], size_t count);
+// extern void CGPathAddLines(CGMutablePathRef path, CGAffineTransform *m, CGPoint points[], int count);
 // 
 function CGPathAddLines(path, m, point, count)
 {

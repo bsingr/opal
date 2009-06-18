@@ -368,6 +368,13 @@
 								</object>
 							</object>
 						</object>
+						<object class="NSCustomView" id="485326750">
+							<reference key="NSNextResponder" ref="414427165"/>
+							<int key="NSvFlags">268</int>
+							<string key="NSFrame">{{162, 87}, {587, 259}}</string>
+							<reference key="NSSuperview" ref="414427165"/>
+							<string key="NSClassName">VNCustomView</string>
+						</object>
 					</object>
 					<string key="NSFrameSize">{946, 613}</string>
 					<reference key="NSSuperview"/>
@@ -434,6 +441,7 @@
 							<reference ref="744995210"/>
 							<reference ref="1037334765"/>
 							<reference ref="669360788"/>
+							<reference ref="485326750"/>
 						</object>
 						<reference key="parent" ref="513744381"/>
 					</object>
@@ -624,6 +632,11 @@
 						<reference key="object" ref="859234033"/>
 						<reference key="parent" ref="669360788"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">532</int>
+						<reference key="object" ref="485326750"/>
+						<reference key="parent" ref="414427165"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -665,6 +678,7 @@
 					<string>504.IBPluginDependency</string>
 					<string>509.IBPluginDependency</string>
 					<string>510.IBPluginDependency</string>
+					<string>532.IBPluginDependency</string>
 				</object>
 				<object class="NSMutableArray" key="dict.values">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -675,6 +689,7 @@
 					<string>{{254, 188}, {946, 613}}</string>
 					<integer value="1"/>
 					<string>{{11, 666}, {480, 270}}</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -721,7 +736,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">531</int>
+			<int key="maxID">532</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes"/>
 		<int key="IBDocument.localizationMode">0</int>

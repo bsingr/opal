@@ -20,11 +20,11 @@ module Vienna
       else
         # Extern to a non pointer (e.g. using id or similar)
         # puts "Found extern declaration2: #{e.right.value}"
-        the_var = ObjectiveCExternVariable.new
-        the_var.name = e.right.value
-        the_var.type = e.left.right.value        
-        current_file().extern_variables << the_var
-        symbol_table_add the_var.name, the_var.type
+        # the_var = ObjectiveCExternVariable.new
+        #         the_var.name = e.right.value
+        #         the_var.type = e.left.right.value        
+        #         current_file().extern_variables << the_var
+        #         symbol_table_add the_var.name, the_var.type
       end
     end
     

@@ -1,12 +1,34 @@
-// 
-//  CGContext.h
-//  vienna
-//  
-//  Created by Adam Beynon on 2009-05-02.
-//  Copyright 2009 Adam Beynon. All rights reserved.
-// 
+/* 
+ * CGContext.h
+ * vienna
+ * 
+ * Created by Adam Beynon.
+ * Copyright 2009 Adam Beynon.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 
-typedef struct CGContext *CGContextRef;
+typedef struct CGContext
+{
+    void    (*save)(void);
+    
+} *CGContextRef;
 
 #import <CoreGraphics/CGBase.h>
 #import <CoreGraphics/CGAffineTransform.h>
@@ -66,7 +88,7 @@ extern void CGContextSetLineWidth(CGContextRef c, CGFloat width);
 extern void CGContextSetLineCap(CGContextRef c, CGLineCap cap);
 extern void CGContextSetLineJoin(CGContextRef c, CGLineJoin join);
 extern void CGContextSetMiterLimit(CGContextRef c, CGFloat limit);
-extern void CGContextSetLineDash(CGContextRef c, CGFloat phase, const CGFloat lengths[], size_t count);
+extern void CGContextSetLineDash(CGContextRef c, CGFloat phase, const CGFloat lengths[], int count);
 extern void CGContextSetFlatness(CGContextRef c, CGFloat flatness);
 extern void CGContextSetAlpha(CGContextRef c, CGFloat alpha);
 // extern void CGContextSetBlendMode(CGContextRef context, CGBlendMode mode);
@@ -77,8 +99,8 @@ extern void CGContextAddCurveToPoint(CGContextRef c, CGFloat cp1x, CGFloat cp1y,
 extern void CGContextAddQuadCurveToPoint(CGContextRef c, CGFloat cpx, CGFloat cpy, CGFloat x, CGFloat y);
 extern void CGContextClosePath(CGContextRef c);
 extern void CGContextAddRect(CGContextRef c, CGRect rect);
-extern void CGContextAddRects(CGContextRef c, const CGRect rects[], size_t count);
-extern void CGContextAddLines(CGContextRef c, const CGPoint points[], size_t count);
+extern void CGContextAddRects(CGContextRef c, const CGRect rects[], int count);
+extern void CGContextAddLines(CGContextRef c, const CGPoint points[], int count);
 extern void CGContextAddEllipseInRect(CGContextRef context, CGRect rect);
 extern void CGContextAddArc(CGContextRef c, CGFloat x, CGFloat y, CGFloat radius, CGFloat startAngle, CGFloat endAngle, int clockwise);
 extern void CGContextAddArcToPoint(CGContextRef c, CGFloat x1, CGFloat y1, CGFloat x2, CGFloat y2, CGFloat radius);
@@ -93,19 +115,19 @@ extern void CGContextFillPath(CGContextRef c);
 extern void CGContextEOFillPath(CGContextRef c);
 extern void CGContextStrokePath(CGContextRef c);
 extern void CGContextFillRect(CGContextRef c, CGRect rect);
-extern void CGContextFillRects(CGContextRef c, const CGRect rects[], size_t count);
+extern void CGContextFillRects(CGContextRef c, const CGRect rects[], int count);
 extern void CGContextStrokeRect(CGContextRef c, CGRect rect);
 extern void CGContextStrokeRectWithWidth(CGContextRef c, CGRect rect, CGFloat width);
 extern void CGContextClearRect(CGContextRef c, CGRect rect);
 extern void CGContextFillEllipseInRect(CGContextRef context, CGRect rect);
 extern void CGContextStrokeEllipseInRect(CGContextRef context, CGRect rect);
-extern void CGContextStrokeLineSegments(CGContextRef c, const CGPoint points[], size_t count);
+extern void CGContextStrokeLineSegments(CGContextRef c, const CGPoint points[], int count);
 extern void CGContextClip(CGContextRef c);
 extern void CGContextEOClip(CGContextRef c);
 extern void CGContextClipToMask(CGContextRef c, CGRect rect, CGImageRef mask);
 extern CGRect CGContextGetClipBoundingBox(CGContextRef c);
 extern void CGContextClipToRect(CGContextRef c, CGRect rect);
-extern void CGContextClipToRects(CGContextRef c, const CGRect rects[], size_t count);
+extern void CGContextClipToRects(CGContextRef c, const CGRect rects[], int count);
 extern void CGContextSetFillColorWithColor(CGContextRef c, CGColorRef color);
 extern void CGContextSetStrokeColorWithColor(CGContextRef c, CGColorRef color);
 extern void CGContextSetFillColorSpace(CGContextRef c, CGColorSpaceRef colorspace);
@@ -140,12 +162,12 @@ extern void CGContextSetTextDrawingMode(CGContextRef c, CGTextDrawingMode mode);
 // extern void CGContextSetFont(CGContextRef c, CGFontRef font);
 extern void CGContextSetFontSize(CGContextRef c, CGFloat size);
 // extern void CGContextSelectFont(CGContextRef c, const char *name, CGFloat size, CGTextEncoding textEncoding);
-// extern void CGContextShowGlyphsAtPositions(CGContextRef context, const CGGlyph glyphs[], const CGPoint positions[], size_t count);
-extern void CGContextShowText(CGContextRef c, const char *string, size_t length);
-extern void CGContextShowTextAtPoint(CGContextRef c, CGFloat x, CGFloat y, const char *string, size_t length);
-// extern void CGContextShowGlyphs(CGContextRef c, const CGGlyph g[], size_t count);
-// extern void CGContextShowGlyphsAtPoint(CGContextRef c, CGFloat x, CGFloat y, const CGGlyph glyphs[], size_t count);
-// extern void CGContextShowGlyphsWithAdvances(CGContextRef c, const CGGlyph glyphs[], const CGSize advances[], size_t count);
+// extern void CGContextShowGlyphsAtPositions(CGContextRef context, const CGGlyph glyphs[], const CGPoint positions[], int count);
+extern void CGContextShowText(CGContextRef c, const char *string, int length);
+extern void CGContextShowTextAtPoint(CGContextRef c, CGFloat x, CGFloat y, const char *string, int length);
+// extern void CGContextShowGlyphs(CGContextRef c, const CGGlyph g[], int count);
+// extern void CGContextShowGlyphsAtPoint(CGContextRef c, CGFloat x, CGFloat y, const CGGlyph glyphs[], int count);
+// extern void CGContextShowGlyphsWithAdvances(CGContextRef c, const CGGlyph glyphs[], const CGSize advances[], int count);
 // extern void CGContextDrawPDFPage(CGContextRef c, CGPDFPageRef page);
 // extern void CGContextDrawPDFDocument(CGContextRef c, CGRect rect, CGPDFDocumentRef document, int page);
 // extern void CGContextBeginPage(CGContextRef c, const CGRect *mediaBox);

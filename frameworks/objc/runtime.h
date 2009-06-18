@@ -70,7 +70,7 @@ extern Class class_setSuperclass(Class cls, Class newSuper);
 extern int class_getVersion(Class cls);
 extern void class_setVersion(Class cls, int version);
 
-extern size_t class_getInstanceSize(Class cls);
+extern int class_getInstanceSize(Class cls);
 
 extern Ivar class_getInstanceVariable(Class cls, const char *name);
 extern Ivar class_getClassVariable(Class cls, const char *name);
@@ -92,16 +92,16 @@ extern objc_property_t *class_copyPropertyList(Class cls, unsigned int *outCount
 extern const char *class_getIvarLayout(Class cls);
 extern const char *class_getWeakIvarLayout(Class cls);
 
-extern id class_createInstance(Class cls, size_t extraBytes);
+extern id class_createInstance(Class cls, int extraBytes);
 
-extern Class objc_allocateClassPair(Class superclass, const char *name, size_t extraBytes);
+extern Class objc_allocateClassPair(Class superclass, const char *name, int extraBytes);
 extern void objc_registerClassPair(Class cls);
-extern Class objc_duplicateClass(Class original, const char *name, size_t extraBytes);
+extern Class objc_duplicateClass(Class original, const char *name, int extraBytes);
 extern void objc_disposeClassPair(Class cls);
 
 extern BOOL class_addMethod(Class cls, SEL name, IMP imp, const char *types);
 extern IMP class_replaceMethod(Class cls, SEL name, IMP imp, const char *types);
-extern BOOL class_addIvar(Class cls, const char *name, size_t size, uint8_t alignment, const char *types);
+extern BOOL class_addIvar(Class cls, const char *name, int size, uint8_t alignment, const char *types);
 extern BOOL class_addProtocol(Class cls, Protocol *protocol);
 extern void class_setIvarLayout(Class cls, const char *layout);
 extern void class_setWeakIvarLayout(Class cls, const char *layout);
@@ -114,8 +114,8 @@ extern const char *method_getTypeEncoding(Method m);
 extern unsigned int method_getNumberOfArguments(Method m);
 extern char *method_copyReturnType(Method m);
 extern char *method_copyArgumentType(Method m, unsigned int index);
-extern void method_getReturnType(Method m, char *dst, size_t dst_len);
-extern void method_getArgumentType(Method m, unsigned int index, char *dst, size_t dst_len);
+extern void method_getReturnType(Method m, char *dst, int dst_len);
+extern void method_getArgumentType(Method m, unsigned int index, char *dst, int dst_len);
 extern struct objc_method_description *method_getDescription(Method m);
 
 extern IMP method_setImplementation(Method m, IMP imp);

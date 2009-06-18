@@ -17,14 +17,14 @@ function CGImageRef()
 }
 
 
-// extern CGImageRef CGImageCreate(size_t width, size_t height, size_t bitsPerComponent, size_t bitsPerPixel, size_t bytesPerRow, CGColorSpaceRef colorspace, CGBitmapInfo bitmapInfo, CGDataProviderRef provider, const CGFloat decode[], bool shouldInterpolate, CGColorRenderingIntent intent);
+// extern CGImageRef CGImageCreate(int width, int height, int bitsPerComponent, int bitsPerPixel, int bytesPerRow, CGColorSpaceRef colorspace, CGBitmapInfo bitmapInfo, CGDataProviderRef provider, const CGFloat decode[], bool shouldInterpolate, CGColorRenderingIntent intent);
 // 
 function CGImageCreate(width, height, bitsPerComponent, bitsPerPixel, bytesPerRow, colorspace, bitmapInfo, provider, decode, shouldInterpolate, intent)
 {
     
 }
 
-// extern CGImageRef CGImageMaskCreate(size_t width, size_t height, size_t bitsPerComponent, size_t bitsPerPixel, size_t bytesPerRow, CGDataProviderRef provider, const CGFloat decode[], bool shouldInterpolate);
+// extern CGImageRef CGImageMaskCreate(int width, int height, int bitsPerComponent, int bitsPerPixel, int bytesPerRow, CGDataProviderRef provider, const CGFloat decode[], bool shouldInterpolate);
 // 
 function CGImageMaskCreate(width, height, bitsPerComponent, bitsPerPixel, bytesPerRow, provider, decode, shouldInterpolate)
 {
@@ -87,35 +87,35 @@ function CGImageIsMask(image)
     
 }
 
-// extern size_t CGImageGetWidth(CGImageRef image);
+// extern int CGImageGetWidth(CGImageRef image);
 // 
 function CGImageGetWidth(image)
 {
     
 }
 
-// extern size_t CGImageGetHeight(CGImageRef image);
+// extern int CGImageGetHeight(CGImageRef image);
 // 
 function CGImageGetHeight(image)
 {
     
 }
 
-// extern size_t CGImageGetBitsPerComponent(CGImageRef image);
+// extern int CGImageGetBitsPerComponent(CGImageRef image);
 // 
 function CGImaheGetBitsPerComponent(image)
 {
     
 }
 
-// extern size_t CGImageGetBitsPerPixel(CGImageRef image);
+// extern int CGImageGetBitsPerPixel(CGImageRef image);
 // 
 function CGImageGetBitsPerPixel(image)
 {
     
 }
 
-// extern size_t CGImageGetBytesPerRow(CGImageRef image);
+// extern int CGImageGetBytesPerRow(CGImageRef image);
 // 
 function CGImageGetBytesPerRow(image)
 {

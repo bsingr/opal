@@ -170,7 +170,7 @@ function CGColorCreateGenericRGB(red, green, blue, alpha)
 // extern CGColorRef CGColorRetain(CGColorRef color);
 // extern void CGColorRelease(CGColorRef color);
 // extern bool CGColorEqualToColor(CGColorRef color1, CGColorRef color2);
-// extern size_t CGColorGetNumberOfComponents(CGColorRef color);
+// extern int CGColorGetNumberOfComponents(CGColorRef color);
 // extern const CGFloat *CGColorGetComponents(CGColorRef color);
 // extern CGFloat CGColorGetAlpha(CGColorRef color);
 // extern CGColorSpaceRef CGColorGetColorSpace(CGColorRef color);
@@ -252,7 +252,7 @@ function CGContextSetMiterLimit(c, limit)
     c.miterLimit = limit;
 }
 
-// extern void CGContextSetLineDash(CGContextRef c, CGFloat phase, const CGFloat lengths[], size_t count);
+// extern void CGContextSetLineDash(CGContextRef c, CGFloat phase, const CGFloat lengths[], int count);
 // 
 function CGContextSetLineDash(c, phase, lengths, count)
 {
@@ -313,14 +313,14 @@ function CGContextAddRect(c, rect)
     c.rect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
 }
 
-// extern void CGContextAddRects(CGContextRef c, const CGRect rects[], size_t count);
+// extern void CGContextAddRects(CGContextRef c, const CGRect rects[], int count);
 // 
 function CGContextAddRects(c, rects, count)
 {
     
 }
 
-// extern void CGContextAddLines(CGContextRef c, const CGPoint points[], size_t count);
+// extern void CGContextAddLines(CGContextRef c, const CGPoint points[], int count);
 // 
 function CGContextAddLines(c, points, count)
 {
@@ -458,7 +458,7 @@ function CGContextStrokeEllipseInRect(c, rect)
     
 }
 
-// extern void CGContextStrokeLineSegments(CGContextRef c, const CGPoint points[], size_t count);
+// extern void CGContextStrokeLineSegments(CGContextRef c, const CGPoint points[], int count);
 // 
 function CGContextStrokeLineSegments(c, points, count)
 {
@@ -499,7 +499,7 @@ function CGContextClipToRect(c, rect)
     
 }
 
-// extern void CGContextClipToRects(CGContextRef c, const CGRect rects[], size_t count);
+// extern void CGContextClipToRects(CGContextRef c, const CGRect rects[], int count);
 // 
 function CGContextClipToRects(c, rects, count)
 {
@@ -750,21 +750,21 @@ function CGContextSelectFont(c, name, size, textEncoding)
     
 }
 
-// extern void CGContextShowGlyphsAtPositions(CGContextRef context, const CGGlyph glyphs[], const CGPoint positions[], size_t count);
+// extern void CGContextShowGlyphsAtPositions(CGContextRef context, const CGGlyph glyphs[], const CGPoint positions[], int count);
 // 
 function CGContextShowGlyphsAtPositions(c, glyphs, positions, count)
 {
     
 }
 
-// extern void CGContextShowText(CGContextRef c, const char *string, size_t length);
+// extern void CGContextShowText(CGContextRef c, const char *string, int length);
 // 
 function CGContextShowText(c, string, length)
 {
     
 }
 
-// extern void CGContextShowTextAtPoint(CGContextRef c, CGFloat x, CGFloat y, const char *string, size_t length);
+// extern void CGContextShowTextAtPoint(CGContextRef c, CGFloat x, CGFloat y, const char *string, int length);
 // 
 function CGContextShowTextAtPoint(c, x, y, string, length)
 {
@@ -772,21 +772,21 @@ function CGContextShowTextAtPoint(c, x, y, string, length)
         c.fillText(string, x, y);
 }
 
-// extern void CGContextShowGlyphs(CGContextRef c, const CGGlyph g[], size_t count);
+// extern void CGContextShowGlyphs(CGContextRef c, const CGGlyph g[], int count);
 // 
 function CGContextShowGlyphs(c, g, count)
 {
     
 }
 
-// extern void CGContextShowGlyphsAtPoint(CGContextRef c, CGFloat x, CGFloat y, const CGGlyph glyphs[], size_t count);
+// extern void CGContextShowGlyphsAtPoint(CGContextRef c, CGFloat x, CGFloat y, const CGGlyph glyphs[], int count);
 // 
 function CGContextShowGlyphsAtPoint(c, x, y, glyphs, count)
 {
     
 }
 
-// extern void CGContextShowGlyphsWithAdvances(CGContextRef c, const CGGlyph glyphs[], const CGSize advances[], size_t count);
+// extern void CGContextShowGlyphsWithAdvances(CGContextRef c, const CGGlyph glyphs[], const CGSize advances[], int count);
 // 
 function CGContextShowGlyphsWithAdvances(c, glyphs, advances, count)
 {
@@ -1598,7 +1598,7 @@ function CGGradientRef()
     return this;
 }
 
-// extern CGGradientRef CGGradientCreateWithColorComponents(CGColorSpaceRef space, CGFloat components[], CGFloat locations[], size_t count);
+// extern CGGradientRef CGGradientCreateWithColorComponents(CGColorSpaceRef space, CGFloat components[], CGFloat locations[], int count);
 // 
 function CGGradientCreateWithColorComponenets(space, componenets, locations, count)
 {
@@ -1633,14 +1633,14 @@ function CGImageRef()
 }
 
 
-// extern CGImageRef CGImageCreate(size_t width, size_t height, size_t bitsPerComponent, size_t bitsPerPixel, size_t bytesPerRow, CGColorSpaceRef colorspace, CGBitmapInfo bitmapInfo, CGDataProviderRef provider, const CGFloat decode[], bool shouldInterpolate, CGColorRenderingIntent intent);
+// extern CGImageRef CGImageCreate(int width, int height, int bitsPerComponent, int bitsPerPixel, int bytesPerRow, CGColorSpaceRef colorspace, CGBitmapInfo bitmapInfo, CGDataProviderRef provider, const CGFloat decode[], bool shouldInterpolate, CGColorRenderingIntent intent);
 // 
 function CGImageCreate(width, height, bitsPerComponent, bitsPerPixel, bytesPerRow, colorspace, bitmapInfo, provider, decode, shouldInterpolate, intent)
 {
     
 }
 
-// extern CGImageRef CGImageMaskCreate(size_t width, size_t height, size_t bitsPerComponent, size_t bitsPerPixel, size_t bytesPerRow, CGDataProviderRef provider, const CGFloat decode[], bool shouldInterpolate);
+// extern CGImageRef CGImageMaskCreate(int width, int height, int bitsPerComponent, int bitsPerPixel, int bytesPerRow, CGDataProviderRef provider, const CGFloat decode[], bool shouldInterpolate);
 // 
 function CGImageMaskCreate(width, height, bitsPerComponent, bitsPerPixel, bytesPerRow, provider, decode, shouldInterpolate)
 {
@@ -1703,35 +1703,35 @@ function CGImageIsMask(image)
     
 }
 
-// extern size_t CGImageGetWidth(CGImageRef image);
+// extern int CGImageGetWidth(CGImageRef image);
 // 
 function CGImageGetWidth(image)
 {
     
 }
 
-// extern size_t CGImageGetHeight(CGImageRef image);
+// extern int CGImageGetHeight(CGImageRef image);
 // 
 function CGImageGetHeight(image)
 {
     
 }
 
-// extern size_t CGImageGetBitsPerComponent(CGImageRef image);
+// extern int CGImageGetBitsPerComponent(CGImageRef image);
 // 
 function CGImaheGetBitsPerComponent(image)
 {
     
 }
 
-// extern size_t CGImageGetBitsPerPixel(CGImageRef image);
+// extern int CGImageGetBitsPerPixel(CGImageRef image);
 // 
 function CGImageGetBitsPerPixel(image)
 {
     
 }
 
-// extern size_t CGImageGetBytesPerRow(CGImageRef image);
+// extern int CGImageGetBytesPerRow(CGImageRef image);
 // 
 function CGImageGetBytesPerRow(image)
 {
@@ -1898,14 +1898,14 @@ function CGPathAddRect(path, m, rect)
     
 }
 
-// extern void CGPathAddRects(CGMutablePathRef path, CGAffineTransform *m, CGRect rects[], size_t count);
+// extern void CGPathAddRects(CGMutablePathRef path, CGAffineTransform *m, CGRect rects[], int count);
 // 
 function CGPathAddRects(path, m, rects, count)
 {
     
 }
 
-// extern void CGPathAddLines(CGMutablePathRef path, CGAffineTransform *m, CGPoint points[], size_t count);
+// extern void CGPathAddLines(CGMutablePathRef path, CGAffineTransform *m, CGPoint points[], int count);
 // 
 function CGPathAddLines(path, m, point, count)
 {

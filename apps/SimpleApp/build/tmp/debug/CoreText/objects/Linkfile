@@ -1,0 +1,61 @@
+--- 
+CTTextTab.c.js: 
+  dependencies: []
+
+  declarations: []
+
+CTStringAttributes.c.js: 
+  dependencies: []
+
+  declarations: []
+
+CTTypesetter.c.js: 
+  dependencies: []
+
+  declarations: []
+
+CTGlyphInfo.c.js: 
+  dependencies: []
+
+  declarations: []
+
+CTFont.c.js: 
+  dependencies: []
+
+  declarations: []
+
+CTParagraphStyle.c.js: 
+  dependencies: []
+
+  declarations: []
+
+CTFramesetter.c.js: 
+  dependencies: []
+
+  declarations: []
+
+CTFrame.c.js: 
+  dependencies: []
+
+  declarations: []
+
+CTFontDescriptor.c.js: 
+  dependencies: []
+
+  declarations: []
+
+CTLine.c.js: 
+  dependencies: []
+
+  declarations: []
+
+CTFontTraits.c.js: 
+  dependencies: []
+
+  declarations: []
+
+CTRun.c.js: 
+  dependencies: []
+
+  declarations: []
+

@@ -16,6 +16,11 @@ NSData.js:
   declarations: 
   - NSData
   - NSMutableData
+NSValue.js: 
+  dependencies: 
+  - NSObject
+  declarations: 
+  - NSValue
 NSKeyValueCoding.js: 
   dependencies: 
   - NSObject
@@ -73,6 +78,13 @@ NSEnumerator.js:
   - NSObject
   declarations: 
   - NSEnumerator
+NSAttributedString.js: 
+  dependencies: 
+  - NSObject
+  - NSAttributedString
+  declarations: 
+  - NSAttributedString
+  - NSMutableAttributedString
 NSNotification.js: 
   dependencies: 
   - NSObject

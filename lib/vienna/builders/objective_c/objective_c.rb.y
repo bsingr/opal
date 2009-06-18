@@ -90,7 +90,7 @@ class Vienna::ObjectiveCParser
     	| postfix_expression '[' expression ']'
     	| postfix_expression '(' ')'                          { result = make_node('f', val[0], nil) }
     	| postfix_expression '(' argument_expression_list ')' { result = make_node('f', val[0], val[2]) }
-    	| postfix_expression '.' IDENTIFIER                   { result = node_set_children(val[1], val[0], val[2]) }
+    	| postfix_expression '.' postfix_expression                   { result = node_set_children(val[1], val[0], val[2]) }
     	| postfix_expression PTR_OP IDENTIFIER
       | type_name IDENTIFIER                                { result = make_node('d', val[0], val[1]) }
     	| postfix_expression INC_OP                           { result = node_set_children(val[1], val[0], nil) }

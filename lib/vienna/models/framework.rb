@@ -40,7 +40,7 @@ module Vienna
       
       objc_sources.each do |c|
         # puts " - Building file: #{File.basename(c)}"
-        builder = ObjectiveCParser.new(c, File.join(@parent.tmp_prefix, bundle_name, 'objects', File.basename(c, '.m')) + '.js', @parent)
+        builder = ObjectiveCParser.new(c, File.join(@parent.tmp_prefix, bundle_name, 'objects', File.basename(c, '.*')) + '.js', @parent)
         builder.build!
         @link_config[File.basename(c, '.m') + '.js'] = builder.link_config
       end

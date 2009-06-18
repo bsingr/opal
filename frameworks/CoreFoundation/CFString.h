@@ -12,6 +12,8 @@
 #import <CoreFoundation/CFDictionary.h>
 #import <CoreFoundation/CFLocale.h>
 
+typedef int CFStringEncoding;
+
 enum {	
     kCFCompareCaseInsensitive       = 1,	
     kCFCompareBackwards             = 4,

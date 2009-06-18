@@ -13,7 +13,7 @@ function CGGradientRef()
     return this;
 }
 
-// extern CGGradientRef CGGradientCreateWithColorComponents(CGColorSpaceRef space, CGFloat components[], CGFloat locations[], size_t count);
+// extern CGGradientRef CGGradientCreateWithColorComponents(CGColorSpaceRef space, CGFloat components[], CGFloat locations[], int count);
 // 
 function CGGradientCreateWithColorComponenets(space, componenets, locations, count)
 {

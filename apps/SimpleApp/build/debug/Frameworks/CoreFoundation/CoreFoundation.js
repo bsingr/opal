@@ -163,11 +163,26 @@ function CFArrayAppendArray(theArray, otherArray, otherRange)
 //  Copyright 2009 Adam Beynon. All rights reserved.
 // 
 
+function CFAttributedStringRef()
+{
+    this._string = "";
+    this._ranges = [];
+}
+
+function CFMutableAttributedStringRef()
+{
+    this._string = "";
+    this._ranges = [];
+}
+
 // extern CFAttributedStringRef CFAttributedStringCreate(CFStringRef str, CFDictionaryRef attributes);
 // 
 function CFAttributedStringCreate(str, attributes)
 {
+    var theString = new CFAttributedStringRef();
+    theString._string = CFStringCreateCopy(str);
     
+    return theString;
 }
 
 // extern CFAttributedStirngRef CFAttributedStringCreateWithSubstring(CFAttributedStringRef aStr, CFRange range);
@@ -181,21 +196,24 @@ function CFAttributedStringCreateWithSubstring(aStr, range)
 // 
 function CFAttributedStringCreateCopy(aStr)
 {
+    var theString = new CFAttributedStringRef();
+    theString._string = CFStringCreateCopy(CFAttributedStringGetString(aStr));
     
+    return theString;
 }
 
 // extern CFStringRef CFAttributedStringGetString(CFAttributedStringRef aStr);
 // 
 function CFAttributedStringGetString(aStr)
 {
-    
+    return aStr._string;
 }
 
 // extern CFIndex CFAttributedStringGetLength(CFAttributedStringRef aStr);
 // 
 function CFAttributedStringGetLength(aStr)
 {
-    
+    return aStr._string.length;
 }
 
 // extern CFDictionaryRef CFAttributedStringGetAttributes(CFAttributedStringRef aStr, CFIndex loc, CFRange *effectiveRange);
@@ -805,7 +823,7 @@ function CFDictionaryAddValue(theDict, key, value)
 // extern void CFDictionarySetValue(CFMutableFictionaryRef theDict, void *key, void *value);
 // 
 function CFDictionarySetValue(theDict, key, value)
-{
+{    
     if (!CFDictionaryContainsKey(theDict, key))
     {
         theDict._keys.push(key);

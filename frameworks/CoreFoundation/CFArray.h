@@ -11,7 +11,7 @@
 typedef void *CFArrayRef;
 typedef void *CFMutableArrayRef;
 
-extern CFArrayRef CFArrayCreate(void **values, size_t numValues);
+extern CFArrayRef CFArrayCreate(void **values, int numValues);
 extern CFArrayRef CFArrayCreateCopy(CFArrayRef theArray);
 
 extern CFMutableArrayRef CFArrayCreateMutable(CFIndex capacity);

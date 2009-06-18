@@ -639,7 +639,7 @@ function class_setVersion(cls, version)
     
 }
 
-// extern size_t class_getInstanceSize(Class cls);
+// extern int class_getInstanceSize(Class cls);
 // 
 function class_getInstanceSize(cls)
 {

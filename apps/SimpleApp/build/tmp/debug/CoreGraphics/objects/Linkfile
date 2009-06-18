@@ -1,2 +1,21 @@
---- {}
+--- 
+CGContext.c.js: 
+  dependencies: []
+
+  declarations: []
+
+CGAffineTransform.c.js: 
+  dependencies: []
+
+  declarations: []
+
+CGColor.c.js: 
+  dependencies: []
+
+  declarations: []
+
+CGBitmapContext.c.js: 
+  dependencies: []
+
+  declarations: []
 

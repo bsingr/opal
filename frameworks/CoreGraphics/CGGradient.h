@@ -21,5 +21,5 @@ enum {
 };
 typedef int CGGradientDrawingOptions;
 
-extern CGGradientRef CGGradientCreateWithColorComponents(CGColorSpaceRef space, CGFloat components[], CGFloat locations[], size_t count);
+extern CGGradientRef CGGradientCreateWithColorComponents(CGColorSpaceRef space, CGFloat components[], CGFloat locations[], int count);
 extern CGGradientRef CGGradientCreateWithColors(CGColorSpaceRef space, CFArrayRef colors, CGFloat locations[]);

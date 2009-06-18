@@ -238,7 +238,7 @@ with(self) {
 
 class_addMethod(the_class, "removeFromSuperview", function(self, _cmd) {
 with(self) {
-var theParentElement = {};
+var theParentElement = {f:0,};
 if (_superview)
 {
 theParentElement = objc_msgSend(_superview, "DOMContainer");

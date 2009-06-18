@@ -22,8 +22,8 @@ extern void CGPathAddCurveToPoint(CGMutablePathRef path, CGAffineTransform *m, C
 extern void CGPathCloseSubpath(CGMutablePathRef path);
 
 extern void CGPathAddRect(CGMutablePathRef path, CGAffineTransform *m, CGRect rect);
-extern void CGPathAddRects(CGMutablePathRef path, CGAffineTransform *m, CGRect rects[], size_t count);
-extern void CGPathAddLines(CGMutablePathRef path, CGAffineTransform *m, CGPoint points[], size_t count);
+extern void CGPathAddRects(CGMutablePathRef path, CGAffineTransform *m, CGRect rects[], int count);
+extern void CGPathAddLines(CGMutablePathRef path, CGAffineTransform *m, CGPoint points[], int count);
 extern void CGPathAddEllipseInRect(CGMutablePathRef path, CGAffineTransform *m, CGRect rect);
 extern void CGPathAddArc(CGMutablePathRef path, CGAffineTransform *m, CGFloat x, CGFloat y, CGFloat radius, CGFloat startAngle, CGFloat endAngle, bool clockwise);
 extern void CGPathAddArcToPoint(CGMutablePathRef path, CGAffineTransform *m, CGFloat x1, CGFloat y1, CGFloat x2, CGFloat y2, CGFloat radius);

@@ -7,7 +7,6 @@
 // 
 
 // C defined types?????????
-typedef int size_t;
 typedef int bool;
 
 typedef unsigned long CFTypeID;

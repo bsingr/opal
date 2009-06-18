@@ -10,8 +10,19 @@
 #import <CoreFoundation/CFString.h>
 #import <CoreFoundation/CFDictionary.h>
 
-typedef const void *CFAttributedStringRef;
-typedef void *CFMutableAttributedStringRef;
+typedef struct __CFAttributedString 
+{
+    CFStringRef     _string;
+    CFArrayRef      _ranges;
+    
+} CFAttributedStringRef;
+
+typedef struct __CFAttributedString
+{
+    CFStringRef     _string;
+    CFArrayRef      _ranges;    
+
+} CFMutableAttributedStringRef;
 
 extern CFAttributedStringRef CFAttributedStringCreate(CFStringRef str, CFDictionaryRef attributes);
 extern CFAttributedStringRef CFAttributedStringCreateWithSubstring(CFAttributedStringRef aStr, CFRange range);

@@ -7,7 +7,7 @@
 # 
 
 config :all,
-  :required => [:Foundation, :CoreGraphics],
+  :required => [:Foundation, :CoreGraphics, :CoreText],
   :user_name => 'Adam Beynon',
   :organization_name => 'Adam Beynon'
   

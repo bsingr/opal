@@ -192,6 +192,11 @@ NSSlider.js:
   - NSControl
   declarations: 
   - NSSlider
+NSCustomView.js: 
+  dependencies: 
+  - NSObject
+  declarations: 
+  - NSCustomView
 NSCursor.js: 
   dependencies: 
   - NSObject
