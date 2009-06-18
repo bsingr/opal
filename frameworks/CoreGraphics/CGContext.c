@@ -28,7 +28,8 @@
 
 CFTypeID CGContextGetTypeID(void)
 {
-    
+    int bob[] = { 2, 3, 4 };
+    CGContextRef c = { .age = 10, .weith = 30 };
 }
 
 void CGContextSaveGState(CGContextRef c)

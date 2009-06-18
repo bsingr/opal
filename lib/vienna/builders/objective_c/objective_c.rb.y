@@ -83,6 +83,8 @@ class Vienna::ObjectiveCParser
     	# these two rules allow for Objc 3.0 style blocks
     	| '^' compound_statement                              { result = make_node('b', nil, val[1]) }
     	| '^' '(' parameter_type_list ')' compound_statement  { result = make_node('b', val[2], val[4]) }
+      # struct initializers
+      | '.' primary_expression
     	;
 
     postfix_expression:
