@@ -26,10 +26,14 @@
 
 #include "CGContext.h"
 
+// var CGLineJoinCanvas = ["miter", "round", "bevel"];
+// static char *CGLineJoinCanvas[] = { "miter", "round", "bevel" };
+// var CGLineCapCanvas = ["butt", "round", "square"];
+// static char *CGLineJoinCanvas[] = { "butt", "round", "square" };
+
 CFTypeID CGContextGetTypeID(void)
 {
-    int bob[] = { 2, 3, 4 };
-    CGContextRef c = { .age = 10, .weith = 30 };
+    
 }
 
 void CGContextSaveGState(CGContextRef c)
@@ -44,17 +48,17 @@ void CGContextRestoreGState(CGContextRef c)
 
 void CGContextScaleCTM(CGContextRef c, CGFloat sx, CGFloat sy)
 {
-    
+    c.scale(sx, sy);
 }
 
 void CGContextTranslateCTM(CGContextRef c, CGFloat tx, CGFloat ty)
 {
-    
+    c.translate(tx, ty);
 }
 
 void CGContextRotateCTM(CGContextRef c, CGFloat angle)
 {
-    
+    c.rotate(angle);
 }
 
 void CGContextConcatCTM(CGContextRef c, CGAffineTransform transform)
@@ -69,22 +73,22 @@ CGAffineTransform CGContextGetCTM(CGContextRef c)
 
 void CGContextSetLineWidth(CGContextRef c, CGFloat width)
 {
-    
+    c.lineWidth = width;
 }
 
 void CGContextSetLineCap(CGContextRef c, CGLineCap cap)
 {
-    
+    c.lineCap = CGLineCapCanvas[cap];
 }
 
 void CGContextSetLineJoin(CGContextRef c, CGLineJoin join)
 {
-    
+    c.lineJoin = CGLineJoinCanvas[join];
 }
 
 void CGContextSetMiterLimit(CGContextRef c, CGFloat limit)
 {
-    
+    c.miterLimit = limit;
 }
 
 void CGContextSetLineDash(CGContextRef c, CGFloat phase, const CGFloat lengths[], int count)
@@ -99,44 +103,44 @@ void CGContextSetFlatness(CGContextRef c, CGFloat flatness)
 
 void CGContextSetAlpha(CGContextRef c, CGFloat alpha)
 {
-    
+    c.globalAlpha = alpha;
 }
 
 //void CGContextSetBlendMode(CGContextRef context, CGBlendMode mode);
 
 void CGContextBeginPath(CGContextRef c)
 {
-    
+    c.beginPath();
 }
 
 void CGContextMoveToPoint(CGContextRef c, CGFloat x, CGFloat y)
 {
-    
+    c.moveTo(x, y);
 }
 
 void CGContextAddLineToPoint(CGContextRef c, CGFloat x, CGFloat y)
 {
-    
+    c.lineTo(x, y);
 }
 
 void CGContextAddCurveToPoint(CGContextRef c, CGFloat cp1x, CGFloat cp1y, CGFloat cp2x, CGFloat cp2y, CGFloat x, CGFloat y)
 {
-    
+    c.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y);
 }
 
 void CGContextAddQuadCurveToPoint(CGContextRef c, CGFloat cpx, CGFloat cpy, CGFloat x, CGFloat y)
 {
-    
+    c.quadraticCurveTo(cpx, cpy, x, y);
 }
 
 void CGContextClosePath(CGContextRef c)
 {
-    
+    c.closePath();
 }
 
 void CGContextAddRect(CGContextRef c, CGRect rect)
 {
-    
+    c.rect(rect.origin.x, rect.origin.y, rect.size.wdith, rect.size.height);
 }
 
 void CGContextAddRects(CGContextRef c, const CGRect rects[], int count)
@@ -156,12 +160,12 @@ void CGContextAddEllipseInRect(CGContextRef context, CGRect rect)
 
 void CGContextAddArc(CGContextRef c, CGFloat x, CGFloat y, CGFloat radius, CGFloat startAngle, CGFloat endAngle, int clockwise)
 {
-    
+    c.arc(x, y, radius, startAngle, endAngle, clockwise);
 }
 
 void CGContextAddArcToPoint(CGContextRef c, CGFloat x1, CGFloat y1, CGFloat x2, CGFloat y2, CGFloat radius)
 {
-    
+    c.arcTo(x1, y1, x2, y2, radius);
 }
 
 void CGContextAddPath(CGContextRef context, CGPathRef path)
@@ -216,7 +220,7 @@ void CGContextStrokePath(CGContextRef c)
 
 void CGContextFillRect(CGContextRef c, CGRect rect)
 {
-    
+    c.fillRect(rect.origin.x, c.canvas.height - rect.origin.y - rect.size.height, rect.size.width, rect.size.height);
 }
 
 void CGContextFillRects(CGContextRef c, const CGRect rects[], int count)
@@ -226,7 +230,7 @@ void CGContextFillRects(CGContextRef c, const CGRect rects[], int count)
 
 void CGContextStrokeRect(CGContextRef c, CGRect rect)
 {
-    
+    c.strokeRect(rect.origin.x, c.canvas.height - rect.origin.y - rect.size.height, rect.size.width, rect.size.height);
 }
 
 void CGContextStrokeRectWithWidth(CGContextRef c, CGRect rect, CGFloat width)
@@ -359,7 +363,7 @@ void CGContextSetRenderingIntent(CGContextRef c, CGColorRenderingIntent intent)
 
 void CGContextDrawImage(CGContextRef c, CGRect rect, CGImageRef image)
 {
-    
+    c.drawImage(image._representations[0], rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
 }
 
 void CGContextDrawTiledImage(CGContextRef c, CGRect rect, CGImageRef image)
@@ -372,12 +376,18 @@ void CGContextDrawTiledImage(CGContextRef c, CGRect rect, CGImageRef image)
 
 void CGContextSetShadowWithColor(CGContextRef context, CGSize offset, CGFloat blur, CGColorRef color)
 {
-    
+    c.shadowOffsetX = offset.width;
+    c.shadowOffsetY = offset.height;
+    c.shadowBlur = blur;
+    c.shadowColor = "rgba(" + parseInt(color._red * 255) + ","  + parseInt(color._green * 255) + ","  + parseInt(color._blue * 255) + ","  + color._alpha + ")";
 }
 
 void CGContextSetShadow(CGContextRef context, CGSize offset, CGFloat blur)
 {
-    
+    c.shadowOffsetX = offset.width;
+    c.shadowOffsetY = offset.height;
+    c.shadowBlur = blur;
+    c.shadowColor = "rgba(1,1,1,1)";
 }
 
 void CGContextDrawLinearGradient(CGContextRef context, CGGradientRef gradient, CGPoint startPoint, CGPoint endPoint, CGGradientDrawingOptions options)
@@ -422,7 +432,10 @@ void CGContextSetTextDrawingMode(CGContextRef c, CGTextDrawingMode mode)
     
 }
 
-//void CGContextSetFont(CGContextRef c, CGFontRef font);
+void CGContextSetFont(CGContextRef c, CGFontRef font)
+{
+    c.font = CGFontGetStringRepresentation(font);
+}
 
 void CGContextSetFontSize(CGContextRef c, CGFloat size)
 {
@@ -439,7 +452,8 @@ void CGContextShowText(CGContextRef c, const char *string, int length)
 
 void CGContextShowTextAtPoint(CGContextRef c, CGFloat x, CGFloat y, const char *string, int length)
 {
-    
+    if (!window.opera)
+        c.fillText(string, x, y);
 }
 
 //void CGContextShowGlyphs(CGContextRef c, const CGGlyph g[], int count);
@@ -538,232 +552,16 @@ CGRect CGContextConvertRectToUserSpace(CGContextRef c, CGRect rect)
     
 }
 
-// var CGLineJoinCanvas = ["miter", "round", "bevel"];
-// 
-// var CGLineCapCanvas = ["butt", "round", "square"];
-// 
-// function CGContextSaveGState(c)
-// {
-//     c.save();
-// }
-// 
-// function CGContextRestoreGState(c)
-// {
-//     c.restore();
-// }
-// 
-// function CGContextScaleCTM(c, sx, sy)
-// {
-//     c.scale(sx, sy);
-// }
-// 
-// function CGContextTranslateCTM(c, tx, ty)
-// {
-//     c.translate(tx, ty);
-// }
-// 
-// function CGContextRotateCTM(c, angle)
-// {
-//     c.rotate(angle);
-// }
-// 
-// //void CGContextConcatCTM(CGContextRef c, CGAffineTransform transform);
-// // 
-// function CGContextConcatCTM(c, transform)
-// {
-//     
-// }
-// 
-// //CGAffineTransform CGContextGetCTM(CGContextRef c);
-// // 
-// function CGContextGetCTM(c)
-// {
-//     
-// }
-// 
-// function CGContextSetLineWidth(c, width)
-// {
-//     c.lineWidth = width;
-// }
-// 
-// function CGContextSetLineCap(c, cap)
-// {
-//     c.lineCap = CGLineCapCanvas[cap];
-// }
-// 
-// function CGContextSetLineJoin(c, join)
-// {
-//     c.lineJoin = CGLineJoinCanvas[join];
-// }
-// 
-// function CGContextSetMiterLimit(c, limit)
-// {
-//     c.miterLimit = limit;
-// }
-// 
-// //void CGContextSetLineDash(CGContextRef c, CGFloat phase, const CGFloat lengths[], int count);
-// // 
-// function CGContextSetLineDash(c, phase, lengths, count)
-// {
-//     
-// }
-// 
-// //void CGContextSetFlatness(CGContextRef c, CGFloat flatness);
-// // 
-// function CGContextSetFlatness(c, flatness)
-// {
-//     
-// }
-// 
-// function CGContextSetAlpha(c, alpha)
-// {
-//     c.globalAlpha = alpha;
-// }
-// 
-// //void CGContextSetBlendMode(CGContextRef context, CGBlendMode mode);
-// // 
-// function CGContextSetBlendMode(c, mode)
-// {
-//     
-// }
-// 
-// function CGContextBeginPath(c)
-// {
-//     c.beginPath();
-// }
-// 
-// function CGContextMoveToPoint(c, x, y)
-// {
-//     c.moveTo(x, y);
-// }
-// 
-// function CGContextAddLineToPoint(c, x, y)
-// {
-//     c.lineTo(x, y);
-// }
-// 
-// function CGContextAddCurveToPoint(c, cp1x, cp1y, cp2x, cp2y, x, y)
-// {
-//     c.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y);
-// }
-// 
-// function CGContextAddQuadCurveToPoint(c, cpx, cpy, x, y)
-// {
-//     c.quadraticCurveTo(cpx, cpy, x, y);
-// }
-// 
-// function CGContextClosePath(c)
-// {
-//     c.closePath();
-// }
-// 
-// function CGContextAddRect(c, rect)
-// {
-//     c.rect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
-// }
-// 
-// //void CGContextAddRects(CGContextRef c, const CGRect rects[], int count);
-// // 
-// function CGContextAddRects(c, rects, count)
-// {
-//     
-// }
-// 
-// //void CGContextAddLines(CGContextRef c, const CGPoint points[], int count);
-// // 
-// function CGContextAddLines(c, points, count)
-// {
-//     
-// }
-// 
-// //void CGContextAddEllipseInRect(CGContextRef context, CGRect rect);
-// // 
-// function CGContextAddEllipeInRect(c, rect)
-// {
-//     
-// }
-// 
-// function CGContextAddArc(c, x, y, radius, startAngle, endAngle, clockwise)
-// {
-//     c.arc(x, y, radius, startAngle, endAngle, clockwise);
-// }
-// 
-// function CGContextAddArcToPoint(c, x1, y1, x2, y2, radius)
-// {
-//     c.arcTo(x1, y1, x2, y2, radius);
-// }
-// 
-// //void CGContextAddPath(CGContextRef context, CGPathRef path);
-// // 
-// function CGContextAddPath(c, path)
-// {
-//     
-// }
-// 
-// //void CGContextReplacePathWithStrokedPath(CGContextRef c);
-// // 
-// function CGContextReplacePathWithStrokedPath(c)
-// {
-//     
-// }
-// 
-// //bool CGContextIsPathEmpty(CGContextRef c);
-// // 
-// function CGContextIsPathEmpty(c)
-// {
-//     
-// }
-// 
-// //CGPoint CGContextGetPathCurrentPoint(CGContextRef c);
-// // 
-// function CGContectGetPathCurrentPoint(c)
-// {
-//     
-// }
-// 
-// //CGRect CGContextGetPathBoundingBox(CGContextRef c);
-// // 
-// function CGContextGetPathBoundingBox(c)
-// {
-//     
-// }
-// 
-// //bool CGContextPathContainsPoint(CGContextRef context, CGPoint point, CGPathDrawingMode mode);
-// // 
-// function CGContextPathContainsPoint(c, point, mode)
-// {
-//     
-// }
-// 
-// //void CGContextDrawPath(CGContextRef c, CGPathDrawingMode mode);
-// // 
-// function CGContextDrawPath(c, mode)
-// {
-//     
-// }
-// 
-// //void CGContextFillPath(CGContextRef c);
-// // 
-// function CGContextFillPath(c)
-// {
-//     
-// }
-// 
-// //void CGContextEOFillPath(CGContextRef c);
-// // 
-// function CGContextEOFillPath(c)
-// {
-//     
-// }
-// 
-// //void CGContextStrokePath(CGContextRef c);
-// // 
-// function CGContextStrokePath(c)
-// {
-//     
-// }
-// 
-// function CGContextFillRect(c, rect)
+// =========================
+// = Vienna added methods: =
+// =========================
+
+void CGContextRGBAStringFromColor(CGColorRef color)
+{
+    return "rgba(" + parseInt(color._red * 255) + ","  + parseInt(color._green * 255) + ","  + parseInt(color._blue * 255) + ","  + color._alpha + ")";
+}
+
+
 // {
 //     c.fillRect(rect.origin.x, c.canvas.height - rect.origin.y - rect.size.height, rect.size.width, rect.size.height);
 // }
@@ -924,246 +722,4 @@ CGRect CGContextConvertRectToUserSpace(CGContextRef c, CGRect rect)
 // function CGContextSetRGBStrokeColor(c, red, green, blue, alpha)
 // {
 //     c.strokeStyle = "rgba(" + parseInt(red * 255) + ","  + parseInt(green * 255) + ","  + parseInt(blue * 255) + ","  + alpha + ")"; 
-// }
-// 
-// //void CGContextSetCMYKFillColor(CGContextRef c, CGFloat cyan, CGFloat magenta, CGFloat yellow, CGFloat black, CGFloat alpha);
-// // 
-// function CGContextSetCMYKFillColor(c, cyan, magenta, yellow, black, alpha)
-// {
-//     
-// }
-// 
-// //void CGContextSetCMYKStrokeColor(CGContextRef c, CGFloat cyan, CGFloat magenta, CGFloat yellow, CGFloat black, CGFloat alpha);
-// // 
-// function CGContextSetCMYKStrokeColor(c, cyan, magenta, yellow, black, alpha)
-// {
-//     
-// }
-// //void CGContextSetRenderingIntent(CGContextRef c, CGColorRenderingIntent intent);
-// // 
-// function CGContextSetRenderingIntent(c, intent)
-// {
-//     
-// }
-// 
-// //void CGContextDrawImage(CGContextRef c, CGRect rect, CGImageRef image);
-// // 
-// function CGContextDrawImage(c, rect, image)
-// {
-//     c.drawImage(image._representations[0], rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
-//     
-//     // if(CGImageDataRepresentationFinishedLoading(image) == 4)
-//     //     {
-//     //         NSLog("Image has loaded, so can draw...");
-//     //     }
-//     //     else
-//     //     {
-//     //         NSLog("Image has not loaded, so cannot draw");
-//     //     }
-// }
-// 
-// //void CGContextDrawTiledImage(CGContextRef c, CGRect rect, CGImageRef image);
-// // 
-// function CGContextDrawTiledImage(c, rect, image)
-// {
-//     
-// }
-// 
-// //CGInterpolationQuality CGContextGetInterpolationQuality(CGContextRef c);
-// // 
-// function CGContextGetInterpolationQuality(c)
-// {
-//     
-// }
-// 
-// //void CGContextSetInterpolationQuality(CGContextRef c, CGInterpolationQuality quality);
-// // 
-// function CGContextSetInterpolationQuality(c, quality)
-// {
-//     
-// }
-// 
-// //void CGContextSetShadowWithColor(CGContextRef context, CGSize offset, CGFloat blur, CGColorRef color);
-// // 
-// function CGContextSetShadowWithColor(c, offset, blur, color)
-// {
-//     c.shadowOffsetX = offset.width;
-//     c.shadowOffsetY = offset.height;
-//     c.shadowBlur = blur;
-//     c.shadowColor = "rgba(" + parseInt(color._red * 255) + ","  + parseInt(color._green * 255) + ","  + parseInt(color._blue * 255) + ","  + color._alpha + ")";
-// }
-// 
-// //void CGContextSetShadow(CGContextRef context, CGSize offset, CGFloat blur);
-// // 
-// function CGContextSetShadow(c, offset, blur)
-// {
-//     c.shadowOffsetX = offset.width;
-//     c.shadowOffsetY = offset.height;
-//     c.shadowBlur = blur;
-//     c.shadowColor = "rgba(1,1,1,1)";
-// }
-// 
-// //void CGContextDrawLinearGradient(CGContextRef context, CGGradientRef gradient, CGPoint startPoint, CGPoint endPoint, CGGradientDrawingOptions options);
-// // 
-// function CGContextDrawLinearGradient(c, gradient, startPoint, endPoint, options)
-// {
-//     var theGradient = c.createLinearGradient(startPoint.x, startPoint.y, 0, endPoint.y);
-//     for(var i = 0; i < gradient._colors.length; i++)
-//     {
-//         theGradient.addColorStop(gradient._locations[i], CGContextRGBAStringFromColor(gradient._colors[i]));
-//     }
-//     c.fillStyle = theGradient;
-//     c.fillRect();
-// }
-// 
-// //void CGContextDrawRadialGradient(CGContextRef context, CGGradientRef gradient, CGPoint startCenter, CGFloat startRadius, CGPoint endCenter, CGFloat endRadius, CGGradientDrawingOptions options);
-// // 
-// function CGContextDrawRadialGradient(c, gradient, startCenter, startRadius, endCenter, endRadius, options)
-// {
-//     
-// }
-// 
-// //void CGContextDrawShading(CGContextRef context, CGShadingRef shading);
-// // 
-// function CGContextDrawShading(c, shading)
-// {
-//     
-// }
-// 
-// //void CGContextSetCharacterSpacing(CGContextRef c, CGFloat spacing);
-// // 
-// function CGContextSetCharacterSpacing(c, spacing)
-// {
-//     
-// }
-// 
-// //void CGContextSetTextPosition(CGContextRef c, CGFloat x, CGFloat y);
-// // 
-// function CGContextSetTextPosition(c, x, y)
-// {
-//     
-// }
-// 
-// //CGPoint CGContextGetTextPosition(CGContextRef c);
-// // 
-// function CGContextGetTextPosition(c)
-// {
-//     
-// }
-// 
-// 
-// //void CGContextSetTextMatrix(CGContextRef c, CGAffineTransform t);
-// // 
-// function CGContextSetTextMatrix(c, t)
-// {
-//     
-// }
-// 
-// 
-// //CGAffineTransform CGContextGetTextMatrix(CGContextRef c);
-// // 
-// function CGContextGetTextMatrix(c)
-// {
-//     
-// }
-// 
-// //void CGContextSetTextDrawingMode(CGContextRef c, CGTextDrawingMode mode);
-// // 
-// function CGContextSetTextDrawingMode(c, mode)
-// {
-//     
-// }
-// 
-// //void CGContextSetFont(CGContextRef c, CGFontRef font);
-// // 
-// function CGContextSetFont(c, font)
-// {
-//     c.font = CGFontGetStringRepresentation(font);
-// }
-// 
-// //void CGContextSetFontSize(CGContextRef c, CGFloat size);
-// // 
-// function CGContextSetFontSize(c, size)
-// {
-//     
-// }
-// 
-// //void CGContextSelectFont(CGContextRef c, const char *name, CGFloat size, CGTextEncoding textEncoding);
-// // 
-// function CGContextSelectFont(c, name, size, textEncoding)
-// {
-//     
-// }
-// 
-// //void CGContextShowGlyphsAtPositions(CGContextRef context, const CGGlyph glyphs[], const CGPoint positions[], int count);
-// // 
-// function CGContextShowGlyphsAtPositions(c, glyphs, positions, count)
-// {
-//     
-// }
-// 
-// //void CGContextShowText(CGContextRef c, const char *string, int length);
-// // 
-// function CGContextShowText(c, string, length)
-// {
-//     
-// }
-// 
-// //void CGContextShowTextAtPoint(CGContextRef c, CGFloat x, CGFloat y, const char *string, int length);
-// // 
-// function CGContextShowTextAtPoint(c, x, y, string, length)
-// {
-//     if (!window.opera)
-//         c.fillText(string, x, y);
-// }
-// 
-// //void CGContextShowGlyphs(CGContextRef c, const CGGlyph g[], int count);
-// // 
-// function CGContextShowGlyphs(c, g, count)
-// {
-//     
-// }
-// 
-// //void CGContextShowGlyphsAtPoint(CGContextRef c, CGFloat x, CGFloat y, const CGGlyph glyphs[], int count);
-// // 
-// function CGContextShowGlyphsAtPoint(c, x, y, glyphs, count)
-// {
-//     
-// }
-// 
-// //void CGContextShowGlyphsWithAdvances(CGContextRef c, const CGGlyph glyphs[], const CGSize advances[], int count);
-// // 
-// function CGContextShowGlyphsWithAdvances(c, glyphs, advances, count)
-// {
-//     
-// }
-// 
-// //void CGContextBeginTransparencyLayer(CGContextRef context, CFDictionaryRef auxiliaryInfo);
-// // 
-// function CGContextBeginTransparencyLayer(c, auxiliaryInfo)
-// {
-//     
-// }
-// 
-// //void CGContextBeginTransparencyLayerWithRect(CGContextRef context, CGRect rect, CFDictionaryRef auxiliaryInfo);
-// // 
-// function CGContextBeginTransparencyLayerWithRect(c, rect, auxiliaryInfo)
-// {
-//     
-// }
-// 
-// //void CGContextEndTransparencyLayer(CGContextRef context);
-// // 
-// function CGContextEndTransparencyLayer(c)
-// {
-//     
-// }
-// 
-// // =========================
-// // = Vienna added methods: =
-// // =========================
-// 
-// function CGContextRGBAStringFromColor(color)
-// {
-//     return "rgba(" + parseInt(color._red * 255) + ","  + parseInt(color._green * 255) + ","  + parseInt(color._blue * 255) + ","  + color._alpha + ")";
 // }

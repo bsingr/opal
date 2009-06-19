@@ -112,8 +112,6 @@ function CGColorGetTypeID()
 }
 function CGContextGetTypeID()
 {
-var bob = Unhandled output_expression: { ({);
-var c = Unhandled output_expression: { ({);
 }
 function CGContextSaveGState(c)
 {
@@ -125,12 +123,15 @@ c.restore();
 }
 function CGContextScaleCTM(c,sx,sy)
 {
+c.scale(sx,sy);
 }
 function CGContextTranslateCTM(c,tx,ty)
 {
+c.translate(tx,ty);
 }
 function CGContextRotateCTM(c,angle)
 {
+c.rotate(angle);
 }
 function CGContextConcatCTM(c,transform)
 {
@@ -140,15 +141,19 @@ function CGContextGetCTM(c)
 }
 function CGContextSetLineWidth(c,width)
 {
+c.lineWidth = width;
 }
 function CGContextSetLineCap(c,cap)
 {
+c.lineCap = CGLineCapCanvas;
 }
 function CGContextSetLineJoin(c,join)
 {
+c.lineJoin = CGLineJoinCanvas;
 }
 function CGContextSetMiterLimit(c,limit)
 {
+c.miterLimit = limit;
 }
 function CGContextSetLineDash(c,phase,lengths,count)
 {
@@ -158,27 +163,35 @@ function CGContextSetFlatness(c,flatness)
 }
 function CGContextSetAlpha(c,alpha)
 {
+c.globalAlpha = alpha;
 }
 function CGContextBeginPath(c)
 {
+c.beginPath();
 }
 function CGContextMoveToPoint(c,x,y)
 {
+c.moveTo(x,y);
 }
 function CGContextAddLineToPoint(c,x,y)
 {
+c.lineTo(x,y);
 }
 function CGContextAddCurveToPoint(c,cp1x,cp1y,cp2x,cp2y,x,y)
 {
+c.bezierCurveTo(cp1x,cp1y,cp2x,cp2y,x,y);
 }
 function CGContextAddQuadCurveToPoint(c,cpx,cpy,x,y)
 {
+c.quadraticCurveTo(cpx,cpy,x,y);
 }
 function CGContextClosePath(c)
 {
+c.closePath();
 }
 function CGContextAddRect(c,rect)
 {
+c.rect(rect.origin.x,rect.origin.y,rect.size.wdith,rect.size.height);
 }
 function CGContextAddRects(c,rects,count)
 {
@@ -191,9 +204,11 @@ function CGContextAddEllipseInRect(context,rect)
 }
 function CGContextAddArc(c,x,y,radius,startAngle,endAngle,clockwise)
 {
+c.arc(x,y,radius,startAngle,endAngle,clockwise);
 }
 function CGContextAddArcToPoint(c,x1,y1,x2,y2,radius)
 {
+c.arcTo(x1,y1,x2,y2,radius);
 }
 function CGContextAddPath(context,path)
 {
@@ -227,12 +242,14 @@ function CGContextStrokePath(c)
 }
 function CGContextFillRect(c,rect)
 {
+c.fillRect(rect.origin.x,c.canvas.height - rect.origin.y - rect.size.height,rect.size.width,rect.size.height);
 }
 function CGContextFillRects(c,rects,count)
 {
 }
 function CGContextStrokeRect(c,rect)
 {
+c.strokeRect(rect.origin.x,c.canvas.height - rect.origin.y - rect.size.height,rect.size.width,rect.size.height);
 }
 function CGContextStrokeRectWithWidth(c,rect,width)
 {
@@ -311,15 +328,24 @@ function CGContextSetRenderingIntent(c,intent)
 }
 function CGContextDrawImage(c,rect,image)
 {
+c.drawImage(image._representations,rect.origin.x,rect.origin.y,rect.size.width,rect.size.height);
 }
 function CGContextDrawTiledImage(c,rect,image)
 {
 }
 function CGContextSetShadowWithColor(context,offset,blur,color)
 {
+c.shadowOffsetX = offset.width;
+c.shadowOffsetY = offset.height;
+c.shadowBlur = blur;
+c.shadowColor = "rgba(" + parseInt(color._red * 255) + "," + parseInt(color._green * 255) + "," + parseInt(color._blue * 255) + "," + color._alpha + ")";
 }
 function CGContextSetShadow(context,offset,blur)
 {
+c.shadowOffsetX = offset.width;
+c.shadowOffsetY = offset.height;
+c.shadowBlur = blur;
+c.shadowColor = "rgba(1,1,1,1)";
 }
 function CGContextDrawLinearGradient(context,gradient,startPoint,endPoint,options)
 {
@@ -345,6 +371,10 @@ function CGContextGetTextMatrix(c)
 function CGContextSetTextDrawingMode(c,mode)
 {
 }
+function CGContextSetFont(c,font)
+{
+c.font = CGFontGetStringRepresentation(font);
+}
 function CGContextSetFontSize(c,size)
 {
 }
@@ -353,6 +383,9 @@ function CGContextShowText(c,string,length)
 }
 function CGContextShowTextAtPoint(c,x,y,string,length)
 {
+if (!window.opera)
+c.fillText(string,x,y);
+
 }
 function CGContextEndPage(c)
 {
@@ -408,121 +441,73 @@ function CGContextConvertRectToDeviceSpace(c,rect)
 function CGContextConvertRectToUserSpace(c,rect)
 {
 }
-// 
-//  CGDOMElement.js
-//  vienna
-//  
-//  Created by Adam Beynon on 2009-05-05.
-//  Copyright 2009 Adam Beynon. All rights reserved.
-// 
-
-// extern CGDOMElementRef CGDOMElementGetRootElement(void);
-// 
+function CGContextRGBAStringFromColor(color)
+{
+return "rgba(" + parseInt(color._red * 255) + "," + parseInt(color._green * 255) + "," + parseInt(color._blue * 255) + "," + color._alpha + ")";
+}
 function CGDOMElementGetRootElement()
 {
-    return document.body;
+return document.body;
 }
-
-// extern CGDOMElementRef CGDOMElementCreate(CFStringRef type);
-// 
 function CGDOMElementCreate(type)
 {
-    var theElement = document.createElement(type);
-    theElement.style.display = "block";
-    theElement.style.position = "absolute";
-    return theElement;
+var theElement = document.createElement(type);
+theElement.style.display = "block";
+theElement.style.position = "absolute";
+return theElement;
 }
-
-// extern CGDOMElementRef CGDOMElementCreateWithAttributes(CFStringRef type, CFDictionaryRef attributes);
-// 
-function CGDOMElementCreateWithAttributes(type, attributes)
+function CGDOMElementCreateWithAttributes(type,attributes)
 {
-    return document.createElement(type);
+return document.createElement(type);
 }
-
-// extern void CGDOMElementAppendChild(CGDOMElementRef parent, CGDOMElementRef child);
-// 
-function CGDOMElementAppendChild(parent, child)
+function CGDOMElementAppendChild(parent,child)
 {
-    parent.appendChild(child);
+parent.appendChild(child);
 }
-
-// extern void CGDOMElementRemoveChild(CGDOMElementRef parent, CGDOMElementRef child);
-// 
-function CGDOMElementRemoveChild(parent, child)
+function CGDOMElementRemoveChild(parent,child)
 {
-    parent.removeChild(child);
+parent.removeChild(child);
 }
-
-// extern void CGDOMElementReplaceChild(CGDOMElementRef parent, CGDOMElementRef oldChild, CGDOMElementRef newChild);
-// 
-function CGDOMElementReplaceChild(parent, oldChild, newChild)
+function CGDOMElementReplaceChild(parent,oldChild,newChild)
 {
-    parent.replaceChild(newChild, oldChild);
+parent.replaceChild(newChild,oldChild);
 }
-
-// extern CFStringRef CGDOMElementGetAttribute(CGDOMElementRef element, CFStringRef attribute);
-// 
-function CGDOMElementGetAttribute(element, attribute)
+function CGDOMElementGetAttribute(element,attribute)
 {
-    return element.getAttribute(attribute);
+return element.getAttribute(attribute);
 }
-
-// extern bool CGDOMElementHasAttribute(CGDOMElementRef element, CFStringRef attribute);
-// 
-function CGDOMElementHasAttribute(element, attribute)
+function CGDOMElementHasAttribute(element,attribute)
 {
-    return element.hasAttribute(attribute);
+return element.hasAttribute(attribute);
 }
-
-// extern void CGDOMElementRemoveAttribute(CGDOMElementRef element, CFStringRef attribute);
-// 
-function CGDOMElementRemoveAttribute(element, attribute)
+function CGDOMElementRemoveAttribute(element,attribute)
 {
-    element.removeAttribute(attribute);
+element.removeAttribute(attribute);
 }
-
-// extern void CGDOMElementSetAttribute(CGDOMElementRef element, CFStringRef name, CFStringRef value);
-// 
-function CGDOMElementSetAttribute(element, name, value)
+function CGDOMElementSetAttribute(element,name,value)
 {
-    element.setAttribute(name, value);
+element.setAttribute(name,value);
 }
-
-// extern void CGDOMElementSetFrame(CGDOMElementRef element, CGRect frame);
-// 
-function CGDOMElementSetFrame(element, frame)
+function CGDOMElementSetFrame(element,frame)
 {
-    element.style.bottom = frame.origin.y + "px";
-    element.style.left = frame.origin.x + "px";
-    element.style.width = frame.size.width + "px";
-    element.style.height = frame.size.height + "px";
-    element.height = frame.size.height;
-    element.width = frame.size.width;
+element.style.bottom = frame.origin.y + "px";
+element.style.left = frame.origin.x + "px";
+element.style.width = frame.size.width + "px";
+element.style.height = frame.size.height + "px";
+element.height = frame.size.height;
+element.width = frame.size.width;
 }
-
-// extern void CGDOMElementSetFrameOrigin(CGDOMElementRef element, CGPoint origin);
-function CGDOMElementSetFrameOrigin(element, origin)
+function CGDOMElementSetFrameOrigin(element,origin)
 {
-    element.style.bottom = origin.y + "px";
-    element.style.left = origin.x + "px";
+element.style.bottom = origin.y + "px";
+element.style.left = origin.x + "px";
 }
-
-// extern void CGDOMElementSetFrameSize(CGDOMElementRef element, CGSize size);
-// 
-function CGDOMElementSetFrameSize(element, size)
+function CGDOMElementSetFrameSize(element,size)
 {
-    
 }
-
-// extern CGContextRef CGDOMElementGetContext(CGDOMElementRef element);
-// 
 function CGDOMElementGetContext(element)
 {
-    return element.getContext("2d");
-    // var theContext = new CGDOMRenderingContext();
-    // theContext.canvas = element;
-    // return theContext;
+return element.getContext("2d");
 }
 // 
 //  CGDOMRenderingContext.js
@@ -848,55 +833,37 @@ function CGEventKeyGetUnicodeString(event)
     //             }
     
     return theCharacters;
-}// 
-//  CGFont.js
-//  vienna
-//  
-//  Created by Adam Beynon on 2009-06-10.
-//  Copyright 2009 Adam Beynon. All rights reserved.
-// 
-
-function CGFontRef()
+}function CGFontCreate(name,size,isBold)
 {
-    this._name = "Arial";
-    this._size = "10"
-    this._isBold = false;
+var theFont = {_name:0,_size:0,_isBold:0,};
+theFont._name = name;
+theFont._size = size;
+theFont._isBold = isBold;
+return theFont;
 }
-
-function CGFontCreate(name, size, isBold)
-{
-    var theFont = new CGFontRef();
-    theFont._name = name;
-    theFont._size = size;
-    theFont._isBold = isBold;
-    return theFont;
-}
-
 function CGFontCreateWithFontName(name)
 {
-    var theFont = new CGFontRef();
-    theFont._name = name;
-    return theFont;
+var theFont = {_name:0,_size:0,_isBold:0,};
+theFont._name = name;
+theFont._size = 12;
+theFont._isBold = NO;
+return theFont;
 }
-
 function CGFontGetFontName(font)
 {
-    return font._name;
+return font._name;
 }
-
 function CGFontGetFontSize(font)
 {
-    return font._size;
+return font._size;
 }
-
 function CGFontGetIsBold(font)
 {
-    return font._isBold;
+return font._isBold;
 }
-
 function CGFontGetStringRepresentation(font)
 {
-    return (font._isBold ? "bold " : "") + Math.round(font._size) + "px '" + font._name + "'"; 
+return (font._isBold ? "bold " : "") + Math.round(font._size) + "px '" + font._name + "'";
 }
 // 
 //  CGGeometry.js

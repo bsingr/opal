@@ -35,11 +35,13 @@ typedef int CGFontIndex;
 typedef int CGGlyph;
 
 
-typedef struct CGFont {
+typedef struct CGFont
+{
     CFStringRef *_name;
     CGFloat      _size;
     BOOL         _isBold;
-}*CGFontRef;
+
+} *CGFontRef;
 
 extern CGFontRef CGFontCreate(CFStringRef name, CGFloat size, BOOL isBold);
 

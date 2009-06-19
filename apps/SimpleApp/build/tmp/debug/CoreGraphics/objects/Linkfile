@@ -14,6 +14,16 @@ CGColor.c.js:
 
   declarations: []
 
+CGDOMElement.c.js: 
+  dependencies: []
+
+  declarations: []
+
+CGFont.c.js: 
+  dependencies: []
+
+  declarations: []
+
 CGBitmapContext.c.js: 
   dependencies: []
 

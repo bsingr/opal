@@ -1,50 +1,32 @@
-// 
-//  CGFont.js
-//  vienna
-//  
-//  Created by Adam Beynon on 2009-06-10.
-//  Copyright 2009 Adam Beynon. All rights reserved.
-// 
-
-function CGFontRef()
+function CGFontCreate(name,size,isBold)
 {
-    this._name = "Arial";
-    this._size = "10"
-    this._isBold = false;
+var theFont = {_name:0,_size:0,_isBold:0,};
+theFont._name = name;
+theFont._size = size;
+theFont._isBold = isBold;
+return theFont;
 }
-
-function CGFontCreate(name, size, isBold)
-{
-    var theFont = new CGFontRef();
-    theFont._name = name;
-    theFont._size = size;
-    theFont._isBold = isBold;
-    return theFont;
-}
-
 function CGFontCreateWithFontName(name)
 {
-    var theFont = new CGFontRef();
-    theFont._name = name;
-    return theFont;
+var theFont = {_name:0,_size:0,_isBold:0,};
+theFont._name = name;
+theFont._size = 12;
+theFont._isBold = NO;
+return theFont;
 }
-
 function CGFontGetFontName(font)
 {
-    return font._name;
+return font._name;
 }
-
 function CGFontGetFontSize(font)
 {
-    return font._size;
+return font._size;
 }
-
 function CGFontGetIsBold(font)
 {
-    return font._isBold;
+return font._isBold;
 }
-
 function CGFontGetStringRepresentation(font)
 {
-    return (font._isBold ? "bold " : "") + Math.round(font._size) + "px '" + font._name + "'"; 
+return (font._isBold ? "bold " : "") + Math.round(font._size) + "px '" + font._name + "'";
 }
