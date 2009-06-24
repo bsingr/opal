@@ -1,0 +1,2 @@
+
+var AppController=NSObject.extend({init:function(){this._super();return this;},applicationDidFinishLaunching:function(){console.log("Application finished lauchiong");},awakeFromNib:function(sender){console.log("Awoken from nib");}});

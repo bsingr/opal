@@ -22,58 +22,9 @@ module Vienna
     def prepare!
       @prepared_status = true
       FileUtils.mkdir_p(File.join(@parent.tmp_prefix, bundle_name, 'objects'))
-      FileUtils.mkdir_p(File.join(@parent.build_prefix, 'Frameworks', bundle_name))
+      # FileUtils.mkdir_p(File.join(@parent.build_prefix, 'Frameworks', bundle_name))
     end
     
-    def build!
-      prepare! unless is_prepared?
-      
-      puts "Building framework: #{bundle_name}"
-      
-      frameworks.each do |f|
-        f.build!
-      end
-      
-      # =======================================================================
-      # = Compiling stage - all files actually compiled and copied to tmp dir =
-      # =======================================================================
-      
-      objc_sources.each do |c|
-        # puts " - Building file: #{File.basename(c)}"
-        builder = ObjectiveCParser.new(c, File.join(@parent.tmp_prefix, bundle_name, 'objects', File.basename(c, '.*')) + '.js', @parent)
-        builder.build!
-        @link_config[File.basename(c, '.m') + '.js'] = builder.link_config
-      end
-      
-      javascript_sources.each do |j|
-        Vienna::Builder::Javascript.new(j, File.join(@parent.tmp_prefix, bundle_name, 'objects', File.basename(j)), @parent).build!
-      end
-      
-      # ======================================================================
-      # = Pre - linking all objects and making sure our link config is valid =
-      # ======================================================================
-      
-      File.open(File.join(@parent.tmp_prefix, bundle_name, 'objects') + '/Linkfile', 'w') do |out|
-        YAML.dump(@link_config, out)
-      end
-      
-      # ==========================================================================
-      # = Linking stage - all object files linked into one file using dependency =
-      # ==========================================================================
-      
-      all_objects = Dir.glob(File.join(@parent.tmp_prefix, bundle_name, 'objects', '*.js'))
-      framework_out = File.new(File.join(@parent.build_prefix, 'Frameworks', bundle_name) + "/#{bundle_name}.js", 'w')
-      
-      all_objects.each do |f|
-        link_object_file(File.basename(f), framework_out)
-      end
-      
-      # =====================================================================
-      # = Finished linking here. so compilation is (technically) completed! =
-      # =====================================================================
-      
-      framework_out.close
-    end
     
     def link_object_file(file, out)
       
@@ -99,25 +50,6 @@ module Vienna
       out.write t
       # puts "Writing content of #{file}"
       
-    end
-    
-    # Returns an array of all the frameworks required by this application. This
-    # might, but never should, be nil... so be careful when using and relying on
-    # contents
-    def frameworks
-      return @frameworks if @frameworks
-      
-      @frameworks = []
-      required.each do |f|
-        framework_dir = find_framework f
-        if framework_dir #and @parent.should_build_framework?(f)
-          @frameworks << Framework.new(framework_dir, @parent) 
-          @parent.add_built_framework(f)
-        elsif framework_dir.nil?
-          puts "Error: cannot find framework named: #{f}"
-        end
-      end
-      return @frameworks
     end
   end
 end

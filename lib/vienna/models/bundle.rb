@@ -74,15 +74,67 @@ module Vienna
       @prepared
     end
     
+    # builds the bundle. Basically compiles each "good" file type, and puts it into the respective
+    # tmp directory. These are not combined. link! is VERY different from build!
+    # 
+    # build! is for each file, link! is for the bundle/framework/app.
     def build!
       prepare! unless is_prepared?
-      puts "Building #{project_name}"
       
-      frameworks.each do |f|
-        f.build!
+      # Objective C Files
+      objc_sources.each do |c|
+        builder = ObjectiveCParser.new(c, File.join(@parent.tmp_prefix, bundle_name, 'objects', File.basename(c, '.*')) + '.js', @parent)
+        builder.build!
+        @link_config[File.basename(c, '.m') + '.js'] = builder.link_config
       end
       
-    end    
+      # Javascript files
+      javascript_sources.each do |j|
+        builder = Vienna::Builder::Javascript.new(j, File.join(@parent.tmp_prefix, bundle_name, 'objects', File.basename(j)), @parent)
+        builder.build!
+        @link_config[File.basename(j)] = builder.link_config
+        builder.link_frameworks.each do |r|
+          @parent.required_frameworks << r unless @parent.required_frameworks.include? r
+        end
+      end
+      
+      # save link config for the bundle, to speed up compiling (avoids rebuilding everyfile all the time)
+      File.open(File.join(@parent.tmp_prefix, bundle_name, 'objects') + '/Linkfile', 'w') do |out|
+        YAML.dump(@link_config, out)
+      end
+      
+      # add self to list of built frameworks
+      
+      # go through all required frameworks..
+      @parent.required_frameworks.each do |f|
+        
+        if !@parent.should_build_framework? f
+          puts "Skipping: #{f}"
+          next
+        end
+        
+        path = find_framework(f)
+        if path
+          puts "Found framework named #{f}"
+          @parent.add_built_framework f
+          framework = Framework.new path, @parent
+          framework.build!
+        else
+          puts "Error: cannot find framework named #{f}"
+        end
+      end
+    end
+    
+    # link all JS resources into the openFile, which, by name, is open (so just write)
+    def link!(openFile)
+      all_objects = Dir.glob(File.join(@parent.tmp_prefix, bundle_name, 'objects', '*.js'))
+      all_objects.each do |f|
+        file = File.new(f)
+        t = file.read
+        openFile.write t
+        file.close
+      end
+    end
     
     def build_prefix
       @build_prefix ||= (rakefile.config_for(build_mode)[:build_prefix] || 'build')
@@ -106,6 +158,22 @@ module Vienna
     
     def bundle_name
       @project_name ||= File.basename(bundle_root)
+    end
+    
+    def project_SDK
+      @project_SDK ||= (rakefile.config_for(build_mode)[:SDK] || 'javascript')
+    end
+    
+    def system_frameworks
+      @system_frameworks ||= File.expand_path(File.join(LIBPATH, '..', 'SDKs', project_SDK, 'frameworks'))
+    end
+    
+    def project_frameworks
+      @project_frameworks ||= File.expand_path(File.join(bundle_root, 'frameworks'))
+    end
+    
+    def required_frameworks
+      @required_frameworks ||= []
     end
     
     def required
@@ -135,7 +203,6 @@ module Vienna
     def find_framework(name)
       # normalize string
       name = name.to_s.downcase
-      system_frameworks = File.expand_path(File.join(LIBPATH, '..', 'frameworks'))
       f = Dir.new(system_frameworks)
       f.each do |x|
         if x.downcase == name

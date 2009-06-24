@@ -16,6 +16,7 @@ module Vienna
     # subprojects etc as a reference point
     def initialize(project_root)
       super
+      @parent = self
       # cached files - saves them being processed more than once (on large builds)
       @cached_objc_files = Hash.new
       # cache built frameworks so we do not have to rebuild them more than once
@@ -33,68 +34,23 @@ module Vienna
       FileUtils.mkdir_p(File.join(tmp_prefix, bundle_name, 'resources'))
     end
     
-    def build!
-      prepare! unless is_prepared?
-      puts "Building #{bundle_name}"
-      
-      frameworks.each do |f|
-        f.build!
-      end
-      
-      objc_sources.each do |c|
-        ObjectiveCParser.new(c, File.join(tmp_prefix, bundle_name, 'objects', File.basename(c, '.m')) + '.js', self).build!
-      end
-      
-      javascript_sources.each do |j|
-        # puts j
-      end
-      
-      xib_sources.each do |x|
-        Vienna::Builder::Xib.new(x, File.join(tmp_prefix, bundle_name, 'resources', File.basename(x, '.xib')) + '.json', self).build!
-      end
-      
-      plist_sources.each do |x|
-        Vienna::Builder::Plist.new(x, File.join(tmp_prefix, bundle_name, 'resources', File.basename(x, '.plist')) + '.json', self).build!
-      end
-      
-      all_objects = Dir.glob(File.join(tmp_prefix, bundle_name, 'objects', '*.js'))
-      bundle_out = File.new(build_prefix + "/#{bundle_name}.js", 'w')
-      
-      all_objects.each do |o|
-        f = File.new o
-        t = f.read
-        bundle_out.write t
-      end
-      
-      bundle_out.close
-      
-    end  
-    
     def clean!
       puts "Cleaning project (Not yet implemented)"
-    end  
-    
-    # Returns an array of all the frameworks required by this application. This
-    # might, but never should, be nil... so be careful when using and relying on
-    # contents
-    def frameworks
-      return @frameworks if @frameworks
-      
-      @frameworks = []
-      required.each do |f|
-        framework_dir = find_framework f
-        if framework_dir #and should_build_framework?(f)
-          @frameworks << Framework.new(framework_dir, self) 
-          add_built_framework(f)
-        elsif framework_dir.nil?
-          puts "Error: cannot find framework named: #{f}"
-        else
-          puts "not building: #{f}"
-        end
-      end
-      return @frameworks
     end
         
+    def build!
+      super
+      
+      puts required_frameworks
+      puts "The built frameworks are:"
+      puts @built_frameworks
+      
+      f = File.new(File.join(@parent.build_prefix, 'application.js'), 'w')
+      link!(f)
+      f.close()
+    end
+    
+    
     # Gets the build mode. If not set, defaults to debug
     def build_mode
       @build_mode ||= :debug
@@ -113,14 +69,21 @@ module Vienna
       @built_frameworks.include? a_framework ? false : true
     end
     
+    # ========================================================================
+    # = Caching objective C files to avoid re-parsing headers multiple times =
+    # ========================================================================
+    
+    # add a file to the cache
     def add_objc_file(file)
       @cached_objc_files.store file.file_path, file
     end
     
+    # check to see if the file is cached
     def has_objc_file?(file_path)
       @cached_objc_files.has_key? file_path
     end
     
+    # return a cached file.
     def get_objc_file(file_path)
       @cached_objc_files[file_path]
     end

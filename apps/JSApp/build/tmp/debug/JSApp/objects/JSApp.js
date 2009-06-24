@@ -1,0 +1,2 @@
+
+var JSApp={CFBundleDevelopmentRegion:"English",CFBundleIconFile:"",CFBundleIdentifier:"com.yourcompany.JSApp",CFBundleName:"JSApp",CFBundlePackageType:"APPL",NSMainNibFile:"MainMenu",NSPrincipalClass:"NSApplication"};

@@ -1,5 +1,5 @@
 /* 
- * runtime.js
+ * JSApp.js
  * vienna
  * 
  * Created by Adam Beynon.
@@ -24,18 +24,15 @@
  * THE SOFTWARE.
  */
 
-var include = function include() { };
+include('vienna/vienna');
 
-var YES = true;
-var NO = false;
-
-if (typeof console === 'undefined') {
-    var console = console || window.console || { };
-    console.log = console.info = console.warn = console.error = function() { };
-}
-
-var VN = { };
-
-VN.extend = function() {
+var JSApp = {
     
+    CFBundleDevelopmentRegion: "English",
+    CFBundleIconFile: "",
+    CFBundleIdentifier: "com.yourcompany.JSApp",
+    CFBundleName: "JSApp",
+    CFBundlePackageType: "APPL",
+    NSMainNibFile: "MainMenu",
+    NSPrincipalClass: "NSApplication"
 };
