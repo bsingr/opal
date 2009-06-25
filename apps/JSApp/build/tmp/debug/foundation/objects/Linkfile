@@ -1,0 +1,47 @@
+--- 
+keyed_archiver.js: 
+  dependencies: 
+  - array.js
+  - dictionary.js
+  - coder.js
+  - geometry.js
+  - property_list.js
+array.js: 
+  dependencies: 
+  - object.js
+  - coder.js
+  - enumerator.js
+  - range.js
+foundation.js: 
+  dependencies: 
+  - runtime.js
+  - archiver.js
+  - keyed_archiver.js
+  - array.js
+  - bundle.js
+  - coder.js
+  - data.js
+  - date.js
+  - dictionary.js
+  - enumerator.js
+  - exception.js
+  - geometry.js
+  - key_value_coding.js
+  - notification.js
+  - property_list.js
+  - proxy.js
+  - range.js
+  - stirng.js
+  - value.js
+object.js: 
+  dependencies: 
+  - runtime.js
+coder.js: 
+  dependencies: 
+  - object.js
+archiver.js: 
+  dependencies: 
+  - coder.js
+bundle.js: 
+  dependencies: 
+  - object.js

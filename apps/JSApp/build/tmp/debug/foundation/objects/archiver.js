@@ -1,0 +1,2 @@
+
+var NSInconsistentArchiveException="NSInconsistentArchiveException";var NSArchiver=NSCoder.extend({initForWritingWithMutableData:function(mdata){},archiverData:function(){},encodeRootObject:function(rootObject){},encodeConditionalObject:function(object){},archivedDataWithRootObject:function(rootObject){},archiveRootObject:function(rootObject,path){}});var NSUnarchiver=NSCoder.extend({initForReadingWidthData:function(data){},isAtEnd:function(){},unarchiveObjectWithData:function(data){},unarchiveObjectWithFile:function(path){},replaceObject:function(object,newObject){}});

@@ -29,6 +29,6 @@ include('foundation/coder');
 include('foundation/enumerator');
 include('foundation/range');
 
-NS.Array = {
+NSArray = {
     
 };

@@ -26,7 +26,7 @@
 
 include('foundation/object');
 
-NS.Bundle = NS.Object.extend({
+NSBundle = NSObject.extend({
     
     
 });

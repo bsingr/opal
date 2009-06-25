@@ -28,7 +28,7 @@ include('foundation/coder');
 
 var NSInconsistentArchiveException = "NSInconsistentArchiveException";
 
-NS.Archiver = NS.Coder.extend({
+var NSArchiver = NSCoder.extend({
    
     initForWritingWithMutableData: function(mdata) {
         
@@ -56,7 +56,7 @@ NS.Archiver = NS.Coder.extend({
     }
 });
 
-NS.Unarchiver = VN.Coder.extend({
+var NSUnarchiver = NSCoder.extend({
     
    initForReadingWidthData: function(data) {
        

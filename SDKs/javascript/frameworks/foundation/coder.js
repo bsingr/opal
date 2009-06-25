@@ -1,5 +1,5 @@
 /* 
- * vienna.js
+ * coder.js
  * vienna
  * 
  * Created by Adam Beynon.
@@ -23,14 +23,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+ 
+include('foundation/object');
 
-// Global Vienna namespace object
-var VN = { };
-
-include('runtime/runtime');
-include('foundation/foundation');
-include('core_graphics/core_graphics');
-include('core_text/core_text');
-include('app_kit/app_kit');
-
-include('vienna/flash_view');
+var NSCoder = NSObject.extend({
+    
+});

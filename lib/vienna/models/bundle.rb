@@ -27,6 +27,8 @@ module Vienna
       
       # linked files
       @linked_files = []
+      
+      @sub_frameworks = []
     end
 
     def rakefile
@@ -81,6 +83,8 @@ module Vienna
     def build!
       prepare! unless is_prepared?
       
+      puts "Building: #{bundle_name}"
+      
       # Objective C Files
       objc_sources.each do |c|
         builder = ObjectiveCParser.new(c, File.join(@parent.tmp_prefix, bundle_name, 'objects', File.basename(c, '.*')) + '.js', @parent)
@@ -94,7 +98,11 @@ module Vienna
         builder.build!
         @link_config[File.basename(j)] = builder.link_config
         builder.link_frameworks.each do |r|
-          @parent.required_frameworks << r unless @parent.required_frameworks.include? r
+          if @parent.should_build_framework? r
+            required_frameworks << r
+            @parent.add_built_framework r
+            puts " -- Requiring #{r}"
+          end
         end
       end
       
@@ -102,25 +110,16 @@ module Vienna
       File.open(File.join(@parent.tmp_prefix, bundle_name, 'objects') + '/Linkfile', 'w') do |out|
         YAML.dump(@link_config, out)
       end
-      
-      # add self to list of built frameworks
-      
+            
       # go through all required frameworks..
-      @parent.required_frameworks.each do |f|
-        
-        if !@parent.should_build_framework? f
-          puts "Skipping: #{f}"
-          next
-        end
-        
+      required_frameworks.each do |f|
         path = find_framework(f)
         if path
-          puts "Found framework named #{f}"
-          @parent.add_built_framework f
           framework = Framework.new path, @parent
           framework.build!
+          @sub_frameworks << framework
         else
-          puts "Error: cannot find framework named #{f}"
+          puts " -- Error: cannot find framework named #{f}"
         end
       end
     end
@@ -128,12 +127,39 @@ module Vienna
     # link all JS resources into the openFile, which, by name, is open (so just write)
     def link!(openFile)
       all_objects = Dir.glob(File.join(@parent.tmp_prefix, bundle_name, 'objects', '*.js'))
-      all_objects.each do |f|
-        file = File.new(f)
-        t = file.read
-        openFile.write t
-        file.close
+      
+      # do sub frameworks first
+      @sub_frameworks.each do |s|
+        s.link!(openFile)
       end
+      
+      # this frameworks's files
+      all_objects.each do |f|
+        link_object_file(f, openFile)
+      end
+    end
+    
+    # link an actual object file
+    def link_object_file(file, out)
+
+      return if @linked_files.include? file
+
+      all_objects = Dir.glob(File.join(@parent.tmp_prefix, bundle_name, 'objects', '*.js'))
+      object_path = File.join(@parent.tmp_prefix, bundle_name, 'objects')
+      
+      return unless all_objects.include?(file)
+
+      @linked_files << file
+
+      if @link_config[File.basename(file)]
+        # has linked files, so include (.m, not .js)
+        @link_config[File.basename(file)]["dependencies"].each do |d|
+          link_object_file(File.join(object_path, d), out)
+        end
+      end
+      f = File.new(file)
+      t = f.read
+      out.write t      
     end
     
     def build_prefix

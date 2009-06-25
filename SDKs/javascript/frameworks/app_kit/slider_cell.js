@@ -55,7 +55,7 @@ var NSSliderCell = NSCell.extend({
        this._maxValue = aCoder.decodeDoubleForKey("NSMaxValue");
        this._value = aCoder.decodeDoubleForKey("NSValue");
        return this;
-   }.initializer("coder"),
+   },
    
    drawWithFrameInView: function(cellFrame, controlView) {
        var SLIDER_PADDING = 8.5;

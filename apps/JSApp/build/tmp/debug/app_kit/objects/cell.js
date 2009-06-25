@@ -1,0 +1,2 @@
+
+var NSCell=NSObject.extend({});

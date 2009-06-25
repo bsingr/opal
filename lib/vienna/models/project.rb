@@ -27,7 +27,6 @@ module Vienna
       @prepared_status = true
       # build paths
       FileUtils.mkdir_p(build_prefix)
-      FileUtils.mkdir_p(File.join(build_prefix, 'Frameworks'))
       FileUtils.mkdir_p(File.join(build_prefix, 'Resources'))
       FileUtils.mkdir_p(tmp_prefix)
       FileUtils.mkdir_p(File.join(tmp_prefix, bundle_name, 'objects'))
@@ -40,14 +39,18 @@ module Vienna
         
     def build!
       super
-      
-      puts required_frameworks
-      puts "The built frameworks are:"
-      puts @built_frameworks
-      
+          
       f = File.new(File.join(@parent.build_prefix, 'application.js'), 'w')
       link!(f)
       f.close()
+      
+
+      # index.html
+      o = File.new(File.join(build_prefix, 'index.html'), 'w')
+      File.readlines('index.html').map do |f|
+        o.write f
+      end
+      o.close()
     end
     
     
@@ -66,7 +69,9 @@ module Vienna
     end
     
     def should_build_framework?(a_framework)
-      @built_frameworks.include? a_framework ? false : true
+      test = @built_frameworks.include?(a_framework) ? false : true
+      # puts test
+      return test
     end
     
     # ========================================================================

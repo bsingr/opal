@@ -1,5 +1,5 @@
 /* 
- * vienna.js
+ * object.js
  * vienna
  * 
  * Created by Adam Beynon.
@@ -24,13 +24,8 @@
  * THE SOFTWARE.
  */
 
-// Global Vienna namespace object
-var VN = { };
-
 include('runtime/runtime');
-include('foundation/foundation');
-include('core_graphics/core_graphics');
-include('core_text/core_text');
-include('app_kit/app_kit');
 
-include('vienna/flash_view');
+var NSObject = Class.extend({
+    
+});

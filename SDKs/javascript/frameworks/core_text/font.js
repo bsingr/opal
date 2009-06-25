@@ -24,9 +24,9 @@
  * THE SOFTWARE.
  */
  
-include('core_text/font_descriptor');
-include('core_graphics/font');
-include('core_graphics/path');
+include('core_text/font_descriptor'){}
+include('core_graphics/font'){}
+include('core_graphics/path'){}
 
 function CTFontRef()
 {
@@ -113,89 +113,89 @@ function CTFontCreateWithFontDescriptor(descriptor, size, matrix)
     
 }
 
-function CTFontCreateUIFontForLanguage(uiType, size, language);
+function CTFontCreateUIFontForLanguage(uiType, size, language){}
 
-function CTFontCreateCopyWithAttributes(font, size, matrix, attributes);
+function CTFontCreateCopyWithAttributes(font, size, matrix, attributes){}
 
-function CTFontCreateCopyWithSymbolicTraits(font, size, matrix, symTraitValue, symTraitMask);
+function CTFontCreateCopyWithSymbolicTraits(font, size, matrix, symTraitValue, symTraitMask){}
 
-function CTFontCreateCopyWithFamily(font, size, matrix, family);
+function CTFontCreateCopyWithFamily(font, size, matrix, family){}
 
-function CTFontCreateForString(currentFont, string, range);
+function CTFontCreateForString(currentFont, string, range){}
 
-function CTFontCopyFontDescriptor(font);
+function CTFontCopyFontDescriptor(font){}
 
-function CTFontCopyAttribute(font, attribute);
+function CTFontCopyAttribute(font, attribute){}
 
-function CTFontGetSize(font);
+function CTFontGetSize(font){}
 
-function CTFontGetMatrix(font);
+function CTFontGetMatrix(font){}
 
-function CTFontGetSymbolicTraits(font);
+function CTFontGetSymbolicTraits(font){}
 
-function CTFontCopyTraits(font);
+function CTFontCopyTraits(font){}
 
-function CTFontCopyPostScriptName(font);
+function CTFontCopyPostScriptName(font){}
 
-function CTFontCopyFamilyName(font);
+function CTFontCopyFamilyName(font){}
 
-function CTFontCopyFullName(font);
+function CTFontCopyFullName(font){}
 
-function CTFontCopyDisplayName(font);
+function CTFontCopyDisplayName(font){}
 
-function CTFontCopyName(font, nameKey);
+function CTFontCopyName(font, nameKey){}
 
-function CTFontCopyLocalizedName(font, nameKey, language);
+function CTFontCopyLocalizedName(font, nameKey, language){}
 
-function CTFontCopyCharacterSet(font);
+function CTFontCopyCharacterSet(font){}
 
-function CTFontGetStringEncoding(font);
+function CTFontGetStringEncoding(font){}
 
-function CTFontCopySupportedLanguages(font);
+function CTFontCopySupportedLanguages(font){}
 
-function CTFontGetGlyphsForCharacters(font, const char characters[], CGGlyph glyphs[], count);
-
-
-function CTFontGetAscent(font);
-
-function CTFontGetDescent(font);
-
-function CTFontGetLeading(font);
-
-function CTFontGetUnitsPerEm(font);
-
-function CTFontGetGlyphCount(font);
-
-function CTFontGetBoundingBox(font);
-
-function CTFontGetUnderlinePosition(font);
-
-function CTFontGetUnderlineThickness(font);
-
-function CTFontGetSlantAngle(font);
-
-function CTFontGetCapHeight(font);
-
-function CTFontGetXHeight(font);
-
-function CTFontGetGlyphWithName(font, glyphName);
+function CTFontGetGlyphsForCharacters(font, characters, glyphs, count){}
 
 
-function CTFontGetBoundingRectsForGlyphs(font, orientation, glyphs, boundingRects, count);
+function CTFontGetAscent(font){}
 
-function CTFontGetAdvancesForGlyphs(font, CTFontOrientation orientation, glyphs, advances, count);
+function CTFontGetDescent(font){}
 
-function CTFontGetVerticalTranslationsForGlyphs(font, const CGGlyph glyphs[], CGSize translations[], count);
+function CTFontGetLeading(font){}
 
-function CTFontCreatePathForGlyph(font, CGGlyph glyph, const CGAffineTransform *transform);
+function CTFontGetUnitsPerEm(font){}
+
+function CTFontGetGlyphCount(font){}
+
+function CTFontGetBoundingBox(font){}
+
+function CTFontGetUnderlinePosition(font){}
+
+function CTFontGetUnderlineThickness(font){}
+
+function CTFontGetSlantAngle(font){}
+
+function CTFontGetCapHeight(font){}
+
+function CTFontGetXHeight(font){}
+
+function CTFontGetGlyphWithName(font, glyphName){}
 
 
-function CTFontCopyVariationAxes(font);
+function CTFontGetBoundingRectsForGlyphs(font, orientation, glyphs, boundingRects, count){}
 
-function CTFontCopyVariation(font);
+function CTFontGetAdvancesForGlyphs(font, orientation, glyphs, advances, count){}
+
+function CTFontGetVerticalTranslationsForGlyphs(font, glyphs, translations, count){}
+
+function CTFontCreatePathForGlyph(font, glyph, transform){}
 
 
-function CTFontCopyFeatures(font);
+function CTFontCopyVariationAxes(font){}
 
-function CTFontCopyFeatureSettings(font);
+function CTFontCopyVariation(font){}
+
+
+function CTFontCopyFeatures(font){}
+
+function CTFontCopyFeatureSettings(font){}
 

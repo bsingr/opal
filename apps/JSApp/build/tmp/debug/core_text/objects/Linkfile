@@ -1,0 +1,22 @@
+--- 
+font.js: 
+  dependencies: 
+  - font_descriptor.js
+  - font.js
+  - path.js
+core_text.js: 
+  dependencies: 
+  - font.js
+  - font_collection.js
+  - font_descriptor.js
+  - font_manager.js
+  - font_traits.js
+  - frame.js
+  - framesetter.js
+  - glyph_info.js
+  - line.js
+  - paragraph_style.js
+  - run.js
+  - string_attributes.js
+  - text_tab.js
+  - typesetter.js

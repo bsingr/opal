@@ -29,11 +29,11 @@ include('app_kit/responder');
 include('app_kit/graphics_context');
 include('app_kit/window');
 
-NS.Application = NS.Responder.extend({
+var NSApplication = NSResponder.extend({
     
     _delegate: null,
     
-    _windows = [],
+    _windows: [],
     
     _currentEvent: null,
     
@@ -50,9 +50,7 @@ NS.Application = NS.Responder.extend({
     _menuBar: null,
     
     init: function() {
-        vn_super();
-        
-        
+        this._super();
     },
     
     sharedApplication: function() {
@@ -159,3 +157,8 @@ NS.Application = NS.Responder.extend({
         
     }
 });
+
+function NSApplicationMain(argc, argv)
+{
+    return 1;
+}

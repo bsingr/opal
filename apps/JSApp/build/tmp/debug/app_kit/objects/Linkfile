@@ -1,0 +1,26 @@
+--- 
+responder.js: 
+  dependencies: 
+  - foundation.js
+button_cell.js: 
+  dependencies: 
+  - cell.js
+slider.js: 
+  dependencies: 
+  - control.js
+  - slider_cell.js
+slider_cell.js: 
+  dependencies: 
+  - cell.js
+cell.js: 
+  dependencies: 
+  - cell.js
+button.js: 
+  dependencies: []
+
+application.js: 
+  dependencies: 
+  - foundation.js
+  - responder.js
+  - graphics_context.js
+  - window.js

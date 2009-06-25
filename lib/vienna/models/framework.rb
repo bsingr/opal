@@ -24,32 +24,5 @@ module Vienna
       FileUtils.mkdir_p(File.join(@parent.tmp_prefix, bundle_name, 'objects'))
       # FileUtils.mkdir_p(File.join(@parent.build_prefix, 'Frameworks', bundle_name))
     end
-    
-    
-    def link_object_file(file, out)
-      
-      return if @linked_files.include? file
-      
-      all_objects = Dir.glob(File.join(@parent.tmp_prefix, bundle_name, 'objects', '*.js'))
-      object_path = File.join(@parent.tmp_prefix, bundle_name, 'objects')
-      
-      return unless all_objects.include?(object_path + '/' + file)
-
-      @linked_files << file
-      
-      # puts @link_config[file]["dependencies"]
-      if @link_config[file]
-        # has linked files, so include (.m, not .js)
-        @link_config[file]["dependencies"].each do |d|
-          link_object_file(d + '.js', out)
-        end
-      end
-      
-      f = File.new(object_path + "/" + file)
-      t = f.read
-      out.write t
-      # puts "Writing content of #{file}"
-      
-    end
   end
 end

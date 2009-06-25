@@ -1,0 +1,2 @@
+
+NSBundle=NSObject.extend({});
