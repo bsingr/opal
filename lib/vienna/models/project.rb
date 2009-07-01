@@ -27,7 +27,7 @@ module Vienna
       @prepared_status = true
       # build paths
       FileUtils.mkdir_p(build_prefix)
-      FileUtils.mkdir_p(File.join(build_prefix, 'Resources'))
+      FileUtils.mkdir_p(File.join(build_prefix, 'resources'))
       FileUtils.mkdir_p(tmp_prefix)
       FileUtils.mkdir_p(File.join(tmp_prefix, bundle_name, 'objects'))
       FileUtils.mkdir_p(File.join(tmp_prefix, bundle_name, 'resources'))

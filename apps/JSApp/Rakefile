@@ -30,6 +30,8 @@ config :all,
   :build_prefix => 'build',
   :tmp_prefix => 'build/tmp',
 
+  # minify javascript: default yes, for better bandwidth
+  :minimize_javascript => true,
   
   # Preferred lnaguage: default app language to suit English.lproj
   :preferred_language => :en,
@@ -39,6 +41,9 @@ config :all,
   :organization_name => 'My Company',
   
   :SDK => 'javascript',
+  
+  # Useful for developing core frameworks: saves reinstalling gem between edits
+  # :sdk_root => '/Users/adambeynon/Development/vienna/SDKs',
   
   # Used for inserting copyrights to the tops of files
   :copyright_notice =>
@@ -63,7 +68,9 @@ THE SOFTWARE.}
 config :debug,
   :compress => false,
   :build_prefix => 'build/debug',
-  :tmp_prefix => 'build/tmp/debug'
+  :tmp_prefix => 'build/tmp/debug',
+  # do not minimize for debugging
+  :minimize_javascript => false
 
 config :release,
   :compress => true,

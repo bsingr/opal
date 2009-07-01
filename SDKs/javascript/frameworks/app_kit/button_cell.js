@@ -26,6 +26,21 @@
 
 include('app_kit/cell');
 
+// NSButton normal
+resource('NSButtonNormalLeft.png');
+resource('NSButtonNormalMiddle.png');
+resource('NSButtonNormalRight.png');
+// NSButton highlighted
+resource('NSButtonHighlightedLeft.png');
+resource('NSButtonHighlightedMiddle.png');
+resource('NSButtonHighlightedRight.png');
+// NSSwitch
+resource('NSSwitchNormal.png');
+resource('NSSwitchAlternate.png');
+// NSRadioButton
+resource('NSRadioButtonNormal.png');
+resource('NSRadioButtonAlternate.png');
+
 // NSButtonType
 var NSMomentaryLightButton		    = 0;
 var NSPushOnPushOffButton		    = 1;
@@ -87,7 +102,7 @@ var NSButtonCell = NSCell.extend({
         CGContextClearRect(c, cellFrame);
         
         this.drawBezelWithFrameInView(cellFrame, controlView);
-        this.drawInteriorWithFrame(cellFrame, controlView);
+        this.drawInteriorWithFrameInView(cellFrame, controlView);
         this.drawTitleWithFrameInView(this._value, cellFrame, controlView);
     },
     
@@ -116,10 +131,48 @@ var NSButtonCell = NSCell.extend({
         CGContextSaveGState(c);
         
         if (this._isEnabled) {
-            
+            CGContextSetFillColor(c, [0.204, 0.204, 0.204, 1.0]);
+
+            // CGContextSetShadowWithColor(c, CGSizeMake(1,1), 1, CGColorCreateGenericRGB(1,1,1,1));
+
+            var theFont = CGFontCreate("Arial", 12, false);
+            CGContextSetFont(c, theFont);
+            CGContextShowTextAtPoint(c, 20, ((rect.size.height + 12) / 2) - 1, title, 14);
         }
         else {
-            
+            CGContextSetFillColor(c, [0.704, 0.704, 0.704, 1.0]);
+            // CGContextSetShadowWithColor(c, CGSizeMake(1,1), 1, CGColorCreateGenericRGB(1,1,1,1));
+
+            var theFont = CGFontCreate("Arial", 12, NO);
+            CGContextSetFont(c, theFont);
+            // 12 being the size of the text, although this could change
+            CGContextShowTextAtPoint(c, 20, ((rect.size.height + 12) / 2) - 1, title, 14);
+        }
+        
+        CGContextRestoreGState(c);
+    },
+    
+    drawBezelWithFrameInView: function(frame, controlView) {
+        var c = NSGraphicsContext.currentContext().graphicsPort();
+        CGContextSaveGState(c);
+        
+        if (this._isEnabled && this._isBordered) {
+            if (this._isHighlighted) {
+                NSImage.imageNamed('NSButtonHighlightedLeft.png').drawInRect(CGRectMake(0, 0, 6, 24));
+                NSImage.imageNamed('NSButtonHighlightedMiddle.png').drawInRect(CGRectMake(6, 0, frame.size.width - 12, 24));
+                NSImage.imageNamed('NSButtonHighlightedRight.png').drawInRect(CGRectMake(frame.size.width - 6, 0, 6, 24));
+            }
+            else {
+                NSImage.imageNamed('NSButtonNormalLeft.png').drawInRect(CGRectMake(0, 0, 6, 24));
+                NSImage.imageNamed('NSButtonNormalMiddle.png').drawInRect(CGRectMake(6, 0, frame.size.width - 12, 24));
+                NSImage.imageNamed('NSButtonNormalRight.png').drawInRect(CGRectMake(frame.size.width - 6, 0, 6, 24));
+            }
+        }
+        else if (this._isBordered) {
+            CGContextSetAlpha(c, 0.8);
+            NSImage.imageNamed('NSButtonNormalLeft.png').drawInRect(CGRectMake(0, 0, 6, 24));
+            NSImage.imageNamed('NSButtonNormalMiddle.png').drawInRect(CGRectMake(6, 0, frame.size.width - 12, 24));
+            NSImage.imageNamed('NSButtonNormalRight.png').drawInRect(CGRectMake(frame.size.width - 6, 0, 6, 24));
         }
         
         CGContextRestoreGState(c);

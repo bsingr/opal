@@ -26,6 +26,11 @@
 
 include('app_kit/cell');
 
+resource('NSSliderHorizontalLeft.png');
+resource('NSSliderHorizontalMiddle.png');
+resource('NSSliderHorizontalRight.png');
+resource('NSSliderHorizontalKnobNormal.png');
+
 // NSTickMarkPosition
 var NSTickMarkBelow = 0;
 var NSTickMarkAbove = 1;
@@ -64,6 +69,17 @@ var NSSliderCell = NSCell.extend({
        var c = NSGraphicsContext.currentContext().graphicsPort();
        CGContextSaveGState(c);
        if (!this.isEnabled()) CGContextSetAlpha(c, 0.8);
+       
+       // draw the bar
+       NSImage.imageNamed('NSSliderHorizontalLeft.png').drawInRect(CGRectMake(KNOB_PADDING, 8, 5, 5));
+       NSImage.imageNamed('NSSliderHorizontalMiddle.png').drawInRect(CGRectMake(5 + KNOB_PADDING, 8, (cellFrame.size.width - 10) - (2 * KNOB_PADDING), 5));
+       NSImage.imageNamed('NSSliderHorizontalRight.png').drawInRect(CGRectMake((cellFrame.size.width-5) - KNOB_PADDING, 8 ,5 ,5));
+       
+       // draw the knob
+       var knobPosition = (((this._value / (this._maxValue - this._minValue)) * ((cellFrame.size.width - (2 * SLIDER_PADDING)))));
+       NSImage.imageNamed('NSSliderHorizontalKnobNormal.png').drawInRect(CGRectMake(knobPosition,2,17,17));
+       
+       CGContextRestoreGState(c);
    },
    
    startTrackingAtInView: function(startPoint, controlView) {
@@ -77,7 +93,12 @@ var NSSliderCell = NSCell.extend({
        return false;
    },
 
-   setDoubleValue: function(aDouble) {
+    /**
+        Sets the double value for the slider. If the value is below the minValue,
+        then the value is adjusted to be the minValue. Similarly, if the value
+        is greater than the maxValue, it is also adjusted acordingly.
+    */
+    setDoubleValue: function(aDouble) {
        if (aDouble < this._minValue) this._value = this._minValue;
        else if (aDouble > this._maxValue) this._value = this._maxValue;
        else this._value = aDouble;
@@ -92,9 +113,7 @@ var NSSliderCell = NSCell.extend({
    },
    
    /**
-
         @param flag - If the mouseIsUp
-
    */
    stopTrackingInView: function(lastPoint, stopPoint, controlView, flag) {
        

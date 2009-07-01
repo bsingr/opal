@@ -25,6 +25,8 @@ module Vienna
         output = File.new @dest, 'w'
         doc = REXML::Document.new file
         output_element output, doc.root
+        output.close()
+        file.close()
       end
       
       def output_element(file, element)
@@ -45,11 +47,30 @@ module Vienna
             file.write "," if e.next_element
           end
           file.write "}"
-          
-        when "int", "integer", "string", "bool", "double", "bytes"
+        
+        when "int", "integer", "double"
           file.write "\"#{element.attribute "key"}\": " if element.attribute "key"
-          file.write "{\"#{element.name}\": \"#{element.text}\"}"
+          # file.write "{\"#{element.name}\": \"#{element.text}\"}"
+          file.write "#{element.text}"
+          file.write "#{element.attribute "value"}" if element.attribute "value"
           
+        when "string", "bytes"
+          file.write "\"#{element.attribute "key"}\": " if element.attribute "key"
+          # file.write "{\"#{element.name}\": \"#{element.text}\"}"
+          file.write "\"#{element.text}\""
+        
+        when "bool"
+          file.write "\"#{element.attribute "key"}\": " if element.attribute "key"
+          # file.write "{\"#{element.name}\": \"#{element.text}\"}"
+          # file.write "\"#{element.text}\""
+          if element.text == "YES"
+            file.write "true"
+          elsif element.text == "NO"
+            file.write "false"
+          else
+            file.write "true"
+          end
+        
         when "reference"
           file.write "\"#{element.attribute "key"}\": " if element.attribute "key"
           file.write "{\"id\":\"#{element.attribute "ref"}\"}"
@@ -80,6 +101,7 @@ module Vienna
             element.each_element do |e|
               output_element file, e
               file.write "," if e.next_element
+              file.write ""
               end
             file.write "}}"
           end

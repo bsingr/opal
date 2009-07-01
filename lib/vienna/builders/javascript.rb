@@ -50,8 +50,6 @@ module Vienna
         t = ""
         File.readlines(@source).map do |l|
           if match = l.match(/include\(\'(.*)\/(.*)\'\)/)
-            # puts "#{match[1].to_s} .. #{match[2].to_s}"
-            # "yeah(" << match[1].to_s << ")"
             link_config["dependencies"] << "#{match[2].to_s}.js"
             link_frameworks << match[1].to_s unless link_frameworks.include? match[1].to_s
           else
@@ -60,7 +58,8 @@ module Vienna
         end
         
         o = File.new(@destination, 'w')
-        o.write(JSMin.minify(t))
+        # o.write(JSMin.minify(t))
+        o.write(t)
         o.close
       end
      

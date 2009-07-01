@@ -27,3 +27,6 @@
 include('app_kit/control');
 include('app_kit/slider_cell');
 
+var NSSlider = NSControl.extend({
+    
+});

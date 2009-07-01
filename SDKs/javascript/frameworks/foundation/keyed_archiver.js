@@ -102,13 +102,19 @@ var NSKeyedArchiver = NSCoder.extend({
 
 var NSKeyedUnarchiver = NSCoder.extend({
     
+    _delegate: null,
+    _data: null,
+    _rootDict: null,
+    _contextStack: null,
+    _unarchivedObjects: null,
+    
     initForReadingWithData: function(data) {
         this.init();
-        this._data = data;
-        this._rootDict = CFPropertyListFromData(this._data.bytes());
-        this._contentStack = new NSArray();
-        this._contentStack.addObject(this._rootDict);
-        this._unarchivedObjects = new NSDictionary();
+        this._data = data.archive.data;
+        this._rootDict = this._data; //CFPropertyListFromData(this._data.bytes());
+        this._contextStack = [];
+        this._contextStack.addObject(this._rootDict);
+        this._unarchivedObjects = NSDictionary.create();
         return this;
     },
 
@@ -121,39 +127,144 @@ var NSKeyedUnarchiver = NSCoder.extend({
     },
     
     finishDecoding: function() {
-        
+        // do nothing?
     },
     
     containsValueForKey: function(key) {
         var theContext = this._contextStack.lastObject();
         
-        return NO;
+        if (theContext[key])
+            return true;
+        
+        return false;
     },
     
     decodeObjectForKey: function(key) {
         var theContext = this._contextStack.lastObject();
-        
-        if(theContext.typeOf == NSArray) {
-            var a, array = new NSArray();
-            for (a in theContext) {
-                this._contextStack.addObject(a);
-                array.addObject(this._decodeObject(a));
+        // if the context is an array, then we need to decode this differently
+        if(theContext['indexOf']) {
+            var array = [];
+            for (var idx = 0; idx < theContext.length; idx++) {
+                this._contextStack.addObject(theContext[idx]);
+                var newObject = this._decodeObject(theContext[idx]);
+                array.push(newObject);
                 this._contextStack.removeLastObject();
             }
             return array;
         }
         
-        var theObject = theContext.objectForKey(key);
+        var theObject = theContext[key];
+    
         return this._decodeObject(theObject);
     },
     
-    _decodeObject: function(theObject) {
-        if (!theObject) return null; // no context
-        var theClass = NSClassFromString(theObject.objectForKey("class"));
-        if (!theClass) {
-            
-        }
-        var newObject = new theClass();
+    /**
+        @private
         
+        Private method to decode an actual object at the head of the context
+        array.
+    */
+    _decodeObject: function(theObject) {
+        // no context, so return null... error?
+        if (!theObject)
+            return null;
+        
+        // object is a string, so just return it
+        if (typeof theObject == 'string')
+            return new String(theObject);
+        
+        var theClass = window[theObject["class"]];
+        
+        if (!theClass) {
+            if (this._unarchivedObjects.containsKey(theObject['id']))
+                return this._unarchivedObjects.objectForKey(theObject['id'])
+            else {
+                console.log('unable to decode ' + theObject['class']);
+                return null;
+            }
+                
+        }
+        
+        var newObject;
+        
+        //throws error if array...............
+        if (theClass == NSArray || theClass == NSMutableArray) {
+            newObject = [];
+        }
+        else {
+            newObject = new theClass(); // basically just alloc's it.. does not init().
+        }
+        
+        this._unarchivedObjects.setObjectForKey(newObject, theObject['id']);
+        
+        if (theObject['class'] == "NSCustomObject") {
+            newObject.init();
+        }
+        else {
+            this._contextStack.addObject(theObject['objects']);
+            console.log('initing ' + theObject['class']);
+            newObject.initWithCoder(this);
+            this._contextStack.removeLastObject();
+        }
+        
+        newObject = newObject.awakeAfterUsingCoder(this);
+        this._unarchivedObjects.setObjectForKey(newObject, theObject['id']);
+        
+        return newObject;
+    },
+    
+    decodeBoolForKey: function(key) {
+        var theContext = this._contextStack.lastObject();
+        var theObject = theContext[key];
+        
+        // return false if it does not exist, otherwise, return value
+        return (!theObject) ? false : true;
+    },
+    
+    decodeIntForKey: function(key) {
+        var theContext = this._contextStack.lastObject();
+        return parseInt(theContext[key]);
+    },
+    
+    decodeInt32ForKey: function(key) {
+        var theContext = this._contextStack.lastObject();
+        return parseInt(theContext[key]);        
+    },
+    
+    decodeInt64ForKey: function(key) {
+        var theContext = this._contextStack.lastObject();
+        return parseInt(theContext[key]);        
+    },
+    
+    decodeFloatForKey: function(key) {
+        var theContext = this._contextStack.lastObject();
+        return parseFloat(theContext[key]);
+    },
+    
+    decodeDoubleForKey: function(key) {
+        var theContext = this._contextStack.lastObject();
+        return parseFloat(theContext[key]);
+    },
+    
+    decodePointForKey: function(key) {
+        var thePoint = this.decodeObjectForKey(key);
+        return NSPointFromString(thePoint);
+    },
+    
+    decodeSizeForKey: function(key) {
+        var theSize = this.decodeObjectForKey(key);
+        return NSSizeFromString(theSize);
+    },
+    
+    decodeRectForKey: function(key) {
+        var theRect = this.decodeObjectForKey(key);
+        return NSRectFromString(theRect);
+    }    
+});
+
+NSObject.mixin({
+    
+    awakeAfterUsingCoder: function(aCoder) {
+        return this;
     }
 });

@@ -1,5 +1,11 @@
 --- 
+resource.js: 
+  dependencies: []
+
 object.js: 
+  dependencies: []
+
+file.js: 
   dependencies: []
 
 runtime.js: 

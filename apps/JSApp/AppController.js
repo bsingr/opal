@@ -33,11 +33,19 @@ var AppController = NSObject.extend({
        return this;
    },
    
-   applicationDidFinishLaunching: function() {
-       console.log("Application finished lauchiong");
+   doSomething: function(sender) {
+       
    },
    
    awakeFromNib: function(sender) {
        console.log("Awoken from nib");
+   },
+   
+   applicationWillFinishLaunching: function() {
+       console.log('Application will finish launching');
+   },
+   
+   applicationDidFinishLaunching: function() {
+       console.log("Application finished lauchiong");
    }
 });

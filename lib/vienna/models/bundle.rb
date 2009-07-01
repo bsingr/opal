@@ -63,6 +63,10 @@ module Vienna
       @plist_sources ||= Dir.glob(File.join(bundle_root, '*.plist'))
     end
     
+    def image_sources
+      @image_sources ||= Dir.glob(File.join(bundle_root, 'resources', '*.png'))
+    end
+    
     def prepare!
       # build paths
       FileUtils.mkdir_p(build_prefix)
@@ -106,6 +110,17 @@ module Vienna
         end
       end
       
+      # xib files
+      xib_sources.each do |x|
+        builder = Vienna::Builder::Xib.new(x, File.join(@parent.tmp_prefix, bundle_name, 'resources', File.basename(x, '.xib')) + '.json', @parent)
+        builder.build!
+      end
+      
+      # image_sources
+      image_sources.each do |i|
+        File.copy(i, File.join(@parent.tmp_prefix, bundle_name, 'resources', File.basename(i)))
+      end
+      
       # save link config for the bundle, to speed up compiling (avoids rebuilding everyfile all the time)
       File.open(File.join(@parent.tmp_prefix, bundle_name, 'objects') + '/Linkfile', 'w') do |out|
         YAML.dump(@link_config, out)
@@ -127,6 +142,8 @@ module Vienna
     # link all JS resources into the openFile, which, by name, is open (so just write)
     def link!(openFile)
       all_objects = Dir.glob(File.join(@parent.tmp_prefix, bundle_name, 'objects', '*.js'))
+      all_resources = Dir.glob(File.join(@parent.tmp_prefix, bundle_name, 'resources', '*.json'))
+      all_images = Dir.glob(File.join(@parent.tmp_prefix, bundle_name, 'resources', '*.png'))
       
       # do sub frameworks first
       @sub_frameworks.each do |s|
@@ -136,6 +153,16 @@ module Vienna
       # this frameworks's files
       all_objects.each do |f|
         link_object_file(f, openFile)
+      end
+      
+      # this framework's resources
+      all_resources.each do |r|
+        link_resource_file(r, openFile)
+      end
+      
+      # any image resources
+      all_images.each do |i|
+        File.copy(i, File.join(@parent.build_prefix, 'resources', File.basename(i)))
       end
     end
     
@@ -159,7 +186,23 @@ module Vienna
       end
       f = File.new(file)
       t = f.read
-      out.write t      
+      out.write t
+      f.close();
+    end
+    
+    # Links a resource file into the specified file. This will only link files
+    # that can be inserted as json, plain text, or a string representation. For
+    # example, strings files are copied, as are xibs (in json format)
+    def link_resource_file(file, out)
+      f = File.new(file, 'r')
+      # t = f.read
+      out.write "__bootstrap_files[\"#{File.basename(file)}\"] = "
+      f.readlines.map {|line| out.write line}
+      # out.write IO.read(file)
+      # out.write JSMin.minify(file)
+      # File.open(file, 'r') {|aFile| out.write JSMin.minify(aFile) }
+      # out.write t
+      out.write ";"
     end
     
     def build_prefix
@@ -186,12 +229,16 @@ module Vienna
       @project_name ||= File.basename(bundle_root)
     end
     
+    def sdk_root
+      @sdk_root ||= (rakefile.config_for(build_mode)[:sdk_root] || (File.join(LIBPATH, '..', 'SDKs')))
+    end
+    
     def project_SDK
       @project_SDK ||= (rakefile.config_for(build_mode)[:SDK] || 'javascript')
     end
     
     def system_frameworks
-      @system_frameworks ||= File.expand_path(File.join(LIBPATH, '..', 'SDKs', project_SDK, 'frameworks'))
+      @system_frameworks ||= File.expand_path(File.join(sdk_root, project_SDK, 'frameworks'))
     end
     
     def project_frameworks

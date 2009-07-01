@@ -35,7 +35,7 @@ var NSBorderlessWindowMask              = 0;
 var NSTitledWindowMask                  = 1 << 0;
 var NSClosableWindowMask                = 1 << 1;
 var NSMiniaturizableWindowMask          = 1 << 2;
-var NSResizableWindowMask               = 1 << 3,;
+var NSResizableWindowMask               = 1 << 3;
 var NSTexturedBackgroundWindowMask      = 1 << 8;
 var NSUnifiedTitleAndToolbarWindowMask  = 1 << 12;
 
@@ -54,6 +54,24 @@ var NSWindowMiniaturizeButton           = 1;
 var NSWindowZoomButton                  = 2;
 var NSWindowToolbarButton               = 3;
 var NSWindowDocumentIconButton          = 4;
+
+var NSWindowDidBecomeKeyNotification            = "NSWindowDidBecomeKeyNotification";
+var NSWindowDidBecomeMainNotification           = "NSWindowDidBecomeMainNotification";
+var NSWindowDidChangeScreenNotification         = "NSWindowDidChangeScreenNotification";
+var NSWindowDidDeminiaturizeNotification        = "NSWindowDidDeminiaturizeNotification";
+var NSWindowDidExposeNotification               = "NSWindowDidExposeNotification";
+var NSWindowDidMiniaturizeNotification          = "NSWindowDidMiniaturizeNotification";
+var NSWindowDidMoveNotification                 = "NSWindowDidMoveNotification";
+var NSWindowDidResignKeyNotification            = "NSWindowDidResignKeyNotification";
+var NSWindowDidResignMainNotification           = "NSWindowDidResignMainNotification";
+var NSWindowDidResizeNotification               = "NSWindowDidResizeNotification";
+var NSWindowDidUpdateNotification               = "NSWindowDidUpdateNotification";
+var NSWindowWillCloseNotification               = "NSWindowWillCloseNotification";
+var NSWindowWillMiniaturizeNotification         = "NSWindowWillMiniaturizeNotification";
+var NSWindowWillMoveNotification                = "NSWindowWillMoveNotification";
+var NSWindowWillBeginSheetNotification          = "NSWindowWillBeginSheetNotification";
+var NSWindowDidEndSheetNotification             = "NSWindowDidEndSheetNotification";
+var NSWindowDidChangeScreenProfileNotification  = "NSWindowDidChangeScreenProfileNotification";
 
 
 var NSWindow = NSResponder.extend({
@@ -108,8 +126,17 @@ var NSWindow = NSResponder.extend({
     _DOMGraphicsContext: null,   // Rendering context: usually a canvas (exceptions for DOM rendering and VML)
     _graphicsContext: null,      // a cache of the actual graphics context (from canvas, or VML representation).
     
+    DOMContainer: function() {
+        return this._DOMContainer;
+    },
+    
     contentRectForFrameRect: function(frameRect) {
         return CGRectMake(0, 0, frameRect.size.width, frameRect.size.height);
+    },
+    
+    frameRectForContentRect: function(contentRect) {
+        
+        return contentRect;
     },
     
     init: function() {
@@ -118,13 +145,19 @@ var NSWindow = NSResponder.extend({
     },
     
     initWithContentRectAndStyleMask: function(contentRect, aStyle) {
-        this = this.init();
-        
+        this.init();
+                
         // DOM etc
         this._DOMContainer = document.createElement('div');
         this._DOMGraphicsContext = document.createElement('canvas');
         this._DOMContainer.appendChild(this._DOMGraphicsContext);
         document.body.appendChild(this._DOMContainer);
+        
+        this._DOMContainer.style.display = "block";
+        this._DOMContainer.style.position = "absolute";
+        
+        this._DOMGraphicsContext.style.display = "block";
+        this._DOMGraphicsContext.style.position = "absolute";
         
         this._windowNumber = NSApplication.sharedApplication().addWindow(this);
         this._styleMask = aStyle;
@@ -135,7 +168,7 @@ var NSWindow = NSResponder.extend({
         this._frame = this.frameRectForContentRect(contentRect);
         this._firstResponder = this;
         
-        this.setContentView(new NSView('initWithFrame', contentRect));
+        this.setContentView(NSView.create('initWithFrame', contentRect));
         this.setNextResponder(NSApplication.sharedApplication());
         this.setFrame(this.frameRectForContentRect(contentRect), false);
         this.setNeedsDisplay(true);
@@ -230,6 +263,8 @@ var NSWindow = NSResponder.extend({
     
     setFrame: function(frameRect, flag, animate) {
         this._frame = frameRect;
+        CGDOMElementSetFrame(this._DOMContainer, this._frame);
+        CGDOMElementSetFrame(this._DOMGraphicsContext, this.bounds());
         this.setNeedsDisplay(true);
     },
     
@@ -487,7 +522,7 @@ var NSWindow = NSResponder.extend({
     
     becomeMainWindow: function() {
         
-    }
+    },
     
     resignKeyWindow: function() {
         
@@ -649,27 +684,22 @@ var NSWindow = NSResponder.extend({
     },
     
     sendEvent: function(theEvent) {
-        var hitTest;
-        if (theEvent.type() == NSLeftMouseDown) {
-            hitTest = this._contentView.hitTest(theEvent.locationInWindow);
-            if (hitTest)
-                hitTest.mouseDown(theEvent);
-            else
-                NSLog("Mouse event (down) did not find a target");
-        }
-        else if (theEvent.type() == NSLeftMouseUp) {
-            // mouse up
-        }
-        else if (theEvent.type() == NSKeyDown) {
-            if (this._firstResponder) {
-                NSLog("Sending key down to first responder");
-                this._firstReponder.keyDown(theEvent);
-            }
-            else
-                NSLog("No key responder");
-        }
-        else {
-            
+        var hitTest, aPoint = theEvent.locationInWindow();
+        
+        switch (theEvent.type()) {
+            case NSLeftMouseDown:
+                hitTest = this._contentView.hitTest(aPoint);
+                if (hitTest) {
+                    hitTest.mouseDown(theEvent);
+                    // console.log(hitTest);
+                }
+                else {
+                    console.log('Sending mouse down to (else)');
+                }
+                break;
+            case NSLeftMouseUp:
+                console.log('mouse up;');
+                break;
         }
     },
     
@@ -745,249 +775,134 @@ var NSWindow = NSResponder.extend({
         
     },
     
-    
-    
-    
-    - (void)setDefaultButtonCell:(NSButtonCell *)defButt
-    {
-        // TODO: Need to implement
-    }
+    setDefaultButtonCell: function(defButt) {
+	
+	},
+	
+	defautButtonCell: function() {
+		
+	},
+	
+	recalculateKeyViewLoop: function() {
+		
+	},
+	
+	setToolbar: function(toolbar) {
+		
+	},
+	
+	toolbar: function() {
+		
+	},
+	
+	toggleToolbarShown: function(sender) {
+		
+	},
+	
+	runToolbarCustomizationPalette: function(sender) {
+		
+	},
+	
+	setShowsToolbarButton: function(show) {
+		
+	},
+	
+	showsToolbarButton: function() {
+		
+	},
+	
+	dragImage: function(anImage, baseLocation, initialOffset, theEvent, pboard, sourceObj, slideFlag) {
+		
+	},
+	
+	registerForDraggedTypes: function(newTypes) {
+		
+	},
+	
+	unregisterDraggedTypes: function() {
+		
+	},
+	
+	canDraw: function() {
+		
+	},
+	
+	setNeedsDisplay: function(flag) {
+		if (flag)
+            this.setNeedsDisplayInRect(this.bounds());
+	},
+	
+	setNeedsDisplayInRect: function(invalidRect) {
+		this.displayRect(invalidRect);
+	},
+	
+	needsDisplay: function() {
+		
+	},
+	
+	lockFocus: function() {
+		if (!this._graphicsContext)
+			this._graphicsContext = NSGraphicsContext.graphicsContextWithGraphicsPort(this._DOMGraphicsContext.getContext('2d'), false);
+		
+		NSGraphicsContext.setCurrentContext(this._graphicsContext);
+		CGContextSaveGState(this._graphicsContext.graphicsPort());
+	},
+	
+	unlockFocus: function() {
+		CGContextRestoreGState(this._graphicsContext.graphicsPort());
+		NSGraphicsContext.setCurrentContext(null);
+	},
+	
+	lockFocusIfCanDraw: function() {
+		
+	},
+	
+	lockFocusIfCanDrawInContext: function(context) {
+		
+	},
+	
+	display: function() {
+		this.displayRect(this.bounds());
+	},
+	
+	displayIfNeeded: function() {
+		if (this.needsDisplay())
+			this.displayRect(this.bounds());
+	},
+	
+	displayIfNeededIgnoringOpacity: function() {
+		
+	},
+	
+	displayRect: function(rect) {
+		this.displayRectIgnoringOpacityInContext(rect, null);
+	},
+	
+	displayIfNeededInRect: function(rect) {
+		if (this.needsDisplay())
+			this.displayRect(this.bounds());
+	},
 
-    - (NSButtonCell *)defaultButtonCell
-    {
-        // TODO: Need to implement
-    }
+    drawRect: function(rect) {
+		var c = NSGraphicsContext.currentContext().graphicsPort();
+		CGContextClearRect(c, rect);
+		CGContextSaveGState(c);
+		console.log('drawing window');
+		CGContextSetFillColor(c, [0.944, 0.944, 0.944, 1.0]);
+		CGContextFillRect(c, rect);
+	},
+	
+	displayRectIgnoringOpacityInContext: function(aRect, context) {
+		this.lockFocus();
+		this.drawRect(aRect);
+		this.unlockFocus();
+	},
 
-    - (void)disableKeyEquivalentForDefaultButtonCell
-    {
-        // TODO: Need to implement
-    }
-
-    - (void)enableKeyEquivalentForDefaultButtonCell
-    {
-        // TODO: Need to implement
-    }
-
-    - (void)setAutorecalculatesKeyViewLoop:(BOOL)flag
-    {
-        // TODO: Need to implement
-    }
-
-    - (BOOL)autorecalculatesKeyViewLoop
-    {
-        // TODO: Need to implement
-    }
-
-    - (void)recalculateKeyViewLoop
-    {
-        // TODO: Need to implement
-    }
-
-    @end
-
-    @implementation NSWindow (NSToolbarSupport)
-
-    - (void)setToolbar:(NSToolbar*)toolbar
-    {
-        // TODO: Need to implement
-    }
-
-    - (NSToolbar *)toolbar
-    {
-        // TODO: Need to implement
-    }
-
-    - (void)toggleToolbarShown:(id)sender
-    {
-        // TODO: Need to implement
-    }
-
-    - (void)runToolbarCustomizationPalette:(id)sender
-    {
-        // TODO: Need to implement
-    }
-
-    - (void)setShowsToolbarButton:(BOOL)show
-    {
-        // TODO: Need to implement
-    }
-
-    - (BOOL)showsToolbarButton
-    {
-        // TODO: Need to implement
-    }
-
-    @end
-
-
-    @implementation NSWindow (NSDrag)
-
-    - (void)dragImage:(NSImage *)anImage at:(NSPoint)baseLocation offset:(NSSize)initialOffset event:(NSEvent *)event pasteboard:(NSPasteboard *)pboard source:(id)sourceObj slideBack:(BOOL)slideFlag
-    {
-        // TODO: Need to implement
-    }
-
-    - (void)registerForDraggedTypes:(NSArray *)newTypes
-    {
-        // TODO: Need to implement
-    }
-
-    - (void)unregisterDraggedTypes
-    {
-        // TODO: Need to implement
-    }
-
-    @end
-
-
-    @implementation NSWindow (ViennaWindowDrawingExtensions)
-
-    - (BOOL)canDraw
-    {
-        // TODO: Need to implement
-    }
-
-    - (void)setNeedsDisplay:(BOOL)flag
-    {
-        if (flag)
-    		[self setNeedsDisplayInRect:[self bounds]];
-    }
-
-    - (void)setNeedsDisplayInRect:(NSRect)invalidRect
-    {
-    	[self displayRect:invalidRect];
-    }
-
-    - (BOOL)needsDisplay
-    {
-        // TODO: Need to implement
-    }
-
-    - (void)lockFocus
-    {
-        if (!_graphicsContext)
-    		_graphicsContext = [NSGraphicsContext graphicsContextWithGraphicsPort:CGDOMElementGetContext(_DOMGraphicsContext) flipped:NO];
-
-        // CGContextClearRect(_graphicsContext, [self bounds]);
-    	[NSGraphicsContext setCurrentContext:_graphicsContext];
-    	CGContextSaveGState([_graphicsContext graphicsPort]);
-    }
-
-    - (void)unlockFocus
-    {
-    	CGContextRestoreGState([_graphicsContext graphicsPort]);
-    	[NSGraphicsContext setCurrentContext:nil];
-    }
-
-    - (BOOL)lockFocusIfCanDraw
-    {
-        // TODO: Need to implement
-    }
-
-    - (BOOL)lockFocusIfCanDrawInContext:(NSGraphicsContext *)context
-    {
-        // TODO: Need to implement
-    }
-
-    - (void)display
-    {
-    	[self displayRect:[self bounds]];
-    }
-
-    - (void)displayIfNeeded
-    {
-        if ([self needsDisplay])
-    		[self displayRect:[self bounds]];
-    }
-
-    - (void)displayIfNeededIgnoringOpacity
-    {
-        // TODO: Need to implement
-    }
-
-    - (void)displayRect:(NSRect)rect
-    {
-    	// [self viewWillDraw];
-    	[self displayRectIgnoringOpacity:rect inContext:nil];
-    }
-
-    - (void)displayIfNeededInRect:(NSRect)rect
-    {
-        if ([self needsDisplay])
-    		[self displayRect:[self bounds]];
-    }
-
-    - (void)displayRectIgnoringOpacity:(NSRect)rect
-    {
-        // TODO: Need to implement
-    }
-
-    - (void)displayIfNeededInRectIgnoringOpacity:(NSRect)rect
-    {
-        // TODO: Need to implement
-    }
-
-    - (void)drawRect:(NSRect)rect
-    {
-    	CGContextRef c = [[NSGraphicsContext currentContext] graphicsPort];
-        CGContextClearRect(c, rect);
-        // CGContextSetAlpha(c, 0.3);
-        CGContextSaveGState(c);
-        CGContextSetFillColorWithColor(c, CGColorCreateGenericRGB(0.944, 0.944, 0.944, 1.0));
-        CGContextSetShadowWithColor(c, CGSizeMake(0,5), 10, CGColorCreateGenericRGB(0.2,0.2,0.2,0.8));
-        CGContextFillRect(c, CGRectInset(rect, 20, 20));
-        CGContextRestoreGState(c);
-        CGImageRef theImage = CGImageCreateWithURLDataProvider(@"Resources/NSWindowBackgroundMiddle.png");
-
-                CGContextDrawImage(c, CGRectMake(20,20,rect.size.width - 40,56), theImage);
-
-    	// CGRect newRect = CGRectInset(rect, 5, 5);
-    	//     CGContextSetFillColorWithColor(c, CGColorCreateGenericRGB(0.3,0.8,0.2,0.5));
-    	//     CGContextFillRect(c, newRect);
-
-        CGContextSetFillColorWithColor(c, CGColorCreateGenericRGB(0.204,0.204,0.204, 1.0));
-        CGContextSetAlpha(c, 1);
-        CGFontRef theFont = CGFontCreate(@"Arial", 12, YES);
-        CGContextSetFont(c, theFont);
-
-        CGContextSetShadowWithColor(c, CGSizeMake(1,1), 1, CGColorCreateGenericRGB(1,1,1,1));
-
-        CGContextShowTextAtPoint(c, 200, 36, @"Hello there!", 20);
-    }
-
-    - (void)displayRectIgnoringOpacity:(NSRect)aRect inContext:(NSGraphicsContext *)context
-    {
-    	[self lockFocus];
-    	[self drawRect:aRect];
-    	[self unlockFocus];
-    }
-
-    - (NSBitmapImageRep *)bitmapImageRepForCachingDisplayInRect:(NSRect)rect
-    {
-        // TODO: Need to implement
-    }
-
-    - (void)cacheDisplayInRect:(NSRect)rect toBitmapImageRep:(NSBitmapImageRep *)bitmapImageRep
-    {
-        // TODO: Need to implement
-    }
-
-    @end
-
-    NSString *NSWindowDidBecomeKeyNotification = @"NSWindowDidBecomeKeyNotification";
-    NSString *NSWindowDidBecomeMainNotification = @"NSWindowDidBecomeMainNotification";
-    NSString *NSWindowDidChangeScreenNotification = @"NSWindowDidChangeScreenNotification";
-    NSString *NSWindowDidDeminiaturizeNotification = @"NSWindowDidDeminiaturizeNotification";
-    NSString *NSWindowDidExposeNotification = @"NSWindowDidExposeNotification";
-    NSString *NSWindowDidMiniaturizeNotification = @"NSWindowDidMiniaturizeNotification";
-    NSString *NSWindowDidMoveNotification = @"NSWindowDidMoveNotification";
-    NSString *NSWindowDidResignKeyNotification = @"NSWindowDidResignKeyNotification";
-    NSString *NSWindowDidResignMainNotification = @"NSWindowDidResignMainNotification";
-    NSString *NSWindowDidResizeNotification = @"NSWindowDidResizeNotification";
-    NSString *NSWindowDidUpdateNotification = @"NSWindowDidUpdateNotification";
-    NSString *NSWindowWillCloseNotification = @"NSWindowWillCloseNotification";
-    NSString *NSWindowWillMiniaturizeNotification = @"NSWindowWillMiniaturizeNotification";
-    NSString *NSWindowWillMoveNotification = @"NSWindowWillMoveNotification";
-    NSString *NSWindowWillBeginSheetNotification = @"NSWindowWillBeginSheetNotification";
-    NSString *NSWindowDidEndSheetNotification = @"NSWindowDidEndSheetNotification";
-    NSString *NSWindowDidChangeScreenProfileNotification = @"NSWindowDidChangeScreenProfileNotification";
+    bitmapImageRepForCachingDisplayInRect: function(aRect) {
+	
+	},
+	
+	cacheDisplayInRectToBitmapImageRep: function(aRect, bitmapImageRep) {
+		
+	}
+});

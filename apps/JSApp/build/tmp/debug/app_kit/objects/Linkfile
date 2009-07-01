@@ -1,7 +1,23 @@
 --- 
+window.js: 
+  dependencies: 
+  - geometry.js
+  - responder.js
+  - graphics.js
+  - text.js
+  - application.js
+  - gradient.js
+text_view.js: 
+  dependencies: []
+
+layout_manager.js: 
+  dependencies: []
+
 responder.js: 
   dependencies: 
-  - foundation.js
+  - object.js
+  - array.js
+  - event.js
 button_cell.js: 
   dependencies: 
   - cell.js
@@ -9,18 +25,94 @@ slider.js:
   dependencies: 
   - control.js
   - slider_cell.js
+scroll_view.js: 
+  dependencies: []
+
+text_storage.js: 
+  dependencies: []
+
 slider_cell.js: 
   dependencies: 
   - cell.js
 cell.js: 
   dependencies: 
-  - cell.js
-button.js: 
+  - foundation.js
+  - text.js
+text_field.js: 
   dependencies: []
 
+button_image_source.js: 
+  dependencies: 
+  - image.js
+  - button.js
+window_template.js: 
+  dependencies: 
+  - foundation.js
+  - view.js
+clip_view.js: 
+  dependencies: []
+
+graphics_context.js: 
+  dependencies: 
+  - core_graphics.js
+  - graphics.js
+  - geometry.js
+  - object.js
+custom_view.js: 
+  dependencies: []
+
+control.js: 
+  dependencies: 
+  - foundation.js
+  - view.js
+  - cell.js
+  - text.js
+  - application.js
+text_view_shared_data.js: 
+  dependencies: []
+
+nib.js: 
+  dependencies: 
+  - foundation.js
+event.js: 
+  dependencies: 
+  - foundation.js
+custom_resource.js: 
+  dependencies: []
+
+nib_loading.js: 
+  dependencies: 
+  - bundle.js
+  - nib.js
+image.js: 
+  dependencies: []
+
+view.js: 
+  dependencies: 
+  - responder.js
+  - geometry.js
+  - range.js
+  - graphics.js
+  - animation.js
+scroller.js: 
+  dependencies: []
+
+button.js: 
+  dependencies: 
+  - control.js
+  - button_cell.js
 application.js: 
   dependencies: 
   - foundation.js
   - responder.js
   - graphics_context.js
   - window.js
+typesetter.js: 
+  dependencies: []
+
+text_field_cell.js: 
+  dependencies: []
+
+text_container.js: 
+  dependencies: []
+

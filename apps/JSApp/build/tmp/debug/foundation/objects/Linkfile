@@ -12,6 +12,14 @@ array.js:
   - coder.js
   - enumerator.js
   - range.js
+key_value_coding.js: 
+  dependencies: 
+  - array.js
+  - dictionary.js
+  - set.js
+dictionary.js: 
+  dependencies: 
+  - object.js
 foundation.js: 
   dependencies: 
   - runtime.js
@@ -33,6 +41,11 @@ foundation.js:
   - range.js
   - stirng.js
   - value.js
+geometry.js: 
+  dependencies: 
+  - value.js
+  - coder.js
+  - geometry.js
 object.js: 
   dependencies: 
   - runtime.js

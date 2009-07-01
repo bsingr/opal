@@ -26,7 +26,40 @@
 
 include('foundation/object');
 
-NSBundle = NSObject.extend({
+var NSBundleDidLoadNotification     = "NSBundleDidLoadNotification";
+var NSLoadedClasses                 = "NSLoadedClasses";
+
+var NSBundle = NSObject.extend({
     
+    principalClass: function() {
+		return NSApplication;
+	}
+});
+
+Object.extend(NSBundle, {
+    mainBundle: function() {
+        console.log("Returning main bundle");
+        console.log(NSBundle.create());
+        return NSBundle.create();
+    },
     
+    bundleWithPath: function(path) {
+        
+    },
+    
+    bundleForClass: function(aClass) {
+        
+    },
+    
+    bundleWithIdentifier: function(identifier) {
+        
+    },
+    
+    allBundles: function() {
+        
+    },
+    
+    allFrameworks: function() {
+        
+    }
 });

@@ -1,7 +1,15 @@
 --- 
 context.js: 
-  dependencies: []
-
+  dependencies: 
+  - base.js
+  - affine_transform.js
+  - color.js
+  - color_space.js
+  - font.js
+  - gradient.js
+  - image.js
+  - path.js
+  - pattern.js
 core_graphics.js: 
   dependencies: 
   - affine_transform.js
@@ -14,7 +22,16 @@ core_graphics.js:
   - gradient.js
   - image.js
   - path.js
+dom_element.js: 
+  dependencies: 
+  - context.js
 affine_transform.js: 
   dependencies: 
   - base.js
   - geometry.js
+geometry.js: 
+  dependencies: []
+
+font.js: 
+  dependencies: []
+

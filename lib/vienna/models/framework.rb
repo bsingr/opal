@@ -22,6 +22,7 @@ module Vienna
     def prepare!
       @prepared_status = true
       FileUtils.mkdir_p(File.join(@parent.tmp_prefix, bundle_name, 'objects'))
+      FileUtils.mkdir_p(File.join(@parent.tmp_prefix, bundle_name, 'resources'))
       # FileUtils.mkdir_p(File.join(@parent.build_prefix, 'Frameworks', bundle_name))
     end
   end
