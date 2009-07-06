@@ -100,9 +100,8 @@ var NSControl = NSView.extend({
         return this._cell.action();
     },
     
-    setAction: function(aSelector) {
-        
-        this._cell.setAction(aSelector);
+    setAction: function(anAction) {
+        this._cell.setAction(anAction);
     },
     
     tag: function() {
@@ -249,7 +248,7 @@ var NSControl = NSView.extend({
     */
     drawRect: function(rect) {
         if (this._cell)
-            this._cell.drawWithFrameInView(this.bounds(), this);
+            this._cell.drawWithFrame(this.bounds(), this);
     },
     
     /**
@@ -279,7 +278,8 @@ var NSControl = NSView.extend({
     },
     
     takeDoubleValueFrom: function(sender) {
-        
+        this._cell.takeDoubleValueFrom(sender);
+        this.setNeedsDisplay(true);
     },
     
     takeStringValueFrom: function(sender) {

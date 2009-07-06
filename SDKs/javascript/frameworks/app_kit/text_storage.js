@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-var NSTextStorage = NSObject.extend({
+var NSTextStorage = NSAttributedString.extend({
 
     _delegate: null,
     
@@ -36,6 +36,13 @@ var NSTextStorage = NSObject.extend({
     
     initWithCoder: function(aCoder) {
         this._layoutManagers = [];
+        return this;
+    },
+    
+    init: function() {
+        this._layoutManagers = [];
+        this._string = "";
+        this._attributed = [];
         return this;
     },
     

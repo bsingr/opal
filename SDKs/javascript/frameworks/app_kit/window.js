@@ -43,10 +43,10 @@ var NSNormalWindowLevel                 = 10;
 var NSFloatingWindowLevel               = 10;
 var NSSubmenuWindowLevel                = 10;
 var NSTornOffMenuWindowLevel            = 10;
-var NSMainMenuWindowLevel               = 10;
+var NSMainMenuWindowLevel               = 70;
 var NSStatusWindowLevel                 = 10;
 var NSModalPanelWindowLevel             = 10;
-var NSPopUpMenuWindowLevel              = 10;
+var NSPopUpMenuWindowLevel              = 60;
 var NSScreenSaverWindowLevel            = 10;
 
 var NSWindowCloseButton                 = 0;
@@ -110,11 +110,12 @@ var NSWindow = NSResponder.extend({
 
     _movableByWindowBackground: true,
 
-    _eventBindingCurrentX: null,
-    _eventBindingCurrentY: null,
+    _eventBindingCurrent: null,
 
     _windowCloseButton: null,
     _fieldEditor: null,
+    
+    _isZoomed: false,
 
     _maxSize: null,
     _minSize: null,
@@ -126,17 +127,37 @@ var NSWindow = NSResponder.extend({
     _DOMGraphicsContext: null,   // Rendering context: usually a canvas (exceptions for DOM rendering and VML)
     _graphicsContext: null,      // a cache of the actual graphics context (from canvas, or VML representation).
     
+    // used to hold the old frame size for when a window is "unZoomed"
+    _oldZoomFrame: null,
+    
     DOMContainer: function() {
         return this._DOMContainer;
     },
     
     contentRectForFrameRect: function(frameRect) {
-        return CGRectMake(0, 0, frameRect.size.width, frameRect.size.height);
+        
+        var xOffset = 0, yOffset = 0, wOffset = 0, hOffset = 0;
+        
+        if (this.hasShadow()) {
+            xOffset += 20;
+            yOffset += 20;
+        }
+              
+        return NSMakeRect(0 + xOffset, 0 + yOffset, frameRect.size.width, frameRect.size.height);
     },
     
     frameRectForContentRect: function(contentRect) {
         
-        return contentRect;
+        var xOffset = 0, yOffset = 0, wOffset = 0, hOffset = 0;
+        
+        if (this.hasShadow()) {
+            xOffset -= 20;
+            yOffset -= 20;
+            wOffset += 40;
+            hOffset += 40;
+        }
+        
+        return NSMakeRect(contentRect.origin.x + xOffset, contentRect.origin.y + yOffset, contentRect.size.width + wOffset, contentRect.size.height + hOffset);
     },
     
     init: function() {
@@ -161,6 +182,9 @@ var NSWindow = NSResponder.extend({
         
         this._windowNumber = NSApplication.sharedApplication().addWindow(this);
         this._styleMask = aStyle;
+        
+        this._hasShadow = (aStyle == NSBorderlessWindowMask) ? false : true;
+        
         this._level = NSNormalWindowLevel;
         
         this._minSize = NSMakeSize(0.0, 0.0);
@@ -168,16 +192,64 @@ var NSWindow = NSResponder.extend({
         this._frame = this.frameRectForContentRect(contentRect);
         this._firstResponder = this;
         
-        this.setContentView(NSView.create('initWithFrame', contentRect));
+        this.setContentView(NSView.create('initWithFrame', NSMakeRect(0, 0, 0, 0)));
         this.setNextResponder(NSApplication.sharedApplication());
-        this.setFrame(this.frameRectForContentRect(contentRect), false);
+        this.setFrame(contentRect, false);
         this.setNeedsDisplay(true);
         
         return this;
     },
     
     mouseDown: function(theEvent) {
-        this.makeMainWindow();
+        
+        if (this.isZoomed())
+            return;
+        
+        // this.makeMainWindow();     
+        this._eventBindingCurrent = theEvent.locationInWindow();
+        
+        NSApplication.sharedApplication().bindEventsMatchingMask((NSLeftMouseUpMask | NSMouseMovedMask), this, function(theEvent) {
+            
+            if (theEvent.type() == NSLeftMouseUp) {
+                NSApplication.sharedApplication().unbindEvents();
+                return;
+            }
+            
+            var location = theEvent.locationInWindow();
+            
+            // if we move the mouse too quickly, the mouse may jump outside the window, so that the location
+            // in the window will be null. therefore, we need to get the location from the cursor's location
+            // on screen, and adjust it into this window's co-ordinates. hack, but it works.
+            if (!location) {
+                location = this.convertScreenToBase(theEvent.locationInScreen());
+            }
+            
+            var newOrigin = NSMakePoint(this._frame.origin.x + (location.x - this._eventBindingCurrent.x),
+                                        this._frame.origin.y + (location.y - this._eventBindingCurrent.y));
+            
+            this.setFrameOrigin(newOrigin);
+            
+        });
+    },
+    
+    /**
+        Receieved from the application when the browser window chnages its
+        co-ordinates: likely to result from the user adjusting the window
+        size manually. For standard windows, the current default action to
+        take is to adjust the window only if the window is currently zoomed.
+        
+        By being zoomed, the window wants to take up the entire available
+        space. Non zoomed windows will not do anything.
+        
+        In future, it might be a consideration to move non-zoomed windows
+        to ensure they stay visible if the window is resized such to hide
+        them entirely or perhaps partially.
+    */
+    applicationDidChangeScreenParameters: function(aNotification) {
+        // console.log('main menu got new screen co-ordinates');
+        if (this._isZoomed) {
+            this.setFrame(NSMakeRect(0, 0, window.innerWidth, window.innerHeight - NSMenu.menuBarHeight()));
+        }
     },
 
     title: function() {
@@ -240,7 +312,7 @@ var NSWindow = NSResponder.extend({
         return this._windowNumber;
     },
     
-    fieldEditorForObject: function(createFlag, anObject) {
+    fieldEditor: function(createFlag, anObject) {
         if (!this._fieldEditor) {
             this._fieldEditor = NSTextView.create('initWithFrame', NSMakeRect(0, 0, 0, 0));
             this._fieldEditor.viewWillMoveToWindow(this);
@@ -263,8 +335,14 @@ var NSWindow = NSResponder.extend({
     
     setFrame: function(frameRect, flag, animate) {
         this._frame = frameRect;
-        CGDOMElementSetFrame(this._DOMContainer, this._frame);
-        CGDOMElementSetFrame(this._DOMGraphicsContext, this.bounds());
+        
+        var actualFrameRect = this.frameRectForContentRect(this._frame);
+        
+        CGDOMElementSetFrame(this._DOMContainer, actualFrameRect);
+        CGDOMElementSetFrame(this._DOMGraphicsContext, NSMakeRect(0, 0, actualFrameRect.size.width, actualFrameRect.size.height));
+        
+        this._contentView.setFrame(this.contentRectForFrameRect(this._frame));
+        
         this.setNeedsDisplay(true);
     },
     
@@ -273,7 +351,8 @@ var NSWindow = NSResponder.extend({
     },
     
     setFrameOrigin: function(aPoint) {
-        
+        this._frame.origin = aPoint;
+        CGDOMElementSetFrameOrigin(this._DOMContainer, this.frameRectForContentRect(this._frame).origin);
     },
     
     frame: function() {
@@ -281,7 +360,9 @@ var NSWindow = NSResponder.extend({
     },
     
     bounds: function() {
-        return NSMakeRect(0, 0, this._frame.size.width, this._frame.size.height);
+        var frameRect = this.contentRectForFrameRect(this._frame);
+        return frameRect;
+        // return NSMakeRect(0, 0, this._frame.size.width, this._frame.size.height);
     },
     
     animationResizeTime: function(newFrame) {
@@ -369,7 +450,8 @@ var NSWindow = NSResponder.extend({
     },
     
     close: function() {
-        
+        console.log('window needs to close');
+        document.body.removeChild(this._DOMContainer);
     },
     
     setReleasedWhenClosed: function(flag) {
@@ -389,11 +471,11 @@ var NSWindow = NSResponder.extend({
     },
     
     isZoomed: function() {
-        
+        return this._isZoomed;
     },
     
     zoom: function(sender) {
-        
+        console.log('zoom window');
     },
     
     isMiniaturized: function() {
@@ -556,7 +638,8 @@ var NSWindow = NSResponder.extend({
     },
     
     performZoom: function(sender) {
-        
+        this._isZoomed = true;
+        this.setFrame(NSMakeRect(0, 0, window.innerWidth, window.innerHeight - NSMenu.menuBarHeight()));
     },
     
     setOneShot: function(flag) {
@@ -592,11 +675,12 @@ var NSWindow = NSResponder.extend({
     },
     
     setLevel: function(newLevel) {
-        
+        this._DOMContainer.style.zIndex = newLevel;
+        this._level = newLevel;
     },
     
     level: function() {
-        
+        return this._level;
     },
     
     screen: function() {
@@ -604,11 +688,11 @@ var NSWindow = NSResponder.extend({
     },
     
     setHasShadow: function(hasShadow) {
-        
+        this._hasShadow = hasShadow;
     },
     
     hasShadow: function() {
-        
+        return this._hasShadow;
     },
     
     invalidateShadow: function() {
@@ -685,9 +769,9 @@ var NSWindow = NSResponder.extend({
     
     sendEvent: function(theEvent) {
         var hitTest, aPoint = theEvent.locationInWindow();
-        
         switch (theEvent.type()) {
             case NSLeftMouseDown:
+
                 hitTest = this._contentView.hitTest(aPoint);
                 if (hitTest) {
                     hitTest.mouseDown(theEvent);
@@ -828,11 +912,17 @@ var NSWindow = NSResponder.extend({
 	},
 	
 	setNeedsDisplay: function(flag) {
-		if (flag)
-            this.setNeedsDisplayInRect(this.bounds());
+        // if (flag) {
+        //     var actualBounds = this.frameRectForContentRect(this._frame);
+        //     actualBounds.origin.x = 0;
+        //     actualBounds.origin.y = 0;
+        //     this.setNeedsDisplayInRect(actualBounds);
+        // }
+        this.setNeedsDisplayInRect(this.bounds());
 	},
 	
 	setNeedsDisplayInRect: function(invalidRect) {
+
 		this.displayRect(invalidRect);
 	},
 	
@@ -846,6 +936,7 @@ var NSWindow = NSResponder.extend({
 		
 		NSGraphicsContext.setCurrentContext(this._graphicsContext);
 		CGContextSaveGState(this._graphicsContext.graphicsPort());
+		CGContextClearRect(this._graphicsContext.graphicsPort(), NSMakeRect(0, 0, this._DOMGraphicsContext.width, this._DOMGraphicsContext.height));
 	},
 	
 	unlockFocus: function() {
@@ -888,6 +979,11 @@ var NSWindow = NSResponder.extend({
 		CGContextClearRect(c, rect);
 		CGContextSaveGState(c);
 		console.log('drawing window');
+		
+		if (this.hasShadow()) {
+		    CGContextSetShadowWithColor(c, NSMakeSize(0, 5), 10, NSColor.colorWithCalibratedRGBA(0.0, 0.0, 0.0, 0.694));
+		}
+		
 		CGContextSetFillColor(c, [0.944, 0.944, 0.944, 1.0]);
 		CGContextFillRect(c, rect);
 	},

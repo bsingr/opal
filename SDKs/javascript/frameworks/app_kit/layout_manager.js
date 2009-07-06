@@ -47,6 +47,11 @@ var NSLayoutManager = NSObject.extend({
         return this;
     },
     
+    init: function() {
+        this._textContainers = [];
+        return this;
+    },
+    
     textStorage: function() {
         return this._textStorage;
     },
@@ -65,5 +70,9 @@ var NSLayoutManager = NSObject.extend({
     
     textContainers: function() {
         return this._textContainers;
+    },
+    
+    addTextContainer: function(aContainer) {
+        this._textContainers.push(aContainer);
     }
 });

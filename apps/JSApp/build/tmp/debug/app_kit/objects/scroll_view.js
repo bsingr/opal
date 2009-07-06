@@ -47,7 +47,7 @@ var NSScrollView = NSView.extend({
             this._horizontalScroller.removeFromSuperview();
         
         this.tile();
-        return self;
+        return this;
     },
     
     tile: function() {

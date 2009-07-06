@@ -203,6 +203,9 @@ function NSEventFromRawEvent(event)
         case "mouseup":
             eventType = NSLeftMouseUp;
             break;
+        case "mousemove":
+            eventType = NSMouseMoved;
+            break;
         default:
             console.log("unable to determine event type");
             return;
@@ -236,7 +239,7 @@ function NSEventFromRawEvent(event)
     NSApplication.sharedApplication().sendEvent(theEvent);
     
     // to stop event bubbling
-    return false;
+    // return false;
 }    
 
 NSEvent.mouseEventWithType = function(type, location, modifierFlags, timestamp, windowNumber, context, eventNumber, clickCount, pressure)
@@ -245,7 +248,7 @@ NSEvent.mouseEventWithType = function(type, location, modifierFlags, timestamp, 
     theEvent._type = type;
     theEvent._location = location;
     theEvent._modifierFlags = modifierFlags;
-    theEvent_timestamp = timestamp;
+    theEvent._timestamp = timestamp;
     theEvent._windowNumber = windowNumber;
     theEvent._context = context;
     theEvent._eventNumber = eventNumber;

@@ -10,9 +10,25 @@ window.js:
 text_view.js: 
   dependencies: []
 
+outlet_connection.js: 
+  dependencies: 
+  - object.js
+menu_item_cell.js: 
+  dependencies: 
+  - cell.js
+  - menu_item.js
+main_menu.js: 
+  dependencies: 
+  - window.js
 layout_manager.js: 
   dependencies: []
 
+color.js: 
+  dependencies: 
+  - object.js
+shadow.js: 
+  dependencies: 
+  - color.js
 responder.js: 
   dependencies: 
   - object.js
@@ -28,19 +44,37 @@ slider.js:
 scroll_view.js: 
   dependencies: []
 
+object_container.js: 
+  dependencies: []
+
+main_menu_view.js: 
+  dependencies: 
+  - view.js
 text_storage.js: 
+  dependencies: []
+
+text.js: 
   dependencies: []
 
 slider_cell.js: 
   dependencies: 
   - cell.js
+paragraph_style.js: 
+  dependencies: 
+  - text.js
+custom_object.js: 
+  dependencies: 
+  - object.js
 cell.js: 
   dependencies: 
   - foundation.js
   - text.js
 text_field.js: 
-  dependencies: []
-
+  dependencies: 
+  - control.js
+menu.js: 
+  dependencies: 
+  - geometry.js
 button_image_source.js: 
   dependencies: 
   - image.js
@@ -49,9 +83,15 @@ window_template.js:
   dependencies: 
   - foundation.js
   - view.js
+table_view.js: 
+  dependencies: 
+  - view.js
 clip_view.js: 
   dependencies: []
 
+action_connection.js: 
+  dependencies: 
+  - object.js
 graphics_context.js: 
   dependencies: 
   - core_graphics.js
@@ -80,13 +120,22 @@ event.js:
 custom_resource.js: 
   dependencies: []
 
+table_header_view.js: 
+  dependencies: 
+  - view.js
 nib_loading.js: 
   dependencies: 
   - bundle.js
   - nib.js
+menu_item.js: 
+  dependencies: 
+  - view.js
 image.js: 
   dependencies: []
 
+attributed_string.js: 
+  dependencies: 
+  - attributed_string.js
 view.js: 
   dependencies: 
   - responder.js
@@ -94,7 +143,26 @@ view.js:
   - range.js
   - graphics.js
   - animation.js
+table_header_cell.js: 
+  dependencies: 
+  - text_field_cell.js
+table_column.js: 
+  dependencies: 
+  - foundation.js
+string_drawing.js: 
+  dependencies: 
+  - string.js
+  - attributed_string.js
 scroller.js: 
+  dependencies: []
+
+menu_window.js: 
+  dependencies: 
+  - window.js
+menu_view.js: 
+  dependencies: 
+  - view.js
+connection_record.js: 
   dependencies: []
 
 button.js: 
@@ -111,8 +179,21 @@ typesetter.js:
   dependencies: []
 
 text_field_cell.js: 
-  dependencies: []
-
+  dependencies: 
+  - cell.js
 text_container.js: 
   dependencies: []
 
+panel.js: 
+  dependencies: 
+  - window.js
+font.js: 
+  dependencies: 
+  - string.js
+  - cell.js
+corner_view.js: 
+  dependencies: 
+  - view.js
+application_title_view.js: 
+  dependencies: 
+  - view.js

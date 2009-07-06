@@ -24,6 +24,22 @@
  * THE SOFTWARE.
  */
 
+include('app_kit/control');
+
 var NSTextField = NSControl.extend({
     
+    mouseDown: function(theEvent) {
+        if (!this._cell.isEnabled())
+            return;
+        
+        if (this._cell.isSelectable() || this._cell.isEditable()) {
+            if (!this._currentEditor) {
+                this._currentEditor = this.window().fieldEditor(true, this);
+                this._currentEditor = this._cell.setUpFieldEditorAttributes(this._currentEditor);
+            }
+            
+            this._cell.setHighlighted(true);
+            this._cell.editWithFrame(this._bounds, this, this._currentEditor, this, theEvent);
+        }
+    }
 });

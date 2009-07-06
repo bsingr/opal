@@ -96,21 +96,21 @@ var NSButtonCell = NSCell.extend({
         return this;
     },
     
-    drawWithFrameInView: function(cellFrame, controlView) {
+    drawWithFrame: function(cellFrame, controlView) {
         var c = NSGraphicsContext.currentContext().graphicsPort();
         CGContextClearRect(c, cellFrame);
         
         this.drawBezelWithFrameInView(cellFrame, controlView);
-        this.drawInteriorWithFrameInView(cellFrame, controlView);
-        this.drawTitleWithFrameInView(this._value, cellFrame, controlView);
+        this.drawInteriorWithFrame(cellFrame, controlView);
+        this.drawTitleWithFrameInView(this._value, this.titleRectForBounds(cellFrame), controlView);
     },
     
-    drawInteriorWithFrameInView: function(cellFrame, controlView) {
+    drawInteriorWithFrame: function(cellFrame, controlView) {
         if (this._image) {
             if (this._state == NSOnState)
-                this.drawImageWithFrameInView(this._alternateImage, CGRectMake(1, 1, 17, 17), controlView);
+                this.drawImageWithFrameInView(this._alternateImage, this.imageRectForBounds(cellFrame), controlView);
             else
-                this.drawImageWithFrameInView(this._image, CGRectMake(1, 1, 17, 17), controlView);
+                this.drawImageWithFrameInView(this._image, this.imageRectForBounds(cellFrame), controlView);
         }
     },
     
@@ -126,29 +126,9 @@ var NSButtonCell = NSCell.extend({
     },
 
     drawTitleWithFrameInView: function(title, rect, controlView) {
-        var c = NSGraphicsContext.currentContext().graphicsPort();
-        CGContextSaveGState(c);
-        
-        if (this._isEnabled) {
-            CGContextSetFillColor(c, [0.204, 0.204, 0.204, 1.0]);
-
-            // CGContextSetShadowWithColor(c, CGSizeMake(1,1), 1, CGColorCreateGenericRGB(1,1,1,1));
-
-            var theFont = CGFontCreate("Arial", 12, false);
-            CGContextSetFont(c, theFont);
-            CGContextShowTextAtPoint(c, 20, ((rect.size.height + 12) / 2) - 1, title, 14);
-        }
-        else {
-            CGContextSetFillColor(c, [0.704, 0.704, 0.704, 1.0]);
-            // CGContextSetShadowWithColor(c, CGSizeMake(1,1), 1, CGColorCreateGenericRGB(1,1,1,1));
-
-            var theFont = CGFontCreate("Arial", 12, NO);
-            CGContextSetFont(c, theFont);
-            // 12 being the size of the text, although this could change
-            CGContextShowTextAtPoint(c, 20, ((rect.size.height + 12) / 2) - 1, title, 14);
-        }
-        
-        CGContextRestoreGState(c);
+        // var c = NSGraphicsContext.currentContext().graphicsPort();
+        this.attributedStringValue().drawWithRectAndOptions(rect, null);
+        // CGContextFillRect(c, rect);
     },
     
     drawBezelWithFrameInView: function(frame, controlView) {
@@ -175,5 +155,59 @@ var NSButtonCell = NSCell.extend({
         }
         
         CGContextRestoreGState(c);
-    }
+    },
+    
+    titleRectForBounds: function(theRect) {
+        
+        var xImageOffset = theRect.origin.x + 2;
+        
+        if (this._image) {
+            xImageOffset += this._image.width + 3;
+        }
+        
+        
+        return NSMakeRect(xImageOffset,
+                            theRect.origin.y + 2,
+                            theRect.size.width - 4,
+                            theRect.size.height - 4);
+    },
+    
+    imageRectForBounds: function(theRect) {
+        var theHeight = 0, theWidth = 0;
+        
+        if (this._image) {
+            return NSMakeRect(2, (theRect.size.height - this._image.height) / 2, this._image.width, this._image.height);
+        }
+        
+        return NSMakeRect(0, 0, 0, 0);
+    },
+    
+    attributedStringValue: function() {
+		if (this._value.typeOf(NSAttributedString)) {
+			return this._value;
+		}
+		
+		var attributes = NSDictionary.create();
+		
+		// font
+		if (this.font())
+			attributes.setObjectForKey(this.font(), NSFontAttributeName);
+		
+		// textColor
+		var textColor;
+		if (this.isEnabled())
+		    textColor = this.isHighlighted() ? NSColor.selectedControlTextColor() : NSColor.controlTextColor();
+		else
+		    textColor = NSColor.disabledControlTextColor();
+		
+		attributes.setObjectForKey(textColor, NSForegroundColorAttributeName);
+		
+        // paragraph style
+        var paragraphStyle = NSParagraphStyle.defaultParagraphStyle();
+        paragraphStyle.setAlignment(this.alignment());
+        
+        attributes.setObjectForKey(paragraphStyle, NSParagraphStyleAttributeName);
+		
+		return NSAttributedString.create('initWithStringAndAttributes', this._value, attributes);
+	},
 });

@@ -70,17 +70,46 @@ var NSApplication = NSResponder.extend({
     
     _menuBar: null,
     
+    _mainMenu: null,
+    
     init: function() {
         // this._super();
         return this;
     },
     
-    setDelegate: function(anObject) {
+    /**
+        Sets the delegate for the singleton instance of NSApplication. This will
+        also register the delegate for any NSApp related notifications that it
+        responds to. Any that it does not implement, will not be registered.
         
+        @param anObject The delegate object (usually setup in MainMenu.nib)
+    */
+    setDelegate: function(anObject) {
+        if (this._delegate == anObject)
+            return;
+        
+        var nc = NSNotificationCenter.defaultCenter();
+        
+        if (this._delegate) {
+            nc.removeObserver(this._delegate, NSApplicationWillFinishLaunchingNotification, this);
+            nc.removeObserver(this._delegate, NSApplicationDidFinishLaunchingNotification, this);
+            nc.removeObserver(this._delegate, NSApplicationDidChangeScreenParametersNotification, this);
+        }
+        
+        this._delegate = anObject;
+        
+        if (this._delegate.respondsTo('applicationWillFinishLaunching'))
+            nc.addObserver(this._delegate, 'applicationWillFinishLaunching', NSApplicationWillFinishLaunchingNotification, this);
+        
+        if (this._delegate.respondsTo('applicationDidFinishLaunching'))
+            nc.addObserver(this._delegate, 'applicationDidFinishLaunching', NSApplicationDidFinishLaunchingNotification, this);
+            
+        if (this._delegate.respondsTo('applicationDidChangeScreenParameters'))
+            nc.addObserver(this._delegate, 'applicationDidChangeScreenParameters', NSApplicationDidChangeScreenParametersNotification, this);
     },
     
     delegate: function() {
-        
+        return this._delegate;
     },
     
     context: function() {
@@ -92,6 +121,9 @@ var NSApplication = NSResponder.extend({
     },
     
     addWindow: function(aWindow) {
+        // Register for screen chnages (if it wants them)
+        var defaultCenter = NSNotificationCenter.defaultCenter();
+        defaultCenter.addObserver(aWindow, 'applicationDidChangeScreenParameters', NSApplicationDidChangeScreenParametersNotification, this);
         
         this._windows.push(aWindow);
         return this._windows.indexOf(aWindow);
@@ -120,7 +152,9 @@ var NSApplication = NSResponder.extend({
     },
     
     finishLaunching: function() {
-        
+        var defaultCenter = NSNotificationCenter.defaultCenter();
+        defaultCenter.postNotificationName(NSApplicationWillFinishLaunchingNotification, this);
+        defaultCenter.postNotificationName(NSApplicationDidFinishLaunchingNotification, this);
     },
     
     /**
@@ -130,6 +164,15 @@ var NSApplication = NSResponder.extend({
     run: function() {
         document.onmousedown = NSEventFromRawEvent;
         document.onmouseup = NSEventFromRawEvent;
+        document.onmousemove = NSEventFromRawEvent;
+        
+        // On resize, post notification (for app delegate, also windows listen and handle accordingly)
+        window.onresize = function() {
+            var defaultCenter = NSNotificationCenter.defaultCenter();
+            defaultCenter.postNotificationName(NSApplicationDidChangeScreenParametersNotification, this);
+        };
+        
+        this.finishLaunching();
     },
    
     postEvent: function(theEvent, atStart) {
@@ -142,10 +185,19 @@ var NSApplication = NSResponder.extend({
     
     sendEvent: function(theEvent) {
         this._currentEvent = theEvent;
+        if (this._eventBindingQueued) {   
+            if (((1 << theEvent.type()) & this._eventBindingMask) != 0) {
+                this._eventBindingCallback.apply(this._eventBindingContext, [theEvent]);
+            }
+            else {
+                console.log('dropping event, as not matching bind mask');
+            }
+            return;
+        }
         
         if (theEvent.window())
             theEvent.window().sendEvent(theEvent);
-        else
+        else // no window so drop event. dont drop if a key event?
             console.log('dropping event, as no window');
     },
     
@@ -162,17 +214,25 @@ var NSApplication = NSResponder.extend({
         for events is through (usually on the mouse up event).
         
         The callback will be of the form function(theEvent) { ... };
-    */
-    bindEventsMatchingMask: function(mask, withCallback) {
         
+        The context will be the 'this' inside of the object. This is usually
+        set to be the receiver, but can be any custom object. It is recomended
+        to use the receiver, as this ensures that the function executes in the
+        same context as it was created.
+    */
+    bindEventsMatchingMask: function(mask, context, withCallback) {
+        this._eventBindingQueued = true;
+        this._eventBindingCallback = withCallback;
+        this._eventBindingMask = mask;
+        this._eventBindingContext = context;
     },
     
     /**
         Unbinds the event request, so that normal event passing may resume. See
         bindEventsMatchingMask for more.
     */
-    unbindEvens: function() {
-        
+    unbindEvents: function() {
+        this._eventBindingQueued = false;
     },
     
     preventWindowOrdering: function() {
@@ -196,11 +256,17 @@ var NSApplication = NSResponder.extend({
     },
     
     setMainMenu: function(aMenu) {
+        this._mainMenu = aMenu;
         
+        if (!this._menuBar) {
+            this._menuBar = NSMainMenu.create('initWithMainMenu', this._mainMenu);
+        }
+        
+        this._menuBar.setMainMenu(this._mainMenu);
     },
     
     mainMenu: function() {
-        
+        return this._mainMenu;
     },
     
     setApplicationIconImage: function(image) {
@@ -212,7 +278,8 @@ var NSApplication = NSResponder.extend({
     },
     
     sendAction: function(theAction, theTarget, sender) {
-        
+        if (theAction && theTarget)
+            theTarget[theAction](sender);
     },
     
     targetForAction: function(theAction, theTarget, theSender) {
@@ -235,8 +302,9 @@ Object.extend(NSApplication, {
         assuming that no user code exists in the global scope.
     */
     sharedApplication: function() {
-        
-        if (!NSApp) NSApp = NSApplication.create();
+        if (!NSApp)
+            NSApp = NSApplication.create();
+	    
 	    return NSApp;
     }
 });
@@ -252,8 +320,14 @@ function NSApplicationMain(argc, argv)
 {
 	var mainBundle = NSBundle.mainBundle();
 	var principalClass = mainBundle.principalClass();
-    NSBundle.loadNibNamed("MainMenu", principalClass.sharedApplication());
-	AppController.create();
+    var topLevel = NSBundle.loadNibNamed("MainMenu", principalClass.sharedApplication());
+    
+    for (var idx = 0; idx < topLevel.length; idx++) {
+        if (topLevel[idx] && topLevel[idx]._title == "Main Menu") {
+            principalClass.sharedApplication().setMainMenu(topLevel[idx]);
+        }
+    }
+    
 	principalClass.sharedApplication().run();
 	return 0;
 }

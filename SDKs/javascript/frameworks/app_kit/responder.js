@@ -49,6 +49,16 @@ var NSResponder = NSObject.extend({
         }
         
         return this._nextResponder.tryToPerform(anAction, anObject);
+    },
+    
+    performKeyEquivalent: function(theEvent) {
+        return false;
+    },
+    
+    mouseDown: function(theEvent) {
+        console.log('sending mouse down to');
+        console.log(this._nextResponder);
+        this._nextResponder.mouseDown(theEvent);
     }
 
     // - (BOOL)performKeyEquivalent:(NSEvent *)theEvent

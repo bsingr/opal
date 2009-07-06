@@ -160,6 +160,11 @@ NSObject.mixin({
         respondsToSelector:
     */
     respondsTo: function(aName) {
-        
+        return this[aName] ? true : false;
+    },
+    
+    perform: function(aFunctionName, withObject, anotherObject) {
+        if (this.respondsTo(aFunctionName))
+            this[aFunctionName](withObject, anotherObject);
     }
 });

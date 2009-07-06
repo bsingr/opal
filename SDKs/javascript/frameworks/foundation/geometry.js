@@ -28,6 +28,11 @@ include('foundation/value');
 include('foundation/coder');
 include('core_graphics/geometry');
 
+function NSMakeRange(location, length)
+{
+    return { location: location, length: length };
+}
+
 function NSMakePoint(x, y)
 {   
     return { x: x, y: y };

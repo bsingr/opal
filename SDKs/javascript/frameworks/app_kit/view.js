@@ -108,6 +108,8 @@ var NSView = NSResponder.extend({
         this._DOMGraphicsContext.style.display = "block";
         this._DOMGraphicsContext.style.position = "absolute";
         
+        this._frame = NSMakeRect (0, 0, 0, 0);
+        
         return this;
     },
     
@@ -118,6 +120,8 @@ var NSView = NSResponder.extend({
         
         // this.init();
         
+        this._frame = NSMakeRect (0, 0, 0, 0);
+        
         this._DOMContainer = document.createElement('div');
         this._DOMGraphicsContext = document.createElement('canvas');
         this._DOMContainer.appendChild(this._DOMGraphicsContext);
@@ -127,6 +131,8 @@ var NSView = NSResponder.extend({
         
         this._DOMGraphicsContext.style.display = "block";
         this._DOMGraphicsContext.style.position = "absolute";
+        
+        this._subviews = [];
         
         this.setFrame(frameRect);
         return this;
@@ -170,6 +176,10 @@ var NSView = NSResponder.extend({
         
         this._bounds.origin = NSMakePoint(0, 0);
         this._bounds.size = this._frame.size;
+        
+        var vFlags = aCoder.decodeIntForKey("NSvFlags");
+        this._autoResizesSubviews = true;
+        this._autoResizeMask = vFlags & 0x3F;
         
         return this;
     },
@@ -250,11 +260,11 @@ var NSView = NSResponder.extend({
     
     viewWillMoveToWindow: function(newWindow) {
         
-        // this._window = newWindow;
+        this._window = newWindow;
         
-        // for (var i = 0; i < this._subviews.count(); i++) {
-            // this._subviews.objectAtIndex(i).viewWillMoveToWindow(newWindow);
-        // }
+        for (var i = 0; i < this._subviews.length; i++) {
+            this._subviews[i].viewWillMoveToWindow(newWindow);
+        }
     },
     
     viewDidMoveToWindow: function() {
@@ -308,11 +318,85 @@ var NSView = NSResponder.extend({
     },
     
     resizeSubviewsWithOldSize: function(oldSize) {
-        
+        for (var idx = 0; idx < this._subviews.length; idx++)
+            this._subviews[idx].resizeWithOldSuperviewSize(oldSize);
     },
-    
+
     resizeWithOldSuperviewSize: function(oldSize) {
+        var superFrame = this._superview.frame();
+        var thisFrame = this.frame();
+        var originChanged = false, sizeChanged = false;
         
+        // x dimensions first
+        if (this._autoResizeMask & NSViewMinXMargin) {
+            if (this._autoResizeMask & NSViewWidthSizable) {
+                if (this._autoResizeMask & NSViewMinXMargin) {
+                    thisFrame.origin.x = thisFrame.origin.x + ((superFrame.size.width - oldSize.width) / 3);
+                    thisFrame.size.width = thisFrame.size.width + ((superFrame.size.width - oldSize.width) / 3);
+                }
+                else {
+                    thisFrame.origin.x = thisFrame.origin.x + ((superFrame.size.width - oldSize.width) / 3);
+                    thisFrame.size.width = thisFrame.size.width + ((superFrame.size.width - oldSize.width) / 3);
+                }
+                sizeChanged = true;
+                originChanged = true;
+            }
+            else if (this._autoResizeMask & NSViewMaxXMargin) {
+                thisFrame.origin.x = thisFrame.origin.x + ((superFrame.size.width - oldSize.width) / 2);
+                originChanged = true;
+            }
+            else {
+                thisFrame.origin.x = thisFrame.origin.x + (superFrame.size.width - oldSize.width);
+                originChanged = true;
+            }
+        }
+        else if (this._autoResizeMask & NSViewWidthSizable) {
+            if (this._autoResizeMask & NSViewMaxXMargin) {
+                thisFrame.size.width = thisFrame.size.width + ((superFrame.size.width - oldSize.width) / 2);
+            }
+            else {
+                thisFrame.size.width = thisFrame.size.width + (superFrame.size.width - oldSize.width);
+            }
+            
+            sizeChanged = true;
+        }
+        
+        // now do y dimensions
+        if (this._autoResizeMask & NSViewMinYMargin) {
+            if (this._autoResizeMask & NSViewHeightSizable) {
+                if (this._autoResizeMask & NSViewMinYMargin) {
+                    thisFrame.origin.y = thisFrame.origin.y + ((superFrame.size.height - oldSize.height) / 3);
+                    thisFrame.size.height = thisFrame.size.height + ((superFrame.size.height - oldSize.height) / 3);
+                }
+                else {
+                    thisFrame.origin.y = thisFrame.origin.y + ((superFrame.size.height - oldSize.height) / 3);
+                    thisFrame.size.height = thisFrame.size.height + ((superFrame.size.height - oldSize.height) / 3);
+                }
+                sizeChanged = true;
+                originChanged = true;
+            }
+            else if (this._autoResizeMask & NSViewMaxYMargin) {
+                thisFrame.origin.y = thisFrame.origin.y + ((superFrame.size.height - oldSize.height) / 2);
+                originChanged = true;
+            }
+            else {
+                thisFrame.origin.y = thisFrame.origin.y + (superFrame.size.height - oldSize.height);
+                originChanged = true;
+            }
+        }
+        else if (this._autoResizeMask & NSViewHeightSizable) {
+            if (this._autoResizeMask & NSViewMaxYMargin) {
+                thisFrame.size.height = thisFrame.size.height + ((superFrame.size.height - oldSize.height) / 2);
+            }
+            else {
+                thisFrame.size.height = thisFrame.size.height + (superFrame.size.height - oldSize.height);
+            }
+            
+            sizeChanged = true;
+        }
+        
+        if (sizeChanged || originChanged)
+            this.setFrame(thisFrame);        
     },
     
     setAutoresizesSubviews: function(flag) {
@@ -336,13 +420,28 @@ var NSView = NSResponder.extend({
     },
     
     setFrameSize: function(newSize) {
+        var oldBounds = this.bounds();
         
+        this._frame.size = newSize;
+        CGDOMElementSetFrame(this._DOMContainer, this._frame);
+        CGDOMElementSetFrame(this._DOMGraphicsContext, this.bounds());
+        
+        if (this._autoResizesSubviews)
+            this.resizeSubviewsWithOldSize(oldBounds.size);
+            
+        this.setNeedsDisplay(true);
     },
     
     setFrame: function(frameRect) {
+        var oldBounds = this.bounds();
+        
         this._frame = frameRect;
         CGDOMElementSetFrame(this._DOMContainer, this._frame);
         CGDOMElementSetFrame(this._DOMGraphicsContext, this.bounds());
+        
+        if (this._autoResizesSubviews)
+            this.resizeSubviewsWithOldSize(oldBounds.size);
+                
         this.setNeedsDisplay(true);
     },
     
@@ -458,12 +557,12 @@ var NSView = NSResponder.extend({
                 y: aPoint.y - this._frame.origin.y
             });
         }
-        else if (this._window) {
-            return {
-                x: aPoint.x - this._window.frame().origin.x,
-                y: aPoint.y - this._window.frame().origin.y
-            };
-        }
+        // else if (this._window) {
+        //     return {
+        //         x: aPoint.x - this._window.frame().origin.x,
+        //         y: aPoint.y - this._window.frame().origin.y
+        //     };
+        // }
         else {
             return aPoint;
         }
@@ -603,7 +702,7 @@ var NSView = NSResponder.extend({
     },
     
     graphicsContext: function() {
-        
+        return this._graphicsContext;
     },
 
     scrollPoint: function(aPoint) {
@@ -628,7 +727,6 @@ var NSView = NSResponder.extend({
     
     hitTest: function(aPoint) {
         aPoint = this.convertPointFromView(aPoint, this._superview);
-        
         if (!NSPointInRect(aPoint, this.bounds())) {
             return null;
         }

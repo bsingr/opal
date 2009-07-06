@@ -61,7 +61,7 @@ var NSSliderCell = NSCell.extend({
        return this;
    },
    
-   drawWithFrameInView: function(cellFrame, controlView) {
+   drawWithFrame: function(cellFrame, controlView) {
        var SLIDER_PADDING = 8.5;
        var KNOB_PADDING = 2;
        
@@ -81,12 +81,14 @@ var NSSliderCell = NSCell.extend({
        CGContextRestoreGState(c);
    },
    
-   startTrackingAtInView: function(startPoint, controlView) {
+   startTrackingInView: function(startPoint, controlView) {
        if (this.isEnabled()) {
+           console.log('here..');
            var SLIDER_PADDING = 8.5;
            var location = controlView.convertPointFromView(startPoint, null);
            this.setDoubleValue(((location.x - SLIDER_PADDING) / (controlView.bounds().size.width - (2 * SLIDER_PADDING))) * (this._maxValue - this._minValue));
-           this.drawFrameInView(controlView.bounds(), controlView);
+           this.drawWithFrame(controlView.bounds(), controlView);
+           
            return true;
        }
        return false;
@@ -103,11 +105,11 @@ var NSSliderCell = NSCell.extend({
        else this._value = aDouble;
    },
    
-   continueTrackingAtInView: function(lastPoint, currentPoint, controlView) {
+   continueTrackingInView: function(lastPoint, currentPoint, controlView) {
        var SLIDER_PADDING = 8.5;
        var location = controlView.convertPointFromView(currentPoint, null);
        this.setDoubleValue(((location.x - SLIDER_PADDING) / (controlView.bounds().size.width - (2 * SLIDER_PADDING))) * (this._maxValue - this._minValue));
-       this.drawFrameInView(controlView.bounds(), controlView);
+       this.drawWithFrame(controlView.bounds(), controlView);
        return true;
    },
    

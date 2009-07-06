@@ -24,6 +24,156 @@
  * THE SOFTWARE.
  */
 
+include('app_kit/cell');
+
+resource('NSTextFieldBezelTopLeft.png');
+resource('NSTextFieldBezelTopMiddle.png');
+resource('NSTextFieldBezelTopRight.png');
+resource('NSTextFieldBezelSides.png');
+resource('NSTextFieldBezelBottom.png');
+
 var NSTextFieldCell = NSCell.extend({
     
+    _backgroundColor: null,
+    
+    init: function() {
+        this._super();
+        return this;
+    },
+    
+    initWithCoder: function(aCoder) {
+        this._super(aCoder);
+        
+        this._drawsBackground = aCoder.decodeBoolForKey("NSDrawsBackground");
+        this._backgroundColor = aCoder.decodeObjectForKey("NSBackgroundColor");
+        this._textColor = aCoder.decodeObjectForKey("NSTextColor");
+        
+        return this;
+    },
+    
+    drawInteriorWithFrame: function(cellFrame, controlView) {
+		this.attributedStringValue().drawWithRectAndOptions(this.titleRectForBounds(cellFrame), null);
+    },
+    
+    drawWithFrame: function(cellFrame, controlView) {
+        var c = NSGraphicsContext.currentContext().graphicsPort();
+        
+        if (this.drawsBackground()) {
+            CGContextSetFillColorWithColor(c, this._backgroundColor);
+            CGContextFillRect(c, cellFrame);
+        }
+        
+        if (this.isBezeled()) {
+            NSImage.imageNamed('NSTextFieldBezelTopLeft.png').drawInRect(CGRectMake(0 ,0, 2, 2));
+            NSImage.imageNamed('NSTextFieldBezelTopMiddle.png').drawInRect(CGRectMake(2,0,cellFrame.size.width - 4,2));
+            NSImage.imageNamed('NSTextFieldBezelTopRight.png').drawInRect(CGRectMake(cellFrame.size.width-2,0,2,2));
+            NSImage.imageNamed('NSTextFieldBezelSides.png').drawInRect(CGRectMake(0, 2, 1, cellFrame.size.height - 2));
+            NSImage.imageNamed('NSTextFieldBezelSides.png').drawInRect(CGRectMake(cellFrame.size.width - 1, 2, 1, cellFrame.size.height - 2));
+            NSImage.imageNamed('NSTextFieldBezelBottom.png').drawInRect(CGRectMake(1, cellFrame.size.height - 1, cellFrame.size.width - 2, 1));
+        }
+        
+        this.drawInteriorWithFrame(cellFrame, controlView);
+    },
+    
+    drawsBackground: function() {
+        return this._drawsBackground;
+    },
+    
+    setDrawsBackground: function(flag) {
+        this._drawsBackground = flag;
+    },
+    
+    backgroundColor: function() {
+        return this._backgroundColor;
+    },
+    
+    setBackgroundColor: function(aColor) {
+        this._backgroundColor = aColor;
+    },
+    
+    setBezeled: function(flag) {
+        this._isBezeled = flag;
+    },
+    
+    isBezeled: function() {
+        return this._isBezeled;
+    },
+    
+    setBezelStyle: function(style) {
+        this._bezelStyle = style;
+    },
+    
+    bezelStyle: function() {
+        return this._bezelStyle;
+    },
+    
+    setTextColor: function(aColor) {
+        this._textColor = aColor;
+    },
+    
+    textColor: function(aColor) {
+        return this._textColor;
+    },
+    
+    titleRectForBounds: function(theRect) {
+        if (this.isEditable()) {
+            return NSMakeRect(theRect.origin.x + 2, theRect.origin.y + 3, theRect.size.width - 4, theRect.size.height - 5);
+        }
+        
+        return theRect;
+    },
+
+	attributedStringValue: function() {
+        // if (this._value.typeOf(NSAttributedString)) {
+            // return this._value;
+        // }
+		
+		var attributes = NSDictionary.create();
+		
+		// font
+		if (this.font())
+			attributes.setObjectForKey(this.font(), NSFontAttributeName);
+		
+		// textColor
+		if (this.isEnabled()) {
+			if (this.textColor())
+				attributes.setObjectForKey(this.textColor(), NSForegroundColorAttributeName);
+		}
+		else {
+			attributes.setObjectForKey(NSColor.disabledControlTextColor(), NSForegroundColorAttributeName);
+		}
+		
+		// paragraph style
+        var paragraphStyle = NSParagraphStyle.defaultParagraphStyle();
+        paragraphStyle.setAlignment(this.alignment());
+        paragraphStyle.setLineBreakMode(this.lineBreakMode());
+        
+        attributes.setObjectForKey(paragraphStyle, NSParagraphStyleAttributeName);
+		
+		return NSAttributedString.create('initWithStringAndAttributes', this._value, attributes);
+	},
+    
+    // setUpFieldEditorAttributes: function(textObj) {
+    //     return textObj;
+    // },
+    
+    setPlaceholderString: function(aString) {
+        
+    },
+    
+    placeholderString: function() {
+        
+    },
+    
+    setPlaceholderAttributedString: function(aString) {
+        
+    },
+    
+    placeholderAttributedString: function() {
+        
+    },
+    
+    setWantsNotificationForMarkedText: function(flag) {
+        
+    }
 });

@@ -110,6 +110,9 @@ var NSCell = NSObject.extend({
     _alignment: null,
     _controlSize: null,
     
+    _lineBreakMode: null,
+    _wraps: null,
+    
     _controlView: null,
     
     _target: null,
@@ -143,16 +146,19 @@ var NSCell = NSObject.extend({
         this._alignment = (flags2 & 0x1c000000) >> 26;
         this._controlSize = (flags2 & 0xE0000) >> 17;
         
+        this._lineBreakMode = (flags & 0x00007000) >> 12;
+        this._wraps = (flags & 0x40) ? false : true;
+        
+        this._font = aCoder.decodeObjectForKey("NSSupport");
+        
         return this;
     },
     
     controlView: function() {
-        
         return this._controlView;
     },
     
     setControlView: function(view) {
-        
         this._controlView = view;
     },
     
@@ -169,42 +175,34 @@ var NSCell = NSObject.extend({
     },
     
     state: function() {
-        
         return this._state;
     },
     
     setstate: function(value) {
-        
         this._state = value;
     },
     
     target: function() {
-        
         return this._target;
     },
     
     setTarget: function(anObject) {
-        
         this._target = anObject;
     },
     
     action: function() {
-        
         return this._action;
     },
     
     setAction: function(aSelector) {
-        
         this._action = aSelector;
     },
     
     tag: function() {
-        
         return this._tag;
     },
     
     setTag: function(anInt) {
-        
         this._tag = anInt;
     },
     
@@ -221,12 +219,10 @@ var NSCell = NSObject.extend({
     },
     
     isEnabled: function() {
-        
         return this._isEnabled;
     },
     
     setEnabled: function(flag) {
-        
         this._isEnabled = flag;
     },
     
@@ -243,20 +239,18 @@ var NSCell = NSObject.extend({
     },
     
     isEditable: function() {
-        
+        return this._isEditable;
     },
     
     setEditable: function(flag) {
-        
+        this._isEditable = flag;
     },
     
     isSelectable: function() {
-        
         return this._isSelectable;
     },
     
     setSelectable: function(flag) {
-        
         this._isSelectable = flag;
     },
     
@@ -285,21 +279,19 @@ var NSCell = NSObject.extend({
     },
     
     isHighlighted: function() {
-        
         return this._isHighlighted;
     },
     
     setHighlighted: function(flag) {
-        
         this._isHighlighted = flag;
     },
     
     alignment: function() {
-        
+        return this._alignment;
     },
     
     setAlignment: function(mode) {
-        
+        this._alignment = mode;
     },
     
     wraps: function() {
@@ -311,11 +303,11 @@ var NSCell = NSObject.extend({
     },
     
     font: function() {
-        
+        return this._font;
     },
     
     setFont: function(fontObj) {
-        
+        this._font = fontObj;
     },
     
     entryType: function() {
@@ -355,11 +347,11 @@ var NSCell = NSObject.extend({
     },
     
     stringValue: function() {
-        
+        return this._value;
     },
     
     setStringValue: function(aString) {
-        
+        this._value = aString;
     },
     
     compare: function(otherCell) {
@@ -383,11 +375,10 @@ var NSCell = NSObject.extend({
     },
     
     doubleValue: function() {
-        
+        return this._value;
     },
     
     setDoubleValue: function(aDouble) {
-        
         this._value = aDouble;
     },
     
@@ -400,7 +391,7 @@ var NSCell = NSObject.extend({
     },
     
     takeDoubleValueFrom: function(sender) {
-        
+        this.setDoubleValue(sender.doubleValue());
     },
     
     takeStringValueFrom: function(sender) {
@@ -448,7 +439,7 @@ var NSCell = NSObject.extend({
     },
     
     titleRectForBounds: function(theRect) {
-        
+        return theRect;
     },
     
     drawingRectForBounds: function(theRect) {
@@ -471,12 +462,12 @@ var NSCell = NSObject.extend({
         
     },
     
-    setupFieldEditorAttribiutes: function(textObj) {
-        
+    setUpFieldEditorAttributes: function(textObj) {
         textObj.setAlignment(this.alignment());
         textObj.setString(this.stringValue());
         textObj.setSelectable(this.isSelectable());
         textObj.setEditable(this.isEditable());
+        textObj.setFont(this.font());
         
         if (this.respondsTo('drawsBackground'))
             textObj.setDrawsBackground(this.drawsBackground());
@@ -487,20 +478,19 @@ var NSCell = NSObject.extend({
         return textObj;
     },
 
-    drawInteriorWithFrameInView: function(cellFrame, controlView) {
+    drawInteriorWithFrame: function(cellFrame, controlView) {
         
     },
     
-    drawWithFrameInView: function(cellFrame, controlView) {
-        
-        this.drawInteriorWithFrameInView(cellFrame, controlView);
+    drawWithFrame: function(cellFrame, controlView) {
+        this.drawInteriorWithFrame(cellFrame, controlView);
     },
     
     highlightInView: function(flag, cellFrame, controlView) {
         
         if (this.isHighlighted() != flag) {
             this.setHighlighted(flag);
-            this.drawWithFrameInView(cellFrame, controlView);
+            this.drawWithFrame(cellFrame, controlView);
         }
     },
     
@@ -533,25 +523,25 @@ var NSCell = NSObject.extend({
         
         var location = controlView.convertPointFromView(theEvent.locationInWindow(), null);
         
-        if (!(this.startTrackingInView(theEvent.locationInWindow, controlView))) {
-            this.drawWithFrameInView(cellFrame, controlView);
+        if (!(this.startTrackingInView(theEvent.locationInWindow(), controlView))) {
+            this.drawWithFrame(cellFrame, controlView);
             controlView.unlockFocus();
             return false;
         }
         
         this.highlightInView(true, controlView.bounds(), controlView);
         controlView.unlockFocus();
+        NSApplication.sharedApplication().sendAction(this._action, this._target, this);
         
         // for each further event...
-        NSApplication.sharedApplication().nextEventMatchingMask((NSLeftMouseUpMask | NSMouseMovedMask), function(object, theEvent) {
+        NSApplication.sharedApplication().bindEventsMatchingMask((NSLeftMouseUpMask | NSMouseMovedMask), this, function(theEvent) {
             controlView.lockFocus();
-            
             var location = controlView.convertPointFromView(theEvent.locationInWindow(), null);
             
-            if (flag) {
+            if (untilMouseUp) {
                 if (theEvent.type() == NSLeftMouseUp) {
                     this.stopTrackingInView(theEvent.locationInWindow(), theEvent.locationInWindow(), controlView, true);
-                    NSApplication.sharedApplication().discardEventsMatchingMaskRequest();
+                    NSApplication.sharedApplication().unbindEvents();
                     
                     if (this.state() == NSOffState)
                         this._state = NSOnState;
@@ -567,28 +557,30 @@ var NSCell = NSObject.extend({
                         this.setHighlighted(false);
                     
                     if (!(this.continueTrackingInView(theEvent.locationInWindow(), theEvent.locationInWindow(), controlView)))
-                        NSApplication.sharedApplication().discardEventsMatchingMaskRequest();
+                        NSApplication.sharedApplication().unbindEvents();
                 }
             }
             else if (NSPointInRect(location, cellFrame)) {
-                NSLog("Got here, in frame");
+                console.log("Got here, in frame");
             }
             else {
-                NSLog("moved out of frame");
+                console.log("moved out of frame");
                 this.stopTrackingInView(theEvent.locationInWindow(), theEvent.locationInWindow(), controlView, false);
-                NSApplication.sharedApplication().discardEventsMatchingMaskRequest();
+                NSApplication.sharedApplication().unbindEvents();
             }
             
-            this.drawWithFrameInView(cellFrame, controlView);
+            this.drawWithFrame(cellFrame, controlView);
             controlView.unlockFocus();
+            
+            NSApplication.sharedApplication().sendAction(this._action, this._target, this);
         });
     },
     
-    editWithFrameInView: function(aRect, controlView, textObj, anObject, theEvent) {
+    editWithFrame: function(aRect, controlView, textObj, anObject, theEvent) {
         
-        if (!this.isEditable() && !this.isSelectable()) return;
+        if (!this.isEditable() && !this.isSelectable())
+            return;
         
-        NSLog("WowzA");
         textObj.setFrame(this.titleRectForBounds(aRect));
         controlView.addSubview(textObj);
         controlView.window().makeFirstResponder(textObj);
@@ -645,11 +637,11 @@ var NSCell = NSObject.extend({
     },
     
     setLineBreakMode: function(mode) {
-        
+        this._lineBreakMode = mode;
     },
     
     lineBreakMode: function() {
-        
+        return this._lineBreakMode;
     },
     
     setAllowsUndo: function(flag) {

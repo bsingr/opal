@@ -35,5 +35,7 @@ NSBundle.loadNibNamed = function(nibName, owner) {
 	console.log('loading nib: ' + nibName);
 	var theBundle = NSBundle.mainBundle();
 	var theNib = NSNib.create('initWithNibNamed', nibName, theBundle);
-	return theNib.instantiateNibWithOwner(owner, []);
+	var topLevelObjects = [];
+	topLevelObjects = theNib.instantiateNibWithOwner(owner, topLevelObjects);
+	return topLevelObjects;
 };

@@ -52,7 +52,8 @@ var NSNib = NSObject.extend({
     instantiateNibWithExternalNameTable: function(externalNameTable) {
         var unarchiver = NSKeyedUnarchiver.create('initForReadingWithData', this._data);
         this._topLevelObjects = unarchiver.decodeObjectForKey("IBDocument.RootObjects");
+        this._connections = unarchiver.decodeObjectForKey("IBDocument.Objects");
         // console.log(this._topLevelObjects);
-        return true;
+        return this._topLevelObjects;
     }
 });

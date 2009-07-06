@@ -232,24 +232,24 @@ function CGContextAddArcToPoint(c, x1, y1, x2, y2, radius)
 //     
 // }
 // 
-// void CGContextFillPath(CGContextRef c)
-// {
-//     
-// }
+function CGContextFillPath(c)
+{
+    c.fill();
+}
 // 
 // void CGContextEOFillPath(CGContextRef c)
 // {
 //     
 // }
 // 
-// void CGContextStrokePath(CGContextRef c)
-// {
-//     
-// }
+function CGContextStrokePath(c)
+{
+    c.stroke();
+}
 // 
 function CGContextFillRect(c, rect)
 {
-    c.fillRect(rect.origin.x, c.canvas.height - rect.origin.y - rect.size.height, rect.size.width, rect.size.height);
+    c.fillRect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
 }
 // 
 // void CGContextFillRects(CGContextRef c, const CGRect rects[], int count)
@@ -403,7 +403,7 @@ function CGContextDrawImage(c, rect, image)
 // //CGInterpolationQuality CGContextGetInterpolationQuality(CGContextRef c);
 // //void CGContextSetInterpolationQuality(CGContextRef c, CGInterpolationQuality quality);
 // 
-function CGContextSetShadowWithColor(context, offset, blur, color)
+function CGContextSetShadowWithColor(c, offset, blur, color)
 {
     c.shadowOffsetX = offset.width;
     c.shadowOffsetY = offset.height;
@@ -585,10 +585,10 @@ function CGContextShowTextAtPoint(c, x, y, string, length)
 // // = Vienna added methods: =
 // // =========================
 // 
-// void CGContextRGBAStringFromColor(CGColorRef color)
-// {
-//     return "rgba(" + parseInt(color._red * 255) + ","  + parseInt(color._green * 255) + ","  + parseInt(color._blue * 255) + ","  + color._alpha + ")";
-// }
+function CGContextRGBAStringFromColor(color)
+{
+    return "rgba(" + parseInt(color._red * 255) + ","  + parseInt(color._green * 255) + ","  + parseInt(color._blue * 255) + ","  + color._alpha + ")";
+}
 // 
 // 
 // // {
@@ -683,10 +683,10 @@ function CGContextSetFillColorWithColor(c, color)
     c.fillStyle = "rgba(" + parseInt(color._red * 255) + ","  + parseInt(color._green * 255) + ","  + parseInt(color._blue * 255) + ","  + color._alpha + ")";
 }
 // // 
-// // function CGContextSetStrokeColorWithColor(c, color)
-// // {
-// //     c.strokeStyle = "rgba(" + parseInt(color._red * 255) + ","  + parseInt(color._green * 255) + ","  + parseInt(color._blue * 255) + ","  + color._alpha + ")";
-// // }
+function CGContextSetStrokeColorWithColor(c, color)
+{
+    c.strokeStyle = "rgba(" + parseInt(color._red * 255) + ","  + parseInt(color._green * 255) + ","  + parseInt(color._blue * 255) + ","  + color._alpha + ")";
+}
 // // 
 // // //void CGContextSetFillColorSpace(CGContextRef c, CGColorSpaceRef colorspace);
 // // // 

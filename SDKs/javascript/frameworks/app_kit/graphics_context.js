@@ -33,13 +33,25 @@ var NSGraphicsContextCurrent = null;
 
 var NSGraphicsContext = NSObject.extend({
     
+    // low level context: (2d context for canvas)
+    _graphicsPort: null,
+    
+    // not flipped means origin is bottom left. A Flipped context has the origin
+    // at the top left (opposite to what 2d canvas in browser has)
+    _isFlipped: null,
+    
     initWithGraphicsPort: function(graphicsPort, initialFlippedState) {
         this._graphicsPort = graphicsPort;
+        this._isFlipped = initialFlippedState;
         return this;
     },
     
     graphicsPort: function() {
         return this._graphicsPort;
+    },
+    
+    isFlipped: function() {
+        return this._isFlipped;
     }
 });
 
@@ -55,26 +67,15 @@ Object.extend(NSGraphicsContext, {
     
     setCurrentContext: function(context) {
         NSGraphicsContextCurrent = context;
+    },
+    
+    saveGraphicsState: function() {
+        var ctx = NSGraphicsContext.currentContext().graphicsPort();
+        CGContextSaveGState(ctx);
+    },
+    
+    restoreGraphicsState: function() {
+        var ctx = NSGraphicsContext.currentContext().graphicsPort();
+        CGContextRestoreGState(ctx);     
     }
 });
-
-
-// + (NSGraphicsContext *)currentContext
-// {
-//     return NSGraphicsContextCurrent;
-// }
-// 
-// + (void)setCurrentContext:(NSGraphicsContext *)context
-// {
-//     NSGraphicsContextCurrent = context;
-// }
-// 
-// + (void)saveGraphicsState {
-//     CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
-//  CGContextSaveGState(ctx);
-// }
-// 
-// + (void)restoreGraphicsState {
-//     CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
-//     CGContextRestoreGState(ctx);
-// }

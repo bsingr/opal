@@ -28,8 +28,12 @@ include('vienna/vienna');
 
 var AppController = NSObject.extend({
    
+   _theWindow: null,
+   
    init: function() {
        this._super();
+       
+       console.log('creating app controller');
        return this;
    },
    

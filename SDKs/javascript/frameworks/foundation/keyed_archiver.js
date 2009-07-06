@@ -197,15 +197,14 @@ var NSKeyedUnarchiver = NSCoder.extend({
         
         this._unarchivedObjects.setObjectForKey(newObject, theObject['id']);
         
-        if (theObject['class'] == "NSCustomObject") {
-            newObject.init();
-        }
-        else {
+        // if (theObject['class'] == "NSCustomObject") {
+        //     newObject.init();
+        // }
+        // else {
             this._contextStack.addObject(theObject['objects']);
-            console.log('initing ' + theObject['class']);
-            newObject.initWithCoder(this);
+            newObject = newObject.initWithCoder(this);
             this._contextStack.removeLastObject();
-        }
+        // }
         
         newObject = newObject.awakeAfterUsingCoder(this);
         this._unarchivedObjects.setObjectForKey(newObject, theObject['id']);

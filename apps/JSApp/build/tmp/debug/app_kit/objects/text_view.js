@@ -45,8 +45,7 @@ var NSTextView = NSView.extend({
 
     _textStorage: null,
     _textContainer: null,
-    // _textContainerInset: null,
-    // _ownsTextStorage: null,
+    _textContainerInset: null,
     _typingAttributes: null,
 
     _delegate: null,
@@ -109,8 +108,51 @@ var NSTextView = NSView.extend({
         return this;
     },
     
+    initWithFrame: function(frameRect) {
+        this._super(frameRect);
+        
+        this._textStorage = NSTextStorage.create();
+        this._textContainer = NSTextContainer.create('initWithContainerSize', frameRect.size);
+        var theLayoutManager = NSLayoutManager.create();
+        
+        this._textStorage.addLayoutManager(theLayoutManager);
+        theLayoutManager.addTextContainer(this._textContainer);
+        
+        this._textContainer.setTextView(this);
+        
+        this._textContainerInset = NSMakeSize(0, 0);
+        
+        this._isEditable = true;
+        this._isSelectable = true;
+        this._isRichText = true;
+        
+        this._backgroundColor = NSColor.whiteColor();
+        this._drawsBackground = true;
+        
+        this._textColor = NSColor.textColor();
+        this._font = NSFont.userFontOfSize(10);
+        this._textAlignment = NSLeftTextAlignment;
+        this._insertionPointColor = NSColor.blackColor();
+        
+        this._isFieldEditor = false;
+        this._maxSize = this.bounds().size;
+        this._isHorizontallyResizable = false;
+        this._isVerticallyResizable = true;
+        this._selectedRange = NSMakeRange(0, 0);
+        
+        return this;
+    },
+    
+    mouseDown: function(theEvent) {
+        console.log('mouse down in text view');
+    },
+    
     textContainer: function() {
         return this._textContainer;
+    },
+    
+    setTextContainer: function(aContainer) {
+        this._textContainer = aContainer;
     },
     
     layoutManager: function() {
@@ -441,7 +483,9 @@ var NSTextView = NSView.extend({
     },
     
     setString: function(aString) {
-        this.replaceCharactersInRange(NSMakeRange(0, this._textStorage.length(), aString));
+        // console.log('setting string to ' + aString);
+        this.replaceCharactersInRange(NSMakeRange(0, this._textStorage.length()), aString);
+        // console.log(this._textStorage);
     },
     
     replaceCharactersInRange: function(range, withString) {
@@ -568,7 +612,10 @@ var NSTextView = NSView.extend({
     
     drawRect: function(theRect) {
         var c = NSGraphicsContext.currentContext().graphicsPort();
-        console.log('drawing');
-        CGContextFillRect(c, theRect);
+        
+        if (this._backgroundColor) {
+            CGContextSetFillColorWithColor(c, this._backgroundColor);
+            CGContextFillRect(c, theRect);
+        }
     }
 });

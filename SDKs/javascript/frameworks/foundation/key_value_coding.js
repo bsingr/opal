@@ -41,14 +41,59 @@ var NSUnionOfArraysKeyValueOperator             = "NSUnionOfArraysKeyValueOperat
 var NSUnionOfObjectsKeyValueOperator            = "NSUnionOfObjectsKeyValueOperator";
 var NSUnionOfSetsKeyValueOperator               = "NSUnionOfSetsKeyValueOperator";
 
-NSObject.extend({
+NSObject.mixin({
     
     valueForKey: function(key) {
+        // -get<Key>
+        var accessorName = "get" + key.capitalizedString();
+        if (this.respondsTo(accessorName))
+            return this.perform(accessorName);
+
+        // -<key>
+        accessorName = key;
+        if (this.respondsTo(accessorName))
+            return this.perform(accessorName);
         
+        // -is<Key>
+        var accessorName = "is" + key.capitalizedString();
+        if (this.respondsTo(accessorName))
+            return this.perform(accessorName);
+        
+        if (this.accessInstanceVariabledDirectly()) {
+            var theValue;
+            
+            // _<key>
+            accessorName = "_" + key;
+            if (theValue = this[accessorName])
+                return theValue;
+            
+            // _is<Key>
+            accessorName = "_is" + key.capitalizedString();
+            if (theValue = this[accessorName])
+                return theValue;
+            
+            // <key>
+            accessorName = key;
+            if (theValue = this[accessorName])
+                return theValue;
+            
+            // is<Key>
+            accessorName = "is" + key.capitalizedString();
+            if (theValue = this[accessorName])
+                return theValue;            
+        }
+        
+        // if not found
+        return this.valueForUndefinedKey(key);
     },
     
     setValueForKey: function(value, key) {
+        // -set<Key>
+        var accessorName = "set" + key.capitalizedString();
+        if (this.respondsTo(accessorName))
+            return this.perform(accessorName, value);
         
+        return this.setValueForUndefinedKey(value, key);
     },
     
     validateValueForKey: function(aValue, aKey, error) {
@@ -76,11 +121,11 @@ NSObject.extend({
     },
     
     valueForUndefinedKey: function(key) {
-        
+        throw "Undefined key was requested from object. '" + key + "'";
     },
     
     setValueForUndefinedKey: function(value, key) {
-        
+        throw "Undefined key was requested from object for setting. '" + key + "'";
     },
     
     setNilValueForKey: function(key) {
@@ -93,6 +138,10 @@ NSObject.extend({
     
     setValuesForKeysWithDictionary: function(keyedValues) {
         
+    },
+    
+    accessInstanceVariablesDirectly: function() {
+        return true;
     }
 });
 
