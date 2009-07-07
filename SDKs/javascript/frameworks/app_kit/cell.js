@@ -341,7 +341,7 @@ var NSCell = NSObject.extend({
     },
     
     setObjectValue: function(obj) {
-        
+        this._value = obj;
     },
     
     hasValidObjectValue: function() {
@@ -488,11 +488,27 @@ var NSCell = NSObject.extend({
         this.drawInteriorWithFrame(cellFrame, controlView);
     },
     
+    renderWithFrame: function(cellFrame, controlView) {
+        this.renderInteriorWithFrame(cellFrame, controlView);
+    },
+    
+    renderInteriorWithFrame: function(cellFrame, controlView) {
+        
+    },
+    
+    displayWithFrame: function(cellFrame, controlView) {
+        
+    },
+    
+    displayInteriorWithFrame: function(cellFrame, controlView) {
+        
+    },
+    
     highlightInView: function(flag, cellFrame, controlView) {
         
         if (this.isHighlighted() != flag) {
             this.setHighlighted(flag);
-            this.drawWithFrame(cellFrame, controlView);
+            this.displayWithFrame(cellFrame, controlView);
         }
     },
     

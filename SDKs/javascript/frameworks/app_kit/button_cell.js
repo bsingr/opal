@@ -122,7 +122,8 @@ var NSButtonCell = NSCell.extend({
         if (!this._isEnabled)
             CGContextSetAlpha(c, 0.8);
         
-        CGContextDrawImage(c, frame, image);
+        // CGContextDrawImage(c, frame, image);
+        image.drawInRect(frame);
         CGContextRestoreGState(c);
     },
 

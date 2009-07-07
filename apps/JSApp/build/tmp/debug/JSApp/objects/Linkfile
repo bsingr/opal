@@ -2,6 +2,9 @@
 JSApp.js: 
   dependencies: 
   - vienna.js
+scroll_view.js: 
+  dependencies: []
+
 AppController.js: 
   dependencies: 
   - vienna.js

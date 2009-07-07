@@ -100,8 +100,11 @@ var NSTableView = NSView.extend({
         this._drawsGrid = (flags & 0x20000000) ? true : false;
         this._alternatingRowBackground = (flags & 0x00800000) ? true : false;
         
+        this._gridColor = aCoder.decodeObjectForKey("NSGridColor");
+        
         this._backgroundColor = NSColor.whiteColor();
         
+        this._rowHeight = aCoder.decodeDoubleForKey("NSRowHeight");
         
         this._headerView = aCoder.decodeObjectForKey("NSHeaderView");
         
@@ -111,8 +114,10 @@ var NSTableView = NSView.extend({
         this._cornerView = aCoder.decodeObjectForKey("NSCornerView");
         this._tableColumns = aCoder.decodeObjectForKey("NSTableColumns");
         
-        this._numberOfRows = 0;
+        this._numberOfRows = -1;
         this._numberOfColumns = this._tableColumns.length;
+        
+        this._intercellSpacing = NSMakeSize(2, 2);
         
         for (var idx = 0; idx < this._numberOfColumns; idx++) {
             // do we need this?
@@ -122,20 +127,12 @@ var NSTableView = NSView.extend({
         return this;
     },
     
-    drawRect: function(dirtyRect) {
-        var c = NSGraphicsContext.currentContext().graphicsPort();
-        
-        if (this._backgroundColor) {
-            CGContextSetFillColorWithColor(c, this._backgroundColor);
-            CGContextFillRect(c, dirtyRect);
-        }
-    },
-    
     /**
         Sets the datasource, conforming to NSTableViewDataSource.
     */
     setDataSource: function(aSource) {
         this._dataSource = aSource;
+		this.reloadData();
     },
     
     dataSource: function() {
@@ -254,7 +251,22 @@ var NSTableView = NSView.extend({
     },
     
     numberOfRows: function() {
-        return this._numberOfRows;
+        if (this._numberOfRows < 0) {
+			if (this._dataSource) {
+				if (this._dataSource.respondsTo('numberOfRowsInTableView')) {
+					this._numberOfRows = this._dataSource.numberOfRowsInTableView(this);   
+				}
+				else {
+					console.log("TableView's datasource does not respond to numberOfRowsInTableView")
+					this._numberOfRows = 0;
+				}
+			}
+			else {
+				this._numberOfRows = 0;
+			}
+		}
+		
+		return this._numberOfRows;
     },
     
     addTableColumn: function(tableColumn) {
@@ -298,10 +310,13 @@ var NSTableView = NSView.extend({
     },
     
     reloadData: function() {
-        
+        this._numberOfRows = -1;
+		this.noteNumberOfRowsChanged();
+		this.setNeedsDisplay(true);
+		this._headerView.setNeedsDisplay(true);
     },
     
-    noteNumberOfRowsChnaged: function() {
+    noteNumberOfRowsChanged: function() {
         
     },
     
@@ -480,19 +495,46 @@ var NSTableView = NSView.extend({
     },
     
     rectOfColumn: function(column) {
+        var theRect = NSMakeRect(0, 0, 0, 0);
         
+        if (column < 0 || column > this._tableColumns.length)
+            throw "NSTableView -rectOfColumn invalidIndex: " + column;
+        
+        for (var idx = 0; idx < column; idx++)
+            theRect.origin.x += this._tableColumns[idx].width() + this._intercellSpacing.width;
+        
+        for (var idx = 0; idx < this.numberOfRows(); idx++)
+            theRect.size.height += this._rowHeight + this._intercellSpacing.height;
+        
+        theRect.origin.y = 0.0;
+        theRect.size.width = this._tableColumns[column].width() + this._intercellSpacing.width;
+        
+        return theRect;
     },
     
     rectOfRow: function(row) {
-        
+		var theRect = NSMakeRect(0, 0, 0, 0);
+	
+		// if index outside valid range, return zero rect
+        if (row < 0 || row > this.numberOfRows())
+			return theRect;
+		
+		for (var idx = 0; idx < this._tableColumns.length; idx ++)
+			theRect.size.width += this._tableColumns[idx].width() + this._intercellSpacing.width;
+		
+		theRect.origin.y = this.bounds().origin.y + ((this._rowHeight + this._intercellSpacing.height) * row);
+		theRect.size.height = this._rowHeight + this._intercellSpacing.height;
+		theRect.origin.x = this.bounds().origin.x;
+		
+		return theRect;
     },
     
     columnIndexesInRect: function(rect) {
-        
+        return NSMakeRange(0, 2);
     },
     
     rowsInRect: function(rect) {
-        
+        return NSMakeRange(0, 5);
     },
     
     columnAtPoint: function(point) {
@@ -504,11 +546,38 @@ var NSTableView = NSView.extend({
     },
     
     frameOfCellAtColumnRow: function(column, row) {
+        var theRect = NSMakeRect(0, 0, 0, 0);
         
+        if (column < 0 || column > this.numberOfColumns())
+            return theRect;
+        
+        if (row < 0 || row > this.numberOfRows())
+            return theRect;
+        
+        for (var idx = 0; idx < column; idx++)
+            theRect.origin.x += this._tableColumns[idx].width() + this._intercellSpacing.width;
+        
+        for (var idx = 0; idx < row; idx++)
+            theRect.origin.y += this._rowHeight + this._intercellSpacing.height;
+        
+        theRect.size.width = this._tableColumns[column].width() + this._intercellSpacing.width;
+        theRect.size.height += this._rowHeight + this._intercellSpacing.height;
+        
+        return theRect;
     },
     
     preparedCellAtColumnRow: function(column, row) {
+        var dataCell = this._tableColumns[column].dataCellForRow(row);
+        dataCell.setObjectValue(this.dataSourceObjectValueForColumnRow(column, row));
+        return dataCell;        
+    },
+    
+    dataSourceObjectValueForColumnRow: function(column, row) {
+        if (this._dataSource && this._dataSource.respondsTo('tableViewObjectValueForTableColumnRow'))
+            return this._dataSource.tableViewObjectValueForTableColumnRow(this, column, row);
         
+        console.log('Tableview data source does not respond to tableViewObjectValueForTableColumnRow');
+        return null;
     },
 
     /*
@@ -561,8 +630,67 @@ var NSTableView = NSView.extend({
         
     },
     
-    drawRow: function(row, clipRect) {
+    drawRect: function(clipRect) {
+        // draw background
+        this.drawBackgroundInClipRect(clipRect);
+        // draw grid
+        this.drawGridInClipRect(clipRect);
         
+        // draw highlighted row backgrounds (each row is drawn on top of this)
+        
+        // draw each row
+        if (this.numberOfRows() > 0) {
+            var visibleRows = this.rowsInRect(clipRect);
+            console.log(visibleRows);
+            if (visibleRows.length > 0) {
+                for (var idx = visibleRows.location; idx < visibleRows.location + visibleRows.length; idx++) {
+                    this.drawRowInClipRect(idx, clipRect);
+                }
+            }
+        }
+    },
+    
+    drawRowInClipRect: function(row, clipRect) {
+        var visibleColumns = this.columnIndexesInRect(clipRect);
+        
+        if (row < 0 || row >= this.numberOfRows()) {
+            console.log('Invalid row number in table. ' + row);
+            return;
+        }
+        
+        for (var idx = visibleColumns.location; idx < visibleColumns.location + visibleColumns.length; idx++) {
+            var dataCell = this.preparedCellAtColumnRow(idx, row);
+            var cellRect = this.frameOfCellAtColumnRow(idx, row);
+            
+            if (this._delegate && this._delegate.respondsTo('tableViewWillDisplayCell')) {
+                this._delegate.tableViewWillDisplayCell(this, dataCell, this._tableColumns[idx], row);
+            }
+                
+            dataCell.drawWithFrame(cellRect, this);
+        }
+        
+        // draw only visible columns.
+        // NSRange visibleColumns = [self columnsInRect:clipRect];
+        //         int drawThisColumn = visibleColumns.location;
+        //         NSInteger numberOfRows=[self numberOfRows];
+        // 
+        //         if (row < 0 || row >= numberOfRows)
+        //             [NSException raise:NSInvalidArgumentException
+        //                         format:@"invalid row in drawRow:clipRect:"];
+        // 
+        //         while (drawThisColumn < NSMaxRange(visibleColumns)) {
+        //            if (!(row == _editedRow && drawThisColumn == _editedColumn)) {
+        //               NSCell *dataCell=[self preparedCellAtColumn:drawThisColumn row:row];
+        //               NSTableColumn *column = [_tableColumns objectAtIndex:drawThisColumn];
+        //               NSRect cellRect = [self _adjustedFrame:[self frameOfCellAtColumn:drawThisColumn row:row] forCell:dataCell];
+        //               if ([_delegate respondsToSelector:@selector(tableView:willDisplayCell:forTableColumn:row:)])
+        //                  [_delegate tableView:self willDisplayCell:dataCell forTableColumn:column row:row];
+        // 
+        //               [dataCell drawWithFrame:cellRect inView:self];
+        //            }
+        //            drawThisColumn++;
+        //         }
+                
     },
     
     highlightSelectionInClipRect: function(clipRect) {
@@ -571,10 +699,41 @@ var NSTableView = NSView.extend({
     
     drawGridInClipRect: function(clipRect) {
         
+        if (this._drawsGrid) {
+            var c = NSGraphicsContext.currentContext().graphicsPort();
+            CGContextBeginPath(c);
+            CGContextSetStrokeColorWithColor(c, this._gridColor);
+            
+            var columnsToDraw = this.columnIndexesInRect(clipRect);
+            for (var idx = columnsToDraw.location; idx < columnsToDraw.location + columnsToDraw.length; idx++) {
+                var theRect = this.rectOfColumn(idx);
+                var columnX = theRect.origin.x + theRect.size.width - 0.5; // draw not in line center (draws 1px instead of 2px)
+                
+                CGContextMoveToPoint(c, NSMakePoint(columnX, clipRect.origin.y));
+                CGContextAddLineToPoint(c, NSMakePoint(columnX, clipRect.origin.y + clipRect.size.height));            
+            }   
+            CGContextStrokePath(c);
+        }
     },
     
     drawBackgroundInClipRect: function(clipRect) {
-        
+        if (this._backgroundColor) {
+            var c = NSGraphicsContext.currentContext().graphicsPort();
+            
+            if (!this._alternatingRowBackground) {
+                CGContextSetFillColorWithColor(c, this._backgroundColor);
+                CGContextFillRect(c, clipRect);
+            }
+            else {
+                var altColors = NSColor.controlAlternatingRowBackgroundColors();
+                var rowsInRect = this.rowsInRect(clipRect);
+                
+                for (var idx = rowsInRect.location; idx < rowsInRect.location + rowsInRect.length; idx++) {
+                    CGContextSetFillColorWithColor(c, altColors[idx % altColors.length]);
+                    CGContextFillRect(c, this.rectOfRow(idx));
+                }
+            }
+        }
     }
 });
 

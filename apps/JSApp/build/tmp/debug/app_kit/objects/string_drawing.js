@@ -51,6 +51,7 @@ Object.extend(String.prototype, {
 NSAttributedString.mixin({
     
     size: function() {
+        
 	    var c = NSGraphicsContext.currentContext().graphicsPort();
 	    CGContextSaveGState(c);
 	    
@@ -85,6 +86,7 @@ Object.extend(String.prototype, {
 NSAttributedString.mixin({
     
     drawWithRectAndOptions: function(aRect, options) {
+        
         var c = NSGraphicsContext.currentContext().graphicsPort();
 		var fontSize = this.size();
 		

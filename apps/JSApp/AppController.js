@@ -51,5 +51,16 @@ var AppController = NSObject.extend({
    
    applicationDidFinishLaunching: function() {
        console.log("Application finished lauchiong");
-   }
+   },
+
+	/*
+		Table view delegate
+	*/
+	numberOfRowsInTableView: function(tableView) {
+		return 6;
+	},
+	
+	tableViewObjectValueForTableColumnRow: function(tableView, tableColumn, row) {
+	    return "Hi there " + row;
+	}
 });

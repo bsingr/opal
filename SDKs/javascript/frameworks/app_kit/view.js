@@ -88,18 +88,12 @@ var NSView = NSResponder.extend({
     _DOMGraphicsContext : null,
     
     _graphicsContext: null,
-    
-    /**
-        The containing DOM element for the view (usually a div)
-    */
-    DOMContainer: function() {
         
-        return this._DOMContainer;
-    },
-    
-    init: function() {
+    setupGraphicsContextDisplay: function() {
         this._DOMContainer = document.createElement('div');
         this._DOMGraphicsContext = document.createElement('canvas');
+        
+        
         this._DOMContainer.appendChild(this._DOMGraphicsContext);
         
         this._DOMContainer.style.display = "block";
@@ -107,7 +101,17 @@ var NSView = NSResponder.extend({
         
         this._DOMGraphicsContext.style.display = "block";
         this._DOMGraphicsContext.style.position = "absolute";
-        
+    },
+    
+    /**
+        The containing DOM element for the view (usually a div)
+    */
+    DOMContainer: function() {
+        return this._DOMContainer;
+    },
+    
+    init: function() {
+        this.setupGraphicsContextDisplay();     
         this._frame = NSMakeRect (0, 0, 0, 0);
         
         return this;
@@ -121,17 +125,7 @@ var NSView = NSResponder.extend({
         // this.init();
         
         this._frame = NSMakeRect (0, 0, 0, 0);
-        
-        this._DOMContainer = document.createElement('div');
-        this._DOMGraphicsContext = document.createElement('canvas');
-        this._DOMContainer.appendChild(this._DOMGraphicsContext);
-        
-        this._DOMContainer.style.display = "block";
-        this._DOMContainer.style.position = "absolute";
-        
-        this._DOMGraphicsContext.style.display = "block";
-        this._DOMGraphicsContext.style.position = "absolute";
-        
+        this.setupGraphicsContextDisplay();
         this._subviews = [];
         
         this.setFrame(frameRect);
@@ -143,15 +137,7 @@ var NSView = NSResponder.extend({
     */
     initWithCoder: function(aCoder) {
         
-        this._DOMContainer = document.createElement('div');
-        this._DOMGraphicsContext = document.createElement('canvas');
-        this._DOMContainer.appendChild(this._DOMGraphicsContext);
-        
-        this._DOMContainer.style.display = "block";
-        this._DOMContainer.style.position = "absolute";
-        
-        this._DOMGraphicsContext.style.display = "block";
-        this._DOMGraphicsContext.style.position = "absolute";
+        this.setupGraphicsContextDisplay();
         
         this._frame = NSMakeRect(0, 0, 0, 0);
         this._bounds = NSMakeRect(0, 0, 0, 0);
@@ -603,18 +589,18 @@ var NSView = NSResponder.extend({
         
     },
     
-    lockFocus: function() {
+    lockFocus: function() {    
         
         if (!this._graphicsContext)
             this._graphicsContext = NSGraphicsContext.graphicsContextWithGraphicsPort(this._DOMGraphicsContext.getContext('2d'), false);
+        
         
         NSGraphicsContext.setCurrentContext(this._graphicsContext);
         CGContextSaveGState(this._graphicsContext.graphicsPort());
         CGContextClearRect(this._graphicsContext.graphicsPort(), this.bounds());
     },
     
-    unlockFocus: function() {
-        
+    unlockFocus: function() {            
         CGContextRestoreGState(this._graphicsContext.graphicsPort());
         NSGraphicsContext.setCurrentContext(null);
     },
@@ -685,7 +671,9 @@ var NSView = NSResponder.extend({
     displayRectIgnoringOpacityInContext: function(aRect, context) {
         
         this.lockFocus();
+        
         this.drawRect(aRect);
+
         this.unlockFocus();
     },
     

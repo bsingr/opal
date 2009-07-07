@@ -68,6 +68,8 @@ var NSApplication = NSResponder.extend({
     
     _mainMenu: null,
     
+    _focusView: null,
+    
     init: function() {
         // this._super();
         return this;
@@ -133,6 +135,14 @@ var NSApplication = NSResponder.extend({
         }
 
         return null;
+    },
+    
+    setFocusView: function(aView) {
+        this._focusView = aView;
+    },
+    
+    focusView: function() {
+        return this._focusView;
     },
     
     mainWindow: function() {

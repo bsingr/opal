@@ -25,6 +25,11 @@
  */
 
 
+// NSTablecolumn resizing
+var NSTableColumnNoResizing         = 0;
+var NSTableColumnAutoresizingMask   = ( 1 << 0 );
+var NSTableColumnUserResizingMask   = ( 1 << 1 );
+
 var NSTableColumn = NSObject.extend({
     
     _identifier: null,
@@ -52,5 +57,105 @@ var NSTableColumn = NSObject.extend({
     
     setTableView: function(aTableView) {
         this._tableView = aTableView;
-    }
+    },
+    
+    tableView: function() {
+        return this._tableView;
+    },
+    
+    setIdentifier: function(identifier) {
+        this._identifier = identifier;
+    },
+    
+    identifier: function() {
+        return this._identifier;
+    },
+    
+    setWidth: function(width) {
+        this._width = width;
+    },
+    
+    width: function() {
+        return this._width;
+    },
+    
+    setMinWidth: function(minWidth) {
+        this._minWidth = minWidth;
+    },
+    
+    minWidth: function() {
+        return this._minWidth;
+    },
+    
+    setMaxWidth: function(maxWidth) {
+        this._maxWidth = maxWidth;
+    },
+    
+    maxWidth: function() {
+        return this._maxWidth;
+    },
+    
+    setHeaderCell: function(cell) {
+        this._headerCell = cell;
+    },
+    
+    headerCell: function() {
+        return this._headerCell;
+    },
+    
+    setDataCell: function(cell) {
+        this._dataCell = cell;
+    },
+    
+    dataCell: function() {
+        return this._dataCell;
+    },
+    
+    dataCellForRow: function() {
+        return this._dataCell;
+    },
+    
+    setEditable: function(flag) {
+        this._isEditable = flag;
+    },
+    
+    isEditable: function() {
+        return this._isEditable;
+    },
+    
+    sizeToFit: function() {
+        
+    },
+    
+    setSortDescriptorPrototype: function(sortDescriptor) {
+        this._sortDescriptorPrototype = sortDescriptor;
+    },
+    
+    sortDescriptorPrototype: function() {
+        return this._sortDescriptorPrototype;
+    },
+    
+    setResizingMask: function(resizingMask) {
+        this._resizingMask = resizingMask;
+    },
+    
+    resizingMask: function() {
+        return this._resizingMask;
+    },
+    
+    setHeaderToolTip: function(aString) {
+        this._headerToolTip = aString;
+    },
+    
+    headerToolTip: function() {
+        return this._headerToolTip;
+    },
+    
+    isHidden: function() {
+        return this._isHidden;
+    },
+    
+    setHidden: function(flag) {
+        this._isHidden = flag;
+    }    
 });

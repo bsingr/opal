@@ -24,6 +24,12 @@
  * THE SOFTWARE.
  */
 
+include('app_kit/view');
+
 var NSCustomView = NSView.extend({
     
+    initWithCoder: function(aCoder) {
+        this._super(aCoder);
+        return this;
+    }
 });

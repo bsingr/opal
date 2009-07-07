@@ -925,6 +925,8 @@ var NSWindow = NSResponder.extend({
 	},
 	
 	lockFocus: function() {
+	    NSApplication.sharedApplication().setFocusView(this);
+	    
 		if (!this._graphicsContext)
 			this._graphicsContext = NSGraphicsContext.graphicsContextWithGraphicsPort(this._DOMGraphicsContext.getContext('2d'), false);
 		
@@ -934,6 +936,7 @@ var NSWindow = NSResponder.extend({
 	},
 	
 	unlockFocus: function() {
+	    NSApplication.sharedApplication().setFocusView(null);
 		CGContextRestoreGState(this._graphicsContext.graphicsPort());
 		NSGraphicsContext.setCurrentContext(null);
 	},

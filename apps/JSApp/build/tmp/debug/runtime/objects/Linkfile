@@ -2,6 +2,9 @@
 resource.js: 
   dependencies: []
 
+display_mode.js: 
+  dependencies: []
+
 object.js: 
   dependencies: []
 

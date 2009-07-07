@@ -47,9 +47,6 @@ scroll_view.js:
 object_container.js: 
   dependencies: []
 
-main_menu_view.js: 
-  dependencies: 
-  - view.js
 text_storage.js: 
   dependencies: []
 
@@ -99,8 +96,8 @@ graphics_context.js:
   - geometry.js
   - object.js
 custom_view.js: 
-  dependencies: []
-
+  dependencies: 
+  - view.js
 control.js: 
   dependencies: 
   - foundation.js
@@ -154,8 +151,8 @@ string_drawing.js:
   - string.js
   - attributed_string.js
 scroller.js: 
-  dependencies: []
-
+  dependencies: 
+  - view.js
 menu_window.js: 
   dependencies: 
   - window.js

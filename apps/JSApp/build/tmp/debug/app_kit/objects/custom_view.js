@@ -24,6 +24,11 @@
  * THE SOFTWARE.
  */
 
+
 var NSCustomView = NSView.extend({
     
+    initWithCoder: function(aCoder) {
+        this._super(aCoder);
+        return this;
+    }
 });

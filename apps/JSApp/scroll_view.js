@@ -1,5 +1,5 @@
 /* 
- * main_menu_view.js
+ * scroll_view.js
  * vienna
  * 
  * Created by Adam Beynon.
@@ -24,11 +24,10 @@
  * THE SOFTWARE.
  */
 
-
-var NSMainMenuView = NSView.extend({
+var JSScrollView = NSView.extend({
     
-    drawRect: function(rect) {
+    drawRect: function(aRect) {
         var c = NSGraphicsContext.currentContext().graphicsPort();
-        CGContextFillRect(c, rect);
+        CGContextFillRect(c, aRect);
     }
 });

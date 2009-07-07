@@ -35,15 +35,26 @@
     as a regular image. Spriting images dramatically improves performance and
     saves heavily on bandwidth.
 */
-var NSImage = { };
+var NSImage = NSObject.extend({
+    
+    _image: null,
+    
+    initByReferencingFile: function(fileName) {
+        this._image = new Image();
+        this._image.src = fileName;
+        return this;
+    },
+    
+    drawInRect: function(theRect) {
+        var c = NSGraphicsContext.currentContext().graphicsPort();
+        CGContextDrawImage(c, theRect, this._image);
+    },
+    
+    size: function() {
+        return NSMakeSize(this._image.width, this._image.height);
+    }
+});
 
 NSImage.imageNamed = function(anImage) {
-    var newImage = new Image();
-    newImage.src = 'resources/' + anImage;
-    return newImage;
-};
-
-Image.prototype.drawInRect = function(theRect) {
-    var c = NSGraphicsContext.currentContext().graphicsPort();
-    CGContextDrawImage(c, theRect, this);
+    return NSImage.create('initByReferencingFile', 'resources/' + anImage);
 };

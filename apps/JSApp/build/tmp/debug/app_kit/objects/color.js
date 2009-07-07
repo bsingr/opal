@@ -208,6 +208,9 @@ Object.extend(NSColor, {
 		return NSColor.colorWithCalibratedRGBA(0.0, 0.0, 0.0, 0.0);
 	},
 	
+	gridColor: function() {
+	    return NSColor.colorWithCalibratedRGBA(0.902, 0.902, 0.902, 1.0);
+	},
 	
 	controlShadowColor: function() {
 		return NSColor.colorWithCalibratedRGBA(0.5, 0.5, 0.5, 1.0);
@@ -230,7 +233,7 @@ Object.extend(NSColor, {
 	},
 	
 	controlBackgroundColor: function() {
-		return NSColor.colorWithCalibratedRGBA(0.5, 0.5, 0.5, 1.0);
+		return NSColor.controlTextColor();
 	},
 	
 	selectedControlColor: function() {
@@ -322,8 +325,8 @@ Object.extend(NSColor, {
 	},
 	
 	controlAlternatingRowBackgroundColors: function() {
-		return [NSColor.colorWithCalibratedRGBA(0.5, 0.5, 0.5, 1.0), 
-				NSColor.colorWithCalibratedRGBA(0.5, 0.5, 0.5, 1.0)];
+		return [NSColor.colorWithCalibratedRGBA(0.953, 0.953, 0.953, 1.0), 
+				NSColor.whiteColor()];
 	},
 	
 	colorForControlTint: function(controlTint) {

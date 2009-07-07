@@ -28,7 +28,7 @@
 var NSTableHeaderCell = NSTextFieldCell.extend({
     
     initWithCoder: function(aCoder) {
-        // this._super(aCoder);
+        this._super(aCoder);
         // this._value = aCoder.decodeObjectForKey("NSContents");
         return this;
     }

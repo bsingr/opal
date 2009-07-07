@@ -54,7 +54,127 @@ var NSScrollView = NSView.extend({
         
     },
     
-    hitTest: function() {
-        return null;
-    }
+    // hitTest: function() {
+        // return null;
+    // },
+    
+    documentVisibleRect: function() {
+        
+    },
+    
+    contentSize: function() {
+        
+    },
+    
+    setDocumentView: function(aView) {
+        
+    },
+    
+    documentView: function() {
+        
+    },
+    
+    setContentView: function(contentView) {
+        
+    },
+    
+    contentView: function() {
+        
+    },
+    
+    setDocumentCursor: function(aCursor) {
+        
+    },
+    
+    documentCursor: function() {
+        
+    },
+    
+    setBorderType: function(aType) {
+        
+    },
+    
+    borderType: function() {
+        
+    },
+    
+    setBackgroundColor: function(aColor) {
+        
+    },
+    
+    backgroundColor: function() {
+        
+    },
+    
+    setDrawsBackground: function(flag) {
+        
+    },
+    
+    drawsBackground: function() {
+        
+    },
+    
+    setHasVerticalScroller: function(flag) {
+        
+    },
+    
+    hasVerticalScroller: function() {
+        
+    },
+    
+    setVericalScroller: function(aScroller) {
+        
+    },
+    
+    verticalScroller: function() {
+        
+    },
+    
+    setHasHorizontalSroller: function(flag) {
+        
+    },
+    
+    hasHorizontalScroller: function() {
+        
+    },
+    
+    setHorizontalScroller: function(aScroller) {
+        
+    },
+    
+    horizontalScroller: function() {
+        
+    },
+    
+    autohidesScrollers: function() {
+        
+    },
+    
+    setAutohidesScrollers: function(flag) {
+        
+    },
+    
+    
+    // #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_3
+    //  - (BOOL)autohidesScrollers;
+    //  - (void)setAutohidesScrollers:(BOOL)flag;
+    //  #endif
+    //  - (void)setHorizontalLineScroll:(CGFloat)value;
+    //  - (void)setVerticalLineScroll:(CGFloat)value;
+    //  - (void)setLineScroll:(CGFloat)value;
+    //  - (CGFloat)horizontalLineScroll;
+    //  - (CGFloat)verticalLineScroll;
+    //  - (CGFloat)lineScroll;
+    //  - (void)setHorizontalPageScroll:(CGFloat)value;
+    //  - (void)setVerticalPageScroll:(CGFloat)value;
+    //  - (void)setPageScroll:(CGFloat)value;
+    //  - (CGFloat)horizontalPageScroll;
+    //  - (CGFloat)verticalPageScroll;
+    //  - (CGFloat)pageScroll;
+    //  - (void)setScrollsDynamically:(BOOL)flag;
+    //  - (BOOL)scrollsDynamically;
+    //  - (void)tile;
+    //  - (void)reflectScrolledClipView:(NSClipView *)cView;
+    //  - (void)scrollWheel:(NSEvent *)theEvent;
+    //  @end
 });

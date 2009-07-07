@@ -28,6 +28,16 @@
 var NSTableHeaderView = NSView.extend({
     
     _tableView: null,
+    _resizedColumn: null,
+    _draggedColumn: null,
+    _pressedColumn: null,
+    _headerDragImage: null,
+    _draggedDistance: null,
+    _isColumnResizing: null,
+    _showHandCursorFired: null,
+    _toolTipRectsDirty: null,
+    _alignTitleWithDataCell: null,
+    _skipDrawingSeparator: null,
     
     initWithCoder: function(aCoder) {
         this._super(aCoder);
@@ -41,5 +51,30 @@ var NSTableHeaderView = NSView.extend({
     
     tableView: function() {
         return this._tableView;
+    },
+    
+    drawRect: function(dirtyRect) {
+        var c = NSGraphicsContext.currentContext().graphicsPort();
+        CGContextFillRect(c, dirtyRect);
+    },
+    
+    draggedColumn: function() {
+        
+    },
+    
+    draggedDistance: function() {
+        
+    },
+    
+    resizedColumn: function() {
+        
+    },
+    
+    headerRectOfColumn: function(column) {
+        
+    },
+    
+    columnAtPoint: function(point) {
+        
     }
 });

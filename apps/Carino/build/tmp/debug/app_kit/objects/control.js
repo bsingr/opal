@@ -251,7 +251,7 @@ var NSControl = NSView.extend({
     */
     renderRect: function(rect) {
         if (this._cell)
-            this._cell.renderWithFrameInView(this.bounds(), this);
+            this._cell.renderWithFrame(this.bounds(), this);
     },
     
     sendActionTo: function(theAction, theTarget) {
