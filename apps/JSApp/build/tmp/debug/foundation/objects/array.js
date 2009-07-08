@@ -75,6 +75,10 @@ Object.extend(Array.prototype, NSArray);
 
 NSArray.create = function() {
     return [];
-}
+};
+
+NSArray.mixin = function(props) {
+    Object.extend(this.prototype, props);
+};
 
 var NSMutableArray = NSArray;

@@ -91,7 +91,7 @@ var NSArrayController = NSObjectController.extend({
     */
     automaticRearrangementKeyPaths: function() {
         
-    }
+    },
     
     /*
         ..
@@ -147,64 +147,277 @@ var NSArrayController = NSObjectController.extend({
         
     },
     
-    
+	/*
+		@param NSArray objects
+		@return NSArray
+	*/
+    arrangeObjects: function(objects) {
+	
+	},
+	
+	/*
+		An array of all objects to be displayed (after filtering/sorting)
+		@return NSArray
+	*/
+	arrangedObjects: function() {
+		
+	},
+	
+	/*
+		Default is true.
+		
+		@param bool flag
+	*/
+	setAvoidsEmptySelection: function(flag) {
+		
+	},
+	
+	/*
+		@return bool
+	*/
+	avoidsEmptySelection: function() {
+		
+	},
+	
+	/*
+		Default is true
+		
+		@param bool flag
+	*/
+	setPreservesSelection: function(flag) {
+		
+	},
+	
+	/*
+		@return bool
+	*/
+	preservesSelection: function() {
+		
+	},
+	
+	/*
+		Default is true
+		
+		@param bool flag
+	*/
+	setSelectsInsertedObjects: function(flag) {
+		
+	},
+	
+	/*
+		@return bool
+	*/
+	selectsInsertedObjects: function() {
+		
+	},
+	
+	/*
+		@param {Boolean} flag
+	*/
+	setAlwaysUsesMultipleValuesMarker: function(flag) {
+		
+	},
+	
+	/*
+		@returns Boolean
+	*/
+	alwaysUsesMultipleValuesMarker: function() {
+		
+	},
+	
+	/*
+		@param {NSIndexSet} indexes
+		@returns Boolean
+	*/
+	setSelectionIndexes: function(indexes) {
+		
+	},
+	
+	/*
+		@returns NSIndexSet
+	*/
+	selectionIndexes: function() {
+		
+	},
+	
+	/*
+		@param {Integer} index
+		@returns Boolean
+	*/
+	setSelectionIndex: function() {
+		
+	},
+	
+	/*
+		@returns Integer
+	*/
+	selectionIndex: function() {
+		
+	},
+	
+	/*
+		@param {NSIndexSet} indexes
+		@returns Boolean
+	*/
+	addSelectionIndexes: function(indexes) {
+		
+	},
+	
+	/*
+		@param {NSIndexSet} indexes
+		@returns Boolean
+	*/
+	removeSelectionIndexes: function(indexes) {
+		
+	},
+	
+	/*
+		@param {NSArray} objects
+		@returns Boolean
+	*/
+	setSelectionObjects: function(objects) {
+		
+	},
+	
+	/*
+		@returns {NSIndexSet}
+	*/
+	selectedObjects: function() {
+		
+	},
+	
+	/*
+		@param {NSArray} objects
+		@returns Boolean
+	*/
+	addSelectedObjects: function(objects) {
+		
+	},
+	
+	/*
+		@param {NSArray} objects
+		@retuns Boolean
+	*/
+	removeSelectedObjects: function(objects) {
+		
+	},
+	
+	/*
+		Adds new object to the content objects, but to the arranged objects as
+		well.
+		
+		@param {NSObject} sender
+	*/
+	add: function(sender) {
+		
+	},
+	
+	/*
+		Remove selected object(s)
+	
+		@param {NSObject} sender
+	*/
+	remove: function(sender) {
+		
+	},
+	
+	/*
+		@param {NSObject} sender
+	*/
+	insert: function(sender) {
+		
+	},
+	
+	/*
+		@return Boolean
+	*/
+	canInsert: function() {
+		
+	},
+	
+	/*
+		@param {NSObject} sender
+	*/
+	selectNext: function(sender) {
+		
+	},
+	
+	/*
+		@param {NSObject} sender
+	*/
+	selectPrevious: function(sender) {
+		
+	},
+	
+	/*
+		@returns Boolean
+	*/
+	canSelectNext: function() {
+		
+	},
+	
+	/*
+		@returns Boolean
+	*/
+	canSelectPrevious: function() {
+		
+	},
+	
+	/*
+		@param {NSObject} object
+	*/
+	addObject: function(object) {
+		
+	},
+	
+	/*
+		@param {NSArray} objects
+	*/
+	addObjects: function(objects) {
+		
+	},
+	
+	/*
+		@param {NSObject} object
+		@param {Integer} index
+	*/
+	insertObjectAtArrangedObjectIndex: function(object, index) {
+		
+	},
+	
+	/*
+		@param {NSArray} objects
+		@param {NSIndexSet} indexes
+	*/
+	insertObjectsAtArrangedObjectIndexes: function(objects, indexes) {
+		
+	},
+	
+	/*
+		@param {Integer} index
+	*/
+	removeObjectAtArrangedObjectIndex: function(index) {
+		
+	},
+	
+	/*
+		@param {NSIndexSet} indexes
+	*/
+	removeObjectsAtArrangedObjectIndexes: function(indexes) {
+		
+	},
+	
+	/*
+		@param {NSObject} object
+	*/
+	removeObject: function(object) {
+		
+	},
+	
+	/*
+		@param {NSArray} objects
+	*/
+	removeObjects: function(objects) {
+		
+	}
 });
-
- /* Indicates whether the controller should nil out its filter predicate before inserting (or adding) new objects. When set to yes, this eliminates the problem of inserting a new object into the array that would otherwise immediately be filtered out of the array of arranged objects.
- */
- - (void)setClearsFilterPredicateOnInsertion:(BOOL)flag; // default: YES
- - (BOOL)clearsFilterPredicateOnInsertion;
- #endif
-
- - (NSArray *)arrangeObjects:(NSArray *)objects;    // returns objects to be arranged in the user interface for the content object array objects - method can be overridden to use a different kind of sort mechanism or to filter the display objects
- - (id)arrangedObjects;     // array of all displayed objects (after sorting and potentially filtering)
-
- - (void)setAvoidsEmptySelection:(BOOL)flag;    // default: YES
- - (BOOL)avoidsEmptySelection;
- - (void)setPreservesSelection:(BOOL)flag;    // default: YES
- - (BOOL)preservesSelection;
- - (void)setSelectsInsertedObjects:(BOOL)flag;    // default: YES
- - (BOOL)selectsInsertedObjects;
-
- #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
- /* Indicates whether the controller should indicate all multiple selections through the NSMultipleValuesMarker, whether the selected values are equal or not (by default, the controller will only use the NSMultipleValuesMarker if the selected objects actually have different values) - this may act as a performance enhancement in certain applications.
- */
- - (void)setAlwaysUsesMultipleValuesMarker:(BOOL)flag;
- - (BOOL)alwaysUsesMultipleValuesMarker;
- #endif
-
- /* All selection modification methods returning a BOOL indicate through that flag whether changing the selection was successful (changing the selection might trigger an commitEditing call which fails and thus deny's the selection change).
- */
- - (BOOL)setSelectionIndexes:(NSIndexSet *)indexes;    // to deselect all: empty index set, to select all: index set with indexes [0...count - 1]
- - (NSIndexSet *)selectionIndexes;
- - (BOOL)setSelectionIndex:(NSUInteger)index;
- - (NSUInteger)selectionIndex;
- - (BOOL)addSelectionIndexes:(NSIndexSet *)indexes;
- - (BOOL)removeSelectionIndexes:(NSIndexSet *)indexes;
-
- - (BOOL)setSelectedObjects:(NSArray *)objects;
- - (NSArray *)selectedObjects;
- - (BOOL)addSelectedObjects:(NSArray *)objects;
- - (BOOL)removeSelectedObjects:(NSArray *)objects;
-
- - (void)add:(id)sender;    // overridden to add a new object to the content objects and to the arranged objects
- - (void)remove:(id)sender;    // overridden to remove the selected objects
- - (void)insert:(id)sender;
- - (BOOL)canInsert;    // can be used in bindings controlling the enabling of buttons, for example
- - (void)selectNext:(id)sender;
- - (void)selectPrevious:(id)sender;
- - (BOOL)canSelectNext;
- - (BOOL)canSelectPrevious;
-
- - (void)addObject:(id)object;    // overridden to add to the content objects and to the arranged objects if all filters currently applied are matched
- - (void)addObjects:(NSArray *)objects;
- - (void)insertObject:(id)object atArrangedObjectIndex:(NSUInteger)index;    // inserts into the content objects and the arranged objects (as specified by index in the arranged objects) - will raise an exception if the object does not match all filters currently applied
- - (void)insertObjects:(NSArray *)objects atArrangedObjectIndexes:(NSIndexSet *)indexes;
- - (void)removeObjectAtArrangedObjectIndex:(NSUInteger)index;    // removes from the content objects and the arranged objects (as specified by index in the arranged objects)
- - (void)removeObjectsAtArrangedObjectIndexes:(NSIndexSet *)indexes;
- - (void)removeObject:(id)object;    // removes from the content objects and the arranged objects (if currently contained)
- - (void)removeObjects:(NSArray *)objects;
-
- @end
-
- #endif

@@ -84,6 +84,61 @@ var NSDictionary = NSObject.extend({
     }
 });
 
+/*
+    
+*/
+Object.extend(NSDictionary, {
+    
+    /*
+        @return NSDictionary
+    */
+    dictionary: function() {
+        return this.create();
+    },
+
+    /*
+        @param {id} anObject
+        @param {key} aKey
+        @return NSDictionary
+    */
+    dictionaryWithObjectForKey: function(anObject, aKey) {
+        var theDict = this.create();
+        theDict.setObjectForKey(anObject, aKey);
+        return theDict;
+    },
+    
+    /*
+        @param {id} firstObject
+        @param ... variable arguments
+        @return NSDictionary
+    */
+    dictionaryWithObjectsAndKeys: function(firstObject) {
+        
+    },
+
+    /*
+        @param {NSDictionary) dict
+        @return NSDictionary
+    */
+    dictionaryWithDictionary: function(dict) {
+        
+    },
+    
+    /*
+        @param {NSArray} objects
+        @param {NSArray} keys
+        @return NSDictionary
+    */
+    dictionaryWithObjectsForKeys: function(objects, keys) {
+        var theDict = this.create();
+        
+        for (var idx = 0; idx < objects.length; idx++)
+            theDict.setObjectForKey(objects[idx], keys[idx]);
+        
+        return theDict;
+    }
+});
+
 /**
     @class NSMutableDictionary
     

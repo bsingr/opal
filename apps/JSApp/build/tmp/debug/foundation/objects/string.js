@@ -25,16 +25,135 @@
  */
 
 
+/*
+    @enum NSStringCompareOptions
+*/
+var NSCaseInsensitiveSearch         = 1;
+var NSLiteralSearch                 = 2;
+var NSBackwardsSearch               = 4;
+var NSAnchoredSearch                = 8;
+var NSNumericSearch                 = 64;
+var NSDiacriticInsensitiveSearch    = 128;
+var NSWidthInsensitiveSearch        = 256;
+var NSForcedOrderingSearch          = 512;
+
 // NSString just mirrors native String object
 var NSString = String;
 
-Object.extend(NSString.prototype, {
-	
-	typeOf: function(aClass) {
-		return aClass == NSString;
-	},
-	
-	capitalizedString: function() {
+NSString.create = function() {
+    return "";
+};
+
+NSString.mixin = function(props) {
+    Object.extend(this.prototype, props);
+};
+
+/*
+    @mixin NSString
+    @class NSString
+*/
+NSString.mixin({
+    
+    /*
+        @returns Integer
+    */
+    length: function() {
+        return this.length;
+    },
+    
+    /*
+        @param {Integer} index
+        @returns {NSString}
+    */
+    characterAtIndex: function(index) {
+        
+    }
+});
+
+NSString.mixin({
+ 
+ typeOf: function(aClass) {
+     return aClass == NSString;
+ },
+ 
+ capitalizedString: function() {
         return this.charAt(0).toUpperCase() + this.substr(1);
-	}
+ }
+});
+
+/*
+    @mixin NSStringExtensionMethods
+    @class NSString
+*/
+NSString.mixin({
+    
+    /*
+        @param {Integer} from
+        @returns NSString
+    */
+    substringFromIndex: function(from) {
+        
+    },
+    
+    /*
+        @param {Integer} to
+        @returns NSString
+    */
+    substringToIndex: function(to) {
+        
+    },
+    
+    /*
+        @param {NSRange} range
+        @returns NSString
+    */
+    substringWithRange: function(range) {
+        
+    },
+    
+    /*
+        @param {NSString} string
+        @param {NSStringCompareOptions} mask
+        @returns NSComparisonResult
+    */
+    compareWithOptions: function(string, mask) {
+        
+    },
+    
+    /*
+        @param {NSString} string
+        @param {NSStringCompareOptions} mask
+        @param {NSRange} compareRange
+        @returns NSComparisonResult
+    */
+    compareWithOptionsInRange: function(string, mask, compareRange) {
+        
+    },
+    
+    /*
+        @param {NSString} aString
+        @returns Boolean
+    */
+    isEqualToString: function(aString) {
+        
+    },
+    
+    /*
+        @param {NSString} aString
+        @returns Boolean
+    */
+    hasPrefix: function(aString) {
+        
+    },
+    
+    /*
+        @param {NSString} aString
+        @returns Boolean
+    */
+    hasSuffix: function(aString) {
+        
+    },
+    
+    
+    
 });

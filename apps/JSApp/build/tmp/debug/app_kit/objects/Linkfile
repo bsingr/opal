@@ -86,6 +86,9 @@ window_template.js:
 table_view.js: 
   dependencies: 
   - view.js
+object_controller.js: 
+  dependencies: 
+  - controller.js
 clip_view.js: 
   dependencies: []
 
@@ -120,6 +123,9 @@ event.js:
 custom_resource.js: 
   dependencies: []
 
+controller.js: 
+  dependencies: 
+  - key_value_binding.js
 table_header_view.js: 
   dependencies: 
   - view.js
@@ -194,6 +200,9 @@ font.js:
 corner_view.js: 
   dependencies: 
   - view.js
+array_controller.js: 
+  dependencies: 
+  - object_controller.js
 application_title_view.js: 
   dependencies: 
   - view.js

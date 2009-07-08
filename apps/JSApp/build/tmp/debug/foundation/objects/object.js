@@ -96,7 +96,28 @@ Object.extend(NSObject, {
     */
     mixin: function(props) {
         Object.extend(this.prototype, props);
-    }
+    },
+
+	/*
+		A "nice" way to define protocols. Doesnt do anything but return the 
+		class. Nothing is added to the class. The methods defined for the
+		protocol should have empty implementations as they are only used as
+		reference within the code. For example:
+		
+		{{{
+			var NSTableDelegate = NSObject.protocol({
+				numberOfRowsInTable: function(...) {	
+				},
+				...
+			});
+		}}}
+		
+		If you want default implementations, NSObject.mixin is better suited,
+		which can then be overridden as desired.
+	*/
+	protocol: function(props) {
+		return this;
+	}
 });
 
 /**
@@ -159,11 +180,13 @@ NSObject.mixin({
         respondsToSelector:
     */
     respondsTo: function(aName) {
-        return this[aName] ? true : false;
+        return (this[aName] && (typeof this[aName] == 'function')) ? true : false;
     },
     
     perform: function(aFunctionName, withObject, anotherObject) {
         if (this.respondsTo(aFunctionName))
-            this[aFunctionName](withObject, anotherObject);
+            return this[aFunctionName](withObject, anotherObject);
+        else
+            return null;
     }
 });

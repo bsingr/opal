@@ -250,7 +250,7 @@ var NSApplication = NSResponder.extend({
     },
     
     windows: function() {
-        
+        return this._windows;
     },
     
     setWindowsNeedUpdate: function(needUpdate) {

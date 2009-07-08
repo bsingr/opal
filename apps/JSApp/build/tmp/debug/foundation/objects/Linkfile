@@ -26,6 +26,10 @@ key_value_coding.js:
   - array.js
   - dictionary.js
   - set.js
+set.js: 
+  dependencies: 
+  - object.js
+  - enumerator.js
 dictionary.js: 
   dependencies: 
   - object.js
@@ -58,6 +62,9 @@ geometry.js:
   - value.js
   - coder.js
   - geometry.js
+user_defaults.js: 
+  dependencies: 
+  - object.js
 string.js: 
   dependencies: 
   - object.js

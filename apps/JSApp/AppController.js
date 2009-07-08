@@ -30,6 +30,8 @@ var AppController = NSObject.extend({
    
    _theWindow: null,
    
+   _testValue: 10,
+   
    init: function() {
        this._super();
        

@@ -460,7 +460,28 @@ Object.extend(NSObject, {
     */
     mixin: function(props) {
         Object.extend(this.prototype, props);
-    }
+    },
+
+	/*
+		A "nice" way to define protocols. Doesnt do anything but return the 
+		class. Nothing is added to the class. The methods defined for the
+		protocol should have empty implementations as they are only used as
+		reference within the code. For example:
+		
+		{{{
+			var NSTableDelegate = NSObject.protocol({
+				numberOfRowsInTable: function(...) {	
+				},
+				...
+			});
+		}}}
+		
+		If you want default implementations, NSObject.mixin is better suited,
+		which can then be overridden as desired.
+	*/
+	protocol: function(props) {
+		return this;
+	}
 });
 
 /**
@@ -523,12 +544,14 @@ NSObject.mixin({
         respondsToSelector:
     */
     respondsTo: function(aName) {
-        return this[aName] ? true : false;
+        return (this[aName] && (typeof this[aName] == 'function')) ? true : false;
     },
     
     perform: function(aFunctionName, withObject, anotherObject) {
         if (this.respondsTo(aFunctionName))
-            this[aFunctionName](withObject, anotherObject);
+            return this[aFunctionName](withObject, anotherObject);
+        else
+            return null;
     }
 });
 /* 
@@ -716,7 +739,11 @@ Object.extend(Array.prototype, NSArray);
 
 NSArray.create = function() {
     return [];
-}
+};
+
+NSArray.mixin = function(props) {
+    Object.extend(this.prototype, props);
+};
 
 var NSMutableArray = NSArray;
 /* 
@@ -746,18 +773,137 @@ var NSMutableArray = NSArray;
  */
 
 
+/*
+    @enum NSStringCompareOptions
+*/
+var NSCaseInsensitiveSearch         = 1;
+var NSLiteralSearch                 = 2;
+var NSBackwardsSearch               = 4;
+var NSAnchoredSearch                = 8;
+var NSNumericSearch                 = 64;
+var NSDiacriticInsensitiveSearch    = 128;
+var NSWidthInsensitiveSearch        = 256;
+var NSForcedOrderingSearch          = 512;
+
 // NSString just mirrors native String object
 var NSString = String;
 
-Object.extend(NSString.prototype, {
-	
-	typeOf: function(aClass) {
-		return aClass == NSString;
-	},
-	
-	capitalizedString: function() {
+NSString.create = function() {
+    return "";
+};
+
+NSString.mixin = function(props) {
+    Object.extend(this.prototype, props);
+};
+
+/*
+    @mixin NSString
+    @class NSString
+*/
+NSString.mixin({
+    
+    /*
+        @returns Integer
+    */
+    length: function() {
+        return this.length;
+    },
+    
+    /*
+        @param {Integer} index
+        @returns {NSString}
+    */
+    characterAtIndex: function(index) {
+        
+    }
+});
+
+NSString.mixin({
+ 
+ typeOf: function(aClass) {
+     return aClass == NSString;
+ },
+ 
+ capitalizedString: function() {
         return this.charAt(0).toUpperCase() + this.substr(1);
-	}
+ }
+});
+
+/*
+    @mixin NSStringExtensionMethods
+    @class NSString
+*/
+NSString.mixin({
+    
+    /*
+        @param {Integer} from
+        @returns NSString
+    */
+    substringFromIndex: function(from) {
+        
+    },
+    
+    /*
+        @param {Integer} to
+        @returns NSString
+    */
+    substringToIndex: function(to) {
+        
+    },
+    
+    /*
+        @param {NSRange} range
+        @returns NSString
+    */
+    substringWithRange: function(range) {
+        
+    },
+    
+    /*
+        @param {NSString} string
+        @param {NSStringCompareOptions} mask
+        @returns NSComparisonResult
+    */
+    compareWithOptions: function(string, mask) {
+        
+    },
+    
+    /*
+        @param {NSString} string
+        @param {NSStringCompareOptions} mask
+        @param {NSRange} compareRange
+        @returns NSComparisonResult
+    */
+    compareWithOptionsInRange: function(string, mask, compareRange) {
+        
+    },
+    
+    /*
+        @param {NSString} aString
+        @returns Boolean
+    */
+    isEqualToString: function(aString) {
+        
+    },
+    
+    /*
+        @param {NSString} aString
+        @returns Boolean
+    */
+    hasPrefix: function(aString) {
+        
+    },
+    
+    /*
+        @param {NSString} aString
+        @returns Boolean
+    */
+    hasSuffix: function(aString) {
+        
+    },
+    
+    
+    
 });
 /* 
  * dictionary.js
@@ -841,6 +987,61 @@ var NSDictionary = NSObject.extend({
         }
         
         this._values[aKey] = anObject;
+    }
+});
+
+/*
+    
+*/
+Object.extend(NSDictionary, {
+    
+    /*
+        @return NSDictionary
+    */
+    dictionary: function() {
+        return this.create();
+    },
+
+    /*
+        @param {id} anObject
+        @param {key} aKey
+        @return NSDictionary
+    */
+    dictionaryWithObjectForKey: function(anObject, aKey) {
+        var theDict = this.create();
+        theDict.setObjectForKey(anObject, aKey);
+        return theDict;
+    },
+    
+    /*
+        @param {id} firstObject
+        @param ... variable arguments
+        @return NSDictionary
+    */
+    dictionaryWithObjectsAndKeys: function(firstObject) {
+        
+    },
+
+    /*
+        @param {NSDictionary) dict
+        @return NSDictionary
+    */
+    dictionaryWithDictionary: function(dict) {
+        
+    },
+    
+    /*
+        @param {NSArray} objects
+        @param {NSArray} keys
+        @return NSDictionary
+    */
+    dictionaryWithObjectsForKeys: function(objects, keys) {
+        var theDict = this.create();
+        
+        for (var idx = 0; idx < objects.length; idx++)
+            theDict.setObjectForKey(objects[idx], keys[idx]);
+        
+        return theDict;
     }
 });
 
@@ -1383,6 +1584,139 @@ NSObject.mixin({
     }
 });
 /* 
+ * set.js
+ * vienna
+ * 
+ * Created by Adam Beynon.
+ * Copyright 2009 Adam Beynon.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+
+/*
+    @class NSSet
+    @extends NSObject
+*/
+var NSSet = NSObject.extend({
+    
+    /*
+        @returns Integer
+    */
+    count: function() {
+        
+    },
+    
+    /*
+        @param {id} object
+        @returns id
+    */
+    member: function(object) {
+        
+    },
+    
+    /*
+        @returns NSEnumerator
+    */
+    objectEnumerator: function() {
+        
+    }
+});
+
+/*
+    @mixin NSExtendedSet
+    @class NSSet
+*/
+NSSet.mixin({
+    
+    /*
+        @returns NSArray
+    */
+    allObjects: function() {
+        
+    },
+    
+    /*
+        @returns id
+    */
+    anyObject: function() {
+        
+    },
+    
+    /*
+        @param {id} anObject
+        @returns Boolean
+    */
+    containsObject: function(anObject) {
+        
+    },
+    
+    /*
+        @returns NSString
+    */
+    description: function() {
+        
+    },
+    
+    /*
+        @param {id} locale
+        @returns NSString
+    */
+    descriptionWithLocale: function(locale) {
+        
+    },
+    
+    /*
+        @param {NSSet} otherSet
+        @returns Boolean
+    */
+    intersectsSet: function(otherSet) {
+        
+    },
+    
+    /*
+        @param {NSSet} otherSet
+        @returns Boolean
+    */
+    isEqualToSet: function(otherSet) {
+        
+    },
+    
+    /*
+        @param {NSSet} otherSet
+        @returns Boolean
+    */
+    isSubsetOfSet: function(otherSet) {
+        
+    },
+    
+    /*
+        argument is optional
+        
+        @param {NSString} aSelector
+        @param {id} argument
+    */
+    makeObjectsPerformSelector: function(aSelector, argument) {
+        
+    }
+});
+/* 
  * key_value_coding.js
  * vienna
  * 
@@ -1422,9 +1756,18 @@ var NSUnionOfArraysKeyValueOperator             = "NSUnionOfArraysKeyValueOperat
 var NSUnionOfObjectsKeyValueOperator            = "NSUnionOfObjectsKeyValueOperator";
 var NSUnionOfSetsKeyValueOperator               = "NSUnionOfSetsKeyValueOperator";
 
+/*
+    @mixin NSKeyValueCoding
+    @class NSObject
+*/
 NSObject.mixin({
     
+    /*
+        @param {NSString} key
+        @returns id
+    */
     valueForKey: function(key) {
+
         // -get<Key>
         var accessorName = "get" + key.capitalizedString();
         if (this.respondsTo(accessorName))
@@ -1434,25 +1777,25 @@ NSObject.mixin({
         accessorName = key;
         if (this.respondsTo(accessorName))
             return this.perform(accessorName);
-        
+
         // -is<Key>
         var accessorName = "is" + key.capitalizedString();
         if (this.respondsTo(accessorName))
             return this.perform(accessorName);
-        
-        if (this.accessInstanceVariabledDirectly()) {
+
+        if (this.accessInstanceVariablesDirectly()) {
             var theValue;
-            
+
             // _<key>
             accessorName = "_" + key;
             if (theValue = this[accessorName])
                 return theValue;
-            
+
             // _is<Key>
             accessorName = "_is" + key.capitalizedString();
             if (theValue = this[accessorName])
                 return theValue;
-            
+
             // <key>
             accessorName = key;
             if (theValue = this[accessorName])
@@ -1463,19 +1806,66 @@ NSObject.mixin({
             if (theValue = this[accessorName])
                 return theValue;            
         }
-        
         // if not found
         return this.valueForUndefinedKey(key);
     },
     
+    /*
+        @param {id} value
+        @param {NSString} key
+    */
     setValueForKey: function(value, key) {
         // -set<Key>
         var accessorName = "set" + key.capitalizedString();
-        if (this.respondsTo(accessorName))
-            return this.perform(accessorName, value);
+        if (this.respondsTo(accessorName)) {
+            this.willChangeValueForKey(key);
+            this.perform(accessorName, value);
+            this.didChangeValueForKey(key);
+            return;
+        }
         
-        return this.setValueForUndefinedKey(value, key);
+        if (this.accessInstanceVariablesDirectly()) {
+
+            // _<key>
+            accessorName = "_" + key;
+            if ((this[accessorName] != 'undefined') && (typeof this[accessorName] != 'function')) {
+                this.willChangeValueForKey(key);
+                this[accessorName] = value;
+                this.didChangeValueForKey(key);
+                return;
+            }
+
+            // _is<Key>
+            accessorName = "_is" + key.capitalizedString();
+            if ((this[accessorName] != 'undefined') && (typeof this[accessorName] != 'function')) {
+                this.willChangeValueForKey(key);
+                this[accessorName] = value;
+                this.didChangeValueForKey(key);
+                return;
+            }
+
+            // <key>
+            accessorName = key;
+            if ((this[accessorName] != 'undefined') && (typeof this[accessorName] != 'function')) {
+                this.willChangeValueForKey(key);
+                this[accessorName] = value;
+                this.didChangeValueForKey(key);
+                return;
+            }
+            
+            // is<Key>
+            accessorName = "is" + key.capitalizedString();
+            if ((this[accessorName] != 'undefined') && (typeof this[accessorName] != 'function')) {
+                this.willChangeValueForKey(key);
+                this[accessorName] = value;
+                this.didChangeValueForKey(key);
+                return;
+            }
+        }
+        
+        this.setValueForUndefinedKey(value, key);
     },
+    
     
     validateValueForKey: function(aValue, aKey, error) {
         
@@ -1485,12 +1875,38 @@ NSObject.mixin({
         
     },
     
-    valueForKeyPath: function(keyPath) {
+    /*
+        Takes the key path and splits the string into seperate keys. The keys
+        are then used to recursively fetcha  value using valueForKey() for the
+        returned object at each point. The final value is then returned from
+        this function.
         
+        @param {NSString} keyPath
+        @returns id
+    */
+    valueForKeyPath: function(keyPath) {
+        var keys = keyPath.split('.'), parent = this;
+        
+        for (var idx = 0; idx < (keys.length - 1); idx++)
+            parent = parent.valueForKey(keys[idx]);
+        
+        return parent.valueForKey(keys[idx++]);
     },
     
-    setValueForKeyPath: function(value, keyPath) {
+    /*
+        Splits the key path into keys and recusively does through the chain to 
+        set the final destination value to the provided value
         
+        @param {id} value
+        @param {NSString} keyPath
+    */
+    setValueForKeyPath: function(value, keyPath) {
+        var keys = keyPath.split('.'), parent = this;
+        
+        for (var idx = 0; idx < (keys.length - 1); idx++)
+            parent = parent.valueForKey(keys[idx]);
+        
+        parent.setValueForKey(value, keys[idx++]);
     },
     
     validateValueForKeyPath: function(value, keyPath, error) {
@@ -1526,7 +1942,11 @@ NSObject.mixin({
     }
 });
 
-Object.extend(Array.prototype, {
+/*
+    @mixin NSKeyValueCoding
+    @class NSArray
+*/
+NSArray.mixin({
     
     valueForKey: function(key) {
         
@@ -1537,7 +1957,11 @@ Object.extend(Array.prototype, {
     }
 });
 
-NSDictionary.extend({
+/*
+    @mixin NSKeyValueCoding
+    @class NSDictionary
+*/
+NSDictionary.mixin({
     
     valueForKey: function(key) {
         
@@ -1683,22 +2107,263 @@ var NSKeyValueSetSetMutation                = 4;
 var NSKeyValueChangeKindKey                 = "NSKeyValueChangeKindKey"; 
 var NSKeyValueChangeNewKey                  = "NSKeyValueChangeNewKey";
 var NSKeyValueChangeOldKey                  = "NSKeyValueChangeOldKey";
-var NSKeyValueChangeIndexesKey              = "NSKeyValueChangeIndexesKey" ;
+var NSKeyValueChangeIndexesKey              = "NSKeyValueChangeIndexesKey";
 var NSKeyValueChangeNotificationIsPriorKey  = "NSKeyValueChangeNotificationIsPriorKey";
 
+/*
+	@mixin NSKeyValueObserving
+	@class NSObject
+*/
 NSObject.mixin({
     
+    /*
+        This is used to store a list of observers that are observing this object
+        for changes to key values. When a chnage takes place, the observers need
+        to be notified.
+        
+        @type NSArray
+    */
+    _kvo_observers: NSArray.create(),
+    
+    /*
+        This dictionary maintains a list of "old values" for keys that request 
+        to have their old values sent in the info dictionary for observers.
+        
+        @type NSDictionary
+    */
+    _kvo_oldValues: NSDictionary.create(),
+    
+	/*
+		@param {NSString} keyPath
+		@param {NSObject} ofObject
+		@param {NSDictionary} change
+		@param {Object} context
+	*/
     observeValueForKeyPath: function(keyPath, ofObject, change, context) {
+        console.log('observer notification for:' + keyPath);
+        console.log(this);
+    }
+});
+
+/*
+	@mixin NSKeyValueObserverRegistration
+	@class NSObject
+*/
+NSObject.mixin({
+    
+	/*
+		@param {NSObject} observer
+		@param {NSString} keyPath
+		@param {NSKeyValueObservingOptions} options
+		@param {Object} context
+	*/
+    addObserverForKeyPath: function(observer, keyPath, options, context) {
+        if (!observer || !keyPath)
+            return;
         
+        var kvcDict = NSDictionary.dictionaryWithObjectsForKeys(
+            [observer, keyPath, options, context],
+            ['NSObserver', 'NSKeyPath', 'NSOptions', 'NSContext']);
+            
+        this._kvo_observers.push(kvcDict);
     },
     
-    addObserver: function(observer, forKeyPath, options, context) {
-        
-    },
-    
-    removeObserver: function(observer, forKeyPath) {
+	/*
+		@param {NSObject} observer
+		@param {NSString} keyPath
+	*/
+    removeObserverForKeyPath: function(observer, keyPath) {
         
     }
+});
+
+/*
+	@mixin NSKeyValueObserverRegistration
+	@class NSArray
+*/
+NSArray.mixin({
+	
+	/*
+		@param {NSObject} observer
+		@param {NSIndexSet} indexes
+		@param {NSString} keyPath
+		@param {NSKeyValueObservingOptions} options
+		@param {Object} context
+	*/
+	addObserverToObjectsAtIndexes: function(observer, indexes, keyPath, options, context) {
+		
+	},
+	
+	/*
+		@param {NSObject} observer
+		@param {NSIndexSet} indexes
+		@param {NSString} keyPath
+	*/
+	removeObserverFromObjectsAtIndexes: function(observer, indexes, keyPath) {
+		
+	},
+	
+	/*
+		Arrays are not observable, so this method just throws an error.
+	
+		@param {NSObject} observer
+		@param {NSString} keyPath
+		@param {NSKeyValueObservingOptions} options
+		@param {Object} context
+	*/
+    addObserverForKeyPath: function(observer, keyPath, options, context) {
+        throw "NSArray.addObserverForKeyPath: arrays cannot be observed. keyPath: " + keyPath;
+    },
+    
+	/*
+		Arrays are not observable, so this method just throws an error.
+		
+		@param {NSObject} observer
+		@param {NSString} keyPath
+	*/
+    removeObserverForKeyPath: function(observer, keyPath) {
+        throw "NSArray.removeObserverForKeyPath: arrays cannot be observed. keyPath: " + keyPath;
+    }
+});
+
+/*
+	@mixin NSKeyValueObserverRegistration
+	@class NSSet
+*/
+NSSet.mixin({
+
+	/*
+		Sets are not observable, so this method just throws an error.
+	
+		@param {NSObject} observer
+		@param {NSString} keyPath
+		@param {NSKeyValueObservingOptions} options
+		@param {Object} context
+	*/
+    addObserverForKeyPath: function(observer, keyPath, options, context) {
+        throw "NSSet.addObserverForKeyPath: arrays cannot be observed. keyPath: " + keyPath;
+    },
+    
+	/*
+		Sets are not observable, so this method just throws an error.
+		
+		@param {NSObject} observer
+		@param {NSString} keyPath
+	*/
+    removeObserverForKeyPath: function(observer, keyPath) {
+        throw "NSSet.removeObserverForKeyPath: arrays cannot be observed. keyPath: " + keyPath;
+    }
+});
+
+
+/*
+	@mixin NSKeyValueObserverNotification
+	@class NSObject
+*/
+NSObject.mixin({
+	
+	/*
+	    This should be called before a value is set, assuming the value is
+	    required to be observable. This notes the current value of the 
+	    specified key so that it can be returned in the info dictionary
+	    to the observer if required. The order of using this function is:
+	    
+	    {{{
+	        this.willChangeValueForKey('theKey');
+	        theKey = newValue;
+	        this.didChangeValueForKey('theKey');
+	    }}}
+	    
+	    To avoid this coding repetition, these should be placed inside
+	    KVO compliant functions, so the following simipler call will
+	    handle the complexity:
+	    
+	    {{{
+	        this.setTheKey(newValue);
+            // or...
+            this.setValueForKey(newValue, 'theKey');
+	    }}}
+	
+		@param {NSString} key
+	*/
+	willChangeValueForKey: function(key) {
+	    this._kvo_oldValues.setObjectForKey(this.valueForKey(key), key);
+	},
+	
+	/*
+		@param {NSString} key
+	*/
+	didChangeValueForKey: function(key) {
+		for (var idx = 0; idx < this._kvo_observers.length; idx++) {
+		    var current = this._kvo_observers[idx];
+		    if (current.objectForKey('NSKeyPath') == key) {
+		        var theObserver = current.objectForKey('NSObserver');
+		        var changeDict = NSDictionary.dictionaryWithObjectsForKeys(
+                    [this._kvo_oldValues.objectForKey(key), this.valueForKey(key)],
+                    [NSKeyValueChangeOldKey, NSKeyValueChangeNewKey]);
+                theObserver.observeValueForKeyPath(key, this, changeDict, current.valueForKey('NSContext'));
+		    }
+		}
+	},
+	
+	/*
+		@param {NSKeyValueChange} changeKind
+		@param {NSIndexSet} indexes
+		@param {NSString} key
+	*/
+	willChangeValuesAtIndexesForKey: function(changeKind, indexes, key) {
+		
+	},
+	
+	/*
+		@param {NSKeyValueChange} changeKind
+		@param {NSIndexSet} indexes
+		@param {NSString} key
+	*/
+	didChangeValuesAtIndexesForKey: function(changeKind, indexes, key) {
+		
+	},
+	
+	/*
+		@param {NSString} key
+		@param {NSKeyValueSetMutationKind} mutationKind
+		@param {NSSet} objects
+	*/
+	willChangeValueForKeyWithSetMutationUsingObjects: function(key, mutationKind, objects) {
+		
+	},
+	
+	/*
+		@param {NSString} key
+		@param {NSKeyValueSetMutationKind} mutationKind
+		@param {NSSet} objects
+	*/
+	didChangeValueForKeyWithSetMutationUsingObjects: function(key, mutationKind, objects) {
+		
+	}
+});
+
+/*
+	@mixin NSKeyValueObservingCustomization
+	@class NSObject
+*/
+NSObject.mixin({
+	
+	/*
+		@param {NSString} key
+		@returns {NSSet}
+	*/
+	keyPathsForValuesAffectingValueForKey: function(key) {
+		
+	},
+	
+	/*
+	   @param {NSString} key
+	   @returns Boolean
+	*/
+	automaticallyNotifiesObserversForKey: function(key) {
+	    
+	}
 });
 /* 
  * notification_center.js
@@ -1774,6 +2439,159 @@ NSNotificationCenter.defaultCenter = function() {
         NSNotificationCenterDefault = NSNotificationCenter.create();
     
     return NSNotificationCenterDefault;
+};
+/* 
+ * user_defaults.js
+ * vienna
+ * 
+ * Created by Adam Beynon.
+ * Copyright 2009 Adam Beynon.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+
+var NSGlobalDomain          = "NSGlobalDomain";
+var NSArgumentDomain        = "NSArgumentDomain";
+var NSRegistrationDomain    = "NSRegistrationDomain";
+
+var NSUserDefaultsDidChangeNotification = "NSUserDefaultsDidChangeNotification";
+
+/*
+    @class NSUserDefaults
+*/
+var NSUserDefaults = NSObject.extend({
+    
+    init: function() {
+        this._super();
+        return this;
+    },
+    
+    /*
+        @param {NSString} defaultName
+        @returns id
+    */
+    objectForKey: function(defaultName) {
+        
+    },
+    
+    /*
+        @param {id} value
+        @param {NSString} defaultName
+    */
+    setObjectForKey: function(value, defaultName) {
+        
+    },
+    
+    /*
+        @param {NSString} defaultName
+    */
+    removeObjectForKey: function(defaultName) {
+        
+    },
+    
+    /*
+        @param {NSString} defaultName
+        @returns {NSString}
+    */
+    stringForKey: function(defaultName) {
+        
+    },
+    
+    /*
+        @param {NSString} defaultName
+        @returns NSArray
+    */
+    arrayForKey: function(defaultName) {
+        
+    },
+    
+    /*
+        @param {NSString} defaultName
+        @returns NSDictionary
+    */
+    dictionaryForKey: function(defaultName) {
+        
+    },
+    
+    /*
+        @param {NSString} defaultName
+        @returns NSData
+    */
+    dataForKey: function(defaultName) {
+        
+    },
+    
+    /*
+        @param {NSString} defaultName
+        @returns NSArray
+    */
+    stringArrayForKey: function(defaultName) {
+        
+    },
+    
+    /*
+        @param {NSString} defaultName
+        @returns Integer
+    */
+    integerForKey: function(defaultName) {
+        
+    },
+    
+    /*
+        @param {NSString} defaultName
+        @returns Float
+    */
+    floatForKey: function(defaultName) {
+        
+    },
+    
+    /*
+        @param {NSString} defaultName
+        @returns Double
+    */
+    doubleForKey: function(defaultName) {
+        
+    },
+    
+    /*
+        @param {NSString} defaultName
+        @returns Boolean
+    */
+    boolForKey: function(defaultName) {
+        
+    },
+    
+});
+
+/*
+    @returns NSUserDefaults
+*/
+NSUserDefaults.standardUserDefaults = function() {
+    return this.create();
+};
+
+/*
+    Reset
+*/
+NSUserDefaults.resetUserDefaults = function() {
+    // do something
 };
 /* 
  * geometry.js
@@ -5468,7 +6286,7 @@ var NSApplication = NSResponder.extend({
     },
     
     windows: function() {
-        
+        return this._windows;
     },
     
     setWindowsNeedUpdate: function(needUpdate) {
@@ -6607,6 +7425,1058 @@ var NSApplicationTitleView = NSView.extend({
         CGContextSetShadowWithColor(c, NSMakeSize(1, 1), 0, NSColor.colorWithCalibratedRGBA(0.204, 0.204, 0.204, 0.8));
         this.attributedTitle().drawWithRectAndOptions(aRect, null);
     }
+});
+/* 
+ * key_value_binding.js
+ * vienna
+ * 
+ * Created by Adam Beynon.
+ * Copyright 2009 Adam Beynon.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+
+var NSMultipleValuesMarker = null;
+var NSNoSelectionMarker = null;
+var NSNotApplicableMarker = null;
+
+/*
+    @param object - NSObject
+    @return boolean
+*/
+function NSIsControllerMarker(object)
+{
+    
+}
+
+/*
+    These keys are to be used in the retunred dictionary for the infoForBinding
+    method.
+*/
+var NSObservedObjectKey     = "NSObservedObjectKey";
+var NSObservedKeyPathKey    = "NSObservedKeyPathKey";
+var NSOptionsKey            = "NSOptionsKey";
+
+/*
+    Bindings exposed here will then become available in the instance method
+    exposedBindings();
+    
+    @param binding - NSString
+*/
+NSObject.exposeBinding = function(binding) {
+    
+};
+
+/*
+    @mixin NSKeyValueBindingCreation
+*/
+NSObject.mixin({
+    
+    /*
+        @return NSArray
+    */
+    exposedBindings: function() {
+        
+    },
+    
+    /*
+        Optional method.
+        
+        @param binding - NSString
+        @return Class
+    */
+    valueClassForBinding: function(binding) {
+        
+    },
+    
+    /*
+        Instantiate a binding to the object. Placeholders and other information
+        can be specified in the options dictionary.
+        
+        @param binding - NSString
+        @param toObject - NSObject
+        @param withKeyPath - NSString
+        @param options - NSDictionary
+    */
+    bind: function(binding, toObject, withKeyPath, options) {
+        
+    },
+    
+    /*
+        Remove the specified binding
+        
+        @param binding - NSString
+    */
+    unbind: function(binding) {
+        
+    },
+    
+    /*
+        Information about the dictionary. Can be null if the binding is not
+        bound. Contains these three items:
+        
+        NSObservedObjectKey   - the bound object
+        NSObservedKeyPathKey  - the bound keypath
+        NSOptionsKey          - specified options
+        
+        @param binding - NSString
+        @return NSDictionary
+    */
+    infoForBinding: function(binding) {
+        
+    },
+    
+    /*
+        Returns array of NSAttributeDescriptions for binding
+        
+        @param binding - NSString
+        @return NSArray
+    */
+    optionDescriptionsForBinding: function(binding) {
+        
+    }
+});
+
+/*
+    @mixin NSPlaceholders (meta class)
+*/
+Object.extend(NSObject, {
+    
+    /*
+        Marker can be null, NSMultipleValuesMarker, NSNoSelectionMarker or
+        NSNotApplicableMarker
+        
+        @param placeholder - NSObject
+        @param marker - NSObject
+        @param binding - NSString
+    */
+    setDefaultPlaceholderForMarker: function(placeholder, marker, binding) {
+        
+    },
+    
+    /*
+        Marker can be null, NSMultipleValuesMarker, NSNoSelectionMarker or
+        NSNotApplicableMarker
+    
+        @param marker - NSObject
+        @param binding - NSString
+    */
+    defaultPlaceholderForMarker: function(marker, binding) {
+        
+    }
+});
+
+/*
+    @mixin NSEditorRegistration
+    
+    These should be implemented by controllers etc.
+*/
+NSObject.mixin({
+    
+    /*
+        @param editor - NSObject
+    */
+    objectDidBeginEditing: function(editor) {
+        
+    },
+    
+    /*
+        @param editor - NSObject
+    */
+    objectDidEndEditing: function(editor) {
+        
+    }
+});
+
+/*
+    @mixin NSEditor
+    
+    These should be implemented by controllers etc.
+*/
+NSObject.mixin({
+    
+    /*
+        Reverts back to original value (end chnages).
+    */
+    discardEditing: function() {
+        
+    },
+    
+    /*
+        Returns whether or not end editing was a success. It might not be if the
+        value is invalid (e.g. an object requires a float value, but was given
+        a string).
+        
+        @return boolean
+    */
+    commitEditing: function() {
+        
+    },
+    
+    /*
+        @param delegate - NSObject
+        @param didCommitAction - function pointer for delegate
+        @param contextInfo - NSObject
+    */
+    commitEditingWithDelegate: function(delegate, didCommitAction, contextInfo) {
+        
+    }
+});
+
+/*
+    Default constant names for bindings (AppKit defined)
+*/
+var NSAlignmentBinding                          = "NSAlignmentBinding";
+var NSAlternateImageBinding	                    = "NSAlternateImageBinding";
+var NSAlternateTitleBinding	                    = "NSAlternateTitleBinding";
+var NSAnimateBinding                            = "NSAnimateBinding";
+var NSAnimationDelayBinding	                    = "NSAnimationDelayBinding";
+var NSArgumentBinding	                        = "NSArgumentBinding";
+var NSAttributedStringBinding	                = "NSAttributedStringBinding";
+var NSContentArrayBinding	                    = "NSContentArrayBinding";
+var NSContentArrayForMultipleSelectionBinding	= "NSContentArrayForMultipleSelectionBinding";
+var NSContentBinding	                        = "NSContentBinding";
+var NSContentDictionaryBinding	                = "NSContentDictionaryBinding";
+var NSContentHeightBinding	                    = "NSContentHeightBinding";
+var NSContentObjectBinding	                    = "NSContentObjectBinding";
+var NSContentObjectsBinding	                    = "NSContentObjectsBinding";
+var NSContentSetBinding	                        = "NSContentSetBinding";
+var NSContentValuesBinding                      = "NSContentValuesBinding";
+var NSContentWidthBinding                       = "NSContentWidthBinding";
+var NSCriticalValueBinding                      = "NSCriticalValueBinding";
+var NSDataBinding                               = "NSDataBinding";
+var NSDisplayPatternTitleBinding                = "NSDisplayPatternTitleBinding";
+var NSDisplayPatternValueBinding                = "NSDisplayPatternValueBinding";
+var NSDocumentEditedBinding                     = "NSDocumentEditedBinding";
+var NSDoubleClickArgumentBinding                = "NSDoubleClickArgumentBinding";
+var NSDoubleClickTargetBinding                  = "NSDoubleClickTargetBinding";
+var NSEditableBinding                           = "NSEditableBinding";
+var NSEnabledBinding                            = "NSEnabledBinding";
+var NSExcludedKeysBinding                       = "NSExcludedKeysBinding";
+var NSFilterPredicateBinding                    = "NSFilterPredicateBinding";
+var NSFontBinding                               = "NSFontBinding";
+var NSFontBoldBinding                           = "NSFontBoldBinding";
+var NSFontFamilyNameBinding                     = "NSFontFamilyNameBinding";
+var NSFontItalicBinding                         = "NSFontItalicBinding";
+var NSFontNameBinding                           = "NSFontNameBinding";
+var NSFontSizeBinding                           = "NSFontSizeBinding";
+var NSHeaderTitleBinding                        = "NSHeaderTitleBinding";
+var NSHiddenBinding                             = "NSHiddenBinding";
+var NSImageBinding                              = "NSImageBinding";
+var NSIncludedKeysBinding                       = "NSIncludedKeysBinding";
+var NSInitialKeyBinding                         = "NSInitialKeyBinding";
+var NSInitialValueBinding                       = "NSInitialValueBinding";
+var NSIsIndeterminateBinding                    = "NSIsIndeterminateBinding";
+var NSLabelBinding                              = "NSLabelBinding";
+var NSLocalizedKeyDictionaryBinding             = "NSLocalizedKeyDictionaryBinding";
+var NSManagedObjectContextBinding               = "NSManagedObjectContextBinding";
+var NSMaximumRecentsBinding                     = "NSMaximumRecentsBinding";
+var NSMaxValueBinding                           = "NSMaxValueBinding";
+var NSMaxWidthBinding                           = "NSMaxWidthBinding";
+var NSMinValueBinding                           = "NSMinValueBinding";
+var NSMinWidthBinding                           = "NSMinWidthBinding";
+var NSMixedStateImageBinding                    = "NSMixedStateImageBinding";
+var NSOffStateImageBinding                      = "NSOffStateImageBinding";
+var NSOnStateImageBinding                       = "NSOnStateImageBinding";
+var NSPredicateBinding                          = "NSPredicateBinding";
+var NSRecentSearchesBinding                     = "NSRecentSearchesBinding";
+var NSRepresentedFilenameBinding                = "NSRepresentedFilenameBinding";
+var NSRowHeightBinding                          = "NSRowHeightBinding";
+var NSSelectedIdentifierBinding                 = "NSSelectedIdentifierBinding";
+var NSSelectedIndexBinding                      = "NSSelectedIndexBinding";
+var NSSelectedLabelBinding                      = "NSSelectedLabelBinding";
+var NSSelectedObjectBinding                     = "NSSelectedObjectBinding";
+var NSSelectedObjectsBinding                    = "NSSelectedObjectsBinding";
+var NSSelectedTagBinding                        = "NSSelectedTagBinding";
+var NSSelectedValueBinding                      = "NSSelectedValueBinding";
+var NSSelectedValuesBinding                     = "NSSelectedValuesBinding";
+var NSSelectionIndexesBinding                   = "NSSelectionIndexesBinding";
+var NSSelectionIndexPathsBinding                = "NSSelectionIndexPathsBinding";
+var NSSortDescriptorsBinding                    = "NSSortDescriptorsBinding";
+var NSTargetBinding                             = "NSTargetBinding";
+var NSTextColorBinding                          = "NSTextColorBinding";
+var NSTitleBinding                              = "NSTitleBinding";
+var NSToolTipBinding                            = "NSToolTipBinding";
+var NSTransparentBinding                        = "NSTransparentBinding";
+var NSValueBinding                              = "NSValueBinding";
+var NSValuePathBinding                          = "NSValuePathBinding";
+var NSValueURLBinding                           = "NSValueURLBinding";
+var NSVisibleBinding                            = "NSVisibleBinding";
+var NSWarningValueBinding                       = "NSWarningValueBinding";
+var NSWidthBinding                              = "NSWidthBinding";
+
+
+/*
+    Options for bindings (used with info keys at top).
+*/
+var NSAllowsEditingMultipleValuesSelectionBindingOption = "NSAllowsEditingMultipleValuesSelectionBindingOption";
+var NSAllowsNullArgumentBindingOption                   = "NSAllowsNullArgumentBindingOption";
+var NSAlwaysPresentsApplicationModalAlertsBindingOption = "NSAlwaysPresentsApplicationModalAlertsBindingOption";
+var NSConditionallySetsEditableBindingOption            = "NSConditionallySetsEditableBindingOption";
+var NSConditionallySetsEnabledBindingOption             = "NSConditionallySetsEnabledBindingOption";
+var NSConditionallySetsHiddenBindingOption              = "NSConditionallySetsHiddenBindingOption";
+var NSContinuouslyUpdatesValueBindingOption             = "NSContinuouslyUpdatesValueBindingOption";
+var NSCreatesSortDescriptorBindingOption                = "NSCreatesSortDescriptorBindingOption";
+var NSDeletesObjectsOnRemoveBindingsOption              = "NSDeletesObjectsOnRemoveBindingsOption";
+var NSDisplayNameBindingOption                          = "NSDisplayNameBindingOption";
+var NSDisplayPatternBindingOption                       = "NSDisplayPatternBindingOption";
+var NSContentPlacementTagBindingOption                  = "NSContentPlacementTagBindingOption";
+var NSHandlesContentAsCompoundValueBindingOption        = "NSHandlesContentAsCompoundValueBindingOption";
+var NSInsertsNullPlaceholderBindingOption               = "NSInsertsNullPlaceholderBindingOption";
+var NSInvokesSeparatelyWithArrayObjectsBindingOption    = "NSInvokesSeparatelyWithArrayObjectsBindingOption";
+var NSMultipleValuesPlaceholderBindingOption            = "NSMultipleValuesPlaceholderBindingOption";
+var NSNoSelectionPlaceholderBindingOption               = "NSNoSelectionPlaceholderBindingOption";
+var NSNotApplicablePlaceholderBindingOption             = "NSNotApplicablePlaceholderBindingOption";
+var NSNullPlaceholderBindingOption                      = "NSNullPlaceholderBindingOption";
+var NSRaisesForNotApplicableKeysBindingOption           = "NSRaisesForNotApplicableKeysBindingOption";
+var NSPredicateFormatBindingOption                      = "NSPredicateFormatBindingOption";
+var NSSelectorNameBindingOption                         = "NSSelectorNameBindingOption";
+var NSSelectsAllWhenSettingContentBindingOption         = "NSSelectsAllWhenSettingContentBindingOption";
+var NSValidatesImmediatelyBindingOption                 = "NSValidatesImmediatelyBindingOption";
+var NSValueTransformerNameBindingOption                 = "NSValueTransformerNameBindingOption";
+var NSValueTransformerBindingOption                     = "NSValueTransformerBindingOption";
+/* 
+ * controller.js
+ * vienna
+ * 
+ * Created by Adam Beynon.
+ * Copyright 2009 Adam Beynon.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+
+var NSController = NSObject.extend({
+    
+    /*
+        NSArray
+    */
+    _editors: null,
+    
+    /*
+        NSArray
+    */
+    _declaredKeys: null,
+    
+    /*
+        NSDictionary
+    */
+    _dependentKeyToModelKeyTable: null,
+    
+    /*
+        NSDictionary
+    */
+    _modelKeyToDependentKeyTable: null,
+    
+    /*
+        @param editor - NSObject
+    */
+    objectDidBeginEditing: function(editor) {
+        
+    },
+    
+    /*
+        @param editor - NSObject
+    */
+    objectDidEndEditing: function(editor) {
+        
+    },
+    
+    discardEditing: function() {
+        
+    },
+    
+    /*
+        @return boolean
+    */
+    commitEditing: function() {
+        
+    },
+    
+    commitEditingWithDelegate: function(delegate, didCommitAction, contextInfo) {
+        
+    },
+    
+    /*
+        @return boolean
+    */
+    isEditing: function() {
+        
+    }
+});
+/* 
+ * object_controller.js
+ * vienna
+ * 
+ * Created by Adam Beynon.
+ * Copyright 2009 Adam Beynon.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+
+/*
+    @class NSObjectController
+    @extend NSController
+*/
+var NSObjectController = NSController.extend({
+    
+    /*
+        NSString
+    */
+    _objectClassName: null,
+    
+    /*
+        Class
+    */
+    _objectClass: null,
+    
+    /*
+        NSArray
+    */
+    _contentObjectArray: null,
+    
+    /*
+        NSObject
+    */
+    _content: null,
+    
+    /*
+        NSObject
+    */
+    _objectHandler: null,
+    
+    /*
+        @param NSObject content
+        @return NSObjectController
+    */
+    initWithContent: function(content) {
+        
+    },
+    
+    /*
+        @param NSObject content
+    */
+    setContent: function(content) {
+        
+    },
+    
+    /*
+        @return NSObject
+    */
+    content: function() {
+        
+    },
+    
+    /*
+        Returns the object being used to access the content
+        
+        @return NSObject
+    */
+    selection: function() {
+        
+    },
+    
+    /*
+        Returns an array of all the content objects
+        
+        @return NSArray
+    */
+    selectedObjects: function() {
+        
+    },
+    
+    /*
+        When loaded from xib files, prepareContent will be called (if true).
+        
+        @param boolean flag
+    */
+    setAutomaticallyPreparesContent: function(flag) {
+        
+    },
+    
+    /*
+        @return boolean
+    */
+    automaticallyPreparesContent: function() {
+        
+    },
+    
+    /*
+        Sets the content. Default just creates a new object, of the required
+        type, and sets it as the content. (based on _objectClass ivar)
+    */
+    prepareContent: function() {
+        
+    },
+    
+    /*
+        The object class to use when creating new objects
+        
+        @param Class objectClass
+    */
+    setObjectClass: function(objectClass) {
+        
+    },
+    
+    /*
+        @return Class
+    */
+    objectClass: function() {
+        
+    },
+    
+    /*
+        Creates a new object, _objectClass, when adding/inserting objects. Uses
+        the default init() method of the object.
+        
+        @return NSObject (or subclass of)
+    */
+    newObject: function() {
+        
+    },
+    
+    /*
+        Sets the content object for the controller.
+        
+        @param NSObject object
+    */
+    addObject: function(object) {
+        
+    },
+    
+    /*
+        Removes the object if current content
+        
+        @param NSObject object
+    */
+    removeObject: function(object) {
+        
+    },
+    
+    /*
+        Sets whether the controller can add/remove objects
+        
+        @param boolean flag
+    */
+    setEditable: function(flag) {
+        
+    },
+    
+    /*
+        @return boolean
+    */
+    isEditable: function() {
+        
+    },
+    
+    /*
+        Creates a new object with newObject() and then adds it using addObject()
+        
+        @param NSObject sender - object that requested a new object to be added
+    */
+    add: function(sender) {
+        
+    },
+    
+    /*
+        Returns whether or not new objects can be added.
+        
+        @return boolean
+    */
+    canAdd: function() {
+        
+    },
+    
+    /*
+        Removes content object through removeObject()
+        
+        @param NSObject sender - object that requested removal
+    */
+    remove: function(sender) {
+        
+    },
+    
+    /*
+        Returns whether or not an item can be removed (false if there
+        are no items in content, for example)
+        
+        @return boolean
+    */
+    canRemove: function() {
+        
+    }
+});
+/* 
+ * array_controller.js
+ * vienna
+ * 
+ * Created by Adam Beynon.
+ * Copyright 2009 Adam Beynon.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+
+/*
+    @class NSArrayController
+    @extend NSObjectController
+*/
+var NSArrayController = NSObjectController.extend({
+    
+    /*
+        NSInteger
+    */
+    _observedIndexHint: null,
+    
+    /*
+        NSIndexSet
+    */
+    _selectionIndexes: null,
+    
+    /*
+        NSArray
+    */
+    _objects: null,
+    
+    /*
+        NSIndexSet
+    */
+    _cachedSelectedIndexes: null,
+    
+    /*
+        NSArray
+    */
+    _cachedSelectedObjects: null,
+    
+    /*
+        NSArray
+    */
+    _arrangedObjects: null,
+    
+    /*
+        Rearranges objects ready for display. This might include sorting and
+        filtering.
+    */
+    rearrangeObjects: function() {
+        
+    },
+    
+    /*
+        Sets whether the controller rearranges objects. Default is false
+        
+        @param boolean flag
+    */
+    setAutomaticallyRearrangesObjects: function(flag) {
+        
+    },
+    
+    /*
+        @return boolean
+    */
+    automaticallyRearrangesObjects: function() {
+        
+    },
+    
+    /*
+        @return NSArray
+    */
+    automaticRearrangementKeyPaths: function() {
+        
+    },
+    
+    /*
+        ..
+    */
+    didChangeArrangementCriteria: function() {
+        
+    },
+    
+    /*
+        @param NSArray sortDescriptors
+    */
+    setSortDescriptors: function(sortDescriptors) {
+        
+    },
+    
+    /*
+        @return NSArray
+    */
+    sortDescriptors: function() {
+        
+    },
+    
+    /*
+        @param NSPredicate filterPredicate
+    */
+    setFilterPredicate: function(filterPredicate) {
+        
+    },
+    
+    /*
+        @return NSPredicate
+    */
+    filterPredicate: function() {
+        
+    },
+    
+    /*
+        If true, predicates are disabled after adding new objects. this avoids
+        new objects not meeting criteria from being automatically hidden.
+        
+        This is true by default
+        
+        @param bool flag
+    */
+    setClearsFilterPredicateOnInsertion: function(flag) {
+        
+    },
+    
+    /*
+        @return boolean
+    */
+    clearsFilterPredicateOnInsertion: function() {
+        
+    },
+    
+	/*
+		@param NSArray objects
+		@return NSArray
+	*/
+    arrangeObjects: function(objects) {
+	
+	},
+	
+	/*
+		An array of all objects to be displayed (after filtering/sorting)
+		@return NSArray
+	*/
+	arrangedObjects: function() {
+		
+	},
+	
+	/*
+		Default is true.
+		
+		@param bool flag
+	*/
+	setAvoidsEmptySelection: function(flag) {
+		
+	},
+	
+	/*
+		@return bool
+	*/
+	avoidsEmptySelection: function() {
+		
+	},
+	
+	/*
+		Default is true
+		
+		@param bool flag
+	*/
+	setPreservesSelection: function(flag) {
+		
+	},
+	
+	/*
+		@return bool
+	*/
+	preservesSelection: function() {
+		
+	},
+	
+	/*
+		Default is true
+		
+		@param bool flag
+	*/
+	setSelectsInsertedObjects: function(flag) {
+		
+	},
+	
+	/*
+		@return bool
+	*/
+	selectsInsertedObjects: function() {
+		
+	},
+	
+	/*
+		@param {Boolean} flag
+	*/
+	setAlwaysUsesMultipleValuesMarker: function(flag) {
+		
+	},
+	
+	/*
+		@returns Boolean
+	*/
+	alwaysUsesMultipleValuesMarker: function() {
+		
+	},
+	
+	/*
+		@param {NSIndexSet} indexes
+		@returns Boolean
+	*/
+	setSelectionIndexes: function(indexes) {
+		
+	},
+	
+	/*
+		@returns NSIndexSet
+	*/
+	selectionIndexes: function() {
+		
+	},
+	
+	/*
+		@param {Integer} index
+		@returns Boolean
+	*/
+	setSelectionIndex: function() {
+		
+	},
+	
+	/*
+		@returns Integer
+	*/
+	selectionIndex: function() {
+		
+	},
+	
+	/*
+		@param {NSIndexSet} indexes
+		@returns Boolean
+	*/
+	addSelectionIndexes: function(indexes) {
+		
+	},
+	
+	/*
+		@param {NSIndexSet} indexes
+		@returns Boolean
+	*/
+	removeSelectionIndexes: function(indexes) {
+		
+	},
+	
+	/*
+		@param {NSArray} objects
+		@returns Boolean
+	*/
+	setSelectionObjects: function(objects) {
+		
+	},
+	
+	/*
+		@returns {NSIndexSet}
+	*/
+	selectedObjects: function() {
+		
+	},
+	
+	/*
+		@param {NSArray} objects
+		@returns Boolean
+	*/
+	addSelectedObjects: function(objects) {
+		
+	},
+	
+	/*
+		@param {NSArray} objects
+		@retuns Boolean
+	*/
+	removeSelectedObjects: function(objects) {
+		
+	},
+	
+	/*
+		Adds new object to the content objects, but to the arranged objects as
+		well.
+		
+		@param {NSObject} sender
+	*/
+	add: function(sender) {
+		
+	},
+	
+	/*
+		Remove selected object(s)
+	
+		@param {NSObject} sender
+	*/
+	remove: function(sender) {
+		
+	},
+	
+	/*
+		@param {NSObject} sender
+	*/
+	insert: function(sender) {
+		
+	},
+	
+	/*
+		@return Boolean
+	*/
+	canInsert: function() {
+		
+	},
+	
+	/*
+		@param {NSObject} sender
+	*/
+	selectNext: function(sender) {
+		
+	},
+	
+	/*
+		@param {NSObject} sender
+	*/
+	selectPrevious: function(sender) {
+		
+	},
+	
+	/*
+		@returns Boolean
+	*/
+	canSelectNext: function() {
+		
+	},
+	
+	/*
+		@returns Boolean
+	*/
+	canSelectPrevious: function() {
+		
+	},
+	
+	/*
+		@param {NSObject} object
+	*/
+	addObject: function(object) {
+		
+	},
+	
+	/*
+		@param {NSArray} objects
+	*/
+	addObjects: function(objects) {
+		
+	},
+	
+	/*
+		@param {NSObject} object
+		@param {Integer} index
+	*/
+	insertObjectAtArrangedObjectIndex: function(object, index) {
+		
+	},
+	
+	/*
+		@param {NSArray} objects
+		@param {NSIndexSet} indexes
+	*/
+	insertObjectsAtArrangedObjectIndexes: function(objects, indexes) {
+		
+	},
+	
+	/*
+		@param {Integer} index
+	*/
+	removeObjectAtArrangedObjectIndex: function(index) {
+		
+	},
+	
+	/*
+		@param {NSIndexSet} indexes
+	*/
+	removeObjectsAtArrangedObjectIndexes: function(indexes) {
+		
+	},
+	
+	/*
+		@param {NSObject} object
+	*/
+	removeObject: function(object) {
+		
+	},
+	
+	/*
+		@param {NSArray} objects
+	*/
+	removeObjects: function(objects) {
+		
+	}
 });
 /* 
  * attributed_string.js
@@ -8806,332 +10676,6 @@ Object.extend(NSFont, {
         
     }
 });
-/* 
- * key_value_binding.js
- * vienna
- * 
- * Created by Adam Beynon.
- * Copyright 2009 Adam Beynon.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
-
-var NSMultipleValuesMarker = null;
-var NSNoSelectionMarker = null;
-var NSNotApplicableMarker = null;
-
-/*
-    @param object - NSObject
-    @return boolean
-*/
-function NSIsControllerMarker(object)
-{
-    
-}
-
-/*
-    These keys are to be used in the retunred dictionary for the infoForBinding
-    method.
-*/
-var NSObservedObjectKey     = "NSObservedObjectKey";
-var NSObservedKeyPathKey    = "NSObservedKeyPathKey";
-var NSOptionsKey            = "NSOptionsKey";
-
-/*
-    Bindings exposed here will then become available in the instance method
-    exposedBindings();
-    
-    @param binding - NSString
-*/
-NSObject.exposeBinding = function(binding) {
-    
-};
-
-/*
-    @mixin NSKeyValueBindingCreation
-*/
-NSObject.mixin({
-    
-    /*
-        @return NSArray
-    */
-    exposedBindings: function() {
-        
-    },
-    
-    /*
-        Optional method.
-        
-        @param binding - NSString
-        @return Class
-    */
-    valueClassForBinding: function(binding) {
-        
-    },
-    
-    /*
-        Instantiate a binding to the object. Placeholders and other information
-        can be specified in the options dictionary.
-        
-        @param binding - NSString
-        @param toObject - NSObject
-        @param withKeyPath - NSString
-        @param options - NSDictionary
-    */
-    bind: function(binding, toObject, withKeyPath, options) {
-        
-    },
-    
-    /*
-        Remove the specified binding
-        
-        @param binding - NSString
-    */
-    unbind: function(binding) {
-        
-    },
-    
-    /*
-        Information about the dictionary. Can be null if the binding is not
-        bound. Contains these three items:
-        
-        NSObservedObjectKey   - the bound object
-        NSObservedKeyPathKey  - the bound keypath
-        NSOptionsKey          - specified options
-        
-        @param binding - NSString
-        @return NSDictionary
-    */
-    infoForBinding: function(binding) {
-        
-    },
-    
-    /*
-        Returns array of NSAttributeDescriptions for binding
-        
-        @param binding - NSString
-        @return NSArray
-    */
-    optionDescriptionsForBinding: function(binding) {
-        
-    }
-});
-
-/*
-    @mixin NSPlaceholders (meta class)
-*/
-Object.extend(NSObject, {
-    
-    /*
-        Marker can be null, NSMultipleValuesMarker, NSNoSelectionMarker or
-        NSNotApplicableMarker
-        
-        @param placeholder - NSObject
-        @param marker - NSObject
-        @param binding - NSString
-    */
-    setDefaultPlaceholderForMarker: function(placeholder, marker, binding) {
-        
-    },
-    
-    /*
-        Marker can be null, NSMultipleValuesMarker, NSNoSelectionMarker or
-        NSNotApplicableMarker
-    
-        @param marker - NSObject
-        @param binding - NSString
-    */
-    defaultPlaceholderForMarker: function(marker, binding) {
-        
-    }
-});
-
-/*
-    @mixin NSEditorRegistration
-    
-    These should be implemented by controllers etc.
-*/
-NSObject.mixin({
-    
-    /*
-        @param editor - NSObject
-    */
-    objectDidBeginEditing: function(editor) {
-        
-    },
-    
-    /*
-        @param editor - NSObject
-    */
-    objectDidEndEditing: function(editor) {
-        
-    }
-});
-
-/*
-    @mixin NSEditor
-    
-    These should be implemented by controllers etc.
-*/
-NSObject.mixin({
-    
-    /*
-        Reverts back to original value (end chnages).
-    */
-    discardEditing: function() {
-        
-    },
-    
-    /*
-        Returns whether or not end editing was a success. It might not be if the
-        value is invalid (e.g. an object requires a float value, but was given
-        a string).
-        
-        @return boolean
-    */
-    commitEditing: function() {
-        
-    },
-    
-    /*
-        @param delegate - NSObject
-        @param didCommitAction - function pointer for delegate
-        @param contextInfo - NSObject
-    */
-    commitEditingWithDelegate: function(delegate, didCommitAction, contextInfo) {
-        
-    }
-});
-
-/*
-    Default constant names for bindings (AppKit defined)
-*/
-var NSAlignmentBinding                          = "NSAlignmentBinding";
-var NSAlternateImageBinding	                    = "NSAlternateImageBinding";
-var NSAlternateTitleBinding	                    = "NSAlternateTitleBinding";
-var NSAnimateBinding                            = "NSAnimateBinding";
-var NSAnimationDelayBinding	                    = "NSAnimationDelayBinding";
-var NSArgumentBinding	                        = "NSArgumentBinding";
-var NSAttributedStringBinding	                = "NSAttributedStringBinding";
-var NSContentArrayBinding	                    = "NSContentArrayBinding";
-var NSContentArrayForMultipleSelectionBinding	= "NSContentArrayForMultipleSelectionBinding";
-var NSContentBinding	                        = "NSContentBinding";
-var NSContentDictionaryBinding	                = "NSContentDictionaryBinding";
-var NSContentHeightBinding	                    = "NSContentHeightBinding";
-var NSContentObjectBinding	                    = "NSContentObjectBinding";
-var NSContentObjectsBinding	                    = "NSContentObjectsBinding";
-var NSContentSetBinding	                        = "NSContentSetBinding";
-var NSContentValuesBinding                      = "NSContentValuesBinding";
-var NSContentWidthBinding                       = "NSContentWidthBinding";
-var NSCriticalValueBinding                      = "NSCriticalValueBinding";
-var NSDataBinding                               = "NSDataBinding";
-var NSDisplayPatternTitleBinding                = "NSDisplayPatternTitleBinding";
-var NSDisplayPatternValueBinding                = "NSDisplayPatternValueBinding";
-var NSDocumentEditedBinding                     = "NSDocumentEditedBinding";
-var NSDoubleClickArgumentBinding                = "NSDoubleClickArgumentBinding";
-var NSDoubleClickTargetBinding                  = "NSDoubleClickTargetBinding";
-var NSEditableBinding                           = "NSEditableBinding";
-var NSEnabledBinding                            = "NSEnabledBinding";
-var NSExcludedKeysBinding                       = "NSExcludedKeysBinding";
-var NSFilterPredicateBinding                    = "NSFilterPredicateBinding";
-var NSFontBinding                               = "NSFontBinding";
-var NSFontBoldBinding                           = "NSFontBoldBinding";
-var NSFontFamilyNameBinding                     = "NSFontFamilyNameBinding";
-var NSFontItalicBinding                         = "NSFontItalicBinding";
-var NSFontNameBinding                           = "NSFontNameBinding";
-var NSFontSizeBinding                           = "NSFontSizeBinding";
-var NSHeaderTitleBinding                        = "NSHeaderTitleBinding";
-var NSHiddenBinding                             = "NSHiddenBinding";
-var NSImageBinding                              = "NSImageBinding";
-var NSIncludedKeysBinding                       = "NSIncludedKeysBinding";
-var NSInitialKeyBinding                         = "NSInitialKeyBinding";
-var NSInitialValueBinding                       = "NSInitialValueBinding";
-var NSIsIndeterminateBinding                    = "NSIsIndeterminateBinding";
-var NSLabelBinding                              = "NSLabelBinding";
-var NSLocalizedKeyDictionaryBinding             = "NSLocalizedKeyDictionaryBinding";
-var NSManagedObjectContextBinding               = "NSManagedObjectContextBinding";
-var NSMaximumRecentsBinding                     = "NSMaximumRecentsBinding";
-var NSMaxValueBinding                           = "NSMaxValueBinding";
-var NSMaxWidthBinding                           = "NSMaxWidthBinding";
-var NSMinValueBinding                           = "NSMinValueBinding";
-var NSMinWidthBinding                           = "NSMinWidthBinding";
-var NSMixedStateImageBinding                    = "NSMixedStateImageBinding";
-var NSOffStateImageBinding                      = "NSOffStateImageBinding";
-var NSOnStateImageBinding                       = "NSOnStateImageBinding";
-var NSPredicateBinding                          = "NSPredicateBinding";
-var NSRecentSearchesBinding                     = "NSRecentSearchesBinding";
-var NSRepresentedFilenameBinding                = "NSRepresentedFilenameBinding";
-var NSRowHeightBinding                          = "NSRowHeightBinding";
-var NSSelectedIdentifierBinding                 = "NSSelectedIdentifierBinding";
-var NSSelectedIndexBinding                      = "NSSelectedIndexBinding";
-var NSSelectedLabelBinding                      = "NSSelectedLabelBinding";
-var NSSelectedObjectBinding                     = "NSSelectedObjectBinding";
-var NSSelectedObjectsBinding                    = "NSSelectedObjectsBinding";
-var NSSelectedTagBinding                        = "NSSelectedTagBinding";
-var NSSelectedValueBinding                      = "NSSelectedValueBinding";
-var NSSelectedValuesBinding                     = "NSSelectedValuesBinding";
-var NSSelectionIndexesBinding                   = "NSSelectionIndexesBinding";
-var NSSelectionIndexPathsBinding                = "NSSelectionIndexPathsBinding";
-var NSSortDescriptorsBinding                    = "NSSortDescriptorsBinding";
-var NSTargetBinding                             = "NSTargetBinding";
-var NSTextColorBinding                          = "NSTextColorBinding";
-var NSTitleBinding                              = "NSTitleBinding";
-var NSToolTipBinding                            = "NSToolTipBinding";
-var NSTransparentBinding                        = "NSTransparentBinding";
-var NSValueBinding                              = "NSValueBinding";
-var NSValuePathBinding                          = "NSValuePathBinding";
-var NSValueURLBinding                           = "NSValueURLBinding";
-var NSVisibleBinding                            = "NSVisibleBinding";
-var NSWarningValueBinding                       = "NSWarningValueBinding";
-var NSWidthBinding                              = "NSWidthBinding";
-
-
-/*
-    Options for bindings (used with info keys at top).
-*/
-var NSAllowsEditingMultipleValuesSelectionBindingOption = "NSAllowsEditingMultipleValuesSelectionBindingOption";
-var NSAllowsNullArgumentBindingOption                   = "NSAllowsNullArgumentBindingOption";
-var NSAlwaysPresentsApplicationModalAlertsBindingOption = "NSAlwaysPresentsApplicationModalAlertsBindingOption";
-var NSConditionallySetsEditableBindingOption            = "NSConditionallySetsEditableBindingOption";
-var NSConditionallySetsEnabledBindingOption             = "NSConditionallySetsEnabledBindingOption";
-var NSConditionallySetsHiddenBindingOption              = "NSConditionallySetsHiddenBindingOption";
-var NSContinuouslyUpdatesValueBindingOption             = "NSContinuouslyUpdatesValueBindingOption";
-var NSCreatesSortDescriptorBindingOption                = "NSCreatesSortDescriptorBindingOption";
-var NSDeletesObjectsOnRemoveBindingsOption              = "NSDeletesObjectsOnRemoveBindingsOption";
-var NSDisplayNameBindingOption                          = "NSDisplayNameBindingOption";
-var NSDisplayPatternBindingOption                       = "NSDisplayPatternBindingOption";
-var NSContentPlacementTagBindingOption                  = "NSContentPlacementTagBindingOption";
-var NSHandlesContentAsCompoundValueBindingOption        = "NSHandlesContentAsCompoundValueBindingOption";
-var NSInsertsNullPlaceholderBindingOption               = "NSInsertsNullPlaceholderBindingOption";
-var NSInvokesSeparatelyWithArrayObjectsBindingOption    = "NSInvokesSeparatelyWithArrayObjectsBindingOption";
-var NSMultipleValuesPlaceholderBindingOption            = "NSMultipleValuesPlaceholderBindingOption";
-var NSNoSelectionPlaceholderBindingOption               = "NSNoSelectionPlaceholderBindingOption";
-var NSNotApplicablePlaceholderBindingOption             = "NSNotApplicablePlaceholderBindingOption";
-var NSNullPlaceholderBindingOption                      = "NSNullPlaceholderBindingOption";
-var NSRaisesForNotApplicableKeysBindingOption           = "NSRaisesForNotApplicableKeysBindingOption";
-var NSPredicateFormatBindingOption                      = "NSPredicateFormatBindingOption";
-var NSSelectorNameBindingOption                         = "NSSelectorNameBindingOption";
-var NSSelectsAllWhenSettingContentBindingOption         = "NSSelectsAllWhenSettingContentBindingOption";
-var NSValidatesImmediatelyBindingOption                 = "NSValidatesImmediatelyBindingOption";
-var NSValueTransformerNameBindingOption                 = "NSValueTransformerNameBindingOption";
-var NSValueTransformerBindingOption                     = "NSValueTransformerBindingOption";
 /* 
  * layout_manager.js
  * vienna
@@ -14456,6 +16000,8 @@ var VN = { };
 var AppController = NSObject.extend({
    
    _theWindow: null,
+   
+   _testValue: 10,
    
    init: function() {
        this._super();
