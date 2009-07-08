@@ -47,6 +47,9 @@ scroll_view.js:
 object_container.js: 
   dependencies: []
 
+key_value_binding.js: 
+  dependencies: 
+  - object.js
 text_storage.js: 
   dependencies: []
 

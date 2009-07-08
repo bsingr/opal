@@ -35,6 +35,16 @@ resource('NSScrollerTopKnobNormal.png');        // 15 x 10
 resource('NSScrollerBottomKnobNormal.png');     // 15 x 10
 resource('NSScrollerVerticalKnobNormal.png');   // 15 x 1
 
+// NSScroller Horizontal
+resource('NSScrollerRightArrowNormal.png');     // 18 x 15
+resource('NSScrollerLeftArrowNormal.png');      // 30 x 15
+resource('NSScrollerLeftSlotNormal.png');       // 18 x 15
+resource('NSScrollerHBackgroundNormal.png');    // 6 x 15
+
+resource('NSScrollerLeftKnobNormal.png');       // 10 x 15
+resource('NSScrollerRightSlotNormal.png');      // 10 x 15
+resource('NSScrollerHorizontalKnobNormal.png'); // 1 x 15
+
 // NSScrollArrowPosition
 var NSScrollerArrowsDefaultSetting	= 0;
 var NSScrollerArrowsNone	       	= 2;
@@ -94,10 +104,11 @@ var NSScroller = NSView.extend({
         this._value = aCoder.decodeDoubleForKey("NSCurValue");
         if (!this._value)
             this._value = 1;
-        
+            
         this._knobProportion = aCoder.decodeDoubleForKey("NSPercent");
         if (!this._knobProportion)
             this._knobProportion = 1;
+        
                     
         return this;
     },
@@ -106,19 +117,23 @@ var NSScroller = NSView.extend({
         var c = NSGraphicsContext.currentContext().graphicsPort();
         
         if (this._isVertical) {
-            // var slotRect = this.rectForPart(NSScrollerKnobSlot);
             this.drawKnobSlotInRect(this.rectForPart(NSScrollerKnobSlot), false);
             NSImage.imageNamed('NSScrollerTopSlotNormal.png').drawInRect(NSMakeRect(0, 0, 15, 18));
             
             this.drawArrow(NSScrollerIncrementArrow, false);
             this.drawArrow(NSScrollerDecrementArrow, false);
-            
-            // draw the non part (background)
-            // NSImage.imageNamed('NSScrollerVBackgroundNormal.png').drawInRect(this.rectForPart(NSScrollerNoPart));
-            
+             
             this.drawKnob();
         }
-        
+        else {
+            this.drawKnobSlotInRect(this.rectForPart(NSScrollerKnobSlot), false);
+            NSImage.imageNamed('NSScrollerLeftSlotNormal.png').drawInRect(NSMakeRect(0, 0, 18, 15));
+
+            this.drawArrow(NSScrollerIncrementArrow, false);
+            this.drawArrow(NSScrollerDecrementArrow, false);
+
+            this.drawKnob();
+        }
     },
     
     drawParts: function() {
@@ -148,11 +163,36 @@ var NSScroller = NSView.extend({
                     break;
                 
                 case NSScrollerKnob:
-                console.log(this._value + ' ...... ' + this._knobProportion);
                     var slotRect = this.rectForPart(NSScrollerKnobSlot);
                     var scrollerHeight = this._knobProportion * slotRect.size.height;
-                    var yOffset = ((slotRect.size.height - scrollerHeight) * this._value); // ((this._value * scrollerHeight) / 2);
+                    var yOffset = (slotRect.size.height - scrollerHeight) * this._value;
                     return NSMakeRect(0, yOffset + slotRect.origin.y, 15, scrollerHeight);
+                    break;
+            }
+        }
+        else {
+            switch (partCode) {
+                case NSScrollerKnobSlot:
+                    return NSMakeRect(8, 0, this._bounds.size.width - 45, 15);
+                    break;
+                case NSScrollerIncrementLine:
+                    // bottom arrow (facing down)
+                    return NSMakeRect(this._bounds.size.width - 18, 0, 18, 15);
+                    break;
+                case NSScrollerDecrementLine:
+                    // top arrow
+                    return NSMakeRect(this._bounds.size.width - (18 + 30), 0, 30, 15);
+                    break;
+                case NSScrollerNoPart:
+                    // returns the area between slot and top arrow
+                    return NSMakeRect(18, 0, this._bounds.size.width - (18 + 30 + 18), 15);
+                    break;
+                
+                case NSScrollerKnob:
+                    var slotRect = this.rectForPart(NSScrollerKnobSlot);
+                    var scrollerWidth = this._knobProportion * slotRect.size.width;
+                    var xOffset = (slotRect.size.width - scrollerWidth) * this._value;
+                    return NSMakeRect(xOffset + slotRect.origin.x, 0, scrollerWidth, 15);
                     break;
             }
         }
@@ -188,20 +228,33 @@ var NSScroller = NSView.extend({
     drawArrow: function(anArrow, highlight) {
         if (anArrow == NSScrollerIncrementArrow) {
             var theRect = this.rectForPart(NSScrollerIncrementLine);
-            NSImage.imageNamed('NSScrollerBottomArrowNormal.png').drawInRect(theRect);
+            if (this._isVertical)
+                NSImage.imageNamed('NSScrollerBottomArrowNormal.png').drawInRect(theRect);
+            else
+                NSImage.imageNamed('NSScrollerRightArrowNormal.png').drawInRect(theRect);
         }
         else if (anArrow == NSScrollerDecrementArrow) {
             var theRect = this.rectForPart(NSScrollerDecrementLine);
-            NSImage.imageNamed('NSScrollerTopArrowNormal.png').drawInRect(theRect);
+            if (this._isVertical)
+                NSImage.imageNamed('NSScrollerTopArrowNormal.png').drawInRect(theRect);
+            else
+                NSImage.imageNamed('NSScrollerLeftArrowNormal.png').drawInRect(theRect);
         }
         
     },
     
     drawKnob: function() {
         var knobRect = this.rectForPart(NSScrollerKnob);
-        NSImage.imageNamed('NSScrollerTopKnobNormal.png').drawInRect(NSMakeRect(knobRect.origin.x, knobRect.origin.y, 15, 10));
-        NSImage.imageNamed('NSScrollerVerticalKnobNormal.png').drawInRect(NSMakeRect(knobRect.origin.x, knobRect.origin.y + 10, 15, knobRect.size.height - 20));
-        NSImage.imageNamed('NSScrollerBottomKnobNormal.png').drawInRect(NSMakeRect(knobRect.origin.x, knobRect.origin.y + 10 + (knobRect.size.height - 20), 15, 10));
+        if (this._isVertical) {
+            NSImage.imageNamed('NSScrollerTopKnobNormal.png').drawInRect(NSMakeRect(knobRect.origin.x, knobRect.origin.y, 15, 10));
+            NSImage.imageNamed('NSScrollerVerticalKnobNormal.png').drawInRect(NSMakeRect(knobRect.origin.x, knobRect.origin.y + 10, 15, knobRect.size.height - 20));
+            NSImage.imageNamed('NSScrollerBottomKnobNormal.png').drawInRect(NSMakeRect(knobRect.origin.x, knobRect.origin.y + 10 + (knobRect.size.height - 20), 15, 10));
+        }
+        else {
+            // NSImage.imageNamed('NSScrollerLeftKnobNormal.png').drawInRect(NSMakeRect(knobRect.origin.x, knobRect.origin.y, 10, 15));
+            // NSImage.imageNamed('NSScrollerHorizontalKnobNormal.png').drawInRect(NSMakeRect(knobRect.origin.x + 10, knobRect.origin.y, knobRect.size.width - 20, 15));
+            // NSImage.imageNamed('NSScrollerRightKnobNormal.png').drawInRect(NSMakeRect(knobRect.origin.x + 10 + (knobRect.size.width - 20), knobRect.origin.y, 10, 15));
+        }
     },
     
     /*
@@ -209,7 +262,10 @@ var NSScroller = NSView.extend({
         @param highlight - Boolean
     */
     drawKnobSlotInRect: function(slotRect, highlight) {
-        NSImage.imageNamed('NSScrollerVBackgroundNormal.png').drawInRect(slotRect);
+        if (this._isVertical)
+            NSImage.imageNamed('NSScrollerVBackgroundNormal.png').drawInRect(slotRect);
+        else
+            NSImage.imageNamed('NSScrollerHBackgroundNormal.png').drawInRect(slotRect);
     },
     
     /*
@@ -249,8 +305,26 @@ var NSScroller = NSView.extend({
             // Temp fix for inverted co-ord (cocoa origin bottom left)
             location.y = this._bounds.size.height - location.y;
             
-            console.log(location.y - this._knobTrackStartPoint.y);
+            var knobRect = this.rectForPart(NSScrollerKnob);
+            var slotRect = this.rectForPart(NSScrollerKnobSlot);
+            // var change = (location.y - this._knobTrackStartPoint.y) * knobRect.size.height;
+            var offsetY = (location.y - this._knobTrackStartPoint.y) / (slotRect.size.height - knobRect.size.height);// - knobRect.origin.y;
+            // var newValue = offsetY / (slotRect.size.height - knobRect.size.height);
+            this.setDoubleValue(offsetY + 0.5);
+            // this.setNeedsDisplay(true);
+            // console.log(offsetY + '(' + this._value + ')');
         });
+    },
+    
+    setDoubleValue: function(aDouble) {
+        if (aDouble < 0)
+            this._value = 0;
+        else if (aDouble > 1)
+            this._value = 1;
+        else
+            this._value = aDouble;
+        
+        this.setNeedsDisplay(true);
     },
     
     /*

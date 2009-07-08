@@ -98,9 +98,13 @@ var NSView = NSResponder.extend({
         
         this._DOMContainer.style.display = "block";
         this._DOMContainer.style.position = "absolute";
+        this._DOMContainer.style.overflowX = "hidden";
+        this._DOMContainer.style.overflowY = "hidden";
         
         this._DOMGraphicsContext.style.display = "block";
         this._DOMGraphicsContext.style.position = "absolute";
+        this._DOMGraphicsContext.style.overflowX = "hidden";
+        this._DOMGraphicsContext.style.overflowY = "hidden";
     },
     
     /**

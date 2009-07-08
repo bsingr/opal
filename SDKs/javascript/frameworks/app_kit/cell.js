@@ -112,6 +112,8 @@ var NSCell = NSObject.extend({
     _alignment: null,
     _controlSize: null,
     
+    _isContinuous: null,
+    
     _lineBreakMode: null,
     _wraps: null,
     
@@ -147,6 +149,7 @@ var NSCell = NSObject.extend({
         this._isScrollable = (flags & 0x00100000) ? true : false;
         this._alignment = (flags2 & 0x1c000000) >> 26;
         this._controlSize = (flags2 & 0xE0000) >> 17;
+        this._isContinuous = (flags & 0x00080100) ? true : false;
         
         this._lineBreakMode = (flags & 0x00007000) >> 12;
         this._wraps = (flags & 0x40) ? false : true;
@@ -233,11 +236,11 @@ var NSCell = NSObject.extend({
     },
     
     isContinuous: function() {
-        
+        return this._isContinuous;
     },
     
     setContinuous: function(flag) {
-        
+        this._isContinuous = flag;
     },
     
     isEditable: function() {
@@ -521,7 +524,6 @@ var NSCell = NSObject.extend({
     },
     
     startTrackingInView: function(startPoint, controlView) {
-        
         return this.isEnabled() ? true : false;
     },
     
@@ -549,7 +551,10 @@ var NSCell = NSObject.extend({
         
         this.highlightInView(true, controlView.bounds(), controlView);
         controlView.unlockFocus();
-        NSApplication.sharedApplication().sendAction(this._action, this._target, this);
+        if (this.isContinuous()) {
+            // mouse down, so only send if control is continous
+            NSApplication.sharedApplication().sendAction(this._action, this._target, this);
+        }
         
         // for each further event...
         NSApplication.sharedApplication().bindEventsMatchingMask((NSLeftMouseUpMask | NSMouseMovedMask), this, function(theEvent) {
@@ -567,6 +572,16 @@ var NSCell = NSObject.extend({
                         this._state = NSOffState;
                     
                     this.setHighlighted(false);
+                    this.drawWithFrame(cellFrame, controlView);
+                    controlView.unlockFocus();
+                    
+                    NSApplication.sharedApplication().unbindEvents();
+                    if (NSPointInRect(location, cellFrame)) {
+                        // only send action is mouse up was in rect
+                        NSApplication.sharedApplication().sendAction(this._action, this._target, this);
+                    }
+                    
+                    return;
                 }
                 else {
                     if (NSPointInRect(location, cellFrame))
@@ -590,7 +605,11 @@ var NSCell = NSObject.extend({
             this.drawWithFrame(cellFrame, controlView);
             controlView.unlockFocus();
             
-            NSApplication.sharedApplication().sendAction(this._action, this._target, this);
+            if (this.isContinuous()) {
+                // mouse moved, so only send if control is continous
+                NSApplication.sharedApplication().sendAction(this._action, this._target, this);
+            }
+                
         });
     },
     

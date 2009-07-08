@@ -30,6 +30,16 @@ var NSCustomView = NSView.extend({
     
     initWithCoder: function(aCoder) {
         this._super(aCoder);
-        return this;
+        
+        var theFrame = NSMakeRect(0, 0, 0, 0);
+        if (aCoder.containsValueForKey("NSFrame"))
+            theFrame = aCoder.decodeRectForKey("NSFrame");
+        else if (aCoder.containsValueForKey("NSFrameSize"))
+            theFrame.size = aCoder.decodeSizeForKey("NSFrameSize");
+        
+        var theClassName = aCoder.decodeObjectForKey("NSClassName");
+        var theView = window[theClassName].create('initWithFrame', theFrame);
+        
+        return theView;
     }
 });

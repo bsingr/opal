@@ -1,5 +1,5 @@
 /* 
- * custom_view.js
+ * controller.js
  * vienna
  * 
  * Created by Adam Beynon.
@@ -24,21 +24,63 @@
  * THE SOFTWARE.
  */
 
+include('app_kit/key_value_binding');
 
-var NSCustomView = NSView.extend({
+var NSController = NSObject.extend({
     
-    initWithCoder: function(aCoder) {
-        this._super(aCoder);
+    /*
+        NSArray
+    */
+    _editors: null,
+    
+    /*
+        NSArray
+    */
+    _declaredKeys: null,
+    
+    /*
+        NSDictionary
+    */
+    _dependentKeyToModelKeyTable: null,
+    
+    /*
+        NSDictionary
+    */
+    _modelKeyToDependentKeyTable: null,
+    
+    /*
+        @param editor - NSObject
+    */
+    objectDidBeginEditing: function(editor) {
         
-        var theFrame = NSMakeRect(0, 0, 0, 0);
-        if (aCoder.containsValueForKey("NSFrame"))
-            theFrame = aCoder.decodeRectForKey("NSFrame");
-        else if (aCoder.containsValueForKey("NSFrameSize"))
-            theFrame.size = aCoder.decodeSizeForKey("NSFrameSize");
+    },
+    
+    /*
+        @param editor - NSObject
+    */
+    objectDidEndEditing: function(editor) {
         
-        var theClassName = aCoder.decodeObjectForKey("NSClassName");
-        var theView = window[theClassName].create('initWithFrame', theFrame);
+    },
+    
+    discardEditing: function() {
         
-        return theView;
+    },
+    
+    /*
+        @return boolean
+    */
+    commitEditing: function() {
+        
+    },
+    
+    commitEditingWithDelegate: function(delegate, didCommitAction, contextInfo) {
+        
+    },
+    
+    /*
+        @return boolean
+    */
+    isEditing: function() {
+        
     }
 });

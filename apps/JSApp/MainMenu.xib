@@ -12,7 +12,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="710"/>
+			<integer value="368"/>
 			<integer value="687"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
@@ -133,7 +133,7 @@
 							<reference key="NSSuperview" ref="414427165"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSSliderCell" key="NSCell" id="829387278">
-								<int key="NSCellFlags">-2080244224</int>
+								<int key="NSCellFlags">-2079981824</int>
 								<int key="NSCellFlags2">0</int>
 								<string key="NSContents"/>
 								<reference key="NSSupport" ref="672854075"/>
@@ -581,7 +581,7 @@
 									<bool key="NSEnabled">YES</bool>
 									<reference key="NSTarget" ref="504503506"/>
 									<string key="NSAction">_doScroller:</string>
-									<double key="NSCurValue">0.59999999999999998</double>
+									<double key="NSCurValue">0.59859154929577463</double>
 									<double key="NSPercent">0.64500000000000002</double>
 								</object>
 								<object class="NSScroller" id="1023033300">
@@ -1923,6 +1923,14 @@
 						<reference key="destination" ref="864649339"/>
 					</object>
 					<int key="connectionID">708</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">takeDoubleValueFrom:</string>
+						<reference key="source" ref="744995210"/>
+						<reference key="destination" ref="257328319"/>
+					</object>
+					<int key="connectionID">714</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -3822,7 +3830,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">712</int>
+			<int key="maxID">714</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes"/>
 		<int key="IBDocument.localizationMode">0</int>
