@@ -31,7 +31,12 @@ include('runtime/runtime');
 */
 var NSObject = function() {
     return this;
-}
+};
+
+Function.prototype.property = function(key) {
+    this._kvc_property = key;
+    return this;
+};
 
 Object.extend(NSObject, {
     
@@ -63,6 +68,15 @@ Object.extend(NSObject, {
         
         // copy in new props (might over-ride existing ones)
         for (var prop in props) {
+            if(props[prop] && props[prop] instanceof Function) {
+                if (props[prop]._kvc_property) {
+                    console.log('_kvc_property:' + props[prop]._kvc_property);
+                }
+            }
+            // if (props[prop].age) {
+                // console.log('yesh');
+            // }
+            // throw "something";
             base[prop] = (typeof props[prop] == "function" && 
                 typeof _super[prop] == "function") ? 
                 (function(name, func) {

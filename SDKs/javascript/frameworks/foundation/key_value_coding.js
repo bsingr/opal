@@ -73,23 +73,23 @@ NSObject.mixin({
 
             // _<key>
             accessorName = "_" + key;
-            if (theValue = this[accessorName])
-                return theValue;
+            if ((typeof this[accessorName] != 'undefined') && (typeof this[accessorName] != 'function'))
+                return this[accessorName];
 
             // _is<Key>
             accessorName = "_is" + key.capitalizedString();
-            if (theValue = this[accessorName])
-                return theValue;
+            if ((typeof this[accessorName] != 'undefined') && (typeof this[accessorName] != 'function'))
+                return this[accessorName];
 
             // <key>
             accessorName = key;
-            if (theValue = this[accessorName])
-                return theValue;
+            if ((typeof this[accessorName] != 'undefined') && (typeof this[accessorName] != 'function'))
+                return this[accessorName];
             
             // is<Key>
             accessorName = "is" + key.capitalizedString();
-            if (theValue = this[accessorName])
-                return theValue;            
+            if ((typeof this[accessorName] != 'undefined') && (typeof this[accessorName] != 'function'))
+                return this[accessorName];           
         }
         // if not found
         return this.valueForUndefinedKey(key);
@@ -118,7 +118,9 @@ NSObject.mixin({
 
             // _<key>
             accessorName = "_" + key;
-            if ((this[accessorName] != 'undefined') && (typeof this[accessorName] != 'function')) {
+            console.log('trying ' + accessorName);
+            if ((typeof this[accessorName] != 'undefined') && (typeof this[accessorName] != 'function')) {
+                console.log('well');
                 this.willChangeValueForKey(key);
                 this[accessorName] = value;
                 this.didChangeValueForKey(key);
@@ -127,7 +129,9 @@ NSObject.mixin({
 
             // _is<Key>
             accessorName = "_is" + key.capitalizedString();
-            if ((this[accessorName] != 'undefined') && (typeof this[accessorName] != 'function')) {
+            console.log('trying ' + accessorName);
+            if ((typeof this[accessorName] != 'undefined') && (typeof this[accessorName] != 'function')) {
+                console.log('well 2');
                 this.willChangeValueForKey(key);
                 this[accessorName] = value;
                 this.didChangeValueForKey(key);
@@ -136,23 +140,29 @@ NSObject.mixin({
 
             // <key>
             accessorName = key;
-            if ((this[accessorName] != 'undefined') && (typeof this[accessorName] != 'function')) {
+            console.log('trying ' + accessorName);
+            if ((typeof this[accessorName] != 'undefined') && (typeof this[accessorName] != 'function')) {
+                console.log('first');
                 this.willChangeValueForKey(key);
+                console.log('second');
                 this[accessorName] = value;
+                console.log('third');
                 this.didChangeValueForKey(key);
+                console.log('fourth');
                 return;
             }
             
             // is<Key>
             accessorName = "is" + key.capitalizedString();
-            if ((this[accessorName] != 'undefined') && (typeof this[accessorName] != 'function')) {
+            console.log('trying ' + accessorName);
+            if ((typeof this[accessorName] != 'undefined') && (typeof this[accessorName] != 'function')) {
                 this.willChangeValueForKey(key);
                 this[accessorName] = value;
                 this.didChangeValueForKey(key);
                 return;
             }
         }
-        
+        console.log('no luck..');
         this.setValueForUndefinedKey(value, key);
     },
     

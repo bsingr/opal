@@ -26,10 +26,10 @@
 
 
 var AppController = NSObject.extend({
-   
-   _theWindow: null,
-   
+     
    _testValue: 10,
+   
+   _window: IBOutlet(),
    
    init: function() {
        this._super();
@@ -37,6 +37,10 @@ var AppController = NSObject.extend({
        console.log('creating app controller');
        return this;
    },
+   
+   setTestValue: function(aValue) {
+       this._testValue = aValue;
+   }.property('testValue'),
    
    doSomething: function(sender) {
        
