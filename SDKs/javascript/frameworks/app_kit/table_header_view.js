@@ -55,8 +55,16 @@ var NSTableHeaderView = NSView.extend({
     },
     
     drawRect: function(dirtyRect) {
-        var c = NSGraphicsContext.currentContext().graphicsPort();
-        CGContextFillRect(c, dirtyRect);
+        // var c = NSGraphicsContext.currentContext().graphicsPort();
+        // var tableColumns = this._tableView.tableColumns();
+        // var columnRect = this.bounds(), spacing = this._tableView._intercellSpacing;
+        // 
+        // for (var idx = 0; idx < tableColumns.length; idx++) {
+        //     var theColumn = tableColumns[idx];
+        //     columnRect.size.width = theColumn.width() + spacing.width;
+        //     theColumn.headerCell.drawWithFrame(columnRect, this);
+        //     columnRect.origin.x = theColumn.width() + spacing.width;
+        // }
     },
     
     draggedColumn: function() {

@@ -41,5 +41,40 @@ var NSTextField = NSControl.extend({
             this._cell.setHighlighted(true);
             this._cell.editWithFrame(this._bounds, this, this._currentEditor, this, theEvent);
         }
+    },
+    
+    /*
+        Instantiate a binding to the object. Placeholders and other information
+        can be specified in the options dictionary.
+        
+        @param binding - NSString
+        @param toObject - NSObject
+        @param withKeyPath - NSString
+        @param options - NSDictionary
+    */
+    bind: function(binding, toObject, withKeyPath, options) {
+        // value binding - NSValueBinding
+        if (binding == "value") {
+            toObject.addObserverForKeyPath(this, withKeyPath, 0, NSValueBinding);
+            
+            var bindingInfo = NSDictionary.dictionaryWithObjectsForKeys(
+                [toObject, withKeyPath, options],
+                [NSObservedObjectKey, NSObservedKeyPathKey, NSOptionsKey]);
+            
+            this._kvb_info.setObjectForKey(bindingInfo, NSValueBinding);
+        }
+    },
+    
+    /*
+		@param {NSString} keyPath
+		@param {NSObject} ofObject
+		@param {NSDictionary} change
+		@param {Object} context
+	*/
+    observeValueForKeyPath: function(keyPath, ofObject, change, context) {
+        if (context == NSValueBinding) {
+            var newValue = ofObject.valueForKeyPath(keyPath);
+            this.setObjectValue(newValue);
+        }
     }
 });

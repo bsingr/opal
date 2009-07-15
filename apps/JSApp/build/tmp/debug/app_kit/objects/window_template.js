@@ -67,6 +67,7 @@ var NSWindowTemplate = NSObject.extend({
         var theClass = window[this._windowClass];
         var theWindow = theClass.create('initWithContentRectAndStyleMask', this._windowRect, this._styleMask);
         theWindow.setContentView(this._windowView);
+        theWindow.makeKeyAndOrderFront(this);
         return theWindow;
     }
 });

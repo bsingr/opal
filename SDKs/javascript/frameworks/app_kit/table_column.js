@@ -33,6 +33,9 @@ var NSTableColumnUserResizingMask   = ( 1 << 1 );
 
 var NSTableColumn = NSObject.extend({
     
+    /**
+        @type NSString
+    */
     _identifier: null,
     _headerCell: null,
     _dataCell: null,
@@ -42,11 +45,13 @@ var NSTableColumn = NSObject.extend({
     
     _tableView: null,
     
+    _value: null,
+    
     initWithCoder: function(aCoder) {
         // this._super(aCoder);
         
         this._identifier = aCoder.decodeObjectForKey("NSIdentifier");
-        // this._headerCell = aCoder.decodeObjectForKey("NSHeaderCell");
+        this._headerCell = aCoder.decodeObjectForKey("NSHeaderCell");
         this._dataCell = aCoder.decodeObjectForKey("NSDataCell");
         this._width = aCoder.decodeIntForKey("NSWidth");
         this._minWidth = aCoder.decodeIntForKey("NSMinWidth");
@@ -55,6 +60,42 @@ var NSTableColumn = NSObject.extend({
         
         return this;
     },
+    
+    /*
+        Instantiate a binding to the object. Placeholders and other information
+        can be specified in the options dictionary.
+        
+        @param binding - NSString
+        @param toObject - NSObject
+        @param withKeyPath - NSString
+        @param options - NSDictionary
+    */
+    bind: function(binding, toObject, withKeyPath, options) {
+        if (binding == "value") {
+            toObject.addObserverForKeyPath(this, withKeyPath, 0, NSValueBinding);
+            
+            var bindingInfo = NSDictionary.dictionaryWithObjectsForKeys(
+                [toObject, withKeyPath, options],
+                [NSObservedObjectKey, NSObservedKeyPathKey, NSOptionsKey]);
+
+            this._kvb_info.setObjectForKey(bindingInfo, NSValueBinding);
+        }
+    },
+
+     /*
+ 		@param {NSString} keyPath
+ 		@param {NSObject} ofObject
+ 		@param {NSDictionary} change
+ 		@param {Object} context
+ 	*/
+     observeValueForKeyPath: function(keyPath, ofObject, change, context) {
+         if (context == NSValueBinding) {
+             var newValue = ofObject.valueForKeyPath(keyPath);
+             // this.setObjectValue(newValue);
+             consolg.log('table column, new value = ');
+             console.log(newValue);
+         }
+     },
     
     setTableView: function(aTableView) {
         this._tableView = aTableView;

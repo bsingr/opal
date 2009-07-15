@@ -49,16 +49,19 @@ var NSApplicationWillUpdateNotification                 = "NSApplicationWillUpda
 var NSApplicationWillTerminateNotification              = "NSApplicationWillTerminateNotification";
 var NSApplicationDidChangeScreenParametersNotification  = "NSApplicationDidChangeScreenParametersNotification";
 
-
+/**
+    @class NSApplication
+    @extends NSResponder
+*/
 var NSApplication = NSResponder.extend({
     
     _delegate: null,
     
-    _windows: [],
+    _windows: null,
     
     _currentEvent: null,
     
-    _eventQueue: [],
+    _eventQueue: null,
     
     _eventBindingQueued: false,
     
@@ -76,6 +79,10 @@ var NSApplication = NSResponder.extend({
     
     init: function() {
         // this._super();
+        
+        this._windows = [];
+        this._eventQueue = [];
+        
         return this;
     },
     
@@ -150,11 +157,23 @@ var NSApplication = NSResponder.extend({
     },
     
     mainWindow: function() {
+        for (var idx = 0; idx < this._windows.length; idx++) {
+            if (this._windows[idx].isMainWindow()) {
+                return this._windows[idx];
+            }
+        }
         
+        return null;
     },
     
     keyWindow: function() {
+        for (var idx = 0; idx < this._windows.length; idx++) {
+            if (this._windows[idx].isKeyWindow()) {
+                return this._windows[idx];
+            }
+        }
         
+        return null;
     },
     
     isRunning: function() {
@@ -172,9 +191,32 @@ var NSApplication = NSResponder.extend({
         are attatched here.
     */
     run: function() {
-        document.onmousedown = NSEventFromRawEvent;
-        document.onmouseup = NSEventFromRawEvent;
-        document.onmousemove = NSEventFromRawEvent;
+        document.onmousedown = NSEventFromMouseEvent;
+        document.onmouseup = NSEventFromMouseEvent;
+        document.onmousemove = NSEventFromMouseEvent;
+        document.onkeypress = NSEventFromKeyEvent;
+        // match special keys that will not be caugh by onkeypress. It is important
+        // to stop the event here for those key events, but we must allow other keys
+        // to pass (by not returning false)
+        document.onkeydown = function(theEvent) {
+            switch (theEvent.keyCode) {
+                case NSUpArrowFunctionKey:
+                case NSDownArrowFunctionKey:
+                case NSLeftArrowFunctionKey:
+                case NSRightArrowFunctionKey:
+                case NSDeleteForwardFunctionKey:
+                case NSDeleteBackwardFunctionKey:
+                case NSReturnFunctionKey:
+                case NSEscapeFunctionKey:
+                case NSTabFunctionKey:
+                case NSPageUpFunctionKey:
+                case NSPageDownFunctionKey:
+                    NSEventFromKeyEvent(theEvent);
+                    return false;
+                    break;
+                default:
+            };
+        };
         
         // On resize, post notification (for app delegate, also windows listen and handle accordingly)
         window.onresize = function() {
@@ -265,6 +307,9 @@ var NSApplication = NSResponder.extend({
         
     },
     
+    /**
+        @param {NSMenu} aMenu
+    */
     setMainMenu: function(aMenu) {
         this._mainMenu = aMenu;
         
@@ -301,21 +346,182 @@ var NSApplication = NSResponder.extend({
     }
 });
 
-Object.extend(NSApplication, {
-
-    /**
-        Returns the singleton instance of the NSApplication object that exists
-        for the application. This creates NSApp if it does not already exist.
+/**
+    Returns the singleton instance of the NSApplication object that exists
+    for the application. This creates NSApp if it does not already exist.
         
-        It is pretty safe to just reference NSApp itself in code, as it will 
-        already have been created before any user code is likely to run, 
-        assuming that no user code exists in the global scope.
+    It is pretty safe to just reference NSApp itself in code, as it will 
+    already have been created before any user code is likely to run, 
+    assuming that no user code exists in the global scope.
+*/
+NSApplication.sharedApplication = function() {
+    if (!NSApp)
+        NSApp = NSApplication.create();
+    
+    return NSApp
+};
+
+/**
+    @protocol NSApplicationDelegate
+*/
+var NSApplicationDelegate = NSObject.protocol({
+    
+    /**
+        @optional
+        
+        @param {NSApplication} sender
+        @returns NSApplicationTerminateReply
     */
-    sharedApplication: function() {
-        if (!NSApp)
-            NSApp = NSApplication.create();
-	    
-	    return NSApp;
+    applicationShouldTerminate: function(sender) {
+    },
+    
+    /**
+        @optional
+        
+        @param {NSApplication} sender
+        @param {NSString} filename
+        @returns Boolean
+    */
+    applicationOpenFile: function(sender, filename) {
+    },
+    
+    /**
+        @optional
+        
+        @param {NSApplication} sender
+        @returns Boolean
+    */
+    applicationShouldOpenUntitledFile: function(sender) {
+    },
+    
+    /**
+        @optional
+        
+        @param {NSApplication} application
+        @param {NSError} error
+        @returns NSError
+    */
+    applicationWillPresentError: function(application, error) {
+    },
+    
+    /**
+        @optional
+        
+        @notification NSApplicationWillFinishLaunchingNotification
+        @param {NSNotification} notification
+    */
+    
+    applicationWillFinishLaunching: function(notification) {
+    },
+    
+    /**
+        @optional
+        
+        @notification applicationDidFinishLaunching
+        @param {NSNotification} notification
+    */
+    
+    applicationDidFinishLaunching: function(notification) {
+    },
+    
+    /**
+        @optional
+        
+        @notification applicationDidFinishLaunching
+        @param {NSNotification} notification
+    */
+    
+    applicationWillHide: function(notification) {
+    },
+    
+    /**
+        @optional
+        
+        @notification applicationDidFinishLaunching
+        @param {NSNotification} notification
+    */
+    
+    applicationDidHide: function(notification) {
+    },
+    
+    /**
+        @optional
+        
+        @notification applicationDidFinishLaunching
+        @param {NSNotification} notification
+    */
+    
+    applicationWillUnhide: function(notification) {
+    },
+    
+    /**
+        @optional
+        
+        @notification applicationDidFinishLaunching
+        @param {NSNotification} notification
+    */
+    
+    applicationDidUnhide: function(notification) {
+    },
+    
+    /**
+        @optional
+        
+        @notification applicationDidFinishLaunching
+        @param {NSNotification} notification
+    */
+    
+    applicationWillBecomeActive: function(notification) {
+    },
+    
+    /**
+        @optional
+        
+        @notification applicationDidFinishLaunching
+        @param {NSNotification} notification
+    */
+    
+    applicationDidBecomeActive: function(notification) {
+    },
+    
+    /**
+        @optional
+        
+        @notification applicationDidFinishLaunching
+        @param {NSNotification} notification
+    */
+    
+    applicationWillResignActive: function(notification) {
+    },
+    
+    /**
+        @optional
+        
+        @notification applicationDidFinishLaunching
+        @param {NSNotification} notification
+    */
+    
+    applicationWillUpdate: function(notification) {
+    },
+    
+    /**
+        @optional
+        
+        @notification applicationDidFinishLaunching
+        @param {NSNotification} notification
+    */
+    
+    applicationWillTerminate: function(notification) {
+    },
+    
+    /**
+        @optional
+        
+        @notification applicationDidFinishLaunching
+        @param {NSNotification} notification
+    */
+    
+    applicationDidChangeScreenParameters: function(notification) {
     }
 });
 

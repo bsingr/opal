@@ -140,7 +140,7 @@ var NSView = NSResponder.extend({
         Initialize with the given coder
     */
     initWithCoder: function(aCoder) {
-        
+        this._super(aCoder);
         this.setupGraphicsContextDisplay();
         
         this._frame = NSMakeRect(0, 0, 0, 0);
@@ -174,6 +174,11 @@ var NSView = NSResponder.extend({
         return this;
     },
     
+    // awakeAfterUsingCoder: function(aCoder) {
+    //     this.setNeedsDisplay(true);
+    //     return this;
+    // },
+    
     window: function() {
         return this._window;
     },
@@ -199,11 +204,16 @@ var NSView = NSResponder.extend({
     },
     
     setHidden: function(flag) {
+        this._isHidden = flag;
         
+        if (flag)
+            this._DOMContainer.style.visibility = "hidden";
+        else
+            this._DOMContainer.style.visibility = "visible";
     },
     
     isHidden: function() {
-        
+        return this._isHidden;
     },
     
     isHiddenOrHasHiddenAncestor: function() {
@@ -406,7 +416,8 @@ var NSView = NSResponder.extend({
     },
     
     setFrameOrigin: function(newOrigin) {
-        
+        this._frame.origin = newOrigin;
+        CGDOMElementSetFrame(this._DOMContainer, this._frame);
     },
     
     setFrameSize: function(newSize) {
@@ -528,8 +539,25 @@ var NSView = NSResponder.extend({
         
     },
     
+    /**
+        @param {NSRect} aRect
+        @param {NSView} aView
+        @returns NSRect
+    */
     convertRectToView: function(aRect, aView) {
+        if (!aView)
+            return this.convertRectFromBase(aRect);
         
+        return {
+            size: {
+                width: aRect.size.width,
+                height: aRect.size.height
+            },
+            origin: {
+                x: aRect.origin.x - aView.frame().origin.x,
+                y: aRect.origin.y - aView.frame().origin.y,
+            }
+        };
     },
     
     centerScanRect: function(aRect) {

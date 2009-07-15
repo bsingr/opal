@@ -27,4 +27,40 @@
 
 var NSSlider = NSControl.extend({
     
+    /*
+        Instantiate a binding to the object. Placeholders and other information
+        can be specified in the options dictionary.
+        
+        @param binding - NSString
+        @param toObject - NSObject
+        @param withKeyPath - NSString
+        @param options - NSDictionary
+    */
+    bind: function(binding, toObject, withKeyPath, options) {
+        // value binding - NSValueBinding
+        if (binding == "value") {
+            toObject.addObserverForKeyPath(this, withKeyPath, 0, NSValueBinding);
+            
+            var bindingInfo = NSDictionary.dictionaryWithObjectsForKeys(
+                [toObject, withKeyPath, options],
+                [NSObservedObjectKey, NSObservedKeyPathKey, NSOptionsKey]);
+            
+            this._kvb_info.setObjectForKey(bindingInfo, NSValueBinding);
+        }
+    },
+    
+    /*
+		@param {NSString} keyPath
+		@param {NSObject} ofObject
+		@param {NSDictionary} change
+		@param {Object} context
+	*/
+    observeValueForKeyPath: function(keyPath, ofObject, change, context) {
+        console.log('slider got observing');
+        if (context == NSValueBinding) {
+            var newValue = ofObject.valueForKeyPath(keyPath);
+            console.log(newValue);
+            this.setDoubleValue(newValue);
+        }
+    }
 });

@@ -120,7 +120,7 @@ var NSMenuItem = NSObject.extend({
 		    if (this.isHighlighted())
 		        attributes.setObjectForKey(NSColor.selectedMenuItemTextColor(), NSForegroundColorAttributeName);
 		    else
-			    attributes.setObjectForKey(NSColor.colorWithCalibratedRGBA(0.8, 0.8, 0.8, 1.0), NSForegroundColorAttributeName);
+			    attributes.setObjectForKey(NSColor.colorWithCalibratedRGBA(0.916, 0.916, 0.916, 1.0), NSForegroundColorAttributeName);
 		}
 		else {
 			attributes.setObjectForKey(NSColor.disabledControlTextColor(), NSForegroundColorAttributeName);

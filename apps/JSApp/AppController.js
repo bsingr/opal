@@ -28,12 +28,62 @@ include('vienna/vienna');
 
 var AppController = NSObject.extend({
      
-   _testValue: 10,
+    /**
+        @type Integer
+    */
+    _testValue: 10,
    
-   _window: IBOutlet(),
+    /**
+        @outlet
+        @type NSWindow
+    */
+    _window: IBOutlet(),
    
-   init: function() {
-       this._super();
+   /**
+        @outlet
+        @type NSArrayController
+   */
+   _arrayController: IBOutlet(),
+   
+    /**
+        @outlet
+        @type NSArray
+    */
+    _tableContent: IBOutlet(),
+    
+    _tempData: null,
+    
+    _tableSelections: null,
+   
+    init: function() {
+        this._super();
+       
+        this._tempData = [
+            { "name": "Adam", "age": 23, "band": "Led Zepplin" },
+            { "name": "Benjamin", "age": 22, "band": "Rage Against the machine" },
+            { "name": "Rebeccae", "age": 19, "band": "Lagy Gaga" },
+            { "name": "Adam", "age": 23, "band": "Led Zepplin" },
+            { "name": "Benjamin", "age": 22, "band": "Rage Against the machine" },
+            { "name": "Rebeccae", "age": 19, "band": "Lagy Gaga" },
+            { "name": "Adam", "age": 23, "band": "Led Zepplin" },
+            { "name": "Benjamin", "age": 22, "band": "Rage Against the machine" },
+            { "name": "Rebeccae", "age": 19, "band": "Lagy Gaga" },
+            { "name": "Adam", "age": 23, "band": "Led Zepplin" },
+            { "name": "Benjamin", "age": 22, "band": "Rage Against the machine" },
+            { "name": "Rebeccae", "age": 19, "band": "Lagy Gaga" },
+            { "name": "Adam", "age": 23, "band": "Led Zepplin" },
+            { "name": "Benjamin", "age": 22, "band": "Rage Against the machine" },
+            { "name": "Rebeccae", "age": 19, "band": "Lagy Gaga" },
+            { "name": "Adam", "age": 23, "band": "Led Zepplin" },
+            { "name": "Benjamin", "age": 22, "band": "Rage Against the machine" },
+            { "name": "Rebeccae", "age": 19, "band": "Lagy Gaga" },
+            { "name": "Adam", "age": 23, "band": "Led Zepplin" },
+            { "name": "Benjamin", "age": 22, "band": "Rage Against the machine" },
+            { "name": "Rebeccae", "age": 19, "band": "Lagy Gaga" },
+            { "name": "Adam", "age": 23, "band": "Led Zepplin" },
+            { "name": "Benjamin", "age": 22, "band": "Rage Against the machine" },
+            { "name": "Rebeccae", "age": 19, "band": "Lagy Gaga" }
+        ];
        
        console.log('creating app controller');
        return this;
@@ -59,14 +109,15 @@ var AppController = NSObject.extend({
        console.log("Application finished lauchiong");
    },
 
-	/*
+	/**
 		Table view delegate
 	*/
 	numberOfRowsInTableView: function(tableView) {
-		return 6;
+		return this._tempData.length;
 	},
 	
 	tableViewObjectValueForTableColumnRow: function(tableView, tableColumn, row) {
-	    return "Hi there " + row;
+        // console.log(tableColumn);
+	    return this._tempData[row][tableColumn.identifier()];
 	}
 });

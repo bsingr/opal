@@ -171,26 +171,31 @@ var NSControl = NSView.extend({
     setObjectValue: function(obj) {
         
         this._cell.setObjectValue(obj);
+        this.setNeedsDisplay(true);
     },
     
     setStringValue: function(aString) {
         
         this._cell.setStringValue(aString);
+        this.setNeedsDisplay(true);
     },
     
     setIntValue: function(anInt) {
         
         this._cell.setIntValue(anInt);
+        this.setNeedsDisplay(true);
     },
     
     setFloatValue: function(aFloat) {
         
         this._cell.setFloatValue(aFloat);
+        this.setNeedsDisplay(true);
     },
     
     setDoubleValue: function(aDouble) {
         
         this._cell.setDoubleValue(aDouble);
+        this.setNeedsDisplay(true);
     },
     
     objectValue: function() {

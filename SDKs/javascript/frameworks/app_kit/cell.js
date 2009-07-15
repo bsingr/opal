@@ -133,11 +133,9 @@ var NSCell = NSObject.extend({
     initWithCoder: function(aCoder) {
         
         // this._super(aCoder);
-        
         this._value = aCoder.decodeObjectForKey("NSContents");
         var flags = aCoder.decodeIntForKey("NSCellFlags");
         var flags2 = aCoder.decodeIntForKey("NSCellFlags2");
-        
         this._state = (flags & 0x80000000) ? NSOnState : NSOffState;
         this._isHighlighted = (flags & 0x40000000) ? true : false;
         this._isEnabled = (flags & 0x20000000) ? false : true;
@@ -153,9 +151,7 @@ var NSCell = NSObject.extend({
         
         this._lineBreakMode = (flags & 0x00007000) >> 12;
         this._wraps = (flags & 0x40) ? false : true;
-        
         this._font = aCoder.decodeObjectForKey("NSSupport");
-        
         return this;
     },
     

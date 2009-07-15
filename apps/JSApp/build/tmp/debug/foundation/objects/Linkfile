@@ -71,6 +71,9 @@ string.js:
 object.js: 
   dependencies: 
   - runtime.js
+index_set.js: 
+  dependencies: 
+  - object.js
 coder.js: 
   dependencies: 
   - object.js

@@ -45,7 +45,6 @@ var IBActionConnection = NSObject.extend({
     },
     
     awakeAfterUsingCoder: function(aCoder) {
-        console.log(this._destination);
         this._destination.setAction(this._label);
         this._destination.setTarget(this._source);
         return this;

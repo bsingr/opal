@@ -1,4 +1,4 @@
-/* 
+/*
  * array_controller.js
  * vienna
  * 
@@ -25,43 +25,111 @@
  */
 
 
-/*
+/**
     @class NSArrayController
     @extend NSObjectController
 */
 var NSArrayController = NSObjectController.extend({
     
-    /*
-        NSInteger
+    /**
+        @type NSInteger
     */
     _observedIndexHint: null,
     
-    /*
-        NSIndexSet
+    /**
+        @type NSIndexSet
     */
     _selectionIndexes: null,
     
-    /*
-        NSArray
+    /**
+        @type NSArray
     */
     _objects: null,
     
-    /*
-        NSIndexSet
+    /**
+        @type NSIndexSet
     */
     _cachedSelectedIndexes: null,
     
-    /*
-        NSArray
+    /**
+        @type NSArray
     */
     _cachedSelectedObjects: null,
     
-    /*
-        NSArray
+    /**
+        @type NSArray
     */
     _arrangedObjects: null,
     
-    /*
+    /**
+        @type Boolean
+    */
+    _isEditable: null,
+    
+    /**
+        @type Boolean
+    */
+    _avoidsEmptySelection: null,
+    
+    /**
+        @type Boolean
+    */
+    _preservesSelection: null,
+    
+    /** 
+        @type NSArray
+    */
+    _declaredKeys: null,
+    
+    /**
+        @param {NSCoder} aCoder
+        @returns NSArrayController
+    */
+    initWithCoder: function(aCoder) {
+        this._isEditable = aCoder.decodeBoolForKey('NSEditable');
+        this._avoidsEmptySelection = aCoder.decodeBoolForKey('NSAvoidsEmptySelection');
+        this._preservesSelection = aCoder.decodeBoolForKey('NSSelectsInsertedObjects');
+        this._declaredKeys = aCoder.decodeObjectForKey('NSDeclaredKeys');
+        return this;
+    },
+    
+    /**
+        Instantiate a binding to the object. Placeholders and other information
+        can be specified in the options dictionary.
+        
+        @param binding - NSString
+        @param toObject - NSObject
+        @param withKeyPath - NSString
+        @param options - NSDictionary
+    */
+    bind: function(binding, toObject, withKeyPath, options) {
+        if (binding == "contentArray") {
+            toObject.addObserverForKeyPath(this, withKeyPath, 0, NSContentArrayBinding);
+            
+            var bindingInfo = NSDictionary.dictionaryWithObjectsForKeys(
+                [toObject, withKeyPath, options],
+                [NSObservedObjectKey, NSObservedKeyPathKey, NSOptionsKey]);
+
+            this._kvb_info.setObjectForKey(bindingInfo, NSContentArrayBinding);
+        }
+    },
+
+     /**
+ 		@param {NSString} keyPath
+ 		@param {NSObject} ofObject
+ 		@param {NSDictionary} change
+ 		@param {Object} context
+ 	*/
+     observeValueForKeyPath: function(keyPath, ofObject, change, context) {
+         if (context == NSContentArrayBinding) {
+             var newValue = ofObject.valueForKeyPath(keyPath);
+             // this.setObjectValue(newValue);
+             console.log('array controller, new value = ');
+             console.log(newValue);
+         }
+     },
+    
+    /**
         Rearranges objects ready for display. This might include sorting and
         filtering.
     */
@@ -69,7 +137,7 @@ var NSArrayController = NSObjectController.extend({
         
     },
     
-    /*
+    /**
         Sets whether the controller rearranges objects. Default is false
         
         @param boolean flag
@@ -78,56 +146,56 @@ var NSArrayController = NSObjectController.extend({
         
     },
     
-    /*
+    /**
         @return boolean
     */
     automaticallyRearrangesObjects: function() {
         
     },
     
-    /*
+    /**
         @return NSArray
     */
     automaticRearrangementKeyPaths: function() {
         
     },
     
-    /*
+    /**
         ..
     */
     didChangeArrangementCriteria: function() {
         
     },
     
-    /*
+    /**
         @param NSArray sortDescriptors
     */
     setSortDescriptors: function(sortDescriptors) {
         
     },
     
-    /*
+    /**
         @return NSArray
     */
     sortDescriptors: function() {
         
     },
     
-    /*
+    /**
         @param NSPredicate filterPredicate
     */
     setFilterPredicate: function(filterPredicate) {
         
     },
     
-    /*
+    /**
         @return NSPredicate
     */
     filterPredicate: function() {
         
     },
     
-    /*
+    /**
         If true, predicates are disabled after adding new objects. this avoids
         new objects not meeting criteria from being automatically hidden.
         
@@ -139,14 +207,14 @@ var NSArrayController = NSObjectController.extend({
         
     },
     
-    /*
+    /**
         @return boolean
     */
     clearsFilterPredicateOnInsertion: function() {
         
     },
     
-	/*
+	/**
 		@param NSArray objects
 		@return NSArray
 	*/
@@ -154,7 +222,7 @@ var NSArrayController = NSObjectController.extend({
 	
 	},
 	
-	/*
+	/**
 		An array of all objects to be displayed (after filtering/sorting)
 		@return NSArray
 	*/
@@ -162,7 +230,7 @@ var NSArrayController = NSObjectController.extend({
 		
 	},
 	
-	/*
+	/**
 		Default is true.
 		
 		@param bool flag
@@ -171,14 +239,14 @@ var NSArrayController = NSObjectController.extend({
 		
 	},
 	
-	/*
+	/**
 		@return bool
 	*/
 	avoidsEmptySelection: function() {
 		
 	},
 	
-	/*
+	/**
 		Default is true
 		
 		@param bool flag
@@ -187,14 +255,14 @@ var NSArrayController = NSObjectController.extend({
 		
 	},
 	
-	/*
+	/**
 		@return bool
 	*/
 	preservesSelection: function() {
 		
 	},
 	
-	/*
+	/**
 		Default is true
 		
 		@param bool flag
@@ -203,28 +271,28 @@ var NSArrayController = NSObjectController.extend({
 		
 	},
 	
-	/*
+	/**
 		@return bool
 	*/
 	selectsInsertedObjects: function() {
 		
 	},
 	
-	/*
+	/**
 		@param {Boolean} flag
 	*/
 	setAlwaysUsesMultipleValuesMarker: function(flag) {
 		
 	},
 	
-	/*
+	/**
 		@returns Boolean
 	*/
 	alwaysUsesMultipleValuesMarker: function() {
 		
 	},
 	
-	/*
+	/**
 		@param {NSIndexSet} indexes
 		@returns Boolean
 	*/
@@ -232,14 +300,14 @@ var NSArrayController = NSObjectController.extend({
 		
 	},
 	
-	/*
+	/**
 		@returns NSIndexSet
 	*/
 	selectionIndexes: function() {
 		
 	},
 	
-	/*
+	/**
 		@param {Integer} index
 		@returns Boolean
 	*/
@@ -247,14 +315,14 @@ var NSArrayController = NSObjectController.extend({
 		
 	},
 	
-	/*
+	/**
 		@returns Integer
 	*/
 	selectionIndex: function() {
 		
 	},
 	
-	/*
+	/**
 		@param {NSIndexSet} indexes
 		@returns Boolean
 	*/
@@ -262,7 +330,7 @@ var NSArrayController = NSObjectController.extend({
 		
 	},
 	
-	/*
+	/**
 		@param {NSIndexSet} indexes
 		@returns Boolean
 	*/
@@ -270,7 +338,7 @@ var NSArrayController = NSObjectController.extend({
 		
 	},
 	
-	/*
+	/**
 		@param {NSArray} objects
 		@returns Boolean
 	*/
@@ -278,14 +346,14 @@ var NSArrayController = NSObjectController.extend({
 		
 	},
 	
-	/*
+	/**
 		@returns {NSIndexSet}
 	*/
 	selectedObjects: function() {
 		
 	},
 	
-	/*
+	/**
 		@param {NSArray} objects
 		@returns Boolean
 	*/
@@ -293,7 +361,7 @@ var NSArrayController = NSObjectController.extend({
 		
 	},
 	
-	/*
+	/**
 		@param {NSArray} objects
 		@retuns Boolean
 	*/
@@ -301,7 +369,7 @@ var NSArrayController = NSObjectController.extend({
 		
 	},
 	
-	/*
+	/**
 		Adds new object to the content objects, but to the arranged objects as
 		well.
 		
@@ -311,7 +379,7 @@ var NSArrayController = NSObjectController.extend({
 		
 	},
 	
-	/*
+	/**
 		Remove selected object(s)
 	
 		@param {NSObject} sender
@@ -320,63 +388,63 @@ var NSArrayController = NSObjectController.extend({
 		
 	},
 	
-	/*
+	/**
 		@param {NSObject} sender
 	*/
 	insert: function(sender) {
 		
 	},
 	
-	/*
+	/**
 		@return Boolean
 	*/
 	canInsert: function() {
 		
 	},
 	
-	/*
+	/**
 		@param {NSObject} sender
 	*/
 	selectNext: function(sender) {
 		
 	},
 	
-	/*
+	/**
 		@param {NSObject} sender
 	*/
 	selectPrevious: function(sender) {
 		
 	},
 	
-	/*
+	/**
 		@returns Boolean
 	*/
 	canSelectNext: function() {
 		
 	},
 	
-	/*
+	/**
 		@returns Boolean
 	*/
 	canSelectPrevious: function() {
 		
 	},
 	
-	/*
+	/**
 		@param {NSObject} object
 	*/
 	addObject: function(object) {
 		
 	},
 	
-	/*
+	/**
 		@param {NSArray} objects
 	*/
 	addObjects: function(objects) {
 		
 	},
 	
-	/*
+	/**
 		@param {NSObject} object
 		@param {Integer} index
 	*/
@@ -384,7 +452,7 @@ var NSArrayController = NSObjectController.extend({
 		
 	},
 	
-	/*
+	/**
 		@param {NSArray} objects
 		@param {NSIndexSet} indexes
 	*/
@@ -392,28 +460,28 @@ var NSArrayController = NSObjectController.extend({
 		
 	},
 	
-	/*
+	/**
 		@param {Integer} index
 	*/
 	removeObjectAtArrangedObjectIndex: function(index) {
 		
 	},
 	
-	/*
+	/**
 		@param {NSIndexSet} indexes
 	*/
 	removeObjectsAtArrangedObjectIndexes: function(indexes) {
 		
 	},
 	
-	/*
+	/**
 		@param {NSObject} object
 	*/
 	removeObject: function(object) {
 		
 	},
 	
-	/*
+	/**
 		@param {NSArray} objects
 	*/
 	removeObjects: function(objects) {

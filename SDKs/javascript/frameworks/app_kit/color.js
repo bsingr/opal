@@ -238,7 +238,7 @@ Object.extend(NSColor, {
 	},
 	
 	selectedControlColor: function() {
-		return NSColor.colorWithCalibratedRGBA(0.5, 0.5, 0.5, 1.0);
+		return NSColor.colorWithCalibratedRGBA(0.220, 0.475, 0.851, 1.0);
 	},
 	
 	secondarySelectedControlColor: function() {
@@ -336,5 +336,9 @@ Object.extend(NSColor, {
 	
 	currentControlTint: function() {
 		return NSColor.colorWithCalibratedRGBA(0.5, 0.5, 0.5, 1.0);
+	},
+	
+	_sourceListBackgroundColor: function() {
+	    return NSColor.colorWithCalibratedRGBA(0.839, 0.867, 0.898, 1.0);
 	}
 });

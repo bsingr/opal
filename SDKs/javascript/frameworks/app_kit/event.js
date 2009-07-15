@@ -189,10 +189,12 @@ var NSEvent = NSObject.extend({
 });
 
 /**
-    Main entrance point for events. This handles a raw JS event, and creates an
-    NSEvent, and posts it off to NSApplication.
+    Main entrance point for  mouse events. This handles a raw JS event, and
+    creates an NSEvent, and posts it off to NSApplication.
+    
+    @param {Event} event
 */
-function NSEventFromRawEvent(event)
+function NSEventFromMouseEvent(event)
 {
     // event type
     var eventType;    
@@ -240,7 +242,54 @@ function NSEventFromRawEvent(event)
     
     // to stop event bubbling
     // return false;
-}    
+}
+
+/**
+    Main entry point for key events.
+    
+    @param {Event} event
+*/
+function NSEventFromKeyEvent(event)
+{
+    // event type
+    var eventType;    
+    switch (event.type) {
+        case "keypress":
+        case "keydown":
+            eventType = NSKeyDown;
+            break;
+        default:
+            console.log("unable to determine event type");
+            return;
+    }
+    
+    // modifier flags
+    var modifierFlags = 1;
+    if (event.metaKey)  modifierFlags = modifierFlags | NSCommandKeyMask;
+    if (event.shiftKey) modifierFlags = modifierFlags | NSShiftKeyMask;
+    if (event.altKey)   modifierFlags = modifierFlags | NSAlternateKeyMask;
+    if (event.ctrlKey)  modifierFlags = modifierFlags | NSControlKeyMask;
+    
+    // timestamp
+    var timestamp = new Date().getTime();
+    
+    // characters
+    var keyCode = event.charCode || event.keyCode;
+    var theCharacters = String.fromCharCode(keyCode);
+    
+    // set the window to NSApp's keyWindow?
+    var theWindow = NSApplication.sharedApplication().keyWindow();
+    
+    var theEvent = NSEvent.keyEventWithType(eventType, null, modifierFlags, timestamp, null, null, theCharacters, theCharacters, false, keyCode);
+    theEvent._window = theWindow;
+    NSApplication.sharedApplication().sendEvent(theEvent);
+    
+    // if a controller key is pressed, allow control back to the browser. other
+    // wise block bubbling of event. In future, registered commands (involving
+    // control, meta, alt) will not allow control back, others will
+    if (!event.metaKey && !event.altKey && !event.ctrlKey)
+        return false;
+}
 
 NSEvent.mouseEventWithType = function(type, location, modifierFlags, timestamp, windowNumber, context, eventNumber, clickCount, pressure)
 {
@@ -259,7 +308,18 @@ NSEvent.mouseEventWithType = function(type, location, modifierFlags, timestamp, 
 
 NSEvent.keyEventWithType = function(type, location, modifierFlags, timestamp, windowNumber, context, characters, charactersIgnoringModifiers, isARepeat, keyCode)
 {
-    
+    var theEvent = NSEvent.create();
+    theEvent._type = type;
+    theEvent._location = location;
+    theEvent._modifierFlags = modifierFlags;
+    theEvent._timestamp = timestamp;
+    theEvent._windowNumber = windowNumber;
+    theEvent._context = context;
+    theEvent._keys = characters;
+    theEvent._unmodKeys = charactersIgnoringModifiers;
+    theEvent._isARepeat = isARepeat;
+    theEvent._keyCode = keyCode;
+    return theEvent;
 };
 
 NSEvent.mouseLocation = function()
@@ -268,52 +328,14 @@ NSEvent.mouseLocation = function()
 };
 
 // reserved keycodes
-var NSUpArrowFunctionKey        = 0xF700;
-var NSDownArrowFunctionKey      = 0xF701;
-var NSLeftArrowFunctionKey      = 0xF702;
-var NSRightArrowFunctionKey     = 0xF703;
-var NSF1FunctionKey             = 0xF704;
-var NSF2FunctionKey             = 0xF705;
-var NSF3FunctionKey             = 0xF706;
-var NSF4FunctionKey             = 0xF707;
-var NSF5FunctionKey             = 0xF708;
-var NSF6FunctionKey             = 0xF709;
-var NSF7FunctionKey             = 0xF70A;
-var NSF8FunctionKey             = 0xF70B;
-var NSF9FunctionKey             = 0xF70C;
-var NSF10FunctionKey            = 0xF70D;
-var NSF11FunctionKey            = 0xF70E;
-var NSF12FunctionKey            = 0xF70F;
-var NSInsertFunctionKey         = 0xF727;
-var NSDeleteFunctionKey         = 0xF728;
-var NSHomeFunctionKey           = 0xF729;
-var NSBeginFunctionKey          = 0xF72A;
-var NSEndFunctionKey            = 0xF72B;
-var NSPageUpFunctionKey         = 0xF72C;
-var NSPageDownFunctionKey       = 0xF72D;
-var NSPrintScreenFunctionKey    = 0xF72E;
-var NSScrollLockFunctionKey     = 0xF72F;
-var NSPauseFunctionKey          = 0xF730;
-var NSSysReqFunctionKey         = 0xF731;
-var NSBreakFunctionKey          = 0xF732;
-var NSResetFunctionKey          = 0xF733;
-var NSStopFunctionKey           = 0xF734;
-var NSMenuFunctionKey           = 0xF735;
-var NSUserFunctionKey           = 0xF736;
-var NSSystemFunctionKey         = 0xF737;
-var NSPrintFunctionKey          = 0xF738;
-var NSClearLineFunctionKey      = 0xF739;
-var NSClearDisplayFunctionKey   = 0xF73A;
-var NSInsertLineFunctionKey     = 0xF73B;
-var NSDeleteLineFunctionKey     = 0xF73C;
-var NSInsertCharFunctionKey     = 0xF73D;
-var NSDeleteCharFunctionKey     = 0xF73E;
-var NSPrevFunctionKey           = 0xF73F;
-var NSNextFunctionKey           = 0xF740;
-var NSSelectFunctionKey         = 0xF741;
-var NSExecuteFunctionKey        = 0xF742;
-var NSUndoFunctionKey           = 0xF743;
-var NSRedoFunctionKey           = 0xF744;
-var NSFindFunctionKey           = 0xF745;
-var NSHelpFunctionKey           = 0xF746;
-var NSModeSwitchFunctionKey     = 0xF747;
+var NSUpArrowFunctionKey        = 38;
+var NSDownArrowFunctionKey      = 40;
+var NSLeftArrowFunctionKey      = 37;
+var NSRightArrowFunctionKey     = 39;
+var NSDeleteForwardFunctionKey  = 46;
+var NSDeleteBackwardFunctionKey = 8;
+var NSReturnFunctionKey         = 13;
+var NSEscapeFunctionKey         = 27;
+var NSTabFunctionKey            = 9;
+var NSPageUpFunctionKey         = 33;
+var NSPageDownFunctionKey       = 34;

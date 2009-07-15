@@ -164,7 +164,7 @@ var NSButtonCell = NSCell.extend({
         var xImageOffset = theRect.origin.x + 2;
         
         if (this._image) {
-            xImageOffset += this._image.width + 3;
+            xImageOffset += this._image.size().width + 3;
         }
         
         
@@ -178,7 +178,7 @@ var NSButtonCell = NSCell.extend({
         var theHeight = 0, theWidth = 0;
         
         if (this._image) {
-            return NSMakeRect(2, (theRect.size.height - this._image.height) / 2, this._image.width, this._image.height);
+            return NSMakeRect(2, (theRect.size.height - this._image.size().height) / 2, this._image.size().width, this._image.size().height);
         }
         
         return NSMakeRect(0, 0, 0, 0);
@@ -192,8 +192,9 @@ var NSButtonCell = NSCell.extend({
 		var attributes = NSDictionary.create();
 		
 		// font
-		if (this.font())
-			attributes.setObjectForKey(this.font(), NSFontAttributeName);
+		if (this.font()) {
+		    attributes.setObjectForKey(this.font(), NSFontAttributeName);
+		}
 		
 		// textColor
 		var textColor;

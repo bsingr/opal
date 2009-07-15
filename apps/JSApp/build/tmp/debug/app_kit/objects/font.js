@@ -84,12 +84,14 @@ Object.extend(NSFont, {
     },
     
     menuFontOfSize: function(fontSize) {
-        return NSFont.fontWithNameAndSize("Arial", fontSize);
+        var theFont = NSFont.fontWithNameAndSize("Arial", fontSize);
+        theFont._isBold = true;
+        return theFont;
     },
     
     menuBarFontOfSize: function(fontSize) {
         var theFont = NSFont.fontWithNameAndSize("Arial", fontSize);
-        // theFont._isBold = true;
+        theFont._isBold = true;
         return theFont;
     },
     

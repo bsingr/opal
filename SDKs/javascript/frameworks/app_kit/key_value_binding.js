@@ -26,9 +26,9 @@
 
 include('foundation/object');
 
-var NSMultipleValuesMarker = null;
-var NSNoSelectionMarker = null;
-var NSNotApplicableMarker = null;
+var NSMultipleValuesMarker  = "NSMultipleValuesMarker";
+var NSNoSelectionMarker     = "NSNoSelectionMarker";
+var NSNotApplicableMarker   = "NSNotApplicableMarker";
 
 /*
     @param object - NSObject
@@ -36,7 +36,10 @@ var NSNotApplicableMarker = null;
 */
 function NSIsControllerMarker(object)
 {
+    if (object == NSMultipleValuesMarker || object ==  NSNoSelectionMarker || object == NSNotApplicableMarker)
+        return true;
     
+    return false;
 }
 
 /*
@@ -62,14 +65,24 @@ NSObject.exposeBinding = function(binding) {
 */
 NSObject.mixin({
     
-    /*
-        @return NSArray
+    /**
+        A NSDictionary used for holding binding info. Each key is the binding 
+        context name (see lower area of this file) and the value for each key
+        is another dictionary holding information for the binding.
+        
+        @type NSDictionary
+    */
+    _kvb_info: NSDictionary.create(),
+    
+    
+    /**
+        @returns NSArray
     */
     exposedBindings: function() {
         
     },
     
-    /*
+    /**
         Optional method.
         
         @param binding - NSString
@@ -79,7 +92,7 @@ NSObject.mixin({
         
     },
     
-    /*
+    /**
         Instantiate a binding to the object. Placeholders and other information
         can be specified in the options dictionary.
         
@@ -89,10 +102,11 @@ NSObject.mixin({
         @param options - NSDictionary
     */
     bind: function(binding, toObject, withKeyPath, options) {
-        
+        console.log('bind ' + binding + " to key path " + withKeyPath + ' for ');
+        console.log(this);
     },
     
-    /*
+    /**
         Remove the specified binding
         
         @param binding - NSString
@@ -101,7 +115,7 @@ NSObject.mixin({
         
     },
     
-    /*
+    /**
         Information about the dictionary. Can be null if the binding is not
         bound. Contains these three items:
         
@@ -116,7 +130,7 @@ NSObject.mixin({
         
     },
     
-    /*
+    /**
         Returns array of NSAttributeDescriptions for binding
         
         @param binding - NSString
@@ -127,12 +141,12 @@ NSObject.mixin({
     }
 });
 
-/*
+/**
     @mixin NSPlaceholders (meta class)
 */
 Object.extend(NSObject, {
     
-    /*
+    /**
         Marker can be null, NSMultipleValuesMarker, NSNoSelectionMarker or
         NSNotApplicableMarker
         
@@ -144,7 +158,7 @@ Object.extend(NSObject, {
         
     },
     
-    /*
+    /**
         Marker can be null, NSMultipleValuesMarker, NSNoSelectionMarker or
         NSNotApplicableMarker
     
@@ -156,21 +170,21 @@ Object.extend(NSObject, {
     }
 });
 
-/*
+/**
     @mixin NSEditorRegistration
     
     These should be implemented by controllers etc.
 */
 NSObject.mixin({
     
-    /*
+    /**
         @param editor - NSObject
     */
     objectDidBeginEditing: function(editor) {
         
     },
     
-    /*
+    /**
         @param editor - NSObject
     */
     objectDidEndEditing: function(editor) {
@@ -178,21 +192,21 @@ NSObject.mixin({
     }
 });
 
-/*
+/**
     @mixin NSEditor
     
     These should be implemented by controllers etc.
 */
 NSObject.mixin({
     
-    /*
+    /**
         Reverts back to original value (end chnages).
     */
     discardEditing: function() {
         
     },
     
-    /*
+    /**
         Returns whether or not end editing was a success. It might not be if the
         value is invalid (e.g. an object requires a float value, but was given
         a string).
@@ -203,7 +217,7 @@ NSObject.mixin({
         
     },
     
-    /*
+    /**
         @param delegate - NSObject
         @param didCommitAction - function pointer for delegate
         @param contextInfo - NSObject
@@ -213,7 +227,7 @@ NSObject.mixin({
     }
 });
 
-/*
+/**
     Default constant names for bindings (AppKit defined)
 */
 var NSAlignmentBinding                          = "NSAlignmentBinding";
@@ -296,7 +310,7 @@ var NSWarningValueBinding                       = "NSWarningValueBinding";
 var NSWidthBinding                              = "NSWidthBinding";
 
 
-/*
+/**
     Options for bindings (used with info keys at top).
 */
 var NSAllowsEditingMultipleValuesSelectionBindingOption = "NSAllowsEditingMultipleValuesSelectionBindingOption";

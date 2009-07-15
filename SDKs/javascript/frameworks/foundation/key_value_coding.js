@@ -248,8 +248,11 @@ NSObject.mixin({
 */
 NSArray.mixin({
     
+    /*
+        Returns an array of the result of requesting -valueForKey from each object
+    */
     valueForKey: function(key) {
-        
+        return [10, 23, 34];
     },
     
     setValueForKey: function(value, key) {

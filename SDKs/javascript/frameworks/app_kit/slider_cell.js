@@ -62,8 +62,13 @@ var NSSliderCell = NSCell.extend({
        return this;
    },
    
-   drawWithFrame: function(cellFrame, controlView) {
-       var SLIDER_PADDING = 8.5;
+    /**
+        Draw the slider using CoreGraphics (canvas/vml)
+        @param {NSRect} cellFrame
+        @param {NSView} controlView
+    */
+    drawWithFrame: function(cellFrame, controlView) {
+       var SLIDER_PADDING = 9.5;
        var KNOB_PADDING = 2;
        
        var c = NSGraphicsContext.currentContext().graphicsPort();
@@ -77,14 +82,26 @@ var NSSliderCell = NSCell.extend({
        
        // draw the knob
        var knobPosition = (((this._value / (this._maxValue - this._minValue)) * ((cellFrame.size.width - (2 * SLIDER_PADDING)))));
-       NSImage.imageNamed('NSSliderHorizontalKnobNormal.png').drawInRect(CGRectMake(knobPosition,2,17,17));
+       // use math.round to make sure knob is aligned to a pixel... this avoids a blurry knob if it is aligned between pixel boundries.
+       NSImage.imageNamed('NSSliderHorizontalKnobNormal.png').drawInRect(CGRectMake(Math.round(knobPosition), 1, 19, 19));
        
        CGContextRestoreGState(c);
-   },
-   
-   startTrackingInView: function(startPoint, controlView) {
+    },
+    
+    /**
+        @param {NSRect} cellFrame
+        @param {NSView} controlView
+        @param {Boolean} firstTime
+    */
+    renderWithFrame: function(cellFrame, controlView, firstTime) {
+        
+        if (firstTime) {
+            
+        }
+    },
+    
+    startTrackingInView: function(startPoint, controlView) {
        if (this.isEnabled()) {
-           console.log('here..');
            var SLIDER_PADDING = 8.5;
            var location = controlView.convertPointFromView(startPoint, null);
            this.setDoubleValue(((location.x - SLIDER_PADDING) / (controlView.bounds().size.width - (2 * SLIDER_PADDING))) * (this._maxValue - this._minValue));
@@ -107,7 +124,7 @@ var NSSliderCell = NSCell.extend({
    },
    
    continueTrackingInView: function(lastPoint, currentPoint, controlView) {
-       var SLIDER_PADDING = 8.5;
+       var SLIDER_PADDING = 9.5;
        var location = controlView.convertPointFromView(currentPoint, null);
        this.setDoubleValue(((location.x - SLIDER_PADDING) / (controlView.bounds().size.width - (2 * SLIDER_PADDING))) * (this._maxValue - this._minValue));
        this.drawWithFrame(controlView.bounds(), controlView);

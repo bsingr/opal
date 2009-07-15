@@ -428,11 +428,21 @@ var NSWindow = NSResponder.extend({
     },
     
     makeFirstResponder: function(aResponder) {
+        if (this._firstResponder == aResponder)
+            return true;
         
+        if (!this._firstResponder.resignFirstResponder())
+            return false;
+        
+        if (!aResponder || !aResponder.acceptsFirstResponder() || !aResponder.becomeFirstResponder())
+            return false;
+        
+        this._firstResponder = aResponder;
+        return true;
     },
     
     firstResponder: function() {
-        
+        return this._firstResponder;
     },
     
     resizeFlags: function() {
@@ -440,7 +450,11 @@ var NSWindow = NSResponder.extend({
     },
     
     keyDown: function(theEvent) {
+        console.log('key down in window');
+        console.log(this.firstResponder());
         
+        if (!this.performKeyEquivalent(theEvent))
+            this.interpretKeyEvents([theEvent]); // pass in an array?
     },
     
     close: function() {
@@ -517,7 +531,9 @@ var NSWindow = NSResponder.extend({
     },
     
     makeKeyAndOrderFront: function(sender) {
-        
+        this.makeKeyWindow();
+        this.makeMainWindow();
+        this.orderFront();
     },
     
     orderFront: function(sender) {
@@ -569,43 +585,55 @@ var NSWindow = NSResponder.extend({
     },
     
     isKeyWindow: function() {
-        
+        return this._keyWindow;
     },
     
     isMainWindow: function() {
-        
+        return this._mainWindow;
     },
     
     canBecomeKeyWindow: function() {
-        
+        return true;
     },
     
     canBecomeMainWindow: function() {
-        
+        return true;
     },
     
     makeKeyWindow: function() {
-        
+        if (this.canBecomeKeyWindow())
+            this.becomeKeyWindow();
     },
     
     makeMainWindow: function() {
-        
+        if (this.canBecomeMainWindow())
+            this.becomeMainWindow();
     },
     
     becomeKeyWindow: function() {
+        if (NSApplication.sharedApplication().keyWindow())
+            NSApplication.sharedApplication().keyWindow().resignKeyWindow();
         
+        this._keyWindow = true;
+        this.setLevel(NSNormalWindowLevel + 5);            
     },
     
     becomeMainWindow: function() {
+        if (NSApplication.sharedApplication().mainWindow())
+            NSApplication.sharedApplication().mainWindow().resignMainWindow();
         
+        this._mainWindow = true;
+        this.setLevel(NSNormalWindowLevel + 5);
     },
     
     resignKeyWindow: function() {
-        
+        this._keyWindow = false;
+        this.setLevel(NSNormalWindowLevel);
     },
     
     resignMainWindow: function() {
-        
+        this._mainWindow = false;
+        this.setLevel(NSNormalWindowLevel);
     },
     
     worksWhenModal: function() {
@@ -768,15 +796,28 @@ var NSWindow = NSResponder.extend({
 
                 hitTest = this._contentView.hitTest(aPoint);
                 if (hitTest) {
+                    if (hitTest != this._firstResponder && hitTest.acceptsFirstResponder()) {
+                        this.makeFirstResponder(hitTest);
+                    }
+                    
                     hitTest.mouseDown(theEvent);
-                    // console.log(hitTest);
                 }
                 else {
                     console.log('Sending mouse down to (else)');
                 }
                 break;
             case NSLeftMouseUp:
-                console.log('mouse up;');
+                // console.log('mouse up;');
+                break;
+            case NSKeyDown:
+                if (this._firstResponder) {
+                    // console.log('sending keydown to firstresponder');
+                    // console.log(this._firstResponder);
+                    this._firstResponder.keyDown(theEvent);
+                }
+                else {
+                    console.log('No Key Responder');
+                }
                 break;
         }
     },

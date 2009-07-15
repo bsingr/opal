@@ -96,7 +96,6 @@ var NSMenuWindow = NSWindow.extend({
         
         // shadow
         CGContextSetShadowWithColor(c, NSMakeSize(0, 5), 10, NSColor.colorWithCalibratedRGBA(0.0, 0.0, 0.0, 0.694));
-        
         CGContextFillPath(c);
     },
     

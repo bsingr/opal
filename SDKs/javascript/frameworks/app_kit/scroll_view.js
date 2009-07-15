@@ -24,8 +24,56 @@
  * THE SOFTWARE.
  */
 
+/**
+    @class NSScrollView
+    @extends NSView
+*/
 var NSScrollView = NSView.extend({
-   
+    
+    /**
+        @type Boolean
+    */
+    _hasVerticalScroller: null,
+    
+    /**
+        @type Boolean
+    */
+    _hasHorizontalScroller: null,
+    
+    /**
+        @type Integer
+    */
+    _borderType: null,
+    
+    /**
+        @type NSScroller
+    */
+    _verticalScroller: null,
+    
+    /**
+        @type NSScroller
+    */
+    _horizontalScroller: null,
+    
+    /**
+        @type NSClipView
+    */
+    _clipView: null,
+    
+    /**
+        @type NSClipView
+    */
+    _headerClipView: null,
+    
+    /**
+        @type NSView
+    */
+    _cornerView: null,
+    
+    /**
+        @param {NSCoder} aCoder
+        @returns NSScrollView
+    */
     initWithCoder: function(aCoder) {
         this._super(aCoder);
         var flags = aCoder.decodeIntForKey("NSsFlags");
@@ -50,13 +98,25 @@ var NSScrollView = NSView.extend({
         return this;
     },
     
+    /**
+        Tiles the scrollview and all of its contents
+    */
     tile: function() {
+        var frame;
         
+        // headerClipView
+        if (this._headerClipView) {
+            frame = NSMakeRect(0, this.bounds().size.height - this._headerClipView.bounds().size.height, this.bounds().size.width, this._headerClipView.bounds().size.height);
+            this._headerClipView.setFrame(frame);
+        }
+        
+        // clipView
+        if (this._clipView) {
+            var heightOffset = (this._headerClipView) ? this._headerClipView.bounds().size.height : 0;
+            frame = NSMakeRect(0, 0, this.bounds().size.width, this.bounds().size.height - heightOffset);
+            this._clipView.setFrame(frame);
+        }
     },
-    
-    // hitTest: function() {
-        // return null;
-    // },
     
     documentVisibleRect: function() {
         
@@ -70,8 +130,11 @@ var NSScrollView = NSView.extend({
         
     },
     
+    /**
+        @returns NSClipView
+    */
     documentView: function() {
-        
+        return this._clipView;
     },
     
     setContentView: function(contentView) {
@@ -146,35 +209,129 @@ var NSScrollView = NSView.extend({
         
     },
     
+    /**
+        @returns Boolean
+    */
     autohidesScrollers: function() {
         
     },
     
+    /**
+        @param {Boolean} flag
+    */
     setAutohidesScrollers: function(flag) {
         
     },
     
+    /**
+        @param {Float} value
+    */
+    setHorizontalLineScroll: function(value) {
+        
+    },
     
-    // #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_3
-    //  - (BOOL)autohidesScrollers;
-    //  - (void)setAutohidesScrollers:(BOOL)flag;
-    //  #endif
-    //  - (void)setHorizontalLineScroll:(CGFloat)value;
-    //  - (void)setVerticalLineScroll:(CGFloat)value;
-    //  - (void)setLineScroll:(CGFloat)value;
-    //  - (CGFloat)horizontalLineScroll;
-    //  - (CGFloat)verticalLineScroll;
-    //  - (CGFloat)lineScroll;
-    //  - (void)setHorizontalPageScroll:(CGFloat)value;
-    //  - (void)setVerticalPageScroll:(CGFloat)value;
-    //  - (void)setPageScroll:(CGFloat)value;
-    //  - (CGFloat)horizontalPageScroll;
-    //  - (CGFloat)verticalPageScroll;
-    //  - (CGFloat)pageScroll;
-    //  - (void)setScrollsDynamically:(BOOL)flag;
-    //  - (BOOL)scrollsDynamically;
-    //  - (void)tile;
-    //  - (void)reflectScrolledClipView:(NSClipView *)cView;
-    //  - (void)scrollWheel:(NSEvent *)theEvent;
-    //  @end
+    /**
+        @returns Float
+    */
+    horizontalLineScroll: function() {
+        
+    },
+    
+    /**
+        @param {Float} value
+    */
+    setVerticalLineScroll: function(value) {
+        
+    },
+    
+    /**
+        @returns Float
+    */
+    verticalLineScroll: function() {
+        
+    },
+    
+    /**
+        @param {Float} value
+    */
+    setLineScroll: function(value) {
+        
+    },
+    
+    /**
+        @returns Float
+    */
+    lineScroll: function() {
+        
+    },
+    
+    /**
+        @param {Float} value
+    */
+    setHorizontalPageScroll: function(value) {
+        
+    },
+    
+    /**
+        @returns Float
+    */
+    horizontalPageScroll: function() {
+        
+    },
+    
+    /**
+        @param {Float} value
+    */
+    setVerticalPageScroll: function(value) {
+        
+    },
+    
+    /**
+        @returns Float
+    */
+    verticalPageScroll: function() {
+        
+    },
+    
+    /**
+        @param {Float} value
+    */
+    setPageScroll: function(value) {
+        
+    },
+    
+    /**
+        @returns Float
+    */
+    pageScroll: function() {
+        
+    },
+    
+    /**
+        @param {Boolean} flag
+    */
+    setScrollsDynamically: function(flag) {
+        
+    },
+    
+    /**
+        @returns Boolean
+    */
+    scrollsDynamically: function() {
+        
+    },
+    
+    /**
+        @param {NSClipView} aView
+    */
+    reflectScrolledClipView: function(aView) {
+        
+    },
+    
+    /**
+        @param {NSEvent} theEvent
+    */
+    scrollWheel: function(theEvent) {
+        
+    }
 });

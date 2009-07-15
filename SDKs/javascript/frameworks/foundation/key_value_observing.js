@@ -54,13 +54,13 @@ var NSKeyValueChangeOldKey                  = "NSKeyValueChangeOldKey";
 var NSKeyValueChangeIndexesKey              = "NSKeyValueChangeIndexesKey";
 var NSKeyValueChangeNotificationIsPriorKey  = "NSKeyValueChangeNotificationIsPriorKey";
 
-/*
+/**
 	@mixin NSKeyValueObserving
 	@class NSObject
 */
 NSObject.mixin({
     
-    /*
+    /**
         This is used to store a list of observers that are observing this object
         for changes to key values. When a chnage takes place, the observers need
         to be notified.
@@ -69,7 +69,7 @@ NSObject.mixin({
     */
     _kvo_observers: NSArray.create(),
     
-    /*
+    /**
         This dictionary maintains a list of "old values" for keys that request 
         to have their old values sent in the info dictionary for observers.
         
@@ -77,7 +77,7 @@ NSObject.mixin({
     */
     _kvo_oldValues: NSDictionary.create(),
     
-	/*
+	/**
 		@param {NSString} keyPath
 		@param {NSObject} ofObject
 		@param {NSDictionary} change
@@ -89,13 +89,13 @@ NSObject.mixin({
     }
 });
 
-/*
+/**
 	@mixin NSKeyValueObserverRegistration
 	@class NSObject
 */
 NSObject.mixin({
     
-	/*
+	/**
 		@param {NSObject} observer
 		@param {NSString} keyPath
 		@param {NSKeyValueObservingOptions} options
@@ -112,7 +112,7 @@ NSObject.mixin({
         this._kvo_observers.push(kvcDict);
     },
     
-	/*
+	/**
 		@param {NSObject} observer
 		@param {NSString} keyPath
 	*/
@@ -121,13 +121,13 @@ NSObject.mixin({
     }
 });
 
-/*
+/**
 	@mixin NSKeyValueObserverRegistration
 	@class NSArray
 */
 NSArray.mixin({
 	
-	/*
+	/**
 		@param {NSObject} observer
 		@param {NSIndexSet} indexes
 		@param {NSString} keyPath
@@ -138,7 +138,7 @@ NSArray.mixin({
 		
 	},
 	
-	/*
+	/**
 		@param {NSObject} observer
 		@param {NSIndexSet} indexes
 		@param {NSString} keyPath
@@ -147,7 +147,7 @@ NSArray.mixin({
 		
 	},
 	
-	/*
+	/**
 		Arrays are not observable, so this method just throws an error.
 	
 		@param {NSObject} observer
@@ -159,7 +159,7 @@ NSArray.mixin({
         throw "NSArray.addObserverForKeyPath: arrays cannot be observed. keyPath: " + keyPath;
     },
     
-	/*
+	/**
 		Arrays are not observable, so this method just throws an error.
 		
 		@param {NSObject} observer
@@ -170,13 +170,13 @@ NSArray.mixin({
     }
 });
 
-/*
+/**
 	@mixin NSKeyValueObserverRegistration
 	@class NSSet
 */
 NSSet.mixin({
 
-	/*
+	/**
 		Sets are not observable, so this method just throws an error.
 	
 		@param {NSObject} observer
@@ -188,7 +188,7 @@ NSSet.mixin({
         throw "NSSet.addObserverForKeyPath: arrays cannot be observed. keyPath: " + keyPath;
     },
     
-	/*
+	/**
 		Sets are not observable, so this method just throws an error.
 		
 		@param {NSObject} observer
@@ -200,13 +200,13 @@ NSSet.mixin({
 });
 
 
-/*
+/**
 	@mixin NSKeyValueObserverNotification
 	@class NSObject
 */
 NSObject.mixin({
 	
-	/*
+	/**
 	    This should be called before a value is set, assuming the value is
 	    required to be observable. This notes the current value of the 
 	    specified key so that it can be returned in the info dictionary
@@ -234,7 +234,7 @@ NSObject.mixin({
 	    this._kvo_oldValues.setObjectForKey(this.valueForKey(key), key);
 	},
 	
-	/*
+	/**
 		@param {NSString} key
 	*/
 	didChangeValueForKey: function(key) {
@@ -250,7 +250,7 @@ NSObject.mixin({
 		}
 	},
 	
-	/*
+	/**
 		@param {NSKeyValueChange} changeKind
 		@param {NSIndexSet} indexes
 		@param {NSString} key
@@ -259,7 +259,7 @@ NSObject.mixin({
 		
 	},
 	
-	/*
+	/**
 		@param {NSKeyValueChange} changeKind
 		@param {NSIndexSet} indexes
 		@param {NSString} key
@@ -268,7 +268,7 @@ NSObject.mixin({
 		
 	},
 	
-	/*
+	/**
 		@param {NSString} key
 		@param {NSKeyValueSetMutationKind} mutationKind
 		@param {NSSet} objects
@@ -277,7 +277,7 @@ NSObject.mixin({
 		
 	},
 	
-	/*
+	/**
 		@param {NSString} key
 		@param {NSKeyValueSetMutationKind} mutationKind
 		@param {NSSet} objects
@@ -287,13 +287,13 @@ NSObject.mixin({
 	}
 });
 
-/*
+/**
 	@mixin NSKeyValueObservingCustomization
 	@class NSObject
 */
 NSObject.mixin({
 	
-	/*
+	/**
 		@param {NSString} key
 		@returns {NSSet}
 	*/
@@ -301,7 +301,7 @@ NSObject.mixin({
 		
 	},
 	
-	/*
+	/**
 	   @param {NSString} key
 	   @returns Boolean
 	*/

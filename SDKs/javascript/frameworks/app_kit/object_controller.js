@@ -26,36 +26,63 @@
 
 include('app_kit/controller');
 
-/*
+/**
     @class NSObjectController
-    @extend NSController
+    @extends NSController
 */
 var NSObjectController = NSController.extend({
     
-    /*
-        NSString
+    /**
+        @type NSString
     */
     _objectClassName: null,
     
-    /*
-        Class
+    /**
+        @type Class
     */
     _objectClass: null,
     
-    /*
-        NSArray
+    /**
+        @type NSArray
     */
     _contentObjectArray: null,
     
-    /*
-        NSObject
+    /**
+        @type NSObject
     */
     _content: null,
     
-    /*
-        NSObject
+    /**
+        @type NSObject
     */
     _objectHandler: null,
+    
+    /**
+        @param {NSCoder} aCoder
+        @returns NSObjectController
+    */
+    initWithCoder: function(aCoder) {
+        this._objectClassName = aCoder.decodeObjectForKey("NSObjectClassName");
+        this._editable = aCoder.decodeBoolForKey("NSEditable");
+        this._automaticallyPreparesContent = aCoder.decodeBoolForKey("NSAutomaticallyPreparesContent");
+        return this;
+    },
+    
+    /**
+        Override observers binding for certain keys. Observing properties of 
+        changing attributes, e.g. in content arrays requires custom behaviour.
+        
+        A lot of bindable properties do not actually exist in arrays, for 
+        instance.
+        
+		@param {NSString} keyPath
+		@param {NSObject} ofObject
+		@param {NSDictionary} change
+		@param {Object} context
+	*/
+    observeValueForKeyPath: function(keyPath, ofObject, change, context) {
+        console.log('observer notification for:' + keyPath + ' in objectcontroller');
+    },
     
     /*
         @param NSObject content
@@ -72,14 +99,14 @@ var NSObjectController = NSController.extend({
         
     },
     
-    /*
+    /**
         @return NSObject
     */
     content: function() {
         
     },
     
-    /*
+    /**
         Returns the object being used to access the content
         
         @return NSObject
@@ -88,7 +115,7 @@ var NSObjectController = NSController.extend({
         
     },
     
-    /*
+    /**
         Returns an array of all the content objects
         
         @return NSArray
@@ -97,7 +124,7 @@ var NSObjectController = NSController.extend({
         
     },
     
-    /*
+    /**
         When loaded from xib files, prepareContent will be called (if true).
         
         @param boolean flag
@@ -106,7 +133,7 @@ var NSObjectController = NSController.extend({
         
     },
     
-    /*
+    /**
         @return boolean
     */
     automaticallyPreparesContent: function() {
