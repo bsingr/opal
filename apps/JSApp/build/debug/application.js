@@ -2748,6 +2748,95 @@ NSNotificationCenter.defaultCenter = function() {
     return NSNotificationCenterDefault;
 };
 /* 
+ * timer.js
+ * vienna
+ * 
+ * Created by Adam Beynon.
+ * Copyright 2009 Adam Beynon.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+
+/**
+    @class NSTimer
+    @extends NSObject
+*/
+var NSTimer = NSObject.extend({
+    
+    /**
+        Native browser timer.
+    */
+    _rawTimer: null,
+    
+    _timeInterval: null,
+    
+    _target: null,
+    
+    _selector: null,
+    
+    _userInfo: null,
+    
+    _repeats: null,
+    
+    initWithTimeInterval: function(timeInterval, aTarget, aSelector, userInfo, repeats) {
+        this.init();
+        this._timeInterval = timeInterval;
+        this._target = aTarget;
+        this._selector = aSelector;
+        this._userInfo = userInfo;
+        this._repeats = repeats;
+        return this;
+    },
+    
+    fire: function() {
+        if (this._repeats)
+            this._rawTimer = setInterval(this._timerDidFire, this._timeInterval);
+        else
+            this._rawTimer = setTimeout(this._timerDidFire, this._timeInterval);
+    },
+    
+    _timerDidFire: function() {
+        console.log('timer did fire');
+    },
+    
+    timeInterval: function() {
+        return this._timeInterval;
+    },
+    
+    invalidate: function() {
+        clearTimeout(this._rawTimer);
+    },
+    
+    isValid: function() {
+        return true;
+    },
+    
+    userInfo: function() {
+        return this._userInfo;
+    }
+});
+
+NSTimer.timerWithTimeInterval = function(timeInterval, aTarget, aSelector, userInfo, repeats) {
+    return this.create('initWithTimeInterval', timeInterval, aTarget, aSelector, userInfo, repeats);
+};
+/* 
  * user_defaults.js
  * vienna
  * 
@@ -4328,6 +4417,662 @@ function CGDOMElementGetContext(element)
  */
 
 /* 
+ * animation.js
+ * vienna
+ * 
+ * Created by Adam Beynon.
+ * Copyright 2009 Adam Beynon.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+
+/**
+    @class CAAnimation
+    @extends NSObject
+*/
+var CAAnimation = NSObject.extend({
+    
+    /**
+        @type CAMediaTimingFunction
+    */
+    _timingFunction: null,
+    
+    /**
+        @type NSObject
+    */
+    _delegate: null,
+    
+    /**
+        @type Booleans
+    */
+    _removedOnCompletion: null,
+    
+    /**
+        @param {CAMediaTimingFunction} timingFunction
+    */
+    setTimingFunction: function(timingFunction) {
+        this._timingFunction = timingFunction;
+    },
+    
+    /**
+        @returns CAMediaTimingFunction
+    */
+    timingFunction: function() {
+        return this._timingFunction;
+    },
+    
+    /**
+        @param {NSObject} delegate
+    */
+    setDelegate: function(delegate) {
+        
+    },
+    
+    /**
+        @returns NSObject
+    */
+    delegate: function() {
+        return this._delegate;
+    },
+    
+    /**
+        @param {Boolean} flag
+    */
+    setRemovedOnCompletion: function(flag) {
+        this._removedOnCompletion = flag;
+    },
+    
+    /**
+        @returns Boolean
+    */
+    isRemovedOnCompletion: function() {
+        return this._removedOnCompletion;
+    }
+});
+
+/**
+    @returns CAAnimation
+*/
+CAAnimation.animation = function() {
+    
+};
+
+/**
+    @param {NSString} key
+    @returns CAAnimation
+*/
+CAAnimation.defaultValueForKey = function(key) {
+    
+};
+
+/**
+    @protocol CAAnimationDelegate
+*/
+var CAAnimationDelegate = NSObject.protocol({
+    
+    /**
+        @param {CAAnimation} animation
+    */
+    animationDidStart: function(animation) {
+    },
+    
+    /**
+        @param {CAAnimation} animation
+        @param {Boolean} flag
+    */
+    animationDidStopFinished: function(animation, flag) {
+    }
+});
+
+
+/**
+    @class CAPropertyAnimation
+    @extends CAAnimation
+*/
+var CAPropertyAnimation = CAAnimation.extend({
+    
+    /**
+        @type NSString
+    */
+    _keyPath: null,
+    
+    /**
+        @param {NSString} keyPath
+    */
+    setKeyPath: function(keyPath) {
+        this._keyPath = keyPath;
+    },
+    
+    /**
+        @returns NSString
+    */
+    keyPath: function() {
+        return this._keyPath;
+    },
+    
+    /**
+        @type Boolean
+    */
+    _additive: null,
+    
+    /**
+        @param {Boolean} additive
+    */
+    setAdditive: function(additive) {
+        this._additive = additive;
+    },
+    
+    /**
+        @returns {Boolean}
+    */
+    isAdditive: function() {
+        return this._additive;
+    },
+    
+    /**
+        @type Boolean
+    */
+    _cumulative: null,
+    
+    /**
+        @param {Boolean} cumulative
+    */
+    setCumulative: function(cumulative) {
+        this._cumulative = cumulative;
+    },
+    
+    /**
+        @returns {Boolean}
+    */
+    isCumulative: function() {
+        return this._cumulative;
+    }
+});
+
+
+/**
+    @class CABasicAnimation
+    @extends CAPropertyAnimation
+*/
+var CABasicAnimation = CAPropertyAnimation.extend({
+    
+    /**
+        @type id
+    */
+    _byValue: null,
+    
+    /**
+        @param {id} value
+    */
+    setByValue: function(value) {
+        this._byValue = value;
+    },
+    
+    /**
+        @returns id
+    */
+    byValue: function() {
+        return this._byValue;
+    },
+    
+    /**
+        @type id
+    */
+    _toValue: null,
+    
+    /**
+        @param {id} value
+    */
+    setToValue: function(value) {
+        this._toValue = value;
+    },
+    
+    /**
+        @returns id
+    */
+    toValue: function() {
+        return this._toValue;
+    },
+    
+    /**
+        @type id
+    */
+    _fromValue: null,
+    
+    /**
+        @param {id} value
+    */
+    setFromValue: function(value) {
+        this._fromValue = value;
+    },
+    
+    /**
+        @returns id
+    */
+    fromValue: function() {
+        return this._fromValue;
+    },
+});
+
+
+/**
+    @class CAKeyframeAnimation
+    @extends CAPropertyAnimation
+*/
+var CAKeyFrameAnimation = CAPropertyAnimation.extend({
+    
+    /**
+        @type NSArray
+    */
+    _values: null,
+    
+    setValues: function(values) {
+        this._values = values;
+    },
+    
+    values: function() {
+        return this._values;
+    },
+    
+    /**
+        @type CGPathRef
+    */
+    _path: null,
+    
+    setPath: function(path) {
+        this._path = path;
+    },
+    
+    path: function() {
+        return this._path;
+    },
+    
+    /**
+        @type NSArray
+    */
+    _keyTimes: null,
+    
+    setKeyTimes: function(times) {
+        this._keyTimes = times;
+    },
+    
+    keyTimes: function() {
+        return this._keyTimes;
+    },
+    
+    /**
+        @type NSArray
+    */
+    _timingFunctions: null,
+    
+    setTimingFunctions: function(functions) {
+        this._timingFunctions = functions;
+    },
+    
+    timingFunctions: function() {
+        return this._timingFunctions;
+    },
+    
+    /**
+        @type NSString
+    */
+    _calculationMode: null,
+    
+    setCalculationMode: function(mode) {
+        this._calculationMode = mode;
+    },
+    
+    calculationMode: function() {
+        return this._calculationMode;
+    },
+    
+    /**
+        @type rotationMode
+    */
+    _rotationMode: null,
+    
+    setRotationMode: function(mode) {
+        this._rotationMode = mode;
+    },
+    
+    rotationMode: function() {
+        return this._rotationMode;
+    }
+});
+
+
+/**
+    Calculation mode..
+*/
+var kCAAnimationLinear              = "kCAAnimationLinear";
+var kCAAnimationDiscrete            = "kCAAnimationDiscrete";
+var kCAAnimationPaced               = "kCAAnimationPaced";
+
+/**
+    Rotation mode
+*/
+var kCAAnimationRotateAuto          = "kCAAnimationRotateAuto";
+var kCAAnimationRotateAutoReverse   = "kCAAnimationRotateAutoReverse";
+
+
+/**
+    @class CATransition
+    @extends CAAnimation
+*/
+var CATransition = CAAnimation.extend({
+    
+    /**
+        @type NSString
+    */
+    _type: null,
+    
+    setType: function(aType) {
+        this._type = aType;
+    },
+    
+    type: function() {
+        return this._type;
+    },
+    
+    /**
+        @type NSString
+    */
+    _subType: null,
+    
+    setSubType: function(aType) {
+        this._subType = aType;
+    },
+    
+    subType: function() {
+        return this._subType;
+    },
+    
+    /**
+        @type Float
+    */
+    _startProgress: null,
+    
+    setStartProgress: function(progress) {
+        this._startProgress = progress;
+    },
+    
+    startProgress: function() {
+        return this._startProgress;
+    },
+    
+    /**
+        @type Float
+    */
+    _endProgress: null,
+    
+    setEndProgress: function(progress) {
+        this._endProgress = progress;
+    },
+    
+    endProgress: function() {
+        return this._endProgress;
+    },
+    
+    /**
+        @type id
+    */
+    _filter: null,
+    
+    setFilter: function(filter) {
+        this._filter = filter;
+    },
+    
+    filter: function() {
+        return this._filter;
+    }
+});
+
+/**
+    Transition types..
+*/
+var kCATransitionFade       = "kCATransitionFade";
+var kCATransitionMoveIn     = "kCATransitionMoveIn";
+var kCATransitionPush       = "kCATransitionPush";
+var kCATransitionReveal     = "kCATransitionReveal";
+
+var kCATransitionFromRight  = "kCATransitionFromRight";
+var kCATransitionFromLeft   = "kCATransitionFromLeft";
+var kCATransitionFromTop    = "kCATransitionFromTop";
+var kCATransitionFromBottom = "kCATransitionFromBottom";
+
+
+/**
+    @class CAAnimationGroup
+    @extends CAAnimation
+*/
+var CAAnimationGroup = CAAnimation.extend({
+    
+    /**
+        @type NSArray
+    */
+    _animations: null,
+    
+    /**
+        @param {NSArray} animations
+    */
+    setAnimations: function(animations) {
+        this._animations = animations;
+    },
+    
+    /**
+        @returns NSArray
+    */
+    animations: function() {
+        return this._animations;
+    }
+});
+/* 
+ * media_timing.js
+ * vienna
+ * 
+ * Created by Adam Beynon.
+ * Copyright 2009 Adam Beynon.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+
+/**
+    @protocol CAMediaTiming
+*/
+var CAMediaTiming = NSObject.protocol({
+    
+    /**
+        Defaults to 0.0
+        
+        @type {Float}
+    */
+    _beginTime: null,
+    
+    /**
+        @param {Float} time
+    */
+    setBeginTime: function(time) {
+        this._beginTime = time;
+    },
+    
+    /**
+        @returns Float
+    */
+    beginTime: function() {
+        return this._beginTime;
+    },
+    
+    /**
+        Defaults to 0.0
+        
+        @type {Float}
+    */
+    _duration: null,
+    
+    /**
+        @param {Float} time
+    */
+    setDuration: function(duration) {
+        this._duration = duration;
+    },
+    
+    /**
+        @returns Float
+    */
+    duration: function() {
+        return this._duaration;
+    },
+    
+    /**
+        Defaults to 1.0
+        
+        @type {Float}
+    */
+    _speed: null,
+    
+    /**
+        @param {Float} time
+    */
+    setSpeed: function(speed) {
+        this._speed = speed;
+    },
+    
+    /**
+        @returns Float
+    */
+    speed: function() {
+        return this._speed;
+    },
+    
+    /**
+        Defaults to false
+        
+        @type {Boolean}
+    */
+    _autoreverses: null,
+    
+    /**
+        @param {Boolean} flag
+    */
+    setAutoreverses: function(flag) {
+        this._autoreverses = flag;
+    },
+    
+    /**
+        @returns Boolean
+    */
+    autoreverses: function() {
+        return this._autoreverses;
+    }
+});/* 
+ * media_timing_function.js
+ * vienna
+ * 
+ * Created by Adam Beynon.
+ * Copyright 2009 Adam Beynon.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+
+/**
+    @class CAMediaTimingFunction
+    @extends NSObject
+*/
+var CAMediaTimingFunction = NSObject.extend({
+    
+    /**
+        @param {Float} c1x
+        @param {Float} c1y
+        @param {Float} c2x
+        @param {Float} c2y
+        @returns CAMediaTimingFunction
+    */
+    initWithControlPoints: function(c1x, c1y, c2x, c2y) {
+
+    }
+});
+
+/**
+    'linear', 'easeIn', 'easeOut', 'easeInEaseOut', 'default'
+    
+    @param {NSString} name
+    @returns CAMediaTimingFunction
+*/
+CAMediaTimingFunction.functionWithName = function(name) {
+    
+};
+
+/**
+    @param {Float} c1x
+    @param {Float} c1y
+    @param {Float} c2x
+    @param {Float} c2y
+    @returns CAMediaTimingFunction
+*/
+CAMediaTimingFunction.functionWithControlPoints = function(c1x, c1y, c2x, c2y) {
+    
+};
+
+/**
+    Media timing names
+*/
+var kCAMediaTimingFunctionLinear        = "linear";
+var kCAMediaTimingFunctionEaseIn        = "easeIn";
+var kCAMediaTimingFunctionEaseOut       = "easeOut";
+var kCAMediaTimingFunctionEaseInEaseOut = "easeInEaseOut";
+var kCAMediaTimingFunctionDefault       = "default";
+/* 
  * font.js
  * vienna
  * 
@@ -4605,6 +5350,473 @@ var IBActionConnection = NSObject.extend({
         return this;
     }
 });
+/* 
+ * animation.js
+ * vienna
+ * 
+ * Created by Adam Beynon.
+ * Copyright 2009 Adam Beynon.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+
+/**
+    @enum NSAnimationCurve
+*/
+var NSAnimationEaseInOut        = 0; // default
+var NSAnimationEaseIn           = 1;
+var NSAnimationEaseOut          = 2;
+var NSAnimationLinear           = 3;
+
+
+var NSAnimationProgressMarkNotification = "NSAnimationProgressMarkNotification";
+var NSAnimationProgressMark             = "NSAnimationProgressMark";
+
+/**
+    @class NSAnimation
+    @extends NSObject
+*/
+var NSAnimation = NSObject.extend({
+    
+    /**
+        @type Float time interval
+    */
+    _duration: null,
+    
+    /**
+        @type Float the progress
+    */
+    _currentProgress: null,
+    
+    /**
+        @type Float
+    */
+    _framesPerSecond: null,
+    
+    /**
+        @type NSObject
+    */
+    _delegate: null,
+    
+    /**
+        @type NSTimer
+    */
+    _timer: null,
+    
+    /**
+        @type Float time interval
+    */
+    _startTime: null,
+    
+    /**
+        @type NSArray
+    */
+    _progressMarks: null,
+    
+    /**
+        @type NSAnimation
+    */
+    _startAnimation: null,
+    
+    /**
+        @type NSAnimation
+    */
+    _stopAnimation: null,
+    
+    /**
+        @type Integer
+    */
+    _nextProgressMark: null,
+    
+    /**
+        @param {Float} duration
+        @param {NSAnimationCurve} animationCurve
+        @returns NSAnimation
+    */
+    initWithDurationAnimationCurve: function(duration, animationCurve) {
+        
+    },
+    
+    /**
+        Starts the animation
+    */
+    startAnimation: function() {
+        
+    },
+    
+    /**
+        Stops the animation
+    */
+    stopAnimation: function() {
+        
+    },
+    
+    /**
+        @returns Boolean
+    */
+    isAnimating: function() {
+        
+    },
+    
+    /**
+        @returns Float
+    */
+    currentProgress: function() {
+        
+    },
+    
+    /**
+        @param {Float} progress
+    */
+    setCurrentProgress: function() {
+        
+    },
+    
+    /**
+        @param {Float} duration
+    */
+    setDuration: function(duration) {
+        
+    },
+    
+    /**
+        @returns Float
+    */
+    duration: function() {
+        
+    },
+    
+    /**
+        @param {NSAnimationCurve} curve
+    */
+    setAnimationCurve: function(curve) {
+        
+    },
+    
+    /**
+        @returns NSAnimationCurve
+    */
+    animationCurve: function() {
+        
+    },
+    
+    /**
+        @returns Float
+    */
+    currentValue: function() {
+        
+    },
+    
+    /**
+        @param {NSObject} <NSAnimationDelegate> delegate
+    */
+    setDelegate: function(delegate) {
+        
+    },
+    
+    /**
+        @returns NSObject <NSAnimationDelegate>
+    */
+    delegate: function() {
+        return this._delegate;
+    },
+    
+    /**
+        @returns NSArray
+    */
+    progressMarks: function() {
+        
+    },
+    
+    /**
+        @param {NSArray} progressMarks
+    */
+    setProgressMarks: function(progressMarks) {
+        
+    },
+    
+    /**
+        @param {Float} progressMark
+    */
+    addProgressMark: function(progressMark) {
+        
+    },
+    
+    /**
+        @param {Float} progressMark
+    */
+    removeProgressMark: function(progressMark) {
+        
+    },
+    
+    /**
+        @param {NSAnimation} animation
+        @param {Float} startProgress
+    */
+    startWhenAnimationReachesProgress: function(animation, startProgress) {
+        
+    },
+    
+    /**
+        @param {NSAnimation} animation
+        @param {Float} stopProgress
+    */
+    stopWhenAnimationReachesProgress: function(animation, stopProgress) {
+        
+    },
+    
+    /**
+        Clear animation
+    */
+    clearStartAnimation: function() {
+        
+    },
+    
+    
+    /**
+        Clear animation
+    */
+    clearStopAnimation: function() {
+        
+    }
+});
+
+/**
+    @protocol NSAnimationDelegate
+*/
+var NSAnimationDelegate = NSObject.protocol({
+    
+    /**
+        @optional
+        
+        @param {NSAnimation} animation
+        @returns Boolean
+    */
+    animationShouldStart: function(animation) {
+    },
+    
+    /**
+        @optional
+        
+        @param {NSAnimation} animation
+    */
+    animationDidStop: function(animation) {
+    },
+    
+    /**
+        @optional
+        
+        @param {NSAnimation} animation
+    */
+    animationDidEnd: function(animation) {
+    },
+    
+    /**
+        @optional
+        
+        @param {NSAnimation} animation
+        @param {Float} progress
+        @returns Float
+    */
+    animationValueForProgress: function(animation, progress) {
+    },
+    
+    /**
+        @optional
+        
+        @param {NSAnimation} animation
+        @param {Float} progress
+    */
+    animationDidReachProgressMark: function(animation, progress) {
+    }
+});
+
+
+/**
+    Animation info keys
+*/
+var NSViewAnimationTargetKey        = "NSViewAnimationTargetKey";       // @required an NSWindow or NSView
+var NSViewAnimationStartFrameKey    = "NSViewAnimationStartFrameKey";   // @optional NSRect
+var NSViewAnimationEndFrameKey      = "NSViewAnimationEndFrameKey";     // @optional NSRect
+var NSViewAnimationEffectKey        = "NSViewAnimationEffectKey";       // @optional NSString
+var NSViewAnimationFadeInEffect     = "NSViewAnimationFadeInEffect";
+var NSViewAnimationFadeOutEffect    = "NSViewAnimationFadeOutEffect";
+
+
+/**
+    @class NSViewAnimation
+    @extends NSAnimation
+*/
+var NSViewAnimation = NSAnimation.extend({
+    
+    /**
+        @type NSArray
+    */
+    _viewAnimations: null,
+    
+    /**
+        @type NSDictionary
+    */
+    _viewAnimationInfo: null,
+    
+    /**
+        @type NSDictionary
+    */
+    _windowAnimationInfo: null,
+    
+    /**
+        @param {NSArray} viewAnimations
+        @returns NSViewAnimation
+    */
+    initWithViewAnimations: function(viewAnimations) {
+        
+    },
+    
+    /**
+        @returns NSArray
+    */
+    viewAnimations: function() {
+        return this._viewAnimations;
+    },
+    
+    /**
+        @param {NSArray} viewAnimations
+    */
+    setViewAnimations: function(viewAnimations) {
+        
+    }
+});
+
+
+/**
+    @protocol NSAnimatablePropertyContainer
+*/
+var NSAnimatablePropertyContainer = NSObject.protocol({
+    
+    /**
+        @returns
+    */
+    animator: function() {
+    },
+    
+    /**
+        @returns NSDictionary
+    */
+    animations: function() {
+    },
+    
+    /**
+        @param {NSDictionary} animations
+    */
+    setAnimations: function(animations) {
+    },
+    
+    /**
+        @param {NSString} key
+        @returns 
+    */
+    animationForKey: function(key) {
+    },
+    
+    /**
+        @class-method
+        @param {NSString} key
+        @returns 
+    */
+    defaultAnimationForKey: function(key) {
+    }
+});
+/* 
+ * animation_context.js
+ * vienna
+ * 
+ * Created by Adam Beynon.
+ * Copyright 2009 Adam Beynon.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+
+/**
+    @class NSAnimationContext
+    @extends NSObject
+*/
+var NSAnimationContext = NSObject.extend({
+    
+    /**
+        @type Float
+    */
+    _duration: null,
+    
+    /**
+        @param {Float} duration
+    */
+    setDuration: function(duration) {
+        
+    },
+    
+    /**
+        @returns Float
+    */
+    duration: function() {
+        
+    }
+});
+
+
+/**
+    Begin grouping
+*/
+NSAnimationContext.beginGrouping = function() {
+    
+};
+
+/**
+    End grouping
+*/
+NSAnimationContext.endGrouping = function() {
+    
+};
+
+/**
+    @returns NSAnimationContext
+*/
+NSAnimationContext.currentContext = function() {
+    
+};
 /* 
  * event.js
  * vienna
@@ -19873,4 +21085,4 @@ var JSScrollView = NSView.extend({
         CGContextFillRect(c, aRect);
     }
 });
-__bootstrap_files["MainMenu.json"] = {"archive":{"data":{"IBDocument.SystemTarget": 1050,"IBDocument.SystemVersion": "10A411","IBDocument.InterfaceBuilderVersion": "731","IBDocument.AppKitVersion": "1033","IBDocument.HIToolboxVersion": "435.00","IBDocument.PluginVersions": {"class": "NSMutableDictionary","id": "", "objects":{"NS.key.0": "com.apple.InterfaceBuilder.CocoaPlugin","NS.object.0": "731"}},"IBDocument.EditedObjectIDs": {"class": "NSMutableArray","id": "", "objects":[767]},"IBDocument.PluginDependencies": {"class": "NSArray","id": "", "objects":["com.apple.InterfaceBuilder.CocoaPlugin"]},"IBDocument.Metadata": {"class": "NSMutableDictionary","id": "", "objects":{"EncodedWithXMLCoder": true,"dict.sortedKeys": {"class": "NSArray","id": "0", "objects":[]},"dict.values": {"class": "NSMutableArray","id": "", "objects":[]}}},"IBDocument.RootObjects": {"class": "NSMutableArray","id": "1048", "objects":[{"class": "NSCustomObject","id": "1021", "objects":{"NSClassName": "NSApplication"}},{"class": "NSCustomObject","id": "1014", "objects":{"NSClassName": "FirstResponder"}},{"class": "NSCustomObject","id": "1050", "objects":{"NSClassName": "NSApplication"}},{"class": "NSCustomObject","id": "163992474", "objects":{"NSClassName": "NSFontManager"}},{"class": "NSWindowTemplate","id": "513744381", "objects":{"NSWindowStyleMask": 15,"NSWindowBacking": 2,"NSWindowRect": "{{133, 47}, {946, 613}}","NSWTFlags": 603979776,"NSWindowTitle": "Window","NSWindowClass": "NSWindow","NSViewClass": {"nil":""},"NSWindowContentMaxSize": "{1.79769e+308, 1.79769e+308}","NSWindowView": {"class": "NSView","id": "414427165", "objects":{"NSNextResponder": {"id":""},"NSvFlags": 256,"NSSubviews": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSButton","id": "807627904", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSFrame": "{{554, 422}, {118, 25}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSButtonCell","id": "281914322", "objects":{"NSCellFlags": -2080244224,"NSCellFlags2": 134217728,"NSContents": "Round Textured","NSSupport": {"class": "NSFont","id": "798430573", "objects":{"NSName": "LucidaGrande","NSSize": 13,"NSfFlags": 1044}},"NSControlView": {"id":"807627904"},"NSButtonFlags": -2038152961,"NSButtonFlags2": 163,"NSAlternateContents": "","NSKeyEquivalent": "","NSPeriodicDelay": 400,"NSPeriodicInterval": 75}}}},{"class": "NSButton","id": "947043007", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSFrame": "{{554, 391}, {118, 25}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSButtonCell","id": "775301662", "objects":{"NSCellFlags": -1543373312,"NSCellFlags2": 134217728,"NSContents": "This is disabled","NSSupport": {"id":"798430573"},"NSControlView": {"id":"947043007"},"NSButtonFlags": -2038152961,"NSButtonFlags2": 163,"NSAlternateContents": "","NSKeyEquivalent": "","NSPeriodicDelay": 400,"NSPeriodicInterval": 75}}}},{"class": "NSSlider","id": "481053202", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSFrame": "{{552, 455}, {122, 21}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSSliderCell","id": "228939928", "objects":{"NSCellFlags": -1543373312,"NSCellFlags2": 0,"NSContents": "","NSSupport": {"class": "NSFont","id": "672854075", "objects":{"NSName": "Helvetica","NSSize": 12,"NSfFlags": 16}},"NSControlView": {"id":"481053202"},"NSMaxValue": 100,"NSMinValue": 0.0,"NSValue": 50,"NSAltIncValue": 0.0,"NSNumberOfTickMarks": 0,"NSTickMarkPosition": 1,"NSAllowsTickMarkValuesOnly": false,"NSVertical": false}}}},{"class": "NSSlider","id": "257328319", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSFrame": "{{552, 478}, {122, 21}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSSliderCell","id": "829387278", "objects":{"NSCellFlags": -2079981824,"NSCellFlags2": 0,"NSContents": "","NSSupport": {"id":"672854075"},"NSControlView": {"id":"257328319"},"NSMaxValue": 100,"NSMinValue": 0.0,"NSValue": 50,"NSAltIncValue": 0.0,"NSNumberOfTickMarks": 0,"NSTickMarkPosition": 1,"NSAllowsTickMarkValuesOnly": false,"NSVertical": false}}}},{"class": "NSButton","id": "780169108", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSFrame": "{{62, 488}, {109, 18}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSButtonCell","id": "146314554", "objects":{"NSCellFlags": 67239424,"NSCellFlags2": 0,"NSContents": "Normal radio","NSSupport": {"id":"798430573"},"NSControlView": {"id":"780169108"},"NSButtonFlags": 1211912703,"NSButtonFlags2": 130,"NSNormalImage": {"class": "NSCustomResource","id": "904276281", "objects":{"NSClassName": "NSImage","NSResourceName": "NSRadioButton"}},"NSAlternateImage": {"class": "NSButtonImageSource","id": "813970489", "objects":{"NSImageName": "NSRadioButton"}},"NSAlternateContents": "","NSKeyEquivalent": "","NSPeriodicDelay": 200,"NSPeriodicInterval": 25}}}},{"class": "NSButton","id": "511023663", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSFrame": "{{62, 433}, {156, 18}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSButtonCell","id": "388353698", "objects":{"NSCellFlags": -1543373312,"NSCellFlags2": 0,"NSContents": "Disabled Check radio","NSSupport": {"id":"798430573"},"NSControlView": {"id":"511023663"},"NSButtonFlags": 1211912703,"NSButtonFlags2": 130,"NSNormalImage": {"id":"904276281"},"NSAlternateImage": {"id":"813970489"},"NSAlternateContents": "","NSKeyEquivalent": "","NSPeriodicDelay": 200,"NSPeriodicInterval": 25}}}},{"class": "NSButton","id": "142462336", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSFrame": "{{62, 462}, {177, 18}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSButtonCell","id": "100568012", "objects":{"NSCellFlags": -2080244224,"NSCellFlags2": 0,"NSContents": "Normal unchecked radio","NSSupport": {"id":"798430573"},"NSControlView": {"id":"142462336"},"NSButtonFlags": 1211912703,"NSButtonFlags2": 130,"NSNormalImage": {"id":"904276281"},"NSAlternateImage": {"id":"813970489"},"NSAlternateContents": "","NSKeyEquivalent": "","NSPeriodicDelay": 200,"NSPeriodicInterval": 25}}}},{"class": "NSButton","id": "577562334", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSFrame": "{{285, 488}, {109, 18}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSButtonCell","id": "671756545", "objects":{"NSCellFlags": -2080244224,"NSCellFlags2": 0,"NSContents": "Normal radio","NSSupport": {"id":"798430573"},"NSControlView": {"id":"577562334"},"NSButtonFlags": 1211912703,"NSButtonFlags2": 130,"NSNormalImage": {"class": "NSCustomResource","id": "1020590486", "objects":{"NSClassName": "NSImage","NSResourceName": "NSSwitch"}},"NSAlternateImage": {"class": "NSButtonImageSource","id": "849298367", "objects":{"NSImageName": "NSSwitch"}},"NSAlternateContents": "","NSKeyEquivalent": "","NSPeriodicDelay": 200,"NSPeriodicInterval": 25}}}},{"class": "NSButton","id": "790695465", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSFrame": "{{285, 433}, {156, 18}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSButtonCell","id": "561385561", "objects":{"NSCellFlags": -1543373312,"NSCellFlags2": 0,"NSContents": "Disabled Check radio","NSSupport": {"id":"798430573"},"NSControlView": {"id":"790695465"},"NSButtonFlags": 1211912703,"NSButtonFlags2": 130,"NSNormalImage": {"id":"1020590486"},"NSAlternateImage": {"id":"849298367"},"NSAlternateContents": "","NSKeyEquivalent": "","NSPeriodicDelay": 200,"NSPeriodicInterval": 25}}}},{"class": "NSButton","id": "561516135", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSFrame": "{{285, 462}, {177, 18}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSButtonCell","id": "79065924", "objects":{"NSCellFlags": 67239424,"NSCellFlags2": 0,"NSContents": "Normal unchecked radio","NSSupport": {"id":"798430573"},"NSControlView": {"id":"561516135"},"NSButtonFlags": 1211912703,"NSButtonFlags2": 130,"NSNormalImage": {"id":"1020590486"},"NSAlternateImage": {"id":"849298367"},"NSAlternateContents": "","NSKeyEquivalent": "","NSPeriodicDelay": 200,"NSPeriodicInterval": 25}}}},{"class": "NSTextField","id": "744995210", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 267,"NSFrame": "{{708, 478}, {106, 22}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSTextFieldCell","id": "160495813", "objects":{"NSCellFlags": -1804468671,"NSCellFlags2": 272630784,"NSContents": "Textfieldy","NSSupport": {"id":"798430573"},"NSControlView": {"id":"744995210"},"NSDrawsBackground": true,"NSBackgroundColor": {"class": "NSColor","id": "875495060", "objects":{"NSColorSpace": 6,"NSCatalogName": "System","NSColorName": "textBackgroundColor","NSColor": {"class": "NSColor","id": "5431023", "objects":{"NSColorSpace": 3,"NSWhite": "MQA"}}}},"NSTextColor": {"class": "NSColor","id": "91711647", "objects":{"NSColorSpace": 6,"NSCatalogName": "System","NSColorName": "textColor","NSColor": {"class": "NSColor","id": "106532192", "objects":{"NSColorSpace": 3,"NSWhite": "MAA"}}}}}}}},{"class": "NSTextField","id": "1037334765", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 267,"NSFrame": "{{708, 446}, {106, 22}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSTextFieldCell","id": "685186056", "objects":{"NSCellFlags": -1267597759,"NSCellFlags2": 272630784,"NSContents": "Disabled","NSSupport": {"id":"798430573"},"NSControlView": {"id":"1037334765"},"NSDrawsBackground": true,"NSBackgroundColor": {"id":"875495060"},"NSTextColor": {"id":"91711647"}}}}},{"class": "NSTextField","id": "669360788", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSFrame": "{{713, 421}, {77, 17}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSTextFieldCell","id": "859234033", "objects":{"NSCellFlags": 68288064,"NSCellFlags2": 272630784,"NSContents": "Label","NSSupport": {"id":"798430573"},"NSControlView": {"id":"669360788"},"NSBackgroundColor": {"class": "NSColor","id": "", "objects":{"NSColorSpace": 6,"NSCatalogName": "System","NSColorName": "controlColor","NSColor": {"class": "NSColor","id": "415934132", "objects":{"NSColorSpace": 3,"NSWhite": "MC42NjY2NjY2NjY3AA"}}}},"NSTextColor": {"class": "NSColor","id": "163054175", "objects":{"NSColorSpace": 6,"NSCatalogName": "System","NSColorName": "controlTextColor","NSColor": {"id":"106532192"}}}}}}},{"class": "NSButton","id": "479961390", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSFrame": "{{20, 57}, {73, 25}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSButtonCell","id": "1059063770", "objects":{"NSCellFlags": -2080244224,"NSCellFlags2": 134217728,"NSContents": "Add","NSSupport": {"id":"798430573"},"NSControlView": {"id":"479961390"},"NSButtonFlags": -2038152961,"NSButtonFlags2": 163,"NSAlternateContents": "","NSKeyEquivalent": "","NSPeriodicDelay": 400,"NSPeriodicInterval": 75}}}},{"class": "NSButton","id": "780600689", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSFrame": "{{110, 57}, {80, 25}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSButtonCell","id": "577933790", "objects":{"NSCellFlags": -2080244224,"NSCellFlags2": 134217728,"NSContents": "Remove","NSSupport": {"id":"798430573"},"NSControlView": {"id":"780600689"},"NSButtonFlags": -2038152961,"NSButtonFlags2": 163,"NSAlternateContents": "","NSKeyEquivalent": "","NSPeriodicDelay": 400,"NSPeriodicInterval": 75}}}},{"class": "NSScrollView","id": "442029134", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSSubviews": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSClipView","id": "1055184103", "objects":{"NSNextResponder": {"id":"442029134"},"NSvFlags": 2304,"NSSubviews": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSTableView","id": "685474029", "objects":{"NSNextResponder": {"id":"1055184103"},"NSvFlags": 256,"NSFrameSize": "{904, 258}","NSSuperview": {"id":"1055184103"},"NSEnabled": true,"NSHeaderView": {"class": "NSTableHeaderView","id": "543495260", "objects":{"NSNextResponder": {"id":"785183076"},"NSvFlags": 256,"NSFrameSize": "{904, 17}","NSSuperview": {"id":"785183076"},"NSTableView": {"id":"685474029"}}},"NSCornerView": {"class": "_NSCornerView","id": "625063725", "objects":{"NSNextResponder": {"id":"442029134"},"NSvFlags": -2147483392,"NSFrame": "{{224, 0}, {16, 17}}","NSSuperview": {"id":"442029134"}}},"NSTableColumns": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSTableColumn","id": "283264676", "objects":{"NSIdentifier": "name","NSWidth": 101,"NSMinWidth": 40,"NSMaxWidth": 1000,"NSHeaderCell": {"class": "NSTableHeaderCell","id": "", "objects":{"NSCellFlags": 75628096,"NSCellFlags2": 2048,"NSContents": "Name","NSSupport": {"class": "NSFont","id": "26", "objects":{"NSName": "LucidaGrande","NSSize": 11,"NSfFlags": 3100}},"NSBackgroundColor": {"class": "NSColor","id": "1034044358", "objects":{"NSColorSpace": 3,"NSWhite": "MC4zMzMzMzI5ODU2AA"}},"NSTextColor": {"class": "NSColor","id": "384823602", "objects":{"NSColorSpace": 6,"NSCatalogName": "System","NSColorName": "headerTextColor","NSColor": {"id":"106532192"}}}}},"NSDataCell": {"class": "NSTextFieldCell","id": "17975100", "objects":{"NSCellFlags": 337772096,"NSCellFlags2": 2048,"NSContents": "Text Cell","NSSupport": {"id":"798430573"},"NSControlView": {"id":"685474029"},"NSBackgroundColor": {"class": "NSColor","id": "955461975", "objects":{"NSColorSpace": 6,"NSCatalogName": "System","NSColorName": "controlBackgroundColor","NSColor": {"id":"415934132"}}},"NSTextColor": {"id":"163054175"}}},"NSResizingMask": 3,"NSIsResizeable": true,"NSIsEditable": true,"NSTableView": {"id":"685474029"}}},{"class": "NSTableColumn","id": "1002923163", "objects":{"NSIdentifier": "age","NSWidth": 797,"NSMinWidth": 40,"NSMaxWidth": 1000,"NSHeaderCell": {"class": "NSTableHeaderCell","id": "", "objects":{"NSCellFlags": 75628096,"NSCellFlags2": 2048,"NSContents": "Age","NSSupport": {"id":"26"},"NSBackgroundColor": {"id":"1034044358"},"NSTextColor": {"id":"384823602"}}},"NSDataCell": {"class": "NSTextFieldCell","id": "276960075", "objects":{"NSCellFlags": 337772096,"NSCellFlags2": 2048,"NSContents": "Text Cell","NSSupport": {"id":"798430573"},"NSControlView": {"id":"685474029"},"NSBackgroundColor": {"id":"955461975"},"NSTextColor": {"id":"163054175"}}},"NSResizingMask": 3,"NSIsResizeable": true,"NSIsEditable": true,"NSTableView": {"id":"685474029"}}}]},"NSIntercellSpacingWidth": 3,"NSIntercellSpacingHeight": 2,"NSBackgroundColor": {"id":"5431023"},"NSGridColor": {"class": "NSColor","id": "", "objects":{"NSColorSpace": 6,"NSCatalogName": "System","NSColorName": "gridColor","NSColor": {"class": "NSColor","id": "", "objects":{"NSColorSpace": 3,"NSWhite": "MC41AA"}}}},"NSRowHeight": 17,"NSTvFlags": -700448768,"NSDelegate": {"id":""},"NSDataSource": {"id":""},"NSColumnAutoresizingStyle": 4,"NSDraggingSourceMaskForLocal": 15,"NSDraggingSourceMaskForNonLocal": 0,"NSAllowsTypeSelect": true,"NSTableViewDraggingDestinationStyle": 0}}]},"NSFrame": "{{1, 17}, {904, 258}}","NSSuperview": {"id":"442029134"},"NSNextKeyView": {"id":"685474029"},"NSDocView": {"id":"685474029"},"NSBGColor": {"id":"955461975"},"NScvFlags": 4}},{"class": "NSScroller","id": "923730944", "objects":{"NSNextResponder": {"id":"442029134"},"NSvFlags": -2147483392,"NSFrame": "{{224, 17}, {15, 102}}","NSSuperview": {"id":"442029134"},"NSTarget": {"id":"442029134"},"NSAction": "_doScroller:","NSCurValue": 37,"NSPercent": 0.1947367936372757}},{"class": "NSScroller","id": "959634700", "objects":{"NSNextResponder": {"id":"442029134"},"NSvFlags": -2147483392,"NSFrame": "{{1, 119}, {223, 15}}","NSSuperview": {"id":"442029134"},"NSsFlags": 1,"NSTarget": {"id":"442029134"},"NSAction": "_doScroller:","NSPercent": 0.57142859697341919}},{"class": "NSClipView","id": "785183076", "objects":{"NSNextResponder": {"id":"442029134"},"NSvFlags": 2304,"NSSubviews": {"class": "NSMutableArray","id": "", "objects":[{"id":"543495260"}]},"NSFrame": "{{1, 0}, {904, 17}}","NSSuperview": {"id":"442029134"},"NSNextKeyView": {"id":"543495260"},"NSDocView": {"id":"543495260"},"NSBGColor": {"id":"955461975"},"NScvFlags": 4}},{"id":"625063725"}]},"NSFrame": "{{20, 102}, {906, 276}}","NSSuperview": {"id":"414427165"},"NSNextKeyView": {"id":"1055184103"},"NSsFlags": 562,"NSVScroller": {"id":"923730944"},"NSHScroller": {"id":"959634700"},"NSContentView": {"id":"1055184103"},"NSHeaderClipView": {"id":"785183076"},"NSCornerView": {"id":"625063725"},"NSScrollAmts": "QSAAAEEgAABBmAAAQZgAAA"}}]},"NSFrameSize": "{946, 613}","NSSuperview": {"id":""}}},"NSScreenRect": "{{0, 0}, {1920, 1178}}","NSMaxSize": "{1.79769e+308, 1.79769e+308}"}},{"class": "NSMenu","id": "396145598", "objects":{"NSTitle": "Main Menu","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "502041852", "objects":{"NSMenu": {"id":"396145598"},"NSTitle": "JSApp","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"class": "NSCustomResource","id": "277861762", "objects":{"NSClassName": "NSImage","NSResourceName": "NSMenuCheckmark"}},"NSMixedImage": {"class": "NSCustomResource","id": "420132161", "objects":{"NSClassName": "NSImage","NSResourceName": "NSMenuMixedState"}},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "929908017", "objects":{"NSTitle": "JSApp","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "719413741", "objects":{"NSMenu": {"id":"929908017"},"NSTitle": "About JSApp","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "147013270", "objects":{"NSMenu": {"id":"929908017"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "544446554", "objects":{"NSMenu": {"id":"929908017"},"NSTitle": "Preferences…","NSKeyEquiv": ",","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "455124416", "objects":{"NSMenu": {"id":"929908017"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "493734341", "objects":{"NSMenu": {"id":"929908017"},"NSTitle": "Services","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "218525171", "objects":{"NSTitle": "Services","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[]},"NSName": "_NSServicesMenu"}}}},{"class": "NSMenuItem","id": "646933026", "objects":{"NSMenu": {"id":"929908017"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "843796999", "objects":{"NSMenu": {"id":"929908017"},"NSTitle": "Hide JSApp","NSKeyEquiv": "h","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "61754815", "objects":{"NSMenu": {"id":"929908017"},"NSTitle": "Hide Others","NSKeyEquiv": "h","NSKeyEquivModMask": 1572864,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "727120825", "objects":{"NSMenu": {"id":"929908017"},"NSTitle": "Show All","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "428803447", "objects":{"NSMenu": {"id":"929908017"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "491412195", "objects":{"NSMenu": {"id":"929908017"},"NSTitle": "Quit JSApp","NSKeyEquiv": "q","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]},"NSName": "_NSAppleMenu"}}}},{"class": "NSMenuItem","id": "475354134", "objects":{"NSMenu": {"id":"396145598"},"NSTitle": "File","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "140258427", "objects":{"NSTitle": "File","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "684393965", "objects":{"NSMenu": {"id":"140258427"},"NSTitle": "New","NSKeyEquiv": "n","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "118789126", "objects":{"NSMenu": {"id":"140258427"},"NSTitle": "Open…","NSKeyEquiv": "o","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "711009244", "objects":{"NSMenu": {"id":"140258427"},"NSTitle": "Open Recent","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "85259455", "objects":{"NSTitle": "Open Recent","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "620121511", "objects":{"NSMenu": {"id":"85259455"},"NSTitle": "Clear Menu","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]},"NSName": "_NSRecentDocumentsMenu"}}}},{"class": "NSMenuItem","id": "875068603", "objects":{"NSMenu": {"id":"140258427"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "313874609", "objects":{"NSMenu": {"id":"140258427"},"NSTitle": "Close","NSKeyEquiv": "w","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "594142260", "objects":{"NSMenu": {"id":"140258427"},"NSTitle": "Save","NSKeyEquiv": "s","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "323858156", "objects":{"NSMenu": {"id":"140258427"},"NSTitle": "Save As…","NSKeyEquiv": "S","NSKeyEquivModMask": 1179648,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "402382860", "objects":{"NSMenu": {"id":"140258427"},"NSTitle": "Revert to Saved","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "481018735", "objects":{"NSMenu": {"id":"140258427"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "499319061", "objects":{"NSMenu": {"id":"140258427"},"NSTitle": "Page Setup...","NSKeyEquiv": "P","NSKeyEquivModMask": 1179648,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSToolTip": ""}},{"class": "NSMenuItem","id": "494801925", "objects":{"NSMenu": {"id":"140258427"},"NSTitle": "Print…","NSKeyEquiv": "p","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]}}}}},{"class": "NSMenuItem","id": "693213887", "objects":{"NSMenu": {"id":"396145598"},"NSTitle": "Edit","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "26323967", "objects":{"NSTitle": "Edit","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "1062491368", "objects":{"NSMenu": {"id":"26323967"},"NSTitle": "Undo","NSKeyEquiv": "z","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "766653658", "objects":{"NSMenu": {"id":"26323967"},"NSTitle": "Redo","NSKeyEquiv": "Z","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "894470039", "objects":{"NSMenu": {"id":"26323967"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "882289911", "objects":{"NSMenu": {"id":"26323967"},"NSTitle": "Cut","NSKeyEquiv": "x","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "108407587", "objects":{"NSMenu": {"id":"26323967"},"NSTitle": "Copy","NSKeyEquiv": "c","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "987153865", "objects":{"NSMenu": {"id":"26323967"},"NSTitle": "Paste","NSKeyEquiv": "v","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "238136692", "objects":{"NSMenu": {"id":"26323967"},"NSTitle": "Paste and Match Style","NSKeyEquiv": "V","NSKeyEquivModMask": 1572864,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "567593746", "objects":{"NSMenu": {"id":"26323967"},"NSTitle": "Delete","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "212764814", "objects":{"NSMenu": {"id":"26323967"},"NSTitle": "Select All","NSKeyEquiv": "a","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "419879483", "objects":{"NSMenu": {"id":"26323967"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "573155596", "objects":{"NSMenu": {"id":"26323967"},"NSTitle": "Find","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "50713213", "objects":{"NSTitle": "Find","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "547150631", "objects":{"NSMenu": {"id":"50713213"},"NSTitle": "Find…","NSKeyEquiv": "f","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSTag": 1}},{"class": "NSMenuItem","id": "710177711", "objects":{"NSMenu": {"id":"50713213"},"NSTitle": "Find Next","NSKeyEquiv": "g","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSTag": 2}},{"class": "NSMenuItem","id": "840494879", "objects":{"NSMenu": {"id":"50713213"},"NSTitle": "Find Previous","NSKeyEquiv": "G","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSTag": 3}},{"class": "NSMenuItem","id": "748324225", "objects":{"NSMenu": {"id":"50713213"},"NSTitle": "Use Selection for Find","NSKeyEquiv": "e","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSTag": 7}},{"class": "NSMenuItem","id": "1017125445", "objects":{"NSMenu": {"id":"50713213"},"NSTitle": "Jump to Selection","NSKeyEquiv": "j","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]}}}}},{"class": "NSMenuItem","id": "32515025", "objects":{"NSMenu": {"id":"26323967"},"NSTitle": "Spelling and Grammar","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "499920755", "objects":{"NSTitle": "Spelling","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "882984624", "objects":{"NSMenu": {"id":"499920755"},"NSTitle": "Show Spelling and Grammar","NSKeyEquiv": ":","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "664256261", "objects":{"NSMenu": {"id":"499920755"},"NSTitle": "Check Document Now","NSKeyEquiv": ";","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "277876898", "objects":{"NSMenu": {"id":"499920755"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "707578430", "objects":{"NSMenu": {"id":"499920755"},"NSTitle": "Check Spelling While Typing","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "428750252", "objects":{"NSMenu": {"id":"499920755"},"NSTitle": "Check Grammar With Spelling","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "363312713", "objects":{"NSMenu": {"id":"499920755"},"NSTitle": "Correct Spelling Automatically","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]}}}}},{"class": "NSMenuItem","id": "925479430", "objects":{"NSMenu": {"id":"26323967"},"NSTitle": "Substitutions","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "36288778", "objects":{"NSTitle": "Substitutions","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "882086962", "objects":{"NSMenu": {"id":"36288778"},"NSTitle": "Show Substitutions","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "491421895", "objects":{"NSMenu": {"id":"36288778"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "189206921", "objects":{"NSMenu": {"id":"36288778"},"NSTitle": "Smart Copy/Paste","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "1030351354", "objects":{"NSMenu": {"id":"36288778"},"NSTitle": "Smart Quotes","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "491645350", "objects":{"NSMenu": {"id":"36288778"},"NSTitle": "Smart Dashes","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "218154558", "objects":{"NSMenu": {"id":"36288778"},"NSTitle": "Smart Links","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "1062365657", "objects":{"NSMenu": {"id":"36288778"},"NSTitle": "Data Detectors","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "354238611", "objects":{"NSMenu": {"id":"36288778"},"NSTitle": "Text Replacement","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]}}}}},{"class": "NSMenuItem","id": "1073520368", "objects":{"NSMenu": {"id":"26323967"},"NSTitle": "Transformations","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "182677269", "objects":{"NSTitle": "Transformations","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "228222622", "objects":{"NSMenu": {"id":"182677269"},"NSTitle": "Make Upper Case","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "1064576491", "objects":{"NSMenu": {"id":"182677269"},"NSTitle": "Make Lower Case","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "221720946", "objects":{"NSMenu": {"id":"182677269"},"NSTitle": "Capitalize","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]}}}}},{"class": "NSMenuItem","id": "1044796185", "objects":{"NSMenu": {"id":"26323967"},"NSTitle": "Speech","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "196866971", "objects":{"NSTitle": "Speech","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "558426415", "objects":{"NSMenu": {"id":"196866971"},"NSTitle": "Start Speaking","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "434484761", "objects":{"NSMenu": {"id":"196866971"},"NSTitle": "Stop Speaking","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]}}}}}]}}}}},{"class": "NSMenuItem","id": "857536504", "objects":{"NSMenu": {"id":"396145598"},"NSTitle": "Format","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "228002546", "objects":{"NSTitle": "Format","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "609792061", "objects":{"NSMenu": {"id":"228002546"},"NSTitle": "Font","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "565148168", "objects":{"NSTitle": "Font","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "643620124", "objects":{"NSMenu": {"id":"565148168"},"NSTitle": "Show Fonts","NSKeyEquiv": "t","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "61046026", "objects":{"NSMenu": {"id":"565148168"},"NSTitle": "Bold","NSKeyEquiv": "b","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSTag": 2}},{"class": "NSMenuItem","id": "233505564", "objects":{"NSMenu": {"id":"565148168"},"NSTitle": "Italic","NSKeyEquiv": "i","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSTag": 1}},{"class": "NSMenuItem","id": "162604386", "objects":{"NSMenu": {"id":"565148168"},"NSTitle": "Underline","NSKeyEquiv": "u","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "161800526", "objects":{"NSMenu": {"id":"565148168"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "14981393", "objects":{"NSMenu": {"id":"565148168"},"NSTitle": "Bigger","NSKeyEquiv": "+","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSTag": 3}},{"class": "NSMenuItem","id": "516934468", "objects":{"NSMenu": {"id":"565148168"},"NSTitle": "Smaller","NSKeyEquiv": "-","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSTag": 4}},{"class": "NSMenuItem","id": "391747350", "objects":{"NSMenu": {"id":"565148168"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "361602393", "objects":{"NSMenu": {"id":"565148168"},"NSTitle": "Kern","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "129191325", "objects":{"NSTitle": "Kern","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "61462663", "objects":{"NSMenu": {"id":"129191325"},"NSTitle": "Use Default","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "957493733", "objects":{"NSMenu": {"id":"129191325"},"NSTitle": "Use None","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "936113629", "objects":{"NSMenu": {"id":"129191325"},"NSTitle": "Tighten","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "635885426", "objects":{"NSMenu": {"id":"129191325"},"NSTitle": "Loosen","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]}}}}},{"class": "NSMenuItem","id": "25523273", "objects":{"NSMenu": {"id":"565148168"},"NSTitle": "Ligature","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "835348817", "objects":{"NSTitle": "Ligature","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "180250789", "objects":{"NSMenu": {"id":"835348817"},"NSTitle": "Use Default","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "568143876", "objects":{"NSMenu": {"id":"835348817"},"NSTitle": "Use None","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "573379050", "objects":{"NSMenu": {"id":"835348817"},"NSTitle": "Use All","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]}}}}},{"class": "NSMenuItem","id": "818558147", "objects":{"NSMenu": {"id":"565148168"},"NSTitle": "Baseline","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "183858689", "objects":{"NSTitle": "Baseline","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "644154219", "objects":{"NSMenu": {"id":"183858689"},"NSTitle": "Use Default","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "614557663", "objects":{"NSMenu": {"id":"183858689"},"NSTitle": "Superscript","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "774392049", "objects":{"NSMenu": {"id":"183858689"},"NSTitle": "Subscript","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "892001032", "objects":{"NSMenu": {"id":"183858689"},"NSTitle": "Raise","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "1068179975", "objects":{"NSMenu": {"id":"183858689"},"NSTitle": "Lower","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]}}}}},{"class": "NSMenuItem","id": "890899662", "objects":{"NSMenu": {"id":"565148168"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "644140682", "objects":{"NSMenu": {"id":"565148168"},"NSTitle": "Show Colors","NSKeyEquiv": "C","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "671545876", "objects":{"NSMenu": {"id":"565148168"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "397166321", "objects":{"NSMenu": {"id":"565148168"},"NSTitle": "Copy Style","NSKeyEquiv": "c","NSKeyEquivModMask": 1572864,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "215340233", "objects":{"NSMenu": {"id":"565148168"},"NSTitle": "Paste Style","NSKeyEquiv": "v","NSKeyEquivModMask": 1572864,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]},"NSName": "_NSFontMenu"}}}},{"class": "NSMenuItem","id": "43690407", "objects":{"NSMenu": {"id":"228002546"},"NSTitle": "Text","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "975825102", "objects":{"NSTitle": "Text","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "792316364", "objects":{"NSMenu": {"id":"975825102"},"NSTitle": "Align Left","NSKeyEquiv": "{","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "596561657", "objects":{"NSMenu": {"id":"975825102"},"NSTitle": "Center","NSKeyEquiv": "|","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "872570229", "objects":{"NSMenu": {"id":"975825102"},"NSTitle": "Justify","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "766796088", "objects":{"NSMenu": {"id":"975825102"},"NSTitle": "Align Right","NSKeyEquiv": "}","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "851747333", "objects":{"NSMenu": {"id":"975825102"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "981059996", "objects":{"NSMenu": {"id":"975825102"},"NSTitle": "Writing Direction","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "906599697", "objects":{"NSTitle": "Writing Direction","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "1041729520", "objects":{"NSMenu": {"id":"906599697"},"NSIsDisabled": true,"NSTitle": "Paragraph","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "137407739", "objects":{"NSMenu": {"id":"906599697"},"NSTitle": "CURlZmF1bHQ","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "408911759", "objects":{"NSMenu": {"id":"906599697"},"NSTitle": "CUxlZnQgdG8gUmlnaHQ","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "398110396", "objects":{"NSMenu": {"id":"906599697"},"NSTitle": "CVJpZ2h0IHRvIExlZnQ","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "175409192", "objects":{"NSMenu": {"id":"906599697"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "76364711", "objects":{"NSMenu": {"id":"906599697"},"NSIsDisabled": true,"NSTitle": "Selection","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "235507009", "objects":{"NSMenu": {"id":"906599697"},"NSTitle": "CURlZmF1bHQ","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "988306009", "objects":{"NSMenu": {"id":"906599697"},"NSTitle": "CUxlZnQgdG8gUmlnaHQ","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "160428799", "objects":{"NSMenu": {"id":"906599697"},"NSTitle": "CVJpZ2h0IHRvIExlZnQ","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]}}}}},{"class": "NSMenuItem","id": "658247071", "objects":{"NSMenu": {"id":"975825102"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "1055412392", "objects":{"NSMenu": {"id":"975825102"},"NSTitle": "Show Ruler","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "122656406", "objects":{"NSMenu": {"id":"975825102"},"NSTitle": "Copy Ruler","NSKeyEquiv": "c","NSKeyEquivModMask": 1310720,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "180202457", "objects":{"NSMenu": {"id":"975825102"},"NSTitle": "Paste Ruler","NSKeyEquiv": "v","NSKeyEquivModMask": 1310720,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]}}}}}]}}}}},{"class": "NSMenuItem","id": "713206015", "objects":{"NSMenu": {"id":"396145598"},"NSTitle": "View","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "96939199", "objects":{"NSTitle": "View","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "206668947", "objects":{"NSMenu": {"id":"96939199"},"NSTitle": "Show Toolbar","NSKeyEquiv": "t","NSKeyEquivModMask": 1572864,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "825897010", "objects":{"NSMenu": {"id":"96939199"},"NSTitle": "Customize Toolbar…","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]}}}}},{"class": "NSMenuItem","id": "686270510", "objects":{"NSMenu": {"id":"396145598"},"NSTitle": "Window","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "909684463", "objects":{"NSTitle": "Window","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "497312719", "objects":{"NSMenu": {"id":"909684463"},"NSTitle": "Minimize","NSKeyEquiv": "m","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "857636876", "objects":{"NSMenu": {"id":"909684463"},"NSTitle": "Zoom","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "353476913", "objects":{"NSMenu": {"id":"909684463"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "8672285", "objects":{"NSMenu": {"id":"909684463"},"NSTitle": "Bring All to Front","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]},"NSName": "_NSWindowsMenu"}}}},{"class": "NSMenuItem","id": "125320586", "objects":{"NSMenu": {"id":"396145598"},"NSTitle": "Help","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "370522354", "objects":{"NSTitle": "Help","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "972987324", "objects":{"NSMenu": {"id":"370522354"},"NSTitle": "JSApp Help","NSKeyEquiv": "?","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]},"NSName": "_NSHelpMenu"}}}}]},"NSName": "_NSMainMenu"}},{"class": "NSCustomObject","id": "864649339", "objects":{"NSClassName": "AppController"}},{"class": "NSArrayController","id": "484200277", "objects":{"NSDeclaredKeys": {"class": "NSMutableArray","id": "", "objects":["age","name"]},"NSEditable": true,"_NSManagedProxy": {"class": "_NSManagedProxy","id": "", "objects":{}},"NSAvoidsEmptySelection": true,"NSPreservesSelection": true,"NSSelectsInsertedObjects": true,"NSFilterRestrictsInsertion": true,"NSClearsFilterPredicateOnInsertion": true}}]},"IBDocument.Objects": {"class": "IBObjectContainer","id": "", "objects":{"connectionRecords": {"class": "NSMutableArray","id": "", "objects":[{"class": "IBConnectionRecord","id": "", "objects":{"connection": {"class": "IBActionConnection","id": "", "objects":{"label": "takeDoubleValueFrom:","source": {"id":"257328319"},"destination": {"id":"744995210"}}},"connectionID": 689}},{"class": "IBConnectionRecord","id": "", "objects":{"connection": {"class": "IBOutletConnection","id": "", "objects":{"label": "delegate","source": {"id":"1050"},"destination": {"id":"864649339"}}},"connectionID": 691}},{"class": "IBConnectionRecord","id": "", "objects":{"connection": {"class": "IBActionConnection","id": "", "objects":{"label": "takeDoubleValueFrom:","source": {"id":"744995210"},"destination": {"id":"257328319"}}},"connectionID": 714}},{"class": "IBConnectionRecord","id": "", "objects":{"connection": {"class": "IBOutletConnection","id": "", "objects":{"label": "_window","source": {"id":"864649339"},"destination": {"id":"513744381"}}},"connectionID": 715}},{"class": "IBConnectionRecord","id": "", "objects":{"connection": {"class": "IBBindingConnection","id": "", "objects":{"label": "value: testValue","source": {"id":"744995210"},"destination": {"id":"864649339"},"connector": {"class": "NSNibBindingConnector","id": "", "objects":{"NSSource": {"id":"744995210"},"NSDestination": {"id":"864649339"},"NSLabel": "value: testValue","NSBinding": "value","NSKeyPath": "testValue","NSNibBindingConnectorVersion": 2}}}},"connectionID": 724}},{"class": "IBConnectionRecord","id": "", "objects":{"connection": {"class": "IBBindingConnection","id": "", "objects":{"label": "value: testValue","source": {"id":"257328319"},"destination": {"id":"864649339"},"connector": {"class": "NSNibBindingConnector","id": "", "objects":{"NSSource": {"id":"257328319"},"NSDestination": {"id":"864649339"},"NSLabel": "value: testValue","NSBinding": "value","NSKeyPath": "testValue","NSNibBindingConnectorVersion": 2}}}},"connectionID": 736}},{"class": "IBConnectionRecord","id": "", "objects":{"connection": {"class": "IBOutletConnection","id": "", "objects":{"label": "_arrayController","source": {"id":"864649339"},"destination": {"id":"484200277"}}},"connectionID": 743}},{"class": "IBConnectionRecord","id": "", "objects":{"connection": {"class": "IBBindingConnection","id": "", "objects":{"label": "contentArray: tableContent","source": {"id":"484200277"},"destination": {"id":"864649339"},"connector": {"class": "NSNibBindingConnector","id": "", "objects":{"NSSource": {"id":"484200277"},"NSDestination": {"id":"864649339"},"NSLabel": "contentArray: tableContent","NSBinding": "contentArray","NSKeyPath": "tableContent","NSNibBindingConnectorVersion": 2}}}},"connectionID": 747}},{"class": "IBConnectionRecord","id": "", "objects":{"connection": {"class": "IBActionConnection","id": "", "objects":{"label": "performClose:","source": {"id":"513744381"},"destination": {"id":"807627904"}}},"connectionID": 760}},{"class": "IBConnectionRecord","id": "", "objects":{"connection": {"class": "IBOutletConnection","id": "", "objects":{"label": "dataSource","source": {"id":"685474029"},"destination": {"id":"864649339"}}},"connectionID": 770}}]},"objectRecords": {"class": "IBMutableOrderedSet","id": "", "objects":{"orderedObjects": {"class": "NSArray","id": "", "objects":[{"class": "IBObjectRecord","id": "", "objects":{"objectID": 0,"object": {"id":"0"},"children": {"id":"1048"},"parent": {"nil":""}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": -2,"object": {"id":"1021"},"parent": {"id":"0"},"objectName": "File's Owner"}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": -1,"object": {"id":"1014"},"parent": {"id":"0"},"objectName": "First Responder"}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": -3,"object": {"id":"1050"},"parent": {"id":"0"},"objectName": "Application"}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 367,"object": {"id":"513744381"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"414427165"}]},"parent": {"id":"0"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 368,"object": {"id":"414427165"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"511023663"},{"id":"142462336"},{"id":"780169108"},{"id":"807627904"},{"id":"947043007"},{"id":"481053202"},{"id":"257328319"},{"id":"577562334"},{"id":"561516135"},{"id":"790695465"},{"id":"744995210"},{"id":"1037334765"},{"id":"669360788"},{"id":"479961390"},{"id":"780600689"},{"id":"442029134"}]},"parent": {"id":"513744381"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 373,"object": {"id":"163992474"},"parent": {"id":"0"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 451,"object": {"id":"807627904"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"281914322"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 452,"object": {"id":"281914322"},"parent": {"id":"807627904"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 453,"object": {"id":"947043007"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"775301662"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 454,"object": {"id":"775301662"},"parent": {"id":"947043007"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 455,"object": {"id":"481053202"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"228939928"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 456,"object": {"id":"228939928"},"parent": {"id":"481053202"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 457,"object": {"id":"257328319"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"829387278"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 458,"object": {"id":"829387278"},"parent": {"id":"257328319"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 463,"object": {"id":"780169108"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"146314554"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 464,"object": {"id":"146314554"},"parent": {"id":"780169108"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 467,"object": {"id":"511023663"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"388353698"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 468,"object": {"id":"388353698"},"parent": {"id":"511023663"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 471,"object": {"id":"142462336"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"100568012"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 472,"object": {"id":"100568012"},"parent": {"id":"142462336"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 473,"object": {"id":"577562334"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"671756545"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 474,"object": {"id":"790695465"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"561385561"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 476,"object": {"id":"561516135"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"79065924"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 477,"object": {"id":"79065924"},"parent": {"id":"561516135"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 479,"object": {"id":"561385561"},"parent": {"id":"790695465"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 480,"object": {"id":"671756545"},"parent": {"id":"577562334"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 501,"object": {"id":"744995210"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"160495813"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 502,"object": {"id":"160495813"},"parent": {"id":"744995210"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 503,"object": {"id":"1037334765"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"685186056"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 504,"object": {"id":"685186056"},"parent": {"id":"1037334765"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 509,"object": {"id":"669360788"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"859234033"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 510,"object": {"id":"859234033"},"parent": {"id":"669360788"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 541,"object": {"id":"396145598"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"693213887"},{"id":"857536504"},{"id":"713206015"},{"id":"475354134"},{"id":"125320586"},{"id":"502041852"},{"id":"686270510"}]},"parent": {"id":"0"},"objectName": "Main Menu"}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 542,"object": {"id":"693213887"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"26323967"}]},"parent": {"id":"396145598"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 543,"object": {"id":"857536504"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"228002546"}]},"parent": {"id":"396145598"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 544,"object": {"id":"713206015"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"96939199"}]},"parent": {"id":"396145598"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 545,"object": {"id":"475354134"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"140258427"}]},"parent": {"id":"396145598"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 546,"object": {"id":"125320586"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"370522354"}]},"parent": {"id":"396145598"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 547,"object": {"id":"502041852"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"929908017"}]},"parent": {"id":"396145598"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 548,"object": {"id":"686270510"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"909684463"}]},"parent": {"id":"396145598"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 549,"object": {"id":"909684463"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"497312719"},{"id":"857636876"},{"id":"8672285"},{"id":"353476913"}]},"parent": {"id":"686270510"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 550,"object": {"id":"497312719"},"parent": {"id":"909684463"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 551,"object": {"id":"857636876"},"parent": {"id":"909684463"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 552,"object": {"id":"8672285"},"parent": {"id":"909684463"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 553,"object": {"id":"353476913"},"parent": {"id":"909684463"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 554,"object": {"id":"929908017"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"61754815"},{"id":"428803447"},{"id":"493734341"},{"id":"147013270"},{"id":"455124416"},{"id":"544446554"},{"id":"646933026"},{"id":"491412195"},{"id":"727120825"},{"id":"843796999"},{"id":"719413741"}]},"parent": {"id":"502041852"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 555,"object": {"id":"61754815"},"parent": {"id":"929908017"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 556,"object": {"id":"428803447"},"parent": {"id":"929908017"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 557,"object": {"id":"493734341"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"218525171"}]},"parent": {"id":"929908017"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 558,"object": {"id":"147013270"},"parent": {"id":"929908017"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 559,"object": {"id":"455124416"},"parent": {"id":"929908017"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 560,"object": {"id":"544446554"},"parent": {"id":"929908017"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 561,"object": {"id":"646933026"},"parent": {"id":"929908017"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 562,"object": {"id":"491412195"},"parent": {"id":"929908017"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 563,"object": {"id":"727120825"},"parent": {"id":"929908017"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 564,"object": {"id":"843796999"},"parent": {"id":"929908017"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 565,"object": {"id":"719413741"},"parent": {"id":"929908017"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 566,"object": {"id":"218525171"},"parent": {"id":"493734341"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 567,"object": {"id":"370522354"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"972987324"}]},"parent": {"id":"125320586"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 568,"object": {"id":"972987324"},"parent": {"id":"370522354"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 569,"object": {"id":"140258427"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"481018735"},{"id":"402382860"},{"id":"875068603"},{"id":"313874609"},{"id":"499319061"},{"id":"711009244"},{"id":"684393965"},{"id":"118789126"},{"id":"494801925"},{"id":"323858156"},{"id":"594142260"}]},"parent": {"id":"475354134"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 570,"object": {"id":"481018735"},"parent": {"id":"140258427"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 571,"object": {"id":"402382860"},"parent": {"id":"140258427"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 572,"object": {"id":"875068603"},"parent": {"id":"140258427"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 573,"object": {"id":"313874609"},"parent": {"id":"140258427"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 574,"object": {"id":"499319061"},"parent": {"id":"140258427"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 575,"object": {"id":"711009244"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"85259455"}]},"parent": {"id":"140258427"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 576,"object": {"id":"684393965"},"parent": {"id":"140258427"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 577,"object": {"id":"118789126"},"parent": {"id":"140258427"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 578,"object": {"id":"494801925"},"parent": {"id":"140258427"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 579,"object": {"id":"323858156"},"parent": {"id":"140258427"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 580,"object": {"id":"594142260"},"parent": {"id":"140258427"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 581,"object": {"id":"85259455"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"620121511"}]},"parent": {"id":"711009244"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 582,"object": {"id":"620121511"},"parent": {"id":"85259455"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 583,"object": {"id":"96939199"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"825897010"},{"id":"206668947"}]},"parent": {"id":"713206015"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 584,"object": {"id":"825897010"},"parent": {"id":"96939199"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 585,"object": {"id":"206668947"},"parent": {"id":"96939199"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 586,"object": {"id":"228002546"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"43690407"},{"id":"609792061"}]},"parent": {"id":"857536504"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 587,"object": {"id":"43690407"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"975825102"}]},"parent": {"id":"228002546"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 588,"object": {"id":"609792061"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"565148168"}]},"parent": {"id":"228002546"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 589,"object": {"id":"565148168"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"215340233"},{"id":"397166321"},{"id":"671545876"},{"id":"644140682"},{"id":"890899662"},{"id":"818558147"},{"id":"25523273"},{"id":"361602393"},{"id":"391747350"},{"id":"516934468"},{"id":"14981393"},{"id":"161800526"},{"id":"162604386"},{"id":"233505564"},{"id":"61046026"},{"id":"643620124"}]},"parent": {"id":"609792061"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 590,"object": {"id":"215340233"},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 591,"object": {"id":"397166321"},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 592,"object": {"id":"671545876"},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 593,"object": {"id":"644140682"},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 594,"object": {"id":"890899662"},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 595,"object": {"id":"818558147"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"183858689"}]},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 596,"object": {"id":"25523273"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"835348817"}]},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 597,"object": {"id":"361602393"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"129191325"}]},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 598,"object": {"id":"391747350"},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 599,"object": {"id":"516934468"},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 600,"object": {"id":"14981393"},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 601,"object": {"id":"161800526"},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 602,"object": {"id":"162604386"},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 603,"object": {"id":"233505564"},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 604,"object": {"id":"61046026"},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 605,"object": {"id":"643620124"},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 606,"object": {"id":"129191325"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"635885426"},{"id":"936113629"},{"id":"957493733"},{"id":"61462663"}]},"parent": {"id":"361602393"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 607,"object": {"id":"635885426"},"parent": {"id":"129191325"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 608,"object": {"id":"936113629"},"parent": {"id":"129191325"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 609,"object": {"id":"957493733"},"parent": {"id":"129191325"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 610,"object": {"id":"61462663"},"parent": {"id":"129191325"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 611,"object": {"id":"835348817"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"573379050"},{"id":"568143876"},{"id":"180250789"}]},"parent": {"id":"25523273"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 612,"object": {"id":"573379050"},"parent": {"id":"835348817"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 613,"object": {"id":"568143876"},"parent": {"id":"835348817"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 614,"object": {"id":"180250789"},"parent": {"id":"835348817"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 615,"object": {"id":"183858689"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"1068179975"},{"id":"892001032"},{"id":"774392049"},{"id":"614557663"},{"id":"644154219"}]},"parent": {"id":"818558147"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 616,"object": {"id":"1068179975"},"parent": {"id":"183858689"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 617,"object": {"id":"892001032"},"parent": {"id":"183858689"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 618,"object": {"id":"774392049"},"parent": {"id":"183858689"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 619,"object": {"id":"614557663"},"parent": {"id":"183858689"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 620,"object": {"id":"644154219"},"parent": {"id":"183858689"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 621,"object": {"id":"975825102"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"981059996"},{"id":"658247071"},{"id":"180202457"},{"id":"122656406"},{"id":"1055412392"},{"id":"851747333"},{"id":"766796088"},{"id":"872570229"},{"id":"596561657"},{"id":"792316364"}]},"parent": {"id":"43690407"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 622,"object": {"id":"981059996"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"906599697"}]},"parent": {"id":"975825102"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 623,"object": {"id":"658247071"},"parent": {"id":"975825102"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 624,"object": {"id":"180202457"},"parent": {"id":"975825102"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 625,"object": {"id":"122656406"},"parent": {"id":"975825102"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 626,"object": {"id":"1055412392"},"parent": {"id":"975825102"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 627,"object": {"id":"851747333"},"parent": {"id":"975825102"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 628,"object": {"id":"766796088"},"parent": {"id":"975825102"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 629,"object": {"id":"872570229"},"parent": {"id":"975825102"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 630,"object": {"id":"596561657"},"parent": {"id":"975825102"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 631,"object": {"id":"792316364"},"parent": {"id":"975825102"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 632,"object": {"id":"906599697"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"160428799"},{"id":"988306009"},{"id":"235507009"},{"id":"175409192"},{"id":"76364711"},{"id":"398110396"},{"id":"408911759"},{"id":"137407739"},{"id":"1041729520"}]},"parent": {"id":"981059996"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 633,"object": {"id":"160428799"},"parent": {"id":"906599697"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 634,"object": {"id":"988306009"},"parent": {"id":"906599697"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 635,"object": {"id":"235507009"},"parent": {"id":"906599697"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 636,"object": {"id":"175409192"},"parent": {"id":"906599697"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 637,"object": {"id":"76364711"},"parent": {"id":"906599697"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 638,"object": {"id":"398110396"},"parent": {"id":"906599697"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 639,"object": {"id":"408911759"},"parent": {"id":"906599697"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 640,"object": {"id":"137407739"},"parent": {"id":"906599697"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 641,"object": {"id":"1041729520"},"parent": {"id":"906599697"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 642,"object": {"id":"26323967"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"1044796185"},{"id":"1073520368"},{"id":"925479430"},{"id":"32515025"},{"id":"573155596"},{"id":"419879483"},{"id":"212764814"},{"id":"567593746"},{"id":"238136692"},{"id":"987153865"},{"id":"108407587"},{"id":"882289911"},{"id":"894470039"},{"id":"766653658"},{"id":"1062491368"}]},"parent": {"id":"693213887"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 643,"object": {"id":"1044796185"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"196866971"}]},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 644,"object": {"id":"1073520368"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"182677269"}]},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 645,"object": {"id":"925479430"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"36288778"}]},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 646,"object": {"id":"32515025"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"499920755"}]},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 647,"object": {"id":"573155596"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"50713213"}]},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 648,"object": {"id":"419879483"},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 649,"object": {"id":"212764814"},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 650,"object": {"id":"567593746"},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 651,"object": {"id":"238136692"},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 652,"object": {"id":"987153865"},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 653,"object": {"id":"108407587"},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 654,"object": {"id":"882289911"},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 655,"object": {"id":"894470039"},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 656,"object": {"id":"766653658"},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 657,"object": {"id":"1062491368"},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 658,"object": {"id":"50713213"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"1017125445"},{"id":"748324225"},{"id":"840494879"},{"id":"710177711"},{"id":"547150631"}]},"parent": {"id":"573155596"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 659,"object": {"id":"1017125445"},"parent": {"id":"50713213"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 660,"object": {"id":"748324225"},"parent": {"id":"50713213"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 661,"object": {"id":"840494879"},"parent": {"id":"50713213"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 662,"object": {"id":"710177711"},"parent": {"id":"50713213"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 663,"object": {"id":"547150631"},"parent": {"id":"50713213"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 664,"object": {"id":"499920755"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"363312713"},{"id":"428750252"},{"id":"707578430"},{"id":"277876898"},{"id":"664256261"},{"id":"882984624"}]},"parent": {"id":"32515025"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 665,"object": {"id":"363312713"},"parent": {"id":"499920755"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 666,"object": {"id":"428750252"},"parent": {"id":"499920755"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 667,"object": {"id":"707578430"},"parent": {"id":"499920755"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 668,"object": {"id":"277876898"},"parent": {"id":"499920755"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 669,"object": {"id":"664256261"},"parent": {"id":"499920755"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 670,"object": {"id":"882984624"},"parent": {"id":"499920755"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 671,"object": {"id":"36288778"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"354238611"},{"id":"1062365657"},{"id":"218154558"},{"id":"491645350"},{"id":"1030351354"},{"id":"189206921"},{"id":"491421895"},{"id":"882086962"}]},"parent": {"id":"925479430"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 672,"object": {"id":"354238611"},"parent": {"id":"36288778"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 673,"object": {"id":"1062365657"},"parent": {"id":"36288778"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 674,"object": {"id":"218154558"},"parent": {"id":"36288778"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 675,"object": {"id":"491645350"},"parent": {"id":"36288778"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 676,"object": {"id":"1030351354"},"parent": {"id":"36288778"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 677,"object": {"id":"189206921"},"parent": {"id":"36288778"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 678,"object": {"id":"491421895"},"parent": {"id":"36288778"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 679,"object": {"id":"882086962"},"parent": {"id":"36288778"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 680,"object": {"id":"182677269"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"221720946"},{"id":"1064576491"},{"id":"228222622"}]},"parent": {"id":"1073520368"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 681,"object": {"id":"221720946"},"parent": {"id":"182677269"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 682,"object": {"id":"1064576491"},"parent": {"id":"182677269"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 683,"object": {"id":"228222622"},"parent": {"id":"182677269"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 684,"object": {"id":"196866971"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"434484761"},{"id":"558426415"}]},"parent": {"id":"1044796185"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 685,"object": {"id":"434484761"},"parent": {"id":"196866971"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 686,"object": {"id":"558426415"},"parent": {"id":"196866971"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 690,"object": {"id":"864649339"},"parent": {"id":"0"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 716,"object": {"id":"479961390"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"1059063770"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 717,"object": {"id":"1059063770"},"parent": {"id":"479961390"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 718,"object": {"id":"780600689"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"577933790"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 719,"object": {"id":"577933790"},"parent": {"id":"780600689"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 737,"object": {"id":"484200277"},"parent": {"id":"0"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 761,"object": {"id":"442029134"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"543495260"},{"id":"685474029"},{"id":"959634700"},{"id":"923730944"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 765,"object": {"id":"543495260"},"parent": {"id":"442029134"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 764,"object": {"id":"685474029"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"1002923163"},{"id":"283264676"}]},"parent": {"id":"442029134"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 767,"object": {"id":"1002923163"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"276960075"}]},"parent": {"id":"685474029"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 768,"object": {"id":"276960075"},"parent": {"id":"1002923163"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 766,"object": {"id":"283264676"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"17975100"}]},"parent": {"id":"685474029"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 769,"object": {"id":"17975100"},"parent": {"id":"283264676"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 763,"object": {"id":"959634700"},"parent": {"id":"442029134"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 762,"object": {"id":"923730944"},"parent": {"id":"442029134"}}}]}}},"flattenedProperties": {"class": "NSMutableDictionary","id": "", "objects":{"EncodedWithXMLCoder": true,"dict.sortedKeys": {"class": "NSArray","id": "", "objects":["-3.IBPluginDependency","367.IBEditorWindowLastContentRect","367.IBPluginDependency","367.IBWindowTemplateEditedContentRect","367.NSWindowTemplate.visibleAtLaunch","367.editorWindowContentRectSynchronizationRect","368.IBPluginDependency","451.IBPluginDependency","452.IBPluginDependency","453.IBPluginDependency","454.IBPluginDependency","455.IBPluginDependency","456.IBPluginDependency","457.IBPluginDependency","458.IBPluginDependency","463.IBPluginDependency","464.IBPluginDependency","467.IBPluginDependency","468.IBPluginDependency","471.IBPluginDependency","472.IBPluginDependency","473.IBPluginDependency","474.IBPluginDependency","476.IBPluginDependency","477.IBPluginDependency","479.IBPluginDependency","480.IBPluginDependency","501.IBPluginDependency","502.IBPluginDependency","503.IBPluginDependency","504.IBPluginDependency","509.IBPluginDependency","510.IBPluginDependency","541.IBEditorWindowLastContentRect","541.IBPluginDependency","541.ImportedFromIB2","541.WindowOrigin","541.editorWindowContentRectSynchronizationRect","542.IBPluginDependency","543.IBPluginDependency","544.IBPluginDependency","545.IBPluginDependency","545.ImportedFromIB2","546.IBPluginDependency","546.ImportedFromIB2","547.IBPluginDependency","547.ImportedFromIB2","548.IBPluginDependency","548.ImportedFromIB2","549.IBEditorWindowLastContentRect","549.IBPluginDependency","549.ImportedFromIB2","549.editorWindowContentRectSynchronizationRect","550.IBPluginDependency","550.ImportedFromIB2","551.IBPluginDependency","551.ImportedFromIB2","552.IBPluginDependency","552.ImportedFromIB2","553.IBPluginDependency","553.ImportedFromIB2","554.IBEditorWindowLastContentRect","554.IBPluginDependency","554.ImportedFromIB2","554.editorWindowContentRectSynchronizationRect","555.IBPluginDependency","555.ImportedFromIB2","556.IBPluginDependency","556.ImportedFromIB2","557.IBPluginDependency","557.ImportedFromIB2","558.IBPluginDependency","558.ImportedFromIB2","559.IBPluginDependency","559.ImportedFromIB2","560.IBPluginDependency","560.ImportedFromIB2","561.IBPluginDependency","561.ImportedFromIB2","562.IBPluginDependency","562.ImportedFromIB2","563.IBPluginDependency","563.ImportedFromIB2","564.IBPluginDependency","564.ImportedFromIB2","565.IBPluginDependency","565.ImportedFromIB2","566.IBEditorWindowLastContentRect","566.IBPluginDependency","566.ImportedFromIB2","566.editorWindowContentRectSynchronizationRect","567.IBEditorWindowLastContentRect","567.IBPluginDependency","567.ImportedFromIB2","567.editorWindowContentRectSynchronizationRect","568.IBPluginDependency","568.ImportedFromIB2","569.IBEditorWindowLastContentRect","569.IBPluginDependency","569.ImportedFromIB2","569.editorWindowContentRectSynchronizationRect","570.IBPluginDependency","570.ImportedFromIB2","571.IBPluginDependency","571.ImportedFromIB2","572.IBPluginDependency","572.ImportedFromIB2","573.IBPluginDependency","573.ImportedFromIB2","574.IBPluginDependency","574.ImportedFromIB2","575.IBPluginDependency","575.ImportedFromIB2","576.IBPluginDependency","576.ImportedFromIB2","577.IBPluginDependency","577.ImportedFromIB2","578.IBPluginDependency","578.ImportedFromIB2","579.IBPluginDependency","579.ImportedFromIB2","580.IBPluginDependency","580.ImportedFromIB2","581.IBEditorWindowLastContentRect","581.IBPluginDependency","581.ImportedFromIB2","581.editorWindowContentRectSynchronizationRect","582.IBPluginDependency","582.ImportedFromIB2","583.IBEditorWindowLastContentRect","583.IBPluginDependency","583.editorWindowContentRectSynchronizationRect","584.IBPluginDependency","585.IBPluginDependency","586.IBEditorWindowLastContentRect","586.IBPluginDependency","587.IBPluginDependency","588.IBPluginDependency","589.IBPluginDependency","590.IBPluginDependency","591.IBPluginDependency","592.IBPluginDependency","593.IBPluginDependency","594.IBPluginDependency","595.IBPluginDependency","596.IBPluginDependency","597.IBPluginDependency","598.IBPluginDependency","599.IBPluginDependency","600.IBPluginDependency","601.IBPluginDependency","602.IBPluginDependency","603.IBPluginDependency","604.IBPluginDependency","605.IBPluginDependency","606.IBPluginDependency","607.IBPluginDependency","608.IBPluginDependency","609.IBPluginDependency","610.IBPluginDependency","611.IBPluginDependency","612.IBPluginDependency","613.IBPluginDependency","614.IBPluginDependency","615.IBPluginDependency","616.IBPluginDependency","617.IBPluginDependency","618.IBPluginDependency","619.IBPluginDependency","620.IBPluginDependency","621.IBEditorWindowLastContentRect","621.IBPluginDependency","622.IBPluginDependency","623.IBPluginDependency","624.IBPluginDependency","625.IBPluginDependency","626.IBPluginDependency","627.IBPluginDependency","628.IBPluginDependency","629.IBPluginDependency","630.IBPluginDependency","631.IBPluginDependency","632.IBEditorWindowLastContentRect","632.IBPluginDependency","633.IBPluginDependency","634.IBPluginDependency","635.IBPluginDependency","636.IBPluginDependency","637.IBPluginDependency","638.IBPluginDependency","639.IBPluginDependency","640.IBPluginDependency","641.IBPluginDependency","642.IBEditorWindowLastContentRect","642.IBPluginDependency","643.IBPluginDependency","644.IBPluginDependency","645.IBPluginDependency","646.IBPluginDependency","647.IBPluginDependency","648.IBPluginDependency","649.IBPluginDependency","650.IBPluginDependency","651.IBPluginDependency","652.IBPluginDependency","653.IBPluginDependency","654.IBPluginDependency","655.IBPluginDependency","656.IBPluginDependency","657.IBPluginDependency","658.IBPluginDependency","659.IBPluginDependency","660.IBPluginDependency","661.IBPluginDependency","662.IBPluginDependency","663.IBPluginDependency","664.IBPluginDependency","665.IBPluginDependency","666.IBPluginDependency","667.IBPluginDependency","668.IBPluginDependency","669.IBPluginDependency","670.IBPluginDependency","671.IBEditorWindowLastContentRect","671.IBPluginDependency","672.IBPluginDependency","673.IBPluginDependency","674.IBPluginDependency","675.IBPluginDependency","676.IBPluginDependency","677.IBPluginDependency","678.IBPluginDependency","679.IBPluginDependency","680.IBEditorWindowLastContentRect","680.IBPluginDependency","681.IBPluginDependency","682.IBPluginDependency","683.IBPluginDependency","684.IBPluginDependency","685.IBPluginDependency","686.IBPluginDependency","690.IBAttributePlaceholdersKey","716.IBPluginDependency","717.IBPluginDependency","718.IBPluginDependency","719.IBPluginDependency","737.IBPluginDependency","761.IBPluginDependency","762.IBPluginDependency","763.IBPluginDependency","764.IBPluginDependency","765.IBPluginDependency","766.IBPluginDependency","767.IBPluginDependency","768.IBPluginDependency","769.IBPluginDependency"]},"dict.values": {"class": "NSMutableArray","id": "", "objects":["com.apple.InterfaceBuilder.CocoaPlugin","{{67, 532}, {946, 613}}","com.apple.InterfaceBuilder.CocoaPlugin","{{67, 532}, {946, 613}}",1,"{{11, 666}, {480, 270}}","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","{{309, 1136}, {478, 20}}","com.apple.InterfaceBuilder.CocoaPlugin",1,"{74, 862}","{{11, 977}, {478, 20}}","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"{{447, 673}, {197, 73}}","com.apple.InterfaceBuilder.CocoaPlugin",1,"{{525, 802}, {197, 73}}","com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"{{334, 562}, {242, 183}}","com.apple.InterfaceBuilder.CocoaPlugin",1,"{{23, 794}, {245, 183}}","com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"{{531, 606}, {64, 6}}","com.apple.InterfaceBuilder.CocoaPlugin",1,"{{436, 809}, {64, 6}}","{{739, 722}, {213, 23}}","com.apple.InterfaceBuilder.CocoaPlugin",1,"{{596, 852}, {216, 23}}","com.apple.InterfaceBuilder.CocoaPlugin",1,"{{466, 542}, {196, 203}}","com.apple.InterfaceBuilder.CocoaPlugin",1,"{{323, 672}, {199, 203}}","com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"{{617, 609}, {132, 23}}","com.apple.InterfaceBuilder.CocoaPlugin",1,"{{522, 812}, {146, 23}}","com.apple.InterfaceBuilder.CocoaPlugin",1,"{{397, 703}, {234, 43}}","com.apple.InterfaceBuilder.CocoaPlugin","{{475, 832}, {234, 43}}","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","{{552, 702}, {83, 43}}","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","{{635, 542}, {204, 183}}","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","{{839, 462}, {164, 173}}","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","{{508, 462}, {254, 283}}","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","{{762, 372}, {182, 153}}","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","{{762, 442}, {170, 63}}","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin",{"class": "NSMutableDictionary","id": "", "objects":{"EncodedWithXMLCoder": true,"dict.sortedKeys": {"id":"0"},"dict.values": {"class": "NSMutableArray","id": "", "objects":[]}}},"com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin"]}}},"unlocalizedProperties": {"class": "NSMutableDictionary","id": "", "objects":{"EncodedWithXMLCoder": true,"dict.sortedKeys": {"id":"0"},"dict.values": {"class": "NSMutableArray","id": "", "objects":[]}}},"activeLocalization": {"nil":""},"localizations": {"class": "NSMutableDictionary","id": "", "objects":{"EncodedWithXMLCoder": true,"dict.sortedKeys": {"id":"0"},"dict.values": {"class": "NSMutableArray","id": "", "objects":[]}}},"sourceID": {"nil":""},"maxID": 770}},"IBDocument.Classes": {"class": "IBClassDescriber","id": "", "objects":{"referencedPartialClassDescriptions": {"class": "NSMutableArray","id": "", "objects":[{"class": "IBPartialClassDescription","id": "", "objects":{"className": "AppController","outlets": {"class": "NSMutableDictionary","id": "", "objects":{"EncodedWithXMLCoder": true,"dict.sortedKeys": {"class": "NSArray","id": "", "objects":["_arrayController","_window"]},"dict.values": {"class": "NSMutableArray","id": "", "objects":["id","id"]}}},"sourceIdentifier": {"class": "IBClassDescriptionSource","id": "", "objects":{"majorKey": "IBUserSource","minorKey": ""}}}}]}}},"IBDocument.localizationMode": 0,"IBDocument.PluginDeclaredDependencies": {"class": "NSMutableDictionary","id": "", "objects":{"NS.key.0": "com.apple.InterfaceBuilder.CocoaPlugin.macosx","NS.object.0": 1050}},"IBDocument.PluginDeclaredDevelopmentDependencies": {"class": "NSMutableDictionary","id": "", "objects":{"NS.key.0": "com.apple.InterfaceBuilder.CocoaPlugin.InterfaceBuilder3","NS.object.0": 3000}},"IBDocument.PluginDeclaredDependenciesTrackSystemTargetVersion": true,"IBDocument.LastKnownRelativeProjectPath": {"nil":""},"IBDocument.defaultPropertyAccessControl": 3}}};
+__bootstrap_files["MainMenu.json"] = {"archive":{"data":{"IBDocument.SystemTarget": 1050,"IBDocument.SystemVersion": "10A411","IBDocument.InterfaceBuilderVersion": "731","IBDocument.AppKitVersion": "1033","IBDocument.HIToolboxVersion": "435.00","IBDocument.PluginVersions": {"class": "NSMutableDictionary","id": "", "objects":{"NS.key.0": "com.apple.InterfaceBuilder.CocoaPlugin","NS.object.0": "731"}},"IBDocument.EditedObjectIDs": {"class": "NSMutableArray","id": "", "objects":[368]},"IBDocument.PluginDependencies": {"class": "NSArray","id": "", "objects":["com.apple.InterfaceBuilder.CocoaPlugin"]},"IBDocument.Metadata": {"class": "NSMutableDictionary","id": "", "objects":{"EncodedWithXMLCoder": true,"dict.sortedKeys": {"class": "NSArray","id": "0", "objects":[]},"dict.values": {"class": "NSMutableArray","id": "", "objects":[]}}},"IBDocument.RootObjects": {"class": "NSMutableArray","id": "1048", "objects":[{"class": "NSCustomObject","id": "1021", "objects":{"NSClassName": "NSApplication"}},{"class": "NSCustomObject","id": "1014", "objects":{"NSClassName": "FirstResponder"}},{"class": "NSCustomObject","id": "1050", "objects":{"NSClassName": "NSApplication"}},{"class": "NSCustomObject","id": "163992474", "objects":{"NSClassName": "NSFontManager"}},{"class": "NSWindowTemplate","id": "513744381", "objects":{"NSWindowStyleMask": 15,"NSWindowBacking": 2,"NSWindowRect": "{{133, 47}, {946, 613}}","NSWTFlags": 603979776,"NSWindowTitle": "Window","NSWindowClass": "NSWindow","NSViewClass": {"nil":""},"NSWindowContentMaxSize": "{1.79769e+308, 1.79769e+308}","NSWindowView": {"class": "NSView","id": "414427165", "objects":{"NSNextResponder": {"id":""},"NSvFlags": 256,"NSSubviews": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSButton","id": "807627904", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSFrame": "{{554, 422}, {118, 25}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSButtonCell","id": "281914322", "objects":{"NSCellFlags": -2080244224,"NSCellFlags2": 134217728,"NSContents": "Round Textured","NSSupport": {"class": "NSFont","id": "798430573", "objects":{"NSName": "LucidaGrande","NSSize": 13,"NSfFlags": 1044}},"NSControlView": {"id":"807627904"},"NSButtonFlags": -2038152961,"NSButtonFlags2": 163,"NSAlternateContents": "","NSKeyEquivalent": "","NSPeriodicDelay": 400,"NSPeriodicInterval": 75}}}},{"class": "NSButton","id": "947043007", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSFrame": "{{554, 391}, {118, 25}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSButtonCell","id": "775301662", "objects":{"NSCellFlags": -1543373312,"NSCellFlags2": 134217728,"NSContents": "This is disabled","NSSupport": {"id":"798430573"},"NSControlView": {"id":"947043007"},"NSButtonFlags": -2038152961,"NSButtonFlags2": 163,"NSAlternateContents": "","NSKeyEquivalent": "","NSPeriodicDelay": 400,"NSPeriodicInterval": 75}}}},{"class": "NSSlider","id": "481053202", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSFrame": "{{552, 455}, {122, 21}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSSliderCell","id": "228939928", "objects":{"NSCellFlags": -1543373312,"NSCellFlags2": 0,"NSContents": "","NSSupport": {"class": "NSFont","id": "672854075", "objects":{"NSName": "Helvetica","NSSize": 12,"NSfFlags": 16}},"NSControlView": {"id":"481053202"},"NSMaxValue": 100,"NSMinValue": 0.0,"NSValue": 50,"NSAltIncValue": 0.0,"NSNumberOfTickMarks": 0,"NSTickMarkPosition": 1,"NSAllowsTickMarkValuesOnly": false,"NSVertical": false}}}},{"class": "NSSlider","id": "257328319", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSFrame": "{{552, 478}, {122, 21}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSSliderCell","id": "829387278", "objects":{"NSCellFlags": -2079981824,"NSCellFlags2": 0,"NSContents": "","NSSupport": {"id":"672854075"},"NSControlView": {"id":"257328319"},"NSMaxValue": 100,"NSMinValue": 0.0,"NSValue": 50,"NSAltIncValue": 0.0,"NSNumberOfTickMarks": 0,"NSTickMarkPosition": 1,"NSAllowsTickMarkValuesOnly": false,"NSVertical": false}}}},{"class": "NSButton","id": "780169108", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSFrame": "{{62, 488}, {109, 18}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSButtonCell","id": "146314554", "objects":{"NSCellFlags": 67239424,"NSCellFlags2": 0,"NSContents": "Normal radio","NSSupport": {"id":"798430573"},"NSControlView": {"id":"780169108"},"NSButtonFlags": 1211912703,"NSButtonFlags2": 130,"NSNormalImage": {"class": "NSCustomResource","id": "904276281", "objects":{"NSClassName": "NSImage","NSResourceName": "NSRadioButton"}},"NSAlternateImage": {"class": "NSButtonImageSource","id": "813970489", "objects":{"NSImageName": "NSRadioButton"}},"NSAlternateContents": "","NSKeyEquivalent": "","NSPeriodicDelay": 200,"NSPeriodicInterval": 25}}}},{"class": "NSButton","id": "511023663", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSFrame": "{{62, 433}, {156, 18}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSButtonCell","id": "388353698", "objects":{"NSCellFlags": -1543373312,"NSCellFlags2": 0,"NSContents": "Disabled Check radio","NSSupport": {"id":"798430573"},"NSControlView": {"id":"511023663"},"NSButtonFlags": 1211912703,"NSButtonFlags2": 130,"NSNormalImage": {"id":"904276281"},"NSAlternateImage": {"id":"813970489"},"NSAlternateContents": "","NSKeyEquivalent": "","NSPeriodicDelay": 200,"NSPeriodicInterval": 25}}}},{"class": "NSButton","id": "142462336", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSFrame": "{{62, 462}, {177, 18}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSButtonCell","id": "100568012", "objects":{"NSCellFlags": -2080244224,"NSCellFlags2": 0,"NSContents": "Normal unchecked radio","NSSupport": {"id":"798430573"},"NSControlView": {"id":"142462336"},"NSButtonFlags": 1211912703,"NSButtonFlags2": 130,"NSNormalImage": {"id":"904276281"},"NSAlternateImage": {"id":"813970489"},"NSAlternateContents": "","NSKeyEquivalent": "","NSPeriodicDelay": 200,"NSPeriodicInterval": 25}}}},{"class": "NSButton","id": "577562334", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSFrame": "{{285, 488}, {109, 18}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSButtonCell","id": "671756545", "objects":{"NSCellFlags": -2080244224,"NSCellFlags2": 0,"NSContents": "Normal radio","NSSupport": {"id":"798430573"},"NSControlView": {"id":"577562334"},"NSButtonFlags": 1211912703,"NSButtonFlags2": 130,"NSNormalImage": {"class": "NSCustomResource","id": "1020590486", "objects":{"NSClassName": "NSImage","NSResourceName": "NSSwitch"}},"NSAlternateImage": {"class": "NSButtonImageSource","id": "849298367", "objects":{"NSImageName": "NSSwitch"}},"NSAlternateContents": "","NSKeyEquivalent": "","NSPeriodicDelay": 200,"NSPeriodicInterval": 25}}}},{"class": "NSButton","id": "790695465", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSFrame": "{{285, 433}, {156, 18}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSButtonCell","id": "561385561", "objects":{"NSCellFlags": -1543373312,"NSCellFlags2": 0,"NSContents": "Disabled Check radio","NSSupport": {"id":"798430573"},"NSControlView": {"id":"790695465"},"NSButtonFlags": 1211912703,"NSButtonFlags2": 130,"NSNormalImage": {"id":"1020590486"},"NSAlternateImage": {"id":"849298367"},"NSAlternateContents": "","NSKeyEquivalent": "","NSPeriodicDelay": 200,"NSPeriodicInterval": 25}}}},{"class": "NSButton","id": "561516135", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSFrame": "{{285, 462}, {177, 18}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSButtonCell","id": "79065924", "objects":{"NSCellFlags": 67239424,"NSCellFlags2": 0,"NSContents": "Normal unchecked radio","NSSupport": {"id":"798430573"},"NSControlView": {"id":"561516135"},"NSButtonFlags": 1211912703,"NSButtonFlags2": 130,"NSNormalImage": {"id":"1020590486"},"NSAlternateImage": {"id":"849298367"},"NSAlternateContents": "","NSKeyEquivalent": "","NSPeriodicDelay": 200,"NSPeriodicInterval": 25}}}},{"class": "NSTextField","id": "744995210", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 267,"NSFrame": "{{708, 478}, {106, 22}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSTextFieldCell","id": "160495813", "objects":{"NSCellFlags": -1804468671,"NSCellFlags2": 272630784,"NSContents": "Textfieldy","NSSupport": {"id":"798430573"},"NSControlView": {"id":"744995210"},"NSDrawsBackground": true,"NSBackgroundColor": {"class": "NSColor","id": "875495060", "objects":{"NSColorSpace": 6,"NSCatalogName": "System","NSColorName": "textBackgroundColor","NSColor": {"class": "NSColor","id": "5431023", "objects":{"NSColorSpace": 3,"NSWhite": "MQA"}}}},"NSTextColor": {"class": "NSColor","id": "91711647", "objects":{"NSColorSpace": 6,"NSCatalogName": "System","NSColorName": "textColor","NSColor": {"class": "NSColor","id": "106532192", "objects":{"NSColorSpace": 3,"NSWhite": "MAA"}}}}}}}},{"class": "NSTextField","id": "1037334765", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 267,"NSFrame": "{{708, 446}, {106, 22}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSTextFieldCell","id": "685186056", "objects":{"NSCellFlags": -1267597759,"NSCellFlags2": 272630784,"NSContents": "Disabled","NSSupport": {"id":"798430573"},"NSControlView": {"id":"1037334765"},"NSDrawsBackground": true,"NSBackgroundColor": {"id":"875495060"},"NSTextColor": {"id":"91711647"}}}}},{"class": "NSTextField","id": "669360788", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSFrame": "{{713, 421}, {77, 17}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSTextFieldCell","id": "859234033", "objects":{"NSCellFlags": 68288064,"NSCellFlags2": 272630784,"NSContents": "Label","NSSupport": {"id":"798430573"},"NSControlView": {"id":"669360788"},"NSBackgroundColor": {"class": "NSColor","id": "", "objects":{"NSColorSpace": 6,"NSCatalogName": "System","NSColorName": "controlColor","NSColor": {"class": "NSColor","id": "415934132", "objects":{"NSColorSpace": 3,"NSWhite": "MC42NjY2NjY2NjY3AA"}}}},"NSTextColor": {"class": "NSColor","id": "163054175", "objects":{"NSColorSpace": 6,"NSCatalogName": "System","NSColorName": "controlTextColor","NSColor": {"id":"106532192"}}}}}}},{"class": "NSButton","id": "479961390", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSFrame": "{{29, 57}, {73, 25}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSButtonCell","id": "1059063770", "objects":{"NSCellFlags": -2080244224,"NSCellFlags2": 134217728,"NSContents": "Add","NSSupport": {"id":"798430573"},"NSControlView": {"id":"479961390"},"NSButtonFlags": -2038152961,"NSButtonFlags2": 163,"NSAlternateContents": "","NSKeyEquivalent": "","NSPeriodicDelay": 400,"NSPeriodicInterval": 75}}}},{"class": "NSButton","id": "780600689", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSFrame": "{{110, 57}, {80, 25}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSButtonCell","id": "577933790", "objects":{"NSCellFlags": -2080244224,"NSCellFlags2": 134217728,"NSContents": "Remove","NSSupport": {"id":"798430573"},"NSControlView": {"id":"780600689"},"NSButtonFlags": -2038152961,"NSButtonFlags2": 163,"NSAlternateContents": "","NSKeyEquivalent": "","NSPeriodicDelay": 400,"NSPeriodicInterval": 75}}}},{"class": "NSScrollView","id": "30980817", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSSubviews": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSClipView","id": "948217383", "objects":{"NSNextResponder": {"id":"30980817"},"NSvFlags": 2304,"NSSubviews": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSTableView","id": "327081499", "objects":{"NSNextResponder": {"id":"948217383"},"NSvFlags": 256,"NSFrameSize": "{904, 258}","NSSuperview": {"id":"948217383"},"NSEnabled": true,"NSHeaderView": {"class": "NSTableHeaderView","id": "604040574", "objects":{"NSNextResponder": {"id":"1007693269"},"NSvFlags": 256,"NSFrameSize": "{904, 17}","NSSuperview": {"id":"1007693269"},"NSTableView": {"id":"327081499"}}},"NSCornerView": {"class": "_NSCornerView","id": "895370824", "objects":{"NSNextResponder": {"id":"30980817"},"NSvFlags": -2147483392,"NSFrame": "{{224, 0}, {16, 17}}","NSSuperview": {"id":"30980817"}}},"NSTableColumns": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSTableColumn","id": "906371060", "objects":{"NSIdentifier": "name","NSWidth": 101,"NSMinWidth": 40,"NSMaxWidth": 1000,"NSHeaderCell": {"class": "NSTableHeaderCell","id": "", "objects":{"NSCellFlags": 75628096,"NSCellFlags2": 2048,"NSContents": "Name","NSSupport": {"class": "NSFont","id": "26", "objects":{"NSName": "LucidaGrande","NSSize": 11,"NSfFlags": 3100}},"NSBackgroundColor": {"class": "NSColor","id": "877396723", "objects":{"NSColorSpace": 3,"NSWhite": "MC4zMzMzMzI5ODU2AA"}},"NSTextColor": {"class": "NSColor","id": "384823602", "objects":{"NSColorSpace": 6,"NSCatalogName": "System","NSColorName": "headerTextColor","NSColor": {"id":"106532192"}}}}},"NSDataCell": {"class": "NSTextFieldCell","id": "136009105", "objects":{"NSCellFlags": 337772096,"NSCellFlags2": 2048,"NSContents": "Text Cell","NSSupport": {"id":"798430573"},"NSControlView": {"id":"327081499"},"NSBackgroundColor": {"class": "NSColor","id": "955461975", "objects":{"NSColorSpace": 6,"NSCatalogName": "System","NSColorName": "controlBackgroundColor","NSColor": {"id":"415934132"}}},"NSTextColor": {"id":"163054175"}}},"NSResizingMask": 3,"NSIsResizeable": true,"NSIsEditable": true,"NSTableView": {"id":"327081499"}}},{"class": "NSTableColumn","id": "163630843", "objects":{"NSIdentifier": "age","NSWidth": 797,"NSMinWidth": 40,"NSMaxWidth": 1000,"NSHeaderCell": {"class": "NSTableHeaderCell","id": "", "objects":{"NSCellFlags": 75628096,"NSCellFlags2": 2048,"NSContents": "Age","NSSupport": {"id":"26"},"NSBackgroundColor": {"id":"877396723"},"NSTextColor": {"id":"384823602"}}},"NSDataCell": {"class": "NSTextFieldCell","id": "464442001", "objects":{"NSCellFlags": 337772096,"NSCellFlags2": 2048,"NSContents": "Text Cell","NSSupport": {"id":"798430573"},"NSControlView": {"id":"327081499"},"NSBackgroundColor": {"id":"955461975"},"NSTextColor": {"id":"163054175"}}},"NSResizingMask": 3,"NSIsResizeable": true,"NSIsEditable": true,"NSTableView": {"id":"327081499"}}}]},"NSIntercellSpacingWidth": 3,"NSIntercellSpacingHeight": 2,"NSBackgroundColor": {"id":"5431023"},"NSGridColor": {"class": "NSColor","id": "", "objects":{"NSColorSpace": 6,"NSCatalogName": "System","NSColorName": "gridColor","NSColor": {"class": "NSColor","id": "", "objects":{"NSColorSpace": 3,"NSWhite": "MC41AA"}}}},"NSRowHeight": 17,"NSTvFlags": -700448768,"NSDelegate": {"id":""},"NSDataSource": {"id":""},"NSColumnAutoresizingStyle": 4,"NSDraggingSourceMaskForLocal": 15,"NSDraggingSourceMaskForNonLocal": 0,"NSAllowsTypeSelect": true,"NSTableViewDraggingDestinationStyle": 0}}]},"NSFrame": "{{1, 17}, {904, 258}}","NSSuperview": {"id":"30980817"},"NSNextKeyView": {"id":"327081499"},"NSDocView": {"id":"327081499"},"NSBGColor": {"id":"955461975"},"NScvFlags": 4}},{"class": "NSScroller","id": "276741145", "objects":{"NSNextResponder": {"id":"30980817"},"NSvFlags": -2147483392,"NSFrame": "{{224, 17}, {15, 102}}","NSSuperview": {"id":"30980817"},"NSTarget": {"id":"30980817"},"NSAction": "_doScroller:","NSCurValue": 37,"NSPercent": 0.1947367936372757}},{"class": "NSScroller","id": "69568024", "objects":{"NSNextResponder": {"id":"30980817"},"NSvFlags": -2147483392,"NSFrame": "{{1, 119}, {223, 15}}","NSSuperview": {"id":"30980817"},"NSsFlags": 1,"NSTarget": {"id":"30980817"},"NSAction": "_doScroller:","NSPercent": 0.57142859697341919}},{"class": "NSClipView","id": "1007693269", "objects":{"NSNextResponder": {"id":"30980817"},"NSvFlags": 2304,"NSSubviews": {"class": "NSMutableArray","id": "", "objects":[{"id":"604040574"}]},"NSFrame": "{{1, 0}, {904, 17}}","NSSuperview": {"id":"30980817"},"NSNextKeyView": {"id":"604040574"},"NSDocView": {"id":"604040574"},"NSBGColor": {"id":"955461975"},"NScvFlags": 4}},{"id":"895370824"}]},"NSFrame": "{{20, 102}, {906, 276}}","NSSuperview": {"id":"414427165"},"NSNextKeyView": {"id":"948217383"},"NSsFlags": 562,"NSVScroller": {"id":"276741145"},"NSHScroller": {"id":"69568024"},"NSContentView": {"id":"948217383"},"NSHeaderClipView": {"id":"1007693269"},"NSCornerView": {"id":"895370824"},"NSScrollAmts": "QSAAAEEgAABBmAAAQZgAAA"}}]},"NSFrameSize": "{946, 613}","NSSuperview": {"id":""}}},"NSScreenRect": "{{0, 0}, {1920, 1178}}","NSMaxSize": "{1.79769e+308, 1.79769e+308}"}},{"class": "NSMenu","id": "396145598", "objects":{"NSTitle": "Main Menu","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "502041852", "objects":{"NSMenu": {"id":"396145598"},"NSTitle": "JSApp","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"class": "NSCustomResource","id": "277861762", "objects":{"NSClassName": "NSImage","NSResourceName": "NSMenuCheckmark"}},"NSMixedImage": {"class": "NSCustomResource","id": "420132161", "objects":{"NSClassName": "NSImage","NSResourceName": "NSMenuMixedState"}},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "929908017", "objects":{"NSTitle": "JSApp","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "719413741", "objects":{"NSMenu": {"id":"929908017"},"NSTitle": "About JSApp","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "147013270", "objects":{"NSMenu": {"id":"929908017"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "544446554", "objects":{"NSMenu": {"id":"929908017"},"NSTitle": "Preferences…","NSKeyEquiv": ",","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "455124416", "objects":{"NSMenu": {"id":"929908017"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "493734341", "objects":{"NSMenu": {"id":"929908017"},"NSTitle": "Services","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "218525171", "objects":{"NSTitle": "Services","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[]},"NSName": "_NSServicesMenu"}}}},{"class": "NSMenuItem","id": "646933026", "objects":{"NSMenu": {"id":"929908017"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "843796999", "objects":{"NSMenu": {"id":"929908017"},"NSTitle": "Hide JSApp","NSKeyEquiv": "h","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "61754815", "objects":{"NSMenu": {"id":"929908017"},"NSTitle": "Hide Others","NSKeyEquiv": "h","NSKeyEquivModMask": 1572864,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "727120825", "objects":{"NSMenu": {"id":"929908017"},"NSTitle": "Show All","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "428803447", "objects":{"NSMenu": {"id":"929908017"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "491412195", "objects":{"NSMenu": {"id":"929908017"},"NSTitle": "Quit JSApp","NSKeyEquiv": "q","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]},"NSName": "_NSAppleMenu"}}}},{"class": "NSMenuItem","id": "475354134", "objects":{"NSMenu": {"id":"396145598"},"NSTitle": "File","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "140258427", "objects":{"NSTitle": "File","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "684393965", "objects":{"NSMenu": {"id":"140258427"},"NSTitle": "New","NSKeyEquiv": "n","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "118789126", "objects":{"NSMenu": {"id":"140258427"},"NSTitle": "Open…","NSKeyEquiv": "o","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "711009244", "objects":{"NSMenu": {"id":"140258427"},"NSTitle": "Open Recent","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "85259455", "objects":{"NSTitle": "Open Recent","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "620121511", "objects":{"NSMenu": {"id":"85259455"},"NSTitle": "Clear Menu","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]},"NSName": "_NSRecentDocumentsMenu"}}}},{"class": "NSMenuItem","id": "875068603", "objects":{"NSMenu": {"id":"140258427"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "313874609", "objects":{"NSMenu": {"id":"140258427"},"NSTitle": "Close","NSKeyEquiv": "w","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "594142260", "objects":{"NSMenu": {"id":"140258427"},"NSTitle": "Save","NSKeyEquiv": "s","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "323858156", "objects":{"NSMenu": {"id":"140258427"},"NSTitle": "Save As…","NSKeyEquiv": "S","NSKeyEquivModMask": 1179648,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "402382860", "objects":{"NSMenu": {"id":"140258427"},"NSTitle": "Revert to Saved","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "481018735", "objects":{"NSMenu": {"id":"140258427"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "499319061", "objects":{"NSMenu": {"id":"140258427"},"NSTitle": "Page Setup...","NSKeyEquiv": "P","NSKeyEquivModMask": 1179648,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSToolTip": ""}},{"class": "NSMenuItem","id": "494801925", "objects":{"NSMenu": {"id":"140258427"},"NSTitle": "Print…","NSKeyEquiv": "p","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]}}}}},{"class": "NSMenuItem","id": "693213887", "objects":{"NSMenu": {"id":"396145598"},"NSTitle": "Edit","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "26323967", "objects":{"NSTitle": "Edit","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "1062491368", "objects":{"NSMenu": {"id":"26323967"},"NSTitle": "Undo","NSKeyEquiv": "z","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "766653658", "objects":{"NSMenu": {"id":"26323967"},"NSTitle": "Redo","NSKeyEquiv": "Z","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "894470039", "objects":{"NSMenu": {"id":"26323967"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "882289911", "objects":{"NSMenu": {"id":"26323967"},"NSTitle": "Cut","NSKeyEquiv": "x","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "108407587", "objects":{"NSMenu": {"id":"26323967"},"NSTitle": "Copy","NSKeyEquiv": "c","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "987153865", "objects":{"NSMenu": {"id":"26323967"},"NSTitle": "Paste","NSKeyEquiv": "v","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "238136692", "objects":{"NSMenu": {"id":"26323967"},"NSTitle": "Paste and Match Style","NSKeyEquiv": "V","NSKeyEquivModMask": 1572864,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "567593746", "objects":{"NSMenu": {"id":"26323967"},"NSTitle": "Delete","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "212764814", "objects":{"NSMenu": {"id":"26323967"},"NSTitle": "Select All","NSKeyEquiv": "a","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "419879483", "objects":{"NSMenu": {"id":"26323967"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "573155596", "objects":{"NSMenu": {"id":"26323967"},"NSTitle": "Find","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "50713213", "objects":{"NSTitle": "Find","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "547150631", "objects":{"NSMenu": {"id":"50713213"},"NSTitle": "Find…","NSKeyEquiv": "f","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSTag": 1}},{"class": "NSMenuItem","id": "710177711", "objects":{"NSMenu": {"id":"50713213"},"NSTitle": "Find Next","NSKeyEquiv": "g","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSTag": 2}},{"class": "NSMenuItem","id": "840494879", "objects":{"NSMenu": {"id":"50713213"},"NSTitle": "Find Previous","NSKeyEquiv": "G","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSTag": 3}},{"class": "NSMenuItem","id": "748324225", "objects":{"NSMenu": {"id":"50713213"},"NSTitle": "Use Selection for Find","NSKeyEquiv": "e","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSTag": 7}},{"class": "NSMenuItem","id": "1017125445", "objects":{"NSMenu": {"id":"50713213"},"NSTitle": "Jump to Selection","NSKeyEquiv": "j","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]}}}}},{"class": "NSMenuItem","id": "32515025", "objects":{"NSMenu": {"id":"26323967"},"NSTitle": "Spelling and Grammar","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "499920755", "objects":{"NSTitle": "Spelling","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "882984624", "objects":{"NSMenu": {"id":"499920755"},"NSTitle": "Show Spelling and Grammar","NSKeyEquiv": ":","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "664256261", "objects":{"NSMenu": {"id":"499920755"},"NSTitle": "Check Document Now","NSKeyEquiv": ";","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "277876898", "objects":{"NSMenu": {"id":"499920755"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "707578430", "objects":{"NSMenu": {"id":"499920755"},"NSTitle": "Check Spelling While Typing","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "428750252", "objects":{"NSMenu": {"id":"499920755"},"NSTitle": "Check Grammar With Spelling","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "363312713", "objects":{"NSMenu": {"id":"499920755"},"NSTitle": "Correct Spelling Automatically","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]}}}}},{"class": "NSMenuItem","id": "925479430", "objects":{"NSMenu": {"id":"26323967"},"NSTitle": "Substitutions","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "36288778", "objects":{"NSTitle": "Substitutions","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "882086962", "objects":{"NSMenu": {"id":"36288778"},"NSTitle": "Show Substitutions","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "491421895", "objects":{"NSMenu": {"id":"36288778"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "189206921", "objects":{"NSMenu": {"id":"36288778"},"NSTitle": "Smart Copy/Paste","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "1030351354", "objects":{"NSMenu": {"id":"36288778"},"NSTitle": "Smart Quotes","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "491645350", "objects":{"NSMenu": {"id":"36288778"},"NSTitle": "Smart Dashes","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "218154558", "objects":{"NSMenu": {"id":"36288778"},"NSTitle": "Smart Links","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "1062365657", "objects":{"NSMenu": {"id":"36288778"},"NSTitle": "Data Detectors","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "354238611", "objects":{"NSMenu": {"id":"36288778"},"NSTitle": "Text Replacement","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]}}}}},{"class": "NSMenuItem","id": "1073520368", "objects":{"NSMenu": {"id":"26323967"},"NSTitle": "Transformations","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "182677269", "objects":{"NSTitle": "Transformations","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "228222622", "objects":{"NSMenu": {"id":"182677269"},"NSTitle": "Make Upper Case","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "1064576491", "objects":{"NSMenu": {"id":"182677269"},"NSTitle": "Make Lower Case","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "221720946", "objects":{"NSMenu": {"id":"182677269"},"NSTitle": "Capitalize","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]}}}}},{"class": "NSMenuItem","id": "1044796185", "objects":{"NSMenu": {"id":"26323967"},"NSTitle": "Speech","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "196866971", "objects":{"NSTitle": "Speech","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "558426415", "objects":{"NSMenu": {"id":"196866971"},"NSTitle": "Start Speaking","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "434484761", "objects":{"NSMenu": {"id":"196866971"},"NSTitle": "Stop Speaking","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]}}}}}]}}}}},{"class": "NSMenuItem","id": "857536504", "objects":{"NSMenu": {"id":"396145598"},"NSTitle": "Format","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "228002546", "objects":{"NSTitle": "Format","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "609792061", "objects":{"NSMenu": {"id":"228002546"},"NSTitle": "Font","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "565148168", "objects":{"NSTitle": "Font","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "643620124", "objects":{"NSMenu": {"id":"565148168"},"NSTitle": "Show Fonts","NSKeyEquiv": "t","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "61046026", "objects":{"NSMenu": {"id":"565148168"},"NSTitle": "Bold","NSKeyEquiv": "b","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSTag": 2}},{"class": "NSMenuItem","id": "233505564", "objects":{"NSMenu": {"id":"565148168"},"NSTitle": "Italic","NSKeyEquiv": "i","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSTag": 1}},{"class": "NSMenuItem","id": "162604386", "objects":{"NSMenu": {"id":"565148168"},"NSTitle": "Underline","NSKeyEquiv": "u","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "161800526", "objects":{"NSMenu": {"id":"565148168"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "14981393", "objects":{"NSMenu": {"id":"565148168"},"NSTitle": "Bigger","NSKeyEquiv": "+","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSTag": 3}},{"class": "NSMenuItem","id": "516934468", "objects":{"NSMenu": {"id":"565148168"},"NSTitle": "Smaller","NSKeyEquiv": "-","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSTag": 4}},{"class": "NSMenuItem","id": "391747350", "objects":{"NSMenu": {"id":"565148168"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "361602393", "objects":{"NSMenu": {"id":"565148168"},"NSTitle": "Kern","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "129191325", "objects":{"NSTitle": "Kern","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "61462663", "objects":{"NSMenu": {"id":"129191325"},"NSTitle": "Use Default","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "957493733", "objects":{"NSMenu": {"id":"129191325"},"NSTitle": "Use None","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "936113629", "objects":{"NSMenu": {"id":"129191325"},"NSTitle": "Tighten","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "635885426", "objects":{"NSMenu": {"id":"129191325"},"NSTitle": "Loosen","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]}}}}},{"class": "NSMenuItem","id": "25523273", "objects":{"NSMenu": {"id":"565148168"},"NSTitle": "Ligature","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "835348817", "objects":{"NSTitle": "Ligature","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "180250789", "objects":{"NSMenu": {"id":"835348817"},"NSTitle": "Use Default","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "568143876", "objects":{"NSMenu": {"id":"835348817"},"NSTitle": "Use None","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "573379050", "objects":{"NSMenu": {"id":"835348817"},"NSTitle": "Use All","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]}}}}},{"class": "NSMenuItem","id": "818558147", "objects":{"NSMenu": {"id":"565148168"},"NSTitle": "Baseline","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "183858689", "objects":{"NSTitle": "Baseline","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "644154219", "objects":{"NSMenu": {"id":"183858689"},"NSTitle": "Use Default","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "614557663", "objects":{"NSMenu": {"id":"183858689"},"NSTitle": "Superscript","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "774392049", "objects":{"NSMenu": {"id":"183858689"},"NSTitle": "Subscript","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "892001032", "objects":{"NSMenu": {"id":"183858689"},"NSTitle": "Raise","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "1068179975", "objects":{"NSMenu": {"id":"183858689"},"NSTitle": "Lower","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]}}}}},{"class": "NSMenuItem","id": "890899662", "objects":{"NSMenu": {"id":"565148168"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "644140682", "objects":{"NSMenu": {"id":"565148168"},"NSTitle": "Show Colors","NSKeyEquiv": "C","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "671545876", "objects":{"NSMenu": {"id":"565148168"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "397166321", "objects":{"NSMenu": {"id":"565148168"},"NSTitle": "Copy Style","NSKeyEquiv": "c","NSKeyEquivModMask": 1572864,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "215340233", "objects":{"NSMenu": {"id":"565148168"},"NSTitle": "Paste Style","NSKeyEquiv": "v","NSKeyEquivModMask": 1572864,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]},"NSName": "_NSFontMenu"}}}},{"class": "NSMenuItem","id": "43690407", "objects":{"NSMenu": {"id":"228002546"},"NSTitle": "Text","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "975825102", "objects":{"NSTitle": "Text","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "792316364", "objects":{"NSMenu": {"id":"975825102"},"NSTitle": "Align Left","NSKeyEquiv": "{","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "596561657", "objects":{"NSMenu": {"id":"975825102"},"NSTitle": "Center","NSKeyEquiv": "|","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "872570229", "objects":{"NSMenu": {"id":"975825102"},"NSTitle": "Justify","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "766796088", "objects":{"NSMenu": {"id":"975825102"},"NSTitle": "Align Right","NSKeyEquiv": "}","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "851747333", "objects":{"NSMenu": {"id":"975825102"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "981059996", "objects":{"NSMenu": {"id":"975825102"},"NSTitle": "Writing Direction","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "906599697", "objects":{"NSTitle": "Writing Direction","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "1041729520", "objects":{"NSMenu": {"id":"906599697"},"NSIsDisabled": true,"NSTitle": "Paragraph","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "137407739", "objects":{"NSMenu": {"id":"906599697"},"NSTitle": "CURlZmF1bHQ","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "408911759", "objects":{"NSMenu": {"id":"906599697"},"NSTitle": "CUxlZnQgdG8gUmlnaHQ","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "398110396", "objects":{"NSMenu": {"id":"906599697"},"NSTitle": "CVJpZ2h0IHRvIExlZnQ","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "175409192", "objects":{"NSMenu": {"id":"906599697"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "76364711", "objects":{"NSMenu": {"id":"906599697"},"NSIsDisabled": true,"NSTitle": "Selection","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "235507009", "objects":{"NSMenu": {"id":"906599697"},"NSTitle": "CURlZmF1bHQ","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "988306009", "objects":{"NSMenu": {"id":"906599697"},"NSTitle": "CUxlZnQgdG8gUmlnaHQ","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "160428799", "objects":{"NSMenu": {"id":"906599697"},"NSTitle": "CVJpZ2h0IHRvIExlZnQ","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]}}}}},{"class": "NSMenuItem","id": "658247071", "objects":{"NSMenu": {"id":"975825102"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "1055412392", "objects":{"NSMenu": {"id":"975825102"},"NSTitle": "Show Ruler","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "122656406", "objects":{"NSMenu": {"id":"975825102"},"NSTitle": "Copy Ruler","NSKeyEquiv": "c","NSKeyEquivModMask": 1310720,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "180202457", "objects":{"NSMenu": {"id":"975825102"},"NSTitle": "Paste Ruler","NSKeyEquiv": "v","NSKeyEquivModMask": 1310720,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]}}}}}]}}}}},{"class": "NSMenuItem","id": "713206015", "objects":{"NSMenu": {"id":"396145598"},"NSTitle": "View","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "96939199", "objects":{"NSTitle": "View","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "206668947", "objects":{"NSMenu": {"id":"96939199"},"NSTitle": "Show Toolbar","NSKeyEquiv": "t","NSKeyEquivModMask": 1572864,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "825897010", "objects":{"NSMenu": {"id":"96939199"},"NSTitle": "Customize Toolbar…","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]}}}}},{"class": "NSMenuItem","id": "686270510", "objects":{"NSMenu": {"id":"396145598"},"NSTitle": "Window","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "909684463", "objects":{"NSTitle": "Window","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "497312719", "objects":{"NSMenu": {"id":"909684463"},"NSTitle": "Minimize","NSKeyEquiv": "m","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "857636876", "objects":{"NSMenu": {"id":"909684463"},"NSTitle": "Zoom","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "353476913", "objects":{"NSMenu": {"id":"909684463"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "8672285", "objects":{"NSMenu": {"id":"909684463"},"NSTitle": "Bring All to Front","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]},"NSName": "_NSWindowsMenu"}}}},{"class": "NSMenuItem","id": "125320586", "objects":{"NSMenu": {"id":"396145598"},"NSTitle": "Help","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "370522354", "objects":{"NSTitle": "Help","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "972987324", "objects":{"NSMenu": {"id":"370522354"},"NSTitle": "JSApp Help","NSKeyEquiv": "?","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]},"NSName": "_NSHelpMenu"}}}}]},"NSName": "_NSMainMenu"}},{"class": "NSCustomObject","id": "864649339", "objects":{"NSClassName": "AppController"}},{"class": "NSArrayController","id": "484200277", "objects":{"NSDeclaredKeys": {"class": "NSMutableArray","id": "", "objects":["age","name"]},"NSEditable": true,"_NSManagedProxy": {"class": "_NSManagedProxy","id": "", "objects":{}},"NSAvoidsEmptySelection": true,"NSPreservesSelection": true,"NSSelectsInsertedObjects": true,"NSFilterRestrictsInsertion": true,"NSClearsFilterPredicateOnInsertion": true}}]},"IBDocument.Objects": {"class": "IBObjectContainer","id": "", "objects":{"connectionRecords": {"class": "NSMutableArray","id": "", "objects":[{"class": "IBConnectionRecord","id": "", "objects":{"connection": {"class": "IBActionConnection","id": "", "objects":{"label": "takeDoubleValueFrom:","source": {"id":"257328319"},"destination": {"id":"744995210"}}},"connectionID": 689}},{"class": "IBConnectionRecord","id": "", "objects":{"connection": {"class": "IBOutletConnection","id": "", "objects":{"label": "delegate","source": {"id":"1050"},"destination": {"id":"864649339"}}},"connectionID": 691}},{"class": "IBConnectionRecord","id": "", "objects":{"connection": {"class": "IBActionConnection","id": "", "objects":{"label": "takeDoubleValueFrom:","source": {"id":"744995210"},"destination": {"id":"257328319"}}},"connectionID": 714}},{"class": "IBConnectionRecord","id": "", "objects":{"connection": {"class": "IBOutletConnection","id": "", "objects":{"label": "_window","source": {"id":"864649339"},"destination": {"id":"513744381"}}},"connectionID": 715}},{"class": "IBConnectionRecord","id": "", "objects":{"connection": {"class": "IBBindingConnection","id": "", "objects":{"label": "value: testValue","source": {"id":"744995210"},"destination": {"id":"864649339"},"connector": {"class": "NSNibBindingConnector","id": "", "objects":{"NSSource": {"id":"744995210"},"NSDestination": {"id":"864649339"},"NSLabel": "value: testValue","NSBinding": "value","NSKeyPath": "testValue","NSNibBindingConnectorVersion": 2}}}},"connectionID": 724}},{"class": "IBConnectionRecord","id": "", "objects":{"connection": {"class": "IBBindingConnection","id": "", "objects":{"label": "value: testValue","source": {"id":"257328319"},"destination": {"id":"864649339"},"connector": {"class": "NSNibBindingConnector","id": "", "objects":{"NSSource": {"id":"257328319"},"NSDestination": {"id":"864649339"},"NSLabel": "value: testValue","NSBinding": "value","NSKeyPath": "testValue","NSNibBindingConnectorVersion": 2}}}},"connectionID": 736}},{"class": "IBConnectionRecord","id": "", "objects":{"connection": {"class": "IBOutletConnection","id": "", "objects":{"label": "_arrayController","source": {"id":"864649339"},"destination": {"id":"484200277"}}},"connectionID": 743}},{"class": "IBConnectionRecord","id": "", "objects":{"connection": {"class": "IBBindingConnection","id": "", "objects":{"label": "contentArray: tableContent","source": {"id":"484200277"},"destination": {"id":"864649339"},"connector": {"class": "NSNibBindingConnector","id": "", "objects":{"NSSource": {"id":"484200277"},"NSDestination": {"id":"864649339"},"NSLabel": "contentArray: tableContent","NSBinding": "contentArray","NSKeyPath": "tableContent","NSNibBindingConnectorVersion": 2}}}},"connectionID": 747}},{"class": "IBConnectionRecord","id": "", "objects":{"connection": {"class": "IBActionConnection","id": "", "objects":{"label": "performClose:","source": {"id":"513744381"},"destination": {"id":"807627904"}}},"connectionID": 760}},{"class": "IBConnectionRecord","id": "", "objects":{"connection": {"class": "IBOutletConnection","id": "", "objects":{"label": "dataSource","source": {"id":"327081499"},"destination": {"id":"864649339"}}},"connectionID": 770}}]},"objectRecords": {"class": "IBMutableOrderedSet","id": "", "objects":{"orderedObjects": {"class": "NSArray","id": "", "objects":[{"class": "IBObjectRecord","id": "", "objects":{"objectID": 0,"object": {"id":"0"},"children": {"id":"1048"},"parent": {"nil":""}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": -2,"object": {"id":"1021"},"parent": {"id":"0"},"objectName": "File's Owner"}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": -1,"object": {"id":"1014"},"parent": {"id":"0"},"objectName": "First Responder"}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": -3,"object": {"id":"1050"},"parent": {"id":"0"},"objectName": "Application"}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 367,"object": {"id":"513744381"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"414427165"}]},"parent": {"id":"0"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 368,"object": {"id":"414427165"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"511023663"},{"id":"142462336"},{"id":"780169108"},{"id":"807627904"},{"id":"947043007"},{"id":"481053202"},{"id":"257328319"},{"id":"577562334"},{"id":"561516135"},{"id":"790695465"},{"id":"744995210"},{"id":"1037334765"},{"id":"669360788"},{"id":"780600689"},{"id":"30980817"},{"id":"479961390"}]},"parent": {"id":"513744381"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 373,"object": {"id":"163992474"},"parent": {"id":"0"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 451,"object": {"id":"807627904"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"281914322"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 452,"object": {"id":"281914322"},"parent": {"id":"807627904"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 453,"object": {"id":"947043007"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"775301662"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 454,"object": {"id":"775301662"},"parent": {"id":"947043007"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 455,"object": {"id":"481053202"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"228939928"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 456,"object": {"id":"228939928"},"parent": {"id":"481053202"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 457,"object": {"id":"257328319"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"829387278"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 458,"object": {"id":"829387278"},"parent": {"id":"257328319"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 463,"object": {"id":"780169108"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"146314554"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 464,"object": {"id":"146314554"},"parent": {"id":"780169108"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 467,"object": {"id":"511023663"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"388353698"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 468,"object": {"id":"388353698"},"parent": {"id":"511023663"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 471,"object": {"id":"142462336"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"100568012"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 472,"object": {"id":"100568012"},"parent": {"id":"142462336"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 473,"object": {"id":"577562334"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"671756545"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 474,"object": {"id":"790695465"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"561385561"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 476,"object": {"id":"561516135"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"79065924"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 477,"object": {"id":"79065924"},"parent": {"id":"561516135"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 479,"object": {"id":"561385561"},"parent": {"id":"790695465"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 480,"object": {"id":"671756545"},"parent": {"id":"577562334"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 501,"object": {"id":"744995210"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"160495813"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 502,"object": {"id":"160495813"},"parent": {"id":"744995210"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 503,"object": {"id":"1037334765"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"685186056"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 504,"object": {"id":"685186056"},"parent": {"id":"1037334765"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 509,"object": {"id":"669360788"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"859234033"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 510,"object": {"id":"859234033"},"parent": {"id":"669360788"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 541,"object": {"id":"396145598"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"693213887"},{"id":"857536504"},{"id":"713206015"},{"id":"475354134"},{"id":"125320586"},{"id":"502041852"},{"id":"686270510"}]},"parent": {"id":"0"},"objectName": "Main Menu"}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 542,"object": {"id":"693213887"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"26323967"}]},"parent": {"id":"396145598"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 543,"object": {"id":"857536504"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"228002546"}]},"parent": {"id":"396145598"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 544,"object": {"id":"713206015"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"96939199"}]},"parent": {"id":"396145598"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 545,"object": {"id":"475354134"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"140258427"}]},"parent": {"id":"396145598"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 546,"object": {"id":"125320586"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"370522354"}]},"parent": {"id":"396145598"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 547,"object": {"id":"502041852"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"929908017"}]},"parent": {"id":"396145598"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 548,"object": {"id":"686270510"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"909684463"}]},"parent": {"id":"396145598"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 549,"object": {"id":"909684463"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"497312719"},{"id":"857636876"},{"id":"8672285"},{"id":"353476913"}]},"parent": {"id":"686270510"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 550,"object": {"id":"497312719"},"parent": {"id":"909684463"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 551,"object": {"id":"857636876"},"parent": {"id":"909684463"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 552,"object": {"id":"8672285"},"parent": {"id":"909684463"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 553,"object": {"id":"353476913"},"parent": {"id":"909684463"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 554,"object": {"id":"929908017"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"61754815"},{"id":"428803447"},{"id":"493734341"},{"id":"147013270"},{"id":"455124416"},{"id":"544446554"},{"id":"646933026"},{"id":"491412195"},{"id":"727120825"},{"id":"843796999"},{"id":"719413741"}]},"parent": {"id":"502041852"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 555,"object": {"id":"61754815"},"parent": {"id":"929908017"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 556,"object": {"id":"428803447"},"parent": {"id":"929908017"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 557,"object": {"id":"493734341"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"218525171"}]},"parent": {"id":"929908017"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 558,"object": {"id":"147013270"},"parent": {"id":"929908017"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 559,"object": {"id":"455124416"},"parent": {"id":"929908017"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 560,"object": {"id":"544446554"},"parent": {"id":"929908017"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 561,"object": {"id":"646933026"},"parent": {"id":"929908017"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 562,"object": {"id":"491412195"},"parent": {"id":"929908017"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 563,"object": {"id":"727120825"},"parent": {"id":"929908017"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 564,"object": {"id":"843796999"},"parent": {"id":"929908017"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 565,"object": {"id":"719413741"},"parent": {"id":"929908017"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 566,"object": {"id":"218525171"},"parent": {"id":"493734341"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 567,"object": {"id":"370522354"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"972987324"}]},"parent": {"id":"125320586"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 568,"object": {"id":"972987324"},"parent": {"id":"370522354"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 569,"object": {"id":"140258427"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"481018735"},{"id":"402382860"},{"id":"875068603"},{"id":"313874609"},{"id":"499319061"},{"id":"711009244"},{"id":"684393965"},{"id":"118789126"},{"id":"494801925"},{"id":"323858156"},{"id":"594142260"}]},"parent": {"id":"475354134"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 570,"object": {"id":"481018735"},"parent": {"id":"140258427"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 571,"object": {"id":"402382860"},"parent": {"id":"140258427"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 572,"object": {"id":"875068603"},"parent": {"id":"140258427"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 573,"object": {"id":"313874609"},"parent": {"id":"140258427"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 574,"object": {"id":"499319061"},"parent": {"id":"140258427"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 575,"object": {"id":"711009244"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"85259455"}]},"parent": {"id":"140258427"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 576,"object": {"id":"684393965"},"parent": {"id":"140258427"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 577,"object": {"id":"118789126"},"parent": {"id":"140258427"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 578,"object": {"id":"494801925"},"parent": {"id":"140258427"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 579,"object": {"id":"323858156"},"parent": {"id":"140258427"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 580,"object": {"id":"594142260"},"parent": {"id":"140258427"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 581,"object": {"id":"85259455"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"620121511"}]},"parent": {"id":"711009244"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 582,"object": {"id":"620121511"},"parent": {"id":"85259455"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 583,"object": {"id":"96939199"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"825897010"},{"id":"206668947"}]},"parent": {"id":"713206015"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 584,"object": {"id":"825897010"},"parent": {"id":"96939199"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 585,"object": {"id":"206668947"},"parent": {"id":"96939199"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 586,"object": {"id":"228002546"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"43690407"},{"id":"609792061"}]},"parent": {"id":"857536504"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 587,"object": {"id":"43690407"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"975825102"}]},"parent": {"id":"228002546"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 588,"object": {"id":"609792061"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"565148168"}]},"parent": {"id":"228002546"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 589,"object": {"id":"565148168"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"215340233"},{"id":"397166321"},{"id":"671545876"},{"id":"644140682"},{"id":"890899662"},{"id":"818558147"},{"id":"25523273"},{"id":"361602393"},{"id":"391747350"},{"id":"516934468"},{"id":"14981393"},{"id":"161800526"},{"id":"162604386"},{"id":"233505564"},{"id":"61046026"},{"id":"643620124"}]},"parent": {"id":"609792061"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 590,"object": {"id":"215340233"},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 591,"object": {"id":"397166321"},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 592,"object": {"id":"671545876"},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 593,"object": {"id":"644140682"},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 594,"object": {"id":"890899662"},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 595,"object": {"id":"818558147"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"183858689"}]},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 596,"object": {"id":"25523273"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"835348817"}]},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 597,"object": {"id":"361602393"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"129191325"}]},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 598,"object": {"id":"391747350"},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 599,"object": {"id":"516934468"},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 600,"object": {"id":"14981393"},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 601,"object": {"id":"161800526"},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 602,"object": {"id":"162604386"},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 603,"object": {"id":"233505564"},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 604,"object": {"id":"61046026"},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 605,"object": {"id":"643620124"},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 606,"object": {"id":"129191325"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"635885426"},{"id":"936113629"},{"id":"957493733"},{"id":"61462663"}]},"parent": {"id":"361602393"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 607,"object": {"id":"635885426"},"parent": {"id":"129191325"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 608,"object": {"id":"936113629"},"parent": {"id":"129191325"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 609,"object": {"id":"957493733"},"parent": {"id":"129191325"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 610,"object": {"id":"61462663"},"parent": {"id":"129191325"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 611,"object": {"id":"835348817"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"573379050"},{"id":"568143876"},{"id":"180250789"}]},"parent": {"id":"25523273"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 612,"object": {"id":"573379050"},"parent": {"id":"835348817"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 613,"object": {"id":"568143876"},"parent": {"id":"835348817"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 614,"object": {"id":"180250789"},"parent": {"id":"835348817"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 615,"object": {"id":"183858689"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"1068179975"},{"id":"892001032"},{"id":"774392049"},{"id":"614557663"},{"id":"644154219"}]},"parent": {"id":"818558147"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 616,"object": {"id":"1068179975"},"parent": {"id":"183858689"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 617,"object": {"id":"892001032"},"parent": {"id":"183858689"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 618,"object": {"id":"774392049"},"parent": {"id":"183858689"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 619,"object": {"id":"614557663"},"parent": {"id":"183858689"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 620,"object": {"id":"644154219"},"parent": {"id":"183858689"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 621,"object": {"id":"975825102"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"981059996"},{"id":"658247071"},{"id":"180202457"},{"id":"122656406"},{"id":"1055412392"},{"id":"851747333"},{"id":"766796088"},{"id":"872570229"},{"id":"596561657"},{"id":"792316364"}]},"parent": {"id":"43690407"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 622,"object": {"id":"981059996"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"906599697"}]},"parent": {"id":"975825102"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 623,"object": {"id":"658247071"},"parent": {"id":"975825102"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 624,"object": {"id":"180202457"},"parent": {"id":"975825102"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 625,"object": {"id":"122656406"},"parent": {"id":"975825102"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 626,"object": {"id":"1055412392"},"parent": {"id":"975825102"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 627,"object": {"id":"851747333"},"parent": {"id":"975825102"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 628,"object": {"id":"766796088"},"parent": {"id":"975825102"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 629,"object": {"id":"872570229"},"parent": {"id":"975825102"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 630,"object": {"id":"596561657"},"parent": {"id":"975825102"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 631,"object": {"id":"792316364"},"parent": {"id":"975825102"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 632,"object": {"id":"906599697"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"160428799"},{"id":"988306009"},{"id":"235507009"},{"id":"175409192"},{"id":"76364711"},{"id":"398110396"},{"id":"408911759"},{"id":"137407739"},{"id":"1041729520"}]},"parent": {"id":"981059996"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 633,"object": {"id":"160428799"},"parent": {"id":"906599697"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 634,"object": {"id":"988306009"},"parent": {"id":"906599697"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 635,"object": {"id":"235507009"},"parent": {"id":"906599697"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 636,"object": {"id":"175409192"},"parent": {"id":"906599697"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 637,"object": {"id":"76364711"},"parent": {"id":"906599697"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 638,"object": {"id":"398110396"},"parent": {"id":"906599697"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 639,"object": {"id":"408911759"},"parent": {"id":"906599697"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 640,"object": {"id":"137407739"},"parent": {"id":"906599697"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 641,"object": {"id":"1041729520"},"parent": {"id":"906599697"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 642,"object": {"id":"26323967"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"1044796185"},{"id":"1073520368"},{"id":"925479430"},{"id":"32515025"},{"id":"573155596"},{"id":"419879483"},{"id":"212764814"},{"id":"567593746"},{"id":"238136692"},{"id":"987153865"},{"id":"108407587"},{"id":"882289911"},{"id":"894470039"},{"id":"766653658"},{"id":"1062491368"}]},"parent": {"id":"693213887"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 643,"object": {"id":"1044796185"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"196866971"}]},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 644,"object": {"id":"1073520368"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"182677269"}]},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 645,"object": {"id":"925479430"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"36288778"}]},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 646,"object": {"id":"32515025"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"499920755"}]},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 647,"object": {"id":"573155596"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"50713213"}]},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 648,"object": {"id":"419879483"},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 649,"object": {"id":"212764814"},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 650,"object": {"id":"567593746"},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 651,"object": {"id":"238136692"},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 652,"object": {"id":"987153865"},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 653,"object": {"id":"108407587"},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 654,"object": {"id":"882289911"},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 655,"object": {"id":"894470039"},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 656,"object": {"id":"766653658"},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 657,"object": {"id":"1062491368"},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 658,"object": {"id":"50713213"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"1017125445"},{"id":"748324225"},{"id":"840494879"},{"id":"710177711"},{"id":"547150631"}]},"parent": {"id":"573155596"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 659,"object": {"id":"1017125445"},"parent": {"id":"50713213"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 660,"object": {"id":"748324225"},"parent": {"id":"50713213"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 661,"object": {"id":"840494879"},"parent": {"id":"50713213"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 662,"object": {"id":"710177711"},"parent": {"id":"50713213"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 663,"object": {"id":"547150631"},"parent": {"id":"50713213"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 664,"object": {"id":"499920755"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"363312713"},{"id":"428750252"},{"id":"707578430"},{"id":"277876898"},{"id":"664256261"},{"id":"882984624"}]},"parent": {"id":"32515025"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 665,"object": {"id":"363312713"},"parent": {"id":"499920755"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 666,"object": {"id":"428750252"},"parent": {"id":"499920755"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 667,"object": {"id":"707578430"},"parent": {"id":"499920755"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 668,"object": {"id":"277876898"},"parent": {"id":"499920755"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 669,"object": {"id":"664256261"},"parent": {"id":"499920755"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 670,"object": {"id":"882984624"},"parent": {"id":"499920755"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 671,"object": {"id":"36288778"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"354238611"},{"id":"1062365657"},{"id":"218154558"},{"id":"491645350"},{"id":"1030351354"},{"id":"189206921"},{"id":"491421895"},{"id":"882086962"}]},"parent": {"id":"925479430"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 672,"object": {"id":"354238611"},"parent": {"id":"36288778"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 673,"object": {"id":"1062365657"},"parent": {"id":"36288778"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 674,"object": {"id":"218154558"},"parent": {"id":"36288778"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 675,"object": {"id":"491645350"},"parent": {"id":"36288778"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 676,"object": {"id":"1030351354"},"parent": {"id":"36288778"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 677,"object": {"id":"189206921"},"parent": {"id":"36288778"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 678,"object": {"id":"491421895"},"parent": {"id":"36288778"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 679,"object": {"id":"882086962"},"parent": {"id":"36288778"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 680,"object": {"id":"182677269"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"221720946"},{"id":"1064576491"},{"id":"228222622"}]},"parent": {"id":"1073520368"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 681,"object": {"id":"221720946"},"parent": {"id":"182677269"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 682,"object": {"id":"1064576491"},"parent": {"id":"182677269"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 683,"object": {"id":"228222622"},"parent": {"id":"182677269"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 684,"object": {"id":"196866971"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"434484761"},{"id":"558426415"}]},"parent": {"id":"1044796185"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 685,"object": {"id":"434484761"},"parent": {"id":"196866971"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 686,"object": {"id":"558426415"},"parent": {"id":"196866971"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 690,"object": {"id":"864649339"},"parent": {"id":"0"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 716,"object": {"id":"479961390"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"1059063770"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 717,"object": {"id":"1059063770"},"parent": {"id":"479961390"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 718,"object": {"id":"780600689"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"577933790"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 719,"object": {"id":"577933790"},"parent": {"id":"780600689"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 737,"object": {"id":"484200277"},"parent": {"id":"0"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 761,"object": {"id":"30980817"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"604040574"},{"id":"327081499"},{"id":"69568024"},{"id":"276741145"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 765,"object": {"id":"604040574"},"parent": {"id":"30980817"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 764,"object": {"id":"327081499"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"163630843"},{"id":"906371060"}]},"parent": {"id":"30980817"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 767,"object": {"id":"163630843"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"464442001"}]},"parent": {"id":"327081499"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 768,"object": {"id":"464442001"},"parent": {"id":"163630843"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 766,"object": {"id":"906371060"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"136009105"}]},"parent": {"id":"327081499"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 769,"object": {"id":"136009105"},"parent": {"id":"906371060"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 763,"object": {"id":"69568024"},"parent": {"id":"30980817"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 762,"object": {"id":"276741145"},"parent": {"id":"30980817"}}}]}}},"flattenedProperties": {"class": "NSMutableDictionary","id": "", "objects":{"EncodedWithXMLCoder": true,"dict.sortedKeys": {"class": "NSArray","id": "", "objects":["-3.IBPluginDependency","367.IBEditorWindowLastContentRect","367.IBPluginDependency","367.IBWindowTemplateEditedContentRect","367.NSWindowTemplate.visibleAtLaunch","367.editorWindowContentRectSynchronizationRect","368.IBPluginDependency","451.IBPluginDependency","452.IBPluginDependency","453.IBPluginDependency","454.IBPluginDependency","455.IBPluginDependency","456.IBPluginDependency","457.IBPluginDependency","458.IBPluginDependency","463.IBPluginDependency","464.IBPluginDependency","467.IBPluginDependency","468.IBPluginDependency","471.IBPluginDependency","472.IBPluginDependency","473.IBPluginDependency","474.IBPluginDependency","476.IBPluginDependency","477.IBPluginDependency","479.IBPluginDependency","480.IBPluginDependency","501.IBPluginDependency","502.IBPluginDependency","503.IBPluginDependency","504.IBPluginDependency","509.IBPluginDependency","510.IBPluginDependency","541.IBEditorWindowLastContentRect","541.IBPluginDependency","541.ImportedFromIB2","541.WindowOrigin","541.editorWindowContentRectSynchronizationRect","542.IBPluginDependency","543.IBPluginDependency","544.IBPluginDependency","545.IBPluginDependency","545.ImportedFromIB2","546.IBPluginDependency","546.ImportedFromIB2","547.IBPluginDependency","547.ImportedFromIB2","548.IBPluginDependency","548.ImportedFromIB2","549.IBEditorWindowLastContentRect","549.IBPluginDependency","549.ImportedFromIB2","549.editorWindowContentRectSynchronizationRect","550.IBPluginDependency","550.ImportedFromIB2","551.IBPluginDependency","551.ImportedFromIB2","552.IBPluginDependency","552.ImportedFromIB2","553.IBPluginDependency","553.ImportedFromIB2","554.IBEditorWindowLastContentRect","554.IBPluginDependency","554.ImportedFromIB2","554.editorWindowContentRectSynchronizationRect","555.IBPluginDependency","555.ImportedFromIB2","556.IBPluginDependency","556.ImportedFromIB2","557.IBPluginDependency","557.ImportedFromIB2","558.IBPluginDependency","558.ImportedFromIB2","559.IBPluginDependency","559.ImportedFromIB2","560.IBPluginDependency","560.ImportedFromIB2","561.IBPluginDependency","561.ImportedFromIB2","562.IBPluginDependency","562.ImportedFromIB2","563.IBPluginDependency","563.ImportedFromIB2","564.IBPluginDependency","564.ImportedFromIB2","565.IBPluginDependency","565.ImportedFromIB2","566.IBEditorWindowLastContentRect","566.IBPluginDependency","566.ImportedFromIB2","566.editorWindowContentRectSynchronizationRect","567.IBEditorWindowLastContentRect","567.IBPluginDependency","567.ImportedFromIB2","567.editorWindowContentRectSynchronizationRect","568.IBPluginDependency","568.ImportedFromIB2","569.IBEditorWindowLastContentRect","569.IBPluginDependency","569.ImportedFromIB2","569.editorWindowContentRectSynchronizationRect","570.IBPluginDependency","570.ImportedFromIB2","571.IBPluginDependency","571.ImportedFromIB2","572.IBPluginDependency","572.ImportedFromIB2","573.IBPluginDependency","573.ImportedFromIB2","574.IBPluginDependency","574.ImportedFromIB2","575.IBPluginDependency","575.ImportedFromIB2","576.IBPluginDependency","576.ImportedFromIB2","577.IBPluginDependency","577.ImportedFromIB2","578.IBPluginDependency","578.ImportedFromIB2","579.IBPluginDependency","579.ImportedFromIB2","580.IBPluginDependency","580.ImportedFromIB2","581.IBEditorWindowLastContentRect","581.IBPluginDependency","581.ImportedFromIB2","581.editorWindowContentRectSynchronizationRect","582.IBPluginDependency","582.ImportedFromIB2","583.IBEditorWindowLastContentRect","583.IBPluginDependency","583.editorWindowContentRectSynchronizationRect","584.IBPluginDependency","585.IBPluginDependency","586.IBEditorWindowLastContentRect","586.IBPluginDependency","587.IBPluginDependency","588.IBPluginDependency","589.IBPluginDependency","590.IBPluginDependency","591.IBPluginDependency","592.IBPluginDependency","593.IBPluginDependency","594.IBPluginDependency","595.IBPluginDependency","596.IBPluginDependency","597.IBPluginDependency","598.IBPluginDependency","599.IBPluginDependency","600.IBPluginDependency","601.IBPluginDependency","602.IBPluginDependency","603.IBPluginDependency","604.IBPluginDependency","605.IBPluginDependency","606.IBPluginDependency","607.IBPluginDependency","608.IBPluginDependency","609.IBPluginDependency","610.IBPluginDependency","611.IBPluginDependency","612.IBPluginDependency","613.IBPluginDependency","614.IBPluginDependency","615.IBPluginDependency","616.IBPluginDependency","617.IBPluginDependency","618.IBPluginDependency","619.IBPluginDependency","620.IBPluginDependency","621.IBEditorWindowLastContentRect","621.IBPluginDependency","622.IBPluginDependency","623.IBPluginDependency","624.IBPluginDependency","625.IBPluginDependency","626.IBPluginDependency","627.IBPluginDependency","628.IBPluginDependency","629.IBPluginDependency","630.IBPluginDependency","631.IBPluginDependency","632.IBEditorWindowLastContentRect","632.IBPluginDependency","633.IBPluginDependency","634.IBPluginDependency","635.IBPluginDependency","636.IBPluginDependency","637.IBPluginDependency","638.IBPluginDependency","639.IBPluginDependency","640.IBPluginDependency","641.IBPluginDependency","642.IBEditorWindowLastContentRect","642.IBPluginDependency","643.IBPluginDependency","644.IBPluginDependency","645.IBPluginDependency","646.IBPluginDependency","647.IBPluginDependency","648.IBPluginDependency","649.IBPluginDependency","650.IBPluginDependency","651.IBPluginDependency","652.IBPluginDependency","653.IBPluginDependency","654.IBPluginDependency","655.IBPluginDependency","656.IBPluginDependency","657.IBPluginDependency","658.IBPluginDependency","659.IBPluginDependency","660.IBPluginDependency","661.IBPluginDependency","662.IBPluginDependency","663.IBPluginDependency","664.IBPluginDependency","665.IBPluginDependency","666.IBPluginDependency","667.IBPluginDependency","668.IBPluginDependency","669.IBPluginDependency","670.IBPluginDependency","671.IBEditorWindowLastContentRect","671.IBPluginDependency","672.IBPluginDependency","673.IBPluginDependency","674.IBPluginDependency","675.IBPluginDependency","676.IBPluginDependency","677.IBPluginDependency","678.IBPluginDependency","679.IBPluginDependency","680.IBEditorWindowLastContentRect","680.IBPluginDependency","681.IBPluginDependency","682.IBPluginDependency","683.IBPluginDependency","684.IBPluginDependency","685.IBPluginDependency","686.IBPluginDependency","690.IBAttributePlaceholdersKey","716.IBPluginDependency","717.IBPluginDependency","718.IBPluginDependency","719.IBPluginDependency","737.IBPluginDependency","761.IBPluginDependency","762.IBPluginDependency","763.IBPluginDependency","764.IBPluginDependency","765.IBPluginDependency","766.IBPluginDependency","767.IBPluginDependency","768.IBPluginDependency","769.IBPluginDependency"]},"dict.values": {"class": "NSMutableArray","id": "", "objects":["com.apple.InterfaceBuilder.CocoaPlugin","{{67, 532}, {946, 613}}","com.apple.InterfaceBuilder.CocoaPlugin","{{67, 532}, {946, 613}}",1,"{{11, 666}, {480, 270}}","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","{{309, 1136}, {478, 20}}","com.apple.InterfaceBuilder.CocoaPlugin",1,"{74, 862}","{{11, 977}, {478, 20}}","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"{{447, 673}, {197, 73}}","com.apple.InterfaceBuilder.CocoaPlugin",1,"{{525, 802}, {197, 73}}","com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"{{334, 562}, {242, 183}}","com.apple.InterfaceBuilder.CocoaPlugin",1,"{{23, 794}, {245, 183}}","com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"{{531, 606}, {64, 6}}","com.apple.InterfaceBuilder.CocoaPlugin",1,"{{436, 809}, {64, 6}}","{{739, 722}, {213, 23}}","com.apple.InterfaceBuilder.CocoaPlugin",1,"{{596, 852}, {216, 23}}","com.apple.InterfaceBuilder.CocoaPlugin",1,"{{466, 542}, {196, 203}}","com.apple.InterfaceBuilder.CocoaPlugin",1,"{{323, 672}, {199, 203}}","com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"{{617, 609}, {132, 23}}","com.apple.InterfaceBuilder.CocoaPlugin",1,"{{522, 812}, {146, 23}}","com.apple.InterfaceBuilder.CocoaPlugin",1,"{{397, 703}, {234, 43}}","com.apple.InterfaceBuilder.CocoaPlugin","{{475, 832}, {234, 43}}","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","{{552, 702}, {83, 43}}","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","{{635, 542}, {204, 183}}","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","{{839, 462}, {164, 173}}","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","{{508, 462}, {254, 283}}","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","{{762, 372}, {182, 153}}","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","{{762, 442}, {170, 63}}","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin",{"class": "NSMutableDictionary","id": "", "objects":{"EncodedWithXMLCoder": true,"dict.sortedKeys": {"id":"0"},"dict.values": {"class": "NSMutableArray","id": "", "objects":[]}}},"com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin"]}}},"unlocalizedProperties": {"class": "NSMutableDictionary","id": "", "objects":{"EncodedWithXMLCoder": true,"dict.sortedKeys": {"id":"0"},"dict.values": {"class": "NSMutableArray","id": "", "objects":[]}}},"activeLocalization": {"nil":""},"localizations": {"class": "NSMutableDictionary","id": "", "objects":{"EncodedWithXMLCoder": true,"dict.sortedKeys": {"id":"0"},"dict.values": {"class": "NSMutableArray","id": "", "objects":[]}}},"sourceID": {"nil":""},"maxID": 770}},"IBDocument.Classes": {"class": "IBClassDescriber","id": "", "objects":{"referencedPartialClassDescriptions": {"class": "NSMutableArray","id": "", "objects":[{"class": "IBPartialClassDescription","id": "", "objects":{"className": "AppController","outlets": {"class": "NSMutableDictionary","id": "", "objects":{"EncodedWithXMLCoder": true,"dict.sortedKeys": {"class": "NSArray","id": "", "objects":["_arrayController","_window"]},"dict.values": {"class": "NSMutableArray","id": "", "objects":["id","id"]}}},"sourceIdentifier": {"class": "IBClassDescriptionSource","id": "", "objects":{"majorKey": "IBUserSource","minorKey": ""}}}}]}}},"IBDocument.localizationMode": 0,"IBDocument.PluginDeclaredDependencies": {"class": "NSMutableDictionary","id": "", "objects":{"NS.key.0": "com.apple.InterfaceBuilder.CocoaPlugin.macosx","NS.object.0": 1050}},"IBDocument.PluginDeclaredDevelopmentDependencies": {"class": "NSMutableDictionary","id": "", "objects":{"NS.key.0": "com.apple.InterfaceBuilder.CocoaPlugin.InterfaceBuilder3","NS.object.0": 3000}},"IBDocument.PluginDeclaredDependenciesTrackSystemTargetVersion": true,"IBDocument.LastKnownRelativeProjectPath": {"nil":""},"IBDocument.defaultPropertyAccessControl": 3}}};

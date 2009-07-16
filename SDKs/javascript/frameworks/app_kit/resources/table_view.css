@@ -4,6 +4,7 @@
 
 .ns-table-view-row {
   height: 17px;
+  position: absolute;
 }
 
 .ns-table-view-row.selected {

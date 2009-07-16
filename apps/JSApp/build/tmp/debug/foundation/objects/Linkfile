@@ -1,4 +1,7 @@
 --- 
+timer.js: 
+  dependencies: 
+  - object.js
 notification.js: 
   dependencies: 
   - object.js

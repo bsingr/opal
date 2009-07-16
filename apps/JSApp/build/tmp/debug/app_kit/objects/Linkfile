@@ -138,6 +138,9 @@ custom_resource.js:
 controller.js: 
   dependencies: 
   - key_value_binding.js
+animation_context.js: 
+  dependencies: 
+  - object.js
 table_header_view.js: 
   dependencies: 
   - view.js
@@ -154,6 +157,9 @@ image.js:
 attributed_string.js: 
   dependencies: 
   - attributed_string.js
+animation.js: 
+  dependencies: 
+  - foundation.js
 view.js: 
   dependencies: 
   - responder.js

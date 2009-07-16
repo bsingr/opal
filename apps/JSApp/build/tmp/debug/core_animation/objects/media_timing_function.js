@@ -1,5 +1,5 @@
 /* 
- * vienna.js
+ * media_timing_function.js
  * vienna
  * 
  * Created by Adam Beynon.
@@ -24,14 +24,51 @@
  * THE SOFTWARE.
  */
 
-// Global Vienna namespace object
-var VN = { };
 
-include('runtime/runtime');
-include('foundation/foundation');
-include('core_graphics/core_graphics');
-include('core_animation/core_animation');
-include('core_text/core_text');
-include('app_kit/app_kit');
+/**
+    @class CAMediaTimingFunction
+    @extends NSObject
+*/
+var CAMediaTimingFunction = NSObject.extend({
+    
+    /**
+        @param {Float} c1x
+        @param {Float} c1y
+        @param {Float} c2x
+        @param {Float} c2y
+        @returns CAMediaTimingFunction
+    */
+    initWithControlPoints: function(c1x, c1y, c2x, c2y) {
 
-include('vienna/flash_view');
+    }
+});
+
+/**
+    'linear', 'easeIn', 'easeOut', 'easeInEaseOut', 'default'
+    
+    @param {NSString} name
+    @returns CAMediaTimingFunction
+*/
+CAMediaTimingFunction.functionWithName = function(name) {
+    
+};
+
+/**
+    @param {Float} c1x
+    @param {Float} c1y
+    @param {Float} c2x
+    @param {Float} c2y
+    @returns CAMediaTimingFunction
+*/
+CAMediaTimingFunction.functionWithControlPoints = function(c1x, c1y, c2x, c2y) {
+    
+};
+
+/**
+    Media timing names
+*/
+var kCAMediaTimingFunctionLinear        = "linear";
+var kCAMediaTimingFunctionEaseIn        = "easeIn";
+var kCAMediaTimingFunctionEaseOut       = "easeOut";
+var kCAMediaTimingFunctionEaseInEaseOut = "easeInEaseOut";
+var kCAMediaTimingFunctionDefault       = "default";

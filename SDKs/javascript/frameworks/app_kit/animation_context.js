@@ -1,5 +1,5 @@
 /* 
- * vienna.js
+ * animation_context.js
  * vienna
  * 
  * Created by Adam Beynon.
@@ -24,14 +24,52 @@
  * THE SOFTWARE.
  */
 
-// Global Vienna namespace object
-var VN = { };
+include('foundation/object');
 
-include('runtime/runtime');
-include('foundation/foundation');
-include('core_graphics/core_graphics');
-include('core_animation/core_animation');
-include('core_text/core_text');
-include('app_kit/app_kit');
+/**
+    @class NSAnimationContext
+    @extends NSObject
+*/
+var NSAnimationContext = NSObject.extend({
+    
+    /**
+        @type Float
+    */
+    _duration: null,
+    
+    /**
+        @param {Float} duration
+    */
+    setDuration: function(duration) {
+        
+    },
+    
+    /**
+        @returns Float
+    */
+    duration: function() {
+        
+    }
+});
 
-include('vienna/flash_view');
+
+/**
+    Begin grouping
+*/
+NSAnimationContext.beginGrouping = function() {
+    
+};
+
+/**
+    End grouping
+*/
+NSAnimationContext.endGrouping = function() {
+    
+};
+
+/**
+    @returns NSAnimationContext
+*/
+NSAnimationContext.currentContext = function() {
+    
+};
