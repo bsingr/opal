@@ -67,6 +67,10 @@ module Vienna
       @image_sources ||= Dir.glob(File.join(bundle_root, 'resources', '*.png'))
     end
     
+    def css_sources
+      @css_sources ||= Dir.glob(File.join(bundle_root, 'resources', '*.css'))
+    end
+    
     def prepare!
       # build paths
       FileUtils.mkdir_p(build_prefix)
@@ -116,6 +120,12 @@ module Vienna
         builder.build!
       end
       
+      # css sources
+      css_sources.each do |c|
+        builder = Vienna::Builder::Css.new(c, File.join(@parent.tmp_prefix, bundle_name, 'resources', File.basename(c)), @parent)
+        builder.build!
+      end
+      
       # image_sources
       image_sources.each do |i|
         File.copy(i, File.join(@parent.tmp_prefix, bundle_name, 'resources', File.basename(i)))
@@ -140,14 +150,14 @@ module Vienna
     end
     
     # link all JS resources into the openFile, which, by name, is open (so just write)
-    def link!(openFile)
+    def link_javascript!(openFile)
       all_objects = Dir.glob(File.join(@parent.tmp_prefix, bundle_name, 'objects', '*.js'))
       all_resources = Dir.glob(File.join(@parent.tmp_prefix, bundle_name, 'resources', '*.json'))
       all_images = Dir.glob(File.join(@parent.tmp_prefix, bundle_name, 'resources', '*.png'))
       
       # do sub frameworks first
       @sub_frameworks.each do |s|
-        s.link!(openFile)
+        s.link_javascript!(openFile)
       end
       
       # this frameworks's files
@@ -163,6 +173,23 @@ module Vienna
       # any image resources
       all_images.each do |i|
         File.copy(i, File.join(@parent.build_prefix, 'resources', File.basename(i)))
+      end
+    end
+    
+    # link all stylesheets into the provided file
+    def link_css!(openFile)
+      all_stylesheets = Dir.glob(File.join(@parent.tmp_prefix, bundle_name, 'resources', '*.css'))
+      
+      # sub frameworks
+      @sub_frameworks.each do |s|
+        s.link_css!(openFile)
+      end
+      
+      all_stylesheets.each do |c|
+        f = File.new(c)
+        t = f.read
+        openFile.write t
+        f.close()
       end
     end
     

@@ -101,6 +101,9 @@ clip_view.js:
 action_connection.js: 
   dependencies: 
   - object.js
+render_context.js: 
+  dependencies: 
+  - foundation.js
 nib_binding_connector.js: 
   dependencies: 
   - object.js

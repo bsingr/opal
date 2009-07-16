@@ -29,6 +29,31 @@ include('app_kit/button_cell');
 
 var NSButton = NSControl.extend({
     
+    /**
+        @type NSRenderContext
+    */
+    _renderContext: null,
+    
+    setupGraphicsContextDisplay: function() {
+        this._DOMContainer = document.createElement('div');
+        this._DOMGraphicsContext = document.createElement('div');
+        
+        
+        this._DOMContainer.appendChild(this._DOMGraphicsContext);
+        
+        this._DOMContainer.style.display = "block";
+        this._DOMContainer.style.position = "absolute";
+        this._DOMContainer.style.overflowX = "hidden";
+        this._DOMContainer.style.overflowY = "hidden";
+        
+        this._DOMGraphicsContext.style.display = "block";
+        this._DOMGraphicsContext.style.position = "absolute";
+        this._DOMGraphicsContext.style.overflowX = "hidden";
+        this._DOMGraphicsContext.style.overflowY = "hidden";
+        
+        this._renderContext = NSRenderContext.renderContextWithElement(this._DOMGraphicsContext);
+    },
+    
     initWithCoder: function(aCoder) {
         this._super(aCoder);
         return this;

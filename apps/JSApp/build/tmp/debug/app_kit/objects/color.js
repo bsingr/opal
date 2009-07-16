@@ -121,6 +121,10 @@ var NSColor = NSObject.extend({
 	
 	alphaComponent: function() {
 		
+	},
+	
+	rgbString: function() {
+	    return "rgb(" + parseInt(this._red * 255) + ","  + parseInt(this._green * 255) + ","  + parseInt(this._blue * 255) + ")";
 	}
 });
 

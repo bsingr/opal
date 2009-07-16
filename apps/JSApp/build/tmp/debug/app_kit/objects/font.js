@@ -43,6 +43,10 @@ var NSFont = NSObject.extend({
     
     fontSize: function() {
         return this._size;
+    },
+    
+    renderingRepresentation: function() {
+        return (this._isBold ? "bold " : "") + Math.round(this._size) + "px '" + this._name + "'"; 
     }
 });
 

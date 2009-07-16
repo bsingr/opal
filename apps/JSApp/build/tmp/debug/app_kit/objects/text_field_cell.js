@@ -25,12 +25,16 @@
  */
 
 
-resource('NSTextFieldBezelTopLeft.png');
-resource('NSTextFieldBezelTopMiddle.png');
-resource('NSTextFieldBezelTopRight.png');
-resource('NSTextFieldBezelSides.png');
-resource('NSTextFieldBezelBottom.png');
+/**
+    @enum NSTextFieldBezelStyle
+*/
+var NSTextFieldSquareBezel  = 0;
+var NSTextFieldRoundedBezel = 1;
 
+/**
+    @class NSTextFieldCell
+    @extends NSCell
+*/
 var NSTextFieldCell = NSCell.extend({
     
     _backgroundColor: null,
@@ -48,6 +52,32 @@ var NSTextFieldCell = NSCell.extend({
         this._textColor = aCoder.decodeObjectForKey("NSTextColor");
         
         return this;
+    },
+    
+    /**
+        @param {NSRect} cellFrame
+        @param {NSView} controlView
+        @param {Boolean} firstTime
+        @param {NSRenderContext} context
+    */
+    renderWithFrame: function(cellFrame, controlView, firstTime, context) {    
+        if (firstTime) {
+            context.setClass('ns-text-field');
+            context.push('span', 'ns-text-field-title');
+        }
+        else {
+            if (this._drawsBackground) {
+                context.addClass('bezeled');
+            }
+            
+            this.renderInteriorWithFrame(cellFrame, controlView, firstTime, context);
+        }
+    },
+    
+    renderInteriorWithFrame: function(cellFrame, controlView, firstTime, context) {
+        var titleRect = this.titleRectForBounds(cellFrame);
+        context.$('ns-text-field-title').setFrame(titleRect);
+        context.$('ns-text-field-title').renderAttributedString(this.attributedStringValue());
     },
     
     drawInteriorWithFrame: function(cellFrame, controlView) {

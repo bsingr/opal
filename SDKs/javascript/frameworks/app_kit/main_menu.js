@@ -44,16 +44,7 @@ var NSMainMenu = NSWindow.extend({
     _hasGradient: null,
     
     initWithMainMenu: function(aMenu) {
-        this._DOMContainer = document.createElement('div');
-        this._DOMGraphicsContext = document.createElement('canvas');
-        this._DOMContainer.appendChild(this._DOMGraphicsContext);
-        document.body.appendChild(this._DOMContainer);
-        
-        this._DOMContainer.style.display = "block";
-        this._DOMContainer.style.position = "absolute";
-        
-        this._DOMGraphicsContext.style.display = "block";
-        this._DOMGraphicsContext.style.position = "absolute";
+        this.setupGraphicsContextDisplay();
         
         this._backgroundColor = NSColor.colorWithCalibratedRGBA(0.33, 0.33, 0.33, 1);
         this._hasGradient = true;

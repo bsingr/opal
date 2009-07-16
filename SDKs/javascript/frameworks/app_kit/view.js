@@ -53,6 +53,11 @@ var NSViewDidUpdateTrackingAreasNotification    = "NSViewDidUpdateTrackingAreasN
 
 var NSView = NSResponder.extend({
     
+    /**
+        @type NSRenderContext
+    */
+    _renderContext: null,
+    
     _frame: null,
     _bounds: null,
     _window: null,
@@ -91,7 +96,7 @@ var NSView = NSResponder.extend({
         
     setupGraphicsContextDisplay: function() {
         this._DOMContainer = document.createElement('div');
-        this._DOMGraphicsContext = document.createElement('canvas');
+        this._DOMGraphicsContext = document.createElement('div');
         
         
         this._DOMContainer.appendChild(this._DOMGraphicsContext);
@@ -105,6 +110,8 @@ var NSView = NSResponder.extend({
         this._DOMGraphicsContext.style.position = "absolute";
         this._DOMGraphicsContext.style.overflowX = "hidden";
         this._DOMGraphicsContext.style.overflowY = "hidden";
+        
+        this._renderContext = NSRenderContext.renderContextWithElement(this._DOMGraphicsContext);
     },
     
     /**
@@ -622,6 +629,7 @@ var NSView = NSResponder.extend({
     },
     
     lockFocus: function() {    
+        return;
         
         if (!this._graphicsContext)
             this._graphicsContext = NSGraphicsContext.graphicsContextWithGraphicsPort(this._DOMGraphicsContext.getContext('2d'), false);
@@ -632,7 +640,9 @@ var NSView = NSResponder.extend({
         CGContextClearRect(this._graphicsContext.graphicsPort(), this.bounds());
     },
     
-    unlockFocus: function() {            
+    unlockFocus: function() {
+        return;
+               
         CGContextRestoreGState(this._graphicsContext.graphicsPort());
         NSGraphicsContext.setCurrentContext(null);
     },
@@ -695,17 +705,20 @@ var NSView = NSResponder.extend({
         browser routines using the DOM. No canvas/VML based drawing should be
         carried out in these routines. Drawing can use css etc as intended. 
         See wiki for examples and more information.
+        
+        @param {NSRect} aRect
+        @param {Boolean} firstTime
+        @param {NSRenderContext} context
     */
-    renderRect: function(rect) {
+    renderRect: function(aRect, firstTime, context) {
         // Render using DOM.
     },
     
     displayRectIgnoringOpacityInContext: function(aRect, context) {
-        
         this.lockFocus();
-        
-        this.drawRect(aRect);
-
+        // this.drawRect(aRect);
+        this.renderRect(aRect, this._renderContext.firstTime(), this._renderContext);
+        // this._renderContext.setFirstTime(false);
         this.unlockFocus();
     },
     

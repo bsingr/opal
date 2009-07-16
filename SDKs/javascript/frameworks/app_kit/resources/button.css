@@ -1,0 +1,65 @@
+.ns-button {
+  
+}
+
+.bordered .ns-button-left {
+  position: absolute;
+  background: url('resources/button_bezel_left.png');
+  height: 24px;
+  width: 6px;
+  top: 0px;
+  left: 0px;
+}
+
+.bordered .ns-button-middle {
+  position: absolute;
+  background: url('resources/button_bezel_middle.png');
+  top: 0px;
+  left: 6px;
+  right: 6px;
+  height: 24px;
+}
+
+.bordered .ns-button-right {
+  position: absolute;
+  background: url('resources/button_bezel_right.png');
+  height: 24px;
+  width: 6px;
+  top: 0px;
+  right: 0px;
+}
+
+.ns-button-title {
+  position: absolute;
+  text-align:center;
+}
+
+/*
+  Disabled button with border
+*/
+.bordered.disabled .ns-button-left {
+  background: url('resources/button_disabled_left.png');
+}
+
+.bordered.disabled .ns-button-middle {
+  background: url('resources/button_disabled_middle.png');
+}
+
+.bordered.disabled .ns-button-right {
+  background: url('resources/button_disabled_right.png');
+}
+
+/*
+  Highlighted button with border
+*/
+.bordered.highlighted .ns-button-left {
+  background: url('resources/button_highlighted_left.png');
+}
+
+.bordered.highlighted .ns-button-middle {
+  background: url('resources/button_highlighted_middle.png');
+}
+
+.bordered.highlighted .ns-button-right {
+  background: url('resources/button_highlighted_right.png');
+}

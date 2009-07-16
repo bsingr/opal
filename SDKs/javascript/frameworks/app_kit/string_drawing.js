@@ -35,6 +35,9 @@ var NSStringDrawingDisableScreenFontSubstitution    = (1 << 2);
 var NSStringDrawingUsesDeviceMetrics                = (1 << 3);
 var NSStringDrawingOneShot                          = (1 << 4);
 
+// Used for measuring text in render mode
+var NSAttributedStringMeasureElement = null;
+
 Object.extend(String.prototype, {
     
     sizeWithAttributes: function(attrs) {
@@ -53,7 +56,22 @@ Object.extend(String.prototype, {
 NSAttributedString.mixin({
     
     size: function() {
+        if (!NSAttributedStringMeasureElement) {
+            NSAttributedStringMeasureElement = document.createElement('span');
+            NSAttributedStringMeasureElement.style.left = '-10000px';
+            NSAttributedStringMeasureElement.style.top = '-10000px';
+            NSAttributedStringMeasureElement.style.position = 'absolute';
+            NSAttributedStringMeasureElement.style.display = 'block';
+            document.body.appendChild(NSAttributedStringMeasureElement);
+        }
         
+        var theFont = this._attributes.objectForKey(NSFontAttributeName);
+        NSAttributedStringMeasureElement.style.font = theFont.renderingRepresentation();
+        
+        return NSMakeSize(NSAttributedStringMeasureElement.clientWidth, NSAttributedStringMeasureElement.clientHeight);
+        
+        
+        return NSMakeSize(0, 0);
 	    var c = NSGraphicsContext.currentContext().graphicsPort();
 	    CGContextSaveGState(c);
 	    

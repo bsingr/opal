@@ -507,7 +507,7 @@ var NSCell = NSObject.extend({
         
         if (this.isHighlighted() != flag) {
             this.setHighlighted(flag);
-            this.displayWithFrame(cellFrame, controlView);
+            this.renderWithFrame(cellFrame, controlView, false, controlView._renderContext);
         }
     },
     

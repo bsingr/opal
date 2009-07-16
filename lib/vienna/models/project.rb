@@ -39,12 +39,17 @@ module Vienna
         
     def build!
       super
-          
+      
+      # link javascript
       f = File.new(File.join(@parent.build_prefix, 'application.js'), 'w')
-      link!(f)
+      link_javascript!(f)
       f.close()
       
-
+      # link stylesheets
+      f = File.new(File.join(@parent.build_prefix, 'style.css'), 'w')
+      link_css!(f)
+      f.close()
+      
       # index.html
       o = File.new(File.join(build_prefix, 'index.html'), 'w')
       File.readlines('index.html').map do |f|

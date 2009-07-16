@@ -26,11 +26,6 @@
 
 include('app_kit/cell');
 
-resource('NSSliderHorizontalLeft.png');
-resource('NSSliderHorizontalMiddle.png');
-resource('NSSliderHorizontalRight.png');
-resource('NSSliderHorizontalKnobNormal.png');
-
 // NSTickMarkPosition
 var NSTickMarkBelow = 0;
 var NSTickMarkAbove = 1;
@@ -68,6 +63,9 @@ var NSSliderCell = NSCell.extend({
         @param {NSView} controlView
     */
     drawWithFrame: function(cellFrame, controlView) {
+        this.renderWithFrame(cellFrame, controlView, false, controlView._renderContext);
+        return;
+        
        var SLIDER_PADDING = 9.5;
        var KNOB_PADDING = 2;
        
@@ -92,11 +90,28 @@ var NSSliderCell = NSCell.extend({
         @param {NSRect} cellFrame
         @param {NSView} controlView
         @param {Boolean} firstTime
+        @param {NSRenderContext} context
     */
-    renderWithFrame: function(cellFrame, controlView, firstTime) {
-        
+    renderWithFrame: function(cellFrame, controlView, firstTime, context) {
+        var SLIDER_PADDING = 9.5, KNOB_PADDING = 2.0;
+    
         if (firstTime) {
+            context.setClass('ns-slider');
+            context.push('div', 'ns-slider-track-left');
+            context.push('div', 'ns-slider-track');
+            context.push('div', 'ns-slider-track-right');
+            context.push('div', 'ns-slider-knob');
+        }
+        else {
+            // set knob position
+            var knobPosition = Math.round(((this._value / (this._maxValue - this._minValue)) * ((cellFrame.size.width - (2 * SLIDER_PADDING)))));
+            context.$('ns-slider-knob').set(knobPosition + 'px', 'left');
             
+            // enabled/disabled
+            if (this._isEnabled)
+                                        context.removeClass('disabled');
+                                    else
+                                        context.addClass('disabled');
         }
     },
     
@@ -118,18 +133,18 @@ var NSSliderCell = NSCell.extend({
         is greater than the maxValue, it is also adjusted acordingly.
     */
     setDoubleValue: function(aDouble) {
-       if (aDouble < this._minValue) this._value = this._minValue;
-       else if (aDouble > this._maxValue) this._value = this._maxValue;
-       else this._value = aDouble;
-   },
+        if (aDouble < this._minValue) this._value = this._minValue;
+        else if (aDouble > this._maxValue) this._value = this._maxValue;
+        else this._value = aDouble;
+    },
    
-   continueTrackingInView: function(lastPoint, currentPoint, controlView) {
-       var SLIDER_PADDING = 9.5;
-       var location = controlView.convertPointFromView(currentPoint, null);
-       this.setDoubleValue(((location.x - SLIDER_PADDING) / (controlView.bounds().size.width - (2 * SLIDER_PADDING))) * (this._maxValue - this._minValue));
-       this.drawWithFrame(controlView.bounds(), controlView);
-       return true;
-   },
+    continueTrackingInView: function(lastPoint, currentPoint, controlView) {
+        var SLIDER_PADDING = 9.5;
+        var location = controlView.convertPointFromView(currentPoint, null);
+        this.setDoubleValue(((location.x - SLIDER_PADDING) / (controlView.bounds().size.width - (2 * SLIDER_PADDING))) * (this._maxValue - this._minValue));
+        this.drawWithFrame(controlView.bounds(), controlView);
+        return true;
+    },
    
    /**
         @param flag - If the mouseIsUp

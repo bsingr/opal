@@ -259,18 +259,18 @@ var NSMenuView = NSView.extend({
     },
     
     drawRect: function(rect) {
-        var c = NSGraphicsContext.currentContext().graphicsPort();
-        
-        if (this._cachedMenuItemRects.length < 1)
-            return;
-        
-        var theItem, theCell = this._menuItemCell;
-        
-        for (var idx = 0; idx < this._menu.numberOfItems(); idx++) {
-            theItem = this._menu.itemAtIndex(idx);
-            theCell.setMenuItem(theItem);
-            theCell.drawWithFrame(this.rectOfItemAtIndex(idx), this);
-        }
+        // var c = NSGraphicsContext.currentContext().graphicsPort();
+        //         
+        //         if (this._cachedMenuItemRects.length < 1)
+        //             return;
+        //         
+        //         var theItem, theCell = this._menuItemCell;
+        //         
+        //         for (var idx = 0; idx < this._menu.numberOfItems(); idx++) {
+        //             theItem = this._menu.itemAtIndex(idx);
+        //             theCell.setMenuItem(theItem);
+        //             theCell.drawWithFrame(this.rectOfItemAtIndex(idx), this);
+        //         }
     },
     
     attatchedMenu: function() {

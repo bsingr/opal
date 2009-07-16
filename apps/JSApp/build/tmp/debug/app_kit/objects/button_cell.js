@@ -25,20 +25,12 @@
  */
 
 
-// NSButton normal
-resource('NSButtonNormalLeft.png');
-resource('NSButtonNormalMiddle.png');
-resource('NSButtonNormalRight.png');
-// NSButton highlighted
-resource('NSButtonHighlightedLeft.png');
-resource('NSButtonHighlightedMiddle.png');
-resource('NSButtonHighlightedRight.png');
 // NSSwitch
-resource('NSSwitchNormal.png');
-resource('NSSwitchAlternate.png');
+// resource('NSSwitchNormal.png');
+// resource('NSSwitchAlternate.png');
 // NSRadioButton
-resource('NSRadioButtonNormal.png');
-resource('NSRadioButtonAlternate.png');
+// resource('NSRadioButtonNormal.png');
+// resource('NSRadioButtonAlternate.png');
 
 // NSButtonType
 var NSMomentaryLightButton		    = 0;
@@ -97,6 +89,9 @@ var NSButtonCell = NSCell.extend({
     },
     
     drawWithFrame: function(cellFrame, controlView) {
+        this.renderWithFrame(cellFrame, controlView, false, controlView._renderContext);
+        return;
+        
         var c = NSGraphicsContext.currentContext().graphicsPort();
         CGContextClearRect(c, cellFrame);
         
@@ -156,6 +151,58 @@ var NSButtonCell = NSCell.extend({
         }
         
         CGContextRestoreGState(c);
+    },
+    
+    /**
+        @param {NSRect} cellFrame
+        @param {NSView} controlView
+        @param {Boolean} firstTime
+        @param {NSRenderContext} context
+    */
+    renderWithFrame: function(cellFrame, controlView, firstTime, context) {
+        // return; 
+        if (firstTime) {
+            context.setClass('ns-button');
+            context.push('div', 'ns-button-left');
+            context.push('div', 'ns-button-middle');
+            context.push('div', 'ns-button-right');
+            context.push('span', 'ns-button-title');
+        }
+            
+        this.renderBezelWithFrame(cellFrame, controlView, firstTime, context);
+            // this.renderInteriorWithFrame(cellFrame, controlView, firstTime, context);
+        this.renderTitleWithFrame(this._value, this.titleRectForBounds(cellFrame), controlView, firstTime, context);
+    },
+    
+    /**
+        @param {NSRect} cellFrame
+        @param {NSView} controlView
+        @param {Boolean} firstTime
+        @param {NSRenderContext} context
+    */
+    renderBezelWithFrame: function(cellFrame, controlView, firstTime, context) {
+        // enabled
+        if (this._isEnabled)
+            context.removeClass('disabled');
+        else
+            context.addClass('disabled');
+        
+        // bordered
+        if (this._isBordered)
+            context.addClass('bordered');
+        else
+            context.removeClass('bordered');
+        
+        // highlighted
+        if (this._isHighlighted)
+            context.addClass('highlighted');
+        else
+            context.removeClass('highlighted');
+    },
+    
+    renderTitleWithFrame: function(title, titleRect, controlView, firstTime, context) {
+        context.$('ns-button-title').setFrame(titleRect);
+        context.$('ns-button-title').renderAttributedString(this.attributedStringValue());
     },
     
     titleRectForBounds: function(theRect) {

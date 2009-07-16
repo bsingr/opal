@@ -130,6 +130,8 @@ var NSWindow = NSResponder.extend({
     // used to hold the old frame size for when a window is "unZoomed"
     _oldZoomFrame: null,
     
+    _renderContext: null,
+    
     DOMContainer: function() {
         return this._DOMContainer;
     },
@@ -139,8 +141,10 @@ var NSWindow = NSResponder.extend({
         var xOffset = 0, yOffset = 0, wOffset = 0, hOffset = 0;
         
         if (this.hasShadow()) {
-            xOffset += 20;
-            yOffset += 20;
+            // xOffset += 20;
+            // yOffset += 20;
+            xOffset += 0;
+            yOffset += 0;
         }
               
         return NSMakeRect(0 + xOffset, 0 + yOffset, frameRect.size.width, frameRect.size.height);
@@ -151,10 +155,14 @@ var NSWindow = NSResponder.extend({
         var xOffset = 0, yOffset = 0, wOffset = 0, hOffset = 0;
         
         if (this.hasShadow()) {
-            xOffset -= 20;
-            yOffset -= 20;
-            wOffset += 40;
-            hOffset += 40;
+            // xOffset -= 20;
+            // yOffset -= 20;
+            // wOffset += 40;
+            // hOffset += 40;
+            xOffset -= 0;
+            yOffset -= 0;
+            wOffset += 0;
+            hOffset += 0;
         }
         
         return NSMakeRect(contentRect.origin.x + xOffset, contentRect.origin.y + yOffset, contentRect.size.width + wOffset, contentRect.size.height + hOffset);
@@ -165,20 +173,33 @@ var NSWindow = NSResponder.extend({
         return this;
     },
     
+    setupGraphicsContextDisplay: function() {
+        this._DOMContainer = document.createElement('div');
+        this._DOMGraphicsContext = document.createElement('div');
+        
+        
+        this._DOMContainer.appendChild(this._DOMGraphicsContext);
+        
+        this._DOMContainer.style.display = "block";
+        this._DOMContainer.style.position = "absolute";
+        // this._DOMContainer.style.overflowX = "hidden";
+        // this._DOMContainer.style.overflowY = "hidden";
+        
+        this._DOMGraphicsContext.style.display = "block";
+        this._DOMGraphicsContext.style.position = "absolute";
+        // this._DOMGraphicsContext.style.overflowX = "hidden";
+        // this._DOMGraphicsContext.style.overflowY = "hidden";
+        
+        document.body.appendChild(this._DOMContainer);
+        
+        this._renderContext = NSRenderContext.renderContextWithElement(this._DOMGraphicsContext);
+    },
+    
     initWithContentRectAndStyleMask: function(contentRect, aStyle) {
         this.init();
                 
         // DOM etc
-        this._DOMContainer = document.createElement('div');
-        this._DOMGraphicsContext = document.createElement('canvas');
-        this._DOMContainer.appendChild(this._DOMGraphicsContext);
-        document.body.appendChild(this._DOMContainer);
-        
-        this._DOMContainer.style.display = "block";
-        this._DOMContainer.style.position = "absolute";
-        
-        this._DOMGraphicsContext.style.display = "block";
-        this._DOMGraphicsContext.style.position = "absolute";
+        this.setupGraphicsContextDisplay();
         
         this._windowNumber = NSApplication.sharedApplication().addWindow(this);
         this._styleMask = aStyle;
@@ -658,7 +679,14 @@ var NSWindow = NSResponder.extend({
     },
     
     performClose: function(sender) {
-        
+        console.log('close window');
+        // borrowed.. nice effect from webkit.
+        var duration = 0.5;
+        this._DOMContainer.style.webkitTransition = '-webkit-transform ' + duration + 's ease-in, opacity ' + duration + 's ease-in';
+        this._DOMContainer.offsetTop;
+        this._DOMContainer.style.webkitTransformOrigin = "0 0";
+        this._DOMContainer.style.webkitTransform = 'skew(30deg, 0deg) scale(0)';
+        this._DOMContainer.style.opacity = '0';
     },
     
     performMiniaturize: function(sender) {
@@ -972,6 +1000,8 @@ var NSWindow = NSResponder.extend({
 	},
 	
 	lockFocus: function() {
+	    return;
+	    
 	    NSApplication.sharedApplication().setFocusView(this);
 	    
 		if (!this._graphicsContext)
@@ -983,6 +1013,7 @@ var NSWindow = NSResponder.extend({
 	},
 	
 	unlockFocus: function() {
+	    return;
 	    NSApplication.sharedApplication().setFocusView(null);
 		CGContextRestoreGState(this._graphicsContext.graphicsPort());
 		NSGraphicsContext.setCurrentContext(null);
@@ -1032,9 +1063,26 @@ var NSWindow = NSResponder.extend({
 		CGContextFillRect(c, rect);
 	},
 	
+	/**
+        Draws the receiver in the given rect. This method is intended for old
+        browser routines using the DOM. No canvas/VML based drawing should be
+        carried out in these routines. Drawing can use css etc as intended. 
+        See wiki for examples and more information.
+        
+        @param {NSRect} aRect
+        @param {Boolean} firstTime
+        @param {NSRenderContext} context
+    */
+    renderRect: function(aRect, firstTime, context) {
+        if (firstTime) {
+            context.setClass('ns-window');
+        }
+    },
+	
 	displayRectIgnoringOpacityInContext: function(aRect, context) {
 		this.lockFocus();
-		this.drawRect(aRect);
+        // this.drawRect(aRect);
+        this.renderRect(aRect, this._renderContext.firstTime(), this._renderContext);
 		this.unlockFocus();
 	},
 

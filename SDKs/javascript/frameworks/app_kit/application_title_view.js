@@ -62,8 +62,8 @@ var NSApplicationTitleView = NSView.extend({
     },
     
     drawRect: function(aRect) {
-        var c = NSGraphicsContext.currentContext().graphicsPort();
-        CGContextSetShadowWithColor(c, NSMakeSize(1, 1), 0, NSColor.colorWithCalibratedRGBA(0.204, 0.204, 0.204, 0.8));
-        this.attributedTitle().drawWithRectAndOptions(aRect, null);
+        // var c = NSGraphicsContext.currentContext().graphicsPort();
+        // CGContextSetShadowWithColor(c, NSMakeSize(1, 1), 0, NSColor.colorWithCalibratedRGBA(0.204, 0.204, 0.204, 0.8));
+        // this.attributedTitle().drawWithRectAndOptions(aRect, null);
     }
 });

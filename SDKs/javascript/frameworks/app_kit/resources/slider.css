@@ -1,0 +1,43 @@
+.ns-slider {
+  height: 21px;
+}
+
+.ns-slider-track {
+  position: absolute;
+  background: url('resources/slider_track_horizontal.png') repeat-x;
+  height: 5px;
+  top: 8px;
+  left: 9px;
+  right: 9px;
+}
+
+.ns-slider-track-left {
+  position: absolute;
+  background: url('resources/slider_track_left.png');
+  height: 5px;
+  left: 4px;
+  top: 8px;
+  width: 5px;
+}
+
+.ns-slider-track-right {
+  position: absolute;
+  background: url('resources/slider_track_right.png');
+  height: 5px;
+  right: 4px;
+  top: 8px;
+  width: 5px;
+}
+
+.ns-slider .ns-slider-knob {
+  position: absolute;
+  background-image: url('resources/slider_knob.png');
+  height: 19px;
+  width: 19px;
+  top: 1px;
+  left: 34px;
+}
+
+.ns-slider.disabled .ns-slider-knob {
+  background-image: url('resources/slider_knob_disabled.png');
+}

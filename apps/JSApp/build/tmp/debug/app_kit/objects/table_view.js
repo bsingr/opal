@@ -150,6 +150,13 @@ var NSTableView = NSControl.extend({
     _selectedRows: null,
     
     /**
+        Array of all the rows in the table view (elements)
+        
+        @type NSArray
+    */
+    _tableViewRowRenderContexts: null,
+    
+    /**
         @param {NSCoder} aCoder
         @returns NSTableView
     */
@@ -548,6 +555,13 @@ var NSTableView = NSControl.extend({
         
         this._numberOfRows = -1;
         var numberOfRows = this.numberOfRows();
+        
+        var children = this._renderContext.element().childNodes.length;
+        
+        if (children < numberOfRows) {
+            for (var i = 0; i < (numberOfRows - children); i++)
+                this._renderContext.push('div', 'ns-table-view-row');
+        }
         
         if (numberOfRows > 0)
             frameSize.width = this.rectOfRow(0).size.width;
@@ -996,6 +1010,43 @@ var NSTableView = NSControl.extend({
                 }
             }
         }
+    },
+    
+    /**
+        NSTableView handles rendering slightly differently, in the sense that
+        firstTime is seen in a different context. firstTime is used to flag
+        whenever the data is reloaded, in that whenever all the data from
+        a datasource needs to be recalculated, then firsTime is used to 
+        indicate this.
+        
+        @param {NSRect} aRect
+        @param {Boolean} firstTime
+        @param {NSRenderContext} context
+    */
+    renderRect: function(aRect, firstTime, context) {
+        this.renderBackgroundInClipRect(aRect, firstTime, context);
+        this.renderSelectionInClipRect(aRect, firstTime, context);
+    },
+    
+    renderSelectionInClipRect: function(aRect, firstTime, context) {
+        if (!this._tableColumns)
+            return;
+        
+        var numberOfRows = this.numberOfRows();
+        
+        for (var row = 0; row <  numberOfRows; row++) {
+            if (this.isRowSelected(row)) {
+                console.log('adding selected for ' + row);
+                context.addClassForChildAtIndex('selected', row);
+            }
+            else {
+                context.removeClassForChildAtIndex('selected', row);
+            }
+        }
+    },
+    
+    renderBackgroundInClipRect: function(aRect, firstTime, context) {
+        console.log('rendering background');
     },
     
     drawRowInClipRect: function(row, clipRect) {

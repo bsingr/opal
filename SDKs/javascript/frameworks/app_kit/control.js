@@ -257,13 +257,26 @@ var NSControl = NSView.extend({
     },
     
     /**
-        DOM based rendering.
+        Draws the receiver in the given rect. This method is intended for old
+        browser routines using the DOM. No canvas/VML based drawing should be
+        carried out in these routines. Drawing can use css etc as intended. 
+        See wiki for examples and more information.
+        
+        @param {NSRect} aRect
+        @param {Boolean} firstTime
+        @param {NSRenderContext} context
     */
-    renderRect: function(rect) {
-        if (this._cell)
-            this._cell.renderWithFrame(this.bounds(), this);
+    renderRect: function(aRect, firstTime, context) {
+        if (this._cell) {
+            this._cell.renderWithFrame(aRect, this, context.firstTime(), context);
+            context.setFirstTime(false);
+        }
     },
     
+    /**
+        @param {Selector} theAction
+        @param {NSObject} theTarget
+    */
     sendActionTo: function(theAction, theTarget) {
         
         if (theAction && theTarget) {

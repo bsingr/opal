@@ -1,0 +1,11 @@
+.ns-table-view {
+  
+}
+
+.ns-table-view-row {
+  height: 17px;
+}
+
+.ns-table-view-row.selected {
+  background: rgb(56, 121, 217);
+}

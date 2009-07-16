@@ -1,0 +1,10 @@
+.ns-text-field {
+}
+
+.ns-text-field.bezeled {
+  background: white;
+}
+
+.ns-text-field-title {
+  position: absolute;
+}

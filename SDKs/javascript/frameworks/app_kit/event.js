@@ -232,7 +232,7 @@ function NSEventFromMouseEvent(event)
     if (theWindow) {
         windowLocation = theWindow.convertScreenToBase(screenLocation);
         windowNumber = theWindow.windowNumber();
-        theContext = theWindow.graphicsContext();
+        // theContext = theWindow.graphicsContext();
     }
     
     var theEvent = NSEvent.mouseEventWithType(eventType, windowLocation, modifierFlags, timestamp, windowNumber, theContext, 0, 1, 1);
@@ -241,7 +241,7 @@ function NSEventFromMouseEvent(event)
     NSApplication.sharedApplication().sendEvent(theEvent);
     
     // to stop event bubbling
-    // return false;
+    return false;
 }
 
 /**

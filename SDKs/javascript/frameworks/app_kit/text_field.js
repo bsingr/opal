@@ -28,6 +28,47 @@ include('app_kit/control');
 
 var NSTextField = NSControl.extend({
     
+    /**
+        @type NSRenderContext
+    */
+    _renderContext: null,
+    
+    setupGraphicsContextDisplay: function() {
+        this._DOMContainer = document.createElement('div');
+        this._DOMGraphicsContext = document.createElement('div');
+        
+        
+        this._DOMContainer.appendChild(this._DOMGraphicsContext);
+        
+        this._DOMContainer.style.display = "block";
+        this._DOMContainer.style.position = "absolute";
+        this._DOMContainer.style.overflowX = "hidden";
+        this._DOMContainer.style.overflowY = "hidden";
+        
+        this._DOMGraphicsContext.style.display = "block";
+        this._DOMGraphicsContext.style.position = "absolute";
+        this._DOMGraphicsContext.style.overflowX = "hidden";
+        this._DOMGraphicsContext.style.overflowY = "hidden";
+        
+        this._renderContext = NSRenderContext.renderContextWithElement(this._DOMGraphicsContext);
+    },
+    
+    lockFocus: function() {
+        
+    },
+    
+    drawRect: function() {
+        if (this._cell) {
+            this._cell.renderWithFrame(this.bounds(), this, this._renderContext.firstTime(), this._renderContext);
+            this._renderContext.setFirstTime(false);
+        }
+            
+    },
+    
+    unlockFocus: function() {
+        
+    },
+    
     mouseDown: function(theEvent) {
         if (!this._cell.isEnabled())
             return;
