@@ -166,5 +166,14 @@ var NSMainMenu = NSWindow.extend({
 		c.stroke();
 		
 		CGContextRestoreGState(c);
+	},
+	
+	renderRect: function(aRect, firstTime, context) {
+	    this._super(aRect, firstTime, context);
+	    if (firstTime) {
+	        context.removeClass('shadow');
+	        context.removeClass('rounded');
+	        context.addClass('ns-window-main-menu');
+	    }
 	}
 });

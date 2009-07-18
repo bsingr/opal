@@ -35,7 +35,7 @@ var NSBundle = NSObject.extend({
 	}
 });
 
-Object.extend(NSBundle, {
+VN.extend(NSBundle, {
     mainBundle: function() {
         console.log("Returning main bundle");
         console.log(NSBundle.create());

@@ -30,31 +30,36 @@ include('foundation/range');
 include('app_kit/graphics');
 include('app_kit/animation');
  
-// 
-var NSViewNotSizable    = 0;
-var NSViewMinXMargin    = 1;
-var NSViewWidthSizable  = 2;
-var NSViewMaxXMargin    = 4;
-var NSViewMinYMargin    = 8;
-var NSViewHeightSizable = 16;
-var NSViewMaxYMargin    = 32;
+//  Frame sizing
+var NSViewNotSizable    = VN.VIEW_NOT_SIZABLE       = 0;
+var NSViewMinXMargin    = VN.VIEW_MIN_X_MARGIN      = 1;
+var NSViewWidthSizable  = VN.VIEW_WIDTH_SIZABLE     = 2;
+var NSViewMaxXMargin    = VN.VIEW_MAX_X_MARGIN      = 4;
+var NSViewMinYMargin    = VN.VIEW_MIN_Y_MARGIN      = 8;
+var NSViewHeightSizable = VN.VIEW_HEIGHT_SIZABLE    = 16;
+var NSViewMaxYMargin    = VN.VIEW_MAX_Y_MARGIN      = 32;
 
 // NSBorderType
-var NSNoBorder          = 0;
-var NSLineBorder        = 1;
-var NSBezelBorder       = 2;
-var NSGrooveBorder      = 3;
+var NSNoBorder          = VN.NO_BORDER              = 0;
+var NSLineBorder        = VN.LINE_BORDER            = 1;
+var NSBezelBorder       = VN.BEZEL_BORDER           = 2;
+var NSGrooveBorder      = VN.GROOVE_BORDER          = 3;
 
-var NSViewFrameDidChangeNotification            = "NSViewFrameDidChangeNotification";
-var NSViewFocusDidChangeNotification            = "NSViewFocusDidChangeNotification";
-var NSViewBoundsDidChangeNotification           = "NSViewBoundsDidChangeNotification";
-var NSViewGlobalFrameDidChangeNotification      = "NSViewGlobalFrameDidChangeNotification";
-var NSViewDidUpdateTrackingAreasNotification    = "NSViewDidUpdateTrackingAreasNotification";
+// Frame Notifications
+var NSViewFrameDidChangeNotification            = VN.VIEW_FRAME_DID_CHANGE_NOTIFICATION           = "NSViewFrameDidChangeNotification";
+var NSViewFocusDidChangeNotification            = VN.VIEW_FOCUS_DID_CHANGE_NOTIFICATION           = "NSViewFocusDidChangeNotification";
+var NSViewBoundsDidChangeNotification           = VN.VIEW_BOUNDS_DID_CHANGE_NOTIFICATION          = "NSViewBoundsDidChangeNotification";
+var NSViewGlobalFrameDidChangeNotification      = VN.VIEW_GLOBAL_FRAME_DID_CHANGE_NOTIFICATION    = "NSViewGlobalFrameDidChangeNotification";
+var NSViewDidUpdateTrackingAreasNotification    = VN.VIEW_DID_UPDATE_TRACKING_AREAS_NOTIFICATION  = "NSViewDidUpdateTrackingAreasNotification";
 
-var NSView = NSResponder.extend({
+/**
+    @class VN.View
+    @extend VN.Responder
+*/
+var NSView = VN.View = VN.Responder.extend({
     
     /**
-        @type NSRenderContext
+        @type VN.RenderContext
     */
     _renderContext: null,
     
@@ -718,7 +723,7 @@ var NSView = NSResponder.extend({
         this.lockFocus();
         // this.drawRect(aRect);
         this.renderRect(aRect, this._renderContext.firstTime(), this._renderContext);
-        // this._renderContext.setFirstTime(false);
+        this._renderContext.setFirstTime(false);
         this.unlockFocus();
     },
     

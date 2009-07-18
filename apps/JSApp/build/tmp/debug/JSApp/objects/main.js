@@ -27,5 +27,5 @@
 
 function main(argc, argv)
 {
-    return NSApplicationMain(argc, argv);
+    return VN.ApplicationMain(argc, argv);
 }

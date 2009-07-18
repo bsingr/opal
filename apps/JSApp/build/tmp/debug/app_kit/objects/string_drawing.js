@@ -36,7 +36,7 @@ var NSStringDrawingOneShot                          = (1 << 4);
 // Used for measuring text in render mode
 var NSAttributedStringMeasureElement = null;
 
-Object.extend(String.prototype, {
+VN.extend(String.prototype, {
     
     sizeWithAttributes: function(attrs) {
         
@@ -90,7 +90,7 @@ NSAttributedString.mixin({
     }
 });
 
-Object.extend(String.prototype, {
+VN.extend(String.prototype, {
     
     drawWithRectAndOptions: function(aRect, options, attributes) {
         

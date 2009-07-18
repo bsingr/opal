@@ -75,14 +75,14 @@ if (!Array.prototype.indexOf) Array.prototype.indexOf = function(item, i)
             return -1;
 };
 
-Object.extend(Array.prototype, NSArray);
+VN.extend(Array.prototype, NSArray);
 
 NSArray.create = function() {
     return [];
 };
 
 NSArray.mixin = function(props) {
-    Object.extend(this.prototype, props);
+    VN.extend(this.prototype, props);
 };
 
 var NSMutableArray = NSArray;

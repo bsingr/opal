@@ -25,68 +25,61 @@
  */
 
 
-var NSSlider = NSControl.extend({
+/**
+    VN.TickMarkPosition
+*/
+VN.TICK_MARK_BELOW  = 0;
+VN.TICK_MARK_ABOVE  = 1;
+VN.TICK_MARK_LEFT   = 1;
+VN.TICK_MARK_RIGHT  = 0;
+
+/**
+    VN.SliderType
+*/
+VN.LINEAR_SLIDER    = 0;
+VN.CIRCULAR_SLIDER  = 1;
+
+/**
+    @class VN.Slider
+    @extends VN.Control
+*/
+var NSSlider = VN.Slider = VN.Control.extend({
+    
+    _minValue: 0,
+
+    _maxValue: 0,
     
     /**
-        @type NSRenderContext
+        @param {VN.Coder} aCoder
+        @returns VN.Slider
     */
-    _renderContext: null,
-    
-    setupGraphicsContextDisplay: function() {
-        this._DOMContainer = document.createElement('div');
-        this._DOMGraphicsContext = document.createElement('div');
-        
-        
-        this._DOMContainer.appendChild(this._DOMGraphicsContext);
-        
-        this._DOMContainer.style.display = "block";
-        this._DOMContainer.style.position = "absolute";
-        this._DOMContainer.style.overflowX = "hidden";
-        this._DOMContainer.style.overflowY = "hidden";
-        
-        this._DOMGraphicsContext.style.display = "block";
-        this._DOMGraphicsContext.style.position = "absolute";
-        this._DOMGraphicsContext.style.overflowX = "hidden";
-        this._DOMGraphicsContext.style.overflowY = "hidden";
-        
-        this._renderContext = NSRenderContext.renderContextWithElement(this._DOMGraphicsContext);
-    },
-    
-    lockFocus: function() {
-        
-    },
-    
-    drawRect: function() {
-        if (this._cell) {
-            this._cell.renderWithFrame(this.bounds(), this, this._renderContext.firstTime(), this._renderContext);
-            this._renderContext.setFirstTime(false);
-        }
-            
-    },
-    
-    unlockFocus: function() {
-        
+    initWithCoder: function(aCoder) {
+        this._super(aCoder);
+        this._minValue = this._cell._minValue;
+        this._maxValue = this._cell._maxValue;
+        this._value = this._cell._value;
+        return this;
     },
     
     /**
         Instantiate a binding to the object. Placeholders and other information
         can be specified in the options dictionary.
         
-        @param binding - NSString
-        @param toObject - NSObject
-        @param withKeyPath - NSString
-        @param options - NSDictionary
+        @param {VN.String} binding
+        @param {VN.Object} toObject
+        @param {VN.String} withKeyPath
+        @param {VN.Dictionary} options
     */
     bind: function(binding, toObject, withKeyPath, options) {
-        // value binding - NSValueBinding
+        // value binding - VN.VALUE_BINDING
         if (binding == "value") {
-            toObject.addObserverForKeyPath(this, withKeyPath, 0, NSValueBinding);
+            toObject.addObserverForKeyPath(this, withKeyPath, 0, VN.VALUE_BINDING);
             
-            var bindingInfo = NSDictionary.dictionaryWithObjectsForKeys(
+            var bindingInfo = VN.Dictionary.dictionaryWithObjectsForKeys(
                 [toObject, withKeyPath, options],
-                [NSObservedObjectKey, NSObservedKeyPathKey, NSOptionsKey]);
+                [VN.OBSERVED_OBJECT_KEY, VN.OBSERVED_KEY_PATH_KEY, VN.OPTIONS_KEY]);
             
-            this._kvb_info.setObjectForKey(bindingInfo, NSValueBinding);
+            this._kvb_info.setObjectForKey(bindingInfo, VN.VALUE_BINDING);
         }
     },
     
@@ -97,9 +90,123 @@ var NSSlider = NSControl.extend({
 		@param {Object} context
 	*/
     observeValueForKeyPath: function(keyPath, ofObject, change, context) {
-        if (context == NSValueBinding) {
+        if (context == VN.VALUE_BINDING) {
             var newValue = ofObject.valueForKeyPath(keyPath);
             this.setDoubleValue(newValue);
         }
+    },
+    
+     /**
+         Draw the slider using CoreGraphics (canvas/vml)
+         @param {NSRect} cellFrame
+         @param {NSView} controlView
+     */
+     drawWithFrame: function(cellFrame, controlView) {
+         this.renderWithFrame(cellFrame, controlView, false, controlView._renderContext);
+         return;
+
+        var SLIDER_PADDING = 9.5;
+        var KNOB_PADDING = 2;
+
+        var c = NSGraphicsContext.currentContext().graphicsPort();
+        CGContextSaveGState(c);
+        if (!this.isEnabled()) CGContextSetAlpha(c, 0.8);
+
+        // draw the bar
+        NSImage.imageNamed('NSSliderHorizontalLeft.png').drawInRect(CGRectMake(KNOB_PADDING, 8, 5, 5));
+        NSImage.imageNamed('NSSliderHorizontalMiddle.png').drawInRect(CGRectMake(5 + KNOB_PADDING, 8, (cellFrame.size.width - 10) - (2 * KNOB_PADDING), 5));
+        NSImage.imageNamed('NSSliderHorizontalRight.png').drawInRect(CGRectMake((cellFrame.size.width-5) - KNOB_PADDING, 8 ,5 ,5));
+
+        // draw the knob
+        var knobPosition = (((this._value / (this._maxValue - this._minValue)) * ((cellFrame.size.width - (2 * SLIDER_PADDING)))));
+        // use math.round to make sure knob is aligned to a pixel... this avoids a blurry knob if it is aligned between pixel boundries.
+        NSImage.imageNamed('NSSliderHorizontalKnobNormal.png').drawInRect(CGRectMake(Math.round(knobPosition), 1, 19, 19));
+
+        CGContextRestoreGState(c);
+     },
+
+     /**
+         @param {NSRect} cellFrame
+         @param {NSView} controlView
+         @param {Boolean} firstTime
+         @param {NSRenderContext} context
+     */
+     renderRect: function(aRect, firstTime, context) {
+         var SLIDER_PADDING = 9.5, KNOB_PADDING = 2.0;
+
+         if (firstTime) {
+             context.setClass('ns-slider');
+             context.push('div', 'ns-slider-track-left');
+             context.push('div', 'ns-slider-track');
+             context.push('div', 'ns-slider-track-right');
+             context.push('div', 'ns-slider-knob');
+         }
+         else {
+             // set knob position
+             var knobPosition = Math.round(((this._value / (this._maxValue - this._minValue)) * ((aRect.size.width - (2 * SLIDER_PADDING)))));
+             context.$('ns-slider-knob').set(knobPosition + 'px', 'left');
+
+             // enabled/disabled
+             if (this._isEnabled)
+                 context.removeClass('disabled');
+             else
+                 context.addClass('disabled');
+         }
+     },
+
+     startTracking: function(startPoint) {
+        if (this.isEnabled()) {
+            var SLIDER_PADDING = 8.5;
+            var location = this.convertPointFromView(startPoint, null);
+            this.setDoubleValue(((location.x - SLIDER_PADDING) / (this.bounds().size.width - (2 * SLIDER_PADDING))) * (this._maxValue - this._minValue));
+            this.setNeedsDisplay(true);
+
+            return true;
+        }
+        return false;
+    },
+
+     /**
+         Sets the double value for the slider. If the value is below the minValue,
+         then the value is adjusted to be the minValue. Similarly, if the value
+         is greater than the maxValue, it is also adjusted acordingly.
+     */
+     setDoubleValue: function(aDouble) {     
+         this._value = Math.max(Math.min(aDouble, this._maxValue), this._minValue);
+     },
+
+     continueTracking: function(lastPoint, currentPoint) {
+         var SLIDER_PADDING = 9.5;
+         var location = this.convertPointFromView(currentPoint, null);
+         this.setDoubleValue(((location.x - SLIDER_PADDING) / (this.bounds().size.width - (2 * SLIDER_PADDING))) * (this._maxValue - this._minValue));
+         this.setNeedsDisplay(true);
+         return true;
+     },
+
+    /**
+         @param flag - If the mouseIsUp
+    */
+    stopTracking: function(lastPoint, stopPoint, flag) {
+
+    },
+
+    prefersTrackingUntilMouseUp: function() {
+
+    },
+
+    minValue: function() {
+        return this._minValue;
+    },
+
+    setMinValue: function(aDouble) {
+        this._minValue = aDouble;
+    },
+
+    maxValue: function() {
+        return this._maxValue;
+    },
+
+    setMaxValue: function(aDouble) {
+        this._maxValue = aDouble;
     }
 });

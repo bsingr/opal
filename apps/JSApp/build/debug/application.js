@@ -53,6 +53,40 @@ var VNGraphicsContextDrawDisplayMode    = 1;/*
 
 
 var __bootstrap_files = { };/* 
+ * runtime.js
+ * vienna
+ * 
+ * Created by Adam Beynon.
+ * Copyright 2009 Adam Beynon.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+var include = function include() { };
+
+if (typeof console === 'undefined') {
+    var console = console || window.console || { };
+    console.log = console.info = console.warn = console.error = function() { };
+}
+
+var VN = { };
+/* 
  * object.js
  * vienna
  * 
@@ -78,13 +112,12 @@ var __bootstrap_files = { };/*
  * THE SOFTWARE.
  */
 
-var Class = { };
 
 /**
     Extends the object passed as the first parameter using the properties
     defined in the second argument.
 */
-Object.extend = function() {
+VN.extend = function() {
 
     var target = arguments[0] || { };
     var idx = 1;
@@ -105,167 +138,6 @@ Object.extend = function() {
     
     return target;
 };
-
-// var initializing = false,
-// fnTest = /xyz/.test(function() {
-//     xyz;
-// }) ? /b_superb/: /.*/;
-// // The base Class implementation (does nothing)
-// this.Class = function() {};
-// 
-// // Create a new Class that inherits from this class
-// Class.extend = function(prop) {
-//     var _super = this.prototype;
-// 
-//     // Instantiate a base class (but only create the instance,
-//     // don't run the init constructor)
-//     initializing = true;
-//     var prototype = new this();
-//     initializing = false;
-//     // Copy the properties over onto the new prototype
-//     for (var name in prop) {
-//         // Check if we're overwriting an existing function
-//         prototype[name] = typeof prop[name] == "function" &&
-//         typeof _super[name] == "function" && fnTest.test(prop[name]) ?
-//         (function(name, fn) {
-//             return function() {
-//                 var tmp = this._super;
-// 
-//                 // Add a new ._super() method that is the same method
-//                 // but on the super-class
-//                 this._super = _super[name];
-// 
-// 
-//                 // The method only need to be bound temporarily, so we
-//                 // remove it when we're done executing
-//                 var ret = fn.apply(this, arguments);
-//                 this._super = tmp;
-// 
-//                 return ret;
-//             };
-//         })(name, prop[name]) :
-//         prop[name];
-//     }
-// 
-//     // The dummy class constructor
-//     function Class() {
-//         if (!initializing) {
-//             if (arguments.length == 0) {
-//                 this.init.apply(this, arguments);
-//             }
-//             else {
-//                 var args = [],
-//                 idx = 1;
-//                 // first argument is the custom initializer, so from the 2nd
-//                 // argument we want to apply to the initializer.
-//                 for (; idx < arguments.length; idx++) {
-//                     args.push(arguments[idx])
-//                 }
-//                 if (this[arguments[0]]) {
-//                     this[arguments[0]].apply(this, args);
-//                 }
-//                 else {
-//                     console.log(arguments[0] + " does not exist: " + arguments.length)
-//                     console.log(args);
-//                 }
-//             }
-//         }
-//     }
-// 
-//     // Populate our constructed prototype object
-//     Class.prototype = prototype;
-// 
-//     // Enforce the constructor to be what we expect
-//     Class.constructor = Class;
-// 
-//     // And make this class extendable
-//     Class.extend = arguments.callee;
-// 
-//     Class.create = function(args) {
-//         return new this(args);
-//     };
-// 
-//     return Class;
-// };
-// 
-// 
-
-
-// // Inspired by base2 and Prototype
-//  (function() {
-//     var initializing = false,
-//     fnTest = /xyz/.test(function() {
-//         xyz;
-//     }) ? /b_superb/: /.*/;
-//     // The base Class implementation (does nothing)
-//     this.Class = function() {};
-//
-//     // Create a new Class that inherits from this class
-//     Class.extend = function(prop) {
-//         var _super = this.prototype;
-//
-//         // Instantiate a base class (but only create the instance,
-//         // don't run the init constructor)
-//         initializing = true;
-//         var prototype = new this();
-//         initializing = false;
-//
-//         // Copy the properties over onto the new prototype
-//         for (var name in prop) {
-//             // Check if we're overwriting an existing function
-//             prototype[name] = typeof prop[name] == "function" &&
-//             typeof _super[name] == "function" && fnTest.test(prop[name]) ?
-//             (function(name, fn) {
-//                 return function() {
-//                     var tmp = this._super;
-//
-//                     // Add a new ._super() method that is the same method
-//                     // but on the super-class
-//                     this._super = _super[name];
-//
-//
-//                     // The method only need to be bound temporarily, so we
-//                     // remove it when we're done executing
-//                     var ret = fn.apply(this, arguments);
-//                     this._super = tmp;
-//
-//                     return ret;
-//                 };
-//             })(name, prop[name]) :
-//             prop[name];
-//         }
-//
-//         // The dummy class constructor
-//         function Class() {
-//             if (!initializing) {
-//                 if (arguments.length == 0) {
-//                     this.init.apply(this, arguments);
-//                 }
-//                 else {
-//                     var args = [],
-//                     idx = 1;
-//                     // first argument is the custom initializer, so from the 2nd
-//                     // argument we want to apply to the initializer.
-//                     for (; idx < arguments.length; idx++) {
-//                         args.push(arguments[idx])
-//                     }
-//                     this[arguments[0]].apply(this, args);
-//                 }
-//             }
-//         }
-//
-//         // Populate our constructed prototype object
-//         Class.prototype = prototype;
-//
-//         // Enforce the constructor to be what we expect
-//         Class.constructor = Class;
-//
-//         // And make this class extendable
-//         Class.extend = arguments.callee;
-//
-//         return Class;
-//     };
-// })();
 /* 
  * resource.js
  * vienna
@@ -328,41 +200,6 @@ function __bootstrap_preloaded_resource(aResource)
     }
 }
 /* 
- * runtime.js
- * vienna
- * 
- * Created by Adam Beynon.
- * Copyright 2009 Adam Beynon.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
-var include = function include() { };
-
-var YES = true;
-var NO = false;
-
-if (typeof console === 'undefined') {
-    var console = console || window.console || { };
-    console.log = console.info = console.warn = console.error = function() { };
-}
-/* 
  * object.js
  * vienna
  * 
@@ -389,10 +226,11 @@ if (typeof console === 'undefined') {
  */
 
 
-/**
-    Root object constructor
-*/
-var NSObject = function() {
+var NSObject = VN.Object = function() {
+    return this;
+};
+
+VN.protocol = function(props) {
     return this;
 };
 
@@ -401,7 +239,7 @@ Function.prototype.property = function(key) {
     return this;
 };
 
-Object.extend(NSObject, {
+VN.extend(VN.Object, {
     
     superclass: null,
    
@@ -473,7 +311,7 @@ Object.extend(NSObject, {
         Class.extend(theClass, { ... }) for extending Class methods
     */
     mixin: function(props) {
-        Object.extend(this.prototype, props);
+        VN.extend(this.prototype, props);
     },
 
 	/*
@@ -505,7 +343,7 @@ Object.extend(NSObject, {
         NSObject.create();
     }}}
 */
-NSObject.mixin({
+VN.Object.mixin({
     
     /**
         This is invoked when the object instance is created. This basically
@@ -749,14 +587,14 @@ if (!Array.prototype.indexOf) Array.prototype.indexOf = function(item, i)
             return -1;
 };
 
-Object.extend(Array.prototype, NSArray);
+VN.extend(Array.prototype, NSArray);
 
 NSArray.create = function() {
     return [];
 };
 
 NSArray.mixin = function(props) {
-    Object.extend(this.prototype, props);
+    VN.extend(this.prototype, props);
 };
 
 var NSMutableArray = NSArray;
@@ -807,7 +645,7 @@ NSString.create = function() {
 };
 
 NSString.mixin = function(props) {
-    Object.extend(this.prototype, props);
+    VN.extend(this.prototype, props);
 };
 
 /*
@@ -946,7 +784,7 @@ NSString.mixin({
  */
 
 
-var NSDictionary = NSObject.extend({
+var NSDictionary = VN.Dictionary = VN.Object.extend({
     
     _keys: null,
     
@@ -1007,7 +845,7 @@ var NSDictionary = NSObject.extend({
 /*
     
 */
-Object.extend(NSDictionary, {
+VN.extend(NSDictionary, {
     
     /*
         @return NSDictionary
@@ -1236,7 +1074,7 @@ var NSBundle = NSObject.extend({
 	}
 });
 
-Object.extend(NSBundle, {
+VN.extend(NSBundle, {
     mainBundle: function() {
         console.log("Returning main bundle");
         console.log(NSBundle.create());
@@ -6185,24 +6023,24 @@ var NSPageDownFunctionKey       = 34;
 
 
 /**
-    @class NSResponder
-    @extend NSObject
+    @class VN.Responder
+    @extend VN.Object
 */
-var NSResponder = NSObject.extend({
+var NSResponder = VN.Responder = VN.Object.extend({
 
     /**
-        @type NSResponder
+        @type VN.Responder
     */
     _nextResponder: null,
     
     /**
-        @type NSMenu
+        @type VN.Menu
     */
     _menu: null,
     
     /**
-        @param {NSCoder} aCoder
-        @returns NSResponder
+        @param {VN.Coder} aCoder
+        @returns VN.Responder
     */
     initWithCoder: function(aCoder) {
         this._nextResponder = aCoder.decodeObjectForKey("NSNextResponder");
@@ -6482,7 +6320,6 @@ var NSResponder = NSObject.extend({
         //     this._nextResponder.doCommandBySelector(aSelector);
     },
 });
-
 
 /**
     @protocol NSStandardKeyBindingMethods
@@ -7130,7 +6967,7 @@ var NSGraphicsContext = NSObject.extend({
     }
 });
 
-Object.extend(NSGraphicsContext, {
+VN.extend(NSGraphicsContext, {
    
     graphicsContextWithGraphicsPort: function(graphicsPort, initialFlippedState) {
         return NSGraphicsContext.create('initWithGraphicsPort', graphicsPort, initialFlippedState);
@@ -8319,6 +8156,8 @@ var NSWindow = NSResponder.extend({
     renderRect: function(aRect, firstTime, context) {
         if (firstTime) {
             context.setClass('ns-window');
+            context.addClass('shadow');
+            context.addClass('rounded');
         }
     },
 	
@@ -8364,31 +8203,36 @@ var NSWindow = NSResponder.extend({
  */
 
 
-var NSApp = null;
+/**
+    @type VN.Application
+    
+    Global VN.Application singleton
+*/
+VN.App = null;
 
-var NSModalPanelRunLoopMode                             = "NSModalPanelRunLoopMode";
-var NSEventTrackingRunLoopMode                          = "NSEventTrackingRunLoopMode";
+VN.MODAL_PANEL_RUN_LOOP_MODE                              = "VNModalPanelRunLoopMode";
+VN.EVENT_TRACKING_RUN_LOOP_MODE                           = "VNEventTrackingRunLoopMode";
 
-var NSApplicationDidBecomeActiveNotification            = "NSApplicationDidBecomeActiveNotification";
-var NSApplicationDidHideNotification                    = "NSApplicationDidHideNotification";
-var NSApplicationDidFinishLaunchingNotification         = "NSApplicationDidFinishLaunchingNotification";
-var NSApplicationDidResignActiveNotification            = "NSApplicationDidResignActiveNotification";
-var NSApplicationDidUnhideNotification                  = "NSApplicationDidUnhideNotification";
-var NSApplicationDidUpdateNotification                  = "NSApplicationDidUpdateNotification";
-var NSApplicationWillBecomeActiveNotification           = "NSApplicationWillBecomeActiveNotification";
-var NSApplicationWillHideNotification                   = "NSApplicationWillHideNotification";
-var NSApplicationWillFinishLaunchingNotification        = "NSApplicationWillFinishLaunchingNotification";
-var NSApplicationWillResignActiveNotification           = "NSApplicationWillResignActiveNotification";
-var NSApplicationWillUnhideNotification                 = "NSApplicationWillUnhideNotification";
-var NSApplicationWillUpdateNotification                 = "NSApplicationWillUpdateNotification";
-var NSApplicationWillTerminateNotification              = "NSApplicationWillTerminateNotification";
-var NSApplicationDidChangeScreenParametersNotification  = "NSApplicationDidChangeScreenParametersNotification";
+VN.APPLICATION_DID_BECOME_ACTIVE_NOTIFICATION             = "VNApplicationDidBecomeActiveNotification";
+VN.APPLICATION_DID_HIDE_NOTIFICATION                      = "VNApplicationDidHideNotification";
+VN.APPLICATION_DID_FINISH_LAUNCHING_NOTIFICATION          = "VNApplicationDidFinishLaunchingNotification";
+VN.APPLICATION_DID_RESIGN_ACTIVE_NOTIFICATION             = "VNApplicationDidResignActiveNotification";
+VN.APPLICATION_DID_UNHIDE_NOTIFICATION                    = "VNApplicationDidUnhideNotification";
+VN.APPLICATION_DID_UPDATE_NOTIFICATION                    = "VNApplicationDidUpdateNotification";
+VN.APPLICATION_WILL_BECOME_ACTIVE_NOTIFICATION            = "VNApplicationWillBecomeActiveNotification";
+VN.APPLICATION_WILL_HIDE_NOTIFICATION                     = "VNApplicationWillHideNotification";
+VN.APPLICATION_WILL_FINISH_LAUNCHING_NOTIFICATION         = "VNApplicationWillFinishLaunchingNotification";
+VN.APPLICATION_WILL_RESIGN_ACTIVE_NOTIFICATION            = "VNApplicationWillResignActiveNotification";
+VN.APPLICATION_WILL_UNHIDE_NOTIFICATION                   = "VNApplicationWillUnhideNotification";
+VN.APPLICATION_WILL_UPDATE_NOTIFICATION                   = "VNApplicationWillUpdateNotification";
+VN.APPLICATION_WILL_TERMINATE_NOTIFICATION                = "VNApplicationWillTerminateNotification";
+VN.APPLICATION_DID_CHANGE_SCREEN_PARAMETERS_NOTIFICATION  = "VNApplicationDidChangeScreenParametersNotification";
 
 /**
-    @class NSApplication
-    @extends NSResponder
+    @class VN.Application
+    @extends VN.Responder
 */
-var NSApplication = NSResponder.extend({
+var NSApplication = VN.Application = VN.Responder.extend({
     
     _delegate: null,
     
@@ -8435,21 +8279,21 @@ var NSApplication = NSResponder.extend({
         var nc = NSNotificationCenter.defaultCenter();
         
         if (this._delegate) {
-            nc.removeObserver(this._delegate, NSApplicationWillFinishLaunchingNotification, this);
-            nc.removeObserver(this._delegate, NSApplicationDidFinishLaunchingNotification, this);
-            nc.removeObserver(this._delegate, NSApplicationDidChangeScreenParametersNotification, this);
+            nc.removeObserver(this._delegate, VN.APPLICATION_WILL_FINISH_LAUNCHING_NOTIFICATION, this);
+            nc.removeObserver(this._delegate, VN.APPLICATION_DID_FINISH_LAUNCHING_NOTIFICATION, this);
+            nc.removeObserver(this._delegate, VN.APPLICATION_DID_CHANGE_SCREEN_PARAMETERS_NOTIFICATION, this);
         }
         
         this._delegate = anObject;
         
         if (this._delegate.respondsTo('applicationWillFinishLaunching'))
-            nc.addObserver(this._delegate, 'applicationWillFinishLaunching', NSApplicationWillFinishLaunchingNotification, this);
+            nc.addObserver(this._delegate, 'applicationWillFinishLaunching', VN.APPLICATION_WILL_FINISH_LAUNCHING_NOTIFICATION, this);
         
         if (this._delegate.respondsTo('applicationDidFinishLaunching'))
-            nc.addObserver(this._delegate, 'applicationDidFinishLaunching', NSApplicationDidFinishLaunchingNotification, this);
+            nc.addObserver(this._delegate, 'applicationDidFinishLaunching', VN.APPLICATION_DID_FINISH_LAUNCHING_NOTIFICATION, this);
             
         if (this._delegate.respondsTo('applicationDidChangeScreenParameters'))
-            nc.addObserver(this._delegate, 'applicationDidChangeScreenParameters', NSApplicationDidChangeScreenParametersNotification, this);
+            nc.addObserver(this._delegate, 'applicationDidChangeScreenParameters', VN.APPLICATION_DID_CHANGE_SCREEN_PARAMETERS_NOTIFICATION, this);
     },
     
     delegate: function() {
@@ -8467,7 +8311,7 @@ var NSApplication = NSResponder.extend({
     addWindow: function(aWindow) {
         // Register for screen chnages (if it wants them)
         var defaultCenter = NSNotificationCenter.defaultCenter();
-        defaultCenter.addObserver(aWindow, 'applicationDidChangeScreenParameters', NSApplicationDidChangeScreenParametersNotification, this);
+        defaultCenter.addObserver(aWindow, 'applicationDidChangeScreenParameters', VN.APPLICATION_DID_CHANGE_SCREEN_PARAMETERS_NOTIFICATION, this);
         
         this._windows.push(aWindow);
         return this._windows.indexOf(aWindow);
@@ -8517,8 +8361,8 @@ var NSApplication = NSResponder.extend({
     
     finishLaunching: function() {
         var defaultCenter = NSNotificationCenter.defaultCenter();
-        defaultCenter.postNotificationName(NSApplicationWillFinishLaunchingNotification, this);
-        defaultCenter.postNotificationName(NSApplicationDidFinishLaunchingNotification, this);
+        defaultCenter.postNotificationName(VN.APPLICATION_WILL_FINISH_LAUNCHING_NOTIFICATION, this);
+        defaultCenter.postNotificationName(VN.APPLICATION_DID_FINISH_LAUNCHING_NOTIFICATION, this);
     },
     
     /**
@@ -8556,7 +8400,7 @@ var NSApplication = NSResponder.extend({
         // On resize, post notification (for app delegate, also windows listen and handle accordingly)
         window.onresize = function() {
             var defaultCenter = NSNotificationCenter.defaultCenter();
-            defaultCenter.postNotificationName(NSApplicationDidChangeScreenParametersNotification, this);
+            defaultCenter.postNotificationName(VN.APPLICATION_DID_CHANGE_SCREEN_PARAMETERS_NOTIFICATION, this);
         };
         
         this.finishLaunching();
@@ -8689,17 +8533,18 @@ var NSApplication = NSResponder.extend({
     already have been created before any user code is likely to run, 
     assuming that no user code exists in the global scope.
 */
-NSApplication.sharedApplication = function() {
-    if (!NSApp)
-        NSApp = NSApplication.create();
+VN.Application.sharedApplication = function() {
+    if (!VN.App) {
+        VN.App = VN.Application.create();
+    }
     
-    return NSApp
+    return VN.App;
 };
 
 /**
-    @protocol NSApplicationDelegate
+    @protocol VN.ApplicationDelegate
 */
-var NSApplicationDelegate = NSObject.protocol({
+VN.ApplicationDelegate = VN.protocol({
     
     /**
         @optional
@@ -8867,8 +8712,7 @@ var NSApplicationDelegate = NSObject.protocol({
     once will likely have undefined results, with, at minimum, a duplicate
     interface defined in the main nib file.
 */
-function NSApplicationMain(argc, argv)
-{
+VN.ApplicationMain = function(argc, argv) {
 	var mainBundle = NSBundle.mainBundle();
 	var principalClass = mainBundle.principalClass();
     var topLevel = NSBundle.loadNibNamed("MainMenu", principalClass.sharedApplication());
@@ -8881,7 +8725,7 @@ function NSApplicationMain(argc, argv)
     
 	principalClass.sharedApplication().run();
 	return 0;
-}
+};
 /* 
  * view.js
  * vienna
@@ -8909,31 +8753,36 @@ function NSApplicationMain(argc, argv)
  */
  
  
-// 
-var NSViewNotSizable    = 0;
-var NSViewMinXMargin    = 1;
-var NSViewWidthSizable  = 2;
-var NSViewMaxXMargin    = 4;
-var NSViewMinYMargin    = 8;
-var NSViewHeightSizable = 16;
-var NSViewMaxYMargin    = 32;
+//  Frame sizing
+var NSViewNotSizable    = VN.VIEW_NOT_SIZABLE       = 0;
+var NSViewMinXMargin    = VN.VIEW_MIN_X_MARGIN      = 1;
+var NSViewWidthSizable  = VN.VIEW_WIDTH_SIZABLE     = 2;
+var NSViewMaxXMargin    = VN.VIEW_MAX_X_MARGIN      = 4;
+var NSViewMinYMargin    = VN.VIEW_MIN_Y_MARGIN      = 8;
+var NSViewHeightSizable = VN.VIEW_HEIGHT_SIZABLE    = 16;
+var NSViewMaxYMargin    = VN.VIEW_MAX_Y_MARGIN      = 32;
 
 // NSBorderType
-var NSNoBorder          = 0;
-var NSLineBorder        = 1;
-var NSBezelBorder       = 2;
-var NSGrooveBorder      = 3;
+var NSNoBorder          = VN.NO_BORDER              = 0;
+var NSLineBorder        = VN.LINE_BORDER            = 1;
+var NSBezelBorder       = VN.BEZEL_BORDER           = 2;
+var NSGrooveBorder      = VN.GROOVE_BORDER          = 3;
 
-var NSViewFrameDidChangeNotification            = "NSViewFrameDidChangeNotification";
-var NSViewFocusDidChangeNotification            = "NSViewFocusDidChangeNotification";
-var NSViewBoundsDidChangeNotification           = "NSViewBoundsDidChangeNotification";
-var NSViewGlobalFrameDidChangeNotification      = "NSViewGlobalFrameDidChangeNotification";
-var NSViewDidUpdateTrackingAreasNotification    = "NSViewDidUpdateTrackingAreasNotification";
+// Frame Notifications
+var NSViewFrameDidChangeNotification            = VN.VIEW_FRAME_DID_CHANGE_NOTIFICATION           = "NSViewFrameDidChangeNotification";
+var NSViewFocusDidChangeNotification            = VN.VIEW_FOCUS_DID_CHANGE_NOTIFICATION           = "NSViewFocusDidChangeNotification";
+var NSViewBoundsDidChangeNotification           = VN.VIEW_BOUNDS_DID_CHANGE_NOTIFICATION          = "NSViewBoundsDidChangeNotification";
+var NSViewGlobalFrameDidChangeNotification      = VN.VIEW_GLOBAL_FRAME_DID_CHANGE_NOTIFICATION    = "NSViewGlobalFrameDidChangeNotification";
+var NSViewDidUpdateTrackingAreasNotification    = VN.VIEW_DID_UPDATE_TRACKING_AREAS_NOTIFICATION  = "NSViewDidUpdateTrackingAreasNotification";
 
-var NSView = NSResponder.extend({
+/**
+    @class VN.View
+    @extend VN.Responder
+*/
+var NSView = VN.View = VN.Responder.extend({
     
     /**
-        @type NSRenderContext
+        @type VN.RenderContext
     */
     _renderContext: null,
     
@@ -9597,7 +9446,7 @@ var NSView = NSResponder.extend({
         this.lockFocus();
         // this.drawRect(aRect);
         this.renderRect(aRect, this._renderContext.firstTime(), this._renderContext);
-        // this._renderContext.setFirstTime(false);
+        this._renderContext.setFirstTime(false);
         this.unlockFocus();
     },
     
@@ -10003,57 +9852,57 @@ var NSApplicationTitleView = NSView.extend({
  */
 
 
-var NSMultipleValuesMarker  = "NSMultipleValuesMarker";
-var NSNoSelectionMarker     = "NSNoSelectionMarker";
-var NSNotApplicableMarker   = "NSNotApplicableMarker";
+VN.MULTIPLE_VALUES_MARKER   = "VNMultipleValuesMarker";
+VN.NO_SELECTION_MARKER      = "VNNoSelectionMarker";
+VN.NOT_APPLICABLE_MARKER    = "VNNotApplicableMarker";
 
-/*
-    @param object - NSObject
-    @return boolean
+/**
+    @param {VN.Object} object
+    @return Boolean
 */
-function NSIsControllerMarker(object)
-{
-    if (object == NSMultipleValuesMarker || object ==  NSNoSelectionMarker || object == NSNotApplicableMarker)
+VN.IsControllerMarker = function(object) {
+    if (object == VN.MULTIPLE_VALUES_MARKER || object ==  VN.NO_SELECTION_MARKER || object == VN.NOT_APPLICABLE_MARKER)
         return true;
     
     return false;
 }
 
-/*
+/**
     These keys are to be used in the retunred dictionary for the infoForBinding
     method.
 */
-var NSObservedObjectKey     = "NSObservedObjectKey";
-var NSObservedKeyPathKey    = "NSObservedKeyPathKey";
-var NSOptionsKey            = "NSOptionsKey";
+VN.OBSERVED_OBJECT_KEY      = "VNObservedObjectKey";
+VN.OBSERVED_KEY_PATH_KEY    = "VNObservedKeyPathKey";
+VN.OPTIONS_KEY              = "VNOptionsKey";
 
-/*
+/**
     Bindings exposed here will then become available in the instance method
     exposedBindings();
     
-    @param binding - NSString
+    @param {VN.String} binding
 */
-NSObject.exposeBinding = function(binding) {
+VN.Object.exposeBinding = function(binding) {
     
 };
 
-/*
-    @mixin NSKeyValueBindingCreation
+/**
+    @mixin VNKeyValueBindingCreation
+    @class VN.Object
 */
-NSObject.mixin({
+VN.Object.mixin({
     
     /**
-        A NSDictionary used for holding binding info. Each key is the binding 
+        A VN.Dictionary used for holding binding info. Each key is the binding 
         context name (see lower area of this file) and the value for each key
         is another dictionary holding information for the binding.
         
-        @type NSDictionary
+        @type VN.Dictionary
     */
-    _kvb_info: NSDictionary.create(),
+    _kvb_info: VN.Dictionary.create(),
     
     
     /**
-        @returns NSArray
+        @returns VN.Array
     */
     exposedBindings: function() {
         
@@ -10121,7 +9970,7 @@ NSObject.mixin({
 /**
     @mixin NSPlaceholders (meta class)
 */
-Object.extend(NSObject, {
+VN.extend(NSObject, {
     
     /**
         Marker can be null, NSMultipleValuesMarker, NSNoSelectionMarker or
@@ -10152,7 +10001,7 @@ Object.extend(NSObject, {
     
     These should be implemented by controllers etc.
 */
-NSObject.mixin({
+VN.Object.mixin({
     
     /**
         @param editor - NSObject
@@ -10174,7 +10023,7 @@ NSObject.mixin({
     
     These should be implemented by controllers etc.
 */
-NSObject.mixin({
+VN.Object.mixin({
     
     /**
         Reverts back to original value (end chnages).
@@ -10207,115 +10056,115 @@ NSObject.mixin({
 /**
     Default constant names for bindings (AppKit defined)
 */
-var NSAlignmentBinding                          = "NSAlignmentBinding";
-var NSAlternateImageBinding	                    = "NSAlternateImageBinding";
-var NSAlternateTitleBinding	                    = "NSAlternateTitleBinding";
-var NSAnimateBinding                            = "NSAnimateBinding";
-var NSAnimationDelayBinding	                    = "NSAnimationDelayBinding";
-var NSArgumentBinding	                        = "NSArgumentBinding";
-var NSAttributedStringBinding	                = "NSAttributedStringBinding";
-var NSContentArrayBinding	                    = "NSContentArrayBinding";
-var NSContentArrayForMultipleSelectionBinding	= "NSContentArrayForMultipleSelectionBinding";
-var NSContentBinding	                        = "NSContentBinding";
-var NSContentDictionaryBinding	                = "NSContentDictionaryBinding";
-var NSContentHeightBinding	                    = "NSContentHeightBinding";
-var NSContentObjectBinding	                    = "NSContentObjectBinding";
-var NSContentObjectsBinding	                    = "NSContentObjectsBinding";
-var NSContentSetBinding	                        = "NSContentSetBinding";
-var NSContentValuesBinding                      = "NSContentValuesBinding";
-var NSContentWidthBinding                       = "NSContentWidthBinding";
-var NSCriticalValueBinding                      = "NSCriticalValueBinding";
-var NSDataBinding                               = "NSDataBinding";
-var NSDisplayPatternTitleBinding                = "NSDisplayPatternTitleBinding";
-var NSDisplayPatternValueBinding                = "NSDisplayPatternValueBinding";
-var NSDocumentEditedBinding                     = "NSDocumentEditedBinding";
-var NSDoubleClickArgumentBinding                = "NSDoubleClickArgumentBinding";
-var NSDoubleClickTargetBinding                  = "NSDoubleClickTargetBinding";
-var NSEditableBinding                           = "NSEditableBinding";
-var NSEnabledBinding                            = "NSEnabledBinding";
-var NSExcludedKeysBinding                       = "NSExcludedKeysBinding";
-var NSFilterPredicateBinding                    = "NSFilterPredicateBinding";
-var NSFontBinding                               = "NSFontBinding";
-var NSFontBoldBinding                           = "NSFontBoldBinding";
-var NSFontFamilyNameBinding                     = "NSFontFamilyNameBinding";
-var NSFontItalicBinding                         = "NSFontItalicBinding";
-var NSFontNameBinding                           = "NSFontNameBinding";
-var NSFontSizeBinding                           = "NSFontSizeBinding";
-var NSHeaderTitleBinding                        = "NSHeaderTitleBinding";
-var NSHiddenBinding                             = "NSHiddenBinding";
-var NSImageBinding                              = "NSImageBinding";
-var NSIncludedKeysBinding                       = "NSIncludedKeysBinding";
-var NSInitialKeyBinding                         = "NSInitialKeyBinding";
-var NSInitialValueBinding                       = "NSInitialValueBinding";
-var NSIsIndeterminateBinding                    = "NSIsIndeterminateBinding";
-var NSLabelBinding                              = "NSLabelBinding";
-var NSLocalizedKeyDictionaryBinding             = "NSLocalizedKeyDictionaryBinding";
-var NSManagedObjectContextBinding               = "NSManagedObjectContextBinding";
-var NSMaximumRecentsBinding                     = "NSMaximumRecentsBinding";
-var NSMaxValueBinding                           = "NSMaxValueBinding";
-var NSMaxWidthBinding                           = "NSMaxWidthBinding";
-var NSMinValueBinding                           = "NSMinValueBinding";
-var NSMinWidthBinding                           = "NSMinWidthBinding";
-var NSMixedStateImageBinding                    = "NSMixedStateImageBinding";
-var NSOffStateImageBinding                      = "NSOffStateImageBinding";
-var NSOnStateImageBinding                       = "NSOnStateImageBinding";
-var NSPredicateBinding                          = "NSPredicateBinding";
-var NSRecentSearchesBinding                     = "NSRecentSearchesBinding";
-var NSRepresentedFilenameBinding                = "NSRepresentedFilenameBinding";
-var NSRowHeightBinding                          = "NSRowHeightBinding";
-var NSSelectedIdentifierBinding                 = "NSSelectedIdentifierBinding";
-var NSSelectedIndexBinding                      = "NSSelectedIndexBinding";
-var NSSelectedLabelBinding                      = "NSSelectedLabelBinding";
-var NSSelectedObjectBinding                     = "NSSelectedObjectBinding";
-var NSSelectedObjectsBinding                    = "NSSelectedObjectsBinding";
-var NSSelectedTagBinding                        = "NSSelectedTagBinding";
-var NSSelectedValueBinding                      = "NSSelectedValueBinding";
-var NSSelectedValuesBinding                     = "NSSelectedValuesBinding";
-var NSSelectionIndexesBinding                   = "NSSelectionIndexesBinding";
-var NSSelectionIndexPathsBinding                = "NSSelectionIndexPathsBinding";
-var NSSortDescriptorsBinding                    = "NSSortDescriptorsBinding";
-var NSTargetBinding                             = "NSTargetBinding";
-var NSTextColorBinding                          = "NSTextColorBinding";
-var NSTitleBinding                              = "NSTitleBinding";
-var NSToolTipBinding                            = "NSToolTipBinding";
-var NSTransparentBinding                        = "NSTransparentBinding";
-var NSValueBinding                              = "NSValueBinding";
-var NSValuePathBinding                          = "NSValuePathBinding";
-var NSValueURLBinding                           = "NSValueURLBinding";
-var NSVisibleBinding                            = "NSVisibleBinding";
-var NSWarningValueBinding                       = "NSWarningValueBinding";
-var NSWidthBinding                              = "NSWidthBinding";
+VN.ALIGNMENT_BINDING                            = "VNAlignmentBinding";
+VN.ALTERNATE_IMAGE_BINDING	                    = "VNAlternateImageBinding";
+VN.ALTERNATE_TITLE_BINDING	                    = "VNAlternateTitleBinding";
+VN.ANIMATE_BINDING                              = "VNAnimateBinding";
+VN.ANIMATION_DELAY_BINDING	                    = "VNAnimationDelayBinding";
+VN.ARGUMENT_BINDING	                            = "VNArgumentBinding";
+VN.ATTRIBUTED_STRING_BINDING	                = "VNAttributedStringBinding";
+VN.CONTENT_ARRAY_BINDING	                    = "VNContentArrayBinding";
+VN.CONTENT_ARRAY_FOR_MULTIPLE_SELECTION_BINDING = "VNContentArrayForMultipleSelectionBinding";
+VN.CONTENT_BINDING	                            = "VNContentBinding";
+VN.CONTENT_DICTIONARY_BINDING	                = "VNContentDictionaryBinding";
+VN.CONTENT_HEIGHT_BINDING	                    = "VNContentHeightBinding";
+VN.CONTENT_OBJECT_BINDING	                    = "VNContentObjectBinding";
+VN.CONTENT_OBJECTS_BINDING	                    = "VNContentObjectsBinding";
+VN.CONTENT_SET_BINDING	                        = "VNContentSetBinding";
+VN.CONTENT_VALUES_BINDING                       = "VNContentValuesBinding";
+VN.CONTENT_WIDTH_BINDING                        = "VNContentWidthBinding";
+VN.CRITICAL_VALUE_BINDING                       = "VNCriticalValueBinding";
+VN.DATA_BINDING                                 = "VNDataBinding";
+VN.DISPLAY_PATTERN_TITLE_BINDING                = "VNDisplayPatternTitleBinding";
+VN.DISPLAY_PATTERN_VALUE_BINDING                = "VNDisplayPatternValueBinding";
+VN.DOCUMENT_EDITED_BINDING                      = "VNDocumentEditedBinding";
+VN.DOUBLE_CLICK_ARGUMENT_BINDING                = "VNDoubleClickArgumentBinding";
+VN.DOUBLE_CLICK_TARGET_BINDING                  = "VNDoubleClickTargetBinding";
+VN.EDITABLE_BINDING                             = "VNEditableBinding";
+VN.ENABLED_BINDING                              = "VNEnabledBinding";
+VN.EXCLUDED_KEYS_BINDING                        = "VNExcludedKeysBinding";
+VN.FILTER_PREDICATE_BINDING                     = "VNFilterPredicateBinding";
+VN.FONT_BINDING                                 = "VNFontBinding";
+VN.FONT_BOLD_BINDING                            = "VNFontBoldBinding";
+VN.FONT_FAMILY_NAME_BINDING                     = "VNFontFamilyNameBinding";
+VN.FONT_ITALIC_BINDING                          = "VNFontItalicBinding";
+VN.FONT_NAME_BINDING                            = "VNFontNameBinding";
+VN.FONT_SIZE_BINDING                            = "VNFontSizeBinding";
+VN.HEADER_TITLE_BINDING                         = "VNHeaderTitleBinding";
+VN.HIDDEN_BINDING                               = "VNHiddenBinding";
+VN.IMAGE_BINDING                                = "VNImageBinding";
+VN.INCLUDED_KEYS_BINDING                        = "VNIncludedKeysBinding";
+VN.INITIAL_KEY_BINDING                          = "VNInitialKeyBinding";
+VN.INTIAL_VALUE_BINDING                         = "VNInitialValueBinding";
+VN.IS_INDETERMINATE_BINDING                     = "VNIsIndeterminateBinding";
+VN.LABEL_BINDING                                = "VNLabelBinding";
+VN.LOCALIZED_KEY_DICTIONARY_BINDING             = "VNLocalizedKeyDictionaryBinding";
+VN.MANAGED_OBJECT_CONTEXT_BINDING               = "VNManagedObjectContextBinding";
+VN.MAXIMUM_RECENTS_BINDING                      = "VNMaximumRecentsBinding";
+VN.MAX_VALUE_BINDING                            = "VNMaxValueBinding";
+VN.MAX_WIDTH_BINDING                            = "VNMaxWidthBinding";
+VN.MIN_VALUE_BINDING                            = "VNMinValueBinding";
+VN.MIN_WIDTH_BINDING                            = "VNMinWidthBinding";
+VN.MIXED_STATE_IMAGE_BINDING                    = "VNMixedStateImageBinding";
+VN.OFF_STATE_IMAGE_BINDING                      = "VNOffStateImageBinding";
+VN.ON_STATE_IMAGE_BINDING                       = "VNOnStateImageBinding";
+VN.PREDICATE_BINDING                            = "VNPredicateBinding";
+VN.RECENT_SEARCHES_BINDING                      = "VNRecentSearchesBinding";
+VN.REPRESENTED_FILENAME_BINDING                 = "VNRepresentedFilenameBinding";
+VN.ROW_HEIGHT_BINDING                           = "VNRowHeightBinding";
+VN.SELECTED_IDENTIFIER_BINDING                  = "VNSelectedIdentifierBinding";
+VN.SELECTED_INDEX_BINDING                       = "VNSelectedIndexBinding";
+VN.SELECTED_LABEL_BINDING                       = "VNSelectedLabelBinding";
+VN.SELECTED_OBJECT_BINDING                      = "VNSelectedObjectBinding";
+VN.SELECTED_OBJECTS_BINDING                     = "VNSelectedObjectsBinding";
+VN.SELECTED_TAG_BINDING                         = "VNSelectedTagBinding";
+VN.SELECTED_VALUE_BINDING                       = "VNSelectedValueBinding";
+VN.SELECTED_VALUES_BINDING                      = "VNSelectedValuesBinding";
+VN.SELECTION_INDEXES_BINDING                    = "VNSelectionIndexesBinding";
+VN.SELECTION_INDEX_PATHS_BINDING                = "VNSelectionIndexPathsBinding";
+VN.SORT_DESCRIPTORS_BINDING                     = "VNSortDescriptorsBinding";
+VN.TAGRTE_BINDING                               = "VNTargetBinding";
+VN.TEXT_COLOR_BINDING                           = "VNTextColorBinding";
+VN.TITLE_BINDING                                = "VNTitleBinding";
+VN.TOOP_TIP_BINDING                             = "VNToolTipBinding";
+VN.TRANSPARENT_BINDING                          = "VNTransparentBinding";
+VN.VALUE_BINDING                                = "VNValueBinding";
+VN.VALUE_PATH_BINDING                           = "VNValuePathBinding";
+VN.VALUE_URL_BINDING                            = "VNValueURLBinding";
+VN.VISIBLE_BINDING                              = "VNVisibleBinding";
+VN.WARNING_VALUE_BINDING                        = "VNWarningValueBinding";
+VN.WIDTH_BINDING                                = "VNWidthBinding";
 
 
 /**
     Options for bindings (used with info keys at top).
 */
-var NSAllowsEditingMultipleValuesSelectionBindingOption = "NSAllowsEditingMultipleValuesSelectionBindingOption";
-var NSAllowsNullArgumentBindingOption                   = "NSAllowsNullArgumentBindingOption";
-var NSAlwaysPresentsApplicationModalAlertsBindingOption = "NSAlwaysPresentsApplicationModalAlertsBindingOption";
-var NSConditionallySetsEditableBindingOption            = "NSConditionallySetsEditableBindingOption";
-var NSConditionallySetsEnabledBindingOption             = "NSConditionallySetsEnabledBindingOption";
-var NSConditionallySetsHiddenBindingOption              = "NSConditionallySetsHiddenBindingOption";
-var NSContinuouslyUpdatesValueBindingOption             = "NSContinuouslyUpdatesValueBindingOption";
-var NSCreatesSortDescriptorBindingOption                = "NSCreatesSortDescriptorBindingOption";
-var NSDeletesObjectsOnRemoveBindingsOption              = "NSDeletesObjectsOnRemoveBindingsOption";
-var NSDisplayNameBindingOption                          = "NSDisplayNameBindingOption";
-var NSDisplayPatternBindingOption                       = "NSDisplayPatternBindingOption";
-var NSContentPlacementTagBindingOption                  = "NSContentPlacementTagBindingOption";
-var NSHandlesContentAsCompoundValueBindingOption        = "NSHandlesContentAsCompoundValueBindingOption";
-var NSInsertsNullPlaceholderBindingOption               = "NSInsertsNullPlaceholderBindingOption";
-var NSInvokesSeparatelyWithArrayObjectsBindingOption    = "NSInvokesSeparatelyWithArrayObjectsBindingOption";
-var NSMultipleValuesPlaceholderBindingOption            = "NSMultipleValuesPlaceholderBindingOption";
-var NSNoSelectionPlaceholderBindingOption               = "NSNoSelectionPlaceholderBindingOption";
-var NSNotApplicablePlaceholderBindingOption             = "NSNotApplicablePlaceholderBindingOption";
-var NSNullPlaceholderBindingOption                      = "NSNullPlaceholderBindingOption";
-var NSRaisesForNotApplicableKeysBindingOption           = "NSRaisesForNotApplicableKeysBindingOption";
-var NSPredicateFormatBindingOption                      = "NSPredicateFormatBindingOption";
-var NSSelectorNameBindingOption                         = "NSSelectorNameBindingOption";
-var NSSelectsAllWhenSettingContentBindingOption         = "NSSelectsAllWhenSettingContentBindingOption";
-var NSValidatesImmediatelyBindingOption                 = "NSValidatesImmediatelyBindingOption";
-var NSValueTransformerNameBindingOption                 = "NSValueTransformerNameBindingOption";
-var NSValueTransformerBindingOption                     = "NSValueTransformerBindingOption";
+VN.ALLOWS_EDITING_MULTIPLE_VALUES_SELECTION_BINDING_OPTION  = "VNAllowsEditingMultipleValuesSelectionBindingOption";
+VN.ALLOWS_NULL_ARGUMENT_BINDING_OPTION                      = "VNAllowsNullArgumentBindingOption";
+VN.ALWAYS_PRESENTS_APPLICATION_MODAL_ALERTS_BINDING_OPTION  = "VNAlwaysPresentsApplicationModalAlertsBindingOption";
+VN.CONDITIONALLY_SETS_EDITABLE_BINDING_OPTION               = "VNConditionallySetsEditableBindingOption";
+VN.CONDITIONALLY_SETS_ENABLED_BINDING_OPTION                = "VNConditionallySetsEnabledBindingOption";
+VN.CONDITIONALLY_SETS_HIDDEN_BINDING_OPTION                 = "VNConditionallySetsHiddenBindingOption";
+VN.CONTINUOUSLY_UPDATES_VALUE_BINDING_OPTION                = "VNContinuouslyUpdatesValueBindingOption";
+VN.CREATES_SORT_DESCRIPTOR_BINDING_OPTION                   = "VNCreatesSortDescriptorBindingOption";
+VN.DELETES_OBJECTS_ON_REMOVE_BINDING_OPTION                 = "VNDeletesObjectsOnRemoveBindingsOption";
+VN.DISPLAY_NAME_BINDING_OTPTION                             = "VNDisplayNameBindingOption";
+VN.DISPLAY_PATTERN_BINDING_OPTION                           = "VNDisplayPatternBindingOption";
+VN.CONTENT_PLACEMENT_TAG_BINDING_OPTION                     = "VNContentPlacementTagBindingOption";
+VN.HANDLES_CONTENT_AS_COMPOUND_VALUE_BINDING_OPTION         = "VNHandlesContentAsCompoundValueBindingOption";
+VN.INSERTS_NULL_PLACEHOLDER_BINDING_OPTION                  = "VNInsertsNullPlaceholderBindingOption";
+VN.INVOKES_SEPERATELY_WITH_ARRAY_OBJECTS_BINDING_OPTION     = "VNInvokesSeparatelyWithArrayObjectsBindingOption";
+VN.MULTIPLE_VALUES_PLACEHOLDER_BINDING_OTPION               = "VNMultipleValuesPlaceholderBindingOption";
+VN.NO_SELECTION_PLACEHOLDER_BINDING_OPTION                  = "VNNoSelectionPlaceholderBindingOption";
+VN.NOT_APPLICABLE_PLACEHOLDER_BINDING_OPTION                = "VNNotApplicablePlaceholderBindingOption";
+VN.NULL_PLACEHOLDER_BINDING_OPTION                          = "VNNullPlaceholderBindingOption";
+VN.RAISES_FOR_NOT_APPLICABLE_KEYS_BINDING_OPTION            = "VNRaisesForNotApplicableKeysBindingOption";
+VN.PREDICATE_FORMAT_BINDING_OPTION                          = "VNPredicateFormatBindingOption";
+VN.SELECTOR_NAME_BINDING_OPTION                             = "VNSelectorNameBindingOption";
+VN.SELECTS_ALL_WHEN_SETTING_CONTENT_BINDING_OPTION          = "VNSelectsAllWhenSettingContentBindingOption";
+VN.VALIDATES_IMMEDIATELY_BINDING_OPTION                     = "VNValidatesImmediatelyBindingOption";
+VN.VALUE_TRANSFORMER_NAME_BINDING_OPTION                    = "VNValueTransformerNameBindingOption";
+VN.VALUE_TRANSFORMER_BINDING_OPTION                         = "VNValueTransformerBindingOption";
 /* 
  * controller.js
  * vienna
@@ -11320,116 +11169,17 @@ var IBBindingConnection = NSObject.extend({
  */
 
 
-
-var NSAnyType				        = 0;
-var NSIntType				        = 1;
-var NSPositiveIntType			    = 2;
-var NSFloatType				        = 3;
-var NSPositiveFloatType			    = 4;
-var NSDoubleType			        = 6;
-var NSPositiveDoubleType		    = 7;
-
-// NSCellType
-var NSNullCellType			        = 0;
-var NSTextCellType			        = 1;
-var NSImageCellType			        = 2;
-
-// NSCellAttribute
-var NSCellDisabled			        = 0;
-var NSCellState				        = 1;
-var NSPushInCell			        = 2;
-var NSCellEditable			        = 3;
-var NSChangeGrayCell			    = 4;
-var NSCellHighlighted			    = 5;
-var NSCellLightsByContents		    = 6;
-var NSCellLightsByGray			    = 7;
-var NSChangeBackgroundCell		    = 8;
-var NSCellLightsByBackground		= 9;
-var NSCellIsBordered			    = 10;
-var NSCellHasOverlappingImage		= 11;
-var NSCellHasImageHorizontal		= 12;
-var NSCellHasImageOnLeftOrBottom	= 13;
-var NSCellChangesContents		    = 14;
-var NSCellIsInsetButton			    = 15;
-var NSCellAllowsMixedState		    = 16;
-
-// NSCellImagePosition
-var NSNoImage				        = 0;
-var NSImageOnly				        = 1;
-var NSImageLeft				        = 2;
-var NSImageRight			        = 3;
-var NSImageBelow			        = 4;
-var NSImageAbove			        = 5;
-var NSImageOverlaps			        = 6;
-
-
-// NSImageScaling
-var NSImageScaleProportionallyDown  = 0;
-var NSImageScaleAxesIndependently   = 1;
-var NSImageScaleNone                = 2;
-var NSImageScaleProportionallyUpOrDown = 3;
-
-// NSCellStateValue
-var NSMixedState                    = -1;
-var NSOffState                      = 0;
-var NSOnState                       = 1;
-
-var NSNoCellMask			        = 0;
-var NSContentsCellMask			    = 1;
-var NSPushInCellMask			    = 2;
-var NSChangeGrayCellMask		    = 4;
-var NSChangeBackgroundCellMask		= 8;
-
-// NSControlTint
-var NSDefaultControlTint            = 0;
-var NSBlueControlTint               = 1;
-var NSGraphiteControlTint           = 6;
-var NSClearControlTint              = 7;
-
-// NSControlSize
-var NSRegularControlSize            = 0;
-var NSSmallControlSize              = 1;
-var NSMiniControlSize               = 2;
-
+/**
+    @class NSCell
+    @extends NSObject
+*/
 var NSCell = NSObject.extend({
     
-    _value: null,
-    _state: null,
-    _isHighlighted: null,
-    _isEnabled: null,
-    _isEditable: null,
-    _isBordered: null,
-    _isBezeled: null,
-    _isSelectable: null,
-    _isScrollable: null,
-    _alignment: null,
-    _controlSize: null,
-    
-    _isContinuous: null,
-    
-    _lineBreakMode: null,
-    _wraps: null,
-    
-    _controlView: null,
-    
-    _target: null,
-    _action: null,
-    
-    initTextCell: function(aString) {
-        
-    },
-    
-    initImageCell: function(image) {
-        
-    },
-    
     initWithCoder: function(aCoder) {
-        
-        // this._super(aCoder);
         this._value = aCoder.decodeObjectForKey("NSContents");
         var flags = aCoder.decodeIntForKey("NSCellFlags");
         var flags2 = aCoder.decodeIntForKey("NSCellFlags2");
-        this._state = (flags & 0x80000000) ? NSOnState : NSOffState;
+        this._state = (flags & 0x80000000) ? VN.ON_STATE : VN.OFF_STATE;
         this._isHighlighted = (flags & 0x40000000) ? true : false;
         this._isEnabled = (flags & 0x20000000) ? false : true;
 
@@ -11446,552 +11196,6 @@ var NSCell = NSObject.extend({
         this._wraps = (flags & 0x40) ? false : true;
         this._font = aCoder.decodeObjectForKey("NSSupport");
         return this;
-    },
-    
-    controlView: function() {
-        return this._controlView;
-    },
-    
-    setControlView: function(view) {
-        this._controlView = view;
-    },
-    
-    cellClass: function() {
-        return NSCell;
-    },
-    
-    type: function() {
-        
-    },
-    
-    setType: function(aType) {
-        
-    },
-    
-    state: function() {
-        return this._state;
-    },
-    
-    setstate: function(value) {
-        this._state = value;
-    },
-    
-    target: function() {
-        return this._target;
-    },
-    
-    setTarget: function(anObject) {
-        this._target = anObject;
-    },
-    
-    action: function() {
-        return this._action;
-    },
-    
-    setAction: function(aSelector) {
-        this._action = aSelector;
-    },
-    
-    tag: function() {
-        return this._tag;
-    },
-    
-    setTag: function(anInt) {
-        this._tag = anInt;
-    },
-    
-    title: function() {
-        
-    },
-    
-    setTitle: function(aString) {
-        
-    },
-    
-    isOpaque: function() {
-        
-    },
-    
-    isEnabled: function() {
-        return this._isEnabled;
-    },
-    
-    setEnabled: function(flag) {
-        this._isEnabled = flag;
-    },
-    
-    sendActionOn: function(mask) {
-        
-    },
-    
-    isContinuous: function() {
-        return this._isContinuous;
-    },
-    
-    setContinuous: function(flag) {
-        this._isContinuous = flag;
-    },
-    
-    isEditable: function() {
-        return this._isEditable;
-    },
-    
-    setEditable: function(flag) {
-        this._isEditable = flag;
-    },
-    
-    isSelectable: function() {
-        return this._isSelectable;
-    },
-    
-    setSelectable: function(flag) {
-        this._isSelectable = flag;
-    },
-    
-    isBordered: function() {
-        
-    },
-    
-    setBordered: function(flag) {
-        
-    },
-    
-    isBezeled: function() {
-        
-    },
-    
-    setBezeled: function(flag) {
-        
-    },
-    
-    isScrollable: function() {
-        
-    },
-    
-    setScrollable: function(flag) {
-        
-    },
-    
-    isHighlighted: function() {
-        return this._isHighlighted;
-    },
-    
-    setHighlighted: function(flag) {
-        this._isHighlighted = flag;
-    },
-    
-    alignment: function() {
-        return this._alignment;
-    },
-    
-    setAlignment: function(mode) {
-        this._alignment = mode;
-    },
-    
-    wraps: function() {
-        
-    },
-    
-    setWraps: function(flag) {
-        
-    },
-    
-    font: function() {
-        return this._font;
-    },
-    
-    setFont: function(fontObj) {
-        this._font = fontObj;
-    },
-    
-    entryType: function() {
-        
-    },
-    
-    setEntryType: function(aType) {
-        
-    },
-    
-    isEntryAcceptable: function(aString) {
-        
-    },
-    
-    keyEquivalent: function() {
-        
-    },
-    
-    setFormatter: function(newFormatter) {
-        
-    },
-    
-    formatter: function() {
-        
-    },
-    
-    objectValue: function() {
-        
-    },
-    
-    setObjectValue: function(obj) {
-        this._value = obj;
-    },
-    
-    hasValidObjectValue: function() {
-        
-    },
-    
-    stringValue: function() {
-        return this._value;
-    },
-    
-    setStringValue: function(aString) {
-        this._value = aString;
-    },
-    
-    compare: function(otherCell) {
-        
-    },
-    
-    intValue: function() {
-        
-    },
-    
-    setIntValue: function(anInt) {
-        
-    },
-    
-    floatValue: function() {
-        
-    },
-    
-    setFloatValue: function(aFloat) {
-        
-    },
-    
-    doubleValue: function() {
-        return this._value;
-    },
-    
-    setDoubleValue: function(aDouble) {
-        this._value = aDouble;
-    },
-    
-    takeIntValueFrom: function(sender) {
-        
-    },
-    
-    takeFloatValueFrom: function(sender) {
-        
-    },
-    
-    takeDoubleValueFrom: function(sender) {
-        this.setDoubleValue(sender.doubleValue());
-    },
-    
-    takeStringValueFrom: function(sender) {
-        
-    },
-    
-    takeObjectValueFrom: function(sender) {
-        
-    },
-    
-    image: function() {
-        
-    },
-    
-    setImage: function(image) {
-        
-    },
-    
-    setControlTint: function(controlTint) {
-        
-    },
-    
-    controlTint: function() {
-        
-    },
-    
-    setControlSize: function(size) {
-        
-    },
-    
-    controlSize: function() {
-        
-    },
-    
-    representedObject: function() {
-        
-    },
-    
-    setRepresentedObject: function(anObject) {
-        
-    },
-    
-    imageRectForBounds: function(theRect) {
-        
-    },
-    
-    titleRectForBounds: function(theRect) {
-        return theRect;
-    },
-    
-    drawingRectForBounds: function(theRect) {
-        
-    },
-    
-    cellSize: function() {
-        
-    },
-    
-    cellSizeForBounds: function(aRect) {
-        
-    },
-    
-    highlightColorWithFrame: function(cellFrame, controlView) {
-        
-    },
-    
-    calcDrawInfo: function(aRect) {
-        
-    },
-    
-    setUpFieldEditorAttributes: function(textObj) {
-        textObj.setAlignment(this.alignment());
-        textObj.setString(this.stringValue());
-        textObj.setSelectable(this.isSelectable());
-        textObj.setEditable(this.isEditable());
-        textObj.setFont(this.font());
-        
-        if (this.respondsTo('drawsBackground'))
-            textObj.setDrawsBackground(this.drawsBackground());
-        
-        if (this.respondsTo('backgroundColor'))
-            textObj.setBackgroundColor(this.backgroundColor());
-        
-        return textObj;
-    },
-
-    drawInteriorWithFrame: function(cellFrame, controlView) {
-        
-    },
-    
-    drawWithFrame: function(cellFrame, controlView) {
-        this.drawInteriorWithFrame(cellFrame, controlView);
-    },
-    
-    renderWithFrame: function(cellFrame, controlView) {
-        this.renderInteriorWithFrame(cellFrame, controlView);
-    },
-    
-    renderInteriorWithFrame: function(cellFrame, controlView) {
-        
-    },
-    
-    displayWithFrame: function(cellFrame, controlView) {
-        
-    },
-    
-    displayInteriorWithFrame: function(cellFrame, controlView) {
-        
-    },
-    
-    highlightInView: function(flag, cellFrame, controlView) {
-        
-        if (this.isHighlighted() != flag) {
-            this.setHighlighted(flag);
-            this.renderWithFrame(cellFrame, controlView, false, controlView._renderContext);
-        }
-    },
-    
-    mouseDownFlags: function() {
-        
-    },
-    
-    getPeriodicDelay: function(delay, interval) {
-        
-    },
-    
-    startTrackingInView: function(startPoint, controlView) {
-        return this.isEnabled() ? true : false;
-    },
-    
-    continueTrackingInView: function(lastPoint, currentPoint, controlView) {
-        
-        return true;
-    },
-    
-    stopTrackingInView: function(lastPoint, stopPoint, controlView, mouseUp) {
-        
-        // empty implementation
-    },
-    
-    trackMouseInView: function(theEvent, cellFrame, controlView, untilMouseUp) {
-        
-        controlView.lockFocus();
-        
-        var location = controlView.convertPointFromView(theEvent.locationInWindow(), null);
-        
-        if (!(this.startTrackingInView(theEvent.locationInWindow(), controlView))) {
-            this.drawWithFrame(cellFrame, controlView);
-            controlView.unlockFocus();
-            return false;
-        }
-        
-        this.highlightInView(true, controlView.bounds(), controlView);
-        controlView.unlockFocus();
-        if (this.isContinuous()) {
-            // mouse down, so only send if control is continous
-            NSApplication.sharedApplication().sendAction(this._action, this._target, this);
-        }
-        
-        // for each further event...
-        NSApplication.sharedApplication().bindEventsMatchingMask((NSLeftMouseUpMask | NSMouseMovedMask), this, function(theEvent) {
-            controlView.lockFocus();
-            var location = controlView.convertPointFromView(theEvent.locationInWindow(), null);
-            
-            if (untilMouseUp) {
-                if (theEvent.type() == NSLeftMouseUp) {
-                    this.stopTrackingInView(theEvent.locationInWindow(), theEvent.locationInWindow(), controlView, true);
-                    NSApplication.sharedApplication().unbindEvents();
-                    
-                    if (this.state() == NSOffState)
-                        this._state = NSOnState;
-                    else
-                        this._state = NSOffState;
-                    
-                    this.setHighlighted(false);
-                    this.drawWithFrame(cellFrame, controlView);
-                    controlView.unlockFocus();
-                    
-                    NSApplication.sharedApplication().unbindEvents();
-                    if (NSPointInRect(location, cellFrame)) {
-                        // only send action is mouse up was in rect
-                        NSApplication.sharedApplication().sendAction(this._action, this._target, this);
-                    }
-                    
-                    return;
-                }
-                else {
-                    if (NSPointInRect(location, cellFrame))
-                        this.setHighlighted(true);
-                    else
-                        this.setHighlighted(false);
-                    
-                    if (!(this.continueTrackingInView(theEvent.locationInWindow(), theEvent.locationInWindow(), controlView)))
-                        NSApplication.sharedApplication().unbindEvents();
-                }
-            }
-            else if (NSPointInRect(location, cellFrame)) {
-                console.log("Got here, in frame");
-            }
-            else {
-                console.log("moved out of frame");
-                this.stopTrackingInView(theEvent.locationInWindow(), theEvent.locationInWindow(), controlView, false);
-                NSApplication.sharedApplication().unbindEvents();
-            }
-            
-            this.drawWithFrame(cellFrame, controlView);
-            controlView.unlockFocus();
-            
-            if (this.isContinuous()) {
-                // mouse moved, so only send if control is continous
-                NSApplication.sharedApplication().sendAction(this._action, this._target, this);
-            }
-                
-        });
-    },
-    
-    editWithFrame: function(aRect, controlView, textObj, anObject, theEvent) {
-        
-        if (!this.isEditable() && !this.isSelectable())
-            return;
-        
-        textObj.setFrame(this.titleRectForBounds(aRect));
-        controlView.addSubview(textObj);
-        controlView.window().makeFirstResponder(textObj);
-        textObj.setDelegate(anObject);
-        textObj.mouseDown(theEvent);
-    },
-    
-    selectWithFrameInView: function(aRect, controlView, textObj, anObject, selStart, selLength) {
-        
-        if (!this.isEditable() && !this.isSelectable()) return;
-        
-        textObj.setFrame(this.titleRectForBounds(aRect));
-        controlView.addSubview(textObj);
-        controlView.window().makeFirstResponder(textObj);
-        textObj.setDelegate(anObject);
-        textObj.setSelectedRange(null);
-    },
-    
-    endEditing: function(textObj) {
-        
-        this.setStringValue(textObj.string());
-    },
-    
-    resetCursorRectInView: function(cellFrame, controlView) {
-        
-    },
-    
-    setMenu: function(aMenu) {
-        
-    },
-    
-    menu: function() {
-        
-    },
-    
-    menuForEvent: function(theEvent, cellFrame, view) {
-        
-    },
-    
-    setSendsActionOnEndEditing: function(flag) {
-        
-    },
-    
-    sendsActionOnEndEditing: function() {
-        
-    },
-    
-    baseWritingDirection: function() {
-        
-    },
-    
-    setBaseWritingDirection: function(writingDirection) {
-        
-    },
-    
-    setLineBreakMode: function(mode) {
-        this._lineBreakMode = mode;
-    },
-    
-    lineBreakMode: function() {
-        return this._lineBreakMode;
-    },
-    
-    setAllowsUndo: function(flag) {
-        
-    },
-    
-    allowsUndo: function() {
-        
-    },
-    
-    setIntegerValue: function(anInteger) {
-        
-    },
-    
-    integerValue: function() {
-        
-    },
-    
-    trunacatesLastVisibleLine: function() {
-        
-    },
-    
-    setTrunacatesLastVisibleLine: function(flag) {
-        
     }
 });     
 /* 
@@ -12021,11 +11225,98 @@ var NSCell = NSObject.extend({
  */
 
 
-var NSControlTextDidBeginEditingNotification    = "NSControlTextDidBeginEditingNotification";
-var NSControlTextDidEndEditingNotification      = "NSControlTextDidEndEditingNotification";
-var NSControlTextDidChangeNotification          = "NSControlTextDidChangeNotification";
+VN.ANY_TYPE                           = 0;
+VN.INT_TYPE                           = 1;
+VN.POSITIVE_INT_TYPE                  = 2;
+VN.FLOAT_TYPE                         = 3;
+VN.POSITIVE_FLOAT_TYPE                = 4;
+VN.DOUBLE_TYPE                        = 6;
+VN.POSITIVE_DOUBLE_TYPE               = 7;
+                                        
+/**
+    VN.CellType
+*/
+VN.NULL_CELL_TYPE                     = 0;
+VN.TEXT_CELL_TYPE                     = 1;
+VN.IMAGE_CELL_TYPE                    = 2;
+                                        
+/**
+    VN.CellAttribute
+*/                      
+VN.CELL_DISABLED                      = 0;
+VN.CELL_STATE                         = 1;
+VN.PUSH_IN_CELL                       = 2;
+VN.CELL_EDITABLE                      = 3;
+VN.CHANGE_GRAY_CELL                   = 4;
+VN.CELL_HIGHLIGHTED                   = 5;
+VN.CELL_LIGHTS_BY_CONTENTS            = 6;
+VN.CELL_LIGHTS_BY_GRAY                = 7;
+VN.CHANGE_BACKGROUND_CELL             = 8;
+VN.CELL_LIGHTS_BY_BACKGROUND          = 9;
+VN.CELL_IS_BORDERED                   = 10;
+VN.CELL_HAS_OVERLAPPING_IMAGE         = 11;
+VN.CELL_HAS_IMAGE_HORIZONTAL          = 12;
+VN.CELL_HAS_IMAGE_ON_LEFT_OR_BOTTOM   = 13;
+VN.CELL_CHANGES_CONTENTS              = 14;
+VN.CELL_IS_INSET_BUTTON               = 15;
+VN.CELL_ALLOWS_MIXED_STATE            = 16;
+                                        
+/**
+    VN.CellImagePosition
+*/
+VN.NO_IMAGE                           = 0;
+VN.IMAGE_ONLY                         = 1;
+VN.IMAGE_LEFT                         = 2;
+VN.IMAGE_RIGHT                        = 3;
+VN.IMAGE_BELOW                        = 4;
+VN.IMAGE_ABOVE                        = 5;
+VN.IMAGE_OVERLAPS                     = 6;
+                                        
+/**
+    VN.ImageScaling
+*/                       
+VN.IMAGE_SCALE_PROPORTIONALLY_DOWN      = 0;
+VN.IMAGE_SCALE_AXES_INDEPENDENTLY       = 1;
+VN.IMAGE_SCALE_NONE                     = 2;
+VN.IMAGE_SCALE_PROPORTIONALLY_UP_OR_DOWN = 3;
 
-var NSControl = NSView.extend({
+/**
+    VN.CellStateValue
+*/
+VN.MIXED_STATE                        = -1;
+VN.OFF_STATE                          = 0;
+VN.ON_STATE                           = 1;
+                                        
+VN.NO_CELL_MASK                       = 0;
+VN.CONTENTS_CELL_MASK                 = 1;
+VN.PUSH_IN_CELL_MASK                  = 2;
+VN.CHANGE_GRAY_CELL_MASK              = 4;
+VN.CHANGE_BACKGROUND_CELL_MASK        = 8;
+
+VN.DEFAULT_CONTROL_TINT               = 0;
+VN.BLUE_CONTROL_TINT                  = 1;
+VN.GRAPHITE_CONTROL_TINT              = 6;
+VN.CLEAR_CONTROL_TINT                 = 7;
+
+/**
+    VN.ControlSize
+*/
+VN.REGULAR_CONTROL_SIZE               = 0;
+VN.SMALL_CONTROL_SIZE                 = 1;
+VN.MINI_CONTROL_SIZE                  = 2;
+
+/**
+    VN.Control notifications
+*/
+VN.CONTROL_TEXT_DID_BEGIN_EDITING_NOTIFICATION    = "NSControlTextDidBeginEditingNotification";
+VN.CONTROL_TEXT_DID_END_EDITING_NOTIFICATION      = "NSControlTextDidEndEditingNotification";
+VN.CONTROL_TEXT_DID_CHANGE_NOTIFICATION           = "NSControlTextDidChangeNotification";
+
+/**
+    @class VN.Control
+    @extends VN.View
+*/
+var NSControl = VN.Control = VN.View.extend({
    
     _tag: null,
     
@@ -12033,23 +11324,122 @@ var NSControl = NSView.extend({
     
     _currentEditor: null,
     
-    _isEnabled: null,
-    
     _value: null,
+    _state: null,
+    _isHighlighted: null,
+    _isEnabled: null,
+    _isEditable: null,
+    _isBordered: null,
+    _isBezeled: null,
+    _isSelectable: null,
+    _isScrollable: null,
+    _alignment: null,
+    _controlSize: null,
     
+    _isContinuous: null,
+    
+    _lineBreakMode: null,
+    _wraps: null,
+    
+    _controlView: null,
+    
+    _target: null,
+    _action: null,
+    
+    /**
+        @param {VN.Rect} frameRect
+        @returns VN.Control
+    */
     initWithFrame: function(frameRect) {
-        
         this._super(frameRect);
         this.setCell(this.cellClass().create());
         return this;
     },
     
+    /**
+        @param {VN.Coder} aCoder
+        @returns VN.Control
+    */
     initWithCoder: function(aCoder) {
+        this._value = "";
         
         this._super(aCoder);
         this._cell = aCoder.decodeObjectForKey("NSCell");
+        
+        if (!this._cell) return this;
+        
+        this._value = this._cell._value;
+        this._state = this._cell._state;
+        this._isHighlighted = this._cell._isHighlighted;
+        this._isEnabled = this._cell._isEnabled;
+
+        this._isEditable = this._cell._isEditable;
+        this._isBordered = this._cell._isBordered;
+        this._isBezeled = this._cell._isBezeled;
+        this._isSelectable = this._cell._isSelectable;
+        this._isScrollable = this._cell._isScrollable;
+        this._alignment = this._cell._alignment;
+        this._controlSize = this._cell._controlSize;
+        this._isContinuous = this._cell._isContinuous;
+        
+        this._lineBreakMode = this._cell._lineBreakMode;
+        this._wraps = this._cell._wraps;
+        this._font = this._cell._font;
         this.setFrame(this._frame);
         return this;
+    },
+    
+    /**
+        @param {VN.TextView} textObj
+        @returns VN.TextView
+    */
+    setUpFieldEditorAttributes: function(textObj) {
+        textObj.setAlignment(this.alignment());
+        textObj.setString(this.stringValue());
+        textObj.setSelectable(this.isSelectable());
+        textObj.setEditable(this.isEditable());
+        textObj.setFont(this.font());
+        
+        if (this.respondsTo('drawsBackground'))
+            textObj.setDrawsBackground(this.drawsBackground());
+        
+        if (this.respondsTo('backgroundColor'))
+            textObj.setBackgroundColor(this.backgroundColor());
+        
+        return textObj;
+    },
+    
+    /**
+        @param {VN.Rect} aRect
+        @param {VN.View} controlView
+        @param {VN.TextView} textObj
+        @param {VN.Object} anObject the delegate
+        @param {VN.Event} theEvent
+    */
+    editWithFrame: function(aRect, controlView, textObj, anObject, theEvent) {
+        if (!this.isEditable() && !this.isSelectable())
+            return;
+
+        textObj.setFrame(this.titleRectForBounds(aRect));
+        controlView.addSubview(textObj);
+        controlView.window().makeFirstResponder(textObj);
+        textObj.setDelegate(anObject);
+        textObj.mouseDown(theEvent);
+    },
+
+    selectWithFrameInView: function(aRect, controlView, textObj, anObject, selStart, selLength) {
+
+        if (!this.isEditable() && !this.isSelectable()) return;
+
+        textObj.setFrame(this.titleRectForBounds(aRect));
+        controlView.addSubview(textObj);
+        controlView.window().makeFirstResponder(textObj);
+        textObj.setDelegate(anObject);
+        textObj.setSelectedRange(null);
+    },
+
+    endEditing: function(textObj) {
+        this.setStringValue(textObj.string());
     },
     
     sizeToFit: function() {
@@ -12061,12 +11451,10 @@ var NSControl = NSView.extend({
     },
     
     cell: function() {
-        
         return this._cell;
     },
     
     setCell: function(aCell) {
-        
         this._cell = aCell;
         this._cell.setControlView(this);
         this.setNeedsDisplay(true);
@@ -12077,30 +11465,35 @@ var NSControl = NSView.extend({
     },
     
     target: function() {
-        
-        return this._cell.target();
+        return this._target;
     },
     
     setTarget: function(anObject) {
-        
-        this._cell.setTarget(anObject);
+        this._target = anObject;
     },
     
     action: function() {
-        
-        return this._cell.action();
+        return this._action;
     },
     
     setAction: function(anAction) {
-        this._cell.setAction(anAction);
+        this._action = anAction;
+    },
+    
+    state: function() {
+        return this._state;
+    },
+    
+    setstate: function(value) {
+        this._state = value;
     },
     
     tag: function() {
-        
+        return this._tag;
     },
     
     setTag: function(anInt) {
-        
+        this._tag = anInt;
     },
     
     selectedTag: function() {
@@ -12120,131 +11513,97 @@ var NSControl = NSView.extend({
     },
     
     isContinuous: function() {
-        
+        return this._isContinuous;
     },
     
     setContinuous: function(flag) {
-        
+        this._isContinuous = flag;
     },
     
     isEnabled: function() {
-        
-        return this._cell.isEnabled();
+        return this._isEnabled;
     },
     
     setEnabled: function(flag) {
-        
-        this._cell.setEnabled(flag);
+        this._isEnabled = flag;
+        this.setNeedsDisplay(true);
     },
     
     alignment: function() {
-        
-        return this._cell.alignment();
+        return this._alignment;
     },
     
     setAlignment: function(mode) {
-        
-        this._cell.setAlignment(mode);
+        this._alignment = mode;
         this.setNeedsDisplay(true);
     },
     
     font: function() {
-        
+        return this._font;
     },
     
     setFont: function(fontObj) {
-        
+        this._font = fontObj;
     },
     
     setFormatter: function(newFormatter) {
-        
+        this._formatter = newFormatter;
     },
     
     formatter: function() {
-        
+        return this._formatter;
     },
     
     setObjectValue: function(obj) {
-        
-        this._cell.setObjectValue(obj);
+        this._value = obj;
         this.setNeedsDisplay(true);
     },
     
     setStringValue: function(aString) {
-        
-        this._cell.setStringValue(aString);
+        this._value = aString;
         this.setNeedsDisplay(true);
     },
     
     setIntValue: function(anInt) {
-        
-        this._cell.setIntValue(anInt);
+        this._value = anInt;
         this.setNeedsDisplay(true);
     },
     
     setFloatValue: function(aFloat) {
-        
-        this._cell.setFloatValue(aFloat);
+        this._value = aFloat;
         this.setNeedsDisplay(true);
     },
     
     setDoubleValue: function(aDouble) {
-        
-        this._cell.setDoubleValue(aDouble);
+        this._value = aDouble;
         this.setNeedsDisplay(true);
     },
     
     objectValue: function() {
-        
-        return this._cell.objectValue();
+        return this._value;
     },
     
     stringValue: function() {
-        
-        return this._cell.stringValue();
+        return new String(this._value);
     },
     
     intValue: function() {
-        
-        return this._cell.intValue();
+        return parseInt(this._value);
     },
     
     floatValue: function() {
-        
-        return this._cell.floatValue();
+        return parseFloat(this._value);
     },
     
     doubleValue: function() {
-        
-        return this._cell.doubleValue();
-    },
-    
-    updateCell: function(aCell) {
-        
-    },
-    
-    updateCellInside: function(aCell) {
-        
-    },
-    
-    drawCellInside: function(aCell) {
-        
-    },
-    
-    drawCell: function(aCell) {
-        
-    },
-    
-    selectCell: function(aCell) {
-        
+        return parseFloat(this._value);
     },
     
     /**
         Core graphics (canvas & vml) based rendering
     */
     drawRect: function(rect) {
-        if (this._cell)
-            this._cell.drawWithFrame(this.bounds(), this);
+        // default is to draw nothing.
     },
     
     /**
@@ -12258,10 +11617,7 @@ var NSControl = NSView.extend({
         @param {NSRenderContext} context
     */
     renderRect: function(aRect, firstTime, context) {
-        if (this._cell) {
-            this._cell.renderWithFrame(aRect, this, context.firstTime(), context);
-            context.setFirstTime(false);
-        }
+        // default is to render nothing.
     },
     
     /**
@@ -12269,7 +11625,6 @@ var NSControl = NSView.extend({
         @param {NSObject} theTarget
     */
     sendActionTo: function(theAction, theTarget) {
-        
         if (theAction && theTarget) {
             NSApplication.sharedApplication().sendActionTo(theAction, theTarget, this);
             return true;
@@ -12279,32 +11634,35 @@ var NSControl = NSView.extend({
     },
     
     takeIntValueFrom: function(sender) {
-        
+        this.setIntValue(sender.intValue());
+        this.setNeedsDisplay(true);
     },
     
     takeFloatValueFrom: function(sender) {
-        
+        this.setFloatValue(sender.doubleValue());
+        this.setNeedsDisplay(true);
     },
     
     takeDoubleValueFrom: function(sender) {
-        this._cell.takeDoubleValueFrom(sender);
+        this.setDoubleValue(sender.doubleValue());
         this.setNeedsDisplay(true);
     },
     
     takeStringValueFrom: function(sender) {
-        
+        this.setStringValue(sender.stringValue());
+        this.setNeedsDisplay(true);
     },
 
     takeObjectValueFrom: function(sender) {
-        
+        this.setObjectValue(sender.objectValue());
+        this.setNeedsDisplay(true);
     },
     
     currentEditor: function() {
-        
+        return this._currentEditor;
     },
     
     abortEditing: function() {
-        
         if (this._currentEditor) {
             this.window().endEditingFor(this);
             this._currentEditor = null;
@@ -12315,32 +11673,143 @@ var NSControl = NSView.extend({
     },
     
     validateEditing: function() {
-        
+        return true;
     },
     
     mouseDown: function(theEvent) {
+        this.trackMouse(theEvent, true);
+    },
+    
+    /**
+        @param {NSPoint} startPoint
+        @returns Boolean
+    */
+    startTracking: function(startPoint) {
+        return this.isEnabled() ? true : false;
+    },
+    
+    /**
+        @param {NSPoint} lastPoint
+        @param {NSPoint} currentPoint
+        @returns Boolean
+    */
+    continueTracking: function(lastPoint, currentPoint) {
+        return true;
+    },
+    
+    /**
+        @param {NSPoint} lastPoint
+        @param {NSPoint} stopPoint
+        @param {Boolean} mouseUp
+    */
+    stopTracking: function(lastPoint, stopPoint, mouseUp) {
+        // empty implementation
+    },
+    
+    /**
+        @param {NSEvent} theEvent
+        @param {Boolean} untilMouseUp
+    */
+    trackMouse: function(theEvent, untilMouseUp) {
+        var location = this.convertPointFromView(theEvent.locationInWindow(), null);
+        if (!(this.startTracking(theEvent.locationInWindow())))
+            return false;
         
-        this._cell.trackMouseInView(theEvent, this.bounds(), this, true);
+        this.setHighlighted(true); // hmmm?
+        this.setNeedsDisplay(true);
+        if (this.isContinuous())
+            NSApplication.sharedApplication().sendAction(this._action, this._target, this);
+        
+        // for every further event
+        NSApplication.sharedApplication().bindEventsMatchingMask((NSLeftMouseUpMask | NSMouseMovedMask), this, function(theEvent) {
+            var location = this.convertPointFromView(theEvent.locationInWindow(), null);
+            
+            if (untilMouseUp) {
+                if (theEvent.type() == NSLeftMouseUp) {
+                    this.stopTracking(theEvent.locationInWindow(), theEvent.locationInWindow(), true);
+                    NSApplication.sharedApplication().unbindEvents();
+                    
+                    this._state = (this.state() == VN.OFF_STATE) ? VN.ON_STATE : VN.OFF_STATE;
+                    this.setHighlighted(false);
+                    
+                    if (NSPointInRect(location, this.bounds()))
+                        NSApplication.sharedApplication().sendAction(this._action, this._target, this);
+                    
+                    this.setNeedsDisplay(true);
+                    return;
+                }
+                else {
+                    this.setHighlighted(NSPointInRect(location, this.bounds()) ? true : false);
+                    this.setNeedsDisplay(true);
+
+                    if (!(this.continueTracking(theEvent.locationInWindow(), theEvent.locationInWindow()))) {
+                        NSApplication.sharedApplication().unbindEvents();
+                    }
+                }
+            }
+            else if (NSPointInRect(location, this.bounds())) {
+                console.log('Got here in frame');
+            }
+            else {
+                console.log('moved out fo frame');
+                this.stopTracking(theEvent.locationInWindow(), theEvent.locationInWindow(), false);
+                NSApplication.sharedApplication().unbindEvents();
+            }
+            
+            // draw frame
+            
+            if (this.isContinuous()) {
+                 NSApplication.sharedApplication().sendAction(this._action, this._target, this);
+            }
+        });
+    },
+    
+    highlight: function(flag) {
+        if (this.isHighlighted() != flag) {
+            this.setHighlighted(flag);
+            this.renderRect(this.bounds(), false, this._renderContext);
+        }
+    },
+    
+    isHighlighted: function() {
+        return this._isHighlighted;
+    },
+    
+    setHighlighted: function(flag) {
+        this._isHighlighted = flag;
+    },
+    
+    isEditable: function() {
+        return this._isEditable;
+    },
+    
+    lineBreakMode: function() {
+        return this._lineBreakMode;
+    },
+    
+    setLineBreakMode: function(mode) {
+        this._lineBreakMode = mode;
     },
     
     baseWritingDirection: function() {
-        
+        return this._baseWritingDirection;
     },
     
     setBaseWritingDirection: function(writingDirection) {
-        
+        this._baseWritingDirection = writingDirection;
     },
     
     integerValue: function() {
-        
+        return parseInt(this._value);
     },
     
     setIntegerValue: function(anInteger) {
-        
+        this._value = anInteger;
     },
     
     takeIntegerValueFrom: function(sender) {
-        
+        this.setIntegerValue(sender.integerValue());
+        this.setNeedsDisplay(true);
     }
 });/* 
  * button_cell.js
@@ -12376,46 +11845,16 @@ var NSControl = NSView.extend({
 // resource('NSRadioButtonNormal.png');
 // resource('NSRadioButtonAlternate.png');
 
-// NSButtonType
-var NSMomentaryLightButton		    = 0;
-var NSPushOnPushOffButton		    = 1;
-var NSToggleButton			        = 2;
-var NSSwitchButton			        = 3;
-var NSRadioButton			        = 4;
-var NSMomentaryChangeButton		    = 5;
-var NSOnOffButton			        = 6;
-var NSMomentaryPushInButton		    = 7;
 
-// NSBezelStyle
-var NSRoundedBezelStyle             = 1;
-var NSRegularSquareBezelStyle       = 2;
-var NSThickSquareBezelStyle         = 3;
-var NSThickerSquareBezelStyle       = 4;
-var NSDisclosureBezelStyle          = 5;
-var NSShadowlessSquareBezelStyle    = 6;
-var NSCircularBezelStyle            = 7;
-var NSTexturedSquareBezelStyle      = 8
-var NSHelpButtonBezelStyle          = 9;
-var NSSmallSquareBezelStyle         = 10;
-var NSTexturedRoundedBezelStyle     = 11;
-var NSRoundRectBezelStyle           = 12;
-var NSRecessedBezelStyle            = 13;
-var NSRoundedDisclosureBezelStyle   = 14;    
-
-
-// NSGradientType
-var NSGradientNone                  = 0;
-var NSGradientConcaveWeak           = 1;
-var NSGradientConcaveStrong         = 2;
-var NSGradientConvexWeak            = 3;
-var NSGradientConvexStrong          = 4;
-
+/**
+    @class NSButtonCell
+    @class NSCell
+    
+    Clas maintained for compatibility with nibs. Once Carino is finished, this
+    class might be removed, so do not rely on this implementation.
+*/
 var NSButtonCell = NSCell.extend({
-    
-    _alternateImage: null,
-    
-    _image: null,
-    
+        
     initWithCoder: function(aCoder) {
         this._super(aCoder);
         var flags = aCoder.decodeIntForKey("NSButtonFlags");
@@ -12430,6 +11869,145 @@ var NSButtonCell = NSCell.extend({
         }
         
         return this;
+    }
+});/* 
+ * button.js
+ * vienna
+ * 
+ * Created by Adam Beynon.
+ * Copyright 2009 Adam Beynon.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+ 
+
+/**
+    VN.ButtonType
+*/
+VN.MOMENTARY_LIGHT_BUTTON         = 0;
+VN.PUSH_ON_PUSH_OFF_BUTTON        = 1;
+VN.TOGGLE_BUTTON                  = 2;
+VN.SWITCH_BUTTON                  = 3;
+VN.RADIO_BUTTON                   = 4;
+VN.MOMENTARY_CHANGE_BUTTON        = 5;
+VN.ON_OFF_BUTTON                  = 6;
+VN.MOMENTARY_PUSH_IN_BUTTON       = 7;
+
+/**
+    VN.BezelStyle
+*/
+VN.ROUNDED_BEZEL_STYLE            = 1;
+VN.REGULAR_SQUARE_BEZEL_STYLE     = 2;
+VN.THICK_SQUARE_BEZEL_STYLE       = 3;
+VN.THICKER_SQUARE_BEZEL_STLYE     = 4;
+VN.DISCLOSURE_BEZEL_STYLE         = 5;
+VN.SHADOWLESS_SQUARE_BEZEL_STLYE  = 6;
+VN.CIRCULAR_BEZEL_STYLE           = 7;
+VN.TEXTURED_SQUARE_BEZEL_STYLE    = 8
+VN.HELP_BUTTON_BEZEL_STYLE        = 9;
+VN.SMALL_SQUARE_BEZEL_STYLE       = 10;
+VN.TEXTURED_ROUNDED_BEZEL_STYLE   = 11;
+VN.ROUNDED_RECT_BEZEL_STYLE       = 12;
+VN.RECESSED_BEZEL_STYLE           = 13;
+VN.ROUNDED_DISCLOSURE_BEZEL_STYLE = 14;    
+
+/**
+    VN.GradientType
+*/
+VN.GRADIENT_NONE                  = 0;
+VN.GRADIENT_CONCAVE_WEAK          = 1;
+VN.GRADIENT_CONCAVE_STRONG        = 2;
+VN.GRADIENT_CONVEX_WEAK           = 3;
+VN.GRADIENT_CONVEX_STRONG         = 4;
+
+/**
+    @class VN.Button
+    @extends VN.Control
+*/
+var NSButton = VN.Button = VN.Control.extend({
+    
+    /**
+        @type VN.Image
+    */
+    _alternateImage: null,
+    
+    /**
+        @type VN.Image
+    */
+    _image: null,
+    
+    /**
+        @param {VN.Coder} aCoder
+        @returns VN.Button
+    */
+    initWithCoder: function(aCoder) {
+        this._super(aCoder);
+        return this;
+    },
+    
+    /**
+        @param {NSRect} aRect
+        @param {Boolean} firstTime
+        @param {NSRenderContext} context
+    */
+    renderRect: function(aRect, firstTime, context) { 
+        if (firstTime) {
+            context.setClass('ns-button');
+            context.push('div', 'ns-button-left');
+            context.push('div', 'ns-button-middle');
+            context.push('div', 'ns-button-right');
+            context.push('span', 'ns-button-title');
+        }
+            
+        this.renderBezel(aRect, firstTime, context);
+            // this.renderInteriorWithFrame(cellFrame, controlView, firstTime, context);
+        this.renderTitle(this._value, this.titleRectForBounds(aRect), firstTime, context);
+    },
+    
+    /**
+        @param {NSRect} aRect
+        @param {Boolean} firstTime
+        @param {NSRenderContext} context
+    */
+    renderBezel: function(aRect, firstTime, context) {
+        // enabled
+        if (this._isEnabled)
+            context.removeClass('disabled');
+        else
+            context.addClass('disabled');
+        
+        // bordered
+        if (this._isBordered)
+            context.addClass('bordered');
+        else
+            context.removeClass('bordered');
+        
+        // highlighted
+        if (this._isHighlighted)
+            context.addClass('highlighted');
+        else
+            context.removeClass('highlighted');
+    },
+    
+    renderTitle: function(title, titleRect, firstTime, context) {
+        context.$('ns-button-title').setFrame(titleRect);
+        context.$('ns-button-title').renderAttributedString(this.attributedStringValue());
     },
     
     drawWithFrame: function(cellFrame, controlView) {
@@ -12497,56 +12075,16 @@ var NSButtonCell = NSCell.extend({
         CGContextRestoreGState(c);
     },
     
-    /**
-        @param {NSRect} cellFrame
-        @param {NSView} controlView
-        @param {Boolean} firstTime
-        @param {NSRenderContext} context
-    */
-    renderWithFrame: function(cellFrame, controlView, firstTime, context) {
-        // return; 
-        if (firstTime) {
-            context.setClass('ns-button');
-            context.push('div', 'ns-button-left');
-            context.push('div', 'ns-button-middle');
-            context.push('div', 'ns-button-right');
-            context.push('span', 'ns-button-title');
-        }
-            
-        this.renderBezelWithFrame(cellFrame, controlView, firstTime, context);
-            // this.renderInteriorWithFrame(cellFrame, controlView, firstTime, context);
-        this.renderTitleWithFrame(this._value, this.titleRectForBounds(cellFrame), controlView, firstTime, context);
+    cellClass: function() {
+        return NSButtonCell;
     },
     
-    /**
-        @param {NSRect} cellFrame
-        @param {NSView} controlView
-        @param {Boolean} firstTime
-        @param {NSRenderContext} context
-    */
-    renderBezelWithFrame: function(cellFrame, controlView, firstTime, context) {
-        // enabled
-        if (this._isEnabled)
-            context.removeClass('disabled');
-        else
-            context.addClass('disabled');
+    title: function() {
         
-        // bordered
-        if (this._isBordered)
-            context.addClass('bordered');
-        else
-            context.removeClass('bordered');
-        
-        // highlighted
-        if (this._isHighlighted)
-            context.addClass('highlighted');
-        else
-            context.removeClass('highlighted');
     },
     
-    renderTitleWithFrame: function(title, titleRect, controlView, firstTime, context) {
-        context.$('ns-button-title').setFrame(titleRect);
-        context.$('ns-button-title').renderAttributedString(this.attributedStringValue());
+    setTitle: function(aString) {
+        
     },
     
     titleRectForBounds: function(theRect) {
@@ -12581,10 +12119,13 @@ var NSButtonCell = NSCell.extend({
 		
 		var attributes = NSDictionary.create();
 		
+		
 		// font
-		if (this.font()) {
-		    attributes.setObjectForKey(this.font(), NSFontAttributeName);
+		if (!this.font()) {
+		    this.setFont(NSFont.controlContentFontOfSize(12));
+		    
 		}
+		attributes.setObjectForKey(this.font(), NSFontAttributeName);
 		
 		// textColor
 		var textColor;
@@ -12603,76 +12144,6 @@ var NSButtonCell = NSCell.extend({
 		
 		return NSAttributedString.create('initWithStringAndAttributes', this._value, attributes);
 	},
-});/* 
- * button.js
- * vienna
- * 
- * Created by Adam Beynon.
- * Copyright 2009 Adam Beynon.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
- 
-
-var NSButton = NSControl.extend({
-    
-    /**
-        @type NSRenderContext
-    */
-    _renderContext: null,
-    
-    setupGraphicsContextDisplay: function() {
-        this._DOMContainer = document.createElement('div');
-        this._DOMGraphicsContext = document.createElement('div');
-        
-        
-        this._DOMContainer.appendChild(this._DOMGraphicsContext);
-        
-        this._DOMContainer.style.display = "block";
-        this._DOMContainer.style.position = "absolute";
-        this._DOMContainer.style.overflowX = "hidden";
-        this._DOMContainer.style.overflowY = "hidden";
-        
-        this._DOMGraphicsContext.style.display = "block";
-        this._DOMGraphicsContext.style.position = "absolute";
-        this._DOMGraphicsContext.style.overflowX = "hidden";
-        this._DOMGraphicsContext.style.overflowY = "hidden";
-        
-        this._renderContext = NSRenderContext.renderContextWithElement(this._DOMGraphicsContext);
-    },
-    
-    initWithCoder: function(aCoder) {
-        this._super(aCoder);
-        return this;
-    },
-    
-    cellClass: function() {
-        return NSButtonCell;
-    },
-    
-    title: function() {
-        
-    },
-    
-    setTitle: function(aString) {
-        
-    }
 });
 /* 
  * image.js
@@ -13127,7 +12598,7 @@ var NSColor = NSObject.extend({
 	}
 });
 
-Object.extend(NSColor, {
+VN.extend(NSColor, {
 	
 	colorWithCalibratedWhite: function(white, alpha) {
 		var theColor =  NSColor.create();
@@ -13580,7 +13051,7 @@ var NSFont = NSObject.extend({
     }
 });
 
-Object.extend(NSFont, {
+VN.extend(NSFont, {
     
     fontWithNameAndSize: function(fontName, fontSize) {
         var font = NSFont.create();
@@ -13648,7 +13119,8 @@ Object.extend(NSFont, {
     },
     
     controlContentFontOfSize: function(fontSize) {
-        
+        var theFont = NSFont.fontWithNameAndSize("Arial", fontSize);
+        return theFont;
     },
     
     systemFontSize: function() {
@@ -13912,6 +13384,15 @@ var NSMainMenu = NSWindow.extend({
 		c.stroke();
 		
 		CGContextRestoreGState(c);
+	},
+	
+	renderRect: function(aRect, firstTime, context) {
+	    this._super(aRect, firstTime, context);
+	    if (firstTime) {
+	        context.removeClass('shadow');
+	        context.removeClass('rounded');
+	        context.addClass('ns-window-main-menu');
+	    }
 	}
 });
 /* 
@@ -14115,10 +13596,10 @@ var NSMenu = NSObject.extend({
     }
 });
 
-Object.extend(NSMenu, {
+VN.extend(NSMenu, {
     
     menuBarHeight: function() {
-        return 30.0;
+        return 35.0;
     }
 });
 /* 
@@ -15170,7 +14651,7 @@ var NSMenuWindow = NSWindow.extend({
  */
 
 
-var NSNib = NSObject.extend({
+var NSNib = VN.Nib = VN.Object.extend({
 
     _data: null, 
     _connections: null,
@@ -18774,28 +18255,11 @@ var NSShadow = NSObject.extend({
  */
 
 
-// NSTickMarkPosition
-var NSTickMarkBelow = 0;
-var NSTickMarkAbove = 1;
-var NSTickMarkLeft  = 1;
-var NSTickMarkRight = 0;
-
-// NSSliderType
-var NSLinearSlider   = 0;
-var NSCircularSlider = 1;
-
 /**
     @class NSSliderCell
-    
-    Cell used for the drawing parts of the NSSlider control. A min and max value
-    can be set to constrain drawing. Both normal sliders (vertical as well as
-    horizontal) and round knobs can be used.
+    @extends NSCell
 */
 var NSSliderCell = NSCell.extend({
-   
-   _minValue: 0,
-   
-   _maxValue: 0,
    
    initWithCoder: function(aCoder) {
        this._super(aCoder);
@@ -18804,122 +18268,7 @@ var NSSliderCell = NSCell.extend({
        this._value = aCoder.decodeDoubleForKey("NSValue");
        return this;
    },
-   
-    /**
-        Draw the slider using CoreGraphics (canvas/vml)
-        @param {NSRect} cellFrame
-        @param {NSView} controlView
-    */
-    drawWithFrame: function(cellFrame, controlView) {
-        this.renderWithFrame(cellFrame, controlView, false, controlView._renderContext);
-        return;
-        
-       var SLIDER_PADDING = 9.5;
-       var KNOB_PADDING = 2;
-       
-       var c = NSGraphicsContext.currentContext().graphicsPort();
-       CGContextSaveGState(c);
-       if (!this.isEnabled()) CGContextSetAlpha(c, 0.8);
-       
-       // draw the bar
-       NSImage.imageNamed('NSSliderHorizontalLeft.png').drawInRect(CGRectMake(KNOB_PADDING, 8, 5, 5));
-       NSImage.imageNamed('NSSliderHorizontalMiddle.png').drawInRect(CGRectMake(5 + KNOB_PADDING, 8, (cellFrame.size.width - 10) - (2 * KNOB_PADDING), 5));
-       NSImage.imageNamed('NSSliderHorizontalRight.png').drawInRect(CGRectMake((cellFrame.size.width-5) - KNOB_PADDING, 8 ,5 ,5));
-       
-       // draw the knob
-       var knobPosition = (((this._value / (this._maxValue - this._minValue)) * ((cellFrame.size.width - (2 * SLIDER_PADDING)))));
-       // use math.round to make sure knob is aligned to a pixel... this avoids a blurry knob if it is aligned between pixel boundries.
-       NSImage.imageNamed('NSSliderHorizontalKnobNormal.png').drawInRect(CGRectMake(Math.round(knobPosition), 1, 19, 19));
-       
-       CGContextRestoreGState(c);
-    },
-    
-    /**
-        @param {NSRect} cellFrame
-        @param {NSView} controlView
-        @param {Boolean} firstTime
-        @param {NSRenderContext} context
-    */
-    renderWithFrame: function(cellFrame, controlView, firstTime, context) {
-        var SLIDER_PADDING = 9.5, KNOB_PADDING = 2.0;
-    
-        if (firstTime) {
-            context.setClass('ns-slider');
-            context.push('div', 'ns-slider-track-left');
-            context.push('div', 'ns-slider-track');
-            context.push('div', 'ns-slider-track-right');
-            context.push('div', 'ns-slider-knob');
-        }
-        else {
-            // set knob position
-            var knobPosition = Math.round(((this._value / (this._maxValue - this._minValue)) * ((cellFrame.size.width - (2 * SLIDER_PADDING)))));
-            context.$('ns-slider-knob').set(knobPosition + 'px', 'left');
-            
-            // enabled/disabled
-            if (this._isEnabled)
-                                        context.removeClass('disabled');
-                                    else
-                                        context.addClass('disabled');
-        }
-    },
-    
-    startTrackingInView: function(startPoint, controlView) {
-       if (this.isEnabled()) {
-           var SLIDER_PADDING = 8.5;
-           var location = controlView.convertPointFromView(startPoint, null);
-           this.setDoubleValue(((location.x - SLIDER_PADDING) / (controlView.bounds().size.width - (2 * SLIDER_PADDING))) * (this._maxValue - this._minValue));
-           this.drawWithFrame(controlView.bounds(), controlView);
-           
-           return true;
-       }
-       return false;
-   },
 
-    /**
-        Sets the double value for the slider. If the value is below the minValue,
-        then the value is adjusted to be the minValue. Similarly, if the value
-        is greater than the maxValue, it is also adjusted acordingly.
-    */
-    setDoubleValue: function(aDouble) {
-        if (aDouble < this._minValue) this._value = this._minValue;
-        else if (aDouble > this._maxValue) this._value = this._maxValue;
-        else this._value = aDouble;
-    },
-   
-    continueTrackingInView: function(lastPoint, currentPoint, controlView) {
-        var SLIDER_PADDING = 9.5;
-        var location = controlView.convertPointFromView(currentPoint, null);
-        this.setDoubleValue(((location.x - SLIDER_PADDING) / (controlView.bounds().size.width - (2 * SLIDER_PADDING))) * (this._maxValue - this._minValue));
-        this.drawWithFrame(controlView.bounds(), controlView);
-        return true;
-    },
-   
-   /**
-        @param flag - If the mouseIsUp
-   */
-   stopTrackingInView: function(lastPoint, stopPoint, controlView, flag) {
-       
-   },
-   
-   prefersTrackingUntilMouseUp: function() {
-       
-   },
-   
-   minValue: function() {
-       return this._minValue;
-   },
-   
-   setMinValue: function(aDouble) {
-       this._minValue = aDouble;
-   },
-   
-   maxValue: function() {
-       return this._maxValue;
-   },
-
-   setMaxValue: function(aDouble) {
-       this._maxValue = aDouble;
-   }
 });
 /* 
  * slider.js
@@ -18948,68 +18297,61 @@ var NSSliderCell = NSCell.extend({
  */
 
 
-var NSSlider = NSControl.extend({
+/**
+    VN.TickMarkPosition
+*/
+VN.TICK_MARK_BELOW  = 0;
+VN.TICK_MARK_ABOVE  = 1;
+VN.TICK_MARK_LEFT   = 1;
+VN.TICK_MARK_RIGHT  = 0;
+
+/**
+    VN.SliderType
+*/
+VN.LINEAR_SLIDER    = 0;
+VN.CIRCULAR_SLIDER  = 1;
+
+/**
+    @class VN.Slider
+    @extends VN.Control
+*/
+var NSSlider = VN.Slider = VN.Control.extend({
+    
+    _minValue: 0,
+
+    _maxValue: 0,
     
     /**
-        @type NSRenderContext
+        @param {VN.Coder} aCoder
+        @returns VN.Slider
     */
-    _renderContext: null,
-    
-    setupGraphicsContextDisplay: function() {
-        this._DOMContainer = document.createElement('div');
-        this._DOMGraphicsContext = document.createElement('div');
-        
-        
-        this._DOMContainer.appendChild(this._DOMGraphicsContext);
-        
-        this._DOMContainer.style.display = "block";
-        this._DOMContainer.style.position = "absolute";
-        this._DOMContainer.style.overflowX = "hidden";
-        this._DOMContainer.style.overflowY = "hidden";
-        
-        this._DOMGraphicsContext.style.display = "block";
-        this._DOMGraphicsContext.style.position = "absolute";
-        this._DOMGraphicsContext.style.overflowX = "hidden";
-        this._DOMGraphicsContext.style.overflowY = "hidden";
-        
-        this._renderContext = NSRenderContext.renderContextWithElement(this._DOMGraphicsContext);
-    },
-    
-    lockFocus: function() {
-        
-    },
-    
-    drawRect: function() {
-        if (this._cell) {
-            this._cell.renderWithFrame(this.bounds(), this, this._renderContext.firstTime(), this._renderContext);
-            this._renderContext.setFirstTime(false);
-        }
-            
-    },
-    
-    unlockFocus: function() {
-        
+    initWithCoder: function(aCoder) {
+        this._super(aCoder);
+        this._minValue = this._cell._minValue;
+        this._maxValue = this._cell._maxValue;
+        this._value = this._cell._value;
+        return this;
     },
     
     /**
         Instantiate a binding to the object. Placeholders and other information
         can be specified in the options dictionary.
         
-        @param binding - NSString
-        @param toObject - NSObject
-        @param withKeyPath - NSString
-        @param options - NSDictionary
+        @param {VN.String} binding
+        @param {VN.Object} toObject
+        @param {VN.String} withKeyPath
+        @param {VN.Dictionary} options
     */
     bind: function(binding, toObject, withKeyPath, options) {
-        // value binding - NSValueBinding
+        // value binding - VN.VALUE_BINDING
         if (binding == "value") {
-            toObject.addObserverForKeyPath(this, withKeyPath, 0, NSValueBinding);
+            toObject.addObserverForKeyPath(this, withKeyPath, 0, VN.VALUE_BINDING);
             
-            var bindingInfo = NSDictionary.dictionaryWithObjectsForKeys(
+            var bindingInfo = VN.Dictionary.dictionaryWithObjectsForKeys(
                 [toObject, withKeyPath, options],
-                [NSObservedObjectKey, NSObservedKeyPathKey, NSOptionsKey]);
+                [VN.OBSERVED_OBJECT_KEY, VN.OBSERVED_KEY_PATH_KEY, VN.OPTIONS_KEY]);
             
-            this._kvb_info.setObjectForKey(bindingInfo, NSValueBinding);
+            this._kvb_info.setObjectForKey(bindingInfo, VN.VALUE_BINDING);
         }
     },
     
@@ -19020,10 +18362,124 @@ var NSSlider = NSControl.extend({
 		@param {Object} context
 	*/
     observeValueForKeyPath: function(keyPath, ofObject, change, context) {
-        if (context == NSValueBinding) {
+        if (context == VN.VALUE_BINDING) {
             var newValue = ofObject.valueForKeyPath(keyPath);
             this.setDoubleValue(newValue);
         }
+    },
+    
+     /**
+         Draw the slider using CoreGraphics (canvas/vml)
+         @param {NSRect} cellFrame
+         @param {NSView} controlView
+     */
+     drawWithFrame: function(cellFrame, controlView) {
+         this.renderWithFrame(cellFrame, controlView, false, controlView._renderContext);
+         return;
+
+        var SLIDER_PADDING = 9.5;
+        var KNOB_PADDING = 2;
+
+        var c = NSGraphicsContext.currentContext().graphicsPort();
+        CGContextSaveGState(c);
+        if (!this.isEnabled()) CGContextSetAlpha(c, 0.8);
+
+        // draw the bar
+        NSImage.imageNamed('NSSliderHorizontalLeft.png').drawInRect(CGRectMake(KNOB_PADDING, 8, 5, 5));
+        NSImage.imageNamed('NSSliderHorizontalMiddle.png').drawInRect(CGRectMake(5 + KNOB_PADDING, 8, (cellFrame.size.width - 10) - (2 * KNOB_PADDING), 5));
+        NSImage.imageNamed('NSSliderHorizontalRight.png').drawInRect(CGRectMake((cellFrame.size.width-5) - KNOB_PADDING, 8 ,5 ,5));
+
+        // draw the knob
+        var knobPosition = (((this._value / (this._maxValue - this._minValue)) * ((cellFrame.size.width - (2 * SLIDER_PADDING)))));
+        // use math.round to make sure knob is aligned to a pixel... this avoids a blurry knob if it is aligned between pixel boundries.
+        NSImage.imageNamed('NSSliderHorizontalKnobNormal.png').drawInRect(CGRectMake(Math.round(knobPosition), 1, 19, 19));
+
+        CGContextRestoreGState(c);
+     },
+
+     /**
+         @param {NSRect} cellFrame
+         @param {NSView} controlView
+         @param {Boolean} firstTime
+         @param {NSRenderContext} context
+     */
+     renderRect: function(aRect, firstTime, context) {
+         var SLIDER_PADDING = 9.5, KNOB_PADDING = 2.0;
+
+         if (firstTime) {
+             context.setClass('ns-slider');
+             context.push('div', 'ns-slider-track-left');
+             context.push('div', 'ns-slider-track');
+             context.push('div', 'ns-slider-track-right');
+             context.push('div', 'ns-slider-knob');
+         }
+         else {
+             // set knob position
+             var knobPosition = Math.round(((this._value / (this._maxValue - this._minValue)) * ((aRect.size.width - (2 * SLIDER_PADDING)))));
+             context.$('ns-slider-knob').set(knobPosition + 'px', 'left');
+
+             // enabled/disabled
+             if (this._isEnabled)
+                 context.removeClass('disabled');
+             else
+                 context.addClass('disabled');
+         }
+     },
+
+     startTracking: function(startPoint) {
+        if (this.isEnabled()) {
+            var SLIDER_PADDING = 8.5;
+            var location = this.convertPointFromView(startPoint, null);
+            this.setDoubleValue(((location.x - SLIDER_PADDING) / (this.bounds().size.width - (2 * SLIDER_PADDING))) * (this._maxValue - this._minValue));
+            this.setNeedsDisplay(true);
+
+            return true;
+        }
+        return false;
+    },
+
+     /**
+         Sets the double value for the slider. If the value is below the minValue,
+         then the value is adjusted to be the minValue. Similarly, if the value
+         is greater than the maxValue, it is also adjusted acordingly.
+     */
+     setDoubleValue: function(aDouble) {     
+         this._value = Math.max(Math.min(aDouble, this._maxValue), this._minValue);
+     },
+
+     continueTracking: function(lastPoint, currentPoint) {
+         var SLIDER_PADDING = 9.5;
+         var location = this.convertPointFromView(currentPoint, null);
+         this.setDoubleValue(((location.x - SLIDER_PADDING) / (this.bounds().size.width - (2 * SLIDER_PADDING))) * (this._maxValue - this._minValue));
+         this.setNeedsDisplay(true);
+         return true;
+     },
+
+    /**
+         @param flag - If the mouseIsUp
+    */
+    stopTracking: function(lastPoint, stopPoint, flag) {
+
+    },
+
+    prefersTrackingUntilMouseUp: function() {
+
+    },
+
+    minValue: function() {
+        return this._minValue;
+    },
+
+    setMinValue: function(aDouble) {
+        this._minValue = aDouble;
+    },
+
+    maxValue: function() {
+        return this._maxValue;
+    },
+
+    setMaxValue: function(aDouble) {
+        this._maxValue = aDouble;
     }
 });
 /* 
@@ -19064,7 +18520,7 @@ var NSStringDrawingOneShot                          = (1 << 4);
 // Used for measuring text in render mode
 var NSAttributedStringMeasureElement = null;
 
-Object.extend(String.prototype, {
+VN.extend(String.prototype, {
     
     sizeWithAttributes: function(attrs) {
         
@@ -19118,7 +18574,7 @@ NSAttributedString.mixin({
     }
 });
 
-Object.extend(String.prototype, {
+VN.extend(String.prototype, {
     
     drawWithRectAndOptions: function(aRect, options, attributes) {
         
@@ -19410,12 +18866,6 @@ var NSTableColumn = NSObject.extend({
 
 
 /**
-    @enum NSTextFieldBezelStyle
-*/
-var NSTextFieldSquareBezel  = 0;
-var NSTextFieldRoundedBezel = 1;
-
-/**
     @class NSTextFieldCell
     @extends NSCell
 */
@@ -19436,158 +18886,6 @@ var NSTextFieldCell = NSCell.extend({
         this._textColor = aCoder.decodeObjectForKey("NSTextColor");
         
         return this;
-    },
-    
-    /**
-        @param {NSRect} cellFrame
-        @param {NSView} controlView
-        @param {Boolean} firstTime
-        @param {NSRenderContext} context
-    */
-    renderWithFrame: function(cellFrame, controlView, firstTime, context) {    
-        if (firstTime) {
-            context.setClass('ns-text-field');
-            context.push('span', 'ns-text-field-title');
-        }
-        else {
-            if (this._drawsBackground) {
-                context.addClass('bezeled');
-            }
-            
-            this.renderInteriorWithFrame(cellFrame, controlView, firstTime, context);
-        }
-    },
-    
-    renderInteriorWithFrame: function(cellFrame, controlView, firstTime, context) {
-        var titleRect = this.titleRectForBounds(cellFrame);
-        context.$('ns-text-field-title').setFrame(titleRect);
-        context.$('ns-text-field-title').renderAttributedString(this.attributedStringValue());
-    },
-    
-    drawInteriorWithFrame: function(cellFrame, controlView) {
-		this.attributedStringValue().drawWithRectAndOptions(this.titleRectForBounds(cellFrame), null);
-    },
-    
-    drawWithFrame: function(cellFrame, controlView) {
-        var c = NSGraphicsContext.currentContext().graphicsPort();
-        
-        if (this.drawsBackground()) {
-            CGContextSetFillColorWithColor(c, this._backgroundColor);
-            CGContextFillRect(c, cellFrame);
-        }
-        
-        if (this.isBezeled()) {
-            NSImage.imageNamed('NSTextFieldBezelTopLeft.png').drawInRect(CGRectMake(0 ,0, 2, 2));
-            NSImage.imageNamed('NSTextFieldBezelTopMiddle.png').drawInRect(CGRectMake(2,0,cellFrame.size.width - 4,2));
-            NSImage.imageNamed('NSTextFieldBezelTopRight.png').drawInRect(CGRectMake(cellFrame.size.width-2,0,2,2));
-            NSImage.imageNamed('NSTextFieldBezelSides.png').drawInRect(CGRectMake(0, 2, 1, cellFrame.size.height - 2));
-            NSImage.imageNamed('NSTextFieldBezelSides.png').drawInRect(CGRectMake(cellFrame.size.width - 1, 2, 1, cellFrame.size.height - 2));
-            NSImage.imageNamed('NSTextFieldBezelBottom.png').drawInRect(CGRectMake(1, cellFrame.size.height - 1, cellFrame.size.width - 2, 1));
-        }
-        
-        this.drawInteriorWithFrame(cellFrame, controlView);
-    },
-    
-    drawsBackground: function() {
-        return this._drawsBackground;
-    },
-    
-    setDrawsBackground: function(flag) {
-        this._drawsBackground = flag;
-    },
-    
-    backgroundColor: function() {
-        return this._backgroundColor;
-    },
-    
-    setBackgroundColor: function(aColor) {
-        this._backgroundColor = aColor;
-    },
-    
-    setBezeled: function(flag) {
-        this._isBezeled = flag;
-    },
-    
-    isBezeled: function() {
-        return this._isBezeled;
-    },
-    
-    setBezelStyle: function(style) {
-        this._bezelStyle = style;
-    },
-    
-    bezelStyle: function() {
-        return this._bezelStyle;
-    },
-    
-    setTextColor: function(aColor) {
-        this._textColor = aColor;
-    },
-    
-    textColor: function(aColor) {
-        return this._textColor;
-    },
-    
-    titleRectForBounds: function(theRect) {
-        if (this.isEditable()) {
-            return NSMakeRect(theRect.origin.x + 2, theRect.origin.y + 3, theRect.size.width - 4, theRect.size.height - 5);
-        }
-        
-        return theRect;
-    },
-
-	attributedStringValue: function() {
-        // if (this._value.typeOf(NSAttributedString)) {
-            // return this._value;
-        // }
-		
-		var attributes = NSDictionary.create();
-		
-		// font
-		if (this.font())
-			attributes.setObjectForKey(this.font(), NSFontAttributeName);
-		
-		// textColor
-		if (this.isEnabled()) {
-			if (this.textColor())
-				attributes.setObjectForKey(this.textColor(), NSForegroundColorAttributeName);
-		}
-		else {
-			attributes.setObjectForKey(NSColor.disabledControlTextColor(), NSForegroundColorAttributeName);
-		}
-		
-		// paragraph style
-        var paragraphStyle = NSParagraphStyle.defaultParagraphStyle();
-        paragraphStyle.setAlignment(this.alignment());
-        paragraphStyle.setLineBreakMode(this.lineBreakMode());
-        
-        attributes.setObjectForKey(paragraphStyle, NSParagraphStyleAttributeName);
-		
-		return NSAttributedString.create('initWithStringAndAttributes', this._value, attributes);
-	},
-    
-    // setUpFieldEditorAttributes: function(textObj) {
-    //     return textObj;
-    // },
-    
-    setPlaceholderString: function(aString) {
-        
-    },
-    
-    placeholderString: function() {
-        
-    },
-    
-    setPlaceholderAttributedString: function(aString) {
-        
-    },
-    
-    placeholderAttributedString: function() {
-        
-    },
-    
-    setWantsNotificationForMarkedText: function(flag) {
-        
     }
 });
 /* 
@@ -19837,48 +19135,75 @@ var NSTextContainer = NSObject.extend({
  */
 
 
+/**
+    @enum NSTextFieldBezelStyle
+*/
+var NSTextFieldSquareBezel  = 0;
+var NSTextFieldRoundedBezel = 1;
+
+/**
+    @class NSTextField
+    @extends NSControl
+*/
 var NSTextField = NSControl.extend({
     
-    /**
-        @type NSRenderContext
-    */
-    _renderContext: null,
+    _drawsBackground: null,
+    _backgroundColor: null,
+    _textColor: null,
     
-    setupGraphicsContextDisplay: function() {
-        this._DOMContainer = document.createElement('div');
-        this._DOMGraphicsContext = document.createElement('div');
-        
-        
-        this._DOMContainer.appendChild(this._DOMGraphicsContext);
-        
-        this._DOMContainer.style.display = "block";
-        this._DOMContainer.style.position = "absolute";
-        this._DOMContainer.style.overflowX = "hidden";
-        this._DOMContainer.style.overflowY = "hidden";
-        
-        this._DOMGraphicsContext.style.display = "block";
-        this._DOMGraphicsContext.style.position = "absolute";
-        this._DOMGraphicsContext.style.overflowX = "hidden";
-        this._DOMGraphicsContext.style.overflowY = "hidden";
-        
-        this._renderContext = NSRenderContext.renderContextWithElement(this._DOMGraphicsContext);
+    initWithCoder: function(aCoder) {
+        this._super(aCoder);
+        this._drawsBackground = this._cell._drawsBackground;
+        this._backgroundColor = this._cell._backgroundColor;
+        this._textColor = this._cell._textColor;
+        return this;
     },
     
-    lockFocus: function() {
-        
-    },
     
-    drawRect: function() {
-        if (this._cell) {
-            this._cell.renderWithFrame(this.bounds(), this, this._renderContext.firstTime(), this._renderContext);
-            this._renderContext.setFirstTime(false);
+    renderRect: function(aRect, firstTime, context) {    
+        if (firstTime) {
+            context.setClass('ns-text-field');
+            context.push('span', 'ns-text-field-title');
         }
+        else {
+            if (this._drawsBackground) {
+                context.addClass('bezeled');
+            }
             
+            this.renderInterior(aRect, firstTime, context);
+        }
     },
     
-    unlockFocus: function() {
-        
+    renderInterior: function(aRect, firstTime, context) {
+        var titleRect = this.titleRectForBounds(aRect);
+        context.$('ns-text-field-title').setFrame(titleRect);
+        context.$('ns-text-field-title').renderAttributedString(this.attributedStringValue());
     },
+    
+    drawInteriorWithFrame: function(cellFrame, controlView) {
+		this.attributedStringValue().drawWithRectAndOptions(this.titleRectForBounds(cellFrame), null);
+    },
+    
+    drawWithFrame: function(cellFrame, controlView) {
+        var c = NSGraphicsContext.currentContext().graphicsPort();
+        
+        if (this.drawsBackground()) {
+            CGContextSetFillColorWithColor(c, this._backgroundColor);
+            CGContextFillRect(c, cellFrame);
+        }
+        
+        if (this.isBezeled()) {
+            NSImage.imageNamed('NSTextFieldBezelTopLeft.png').drawInRect(CGRectMake(0 ,0, 2, 2));
+            NSImage.imageNamed('NSTextFieldBezelTopMiddle.png').drawInRect(CGRectMake(2,0,cellFrame.size.width - 4,2));
+            NSImage.imageNamed('NSTextFieldBezelTopRight.png').drawInRect(CGRectMake(cellFrame.size.width-2,0,2,2));
+            NSImage.imageNamed('NSTextFieldBezelSides.png').drawInRect(CGRectMake(0, 2, 1, cellFrame.size.height - 2));
+            NSImage.imageNamed('NSTextFieldBezelSides.png').drawInRect(CGRectMake(cellFrame.size.width - 1, 2, 1, cellFrame.size.height - 2));
+            NSImage.imageNamed('NSTextFieldBezelBottom.png').drawInRect(CGRectMake(1, cellFrame.size.height - 1, cellFrame.size.width - 2, 1));
+        }
+        
+        this.drawInteriorWithFrame(cellFrame, controlView);
+    },
+    
     
     mouseDown: function(theEvent) {
         if (!this._cell.isEnabled())
@@ -19895,7 +19220,7 @@ var NSTextField = NSControl.extend({
         }
     },
     
-    /*
+    /**
         Instantiate a binding to the object. Placeholders and other information
         can be specified in the options dictionary.
         
@@ -19917,7 +19242,7 @@ var NSTextField = NSControl.extend({
         }
     },
     
-    /*
+    /**
 		@param {NSString} keyPath
 		@param {NSObject} ofObject
 		@param {NSDictionary} change
@@ -19928,6 +19253,108 @@ var NSTextField = NSControl.extend({
             var newValue = ofObject.valueForKeyPath(keyPath);
             this.setObjectValue(newValue);
         }
+    },
+    
+    drawsBackground: function() {
+        return this._drawsBackground;
+    },
+    
+    setDrawsBackground: function(flag) {
+        this._drawsBackground = flag;
+    },
+    
+    backgroundColor: function() {
+        return this._backgroundColor;
+    },
+    
+    setBackgroundColor: function(aColor) {
+        this._backgroundColor = aColor;
+    },
+    
+    setBezeled: function(flag) {
+        this._isBezeled = flag;
+    },
+    
+    isBezeled: function() {
+        return this._isBezeled;
+    },
+    
+    setBezelStyle: function(style) {
+        this._bezelStyle = style;
+    },
+    
+    bezelStyle: function() {
+        return this._bezelStyle;
+    },
+    
+    setTextColor: function(aColor) {
+        this._textColor = aColor;
+    },
+    
+    textColor: function() {
+        return this._textColor;
+    },
+    
+    titleRectForBounds: function(theRect) {
+        if (this.isEditable()) {
+            return NSMakeRect(theRect.origin.x + 2, theRect.origin.y + 3, theRect.size.width - 4, theRect.size.height - 5);
+        }
+        
+        return theRect;
+    },
+
+	attributedStringValue: function() {
+        // if (this._value.typeOf(NSAttributedString)) {
+            // return this._value;
+        // }
+		
+		var attributes = NSDictionary.create();
+		
+		// font
+		if (this.font())
+			attributes.setObjectForKey(this.font(), NSFontAttributeName);
+		
+		// textColor
+		if (this.isEnabled()) {
+			if (this.textColor())
+				attributes.setObjectForKey(this.textColor(), NSForegroundColorAttributeName);
+		}
+		else {
+			attributes.setObjectForKey(NSColor.disabledControlTextColor(), NSForegroundColorAttributeName);
+		}
+		
+		// paragraph style
+        var paragraphStyle = NSParagraphStyle.defaultParagraphStyle();
+        paragraphStyle.setAlignment(this.alignment());
+        paragraphStyle.setLineBreakMode(this.lineBreakMode());
+        
+        attributes.setObjectForKey(paragraphStyle, NSParagraphStyleAttributeName);
+		
+		return NSAttributedString.create('initWithStringAndAttributes', this._value, attributes);
+	},
+    
+    // setUpFieldEditorAttributes: function(textObj) {
+    //     return textObj;
+    // },
+    
+    setPlaceholderString: function(aString) {
+        
+    },
+    
+    placeholderString: function() {
+        
+    },
+    
+    setPlaceholderAttributedString: function(aString) {
+        
+    },
+    
+    placeholderAttributedString: function() {
+        
+    },
+    
+    setWantsNotificationForMarkedText: function(flag) {
+        
     }
 });
 /* 
@@ -20858,8 +20285,6 @@ var NSWindowTemplate = NSObject.extend({
  * THE SOFTWARE.
  */
 
-// Global Vienna namespace object
-var VN = { };
 
 
 /* 
@@ -21050,7 +20475,7 @@ var JSApp = {
 
 function main(argc, argv)
 {
-    return NSApplicationMain(argc, argv);
+    return VN.ApplicationMain(argc, argv);
 }
 /* 
  * scroll_view.js
@@ -21085,4 +20510,4 @@ var JSScrollView = NSView.extend({
         CGContextFillRect(c, aRect);
     }
 });
-__bootstrap_files["MainMenu.json"] = {"archive":{"data":{"IBDocument.SystemTarget": 1050,"IBDocument.SystemVersion": "10A411","IBDocument.InterfaceBuilderVersion": "731","IBDocument.AppKitVersion": "1033","IBDocument.HIToolboxVersion": "435.00","IBDocument.PluginVersions": {"class": "NSMutableDictionary","id": "", "objects":{"NS.key.0": "com.apple.InterfaceBuilder.CocoaPlugin","NS.object.0": "731"}},"IBDocument.EditedObjectIDs": {"class": "NSMutableArray","id": "", "objects":[368]},"IBDocument.PluginDependencies": {"class": "NSArray","id": "", "objects":["com.apple.InterfaceBuilder.CocoaPlugin"]},"IBDocument.Metadata": {"class": "NSMutableDictionary","id": "", "objects":{"EncodedWithXMLCoder": true,"dict.sortedKeys": {"class": "NSArray","id": "0", "objects":[]},"dict.values": {"class": "NSMutableArray","id": "", "objects":[]}}},"IBDocument.RootObjects": {"class": "NSMutableArray","id": "1048", "objects":[{"class": "NSCustomObject","id": "1021", "objects":{"NSClassName": "NSApplication"}},{"class": "NSCustomObject","id": "1014", "objects":{"NSClassName": "FirstResponder"}},{"class": "NSCustomObject","id": "1050", "objects":{"NSClassName": "NSApplication"}},{"class": "NSCustomObject","id": "163992474", "objects":{"NSClassName": "NSFontManager"}},{"class": "NSWindowTemplate","id": "513744381", "objects":{"NSWindowStyleMask": 15,"NSWindowBacking": 2,"NSWindowRect": "{{133, 47}, {946, 613}}","NSWTFlags": 603979776,"NSWindowTitle": "Window","NSWindowClass": "NSWindow","NSViewClass": {"nil":""},"NSWindowContentMaxSize": "{1.79769e+308, 1.79769e+308}","NSWindowView": {"class": "NSView","id": "414427165", "objects":{"NSNextResponder": {"id":""},"NSvFlags": 256,"NSSubviews": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSButton","id": "807627904", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSFrame": "{{554, 422}, {118, 25}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSButtonCell","id": "281914322", "objects":{"NSCellFlags": -2080244224,"NSCellFlags2": 134217728,"NSContents": "Round Textured","NSSupport": {"class": "NSFont","id": "798430573", "objects":{"NSName": "LucidaGrande","NSSize": 13,"NSfFlags": 1044}},"NSControlView": {"id":"807627904"},"NSButtonFlags": -2038152961,"NSButtonFlags2": 163,"NSAlternateContents": "","NSKeyEquivalent": "","NSPeriodicDelay": 400,"NSPeriodicInterval": 75}}}},{"class": "NSButton","id": "947043007", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSFrame": "{{554, 391}, {118, 25}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSButtonCell","id": "775301662", "objects":{"NSCellFlags": -1543373312,"NSCellFlags2": 134217728,"NSContents": "This is disabled","NSSupport": {"id":"798430573"},"NSControlView": {"id":"947043007"},"NSButtonFlags": -2038152961,"NSButtonFlags2": 163,"NSAlternateContents": "","NSKeyEquivalent": "","NSPeriodicDelay": 400,"NSPeriodicInterval": 75}}}},{"class": "NSSlider","id": "481053202", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSFrame": "{{552, 455}, {122, 21}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSSliderCell","id": "228939928", "objects":{"NSCellFlags": -1543373312,"NSCellFlags2": 0,"NSContents": "","NSSupport": {"class": "NSFont","id": "672854075", "objects":{"NSName": "Helvetica","NSSize": 12,"NSfFlags": 16}},"NSControlView": {"id":"481053202"},"NSMaxValue": 100,"NSMinValue": 0.0,"NSValue": 50,"NSAltIncValue": 0.0,"NSNumberOfTickMarks": 0,"NSTickMarkPosition": 1,"NSAllowsTickMarkValuesOnly": false,"NSVertical": false}}}},{"class": "NSSlider","id": "257328319", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSFrame": "{{552, 478}, {122, 21}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSSliderCell","id": "829387278", "objects":{"NSCellFlags": -2079981824,"NSCellFlags2": 0,"NSContents": "","NSSupport": {"id":"672854075"},"NSControlView": {"id":"257328319"},"NSMaxValue": 100,"NSMinValue": 0.0,"NSValue": 50,"NSAltIncValue": 0.0,"NSNumberOfTickMarks": 0,"NSTickMarkPosition": 1,"NSAllowsTickMarkValuesOnly": false,"NSVertical": false}}}},{"class": "NSButton","id": "780169108", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSFrame": "{{62, 488}, {109, 18}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSButtonCell","id": "146314554", "objects":{"NSCellFlags": 67239424,"NSCellFlags2": 0,"NSContents": "Normal radio","NSSupport": {"id":"798430573"},"NSControlView": {"id":"780169108"},"NSButtonFlags": 1211912703,"NSButtonFlags2": 130,"NSNormalImage": {"class": "NSCustomResource","id": "904276281", "objects":{"NSClassName": "NSImage","NSResourceName": "NSRadioButton"}},"NSAlternateImage": {"class": "NSButtonImageSource","id": "813970489", "objects":{"NSImageName": "NSRadioButton"}},"NSAlternateContents": "","NSKeyEquivalent": "","NSPeriodicDelay": 200,"NSPeriodicInterval": 25}}}},{"class": "NSButton","id": "511023663", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSFrame": "{{62, 433}, {156, 18}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSButtonCell","id": "388353698", "objects":{"NSCellFlags": -1543373312,"NSCellFlags2": 0,"NSContents": "Disabled Check radio","NSSupport": {"id":"798430573"},"NSControlView": {"id":"511023663"},"NSButtonFlags": 1211912703,"NSButtonFlags2": 130,"NSNormalImage": {"id":"904276281"},"NSAlternateImage": {"id":"813970489"},"NSAlternateContents": "","NSKeyEquivalent": "","NSPeriodicDelay": 200,"NSPeriodicInterval": 25}}}},{"class": "NSButton","id": "142462336", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSFrame": "{{62, 462}, {177, 18}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSButtonCell","id": "100568012", "objects":{"NSCellFlags": -2080244224,"NSCellFlags2": 0,"NSContents": "Normal unchecked radio","NSSupport": {"id":"798430573"},"NSControlView": {"id":"142462336"},"NSButtonFlags": 1211912703,"NSButtonFlags2": 130,"NSNormalImage": {"id":"904276281"},"NSAlternateImage": {"id":"813970489"},"NSAlternateContents": "","NSKeyEquivalent": "","NSPeriodicDelay": 200,"NSPeriodicInterval": 25}}}},{"class": "NSButton","id": "577562334", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSFrame": "{{285, 488}, {109, 18}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSButtonCell","id": "671756545", "objects":{"NSCellFlags": -2080244224,"NSCellFlags2": 0,"NSContents": "Normal radio","NSSupport": {"id":"798430573"},"NSControlView": {"id":"577562334"},"NSButtonFlags": 1211912703,"NSButtonFlags2": 130,"NSNormalImage": {"class": "NSCustomResource","id": "1020590486", "objects":{"NSClassName": "NSImage","NSResourceName": "NSSwitch"}},"NSAlternateImage": {"class": "NSButtonImageSource","id": "849298367", "objects":{"NSImageName": "NSSwitch"}},"NSAlternateContents": "","NSKeyEquivalent": "","NSPeriodicDelay": 200,"NSPeriodicInterval": 25}}}},{"class": "NSButton","id": "790695465", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSFrame": "{{285, 433}, {156, 18}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSButtonCell","id": "561385561", "objects":{"NSCellFlags": -1543373312,"NSCellFlags2": 0,"NSContents": "Disabled Check radio","NSSupport": {"id":"798430573"},"NSControlView": {"id":"790695465"},"NSButtonFlags": 1211912703,"NSButtonFlags2": 130,"NSNormalImage": {"id":"1020590486"},"NSAlternateImage": {"id":"849298367"},"NSAlternateContents": "","NSKeyEquivalent": "","NSPeriodicDelay": 200,"NSPeriodicInterval": 25}}}},{"class": "NSButton","id": "561516135", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSFrame": "{{285, 462}, {177, 18}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSButtonCell","id": "79065924", "objects":{"NSCellFlags": 67239424,"NSCellFlags2": 0,"NSContents": "Normal unchecked radio","NSSupport": {"id":"798430573"},"NSControlView": {"id":"561516135"},"NSButtonFlags": 1211912703,"NSButtonFlags2": 130,"NSNormalImage": {"id":"1020590486"},"NSAlternateImage": {"id":"849298367"},"NSAlternateContents": "","NSKeyEquivalent": "","NSPeriodicDelay": 200,"NSPeriodicInterval": 25}}}},{"class": "NSTextField","id": "744995210", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 267,"NSFrame": "{{708, 478}, {106, 22}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSTextFieldCell","id": "160495813", "objects":{"NSCellFlags": -1804468671,"NSCellFlags2": 272630784,"NSContents": "Textfieldy","NSSupport": {"id":"798430573"},"NSControlView": {"id":"744995210"},"NSDrawsBackground": true,"NSBackgroundColor": {"class": "NSColor","id": "875495060", "objects":{"NSColorSpace": 6,"NSCatalogName": "System","NSColorName": "textBackgroundColor","NSColor": {"class": "NSColor","id": "5431023", "objects":{"NSColorSpace": 3,"NSWhite": "MQA"}}}},"NSTextColor": {"class": "NSColor","id": "91711647", "objects":{"NSColorSpace": 6,"NSCatalogName": "System","NSColorName": "textColor","NSColor": {"class": "NSColor","id": "106532192", "objects":{"NSColorSpace": 3,"NSWhite": "MAA"}}}}}}}},{"class": "NSTextField","id": "1037334765", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 267,"NSFrame": "{{708, 446}, {106, 22}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSTextFieldCell","id": "685186056", "objects":{"NSCellFlags": -1267597759,"NSCellFlags2": 272630784,"NSContents": "Disabled","NSSupport": {"id":"798430573"},"NSControlView": {"id":"1037334765"},"NSDrawsBackground": true,"NSBackgroundColor": {"id":"875495060"},"NSTextColor": {"id":"91711647"}}}}},{"class": "NSTextField","id": "669360788", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSFrame": "{{713, 421}, {77, 17}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSTextFieldCell","id": "859234033", "objects":{"NSCellFlags": 68288064,"NSCellFlags2": 272630784,"NSContents": "Label","NSSupport": {"id":"798430573"},"NSControlView": {"id":"669360788"},"NSBackgroundColor": {"class": "NSColor","id": "", "objects":{"NSColorSpace": 6,"NSCatalogName": "System","NSColorName": "controlColor","NSColor": {"class": "NSColor","id": "415934132", "objects":{"NSColorSpace": 3,"NSWhite": "MC42NjY2NjY2NjY3AA"}}}},"NSTextColor": {"class": "NSColor","id": "163054175", "objects":{"NSColorSpace": 6,"NSCatalogName": "System","NSColorName": "controlTextColor","NSColor": {"id":"106532192"}}}}}}},{"class": "NSButton","id": "479961390", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSFrame": "{{29, 57}, {73, 25}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSButtonCell","id": "1059063770", "objects":{"NSCellFlags": -2080244224,"NSCellFlags2": 134217728,"NSContents": "Add","NSSupport": {"id":"798430573"},"NSControlView": {"id":"479961390"},"NSButtonFlags": -2038152961,"NSButtonFlags2": 163,"NSAlternateContents": "","NSKeyEquivalent": "","NSPeriodicDelay": 400,"NSPeriodicInterval": 75}}}},{"class": "NSButton","id": "780600689", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSFrame": "{{110, 57}, {80, 25}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSButtonCell","id": "577933790", "objects":{"NSCellFlags": -2080244224,"NSCellFlags2": 134217728,"NSContents": "Remove","NSSupport": {"id":"798430573"},"NSControlView": {"id":"780600689"},"NSButtonFlags": -2038152961,"NSButtonFlags2": 163,"NSAlternateContents": "","NSKeyEquivalent": "","NSPeriodicDelay": 400,"NSPeriodicInterval": 75}}}},{"class": "NSScrollView","id": "30980817", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSSubviews": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSClipView","id": "948217383", "objects":{"NSNextResponder": {"id":"30980817"},"NSvFlags": 2304,"NSSubviews": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSTableView","id": "327081499", "objects":{"NSNextResponder": {"id":"948217383"},"NSvFlags": 256,"NSFrameSize": "{904, 258}","NSSuperview": {"id":"948217383"},"NSEnabled": true,"NSHeaderView": {"class": "NSTableHeaderView","id": "604040574", "objects":{"NSNextResponder": {"id":"1007693269"},"NSvFlags": 256,"NSFrameSize": "{904, 17}","NSSuperview": {"id":"1007693269"},"NSTableView": {"id":"327081499"}}},"NSCornerView": {"class": "_NSCornerView","id": "895370824", "objects":{"NSNextResponder": {"id":"30980817"},"NSvFlags": -2147483392,"NSFrame": "{{224, 0}, {16, 17}}","NSSuperview": {"id":"30980817"}}},"NSTableColumns": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSTableColumn","id": "906371060", "objects":{"NSIdentifier": "name","NSWidth": 101,"NSMinWidth": 40,"NSMaxWidth": 1000,"NSHeaderCell": {"class": "NSTableHeaderCell","id": "", "objects":{"NSCellFlags": 75628096,"NSCellFlags2": 2048,"NSContents": "Name","NSSupport": {"class": "NSFont","id": "26", "objects":{"NSName": "LucidaGrande","NSSize": 11,"NSfFlags": 3100}},"NSBackgroundColor": {"class": "NSColor","id": "877396723", "objects":{"NSColorSpace": 3,"NSWhite": "MC4zMzMzMzI5ODU2AA"}},"NSTextColor": {"class": "NSColor","id": "384823602", "objects":{"NSColorSpace": 6,"NSCatalogName": "System","NSColorName": "headerTextColor","NSColor": {"id":"106532192"}}}}},"NSDataCell": {"class": "NSTextFieldCell","id": "136009105", "objects":{"NSCellFlags": 337772096,"NSCellFlags2": 2048,"NSContents": "Text Cell","NSSupport": {"id":"798430573"},"NSControlView": {"id":"327081499"},"NSBackgroundColor": {"class": "NSColor","id": "955461975", "objects":{"NSColorSpace": 6,"NSCatalogName": "System","NSColorName": "controlBackgroundColor","NSColor": {"id":"415934132"}}},"NSTextColor": {"id":"163054175"}}},"NSResizingMask": 3,"NSIsResizeable": true,"NSIsEditable": true,"NSTableView": {"id":"327081499"}}},{"class": "NSTableColumn","id": "163630843", "objects":{"NSIdentifier": "age","NSWidth": 797,"NSMinWidth": 40,"NSMaxWidth": 1000,"NSHeaderCell": {"class": "NSTableHeaderCell","id": "", "objects":{"NSCellFlags": 75628096,"NSCellFlags2": 2048,"NSContents": "Age","NSSupport": {"id":"26"},"NSBackgroundColor": {"id":"877396723"},"NSTextColor": {"id":"384823602"}}},"NSDataCell": {"class": "NSTextFieldCell","id": "464442001", "objects":{"NSCellFlags": 337772096,"NSCellFlags2": 2048,"NSContents": "Text Cell","NSSupport": {"id":"798430573"},"NSControlView": {"id":"327081499"},"NSBackgroundColor": {"id":"955461975"},"NSTextColor": {"id":"163054175"}}},"NSResizingMask": 3,"NSIsResizeable": true,"NSIsEditable": true,"NSTableView": {"id":"327081499"}}}]},"NSIntercellSpacingWidth": 3,"NSIntercellSpacingHeight": 2,"NSBackgroundColor": {"id":"5431023"},"NSGridColor": {"class": "NSColor","id": "", "objects":{"NSColorSpace": 6,"NSCatalogName": "System","NSColorName": "gridColor","NSColor": {"class": "NSColor","id": "", "objects":{"NSColorSpace": 3,"NSWhite": "MC41AA"}}}},"NSRowHeight": 17,"NSTvFlags": -700448768,"NSDelegate": {"id":""},"NSDataSource": {"id":""},"NSColumnAutoresizingStyle": 4,"NSDraggingSourceMaskForLocal": 15,"NSDraggingSourceMaskForNonLocal": 0,"NSAllowsTypeSelect": true,"NSTableViewDraggingDestinationStyle": 0}}]},"NSFrame": "{{1, 17}, {904, 258}}","NSSuperview": {"id":"30980817"},"NSNextKeyView": {"id":"327081499"},"NSDocView": {"id":"327081499"},"NSBGColor": {"id":"955461975"},"NScvFlags": 4}},{"class": "NSScroller","id": "276741145", "objects":{"NSNextResponder": {"id":"30980817"},"NSvFlags": -2147483392,"NSFrame": "{{224, 17}, {15, 102}}","NSSuperview": {"id":"30980817"},"NSTarget": {"id":"30980817"},"NSAction": "_doScroller:","NSCurValue": 37,"NSPercent": 0.1947367936372757}},{"class": "NSScroller","id": "69568024", "objects":{"NSNextResponder": {"id":"30980817"},"NSvFlags": -2147483392,"NSFrame": "{{1, 119}, {223, 15}}","NSSuperview": {"id":"30980817"},"NSsFlags": 1,"NSTarget": {"id":"30980817"},"NSAction": "_doScroller:","NSPercent": 0.57142859697341919}},{"class": "NSClipView","id": "1007693269", "objects":{"NSNextResponder": {"id":"30980817"},"NSvFlags": 2304,"NSSubviews": {"class": "NSMutableArray","id": "", "objects":[{"id":"604040574"}]},"NSFrame": "{{1, 0}, {904, 17}}","NSSuperview": {"id":"30980817"},"NSNextKeyView": {"id":"604040574"},"NSDocView": {"id":"604040574"},"NSBGColor": {"id":"955461975"},"NScvFlags": 4}},{"id":"895370824"}]},"NSFrame": "{{20, 102}, {906, 276}}","NSSuperview": {"id":"414427165"},"NSNextKeyView": {"id":"948217383"},"NSsFlags": 562,"NSVScroller": {"id":"276741145"},"NSHScroller": {"id":"69568024"},"NSContentView": {"id":"948217383"},"NSHeaderClipView": {"id":"1007693269"},"NSCornerView": {"id":"895370824"},"NSScrollAmts": "QSAAAEEgAABBmAAAQZgAAA"}}]},"NSFrameSize": "{946, 613}","NSSuperview": {"id":""}}},"NSScreenRect": "{{0, 0}, {1920, 1178}}","NSMaxSize": "{1.79769e+308, 1.79769e+308}"}},{"class": "NSMenu","id": "396145598", "objects":{"NSTitle": "Main Menu","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "502041852", "objects":{"NSMenu": {"id":"396145598"},"NSTitle": "JSApp","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"class": "NSCustomResource","id": "277861762", "objects":{"NSClassName": "NSImage","NSResourceName": "NSMenuCheckmark"}},"NSMixedImage": {"class": "NSCustomResource","id": "420132161", "objects":{"NSClassName": "NSImage","NSResourceName": "NSMenuMixedState"}},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "929908017", "objects":{"NSTitle": "JSApp","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "719413741", "objects":{"NSMenu": {"id":"929908017"},"NSTitle": "About JSApp","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "147013270", "objects":{"NSMenu": {"id":"929908017"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "544446554", "objects":{"NSMenu": {"id":"929908017"},"NSTitle": "Preferences…","NSKeyEquiv": ",","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "455124416", "objects":{"NSMenu": {"id":"929908017"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "493734341", "objects":{"NSMenu": {"id":"929908017"},"NSTitle": "Services","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "218525171", "objects":{"NSTitle": "Services","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[]},"NSName": "_NSServicesMenu"}}}},{"class": "NSMenuItem","id": "646933026", "objects":{"NSMenu": {"id":"929908017"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "843796999", "objects":{"NSMenu": {"id":"929908017"},"NSTitle": "Hide JSApp","NSKeyEquiv": "h","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "61754815", "objects":{"NSMenu": {"id":"929908017"},"NSTitle": "Hide Others","NSKeyEquiv": "h","NSKeyEquivModMask": 1572864,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "727120825", "objects":{"NSMenu": {"id":"929908017"},"NSTitle": "Show All","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "428803447", "objects":{"NSMenu": {"id":"929908017"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "491412195", "objects":{"NSMenu": {"id":"929908017"},"NSTitle": "Quit JSApp","NSKeyEquiv": "q","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]},"NSName": "_NSAppleMenu"}}}},{"class": "NSMenuItem","id": "475354134", "objects":{"NSMenu": {"id":"396145598"},"NSTitle": "File","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "140258427", "objects":{"NSTitle": "File","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "684393965", "objects":{"NSMenu": {"id":"140258427"},"NSTitle": "New","NSKeyEquiv": "n","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "118789126", "objects":{"NSMenu": {"id":"140258427"},"NSTitle": "Open…","NSKeyEquiv": "o","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "711009244", "objects":{"NSMenu": {"id":"140258427"},"NSTitle": "Open Recent","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "85259455", "objects":{"NSTitle": "Open Recent","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "620121511", "objects":{"NSMenu": {"id":"85259455"},"NSTitle": "Clear Menu","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]},"NSName": "_NSRecentDocumentsMenu"}}}},{"class": "NSMenuItem","id": "875068603", "objects":{"NSMenu": {"id":"140258427"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "313874609", "objects":{"NSMenu": {"id":"140258427"},"NSTitle": "Close","NSKeyEquiv": "w","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "594142260", "objects":{"NSMenu": {"id":"140258427"},"NSTitle": "Save","NSKeyEquiv": "s","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "323858156", "objects":{"NSMenu": {"id":"140258427"},"NSTitle": "Save As…","NSKeyEquiv": "S","NSKeyEquivModMask": 1179648,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "402382860", "objects":{"NSMenu": {"id":"140258427"},"NSTitle": "Revert to Saved","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "481018735", "objects":{"NSMenu": {"id":"140258427"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "499319061", "objects":{"NSMenu": {"id":"140258427"},"NSTitle": "Page Setup...","NSKeyEquiv": "P","NSKeyEquivModMask": 1179648,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSToolTip": ""}},{"class": "NSMenuItem","id": "494801925", "objects":{"NSMenu": {"id":"140258427"},"NSTitle": "Print…","NSKeyEquiv": "p","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]}}}}},{"class": "NSMenuItem","id": "693213887", "objects":{"NSMenu": {"id":"396145598"},"NSTitle": "Edit","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "26323967", "objects":{"NSTitle": "Edit","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "1062491368", "objects":{"NSMenu": {"id":"26323967"},"NSTitle": "Undo","NSKeyEquiv": "z","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "766653658", "objects":{"NSMenu": {"id":"26323967"},"NSTitle": "Redo","NSKeyEquiv": "Z","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "894470039", "objects":{"NSMenu": {"id":"26323967"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "882289911", "objects":{"NSMenu": {"id":"26323967"},"NSTitle": "Cut","NSKeyEquiv": "x","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "108407587", "objects":{"NSMenu": {"id":"26323967"},"NSTitle": "Copy","NSKeyEquiv": "c","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "987153865", "objects":{"NSMenu": {"id":"26323967"},"NSTitle": "Paste","NSKeyEquiv": "v","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "238136692", "objects":{"NSMenu": {"id":"26323967"},"NSTitle": "Paste and Match Style","NSKeyEquiv": "V","NSKeyEquivModMask": 1572864,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "567593746", "objects":{"NSMenu": {"id":"26323967"},"NSTitle": "Delete","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "212764814", "objects":{"NSMenu": {"id":"26323967"},"NSTitle": "Select All","NSKeyEquiv": "a","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "419879483", "objects":{"NSMenu": {"id":"26323967"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "573155596", "objects":{"NSMenu": {"id":"26323967"},"NSTitle": "Find","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "50713213", "objects":{"NSTitle": "Find","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "547150631", "objects":{"NSMenu": {"id":"50713213"},"NSTitle": "Find…","NSKeyEquiv": "f","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSTag": 1}},{"class": "NSMenuItem","id": "710177711", "objects":{"NSMenu": {"id":"50713213"},"NSTitle": "Find Next","NSKeyEquiv": "g","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSTag": 2}},{"class": "NSMenuItem","id": "840494879", "objects":{"NSMenu": {"id":"50713213"},"NSTitle": "Find Previous","NSKeyEquiv": "G","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSTag": 3}},{"class": "NSMenuItem","id": "748324225", "objects":{"NSMenu": {"id":"50713213"},"NSTitle": "Use Selection for Find","NSKeyEquiv": "e","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSTag": 7}},{"class": "NSMenuItem","id": "1017125445", "objects":{"NSMenu": {"id":"50713213"},"NSTitle": "Jump to Selection","NSKeyEquiv": "j","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]}}}}},{"class": "NSMenuItem","id": "32515025", "objects":{"NSMenu": {"id":"26323967"},"NSTitle": "Spelling and Grammar","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "499920755", "objects":{"NSTitle": "Spelling","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "882984624", "objects":{"NSMenu": {"id":"499920755"},"NSTitle": "Show Spelling and Grammar","NSKeyEquiv": ":","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "664256261", "objects":{"NSMenu": {"id":"499920755"},"NSTitle": "Check Document Now","NSKeyEquiv": ";","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "277876898", "objects":{"NSMenu": {"id":"499920755"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "707578430", "objects":{"NSMenu": {"id":"499920755"},"NSTitle": "Check Spelling While Typing","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "428750252", "objects":{"NSMenu": {"id":"499920755"},"NSTitle": "Check Grammar With Spelling","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "363312713", "objects":{"NSMenu": {"id":"499920755"},"NSTitle": "Correct Spelling Automatically","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]}}}}},{"class": "NSMenuItem","id": "925479430", "objects":{"NSMenu": {"id":"26323967"},"NSTitle": "Substitutions","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "36288778", "objects":{"NSTitle": "Substitutions","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "882086962", "objects":{"NSMenu": {"id":"36288778"},"NSTitle": "Show Substitutions","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "491421895", "objects":{"NSMenu": {"id":"36288778"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "189206921", "objects":{"NSMenu": {"id":"36288778"},"NSTitle": "Smart Copy/Paste","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "1030351354", "objects":{"NSMenu": {"id":"36288778"},"NSTitle": "Smart Quotes","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "491645350", "objects":{"NSMenu": {"id":"36288778"},"NSTitle": "Smart Dashes","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "218154558", "objects":{"NSMenu": {"id":"36288778"},"NSTitle": "Smart Links","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "1062365657", "objects":{"NSMenu": {"id":"36288778"},"NSTitle": "Data Detectors","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "354238611", "objects":{"NSMenu": {"id":"36288778"},"NSTitle": "Text Replacement","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]}}}}},{"class": "NSMenuItem","id": "1073520368", "objects":{"NSMenu": {"id":"26323967"},"NSTitle": "Transformations","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "182677269", "objects":{"NSTitle": "Transformations","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "228222622", "objects":{"NSMenu": {"id":"182677269"},"NSTitle": "Make Upper Case","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "1064576491", "objects":{"NSMenu": {"id":"182677269"},"NSTitle": "Make Lower Case","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "221720946", "objects":{"NSMenu": {"id":"182677269"},"NSTitle": "Capitalize","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]}}}}},{"class": "NSMenuItem","id": "1044796185", "objects":{"NSMenu": {"id":"26323967"},"NSTitle": "Speech","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "196866971", "objects":{"NSTitle": "Speech","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "558426415", "objects":{"NSMenu": {"id":"196866971"},"NSTitle": "Start Speaking","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "434484761", "objects":{"NSMenu": {"id":"196866971"},"NSTitle": "Stop Speaking","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]}}}}}]}}}}},{"class": "NSMenuItem","id": "857536504", "objects":{"NSMenu": {"id":"396145598"},"NSTitle": "Format","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "228002546", "objects":{"NSTitle": "Format","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "609792061", "objects":{"NSMenu": {"id":"228002546"},"NSTitle": "Font","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "565148168", "objects":{"NSTitle": "Font","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "643620124", "objects":{"NSMenu": {"id":"565148168"},"NSTitle": "Show Fonts","NSKeyEquiv": "t","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "61046026", "objects":{"NSMenu": {"id":"565148168"},"NSTitle": "Bold","NSKeyEquiv": "b","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSTag": 2}},{"class": "NSMenuItem","id": "233505564", "objects":{"NSMenu": {"id":"565148168"},"NSTitle": "Italic","NSKeyEquiv": "i","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSTag": 1}},{"class": "NSMenuItem","id": "162604386", "objects":{"NSMenu": {"id":"565148168"},"NSTitle": "Underline","NSKeyEquiv": "u","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "161800526", "objects":{"NSMenu": {"id":"565148168"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "14981393", "objects":{"NSMenu": {"id":"565148168"},"NSTitle": "Bigger","NSKeyEquiv": "+","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSTag": 3}},{"class": "NSMenuItem","id": "516934468", "objects":{"NSMenu": {"id":"565148168"},"NSTitle": "Smaller","NSKeyEquiv": "-","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSTag": 4}},{"class": "NSMenuItem","id": "391747350", "objects":{"NSMenu": {"id":"565148168"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "361602393", "objects":{"NSMenu": {"id":"565148168"},"NSTitle": "Kern","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "129191325", "objects":{"NSTitle": "Kern","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "61462663", "objects":{"NSMenu": {"id":"129191325"},"NSTitle": "Use Default","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "957493733", "objects":{"NSMenu": {"id":"129191325"},"NSTitle": "Use None","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "936113629", "objects":{"NSMenu": {"id":"129191325"},"NSTitle": "Tighten","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "635885426", "objects":{"NSMenu": {"id":"129191325"},"NSTitle": "Loosen","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]}}}}},{"class": "NSMenuItem","id": "25523273", "objects":{"NSMenu": {"id":"565148168"},"NSTitle": "Ligature","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "835348817", "objects":{"NSTitle": "Ligature","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "180250789", "objects":{"NSMenu": {"id":"835348817"},"NSTitle": "Use Default","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "568143876", "objects":{"NSMenu": {"id":"835348817"},"NSTitle": "Use None","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "573379050", "objects":{"NSMenu": {"id":"835348817"},"NSTitle": "Use All","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]}}}}},{"class": "NSMenuItem","id": "818558147", "objects":{"NSMenu": {"id":"565148168"},"NSTitle": "Baseline","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "183858689", "objects":{"NSTitle": "Baseline","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "644154219", "objects":{"NSMenu": {"id":"183858689"},"NSTitle": "Use Default","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "614557663", "objects":{"NSMenu": {"id":"183858689"},"NSTitle": "Superscript","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "774392049", "objects":{"NSMenu": {"id":"183858689"},"NSTitle": "Subscript","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "892001032", "objects":{"NSMenu": {"id":"183858689"},"NSTitle": "Raise","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "1068179975", "objects":{"NSMenu": {"id":"183858689"},"NSTitle": "Lower","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]}}}}},{"class": "NSMenuItem","id": "890899662", "objects":{"NSMenu": {"id":"565148168"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "644140682", "objects":{"NSMenu": {"id":"565148168"},"NSTitle": "Show Colors","NSKeyEquiv": "C","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "671545876", "objects":{"NSMenu": {"id":"565148168"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "397166321", "objects":{"NSMenu": {"id":"565148168"},"NSTitle": "Copy Style","NSKeyEquiv": "c","NSKeyEquivModMask": 1572864,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "215340233", "objects":{"NSMenu": {"id":"565148168"},"NSTitle": "Paste Style","NSKeyEquiv": "v","NSKeyEquivModMask": 1572864,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]},"NSName": "_NSFontMenu"}}}},{"class": "NSMenuItem","id": "43690407", "objects":{"NSMenu": {"id":"228002546"},"NSTitle": "Text","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "975825102", "objects":{"NSTitle": "Text","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "792316364", "objects":{"NSMenu": {"id":"975825102"},"NSTitle": "Align Left","NSKeyEquiv": "{","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "596561657", "objects":{"NSMenu": {"id":"975825102"},"NSTitle": "Center","NSKeyEquiv": "|","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "872570229", "objects":{"NSMenu": {"id":"975825102"},"NSTitle": "Justify","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "766796088", "objects":{"NSMenu": {"id":"975825102"},"NSTitle": "Align Right","NSKeyEquiv": "}","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "851747333", "objects":{"NSMenu": {"id":"975825102"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "981059996", "objects":{"NSMenu": {"id":"975825102"},"NSTitle": "Writing Direction","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "906599697", "objects":{"NSTitle": "Writing Direction","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "1041729520", "objects":{"NSMenu": {"id":"906599697"},"NSIsDisabled": true,"NSTitle": "Paragraph","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "137407739", "objects":{"NSMenu": {"id":"906599697"},"NSTitle": "CURlZmF1bHQ","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "408911759", "objects":{"NSMenu": {"id":"906599697"},"NSTitle": "CUxlZnQgdG8gUmlnaHQ","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "398110396", "objects":{"NSMenu": {"id":"906599697"},"NSTitle": "CVJpZ2h0IHRvIExlZnQ","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "175409192", "objects":{"NSMenu": {"id":"906599697"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "76364711", "objects":{"NSMenu": {"id":"906599697"},"NSIsDisabled": true,"NSTitle": "Selection","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "235507009", "objects":{"NSMenu": {"id":"906599697"},"NSTitle": "CURlZmF1bHQ","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "988306009", "objects":{"NSMenu": {"id":"906599697"},"NSTitle": "CUxlZnQgdG8gUmlnaHQ","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "160428799", "objects":{"NSMenu": {"id":"906599697"},"NSTitle": "CVJpZ2h0IHRvIExlZnQ","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]}}}}},{"class": "NSMenuItem","id": "658247071", "objects":{"NSMenu": {"id":"975825102"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "1055412392", "objects":{"NSMenu": {"id":"975825102"},"NSTitle": "Show Ruler","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "122656406", "objects":{"NSMenu": {"id":"975825102"},"NSTitle": "Copy Ruler","NSKeyEquiv": "c","NSKeyEquivModMask": 1310720,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "180202457", "objects":{"NSMenu": {"id":"975825102"},"NSTitle": "Paste Ruler","NSKeyEquiv": "v","NSKeyEquivModMask": 1310720,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]}}}}}]}}}}},{"class": "NSMenuItem","id": "713206015", "objects":{"NSMenu": {"id":"396145598"},"NSTitle": "View","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "96939199", "objects":{"NSTitle": "View","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "206668947", "objects":{"NSMenu": {"id":"96939199"},"NSTitle": "Show Toolbar","NSKeyEquiv": "t","NSKeyEquivModMask": 1572864,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "825897010", "objects":{"NSMenu": {"id":"96939199"},"NSTitle": "Customize Toolbar…","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]}}}}},{"class": "NSMenuItem","id": "686270510", "objects":{"NSMenu": {"id":"396145598"},"NSTitle": "Window","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "909684463", "objects":{"NSTitle": "Window","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "497312719", "objects":{"NSMenu": {"id":"909684463"},"NSTitle": "Minimize","NSKeyEquiv": "m","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "857636876", "objects":{"NSMenu": {"id":"909684463"},"NSTitle": "Zoom","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "353476913", "objects":{"NSMenu": {"id":"909684463"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "8672285", "objects":{"NSMenu": {"id":"909684463"},"NSTitle": "Bring All to Front","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]},"NSName": "_NSWindowsMenu"}}}},{"class": "NSMenuItem","id": "125320586", "objects":{"NSMenu": {"id":"396145598"},"NSTitle": "Help","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "370522354", "objects":{"NSTitle": "Help","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "972987324", "objects":{"NSMenu": {"id":"370522354"},"NSTitle": "JSApp Help","NSKeyEquiv": "?","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]},"NSName": "_NSHelpMenu"}}}}]},"NSName": "_NSMainMenu"}},{"class": "NSCustomObject","id": "864649339", "objects":{"NSClassName": "AppController"}},{"class": "NSArrayController","id": "484200277", "objects":{"NSDeclaredKeys": {"class": "NSMutableArray","id": "", "objects":["age","name"]},"NSEditable": true,"_NSManagedProxy": {"class": "_NSManagedProxy","id": "", "objects":{}},"NSAvoidsEmptySelection": true,"NSPreservesSelection": true,"NSSelectsInsertedObjects": true,"NSFilterRestrictsInsertion": true,"NSClearsFilterPredicateOnInsertion": true}}]},"IBDocument.Objects": {"class": "IBObjectContainer","id": "", "objects":{"connectionRecords": {"class": "NSMutableArray","id": "", "objects":[{"class": "IBConnectionRecord","id": "", "objects":{"connection": {"class": "IBActionConnection","id": "", "objects":{"label": "takeDoubleValueFrom:","source": {"id":"257328319"},"destination": {"id":"744995210"}}},"connectionID": 689}},{"class": "IBConnectionRecord","id": "", "objects":{"connection": {"class": "IBOutletConnection","id": "", "objects":{"label": "delegate","source": {"id":"1050"},"destination": {"id":"864649339"}}},"connectionID": 691}},{"class": "IBConnectionRecord","id": "", "objects":{"connection": {"class": "IBActionConnection","id": "", "objects":{"label": "takeDoubleValueFrom:","source": {"id":"744995210"},"destination": {"id":"257328319"}}},"connectionID": 714}},{"class": "IBConnectionRecord","id": "", "objects":{"connection": {"class": "IBOutletConnection","id": "", "objects":{"label": "_window","source": {"id":"864649339"},"destination": {"id":"513744381"}}},"connectionID": 715}},{"class": "IBConnectionRecord","id": "", "objects":{"connection": {"class": "IBBindingConnection","id": "", "objects":{"label": "value: testValue","source": {"id":"744995210"},"destination": {"id":"864649339"},"connector": {"class": "NSNibBindingConnector","id": "", "objects":{"NSSource": {"id":"744995210"},"NSDestination": {"id":"864649339"},"NSLabel": "value: testValue","NSBinding": "value","NSKeyPath": "testValue","NSNibBindingConnectorVersion": 2}}}},"connectionID": 724}},{"class": "IBConnectionRecord","id": "", "objects":{"connection": {"class": "IBBindingConnection","id": "", "objects":{"label": "value: testValue","source": {"id":"257328319"},"destination": {"id":"864649339"},"connector": {"class": "NSNibBindingConnector","id": "", "objects":{"NSSource": {"id":"257328319"},"NSDestination": {"id":"864649339"},"NSLabel": "value: testValue","NSBinding": "value","NSKeyPath": "testValue","NSNibBindingConnectorVersion": 2}}}},"connectionID": 736}},{"class": "IBConnectionRecord","id": "", "objects":{"connection": {"class": "IBOutletConnection","id": "", "objects":{"label": "_arrayController","source": {"id":"864649339"},"destination": {"id":"484200277"}}},"connectionID": 743}},{"class": "IBConnectionRecord","id": "", "objects":{"connection": {"class": "IBBindingConnection","id": "", "objects":{"label": "contentArray: tableContent","source": {"id":"484200277"},"destination": {"id":"864649339"},"connector": {"class": "NSNibBindingConnector","id": "", "objects":{"NSSource": {"id":"484200277"},"NSDestination": {"id":"864649339"},"NSLabel": "contentArray: tableContent","NSBinding": "contentArray","NSKeyPath": "tableContent","NSNibBindingConnectorVersion": 2}}}},"connectionID": 747}},{"class": "IBConnectionRecord","id": "", "objects":{"connection": {"class": "IBActionConnection","id": "", "objects":{"label": "performClose:","source": {"id":"513744381"},"destination": {"id":"807627904"}}},"connectionID": 760}},{"class": "IBConnectionRecord","id": "", "objects":{"connection": {"class": "IBOutletConnection","id": "", "objects":{"label": "dataSource","source": {"id":"327081499"},"destination": {"id":"864649339"}}},"connectionID": 770}}]},"objectRecords": {"class": "IBMutableOrderedSet","id": "", "objects":{"orderedObjects": {"class": "NSArray","id": "", "objects":[{"class": "IBObjectRecord","id": "", "objects":{"objectID": 0,"object": {"id":"0"},"children": {"id":"1048"},"parent": {"nil":""}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": -2,"object": {"id":"1021"},"parent": {"id":"0"},"objectName": "File's Owner"}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": -1,"object": {"id":"1014"},"parent": {"id":"0"},"objectName": "First Responder"}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": -3,"object": {"id":"1050"},"parent": {"id":"0"},"objectName": "Application"}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 367,"object": {"id":"513744381"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"414427165"}]},"parent": {"id":"0"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 368,"object": {"id":"414427165"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"511023663"},{"id":"142462336"},{"id":"780169108"},{"id":"807627904"},{"id":"947043007"},{"id":"481053202"},{"id":"257328319"},{"id":"577562334"},{"id":"561516135"},{"id":"790695465"},{"id":"744995210"},{"id":"1037334765"},{"id":"669360788"},{"id":"780600689"},{"id":"30980817"},{"id":"479961390"}]},"parent": {"id":"513744381"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 373,"object": {"id":"163992474"},"parent": {"id":"0"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 451,"object": {"id":"807627904"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"281914322"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 452,"object": {"id":"281914322"},"parent": {"id":"807627904"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 453,"object": {"id":"947043007"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"775301662"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 454,"object": {"id":"775301662"},"parent": {"id":"947043007"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 455,"object": {"id":"481053202"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"228939928"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 456,"object": {"id":"228939928"},"parent": {"id":"481053202"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 457,"object": {"id":"257328319"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"829387278"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 458,"object": {"id":"829387278"},"parent": {"id":"257328319"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 463,"object": {"id":"780169108"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"146314554"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 464,"object": {"id":"146314554"},"parent": {"id":"780169108"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 467,"object": {"id":"511023663"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"388353698"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 468,"object": {"id":"388353698"},"parent": {"id":"511023663"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 471,"object": {"id":"142462336"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"100568012"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 472,"object": {"id":"100568012"},"parent": {"id":"142462336"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 473,"object": {"id":"577562334"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"671756545"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 474,"object": {"id":"790695465"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"561385561"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 476,"object": {"id":"561516135"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"79065924"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 477,"object": {"id":"79065924"},"parent": {"id":"561516135"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 479,"object": {"id":"561385561"},"parent": {"id":"790695465"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 480,"object": {"id":"671756545"},"parent": {"id":"577562334"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 501,"object": {"id":"744995210"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"160495813"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 502,"object": {"id":"160495813"},"parent": {"id":"744995210"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 503,"object": {"id":"1037334765"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"685186056"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 504,"object": {"id":"685186056"},"parent": {"id":"1037334765"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 509,"object": {"id":"669360788"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"859234033"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 510,"object": {"id":"859234033"},"parent": {"id":"669360788"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 541,"object": {"id":"396145598"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"693213887"},{"id":"857536504"},{"id":"713206015"},{"id":"475354134"},{"id":"125320586"},{"id":"502041852"},{"id":"686270510"}]},"parent": {"id":"0"},"objectName": "Main Menu"}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 542,"object": {"id":"693213887"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"26323967"}]},"parent": {"id":"396145598"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 543,"object": {"id":"857536504"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"228002546"}]},"parent": {"id":"396145598"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 544,"object": {"id":"713206015"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"96939199"}]},"parent": {"id":"396145598"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 545,"object": {"id":"475354134"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"140258427"}]},"parent": {"id":"396145598"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 546,"object": {"id":"125320586"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"370522354"}]},"parent": {"id":"396145598"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 547,"object": {"id":"502041852"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"929908017"}]},"parent": {"id":"396145598"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 548,"object": {"id":"686270510"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"909684463"}]},"parent": {"id":"396145598"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 549,"object": {"id":"909684463"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"497312719"},{"id":"857636876"},{"id":"8672285"},{"id":"353476913"}]},"parent": {"id":"686270510"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 550,"object": {"id":"497312719"},"parent": {"id":"909684463"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 551,"object": {"id":"857636876"},"parent": {"id":"909684463"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 552,"object": {"id":"8672285"},"parent": {"id":"909684463"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 553,"object": {"id":"353476913"},"parent": {"id":"909684463"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 554,"object": {"id":"929908017"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"61754815"},{"id":"428803447"},{"id":"493734341"},{"id":"147013270"},{"id":"455124416"},{"id":"544446554"},{"id":"646933026"},{"id":"491412195"},{"id":"727120825"},{"id":"843796999"},{"id":"719413741"}]},"parent": {"id":"502041852"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 555,"object": {"id":"61754815"},"parent": {"id":"929908017"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 556,"object": {"id":"428803447"},"parent": {"id":"929908017"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 557,"object": {"id":"493734341"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"218525171"}]},"parent": {"id":"929908017"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 558,"object": {"id":"147013270"},"parent": {"id":"929908017"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 559,"object": {"id":"455124416"},"parent": {"id":"929908017"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 560,"object": {"id":"544446554"},"parent": {"id":"929908017"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 561,"object": {"id":"646933026"},"parent": {"id":"929908017"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 562,"object": {"id":"491412195"},"parent": {"id":"929908017"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 563,"object": {"id":"727120825"},"parent": {"id":"929908017"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 564,"object": {"id":"843796999"},"parent": {"id":"929908017"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 565,"object": {"id":"719413741"},"parent": {"id":"929908017"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 566,"object": {"id":"218525171"},"parent": {"id":"493734341"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 567,"object": {"id":"370522354"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"972987324"}]},"parent": {"id":"125320586"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 568,"object": {"id":"972987324"},"parent": {"id":"370522354"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 569,"object": {"id":"140258427"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"481018735"},{"id":"402382860"},{"id":"875068603"},{"id":"313874609"},{"id":"499319061"},{"id":"711009244"},{"id":"684393965"},{"id":"118789126"},{"id":"494801925"},{"id":"323858156"},{"id":"594142260"}]},"parent": {"id":"475354134"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 570,"object": {"id":"481018735"},"parent": {"id":"140258427"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 571,"object": {"id":"402382860"},"parent": {"id":"140258427"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 572,"object": {"id":"875068603"},"parent": {"id":"140258427"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 573,"object": {"id":"313874609"},"parent": {"id":"140258427"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 574,"object": {"id":"499319061"},"parent": {"id":"140258427"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 575,"object": {"id":"711009244"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"85259455"}]},"parent": {"id":"140258427"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 576,"object": {"id":"684393965"},"parent": {"id":"140258427"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 577,"object": {"id":"118789126"},"parent": {"id":"140258427"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 578,"object": {"id":"494801925"},"parent": {"id":"140258427"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 579,"object": {"id":"323858156"},"parent": {"id":"140258427"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 580,"object": {"id":"594142260"},"parent": {"id":"140258427"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 581,"object": {"id":"85259455"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"620121511"}]},"parent": {"id":"711009244"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 582,"object": {"id":"620121511"},"parent": {"id":"85259455"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 583,"object": {"id":"96939199"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"825897010"},{"id":"206668947"}]},"parent": {"id":"713206015"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 584,"object": {"id":"825897010"},"parent": {"id":"96939199"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 585,"object": {"id":"206668947"},"parent": {"id":"96939199"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 586,"object": {"id":"228002546"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"43690407"},{"id":"609792061"}]},"parent": {"id":"857536504"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 587,"object": {"id":"43690407"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"975825102"}]},"parent": {"id":"228002546"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 588,"object": {"id":"609792061"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"565148168"}]},"parent": {"id":"228002546"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 589,"object": {"id":"565148168"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"215340233"},{"id":"397166321"},{"id":"671545876"},{"id":"644140682"},{"id":"890899662"},{"id":"818558147"},{"id":"25523273"},{"id":"361602393"},{"id":"391747350"},{"id":"516934468"},{"id":"14981393"},{"id":"161800526"},{"id":"162604386"},{"id":"233505564"},{"id":"61046026"},{"id":"643620124"}]},"parent": {"id":"609792061"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 590,"object": {"id":"215340233"},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 591,"object": {"id":"397166321"},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 592,"object": {"id":"671545876"},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 593,"object": {"id":"644140682"},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 594,"object": {"id":"890899662"},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 595,"object": {"id":"818558147"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"183858689"}]},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 596,"object": {"id":"25523273"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"835348817"}]},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 597,"object": {"id":"361602393"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"129191325"}]},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 598,"object": {"id":"391747350"},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 599,"object": {"id":"516934468"},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 600,"object": {"id":"14981393"},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 601,"object": {"id":"161800526"},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 602,"object": {"id":"162604386"},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 603,"object": {"id":"233505564"},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 604,"object": {"id":"61046026"},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 605,"object": {"id":"643620124"},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 606,"object": {"id":"129191325"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"635885426"},{"id":"936113629"},{"id":"957493733"},{"id":"61462663"}]},"parent": {"id":"361602393"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 607,"object": {"id":"635885426"},"parent": {"id":"129191325"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 608,"object": {"id":"936113629"},"parent": {"id":"129191325"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 609,"object": {"id":"957493733"},"parent": {"id":"129191325"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 610,"object": {"id":"61462663"},"parent": {"id":"129191325"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 611,"object": {"id":"835348817"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"573379050"},{"id":"568143876"},{"id":"180250789"}]},"parent": {"id":"25523273"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 612,"object": {"id":"573379050"},"parent": {"id":"835348817"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 613,"object": {"id":"568143876"},"parent": {"id":"835348817"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 614,"object": {"id":"180250789"},"parent": {"id":"835348817"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 615,"object": {"id":"183858689"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"1068179975"},{"id":"892001032"},{"id":"774392049"},{"id":"614557663"},{"id":"644154219"}]},"parent": {"id":"818558147"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 616,"object": {"id":"1068179975"},"parent": {"id":"183858689"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 617,"object": {"id":"892001032"},"parent": {"id":"183858689"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 618,"object": {"id":"774392049"},"parent": {"id":"183858689"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 619,"object": {"id":"614557663"},"parent": {"id":"183858689"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 620,"object": {"id":"644154219"},"parent": {"id":"183858689"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 621,"object": {"id":"975825102"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"981059996"},{"id":"658247071"},{"id":"180202457"},{"id":"122656406"},{"id":"1055412392"},{"id":"851747333"},{"id":"766796088"},{"id":"872570229"},{"id":"596561657"},{"id":"792316364"}]},"parent": {"id":"43690407"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 622,"object": {"id":"981059996"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"906599697"}]},"parent": {"id":"975825102"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 623,"object": {"id":"658247071"},"parent": {"id":"975825102"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 624,"object": {"id":"180202457"},"parent": {"id":"975825102"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 625,"object": {"id":"122656406"},"parent": {"id":"975825102"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 626,"object": {"id":"1055412392"},"parent": {"id":"975825102"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 627,"object": {"id":"851747333"},"parent": {"id":"975825102"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 628,"object": {"id":"766796088"},"parent": {"id":"975825102"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 629,"object": {"id":"872570229"},"parent": {"id":"975825102"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 630,"object": {"id":"596561657"},"parent": {"id":"975825102"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 631,"object": {"id":"792316364"},"parent": {"id":"975825102"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 632,"object": {"id":"906599697"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"160428799"},{"id":"988306009"},{"id":"235507009"},{"id":"175409192"},{"id":"76364711"},{"id":"398110396"},{"id":"408911759"},{"id":"137407739"},{"id":"1041729520"}]},"parent": {"id":"981059996"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 633,"object": {"id":"160428799"},"parent": {"id":"906599697"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 634,"object": {"id":"988306009"},"parent": {"id":"906599697"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 635,"object": {"id":"235507009"},"parent": {"id":"906599697"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 636,"object": {"id":"175409192"},"parent": {"id":"906599697"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 637,"object": {"id":"76364711"},"parent": {"id":"906599697"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 638,"object": {"id":"398110396"},"parent": {"id":"906599697"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 639,"object": {"id":"408911759"},"parent": {"id":"906599697"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 640,"object": {"id":"137407739"},"parent": {"id":"906599697"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 641,"object": {"id":"1041729520"},"parent": {"id":"906599697"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 642,"object": {"id":"26323967"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"1044796185"},{"id":"1073520368"},{"id":"925479430"},{"id":"32515025"},{"id":"573155596"},{"id":"419879483"},{"id":"212764814"},{"id":"567593746"},{"id":"238136692"},{"id":"987153865"},{"id":"108407587"},{"id":"882289911"},{"id":"894470039"},{"id":"766653658"},{"id":"1062491368"}]},"parent": {"id":"693213887"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 643,"object": {"id":"1044796185"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"196866971"}]},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 644,"object": {"id":"1073520368"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"182677269"}]},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 645,"object": {"id":"925479430"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"36288778"}]},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 646,"object": {"id":"32515025"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"499920755"}]},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 647,"object": {"id":"573155596"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"50713213"}]},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 648,"object": {"id":"419879483"},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 649,"object": {"id":"212764814"},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 650,"object": {"id":"567593746"},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 651,"object": {"id":"238136692"},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 652,"object": {"id":"987153865"},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 653,"object": {"id":"108407587"},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 654,"object": {"id":"882289911"},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 655,"object": {"id":"894470039"},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 656,"object": {"id":"766653658"},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 657,"object": {"id":"1062491368"},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 658,"object": {"id":"50713213"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"1017125445"},{"id":"748324225"},{"id":"840494879"},{"id":"710177711"},{"id":"547150631"}]},"parent": {"id":"573155596"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 659,"object": {"id":"1017125445"},"parent": {"id":"50713213"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 660,"object": {"id":"748324225"},"parent": {"id":"50713213"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 661,"object": {"id":"840494879"},"parent": {"id":"50713213"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 662,"object": {"id":"710177711"},"parent": {"id":"50713213"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 663,"object": {"id":"547150631"},"parent": {"id":"50713213"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 664,"object": {"id":"499920755"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"363312713"},{"id":"428750252"},{"id":"707578430"},{"id":"277876898"},{"id":"664256261"},{"id":"882984624"}]},"parent": {"id":"32515025"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 665,"object": {"id":"363312713"},"parent": {"id":"499920755"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 666,"object": {"id":"428750252"},"parent": {"id":"499920755"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 667,"object": {"id":"707578430"},"parent": {"id":"499920755"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 668,"object": {"id":"277876898"},"parent": {"id":"499920755"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 669,"object": {"id":"664256261"},"parent": {"id":"499920755"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 670,"object": {"id":"882984624"},"parent": {"id":"499920755"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 671,"object": {"id":"36288778"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"354238611"},{"id":"1062365657"},{"id":"218154558"},{"id":"491645350"},{"id":"1030351354"},{"id":"189206921"},{"id":"491421895"},{"id":"882086962"}]},"parent": {"id":"925479430"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 672,"object": {"id":"354238611"},"parent": {"id":"36288778"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 673,"object": {"id":"1062365657"},"parent": {"id":"36288778"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 674,"object": {"id":"218154558"},"parent": {"id":"36288778"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 675,"object": {"id":"491645350"},"parent": {"id":"36288778"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 676,"object": {"id":"1030351354"},"parent": {"id":"36288778"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 677,"object": {"id":"189206921"},"parent": {"id":"36288778"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 678,"object": {"id":"491421895"},"parent": {"id":"36288778"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 679,"object": {"id":"882086962"},"parent": {"id":"36288778"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 680,"object": {"id":"182677269"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"221720946"},{"id":"1064576491"},{"id":"228222622"}]},"parent": {"id":"1073520368"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 681,"object": {"id":"221720946"},"parent": {"id":"182677269"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 682,"object": {"id":"1064576491"},"parent": {"id":"182677269"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 683,"object": {"id":"228222622"},"parent": {"id":"182677269"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 684,"object": {"id":"196866971"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"434484761"},{"id":"558426415"}]},"parent": {"id":"1044796185"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 685,"object": {"id":"434484761"},"parent": {"id":"196866971"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 686,"object": {"id":"558426415"},"parent": {"id":"196866971"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 690,"object": {"id":"864649339"},"parent": {"id":"0"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 716,"object": {"id":"479961390"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"1059063770"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 717,"object": {"id":"1059063770"},"parent": {"id":"479961390"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 718,"object": {"id":"780600689"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"577933790"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 719,"object": {"id":"577933790"},"parent": {"id":"780600689"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 737,"object": {"id":"484200277"},"parent": {"id":"0"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 761,"object": {"id":"30980817"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"604040574"},{"id":"327081499"},{"id":"69568024"},{"id":"276741145"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 765,"object": {"id":"604040574"},"parent": {"id":"30980817"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 764,"object": {"id":"327081499"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"163630843"},{"id":"906371060"}]},"parent": {"id":"30980817"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 767,"object": {"id":"163630843"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"464442001"}]},"parent": {"id":"327081499"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 768,"object": {"id":"464442001"},"parent": {"id":"163630843"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 766,"object": {"id":"906371060"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"136009105"}]},"parent": {"id":"327081499"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 769,"object": {"id":"136009105"},"parent": {"id":"906371060"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 763,"object": {"id":"69568024"},"parent": {"id":"30980817"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 762,"object": {"id":"276741145"},"parent": {"id":"30980817"}}}]}}},"flattenedProperties": {"class": "NSMutableDictionary","id": "", "objects":{"EncodedWithXMLCoder": true,"dict.sortedKeys": {"class": "NSArray","id": "", "objects":["-3.IBPluginDependency","367.IBEditorWindowLastContentRect","367.IBPluginDependency","367.IBWindowTemplateEditedContentRect","367.NSWindowTemplate.visibleAtLaunch","367.editorWindowContentRectSynchronizationRect","368.IBPluginDependency","451.IBPluginDependency","452.IBPluginDependency","453.IBPluginDependency","454.IBPluginDependency","455.IBPluginDependency","456.IBPluginDependency","457.IBPluginDependency","458.IBPluginDependency","463.IBPluginDependency","464.IBPluginDependency","467.IBPluginDependency","468.IBPluginDependency","471.IBPluginDependency","472.IBPluginDependency","473.IBPluginDependency","474.IBPluginDependency","476.IBPluginDependency","477.IBPluginDependency","479.IBPluginDependency","480.IBPluginDependency","501.IBPluginDependency","502.IBPluginDependency","503.IBPluginDependency","504.IBPluginDependency","509.IBPluginDependency","510.IBPluginDependency","541.IBEditorWindowLastContentRect","541.IBPluginDependency","541.ImportedFromIB2","541.WindowOrigin","541.editorWindowContentRectSynchronizationRect","542.IBPluginDependency","543.IBPluginDependency","544.IBPluginDependency","545.IBPluginDependency","545.ImportedFromIB2","546.IBPluginDependency","546.ImportedFromIB2","547.IBPluginDependency","547.ImportedFromIB2","548.IBPluginDependency","548.ImportedFromIB2","549.IBEditorWindowLastContentRect","549.IBPluginDependency","549.ImportedFromIB2","549.editorWindowContentRectSynchronizationRect","550.IBPluginDependency","550.ImportedFromIB2","551.IBPluginDependency","551.ImportedFromIB2","552.IBPluginDependency","552.ImportedFromIB2","553.IBPluginDependency","553.ImportedFromIB2","554.IBEditorWindowLastContentRect","554.IBPluginDependency","554.ImportedFromIB2","554.editorWindowContentRectSynchronizationRect","555.IBPluginDependency","555.ImportedFromIB2","556.IBPluginDependency","556.ImportedFromIB2","557.IBPluginDependency","557.ImportedFromIB2","558.IBPluginDependency","558.ImportedFromIB2","559.IBPluginDependency","559.ImportedFromIB2","560.IBPluginDependency","560.ImportedFromIB2","561.IBPluginDependency","561.ImportedFromIB2","562.IBPluginDependency","562.ImportedFromIB2","563.IBPluginDependency","563.ImportedFromIB2","564.IBPluginDependency","564.ImportedFromIB2","565.IBPluginDependency","565.ImportedFromIB2","566.IBEditorWindowLastContentRect","566.IBPluginDependency","566.ImportedFromIB2","566.editorWindowContentRectSynchronizationRect","567.IBEditorWindowLastContentRect","567.IBPluginDependency","567.ImportedFromIB2","567.editorWindowContentRectSynchronizationRect","568.IBPluginDependency","568.ImportedFromIB2","569.IBEditorWindowLastContentRect","569.IBPluginDependency","569.ImportedFromIB2","569.editorWindowContentRectSynchronizationRect","570.IBPluginDependency","570.ImportedFromIB2","571.IBPluginDependency","571.ImportedFromIB2","572.IBPluginDependency","572.ImportedFromIB2","573.IBPluginDependency","573.ImportedFromIB2","574.IBPluginDependency","574.ImportedFromIB2","575.IBPluginDependency","575.ImportedFromIB2","576.IBPluginDependency","576.ImportedFromIB2","577.IBPluginDependency","577.ImportedFromIB2","578.IBPluginDependency","578.ImportedFromIB2","579.IBPluginDependency","579.ImportedFromIB2","580.IBPluginDependency","580.ImportedFromIB2","581.IBEditorWindowLastContentRect","581.IBPluginDependency","581.ImportedFromIB2","581.editorWindowContentRectSynchronizationRect","582.IBPluginDependency","582.ImportedFromIB2","583.IBEditorWindowLastContentRect","583.IBPluginDependency","583.editorWindowContentRectSynchronizationRect","584.IBPluginDependency","585.IBPluginDependency","586.IBEditorWindowLastContentRect","586.IBPluginDependency","587.IBPluginDependency","588.IBPluginDependency","589.IBPluginDependency","590.IBPluginDependency","591.IBPluginDependency","592.IBPluginDependency","593.IBPluginDependency","594.IBPluginDependency","595.IBPluginDependency","596.IBPluginDependency","597.IBPluginDependency","598.IBPluginDependency","599.IBPluginDependency","600.IBPluginDependency","601.IBPluginDependency","602.IBPluginDependency","603.IBPluginDependency","604.IBPluginDependency","605.IBPluginDependency","606.IBPluginDependency","607.IBPluginDependency","608.IBPluginDependency","609.IBPluginDependency","610.IBPluginDependency","611.IBPluginDependency","612.IBPluginDependency","613.IBPluginDependency","614.IBPluginDependency","615.IBPluginDependency","616.IBPluginDependency","617.IBPluginDependency","618.IBPluginDependency","619.IBPluginDependency","620.IBPluginDependency","621.IBEditorWindowLastContentRect","621.IBPluginDependency","622.IBPluginDependency","623.IBPluginDependency","624.IBPluginDependency","625.IBPluginDependency","626.IBPluginDependency","627.IBPluginDependency","628.IBPluginDependency","629.IBPluginDependency","630.IBPluginDependency","631.IBPluginDependency","632.IBEditorWindowLastContentRect","632.IBPluginDependency","633.IBPluginDependency","634.IBPluginDependency","635.IBPluginDependency","636.IBPluginDependency","637.IBPluginDependency","638.IBPluginDependency","639.IBPluginDependency","640.IBPluginDependency","641.IBPluginDependency","642.IBEditorWindowLastContentRect","642.IBPluginDependency","643.IBPluginDependency","644.IBPluginDependency","645.IBPluginDependency","646.IBPluginDependency","647.IBPluginDependency","648.IBPluginDependency","649.IBPluginDependency","650.IBPluginDependency","651.IBPluginDependency","652.IBPluginDependency","653.IBPluginDependency","654.IBPluginDependency","655.IBPluginDependency","656.IBPluginDependency","657.IBPluginDependency","658.IBPluginDependency","659.IBPluginDependency","660.IBPluginDependency","661.IBPluginDependency","662.IBPluginDependency","663.IBPluginDependency","664.IBPluginDependency","665.IBPluginDependency","666.IBPluginDependency","667.IBPluginDependency","668.IBPluginDependency","669.IBPluginDependency","670.IBPluginDependency","671.IBEditorWindowLastContentRect","671.IBPluginDependency","672.IBPluginDependency","673.IBPluginDependency","674.IBPluginDependency","675.IBPluginDependency","676.IBPluginDependency","677.IBPluginDependency","678.IBPluginDependency","679.IBPluginDependency","680.IBEditorWindowLastContentRect","680.IBPluginDependency","681.IBPluginDependency","682.IBPluginDependency","683.IBPluginDependency","684.IBPluginDependency","685.IBPluginDependency","686.IBPluginDependency","690.IBAttributePlaceholdersKey","716.IBPluginDependency","717.IBPluginDependency","718.IBPluginDependency","719.IBPluginDependency","737.IBPluginDependency","761.IBPluginDependency","762.IBPluginDependency","763.IBPluginDependency","764.IBPluginDependency","765.IBPluginDependency","766.IBPluginDependency","767.IBPluginDependency","768.IBPluginDependency","769.IBPluginDependency"]},"dict.values": {"class": "NSMutableArray","id": "", "objects":["com.apple.InterfaceBuilder.CocoaPlugin","{{67, 532}, {946, 613}}","com.apple.InterfaceBuilder.CocoaPlugin","{{67, 532}, {946, 613}}",1,"{{11, 666}, {480, 270}}","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","{{309, 1136}, {478, 20}}","com.apple.InterfaceBuilder.CocoaPlugin",1,"{74, 862}","{{11, 977}, {478, 20}}","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"{{447, 673}, {197, 73}}","com.apple.InterfaceBuilder.CocoaPlugin",1,"{{525, 802}, {197, 73}}","com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"{{334, 562}, {242, 183}}","com.apple.InterfaceBuilder.CocoaPlugin",1,"{{23, 794}, {245, 183}}","com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"{{531, 606}, {64, 6}}","com.apple.InterfaceBuilder.CocoaPlugin",1,"{{436, 809}, {64, 6}}","{{739, 722}, {213, 23}}","com.apple.InterfaceBuilder.CocoaPlugin",1,"{{596, 852}, {216, 23}}","com.apple.InterfaceBuilder.CocoaPlugin",1,"{{466, 542}, {196, 203}}","com.apple.InterfaceBuilder.CocoaPlugin",1,"{{323, 672}, {199, 203}}","com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"{{617, 609}, {132, 23}}","com.apple.InterfaceBuilder.CocoaPlugin",1,"{{522, 812}, {146, 23}}","com.apple.InterfaceBuilder.CocoaPlugin",1,"{{397, 703}, {234, 43}}","com.apple.InterfaceBuilder.CocoaPlugin","{{475, 832}, {234, 43}}","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","{{552, 702}, {83, 43}}","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","{{635, 542}, {204, 183}}","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","{{839, 462}, {164, 173}}","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","{{508, 462}, {254, 283}}","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","{{762, 372}, {182, 153}}","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","{{762, 442}, {170, 63}}","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin",{"class": "NSMutableDictionary","id": "", "objects":{"EncodedWithXMLCoder": true,"dict.sortedKeys": {"id":"0"},"dict.values": {"class": "NSMutableArray","id": "", "objects":[]}}},"com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin"]}}},"unlocalizedProperties": {"class": "NSMutableDictionary","id": "", "objects":{"EncodedWithXMLCoder": true,"dict.sortedKeys": {"id":"0"},"dict.values": {"class": "NSMutableArray","id": "", "objects":[]}}},"activeLocalization": {"nil":""},"localizations": {"class": "NSMutableDictionary","id": "", "objects":{"EncodedWithXMLCoder": true,"dict.sortedKeys": {"id":"0"},"dict.values": {"class": "NSMutableArray","id": "", "objects":[]}}},"sourceID": {"nil":""},"maxID": 770}},"IBDocument.Classes": {"class": "IBClassDescriber","id": "", "objects":{"referencedPartialClassDescriptions": {"class": "NSMutableArray","id": "", "objects":[{"class": "IBPartialClassDescription","id": "", "objects":{"className": "AppController","outlets": {"class": "NSMutableDictionary","id": "", "objects":{"EncodedWithXMLCoder": true,"dict.sortedKeys": {"class": "NSArray","id": "", "objects":["_arrayController","_window"]},"dict.values": {"class": "NSMutableArray","id": "", "objects":["id","id"]}}},"sourceIdentifier": {"class": "IBClassDescriptionSource","id": "", "objects":{"majorKey": "IBUserSource","minorKey": ""}}}}]}}},"IBDocument.localizationMode": 0,"IBDocument.PluginDeclaredDependencies": {"class": "NSMutableDictionary","id": "", "objects":{"NS.key.0": "com.apple.InterfaceBuilder.CocoaPlugin.macosx","NS.object.0": 1050}},"IBDocument.PluginDeclaredDevelopmentDependencies": {"class": "NSMutableDictionary","id": "", "objects":{"NS.key.0": "com.apple.InterfaceBuilder.CocoaPlugin.InterfaceBuilder3","NS.object.0": 3000}},"IBDocument.PluginDeclaredDependenciesTrackSystemTargetVersion": true,"IBDocument.LastKnownRelativeProjectPath": {"nil":""},"IBDocument.defaultPropertyAccessControl": 3}}};
+__bootstrap_files["MainMenu.json"] = {"archive":{"data":{"IBDocument.SystemTarget": 1050,"IBDocument.SystemVersion": "10A411","IBDocument.InterfaceBuilderVersion": "731","IBDocument.AppKitVersion": "1033","IBDocument.HIToolboxVersion": "435.00","IBDocument.PluginVersions": {"class": "NSMutableDictionary","id": "", "objects":{"NS.key.0": "com.apple.InterfaceBuilder.CocoaPlugin","NS.object.0": "731"}},"IBDocument.EditedObjectIDs": {"class": "NSMutableArray","id": "", "objects":[368]},"IBDocument.PluginDependencies": {"class": "NSArray","id": "", "objects":["com.apple.InterfaceBuilder.CocoaPlugin"]},"IBDocument.Metadata": {"class": "NSMutableDictionary","id": "", "objects":{"EncodedWithXMLCoder": true,"dict.sortedKeys": {"class": "NSArray","id": "0", "objects":[]},"dict.values": {"class": "NSMutableArray","id": "", "objects":[]}}},"IBDocument.RootObjects": {"class": "NSMutableArray","id": "1048", "objects":[{"class": "NSCustomObject","id": "1021", "objects":{"NSClassName": "NSApplication"}},{"class": "NSCustomObject","id": "1014", "objects":{"NSClassName": "FirstResponder"}},{"class": "NSCustomObject","id": "1050", "objects":{"NSClassName": "NSApplication"}},{"class": "NSCustomObject","id": "163992474", "objects":{"NSClassName": "NSFontManager"}},{"class": "NSWindowTemplate","id": "513744381", "objects":{"NSWindowStyleMask": 15,"NSWindowBacking": 2,"NSWindowRect": "{{133, 47}, {946, 613}}","NSWTFlags": 603979776,"NSWindowTitle": "Window","NSWindowClass": "NSWindow","NSViewClass": {"nil":""},"NSWindowContentMaxSize": "{1.79769e+308, 1.79769e+308}","NSWindowView": {"class": "NSView","id": "414427165", "objects":{"NSNextResponder": {"id":""},"NSvFlags": 256,"NSSubviews": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSButton","id": "807627904", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSFrame": "{{554, 422}, {118, 25}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSButtonCell","id": "281914322", "objects":{"NSCellFlags": -2080244224,"NSCellFlags2": 134217728,"NSContents": "Round Textured","NSSupport": {"class": "NSFont","id": "798430573", "objects":{"NSName": "LucidaGrande","NSSize": 13,"NSfFlags": 1044}},"NSControlView": {"id":"807627904"},"NSButtonFlags": -2038152961,"NSButtonFlags2": 163,"NSAlternateContents": "","NSKeyEquivalent": "","NSPeriodicDelay": 400,"NSPeriodicInterval": 75}}}},{"class": "NSButton","id": "947043007", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSFrame": "{{554, 391}, {118, 25}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSButtonCell","id": "775301662", "objects":{"NSCellFlags": -1543373312,"NSCellFlags2": 134217728,"NSContents": "This is disabled","NSSupport": {"id":"798430573"},"NSControlView": {"id":"947043007"},"NSButtonFlags": -2038152961,"NSButtonFlags2": 163,"NSAlternateContents": "","NSKeyEquivalent": "","NSPeriodicDelay": 400,"NSPeriodicInterval": 75}}}},{"class": "NSSlider","id": "481053202", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSFrame": "{{552, 455}, {122, 21}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSSliderCell","id": "228939928", "objects":{"NSCellFlags": -1543373312,"NSCellFlags2": 0,"NSContents": "","NSSupport": {"class": "NSFont","id": "672854075", "objects":{"NSName": "Helvetica","NSSize": 12,"NSfFlags": 16}},"NSControlView": {"id":"481053202"},"NSMaxValue": 100,"NSMinValue": 0.0,"NSValue": 50,"NSAltIncValue": 0.0,"NSNumberOfTickMarks": 0,"NSTickMarkPosition": 1,"NSAllowsTickMarkValuesOnly": false,"NSVertical": false}}}},{"class": "NSSlider","id": "257328319", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSFrame": "{{552, 478}, {122, 21}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSSliderCell","id": "829387278", "objects":{"NSCellFlags": -2079981824,"NSCellFlags2": 0,"NSContents": "","NSSupport": {"id":"672854075"},"NSControlView": {"id":"257328319"},"NSMaxValue": 100,"NSMinValue": 0.0,"NSValue": 50,"NSAltIncValue": 0.0,"NSNumberOfTickMarks": 0,"NSTickMarkPosition": 1,"NSAllowsTickMarkValuesOnly": false,"NSVertical": false}}}},{"class": "NSButton","id": "780169108", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSFrame": "{{62, 488}, {109, 18}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSButtonCell","id": "146314554", "objects":{"NSCellFlags": 67239424,"NSCellFlags2": 0,"NSContents": "Normal radio","NSSupport": {"id":"798430573"},"NSControlView": {"id":"780169108"},"NSButtonFlags": 1211912703,"NSButtonFlags2": 130,"NSNormalImage": {"class": "NSCustomResource","id": "904276281", "objects":{"NSClassName": "NSImage","NSResourceName": "NSRadioButton"}},"NSAlternateImage": {"class": "NSButtonImageSource","id": "813970489", "objects":{"NSImageName": "NSRadioButton"}},"NSAlternateContents": "","NSKeyEquivalent": "","NSPeriodicDelay": 200,"NSPeriodicInterval": 25}}}},{"class": "NSButton","id": "511023663", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSFrame": "{{62, 433}, {156, 18}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSButtonCell","id": "388353698", "objects":{"NSCellFlags": -1543373312,"NSCellFlags2": 0,"NSContents": "Disabled Check radio","NSSupport": {"id":"798430573"},"NSControlView": {"id":"511023663"},"NSButtonFlags": 1211912703,"NSButtonFlags2": 130,"NSNormalImage": {"id":"904276281"},"NSAlternateImage": {"id":"813970489"},"NSAlternateContents": "","NSKeyEquivalent": "","NSPeriodicDelay": 200,"NSPeriodicInterval": 25}}}},{"class": "NSButton","id": "142462336", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSFrame": "{{62, 462}, {177, 18}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSButtonCell","id": "100568012", "objects":{"NSCellFlags": -2080244224,"NSCellFlags2": 0,"NSContents": "Normal unchecked radio","NSSupport": {"id":"798430573"},"NSControlView": {"id":"142462336"},"NSButtonFlags": 1211912703,"NSButtonFlags2": 130,"NSNormalImage": {"id":"904276281"},"NSAlternateImage": {"id":"813970489"},"NSAlternateContents": "","NSKeyEquivalent": "","NSPeriodicDelay": 200,"NSPeriodicInterval": 25}}}},{"class": "NSButton","id": "577562334", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSFrame": "{{285, 488}, {109, 18}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSButtonCell","id": "671756545", "objects":{"NSCellFlags": -2080244224,"NSCellFlags2": 0,"NSContents": "Normal radio","NSSupport": {"id":"798430573"},"NSControlView": {"id":"577562334"},"NSButtonFlags": 1211912703,"NSButtonFlags2": 130,"NSNormalImage": {"class": "NSCustomResource","id": "1020590486", "objects":{"NSClassName": "NSImage","NSResourceName": "NSSwitch"}},"NSAlternateImage": {"class": "NSButtonImageSource","id": "849298367", "objects":{"NSImageName": "NSSwitch"}},"NSAlternateContents": "","NSKeyEquivalent": "","NSPeriodicDelay": 200,"NSPeriodicInterval": 25}}}},{"class": "NSButton","id": "790695465", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSFrame": "{{285, 433}, {156, 18}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSButtonCell","id": "561385561", "objects":{"NSCellFlags": -1543373312,"NSCellFlags2": 0,"NSContents": "Disabled Check radio","NSSupport": {"id":"798430573"},"NSControlView": {"id":"790695465"},"NSButtonFlags": 1211912703,"NSButtonFlags2": 130,"NSNormalImage": {"id":"1020590486"},"NSAlternateImage": {"id":"849298367"},"NSAlternateContents": "","NSKeyEquivalent": "","NSPeriodicDelay": 200,"NSPeriodicInterval": 25}}}},{"class": "NSButton","id": "561516135", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSFrame": "{{285, 462}, {177, 18}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSButtonCell","id": "79065924", "objects":{"NSCellFlags": 67239424,"NSCellFlags2": 0,"NSContents": "Normal unchecked radio","NSSupport": {"id":"798430573"},"NSControlView": {"id":"561516135"},"NSButtonFlags": 1211912703,"NSButtonFlags2": 130,"NSNormalImage": {"id":"1020590486"},"NSAlternateImage": {"id":"849298367"},"NSAlternateContents": "","NSKeyEquivalent": "","NSPeriodicDelay": 200,"NSPeriodicInterval": 25}}}},{"class": "NSButton","id": "479961390", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSFrame": "{{29, 57}, {73, 25}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSButtonCell","id": "1059063770", "objects":{"NSCellFlags": -2080244224,"NSCellFlags2": 134217728,"NSContents": "Add","NSSupport": {"id":"798430573"},"NSControlView": {"id":"479961390"},"NSButtonFlags": -2038152961,"NSButtonFlags2": 163,"NSAlternateContents": "","NSKeyEquivalent": "","NSPeriodicDelay": 400,"NSPeriodicInterval": 75}}}},{"class": "NSButton","id": "780600689", "objects":{"NSNextResponder": {"id":"414427165"},"NSvFlags": 268,"NSFrame": "{{110, 57}, {80, 25}}","NSSuperview": {"id":"414427165"},"NSEnabled": true,"NSCell": {"class": "NSButtonCell","id": "577933790", "objects":{"NSCellFlags": -2080244224,"NSCellFlags2": 134217728,"NSContents": "Remove","NSSupport": {"id":"798430573"},"NSControlView": {"id":"780600689"},"NSButtonFlags": -2038152961,"NSButtonFlags2": 163,"NSAlternateContents": "","NSKeyEquivalent": "","NSPeriodicDelay": 400,"NSPeriodicInterval": 75}}}}]},"NSFrameSize": "{946, 613}","NSSuperview": {"id":""}}},"NSScreenRect": "{{0, 0}, {1920, 1178}}","NSMaxSize": "{1.79769e+308, 1.79769e+308}"}},{"class": "NSMenu","id": "396145598", "objects":{"NSTitle": "Main Menu","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "502041852", "objects":{"NSMenu": {"id":"396145598"},"NSTitle": "JSApp","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"class": "NSCustomResource","id": "277861762", "objects":{"NSClassName": "NSImage","NSResourceName": "NSMenuCheckmark"}},"NSMixedImage": {"class": "NSCustomResource","id": "420132161", "objects":{"NSClassName": "NSImage","NSResourceName": "NSMenuMixedState"}},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "929908017", "objects":{"NSTitle": "JSApp","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "719413741", "objects":{"NSMenu": {"id":"929908017"},"NSTitle": "About JSApp","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "147013270", "objects":{"NSMenu": {"id":"929908017"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "544446554", "objects":{"NSMenu": {"id":"929908017"},"NSTitle": "Preferences…","NSKeyEquiv": ",","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "455124416", "objects":{"NSMenu": {"id":"929908017"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "493734341", "objects":{"NSMenu": {"id":"929908017"},"NSTitle": "Services","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "218525171", "objects":{"NSTitle": "Services","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[]},"NSName": "_NSServicesMenu"}}}},{"class": "NSMenuItem","id": "646933026", "objects":{"NSMenu": {"id":"929908017"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "843796999", "objects":{"NSMenu": {"id":"929908017"},"NSTitle": "Hide JSApp","NSKeyEquiv": "h","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "61754815", "objects":{"NSMenu": {"id":"929908017"},"NSTitle": "Hide Others","NSKeyEquiv": "h","NSKeyEquivModMask": 1572864,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "727120825", "objects":{"NSMenu": {"id":"929908017"},"NSTitle": "Show All","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "428803447", "objects":{"NSMenu": {"id":"929908017"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "491412195", "objects":{"NSMenu": {"id":"929908017"},"NSTitle": "Quit JSApp","NSKeyEquiv": "q","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]},"NSName": "_NSAppleMenu"}}}},{"class": "NSMenuItem","id": "475354134", "objects":{"NSMenu": {"id":"396145598"},"NSTitle": "File","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "140258427", "objects":{"NSTitle": "File","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "684393965", "objects":{"NSMenu": {"id":"140258427"},"NSTitle": "New","NSKeyEquiv": "n","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "118789126", "objects":{"NSMenu": {"id":"140258427"},"NSTitle": "Open…","NSKeyEquiv": "o","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "711009244", "objects":{"NSMenu": {"id":"140258427"},"NSTitle": "Open Recent","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "85259455", "objects":{"NSTitle": "Open Recent","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "620121511", "objects":{"NSMenu": {"id":"85259455"},"NSTitle": "Clear Menu","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]},"NSName": "_NSRecentDocumentsMenu"}}}},{"class": "NSMenuItem","id": "875068603", "objects":{"NSMenu": {"id":"140258427"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "313874609", "objects":{"NSMenu": {"id":"140258427"},"NSTitle": "Close","NSKeyEquiv": "w","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "594142260", "objects":{"NSMenu": {"id":"140258427"},"NSTitle": "Save","NSKeyEquiv": "s","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "323858156", "objects":{"NSMenu": {"id":"140258427"},"NSTitle": "Save As…","NSKeyEquiv": "S","NSKeyEquivModMask": 1179648,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "402382860", "objects":{"NSMenu": {"id":"140258427"},"NSTitle": "Revert to Saved","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "481018735", "objects":{"NSMenu": {"id":"140258427"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "499319061", "objects":{"NSMenu": {"id":"140258427"},"NSTitle": "Page Setup...","NSKeyEquiv": "P","NSKeyEquivModMask": 1179648,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSToolTip": ""}},{"class": "NSMenuItem","id": "494801925", "objects":{"NSMenu": {"id":"140258427"},"NSTitle": "Print…","NSKeyEquiv": "p","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]}}}}},{"class": "NSMenuItem","id": "693213887", "objects":{"NSMenu": {"id":"396145598"},"NSTitle": "Edit","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "26323967", "objects":{"NSTitle": "Edit","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "1062491368", "objects":{"NSMenu": {"id":"26323967"},"NSTitle": "Undo","NSKeyEquiv": "z","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "766653658", "objects":{"NSMenu": {"id":"26323967"},"NSTitle": "Redo","NSKeyEquiv": "Z","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "894470039", "objects":{"NSMenu": {"id":"26323967"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "882289911", "objects":{"NSMenu": {"id":"26323967"},"NSTitle": "Cut","NSKeyEquiv": "x","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "108407587", "objects":{"NSMenu": {"id":"26323967"},"NSTitle": "Copy","NSKeyEquiv": "c","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "987153865", "objects":{"NSMenu": {"id":"26323967"},"NSTitle": "Paste","NSKeyEquiv": "v","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "238136692", "objects":{"NSMenu": {"id":"26323967"},"NSTitle": "Paste and Match Style","NSKeyEquiv": "V","NSKeyEquivModMask": 1572864,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "567593746", "objects":{"NSMenu": {"id":"26323967"},"NSTitle": "Delete","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "212764814", "objects":{"NSMenu": {"id":"26323967"},"NSTitle": "Select All","NSKeyEquiv": "a","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "419879483", "objects":{"NSMenu": {"id":"26323967"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "573155596", "objects":{"NSMenu": {"id":"26323967"},"NSTitle": "Find","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "50713213", "objects":{"NSTitle": "Find","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "547150631", "objects":{"NSMenu": {"id":"50713213"},"NSTitle": "Find…","NSKeyEquiv": "f","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSTag": 1}},{"class": "NSMenuItem","id": "710177711", "objects":{"NSMenu": {"id":"50713213"},"NSTitle": "Find Next","NSKeyEquiv": "g","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSTag": 2}},{"class": "NSMenuItem","id": "840494879", "objects":{"NSMenu": {"id":"50713213"},"NSTitle": "Find Previous","NSKeyEquiv": "G","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSTag": 3}},{"class": "NSMenuItem","id": "748324225", "objects":{"NSMenu": {"id":"50713213"},"NSTitle": "Use Selection for Find","NSKeyEquiv": "e","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSTag": 7}},{"class": "NSMenuItem","id": "1017125445", "objects":{"NSMenu": {"id":"50713213"},"NSTitle": "Jump to Selection","NSKeyEquiv": "j","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]}}}}},{"class": "NSMenuItem","id": "32515025", "objects":{"NSMenu": {"id":"26323967"},"NSTitle": "Spelling and Grammar","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "499920755", "objects":{"NSTitle": "Spelling","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "882984624", "objects":{"NSMenu": {"id":"499920755"},"NSTitle": "Show Spelling and Grammar","NSKeyEquiv": ":","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "664256261", "objects":{"NSMenu": {"id":"499920755"},"NSTitle": "Check Document Now","NSKeyEquiv": ";","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "277876898", "objects":{"NSMenu": {"id":"499920755"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "707578430", "objects":{"NSMenu": {"id":"499920755"},"NSTitle": "Check Spelling While Typing","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "428750252", "objects":{"NSMenu": {"id":"499920755"},"NSTitle": "Check Grammar With Spelling","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "363312713", "objects":{"NSMenu": {"id":"499920755"},"NSTitle": "Correct Spelling Automatically","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]}}}}},{"class": "NSMenuItem","id": "925479430", "objects":{"NSMenu": {"id":"26323967"},"NSTitle": "Substitutions","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "36288778", "objects":{"NSTitle": "Substitutions","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "882086962", "objects":{"NSMenu": {"id":"36288778"},"NSTitle": "Show Substitutions","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "491421895", "objects":{"NSMenu": {"id":"36288778"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "189206921", "objects":{"NSMenu": {"id":"36288778"},"NSTitle": "Smart Copy/Paste","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "1030351354", "objects":{"NSMenu": {"id":"36288778"},"NSTitle": "Smart Quotes","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "491645350", "objects":{"NSMenu": {"id":"36288778"},"NSTitle": "Smart Dashes","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "218154558", "objects":{"NSMenu": {"id":"36288778"},"NSTitle": "Smart Links","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "1062365657", "objects":{"NSMenu": {"id":"36288778"},"NSTitle": "Data Detectors","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "354238611", "objects":{"NSMenu": {"id":"36288778"},"NSTitle": "Text Replacement","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]}}}}},{"class": "NSMenuItem","id": "1073520368", "objects":{"NSMenu": {"id":"26323967"},"NSTitle": "Transformations","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "182677269", "objects":{"NSTitle": "Transformations","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "228222622", "objects":{"NSMenu": {"id":"182677269"},"NSTitle": "Make Upper Case","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "1064576491", "objects":{"NSMenu": {"id":"182677269"},"NSTitle": "Make Lower Case","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "221720946", "objects":{"NSMenu": {"id":"182677269"},"NSTitle": "Capitalize","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]}}}}},{"class": "NSMenuItem","id": "1044796185", "objects":{"NSMenu": {"id":"26323967"},"NSTitle": "Speech","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "196866971", "objects":{"NSTitle": "Speech","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "558426415", "objects":{"NSMenu": {"id":"196866971"},"NSTitle": "Start Speaking","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "434484761", "objects":{"NSMenu": {"id":"196866971"},"NSTitle": "Stop Speaking","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]}}}}}]}}}}},{"class": "NSMenuItem","id": "857536504", "objects":{"NSMenu": {"id":"396145598"},"NSTitle": "Format","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "228002546", "objects":{"NSTitle": "Format","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "609792061", "objects":{"NSMenu": {"id":"228002546"},"NSTitle": "Font","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "565148168", "objects":{"NSTitle": "Font","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "643620124", "objects":{"NSMenu": {"id":"565148168"},"NSTitle": "Show Fonts","NSKeyEquiv": "t","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "61046026", "objects":{"NSMenu": {"id":"565148168"},"NSTitle": "Bold","NSKeyEquiv": "b","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSTag": 2}},{"class": "NSMenuItem","id": "233505564", "objects":{"NSMenu": {"id":"565148168"},"NSTitle": "Italic","NSKeyEquiv": "i","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSTag": 1}},{"class": "NSMenuItem","id": "162604386", "objects":{"NSMenu": {"id":"565148168"},"NSTitle": "Underline","NSKeyEquiv": "u","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "161800526", "objects":{"NSMenu": {"id":"565148168"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "14981393", "objects":{"NSMenu": {"id":"565148168"},"NSTitle": "Bigger","NSKeyEquiv": "+","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSTag": 3}},{"class": "NSMenuItem","id": "516934468", "objects":{"NSMenu": {"id":"565148168"},"NSTitle": "Smaller","NSKeyEquiv": "-","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSTag": 4}},{"class": "NSMenuItem","id": "391747350", "objects":{"NSMenu": {"id":"565148168"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "361602393", "objects":{"NSMenu": {"id":"565148168"},"NSTitle": "Kern","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "129191325", "objects":{"NSTitle": "Kern","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "61462663", "objects":{"NSMenu": {"id":"129191325"},"NSTitle": "Use Default","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "957493733", "objects":{"NSMenu": {"id":"129191325"},"NSTitle": "Use None","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "936113629", "objects":{"NSMenu": {"id":"129191325"},"NSTitle": "Tighten","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "635885426", "objects":{"NSMenu": {"id":"129191325"},"NSTitle": "Loosen","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]}}}}},{"class": "NSMenuItem","id": "25523273", "objects":{"NSMenu": {"id":"565148168"},"NSTitle": "Ligature","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "835348817", "objects":{"NSTitle": "Ligature","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "180250789", "objects":{"NSMenu": {"id":"835348817"},"NSTitle": "Use Default","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "568143876", "objects":{"NSMenu": {"id":"835348817"},"NSTitle": "Use None","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "573379050", "objects":{"NSMenu": {"id":"835348817"},"NSTitle": "Use All","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]}}}}},{"class": "NSMenuItem","id": "818558147", "objects":{"NSMenu": {"id":"565148168"},"NSTitle": "Baseline","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "183858689", "objects":{"NSTitle": "Baseline","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "644154219", "objects":{"NSMenu": {"id":"183858689"},"NSTitle": "Use Default","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "614557663", "objects":{"NSMenu": {"id":"183858689"},"NSTitle": "Superscript","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "774392049", "objects":{"NSMenu": {"id":"183858689"},"NSTitle": "Subscript","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "892001032", "objects":{"NSMenu": {"id":"183858689"},"NSTitle": "Raise","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "1068179975", "objects":{"NSMenu": {"id":"183858689"},"NSTitle": "Lower","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]}}}}},{"class": "NSMenuItem","id": "890899662", "objects":{"NSMenu": {"id":"565148168"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "644140682", "objects":{"NSMenu": {"id":"565148168"},"NSTitle": "Show Colors","NSKeyEquiv": "C","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "671545876", "objects":{"NSMenu": {"id":"565148168"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "397166321", "objects":{"NSMenu": {"id":"565148168"},"NSTitle": "Copy Style","NSKeyEquiv": "c","NSKeyEquivModMask": 1572864,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "215340233", "objects":{"NSMenu": {"id":"565148168"},"NSTitle": "Paste Style","NSKeyEquiv": "v","NSKeyEquivModMask": 1572864,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]},"NSName": "_NSFontMenu"}}}},{"class": "NSMenuItem","id": "43690407", "objects":{"NSMenu": {"id":"228002546"},"NSTitle": "Text","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "975825102", "objects":{"NSTitle": "Text","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "792316364", "objects":{"NSMenu": {"id":"975825102"},"NSTitle": "Align Left","NSKeyEquiv": "{","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "596561657", "objects":{"NSMenu": {"id":"975825102"},"NSTitle": "Center","NSKeyEquiv": "|","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "872570229", "objects":{"NSMenu": {"id":"975825102"},"NSTitle": "Justify","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "766796088", "objects":{"NSMenu": {"id":"975825102"},"NSTitle": "Align Right","NSKeyEquiv": "}","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "851747333", "objects":{"NSMenu": {"id":"975825102"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "981059996", "objects":{"NSMenu": {"id":"975825102"},"NSTitle": "Writing Direction","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "906599697", "objects":{"NSTitle": "Writing Direction","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "1041729520", "objects":{"NSMenu": {"id":"906599697"},"NSIsDisabled": true,"NSTitle": "Paragraph","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "137407739", "objects":{"NSMenu": {"id":"906599697"},"NSTitle": "CURlZmF1bHQ","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "408911759", "objects":{"NSMenu": {"id":"906599697"},"NSTitle": "CUxlZnQgdG8gUmlnaHQ","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "398110396", "objects":{"NSMenu": {"id":"906599697"},"NSTitle": "CVJpZ2h0IHRvIExlZnQ","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "175409192", "objects":{"NSMenu": {"id":"906599697"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "76364711", "objects":{"NSMenu": {"id":"906599697"},"NSIsDisabled": true,"NSTitle": "Selection","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "235507009", "objects":{"NSMenu": {"id":"906599697"},"NSTitle": "CURlZmF1bHQ","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "988306009", "objects":{"NSMenu": {"id":"906599697"},"NSTitle": "CUxlZnQgdG8gUmlnaHQ","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "160428799", "objects":{"NSMenu": {"id":"906599697"},"NSTitle": "CVJpZ2h0IHRvIExlZnQ","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]}}}}},{"class": "NSMenuItem","id": "658247071", "objects":{"NSMenu": {"id":"975825102"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "1055412392", "objects":{"NSMenu": {"id":"975825102"},"NSTitle": "Show Ruler","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "122656406", "objects":{"NSMenu": {"id":"975825102"},"NSTitle": "Copy Ruler","NSKeyEquiv": "c","NSKeyEquivModMask": 1310720,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "180202457", "objects":{"NSMenu": {"id":"975825102"},"NSTitle": "Paste Ruler","NSKeyEquiv": "v","NSKeyEquivModMask": 1310720,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]}}}}}]}}}}},{"class": "NSMenuItem","id": "713206015", "objects":{"NSMenu": {"id":"396145598"},"NSTitle": "View","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "96939199", "objects":{"NSTitle": "View","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "206668947", "objects":{"NSMenu": {"id":"96939199"},"NSTitle": "Show Toolbar","NSKeyEquiv": "t","NSKeyEquivModMask": 1572864,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "825897010", "objects":{"NSMenu": {"id":"96939199"},"NSTitle": "Customize Toolbar…","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]}}}}},{"class": "NSMenuItem","id": "686270510", "objects":{"NSMenu": {"id":"396145598"},"NSTitle": "Window","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "909684463", "objects":{"NSTitle": "Window","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "497312719", "objects":{"NSMenu": {"id":"909684463"},"NSTitle": "Minimize","NSKeyEquiv": "m","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "857636876", "objects":{"NSMenu": {"id":"909684463"},"NSTitle": "Zoom","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "353476913", "objects":{"NSMenu": {"id":"909684463"},"NSIsDisabled": true,"NSIsSeparator": true,"NSTitle": "","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}},{"class": "NSMenuItem","id": "8672285", "objects":{"NSMenu": {"id":"909684463"},"NSTitle": "Bring All to Front","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]},"NSName": "_NSWindowsMenu"}}}},{"class": "NSMenuItem","id": "125320586", "objects":{"NSMenu": {"id":"396145598"},"NSTitle": "Help","NSKeyEquiv": "","NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"},"NSAction": "submenuAction:","NSSubmenu": {"class": "NSMenu","id": "370522354", "objects":{"NSTitle": "Help","NSMenuItems": {"class": "NSMutableArray","id": "", "objects":[{"class": "NSMenuItem","id": "972987324", "objects":{"NSMenu": {"id":"370522354"},"NSTitle": "JSApp Help","NSKeyEquiv": "?","NSKeyEquivModMask": 1048576,"NSMnemonicLoc": 2147483647,"NSOnImage": {"id":"277861762"},"NSMixedImage": {"id":"420132161"}}}]},"NSName": "_NSHelpMenu"}}}}]},"NSName": "_NSMainMenu"}},{"class": "NSCustomObject","id": "864649339", "objects":{"NSClassName": "AppController"}}]},"IBDocument.Objects": {"class": "IBObjectContainer","id": "", "objects":{"connectionRecords": {"class": "NSMutableArray","id": "", "objects":[{"class": "IBConnectionRecord","id": "", "objects":{"connection": {"class": "IBOutletConnection","id": "", "objects":{"label": "delegate","source": {"id":"1050"},"destination": {"id":"864649339"}}},"connectionID": 691}},{"class": "IBConnectionRecord","id": "", "objects":{"connection": {"class": "IBOutletConnection","id": "", "objects":{"label": "_window","source": {"id":"864649339"},"destination": {"id":"513744381"}}},"connectionID": 715}},{"class": "IBConnectionRecord","id": "", "objects":{"connection": {"class": "IBBindingConnection","id": "", "objects":{"label": "value: testValue","source": {"id":"257328319"},"destination": {"id":"864649339"},"connector": {"class": "NSNibBindingConnector","id": "", "objects":{"NSSource": {"id":"257328319"},"NSDestination": {"id":"864649339"},"NSLabel": "value: testValue","NSBinding": "value","NSKeyPath": "testValue","NSNibBindingConnectorVersion": 2}}}},"connectionID": 736}},{"class": "IBConnectionRecord","id": "", "objects":{"connection": {"class": "IBActionConnection","id": "", "objects":{"label": "performClose:","source": {"id":"513744381"},"destination": {"id":"807627904"}}},"connectionID": 760}}]},"objectRecords": {"class": "IBMutableOrderedSet","id": "", "objects":{"orderedObjects": {"class": "NSArray","id": "", "objects":[{"class": "IBObjectRecord","id": "", "objects":{"objectID": 0,"object": {"id":"0"},"children": {"id":"1048"},"parent": {"nil":""}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": -2,"object": {"id":"1021"},"parent": {"id":"0"},"objectName": "File's Owner"}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": -1,"object": {"id":"1014"},"parent": {"id":"0"},"objectName": "First Responder"}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": -3,"object": {"id":"1050"},"parent": {"id":"0"},"objectName": "Application"}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 367,"object": {"id":"513744381"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"414427165"}]},"parent": {"id":"0"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 368,"object": {"id":"414427165"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"511023663"},{"id":"142462336"},{"id":"780169108"},{"id":"807627904"},{"id":"947043007"},{"id":"481053202"},{"id":"257328319"},{"id":"577562334"},{"id":"561516135"},{"id":"790695465"},{"id":"780600689"},{"id":"479961390"}]},"parent": {"id":"513744381"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 373,"object": {"id":"163992474"},"parent": {"id":"0"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 451,"object": {"id":"807627904"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"281914322"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 452,"object": {"id":"281914322"},"parent": {"id":"807627904"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 453,"object": {"id":"947043007"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"775301662"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 454,"object": {"id":"775301662"},"parent": {"id":"947043007"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 455,"object": {"id":"481053202"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"228939928"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 456,"object": {"id":"228939928"},"parent": {"id":"481053202"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 457,"object": {"id":"257328319"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"829387278"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 458,"object": {"id":"829387278"},"parent": {"id":"257328319"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 463,"object": {"id":"780169108"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"146314554"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 464,"object": {"id":"146314554"},"parent": {"id":"780169108"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 467,"object": {"id":"511023663"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"388353698"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 468,"object": {"id":"388353698"},"parent": {"id":"511023663"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 471,"object": {"id":"142462336"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"100568012"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 472,"object": {"id":"100568012"},"parent": {"id":"142462336"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 473,"object": {"id":"577562334"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"671756545"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 474,"object": {"id":"790695465"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"561385561"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 476,"object": {"id":"561516135"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"79065924"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 477,"object": {"id":"79065924"},"parent": {"id":"561516135"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 479,"object": {"id":"561385561"},"parent": {"id":"790695465"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 480,"object": {"id":"671756545"},"parent": {"id":"577562334"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 541,"object": {"id":"396145598"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"693213887"},{"id":"857536504"},{"id":"713206015"},{"id":"475354134"},{"id":"125320586"},{"id":"502041852"},{"id":"686270510"}]},"parent": {"id":"0"},"objectName": "Main Menu"}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 542,"object": {"id":"693213887"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"26323967"}]},"parent": {"id":"396145598"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 543,"object": {"id":"857536504"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"228002546"}]},"parent": {"id":"396145598"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 544,"object": {"id":"713206015"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"96939199"}]},"parent": {"id":"396145598"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 545,"object": {"id":"475354134"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"140258427"}]},"parent": {"id":"396145598"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 546,"object": {"id":"125320586"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"370522354"}]},"parent": {"id":"396145598"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 547,"object": {"id":"502041852"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"929908017"}]},"parent": {"id":"396145598"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 548,"object": {"id":"686270510"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"909684463"}]},"parent": {"id":"396145598"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 549,"object": {"id":"909684463"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"497312719"},{"id":"857636876"},{"id":"8672285"},{"id":"353476913"}]},"parent": {"id":"686270510"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 550,"object": {"id":"497312719"},"parent": {"id":"909684463"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 551,"object": {"id":"857636876"},"parent": {"id":"909684463"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 552,"object": {"id":"8672285"},"parent": {"id":"909684463"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 553,"object": {"id":"353476913"},"parent": {"id":"909684463"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 554,"object": {"id":"929908017"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"61754815"},{"id":"428803447"},{"id":"493734341"},{"id":"147013270"},{"id":"455124416"},{"id":"544446554"},{"id":"646933026"},{"id":"491412195"},{"id":"727120825"},{"id":"843796999"},{"id":"719413741"}]},"parent": {"id":"502041852"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 555,"object": {"id":"61754815"},"parent": {"id":"929908017"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 556,"object": {"id":"428803447"},"parent": {"id":"929908017"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 557,"object": {"id":"493734341"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"218525171"}]},"parent": {"id":"929908017"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 558,"object": {"id":"147013270"},"parent": {"id":"929908017"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 559,"object": {"id":"455124416"},"parent": {"id":"929908017"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 560,"object": {"id":"544446554"},"parent": {"id":"929908017"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 561,"object": {"id":"646933026"},"parent": {"id":"929908017"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 562,"object": {"id":"491412195"},"parent": {"id":"929908017"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 563,"object": {"id":"727120825"},"parent": {"id":"929908017"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 564,"object": {"id":"843796999"},"parent": {"id":"929908017"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 565,"object": {"id":"719413741"},"parent": {"id":"929908017"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 566,"object": {"id":"218525171"},"parent": {"id":"493734341"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 567,"object": {"id":"370522354"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"972987324"}]},"parent": {"id":"125320586"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 568,"object": {"id":"972987324"},"parent": {"id":"370522354"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 569,"object": {"id":"140258427"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"481018735"},{"id":"402382860"},{"id":"875068603"},{"id":"313874609"},{"id":"499319061"},{"id":"711009244"},{"id":"684393965"},{"id":"118789126"},{"id":"494801925"},{"id":"323858156"},{"id":"594142260"}]},"parent": {"id":"475354134"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 570,"object": {"id":"481018735"},"parent": {"id":"140258427"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 571,"object": {"id":"402382860"},"parent": {"id":"140258427"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 572,"object": {"id":"875068603"},"parent": {"id":"140258427"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 573,"object": {"id":"313874609"},"parent": {"id":"140258427"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 574,"object": {"id":"499319061"},"parent": {"id":"140258427"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 575,"object": {"id":"711009244"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"85259455"}]},"parent": {"id":"140258427"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 576,"object": {"id":"684393965"},"parent": {"id":"140258427"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 577,"object": {"id":"118789126"},"parent": {"id":"140258427"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 578,"object": {"id":"494801925"},"parent": {"id":"140258427"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 579,"object": {"id":"323858156"},"parent": {"id":"140258427"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 580,"object": {"id":"594142260"},"parent": {"id":"140258427"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 581,"object": {"id":"85259455"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"620121511"}]},"parent": {"id":"711009244"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 582,"object": {"id":"620121511"},"parent": {"id":"85259455"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 583,"object": {"id":"96939199"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"825897010"},{"id":"206668947"}]},"parent": {"id":"713206015"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 584,"object": {"id":"825897010"},"parent": {"id":"96939199"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 585,"object": {"id":"206668947"},"parent": {"id":"96939199"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 586,"object": {"id":"228002546"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"43690407"},{"id":"609792061"}]},"parent": {"id":"857536504"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 587,"object": {"id":"43690407"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"975825102"}]},"parent": {"id":"228002546"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 588,"object": {"id":"609792061"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"565148168"}]},"parent": {"id":"228002546"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 589,"object": {"id":"565148168"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"215340233"},{"id":"397166321"},{"id":"671545876"},{"id":"644140682"},{"id":"890899662"},{"id":"818558147"},{"id":"25523273"},{"id":"361602393"},{"id":"391747350"},{"id":"516934468"},{"id":"14981393"},{"id":"161800526"},{"id":"162604386"},{"id":"233505564"},{"id":"61046026"},{"id":"643620124"}]},"parent": {"id":"609792061"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 590,"object": {"id":"215340233"},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 591,"object": {"id":"397166321"},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 592,"object": {"id":"671545876"},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 593,"object": {"id":"644140682"},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 594,"object": {"id":"890899662"},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 595,"object": {"id":"818558147"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"183858689"}]},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 596,"object": {"id":"25523273"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"835348817"}]},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 597,"object": {"id":"361602393"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"129191325"}]},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 598,"object": {"id":"391747350"},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 599,"object": {"id":"516934468"},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 600,"object": {"id":"14981393"},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 601,"object": {"id":"161800526"},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 602,"object": {"id":"162604386"},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 603,"object": {"id":"233505564"},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 604,"object": {"id":"61046026"},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 605,"object": {"id":"643620124"},"parent": {"id":"565148168"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 606,"object": {"id":"129191325"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"635885426"},{"id":"936113629"},{"id":"957493733"},{"id":"61462663"}]},"parent": {"id":"361602393"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 607,"object": {"id":"635885426"},"parent": {"id":"129191325"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 608,"object": {"id":"936113629"},"parent": {"id":"129191325"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 609,"object": {"id":"957493733"},"parent": {"id":"129191325"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 610,"object": {"id":"61462663"},"parent": {"id":"129191325"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 611,"object": {"id":"835348817"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"573379050"},{"id":"568143876"},{"id":"180250789"}]},"parent": {"id":"25523273"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 612,"object": {"id":"573379050"},"parent": {"id":"835348817"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 613,"object": {"id":"568143876"},"parent": {"id":"835348817"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 614,"object": {"id":"180250789"},"parent": {"id":"835348817"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 615,"object": {"id":"183858689"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"1068179975"},{"id":"892001032"},{"id":"774392049"},{"id":"614557663"},{"id":"644154219"}]},"parent": {"id":"818558147"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 616,"object": {"id":"1068179975"},"parent": {"id":"183858689"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 617,"object": {"id":"892001032"},"parent": {"id":"183858689"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 618,"object": {"id":"774392049"},"parent": {"id":"183858689"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 619,"object": {"id":"614557663"},"parent": {"id":"183858689"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 620,"object": {"id":"644154219"},"parent": {"id":"183858689"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 621,"object": {"id":"975825102"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"981059996"},{"id":"658247071"},{"id":"180202457"},{"id":"122656406"},{"id":"1055412392"},{"id":"851747333"},{"id":"766796088"},{"id":"872570229"},{"id":"596561657"},{"id":"792316364"}]},"parent": {"id":"43690407"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 622,"object": {"id":"981059996"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"906599697"}]},"parent": {"id":"975825102"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 623,"object": {"id":"658247071"},"parent": {"id":"975825102"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 624,"object": {"id":"180202457"},"parent": {"id":"975825102"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 625,"object": {"id":"122656406"},"parent": {"id":"975825102"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 626,"object": {"id":"1055412392"},"parent": {"id":"975825102"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 627,"object": {"id":"851747333"},"parent": {"id":"975825102"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 628,"object": {"id":"766796088"},"parent": {"id":"975825102"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 629,"object": {"id":"872570229"},"parent": {"id":"975825102"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 630,"object": {"id":"596561657"},"parent": {"id":"975825102"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 631,"object": {"id":"792316364"},"parent": {"id":"975825102"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 632,"object": {"id":"906599697"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"160428799"},{"id":"988306009"},{"id":"235507009"},{"id":"175409192"},{"id":"76364711"},{"id":"398110396"},{"id":"408911759"},{"id":"137407739"},{"id":"1041729520"}]},"parent": {"id":"981059996"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 633,"object": {"id":"160428799"},"parent": {"id":"906599697"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 634,"object": {"id":"988306009"},"parent": {"id":"906599697"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 635,"object": {"id":"235507009"},"parent": {"id":"906599697"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 636,"object": {"id":"175409192"},"parent": {"id":"906599697"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 637,"object": {"id":"76364711"},"parent": {"id":"906599697"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 638,"object": {"id":"398110396"},"parent": {"id":"906599697"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 639,"object": {"id":"408911759"},"parent": {"id":"906599697"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 640,"object": {"id":"137407739"},"parent": {"id":"906599697"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 641,"object": {"id":"1041729520"},"parent": {"id":"906599697"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 642,"object": {"id":"26323967"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"1044796185"},{"id":"1073520368"},{"id":"925479430"},{"id":"32515025"},{"id":"573155596"},{"id":"419879483"},{"id":"212764814"},{"id":"567593746"},{"id":"238136692"},{"id":"987153865"},{"id":"108407587"},{"id":"882289911"},{"id":"894470039"},{"id":"766653658"},{"id":"1062491368"}]},"parent": {"id":"693213887"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 643,"object": {"id":"1044796185"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"196866971"}]},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 644,"object": {"id":"1073520368"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"182677269"}]},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 645,"object": {"id":"925479430"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"36288778"}]},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 646,"object": {"id":"32515025"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"499920755"}]},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 647,"object": {"id":"573155596"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"50713213"}]},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 648,"object": {"id":"419879483"},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 649,"object": {"id":"212764814"},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 650,"object": {"id":"567593746"},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 651,"object": {"id":"238136692"},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 652,"object": {"id":"987153865"},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 653,"object": {"id":"108407587"},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 654,"object": {"id":"882289911"},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 655,"object": {"id":"894470039"},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 656,"object": {"id":"766653658"},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 657,"object": {"id":"1062491368"},"parent": {"id":"26323967"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 658,"object": {"id":"50713213"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"1017125445"},{"id":"748324225"},{"id":"840494879"},{"id":"710177711"},{"id":"547150631"}]},"parent": {"id":"573155596"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 659,"object": {"id":"1017125445"},"parent": {"id":"50713213"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 660,"object": {"id":"748324225"},"parent": {"id":"50713213"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 661,"object": {"id":"840494879"},"parent": {"id":"50713213"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 662,"object": {"id":"710177711"},"parent": {"id":"50713213"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 663,"object": {"id":"547150631"},"parent": {"id":"50713213"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 664,"object": {"id":"499920755"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"363312713"},{"id":"428750252"},{"id":"707578430"},{"id":"277876898"},{"id":"664256261"},{"id":"882984624"}]},"parent": {"id":"32515025"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 665,"object": {"id":"363312713"},"parent": {"id":"499920755"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 666,"object": {"id":"428750252"},"parent": {"id":"499920755"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 667,"object": {"id":"707578430"},"parent": {"id":"499920755"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 668,"object": {"id":"277876898"},"parent": {"id":"499920755"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 669,"object": {"id":"664256261"},"parent": {"id":"499920755"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 670,"object": {"id":"882984624"},"parent": {"id":"499920755"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 671,"object": {"id":"36288778"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"354238611"},{"id":"1062365657"},{"id":"218154558"},{"id":"491645350"},{"id":"1030351354"},{"id":"189206921"},{"id":"491421895"},{"id":"882086962"}]},"parent": {"id":"925479430"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 672,"object": {"id":"354238611"},"parent": {"id":"36288778"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 673,"object": {"id":"1062365657"},"parent": {"id":"36288778"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 674,"object": {"id":"218154558"},"parent": {"id":"36288778"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 675,"object": {"id":"491645350"},"parent": {"id":"36288778"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 676,"object": {"id":"1030351354"},"parent": {"id":"36288778"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 677,"object": {"id":"189206921"},"parent": {"id":"36288778"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 678,"object": {"id":"491421895"},"parent": {"id":"36288778"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 679,"object": {"id":"882086962"},"parent": {"id":"36288778"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 680,"object": {"id":"182677269"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"221720946"},{"id":"1064576491"},{"id":"228222622"}]},"parent": {"id":"1073520368"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 681,"object": {"id":"221720946"},"parent": {"id":"182677269"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 682,"object": {"id":"1064576491"},"parent": {"id":"182677269"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 683,"object": {"id":"228222622"},"parent": {"id":"182677269"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 684,"object": {"id":"196866971"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"434484761"},{"id":"558426415"}]},"parent": {"id":"1044796185"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 685,"object": {"id":"434484761"},"parent": {"id":"196866971"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 686,"object": {"id":"558426415"},"parent": {"id":"196866971"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 690,"object": {"id":"864649339"},"parent": {"id":"0"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 716,"object": {"id":"479961390"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"1059063770"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 717,"object": {"id":"1059063770"},"parent": {"id":"479961390"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 718,"object": {"id":"780600689"},"children": {"class": "NSMutableArray","id": "", "objects":[{"id":"577933790"}]},"parent": {"id":"414427165"}}},{"class": "IBObjectRecord","id": "", "objects":{"objectID": 719,"object": {"id":"577933790"},"parent": {"id":"780600689"}}}]}}},"flattenedProperties": {"class": "NSMutableDictionary","id": "", "objects":{"EncodedWithXMLCoder": true,"dict.sortedKeys": {"class": "NSArray","id": "", "objects":["-3.IBPluginDependency","367.IBEditorWindowLastContentRect","367.IBPluginDependency","367.IBWindowTemplateEditedContentRect","367.NSWindowTemplate.visibleAtLaunch","367.editorWindowContentRectSynchronizationRect","368.IBPluginDependency","451.IBPluginDependency","452.IBPluginDependency","453.IBPluginDependency","454.IBPluginDependency","455.IBPluginDependency","456.IBPluginDependency","457.IBPluginDependency","458.IBPluginDependency","463.IBPluginDependency","464.IBPluginDependency","467.IBPluginDependency","468.IBPluginDependency","471.IBPluginDependency","472.IBPluginDependency","473.IBPluginDependency","474.IBPluginDependency","476.IBPluginDependency","477.IBPluginDependency","479.IBPluginDependency","480.IBPluginDependency","541.IBEditorWindowLastContentRect","541.IBPluginDependency","541.ImportedFromIB2","541.WindowOrigin","541.editorWindowContentRectSynchronizationRect","542.IBPluginDependency","543.IBPluginDependency","544.IBPluginDependency","545.IBPluginDependency","545.ImportedFromIB2","546.IBPluginDependency","546.ImportedFromIB2","547.IBPluginDependency","547.ImportedFromIB2","548.IBPluginDependency","548.ImportedFromIB2","549.IBEditorWindowLastContentRect","549.IBPluginDependency","549.ImportedFromIB2","549.editorWindowContentRectSynchronizationRect","550.IBPluginDependency","550.ImportedFromIB2","551.IBPluginDependency","551.ImportedFromIB2","552.IBPluginDependency","552.ImportedFromIB2","553.IBPluginDependency","553.ImportedFromIB2","554.IBEditorWindowLastContentRect","554.IBPluginDependency","554.ImportedFromIB2","554.editorWindowContentRectSynchronizationRect","555.IBPluginDependency","555.ImportedFromIB2","556.IBPluginDependency","556.ImportedFromIB2","557.IBPluginDependency","557.ImportedFromIB2","558.IBPluginDependency","558.ImportedFromIB2","559.IBPluginDependency","559.ImportedFromIB2","560.IBPluginDependency","560.ImportedFromIB2","561.IBPluginDependency","561.ImportedFromIB2","562.IBPluginDependency","562.ImportedFromIB2","563.IBPluginDependency","563.ImportedFromIB2","564.IBPluginDependency","564.ImportedFromIB2","565.IBPluginDependency","565.ImportedFromIB2","566.IBEditorWindowLastContentRect","566.IBPluginDependency","566.ImportedFromIB2","566.editorWindowContentRectSynchronizationRect","567.IBEditorWindowLastContentRect","567.IBPluginDependency","567.ImportedFromIB2","567.editorWindowContentRectSynchronizationRect","568.IBPluginDependency","568.ImportedFromIB2","569.IBEditorWindowLastContentRect","569.IBPluginDependency","569.ImportedFromIB2","569.editorWindowContentRectSynchronizationRect","570.IBPluginDependency","570.ImportedFromIB2","571.IBPluginDependency","571.ImportedFromIB2","572.IBPluginDependency","572.ImportedFromIB2","573.IBPluginDependency","573.ImportedFromIB2","574.IBPluginDependency","574.ImportedFromIB2","575.IBPluginDependency","575.ImportedFromIB2","576.IBPluginDependency","576.ImportedFromIB2","577.IBPluginDependency","577.ImportedFromIB2","578.IBPluginDependency","578.ImportedFromIB2","579.IBPluginDependency","579.ImportedFromIB2","580.IBPluginDependency","580.ImportedFromIB2","581.IBEditorWindowLastContentRect","581.IBPluginDependency","581.ImportedFromIB2","581.editorWindowContentRectSynchronizationRect","582.IBPluginDependency","582.ImportedFromIB2","583.IBEditorWindowLastContentRect","583.IBPluginDependency","583.editorWindowContentRectSynchronizationRect","584.IBPluginDependency","585.IBPluginDependency","586.IBEditorWindowLastContentRect","586.IBPluginDependency","587.IBPluginDependency","588.IBPluginDependency","589.IBPluginDependency","590.IBPluginDependency","591.IBPluginDependency","592.IBPluginDependency","593.IBPluginDependency","594.IBPluginDependency","595.IBPluginDependency","596.IBPluginDependency","597.IBPluginDependency","598.IBPluginDependency","599.IBPluginDependency","600.IBPluginDependency","601.IBPluginDependency","602.IBPluginDependency","603.IBPluginDependency","604.IBPluginDependency","605.IBPluginDependency","606.IBPluginDependency","607.IBPluginDependency","608.IBPluginDependency","609.IBPluginDependency","610.IBPluginDependency","611.IBPluginDependency","612.IBPluginDependency","613.IBPluginDependency","614.IBPluginDependency","615.IBPluginDependency","616.IBPluginDependency","617.IBPluginDependency","618.IBPluginDependency","619.IBPluginDependency","620.IBPluginDependency","621.IBEditorWindowLastContentRect","621.IBPluginDependency","622.IBPluginDependency","623.IBPluginDependency","624.IBPluginDependency","625.IBPluginDependency","626.IBPluginDependency","627.IBPluginDependency","628.IBPluginDependency","629.IBPluginDependency","630.IBPluginDependency","631.IBPluginDependency","632.IBEditorWindowLastContentRect","632.IBPluginDependency","633.IBPluginDependency","634.IBPluginDependency","635.IBPluginDependency","636.IBPluginDependency","637.IBPluginDependency","638.IBPluginDependency","639.IBPluginDependency","640.IBPluginDependency","641.IBPluginDependency","642.IBEditorWindowLastContentRect","642.IBPluginDependency","643.IBPluginDependency","644.IBPluginDependency","645.IBPluginDependency","646.IBPluginDependency","647.IBPluginDependency","648.IBPluginDependency","649.IBPluginDependency","650.IBPluginDependency","651.IBPluginDependency","652.IBPluginDependency","653.IBPluginDependency","654.IBPluginDependency","655.IBPluginDependency","656.IBPluginDependency","657.IBPluginDependency","658.IBPluginDependency","659.IBPluginDependency","660.IBPluginDependency","661.IBPluginDependency","662.IBPluginDependency","663.IBPluginDependency","664.IBPluginDependency","665.IBPluginDependency","666.IBPluginDependency","667.IBPluginDependency","668.IBPluginDependency","669.IBPluginDependency","670.IBPluginDependency","671.IBEditorWindowLastContentRect","671.IBPluginDependency","672.IBPluginDependency","673.IBPluginDependency","674.IBPluginDependency","675.IBPluginDependency","676.IBPluginDependency","677.IBPluginDependency","678.IBPluginDependency","679.IBPluginDependency","680.IBEditorWindowLastContentRect","680.IBPluginDependency","681.IBPluginDependency","682.IBPluginDependency","683.IBPluginDependency","684.IBPluginDependency","685.IBPluginDependency","686.IBPluginDependency","690.IBAttributePlaceholdersKey","716.IBPluginDependency","717.IBPluginDependency","718.IBPluginDependency","719.IBPluginDependency"]},"dict.values": {"class": "NSMutableArray","id": "", "objects":["com.apple.InterfaceBuilder.CocoaPlugin","{{67, 532}, {946, 613}}","com.apple.InterfaceBuilder.CocoaPlugin","{{67, 532}, {946, 613}}",1,"{{11, 666}, {480, 270}}","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","{{309, 1136}, {478, 20}}","com.apple.InterfaceBuilder.CocoaPlugin",1,"{74, 862}","{{11, 977}, {478, 20}}","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"{{447, 673}, {197, 73}}","com.apple.InterfaceBuilder.CocoaPlugin",1,"{{525, 802}, {197, 73}}","com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"{{334, 562}, {242, 183}}","com.apple.InterfaceBuilder.CocoaPlugin",1,"{{23, 794}, {245, 183}}","com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"{{531, 606}, {64, 6}}","com.apple.InterfaceBuilder.CocoaPlugin",1,"{{436, 809}, {64, 6}}","{{739, 722}, {213, 23}}","com.apple.InterfaceBuilder.CocoaPlugin",1,"{{596, 852}, {216, 23}}","com.apple.InterfaceBuilder.CocoaPlugin",1,"{{466, 542}, {196, 203}}","com.apple.InterfaceBuilder.CocoaPlugin",1,"{{323, 672}, {199, 203}}","com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"com.apple.InterfaceBuilder.CocoaPlugin",1,"{{617, 609}, {132, 23}}","com.apple.InterfaceBuilder.CocoaPlugin",1,"{{522, 812}, {146, 23}}","com.apple.InterfaceBuilder.CocoaPlugin",1,"{{397, 703}, {234, 43}}","com.apple.InterfaceBuilder.CocoaPlugin","{{475, 832}, {234, 43}}","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","{{552, 702}, {83, 43}}","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","{{635, 542}, {204, 183}}","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","{{839, 462}, {164, 173}}","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","{{508, 462}, {254, 283}}","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","{{762, 372}, {182, 153}}","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","{{762, 442}, {170, 63}}","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin",{"class": "NSMutableDictionary","id": "", "objects":{"EncodedWithXMLCoder": true,"dict.sortedKeys": {"id":"0"},"dict.values": {"class": "NSMutableArray","id": "", "objects":[]}}},"com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin","com.apple.InterfaceBuilder.CocoaPlugin"]}}},"unlocalizedProperties": {"class": "NSMutableDictionary","id": "", "objects":{"EncodedWithXMLCoder": true,"dict.sortedKeys": {"id":"0"},"dict.values": {"class": "NSMutableArray","id": "", "objects":[]}}},"activeLocalization": {"nil":""},"localizations": {"class": "NSMutableDictionary","id": "", "objects":{"EncodedWithXMLCoder": true,"dict.sortedKeys": {"id":"0"},"dict.values": {"class": "NSMutableArray","id": "", "objects":[]}}},"sourceID": {"nil":""},"maxID": 770}},"IBDocument.Classes": {"class": "IBClassDescriber","id": "", "objects":{"referencedPartialClassDescriptions": {"class": "NSMutableArray","id": "", "objects":[{"class": "IBPartialClassDescription","id": "", "objects":{"className": "AppController","outlets": {"class": "NSMutableDictionary","id": "", "objects":{"EncodedWithXMLCoder": true,"dict.sortedKeys": {"class": "NSArray","id": "", "objects":["_arrayController","_window"]},"dict.values": {"class": "NSMutableArray","id": "", "objects":["id","id"]}}},"sourceIdentifier": {"class": "IBClassDescriptionSource","id": "", "objects":{"majorKey": "IBUserSource","minorKey": ""}}}}]}}},"IBDocument.localizationMode": 0,"IBDocument.PluginDeclaredDependencies": {"class": "NSMutableDictionary","id": "", "objects":{"NS.key.0": "com.apple.InterfaceBuilder.CocoaPlugin.macosx","NS.object.0": 1050}},"IBDocument.PluginDeclaredDevelopmentDependencies": {"class": "NSMutableDictionary","id": "", "objects":{"NS.key.0": "com.apple.InterfaceBuilder.CocoaPlugin.InterfaceBuilder3","NS.object.0": 3000}},"IBDocument.PluginDeclaredDependenciesTrackSystemTargetVersion": true,"IBDocument.LastKnownRelativeProjectPath": {"nil":""},"IBDocument.defaultPropertyAccessControl": 3}}};

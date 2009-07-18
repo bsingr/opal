@@ -24,8 +24,6 @@
  * THE SOFTWARE.
  */
 
-// Global Vienna namespace object
-var VN = { };
 
 include('runtime/runtime');
 include('foundation/foundation');

@@ -24,7 +24,5 @@
  * THE SOFTWARE.
  */
 
-// Global Vienna namespace object
-var VN = { };
 
 

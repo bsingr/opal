@@ -128,7 +128,7 @@ var NSColor = NSObject.extend({
 	}
 });
 
-Object.extend(NSColor, {
+VN.extend(NSColor, {
 	
 	colorWithCalibratedWhite: function(white, alpha) {
 		var theColor =  NSColor.create();

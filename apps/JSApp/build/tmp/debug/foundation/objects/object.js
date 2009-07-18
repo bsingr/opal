@@ -25,10 +25,11 @@
  */
 
 
-/**
-    Root object constructor
-*/
-var NSObject = function() {
+var NSObject = VN.Object = function() {
+    return this;
+};
+
+VN.protocol = function(props) {
     return this;
 };
 
@@ -37,7 +38,7 @@ Function.prototype.property = function(key) {
     return this;
 };
 
-Object.extend(NSObject, {
+VN.extend(VN.Object, {
     
     superclass: null,
    
@@ -109,7 +110,7 @@ Object.extend(NSObject, {
         Class.extend(theClass, { ... }) for extending Class methods
     */
     mixin: function(props) {
-        Object.extend(this.prototype, props);
+        VN.extend(this.prototype, props);
     },
 
 	/*
@@ -141,7 +142,7 @@ Object.extend(NSObject, {
         NSObject.create();
     }}}
 */
-NSObject.mixin({
+VN.Object.mixin({
     
     /**
         This is invoked when the object instance is created. This basically

@@ -52,7 +52,7 @@ var NSFont = NSObject.extend({
     }
 });
 
-Object.extend(NSFont, {
+VN.extend(NSFont, {
     
     fontWithNameAndSize: function(fontName, fontSize) {
         var font = NSFont.create();
@@ -120,7 +120,8 @@ Object.extend(NSFont, {
     },
     
     controlContentFontOfSize: function(fontSize) {
-        
+        var theFont = NSFont.fontWithNameAndSize("Arial", fontSize);
+        return theFont;
     },
     
     systemFontSize: function() {

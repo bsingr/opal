@@ -199,9 +199,9 @@ var NSMenu = NSObject.extend({
     }
 });
 
-Object.extend(NSMenu, {
+VN.extend(NSMenu, {
     
     menuBarHeight: function() {
-        return 30.0;
+        return 35.0;
     }
 });

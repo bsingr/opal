@@ -128,6 +128,9 @@
   position: absolute;
 }.ns-window {
   background: rgb(240, 240, 240);
+}
+
+.ns-window.rounded {
   -webkit-border-bottom-right-radius: 6px;
   -webkit-border-bottom-left-radius: 6px;
   
@@ -141,7 +144,5 @@
 }
 
 .ns-window-main-menu {
-  -webkit-box-shadow: none;
-  -moz-box-shadow: none;
-  box-shadow: none;
+  background: url('resources/main_menu_black_gradient.png') repeat-x;
 }

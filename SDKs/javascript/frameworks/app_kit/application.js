@@ -29,31 +29,36 @@ include('app_kit/responder');
 include('app_kit/graphics_context');
 include('app_kit/window');
 
-var NSApp = null;
+/**
+    @type VN.Application
+    
+    Global VN.Application singleton
+*/
+VN.App = null;
 
-var NSModalPanelRunLoopMode                             = "NSModalPanelRunLoopMode";
-var NSEventTrackingRunLoopMode                          = "NSEventTrackingRunLoopMode";
+VN.MODAL_PANEL_RUN_LOOP_MODE                              = "VNModalPanelRunLoopMode";
+VN.EVENT_TRACKING_RUN_LOOP_MODE                           = "VNEventTrackingRunLoopMode";
 
-var NSApplicationDidBecomeActiveNotification            = "NSApplicationDidBecomeActiveNotification";
-var NSApplicationDidHideNotification                    = "NSApplicationDidHideNotification";
-var NSApplicationDidFinishLaunchingNotification         = "NSApplicationDidFinishLaunchingNotification";
-var NSApplicationDidResignActiveNotification            = "NSApplicationDidResignActiveNotification";
-var NSApplicationDidUnhideNotification                  = "NSApplicationDidUnhideNotification";
-var NSApplicationDidUpdateNotification                  = "NSApplicationDidUpdateNotification";
-var NSApplicationWillBecomeActiveNotification           = "NSApplicationWillBecomeActiveNotification";
-var NSApplicationWillHideNotification                   = "NSApplicationWillHideNotification";
-var NSApplicationWillFinishLaunchingNotification        = "NSApplicationWillFinishLaunchingNotification";
-var NSApplicationWillResignActiveNotification           = "NSApplicationWillResignActiveNotification";
-var NSApplicationWillUnhideNotification                 = "NSApplicationWillUnhideNotification";
-var NSApplicationWillUpdateNotification                 = "NSApplicationWillUpdateNotification";
-var NSApplicationWillTerminateNotification              = "NSApplicationWillTerminateNotification";
-var NSApplicationDidChangeScreenParametersNotification  = "NSApplicationDidChangeScreenParametersNotification";
+VN.APPLICATION_DID_BECOME_ACTIVE_NOTIFICATION             = "VNApplicationDidBecomeActiveNotification";
+VN.APPLICATION_DID_HIDE_NOTIFICATION                      = "VNApplicationDidHideNotification";
+VN.APPLICATION_DID_FINISH_LAUNCHING_NOTIFICATION          = "VNApplicationDidFinishLaunchingNotification";
+VN.APPLICATION_DID_RESIGN_ACTIVE_NOTIFICATION             = "VNApplicationDidResignActiveNotification";
+VN.APPLICATION_DID_UNHIDE_NOTIFICATION                    = "VNApplicationDidUnhideNotification";
+VN.APPLICATION_DID_UPDATE_NOTIFICATION                    = "VNApplicationDidUpdateNotification";
+VN.APPLICATION_WILL_BECOME_ACTIVE_NOTIFICATION            = "VNApplicationWillBecomeActiveNotification";
+VN.APPLICATION_WILL_HIDE_NOTIFICATION                     = "VNApplicationWillHideNotification";
+VN.APPLICATION_WILL_FINISH_LAUNCHING_NOTIFICATION         = "VNApplicationWillFinishLaunchingNotification";
+VN.APPLICATION_WILL_RESIGN_ACTIVE_NOTIFICATION            = "VNApplicationWillResignActiveNotification";
+VN.APPLICATION_WILL_UNHIDE_NOTIFICATION                   = "VNApplicationWillUnhideNotification";
+VN.APPLICATION_WILL_UPDATE_NOTIFICATION                   = "VNApplicationWillUpdateNotification";
+VN.APPLICATION_WILL_TERMINATE_NOTIFICATION                = "VNApplicationWillTerminateNotification";
+VN.APPLICATION_DID_CHANGE_SCREEN_PARAMETERS_NOTIFICATION  = "VNApplicationDidChangeScreenParametersNotification";
 
 /**
-    @class NSApplication
-    @extends NSResponder
+    @class VN.Application
+    @extends VN.Responder
 */
-var NSApplication = NSResponder.extend({
+var NSApplication = VN.Application = VN.Responder.extend({
     
     _delegate: null,
     
@@ -100,21 +105,21 @@ var NSApplication = NSResponder.extend({
         var nc = NSNotificationCenter.defaultCenter();
         
         if (this._delegate) {
-            nc.removeObserver(this._delegate, NSApplicationWillFinishLaunchingNotification, this);
-            nc.removeObserver(this._delegate, NSApplicationDidFinishLaunchingNotification, this);
-            nc.removeObserver(this._delegate, NSApplicationDidChangeScreenParametersNotification, this);
+            nc.removeObserver(this._delegate, VN.APPLICATION_WILL_FINISH_LAUNCHING_NOTIFICATION, this);
+            nc.removeObserver(this._delegate, VN.APPLICATION_DID_FINISH_LAUNCHING_NOTIFICATION, this);
+            nc.removeObserver(this._delegate, VN.APPLICATION_DID_CHANGE_SCREEN_PARAMETERS_NOTIFICATION, this);
         }
         
         this._delegate = anObject;
         
         if (this._delegate.respondsTo('applicationWillFinishLaunching'))
-            nc.addObserver(this._delegate, 'applicationWillFinishLaunching', NSApplicationWillFinishLaunchingNotification, this);
+            nc.addObserver(this._delegate, 'applicationWillFinishLaunching', VN.APPLICATION_WILL_FINISH_LAUNCHING_NOTIFICATION, this);
         
         if (this._delegate.respondsTo('applicationDidFinishLaunching'))
-            nc.addObserver(this._delegate, 'applicationDidFinishLaunching', NSApplicationDidFinishLaunchingNotification, this);
+            nc.addObserver(this._delegate, 'applicationDidFinishLaunching', VN.APPLICATION_DID_FINISH_LAUNCHING_NOTIFICATION, this);
             
         if (this._delegate.respondsTo('applicationDidChangeScreenParameters'))
-            nc.addObserver(this._delegate, 'applicationDidChangeScreenParameters', NSApplicationDidChangeScreenParametersNotification, this);
+            nc.addObserver(this._delegate, 'applicationDidChangeScreenParameters', VN.APPLICATION_DID_CHANGE_SCREEN_PARAMETERS_NOTIFICATION, this);
     },
     
     delegate: function() {
@@ -132,7 +137,7 @@ var NSApplication = NSResponder.extend({
     addWindow: function(aWindow) {
         // Register for screen chnages (if it wants them)
         var defaultCenter = NSNotificationCenter.defaultCenter();
-        defaultCenter.addObserver(aWindow, 'applicationDidChangeScreenParameters', NSApplicationDidChangeScreenParametersNotification, this);
+        defaultCenter.addObserver(aWindow, 'applicationDidChangeScreenParameters', VN.APPLICATION_DID_CHANGE_SCREEN_PARAMETERS_NOTIFICATION, this);
         
         this._windows.push(aWindow);
         return this._windows.indexOf(aWindow);
@@ -182,8 +187,8 @@ var NSApplication = NSResponder.extend({
     
     finishLaunching: function() {
         var defaultCenter = NSNotificationCenter.defaultCenter();
-        defaultCenter.postNotificationName(NSApplicationWillFinishLaunchingNotification, this);
-        defaultCenter.postNotificationName(NSApplicationDidFinishLaunchingNotification, this);
+        defaultCenter.postNotificationName(VN.APPLICATION_WILL_FINISH_LAUNCHING_NOTIFICATION, this);
+        defaultCenter.postNotificationName(VN.APPLICATION_DID_FINISH_LAUNCHING_NOTIFICATION, this);
     },
     
     /**
@@ -221,7 +226,7 @@ var NSApplication = NSResponder.extend({
         // On resize, post notification (for app delegate, also windows listen and handle accordingly)
         window.onresize = function() {
             var defaultCenter = NSNotificationCenter.defaultCenter();
-            defaultCenter.postNotificationName(NSApplicationDidChangeScreenParametersNotification, this);
+            defaultCenter.postNotificationName(VN.APPLICATION_DID_CHANGE_SCREEN_PARAMETERS_NOTIFICATION, this);
         };
         
         this.finishLaunching();
@@ -354,17 +359,18 @@ var NSApplication = NSResponder.extend({
     already have been created before any user code is likely to run, 
     assuming that no user code exists in the global scope.
 */
-NSApplication.sharedApplication = function() {
-    if (!NSApp)
-        NSApp = NSApplication.create();
+VN.Application.sharedApplication = function() {
+    if (!VN.App) {
+        VN.App = VN.Application.create();
+    }
     
-    return NSApp
+    return VN.App;
 };
 
 /**
-    @protocol NSApplicationDelegate
+    @protocol VN.ApplicationDelegate
 */
-var NSApplicationDelegate = NSObject.protocol({
+VN.ApplicationDelegate = VN.protocol({
     
     /**
         @optional
@@ -532,8 +538,7 @@ var NSApplicationDelegate = NSObject.protocol({
     once will likely have undefined results, with, at minimum, a duplicate
     interface defined in the main nib file.
 */
-function NSApplicationMain(argc, argv)
-{
+VN.ApplicationMain = function(argc, argv) {
 	var mainBundle = NSBundle.mainBundle();
 	var principalClass = mainBundle.principalClass();
     var topLevel = NSBundle.loadNibNamed("MainMenu", principalClass.sharedApplication());
@@ -546,4 +551,4 @@ function NSApplicationMain(argc, argv)
     
 	principalClass.sharedApplication().run();
 	return 0;
-}
+};

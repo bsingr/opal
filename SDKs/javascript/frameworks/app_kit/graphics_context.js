@@ -55,7 +55,7 @@ var NSGraphicsContext = NSObject.extend({
     }
 });
 
-Object.extend(NSGraphicsContext, {
+VN.extend(NSGraphicsContext, {
    
     graphicsContextWithGraphicsPort: function(graphicsPort, initialFlippedState) {
         return NSGraphicsContext.create('initWithGraphicsPort', graphicsPort, initialFlippedState);

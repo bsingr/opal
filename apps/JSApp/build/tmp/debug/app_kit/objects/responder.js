@@ -26,24 +26,24 @@
 
 
 /**
-    @class NSResponder
-    @extend NSObject
+    @class VN.Responder
+    @extend VN.Object
 */
-var NSResponder = NSObject.extend({
+var NSResponder = VN.Responder = VN.Object.extend({
 
     /**
-        @type NSResponder
+        @type VN.Responder
     */
     _nextResponder: null,
     
     /**
-        @type NSMenu
+        @type VN.Menu
     */
     _menu: null,
     
     /**
-        @param {NSCoder} aCoder
-        @returns NSResponder
+        @param {VN.Coder} aCoder
+        @returns VN.Responder
     */
     initWithCoder: function(aCoder) {
         this._nextResponder = aCoder.decodeObjectForKey("NSNextResponder");
@@ -323,7 +323,6 @@ var NSResponder = NSObject.extend({
         //     this._nextResponder.doCommandBySelector(aSelector);
     },
 });
-
 
 /**
     @protocol NSStandardKeyBindingMethods

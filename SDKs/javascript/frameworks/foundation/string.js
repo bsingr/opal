@@ -46,7 +46,7 @@ NSString.create = function() {
 };
 
 NSString.mixin = function(props) {
-    Object.extend(this.prototype, props);
+    VN.extend(this.prototype, props);
 };
 
 /*

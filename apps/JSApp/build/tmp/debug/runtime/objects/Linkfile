@@ -6,8 +6,8 @@ display_mode.js:
   dependencies: []
 
 object.js: 
-  dependencies: []
-
+  dependencies: 
+  - runtime.js
 file.js: 
   dependencies: []
 

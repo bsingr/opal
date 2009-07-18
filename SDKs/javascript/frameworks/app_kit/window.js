@@ -1076,6 +1076,8 @@ var NSWindow = NSResponder.extend({
     renderRect: function(aRect, firstTime, context) {
         if (firstTime) {
             context.setClass('ns-window');
+            context.addClass('shadow');
+            context.addClass('rounded');
         }
     },
 	

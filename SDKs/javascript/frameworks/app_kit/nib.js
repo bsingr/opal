@@ -26,7 +26,7 @@
 
 include('foundation/foundation');
 
-var NSNib = NSObject.extend({
+var NSNib = VN.Nib = VN.Object.extend({
 
     _data: null, 
     _connections: null,

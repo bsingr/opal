@@ -26,7 +26,7 @@
 
 include('foundation/object');
 
-var NSDictionary = NSObject.extend({
+var NSDictionary = VN.Dictionary = VN.Object.extend({
     
     _keys: null,
     
@@ -87,7 +87,7 @@ var NSDictionary = NSObject.extend({
 /*
     
 */
-Object.extend(NSDictionary, {
+VN.extend(NSDictionary, {
     
     /*
         @return NSDictionary
