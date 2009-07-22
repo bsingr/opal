@@ -26,38 +26,23 @@
 
 include('foundation/foundation');
 
-// NSEventType
-var NSLeftMouseDown             = 1;            
-var NSLeftMouseUp               = 2;
-var NSRightMouseDown            = 3;
-var NSRightMouseUp              = 4;
-var NSMouseMoved                = 5;
-var NSLeftMouseDragged          = 6;
-var NSRightMouseDragged         = 7;
-var NSMouseEntered              = 8;
-var NSMouseExited               = 9;
-var NSKeyDown                   = 10;
-var NSKeyUp                     = 11;
-var NSFlagsChanged              = 12;
-var NSAppKitDefined             = 13;
-var NSSystemDefined             = 14;
-var NSApplicationDefined        = 15;
-var NSPeriodic                  = 16;
-var NSCursorUpdate              = 17;
-var NSScrollWheel               = 22;
-var NSTabletPoint               = 23;
-var NSTabletProximity           = 24;
-var NSOtherMouseDown            = 25;
-var NSOtherMouseUp              = 26;
-var NSOtherMouseDragged         = 27;
-var NSEventTypeGesture          = 29;
-var NSEventTypeMagnify          = 30;
-var NSEventTypeSwipe            = 31;
-var NSEventTypeRotate           = 18;
-var NSEventTypeBeginGesture     = 19;
-var NSEventTypeEndGesture       = 20;
+// VN.EventType
+var NSLeftMouseDown             = VN.LEFT_MOUSE_DOWN = 1;            
+var NSLeftMouseUp               = VN.LEFT_MOUSE_UP = 2;
+var NSRightMouseDown            = VN.RIGHT_MOUSE_DOWN = 3;
+var NSRightMouseUp              = VN.RIGHT_MOUSE_UP = 4;
+var NSMouseMoved                = VN.MOUSE_MOVED = 5;
+var NSLeftMouseDragged          = VN.LEFT_MOUSE_DRAGGED = 6;
+var NSRightMouseDragged         = VN.RIGHT_MOUSE_DRAGGED = 7;
+var NSMouseEntered              = VN.MOUSE_ENTERED = 8;
+var NSMouseExited               = VN.MOUSE_EXITED = 9;
+var NSKeyDown                   = VN.KEY_DOWN = 10;
+var NSKeyUp                     = VN.KEY_UP = 11;
+var NSFlagsChanged              = VN.FLAGS_CHNAGED = 12;
+var NSCursorUpdate              = VN.CURSOR_UPDATE = 17;
+var NSScrollWheel               = VN.SCROLL_WHEEL = 22;
 
-// NSEventMasks
+// VN.EventMasks
 var NSLeftMouseDownMask         = 1 << NSLeftMouseDown;
 var NSLeftMouseUpMask           = 1 << NSLeftMouseUp;
 var NSRightMouseDownMask        = 1 << NSRightMouseDown;
@@ -70,23 +55,8 @@ var NSMouseExitedMask           = 1 << NSMouseExited;
 var NSKeyDownMask               = 1 << NSKeyDown;
 var NSKeyUpMask                 = 1 << NSKeyUp;
 var NSFlagsChangedMask          = 1 << NSFlagsChanged;
-var NSAppKitDefinedMask         = 1 << NSAppKitDefined;
-var NSSystemDefinedMask         = 1 << NSSystemDefined;
-var NSApplicationDefinedMask    = 1 << NSApplicationDefined;
-var NSPeriodicMask              = 1 << NSPeriodic;
 var NSCursorUpdateMask          = 1 << NSCursorUpdate;
 var NSScrollWheelMask           = 1 << NSScrollWheel;
-var NSTabletPointMask           = 1 << NSTabletPoint;
-var NSTabletProximityMask       = 1 << NSTabletProximity;
-var NSOtherMouseDownMask        = 1 << NSOtherMouseDown;
-var NSOtherMouseUpMask          = 1 << NSOtherMouseUp;
-var NSOtherMouseDraggedMask     = 1 << NSOtherMouseDragged;
-var NSEventMaskGesture          = 1 << NSEventTypeGesture;
-var NSEventMaskMagnify          = 1 << NSEventTypeMagnify;
-var NSEventMaskSwipe            = 1 << NSEventTypeSwipe;
-var NSEventMaskRotate           = 1 << NSEventTypeRotate;
-var NSEventMaskBeginGesture     = 1 << NSEventTypeBeginGesture;
-var NSEventMaskEndGesture       = 1 << NSEventTypeEndGesture;
 
 // NSevent modifier flags
 var NSAlphaShiftKeyMask         = 1 << 16; // caps lock - not the same as shift
@@ -99,88 +69,77 @@ var NSHelpKeyMask               = 1 << 22;
 var NSFunctionKeyMask           = 1 << 23;
 
 /**
-    @class NSEvent
+    @class VN.Event
 */
-var NSEvent = NSObject.extend({
+VN.Event = function(theEvent) {
     
-    _type: null,
-    _location: null,
-    _locationInScreen: null,
-    _modifierFlags: null,
-    _timestamp: null,
-    _windowNumber: null,
-    _window: null,
-    _context: null,
+    this._event = theEvent;
     
-    _eventNumber: null,
-    _clickCount: null,
-    _pressure: null,
+    // eventType
+    switch (theEvent.type) {
+        case 'mousedown': this._type = VN.LEFT_MOUSE_DOWN; break;
+        case 'mouseup': this._type = VN.LEFT_MOUSE_UP; break;
+        case 'mousemove': this._type = VN.MOUSE_MOVED; break;
+        case 'keypress': this._type = VN.KEY_DOWN; break;
+        case 'keydown': this._type = VN.KEY_DOWN; break;
+        default: console.log('unable to determine event type'); return;
+    }
     
-    _deltaX: null,
-    _deltaY: null,
+    // modifierFlags
+    var modifierFlags = 1;
+    if (theEvent.metaKey) { modifierFlags = modifierFlags | NSCommandKeyMask; theEvent._allowsBrowserControl = true; }
+    if (theEvent.shiftKey) modifierFlags = modifierFlags | NSShiftKeyMask;
+    if (theEvent.altKey) modifierFlags = modifierFlags | NSAlternateKeyMask;
+    if (theEvent.ctrlKey) modifierFlags = modifierFlags | NSControlKeyMask;
+    this._modifierFlags = modifierFlags;
     
-    _keys: null,
-    _unmodKeys: null,
-    _keyCode: null,
-    _isARepeat: null,
+    // screenLocation
+    this._screenLocation = NSMakePoint(theEvent.clientX, window.innerHeight - theEvent.clientY);
+    
+    // timeStamp
+    this._timeStamp = theEvent.timeStamp || new Date().getTime();
+    
+    // window etc
+    this._window = VN.Application.sharedApplication().windowAtPoint(this._screenLocation);
+    if (!this._window) this._window = VN.App.keyWindow();
+    
+    if (this._window) {
+        this._windowLocation = this._window.convertScreenToBase(this._screenLocation);
+        this._windowNumber = this._window.windowNumber();
+    }
+    
+    // characters
+    this._keyCode = theEvent.charCode || theEvent.keyCode;
+    this._characters = String.fromCharCode(this._keyCode);
+    
+    return this;
+};
 
-// all events
+VN.Event.create = function(event) {
+    VN.Application.sharedApplication().sendEvent(new VN.Event(event));
+    return event._allowBrowserControl ? true : false;
+};
+
+VN.Event.mixin = function(props) {
+    VN.extend(this.prototype, props);
+};
+
+VN.Event.mixin({
+    
     type: function() {
         return this._type;
     },
     
-    modifierFlags: function() {
-        return this._modifierFlags;
-    },
-    
-    timestamp: function() {
-        return this._timestamp;
+    locationInWindow: function() {
+        return this._windowLocation;
     },
     
     window: function() {
         return this._window;
     },
     
-    windowNumber: function() {
-        return this._windowNumber;
-    },
-    
-    content: function() {
-        return this._context;
-    },
-
-// mouse down/up/drag events
-    clickCount: function() {
-        return this._clickCount;
-    },
-    
-    buttonNumber: function() {
-        return this._buttonNumber;
-    },
-    
-    eventNumber: function() {
-        return this._eventNumber;
-    },
-    
-    locationInWindow: function() {
-        return this._location;
-    },
-    
-    locationInScreen: function() {
-        return this._locationInScreen;
-    },
-    
-// key up/down events
-    characters: function() {
-        return this._keys;
-    },
-    
-    charactersIgnoringModifiers: function() {
-        return this._unmodKeys;
-    },
-    
-    isARepeat: function() {
-        return this._isARepeat;
+    modifierFlags: function() {
+        return this._modifierFlags;
     },
     
     keyCode: function() {
@@ -188,144 +147,8 @@ var NSEvent = NSObject.extend({
     }
 });
 
-/**
-    Main entrance point for  mouse events. This handles a raw JS event, and
-    creates an NSEvent, and posts it off to NSApplication.
-    
-    @param {Event} event
-*/
-function NSEventFromMouseEvent(event)
-{
-    // event type
-    var eventType;    
-    switch (event.type) {
-        case "mousedown":
-            eventType = NSLeftMouseDown;
-            break;
-        case "mouseup":
-            eventType = NSLeftMouseUp;
-            break;
-        case "mousemove":
-            eventType = NSMouseMoved;
-            break;
-        default:
-            console.log("unable to determine event type");
-            return;
-    }
-    
-    // modifier flags
-    var modifierFlags = 1;
-    if (event.metaKey)  modifierFlags = modifierFlags | NSCommandKeyMask;
-    if (event.shiftKey) modifierFlags = modifierFlags | NSShiftKeyMask;
-    if (event.altKey)   modifierFlags = modifierFlags | NSAlternateKeyMask;
-    if (event.ctrlKey)  modifierFlags = modifierFlags | NSControlKeyMask;
-    
-    // event location
-    var screenLocation = NSMakePoint(event.clientX, window.innerHeight - event.clientY);
-    
-    // timestamp
-    var timestamp = new Date().getTime();
-    
-    // the window, windowNumber (might both be null....)
-    var theWindow = NSApplication.sharedApplication().windowAtPoint(screenLocation);
-    var windowLocation, windowNumber, theContext;
-    if (theWindow) {
-        windowLocation = theWindow.convertScreenToBase(screenLocation);
-        windowNumber = theWindow.windowNumber();
-        // theContext = theWindow.graphicsContext();
-    }
-    
-    var theEvent = NSEvent.mouseEventWithType(eventType, windowLocation, modifierFlags, timestamp, windowNumber, theContext, 0, 1, 1);
-    theEvent._window = theWindow;
-    theEvent._locationInScreen = screenLocation;
-    NSApplication.sharedApplication().sendEvent(theEvent);
-    
-    // to stop event bubbling
-    return false;
-}
+var NSEvent = VN.Event;
 
-/**
-    Main entry point for key events.
-    
-    @param {Event} event
-*/
-function NSEventFromKeyEvent(event)
-{
-    // event type
-    var eventType;    
-    switch (event.type) {
-        case "keypress":
-        case "keydown":
-            eventType = NSKeyDown;
-            break;
-        default:
-            console.log("unable to determine event type");
-            return;
-    }
-    
-    // modifier flags
-    var modifierFlags = 1;
-    if (event.metaKey)  modifierFlags = modifierFlags | NSCommandKeyMask;
-    if (event.shiftKey) modifierFlags = modifierFlags | NSShiftKeyMask;
-    if (event.altKey)   modifierFlags = modifierFlags | NSAlternateKeyMask;
-    if (event.ctrlKey)  modifierFlags = modifierFlags | NSControlKeyMask;
-    
-    // timestamp
-    var timestamp = new Date().getTime();
-    
-    // characters
-    var keyCode = event.charCode || event.keyCode;
-    var theCharacters = String.fromCharCode(keyCode);
-    
-    // set the window to NSApp's keyWindow?
-    var theWindow = NSApplication.sharedApplication().keyWindow();
-    
-    var theEvent = NSEvent.keyEventWithType(eventType, null, modifierFlags, timestamp, null, null, theCharacters, theCharacters, false, keyCode);
-    theEvent._window = theWindow;
-    NSApplication.sharedApplication().sendEvent(theEvent);
-    
-    // if a controller key is pressed, allow control back to the browser. other
-    // wise block bubbling of event. In future, registered commands (involving
-    // control, meta, alt) will not allow control back, others will
-    if (!event.metaKey && !event.altKey && !event.ctrlKey)
-        return false;
-}
-
-NSEvent.mouseEventWithType = function(type, location, modifierFlags, timestamp, windowNumber, context, eventNumber, clickCount, pressure)
-{
-    var theEvent = NSEvent.create();
-    theEvent._type = type;
-    theEvent._location = location;
-    theEvent._modifierFlags = modifierFlags;
-    theEvent._timestamp = timestamp;
-    theEvent._windowNumber = windowNumber;
-    theEvent._context = context;
-    theEvent._eventNumber = eventNumber;
-    theEvent._clickCount = clickCount;
-    theEvent._pressure = pressure;
-    return theEvent;
-};
-
-NSEvent.keyEventWithType = function(type, location, modifierFlags, timestamp, windowNumber, context, characters, charactersIgnoringModifiers, isARepeat, keyCode)
-{
-    var theEvent = NSEvent.create();
-    theEvent._type = type;
-    theEvent._location = location;
-    theEvent._modifierFlags = modifierFlags;
-    theEvent._timestamp = timestamp;
-    theEvent._windowNumber = windowNumber;
-    theEvent._context = context;
-    theEvent._keys = characters;
-    theEvent._unmodKeys = charactersIgnoringModifiers;
-    theEvent._isARepeat = isARepeat;
-    theEvent._keyCode = keyCode;
-    return theEvent;
-};
-
-NSEvent.mouseLocation = function()
-{
-    
-};
 
 // reserved keycodes
 var NSUpArrowFunctionKey        = 38;

@@ -25,28 +25,28 @@
  */
 
 
-var NSUndefinedKeyException                     = "NSUndefinedKeyException";
-var NSAverageKeyValueOperator                   = "NSAverageKeyValueOperator";
-var NSCountKeyValueOperator                     = "NSCountKeyValueOperator";
-var NSDistinctUnionOfArraysKeyValueOperator     = "NSDistinctUnionOfArraysKeyValueOperator";
-var NSDistinctUnionOfObjectsKeyValueOperator    = "NSDistinctUnionOfObjectsKeyValueOperator";
-var NSDistinctUnionOfSetsKeyValueOperator       = "NSDistinctUnionOfSetsKeyValueOperator";
-var NSMaximumKeyValueOperator                   = "NSMaximumKeyValueOperator";
-var NSMinimumKeyValueOperator                   = "NSMinimumKeyValueOperator";
-var NSSumKeyValueOperator                       = "NSSumKeyValueOperator";
-var NSUnionOfArraysKeyValueOperator             = "NSUnionOfArraysKeyValueOperator";
-var NSUnionOfObjectsKeyValueOperator            = "NSUnionOfObjectsKeyValueOperator";
-var NSUnionOfSetsKeyValueOperator               = "NSUnionOfSetsKeyValueOperator";
+VN.UNDEFINED_KEY_EXCEPTION = "NSUndefinedKeyException";
+VN.AVERAGE_KEY_VALUE_OPERATOR = "NSAverageKeyValueOperator";
+VN.COUNT_KEY_VALUE_OPERATOR = "NSCountKeyValueOperator";
+VN.DISTINCT_UNION_OF_ARRAYS_KEY_VALUE_OPERATOR = "NSDistinctUnionOfArraysKeyValueOperator";
+VN.DISTINT_UNION_OF_OBJECTS_KEY_VALUE_OPERATOR = "NSDistinctUnionOfObjectsKeyValueOperator";
+VN.DISTINCT_UNION_OF_SETS_KEY_VALUE_OPERATOR = "NSDistinctUnionOfSetsKeyValueOperator";
+VN.MAXIMUM_KEY_VALUE_OPERATOR = "NSMaximumKeyValueOperator";
+VN.MINIMUM_KEY_VALUE_OPERATOR = "NSMinimumKeyValueOperator";
+VN.SUM_KEY_VALUE_OPERATOR = "NSSumKeyValueOperator";
+VN.UNION_OF_ARRAYS_KEY_VALUE_OPERATOR = "NSUnionOfArraysKeyValueOperator";
+VN.UNION_OF_OBJECTS_KEY_VALUE_OPERATOR = "NSUnionOfObjectsKeyValueOperator";
+VN.UNION_OF_SETS_KEY_VALUE_OPERATOR = "NSUnionOfSetsKeyValueOperator";
 
-/*
-    @mixin NSKeyValueCoding
-    @class NSObject
+/**
+    @mixin VN.KeyValueCoding
+    @class VN.Object
 */
-NSObject.mixin({
+VN.Object.mixin({
     
-    /*
-        @param {NSString} key
-        @returns id
+    /**
+        @param {VN.String} key
+        @returns VN.Object
     */
     valueForKey: function(key) {
 
@@ -92,7 +92,7 @@ NSObject.mixin({
         return this.valueForUndefinedKey(key);
     },
     
-    /*
+    /**
         Sends observer notifications if setting a key was successful. Currently,
         custom setters will not call observer notifications unless they are
         triggered through this custom method. This is a planned feature for the
@@ -115,9 +115,7 @@ NSObject.mixin({
 
             // _<key>
             accessorName = "_" + key;
-            console.log('trying ' + accessorName);
             if ((typeof this[accessorName] != 'undefined') && (typeof this[accessorName] != 'function')) {
-                console.log('well');
                 this.willChangeValueForKey(key);
                 this[accessorName] = value;
                 this.didChangeValueForKey(key);
@@ -126,9 +124,7 @@ NSObject.mixin({
 
             // _is<Key>
             accessorName = "_is" + key.capitalizedString();
-            console.log('trying ' + accessorName);
             if ((typeof this[accessorName] != 'undefined') && (typeof this[accessorName] != 'function')) {
-                console.log('well 2');
                 this.willChangeValueForKey(key);
                 this[accessorName] = value;
                 this.didChangeValueForKey(key);
@@ -137,21 +133,15 @@ NSObject.mixin({
 
             // <key>
             accessorName = key;
-            console.log('trying ' + accessorName);
             if ((typeof this[accessorName] != 'undefined') && (typeof this[accessorName] != 'function')) {
-                console.log('first');
                 this.willChangeValueForKey(key);
-                console.log('second');
                 this[accessorName] = value;
-                console.log('third');
                 this.didChangeValueForKey(key);
-                console.log('fourth');
                 return;
             }
             
             // is<Key>
             accessorName = "is" + key.capitalizedString();
-            console.log('trying ' + accessorName);
             if ((typeof this[accessorName] != 'undefined') && (typeof this[accessorName] != 'function')) {
                 this.willChangeValueForKey(key);
                 this[accessorName] = value;
@@ -159,7 +149,7 @@ NSObject.mixin({
                 return;
             }
         }
-        console.log('no luck..');
+
         this.setValueForUndefinedKey(value, key);
     },
     
@@ -172,7 +162,7 @@ NSObject.mixin({
         
     },
     
-    /*
+    /**
         Takes the key path and splits the string into seperate keys. The keys
         are then used to recursively fetcha  value using valueForKey() for the
         returned object at each point. The final value is then returned from
@@ -184,13 +174,18 @@ NSObject.mixin({
     valueForKeyPath: function(keyPath) {
         var keys = keyPath.split('.'), parent = this;
         
-        for (var idx = 0; idx < (keys.length - 1); idx++)
-            parent = parent.valueForKey(keys[idx]);
+        for (var idx = 0; idx < keys.length; idx++) {
+            // check if VN.Object, otherwise treet as if Javascript Object
+            if (parent['valueForKeyPath'] && parent['setValueForKeyPath'])
+                parent = parent.valueForKey(keys[idx]);
+            else
+                parent = parent[keys[idx]];
+        }
         
-        return parent.valueForKey(keys[idx++]);
+        return parent;
     },
     
-    /*
+    /**
         Splits the key path into keys and recusively does through the chain to 
         set the final destination value to the provided value
         
@@ -202,6 +197,8 @@ NSObject.mixin({
         
         for (var idx = 0; idx < (keys.length - 1); idx++)
             parent = parent.valueForKey(keys[idx]);
+        
+        console.log(keyPath);
         
         parent.setValueForKey(value, keys[idx++]);
     },
@@ -239,17 +236,24 @@ NSObject.mixin({
     }
 });
 
-/*
+/**
     @mixin NSKeyValueCoding
     @class NSArray
 */
-NSArray.mixin({
+VN.Array.mixin({
     
-    /*
+    /**
         Returns an array of the result of requesting -valueForKey from each object
+        
+        @param {VN.String} key
+        @returns VN.Array
     */
     valueForKey: function(key) {
-        return [10, 23, 34];
+        var result = [];
+        for (var idx = 0; idx < this.length; idx++)
+            result.push(this[idx].valueForKey(key));
+        
+        return result;
     },
     
     setValueForKey: function(value, key) {
@@ -257,11 +261,11 @@ NSArray.mixin({
     }
 });
 
-/*
+/**
     @mixin NSKeyValueCoding
     @class NSDictionary
 */
-NSDictionary.mixin({
+VN.Dictionary.mixin({
     
     valueForKey: function(key) {
         return this.objectForKey(key);

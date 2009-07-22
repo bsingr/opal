@@ -28,6 +28,9 @@ include('app_kit/view');
 
 var NSTableHeaderView = NSView.extend({
     
+    renderClassName: 'vn-table-view-header',
+    
+    
     _tableView: null,
     _resizedColumn: null,
     _draggedColumn: null,

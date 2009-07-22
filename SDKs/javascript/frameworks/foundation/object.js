@@ -34,10 +34,6 @@ VN.protocol = function(props) {
     return this;
 };
 
-Function.prototype.property = function(key) {
-    this._kvc_property = key;
-    return this;
-};
 
 VN.extend(VN.Object, {
     
@@ -189,6 +185,15 @@ VN.Object.mixin({
     
     init: function() {
         return this;
+    },
+    
+    _guid: null,
+    
+    guid: function() {
+        if (this._guid == null)
+            this._guid = VN.CreateGuid();
+        
+        return this._guid;
     },
     
     /**

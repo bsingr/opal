@@ -30,24 +30,28 @@ var NSTableColumnNoResizing         = 0;
 var NSTableColumnAutoresizingMask   = ( 1 << 0 );
 var NSTableColumnUserResizingMask   = ( 1 << 1 );
 
-var NSTableColumn = NSObject.extend({
-    
+var NSTableColumn = VN.TableColumn = VN.Object.extend({
+
     /**
-        @type NSString
+        Every column maintains its own renderContext for rendering each cell in
+        that table column. The data cell is used with the renderContext, so that
+        the element for the context is set between cell draws.
+        
+        @type VN.RenderContext
     */
-    _identifier: null,
-    _headerCell: null,
-    _dataCell: null,
-    _width: null,
-    _minWidth: null,
-    _maxWidth: null,
+    renderContext: null,
     
-    _tableView: null,
     
     _value: null,
     
+    /**
+        @param {VN.Coder} aCoder
+        @returns VN.TableColumn
+    */
     initWithCoder: function(aCoder) {
         // this._super(aCoder);
+        // render context
+        this.renderContext = VN.RenderContext.create();
         
         this._identifier = aCoder.decodeObjectForKey("NSIdentifier");
         this._headerCell = aCoder.decodeObjectForKey("NSHeaderCell");
@@ -81,36 +85,63 @@ var NSTableColumn = NSObject.extend({
         }
     },
 
-     /*
- 		@param {NSString} keyPath
+    /*
+        @param {NSString} keyPath
  		@param {NSObject} ofObject
  		@param {NSDictionary} change
  		@param {Object} context
  	*/
-     observeValueForKeyPath: function(keyPath, ofObject, change, context) {
-         if (context == NSValueBinding) {
-             var newValue = ofObject.valueForKeyPath(keyPath);
-             // this.setObjectValue(newValue);
-             consolg.log('table column, new value = ');
-             console.log(newValue);
+    observeValueForKeyPath: function(keyPath, ofObject, change, context) {
+        if (context == NSValueBinding) {
+            var newValue = ofObject.valueForKeyPath(keyPath);
+            // this.setObjectValue(newValue);
+            console.log('table column, new value = ');
+            console.log(newValue);
          }
-     },
+    },
     
+    /**
+        @type VN.TableView
+    */
+    _tableView: null,
+    
+    /**
+        @param {VN.TableView} aTableView
+    */
     setTableView: function(aTableView) {
         this._tableView = aTableView;
     },
     
+    /**
+        @returns VN.TableView
+    */
     tableView: function() {
         return this._tableView;
     },
+
+    /**
+        @type VN.String
+    */
+    _identifier: null,
     
+    /**
+        @param {VN.String} identifier
+    */
     setIdentifier: function(identifier) {
         this._identifier = identifier;
     },
     
+    /**
+        @returns VN.String
+    */
     identifier: function() {
         return this._identifier;
     },
+    
+    /**
+        @type Float
+    */
+    _width: null,
     
     setWidth: function(width) {
         this._width = width;
@@ -120,6 +151,11 @@ var NSTableColumn = NSObject.extend({
         return this._width;
     },
     
+    /**
+        @type Float
+    */
+    _minWidth: null,
+    
     setMinWidth: function(minWidth) {
         this._minWidth = minWidth;
     },
@@ -127,6 +163,11 @@ var NSTableColumn = NSObject.extend({
     minWidth: function() {
         return this._minWidth;
     },
+    
+    /**
+        @type Float
+    */
+    _maxWidth: null,
     
     setMaxWidth: function(maxWidth) {
         this._maxWidth = maxWidth;
@@ -136,6 +177,11 @@ var NSTableColumn = NSObject.extend({
         return this._maxWidth;
     },
     
+    /**
+        @type VN.Cell
+    */
+    _headerCell: null,
+    
     setHeaderCell: function(cell) {
         this._headerCell = cell;
     },
@@ -143,6 +189,11 @@ var NSTableColumn = NSObject.extend({
     headerCell: function() {
         return this._headerCell;
     },
+    
+    /**
+        @type VN.Cell
+    */
+    _dataCell: null,
     
     setDataCell: function(cell) {
         this._dataCell = cell;

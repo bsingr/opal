@@ -1,0 +1,6 @@
+.vn-clip-view {
+  position: absolute;
+  display: block;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}

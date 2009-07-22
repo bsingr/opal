@@ -3,8 +3,8 @@ resource.js:
   dependencies: []
 
 display_mode.js: 
-  dependencies: []
-
+  dependencies: 
+  - runtime.js
 object.js: 
   dependencies: 
   - runtime.js

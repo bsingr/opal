@@ -40,6 +40,26 @@ var NSCustomView = NSView.extend({
         var theClassName = aCoder.decodeObjectForKey("NSClassName");
         var theView = window[theClassName].create('initWithFrame', theFrame);
         
+        var subviews = aCoder.decodeObjectForKey("NSSubviews");
+        theView._superview = aCoder.decodeObjectForKey("NSSuperview");
+        theView._window = null;
+        theView._subviews = [];
+        
+        if (subviews) {
+            for (var idx = 0; idx < subviews.length; idx++) {
+                theView.addSubview(subviews[idx]);
+            }
+        }
+        theView._bounds = NSMakeRect(0, 0, 0, 0);
+        theView.setFrame(theFrame);
+        
+        theView._bounds.origin = NSMakePoint(0, 0);
+        theView._bounds.size = this._frame.size;
+        
+        var vFlags = aCoder.decodeIntForKey("NSvFlags");
+        theView._autoResizesSubviews = true;
+        theView._autoResizeMask = vFlags & 0x3F;
+        
         return theView;
     }
 });

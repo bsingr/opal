@@ -57,6 +57,11 @@ var NSClipView = NSView.extend({
     _drawsBackground: null,
     
     /**
+        @type VN.String
+    */
+    renderClassName: 'vn-clip-view',
+    
+    /**
         @param {NSCoder} aCoder
         @returns NSClipView
     */

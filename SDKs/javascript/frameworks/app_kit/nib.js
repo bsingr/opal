@@ -45,6 +45,7 @@ var NSNib = VN.Nib = VN.Object.extend({
     
     instantiateNibWithOwner: function(owner, topLevelObjects) {
         var nameTable = NSDictionary.create();
+        nameTable.setValueForKey(owner, 'NSFileOwner');
         this._topLevelObjects = topLevelObjects;
         return this.instantiateNibWithExternalNameTable(nameTable);
     },

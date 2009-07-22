@@ -314,7 +314,7 @@ var NSWindow = NSResponder.extend({
         aView.viewDidMoveToSuperview();
         aView.viewDidMoveToWindow();
         aView.setNextResponder(this);
-        this._DOMContainer.appendChild(aView._DOMContainer);
+        this._DOMContainer.appendChild(aView.renderElement);
     },
     
     contentView: function() {
@@ -455,16 +455,18 @@ var NSWindow = NSResponder.extend({
     },
     
     makeFirstResponder: function(aResponder) {
+        console.log('making first responder');
         if (this._firstResponder == aResponder)
             return true;
-        
+        console.log(1);
         if (!this._firstResponder.resignFirstResponder())
             return false;
-        
+        console.log(2);
         if (!aResponder || !aResponder.acceptsFirstResponder() || !aResponder.becomeFirstResponder())
             return false;
-        
+        console.log(3);
         this._firstResponder = aResponder;
+        console.log(this._firstResponder);
         return true;
     },
     

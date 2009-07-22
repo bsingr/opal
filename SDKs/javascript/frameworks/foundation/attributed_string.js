@@ -28,7 +28,7 @@ include('foundation/string');
 include('foundation/dictionary');
 
 /**
-    @class NSAttributedString
+    @class VN.AttributedString
     
     NSAttributedString manages a string with associated attributes that apply to
     individual characters, or ranges within the string. This base class provides
@@ -41,7 +41,7 @@ include('foundation/dictionary');
     Attributes are contained within NSDictionary classes that apply to the
     relevant ranges defined. NSAttributedString === NSMutableAttributedString.
 */
-var NSAttributedString = NSObject.extend({
+var NSAttributedString = VN.AttributedString = VN.Object.extend({
    
 	_string: null,
 	_attributes: null,

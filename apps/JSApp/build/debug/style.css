@@ -1,8 +1,9 @@
-.ns-button {
-  
+.vn-button {
+  position: absolute;
+  display: block;
 }
 
-.bordered .ns-button-left {
+.bordered .vn-button-left {
   position: absolute;
   background: url('resources/button_bezel_left.png');
   height: 24px;
@@ -11,7 +12,7 @@
   left: 0px;
 }
 
-.bordered .ns-button-middle {
+.bordered .vn-button-middle {
   position: absolute;
   background: url('resources/button_bezel_middle.png');
   top: 0px;
@@ -20,7 +21,7 @@
   height: 24px;
 }
 
-.bordered .ns-button-right {
+.bordered .vn-button-right {
   position: absolute;
   background: url('resources/button_bezel_right.png');
   height: 24px;
@@ -29,7 +30,7 @@
   right: 0px;
 }
 
-.ns-button-title {
+.vn-button-title {
   position: absolute;
   text-align:center;
 }
@@ -37,37 +38,134 @@
 /*
   Disabled button with border
 */
-.bordered.disabled .ns-button-left {
+.bordered.disabled .vn-button-left {
   background: url('resources/button_disabled_left.png');
 }
 
-.bordered.disabled .ns-button-middle {
+.bordered.disabled .vn-button-middle {
   background: url('resources/button_disabled_middle.png');
 }
 
-.bordered.disabled .ns-button-right {
+.bordered.disabled .vn-button-right {
   background: url('resources/button_disabled_right.png');
 }
 
 /*
   Highlighted button with border
 */
-.bordered.highlighted .ns-button-left {
+.bordered.highlighted .vn-button-left {
   background: url('resources/button_highlighted_left.png');
 }
 
-.bordered.highlighted .ns-button-middle {
+.bordered.highlighted .vn-button-middle {
   background: url('resources/button_highlighted_middle.png');
 }
 
-.bordered.highlighted .ns-button-right {
+.bordered.highlighted .vn-button-right {
   background: url('resources/button_highlighted_right.png');
 }
-.ns-slider {
+.vn-clip-view {
+  position: absolute;
+  display: block;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}/*
+  All colors used within Vienna in both the 'VN.Color' class, and app_kit are
+  defined here in css classes also, so they can be mixed into custom controls
+  and views. Using VN.AttributedString, for example, the textColors used are
+  simply css classes as defined here. This allows for highlighted controls to
+  easily change the colors of text controls without using custom style 
+  attributes on a 'per-node' basis.
+  
+  Also color/background are used as appropriate based onhow the css class is
+  to be used.
+*/
+
+.vn-color-gridColor {
+  background: rgb(230, 230, 230);
+}
+
+.vn-color-controlShadowColor {
+  background: rgb(128, 128, 128);
+}
+
+.vn-color-controlDarkShadowColor {
+  background: rgb(128, 128, 128);
+}
+
+.vn-color-controlColor {
+  background: rgb(128, 128, 128);
+}
+
+.vn-color-controlHighlightColor {
+  background: rgb(128, 128, 128);
+}
+
+.vn-color-controlTextColor {
+  color: rgb(52, 52, 52);
+}
+
+.vn-color-controlBackgroundColor {
+  color: rgb(52, 52, 52);
+}
+
+.vn-color-selectedControlColor {
+  color: rgb(56, 121, 217);
+}
+
+.vn-color-secondarySelectedControlColor {
+  color: rgb(52, 52, 52);
+}
+
+.vn-color-selectedControlTextColor {
+  color: rgb(41, 41, 41);
+}
+.vn-scroller {
+  position: absolute;
+  display: block;
+}
+
+.vn-scroller-top {
+  position: absolute;
+  background: url('resources/scroller_slot_top.png');
+  top: 0px;
+  left: 0px;
+  height: 18px;
+  width: 15px;
+}
+
+.vn-scroller-middle {
+  position: absolute;
+  background: url('resources/scroller_vertical_back.png');
+  top: 18px;
+  left: 0px;
+  width: 15px;
+  bottom: 48px;
+}
+
+.vn-scroller-up {
+  position: absolute;
+  background: url('resources/scroller_up_arow.png');
+  bottom:18px;
+  left: 0px;
+  height: 30px;
+  width: 15px;  
+}
+
+.vn-scroller-down {
+  position: absolute;
+  background: url('resources/scroller_down_arow.png');
+  bottom:0px;
+  left: 0px;
+  height: 18px;
+  width: 15px;  
+}.vn-slider {
+  position: absolute;
+  display:block;
   height: 21px;
 }
 
-.ns-slider-track {
+.vn-slider-track {
   position: absolute;
   background: url('resources/slider_track_horizontal.png') repeat-x;
   height: 5px;
@@ -76,7 +174,7 @@
   right: 9px;
 }
 
-.ns-slider-track-left {
+.vn-slider-track-left {
   position: absolute;
   background: url('resources/slider_track_left.png');
   height: 5px;
@@ -85,7 +183,7 @@
   width: 5px;
 }
 
-.ns-slider-track-right {
+.vn-slider-track-right {
   position: absolute;
   background: url('resources/slider_track_right.png');
   height: 5px;
@@ -94,7 +192,7 @@
   width: 5px;
 }
 
-.ns-slider .ns-slider-knob {
+.vn-slider .vn-slider-knob {
   position: absolute;
   background-image: url('resources/slider_knob.png');
   height: 19px;
@@ -103,44 +201,75 @@
   left: 34px;
 }
 
-.ns-slider.disabled .ns-slider-knob {
+.vn-slider.disabled .vn-slider-knob {
   background-image: url('resources/slider_knob_disabled.png');
 }
-.ns-table-view {
-  
+.vn-table-view {
+  position: absolute;
+  display: block;
 }
 
-.ns-table-view-row {
+.vn-table-view-row {
   height: 17px;
   position: absolute;
-}
-
-.ns-table-view-row.selected {
-  background: rgb(56, 121, 217);
-}.ns-text-field {
-}
-
-.ns-text-field.bezeled {
   background: white;
 }
 
-.ns-text-field-title {
+.vn-table-view-row.selected {
+  background: rgb(119, 141, 168);
+  color: white;
+}
+
+.vn-table-view-header {
+  background: url('resources/table_view_header_background.png') repeat-x;
+}
+.vn-text-field {
   position: absolute;
+  display:block;
+}
+
+.vn-text-field.bezeled {
+  padding: 1px;
+  border: 1px solid rgb(64, 64, 64);
+  background: white;
+}
+
+.vn-text-field.editable {
+  border: 0px;
+  padding: 0px;
+  margin: 0px;
+  white-space: "pre";
+  background: white;
+  outline: none;
+}
+
+.vn-text-field-title {
+  position: absolute;
+}.vn-text-view {
+  border: 0px;
+  padding: 0px;
+  margin: 0px;
+  white-space: "pre";
+  background: white;
+  outline: none;
+}.vn-view {
+  position: absolute;
+  display:block;
 }.ns-window {
-  background: rgb(240, 240, 240);
+  background: rgb(243, 245, 245);
 }
 
 .ns-window.rounded {
-  -webkit-border-bottom-right-radius: 6px;
+/*  -webkit-border-bottom-right-radius: 6px;
   -webkit-border-bottom-left-radius: 6px;
   
   -moz-border-radius-bottomright: 6px;
-  -moz-border-radius-bottomleft: 6px;
+  -moz-border-radius-bottomleft: 6px;*/
 }
 
 .ns-window.shadow {
-  -webkit-box-shadow: rgba(0, 0, 0, 0.496094) 0px 5px 10px;
-  -moz-box-shadow: rgba(0, 0, 0, 0.496094) 0px 5px 10px;
+/*  -webkit-box-shadow: rgba(0, 0, 0, 0.496094) 0px 5px 10px;
+  -moz-box-shadow: rgba(0, 0, 0, 0.496094) 0px 5px 10px;*/
 }
 
 .ns-window-main-menu {

@@ -1,10 +1,23 @@
-.ns-text-field {
+.vn-text-field {
+  position: absolute;
+  display:block;
 }
 
-.ns-text-field.bezeled {
+.vn-text-field.bezeled {
+  padding: 1px;
+  border: 1px solid rgb(64, 64, 64);
   background: white;
 }
 
-.ns-text-field-title {
+.vn-text-field.editable {
+  border: 0px;
+  padding: 0px;
+  margin: 0px;
+  white-space: "pre";
+  background: white;
+  outline: none;
+}
+
+.vn-text-field-title {
   position: absolute;
 }

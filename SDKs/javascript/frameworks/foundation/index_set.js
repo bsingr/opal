@@ -30,7 +30,7 @@ include('foundation/object');
     @class NSIndexSet
     @extends NSObject
 */
-var NSIndexSet = NSObject.extend({
+var NSIndexSet = VN.IndexSet = VN.Object.extend({
     
     /**
         @type Integer
@@ -255,7 +255,7 @@ var NSIndexSet = NSObject.extend({
 /**
     @returns NSIndexSet
 */
-NSIndexSet.indexSet = function() {
+VN.IndexSet.indexSet = function() {
     return this.create();
 };
 
@@ -263,7 +263,7 @@ NSIndexSet.indexSet = function() {
     @param {Integer} value
     @returns NSIndexSet
 */
-NSIndexSet.indexSetWithIndex = function(value) {
+VN.IndexSet.indexSetWithIndex = function(value) {
     return this.create('initWithIndex', value);
 };
 
@@ -271,6 +271,6 @@ NSIndexSet.indexSetWithIndex = function(value) {
     @param {NSRange} range
     @returns NSIndexSet
 */
-NSIndexSet.indexSetWithIndexesInRange = function(range) {
+VN.IndexSet.indexSetWithIndexesInRange = function(range) {
     return this.create('initWithIndexesInRange', range);
 };

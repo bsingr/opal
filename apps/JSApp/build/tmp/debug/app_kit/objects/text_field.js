@@ -26,20 +26,30 @@
 
 
 /**
-    @enum NSTextFieldBezelStyle
+    VN.TextFieldBezelStyle
 */
-var NSTextFieldSquareBezel  = 0;
-var NSTextFieldRoundedBezel = 1;
+VN.TEXT_FIELD_SQUARE_BEZEL = 0;
+VN.TEXT_FIELD_ROUNDED_BEZEL = 1;
 
 /**
-    @class NSTextField
-    @extends NSControl
+    @class VN.TextField
+    @extends VN.Control
 */
-var NSTextField = NSControl.extend({
+var NSTextField = VN.TextField = VN.Control.extend({
     
     _drawsBackground: null,
     _backgroundColor: null,
     _textColor: null,
+    
+    /**
+        @type VN.String
+    */
+    renderTagName: 'div',
+    
+    /**
+        @type VN.String
+    */
+    renderClassName: 'vn-text-field',
     
     initWithCoder: function(aCoder) {
         this._super(aCoder);
@@ -52,8 +62,8 @@ var NSTextField = NSControl.extend({
     
     renderRect: function(aRect, firstTime, context) {    
         if (firstTime) {
-            context.setClass('ns-text-field');
-            context.push('span', 'ns-text-field-title');
+            context.setClass('vn-text-field');
+            context.push('span', 'vn-text-field-title');
         }
         else {
             if (this._drawsBackground) {
@@ -66,8 +76,8 @@ var NSTextField = NSControl.extend({
     
     renderInterior: function(aRect, firstTime, context) {
         var titleRect = this.titleRectForBounds(aRect);
-        context.$('ns-text-field-title').setFrame(titleRect);
-        context.$('ns-text-field-title').renderAttributedString(this.attributedStringValue());
+        context.$('vn-text-field-title').setFrame(titleRect);
+        context.$('vn-text-field-title').renderAttributedString(this.attributedStringValue());
     },
     
     drawInteriorWithFrame: function(cellFrame, controlView) {
@@ -94,19 +104,24 @@ var NSTextField = NSControl.extend({
         this.drawInteriorWithFrame(cellFrame, controlView);
     },
     
-    
+    /**
+        If appropriate, setup a field editor to allow editing of the textfield
+        and it's contents using the window's field editor.
+        
+        @param {VN.Event} theEvent
+    */
     mouseDown: function(theEvent) {
-        if (!this._cell.isEnabled())
+        if (!this.isEnabled())
             return;
         
-        if (this._cell.isSelectable() || this._cell.isEditable()) {
+        if (this.isSelectable() || this.isEditable()) {
             if (!this._currentEditor) {
                 this._currentEditor = this.window().fieldEditor(true, this);
-                this._currentEditor = this._cell.setUpFieldEditorAttributes(this._currentEditor);
+                this._currentEditor = this.setUpFieldEditorAttributes(this._currentEditor);
             }
             
-            this._cell.setHighlighted(true);
-            this._cell.editWithFrame(this._bounds, this, this._currentEditor, this, theEvent);
+            this.setHighlighted(true);
+            this.editWithFrame(this._bounds, this, this._currentEditor, this, theEvent);
         }
     },
     
@@ -122,13 +137,13 @@ var NSTextField = NSControl.extend({
     bind: function(binding, toObject, withKeyPath, options) {
         // value binding - NSValueBinding
         if (binding == "value") {
-            toObject.addObserverForKeyPath(this, withKeyPath, 0, NSValueBinding);
+            toObject.addObserverForKeyPath(this, withKeyPath, 0, VN.VALUE_BINDING);
             
             var bindingInfo = NSDictionary.dictionaryWithObjectsForKeys(
                 [toObject, withKeyPath, options],
-                [NSObservedObjectKey, NSObservedKeyPathKey, NSOptionsKey]);
+                [VN.OBSERVED_OBJECT_KEY, VN.OBSERVED_KEY_PATH_KEY, VN.OPTIONS_KEY]);
             
-            this._kvb_info.setObjectForKey(bindingInfo, NSValueBinding);
+            this._kvb_info.setObjectForKey(bindingInfo, VN.VALUE_BINDING);
         }
     },
     
@@ -139,7 +154,7 @@ var NSTextField = NSControl.extend({
 		@param {Object} context
 	*/
     observeValueForKeyPath: function(keyPath, ofObject, change, context) {
-        if (context == NSValueBinding) {
+        if (context == VN.VALUE_BINDING) {
             var newValue = ofObject.valueForKeyPath(keyPath);
             this.setObjectValue(newValue);
         }
@@ -208,6 +223,8 @@ var NSTextField = NSControl.extend({
 		if (this.isEnabled()) {
 			if (this.textColor())
 				attributes.setObjectForKey(this.textColor(), NSForegroundColorAttributeName);
+			else
+			    attributes.setObjectForKey(NSColor.controlTextColor(), NSForegroundColorAttributeName);
 		}
 		else {
 			attributes.setObjectForKey(NSColor.disabledControlTextColor(), NSForegroundColorAttributeName);

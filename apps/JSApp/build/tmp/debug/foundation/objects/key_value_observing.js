@@ -25,11 +25,29 @@
  */
 
 
-// NSKeyValueObservingOptions
-var NSKeyValueObservingOptionNew            = 0x01;
-var NSKeyValueObservingOptionOld            = 0x02;
-var NSKeyValueObservingOptionInitial        = 0x04;
-var NSKeyValueObservingOptionPrior          = 0x08;
+/**
+    VN.KeyValueObservingOptions
+*/
+
+/**
+    The new value will be passed in the info dictionary with this key
+*/
+VN.KEY_VALUE_OBSERVING_OPTION_NEW = 0x01;
+
+/**
+    The old value will be passed in the info dictionary
+*/
+VN.KEY_VALUE_OBSERVING_OPTION_OLD = 0x02;
+
+/**
+    The initial key
+*/
+VN.KEY_VALUE_OBSERVING_OPTION_INITIAL = 0x04;
+
+/**
+    The prior key
+*/
+VN.KEY_VALUE_OBSERVING_OPTION_PRIOR = 0x08;
                                         
 // NSKeyValueChange                     
 var NSKeyValueChangeSetting                 = 1;
@@ -51,10 +69,10 @@ var NSKeyValueChangeIndexesKey              = "NSKeyValueChangeIndexesKey";
 var NSKeyValueChangeNotificationIsPriorKey  = "NSKeyValueChangeNotificationIsPriorKey";
 
 /**
-	@mixin NSKeyValueObserving
-	@class NSObject
+	@mixin VN.KeyValueObserving
+	@class VN.Object
 */
-NSObject.mixin({
+VN.Object.mixin({
     
     /**
         This is used to store a list of observers that are observing this object
@@ -69,15 +87,15 @@ NSObject.mixin({
         This dictionary maintains a list of "old values" for keys that request 
         to have their old values sent in the info dictionary for observers.
         
-        @type NSDictionary
+        @type VN.Dictionary
     */
     _kvo_oldValues: NSDictionary.create(),
     
 	/**
-		@param {NSString} keyPath
-		@param {NSObject} ofObject
-		@param {NSDictionary} change
-		@param {Object} context
+		@param {VN.String} keyPath
+		@param {VN.Object} ofObject
+		@param {VN.Dictionary} change
+		@param {VN.Object} context
 	*/
     observeValueForKeyPath: function(keyPath, ofObject, change, context) {
         console.log('observer notification for:' + keyPath);

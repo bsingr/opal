@@ -1,0 +1,40 @@
+.vn-scroller {
+  position: absolute;
+  display: block;
+}
+
+.vn-scroller-top {
+  position: absolute;
+  background: url('resources/scroller_slot_top.png');
+  top: 0px;
+  left: 0px;
+  height: 18px;
+  width: 15px;
+}
+
+.vn-scroller-middle {
+  position: absolute;
+  background: url('resources/scroller_vertical_back.png');
+  top: 18px;
+  left: 0px;
+  width: 15px;
+  bottom: 48px;
+}
+
+.vn-scroller-up {
+  position: absolute;
+  background: url('resources/scroller_up_arow.png');
+  bottom:18px;
+  left: 0px;
+  height: 30px;
+  width: 15px;  
+}
+
+.vn-scroller-down {
+  position: absolute;
+  background: url('resources/scroller_down_arow.png');
+  bottom:0px;
+  left: 0px;
+  height: 18px;
+  width: 15px;  
+}

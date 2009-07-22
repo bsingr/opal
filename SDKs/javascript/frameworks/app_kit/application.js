@@ -30,20 +30,27 @@ include('app_kit/graphics_context');
 include('app_kit/window');
 
 /**
-    @type VN.Application
-    
-    Global VN.Application singleton
+    @type VN.Application the global VN.Application singleton
 */
 VN.App = null;
 
-VN.MODAL_PANEL_RUN_LOOP_MODE                              = "VNModalPanelRunLoopMode";
-VN.EVENT_TRACKING_RUN_LOOP_MODE                           = "VNEventTrackingRunLoopMode";
+/**
+    Run loop mode when using a modal panel
+*/
+VN.MODAL_PANEL_RUN_LOOP_MODE = "VNModalPanelRunLoopMode";
 
-VN.APPLICATION_DID_BECOME_ACTIVE_NOTIFICATION             = "VNApplicationDidBecomeActiveNotification";
-VN.APPLICATION_DID_HIDE_NOTIFICATION                      = "VNApplicationDidHideNotification";
-VN.APPLICATION_DID_FINISH_LAUNCHING_NOTIFICATION          = "VNApplicationDidFinishLaunchingNotification";
-VN.APPLICATION_DID_RESIGN_ACTIVE_NOTIFICATION             = "VNApplicationDidResignActiveNotification";
-VN.APPLICATION_DID_UNHIDE_NOTIFICATION                    = "VNApplicationDidUnhideNotification";
+/**
+    Run loop mode for tracking. Use the trackEventsForKeyMask method of 
+    VN.Application
+*/
+VN.EVENT_TRACKING_RUN_LOOP_MODE = "VNEventTrackingRunLoopMode";
+
+// VN.Application notification constants
+VN.APPLICATION_DID_BECOME_ACTIVE_NOTIFICATION = "VNApplicationDidBecomeActiveNotification";
+VN.APPLICATION_DID_HIDE_NOTIFICATION = "VNApplicationDidHideNotification";
+VN.APPLICATION_DID_FINISH_LAUNCHING_NOTIFICATION = "VNApplicationDidFinishLaunchingNotification";
+VN.APPLICATION_DID_RESIGN_ACTIVE_NOTIFICATION = "VNApplicationDidResignActiveNotification";
+VN.APPLICATION_DID_UNHIDE_NOTIFICATION = "VNApplicationDidUnhideNotification";
 VN.APPLICATION_DID_UPDATE_NOTIFICATION                    = "VNApplicationDidUpdateNotification";
 VN.APPLICATION_WILL_BECOME_ACTIVE_NOTIFICATION            = "VNApplicationWillBecomeActiveNotification";
 VN.APPLICATION_WILL_HIDE_NOTIFICATION                     = "VNApplicationWillHideNotification";
@@ -161,6 +168,12 @@ var NSApplication = VN.Application = VN.Responder.extend({
         return this._focusView;
     },
     
+    /**
+        Gets the main window of the application by asking each window in turn
+        if it is registered as the main window.
+        
+        @returns VN.Window
+    */
     mainWindow: function() {
         for (var idx = 0; idx < this._windows.length; idx++) {
             if (this._windows[idx].isMainWindow()) {
@@ -196,10 +209,10 @@ var NSApplication = VN.Application = VN.Responder.extend({
         are attatched here.
     */
     run: function() {
-        document.onmousedown = NSEventFromMouseEvent;
-        document.onmouseup = NSEventFromMouseEvent;
-        document.onmousemove = NSEventFromMouseEvent;
-        document.onkeypress = NSEventFromKeyEvent;
+        document.onmousedown = VN.Event.create;
+        document.onmouseup = VN.Event.create;
+        document.onmousemove = VN.Event.create;
+        document.onkeypress = VN.Event.create;
         // match special keys that will not be caugh by onkeypress. It is important
         // to stop the event here for those key events, but we must allow other keys
         // to pass (by not returning false)
@@ -216,7 +229,7 @@ var NSApplication = VN.Application = VN.Responder.extend({
                 case NSTabFunctionKey:
                 case NSPageUpFunctionKey:
                 case NSPageDownFunctionKey:
-                    NSEventFromKeyEvent(theEvent);
+                    VN.Event.create(theEvent);
                     return false;
                     break;
                 default:

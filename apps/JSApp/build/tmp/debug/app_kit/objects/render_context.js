@@ -29,7 +29,7 @@
     @class NSRenderContext
     @extends NSObject
 */
-var NSRenderContext = NSObject.extend({
+var NSRenderContext = VN.RenderContext = VN.Object.extend({
     
     /**
         @type Boolean
@@ -105,11 +105,12 @@ var NSRenderContext = NSObject.extend({
         
         @param {NSString} element
         @param {NSString} className
-        @param {NSString} innerHTML - entirely optional
+        @param {NSString} id - the dom id for the element
     */
-    push: function(element, className, innerHTML) {
+    push: function(element, className, id) {
         var theElement = document.createElement(element);
         theElement.className = className;
+        theElement.id = id;
         this._element.appendChild(theElement);
     },
     
@@ -169,17 +170,17 @@ var NSRenderContext = NSObject.extend({
 		if (attributedString._attributes.containsKey(NSParagraphStyleAttributeName)) {
             var paragraphStyle = attributedString._attributes.objectForKey(NSParagraphStyleAttributeName);
             switch (paragraphStyle.alignment()) {
-                case NSLeftTextAlignment:
+                case VN.LEFT_TEXT_ALIGNMENT:
                     this.set('left', 'textAlign');
                     break;
-                case NSRightTextAlignment:
+                case VN.RIGHT_TEXT_ALIGNMENT:
                     this.set('right', 'textAlign');
                     break;
-                case NSCenterTextAlignment:
+                case VN.CENTER_TEXT_ALIGNMENT:
                     // position text in middle...
                     this.set('center', 'textAlign');
                     break;
-                case NSJustifiedTextAlignment:
+                case VN.JUSTIFIED_TEXT_ALIGNMENT:
                     break;
             }
             

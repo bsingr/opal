@@ -27,23 +27,23 @@
 include('app_kit/view');
 
 // NSScroller Vertical
-resource('NSScrollerBottomArrowNormal.png');    // 15 x 18
-resource('NSScrollerTopArrowNormal.png');       // 15 x 30
-resource('NSScrollerTopSlotNormal.png');        // 15 x 18
-resource('NSScrollerVBackgroundNormal.png');    // 15 x 6
-
-resource('NSScrollerTopKnobNormal.png');        // 15 x 10
-resource('NSScrollerBottomKnobNormal.png');     // 15 x 10
-resource('NSScrollerVerticalKnobNormal.png');   // 15 x 1
-
-// NSScroller Horizontal
-resource('NSScrollerRightArrowNormal.png');     // 18 x 15
-resource('NSScrollerLeftArrowNormal.png');      // 30 x 15
-resource('NSScrollerLeftSlotNormal.png');       // 18 x 15
-resource('NSScrollerHBackgroundNormal.png');    // 6 x 15
-
-resource('NSScrollerLeftKnobNormal.png');       // 10 x 15
-resource('NSScrollerRightSlotNormal.png');      // 10 x 15
+// resource('NSScrollerBottomArrowNormal.png');    // 15 x 18
+// resource('NSScrollerTopArrowNormal.png');       // 15 x 30
+// resource('NSScrollerTopSlotNormal.png');        // 15 x 18
+// resource('NSScrollerVBackgroundNormal.png');    // 15 x 6
+// 
+// resource('NSScrollerTopKnobNormal.png');        // 15 x 10
+// resource('NSScrollerBottomKnobNormal.png');     // 15 x 10
+// resource('NSScrollerVerticalKnobNormal.png');   // 15 x 1
+// 
+// // NSScroller Horizontal
+// resource('NSScrollerRightArrowNormal.png');     // 18 x 15
+// resource('NSScrollerLeftArrowNormal.png');      // 30 x 15
+// resource('NSScrollerLeftSlotNormal.png');       // 18 x 15
+// resource('NSScrollerHBackgroundNormal.png');    // 6 x 15
+// 
+// resource('NSScrollerLeftKnobNormal.png');       // 10 x 15
+// resource('NSScrollerRightSlotNormal.png');      // 10 x 15
 resource('NSScrollerHorizontalKnobNormal.png'); // 1 x 15
 
 // NSScrollArrowPosition
@@ -97,6 +97,16 @@ var NSScroller = NSView.extend({
     */
     _knobTrackStartPoint: null,
     
+    /**
+        @type VN.String
+    */
+    renderTagName: 'div',
+    
+    /**
+        @type VN.String
+    */
+    renderClassName: 'vn-scroller',
+    
     initWithCoder: function(aCoder) {
         this._super(aCoder);
         
@@ -112,6 +122,20 @@ var NSScroller = NSView.extend({
         
                     
         return this;
+    },
+    
+    renderRect: function(aRect, firstTime, context) {
+        if (firstTime) {
+            context.push('div', 'vn-scroller-top');
+            context.push('div', 'vn-scroller-knob');
+            context.push('div', 'vn-scroller-middle');
+            context.push('div', 'vn-scroller-up');
+            context.push('div', 'vn-scroller-down');
+        }
+            
+        // this.renderBezel(aRect, firstTime, context);
+            // this.renderInteriorWithFrame(cellFrame, controlView, firstTime, context);
+        // this.renderTitle(this._value, this.titleRectForBounds(aRect), firstTime, context);
     },
     
     drawRect: function(aRect) {

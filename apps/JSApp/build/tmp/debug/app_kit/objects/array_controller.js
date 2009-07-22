@@ -26,20 +26,15 @@
 
 
 /**
-    @class NSArrayController
-    @extend NSObjectController
+    @class VN.ArrayController
+    @extend VN.ObjectController
 */
-var NSArrayController = NSObjectController.extend({
+var NSArrayController = VN.ArrayController = VN.ObjectController.extend({
     
     /**
         @type NSInteger
     */
     _observedIndexHint: null,
-    
-    /**
-        @type NSIndexSet
-    */
-    _selectionIndexes: null,
     
     /**
         @type NSArray
@@ -55,11 +50,6 @@ var NSArrayController = NSObjectController.extend({
         @type NSArray
     */
     _cachedSelectedObjects: null,
-    
-    /**
-        @type NSArray
-    */
-    _arrangedObjects: null,
     
     /**
         @type Boolean
@@ -86,11 +76,28 @@ var NSArrayController = NSObjectController.extend({
         @returns NSArrayController
     */
     initWithCoder: function(aCoder) {
+        this._arrangedObjects = [];
+        this._selectionIndexes = VN.IndexSet.indexSet();
+		
         this._isEditable = aCoder.decodeBoolForKey('NSEditable');
         this._avoidsEmptySelection = aCoder.decodeBoolForKey('NSAvoidsEmptySelection');
         this._preservesSelection = aCoder.decodeBoolForKey('NSSelectsInsertedObjects');
         this._declaredKeys = aCoder.decodeObjectForKey('NSDeclaredKeys');
         return this;
+    },
+    
+    /*
+        Over-ridden from VN.ObjectController
+        
+        @param VN.Object content
+    */
+    setContent: function(content) {
+        this._objects = content;
+        // this.willChangeValueForKey('arrangedObjects');
+        // this._arrangedObjects = this.arrangeObjects(this._objects);
+        // this.didChangeValueForKey('arrangedObjects');
+        this.setValueForKey(this.arrangeObjects(this._objects), 'arrangedObjects');
+        this.setValueForKey(VN.IndexSet.indexSetWithIndex(0), 'selectionIndexes');
     },
     
     /**
@@ -103,14 +110,15 @@ var NSArrayController = NSObjectController.extend({
         @param options - NSDictionary
     */
     bind: function(binding, toObject, withKeyPath, options) {
-        if (binding == "contentArray") {
-            toObject.addObserverForKeyPath(this, withKeyPath, 0, NSContentArrayBinding);
+        if (binding == 'contentArray') {
+            toObject.addObserverForKeyPath(this, withKeyPath, 0, VN.CONTENT_ARRAY_BINDING);
             
             var bindingInfo = NSDictionary.dictionaryWithObjectsForKeys(
                 [toObject, withKeyPath, options],
-                [NSObservedObjectKey, NSObservedKeyPathKey, NSOptionsKey]);
+                [VN.OBSERVED_OBJECT_KEY, VN.OBSERVED_KEY_PATH_KEY, VN.OPTIONS_KEY]);
 
-            this._kvb_info.setObjectForKey(bindingInfo, NSContentArrayBinding);
+            this._kvb_info.setObjectForKey(bindingInfo, VN.CONTENT_ARRAY_BINDING);
+            this.setContent(toObject.valueForKeyPath(withKeyPath));
         }
     },
 
@@ -121,11 +129,8 @@ var NSArrayController = NSObjectController.extend({
  		@param {Object} context
  	*/
      observeValueForKeyPath: function(keyPath, ofObject, change, context) {
-         if (context == NSContentArrayBinding) {
-             var newValue = ofObject.valueForKeyPath(keyPath);
-             // this.setObjectValue(newValue);
-             console.log('array controller, new value = ');
-             console.log(newValue);
+         if (context == VN.CONTENT_ARRAY_BINDING) {
+             this.setContent(ofObject.valueForKeyPath(keyPath));
          }
      },
     
@@ -219,15 +224,20 @@ var NSArrayController = NSObjectController.extend({
 		@return NSArray
 	*/
     arrangeObjects: function(objects) {
-	
+	    return objects;
 	},
 	
 	/**
+        @type {VN.Array}
+    */
+    _arrangedObjects: null,
+	
+	/**
 		An array of all objects to be displayed (after filtering/sorting)
-		@return NSArray
+		@return {VN.Array}
 	*/
 	arrangedObjects: function() {
-		
+	    return this._arrangedObjects;
 	},
 	
 	/**
@@ -293,37 +303,57 @@ var NSArrayController = NSObjectController.extend({
 	},
 	
 	/**
-		@param {NSIndexSet} indexes
+        @type VN.IndexSet
+    */
+    _selectionIndexes: null,
+	
+	/**
+	    This sets the selection indexes. This also needs to inform some keys
+	    that they will change. The 'canRemove' depends upon the selection 
+	    indexes containing atleast one index.
+	
+		@param {VN.IndexSet} indexes
 		@returns Boolean
 	*/
 	setSelectionIndexes: function(indexes) {
-		
+	    this.willChangeValueForKey('canRemove');
+		this._selectionIndexes = indexes;
+		this.didChangeValueForKey('canRemove');
 	},
 	
 	/**
-		@returns NSIndexSet
+        Current selection (single object)
+        
+        @return VN.Object
+    */
+    selection: function() {
+        var firstObject = this.arrangedObjects()[this._selectionIndexes.firstIndex()];
+    },
+	
+	/**
+		@returns VN.IndexSet
 	*/
 	selectionIndexes: function() {
-		
+		return this._selectionIndexes;
 	},
 	
 	/**
 		@param {Integer} index
 		@returns Boolean
 	*/
-	setSelectionIndex: function() {
-		
+	setSelectionIndex: function(index) {
+		this.setSelectionIndexes(VN.IndexSet.indexSetWithIndex(index));
 	},
 	
 	/**
 		@returns Integer
 	*/
 	selectionIndex: function() {
-		
+		return this._selectionIndexes.firstIndex();
 	},
 	
 	/**
-		@param {NSIndexSet} indexes
+		@param {VN.IndexSet} indexes
 		@returns Boolean
 	*/
 	addSelectionIndexes: function(indexes) {
@@ -331,7 +361,7 @@ var NSArrayController = NSObjectController.extend({
 	},
 	
 	/**
-		@param {NSIndexSet} indexes
+		@param {VN.IndexSet} indexes
 		@returns Boolean
 	*/
 	removeSelectionIndexes: function(indexes) {
@@ -339,7 +369,7 @@ var NSArrayController = NSObjectController.extend({
 	},
 	
 	/**
-		@param {NSArray} objects
+		@param {VN.Array} objects
 		@returns Boolean
 	*/
 	setSelectionObjects: function(objects) {
@@ -347,14 +377,14 @@ var NSArrayController = NSObjectController.extend({
 	},
 	
 	/**
-		@returns {NSIndexSet}
+		@returns {VN.Array}
 	*/
 	selectedObjects: function() {
 		
 	},
 	
 	/**
-		@param {NSArray} objects
+		@param {VN.Array} objects
 		@returns Boolean
 	*/
 	addSelectedObjects: function(objects) {
@@ -362,7 +392,7 @@ var NSArrayController = NSObjectController.extend({
 	},
 	
 	/**
-		@param {NSArray} objects
+		@param {VN.Array} objects
 		@retuns Boolean
 	*/
 	removeSelectedObjects: function(objects) {
@@ -376,7 +406,10 @@ var NSArrayController = NSObjectController.extend({
 		@param {NSObject} sender
 	*/
 	add: function(sender) {
-		
+		console.log('changing');
+		this.willChangeValueForKey('canRemove');
+		this._selectionIndexes = VN.IndexSet.indexSetWithIndex(3);
+		this.didChangeValueForKey('canRemove');
 	},
 	
 	/**
@@ -400,6 +433,25 @@ var NSArrayController = NSObjectController.extend({
 	*/
 	canInsert: function() {
 		
+	},
+	
+	/**
+		@return Boolean
+	*/
+	canAdd: function() {
+		return true;
+	},
+		
+	/**
+	    Property stating whether or not the array controller can remove an item.
+	    This is basically reliant on the number of selection indexes. If there
+	    is atleast one selection index, then that can be removed. No selection
+	    indexes means that we cannot remove anything.
+	    
+		@return Boolean
+	*/
+	canRemove: function() {
+		return (this._selectionIndexes.count() == 0) ? false : true;
 	},
 	
 	/**

@@ -29,7 +29,7 @@ include('foundation/coder');
 include('foundation/enumerator');
 include('foundation/range');
 
-var NSArray = {
+VN.Array = {
     
     count: function() {
         return this.length;
@@ -75,14 +75,14 @@ if (!Array.prototype.indexOf) Array.prototype.indexOf = function(item, i)
             return -1;
 };
 
-VN.extend(Array.prototype, NSArray);
+VN.extend(Array.prototype, VN.Array);
 
-NSArray.create = function() {
+VN.Array.create = function() {
     return [];
 };
 
-NSArray.mixin = function(props) {
+VN.Array.mixin = function(props) {
     VN.extend(this.prototype, props);
 };
 
-var NSMutableArray = NSArray;
+var NSMutableArray = NSArray = VN.Array;

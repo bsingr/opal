@@ -58,11 +58,6 @@ var NSViewDidUpdateTrackingAreasNotification    = VN.VIEW_DID_UPDATE_TRACKING_AR
 */
 var NSView = VN.View = VN.Responder.extend({
     
-    /**
-        @type VN.RenderContext
-    */
-    _renderContext: null,
-    
     _frame: null,
     _bounds: null,
     _window: null,
@@ -98,6 +93,37 @@ var NSView = VN.View = VN.Responder.extend({
     _DOMGraphicsContext : null,
     
     _graphicsContext: null,
+    
+    /**
+        @type VN.RenderContext
+    */
+    renderContext: null,
+    
+    /**
+        @type Element
+    */
+    renderElement: null,
+    
+    /**
+        @type VN.String
+    */
+    renderTagName: 'div',
+    
+    /**
+        @type VN.String
+    */
+    renderClassName: 'vn-view',
+    
+    /**
+        Sets up the render context so that it is ready to be rendered. This
+        will be called before the elements can be rendered.
+    */  
+    setupRenderContext: function() {
+        this.renderElement = document.createElement(this.renderTagName);
+        this.renderElement.className = this.renderClassName;
+        this.renderElement.id = 'guid_' + this.guid();
+        this.renderContext = VN.RenderContext.renderContextWithElement(this.renderElement);
+    },
         
     setupGraphicsContextDisplay: function() {
         this._DOMContainer = document.createElement('div');
@@ -141,7 +167,8 @@ var NSView = VN.View = VN.Responder.extend({
         // this.init();
         
         this._frame = NSMakeRect (0, 0, 0, 0);
-        this.setupGraphicsContextDisplay();
+        // this.setupGraphicsContextDisplay();
+        this.setupRenderContext();
         this._subviews = [];
         
         this.setFrame(frameRect);
@@ -153,7 +180,8 @@ var NSView = VN.View = VN.Responder.extend({
     */
     initWithCoder: function(aCoder) {
         this._super(aCoder);
-        this.setupGraphicsContextDisplay();
+        // this.setupGraphicsContextDisplay();
+        this.setupRenderContext();
         
         this._frame = NSMakeRect(0, 0, 0, 0);
         this._bounds = NSMakeRect(0, 0, 0, 0);
@@ -255,7 +283,7 @@ var NSView = VN.View = VN.Responder.extend({
     addSubview: function(aView) {
         aView.viewWillMoveToSuperview(this);
         aView.viewWillMoveToWindow(this._window);
-        this._DOMContainer.appendChild(aView.DOMContainer());
+        this.renderElement.appendChild(aView.renderElement);
         aView.viewDidMoveToSuperview();
         aView.viewDidMoveToWindow();
         this.didAddSubview(aView);
@@ -304,12 +332,13 @@ var NSView = VN.View = VN.Responder.extend({
         var theParentElement;
         
         if (this._superview) {
-            theParentElement = this._superview.DOMContainer();
-            theParentElement.removeChild(this._DOMContainer);
+            theParentElement = this._superview.renderElement;
+            theParentElement.removeChild(this.renderElement);
+            this._superview._subviews.splice(this._superview._subviews.indexOf(this), 1);
         }
         else if (this._window) {
             theParentElement = this._window.DOMContainer();
-            theParentElement.removeChild(this._DOMContainer);
+            theParentElement.removeChild(this.renderElement);
         }
     },
     
@@ -429,15 +458,15 @@ var NSView = VN.View = VN.Responder.extend({
     
     setFrameOrigin: function(newOrigin) {
         this._frame.origin = newOrigin;
-        CGDOMElementSetFrame(this._DOMContainer, this._frame);
+        CGDOMElementSetFrame(this.renderElement, this._frame);
     },
     
     setFrameSize: function(newSize) {
         var oldBounds = this.bounds();
         
         this._frame.size = newSize;
-        CGDOMElementSetFrame(this._DOMContainer, this._frame);
-        CGDOMElementSetFrame(this._DOMGraphicsContext, this.bounds());
+        CGDOMElementSetFrame(this.renderElement, this._frame);
+        // CGDOMElementSetFrame(this.renderElement, this.bounds());
         
         if (this._autoResizesSubviews)
             this.resizeSubviewsWithOldSize(oldBounds.size);
@@ -449,8 +478,8 @@ var NSView = VN.View = VN.Responder.extend({
         var oldBounds = this.bounds();
         
         this._frame = frameRect;
-        CGDOMElementSetFrame(this._DOMContainer, this._frame);
-        CGDOMElementSetFrame(this._DOMGraphicsContext, this.bounds());
+        CGDOMElementSetFrame(this.renderElement, this._frame);
+        // CGDOMElementSetFrame(this.renderElement, this.bounds());
         
         if (this._autoResizesSubviews)
             this.resizeSubviewsWithOldSize(oldBounds.size);
@@ -711,19 +740,20 @@ var NSView = VN.View = VN.Responder.extend({
         carried out in these routines. Drawing can use css etc as intended. 
         See wiki for examples and more information.
         
-        @param {NSRect} aRect
         @param {Boolean} firstTime
         @param {NSRenderContext} context
     */
-    renderRect: function(aRect, firstTime, context) {
+    render: function(context, firstTime) {
         // Render using DOM.
     },
     
     displayRectIgnoringOpacityInContext: function(aRect, context) {
         this.lockFocus();
         // this.drawRect(aRect);
-        this.renderRect(aRect, this._renderContext.firstTime(), this._renderContext);
-        this._renderContext.setFirstTime(false);
+        var firstTime = this.renderContext.firstTime();
+        this.renderContext.setFirstTime(false);
+        this.render(this.renderContext, firstTime);
+        
         this.unlockFocus();
     },
     

@@ -37,19 +37,19 @@ var AppController = NSObject.extend({
         @outlet
         @type NSWindow
     */
-    _window: IBOutlet(),
+    _window: null,
    
    /**
         @outlet
         @type NSArrayController
    */
-   _arrayController: IBOutlet(),
+   _arrayController: null,
    
     /**
         @outlet
         @type NSArray
     */
-    _tableContent: IBOutlet(),
+    _tableContent: null,
     
     _tempData: null,
     
@@ -91,7 +91,7 @@ var AppController = NSObject.extend({
    
    setTestValue: function(aValue) {
        this._testValue = aValue;
-   }.property('testValue'),
+   },
    
    doSomething: function(sender) {
        
@@ -102,7 +102,7 @@ var AppController = NSObject.extend({
    },
    
    applicationWillFinishLaunching: function() {
-       console.log('Application will finish launching');
+       this._window.performZoom(this);
    },
    
    applicationDidFinishLaunching: function() {
@@ -117,7 +117,6 @@ var AppController = NSObject.extend({
 	},
 	
 	tableViewObjectValueForTableColumnRow: function(tableView, tableColumn, row) {
-        // console.log(tableColumn);
 	    return this._tempData[row][tableColumn.identifier()];
 	}
 });

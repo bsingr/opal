@@ -61,7 +61,7 @@ var NSParagraphStyle = NSObject.extend({
     init: function() {
         
         this._lineSpacing = 10;
-        this._alignment = NSLeftTextAlignment;
+        this._alignment = VN.LEFT_TEXT_ALIGNMENT;
         
         return this;
     },

@@ -1,8 +1,9 @@
-.ns-button {
-  
+.vn-button {
+  position: absolute;
+  display: block;
 }
 
-.bordered .ns-button-left {
+.bordered .vn-button-left {
   position: absolute;
   background: url('resources/button_bezel_left.png');
   height: 24px;
@@ -11,7 +12,7 @@
   left: 0px;
 }
 
-.bordered .ns-button-middle {
+.bordered .vn-button-middle {
   position: absolute;
   background: url('resources/button_bezel_middle.png');
   top: 0px;
@@ -20,7 +21,7 @@
   height: 24px;
 }
 
-.bordered .ns-button-right {
+.bordered .vn-button-right {
   position: absolute;
   background: url('resources/button_bezel_right.png');
   height: 24px;
@@ -29,7 +30,7 @@
   right: 0px;
 }
 
-.ns-button-title {
+.vn-button-title {
   position: absolute;
   text-align:center;
 }
@@ -37,29 +38,29 @@
 /*
   Disabled button with border
 */
-.bordered.disabled .ns-button-left {
+.bordered.disabled .vn-button-left {
   background: url('resources/button_disabled_left.png');
 }
 
-.bordered.disabled .ns-button-middle {
+.bordered.disabled .vn-button-middle {
   background: url('resources/button_disabled_middle.png');
 }
 
-.bordered.disabled .ns-button-right {
+.bordered.disabled .vn-button-right {
   background: url('resources/button_disabled_right.png');
 }
 
 /*
   Highlighted button with border
 */
-.bordered.highlighted .ns-button-left {
+.bordered.highlighted .vn-button-left {
   background: url('resources/button_highlighted_left.png');
 }
 
-.bordered.highlighted .ns-button-middle {
+.bordered.highlighted .vn-button-middle {
   background: url('resources/button_highlighted_middle.png');
 }
 
-.bordered.highlighted .ns-button-right {
+.bordered.highlighted .vn-button-right {
   background: url('resources/button_highlighted_right.png');
 }

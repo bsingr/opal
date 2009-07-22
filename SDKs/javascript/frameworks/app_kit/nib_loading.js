@@ -27,21 +27,6 @@
 include('foundation/bundle');
 include('app_kit/nib');
 
-/*
-    Currently does nothing, but is useful reference in code to identify outlets
-    for classes. In future, Caprino will use this.
-*/
-var IBOutlet = function() {
-    return null;
-};
-
-/*
-    Mark functions as being actions. currently does nothing, but, again, Caprino
-    will in future use this so it is good practice to use within custom classes.
-*/
-Function.prototype.IBAction = function() {
-    return this;
-};
 
 NSBundle.loadNibFile = function(fileName, context) {
 	

@@ -26,55 +26,55 @@
 
 include ('app_kit/view');
 
-// important character codes
-var NSEnterCharacter                    = 0x0003;
-var NSBackspaceCharacter                = 0x0008;
-var NSTabCharacter                      = 0x0009;
-var NSNewlineCharacter                  = 0x000a;
-var NSFormFeedCharacter                 = 0x000c;
-var NSCarriageReturnCharacter           = 0x000d;
-var NSBackTabCharacter                  = 0x0019;
-var NSDeleteCharacter                   = 0x007f;
-var NSLineSeparatorCharacter            = 0x2028;
-var NSParagraphSeparatorCharacter       = 0x2029;
+// Important character codes
+VN.ENTER_CHARACTER = 0x0003;
+VN.BACKSPACE_CHARACTER = 0x0008;
+VN.TAB_CHARACTER = 0x0009;
+VN.NEWLINE_CHARACTER = 0x000a;
+VN.FORM_FEED_CHARACTER = 0x000c;
+VN.CARRIAGE_RETURN_CHARACTER = 0x000d;
+VN.BACK_TAB_CHARACTER = 0x0019;
+VN.DELETE_CHARACTER = 0x007f;
+VN.LINE_SEPARATOR_CHARACTER = 0x2028;
+VN.PARAGRAPH_SEPARATOR_CHARACTER = 0x2029;
                                     
-// NSTextAlignment                  
-var NSLeftTextAlignment		            = 0;
-var NSRightTextAlignment	            = 1;
-var NSCenterTextAlignment	            = 2;
-var NSJustifiedTextAlignment	        = 3;
-var NSNaturalTextAlignment	            = 4;
+// VN.TextAlignment                  
+VN.LEFT_TEXT_ALIGNMENT = 0;
+VN.RIGHT_TEXT_ALIGNMENT = 1;
+VN.CENTER_TEXT_ALIGNMENT = 2;
+VN.JUSTIFIED_TEXT_ALIGNMENT = 3;
+VN.NATURAL_TEXT_ALIGNMENT = 4;
                                     
-// NSWritingDirection               
-var NSWritingDirectionNatural           = -1;
-var NSWritingDirectionLeftToRight       = 0;
-var NSWritingDirectionRightToLeft       = 1;
-var NSTextWritingDirectionEmbedding     = (0 << 1);
-var NSTextWritingDirectionOverride      = (1 << 1);
+// VN.WritingDirection               
+VN.WRITING_DIRECTION_NATURAL = -1;
+VN.WRITING_DIRECTION_LEFT_TO_RIGHT = 0;
+VN.WRITING_DIRECTION_RIGHT_TO_LEFT = 1;
+VN.WRITING_DIRECTION_EMBEDDING = (0 << 1);
+VN.WRITING_DIRECTION_OVERRIDE = (1 << 1);
                                     
-// Movement codes                   
-var NSIllegalTextMovement		        = 0;
-var NSReturnTextMovement		        = 0x10;
-var NSTabTextMovement			        = 0x11;
-var NSBacktabTextMovement		        = 0x12;
-var NSLeftTextMovement			        = 0x13;
-var NSRightTextMovement			        = 0x14;
-var NSUpTextMovement			        = 0x15;
-var NSDownTextMovement			        = 0x16;
-var NSCancelTextMovement		        = 0x17;
-var NSOtherTextMovement			        = 0;
+// Movement codes
+VN.ILLEGAL_TEXT_MOVEMENT = 0;
+VN.RETURN_TEXT_MOVEMENT = 0x10;
+VN.TAB_TEXT_MOVEMENT = 0x11;
+VN.BACKTAB_TEXT_MOVEMENT = 0x12;
+VN.LEFT_TEXT_MOVEMENT = 0x13;
+VN.RIGHT_TEXT_MOVEMENT = 0x14;
+VN.UP_TEXT_MOVEMENT = 0x15;
+VN.DOWN_TEXT_MOVEMENT = 0x16;
+VN.CANCEL_TEXT_MOVEMENT = 0x17;
+VN.OTHER_TEXT_MOVEMENT = 0;
 
 // Notifications
-var NSTextDidBeginEditingNotification   = "NSTextDidBeginEditingNotification";
-var NSTextDidEndEditingNotification     = "NSTextDidEndEditingNotification";
-var NSTextDidChangeNotification         = "NSTextDidChangeNotification";
+VN.TEXT_DID_BEGIN_EDITING_NOTIFICATION = "NSTextDidBeginEditingNotification";
+VN.TEXT_DID_END_EDITING_NOTIFICATION = "NSTextDidEndEditingNotification";
+VN.TEXT_DID_CHANGE_NOTIFICATION = "NSTextDidChangeNotification";
 
-/*
-    @prototol NSTextDelegate
+/**
+    @prototol VN.TextDelegate
     
     Protocol defining the text delegate methods.
 */
-var NSTextDelegate = {
+VN.TextDelegate = VN.protocol({
     
     textShouldBeginEditing: function(textObject) {    
     },
@@ -90,4 +90,4 @@ var NSTextDelegate = {
     
     textDidChange: function(aNotification) {
     }
-};
+});

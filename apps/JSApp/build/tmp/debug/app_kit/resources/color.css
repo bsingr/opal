@@ -1,0 +1,51 @@
+/*
+  All colors used within Vienna in both the 'VN.Color' class, and app_kit are
+  defined here in css classes also, so they can be mixed into custom controls
+  and views. Using VN.AttributedString, for example, the textColors used are
+  simply css classes as defined here. This allows for highlighted controls to
+  easily change the colors of text controls without using custom style 
+  attributes on a 'per-node' basis.
+  
+  Also color/background are used as appropriate based onhow the css class is
+  to be used.
+*/
+
+.vn-color-gridColor {
+  background: rgb(230, 230, 230);
+}
+
+.vn-color-controlShadowColor {
+  background: rgb(128, 128, 128);
+}
+
+.vn-color-controlDarkShadowColor {
+  background: rgb(128, 128, 128);
+}
+
+.vn-color-controlColor {
+  background: rgb(128, 128, 128);
+}
+
+.vn-color-controlHighlightColor {
+  background: rgb(128, 128, 128);
+}
+
+.vn-color-controlTextColor {
+  color: rgb(52, 52, 52);
+}
+
+.vn-color-controlBackgroundColor {
+  color: rgb(52, 52, 52);
+}
+
+.vn-color-selectedControlColor {
+  color: rgb(56, 121, 217);
+}
+
+.vn-color-secondarySelectedControlColor {
+  color: rgb(52, 52, 52);
+}
+
+.vn-color-selectedControlTextColor {
+  color: rgb(41, 41, 41);
+}

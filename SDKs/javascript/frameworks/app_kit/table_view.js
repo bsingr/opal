@@ -26,35 +26,35 @@
 
 include('app_kit/view');
 
-// NSTableViewColumnAutoresizingStyle
-var NSTableViewNoColumnAutoresizing                         = 0;
-var NSTableViewUniformColumnAutoresizingStyle               = 1;
-var NSTableViewSequentialColumnAutoresizingStyle            = 2;
-var NSTableViewReverseSequentialColumnAutoresizingStyle     = 3;
-var NSTableViewLastColumnOnlyAutoresizingStyle              = 4;
-var NSTableViewFirstColumnOnlyAutoresizingStyle             = 5;
+// VN.TableViewColumnAutoresizingStyle
+VN.TABLE_VIEW_NO_COLUMN_AUTORESIZING = 0;
+VN.TABLE_VIEW_UNIFORM_COLUMN_AUTORESIZING_STYLE = 1;
+VN.TABLE_VIEW_SEQUENTIAL_COLUMN_AUTORESIZING_STYLE = 2;
+VN.TABLE_VIEW_REVERSE_SEQUENTIAL_COLUMN_AUTORESIZING_STYLE = 3;
+VN.TABLE_VIEW_LAST_COLUMN_ONLY_AUTORESIZING_STYLE = 4;
+VN.TABLE_VIEW_FIRST_COLUMN_ONLY_AUTORESIZING_STYLE = 5;
 
 // gridstylemask
-var NSTableViewGridNone                                     = 0;
-var NSTableViewSolidVerticalGridLineMask                    = 1 << 0;
-var NSTableViewSolidHorizontalGridLineMask                  = 1 << 1;
+VN.TABLE_VIEW_GRID_NONE = 0;
+VN.TABLE_VIEW_SOLID_VERTICAL_GRID_LINE_MASK = 1 << 0;
+VN.TABLE_VIEW_SOLID_HORIZONTAL_GRID_LINE_MASK = 1 << 1;
 
-// NSTableViewSelectionHighlightStyle
-var NSTableViewSelectionHighlightStyleRegular               = 0;
-var NSTableViewSelectionHighlightStyleSourceList            = 1;
+// VN.TableViewSelectionHighlightStyle
+VN.TABLE_VIEW_SELECTION_HIGHLIGHT_STLYE_REGULAR = 0;
+VN.TABLE_VIEW_SELECTION_HIGHLIGHT_STLYE_SOURCE_LIST = 1;
 
 // Tableview delegate notifications
-var NSTableViewSelectionDidChangeNotification               = "NSTableViewSelectionDidChangeNotification";
-var NSTableViewColumnDidMoveNotification                    = "NSTableViewColumnDidMoveNotification";
-var NSTableViewColumnDidResizeNotification                  = "NSTableViewColumnDidResizeNotification";
-var NSTableViewSelectionIsChangingNotification              = "NSTableViewSelectionIsChangingNotification";
+VN.TABLE_VIEW_SELECTION_DID_CHANGE_NOTIFICATION = "VN.TableViewSelectionDidChangeNotification";
+VN.TABLE_VIEW_COLUMN_DID_MOVE_NOTIFICATION = "VN.TableViewColumnDidMoveNotification";
+VN.TABLE_VIEW_COLUMN_DID_RESIZE_NOTIFICATION = "VN.TableViewColumnDidResizeNotification";
+VN.TABLE_VIEW_SELECTION_IS_CHANGING_NOTIFICATION = "VN.TableViewSelectionIsChangingNotification";
 
 
 /**
-    @class NSTableView
-    @extends NSView
+    @class VN.TableView
+    @extends VN.View
 */
-var NSTableView = NSControl.extend({
+var NSTableView = VN.TableView = VN.Control.extend({
     
     /**
         @type Boolean
@@ -155,7 +155,27 @@ var NSTableView = NSControl.extend({
         
         @type NSArray
     */
-    _tableViewRowRenderContexts: null,
+    _reusableRenderContext: null,
+    
+    /**
+        @type VN.String
+    */
+    renderTagName: 'div',
+    
+    /**
+        @type VN.String
+    */
+    renderClassName: 'vn-table-view',
+    
+    /**
+        This is used for binding against a controller, usually an Array
+        Controller for managing the content of the tableview. If set, all
+        other possible data sources are ignored, but some delegate methods
+        might still be used if appropriate.
+        
+        @type VN.Array
+    */
+    _content: null,
     
     /**
         @param {NSCoder} aCoder
@@ -433,9 +453,12 @@ var NSTableView = NSControl.extend({
     /**
         @returns Integer
     */
-    numberOfRows: function() {
+    numberOfRows: function() {    
         if (this._numberOfRows < 0) {
-			if (this._dataSource) {
+            if (this._kvb_info.objectForKey(VN.CONTENT_BINDING)) {
+                this._numberOfRows = this._content.length;
+            }
+			else if (this._dataSource) {
 				if (this._dataSource.respondsTo('numberOfRowsInTableView')) {
 					this._numberOfRows = this._dataSource.numberOfRowsInTableView(this);   
 				}
@@ -545,7 +568,7 @@ var NSTableView = NSControl.extend({
         Reloads the data from the datasource and then sets itself for needing
         display. This recalculates the number of rows from the source.
     */
-    reloadData: function() {
+    reloadData: function() {        
 		this.noteNumberOfRowsChanged();
 		this.setNeedsDisplay(true);
 		this._headerView.setNeedsDisplay(true);
@@ -557,11 +580,24 @@ var NSTableView = NSControl.extend({
         this._numberOfRows = -1;
         var numberOfRows = this.numberOfRows();
         
-        var children = this._renderContext.element().childNodes.length;
+        var children = this.renderElement.childNodes.length;
         
+        // add rows/cells if current number is fewer than that is required
         if (children < numberOfRows) {
-            for (var i = 0; i < (numberOfRows - children); i++)
-                this._renderContext.push('div', 'ns-table-view-row');
+            for (var i = 0; i < (numberOfRows - children); i++) {
+                this.renderContext.push('div', 'vn-table-view-row', this.guidForRow(children + i));
+                var rowContext = VN.RenderContext.renderContextWithElement(this.renderElement.childNodes[children + i]);
+                
+                for (var j = 0; j < this._tableColumns.length; j++) {
+                    rowContext.push('div', 'vn-view', this.guidForRowInColumn(children + i, j));
+                }
+            }        
+        }
+        // otherwise, if number is more, remove the excess rows
+        else if (children > numberOfRows) {
+            for (var i = 0; i < (children - numberOfRows); i++) {
+                this.renderContext.element().removeChild(VN.$(this.guidForRow(numberOfRows + i)));
+            }
         }
         
         if (numberOfRows > 0)
@@ -571,6 +607,21 @@ var NSTableView = NSControl.extend({
             frameSize.height = this.rectOfColumn(0).size.height;
         
         this.setFrameSize(frameSize);
+    },
+    
+    /**
+        Returns the guid for the row number 'row'. This returns the string that
+        is the id of the DOM element representing that row
+        
+        @param {Integer} row
+        @returns {VN.String}
+    */
+    guidForRow: function(row) {
+        return 'guid_' + this.guid() + '_r_' + row;
+    },
+    
+    guidForRowInColumn: function(row, column) {
+        return this.guidForRow(row) + '_c_' + column;
     },
     
     /**
@@ -744,11 +795,18 @@ var NSTableView = NSControl.extend({
         @param {NSIndexSet} indexes
         @param {Boolean} extendSelection
     */
-    selectRowIndexes: function(indexes, extendSelection) {
-        if (extendSelection)
+    selectRowIndexes: function(indexes, extendSelection) {        
+        if (extendSelection) {
+            // add select clas to the extended rows
+            this._oldSelectionRows = null;
             this._selectedRows.addIndexes(indexes);
-        else
+        }  
+        else {
+            // remove selection from current selection, then select
+            // the new selection indexes
+            this._oldSelectionRows = this._selectedRows;
             this._selectedRows = indexes;
+        }            
     },
     
     selectedColumnIndexes: function() {
@@ -916,8 +974,9 @@ var NSTableView = NSControl.extend({
         for (var idx = 0; idx < column; idx++)
             theRect.origin.x += this._tableColumns[idx].width() + this._intercellSpacing.width;
         
-        for (var idx = 0; idx < row; idx++)
-            theRect.origin.y += this._rowHeight + this._intercellSpacing.height;
+        // y origin is 0 (in relation to row)
+        // for (var idx = 0; idx < row; idx++)
+            // theRect.origin.y += this._rowHeight + this._intercellSpacing.height;
         
         theRect.size.width = this._tableColumns[column].width() + this._intercellSpacing.width;
         theRect.size.height += this._rowHeight + this._intercellSpacing.height;
@@ -925,12 +984,41 @@ var NSTableView = NSControl.extend({
         return theRect;
     },
     
+    /**
+        @param {Integer} column
+        @param {Integer} row
+        @returns VN.Cell
+    */
     preparedCellAtColumnRow: function(column, row) {
         var dataCell = this._tableColumns[column].dataCellForRow(row);
-        dataCell.setObjectValue(this.dataSourceObjectValueForColumnRow(this._tableColumns[column], row));
+        
+        if (this._kvb_info.objectForKey(VN.CONTENT_BINDING)) {
+            // use content binding
+            dataCell.setObjectValue(this.contentBindingObjectValueForColumnRow(this._tableColumns[column], row))
+        }
+        else {
+            // use datasource
+            dataCell.setObjectValue(this.dataSourceObjectValueForColumnRow(this._tableColumns[column], row));
+        }
+        
+        
         return dataCell;        
     },
     
+    /**
+        @param {VN.TableColumn} column
+        @param {Integer} row
+        @returns {VN.Object}
+    */
+    contentBindingObjectValueForColumnRow: function(column, row) {
+        return this._content[row][column.identifier()];
+    },
+    
+    /**
+        @param {VN.TableColumn} column
+        @param {Integer} row
+        @returns {VN.Object}
+    */
     dataSourceObjectValueForColumnRow: function(column, row) {
         if (this._dataSource && this._dataSource.respondsTo('tableViewObjectValueForTableColumnRow'))
             return this._dataSource.tableViewObjectValueForTableColumnRow(this, column, row);
@@ -1025,29 +1113,79 @@ var NSTableView = NSControl.extend({
         @param {NSRenderContext} context
     */
     renderRect: function(aRect, firstTime, context) {
+        this.render(context, firstTime);
+    },
+    
+    render: function(context, firstTime) {
+        var aRect = NSMakeRect(100,100,100,100);
         this.renderBackgroundInClipRect(aRect, firstTime, context);
         this.renderSelectionInClipRect(aRect, firstTime, context);
+        
+        // if (firstTime) {
+            if (this.numberOfRows() > 0) {
+                if (!this._reusableRenderContext)
+                    this._reusableRenderContext = VN.RenderContext.renderContextWithElement(context.element().childNodes[0])
+                // var visibleRows = this.rowsInRect(aRect);
+                // if (visibleRows.length > 0) {
+                    // for (var idx = visibleRows.location; idx < visibleRows.location + visibleRows.length; idx++) {
+                    for (var idx = 0; idx < this.numberOfRows(); idx++) {
+                        this._reusableRenderContext.setElement(context.element().childNodes[idx]);
+                        this.renderRowInContext(idx, this._reusableRenderContext);
+                    }
+                // }
+            }
+        // }
+    },
+    
+    renderRowInContext: function(row, context) {
+        var visibleColumns = this.columnIndexesInRect(this.bounds());
+        // context.set(row % 2 ? 'rgb(243, 243, 243)' : 'white', 'background');
+        context.setFrame(this.rectOfRow(row));
+        
+        for (var idx = visibleColumns.location; idx < visibleColumns.location + visibleColumns.length; idx++) {
+            var dataCell = this.preparedCellAtColumnRow(idx, row);
+            var cellRect = this.frameOfCellAtColumnRow(idx, row);
+            var columnContext = this._tableColumns[idx].renderContext;
+            columnContext.setElement(VN.$(this.guidForRowInColumn(row, idx)));
+            columnContext.setFrame(cellRect);
+            dataCell.renderWithFrameInView(cellRect, this, columnContext, true)
+        }
     },
     
     renderSelectionInClipRect: function(aRect, firstTime, context) {
         if (!this._tableColumns)
             return;
         
-        var numberOfRows = this.numberOfRows();
-        
-        for (var row = 0; row <  numberOfRows; row++) {
-            if (this.isRowSelected(row)) {
-                console.log('adding selected for ' + row);
-                context.addClassForChildAtIndex('selected', row);
-            }
-            else {
-                context.removeClassForChildAtIndex('selected', row);
+        for (var idx = 0; idx < this._selectedRows._ranges.length; idx++) {
+            var currentRange = this._selectedRows._ranges[idx]
+            for (var j = currentRange.location; j < currentRange.location + currentRange.length; j++) {
+                context.addClassForChildAtIndex('selected', j);
             }
         }
+        
+        if (this._oldSelectionRows) {
+            for (var idx = 0; idx < this._oldSelectionRows._ranges.length; idx++) {
+                var currentRange = this._oldSelectionRows._ranges[idx]
+                for (var j = currentRange.location; j < currentRange.location + currentRange.length; j++) {
+                    context.removeClassForChildAtIndex('selected', j);
+                }
+            }
+        }
+        
+        
+        // var numberOfRows = this.numberOfRows();
+        //         
+        //         for (var row = 0; row <  numberOfRows; row++) {
+        //             if (this.isRowSelected(row)) {
+        //                 context.addClassForChildAtIndex('selected', row);
+        //             }
+        //             else {
+        //                 context.removeClassForChildAtIndex('selected', row);
+        //             }
+        //         }
     },
     
     renderBackgroundInClipRect: function(aRect, firstTime, context) {
-        console.log('rendering background');
     },
     
     drawRowInClipRect: function(row, clipRect) {
@@ -1131,11 +1269,18 @@ var NSTableView = NSControl.extend({
     
     mouseDown: function(theEvent) {
         var location = this.convertPointFromView(theEvent.locationInWindow(), null);
+        console.log(location.y);
         location.y = this.bounds().size.height - location.y;
-        
+        console.log(location.y + '    ' + this.rowAtPoint(location));
         var extendSelection = (theEvent.modifierFlags() & NSCommandKeyMask) ? true : false;
         this.selectRowIndexes(NSIndexSet.indexSetWithIndex(this.rowAtPoint(location)), extendSelection);
-        this.setNeedsDisplay(true);
+        // this.setNeedsDisplay(true);
+        this.renderSelectionInClipRect(null, false, this.renderContext);
+        
+        // var bindingInfo = this._kvb_info.valueForKey(VN.SELECTION_INDEXES_BINDING);
+        // if (bindingInfo) {
+            // bindingInfo.valueForKey(VN.OBSERVED_OBJECT_KEY).setValueForKeyPath(this._selectedRows, bindingInfo.valueForKey(VN.OBSERVED_KEY_PATH_KEY));
+        // }
     },
     
     /**
@@ -1191,14 +1336,26 @@ var NSTableView = NSControl.extend({
     */
     bind: function(binding, toObject, withKeyPath, options) {
         // value binding - NSValueBinding
-        if (binding == "selectionIndexes") {
-            toObject.addObserverForKeyPath(this, withKeyPath, 0, NSSelectionIndexesBinding);
+        if (binding == 'selectionIndexes') {
+            toObject.addObserverForKeyPath(this, withKeyPath, 0, VN.SELECTION_INDEXES_BINDING);
             
             var bindingInfo = NSDictionary.dictionaryWithObjectsForKeys(
                 [toObject, withKeyPath, options],
-                [NSObservedObjectKey, NSObservedKeyPathKey, NSOptionsKey]);
+                [VN.OBSERVED_OBJECT_KEY, VN.OBSERVED_KEY_PATH_KEY, VN.OPTIONS_KEY]);
             
-            this._kvb_info.setObjectForKey(bindingInfo, NSSelectionIndexesBinding);
+            this._kvb_info.setObjectForKey(bindingInfo, VN.SELECTION_INDEXES_BINDING);
+        }
+        else if (binding == 'content') {
+            toObject.addObserverForKeyPath(this, withKeyPath, 0, VN.CONTENT_BINDING);
+            
+            var bindingInfo = NSDictionary.dictionaryWithObjectsForKeys(
+                [toObject, withKeyPath, options],
+                [VN.OBSERVED_OBJECT_KEY, VN.OBSERVED_KEY_PATH_KEY, VN.OPTIONS_KEY]);
+            
+            this._kvb_info.setObjectForKey(bindingInfo, VN.CONTENT_BINDING);
+            
+            this._content = toObject.valueForKeyPath(withKeyPath);
+            this.reloadData();
         }
     },
     
@@ -1210,20 +1367,23 @@ var NSTableView = NSControl.extend({
 	*/
     observeValueForKeyPath: function(keyPath, ofObject, change, context) {
         // binding for selection indexes. select new indexes, and display.
-        if (context == NSSelectionIndexesBinding) {
+        if (context == VN.SELECTION_INDEXES_BINDING) {
             var newValue = ofObject.valueForKeyPath(keyPath);
             this.selectRowIndexes(newValue, false);
-            this.setNeedsDisplay(true);
-
+            this.renderSelectionInClipRect(null, false, this.renderContext);
+        }
+        else if (context == VN.CONTENT_BINDING) {
+            this._content = ofObject.valueForKeyPath(keyPath);
+            this.reloadData();
         }
     }
 });
 
 /**
-    @protocol NSTableViewDelegate
-    @conforms NSControlTextEditingDelegate
+    @protocol VN.TableViewDelegate
+    @conforms VN.ControlTextEditingDelegate
 */
-var NSTableViewDelegate = NSObject.protocol({
+VN.TableViewDelegate = VN.protocol({
     
     /**
         @optional
@@ -1483,9 +1643,9 @@ var NSTableViewDelegate = NSObject.protocol({
 });
 
 /**
-    @protocol NSTableViewDataSource
+    @protocol VN.TableViewDataSource
 */
-var NSTableViewDataSource = NSObject.protocol({
+VN.TableViewDataSource = NSObject.protocol({
     
     /**
         @required

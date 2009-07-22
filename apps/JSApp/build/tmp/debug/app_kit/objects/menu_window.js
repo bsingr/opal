@@ -59,7 +59,7 @@ var NSMenuWindow = NSWindow.extend({
         this._contentView.update();
         this._contentView._window = this;
         this.setFrame(this._contentView.frame());
-        this._DOMContainer.appendChild(this._contentView.DOMContainer());
+        // this._DOMContainer.appendChild(this._contentView.renderElement);
         
         this.setNextResponder(NSApplication.sharedApplication());
         

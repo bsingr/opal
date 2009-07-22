@@ -29,7 +29,7 @@
     @class NSObjectController
     @extends NSController
 */
-var NSObjectController = NSController.extend({
+var NSObjectController = VN.ObjectController = NSController.extend({
     
     /**
         @type NSString

@@ -1,8 +1,10 @@
-.ns-slider {
+.vn-slider {
+  position: absolute;
+  display:block;
   height: 21px;
 }
 
-.ns-slider-track {
+.vn-slider-track {
   position: absolute;
   background: url('resources/slider_track_horizontal.png') repeat-x;
   height: 5px;
@@ -11,7 +13,7 @@
   right: 9px;
 }
 
-.ns-slider-track-left {
+.vn-slider-track-left {
   position: absolute;
   background: url('resources/slider_track_left.png');
   height: 5px;
@@ -20,7 +22,7 @@
   width: 5px;
 }
 
-.ns-slider-track-right {
+.vn-slider-track-right {
   position: absolute;
   background: url('resources/slider_track_right.png');
   height: 5px;
@@ -29,7 +31,7 @@
   width: 5px;
 }
 
-.ns-slider .ns-slider-knob {
+.vn-slider .vn-slider-knob {
   position: absolute;
   background-image: url('resources/slider_knob.png');
   height: 19px;
@@ -38,6 +40,6 @@
   left: 34px;
 }
 
-.ns-slider.disabled .ns-slider-knob {
+.vn-slider.disabled .vn-slider-knob {
   background-image: url('resources/slider_knob_disabled.png');
 }

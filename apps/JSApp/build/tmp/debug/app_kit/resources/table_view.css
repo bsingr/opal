@@ -1,12 +1,19 @@
-.ns-table-view {
-  
+.vn-table-view {
+  position: absolute;
+  display: block;
 }
 
-.ns-table-view-row {
+.vn-table-view-row {
   height: 17px;
   position: absolute;
+  background: white;
 }
 
-.ns-table-view-row.selected {
-  background: rgb(56, 121, 217);
+.vn-table-view-row.selected {
+  background: rgb(119, 141, 168);
+  color: white;
+}
+
+.vn-table-view-header {
+  background: url('resources/table_view_header_background.png') repeat-x;
 }

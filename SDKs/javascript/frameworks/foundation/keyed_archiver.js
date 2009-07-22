@@ -107,6 +107,7 @@ var NSKeyedUnarchiver = NSCoder.extend({
     _rootDict: null,
     _contextStack: null,
     _unarchivedObjects: null,
+    _fileOwner: null,
     
     initForReadingWithData: function(data) {
         this.init();
@@ -115,7 +116,28 @@ var NSKeyedUnarchiver = NSCoder.extend({
         this._contextStack = [];
         this._contextStack.addObject(this._rootDict);
         this._unarchivedObjects = NSDictionary.create();
+        this._fileOwner = this.getFileOwner();
         return this;
+    },
+    
+    /**
+        Returns the ID for the File's owner. must be a better way to do this...
+        
+        not in nib's, but carina will have a better system (top level).
+        
+        @returns {VN.String}
+    */
+    getFileOwner: function() {
+        var rootObjects = this._data['IBDocument.Objects'].objects.objectRecords.objects.orderedObjects.objects;
+        for (var idx = 0; idx < rootObjects.length; idx++) {
+            if (rootObjects[idx]['objects']['objectName'] == "File's Owner") {
+                return rootObjects[idx].objects.object.id;
+            }
+        }
+    },
+    
+    fileOwner: function() {
+        return this._unarchivedObjects.objectForKey(this._fileOwner);
     },
 
     setDelegate: function(delegate) {
@@ -174,6 +196,11 @@ var NSKeyedUnarchiver = NSCoder.extend({
             return new String(theObject);
         
         var theClass = window[theObject["class"]];
+
+        // catch the file owner, and just return it (should already have been)
+        if (theObject['class'] == "NSCustomObject" && theObject['id'] == this._fileOwner) {
+            return this.fileOwner();
+        }
         
         if (!theClass) {
             if (this._unarchivedObjects.containsKey(theObject['id']))
@@ -197,9 +224,7 @@ var NSKeyedUnarchiver = NSCoder.extend({
         
         this._unarchivedObjects.setObjectForKey(newObject, theObject['id']);
         
-        // if (theObject['class'] == "NSCustomObject") {
-        //     newObject.init();
-        // }
+        
         // else {
             this._contextStack.addObject(theObject['objects']);
             newObject = newObject.initWithCoder(this);

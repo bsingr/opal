@@ -41,8 +41,10 @@
     class views of the text system. Subclassing the other objects is heavly
     non recomended.
 */
-var NSTextView = NSView.extend({
-
+var NSTextView = VN.TextView = VN.View.extend({
+    
+    _string: null,
+    
     _textStorage: null,
     _textContainer: null,
     _textContainerInset: null,
@@ -111,14 +113,14 @@ var NSTextView = NSView.extend({
     initWithFrame: function(frameRect) {
         this._super(frameRect);
         
-        this._textStorage = NSTextStorage.create();
-        this._textContainer = NSTextContainer.create('initWithContainerSize', frameRect.size);
-        var theLayoutManager = NSLayoutManager.create();
+        // this._textStorage = NSTextStorage.create();
+        // this._textContainer = NSTextContainer.create('initWithContainerSize', frameRect.size);
+        // var theLayoutManager = NSLayoutManager.create();
         
-        this._textStorage.addLayoutManager(theLayoutManager);
-        theLayoutManager.addTextContainer(this._textContainer);
+        // this._textStorage.addLayoutManager(theLayoutManager);
+        // theLayoutManager.addTextContainer(this._textContainer);
         
-        this._textContainer.setTextView(this);
+        // this._textContainer.setTextView(this);
         
         this._textContainerInset = NSMakeSize(0, 0);
         
@@ -131,7 +133,7 @@ var NSTextView = NSView.extend({
         
         this._textColor = NSColor.textColor();
         this._font = NSFont.userFontOfSize(10);
-        this._textAlignment = NSLeftTextAlignment;
+        this._textAlignment = VN.LEFT_TEXT_ALIGNMENT;
         this._insertionPointColor = NSColor.blackColor();
         
         this._isFieldEditor = false;
@@ -143,8 +145,57 @@ var NSTextView = NSView.extend({
         return this;
     },
     
+    setupGraphicsContextDisplay: function() {
+        this._DOMContainer = document.createElement('input');
+        this._DOMGraphicsContext = document.createElement('div');
+        
+        this._DOMContainer.style.display = "block";
+        this._DOMContainer.style.position = "absolute";
+        this._DOMContainer.style.overflowX = "hidden";
+        this._DOMContainer.style.overflowY = "hidden";
+        
+        this._DOMContainer.onkeypress = function(event) {
+            event._allowBrowserControl = true;
+        };
+        
+        this._DOMContainer.onmousedown = function(event) {
+            event._allowBrowserControl = true;
+        };
+        
+        this._DOMContainer.onmousemove = function(event) {
+            event._allowBrowserControl = true;
+        };
+        
+        this._DOMContainer.onmouseup = function(event) {
+            event._allowBrowserControl = true;
+        };
+        
+        this._renderContext = NSRenderContext.renderContextWithElement(this._DOMContainer);
+    },
+    
+    renderRect: function(aRect, firstTime, context) {
+        if (firstTime) {
+            context.setClass('vn-text-view');
+        }
+        
+        this._DOMContainer.value = this._string;
+    },
+    
     mouseDown: function(theEvent) {
         console.log('mouse down in text view');
+        this._DOMContainer.focus();
+    },
+    
+    acceptsFirstResponder: function() {
+        return true;
+    },
+    
+    keyDown: function(theEvent) {
+        this.interpretKeyEvents([theEvent]);
+    },
+    
+    insertText: function(theCharacters) {
+        console.log(theCharacters);
     },
     
     textContainer: function() {
@@ -483,8 +534,9 @@ var NSTextView = NSView.extend({
     },
     
     setString: function(aString) {
+        this._string = aString;
         // console.log('setting string to ' + aString);
-        this.replaceCharactersInRange(NSMakeRange(0, this._textStorage.length()), aString);
+        // this.replaceCharactersInRange(NSMakeRange(0, this._textStorage.length()), aString);
         // console.log(this._textStorage);
     },
     

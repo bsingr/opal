@@ -62,11 +62,11 @@ var NSMainMenu = NSWindow.extend({
         this._mainMenuView = NSMenuView.create('initWithMenu', this._mainMenu);
         this._mainMenuView.setHorizontal(true);
         this._mainMenuView.update();
-        this._DOMContainer.appendChild(this._mainMenuView.DOMContainer());
+        this._DOMContainer.appendChild(this._mainMenuView.renderElement);
         
         // menu title
         this._applicationTitleView = NSApplicationTitleView.create('initWithFrame', NSMakeRect(0, 0, 0, 0));
-        this._DOMContainer.appendChild(this._applicationTitleView.DOMContainer());
+        this._DOMContainer.appendChild(this._applicationTitleView.renderElement);
         
         this.setNextResponder(NSApplication.sharedApplication());
         
