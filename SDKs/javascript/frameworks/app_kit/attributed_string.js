@@ -27,43 +27,43 @@
 include('foundation/attributed_string')
 
 /**
-    Attributes used for strings. If not present, then defaults will be used 
-    instead.
+  Attributes used for strings. If not present, then defaults will be used 
+  instead.
 */
-var NSFontAttributeName                 = "NSFontAttributeName";
-var NSParagraphStyleAttributeName       = "NSParagraphStyleAttributeName";
-var NSForegroundColorAttributeName      = "NSForegroundColorAttributeName";
-var NSUnderlineStyleAttributeName       = "NSUnderlineStyleAttributeName";
-var NSSuperscriptAttributeName          = "NSSuperscriptAttributeName";
-var NSBackgroundColorAttributeName      = "NSBackgroundColorAttributeName";
-var NSAttachmentAttributeName           = "NSAttachmentAttributeName";
-var NSLigatureAttributeName             = "NSLigatureAttributeName";
-var NSBaselineOffsetAttributeName       = "NSBaselineOffsetAttributeName";
-var NSKernAttributeName                 = "NSKernAttributeName";
-var NSLinkAttributeName                 = "NSLinkAttributeName";
+var NSFontAttributeName         = "NSFontAttributeName";
+var NSParagraphStyleAttributeName     = "NSParagraphStyleAttributeName";
+var NSForegroundColorAttributeName    = "NSForegroundColorAttributeName";
+var NSUnderlineStyleAttributeName     = "NSUnderlineStyleAttributeName";
+var NSSuperscriptAttributeName      = "NSSuperscriptAttributeName";
+var NSBackgroundColorAttributeName    = "NSBackgroundColorAttributeName";
+var NSAttachmentAttributeName       = "NSAttachmentAttributeName";
+var NSLigatureAttributeName       = "NSLigatureAttributeName";
+var NSBaselineOffsetAttributeName     = "NSBaselineOffsetAttributeName";
+var NSKernAttributeName         = "NSKernAttributeName";
+var NSLinkAttributeName         = "NSLinkAttributeName";
 
-var NSStrokeWidthAttributeName          = "NSStrokeWidthAttributeName";
-var NSStrokeColorAttributeName          = "NSStrokeColorAttributeName";
-var NSUnderlineColorAttributeName       = "NSUnderlineColorAttributeName";
+var NSStrokeWidthAttributeName      = "NSStrokeWidthAttributeName";
+var NSStrokeColorAttributeName      = "NSStrokeColorAttributeName";
+var NSUnderlineColorAttributeName     = "NSUnderlineColorAttributeName";
 var NSStrikethroughStyleAttributeName   = "NSStrikethroughStyleAttributeName";
 var NSStrikethroughColorAttributeName   = "NSStrikethroughColorAttributeName";
-var NSShadowAttributeName               = "NSShadowAttributeName";
-var NSObliquenessAttributeName          = "NSObliquenessAttributeName";
-var NSExpansionAttributeName            = "NSExpansionAttributeName";
-var NSCursorAttributeName               = "NSCursorAttributeName";
-var NSToolTipAttributeName              = "NSToolTipAttributeName";
+var NSShadowAttributeName         = "NSShadowAttributeName";
+var NSObliquenessAttributeName      = "NSObliquenessAttributeName";
+var NSExpansionAttributeName      = "NSExpansionAttributeName";
+var NSCursorAttributeName         = "NSCursorAttributeName";
+var NSToolTipAttributeName        = "NSToolTipAttributeName";
 
 // NSUnderlineStyleAttributeName and NSStrikethroughStyleAttributeName
-var NSUnderlineStyleNone                = 0x00;
-var NSUnderlineStyleSingle              = 0x01;
-var NSUnderlineStyleThick               = 0x02;
-var NSUnderlineStyleDouble              = 0x09;
+var NSUnderlineStyleNone        = 0x00;
+var NSUnderlineStyleSingle        = 0x01;
+var NSUnderlineStyleThick         = 0x02;
+var NSUnderlineStyleDouble        = 0x09;
 
-var NSUnderlinePatternSolid             = 0x0000;
-var NSUnderlinePatternDot               = 0x0100;
-var NSUnderlinePatternDash              = 0x0200;
-var NSUnderlinePatternDashDot           = 0x0300;
-var NSUnderlinePatternDashDotDot        = 0x0400;
+var NSUnderlinePatternSolid       = 0x0000;
+var NSUnderlinePatternDot         = 0x0100;
+var NSUnderlinePatternDash        = 0x0200;
+var NSUnderlinePatternDashDot       = 0x0300;
+var NSUnderlinePatternDashDotDot    = 0x0400;
 
 NSAttributedString.mixin({
 	

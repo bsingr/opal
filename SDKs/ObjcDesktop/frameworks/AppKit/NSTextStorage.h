@@ -12,16 +12,16 @@
 @class NSLayoutManager, NSMutableArray;
 
 enum {
-    NSTextStorageEditedAttributes = 1,
-    NSTextStorageEditedCharacters = 2
+  NSTextStorageEditedAttributes = 1,
+  NSTextStorageEditedCharacters = 2
 };
 
 @interface NSTextStorage : NSAttributedString
 {
-    NSRange          _editedRange;
-    NSInteger        _editedDelta;
-    NSMutableArray  *_layoutManagers;
-    id               _sideData;
+  NSRange      _editedRange;
+  NSInteger    _editedDelta;
+  NSMutableArray  *_layoutManagers;
+  id         _sideData;
 }
 
 - (void)addLayoutManager:(NSLayoutManager *)aLayoutManager;
@@ -34,7 +34,7 @@ enum {
 - (void)invalidateAttributesInRange:(NSRange)range;
 - (void)ensureAttributesAreFixedInRange:(NSRange)range;
 - (BOOL)fixesAttributesLazily;
-    
+  
 - (NSUInteger)editedMask;
 - (NSRange)editedRange;
 - (NSInteger)changeInLength;

@@ -13,67 +13,67 @@
 @class NSNotification;
 
 enum {
-    NSEnterCharacter                = 0x0003,
-    NSBackspaceCharacter            = 0x0008,
-    NSTabCharacter                  = 0x0009,
-    NSNewlineCharacter              = 0x000a,
-    NSFormFeedCharacter             = 0x000c,
-    NSCarriageReturnCharacter       = 0x000d,
-    NSBackTabCharacter              = 0x0019,
-    NSDeleteCharacter               = 0x007f,
-    NSLineSeparatorCharacter        = 0x2028,
-    NSParagraphSeparatorCharacter   = 0x2029
+  NSEnterCharacter        = 0x0003,
+  NSBackspaceCharacter      = 0x0008,
+  NSTabCharacter          = 0x0009,
+  NSNewlineCharacter        = 0x000a,
+  NSFormFeedCharacter       = 0x000c,
+  NSCarriageReturnCharacter     = 0x000d,
+  NSBackTabCharacter        = 0x0019,
+  NSDeleteCharacter         = 0x007f,
+  NSLineSeparatorCharacter    = 0x2028,
+  NSParagraphSeparatorCharacter   = 0x2029
 };
 
 enum {
-    NSLeftTextAlignment		        = 0,
-    NSRightTextAlignment	        = 1,
-    NSCenterTextAlignment	        = 2,
-    NSJustifiedTextAlignment	    = 3,
-    NSNaturalTextAlignment	        = 4
+  NSLeftTextAlignment		    = 0,
+  NSRightTextAlignment	    = 1,
+  NSCenterTextAlignment	    = 2,
+  NSJustifiedTextAlignment	  = 3,
+  NSNaturalTextAlignment	    = 4
 };
 typedef NSUInteger NSTextAlignment;
 
 enum {
-    NSWritingDirectionNatural       = -1,
-    NSWritingDirectionLeftToRight   = 0,
-    NSWritingDirectionRightToLeft   = 1
+  NSWritingDirectionNatural     = -1,
+  NSWritingDirectionLeftToRight   = 0,
+  NSWritingDirectionRightToLeft   = 1
 };
 typedef NSInteger NSWritingDirection;
 
 enum {
-    NSIllegalTextMovement		    = 0,
-    NSReturnTextMovement		    = 0x10,
-    NSTabTextMovement			    = 0x11,
-    NSBacktabTextMovement		    = 0x12,
-    NSLeftTextMovement			    = 0x13,
-    NSRightTextMovement			    = 0x14,
-    NSUpTextMovement			    = 0x15,
-    NSDownTextMovement			    = 0x16,
-    NSCancelTextMovement		= 0x17,
-    NSOtherTextMovement			= 0
+  NSIllegalTextMovement		  = 0,
+  NSReturnTextMovement		  = 0x10,
+  NSTabTextMovement			  = 0x11,
+  NSBacktabTextMovement		  = 0x12,
+  NSLeftTextMovement			  = 0x13,
+  NSRightTextMovement			  = 0x14,
+  NSUpTextMovement			  = 0x15,
+  NSDownTextMovement			  = 0x16,
+  NSCancelTextMovement		= 0x17,
+  NSOtherTextMovement			= 0
 };
 
 @interface NSText : NSView
 {
-    NSString        *_string;
-    NSColor         *_backgroundColor;
-    BOOL             _drawsBackground;
-    BOOL             _isEditable;
-    BOOL             _isSelectable;
-    BOOL             _isFieldEditor;
-    BOOL             _isRichText;
-    BOOL             _importsGraphics;
-    BOOL             _usesFontPanel;
-    NSRange         *_selectedRange;
-    NSFont          *_font;
-    NSTextAlignment *_textAlignment;
-    NSColor         *_textColor;
-    NSSize           _maxSize;
-    NSSize           _minSize;
-    id               _delegate;
-    
-    CGContextRef     _gCanvas;
+  NSString    *_string;
+  NSColor     *_backgroundColor;
+  BOOL       _drawsBackground;
+  BOOL       _isEditable;
+  BOOL       _isSelectable;
+  BOOL       _isFieldEditor;
+  BOOL       _isRichText;
+  BOOL       _importsGraphics;
+  BOOL       _usesFontPanel;
+  NSRange     *_selectedRange;
+  NSFont      *_font;
+  NSTextAlignment *_textAlignment;
+  NSColor     *_textColor;
+  NSSize       _maxSize;
+  NSSize       _minSize;
+  id         _delegate;
+  
+  CGContextRef   _gCanvas;
 }
 
 - (NSString *)string;

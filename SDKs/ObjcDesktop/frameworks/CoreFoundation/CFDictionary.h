@@ -9,15 +9,15 @@
 #import <CoreFoundation/CFBase.h>
 
 typedef struct {
-    CFStringRef _keys[];
-    void *_values[];
-    CFIndex _count;
+  CFStringRef _keys[];
+  void *_values[];
+  CFIndex _count;
 } CFDictionaryRef;
 
 typedef struct {
-    CFStringRef _keys[];
-    void *_values[];
-    CFIndex _count;
+  CFStringRef _keys[];
+  void *_values[];
+  CFIndex _count;
 } CFMutableDictionaryRef;
 
 extern CFDictionaryRef CFDictionaryCreate(void **keys, void **values);

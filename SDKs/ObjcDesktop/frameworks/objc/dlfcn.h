@@ -7,10 +7,10 @@
 // 
 
 typedef struct {
-    const char  *dli_fname;
-    void        *dli_fbase;
-    const char  *dli_sname;
-    void        *dli_saddr;
+  const char  *dli_fname;
+  void    *dli_fbase;
+  const char  *dli_sname;
+  void    *dli_saddr;
 } Dl_info;
 
 // typedef void (*CFArrayReleaseCallBack)(int allocator, const void *value);

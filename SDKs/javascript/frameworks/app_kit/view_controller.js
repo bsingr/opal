@@ -27,100 +27,100 @@
 include('app_kit/responder');
 
 /**
-    @class VN.ViewController
-    @extends VN.Responder
+  @class VN.ViewController
+  @extends VN.Responder
 */
 var NSViewController = VN.ViewController = VN.Responder.extend({
-    
-    /**
-        The top level objects created from the Nib file.
-        @type VN.Array
-    */
-    _topLevelObjects: null,
-    
-    /**
-        @param {VN.String} nibName
-        @returns VN.ViewController
-    */
-    initWithNibName: function(nibName) {
-        this._nibName = nibName;
-        return this;
-    },
-    
-    /**
-        @type VN.Object
-    */
-    _representedObject: null,
-    
-    /**
-        @param {VN.Object} representedObject
-    */
-    setRepresentedObject: function(representedObject) {
-        this._representedObject = representedObject;
-    },
-    
-    /**
-        @returns VN.Object
-    */
-    represnetedObject: function() {
-        return this._representedObject;
-    },
-    
-    /**
-        @type VN.String
-    */
-    _title: null,
-    
-    /**
-        @param {VN.String} title
-    */
-    setTitle: function(title) {
-        this._title = title;
-    },
-    
-    /**
-        @returns VN.String
-    */
-    title: function() {
-        return this._title;
-    },
-    
-    /**
-        @outlet
-        @type VN.View
-    */
-    _view: null,
-    
-    /**
-        @param {VN.View} view
-    */
-    setView: function(view) {
-        this._view = view;
-    },
-    
-    /**
-        @returns VN.View
-    */
-    view: function() {
-        return this._view;
-    },
-    
-    /**
-        Loads the view using VN.Nib class
-    */
-    loadView: function() {
-        NSBundle.loadNibNamed(this._nibName, this);
-    },
-    
-    /**
-        @type VN.String
-    */
-    _nibName: null,
-    
-    /**
-        @returns VN.String
-    */
-    nibName: function() {
-        return this._nibName;
-    } 
+  
+  /**
+    The top level objects created from the Nib file.
+    @type VN.Array
+  */
+  _topLevelObjects: null,
+  
+  /**
+    @param {VN.String} nibName
+    @returns VN.ViewController
+  */
+  initWithNibName: function(nibName) {
+    this._nibName = nibName;
+    return this;
+  },
+  
+  /**
+    @type VN.Object
+  */
+  _representedObject: null,
+  
+  /**
+    @param {VN.Object} representedObject
+  */
+  setRepresentedObject: function(representedObject) {
+    this._representedObject = representedObject;
+  },
+  
+  /**
+    @returns VN.Object
+  */
+  represnetedObject: function() {
+    return this._representedObject;
+  },
+  
+  /**
+    @type VN.String
+  */
+  _title: null,
+  
+  /**
+    @param {VN.String} title
+  */
+  setTitle: function(title) {
+    this._title = title;
+  },
+  
+  /**
+    @returns VN.String
+  */
+  title: function() {
+    return this._title;
+  },
+  
+  /**
+    @outlet
+    @type VN.View
+  */
+  _view: null,
+  
+  /**
+    @param {VN.View} view
+  */
+  setView: function(view) {
+    this._view = view;
+  },
+  
+  /**
+    @returns VN.View
+  */
+  view: function() {
+    return this._view;
+  },
+  
+  /**
+    Loads the view using VN.Nib class
+  */
+  loadView: function() {
+    NSBundle.loadNibNamed(this._nibName, this);
+  },
+  
+  /**
+    @type VN.String
+  */
+  _nibName: null,
+  
+  /**
+    @returns VN.String
+  */
+  nibName: function() {
+    return this._nibName;
+  } 
 });

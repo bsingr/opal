@@ -25,5 +25,5 @@
  */
 
 var NSCustomView = NSView.extend({
-    
+  
 });

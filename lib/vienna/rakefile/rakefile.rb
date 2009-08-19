@@ -15,44 +15,44 @@ module Vienna
   
   class Rakefile
   
-    def initialize
-      @configs = {}
-    end
+  def initialize
+    @configs = {}
+  end
   
-    def load!(filename)
-    
-      if File.directory? filename
-        load! File.join(filename, 'Rakefile')
-      elsif File.exist? filename
-        text = File.read(filename)
-        instance_eval text
-      end
-      return self
-    end
+  def load!(filename)
   
-    def config(config_name, opts = {})
-      config_name = config_name.to_sym
-      config = {}
-      config.merge! opts
-      @configs.store config_name, config
+    if File.directory? filename
+    load! File.join(filename, 'Rakefile')
+    elsif File.exist? filename
+    text = File.read(filename)
+    instance_eval text
     end
-    
-    def config_for(config_name)
-      config = {}
-      config_name = config_name.to_sym
-      config.merge!(@configs[:all]) if @configs.has_key? :all
-      config.merge!(@configs[config_name]) if @configs.has_key? config_name
-      return config
-    end
-    
-    
-    def namespace(name=nil, &block)
-      # puts "namespace: #{name}"
-    end
-    
-    def desc(description)
-      # puts "description"
-    end
-    
+    return self
+  end
+  
+  def config(config_name, opts = {})
+    config_name = config_name.to_sym
+    config = {}
+    config.merge! opts
+    @configs.store config_name, config
+  end
+  
+  def config_for(config_name)
+    config = {}
+    config_name = config_name.to_sym
+    config.merge!(@configs[:all]) if @configs.has_key? :all
+    config.merge!(@configs[config_name]) if @configs.has_key? config_name
+    return config
+  end
+  
+  
+  def namespace(name=nil, &block)
+    # puts "namespace: #{name}"
+  end
+  
+  def desc(description)
+    # puts "description"
+  end
+  
   end
 end

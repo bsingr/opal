@@ -11,7 +11,7 @@
 
 @interface NSScroller : NSControl
 {
-    BOOL    _isVertical;
+  BOOL  _isVertical;
 }
 
 @end

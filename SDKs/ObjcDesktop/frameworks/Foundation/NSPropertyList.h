@@ -12,17 +12,17 @@
 @class NSData, NSString;
 
 enum {
-    NSPropertyListImmutable                     = kCFPropertyListImmutable,
-    NSPropertyListMutableContainers             = kCFPropertyListMutableContainers,
-    NSPropertyListMutableContainersAndLeaves    = kCFPropertyListMutableContainersAndLeaves
+  NSPropertyListImmutable           = kCFPropertyListImmutable,
+  NSPropertyListMutableContainers       = kCFPropertyListMutableContainers,
+  NSPropertyListMutableContainersAndLeaves  = kCFPropertyListMutableContainersAndLeaves
 };
 typedef NSUInteger NSPropertyListMutabilityOptions;
 
 enum {
-    NSPropertyListOpenStepFormat        = kCFPropertyListOpenStepFormat,
-    NSPropertyListXMLFormat_v1_0        = kCFPropertyListXMLFormat_v1_0,
-    NSPropertyListBinaryFormat_v1_0     = kCFPropertyListBinaryFormat_v1_0,
-    NSPropertyListJSONFormat_v1_0       = kCFPropertyListJSONFormat_v1_0
+  NSPropertyListOpenStepFormat    = kCFPropertyListOpenStepFormat,
+  NSPropertyListXMLFormat_v1_0    = kCFPropertyListXMLFormat_v1_0,
+  NSPropertyListBinaryFormat_v1_0   = kCFPropertyListBinaryFormat_v1_0,
+  NSPropertyListJSONFormat_v1_0     = kCFPropertyListJSONFormat_v1_0
 };
 typedef NSUInteger NSPropertyListFormat;
 

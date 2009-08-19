@@ -30,51 +30,51 @@ var NSInconsistentArchiveException = "NSInconsistentArchiveException";
 
 var NSArchiver = NSCoder.extend({
    
-    initForWritingWithMutableData: function(mdata) {
-        
-    },
+  initForWritingWithMutableData: function(mdata) {
     
-    archiverData: function() {
-        
-    },
+  },
+  
+  archiverData: function() {
     
-    encodeRootObject: function(rootObject) {
-        
-    },
+  },
+  
+  encodeRootObject: function(rootObject) {
     
-    encodeConditionalObject: function(object) {
-        
-    },
+  },
+  
+  encodeConditionalObject: function(object) {
     
+  },
+  
+  
+  archivedDataWithRootObject:function(rootObject) {
     
-    archivedDataWithRootObject:function(rootObject) {
-        
-    },
+  },
+  
+  archiveRootObject: function(rootObject, path) {
     
-    archiveRootObject: function(rootObject, path) {
-        
-    }
+  }
 });
 
 var NSUnarchiver = NSCoder.extend({
-    
+  
    initForReadingWidthData: function(data) {
-       
+     
    },
    
    isAtEnd: function() {
-       
+     
    },
    
    unarchiveObjectWithData: function(data) {
-       
+     
    },
    
    unarchiveObjectWithFile: function(path) {
-       
+     
    },
    
    replaceObject: function(object, newObject) {
-       
+     
    }
 });

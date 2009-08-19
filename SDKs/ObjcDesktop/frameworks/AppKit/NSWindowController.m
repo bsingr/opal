@@ -13,18 +13,18 @@
 
 - (id)initWithWindowNibName:(NSString *)windowNibName
 {
-    return [[NSWindowController alloc] initWithWindowNibName:windowNibName owner:self];
+  return [[NSWindowController alloc] initWithWindowNibName:windowNibName owner:self];
 }
 
 - (id)initWithWindowNibName:(NSString *)windowNibName owner:(id)owner
 {
-    [self init];
-    
-    if (self){
-        _owner = owner;
-        [NSBundle loadNibNamed:windowNibName owner:owner];
-    }
-    return self;
+  [self init];
+  
+  if (self){
+    _owner = owner;
+    [NSBundle loadNibNamed:windowNibName owner:owner];
+  }
+  return self;
 }
 
 // - (IBAction)showWindow:(id)sender
@@ -34,17 +34,17 @@
 
 - (NSWindow *)window
 {
-    return _window;
+  return _window;
 }
 
 - (void)close
 {
-    if (_window)
-        [_window close];
+  if (_window)
+    [_window close];
 }
 - (id)owner
 {
-    return _owner;
+  return _owner;
 }
 
 @end

@@ -16,7 +16,7 @@
 // extern FILE *fopen(const char *filename, const char *mode);
 function fopen(filename, mode)
 {
-    
+  
 }
 
 // extern int fprintf(FILE * __restrict, const char * __restrict, ...);
@@ -25,7 +25,7 @@ function fopen(filename, mode)
 // extern int fread(void *ptr, int size, int count, FILE *stream);
 function fread(ptr, size, count, stream)
 {
-    
+  
 }
 
 // extern FILE *freopen(const char * __restrict, const char * __restrict, FILE * __restrict);
@@ -43,14 +43,14 @@ function fread(ptr, size, count, stream)
 
 function printf(format)
 {
-    if (window.opera && !window.console)
-    {
-        opera.postError(format);
-    }
-    else
-    {
-        console.log(format);
-    }
+  if (window.opera && !window.console)
+  {
+    opera.postError(format);
+  }
+  else
+  {
+    console.log(format);
+  }
 }
 
 // extern int putc(int, FILE *);

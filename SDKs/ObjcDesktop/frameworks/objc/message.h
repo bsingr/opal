@@ -11,8 +11,8 @@
 
 
 struct objc_super {
-    id receiver;
-    Class super_class;
+  id receiver;
+  Class super_class;
 };
 
 extern id objc_msgSend(id self, SEL op, ...);

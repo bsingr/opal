@@ -10,45 +10,45 @@
 
 NSRange NSMakeRange(NSUInteger loc, NSUInteger len)
 {
-    NSRange r;
-    r.location = loc;
-    r.length = len;
-    return r;
+  NSRange r;
+  r.location = loc;
+  r.length = len;
+  return r;
 }
 
 NSUInteger NSMaxRange(NSRange range)
 {
-    return (range.location + range.length);
+  return (range.location + range.length);
 }
 
 BOOL NSLocationInRange(NSUInteger loc, NSRange range)
 {
-    return (loc - range.location < range.length);
+  return (loc - range.location < range.length);
 }
 
 BOOL NSEqualRanges(NSRange range1, NSRange range2)
 {
-    return (range1.location == range2.location && range1.length == range2.length);
+  return (range1.location == range2.location && range1.length == range2.length);
 }
 
 NSRange NSUnionRange(NSRange range1, NSRange range2)
 {
-    
+  
 }
 
 NSRange NSIntersectionRange(NSRange range1, NSRange range2)
 {
-    
+  
 }
 
 NSString *NSStringFromRange(NSRange range)
 {
-    
+  
 }
 
 NSRange NSRangeFromString(NSString *aString)
 {
-    
+  
 }
 
 
@@ -56,12 +56,12 @@ NSRange NSRangeFromString(NSString *aString)
 
 + (NSValue *)valueWithRange:(NSRange)range
 {
-    
+  
 }
 
 - (NSRange)rangeValue
 {
-    
+  
 }
 
 @end

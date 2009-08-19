@@ -20,4 +20,19 @@
 
 .vn-text-field-title {
   position: absolute;
+  display: block;
+  word-wrap: normal;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  cursor: default;
+}
+
+.vn-text-field.editable .vn-text-field-title {
+  position: absolute;
+  border: 0px;
+  padding: 0px;
+  margin: 0px;
+  white-space: "pre";
+  background: white;
+  outline: none;
 }

@@ -28,80 +28,80 @@
 
 CFIndex CTRunGetGlyphCount(CTRunRef run)
 {
-    
+  
 }
 
 CFDictionaryRef CTRunGetAttributes(CTRunRef run)
 {
-    
+  
 }
 
 CTRunStatus CTRunGetStatus(CTRunRef run)
 {
-    
+  
 }
 
 const CGGlyph* CTRunGetGlyphsPtr(CTRunRef run)
 {
-    
+  
 }
 
 void CTRunGetGlyphs(CTRunRef run, CFRange range, CGGlyph buffer[])
 {
-    
+  
 }
 
 const CGPoint* CTRunGetPositionsPtr(CTRunRef run)
 {
-    
+  
 }
 
 void CTRunGetPositions(CTRunRef run, CFRange range, CGPoint buffer[])
 {
-    
+  
 }
 
 const CGSize* CTRunGetAdvancesPtr(CTRunRef run)
 {
-    
+  
 }
 
 void CTRunGetAdvances(CTRunRef run, CFRange range, CGSize buffer[])
 {
-    
+  
 }
 
 const CFIndex* CTRunGetStringIndicesPtr(CTRunRef run)
 {
-    
+  
 }
 
 void CTRunGetStringIndices(CTRunRef run, CFRange range, CFIndex buffer[])
 {
-    
+  
 }
 
 CFRange CTRunGetStringRange(CTRunRef run)
 {
-    
+  
 }
 
 double CTRunGetTypographicBounds(CTRunRef run, CFRange range, CGFloat* ascent, CGFloat* descent, CGFloat* leading)
 {
-    
+  
 }
 
 CGRect CTRunGetImageBounds(CTRunRef run, CGContextRef context, CFRange range)
 {
-    
+  
 }
 
 CGAffineTransform CTRunGetTextMatrix(CTRunRef run)
 {
-    
+  
 }
 
 void CTRunDraw(CTRunRef run, CGContextRef context, CFRange range)
 {
-    
+  
 }

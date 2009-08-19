@@ -11,13 +11,13 @@
 #import <CoreGraphics/CGContext.h>
 
 typedef struct CGGradient{
-    CFArrayRef  *_colors;
-    CFArrayRef  *_locations;
+  CFArrayRef  *_colors;
+  CFArrayRef  *_locations;
 } *CGGradientRef;
 
 enum {
-    kCGGradientDrawsBeforeStartLocation = (1 << 0),
-    kCGGradientDrawsAfterEndLocation    = (1 << 1)
+  kCGGradientDrawsBeforeStartLocation = (1 << 0),
+  kCGGradientDrawsAfterEndLocation  = (1 << 1)
 };
 typedef int CGGradientDrawingOptions;
 

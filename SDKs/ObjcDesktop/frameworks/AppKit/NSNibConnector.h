@@ -10,9 +10,9 @@
 
 @interface NSNibConnector : NSObject
 {
-    id          _source;
-    id          _destination;
-    NSString   *_label;
+  id      _source;
+  id      _destination;
+  NSString   *_label;
 }
 
 - (id)source;

@@ -8,18 +8,18 @@
 
 function CFHTTPRequestCreate(method, address, async, callback)
 {
-    var req =  new XMLHttpRequest();
-    req.open(method, address, async);
-    req.onreadystatechange = callback;
-    return req;
+  var req =  new XMLHttpRequest();
+  req.open(method, address, async);
+  req.onreadystatechange = callback;
+  return req;
 }
 
 function CFHTTPRequestSetMimeType(request, mime)
 {
-    // request.overrideMimeType(mime);
+  // request.overrideMimeType(mime);
 }
 
 function CFHTTPRequestSend(request, data)
 {
-    request.send(data);
+  request.send(data);
 }

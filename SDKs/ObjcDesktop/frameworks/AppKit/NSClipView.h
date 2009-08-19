@@ -12,7 +12,7 @@
 
 @interface NSClipView : NSView
 {
-    NSView      *_docView;
+  NSView    *_docView;
 }
 
 - (void)setBackgroundColor:(NSColor *)color;

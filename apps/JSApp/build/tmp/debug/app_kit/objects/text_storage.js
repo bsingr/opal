@@ -26,32 +26,32 @@
 
 var NSTextStorage = NSAttributedString.extend({
 
-    _delegate: null,
-    
-    _layoutManagers: null,
-    _changeInLength: null,
-    _editedMask: null,
-    _editedRange: null,
-    _beginEditing: null,
-    
-    initWithCoder: function(aCoder) {
-        this._layoutManagers = [];
-        return this;
-    },
-    
-    init: function() {
-        this._layoutManagers = [];
-        this._string = "";
-        this._attributed = [];
-        return this;
-    },
-    
-    layoutManagers: function() {
-        return this._layoutManagers;
-    },
-    
-    addLayoutManager: function(layoutManager) {
-        this._layoutManagers.push(layoutManager);
-        layoutManager.setTextStorage(this);
-    }
+  _delegate: null,
+  
+  _layoutManagers: null,
+  _changeInLength: null,
+  _editedMask: null,
+  _editedRange: null,
+  _beginEditing: null,
+  
+  initWithCoder: function(aCoder) {
+    this._layoutManagers = [];
+    return this;
+  },
+  
+  init: function() {
+    this._layoutManagers = [];
+    this._string = "";
+    this._attributed = [];
+    return this;
+  },
+  
+  layoutManagers: function() {
+    return this._layoutManagers;
+  },
+  
+  addLayoutManager: function(layoutManager) {
+    this._layoutManagers.push(layoutManager);
+    layoutManager.setTextStorage(this);
+  }
 });

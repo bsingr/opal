@@ -26,17 +26,17 @@
 
 
 var NSCustomObject = NSObject.extend({
+  
+  initWithCoder: function(aCoder) {
+    var className = aCoder.decodeObjectForKey("NSClassName");    
     
-    initWithCoder: function(aCoder) {
-        var className = aCoder.decodeObjectForKey("NSClassName");
-        
-        if (className == "NSApplication")
-            return NSApplication.sharedApplication();
-        else if (className == "FirstResponder")
-            return NSApplication.sharedApplication();
-        else if (className == "NSFontManager")
-            return NSApplication.sharedApplication();
-        
-        return window[className].create();
-    }
+    if (className == "NSApplication")
+      return NSApplication.sharedApplication();
+    else if (className == "FirstResponder")
+      return NSApplication.sharedApplication();
+    else if (className == "NSFontManager")
+      return NSApplication.sharedApplication();
+    
+    return window[className].create();
+  }
 });

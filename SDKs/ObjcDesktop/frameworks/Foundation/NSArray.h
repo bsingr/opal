@@ -20,7 +20,7 @@
 
 - (NSUInteger)count;
 - (id)objectAtIndex:(NSUInteger)index;
-    
+  
 @end
 
 
@@ -93,7 +93,7 @@
 
 
 @interface NSMutableArray (NSExtendedMutableArray)
-    
+  
 - (void)addObjectsFromArray:(NSArray *)otherArray;
 - (void)exchangeObjectAtIndex:(NSUInteger)idx1 withObjectAtIndex:(NSUInteger)idx2;
 - (void)removeAllObjects;

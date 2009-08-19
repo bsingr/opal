@@ -15,15 +15,15 @@
 typedef int CFStringEncoding;
 
 enum {	
-    kCFCompareCaseInsensitive       = 1,	
-    kCFCompareBackwards             = 4,
-    kCFCompareAnchored              = 8,
-    kCFCompareNonliteral            = 16,
-    kCFCompareLocalized             = 32,
-    kCFCompareNumerically           = 64,
-    kCFCompareDiacriticInsensitive  = 128,
-    kCFCompareWidthInsensitive      = 256,
-    kCFCompareForcedOrdering        = 512
+  kCFCompareCaseInsensitive     = 1,	
+  kCFCompareBackwards       = 4,
+  kCFCompareAnchored        = 8,
+  kCFCompareNonliteral      = 16,
+  kCFCompareLocalized       = 32,
+  kCFCompareNumerically       = 64,
+  kCFCompareDiacriticInsensitive  = 128,
+  kCFCompareWidthInsensitive    = 256,
+  kCFCompareForcedOrdering    = 512
 };
 typedef CFOptionFlags CFStringCompareFlags;
 

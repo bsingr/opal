@@ -26,67 +26,67 @@
 
 
 var NSDictionary = NSObject.extend({
+  
+  _keys: null,
+  
+  _values: null,
+  
+  init: function() {
+    this._keys = [];
+    this._values = { };
+    return this;
+  },
+  
+  initWithCoder: function(aCoder) {
     
-    _keys: null,
+  },
+  
+  count: function() {
+    return this._keys.length;
+  },
+  
+  objectForKey: function(aKey) {
+    return this._values[aKey];
+  },
+  
+  keyEnumerator: function() {
     
-    _values: null,
+  },
+  
+  allKeys: function() {
     
-    init: function() {
-        this._keys = [];
-        this._values = { };
-        return this;
-    },
+  },
+  
+  allKeysForObject: function(anObject) {
     
-    initWithCoder: function(aCoder) {
-        
-    },
+  },
+  
+  allValues: function() {
     
-    count: function() {
-        return this._keys.length;
-    },
+  },
+  
+  description: function() {
     
-    objectForKey: function(aKey) {
-        return this._values[aKey];
-    },
+  },
+  
+  containsKey: function(aKey) {
+    return this._values[aKey] ? true : false;
+  },
+  
+  setObjectForKey: function(anObject, aKey) {
     
-    keyEnumerator: function() {
-        
-    },
-    
-    allKeys: function() {
-        
-    },
-    
-    allKeysForObject: function(anObject) {
-        
-    },
-    
-    allValues: function() {
-        
-    },
-    
-    description: function() {
-        
-    },
-    
-    containsKey: function(aKey) {
-        return this._values[aKey] ? true : false;
-    },
-    
-    setObjectForKey: function(anObject, aKey) {
-        
-        if (!this._values[aKey]) {
-            this._keys.push(aKey);
-        }
-        
-        this._values[aKey] = anObject;
+    if (!this._values[aKey]) {
+      this._keys.push(aKey);
     }
+    
+    this._values[aKey] = anObject;
+  }
 });
 
 /**
-    @class NSMutableDictionary
-    
-    This is just for compatibility. NSDictionary and this are interchnageable
-    in usage. This is not recomended for use.
+  @class NSMutableDictionary
+  
+  This is just for compatibility. NSDictionary and this are interchnageable
+  in usage. This is not recomended for use.
 */
 var NSMutableDictionary = NSDictionary;

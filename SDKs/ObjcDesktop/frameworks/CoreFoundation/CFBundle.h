@@ -15,7 +15,7 @@
 
 typedef struct {
 	CFStringRef _path;
-    CFDictionaryRef _infoDictionary;
+  CFDictionaryRef _infoDictionary;
 } CFBundleRef;
 
 typedef struct {

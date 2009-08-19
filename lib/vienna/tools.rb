@@ -6,21 +6,21 @@
 #  Copyright 2009 Adam Beynon. All rights reserved.
 # 
 
-require 'rake'
+# require 'rake'
 
 module Vienna
   
   class Tools
-    def initialize
-    end
-    
-    def project=(project)
-      @project = project
-    end
-    
-    def project
-      return @project if @project
-    end
+  def initialize
+  end
+  
+  def project=(project)
+    @project = project
+  end
+  
+  def project
+    return @project if @project
+  end
   end
   
 end

@@ -25,40 +25,40 @@
  */
 
 
-var NSBundleDidLoadNotification     = "NSBundleDidLoadNotification";
-var NSLoadedClasses                 = "NSLoadedClasses";
+var NSBundleDidLoadNotification   = "NSBundleDidLoadNotification";
+var NSLoadedClasses         = "NSLoadedClasses";
 
 var NSBundle = NSObject.extend({
-    
-    principalClass: function() {
+  
+  principalClass: function() {
 		return NSApplication;
 	}
 });
 
 Object.extend(NSBundle, {
-    mainBundle: function() {
-        console.log("Returning main bundle");
-        console.log(NSBundle.create());
-        return NSBundle.create();
-    },
+  mainBundle: function() {
+    console.log("Returning main bundle");
+    console.log(NSBundle.create());
+    return NSBundle.create();
+  },
+  
+  bundleWithPath: function(path) {
     
-    bundleWithPath: function(path) {
-        
-    },
+  },
+  
+  bundleForClass: function(aClass) {
     
-    bundleForClass: function(aClass) {
-        
-    },
+  },
+  
+  bundleWithIdentifier: function(identifier) {
     
-    bundleWithIdentifier: function(identifier) {
-        
-    },
+  },
+  
+  allBundles: function() {
     
-    allBundles: function() {
-        
-    },
+  },
+  
+  allFrameworks: function() {
     
-    allFrameworks: function() {
-        
-    }
+  }
 });

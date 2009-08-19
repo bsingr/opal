@@ -12,48 +12,48 @@
 @class NSColor, NSView;
 
 enum {
-    NSCompositeClear		    = 0,
-    NSCompositeCopy		        = 1,
-    NSCompositeSourceOver	    = 2,
-    NSCompositeSourceIn		    = 3,
-    NSCompositeSourceOut	    = 4,
-    NSCompositeSourceAtop	    = 5,
-    NSCompositeDestinationOver	= 6,
-    NSCompositeDestinationIn	= 7,
-    NSCompositeDestinationOut	= 8,
-    NSCompositeDestinationAtop	= 9,
-    NSCompositeXOR		        = 10,
-    NSCompositePlusDarker	    = 11,
-    NSCompositeHighlight	    = 12,
-    NSCompositePlusLighter	    = 13
+  NSCompositeClear		  = 0,
+  NSCompositeCopy		    = 1,
+  NSCompositeSourceOver	  = 2,
+  NSCompositeSourceIn		  = 3,
+  NSCompositeSourceOut	  = 4,
+  NSCompositeSourceAtop	  = 5,
+  NSCompositeDestinationOver	= 6,
+  NSCompositeDestinationIn	= 7,
+  NSCompositeDestinationOut	= 8,
+  NSCompositeDestinationAtop	= 9,
+  NSCompositeXOR		    = 10,
+  NSCompositePlusDarker	  = 11,
+  NSCompositeHighlight	  = 12,
+  NSCompositePlusLighter	  = 13
 };
 typedef NSUInteger NSCompositingOperation;
 
 enum {
-    NSBackingStoreRetained	    = 0,
-    NSBackingStoreNonretained	= 1,
-    NSBackingStoreBuffered	    = 2
+  NSBackingStoreRetained	  = 0,
+  NSBackingStoreNonretained	= 1,
+  NSBackingStoreBuffered	  = 2
 };
 typedef NSUInteger NSBackingStoreType;
 
 enum {
-    NSWindowAbove		        =  1,
-    NSWindowBelow		        = -1,
-    NSWindowOut			        =  0
+  NSWindowAbove		    =  1,
+  NSWindowBelow		    = -1,
+  NSWindowOut			    =  0
 };
 typedef NSInteger NSWindowOrderingMode;
 
 enum {
-    NSFocusRingOnly	            = 0,
-    NSFocusRingBelow	        = 1,
-    NSFocusRingAbove	        = 2
+  NSFocusRingOnly	      = 0,
+  NSFocusRingBelow	    = 1,
+  NSFocusRingAbove	    = 2
 };
 typedef NSUInteger NSFocusRingPlacement;
 
 enum {
-    NSFocusRingTypeDefault = 0,
-    NSFocusRingTypeNone = 1,
-    NSFocusRingTypeExterior = 2
+  NSFocusRingTypeDefault = 0,
+  NSFocusRingTypeNone = 1,
+  NSFocusRingTypeExterior = 2
 };
 typedef NSUInteger NSFocusRingType;
 

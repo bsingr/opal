@@ -12,22 +12,22 @@
 
 - (id)initWithCoder:(NSCoder *)aCoder
 {
-    _imageName = [aCoder decodeObjectForKey:@"NSImageName"];
-    return self;
+  _imageName = [aCoder decodeObjectForKey:@"NSImageName"];
+  return self;
 }
 
 - (NSImage *)normalImage
 {
-    id theImage = CGImageCreateWithURLDataProvider(@"Resources/" + _imageName + @"Normal.png");
-    return theImage;
-    // return [NSImage imageNamed:theImage];
+  id theImage = CGImageCreateWithURLDataProvider(@"Resources/" + _imageName + @"Normal.png");
+  return theImage;
+  // return [NSImage imageNamed:theImage];
 }
 
 - (NSImage *)alternateImage
 {
-    id theImage = CGImageCreateWithURLDataProvider(@"Resources/" + _imageName + @"Alternate.png");
-    return theImage;
-    // return [NSImage imageNamed:theImage];
+  id theImage = CGImageCreateWithURLDataProvider(@"Resources/" + _imageName + @"Alternate.png");
+  return theImage;
+  // return [NSImage imageNamed:theImage];
 }
 
 @end

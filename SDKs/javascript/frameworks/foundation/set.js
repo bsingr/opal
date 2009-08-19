@@ -28,108 +28,108 @@ include('foundation/object');
 include('foundation/enumerator');
 
 /*
-    @class NSSet
-    @extends NSObject
+  @class NSSet
+  @extends NSObject
 */
 var NSSet = NSObject.extend({
+  
+  /*
+    @returns Integer
+  */
+  count: function() {
     
-    /*
-        @returns Integer
-    */
-    count: function() {
-        
-    },
+  },
+  
+  /*
+    @param {id} object
+    @returns id
+  */
+  member: function(object) {
     
-    /*
-        @param {id} object
-        @returns id
-    */
-    member: function(object) {
-        
-    },
+  },
+  
+  /*
+    @returns NSEnumerator
+  */
+  objectEnumerator: function() {
     
-    /*
-        @returns NSEnumerator
-    */
-    objectEnumerator: function() {
-        
-    }
+  }
 });
 
 /*
-    @mixin NSExtendedSet
-    @class NSSet
+  @mixin NSExtendedSet
+  @class NSSet
 */
 NSSet.mixin({
+  
+  /*
+    @returns NSArray
+  */
+  allObjects: function() {
     
-    /*
-        @returns NSArray
-    */
-    allObjects: function() {
-        
-    },
+  },
+  
+  /*
+    @returns id
+  */
+  anyObject: function() {
     
-    /*
-        @returns id
-    */
-    anyObject: function() {
-        
-    },
+  },
+  
+  /*
+    @param {id} anObject
+    @returns Boolean
+  */
+  containsObject: function(anObject) {
     
-    /*
-        @param {id} anObject
-        @returns Boolean
-    */
-    containsObject: function(anObject) {
-        
-    },
+  },
+  
+  /*
+    @returns NSString
+  */
+  description: function() {
     
-    /*
-        @returns NSString
-    */
-    description: function() {
-        
-    },
+  },
+  
+  /*
+    @param {id} locale
+    @returns NSString
+  */
+  descriptionWithLocale: function(locale) {
     
-    /*
-        @param {id} locale
-        @returns NSString
-    */
-    descriptionWithLocale: function(locale) {
-        
-    },
+  },
+  
+  /*
+    @param {NSSet} otherSet
+    @returns Boolean
+  */
+  intersectsSet: function(otherSet) {
     
-    /*
-        @param {NSSet} otherSet
-        @returns Boolean
-    */
-    intersectsSet: function(otherSet) {
-        
-    },
+  },
+  
+  /*
+    @param {NSSet} otherSet
+    @returns Boolean
+  */
+  isEqualToSet: function(otherSet) {
     
-    /*
-        @param {NSSet} otherSet
-        @returns Boolean
-    */
-    isEqualToSet: function(otherSet) {
-        
-    },
+  },
+  
+  /*
+    @param {NSSet} otherSet
+    @returns Boolean
+  */
+  isSubsetOfSet: function(otherSet) {
     
-    /*
-        @param {NSSet} otherSet
-        @returns Boolean
-    */
-    isSubsetOfSet: function(otherSet) {
-        
-    },
+  },
+  
+  /*
+    argument is optional
     
-    /*
-        argument is optional
-        
-        @param {NSString} aSelector
-        @param {id} argument
-    */
-    makeObjectsPerformSelector: function(aSelector, argument) {
-        
-    }
+    @param {NSString} aSelector
+    @param {id} argument
+  */
+  makeObjectsPerformSelector: function(aSelector, argument) {
+    
+  }
 });

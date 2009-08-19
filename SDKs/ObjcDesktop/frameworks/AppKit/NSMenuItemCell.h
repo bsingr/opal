@@ -15,8 +15,8 @@
 
 @interface NSMenuItemCell : NSButtonCell
 {
-    NSMenuItem      *_menuItem;
-    NSMenuView      *_menuView;
+  NSMenuItem    *_menuItem;
+  NSMenuView    *_menuView;
 }
 
 - (void)setMenuItem:(NSMenuItem *)item;

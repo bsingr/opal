@@ -28,65 +28,65 @@
 
 CTLineRef CTLineCreateWithAttributedString(CFAttributedStringRef string)
 {
-    
+  
 }
 
 CTLineRef CTLineCreateTruncatedLine(CTLineRef line, double width, CTLineTruncationType truncationType, CTLineRef truncationToken)
 {
-    
+  
 }
 
 CTLineRef CTLineCreateJustifiedLine(CTLineRef line, CGFloat justificationFactor, double justificationWidth)
 {
-    
+  
 }
 
 CFIndex CTLineGetGlyphCount(CTLineRef line)
 {
-    
+  
 }
 
 CFArrayRef CTLineGetGlyphRuns(CTLineRef line)
 {
-    
+  
 }
 
 CFRange CTLineGetStringRange(CTLineRef line)
 {
-    
+  
 }
 
 double CTLineGetPenOffsetForFlush(CTLineRef line, CGFloat flushFactor, double flushWidth)
 {
-    
+  
 }
 
 void CTLineDraw(CTLineRef line, CGContextRef context)
 {
-    
+  
 }
 
 CGRect CTLineGetImageBounds(CTLineRef line, CGContextRef context)
 {
-    
+  
 }
 
 double CTLineGetTypographicBounds(CTLineRef line, CGFloat* ascent, CGFloat* descent, CGFloat* leading)
 {
-    
+  
 }
 
 double CTLineGetTrailingWhitespaceWidth(CTLineRef line)
 {
-    
+  
 }
 
 CFIndex CTLineGetStringIndexForPosition(CTLineRef line, CGPoint position)
 {
-    
+  
 }
 
 CGFloat CTLineGetOffsetForStringIndex(CTLineRef line, CFIndex charIndex, CGFloat* secondaryOffset)
 {
-    
+  
 }

@@ -27,49 +27,49 @@
 include('foundation/object');
 
 /**
-    @class NSAnimationContext
-    @extends NSObject
+  @class NSAnimationContext
+  @extends NSObject
 */
 var NSAnimationContext = NSObject.extend({
+  
+  /**
+    @type Float
+  */
+  _duration: null,
+  
+  /**
+    @param {Float} duration
+  */
+  setDuration: function(duration) {
     
-    /**
-        @type Float
-    */
-    _duration: null,
+  },
+  
+  /**
+    @returns Float
+  */
+  duration: function() {
     
-    /**
-        @param {Float} duration
-    */
-    setDuration: function(duration) {
-        
-    },
-    
-    /**
-        @returns Float
-    */
-    duration: function() {
-        
-    }
+  }
 });
 
 
 /**
-    Begin grouping
+  Begin grouping
 */
 NSAnimationContext.beginGrouping = function() {
-    
+  
 };
 
 /**
-    End grouping
+  End grouping
 */
 NSAnimationContext.endGrouping = function() {
-    
+  
 };
 
 /**
-    @returns NSAnimationContext
+  @returns NSAnimationContext
 */
 NSAnimationContext.currentContext = function() {
-    
+  
 };

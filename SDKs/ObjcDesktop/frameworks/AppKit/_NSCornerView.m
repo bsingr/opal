@@ -22,20 +22,20 @@
 
 - (id)initWithCoder:(NSCoder *)aCoder
 {
-    [super initWithCoder:aCoder];
-    return self;	
+  [super initWithCoder:aCoder];
+  return self;	
 }
 
 - (id)initWithFrame:(NSRect)frame {
-    self = [super initWithFrame:frame];
-    if (self) {
-        // Initialization code here.
-    }
-    return self;
+  self = [super initWithFrame:frame];
+  if (self) {
+    // Initialization code here.
+  }
+  return self;
 }
 
 - (void)drawRect:(NSRect)rect {
-    // Drawing code here
+  // Drawing code here
 }
 
 @end

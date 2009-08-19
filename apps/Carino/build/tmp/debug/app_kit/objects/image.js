@@ -25,25 +25,25 @@
  */
 
 /**
-    NSImage adds very important methods to Image. Not only does it extend useful
-    fnctionality into the default object, but it also extends the functionality
-    to include caching of images, so that drawing controls constantly does not
-    require re-downloading. Also, it supports sprites, such that images combined
-    into a single resource can be referenced and dealt with as a single image.
-    
-    Drawing these images actually references the sprites, but user code sees it
-    as a regular image. Spriting images dramatically improves performance and
-    saves heavily on bandwidth.
+  NSImage adds very important methods to Image. Not only does it extend useful
+  fnctionality into the default object, but it also extends the functionality
+  to include caching of images, so that drawing controls constantly does not
+  require re-downloading. Also, it supports sprites, such that images combined
+  into a single resource can be referenced and dealt with as a single image.
+  
+  Drawing these images actually references the sprites, but user code sees it
+  as a regular image. Spriting images dramatically improves performance and
+  saves heavily on bandwidth.
 */
 var NSImage = { };
 
 NSImage.imageNamed = function(anImage) {
-    var newImage = new Image();
-    newImage.src = 'resources/' + anImage;
-    return newImage;
+  var newImage = new Image();
+  newImage.src = 'resources/' + anImage;
+  return newImage;
 };
 
 Image.prototype.drawInRect = function(theRect) {
-    var c = NSGraphicsContext.currentContext().graphicsPort();
-    CGContextDrawImage(c, theRect, this);
+  var c = NSGraphicsContext.currentContext().graphicsPort();
+  CGContextDrawImage(c, theRect, this);
 };

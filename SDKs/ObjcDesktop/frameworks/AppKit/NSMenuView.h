@@ -17,18 +17,18 @@
 
 @interface NSMenuView : NSView
 {
-    NSMenu      *_menu;
-    
-    BOOL            _isHorizontal;
-    NSInteger       _highlightedItemIndex;
-    NSMenuItemCell *_menuItemCell;
-    
-    NSMenuView     *_attatchedMenuView;
-    NSMenu         *_attatchedMenu;
-    
-    NSRect          _innerRect;
-    
-    NSMutableArray *_eventBindingMenuArray;
+  NSMenu    *_menu;
+  
+  BOOL      _isHorizontal;
+  NSInteger     _highlightedItemIndex;
+  NSMenuItemCell *_menuItemCell;
+  
+  NSMenuView   *_attatchedMenuView;
+  NSMenu     *_attatchedMenu;
+  
+  NSRect      _innerRect;
+  
+  NSMutableArray *_eventBindingMenuArray;
 }
 
 + (CGFloat)menuBarHeight;

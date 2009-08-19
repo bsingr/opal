@@ -28,7 +28,7 @@
 
 @interface NSCustomView : NSObject
 {
-    NSView  *theView;
+  NSView  *theView;
 }
 
 - (id)initWithCoder:(NSCoder *)aCoder;

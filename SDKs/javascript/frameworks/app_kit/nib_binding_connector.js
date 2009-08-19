@@ -28,25 +28,25 @@ include('foundation/object');
 
 var NSNibBindingConnector = NSObject.extend({
 
-    _label: null,
-    _source: null,
-    _destination: null,
-    
-    _binding: null,
-    
-    _keyPath: null,
+  _label: null,
+  _source: null,
+  _destination: null,
+  
+  _binding: null,
+  
+  _keyPath: null,
 
  initWithCoder: function(aCoder) {
-     this._label = aCoder.decodeObjectForKey("NSLabel");
-     this._source = aCoder.decodeObjectForKey("NSSource");
-     this._destination = aCoder.decodeObjectForKey("NSDestination");
-     this._binding = aCoder.decodeObjectForKey("NSBinding");
-     this._keyPath = aCoder.decodeObjectForKey("NSKeyPath");
-     return this;
+   this._label = aCoder.decodeObjectForKey("NSLabel");
+   this._source = aCoder.decodeObjectForKey("NSSource");
+   this._destination = aCoder.decodeObjectForKey("NSDestination");
+   this._binding = aCoder.decodeObjectForKey("NSBinding");
+   this._keyPath = aCoder.decodeObjectForKey("NSKeyPath");
+   return this;
  },
 
  awakeAfterUsingCoder: function(aCoder) {
-     this._source.bind(this._binding, this._destination, this._keyPath, this._options);
-     return this;
+   this._source.bind(this._binding, this._destination, this._keyPath, this._options);
+   return this;
  }
 });

@@ -13,7 +13,7 @@
 
 @interface NSCursor : NSObject <NSCoding>
 {
-    NSString    *_cursor;
+  NSString  *_cursor;
 }
 
 + (NSCursor *)currentCursor;

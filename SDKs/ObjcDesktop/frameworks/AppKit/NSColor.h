@@ -17,10 +17,10 @@
 
 @interface NSColor : NSObject <NSCopying, NSCoding>
 {
-    CGFloat     _red;
-    CGFloat     _green;
-    CGFloat     _blue;
-    CGFloat     _alpha;
+  CGFloat   _red;
+  CGFloat   _green;
+  CGFloat   _blue;
+  CGFloat   _alpha;
 }
 
 + (NSColor *)colorWithCalibratedWhite:(CGFloat)white alpha:(CGFloat)alpha;

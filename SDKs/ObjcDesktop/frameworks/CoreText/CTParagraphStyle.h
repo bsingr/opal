@@ -30,56 +30,56 @@
 typedef const struct __CTParagraphStyle *CTParagraphStyleRef;
 
 enum {
-	kCTLeftTextAlignment        = 0,
-	kCTRightTextAlignment       = 1,
-	kCTCenterTextAlignment      = 2,
+	kCTLeftTextAlignment    = 0,
+	kCTRightTextAlignment     = 1,
+	kCTCenterTextAlignment    = 2,
 	kCTJustifiedTextAlignment   = 3,
-	kCTNaturalTextAlignment     = 4
+	kCTNaturalTextAlignment   = 4
 };
 typedef int CTTextAlignment;
 
 enum {
-	kCTLineBreakByWordWrapping      = 0,
-	kCTLineBreakByCharWrapping      = 1,
-	kCTLineBreakByClipping          = 2,
-	kCTLineBreakByTruncatingHead    = 3,
-	kCTLineBreakByTruncatingTail    = 4,
+	kCTLineBreakByWordWrapping    = 0,
+	kCTLineBreakByCharWrapping    = 1,
+	kCTLineBreakByClipping      = 2,
+	kCTLineBreakByTruncatingHead  = 3,
+	kCTLineBreakByTruncatingTail  = 4,
 	kCTLineBreakByTruncatingMiddle  = 5
 };
 typedef int CTLineBreakMode;
 
 enum {
-	kCTWritingDirectionNatural      = -1,
+	kCTWritingDirectionNatural    = -1,
 	kCTWritingDirectionLeftToRight  = 0,
 	kCTWritingDirectionRightToLeft  = 1
 };
 typedef int CTWritingDirection;
 
 enum {
-	kCTParagraphStyleSpecifierAlignment                 = 0,
-	kCTParagraphStyleSpecifierFirstLineHeadIndent       = 1,
-	kCTParagraphStyleSpecifierHeadIndent                = 2,
-	kCTParagraphStyleSpecifierTailIndent                = 3,
-	kCTParagraphStyleSpecifierTabStops                  = 4,
-	kCTParagraphStyleSpecifierDefaultTabInterval        = 5,
-	kCTParagraphStyleSpecifierLineBreakMode             = 6,
-	kCTParagraphStyleSpecifierLineHeightMultiple        = 7,
-	kCTParagraphStyleSpecifierMaximumLineHeight         = 8,
-	kCTParagraphStyleSpecifierMinimumLineHeight         = 9,
-	kCTParagraphStyleSpecifierLineSpacing               = 10,
-	kCTParagraphStyleSpecifierParagraphSpacing          = 11,
-	kCTParagraphStyleSpecifierParagraphSpacingBefore    = 12,
-	kCTParagraphStyleSpecifierBaseWritingDirection      = 13,
+	kCTParagraphStyleSpecifierAlignment         = 0,
+	kCTParagraphStyleSpecifierFirstLineHeadIndent     = 1,
+	kCTParagraphStyleSpecifierHeadIndent        = 2,
+	kCTParagraphStyleSpecifierTailIndent        = 3,
+	kCTParagraphStyleSpecifierTabStops          = 4,
+	kCTParagraphStyleSpecifierDefaultTabInterval    = 5,
+	kCTParagraphStyleSpecifierLineBreakMode       = 6,
+	kCTParagraphStyleSpecifierLineHeightMultiple    = 7,
+	kCTParagraphStyleSpecifierMaximumLineHeight     = 8,
+	kCTParagraphStyleSpecifierMinimumLineHeight     = 9,
+	kCTParagraphStyleSpecifierLineSpacing         = 10,
+	kCTParagraphStyleSpecifierParagraphSpacing      = 11,
+	kCTParagraphStyleSpecifierParagraphSpacingBefore  = 12,
+	kCTParagraphStyleSpecifierBaseWritingDirection    = 13,
 
-	kCTParagraphStyleSpecifierCount                     = 14
+	kCTParagraphStyleSpecifierCount           = 14
 };
 typedef int CTParagraphStyleSpecifier;
 
 typedef struct CTParagraphStyleSetting
 {
 	CTParagraphStyleSpecifier   spec;
-	int                         valueSize;
-	const void                 *value;
+	int             valueSize;
+	const void         *value;
 
 } CTParagraphStyleSetting;
 

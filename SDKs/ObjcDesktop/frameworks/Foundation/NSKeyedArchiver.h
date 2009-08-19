@@ -55,11 +55,11 @@ extern NSString *NSInvalidUnarchiveOperationException;
 
 @interface NSKeyedUnarchiver : NSCoder
 {
-    id                   _delegate;
-    id                   _data;
-    NSMutableDictionary *_rootDict;
-    NSMutableArray      *_contextStack;
-    NSMutableDictionary *_unarchivedObjects;
+  id           _delegate;
+  id           _data;
+  NSMutableDictionary *_rootDict;
+  NSMutableArray    *_contextStack;
+  NSMutableDictionary *_unarchivedObjects;
 }
 
 + (id)unarchiveObjectWithData:(NSData *)data;

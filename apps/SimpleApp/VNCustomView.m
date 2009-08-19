@@ -30,15 +30,15 @@
 
 - (id)initWithFrame:(NSRect)aRect
 {
-    self = [super initWithFrame:aRect];
-    NSLog(@"initialising");
-    return self;
+  self = [super initWithFrame:aRect];
+  NSLog(@"initialising");
+  return self;
 }
 
 - (void)drawRect:(NSRect)aRect
 {
-    CGContextRef c = [[NSGraphicsContext currentContext] graphicsPort];
-    
+  CGContextRef c = [[NSGraphicsContext currentContext] graphicsPort];
+  
 }
 
 @end

@@ -24,14 +24,14 @@
 extern NSString *const NSParseErrorException;
 
 enum {
-    NSCaseInsensitiveSearch         = 1,
-    NSLiteralSearch                 = 2,
-    NSBackwardsSearch               = 4,
-    NSAnchoredSearch                = 8,
-    NSNumericSearch                 = 64,
-    NSDiacriticInsensitiveSearch    = 128,
-    NSWidthInsensitiveSearch        = 256,
-    NSForcedOrderingSearch          = 512
+  NSCaseInsensitiveSearch     = 1,
+  NSLiteralSearch         = 2,
+  NSBackwardsSearch         = 4,
+  NSAnchoredSearch        = 8,
+  NSNumericSearch         = 64,
+  NSDiacriticInsensitiveSearch  = 128,
+  NSWidthInsensitiveSearch    = 256,
+  NSForcedOrderingSearch      = 512
 };
 typedef NSUInteger NSStringCompareOptions;
 
@@ -210,7 +210,7 @@ typedef NSUInteger NSStringCompareOptions;
 
 
 @interface NSString (NSExtendedStringPropertyListParsing)
-    
+  
 - (id)propertyList;
 - (NSDictionary *)propertyListFromStringsFileFormat;
 

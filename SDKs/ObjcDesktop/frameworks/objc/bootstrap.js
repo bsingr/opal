@@ -35,72 +35,72 @@
 // // 
 // function __bootstrap_main()
 // {
-//     __bootstrap_files = CFDictionaryCreateMutable();
-//     __bootstrap_link();
+//   __bootstrap_files = CFDictionaryCreateMutable();
+//   __bootstrap_link();
 // }
 // 
 // function __bootstrap_link()
 // {
 //  var the_framework = __bootstrap_frameworks.shift();
-//                                  
+//                  
 //  if (the_framework == null)
 //  {
-//      if (__bootstrap_completed)
+//    if (__bootstrap_completed)
+//    {
+//      var main_bundle_dictionary = CFBundleGetMainBundle()._infoDictionary;
+//            
+//      if (CFDictionaryContainsKey(main_bundle_dictionary, "NSMainNibFile"))
 //      {
-//          var main_bundle_dictionary = CFBundleGetMainBundle()._infoDictionary;
-//                      
-//          if (CFDictionaryContainsKey(main_bundle_dictionary, "NSMainNibFile"))
-//          {
-//              var nib_data = CFDataCreateFromURL("Resources/" + CFDictionaryGetValue(main_bundle_dictionary, "NSMainNibFile") + ".xib", function() {
-//                                 
-//                    __bootstrap_preload_finished(nib_data);
-//              });
-//              
-//              CFArrayAppendValue(__bootstrap_preload_files, nib_data);
-//          }           
-//      }
-//      else
-//      {
-//          var new_bundle = CFBundleCreate("Info.plist", function() {
-//                 // When plist is loaded....
-//                 __bootstrap_main_bundle = new_bundle;
+//        var nib_data = CFDataCreateFromURL("Resources/" + CFDictionaryGetValue(main_bundle_dictionary, "NSMainNibFile") + ".xib", function() {
 //                 
-//                 if(CFDictionaryContainsKey(new_bundle._infoDictionary, "CFBundleExecutable"))
-//                 {
-//                     __bootstrap_bundles_current = new_bundle;
-//                     dlopen(CFDictionaryGetValue(new_bundle._infoDictionary, "CFBundleExecutable") + ".js", 0, function() {
-//                         __bootstrap_completed = true;
-//                      __bootstrap_link();
-//                     });
-//                 }            
-//          });
-//      }
+//          __bootstrap_preload_finished(nib_data);
+//        });
+//        
+//        CFArrayAppendValue(__bootstrap_preload_files, nib_data);
+//      }       
+//    }
+//    else
+//    {
+//      var new_bundle = CFBundleCreate("Info.plist", function() {
+//         // When plist is loaded....
+//         __bootstrap_main_bundle = new_bundle;
+//         
+//         if(CFDictionaryContainsKey(new_bundle._infoDictionary, "CFBundleExecutable"))
+//         {
+//           __bootstrap_bundles_current = new_bundle;
+//           dlopen(CFDictionaryGetValue(new_bundle._infoDictionary, "CFBundleExecutable") + ".js", 0, function() {
+//             __bootstrap_completed = true;
+//            __bootstrap_link();
+//           });
+//         }      
+//      });
+//    }
 //  }
 //  else
 //  {
-//      var new_bundle = CFBundleCreate("Frameworks/" + the_framework + "/Info.plist", function() {
-//             // When plist is loaded....
-//             if(CFDictionaryContainsKey(new_bundle._infoDictionary, "CFBundleExecutable"))
-//             {
-//                 __bootstrap_bundles_current = new_bundle;
-//                 dlopen("Frameworks/" + the_framework + "/" + CFDictionaryGetValue(new_bundle._infoDictionary, "CFBundleExecutable") + ".js", 0, function() {
-//                  __bootstrap_link();
-//                 });
-//             }            
-//      });
+//    var new_bundle = CFBundleCreate("Frameworks/" + the_framework + "/Info.plist", function() {
+//       // When plist is loaded....
+//       if(CFDictionaryContainsKey(new_bundle._infoDictionary, "CFBundleExecutable"))
+//       {
+//         __bootstrap_bundles_current = new_bundle;
+//         dlopen("Frameworks/" + the_framework + "/" + CFDictionaryGetValue(new_bundle._infoDictionary, "CFBundleExecutable") + ".js", 0, function() {
+//          __bootstrap_link();
+//         });
+//       }      
+//    });
 //  }
 // }
 // 
 // // We finished loading this item..
 // function __bootstrap_preload_finished(item)
 // {
-//     NSLog(CFArrayGetCount(__bootstrap_preload_files));
-//     CFArrayRemoveValueAtIndex(__bootstrap_preload_files, CFArrayGetFirstIndexOfValue(__bootstrap_preload_files, null, item));
-//     
-//     if((CFArrayGetCount(__bootstrap_preload_files) == 0) && __bootstrap_completed)
-//     {
-//         main(1, ["SimpleApp"]);
-//     }
+//   NSLog(CFArrayGetCount(__bootstrap_preload_files));
+//   CFArrayRemoveValueAtIndex(__bootstrap_preload_files, CFArrayGetFirstIndexOfValue(__bootstrap_preload_files, null, item));
+//   
+//   if((CFArrayGetCount(__bootstrap_preload_files) == 0) && __bootstrap_completed)
+//   {
+//     main(1, ["SimpleApp"]);
+//   }
 // }
 // 
 
@@ -124,65 +124,65 @@ var __bootstrap_finished_linking_stage = false;
 // Main bootstrap entry point (on window load)
 function __bootstrap_main()
 {
-    __bootstrap_files = CFDictionaryCreateMutable();
-    __bootstrap_link_next_bundle();
+  __bootstrap_files = CFDictionaryCreateMutable();
+  __bootstrap_link_next_bundle();
 }
 
 function __bootstrap_link_next_bundle()
 {
-    var the_framework = __bootstrap_frameworks.shift();
+  var the_framework = __bootstrap_frameworks.shift();
+  
+  if (the_framework)
+  {
+    var new_bundle = CFBundleCreate("Frameworks/" + the_framework + "/Info.plist", function() {
+      printf("Finished loading plist for bundle: " +  CFDictionaryGetValue(__bootstrap_bundles_current._infoDictionary, "CFBundleName"));
+      
+      dlopen("Frameworks/" + the_framework + "/" + CFDictionaryGetValue(__bootstrap_bundles_current._infoDictionary, "CFBundleExecutable") + ".js", 0, function() {
+        __bootstrap_link_next_bundle();
+      });
+    });
+    __bootstrap_bundles_current = new_bundle;
+  }
+  else
+  {
+    printf("Now trying to load application");
     
-    if (the_framework)
-    {
-        var new_bundle = CFBundleCreate("Frameworks/" + the_framework + "/Info.plist", function() {
-            printf("Finished loading plist for bundle: " +  CFDictionaryGetValue(__bootstrap_bundles_current._infoDictionary, "CFBundleName"));
-            
-            dlopen("Frameworks/" + the_framework + "/" + CFDictionaryGetValue(__bootstrap_bundles_current._infoDictionary, "CFBundleExecutable") + ".js", 0, function() {
-                __bootstrap_link_next_bundle();
-            });
-        });
-        __bootstrap_bundles_current = new_bundle;
-    }
-    else
-    {
-        printf("Now trying to load application");
+    var new_bundle = CFBundleCreate("Info.plist", function() {
+      printf("Finished loading plist for bundle: " +  CFDictionaryGetValue(__bootstrap_bundles_current._infoDictionary, "CFBundleName"));
+      
+      dlopen(CFDictionaryGetValue(__bootstrap_bundles_current._infoDictionary, "CFBundleExecutable") + ".js", 0, function() {
+        // __bootstrap_link_next_bundle();
+        printf("Finished loading application!");
         
-        var new_bundle = CFBundleCreate("Info.plist", function() {
-            printf("Finished loading plist for bundle: " +  CFDictionaryGetValue(__bootstrap_bundles_current._infoDictionary, "CFBundleName"));
-            
-            dlopen(CFDictionaryGetValue(__bootstrap_bundles_current._infoDictionary, "CFBundleExecutable") + ".js", 0, function() {
-                // __bootstrap_link_next_bundle();
-                printf("Finished loading application!");
-                
-                var nib_data = CFDataCreateFromURL("Resources/" + CFDictionaryGetValue(__bootstrap_main_bundle._infoDictionary, "NSMainNibFile") + ".xib", function()
-                {
-                    __bootstrap_preload_item_finished(nib_data);
-                });
-                             
-                CFArrayAppendValue(__bootstrap_preload_files, nib_data);
-                
-                __bootstrap_finished_linking_stage = true;
-                __bootstrap_check_application_state();
-            });
+        var nib_data = CFDataCreateFromURL("Resources/" + CFDictionaryGetValue(__bootstrap_main_bundle._infoDictionary, "NSMainNibFile") + ".xib", function()
+        {
+          __bootstrap_preload_item_finished(nib_data);
         });
-        __bootstrap_main_bundle = new_bundle
-        __bootstrap_bundles_current = new_bundle;
-    }
+               
+        CFArrayAppendValue(__bootstrap_preload_files, nib_data);
+        
+        __bootstrap_finished_linking_stage = true;
+        __bootstrap_check_application_state();
+      });
+    });
+    __bootstrap_main_bundle = new_bundle
+    __bootstrap_bundles_current = new_bundle;
+  }
 }
 
 function __bootstrap_check_application_state()
 {
-    if(__bootstrap_finished_linking_stage && __bootstrap_preload_files.length == 0)
-    {
-        printf("Ready to run application");
-        main(1, ["SimpleApp"]);
-    }
+  if(__bootstrap_finished_linking_stage && __bootstrap_preload_files.length == 0)
+  {
+    printf("Ready to run application");
+    main(1, ["SimpleApp"]);
+  }
 }
 
 function __bootstrap_preload_item_finished(item)
 {
-    printf("finished loading an item");
-    CFArrayRemoveValueAtIndex(__bootstrap_preload_files, CFArrayGetFirstIndexOfValue(__bootstrap_preload_files, null, item));
-    __bootstrap_check_application_state();
+  printf("finished loading an item");
+  CFArrayRemoveValueAtIndex(__bootstrap_preload_files, CFArrayGetFirstIndexOfValue(__bootstrap_preload_files, null, item));
+  __bootstrap_check_application_state();
 }
 

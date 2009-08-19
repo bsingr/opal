@@ -12,8 +12,8 @@
 
 @interface NSButtonImageSource : NSObject
 {
-    NSImage             *_imageName;
-    NSMutableDictionary *_images;
+  NSImage       *_imageName;
+  NSMutableDictionary *_images;
 }
 
 + (id)buttonImageSourceWithName:(NSString*)name;

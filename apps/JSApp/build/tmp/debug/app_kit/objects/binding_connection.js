@@ -26,23 +26,23 @@
 
 
 var IBBindingConnection = NSObject.extend({
-    
-    _connector: null,
-    
-    _source: null,
-    
-    _destination: null,
-    
-    initWithCoder: function(aCoder) {
-        // this._connector = aCoder.decodeObjectForKey('connector');
-        this._connector = aCoder.decodeObjectForKey('connector');
-        this._source = aCoder.decodeObjectForKey("source");
-        this._destination = aCoder.decodeObjectForKey("destination");
-        // replace @selector style name with js compatible identifier.
-        return this;
-    },
-    
-    awakeAfterUsingCoder: function(aCoder) {
-        return this;
-    }
+  
+  _connector: null,
+  
+  _source: null,
+  
+  _destination: null,
+  
+  initWithCoder: function(aCoder) {
+    // this._connector = aCoder.decodeObjectForKey('connector');
+    this._connector = aCoder.decodeObjectForKey('connector');
+    this._source = aCoder.decodeObjectForKey("source");
+    this._destination = aCoder.decodeObjectForKey("destination");
+    // replace @selector style name with js compatible identifier.
+    return this;
+  },
+  
+  awakeAfterUsingCoder: function(aCoder) {
+    return this;
+  }
 });

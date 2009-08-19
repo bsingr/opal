@@ -15,30 +15,30 @@
 typedef unsigned int NSGlyph;
 
 enum {
-    NSControlGlyph  = 0x00FFFFFF,
-    NSNullGlyph     = 0x0
+  NSControlGlyph  = 0x00FFFFFF,
+  NSNullGlyph   = 0x0
 };
 
 extern const CGFloat *NSFontIdentityMatrix;
 
 enum {
-    NSNativeShortGlyphPacking = 5
+  NSNativeShortGlyphPacking = 5
 };
 typedef NSUInteger NSMultibyteGlyphPacking;
 
 enum {
-    NSFontDefaultRenderingMode                          = 0,
-    NSFontAntialiasedRenderingMode                      = 1,
-    NSFontIntegerAdvancementsRenderingMode              = 2,
-    NSFontAntialiasedIntegerAdvancementsRenderingMode   = 3
+  NSFontDefaultRenderingMode              = 0,
+  NSFontAntialiasedRenderingMode            = 1,
+  NSFontIntegerAdvancementsRenderingMode        = 2,
+  NSFontAntialiasedIntegerAdvancementsRenderingMode   = 3
 };
 typedef NSUInteger NSFontRenderingMode;
 
 
 @interface NSFont : NSObject <NSCopying, NSCoding>
 {
-    NSString    *_name;
-    CGFloat      _size;
+  NSString  *_name;
+  CGFloat    _size;
 }
 
 + (NSFont *)fontWithName:(NSString *)fontName size:(CGFloat)fontSize;

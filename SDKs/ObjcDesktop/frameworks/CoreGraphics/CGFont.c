@@ -29,38 +29,38 @@
 
 CGFontRef CGFontCreate(CFStringRef name, CGFloat size, BOOL isBold)
 {
-    CGFontRef theFont;
-    theFont._name = name;
-    theFont._size = size;
-    theFont._isBold = isBold;
-    return theFont;
+  CGFontRef theFont;
+  theFont._name = name;
+  theFont._size = size;
+  theFont._isBold = isBold;
+  return theFont;
 }
 
 CGFontRef CGFontCreateWithFontName(CFStringRef name)
 {
-    CGFontRef theFont;
-    theFont._name = name;
-    theFont._size = 12;         // default size
-    theFont._isBold = NO;       // default to regular typeface
-    return theFont;
+  CGFontRef theFont;
+  theFont._name = name;
+  theFont._size = 12;     // default size
+  theFont._isBold = NO;     // default to regular typeface
+  return theFont;
 }
 
 CFStringRef CGFontGetFontName(CGFontRef font)
 {
-    return font._name;
+  return font._name;
 }
 
 CGFloat CGFontGetFontSize(CGFontRef font)
 {
-    return font._size;
+  return font._size;
 }
 
 BOOL CGFontGetIsBold(CGFontRef font)
 {
-    return font._isBold;
+  return font._isBold;
 }
 
 CFStringRef CGFontGetStringRepresentation(CGFontRef font)
 {
-    return (font._isBold ? "bold " : "") + Math.round(font._size) + "px '" + font._name + "'"; 
+  return (font._isBold ? "bold " : "") + Math.round(font._size) + "px '" + font._name + "'"; 
 }

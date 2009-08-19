@@ -30,46 +30,46 @@ var NSNotificationCenterDefault = null;
 
 
 var NSNotificationCenter = NSObject.extend({
-    
-    _dispatchTable: null,
-    
-    init: function() {
-        this._super();
-        this._dispatchTable = [];
-        return this;
-    },
-    
-    addObserver: function(anObserver, notificationSelector, notificationName, notificationSender) {
-        var theAttributes = NSDictionary.create();
-        theAttributes.setObjectForKey(anObserver, "observer");
-        theAttributes.setObjectForKey(notificationSelector, "selector");
-        theAttributes.setObjectForKey(notificationName, "name");
-        theAttributes.setObjectForKey(notificationSender, "sender");
-        theAttributes.setObjectForKey(true, "working");
-        this._dispatchTable.addObject(theAttributes);
-    },
-    
-    /**
-        Posts the notification called notificationName.
-        @param userInfo - Dictionary, but can be null
-    */
-    postNotificationName: function(notificationName, notificationSender, userInfo) {
-        for (var idx = 0; idx < this._dispatchTable.length; idx++) {
-            var theObject = this._dispatchTable[idx];
-            if (theObject.objectForKey("name") == notificationName)
-                theObject.objectForKey("observer").perform(theObject.objectForKey("selector"), notificationSender, userInfo);
-        }
+  
+  _dispatchTable: null,
+  
+  init: function() {
+    this._super();
+    this._dispatchTable = [];
+    return this;
+  },
+  
+  addObserver: function(anObserver, notificationSelector, notificationName, notificationSender) {
+    var theAttributes = NSDictionary.create();
+    theAttributes.setObjectForKey(anObserver, "observer");
+    theAttributes.setObjectForKey(notificationSelector, "selector");
+    theAttributes.setObjectForKey(notificationName, "name");
+    theAttributes.setObjectForKey(notificationSender, "sender");
+    theAttributes.setObjectForKey(true, "working");
+    this._dispatchTable.addObject(theAttributes);
+  },
+  
+  /**
+    Posts the notification called notificationName.
+    @param userInfo - Dictionary, but can be null
+  */
+  postNotificationName: function(notificationName, notificationSender, userInfo) {
+    for (var idx = 0; idx < this._dispatchTable.length; idx++) {
+      var theObject = this._dispatchTable[idx];
+      if (theObject.objectForKey("name") == notificationName)
+        theObject.objectForKey("observer").perform(theObject.objectForKey("selector"), notificationSender, userInfo);
     }
+  }
 });
 
 /**
-    Returns the default notification center, aka, the instance that should be
-    used within the application.
+  Returns the default notification center, aka, the instance that should be
+  used within the application.
 */
 NSNotificationCenter.defaultCenter = function() {
-    
-    if (!NSNotificationCenterDefault)
-        NSNotificationCenterDefault = NSNotificationCenter.create();
-    
-    return NSNotificationCenterDefault;
+  
+  if (!NSNotificationCenterDefault)
+    NSNotificationCenterDefault = NSNotificationCenter.create();
+  
+  return NSNotificationCenterDefault;
 };

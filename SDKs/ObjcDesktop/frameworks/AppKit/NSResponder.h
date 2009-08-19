@@ -22,7 +22,7 @@
 
 @interface NSResponder : NSObject <NSCoding>
 {
-    id _nextResponder;
+  id _nextResponder;
 }
 
 - (NSResponder *)nextResponder;

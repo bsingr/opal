@@ -12,9 +12,9 @@
 @implementation VNFlashView
 - (id)init
 {
-    if((self = [super init]))
-    {
-    }
-    return self;
+  if((self = [super init]))
+  {
+  }
+  return self;
 }
 @end

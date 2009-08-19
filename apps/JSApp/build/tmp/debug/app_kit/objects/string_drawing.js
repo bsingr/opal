@@ -26,129 +26,129 @@
 
 
 // NSStringDrawingOptions
-var NSStringDrawingTruncatesLastVisibleLine         = (1 << 5);
-var NSStringDrawingUsesLineFragmentOrigin           = (1 << 0);
-var NSStringDrawingUsesFontLeading                  = (1 << 1);
-var NSStringDrawingDisableScreenFontSubstitution    = (1 << 2);
-var NSStringDrawingUsesDeviceMetrics                = (1 << 3);
-var NSStringDrawingOneShot                          = (1 << 4);
+var NSStringDrawingTruncatesLastVisibleLine     = (1 << 5);
+var NSStringDrawingUsesLineFragmentOrigin       = (1 << 0);
+var NSStringDrawingUsesFontLeading          = (1 << 1);
+var NSStringDrawingDisableScreenFontSubstitution  = (1 << 2);
+var NSStringDrawingUsesDeviceMetrics        = (1 << 3);
+var NSStringDrawingOneShot              = (1 << 4);
 
 // Used for measuring text in render mode
 var NSAttributedStringMeasureElement = null;
 
 VN.extend(String.prototype, {
+  
+  sizeWithAttributes: function(attrs) {
     
-    sizeWithAttributes: function(attrs) {
-        
-    },
+  },
+  
+  drawAtPoint: function(aPoint, attrs) {
     
-    drawAtPoint: function(aPoint, attrs) {
-        
-    },
+  },
+  
+  drawInRect: function(aRect, attrs) {
     
-    drawInRect: function(aRect, attrs) {
-        
-    }
+  }
 });
 
 NSAttributedString.mixin({
+  
+  size: function() {
+    if (!NSAttributedStringMeasureElement) {
+      NSAttributedStringMeasureElement = document.createElement('span');
+      NSAttributedStringMeasureElement.style.left = '-10000px';
+      NSAttributedStringMeasureElement.style.top = '-10000px';
+      NSAttributedStringMeasureElement.style.position = 'absolute';
+      NSAttributedStringMeasureElement.style.display = 'block';
+      document.body.appendChild(NSAttributedStringMeasureElement);
+    }
     
-    size: function() {
-        if (!NSAttributedStringMeasureElement) {
-            NSAttributedStringMeasureElement = document.createElement('span');
-            NSAttributedStringMeasureElement.style.left = '-10000px';
-            NSAttributedStringMeasureElement.style.top = '-10000px';
-            NSAttributedStringMeasureElement.style.position = 'absolute';
-            NSAttributedStringMeasureElement.style.display = 'block';
-            document.body.appendChild(NSAttributedStringMeasureElement);
-        }
-        
-        var theFont = this._attributes.objectForKey(NSFontAttributeName);
-        NSAttributedStringMeasureElement.style.font = theFont.renderingRepresentation();
-        
-        return NSMakeSize(NSAttributedStringMeasureElement.clientWidth, NSAttributedStringMeasureElement.clientHeight);
-        
-        
-        return NSMakeSize(0, 0);
-	    var c = NSGraphicsContext.currentContext().graphicsPort();
-	    CGContextSaveGState(c);
-	    
-	    var theFont = this._attributes.objectForKey(NSFontAttributeName);
+    var theFont = this._attributes.objectForKey(NSFontAttributeName);
+    NSAttributedStringMeasureElement.style.font = theFont.renderingRepresentation();
+    
+    return NSMakeSize(NSAttributedStringMeasureElement.clientWidth, NSAttributedStringMeasureElement.clientHeight);
+    
+    
+    return NSMakeSize(0, 0);
+	  var c = NSGraphicsContext.currentContext().graphicsPort();
+	  CGContextSaveGState(c);
+	  
+	  var theFont = this._attributes.objectForKey(NSFontAttributeName);
 		CGContextSetFont(c, theFont);
 		
-	    var theSize = NSMakeSize(c.measureText(this._string).width, this._attributes.objectForKey(NSFontAttributeName).fontSize());
-	    CGContextRestoreGState(c);
-	    return theSize;
+	  var theSize = NSMakeSize(c.measureText(this._string).width, this._attributes.objectForKey(NSFontAttributeName).fontSize());
+	  CGContextRestoreGState(c);
+	  return theSize;
 	},
+  
+  drawAtPoint: function(aPoint) {
     
-    drawAtPoint: function(aPoint) {
-        
-    },
+  },
+  
+  drawInRect: function(aRect) {
     
-    drawInRect: function(aRect) {
-        
-    }
+  }
 });
 
 VN.extend(String.prototype, {
+  
+  drawWithRectAndOptions: function(aRect, options, attributes) {
     
-    drawWithRectAndOptions: function(aRect, options, attributes) {
-        
-    },
+  },
+  
+  boundingRectWithSize: function(aSize, options, attributes) {
     
-    boundingRectWithSize: function(aSize, options, attributes) {
-        
-    }
+  }
 });
 
 NSAttributedString.mixin({
+  
+  drawWithRectAndOptions: function(aRect, options) {
     
-    drawWithRectAndOptions: function(aRect, options) {
-        
-        var c = NSGraphicsContext.currentContext().graphicsPort();
+    var c = NSGraphicsContext.currentContext().graphicsPort();
 		var fontSize = this.size();
 		
-        // font
+    // font
 		var theFont = this._attributes.objectForKey(NSFontAttributeName);
 		CGContextSetFont(c, theFont);
 		
-        // text color
+    // text color
 		var theColor = this._attributes.objectForKey(NSForegroundColorAttributeName);
 		CGContextSetFillColorWithColor(c, theColor);
 		
-        // text shadow, if any
-        if (this._attributes.containsKey(NSShadowAttributeName)) {
-            // CGContextSetShadowWithColor(c, NSMakeSize(1, 1), 1, NSColor.)
-        }
-        
-        var alignmentOrigin = 0;
-        // paragraph style
-        if (this._attributes.containsKey(NSParagraphStyleAttributeName)) {
-            var paragraphStyle = this._attributes.objectForKey(NSParagraphStyleAttributeName);
-            switch (paragraphStyle.alignment()) {
-                case NSLeftTextAlignment:
-                    break;
-                case NSRightTextAlignment:
-                    break;
-                case NSCenterTextAlignment:
-                    // position text in middle...
-                    alignmentOrigin = (aRect.size.width - fontSize.width) / 2;
-                    break;
-                case NSJustifiedTextAlignment:
-                    // "easiest" way is to work out how far short the line is, and then to split
-                    // the string, and insert an equal amount of space between each word, so that
-                    // each word has a gap between it. this wont put gaps between letters within
-                    // a word, but this might take a LOT more of processing? or will it?
-                    break;
-            }
-            
-            // console.log('line break mode: ' + paragraphStyle.lineBreakMode());
-        }
+    // text shadow, if any
+    if (this._attributes.containsKey(NSShadowAttributeName)) {
+      // CGContextSetShadowWithColor(c, NSMakeSize(1, 1), 1, NSColor.)
+    }
+    
+    var alignmentOrigin = 0;
+    // paragraph style
+    if (this._attributes.containsKey(NSParagraphStyleAttributeName)) {
+      var paragraphStyle = this._attributes.objectForKey(NSParagraphStyleAttributeName);
+      switch (paragraphStyle.alignment()) {
+        case NSLeftTextAlignment:
+          break;
+        case NSRightTextAlignment:
+          break;
+        case NSCenterTextAlignment:
+          // position text in middle...
+          alignmentOrigin = (aRect.size.width - fontSize.width) / 2;
+          break;
+        case NSJustifiedTextAlignment:
+          // "easiest" way is to work out how far short the line is, and then to split
+          // the string, and insert an equal amount of space between each word, so that
+          // each word has a gap between it. this wont put gaps between letters within
+          // a word, but this might take a LOT more of processing? or will it?
+          break;
+      }
+      
+      // console.log('line break mode: ' + paragraphStyle.lineBreakMode());
+    }
 		
 		CGContextShowTextAtPoint(c, aRect.origin.x + alignmentOrigin, (aRect.size.height * 0.75) + aRect.origin.y, this._string);
-    },
+  },
+  
+  boundingRectWithSize: function(aSize, options) {
     
-    boundingRectWithSize: function(aSize, options) {
-        
-    }
+  }
 });

@@ -27,169 +27,176 @@
 include('foundation/foundation');
 
 /**
-    @class NSRenderContext
-    @extends NSObject
+  @class NSRenderContext
+  @extends NSObject
 */
 var NSRenderContext = VN.RenderContext = VN.Object.extend({
+  
+  /**
+    @type Boolean
+  */
+  _firstTime: null,
+  
+  /**
+    @type Element
+  */
+  _element: null,
+  
+  /**
+    @returns Element
+  */
+  element: function() {
+    return this._element;
+  },
+  
+  initWithElement: function(element) {
+    this._element = element;
+    this._firstTime = true;
+    return this;
+  },
+  
+  firstTime: function() {
+    return this._firstTime;
+  },
+  
+  setFirstTime: function(flag) {
+    this._firstTime = flag;
+  },
+  
+  /**
+    @param {Element} anElement
+  */
+  setElement: function(anElement) {
+    this._element = anElement;
+  },
+  
+  /**
+    Uses the path, after splitting it, to get the dom element. Path should
+    be a dot-seperated string, where each path element can be a class-name
+    of the selector. For example $('inner.title') might be used to return
+    the title span in:
     
-    /**
-        @type Boolean
-    */
-    _firstTime: null,
+    {{{
+      <div class='the-view'>
+        <div class="inner">
+          <span class = "title">
+            hey
+          </span>
+        </div>
+      </div>
+    }}}
     
-    /**
-        @type Element
-    */
-    _element: null,
+    The first retireved class will be used. i.e. if the dom has two elements
+    of the relevant class, then the first is always returned.
     
-    /**
-        @returns Element
-    */
-    element: function() {
-        return this._element;
-    },
+    @param {NSString} path
+    @returns NSRenderContext
+  */
+  $: function(path) {
+    return NSRenderContext.renderContextWithElement(this._element.getElementsByClassName(path)[0]);
+  },
+  
+  set: function(value, key) {
+    console.log(value + ' ' + key);
+    this._element.style[key] = value;
+  },
+  
+  /**
+    Pushes a new 'element' with class 'className' into the _element's 
+    context.
     
-    initWithElement: function(element) {
-        this._element = element;
-        this._firstTime = true;
-        return this;
-    },
+    @param {NSString} element
+    @param {NSString} className
+    @param {NSString} id - the dom id for the element
+  */
+  push: function(element, className, id) {
+    var theElement = document.createElement(element);
+    theElement.className = className;
+    theElement.id = id;
+    this._element.appendChild(theElement);
+  },
+  
+  setClass: function(className) {
+    this._element.className = className;
+  },
+  
+  addClassForElement: function(className, element) {
+    var classes = element.className.split(' '), index = classes.indexOf(className);
+    if (index > -1) return; // already has class
     
-    firstTime: function() {
-        return this._firstTime;
-    },
+    element.className = element.className + " " + className;
+  },
+  
+  removeClassForElement: function(className, element) {
+    var classes = element.className.split(' '), index = classes.indexOf(className);
+    if (index > -1) {
+      classes.splice(index, 1);
+      element.className = classes.join(' ');
+    }
+  },
+  
+  addClass: function(className) {
+    this.addClassForElement(className, this._element);
+  },
+  
+  removeClass: function(className) {
+    this.removeClassForElement(className, this._element);
+  },
+  
+  addClassForChildAtIndex: function(className, index) {
+    this.addClassForElement(className, this._element.childNodes[index]);
+  },
+  
+  removeClassForChildAtIndex: function(className, index) {
+    this.removeClassForElement(className, this._element.childNodes[index]);
+  },
+  
+  setFrame: function(frameRect) {
+    this.set(frameRect.origin.x + 'px', 'left');
+    this.set(frameRect.origin.y + 'px', 'top');
+    this.set(frameRect.size.width + 'px', 'width');
+    this.set(frameRect.size.height + 'px', 'height');
+  },
+  
+  renderAttributedString: function(attributedString) {
+    if (this._element.tagName == 'INPUT') {
+      this._element.value = attributedString._string;
+    }
+    else {
+      this._element.innerHTML = attributedString._string;
+    }
     
-    setFirstTime: function(flag) {
-        this._firstTime = flag;
-    },
     
-    /**
-        @param {Element} anElement
-    */
-    setElement: function(anElement) {
-        this._element = anElement;
-    },
+    // the font
+    var theFont = attributedString._attributes.objectForKey(NSFontAttributeName);
+    this.set(theFont.renderingRepresentation(), 'font');
     
-    /**
-        Uses the path, after splitting it, to get the dom element. Path should
-        be a dot-seperated string, where each path element can be a class-name
-        of the selector. For example $('inner.title') might be used to return
-        the title span in:
-        
-        {{{
-            <div class='the-view'>
-                <div class="inner">
-                    <span class = "title">
-                        hey
-                    </span>
-                </div>
-            </div>
-        }}}
-        
-        The first retireved class will be used. i.e. if the dom has two elements
-        of the relevant class, then the first is always returned.
-        
-        @param {NSString} path
-        @returns NSRenderContext
-    */
-    $: function(path) {
-        return NSRenderContext.renderContextWithElement(this._element.getElementsByClassName(path)[0]);
-    },
-    
-    set: function(value, key) {
-        this._element.style[key] = value;
-    },
-    
-    /**
-        Pushes a new 'element' with class 'className' into the _element's 
-        context.
-        
-        @param {NSString} element
-        @param {NSString} className
-        @param {NSString} id - the dom id for the element
-    */
-    push: function(element, className, id) {
-        var theElement = document.createElement(element);
-        theElement.className = className;
-        theElement.id = id;
-        this._element.appendChild(theElement);
-    },
-    
-    setClass: function(className) {
-        this._element.className = className;
-    },
-    
-    addClassForElement: function(className, element) {
-        var classes = element.className.split(' '), index = classes.indexOf(className);
-        if (index > -1) return; // already has class
-        
-        element.className = element.className + " " + className;
-    },
-    
-    removeClassForElement: function(className, element) {
-        var classes = element.className.split(' '), index = classes.indexOf(className);
-        if (index > -1) {
-            classes.splice(index, 1);
-            element.className = classes.join(' ');
-        }
-    },
-    
-    addClass: function(className) {
-        this.addClassForElement(className, this._element);
-    },
-    
-    removeClass: function(className) {
-        this.removeClassForElement(className, this._element);
-    },
-    
-    addClassForChildAtIndex: function(className, index) {
-        this.addClassForElement(className, this._element.childNodes[index]);
-    },
-    
-    removeClassForChildAtIndex: function(className, index) {
-        this.removeClassForElement(className, this._element.childNodes[index]);
-    },
-    
-    setFrame: function(frameRect) {
-        this.set(frameRect.origin.x + 'px', 'left');
-        this.set(frameRect.origin.y + 'px', 'top');
-        this.set(frameRect.size.width + 'px', 'width');
-        this.set(frameRect.size.height + 'px', 'height');
-    },
-    
-    renderAttributedString: function(attributedString) {
-        this._element.innerHTML = attributedString._string;
-        
-        // the font
-        var theFont = attributedString._attributes.objectForKey(NSFontAttributeName);
-        this.set(theFont.renderingRepresentation(), 'font');
-        
-        // text color
+    // text color
 		var theColor = attributedString._attributes.objectForKey(NSForegroundColorAttributeName);
 		this.set(theColor.rgbString(), 'color');
 		
 		if (attributedString._attributes.containsKey(NSParagraphStyleAttributeName)) {
-            var paragraphStyle = attributedString._attributes.objectForKey(NSParagraphStyleAttributeName);
-            switch (paragraphStyle.alignment()) {
-                case VN.LEFT_TEXT_ALIGNMENT:
-                    this.set('left', 'textAlign');
-                    break;
-                case VN.RIGHT_TEXT_ALIGNMENT:
-                    this.set('right', 'textAlign');
-                    break;
-                case VN.CENTER_TEXT_ALIGNMENT:
-                    // position text in middle...
-                    this.set('center', 'textAlign');
-                    break;
-                case VN.JUSTIFIED_TEXT_ALIGNMENT:
-                    break;
-            }
-            
-            // console.log('line break mode: ' + paragraphStyle.lineBreakMode());
-        }
+      var paragraphStyle = attributedString._attributes.objectForKey(NSParagraphStyleAttributeName);
+      switch (paragraphStyle.alignment()) {
+        case VN.LEFT_TEXT_ALIGNMENT:
+          this.set('left', 'textAlign');
+          break;
+        case VN.RIGHT_TEXT_ALIGNMENT:
+          this.set('right', 'textAlign');
+          break;
+        case VN.CENTER_TEXT_ALIGNMENT:
+          // position text in middle...
+          this.set('center', 'textAlign');
+          break;
+        case VN.JUSTIFIED_TEXT_ALIGNMENT:
+          break;
+      }
+      
+      // console.log('line break mode: ' + paragraphStyle.lineBreakMode());
     }
+  }
 });
 
 NSRenderContext.renderContextWithElement = function(element) {
-    return this.create('initWithElement', element);
+  return this.create('initWithElement', element);
 };

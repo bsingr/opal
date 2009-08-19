@@ -12,28 +12,28 @@
 @class NSLayoutManager, NSTextView, NSArray;
 
 enum {
-    NSLineSweepLeft     = 0,
-    NSLineSweepRight    = 1,
-    NSLineSweepDown     = 2,
-    NSLineSweepUp       = 3
+  NSLineSweepLeft   = 0,
+  NSLineSweepRight  = 1,
+  NSLineSweepDown   = 2,
+  NSLineSweepUp     = 3
 };
 typedef NSUInteger NSLineSweepDirection;
 
 enum {
-    NSLineDoesntMove    = 0, 
-    NSLineMovesLeft     = 1,
-    NSLineMovesRight    = 2,
-    NSLineMovesDown     = 3,
-    NSLineMovesUp       = 4
+  NSLineDoesntMove  = 0, 
+  NSLineMovesLeft   = 1,
+  NSLineMovesRight  = 2,
+  NSLineMovesDown   = 3,
+  NSLineMovesUp     = 4
 };
 typedef NSUInteger NSLineMovementDirection;
 
 @interface NSTextContainer : NSObject
 {
-    NSLayoutManager     *_layoutManager;
-    NSTextView          *_textView;
-    NSSize               _size;
-    CGFloat              _lineFragmentPadding;
+  NSLayoutManager   *_layoutManager;
+  NSTextView      *_textView;
+  NSSize         _size;
+  CGFloat        _lineFragmentPadding;
 }
 
 - (id)initWithContainerSize:(NSSize)size;

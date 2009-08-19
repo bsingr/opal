@@ -37,9 +37,9 @@ typedef int CGGlyph;
 
 typedef struct CGFont
 {
-    CFStringRef *_name;
-    CGFloat      _size;
-    BOOL         _isBold;
+  CFStringRef *_name;
+  CGFloat    _size;
+  BOOL     _isBold;
 
 } *CGFontRef;
 

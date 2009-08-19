@@ -23,7 +23,7 @@
 @interface NSDictionary (NSExtendedDictionary)
 
 - (NSArray *)allKeys;
-- (NSArray *)allKeysForObject:(id)anObject;    
+- (NSArray *)allKeysForObject:(id)anObject;  
 - (NSArray *)allValues;
 - (NSString *)description;
 - (NSString *)descriptionInStringsFileFormat;

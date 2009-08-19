@@ -26,108 +26,108 @@
 
 
 /**
-    @class VN.AttributedString
-    
-    NSAttributedString manages a string with associated attributes that apply to
-    individual characters, or ranges within the string. This base class provides
-    the necessary basics for constructing and manipulating attributes within the
-    string. AppKit adds more functionality, including the ability to draw these
-    strings with their attributes. For advanced drawing and handling, a subclass
-    NSTextStorage is introduced in AppKit that provides the means for the NSText
-    drawing system within Vienna.
-    
-    Attributes are contained within NSDictionary classes that apply to the
-    relevant ranges defined. NSAttributedString === NSMutableAttributedString.
+  @class VN.AttributedString
+  
+  NSAttributedString manages a string with associated attributes that apply to
+  individual characters, or ranges within the string. This base class provides
+  the necessary basics for constructing and manipulating attributes within the
+  string. AppKit adds more functionality, including the ability to draw these
+  strings with their attributes. For advanced drawing and handling, a subclass
+  NSTextStorage is introduced in AppKit that provides the means for the NSText
+  drawing system within Vienna.
+  
+  Attributes are contained within NSDictionary classes that apply to the
+  relevant ranges defined. NSAttributedString === NSMutableAttributedString.
 */
 var NSAttributedString = VN.AttributedString = VN.Object.extend({
    
 	_string: null,
 	_attributes: null,
 	
-    string: function() {
-        return this._string;
-    },
+  string: function() {
+    return this._string;
+  },
+  
+  attributesAtIndex: function(location, effectiveRange) {
     
-    attributesAtIndex: function(location, effectiveRange) {
-        
-    },
+  },
+  
+  length: function() {
+    return this._string.length;
+  },
+  
+  attributeAtIndex: function(attrName, location, effectiveRange) {
     
-    length: function() {
-        return this._string.length;
-    },
+  },
+  
+  attributedSubstringFromRange: function(string) {
     
-    attributeAtIndex: function(attrName, location, effectiveRange) {
-        
-    },
+  },
+  
+  isEqualToAttributedString: function(other) {
     
-    attributedSubstringFromRange: function(string) {
-        
-    },
-    
-    isEqualToAttributedString: function(other) {
-        
-    },
-    
-    initWithString: function(aString) {
-        this.init();
+  },
+  
+  initWithString: function(aString) {
+    this.init();
 		this._string = new String(aString);
 		this._attributes = NSDictionary.create();
 		return this;
-    },
+  },
+  
+  initWithStringAndAttributes: function(aString, attributes) {
+    this.init();
+    this._string = new String(aString);
+    this._attributes = attributes;
+    return this;
+  },
+  
+  initWithAttributedString: function(attrString) {
     
-    initWithStringAndAttributes: function(aString, attributes) {
-        this.init();
-        this._string = new String(aString);
-        this._attributes = attributes;
-        return this;
-    },
+  },
+  
+  replaceCharactersInRange: function(range, withString) {
+    // this._string = this._string.slice(0, range.location) + withString + this._string.slice(range.location + range.length, )
+    this._string = this._string.slice(0, range.location) + withString + this._string.slice(range.location + range.length);
+  },
+  
+  setAttributes: function(attributes, range) {
     
-    initWithAttributedString: function(attrString) {
-        
-    },
+  },
+  
+  addAttribute: function(name, value, range) {
     
-    replaceCharactersInRange: function(range, withString) {
-        // this._string = this._string.slice(0, range.location) + withString + this._string.slice(range.location + range.length, )
-        this._string = this._string.slice(0, range.location) + withString + this._string.slice(range.location + range.length);
-    },
+  },
+  
+  removeAttribute: function(name, range) {
     
-    setAttributes: function(attributes, range) {
-        
-    },
+  },
+  
+  replaceCharactersInRangeWithAttributedString: function(range, attrString) {
     
-    addAttribute: function(name, value, range) {
-        
-    },
+  },
+  
+  insertAttributedString: function(attrString, atIndex) {
     
-    removeAttribute: function(name, range) {
-        
-    },
+  },
+  
+  appendAttributedString: function(attrString) {
     
-    replaceCharactersInRangeWithAttributedString: function(range, attrString) {
-        
-    },
+  },
+  
+  deleteCharactersInRange: function(range) {
     
-    insertAttributedString: function(attrString, atIndex) {
-        
-    },
+  },
+  
+  setAttributedString: function(attrString) {
     
-    appendAttributedString: function(attrString) {
-        
-    },
-    
-    deleteCharactersInRange: function(range) {
-        
-    },
-    
-    setAttributedString: function(attrString) {
-        
-    },
-    
-    beginEditing: function() {
-        // do nothing....
-    },
-    
-    endEditing: function() {
-        // do ntohing/....
-    }
+  },
+  
+  beginEditing: function() {
+    // do nothing....
+  },
+  
+  endEditing: function() {
+    // do ntohing/....
+  }
 });

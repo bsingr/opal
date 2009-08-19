@@ -30,16 +30,16 @@
 
 - (id)initWithCoder:(NSCoder *)aCoder
 {
-    NSString *className = [aCoder decodeObjectForKey:@"NSClassName"];
-    Class theClass = NSClassFromString(className);
-    NSLog(@"Allocing custom class:" + className);
-    theView = [[theClass alloc] initWithFrame:[aCoder decodeRectForKey:@"NSFrame"]];
-    return theView;
+  NSString *className = [aCoder decodeObjectForKey:@"NSClassName"];
+  Class theClass = NSClassFromString(className);
+  NSLog(@"Allocing custom class:" + className);
+  theView = [[theClass alloc] initWithFrame:[aCoder decodeRectForKey:@"NSFrame"]];
+  return theView;
 }
 
 - (id)awakeAfterUsingCoder:(NSCoder *)aCoder
 {
-    return theView;
+  return theView;
 }
 
 @end

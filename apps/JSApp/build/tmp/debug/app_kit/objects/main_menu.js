@@ -26,123 +26,123 @@
 
 
 /**
-    MainMenu. This holds the main menu itself, a title (app title) and the status
-    bar for the application. This window does not have a content view, and instead
-    holds three views. one for each of the previously outlined responsibilities.
-    
-    Due to the massive internal chnages that the window undertakes, a lot of the
-    functionality is removed abnd over-ridden.
+  MainMenu. This holds the main menu itself, a title (app title) and the status
+  bar for the application. This window does not have a content view, and instead
+  holds three views. one for each of the previously outlined responsibilities.
+  
+  Due to the massive internal chnages that the window undertakes, a lot of the
+  functionality is removed abnd over-ridden.
 */
-var NSMainMenu = NSWindow.extend({
+VN.MainMenu= VN.Window.extend({
+  
+  _mainMenu: null,
+  _mainMenuView: null,
+  
+  _applicationTitleView: null,
+  
+  _hasGradient: null,
+  
+  initWithMainMenu: function(aMenu) {
+    this.setupGraphicsContextDisplay();
     
-    _mainMenu: null,
-    _mainMenuView: null,
+    this._backgroundColor = NSColor.colorWithCalibratedRGBA(0.33, 0.33, 0.33, 1);
+    this._hasGradient = true;
     
-    _applicationTitleView: null,
+    this._windowNumber = NSApplication.sharedApplication().addWindow(this);
     
-    _hasGradient: null,
+    this._minSize = NSMakeSize(0.0, 0.0);
+    this._maxSize = NSMakeSize(9999.0, 9999.0);
+    this._frame = this.frameRectForContentRect(NSMakeRect(100,100,100,100));
+    this._firstResponder = this;
     
-    initWithMainMenu: function(aMenu) {
-        this.setupGraphicsContextDisplay();
-        
-        this._backgroundColor = NSColor.colorWithCalibratedRGBA(0.33, 0.33, 0.33, 1);
-        this._hasGradient = true;
-        
-        this._windowNumber = NSApplication.sharedApplication().addWindow(this);
-        
-        this._minSize = NSMakeSize(0.0, 0.0);
-        this._maxSize = NSMakeSize(9999.0, 9999.0);
-        this._frame = this.frameRectForContentRect(NSMakeRect(100,100,100,100));
-        this._firstResponder = this;
-        
-        this._mainMenu = aMenu;
-        
-        // menu view
-        this._mainMenuView = NSMenuView.create('initWithMenu', this._mainMenu);
-        this._mainMenuView.setHorizontal(true);
-        this._mainMenuView.update();
-        this._DOMContainer.appendChild(this._mainMenuView.renderElement);
-        
-        // menu title
-        this._applicationTitleView = NSApplicationTitleView.create('initWithFrame', NSMakeRect(0, 0, 0, 0));
-        this._DOMContainer.appendChild(this._applicationTitleView.renderElement);
-        
-        this.setNextResponder(NSApplication.sharedApplication());
-        
-        this.setLevel(NSMainMenuWindowLevel);
-        
-        this.tile();
-        
-        return this;
-    },
+    this._mainMenu = aMenu;
     
-    applicationDidChangeScreenParameters: function(aNotification) {
-        // console.log('main menu got new screen co-ordinates');
-        this.tile();
-    },
+    // menu view
+    this._mainMenuView = NSMenuView.create('initWithMenu', this._mainMenu);
+    this._mainMenuView.setHorizontal(true);
+    this._mainMenuView.update();
+    this._DOMContainer.appendChild(this._mainMenuView.renderElement);
     
-    setMainMenu: function(aMenu) {
-        this._mainMenu = aMenu;
-    },
+    // menu title
+    this._applicationTitleView = NSApplicationTitleView.create('initWithFrame', NSMakeRect(0, 0, 0, 0));
+    this._DOMContainer.appendChild(this._applicationTitleView.renderElement);
     
-    mainMenu: function() {
-        return this._mainMenu;
-    },
+    this.setNextResponder(NSApplication.sharedApplication());
     
-    setHasGradient: function(flag) {
-        this._hasGradient = flag;
-    },
+    this.setLevel(NSMainMenuWindowLevel);
     
-    hasGradient: function() {
-        return this._hasGradient;
-    },
+    this.tile();
     
-    sendEvent: function(theEvent) {
-        var hitTest, aPoint = theEvent.locationInWindow();
-        
-        switch (theEvent.type()) {
-            case NSLeftMouseDown:
-                hitTest = this._mainMenuView.hitTest(aPoint);
-                if (hitTest) {
-                    hitTest.mouseDown(theEvent);
-                    // console.log('hitTest in mainMenu');
-                }
-                else {
-                    console.log('Sending mouse down to (else)');
-                }
-                break;
-            case NSLeftMouseUp:
-                console.log('mouse up;');
-                break;
+    return this;
+  },
+  
+  applicationDidChangeScreenParameters: function(aNotification) {
+    // console.log('main menu got new screen co-ordinates');
+    this.tile();
+  },
+  
+  setMainMenu: function(aMenu) {
+    this._mainMenu = aMenu;
+  },
+  
+  mainMenu: function() {
+    return this._mainMenu;
+  },
+  
+  setHasGradient: function(flag) {
+    this._hasGradient = flag;
+  },
+  
+  hasGradient: function() {
+    return this._hasGradient;
+  },
+  
+  sendEvent: function(theEvent) {
+    var hitTest, aPoint = theEvent.locationInWindow();
+    
+    switch (theEvent.type()) {
+      case NSLeftMouseDown:
+        hitTest = this._mainMenuView.hitTest(aPoint);
+        if (hitTest) {
+          hitTest.mouseDown(theEvent);
+          // console.log('hitTest in mainMenu');
         }
-    },
+        else {
+          console.log('Sending mouse down to (else)');
+        }
+        break;
+      case NSLeftMouseUp:
+        console.log('mouse up;');
+        break;
+    }
+  },
+  
+  contentRectForFrameRect: function(frameRect) {
+    return NSMakeRect(0, 0, frameRect.size.width, frameRect.size.height);
+  },
+  
+  frameRectForContentRect: function(contentRect) {
+    return NSMakeRect(contentRect.origin.x, contentRect.origin.y, contentRect.size.width, contentRect.size.height);
+  },
+  
+  /**
+    Calculates the size and position of the window, and moves it into place using setFrame
+  */
+  tile: function() {
+    this.setFrame(NSMakeRect(0, window.innerHeight - NSMenu.menuBarHeight(), window.innerWidth, NSMenu.menuBarHeight()));
+  },
+  
+  setFrame: function(frameRect) {
+    this._frame = frameRect;
+    CGDOMElementSetFrame(this._DOMContainer, this._frame);
+    CGDOMElementSetFrame(this._DOMGraphicsContext, this.bounds());
+    this.setNeedsDisplay(true);
     
-    contentRectForFrameRect: function(frameRect) {
-        return NSMakeRect(0, 0, frameRect.size.width, frameRect.size.height);
-    },
-    
-    frameRectForContentRect: function(contentRect) {
-        return NSMakeRect(contentRect.origin.x, contentRect.origin.y, contentRect.size.width, contentRect.size.height);
-    },
-    
-    /**
-        Calculates the size and position of the window, and moves it into place using setFrame
-    */
-    tile: function() {
-        this.setFrame(NSMakeRect(0, window.innerHeight - NSMenu.menuBarHeight(), window.innerWidth, NSMenu.menuBarHeight()));
-    },
-    
-    setFrame: function(frameRect) {
-        this._frame = frameRect;
-        CGDOMElementSetFrame(this._DOMContainer, this._frame);
-        CGDOMElementSetFrame(this._DOMGraphicsContext, this.bounds());
-        this.setNeedsDisplay(true);
-        
-        // application title view
-        this._applicationTitleView.setFrame(NSMakeRect(frameRect.size.width / 2, 0, 100, 38));
-    },
-    
-    drawRect: function(rect) {
+    // application title view
+    this._applicationTitleView.setFrame(NSMakeRect(frameRect.size.width / 2, 0, 100, 38));
+  },
+  
+  drawRect: function(rect) {
 		var c = NSGraphicsContext.currentContext().graphicsPort();
 		CGContextClearRect(c, rect);
 		CGContextSaveGState(c);
@@ -150,12 +150,12 @@ var NSMainMenu = NSWindow.extend({
 		CGContextFillRect(c, rect);
 		
 		if (this.hasGradient()) {
-		    var lingrad = c.createLinearGradient(0,0,0,rect.size.height);
-            lingrad.addColorStop(0, CGContextRGBAStringFromColor(NSColor.colorWithCalibratedRGBA(0.604, 0.604, 0.604, 0.504)));
-            lingrad.addColorStop(1, CGContextRGBAStringFromColor(NSColor.colorWithCalibratedRGBA(0.264, 0.264, 0.264, 0.504)));
-            
-            c.fillStyle = lingrad;
-            c.fillRect(0,0,rect.size.width,rect.size.height);
+		  var lingrad = c.createLinearGradient(0,0,0,rect.size.height);
+      lingrad.addColorStop(0, CGContextRGBAStringFromColor(NSColor.colorWithCalibratedRGBA(0.604, 0.604, 0.604, 0.504)));
+      lingrad.addColorStop(1, CGContextRGBAStringFromColor(NSColor.colorWithCalibratedRGBA(0.264, 0.264, 0.264, 0.504)));
+      
+      c.fillStyle = lingrad;
+      c.fillRect(0,0,rect.size.width,rect.size.height);
 		}
 		
 		c.strokeStyle = "black";
@@ -168,11 +168,11 @@ var NSMainMenu = NSWindow.extend({
 	},
 	
 	renderRect: function(aRect, firstTime, context) {
-	    this._super(aRect, firstTime, context);
-	    if (firstTime) {
-	        context.removeClass('shadow');
-	        context.removeClass('rounded');
-	        context.addClass('ns-window-main-menu');
-	    }
+	  this._super(aRect, firstTime, context);
+	  if (firstTime) {
+	    context.removeClass('shadow');
+	    context.removeClass('rounded');
+	    context.addClass('ns-window-main-menu');
+	  }
 	}
 });

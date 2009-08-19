@@ -11,21 +11,21 @@
 
 @interface NSWindowTemplate : NSObject
 {
-    NSSize      _maxSize;
-    NSSize      _minSize;
-    NSRect      _screenRect;
-    
-    id          _viewClass;
-    NSUInteger  _wtFlags;
-    NSUInteger  _windowBacking;
-    NSString   *_windowClass;
-    NSRect      _windowRect;
-    
-    NSString   *_windowTitle;
-    NSView     *_windowView;
-    
-    int         _styleMask;
-    NSString   *_windowAutosave;
+  NSSize    _maxSize;
+  NSSize    _minSize;
+  NSRect    _screenRect;
+  
+  id      _viewClass;
+  NSUInteger  _wtFlags;
+  NSUInteger  _windowBacking;
+  NSString   *_windowClass;
+  NSRect    _windowRect;
+  
+  NSString   *_windowTitle;
+  NSView   *_windowView;
+  
+  int     _styleMask;
+  NSString   *_windowAutosave;
 }
 
 @end

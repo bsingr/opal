@@ -27,44 +27,44 @@
 include('app_kit/color');
 
 var NSShadow = NSObject.extend({
-    
-    _shadowOffset: null,
-    _shadowBlurRadius: null,
-    _shadowColor: null,
-    
-    init: function() {
-        this._shadowOffset = NSMakeSize(0, 0);
-        this._shadowBlurRadius = 0.0;
-        this._shadowColor = NSColor.colorWithCalibratedRGBA(0.0, 0.0, 0.0, 0.333);
-        return this;
-    },
-    
-    shadowOffset: function() {
-        return this._shadowOffset;
-    },
-    
-    setShadowOffset: function(offset) {
-        this._shadowOffset = offset;
-    },
-    
-    shadowBlurRadius: function() {
-        return this._shadowBlurRadius;
-    },
-    
-    setShadowBlurRadius: function(val) {
-        this._shadowBlurRadius = val;
-    },
-    
-    shadowColor: function() {
-        return this.shadowColor;
-    },
-    
-    setShadowColor: function(aColor) {
-        this._shadowColor = aColor;
-    },
-    
-    set: function() {
-        var c = NSGraphicsContext.currentContext().graphicsPort();
-        CGContextSetShadowWithColor(c, this.__shadowOffset, this._shadowBlurRadius, this._shadowColor);
-    }
+  
+  _shadowOffset: null,
+  _shadowBlurRadius: null,
+  _shadowColor: null,
+  
+  init: function() {
+    this._shadowOffset = NSMakeSize(0, 0);
+    this._shadowBlurRadius = 0.0;
+    this._shadowColor = NSColor.colorWithCalibratedRGBA(0.0, 0.0, 0.0, 0.333);
+    return this;
+  },
+  
+  shadowOffset: function() {
+    return this._shadowOffset;
+  },
+  
+  setShadowOffset: function(offset) {
+    this._shadowOffset = offset;
+  },
+  
+  shadowBlurRadius: function() {
+    return this._shadowBlurRadius;
+  },
+  
+  setShadowBlurRadius: function(val) {
+    this._shadowBlurRadius = val;
+  },
+  
+  shadowColor: function() {
+    return this.shadowColor;
+  },
+  
+  setShadowColor: function(aColor) {
+    this._shadowColor = aColor;
+  },
+  
+  set: function() {
+    var c = NSGraphicsContext.currentContext().graphicsPort();
+    CGContextSetShadowWithColor(c, this.__shadowOffset, this._shadowBlurRadius, this._shadowColor);
+  }
 });

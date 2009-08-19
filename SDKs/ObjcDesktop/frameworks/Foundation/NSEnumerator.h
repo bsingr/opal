@@ -11,7 +11,7 @@
 @class NSArray;
 
 typedef struct {
-    unsigned long state;
+  unsigned long state;
 } NSFastEnumerationState;
 
 @protocol NSFastEnumeration
@@ -23,8 +23,8 @@ typedef struct {
 
 @interface NSEnumerator : NSObject <NSFastEnumeration>
 {
-    NSArray *_array;
-    NSUInteger _currentIndex;
+  NSArray *_array;
+  NSUInteger _currentIndex;
 }
 
 - (id)initWithArray:(NSArray *)array;

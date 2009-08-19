@@ -10,19 +10,19 @@
 #import <AppKit/NSScroller.h>
 
 @interface NSScrollView : NSView {
-    
-    NSView      *_verticalScroller;
-    NSView      *_horizontalScroller;
-    NSView      *_clipView;
-    NSView      *_headerClipView;
-    NSView      *_cornerView;
-    
-    BOOL         _hasVerticalScroller;
-    BOOL         _hasHorizontalScroller;
-    
-    NSInteger    _borderType;
-    
-    NSView      *_contentView;
+  
+  NSView    *_verticalScroller;
+  NSView    *_horizontalScroller;
+  NSView    *_clipView;
+  NSView    *_headerClipView;
+  NSView    *_cornerView;
+  
+  BOOL     _hasVerticalScroller;
+  BOOL     _hasHorizontalScroller;
+  
+  NSInteger  _borderType;
+  
+  NSView    *_contentView;
 }
 
 - (void)tile;

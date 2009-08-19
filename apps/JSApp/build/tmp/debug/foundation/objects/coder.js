@@ -25,6 +25,21 @@
  */
  
 
-var NSCoder = NSObject.extend({
-    
+/*
+	Exception string used for throwing when an invalid object is used for
+	archiving.
+*/
+VN.INVALID_ARCHIVE_OPERATION_EXCEPTION = "VNInvalidArchiveOperationException";
+
+/*
+	Exception thrown when an object cannot be unarchived
+*/
+VN.INVALID_UNARCHIVE_OPERATION_EXCEPTION ="VNInvalidUnarchiveOperationException";
+
+/*
+	@class VN.Coder
+	@extend VN.Object
+*/
+var NSCoder = VN.Coder = VN.Object.extend({
+  
 });

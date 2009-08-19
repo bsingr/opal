@@ -25,36 +25,36 @@
  */
 
 /**
-    NSImage adds very important methods to Image. Not only does it extend useful
-    fnctionality into the default object, but it also extends the functionality
-    to include caching of images, so that drawing controls constantly does not
-    require re-downloading. Also, it supports sprites, such that images combined
-    into a single resource can be referenced and dealt with as a single image.
-    
-    Drawing these images actually references the sprites, but user code sees it
-    as a regular image. Spriting images dramatically improves performance and
-    saves heavily on bandwidth.
+  NSImage adds very important methods to Image. Not only does it extend useful
+  fnctionality into the default object, but it also extends the functionality
+  to include caching of images, so that drawing controls constantly does not
+  require re-downloading. Also, it supports sprites, such that images combined
+  into a single resource can be referenced and dealt with as a single image.
+  
+  Drawing these images actually references the sprites, but user code sees it
+  as a regular image. Spriting images dramatically improves performance and
+  saves heavily on bandwidth.
 */
 var NSImage = NSObject.extend({
-    
-    _image: null,
-    
-    initByReferencingFile: function(fileName) {
-        this._image = new Image();
-        this._image.src = fileName;
-        return this;
-    },
-    
-    drawInRect: function(theRect) {
-        var c = NSGraphicsContext.currentContext().graphicsPort();
-        CGContextDrawImage(c, theRect, this._image);
-    },
-    
-    size: function() {
-        return NSMakeSize(this._image.width, this._image.height);
-    }
+  
+  _image: null,
+  
+  initByReferencingFile: function(fileName) {
+    this._image = new Image();
+    this._image.src = fileName;
+    return this;
+  },
+  
+  drawInRect: function(theRect) {
+    var c = NSGraphicsContext.currentContext().graphicsPort();
+    CGContextDrawImage(c, theRect, this._image);
+  },
+  
+  size: function() {
+    return NSMakeSize(this._image.width, this._image.height);
+  }
 });
 
 NSImage.imageNamed = function(anImage) {
-    return NSImage.create('initByReferencingFile', 'resources/' + anImage);
+  return NSImage.create('initByReferencingFile', 'resources/' + anImage);
 };

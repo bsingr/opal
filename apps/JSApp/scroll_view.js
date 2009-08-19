@@ -25,9 +25,9 @@
  */
 
 var JSScrollView = NSView.extend({
-    
-    drawRect: function(aRect) {
-        var c = NSGraphicsContext.currentContext().graphicsPort();
-        CGContextFillRect(c, aRect);
-    }
+  
+  drawRect: function(aRect) {
+    var c = NSGraphicsContext.currentContext().graphicsPort();
+    CGContextFillRect(c, aRect);
+  }
 });

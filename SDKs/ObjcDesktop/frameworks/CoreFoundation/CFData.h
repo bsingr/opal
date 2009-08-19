@@ -9,11 +9,11 @@
 #import <CoreFoundation/CFBase.h>
 
 typedef struct {
-    char *_bytes;
+  char *_bytes;
 } CFDataRef;
 
 typedef struct {
-    char *_bytes;
+  char *_bytes;
 } CFMutableDataRef;
 
 extern CFDataRef CFDataCreateFromURL(CFStringRef path, void (^callback)(void));

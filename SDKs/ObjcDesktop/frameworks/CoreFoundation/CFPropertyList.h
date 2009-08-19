@@ -11,9 +11,9 @@
 #import <CoreFoundation/CFString.h>
 
 enum {
-    kCFPropertyListImmutable = 0,
-    kCFPropertyListMutableContainers,
-    kCFPropertyListMutableContainersAndLeaves
+  kCFPropertyListImmutable = 0,
+  kCFPropertyListMutableContainers,
+  kCFPropertyListMutableContainersAndLeaves
 };
 typedef CFOptionFlags CFPropertyListMutabilityOptions;
 
@@ -26,10 +26,10 @@ extern CFDataRef CFPropertyListCreateJSONData (CFPropertyListRef propertyList);
 extern CFPropertyListRef CFPropertyListCreateDeepCopy (CFPropertyListRef propertyList, CFOptionFlags mutabilityOption);
 
 enum {
-    kCFPropertyListOpenStepFormat = 1,
-    kCFPropertyListXMLFormat_v1_0 = 100,
-    kCFPropertyListBinaryFormat_v1_0 = 200,
-    kCFPropertyListJSONFormat_v1_0 = 300
+  kCFPropertyListOpenStepFormat = 1,
+  kCFPropertyListXMLFormat_v1_0 = 100,
+  kCFPropertyListBinaryFormat_v1_0 = 200,
+  kCFPropertyListJSONFormat_v1_0 = 300
 };
 typedef CFIndex CFPropertyListFormat;
 

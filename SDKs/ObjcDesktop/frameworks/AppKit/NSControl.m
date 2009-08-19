@@ -10,346 +10,346 @@
 
 @implementation NSControl
 {
-    NSInteger       _tag;
-    NSCell         *_cell;
+  NSInteger     _tag;
+  NSCell     *_cell;
 }
 
 + (void)setCellClass:(Class)factoryId
 {
-    // TODO: Need to implement
+  // TODO: Need to implement
 }
 
 + (Class)cellClass
 {
-    // return NSCell;
+  // return NSCell;
 }
 
 
 - (id)initWithFrame:(NSRect)frameRect
 {
-    self = [super initWithFrame:frameRect];
-    if (self) {
-        [self setCell:[[[self cellClass] alloc] init]];
-    }
-    
-    return self;
+  self = [super initWithFrame:frameRect];
+  if (self) {
+    [self setCell:[[[self cellClass] alloc] init]];
+  }
+  
+  return self;
 }
 
 - (id)initWithCoder:(NSCoder *)aCoder
 {
 	[super initWithCoder:aCoder];
-    _cell = [aCoder decodeObjectForKey:@"NSCell"];
-    
-    [self setFrame:_frame];
-    return self;
+  _cell = [aCoder decodeObjectForKey:@"NSCell"];
+  
+  [self setFrame:_frame];
+  return self;
 }
 
 - (void)sizeToFit
 {
-    // TODO: Need to implement
+  // TODO: Need to implement
 }
 
 - (void)calcSize
 {
-    // TODO: Need to implement
+  // TODO: Need to implement
 }
 
 - (id)cell
 {
-    return _cell;
+  return _cell;
 }
 
 - (void)setCell:(NSCell *)aCell
 {
-    _cell = aCell;
-    [_cell setControlView:self];
-    [self setNeedsDisplay:YES];
+  _cell = aCell;
+  [_cell setControlView:self];
+  [self setNeedsDisplay:YES];
 }
 
 - (id)selectedCell
 {
-    // TODO: Need to implement
+  // TODO: Need to implement
 }
 
 - (id)target
 {
-    return [_cell target];
+  return [_cell target];
 }
 
 - (void)setTarget:(id)anObject
 {
-    [_cell setTarget:anObject];
+  [_cell setTarget:anObject];
 }
 
 - (SEL)action
 {
-    return [_cell action];
+  return [_cell action];
 }
 
 - (void)setAction:(SEL)aSelector
 {
-    [_cell setAction:aSelector];
+  [_cell setAction:aSelector];
 }
 
 - (NSInteger)tag
 {
-    // TODO: Need to implement
+  // TODO: Need to implement
 }
 
 - (void)setTag:(NSInteger)anInt
 {
-    // TODO: Need to implement
+  // TODO: Need to implement
 }
 
 - (NSInteger)selectedTag
 {
-    // TODO: Need to implement
+  // TODO: Need to implement
 }
 
 - (void)setIgnoresMultiClick:(BOOL)flag
 {
-    // TODO: Need to implement
+  // TODO: Need to implement
 }
 
 - (BOOL)ignoresMultiClick
 {
-    // TODO: Need to implement
+  // TODO: Need to implement
 }
 
 - (NSInteger)sendActionOn:(NSInteger)mask
 {
-    // TODO: Need to implement
+  // TODO: Need to implement
 }
 
 - (BOOL)isContinuous
 {
-    // TODO: Need to implement
+  // TODO: Need to implement
 }
 
 - (void)setContinuous:(BOOL)flag
 {
-    // TODO: Need to implement
+  // TODO: Need to implement
 }
 
 - (BOOL)isEnabled
 {
-    return [_cell isEnabled];
+  return [_cell isEnabled];
 }
 
 - (void)setEnabled:(BOOL)flag
 {
-    [_cell setEnabled:flag];
+  [_cell setEnabled:flag];
 }
 
 - (void)setFloatingPointFormat:(BOOL)autoRange left:(NSUInteger)leftDigits right:(NSUInteger)rightDigits
 {
-    // TODO: Need to implement
+  // TODO: Need to implement
 }
 
 - (NSTextAlignment)alignment
 {
-    return [_cell alignment];
+  return [_cell alignment];
 }
 
 - (void)setAlignment:(NSTextAlignment)mode
 {
-    [_cell setAlignment:mode];
-    [self setNeedsDisplay:YES];
+  [_cell setAlignment:mode];
+  [self setNeedsDisplay:YES];
 }
 
 - (NSFont *)font
 {
-    // TODO: Need to implement
+  // TODO: Need to implement
 }
 
 - (void)setFont:(NSFont *)fontObj
 {
-    // TODO: Need to implement
+  // TODO: Need to implement
 }
 
 - (void)setFormatter:(NSFormatter *)newFormatter
 {
-    // TODO: Need to implement
+  // TODO: Need to implement
 }
 
 - (id)formatter
 {
-    // TODO: Need to implement
+  // TODO: Need to implement
 }
 
 - (void)setObjectValue:(id)obj
 {
-    [_cell setObjectValue:obj];
+  [_cell setObjectValue:obj];
 }
 
 - (void)setStringValue:(NSString *)aString
 {
-    [_cell setStringValue:aString];
+  [_cell setStringValue:aString];
 }
 
 - (void)setIntValue:(int)anInt
 {
-    [_cell setIntValue:anInt];
+  [_cell setIntValue:anInt];
 }
 
 - (void)setFloatValue:(float)aFloat
 {
-    [_cell setFloatValue:aFloat];
+  [_cell setFloatValue:aFloat];
 }
 
 - (void)setDoubleValue:(double)aDouble
 {
-    [_cell setDoubleValue:aDouble];
+  [_cell setDoubleValue:aDouble];
 }
 
 - (id)objectValue
 {
-    return [_cell objectValue];
+  return [_cell objectValue];
 }
 
 - (NSString *)stringValue
 {
-    return [_cell stringValue];
+  return [_cell stringValue];
 }
 
 - (int)intValue
 {
-    return [_cell intValue];
+  return [_cell intValue];
 }
 
 - (float)floatValue
 {
-    return [_cell floatValue];
+  return [_cell floatValue];
 }
 
 - (double)doubleValue
 {
-    return [_cell doubleValue];
+  return [_cell doubleValue];
 }
 
 - (void)setNeedsDisplay
 {
-    // TODO: Need to implement
+  // TODO: Need to implement
 }
 
 - (void)updateCell:(NSCell *)aCell
 {
-    // TODO: Need to implement
+  // TODO: Need to implement
 }
 
 - (void)updateCellInside:(NSCell *)aCell
 {
-    // TODO: Need to implement
+  // TODO: Need to implement
 }
 
 - (void)drawCellInside:(NSCell *)aCell
 {
-    // TODO: Need to implement
+  // TODO: Need to implement
 }
 
 - (void)drawCell:(NSCell *)aCell
 {
-    // TODO: Need to implement
+  // TODO: Need to implement
 }
 
 - (void)selectCell:(NSCell *)aCell
 {
-    // TODO: Need to implement
+  // TODO: Need to implement
 }
 
 - (void)drawRect:(NSRect)rect
 {
-    CGContextRef c = [[NSGraphicsContext currentContext] graphicsPort];
-    
-    if(_cell)
-        [_cell drawWithFrame:[self bounds] inView:self];
+  CGContextRef c = [[NSGraphicsContext currentContext] graphicsPort];
+  
+  if(_cell)
+    [_cell drawWithFrame:[self bounds] inView:self];
 }
 
 
 - (BOOL)sendAction:(SEL)theAction to:(id)theTarget
 {
-    if (theAction && theTarget) {
-        [[NSApplication sharedApplication] sendAction:theAction to:theTarget from:self];
-        return YES;
-    }
-    
-    return NO;
+  if (theAction && theTarget) {
+    [[NSApplication sharedApplication] sendAction:theAction to:theTarget from:self];
+    return YES;
+  }
+  
+  return NO;
 }
 
 - (void)takeIntValueFrom:(id)sender
 {
-    // TODO: Need to implement
+  // TODO: Need to implement
 }
 
 - (void)takeFloatValueFrom:(id)sender
 {
-    // TODO: Need to implement
+  // TODO: Need to implement
 }
 
 - (void)takeDoubleValueFrom:(id)sender
 {
-    // TODO: Need to implement
+  // TODO: Need to implement
 }
 
 - (void)takeStringValueFrom:(id)sender
 {
-    // TODO: Need to implement
+  // TODO: Need to implement
 }
 
 - (void)takeObjectValueFrom:(id)sender
 {
-    // TODO: Need to implement
+  // TODO: Need to implement
 }
 
 - (NSText *)currentEditor
 {
-    // TODO: Need to implement
+  // TODO: Need to implement
 }
 
 - (BOOL)abortEditing
 {
-    if (_currentEditor) {
-        [[self window] endEditingFor:self];
-        _currentEditor = nil;
-    }
-    
-    return NO;
+  if (_currentEditor) {
+    [[self window] endEditingFor:self];
+    _currentEditor = nil;
+  }
+  
+  return NO;
 }
 
 - (void)validateEditing
 {
-    // TODO: Need to implement
+  // TODO: Need to implement
 }
 
 - (void)mouseDown:(NSEvent *)theEvent
-{        
-    [_cell trackMouse:theEvent inRect:[self bounds] ofView:self untilMouseUp:YES];
+{    
+  [_cell trackMouse:theEvent inRect:[self bounds] ofView:self untilMouseUp:YES];
 }
 
 - (NSWritingDirection)baseWritingDirection
 {
-    // TODO: Need to implement
+  // TODO: Need to implement
 }
 
 - (void)setBaseWritingDirection:(NSWritingDirection)writingDirection
 {
-    // TODO: Need to implement
+  // TODO: Need to implement
 }
 
 
 - (NSInteger)integerValue
 {
-    // TODO: Need to implement
+  // TODO: Need to implement
 }
 
 - (void)setIntegerValue:(NSInteger)anInteger
 {
-    // TODO: Need to implement
+  // TODO: Need to implement
 }
 
 - (void)takeIntegerValueFrom:(id)sender
 {
-    // TODO: Need to implement
+  // TODO: Need to implement
 }
 
 @end
@@ -358,17 +358,17 @@
 
 - (void)performClick:(id)sender
 {
-    // TODO: Need to implement
+  // TODO: Need to implement
 }
 
 - (void)setRefusesFirstResponder:(BOOL)flag
 {
-    // TODO: Need to implement
+  // TODO: Need to implement
 }
 
 - (BOOL)refusesFirstResponder
 {
-    // TODO: Need to implement
+  // TODO: Need to implement
 }
 
 @end
@@ -377,17 +377,17 @@
 
 - (void)controlTextDidBeginEditing:(NSNotification *)obj
 {
-    // TODO: Need to implement
+  // TODO: Need to implement
 }
 
 - (void)controlTextDidEndEditing:(NSNotification *)obj
 {
-    // TODO: Need to implement
+  // TODO: Need to implement
 }
 
 - (void)controlTextDidChange:(NSNotification *)obj
 {
-    // TODO: Need to implement
+  // TODO: Need to implement
 }
 
 @end
@@ -413,12 +413,12 @@ NSString *NSControlTextDidChangeNotification = @"NSControlTextDidChangeNotificat
 
 - (NSAttributedString *)attributedStringValue
 {
-    // TODO: Need to implement
+  // TODO: Need to implement
 }
 
 - (void)setAttributedStringValue:(NSAttributedString *)obj
 {
-    // TODO: Need to implement
+  // TODO: Need to implement
 }
 
 

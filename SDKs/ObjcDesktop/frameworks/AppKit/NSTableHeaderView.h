@@ -12,7 +12,7 @@
 
 @interface NSTableHeaderView : NSView
 {
-    NSTableView     *_tableView;
+  NSTableView   *_tableView;
 }
 
 - (void)setTableView:(NSTableView *)tableView;

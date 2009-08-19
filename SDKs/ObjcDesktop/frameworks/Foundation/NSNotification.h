@@ -27,11 +27,11 @@
 
 @interface NSNotificationCenter : NSObject
 {
-    // Ivars...
+  // Ivars...
 }
 
 + (id)defaultCenter;
-    
+  
 - (void)addObserver:(id)observer selector:(SEL)aSelector name:(NSString *)aName object:(id)anObject;
 
 - (void)postNotification:(NSNotification *)notification;

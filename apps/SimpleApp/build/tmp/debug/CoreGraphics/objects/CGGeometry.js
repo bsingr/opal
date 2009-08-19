@@ -8,54 +8,54 @@
 
 function CGPoint()
 {
-    this.x = 0;
-    this.y = 0;
+  this.x = 0;
+  this.y = 0;
 }
 
 function CGSize()
 {
-    this.width = 0;
-    this.height = 0;
+  this.width = 0;
+  this.height = 0;
 }
 
 function CGRect()
 {
-    this.origin = new CGPoint();
-    this.size = new CGSize();
+  this.origin = new CGPoint();
+  this.size = new CGSize();
 }
 
 function CGPointMake(x, y)
 {
-    return {
-        x: x,
-        y: y
-    };
+  return {
+    x: x,
+    y: y
+  };
 }
 
 function CGSizeMake(width, height)
 {
-    return {
-        width: width,
-        height: height
-    };
+  return {
+    width: width,
+    height: height
+  };
 }
 
 function CGRectMake(x, y, width, height)
 {
-    return {
-        size: CGSizeMake(width, height),
-        origin: CGPointMake(x, y)
-    };
+  return {
+    size: CGSizeMake(width, height),
+    origin: CGPointMake(x, y)
+  };
 }
 
 function CGRectGetMinX(rect)
 {
-    return rect.origin.x;
+  return rect.origin.x;
 }
 
 function CGRectGetMidX(rect)
 {
-    return rect.origin.x + (rect.size.width / 2.0);
+  return rect.origin.x + (rect.size.width / 2.0);
 }
 
 function CGRectGetMaxX(rect)
@@ -247,17 +247,17 @@ function CGRectFromString(aString)
 
 function CGStringFromRect(aRect)
 {
-    return "{" + CGStringFromPoint(aRect.origin) + ", " + CGStringFromSize(aRect.size) + "}";
+  return "{" + CGStringFromPoint(aRect.origin) + ", " + CGStringFromSize(aRect.size) + "}";
 }
 
 function CGStringFromPoint(aPoint)
 {
-    return "{" + aPoint.x + ", " + aPoint.y + "}";
+  return "{" + aPoint.x + ", " + aPoint.y + "}";
 }
 
 function CGStringFromSize(aSize)
 {
-    return "{" + aSize.width + ", " + aSize.height + "}";
+  return "{" + aSize.width + ", " + aSize.height + "}";
 }
 
 function CGPointFromString(aString)

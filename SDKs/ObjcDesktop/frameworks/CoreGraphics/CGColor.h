@@ -27,10 +27,10 @@
 #import <CoreGraphics/CGBase.h>
 
 typedef struct CGColor {
-    CGFloat _red;
-    CGFloat _blue;
-    CGFloat _green;
-    CGFloat _alpha;
+  CGFloat _red;
+  CGFloat _blue;
+  CGFloat _green;
+  CGFloat _alpha;
 } CGColorRef;
 
 #import <CoreGraphics/CGColorSpace.h>

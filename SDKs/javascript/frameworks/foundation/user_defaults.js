@@ -26,129 +26,129 @@
 
 include('foundation/object');
 
-var NSGlobalDomain          = "NSGlobalDomain";
-var NSArgumentDomain        = "NSArgumentDomain";
-var NSRegistrationDomain    = "NSRegistrationDomain";
+var NSGlobalDomain      = "NSGlobalDomain";
+var NSArgumentDomain    = "NSArgumentDomain";
+var NSRegistrationDomain  = "NSRegistrationDomain";
 
 var NSUserDefaultsDidChangeNotification = "NSUserDefaultsDidChangeNotification";
 
 /*
-    @class NSUserDefaults
+  @class NSUserDefaults
 */
 var NSUserDefaults = NSObject.extend({
+  
+  init: function() {
+    this._super();
+    return this;
+  },
+  
+  /*
+    @param {NSString} defaultName
+    @returns id
+  */
+  objectForKey: function(defaultName) {
     
-    init: function() {
-        this._super();
-        return this;
-    },
+  },
+  
+  /*
+    @param {id} value
+    @param {NSString} defaultName
+  */
+  setObjectForKey: function(value, defaultName) {
     
-    /*
-        @param {NSString} defaultName
-        @returns id
-    */
-    objectForKey: function(defaultName) {
-        
-    },
+  },
+  
+  /*
+    @param {NSString} defaultName
+  */
+  removeObjectForKey: function(defaultName) {
     
-    /*
-        @param {id} value
-        @param {NSString} defaultName
-    */
-    setObjectForKey: function(value, defaultName) {
-        
-    },
+  },
+  
+  /*
+    @param {NSString} defaultName
+    @returns {NSString}
+  */
+  stringForKey: function(defaultName) {
     
-    /*
-        @param {NSString} defaultName
-    */
-    removeObjectForKey: function(defaultName) {
-        
-    },
+  },
+  
+  /*
+    @param {NSString} defaultName
+    @returns NSArray
+  */
+  arrayForKey: function(defaultName) {
     
-    /*
-        @param {NSString} defaultName
-        @returns {NSString}
-    */
-    stringForKey: function(defaultName) {
-        
-    },
+  },
+  
+  /*
+    @param {NSString} defaultName
+    @returns NSDictionary
+  */
+  dictionaryForKey: function(defaultName) {
     
-    /*
-        @param {NSString} defaultName
-        @returns NSArray
-    */
-    arrayForKey: function(defaultName) {
-        
-    },
+  },
+  
+  /*
+    @param {NSString} defaultName
+    @returns NSData
+  */
+  dataForKey: function(defaultName) {
     
-    /*
-        @param {NSString} defaultName
-        @returns NSDictionary
-    */
-    dictionaryForKey: function(defaultName) {
-        
-    },
+  },
+  
+  /*
+    @param {NSString} defaultName
+    @returns NSArray
+  */
+  stringArrayForKey: function(defaultName) {
     
-    /*
-        @param {NSString} defaultName
-        @returns NSData
-    */
-    dataForKey: function(defaultName) {
-        
-    },
+  },
+  
+  /*
+    @param {NSString} defaultName
+    @returns Integer
+  */
+  integerForKey: function(defaultName) {
     
-    /*
-        @param {NSString} defaultName
-        @returns NSArray
-    */
-    stringArrayForKey: function(defaultName) {
-        
-    },
+  },
+  
+  /*
+    @param {NSString} defaultName
+    @returns Float
+  */
+  floatForKey: function(defaultName) {
     
-    /*
-        @param {NSString} defaultName
-        @returns Integer
-    */
-    integerForKey: function(defaultName) {
-        
-    },
+  },
+  
+  /*
+    @param {NSString} defaultName
+    @returns Double
+  */
+  doubleForKey: function(defaultName) {
     
-    /*
-        @param {NSString} defaultName
-        @returns Float
-    */
-    floatForKey: function(defaultName) {
-        
-    },
+  },
+  
+  /*
+    @param {NSString} defaultName
+    @returns Boolean
+  */
+  boolForKey: function(defaultName) {
     
-    /*
-        @param {NSString} defaultName
-        @returns Double
-    */
-    doubleForKey: function(defaultName) {
-        
-    },
-    
-    /*
-        @param {NSString} defaultName
-        @returns Boolean
-    */
-    boolForKey: function(defaultName) {
-        
-    },
-    
+  },
+  
 });
 
 /*
-    @returns NSUserDefaults
+  @returns NSUserDefaults
 */
 NSUserDefaults.standardUserDefaults = function() {
-    return this.create();
+  return this.create();
 };
 
 /*
-    Reset
+  Reset
 */
 NSUserDefaults.resetUserDefaults = function() {
-    // do something
+  // do something
 };

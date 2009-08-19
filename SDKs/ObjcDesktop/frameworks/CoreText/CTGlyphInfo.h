@@ -30,11 +30,11 @@ typedef const struct __CTGlyphInfo * CTGlyphInfoRef;
 
 enum {
 	kCTIdentityMappingCharacterCollection   = 0,
-	kCTAdobeCNS1CharacterCollection         = 1,
-	kCTAdobeGB1CharacterCollection          = 2,
-	kCTAdobeJapan1CharacterCollection       = 3,
-	kCTAdobeJapan2CharacterCollection       = 4,
-	kCTAdobeKorea1CharacterCollection       = 5
+	kCTAdobeCNS1CharacterCollection     = 1,
+	kCTAdobeGB1CharacterCollection      = 2,
+	kCTAdobeJapan1CharacterCollection     = 3,
+	kCTAdobeJapan2CharacterCollection     = 4,
+	kCTAdobeKorea1CharacterCollection     = 5
 };
 typedef int CTCharacterCollection;
 

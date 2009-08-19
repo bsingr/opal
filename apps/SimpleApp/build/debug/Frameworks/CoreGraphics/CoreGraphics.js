@@ -519,190 +519,190 @@ return element.getContext("2d");
 
 function CGDOMRenderingContext()
 {
-    this.canvas = null;
-    
-    // compositing
-    this.globalAlpha = 1.0;
-    this.globalCompositeOperation = "source-over";
-    
-    // colors and styles
-    this.strokeStyle = "black";
-    this.fillStyle = "black";
-    
-    // text
-    this.font = "10px Arial";
-    this.textAlign = "start";
-    this.textBaseline = "alphabetic";
-    
-    // line caps/joins
-    this.lineWidth = 1;
-    this.lineCap = "butt";
-    this.lineJoin = "miter";
-    this.miterLimit = 10;
+  this.canvas = null;
+  
+  // compositing
+  this.globalAlpha = 1.0;
+  this.globalCompositeOperation = "source-over";
+  
+  // colors and styles
+  this.strokeStyle = "black";
+  this.fillStyle = "black";
+  
+  // text
+  this.font = "10px Arial";
+  this.textAlign = "start";
+  this.textBaseline = "alphabetic";
+  
+  // line caps/joins
+  this.lineWidth = 1;
+  this.lineCap = "butt";
+  this.lineJoin = "miter";
+  this.miterLimit = 10;
 
-    // shadows
-    this.shadowOffsetX = 0;
-    this.shadowOffsetY = 0;
-    this.shadowBlur = 0;
-    this.shadowColor = "black";
-    return this;
+  // shadows
+  this.shadowOffsetX = 0;
+  this.shadowOffsetY = 0;
+  this.shadowBlur = 0;
+  this.shadowColor = "black";
+  return this;
 }
 
 CGDOMRenderingContext.prototype.save = function()
 {
-    
+  
 };
 
 CGDOMRenderingContext.prototype.restore = function()
 {
-    
+  
 };
 
 CGDOMRenderingContext.prototype.scale = function(x, y)
 {
-    
+  
 };
 
 CGDOMRenderingContext.prototype.rotate = function(angle)
 {
-    
+  
 };
 
 CGDOMRenderingContext.prototype.translate = function(x, y)
 {
-    
+  
 };
 
 CGDOMRenderingContext.prototype.transform = function(m11, m12, m21, m22, dx, dy)
 {
-    
+  
 };
-        
+    
 
-            
+      
 CGDOMRenderingContext.prototype.setTransform = function(m11, m21, m12, m22, dx, dy)
 {
-                
+        
 };
-            
+      
 CGDOMRenderingContext.prototype.createLinearGradient = function(x0, y0, x1, y1)
 {
-                
+        
 };
-            
+      
 CGDOMRenderingContext.prototype.createRadialGradient =  function(x0, y0, r0, x1, y1, r1)
 {
-                
+        
 };
-            
+      
 CGDOMRenderingContext.prototype.createPattern = function(image, repetition)
 {
-                
+        
 };
 
 CGDOMRenderingContext.prototype.clearRect = function(x, y, w, h)
 {
-    if (this.canvas.hasChildNodes())
+  if (this.canvas.hasChildNodes())
+  {
+    while (this.canvas.childNodes.length >= 1)
     {
-        while (this.canvas.childNodes.length >= 1)
-        {
-            this.canvas.removeChild(this.canvas.firstChild);       
-        } 
-    }
+      this.canvas.removeChild(this.canvas.firstChild);     
+    } 
+  }
 };
-            
+      
 CGDOMRenderingContext.prototype.fillRect = function(x, y, w, h)
 {
-    var theDiv = document.createElement("div");
-    theDiv.style.height = h + 'px';
-    theDiv.style.width = w + 'px';
-    theDiv.style.background = "yellow";// = this.fillStyle;
-    this.canvas.appendChild(theDiv);
+  var theDiv = document.createElement("div");
+  theDiv.style.height = h + 'px';
+  theDiv.style.width = w + 'px';
+  theDiv.style.background = "yellow";// = this.fillStyle;
+  this.canvas.appendChild(theDiv);
 };
-            
+      
 CGDOMRenderingContext.prototype.strokeRect = function(x, y, w, h)
 {
-                
+        
 };
 
 CGDOMRenderingContext.prototype.beginPath = function()
 {
-                
+        
 };
-            
+      
 CGDOMRenderingContext.prototype.closePath = function()
 {
-                
+        
 };
-            
+      
 CGDOMRenderingContext.prototype.moveTo = function(x, y)
 {
-                
+        
 };
-            
+      
 CGDOMRenderingContext.prototype.lineTo = function(x, y)
 {
-                
+        
 };
-            
+      
 CGDOMRenderingContext.prototype.quadraticCurveTo = function(cpx, cpy, x, y)
 {
-                
+        
 };
-            
+      
 CGDOMRenderingContext.prototype.bezierCurveTo = function(cp1x, cp1y, cp2x, cp2y, x, y)
 {
-                
+        
 };
-            
+      
 CGDOMRenderingContext.prototype.arcTo = function(x1, y1, x2, y2, radius)
 {
-                
+        
 };
-            
+      
 CGDOMRenderingContext.prototype.rect = function(x, y, w, h)
 {
-                
+        
 };
-            
+      
 CGDOMRenderingContext.prototype.arc = function(x, y, radius, startAngle, endAngle, anticlockwise)
 {
 
 };
-            
+      
 CGDOMRenderingContext.prototype.fill = function()
 {
-                
+        
 };
-            
+      
 CGDOMRenderingContext.prototype.stroke = function()
 {
-                
+        
 };
-            
+      
 CGDOMRenderingContext.prototype.clip = function()
 {
-                
+        
 };
-            
+      
 CGDOMRenderingContext.prototype.isPointInPath = function(x, y)
 {
-                
+        
 };
-            
+      
 CGDOMRenderingContext.prototype.fillText = function(text, x, y, maxWidth)
 {
-    this.strokeText(text, x, y, maxWidth);
+  this.strokeText(text, x, y, maxWidth);
 };
-            
+      
 CGDOMRenderingContext.prototype.strokeText = function(text, x, y, maxWidth)
 {
-    var theSpan = document.createElement("span");
-    theSpan.innerHTML = text;
-    theSpan.style.font = this.font;
-    this.canvas.appendChild(theSpan);
+  var theSpan = document.createElement("span");
+  theSpan.innerHTML = text;
+  theSpan.style.font = this.font;
+  this.canvas.appendChild(theSpan);
 };
-            
+      
 CGDOMRenderingContext.prototype.measureText = function(text)
 {
 
@@ -733,7 +733,7 @@ CGDOMRenderingContext.prototype.getImageData = function(sx, sy, sw, sh)
 
 CGDOMRenderingContext.prototype.putImageData = function(imagedata, dx, dy,  dirtyX, dirtyY, dirtyWidth, dirtyHeight)
 {
-    
+  
 };
 // 
 //  CGEvent.js
@@ -747,51 +747,51 @@ CGDOMRenderingContext.prototype.putImageData = function(imagedata, dx, dy,  dirt
 // =============================================================================
 document.onmousedown = function(event)
 {
-    NSEventMouseEventFromCGEvent(event);
+  NSEventMouseEventFromCGEvent(event);
 };
 
 document.onmouseup = function(event)
 {
-    NSEventMouseEventFromCGEvent(event);
+  NSEventMouseEventFromCGEvent(event);
 };
 
 document.onmousemove = function(event)
 {
-    NSEventMouseEventFromCGEvent(event);
+  NSEventMouseEventFromCGEvent(event);
 };
 
 document.onkeypress = function(event)
 {
-    NSEventKeyEventFromCGEvent(event);
+  NSEventKeyEventFromCGEvent(event);
 };
 
 function CGEventScreenFrameRect()
 {
-    return CGRectMake(0, 0, window.innerWidth, window.innerHeight);
+  return CGRectMake(0, 0, window.innerWidth, window.innerHeight);
 }
 
 // extern CGEventType CGEventGetType(CGEventRef event);
 function CGEventGetType(event)
 {
-    if(event.type == "mousedown")
-        return 1;
-    else if(event.type == "mouseup")
-        return 2;
-    else if(event.type == "mousemove")
-        return 5;
-    else return -1;
+  if(event.type == "mousedown")
+    return 1;
+  else if(event.type == "mouseup")
+    return 2;
+  else if(event.type == "mousemove")
+    return 5;
+  else return -1;
 }
 
 // extern CGPoint CGEventGetLocation(CGEventRef event);
 function CGEventGetLocation(event)
 {
-    return CGPointMake(event.clientX, (window.innerHeight - event.clientY));
+  return CGPointMake(event.clientX, (window.innerHeight - event.clientY));
 }
 
 // extern CGPoint CGEventGetUnflippedLocation(CGEventRef event);
 function CGEventGetUnflippedLocation(event)
 {
-    return CGPointMake(event.clientX, event.clientY);
+  return CGPointMake(event.clientX, event.clientY);
 }
 
 // extern void CGEventSetLocation(CGEventRef event, CGPoint location);
@@ -799,21 +799,21 @@ function CGEventGetUnflippedLocation(event)
 // extern CGEventFlags CGEventGetFlags(CGEventRef event);
 function CGEventGetFlags(event)
 {
-    var modifierFlags = 1;
-    
-    if (event.metaKey)
-     modifierFlags = modifierFlags | (1 << 20);
-     
-     if (event.shiftKey)
-     modifierFlags = modifierFlags | (1 << 17);
-     
-     if (event.altKey)
-     modifierFlags = modifierFlags | (1 << 19);
-     
-     if (event.ctrlKey)
-     modifierFlags = modifierFlags | (1 << 18);
-    
-    return modifierFlags;
+  var modifierFlags = 1;
+  
+  if (event.metaKey)
+   modifierFlags = modifierFlags | (1 << 20);
+   
+   if (event.shiftKey)
+   modifierFlags = modifierFlags | (1 << 17);
+   
+   if (event.altKey)
+   modifierFlags = modifierFlags | (1 << 19);
+   
+   if (event.ctrlKey)
+   modifierFlags = modifierFlags | (1 << 18);
+  
+  return modifierFlags;
 }
 
 // extern void CGEventSetFlags(CGEventRef event, CGEventFlags flags);
@@ -825,14 +825,14 @@ function CGEventGetFlags(event)
 // extern CFStringRef CGEventKeyGetUnicodeString(CGEventRef event);
 function CGEventKeyGetUnicodeString(event)
 {
-    var keyCode = event.charCode;
-    var theCharacters = String.fromCharCode(keyCode);
+  var keyCode = event.charCode;
+  var theCharacters = String.fromCharCode(keyCode);
 
-    // if ( theCharacters.toUpperCase() === theCharacters && theCharacters.toLowerCase() !== theCharacters && !theCharacters.shiftKey ) {
-    //                     NSLog("caps: " + theCharacters);
-    //             }
-    
-    return theCharacters;
+  // if ( theCharacters.toUpperCase() === theCharacters && theCharacters.toLowerCase() !== theCharacters && !theCharacters.shiftKey ) {
+  //           NSLog("caps: " + theCharacters);
+  //       }
+  
+  return theCharacters;
 }function CGFontCreate(name,size,isBold)
 {
 var theFont = {_name:0,_size:0,_isBold:0,};
@@ -875,54 +875,54 @@ return (font._isBold ? "bold " : "") + Math.round(font._size) + "px '" + font._n
 
 function CGPoint()
 {
-    this.x = 0;
-    this.y = 0;
+  this.x = 0;
+  this.y = 0;
 }
 
 function CGSize()
 {
-    this.width = 0;
-    this.height = 0;
+  this.width = 0;
+  this.height = 0;
 }
 
 function CGRect()
 {
-    this.origin = new CGPoint();
-    this.size = new CGSize();
+  this.origin = new CGPoint();
+  this.size = new CGSize();
 }
 
 function CGPointMake(x, y)
 {
-    return {
-        x: x,
-        y: y
-    };
+  return {
+    x: x,
+    y: y
+  };
 }
 
 function CGSizeMake(width, height)
 {
-    return {
-        width: width,
-        height: height
-    };
+  return {
+    width: width,
+    height: height
+  };
 }
 
 function CGRectMake(x, y, width, height)
 {
-    return {
-        size: CGSizeMake(width, height),
-        origin: CGPointMake(x, y)
-    };
+  return {
+    size: CGSizeMake(width, height),
+    origin: CGPointMake(x, y)
+  };
 }
 
 function CGRectGetMinX(rect)
 {
-    return rect.origin.x;
+  return rect.origin.x;
 }
 
 function CGRectGetMidX(rect)
 {
-    return rect.origin.x + (rect.size.width / 2.0);
+  return rect.origin.x + (rect.size.width / 2.0);
 }
 
 function CGRectGetMaxX(rect)
@@ -1114,17 +1114,17 @@ function CGRectFromString(aString)
 
 function CGStringFromRect(aRect)
 {
-    return "{" + CGStringFromPoint(aRect.origin) + ", " + CGStringFromSize(aRect.size) + "}";
+  return "{" + CGStringFromPoint(aRect.origin) + ", " + CGStringFromSize(aRect.size) + "}";
 }
 
 function CGStringFromPoint(aPoint)
 {
-    return "{" + aPoint.x + ", " + aPoint.y + "}";
+  return "{" + aPoint.x + ", " + aPoint.y + "}";
 }
 
 function CGStringFromSize(aSize)
 {
-    return "{" + aSize.width + ", " + aSize.height + "}";
+  return "{" + aSize.width + ", " + aSize.height + "}";
 }
 
 function CGPointFromString(aString)
@@ -1146,26 +1146,26 @@ function CGSizeFromString(aString)
 
 function CGGradientRef()
 {
-    this._colors = [];
-    this._locations = [];
-    return this;
+  this._colors = [];
+  this._locations = [];
+  return this;
 }
 
 // extern CGGradientRef CGGradientCreateWithColorComponents(CGColorSpaceRef space, CGFloat components[], CGFloat locations[], int count);
 // 
 function CGGradientCreateWithColorComponenets(space, componenets, locations, count)
 {
-    
+  
 }
 
 // extern CGGradientRef CGGradientCreateWithColors(CGColorSpaceRef space, CGArrayRef colors, CGFloat locations[]);
 // 
 function CGGradientCreateWithColors(space, colors, locations)
 {
-    var theGradient = new CGGradientRef();
-    theGradient._colors = colors;
-    theGradient._locations = locations;
-    return theGradient;
+  var theGradient = new CGGradientRef();
+  theGradient._colors = colors;
+  theGradient._locations = locations;
+  return theGradient;
 }
 // 
 //  CGImage.js
@@ -1179,10 +1179,10 @@ function CGGradientCreateWithColors(space, colors, locations)
 
 function CGImageRef()
 {
-    this._imageSource = "";
-    this._representations = [];
-    this._loadingStatus = [0];
-    return this;
+  this._imageSource = "";
+  this._representations = [];
+  this._loadingStatus = [0];
+  return this;
 }
 
 
@@ -1190,153 +1190,153 @@ function CGImageRef()
 // 
 function CGImageCreate(width, height, bitsPerComponent, bitsPerPixel, bytesPerRow, colorspace, bitmapInfo, provider, decode, shouldInterpolate, intent)
 {
-    
+  
 }
 
 // extern CGImageRef CGImageMaskCreate(int width, int height, int bitsPerComponent, int bitsPerPixel, int bytesPerRow, CGDataProviderRef provider, const CGFloat decode[], bool shouldInterpolate);
 // 
 function CGImageMaskCreate(width, height, bitsPerComponent, bitsPerPixel, bytesPerRow, provider, decode, shouldInterpolate)
 {
-    
+  
 }
 
 // extern CGImageRef CGImageCreateCopy(CGImageRef image);
 // 
 function CGImageCreateCopy(image)
 {
-    
+  
 }
 
 // extern CGImageRef CGImageCreateWithJPEGDataProvider(CGDataProviderRef source, const CGFloat decode[], bool shouldInterpolate, CGColorRenderingIntent intent);
 // 
 function CGImageCreateWithJPEGDataProvider(source, decode, shouldInterpolate, intent)
 {
-    
+  
 }
 
 // extern CGImageRef CGImageCreateWithPNGDataProvider(CGDataProviderRef source, const CGFloat decode[], bool shouldInterpolate, CGColorRenderingIntent intent);
 // 
 function CGImageCreateWithPNGDataProvider(source, decode, shouldInterpolate, intent)
 {
-    
+  
 }
 
 // extern CGImageRef CGImageCreateWithImageInRect(CGImageRef image, CGRect rect);
 // 
 function CGImageCreateWithImageInRect(image, rect)
 {
-    
+  
 }
 
 // extern CGImageRef CGImageCreateWithMask(CGImageRef image, CGImageRef mask);
 // 
 function CGImageCreateWithMask(image, mask)
 {
-    
+  
 }
 
 // extern CGImageRef CGImageCreateWithMaskingColors(CGImageRef image, const CGFloat components[]);
 // 
 function CGImageCreateWithMaskingColors(image, components)
 {
-    
+  
 }
 
 // extern CGImageRef CGImageCreateCopyWithColorSpace(CGImageRef image, CGColorSpaceRef colorspace);
 // 
 function CGImageCreateCopyWithColorSpace(image, colorspace)
 {
-    
+  
 }
 
 // extern bool CGImageIsMask(CGImageRef image);
 // 
 function CGImageIsMask(image)
 {
-    
+  
 }
 
 // extern int CGImageGetWidth(CGImageRef image);
 // 
 function CGImageGetWidth(image)
 {
-    
+  
 }
 
 // extern int CGImageGetHeight(CGImageRef image);
 // 
 function CGImageGetHeight(image)
 {
-    
+  
 }
 
 // extern int CGImageGetBitsPerComponent(CGImageRef image);
 // 
 function CGImaheGetBitsPerComponent(image)
 {
-    
+  
 }
 
 // extern int CGImageGetBitsPerPixel(CGImageRef image);
 // 
 function CGImageGetBitsPerPixel(image)
 {
-    
+  
 }
 
 // extern int CGImageGetBytesPerRow(CGImageRef image);
 // 
 function CGImageGetBytesPerRow(image)
 {
-    
+  
 }
 
 // extern CGColorSpaceRef CGImageGetColorSpace(CGImageRef image);
 // 
 function CGImageGetColorSpace(image)
 {
-    
+  
 }
 
 // extern CGImageAlphaInfo CGImageGetAlphaInfo(CGImageRef image);
 // 
 function CGImageGetAlphaInfo(image)
 {
-    
+  
 }
 
 // extern CGDataProviderRef CGImageGetDataProvider(CGImageRef image);
 // 
 function CGImageGetDataProvider(image)
 {
-    
+  
 }
 
 // extern const CGFloat *CGImageGetDecode(CGImageRef image);
 // 
 function CGImageGetDecode(image)
 {
-    
+  
 }
 
 // extern bool CGImageGetShouldInterpolate(CGImageRef image);
 // 
 function CGImageGetShouldInterpolate(image)
 {
-    
+  
 }
 
 // extern CGColorRenderingIntent CGImageGetRenderingIntent(CGImageRef image);
 // 
 function CGImageGetRenderingIntent(image)
 {
-    
+  
 }
 
 // extern CGBitmapInfo CGImageGetBitmapInfo(CGImageRef image);
 function CGImageGetBitmapInfo(image)
 {
-    
+  
 }
 
 // ========================
@@ -1345,17 +1345,17 @@ function CGImageGetBitmapInfo(image)
 
 function CGImageCreateWithURLDataProvider(source)
 {
-    var theImage = new CGImageRef();
-    theImage._imageSource = source;
-    var theRepresentation = new Image();
-    theImage._representations[0] = theRepresentation;
-    theRepresentation.src = source;
-    
-    theRepresentation.onload = function() {
-        theImage._loadingStatus[0] == 4;
-    };
-    
-    return theImage;
+  var theImage = new CGImageRef();
+  theImage._imageSource = source;
+  var theRepresentation = new Image();
+  theImage._representations[0] = theRepresentation;
+  theRepresentation.src = source;
+  
+  theRepresentation.onload = function() {
+    theImage._loadingStatus[0] == 4;
+  };
+  
+  return theImage;
 }
 
 // extern CGImageRef CGImageCreateWithFileDataProvider(CFStringRef source);
@@ -1363,7 +1363,7 @@ function CGImageCreateWithURLDataProvider(source)
 // extern BOOL CGImageDataRepresentationFinishedLoading(CGImageRef image);
 function CGImageDataRepresentationFinishedLoading(image)
 {
-    return (image._loadingStatus[0] == 4);
+  return (image._loadingStatus[0] == 4);
 }
 
 // 
@@ -1378,154 +1378,154 @@ function CGImageDataRepresentationFinishedLoading(image)
 // 
 function CGPathGetTypeID()
 {
-    
+  
 }
 
 // extern CGMutablePathRef CGPathCreateMutable(void);
 // 
 function CGPathCreateMutable()
 {
-    
+  
 }
 
 // extern CGPathRef CGPathCreateCopy(CGPathRef path);
 // 
 function CGPathCreateCopy()
 {
-    
+  
 }
 
 // extern CGMutablePathRef CGPathCreateMutableCopy(CGPathRef path);
 // 
 function CGPathCreateMutableCopy(path)
 {
-    
+  
 }
 
 // extern bool CGPathEqualToPath(CGPathRef path1, CGPathRef path2);
 // 
 function CGPathEqualToPath(path1, path2)
 {
-    
+  
 }
 
 // extern bool CGPathMoveToPoint(CGMutablePathRef path, CGAffineTransform *m, CGFloat x, CGFloat y);
 // 
 function CGPathMoveToPoint(path, m, x, y)
 {
-    
+  
 }
 
 // extern void CGPathAddLineToPoint(CGMutablePathRef path, CGAffineTransform *m, CGFloat x, CGFloat y);
 // 
 function CGPathAddLineToPoint(path, m, x, y)
 {
-    
+  
 }
 
 // extern void CGPathAddQuadCurveToPoint(CGMutablePathRef path, CGAffineTransform *m, CGFloat cpx, CGFloat cpy, CGFloat x, CGFloat y);
 // 
 function CGPathAddQuadCurveToPoint(path, m, cpx, cpy, x, y)
 {
-    
+  
 }
 
 // extern void CGPathAddCurveToPoint(CGMutablePathRef path, CGAffineTransform *m, CGFloat cp1x, CGFloat cp1y, CGFloat cp2x, CGFloat cp2y, CGFloat x, CGFloat y);
 // 
 function CGPathAddCurveToPoint(path, m, cp1x, cp2y, cp2x, cp2y, x, y)
 {
-    
+  
 }
 
 // extern void CGPathCloseSubpath(CGMutablePathRef path);
 // 
 function CGPathCloseSubpath(path)
 {
-    
+  
 }
 
 // extern void CGPathAddRect(CGMutablePathRef path, CGAffineTransform *m, CGRect rect);
 // 
 function CGPathAddRect(path, m, rect)
 {
-    
+  
 }
 
 // extern void CGPathAddRects(CGMutablePathRef path, CGAffineTransform *m, CGRect rects[], int count);
 // 
 function CGPathAddRects(path, m, rects, count)
 {
-    
+  
 }
 
 // extern void CGPathAddLines(CGMutablePathRef path, CGAffineTransform *m, CGPoint points[], int count);
 // 
 function CGPathAddLines(path, m, point, count)
 {
-    
+  
 }
 
 // extern void CGPathAddEllipseInRect(CGMutablePathRef path, CGAffineTransform *m, CGRect rect);
 // 
 function CGPathAddEllipseInRect(path, m, rect)
 {
-    
+  
 }
 
 // extern void CGPathAddArc(CGMutablePathRef path, CGAffineTransform *m, CGFloat x, CGFloat y, CGFloat radius, CGFloat startAngle, CGFloat endAngle, bool clockwise);
 // 
 function CGPathAddArc(path, m, x, y, radius, startAngle, endAngle, clockwise)
 {
-    
+  
 }
 
 // extern void CGPathAddArcToPoint(CGMutablePathRef path, CGAffineTransform *m, CGFloat x1, CGFloat y1, CGFloat x2, CGFloat y2, CGFloat radius);
 // 
 function CGPathAddArcToPoint(path, m, x1, y1, x2, y2, radius)
 {
-    
+  
 }
 
 // extern void CGPathAddPath(CGMutablePathRef path1, CGAffineTransform *m, CGPathRef path2);
 // 
 function CGPathAddPath(path1, m, path2)
 {
-    
+  
 }
 
 // extern bool CGPathIsEmpty(CGPathRef path);
 // 
 function CGPathIsEmpty(path)
 {
-    
+  
 }
 
 // extern bool CGPathIsRect(CGPathRef path, CGRect *rect);
 // 
 function CGPathIsRect(path, rect)
 {
-    
+  
 }
 
 // extern CGPoint CGPathGetCurrentPoint(CGPathRef path);
 // 
 function CGPathGetCurrentPoint(path)
 {
-    
+  
 }
 
 // extern CGRect CGPathGetBoundingBox(CGPathRef path);
 // 
 function CGPathGetBoudingBox(path)
 {
-    
+  
 }
 
 // extern bool CGPathContainsPoint(CGPathRef path, CGAffineTransform *m, CGPoint point, bool eoFill);
 // 
 function CGPathContainsPoint(path, m, point, eoFill)
 {
-    
+  
 }
 // Copyright 2006 Google Inc.
 //
@@ -1582,8 +1582,8 @@ if (!document.createElement('canvas').getContext) {
    * @return {CanvasRenderingContext2D_}
    */
   function getContext() {
-    return this.context_ ||
-        (this.context_ = new CanvasRenderingContext2D_(this));
+  return this.context_ ||
+    (this.context_ = new CanvasRenderingContext2D_(this));
   }
 
   var slice = Array.prototype.slice;
@@ -1599,124 +1599,124 @@ if (!document.createElement('canvas').getContext) {
    *
    * @param {Function} f The function to bind the object to
    * @param {Object} obj The object that should act as this when the function
-   *     is called
+   *   is called
    * @param {*} var_args Rest arguments that will be used as the initial
-   *     arguments when the function is called
+   *   arguments when the function is called
    * @return {Function} A new function that has bound this
    */
   function bind(f, obj, var_args) {
-    var a = slice.call(arguments, 2);
-    return function() {
-      return f.apply(obj, a.concat(slice.call(arguments)));
-    };
+  var a = slice.call(arguments, 2);
+  return function() {
+    return f.apply(obj, a.concat(slice.call(arguments)));
+  };
   }
 
   var G_vmlCanvasManager_ = {
-    init: function(opt_doc) {
-      if (/MSIE/.test(navigator.userAgent) && !window.opera) {
-        var doc = opt_doc || document;
-        // Create a dummy element so that IE will allow canvas elements to be
-        // recognized.
-        doc.createElement('canvas');
-        doc.attachEvent('onreadystatechange', bind(this.init_, this, doc));
-      }
-    },
-
-    init_: function(doc) {
-      // create xmlns
-      if (!doc.namespaces['g_vml_']) {
-        doc.namespaces.add('g_vml_', 'urn:schemas-microsoft-com:vml',
-                           '#default#VML');
-
-      }
-      if (!doc.namespaces['g_o_']) {
-        doc.namespaces.add('g_o_', 'urn:schemas-microsoft-com:office:office',
-                           '#default#VML');
-      }
-
-      // Setup default CSS.  Only add one style sheet per document
-      if (!doc.styleSheets['ex_canvas_']) {
-        var ss = doc.createStyleSheet();
-        ss.owningElement.id = 'ex_canvas_';
-        ss.cssText = 'canvas{display:inline-block;overflow:hidden;' +
-            // default size is 300x150 in Gecko and Opera
-            'text-align:left;width:300px;height:150px}' +
-            'g_vml_\\:*{behavior:url(#default#VML)}' +
-            'g_o_\\:*{behavior:url(#default#VML)}';
-
-      }
-
-      // find all canvas elements
-      var els = doc.getElementsByTagName('canvas');
-      for (var i = 0; i < els.length; i++) {
-        this.initElement(els[i]);
-      }
-    },
-
-    /**
-     * Public initializes a canvas element so that it can be used as canvas
-     * element from now on. This is called automatically before the page is
-     * loaded but if you are creating elements using createElement you need to
-     * make sure this is called on the element.
-     * @param {HTMLElement} el The canvas element to initialize.
-     * @return {HTMLElement} the element that was created.
-     */
-    initElement: function(el) {
-      if (!el.getContext) {
-
-        el.getContext = getContext;
-
-        // Remove fallback content. There is no way to hide text nodes so we
-        // just remove all childNodes. We could hide all elements and remove
-        // text nodes but who really cares about the fallback content.
-        el.innerHTML = '';
-
-        // do not use inline function because that will leak memory
-        el.attachEvent('onpropertychange', onPropertyChange);
-        el.attachEvent('onresize', onResize);
-
-        var attrs = el.attributes;
-        if (attrs.width && attrs.width.specified) {
-          // TODO: use runtimeStyle and coordsize
-          // el.getContext().setWidth_(attrs.width.nodeValue);
-          el.style.width = attrs.width.nodeValue + 'px';
-        } else {
-          el.width = el.clientWidth;
-        }
-        if (attrs.height && attrs.height.specified) {
-          // TODO: use runtimeStyle and coordsize
-          // el.getContext().setHeight_(attrs.height.nodeValue);
-          el.style.height = attrs.height.nodeValue + 'px';
-        } else {
-          el.height = el.clientHeight;
-        }
-        //el.getContext().setCoordsize_()
-      }
-      return el;
+  init: function(opt_doc) {
+    if (/MSIE/.test(navigator.userAgent) && !window.opera) {
+    var doc = opt_doc || document;
+    // Create a dummy element so that IE will allow canvas elements to be
+    // recognized.
+    doc.createElement('canvas');
+    doc.attachEvent('onreadystatechange', bind(this.init_, this, doc));
     }
+  },
+
+  init_: function(doc) {
+    // create xmlns
+    if (!doc.namespaces['g_vml_']) {
+    doc.namespaces.add('g_vml_', 'urn:schemas-microsoft-com:vml',
+               '#default#VML');
+
+    }
+    if (!doc.namespaces['g_o_']) {
+    doc.namespaces.add('g_o_', 'urn:schemas-microsoft-com:office:office',
+               '#default#VML');
+    }
+
+    // Setup default CSS.  Only add one style sheet per document
+    if (!doc.styleSheets['ex_canvas_']) {
+    var ss = doc.createStyleSheet();
+    ss.owningElement.id = 'ex_canvas_';
+    ss.cssText = 'canvas{display:inline-block;overflow:hidden;' +
+      // default size is 300x150 in Gecko and Opera
+      'text-align:left;width:300px;height:150px}' +
+      'g_vml_\\:*{behavior:url(#default#VML)}' +
+      'g_o_\\:*{behavior:url(#default#VML)}';
+
+    }
+
+    // find all canvas elements
+    var els = doc.getElementsByTagName('canvas');
+    for (var i = 0; i < els.length; i++) {
+    this.initElement(els[i]);
+    }
+  },
+
+  /**
+   * Public initializes a canvas element so that it can be used as canvas
+   * element from now on. This is called automatically before the page is
+   * loaded but if you are creating elements using createElement you need to
+   * make sure this is called on the element.
+   * @param {HTMLElement} el The canvas element to initialize.
+   * @return {HTMLElement} the element that was created.
+   */
+  initElement: function(el) {
+    if (!el.getContext) {
+
+    el.getContext = getContext;
+
+    // Remove fallback content. There is no way to hide text nodes so we
+    // just remove all childNodes. We could hide all elements and remove
+    // text nodes but who really cares about the fallback content.
+    el.innerHTML = '';
+
+    // do not use inline function because that will leak memory
+    el.attachEvent('onpropertychange', onPropertyChange);
+    el.attachEvent('onresize', onResize);
+
+    var attrs = el.attributes;
+    if (attrs.width && attrs.width.specified) {
+      // TODO: use runtimeStyle and coordsize
+      // el.getContext().setWidth_(attrs.width.nodeValue);
+      el.style.width = attrs.width.nodeValue + 'px';
+    } else {
+      el.width = el.clientWidth;
+    }
+    if (attrs.height && attrs.height.specified) {
+      // TODO: use runtimeStyle and coordsize
+      // el.getContext().setHeight_(attrs.height.nodeValue);
+      el.style.height = attrs.height.nodeValue + 'px';
+    } else {
+      el.height = el.clientHeight;
+    }
+    //el.getContext().setCoordsize_()
+    }
+    return el;
+  }
   };
 
   function onPropertyChange(e) {
-    var el = e.srcElement;
+  var el = e.srcElement;
 
-    switch (e.propertyName) {
-      case 'width':
-        el.style.width = el.attributes.width.nodeValue + 'px';
-        el.getContext().clearRect();
-        break;
-      case 'height':
-        el.style.height = el.attributes.height.nodeValue + 'px';
-        el.getContext().clearRect();
-        break;
-    }
+  switch (e.propertyName) {
+    case 'width':
+    el.style.width = el.attributes.width.nodeValue + 'px';
+    el.getContext().clearRect();
+    break;
+    case 'height':
+    el.style.height = el.attributes.height.nodeValue + 'px';
+    el.getContext().clearRect();
+    break;
+  }
   }
 
   function onResize(e) {
-    var el = e.srcElement;
-    if (el.firstChild) {
-      el.firstChild.style.width =  el.clientWidth + 'px';
-      el.firstChild.style.height = el.clientHeight + 'px';
-    }
+  var el = e.srcElement;
+  if (el.firstChild) {
+    el.firstChild.style.width =  el.clientWidth + 'px';
+    el.firstChild.style.height = el.clientHeight + 'px';
+  }
   }
 
   G_vmlCanvasManager_.init();
@@ -1724,87 +1724,87 @@ if (!document.createElement('canvas').getContext) {
   // precompute "00" to "FF"
   var dec2hex = [];
   for (var i = 0; i < 16; i++) {
-    for (var j = 0; j < 16; j++) {
-      dec2hex[i * 16 + j] = i.toString(16) + j.toString(16);
-    }
+  for (var j = 0; j < 16; j++) {
+    dec2hex[i * 16 + j] = i.toString(16) + j.toString(16);
+  }
   }
 
   function createMatrixIdentity() {
-    return [
-      [1, 0, 0],
-      [0, 1, 0],
-      [0, 0, 1]
-    ];
+  return [
+    [1, 0, 0],
+    [0, 1, 0],
+    [0, 0, 1]
+  ];
   }
 
   function matrixMultiply(m1, m2) {
-    var result = createMatrixIdentity();
+  var result = createMatrixIdentity();
 
-    for (var x = 0; x < 3; x++) {
-      for (var y = 0; y < 3; y++) {
-        var sum = 0;
+  for (var x = 0; x < 3; x++) {
+    for (var y = 0; y < 3; y++) {
+    var sum = 0;
 
-        for (var z = 0; z < 3; z++) {
-          sum += m1[x][z] * m2[z][y];
-        }
-
-        result[x][y] = sum;
-      }
+    for (var z = 0; z < 3; z++) {
+      sum += m1[x][z] * m2[z][y];
     }
-    return result;
+
+    result[x][y] = sum;
+    }
+  }
+  return result;
   }
 
   function copyState(o1, o2) {
-    o2.fillStyle     = o1.fillStyle;
-    o2.lineCap       = o1.lineCap;
-    o2.lineJoin      = o1.lineJoin;
-    o2.lineWidth     = o1.lineWidth;
-    o2.miterLimit    = o1.miterLimit;
-    o2.shadowBlur    = o1.shadowBlur;
-    o2.shadowColor   = o1.shadowColor;
-    o2.shadowOffsetX = o1.shadowOffsetX;
-    o2.shadowOffsetY = o1.shadowOffsetY;
-    o2.strokeStyle   = o1.strokeStyle;
-    o2.globalAlpha   = o1.globalAlpha;
-    o2.arcScaleX_    = o1.arcScaleX_;
-    o2.arcScaleY_    = o1.arcScaleY_;
-    o2.lineScale_    = o1.lineScale_;
+  o2.fillStyle   = o1.fillStyle;
+  o2.lineCap     = o1.lineCap;
+  o2.lineJoin    = o1.lineJoin;
+  o2.lineWidth   = o1.lineWidth;
+  o2.miterLimit  = o1.miterLimit;
+  o2.shadowBlur  = o1.shadowBlur;
+  o2.shadowColor   = o1.shadowColor;
+  o2.shadowOffsetX = o1.shadowOffsetX;
+  o2.shadowOffsetY = o1.shadowOffsetY;
+  o2.strokeStyle   = o1.strokeStyle;
+  o2.globalAlpha   = o1.globalAlpha;
+  o2.arcScaleX_  = o1.arcScaleX_;
+  o2.arcScaleY_  = o1.arcScaleY_;
+  o2.lineScale_  = o1.lineScale_;
   }
 
   function processStyle(styleString) {
-    var str, alpha = 1;
+  var str, alpha = 1;
 
-    styleString = String(styleString);
-    if (styleString.substring(0, 3) == 'rgb') {
-      var start = styleString.indexOf('(', 3);
-      var end = styleString.indexOf(')', start + 1);
-      var guts = styleString.substring(start + 1, end).split(',');
+  styleString = String(styleString);
+  if (styleString.substring(0, 3) == 'rgb') {
+    var start = styleString.indexOf('(', 3);
+    var end = styleString.indexOf(')', start + 1);
+    var guts = styleString.substring(start + 1, end).split(',');
 
-      str = '#';
-      for (var i = 0; i < 3; i++) {
-        str += dec2hex[Number(guts[i])];
-      }
-
-      if (guts.length == 4 && styleString.substr(3, 1) == 'a') {
-        alpha = guts[3];
-      }
-    } else {
-      str = styleString;
+    str = '#';
+    for (var i = 0; i < 3; i++) {
+    str += dec2hex[Number(guts[i])];
     }
 
-    return {color: str, alpha: alpha};
+    if (guts.length == 4 && styleString.substr(3, 1) == 'a') {
+    alpha = guts[3];
+    }
+  } else {
+    str = styleString;
+  }
+
+  return {color: str, alpha: alpha};
   }
 
   function processLineCap(lineCap) {
-    switch (lineCap) {
-      case 'butt':
-        return 'flat';
-      case 'round':
-        return 'round';
-      case 'square':
-      default:
-        return 'square';
-    }
+  switch (lineCap) {
+    case 'butt':
+    return 'flat';
+    case 'round':
+    return 'round';
+    case 'square':
+    default:
+    return 'square';
+  }
   }
 
   /**
@@ -1814,629 +1814,629 @@ if (!document.createElement('canvas').getContext) {
    * be associated with
    */
   function CanvasRenderingContext2D_(surfaceElement) {
-    this.m_ = createMatrixIdentity();
+  this.m_ = createMatrixIdentity();
 
-    this.mStack_ = [];
-    this.aStack_ = [];
-    this.currentPath_ = [];
+  this.mStack_ = [];
+  this.aStack_ = [];
+  this.currentPath_ = [];
 
-    // Canvas context properties
-    this.strokeStyle = '#000';
-    this.fillStyle = '#000';
+  // Canvas context properties
+  this.strokeStyle = '#000';
+  this.fillStyle = '#000';
 
-    this.lineWidth = 1;
-    this.lineJoin = 'miter';
-    this.lineCap = 'butt';
-    this.miterLimit = Z * 1;
-    this.globalAlpha = 1;
-    this.canvas = surfaceElement;
+  this.lineWidth = 1;
+  this.lineJoin = 'miter';
+  this.lineCap = 'butt';
+  this.miterLimit = Z * 1;
+  this.globalAlpha = 1;
+  this.canvas = surfaceElement;
 
-    var el = surfaceElement.ownerDocument.createElement('div');
-    el.style.width =  surfaceElement.clientWidth + 'px';
-    el.style.height = surfaceElement.clientHeight + 'px';
-    el.style.overflow = 'hidden';
-    el.style.position = 'absolute';
-    surfaceElement.appendChild(el);
+  var el = surfaceElement.ownerDocument.createElement('div');
+  el.style.width =  surfaceElement.clientWidth + 'px';
+  el.style.height = surfaceElement.clientHeight + 'px';
+  el.style.overflow = 'hidden';
+  el.style.position = 'absolute';
+  surfaceElement.appendChild(el);
 
-    this.element_ = el;
-    this.arcScaleX_ = 1;
-    this.arcScaleY_ = 1;
-    this.lineScale_ = 1;
+  this.element_ = el;
+  this.arcScaleX_ = 1;
+  this.arcScaleY_ = 1;
+  this.lineScale_ = 1;
   }
 
   var contextPrototype = CanvasRenderingContext2D_.prototype;
   contextPrototype.clearRect = function() {
-    this.element_.innerHTML = '';
+  this.element_.innerHTML = '';
   };
 
   contextPrototype.beginPath = function() {
-    // TODO: Branch current matrix so that save/restore has no effect
-    //       as per safari docs.
-    this.currentPath_ = [];
+  // TODO: Branch current matrix so that save/restore has no effect
+  //     as per safari docs.
+  this.currentPath_ = [];
   };
 
   contextPrototype.moveTo = function(aX, aY) {
-    var p = this.getCoords_(aX, aY);
-    this.currentPath_.push({type: 'moveTo', x: p.x, y: p.y});
-    this.currentX_ = p.x;
-    this.currentY_ = p.y;
+  var p = this.getCoords_(aX, aY);
+  this.currentPath_.push({type: 'moveTo', x: p.x, y: p.y});
+  this.currentX_ = p.x;
+  this.currentY_ = p.y;
   };
 
   contextPrototype.lineTo = function(aX, aY) {
-    var p = this.getCoords_(aX, aY);
-    this.currentPath_.push({type: 'lineTo', x: p.x, y: p.y});
+  var p = this.getCoords_(aX, aY);
+  this.currentPath_.push({type: 'lineTo', x: p.x, y: p.y});
 
-    this.currentX_ = p.x;
-    this.currentY_ = p.y;
+  this.currentX_ = p.x;
+  this.currentY_ = p.y;
   };
 
   contextPrototype.bezierCurveTo = function(aCP1x, aCP1y,
-                                            aCP2x, aCP2y,
-                                            aX, aY) {
-    var p = this.getCoords_(aX, aY);
-    var cp1 = this.getCoords_(aCP1x, aCP1y);
-    var cp2 = this.getCoords_(aCP2x, aCP2y);
-    bezierCurveTo(this, cp1, cp2, p);
+                      aCP2x, aCP2y,
+                      aX, aY) {
+  var p = this.getCoords_(aX, aY);
+  var cp1 = this.getCoords_(aCP1x, aCP1y);
+  var cp2 = this.getCoords_(aCP2x, aCP2y);
+  bezierCurveTo(this, cp1, cp2, p);
   };
 
   // Helper function that takes the already fixed cordinates.
   function bezierCurveTo(self, cp1, cp2, p) {
-    self.currentPath_.push({
-      type: 'bezierCurveTo',
-      cp1x: cp1.x,
-      cp1y: cp1.y,
-      cp2x: cp2.x,
-      cp2y: cp2.y,
-      x: p.x,
-      y: p.y
-    });
-    self.currentX_ = p.x;
-    self.currentY_ = p.y;
+  self.currentPath_.push({
+    type: 'bezierCurveTo',
+    cp1x: cp1.x,
+    cp1y: cp1.y,
+    cp2x: cp2.x,
+    cp2y: cp2.y,
+    x: p.x,
+    y: p.y
+  });
+  self.currentX_ = p.x;
+  self.currentY_ = p.y;
   }
 
   contextPrototype.quadraticCurveTo = function(aCPx, aCPy, aX, aY) {
-    // the following is lifted almost directly from
-    // http://developer.mozilla.org/en/docs/Canvas_tutorial:Drawing_shapes
+  // the following is lifted almost directly from
+  // http://developer.mozilla.org/en/docs/Canvas_tutorial:Drawing_shapes
 
-    var cp = this.getCoords_(aCPx, aCPy);
-    var p = this.getCoords_(aX, aY);
+  var cp = this.getCoords_(aCPx, aCPy);
+  var p = this.getCoords_(aX, aY);
 
-    var cp1 = {
-      x: this.currentX_ + 2.0 / 3.0 * (cp.x - this.currentX_),
-      y: this.currentY_ + 2.0 / 3.0 * (cp.y - this.currentY_)
-    };
-    var cp2 = {
-      x: cp1.x + (p.x - this.currentX_) / 3.0,
-      y: cp1.y + (p.y - this.currentY_) / 3.0
-    };
+  var cp1 = {
+    x: this.currentX_ + 2.0 / 3.0 * (cp.x - this.currentX_),
+    y: this.currentY_ + 2.0 / 3.0 * (cp.y - this.currentY_)
+  };
+  var cp2 = {
+    x: cp1.x + (p.x - this.currentX_) / 3.0,
+    y: cp1.y + (p.y - this.currentY_) / 3.0
+  };
 
-    bezierCurveTo(this, cp1, cp2, p);
+  bezierCurveTo(this, cp1, cp2, p);
   };
 
   contextPrototype.arc = function(aX, aY, aRadius,
-                                  aStartAngle, aEndAngle, aClockwise) {
-    aRadius *= Z;
-    var arcType = aClockwise ? 'at' : 'wa';
+                  aStartAngle, aEndAngle, aClockwise) {
+  aRadius *= Z;
+  var arcType = aClockwise ? 'at' : 'wa';
 
-    var xStart = aX + mc(aStartAngle) * aRadius - Z2;
-    var yStart = aY + ms(aStartAngle) * aRadius - Z2;
+  var xStart = aX + mc(aStartAngle) * aRadius - Z2;
+  var yStart = aY + ms(aStartAngle) * aRadius - Z2;
 
-    var xEnd = aX + mc(aEndAngle) * aRadius - Z2;
-    var yEnd = aY + ms(aEndAngle) * aRadius - Z2;
+  var xEnd = aX + mc(aEndAngle) * aRadius - Z2;
+  var yEnd = aY + ms(aEndAngle) * aRadius - Z2;
 
-    // IE won't render arches drawn counter clockwise if xStart == xEnd.
-    if (xStart == xEnd && !aClockwise) {
-      xStart += 0.125; // Offset xStart by 1/80 of a pixel. Use something
-                       // that can be represented in binary
-    }
+  // IE won't render arches drawn counter clockwise if xStart == xEnd.
+  if (xStart == xEnd && !aClockwise) {
+    xStart += 0.125; // Offset xStart by 1/80 of a pixel. Use something
+             // that can be represented in binary
+  }
 
-    var p = this.getCoords_(aX, aY);
-    var pStart = this.getCoords_(xStart, yStart);
-    var pEnd = this.getCoords_(xEnd, yEnd);
+  var p = this.getCoords_(aX, aY);
+  var pStart = this.getCoords_(xStart, yStart);
+  var pEnd = this.getCoords_(xEnd, yEnd);
 
-    this.currentPath_.push({type: arcType,
-                           x: p.x,
-                           y: p.y,
-                           radius: aRadius,
-                           xStart: pStart.x,
-                           yStart: pStart.y,
-                           xEnd: pEnd.x,
-                           yEnd: pEnd.y});
+  this.currentPath_.push({type: arcType,
+               x: p.x,
+               y: p.y,
+               radius: aRadius,
+               xStart: pStart.x,
+               yStart: pStart.y,
+               xEnd: pEnd.x,
+               yEnd: pEnd.y});
 
   };
 
   contextPrototype.rect = function(aX, aY, aWidth, aHeight) {
-    this.moveTo(aX, aY);
-    this.lineTo(aX + aWidth, aY);
-    this.lineTo(aX + aWidth, aY + aHeight);
-    this.lineTo(aX, aY + aHeight);
-    this.closePath();
+  this.moveTo(aX, aY);
+  this.lineTo(aX + aWidth, aY);
+  this.lineTo(aX + aWidth, aY + aHeight);
+  this.lineTo(aX, aY + aHeight);
+  this.closePath();
   };
 
   contextPrototype.strokeRect = function(aX, aY, aWidth, aHeight) {
-    var oldPath = this.currentPath_;
-    this.beginPath();
+  var oldPath = this.currentPath_;
+  this.beginPath();
 
-    this.moveTo(aX, aY);
-    this.lineTo(aX + aWidth, aY);
-    this.lineTo(aX + aWidth, aY + aHeight);
-    this.lineTo(aX, aY + aHeight);
-    this.closePath();
-    this.stroke();
+  this.moveTo(aX, aY);
+  this.lineTo(aX + aWidth, aY);
+  this.lineTo(aX + aWidth, aY + aHeight);
+  this.lineTo(aX, aY + aHeight);
+  this.closePath();
+  this.stroke();
 
-    this.currentPath_ = oldPath;
+  this.currentPath_ = oldPath;
   };
 
   contextPrototype.fillRect = function(aX, aY, aWidth, aHeight) {
-    var oldPath = this.currentPath_;
-    this.beginPath();
+  var oldPath = this.currentPath_;
+  this.beginPath();
 
-    this.moveTo(aX, aY);
-    this.lineTo(aX + aWidth, aY);
-    this.lineTo(aX + aWidth, aY + aHeight);
-    this.lineTo(aX, aY + aHeight);
-    this.closePath();
-    this.fill();
+  this.moveTo(aX, aY);
+  this.lineTo(aX + aWidth, aY);
+  this.lineTo(aX + aWidth, aY + aHeight);
+  this.lineTo(aX, aY + aHeight);
+  this.closePath();
+  this.fill();
 
-    this.currentPath_ = oldPath;
+  this.currentPath_ = oldPath;
   };
 
   contextPrototype.createLinearGradient = function(aX0, aY0, aX1, aY1) {
-    var gradient = new CanvasGradient_('gradient');
-    gradient.x0_ = aX0;
-    gradient.y0_ = aY0;
-    gradient.x1_ = aX1;
-    gradient.y1_ = aY1;
-    return gradient;
+  var gradient = new CanvasGradient_('gradient');
+  gradient.x0_ = aX0;
+  gradient.y0_ = aY0;
+  gradient.x1_ = aX1;
+  gradient.y1_ = aY1;
+  return gradient;
   };
 
   contextPrototype.createRadialGradient = function(aX0, aY0, aR0,
-                                                   aX1, aY1, aR1) {
-    var gradient = new CanvasGradient_('gradientradial');
-    gradient.x0_ = aX0;
-    gradient.y0_ = aY0;
-    gradient.r0_ = aR0;
-    gradient.x1_ = aX1;
-    gradient.y1_ = aY1;
-    gradient.r1_ = aR1;
-    return gradient;
+                           aX1, aY1, aR1) {
+  var gradient = new CanvasGradient_('gradientradial');
+  gradient.x0_ = aX0;
+  gradient.y0_ = aY0;
+  gradient.r0_ = aR0;
+  gradient.x1_ = aX1;
+  gradient.y1_ = aY1;
+  gradient.r1_ = aR1;
+  return gradient;
   };
 
   contextPrototype.drawImage = function(image, var_args) {
-    var dx, dy, dw, dh, sx, sy, sw, sh;
+  var dx, dy, dw, dh, sx, sy, sw, sh;
 
-    // to find the original width we overide the width and height
-    var oldRuntimeWidth = image.runtimeStyle.width;
-    var oldRuntimeHeight = image.runtimeStyle.height;
-    image.runtimeStyle.width = 'auto';
-    image.runtimeStyle.height = 'auto';
+  // to find the original width we overide the width and height
+  var oldRuntimeWidth = image.runtimeStyle.width;
+  var oldRuntimeHeight = image.runtimeStyle.height;
+  image.runtimeStyle.width = 'auto';
+  image.runtimeStyle.height = 'auto';
 
-    // get the original size
-    var w = image.width;
-    var h = image.height;
+  // get the original size
+  var w = image.width;
+  var h = image.height;
 
-    // and remove overides
-    image.runtimeStyle.width = oldRuntimeWidth;
-    image.runtimeStyle.height = oldRuntimeHeight;
+  // and remove overides
+  image.runtimeStyle.width = oldRuntimeWidth;
+  image.runtimeStyle.height = oldRuntimeHeight;
 
-    if (arguments.length == 3) {
-      dx = arguments[1];
-      dy = arguments[2];
-      sx = sy = 0;
-      sw = dw = w;
-      sh = dh = h;
-    } else if (arguments.length == 5) {
-      dx = arguments[1];
-      dy = arguments[2];
-      dw = arguments[3];
-      dh = arguments[4];
-      sx = sy = 0;
-      sw = w;
-      sh = h;
-    } else if (arguments.length == 9) {
-      sx = arguments[1];
-      sy = arguments[2];
-      sw = arguments[3];
-      sh = arguments[4];
-      dx = arguments[5];
-      dy = arguments[6];
-      dw = arguments[7];
-      dh = arguments[8];
-    } else {
-      throw Error('Invalid number of arguments');
-    }
+  if (arguments.length == 3) {
+    dx = arguments[1];
+    dy = arguments[2];
+    sx = sy = 0;
+    sw = dw = w;
+    sh = dh = h;
+  } else if (arguments.length == 5) {
+    dx = arguments[1];
+    dy = arguments[2];
+    dw = arguments[3];
+    dh = arguments[4];
+    sx = sy = 0;
+    sw = w;
+    sh = h;
+  } else if (arguments.length == 9) {
+    sx = arguments[1];
+    sy = arguments[2];
+    sw = arguments[3];
+    sh = arguments[4];
+    dx = arguments[5];
+    dy = arguments[6];
+    dw = arguments[7];
+    dh = arguments[8];
+  } else {
+    throw Error('Invalid number of arguments');
+  }
 
-    var d = this.getCoords_(dx, dy);
+  var d = this.getCoords_(dx, dy);
 
-    var w2 = sw / 2;
-    var h2 = sh / 2;
+  var w2 = sw / 2;
+  var h2 = sh / 2;
 
-    var vmlStr = [];
+  var vmlStr = [];
 
-    var W = 10;
-    var H = 10;
+  var W = 10;
+  var H = 10;
 
-    // For some reason that I've now forgotten, using divs didn't work
-    vmlStr.push(' <g_vml_:group',
-                ' coordsize="', Z * W, ',', Z * H, '"',
-                ' coordorigin="0,0"' ,
-                ' style="width:', W, 'px;height:', H, 'px;position:absolute;');
+  // For some reason that I've now forgotten, using divs didn't work
+  vmlStr.push(' <g_vml_:group',
+        ' coordsize="', Z * W, ',', Z * H, '"',
+        ' coordorigin="0,0"' ,
+        ' style="width:', W, 'px;height:', H, 'px;position:absolute;');
 
-    // If filters are necessary (rotation exists), create them
-    // filters are bog-slow, so only create them if abbsolutely necessary
-    // The following check doesn't account for skews (which don't exist
-    // in the canvas spec (yet) anyway.
+  // If filters are necessary (rotation exists), create them
+  // filters are bog-slow, so only create them if abbsolutely necessary
+  // The following check doesn't account for skews (which don't exist
+  // in the canvas spec (yet) anyway.
 
-    if (this.m_[0][0] != 1 || this.m_[0][1]) {
-      var filter = [];
+  if (this.m_[0][0] != 1 || this.m_[0][1]) {
+    var filter = [];
 
-      // Note the 12/21 reversal
-      filter.push('M11=', this.m_[0][0], ',',
-                  'M12=', this.m_[1][0], ',',
-                  'M21=', this.m_[0][1], ',',
-                  'M22=', this.m_[1][1], ',',
-                  'Dx=', mr(d.x / Z), ',',
-                  'Dy=', mr(d.y / Z), '');
+    // Note the 12/21 reversal
+    filter.push('M11=', this.m_[0][0], ',',
+          'M12=', this.m_[1][0], ',',
+          'M21=', this.m_[0][1], ',',
+          'M22=', this.m_[1][1], ',',
+          'Dx=', mr(d.x / Z), ',',
+          'Dy=', mr(d.y / Z), '');
 
-      // Bounding box calculation (need to minimize displayed area so that
-      // filters don't waste time on unused pixels.
-      var max = d;
-      var c2 = this.getCoords_(dx + dw, dy);
-      var c3 = this.getCoords_(dx, dy + dh);
-      var c4 = this.getCoords_(dx + dw, dy + dh);
+    // Bounding box calculation (need to minimize displayed area so that
+    // filters don't waste time on unused pixels.
+    var max = d;
+    var c2 = this.getCoords_(dx + dw, dy);
+    var c3 = this.getCoords_(dx, dy + dh);
+    var c4 = this.getCoords_(dx + dw, dy + dh);
 
-      max.x = m.max(max.x, c2.x, c3.x, c4.x);
-      max.y = m.max(max.y, c2.y, c3.y, c4.y);
+    max.x = m.max(max.x, c2.x, c3.x, c4.x);
+    max.y = m.max(max.y, c2.y, c3.y, c4.y);
 
-      vmlStr.push('padding:0 ', mr(max.x / Z), 'px ', mr(max.y / Z),
-                  'px 0;filter:progid:DXImageTransform.Microsoft.Matrix(',
-                  filter.join(''), ", sizingmethod='clip');")
-    } else {
-      vmlStr.push('top:', mr(d.y / Z), 'px;left:', mr(d.x / Z), 'px;');
-    }
+    vmlStr.push('padding:0 ', mr(max.x / Z), 'px ', mr(max.y / Z),
+          'px 0;filter:progid:DXImageTransform.Microsoft.Matrix(',
+          filter.join(''), ", sizingmethod='clip');")
+  } else {
+    vmlStr.push('top:', mr(d.y / Z), 'px;left:', mr(d.x / Z), 'px;');
+  }
 
-    vmlStr.push(' ">' ,
-                '<g_vml_:image src="', image.src, '"',
-                ' style="width:', Z * dw, 'px;',
-                ' height:', Z * dh, 'px;"',
-                ' cropleft="', sx / w, '"',
-                ' croptop="', sy / h, '"',
-                ' cropright="', (w - sx - sw) / w, '"',
-                ' cropbottom="', (h - sy - sh) / h, '"',
-                ' />',
-                '</g_vml_:group>');
+  vmlStr.push(' ">' ,
+        '<g_vml_:image src="', image.src, '"',
+        ' style="width:', Z * dw, 'px;',
+        ' height:', Z * dh, 'px;"',
+        ' cropleft="', sx / w, '"',
+        ' croptop="', sy / h, '"',
+        ' cropright="', (w - sx - sw) / w, '"',
+        ' cropbottom="', (h - sy - sh) / h, '"',
+        ' />',
+        '</g_vml_:group>');
 
-    this.element_.insertAdjacentHTML('BeforeEnd',
-                                    vmlStr.join(''));
+  this.element_.insertAdjacentHTML('BeforeEnd',
+                  vmlStr.join(''));
   };
 
   contextPrototype.stroke = function(aFill) {
-    var lineStr = [];
-    var lineOpen = false;
-    var a = processStyle(aFill ? this.fillStyle : this.strokeStyle);
-    var color = a.color;
-    var opacity = a.alpha * this.globalAlpha;
+  var lineStr = [];
+  var lineOpen = false;
+  var a = processStyle(aFill ? this.fillStyle : this.strokeStyle);
+  var color = a.color;
+  var opacity = a.alpha * this.globalAlpha;
 
-    var W = 10;
-    var H = 10;
+  var W = 10;
+  var H = 10;
 
-    lineStr.push('<g_vml_:shape',
-                 ' filled="', !!aFill, '"',
-                 ' style="position:absolute;width:', W, 'px;height:', H, 'px;"',
-                 ' coordorigin="0 0" coordsize="', Z * W, ' ', Z * H, '"',
-                 ' stroked="', !aFill, '"',
-                 ' path="');
+  lineStr.push('<g_vml_:shape',
+         ' filled="', !!aFill, '"',
+         ' style="position:absolute;width:', W, 'px;height:', H, 'px;"',
+         ' coordorigin="0 0" coordsize="', Z * W, ' ', Z * H, '"',
+         ' stroked="', !aFill, '"',
+         ' path="');
 
-    var newSeq = false;
-    var min = {x: null, y: null};
-    var max = {x: null, y: null};
+  var newSeq = false;
+  var min = {x: null, y: null};
+  var max = {x: null, y: null};
 
-    for (var i = 0; i < this.currentPath_.length; i++) {
-      var p = this.currentPath_[i];
-      var c;
+  for (var i = 0; i < this.currentPath_.length; i++) {
+    var p = this.currentPath_[i];
+    var c;
 
-      switch (p.type) {
-        case 'moveTo':
-          c = p;
-          lineStr.push(' m ', mr(p.x), ',', mr(p.y));
-          break;
-        case 'lineTo':
-          lineStr.push(' l ', mr(p.x), ',', mr(p.y));
-          break;
-        case 'close':
-          lineStr.push(' x ');
-          p = null;
-          break;
-        case 'bezierCurveTo':
-          lineStr.push(' c ',
-                       mr(p.cp1x), ',', mr(p.cp1y), ',',
-                       mr(p.cp2x), ',', mr(p.cp2y), ',',
-                       mr(p.x), ',', mr(p.y));
-          break;
-        case 'at':
-        case 'wa':
-          lineStr.push(' ', p.type, ' ',
-                       mr(p.x - this.arcScaleX_ * p.radius), ',',
-                       mr(p.y - this.arcScaleY_ * p.radius), ' ',
-                       mr(p.x + this.arcScaleX_ * p.radius), ',',
-                       mr(p.y + this.arcScaleY_ * p.radius), ' ',
-                       mr(p.xStart), ',', mr(p.yStart), ' ',
-                       mr(p.xEnd), ',', mr(p.yEnd));
-          break;
-      }
-
-
-      // TODO: Following is broken for curves due to
-      //       move to proper paths.
-
-      // Figure out dimensions so we can do gradient fills
-      // properly
-      if (p) {
-        if (min.x == null || p.x < min.x) {
-          min.x = p.x;
-        }
-        if (max.x == null || p.x > max.x) {
-          max.x = p.x;
-        }
-        if (min.y == null || p.y < min.y) {
-          min.y = p.y;
-        }
-        if (max.y == null || p.y > max.y) {
-          max.y = p.y;
-        }
-      }
+    switch (p.type) {
+    case 'moveTo':
+      c = p;
+      lineStr.push(' m ', mr(p.x), ',', mr(p.y));
+      break;
+    case 'lineTo':
+      lineStr.push(' l ', mr(p.x), ',', mr(p.y));
+      break;
+    case 'close':
+      lineStr.push(' x ');
+      p = null;
+      break;
+    case 'bezierCurveTo':
+      lineStr.push(' c ',
+             mr(p.cp1x), ',', mr(p.cp1y), ',',
+             mr(p.cp2x), ',', mr(p.cp2y), ',',
+             mr(p.x), ',', mr(p.y));
+      break;
+    case 'at':
+    case 'wa':
+      lineStr.push(' ', p.type, ' ',
+             mr(p.x - this.arcScaleX_ * p.radius), ',',
+             mr(p.y - this.arcScaleY_ * p.radius), ' ',
+             mr(p.x + this.arcScaleX_ * p.radius), ',',
+             mr(p.y + this.arcScaleY_ * p.radius), ' ',
+             mr(p.xStart), ',', mr(p.yStart), ' ',
+             mr(p.xEnd), ',', mr(p.yEnd));
+      break;
     }
-    lineStr.push(' ">');
 
-    if (!aFill) {
-      var lineWidth = this.lineScale_ * this.lineWidth;
 
-      // VML cannot correctly render a line if the width is less than 1px.
-      // In that case, we dilute the color to make the line look thinner.
-      if (lineWidth < 1) {
-        opacity *= lineWidth;
-      }
+    // TODO: Following is broken for curves due to
+    //     move to proper paths.
 
-      lineStr.push(
-        '<g_vml_:stroke',
-        ' opacity="', opacity, '"',
-        ' joinstyle="', this.lineJoin, '"',
-        ' miterlimit="', this.miterLimit, '"',
-        ' endcap="', processLineCap(this.lineCap), '"',
-        ' weight="', lineWidth, 'px"',
-        ' color="', color, '" />'
-      );
-    } else if (typeof this.fillStyle == 'object') {
-      var fillStyle = this.fillStyle;
-      var angle = 0;
-      var focus = {x: 0, y: 0};
+    // Figure out dimensions so we can do gradient fills
+    // properly
+    if (p) {
+    if (min.x == null || p.x < min.x) {
+      min.x = p.x;
+    }
+    if (max.x == null || p.x > max.x) {
+      max.x = p.x;
+    }
+    if (min.y == null || p.y < min.y) {
+      min.y = p.y;
+    }
+    if (max.y == null || p.y > max.y) {
+      max.y = p.y;
+    }
+    }
+  }
+  lineStr.push(' ">');
 
-      // additional offset
-      var shift = 0;
-      // scale factor for offset
-      var expansion = 1;
+  if (!aFill) {
+    var lineWidth = this.lineScale_ * this.lineWidth;
 
-      if (fillStyle.type_ == 'gradient') {
-        var x0 = fillStyle.x0_ / this.arcScaleX_;
-        var y0 = fillStyle.y0_ / this.arcScaleY_;
-        var x1 = fillStyle.x1_ / this.arcScaleX_;
-        var y1 = fillStyle.y1_ / this.arcScaleY_;
-        var p0 = this.getCoords_(x0, y0);
-        var p1 = this.getCoords_(x1, y1);
-        var dx = p1.x - p0.x;
-        var dy = p1.y - p0.y;
-        angle = Math.atan2(dx, dy) * 180 / Math.PI;
+    // VML cannot correctly render a line if the width is less than 1px.
+    // In that case, we dilute the color to make the line look thinner.
+    if (lineWidth < 1) {
+    opacity *= lineWidth;
+    }
 
-        // The angle should be a non-negative number.
-        if (angle < 0) {
-          angle += 360;
-        }
+    lineStr.push(
+    '<g_vml_:stroke',
+    ' opacity="', opacity, '"',
+    ' joinstyle="', this.lineJoin, '"',
+    ' miterlimit="', this.miterLimit, '"',
+    ' endcap="', processLineCap(this.lineCap), '"',
+    ' weight="', lineWidth, 'px"',
+    ' color="', color, '" />'
+    );
+  } else if (typeof this.fillStyle == 'object') {
+    var fillStyle = this.fillStyle;
+    var angle = 0;
+    var focus = {x: 0, y: 0};
 
-        // Very small angles produce an unexpected result because they are
-        // converted to a scientific notation string.
-        if (angle < 1e-6) {
-          angle = 0;
-        }
-      } else {
-        var p0 = this.getCoords_(fillStyle.x0_, fillStyle.y0_);
-        var width  = max.x - min.x;
-        var height = max.y - min.y;
-        focus = {
-          x: (p0.x - min.x) / width,
-          y: (p0.y - min.y) / height
-        };
+    // additional offset
+    var shift = 0;
+    // scale factor for offset
+    var expansion = 1;
 
-        width  /= this.arcScaleX_ * Z;
-        height /= this.arcScaleY_ * Z;
-        var dimension = m.max(width, height);
-        shift = 2 * fillStyle.r0_ / dimension;
-        expansion = 2 * fillStyle.r1_ / dimension - shift;
-      }
+    if (fillStyle.type_ == 'gradient') {
+    var x0 = fillStyle.x0_ / this.arcScaleX_;
+    var y0 = fillStyle.y0_ / this.arcScaleY_;
+    var x1 = fillStyle.x1_ / this.arcScaleX_;
+    var y1 = fillStyle.y1_ / this.arcScaleY_;
+    var p0 = this.getCoords_(x0, y0);
+    var p1 = this.getCoords_(x1, y1);
+    var dx = p1.x - p0.x;
+    var dy = p1.y - p0.y;
+    angle = Math.atan2(dx, dy) * 180 / Math.PI;
 
-      // We need to sort the color stops in ascending order by offset,
-      // otherwise IE won't interpret it correctly.
-      var stops = fillStyle.colors_;
-      stops.sort(function(cs1, cs2) {
-        return cs1.offset - cs2.offset;
-      });
+    // The angle should be a non-negative number.
+    if (angle < 0) {
+      angle += 360;
+    }
 
-      var length = stops.length;
-      var color1 = stops[0].color;
-      var color2 = stops[length - 1].color;
-      var opacity1 = stops[0].alpha * this.globalAlpha;
-      var opacity2 = stops[length - 1].alpha * this.globalAlpha;
-
-      var colors = [];
-      for (var i = 0; i < length; i++) {
-        var stop = stops[i];
-        colors.push(stop.offset * expansion + shift + ' ' + stop.color);
-      }
-
-      // When colors attribute is used, the meanings of opacity and o:opacity2
-      // are reversed.
-      lineStr.push('<g_vml_:fill type="', fillStyle.type_, '"',
-                   ' method="none" focus="100%"',
-                   ' color="', color1, '"',
-                   ' color2="', color2, '"',
-                   ' colors="', colors.join(','), '"',
-                   ' opacity="', opacity2, '"',
-                   ' g_o_:opacity2="', opacity1, '"',
-                   ' angle="', angle, '"',
-                   ' focusposition="', focus.x, ',', focus.y, '" />');
+    // Very small angles produce an unexpected result because they are
+    // converted to a scientific notation string.
+    if (angle < 1e-6) {
+      angle = 0;
+    }
     } else {
-      lineStr.push('<g_vml_:fill color="', color, '" opacity="', opacity,
-                   '" />');
+    var p0 = this.getCoords_(fillStyle.x0_, fillStyle.y0_);
+    var width  = max.x - min.x;
+    var height = max.y - min.y;
+    focus = {
+      x: (p0.x - min.x) / width,
+      y: (p0.y - min.y) / height
+    };
+
+    width  /= this.arcScaleX_ * Z;
+    height /= this.arcScaleY_ * Z;
+    var dimension = m.max(width, height);
+    shift = 2 * fillStyle.r0_ / dimension;
+    expansion = 2 * fillStyle.r1_ / dimension - shift;
     }
 
-    lineStr.push('</g_vml_:shape>');
+    // We need to sort the color stops in ascending order by offset,
+    // otherwise IE won't interpret it correctly.
+    var stops = fillStyle.colors_;
+    stops.sort(function(cs1, cs2) {
+    return cs1.offset - cs2.offset;
+    });
 
-    this.element_.insertAdjacentHTML('beforeEnd', lineStr.join(''));
+    var length = stops.length;
+    var color1 = stops[0].color;
+    var color2 = stops[length - 1].color;
+    var opacity1 = stops[0].alpha * this.globalAlpha;
+    var opacity2 = stops[length - 1].alpha * this.globalAlpha;
+
+    var colors = [];
+    for (var i = 0; i < length; i++) {
+    var stop = stops[i];
+    colors.push(stop.offset * expansion + shift + ' ' + stop.color);
+    }
+
+    // When colors attribute is used, the meanings of opacity and o:opacity2
+    // are reversed.
+    lineStr.push('<g_vml_:fill type="', fillStyle.type_, '"',
+           ' method="none" focus="100%"',
+           ' color="', color1, '"',
+           ' color2="', color2, '"',
+           ' colors="', colors.join(','), '"',
+           ' opacity="', opacity2, '"',
+           ' g_o_:opacity2="', opacity1, '"',
+           ' angle="', angle, '"',
+           ' focusposition="', focus.x, ',', focus.y, '" />');
+  } else {
+    lineStr.push('<g_vml_:fill color="', color, '" opacity="', opacity,
+           '" />');
+  }
+
+  lineStr.push('</g_vml_:shape>');
+
+  this.element_.insertAdjacentHTML('beforeEnd', lineStr.join(''));
   };
 
   contextPrototype.fill = function() {
-    this.stroke(true);
+  this.stroke(true);
   }
 
   contextPrototype.closePath = function() {
-    this.currentPath_.push({type: 'close'});
+  this.currentPath_.push({type: 'close'});
   };
 
   /**
    * @private
    */
   contextPrototype.getCoords_ = function(aX, aY) {
-    var m = this.m_;
-    return {
-      x: Z * (aX * m[0][0] + aY * m[1][0] + m[2][0]) - Z2,
-      y: Z * (aX * m[0][1] + aY * m[1][1] + m[2][1]) - Z2
-    }
+  var m = this.m_;
+  return {
+    x: Z * (aX * m[0][0] + aY * m[1][0] + m[2][0]) - Z2,
+    y: Z * (aX * m[0][1] + aY * m[1][1] + m[2][1]) - Z2
+  }
   };
 
   contextPrototype.save = function() {
-    var o = {};
-    copyState(this, o);
-    this.aStack_.push(o);
-    this.mStack_.push(this.m_);
-    this.m_ = matrixMultiply(createMatrixIdentity(), this.m_);
+  var o = {};
+  copyState(this, o);
+  this.aStack_.push(o);
+  this.mStack_.push(this.m_);
+  this.m_ = matrixMultiply(createMatrixIdentity(), this.m_);
   };
 
   contextPrototype.restore = function() {
-    copyState(this.aStack_.pop(), this);
-    this.m_ = this.mStack_.pop();
+  copyState(this.aStack_.pop(), this);
+  this.m_ = this.mStack_.pop();
   };
 
   function matrixIsFinite(m) {
-    for (var j = 0; j < 3; j++) {
-      for (var k = 0; k < 2; k++) {
-        if (!isFinite(m[j][k]) || isNaN(m[j][k])) {
-          return false;
-        }
-      }
+  for (var j = 0; j < 3; j++) {
+    for (var k = 0; k < 2; k++) {
+    if (!isFinite(m[j][k]) || isNaN(m[j][k])) {
+      return false;
     }
-    return true;
+    }
+  }
+  return true;
   }
 
   function setM(ctx, m, updateLineScale) {
-    if (!matrixIsFinite(m)) {
-      return;
-    }
-    ctx.m_ = m;
+  if (!matrixIsFinite(m)) {
+    return;
+  }
+  ctx.m_ = m;
 
-    if (updateLineScale) {
-      // Get the line scale.
-      // Determinant of this.m_ means how much the area is enlarged by the
-      // transformation. So its square root can be used as a scale factor
-      // for width.
-      var det = m[0][0] * m[1][1] - m[0][1] * m[1][0];
-      ctx.lineScale_ = sqrt(abs(det));
-    }
+  if (updateLineScale) {
+    // Get the line scale.
+    // Determinant of this.m_ means how much the area is enlarged by the
+    // transformation. So its square root can be used as a scale factor
+    // for width.
+    var det = m[0][0] * m[1][1] - m[0][1] * m[1][0];
+    ctx.lineScale_ = sqrt(abs(det));
+  }
   }
 
   contextPrototype.translate = function(aX, aY) {
-    var m1 = [
-      [1,  0,  0],
-      [0,  1,  0],
-      [aX, aY, 1]
-    ];
+  var m1 = [
+    [1,  0,  0],
+    [0,  1,  0],
+    [aX, aY, 1]
+  ];
 
-    setM(this, matrixMultiply(m1, this.m_), false);
+  setM(this, matrixMultiply(m1, this.m_), false);
   };
 
   contextPrototype.rotate = function(aRot) {
-    var c = mc(aRot);
-    var s = ms(aRot);
+  var c = mc(aRot);
+  var s = ms(aRot);
 
-    var m1 = [
-      [c,  s, 0],
-      [-s, c, 0],
-      [0,  0, 1]
-    ];
+  var m1 = [
+    [c,  s, 0],
+    [-s, c, 0],
+    [0,  0, 1]
+  ];
 
-    setM(this, matrixMultiply(m1, this.m_), false);
+  setM(this, matrixMultiply(m1, this.m_), false);
   };
 
   contextPrototype.scale = function(aX, aY) {
-    this.arcScaleX_ *= aX;
-    this.arcScaleY_ *= aY;
-    var m1 = [
-      [aX, 0,  0],
-      [0,  aY, 0],
-      [0,  0,  1]
-    ];
+  this.arcScaleX_ *= aX;
+  this.arcScaleY_ *= aY;
+  var m1 = [
+    [aX, 0,  0],
+    [0,  aY, 0],
+    [0,  0,  1]
+  ];
 
-    setM(this, matrixMultiply(m1, this.m_), true);
+  setM(this, matrixMultiply(m1, this.m_), true);
   };
 
   contextPrototype.transform = function(m11, m12, m21, m22, dx, dy) {
-    var m1 = [
-      [m11, m12, 0],
-      [m21, m22, 0],
-      [dx,  dy,  1]
-    ];
+  var m1 = [
+    [m11, m12, 0],
+    [m21, m22, 0],
+    [dx,  dy,  1]
+  ];
 
-    setM(this, matrixMultiply(m1, this.m_), true);
+  setM(this, matrixMultiply(m1, this.m_), true);
   };
 
   contextPrototype.setTransform = function(m11, m12, m21, m22, dx, dy) {
-    var m = [
-      [m11, m12, 0],
-      [m21, m22, 0],
-      [dx,  dy,  1]
-    ];
+  var m = [
+    [m11, m12, 0],
+    [m21, m22, 0],
+    [dx,  dy,  1]
+  ];
 
-    setM(this, m, true);
+  setM(this, m, true);
   };
 
   /******** STUBS ********/
   contextPrototype.clip = function() {
-    // TODO: Implement
+  // TODO: Implement
   };
 
   contextPrototype.arcTo = function() {
-    // TODO: Implement
+  // TODO: Implement
   };
 
   contextPrototype.createPattern = function() {
-    return new CanvasPattern_;
+  return new CanvasPattern_;
   };
 
   // Gradient / Pattern Stubs
   function CanvasGradient_(aType) {
-    this.type_ = aType;
-    this.x0_ = 0;
-    this.y0_ = 0;
-    this.r0_ = 0;
-    this.x1_ = 0;
-    this.y1_ = 0;
-    this.r1_ = 0;
-    this.colors_ = [];
+  this.type_ = aType;
+  this.x0_ = 0;
+  this.y0_ = 0;
+  this.r0_ = 0;
+  this.x1_ = 0;
+  this.y1_ = 0;
+  this.r1_ = 0;
+  this.colors_ = [];
   }
 
   CanvasGradient_.prototype.addColorStop = function(aOffset, aColor) {
-    aColor = processStyle(aColor);
-    this.colors_.push({offset: aOffset,
-                       color: aColor.color,
-                       alpha: aColor.alpha});
+  aColor = processStyle(aColor);
+  this.colors_.push({offset: aOffset,
+             color: aColor.color,
+             alpha: aColor.alpha});
   };
 
   function CanvasPattern_() {}
@@ -2506,8 +2506,8 @@ if (!document.createElement('canvas').getContext) {
    * @return {CanvasRenderingContext2D_}
    */
   function getContext() {
-    return this.context_ ||
-        (this.context_ = new CanvasRenderingContext2D_(this));
+  return this.context_ ||
+    (this.context_ = new CanvasRenderingContext2D_(this));
   }
 
   var slice = Array.prototype.slice;
@@ -2523,124 +2523,124 @@ if (!document.createElement('canvas').getContext) {
    *
    * @param {Function} f The function to bind the object to
    * @param {Object} obj The object that should act as this when the function
-   *     is called
+   *   is called
    * @param {*} var_args Rest arguments that will be used as the initial
-   *     arguments when the function is called
+   *   arguments when the function is called
    * @return {Function} A new function that has bound this
    */
   function bind(f, obj, var_args) {
-    var a = slice.call(arguments, 2);
-    return function() {
-      return f.apply(obj, a.concat(slice.call(arguments)));
-    };
+  var a = slice.call(arguments, 2);
+  return function() {
+    return f.apply(obj, a.concat(slice.call(arguments)));
+  };
   }
 
   var G_vmlCanvasManager_ = {
-    init: function(opt_doc) {
-      if (/MSIE/.test(navigator.userAgent) && !window.opera) {
-        var doc = opt_doc || document;
-        // Create a dummy element so that IE will allow canvas elements to be
-        // recognized.
-        doc.createElement('canvas');
-        doc.attachEvent('onreadystatechange', bind(this.init_, this, doc));
-      }
-    },
-
-    init_: function(doc) {
-      // create xmlns
-      if (!doc.namespaces['g_vml_']) {
-        doc.namespaces.add('g_vml_', 'urn:schemas-microsoft-com:vml',
-                           '#default#VML');
-
-      }
-      if (!doc.namespaces['g_o_']) {
-        doc.namespaces.add('g_o_', 'urn:schemas-microsoft-com:office:office',
-                           '#default#VML');
-      }
-
-      // Setup default CSS.  Only add one style sheet per document
-      if (!doc.styleSheets['ex_canvas_']) {
-        var ss = doc.createStyleSheet();
-        ss.owningElement.id = 'ex_canvas_';
-        ss.cssText = 'canvas{display:inline-block;overflow:hidden;' +
-            // default size is 300x150 in Gecko and Opera
-            'text-align:left;width:300px;height:150px}' +
-            'g_vml_\\:*{behavior:url(#default#VML)}' +
-            'g_o_\\:*{behavior:url(#default#VML)}';
-
-      }
-
-      // find all canvas elements
-      var els = doc.getElementsByTagName('canvas');
-      for (var i = 0; i < els.length; i++) {
-        this.initElement(els[i]);
-      }
-    },
-
-    /**
-     * Public initializes a canvas element so that it can be used as canvas
-     * element from now on. This is called automatically before the page is
-     * loaded but if you are creating elements using createElement you need to
-     * make sure this is called on the element.
-     * @param {HTMLElement} el The canvas element to initialize.
-     * @return {HTMLElement} the element that was created.
-     */
-    initElement: function(el) {
-      if (!el.getContext) {
-
-        el.getContext = getContext;
-
-        // Remove fallback content. There is no way to hide text nodes so we
-        // just remove all childNodes. We could hide all elements and remove
-        // text nodes but who really cares about the fallback content.
-        el.innerHTML = '';
-
-        // do not use inline function because that will leak memory
-        el.attachEvent('onpropertychange', onPropertyChange);
-        el.attachEvent('onresize', onResize);
-
-        var attrs = el.attributes;
-        if (attrs.width && attrs.width.specified) {
-          // TODO: use runtimeStyle and coordsize
-          // el.getContext().setWidth_(attrs.width.nodeValue);
-          el.style.width = attrs.width.nodeValue + 'px';
-        } else {
-          el.width = el.clientWidth;
-        }
-        if (attrs.height && attrs.height.specified) {
-          // TODO: use runtimeStyle and coordsize
-          // el.getContext().setHeight_(attrs.height.nodeValue);
-          el.style.height = attrs.height.nodeValue + 'px';
-        } else {
-          el.height = el.clientHeight;
-        }
-        //el.getContext().setCoordsize_()
-      }
-      return el;
+  init: function(opt_doc) {
+    if (/MSIE/.test(navigator.userAgent) && !window.opera) {
+    var doc = opt_doc || document;
+    // Create a dummy element so that IE will allow canvas elements to be
+    // recognized.
+    doc.createElement('canvas');
+    doc.attachEvent('onreadystatechange', bind(this.init_, this, doc));
     }
+  },
+
+  init_: function(doc) {
+    // create xmlns
+    if (!doc.namespaces['g_vml_']) {
+    doc.namespaces.add('g_vml_', 'urn:schemas-microsoft-com:vml',
+               '#default#VML');
+
+    }
+    if (!doc.namespaces['g_o_']) {
+    doc.namespaces.add('g_o_', 'urn:schemas-microsoft-com:office:office',
+               '#default#VML');
+    }
+
+    // Setup default CSS.  Only add one style sheet per document
+    if (!doc.styleSheets['ex_canvas_']) {
+    var ss = doc.createStyleSheet();
+    ss.owningElement.id = 'ex_canvas_';
+    ss.cssText = 'canvas{display:inline-block;overflow:hidden;' +
+      // default size is 300x150 in Gecko and Opera
+      'text-align:left;width:300px;height:150px}' +
+      'g_vml_\\:*{behavior:url(#default#VML)}' +
+      'g_o_\\:*{behavior:url(#default#VML)}';
+
+    }
+
+    // find all canvas elements
+    var els = doc.getElementsByTagName('canvas');
+    for (var i = 0; i < els.length; i++) {
+    this.initElement(els[i]);
+    }
+  },
+
+  /**
+   * Public initializes a canvas element so that it can be used as canvas
+   * element from now on. This is called automatically before the page is
+   * loaded but if you are creating elements using createElement you need to
+   * make sure this is called on the element.
+   * @param {HTMLElement} el The canvas element to initialize.
+   * @return {HTMLElement} the element that was created.
+   */
+  initElement: function(el) {
+    if (!el.getContext) {
+
+    el.getContext = getContext;
+
+    // Remove fallback content. There is no way to hide text nodes so we
+    // just remove all childNodes. We could hide all elements and remove
+    // text nodes but who really cares about the fallback content.
+    el.innerHTML = '';
+
+    // do not use inline function because that will leak memory
+    el.attachEvent('onpropertychange', onPropertyChange);
+    el.attachEvent('onresize', onResize);
+
+    var attrs = el.attributes;
+    if (attrs.width && attrs.width.specified) {
+      // TODO: use runtimeStyle and coordsize
+      // el.getContext().setWidth_(attrs.width.nodeValue);
+      el.style.width = attrs.width.nodeValue + 'px';
+    } else {
+      el.width = el.clientWidth;
+    }
+    if (attrs.height && attrs.height.specified) {
+      // TODO: use runtimeStyle and coordsize
+      // el.getContext().setHeight_(attrs.height.nodeValue);
+      el.style.height = attrs.height.nodeValue + 'px';
+    } else {
+      el.height = el.clientHeight;
+    }
+    //el.getContext().setCoordsize_()
+    }
+    return el;
+  }
   };
 
   function onPropertyChange(e) {
-    var el = e.srcElement;
+  var el = e.srcElement;
 
-    switch (e.propertyName) {
-      case 'width':
-        el.style.width = el.attributes.width.nodeValue + 'px';
-        el.getContext().clearRect();
-        break;
-      case 'height':
-        el.style.height = el.attributes.height.nodeValue + 'px';
-        el.getContext().clearRect();
-        break;
-    }
+  switch (e.propertyName) {
+    case 'width':
+    el.style.width = el.attributes.width.nodeValue + 'px';
+    el.getContext().clearRect();
+    break;
+    case 'height':
+    el.style.height = el.attributes.height.nodeValue + 'px';
+    el.getContext().clearRect();
+    break;
+  }
   }
 
   function onResize(e) {
-    var el = e.srcElement;
-    if (el.firstChild) {
-      el.firstChild.style.width =  el.clientWidth + 'px';
-      el.firstChild.style.height = el.clientHeight + 'px';
-    }
+  var el = e.srcElement;
+  if (el.firstChild) {
+    el.firstChild.style.width =  el.clientWidth + 'px';
+    el.firstChild.style.height = el.clientHeight + 'px';
+  }
   }
 
   G_vmlCanvasManager_.init();
@@ -2648,87 +2648,87 @@ if (!document.createElement('canvas').getContext) {
   // precompute "00" to "FF"
   var dec2hex = [];
   for (var i = 0; i < 16; i++) {
-    for (var j = 0; j < 16; j++) {
-      dec2hex[i * 16 + j] = i.toString(16) + j.toString(16);
-    }
+  for (var j = 0; j < 16; j++) {
+    dec2hex[i * 16 + j] = i.toString(16) + j.toString(16);
+  }
   }
 
   function createMatrixIdentity() {
-    return [
-      [1, 0, 0],
-      [0, 1, 0],
-      [0, 0, 1]
-    ];
+  return [
+    [1, 0, 0],
+    [0, 1, 0],
+    [0, 0, 1]
+  ];
   }
 
   function matrixMultiply(m1, m2) {
-    var result = createMatrixIdentity();
+  var result = createMatrixIdentity();
 
-    for (var x = 0; x < 3; x++) {
-      for (var y = 0; y < 3; y++) {
-        var sum = 0;
+  for (var x = 0; x < 3; x++) {
+    for (var y = 0; y < 3; y++) {
+    var sum = 0;
 
-        for (var z = 0; z < 3; z++) {
-          sum += m1[x][z] * m2[z][y];
-        }
-
-        result[x][y] = sum;
-      }
+    for (var z = 0; z < 3; z++) {
+      sum += m1[x][z] * m2[z][y];
     }
-    return result;
+
+    result[x][y] = sum;
+    }
+  }
+  return result;
   }
 
   function copyState(o1, o2) {
-    o2.fillStyle     = o1.fillStyle;
-    o2.lineCap       = o1.lineCap;
-    o2.lineJoin      = o1.lineJoin;
-    o2.lineWidth     = o1.lineWidth;
-    o2.miterLimit    = o1.miterLimit;
-    o2.shadowBlur    = o1.shadowBlur;
-    o2.shadowColor   = o1.shadowColor;
-    o2.shadowOffsetX = o1.shadowOffsetX;
-    o2.shadowOffsetY = o1.shadowOffsetY;
-    o2.strokeStyle   = o1.strokeStyle;
-    o2.globalAlpha   = o1.globalAlpha;
-    o2.arcScaleX_    = o1.arcScaleX_;
-    o2.arcScaleY_    = o1.arcScaleY_;
-    o2.lineScale_    = o1.lineScale_;
+  o2.fillStyle   = o1.fillStyle;
+  o2.lineCap     = o1.lineCap;
+  o2.lineJoin    = o1.lineJoin;
+  o2.lineWidth   = o1.lineWidth;
+  o2.miterLimit  = o1.miterLimit;
+  o2.shadowBlur  = o1.shadowBlur;
+  o2.shadowColor   = o1.shadowColor;
+  o2.shadowOffsetX = o1.shadowOffsetX;
+  o2.shadowOffsetY = o1.shadowOffsetY;
+  o2.strokeStyle   = o1.strokeStyle;
+  o2.globalAlpha   = o1.globalAlpha;
+  o2.arcScaleX_  = o1.arcScaleX_;
+  o2.arcScaleY_  = o1.arcScaleY_;
+  o2.lineScale_  = o1.lineScale_;
   }
 
   function processStyle(styleString) {
-    var str, alpha = 1;
+  var str, alpha = 1;
 
-    styleString = String(styleString);
-    if (styleString.substring(0, 3) == 'rgb') {
-      var start = styleString.indexOf('(', 3);
-      var end = styleString.indexOf(')', start + 1);
-      var guts = styleString.substring(start + 1, end).split(',');
+  styleString = String(styleString);
+  if (styleString.substring(0, 3) == 'rgb') {
+    var start = styleString.indexOf('(', 3);
+    var end = styleString.indexOf(')', start + 1);
+    var guts = styleString.substring(start + 1, end).split(',');
 
-      str = '#';
-      for (var i = 0; i < 3; i++) {
-        str += dec2hex[Number(guts[i])];
-      }
-
-      if (guts.length == 4 && styleString.substr(3, 1) == 'a') {
-        alpha = guts[3];
-      }
-    } else {
-      str = styleString;
+    str = '#';
+    for (var i = 0; i < 3; i++) {
+    str += dec2hex[Number(guts[i])];
     }
 
-    return {color: str, alpha: alpha};
+    if (guts.length == 4 && styleString.substr(3, 1) == 'a') {
+    alpha = guts[3];
+    }
+  } else {
+    str = styleString;
+  }
+
+  return {color: str, alpha: alpha};
   }
 
   function processLineCap(lineCap) {
-    switch (lineCap) {
-      case 'butt':
-        return 'flat';
-      case 'round':
-        return 'round';
-      case 'square':
-      default:
-        return 'square';
-    }
+  switch (lineCap) {
+    case 'butt':
+    return 'flat';
+    case 'round':
+    return 'round';
+    case 'square':
+    default:
+    return 'square';
+  }
   }
 
   /**
@@ -2738,629 +2738,629 @@ if (!document.createElement('canvas').getContext) {
    * be associated with
    */
   function CanvasRenderingContext2D_(surfaceElement) {
-    this.m_ = createMatrixIdentity();
+  this.m_ = createMatrixIdentity();
 
-    this.mStack_ = [];
-    this.aStack_ = [];
-    this.currentPath_ = [];
+  this.mStack_ = [];
+  this.aStack_ = [];
+  this.currentPath_ = [];
 
-    // Canvas context properties
-    this.strokeStyle = '#000';
-    this.fillStyle = '#000';
+  // Canvas context properties
+  this.strokeStyle = '#000';
+  this.fillStyle = '#000';
 
-    this.lineWidth = 1;
-    this.lineJoin = 'miter';
-    this.lineCap = 'butt';
-    this.miterLimit = Z * 1;
-    this.globalAlpha = 1;
-    this.canvas = surfaceElement;
+  this.lineWidth = 1;
+  this.lineJoin = 'miter';
+  this.lineCap = 'butt';
+  this.miterLimit = Z * 1;
+  this.globalAlpha = 1;
+  this.canvas = surfaceElement;
 
-    var el = surfaceElement.ownerDocument.createElement('div');
-    el.style.width =  surfaceElement.clientWidth + 'px';
-    el.style.height = surfaceElement.clientHeight + 'px';
-    el.style.overflow = 'hidden';
-    el.style.position = 'absolute';
-    surfaceElement.appendChild(el);
+  var el = surfaceElement.ownerDocument.createElement('div');
+  el.style.width =  surfaceElement.clientWidth + 'px';
+  el.style.height = surfaceElement.clientHeight + 'px';
+  el.style.overflow = 'hidden';
+  el.style.position = 'absolute';
+  surfaceElement.appendChild(el);
 
-    this.element_ = el;
-    this.arcScaleX_ = 1;
-    this.arcScaleY_ = 1;
-    this.lineScale_ = 1;
+  this.element_ = el;
+  this.arcScaleX_ = 1;
+  this.arcScaleY_ = 1;
+  this.lineScale_ = 1;
   }
 
   var contextPrototype = CanvasRenderingContext2D_.prototype;
   contextPrototype.clearRect = function() {
-    this.element_.innerHTML = '';
+  this.element_.innerHTML = '';
   };
 
   contextPrototype.beginPath = function() {
-    // TODO: Branch current matrix so that save/restore has no effect
-    //       as per safari docs.
-    this.currentPath_ = [];
+  // TODO: Branch current matrix so that save/restore has no effect
+  //     as per safari docs.
+  this.currentPath_ = [];
   };
 
   contextPrototype.moveTo = function(aX, aY) {
-    var p = this.getCoords_(aX, aY);
-    this.currentPath_.push({type: 'moveTo', x: p.x, y: p.y});
-    this.currentX_ = p.x;
-    this.currentY_ = p.y;
+  var p = this.getCoords_(aX, aY);
+  this.currentPath_.push({type: 'moveTo', x: p.x, y: p.y});
+  this.currentX_ = p.x;
+  this.currentY_ = p.y;
   };
 
   contextPrototype.lineTo = function(aX, aY) {
-    var p = this.getCoords_(aX, aY);
-    this.currentPath_.push({type: 'lineTo', x: p.x, y: p.y});
+  var p = this.getCoords_(aX, aY);
+  this.currentPath_.push({type: 'lineTo', x: p.x, y: p.y});
 
-    this.currentX_ = p.x;
-    this.currentY_ = p.y;
+  this.currentX_ = p.x;
+  this.currentY_ = p.y;
   };
 
   contextPrototype.bezierCurveTo = function(aCP1x, aCP1y,
-                                            aCP2x, aCP2y,
-                                            aX, aY) {
-    var p = this.getCoords_(aX, aY);
-    var cp1 = this.getCoords_(aCP1x, aCP1y);
-    var cp2 = this.getCoords_(aCP2x, aCP2y);
-    bezierCurveTo(this, cp1, cp2, p);
+                      aCP2x, aCP2y,
+                      aX, aY) {
+  var p = this.getCoords_(aX, aY);
+  var cp1 = this.getCoords_(aCP1x, aCP1y);
+  var cp2 = this.getCoords_(aCP2x, aCP2y);
+  bezierCurveTo(this, cp1, cp2, p);
   };
 
   // Helper function that takes the already fixed cordinates.
   function bezierCurveTo(self, cp1, cp2, p) {
-    self.currentPath_.push({
-      type: 'bezierCurveTo',
-      cp1x: cp1.x,
-      cp1y: cp1.y,
-      cp2x: cp2.x,
-      cp2y: cp2.y,
-      x: p.x,
-      y: p.y
-    });
-    self.currentX_ = p.x;
-    self.currentY_ = p.y;
+  self.currentPath_.push({
+    type: 'bezierCurveTo',
+    cp1x: cp1.x,
+    cp1y: cp1.y,
+    cp2x: cp2.x,
+    cp2y: cp2.y,
+    x: p.x,
+    y: p.y
+  });
+  self.currentX_ = p.x;
+  self.currentY_ = p.y;
   }
 
   contextPrototype.quadraticCurveTo = function(aCPx, aCPy, aX, aY) {
-    // the following is lifted almost directly from
-    // http://developer.mozilla.org/en/docs/Canvas_tutorial:Drawing_shapes
+  // the following is lifted almost directly from
+  // http://developer.mozilla.org/en/docs/Canvas_tutorial:Drawing_shapes
 
-    var cp = this.getCoords_(aCPx, aCPy);
-    var p = this.getCoords_(aX, aY);
+  var cp = this.getCoords_(aCPx, aCPy);
+  var p = this.getCoords_(aX, aY);
 
-    var cp1 = {
-      x: this.currentX_ + 2.0 / 3.0 * (cp.x - this.currentX_),
-      y: this.currentY_ + 2.0 / 3.0 * (cp.y - this.currentY_)
-    };
-    var cp2 = {
-      x: cp1.x + (p.x - this.currentX_) / 3.0,
-      y: cp1.y + (p.y - this.currentY_) / 3.0
-    };
+  var cp1 = {
+    x: this.currentX_ + 2.0 / 3.0 * (cp.x - this.currentX_),
+    y: this.currentY_ + 2.0 / 3.0 * (cp.y - this.currentY_)
+  };
+  var cp2 = {
+    x: cp1.x + (p.x - this.currentX_) / 3.0,
+    y: cp1.y + (p.y - this.currentY_) / 3.0
+  };
 
-    bezierCurveTo(this, cp1, cp2, p);
+  bezierCurveTo(this, cp1, cp2, p);
   };
 
   contextPrototype.arc = function(aX, aY, aRadius,
-                                  aStartAngle, aEndAngle, aClockwise) {
-    aRadius *= Z;
-    var arcType = aClockwise ? 'at' : 'wa';
+                  aStartAngle, aEndAngle, aClockwise) {
+  aRadius *= Z;
+  var arcType = aClockwise ? 'at' : 'wa';
 
-    var xStart = aX + mc(aStartAngle) * aRadius - Z2;
-    var yStart = aY + ms(aStartAngle) * aRadius - Z2;
+  var xStart = aX + mc(aStartAngle) * aRadius - Z2;
+  var yStart = aY + ms(aStartAngle) * aRadius - Z2;
 
-    var xEnd = aX + mc(aEndAngle) * aRadius - Z2;
-    var yEnd = aY + ms(aEndAngle) * aRadius - Z2;
+  var xEnd = aX + mc(aEndAngle) * aRadius - Z2;
+  var yEnd = aY + ms(aEndAngle) * aRadius - Z2;
 
-    // IE won't render arches drawn counter clockwise if xStart == xEnd.
-    if (xStart == xEnd && !aClockwise) {
-      xStart += 0.125; // Offset xStart by 1/80 of a pixel. Use something
-                       // that can be represented in binary
-    }
+  // IE won't render arches drawn counter clockwise if xStart == xEnd.
+  if (xStart == xEnd && !aClockwise) {
+    xStart += 0.125; // Offset xStart by 1/80 of a pixel. Use something
+             // that can be represented in binary
+  }
 
-    var p = this.getCoords_(aX, aY);
-    var pStart = this.getCoords_(xStart, yStart);
-    var pEnd = this.getCoords_(xEnd, yEnd);
+  var p = this.getCoords_(aX, aY);
+  var pStart = this.getCoords_(xStart, yStart);
+  var pEnd = this.getCoords_(xEnd, yEnd);
 
-    this.currentPath_.push({type: arcType,
-                           x: p.x,
-                           y: p.y,
-                           radius: aRadius,
-                           xStart: pStart.x,
-                           yStart: pStart.y,
-                           xEnd: pEnd.x,
-                           yEnd: pEnd.y});
+  this.currentPath_.push({type: arcType,
+               x: p.x,
+               y: p.y,
+               radius: aRadius,
+               xStart: pStart.x,
+               yStart: pStart.y,
+               xEnd: pEnd.x,
+               yEnd: pEnd.y});
 
   };
 
   contextPrototype.rect = function(aX, aY, aWidth, aHeight) {
-    this.moveTo(aX, aY);
-    this.lineTo(aX + aWidth, aY);
-    this.lineTo(aX + aWidth, aY + aHeight);
-    this.lineTo(aX, aY + aHeight);
-    this.closePath();
+  this.moveTo(aX, aY);
+  this.lineTo(aX + aWidth, aY);
+  this.lineTo(aX + aWidth, aY + aHeight);
+  this.lineTo(aX, aY + aHeight);
+  this.closePath();
   };
 
   contextPrototype.strokeRect = function(aX, aY, aWidth, aHeight) {
-    var oldPath = this.currentPath_;
-    this.beginPath();
+  var oldPath = this.currentPath_;
+  this.beginPath();
 
-    this.moveTo(aX, aY);
-    this.lineTo(aX + aWidth, aY);
-    this.lineTo(aX + aWidth, aY + aHeight);
-    this.lineTo(aX, aY + aHeight);
-    this.closePath();
-    this.stroke();
+  this.moveTo(aX, aY);
+  this.lineTo(aX + aWidth, aY);
+  this.lineTo(aX + aWidth, aY + aHeight);
+  this.lineTo(aX, aY + aHeight);
+  this.closePath();
+  this.stroke();
 
-    this.currentPath_ = oldPath;
+  this.currentPath_ = oldPath;
   };
 
   contextPrototype.fillRect = function(aX, aY, aWidth, aHeight) {
-    var oldPath = this.currentPath_;
-    this.beginPath();
+  var oldPath = this.currentPath_;
+  this.beginPath();
 
-    this.moveTo(aX, aY);
-    this.lineTo(aX + aWidth, aY);
-    this.lineTo(aX + aWidth, aY + aHeight);
-    this.lineTo(aX, aY + aHeight);
-    this.closePath();
-    this.fill();
+  this.moveTo(aX, aY);
+  this.lineTo(aX + aWidth, aY);
+  this.lineTo(aX + aWidth, aY + aHeight);
+  this.lineTo(aX, aY + aHeight);
+  this.closePath();
+  this.fill();
 
-    this.currentPath_ = oldPath;
+  this.currentPath_ = oldPath;
   };
 
   contextPrototype.createLinearGradient = function(aX0, aY0, aX1, aY1) {
-    var gradient = new CanvasGradient_('gradient');
-    gradient.x0_ = aX0;
-    gradient.y0_ = aY0;
-    gradient.x1_ = aX1;
-    gradient.y1_ = aY1;
-    return gradient;
+  var gradient = new CanvasGradient_('gradient');
+  gradient.x0_ = aX0;
+  gradient.y0_ = aY0;
+  gradient.x1_ = aX1;
+  gradient.y1_ = aY1;
+  return gradient;
   };
 
   contextPrototype.createRadialGradient = function(aX0, aY0, aR0,
-                                                   aX1, aY1, aR1) {
-    var gradient = new CanvasGradient_('gradientradial');
-    gradient.x0_ = aX0;
-    gradient.y0_ = aY0;
-    gradient.r0_ = aR0;
-    gradient.x1_ = aX1;
-    gradient.y1_ = aY1;
-    gradient.r1_ = aR1;
-    return gradient;
+                           aX1, aY1, aR1) {
+  var gradient = new CanvasGradient_('gradientradial');
+  gradient.x0_ = aX0;
+  gradient.y0_ = aY0;
+  gradient.r0_ = aR0;
+  gradient.x1_ = aX1;
+  gradient.y1_ = aY1;
+  gradient.r1_ = aR1;
+  return gradient;
   };
 
   contextPrototype.drawImage = function(image, var_args) {
-    var dx, dy, dw, dh, sx, sy, sw, sh;
+  var dx, dy, dw, dh, sx, sy, sw, sh;
 
-    // to find the original width we overide the width and height
-    var oldRuntimeWidth = image.runtimeStyle.width;
-    var oldRuntimeHeight = image.runtimeStyle.height;
-    image.runtimeStyle.width = 'auto';
-    image.runtimeStyle.height = 'auto';
+  // to find the original width we overide the width and height
+  var oldRuntimeWidth = image.runtimeStyle.width;
+  var oldRuntimeHeight = image.runtimeStyle.height;
+  image.runtimeStyle.width = 'auto';
+  image.runtimeStyle.height = 'auto';
 
-    // get the original size
-    var w = image.width;
-    var h = image.height;
+  // get the original size
+  var w = image.width;
+  var h = image.height;
 
-    // and remove overides
-    image.runtimeStyle.width = oldRuntimeWidth;
-    image.runtimeStyle.height = oldRuntimeHeight;
+  // and remove overides
+  image.runtimeStyle.width = oldRuntimeWidth;
+  image.runtimeStyle.height = oldRuntimeHeight;
 
-    if (arguments.length == 3) {
-      dx = arguments[1];
-      dy = arguments[2];
-      sx = sy = 0;
-      sw = dw = w;
-      sh = dh = h;
-    } else if (arguments.length == 5) {
-      dx = arguments[1];
-      dy = arguments[2];
-      dw = arguments[3];
-      dh = arguments[4];
-      sx = sy = 0;
-      sw = w;
-      sh = h;
-    } else if (arguments.length == 9) {
-      sx = arguments[1];
-      sy = arguments[2];
-      sw = arguments[3];
-      sh = arguments[4];
-      dx = arguments[5];
-      dy = arguments[6];
-      dw = arguments[7];
-      dh = arguments[8];
-    } else {
-      throw Error('Invalid number of arguments');
-    }
+  if (arguments.length == 3) {
+    dx = arguments[1];
+    dy = arguments[2];
+    sx = sy = 0;
+    sw = dw = w;
+    sh = dh = h;
+  } else if (arguments.length == 5) {
+    dx = arguments[1];
+    dy = arguments[2];
+    dw = arguments[3];
+    dh = arguments[4];
+    sx = sy = 0;
+    sw = w;
+    sh = h;
+  } else if (arguments.length == 9) {
+    sx = arguments[1];
+    sy = arguments[2];
+    sw = arguments[3];
+    sh = arguments[4];
+    dx = arguments[5];
+    dy = arguments[6];
+    dw = arguments[7];
+    dh = arguments[8];
+  } else {
+    throw Error('Invalid number of arguments');
+  }
 
-    var d = this.getCoords_(dx, dy);
+  var d = this.getCoords_(dx, dy);
 
-    var w2 = sw / 2;
-    var h2 = sh / 2;
+  var w2 = sw / 2;
+  var h2 = sh / 2;
 
-    var vmlStr = [];
+  var vmlStr = [];
 
-    var W = 10;
-    var H = 10;
+  var W = 10;
+  var H = 10;
 
-    // For some reason that I've now forgotten, using divs didn't work
-    vmlStr.push(' <g_vml_:group',
-                ' coordsize="', Z * W, ',', Z * H, '"',
-                ' coordorigin="0,0"' ,
-                ' style="width:', W, 'px;height:', H, 'px;position:absolute;');
+  // For some reason that I've now forgotten, using divs didn't work
+  vmlStr.push(' <g_vml_:group',
+        ' coordsize="', Z * W, ',', Z * H, '"',
+        ' coordorigin="0,0"' ,
+        ' style="width:', W, 'px;height:', H, 'px;position:absolute;');
 
-    // If filters are necessary (rotation exists), create them
-    // filters are bog-slow, so only create them if abbsolutely necessary
-    // The following check doesn't account for skews (which don't exist
-    // in the canvas spec (yet) anyway.
+  // If filters are necessary (rotation exists), create them
+  // filters are bog-slow, so only create them if abbsolutely necessary
+  // The following check doesn't account for skews (which don't exist
+  // in the canvas spec (yet) anyway.
 
-    if (this.m_[0][0] != 1 || this.m_[0][1]) {
-      var filter = [];
+  if (this.m_[0][0] != 1 || this.m_[0][1]) {
+    var filter = [];
 
-      // Note the 12/21 reversal
-      filter.push('M11=', this.m_[0][0], ',',
-                  'M12=', this.m_[1][0], ',',
-                  'M21=', this.m_[0][1], ',',
-                  'M22=', this.m_[1][1], ',',
-                  'Dx=', mr(d.x / Z), ',',
-                  'Dy=', mr(d.y / Z), '');
+    // Note the 12/21 reversal
+    filter.push('M11=', this.m_[0][0], ',',
+          'M12=', this.m_[1][0], ',',
+          'M21=', this.m_[0][1], ',',
+          'M22=', this.m_[1][1], ',',
+          'Dx=', mr(d.x / Z), ',',
+          'Dy=', mr(d.y / Z), '');
 
-      // Bounding box calculation (need to minimize displayed area so that
-      // filters don't waste time on unused pixels.
-      var max = d;
-      var c2 = this.getCoords_(dx + dw, dy);
-      var c3 = this.getCoords_(dx, dy + dh);
-      var c4 = this.getCoords_(dx + dw, dy + dh);
+    // Bounding box calculation (need to minimize displayed area so that
+    // filters don't waste time on unused pixels.
+    var max = d;
+    var c2 = this.getCoords_(dx + dw, dy);
+    var c3 = this.getCoords_(dx, dy + dh);
+    var c4 = this.getCoords_(dx + dw, dy + dh);
 
-      max.x = m.max(max.x, c2.x, c3.x, c4.x);
-      max.y = m.max(max.y, c2.y, c3.y, c4.y);
+    max.x = m.max(max.x, c2.x, c3.x, c4.x);
+    max.y = m.max(max.y, c2.y, c3.y, c4.y);
 
-      vmlStr.push('padding:0 ', mr(max.x / Z), 'px ', mr(max.y / Z),
-                  'px 0;filter:progid:DXImageTransform.Microsoft.Matrix(',
-                  filter.join(''), ", sizingmethod='clip');")
-    } else {
-      vmlStr.push('top:', mr(d.y / Z), 'px;left:', mr(d.x / Z), 'px;');
-    }
+    vmlStr.push('padding:0 ', mr(max.x / Z), 'px ', mr(max.y / Z),
+          'px 0;filter:progid:DXImageTransform.Microsoft.Matrix(',
+          filter.join(''), ", sizingmethod='clip');")
+  } else {
+    vmlStr.push('top:', mr(d.y / Z), 'px;left:', mr(d.x / Z), 'px;');
+  }
 
-    vmlStr.push(' ">' ,
-                '<g_vml_:image src="', image.src, '"',
-                ' style="width:', Z * dw, 'px;',
-                ' height:', Z * dh, 'px;"',
-                ' cropleft="', sx / w, '"',
-                ' croptop="', sy / h, '"',
-                ' cropright="', (w - sx - sw) / w, '"',
-                ' cropbottom="', (h - sy - sh) / h, '"',
-                ' />',
-                '</g_vml_:group>');
+  vmlStr.push(' ">' ,
+        '<g_vml_:image src="', image.src, '"',
+        ' style="width:', Z * dw, 'px;',
+        ' height:', Z * dh, 'px;"',
+        ' cropleft="', sx / w, '"',
+        ' croptop="', sy / h, '"',
+        ' cropright="', (w - sx - sw) / w, '"',
+        ' cropbottom="', (h - sy - sh) / h, '"',
+        ' />',
+        '</g_vml_:group>');
 
-    this.element_.insertAdjacentHTML('BeforeEnd',
-                                    vmlStr.join(''));
+  this.element_.insertAdjacentHTML('BeforeEnd',
+                  vmlStr.join(''));
   };
 
   contextPrototype.stroke = function(aFill) {
-    var lineStr = [];
-    var lineOpen = false;
-    var a = processStyle(aFill ? this.fillStyle : this.strokeStyle);
-    var color = a.color;
-    var opacity = a.alpha * this.globalAlpha;
+  var lineStr = [];
+  var lineOpen = false;
+  var a = processStyle(aFill ? this.fillStyle : this.strokeStyle);
+  var color = a.color;
+  var opacity = a.alpha * this.globalAlpha;
 
-    var W = 10;
-    var H = 10;
+  var W = 10;
+  var H = 10;
 
-    lineStr.push('<g_vml_:shape',
-                 ' filled="', !!aFill, '"',
-                 ' style="position:absolute;width:', W, 'px;height:', H, 'px;"',
-                 ' coordorigin="0 0" coordsize="', Z * W, ' ', Z * H, '"',
-                 ' stroked="', !aFill, '"',
-                 ' path="');
+  lineStr.push('<g_vml_:shape',
+         ' filled="', !!aFill, '"',
+         ' style="position:absolute;width:', W, 'px;height:', H, 'px;"',
+         ' coordorigin="0 0" coordsize="', Z * W, ' ', Z * H, '"',
+         ' stroked="', !aFill, '"',
+         ' path="');
 
-    var newSeq = false;
-    var min = {x: null, y: null};
-    var max = {x: null, y: null};
+  var newSeq = false;
+  var min = {x: null, y: null};
+  var max = {x: null, y: null};
 
-    for (var i = 0; i < this.currentPath_.length; i++) {
-      var p = this.currentPath_[i];
-      var c;
+  for (var i = 0; i < this.currentPath_.length; i++) {
+    var p = this.currentPath_[i];
+    var c;
 
-      switch (p.type) {
-        case 'moveTo':
-          c = p;
-          lineStr.push(' m ', mr(p.x), ',', mr(p.y));
-          break;
-        case 'lineTo':
-          lineStr.push(' l ', mr(p.x), ',', mr(p.y));
-          break;
-        case 'close':
-          lineStr.push(' x ');
-          p = null;
-          break;
-        case 'bezierCurveTo':
-          lineStr.push(' c ',
-                       mr(p.cp1x), ',', mr(p.cp1y), ',',
-                       mr(p.cp2x), ',', mr(p.cp2y), ',',
-                       mr(p.x), ',', mr(p.y));
-          break;
-        case 'at':
-        case 'wa':
-          lineStr.push(' ', p.type, ' ',
-                       mr(p.x - this.arcScaleX_ * p.radius), ',',
-                       mr(p.y - this.arcScaleY_ * p.radius), ' ',
-                       mr(p.x + this.arcScaleX_ * p.radius), ',',
-                       mr(p.y + this.arcScaleY_ * p.radius), ' ',
-                       mr(p.xStart), ',', mr(p.yStart), ' ',
-                       mr(p.xEnd), ',', mr(p.yEnd));
-          break;
-      }
-
-
-      // TODO: Following is broken for curves due to
-      //       move to proper paths.
-
-      // Figure out dimensions so we can do gradient fills
-      // properly
-      if (p) {
-        if (min.x == null || p.x < min.x) {
-          min.x = p.x;
-        }
-        if (max.x == null || p.x > max.x) {
-          max.x = p.x;
-        }
-        if (min.y == null || p.y < min.y) {
-          min.y = p.y;
-        }
-        if (max.y == null || p.y > max.y) {
-          max.y = p.y;
-        }
-      }
+    switch (p.type) {
+    case 'moveTo':
+      c = p;
+      lineStr.push(' m ', mr(p.x), ',', mr(p.y));
+      break;
+    case 'lineTo':
+      lineStr.push(' l ', mr(p.x), ',', mr(p.y));
+      break;
+    case 'close':
+      lineStr.push(' x ');
+      p = null;
+      break;
+    case 'bezierCurveTo':
+      lineStr.push(' c ',
+             mr(p.cp1x), ',', mr(p.cp1y), ',',
+             mr(p.cp2x), ',', mr(p.cp2y), ',',
+             mr(p.x), ',', mr(p.y));
+      break;
+    case 'at':
+    case 'wa':
+      lineStr.push(' ', p.type, ' ',
+             mr(p.x - this.arcScaleX_ * p.radius), ',',
+             mr(p.y - this.arcScaleY_ * p.radius), ' ',
+             mr(p.x + this.arcScaleX_ * p.radius), ',',
+             mr(p.y + this.arcScaleY_ * p.radius), ' ',
+             mr(p.xStart), ',', mr(p.yStart), ' ',
+             mr(p.xEnd), ',', mr(p.yEnd));
+      break;
     }
-    lineStr.push(' ">');
 
-    if (!aFill) {
-      var lineWidth = this.lineScale_ * this.lineWidth;
 
-      // VML cannot correctly render a line if the width is less than 1px.
-      // In that case, we dilute the color to make the line look thinner.
-      if (lineWidth < 1) {
-        opacity *= lineWidth;
-      }
+    // TODO: Following is broken for curves due to
+    //     move to proper paths.
 
-      lineStr.push(
-        '<g_vml_:stroke',
-        ' opacity="', opacity, '"',
-        ' joinstyle="', this.lineJoin, '"',
-        ' miterlimit="', this.miterLimit, '"',
-        ' endcap="', processLineCap(this.lineCap), '"',
-        ' weight="', lineWidth, 'px"',
-        ' color="', color, '" />'
-      );
-    } else if (typeof this.fillStyle == 'object') {
-      var fillStyle = this.fillStyle;
-      var angle = 0;
-      var focus = {x: 0, y: 0};
+    // Figure out dimensions so we can do gradient fills
+    // properly
+    if (p) {
+    if (min.x == null || p.x < min.x) {
+      min.x = p.x;
+    }
+    if (max.x == null || p.x > max.x) {
+      max.x = p.x;
+    }
+    if (min.y == null || p.y < min.y) {
+      min.y = p.y;
+    }
+    if (max.y == null || p.y > max.y) {
+      max.y = p.y;
+    }
+    }
+  }
+  lineStr.push(' ">');
 
-      // additional offset
-      var shift = 0;
-      // scale factor for offset
-      var expansion = 1;
+  if (!aFill) {
+    var lineWidth = this.lineScale_ * this.lineWidth;
 
-      if (fillStyle.type_ == 'gradient') {
-        var x0 = fillStyle.x0_ / this.arcScaleX_;
-        var y0 = fillStyle.y0_ / this.arcScaleY_;
-        var x1 = fillStyle.x1_ / this.arcScaleX_;
-        var y1 = fillStyle.y1_ / this.arcScaleY_;
-        var p0 = this.getCoords_(x0, y0);
-        var p1 = this.getCoords_(x1, y1);
-        var dx = p1.x - p0.x;
-        var dy = p1.y - p0.y;
-        angle = Math.atan2(dx, dy) * 180 / Math.PI;
+    // VML cannot correctly render a line if the width is less than 1px.
+    // In that case, we dilute the color to make the line look thinner.
+    if (lineWidth < 1) {
+    opacity *= lineWidth;
+    }
 
-        // The angle should be a non-negative number.
-        if (angle < 0) {
-          angle += 360;
-        }
+    lineStr.push(
+    '<g_vml_:stroke',
+    ' opacity="', opacity, '"',
+    ' joinstyle="', this.lineJoin, '"',
+    ' miterlimit="', this.miterLimit, '"',
+    ' endcap="', processLineCap(this.lineCap), '"',
+    ' weight="', lineWidth, 'px"',
+    ' color="', color, '" />'
+    );
+  } else if (typeof this.fillStyle == 'object') {
+    var fillStyle = this.fillStyle;
+    var angle = 0;
+    var focus = {x: 0, y: 0};
 
-        // Very small angles produce an unexpected result because they are
-        // converted to a scientific notation string.
-        if (angle < 1e-6) {
-          angle = 0;
-        }
-      } else {
-        var p0 = this.getCoords_(fillStyle.x0_, fillStyle.y0_);
-        var width  = max.x - min.x;
-        var height = max.y - min.y;
-        focus = {
-          x: (p0.x - min.x) / width,
-          y: (p0.y - min.y) / height
-        };
+    // additional offset
+    var shift = 0;
+    // scale factor for offset
+    var expansion = 1;
 
-        width  /= this.arcScaleX_ * Z;
-        height /= this.arcScaleY_ * Z;
-        var dimension = m.max(width, height);
-        shift = 2 * fillStyle.r0_ / dimension;
-        expansion = 2 * fillStyle.r1_ / dimension - shift;
-      }
+    if (fillStyle.type_ == 'gradient') {
+    var x0 = fillStyle.x0_ / this.arcScaleX_;
+    var y0 = fillStyle.y0_ / this.arcScaleY_;
+    var x1 = fillStyle.x1_ / this.arcScaleX_;
+    var y1 = fillStyle.y1_ / this.arcScaleY_;
+    var p0 = this.getCoords_(x0, y0);
+    var p1 = this.getCoords_(x1, y1);
+    var dx = p1.x - p0.x;
+    var dy = p1.y - p0.y;
+    angle = Math.atan2(dx, dy) * 180 / Math.PI;
 
-      // We need to sort the color stops in ascending order by offset,
-      // otherwise IE won't interpret it correctly.
-      var stops = fillStyle.colors_;
-      stops.sort(function(cs1, cs2) {
-        return cs1.offset - cs2.offset;
-      });
+    // The angle should be a non-negative number.
+    if (angle < 0) {
+      angle += 360;
+    }
 
-      var length = stops.length;
-      var color1 = stops[0].color;
-      var color2 = stops[length - 1].color;
-      var opacity1 = stops[0].alpha * this.globalAlpha;
-      var opacity2 = stops[length - 1].alpha * this.globalAlpha;
-
-      var colors = [];
-      for (var i = 0; i < length; i++) {
-        var stop = stops[i];
-        colors.push(stop.offset * expansion + shift + ' ' + stop.color);
-      }
-
-      // When colors attribute is used, the meanings of opacity and o:opacity2
-      // are reversed.
-      lineStr.push('<g_vml_:fill type="', fillStyle.type_, '"',
-                   ' method="none" focus="100%"',
-                   ' color="', color1, '"',
-                   ' color2="', color2, '"',
-                   ' colors="', colors.join(','), '"',
-                   ' opacity="', opacity2, '"',
-                   ' g_o_:opacity2="', opacity1, '"',
-                   ' angle="', angle, '"',
-                   ' focusposition="', focus.x, ',', focus.y, '" />');
+    // Very small angles produce an unexpected result because they are
+    // converted to a scientific notation string.
+    if (angle < 1e-6) {
+      angle = 0;
+    }
     } else {
-      lineStr.push('<g_vml_:fill color="', color, '" opacity="', opacity,
-                   '" />');
+    var p0 = this.getCoords_(fillStyle.x0_, fillStyle.y0_);
+    var width  = max.x - min.x;
+    var height = max.y - min.y;
+    focus = {
+      x: (p0.x - min.x) / width,
+      y: (p0.y - min.y) / height
+    };
+
+    width  /= this.arcScaleX_ * Z;
+    height /= this.arcScaleY_ * Z;
+    var dimension = m.max(width, height);
+    shift = 2 * fillStyle.r0_ / dimension;
+    expansion = 2 * fillStyle.r1_ / dimension - shift;
     }
 
-    lineStr.push('</g_vml_:shape>');
+    // We need to sort the color stops in ascending order by offset,
+    // otherwise IE won't interpret it correctly.
+    var stops = fillStyle.colors_;
+    stops.sort(function(cs1, cs2) {
+    return cs1.offset - cs2.offset;
+    });
 
-    this.element_.insertAdjacentHTML('beforeEnd', lineStr.join(''));
+    var length = stops.length;
+    var color1 = stops[0].color;
+    var color2 = stops[length - 1].color;
+    var opacity1 = stops[0].alpha * this.globalAlpha;
+    var opacity2 = stops[length - 1].alpha * this.globalAlpha;
+
+    var colors = [];
+    for (var i = 0; i < length; i++) {
+    var stop = stops[i];
+    colors.push(stop.offset * expansion + shift + ' ' + stop.color);
+    }
+
+    // When colors attribute is used, the meanings of opacity and o:opacity2
+    // are reversed.
+    lineStr.push('<g_vml_:fill type="', fillStyle.type_, '"',
+           ' method="none" focus="100%"',
+           ' color="', color1, '"',
+           ' color2="', color2, '"',
+           ' colors="', colors.join(','), '"',
+           ' opacity="', opacity2, '"',
+           ' g_o_:opacity2="', opacity1, '"',
+           ' angle="', angle, '"',
+           ' focusposition="', focus.x, ',', focus.y, '" />');
+  } else {
+    lineStr.push('<g_vml_:fill color="', color, '" opacity="', opacity,
+           '" />');
+  }
+
+  lineStr.push('</g_vml_:shape>');
+
+  this.element_.insertAdjacentHTML('beforeEnd', lineStr.join(''));
   };
 
   contextPrototype.fill = function() {
-    this.stroke(true);
+  this.stroke(true);
   }
 
   contextPrototype.closePath = function() {
-    this.currentPath_.push({type: 'close'});
+  this.currentPath_.push({type: 'close'});
   };
 
   /**
    * @private
    */
   contextPrototype.getCoords_ = function(aX, aY) {
-    var m = this.m_;
-    return {
-      x: Z * (aX * m[0][0] + aY * m[1][0] + m[2][0]) - Z2,
-      y: Z * (aX * m[0][1] + aY * m[1][1] + m[2][1]) - Z2
-    }
+  var m = this.m_;
+  return {
+    x: Z * (aX * m[0][0] + aY * m[1][0] + m[2][0]) - Z2,
+    y: Z * (aX * m[0][1] + aY * m[1][1] + m[2][1]) - Z2
+  }
   };
 
   contextPrototype.save = function() {
-    var o = {};
-    copyState(this, o);
-    this.aStack_.push(o);
-    this.mStack_.push(this.m_);
-    this.m_ = matrixMultiply(createMatrixIdentity(), this.m_);
+  var o = {};
+  copyState(this, o);
+  this.aStack_.push(o);
+  this.mStack_.push(this.m_);
+  this.m_ = matrixMultiply(createMatrixIdentity(), this.m_);
   };
 
   contextPrototype.restore = function() {
-    copyState(this.aStack_.pop(), this);
-    this.m_ = this.mStack_.pop();
+  copyState(this.aStack_.pop(), this);
+  this.m_ = this.mStack_.pop();
   };
 
   function matrixIsFinite(m) {
-    for (var j = 0; j < 3; j++) {
-      for (var k = 0; k < 2; k++) {
-        if (!isFinite(m[j][k]) || isNaN(m[j][k])) {
-          return false;
-        }
-      }
+  for (var j = 0; j < 3; j++) {
+    for (var k = 0; k < 2; k++) {
+    if (!isFinite(m[j][k]) || isNaN(m[j][k])) {
+      return false;
     }
-    return true;
+    }
+  }
+  return true;
   }
 
   function setM(ctx, m, updateLineScale) {
-    if (!matrixIsFinite(m)) {
-      return;
-    }
-    ctx.m_ = m;
+  if (!matrixIsFinite(m)) {
+    return;
+  }
+  ctx.m_ = m;
 
-    if (updateLineScale) {
-      // Get the line scale.
-      // Determinant of this.m_ means how much the area is enlarged by the
-      // transformation. So its square root can be used as a scale factor
-      // for width.
-      var det = m[0][0] * m[1][1] - m[0][1] * m[1][0];
-      ctx.lineScale_ = sqrt(abs(det));
-    }
+  if (updateLineScale) {
+    // Get the line scale.
+    // Determinant of this.m_ means how much the area is enlarged by the
+    // transformation. So its square root can be used as a scale factor
+    // for width.
+    var det = m[0][0] * m[1][1] - m[0][1] * m[1][0];
+    ctx.lineScale_ = sqrt(abs(det));
+  }
   }
 
   contextPrototype.translate = function(aX, aY) {
-    var m1 = [
-      [1,  0,  0],
-      [0,  1,  0],
-      [aX, aY, 1]
-    ];
+  var m1 = [
+    [1,  0,  0],
+    [0,  1,  0],
+    [aX, aY, 1]
+  ];
 
-    setM(this, matrixMultiply(m1, this.m_), false);
+  setM(this, matrixMultiply(m1, this.m_), false);
   };
 
   contextPrototype.rotate = function(aRot) {
-    var c = mc(aRot);
-    var s = ms(aRot);
+  var c = mc(aRot);
+  var s = ms(aRot);
 
-    var m1 = [
-      [c,  s, 0],
-      [-s, c, 0],
-      [0,  0, 1]
-    ];
+  var m1 = [
+    [c,  s, 0],
+    [-s, c, 0],
+    [0,  0, 1]
+  ];
 
-    setM(this, matrixMultiply(m1, this.m_), false);
+  setM(this, matrixMultiply(m1, this.m_), false);
   };
 
   contextPrototype.scale = function(aX, aY) {
-    this.arcScaleX_ *= aX;
-    this.arcScaleY_ *= aY;
-    var m1 = [
-      [aX, 0,  0],
-      [0,  aY, 0],
-      [0,  0,  1]
-    ];
+  this.arcScaleX_ *= aX;
+  this.arcScaleY_ *= aY;
+  var m1 = [
+    [aX, 0,  0],
+    [0,  aY, 0],
+    [0,  0,  1]
+  ];
 
-    setM(this, matrixMultiply(m1, this.m_), true);
+  setM(this, matrixMultiply(m1, this.m_), true);
   };
 
   contextPrototype.transform = function(m11, m12, m21, m22, dx, dy) {
-    var m1 = [
-      [m11, m12, 0],
-      [m21, m22, 0],
-      [dx,  dy,  1]
-    ];
+  var m1 = [
+    [m11, m12, 0],
+    [m21, m22, 0],
+    [dx,  dy,  1]
+  ];
 
-    setM(this, matrixMultiply(m1, this.m_), true);
+  setM(this, matrixMultiply(m1, this.m_), true);
   };
 
   contextPrototype.setTransform = function(m11, m12, m21, m22, dx, dy) {
-    var m = [
-      [m11, m12, 0],
-      [m21, m22, 0],
-      [dx,  dy,  1]
-    ];
+  var m = [
+    [m11, m12, 0],
+    [m21, m22, 0],
+    [dx,  dy,  1]
+  ];
 
-    setM(this, m, true);
+  setM(this, m, true);
   };
 
   /******** STUBS ********/
   contextPrototype.clip = function() {
-    // TODO: Implement
+  // TODO: Implement
   };
 
   contextPrototype.arcTo = function() {
-    // TODO: Implement
+  // TODO: Implement
   };
 
   contextPrototype.createPattern = function() {
-    return new CanvasPattern_;
+  return new CanvasPattern_;
   };
 
   // Gradient / Pattern Stubs
   function CanvasGradient_(aType) {
-    this.type_ = aType;
-    this.x0_ = 0;
-    this.y0_ = 0;
-    this.r0_ = 0;
-    this.x1_ = 0;
-    this.y1_ = 0;
-    this.r1_ = 0;
-    this.colors_ = [];
+  this.type_ = aType;
+  this.x0_ = 0;
+  this.y0_ = 0;
+  this.r0_ = 0;
+  this.x1_ = 0;
+  this.y1_ = 0;
+  this.r1_ = 0;
+  this.colors_ = [];
   }
 
   CanvasGradient_.prototype.addColorStop = function(aOffset, aColor) {
-    aColor = processStyle(aColor);
-    this.colors_.push({offset: aOffset,
-                       color: aColor.color,
-                       alpha: aColor.alpha});
+  aColor = processStyle(aColor);
+  this.colors_.push({offset: aOffset,
+             color: aColor.color,
+             alpha: aColor.alpha});
   };
 
   function CanvasPattern_() {}

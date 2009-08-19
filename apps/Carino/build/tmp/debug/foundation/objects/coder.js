@@ -26,5 +26,5 @@
  
 
 var NSCoder = NSObject.extend({
-    
+  
 });

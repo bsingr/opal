@@ -16,56 +16,56 @@
 + (void)setMenuBarVisible:(BOOL)visible{}
 + (NSInteger)menuBarHeight
 {
-    return 29;
+  return 29;
 }
 
 // MARK: Creating an NSMenu object
 - (id)init
 {
-    [super init];
-    _title = @"";
-    _itemArray = [NSMutableArray arrayWithCapacity:0];
-    return self;
+  [super init];
+  _title = @"";
+  _itemArray = [NSMutableArray arrayWithCapacity:0];
+  return self;
 }
 
 - (id)initWithTitle:(NSString *)aTitle
 {
-    [self init];
-    _title = aTitle;
-    return self;
+  [self init];
+  _title = aTitle;
+  return self;
 }
 
 - (id)initWithCoder:(NSCoder *)aCoder
 {
-    _title = [aCoder decodeObjectForKey:@"NSTitle"];
-    _name = [aCoder decodeObjectForKey:@"NSName"];
-    _itemArray = [aCoder decodeObjectForKey:@"NSMenuItems"];
-    
-    return self;
+  _title = [aCoder decodeObjectForKey:@"NSTitle"];
+  _name = [aCoder decodeObjectForKey:@"NSName"];
+  _itemArray = [aCoder decodeObjectForKey:@"NSMenuItems"];
+  
+  return self;
 }
 
 // MARK: Setting up menu commands
 - (void)insertItem:(NSMenuItem *)newItem atIndex:(NSInteger)index
 {
-    [self addItem:newItem];
+  [self addItem:newItem];
 }
 
 - (NSMenuItem *)insertItemWithTitle:(NSString *)aString action:(SEL)aSelector keyEquivalent:(NSString *)keyEquiv atIndex:(NSInteger)index
 {
-    [self addItemWithTitle:aString action:aSelector keyEquivalent:keyEquiv];
+  [self addItemWithTitle:aString action:aSelector keyEquivalent:keyEquiv];
 }
 
 - (void)addItem:(NSMenuItem *)newItem
 {
-    [_itemArray addObject:newItem];
-    [newItem setMenu:self];
+  [_itemArray addObject:newItem];
+  [newItem setMenu:self];
 }
 
 - (NSMenuItem *)addItemWithTitle:(NSString *)aString action:(SEL)aSelector keyEquivalent:(NSString *)keyEquiv
 {
-    NSMenuItem *newItem = [[NSMenuItem alloc] initWithTitle:aString action:aSelector keyEquivalent:keyEquiv];
-    [self addItem:newItem];
-    return newItem;
+  NSMenuItem *newItem = [[NSMenuItem alloc] initWithTitle:aString action:aSelector keyEquivalent:keyEquiv];
+  [self addItem:newItem];
+  return newItem;
 }
 - (void)removeItem:(NSMenuItem *)anItem{}
 - (void)removeItemAtIndex:(NSInteger)index{}
@@ -77,16 +77,16 @@
 
 - (NSMenuItem *)itemAtIndex:(NSInteger)index
 {
-    return [_itemArray objectAtIndex:index];
+  return [_itemArray objectAtIndex:index];
 }
 
 - (NSInteger)numberOfItems
 {
-    return [_itemArray count];
+  return [_itemArray count];
 }
 - (NSArray *)itemArray
 {
-    return _itemArray;
+  return _itemArray;
 }
 
 // MARK: Finding indices of Menu items

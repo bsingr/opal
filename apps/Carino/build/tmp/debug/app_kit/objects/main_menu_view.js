@@ -26,9 +26,9 @@
 
 
 var NSMainMenuView = NSView.extend({
-    
-    drawRect: function(rect) {
-        var c = NSGraphicsContext.currentContext().graphicsPort();
-        CGContextFillRect(c, rect);
-    }
+  
+  drawRect: function(rect) {
+    var c = NSGraphicsContext.currentContext().graphicsPort();
+    CGContextFillRect(c, rect);
+  }
 });

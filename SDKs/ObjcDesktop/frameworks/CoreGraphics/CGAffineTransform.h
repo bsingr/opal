@@ -28,8 +28,8 @@
 #import <CoreGraphics/CGGeometry.h>
 
 typedef struct _CGAffineTransform {
-    CGFloat a, b, c, d;
-    CGFloat tx, ty;
+  CGFloat a, b, c, d;
+  CGFloat tx, ty;
 } CGAffineTransform;
 
 extern const CGAffineTransform CGAffineTransformIdentity;

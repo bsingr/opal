@@ -10,7 +10,7 @@
 
 @interface AppController : NSObject
 {
-    // IBOutlet NSWindow *mainWindow;
+  // IBOutlet NSWindow *mainWindow;
 }
 
 @end

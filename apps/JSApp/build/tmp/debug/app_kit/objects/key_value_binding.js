@@ -30,214 +30,214 @@ VN.NO_SELECTION_MARKER = "VNNoSelectionMarker";
 VN.NOT_APPLICABLE_MARKER = "VNNotApplicableMarker";
 
 /**
-    Useful method for determining whether objects are used as markers in binding
-    dicitonary arrays.
-    
-    @param {VN.Object} object
-    @return Boolean
+  Useful method for determining whether objects are used as markers in binding
+  dicitonary arrays.
+  
+  @param {VN.Object} object
+  @return Boolean
 */
 VN.IsControllerMarker = function(object) {
-    if (object == VN.MULTIPLE_VALUES_MARKER || object ==  VN.NO_SELECTION_MARKER || object == VN.NOT_APPLICABLE_MARKER)
-        return true;
-    
-    return false;
+  if (object == VN.MULTIPLE_VALUES_MARKER || object ==  VN.NO_SELECTION_MARKER || object == VN.NOT_APPLICABLE_MARKER)
+    return true;
+  
+  return false;
 }
 
 /**
-    For the infoForBinding dictionary: the actual object being observed
+  For the infoForBinding dictionary: the actual object being observed
 */
 VN.OBSERVED_OBJECT_KEY = "VNObservedObjectKey";
 
 /**
-    For the infoForBinding dictionary: the keyPath used for observing
+  For the infoForBinding dictionary: the keyPath used for observing
 */
 VN.OBSERVED_KEY_PATH_KEY = "VNObservedKeyPathKey";
 
 /**
-    For the infoForBinding dictionary: any options for the binding
+  For the infoForBinding dictionary: any options for the binding
 */
 VN.OPTIONS_KEY = "VNOptionsKey";
 
 /**
-    Bindings exposed here will then become available in the instance method
-    exposedBindings();
-    
-    @param {VN.String} binding
+  Bindings exposed here will then become available in the instance method
+  exposedBindings();
+  
+  @param {VN.String} binding
 */
 VN.Object.exposeBinding = function(binding) {
-    // should expose the binding in Interface Builder
+  // should expose the binding in Interface Builder
 };
 
 /**
-    @mixin VNKeyValueBindingCreation
-    @class VN.Object
+  @mixin VNKeyValueBindingCreation
+  @class VN.Object
 */
 VN.Object.mixin({
+  
+  /**
+    A VN.Dictionary used for holding binding info. Each key is the binding 
+    context name (see lower area of this file) and the value for each key
+    is another dictionary holding information for the binding.
     
-    /**
-        A VN.Dictionary used for holding binding info. Each key is the binding 
-        context name (see lower area of this file) and the value for each key
-        is another dictionary holding information for the binding.
-        
-        @type VN.Dictionary
-    */
-    _kvb_info: VN.Dictionary.create(),
+    @type VN.Dictionary
+  */
+  _kvb_info: VN.Dictionary.create(),
+  
+  
+  /**
+    @returns VN.Array
+  */
+  exposedBindings: function() {
     
+  },
+  
+  /**
+    Optional method.
     
-    /**
-        @returns VN.Array
-    */
-    exposedBindings: function() {
-        
-    },
+    @param binding - NSString
+    @return Class
+  */
+  valueClassForBinding: function(binding) {
     
-    /**
-        Optional method.
-        
-        @param binding - NSString
-        @return Class
-    */
-    valueClassForBinding: function(binding) {
-        
-    },
+  },
+  
+  /**
+    Instantiate a binding to the object. Placeholders and other information
+    can be specified in the options dictionary.
     
-    /**
-        Instantiate a binding to the object. Placeholders and other information
-        can be specified in the options dictionary.
-        
-        @param binding - NSString
-        @param toObject - NSObject
-        @param withKeyPath - NSString
-        @param options - NSDictionary
-    */
-    bind: function(binding, toObject, withKeyPath, options) {
-        console.log('bind ' + binding + " to key path " + withKeyPath + ' for ');
-        console.log(this);
-    },
+    @param binding - NSString
+    @param toObject - NSObject
+    @param withKeyPath - NSString
+    @param options - NSDictionary
+  */
+  bind: function(binding, toObject, withKeyPath, options) {
+    console.log('bind ' + binding + " to key path " + withKeyPath + ' for ');
+    console.log(this);
+  },
+  
+  /**
+    Remove the specified binding
     
-    /**
-        Remove the specified binding
-        
-        @param binding - NSString
-    */
-    unbind: function(binding) {
-        
-    },
+    @param binding - NSString
+  */
+  unbind: function(binding) {
     
-    /**
-        Information about the dictionary. Can be null if the binding is not
-        bound. Contains these three items:
-        
-        NSObservedObjectKey   - the bound object
-        NSObservedKeyPathKey  - the bound keypath
-        NSOptionsKey          - specified options
-        
-        @param binding - NSString
-        @return NSDictionary
-    */
-    infoForBinding: function(binding) {
-        
-    },
+  },
+  
+  /**
+    Information about the dictionary. Can be null if the binding is not
+    bound. Contains these three items:
     
-    /**
-        Returns array of NSAttributeDescriptions for binding
-        
-        @param binding - NSString
-        @return NSArray
-    */
-    optionDescriptionsForBinding: function(binding) {
-        
-    }
+    NSObservedObjectKey   - the bound object
+    NSObservedKeyPathKey  - the bound keypath
+    NSOptionsKey      - specified options
+    
+    @param binding - NSString
+    @return NSDictionary
+  */
+  infoForBinding: function(binding) {
+    
+  },
+  
+  /**
+    Returns array of NSAttributeDescriptions for binding
+    
+    @param binding - NSString
+    @return NSArray
+  */
+  optionDescriptionsForBinding: function(binding) {
+    
+  }
 });
 
 /**
-    @mixin NSPlaceholders (meta class)
+  @mixin NSPlaceholders (meta class)
 */
 VN.extend(NSObject, {
+  
+  /**
+    Marker can be null, NSMultipleValuesMarker, NSNoSelectionMarker or
+    NSNotApplicableMarker
     
-    /**
-        Marker can be null, NSMultipleValuesMarker, NSNoSelectionMarker or
-        NSNotApplicableMarker
-        
-        @param placeholder - NSObject
-        @param marker - NSObject
-        @param binding - NSString
-    */
-    setDefaultPlaceholderForMarker: function(placeholder, marker, binding) {
-        
-    },
+    @param placeholder - NSObject
+    @param marker - NSObject
+    @param binding - NSString
+  */
+  setDefaultPlaceholderForMarker: function(placeholder, marker, binding) {
     
-    /**
-        Marker can be null, NSMultipleValuesMarker, NSNoSelectionMarker or
-        NSNotApplicableMarker
+  },
+  
+  /**
+    Marker can be null, NSMultipleValuesMarker, NSNoSelectionMarker or
+    NSNotApplicableMarker
+  
+    @param marker - NSObject
+    @param binding - NSString
+  */
+  defaultPlaceholderForMarker: function(marker, binding) {
     
-        @param marker - NSObject
-        @param binding - NSString
-    */
-    defaultPlaceholderForMarker: function(marker, binding) {
-        
-    }
+  }
 });
 
 /**
-    @mixin NSEditorRegistration
-    
-    These should be implemented by controllers etc.
+  @mixin NSEditorRegistration
+  
+  These should be implemented by controllers etc.
 */
 VN.Object.mixin({
+  
+  /**
+    @param editor - NSObject
+  */
+  objectDidBeginEditing: function(editor) {
     
-    /**
-        @param editor - NSObject
-    */
-    objectDidBeginEditing: function(editor) {
-        
-    },
+  },
+  
+  /**
+    @param editor - NSObject
+  */
+  objectDidEndEditing: function(editor) {
     
-    /**
-        @param editor - NSObject
-    */
-    objectDidEndEditing: function(editor) {
-        
-    }
+  }
 });
 
 /**
-    @mixin NSEditor
-    
-    These should be implemented by controllers etc.
+  @mixin NSEditor
+  
+  These should be implemented by controllers etc.
 */
 VN.Object.mixin({
+  
+  /**
+    Reverts back to original value (end chnages).
+  */
+  discardEditing: function() {
     
-    /**
-        Reverts back to original value (end chnages).
-    */
-    discardEditing: function() {
-        
-    },
+  },
+  
+  /**
+    Returns whether or not end editing was a success. It might not be if the
+    value is invalid (e.g. an object requires a float value, but was given
+    a string).
     
-    /**
-        Returns whether or not end editing was a success. It might not be if the
-        value is invalid (e.g. an object requires a float value, but was given
-        a string).
-        
-        @return boolean
-    */
-    commitEditing: function() {
-        
-    },
+    @return boolean
+  */
+  commitEditing: function() {
     
-    /**
-        @param delegate - NSObject
-        @param didCommitAction - function pointer for delegate
-        @param contextInfo - NSObject
-    */
-    commitEditingWithDelegate: function(delegate, didCommitAction, contextInfo) {
-        
-    }
+  },
+  
+  /**
+    @param delegate - NSObject
+    @param didCommitAction - function pointer for delegate
+    @param contextInfo - NSObject
+  */
+  commitEditingWithDelegate: function(delegate, didCommitAction, contextInfo) {
+    
+  }
 });
 
 /**
-    Default constant names for bindings (AppKit defined)
+  Default constant names for bindings (AppKit defined)
 */
 VN.ALIGNMENT_BINDING = "VNAlignmentBinding";
 VN.ALTERNATE_IMAGE_BINDING = "VNAlternateImageBinding";
@@ -320,7 +320,7 @@ VN.WIDTH_BINDING = "VNWidthBinding";
 
 
 /**
-    Options for bindings (used with info keys at top).
+  Options for bindings (used with info keys at top).
 */
 VN.ALLOWS_EDITING_MULTIPLE_VALUES_SELECTION_BINDING_OPTION = "VNAllowsEditingMultipleValuesSelectionBindingOption";
 VN.ALLOWS_NULL_ARGUMENT_BINDING_OPTION = "VNAllowsNullArgumentBindingOption";

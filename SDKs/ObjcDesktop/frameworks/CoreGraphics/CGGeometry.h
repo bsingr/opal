@@ -9,25 +9,25 @@
 #include <CoreGraphics/CGBase.h>
 
 typedef struct _CGPoint {
-    CGFloat x;
-    CGFloat y;
+  CGFloat x;
+  CGFloat y;
 } CGPoint;
 
 typedef struct _CGSize {
-    CGFloat width;
-    CGFloat height;
+  CGFloat width;
+  CGFloat height;
 } CGSize;
 
 typedef struct _CGRect {
-    CGPoint origin;
-    CGSize size;
+  CGPoint origin;
+  CGSize size;
 } CGRect;
 
 enum {
-    CGRectMinXEdge,
-    CGRectMinYEdge,
-    CGRectMaxXEdge,
-    CGRectMaxYEdge
+  CGRectMinXEdge,
+  CGRectMinYEdge,
+  CGRectMaxXEdge,
+  CGRectMaxYEdge
 };
 typedef enum CGRectEdge CGRectEdge;
 

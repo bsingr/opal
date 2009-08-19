@@ -12,17 +12,17 @@
 
 + (BOOL)propertyList:(id)plist isValidForFormat:(NSPropertyListFormat)format
 {
-    
+  
 }
 
 + (NSData *)dataFromPropertyList:(id)plist format:(NSPropertyListFormat)format errorDescription:(NSString **)errorString
 {
-    
+  
 }
 
 + (id)propertyListFromData:(NSData *)data mutabilityOption:(NSPropertyListMutabilityOptions)opt format:(NSPropertyListFormat *)format errorDescription:(NSString **)errorString
 {
-    
+  
 }
 
 @end

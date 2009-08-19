@@ -3,64 +3,122 @@
   display: block;
 }
 
-.bordered .vn-button-left {
+.vn-button .vn-button-title {
   position: absolute;
-  background: url('resources/button_bezel_left.png');
+  text-align:center;
+  cursor: default;
+}
+
+.vn-button .vn-button-image {
+  position: absolute;
+  text-align:center;
+}
+
+.vn-button.bordered .vn-button-left {
+  background: url('resources/controls.png');
+  position: absolute;
   height: 24px;
   width: 6px;
   top: 0px;
   left: 0px;
 }
 
-.bordered .vn-button-middle {
+.vn-button.bordered .vn-button-middle {
+  background: url('resources/controls.png');
+  background-repeat: repeat-x;
   position: absolute;
-  background: url('resources/button_bezel_middle.png');
   top: 0px;
   left: 6px;
   right: 6px;
   height: 24px;
 }
 
-.bordered .vn-button-right {
+.vn-button.bordered .vn-button-right {
+  background: url('resources/controls.png');
   position: absolute;
-  background: url('resources/button_bezel_right.png');
   height: 24px;
   width: 6px;
   top: 0px;
   right: 0px;
 }
 
-.vn-button-title {
-  position: absolute;
-  text-align:center;
+.vn-button .vn-button-title {
+  text-decoration: none;
+  text-shadow: rgba(206, 214, 221, 0.644) 0px 1px 0px;
 }
 
-/*
-  Disabled button with border
-*/
-.bordered.disabled .vn-button-left {
+/* ================================ */
+/* = Textured Rounded bezel style = */
+/* ================================ */
+.vn-button.bordered.textured-rounded .vn-button-left {
+  background-position: 0px 0px;
+}
+
+.vn-button.bordered.textured-rounded .vn-button-middle {
+  background-position: 0px -52px;
+}
+
+.vn-button.bordered.textured-rounded .vn-button-right {
+  background-position: 0px -26px;
+}
+
+/* disabled */
+.vn-button.bordered.textured-rounded.disabled .vn-button-left {
   background: url('resources/button_disabled_left.png');
 }
 
-.bordered.disabled .vn-button-middle {
+.vn-button.bordered.textured-rounded.disabled .vn-button-middle {
   background: url('resources/button_disabled_middle.png');
 }
 
-.bordered.disabled .vn-button-right {
+.vn-button.bordered.textured-rounded.disabled .vn-button-right {
   background: url('resources/button_disabled_right.png');
 }
 
-/*
-  Highlighted button with border
-*/
-.bordered.highlighted .vn-button-left {
-  background: url('resources/button_highlighted_left.png');
+/* highlighted */
+.vn-button.bordered.textured-rounded.highlighted .vn-button-left {
+  background-position: -10px 0px;
 }
 
-.bordered.highlighted .vn-button-middle {
-  background: url('resources/button_highlighted_middle.png');
+.vn-button.bordered.textured-rounded.highlighted .vn-button-middle {
+  background-position: 0px -78px;
 }
 
-.bordered.highlighted .vn-button-right {
-  background: url('resources/button_highlighted_right.png');
+.vn-button.bordered.textured-rounded.highlighted .vn-button-right {
+  background-position: -10px -26px;
+}
+
+/* ======================= */
+/* = Rounded bezel style = */
+/* ======================= */
+
+.vn-button.bordered.rounded .vn-button-left {
+  background-position: 0px -250px;
+  width: 14px;
+}
+
+.vn-button.bordered.rounded .vn-button-middle {
+  background-position: 0px -277px;
+  left: 14px;
+  right: 14px;
+}
+
+.vn-button.bordered.rounded .vn-button-right {
+  background-position: -18px -250px;
+  width: 14px;
+}
+
+/* disabled */
+
+/* highlighted */
+.vn-button.bordered.rounded.highlighted .vn-button-left {
+  background-position: 0px -304px;
+}
+
+.vn-button.bordered.rounded.highlighted .vn-button-middle {
+  background-position: 0px -331px;
+}
+
+.vn-button.bordered.rounded.highlighted .vn-button-right {
+  background-position: -18px -304px;
 }

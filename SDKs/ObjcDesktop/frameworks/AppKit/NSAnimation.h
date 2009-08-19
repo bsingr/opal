@@ -11,17 +11,17 @@
 @class NSGraphicsContext;
 
 enum {
-    NSAnimationEaseInOut,
-    NSAnimationEaseIn,
-    NSAnimationEaseOut,
-    NSAnimationLinear
+  NSAnimationEaseInOut,
+  NSAnimationEaseIn,
+  NSAnimationEaseOut,
+  NSAnimationLinear
 };
 typedef NSUInteger NSAnimationCurve;
 
 enum {
-    NSAnimationBlocking,
-    NSAnimationNonblocking,
-    NSAnimationNonBlockingThreaded
+  NSAnimationBlocking,
+  NSAnimationNonblocking,
+  NSAnimationNonBlockingThreaded
 };
 typedef NSUInteger NSAnimationBlockingMode;
 

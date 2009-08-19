@@ -25,14 +25,14 @@
  */
 
 var IBObjectContainer = NSObject.extend({
+  
+  _connectionRecords: null,
+  
+  initWithCoder: function(aCoder) {
+    console.log('decoding objects container');
     
-    _connectionRecords: null,
+    this._connectionRecords = aCoder.decodeObjectForKey("connectionRecords");
     
-    initWithCoder: function(aCoder) {
-        console.log('decoding objects container');
-        
-        this._connectionRecords = aCoder.decodeObjectForKey("connectionRecords");
-        
-        return this;
-    }
+    return this;
+  }
 });

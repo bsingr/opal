@@ -13,110 +13,110 @@
 
 - (id)initWithIdentifier:(id)identifier
 {
-    [self init];
-    
-    if (self) {
-        [self setIdentifier:identifier];
-        _headerCell = [[NSTableHeaderCell alloc] init];
-        _dataCell = [[NSTextFieldCell alloc] init];
-        [_dataCell setEditable:YES];
-        [_dataCell setSelectable:YES];
-    }
-    
-    return self;
+  [self init];
+  
+  if (self) {
+    [self setIdentifier:identifier];
+    _headerCell = [[NSTableHeaderCell alloc] init];
+    _dataCell = [[NSTextFieldCell alloc] init];
+    [_dataCell setEditable:YES];
+    [_dataCell setSelectable:YES];
+  }
+  
+  return self;
 }
 
 - (id)initWithCoder:(NSCoder *)aCoder
 {
-    [super initWithCoder:aCoder];
-    _identifier = [aCoder decodeObjectForKey:@"NSIdentifier"];
-    _headerCell = [aCoder decodeObjectForKey:@"NSHeaderCell"];
-    _dataCell = [aCoder decodeObjectForKey:@"NSDataCell"];
-    _width = [aCoder decodeDoubleForKey:@"NSWidth"];
-    _minWidth = [aCoder decodeDoubleForKey:@"NSMinWidth"];
-    _maxWidth = [aCoder decodeDoubleForKey:@"NSMaxWidth"];
-    
-    return self;
+  [super initWithCoder:aCoder];
+  _identifier = [aCoder decodeObjectForKey:@"NSIdentifier"];
+  _headerCell = [aCoder decodeObjectForKey:@"NSHeaderCell"];
+  _dataCell = [aCoder decodeObjectForKey:@"NSDataCell"];
+  _width = [aCoder decodeDoubleForKey:@"NSWidth"];
+  _minWidth = [aCoder decodeDoubleForKey:@"NSMinWidth"];
+  _maxWidth = [aCoder decodeDoubleForKey:@"NSMaxWidth"];
+  
+  return self;
 }
 
 
 - (void)setTableView:(NSTableView *)aTableView
 {
-    _tableView = aTableView;
+  _tableView = aTableView;
 }
 
 - (NSTableView *)tableView
 {
-    return _tableView;
+  return _tableView;
 }
 
 - (void)setWidth:(NSUInteger)newWidth
 {
-    // from nib, it might be a string
-    _width = newWidth;    
+  // from nib, it might be a string
+  _width = newWidth;  
 }
 
 - (NSUInteger)width
 {
-    return _width;
+  return _width;
 }
 
 - (void)setHeaderCell:(NSCell *)aCell
 {
-    _headerCell = aCell;
+  _headerCell = aCell;
 }
 
 - (id)headerCell
 {
-    return _headerCell;
+  return _headerCell;
 }
 
 - (void)setDataCell:(NSCell *)aCell
 {
-    _dataCell = aCell;
+  _dataCell = aCell;
 }
 
 - (id)dataCell
 {
-    return _dataCell;
+  return _dataCell;
 }
 
 - (id)dataCellForRow:(NSInteger)row
 {
-    return _dataCell;
+  return _dataCell;
 }
 
 - (void)setIdentifier:(id)anObject
 {
-    _identifier = anObject;
+  _identifier = anObject;
 }
 
 - (id)identifier
 {
-    return _identifier;
+  return _identifier;
 }
 
 - (void)setEditable:(BOOL)flag
 {
-    if (flag == 0)
-        flag = NO;
-    
-    _editable = flag;
+  if (flag == 0)
+    flag = NO;
+  
+  _editable = flag;
 }
 
 - (BOOL)isEditable
 {
-    return _editable;
+  return _editable;
 }
 
 - (BOOL)isHidden
 {
-    return _hidden;
+  return _hidden;
 }
 
 - (void)setHidden:(BOOL)hidden
 {
-    _hidden = hidden;
+  _hidden = hidden;
 }
 
 @end

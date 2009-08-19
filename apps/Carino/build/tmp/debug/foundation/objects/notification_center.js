@@ -30,18 +30,18 @@ var NSNotificationCenterDefault = null;
 
 
 var NSNotificationCenter = NSObject.extend({
-    
-    
+  
+  
 });
 
 /**
-    Returns the default notification center, aka, the instance that should be
-    used within the application.
+  Returns the default notification center, aka, the instance that should be
+  used within the application.
 */
 NSNotificationCenter.defaultCenter = function() {
-    
-    if (!NSNotificationCenterDefault)
-        NSNotificationCenterDefault = NSNotificationCenter.create();
-    
-    return NSNotificationCenterDefault;
+  
+  if (!NSNotificationCenterDefault)
+    NSNotificationCenterDefault = NSNotificationCenter.create();
+  
+  return NSNotificationCenterDefault;
 };

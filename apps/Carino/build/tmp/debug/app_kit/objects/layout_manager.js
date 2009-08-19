@@ -25,45 +25,45 @@
  */
 
 var NSLayoutManager = NSObject.extend({
+  
+  _textStorage: null,
+  _typesetter: null,
+  
+  _delegate: null,
+  
+  _textContainers: null,
+  
+  initWithCoder: function(aCoder) {
+    this._textStorage = aCoder.decodeObjectForKey("NSTextStorage");
+    this._typesetter = NSTypesetter.create();
+    this._delegate = aCoder.decodeObjectForKey("NSDelegate");
     
-    _textStorage: null,
-    _typesetter: null,
-    
-    _delegate: null,
-    
-    _textContainers: null,
-    
-    initWithCoder: function(aCoder) {
-        this._textStorage = aCoder.decodeObjectForKey("NSTextStorage");
-        this._typesetter = NSTypesetter.create();
-        this._delegate = aCoder.decodeObjectForKey("NSDelegate");
-        
-        this._textContainers = [];
-        var textContainers = aCoder.decodeObjectForKey("NSTextContainers");
-        for (var idx = 0; idx < textContainers.length; idx++) {
-            this._textContainers.push(textContainers[idx]);
-        }
-        
-        return this;
-    },
-    
-    textStorage: function() {
-        return this._textStorage;
-    },
-    
-    setTextStorage: function(textStorage) {
-        this._textStorage = textStorage;
-    },
-    
-    typesetter: function() {
-        return this._typesetter;
-    },
-    
-    delegate: function() {
-        return this._delegate;
-    },
-    
-    textContainers: function() {
-        return this._textContainers;
+    this._textContainers = [];
+    var textContainers = aCoder.decodeObjectForKey("NSTextContainers");
+    for (var idx = 0; idx < textContainers.length; idx++) {
+      this._textContainers.push(textContainers[idx]);
     }
+    
+    return this;
+  },
+  
+  textStorage: function() {
+    return this._textStorage;
+  },
+  
+  setTextStorage: function(textStorage) {
+    this._textStorage = textStorage;
+  },
+  
+  typesetter: function() {
+    return this._typesetter;
+  },
+  
+  delegate: function() {
+    return this._delegate;
+  },
+  
+  textContainers: function() {
+    return this._textContainers;
+  }
 });

@@ -28,33 +28,34 @@ include('foundation/foundation');
 
 var NSNib = VN.Nib = VN.Object.extend({
 
-    _data: null, 
-    _connections: null,
-    _hierarchy: null,
-    _objects: null,
-    _topLevelObjects: null,
+  _data: null, 
+  _connections: null,
+  _hierarchy: null,
+  _objects: null,
+  _topLevelObjects: null,
+  
+  initWithContentsOfURL: function(nibFileURL) {
     
-    initWithContentsOfURL: function(nibFileURL) {
-        
-    },
-    
-    initWithNibNamed: function(nibName, bundle) {
-       this._data = __bootstrap_files[nibName + '.json'];
-       return this;
-    },
-    
-    instantiateNibWithOwner: function(owner, topLevelObjects) {
-        var nameTable = NSDictionary.create();
-        nameTable.setValueForKey(owner, 'NSFileOwner');
-        this._topLevelObjects = topLevelObjects;
-        return this.instantiateNibWithExternalNameTable(nameTable);
-    },
-    
-    instantiateNibWithExternalNameTable: function(externalNameTable) {
-        var unarchiver = NSKeyedUnarchiver.create('initForReadingWithData', this._data);
-        this._topLevelObjects = unarchiver.decodeObjectForKey("IBDocument.RootObjects");
-        this._connections = unarchiver.decodeObjectForKey("IBDocument.Objects");
-        // console.log(this._topLevelObjects);
-        return this._topLevelObjects;
-    }
+  },
+  
+  initWithNibNamed: function(nibName, bundle) {
+     this._data = __bootstrap_files[nibName + '.json'];
+     return this;
+  },
+  
+  instantiateNibWithOwner: function(owner, topLevelObjects) {
+    var nameTable = NSDictionary.create();
+    nameTable.setValueForKey(owner, 'NSFileOwner');
+    this._topLevelObjects = topLevelObjects;
+    return this.instantiateNibWithExternalNameTable(nameTable);
+  },
+  
+  instantiateNibWithExternalNameTable: function(externalNameTable) {
+    var unarchiver = NSKeyedUnarchiver.create('initForReadingWithData', this._data);
+    unarchiver.setValueForKey(externalNameTable, 'nameTable');
+    this._topLevelObjects = unarchiver.decodeObjectForKey("IBDocument.RootObjects");
+    this._connections = unarchiver.decodeObjectForKey("IBDocument.Objects");
+    // console.log(this._topLevelObjects);
+    return this._topLevelObjects;
+  }
 });

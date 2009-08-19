@@ -15,30 +15,30 @@ extern CFTimeInterval CFDateGetTimeIntervalSinceDate(CFDateRef theDate, CFDateRe
 extern CFComparisonResult CFDateCompare(CFDateRef theDate, CFDateRef otherDate, void *context);
 
 typedef struct {
-    int     year;
-    int     month;
-    int     day;
-    int     hour;
-    int     minute;
-    double  second;
+  int   year;
+  int   month;
+  int   day;
+  int   hour;
+  int   minute;
+  double  second;
 } CFGregorianDate;
 
 typedef struct {
-    int     years;
-    int     months;
-    int     days;
-    int     minutes;
-    double  seconds;
+  int   years;
+  int   months;
+  int   days;
+  int   minutes;
+  double  seconds;
 } CFGregorianUnits;
 
 enum {
-    kCFGregorianUnitsYears      = (1 << 0),
-    kCFGregorianUnitsMonths     = (1 << 1),
-    kCFGregorianUnitsDays       = (1 << 2),
-    kCFGregorianUnitsHours      = (1 << 3),
-    kCFGregorianUnitsMinutes    = (1 << 4),
-    kCFGregorianUnitsSeconds    = (1 << 5),
-    kCFGregorianAllUnits        = 0x00FFFFFF
+  kCFGregorianUnitsYears    = (1 << 0),
+  kCFGregorianUnitsMonths   = (1 << 1),
+  kCFGregorianUnitsDays     = (1 << 2),
+  kCFGregorianUnitsHours    = (1 << 3),
+  kCFGregorianUnitsMinutes  = (1 << 4),
+  kCFGregorianUnitsSeconds  = (1 << 5),
+  kCFGregorianAllUnits    = 0x00FFFFFF
 };
 typedef CFOptionFlags CFGregorianUnitFlags;
 

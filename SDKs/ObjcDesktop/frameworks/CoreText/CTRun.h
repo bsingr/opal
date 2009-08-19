@@ -30,10 +30,10 @@
 typedef const struct __CTRun * CTRunRef;
 
 enum {
-	kCTRunStatusNoStatus                = 0,
-	kCTRunStatusRightToLeft             = (1 << 0),
-	kCTRunStatusNonMonotonic            = (1 << 1),
-	kCTRunStatusHasNonIdentityMatrix    = (1 << 2)
+	kCTRunStatusNoStatus        = 0,
+	kCTRunStatusRightToLeft       = (1 << 0),
+	kCTRunStatusNonMonotonic      = (1 << 1),
+	kCTRunStatusHasNonIdentityMatrix  = (1 << 2)
 };
 typedef int CTRunStatus;
 

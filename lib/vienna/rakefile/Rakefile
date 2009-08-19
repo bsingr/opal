@@ -19,12 +19,12 @@ namespace :build do
   
   desc "build using the debug configuration"
   task :debug do
-    
+  
   end
   
   desc "build using the release configuration"
   task :release do
-    
+  
   end
   
 end
@@ -33,22 +33,22 @@ namespace :gen do
   
   desc "generate a new project"
   task :project do
-    
+  
   end
   
   desc "generate a new class (that inherits from NSObject)"
   task :class do
-    
+  
   end
   
   desc "generate a new view (that inherits from NSView)"
   task :view do
-    
+  
   end
   
   desc "generate a new locale"
   task :locale do
-    
+  
   end
   
 end

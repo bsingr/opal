@@ -30,15 +30,15 @@ var NSButtonImageSource = NSObject.extend({
    _imageName: null,
    
    initWithCoder: function(aCoder) {
-       this._imageName = aCoder.decodeObjectForKey("NSImageName");
-       return this;
+     this._imageName = aCoder.decodeObjectForKey("NSImageName");
+     return this;
    },
    
    normalImage: function() {
-       return NSImage.imageNamed(this._imageName + 'Normal.png');
+     return NSImage.imageNamed(this._imageName + 'Normal.png');
    },
    
    alternateImage: function() {
-       return NSImage.imageNamed(this._imageName + 'Alternate.png');
+     return NSImage.imageNamed(this._imageName + 'Alternate.png');
    }
 });

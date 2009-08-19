@@ -24,6 +24,9 @@ array.js:
   - coder.js
   - enumerator.js
   - range.js
+url_connection.js: 
+  dependencies: 
+  - object.js
 key_value_coding.js: 
   dependencies: 
   - array.js
@@ -34,6 +37,9 @@ set.js:
   - object.js
   - enumerator.js
 dictionary.js: 
+  dependencies: 
+  - object.js
+url_request.js: 
   dependencies: 
   - object.js
 foundation.js: 
@@ -68,6 +74,9 @@ geometry.js:
 user_defaults.js: 
   dependencies: 
   - object.js
+url_response.js: 
+  dependencies: 
+  - object.js
 string.js: 
   dependencies: 
   - object.js
@@ -80,6 +89,9 @@ index_set.js:
 coder.js: 
   dependencies: 
   - object.js
+url.js: 
+  dependencies: []
+
 attributed_string.js: 
   dependencies: 
   - string.js

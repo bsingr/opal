@@ -26,60 +26,60 @@
 
 
 var NSController = NSObject.extend({
+  
+  /*
+    NSArray
+  */
+  _editors: null,
+  
+  /*
+    NSArray
+  */
+  _declaredKeys: null,
+  
+  /*
+    NSDictionary
+  */
+  _dependentKeyToModelKeyTable: null,
+  
+  /*
+    NSDictionary
+  */
+  _modelKeyToDependentKeyTable: null,
+  
+  /*
+    @param editor - NSObject
+  */
+  objectDidBeginEditing: function(editor) {
     
-    /*
-        NSArray
-    */
-    _editors: null,
+  },
+  
+  /*
+    @param editor - NSObject
+  */
+  objectDidEndEditing: function(editor) {
     
-    /*
-        NSArray
-    */
-    _declaredKeys: null,
+  },
+  
+  discardEditing: function() {
     
-    /*
-        NSDictionary
-    */
-    _dependentKeyToModelKeyTable: null,
+  },
+  
+  /*
+    @return boolean
+  */
+  commitEditing: function() {
     
-    /*
-        NSDictionary
-    */
-    _modelKeyToDependentKeyTable: null,
+  },
+  
+  commitEditingWithDelegate: function(delegate, didCommitAction, contextInfo) {
     
-    /*
-        @param editor - NSObject
-    */
-    objectDidBeginEditing: function(editor) {
-        
-    },
+  },
+  
+  /*
+    @return boolean
+  */
+  isEditing: function() {
     
-    /*
-        @param editor - NSObject
-    */
-    objectDidEndEditing: function(editor) {
-        
-    },
-    
-    discardEditing: function() {
-        
-    },
-    
-    /*
-        @return boolean
-    */
-    commitEditing: function() {
-        
-    },
-    
-    commitEditingWithDelegate: function(delegate, didCommitAction, contextInfo) {
-        
-    },
-    
-    /*
-        @return boolean
-    */
-    isEditing: function() {
-        
-    }
+  }
 });

@@ -32,100 +32,100 @@ resource('NSTextFieldBezelSides.png');
 resource('NSTextFieldBezelBottom.png');
 
 var NSTextFieldCell = NSCell.extend({
+  
+  _backgroundColor: null,
+  
+  init: function() {
+    this._super();
+    return this;
+  },
+  
+  initWithCoder: function(aCoder) {
+    this._super(aCoder);
     
-    _backgroundColor: null,
+    this._drawsBackground = aCoder.decodeBoolForKey("NSDrawsBackground");
+    this._backgroundColor = aCoder.decodeObjectForKey("NSBackgroundColor");
+    this._textColor = aCoder.decodeObjectForKey("NSTextColor");
     
-    init: function() {
-        this._super();
-        return this;
-    },
-    
-    initWithCoder: function(aCoder) {
-        this._super(aCoder);
-        
-        this._drawsBackground = aCoder.decodeBoolForKey("NSDrawsBackground");
-        this._backgroundColor = aCoder.decodeObjectForKey("NSBackgroundColor");
-        this._textColor = aCoder.decodeObjectForKey("NSTextColor");
-        
-        return this;
-    },
-    
-    drawInteriorWithFrame: function(cellFrame, controlView) {
+    return this;
+  },
+  
+  drawInteriorWithFrame: function(cellFrame, controlView) {
 		this.attributedStringValue().drawWithRectAndOptions(cellFrame, null);
-    },
+  },
+  
+  drawWithFrame: function(cellFrame, controlView) {
+    var c = NSGraphicsContext.currentContext().graphicsPort();
     
-    drawWithFrame: function(cellFrame, controlView) {
-        var c = NSGraphicsContext.currentContext().graphicsPort();
-        
-        if (this.drawsBackground()) {
-            CGContextSetFillColorWithColor(c, this._backgroundColor);
-            CGContextFillRect(c, cellFrame);
-        }
-        
-        if (this.isBezeled()) {
-            NSImage.imageNamed('NSTextFieldBezelTopLeft.png').drawInRect(CGRectMake(0 ,0, 2, 2));
-            NSImage.imageNamed('NSTextFieldBezelTopMiddle.png').drawInRect(CGRectMake(2,0,cellFrame.size.width - 4,2));
-            NSImage.imageNamed('NSTextFieldBezelTopRight.png').drawInRect(CGRectMake(cellFrame.size.width-2,0,2,2));
-            NSImage.imageNamed('NSTextFieldBezelSides.png').drawInRect(CGRectMake(0, 2, 1, cellFrame.size.height - 2));
-            NSImage.imageNamed('NSTextFieldBezelSides.png').drawInRect(CGRectMake(cellFrame.size.width - 1, 2, 1, cellFrame.size.height - 2));
-            NSImage.imageNamed('NSTextFieldBezelBottom.png').drawInRect(CGRectMake(1, cellFrame.size.height - 1, cellFrame.size.width - 2, 1));
-        }
-        
-        this.drawInteriorWithFrame(cellFrame, controlView);
-    },
+    if (this.drawsBackground()) {
+      CGContextSetFillColorWithColor(c, this._backgroundColor);
+      CGContextFillRect(c, cellFrame);
+    }
     
-    drawsBackground: function() {
-        return this._drawsBackground;
-    },
+    if (this.isBezeled()) {
+      NSImage.imageNamed('NSTextFieldBezelTopLeft.png').drawInRect(CGRectMake(0 ,0, 2, 2));
+      NSImage.imageNamed('NSTextFieldBezelTopMiddle.png').drawInRect(CGRectMake(2,0,cellFrame.size.width - 4,2));
+      NSImage.imageNamed('NSTextFieldBezelTopRight.png').drawInRect(CGRectMake(cellFrame.size.width-2,0,2,2));
+      NSImage.imageNamed('NSTextFieldBezelSides.png').drawInRect(CGRectMake(0, 2, 1, cellFrame.size.height - 2));
+      NSImage.imageNamed('NSTextFieldBezelSides.png').drawInRect(CGRectMake(cellFrame.size.width - 1, 2, 1, cellFrame.size.height - 2));
+      NSImage.imageNamed('NSTextFieldBezelBottom.png').drawInRect(CGRectMake(1, cellFrame.size.height - 1, cellFrame.size.width - 2, 1));
+    }
     
-    setDrawsBackground: function(flag) {
-        this._drawsBackground = flag;
-    },
+    this.drawInteriorWithFrame(cellFrame, controlView);
+  },
+  
+  drawsBackground: function() {
+    return this._drawsBackground;
+  },
+  
+  setDrawsBackground: function(flag) {
+    this._drawsBackground = flag;
+  },
+  
+  backgroundColor: function() {
+    return this._backgroundColor;
+  },
+  
+  setBackgroundColor: function(aColor) {
+    this._backgroundColor = aColor;
+  },
+  
+  setBezeled: function(flag) {
+    this._isBezeled = flag;
+  },
+  
+  isBezeled: function() {
+    return this._isBezeled;
+  },
+  
+  setBezelStyle: function(style) {
+    this._bezelStyle = style;
+  },
+  
+  bezelStyle: function() {
+    return this._bezelStyle;
+  },
+  
+  setTextColor: function(aColor) {
+    this._textColor = aColor;
+  },
+  
+  textColor: function(aColor) {
+    return this._textColor;
+  },
+  
+  titleRectForBounds: function(theRect) {
+    if (this.isEditable()) {
+      return NSMakeRect(theRect.origin.x + 4, theRect.origin.y + 4, theRect.size.width - 8, theRect.size.height - 8);
+    }
     
-    backgroundColor: function() {
-        return this._backgroundColor;
-    },
-    
-    setBackgroundColor: function(aColor) {
-        this._backgroundColor = aColor;
-    },
-    
-    setBezeled: function(flag) {
-        this._isBezeled = flag;
-    },
-    
-    isBezeled: function() {
-        return this._isBezeled;
-    },
-    
-    setBezelStyle: function(style) {
-        this._bezelStyle = style;
-    },
-    
-    bezelStyle: function() {
-        return this._bezelStyle;
-    },
-    
-    setTextColor: function(aColor) {
-        this._textColor = aColor;
-    },
-    
-    textColor: function(aColor) {
-        return this._textColor;
-    },
-    
-    titleRectForBounds: function(theRect) {
-        if (this.isEditable()) {
-            return NSMakeRect(theRect.origin.x + 4, theRect.origin.y + 4, theRect.size.width - 8, theRect.size.height - 8);
-        }
-        
-        return theRect;
-    },
+    return theRect;
+  },
 
 	attributedStringValue: function() {
-        // if (this._value.typeOf(NSAttributedString)) {
-            // return this._value;
-        // }
+    // if (this._value.typeOf(NSAttributedString)) {
+      // return this._value;
+    // }
 		
 		var attributes = NSDictionary.create();
 		
@@ -144,28 +144,28 @@ var NSTextFieldCell = NSCell.extend({
 		
 		return NSAttributedString.create('initWithStringAndAttributes', this._value, attributes);
 	},
+  
+  setupFieldEditorAttributes: function(textObj) {
+    return textObj;
+  },
+  
+  setPlaceholderString: function(aString) {
     
-    setupFieldEditorAttributes: function(textObj) {
-        return textObj;
-    },
+  },
+  
+  placeholderString: function() {
     
-    setPlaceholderString: function(aString) {
-        
-    },
+  },
+  
+  setPlaceholderAttributedString: function(aString) {
     
-    placeholderString: function() {
-        
-    },
+  },
+  
+  placeholderAttributedString: function() {
     
-    setPlaceholderAttributedString: function(aString) {
-        
-    },
+  },
+  
+  setWantsNotificationForMarkedText: function(flag) {
     
-    placeholderAttributedString: function() {
-        
-    },
-    
-    setWantsNotificationForMarkedText: function(flag) {
-        
-    }
+  }
 });

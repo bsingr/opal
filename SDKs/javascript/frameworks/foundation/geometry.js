@@ -30,44 +30,44 @@ include('core_graphics/geometry');
 
 function NSMakeRange(location, length)
 {
-    return { location: location, length: length };
+  return { location: location, length: length };
 }
 
 function NSMakePoint(x, y)
 {   
-    return { x: x, y: y };
+  return { x: x, y: y };
 }
 
 function NSMakeSize(w, h)
 {
-    return { width: w, height: h };
+  return { width: w, height: h };
 }
 
 function NSMakeRect(x, y, w, h)
 {
-    return { origin: NSMakePoint(x, y), size: NSMakeSize(w, h) };
+  return { origin: NSMakePoint(x, y), size: NSMakeSize(w, h) };
 }
 
 
 function NSPointInRect(aPoint, aRect)
 {
-    return CGRectContainsPoint(aRect, aPoint);
+  return CGRectContainsPoint(aRect, aPoint);
 }
 
 function NSPointFromString(aString)
 {
-    if (!aString) return NSMakePoint(0, 0);
-    return NSMakePoint(parseFloat(aString.substr(1, aString.indexOf(",") - 1)), parseFloat(aString.substr(aString.indexOf(",") + 1, aString.length - 1)));
+  if (!aString) return NSMakePoint(0, 0);
+  return NSMakePoint(parseFloat(aString.substr(1, aString.indexOf(",") - 1)), parseFloat(aString.substr(aString.indexOf(",") + 1, aString.length - 1)));
 }
 
 function NSSizeFromString(aString)
 {
-    if (!aString) return NSMakeSize(0, 0);
-    return NSMakeSize(parseFloat(aString.substr(1, aString.indexOf(",") - 1)), parseFloat(aString.substr(aString.indexOf(",") + 1, aString.length - 1)));
+  if (!aString) return NSMakeSize(0, 0);
+  return NSMakeSize(parseFloat(aString.substr(1, aString.indexOf(",") - 1)), parseFloat(aString.substr(aString.indexOf(",") + 1, aString.length - 1)));
 }
 
 function NSRectFromString(aString)
 {
-    if (!aString) return NSMakeRect(0, 0, 0, 0);
+  if (!aString) return NSMakeRect(0, 0, 0, 0);
 	return { origin: NSPointFromString(aString.substr(1, aString.indexOf("},") - 1)), size: NSSizeFromString(aString.substr(aString.indexOf("},") + 3, aString.length - 3)) };
 }

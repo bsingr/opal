@@ -11,8 +11,8 @@
 
 @interface NSArrayController : NSObjectController
 {
-    NSUInteger      _selectionIndex;
-    BOOL            _preservesSelection;
+  NSUInteger    _selectionIndex;
+  BOOL      _preservesSelection;
 }
 
 - (id)init;

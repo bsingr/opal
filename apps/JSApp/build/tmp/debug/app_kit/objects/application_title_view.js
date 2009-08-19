@@ -26,43 +26,43 @@
 
 
 var NSApplicationTitleView = NSView.extend({
+  
+  _appTitle: null,
+  
+  initWithFrame: function(frameRect) {
+    this._super(frameRect);
+    this._appTitle = "Application";
+    return this;
+  },
+  
+  requiredSize: function() {
+    return NSMakeSize(100, NSMenu.menuBarHeight());
+  },
+  
+  attributedTitle: function() {
+    if (!this._appTitle)
+      this._appTitle = "";
     
-    _appTitle: null,
-    
-    initWithFrame: function(frameRect) {
-        this._super(frameRect);
-        this._appTitle = "Application";
-        return this;
-    },
-    
-    requiredSize: function() {
-        return NSMakeSize(100, NSMenu.menuBarHeight());
-    },
-    
-    attributedTitle: function() {
-        if (!this._appTitle)
-            this._appTitle = "";
-        
-        var attributes = NSDictionary.create();
+    var attributes = NSDictionary.create();
 
 		// font
-            attributes.setObjectForKey(NSFont.applicationTitleFontOfSize(14), NSFontAttributeName);
+      attributes.setObjectForKey(NSFont.applicationTitleFontOfSize(14), NSFontAttributeName);
 
 		// textColor
-        // if (this.isEnabled()) {
-        //  if (this.textColor())
-        //      attributes.setObjectForKey(this.textColor(), NSForegroundColorAttributeName);
-        // }
-        // else {
+    // if (this.isEnabled()) {
+    //  if (this.textColor())
+    //    attributes.setObjectForKey(this.textColor(), NSForegroundColorAttributeName);
+    // }
+    // else {
 			attributes.setObjectForKey(NSColor.colorWithCalibratedRGBA(0.8, 0.8, 0.8, 1.0), NSForegroundColorAttributeName);
-        // }
+    // }
 
 		return NSAttributedString.create('initWithStringAndAttributes', this._appTitle, attributes);
-    },
-    
-    drawRect: function(aRect) {
-        // var c = NSGraphicsContext.currentContext().graphicsPort();
-        // CGContextSetShadowWithColor(c, NSMakeSize(1, 1), 0, NSColor.colorWithCalibratedRGBA(0.204, 0.204, 0.204, 0.8));
-        // this.attributedTitle().drawWithRectAndOptions(aRect, null);
-    }
+  },
+  
+  drawRect: function(aRect) {
+    // var c = NSGraphicsContext.currentContext().graphicsPort();
+    // CGContextSetShadowWithColor(c, NSMakeSize(1, 1), 0, NSColor.colorWithCalibratedRGBA(0.204, 0.204, 0.204, 0.8));
+    // this.attributedTitle().drawWithRectAndOptions(aRect, null);
+  }
 });

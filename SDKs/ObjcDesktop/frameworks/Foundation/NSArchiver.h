@@ -19,7 +19,7 @@ extern NSString *NSInconsistentArchiveException;
 @interface NSArchiver : NSCoder
 
 - (id)initForWritingWithMutableData:(NSMutableData *)mdata;
-    
+  
 - (NSMutableData *)archiverData;
 
 - (void)encodeRootObject:(id)rootObject;

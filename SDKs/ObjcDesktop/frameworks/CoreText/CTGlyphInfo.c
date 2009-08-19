@@ -28,30 +28,30 @@
 
 CTGlyphInfoRef CTGlyphInfoCreateWithGlyphName(CFStringRef glyphName, CTFontRef font, CFStringRef baseString)
 {
-    
+  
 }
 
 CTGlyphInfoRef CTGlyphInfoCreateWithGlyph(CGGlyph glyph, CTFontRef font, CFStringRef baseString)
 {
-    
+  
 }
 
 CTGlyphInfoRef CTGlyphInfoCreateWithCharacterIdentifier(CGFontIndex cid, CTCharacterCollection collection, CFStringRef baseString)
 {
-    
+  
 }
 
 CFStringRef CTGlyphInfoGetGlyphName(CTGlyphInfoRef glyphInfo)
 {
-    
+  
 }
 
 CGFontIndex CTGlyphInfoGetCharacterIdentifier(CTGlyphInfoRef glyphInfo)
 {
-    
+  
 }
 
 CTCharacterCollection CTGlyphInfoGetCharacterCollection(CTGlyphInfoRef glyphInfo)
 {
-    
+  
 }

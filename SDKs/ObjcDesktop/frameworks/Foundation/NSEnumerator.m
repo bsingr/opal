@@ -12,15 +12,15 @@
 
 - (id)initWithArray:(NSArray *)array
 {
-    _array = array;
-    _currentIndex = 0;
-    return self;
+  _array = array;
+  _currentIndex = 0;
+  return self;
 }
 
 - (id)nextObject
 {
-    _currentIndex += 1;
-    return [_array objectAtIndex:_currentIndex - 1];
+  _currentIndex += 1;
+  return [_array objectAtIndex:_currentIndex - 1];
 }
 
 @end
@@ -30,7 +30,7 @@
 
 - (NSArray *)allObjects
 {
-    return _array;
+  return _array;
 }
 
 @end

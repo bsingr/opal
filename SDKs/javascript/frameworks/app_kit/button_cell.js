@@ -27,7 +27,7 @@
 include('app_kit/cell');
 
 /**
-    VN.ButtonType
+  VN.ButtonType
 */
 VN.MOMENTARY_LIGHT_BUTTON = 0;
 VN.PUSH_ON_PUSH_OFF_BUTTON = 1;
@@ -39,7 +39,7 @@ VN.ON_OFF_BUTTON = 6;
 VN.MOMENTARY_PUSH_IN_BUTTON = 7;
 
 /**
-    VN.BezelStyle
+  VN.BezelStyle
 */
 VN.ROUNDED_BEZEL_STYLE = 1;
 VN.REGULAR_SQUARE_BEZEL_STYLE = 2;
@@ -54,10 +54,18 @@ VN.SMALL_SQUARE_BEZEL_STYLE = 10;
 VN.TEXTURED_ROUNDED_BEZEL_STYLE = 11;
 VN.ROUNDED_RECT_BEZEL_STYLE = 12;
 VN.RECESSED_BEZEL_STYLE = 13;
-VN.ROUNDED_DISCLOSURE_BEZEL_STYLE = 14;    
+VN.ROUNDED_DISCLOSURE_BEZEL_STYLE = 14;
 
 /**
-    VN.GradientType
+  The CSS classes used for referencing NS* style bezel attributes
+*/
+VN.BEZEL_STYLE_CLASS_NAMES = ['empty', 'rounded', 'regular-square', 'thick-square',
+  'thicker-square', 'disclosure', 'shadowless-square', 'circular', 'textured',
+  'help-button', 'small-square', 'textured-rounded', 'rounded-rect', 'recessed',
+  'rounded-disclosure'];
+
+/**
+  VN.GradientType
 */
 VN.GRADIENT_NONE = 0;
 VN.GRADIENT_CONCAVE_WEAK = 1;
@@ -66,157 +74,171 @@ VN.GRADIENT_CONVEX_WEAK = 3;
 VN.GRADIENT_CONVEX_STRONG = 4;
 
 /**
-    @class VN.ButtonCell
-    @class VN.Cell
+  @class VN.ButtonCell
+  @class VN.Cell
 */
 var NSButtonCell = VN.ButtonCell = NSCell.extend({
-        
-    initWithCoder: function(aCoder) {
-        this._super(aCoder);
-        var flags = aCoder.decodeIntForKey("NSButtonFlags");
-        var flags2 = aCoder.decodeIntForKey("NSButtonFlags2");
-        this._isBordered = (flags & 0x00800000) ? true : false;
-        this._bezelStyle = ((flags2 & 0x7) | ((flags2 & 0x20) >> 2));
-        
-        this._alternateImage = aCoder.decodeObjectForKey("NSAlternateImage");
-        if (this._alternateImage) {
-            this._image = this._alternateImage.normalImage();
-            this._alternateImage = this._alternateImage.alternateImage();
-        }
-        
-        return this;
-    },
     
-    /**
-        @param {VN.Rect} cellFrame
-        @param {VN.View} controlView
-        @param {VN.RenderContext} renderContext
-        @param {Boolean} firstTime
-    */    
-    renderWithFrameInView: function(cellFrame, controlView, renderContext, firstTime) {
-        if (firstTime) {
-            renderContext.setClass('vn-button');
-            renderContext.push('div', 'vn-button-left');
-            renderContext.push('div', 'vn-button-middle');
-            renderContext.push('div', 'vn-button-right');
-            renderContext.push('span', 'vn-button-title');
-        }
-            
-        this.renderBezelWithFrameInView(cellFrame, controlView, renderContext, firstTime);
-        this.renderInteriorWithFrameInView(cellFrame, controlView, renderContext, firstTime);
-        this.renderTitleWithFrameInView(this._value, this.titleRectForBounds(cellFrame), renderContext, firstTime);
-    },
+  initWithCoder: function(aCoder) {
+    this._super(aCoder);
+    var flags = aCoder.decodeIntForKey("NSButtonFlags");
+    var flags2 = aCoder.decodeIntForKey("NSButtonFlags2");
+    this.isBordered = (flags & 0x00800000) ? true : false;
+    this._bezelStyle = ((flags2 & 0x7) | ((flags2 & 0x20) >> 2));
     
-    /**
-        @param {VN.Rect} cellFrame
-        @param {VN.View} controlView
-        @param {VN.RenderContext} renderContext
-        @param {Boolean} firstTime
-    */
-    renderBezelWithFrameInView: function(cellFrame, controlView, renderContext, firstTime) {
-        if (this.isEnabled())
-            renderContext.removeClass('disabled');
-        else
-            renderContext.addClass('disabled');
-            
-        if (this.isBordered())
-            renderContext.addClass('bordered');
-        else
-            renderContext.removeClass('bordered');
-        
-        if (this.isHighlighted())
-            renderContext.addClass('highlighted');
-        else
-            renderContext.removeClass('highlighted');
-    },
+    // this._alternateImage = aCoder.decodeObjectForKey("NSAlternateImage");
+    // if (this._alternateImage) {
+      // this._image = this._alternateImage.normalImage();
+      // this._alternateImage = this._alternateImage.alternateImage();
+    // }
+    // else {
+      // this._image = aCoder.decodeObjectForKey('NSNormalImage');
+    // }
     
-    /**
-        @param {VN.Rect} cellFrame
-        @param {VN.View} controlView
-        @param {VN.RenderContext} renderContext
-        @param {Boolean} firstTime
-    */
-    renderInteriorWithFrameInView: function(cellFrame, controlView, renderContext, firstTime) {
-        // 
-    },
+    return this;
+  },
+  
+  /**
+    @param {VN.Rect} cellFrame
+    @param {VN.View} controlView
+    @param {VN.RenderContext} renderContext
+    @param {Boolean} firstTime
+  */  
+  renderWithFrameInView: function(cellFrame, controlView, renderContext, firstTime) {
+    if (firstTime) {
+      renderContext.setClass('vn-button');
+      renderContext.push('div', 'vn-button-left');
+      renderContext.push('div', 'vn-button-middle');
+      renderContext.push('div', 'vn-button-right');
+      renderContext.push('img', 'vn-button-image');
+      renderContext.push('span', 'vn-button-title');
+    }
+      
+    this.renderBezelWithFrameInView(cellFrame, controlView, renderContext, firstTime);
+    this.renderInteriorWithFrameInView(cellFrame, controlView, renderContext, firstTime);
+    this.renderTitleWithFrameInView(this._value, this.titleRectForBounds(cellFrame), renderContext, firstTime);
+  },
+  
+  /**
+    @param {VN.Rect} cellFrame
+    @param {VN.View} controlView
+    @param {VN.RenderContext} renderContext
+    @param {Boolean} firstTime
+  */
+  renderBezelWithFrameInView: function(cellFrame, controlView, renderContext, firstTime) {
+    if (this.isEnabled)
+      renderContext.removeClass('disabled');
+    else
+      renderContext.addClass('disabled');
+      
+    if (this.isBordered) {
+      renderContext.addClass('bordered');
+      renderContext.addClass(VN.BEZEL_STYLE_CLASS_NAMES[this._bezelStyle]);
+    }
+    else
+      renderContext.removeClass('bordered');
     
-    /**
-        @param {VN.Rect} cellFrame
-        @param {VN.View} controlView
-        @param {VN.RenderContext} renderContext
-        @param {Boolean} firstTime
-    */
-    renderTitleWithFrameInView: function(title, titleRect, renderContext, firstTime) {
-        renderContext.$('vn-button-title').setFrame(titleRect);
-        renderContext.$('vn-button-title').renderAttributedString(this.attributedStringValue());
-    },
+    if (this.isHighlighted)
+      renderContext.addClass('highlighted');
+    else
+      renderContext.removeClass('highlighted');
+  },
+  
+  /**
+    @param {VN.Rect} cellFrame
+    @param {VN.View} controlView
+    @param {VN.RenderContext} renderContext
+    @param {Boolean} firstTime
+  */
+  renderInteriorWithFrameInView: function(cellFrame, controlView, renderContext, firstTime) {
+    if (this._image) {
+      renderContext.$('vn-button-image').setFrame(this.imageRectForBounds(cellFrame));
+      renderContext.$('vn-button-image').element().src = this._image._image.src;
+    }
+  },
+  
+  /**
+    @param {VN.Rect} cellFrame
+    @param {VN.View} controlView
+    @param {VN.RenderContext} renderContext
+    @param {Boolean} firstTime
+  */
+  renderTitleWithFrameInView: function(title, titleRect, renderContext, firstTime) {
+    renderContext.$('vn-button-title').setFrame(titleRect);
+    renderContext.$('vn-button-title').renderAttributedString(this.attributedStringValue());
+  },
+  
+  /**
+    @param {VN.Rect} theRect
+    @returns VN.Rect
+  */
+  titleRectForBounds: function(theRect) {
     
-    /**
-        @param {VN.Rect} theRect
-        @returns VN.Rect
-    */
-    titleRectForBounds: function(theRect) {
-        
-        var xImageOffset = theRect.origin.x + 2;
-        
-        if (this._image) {
-            xImageOffset += this._image.size().width + 3;
-        }
-        
-        
-        return NSMakeRect(xImageOffset,
-                            theRect.origin.y + 2,
-                            theRect.size.width - 4,
-                            theRect.size.height - 4);
-    },
+    var xImageOffset = theRect.origin.x + 2;
     
-    /**
-        @param {VN.Rect} theRect
-        @returns VN.Rect
-    */
-    imageRectForBounds: function(theRect) {
-        var theHeight = 0, theWidth = 0;
-        
-        if (this._image) {
-            return NSMakeRect(2, (theRect.size.height - this._image.size().height) / 2, this._image.size().width, this._image.size().height);
-        }
-        
-        return NSMakeRect(0, 0, 0, 0);
-    },
+    if (this._image) {
+      xImageOffset += this._image.size().width + 3;
+    }
     
-    /**
-        @returns VN.AttributedString
-    */
-    attributedStringValue: function() {
-		if (this._value.typeOf(NSAttributedString)) {
-			return this._value;
+    
+    return NSMakeRect(xImageOffset,
+              theRect.origin.y + 2,
+              theRect.size.width - 4,
+              theRect.size.height - 4);
+  },
+  
+  /**
+    @param {VN.Rect} theRect
+    @returns VN.Rect
+  */
+  imageRectForBounds: function(theRect) {
+    var theHeight = 0, theWidth = 0;
+    
+    if (this._image) {
+      return NSMakeRect(2, (theRect.size.height - this._image.size().height) / 2, this._image.size().width, this._image.size().height);
+    }
+    
+    return NSMakeRect(0, 0, 0, 0);
+  },
+  
+  /**
+    @returns VN.AttributedString
+  */
+  attributedStringValue: function() {
+		
+		if (!this.value) {
+		  this.value = "";
+		}
+		
+		if (this.value.typeOf(NSAttributedString)) {
+			return this.value;
 		}
 		
 		var attributes = NSDictionary.create();
 		
 		
 		// font
-		if (!this.font()) {
-		    this.setFont(NSFont.controlContentFontOfSize(12));
-		    
+		if (!this.font) {
+		  this.setValueForKey(NSFont.controlContentFontOfSize(12), 'font');
 		}
-		attributes.setObjectForKey(this.font(), NSFontAttributeName);
+		
+		attributes.setObjectForKey(this.font, NSFontAttributeName);
 		
 		// textColor
 		var textColor;
-		if (this.isEnabled())
-		    textColor = this.isHighlighted() ? NSColor.selectedControlTextColor() : NSColor.controlTextColor();
+		if (this.isEnabled)
+		  textColor = this.isHighlighted ? NSColor.selectedControlTextColor() : NSColor.controlTextColor();
 		else
-		    textColor = NSColor.disabledControlTextColor();
+		  textColor = NSColor.disabledControlTextColor();
 		
 		attributes.setObjectForKey(textColor, NSForegroundColorAttributeName);
 		
-        // paragraph style
-        var paragraphStyle = NSParagraphStyle.defaultParagraphStyle();
-        paragraphStyle.setAlignment(this.alignment());
-        
-        attributes.setObjectForKey(paragraphStyle, NSParagraphStyleAttributeName);
+    // paragraph style
+    var paragraphStyle = NSParagraphStyle.defaultParagraphStyle();
+    paragraphStyle.setAlignment(this.alignment);
+    
+    attributes.setObjectForKey(paragraphStyle, NSParagraphStyleAttributeName);
 		
-		return NSAttributedString.create('initWithStringAndAttributes', this._value, attributes);
+		return NSAttributedString.create('initWithStringAndAttributes', this.value, attributes);
 	},
 });

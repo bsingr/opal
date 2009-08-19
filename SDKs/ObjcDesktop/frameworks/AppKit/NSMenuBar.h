@@ -17,10 +17,10 @@
 @class NSApplicationTitleView;
 
 @interface NSMenuBar : NSWindow {
-    NSMenuView          *_mainMenuView;
-    NSView              *_statusBarView;
-    NSString            *_applicationTitleName;
-    NSView              *_applicationTitleView;
+  NSMenuView      *_mainMenuView;
+  NSView        *_statusBarView;
+  NSString      *_applicationTitleName;
+  NSView        *_applicationTitleView;
 }
 
 - (void)setMainMenuView:(NSMenuView *)aView;

@@ -21,91 +21,91 @@
 @class NSSelectionDirection;
 
 enum {
-    NSBorderlessWindowMask              = 0,
-    NSTitledWindowMask                  = 1 << 0,
-    NSClosableWindowMask                = 1 << 1,
-    NSMiniaturizableWindowMask          = 1 << 2,
-    NSResizableWindowMask               = 1 << 3,
-    NSTexturedBackgroundWindowMask      = 1 << 8,
-    NSUnifiedTitleAndToolbarWindowMask  = 1 << 12
+  NSBorderlessWindowMask        = 0,
+  NSTitledWindowMask          = 1 << 0,
+  NSClosableWindowMask        = 1 << 1,
+  NSMiniaturizableWindowMask      = 1 << 2,
+  NSResizableWindowMask         = 1 << 3,
+  NSTexturedBackgroundWindowMask    = 1 << 8,
+  NSUnifiedTitleAndToolbarWindowMask  = 1 << 12
 };
 
 enum {
-    NSNormalWindowLevel =  10,
-    NSFloatingWindowLevel = 10,
-    NSSubmenuWindowLevel = 10,
-    NSTornOffMenuWindowLevel = 10,
-    NSMainMenuWindowLevel = 10,
-    NSStatusWindowLevel =	10,
-    NSModalPanelWindowLevel = 10,
-    NSPopUpMenuWindowLevel = 10,
-    NSScreenSaverWindowLevel = 10
+  NSNormalWindowLevel =  10,
+  NSFloatingWindowLevel = 10,
+  NSSubmenuWindowLevel = 10,
+  NSTornOffMenuWindowLevel = 10,
+  NSMainMenuWindowLevel = 10,
+  NSStatusWindowLevel =	10,
+  NSModalPanelWindowLevel = 10,
+  NSPopUpMenuWindowLevel = 10,
+  NSScreenSaverWindowLevel = 10
 };
 
 enum {
-    NSWindowCloseButton,
-    NSWindowMiniaturizeButton,
-    NSWindowZoomButton,
-    NSWindowToolbarButton,
-    NSWindowDocumentIconButton
+  NSWindowCloseButton,
+  NSWindowMiniaturizeButton,
+  NSWindowZoomButton,
+  NSWindowToolbarButton,
+  NSWindowDocumentIconButton
 };
 typedef NSUInteger NSWindowButton;
 
 @interface NSWindow : NSResponder
 {
-    id                   _gState;
-    id                   _gCanvas;
-    id                   _gBuffer;
-    
-    NSPoint              _contentRectOrigin;
-	NSSize               _contentRectSize;
+  id           _gState;
+  id           _gCanvas;
+  id           _gBuffer;
+  
+  NSPoint        _contentRectOrigin;
+	NSSize         _contentRectSize;
 	
-    BOOL                 _isVisible;
+  BOOL         _isVisible;
 	
-	BOOL                 _hasShadow;
-	BOOL                 _hidesOnDeactivate;
-	BOOL                 _releasedWhenClosed;
-	NSUInteger          *_styleMask;
-	NSString            *_title;
-	BOOL                 _visibleAtLaunch;
-	BOOL                 _resizable;
+	BOOL         _hasShadow;
+	BOOL         _hidesOnDeactivate;
+	BOOL         _releasedWhenClosed;
+	NSUInteger      *_styleMask;
+	NSString      *_title;
+	BOOL         _visibleAtLaunch;
+	BOOL         _resizable;
 	
-	BOOL                 _showNormalTitlebar;
-	BOOL                 _unifiedTitleAndToolbar;
+	BOOL         _showNormalTitlebar;
+	BOOL         _unifiedTitleAndToolbar;
 	
-	NSToolbar           *_toolbar;
+	NSToolbar       *_toolbar;
 	
-	NSView              *_contentView;
+	NSView        *_contentView;
 	
-	id                   _delegate;
-	NSUInteger           _windowNumber;
+	id           _delegate;
+	NSUInteger       _windowNumber;
 	
-	NSRect               _frame;
-    NSRect               _bounds;
-	BOOL                 _visible;
+	NSRect         _frame;
+  NSRect         _bounds;
+	BOOL         _visible;
 	
-	int                  _level;
-	BOOL                 _keyWindow;
-	BOOL                 _mainWindow;
-	NSResponder         *_firstResponder;
+	int          _level;
+	BOOL         _keyWindow;
+	BOOL         _mainWindow;
+	NSResponder     *_firstResponder;
 	
-	BOOL                 _movableByWindowBackground;
-    
-    id                   _eventBindingCurrentX;
-    id                   _eventBindingCurrentY;
-    
-    NSWindowTitleButton *_windowCloseButton;
-    NSText              *_fieldEditor;
-    
-    NSSize               _maxSize;
-    NSSize               _minSize;
-    NSUInteger           _wtFlags;
-    id                  *_windowClass;
-    
-    
-    CGDOMElementRef      _DOMContainer;         // Usually an "outer div" to hold the graphics context aswell as subviews' containers
-    CGDOMElementRef      _DOMGraphicsContext;   // Rendering context: usually a canvas (exceptions for DOM rendering and VML)
-	NSGraphicsContext   *_graphicsContext;      // a cache of the actual graphics context (from canvas, or VML representation).
+	BOOL         _movableByWindowBackground;
+  
+  id           _eventBindingCurrentX;
+  id           _eventBindingCurrentY;
+  
+  NSWindowTitleButton *_windowCloseButton;
+  NSText        *_fieldEditor;
+  
+  NSSize         _maxSize;
+  NSSize         _minSize;
+  NSUInteger       _wtFlags;
+  id          *_windowClass;
+  
+  
+  CGDOMElementRef    _DOMContainer;     // Usually an "outer div" to hold the graphics context aswell as subviews' containers
+  CGDOMElementRef    _DOMGraphicsContext;   // Rendering context: usually a canvas (exceptions for DOM rendering and VML)
+	NSGraphicsContext   *_graphicsContext;    // a cache of the actual graphics context (from canvas, or VML representation).
 }
 
 + (NSRect)frameRectForContentRect:(NSRect)cRect styleMask:(NSUInteger)aStyle;

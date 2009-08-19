@@ -26,26 +26,26 @@
 
 
 var NSColor = NSObject.extend({
+  
+  _red: null,
+  _green: null,
+  _blue: null,
+  _alpha: null,
+  
+  initWithCoder: function(aCoder) {
+    var theColorSpace = aCoder.decodeIntForKey("NSColorSpace");
+    var theColor;
     
-    _red: null,
-    _green: null,
-    _blue: null,
-    _alpha: null,
+    switch (theColorSpace) {
+      case 6:
+        var catalogName = aCoder.decodeObjectForKey("NSCatalogName");
+        var colorName = aCoder.decodeObjectForKey("NSColorName");
+        theColor = NSColor[colorName]();
+        break;
+    }
     
-    initWithCoder: function(aCoder) {
-        var theColorSpace = aCoder.decodeIntForKey("NSColorSpace");
-        var theColor;
-        
-        switch (theColorSpace) {
-            case 6:
-                var catalogName = aCoder.decodeObjectForKey("NSCatalogName");
-                var colorName = aCoder.decodeObjectForKey("NSColorName");
-                theColor = NSColor[colorName]();
-                break;
-        }
-        
-        return theColor;
-    },
+    return theColor;
+  },
 	
 	highlightWithLevel: function(val) {
 		

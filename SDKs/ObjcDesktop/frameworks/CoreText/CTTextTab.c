@@ -30,20 +30,20 @@ const CFStringRef kCTTabColumnTerminatorsAttributeName = "kCTTabColumnTerminator
 
 CTTextTabRef CTTextTabCreate(CTTextAlignment alignment, double location, CFDictionaryRef options)
 {
-    
+  
 }
 
 CTTextAlignment CTTextTabGetAlignment(CTTextTabRef tab)
 {
-    
+  
 }
 
 double CTTextTabGetLocation(CTTextTabRef tab)
 {
-    
+  
 }
 
 CFDictionaryRef CTTextTabGetOptions(CTTextTabRef tab)
 {
-    
+  
 }

@@ -22,19 +22,19 @@ typedef void *CFMutableStringRef;
 typedef CFTypeRef CFPropertyListRef;
 
 enum {
-    kCFCompareLessThan      = -1,
-    kCFCompareEqualTo       = 0,
-    kCFCompareGreaterThan   = 1
+  kCFCompareLessThan    = -1,
+  kCFCompareEqualTo     = 0,
+  kCFCompareGreaterThan   = 1
 };
 typedef CFIndex CFComparisonResult;
 
 enum {
-    kCFNotFound = -1
+  kCFNotFound = -1
 };
 
 typedef struct {
-    CFIndex location;
-    CFIndex length;
+  CFIndex location;
+  CFIndex length;
 } CFRange;
 
 extern CFRange CFRangeMake(CFIndex loc, CFIndex len);

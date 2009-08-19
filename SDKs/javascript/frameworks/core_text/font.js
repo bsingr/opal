@@ -30,7 +30,7 @@ include('core_graphics/path'){}
 
 function CTFontRef()
 {
-    
+  
 };
 
 var kCTFontCopyrightNameKey = "kCTFontCopyrightNameKey";
@@ -68,49 +68,49 @@ var kCTFontFeatureSelectorDefaultKey = "kCTFontFeatureSelectorDefaultKey";
 var kCTFontFeatureSelectorSettingKey = "kCTFontFeatureSelectorSettingKey";
 
 // CTFontOptions;	
-var kCTFontOptionsDefault                       = 0;
-var kCTFontOptionsPreventAutoActivation         = 1 << 0;
-var kCTFontOptionsPreferSystemFont              = 1 << 2;
+var kCTFontOptionsDefault             = 0;
+var kCTFontOptionsPreventAutoActivation     = 1 << 0;
+var kCTFontOptionsPreferSystemFont        = 1 << 2;
 
 // CTFontUIFontType
-var kCTFontNoFontType                           = -1;
-var kCTFontUserFontType                         =  0;
-var kCTFontUserFixedPitchFontType               =  1;
-var kCTFontSystemFontType                       =  2;
-var kCTFontEmphasizedSystemFontType             =  3;
-var kCTFontSmallSystemFontType                  =  4;
-var kCTFontSmallEmphasizedSystemFontType        =  5;
-var kCTFontMiniSystemFontType                   =  6;
-var kCTFontMiniEmphasizedSystemFontType         =  7;
-var kCTFontViewsFontType                        =  8;
-var kCTFontApplicationFontType                  =  9;
-var kCTFontLabelFontType                        = 10;
-var kCTFontMenuTitleFontType                    = 11;
-var kCTFontMenuItemFontType                     = 12;
-var kCTFontMenuItemMarkFontType                 = 13;
-var kCTFontMenuItemCmdKeyFontType               = 14;
-var kCTFontWindowTitleFontType                  = 15;
-var kCTFontPushButtonFontType                   = 16;
-var kCTFontUtilityWindowTitleFontType           = 17;
-var kCTFontAlertHeaderFontType                  = 18;
-var kCTFontSystemDetailFontType                 = 19;
-var kCTFontEmphasizedSystemDetailFontType       = 20;
-var kCTFontToolbarFontType                      = 21;
-var kCTFontSmallToolbarFontType                 = 22;
-var kCTFontMessageFontType                      = 23;
-var kCTFontPaletteFontType                      = 24;
-var kCTFontToolTipFontType                      = 25;
-var kCTFontControlContentFontType               = 26;
+var kCTFontNoFontType               = -1;
+var kCTFontUserFontType             =  0;
+var kCTFontUserFixedPitchFontType         =  1;
+var kCTFontSystemFontType             =  2;
+var kCTFontEmphasizedSystemFontType       =  3;
+var kCTFontSmallSystemFontType          =  4;
+var kCTFontSmallEmphasizedSystemFontType    =  5;
+var kCTFontMiniSystemFontType           =  6;
+var kCTFontMiniEmphasizedSystemFontType     =  7;
+var kCTFontViewsFontType            =  8;
+var kCTFontApplicationFontType          =  9;
+var kCTFontLabelFontType            = 10;
+var kCTFontMenuTitleFontType          = 11;
+var kCTFontMenuItemFontType           = 12;
+var kCTFontMenuItemMarkFontType         = 13;
+var kCTFontMenuItemCmdKeyFontType         = 14;
+var kCTFontWindowTitleFontType          = 15;
+var kCTFontPushButtonFontType           = 16;
+var kCTFontUtilityWindowTitleFontType       = 17;
+var kCTFontAlertHeaderFontType          = 18;
+var kCTFontSystemDetailFontType         = 19;
+var kCTFontEmphasizedSystemDetailFontType     = 20;
+var kCTFontToolbarFontType            = 21;
+var kCTFontSmallToolbarFontType         = 22;
+var kCTFontMessageFontType            = 23;
+var kCTFontPaletteFontType            = 24;
+var kCTFontToolTipFontType            = 25;
+var kCTFontControlContentFontType         = 26;
 
 
 function CTFontCreateWithName(name, size, matrix)
 {
-    
+  
 }
 
 function CTFontCreateWithFontDescriptor(descriptor, size, matrix)
 {
-    
+  
 }
 
 function CTFontCreateUIFontForLanguage(uiType, size, language){}

@@ -12,42 +12,42 @@
 
 - (id)init
 {
-    self = [super init];
-    
-    if (self) {
+  self = [super init];
+  
+  if (self) {
 	}
-    
+  
 	return self;
 }
 
 - (Class)getIsa
 {
-    return isa;
+  return isa;
 }
 
 @end
 
 void dome(int (*ptr)(int, float))
 {
-    
+  
 }
 
 void doSomething(void (^callback)(void))
 {
-    void *a = ^{printf("ten");};
-    
-    doThis(^(int age, int height){
-        printf(age, height);
-    });
-    
-    [array each:^(id obj) {
-        NSLog(obj);
-    }];
+  void *a = ^{printf("ten");};
+  
+  doThis(^(int age, int height){
+    printf(age, height);
+  });
+  
+  [array each:^(id obj) {
+    NSLog(obj);
+  }];
 }
 typedef void (*CFArrayApplierFunction)(const void *value, void *context);
 
 
 // void eatIt(CFArrayApplierFunction bob)
 // {
-//     bob();
+//   bob();
 // }

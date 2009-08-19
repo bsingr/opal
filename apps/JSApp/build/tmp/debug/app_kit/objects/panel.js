@@ -25,37 +25,37 @@
  */
 
 
-var NSPanel = NSWindow.extend({
+VN.Panel = VN.Window.extend({
+  
+  drawRect: function(aRect) {
+    var c = NSGraphicsContext.currentContext().graphicsPort();
     
-    drawRect: function(aRect) {
-        var c = NSGraphicsContext.currentContext().graphicsPort();
-        
-        // bottom
-        CGContextSetFillColorWithColor(c, NSColor.colorWithCalibratedRGBA(0.1, 0.1, 0.1, 0.9));
-        CGContextBeginPath(c);
-        CGContextMoveToPoint(c, aRect.origin.x, aRect.origin.y + 19);
-        CGContextAddLineToPoint(c, aRect.origin.x + aRect.size.width, aRect.origin.y + 19);
-        CGContextAddArcToPoint(c, aRect.origin.x + aRect.size.width, aRect.origin.y + aRect.size.height,
-                                aRect.origin.x + aRect.size.width - 6, aRect.origin.y + aRect.size.height,
-                                6);
-        
-        CGContextAddArcToPoint(c, aRect.origin.x, aRect.origin.y + aRect.size.height,
-                                aRect.origin.x, aRect.origin.y + aRect.size.height - 6,
-                                6)
+    // bottom
+    CGContextSetFillColorWithColor(c, NSColor.colorWithCalibratedRGBA(0.1, 0.1, 0.1, 0.9));
+    CGContextBeginPath(c);
+    CGContextMoveToPoint(c, aRect.origin.x, aRect.origin.y + 19);
+    CGContextAddLineToPoint(c, aRect.origin.x + aRect.size.width, aRect.origin.y + 19);
+    CGContextAddArcToPoint(c, aRect.origin.x + aRect.size.width, aRect.origin.y + aRect.size.height,
+                aRect.origin.x + aRect.size.width - 6, aRect.origin.y + aRect.size.height,
+                6);
+    
+    CGContextAddArcToPoint(c, aRect.origin.x, aRect.origin.y + aRect.size.height,
+                aRect.origin.x, aRect.origin.y + aRect.size.height - 6,
+                6)
 
-        CGContextClosePath(c);
-        CGContextFillPath(c);
-        
-        // top
-        CGContextSetFillColorWithColor(c, NSColor.colorWithCalibratedRGBA(0.25, 0.25, 0.25, 0.9));
-        // CGContextFillRect(c, NSMakeRect(aRect.origin.x, aRect.origin.y, aRect.size.width, 19));
-        CGContextBeginPath(c);
-        CGContextBeginPath(c);
-        CGContextMoveToPoint(c, aRect.origin.x, aRect.origin.y + 19);
-        CGContextAddArcToPoint(c, aRect.origin.x, aRect.origin.y, aRect.origin.x + 6, aRect.origin.y, 6);
-        CGContextAddArcToPoint(c, aRect.origin.x + aRect.size.width, aRect.origin.y, aRect.origin.x + aRect.size.width, aRect.origin.y + 6, 6);
-        CGContextAddLineToPoint(c, aRect.origin.x + aRect.size.width, aRect.origin.y + 19);
-        CGContextClosePath(c);
-        CGContextFillPath(c);
-    }
+    CGContextClosePath(c);
+    CGContextFillPath(c);
+    
+    // top
+    CGContextSetFillColorWithColor(c, NSColor.colorWithCalibratedRGBA(0.25, 0.25, 0.25, 0.9));
+    // CGContextFillRect(c, NSMakeRect(aRect.origin.x, aRect.origin.y, aRect.size.width, 19));
+    CGContextBeginPath(c);
+    CGContextBeginPath(c);
+    CGContextMoveToPoint(c, aRect.origin.x, aRect.origin.y + 19);
+    CGContextAddArcToPoint(c, aRect.origin.x, aRect.origin.y, aRect.origin.x + 6, aRect.origin.y, 6);
+    CGContextAddArcToPoint(c, aRect.origin.x + aRect.size.width, aRect.origin.y, aRect.origin.x + aRect.size.width, aRect.origin.y + 6, 6);
+    CGContextAddLineToPoint(c, aRect.origin.x + aRect.size.width, aRect.origin.y + 19);
+    CGContextClosePath(c);
+    CGContextFillPath(c);
+  }
 });

@@ -11,13 +11,13 @@ require 'erb'
 module Vienna
   
   module Builder
+  
+  class Base
     
-    class Base
-      
-      
-      
-    end
     
+    
+  end
+  
   end
   
 end

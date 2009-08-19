@@ -16,24 +16,24 @@
 @class NSSortDescriptor;
 
 enum {
-    NSTableColumnNoResizing         = 0,
-    NSTableColumnAutoresizingMask   = ( 1 << 0 ),
-    NSTableColumnUserResizingMask   = ( 1 << 1 )
+  NSTableColumnNoResizing     = 0,
+  NSTableColumnAutoresizingMask   = ( 1 << 0 ),
+  NSTableColumnUserResizingMask   = ( 1 << 1 )
 };
 
 @interface NSTableColumn : NSObject <NSCoding>
 {
-    NSString        *_identifier;
-    NSTableView     *_tableView;
-    
-    NSUInteger       _width;
-    NSUInteger       _minWidth;
-    NSUInteger       _maxWidth;
-    
-    NSCell          *_headerCell;
-    NSCell          *_dataCell;
-    BOOL             _editable;
-    BOOL             _hidden;
+  NSString    *_identifier;
+  NSTableView   *_tableView;
+  
+  NSUInteger     _width;
+  NSUInteger     _minWidth;
+  NSUInteger     _maxWidth;
+  
+  NSCell      *_headerCell;
+  NSCell      *_dataCell;
+  BOOL       _editable;
+  BOOL       _hidden;
 }
 
 - (id)initWithIdentifier:(id)identifier;
@@ -55,7 +55,7 @@ enum {
 - (void)setDataCell:(NSCell *)cell;
 - (id)dataCell;
 - (id)dataCellForRow:(NSInteger)row;
-    
+  
 - (void)setEditable:(BOOL)flag;
 - (BOOL)isEditable;
 - (void)sizeToFit;

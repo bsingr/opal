@@ -13,9 +13,9 @@
 
 - (id)initWithFrame:(NSRect)frameRect
 {
-    [super initWithFrame:frameRect];
+  [super initWithFrame:frameRect];
 
-    return self;
+  return self;
 }
 
 @end

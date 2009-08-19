@@ -30,70 +30,70 @@ const CGAffineTransform CGAffineTransformIdentity = "";
 
 CGAffineTransform CGAffineTransformMake (CGFloat a, CGFloat b, CGFloat c, CGFloat d, CGFloat tx, CGFloat ty)
 {
-    
+  
 }
 
 CGAffineTransform CGAffineTransformMakeTranslation(CGFloat tx, CGFloat ty)
 {
-    
+  
 }
 
 CGAffineTransform CGAffineTransformMakeScale(CGFloat sx, CGFloat sy)
 {
-    
+  
 }
 
 CGAffineTransform CGAffineTransformMakeRotation(CGFloat angle)
 {
-    
+  
 }
 
 bool CGAffineTransformIsIdentity(CGAffineTransform t)
 {
-    
+  
 }
 
 CGAffineTransform CGAffineTransformTranslate(CGAffineTransform t, CGFloat tx, CGFloat ty)
 {
-    
+  
 }
 
 CGAffineTransform CGAffineTransformScale(CGAffineTransform t, CGFloat sx, CGFloat sy)
 {
-    
+  
 }
 
 CGAffineTransform CGAffineTransformRotate(CGAffineTransform t, CGFloat angle)
 {
-    
+  
 }
 
 CGAffineTransform CGAffineTransformInvert(CGAffineTransform t)
 {
-    
+  
 }
 
 CGAffineTransform CGAffineTransformConcat(CGAffineTransform t1, CGAffineTransform t2)
 {
-    
+  
 }
 
 bool CGAffineTransformEqualToTransform(CGAffineTransform t1, CGAffineTransform t2)
 {
-    
+  
 }
 
 CGPoint CGPointApplyAffineTransform(CGPoint point, CGAffineTransform t)
 {
-    
+  
 }
 
 CGSize CGSizeApplyAffineTransform(CGSize size, CGAffineTransform t)
 {
-    
+  
 }
 
 CGRect CGRectApplyAffineTransform(CGRect rect, CGAffineTransform t)
 {
-    
+  
 }

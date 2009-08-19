@@ -26,46 +26,46 @@
 
 
 /**
-    VN.KeyValueObservingOptions
+  VN.KeyValueObservingOptions
 */
 
 /**
-    The new value will be passed in the info dictionary with this key
+  The new value will be passed in the info dictionary with this key
 */
-VN.KEY_VALUE_OBSERVING_OPTION_NEW = 0x01;
+VN.KEY_VALUE_OBSERVING_OPTION_NEW = 'new';
 
 /**
-    The old value will be passed in the info dictionary
+  The old value will be passed in the info dictionary
 */
-VN.KEY_VALUE_OBSERVING_OPTION_OLD = 0x02;
+VN.KEY_VALUE_OBSERVING_OPTION_OLD = 'old';
 
 /**
-    The initial key
+  The initial key
 */
-VN.KEY_VALUE_OBSERVING_OPTION_INITIAL = 0x04;
+VN.KEY_VALUE_OBSERVING_OPTION_INITIAL = 'initial';
 
 /**
-    The prior key
+  The prior key
 */
-VN.KEY_VALUE_OBSERVING_OPTION_PRIOR = 0x08;
-                                        
-// NSKeyValueChange                     
-var NSKeyValueChangeSetting                 = 1;
-var NSKeyValueChangeInsertion               = 2;
-var NSKeyValueChangeRemoval                 = 3;
-var NSKeyValueChangeReplacement             = 4;
+VN.KEY_VALUE_OBSERVING_OPTION_PRIOR = 'prior';
+                    
+// NSKeyValueChange           
+var NSKeyValueChangeSetting         = 1;
+var NSKeyValueChangeInsertion         = 2;
+var NSKeyValueChangeRemoval         = 3;
+var NSKeyValueChangeReplacement       = 4;
 
 // NSKeyValueSetMutationKind
-var NSKeyValueUnionSetMutation              = 1;
-var NSKeyValueMinusSetMutation              = 2;
-var NSKeyValueIntersectSetMutation          = 3;
-var NSKeyValueSetSetMutation                = 4;
+var NSKeyValueUnionSetMutation        = 1;
+var NSKeyValueMinusSetMutation        = 2;
+var NSKeyValueIntersectSetMutation      = 3;
+var NSKeyValueSetSetMutation        = 4;
 
 // keys for chnage dictionary
-var NSKeyValueChangeKindKey                 = "NSKeyValueChangeKindKey"; 
-var NSKeyValueChangeNewKey                  = "NSKeyValueChangeNewKey";
-var NSKeyValueChangeOldKey                  = "NSKeyValueChangeOldKey";
-var NSKeyValueChangeIndexesKey              = "NSKeyValueChangeIndexesKey";
+var NSKeyValueChangeKindKey         = "NSKeyValueChangeKindKey"; 
+var NSKeyValueChangeNewKey          = "NSKeyValueChangeNewKey";
+var NSKeyValueChangeOldKey          = "NSKeyValueChangeOldKey";
+var NSKeyValueChangeIndexesKey        = "NSKeyValueChangeIndexesKey";
 var NSKeyValueChangeNotificationIsPriorKey  = "NSKeyValueChangeNotificationIsPriorKey";
 
 /**
@@ -73,34 +73,34 @@ var NSKeyValueChangeNotificationIsPriorKey  = "NSKeyValueChangeNotificationIsPri
 	@class VN.Object
 */
 VN.Object.mixin({
+  
+  /**
+    This is used to store a list of observers that are observing this object
+    for changes to key values. When a chnage takes place, the observers need
+    to be notified.
     
-    /**
-        This is used to store a list of observers that are observing this object
-        for changes to key values. When a chnage takes place, the observers need
-        to be notified.
-        
-        @type NSArray
-    */
-    _kvo_observers: NSArray.create(),
+    @type NSArray
+  */
+  _kvo_observers: NSArray.create(),
+  
+  /**
+    This dictionary maintains a list of "old values" for keys that request 
+    to have their old values sent in the info dictionary for observers.
     
-    /**
-        This dictionary maintains a list of "old values" for keys that request 
-        to have their old values sent in the info dictionary for observers.
-        
-        @type VN.Dictionary
-    */
-    _kvo_oldValues: NSDictionary.create(),
-    
+    @type VN.Dictionary
+  */
+  _kvo_oldValues: NSDictionary.create(),
+  
 	/**
 		@param {VN.String} keyPath
 		@param {VN.Object} ofObject
 		@param {VN.Dictionary} change
 		@param {VN.Object} context
 	*/
-    observeValueForKeyPath: function(keyPath, ofObject, change, context) {
-        console.log('observer notification for:' + keyPath);
-        console.log(this);
-    }
+  observeValueForKeyPath: function(keyPath, ofObject, change, context) {
+    console.log('observer notification for:' + keyPath);
+    console.log(this);
+  }
 });
 
 /**
@@ -108,31 +108,31 @@ VN.Object.mixin({
 	@class NSObject
 */
 NSObject.mixin({
-    
+  
 	/**
 		@param {NSObject} observer
 		@param {NSString} keyPath
 		@param {NSKeyValueObservingOptions} options
 		@param {Object} context
 	*/
-    addObserverForKeyPath: function(observer, keyPath, options, context) {
-        if (!observer || !keyPath)
-            return;
-        
-        var kvcDict = NSDictionary.dictionaryWithObjectsForKeys(
-            [observer, keyPath, options, context],
-            ['NSObserver', 'NSKeyPath', 'NSOptions', 'NSContext']);
-            
-        this._kvo_observers.push(kvcDict);
-    },
+  addObserverForKeyPath: function(observer, keyPath, options, context) {
+    if (!observer || !keyPath)
+      return;
     
+    var kvcDict = NSDictionary.dictionaryWithObjectsForKeys(
+      [observer, keyPath, options, context],
+      ['NSObserver', 'NSKeyPath', 'NSOptions', 'NSContext']);
+      
+    this._kvo_observers.push(kvcDict);
+  },
+  
 	/**
 		@param {NSObject} observer
 		@param {NSString} keyPath
 	*/
-    removeObserverForKeyPath: function(observer, keyPath) {
-        
-    }
+  removeObserverForKeyPath: function(observer, keyPath) {
+    
+  }
 });
 
 /**
@@ -169,19 +169,19 @@ NSArray.mixin({
 		@param {NSKeyValueObservingOptions} options
 		@param {Object} context
 	*/
-    addObserverForKeyPath: function(observer, keyPath, options, context) {
-        throw "NSArray.addObserverForKeyPath: arrays cannot be observed. keyPath: " + keyPath;
-    },
-    
+  addObserverForKeyPath: function(observer, keyPath, options, context) {
+    throw "NSArray.addObserverForKeyPath: arrays cannot be observed. keyPath: " + keyPath;
+  },
+  
 	/**
 		Arrays are not observable, so this method just throws an error.
 		
 		@param {NSObject} observer
 		@param {NSString} keyPath
 	*/
-    removeObserverForKeyPath: function(observer, keyPath) {
-        throw "NSArray.removeObserverForKeyPath: arrays cannot be observed. keyPath: " + keyPath;
-    }
+  removeObserverForKeyPath: function(observer, keyPath) {
+    throw "NSArray.removeObserverForKeyPath: arrays cannot be observed. keyPath: " + keyPath;
+  }
 });
 
 /**
@@ -198,19 +198,19 @@ NSSet.mixin({
 		@param {NSKeyValueObservingOptions} options
 		@param {Object} context
 	*/
-    addObserverForKeyPath: function(observer, keyPath, options, context) {
-        throw "NSSet.addObserverForKeyPath: arrays cannot be observed. keyPath: " + keyPath;
-    },
-    
+  addObserverForKeyPath: function(observer, keyPath, options, context) {
+    throw "NSSet.addObserverForKeyPath: arrays cannot be observed. keyPath: " + keyPath;
+  },
+  
 	/**
 		Sets are not observable, so this method just throws an error.
 		
 		@param {NSObject} observer
 		@param {NSString} keyPath
 	*/
-    removeObserverForKeyPath: function(observer, keyPath) {
-        throw "NSSet.removeObserverForKeyPath: arrays cannot be observed. keyPath: " + keyPath;
-    }
+  removeObserverForKeyPath: function(observer, keyPath) {
+    throw "NSSet.removeObserverForKeyPath: arrays cannot be observed. keyPath: " + keyPath;
+  }
 });
 
 
@@ -221,31 +221,31 @@ NSSet.mixin({
 NSObject.mixin({
 	
 	/**
-	    This should be called before a value is set, assuming the value is
-	    required to be observable. This notes the current value of the 
-	    specified key so that it can be returned in the info dictionary
-	    to the observer if required. The order of using this function is:
-	    
-	    {{{
-	        this.willChangeValueForKey('theKey');
-	        theKey = newValue;
-	        this.didChangeValueForKey('theKey');
-	    }}}
-	    
-	    To avoid this coding repetition, these should be placed inside
-	    KVO compliant functions, so the following simipler call will
-	    handle the complexity:
-	    
-	    {{{
-	        this.setTheKey(newValue);
-            // or...
-            this.setValueForKey(newValue, 'theKey');
-	    }}}
+	  This should be called before a value is set, assuming the value is
+	  required to be observable. This notes the current value of the 
+	  specified key so that it can be returned in the info dictionary
+	  to the observer if required. The order of using this function is:
+	  
+	  {{{
+	    this.willChangeValueForKey('theKey');
+	    theKey = newValue;
+	    this.didChangeValueForKey('theKey');
+	  }}}
+	  
+	  To avoid this coding repetition, these should be placed inside
+	  KVO compliant functions, so the following simipler call will
+	  handle the complexity:
+	  
+	  {{{
+	    this.setTheKey(newValue);
+      // or...
+      this.setValueForKey(newValue, 'theKey');
+	  }}}
 	
 		@param {NSString} key
 	*/
 	willChangeValueForKey: function(key) {
-	    this._kvo_oldValues.setObjectForKey(this.valueForKey(key), key);
+	  this._kvo_oldValues.setObjectForKey(this.valueForKey(key), key);
 	},
 	
 	/**
@@ -253,14 +253,14 @@ NSObject.mixin({
 	*/
 	didChangeValueForKey: function(key) {
 		for (var idx = 0; idx < this._kvo_observers.length; idx++) {
-		    var current = this._kvo_observers[idx];
-		    if (current.objectForKey('NSKeyPath') == key) {
-		        var theObserver = current.objectForKey('NSObserver');
-		        var changeDict = NSDictionary.dictionaryWithObjectsForKeys(
-                    [this._kvo_oldValues.objectForKey(key), this.valueForKey(key)],
-                    [NSKeyValueChangeOldKey, NSKeyValueChangeNewKey]);
-                theObserver.observeValueForKeyPath(key, this, changeDict, current.valueForKey('NSContext'));
-		    }
+		  var current = this._kvo_observers[idx];
+		  if (current.objectForKey('NSKeyPath') == key) {
+		    var theObserver = current.objectForKey('NSObserver');
+		    var changeDict = NSDictionary.dictionaryWithObjectsForKeys(
+          [this._kvo_oldValues.objectForKey(key), this.valueForKey(key)],
+          [NSKeyValueChangeOldKey, NSKeyValueChangeNewKey]);
+        theObserver.observeValueForKeyPath(key, this, changeDict, current.valueForKey('NSContext'));
+		  }
 		}
 	},
 	
@@ -320,6 +320,6 @@ NSObject.mixin({
 	   @returns Boolean
 	*/
 	automaticallyNotifiesObserversForKey: function(key) {
-	    
+	  
 	}
 });

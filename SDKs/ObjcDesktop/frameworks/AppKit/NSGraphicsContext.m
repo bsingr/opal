@@ -14,43 +14,43 @@ id NSGraphicsContextCurrent = nil;
 
 + (NSGraphicsContext *)graphicsContextWithGraphicsPort:(void *)graphicsPort flipped:(BOOL)initialFlippedState
 {
-    return [[NSGraphicsContext alloc] initWithGraphicsPort:graphicsPort flipped:initialFlippedState];
+  return [[NSGraphicsContext alloc] initWithGraphicsPort:graphicsPort flipped:initialFlippedState];
 }
 
 - (NSGraphicsContext *)initWithGraphicsPort:(void *)graphicsPort flipped:(BOOL)initialFlippedState
 {
-    [self init];
-    
-    if (self) {
-        _graphicsPort = graphicsPort;
-    }
-    
-    return self;
+  [self init];
+  
+  if (self) {
+    _graphicsPort = graphicsPort;
+  }
+  
+  return self;
 }
 
 - (void *)graphicsPort
 {
-    return _graphicsPort;
+  return _graphicsPort;
 }
 
 + (NSGraphicsContext *)currentContext
 {
-    return NSGraphicsContextCurrent;
+  return NSGraphicsContextCurrent;
 }
 
 + (void)setCurrentContext:(NSGraphicsContext *)context
 {
-    NSGraphicsContextCurrent = context;
+  NSGraphicsContextCurrent = context;
 }
 
 + (void)saveGraphicsState {
-    CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
+  CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
 	CGContextSaveGState(ctx);
 }
 
 + (void)restoreGraphicsState {
-    CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
-    CGContextRestoreGState(ctx);
+  CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
+  CGContextRestoreGState(ctx);
 }
 
 @end

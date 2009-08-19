@@ -27,38 +27,38 @@
 
 function CGFontCreate(name, size, isBold)
 {
-    var theFont = { };
-    theFont._name = name;
-    theFont._size = size;
-    theFont._isBold = isBold;
-    return theFont;
+  var theFont = { };
+  theFont._name = name;
+  theFont._size = size;
+  theFont._isBold = isBold;
+  return theFont;
 }
 
 function CGFontCreateWithFontName(name)
 {
-    var theFont = { };
-    theFont._name = name;
-    theFont._size = 12;         // default size
-    theFont._isBold = NO;       // default to regular typeface
-    return theFont;
+  var theFont = { };
+  theFont._name = name;
+  theFont._size = 12;     // default size
+  theFont._isBold = NO;     // default to regular typeface
+  return theFont;
 }
 
 function CGFontGetFontName(font)
 {
-    return font._name;
+  return font._name;
 }
 
 function CGFontGetFontSize(font)
 {
-    return font._size;
+  return font._size;
 }
 
 function CGFontGetIsBold(font)
 {
-    return font._isBold;
+  return font._isBold;
 }
 
 function CGFontGetStringRepresentation(font)
 {
-    return (font._isBold ? "bold " : "") + Math.round(font._size) + "px '" + font._name + "'"; 
+  return (font._isBold ? "bold " : "") + Math.round(font._size) + "px '" + font._name + "'"; 
 }

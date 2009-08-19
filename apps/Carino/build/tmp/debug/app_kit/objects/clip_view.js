@@ -25,12 +25,12 @@
  */
 
 var NSClipView = NSView.extend({
-    
-    _docView: null,
-    
-    initWithCoder: function(aCoder) {
-        this._super(aCoder);
-        this._docView = aCoder.decodeObjectForKey("NSDocView");
-        return this;
-    }
+  
+  _docView: null,
+  
+  initWithCoder: function(aCoder) {
+    this._super(aCoder);
+    this._docView = aCoder.decodeObjectForKey("NSDocView");
+    return this;
+  }
 });

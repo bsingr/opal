@@ -34,261 +34,269 @@ var NSInvalidArchiveOperationException = "NSInvalidArchiveOperationException";
 var NSInvalidUnarchiveOperationException = "NSInvalidUnarchiveOperationException";
 
 var NSKeyedArchiver = NSCoder.extend({
+  
+  archivedDataWithRootObject: function(rootObject) {
+  
+  },
+  
+  archiveRootObjectToFile: function(rootObject, path) {
     
-    archivedDataWithRootObject: function(rootObject) {
+  },
+  
+  initForWritingWithMutableData: function(data) {
     
-    },
+  },
+  
+  setDelegate: function(delegate) {
     
-    archiveRootObjectToFile: function(rootObject, path) {
-        
-    },
+  },
+  
+  delegate: function() {
     
-    initForWritingWithMutableData: function(data) {
-        
-    },
+  },
+  
+  setOutputFormat: function(format) {
     
-    setDelegate: function(delegate) {
-        
-    },
+  },
+  
+  outputFormat: function() {
     
-    delegate: function() {
-        
-    },
+  },
+  
+  finishEncoding: function() {
     
-    setOutputFormat: function(format) {
-        
-    },
+  },
+  
+  setClassNameForClass: function(codedName, cls) {
     
-    outputFormat: function() {
-        
-    },
+  },
+  
+  classNameForClass: function(cls) {
     
-    finishEncoding: function() {
-        
-    },
+  },
+  
+  encodeObjectForKey: function(object, key) {
     
-    setClassNameForClass: function(codedName, cls) {
-        
-    },
+  },
+  
+  encodeConditionalObjectForKey: function(object, key) {
     
-    classNameForClass: function(cls) {
-        
-    },
+  },
+  
+  encodeBoolForKey: function(aBool, key) {
     
-    encodeObjectForKey: function(object, key) {
-        
-    },
+  },
+  
+  encodeIntForKey: function(anInt, key) {
     
-    encodeConditionalObjectForKey: function(object, key) {
-        
-    },
+  },
+  
+  encodeFloatForKey: function(aFloat, key) {
     
-    encodeBoolForKey: function(aBool, key) {
-        
-    },
+  },
+  
+  encodeDoubleForKey: function(aDouble, key) {
     
-    encodeIntForKey: function(anInt, key) {
-        
-    },
-    
-    encodeFloatForKey: function(aFloat, key) {
-        
-    },
-    
-    encodeDoubleForKey: function(aDouble, key) {
-        
-    }
+  }
 });
 
 var NSKeyedUnarchiver = NSCoder.extend({
+  
+  _delegate: null,
+  _data: null,
+  _rootDict: null,
+  _contextStack: null,
+  _unarchivedObjects: null,
+  _fileOwner: null,
+  
+  /**
+    @type VN.Dictionary
+  */
+  nameTable: null,
+  
+  initForReadingWithData: function(data) {
+    this.init();
+    this._data = data.archive.data;
+    this._rootDict = this._data; //CFPropertyListFromData(this._data.bytes());
+    this._contextStack = [];
+    this._contextStack.addObject(this._rootDict);
+    this._unarchivedObjects = NSDictionary.create();
+    this._fileOwner = this.getFileOwner();
+    return this;
+  },
+  
+  /**
+    Returns the ID for the File's owner. must be a better way to do this...
     
-    _delegate: null,
-    _data: null,
-    _rootDict: null,
-    _contextStack: null,
-    _unarchivedObjects: null,
-    _fileOwner: null,
+    not in nib's, but carina will have a better system (top level).
     
-    initForReadingWithData: function(data) {
-        this.init();
-        this._data = data.archive.data;
-        this._rootDict = this._data; //CFPropertyListFromData(this._data.bytes());
-        this._contextStack = [];
-        this._contextStack.addObject(this._rootDict);
-        this._unarchivedObjects = NSDictionary.create();
-        this._fileOwner = this.getFileOwner();
-        return this;
-    },
-    
-    /**
-        Returns the ID for the File's owner. must be a better way to do this...
-        
-        not in nib's, but carina will have a better system (top level).
-        
-        @returns {VN.String}
-    */
-    getFileOwner: function() {
-        var rootObjects = this._data['IBDocument.Objects'].objects.objectRecords.objects.orderedObjects.objects;
-        for (var idx = 0; idx < rootObjects.length; idx++) {
-            if (rootObjects[idx]['objects']['objectName'] == "File's Owner") {
-                return rootObjects[idx].objects.object.id;
-            }
-        }
-    },
-    
-    fileOwner: function() {
-        return this._unarchivedObjects.objectForKey(this._fileOwner);
-    },
+    @returns {VN.String}
+  */
+  getFileOwner: function() {
+    var rootObjects = this._data['IBDocument.Objects'].objects.objectRecords.objects.orderedObjects.objects;
+    for (var idx = 0; idx < rootObjects.length; idx++) {
+      if (rootObjects[idx]['objects']['objectName'] == "File's Owner") {
+        return rootObjects[idx].objects.object.id;
+      }
+    }
+  },
+  
+  fileOwner: function() {
+    return this._unarchivedObjects.objectForKey(this._fileOwner);
+  },
 
-    setDelegate: function(delegate) {
-        
-    },
+  setDelegate: function(delegate) {
     
-    delegate: function() {
-        
-    },
+  },
+  
+  delegate: function() {
     
-    finishDecoding: function() {
-        // do nothing?
-    },
+  },
+  
+  finishDecoding: function() {
+    // do nothing?
+  },
+  
+  containsValueForKey: function(key) {
+    var theContext = this._contextStack.lastObject();
     
-    containsValueForKey: function(key) {
-        var theContext = this._contextStack.lastObject();
-        
-        if (theContext[key])
-            return true;
-        
-        return false;
-    },
+    if (theContext[key])
+      return true;
     
-    decodeObjectForKey: function(key) {
-        var theContext = this._contextStack.lastObject();
-        // if the context is an array, then we need to decode this differently
-        if(theContext['indexOf']) {
-            var array = [];
-            for (var idx = 0; idx < theContext.length; idx++) {
-                this._contextStack.addObject(theContext[idx]);
-                var newObject = this._decodeObject(theContext[idx]);
-                array.push(newObject);
-                this._contextStack.removeLastObject();
-            }
-            return array;
-        }
-        
-        var theObject = theContext[key];
+    return false;
+  },
+  
+  decodeObjectForKey: function(key) {
+    var theContext = this._contextStack.lastObject();
+    // if the context is an array, then we need to decode this differently
+    if(theContext['indexOf']) {
+      var array = [];
+      for (var idx = 0; idx < theContext.length; idx++) {
+        this._contextStack.addObject(theContext[idx]);
+        var newObject = this._decodeObject(theContext[idx]);
+        array.push(newObject);
+        this._contextStack.removeLastObject();
+      }
+      return array;
+    }
     
-        return this._decodeObject(theObject);
-    },
+    var theObject = theContext[key];
+  
+    return this._decodeObject(theObject);
+  },
+  
+  /**
+    @private
     
-    /**
-        @private
-        
-        Private method to decode an actual object at the head of the context
-        array.
-    */
-    _decodeObject: function(theObject) {
-        // no context, so return null... error?
-        if (!theObject)
-            return null;
-        
-        // object is a string, so just return it
-        if (typeof theObject == 'string')
-            return new String(theObject);
-        
-        var theClass = window[theObject["class"]];
+    Private method to decode an actual object at the head of the context
+    array.
+  */
+  _decodeObject: function(theObject) {
+    // no context, so return null... error?
+    if (!theObject)
+      return null;
+    
+    // object is a string, so just return it
+    if (typeof theObject == 'string')
+      return new String(theObject);
+    
+    var theClass = window[theObject["class"]];
 
-        // catch the file owner, and just return it (should already have been)
-        if (theObject['class'] == "NSCustomObject" && theObject['id'] == this._fileOwner) {
-            return this.fileOwner();
-        }
-        
-        if (!theClass) {
-            if (this._unarchivedObjects.containsKey(theObject['id']))
-                return this._unarchivedObjects.objectForKey(theObject['id'])
-            else {
-                console.log('unable to decode ' + theObject['class']);
-                return null;
-            }
-                
-        }
-        
-        var newObject;
-        
-        //throws error if array...............
-        if (theClass == NSArray || theClass == NSMutableArray) {
-            newObject = [];
-        }
-        else {
-            newObject = new theClass(); // basically just alloc's it.. does not init().
-        }
-        
-        this._unarchivedObjects.setObjectForKey(newObject, theObject['id']);
-        
-        
-        // else {
-            this._contextStack.addObject(theObject['objects']);
-            newObject = newObject.initWithCoder(this);
-            this._contextStack.removeLastObject();
-        // }
-        
-        newObject = newObject.awakeAfterUsingCoder(this);
-        this._unarchivedObjects.setObjectForKey(newObject, theObject['id']);
-        
-        return newObject;
-    },
+    // catch the file owner, and just return it (should already have been)
+    if (theObject['class'] == "NSCustomObject" && theObject['id'] == this._fileOwner) {
+      var fileOwner = this.nameTable.valueForKey('NSFileOwner')
+      this._unarchivedObjects.setObjectForKey(fileOwner, theObject['id']);
+      // alert(this.nameTable.valueForKey('NSFileOwner'));
+      return fileOwner;
+    }
     
-    decodeBoolForKey: function(key) {
-        var theContext = this._contextStack.lastObject();
-        var theObject = theContext[key];
+    if (!theClass) {
+      if (this._unarchivedObjects.containsKey(theObject['id']))
+        return this._unarchivedObjects.objectForKey(theObject['id'])
+      else {
+        console.log('unable to decode ' + theObject['class']);
+        return null;
+      }
         
-        // return false if it does not exist, otherwise, return value
-        return (!theObject) ? false : true;
-    },
+    }
     
-    decodeIntForKey: function(key) {
-        var theContext = this._contextStack.lastObject();
-        return parseInt(theContext[key]);
-    },
+    var newObject;
     
-    decodeInt32ForKey: function(key) {
-        var theContext = this._contextStack.lastObject();
-        return parseInt(theContext[key]);        
-    },
+    //throws error if array...............
+    if (theClass == NSArray || theClass == NSMutableArray) {
+      newObject = [];
+    }
+    else {
+      newObject = new theClass(); // basically just alloc's it.. does not init().
+    }
     
-    decodeInt64ForKey: function(key) {
-        var theContext = this._contextStack.lastObject();
-        return parseInt(theContext[key]);        
-    },
+    this._unarchivedObjects.setObjectForKey(newObject, theObject['id']);
     
-    decodeFloatForKey: function(key) {
-        var theContext = this._contextStack.lastObject();
-        return parseFloat(theContext[key]);
-    },
     
-    decodeDoubleForKey: function(key) {
-        var theContext = this._contextStack.lastObject();
-        return parseFloat(theContext[key]);
-    },
+    // else {
+      this._contextStack.addObject(theObject['objects']);
+      newObject = newObject.initWithCoder(this);
+      this._contextStack.removeLastObject();
+    // }
     
-    decodePointForKey: function(key) {
-        var thePoint = this.decodeObjectForKey(key);
-        return NSPointFromString(thePoint);
-    },
+    newObject = newObject.awakeAfterUsingCoder(this);
+    this._unarchivedObjects.setObjectForKey(newObject, theObject['id']);
     
-    decodeSizeForKey: function(key) {
-        var theSize = this.decodeObjectForKey(key);
-        return NSSizeFromString(theSize);
-    },
+    return newObject;
+  },
+  
+  decodeBoolForKey: function(key) {
+    var theContext = this._contextStack.lastObject();
+    var theObject = theContext[key];
     
-    decodeRectForKey: function(key) {
-        var theRect = this.decodeObjectForKey(key);
-        return NSRectFromString(theRect);
-    }    
+    // return false if it does not exist, otherwise, return value
+    return (!theObject) ? false : true;
+  },
+  
+  decodeIntForKey: function(key) {
+    var theContext = this._contextStack.lastObject();
+    return parseInt(theContext[key]);
+  },
+  
+  decodeInt32ForKey: function(key) {
+    var theContext = this._contextStack.lastObject();
+    return parseInt(theContext[key]);    
+  },
+  
+  decodeInt64ForKey: function(key) {
+    var theContext = this._contextStack.lastObject();
+    return parseInt(theContext[key]);    
+  },
+  
+  decodeFloatForKey: function(key) {
+    var theContext = this._contextStack.lastObject();
+    return parseFloat(theContext[key]);
+  },
+  
+  decodeDoubleForKey: function(key) {
+    var theContext = this._contextStack.lastObject();
+    return parseFloat(theContext[key]);
+  },
+  
+  decodePointForKey: function(key) {
+    var thePoint = this.decodeObjectForKey(key);
+    return NSPointFromString(thePoint);
+  },
+  
+  decodeSizeForKey: function(key) {
+    var theSize = this.decodeObjectForKey(key);
+    return NSSizeFromString(theSize);
+  },
+  
+  decodeRectForKey: function(key) {
+    var theRect = this.decodeObjectForKey(key);
+    return NSRectFromString(theRect);
+  }
 });
 
 NSObject.mixin({
-    
-    awakeAfterUsingCoder: function(aCoder) {
-        return this;
-    }
+  
+  awakeAfterUsingCoder: function(aCoder) {
+    return this;
+  }
 });

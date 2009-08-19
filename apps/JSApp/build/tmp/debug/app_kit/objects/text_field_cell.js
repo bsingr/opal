@@ -26,122 +26,126 @@
 
 
 /**
-    @class NSTextFieldCell
-    @extends NSCell
+  @class NSTextFieldCell
+  @extends NSCell
 */
-var NSTextFieldCell = NSCell.extend({
+var NSTextFieldCell = VN.TextFieldCell = NSCell.extend({
+  
+  _backgroundColor: null,
+  
+  init: function() {
+    this._super();
+    return this;
+  },
+  
+  initWithCoder: function(aCoder) {
+    this._super(aCoder);
     
-    _backgroundColor: null,
+    this.drawsBackground = aCoder.decodeBoolForKey("NSDrawsBackground");
+    this.backgroundColor = aCoder.decodeObjectForKey("NSBackgroundColor");
+    this.textColor = aCoder.decodeObjectForKey("NSTextColor");
     
-    init: function() {
-        this._super();
-        return this;
-    },
+    return this;
+  },
+  
+  renderWithFrameInView: function(cellFrame, controlView, renderContext, firstTime) {  
+    if (firstTime) {
+      renderContext.setClass('vn-text-field');
+      if (this.isEditable) {
+        renderContext.push('input', 'vn-text-field-title');
+        // renderContext.$('vn-text-field-title')
+      }
+      else {
+        renderContext.push('span', 'vn-text-field-title');
+      }
+    }
+    if (this.drawsBackground) {
+      renderContext.addClass('bezeled');
+    }
+    if (this.isEditable) {
+      renderContext.addClass('editable');
+      // renderContext.$('vn-text-field-title').element().contentEditable = 'true';
+      // renderContext.$('vn-text-field-title').element().spellcheck = 'true';
+    }
+      this.renderInteriorWithFrameInView(cellFrame, controlView, renderContext, firstTime);
     
-    initWithCoder: function(aCoder) {
-        this._super(aCoder);
-        
-        this._drawsBackground = aCoder.decodeBoolForKey("NSDrawsBackground");
-        this._backgroundColor = aCoder.decodeObjectForKey("NSBackgroundColor");
-        this._textColor = aCoder.decodeObjectForKey("NSTextColor");
-        
-        return this;
-    },
     
-    renderWithFrameInView: function(cellFrame, controlView, renderContext, firstTime) {    
-        if (firstTime) {
-            renderContext.setClass('vn-text-field');
-            renderContext.push('span', 'vn-text-field-title');
-        }
-        if (this._drawsBackground) {
-            renderContext.addClass('bezeled');
-        }
-        this.renderInteriorWithFrameInView(cellFrame, controlView, renderContext, firstTime);
-    },
-    
-    renderInteriorWithFrameInView: function(cellFrame, controlView, renderContext, firstTime) {
-        var titleRect = this.titleRectForBounds(cellFrame);
-        renderContext.$('vn-text-field-title').setFrame(titleRect);
-        renderContext.$('vn-text-field-title').renderAttributedString(this.attributedStringValue());
-    },
-    
-    attributedStringValue: function() {
-        // if (this._value.typeOf(NSAttributedString)) {
-            // return this._value;
-        // }
+  },
+  
+  /**
+    Interior should only be rendered for label views: textfield is rendered by native
+    browser input element
+  */
+  renderInteriorWithFrameInView: function(cellFrame, controlView, renderContext, firstTime) {
+    var titleRect = this.titleRectForBounds(cellFrame);
+    renderContext.$('vn-text-field-title').setFrame(titleRect);
+    // if (!this.isEditable) {
+      renderContext.$('vn-text-field-title').renderAttributedString(this.attributedStringValue());
+    // }
+  },
+  
+  attributedStringValue: function() {
+    // if (this._value.typeOf(NSAttributedString)) {
+      // return this._value;
+    // }
 		
 		var attributes = NSDictionary.create();
 		
 		// font
-		if (this.font())
-			attributes.setObjectForKey(this.font(), NSFontAttributeName);
+		if (this.font)
+			attributes.setObjectForKey(this.font, NSFontAttributeName);
 		
 		// textColor
-		if (this.isEnabled()) {
-			if (this.textColor())
-				attributes.setObjectForKey(this.textColor(), NSForegroundColorAttributeName);
+		if (this.isEnabled) {
+			if (this.textColor)
+				attributes.setObjectForKey(this.textColor, NSForegroundColorAttributeName);
 			else
-			    attributes.setObjectForKey(NSColor.controlTextColor(), NSForegroundColorAttributeName);
+			  attributes.setObjectForKey(NSColor.controlTextColor(), NSForegroundColorAttributeName);
 		}
 		else {
 			attributes.setObjectForKey(NSColor.disabledControlTextColor(), NSForegroundColorAttributeName);
 		}
 		
 		// paragraph style
-        var paragraphStyle = NSParagraphStyle.defaultParagraphStyle();
-        paragraphStyle.setAlignment(this.alignment());
-        paragraphStyle.setLineBreakMode(this.lineBreakMode());
-        
-        attributes.setObjectForKey(paragraphStyle, NSParagraphStyleAttributeName);
+    var paragraphStyle = NSParagraphStyle.defaultParagraphStyle();
+    paragraphStyle.setAlignment(this.alignment);
+    paragraphStyle.setLineBreakMode(this.lineBreakMode);
+    
+    attributes.setObjectForKey(paragraphStyle, NSParagraphStyleAttributeName);
 		
-		return NSAttributedString.create('initWithStringAndAttributes', this._value, attributes);
+		return NSAttributedString.create('initWithStringAndAttributes', this.value, attributes);
 	},
 	
-	drawsBackground: function() {
-        return this._drawsBackground;
-    },
-    
-    setDrawsBackground: function(flag) {
-        this._drawsBackground = flag;
-    },
-    
-    backgroundColor: function() {
-        return this._backgroundColor;
-    },
-    
-    setBackgroundColor: function(aColor) {
-        this._backgroundColor = aColor;
-    },
-    
-    setBezeled: function(flag) {
-        this._isBezeled = flag;
-    },
-    
-    isBezeled: function() {
-        return this._isBezeled;
-    },
-    
-    setBezelStyle: function(style) {
-        this._bezelStyle = style;
-    },
-    
-    bezelStyle: function() {
-        return this._bezelStyle;
-    },
-    
-    setTextColor: function(aColor) {
-        this._textColor = aColor;
-    },
-    
-    textColor: function() {
-        return this._textColor;
-    },
-    
-    titleRectForBounds: function(theRect) {
-        if (this.isEditable()) {
-            return NSMakeRect(2, 3, theRect.size.width - 4, theRect.size.height - 5);
-        }
-        
-        return theRect;
+  
+  setDrawsBackground: function(flag) {
+    this._drawsBackground = flag;
+  },
+  
+  setBackgroundColor: function(aColor) {
+    this._backgroundColor = aColor;
+  },
+  
+  setBezeled: function(flag) {
+    this._isBezeled = flag;
+  },
+  
+  
+  setBezelStyle: function(style) {
+    this._bezelStyle = style;
+  },
+  
+ 
+  
+  setTextColor: function(aColor) {
+    this._textColor = aColor;
+  },
+  
+  
+  titleRectForBounds: function(theRect) {
+    if (this.isEditable) {
+      return NSMakeRect(2, 3, theRect.size.width - 4, theRect.size.height - 5);
     }
+    
+    return theRect;
+  }
 });

@@ -37,21 +37,21 @@ VN.BACK_TAB_CHARACTER = 0x0019;
 VN.DELETE_CHARACTER = 0x007f;
 VN.LINE_SEPARATOR_CHARACTER = 0x2028;
 VN.PARAGRAPH_SEPARATOR_CHARACTER = 0x2029;
-                                    
-// VN.TextAlignment                  
+                  
+// VN.TextAlignment          
 VN.LEFT_TEXT_ALIGNMENT = 0;
 VN.RIGHT_TEXT_ALIGNMENT = 1;
 VN.CENTER_TEXT_ALIGNMENT = 2;
 VN.JUSTIFIED_TEXT_ALIGNMENT = 3;
 VN.NATURAL_TEXT_ALIGNMENT = 4;
-                                    
-// VN.WritingDirection               
+                  
+// VN.WritingDirection         
 VN.WRITING_DIRECTION_NATURAL = -1;
 VN.WRITING_DIRECTION_LEFT_TO_RIGHT = 0;
 VN.WRITING_DIRECTION_RIGHT_TO_LEFT = 1;
 VN.WRITING_DIRECTION_EMBEDDING = (0 << 1);
 VN.WRITING_DIRECTION_OVERRIDE = (1 << 1);
-                                    
+                  
 // Movement codes
 VN.ILLEGAL_TEXT_MOVEMENT = 0;
 VN.RETURN_TEXT_MOVEMENT = 0x10;
@@ -70,24 +70,24 @@ VN.TEXT_DID_END_EDITING_NOTIFICATION = "NSTextDidEndEditingNotification";
 VN.TEXT_DID_CHANGE_NOTIFICATION = "NSTextDidChangeNotification";
 
 /**
-    @prototol VN.TextDelegate
-    
-    Protocol defining the text delegate methods.
+  @prototol VN.TextDelegate
+  
+  Protocol defining the text delegate methods.
 */
 VN.TextDelegate = VN.protocol({
-    
-    textShouldBeginEditing: function(textObject) {    
-    },
-    
-    textShouldBeginEditing: function(textObject) {
-    },
-    
-    textDidBeginEditing: function(aNotification) {
-    },
-    
-    textDidEndEditing: function(aNotification) {
-    },
-    
-    textDidChange: function(aNotification) {
-    }
+  
+  textShouldBeginEditing: function(textObject) {  
+  },
+  
+  textShouldBeginEditing: function(textObject) {
+  },
+  
+  textDidBeginEditing: function(aNotification) {
+  },
+  
+  textDidEndEditing: function(aNotification) {
+  },
+  
+  textDidChange: function(aNotification) {
+  }
 });

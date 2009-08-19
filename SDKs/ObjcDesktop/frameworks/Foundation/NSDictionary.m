@@ -12,7 +12,7 @@
 
 + (id)alloc
 {
-    return CFDictionaryCreateMutable();
+  return CFDictionaryCreateMutable();
 }
 
 - (id)init
@@ -117,7 +117,7 @@
 
 + (id)dictionary
 {
-    return [self alloc];
+  return [self alloc];
 }
 
 + (id)dictionaryWithObject:(id)object forKey:(id)key
@@ -132,30 +132,30 @@
 
 + (id)dictionaryWithObjectsAndKeys:(id)firstObject, ...
 {
-    NSDictionary *the_dict = [self alloc];
-    
-    id eachKey;
-    id eachObject;
-    va_list argumentList;
+  NSDictionary *the_dict = [self alloc];
+  
+  id eachKey;
+  id eachObject;
+  va_list argumentList;
 
-    if (firstObject)
+  if (firstObject)
+  {
+    va_start(argumentList, _cmd);
+    while(eachObject = va_arg(argumentList, YES))
     {
-        va_start(argumentList, _cmd);
-        while(eachObject = va_arg(argumentList, YES))
-        {
-            eachKey = va_arg(argumentList, YES);
-            CFDictionarySetValue(the_dict, eachKey, eachObject);
-        }
-        
-        va_end(argumentList);
+      eachKey = va_arg(argumentList, YES);
+      CFDictionarySetValue(the_dict, eachKey, eachObject);
     }
     
-    return the_dict;
+    va_end(argumentList);
+  }
+  
+  return the_dict;
 }
 
 + (id)dictionaryWithDictionary:(NSDictionary *)dict
 {
-    return CFDictionaryCreateMutableCopy(dict);
+  return CFDictionaryCreateMutableCopy(dict);
 }
 
 + (id)dictionaryWithObjects:(NSArray *)objects forKeys:(NSArray *)keys

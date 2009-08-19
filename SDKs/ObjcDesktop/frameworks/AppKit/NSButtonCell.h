@@ -11,50 +11,50 @@
 @class NSImage;
 
 enum {
-    NSMomentaryLightButton		    = 0,
-    NSPushOnPushOffButton		    = 1,
-    NSToggleButton			        = 2,
-    NSSwitchButton			        = 3,
-    NSRadioButton			        = 4,
-    NSMomentaryChangeButton		    = 5,
-    NSOnOffButton			        = 6,
-    NSMomentaryPushInButton		    = 7
-    
+  NSMomentaryLightButton		  = 0,
+  NSPushOnPushOffButton		  = 1,
+  NSToggleButton			    = 2,
+  NSSwitchButton			    = 3,
+  NSRadioButton			    = 4,
+  NSMomentaryChangeButton		  = 5,
+  NSOnOffButton			    = 6,
+  NSMomentaryPushInButton		  = 7
+  
 };
 typedef NSUInteger NSButtonType;
 
 enum {
 
-    NSRoundedBezelStyle             = 1,
-    NSRegularSquareBezelStyle       = 2,
-    NSThickSquareBezelStyle         = 3,
-    NSThickerSquareBezelStyle       = 4,
-    NSDisclosureBezelStyle          = 5,
-    NSShadowlessSquareBezelStyle    = 6,
-    NSCircularBezelStyle            = 7,
-    NSTexturedSquareBezelStyle      = 8,
-    NSHelpButtonBezelStyle          = 9,
-    NSSmallSquareBezelStyle         = 10,
-    NSTexturedRoundedBezelStyle     = 11,
-    NSRoundRectBezelStyle           = 12,
-    NSRecessedBezelStyle            = 13,
-    NSRoundedDisclosureBezelStyle   = 14    
+  NSRoundedBezelStyle       = 1,
+  NSRegularSquareBezelStyle     = 2,
+  NSThickSquareBezelStyle     = 3,
+  NSThickerSquareBezelStyle     = 4,
+  NSDisclosureBezelStyle      = 5,
+  NSShadowlessSquareBezelStyle  = 6,
+  NSCircularBezelStyle      = 7,
+  NSTexturedSquareBezelStyle    = 8,
+  NSHelpButtonBezelStyle      = 9,
+  NSSmallSquareBezelStyle     = 10,
+  NSTexturedRoundedBezelStyle   = 11,
+  NSRoundRectBezelStyle       = 12,
+  NSRecessedBezelStyle      = 13,
+  NSRoundedDisclosureBezelStyle   = 14  
 };
 typedef NSUInteger NSBezelStyle;
 
 enum {
-    NSGradientNone                  = 0,
-    NSGradientConcaveWeak           = 1,
-    NSGradientConcaveStrong         = 2,
-    NSGradientConvexWeak            = 3,
-    NSGradientConvexStrong          = 4
+  NSGradientNone          = 0,
+  NSGradientConcaveWeak       = 1,
+  NSGradientConcaveStrong     = 2,
+  NSGradientConvexWeak      = 3,
+  NSGradientConvexStrong      = 4
 };
 typedef NSUInteger NSGradientType;
 
 @interface NSButtonCell : NSCell
 {
-    NSImage     *_alternateImage;
-    NSImage     *_image;
+  NSImage   *_alternateImage;
+  NSImage   *_image;
 }
 
 - (NSString *)title;

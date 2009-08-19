@@ -11,32 +11,32 @@
 #import <CoreGraphics/CGGeometry.h>
 
 typedef struct CGImage {
-    CFStringRef *_imageSource;
-    CFArrayRef  *_respresentations;
-    CFArrayRef  *_loadingStatus;
+  CFStringRef *_imageSource;
+  CFArrayRef  *_respresentations;
+  CFArrayRef  *_loadingStatus;
 } *CGImageRef;
 
 enum CGImageAlphaInfo {
-    kCGImageAlphaNone,
-    kCGImageAlphaPremultipliedLast,
-    kCGImageAlphaPremultipliedFirst,
-    kCGImageAlphaLast,
-    kCGImageAlphaFirst,
-    kCGImageAlphaNoneSkipLast,
-    kCGImageAlphaNoneSkipFirst,
-    kCGImageAlphaOnly
+  kCGImageAlphaNone,
+  kCGImageAlphaPremultipliedLast,
+  kCGImageAlphaPremultipliedFirst,
+  kCGImageAlphaLast,
+  kCGImageAlphaFirst,
+  kCGImageAlphaNoneSkipLast,
+  kCGImageAlphaNoneSkipFirst,
+  kCGImageAlphaOnly
 };
 typedef enum CGImageAlphaInfo CGImageAlphaInfo;
 
 enum {
-    kCGBitmapAlphaInfoMask      = 0x1F,
-    kCGBitmapFloatComponents    = (1 << 8),
-    kCGBitmapByteOrderMask      = 0x7000,
-    kCGBitmapByteOrderDefault   = (0 << 12),
-    kCGBitmapByteOrder16Little  = (1 << 12),
-    kCGBitmapByteOrder32Little  = (2 << 12),
-    kCGBitmapByteOrder16Big     = (3 << 12),
-    kCGBitmapByteOrder32Big     = (4 << 12)
+  kCGBitmapAlphaInfoMask    = 0x1F,
+  kCGBitmapFloatComponents  = (1 << 8),
+  kCGBitmapByteOrderMask    = 0x7000,
+  kCGBitmapByteOrderDefault   = (0 << 12),
+  kCGBitmapByteOrder16Little  = (1 << 12),
+  kCGBitmapByteOrder32Little  = (2 << 12),
+  kCGBitmapByteOrder16Big   = (3 << 12),
+  kCGBitmapByteOrder32Big   = (4 << 12)
 };
 typedef int CGBitmapInfo;
 

@@ -9,25 +9,25 @@
 module Vienna
   
   class Language
+  
+  def initialize
     
-    def initialize
-      
-      @languages = []
-      
-    end
+    @languages = []
     
-    def prepare!
-      
-    end
+  end
+  
+  def prepare!
     
-    def is_prepared?
-      
-    end
+  end
+  
+  def is_prepared?
     
-    def build!
-      
-    end
+  end
+  
+  def build!
     
+  end
+  
   end
   
 end

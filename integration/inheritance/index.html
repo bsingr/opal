@@ -9,15 +9,15 @@
 			
 
 		  init: function(isDancing){
-		    this.dancing = isDancing;
+		  this.dancing = isDancing;
 		  },
 		  dance: function(amount){
-		    return amount + 10;
+		  return amount + 10;
 		  }
 		});
 		var Ninja = Person.extend({
 		  init: function(){
-		    this._super( false );
+		  this._super( false );
 		  },
 		
 		  initWithCoder: function(aCoder) {
@@ -26,11 +26,11 @@
 		  },
 		
 		  dance: function(amount){
-		    // Call the inherited version of dance()
-		    return this._super(amount) + 7;
+		  // Call the inherited version of dance()
+		  return this._super(amount) + 7;
 		  },
 		  swingSword: function(){
-		    return true;
+		  return true;
 		  }
 		});
 

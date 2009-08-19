@@ -26,12 +26,12 @@
 @end
 
 enum {
-    NSStringDrawingTruncatesLastVisibleLine         = (1 << 5),
-    NSStringDrawingUsesLineFragmentOrigin           = (1 << 0),
-    NSStringDrawingUsesFontLeading                  = (1 << 1),
-    NSStringDrawingDisableScreenFontSubstitution    = (1 << 2),
-    NSStringDrawingUsesDeviceMetrics                = (1 << 3),
-    NSStringDrawingOneShot                          = (1 << 4) 
+  NSStringDrawingTruncatesLastVisibleLine     = (1 << 5),
+  NSStringDrawingUsesLineFragmentOrigin       = (1 << 0),
+  NSStringDrawingUsesFontLeading          = (1 << 1),
+  NSStringDrawingDisableScreenFontSubstitution  = (1 << 2),
+  NSStringDrawingUsesDeviceMetrics        = (1 << 3),
+  NSStringDrawingOneShot              = (1 << 4) 
 };
 typedef NSInteger NSStringDrawingOptions;
 

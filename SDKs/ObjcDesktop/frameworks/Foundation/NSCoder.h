@@ -23,7 +23,7 @@
 
 
 @interface NSCoder (NSExtendedCoder)
-    
+  
 - (void)encodeObject:(id)object;
 - (void)encodePropertyList:(id)aPropertyList;
 - (void)encodeRootObject:(id)rootObject;

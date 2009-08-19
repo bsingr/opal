@@ -10,7 +10,7 @@
 
 @interface NSProxy <NSObject>
 {
-    Class isa;
+  Class isa;
 }
 
 + (id)alloc;

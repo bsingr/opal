@@ -5,6 +5,9 @@ resource.js:
 display_mode.js: 
   dependencies: 
   - runtime.js
+default_options.js: 
+  dependencies: 
+  - runtime.js
 object.js: 
   dependencies: 
   - runtime.js

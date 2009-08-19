@@ -9,9 +9,9 @@
 #import <objc/objc.h>
 
 typedef struct {
-    void    *_name;
-    void    *_reason;
-    void    *_userInfo;
+  void  *_name;
+  void  *_reason;
+  void  *_userInfo;
 } objc_exception;
 
 extern void objc_exception_throw(id exception);

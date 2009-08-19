@@ -12,40 +12,40 @@
 
 + (id)alloc
 {
-    return objc_exception_create();
+  return objc_exception_create();
 }
 
 + (NSException *)exceptionWithName:(NSString *)name reason:(NSString *)reason userInfo:(NSDictionary *)userInfo
 {
-    return [[self alloc] initWithName:name reason:reason userInfo:userInfo];
+  return [[self alloc] initWithName:name reason:reason userInfo:userInfo];
 }
 
 - (id)initWithName:(NSString *)aName reason:(NSString *)aReason userInfo:(NSDictionary *)aUserInfo
 {
-    _name = aName;
-    _reason = aReason;
-    _userInfo = aUserInfo;
-    return self;
+  _name = aName;
+  _reason = aReason;
+  _userInfo = aUserInfo;
+  return self;
 }
 
 - (NSString *)name
 {
-    return _name;
+  return _name;
 }
 
 - (NSString *)reason
 {
-    return _reason;
+  return _reason;
 }
 
 - (NSDictionary *)userInfo
 {
-    return _userInfo;
+  return _userInfo;
 }
 
 - (void)raise
 {
-    objc_exception_throw(self);
+  objc_exception_throw(self);
 }
 
 @end
@@ -55,12 +55,12 @@
 
 + (void)raise:(NSString *)name format:(NSString *)format, ...
 {
-    
+  
 }
 
 + (void)raise:(NSString *)name format:(NSString *)format arguments:(va_list)argList
 {
-    
+  
 }
 
 @end

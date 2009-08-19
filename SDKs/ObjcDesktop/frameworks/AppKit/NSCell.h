@@ -11,111 +11,111 @@
 @class NSFormatter, NSLineBreakMode, NSAttributedString, NSImage, NSComparisonResult, NSEvent, NSMenu, NSUInteger, NSInteger;
 
 enum {
-    NSAnyType				        = 0,
-    NSIntType				        = 1,
-    NSPositiveIntType			    = 2,
-    NSFloatType				        = 3,
-    NSPositiveFloatType			    = 4,
-    NSDoubleType			        = 6,
-    NSPositiveDoubleType		    = 7
+  NSAnyType				    = 0,
+  NSIntType				    = 1,
+  NSPositiveIntType			  = 2,
+  NSFloatType				    = 3,
+  NSPositiveFloatType			  = 4,
+  NSDoubleType			    = 6,
+  NSPositiveDoubleType		  = 7
 };
 
 enum {
-    NSNullCellType			        = 0,
-    NSTextCellType			        = 1,
-    NSImageCellType			        = 2
+  NSNullCellType			    = 0,
+  NSTextCellType			    = 1,
+  NSImageCellType			    = 2
 };
 typedef NSUInteger NSCellType;
 
 enum {
-    NSCellDisabled			        = 0,
-    NSCellState				        = 1,
-    NSPushInCell			        = 2,
-    NSCellEditable			        = 3,
-    NSChangeGrayCell			    = 4,
-    NSCellHighlighted			    = 5,
-    NSCellLightsByContents		    = 6,
-    NSCellLightsByGray			    = 7,
-    NSChangeBackgroundCell		    = 8,
-    NSCellLightsByBackground		= 9,
-    NSCellIsBordered			    = 10,
-    NSCellHasOverlappingImage		= 11,
-    NSCellHasImageHorizontal		= 12,
-    NSCellHasImageOnLeftOrBottom	= 13,
-    NSCellChangesContents		    = 14,
-    NSCellIsInsetButton			    = 15,
-    NSCellAllowsMixedState		    = 16
+  NSCellDisabled			    = 0,
+  NSCellState				    = 1,
+  NSPushInCell			    = 2,
+  NSCellEditable			    = 3,
+  NSChangeGrayCell			  = 4,
+  NSCellHighlighted			  = 5,
+  NSCellLightsByContents		  = 6,
+  NSCellLightsByGray			  = 7,
+  NSChangeBackgroundCell		  = 8,
+  NSCellLightsByBackground		= 9,
+  NSCellIsBordered			  = 10,
+  NSCellHasOverlappingImage		= 11,
+  NSCellHasImageHorizontal		= 12,
+  NSCellHasImageOnLeftOrBottom	= 13,
+  NSCellChangesContents		  = 14,
+  NSCellIsInsetButton			  = 15,
+  NSCellAllowsMixedState		  = 16
 };
 typedef NSUInteger NSCellAttribute;
 
 enum {
-    NSNoImage				        = 0,
-    NSImageOnly				        = 1,
-    NSImageLeft				        = 2,
-    NSImageRight			        = 3,
-    NSImageBelow			        = 4,
-    NSImageAbove			        = 5,
-    NSImageOverlaps			        = 6
+  NSNoImage				    = 0,
+  NSImageOnly				    = 1,
+  NSImageLeft				    = 2,
+  NSImageRight			    = 3,
+  NSImageBelow			    = 4,
+  NSImageAbove			    = 5,
+  NSImageOverlaps			    = 6
 };
 typedef NSUInteger NSCellImagePosition;
 
 
 enum {
-    NSImageScaleProportionallyDown  = 0,
-    NSImageScaleAxesIndependently,
-    NSImageScaleNone,
-    NSImageScaleProportionallyUpOrDown
+  NSImageScaleProportionallyDown  = 0,
+  NSImageScaleAxesIndependently,
+  NSImageScaleNone,
+  NSImageScaleProportionallyUpOrDown
 };
 typedef NSUInteger NSImageScaling;
 
 enum {
-    NSMixedState                    = -1,
-    NSOffState                      = 0,
-    NSOnState                       = 1    
+  NSMixedState          = -1,
+  NSOffState            = 0,
+  NSOnState             = 1  
 };
 typedef NSInteger NSCellStateValue;
 
 enum {
-    NSNoCellMask			        = 0,
-    NSContentsCellMask			    = 1,
-    NSPushInCellMask			    = 2,
-    NSChangeGrayCellMask		    = 4,
-    NSChangeBackgroundCellMask		= 8
+  NSNoCellMask			    = 0,
+  NSContentsCellMask			  = 1,
+  NSPushInCellMask			  = 2,
+  NSChangeGrayCellMask		  = 4,
+  NSChangeBackgroundCellMask		= 8
 };
 
 enum {
-    NSDefaultControlTint            = 0,
-    NSBlueControlTint               = 1,
-    NSGraphiteControlTint           = 6,
-    NSClearControlTint              = 7
+  NSDefaultControlTint      = 0,
+  NSBlueControlTint         = 1,
+  NSGraphiteControlTint       = 6,
+  NSClearControlTint        = 7
 };
 typedef NSUInteger NSControlTint;
 
 enum {
-    NSRegularControlSize,
-    NSSmallControlSize,
-    NSMiniControlSize
+  NSRegularControlSize,
+  NSSmallControlSize,
+  NSMiniControlSize
 };
 typedef NSUInteger NSControlSize;
 
 @interface NSCell : NSObject <NSCopying, NSCoding>
 {
-    id                  _value;
-    NSCellStateValue    _state;
-    BOOL                _isHighlighted;
-    BOOL                _isEnabled;
-    BOOL                _isEditable;
-    BOOL                _isBordered;
-    BOOL                _isBezeled;
-    BOOL                _isSelectable;
-    BOOL                _isScrollable;
-    NSUInteger          _alignment;
-    NSSize              _controlSize;
-    
-    NSView              _controlView;
-    
-    id                  _target;
-    SEL                 _action;
+  id          _value;
+  NSCellStateValue  _state;
+  BOOL        _isHighlighted;
+  BOOL        _isEnabled;
+  BOOL        _isEditable;
+  BOOL        _isBordered;
+  BOOL        _isBezeled;
+  BOOL        _isSelectable;
+  BOOL        _isScrollable;
+  NSUInteger      _alignment;
+  NSSize        _controlSize;
+  
+  NSView        _controlView;
+  
+  id          _target;
+  SEL         _action;
 }
 
 + (BOOL)prefersTrackingUntilMouseUp;
@@ -290,10 +290,10 @@ typedef NSUInteger NSControlSize;
 extern NSString *NSControlTintDidChangeNotification;
 
 enum {
-    NSCellHitNone               = 0,
-    NSCellHitContentArea        = 1 << 0,
-    NSCellHitEditableTextArea   = 1 << 1,
-    NSCellHitTrackableArea      = 1 << 2
+  NSCellHitNone         = 0,
+  NSCellHitContentArea    = 1 << 0,
+  NSCellHitEditableTextArea   = 1 << 1,
+  NSCellHitTrackableArea    = 1 << 2
 };
 
 @interface NSCell (NSCellHitTest)
@@ -312,10 +312,10 @@ enum {
 
 
 enum {
-    NSBackgroundStyleLight = 0,
-    NSBackgroundStyleDark,
-    NSBackgroundStyleRaised,
-    NSBackgroundStyleLowered
+  NSBackgroundStyleLight = 0,
+  NSBackgroundStyleDark,
+  NSBackgroundStyleRaised,
+  NSBackgroundStyleLowered
 };
 typedef NSInteger NSBackgroundStyle;
 

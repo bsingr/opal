@@ -9,5 +9,5 @@
 #import <CoreFoundation/CFString.h>
 
 typedef struct CFURL {
-    CFStringRef *_url;
+  CFStringRef *_url;
 } *CFURLRef;

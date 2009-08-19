@@ -28,15 +28,15 @@
 
 CTParagraphStyleRef CTParagraphStyleCreate(const CTParagraphStyleSetting* settings, CFIndex settingCount)
 {
-    
+  
 }
 
 CTParagraphStyleRef CTParagraphStyleCreateCopy(CTParagraphStyleRef paragraphStyle)
 {
-    
+  
 }
 
 bool CTParagraphStyleGetValueForSpecifier(CTParagraphStyleRef paragraphStyle, CTParagraphStyleSpecifier spec, int valueBufferSize, void* valueBuffer)
 {
-    
+  
 }

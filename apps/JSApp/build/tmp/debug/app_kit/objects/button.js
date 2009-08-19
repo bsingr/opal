@@ -26,128 +26,62 @@
  
 
 /**
-    @class VN.Button
-    @extends VN.Control
+  VN.BezelStyle
 */
-var NSButton = VN.Button = VN.Control.extend({
-    
-    /**
-        @type VN.Image
-    */
-    _alternateImage: null,
-    
-    /**
-        @type VN.Image
-    */
-    _image: null,
-    
-    /**
-        @param {VN.Coder} aCoder
-        @returns VN.Button
-    */
-    initWithCoder: function(aCoder) {
-        this._super(aCoder);
-        return this;
-    },
-    
-    /**
-        @param {Boolean} firstTime
-        @param {NSRenderContext} context
-    */
-    // render: function(context, firstTime) { 
-    //         if (firstTime) {
-    //             context.setClass('ns-button');
-    //             context.push('div', 'ns-button-left');
-    //             context.push('div', 'ns-button-middle');
-    //             context.push('div', 'ns-button-right');
-    //             context.push('span', 'ns-button-title');
-    //         }
-    //             
-    //         this.renderBezel(context, firstTime);
-    //             // this.renderInteriorWithFrame(cellFrame, controlView, firstTime, context);
-    //         this.renderTitle(this._value, this.titleRectForBounds(this.bounds()), context, firstTime);
-    //     },
-    
-    
-    
-    renderTitle: function(title, titleRect, context, firstTime) {
-        
-    },
-    
-    drawWithFrame: function(cellFrame, controlView) {
-        this.renderWithFrame(cellFrame, controlView, false, controlView._renderContext);
-        return;
-        
-        var c = NSGraphicsContext.currentContext().graphicsPort();
-        CGContextClearRect(c, cellFrame);
-        
-        this.drawBezelWithFrameInView(cellFrame, controlView);
-        this.drawInteriorWithFrame(cellFrame, controlView);
-        this.drawTitleWithFrameInView(this._value, this.titleRectForBounds(cellFrame), controlView);
-    },
-    
-    drawInteriorWithFrame: function(cellFrame, controlView) {
-        if (this._image) {
-            if (this._state == NSOnState)
-                this.drawImageWithFrameInView(this._alternateImage, this.imageRectForBounds(cellFrame), controlView);
-            else
-                this.drawImageWithFrameInView(this._image, this.imageRectForBounds(cellFrame), controlView);
-        }
-    },
-    
-    drawImageWithFrameInView: function(image, frame, controlView) {
-        var c = NSGraphicsContext.currentContext().graphicsPort();
-        CGContextSaveGState(c);
-        
-        if (!this._isEnabled)
-            CGContextSetAlpha(c, 0.8);
-        
-        // CGContextDrawImage(c, frame, image);
-        image.drawInRect(frame);
-        CGContextRestoreGState(c);
-    },
+VN.ROUNDED_BEZEL = 'rounded';
+VN.REGULAR_SQUARE_BEZEL = 'regular_square';
+VN.THICK_SQUARE_BEZEL = 'thick_square';
+VN.THICKER_SQUARE_BEZEL = 'thicker_square';
+VN.DISCLOSURE_BEZEL = 'disclosure';
+VN.SHADOWLESS_SQUARE_BEZEL = 'shadowless_square';
+VN.CIRCULAR_BEZEL = 'circular_bezel';
+VN.TEXTURED_SQUARE_BEZEL = 'textured_square';
+VN.HELP_BUTTON_BEZEL = 'help_button';
+VN.SMALL_SQUARE_BEZEL = 'small_square';
+VN.TEXTURED_ROUNDED_BEZEL = 'textured_rounded';
+VN.ROUNDED_RECT_BEZEL = 'rounded_rect';
+VN.RECESSED_BEZEL = 'recessed';
+VN.ROUNDED_DISCLOSURE_BEZEL = 'rounded_disclosure';
 
-    drawTitleWithFrameInView: function(title, rect, controlView) {
-        // var c = NSGraphicsContext.currentContext().graphicsPort();
-        this.attributedStringValue().drawWithRectAndOptions(rect, null);
-        // CGContextFillRect(c, rect);
-    },
-    
-    drawBezelWithFrameInView: function(frame, controlView) {
-        var c = NSGraphicsContext.currentContext().graphicsPort();
-        CGContextSaveGState(c);
-        
-        if (this._isEnabled && this._isBordered) {
-            if (this._isHighlighted) {
-                NSImage.imageNamed('NSButtonHighlightedLeft.png').drawInRect(CGRectMake(0, 0, 6, 24));
-                NSImage.imageNamed('NSButtonHighlightedMiddle.png').drawInRect(CGRectMake(6, 0, frame.size.width - 12, 24));
-                NSImage.imageNamed('NSButtonHighlightedRight.png').drawInRect(CGRectMake(frame.size.width - 6, 0, 6, 24));
-            }
-            else {
-                NSImage.imageNamed('NSButtonNormalLeft.png').drawInRect(CGRectMake(0, 0, 6, 24));
-                NSImage.imageNamed('NSButtonNormalMiddle.png').drawInRect(CGRectMake(6, 0, frame.size.width - 12, 24));
-                NSImage.imageNamed('NSButtonNormalRight.png').drawInRect(CGRectMake(frame.size.width - 6, 0, 6, 24));
-            }
-        }
-        else if (this._isBordered) {
-            CGContextSetAlpha(c, 0.8);
-            NSImage.imageNamed('NSButtonNormalLeft.png').drawInRect(CGRectMake(0, 0, 6, 24));
-            NSImage.imageNamed('NSButtonNormalMiddle.png').drawInRect(CGRectMake(6, 0, frame.size.width - 12, 24));
-            NSImage.imageNamed('NSButtonNormalRight.png').drawInRect(CGRectMake(frame.size.width - 6, 0, 6, 24));
-        }
-        
-        CGContextRestoreGState(c);
-    },
-    
-    cellClass: function() {
-        return NSButtonCell;
-    },
-    
-    title: function() {
-        
-    },
-    
-    setTitle: function(aString) {
-        
-    }
+/**
+  VN.ButtonType
+*/
+VN.MOMENTARY_LIGHT_BUTTON = 0;
+VN.PUSH_ON_PUSH_OFF_BUTTON = 1;
+VN.TOGGLE_BUTTON = 2;
+VN.SWITCH_BUTTON = 3;
+VN.RADIO_BUTTON = 4;
+VN.MOMENTARY_CHANGE_BUTTON = 5;
+VN.ON_OFF_BUTTON = 6;
+VN.MOMENTARY_PUSH_IN_BUTTON = 7;
+
+/**
+  @class VN.Button
+  @extends VN.Control
+*/
+VN.Button = VN.Control.extend({
+  
+  /**
+    VN.Button default options
+  */
+  defaultOptions: { bezel: 'rounded', frame: [0, 0, 0, 0], layout: { } },
+  
+  /**
+    @type VN.Image
+  */
+  alternateImage: null,
+  
+  /**
+    @type VN.Image
+  */
+  image: null,
+  
+  /**
+    @param {VN.Coder} aCoder
+    @returns VN.Button
+  */
+  initWithCoder: function(aCoder) {
+    this._super(aCoder);
+    return this;
+  }
 });

@@ -41,11 +41,11 @@ var NSLinearSlider   = 0;
 var NSCircularSlider = 1;
 
 /**
-    @class NSSliderCell
-    
-    Cell used for the drawing parts of the NSSlider control. A min and max value
-    can be set to constrain drawing. Both normal sliders (vertical as well as
-    horizontal) and round knobs can be used.
+  @class NSSliderCell
+  
+  Cell used for the drawing parts of the NSSlider control. A min and max value
+  can be set to constrain drawing. Both normal sliders (vertical as well as
+  horizontal) and round knobs can be used.
 */
 var NSSliderCell = NSCell.extend({
    
@@ -54,87 +54,87 @@ var NSSliderCell = NSCell.extend({
    _maxValue: 0,
    
    initWithCoder: function(aCoder) {
-       this._super(aCoder);
-       this._minValue = aCoder.decodeDoubleForKey("NSMinValue");
-       this._maxValue = aCoder.decodeDoubleForKey("NSMaxValue");
-       this._value = aCoder.decodeDoubleForKey("NSValue");
-       return this;
+     this._super(aCoder);
+     this._minValue = aCoder.decodeDoubleForKey("NSMinValue");
+     this._maxValue = aCoder.decodeDoubleForKey("NSMaxValue");
+     this._value = aCoder.decodeDoubleForKey("NSValue");
+     return this;
    },
    
    drawWithFrame: function(cellFrame, controlView) {
-       var SLIDER_PADDING = 8.5;
-       var KNOB_PADDING = 2;
-       
-       var c = NSGraphicsContext.currentContext().graphicsPort();
-       CGContextSaveGState(c);
-       if (!this.isEnabled()) CGContextSetAlpha(c, 0.8);
-       
-       // draw the bar
-       NSImage.imageNamed('NSSliderHorizontalLeft.png').drawInRect(CGRectMake(KNOB_PADDING, 8, 5, 5));
-       NSImage.imageNamed('NSSliderHorizontalMiddle.png').drawInRect(CGRectMake(5 + KNOB_PADDING, 8, (cellFrame.size.width - 10) - (2 * KNOB_PADDING), 5));
-       NSImage.imageNamed('NSSliderHorizontalRight.png').drawInRect(CGRectMake((cellFrame.size.width-5) - KNOB_PADDING, 8 ,5 ,5));
-       
-       // draw the knob
-       var knobPosition = (((this._value / (this._maxValue - this._minValue)) * ((cellFrame.size.width - (2 * SLIDER_PADDING)))));
-       NSImage.imageNamed('NSSliderHorizontalKnobNormal.png').drawInRect(CGRectMake(knobPosition,2,17,17));
-       
-       CGContextRestoreGState(c);
+     var SLIDER_PADDING = 8.5;
+     var KNOB_PADDING = 2;
+     
+     var c = NSGraphicsContext.currentContext().graphicsPort();
+     CGContextSaveGState(c);
+     if (!this.isEnabled()) CGContextSetAlpha(c, 0.8);
+     
+     // draw the bar
+     NSImage.imageNamed('NSSliderHorizontalLeft.png').drawInRect(CGRectMake(KNOB_PADDING, 8, 5, 5));
+     NSImage.imageNamed('NSSliderHorizontalMiddle.png').drawInRect(CGRectMake(5 + KNOB_PADDING, 8, (cellFrame.size.width - 10) - (2 * KNOB_PADDING), 5));
+     NSImage.imageNamed('NSSliderHorizontalRight.png').drawInRect(CGRectMake((cellFrame.size.width-5) - KNOB_PADDING, 8 ,5 ,5));
+     
+     // draw the knob
+     var knobPosition = (((this._value / (this._maxValue - this._minValue)) * ((cellFrame.size.width - (2 * SLIDER_PADDING)))));
+     NSImage.imageNamed('NSSliderHorizontalKnobNormal.png').drawInRect(CGRectMake(knobPosition,2,17,17));
+     
+     CGContextRestoreGState(c);
    },
    
    startTrackingAtInView: function(startPoint, controlView) {
-       if (this.isEnabled()) {
-           var SLIDER_PADDING = 8.5;
-           var location = controlView.convertPointFromView(startPoint, null);
-           this.setDoubleValue(((location.x - SLIDER_PADDING) / (controlView.bounds().size.width - (2 * SLIDER_PADDING))) * (this._maxValue - this._minValue));
-           this.drawFrameInView(controlView.bounds(), controlView);
-           return true;
-       }
-       return false;
+     if (this.isEnabled()) {
+       var SLIDER_PADDING = 8.5;
+       var location = controlView.convertPointFromView(startPoint, null);
+       this.setDoubleValue(((location.x - SLIDER_PADDING) / (controlView.bounds().size.width - (2 * SLIDER_PADDING))) * (this._maxValue - this._minValue));
+       this.drawFrameInView(controlView.bounds(), controlView);
+       return true;
+     }
+     return false;
    },
 
-    /**
-        Sets the double value for the slider. If the value is below the minValue,
-        then the value is adjusted to be the minValue. Similarly, if the value
-        is greater than the maxValue, it is also adjusted acordingly.
-    */
-    setDoubleValue: function(aDouble) {
-       if (aDouble < this._minValue) this._value = this._minValue;
-       else if (aDouble > this._maxValue) this._value = this._maxValue;
-       else this._value = aDouble;
+  /**
+    Sets the double value for the slider. If the value is below the minValue,
+    then the value is adjusted to be the minValue. Similarly, if the value
+    is greater than the maxValue, it is also adjusted acordingly.
+  */
+  setDoubleValue: function(aDouble) {
+     if (aDouble < this._minValue) this._value = this._minValue;
+     else if (aDouble > this._maxValue) this._value = this._maxValue;
+     else this._value = aDouble;
    },
    
    continueTrackingInView: function(lastPoint, currentPoint, controlView) {
-       var SLIDER_PADDING = 8.5;
-       var location = controlView.convertPointFromView(currentPoint, null);
-       this.setDoubleValue(((location.x - SLIDER_PADDING) / (controlView.bounds().size.width - (2 * SLIDER_PADDING))) * (this._maxValue - this._minValue));
-       this.drawWithFrame(controlView.bounds(), controlView);
-       return true;
+     var SLIDER_PADDING = 8.5;
+     var location = controlView.convertPointFromView(currentPoint, null);
+     this.setDoubleValue(((location.x - SLIDER_PADDING) / (controlView.bounds().size.width - (2 * SLIDER_PADDING))) * (this._maxValue - this._minValue));
+     this.drawWithFrame(controlView.bounds(), controlView);
+     return true;
    },
    
    /**
-        @param flag - If the mouseIsUp
+    @param flag - If the mouseIsUp
    */
    stopTrackingInView: function(lastPoint, stopPoint, controlView, flag) {
-       
+     
    },
    
    prefersTrackingUntilMouseUp: function() {
-       
+     
    },
    
    minValue: function() {
-       return this._minValue;
+     return this._minValue;
    },
    
    setMinValue: function(aDouble) {
-       this._minValue = aDouble;
+     this._minValue = aDouble;
    },
    
    maxValue: function() {
-       return this._maxValue;
+     return this._maxValue;
    },
 
    setMaxValue: function(aDouble) {
-       this._maxValue = aDouble;
+     this._maxValue = aDouble;
    }
 });

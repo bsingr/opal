@@ -20,22 +20,22 @@
 
 - (id)init
 {
-    return self;
+  return self;
 }
 
 + (id)new
 {
-    return [[self alloc] init];
+  return [[self alloc] init];
 }
 
 + (id)alloc
 {
-    return class_createInstance(self);
+  return class_createInstance(self);
 }
 
 - (void)dealloc
 {
-    // Set self = NULL; ??   
+  // Set self = NULL; ??   
 }
 
 - (void)finalize
@@ -44,158 +44,158 @@
 
 - (id)copy
 {
-    return self;
+  return self;
 }
 
 - (id)mutableCopy
 {
-    return [self copy];
+  return [self copy];
 }
 
 + (Class)superclass
 {
-    // return super_class;
+  // return super_class;
 }
 
 + (Class)class
 {
-    return isa;
+  return isa;
 }
 
 + (BOOL)instancesRespondToSelector:(SEL)aSelector
 {
-    return class_respondToSelector(self, aSelector);
+  return class_respondToSelector(self, aSelector);
 }
 
 + (BOOL)conformsToProtocol:(Protocol *)protocol
 {
-    return class_conformsToProtocol(self, protocol);
+  return class_conformsToProtocol(self, protocol);
 }
 
 - (IMP)methodForSelector:(SEL)aSelector
 {
-    return class_getMethodImplementation(self, aSelector);
+  return class_getMethodImplementation(self, aSelector);
 }
 
 + (IMP)instanceMethodForSelector:(SEL)aSelector
 {
-    return class_getInstanceMethod(self, aSelector);
+  return class_getInstanceMethod(self, aSelector);
 }
 
 - (void)doesNotRecognizeSelector:(SEL)aSelector
 {
-    // Raise an NSException
+  // Raise an NSException
 }
 
 - (void)forwardInvocation:(NSInvocation *)anInvocation
 {
-    // Should call [self doesNotRecognizeSelector] with selector from anInvocation
+  // Should call [self doesNotRecognizeSelector] with selector from anInvocation
 }
 
 - (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector
 {
-    // Should return readble signature for selector
+  // Should return readble signature for selector
 }
 
 + (NSMethodSignature *)instanceMethodSignatureForSelector:(SEL)aSelector
 {
-    // Should return readable sig for selector
+  // Should return readable sig for selector
 }
 
 + (BOOL)isSubclassOfClass:(Class)aClass
 {
-    
+  
 }
 
 
 + (BOOL)resolveClassMethod:(SEL)sel
 {
-    
+  
 }
 
 + (BOOL)resolveInstanceMethod:(SEL)sel
 {
-    
+  
 }
 
 - (BOOL)isEqual:(id)object
 {
-    
+  
 }
 
 - (NSUInteger)hash
 {
-    
+  
 }
 
 - (id)self
 {
-    return self;
+  return self;
 }
 
 - (id)performSelector:(SEL)aSelector
 {
-    return objc_msgSend(self, aSelector);
+  return objc_msgSend(self, aSelector);
 }
 
 - (id)performSelector:(SEL)aSelector withObject:(id)object
 {
-    return objc_msgSend(self, aSelector, object);
+  return objc_msgSend(self, aSelector, object);
 }
 
 - (id)performSelector:(SEL)aSelector withObject:(id)object1 withObject:(id)object2
 {
-    return objc_msgSend(self, aSelector, object1, object2);
+  return objc_msgSend(self, aSelector, object1, object2);
 }
 
 - (BOOL)isProxy
 {
-    return NO;
+  return NO;
 }
 
 - (BOOL)isKindOfClass:(Class)aClass
 {
-    
+  
 }
 
 - (BOOL)isMemberOfClass:(Class)aClass
 {
-    
+  
 }
 
 - (BOOL)conformsToProtocol:(Protocol *)aProtocol
 {
-    return class_conformsToProtocol(self, aProtocol);
+  return class_conformsToProtocol(self, aProtocol);
 }
 
 - (BOOL)respondsToSelector:(SEL)aSelector
 {
-    return class_respondsToSelector(self.isa, aSelector);
+  return class_respondsToSelector(self.isa, aSelector);
 }
 
 - (id)retain
 {
-    return self;
+  return self;
 }
 
 - (void)release
 {
-    return self;
+  return self;
 }
 
 - (id)autorelease
 {
-    return self;
+  return self;
 }
 
 - (NSUInteger)retainCount
 {
-    return 1;
+  return 1;
 }
 
 - (NSString *)description
 {
-    return @"NSObject class description";
+  return @"NSObject class description";
 }
 
 @end

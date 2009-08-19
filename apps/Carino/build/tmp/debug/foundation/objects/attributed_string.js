@@ -30,89 +30,89 @@ var NSAttributedString = NSObject.extend({
 	_string: null,
 	_attributes: null,
 	
-    string: function() {
-        return this._string;
-    },
+  string: function() {
+    return this._string;
+  },
+  
+  attributesAtIndex: function(location, effectiveRange) {
     
-    attributesAtIndex: function(location, effectiveRange) {
-        
-    },
+  },
+  
+  length: function() {
     
-    length: function() {
-        
-    },
+  },
+  
+  attributeAtIndex: function(attrName, location, effectiveRange) {
     
-    attributeAtIndex: function(attrName, location, effectiveRange) {
-        
-    },
+  },
+  
+  attributedSubstringFromRange: function(string) {
     
-    attributedSubstringFromRange: function(string) {
-        
-    },
+  },
+  
+  isEqualToAttributedString: function(other) {
     
-    isEqualToAttributedString: function(other) {
-        
-    },
-    
-    initWithString: function(aString) {
-        this.init();
+  },
+  
+  initWithString: function(aString) {
+    this.init();
 		this._string = new String(aString);
 		this._attributes = NSDictionary.create();
 		return this;
-    },
+  },
+  
+  initWithStringAndAttributes: function(aString, attributes) {
+    this.init();
+    this._string = new String(aString);
+    this._attributes = attributes;
+    return this;
+  },
+  
+  initWithAttributedString: function(attrString) {
     
-    initWithStringAndAttributes: function(aString, attributes) {
-        this.init();
-        this._string = new String(aString);
-        this._attributes = attributes;
-        return this;
-    },
+  },
+  
+  replaceCharactersInRange: function(range, withString) {
     
-    initWithAttributedString: function(attrString) {
-        
-    },
+  },
+  
+  setAttributes: function(attributes, range) {
     
-    replaceCharactersInRange: function(range, withString) {
-        
-    },
+  },
+  
+  addAttribute: function(name, value, range) {
     
-    setAttributes: function(attributes, range) {
-        
-    },
+  },
+  
+  removeAttribute: function(name, range) {
     
-    addAttribute: function(name, value, range) {
-        
-    },
+  },
+  
+  replaceCharactersInRangeWithAttributedString: function(range, attrString) {
     
-    removeAttribute: function(name, range) {
-        
-    },
+  },
+  
+  insertAttributedString: function(attrString, atIndex) {
     
-    replaceCharactersInRangeWithAttributedString: function(range, attrString) {
-        
-    },
+  },
+  
+  appendAttributedString: function(attrString) {
     
-    insertAttributedString: function(attrString, atIndex) {
-        
-    },
+  },
+  
+  deleteCharactersInRange: function(range) {
     
-    appendAttributedString: function(attrString) {
-        
-    },
+  },
+  
+  setAttributedString: function(attrString) {
     
-    deleteCharactersInRange: function(range) {
-        
-    },
+  },
+  
+  beginEditing: function() {
     
-    setAttributedString: function(attrString) {
-        
-    },
+  },
+  
+  endEditing: function() {
     
-    beginEditing: function() {
-        
-    },
-    
-    endEditing: function() {
-        
-    }
+  }
 });

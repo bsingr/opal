@@ -11,16 +11,16 @@ module Vienna
   # Class extensions for objectivecparser. This simply adds methods for easy
   # parsing and creation of protocol objects
   class ObjectiveCParser
-    
-    def deal_with_protocol(p)
-      # TODO: need to implement protocols for checking
-    end
-    
+  
+  def deal_with_protocol(p)
+    # TODO: need to implement protocols for checking
+  end
+  
   end
   
   class ObjectiveCProtocol
-    def initialize
-    end
+  def initialize
+  end
   end
   
 end

@@ -27,26 +27,26 @@
 include('foundation/object');
 
  /**
-     The source is the receiver of the action. The destination sends the 
-     action 'label' to the source when triggered.
+   The source is the receiver of the action. The destination sends the 
+   action 'label' to the source when triggered.
  */
 var IBActionConnection = NSObject.extend({
-    
-    _label: null,
-    _source: null,
-    _destination: null,
-    
-    initWithCoder: function(aCoder) {
-        // replace @selector style name with js compatible identifier.
-        this._label = aCoder.decodeObjectForKey("label").replace(/:/, "");
-        this._source = aCoder.decodeObjectForKey("source");
-        this._destination = aCoder.decodeObjectForKey("destination");
-        return this;
-    },
-    
-    awakeAfterUsingCoder: function(aCoder) {
-        this._destination.setAction(this._label);
-        this._destination.setTarget(this._source);
-        return this;
-    }
+  
+  _label: null,
+  _source: null,
+  _destination: null,
+  
+  initWithCoder: function(aCoder) {
+    // replace @selector style name with js compatible identifier.
+    this._label = aCoder.decodeObjectForKey("label").replace(/:/, "");
+    this._source = aCoder.decodeObjectForKey("source");
+    this._destination = aCoder.decodeObjectForKey("destination");
+    return this;
+  },
+  
+  awakeAfterUsingCoder: function(aCoder) {
+    this._destination.setAction(this._label);
+    this._destination.setTarget(this._source);
+    return this;
+  }
 });

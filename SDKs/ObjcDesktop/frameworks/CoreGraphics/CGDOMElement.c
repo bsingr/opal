@@ -28,79 +28,79 @@
 
 CGDOMElementRef CGDOMElementGetRootElement(void)
 {
-    return document.body;
+  return document.body;
 }
 
 CGDOMElementRef CGDOMElementCreate(CFStringRef type)
 {
-    CGDOMElementRef theElement = document.createElement(type);
-    theElement.style.display = "block";
-    theElement.style.position = "absolute";
-    return theElement;
+  CGDOMElementRef theElement = document.createElement(type);
+  theElement.style.display = "block";
+  theElement.style.position = "absolute";
+  return theElement;
 }
 
 CGDOMElementRef CGDOMElementCreateWithAttributes(CFStringRef type, CFDictionaryRef attributes)
 {
-    return document.createElement(type);
+  return document.createElement(type);
 }
 
 void CGDOMElementAppendChild(CGDOMElementRef parent, CGDOMElementRef child)
 {
-    parent.appendChild(child);
+  parent.appendChild(child);
 }
 
 void CGDOMElementRemoveChild(CGDOMElementRef parent, CGDOMElementRef child)
 {
-    parent.removeChild(child);
+  parent.removeChild(child);
 }
 
 void CGDOMElementReplaceChild(CGDOMElementRef parent, CGDOMElementRef oldChild, CGDOMElementRef newChild)
 {
-    parent.replaceChild(newChild, oldChild);
+  parent.replaceChild(newChild, oldChild);
 }
 
 CFStringRef CGDOMElementGetAttribute(CGDOMElementRef element, CFStringRef attribute)
 {
-    return element.getAttribute(attribute);
+  return element.getAttribute(attribute);
 }
 
 bool CGDOMElementHasAttribute(CGDOMElementRef element, CFStringRef attribute)
 {
-    return element.hasAttribute(attribute);
+  return element.hasAttribute(attribute);
 }
 
 void CGDOMElementRemoveAttribute(CGDOMElementRef element, CFStringRef attribute)
 {
-    element.removeAttribute(attribute);
+  element.removeAttribute(attribute);
 }
 
 void CGDOMElementSetAttribute(CGDOMElementRef element, CFStringRef name, CFStringRef value)
 {
-    element.setAttribute(name, value);
+  element.setAttribute(name, value);
 }
 
 void CGDOMElementSetFrame(CGDOMElementRef element, CGRect frame)
 {
-    element.style.bottom = frame.origin.y + "px";
-    element.style.left = frame.origin.x + "px";
-    element.style.width = frame.size.width + "px";
-    element.style.height = frame.size.height + "px";
-    element.height = frame.size.height;
-    element.width = frame.size.width;
+  element.style.bottom = frame.origin.y + "px";
+  element.style.left = frame.origin.x + "px";
+  element.style.width = frame.size.width + "px";
+  element.style.height = frame.size.height + "px";
+  element.height = frame.size.height;
+  element.width = frame.size.width;
 }
 
 void CGDOMElementSetFrameOrigin(CGDOMElementRef element, CGPoint origin)
 {
-    element.style.bottom = origin.y + "px";
-    element.style.left = origin.x + "px";
+  element.style.bottom = origin.y + "px";
+  element.style.left = origin.x + "px";
 }
 
 void CGDOMElementSetFrameSize(CGDOMElementRef element, CGSize size)
 {
-    
+  
 }
 
 CGContextRef CGDOMElementGetContext(CGDOMElementRef element)
 {
-    return element.getContext("2d");
+  return element.getContext("2d");
 }

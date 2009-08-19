@@ -26,26 +26,29 @@
 
 
 var NSColor = NSObject.extend({
+  
+  _red: null,
+  _green: null,
+  _blue: null,
+  _alpha: null,
+  
+  initWithCoder: function(aCoder) {
+    var theColorSpace = aCoder.decodeIntForKey("NSColorSpace");
+    var theColor;
     
-    _red: null,
-    _green: null,
-    _blue: null,
-    _alpha: null,
+    switch (theColorSpace) {
+      case 6:
+        var catalogName = aCoder.decodeObjectForKey("NSCatalogName");
+        var colorName = aCoder.decodeObjectForKey("NSColorName");
+        theColor = NSColor[colorName]();
+        break;
+      default:
+        theColor = NSColor.create();
+        break;
+    }
     
-    initWithCoder: function(aCoder) {
-        var theColorSpace = aCoder.decodeIntForKey("NSColorSpace");
-        var theColor;
-        
-        switch (theColorSpace) {
-            case 6:
-                var catalogName = aCoder.decodeObjectForKey("NSCatalogName");
-                var colorName = aCoder.decodeObjectForKey("NSColorName");
-                theColor = NSColor[colorName]();
-                break;
-        }
-        
-        return theColor;
-    },
+    return theColor;
+  },
 	
 	highlightWithLevel: function(val) {
 		
@@ -124,7 +127,7 @@ var NSColor = NSObject.extend({
 	},
 	
 	rgbString: function() {
-	    return "rgb(" + parseInt(this._red * 255) + ","  + parseInt(this._green * 255) + ","  + parseInt(this._blue * 255) + ")";
+	  return "rgb(" + parseInt(this._red * 255) + ","  + parseInt(this._green * 255) + ","  + parseInt(this._blue * 255) + ")";
 	}
 });
 
@@ -213,7 +216,7 @@ VN.extend(NSColor, {
 	},
 	
 	gridColor: function() {
-	    return NSColor.colorWithCalibratedRGBA(0.902, 0.902, 0.902, 1.0);
+	  return NSColor.colorWithCalibratedRGBA(0.902, 0.902, 0.902, 1.0);
 	},
 	
 	controlShadowColor: function() {
@@ -342,6 +345,6 @@ VN.extend(NSColor, {
 	},
 	
 	_sourceListBackgroundColor: function() {
-	    return NSColor.colorWithCalibratedRGBA(0.839, 0.867, 0.898, 1.0);
+	  return NSColor.colorWithCalibratedRGBA(0.839, 0.867, 0.898, 1.0);
 	}
 });

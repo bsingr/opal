@@ -25,33 +25,15 @@
  */
 
 
-var JSApp = {
-    
-    CFBundleDevelopmentRegion: "English",
-    CFBundleIconFile: "",
-    CFBundleIdentifier: "com.yourcompany.JSApp",
-    CFBundleName: "JSApp",
-    CFBundlePackageType: "APPL",
-    NSMainNibFile: "MainMenu",
-    NSPrincipalClass: "NSApplication"
-};
-
-JSApp.FIXTURES = [
-    [
-        { "name": "Adam", "age": 23, "band": "Led Zepplin" },
-        { "name": "Benjamin", "age": 22, "band": "Rage Against the machine" },
-        { "name": "Rebeccae", "age": 19, "band": "Lagy Gaga" },
-        { "name": "Willam", "age": 23, "band": "Led Zepplin" },
-        { "name": "George", "age": 22, "band": "The ting tins" },
-        { "name": "Freddo", "age": 19, "band": "Lagy Gaga" },
-        { "name": "David", "age": 23, "band": "Kings Of Leon" },
-        { "name": "Layla", "age": 22, "band": "Clapton" }
-    ],
-    [
-	    { "name": "fred", "age": 24, "band": "Right Said Fred" },
-	    { "name": "john", "age": 22, "band": "Megadeth" },
-	    { "name": "Iaian", "age": 34, "band": "Ga Ga girls" },
-	    { "name": "Bob", "age": 24, "band": "bob The builder" },
-	    { "name": "Jonaes", "age": 21, "band": "Wowmans" }
-	]
-];
+JSApp = VN.Object.create({
+  
+  // store: VN.Store.create({
+  //   
+  //   categories: { as: 'places', requirements: { permalink: 'places' }},
+  //   galleries: { as: 'gallery' },    
+  //   
+  //   login: { controller: 'admin', action: 'new' },
+  //   logout: { controller: 'admin', action: 'destroy' },
+  //   admin: { controller: 'admin', action: 'index' },
+  // })
+});

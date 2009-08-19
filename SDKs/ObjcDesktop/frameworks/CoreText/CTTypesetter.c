@@ -32,25 +32,25 @@ const CFStringRef kCTTypesetterOptionForcedEmbeddingLevel = "kCTTypesetterOption
 
 CTTypesetterRef CTTypesetterCreateWithAttributedString(CFAttributedStringRef string)
 {
-    
+  
 }
 
 CTTypesetterRef CTTypesetterCreateWithAttributedStringAndOptions(CFAttributedStringRef string, CFDictionaryRef options)
 {
-    
+  
 }
 
 CTLineRef CTTypesetterCreateLine(CTTypesetterRef typesetter, CFRange stringRange)
 {
-    
+  
 }
 
 CFIndex CTTypesetterSuggestLineBreak(CTTypesetterRef typesetter, CFIndex startIndex, double width)
 {
-    
+  
 }
 
 CFIndex CTTypesetterSuggestClusterBreak(CTTypesetterRef typesetter, CFIndex startIndex, double width)
 {
-    
+  
 }

@@ -8,10 +8,10 @@
 
 function CFRangeMake (loc, len)
 {
-    var theRange = {
-        location: loc,
-        length: len
-    }
-    
-    return theRange;
+  var theRange = {
+    location: loc,
+    length: len
+  }
+  
+  return theRange;
 }

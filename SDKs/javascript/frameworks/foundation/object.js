@@ -26,89 +26,89 @@
 
 include('runtime/runtime');
 
-var NSObject = VN.Object = function() {
-    return this;
+VN.Object = function() {
+  return this;
 };
 
 VN.protocol = function(props) {
-    return this;
+  return this;
 };
 
 
 VN.extend(VN.Object, {
-    
-    superclass: null,
+  
+  superclass: null,
    
-    /**
-        For creating subclasses of any class that inherits from the root object
-        (NSObject). 
-    */
-    extend: function(props) {
+  /**
+    For creating subclasses of any class that inherits from the root object
+    (NSObject). 
+  */
+  extend: function(props) {
 
-        var _super = this.prototype;
+    var _super = this.prototype;
 
-        // constructor
-        var ret = function() {
-            return this;
-        };
+    // constructor
+    var ret = function() {
+      return this;
+    };
 
-        // class methods
-        for (var prop in this) {
-            ret[prop] = this[prop];
-        }
-        
-        // superclass
-        ret.superclass = this;
-        
-        // firstly inherit ALL superclass' prototpe
-        var base = (ret.prototype = new this());
-        
-        // copy in new props (might over-ride existing ones)
-        for (var prop in props) {
-            if(props[prop] && props[prop] instanceof Function) {
-                if (props[prop]._kvc_property) {
-                    console.log('_kvc_property:' + props[prop]._kvc_property);
-                }
-            }
-            // if (props[prop].age) {
-                // console.log('yesh');
-            // }
-            // throw "something";
-            base[prop] = (typeof props[prop] == "function" && 
-                typeof _super[prop] == "function") ? 
-                (function(name, func) {
-                    return function() {
-                        var tmp = this._super;
-                        this._super = _super[name];
-                        var ret = func.apply(this, arguments);
-                        this._super = tmp;
-                        return ret;
-                    };
-                    
-                })(prop, props[prop])
-                : props[prop];
-        }
-            
-        base.constructor = ret;
-        
-        return ret;
-    },
-   
-    /**
-        Creates a new instance of the class (like new myObj())
-    */
-    create: function() {
-        var C = this;
-        return new C()._init(arguments);
-    },
+    // class methods
+    for (var prop in this) {
+      ret[prop] = this[prop];
+    }
     
-    /**
-        Adds the given properties/functions to the prototype of the object. Use
-        Class.extend(theClass, { ... }) for extending Class methods
-    */
-    mixin: function(props) {
-        VN.extend(this.prototype, props);
-    },
+    // superclass
+    ret.superclass = this;
+    
+    // firstly inherit ALL superclass' prototpe
+    var base = (ret.prototype = new this());
+    
+    // copy in new props (might over-ride existing ones)
+    for (var prop in props) {
+      if(props[prop] && props[prop] instanceof Function) {
+        if (props[prop]._kvc_property) {
+          console.log('_kvc_property:' + props[prop]._kvc_property);
+        }
+      }
+      // if (props[prop].age) {
+        // console.log('yesh');
+      // }
+      // throw "something";
+      base[prop] = (typeof props[prop] == "function" && 
+        typeof _super[prop] == "function") ? 
+        (function(name, func) {
+          return function() {
+            var tmp = this._super;
+            this._super = _super[name];
+            var ret = func.apply(this, arguments);
+            this._super = tmp;
+            return ret;
+          };
+          
+        })(prop, props[prop])
+        : props[prop];
+    }
+      
+    base.constructor = ret;
+    
+    return ret;
+  },
+   
+  /**
+    Creates a new instance of the class (like new myObj())
+  */
+  create: function() {
+    var C = this;
+    return new C()._init(arguments);
+  },
+  
+  /**
+    Adds the given properties/functions to the prototype of the object. Use
+    Class.extend(theClass, { ... }) for extending Class methods
+  */
+  mixin: function(props) {
+    VN.extend(this.prototype, props);
+  },
 
 	/*
 		A "nice" way to define protocols. Doesnt do anything but return the 
@@ -133,81 +133,97 @@ VN.extend(VN.Object, {
 });
 
 /**
-    Base class instance methods/properties. Create with:
-    
-    {{{
-        NSObject.create();
-    }}}
+  Base class instance methods/properties. Create with:
+  
+  {{{
+    NSObject.create();
+  }}}
 */
 VN.Object.mixin({
+  
+  /**
+    Default options used in initWithOptions()
+  */
+  default_options: { },
+  
+  /**
+    This is invoked when the object instance is created. This basically
+    calls init() on the class unless a custom initializer is specified
+    when .create() is called. For example, the initWithCoder() function
+    is called, with aCoder as a parameter, in the following snipppet.
     
-    /**
-        This is invoked when the object instance is created. This basically
-        calls init() on the class unless a custom initializer is specified
-        when .create() is called. For example, the initWithCoder() function
-        is called, with aCoder as a parameter, in the following snipppet.
-        
-        {{{
-            NSObject.create('initWithCoder', aCoder);
-        }}}
-        
-        The custom initializer name MUST always be as a string, as the names
-        may not be registered as global variables. To create an object using
-        the regular init() function, use:
-        
-        {{{
-            NSObject.create();
-        }}}
-        
-        ... esentially, just use no arguments.
-    */
-    _init: function() {
-        
-        var args = [];
-        
-        for (var idx = 0; idx < arguments[0].length; idx++) {
-            args.push(arguments[0][idx]);
-        }
-        
-        if (args.length == 0) {
-            return this.init.apply(this, args);
-        } 
-        else {
-            if (typeof this[args[0]] == "function") {
-                return this[args[0]].apply(this, args.slice(1));
-            }
-            else {
-                console.log("Undefined initializer: " +  arguments[0]);
-                return this.init.apply(this, arguments);
-            }
-        }
-    },
+    {{{
+      NSObject.create('initWithCoder', aCoder);
+    }}}
     
-    init: function() {
-        return this;
-    },
+    The custom initializer name MUST always be as a string, as the names
+    may not be registered as global variables. To create an object using
+    the regular init() function, use:
     
-    _guid: null,
+    {{{
+      NSObject.create();
+    }}}
     
-    guid: function() {
-        if (this._guid == null)
-            this._guid = VN.CreateGuid();
-        
-        return this._guid;
-    },
+    ... esentially, just use no arguments.
+  */
+  _init: function() {
     
-    /**
-        Returns true if aName is a callable method name. This is similar to
-        respondsToSelector:
-    */
-    respondsTo: function(aName) {
-        return (this[aName] && (typeof this[aName] == 'function')) ? true : false;
-    },
+    this.guid = VN.CreateGuid();
     
-    perform: function(aFunctionName, withObject, anotherObject) {
-        if (this.respondsTo(aFunctionName))
-            return this[aFunctionName](withObject, anotherObject);
-        else
-            return null;
+    var args = [];
+    
+    for (var idx = 0; idx < arguments[0].length; idx++) {
+      args.push(arguments[0][idx]);
     }
+    
+    // normal initializer: call init()
+    if (args.length == 0) {
+      return this.init.apply(this, args);
+    } 
+    // call initWithOptions()
+    else if (typeof args[0] == 'object') {
+      var options = new VN.OptionsHash().merge(this.defaultOptions).merge(args[0]);
+      var ret = this.initWithOptions(options);
+      // need to check if we have been passed a function closure, and if so we
+      // need to apply it to this object. TODO: do this.
+      return ret;
+    }
+    // custom initializer: call the first argument, then pass rest as params
+    else {
+      if (typeof this[args[0]] == "function") {
+        return this[args[0]].apply(this, args.slice(1));
+      }
+      else {
+        console.log("Undefined initializer: " +  arguments[0]);
+        return this.init.apply(this, arguments);
+      }
+    }
+  },
+  
+  init: function() {
+    return this;
+  },
+  
+  init_with_options: function(options) {
+    console.log('I am initing with some options');
+    console.log(options);
+    return this;
+  },
+  
+  guid: null,
+  
+  /**
+    Returns true if aName is a callable method name. This is similar to
+    respondsToSelector:
+  */
+  responds_to: function(aName) {
+    return (this[aName] && (typeof this[aName] == 'function')) ? true : false;
+  },
+  
+  perform: function(aFunctionName, withObject, anotherObject) {
+    if (this.respondsTo(aFunctionName))
+      return this[aFunctionName](withObject, anotherObject);
+    else
+      return null;
+  }
 });

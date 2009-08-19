@@ -18,29 +18,29 @@
 @class NSBezierPath;
 
 enum {
-    NSSelectByCharacter                     = 0,
-    NSSelectByWord                          = 1,
-    NSSelectByParagraph                     = 2
+  NSSelectByCharacter           = 0,
+  NSSelectByWord              = 1,
+  NSSelectByParagraph           = 2
 };
 typedef NSUInteger NSSelectionGranularity;
 
 enum {
-    NSSelectionAffinityUpstream             = 0,
-    NSSelectionAffinityDownstream           = 1
+  NSSelectionAffinityUpstream       = 0,
+  NSSelectionAffinityDownstream       = 1
 };
 typedef NSUInteger NSSelectionAffinity;
 
 enum {
-    NSFindPanelActionShowFindPanel          = 1,
-    NSFindPanelActionNext                   = 2,
-    NSFindPanelActionPrevious               = 3,
-    NSFindPanelActionReplaceAll             = 4,
-    NSFindPanelActionReplace                = 5,
-    NSFindPanelActionReplaceAndFind         = 6,
-    NSFindPanelActionSetFindString          = 7,
-    NSFindPanelActionReplaceAllInSelection  = 8,
-    NSFindPanelActionSelectAll              = 9,
-    NSFindPanelActionSelectAllInSelection   = 10
+  NSFindPanelActionShowFindPanel      = 1,
+  NSFindPanelActionNext           = 2,
+  NSFindPanelActionPrevious         = 3,
+  NSFindPanelActionReplaceAll       = 4,
+  NSFindPanelActionReplace        = 5,
+  NSFindPanelActionReplaceAndFind     = 6,
+  NSFindPanelActionSetFindString      = 7,
+  NSFindPanelActionReplaceAllInSelection  = 8,
+  NSFindPanelActionSelectAll        = 9,
+  NSFindPanelActionSelectAllInSelection   = 10
 };
 typedef NSUInteger NSFindPanelAction;
 
@@ -50,10 +50,10 @@ extern NSString *NSFindPanelCaseInsensitiveSearch;
 extern NSString *NSFindPanelSubstringMatch;
 
 enum {
-    NSFindPanelSubstringMatchTypeContains   = 0,
-    NSFindPanelSubstringMatchTypeStartsWith = 1,
-    NSFindPanelSubstringMatchTypeFullWord   = 2,
-    NSFindPanelSubstringMatchTypeEndsWith   = 3
+  NSFindPanelSubstringMatchTypeContains   = 0,
+  NSFindPanelSubstringMatchTypeStartsWith = 1,
+  NSFindPanelSubstringMatchTypeFullWord   = 2,
+  NSFindPanelSubstringMatchTypeEndsWith   = 3
 };
 typedef NSUInteger NSFindPanelSubstringMatchType;
 
@@ -267,7 +267,7 @@ extern NSString *NSTextViewDidChangeTypingAttributesNotification;
 // 
 // - (BOOL)allowsImageEditing;
 // - (void)setAllowsImageEditing:(BOOL)flag;
-//     
+//   
 // - (void)showFindIndicatorForRange:(NSRange)charRange;
 // 
 // 

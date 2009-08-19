@@ -28,5 +28,17 @@ include('vienna/vienna');
 
 function main(argc, argv)
 {
-    return VN.ApplicationMain(argc, argv);
+  VN.App.run(function(app) {
+    var win = VN.Window.create({ title: 'Hey thwre!', frame: [100, 100, 300, 300] }, function(win) {
+      win.push(VN.Button.create({ title: 'Click me!', style: 'rounded', layout: { align: 'center' } }));
+    });
+    
+    // app.push(win); window adds itself to app
+    app.set('delegate', JSApp);
+  });
+  
+  // options.store('frame', [0, 0, 120, 120]);
+  // if (options.hasKey('frame'))
+  //   console.log(options.fetch('frame'))
+  
 }

@@ -13,30 +13,30 @@
 @class NSAffineTransform;
 
 enum {
-    NSButtLineCapStyle      = 0,
-    NSRoundLineCapStyle     = 1,
-    NSSquareLineCapStyle    = 2
+  NSButtLineCapStyle    = 0,
+  NSRoundLineCapStyle   = 1,
+  NSSquareLineCapStyle  = 2
 };
 typedef NSUInteger NSLineCapStyle;
 
 enum {
-    NSMiterLineJoinStyle    = 0,
-    NSRoundLineJoinStyle    = 1,
-    NSBevelLineJoinStyle    = 2
+  NSMiterLineJoinStyle  = 0,
+  NSRoundLineJoinStyle  = 1,
+  NSBevelLineJoinStyle  = 2
 };
 typedef NSUInteger NSLineJoinStyle;
 
 enum {
-    NSNonZeroWindingRule    = 0,
-    NSEvenOddWindingRule    = 1
+  NSNonZeroWindingRule  = 0,
+  NSEvenOddWindingRule  = 1
 };
 typedef NSUInteger NSWindingRule;
 
 enum {
-    NSMoveToBezierPathElement,
-    NSLineToBezierPathElement,
-    NSCurveToBezierPathElement,
-    NSClosePathBezierPathElement
+  NSMoveToBezierPathElement,
+  NSLineToBezierPathElement,
+  NSCurveToBezierPathElement,
+  NSClosePathBezierPathElement
 };
 typedef NSUInteger NSBezierPathElement;
 

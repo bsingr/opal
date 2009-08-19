@@ -11,9 +11,9 @@
 #import <AppKit/NSSegmentedControl.h>
 
 enum {
-    NSSegmentSwitchTrackingSelectOne    = 0,
-    NSSegmentSwitchTrackingSelectAny    = 1,
-    NSSegmentSwitchTrackingMomentary    = 2
+  NSSegmentSwitchTrackingSelectOne  = 0,
+  NSSegmentSwitchTrackingSelectAny  = 1,
+  NSSegmentSwitchTrackingMomentary  = 2
 };
 typedef NSUInteger NSSegmentSwitchTracking;
 

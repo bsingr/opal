@@ -1,4 +1,77 @@
 --- 
+clip_view.js: 
+  dependencies: 
+  - view.js
+outlet_connection.js: 
+  dependencies: 
+  - object.js
+array_controller.js: 
+  dependencies: 
+  - object_controller.js
+application.js: 
+  dependencies: 
+  - foundation.js
+  - responder.js
+  - graphics_context.js
+  - window.js
+string_drawing.js: 
+  dependencies: 
+  - string.js
+  - attributed_string.js
+nib_binding_connector.js: 
+  dependencies: 
+  - object.js
+outline_view.js: 
+  dependencies: 
+  - table_view.js
+table_header_view.js: 
+  dependencies: 
+  - view.js
+graphics_context.js: 
+  dependencies: 
+  - core_graphics.js
+  - graphics.js
+  - geometry.js
+  - object.js
+object_controller.js: 
+  dependencies: 
+  - controller.js
+object_container.js: 
+  dependencies: []
+
+text_view.js: 
+  dependencies: []
+
+connection_record.js: 
+  dependencies: []
+
+menu_item.js: 
+  dependencies: 
+  - view.js
+custom_resource.js: 
+  dependencies: []
+
+text_view_shared_data.js: 
+  dependencies: []
+
+text_field.js: 
+  dependencies: 
+  - control.js
+key_value_binding.js: 
+  dependencies: 
+  - object.js
+image.js: 
+  dependencies: []
+
+nib_loading.js: 
+  dependencies: 
+  - bundle.js
+  - nib.js
+responder.js: 
+  dependencies: 
+  - object.js
+  - array.js
+  - event.js
 window.js: 
   dependencies: 
   - geometry.js
@@ -7,159 +80,6 @@ window.js:
   - text.js
   - application.js
   - gradient.js
-text_view.js: 
-  dependencies: []
-
-outlet_connection.js: 
-  dependencies: 
-  - object.js
-menu_item_cell.js: 
-  dependencies: 
-  - cell.js
-  - menu_item.js
-main_menu.js: 
-  dependencies: 
-  - window.js
-layout_manager.js: 
-  dependencies: []
-
-color.js: 
-  dependencies: 
-  - object.js
-shadow.js: 
-  dependencies: 
-  - color.js
-responder.js: 
-  dependencies: 
-  - object.js
-  - array.js
-  - event.js
-button_cell.js: 
-  dependencies: 
-  - cell.js
-slider.js: 
-  dependencies: 
-  - control.js
-  - slider_cell.js
-scroll_view.js: 
-  dependencies: []
-
-object_container.js: 
-  dependencies: []
-
-key_value_binding.js: 
-  dependencies: 
-  - object.js
-binding_connection.js: 
-  dependencies: 
-  - object.js
-text_storage.js: 
-  dependencies: []
-
-text.js: 
-  dependencies: []
-
-slider_cell.js: 
-  dependencies: 
-  - cell.js
-paragraph_style.js: 
-  dependencies: 
-  - text.js
-outline_view.js: 
-  dependencies: 
-  - table_view.js
-custom_object.js: 
-  dependencies: 
-  - object.js
-cell.js: 
-  dependencies: 
-  - foundation.js
-  - text.js
-text_field.js: 
-  dependencies: 
-  - control.js
-menu.js: 
-  dependencies: 
-  - geometry.js
-button_image_source.js: 
-  dependencies: 
-  - image.js
-  - button.js
-window_template.js: 
-  dependencies: 
-  - foundation.js
-  - view.js
-table_view.js: 
-  dependencies: 
-  - view.js
-object_controller.js: 
-  dependencies: 
-  - controller.js
-clip_view.js: 
-  dependencies: 
-  - view.js
-action_connection.js: 
-  dependencies: 
-  - object.js
-render_context.js: 
-  dependencies: 
-  - foundation.js
-nib_binding_connector.js: 
-  dependencies: 
-  - object.js
-graphics_context.js: 
-  dependencies: 
-  - core_graphics.js
-  - graphics.js
-  - geometry.js
-  - object.js
-custom_view.js: 
-  dependencies: 
-  - view.js
-control.js: 
-  dependencies: 
-  - foundation.js
-  - view.js
-  - cell.js
-  - text.js
-  - application.js
-text_view_shared_data.js: 
-  dependencies: []
-
-nib.js: 
-  dependencies: 
-  - foundation.js
-event.js: 
-  dependencies: 
-  - foundation.js
-custom_resource.js: 
-  dependencies: []
-
-controller.js: 
-  dependencies: 
-  - key_value_binding.js
-animation_context.js: 
-  dependencies: 
-  - object.js
-table_header_view.js: 
-  dependencies: 
-  - view.js
-nib_loading.js: 
-  dependencies: 
-  - bundle.js
-  - nib.js
-menu_item.js: 
-  dependencies: 
-  - view.js
-image.js: 
-  dependencies: []
-
-attributed_string.js: 
-  dependencies: 
-  - attributed_string.js
-animation.js: 
-  dependencies: 
-  - foundation.js
 view.js: 
   dependencies: 
   - responder.js
@@ -167,60 +87,155 @@ view.js:
   - range.js
   - graphics.js
   - animation.js
+segmented_cell.js: 
+  dependencies: []
+
+font.js: 
+  dependencies: 
+  - string.js
+  - cell.js
+text_container.js: 
+  dependencies: []
+
 table_header_cell.js: 
   dependencies: 
   - text_field_cell.js
-table_column.js: 
+animation.js: 
   dependencies: 
   - foundation.js
-string_drawing.js: 
+slider.js: 
   dependencies: 
-  - string.js
-  - attributed_string.js
-scroller.js: 
+  - control.js
+  - slider_cell.js
+color.js: 
   dependencies: 
-  - view.js
-menu_window.js: 
+  - object.js
+menu_item_cell.js: 
   dependencies: 
-  - window.js
+  - cell.js
+  - menu_item.js
+segmented_control.js: 
+  dependencies: 
+  - control.js
 menu_view.js: 
   dependencies: 
   - view.js
-connection_record.js: 
-  dependencies: []
-
+table_column.js: 
+  dependencies: 
+  - foundation.js
+table_view.js: 
+  dependencies: 
+  - view.js
+window_template.js: 
+  dependencies: 
+  - foundation.js
+  - view.js
 button.js: 
   dependencies: 
   - control.js
   - button_cell.js
-application.js: 
+search_field_cell.js: 
+  dependencies: 
+  - text_field_cell.js
+nib.js: 
   dependencies: 
   - foundation.js
+view_controller.js: 
+  dependencies: 
   - responder.js
-  - graphics_context.js
-  - window.js
-typesetter.js: 
-  dependencies: []
-
+corner_view.js: 
+  dependencies: 
+  - view.js
 text_field_cell.js: 
   dependencies: 
   - cell.js
-text_container.js: 
+menu.js: 
+  dependencies: 
+  - geometry.js
+custom_object.js: 
+  dependencies: 
+  - object.js
+slider_cell.js: 
+  dependencies: 
+  - cell.js
+scroll_view.js: 
   dependencies: []
 
 panel.js: 
   dependencies: 
   - window.js
-font.js: 
-  dependencies: 
-  - string.js
-  - cell.js
-corner_view.js: 
+scroller.js: 
   dependencies: 
   - view.js
-array_controller.js: 
+button_image_source.js: 
   dependencies: 
-  - object_controller.js
+  - image.js
+  - button.js
+text_storage.js: 
+  dependencies: []
+
+attributed_string.js: 
+  dependencies: 
+  - attributed_string.js
+layout_manager.js: 
+  dependencies: []
+
+render_context.js: 
+  dependencies: 
+  - foundation.js
+action_connection.js: 
+  dependencies: 
+  - object.js
+binding_connection.js: 
+  dependencies: 
+  - object.js
+event.js: 
+  dependencies: 
+  - foundation.js
+custom_view.js: 
+  dependencies: 
+  - view.js
+button_cell.js: 
+  dependencies: 
+  - cell.js
+main_menu.js: 
+  dependencies: 
+  - window.js
 application_title_view.js: 
   dependencies: 
   - view.js
+animation_context.js: 
+  dependencies: 
+  - object.js
+controller.js: 
+  dependencies: 
+  - key_value_binding.js
+control.js: 
+  dependencies: 
+  - foundation.js
+  - view.js
+  - cell.js
+  - text.js
+  - application.js
+cell.js: 
+  dependencies: 
+  - foundation.js
+  - text.js
+search_field.js: 
+  dependencies: 
+  - text_field.js
+typesetter.js: 
+  dependencies: []
+
+text.js: 
+  dependencies: []
+
+shadow.js: 
+  dependencies: 
+  - color.js
+menu_window.js: 
+  dependencies: 
+  - window.js
+paragraph_style.js: 
+  dependencies: 
+  - text.js

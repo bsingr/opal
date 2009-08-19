@@ -28,219 +28,219 @@
 
 var NSResponder = NSObject.extend({
 
-    _nextResponder: null,
+  _nextResponder: null,
+  
+  nextResponder: function() {
+    return this._nextResponder;
+  },
+  
+  setNextResponder: function(aResponder) {
+    this._nextResponder = aResponder;
+  },
+  
+  tryToPerform: function(anAction, anObject) {
     
-    nextResponder: function() {
-        return this._nextResponder;
-    },
-    
-    setNextResponder: function(aResponder) {
-        this._nextResponder = aResponder;
-    },
-    
-    tryToPerform: function(anAction, anObject) {
-        
-        if (this.respondsTo(anAction)) {
-            this.perform(anAction, anObject);
-            return true;
-        }
-        
-        return this._nextResponder.tryToPerform(anAction, anObject);
-    },
-    
-    performKeyEquivalent: function(theEvent) {
-        return false;
-    },
-    
-    mouseDown: function(theEvent) {
-        console.log('sending mouse down to');
-        console.log(this._nextResponder);
-        this._nextResponder.mouseDown(theEvent);
+    if (this.respondsTo(anAction)) {
+      this.perform(anAction, anObject);
+      return true;
     }
+    
+    return this._nextResponder.tryToPerform(anAction, anObject);
+  },
+  
+  performKeyEquivalent: function(theEvent) {
+    return false;
+  },
+  
+  mouseDown: function(theEvent) {
+    console.log('sending mouse down to');
+    console.log(this._nextResponder);
+    this._nextResponder.mouseDown(theEvent);
+  }
 
-    // - (BOOL)performKeyEquivalent:(NSEvent *)theEvent
-    // {
-    //     return NO;
-    // }
-    // 
-    // - (id)validRequestorForSendType:(NSString *)sendType returnType:(NSString *)returnType
-    // {
-    //     // TODO: Need to implement
-    // }
-    // 
-    // - (void)mouseDown:(NSEvent *)theEvent
-    // {
-    //     [_nextResponder mouseDown:theEvent];
-    // }
-    // 
-    // - (void)rightMouseDown:(NSEvent *)theEvent
-    // {
-    //     [_nextResponder rightMouseDown:theEvent];
-    // }
-    // 
-    // - (void)otherMouseDown:(NSEvent *)theEvent
-    // {
-    //     [_nextResponder otherMouseDown:theEvent];
-    // }
-    // 
-    // - (void)mouseUp:(NSEvent *)theEvent
-    // {
-    //     [_nextResponder mouseUp:theEvent];
-    // }
-    // 
-    // - (void)rightMouseUp:(NSEvent *)theEvent
-    // {
-    //     [_nextResponder rightMouseUp:theEvent];
-    // }
-    // 
-    // - (void)otherMouseUp:(NSEvent *)theEvent
-    // {
-    //     [_nextResponder otherMouseUp:theEvent];
-    // }
-    // 
-    // - (void)mouseMoved:(NSEvent *)theEvent
-    // {
-    //     [_nextResponder mouseMoved:theEvent];
-    // }
-    // 
-    // - (void)mouseDragged:(NSEvent *)theEvent
-    // {
-    //     [_nextResponder mouseDragged:theEvent];
-    // }
-    // 
-    // - (void)scrollWheel:(NSEvent *)theEvent
-    // {
-    //     [_nextResponder scrollWheel:theEvent];
-    // }
-    // 
-    // - (void)rightMouseDragged:(NSEvent *)theEvent
-    // {
-    //     [_nextResponder rightMouseDragged:theEvent];
-    // }
-    // 
-    // - (void)otherMouseDragged:(NSEvent *)theEvent
-    // {
-    //     [_nextResponder otherMouseDragged:theEvent];
-    // }
-    // 
-    // - (void)mouseEntered:(NSEvent *)theEvent
-    // {
-    //     [_nextResponder mouseEntered:theEvent];
-    // }
-    // 
-    // - (void)mouseExited:(NSEvent *)theEvent
-    // {
-    //     [_nextResponder mouseExited:theEvent];
-    // }
-    // 
-    // - (void)keyDown:(NSEvent *)theEvent
-    // {
-    //     [_nextResponder keyDown:theEvent];
-    // }
-    // 
-    // - (void)keyUp:(NSEvent *)theEvent
-    // {
-    //     [_nextResponder keyUp:theEvent];
-    // }
-    // 
-    // - (void)flagsChanged:(NSEvent *)theEvent
-    // {
-    //     // TODO: Need to implement
-    // }
-    // 
-    // - (void)tabletPoint:(NSEvent *)theEvent
-    // {
-    //     // TODO: Need to implement
-    // }
-    // 
-    // - (void)tabletProximity:(NSEvent *)theEvent
-    // {
-    //     // TODO: Need to implement
-    // }
-    // 
-    // - (void)cursorUpdate:(NSEvent *)event
-    // {
-    //     // TODO: Need to implement
-    // }
-    // 
-    // - (void)noResponderFor:(SEL)eventSelector
-    // {
-    //     if (eventSelector == @selector(keyDown:))
-    //     {
-    //         // TODO: Make a beeping sound
-    //     }
-    // }
-    // 
-    // - (BOOL)acceptsFirstResponder
-    // {
-    //     return NO;
-    // }
-    // 
-    // - (BOOL)becomeFirstResponder
-    // {
-    //     return YES;
-    // }
-    // 
-    // - (BOOL)resignFirstResponder
-    // {
-    //     return YES;
-    // }
-    // 
-    // 
-    // - (void)interpretKeyEvents:(NSArray *)eventArray
-    // {
-    //     NSInteger eventsCount = [eventArray count];
-    //     for (int i = 0; i < eventsCount; i++)
-    //     {
-    //         // NSEvent *event = [eventArray objectAtIndex:i];
-    //         //         NSString *eventString = [event charactersIgnoringModifiers];
-    //         //         
-    //         //         switch ([event keyCode]) {
-    //         //             case NSBackspaceKey:
-    //         //                 if ([self respondsToSelector:@selector(deleteBackward:)])
-    //         //                     [self deleteBackward:event];
-    //         //                 break;
-    //         //             case NSTabKey:
-    //         //                 if ([self respondsToSelector:@selector(insertTab:)])
-    //         //                     [self insertTab:event];
-    //         //                 break;
-    //         //             default:
-    //         //             NSLog(@"Does not respond to - interptretKeyEvents:");
-    //         //         }
-    //     }
-    // }
-    // 
-    // - (void)flushBufferedKeyEvents
-    // {
-    //     // TODO: Need to implement
-    // }
-    // 
-    // 
-    // - (void)setMenu:(NSMenu *)menu
-    // {
-    //     // TODO: Need to implement
-    // }
-    // 
-    // - (NSMenu *)menu
-    // {
-    //     // TODO: Need to implement
-    // }
-    // 
-    // 
-    // - (void)showContextHelp:(id)sender
-    // {
-    //     // TODO: Need to implement
-    // }
-    // 
-    // 
-    // - (void)helpRequested:(NSEvent *)eventPtr
-    // {
-    //     // TODO: Need to implement
-    // }
-    // 
-    // 
-    // - (BOOL)shouldBeTreatedAsInkEvent:(NSEvent *)theEvent
-    // {
-    //     // TODO: Need to implement
-    // }
+  // - (BOOL)performKeyEquivalent:(NSEvent *)theEvent
+  // {
+  //   return NO;
+  // }
+  // 
+  // - (id)validRequestorForSendType:(NSString *)sendType returnType:(NSString *)returnType
+  // {
+  //   // TODO: Need to implement
+  // }
+  // 
+  // - (void)mouseDown:(NSEvent *)theEvent
+  // {
+  //   [_nextResponder mouseDown:theEvent];
+  // }
+  // 
+  // - (void)rightMouseDown:(NSEvent *)theEvent
+  // {
+  //   [_nextResponder rightMouseDown:theEvent];
+  // }
+  // 
+  // - (void)otherMouseDown:(NSEvent *)theEvent
+  // {
+  //   [_nextResponder otherMouseDown:theEvent];
+  // }
+  // 
+  // - (void)mouseUp:(NSEvent *)theEvent
+  // {
+  //   [_nextResponder mouseUp:theEvent];
+  // }
+  // 
+  // - (void)rightMouseUp:(NSEvent *)theEvent
+  // {
+  //   [_nextResponder rightMouseUp:theEvent];
+  // }
+  // 
+  // - (void)otherMouseUp:(NSEvent *)theEvent
+  // {
+  //   [_nextResponder otherMouseUp:theEvent];
+  // }
+  // 
+  // - (void)mouseMoved:(NSEvent *)theEvent
+  // {
+  //   [_nextResponder mouseMoved:theEvent];
+  // }
+  // 
+  // - (void)mouseDragged:(NSEvent *)theEvent
+  // {
+  //   [_nextResponder mouseDragged:theEvent];
+  // }
+  // 
+  // - (void)scrollWheel:(NSEvent *)theEvent
+  // {
+  //   [_nextResponder scrollWheel:theEvent];
+  // }
+  // 
+  // - (void)rightMouseDragged:(NSEvent *)theEvent
+  // {
+  //   [_nextResponder rightMouseDragged:theEvent];
+  // }
+  // 
+  // - (void)otherMouseDragged:(NSEvent *)theEvent
+  // {
+  //   [_nextResponder otherMouseDragged:theEvent];
+  // }
+  // 
+  // - (void)mouseEntered:(NSEvent *)theEvent
+  // {
+  //   [_nextResponder mouseEntered:theEvent];
+  // }
+  // 
+  // - (void)mouseExited:(NSEvent *)theEvent
+  // {
+  //   [_nextResponder mouseExited:theEvent];
+  // }
+  // 
+  // - (void)keyDown:(NSEvent *)theEvent
+  // {
+  //   [_nextResponder keyDown:theEvent];
+  // }
+  // 
+  // - (void)keyUp:(NSEvent *)theEvent
+  // {
+  //   [_nextResponder keyUp:theEvent];
+  // }
+  // 
+  // - (void)flagsChanged:(NSEvent *)theEvent
+  // {
+  //   // TODO: Need to implement
+  // }
+  // 
+  // - (void)tabletPoint:(NSEvent *)theEvent
+  // {
+  //   // TODO: Need to implement
+  // }
+  // 
+  // - (void)tabletProximity:(NSEvent *)theEvent
+  // {
+  //   // TODO: Need to implement
+  // }
+  // 
+  // - (void)cursorUpdate:(NSEvent *)event
+  // {
+  //   // TODO: Need to implement
+  // }
+  // 
+  // - (void)noResponderFor:(SEL)eventSelector
+  // {
+  //   if (eventSelector == @selector(keyDown:))
+  //   {
+  //     // TODO: Make a beeping sound
+  //   }
+  // }
+  // 
+  // - (BOOL)acceptsFirstResponder
+  // {
+  //   return NO;
+  // }
+  // 
+  // - (BOOL)becomeFirstResponder
+  // {
+  //   return YES;
+  // }
+  // 
+  // - (BOOL)resignFirstResponder
+  // {
+  //   return YES;
+  // }
+  // 
+  // 
+  // - (void)interpretKeyEvents:(NSArray *)eventArray
+  // {
+  //   NSInteger eventsCount = [eventArray count];
+  //   for (int i = 0; i < eventsCount; i++)
+  //   {
+  //     // NSEvent *event = [eventArray objectAtIndex:i];
+  //     //     NSString *eventString = [event charactersIgnoringModifiers];
+  //     //     
+  //     //     switch ([event keyCode]) {
+  //     //       case NSBackspaceKey:
+  //     //         if ([self respondsToSelector:@selector(deleteBackward:)])
+  //     //           [self deleteBackward:event];
+  //     //         break;
+  //     //       case NSTabKey:
+  //     //         if ([self respondsToSelector:@selector(insertTab:)])
+  //     //           [self insertTab:event];
+  //     //         break;
+  //     //       default:
+  //     //       NSLog(@"Does not respond to - interptretKeyEvents:");
+  //     //     }
+  //   }
+  // }
+  // 
+  // - (void)flushBufferedKeyEvents
+  // {
+  //   // TODO: Need to implement
+  // }
+  // 
+  // 
+  // - (void)setMenu:(NSMenu *)menu
+  // {
+  //   // TODO: Need to implement
+  // }
+  // 
+  // - (NSMenu *)menu
+  // {
+  //   // TODO: Need to implement
+  // }
+  // 
+  // 
+  // - (void)showContextHelp:(id)sender
+  // {
+  //   // TODO: Need to implement
+  // }
+  // 
+  // 
+  // - (void)helpRequested:(NSEvent *)eventPtr
+  // {
+  //   // TODO: Need to implement
+  // }
+  // 
+  // 
+  // - (BOOL)shouldBeTreatedAsInkEvent:(NSEvent *)theEvent
+  // {
+  //   // TODO: Need to implement
+  // }
 });

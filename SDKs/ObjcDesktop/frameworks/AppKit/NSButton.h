@@ -13,7 +13,7 @@
 
 @interface NSButton : NSControl
 {
-    
+  
 }
 
 - (NSString *)title;

@@ -26,35 +26,35 @@
 
 var NSScrollView = NSView.extend({
    
-    initWithCoder: function(aCoder) {
-        this._super(aCoder);
-        var flags = aCoder.decodeIntForKey("NSsFlags");
-        
-        this._hasVerticalScroller = (flags & 0x10) ? true : false;
-        this._hasHorizontalScroller = (flags & 0x20) ? true : false;
-        this._borderType = flags & 0x303;
+  initWithCoder: function(aCoder) {
+    this._super(aCoder);
+    var flags = aCoder.decodeIntForKey("NSsFlags");
+    
+    this._hasVerticalScroller = (flags & 0x10) ? true : false;
+    this._hasHorizontalScroller = (flags & 0x20) ? true : false;
+    this._borderType = flags & 0x303;
 
-        this._verticalScroller = aCoder.decodeObjectForKey("NSVScroller");
-        this._horizontalScroller = aCoder.decodeObjectForKey("NSHScroller");
-        this._clipView = aCoder.decodeObjectForKey("NSContentView");
-        this._headerClipView = aCoder.decodeObjectForKey("NSHeaderClipView");
-        this._cornerView = aCoder.decodeObjectForKey("NSCornerView");
-        
-        if (!this._hasVerticalScroller)
-            this._verticalScroller.removeFromSuperview();
-        
-        if (!this._hasHorizontalScroller)
-            this._horizontalScroller.removeFromSuperview();
-        
-        this.tile();
-        return this;
-    },
+    this._verticalScroller = aCoder.decodeObjectForKey("NSVScroller");
+    this._horizontalScroller = aCoder.decodeObjectForKey("NSHScroller");
+    this._clipView = aCoder.decodeObjectForKey("NSContentView");
+    this._headerClipView = aCoder.decodeObjectForKey("NSHeaderClipView");
+    this._cornerView = aCoder.decodeObjectForKey("NSCornerView");
     
-    tile: function() {
-        
-    },
+    if (!this._hasVerticalScroller)
+      this._verticalScroller.removeFromSuperview();
     
-    hitTest: function() {
-        return null;
-    }
+    if (!this._hasHorizontalScroller)
+      this._horizontalScroller.removeFromSuperview();
+    
+    this.tile();
+    return this;
+  },
+  
+  tile: function() {
+    
+  },
+  
+  hitTest: function() {
+    return null;
+  }
 });

@@ -17,13 +17,13 @@
 typedef NSUInteger NSGradientDrawingOptions;
 
 enum {
-    NSGradientDrawsBeforeStartingLocation   = (1 << 0),
-    NSGradientDrawsAfterEndingLocation      = (1 << 1)
+  NSGradientDrawsBeforeStartingLocation   = (1 << 0),
+  NSGradientDrawsAfterEndingLocation    = (1 << 1)
 };
 
 @interface NSGradient : NSObject <NSCopying, NSCoding>
 {
-    NSMutableArray  *_theColors;
+  NSMutableArray  *_theColors;
 }
 
 - (id)initWithStartingColor:(NSColor *)startingColor endingColor:(NSColor *)endingColor;

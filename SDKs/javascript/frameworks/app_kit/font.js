@@ -28,115 +28,115 @@ include('foundation/string');
 include('app_kit/cell');
 
 var NSFont = NSObject.extend({
-    
-    _name: null,
-    
-    _size: null,
-    
-    initWithCoder: function(aCoder) {
-        var name = "Arial";
-        var size = aCoder.decodeIntForKey("NSSize");
-        return NSFont.fontWithNameAndSize(name, size);
-    },
-    
-    fontName: function() {
-        return this._name;
-    },
-    
-    fontSize: function() {
-        return this._size;
-    },
-    
-    renderingRepresentation: function() {
-        return (this._isBold ? "bold " : "") + Math.round(this._size) + "px '" + this._name + "'"; 
-    }
+  
+  _name: null,
+  
+  _size: null,
+  
+  initWithCoder: function(aCoder) {
+    var name = "Arial";
+    var size = aCoder.decodeIntForKey("NSSize");
+    return NSFont.fontWithNameAndSize(name, size);
+  },
+  
+  fontName: function() {
+    return this._name;
+  },
+  
+  fontSize: function() {
+    return this._size;
+  },
+  
+  renderingRepresentation: function() {
+    return (this._isBold ? "bold " : "") + Math.round(this._size) + "px '" + this._name + "'"; 
+  }
 });
 
 VN.extend(NSFont, {
+  
+  fontWithNameAndSize: function(fontName, fontSize) {
+    var font = NSFont.create();
+    font._name = fontName;
+    font._size = fontSize;
+    return font;
+  },
+  
+  fontWithFontDescriptorAndSize: function(fontDescriptor, fontSize) {
     
-    fontWithNameAndSize: function(fontName, fontSize) {
-        var font = NSFont.create();
-        font._name = fontName;
-        font._size = fontSize;
-        return font;
-    },
+  },
+  
+  userFontOfSize: function(fontSize) {
     
-    fontWithFontDescriptorAndSize: function(fontDescriptor, fontSize) {
-        
-    },
+  },
+  
+  setUserFont: function(aFont) {
     
-    userFontOfSize: function(fontSize) {
-        
-    },
+  },
+  
+  systemFontOfSize: function(fontSize) {
     
-    setUserFont: function(aFont) {
-        
-    },
+  },
+  
+  boldSystemFontOfSize: function(fontSize) {
     
-    systemFontOfSize: function(fontSize) {
-        
-    },
+  },
+  
+  labelFontOfSize: function(fontSize) {
     
-    boldSystemFontOfSize: function(fontSize) {
-        
-    },
+  },
+  
+  titleBarFontOfSize: function(fontSize) {
     
-    labelFontOfSize: function(fontSize) {
-        
-    },
+  },
+  
+  menuFontOfSize: function(fontSize) {
+    var theFont = NSFont.fontWithNameAndSize("Arial", fontSize);
+    theFont._isBold = true;
+    return theFont;
+  },
+  
+  menuBarFontOfSize: function(fontSize) {
+    var theFont = NSFont.fontWithNameAndSize("Arial", fontSize);
+    theFont._isBold = true;
+    return theFont;
+  },
+  
+  applicationTitleFontOfSize: function(fontSize) {
+    var theFont = NSFont.fontWithNameAndSize("Arial", fontSize);
+    theFont._isBold = true;
+    return theFont;
+  },
+  
+  messageFontOfSize: function(fontSize) {
     
-    titleBarFontOfSize: function(fontSize) {
-        
-    },
+  },
+  
+  paletteFontOfSize: function(fontSize) {
     
-    menuFontOfSize: function(fontSize) {
-        var theFont = NSFont.fontWithNameAndSize("Arial", fontSize);
-        theFont._isBold = true;
-        return theFont;
-    },
+  },
+  
+  toolTipsFontOfSize: function(fontSize) {
     
-    menuBarFontOfSize: function(fontSize) {
-        var theFont = NSFont.fontWithNameAndSize("Arial", fontSize);
-        theFont._isBold = true;
-        return theFont;
-    },
+  },
+  
+  controlContentFontOfSize: function(fontSize) {
+    var theFont = NSFont.fontWithNameAndSize("Arial", fontSize);
+    return theFont;
+  },
+  
+  systemFontSize: function() {
     
-    applicationTitleFontOfSize: function(fontSize) {
-        var theFont = NSFont.fontWithNameAndSize("Arial", fontSize);
-        theFont._isBold = true;
-        return theFont;
-    },
+  },
+  
+  smallSystemFontSize: function() {
     
-    messageFontOfSize: function(fontSize) {
-        
-    },
+  },
+  
+  labelFontSize: function() {
     
-    paletteFontOfSize: function(fontSize) {
-        
-    },
+  },
+  
+  systemFontSizeForControlSize: function(controlSize) {
     
-    toolTipsFontOfSize: function(fontSize) {
-        
-    },
-    
-    controlContentFontOfSize: function(fontSize) {
-        var theFont = NSFont.fontWithNameAndSize("Arial", fontSize);
-        return theFont;
-    },
-    
-    systemFontSize: function() {
-        
-    },
-    
-    smallSystemFontSize: function() {
-        
-    },
-    
-    labelFontSize: function() {
-        
-    },
-    
-    systemFontSizeForControlSize: function(controlSize) {
-        
-    }
+  }
 });

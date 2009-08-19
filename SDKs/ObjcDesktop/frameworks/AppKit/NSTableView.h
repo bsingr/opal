@@ -11,45 +11,45 @@
 @class NSTableHeaderView, NSTableColumn, NSMutableArray, NSIndexSet, NSMutableIndexSet;
 
 enum {
-    NSTableViewGridNone                    = 0,
-    NSTableViewSolidVerticalGridLineMask   = 1 << 0,
-    NSTableViewSolidHorizontalGridLineMask = 1 << 1
+  NSTableViewGridNone          = 0,
+  NSTableViewSolidVerticalGridLineMask   = 1 << 0,
+  NSTableViewSolidHorizontalGridLineMask = 1 << 1
 };
 
 enum {
-    NSTableViewSelectionHighlightStyleRegular       = 0,
-    NSTableViewSelectionHighlightStyleSourceList    = 1
+  NSTableViewSelectionHighlightStyleRegular     = 0,
+  NSTableViewSelectionHighlightStyleSourceList  = 1
 };
 typedef NSInteger NSTableViewSelectionHighlightStyle;
 
 @interface NSTableView : NSControl <NSUserInterfaceValidations>
 {
-    id                   _dataSource;
-    id                   _delegate;
-    
-    NSScrollView        *_scrollView;
-    NSTableHeaderView   *_headerView;
-    
-    NSView              *_cornerView;
-    
-    NSMutableArray      *_tableColumns;
-    NSMutableArray      *_tableColumnViews;
-    
-    NSUInteger           _numberOfRows;
-    NSUInteger           _numberOfColumns;
-    
-    NSMutableArray      *_tableCells;
-    
-    NSSize               _intercellSpacing;
-    NSUInteger           _rowHeight;
-    
-    NSMutableIndexSet   *_selectedRowIndexes;
-    
-    NSUInteger           _editedColumn;
-    NSUInteger           _editedRow;
-    
-    BOOL                 _drawsGrid;
-    BOOL                 _alternatingRowBackground;
+  id           _dataSource;
+  id           _delegate;
+  
+  NSScrollView    *_scrollView;
+  NSTableHeaderView   *_headerView;
+  
+  NSView        *_cornerView;
+  
+  NSMutableArray    *_tableColumns;
+  NSMutableArray    *_tableColumnViews;
+  
+  NSUInteger       _numberOfRows;
+  NSUInteger       _numberOfColumns;
+  
+  NSMutableArray    *_tableCells;
+  
+  NSSize         _intercellSpacing;
+  NSUInteger       _rowHeight;
+  
+  NSMutableIndexSet   *_selectedRowIndexes;
+  
+  NSUInteger       _editedColumn;
+  NSUInteger       _editedRow;
+  
+  BOOL         _drawsGrid;
+  BOOL         _alternatingRowBackground;
 }
 
 - (void)setDataSource:(id)aSource;

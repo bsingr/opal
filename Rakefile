@@ -7,9 +7,9 @@ begin
   Bones.setup
 rescue LoadError
   begin
-    load 'tasks/setup.rb'
+  load 'tasks/setup.rb'
   rescue LoadError
-    raise RuntimeError, '### please install the "bones" gem ###'
+  raise RuntimeError, '### please install the "bones" gem ###'
   end
 end
 

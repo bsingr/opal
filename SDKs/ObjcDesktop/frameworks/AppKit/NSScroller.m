@@ -13,35 +13,35 @@
 
 - (id)initWithCoder:(NSCoder *)aCoder
 {
-    [super initWithCoder:aCoder];
-    
-    if (_bounds.size.width < _bounds.size.height)
-        _isVertical = YES;
-    else
-        _isVertical = NO;
-    
-    return self;
+  [super initWithCoder:aCoder];
+  
+  if (_bounds.size.width < _bounds.size.height)
+    _isVertical = YES;
+  else
+    _isVertical = NO;
+  
+  return self;
 }
 
 - (id)initWithFrame:(NSRect)frameRect
 {
-    self = [super initWithFrame:frameRect];
-    
-    if (self) {
-    }
-    
-    return self;
+  self = [super initWithFrame:frameRect];
+  
+  if (self) {
+  }
+  
+  return self;
 }
 
 - (void)drawRect:(NSRect)rect
 {
-    CGContextRef c = [[NSGraphicsContext currentContext] graphicsPort];
-    CGContextFillRect(c, rect);
+  CGContextRef c = [[NSGraphicsContext currentContext] graphicsPort];
+  CGContextFillRect(c, rect);
 }
 
 - (BOOL)isVertical
 {
-    return _isVertical;
+  return _isVertical;
 }
 
 @end

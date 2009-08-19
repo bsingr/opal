@@ -14,63 +14,63 @@
 // MARK: Creating a menu item
 - (id)init
 {
-    [super init];
-    _title = @"";
-    _action = nil;
-    _keyEquivalent = nil;
-    return self;
+  [super init];
+  _title = @"";
+  _action = nil;
+  _keyEquivalent = nil;
+  return self;
 }
 
 - (id)initWithTitle:(NSString *)itemName action:(SEL)anAction keyEquivalent:(NSString *)charCode
 {
-    [self init];
+  [self init];
+  
+  if (self)
+  {
+    _title = itemName;
+    _action = anAction;
+    _keyEquivalent = charCode;
+    _keyEquivalentModifierMask = 0;
     
-    if (self)
-    {
-        _title = itemName;
-        _action = anAction;
-        _keyEquivalent = charCode;
-        _keyEquivalentModifierMask = 0;
-        
-        _menu = nil;
-        _subMenu = nil;
-        _tag = -1;
-        _target = nil;
-        
-        _isEnabled = YES;
-        _isHidden = NO;
-    }
+    _menu = nil;
+    _subMenu = nil;
+    _tag = -1;
+    _target = nil;
     
-    return self;
+    _isEnabled = YES;
+    _isHidden = NO;
+  }
+  
+  return self;
 }
 
 - (id)initWithCoder:(NSCoder *)aCoder
 {
-    _title = [aCoder decodeObjectForKey:@"NSTitle"];
-    _keyEquivalent = [aCoder decodeObjectForKey:@"NSKeyEquiv"];
-    _action = [aCoder decodeObjectForKey:@"NSAction"];
-    _target = [aCoder decodeObjectForKey:@"NSTarget"];
-    _menu = [aCoder decodeObjectForKey:@"NSMenu"];
-    _subMenu = [aCoder decodeObjectForKey:@"NSSubmenu"];
-    
-    _isEnabled = YES;
-    _isHidden = NO;
-    
-    return self;
+  _title = [aCoder decodeObjectForKey:@"NSTitle"];
+  _keyEquivalent = [aCoder decodeObjectForKey:@"NSKeyEquiv"];
+  _action = [aCoder decodeObjectForKey:@"NSAction"];
+  _target = [aCoder decodeObjectForKey:@"NSTarget"];
+  _menu = [aCoder decodeObjectForKey:@"NSMenu"];
+  _subMenu = [aCoder decodeObjectForKey:@"NSSubmenu"];
+  
+  _isEnabled = YES;
+  _isHidden = NO;
+  
+  return self;
 }
 
 // MARK: Enabling a menu item
 - (void)setEnabled:(BOOL)flag
 {
-    if (flag == 0)
-        flag = NO;
-    
-    _isEnabled = flag;
+  if (flag == 0)
+    flag = NO;
+  
+  _isEnabled = flag;
 }
 
 - (BOOL)isEnabled
 {
-    return _isEnabled;
+  return _isEnabled;
 }
 
 // MARK: Handling hidden status
@@ -81,33 +81,33 @@
 // MARK: Managing the target and action
 - (void)setTarget:(id)anObject
 {
-    _target = anObject;
+  _target = anObject;
 }
 
 - (id)target
 {
-    return _target;
+  return _target;
 }
 
 - (void)setAction:(SEL)aSelector
 {
-    _action = aSelector;
+  _action = aSelector;
 }
 
 - (SEL)action
 {
-    return _action;
+  return _action;
 }
 
 // MARK: Managing the title
 - (void)setTitle:(NSString *)aString
 {
-    _title = aString;
+  _title = aString;
 }
 
 - (NSString *)title
 {
-    return _title;
+  return _title;
 }
 
 - (void)setAttributedTitle:(NSAttributedString *)string{}
@@ -116,23 +116,23 @@
 // MARK: Managing the tag
 - (void)setTag:(NSInteger)anInt
 {
-    _tag = anInt;
+  _tag = anInt;
 }
 
 - (NSInteger)tag
 {
-    return _tag;
+  return _tag;
 }
 
 // MARK: Managing the state
 - (void)setState:(NSInteger)itemState
 {
-    _state = itemState;
+  _state = itemState;
 }
 
 - (NSInteger)state
 {
-    return _state;
+  return _state;
 }
 
 // MARK: Managing the image
@@ -148,45 +148,45 @@
 // MARK: Managing submens
 - (void)setSubmenu:(NSMenu *)aSubmenu
 {
-    _subMenu = aSubmenu;
+  _subMenu = aSubmenu;
 }
 
 - (NSMenu *)submenu
 {
-    return _subMenu;
+  return _subMenu;
 }
 
 - (BOOL)hasSubmenu
 {
-    if (_subMenu)
-        return YES;
-    
-    return NO;
+  if (_subMenu)
+    return YES;
+  
+  return NO;
 }
 
 // MARK: Getting a seperator item
 + (NSMenuItem *)separatorItem
 {
-    return [[NSMenuItem alloc] initWithTitle:@"" action:nil keyEquivalent:nil];
+  return [[NSMenuItem alloc] initWithTitle:@"" action:nil keyEquivalent:nil];
 }
 
 - (BOOL)isSeparatorItem
 {
-    if ((_title == @"") || (_title == nil))
-        return YES;
-    
-    return NO;
+  if ((_title == @"") || (_title == nil))
+    return YES;
+  
+  return NO;
 }
 
 // MARK: Managing the owner menu
 - (void)setMenu:(NSMenu *)aMenu
 {
-    _menu = aMenu;
+  _menu = aMenu;
 }
 
 - (NSMenu *)menu
 {
-    return _menu;
+  return _menu;
 }
 
 // MARK: Managing key equivalents

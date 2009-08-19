@@ -23,28 +23,28 @@ extern id NSGetCriticalAlertPanel(const NSString *title, NSString *msgFormat, NS
 extern void NSReleaseAlertPanel(id panel);
 
 enum {
-    NSAlertDefaultReturn		= 1,
-    NSAlertAlternateReturn		= 0,
-    NSAlertOtherReturn			= -1,
-    NSAlertErrorReturn			= -2
+  NSAlertDefaultReturn		= 1,
+  NSAlertAlternateReturn		= 0,
+  NSAlertOtherReturn			= -1,
+  NSAlertErrorReturn			= -2
 };
 
 enum {
-    NSOKButton				    = 1,
-    NSCancelButton			    = 0
+  NSOKButton				  = 1,
+  NSCancelButton			  = 0
 };
 
 enum {
-    NSUtilityWindowMask			= 1 << 4,
-    NSDocModalWindowMask 		= 1 << 6
+  NSUtilityWindowMask			= 1 << 4,
+  NSDocModalWindowMask 		= 1 << 6
 };
 
 enum {
-    NSNonactivatingPanelMask	= 1 << 7
+  NSNonactivatingPanelMask	= 1 << 7
 };
 
 enum {
-    NSHUDWindowMask             = 1 << 13
+  NSHUDWindowMask       = 1 << 13
 };
 
 @interface NSPanel : NSWindow

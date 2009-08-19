@@ -12,27 +12,27 @@
 
 - (void)encodeValueOfObjCType:(const char *)type at:(const void *)addr
 {
-    
+  
 }
 
 - (void)encodeDataObject:(NSData *)data
 {
-    
+  
 }
 
 - (void)decodeValueOfObjCType:(const char *)type at:(void *)data
 {
-    
+  
 }
 
 - (NSData *)decodeDataObject
 {
-    
+  
 }
 
 - (NSInteger)versionForClassName:(NSString *)className
 {
-    
+  
 }
 
 @end

@@ -29,25 +29,25 @@ Vienna.require_all_libs_relative_to(__FILE__)
 module Vienna
   
   module Builder
+  
+  class Css
     
-    class Css
-      
-      def initialize(source, dest, project)
-        @source = source
-        @destination = dest
-        @project = project
-      end
-      
-      def build!
-        f = File.new(@source)
-        t = f.read
-        o = File.new(@destination, 'w')
-        # o.write(JSMin.minify(t))
-        o.write(t)
-        o.close
-        f.close
-      end
-      
+    def initialize(source, dest, project)
+    @source = source
+    @destination = dest
+    @project = project
     end
+    
+    def build!
+    f = File.new(@source)
+    t = f.read
+    o = File.new(@destination, 'w')
+    # o.write(JSMin.minify(t))
+    o.write(t)
+    o.close
+    f.close
+    end
+    
+  end
   end
 end

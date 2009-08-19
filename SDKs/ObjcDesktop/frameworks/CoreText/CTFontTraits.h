@@ -36,33 +36,33 @@ extern const CFStringRef kCTFontWidthTrait;
 extern const CFStringRef kCTFontSlantTrait;
 
 enum {
-    kCTFontClassMaskShift = 28
+  kCTFontClassMaskShift = 28
 };
 
 enum {
-    kCTFontItalicTrait              = (1 << 0),
-    kCTFontBoldTrait                = (1 << 1),
-    kCTFontExpandedTrait            = (1 << 5),
-    kCTFontCondensedTrait           = (1 << 6),
-    kCTFontMonoSpaceTrait           = (1 << 10),
-    kCTFontVerticalTrait            = (1 << 11),
-    kCTFontUIOptimizedTrait         = (1 << 12),
+  kCTFontItalicTrait        = (1 << 0),
+  kCTFontBoldTrait        = (1 << 1),
+  kCTFontExpandedTrait      = (1 << 5),
+  kCTFontCondensedTrait       = (1 << 6),
+  kCTFontMonoSpaceTrait       = (1 << 10),
+  kCTFontVerticalTrait      = (1 << 11),
+  kCTFontUIOptimizedTrait     = (1 << 12),
 
-    kCTFontClassMaskTrait           = (15 << kCTFontClassMaskShift)
+  kCTFontClassMaskTrait       = (15 << kCTFontClassMaskShift)
 };
 typedef int CTFontSymbolicTraits;
 
 enum {
-    kCTFontUnknownClass             = (0 << kCTFontClassMaskShift),
-    kCTFontOldStyleSerifsClass      = (1 << kCTFontClassMaskShift),
-    kCTFontTransitionalSerifsClass  = (2 << kCTFontClassMaskShift),
-    kCTFontModernSerifsClass        = (3 << kCTFontClassMaskShift),
-    kCTFontClarendonSerifsClass     = (4 << kCTFontClassMaskShift),
-    kCTFontSlabSerifsClass          = (5 << kCTFontClassMaskShift),
-    kCTFontFreeformSerifsClass      = (7 << kCTFontClassMaskShift),
-    kCTFontSansSerifClass           = (8 << kCTFontClassMaskShift),
-    kCTFontOrnamentalsClass         = (9 << kCTFontClassMaskShift),
-    kCTFontScriptsClass             = (10 << kCTFontClassMaskShift),
-    kCTFontSymbolicClass            = (12 << kCTFontClassMaskShift)
+  kCTFontUnknownClass       = (0 << kCTFontClassMaskShift),
+  kCTFontOldStyleSerifsClass    = (1 << kCTFontClassMaskShift),
+  kCTFontTransitionalSerifsClass  = (2 << kCTFontClassMaskShift),
+  kCTFontModernSerifsClass    = (3 << kCTFontClassMaskShift),
+  kCTFontClarendonSerifsClass   = (4 << kCTFontClassMaskShift),
+  kCTFontSlabSerifsClass      = (5 << kCTFontClassMaskShift),
+  kCTFontFreeformSerifsClass    = (7 << kCTFontClassMaskShift),
+  kCTFontSansSerifClass       = (8 << kCTFontClassMaskShift),
+  kCTFontOrnamentalsClass     = (9 << kCTFontClassMaskShift),
+  kCTFontScriptsClass       = (10 << kCTFontClassMaskShift),
+  kCTFontSymbolicClass      = (12 << kCTFontClassMaskShift)
 };
 typedef int CTFontStylisticClass;

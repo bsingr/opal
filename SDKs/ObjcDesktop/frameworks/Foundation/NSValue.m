@@ -30,12 +30,12 @@
 
 - (void)getValue:(void *)value
 {
-    
+  
 }
 
 - (const char *)objCType
 {
-    
+  
 }
 
 @end

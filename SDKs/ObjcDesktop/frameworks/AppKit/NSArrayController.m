@@ -12,17 +12,17 @@
 
 - (id)init
 {
-    if((self = [super init]))
-    {
-    }
-    return self;
+  if((self = [super init]))
+  {
+  }
+  return self;
 }
 
 - (void)prepareContent
 {
-    NSMutableArray *anArray = [[NSMutableArray alloc] initWithCapacity:1];
-    [anArray addObject:[self newObject]];
-    [self setContent:anArray];
+  NSMutableArray *anArray = [[NSMutableArray alloc] initWithCapacity:1];
+  [anArray addObject:[self newObject]];
+  [self setContent:anArray];
 }
 
 - (id)arrangedObjects
@@ -32,8 +32,8 @@
 
 - (void)add:(id)sender
 {
-    if ([self canAdd])
-        [self insert:sender];
+  if ([self canAdd])
+    [self insert:sender];
 }
 
 - (BOOL)preservesSelection
@@ -43,7 +43,7 @@
 
 - (void)setPreservesSelection:(BOOL)flag
 {
-    _preservesSelection = flag;
+  _preservesSelection = flag;
 }
 
 - (NSUInteger)selectionIndex
@@ -58,8 +58,8 @@
 
 - (void)setSelectionIndexes:(NSIndexSet *)indexes
 {
-    _selectionIndex = indexes;
-    return YES;
+  _selectionIndex = indexes;
+  return YES;
 }
 
 - (NSIndexSet *)selectionIndexes
@@ -69,9 +69,9 @@
 
 - (NSArray *)selectedObjects
 {
-    NSMutableArray *theObjects = [NSMutableArray arrayWithCapacity:0];
-    [theObjects addObject:[_content objectAtIndex:[self selectionIndex]]];
-    return theObjects;
+  NSMutableArray *theObjects = [NSMutableArray arrayWithCapacity:0];
+  [theObjects addObject:[_content objectAtIndex:[self selectionIndex]]];
+  return theObjects;
 }
 
 - (void)selectNext:(id)sender
@@ -138,7 +138,7 @@
 
 - (void)remove:(id)sender
 {
-    NSLog(@"[NSArrayController remove] - Need to implement");
+  NSLog(@"[NSArrayController remove] - Need to implement");
 	[self removeObjectsAtArrangedObjectIndexes:[self selectionIndexes]];
 }
 

@@ -12,37 +12,37 @@
 
 + (void)exposeBinding:(NSString *)binding
 {
-    
+  
 }
 
 - (NSArray *)exposedBindings
 {
-    
+  
 }
 
 - (Class)valueClassForBinding:(NSString *)binding
 {
-    
+  
 }
 
 - (void)bind:(NSString *)binding toObject:(id)observable withKeyPath:(NSString *)keyPath options:(NSDictionary *)options
 {
-    
+  
 }
 
 - (void)unbind:(NSString *)binding
 {
-    
+  
 }
 
 - (NSDictionary *)infoForBinding:(NSString *)binding
 {
-    
+  
 }
 
 - (NSArray *)optionDescriptionsForBinding:(NSString *)aBinding
 {
-    
+  
 }
 
 @end

@@ -15,77 +15,77 @@ NSString *NSTextStorageDidProcessEditingNotification = @"NSTextStorageDidProcess
 
 - (id)init
 {
-    self = [super init];
-    
-    _layoutManagers = [NSMutableArray array];
-    
-    return self;
+  self = [super init];
+  
+  _layoutManagers = [NSMutableArray array];
+  
+  return self;
 }
 
 - (void)addLayoutManager:(NSLayoutManager *)aLayoutManager
 {
-    [_layoutManagers addObject:aLayoutManager];
-    [aLayoutManager setTextStorage:self];
+  [_layoutManagers addObject:aLayoutManager];
+  [aLayoutManager setTextStorage:self];
 }
 
 - (void)removeLayoutManager:(NSLayoutManager *)aLayoutManager
 {
-    [_layoutManagers removeObject:aLayoutManager];
+  [_layoutManagers removeObject:aLayoutManager];
 }
 
 - (NSArray *)layoutManagers
 {
-    return _layoutManagers;
+  return _layoutManagers;
 }
 
 - (void)edited:(NSUInteger)editedMask range:(NSRange)range changeInLength:(NSInteger)delta
 {
-    
+  
 }
 
 - (void)processEditing
 {
-    
+  
 }
 
 - (void)invalidateAttributesInRange:(NSRange)range
 {
-    
+  
 }
 
 - (void)ensureAttributesAreFixedInRange:(NSRange)range
 {
-    
+  
 }
 
 - (BOOL)fixesAttributesLazily
 {
-    
+  
 }
-    
+  
 - (NSUInteger)editedMask
 {
-    
+  
 }
 
 - (NSRange)editedRange
 {
-    
+  
 }
 
 - (NSInteger)changeInLength
 {
-    
+  
 }
 
 - (void)setDelegate:(id)delegate
 {
-    
+  
 }
 
 - (id)delegate
 {
-    
+  
 }
 
 @end

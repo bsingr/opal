@@ -12,8 +12,8 @@
 @class NSString;
 
 typedef struct _NSRange {
-    NSUInteger location;
-    NSUInteger length;
+  NSUInteger location;
+  NSUInteger length;
 } NSRange;
 
 typedef NSRange *NSRangePointer;

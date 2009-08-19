@@ -18,12 +18,12 @@ module Vienna
   # A framework has its own rakefiles which it can use to perform custom build
   # tasks and routines.
   class Framework  < Vienna::Bundle
-        
-    def prepare!
-      @prepared_status = true
-      FileUtils.mkdir_p(File.join(@parent.tmp_prefix, bundle_name, 'objects'))
-      FileUtils.mkdir_p(File.join(@parent.tmp_prefix, bundle_name, 'resources'))
-      # FileUtils.mkdir_p(File.join(@parent.build_prefix, 'Frameworks', bundle_name))
-    end
+    
+  def prepare!
+    @prepared_status = true
+    FileUtils.mkdir_p(File.join(@parent.tmp_prefix, bundle_name, 'objects'))
+    FileUtils.mkdir_p(File.join(@parent.tmp_prefix, bundle_name, 'resources'))
+    # FileUtils.mkdir_p(File.join(@parent.build_prefix, 'Frameworks', bundle_name))
+  end
   end
 end

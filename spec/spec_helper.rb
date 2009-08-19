@@ -1,6 +1,6 @@
 
 require File.expand_path(
-    File.join(File.dirname(__FILE__), %w[.. lib vienna]))
+  File.join(File.dirname(__FILE__), %w[.. lib vienna]))
 
 Spec::Runner.configure do |config|
   # == Mock Framework

@@ -12,71 +12,71 @@
 @implementation NSCursor
 
 - (id)initWithCursorString:(NSString *)cursor {
-    [self init];
-    if (self) {
-        _cursor = cursor;
-    }
-    return self;
+  [self init];
+  if (self) {
+    _cursor = cursor;
+  }
+  return self;
 }
 
 - (void)set {
-    // document.body.style.cursor = _cursor;
+  // document.body.style.cursor = _cursor;
 }
 
 + (NSCursor *)currentCursor {
-    
+  
 }
 
 + (NSCursor *)arrowCursor {
-    return [[NSCursor alloc] initWithCursorString:@"default"];
+  return [[NSCursor alloc] initWithCursorString:@"default"];
 }
 
 + (NSCursor *)closedHandCursor {
-    
+  
 }
 
 + (NSCursor *)crosshairCursor {
-    
+  
 }
 
 + (NSCursor *)disappearingItemCursor {
-    
+  
 }
 
 + (NSCursor *)IBeamCursor {
-    return [[NSCursor alloc] initWithCursorString:@"text"];
+  return [[NSCursor alloc] initWithCursorString:@"text"];
 }
 
 + (NSCursor *)openHandCursor {
-    
+  
 }
 
 + (NSCursor *)pointingHandCursor {
-    
+  
 }
 
 + (NSCursor *)resizeDownCursor {
-    
+  
 }
 
 + (NSCursor *)resizeLeftCursor {
-    
+  
 }
 
 + (NSCursor *)resizeLeftRightCursor {
-    
+  
 }
 
 + (NSCursor *)resizeRightCursor {
-    
+  
 }
 
 + (NSCursor *)resizeUpCursor {
-    
+  
 }
 
 + (NSCursor *)resizeUpDownCursor {
-    
+  
 }
 
 @end

@@ -28,32 +28,32 @@
 
 CGContextRef CGBitmapContextCreate(void *data, int width, int height, int bitsPerComponent, int bytesPerRow, CGColorSpaceRef colorSpace, CGBitmapInfo bitmapInfo)
 {
-    
+  
 }
 
 void *CGBitmapContextGetData(CGContextRef c)
 {
-    
+  
 }
 
 int CGBitmapContextGetWidth(CGContextRef c)
 {
-    
+  
 }
 
 int CGBitmapContextGetHeight(CGContextRef c)
 {
-    
+  
 }
 
 int CGBitmapContextGetBitsPerComponent(CGContextRef c)
 {
-    
+  
 }
 
 int CGBitmapContextGetBytesPerRow(CGContextRef c)
 {
-    
+  
 }
 
  //CGColorSpaceRef CGBitmapContextGetColorSpace(CGContextRef c);
@@ -62,5 +62,5 @@ int CGBitmapContextGetBytesPerRow(CGContextRef c)
 
 CGImageRef CGBitmapContextCreateImage(CGContextRef c)
 {
-    
+  
 }

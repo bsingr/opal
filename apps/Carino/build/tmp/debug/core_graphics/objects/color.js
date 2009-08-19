@@ -30,25 +30,25 @@ var kCGColorClear = "kCGColorClear";
 
 function CGColorRef()
 {
-    this._red = 0;
-    this._blue = 0;
-    this._green = 0;
-    this._alpha = 0;
+  this._red = 0;
+  this._blue = 0;
+  this._green = 0;
+  this._alpha = 0;
 }
 
 function CGColorCreate(space, components)
 {
-    return { _red: components[0], _green: components[1], _blue: components[2], _alpha: components[3] };
+  return { _red: components[0], _green: components[1], _blue: components[2], _alpha: components[3] };
 }
 
 function CGColorCreateGenericGray(gray, alpha)
 {
-    return { _red: gray, _blue: gray, _green: gray, _alpha: alpha };
+  return { _red: gray, _blue: gray, _green: gray, _alpha: alpha };
 }
 
 function CGColorCreateGenericRGB(red, green, blue, alpha)
 {
-    return { _red: red, _blue: blue, _green: green, _alpha: alpha };
+  return { _red: red, _blue: blue, _green: green, _alpha: alpha };
 }
 
 // CGColorRef CGColorCreateGenericCMYK(CGFloat cyan, CGFloat magenta, CGFloat yellow, CGFloat black, CGFloat alpha)

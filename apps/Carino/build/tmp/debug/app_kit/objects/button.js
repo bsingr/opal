@@ -26,21 +26,21 @@
  
 
 var NSButton = NSControl.extend({
+  
+  initWithCoder: function(aCoder) {
+    this._super(aCoder);
+    return this;
+  },
+  
+  cellClass: function() {
+    return NSButtonCell;
+  },
+  
+  title: function() {
     
-    initWithCoder: function(aCoder) {
-        this._super(aCoder);
-        return this;
-    },
+  },
+  
+  setTitle: function(aString) {
     
-    cellClass: function() {
-        return NSButtonCell;
-    },
-    
-    title: function() {
-        
-    },
-    
-    setTitle: function(aString) {
-        
-    }
+  }
 });

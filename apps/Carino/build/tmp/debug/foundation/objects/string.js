@@ -35,6 +35,6 @@ Object.extend(NSString.prototype, {
 	},
 	
 	capitalizedString: function() {
-        return this.charAt(0).toUpperCase() + this.substr(1);
+    return this.charAt(0).toUpperCase() + this.substr(1);
 	}
 });

@@ -15,25 +15,25 @@ typedef struct objc_ivar *Ivar;
 typedef struct objc_property *objc_property_t;
 
 struct objc_class {
-     Class isa;
-     Class super_class
-     const char *name;
-     struct objc_ivar_list *ivars
-     struct objc_method_list **method_list
-     struct objc_protocol_list *protocols
-     void *alloc;
+   Class isa;
+   Class super_class
+   const char *name;
+   struct objc_ivar_list *ivars
+   struct objc_method_list **method_list
+   struct objc_protocol_list *protocols
+   void *alloc;
 };
 
 struct objc_ivar {
-    char *ivar_name;
-    char *ivar_type;
-    int ivar_offset;
+  char *ivar_name;
+  char *ivar_type;
+  int ivar_offset;
 };
 
 struct objc_method {
-    SEL method_name;
-    char *method_types;
-    IMP method_imp;
+  SEL method_name;
+  char *method_types;
+  IMP method_imp;
 };
 
 extern id object_copy(id obj);

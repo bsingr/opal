@@ -27,8 +27,8 @@
 var include = function include() { };
 
 if (typeof console === 'undefined') {
-    var console = console || window.console || { };
-    console.log = console.info = console.warn = console.error = function() { };
+  var console = console || window.console || { };
+  console.log = console.info = console.warn = console.error = function() { };
 }
 
 var VN = { };

@@ -28,81 +28,81 @@
 
 CGColorRef CGColorCreate(CGColorSpaceRef space, CGFloat components[])
 {
-    
+  
 }
 
 CGColorRef CGColorCreateGenericGray(CGFloat gray, CGFloat alpha)
 {
-    
+  
 }
 
 CGColorRef CGColorCreateGenericRGB(CGFloat red, CGFloat green, CGFloat blue, CGFloat alpha)
 {
-    
+  
 }
 
 CGColorRef CGColorCreateGenericCMYK(CGFloat cyan, CGFloat magenta, CGFloat yellow, CGFloat black, CGFloat alpha)
 {
-    
+  
 }
 
 CGColorRef CGColorGetConstantColor(CFStringRef colorName)
 {
-    
+  
 }
 
  //CGColorRef CGColorCreateWithPattern(CGColorSpaceRef space, CGPatternRef pattern, CGFloat components[]);
 
 CGColorRef CGColorCreateCopy(CGColorRef color)
 {
-    
+  
 }
 
 CGColorRef CGColorCreateCopyWithAlpha(CGColorRef color, CGFloat alpha)
 {
-    
+  
 }
 
 CGColorRef CGColorRetain(CGColorRef color)
 {
-    
+  
 }
 
 void CGColorRelease(CGColorRef color)
 {
-    
+  
 }
 
 bool CGColorEqualToColor(CGColorRef color1, CGColorRef color2)
 {
-    
+  
 }
 
 int CGColorGetNumberOfComponents(CGColorRef color)
 {
-    
+  
 }
 
 const CGFloat *CGColorGetComponents(CGColorRef color)
 {
-    
+  
 }
 
 CGFloat CGColorGetAlpha(CGColorRef color)
 {
-    
+  
 }
 
 CGColorSpaceRef CGColorGetColorSpace(CGColorRef color)
 {
-    
+  
 }
 
  //CGPatternRef CGColorGetPattern(CGColorRef color);
 
 CFTypeID CGColorGetTypeID(void)
 {
-    
+  
 }
 
 CFStringRef kCGColorWhite = "kCGColorWhite";

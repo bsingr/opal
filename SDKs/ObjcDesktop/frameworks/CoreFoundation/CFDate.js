@@ -10,15 +10,15 @@
 // 
 function CFAbsoluteTimeGetCurrent()
 {
-    return new Date().valueOf();
+  return new Date().valueOf();
 }
 
 // typedef struct {
-//     
+//   
 // } CFDataRef;
 function CFDateRef()
 {
-    return new Date();
+  return new Date();
 }
 
 
@@ -26,55 +26,55 @@ function CFDateRef()
 // 
 function CFDateCreate(at)
 {
-    return new Date(at);
+  return new Date(at);
 }
 
 // extern CFAbsoluteTime CFDateGetAbsoluteTime(CFDateRef theDate);
 // 
 function CFDateGetAbsoluteTime(theDate)
 {
-    return theDate.valueOf();
+  return theDate.valueOf();
 }
 
 // extern CFTimeInterval CFDateGetTimeIntervalSinceDate(CFDateRef theDate, CFDateRef otherDate);
 // 
 function CFDateGetTimeIntervalSinceDate(theDate, otherDate)
 {
-    
+  
 }
 
 // extern CFComparisonResult CFDateCompare(CFDateRef theDate, CFDateRef otherDate, void *context);
 // 
 function CFDateCompare(theDate, otherDate, context)
 {
-    
+  
 }
 
 // typedef struct {
-//     int     year;
-//     int     month;
-//     int     day;
-//     int     hour;
-//     int     minute;
-//     double  second;
+//   int   year;
+//   int   month;
+//   int   day;
+//   int   hour;
+//   int   minute;
+//   double  second;
 // } CFGregorianDate;
 // 
 // typedef struct {
-//     int     years;
-//     int     months;
-//     int     days;
-//     int     minutes;
-//     double  seconds;
+//   int   years;
+//   int   months;
+//   int   days;
+//   int   minutes;
+//   double  seconds;
 // } CFGregorianUnits;
 // 
 // enum {
-//     kCFGregorianUnitsYears      = (1 << 0),
-//     kCFGregorianUnitsMonths     = (1 << 1),
-//     kCFGregorianUnitsDays       = (1 << 2),
-//     kCFGregorianUnitsHours      = (1 << 3),
-//     kCFGregorianUnitsMinutes    = (1 << 4),
-//     kCFGregorianUnitsSeconds    = (1 << 5),
-//     kCFGregorianAllUnits        = 0x00FFFFFF
+//   kCFGregorianUnitsYears    = (1 << 0),
+//   kCFGregorianUnitsMonths   = (1 << 1),
+//   kCFGregorianUnitsDays     = (1 << 2),
+//   kCFGregorianUnitsHours    = (1 << 3),
+//   kCFGregorianUnitsMinutes  = (1 << 4),
+//   kCFGregorianUnitsSeconds  = (1 << 5),
+//   kCFGregorianAllUnits    = 0x00FFFFFF
 // };
 // typedef CFOptionFlags CFGregorianUnitFlags;
 
@@ -82,42 +82,42 @@ function CFDateCompare(theDate, otherDate, context)
 // 
 function CFGregorianDateIsValid(gdate, unitFlags)
 {
-    
+  
 }
 
 // extern CFAbsoluteTime CFGregorianDateGetAbsoluteTime(CFGregorianDate gdate, CFTimeZoneRef tz);
 // 
 function CFGregorianDateGetAbsoluteTime(gdate, tz)
 {
-    
+  
 }
 
 // extern CFGregorianDate CFAbsoluteTimeGetGregorianDate(CFAbsoluteTime at, CFTimeZoneRef tz);
 // 
 function CFAbsoluteTimeGetGregorianDate(at, tz)
 {
-    
+  
 }
 
 // extern CFAbsoluteTime CFAbsoluteTimeAddGregorianUnits(CFAbsoluteTime at, CFTimeZoneRef tz, CFGregorianUnits units);
 // 
 function CFAbsoluteTimeAddGregorianUnits(at, tz, units)
 {
-    
+  
 }
 
 // extern CFGregorianUnits CFAbsoluteTimeGetDifferenceAsGregorianUnits(CFAbsoluteTime at1, CFAbsoluteTime at2, CFTimeZoneRef tz, CFOptionFlags unitFlags);
 // 
 function CFAbsoluteTimeGetDifferenceAsGregorianUnits(at1, at2, tz, unitFlags)
 {
-    
+  
 }
 
 // extern int CFAbsoluteTimeGetDayOfWeek(CFAbsoluteTime at, CFTimeZoneRef tz);
 // 
 function CFAbsoluteTimeGetDayOfWeek(at, tz)
 {
-    
+  
 }
 
 
@@ -125,12 +125,12 @@ function CFAbsoluteTimeGetDayOfWeek(at, tz)
 // 
 function CFAbsoluteTimeGetDayOfYear(at, tz)
 {
-    
+  
 }
 
 // extern int CFAbsoluteTimeGetWeekOfYear(CFAbsoluteTime at, CFTimeZoneRef tz);
 // 
 function CFAbsoluteTimeGetWeekOfYear(at, tz)
 {
-    
+  
 }

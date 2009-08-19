@@ -26,5 +26,5 @@
 
 
 var NSSlider = NSControl.extend({
-    
+  
 });

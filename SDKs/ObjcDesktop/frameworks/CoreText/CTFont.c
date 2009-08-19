@@ -48,199 +48,199 @@ const CFStringRef kCTFontPostScriptCIDNameKey = "kCTFontPostScriptCIDNameKey";
 
 CTFontRef CTFontCreateWithName(CFStringRef name, CGFloat size, const CGAffineTransform *matrix)
 {
-    CTFontRef theFont;
-    return theFont;
+  CTFontRef theFont;
+  return theFont;
 }
 
 CTFontRef CTFontCreateWithFontDescriptor(CTFontDescriptorRef descriptor, CGFloat size, const CGAffineTransform *matrix)
 {
-    
+  
 }
 
 CTFontRef CTFontCreateUIFontForLanguage(CTFontUIFontType uiType, CGFloat size, CFStringRef language)
 {
-    
+  
 }
 
 CTFontRef CTFontCreateCopyWithAttributes(CTFontRef font, CGFloat size, const CGAffineTransform *matrix, CTFontDescriptorRef attributes)
 {
-    
+  
 }
 
 CTFontRef CTFontCreateCopyWithSymbolicTraits(CTFontRef font, CGFloat size, const CGAffineTransform *matrix, CTFontSymbolicTraits symTraitValue, CTFontSymbolicTraits symTraitMask)
 {
-    
+  
 }
 
 CTFontRef CTFontCreateCopyWithFamily(CTFontRef font, CGFloat size, const CGAffineTransform *matrix, CFStringRef family)
 {
-    
+  
 }
 
 CTFontRef CTFontCreateForString(CTFontRef currentFont, CFStringRef string, CFRange range)
 {
-    
+  
 }
 
 CTFontDescriptorRef CTFontCopyFontDescriptor(CTFontRef font)
 {
-    
+  
 }
 
 CFTypeRef CTFontCopyAttribute(CTFontRef font, CFStringRef attribute)
 {
-    
+  
 }
 
 CGFloat CTFontGetSize(CTFontRef font)
 {
-    
+  
 }
 
 CGAffineTransform CTFontGetMatrix(CTFontRef font)
 {
-    
+  
 }
 
 CTFontSymbolicTraits CTFontGetSymbolicTraits(CTFontRef font)
 {
-    
+  
 }
 
 CFDictionaryRef CTFontCopyTraits(CTFontRef font)
 {
-    
+  
 }
 
 CFStringRef CTFontCopyPostScriptName(CTFontRef font)
 {
-    
+  
 }
 
 CFStringRef CTFontCopyFamilyName(CTFontRef font)
 {
-    
+  
 }
 
 CFStringRef CTFontCopyFullName(CTFontRef font)
 {
-    
+  
 }
 
 CFStringRef CTFontCopyDisplayName(CTFontRef font)
 {
-    
+  
 }
 
 CFStringRef CTFontCopyName(CTFontRef font, CFStringRef nameKey)
 {
-    
+  
 }
 
 CFStringRef CTFontCopyLocalizedName(CTFontRef font, CFStringRef nameKey, CFStringRef *language)
 {
-    
+  
 }
 
 CFCharacterSetRef CTFontCopyCharacterSet(CTFontRef font)
 {
-    
+  
 }
 
 CFStringEncoding CTFontGetStringEncoding(CTFontRef font)
 {
-    
+  
 }
 
 CFArrayRef CTFontCopySupportedLanguages(CTFontRef font)
 {
-    
+  
 }
 
 bool CTFontGetGlyphsForCharacters(CTFontRef font, const char characters[], CGGlyph glyphs[], CFIndex count)
 {
-    
+  
 }
 
 
 CGFloat CTFontGetAscent(CTFontRef font)
 {
-    
+  
 }
 
 CGFloat CTFontGetDescent(CTFontRef font)
 {
-    
+  
 }
 
 CGFloat CTFontGetLeading(CTFontRef font)
 {
-    
+  
 }
 
 int CTFontGetUnitsPerEm(CTFontRef font)
 {
-    
+  
 }
 
 CFIndex CTFontGetGlyphCount(CTFontRef font)
 {
-    
+  
 }
 
 CGRect CTFontGetBoundingBox(CTFontRef font)
 {
-    
+  
 }
 
 CGFloat CTFontGetUnderlinePosition(CTFontRef font)
 {
-    
+  
 }
 
 CGFloat CTFontGetUnderlineThickness(CTFontRef font)
 {
-    
+  
 }
 
 CGFloat CTFontGetSlantAngle(CTFontRef font)
 {
-    
+  
 }
 
 CGFloat CTFontGetCapHeight(CTFontRef font)
 {
-    
+  
 }
 
 CGFloat CTFontGetXHeight(CTFontRef font)
 {
-    
+  
 }
 
 CGGlyph CTFontGetGlyphWithName(CTFontRef font, CFStringRef glyphName)
 {
-    
+  
 }
 
 CGRect CTFontGetBoundingRectsForGlyphs(CTFontRef font, CTFontOrientation orientation, const CGGlyph glyphs[], CGRect boundingRects[], CFIndex count)
 {
-    
+  
 }
 
 double CTFontGetAdvancesForGlyphs(CTFontRef font, CTFontOrientation orientation, const CGGlyph glyphs[], CGSize advances[], CFIndex count)
 {
-    
+  
 }
 
 void CTFontGetVerticalTranslationsForGlyphs(CTFontRef font, const CGGlyph glyphs[], CGSize translations[], CFIndex count)
 {
-    
+  
 }
 
 CGPathRef CTFontCreatePathForGlyph(CTFontRef font, CGGlyph glyph, const CGAffineTransform *transform)
 {
-    
+  
 }
 
 const CFStringRef kCTFontVariationAxisIdentifierKey = "kCTFontVariationAxisIdentifierKey";
@@ -252,12 +252,12 @@ const CFStringRef kCTFontVariationAxisNameKey = "kCTFontVariationAxisNameKey";
 
 CFArrayRef CTFontCopyVariationAxes(CTFontRef font)
 {
-    
+  
 }
 
 CFDictionaryRef CTFontCopyVariation(CTFontRef font)
 {
-    
+  
 }
 
 
@@ -273,11 +273,11 @@ const CFStringRef kCTFontFeatureSelectorSettingKey = "kCTFontFeatureSelectorSett
 
 CFArrayRef CTFontCopyFeatures(CTFontRef font)
 {
-    
+  
 }
 
 CFArrayRef CTFontCopyFeatureSettings(CTFontRef font)
 {
-    
+  
 }
 

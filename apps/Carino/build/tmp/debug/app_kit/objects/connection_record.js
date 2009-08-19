@@ -25,14 +25,14 @@
  */
 
 var IBConnectionRecord = NSObject.extend({
-    
-    _connection: null,
-    
-    _connectionID: null,
-    
-    initWithCoder: function(aCoder) {
-        this._connection = aCoder.decodeObjectForKey("connection");
-        this._connectionID = aCoder.decodeIntForKey("connectionID");
-        return this;
-    }
+  
+  _connection: null,
+  
+  _connectionID: null,
+  
+  initWithCoder: function(aCoder) {
+    this._connection = aCoder.decodeObjectForKey("connection");
+    this._connectionID = aCoder.decodeIntForKey("connectionID");
+    return this;
+  }
 });

@@ -13,7 +13,7 @@
 // 
 function objc_object()
 {
-    this.isa = null;
+  this.isa = null;
 }
 
 // typedef struct objc_selector *SEL;
@@ -25,25 +25,25 @@ function objc_object()
 // 
 function sel_getName(sel)
 {
-    return sel;
+  return sel;
 }
 
 // extern SEL sel_registerName(const char *str);
 // 
 function sel_registerName(str)
 {
-    return str;
+  return str;
 }
 
 // extern const char *object_getClassName(id obj);
 function object_getClassName(obj)
 {
-    
+  
 }
 
 // extern void *object_getIndexedIvars(id obj)
 // 
 function object_getIndexedIvard(obj)
 {
-    
+  
 }

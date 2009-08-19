@@ -13,13 +13,13 @@
 - (id)initWithItemIdentifier:(NSString *)itemIdentifier
 {	
 	[self init];
-    
-    if (self) {
-        _itemIdentifier = itemIdentifier;
-        _minSize = NULL;
-        _maxSize = NULL;
-    }
-    
+  
+  if (self) {
+    _itemIdentifier = itemIdentifier;
+    _minSize = NULL;
+    _maxSize = NULL;
+  }
+  
 	return self;
 }
 
@@ -29,17 +29,17 @@
 
 - (void)setNeedsDisplay:(BOOL)flag
 {
-    [self drawRect:nil];
+  [self drawRect:nil];
 }
 
 - (void)setNeedsDisplayInRect:(NSRect)invalidRect
 {
-    [self setNeedsDisplay:YES];
+  [self setNeedsDisplay:YES];
 }
 
 - (void)setLeftOffset:(NSInteger)left
 {
-    // _leftOffset = left;
+  // _leftOffset = left;
 }
 
 - (void)mouseDown:(NSEvent *)theEvent
@@ -49,7 +49,7 @@
 
 - (void)mouseUp:(NSEvent *)theEvent
 {
-    NSLog("[NSToolbarItem mouseDown]");
+  NSLog("[NSToolbarItem mouseDown]");
 	//[NSApp sendAction:_action to:_target from:self];
 }
 
@@ -75,8 +75,8 @@
 
 - (void)setToolbar:(NSToolbar *)toolbar
 {
-    _toolBar = toolbar;
-    [self setNeedsDisplay:YES];
+  _toolBar = toolbar;
+  [self setNeedsDisplay:YES];
 }
 
 - (NSString *)label
@@ -87,7 +87,7 @@
 - (void)setLabel:(NSString *)label
 {
 	_label = label;
-    [self setNeedsDisplay:YES];
+  [self setNeedsDisplay:YES];
 }
 
 - (NSString *)toolTip
@@ -138,7 +138,7 @@
 - (void)setEnabled:(BOOL)enabled
 {
 	_isEnabled = enabled;
-    [self setNeedsDisplay:YES];
+  [self setNeedsDisplay:YES];
 }
 
 - (NSImage *)image
@@ -150,7 +150,7 @@
 {
 	_image = image;
 	//[[_image actualImage] addClassName:@"NSToolbar_image"];
-    [self setNeedsDisplay:YES];
+  [self setNeedsDisplay:YES];
 }
 
 - (NSView *)view

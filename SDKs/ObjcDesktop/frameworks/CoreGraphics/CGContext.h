@@ -26,8 +26,8 @@
 
 typedef struct CGContext
 {
-    void    (*save)(void);
-    
+  void  (*save)(void);
+  
 } *CGContextRef;
 
 #import <CoreGraphics/CGBase.h>
@@ -42,37 +42,37 @@ typedef struct CGContext
 #import <CoreGraphics/CGShading.h>
 
 enum CGLineJoin {
-    kCGLineJoinMiter,
-    kCGLineJoinRound,
-    kCGLineJoinBevel
+  kCGLineJoinMiter,
+  kCGLineJoinRound,
+  kCGLineJoinBevel
 };
 typedef enum CGLineJoin CGLineJoin;
 
 enum CGLineCap {
-    kCGLineCapButt,
-    kCGLineCapRound,
-    kCGLineCapSquare
+  kCGLineCapButt,
+  kCGLineCapRound,
+  kCGLineCapSquare
 };
 typedef enum CGLineCap CGLineCap;
 
 enum CGPathDrawingMode {
-    kCGPathFill,
-    kCGPathEOFill,
-    kCGPathStroke,
-    kCGPathFillStroke,
-    kCGEOFillStroke
+  kCGPathFill,
+  kCGPathEOFill,
+  kCGPathStroke,
+  kCGPathFillStroke,
+  kCGEOFillStroke
 };
 typedef enum CGPathDrawingMode CGPathDrawingMode;
 
 enum CGTextDrawingMode {
-    kCGTextFill,
-    kCGTextStroke,
-    kCGFillStroke,
-    kCGTextInvisible,
-    kCGTextFillClip,
-    kCGTextStrokeClip,
-    kCGTextFillStrokeClip,
-    kCGTextClip
+  kCGTextFill,
+  kCGTextStroke,
+  kCGFillStroke,
+  kCGTextInvisible,
+  kCGTextFillClip,
+  kCGTextStrokeClip,
+  kCGTextFillStrokeClip,
+  kCGTextClip
 };
 typedef enum CGTextDrawingMode CGTextDrawingMode;
 

@@ -56,9 +56,9 @@ extern const CFStringRef kCTFontFixedAdvanceAttribute;
 extern const CFStringRef kCTFontOrientationAttribute;
 
 enum {
-    kCTFontDefaultOrientation       = 0,
-    kCTFontHorizontalOrientation    = 1,
-    kCTFontVerticalOrientation      = 2
+  kCTFontDefaultOrientation     = 0,
+  kCTFontHorizontalOrientation  = 1,
+  kCTFontVerticalOrientation    = 2
 };
 typedef int CTFontOrientation;
 

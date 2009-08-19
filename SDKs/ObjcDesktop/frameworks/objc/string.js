@@ -42,7 +42,7 @@
 // int strlen(const char *);
 function strlen(aString)
 {
-    return aString.length;
+  return aString.length;
 }
 
 // char *strncat(char *, const char *, int);

@@ -14,8 +14,8 @@
 
 @interface NSWindowController : NSResponder <NSCoding>
 {
-    NSWindow    *_window;
-    id          *_owner;
+  NSWindow  *_window;
+  id      *_owner;
 }
 
 - (id)initWithWindow:(NSWindow *)window;
@@ -33,9 +33,9 @@
 
 - (void)setShouldCascadeWindows:(BOOL)flag;
 - (BOOL)shouldCascadeWindows;
-    
+  
 - (id)document;
-    
+  
 - (void)setDocument:(NSDocument *)document;
 
 - (void)setDocumentEdited:(BOOL)dirtyFlag;
@@ -44,7 +44,7 @@
 - (BOOL)shouldCloseDocument;
 
 - (void)setWindow:(NSWindow *)window;
-    
+  
 - (NSWindow *)window;
 
 - (void)synchronizeWindowTitleWithDocumentName;
@@ -52,7 +52,7 @@
 - (NSString *)windowTitleForDocumentDisplayName:(NSString *)displayName;
 
 - (void)close;
-    
+  
 // - (IBAction)showWindow:(id)sender;
 
 

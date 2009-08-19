@@ -27,181 +27,181 @@
 include ('foundation/object');
 
 var NSMenu = NSObject.extend({
+  
+  _superMenu: null,
+  _title: null,
+  _itemArray: null,
+  _name: null,
+  
+  _menuView: null,
+  
+  highlightedItem: null,
     
-    _superMenu: null,
-    _title: null,
-    _itemArray: null,
-    _name: null,
+  init: function() {
+    this._super();
+    this._title = "";
+    this._itemArray = [];
+    return this;
+  },
+  
+  initWithTitle: function(aTitle) {
+    this.init();
+    this._title = aTitle;
+    this._itemArray = [];
+    return this;
+  },
+  
+  initWithCoder: function(aCoder) {
+    this._title = aCoder.decodeObjectForKey("NSTitle");
+    this._name = aCoder.decodeObjectForKey("NSName");
+    this._itemArray = aCoder.decodeObjectForKey("NSMenuItems");
+    return this;
+  },
+  
+  setMenuView: function(aView) {
+    this._menuView = aView;
+  },
+  
+  menuView: function() {
+    return this._menuView;
+  },
+  
+  setTitle: function(aString) {
+    this._title = aString;
+  },
+  
+  title: function() {
+    return this._title;
+  },
+  
+  supermenu: function() {
+    return this._superMenu;
+  },
+  
+  setSupermenu: function(supermenu) {
+    this._superMenu = supermenu;
+  },
+  
+  insertItem: function(newItem, atIndex) {
     
-    _menuView: null,
+  },
+  
+  addItem: function(newItem) {
     
-    highlightedItem: null,
-        
-    init: function() {
-        this._super();
-        this._title = "";
-        this._itemArray = [];
-        return this;
-    },
+  },
+  
+  insertItemWithTitle: function(aString, aSelector, keyEquivalent, index) {
     
-    initWithTitle: function(aTitle) {
-        this.init();
-        this._title = aTitle;
-        this._itemArray = [];
-        return this;
-    },
+  },
+  
+  addItemWithTitle: function(aString, aSelector, keyEquivalent) {
     
-    initWithCoder: function(aCoder) {
-        this._title = aCoder.decodeObjectForKey("NSTitle");
-        this._name = aCoder.decodeObjectForKey("NSName");
-        this._itemArray = aCoder.decodeObjectForKey("NSMenuItems");
-        return this;
-    },
+  },
+  
+  removeItemAtIndex: function(index) {
     
-    setMenuView: function(aView) {
-        this._menuView = aView;
-    },
+  },
+  
+  removeItem: function(item) {
     
-    menuView: function() {
-        return this._menuView;
-    },
+  },
+  
+  setSubmenuForItem: function(aMenu, anItem) {
     
-    setTitle: function(aString) {
-        this._title = aString;
-    },
+  },
+  
+  itemArray: function() {
+    return this._itemArray;
+  },
+  
+  numberOfItems: function() {
+    return this._itemArray.count();
+  },
+  
+  itemAtIndex: function(index) {
+    return this._itemArray[index];
+  },
+  
+  indexOfItem: function(item) {
+    return this._itemArray.indexOf(item);
+  },
+  
+  indexOfItemWithTitle: function(aTitle) {
     
-    title: function() {
-        return this._title;
-    },
+  },
+  
+  indexOfItemWithTag: function(aTag) {
     
-    supermenu: function() {
-        return this._superMenu;
-    },
+  },
+  
+  indexOfItemWithRepresentedObject: function(anObject) {
     
-    setSupermenu: function(supermenu) {
-        this._superMenu = supermenu;
-    },
+  },
+  
+  indexOfItemWithSubmenu: function(submenu) {
     
-    insertItem: function(newItem, atIndex) {
-        
-    },
+  },
+  
+  indexOfItemWithTarget: function(target, andAction) {
     
-    addItem: function(newItem) {
-        
-    },
+  },
+  
+  itemWithTitle: function(aTitle) {
     
-    insertItemWithTitle: function(aString, aSelector, keyEquivalent, index) {
-        
-    },
+  },
+  
+  itemWithTag: function(aTag) {
     
-    addItemWithTitle: function(aString, aSelector, keyEquivalent) {
-        
-    },
+  },
+  
+  setAutoEnablesItems: function(flag) {
     
-    removeItemAtIndex: function(index) {
-        
-    },
+  },
+  
+  autoEnablesItems: function() {
     
-    removeItem: function(item) {
-        
-    },
+  },
+  
+  update: function() {
     
-    setSubmenuForItem: function(aMenu, anItem) {
-        
-    },
+  },
+  
+  performKeyEquivalent: function(theEvent) {
     
-    itemArray: function() {
-        return this._itemArray;
-    },
+  },
+  
+  itemChanged: function(item) {
     
-    numberOfItems: function() {
-        return this._itemArray.count();
-    },
+  },
+  
+  performActionForItemAtIndex: function(index) {
     
-    itemAtIndex: function(index) {
-        return this._itemArray[index];
-    },
+  },
+  
+  setDelegate: function(anObject) {
     
-    indexOfItem: function(item) {
-        return this._itemArray.indexOf(item);
-    },
+  },
+  
+  delegate: function() {
     
-    indexOfItemWithTitle: function(aTitle) {
-        
-    },
+  },
+  
+  cancelTracking: function() {
     
-    indexOfItemWithTag: function(aTag) {
-        
-    },
-    
-    indexOfItemWithRepresentedObject: function(anObject) {
-        
-    },
-    
-    indexOfItemWithSubmenu: function(submenu) {
-        
-    },
-    
-    indexOfItemWithTarget: function(target, andAction) {
-        
-    },
-    
-    itemWithTitle: function(aTitle) {
-        
-    },
-    
-    itemWithTag: function(aTag) {
-        
-    },
-    
-    setAutoEnablesItems: function(flag) {
-        
-    },
-    
-    autoEnablesItems: function() {
-        
-    },
-    
-    update: function() {
-        
-    },
-    
-    performKeyEquivalent: function(theEvent) {
-        
-    },
-    
-    itemChanged: function(item) {
-        
-    },
-    
-    performActionForItemAtIndex: function(index) {
-        
-    },
-    
-    setDelegate: function(anObject) {
-        
-    },
-    
-    delegate: function() {
-        
-    },
-    
-    cancelTracking: function() {
-        
-    },
-    
-    highlightedItem: function() {
-        return this._highlightedItem;
-    },
-    
-    setHighlightedItem: function(anItem) {
-        this._highlightedItem = anItem;
-    }
+  },
+  
+  highlightedItem: function() {
+    return this._highlightedItem;
+  },
+  
+  setHighlightedItem: function(anItem) {
+    this._highlightedItem = anItem;
+  }
 });
 
 Object.extend(NSMenu, {
-    
-    menuBarHeight: function() {
-        return 30.0;
-    }
+  
+  menuBarHeight: function() {
+    return 30.0;
+  }
 });

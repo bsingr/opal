@@ -17,19 +17,19 @@
 @class NSPasteboard, NSURL;
 
 enum {
-    NSImageLoadStatusCompleted,
-    NSImageLoadStatusCancelled,
-    NSImageLoadStatusInvalidData,
-    NSImageLoadStatusUnexpectedEOF,
-    NSImageLoadStatusReadError
+  NSImageLoadStatusCompleted,
+  NSImageLoadStatusCancelled,
+  NSImageLoadStatusInvalidData,
+  NSImageLoadStatusUnexpectedEOF,
+  NSImageLoadStatusReadError
 };
 typedef NSUInteger NSImageLoadStatus;
 
 enum {
-    NSImageCacheDefault,
-    NSImageCacheAlways,
-    NSImageCacheBySize,
-    NSImageCacheNever
+  NSImageCacheDefault,
+  NSImageCacheAlways,
+  NSImageCacheBySize,
+  NSImageCacheNever
 };
 typedef NSUInteger NSImageCacheMode;
 

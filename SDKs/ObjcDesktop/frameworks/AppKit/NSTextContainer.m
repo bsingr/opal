@@ -12,10 +12,10 @@
 
 - (id)initWithContainerSize:(NSSize)size
 {
-    _size = size;
-    _textView = nil;
-    _layoutManager = nil;
-    return self;
+  _size = size;
+  _textView = nil;
+  _layoutManager = nil;
+  return self;
 }
 
 - (NSLayoutManager *)layoutManager{}

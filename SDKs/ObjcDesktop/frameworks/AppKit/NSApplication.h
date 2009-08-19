@@ -17,31 +17,31 @@ extern NSString *NSModalPanelRunLoopMode;
 extern NSString *NSEventTrackingRunLoopMode;
 
 enum {
-    NSRunStoppedResponse            = (-1000),
-    NSRunAbortedResponse            = (-1001),
-    NSRunContinuesResponse          = (-1002)
+  NSRunStoppedResponse      = (-1000),
+  NSRunAbortedResponse      = (-1001),
+  NSRunContinuesResponse      = (-1002)
 };
 
 enum {
-    NSUpdateWindowsRunLoopOrdering  = 500000
+  NSUpdateWindowsRunLoopOrdering  = 500000
 };
 
 extern id NSApp;
 
 @interface NSApplication : NSResponder
 {
-    id               _delegate;
-    NSMutableArray  *_windows;
-    
-    NSEvent         *_currentEvent;
-    NSMutableArray  *_eventQueue;
-    
-    // Event bindings
-    BOOL             _eventBindingQueued;
-    id               _eventBindingTarget;
-    SEL              _eventBindingBlock;
-    NSUInteger       _eventBindingMask;
-    NSMenuBar       *_menuBar;
+  id         _delegate;
+  NSMutableArray  *_windows;
+  
+  NSEvent     *_currentEvent;
+  NSMutableArray  *_eventQueue;
+  
+  // Event bindings
+  BOOL       _eventBindingQueued;
+  id         _eventBindingTarget;
+  SEL        _eventBindingBlock;
+  NSUInteger     _eventBindingMask;
+  NSMenuBar     *_menuBar;
 }
 
 + (NSApplication *)sharedApplication;

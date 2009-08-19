@@ -26,5 +26,5 @@
 
 
 var NSTextField = NSControl.extend({
-    
+  
 });

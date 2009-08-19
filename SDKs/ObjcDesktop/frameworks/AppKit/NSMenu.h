@@ -14,10 +14,10 @@
 
 @interface NSMenu : NSObject <NSCopying, NSCoding>
 {
-    NSMenu      *_superMenu;
-    NSString    *_title;
-    id           _itemArray;
-    NSString    *_name;
+  NSMenu    *_superMenu;
+  NSString  *_title;
+  id       _itemArray;
+  NSString  *_name;
 }
 
 + (void)popUpContextMenu:(NSMenu*)menu withEvent:(NSEvent*)event forView:(NSView*)view;

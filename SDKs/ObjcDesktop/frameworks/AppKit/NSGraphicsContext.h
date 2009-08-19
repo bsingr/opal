@@ -17,7 +17,7 @@ extern id NSGraphicsContextCurrent;
 
 @interface NSGraphicsContext : NSObject
 {
-    CGContextRef    _graphicsPort;
+  CGContextRef  _graphicsPort;
 }
 
 + (NSGraphicsContext *)graphicsContextWithAttributes:(NSDictionary *)attributes;

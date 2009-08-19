@@ -12,134 +12,134 @@
 
 - (id)initWithCoder:(NSCoder *)aCoder
 {
-    [super initWithCoder:aCoder];
-    
-    return self;
+  [super initWithCoder:aCoder];
+  
+  return self;
 }
 
 - (NSString *)title
 {
-    
+  
 }
 
 - (void)setTitle:(NSString *)aString
 {
-    
+  
 }
 
 - (NSString *)alternateTitle
 {
-    
+  
 }
 
 - (void)setAlternateTitle:(NSString *)aString
 {
-    
+  
 }
 
 - (NSImage *)image
 {
-    
+  
 }
 
 - (void)setImage:(NSImage *)image
 {
-    
+  
 }
 
 - (NSImage *)alternateImage
 {
-    
+  
 }
 
 - (void)setAlternateImage:(NSImage *)image
 {
-    
+  
 }
 
 - (NSCellImagePosition)imagePosition
 {
-    
+  
 }
 
 - (void)setImagePosition:(NSCellImagePosition)aPosition
 {
-    
+  
 }
 
 - (void)setButtonType:(NSButtonType)aType
 {
-    
+  
 }
 
 - (NSInteger)state
 {
-    return [_cell state];
+  return [_cell state];
 }
 
 - (void)setState:(NSInteger)value
 {
-    [_cell setState:value];
+  [_cell setState:value];
 }
 
 - (BOOL)isBordered
 {
-    
+  
 }
 
 - (void)setBordered:(BOOL)flag
 {
-    
+  
 }
 
 - (BOOL)isTransparent
 {
-    
+  
 }
 
 - (void)setTransparent:(BOOL)flag
 {
-    
+  
 }
 
 - (void)setPeriodicDelay:(float)delay interval:(float)interval
 {
-    
+  
 }
 
 - (void)getPeriodicDelay:(float *)delay interval:(float *)interval
 {
-    
+  
 }
 
 - (NSString *)keyEquivalent
 {
-    
+  
 }
 
 - (void)setKeyEquivalent:(NSString *)charCode
 {
-    
+  
 }
 
 - (NSUInteger)keyEquivalentModifierMask
 {
-    
+  
 }
 
 - (void)setKeyEquivalentModifierMask:(NSUInteger)mask
 {
-    
+  
 }
 
 - (void)highlight:(BOOL)flag
 {
-    
+  
 }
 
 - (BOOL)performKeyEquivalent:(NSEvent *)key
 {
-    
+  
 }
 
 @end
@@ -149,7 +149,7 @@
 
 - (void)setTitleWithMnemonic:(NSString *)stringWithAmpersand
 {
-    
+  
 }
 
 @end
@@ -159,22 +159,22 @@
 
 - (NSAttributedString *)attributedTitle
 {
-    
+  
 }
 
 - (void)setAttributedTitle:(NSAttributedString *)aString
 {
-    
+  
 }
 
 - (NSAttributedString *)attributedAlternateTitle
 {
-    
+  
 }
 
 - (void)setAttributedAlternateTitle:(NSAttributedString *)obj
 {
-    
+  
 }
 
 @end
@@ -184,12 +184,12 @@
 
 - (void)setBezelStyle:(NSBezelStyle)bezelStyle
 {
-    
+  
 }
 
 - (NSBezelStyle)bezelStyle
 {
-    
+  
 }
 
 @end
@@ -199,17 +199,17 @@
 
 - (void)setAllowsMixedState:(BOOL)flag
 {
-    
+  
 }
 
 - (BOOL)allowsMixedState
 {
-    
+  
 }
 
 - (void)setNextState
 {
-    
+  
 }
 
 @end
@@ -219,12 +219,12 @@
 
 - (void)setShowsBorderOnlyWhileMouseInside:(BOOL)show
 {
-    
+  
 }
 
 - (BOOL)showsBorderOnlyWhileMouseInside
 {
-    
+  
 }
 
 @end

@@ -27,39 +27,40 @@
 include('app_kit/view');
 
 var NSCustomView = NSView.extend({
+  
+  initWithCoder: function(aCoder) {
+    this._super(aCoder);
     
-    initWithCoder: function(aCoder) {
-        this._super(aCoder);
-        
-        var theFrame = NSMakeRect(0, 0, 0, 0);
-        if (aCoder.containsValueForKey("NSFrame"))
-            theFrame = aCoder.decodeRectForKey("NSFrame");
-        else if (aCoder.containsValueForKey("NSFrameSize"))
-            theFrame.size = aCoder.decodeSizeForKey("NSFrameSize");
-        
-        var theClassName = aCoder.decodeObjectForKey("NSClassName");
-        var theView = window[theClassName].create('initWithFrame', theFrame);
-        
-        var subviews = aCoder.decodeObjectForKey("NSSubviews");
-        theView._superview = aCoder.decodeObjectForKey("NSSuperview");
-        theView._window = null;
-        theView._subviews = [];
-        
-        if (subviews) {
-            for (var idx = 0; idx < subviews.length; idx++) {
-                theView.addSubview(subviews[idx]);
-            }
-        }
-        theView._bounds = NSMakeRect(0, 0, 0, 0);
-        theView.setFrame(theFrame);
-        
-        theView._bounds.origin = NSMakePoint(0, 0);
-        theView._bounds.size = this._frame.size;
-        
-        var vFlags = aCoder.decodeIntForKey("NSvFlags");
-        theView._autoResizesSubviews = true;
-        theView._autoResizeMask = vFlags & 0x3F;
-        
-        return theView;
+    var theFrame = NSMakeRect(0, 0, 0, 0);
+    if (aCoder.containsValueForKey("NSFrame"))
+      theFrame = aCoder.decodeRectForKey("NSFrame");
+    else if (aCoder.containsValueForKey("NSFrameSize"))
+      theFrame.size = aCoder.decodeSizeForKey("NSFrameSize");
+    
+    var theClassName = aCoder.decodeObjectForKey("NSClassName");
+    console.log(theClassName);
+    var theView = window[theClassName].create('initWithFrame', theFrame);
+    
+    var subviews = aCoder.decodeObjectForKey("NSSubviews");
+    theView.superview = aCoder.decodeObjectForKey("NSSuperview");
+    theView.window = null;
+    theView.subviews = [];
+    
+    if (subviews) {
+      for (var idx = 0; idx < subviews.length; idx++) {
+        theView.addSubview(subviews[idx]);
+      }
     }
+    theView._bounds = NSMakeRect(0, 0, 0, 0);
+    theView.setFrame(theFrame);
+    
+    theView._bounds.origin = NSMakePoint(0, 0);
+    theView._bounds.size = this.frame.size;
+    
+    var vFlags = aCoder.decodeIntForKey("NSvFlags");
+    theView.autoResizesSubviews = true;
+    theView.autoResizeMask = vFlags & 0x3F;
+    
+    return theView;
+  }
 });

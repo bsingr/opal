@@ -27,91 +27,91 @@
 include('foundation/foundation');
 
 /**
-    @protocol CAMediaTiming
+  @protocol CAMediaTiming
 */
 var CAMediaTiming = NSObject.protocol({
+  
+  /**
+    Defaults to 0.0
     
-    /**
-        Defaults to 0.0
-        
-        @type {Float}
-    */
-    _beginTime: null,
+    @type {Float}
+  */
+  _beginTime: null,
+  
+  /**
+    @param {Float} time
+  */
+  setBeginTime: function(time) {
+    this._beginTime = time;
+  },
+  
+  /**
+    @returns Float
+  */
+  beginTime: function() {
+    return this._beginTime;
+  },
+  
+  /**
+    Defaults to 0.0
     
-    /**
-        @param {Float} time
-    */
-    setBeginTime: function(time) {
-        this._beginTime = time;
-    },
+    @type {Float}
+  */
+  _duration: null,
+  
+  /**
+    @param {Float} time
+  */
+  setDuration: function(duration) {
+    this._duration = duration;
+  },
+  
+  /**
+    @returns Float
+  */
+  duration: function() {
+    return this._duaration;
+  },
+  
+  /**
+    Defaults to 1.0
     
-    /**
-        @returns Float
-    */
-    beginTime: function() {
-        return this._beginTime;
-    },
+    @type {Float}
+  */
+  _speed: null,
+  
+  /**
+    @param {Float} time
+  */
+  setSpeed: function(speed) {
+    this._speed = speed;
+  },
+  
+  /**
+    @returns Float
+  */
+  speed: function() {
+    return this._speed;
+  },
+  
+  /**
+    Defaults to false
     
-    /**
-        Defaults to 0.0
-        
-        @type {Float}
-    */
-    _duration: null,
-    
-    /**
-        @param {Float} time
-    */
-    setDuration: function(duration) {
-        this._duration = duration;
-    },
-    
-    /**
-        @returns Float
-    */
-    duration: function() {
-        return this._duaration;
-    },
-    
-    /**
-        Defaults to 1.0
-        
-        @type {Float}
-    */
-    _speed: null,
-    
-    /**
-        @param {Float} time
-    */
-    setSpeed: function(speed) {
-        this._speed = speed;
-    },
-    
-    /**
-        @returns Float
-    */
-    speed: function() {
-        return this._speed;
-    },
-    
-    /**
-        Defaults to false
-        
-        @type {Boolean}
-    */
-    _autoreverses: null,
-    
-    /**
-        @param {Boolean} flag
-    */
-    setAutoreverses: function(flag) {
-        this._autoreverses = flag;
-    },
-    
-    /**
-        @returns Boolean
-    */
-    autoreverses: function() {
-        return this._autoreverses;
-    }
+    @type {Boolean}
+  */
+  _autoreverses: null,
+  
+  /**
+    @param {Boolean} flag
+  */
+  setAutoreverses: function(flag) {
+    this._autoreverses = flag;
+  },
+  
+  /**
+    @returns Boolean
+  */
+  autoreverses: function() {
+    return this._autoreverses;
+  }
 });

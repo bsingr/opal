@@ -26,72 +26,72 @@
 
 var NSTextContainer = NSObject.extend({
    
-    _size: null,
-    _textView: null,
-    _layoutManager: null,
-    _lineFragmentPadding: null,
-    _widthTracksTextView: null,
-    _heightTracksTextView: null,
-    
-    initWithCoder: function(aCoder) {
-        this._size = NSMakeSize(aCoder.decodeFloatForKey("NSWidth"), 0);
-        this._textView = aCoder.decodeObjectForKey("NSTextView");
-        this._layoutManager = aCoder.decodeObjectForKey("NSLayoutManager");
-                console.log(this._textView.frame());
-        this._size.height = this._textView.frame().size.height;
-        this._lineFragmentPadding = 0;
-        this._widthTracksTextView = true;
-        this._heightTracksTextView = true;
-        return this;
-    },
-    
-    containerSize: function() {
-        return this._size;
-    },
-    
-    textView: function() {
-        return this._textView;
-    },
-    
-    lineFragmentPadding: function() {
-        return this._lineFragmentPadding;
-    },
-    
-    setContainerSize: function(aSize) {
-        this._size = aSize;
-        this._layoutManager.textContainerChangedGeometry(this);
-    },
-    
-    setTextView: function(aTextView) {
-        this._textView = aTextView;
-        this._textView.setTextContainer(this);
-    },
-    
-    widthTracksTextView: function() {
-        return this._widthTracksTextView;
-    },
-    
-    setWidthTracksTextView: function(flag) {
-        this._widthTracksTextView = flag;
-    },
-    
-    heightTracksTextView: function() {
-        return this._heightTracksTextView;
-    },
-    
-    setHeightTracksTextView: function(flag) {
-        this._heightTracksTextView = flag;
-    },
-    
-    layoutManager: function() {
-        return this._layoutManager;
-    },
-    
-    setLayoutManager: function(layoutManager) {
-        this._layoutManager = layoutManager;
-    },
-    
-    setLineFragmentPadding: function(padding) {
-        this._lineFragmentPadding = padding;
-    }
+  _size: null,
+  _textView: null,
+  _layoutManager: null,
+  _lineFragmentPadding: null,
+  _widthTracksTextView: null,
+  _heightTracksTextView: null,
+  
+  initWithCoder: function(aCoder) {
+    this._size = NSMakeSize(aCoder.decodeFloatForKey("NSWidth"), 0);
+    this._textView = aCoder.decodeObjectForKey("NSTextView");
+    this._layoutManager = aCoder.decodeObjectForKey("NSLayoutManager");
+        console.log(this._textView.frame());
+    this._size.height = this._textView.frame().size.height;
+    this._lineFragmentPadding = 0;
+    this._widthTracksTextView = true;
+    this._heightTracksTextView = true;
+    return this;
+  },
+  
+  containerSize: function() {
+    return this._size;
+  },
+  
+  textView: function() {
+    return this._textView;
+  },
+  
+  lineFragmentPadding: function() {
+    return this._lineFragmentPadding;
+  },
+  
+  setContainerSize: function(aSize) {
+    this._size = aSize;
+    this._layoutManager.textContainerChangedGeometry(this);
+  },
+  
+  setTextView: function(aTextView) {
+    this._textView = aTextView;
+    this._textView.setTextContainer(this);
+  },
+  
+  widthTracksTextView: function() {
+    return this._widthTracksTextView;
+  },
+  
+  setWidthTracksTextView: function(flag) {
+    this._widthTracksTextView = flag;
+  },
+  
+  heightTracksTextView: function() {
+    return this._heightTracksTextView;
+  },
+  
+  setHeightTracksTextView: function(flag) {
+    this._heightTracksTextView = flag;
+  },
+  
+  layoutManager: function() {
+    return this._layoutManager;
+  },
+  
+  setLayoutManager: function(layoutManager) {
+    this._layoutManager = layoutManager;
+  },
+  
+  setLineFragmentPadding: function(padding) {
+    this._lineFragmentPadding = padding;
+  }
 });

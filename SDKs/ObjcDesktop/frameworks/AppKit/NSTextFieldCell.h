@@ -9,8 +9,8 @@
 #import <AppKit/NSCell.h>
 
 enum {
-    NSTextFieldSquareBezel  = 0,
-    NSTextFieldRoundedBezel = 1
+  NSTextFieldSquareBezel  = 0,
+  NSTextFieldRoundedBezel = 1
 };
 typedef NSUInteger NSTextFieldBezelStyle;
 
@@ -18,12 +18,12 @@ typedef NSUInteger NSTextFieldBezelStyle;
 
 @interface NSTextFieldCell : NSCell
 {
-    NSString   *_placeholderString;
-    BOOL        _drawsBackground;
-    BOOL        _bezeled;
-    NSUInteger  _bezelStyle;
-    NSUInteger  _gBorderType;
-    NSColor    *_textColor;
+  NSString   *_placeholderString;
+  BOOL    _drawsBackground;
+  BOOL    _bezeled;
+  NSUInteger  _bezelStyle;
+  NSUInteger  _gBorderType;
+  NSColor  *_textColor;
 }
 
 - (void)setBackgroundColor:(NSColor *)color;

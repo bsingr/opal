@@ -13,11 +13,11 @@
 
 @interface NSObjectController : NSController
 {
-    NSString       *_objectClass;
-	id              _content;
-	id              _selection;
-	BOOL            _editable;
-	BOOL            _automaticallyPreparesContent;
+  NSString     *_objectClass;
+	id        _content;
+	id        _selection;
+	BOOL      _editable;
+	BOOL      _automaticallyPreparesContent;
 }
 
 - (id)initWithContent:(id)content;

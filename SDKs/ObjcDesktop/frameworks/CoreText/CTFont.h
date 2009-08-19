@@ -58,42 +58,42 @@ extern CTFontRef CTFontCreateWithFontDescriptor(CTFontDescriptorRef descriptor, 
 
 
 enum {	
-    kCTFontOptionsDefault               = 0,
-    kCTFontOptionsPreventAutoActivation = 1 << 0,
-    kCTFontOptionsPreferSystemFont      = 1 << 2
+  kCTFontOptionsDefault         = 0,
+  kCTFontOptionsPreventAutoActivation = 1 << 0,
+  kCTFontOptionsPreferSystemFont    = 1 << 2
 };
 typedef CFOptionFlags CTFontOptions;
 
 
 enum {
-    kCTFontNoFontType                           = -1,
-    kCTFontUserFontType                         =  0,
-    kCTFontUserFixedPitchFontType               =  1,
-    kCTFontSystemFontType                       =  2,
-    kCTFontEmphasizedSystemFontType             =  3,
-    kCTFontSmallSystemFontType                  =  4,
-    kCTFontSmallEmphasizedSystemFontType        =  5,
-    kCTFontMiniSystemFontType                   =  6,
-    kCTFontMiniEmphasizedSystemFontType         =  7,
-    kCTFontViewsFontType                        =  8,
-    kCTFontApplicationFontType                  =  9,
-    kCTFontLabelFontType                        = 10,
-    kCTFontMenuTitleFontType                    = 11,
-    kCTFontMenuItemFontType                     = 12,
-    kCTFontMenuItemMarkFontType                 = 13,
-    kCTFontMenuItemCmdKeyFontType               = 14,
-    kCTFontWindowTitleFontType                  = 15,
-    kCTFontPushButtonFontType                   = 16,
-    kCTFontUtilityWindowTitleFontType           = 17,
-    kCTFontAlertHeaderFontType                  = 18,
-    kCTFontSystemDetailFontType                 = 19,
-    kCTFontEmphasizedSystemDetailFontType       = 20,
-    kCTFontToolbarFontType                      = 21,
-    kCTFontSmallToolbarFontType                 = 22,
-    kCTFontMessageFontType                      = 23,
-    kCTFontPaletteFontType                      = 24,
-    kCTFontToolTipFontType                      = 25,
-    kCTFontControlContentFontType               = 26
+  kCTFontNoFontType               = -1,
+  kCTFontUserFontType             =  0,
+  kCTFontUserFixedPitchFontType         =  1,
+  kCTFontSystemFontType             =  2,
+  kCTFontEmphasizedSystemFontType       =  3,
+  kCTFontSmallSystemFontType          =  4,
+  kCTFontSmallEmphasizedSystemFontType    =  5,
+  kCTFontMiniSystemFontType           =  6,
+  kCTFontMiniEmphasizedSystemFontType     =  7,
+  kCTFontViewsFontType            =  8,
+  kCTFontApplicationFontType          =  9,
+  kCTFontLabelFontType            = 10,
+  kCTFontMenuTitleFontType          = 11,
+  kCTFontMenuItemFontType           = 12,
+  kCTFontMenuItemMarkFontType         = 13,
+  kCTFontMenuItemCmdKeyFontType         = 14,
+  kCTFontWindowTitleFontType          = 15,
+  kCTFontPushButtonFontType           = 16,
+  kCTFontUtilityWindowTitleFontType       = 17,
+  kCTFontAlertHeaderFontType          = 18,
+  kCTFontSystemDetailFontType         = 19,
+  kCTFontEmphasizedSystemDetailFontType     = 20,
+  kCTFontToolbarFontType            = 21,
+  kCTFontSmallToolbarFontType         = 22,
+  kCTFontMessageFontType            = 23,
+  kCTFontPaletteFontType            = 24,
+  kCTFontToolTipFontType            = 25,
+  kCTFontControlContentFontType         = 26
 };
 typedef int CTFontUIFontType;
 

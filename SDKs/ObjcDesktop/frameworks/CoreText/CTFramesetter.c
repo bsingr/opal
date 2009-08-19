@@ -28,20 +28,20 @@
 
 CTFramesetterRef CTFramesetterCreateWithAttributedString(CFAttributedStringRef string)
 {
-    
+  
 }
 
 CTFrameRef CTFramesetterCreateFrame(CTFramesetterRef framesetter, CFRange stringRange, CGPathRef path, CFDictionaryRef frameAttributes)
 {
-    
+  
 }
 
 CTTypesetterRef CTFramesetterGetTypesetter(CTFramesetterRef framesetter)
 {
-    
+  
 }
 
 CGSize CTFramesetterSuggestFrameSizeWithConstraints(CTFramesetterRef framesetter, CFRange stringRange, CFDictionaryRef frameAttributes, CGSize constraints, CFRange* fitRange)
 {
-    
+  
 }

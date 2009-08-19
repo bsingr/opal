@@ -27,35 +27,35 @@
 include('foundation/object');
 
 var NSNotification = NSObject.extend({
-    
-    _name: null,
-    _object: null,
-    _userInfo: null,
-    
-    name: function() {
-        return this._name;
-    },
-    
-    object: function() {
-        return this._object;
-    },
-    
-    _userInfo: function() {
-        return this._userInfo;
-    }
+  
+  _name: null,
+  _object: null,
+  _userInfo: null,
+  
+  name: function() {
+    return this._name;
+  },
+  
+  object: function() {
+    return this._object;
+  },
+  
+  _userInfo: function() {
+    return this._userInfo;
+  }
 });
 
 /**
-    Main method of creating a notification. userInfo can be null, and in which
-    case a default dictionary will be created.
+  Main method of creating a notification. userInfo can be null, and in which
+  case a default dictionary will be created.
 */
 NSNotification.notificationWithName = function(aName, anObject, userInfo) {
-    
-    var theNotification = NSNotification.create();
-    
-    theNotification._name = aName;
-    theNotification._object = anObject
-    theNotification._userInfo = userInfo;
-    
-    return theNotification;
+  
+  var theNotification = NSNotification.create();
+  
+  theNotification._name = aName;
+  theNotification._object = anObject
+  theNotification._userInfo = userInfo;
+  
+  return theNotification;
 };

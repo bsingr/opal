@@ -26,95 +26,95 @@
 
 
 var NSMenuWindow = NSWindow.extend({
+  
+  _menu: null,
+  
+  initWithMenu: function(aMenu) {
+    this._DOMContainer = document.createElement('div');
+    this._DOMGraphicsContext = document.createElement('canvas');
+    this._DOMContainer.appendChild(this._DOMGraphicsContext);
+    document.body.appendChild(this._DOMContainer);
     
-    _menu: null,
+    this._DOMContainer.style.display = "block";
+    this._DOMContainer.style.position = "absolute";
     
-    initWithMenu: function(aMenu) {
-        this._DOMContainer = document.createElement('div');
-        this._DOMGraphicsContext = document.createElement('canvas');
-        this._DOMContainer.appendChild(this._DOMGraphicsContext);
-        document.body.appendChild(this._DOMContainer);
-        
-        this._DOMContainer.style.display = "block";
-        this._DOMContainer.style.position = "absolute";
-        
-        this._DOMGraphicsContext.style.display = "block";
-        this._DOMGraphicsContext.style.position = "absolute";
-        
-        this._backgroundColor = NSColor.colorWithCalibratedRGBA(0.904, 0.904, 0.904, 1);
-        this._hasShadow = true;
-        
-        this._windowNumber = NSApplication.sharedApplication().addWindow(this);
-        
-        this._minSize = NSMakeSize(0.0, 0.0);
-        this._maxSize = NSMakeSize(9999.0, 9999.0);
-        this._frame = this.frameRectForContentRect(NSMakeRect(100,100,100,100));
-        this._firstResponder = this;
-        
-        this._menu = aMenu;
-        
-        // menu view
-        this._contentView = NSMenuView.create('initWithMenu', this._menu);
-        this._contentView.setHorizontal(false);
-        this._contentView.update();
-        this._contentView._window = this;
-        this.setFrame(this._contentView.frame());
-        this._DOMContainer.appendChild(this._contentView.DOMContainer());
-        
-        this.setNextResponder(NSApplication.sharedApplication());
-        
-        this.setLevel(NSPopUpMenuWindowLevel);
-        
-        return this;
-    },
+    this._DOMGraphicsContext.style.display = "block";
+    this._DOMGraphicsContext.style.position = "absolute";
     
-    drawRect: function(aRect) {
-        var c = NSGraphicsContext.currentContext().graphicsPort();
-        
-        CGContextSetFillColorWithColor(c, NSColor.colorWithCalibratedRGBA(0.1, 0.1, 0.1, 0.604));
-        CGContextBeginPath(c);
-        CGContextMoveToPoint(c, aRect.origin.x + 6, aRect.origin.y);
-        
-        CGContextAddArcToPoint(c, aRect.origin.x + aRect.size.width, aRect.origin.y,
-                                aRect.origin.x + aRect.size.width, aRect.origin.y + 6,
-                                6);
-        
-        CGContextAddArcToPoint(c, aRect.origin.x + aRect.size.width, aRect.origin.y + aRect.size.height,
-                                aRect.origin.x + aRect.size.width - 6, aRect.origin.y + aRect.size.height,
-                                6);
-        
-        CGContextAddArcToPoint(c, aRect.origin.x, aRect.origin.y + aRect.size.height,
-                                aRect.origin.x, aRect.origin.y + aRect.size.height - 6,
-                                6);
-        
-        CGContextAddArcToPoint(c, aRect.origin.x, aRect.origin.y,
-                                aRect.origin.x + 6, aRect.origin.y,
-                                6);
+    this._backgroundColor = NSColor.colorWithCalibratedRGBA(0.904, 0.904, 0.904, 1);
+    this._hasShadow = true;
+    
+    this._windowNumber = NSApplication.sharedApplication().addWindow(this);
+    
+    this._minSize = NSMakeSize(0.0, 0.0);
+    this._maxSize = NSMakeSize(9999.0, 9999.0);
+    this._frame = this.frameRectForContentRect(NSMakeRect(100,100,100,100));
+    this._firstResponder = this;
+    
+    this._menu = aMenu;
+    
+    // menu view
+    this._contentView = NSMenuView.create('initWithMenu', this._menu);
+    this._contentView.setHorizontal(false);
+    this._contentView.update();
+    this._contentView._window = this;
+    this.setFrame(this._contentView.frame());
+    this._DOMContainer.appendChild(this._contentView.DOMContainer());
+    
+    this.setNextResponder(NSApplication.sharedApplication());
+    
+    this.setLevel(NSPopUpMenuWindowLevel);
+    
+    return this;
+  },
+  
+  drawRect: function(aRect) {
+    var c = NSGraphicsContext.currentContext().graphicsPort();
+    
+    CGContextSetFillColorWithColor(c, NSColor.colorWithCalibratedRGBA(0.1, 0.1, 0.1, 0.604));
+    CGContextBeginPath(c);
+    CGContextMoveToPoint(c, aRect.origin.x + 6, aRect.origin.y);
+    
+    CGContextAddArcToPoint(c, aRect.origin.x + aRect.size.width, aRect.origin.y,
+                aRect.origin.x + aRect.size.width, aRect.origin.y + 6,
+                6);
+    
+    CGContextAddArcToPoint(c, aRect.origin.x + aRect.size.width, aRect.origin.y + aRect.size.height,
+                aRect.origin.x + aRect.size.width - 6, aRect.origin.y + aRect.size.height,
+                6);
+    
+    CGContextAddArcToPoint(c, aRect.origin.x, aRect.origin.y + aRect.size.height,
+                aRect.origin.x, aRect.origin.y + aRect.size.height - 6,
+                6);
+    
+    CGContextAddArcToPoint(c, aRect.origin.x, aRect.origin.y,
+                aRect.origin.x + 6, aRect.origin.y,
+                6);
 
-        CGContextClosePath(c);
-        
-        // shadow
-        CGContextSetShadowWithColor(c, NSMakeSize(0, 5), 10, NSColor.colorWithCalibratedRGBA(0.0, 0.0, 0.0, 0.694));
-        
-        CGContextFillPath(c);
-    },
+    CGContextClosePath(c);
     
-    /**
-        Used to work out the actual framerect for the winow based on the provided
-        content rect. This window basically needs to consider that the menu will 
-        have a shadow, and thus provide room for it.
-    */
-    frameRectForContentRect: function(contentRect) {
-        return NSMakeRect(contentRect.origin.x - 20, // 20px shadow room
-                        contentRect.origin.y - 20, // 20px shadow room
-                        contentRect.size.width + 40, // 20px shadow on either side
-                        contentRect.size.height + 40); // 20px shadow on bottom and top
-    },
+    // shadow
+    CGContextSetShadowWithColor(c, NSMakeSize(0, 5), 10, NSColor.colorWithCalibratedRGBA(0.0, 0.0, 0.0, 0.694));
     
-    contentRectForFrameRect: function(frameRect) {
-        return NSMakeRect(frameRect.origin.x + 20,
-                        frameRect.origin.y + 20,
-                        frameRect.size.width,
-                        frameRect.size.height);
-    }
+    CGContextFillPath(c);
+  },
+  
+  /**
+    Used to work out the actual framerect for the winow based on the provided
+    content rect. This window basically needs to consider that the menu will 
+    have a shadow, and thus provide room for it.
+  */
+  frameRectForContentRect: function(contentRect) {
+    return NSMakeRect(contentRect.origin.x - 20, // 20px shadow room
+            contentRect.origin.y - 20, // 20px shadow room
+            contentRect.size.width + 40, // 20px shadow on either side
+            contentRect.size.height + 40); // 20px shadow on bottom and top
+  },
+  
+  contentRectForFrameRect: function(frameRect) {
+    return NSMakeRect(frameRect.origin.x + 20,
+            frameRect.origin.y + 20,
+            frameRect.size.width,
+            frameRect.size.height);
+  }
 });

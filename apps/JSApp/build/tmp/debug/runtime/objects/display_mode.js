@@ -26,14 +26,14 @@
 
 
 var VNGraphicsContextRenderDisplayMode  = 0;
-var VNGraphicsContextDrawDisplayMode    = 1;
+var VNGraphicsContextDrawDisplayMode  = 1;
 
 VN._currentGuid = 0;
 
 VN.CreateGuid = function() {
-    return VN._currentGuid++;
+  return VN._currentGuid++;
 };
 
 VN.$ = function(theElement) {
-    return document.getElementById(theElement)
+  return document.getElementById(theElement)
 };

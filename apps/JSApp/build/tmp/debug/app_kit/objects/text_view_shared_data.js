@@ -26,57 +26,57 @@
 
 var NSTextViewSharedData = NSObject.extend({
 
-    _backgroundColor: null,
-    _defaultParagraphStyle: null,
-    _flags: null,
-    _insertionColor: null,
-    _linkAttributes: null,
-    _markedAttributes: null,
-    _selectedAttributes: null,
+  _backgroundColor: null,
+  _defaultParagraphStyle: null,
+  _flags: null,
+  _insertionColor: null,
+  _linkAttributes: null,
+  _markedAttributes: null,
+  _selectedAttributes: null,
+  
+  _isEditable: null,
+  _isSelectable: null,
+  _isRichText: null,
+  
+  initWithCoder: function(aCoder) {
+    var flags = aCoder.decodeIntForKey("NSFlags");
     
-    _isEditable: null,
-    _isSelectable: null,
-    _isRichText: null,
+    this._isEditable = (flags & 0x00000002) ? true : false;
+    this._isSelectable = (flags & 0x00000001) ? true : false;
+    this._isRichText = (flags & 0x00000004) ? true : false;
     
-    initWithCoder: function(aCoder) {
-        var flags = aCoder.decodeIntForKey("NSFlags");
-        
-        this._isEditable = (flags & 0x00000002) ? true : false;
-        this._isSelectable = (flags & 0x00000001) ? true : false;
-        this._isRichText = (flags & 0x00000004) ? true : false;
-        
-        this._backgroundColor = aCoder.decodeObjectForKey("NSBackgroundColor");
-        this._defaultParagraphStyle = aCoder.decodeObjectForKey("NSDefaultParagraphStyle");
-        
-        this._insertionColor = aCoder.decodeObjectForKey("NSInsertionColor");
-        // this._linkAttributes = aCoder.decodeObjectForKey("NSLinkAttributes");
-        this._markedAttributes = aCoder.decodeObjectForKey("NSMarkedAttributes");
-        // this._selectedAttributed = aCoder.decodeObjectForKey("NSSelectedAttributes");
-        
-        return this;
-    },
+    this._backgroundColor = aCoder.decodeObjectForKey("NSBackgroundColor");
+    this._defaultParagraphStyle = aCoder.decodeObjectForKey("NSDefaultParagraphStyle");
     
-    backgroundColor: function() {
-        return this._backgroundColor;
-    },
+    this._insertionColor = aCoder.decodeObjectForKey("NSInsertionColor");
+    // this._linkAttributes = aCoder.decodeObjectForKey("NSLinkAttributes");
+    this._markedAttributes = aCoder.decodeObjectForKey("NSMarkedAttributes");
+    // this._selectedAttributed = aCoder.decodeObjectForKey("NSSelectedAttributes");
     
-    insertionColor: function() {
-        return this._insertionColor;
-    },
-    
-    defaultParagraphStyle: function() {
-        return this._defaultParagraphStyle;
-    },
-    
-    isEditable: function() {
-        return this._isEditable;
-    },
-    
-    isSelectable: function() {
-        return this._isSelectable;
-    },
-    
-    isRichText: function() {
-        return this._isRichText;
-    }
+    return this;
+  },
+  
+  backgroundColor: function() {
+    return this._backgroundColor;
+  },
+  
+  insertionColor: function() {
+    return this._insertionColor;
+  },
+  
+  defaultParagraphStyle: function() {
+    return this._defaultParagraphStyle;
+  },
+  
+  isEditable: function() {
+    return this._isEditable;
+  },
+  
+  isSelectable: function() {
+    return this._isSelectable;
+  },
+  
+  isRichText: function() {
+    return this._isRichText;
+  }
 });

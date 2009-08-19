@@ -32,50 +32,50 @@ include('foundation/object');
 var NSGraphicsContextCurrent = null;
 
 var NSGraphicsContext = NSObject.extend({
-    
-    // low level context: (2d context for canvas)
-    _graphicsPort: null,
-    
-    // not flipped means origin is bottom left. A Flipped context has the origin
-    // at the top left (opposite to what 2d canvas in browser has)
-    _isFlipped: null,
-    
-    initWithGraphicsPort: function(graphicsPort, initialFlippedState) {
-        this._graphicsPort = graphicsPort;
-        this._isFlipped = initialFlippedState;
-        return this;
-    },
-    
-    graphicsPort: function() {
-        return this._graphicsPort;
-    },
-    
-    isFlipped: function() {
-        return this._isFlipped;
-    }
+  
+  // low level context: (2d context for canvas)
+  _graphicsPort: null,
+  
+  // not flipped means origin is bottom left. A Flipped context has the origin
+  // at the top left (opposite to what 2d canvas in browser has)
+  _isFlipped: null,
+  
+  initWithGraphicsPort: function(graphicsPort, initialFlippedState) {
+    this._graphicsPort = graphicsPort;
+    this._isFlipped = initialFlippedState;
+    return this;
+  },
+  
+  graphicsPort: function() {
+    return this._graphicsPort;
+  },
+  
+  isFlipped: function() {
+    return this._isFlipped;
+  }
 });
 
 VN.extend(NSGraphicsContext, {
    
-    graphicsContextWithGraphicsPort: function(graphicsPort, initialFlippedState) {
-        return NSGraphicsContext.create('initWithGraphicsPort', graphicsPort, initialFlippedState);
-    },
-    
-    currentContext: function() {
-        return NSGraphicsContextCurrent;
-    },
-    
-    setCurrentContext: function(context) {
-        NSGraphicsContextCurrent = context;
-    },
-    
-    saveGraphicsState: function() {
-        var ctx = NSGraphicsContext.currentContext().graphicsPort();
-        CGContextSaveGState(ctx);
-    },
-    
-    restoreGraphicsState: function() {
-        var ctx = NSGraphicsContext.currentContext().graphicsPort();
-        CGContextRestoreGState(ctx);     
-    }
+  graphicsContextWithGraphicsPort: function(graphicsPort, initialFlippedState) {
+    return NSGraphicsContext.create('initWithGraphicsPort', graphicsPort, initialFlippedState);
+  },
+  
+  currentContext: function() {
+    return NSGraphicsContextCurrent;
+  },
+  
+  setCurrentContext: function(context) {
+    NSGraphicsContextCurrent = context;
+  },
+  
+  saveGraphicsState: function() {
+    var ctx = NSGraphicsContext.currentContext().graphicsPort();
+    CGContextSaveGState(ctx);
+  },
+  
+  restoreGraphicsState: function() {
+    var ctx = NSGraphicsContext.currentContext().graphicsPort();
+    CGContextRestoreGState(ctx);   
+  }
 });

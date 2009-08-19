@@ -7,7 +7,7 @@
 // 
 
 typedef struct {
-    char *path;
+  char *path;
 } FILE;
 
 extern int fclose(FILE *stream);

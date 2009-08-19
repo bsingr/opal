@@ -7,30 +7,30 @@
 // 
 
 typedef struct CGColorSpace {
-    char *name;
+  char *name;
 } CGColorSpaceRef;
 
 #import <CoreGraphics/CGBase.h>
 #import <CoreGraphics/CGDataProvider.h>
 
 enum CGColorRenderingIntent {
-    kCGRenderingIntentDefault,
-    kCGRenderingIntentAbsoluteColorimetric,
-    kCGRenderingIntentRelavtiveColormetric,
-    kCGRenderingIntentPerceptual,
-    kCGRenderingIntentSaturation
+  kCGRenderingIntentDefault,
+  kCGRenderingIntentAbsoluteColorimetric,
+  kCGRenderingIntentRelavtiveColormetric,
+  kCGRenderingIntentPerceptual,
+  kCGRenderingIntentSaturation
 };
 typedef enum CGColorRenderingIntent CGColorRenderingIntent;
 
 enum CGColorSpaceModel {
-    kCGColorSpaceModelUnknown   = -1,
-    kCGColorSpaceModelMonochrome,
-    kCGColorSpaceModelRGB,
-    kCGColorSpaceModelCMYK,
-    kCGColorSpaceModelLab,
-    kCGColorSpaceModelDeviceN,
-    kCGColorSpaceModelIndexed,
-    kCGColorSpaceModelPattern
+  kCGColorSpaceModelUnknown   = -1,
+  kCGColorSpaceModelMonochrome,
+  kCGColorSpaceModelRGB,
+  kCGColorSpaceModelCMYK,
+  kCGColorSpaceModelLab,
+  kCGColorSpaceModelDeviceN,
+  kCGColorSpaceModelIndexed,
+  kCGColorSpaceModelPattern
 };
 typedef enum CGColorSpaceModel CGColorSpaceModel;
 

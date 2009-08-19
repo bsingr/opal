@@ -25,5 +25,5 @@
  */
 
 var NSScroller = NSView.extend({
-    
+  
 });

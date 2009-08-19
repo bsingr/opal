@@ -1,10 +1,13 @@
 #!/usr/bin/env ruby
 
 require File.expand_path(
-    File.join(File.dirname(__FILE__), %w[.. lib vienna]))
+  File.join(File.dirname(__FILE__), %w[.. lib vienna]))
 
-if ARGV[0] == "build"
-  Vienna::Tools.build
-elsif ARGV[0] == "clean"
-  Vienna::Tools.clean
-end
+# if ARGV[0] == "build"
+#   Vienna::Tools.build
+# elsif ARGV[0] == "clean"
+#   Vienna::Tools.clean
+# end
+
+
+bob = Vienna::RubyParser.parse(ARGV[0])

@@ -44,27 +44,27 @@ function CGRect()
 
 function CGPointMake(x, y)
 {
-    return { x: x, y: y };
+  return { x: x, y: y };
 }
 
 function CGSizeMake(width, height)
 {
-    return { width: width, height: height };
+  return { width: width, height: height };
 }
 
 function CGRectMake(x, y, width, height)
 {
-    return { size: CGSizeMake(width, height), origin: CGPointMake(x, y) };
+  return { size: CGSizeMake(width, height), origin: CGPointMake(x, y) };
 }
 
 function CGRectGetMinX(rect)
 {
-    return rect.origin.x;
+  return rect.origin.x;
 }
 
 function CGRectGetMidX(rect)
 {
-    return rect.origin.x + (rect.size.width / 2.0);
+  return rect.origin.x + (rect.size.width / 2.0);
 }
 
 function CGRectGetMaxX(rect)

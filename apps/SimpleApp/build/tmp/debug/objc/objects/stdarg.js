@@ -10,7 +10,7 @@
 // 
 function va_start(ap, last)
 {
-    var foundIndex;
+  var foundIndex;
 	for (var i = 0; i < ap.all.length; i++)
 	{
 		if (ap.all[i] == last)
@@ -38,12 +38,12 @@ function va_arg(ap, type)
 // 
 function va_end(ap)
 {
-    // Nothing really to do...
+  // Nothing really to do...
 }
 
 // void va_copy(va_list dest, va_list src);
 // 
 function va_copy(dest, src)
 {
-    // FIXME: Need to implemenet
+  // FIXME: Need to implemenet
 }

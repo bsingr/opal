@@ -31,35 +31,35 @@ const CFStringRef kCTFrameProgressionAttributeName = "kCTFrameProgressionAttribu
 
 CFRange CTFrameGetStringRange(CTFrameRef frame)
 {
-    
+  
 }
 
 CFRange CTFrameGetVisibleStringRange(CTFrameRef frame)
 {
-    
+  
 }
 
 CGPathRef CTFrameGetPath(CTFrameRef frame)
 {
-    
+  
 }
 
 CFDictionaryRef CTFrameGetFrameAttributes(CTFrameRef frame)
 {
-    
+  
 }
 
 CFArrayRef CTFrameGetLines(CTFrameRef frame)
 {
-    
+  
 }
 
 void CTFrameGetLineOrigins(CTFrameRef frame, CFRange range, CGPoint origins[])
 {
-    
+  
 }
 
 void CTFrameDraw(CTFrameRef frame, CGContextRef context)
 {
-    
+  
 }

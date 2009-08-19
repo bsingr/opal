@@ -24,20 +24,20 @@
 @class NSWindow;
 
 enum {
-    NSViewNotSizable    = 0,
-    NSViewMinXMargin    = 1,
-    NSViewWidthSizable  = 2,
-    NSViewMaxXMargin    = 4,
-    NSViewMinYMargin    = 8,
-    NSViewHeightSizable = 16,
-    NSViewMaxYMargin    = 32
+  NSViewNotSizable  = 0,
+  NSViewMinXMargin  = 1,
+  NSViewWidthSizable  = 2,
+  NSViewMaxXMargin  = 4,
+  NSViewMinYMargin  = 8,
+  NSViewHeightSizable = 16,
+  NSViewMaxYMargin  = 32
 };
 
 enum {
-    NSNoBorder          = 0,
-    NSLineBorder        = 1,
-    NSBezelBorder       = 2,
-    NSGrooveBorder      = 3
+  NSNoBorder      = 0,
+  NSLineBorder    = 1,
+  NSBezelBorder     = 2,
+  NSGrooveBorder    = 3
 };
 typedef NSUInteger NSBorderType;
 
@@ -46,43 +46,43 @@ typedef NSInteger NSToolTipTag;
 
 @interface NSView : NSResponder
 {
-    NSRect          _frame;
-    NSRect          _bounds;
-    NSWindow       *_window;
-    id              _gState;
-    
-    NSMenu         *_menu;
-    NSView         *_superview;
-    NSMutableArray *_subviews;
-    
-    NSView         *_nextKeyView;
-    NSView         *_previousKeyView;
-    
-    BOOL            _isHidden;
-    BOOL            _postsNotificationOnFrameChange;
-    BOOL            _postsNotificationOnBoundsChange;
-    BOOL            _autoresizesSubviews;
-    BOOL            _inLiveResize;
-    unsigned int    _autoresizingMask;
-    
-    int             _tag;
-    NSArray        *_draggedTypes;
-    NSToolTipTag    _defaultToolTipTag;
-    NSString       *_toolTip;
+  NSRect      _frame;
+  NSRect      _bounds;
+  NSWindow     *_window;
+  id        _gState;
+  
+  NSMenu     *_menu;
+  NSView     *_superview;
+  NSMutableArray *_subviews;
+  
+  NSView     *_nextKeyView;
+  NSView     *_previousKeyView;
+  
+  BOOL      _isHidden;
+  BOOL      _postsNotificationOnFrameChange;
+  BOOL      _postsNotificationOnBoundsChange;
+  BOOL      _autoresizesSubviews;
+  BOOL      _inLiveResize;
+  unsigned int  _autoresizingMask;
+  
+  int       _tag;
+  NSArray    *_draggedTypes;
+  NSToolTipTag  _defaultToolTipTag;
+  NSString     *_toolTip;
 
-    NSRect          _invalidRect;
+  NSRect      _invalidRect;
 
-    BOOL              _validTransforms;
-    CGAffineTransform _transformFromWindow;
-    CGAffineTransform _transformToWindow;
-    NSRect            _visibleRect;
+  BOOL        _validTransforms;
+  CGAffineTransform _transformFromWindow;
+  CGAffineTransform _transformToWindow;
+  NSRect      _visibleRect;
    
-    // Usually an "outer div" to hold the graphics context aswell as subviews' containers
-    CGDOMElementRef   _DOMContainer;
-    // Rendering context. mainly canvas. could be a nested DIV tree if DOM drawing. or could be a textfield for nstextfield etc. but default it is a canvas
-    CGDOMElementRef   _DOMGraphicsContext;
-    
-    CGContextRef     _graphicsContext;
+  // Usually an "outer div" to hold the graphics context aswell as subviews' containers
+  CGDOMElementRef   _DOMContainer;
+  // Rendering context. mainly canvas. could be a nested DIV tree if DOM drawing. or could be a textfield for nstextfield etc. but default it is a canvas
+  CGDOMElementRef   _DOMGraphicsContext;
+  
+  CGContextRef   _graphicsContext;
 }
 
 - (id)initWithFrame:(NSRect)frameRect;

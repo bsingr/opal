@@ -20,7 +20,7 @@ extern NSString *NSBackgroundColorAttributeName;
 extern NSString *NSAttachmentAttributeName;
 extern NSString *NSLigatureAttributeName;
 extern NSString *NSBaselineOffsetAttributeName;
-extern NSString *NSKernAttributeName;                // implement kerning? probably not... minaly use text system for monospace anyway...
+extern NSString *NSKernAttributeName;        // implement kerning? probably not... minaly use text system for monospace anyway...
 extern NSString *NSLinkAttributeName;
 
 extern NSString *NSStrokeWidthAttributeName;
@@ -35,18 +35,18 @@ extern NSString *NSCursorAttributeName;
 extern NSString *NSToolTipAttributeName;
 
 enum {
-    NSUnderlineStyleNone                = 0x00,
-    NSUnderlineStyleSingle              = 0x01,
-    NSUnderlineStyleThick               = 0x02,
-    NSUnderlineStyleDouble              = 0x09
+  NSUnderlineStyleNone        = 0x00,
+  NSUnderlineStyleSingle        = 0x01,
+  NSUnderlineStyleThick         = 0x02,
+  NSUnderlineStyleDouble        = 0x09
 };
 
 enum {
-    NSUnderlinePatternSolid             = 0x0000,
-    NSUnderlinePatternDot               = 0x0100,
-    NSUnderlinePatternDash              = 0x0200,
-    NSUnderlinePatternDashDot           = 0x0300,
-    NSUnderlinePatternDashDotDot        = 0x0400
+  NSUnderlinePatternSolid       = 0x0000,
+  NSUnderlinePatternDot         = 0x0100,
+  NSUnderlinePatternDash        = 0x0200,
+  NSUnderlinePatternDashDot       = 0x0300,
+  NSUnderlinePatternDashDotDot    = 0x0400
 };
 
 extern NSUInteger NSUnderlineByWordMask;

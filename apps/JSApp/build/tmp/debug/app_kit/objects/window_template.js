@@ -26,48 +26,48 @@
 
 
 var NSWindowTemplate = NSObject.extend({
-    
-    _maxSize: null,
-    _minSize: null,
-    _screenRect: null,
-    
-    _viewClass: null,
-    _wtFlags: null,
-    _windowBacking: null,
-    _windowClass: null,
-    _windowRect: null,
-    
-    _windowTitle: null,
-    _windowView: null,
-    
-    _styleMask: null,
-    _windowAutosave: null,
-    
-    initWithCoder: function(aCoder) {
-        this._maxSize = aCoder.decodeSizeForKey("NSMaxSize");
-        this._minSize = aCoder.decodeSizeForKey("NSMinSize");
-        this._screenRect = aCoder.decodeRectForKey("NSScreenRect");
+  
+  _maxSize: null,
+  _minSize: null,
+  _screenRect: null,
+  
+  _viewClass: null,
+  _wtFlags: null,
+  _windowBacking: null,
+  _windowClass: null,
+  _windowRect: null,
+  
+  _windowTitle: null,
+  _windowView: null,
+  
+  _styleMask: null,
+  _windowAutosave: null,
+  
+  initWithCoder: function(aCoder) {
+    this._maxSize = aCoder.decodeSizeForKey("NSMaxSize");
+    this._minSize = aCoder.decodeSizeForKey("NSMinSize");
+    this._screenRect = aCoder.decodeRectForKey("NSScreenRect");
 
-        this._viewClass = aCoder.decodeObjectForKey("NSViewClass");
-        this._wtFlags = aCoder.decodeIntForKey("NSWTFlags");
-        this._windowBacking = aCoder.decodeIntForKey("NSWindowBacking");
-        this._windowClass = aCoder.decodeObjectForKey("NSWindowClass");
-        this._windowRect = aCoder.decodeRectForKey("NSWindowRect");
+    this._viewClass = aCoder.decodeObjectForKey("NSViewClass");
+    this._wtFlags = aCoder.decodeIntForKey("NSWTFlags");
+    this._windowBacking = aCoder.decodeIntForKey("NSWindowBacking");
+    this._windowClass = aCoder.decodeObjectForKey("NSWindowClass");
+    this._windowRect = aCoder.decodeRectForKey("NSWindowRect");
 
-        this._windowTitle = aCoder.decodeObjectForKey("NSWindowTitle");
-        this._windowView = aCoder.decodeObjectForKey("NSWindowView");
+    this._windowTitle = aCoder.decodeObjectForKey("NSWindowTitle");
+    this._windowView = aCoder.decodeObjectForKey("NSWindowView");
 
-        this._styleMask = aCoder.decodeIntForKey("NSWindowStyleMask");
-        this._windowAutosave = aCoder.decodeObjectForKey("NSFrameAutosaveName");
+    this._styleMask = aCoder.decodeIntForKey("NSWindowStyleMask");
+    this._windowAutosave = aCoder.decodeObjectForKey("NSFrameAutosaveName");
 
-        return this;
-    },
-    
-    awakeAfterUsingCoder: function(aCoder) {
-        var theClass = window[this._windowClass];
-        var theWindow = theClass.create('initWithContentRectAndStyleMask', this._windowRect, this._styleMask);
-        theWindow.setContentView(this._windowView);
-        theWindow.makeKeyAndOrderFront(this);
-        return theWindow;
-    }
+    return this;
+  },
+  
+  awakeAfterUsingCoder: function(aCoder) {
+    var theClass = window[this._windowClass];
+    var theWindow = theClass.create('initWithContentRectAndStyleMask', this._windowRect, this._styleMask);
+    theWindow.setContentView(this._windowView);
+    theWindow.makeKeyAndOrderFront(this);
+    return theWindow;
+  }
 });

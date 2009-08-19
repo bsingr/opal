@@ -10,12 +10,12 @@
 
 NSString *NSStringFromSelector(SEL aSelector)
 {
-    return aSelector;
+  return aSelector;
 }
 
 SEL NSSelectorFromString(NSString *aSelectorName)
 {
-    return aSelectorName;
+  return aSelectorName;
 }
 
 void NSLog(NSString *format)
@@ -26,5 +26,5 @@ void NSLog(NSString *format)
 
 Class NSClassFromString(NSString *aClassName)
 {
-    return objc_getClass(aClassName);
+  return objc_getClass(aClassName);
 }

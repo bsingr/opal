@@ -26,41 +26,41 @@
 
 
 // NSKeyValueObservingOptions
-var NSKeyValueObservingOptionNew            = 0x01;
-var NSKeyValueObservingOptionOld            = 0x02;
-var NSKeyValueObservingOptionInitial        = 0x04;
-var NSKeyValueObservingOptionPrior          = 0x08;
-                                        
-// NSKeyValueChange                     
-var NSKeyValueChangeSetting                 = 1;
-var NSKeyValueChangeInsertion               = 2;
-var NSKeyValueChangeRemoval                 = 3;
-var NSKeyValueChangeReplacement             = 4;
+var NSKeyValueObservingOptionNew      = 0x01;
+var NSKeyValueObservingOptionOld      = 0x02;
+var NSKeyValueObservingOptionInitial    = 0x04;
+var NSKeyValueObservingOptionPrior      = 0x08;
+                    
+// NSKeyValueChange           
+var NSKeyValueChangeSetting         = 1;
+var NSKeyValueChangeInsertion         = 2;
+var NSKeyValueChangeRemoval         = 3;
+var NSKeyValueChangeReplacement       = 4;
 
 // NSKeyValueSetMutationKind
-var NSKeyValueUnionSetMutation              = 1;
-var NSKeyValueMinusSetMutation              = 2;
-var NSKeyValueIntersectSetMutation          = 3;
-var NSKeyValueSetSetMutation                = 4;
+var NSKeyValueUnionSetMutation        = 1;
+var NSKeyValueMinusSetMutation        = 2;
+var NSKeyValueIntersectSetMutation      = 3;
+var NSKeyValueSetSetMutation        = 4;
 
 // keys for chnage dictionary
-var NSKeyValueChangeKindKey                 = "NSKeyValueChangeKindKey"; 
-var NSKeyValueChangeNewKey                  = "NSKeyValueChangeNewKey";
-var NSKeyValueChangeOldKey                  = "NSKeyValueChangeOldKey";
-var NSKeyValueChangeIndexesKey              = "NSKeyValueChangeIndexesKey" ;
+var NSKeyValueChangeKindKey         = "NSKeyValueChangeKindKey"; 
+var NSKeyValueChangeNewKey          = "NSKeyValueChangeNewKey";
+var NSKeyValueChangeOldKey          = "NSKeyValueChangeOldKey";
+var NSKeyValueChangeIndexesKey        = "NSKeyValueChangeIndexesKey" ;
 var NSKeyValueChangeNotificationIsPriorKey  = "NSKeyValueChangeNotificationIsPriorKey";
 
 NSObject.mixin({
+  
+  observeValueForKeyPath: function(keyPath, ofObject, change, context) {
     
-    observeValueForKeyPath: function(keyPath, ofObject, change, context) {
-        
-    },
+  },
+  
+  addObserver: function(observer, forKeyPath, options, context) {
     
-    addObserver: function(observer, forKeyPath, options, context) {
-        
-    },
+  },
+  
+  removeObserver: function(observer, forKeyPath) {
     
-    removeObserver: function(observer, forKeyPath) {
-        
-    }
+  }
 });

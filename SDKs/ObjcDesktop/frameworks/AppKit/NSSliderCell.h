@@ -9,23 +9,23 @@
 #import <AppKit/NSCell.h>
 
 enum {
-    NSTickMarkBelow = 0,
-    NSTickMarkAbove = 1,
-    NSTickMarkLeft  = 1,
-    NSTickMarkRight = 0
+  NSTickMarkBelow = 0,
+  NSTickMarkAbove = 1,
+  NSTickMarkLeft  = 1,
+  NSTickMarkRight = 0
 };
 typedef NSUInteger NSTickMarkPosition;
 
 enum {
-    NSLinearSlider   = 0,
-    NSCircularSlider = 1
+  NSLinearSlider   = 0,
+  NSCircularSlider = 1
 };
 typedef NSUInteger NSSliderType;
 
 @interface NSSliderCell : NSCell
 {
-    double      _minValue;
-    double      _maxValue;
+  double    _minValue;
+  double    _maxValue;
 }
 
 + (BOOL)prefersTrackingUntilMouseUp;

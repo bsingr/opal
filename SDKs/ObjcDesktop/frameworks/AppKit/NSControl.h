@@ -14,12 +14,12 @@
 
 @interface NSControl : NSView
 {
-    NSInteger       _tag;
-    NSCell         *_cell;
-    
-    NSText         *_currentEditor;
-    BOOL            _isEnabled;
-    id              _value;
+  NSInteger     _tag;
+  NSCell     *_cell;
+  
+  NSText     *_currentEditor;
+  BOOL      _isEnabled;
+  id        _value;
 }
 
 + (void)setCellClass:(Class)factoryId;

@@ -12,15 +12,15 @@
 
 typedef struct __CFAttributedString 
 {
-    CFStringRef     _string;
-    CFArrayRef      _ranges;
-    
+  CFStringRef   _string;
+  CFArrayRef    _ranges;
+  
 } CFAttributedStringRef;
 
 typedef struct __CFAttributedString
 {
-    CFStringRef     _string;
-    CFArrayRef      _ranges;    
+  CFStringRef   _string;
+  CFArrayRef    _ranges;  
 
 } CFMutableAttributedStringRef;
 

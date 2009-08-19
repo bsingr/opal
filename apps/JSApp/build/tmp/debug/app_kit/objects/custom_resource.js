@@ -24,3 +24,20 @@
  * THE SOFTWARE.
  */
 
+var NSCustomResource = VN.CustomResource = VN.Object.extend({
+  
+  resourceClassName: null,
+  
+  resourceName: null,
+  
+  initWithCoder: function(aCoder) {
+    this.resourceClassName = aCoder.decodeObjectForKey('NSClassName');
+    this.resourceName = aCoder.decodeObjectForKey('NSResourceName');
+    
+    if (this.resourceClassName == 'NSImage') {
+      return NSImage.imageNamed(this.resourceName + '.png');
+    }
+    
+    return this;
+  }
+})

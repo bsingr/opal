@@ -26,27 +26,27 @@
 
 
 /**
-    Extends the object passed as the first parameter using the properties
-    defined in the second argument.
+  Extends the object passed as the first parameter using the properties
+  defined in the second argument.
 */
 VN.extend = function() {
 
-    var target = arguments[0] || { };
-    var idx = 1;
-    var len = arguments.length;
-    var options;
-    
-    if (len == 1) {
-        target = this;
-        idx = 0;
+  var target = arguments[0] || { };
+  var idx = 1;
+  var len = arguments.length;
+  var options;
+  
+  if (len == 1) {
+    target = this;
+    idx = 0;
+  }
+  
+  for ( ; idx < len; idx++) {
+    if (!(options = arguments[idx])) continue;
+    for (var key in options) {
+      target[key] = options[key];
     }
-    
-    for ( ; idx < len; idx++) {
-        if (!(options = arguments[idx])) continue;
-        for (var key in options) {
-            target[key] = options[key];
-        }
-    }
-    
-    return target;
+  }
+  
+  return target;
 };

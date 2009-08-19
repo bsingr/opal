@@ -26,84 +26,84 @@
 
 
 // NSStringDrawingOptions
-var NSStringDrawingTruncatesLastVisibleLine         = (1 << 5);
-var NSStringDrawingUsesLineFragmentOrigin           = (1 << 0);
-var NSStringDrawingUsesFontLeading                  = (1 << 1);
-var NSStringDrawingDisableScreenFontSubstitution    = (1 << 2);
-var NSStringDrawingUsesDeviceMetrics                = (1 << 3);
-var NSStringDrawingOneShot                          = (1 << 4);
+var NSStringDrawingTruncatesLastVisibleLine     = (1 << 5);
+var NSStringDrawingUsesLineFragmentOrigin       = (1 << 0);
+var NSStringDrawingUsesFontLeading          = (1 << 1);
+var NSStringDrawingDisableScreenFontSubstitution  = (1 << 2);
+var NSStringDrawingUsesDeviceMetrics        = (1 << 3);
+var NSStringDrawingOneShot              = (1 << 4);
 
 Object.extend(String.prototype, {
+  
+  sizeWithAttributes: function(attrs) {
     
-    sizeWithAttributes: function(attrs) {
-        
-    },
+  },
+  
+  drawAtPoint: function(aPoint, attrs) {
     
-    drawAtPoint: function(aPoint, attrs) {
-        
-    },
+  },
+  
+  drawInRect: function(aRect, attrs) {
     
-    drawInRect: function(aRect, attrs) {
-        
-    }
+  }
 });
 
 NSAttributedString.mixin({
-    
-    size: function() {
-	    var c = NSGraphicsContext.currentContext().graphicsPort();
-	    CGContextSaveGState(c);
-	    
-	    var theFont = this._attributes.objectForKey(NSFontAttributeName);
+  
+  size: function() {
+	  var c = NSGraphicsContext.currentContext().graphicsPort();
+	  CGContextSaveGState(c);
+	  
+	  var theFont = this._attributes.objectForKey(NSFontAttributeName);
 		CGContextSetFont(c, theFont);
 		
-	    var theSize = NSMakeSize(c.measureText(this._string).width, this._attributes.objectForKey(NSFontAttributeName).fontSize());
-	    CGContextRestoreGState(c);
-	    return theSize;
+	  var theSize = NSMakeSize(c.measureText(this._string).width, this._attributes.objectForKey(NSFontAttributeName).fontSize());
+	  CGContextRestoreGState(c);
+	  return theSize;
 	},
+  
+  drawAtPoint: function(aPoint) {
     
-    drawAtPoint: function(aPoint) {
-        
-    },
+  },
+  
+  drawInRect: function(aRect) {
     
-    drawInRect: function(aRect) {
-        
-    }
+  }
 });
 
 Object.extend(String.prototype, {
+  
+  drawWithRectAndOptions: function(aRect, options, attributes) {
     
-    drawWithRectAndOptions: function(aRect, options, attributes) {
-        
-    },
+  },
+  
+  boundingRectWithSize: function(aSize, options, attributes) {
     
-    boundingRectWithSize: function(aSize, options, attributes) {
-        
-    }
+  }
 });
 
 NSAttributedString.mixin({
-    
-    drawWithRectAndOptions: function(aRect, options) {
-        var c = NSGraphicsContext.currentContext().graphicsPort();
+  
+  drawWithRectAndOptions: function(aRect, options) {
+    var c = NSGraphicsContext.currentContext().graphicsPort();
 		
-        // font
+    // font
 		var theFont = this._attributes.objectForKey(NSFontAttributeName);
 		CGContextSetFont(c, theFont);
 		
-        // text color
+    // text color
 		var theColor = this._attributes.objectForKey(NSForegroundColorAttributeName);
 		CGContextSetFillColorWithColor(c, theColor);
 		
-        // text shadow, if any
-        if (this._attributes.containsKey(NSShadowAttributeName)) {
-            // CGContextSetShadowWithColor(c, NSMakeSize(1, 1), 1, NSColor.)
-        }
+    // text shadow, if any
+    if (this._attributes.containsKey(NSShadowAttributeName)) {
+      // CGContextSetShadowWithColor(c, NSMakeSize(1, 1), 1, NSColor.)
+    }
 		
 		CGContextShowTextAtPoint(c, aRect.origin.x, aRect.size.height + aRect.origin.y, this._string);
-    },
+  },
+  
+  boundingRectWithSize: function(aSize, options) {
     
-    boundingRectWithSize: function(aSize, options) {
-        
-    }
+  }
 });

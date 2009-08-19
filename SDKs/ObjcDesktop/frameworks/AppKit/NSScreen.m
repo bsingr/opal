@@ -12,18 +12,18 @@
 
 + (NSScreen *)mainScreen
 {
-    NSScreen *mainScreen = [[NSScreen alloc] init];
-    return mainScreen;
+  NSScreen *mainScreen = [[NSScreen alloc] init];
+  return mainScreen;
 }
 
 - (NSRect)frame
 {
-    return NSMakeRect(0,0,100,100);
+  return NSMakeRect(0,0,100,100);
 }
 
 - (NSRect)visibleFrame
 {
-    return NSMakeRect(0,0,100,100);
+  return NSMakeRect(0,0,100,100);
 }
 
 @end

@@ -27,24 +27,24 @@
 
 var IBOutletConnection = NSObject.extend({
 
-    _label: null,
-    _source: null,
-    _destination: null,
+  _label: null,
+  _source: null,
+  _destination: null,
 
-    initWithCoder: function(aCoder) {
-        this._label = aCoder.decodeObjectForKey("label")
-        this._source = aCoder.decodeObjectForKey("source");
-        this._destination = aCoder.decodeObjectForKey("destination");
-        return this;
-    },
+  initWithCoder: function(aCoder) {
+    this._label = aCoder.decodeObjectForKey("label")
+    this._source = aCoder.decodeObjectForKey("source");
+    this._destination = aCoder.decodeObjectForKey("destination");
+    return this;
+  },
 
-    /**
-        Instantiate the connection. The source is the object with the outlet, and
-        the destination is the target object. The label is the KVC compliant key
-        name to set, so we use KVC to set the outlet correctly.
-    */
-    awakeAfterUsingCoder: function(aCoder) {
-        this._source.setValueForKey(this._destination, this._label);
-        return this;
-    }
+  /**
+    Instantiate the connection. The source is the object with the outlet, and
+    the destination is the target object. The label is the KVC compliant key
+    name to set, so we use KVC to set the outlet correctly.
+  */
+  awakeAfterUsingCoder: function(aCoder) {
+    this._source.setValueForKey(this._destination, this._label);
+    return this;
+  }
 });

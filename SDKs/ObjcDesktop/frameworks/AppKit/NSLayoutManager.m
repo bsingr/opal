@@ -12,12 +12,12 @@
 
 - (id)init
 {
-    _typeSetter = [[NSTypesetter alloc] init];
-    _glyphGenerator = [NSGlyphGenerator sharedGlyphGenerator];
-    _textContainers = [NSMutableArray array];
-    _layoutInvalid = YES;
-    
-    return self;
+  _typeSetter = [[NSTypesetter alloc] init];
+  _glyphGenerator = [NSGlyphGenerator sharedGlyphGenerator];
+  _textContainers = [NSMutableArray array];
+  _layoutInvalid = YES;
+  
+  return self;
 }
 
 - (NSTextStorage *)textStorage{}
@@ -26,7 +26,7 @@
 - (NSAttributedString *)attributedString{}
 
 - (void)replaceTextStorage:(NSTextStorage *)newTextStorage{}
-    
+  
 - (NSGlyphGenerator *)glyphGenerator{}
 - (void)setGlyphGenerator:(NSGlyphGenerator *)glyphGenerator{}
 
@@ -120,7 +120,7 @@
 
 // - (NSUInteger)getGlyphsInRange:(NSRange)glyphRange glyphs:(NSGlyph *)glyphBuffer characterIndexes:(NSUInteger *)charIndexBuffer glyphInscriptions:(NSGlyphInscription *)inscribeBuffer elasticBits:(BOOL *)elasticBuffer{}
 // - (NSUInteger)getGlyphsInRange:(NSRange)glyphRange glyphs:(NSGlyph *)glyphBuffer characterIndexes:(NSUInteger *)charIndexBuffer glyphInscriptions:(NSGlyphInscription *)inscribeBuffer elasticBits:(BOOL *)elasticBuffer bidiLevels:(unsigned char *)bidiLevelBuffer{}
-    
+  
 - (NSUInteger)getGlyphs:(NSGlyph *)glyphArray range:(NSRange)glyphRange{}
 
 - (void)setTextContainer:(NSTextContainer *)container forGlyphRange:(NSRange)glyphRange{}
@@ -182,7 +182,7 @@
 - (NSRange)glyphRangeForTextContainer:(NSTextContainer *)container{}
 
 - (NSRange)rangeOfNominallySpacedGlyphsContainingIndex:(NSUInteger)glyphIndex{}
-    
+  
 - (NSArray)rectArrayForCharacterRange:(NSRange)charRange withinSelectedCharacterRange:(NSRange)selCharRange inTextContainer:(NSTextContainer *)container rectCount:(NSUInteger *)rectCount{}
 - (NSArray)rectArrayForGlyphRange:(NSRange)glyphRange withinSelectedGlyphRange:(NSRange)selGlyphRange inTextContainer:(NSTextContainer *)container rectCount:(NSUInteger *)rectCount{}
 

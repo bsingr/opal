@@ -48,50 +48,50 @@ const CFStringRef kCTFontOrientationAttribute = "kCTFontOrientationAttribute";
 
 CTFontDescriptorRef CTFontDescriptorCreateWithNameAndSize(CFStringRef name, CGFloat size)
 {
-    
+  
 }
 
 CTFontDescriptorRef CTFontDescriptorCreateWithAttributes(CFDictionaryRef attributes)
 {
-    
+  
 }
 
 CTFontDescriptorRef CTFontDescriptorCreateCopyWithAttributes(CTFontDescriptorRef original, CFDictionaryRef attributes)
 {
-    
+  
 }
 
 CTFontDescriptorRef CTFontDescriptorCreateCopyWithVariation(CTFontDescriptorRef original, CFNumberRef variationIdentifier, CGFloat variationValue)
 {
-    
+  
 }
 
 CTFontDescriptorRef CTFontDescriptorCreateCopyWithFeature(CTFontDescriptorRef original, CFNumberRef featureTypeIdentifier, CFNumberRef featureSelectorIdentifier)
 {
-    
+  
 }
 
 CFArrayRef CTFontDescriptorCreateMatchingFontDescriptors(CTFontDescriptorRef descriptor, CFSetRef mandatoryAttributes)
 {
-    
+  
 }
 
 CTFontDescriptorRef CTFontDescriptorCreateMatchingFontDescriptor(CTFontDescriptorRef descriptor, CFSetRef mandatoryAttributes)
 {
-    
+  
 }
 
 CFDictionaryRef CTFontDescriptorCopyAttributes(CTFontDescriptorRef descriptor)
 {
-    
+  
 }
 
 CFTypeRef CTFontDescriptorCopyAttribute(CTFontDescriptorRef descriptor, CFStringRef attribute)
 {
-    
+  
 }
 
 CFTypeRef CTFontDescriptorCopyLocalizedAttribute(CTFontDescriptorRef descriptor, CFStringRef attribute, CFStringRef *language)
 {
-    
+  
 }

@@ -26,221 +26,221 @@
 
 
 /**
-    @class NSObjectController
-    @extends NSController
+  @class NSObjectController
+  @extends NSController
 */
 var NSObjectController = VN.ObjectController = NSController.extend({
+  
+  /**
+    @type NSString
+  */
+  _objectClassName: null,
+  
+  /**
+    @type Class
+  */
+  _objectClass: null,
+  
+  /**
+    @type NSArray
+  */
+  _contentObjectArray: null,
+  
+  /**
+    @type NSObject
+  */
+  _content: null,
+  
+  /**
+    @type NSObject
+  */
+  _objectHandler: null,
+  
+  /**
+    @param {NSCoder} aCoder
+    @returns NSObjectController
+  */
+  initWithCoder: function(aCoder) {
+    this._objectClassName = aCoder.decodeObjectForKey("NSObjectClassName");
+    this._editable = aCoder.decodeBoolForKey("NSEditable");
+    this._automaticallyPreparesContent = aCoder.decodeBoolForKey("NSAutomaticallyPreparesContent");
+    return this;
+  },
+  
+  /**
+    Override observers binding for certain keys. Observing properties of 
+    changing attributes, e.g. in content arrays requires custom behaviour.
     
-    /**
-        @type NSString
-    */
-    _objectClassName: null,
+    A lot of bindable properties do not actually exist in arrays, for 
+    instance.
     
-    /**
-        @type Class
-    */
-    _objectClass: null,
-    
-    /**
-        @type NSArray
-    */
-    _contentObjectArray: null,
-    
-    /**
-        @type NSObject
-    */
-    _content: null,
-    
-    /**
-        @type NSObject
-    */
-    _objectHandler: null,
-    
-    /**
-        @param {NSCoder} aCoder
-        @returns NSObjectController
-    */
-    initWithCoder: function(aCoder) {
-        this._objectClassName = aCoder.decodeObjectForKey("NSObjectClassName");
-        this._editable = aCoder.decodeBoolForKey("NSEditable");
-        this._automaticallyPreparesContent = aCoder.decodeBoolForKey("NSAutomaticallyPreparesContent");
-        return this;
-    },
-    
-    /**
-        Override observers binding for certain keys. Observing properties of 
-        changing attributes, e.g. in content arrays requires custom behaviour.
-        
-        A lot of bindable properties do not actually exist in arrays, for 
-        instance.
-        
 		@param {NSString} keyPath
 		@param {NSObject} ofObject
 		@param {NSDictionary} change
 		@param {Object} context
 	*/
-    observeValueForKeyPath: function(keyPath, ofObject, change, context) {
-        console.log('observer notification for:' + keyPath + ' in objectcontroller');
-    },
+  observeValueForKeyPath: function(keyPath, ofObject, change, context) {
+    console.log('observer notification for:' + keyPath + ' in objectcontroller');
+  },
+  
+  /*
+    @param NSObject content
+    @return NSObjectController
+  */
+  initWithContent: function(content) {
     
-    /*
-        @param NSObject content
-        @return NSObjectController
-    */
-    initWithContent: function(content) {
-        
-    },
+  },
+  
+  /*
+    @param NSObject content
+  */
+  setContent: function(content) {
     
-    /*
-        @param NSObject content
-    */
-    setContent: function(content) {
-        
-    },
+  },
+  
+  /**
+    @return NSObject
+  */
+  content: function() {
     
-    /**
-        @return NSObject
-    */
-    content: function() {
-        
-    },
+  },
+  
+  /**
+    Returns the object being used to access the content
     
-    /**
-        Returns the object being used to access the content
-        
-        @return NSObject
-    */
-    selection: function() {
-        
-    },
+    @return NSObject
+  */
+  selection: function() {
     
-    /**
-        Returns an array of all the content objects
-        
-        @return NSArray
-    */
-    selectedObjects: function() {
-        
-    },
+  },
+  
+  /**
+    Returns an array of all the content objects
     
-    /**
-        When loaded from xib files, prepareContent will be called (if true).
-        
-        @param boolean flag
-    */
-    setAutomaticallyPreparesContent: function(flag) {
-        
-    },
+    @return NSArray
+  */
+  selectedObjects: function() {
     
-    /**
-        @return boolean
-    */
-    automaticallyPreparesContent: function() {
-        
-    },
+  },
+  
+  /**
+    When loaded from xib files, prepareContent will be called (if true).
     
-    /*
-        Sets the content. Default just creates a new object, of the required
-        type, and sets it as the content. (based on _objectClass ivar)
-    */
-    prepareContent: function() {
-        
-    },
+    @param boolean flag
+  */
+  setAutomaticallyPreparesContent: function(flag) {
     
-    /*
-        The object class to use when creating new objects
-        
-        @param Class objectClass
-    */
-    setObjectClass: function(objectClass) {
-        
-    },
+  },
+  
+  /**
+    @return boolean
+  */
+  automaticallyPreparesContent: function() {
     
-    /*
-        @return Class
-    */
-    objectClass: function() {
-        
-    },
+  },
+  
+  /*
+    Sets the content. Default just creates a new object, of the required
+    type, and sets it as the content. (based on _objectClass ivar)
+  */
+  prepareContent: function() {
     
-    /*
-        Creates a new object, _objectClass, when adding/inserting objects. Uses
-        the default init() method of the object.
-        
-        @return NSObject (or subclass of)
-    */
-    newObject: function() {
-        
-    },
+  },
+  
+  /*
+    The object class to use when creating new objects
     
-    /*
-        Sets the content object for the controller.
-        
-        @param NSObject object
-    */
-    addObject: function(object) {
-        
-    },
+    @param Class objectClass
+  */
+  setObjectClass: function(objectClass) {
     
-    /*
-        Removes the object if current content
-        
-        @param NSObject object
-    */
-    removeObject: function(object) {
-        
-    },
+  },
+  
+  /*
+    @return Class
+  */
+  objectClass: function() {
     
-    /*
-        Sets whether the controller can add/remove objects
-        
-        @param boolean flag
-    */
-    setEditable: function(flag) {
-        
-    },
+  },
+  
+  /*
+    Creates a new object, _objectClass, when adding/inserting objects. Uses
+    the default init() method of the object.
     
-    /*
-        @return boolean
-    */
-    isEditable: function() {
-        
-    },
+    @return NSObject (or subclass of)
+  */
+  newObject: function() {
     
-    /*
-        Creates a new object with newObject() and then adds it using addObject()
-        
-        @param NSObject sender - object that requested a new object to be added
-    */
-    add: function(sender) {
-        
-    },
+  },
+  
+  /*
+    Sets the content object for the controller.
     
-    /*
-        Returns whether or not new objects can be added.
-        
-        @return boolean
-    */
-    canAdd: function() {
-        
-    },
+    @param NSObject object
+  */
+  addObject: function(object) {
     
-    /*
-        Removes content object through removeObject()
-        
-        @param NSObject sender - object that requested removal
-    */
-    remove: function(sender) {
-        
-    },
+  },
+  
+  /*
+    Removes the object if current content
     
-    /*
-        Returns whether or not an item can be removed (false if there
-        are no items in content, for example)
-        
-        @return boolean
-    */
-    canRemove: function() {
-        
-    }
+    @param NSObject object
+  */
+  removeObject: function(object) {
+    
+  },
+  
+  /*
+    Sets whether the controller can add/remove objects
+    
+    @param boolean flag
+  */
+  setEditable: function(flag) {
+    
+  },
+  
+  /*
+    @return boolean
+  */
+  isEditable: function() {
+    
+  },
+  
+  /*
+    Creates a new object with newObject() and then adds it using addObject()
+    
+    @param NSObject sender - object that requested a new object to be added
+  */
+  add: function(sender) {
+    
+  },
+  
+  /*
+    Returns whether or not new objects can be added.
+    
+    @return boolean
+  */
+  canAdd: function() {
+    
+  },
+  
+  /*
+    Removes content object through removeObject()
+    
+    @param NSObject sender - object that requested removal
+  */
+  remove: function(sender) {
+    
+  },
+  
+  /*
+    Returns whether or not an item can be removed (false if there
+    are no items in content, for example)
+    
+    @return boolean
+  */
+  canRemove: function() {
+    
+  }
 });

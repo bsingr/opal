@@ -27,9 +27,9 @@
 include('app_kit/view');
 
 var _NSCornerView = NSView.extend({
-    
-    initWithCoder: function(aCoder) {
-        this._super(aCoder);
-        return this;
-    }
+  
+  initWithCoder: function(aCoder) {
+    this._super(aCoder);
+    return this;
+  }
 });

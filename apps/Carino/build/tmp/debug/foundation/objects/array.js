@@ -26,44 +26,44 @@
 
 
 var NSArray = {
-    
-    count: function() {
-        return this.length;
-    },
-    
-    objectAtIndex: function(index) {
-        return this[index];
-    },
-    
-    addObject: function(anObject) {
-        this.push(anObject);
-    },
-    
-    lastObject: function() {
-        return this.objectAtIndex(this.length - 1);
-    },
-    
-    removeLastObject: function() {
-        this.pop();
-    },
-    
-    initWithCoder: function(aCoder) {
-        var newObjects = aCoder.decodeObjectForKey('NS.Objects');
-        for (var idx = 0; idx < newObjects.length; idx++) {
-            this.push(newObjects[idx]);
-        }
-        return this;
-    },
-    
-    awakeAfterUsingCoder: function(aCoder) {
-        return this;
+  
+  count: function() {
+    return this.length;
+  },
+  
+  objectAtIndex: function(index) {
+    return this[index];
+  },
+  
+  addObject: function(anObject) {
+    this.push(anObject);
+  },
+  
+  lastObject: function() {
+    return this.objectAtIndex(this.length - 1);
+  },
+  
+  removeLastObject: function() {
+    this.pop();
+  },
+  
+  initWithCoder: function(aCoder) {
+    var newObjects = aCoder.decodeObjectForKey('NS.Objects');
+    for (var idx = 0; idx < newObjects.length; idx++) {
+      this.push(newObjects[idx]);
     }
+    return this;
+  },
+  
+  awakeAfterUsingCoder: function(aCoder) {
+    return this;
+  }
 };
 
 Object.extend(Array.prototype, NSArray);
 
 NSArray.create = function() {
-    return [];
+  return [];
 }
 
 var NSMutableArray = NSArray;

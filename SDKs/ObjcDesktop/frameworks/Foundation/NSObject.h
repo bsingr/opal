@@ -50,7 +50,7 @@
 @end
 
 @interface NSObject <NSObject> {
-    Class isa;
+  Class isa;
 }
 
 + (void)load;

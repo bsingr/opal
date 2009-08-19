@@ -9,16 +9,16 @@
 module Vienna
   
   class ObjectiveCParser
-    
-    def deal_with_struct(parse_tree)
-      # puts parse_tree
-      new_struct = ObjectiveCStruct.new
-      new_struct.name = parse_tree.left.value if parse_tree.left
-      new_struct.deal_with_ivar_list parse_tree.right
-      # puts parse_tree
-      return new_struct
-    end
-    
+  
+  def deal_with_struct(parse_tree)
+    # puts parse_tree
+    new_struct = ObjectiveCStruct.new
+    new_struct.name = parse_tree.left.value if parse_tree.left
+    new_struct.deal_with_ivar_list parse_tree.right
+    # puts parse_tree
+    return new_struct
+  end
+  
   end
   
   # struct in c. types are the types of properties, int, char etc and the properties
@@ -28,31 +28,31 @@ module Vienna
   # depending on the type. if the type is a struct, then output that, an array, then
   # do that etc
   class ObjectiveCStruct
+  
+  attr_accessor :types, :properties, :defaults, :name
+  
+  def initialize
+    @name = ""
+    @types = []
+    @properties = []
+    @defaults = []
+  end
+  
+  def deal_with_ivar_list(list)
+    return unless list
     
-    attr_accessor :types, :properties, :defaults, :name
-    
-    def initialize
-      @name = ""
-      @types = []
-      @properties = []
-      @defaults = []
+    if list.value == ","
+    deal_with_ivar_list list.left
+    deal_with_ivar_list list.right
+    elsif list.value == "i"
+    @types << list.left.value
+    if list.right.value == "*"
+      @properties << list.right.right.value
+    else
+      @properties << list.right.value
     end
-    
-    def deal_with_ivar_list(list)
-      return unless list
-      
-      if list.value == ","
-        deal_with_ivar_list list.left
-        deal_with_ivar_list list.right
-      elsif list.value == "i"
-        @types << list.left.value
-        if list.right.value == "*"
-          @properties << list.right.right.value
-        else
-          @properties << list.right.value
-        end
-      end
     end
-    
+  end
+  
   end
 end

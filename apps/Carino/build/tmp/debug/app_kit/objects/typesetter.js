@@ -25,19 +25,19 @@
  */
 
 var NSTypesetter = NSObject.extend({
-    _behavior: null,
-    _hyphenationFactor: null,
-    _lineFragmentPadding: null,
-    _usesFontLeading: null,
-    _bidiProcessingEnabled: null,
-    
-    _layoutManager: null,
-    _textContainers: null,
-    _attributedString: null,
-    _string: null,
-    
-    _currentTextContainer: null,
-    _currentParagraphStyle: null,
-    
-    
+  _behavior: null,
+  _hyphenationFactor: null,
+  _lineFragmentPadding: null,
+  _usesFontLeading: null,
+  _bidiProcessingEnabled: null,
+  
+  _layoutManager: null,
+  _textContainers: null,
+  _attributedString: null,
+  _string: null,
+  
+  _currentTextContainer: null,
+  _currentParagraphStyle: null,
+  
+  
 });

@@ -9,6 +9,6 @@
 #import <CoreGraphics/CGBase.h>
 
 typedef struct {
-    CGDOMElementRef     canvas;
-    
+  CGDOMElementRef   canvas;
+  
 } CGDOMRenderingContext;

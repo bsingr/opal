@@ -27,10 +27,10 @@
 include('app_kit/text_field_cell');
 
 var NSTableHeaderCell = NSCell.extend({
-    
-    initWithCoder: function(aCoder) {
-        this._super(aCoder);
-        return this;
-        // this._value = aCoder.decodeObjectForKey("NSContents");
-    }
+  
+  initWithCoder: function(aCoder) {
+    this._super(aCoder);
+    return this;
+    // this._value = aCoder.decodeObjectForKey("NSContents");
+  }
 });

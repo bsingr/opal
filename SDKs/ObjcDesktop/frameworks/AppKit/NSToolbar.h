@@ -13,17 +13,17 @@
 @class NSToolbarItem, NSWindow, NSBezierPath;
 
 enum {
-    NSToolbarDisplayModeDefault,
-    NSToolbarDisplayModeIconAndLabel,
-    NSToolbarDisplayModeIconOnly,
-    NSToolbarDisplayModeLabelOnly
+  NSToolbarDisplayModeDefault,
+  NSToolbarDisplayModeIconAndLabel,
+  NSToolbarDisplayModeIconOnly,
+  NSToolbarDisplayModeLabelOnly
 };
 typedef NSUInteger NSToolbarDisplayMode;
 
 enum {
-    NSToolbarSizeModeDefault,
-    NSToolbarSizeModeRegular,
-    NSToolbarSizeModeSmall
+  NSToolbarSizeModeDefault,
+  NSToolbarSizeModeRegular,
+  NSToolbarSizeModeSmall
 };
 typedef NSUInteger NSToolbarSizeMode;
 
@@ -32,19 +32,19 @@ extern NSString *NSToolbarDidRemoveItemNotification;
 
 @interface NSToolbar : NSObject
 {
-    NSString                *_identifier;
-	NSToolbarDisplayMode     _displayMode;
-	BOOL                     _showsBaselineSeparator;
-	BOOL                     _visible;
-	id                       _delegate;
-    
-    NSView                  *_toolbarView;
+  NSString        *_identifier;
+	NSToolbarDisplayMode   _displayMode;
+	BOOL           _showsBaselineSeparator;
+	BOOL           _visible;
+	id             _delegate;
+  
+  NSView          *_toolbarView;
 	
-	NSMutableArray           _itemIdentifiers;
-	NSMutableArray           _items;
-	NSMutableArray           _labels;
+	NSMutableArray       _itemIdentifiers;
+	NSMutableArray       _items;
+	NSMutableArray       _labels;
 	
-	NSUInteger               _height;
+	NSUInteger         _height;
 }
 
 - (id)initWithIdentifier:(NSString *)identifier;
@@ -77,7 +77,7 @@ extern NSString *NSToolbarDidRemoveItemNotification;
 - (void)setAllowsUserCustomization:(BOOL)allowCustomization;
 - (BOOL)allowsUserCustomization;
 
-       
+     
 - (NSString *)identifier;
 - (NSArray *)items;
 - (NSArray *)visibleItems;
@@ -98,7 +98,7 @@ extern NSString *NSToolbarDidRemoveItemNotification;
 
 @interface NSObject (NSToolbarDelegate)
 
-- (NSToolbarItem *)toolbar:(NSToolbar *)toolbar itemForItemIdentifier:(NSString *)itemIdentifier willBeInsertedIntoToolbar:(BOOL)flag;    
+- (NSToolbarItem *)toolbar:(NSToolbar *)toolbar itemForItemIdentifier:(NSString *)itemIdentifier willBeInsertedIntoToolbar:(BOOL)flag;  
 - (NSArray *)toolbarDefaultItemIdentifiers:(NSToolbar*)toolbar;
 - (NSArray *)toolbarAllowedItemIdentifiers:(NSToolbar*)toolbar;
 - (NSArray *)toolbarSelectableItemIdentifiers:(NSToolbar *)toolbar;

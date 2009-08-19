@@ -30,59 +30,75 @@ include('foundation/enumerator');
 include('foundation/range');
 
 VN.Array = {
-    
-    count: function() {
-        return this.length;
-    },
-    
-    objectAtIndex: function(index) {
-        return this[index];
-    },
-    
-    addObject: function(anObject) {
-        this.push(anObject);
-    },
-    
-    lastObject: function() {
-        return this.objectAtIndex(this.length - 1);
-    },
-    
-    removeLastObject: function() {
-        this.pop();
-    },
-    
-    initWithCoder: function(aCoder) {
-        var newObjects = aCoder.decodeObjectForKey('NS.Objects');
-        for (var idx = 0; idx < newObjects.length; idx++) {
-            this.push(newObjects[idx]);
-        }
-        return this;
-    },
-    
-    awakeAfterUsingCoder: function(aCoder) {
-        return this;
+  
+  each: function(array) {
+    for (var idx = 0; idx < this.length; idx++) {
+      array(this[idx]);
     }
+  },
+  
+  map: function(array) {
+    var result = [];
+    for (var idx = 0; idx < this.length; idx++) {
+      result[idx] = array(this[idx]);
+    }
+    
+    return result;
+  },
+  
+  count: function() {
+    return this.length;
+  },
+  
+  objectAtIndex: function(index) {
+    return this[index];
+  },
+  
+  addObject: function(anObject) {
+    this.push(anObject);
+  },
+  
+  lastObject: function() {
+    return this.objectAtIndex(this.length - 1);
+  },
+  
+  removeLastObject: function() {
+    this.pop();
+  },
+  
+  initWithCoder: function(aCoder) {
+    var newObjects = aCoder.decodeObjectForKey('NS.Objects');
+    
+    for (var idx = 0; idx < newObjects.length; idx++) {
+      this.push(newObjects[idx]);
+    }
+    return this;
+  },
+  
+  awakeAfterUsingCoder: function(aCoder) {
+    return this;
+  }
 };
 
 // Fix for IE not having indexOf property.
 if (!Array.prototype.indexOf) Array.prototype.indexOf = function(item, i)
 {
-    i || (i = 0);
-    var length = this.length;
-    if (i < 0) i = length + i;
-    for (; i < length; i++)
-        if (this[i] === item) return i;
-            return -1;
+  i || (i = 0);
+  var length = this.length;
+  if (i < 0) i = length + i;
+  for (; i < length; i++)
+    if (this[i] === item) return i;
+      return -1;
 };
 
 VN.extend(Array.prototype, VN.Array);
 
 VN.Array.create = function() {
-    return [];
+  return [];
 };
 
 VN.Array.mixin = function(props) {
-    VN.extend(this.prototype, props);
+  VN.extend(this.prototype, props);
 };
 
 var NSMutableArray = NSArray = VN.Array;

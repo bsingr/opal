@@ -28,34 +28,34 @@
 var __bootstrap_resources = [];
 
 /**
-    Used to specify a resource that needs to be loaded before the application is
-    run. Only use this for essential resources: for example control images. The
-    more resources required, the longer the application takes to load. If items
-    are non essential, load them later as needed.
-    
-    Once all resources have been loaded, the main() function can then be called.
+  Used to specify a resource that needs to be loaded before the application is
+  run. Only use this for essential resources: for example control images. The
+  more resources required, the longer the application takes to load. If items
+  are non essential, load them later as needed.
+  
+  Once all resources have been loaded, the main() function can then be called.
 */
 function resource(aResource)
 {
-    var theImage = new Image();
-    theImage.src = 'resources/' + aResource;
-    theImage.onload = function() {
-        __bootstrap_preloaded_resource(theImage);
-    };
-    __bootstrap_resources.push(theImage);
+  var theImage = new Image();
+  theImage.src = 'resources/' + aResource;
+  theImage.onload = function() {
+    __bootstrap_preloaded_resource(theImage);
+  };
+  __bootstrap_resources.push(theImage);
 }
 
 /**
-    This is called when the given resource has finished loading. Essentially,
-    when all resources are loaded, the application is ready to run. Therefore
-    this function calls main(), and prefills the arguments as seen necessary.
+  This is called when the given resource has finished loading. Essentially,
+  when all resources are loaded, the application is ready to run. Therefore
+  this function calls main(), and prefills the arguments as seen necessary.
 */
 function __bootstrap_preloaded_resource(aResource)
 {
-    console.log('finished loading: ' + aResource.src);
-    __bootstrap_resources.splice(__bootstrap_resources.indexOf(aResource), 1);
-    
-    if (__bootstrap_resources.length == 0) {
-        main('', 0);
-    }
+  console.log('finished loading: ' + aResource.src);
+  __bootstrap_resources.splice(__bootstrap_resources.indexOf(aResource), 1);
+  
+  if (__bootstrap_resources.length == 0) {
+    main('', 0);
+  }
 }

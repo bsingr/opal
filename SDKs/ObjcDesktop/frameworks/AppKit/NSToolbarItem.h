@@ -14,9 +14,9 @@
 
 enum {
    NSToolbarItemVisibilityPriorityStandard  = 0,
-   NSToolbarItemVisibilityPriorityLow       = -1000,
-   NSToolbarItemVisibilityPriorityHigh      = 1000,
-   NSToolbarItemVisibilityPriorityUser      = 2000
+   NSToolbarItemVisibilityPriorityLow     = -1000,
+   NSToolbarItemVisibilityPriorityHigh    = 1000,
+   NSToolbarItemVisibilityPriorityUser    = 2000
 };
 
 extern NSString *NSToolbarSeparatorItemIdentifier;
@@ -30,18 +30,18 @@ extern NSString *NSToolbarPrintItemIdentifier;
 
 @interface NSToolbarItem : NSObject
 {
-    NSString    *_itemIdentifier;
+  NSString  *_itemIdentifier;
 	NSToolbar   *_toolBar;
-	NSString    *_label;
-	NSString    *_toolTip;
+	NSString  *_label;
+	NSString  *_toolTip;
 	NSUInteger  *_tag;
-	id           _target;
-	SEL          _action;
-	BOOL         _isEnabled;
-	NSImage     *_image;
-	NSView      *_view;
-	NSSize       _minSize;
-	NSSize       _maxSize;
+	id       _target;
+	SEL      _action;
+	BOOL     _isEnabled;
+	NSImage   *_image;
+	NSView    *_view;
+	NSSize     _minSize;
+	NSSize     _maxSize;
 	
 	NSUInteger   _displayMode;
 }
