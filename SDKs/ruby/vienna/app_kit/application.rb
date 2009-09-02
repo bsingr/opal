@@ -1,5 +1,5 @@
 # 
-# array.rb
+# application.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,35 +24,40 @@
 # THE SOFTWARE.
 #
 
-class Array
-  include Enumerable
+require 'responder'
+require 'window'
+
+module Vienna
   
-  def each
+  class Application < Responder
+    
+    attr_accessor :windows, :event_queue, :views_needing_display
+    attr_reader :delegate
+    
+    
+    def init
+      @windows = []
+      @event_queue = []
+      @views_needing_display = []
+    end
+    
+    def delegate=(object)
+      return if @delegate == object
+      
+      nc = VN::NotificationCenter.default_center
+      
+      if @delegate
+        nc.remove_observer(@delegate, VN::WILL_FINISH_LAUNCHING, self)
+        nc.remove_observer(@delegate, VN::DID_FINISH_LAUNCHING, self)
+      end
+      
+      @delegate = object
+      
+      if @delegate.respond_to? 'will_finish_launching'
+        nc.add_observer @delegate, 'will_finish_launching', VN::WILL_FINISH_LAUNCHING, self
+        nc.add_observer @delegate, 'did_finish_launching', VN::DID_FINISH_LAUNCHING, self
+      end
+    end
     
   end
-  
-  def []
-    self
-  end
-  
-  def self.try_convert
-    
-  end
-  
-  def initialize
-    
-  end
-  
-  def replace
-    
-  end
-  
-  def to_s
-    map { |e| e.to_s }.join
-  end
-  
-  def inspect
-    "[" + map { |e| e.inspect }.join(", ") + "]"
-  end
-    
 end

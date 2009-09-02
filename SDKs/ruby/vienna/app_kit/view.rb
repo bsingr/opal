@@ -1,5 +1,5 @@
 # 
-# array.rb
+# view.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,35 +24,53 @@
 # THE SOFTWARE.
 #
 
-class Array
-  include Enumerable
+require 'responder'
+
+module Vienna
   
-  def each
+  class View < Responder
+    
+    AUTO_RESIZE_MASKS = [:none, :min_x, :width, :max_x, :min_y, :height, :max_y]
+    
+    display_properties :frame, :frame_size
+    
+    def init
+      setup_render_context
+      @frame = VN.Rect 0, 0, 0, 0
+      self
+    end
+    
+    def init_with_options(options)
+      self.init_with_frame options.delete(:frame)
+    end
+
+    def init_with_frame(frame)
+      @frame = frame
+      @bounds = VN.Rect(0, 0, frame.size.width, frame.size.height)
+      @subviews = []
+      setup_render_context
+      set :frame, frame
+      self
+    end
+    
+    def init_with_coder(coder)
+      super
+      setup_render_context
+      
+      @frame = VN.Rect(0, 0, 0, 0)
+      @bounds = VN.Rect(0, 0, 0, 0)
+      
+      if coder.has_key? "NSFrame"
+        @frame = coder.decode_rect_for_key "NSFrame"
+      elsif coder.has_key? "NSFrameSize"
+        @frame.size = coder.decode_rect_for_key "NSFrameSize"
+      end
+      
+      set :frame, @frame
+      
+      # the_subviews = coder
+    end
     
   end
   
-  def []
-    self
-  end
-  
-  def self.try_convert
-    
-  end
-  
-  def initialize
-    
-  end
-  
-  def replace
-    
-  end
-  
-  def to_s
-    map { |e| e.to_s }.join
-  end
-  
-  def inspect
-    "[" + map { |e| e.inspect }.join(", ") + "]"
-  end
-    
 end

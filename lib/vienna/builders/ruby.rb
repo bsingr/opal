@@ -107,6 +107,12 @@ class Vienna::RubyParser < Racc::Parser
 
   # returns the next token (token/value array)
 	def next_token
+	  t = get_next_token
+	  puts "#{t[0]} : #{t[1]}"
+	  return t
+	end
+	
+	def get_next_token
 	  c = ''
 	  space_seen = false
 	  cmd_state = 0
@@ -188,7 +194,8 @@ class Vienna::RubyParser < Racc::Parser
             return [:tCOLON, scanner.matched]
           end
         elsif scanner.check(/[0-9]/)
-          return parse_number
+          scanner.scan(/[0-9]/)
+          return [scanner.matched, scanner.matched] # need to parse number
         elsif scanner.scan(/\[/)
           result = scanner.matched
           
@@ -229,9 +236,153 @@ class Vienna::RubyParser < Racc::Parser
             :tLBRACE # hash
           end
           return [result, scanner.matched]
+        # +/- as methods/unary etc
         elsif scanner.scan(/[+-]/)
           result = scanner.matched
           sign = (result == "+") ? :tUPLUS : :tUMINUS
+          
+          # if this is a func name def, or a method of an object ( def +(other))
+          if self.lex_state == :EXPR_FNAME || self.lex_state == :EXPR_DOT
+            self.lex_state = :EXPR_ARG
+            if scanner.scan(/@/)
+              return [sign, "#{result}@"]
+            else
+              return [sign, result]
+            end
+          end
+          # += or -=
+          if scanner.scan(/\=/)
+            self.lex_state = :EXPR_BEG
+            return [:tOP_ASGN, "#{result}#{scanner.matched}"]
+          end
+          
+          if lex_state == :EXPR_BEG || lex_state == :EXPR_MID
+            self.lex_state = :EXPR_BEG
+            return [sign, result]
+          end
+          
+          return [sign, result]
+        elsif scanner.scan(/\*\*\=/)
+          self.lex_state = :EXPR_BEG
+          return [:tOP_ASGN, '**=']
+        elsif scanner.scan(/\*\*/)
+          return [:tPOW, '**']
+        elsif scanner.scan(/\*\=/)
+          self.lex_state = :EXPR_BEG
+          return [:tOP_ASGN, '*=']
+        elsif scanner.scan(/\*/)
+          result =  if space_seen && scanner.check(/\S/)
+                      # warning: * interp as arg prefix
+                      :tSTAR
+                    elsif lex_state == :EXPR_BEG || lex_state == :EXPR_MID
+                      :tSTAR
+                    else
+                      :tSTAR2
+                    end
+          return [result, scanner.matched]
+        elsif scanner.scan(/\!\=/)
+          self.lex_state = :EXPR_BEG
+          return [:tNEQ, '!=']
+        elsif scanner.scan(/\!\~/)
+          self.lex_state = :EXPR_BEG
+          return [:tNMATCH, '!~']
+        elsif scanner.scan(/\!/)
+          self.lex_state = :EXPR_BEG
+          return [:tBANG, '!']
+        
+        elsif scanner.scan(/\<\=\>/)
+          return [:tCMP, '<=>']
+        elsif scanner.scan(/\<\=/)
+          return [:tLEQ, '<=']
+        elsif scanner.scan(/\<\<\=/)
+          self.lex_state = :EXPR_BEG
+          return [:tOP_ASGN, '<<=']
+        elsif scanner.scan(/\<\</)
+          if (! [:EXPR_END, :EXPR_DOT, :EXPR_ENDARG, :EXPR_CLASS].include?(lex_state) && space_seen)
+            return [:tLSHFT, '<<']
+          end
+        elsif scanner.scan(/\</)
+          return [:tLT, '<']
+        
+        elsif scanner.scan(/\>\=/)
+          return [:tGEQ, '>=']
+        elsif scanner.scan(/\>\>\=/)
+          self.lex_state = :EXPR_BEG
+          return [:tOP_ASGN, '>>=']
+        elsif scanner.scan(/\>\>/)
+          return [:tRSHFT, '>>']
+        elsif scanner.scan(/\>/)
+          return [:tGT, '>']
+        
+        elsif scanner.scan(/\`/)
+          case self.lex_state
+          when :EXPR_FNAME
+            self.lex_state = :EXPR_END
+            return [:tBACK_REF2, '`']
+          when :EXPR_DOT
+            self.lex_state = :EXPR_ARG
+            return [:tBACK_REF2, '`']
+          end
+          return [:tXSTRING_BEG, '`']
+        
+        elsif scanner.scan(/\?/)
+          if lex_state == :EXPR_END || lex_state == :EXPR_ENDARG
+            self.lex_state = :EXPR_BEG
+            return [:tEH, '?']
+          end
+          
+          # if scanner.check(/\s|\v/)
+            # unless lex_state == :EXPR_ARG
+        
+        elsif scanner.scan(/\&\&\=/)
+          self.lex_state = :EXPR_BEG
+          return [:tOP_ASGN, '&&=']
+        elsif scanner.scan(/\&\&/)
+          self.lex_state = :EXPR_BEG
+          return [:tANDOP, '&&']
+        elsif scanner.scan(/\&\=/)
+          self.lex_state = :EXPR_BEG
+          return [:tOP_ASGN, '&=']
+        elsif scanner.scan(/\&/)
+          result = if space_seen && !scanner.check(/\s/)
+                      # warning: & as prefix
+                      :tAMPER
+                    elsif lex_state == :EXPR_BEG || lex_state == :EXPR_MID
+                      :tAMPER
+                    else
+                      :tAMPER2
+                    end
+          
+          return [result, '&']
+        
+        elsif scanner.scan(/\^\=/)
+          self.lex_state = :EXPR_BEG
+          return [:tOP_ASGN, '^=']
+        elsif scanner.scan(/\^/)
+          return [:tCARET, '^']
+        elsif scanner.scan(/\;/)
+          self.lex_state = :EXPR_BEG
+          return [:tSEMI, ';']
+        elsif scanner.scan(/\~/)
+          return [:tTILDE, '~']
+        
+        elsif scanner.scan(/\\/)
+          if scanner.scan(/\n/)
+            space_seen = true
+            next
+          end
+          # error: backslash only allowed before newline
+        
+        elsif scanner.scan(/\%/)
+          if scanner.scan(/\=/)
+            self.lex_state = :EXPR_BEG
+            return [:tOP_ASGN, '%=']
+          end
+          return [:tPERCENT, '%']
+        
+        if scanner.scan(/(\$_)(\w+)/)
+          
+        end
           
         end
       end
@@ -253,7 +404,7 @@ class Vienna::RubyParser < Racc::Parser
 	
 	
 	def testObjc
-    anObj.set :age, 10
+    anObj.set :age => 10
     my_weight = anObject.get(:age)
   end
 end

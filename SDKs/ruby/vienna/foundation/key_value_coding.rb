@@ -1,5 +1,5 @@
 # 
-# array.rb
+# key_value_coding.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,35 +24,18 @@
 # THE SOFTWARE.
 #
 
-class Array
-  include Enumerable
+require 'array'
+require 'dictionary'
+require 'set'
+
+class Object
   
-  def each
+  def get(key)
     
   end
   
-  def []
-    self
-  end
-  
-  def self.try_convert
+  def set(key, value)
     
   end
   
-  def initialize
-    
-  end
-  
-  def replace
-    
-  end
-  
-  def to_s
-    map { |e| e.to_s }.join
-  end
-  
-  def inspect
-    "[" + map { |e| e.inspect }.join(", ") + "]"
-  end
-    
 end
