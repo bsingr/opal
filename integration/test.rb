@@ -1,1 +1,5 @@
-4 + 8 - 9
+module Vienna
+  
+  VERSION = 1.0.1
+  
+end

@@ -93,18 +93,14 @@ rule
 
         bodystmt: compstmt opt_rescue opt_else opt_ensure
 
-        compstmt: stmts opt_terms
+        compstmt:
+                # none opt_terms
+        stmts opt_terms
 
            stmts: none
                 | stmt
 		            | stmts terms stmt
-		              {
-		                
-		              }
 		            | error stmt
-		              {
-		                result = val[1]
-		              }
 
             stmt: kALIAS fitem
                   {
@@ -123,8 +119,11 @@ rule
             		| stmt kWHILE_MOD expr_value
             		| stmt kUNTIL_MOD expr_value
             		| stmt kRESCUE_MOD stmt
-            		| kEND '{' compstmt '}'
+                | klEND '{' compstmt '}'
             		| lhs '=' command_call
+            		  {
+            		    result = self.node_assign(val[0], val[2])
+            		  }
             		| mlhs '=' command_call
             		| var_lhs tOP_ASGN command_call
             		| primary_value '[' opt_call_args rbracket tOP_ASGN command_call
@@ -212,17 +211,34 @@ rule
             		| backref
 
            cname: tIDENTIFIER
+                  {
+                    puts 'ERROR: cant use identifier for class/mod name'
+                  }
             		| tCONSTANT
+            		  {
+            		    return val[0]
+            		  }
 
            cpath: tCOLON3 cname
   	            | cname
+  	              {
+  	                return val[0]
+  	              }
               	| primary_value tCOLON2 cname
 
            fname: tIDENTIFIER
 		            | tCONSTANT
 		            | tFID
 		            | op
+		              {
+		                self.lex_state = :EXPR_END
+		                result = val[0]
+		              }
 		            | reswords
+		              {
+		                self.lex_state = :EXPR_END
+		                result = val[0]
+		              }
 
             fsym: fname
               	| symbol
@@ -374,8 +390,18 @@ rule
             		| k_class cpath superclass bodystmt k_end
             		| k_class tLSHFT expr term bodystmt k_end
             		| k_module cpath bodystmt k_end
+            		  {
+                    # result = self.node_module(val[1], val[2])
+            		    result = self.node_module(:cpath => val[1], :body => val[2])
+            		  }
             		| k_def fname f_arglist bodystmt k_end
+            		  {
+            		    result = self.node_def(val[1], val[2], val[3])
+            		  }
             		| k_def singleton dot_or_colon fname f_arglist bodystmt k_end
+            		  {
+            		    result = self.node_defs(val[1], val[3], val[4], val[5])
+            		  }
             		| kBREAK
             		| kNEXT
             		| kREDO
@@ -599,7 +625,14 @@ xstring_contents: /* none */
             		| error term { puts 'OMFG' }
 
        f_arglist: '(' f_args rparen
+                  {
+                    self.lex_state = :EXPR_BEG
+                  }
               	| f_args term
+              	  {
+                    puts 'so, yteah, done this'
+                    self.lex_state = :EXPR_BEG
+                  }
 
           f_args: f_arg ',' f_optarg ',' f_rest_arg opt_f_block_arg
               	| f_arg ',' f_optarg ',' f_rest_arg ',' f_arg opt_f_block_arg
@@ -683,7 +716,7 @@ xstring_contents: /* none */
     dot_or_colon: '.'
             		| tCOLON2
 
-       opt_terms: /* none */
+       opt_terms: 
               	| terms
 
           opt_nl: /* none */
@@ -703,7 +736,7 @@ xstring_contents: /* none */
            terms: term
               	| terms ';'
 
-            none: /* none */
+            none:
             
 end
 
