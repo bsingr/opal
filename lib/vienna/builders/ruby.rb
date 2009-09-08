@@ -411,6 +411,9 @@ class Vienna::RubyParser < Racc::Parser
         when 'module'
           self.lex_state = :EXPR_BEG
           return [:kMODULE, scanner.matched]
+        when 'if'
+          # self.lex_state = 
+          return [:kIF, scanner.matched]
         end
         
         # if Vienna::RubyParser::KEYWORDS.has_key?(scanner.matched)
