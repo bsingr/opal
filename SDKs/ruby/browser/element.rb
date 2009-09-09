@@ -24,29 +24,75 @@
 # THE SOFTWARE.
 #
 
-class HTMLElement
+class Element
   
   attr_accessor :element
   
   def self.find(the_id)
-    document.getElementById(the_id)
+    # document.getElementById(the_id)
+    `document.getElementById(#{the_id}.ptr)`
   end
   
   def initialize(type, class_name, the_id)
-    @element = document.createElement(type)
+    @element = `document.createElement(#{type}.ptr)`
     @type = type
     @class_name = class_name
     @id = the_id
   end
   
   def <<(other)
-    @element.appendChild(other.element)
+    # @element.appendChild(other.element)
+    `VN.get_ivar(self, '__element__')`
   end
   
-  def style(style)
-    #style should be a hash
-    style.each do |rule|
-
+  def css(options={})
+    # using each option, apply style to __element__.style
+  end
+  
+  def mouse_down(&block)
+    @element.mouse_down do |event|
+      @element.css background_color: 'blue', font: 'Helvetica', color: 'green'
+      @element << Element.new :div, class_name: 'child_type', id: 'top_alignment'
+      Ajax.new type: 'GET', url: 'test.js', data_type: 'script', success: do |msg|
+        alert "Data saved: #{msg}"
+        Element.find('results').append '<bx>wow</bx>'
+        @element.after "<br>assingment</br>"
+        
+      end
+    end
+    
+    Document.ready? do |event|
+      Element.find('p').text "The DOM is now loaded and can be manipulated."
+    end
+    
+    Element.find('adam').bind :click, do |e|
+      str = "bob"
+      e.assign 23
     end
   end
+  
+  def add_class(name)
+  
+  end
+  
+  def has_class?(name)
+    
+  end
+  
+  def remove_class(name)
+    
+  end
+  
+  def toggle_class(name, switch=true)
+  
+  end
+  
+  def text
+  
+  end
+  
+  def text=(str)
+  
+  end
+  
 end
