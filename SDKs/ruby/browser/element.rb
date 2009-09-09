@@ -52,6 +52,7 @@ class Element
   def mouse_down(&block)
     @element.mouse_down do |event|
       @element.css background_color: 'blue', font: 'Helvetica', color: 'green'
+
       @element << Element.new :div, class_name: 'child_type', id: 'top_alignment'
       Ajax.new type: 'GET', url: 'test.js', data_type: 'script', success: do |msg|
         alert "Data saved: #{msg}"
