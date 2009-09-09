@@ -31,533 +31,554 @@
   namespace, including setting the klass/type attributes on object prototypes
   for strings, numbers, arrays, etc.
 */
-var VN = { } ;
-
-/**
-  VALUE types
-*/
-VN.T_NONE   = 0;
-
-VN.T_OBJECT = 1;
-VN.T_CLASS  = 2;
-VN.T_MODULE = 3;
-VN.T_FLOAT  = 4;
-VN.T_STRING = 5;
-VN.T_REGEXP = 6;
-VN.T_ARRAY  = 7;
-VN.T_HASH   = 8;
-VN.T_STRUCT = 9;
-VN.T_BIGNUM = 10;
-VN.T_FILE   = 11;
-VN.T_DATA   = 12;
-VN.T_MATCH  = 13;
-VN.T_COMPLEX  = 14;
-VN.T_RATIONAL = 15;
-
-VN.T_NIL    = 16;
-VN.T_TRUE   = 17;
-VN.T_FALSE  = 18;
-VN.T_SYMBOL = 19;
-VN.T_FIXNUM = 20;
-
-VN.T_UNDEF  = 21;
-VN.T_NODE   = 22;
-VN.T_ICLASS = 23;
-VN.T_ZOMBIE = 24;
-
-VN.T_MASK   = 31;
-
-/**
-  Method types
-*/
-VN.NOEX_PUBLIC = 0;
-VN.NOEX_PRIVATE = 1;
-VN.NOEX_PROTECTED = 2;
-VN.NOEX_UNDEF = 3;
-
-/**
-  Objects
+var VN = { 
   
-  Strings, Arrays, Numbers etc. are mapped to their native JS equivalents.
-*/
-VN.RObject = function() {
-  this.iv_tbl = { } ;
-  this.klass = null;
-  this.type = null;
-  return this;
-};
+  /**
+    VALUE types
+  */
+  T_NONE: 0,
 
-VN.RClass = function() {
-  this.klass = null;
-  this.iv_tbl = { } ;
-  this.m_tbl = { } ;
-  this.super_klass = null;
-  this.type = null;
-  this.singleton = false;
-  return this;
-};
+  T_OBJECT: 1,
+  T_CLASS: 2,
+  T_MODULE: 3,
+  T_FLOAT: 4,
+  T_STRING: 5,
+  T_REGEXP: 6,
+  T_ARRAY: 7,
+  T_HASH: 8,
+  T_STRUCT: 9,
+  T_BIGNUM: 0,
+  T_FILE: 1,
+  T_DATA: 2,
+  T_MATCH: 3,
+  T_COMPLEX: 4,
+  T_RATIONAL: 5,
 
+  T_NIL: 6,
+  T_TRUE: 7,
+  T_FALSE: 8,
+  T_SYMBOL: 9,
+  T_FIXNUM: 0,
 
+  T_UNDEF: 1,
+  T_NODE: 2,
+  T_ICLASS: 3,
+  T_ZOMBIE: 4,
 
+  T_MASK: 1,
+  
+  /**
+    Method types
+  */
+  NOEX_PUBLIC: 0,
+  NOEX_PRIVATE: 1,
+  NOEX_PROTECTED: 2,
+  NOEX_UNDEF: 3,
+  
+  /**
+    Objects
+  */
+  RObject: function() {
+    this.iv_tbl = { } ;
+    this.klass = null ;
+    this.type = null ;
+    return this;
+  },
+  
+  RClass: function() {
+    this.klass = null;
+    this.iv_tbl = { } ;
+    this.m_tbl = { } ;
+    this.super_klass = null;
+    this.type = null;
+    this.singleton = false;
+    return this;
+  },
+  
+  RFloat: function() {
+    this.klass = null ;
+    this.type = null ;
+    // native Number
+    this.float_value = null;
+    return this;
+  },
 
-/**
-  Class
-*/
-VN.class_inherited = function(super_klass, klass) {
-  if (!super_klass) super_klass = VN.cObject;
-  return VN.funcall(super_klass, 'inherited', 1, klass);
-};
+  RString: function() {
+    this.klass = null ;
+    this.type = null ;
+    // native String
+    this.ptr = null ;
+    return this;
+  },
 
-VN.define_class = function(id, super_klass) {
-  var klass;
-  // if already defined, just ensure right type then return existing class/mod.
-  if (VN.const_defined(VN.cObject, id)) {
-    klass = VN.const_get(VN.cObject, id);
-    if (klass.type != VN.T_CLASS) {
-      VN.type_error(id + ' is not a class');
+  RArray: function() {
+    this.klass = null;
+    this.type = null;
+    // native Array
+    this.ptr = null;
+    return this;
+  },
+
+  RRegexp: function() {
+    this.klass = null;
+    this.type = null;
+    // other stuff....
+    return this;
+  },
+
+  RHash: function() {
+    this.klass = null ;
+    this.type = null;
+    this.ifnone = null ;
+    // store as array... must keep it ordered! 1.9
+
+    return this;
+  },
+
+  RBignum: function() {
+    this.klass = null;
+    this.type = null;
+    // native Number;
+    this.digits = null;
+    return this ;
+  },
+  
+  /**
+    Class
+  */
+  class_inherited: function(super_klass, klass) {
+    if (!super_klass) super_klass = VN.cObject ;
+    return VN.funcall(super_klass, 'inherited', 1, klass);
+  },
+  
+  define_class: function(id, super_klass) {
+    var klass;
+    // if already defined, just ensure right type then return existing class/mod.
+    if (VN.const_defined(VN.cObject, id)) {
+      klass = VN.const_get(VN.cObject, id);
+      if (klass.type != VN.T_CLASS) {
+        VN.type_error(id + ' is not a class');
+      }
+      if (VN.class_real(klass.super_klass) != super_klass) {
+        VN.name_error(id + ' is already defined');
+      }
+      return klass;
     }
-    if (VN.class_real(klass.super_klass) != super_klass) {
-      VN.name_error(id + ' is already defined');
+    if (!super_klass) {
+      VN.warn('no super class for `' + id + '`, Object assumed')
     }
+    klass = VN.define_class_id(id, super_klass);
+    VN.class_tbl[id] = klass;
+    VN.name_class(klass, id);
+    VN.const_set(VN.cObject, id, klass);
+    VN.class_inherited(super_klass, klass);
     return klass;
-  }
-  if (!super_klass) {
-    VN.warn('no super class for `' + id + '`, Object assumed')
-  }
-  klass = VN.define_class_id(id, super_klass);
-  VN.class_tbl[id] = klass;
-  VN.name_class(klass, id);
-  VN.const_set(VN.cObject, id, klass);
-  VN.class_inherited(super_klass, klass);
-  return klass;
-};
-
-VN.define_class_under = function(outer, id, super_klass) {
-  var klass;
-  // if already defined in context... just ensure it is a macthing class def
-  if (VN.const_defined_at(outer, id)) {
-    klass = VN.const_get_at(outer, id);
-    if (klass.type != VN.T_CLASS) {
-      VN.type_error(id + ' is not a class');
+  },
+  
+  define_class_under: function(outer, id, super_klass) {
+    var klass;
+    // if already defined in context... just ensure it is a macthing class def
+    if (VN.const_defined_at(outer, id)) {
+      klass = VN.const_get_at(outer, id);
+      if (klass.type != VN.T_CLASS) {
+        VN.type_error(id + ' is not a class');
+      }
+      if (VN.class_real(klass.super_klass) != super_klass) {
+        VN.name_error(id + ' is already defined');
+      }
+      return klass;
     }
-    if (VN.class_real(klass.super_klass) != super_klass) {
-      VN.name_error(id + ' is already defined');
+    // not existing...
+    if (!super_klass) {
+      VN.warn('no super class for `' + VN.class2name(outer), + '::' + id + '`, Object assumed');
     }
+    klass = VN.define_class_id(id, super_klass);
+    VN.set_class_path(klass, outer, id);
+    VN.const_set(outer, id, klass);
+    VN.class_inherited(super_klass, klass);
+  
     return klass;
-  }
-  // not existing...
-  if (!super_klass) {
-    VN.warn('no super class for `' + VN.class2name(outer), + '::' + id + '`, Object assumed');
-  }
-  klass = VN.define_class_id(id, super_klass);
-  VN.set_class_path(klass, outer, id);
-  VN.const_set(outer, id, klass);
-  VN.class_inherited(super_klass, klass);
-  
-  return klass;
-};
+  },
 
-
-VN.define_module = function(id) {
-  var module;
-  if (VN.const_defined(VN.cObject, id)) {
-    module = VN.const_get(VN.cObject, id);
-    if (module.type == VN.T_MODULE) {
-      return module;
+  define_module: function(id) {
+    var module;
+    if (VN.const_defined(VN.cObject, id)) {
+      module = VN.const_get(VN.cObject, id);
+      if (module.type == VN.T_MODULE) {
+        return module;
+      }
+      VN.type_error(id + ' is not a module');
     }
-    VN.type_error(id + ' is not a module');
-  }
-  module = VN.define_module_id(id);
-  VN.class_tbl[id] = module;
-  VN.const_set(VN.cObject, id, module);
+    module = VN.define_module_id(id);
+    VN.class_tbl[id] = module;
+    VN.const_set(VN.cObject, id, module);
   
-  return module;
-};
+    return module;
+  },
 
-VN.define_module_under = function() {
-  var module;
-  if (VN.const_defined_at(outer, id)) {
-    module = VN.const_get_at(outer, id);
-    if (module.type == VN.T_MODULE) {
-      return module;
+  define_module_under: function() {
+    var module;
+    if (VN.const_defined_at(outer, id)) {
+      module = VN.const_get_at(outer, id);
+      if (module.type == VN.T_MODULE) {
+        return module;
+      }
+      VN.type_error(id + ' is not a module');
     }
-    VN.type_error(id + ' is not a module');
-  }
-  module = VN.define_module_id(id);
-  VN.const_set(outer, id, module);
-  VN.set_class_path(module, outer, name);
-  return module;
-};
+    module = VN.define_module_id(id);
+    VN.const_set(outer, id, module);
+    VN.set_class_path(module, outer, name);
+    return module;
+  },
 
-VN.define_module_id = function(id) {
-  var mdl = VN.module_new();
-  VN.name_class(mdl, id);
-  return mdl;
-};
+  define_module_id: function(id) {
+    var mdl = VN.module_new();
+    VN.name_class(mdl, id);
+    return mdl;
+  },
 
-VN.module_new = function() {
-  var mdl = VN.class_alloc(VN.T_MODULE, VN.cModule);
-  return mdl;
-};
+  module_new: function() {
+    var mdl = VN.class_alloc(VN.T_MODULE, VN.cModule);
+    return mdl;
+  },
 
-VN.include_module = function(klass, module) {
-  throw 'include_module not yet implemented'
-  if (module.type != VN.T_MODULE) {
-    // error?
-  }
-};
+  include_module: function(klass, module) {
+    throw 'include_module not yet implemented'
+    if (module.type != VN.T_MODULE) {
+      // error?
+    }
+  },
 
-VN.name_class = function(klass, id) {
-  VN.ivar_set(klass, '__classid__', id);
-};
+  name_class: function(klass, id) {
+    VN.ivar_set(klass, '__classid__', id);
+  },
 
-VN.class_name = function(klass) {
-  return VN.class_path(VN.class_real(klass));
-};
+  class_name: function(klass) {
+    return VN.class_path(VN.class_real(klass));
+  },
 
-VN.class2name = function(klass) {
-  // need to convert into RString..
-  return VN.class_name(klass);
-};
+  class2name: function(klass) {
+    // need to convert into RString..
+    return VN.class_name(klass);
+  },
 
-VN.obj_classname = function(obj) {
-  return VN.class2name(obj.klass);
-};
+  obj_classname: function(obj) {
+    return VN.class2name(obj.klass);
+  },
 
-VN.make_metaclass = function(obj, super_klass) {
-  // obj is a metaclass...
-  if (obj.type == VN.T_CLASS && obj.singleton == true) {
-    return VN.make_metametaclass(obj);
-  }
-  else {
-    var klass = VN.class_boot(super_klass);
-    klass.singleton = true;
+  make_metaclass: function(obj, super_klass) {
+    // obj is a metaclass...
+    if (obj.type == VN.T_CLASS && obj.singleton == true) {
+      return VN.make_metametaclass(obj);
+    }
+    else {
+      var klass = VN.class_boot(super_klass);
+      klass.singleton = true;
+      obj.klass = klass;
+      VN.singleton_class_attached(klass, obj);
+    
+      var metasuper = VN.class_real(super_klass).klass;
+      if (metasuper) {
+        klass.klass = metasuper;
+      }
+      return klass;
+    }
+  },
+
+  singleton_class_attached: function(klass, obj) {
+    if (klass.singleton == true) {
+      klass.iv_tbl['__attached__'] = obj;
+    }
+  },
+
+  make_metametaclass: function(metaclass) {
+    var metametaclass, super_of_metaclass;
+  
+    if (metaclass.klass == metaclass) {
+      metametaclass = VN.class_boot(null);
+      metametaclass.klass = metametaclass;
+    }
+    else {
+      metametaclass = VN.class_boot(null);
+      metametaclass.klass = metaclass.klass.klass == metaclass.klass ? VN.make_metametaclass(metaclass.klass) : metaclass.klass.klass;
+    }
+    metametaclass.singleton = true;
+    VN.singleton_class_attached(metametaclass, metaclass);
+    metaclass.klass = metametaclass;
+  
+    super_of_metaclass = metaclass.super_klass;
+    while (super_of_metaclass.type == VN.T_ICLASS) {
+      super_of_metaclass = super_of_metaclass.super_klass;
+    }
+  
+    metametaclass.super_klass = VN.ivar_get(super_of_metaclass.klass, '__attached__') == super_of_metaclass ? super_of_metaclass.klass : VN.make_metametaclass(super_of_metaclass);
+    return metametaclass;
+  },
+
+  class_real: function(klass) {
+    return klass;
+  },
+
+  define_alloc_func: function(klass, func) {
+    console.log('ALLOC func');
+    console.log(VN.singleton_class(klass));
+    VN.add_method(VN.singleton_class(klass), 'allocate', func, 0, VN.NOEX_PRIVATE);
+  },
+
+  class_alloc: function(type, klass) {
+    var obj = new VN.RClass();
     obj.klass = klass;
-    VN.singleton_class_attached(klass, obj);
-    
-    var metasuper = VN.class_real(super_klass).klass;
-    if (metasuper) {
-      klass.klass = metasuper;
-    }
+    obj.type = type;
+    return obj;
+  },
+
+  class_boot: function(super_klass) {
+    var klass = VN.class_alloc(VN.T_CLASS, VN.cClass);
+    klass.super_klass = super_klass; 
     return klass;
-  }
-};
+  },
 
-VN.singleton_class_attached = function(klass, obj) {
-  if (klass.singleton == true) {
-    klass.iv_tbl['__attached__'] = obj;
-  }
-};
-
-VN.make_metametaclass = function(metaclass) {
-  var metametaclass, super_of_metaclass;
-  
-  if (metaclass.klass == metaclass) {
-    metametaclass = VN.class_boot(null);
-    metametaclass.klass = metametaclass;
-  }
-  else {
-    metametaclass = VN.class_boot(null);
-    metametaclass.klass = metaclass.klass.klass == metaclass.klass ? VN.make_metametaclass(metaclass.klass) : metaclass.klass.klass;
-  }
-  metametaclass.singleton = true;
-  VN.singleton_class_attached(metametaclass, metaclass);
-  metaclass.klass = metametaclass;
-  
-  super_of_metaclass = metaclass.super_klass;
-  while (super_of_metaclass.type == VN.T_ICLASS) {
-    super_of_metaclass = super_of_metaclass.super_klass;
-  }
-  
-  metametaclass.super_klass = VN.ivar_get(super_of_metaclass.klass, '__attached__') == super_of_metaclass ? super_of_metaclass.klass : VN.make_metametaclass(super_of_metaclass);
-  return metametaclass;
-}
-
-VN.class_real = function(klass) {
-  return klass;
-};
-
-VN.define_alloc_func = function(klass, func) {
-  console.log('ALLOC func');
-  console.log(VN.singleton_class(klass));
-  VN.add_method(VN.singleton_class(klass), 'allocate', func, 0, VN.NOEX_PRIVATE);
-};
-
-VN.class_alloc = function(type, klass) {
-  var obj = new VN.RClass();
-  obj.klass = klass;
-  obj.type = type;
-  return obj;
-};
-
-VN.class_boot = function(super_klass) {
-  var klass = VN.class_alloc(VN.T_CLASS, VN.cClass);
-  klass.super_klass = super_klass; 
-  return klass;
-};
-
-VN.check_inheritable = function(super_klass) {
-  if (super_klass.type != VN.T_CLASS) {
-    VN.type_error('super class must be a Class (' + VN.obj_classname(super_klass) + ' given)');
-  }
-  if (super_klass.singleton) {
-    VN.type_error('can\'t make a subclass of singleton class');
-  }
-};
-
-VN.class_new = function(super_klass) {
-  VN.check_inheritable(super_klass);
-  
-  if (super_klass == VN.cClass) {
-    VN.raise(VN.TypeError, "can't make subclass of Class")
-  }
-  return VN.class_boot(super_klass);
-};
-
-VN.define_class_id = function(id, super_klass) {
-  var klass;
-  if (!super_klass) super_klass = VN.cObject;
-  klass = VN.class_new(super_klass);
-  VN.make_metaclass(klass, super_klass.klass);
-  return klass;
-};
-
-VN.singleton_class = function(obj) {
-  var klass;
-  
-  if (obj.type == VN.T_FIXNUM || obj.type == VN.T_SYMBOL) {
-    VN.type_error('can\'t define singleton');
-  }
-  
-  if (obj.klass.singleton && VN.ivar_get(obj.klass, '__attached__') == obj) {
-    klass = obj.klass;
-  }
-  else {
-    klass = VN.make_metaclass(obj, obj.klass);
-  }
-  
-  if (obj.type == VN.T_CLASS) {
-    if (VN.ivar_get(klass.klass, '__attached__') != klass) {
-      VN.make_metametaclass(klass);
+  check_inheritable: function(super_klass) {
+    if (super_klass.type != VN.T_CLASS) {
+      VN.type_error('super class must be a Class (' + VN.obj_classname(super_klass) + ' given)');
     }
-  }
+    if (super_klass.singleton) {
+      VN.type_error('can\'t make a subclass of singleton class');
+    }
+  },
+
+  class_new: function(super_klass) {
+    VN.check_inheritable(super_klass);
   
-  return klass;
-};
+    if (super_klass == VN.cClass) {
+      VN.raise(VN.TypeError, "can't make subclass of Class")
+    }
+    return VN.class_boot(super_klass);
+  },
 
+  define_class_id: function(id, super_klass) {
+    var klass;
+    if (!super_klass) super_klass = VN.cObject;
+    klass = VN.class_new(super_klass);
+    VN.make_metaclass(klass, super_klass.klass);
+    return klass;
+  },
 
-
-
-
-
-
-/**
-  Methods.
-*/
-VN.define_method = function(klass, name, func, argc) {
-  VN.add_method(klass, name, func, argc, VN.NOEX_PUBLIC);
-};
-
-VN.define_protected_method = function(klass, name, func, argc) {
-  VN.add_method(klass, name, func, argc, VN.NOEX_PROTECTED);
-};
-
-VN.define_private_method = function(klass, name, func, argc) {
-  VN.add_method(klass, name, func, argc, VN.NOEX_PRIVATE);
-};
-
-VN.undef_method = function(klass, name) {
-  VN.add_method(klass, name, null, 0, VN.NOEX_UNDEF);
-}
-
-VN.add_method = function(klass, id, func, argc, noex) {
-  // throw 'add_method not implemented'
-  if (!klass) klass = VN.cObject ; // no class, so assign it to Object#id
-  console.log('add method:' + klass.iv_tbl.__classid__ + '#' + id);
-  klass.m_tbl[id] = func;
-};
-
-VN.define_singleton_method = function(obj, name, func, argc) {
-  VN.define_method(VN.singleton_class(obj), name, func, argc);
-};
-
-
-
-
-
-
-
-
-VN.search_method = function(klass, id) {
-  if (!klass) return undefined ;
-  var func;
-  while (!(func = klass.m_tbl[id])) {
-    klass = klass.super_klass;
-    
-    if (!klass) return undefined ;
-  }
-  return func;
-};
-
-VN.funcall = function(recv, id, argc, argv) {
-  // console.log(recv.iv_tbl.__classid__ + '#' + id);
-  // console.log(VN.search_method(recv.klass, id));
-  var method = VN.search_method(recv.klass, id);
-  if (!method) throw 'VN#funcall cannot find method: ' + id ;
-  console.log('found methods ' + id);
-  console.log(method);
-  // argv.unshift(recv);
-  return method.call(window, argv);
-};
-
-
-/**
-  Instance Variables
-*/
-
-VN.ivar_set = function(obj, id, val) {
-  switch (obj.type) {
-    case VN.T_OBJECT:
-    case VN.T_CLASS:
-    case VN.T_MODULE:
-      obj.iv_tbl[id] = val;
-      break;
-    default:
-      VN.generic_ivar_set(obj, id, val);
-      break;
-  }
-  return val;
-};
-
-VN.ivar_get = function(obj, id) {
-  switch (obj.type) {
-    case VN.T_OBJECT:
-    case VN.T_CLASS:
-    case VN.T_MODULE:
-      var val;
-      if (obj.iv_tbl.hasOwnProperty(id))
-        return obj.iv_tbl[id];
-      break;
-    default:
-      // generic...
-      break;
-  }
-  // ivar not initialised in this instance/class etc.
-  VN.warning('instance variable ' + id + ' not initialized');
-  return nil;
-};
-
-/**
-  Class variables
-*/
-
-VN.cvar_get = function(klass, id) {
-  var tmp = klass;
-  var value;
-  while (tmp) {
-    if (tmp.iv_tbl) {
-      if (value = tmp.iv_tbl[id]) {
-        return value;
+  singleton_class: function(obj) {
+    var klass;
+  
+    if (obj.type == VN.T_FIXNUM || obj.type == VN.T_SYMBOL) {
+      VN.type_error('can\'t define singleton');
+    }
+  
+    if (obj.klass.singleton && VN.ivar_get(obj.klass, '__attached__') == obj) {
+      klass = obj.klass;
+    }
+    else {
+      klass = VN.make_metaclass(obj, obj.klass);
+    }
+  
+    if (obj.type == VN.T_CLASS) {
+      if (VN.ivar_get(klass.klass, '__attached__') != klass) {
+        VN.make_metametaclass(klass);
       }
     }
-    tmp = tmp.super_klass;
+  
+    return klass;
+  },
+
+  /**
+    Methods
+  */
+  define_method: function(klass, name, func, argc) {
+    VN.add_method(klass, name, func, argc, VN.NOEX_PUBLIC);
+  },
+
+  define_protected_method: function(klass, name, func, argc) {
+    VN.add_method(klass, name, func, argc, VN.NOEX_PROTECTED);
+  },
+
+  define_private_method: function(klass, name, func, argc) {
+    VN.add_method(klass, name, func, argc, VN.NOEX_PRIVATE);
+  },
+
+  undef_method: function(klass, name) {
+    VN.add_method(klass, name, null, 0, VN.NOEX_UNDEF);
+  },
+
+  add_method: function(klass, id, func, argc, noex) {
+    // throw 'add_method not implemented'
+    if (!klass) klass = VN.cObject ; // no class, so assign it to Object#id
+    console.log('add method:' + klass.iv_tbl.__classid__ + '#' + id);
+    klass.m_tbl[id] = func;
+  },
+
+  define_singleton_method: function(obj, name, func, argc) {
+    VN.define_method(VN.singleton_class(obj), name, func, argc);
+  },
+
+  search_method: function(klass, id) {
+    if (!klass) return undefined ;
+    var func;
+    while (!(func = klass.m_tbl[id])) {
+      klass = klass.super_klass;
+    
+      if (!klass) return undefined ;
+    }
+    return func;
+  },
+
+  funcall: function(recv, id, argc, argv) {
+    // console.log(recv.iv_tbl.__classid__ + '#' + id);
+    // console.log(VN.search_method(recv.klass, id));
+    var method = VN.search_method(recv.klass, id);
+    if (!method) throw 'VN#funcall cannot find method: ' + id ;
+    // console.log('found methods ' + id);
+    // console.log(method);
+    // argv.unshift(recv);
+    return method.call(window, argv);
+  },
+
+  /**
+    Instance Variables
+  */
+  ivar_set: function(obj, id, val) {
+    switch (obj.type) {
+      case VN.T_OBJECT:
+      case VN.T_CLASS:
+      case VN.T_MODULE:
+        obj.iv_tbl[id] = val;
+        break;
+      default:
+        VN.generic_ivar_set(obj, id, val);
+        break;
+    }
+    return val;
+  },
+
+  ivar_get: function(obj, id) {
+    switch (obj.type) {
+      case VN.T_OBJECT:
+      case VN.T_CLASS:
+      case VN.T_MODULE:
+        var val;
+        if (obj.iv_tbl.hasOwnProperty(id))
+          return obj.iv_tbl[id];
+        break;
+      default:
+        // generic...
+        break;
+    }
+    // ivar not initialised in this instance/class etc.
+    VN.warning('instance variable ' + id + ' not initialized');
+    return nil;
+  },
+
+  /**
+    Class variables
+  */
+
+  cvar_get: function(klass, id) {
+    var tmp = klass;
+    var value;
+    while (tmp) {
+      if (tmp.iv_tbl) {
+        if (value = tmp.iv_tbl[id]) {
+          return value;
+        }
+      }
+      tmp = tmp.super_klass;
+    }
+    VN.name_error(id, 'uninitialized class variable ' + id + ' in ' + klass.name);
+    return VN.nil;
+  },
+
+  /**
+    Constants
+  
+    Constants are set in the iv_tbl of the Class itself. They are easily
+    distinguishable from class variables, as the constants begin with an
+    uppcase letter. Top level constants (defined in the main context) must
+    be treated with consideration (as main is an object, not a class).
+  */
+  const_set: function(klass, id, val) {
+    VN.mod_av_set(klass, id, val, true);
+  },
+
+  mod_av_set: function(klass, id, val, isconst) {
+    // need to check if already set......
+    klass.iv_tbl[id] = val;
+  },
+
+  const_get: function(klass, id) {
+  
+  },
+
+  top_const_get: function(id) {
+    var value;
+
+    return undefined;
+  },
+
+  const_defined_0: function(klass, id, exclude, recurse) {
+  
+  },
+
+  const_defined: function(klass, id) {
+    return VN.const_defined_0(klass, id, false, true);
+  },
+
+  /**
+    Globals
+  */
+  gvar_get: function(id) {
+  
+  },
+
+  gvar_set: function(id, val) {
+  
+  },
+
+  /**
+    Initialise var tables
+  */
+  global_tbl: { }, // globals are stored here
+  class_tbl: { },  // all classes are stored here
+
+  /**
+    Object
+  */
+  boot_defclass: function(id, super_klass) {
+    var obj = VN.class_boot(super_klass);
+    VN.name_class(obj, id);
+    VN.class_tbl[id] = obj;
+    VN.const_set((VN.cObject ? VN.cObject : obj), id, obj);
+    return obj;
+  },
+
+  boot_defmetametaclass: function(klass, metametaclass) {
+    klass.klass.klass = metametaclass;
+  },
+
+  obj_alloc: function(klass) {
+    var obj;
+  
+    if (klass.super_klass == null && klass != VN.cBasicObject) {
+      VN.type_error('can\'t instantiate uninitialized class');
+    }
+    // siingleton...
+  
+    obj = VN.funcall(klass, 'allocate', 0, null);
+    return obj;
+  },
+
+  class_allocate_instance: function(klass) {
+    var obj = new VN.RObject();
+    if (!klass) klass = VN.cObject ;
+    obj.klass = klass;
+    obj.type = VN.T_OBJECT;
+    return obj;
   }
-  VN.name_error(id, 'uninitialized class variable ' + id + ' in ' + klass.name);
-  return VN.nil;
-};
-
-/**
-  Constants
-  
-  Constants are set in the iv_tbl of the Class itself. They are easily
-  distinguishable from class variables, as the constants begin with an
-  uppcase letter. Top level constants (defined in the main context) must
-  be treated with consideration (as main is an object, not a class).
-*/
-
-VN.const_set = function(klass, id, val) {
-  VN.mod_av_set(klass, id, val, true);
-};
-
-VN.mod_av_set = function(klass, id, val, isconst) {
-  // need to check if already set......
-  
-  klass.iv_tbl[id] = val;
-};
-
-VN.const_get = function(klass, id) {
-  
-};
-
-// top level lookup
-VN.top_const_get = function(id) {
-  var value;
-
-  return undefined;
-};
-
-
-VN.const_defined_0 = function(klass, id, exclude, recurse) {
-  
-};
-
-
-VN.const_defined = function(klass, id) {
-  return VN.const_defined_0(klass, id, false, true);
-};
-
-
-
-/**
-  Globals
-*/
-VN.gvar_get = function(id) {
-  
-};
-
-VN.gvar_set = function(id, val) {
-  
-};
-
-/**
-  Initialise var tables
-*/
-VN.global_tbl = { } ; // globals are stored here
-VN.class_tbl = { } ;  // all classes are stored here
-
-/**
-  Object
-*/
-VN.boot_defclass = function(id, super_klass) {
-  var obj = VN.class_boot(super_klass);
-  VN.name_class(obj, id);
-  VN.class_tbl[id] = obj;
-  VN.const_set((VN.cObject ? VN.cObject : obj), id, obj);
-  return obj;
-};
-
-VN.boot_defmetametaclass = function(klass, metametaclass) {
-  klass.klass.klass = metametaclass;
-};
-
-VN.obj_alloc = function(klass) {
-  var obj;
-  
-  if (klass.super_klass == null && klass != VN.cBasicObject) {
-    VN.type_error('can\'t instantiate uninitialized class');
-  }
-  // siingleton...
-  
-  obj = VN.funcall(klass, 'allocate', 0, null);
-  return obj;
-};
-
-VN.class_allocate_instance = function(klass) {
-  var obj = new VN.RObject();
-  if (!klass) klass = VN.cObject ;
-  obj.klass = klass;
-  obj.type = VN.T_OBJECT;
-  return obj;
 };
 
 
@@ -582,6 +603,27 @@ VN.boot_defmetametaclass(VN.cBasicObject, metaclass);
 
 VN.define_private_method(VN.cBasicObject, 'initialize', VN.obj_dummy, 0);
 VN.define_alloc_func(VN.cBasicObject, VN.class_allocate_instance);
+
+VN.define_method(VN.cBasicObject, '==', function(obj1, obj2) {
+  return (obj1 == obj2) ? true : false ;
+}, 1);
+VN.define_method(VN.cBasicObject, 'equal?', function(obj1, obj2) {
+  return (obj1 == obj2) ? true : false ;
+}, 1);
+VN.define_method(VN.cBasicObject, '!', function(obj1) {
+  return (!obj1) ? true : false ;
+}, 0);
+VN.define_method(VN.cBasicObject, '!=', function(obj1, obj2) {
+  var result = VN.funcall(obj1, '==', 1, obj2);
+  return (result) ? false : true ;
+}, 1);
+
+
+
+
+
+
+
 VN.mKernel = VN.define_module("Kernel");
 // VN.include_module(VN.cObject, VN.mKernel);
 VN.define_private_method(VN.cClass, "inherited", VN.obj_dummy, 1);
@@ -607,18 +649,59 @@ VN.define_singleton_method(VN.top_self, 'to_s', function() {
   Initialize String
 */
 VN.cString = VN.define_class('String', VN.cObject);
-// VN.define_alloc_func(VN.cString, function() {
-//   return new String();
-// });
-String.prototype.klass = VN.cString;
-String.prototype.type = VN.T_STRING;
+// VN.include_module(VN.cString, VN.mComparable);
+
+VN.str_alloc = function(klass) {
+  var str = new VN.RString();
+  str.klass = klass;
+  str.type = VN.T_STRING;
+  str.ptr = new String() ;
+  return str;
+};
+
+VN.str_new = function(klass, ptr, len) {
+  var str ;
+  
+  if (len < 0) {
+    VN.arg_error('negative string size (or size too big)');
+  }
+  str = VN.str_alloc(klass) ;
+  str.ptr = ptr;
+  return str ;
+};
+
+VN.str_new_cstr = function(ptr) {
+  if (!ptr) {
+    VN.arg_error('NULL pointer given');
+  }
+  return VN.str_new(VN.cString, ptr, ptr.length);
+};
+
+
+VN.define_alloc_func(VN.cString, VN.str_alloc);
+
+/**
+  Symbol
+*/
+VN.cSymbol = VN.define_class('Symbol', VN.cObject);
+// VN.include_module(VN.cSymbol, VN.mComparable);
+// VN.undef_alloc_func(VN.cSymbol);
+// VN.undef_method(VN.cSymbol.klass, 'new');
+// VN.define_singleton_method(VN.cSymbol, 'all_symbols', function() { }, 0); // do we really need this....
+
+
+
 
 /**
   Initialize Array
 */
 VN.cArray = VN.define_class('Array', VN.cObject);
-// VN.define_alloc_func(VN.cArray, function() {
-//   return new Array();
-// });
-Array.prototype.klass = VN.cArray;
-Array.prototype.type = VN.T_ARRAY;
+// VN.include_module(VN.cArray, VN.mEnumerable);
+VN.define_alloc_func(VN.cArray, function(klass) {
+  var obj = new VN.rArray();
+  obj.klass = klass;
+  obj.type = VN.T_ARRAY;
+  return obj ;
+});
+
+
