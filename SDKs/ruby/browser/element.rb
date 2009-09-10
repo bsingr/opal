@@ -63,10 +63,16 @@ class Element
     end
     
     Document.ready? do |event|
-      Element.find('p').text "The DOM is now loaded and can be manipulated."
+      Element.find('p').text "The DOM is loaded and ready to be manipulated."
     end
     
-    Element.find('adam').bind :click, do |e|
+    Ajax.new type: :get, url: 'test.js', jsonp: true, success: do |m|
+      m.to_a.each do |a|
+        puts a.to_s
+      end
+    end
+    
+    Element.find('adam').click do |e|
       str = "bob"
       e.assign 23
     end
