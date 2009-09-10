@@ -325,6 +325,10 @@ var VN = {
     console.log(VN.singleton_class(klass));
     VN.add_method(VN.singleton_class(klass), 'allocate', func, 0, VN.NOEX_PRIVATE);
   },
+  
+  undef_alloc_func: function(klass) {
+    VN.add_method(VN.singleton_class(klass), 'allocate', null, 0, VN.NOEX_UNDEF);
+  },
 
   class_alloc: function(type, klass) {
     var obj = new VN.RClass();
@@ -528,6 +532,14 @@ var VN = {
   const_defined: function(klass, id) {
     return VN.const_defined_0(klass, id, false, true);
   },
+  
+  define_const: function(klass, id, val) {
+    VN.const_set(klass, id, val);
+  },
+  
+  define_global_const: function(id, val) {
+    VN.define_const(VN.cObject, id, val);
+  },
 
   /**
     Globals
@@ -583,8 +595,14 @@ var VN = {
 };
 
 VN.Qfalse = 0 ; // ?
+// VN.Qfalse.klass = VN.cFalseClass
+// VN.Qfalse.type = VN.T_FALSE
 VN.Qtrue = 2 ; // ?
+// VN.Qtrue.klass = VN.cTrueClass
+// VN.Qtrue.type = VN.T_TRUE
 VN.Qnil = 4 ; // ?
+// VN.Qnil.klass = VN.cNilClass
+// VN.Qnil.type = VN.T_NIL
 VN.Qundef = 6 ; // ?
 
 VN.RTEST = function(v) {
@@ -667,7 +685,161 @@ VN.define_private_method(VN.cModule, "extended", VN.obj_dummy, 1);
 VN.define_private_method(VN.cModule, "method_added", VN.obj_dummy, 1);
 VN.define_private_method(VN.cModule, "method_removed", VN.obj_dummy, 1);
 VN.define_private_method(VN.cModule, "method_undefined", VN.obj_dummy, 1);
+
+/*
+  NilClass
+*/
+VN.nil_to_i = function(obj) {
+    return 0 ;
+};
+
+VN.nil_to_f = function(obj) {
+    return 0.0 ;
+};
+
+VN.nil_to_s = function(obj) {
+    return VN.str_new_cstr("") ;
+};
+
+VN.nil_to_a = function(obj) {
+    return VN.ary_new2(null) ;
+};
+
+VN.nil_inspect = function(obj) {
+    return VN.str_new_cstr("nil");
+};
+
 VN.cNilClass = VN.define_class("NilClass", VN.cObject);
+VN.define_method(VN.cNilClass, 'to_i', VN.nil_to_i, 0);
+VN.define_method(VN.cNilClass, 'to_f', VN.nil_to_f, 0);
+VN.define_method(VN.cNilClass, 'to_s', VN.nil_to_s, 0);
+VN.define_method(VN.cNilClass, 'to_a', VN.nil_to_a, 0);
+VN.define_method(VN.cNilClass, 'inspect', VN.nil_inspect, 0);
+VN.define_method(VN.cNilClass, '&', VN.false_and, 0);
+VN.define_method(VN.cNilClass, '|', VN.false_or, 0);
+VN.define_method(VN.cNilClass, '^', VN.false_xor, 0);
+
+VN.define_method(VN.cNilClass, 'nil?', VN.rb_true, 0);
+VN.undef_alloc_func(VN.cNilClass);
+VN.undef_method(VN.cNilClass.klass, "new");
+VN.define_global_const('NIL', VN.Qnil);
+
+// rb_define_method(rb_cModule, "freeze", rb_mod_freeze, 0);
+// rb_define_method(rb_cModule, "===", rb_mod_eqq, 1);
+// rb_define_method(rb_cModule, "==", rb_obj_equal, 1);
+// rb_define_method(rb_cModule, "<=>",  rb_mod_cmp, 1);
+// rb_define_method(rb_cModule, "<",  rb_mod_lt, 1);
+// rb_define_method(rb_cModule, "<=", rb_class_inherited_p, 1);
+// rb_define_method(rb_cModule, ">",  rb_mod_gt, 1);
+// rb_define_method(rb_cModule, ">=", rb_mod_ge, 1);
+// rb_define_method(rb_cModule, "initialize_copy", rb_mod_init_copy, 1); /* in class.c */
+// rb_define_method(rb_cModule, "to_s", rb_mod_to_s, 0);
+// rb_define_method(rb_cModule, "included_modules", rb_mod_included_modules, 0); /* in class.c */
+// rb_define_method(rb_cModule, "include?", rb_mod_include_p, 1); /* in class.c */
+// rb_define_method(rb_cModule, "name", rb_mod_name, 0);  /* in variable.c */
+// rb_define_method(rb_cModule, "ancestors", rb_mod_ancestors, 0); /* in class.c */
+
+// rb_define_private_method(rb_cModule, "attr", rb_mod_attr, -1);
+// rb_define_private_method(rb_cModule, "attr_reader", rb_mod_attr_reader, -1);
+// rb_define_private_method(rb_cModule, "attr_writer", rb_mod_attr_writer, -1);
+// rb_define_private_method(rb_cModule, "attr_accessor", rb_mod_attr_accessor, -1);
+// 
+// rb_define_alloc_func(rb_cModule, rb_module_s_alloc);
+// rb_define_method(rb_cModule, "initialize", rb_mod_initialize, 0);
+// rb_define_method(rb_cModule, "instance_methods", rb_class_instance_methods, -1); /* in class.c */
+// rb_define_method(rb_cModule, "public_instance_methods", 
+//       rb_class_public_instance_methods, -1);    /* in class.c */
+// rb_define_method(rb_cModule, "protected_instance_methods", 
+//       rb_class_protected_instance_methods, -1); /* in class.c */
+// rb_define_method(rb_cModule, "private_instance_methods", 
+//       rb_class_private_instance_methods, -1);   /* in class.c */
+// 
+// rb_define_method(rb_cModule, "constants", rb_mod_constants, -1); /* in variable.c */
+// rb_define_method(rb_cModule, "const_get", rb_mod_const_get, -1);
+// rb_define_method(rb_cModule, "const_set", rb_mod_const_set, 2);
+// rb_define_method(rb_cModule, "const_defined?", rb_mod_const_defined, -1);
+// rb_define_private_method(rb_cModule, "remove_const", 
+//           rb_mod_remove_const, 1); /* in variable.c */
+// rb_define_method(rb_cModule, "const_missing", 
+//       rb_mod_const_missing, 1); /* in variable.c */
+// rb_define_method(rb_cModule, "class_variables", 
+//       rb_mod_class_variables, 0); /* in variable.c */
+// rb_define_method(rb_cModule, "remove_class_variable", 
+//       rb_mod_remove_cvar, 1); /* in variable.c */
+// rb_define_method(rb_cModule, "class_variable_get", rb_mod_cvar_get, 1);
+// rb_define_method(rb_cModule, "class_variable_set", rb_mod_cvar_set, 2);
+// rb_define_method(rb_cModule, "class_variable_defined?", rb_mod_cvar_defined, 1);
+// 
+// rb_define_method(rb_cClass, "allocate", rb_obj_alloc, 0);
+// rb_define_method(rb_cClass, "new", rb_class_new_instance, -1);
+// rb_define_method(rb_cClass, "initialize", rb_class_initialize, -1);
+// rb_define_method(rb_cClass, "initialize_copy", rb_class_init_copy, 1); /* in class.c */
+// rb_define_method(rb_cClass, "superclass", rb_class_superclass, 0);
+// rb_define_alloc_func(rb_cClass, rb_class_s_alloc);
+// rb_undef_method(rb_cClass, "extend_object");
+// rb_undef_method(rb_cClass, "append_features");
+// 
+// rb_cData = rb_define_class("Data", rb_cObject);
+// rb_undef_alloc_func(rb_cData);
+
+
+/*
+  TrueClass
+*/
+VN.true_to_s = function(obj) {
+  return VN.str_new_cstr("true");
+};
+
+VN.true_and = function(obj, obj2) {
+  return VN.RTEST(obj2) ? VN.Qtrue : VN.Qfalse ;
+};
+
+VN.true_or = function(obj, obj2) {
+  return VN.Qtrue ;
+};
+
+VN.true_xor = function(obj, obj2) {
+  return VN.RTEST(obj2) ? VN.Qfalse : VN.Qtrue ;
+};
+
+VN.cTrueClass = VN.define_class('TrueClass', VN.cObject);
+VN.define_method(VN.cTrueClass, 'to_s', VN.true_to_s, 0);
+VN.define_method(VN.cTrueClass, '&', VN.true_and, 0);
+VN.define_method(VN.cTrueClass, '|', VN.true_or, 0);
+VN.define_method(VN.cTrueClass, '^', VN.true_xor, 0);
+VN.undef_alloc_func(VN.cTrueClass);
+VN.undef_method(VN.cTrueClass.klass, 'new');
+VN.define_global_const('TRUE', VN.Qtrue);
+ 
+/*
+  FalseClass
+*/
+VN.false_to_s = function(obj) {
+  return VN.str_new_cstr("false");
+};
+
+VN.false_and = function(obj, obj2) {
+  return VN.Qfalse ;
+};
+
+VN.false_or = function(obj, obj2) {
+  return VN.RTEST(obj2) ? VN.Qtrue : VN.Qfalse ;
+};
+
+VN.false_xor = function(obj, obj2) {
+  return VN.RTEST(obj2) ? VN.Qtrue : VN.Qfalse ;
+};
+
+VN.cFalseClass = VN.define_class('FalseClass', VN.cObject);
+VN.define_method(VN.cFalseClass, 'to_s', VN.false_to_s, 0);
+VN.define_method(VN.cFalseClass, '&', VN.false_and, 0);
+VN.define_method(VN.cFalseClass, '|', VN.false_or, 0);
+VN.define_method(VN.cFalseClass, '^', VN.false_xor, 0);
+VN.undef_alloc_func(VN.cFalseClass);
+VN.undef_method(VN.cFalseClass.klass, 'new');
+VN.define_global_const('FALSE', VN.Qfalse);
+
+
 /**
   Initialize top self.
 
