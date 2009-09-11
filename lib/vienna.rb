@@ -6,7 +6,7 @@
 #  Copyright 2009 Adam Beynon. All rights reserved.
 # 
 
-# require 'FileUtils'
+require 'FileUtils'
 require 'ftools'
 
 module Vienna

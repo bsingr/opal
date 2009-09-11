@@ -244,7 +244,7 @@ var VN = {
   },
 
   include_module: function(klass, module) {
-    throw 'include_module not yet implemented'
+    // console.log('include_module not yet implemented');
     if (module.type != VN.T_MODULE) {
       // error?
     }
@@ -321,8 +321,8 @@ var VN = {
   },
 
   define_alloc_func: function(klass, func) {
-    console.log('ALLOC func');
-    console.log(VN.singleton_class(klass));
+    // console.log('ALLOC func');
+    // console.log(VN.singleton_class(klass));
     VN.add_method(VN.singleton_class(klass), 'allocate', func, 0, VN.NOEX_PRIVATE);
   },
   
@@ -414,7 +414,7 @@ var VN = {
   add_method: function(klass, id, func, argc, noex) {
     // throw 'add_method not implemented'
     if (!klass) klass = VN.cObject ; // no class, so assign it to Object#id
-    console.log('add method:' + klass.iv_tbl.__classid__ + '#' + id);
+    // console.log('add method:' + klass.iv_tbl.__classid__ + '#' + id);
     klass.m_tbl[id] = func;
   },
 
@@ -439,7 +439,7 @@ var VN = {
     var method = VN.search_method(recv.klass, id);
     if (!method) throw 'VN#funcall cannot find method: ' + id ;
     // console.log('found methods ' + id);
-    console.log(id);
+    // console.log(id);
     argv.unshift(recv);
     return method.apply(window, argv);
   },
@@ -475,8 +475,9 @@ var VN = {
         break;
     }
     // ivar not initialised in this instance/class etc.
+    // console.log(obj);
     VN.warning('instance variable ' + id + ' not initialized');
-    return nil;
+    return VN.Qnil;
   },
 
   /**
@@ -495,7 +496,7 @@ var VN = {
       tmp = tmp.super_klass;
     }
     VN.name_error(id, 'uninitialized class variable ' + id + ' in ' + klass.name);
-    return VN.nil;
+    return VN.Qnil;
   },
 
   /**
@@ -591,55 +592,58 @@ var VN = {
     obj.klass = klass;
     obj.type = VN.T_OBJECT;
     return obj;
+  },
+  
+  /**
+    Dummy function to do nothing (empty implementation)
+  */
+  obj_dummy: function() {
+    return null ;
+  },
+  
+  equal: function(obj1, obj2) {
+    if (obj1 == obj2) return true ;
+    var result = VN.funcall(obj1, '==', 1, obj2);
+    if (VN.RTEST(result)) return true ;
+    return false ;
+  },
+
+  eql: function(obj1, obj2) {
+    return VN.funcall(obj1, '==', 1, obj2);
+  },
+
+  obj_equal: function(obj1, obj2) {
+    if (obj1 == obj2) return true ;
+    return false ;
+  },
+  
+  // Truthiness test. True unless Qfalse or Qnil
+  RTEST: function(v) {
+    return ((v != VN.Qfalse) && (v != VN.Qnil)) ;
+  },
+  
+  NIL_P: function(v) {
+    return (v == VN.Qnil) ;
+  },
+  
+  to_id: function(name) {
+    switch (name.type) {
+      case VN.T_STRING:
+        return name.ptr;
+      case VN.T_SYMBOL:
+        return name;
+    }
+  },
+  
+  warning: function(message) {
+    console.log('Vienna Warning: ' + message);
   }
-};
-
-VN.Qfalse = 0 ; // ?
-// VN.Qfalse.klass = VN.cFalseClass
-// VN.Qfalse.type = VN.T_FALSE
-VN.Qtrue = 2 ; // ?
-// VN.Qtrue.klass = VN.cTrueClass
-// VN.Qtrue.type = VN.T_TRUE
-VN.Qnil = 4 ; // ?
-// VN.Qnil.klass = VN.cNilClass
-// VN.Qnil.type = VN.T_NIL
-VN.Qundef = 6 ; // ?
-
-VN.RTEST = function(v) {
-  return ((v & ~VN.Qnil) != 0)
-};
-
-VN.NIL_P = function(v) {
-  return (v == VN.Qnil);
-};
+} ;
 
 /**
-  Object
+  Very top level BasicObject, Object, Class, Module.
 */
-VN.equal = function(obj1, obj2) {
-  if (obj1 == obj2) return true ;
-  var result = VN.funcall(obj1, '==', 1, obj2);
-  if (VN.RTEST(result)) return true ;
-  return false ;
-};
-
-VN.eql = function(obj1, obj2) {
-  return VN.funcall(obj1, '==', 1, obj2);
-};
-
-VN.obj_equal = function(obj1, obj2) {
-  if (obj1 == obj2) return true ;
-  return false ;
-};
-
-
-
-
-
-VN.obj_dummy = function() { return null ;} ;
-
 var metaclass;
-
 VN.cBasicObject = VN.boot_defclass('BasicObject', null);
 VN.cObject = VN.boot_defclass('Object', VN.cBasicObject);
 VN.cModule = VN.boot_defclass('Module', VN.cObject);
@@ -649,42 +653,203 @@ metaclass = VN.make_metaclass(VN.cBasicObject, VN.cClass);
 metaclass = VN.make_metaclass(VN.cObject, metaclass);
 metaclass = VN.make_metaclass(VN.cModule, metaclass);
 metaclass = VN.make_metaclass(VN.cClass, metaclass);
-
 VN.boot_defmetametaclass(VN.cModule, metaclass);
 VN.boot_defmetametaclass(VN.cObject, metaclass);
 VN.boot_defmetametaclass(VN.cBasicObject, metaclass);
 
+/**
+  BasicObject necessary methods
+*/
 VN.define_private_method(VN.cBasicObject, 'initialize', VN.obj_dummy, 0);
 VN.define_alloc_func(VN.cBasicObject, VN.class_allocate_instance);
+VN.define_method(VN.cBasicObject, '==', VN.obj_equal, 1);
+VN.define_method(VN.cBasicObject, 'equal?', VN.obj_equal, 1);
+VN.define_method(VN.cBasicObject, '!', VN.obj_not, 0);
+VN.define_method(VN.cBasicObject, '!=', VN.obj_not_equal);
+VN.define_private_method(VN.cBasicObject, 'singleton_method_added', VN.obj_dummy, 1);
+VN.define_private_method(VN.cBasicObject, 'singleton_method_removed', VN.obj_dummy, 1);
+VN.define_private_method(VN.cBasicObject, 'singleton_method_undefined', VN.obj_dummy, 1);
 
-VN.define_method(VN.cBasicObject, '==', function(obj1, obj2) {
-  return (obj1 == obj2) ? true : false ;
-}, 1);
-VN.define_method(VN.cBasicObject, 'equal?', function(obj1, obj2) {
-  return (obj1 == obj2) ? true : false ;
-}, 1);
-VN.define_method(VN.cBasicObject, '!', function(obj1) {
-  return (!obj1) ? true : false ;
-}, 0);
-VN.define_method(VN.cBasicObject, '!=', function(obj1, obj2) {
-  var result = VN.funcall(obj1, '==', 1, obj2);
-  return (result) ? false : true ;
-}, 1);
-
-
-
-
-
-
-
+/**
+  Kernel neccessary methods
+*/
 VN.mKernel = VN.define_module("Kernel");
-// VN.include_module(VN.cObject, VN.mKernel);
-VN.define_private_method(VN.cClass, "inherited", VN.obj_dummy, 1);
-VN.define_private_method(VN.cModule, "included", VN.obj_dummy, 1);
-VN.define_private_method(VN.cModule, "extended", VN.obj_dummy, 1);
-VN.define_private_method(VN.cModule, "method_added", VN.obj_dummy, 1);
-VN.define_private_method(VN.cModule, "method_removed", VN.obj_dummy, 1);
-VN.define_private_method(VN.cModule, "method_undefined", VN.obj_dummy, 1);
+VN.include_module(VN.cObject, VN.mKernel);
+VN.define_private_method(VN.cClass, 'inherited', VN.obj_dummy, 1);
+VN.define_private_method(VN.cModule, 'included', VN.obj_dummy, 1);
+VN.define_private_method(VN.cModule, 'extended', VN.obj_dummy, 1);
+VN.define_private_method(VN.cModule, 'method_added', VN.obj_dummy, 1);
+VN.define_private_method(VN.cModule, 'method_removed', VN.obj_dummy, 1);
+VN.define_private_method(VN.cModule, 'method_undefined', VN.obj_dummy, 1);
+
+/**
+  Base Classes/Modules
+*/
+VN.cNilClass = VN.define_class("NilClass", VN.cObject);
+VN.cTrueClass = VN.define_class('TrueClass', VN.cObject);
+VN.cFalseClass = VN.define_class('FalseClass', VN.cObject);
+VN.cArray = VN.define_class('Array', VN.cObject);
+VN.cString = VN.define_class('String', VN.cObject);
+VN.cSymbol = VN.define_class('Symbol', VN.cObject);
+
+/**
+  Instance types.
+*/
+VN.Qfalse = {
+  klass: VN.cFalseClass,
+  type: VN.T_FALSE
+} ; // ?
+
+VN.Qtrue = {
+  klass: VN.cTrueClass,
+  type: VN.T_TRUE
+} ;
+
+VN.Qnil = {
+  klass: VN.cNilClass,
+  type: VN.T_NIL
+} ;
+
+VN.Qundef = 6 ; // ?
+
+/**
+  Kernel
+*/
+VN.obj_match = function(self, obj2) {
+  return VN.Qnil ;
+};
+
+VN.obj_not_match = function(self, obj2) {
+  var result = VN.funcall(self, '=~', 1, obj2) ;
+  return VN.RTEST(result) ? VN.Qfalse : VN.Qtrue ;
+};
+
+VN.define_method(VN.mKernel, 'nil?', VN.rb_false, 0);
+VN.define_method(VN.mKernel, '===', VN.equal, 1);
+VN.define_method(VN.mKernel, '=~', VN.obj_match, 1);
+VN.define_method(VN.mKernel, '!~', VN.obj_not_match, 1);
+VN.define_method(VN.mKernel, 'eql?', VN.obj_equal, 1);
+
+VN.obj_init_copy = function (self, orig) {
+  if (self == orig) return self ;
+  if (self.type != orig.type || obj.klass != orig.klass) {
+    VN.type_error('initialize_copy should take same class object');
+  }
+  return self;
+};
+
+VN.define_method(VN.mKernel, 'class', VN.obj_class, 0);
+VN.define_method(VN.mKernel, 'clone', VN.obj_clone, 0);
+VN.define_method(VN.mKernel, 'dup', VN.obj_dup, 0);
+VN.define_method(VN.mKernel, 'initialize_copy', VN.obj_init_copy, 1);
+
+VN.define_method(VN.mKernel, 'taint', VN.obj_taint, 0);
+VN.define_method(VN.mKernel, 'tainted?', VN.obj_tainted, 0);
+VN.define_method(VN.mKernel, 'untaint', VN.obj_untaint, 0);
+VN.define_method(VN.mKernel, 'untrust', VN.obj_untrust, 0);
+VN.define_method(VN.mKernel, 'untrusted?', VN.obj_untrusted, 0);
+VN.define_method(VN.mKernel, 'trust', VN.obj_trust, 0);
+VN.define_method(VN.mKernel, 'freeze', VN.obj_freeze, 0);
+VN.define_method(VN.mKernel, 'frozen?', VN.obj_frozen_p, 0);
+
+VN.any_to_s = function(self) {
+  return VN.str_new_cstr("#<" + VN.obj_classname(self) + ":0x00000000>");
+};
+
+VN.inspect = function(self) {
+  return VN.str_new_cstr("");
+};
+
+VN.obj_methods = function(argc, argv, self) {
+  
+};
+
+VN.obj_singleton_methods = function(argc, argv, self) {
+  
+};
+
+VN.obj_protected_methods = function(argc, argv, self) {
+  
+};
+
+VN.obj_private_methods = function(argc, argv, self) {
+  
+};
+
+VN.obj_public_methods = function(argc, argv, self) {
+  
+};
+
+VN.obj_instance_variables = function(self) {
+  
+};
+
+VN.obj_ivar_get = function(self, iv) {
+  return VN.ivar_get(self, VN.to_id(iv)) ;
+};
+
+
+VN.obj_ivar_set = function(self, iv, val) {
+  return VN.ivar_set(self, VN.to_id(iv), val) ;
+};
+
+VN.obj_ivar_defined = function(self, iv) {
+  return VN.ivar_defined(self, VN.to_id(iv)) ;
+};
+
+VN.define_method(VN.mKernel, 'to_s', VN.any_to_s, 0);
+VN.define_method(VN.mKernel, 'inspect', VN.obj_inspect, 0);
+VN.define_method(VN.mKernel, 'methods', VN.obj_methods, -1);
+VN.define_method(VN.mKernel, 'singleton_methods', VN.obj_singleton_methods, -1);
+VN.define_method(VN.mKernel, 'protected_methods', VN.obj_protected_methods, -1);
+VN.define_method(VN.mKernel, 'private_methods', VN.obj_private_methods, -1);
+VN.define_method(VN.mKernel, 'public_methods', VN.obj_public_methods, -1);
+VN.define_method(VN.mKernel, 'instance_variables', VN.obj_instance_variables, 0);
+VN.define_method(VN.mKernel, 'instance_variables_get', VN.obj_ivar_get, 1);
+VN.define_method(VN.mKernel, 'instance_variables_set', VN.obj_ivar_set, 2);
+VN.define_method(VN.mKernel, 'instance_variables_defined?', VN.obj_ivar_defined, 1);
+VN.define_private_method(VN.mKernel, 'remove_instance_variable', VN.obj_remove_instance_variable, 1);
+
+VN.obj_is_instance_of = function(self, klass) {
+  switch (klass.type) {
+    case VN.T_MODULE:
+    case VN.T_CLASS:
+    case VN.T_ICLASS:
+      break ;
+    default:
+      VN.type_error('class or module required');
+  }
+  if (self.klass == klass) return VN.Qtrue ;
+  return VN.Qfalse ;
+};
+
+VN.obj_is_kind_of = function(self, klass) { 
+  switch (klass.type) {
+    case VN.T_MODULE:
+    case VN.T_CLASS:
+    case VN.T_ICLASS:
+      break ;
+    default:
+      VN.type_error('class or module required');
+  }
+  var k = self.klass ;
+  while (k) {
+    if (k == klass || klass.m_tbl == k.m_tbl) {
+      return VN.Qtrue;
+    }
+    k = k.super_klass;
+  }
+  return VN.Qfalse;
+};
+
+VN.obj_tap = function(self) {
+  VN.warning('Kernel#tap unimplemented');
+};
+
+VN.define_method(VN.mKernel, 'instance_of?', VN.obj_is_instance_of, 1);
+VN.define_method(VN.mKernel, 'kind_of?', VN.obj_is_kind_of, 1);
+VN.define_method(VN.mKernel, 'is_a?', VN.obj_is_kind_of, 1);
+VN.define_method(VN.mKernel, 'tap', VN.obj_tap, 0);
 
 /*
   NilClass
@@ -709,7 +874,6 @@ VN.nil_inspect = function(obj) {
     return VN.str_new_cstr("nil");
 };
 
-VN.cNilClass = VN.define_class("NilClass", VN.cObject);
 VN.define_method(VN.cNilClass, 'to_i', VN.nil_to_i, 0);
 VN.define_method(VN.cNilClass, 'to_f', VN.nil_to_f, 0);
 VN.define_method(VN.cNilClass, 'to_s', VN.nil_to_s, 0);
@@ -724,64 +888,60 @@ VN.undef_alloc_func(VN.cNilClass);
 VN.undef_method(VN.cNilClass.klass, "new");
 VN.define_global_const('NIL', VN.Qnil);
 
-// rb_define_method(rb_cModule, "freeze", rb_mod_freeze, 0);
-// rb_define_method(rb_cModule, "===", rb_mod_eqq, 1);
-// rb_define_method(rb_cModule, "==", rb_obj_equal, 1);
-// rb_define_method(rb_cModule, "<=>",  rb_mod_cmp, 1);
-// rb_define_method(rb_cModule, "<",  rb_mod_lt, 1);
-// rb_define_method(rb_cModule, "<=", rb_class_inherited_p, 1);
-// rb_define_method(rb_cModule, ">",  rb_mod_gt, 1);
-// rb_define_method(rb_cModule, ">=", rb_mod_ge, 1);
-// rb_define_method(rb_cModule, "initialize_copy", rb_mod_init_copy, 1); /* in class.c */
-// rb_define_method(rb_cModule, "to_s", rb_mod_to_s, 0);
-// rb_define_method(rb_cModule, "included_modules", rb_mod_included_modules, 0); /* in class.c */
-// rb_define_method(rb_cModule, "include?", rb_mod_include_p, 1); /* in class.c */
-// rb_define_method(rb_cModule, "name", rb_mod_name, 0);  /* in variable.c */
-// rb_define_method(rb_cModule, "ancestors", rb_mod_ancestors, 0); /* in class.c */
+/**
+  Module
+*/
+VN.define_method(VN.cModule, 'freeze', VN.mod_freeze, 0);
+VN.define_method(VN.cModule, '===', VN.mod_eqq, 1);
+VN.define_method(VN.cModule, '==', VN.obj_equal, 1);
+VN.define_method(VN.cModule, '<=>', VN.mod_cmp, 1);
+VN.define_method(VN.cModule, '<', VN.mod_lt, 1);
+VN.define_method(VN.cModule, '<=', VN.class_inherited_p, 1);
+VN.define_method(VN.cModule, '>', VN.mod_gt, 1);
+VN.define_method(VN.cModule, '>=', VN.mod_ge, 1);
 
-// rb_define_private_method(rb_cModule, "attr", rb_mod_attr, -1);
-// rb_define_private_method(rb_cModule, "attr_reader", rb_mod_attr_reader, -1);
-// rb_define_private_method(rb_cModule, "attr_writer", rb_mod_attr_writer, -1);
-// rb_define_private_method(rb_cModule, "attr_accessor", rb_mod_attr_accessor, -1);
-// 
-// rb_define_alloc_func(rb_cModule, rb_module_s_alloc);
-// rb_define_method(rb_cModule, "initialize", rb_mod_initialize, 0);
-// rb_define_method(rb_cModule, "instance_methods", rb_class_instance_methods, -1); /* in class.c */
-// rb_define_method(rb_cModule, "public_instance_methods", 
-//       rb_class_public_instance_methods, -1);    /* in class.c */
-// rb_define_method(rb_cModule, "protected_instance_methods", 
-//       rb_class_protected_instance_methods, -1); /* in class.c */
-// rb_define_method(rb_cModule, "private_instance_methods", 
-//       rb_class_private_instance_methods, -1);   /* in class.c */
-// 
-// rb_define_method(rb_cModule, "constants", rb_mod_constants, -1); /* in variable.c */
-// rb_define_method(rb_cModule, "const_get", rb_mod_const_get, -1);
-// rb_define_method(rb_cModule, "const_set", rb_mod_const_set, 2);
-// rb_define_method(rb_cModule, "const_defined?", rb_mod_const_defined, -1);
-// rb_define_private_method(rb_cModule, "remove_const", 
-//           rb_mod_remove_const, 1); /* in variable.c */
-// rb_define_method(rb_cModule, "const_missing", 
-//       rb_mod_const_missing, 1); /* in variable.c */
-// rb_define_method(rb_cModule, "class_variables", 
-//       rb_mod_class_variables, 0); /* in variable.c */
-// rb_define_method(rb_cModule, "remove_class_variable", 
-//       rb_mod_remove_cvar, 1); /* in variable.c */
-// rb_define_method(rb_cModule, "class_variable_get", rb_mod_cvar_get, 1);
-// rb_define_method(rb_cModule, "class_variable_set", rb_mod_cvar_set, 2);
-// rb_define_method(rb_cModule, "class_variable_defined?", rb_mod_cvar_defined, 1);
-// 
-// rb_define_method(rb_cClass, "allocate", rb_obj_alloc, 0);
-// rb_define_method(rb_cClass, "new", rb_class_new_instance, -1);
-// rb_define_method(rb_cClass, "initialize", rb_class_initialize, -1);
-// rb_define_method(rb_cClass, "initialize_copy", rb_class_init_copy, 1); /* in class.c */
-// rb_define_method(rb_cClass, "superclass", rb_class_superclass, 0);
-// rb_define_alloc_func(rb_cClass, rb_class_s_alloc);
-// rb_undef_method(rb_cClass, "extend_object");
-// rb_undef_method(rb_cClass, "append_features");
-// 
-// rb_cData = rb_define_class("Data", rb_cObject);
-// rb_undef_alloc_func(rb_cData);
+VN.define_method(VN.cModule, 'initialize_copy', VN.mod_init_copy, 1);
+VN.define_method(VN.cModule, 'to_s', VN.mod_to_s, 0);
+VN.define_method(VN.cModule, 'included_modules', VN.mod_included_modules, 0);
+VN.define_method(VN.cModule, 'include?', VN.mod_include_p, 1);
+VN.define_method(VN.cModule, 'name', VN.mod_name, 0);
+VN.define_method(VN.cModule, 'ancestors', VN.mod_ancestors, 0);
 
+VN.define_private_method(VN.cModule, 'attr', VN.mod_attr, -1);
+VN.define_private_method(VN.cModule, 'attr_reader', VN.mod_attr_reader, -1);
+VN.define_private_method(VN.cModule, 'attr_writer', VN.mod_attr_writer, -1);
+VN.define_private_method(VN.cModule, 'attr_accessor', VN.mod_attr_accessor, -1);
+
+VN.define_alloc_func(VN.cModule, VN.module_s_alloc);
+VN.define_method(VN.cModule, 'initialize', VN.mod_initialize, 0);
+VN.define_method(VN.cModule, 'instance_methods', VN.class_instance_methods, -1);
+VN.define_method(VN.cModule, 'public_instance_methods', VN.class_public_instance_methods, -1);
+VN.define_method(VN.cModule, 'protected_instance_methods', VN.class_protected_instance_methods, -1);
+VN.define_method(VN.cModule, 'private_instance_methods', VN.class_private_instance_methods, -1);
+
+VN.define_method(VN.cModule, 'constance', VN.mod_constants, -1);
+VN.define_method(VN.cModule, 'const_get', VN.mod_const_get, -1);
+VN.define_method(VN.cModule, 'const_set', VN.mod_const_set, 2);
+VN.define_method(VN.cModule, 'const_defined?', VN.mod_const_defined, -1);
+VN.define_private_method(VN.cModule, 'remove_const', VN.mod_remove_const, 1);
+VN.define_method(VN.cModule, 'const_missing', VN.mod_const_missing, 1);
+VN.define_method(VN.cModule, 'class_variables', VN.mod_class_variables, 0);
+VN.define_method(VN.cModule, 'remove_class_variable', VN.mod_remove_cvar, 1);
+VN.define_method(VN.cModule, 'class_variable_get', VN.mod_cvar_get, 1);
+VN.define_method(VN.cModule, 'class_variable_set', VN.mod_cvar_set, 2);
+VN.define_method(VN.cModule, 'class_variable_defined?', VN.mod_cvar_defined, 1);
+
+/**
+  Class
+*/
+VN.define_method(VN.cClass, 'allocate', VN.obj_alloc, 0);
+VN.define_method(VN.cClass, 'new', VN.class_new_instance, -1);
+VN.define_method(VN.cClass, 'initialize', VN.class_initialize, -1);
+VN.define_method(VN.cClass, 'initialize_copy', VN.class_init_copy, 1);
+VN.define_method(VN.cClass, 'superclass', VN.class_superclass, 0);
+VN.define_alloc_func(VN.cClass, VN.class_s_alloc);
+VN.undef_method(VN.cClass, 'extend_object');
+VN.undef_method(VN.cClass, 'append_features');
 
 /*
   TrueClass
@@ -802,7 +962,7 @@ VN.true_xor = function(obj, obj2) {
   return VN.RTEST(obj2) ? VN.Qfalse : VN.Qtrue ;
 };
 
-VN.cTrueClass = VN.define_class('TrueClass', VN.cObject);
+
 VN.define_method(VN.cTrueClass, 'to_s', VN.true_to_s, 0);
 VN.define_method(VN.cTrueClass, '&', VN.true_and, 0);
 VN.define_method(VN.cTrueClass, '|', VN.true_or, 0);
@@ -830,7 +990,6 @@ VN.false_xor = function(obj, obj2) {
   return VN.RTEST(obj2) ? VN.Qtrue : VN.Qfalse ;
 };
 
-VN.cFalseClass = VN.define_class('FalseClass', VN.cObject);
 VN.define_method(VN.cFalseClass, 'to_s', VN.false_to_s, 0);
 VN.define_method(VN.cFalseClass, '&', VN.false_and, 0);
 VN.define_method(VN.cFalseClass, '|', VN.false_or, 0);
@@ -839,7 +998,6 @@ VN.undef_alloc_func(VN.cFalseClass);
 VN.undef_method(VN.cFalseClass.klass, 'new');
 VN.define_global_const('FALSE', VN.Qfalse);
 
-
 /**
   Initialize top self.
 
@@ -847,15 +1005,17 @@ VN.define_global_const('FALSE', VN.Qfalse);
   etc are added to.
 */
 VN.top_self = VN.obj_alloc(VN.cObject);
-VN.define_singleton_method(VN.top_self, 'to_s', function() {
-  return 'main';
-}, 0);
+
+VN.main_to_s = function(self) {
+  return VN.str_new_cstr("main") ;
+};
+
+VN.define_singleton_method(VN.top_self, 'to_s', VN.main_to_s, 0);
 
 
 /**
   Initialize String
 */
-VN.cString = VN.define_class('String', VN.cObject);
 // VN.include_module(VN.cString, VN.mComparable);
 
 VN.str_alloc = function(klass) {
@@ -884,54 +1044,15 @@ VN.str_new_cstr = function(ptr) {
   return VN.str_new(VN.cString, ptr, ptr.length);
 };
 
-
 VN.define_alloc_func(VN.cString, VN.str_alloc);
-
-
-// rb_define_singleton_method(rb_cString, "try_convert", rb_str_s_try_convert, 1);
-// rb_define_method(rb_cString, "initialize", rb_str_init, -1);
-// rb_define_method(rb_cString, "initialize_copy", rb_str_replace, 1);
-// rb_define_method(rb_cString, "<=>", rb_str_cmp_m, 1);
-
-// VN.define_method(VN.cString, '==', rb_str_equal, 1);
-// rb_define_method(rb_cString, "eql?", rb_str_eql, 1);
-// rb_define_method(rb_cString, "hash", rb_str_hash_m, 0);
-// rb_define_method(rb_cString, "casecmp", rb_str_casecmp, 1);
-// rb_define_method(rb_cString, "+", rb_str_plus, 1);
-// rb_define_method(rb_cString, "*", rb_str_times, 1);
-// rb_define_method(rb_cString, "%", rb_str_format_m, 1);
-// rb_define_method(rb_cString, "[]", rb_str_aref_m, -1);
-// rb_define_method(rb_cString, "[]=", rb_str_aset_m, -1);
-// rb_define_method(rb_cString, "insert", rb_str_insert, 2);
+VN.define_singleton_method(VN.cString, 'try_convert', VN.str_s_try_convert, 1);
 
 VN.str_length = function(str) {
-  console.log(str);
+  // console.log(str);
   var len = str.ptr.length;
   // int2num
   return len;
 };
-
-VN.define_method(VN.cString, 'length', VN.str_length, 0);
-VN.define_method(VN.cString, 'size', VN.str_length, 0);
-// rb_define_method(rb_cString, "bytesize", rb_str_bytesize, 0);
-// rb_define_method(rb_cString, "empty?", rb_str_empty, 0);
-// rb_define_method(rb_cString, "=~", rb_str_match, 1);
-// rb_define_method(rb_cString, "match", rb_str_match_m, -1);
-// rb_define_method(rb_cString, "succ", rb_str_succ, 0);
-// rb_define_method(rb_cString, "succ!", rb_str_succ_bang, 0);
-// rb_define_method(rb_cString, "next", rb_str_succ, 0);
-// rb_define_method(rb_cString, "next!", rb_str_succ_bang, 0);
-// rb_define_method(rb_cString, "upto", rb_str_upto, -1);
-// rb_define_method(rb_cString, "index", rb_str_index_m, -1);
-// rb_define_method(rb_cString, "rindex", rb_str_rindex_m, -1);
-// rb_define_method(rb_cString, "replace", rb_str_replace, 1);
-// rb_define_method(rb_cString, "clear", rb_str_clear, 0);
-// rb_define_method(rb_cString, "chr", rb_str_chr, 0);
-// rb_define_method(rb_cString, "getbyte", rb_str_getbyte, 1);
-// rb_define_method(rb_cString, "setbyte", rb_str_setbyte, 2);
-// 
-// rb_define_method(rb_cString, "to_i", rb_str_to_i, -1);
-// rb_define_method(rb_cString, "to_f", rb_str_to_f, 0);
 
 VN.str_to_s = function(str) {
   if (str.klass != VN.cString) {
@@ -940,109 +1061,183 @@ VN.str_to_s = function(str) {
   return str;
 };
 
+VN.define_method(VN.cString, 'initialize', VN.str_init, -1);
+VN.define_method(VN.cString, 'initialize_copy', VN.str_replace, 1);
+VN.define_method(VN.cString, '<=>', VN.str_cmp_m, 1);
+VN.define_method(VN.cString, '==', VN.str_equal, 1);
+VN.define_method(VN.cString, 'eql?', VN.str_eql, 1);
+VN.define_method(VN.cString, 'hash', VN.str_hash_m, 0);
+VN.define_method(VN.cString, 'casecmp', VN.str_casecmp, 1);
+VN.define_method(VN.cString, '+', VN.str_plus, 1);
+VN.define_method(VN.cString, '*', VN.str_times, 1);
+VN.define_method(VN.cString, '%', VN.str_format_m, 1);
+VN.define_method(VN.cString, '[]', VN.str_aref_m, -1);
+VN.define_method(VN.cString, '[]=', VN.str_aset_m, -1);
+VN.define_method(VN.cString, 'insert', VN.str_insert, 2);
+VN.define_method(VN.cString, 'length', VN.str_length, 0);
+VN.define_method(VN.cString, 'size', VN.str_length, 0);
+VN.define_method(VN.cString, 'bytesize', VN.str_bytesize, 0);
+VN.define_method(VN.cString, 'empty?', VN.str_empty, 0);
+VN.define_method(VN.cString, '=~', VN.str_match, 1);
+VN.define_method(VN.cString, 'match', VN.str_match_m, -1);
+VN.define_method(VN.cString, 'succ', VN.str_succ, 0);
+VN.define_method(VN.cString, 'succ!', VN.str_succ_bang, 0);
+VN.define_method(VN.cString, 'next', VN.str_succ, 0);
+VN.define_method(VN.cString, 'next!', VN.str_succ_bang, 0);
+VN.define_method(VN.cString, 'upto', VN.str_upto, -1);
+VN.define_method(VN.cString, 'index', VN.str_index_m, -1);
+VN.define_method(VN.cString, 'rindex', VN.str_rindex_m, -1);
+VN.define_method(VN.cString, 'replace', VN.str_replace, 1);
+VN.define_method(VN.cString, 'clear', VN.str_clear, 0);
+VN.define_method(VN.cString, 'chr', VN.str_chr, 0);
+VN.define_method(VN.cString, 'getbyte', VN.str_getbyte, 1);
+VN.define_method(VN.cString, 'setbyte', VN.str_setbyte, 2);
+
+VN.str_to_i = function(argc, argv, self) {
+  var base ;
+  if (argc == 0) {
+    base = 10 ;
+  }
+  else {
+    base = argv[0] ;
+  }
+  
+  if (base < 0) {
+    VN.arg_error('invalid radix: ' + base);
+  }
+  return VN.str_to_inum(self, base, VN.Qfalse);
+}
+
+VN.define_method(VN.cString, 'to_i', VN.str_to_i, -1);
+VN.define_method(VN.cString, 'to_f', VN.str_to_f, 0);
 VN.define_method(VN.cString, 'to_s', VN.str_to_s, 0);
 VN.define_method(VN.cString, 'to_str', VN.str_to_s, 0);
-VN.define_method(VN.cString, 'inspect', VN.str_to_s, 0); // this should escape the stirng... TODO.
+VN.define_method(VN.cString, 'inspect', VN.str_inspect, 0);
+VN.define_method(VN.cString, 'dump', VN.str_dump, 0);
 
-// rb_define_method(rb_cString, "dump", rb_str_dump, 0);
-// 
-// rb_define_method(rb_cString, "upcase", rb_str_upcase, 0);
-// rb_define_method(rb_cString, "downcase", rb_str_downcase, 0);
-// rb_define_method(rb_cString, "capitalize", rb_str_capitalize, 0);
-// rb_define_method(rb_cString, "swapcase", rb_str_swapcase, 0);
-// 
-// rb_define_method(rb_cString, "upcase!", rb_str_upcase_bang, 0);
-// rb_define_method(rb_cString, "downcase!", rb_str_downcase_bang, 0);
-// rb_define_method(rb_cString, "capitalize!", rb_str_capitalize_bang, 0);
-// rb_define_method(rb_cString, "swapcase!", rb_str_swapcase_bang, 0);
-// 
-// rb_define_method(rb_cString, "hex", rb_str_hex, 0);
-// rb_define_method(rb_cString, "oct", rb_str_oct, 0);
-// rb_define_method(rb_cString, "split", rb_str_split_m, -1);
-// rb_define_method(rb_cString, "lines", rb_str_each_line, -1);
-// rb_define_method(rb_cString, "bytes", rb_str_each_byte, 0);
-// rb_define_method(rb_cString, "chars", rb_str_each_char, 0);
-// rb_define_method(rb_cString, "codepoints", rb_str_each_codepoint, 0);
-// rb_define_method(rb_cString, "reverse", rb_str_reverse, 0);
-// rb_define_method(rb_cString, "reverse!", rb_str_reverse_bang, 0);
-// rb_define_method(rb_cString, "concat", rb_str_concat, 1);
-// rb_define_method(rb_cString, "<<", rb_str_concat, 1);
-// rb_define_method(rb_cString, "crypt", rb_str_crypt, 1);
-// rb_define_method(rb_cString, "intern", rb_str_intern, 0);
-// rb_define_method(rb_cString, "to_sym", rb_str_intern, 0);
-// rb_define_method(rb_cString, "ord", rb_str_ord, 0);
-// 
-// rb_define_method(rb_cString, "include?", rb_str_include, 1);
-// rb_define_method(rb_cString, "start_with?", rb_str_start_with, -1);
-// rb_define_method(rb_cString, "end_with?", rb_str_end_with, -1);
-// 
-// rb_define_method(rb_cString, "scan", rb_str_scan, 1);
-// 
-// rb_define_method(rb_cString, "ljust", rb_str_ljust, -1);
-// rb_define_method(rb_cString, "rjust", rb_str_rjust, -1);
-// rb_define_method(rb_cString, "center", rb_str_center, -1);
-// 
-// rb_define_method(rb_cString, "sub", rb_str_sub, -1);
-// rb_define_method(rb_cString, "gsub", rb_str_gsub, -1);
-// rb_define_method(rb_cString, "chop", rb_str_chop, 0);
-// rb_define_method(rb_cString, "chomp", rb_str_chomp, -1);
-// rb_define_method(rb_cString, "strip", rb_str_strip, 0);
-// rb_define_method(rb_cString, "lstrip", rb_str_lstrip, 0);
-// rb_define_method(rb_cString, "rstrip", rb_str_rstrip, 0);
-// 
-// rb_define_method(rb_cString, "sub!", rb_str_sub_bang, -1);
-// rb_define_method(rb_cString, "gsub!", rb_str_gsub_bang, -1);
-// rb_define_method(rb_cString, "chop!", rb_str_chop_bang, 0);
-// rb_define_method(rb_cString, "chomp!", rb_str_chomp_bang, -1);
-// rb_define_method(rb_cString, "strip!", rb_str_strip_bang, 0);
-// rb_define_method(rb_cString, "lstrip!", rb_str_lstrip_bang, 0);
-// rb_define_method(rb_cString, "rstrip!", rb_str_rstrip_bang, 0);
-// 
-// rb_define_method(rb_cString, "tr", rb_str_tr, 2);
-// rb_define_method(rb_cString, "tr_s", rb_str_tr_s, 2);
-// rb_define_method(rb_cString, "delete", rb_str_delete, -1);
-// rb_define_method(rb_cString, "squeeze", rb_str_squeeze, -1);
-// rb_define_method(rb_cString, "count", rb_str_count, -1);
-// 
-// rb_define_method(rb_cString, "tr!", rb_str_tr_bang, 2);
-// rb_define_method(rb_cString, "tr_s!", rb_str_tr_s_bang, 2);
-// rb_define_method(rb_cString, "delete!", rb_str_delete_bang, -1);
-// rb_define_method(rb_cString, "squeeze!", rb_str_squeeze_bang, -1);
-// 
-// rb_define_method(rb_cString, "each_line", rb_str_each_line, -1);
-// rb_define_method(rb_cString, "each_byte", rb_str_each_byte, 0);
-// rb_define_method(rb_cString, "each_char", rb_str_each_char, 0);
-// rb_define_method(rb_cString, "each_codepoint", rb_str_each_codepoint, 0);
-// 
-// rb_define_method(rb_cString, "sum", rb_str_sum, -1);
-// 
-// rb_define_method(rb_cString, "slice", rb_str_aref_m, -1);
-// rb_define_method(rb_cString, "slice!", rb_str_slice_bang, -1);
-// 
-// rb_define_method(rb_cString, "partition", rb_str_partition, 1);
-// rb_define_method(rb_cString, "rpartition", rb_str_rpartition, 1);
-// 
-// rb_define_method(rb_cString, "encoding", rb_obj_encoding, 0); /* in encoding.c */
-// rb_define_method(rb_cString, "force_encoding", rb_str_force_encoding, 1);
-// rb_define_method(rb_cString, "valid_encoding?", rb_str_valid_encoding_p, 0);
-// rb_define_method(rb_cString, "ascii_only?", rb_str_is_ascii_only_p, 0);
+VN.define_method(VN.cString, 'upcase', VN.str_upcase, 0);
+VN.define_method(VN.cString, 'downcase', VN.str_downcase, 0);
+VN.define_method(VN.cString, 'capitalize', VN.str_capitalize, 0);
+VN.define_method(VN.cString, 'swapcase', VN.str_swapcase, 0);
+
+VN.define_method(VN.cString, 'upcase!', VN.str_upcase_bang, 0);
+VN.define_method(VN.cString, 'downcase!', VN.str_downcase_bang, 0);
+VN.define_method(VN.cString, 'capitalize!', VN.str_capitalize_bang, 0);
+VN.define_method(VN.cString, 'swapcase!', VN.str_swapcase_bang, 0);
+
+VN.define_method(VN.cString, 'hex', VN.str_hex, 0);
+VN.define_method(VN.cString, 'oct', VN.str_oct, 0);
+VN.define_method(VN.cString, 'split', VN.str_split_m, -1);
+VN.define_method(VN.cString, 'lines', VN.str_each_line, -1);
+VN.define_method(VN.cString, 'bytes', VN.str_each_byte, 0);
+VN.define_method(VN.cString, 'chars', VN.str_each_char, 0);
+VN.define_method(VN.cString, 'codepoints', VN.str_each_codepoint, 0);
+VN.define_method(VN.cString, 'reverse', VN.str_reverse, 0);
+VN.define_method(VN.cString, 'reverse!', VN.str_reverse_bang, 0);
+VN.define_method(VN.cString, 'concat', VN.str_concat, 1);
+VN.define_method(VN.cString, '<<', VN.str_concat, 1);
+VN.define_method(VN.cString, 'crypt', VN.str_crypt, 1);
+VN.define_method(VN.cString, 'intern', VN.str_intern, 0);
+VN.define_method(VN.cString, 'to_sym', VN.str_intern, 0);
+VN.define_method(VN.cString, 'ord', VN.str_ord, 0);
+
+VN.define_method(VN.cString, 'include?', VN.str_include, 1);
+VN.define_method(VN.cString, 'start_with?', VN.str_start_with, -1);
+VN.define_method(VN.cString, 'end_with?', VN.str_end_with, -1);
+
+VN.define_method(VN.cString, 'scan', VN.str_scan, 1);
+
+VN.define_method(VN.cString, 'ljust', VN.str_ljust, -1);
+VN.define_method(VN.cString, 'rjust', VN.str_rjust, -1);
+VN.define_method(VN.cString, 'center', VN.str_center, -1);
+
+VN.define_method(VN.cString, 'sub', VN.str_sub, -1);
+VN.define_method(VN.cString, 'gsub', VN.str_gsub, -1);
+VN.define_method(VN.cString, 'chop', VN.str_chop, 0);
+VN.define_method(VN.cString, 'chomp', VN.str_chomp, -1);
+VN.define_method(VN.cString, 'strip', VN.str_strip, 0);
+VN.define_method(VN.cString, 'lstrip', VN.str_lstrip, 0);
+VN.define_method(VN.cString, 'rstrip', VN.str_rstrip, 0);
+
+VN.define_method(VN.cString, 'sub!', VN.str_sub_bang, -1);
+VN.define_method(VN.cString, 'gsub!', VN.str_gsub_bang, -1);
+VN.define_method(VN.cString, 'chop!', VN.str_chop_bang, 0);
+VN.define_method(VN.cString, 'chomp!', VN.str_chomp_bang, -1);
+VN.define_method(VN.cString, 'strip!', VN.str_strip_bang, 0);
+VN.define_method(VN.cString, 'lstrip!', VN.str_lstrip_bang, 0);
+VN.define_method(VN.cString, 'rstrip!', VN.str_rstrip_bang, 0);
+
+VN.define_method(VN.cString, 'tr', VN.str_tr, 2);
+VN.define_method(VN.cString, 'tr_s', VN.str_tr_s, 2);
+VN.define_method(VN.cString, 'delete', VN.str_delete, -1);
+VN.define_method(VN.cString, 'squeeze', VN.str_squeeze, -1);
+VN.define_method(VN.cString, 'count', VN.str_count, -1);
+
+VN.define_method(VN.cString, 'tr!', VN.str_tr_bang, 2);
+VN.define_method(VN.cString, 'tr_s!', VN.str_tr_s_bang, 2);
+VN.define_method(VN.cString, 'delete!', VN.str_delete_bang, -1);
+VN.define_method(VN.cString, 'squeeze!', VN.str_squeeze_bang, -1);
+
+VN.define_method(VN.cString, 'each_line', VN.str_each_line, -1);
+VN.define_method(VN.cString, 'each_byte', VN.str_each_byte, 0);
+VN.define_method(VN.cString, 'each_char', VN.str_each_char, 0);
+VN.define_method(VN.cString, 'each_codepoint', VN.str_each_codepoint, 0);
+
+VN.define_method(VN.cString, 'sum', VN.str_sum, -1);
+
+VN.define_method(VN.cString, 'slice', VN.str_aref_m, -1);
+VN.define_method(VN.cString, 'slice!', VN.str_slice_bang, -1);
+
+VN.define_method(VN.cString, 'partition', VN.str_partition, 1);
+VN.define_method(VN.cString, 'rpartition', VN.str_rpartition, 1);
+
+VN.define_method(VN.cString, 'encoding', VN.obj_encoding, 0); /* in encoding.c */
+VN.define_method(VN.cString, 'force_encoding', VN.str_force_encoding, 1);
+VN.define_method(VN.cString, 'valid_encoding?', VN.str_valid_encoding_p, 0);
+VN.define_method(VN.cString, 'ascii_only?', VN.str_is_ascii_only_p, 0);
 
 /**
   Symbol
 */
-VN.cSymbol = VN.define_class('Symbol', VN.cObject);
-// VN.include_module(VN.cSymbol, VN.mComparable);
-// VN.undef_alloc_func(VN.cSymbol);
-// VN.undef_method(VN.cSymbol.klass, 'new');
-// VN.define_singleton_method(VN.cSymbol, 'all_symbols', function() { }, 0); // do we really need this....
+// VN.VN.include_module(VN.cSymbol, VN.mComparable);
+VN.undef_alloc_func(VN.cSymbol);
+VN.undef_method(VN.cSymbol.klass, 'new');
+VN.define_singleton_method(VN.cSymbol, 'all_symbols', VN.sym_all_symbols, 0);
 
+VN.define_method(VN.cSymbol, '==', VN.sym_equal, 1);
+VN.define_method(VN.cSymbol, 'inspect', VN.sym_inspect, 0);
+VN.define_method(VN.cSymbol, 'to_s', VN.sym_to_s, 0);
+VN.define_method(VN.cSymbol, 'id2name', VN.sym_to_s, 0);
+VN.define_method(VN.cSymbol, 'intern', VN.sym_to_sym, 0);
+VN.define_method(VN.cSymbol, 'to_sym', VN.sym_to_sym, 0);
+VN.define_method(VN.cSymbol, 'to_proc', VN.sym_to_proc, 0);
+VN.define_method(VN.cSymbol, 'succ', VN.sym_succ, 0);
+VN.define_method(VN.cSymbol, 'next', VN.sym_succ, 0);
+
+VN.define_method(VN.cSymbol, '<=>', VN.sym_cmp, 1);
+VN.define_method(VN.cSymbol, 'casecmp', VN.sym_casecmp, 1);
+VN.define_method(VN.cSymbol, '=~', VN.sym_match, 1);
+
+VN.define_method(VN.cSymbol, '[]', VN.sym_aref, -1);
+VN.define_method(VN.cSymbol, 'slice', VN.sym_aref, -1);
+VN.define_method(VN.cSymbol, 'length', VN.sym_length, 0);
+VN.define_method(VN.cSymbol, 'size', VN.sym_length, 0);
+VN.define_method(VN.cSymbol, 'empty?', VN.sym_empty, 0);
+VN.define_method(VN.cSymbol, 'match', VN.sym_match, 1);
+
+VN.define_method(VN.cSymbol, 'upcase', VN.sym_upcase, 0);
+VN.define_method(VN.cSymbol, 'downcase', VN.sym_downcase, 0);
+VN.define_method(VN.cSymbol, 'capitalize', VN.sym_capitalize, 0);
+VN.define_method(VN.cSymbol, 'swapcase', VN.sym_swapcase, 0);
+
+VN.define_method(VN.cSymbol, 'encoding', VN.sym_encoding, 0);
 
 
 
 /**
   Initialize Array
 */
-VN.cArray = VN.define_class('Array', VN.cObject);
+
 // VN.include_module(VN.cArray, VN.mEnumerable);
 VN.define_alloc_func(VN.cArray, function(klass) {
   var obj = new VN.RArray();
@@ -1065,98 +1260,4 @@ VN.define_singleton_method(VN.cArray, '[]', function(argc, argv, klass) {
   return ary ;
 }, -1);
 
-// VN.define_singleton_method(VN.cArray, 'try_convert', rb_ary_s_try_convert, 1);
-// 
-// VN.define_method(VN.cArray, "initialize", rb_ary_initialize, -1);
-// VN.define_method(VN.cArray, "initialize_copy", rb_ary_replace, 1);
-// 
-// VN.define_method(VN.cArray, "to_s", rb_ary_inspect, 0);
-// VN.define_method(VN.cArray, "inspect", rb_ary_inspect, 0);
-// VN.define_method(VN.cArray, "to_a", rb_ary_to_a, 0);
-// VN.define_method(VN.cArray, "to_ary", rb_ary_to_ary_m, 0);
-// VN.define_method(VN.cArray, "frozen?",  rb_ary_frozen_p, 0);
-// 
-// VN.define_method(VN.cArray, "==", rb_ary_equal, 1);
-// VN.define_method(VN.cArray, "eql?", rb_ary_eql, 1);
-// VN.define_method(VN.cArray, "hash", rb_ary_hash, 0);
-// 
-// VN.define_method(VN.cArray, "[]", rb_ary_aref, -1);
-// VN.define_method(VN.cArray, "[]=", rb_ary_aset, -1);
-// VN.define_method(VN.cArray, "at", rb_ary_at, 1);
-// VN.define_method(VN.cArray, "fetch", rb_ary_fetch, -1);
-// VN.define_method(VN.cArray, "first", rb_ary_first, -1);
-// VN.define_method(VN.cArray, "last", rb_ary_last, -1);
-// VN.define_method(VN.cArray, "concat", rb_ary_concat, 1);
-// VN.define_method(VN.cArray, "<<", rb_ary_push, 1);
-// VN.define_method(VN.cArray, "push", rb_ary_push_m, -1);
-// VN.define_method(VN.cArray, "pop", rb_ary_pop_m, -1);
-// VN.define_method(VN.cArray, "shift", rb_ary_shift_m, -1);
-// VN.define_method(VN.cArray, "unshift", rb_ary_unshift_m, -1);
-// VN.define_method(VN.cArray, "insert", rb_ary_insert, -1);
-// VN.define_method(VN.cArray, "each", rb_ary_each, 0);
-// VN.define_method(VN.cArray, "each_index", rb_ary_each_index, 0);
-// VN.define_method(VN.cArray, "reverse_each", rb_ary_reverse_each, 0);
-// VN.define_method(VN.cArray, "length", rb_ary_length, 0);
-// rb_define_alias(VN.cArray,  "size", "length");
-// VN.define_method(VN.cArray, "empty?", rb_ary_empty_p, 0);
-// VN.define_method(VN.cArray, "find_index", rb_ary_index, -1);
-// VN.define_method(VN.cArray, "index", rb_ary_index, -1);
-// VN.define_method(VN.cArray, "rindex", rb_ary_rindex, -1);
-// VN.define_method(VN.cArray, "join", rb_ary_join_m, -1);
-// VN.define_method(VN.cArray, "reverse", rb_ary_reverse_m, 0);
-// VN.define_method(VN.cArray, "reverse!", rb_ary_reverse_bang, 0);
-// VN.define_method(VN.cArray, "sort", rb_ary_sort, 0);
-// VN.define_method(VN.cArray, "sort!", rb_ary_sort_bang, 0);
-// VN.define_method(VN.cArray, "collect", rb_ary_collect, 0);
-// VN.define_method(VN.cArray, "collect!", rb_ary_collect_bang, 0);
-// VN.define_method(VN.cArray, "map", rb_ary_collect, 0);
-// VN.define_method(VN.cArray, "map!", rb_ary_collect_bang, 0);
-// VN.define_method(VN.cArray, "select", rb_ary_select, 0);
-// VN.define_method(VN.cArray, "values_at", rb_ary_values_at, -1);
-// VN.define_method(VN.cArray, "delete", rb_ary_delete, 1);
-// VN.define_method(VN.cArray, "delete_at", rb_ary_delete_at_m, 1);
-// VN.define_method(VN.cArray, "delete_if", rb_ary_delete_if, 0);
-// VN.define_method(VN.cArray, "reject", rb_ary_reject, 0);
-// VN.define_method(VN.cArray, "reject!", rb_ary_reject_bang, 0);
-// VN.define_method(VN.cArray, "zip", rb_ary_zip, -1);
-// VN.define_method(VN.cArray, "transpose", rb_ary_transpose, 0);
-// VN.define_method(VN.cArray, "replace", rb_ary_replace, 1);
-// VN.define_method(VN.cArray, "clear", rb_ary_clear, 0);
-// VN.define_method(VN.cArray, "fill", rb_ary_fill, -1);
-// VN.define_method(VN.cArray, "include?", rb_ary_includes, 1);
-// VN.define_method(VN.cArray, "<=>", rb_ary_cmp, 1);
-// 
-// VN.define_method(VN.cArray, "slice", rb_ary_aref, -1);
-// VN.define_method(VN.cArray, "slice!", rb_ary_slice_bang, -1);
-// 
-// VN.define_method(VN.cArray, "assoc", rb_ary_assoc, 1);
-// VN.define_method(VN.cArray, "rassoc", rb_ary_rassoc, 1);
-// 
-// VN.define_method(VN.cArray, "+", rb_ary_plus, 1);
-// VN.define_method(VN.cArray, "*", rb_ary_times, 1);
-// 
-// VN.define_method(VN.cArray, "-", rb_ary_diff, 1);
-// VN.define_method(VN.cArray, "&", rb_ary_and, 1);
-// VN.define_method(VN.cArray, "|", rb_ary_or, 1);
-// 
-// VN.define_method(VN.cArray, "uniq", rb_ary_uniq, 0);
-// VN.define_method(VN.cArray, "uniq!", rb_ary_uniq_bang, 0);
-// VN.define_method(VN.cArray, "compact", rb_ary_compact, 0);
-// VN.define_method(VN.cArray, "compact!", rb_ary_compact_bang, 0);
-// VN.define_method(VN.cArray, "flatten", rb_ary_flatten, -1);
-// VN.define_method(VN.cArray, "flatten!", rb_ary_flatten_bang, -1);
-// VN.define_method(VN.cArray, "count", rb_ary_count, -1);
-// VN.define_method(VN.cArray, "shuffle!", rb_ary_shuffle_bang, 0);
-// VN.define_method(VN.cArray, "shuffle", rb_ary_shuffle, 0);
-// VN.define_method(VN.cArray, "sample", rb_ary_sample, -1);
-// VN.define_method(VN.cArray, "cycle", rb_ary_cycle, -1);
-// VN.define_method(VN.cArray, "permutation", rb_ary_permutation, -1);
-// VN.define_method(VN.cArray, "combination", rb_ary_combination, 1);
-// VN.define_method(VN.cArray, "product", rb_ary_product, -1);
-// 
-// VN.define_method(VN.cArray, "take", rb_ary_take, 1);
-// VN.define_method(VN.cArray, "take_while", rb_ary_take_while, 0);
-// VN.define_method(VN.cArray, "drop", rb_ary_drop, 1);
-// VN.define_method(VN.cArray, "drop_while", rb_ary_drop_while, 0);
-// 
-// 
+

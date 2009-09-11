@@ -10,4 +10,10 @@ require File.expand_path(
 # end
 
 
-bob = Vienna::RubyParser.parse(ARGV[0])
+# bob = Vienna::RubyParser.parse(ARGV[0])
+
+if ARGV[0] == 'build'
+  Vienna::Tools.build
+else
+  puts 'Use `build` - nothing else implemented'
+end

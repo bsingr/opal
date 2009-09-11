@@ -1,5 +1,5 @@
 # 
-# symbol.rb
+# ruby_project.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,6 +24,48 @@
 # THE SOFTWARE.
 #
 
-class Symbol
+module Vienna
   
+  attr_accessor :project_root
+  
+  class RubyProject
+    
+    def initialize(project_root)
+      @project_root = File.expand_path(project_root)
+    end
+    
+    def rakefile
+      @rakefile ||= Rakefile.new.load!(@project_root)      
+    end
+    
+    def project_name
+      @project_name ||= File.basename(project_root)
+    end
+    
+    def project_root
+      @project_root
+    end
+    
+    def prepare!
+      FileUtils.mkdir_p(build_prefix)
+      FileUtils.mkdir_p(tmp_prefix)
+    end
+    
+    def build!
+      # puts 'building'
+    end
+    
+    def build_prefix
+      @build_prefix ||= (rakefile.config_for(build_mode)[:build_prefix] || 'build')
+    end
+    
+    def tmp_prefix
+      @tmp_prefix ||= (rakefile.config_for(build_mode)[:tmp_prefix] || 'build/tmp')
+    end
+    
+    def build_mode
+      @build_mode ||= :debug
+    end
+    
+  end
 end

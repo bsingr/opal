@@ -1,5 +1,5 @@
 # 
-# string.rb
+# combine.js
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,6 +24,23 @@
 # THE SOFTWARE.
 #
 
-class String
+module Vienna
   
+  module Builder
+    
+    # Combines javascript files into a single script. This is done by searching
+    # each relevant javascript file for require('blah/blah') statements, and 
+    # then replacing these with the necessary file in its place. A project must
+    # be set, so that the combiner can ensure that a file is not included more
+    # than once (could be part of an infinite loop to add files)
+    # 
+    # Note: require() might not work as a good inserter, as other JS methods
+    # might accidentally be picked up... converting 'require' to something like
+    # VN.require('x') might be better suited. This will therefore need to be
+    # done at the JS compilation stage, as well as ruby compilation.
+    # 
+    module Combine
+      
+    end
+  end
 end

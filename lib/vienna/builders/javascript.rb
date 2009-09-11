@@ -33,34 +33,37 @@ module Vienna
   class Javascript
   
     def initialize(source, dest, project)
-    @source = source
-    @destination = dest
-    @project = project
+      @source = source
+      @destination = dest
+      @project = project
     end
     
     def link_config
-    @link_config ||= { "dependencies" => [] }
+      @link_config ||= { "dependencies" => [] }
     end
     
     def link_frameworks
-    @link_frameworks ||= []
+      @link_frameworks ||= []
     end
     
     def build!
-    t = ""
-    File.readlines(@source).map do |l|
-      if match = l.match(/include\(\'(.*)\/(.*)\'\)/)
-      link_config["dependencies"] << "#{match[2].to_s}.js"
-      link_frameworks << match[1].to_s unless link_frameworks.include? match[1].to_s
-      else
-      t << l
+      t = ""
+      o = File.new(@destination, 'w')
+      File.readlines(@source).map do |l|
+        if match = l.match(/require\(\'(.*)\'\)/)
+          # put requirements in here....
+          o.write(JSMin.minify(t))
+          t = ""
+          o.write "\nVN.require('#{match[1]}')\n"
+        else
+          t << l
+        end
       end
-    end
     
-    o = File.new(@destination, 'w')
-    # o.write(JSMin.minify(t))
-    o.write(t)
-    o.close
+      # write minified of the remaining content... if any
+      o.write(JSMin.minify(t))
+      # o.write(t)
+      o.close
     end
    
   end

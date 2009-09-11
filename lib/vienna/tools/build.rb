@@ -14,8 +14,11 @@ module Vienna
   # if it is valid. This will be chnaged in future to check for plist and Rakefile
   # etc...
   def self.build
-    p = Project.new Dir.getwd
+    # p = Project.new Dir.getwd
+    p = Vienna::RubyProject.new Dir.getwd
+    puts "preparing: #{p.project_root}"
     p.prepare!
+    puts "building: #{p.project_name}"
     p.build!
   end
   

@@ -1,5 +1,5 @@
 # 
-# array.rb
+# ruby_web_app.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,35 +24,11 @@
 # THE SOFTWARE.
 #
 
-class Array
-  include Enumerable
-  
-  def each
-    
-  end
-  
-  def []
-    self
-  end
-  
-  def self.try_convert
-    
-  end
-  
-  def initialize
-    
-  end
-  
-  def replace
-    
-  end
-  
-  def to_s
-    map { |e| e.to_s }.join
-  end
-  
-  def inspect
-    "[" + map { |e| e.inspect }.join(", ") + "]"
-  end
-    
+# require browser addons: Ajax, Element, etc.
+require 'browser'
+# or, if we want the cocoa inspired frameworks...
+# require 'vienna'
+
+Document.ready? do |event|
+  # do stuff once the browser is ready...
 end

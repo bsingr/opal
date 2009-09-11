@@ -1,5 +1,5 @@
 # 
-# class.rb
+# ruby_bundle.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,11 +24,13 @@
 # THE SOFTWARE.
 #
 
-class Class
+module Vienna
   
-  def allocate
-
-
+  class RubyBundle
+    
+    def initialize()
+      
+    end
+    
   end
-  
 end

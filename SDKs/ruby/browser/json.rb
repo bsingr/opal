@@ -1,5 +1,5 @@
 # 
-# base.rb
+# json.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,4 +24,10 @@
 # THE SOFTWARE.
 #
 
-require 'runtime/runtime'
+class String
+  
+  def to_json
+    
+  end
+  
+end
