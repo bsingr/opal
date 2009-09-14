@@ -38,10 +38,6 @@ VN.str_length = function(self) {
   return self.length ;
 };
 
-VN.str_to_s = function(self) {
-  return new String(self) ;
-};
-
 VN.define_method(VN.cString, 'initialize', VN.str_init, -1);
 VN.define_method(VN.cString, 'initialize_copy', VN.str_replace, 1);
 VN.define_method(VN.cString, '<=>', VN.str_cmp_m, 1);
@@ -88,6 +84,14 @@ VN.str_to_i = function(argc, argv, self) {
   }
   return VN.str_to_inum(self, base, VN.Qfalse);
 }
+
+VN.str_to_s = function() {
+  return new String(this) ;
+};
+
+VN.str_inspect = function() {
+  return new String('"' + this + '"');
+};
 
 VN.define_method(VN.cString, 'to_i', VN.str_to_i, -1);
 VN.define_method(VN.cString, 'to_f', VN.str_to_f, 0);

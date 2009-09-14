@@ -54,10 +54,10 @@ VN.define_method(VN.cArray, 'initialize_copy', VN.ary_replace, 1);
 VN.ary_inspect = function() {
   if (this.length == 0) return '[]';
   var str = '[';
-  for (var i = 0; i < this.length; i++) {
+  for (var i = 0; i < (this.length - 1); i++) {
     str += (VN.funcall(this[i], 'inspect', []) + ', ');
   }
-  str += ']';
+  str += (VN.funcall(this[this.length - 1], 'inspect', []) + ']');
   return str ;
 };
 

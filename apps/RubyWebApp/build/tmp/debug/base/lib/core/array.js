@@ -51,15 +51,57 @@ VN.define_singleton_method(VN.cArray, 'try_convert', VN.ary_s_try_convert, 1);
 VN.define_method(VN.cArray, 'initialize', VN.ary_initialize, -1);
 VN.define_method(VN.cArray, 'initialize_copy', VN.ary_replace, 1);
 
+VN.ary_inspect = function() {
+  console.log('hereee init');
+  if (this.length == 0) return '[]';
+  var str = '[';
+  for (var i = 0; i < (this.length - 1); i++) {
+    str += (VN.funcall(this[i], 'inspect', []) + ', ');
+  }
+  str += (VN.funcall(this[this.length - 1], 'inspect', []) + ']');
+  console.log('........');
+  console.log(str);
+  return str ;
+};
+
+VN.ary_to_a = function() {
+  return this;
+};
+
+VN.ary_to_ary_m = function() {
+  return this;
+};
+
 VN.define_method(VN.cArray, 'to_s', VN.ary_inspect, 0);
 VN.define_method(VN.cArray, 'inspect', VN.ary_inspect, 0);
 VN.define_method(VN.cArray, 'to_a', VN.ary_to_a, 0);
 VN.define_method(VN.cArray, 'to_ary', VN.ary_to_ary_m, 0);
 VN.define_method(VN.cArray, 'frozen?',  VN.ary_frozen_p, 0);
 
+VN.ary_equal = function(ary) {
+  if (ary == this) return VN.Qtrue ;
+  if (ary.type != VN.T_ARRAY) {
+    if (!VN.respond_to(ary, 'to_ary')) {
+      return VN.Qfalse;
+    }
+    return VN.equal(ary, this);
+  }
+  if (this.length != ary.length) return VN.Qfalse ;
+  return VN.Qtrue;
+};
+
 VN.define_method(VN.cArray, '==', VN.ary_equal, 1);
 VN.define_method(VN.cArray, 'eql?', VN.ary_eql, 1);
 VN.define_method(VN.cArray, 'hash', VN.ary_hash, 0);
+
+VN.ary_aref = function() {
+  if (arguments.length == 2) {
+    var begin = arguments[0] ;
+    var end = arguments[1] ;
+    if (begin < 0) begin += this.length ;
+    return VN.ary_subseq.call(this, begin, length) ;
+  }
+};
 
 VN.define_method(VN.cArray, '[]', VN.ary_aref, -1);
 VN.define_method(VN.cArray, '[]=', VN.ary_aset, -1);
