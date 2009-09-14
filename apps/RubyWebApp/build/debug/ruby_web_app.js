@@ -1,5 +1,5 @@
 /* 
- * runtime.js
+ * core.js
  * vienna
  * 
  * Created by Adam Beynon.
@@ -81,7 +81,7 @@ var VN = {
   RObject: function() {
     this.iv_tbl = { } ;
     this.klass = null ;
-    this.type = null ;
+    this.type = VN.T_OBJECT ;
     return this;
   },
   
@@ -149,7 +149,7 @@ var VN = {
   */
   class_inherited: function(super_klass, klass) {
     if (!super_klass) super_klass = VN.cObject ;
-    return VN.funcall(super_klass, 'inherited', 1, [klass]);
+    return VN.funcall(super_klass, 'inherited', [klass]);
   },
   
   define_class: function(id, super_klass) {
@@ -421,6 +421,10 @@ var VN = {
   define_singleton_method: function(obj, name, func, argc) {
     VN.define_method(VN.singleton_class(obj), name, func, argc);
   },
+  
+  define_alias: function(id1, id2) {
+    
+  },
 
   search_method: function(klass, id) {
     if (!klass) return undefined ;
@@ -433,15 +437,17 @@ var VN = {
     return func;
   },
 
-  funcall: function(recv, id, argc, argv) {
-    // console.log(recv.iv_tbl.__classid__ + '#' + id);
+  funcall: function(recv, id, args) {
+    // console.log(recv + '#' + id + ' ...... ' + args);
     // console.log(VN.search_method(recv.klass, id));
     var method = VN.search_method(recv.klass, id);
+    console.log(recv);
     if (!method) throw 'VN#funcall cannot find method: ' + id ;
     // console.log('found methods ' + id);
     // console.log(id);
-    argv.unshift(recv);
-    return method.apply(window, argv);
+    // args.unshift(recv);
+    // return method.apply(window, args);
+    return method.apply(recv, args) ;
   },
 
   /**
@@ -483,7 +489,6 @@ var VN = {
   /**
     Class variables
   */
-
   cvar_get: function(klass, id) {
     var tmp = klass;
     var value;
@@ -577,20 +582,19 @@ var VN = {
   obj_alloc: function(klass) {
     var obj;
   
-    if (klass.super_klass == null && klass != VN.cBasicObject) {
-      VN.type_error('can\'t instantiate uninitialized class');
-    }
+    // if (klass.super_klass == null && klass != VN.cBasicObject) {
+    //   VN.type_error('can\'t instantiate uninitialized class');
+    // }
     // siingleton...
   
-    obj = VN.funcall(klass, 'allocate', 0, []);
+    obj = VN.funcall(klass, 'allocate', []);
     return obj;
   },
-
-  class_allocate_instance: function(klass) {
-    var obj = new VN.RObject();
-    if (!klass) klass = VN.cObject ;
-    obj.klass = klass;
-    obj.type = VN.T_OBJECT;
+  
+  class_allocate_instance: function() {
+    var obj = new VN.RObject() ;
+    obj.klass = this ;
+    obj.type = VN.T_OBJECT ;
     return obj;
   },
   
@@ -598,23 +602,23 @@ var VN = {
     Dummy function to do nothing (empty implementation)
   */
   obj_dummy: function() {
-    return null ;
+    return VN.Qnil ;
   },
   
-  equal: function(obj1, obj2) {
-    if (obj1 == obj2) return true ;
-    var result = VN.funcall(obj1, '==', 1, obj2);
-    if (VN.RTEST(result)) return true ;
-    return false ;
+  equal: function(obj) {
+    if (obj == this) return VN.Qtrue ;
+    var result = VN.funcall(this, '==', [obj]);
+    if (VN.RTEST(result)) return VN.Qtrue ;
+    return VN.Qfalse ;
   },
 
-  eql: function(obj1, obj2) {
-    return VN.funcall(obj1, '==', 1, obj2);
+  eql: function(obj) {
+    return VN.funcall(this, '==', [obj]);
   },
 
-  obj_equal: function(obj1, obj2) {
-    if (obj1 == obj2) return true ;
-    return false ;
+  obj_equal: function(obj) {
+    if (obj == this) return VN.Qtrue ;
+    return VN.Qfalse ;
   },
   
   // Truthiness test. True unless Qfalse or Qnil
@@ -625,20 +629,11 @@ var VN = {
   NIL_P: function(v) {
     return (v == VN.Qnil) ;
   },
-  
-  to_id: function(name) {
-    switch (name.type) {
-      case VN.T_STRING:
-        return name.ptr;
-      case VN.T_SYMBOL:
-        return name;
-    }
-  },
-  
+    
   warning: function(message) {
     console.log('Vienna Warning: ' + message);
   }
-} ;
+};
 
 /**
   Very top level BasicObject, Object, Class, Module.
@@ -698,23 +693,47 @@ VN.cSymbol = VN.define_class('Symbol', VN.cObject);
 VN.Qfalse = {
   klass: VN.cFalseClass,
   type: VN.T_FALSE
-} ; // ?
+};
 
 VN.Qtrue = {
   klass: VN.cTrueClass,
   type: VN.T_TRUE
-} ;
+};
 
 VN.Qnil = {
   klass: VN.cNilClass,
   type: VN.T_NIL
-} ;
+};
 
 VN.Qundef = 6 ; // ?
 
-/**
-  Kernel
-*/
+
+/* 
+ * kernel.js
+ * vienna
+ * 
+ * Created by Adam Beynon.
+ * Copyright 2009 Adam Beynon.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 VN.obj_match = function(self, obj2) {
   return VN.Qnil ;
 };
@@ -850,28 +869,50 @@ VN.define_method(VN.mKernel, 'instance_of?', VN.obj_is_instance_of, 1);
 VN.define_method(VN.mKernel, 'kind_of?', VN.obj_is_kind_of, 1);
 VN.define_method(VN.mKernel, 'is_a?', VN.obj_is_kind_of, 1);
 VN.define_method(VN.mKernel, 'tap', VN.obj_tap, 0);
+/* 
+ * nil_class.js
+ * vienna
+ * 
+ * Created by Adam Beynon.
+ * Copyright 2009 Adam Beynon.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 
-/*
-  NilClass
-*/
 VN.nil_to_i = function(obj) {
-    return 0 ;
+   return 0 ;
 };
 
 VN.nil_to_f = function(obj) {
-    return 0.0 ;
+   return 0.0 ;
 };
 
 VN.nil_to_s = function(obj) {
-    return VN.str_new_cstr("") ;
+   return VN.str_new_cstr("") ;
 };
 
 VN.nil_to_a = function(obj) {
-    return VN.ary_new2(null) ;
+   return VN.ary_new2(null) ;
 };
 
 VN.nil_inspect = function(obj) {
-    return VN.str_new_cstr("nil");
+   return VN.str_new_cstr("nil");
 };
 
 VN.define_method(VN.cNilClass, 'to_i', VN.nil_to_i, 0);
@@ -887,10 +928,32 @@ VN.define_method(VN.cNilClass, 'nil?', VN.rb_true, 0);
 VN.undef_alloc_func(VN.cNilClass);
 VN.undef_method(VN.cNilClass.klass, "new");
 VN.define_global_const('NIL', VN.Qnil);
+/* 
+ * module.js
+ * vienna
+ * 
+ * Created by Adam Beynon.
+ * Copyright 2009 Adam Beynon.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 
-/**
-  Module
-*/
 VN.define_method(VN.cModule, 'freeze', VN.mod_freeze, 0);
 VN.define_method(VN.cModule, '===', VN.mod_eqq, 1);
 VN.define_method(VN.cModule, '==', VN.obj_equal, 1);
@@ -930,10 +993,48 @@ VN.define_method(VN.cModule, 'remove_class_variable', VN.mod_remove_cvar, 1);
 VN.define_method(VN.cModule, 'class_variable_get', VN.mod_cvar_get, 1);
 VN.define_method(VN.cModule, 'class_variable_set', VN.mod_cvar_set, 2);
 VN.define_method(VN.cModule, 'class_variable_defined?', VN.mod_cvar_defined, 1);
+/* 
+ * class.js
+ * vienna
+ * 
+ * Created by Adam Beynon.
+ * Copyright 2009 Adam Beynon.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 
 /**
-  Class
+  Variable arguments
 */
+VN.obj_call_init = function(self, args) {
+  VN.funcall(self, 'initialize', args);
+};
+
+/**
+  Variable number of arguments
+*/
+VN.class_new_instance = function() {
+  var obj = VN.obj_alloc(this);
+  VN.obj_call_init(obj, arguments);
+  return obj;
+};
+
 VN.define_method(VN.cClass, 'allocate', VN.obj_alloc, 0);
 VN.define_method(VN.cClass, 'new', VN.class_new_instance, -1);
 VN.define_method(VN.cClass, 'initialize', VN.class_initialize, -1);
@@ -942,10 +1043,6 @@ VN.define_method(VN.cClass, 'superclass', VN.class_superclass, 0);
 VN.define_alloc_func(VN.cClass, VN.class_s_alloc);
 VN.undef_method(VN.cClass, 'extend_object');
 VN.undef_method(VN.cClass, 'append_features');
-
-/*
-  TrueClass
-*/
 VN.true_to_s = function(obj) {
   return VN.str_new_cstr("true");
 };
@@ -970,10 +1067,6 @@ VN.define_method(VN.cTrueClass, '^', VN.true_xor, 0);
 VN.undef_alloc_func(VN.cTrueClass);
 VN.undef_method(VN.cTrueClass.klass, 'new');
 VN.define_global_const('TRUE', VN.Qtrue);
- 
-/*
-  FalseClass
-*/
 VN.false_to_s = function(obj) {
   return VN.str_new_cstr("false");
 };
@@ -997,68 +1090,60 @@ VN.define_method(VN.cFalseClass, '^', VN.false_xor, 0);
 VN.undef_alloc_func(VN.cFalseClass);
 VN.undef_method(VN.cFalseClass.klass, 'new');
 VN.define_global_const('FALSE', VN.Qfalse);
-
 /**
-  Initialize top self.
-
-  Top self. This is the 'main' within ruby runtime, that all top level methods
-  etc are added to.
+  Initialize top self - the 'main' object at runtime
 */
 VN.top_self = VN.obj_alloc(VN.cObject);
 
-VN.main_to_s = function(self) {
-  return VN.str_new_cstr("main") ;
+VN.main_to_s = function() {
+  return 'main' ;
 };
 
 VN.define_singleton_method(VN.top_self, 'to_s', VN.main_to_s, 0);
 
 
-/**
-  Initialize String
-*/
-// VN.include_module(VN.cString, VN.mComparable);
+/* 
+ * string.js
+ * vienna
+ * 
+ * Created by Adam Beynon.
+ * Copyright 2009 Adam Beynon.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+String.prototype.klass = VN.cString ;
+String.prototype.type = VN.T_STRING ;
 
 VN.str_alloc = function(klass) {
-  var str = new VN.RString();
-  str.klass = klass;
-  str.type = VN.T_STRING;
-  str.ptr = new String() ;
-  return str;
-};
-
-VN.str_new = function(klass, ptr, len) {
-  var str ;
-  
-  if (len < 0) {
-    VN.arg_error('negative string size (or size too big)');
-  }
-  str = VN.str_alloc(klass) ;
-  str.ptr = ptr;
-  return str ;
-};
-
-VN.str_new_cstr = function(ptr) {
-  if (!ptr) {
-    VN.arg_error('NULL pointer given');
-  }
-  return VN.str_new(VN.cString, ptr, ptr.length);
+  return new String() ;
 };
 
 VN.define_alloc_func(VN.cString, VN.str_alloc);
 VN.define_singleton_method(VN.cString, 'try_convert', VN.str_s_try_convert, 1);
 
-VN.str_length = function(str) {
-  // console.log(str);
-  var len = str.ptr.length;
-  // int2num
-  return len;
+VN.str_length = function(self) {
+  return self.length ;
 };
 
-VN.str_to_s = function(str) {
-  if (str.klass != VN.cString) {
-    return VN.str_duplicate(VN.cString, str);
-  }
-  return str;
+VN.str_to_s = function(self) {
+  return new String(self) ;
 };
 
 VN.define_method(VN.cString, 'initialize', VN.str_init, -1);
@@ -1196,68 +1281,148 @@ VN.define_method(VN.cString, 'force_encoding', VN.str_force_encoding, 1);
 VN.define_method(VN.cString, 'valid_encoding?', VN.str_valid_encoding_p, 0);
 VN.define_method(VN.cString, 'ascii_only?', VN.str_is_ascii_only_p, 0);
 
-/**
-  Symbol
-*/
-// VN.VN.include_module(VN.cSymbol, VN.mComparable);
-VN.undef_alloc_func(VN.cSymbol);
-VN.undef_method(VN.cSymbol.klass, 'new');
-VN.define_singleton_method(VN.cSymbol, 'all_symbols', VN.sym_all_symbols, 0);
+/* 
+ * array.js
+ * vienna
+ * 
+ * Created by Adam Beynon.
+ * Copyright 2009 Adam Beynon.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 
-VN.define_method(VN.cSymbol, '==', VN.sym_equal, 1);
-VN.define_method(VN.cSymbol, 'inspect', VN.sym_inspect, 0);
-VN.define_method(VN.cSymbol, 'to_s', VN.sym_to_s, 0);
-VN.define_method(VN.cSymbol, 'id2name', VN.sym_to_s, 0);
-VN.define_method(VN.cSymbol, 'intern', VN.sym_to_sym, 0);
-VN.define_method(VN.cSymbol, 'to_sym', VN.sym_to_sym, 0);
-VN.define_method(VN.cSymbol, 'to_proc', VN.sym_to_proc, 0);
-VN.define_method(VN.cSymbol, 'succ', VN.sym_succ, 0);
-VN.define_method(VN.cSymbol, 'next', VN.sym_succ, 0);
-
-VN.define_method(VN.cSymbol, '<=>', VN.sym_cmp, 1);
-VN.define_method(VN.cSymbol, 'casecmp', VN.sym_casecmp, 1);
-VN.define_method(VN.cSymbol, '=~', VN.sym_match, 1);
-
-VN.define_method(VN.cSymbol, '[]', VN.sym_aref, -1);
-VN.define_method(VN.cSymbol, 'slice', VN.sym_aref, -1);
-VN.define_method(VN.cSymbol, 'length', VN.sym_length, 0);
-VN.define_method(VN.cSymbol, 'size', VN.sym_length, 0);
-VN.define_method(VN.cSymbol, 'empty?', VN.sym_empty, 0);
-VN.define_method(VN.cSymbol, 'match', VN.sym_match, 1);
-
-VN.define_method(VN.cSymbol, 'upcase', VN.sym_upcase, 0);
-VN.define_method(VN.cSymbol, 'downcase', VN.sym_downcase, 0);
-VN.define_method(VN.cSymbol, 'capitalize', VN.sym_capitalize, 0);
-VN.define_method(VN.cSymbol, 'swapcase', VN.sym_swapcase, 0);
-
-VN.define_method(VN.cSymbol, 'encoding', VN.sym_encoding, 0);
-
-
-
-/**
-  Initialize Array
-*/
+Array.prototype.klass = VN.cArray ;
+Array.prototype.type = VN.T_ARRAY ;
 
 // VN.include_module(VN.cArray, VN.mEnumerable);
-VN.define_alloc_func(VN.cArray, function(klass) {
-  var obj = new VN.RArray();
-  obj.ptr = new Array () ;
-  obj.klass = klass;
-  obj.type = VN.T_ARRAY;
-  return obj ;
-});
 
 /**
-  Returns a new array with the given objects
-  
-  Array[1, 2, 3] => [1, 2, 3]
+  Array#allocate
 */
-VN.define_singleton_method(VN.cArray, '[]', function(argc, argv, klass) {
-  var ary = VN.ary_new(klass, argc);
-  if (argc > 0 && argv) {
-    // do work
+VN.ary_alloc = function() {
+  return new Array() ;
+};
+
+/**
+  Array#initialize (*args)
+*/
+VN.ary_initialize = function() {
+  for (var i = 0; i < arguments.length; i++) {
+    this.push(arguments[i]);
   }
-  return ary ;
-}, -1);
+};
+
+VN.define_alloc_func(VN.cArray, VN.ary_alloc);
+VN.define_singleton_method(VN.cArray, '[]', VN.ary_s_create, -1);
+VN.define_singleton_method(VN.cArray, 'try_convert', VN.ary_s_try_convert, 1);
+VN.define_method(VN.cArray, 'initialize', VN.ary_initialize, -1);
+VN.define_method(VN.cArray, 'initialize_copy', VN.ary_replace, 1);
+
+VN.define_method(VN.cArray, 'to_s', VN.ary_inspect, 0);
+VN.define_method(VN.cArray, 'inspect', VN.ary_inspect, 0);
+VN.define_method(VN.cArray, 'to_a', VN.ary_to_a, 0);
+VN.define_method(VN.cArray, 'to_ary', VN.ary_to_ary_m, 0);
+VN.define_method(VN.cArray, 'frozen?',  VN.ary_frozen_p, 0);
+
+VN.define_method(VN.cArray, '==', VN.ary_equal, 1);
+VN.define_method(VN.cArray, 'eql?', VN.ary_eql, 1);
+VN.define_method(VN.cArray, 'hash', VN.ary_hash, 0);
+
+VN.define_method(VN.cArray, '[]', VN.ary_aref, -1);
+VN.define_method(VN.cArray, '[]=', VN.ary_aset, -1);
+VN.define_method(VN.cArray, 'at', VN.ary_at, 1);
+VN.define_method(VN.cArray, 'fetch', VN.ary_fetch, -1);
+VN.define_method(VN.cArray, 'first', VN.ary_first, -1);
+VN.define_method(VN.cArray, 'last', VN.ary_last, -1);
+VN.define_method(VN.cArray, 'concat', VN.ary_concat, 1);
+VN.define_method(VN.cArray, '<<', VN.ary_push, 1);
+VN.define_method(VN.cArray, 'push', VN.ary_push_m, -1);
+VN.define_method(VN.cArray, 'pop', VN.ary_pop_m, -1);
+VN.define_method(VN.cArray, 'shift', VN.ary_shift_m, -1);
+VN.define_method(VN.cArray, 'unshift', VN.ary_unshift_m, -1);
+VN.define_method(VN.cArray, 'insert', VN.ary_insert, -1);
+VN.define_method(VN.cArray, 'each', VN.ary_each, 0);
+VN.define_method(VN.cArray, 'each_index', VN.ary_each_index, 0);
+VN.define_method(VN.cArray, 'reverse_each', VN.ary_reverse_each, 0);
+VN.define_method(VN.cArray, 'length', VN.ary_length, 0);
+VN.define_alias(VN.cArray,  'size', 'length');
+VN.define_method(VN.cArray, 'empty?', VN.ary_empty_p, 0);
+VN.define_method(VN.cArray, 'find_index', VN.ary_index, -1);
+VN.define_method(VN.cArray, 'index', VN.ary_index, -1);
+VN.define_method(VN.cArray, 'rindex', VN.ary_rindex, -1);
+VN.define_method(VN.cArray, 'join', VN.ary_join_m, -1);
+VN.define_method(VN.cArray, 'reverse', VN.ary_reverse_m, 0);
+VN.define_method(VN.cArray, 'reverse!', VN.ary_reverse_bang, 0);
+VN.define_method(VN.cArray, 'sort', VN.ary_sort, 0);
+VN.define_method(VN.cArray, 'sort!', VN.ary_sort_bang, 0);
+VN.define_method(VN.cArray, 'collect', VN.ary_collect, 0);
+VN.define_method(VN.cArray, 'collect!', VN.ary_collect_bang, 0);
+VN.define_method(VN.cArray, 'map', VN.ary_collect, 0);
+VN.define_method(VN.cArray, 'map!', VN.ary_collect_bang, 0);
+VN.define_method(VN.cArray, 'select', VN.ary_select, 0);
+VN.define_method(VN.cArray, 'values_at', VN.ary_values_at, -1);
+VN.define_method(VN.cArray, 'delete', VN.ary_delete, 1);
+VN.define_method(VN.cArray, 'delete_at', VN.ary_delete_at_m, 1);
+VN.define_method(VN.cArray, 'delete_if', VN.ary_delete_if, 0);
+VN.define_method(VN.cArray, 'reject', VN.ary_reject, 0);
+VN.define_method(VN.cArray, 'reject!', VN.ary_reject_bang, 0);
+VN.define_method(VN.cArray, 'zip', VN.ary_zip, -1);
+VN.define_method(VN.cArray, 'transpose', VN.ary_transpose, 0);
+VN.define_method(VN.cArray, 'replace', VN.ary_replace, 1);
+VN.define_method(VN.cArray, 'clear', VN.ary_clear, 0);
+VN.define_method(VN.cArray, 'fill', VN.ary_fill, -1);
+VN.define_method(VN.cArray, 'include?', VN.ary_includes, 1);
+VN.define_method(VN.cArray, '<=>', VN.ary_cmp, 1);
+
+VN.define_method(VN.cArray, 'slice', VN.ary_aref, -1);
+VN.define_method(VN.cArray, 'slice!', VN.ary_slice_bang, -1);
+
+VN.define_method(VN.cArray, 'assoc', VN.ary_assoc, 1);
+VN.define_method(VN.cArray, 'rassoc', VN.ary_rassoc, 1);
+
+VN.define_method(VN.cArray, '+', VN.ary_plus, 1);
+VN.define_method(VN.cArray, '*', VN.ary_times, 1);
+
+VN.define_method(VN.cArray, '-', VN.ary_diff, 1);
+VN.define_method(VN.cArray, '&', VN.ary_and, 1);
+VN.define_method(VN.cArray, '|', VN.ary_or, 1);
+
+VN.define_method(VN.cArray, 'uniq', VN.ary_uniq, 0);
+VN.define_method(VN.cArray, 'uniq!', VN.ary_uniq_bang, 0);
+VN.define_method(VN.cArray, 'compact', VN.ary_compact, 0);
+VN.define_method(VN.cArray, 'compact!', VN.ary_compact_bang, 0);
+VN.define_method(VN.cArray, 'flatten', VN.ary_flatten, -1);
+VN.define_method(VN.cArray, 'flatten!', VN.ary_flatten_bang, -1);
+VN.define_method(VN.cArray, 'count', VN.ary_count, -1);
+VN.define_method(VN.cArray, 'shuffle!', VN.ary_shuffle_bang, 0);
+VN.define_method(VN.cArray, 'shuffle', VN.ary_shuffle, 0);
+VN.define_method(VN.cArray, 'sample', VN.ary_sample, -1);
+VN.define_method(VN.cArray, 'cycle', VN.ary_cycle, -1);
+VN.define_method(VN.cArray, 'permutation', VN.ary_permutation, -1);
+VN.define_method(VN.cArray, 'combination', VN.ary_combination, 1);
+VN.define_method(VN.cArray, 'product', VN.ary_product, -1);
+
+VN.define_method(VN.cArray, 'take', VN.ary_take, 1);
+VN.define_method(VN.cArray, 'take_while', VN.ary_take_while, 0);
+VN.define_method(VN.cArray, 'drop', VN.ary_drop, 1);
+VN.define_method(VN.cArray, 'drop_while', VN.ary_drop_while, 0);
+
+
 
 

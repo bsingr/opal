@@ -39,7 +39,32 @@ module Vienna
     # VN.require('x') might be better suited. This will therefore need to be
     # done at the JS compilation stage, as well as ruby compilation.
     # 
-    module Combine
+    class Combine
+      
+      # js_file - path to a js file to combine
+      # to_file - an already open file, ready to be written to
+      def initialize(js_file, to_file, project)
+        File.readlines(js_file).map do |l|
+          # to_file.write l
+          if match = l.match(/VN\.require\(\'(.*)\'\)\;/)
+            # to_file.write file_for_require_relative_to(File.join(project.project_root, js_file), match[1])
+            Vienna::Builder::Combine.new file_for_require_relative_to(File.join(project.project_root, js_file), match[1]), to_file, project
+            # to_file.write "wopwopwow"
+          else
+            to_file.write l
+          end
+        end
+      end
+      
+      def file_for_require_relative_to(file, require_path) 
+        # first try local files...
+        file_dir = File.dirname(file)
+        # try .js first
+        try_path = File.join(file_dir, require_path) + '.js'
+        if File.exists? try_path
+          return try_path
+        end
+      end
       
     end
   end

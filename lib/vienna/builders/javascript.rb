@@ -32,36 +32,46 @@ module Vienna
   
   class Javascript
   
+    attr_reader :requirements
+  
     def initialize(source, dest, project)
       @source = source
       @destination = dest
       @project = project
+      @requirements = []
+      
+      # puts "building:"
+      # puts "from #{@source}"
+      # puts "to #{@destination}"
     end
     
-    def link_config
-      @link_config ||= { "dependencies" => [] }
-    end
-    
-    def link_frameworks
-      @link_frameworks ||= []
-    end
+    # def link_config
+    #   @link_config ||= { "dependencies" => [] }
+    # end
+    # 
+    # def link_frameworks
+    #   @link_frameworks ||= []
+    # end
     
     def build!
       t = ""
       o = File.new(@destination, 'w')
       File.readlines(@source).map do |l|
         if match = l.match(/require\(\'(.*)\'\)/)
-          # put requirements in here....
-          o.write(JSMin.minify(t))
-          t = ""
-          o.write "\nVN.require('#{match[1]}')\n"
+          # add the requirement to '@requirements' for the project to get at
+          @requirements << match[1]
+          # o.write(JSMin.minify(t))
+          o.write t
+          t = "" # clear t so that we do not carry on minifying stuff before the require statement
+          o.write "\nVN.require('#{match[1]}');\n"
         else
           t << l
         end
       end
     
       # write minified of the remaining content... if any
-      o.write(JSMin.minify(t))
+      # o.write(JSMin.minify(t))
+      o.write t
       # o.write(t)
       o.close
     end

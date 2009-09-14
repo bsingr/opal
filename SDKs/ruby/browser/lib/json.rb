@@ -31,3 +31,15 @@ class String
   end
   
 end
+
+class JSON
+  
+  def self.parse(str)
+  
+  end
+  
+  def self.generate(obj)
+    
+  end
+  
+end

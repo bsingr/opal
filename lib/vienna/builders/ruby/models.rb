@@ -28,7 +28,7 @@ module Vienna
   
   class RubyParser
     
-    class Module
+    class RModule
       
       def initialize(options)
         @body = options[:body]
@@ -36,10 +36,12 @@ module Vienna
       end
     end
     
-    class Class
+    class RClass
       
       def initialize(options)
-        
+        @cpath = options[:cpath]
+        @superclass = options[:superclass]
+        @bodystmt = options[:bodystmt]
       end
     end
     

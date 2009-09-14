@@ -48,17 +48,32 @@ class Vienna::RubyParser < Racc::Parser
   # string scanner used for parser
   attr_reader :scanner
   
+  attr_reader :requirements
+  
   
   def self.parse(file_name)
 		new(file_name)
 	end
 	
-	def initialize file_name
-	  File.open(file_name) do |f|
+	def initialize(source, dest, project)
+	  @source = source
+	  @destination = dest
+	  @project = project
+	  @requirements = []
+	  
+	  File.open(@source) do |f|
 	    @scanner = StringScanner.new(f.read)
     end
     
-    do_parse
+    # do_parse
+	end
+	
+	def build!
+	  puts "Buildingggggggg #{@source}"
+	  o = File.new(@destination, 'w')
+	  o.write ""
+	  o.close
+    puts do_parse
 	end
 	
 	KEYWORDS = {
@@ -108,7 +123,7 @@ class Vienna::RubyParser < Racc::Parser
   # returns the next token (token/value array)
 	def next_token
 	  t = get_next_token
-	  puts "#{t[0]} : #{t[1]} (#{self.lex_state})"
+    # puts "#{t[0]} : #{t[1]} (#{self.lex_state})"
 	  return t
 	end
 	

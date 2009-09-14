@@ -51,6 +51,10 @@ module Vienna
 
   Dir.glob(search_me).sort.each {|rb| require rb}
   end
+  
+  def self.underscore(str)
+    str.gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2').gsub(/([a-z\d])([A-Z])/,'\1_\2').tr("-", "_").downcase
+  end
 
 end  # module Vienna
 

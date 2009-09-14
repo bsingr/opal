@@ -24,10 +24,8 @@
 # THE SOFTWARE.
 #
 
-# require browser addons: Ajax, Element, etc.
-require 'browser'
-# or, if we want the cocoa inspired frameworks...
-# require 'vienna'
+require 'browser'   # require browser addons: Ajax, Element, etc.
+# require 'vienna'  for the cocoa inspired frameworks...
 
 Document.ready? do |event|
   # do stuff once the browser is ready...

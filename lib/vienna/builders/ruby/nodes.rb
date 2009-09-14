@@ -29,11 +29,11 @@ module Vienna
   class RubyParser
     
     def node_module(options)
-      Vienna::RubyParser::Module.new(options)
+      Vienna::RubyParser::RModule.new(options)
     end
     
-    def node_class(*args)
-      
+    def node_class(options)
+      Vienna::RubyParser::RClass.new(options)
     end
     
     # instance level def

@@ -79,6 +79,8 @@ rule
                 top_compstmt
                   {
                     result = val[0]
+                    puts "result///"
+                    puts result
                   }
 
     top_compstmt: top_stmts opt_terms
@@ -388,6 +390,9 @@ rule
             		| k_case opt_terms case_body k_end
             		| k_for for_var kIN expr_value do compstmt k_end
             		| k_class cpath superclass bodystmt k_end
+            		  {
+            		    result = self.node_class(:cpath => val[1], :superclass => val[2], :bodystmt => val[3])
+            		  }
             		| k_class tLSHFT expr term bodystmt k_end
             		| k_module cpath bodystmt k_end
             		  {

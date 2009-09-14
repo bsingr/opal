@@ -24,7 +24,7 @@
 # THE SOFTWARE.
 #
 
-class Ajax
+class AJAX
   
   def initialize(options={})
     

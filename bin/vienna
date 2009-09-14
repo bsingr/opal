@@ -3,17 +3,10 @@
 require File.expand_path(
   File.join(File.dirname(__FILE__), %w[.. lib vienna]))
 
-# if ARGV[0] == "build"
-#   Vienna::Tools.build
-# elsif ARGV[0] == "clean"
-#   Vienna::Tools.clean
-# end
-
-
-# bob = Vienna::RubyParser.parse(ARGV[0])
-
 if ARGV[0] == 'build'
   Vienna::Tools.build
+elsif ARGV[0] == 'clean'
+  Vienna::Tools.clean
 else
   puts 'Use `build` - nothing else implemented'
 end
