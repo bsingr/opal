@@ -24,17 +24,16 @@
  * THE SOFTWARE.
  */
 
-Array.prototype.$klass = VN.cArray ;
-
-Array.prototype.$type = VN.T_ARRAY ;
+Array.prototype.$klass = cArray ;
+Array.prototype.$type = VN.ARRAY ;
 
 Array.prototype.$call = function(id, args) {
-  var method = VN.search_method(this.$klass, id);
+  var method = this.$klass.$search_method(id);
   if (!method) throw 'VN#funcall cannot find method: ' + id ;
   return method.apply(this, args) ;
 };
 
-// VN.include_module(VN.cArray, VN.mEnumerable);
+RModule.include(cArray, mEnumerable);
 
 /**
   Array#allocate

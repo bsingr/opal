@@ -26,4 +26,35 @@
 
 class Canvas
   
+  def initialize(options={}, &block)
+    if options[:size]
+      options[:width] = options[:size][0]
+      options[:height] = options[:size][1]
+    end
+  end
+  
+  def save
+    
+  end
+  
+  def restore
+    
+  end
+  
+  def scale
+    
+  end
+  
+  def clear_rect
+    
+  end
+  
+  def stroke_rect
+    
+  end
+  
+  def fill_rect
+    
+  end
+  
 end
