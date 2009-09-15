@@ -24,8 +24,13 @@
  * THE SOFTWARE.
  */
  
-Number.prototype.klass = VN.cFixnum ;
-Number.prototype.type = VN.T_FLOAT ; // what to put here? hmmmm....
+Number.prototype.klass = function() {
+  return VN.cFixnum ;
+};
+
+Number.prototype.type = function() {
+  return VN.T_FLOAT ;
+};  // what to put here? hmmmm....
 
 VN.cNumeric = VN.define_class('Numeric', VN.cObject) ;
 

@@ -1,5 +1,5 @@
 /* 
- * class.js
+ * object.js
  * vienna
  * 
  * Created by Adam Beynon.
@@ -24,25 +24,23 @@
  * THE SOFTWARE.
  */
 
-/**
-  Variable arguments
-*/
-VN.obj_call_init = function(self, args) {
-  console.log(self);
-  self.$call('initialize', args);
+var RObject = function(klass, type) {
+  this.$klass = klass ;
+  this.$type = type ;
+  return this;
 };
 
-cClass.$define_method('allocate', VN.obj_alloc);
+RObject.prototype.$ivar_set = function(id, val) {
+  this[id] = val ;
+  return val ;
+};
 
-cClass.$define_method('new', function() {
-  var obj = VN.obj_alloc(this);
-  VN.obj_call_init(obj, arguments);
-  return obj;
-});
+RObject.prototype.$ivar_get = function(id) {
+  return this[id] ;
+};
 
-cClass.$define_method('initialize', VN.class_initialize, -1);
-cClass.$define_method('initialize_copy', VN.class_init_copy, 1);
-cClass.$define_method('superclass', VN.class_superclass, 0);
-cClass.$define_alloc_func(VN.class_s_alloc);
-// VN.undef_method(VN.cClass, 'extend_object');
-// VN.undef_method(VN.cClass, 'append_features');
+RObject.prototype.$call = function(id, args) {
+  var method = this.$klass.$search_method(id);
+  if (!method) throw 'RObject#call cannot find method: ' + id ;
+  return method.apply(this, args) ;
+};

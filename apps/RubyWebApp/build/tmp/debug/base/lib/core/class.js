@@ -28,23 +28,21 @@
   Variable arguments
 */
 VN.obj_call_init = function(self, args) {
-  VN.funcall(self, 'initialize', args);
+  console.log(self);
+  self.$call('initialize', args);
 };
 
-/**
-  Variable number of arguments
-*/
-VN.class_new_instance = function() {
+cClass.$define_method('allocate', VN.obj_alloc);
+
+cClass.$define_method('new', function() {
   var obj = VN.obj_alloc(this);
   VN.obj_call_init(obj, arguments);
   return obj;
-};
+});
 
-VN.define_method(VN.cClass, 'allocate', VN.obj_alloc, 0);
-VN.define_method(VN.cClass, 'new', VN.class_new_instance, -1);
-VN.define_method(VN.cClass, 'initialize', VN.class_initialize, -1);
-VN.define_method(VN.cClass, 'initialize_copy', VN.class_init_copy, 1);
-VN.define_method(VN.cClass, 'superclass', VN.class_superclass, 0);
-VN.define_alloc_func(VN.cClass, VN.class_s_alloc);
-VN.undef_method(VN.cClass, 'extend_object');
-VN.undef_method(VN.cClass, 'append_features');
+cClass.$define_method('initialize', VN.class_initialize, -1);
+cClass.$define_method('initialize_copy', VN.class_init_copy, 1);
+cClass.$define_method('superclass', VN.class_superclass, 0);
+cClass.$define_alloc_func(VN.class_s_alloc);
+// VN.undef_method(VN.cClass, 'extend_object');
+// VN.undef_method(VN.cClass, 'append_features');

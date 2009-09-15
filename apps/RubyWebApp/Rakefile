@@ -42,7 +42,7 @@ config :all,
   
   :SDK => 'javascript',
   
-  :root_file => '../../SDKs/ruby/base/lib/core.js',
+  :root_file => '../../SDKs/ruby/base/lib/base.js',
   
   # requirements.... saves having to put 'require `browser`' in app code
   :require => 'browser',

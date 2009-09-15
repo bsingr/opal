@@ -24,20 +24,31 @@
  * THE SOFTWARE.
  */
 
-VN.obj_match = function(self, obj2) {
-  return VN.Qnil ;
-};
+mKernel.$define_method('nil?', function() {
+  return false;
+});
 
-VN.obj_not_match = function(self, obj2) {
-  var result = VN.funcall(self, '=~', 1, obj2) ;
-  return VN.RTEST(result) ? VN.Qfalse : VN.Qtrue ;
-};
+mKernel.$define_method('===', function() {
+  
+});
 
-VN.define_method(VN.mKernel, 'nil?', VN.rb_false, 0);
-VN.define_method(VN.mKernel, '===', VN.equal, 1);
-VN.define_method(VN.mKernel, '=~', VN.obj_match, 1);
-VN.define_method(VN.mKernel, '!~', VN.obj_not_match, 1);
-VN.define_method(VN.mKernel, 'eql?', VN.obj_equal, 1);
+mKernel.$define_method('=~', function(obj) {
+  return nil ;
+});
+
+mKernel.$define_method('!=', function(obj) {
+  return this.$call('=~', obj) ? false : true ;
+});
+
+mKernel.$define_method('eql?', function() {
+  
+});
+
+// VN.define_method(VN.mKernel, 'nil?', VN.rb_false, 0);
+// VN.define_method(VN.mKernel, '===', VN.equal, 1);
+// VN.define_method(VN.mKernel, '=~', VN.obj_match, 1);
+// VN.define_method(VN.mKernel, '!~', VN.obj_not_match, 1);
+// VN.define_method(VN.mKernel, 'eql?', VN.obj_equal, 1);
 
 VN.obj_init_copy = function (self, orig) {
   if (self == orig) return self ;
@@ -47,115 +58,126 @@ VN.obj_init_copy = function (self, orig) {
   return self;
 };
 
-VN.define_method(VN.mKernel, 'class', VN.obj_class, 0);
-VN.define_method(VN.mKernel, 'clone', VN.obj_clone, 0);
-VN.define_method(VN.mKernel, 'dup', VN.obj_dup, 0);
-VN.define_method(VN.mKernel, 'initialize_copy', VN.obj_init_copy, 1);
+mKernel.$define_method('class', VN.obj_class, 0);
+mKernel.$define_method('clone', VN.obj_clone, 0);
+mKernel.$define_method('dup', VN.obj_dup, 0);
+mKernel.$define_method('initialize_copy', VN.obj_init_copy, 1);
 
-VN.define_method(VN.mKernel, 'taint', VN.obj_taint, 0);
-VN.define_method(VN.mKernel, 'tainted?', VN.obj_tainted, 0);
-VN.define_method(VN.mKernel, 'untaint', VN.obj_untaint, 0);
-VN.define_method(VN.mKernel, 'untrust', VN.obj_untrust, 0);
-VN.define_method(VN.mKernel, 'untrusted?', VN.obj_untrusted, 0);
-VN.define_method(VN.mKernel, 'trust', VN.obj_trust, 0);
-VN.define_method(VN.mKernel, 'freeze', VN.obj_freeze, 0);
-VN.define_method(VN.mKernel, 'frozen?', VN.obj_frozen_p, 0);
+mKernel.$define_method('taint', VN.obj_taint, 0);
+mKernel.$define_method('tainted?', VN.obj_tainted, 0);
+mKernel.$define_method('untaint', VN.obj_untaint, 0);
+mKernel.$define_method('untrust', VN.obj_untrust, 0);
+mKernel.$define_method('untrusted?', VN.obj_untrusted, 0);
+mKernel.$define_method('trust', VN.obj_trust, 0);
+mKernel.$define_method('freeze', VN.obj_freeze, 0);
+mKernel.$define_method('frozen?', VN.obj_frozen_p, 0);
 
-VN.any_to_s = function(self) {
-  return VN.str_new_cstr("#<" + VN.obj_classname(self) + ":0x00000000>");
-};
 
-VN.inspect = function(self) {
-  return VN.str_new_cstr("");
-};
 
-VN.obj_methods = function(argc, argv, self) {
+
+mKernel.$define_method('to_s', function() {
+  return "#<" + RClass.obj_classname(this) + ":0x00000000>" ;
+});
+
+mKernel.$define_method('inspect', function() {
+  return "";
+});
+
+mKernel.$define_method('methods', function() {
   
-};
+});
 
-VN.obj_singleton_methods = function(argc, argv, self) {
+mKernel.$define_method('singleton_methods', function() {
   
-};
+});
 
-VN.obj_protected_methods = function(argc, argv, self) {
+mKernel.$define_method('protected_methods', function() {
   
-};
+});
 
-VN.obj_private_methods = function(argc, argv, self) {
+mKernel.$define_method('private_methods', function() {
   
-};
+});
 
-VN.obj_public_methods = function(argc, argv, self) {
+mKernel.$define_method('public_methods', function() {
   
-};
+});
 
-VN.obj_instance_variables = function(self) {
+mKernel.$define_method('instance_variables', function() {
   
-};
+});
 
-VN.obj_ivar_get = function(self, iv) {
-  return VN.ivar_get(self, VN.to_id(iv)) ;
-};
+mKernel.$define_method('instance_variables_get', function(iv) {
+  return this.$ivar_get(iv);
+});
+
+mKernel.$define_method('instance_variables_set', function(iv, val) {
+  return this.$ivar_set(iv, val);
+});
+
+mKernel.$define_method('instance_variables_defined?', function(iv) {
+  return this.$ivar_defined(iv);
+});
+
+mKernel.$define_private_method('remove_instance_variable', function(iv) {
+  
+});
 
 
-VN.obj_ivar_set = function(self, iv, val) {
-  return VN.ivar_set(self, VN.to_id(iv), val) ;
-};
 
-VN.obj_ivar_defined = function(self, iv) {
-  return VN.ivar_defined(self, VN.to_id(iv)) ;
-};
 
-VN.define_method(VN.mKernel, 'to_s', VN.any_to_s, 0);
-VN.define_method(VN.mKernel, 'inspect', VN.obj_inspect, 0);
-VN.define_method(VN.mKernel, 'methods', VN.obj_methods, -1);
-VN.define_method(VN.mKernel, 'singleton_methods', VN.obj_singleton_methods, -1);
-VN.define_method(VN.mKernel, 'protected_methods', VN.obj_protected_methods, -1);
-VN.define_method(VN.mKernel, 'private_methods', VN.obj_private_methods, -1);
-VN.define_method(VN.mKernel, 'public_methods', VN.obj_public_methods, -1);
-VN.define_method(VN.mKernel, 'instance_variables', VN.obj_instance_variables, 0);
-VN.define_method(VN.mKernel, 'instance_variables_get', VN.obj_ivar_get, 1);
-VN.define_method(VN.mKernel, 'instance_variables_set', VN.obj_ivar_set, 2);
-VN.define_method(VN.mKernel, 'instance_variables_defined?', VN.obj_ivar_defined, 1);
-VN.define_private_method(VN.mKernel, 'remove_instance_variable', VN.obj_remove_instance_variable, 1);
 
-VN.obj_is_instance_of = function(self, klass) {
-  switch (klass.type) {
-    case VN.T_MODULE:
-    case VN.T_CLASS:
-    case VN.T_ICLASS:
+mKernel.$define_method('instance_of?', function(klass) {
+  switch (klass.$type) {
+    case VN.MODULE:
+    case VN.CLASS:
+    case VN.ICLASS:
       break ;
     default:
       VN.type_error('class or module required');
   }
-  if (self.klass == klass) return VN.Qtrue ;
-  return VN.Qfalse ;
-};
+  if (this.$klass == klass) return true ;
+  return false ;
+});
 
-VN.obj_is_kind_of = function(self, klass) { 
-  switch (klass.type) {
-    case VN.T_MODULE:
-    case VN.T_CLASS:
-    case VN.T_ICLASS:
+mKernel.$define_method('kind_of?', function(klass) {
+  switch (klass.$type) {
+    case VN.MODULE:
+    case VN.CLASS:
+    case VN.ICLASS:
       break ;
     default:
       VN.type_error('class or module required');
   }
-  var k = self.klass ;
+  var k = self.$klass ;
   while (k) {
-    if (k == klass || klass.m_tbl == k.m_tbl) {
-      return VN.Qtrue;
+    if (k == klass) {
+      return true;
     }
-    k = k.super_klass;
+    k = k.$super;
   }
-  return VN.Qfalse;
-};
+  return false; 
+});
 
-VN.obj_tap = function(self) {
-  VN.warning('Kernel#tap unimplemented');
-};
+mKernel.$define_method('is_a?', function(klass) {
+  switch (klass.$type) {
+    case VN.MODULE:
+    case VN.CLASS:
+    case VN.ICLASS:
+      break ;
+    default:
+      VN.type_error('class or module required');
+  }
+  var k = self.$klass ;
+  while (k) {
+    if (k == klass) {
+      return true;
+    }
+    k = k.$super;
+  }
+  return false; 
+});
 
-VN.define_method(VN.mKernel, 'instance_of?', VN.obj_is_instance_of, 1);
-VN.define_method(VN.mKernel, 'kind_of?', VN.obj_is_kind_of, 1);
-VN.define_method(VN.mKernel, 'is_a?', VN.obj_is_kind_of, 1);
-VN.define_method(VN.mKernel, 'tap', VN.obj_tap, 0);
+mKernel.$define_method('tap', function() {
+  VN.warning('Kernel#tap is unimplemented');
+});

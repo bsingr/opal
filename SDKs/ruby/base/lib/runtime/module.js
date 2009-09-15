@@ -1,5 +1,5 @@
 /* 
- * nil_class.js
+ * module.js
  * vienna
  * 
  * Created by Adam Beynon.
@@ -24,36 +24,55 @@
  * THE SOFTWARE.
  */
 
-VN.nil_to_i = function(obj) {
-   return 0 ;
+var RModule = { } ;
+
+RModule.define = function(id) {
+  var module;
+  if (cObject.$const_defined(id)) {
+    module = cObject.$const_get(id);
+    if (module.type == VN.MODULE) {
+      return module;
+    }
+    VN.type_error(id + ' is not a module');
+  }
+  module = RModule.define_module_id(id);
+  VN.class_tbl[id] = module;
+  cObject.$const_set(id, module);
+
+  return module;
 };
 
-VN.nil_to_f = function(obj) {
-   return 0.0 ;
+RModule.define_module_under = function() {
+  var module;
+  if (VN.const_defined_at(outer, id)) {
+    module = VN.const_get_at(outer, id);
+    if (module.type == VN.T_MODULE) {
+      return module;
+    }
+    VN.type_error(id + ' is not a module');
+  }
+  module = VN.define_module_id(id);
+  VN.const_set(outer, id, module);
+  VN.set_class_path(module, outer, name);
+  return module;
 };
 
-VN.nil_to_s = function(obj) {
-   return VN.str_new_cstr("") ;
+RModule.define_module_id = function(id) {
+  var mdl = RModule.create();
+  // VN.name_class(mdl, id);
+  mdl.$name(id);
+  // mdl.$name(id);
+  return mdl;
 };
 
-VN.nil_to_a = function(obj) {
-   return VN.ary_new2(null) ;
+RModule.create = function() {
+  var mdl = RClass.alloc(VN.MODULE, cModule);
+  return mdl;
 };
 
-VN.nil_inspect = function(obj) {
-   return VN.str_new_cstr("nil");
+RModule.include = function(klass, module) {
+  // console.log('include_module not yet implemented');
+  if (module.type != VN.MODULE) {
+    // error?
+  }
 };
-
-VN.define_method(VN.cNilClass, 'to_i', VN.nil_to_i, 0);
-VN.define_method(VN.cNilClass, 'to_f', VN.nil_to_f, 0);
-VN.define_method(VN.cNilClass, 'to_s', VN.nil_to_s, 0);
-VN.define_method(VN.cNilClass, 'to_a', VN.nil_to_a, 0);
-VN.define_method(VN.cNilClass, 'inspect', VN.nil_inspect, 0);
-VN.define_method(VN.cNilClass, '&', VN.false_and, 0);
-VN.define_method(VN.cNilClass, '|', VN.false_or, 0);
-VN.define_method(VN.cNilClass, '^', VN.false_xor, 0);
-
-VN.define_method(VN.cNilClass, 'nil?', VN.rb_true, 0);
-VN.undef_alloc_func(VN.cNilClass);
-VN.undef_method(VN.cNilClass.klass, "new");
-VN.define_global_const('NIL', VN.Qnil);

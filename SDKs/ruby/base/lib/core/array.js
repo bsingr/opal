@@ -24,8 +24,15 @@
  * THE SOFTWARE.
  */
 
-Array.prototype.klass = VN.cArray ;
-Array.prototype.type = VN.T_ARRAY ;
+Array.prototype.$klass = VN.cArray ;
+
+Array.prototype.$type = VN.T_ARRAY ;
+
+Array.prototype.$call = function(id, args) {
+  var method = VN.search_method(this.$klass, id);
+  if (!method) throw 'VN#funcall cannot find method: ' + id ;
+  return method.apply(this, args) ;
+};
 
 // VN.include_module(VN.cArray, VN.mEnumerable);
 

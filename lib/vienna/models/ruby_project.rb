@@ -78,7 +78,7 @@ module Vienna
       
       # puts js_build_path
       o = File.new(js_build_path, 'w')
-      root_combiner = Vienna::Builder::Combine.new File.join(tmp_prefix, 'base', 'lib', 'core.js'), o, self
+      root_combiner = Vienna::Builder::Combine.new File.join(tmp_prefix, 'base', 'lib', 'base.js'), o, self
       o.close
       
     end
