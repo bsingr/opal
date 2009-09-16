@@ -151,9 +151,9 @@ VN.require('core/enumerable');
 VN.require('core/string');
 
 VN.require('core/numeric');
+// require('core/array');
 
-VN.require('core/array');
-// require('core/hash');
+VN.require('core/hash');
 // require('core/struct');
 // require('core/regexp');
 // require('core/range');

@@ -71,6 +71,13 @@ module Vienna
       # the_subviews = coder
     end
     
+    def frame=(rect)
+      will_change_value_for_key :frame
+      @frame = rect
+      did_change_value_for_key :frame
+    end
+    
+    
   end
   
 end

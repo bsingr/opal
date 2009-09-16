@@ -35,7 +35,7 @@ module Vienna
     end
     
     def rakefile
-      @rakefile ||= Rakefile.new.load!(@project_root)      
+      @rakefile ||= Rakefile.new.load!(@project_root)
     end
     
     def root_file
