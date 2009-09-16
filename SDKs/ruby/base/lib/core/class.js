@@ -24,25 +24,32 @@
  * THE SOFTWARE.
  */
 
-/**
-  Variable arguments
-*/
-VN.obj_call_init = function(self, args) {
-  console.log(self);
-  self.$call('initialize', args);
-};
-
-cClass.$define_method('allocate', VN.obj_alloc);
 
 cClass.$define_method('new', function() {
-  var obj = VN.obj_alloc(this);
-  VN.obj_call_init(obj, arguments);
+  var obj = this.$call('allocate', []);
+  obj.$call('initialize', arguments);
   return obj;
 });
 
-cClass.$define_method('initialize', VN.class_initialize, -1);
-cClass.$define_method('initialize_copy', VN.class_init_copy, 1);
-cClass.$define_method('superclass', VN.class_superclass, 0);
-cClass.$define_alloc_func(VN.class_s_alloc);
+cClass.$define_method('allocate', function(obj_alloc) {
+  
+});
+
+cClass.$define_method('initialize', function(class_initialize) {
+  
+});
+
+cClass.$define_method('initialize_copy', function(class_init_copy) {
+  
+});
+
+cClass.$define_method('superclass', function(class_superclass) {
+  
+});
+
+cClass.$define_alloc_func(function(class_s_alloc) {
+  
+});
+
 // VN.undef_method(VN.cClass, 'extend_object');
 // VN.undef_method(VN.cClass, 'append_features');

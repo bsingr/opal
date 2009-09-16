@@ -24,42 +24,151 @@
  * THE SOFTWARE.
  */
 
-cModule.$define_method('freeze', VN.mod_freeze, 0);
-cModule.$define_method('===', VN.mod_eqq, 1);
-cModule.$define_method('==', VN.obj_equal, 1);
-cModule.$define_method('<=>', VN.mod_cmp, 1);
-cModule.$define_method('<', VN.mod_lt, 1);
-cModule.$define_method('<=', VN.class_inherited_p, 1);
-cModule.$define_method('>', VN.mod_gt, 1);
-cModule.$define_method('>=', VN.mod_ge, 1);
+cModule.$define_method('freeze', function(mod_freeze) {
+  
+});
+cModule.$define_method('===', function(mod_eqq) {
+  
+});
 
-cModule.$define_method('initialize_copy', VN.mod_init_copy, 1);
-cModule.$define_method('to_s', VN.mod_to_s, 0);
-cModule.$define_method('included_modules', VN.mod_included_modules, 0);
-cModule.$define_method('include?', VN.mod_include_p, 1);
-cModule.$define_method('name', VN.mod_name, 0);
-cModule.$define_method('ancestors', VN.mod_ancestors, 0);
+cModule.$define_method('==', function(obj_equal) {
+  
+});
 
-cModule.$define_private_method('attr', VN.mod_attr, -1);
-cModule.$define_private_method('attr_reader', VN.mod_attr_reader, -1);
-cModule.$define_private_method('attr_writer', VN.mod_attr_writer, -1);
-cModule.$define_private_method('attr_accessor', VN.mod_attr_accessor, -1);
+cModule.$define_method('<=>', function(mod_cmp) {
+  
+});
 
-cModule.$define_alloc_func(VN.module_s_alloc);
-cModule.$define_method('initialize', VN.mod_initialize, 0);
-cModule.$define_method('instance_methods', VN.class_instance_methods, -1);
-cModule.$define_method('public_instance_methods', VN.class_public_instance_methods, -1);
-cModule.$define_method('protected_instance_methods', VN.class_protected_instance_methods, -1);
-cModule.$define_method('private_instance_methods', VN.class_private_instance_methods, -1);
+cModule.$define_method('<', function(mod_lt) {
+  
+});
 
-cModule.$define_method('constance', VN.mod_constants, -1);
-cModule.$define_method('const_get', VN.mod_const_get, -1);
-cModule.$define_method('const_set', VN.mod_const_set, 2);
-cModule.$define_method('const_defined?', VN.mod_const_defined, -1);
-cModule.$define_private_method('remove_const', VN.mod_remove_const, 1);
-cModule.$define_method('const_missing', VN.mod_const_missing, 1);
-cModule.$define_method('class_variables', VN.mod_class_variables, 0);
-cModule.$define_method('remove_class_variable', VN.mod_remove_cvar, 1);
-cModule.$define_method('class_variable_get', VN.mod_cvar_get, 1);
-cModule.$define_method('class_variable_set', VN.mod_cvar_set, 2);
-cModule.$define_method('class_variable_defined?', VN.mod_cvar_defined, 1);
+cModule.$define_method('<=', function(class_inherited_p) {
+  
+});
+
+cModule.$define_method('>', function(mod_gt) {
+  
+});
+
+cModule.$define_method('>=', function(mod_ge) {
+  
+});
+
+
+
+
+cModule.$define_method('initialize_copy', function(mod_init_copy) {
+  
+});
+
+cModule.$define_method('to_s', function(mod_to_s) {
+  
+});
+
+cModule.$define_method('included_modules', function(mod_included_modules) {
+  
+});
+
+cModule.$define_method('include?', function(mod_include_p) {
+  
+});
+
+cModule.$define_method('name', function(mod_name) {
+  
+});
+
+cModule.$define_method('ancestors', function(mod_ancestors) {
+  
+});
+
+
+
+
+cModule.$define_private_method('attr', function(mod_attr) {
+  
+});
+
+cModule.$define_private_method('attr_reader', function(mod_attr_reader) {
+  
+});
+
+cModule.$define_private_method('attr_writer', function(mod_attr_writer) {
+  
+});
+
+cModule.$define_private_method('attr_accessor', function(mod_attr_accessor) {
+  
+});
+
+
+cModule.$define_alloc_func(function(module_s_alloc) {
+  
+});
+
+cModule.$define_method('initialize', function(mod_initialize) {
+  
+});
+
+cModule.$define_method('instance_methods', function(class_instance_methods) {
+  
+});
+
+cModule.$define_method('public_instance_methods', function(class_public_instance_methods) {
+  
+});
+
+cModule.$define_method('protected_instance_methods', function(class_protected_instance_methods) {
+  
+});
+
+cModule.$define_method('private_instance_methods', function(class_private_instance_methods) {
+  
+});
+
+
+
+
+cModule.$define_method('constants', function(mod_constants) {
+  
+});
+
+cModule.$define_method('const_get', function(mod_const_get) {
+  
+});
+
+cModule.$define_method('const_set', function(mod_const_set) {
+  
+});
+
+cModule.$define_method('const_defined?', function(mod_const_defined) {
+  
+});
+
+cModule.$define_private_method('remove_const', function(mod_remove_const) {
+  
+});
+
+cModule.$define_method('const_missing', function(mod_const_missing) {
+  
+});
+
+cModule.$define_method('class_variables', function(mod_class_variables) {
+  
+});
+
+cModule.$define_method('remove_class_variable', function(mod_remove_cvar) {
+  
+});
+
+cModule.$define_method('class_variable_get', function(mod_cvar_get) {
+  
+});
+
+cModule.$define_method('class_variable_set', function(mod_cvar_set) {
+  
+});
+
+cModule.$define_method('class_variable_defined?', function(mod_cvar_defined) {
+  
+});

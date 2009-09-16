@@ -57,7 +57,7 @@ module Vienna
       t = ""
       o = File.new(@destination, 'w')
       File.readlines(@source).map do |l|
-        if match = l.match(/require\(\'(.*)\'\)/)
+        if match = l.match(/^require\(\'(.*)\'\)/) # ^ to make sure it is not commented out..
           # add the requirement to '@requirements' for the project to get at
           @requirements << match[1]
           # o.write(JSMin.minify(t))

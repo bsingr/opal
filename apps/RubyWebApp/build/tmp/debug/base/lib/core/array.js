@@ -31,31 +31,29 @@ Array.prototype.$call = RObject.prototype.$call;
 
 RModule.include(cArray, mEnumerable);
 
-cArray.$define_alloc_func(function() {
+/**
+  Array#allocate
+*/
+VN.ary_alloc = function() {
   return new Array() ;
-});
+};
 
-cArray.$define_singleton_method('[]', function() {
-  
-});
-
-cArray.$define_singleton_method('try_convert', function() {
-  
-});
-
-cArray.$define_method('initialize', function() {
+/**
+  Array#initialize (*args)
+*/
+VN.ary_initialize = function() {
   for (var i = 0; i < arguments.length; i++) {
     this.push(arguments[i]);
   }
-});
+};
 
-cArray.$define_method('initialize_copy', function() {
-  
-});
+VN.define_alloc_func(VN.cArray, VN.ary_alloc);
+VN.define_singleton_method(VN.cArray, '[]', VN.ary_s_create, -1);
+VN.define_singleton_method(VN.cArray, 'try_convert', VN.ary_s_try_convert, 1);
+VN.define_method(VN.cArray, 'initialize', VN.ary_initialize, -1);
+VN.define_method(VN.cArray, 'initialize_copy', VN.ary_replace, 1);
 
-
-
-cArray.$define_method('to_s', function() {
+VN.ary_inspect = function() {
   if (this.length == 0) return '[]';
   var str = '[';
   for (var i = 0; i < (this.length - 1); i++) {
@@ -63,24 +61,21 @@ cArray.$define_method('to_s', function() {
   }
   str += (VN.funcall(this[this.length - 1], 'inspect', []) + ']');
   return str ;
-});
+};
 
-// Basically copy the to_s method to the inspect method
-cArray.$define_method('inspect', cArray['to_s']);
+VN.ary_to_a = function() {
+  return this;
+};
 
-cArray.$define_method('to_a', function() {
-  return this ;
-});
+VN.ary_to_ary_m = function() {
+  return this;
+};
 
-cArray.$define_method('to_ary', function() {
-  return this ;
-});
-
-cArray.$define_method('frozen?', function() {
-  
-});
-
-
+VN.define_method(VN.cArray, 'to_s', VN.ary_inspect, 0);
+VN.define_method(VN.cArray, 'inspect', VN.ary_inspect, 0);
+VN.define_method(VN.cArray, 'to_a', VN.ary_to_a, 0);
+VN.define_method(VN.cArray, 'to_ary', VN.ary_to_ary_m, 0);
+VN.define_method(VN.cArray, 'frozen?',  VN.ary_frozen_p, 0);
 
 VN.ary_equal = function(ary) {
   if (ary == this) return VN.Qtrue ;

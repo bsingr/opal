@@ -1,5 +1,5 @@
 /* 
- * object.js
+ * top_self.js
  * vienna
  * 
  * Created by Adam Beynon.
@@ -24,29 +24,11 @@
  * THE SOFTWARE.
  */
 
-var RObject = function(klass, type) {
-  this.$klass = klass ;
-  this.$type = type ;
-  return this;
-};
-
-RObject.prototype.$ivar_set = function(id, val) {
-  this[id] = val ;
-  return val ;
-};
-
-RObject.prototype.$ivar_get = function(id) {
-  return this[id] ;
-};
-
-RObject.prototype.$call = function(id, args) {
-  var method = this.$klass.$search_method(id);
-  if (!method) throw 'RObject#call cannot find method: ' + id ;
-  return method.apply(this, args) ;
-};
-
 /**
-  We need to copy some of RClass' methods for singletons
+  'main' object inside runtime
 */
-RObject.prototype.$define_singleton_method = RClass.prototype.$define_singleton_method;
-RObject.prototype.$make_metaclass = RClass.prototype.$make_metaclass;
+VN.top_self = VN.obj_alloc(cObject);
+
+VN.top_self.$define_singleton_method('to_s', function() {
+  return 'main' ;
+});

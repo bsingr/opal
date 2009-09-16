@@ -42,48 +42,79 @@ VN.boot_defmetametaclass(cBasicObject, metaclass);
 /**
   BasicObject necessary methods
 */
-cBasicObject.$define_private_method('initialize', VN.obj_dummy, 0);
-cBasicObject.$define_alloc_func(VN.class_allocate_instance);
-cBasicObject.$define_method('==', VN.obj_equal, 1);
-cBasicObject.$define_method('equal?', VN.obj_equal, 1);
-cBasicObject.$define_method('!', VN.obj_not, 0);
-cBasicObject.$define_method('!=', VN.obj_not_equal);
-cBasicObject.$define_private_method('singleton_method_added', VN.obj_dummy, 1);
-cBasicObject.$define_private_method('singleton_method_removed', VN.obj_dummy, 1);
-cBasicObject.$define_private_method('singleton_method_undefined', VN.obj_dummy, 1);
+cBasicObject.$define_private_method('initialize', function() {
+  return nil ;
+});
+
+cBasicObject.$define_alloc_func(function() {
+  var obj = new RObject(this, VN.OBJECT) ;
+  return obj;
+});
+
+cBasicObject.$define_method('==', function(obj) {
+  return (obj == this) ? true : false ;
+});
+
+cBasicObject.$define_method('equal?', function(obj) {
+  return (obj == this) ? true : false ;
+});
+
+cBasicObject.$define_method('!', function() {
+  
+});
+
+cBasicObject.$define_method('!=', function() {
+  
+});
+
+cBasicObject.$define_private_method('singleton_method_added', function() {
+  return nil ;
+});
+
+cBasicObject.$define_private_method('singleton_method_removed', function() {
+  return nil ;
+});
+
+cBasicObject.$define_private_method('singleton_method_undefined', function() {
+  return nil ;
+});
 
 /**
   Kernel neccessary methods
 */
 mKernel = RModule.define("Kernel");
-// VN.include_module(VN.cObject, VN.mKernel);
-cClass.$define_private_method('inherited', VN.obj_dummy, 1);
-cModule.$define_private_method('included', VN.obj_dummy, 1);
-cModule.$define_private_method('extended', VN.obj_dummy, 1);
-cModule.$define_private_method('method_added', VN.obj_dummy, 1);
-cModule.$define_private_method('method_removed', VN.obj_dummy, 1);
-cModule.$define_private_method('method_undefined', VN.obj_dummy, 1);
+
+RModule.include(cObject, mKernel);
+
+cClass.$define_private_method('inherited', function() {
+  return nil ;
+});
+
+cModule.$define_private_method('included', function() {
+  return nil ;
+});
+
+cModule.$define_private_method('extended', function() {
+  return nil ;
+});
+
+cModule.$define_private_method('method_added', function() {
+  return nil ;
+});
+
+cModule.$define_private_method('method_removed', function() {
+  return nil ;
+});
+
+cModule.$define_private_method('method_undefined', function() {
+  return nil ;
+});
 
 /**
   Base Classes/Modules
 */
-// VN.cNilClass = RClass.define('NilClass', VN.cObject);
 var cNilClass = RClass.define('NilClass', cObject);
+var cBoolean = RClass.define('Boolean', cObject);
+var cArray = RClass.define('Array', cObject);
 var cString = RClass.define('String', cObject);
-
-// // VN.cTrueClass = VN.define_class('TrueClass', VN.cObject);
-// // VN.cFalseClass = VN.define_class('FalseClass', VN.cObject);
-// // VN.cArray = VN.define_class('Array', VN.cObject);
-// // VN.cString = VN.define_class('String', VN.cObject);
-// // VN.cSymbol = VN.define_class('Symbol', VN.cObject);
-// 
-// 
-// /**
-//   Initialize top self - the 'main' object at runtime
-// */
-// VN.top_self = VN.obj_alloc(VN.cObject);
-// 
-// VN.top_self.$define_singleton_method('to_s', function() {
-//   return 'main';
-// });
-
+var cNumeric = RClass.define('Numeric', cObject);

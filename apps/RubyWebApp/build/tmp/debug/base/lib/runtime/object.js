@@ -44,3 +44,9 @@ RObject.prototype.$call = function(id, args) {
   if (!method) throw 'RObject#call cannot find method: ' + id ;
   return method.apply(this, args) ;
 };
+
+/**
+  We need to copy some of RClass' methods for singletons
+*/
+RObject.prototype.$define_singleton_method = RClass.prototype.$define_singleton_method;
+RObject.prototype.$make_metaclass = RClass.prototype.$make_metaclass;

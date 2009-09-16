@@ -175,7 +175,9 @@ RClass.singleton_class = function(obj) {
     klass = obj.$klass;
   }
   else {
-    klass = RClass.make_metaclass(obj, obj.$klass);
+    // klass = RClass.make_metaclass(obj, obj.$klass);
+    console.log(obj);
+    klass = obj.$make_metaclass(obj.$klass) ;
   }
 
   if (obj.$type == VN.CLASS) {

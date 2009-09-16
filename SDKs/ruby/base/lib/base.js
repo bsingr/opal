@@ -133,4 +133,18 @@ require('core/object');
 require('core/kernel');
 require('core/module');
 require('core/class');
+require('core/top_self');
+
+require('core/comparable');
+require('core/enumerable');
 require('core/string');
+require('core/numeric');
+require('core/array');
+// require('core/hash');
+// require('core/struct');
+// require('core/regexp');
+// require('core/range');
+// require('core/time');
+// require('core/proc');
+// require('core/math');
+// require('core/enumerator');

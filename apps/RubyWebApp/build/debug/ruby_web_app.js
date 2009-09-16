@@ -300,7 +300,9 @@ RClass.singleton_class = function(obj) {
     klass = obj.$klass;
   }
   else {
-    klass = RClass.make_metaclass(obj, obj.$klass);
+    // klass = RClass.make_metaclass(obj, obj.$klass);
+    console.log(obj);
+    klass = obj.$make_metaclass(obj.$klass) ;
   }
 
   if (obj.$type == VN.CLASS) {
@@ -590,6 +592,12 @@ RObject.prototype.$call = function(id, args) {
   if (!method) throw 'RObject#call cannot find method: ' + id ;
   return method.apply(this, args) ;
 };
+
+/**
+  We need to copy some of RClass' methods for singletons
+*/
+RObject.prototype.$define_singleton_method = RClass.prototype.$define_singleton_method;
+RObject.prototype.$make_metaclass = RClass.prototype.$make_metaclass;
 /**
   Require core library
 */
@@ -638,51 +646,82 @@ VN.boot_defmetametaclass(cBasicObject, metaclass);
 /**
   BasicObject necessary methods
 */
-cBasicObject.$define_private_method('initialize', VN.obj_dummy, 0);
-cBasicObject.$define_alloc_func(VN.class_allocate_instance);
-cBasicObject.$define_method('==', VN.obj_equal, 1);
-cBasicObject.$define_method('equal?', VN.obj_equal, 1);
-cBasicObject.$define_method('!', VN.obj_not, 0);
-cBasicObject.$define_method('!=', VN.obj_not_equal);
-cBasicObject.$define_private_method('singleton_method_added', VN.obj_dummy, 1);
-cBasicObject.$define_private_method('singleton_method_removed', VN.obj_dummy, 1);
-cBasicObject.$define_private_method('singleton_method_undefined', VN.obj_dummy, 1);
+cBasicObject.$define_private_method('initialize', function() {
+  return nil ;
+});
+
+cBasicObject.$define_alloc_func(function() {
+  var obj = new RObject(this, VN.OBJECT) ;
+  return obj;
+});
+
+cBasicObject.$define_method('==', function(obj) {
+  return (obj == this) ? true : false ;
+});
+
+cBasicObject.$define_method('equal?', function(obj) {
+  return (obj == this) ? true : false ;
+});
+
+cBasicObject.$define_method('!', function() {
+  
+});
+
+cBasicObject.$define_method('!=', function() {
+  
+});
+
+cBasicObject.$define_private_method('singleton_method_added', function() {
+  return nil ;
+});
+
+cBasicObject.$define_private_method('singleton_method_removed', function() {
+  return nil ;
+});
+
+cBasicObject.$define_private_method('singleton_method_undefined', function() {
+  return nil ;
+});
 
 /**
   Kernel neccessary methods
 */
 mKernel = RModule.define("Kernel");
-// VN.include_module(VN.cObject, VN.mKernel);
-cClass.$define_private_method('inherited', VN.obj_dummy, 1);
-cModule.$define_private_method('included', VN.obj_dummy, 1);
-cModule.$define_private_method('extended', VN.obj_dummy, 1);
-cModule.$define_private_method('method_added', VN.obj_dummy, 1);
-cModule.$define_private_method('method_removed', VN.obj_dummy, 1);
-cModule.$define_private_method('method_undefined', VN.obj_dummy, 1);
+
+RModule.include(cObject, mKernel);
+
+cClass.$define_private_method('inherited', function() {
+  return nil ;
+});
+
+cModule.$define_private_method('included', function() {
+  return nil ;
+});
+
+cModule.$define_private_method('extended', function() {
+  return nil ;
+});
+
+cModule.$define_private_method('method_added', function() {
+  return nil ;
+});
+
+cModule.$define_private_method('method_removed', function() {
+  return nil ;
+});
+
+cModule.$define_private_method('method_undefined', function() {
+  return nil ;
+});
 
 /**
   Base Classes/Modules
 */
-// VN.cNilClass = RClass.define('NilClass', VN.cObject);
 var cNilClass = RClass.define('NilClass', cObject);
+var cBoolean = RClass.define('Boolean', cObject);
+var cArray = RClass.define('Array', cObject);
 var cString = RClass.define('String', cObject);
-
-// // VN.cTrueClass = VN.define_class('TrueClass', VN.cObject);
-// // VN.cFalseClass = VN.define_class('FalseClass', VN.cObject);
-// // VN.cArray = VN.define_class('Array', VN.cObject);
-// // VN.cString = VN.define_class('String', VN.cObject);
-// // VN.cSymbol = VN.define_class('Symbol', VN.cObject);
-// 
-// 
-// /**
-//   Initialize top self - the 'main' object at runtime
-// */
-// VN.top_self = VN.obj_alloc(VN.cObject);
-// 
-// VN.top_self.$define_singleton_method('to_s', function() {
-//   return 'main';
-// });
-
+var cNumeric = RClass.define('Numeric', cObject);
 
 /* 
  * kernel.js
@@ -730,32 +769,37 @@ mKernel.$define_method('eql?', function() {
   
 });
 
-// VN.define_method(VN.mKernel, 'nil?', VN.rb_false, 0);
-// VN.define_method(VN.mKernel, '===', VN.equal, 1);
-// VN.define_method(VN.mKernel, '=~', VN.obj_match, 1);
-// VN.define_method(VN.mKernel, '!~', VN.obj_not_match, 1);
-// VN.define_method(VN.mKernel, 'eql?', VN.obj_equal, 1);
 
-VN.obj_init_copy = function (self, orig) {
-  if (self == orig) return self ;
-  if (self.type != orig.type || obj.klass != orig.klass) {
-    VN.type_error('initialize_copy should take same class object');
-  }
-  return self;
-};
+
 
 mKernel.$define_method('class', VN.obj_class, 0);
+
 mKernel.$define_method('clone', VN.obj_clone, 0);
+
 mKernel.$define_method('dup', VN.obj_dup, 0);
-mKernel.$define_method('initialize_copy', VN.obj_init_copy, 1);
+
+mKernel.$define_method('initialize_copy', function(orig) {
+  if (orig == this) return this ;
+  if (this.$type != orig.$type || this.$klass != orig.$klass) {
+    VN.type_error('initialize_copy should take same class object') ;
+  }
+  return this ;
+});
 
 mKernel.$define_method('taint', VN.obj_taint, 0);
+
 mKernel.$define_method('tainted?', VN.obj_tainted, 0);
+
 mKernel.$define_method('untaint', VN.obj_untaint, 0);
+
 mKernel.$define_method('untrust', VN.obj_untrust, 0);
+
 mKernel.$define_method('untrusted?', VN.obj_untrusted, 0);
+
 mKernel.$define_method('trust', VN.obj_trust, 0);
+
 mKernel.$define_method('freeze', VN.obj_freeze, 0);
+
 mKernel.$define_method('frozen?', VN.obj_frozen_p, 0);
 
 
@@ -894,45 +938,155 @@ mKernel.$define_method('tap', function() {
  * THE SOFTWARE.
  */
 
-cModule.$define_method('freeze', VN.mod_freeze, 0);
-cModule.$define_method('===', VN.mod_eqq, 1);
-cModule.$define_method('==', VN.obj_equal, 1);
-cModule.$define_method('<=>', VN.mod_cmp, 1);
-cModule.$define_method('<', VN.mod_lt, 1);
-cModule.$define_method('<=', VN.class_inherited_p, 1);
-cModule.$define_method('>', VN.mod_gt, 1);
-cModule.$define_method('>=', VN.mod_ge, 1);
+cModule.$define_method('freeze', function(mod_freeze) {
+  
+});
+cModule.$define_method('===', function(mod_eqq) {
+  
+});
 
-cModule.$define_method('initialize_copy', VN.mod_init_copy, 1);
-cModule.$define_method('to_s', VN.mod_to_s, 0);
-cModule.$define_method('included_modules', VN.mod_included_modules, 0);
-cModule.$define_method('include?', VN.mod_include_p, 1);
-cModule.$define_method('name', VN.mod_name, 0);
-cModule.$define_method('ancestors', VN.mod_ancestors, 0);
+cModule.$define_method('==', function(obj_equal) {
+  
+});
 
-cModule.$define_private_method('attr', VN.mod_attr, -1);
-cModule.$define_private_method('attr_reader', VN.mod_attr_reader, -1);
-cModule.$define_private_method('attr_writer', VN.mod_attr_writer, -1);
-cModule.$define_private_method('attr_accessor', VN.mod_attr_accessor, -1);
+cModule.$define_method('<=>', function(mod_cmp) {
+  
+});
 
-cModule.$define_alloc_func(VN.module_s_alloc);
-cModule.$define_method('initialize', VN.mod_initialize, 0);
-cModule.$define_method('instance_methods', VN.class_instance_methods, -1);
-cModule.$define_method('public_instance_methods', VN.class_public_instance_methods, -1);
-cModule.$define_method('protected_instance_methods', VN.class_protected_instance_methods, -1);
-cModule.$define_method('private_instance_methods', VN.class_private_instance_methods, -1);
+cModule.$define_method('<', function(mod_lt) {
+  
+});
 
-cModule.$define_method('constance', VN.mod_constants, -1);
-cModule.$define_method('const_get', VN.mod_const_get, -1);
-cModule.$define_method('const_set', VN.mod_const_set, 2);
-cModule.$define_method('const_defined?', VN.mod_const_defined, -1);
-cModule.$define_private_method('remove_const', VN.mod_remove_const, 1);
-cModule.$define_method('const_missing', VN.mod_const_missing, 1);
-cModule.$define_method('class_variables', VN.mod_class_variables, 0);
-cModule.$define_method('remove_class_variable', VN.mod_remove_cvar, 1);
-cModule.$define_method('class_variable_get', VN.mod_cvar_get, 1);
-cModule.$define_method('class_variable_set', VN.mod_cvar_set, 2);
-cModule.$define_method('class_variable_defined?', VN.mod_cvar_defined, 1);
+cModule.$define_method('<=', function(class_inherited_p) {
+  
+});
+
+cModule.$define_method('>', function(mod_gt) {
+  
+});
+
+cModule.$define_method('>=', function(mod_ge) {
+  
+});
+
+
+
+
+cModule.$define_method('initialize_copy', function(mod_init_copy) {
+  
+});
+
+cModule.$define_method('to_s', function(mod_to_s) {
+  
+});
+
+cModule.$define_method('included_modules', function(mod_included_modules) {
+  
+});
+
+cModule.$define_method('include?', function(mod_include_p) {
+  
+});
+
+cModule.$define_method('name', function(mod_name) {
+  
+});
+
+cModule.$define_method('ancestors', function(mod_ancestors) {
+  
+});
+
+
+
+
+cModule.$define_private_method('attr', function(mod_attr) {
+  
+});
+
+cModule.$define_private_method('attr_reader', function(mod_attr_reader) {
+  
+});
+
+cModule.$define_private_method('attr_writer', function(mod_attr_writer) {
+  
+});
+
+cModule.$define_private_method('attr_accessor', function(mod_attr_accessor) {
+  
+});
+
+
+cModule.$define_alloc_func(function(module_s_alloc) {
+  
+});
+
+cModule.$define_method('initialize', function(mod_initialize) {
+  
+});
+
+cModule.$define_method('instance_methods', function(class_instance_methods) {
+  
+});
+
+cModule.$define_method('public_instance_methods', function(class_public_instance_methods) {
+  
+});
+
+cModule.$define_method('protected_instance_methods', function(class_protected_instance_methods) {
+  
+});
+
+cModule.$define_method('private_instance_methods', function(class_private_instance_methods) {
+  
+});
+
+
+
+
+cModule.$define_method('constants', function(mod_constants) {
+  
+});
+
+cModule.$define_method('const_get', function(mod_const_get) {
+  
+});
+
+cModule.$define_method('const_set', function(mod_const_set) {
+  
+});
+
+cModule.$define_method('const_defined?', function(mod_const_defined) {
+  
+});
+
+cModule.$define_private_method('remove_const', function(mod_remove_const) {
+  
+});
+
+cModule.$define_method('const_missing', function(mod_const_missing) {
+  
+});
+
+cModule.$define_method('class_variables', function(mod_class_variables) {
+  
+});
+
+cModule.$define_method('remove_class_variable', function(mod_remove_cvar) {
+  
+});
+
+cModule.$define_method('class_variable_get', function(mod_cvar_get) {
+  
+});
+
+cModule.$define_method('class_variable_set', function(mod_cvar_set) {
+  
+});
+
+cModule.$define_method('class_variable_defined?', function(mod_cvar_defined) {
+  
+});
+
 /* 
  * class.js
  * vienna
@@ -959,28 +1113,307 @@ cModule.$define_method('class_variable_defined?', VN.mod_cvar_defined, 1);
  * THE SOFTWARE.
  */
 
-/**
-  Variable arguments
-*/
-VN.obj_call_init = function(self, args) {
-  console.log(self);
-  self.$call('initialize', args);
-};
-
-cClass.$define_method('allocate', VN.obj_alloc);
 
 cClass.$define_method('new', function() {
-  var obj = VN.obj_alloc(this);
-  VN.obj_call_init(obj, arguments);
+  var obj = this.$call('allocate', []);
+  obj.$call('initialize', arguments);
   return obj;
 });
 
-cClass.$define_method('initialize', VN.class_initialize, -1);
-cClass.$define_method('initialize_copy', VN.class_init_copy, 1);
-cClass.$define_method('superclass', VN.class_superclass, 0);
-cClass.$define_alloc_func(VN.class_s_alloc);
+cClass.$define_method('allocate', function(obj_alloc) {
+  
+});
+
+cClass.$define_method('initialize', function(class_initialize) {
+  
+});
+
+cClass.$define_method('initialize_copy', function(class_init_copy) {
+  
+});
+
+cClass.$define_method('superclass', function(class_superclass) {
+  
+});
+
+cClass.$define_alloc_func(function(class_s_alloc) {
+  
+});
+
 // VN.undef_method(VN.cClass, 'extend_object');
 // VN.undef_method(VN.cClass, 'append_features');
+/* 
+ * top_self.js
+ * vienna
+ * 
+ * Created by Adam Beynon.
+ * Copyright 2009 Adam Beynon.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+/**
+  'main' object inside runtime
+*/
+VN.top_self = VN.obj_alloc(cObject);
+
+VN.top_self.$define_singleton_method('to_s', function() {
+  return 'main' ;
+});
+
+/* 
+ * comparable.js
+ * vienna
+ * 
+ * Created by Adam Beynon.
+ * Copyright 2009 Adam Beynon.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+var mComparable = RModule.define('Comparable');
+
+mComparable.$define_method('==', function(obj) {
+  if (this == obj) return true ;
+  return false;
+});
+
+mComparable.$define_method('>', function(cmp_gt) {
+  
+});
+
+mComparable.$define_method('>=', function(cmp_ge) {
+  
+});
+
+mComparable.$define_method('<', function(cmp_lt) {
+  
+});
+
+mComparable.$define_method('<=', function(cmp_le) {
+  
+});
+
+mComparable.$define_method('between?', function(cmp_between) {
+  
+});
+
+/* 
+ * enumerable.js
+ * vienna
+ * 
+ * Created by Adam Beynon.
+ * Copyright 2009 Adam Beynon.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+var mEnumerable = RModule.define('Enumerable');
+
+mEnumerable.$define_method('to_a', function(enum_to_a) {
+  
+});
+
+mEnumerable.$define_method('entries', function(enum_to_a) {
+  
+});
+
+mEnumerable.$define_method('sort', function(enum_sort) {
+  
+});
+
+mEnumerable.$define_method('sort_by', function(enum_sort_by) {
+  
+});
+
+mEnumerable.$define_method('grep', function(enum_grep) {
+  
+});
+
+mEnumerable.$define_method('count', function(enum_count) {
+  
+});
+
+mEnumerable.$define_method('find', function(enum_find) {
+  
+});
+
+mEnumerable.$define_method('detect', function(enum_find) {
+  
+});
+
+mEnumerable.$define_method('find_index', function(enum_find_index) {
+  
+});
+
+mEnumerable.$define_method('find_all', function(enum_find_all) {
+  
+});
+
+mEnumerable.$define_method('select', function(enum_find_all) {
+  
+});
+
+mEnumerable.$define_method('reject', function(enum_reject) {
+  
+});
+
+mEnumerable.$define_method('collect', function(enum_collect) {
+  
+});
+
+mEnumerable.$define_method('map', function(enum_collect) {
+  
+});
+
+mEnumerable.$define_method('inject', function(enum_inject) {
+  
+});
+
+mEnumerable.$define_method('reduce', function(enum_inject) {
+  
+});
+
+mEnumerable.$define_method('partition', function(enum_partition) {
+  
+});
+
+mEnumerable.$define_method('group_by', function(enum_group_by) {
+  
+});
+
+mEnumerable.$define_method('first', function(enum_first) {
+  
+});
+
+mEnumerable.$define_method('all', function(enum_all) {
+  
+});
+
+mEnumerable.$define_method('any?', function(enum_any) {
+  
+});
+
+mEnumerable.$define_method('one?', function(enum_one) {
+  
+});
+
+mEnumerable.$define_method('none?', function(enum_none) {
+  
+});
+
+mEnumerable.$define_method('min', function(enum_min) {
+  
+});
+
+mEnumerable.$define_method('max', function(enum_max) {
+  
+});
+
+mEnumerable.$define_method('minmax', function(enum_minmax) {
+  
+});
+
+mEnumerable.$define_method('min_by', function(enum_min_by) {
+  
+});
+
+mEnumerable.$define_method('max_by', function(enum_max_by) {
+  
+});
+
+mEnumerable.$define_method('minmax_by', function(enum_minmax_by) {
+  
+});
+
+mEnumerable.$define_method('include?', function(enum_member) {
+  
+});
+
+mEnumerable.$define_method('member?', function(enum_member) {
+  
+});
+
+mEnumerable.$define_method('each_with_index', function(enum_each_with_index) {
+  
+});
+
+mEnumerable.$define_method('reverse_each', function(enum_reverse_each) {
+  
+});
+
+mEnumerable.$define_method('zip', function(enum_zip) {
+  
+});
+
+mEnumerable.$define_method('take', function(enum_take) {
+  
+});
+
+mEnumerable.$define_method('take_while', function(enum_take_while) {
+  
+});
+
+mEnumerable.$define_method('drop', function(enum_drop) {
+  
+});
+
+mEnumerable.$define_method('drop_while', function(enum_drop_while) {
+  
+});
+
+mEnumerable.$define_method('cycle', function(enum_cycle) {
+  
+});
+
 /* 
  * string.js
  * vienna
@@ -1010,6 +1443,10 @@ cClass.$define_alloc_func(VN.class_s_alloc);
 String.prototype.$klass = cString ;
 String.prototype.$type = VN.STRING ;
 
+String.prototype.$call = RObject.prototype.$call;
+
+
+
 cString.$define_alloc_func(function() {
   return new String();
 });
@@ -1018,19 +1455,57 @@ cString.$define_singleton_method('try_convert', function(obj) {
   
 });
 
-cString.$define_method('initialize', VN.str_init, -1);
-cString.$define_method('initialize_copy', VN.str_replace, 1);
-cString.$define_method('<=>', VN.str_cmp_m, 1);
-cString.$define_method('==', VN.str_equal, 1);
-cString.$define_method('eql?', VN.str_eql, 1);
-cString.$define_method('hash', VN.str_hash_m, 0);
-cString.$define_method('casecmp', VN.str_casecmp, 1);
-cString.$define_method('+', VN.str_plus, 1);
-cString.$define_method('*', VN.str_times, 1);
-cString.$define_method('%', VN.str_format_m, 1);
-cString.$define_method('[]', VN.str_aref_m, -1);
-cString.$define_method('[]=', VN.str_aset_m, -1);
-cString.$define_method('insert', VN.str_insert, 2);
+cString.$define_method('initialize', function(str_init) {
+  
+});
+
+cString.$define_method('initialize_copy', function(str_replace) {
+  
+});
+
+cString.$define_method('<=>', function(str_cmp_m) {
+  
+});
+
+cString.$define_method('==', function(str_equal) {
+  
+});
+
+cString.$define_method('eql?', function(str_eql) {
+  
+});
+
+cString.$define_method('hash', function(str_hash_m) {
+  
+});
+
+cString.$define_method('casecmp', function(str_casecmp) {
+  
+});
+
+cString.$define_method('+', function(str_plus) {
+  
+});
+
+cString.$define_method('*', function(str_times) {
+  
+});
+
+cString.$define_method('%', function(str_format_m) {
+  
+});
+
+cString.$define_method('[]', function(str_aref_m) {
+  
+});
+
+cString.$define_method('[]=', function(str_aset_m) {
+  
+});
+
+cString.$define_method('insert', function(str_insert) {
+  
+});
 
 cString.$define_method('length', function() {
   return this.length;
@@ -1040,40 +1515,71 @@ cString.$define_method('size', function() {
   return this.length;
 });
 
-cString.$define_method('bytesize', VN.str_bytesize, 0);
-cString.$define_method('empty?', VN.str_empty, 0);
-cString.$define_method('=~', VN.str_match, 1);
-cString.$define_method('match', VN.str_match_m, -1);
-cString.$define_method('succ', VN.str_succ, 0);
-cString.$define_method('succ!', VN.str_succ_bang, 0);
-cString.$define_method('next', VN.str_succ, 0);
-cString.$define_method('next!', VN.str_succ_bang, 0);
-cString.$define_method('upto', VN.str_upto, -1);
-cString.$define_method('index', VN.str_index_m, -1);
-cString.$define_method('rindex', VN.str_rindex_m, -1);
-cString.$define_method('replace', VN.str_replace, 1);
-cString.$define_method('clear', VN.str_clear, 0);
-cString.$define_method('chr', VN.str_chr, 0);
-cString.$define_method('getbyte', VN.str_getbyte, 1);
-cString.$define_method('setbyte', VN.str_setbyte, 2);
-
-VN.str_to_i = function(argc, argv, self) {
-  var base ;
-  if (argc == 0) {
-    base = 10 ;
-  }
-  else {
-    base = argv[0] ;
-  }
+cString.$define_method('bytesize', function(str_bytesize) {
   
-  if (base < 0) {
-    VN.arg_error('invalid radix: ' + base);
-  }
-  return VN.str_to_inum(self, base, VN.Qfalse);
-}
+});
 
-cString.$define_method('to_i', VN.str_to_i, -1);
-cString.$define_method('to_f', VN.str_to_f, 0);
+cString.$define_method('empty?', function(str_empty) {
+  
+});
+
+cString.$define_method('=~', function(str_match) {
+  
+});
+
+cString.$define_method('match', function(str_match_m) {
+  
+});
+
+cString.$define_method('succ', function(str_succ) {
+  
+});
+
+cString.$define_method('next', function(str_succ) {
+  
+});
+
+cString.$define_method('upto', function(str_upto) {
+  
+});
+
+cString.$define_method('index', function(str_index_m) {
+  
+});
+
+cString.$define_method('rindex', function(str_rindex_m) {
+  
+});
+
+cString.$define_method('replace', function(str_replace) {
+  
+});
+
+cString.$define_method('clear', function(str_clear) {
+  
+});
+
+cString.$define_method('chr', function(str_chr) {
+  
+});
+
+cString.$define_method('getbyte', function(str_getbyte) {
+  
+});
+
+cString.$define_method('setbyte', function(str_setbyte) {
+  
+});
+
+
+cString.$define_method('to_i', function(str_to_i) {
+
+});
+
+cString.$define_method('to_f', function(str_to_f) {
+  
+});
+
 
 cString.$define_method('to_s', function() {
   return new String(this);
@@ -1169,3 +1675,453 @@ cString.$define_method('encoding', VN.obj_encoding, 0); /* in encoding.c */
 cString.$define_method('force_encoding', VN.str_force_encoding, 1);
 cString.$define_method('valid_encoding?', VN.str_valid_encoding_p, 0);
 cString.$define_method('ascii_only?', VN.str_is_ascii_only_p, 0);
+
+/* 
+ * string.js
+ * vienna
+ * 
+ * Created by Adam Beynon.
+ * Copyright 2009 Adam Beynon.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+ 
+Number.prototype.$klass = cNumeric ;
+Number.prototype.$type = VN.NUMBER ;
+
+// VN.include_module(VN.cNumeric, VN.mComparable);
+RModule.include(cNumeric, mComparable);
+
+cNumeric.$define_method('singleton_method_added', function() {
+  
+});
+
+cNumeric.$define_method('initialize_copy', function() {
+  
+});
+
+cNumeric.$define_method('coerce', function() {
+  
+});
+
+cNumeric.$define_method('+@', function() {
+  
+});
+
+cNumeric.$define_method('-@', function() {
+  
+});
+
+cNumeric.$define_method('<=>', function() {
+  
+});
+
+cNumeric.$define_method('eql?', function() {
+  
+});
+
+cNumeric.$define_method('quo', function() {
+  
+});
+
+cNumeric.$define_method('fdiv', function() {
+  
+});
+
+cNumeric.$define_method('div', function() {
+  
+});
+
+cNumeric.$define_method('divmod', function() {
+  
+});
+
+cNumeric.$define_method('modulo', function() {
+  
+});
+
+cNumeric.$define_method('remainder', function() {
+  
+});
+
+cNumeric.$define_method('abs', function() {
+  
+});
+
+cNumeric.$define_method('magnitude', function() {
+  
+});
+
+cNumeric.$define_method('to_int', function() {
+  
+});
+
+cNumeric.$define_method('real?', function() {
+  
+});
+
+cNumeric.$define_method('integer?', function() {
+  
+});
+
+cNumeric.$define_method('zero?', function() {
+  
+});
+
+cNumeric.$define_method('nonzero?', function() {
+  
+});
+
+cNumeric.$define_method('floor', function() {
+  
+});
+
+cNumeric.$define_method('ceil', function() {
+  
+});
+
+cNumeric.$define_method('round', function() {
+  
+});
+
+cNumeric.$define_method('truncate', function() {
+  
+});
+
+cNumeric.$define_method('step', function() {
+  
+});
+
+cNumeric.$define_method('odd?', function() {
+  
+});
+
+cNumeric.$define_method('even?', function() {
+  
+});
+
+cNumeric.$define_method('upto', function() {
+  
+});
+
+cNumeric.$define_method('downto', function() {
+  
+});
+
+cNumeric.$define_method('times', function() {
+  
+});
+
+cNumeric.$define_method('succ', function() {
+  
+});
+
+cNumeric.$define_method('next', function() {
+  
+});
+
+cNumeric.$define_method('pred', function() {
+  
+});
+
+cNumeric.$define_method('chr', function() {
+  
+});
+
+cNumeric.$define_method('ord', function() {
+  
+});
+
+cNumeric.$define_method('to_i', function() {
+  
+});
+
+cNumeric.$define_method('to_s', function() {
+  
+});
+
+cNumeric.$define_method('+', function() {
+  
+});
+
+cNumeric.$define_method('-', function() {
+  
+});
+
+cNumeric.$define_method('*', function() {
+  
+});
+
+cNumeric.$define_method('/', function() {
+  
+});
+
+cNumeric.$define_method('%', function() {
+  
+});
+
+cNumeric.$define_method('**', function() {
+  
+});
+
+cNumeric.$define_method('==', function() {
+  
+});
+
+cNumeric.$define_method('>', function() {
+  
+});
+
+cNumeric.$define_method('>=', function() {
+  
+});
+
+cNumeric.$define_method('<', function() {
+  
+});
+
+cNumeric.$define_method('<=', function() {
+  
+});
+
+cNumeric.$define_method('~', function() {
+  
+});
+
+cNumeric.$define_method('&', function() {
+  
+});
+
+cNumeric.$define_method('|', function() {
+  
+});
+
+cNumeric.$define_method('^', function() {
+  
+});
+
+cNumeric.$define_method('[]', function() {
+  
+});
+
+cNumeric.$define_method('<<', function() {
+  
+});
+
+cNumeric.$define_method('>>', function() {
+  
+});
+
+cNumeric.$define_method('to_f', function() {
+  
+});
+
+/* 
+ * array.js
+ * vienna
+ * 
+ * Created by Adam Beynon.
+ * Copyright 2009 Adam Beynon.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+Array.prototype.$klass = cArray ;
+Array.prototype.$type = VN.ARRAY ;
+
+Array.prototype.$call = RObject.prototype.$call;
+
+RModule.include(cArray, mEnumerable);
+
+/**
+  Array#allocate
+*/
+VN.ary_alloc = function() {
+  return new Array() ;
+};
+
+/**
+  Array#initialize (*args)
+*/
+VN.ary_initialize = function() {
+  for (var i = 0; i < arguments.length; i++) {
+    this.push(arguments[i]);
+  }
+};
+
+VN.define_alloc_func(VN.cArray, VN.ary_alloc);
+VN.define_singleton_method(VN.cArray, '[]', VN.ary_s_create, -1);
+VN.define_singleton_method(VN.cArray, 'try_convert', VN.ary_s_try_convert, 1);
+VN.define_method(VN.cArray, 'initialize', VN.ary_initialize, -1);
+VN.define_method(VN.cArray, 'initialize_copy', VN.ary_replace, 1);
+
+VN.ary_inspect = function() {
+  if (this.length == 0) return '[]';
+  var str = '[';
+  for (var i = 0; i < (this.length - 1); i++) {
+    str += (VN.funcall(this[i], 'inspect', []) + ', ');
+  }
+  str += (VN.funcall(this[this.length - 1], 'inspect', []) + ']');
+  return str ;
+};
+
+VN.ary_to_a = function() {
+  return this;
+};
+
+VN.ary_to_ary_m = function() {
+  return this;
+};
+
+VN.define_method(VN.cArray, 'to_s', VN.ary_inspect, 0);
+VN.define_method(VN.cArray, 'inspect', VN.ary_inspect, 0);
+VN.define_method(VN.cArray, 'to_a', VN.ary_to_a, 0);
+VN.define_method(VN.cArray, 'to_ary', VN.ary_to_ary_m, 0);
+VN.define_method(VN.cArray, 'frozen?',  VN.ary_frozen_p, 0);
+
+VN.ary_equal = function(ary) {
+  if (ary == this) return VN.Qtrue ;
+  if (ary.type != VN.T_ARRAY) {
+    if (!VN.respond_to(ary, 'to_ary')) {
+      return VN.Qfalse;
+    }
+    return VN.equal(ary, this);
+  }
+  if (this.length != ary.length) return VN.Qfalse ;
+  return VN.Qtrue;
+};
+
+VN.define_method(VN.cArray, '==', VN.ary_equal, 1);
+VN.define_method(VN.cArray, 'eql?', VN.ary_eql, 1);
+VN.define_method(VN.cArray, 'hash', VN.ary_hash, 0);
+
+VN.ary_aref = function() {
+  if (arguments.length == 2) {
+    var begin = arguments[0] ;
+    var end = arguments[1] ;
+    if (begin < 0) begin += this.length ;
+    return VN.ary_subseq.call(this, begin, length) ;
+  }
+};
+
+VN.define_method(VN.cArray, '[]', VN.ary_aref, -1);
+VN.define_method(VN.cArray, '[]=', VN.ary_aset, -1);
+VN.define_method(VN.cArray, 'at', VN.ary_at, 1);
+VN.define_method(VN.cArray, 'fetch', VN.ary_fetch, -1);
+VN.define_method(VN.cArray, 'first', VN.ary_first, -1);
+VN.define_method(VN.cArray, 'last', VN.ary_last, -1);
+VN.define_method(VN.cArray, 'concat', VN.ary_concat, 1);
+VN.define_method(VN.cArray, '<<', VN.ary_push, 1);
+VN.define_method(VN.cArray, 'push', VN.ary_push_m, -1);
+VN.define_method(VN.cArray, 'pop', VN.ary_pop_m, -1);
+VN.define_method(VN.cArray, 'shift', VN.ary_shift_m, -1);
+VN.define_method(VN.cArray, 'unshift', VN.ary_unshift_m, -1);
+VN.define_method(VN.cArray, 'insert', VN.ary_insert, -1);
+VN.define_method(VN.cArray, 'each', VN.ary_each, 0);
+VN.define_method(VN.cArray, 'each_index', VN.ary_each_index, 0);
+VN.define_method(VN.cArray, 'reverse_each', VN.ary_reverse_each, 0);
+VN.define_method(VN.cArray, 'length', VN.ary_length, 0);
+VN.define_alias(VN.cArray,  'size', 'length');
+VN.define_method(VN.cArray, 'empty?', VN.ary_empty_p, 0);
+VN.define_method(VN.cArray, 'find_index', VN.ary_index, -1);
+VN.define_method(VN.cArray, 'index', VN.ary_index, -1);
+VN.define_method(VN.cArray, 'rindex', VN.ary_rindex, -1);
+VN.define_method(VN.cArray, 'join', VN.ary_join_m, -1);
+VN.define_method(VN.cArray, 'reverse', VN.ary_reverse_m, 0);
+VN.define_method(VN.cArray, 'reverse!', VN.ary_reverse_bang, 0);
+VN.define_method(VN.cArray, 'sort', VN.ary_sort, 0);
+VN.define_method(VN.cArray, 'sort!', VN.ary_sort_bang, 0);
+VN.define_method(VN.cArray, 'collect', VN.ary_collect, 0);
+VN.define_method(VN.cArray, 'collect!', VN.ary_collect_bang, 0);
+VN.define_method(VN.cArray, 'map', VN.ary_collect, 0);
+VN.define_method(VN.cArray, 'map!', VN.ary_collect_bang, 0);
+VN.define_method(VN.cArray, 'select', VN.ary_select, 0);
+VN.define_method(VN.cArray, 'values_at', VN.ary_values_at, -1);
+VN.define_method(VN.cArray, 'delete', VN.ary_delete, 1);
+VN.define_method(VN.cArray, 'delete_at', VN.ary_delete_at_m, 1);
+VN.define_method(VN.cArray, 'delete_if', VN.ary_delete_if, 0);
+VN.define_method(VN.cArray, 'reject', VN.ary_reject, 0);
+VN.define_method(VN.cArray, 'reject!', VN.ary_reject_bang, 0);
+VN.define_method(VN.cArray, 'zip', VN.ary_zip, -1);
+VN.define_method(VN.cArray, 'transpose', VN.ary_transpose, 0);
+VN.define_method(VN.cArray, 'replace', VN.ary_replace, 1);
+VN.define_method(VN.cArray, 'clear', VN.ary_clear, 0);
+VN.define_method(VN.cArray, 'fill', VN.ary_fill, -1);
+VN.define_method(VN.cArray, 'include?', VN.ary_includes, 1);
+VN.define_method(VN.cArray, '<=>', VN.ary_cmp, 1);
+
+VN.define_method(VN.cArray, 'slice', VN.ary_aref, -1);
+VN.define_method(VN.cArray, 'slice!', VN.ary_slice_bang, -1);
+
+VN.define_method(VN.cArray, 'assoc', VN.ary_assoc, 1);
+VN.define_method(VN.cArray, 'rassoc', VN.ary_rassoc, 1);
+
+VN.define_method(VN.cArray, '+', VN.ary_plus, 1);
+VN.define_method(VN.cArray, '*', VN.ary_times, 1);
+
+VN.define_method(VN.cArray, '-', VN.ary_diff, 1);
+VN.define_method(VN.cArray, '&', VN.ary_and, 1);
+VN.define_method(VN.cArray, '|', VN.ary_or, 1);
+
+VN.define_method(VN.cArray, 'uniq', VN.ary_uniq, 0);
+VN.define_method(VN.cArray, 'uniq!', VN.ary_uniq_bang, 0);
+VN.define_method(VN.cArray, 'compact', VN.ary_compact, 0);
+VN.define_method(VN.cArray, 'compact!', VN.ary_compact_bang, 0);
+VN.define_method(VN.cArray, 'flatten', VN.ary_flatten, -1);
+VN.define_method(VN.cArray, 'flatten!', VN.ary_flatten_bang, -1);
+VN.define_method(VN.cArray, 'count', VN.ary_count, -1);
+VN.define_method(VN.cArray, 'shuffle!', VN.ary_shuffle_bang, 0);
+VN.define_method(VN.cArray, 'shuffle', VN.ary_shuffle, 0);
+VN.define_method(VN.cArray, 'sample', VN.ary_sample, -1);
+VN.define_method(VN.cArray, 'cycle', VN.ary_cycle, -1);
+VN.define_method(VN.cArray, 'permutation', VN.ary_permutation, -1);
+VN.define_method(VN.cArray, 'combination', VN.ary_combination, 1);
+VN.define_method(VN.cArray, 'product', VN.ary_product, -1);
+
+VN.define_method(VN.cArray, 'take', VN.ary_take, 1);
+VN.define_method(VN.cArray, 'take_while', VN.ary_take_while, 0);
+VN.define_method(VN.cArray, 'drop', VN.ary_drop, 1);
+VN.define_method(VN.cArray, 'drop_while', VN.ary_drop_while, 0);
+
+
+
+// require('core/hash');
+// require('core/struct');
+// require('core/regexp');
+// require('core/range');
+// require('core/time');
+// require('core/proc');
+// require('core/math');
+// require('core/enumerator');

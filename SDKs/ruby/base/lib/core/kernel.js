@@ -44,32 +44,37 @@ mKernel.$define_method('eql?', function() {
   
 });
 
-// VN.define_method(VN.mKernel, 'nil?', VN.rb_false, 0);
-// VN.define_method(VN.mKernel, '===', VN.equal, 1);
-// VN.define_method(VN.mKernel, '=~', VN.obj_match, 1);
-// VN.define_method(VN.mKernel, '!~', VN.obj_not_match, 1);
-// VN.define_method(VN.mKernel, 'eql?', VN.obj_equal, 1);
 
-VN.obj_init_copy = function (self, orig) {
-  if (self == orig) return self ;
-  if (self.type != orig.type || obj.klass != orig.klass) {
-    VN.type_error('initialize_copy should take same class object');
-  }
-  return self;
-};
+
 
 mKernel.$define_method('class', VN.obj_class, 0);
+
 mKernel.$define_method('clone', VN.obj_clone, 0);
+
 mKernel.$define_method('dup', VN.obj_dup, 0);
-mKernel.$define_method('initialize_copy', VN.obj_init_copy, 1);
+
+mKernel.$define_method('initialize_copy', function(orig) {
+  if (orig == this) return this ;
+  if (this.$type != orig.$type || this.$klass != orig.$klass) {
+    VN.type_error('initialize_copy should take same class object') ;
+  }
+  return this ;
+});
 
 mKernel.$define_method('taint', VN.obj_taint, 0);
+
 mKernel.$define_method('tainted?', VN.obj_tainted, 0);
+
 mKernel.$define_method('untaint', VN.obj_untaint, 0);
+
 mKernel.$define_method('untrust', VN.obj_untrust, 0);
+
 mKernel.$define_method('untrusted?', VN.obj_untrusted, 0);
+
 mKernel.$define_method('trust', VN.obj_trust, 0);
+
 mKernel.$define_method('freeze', VN.obj_freeze, 0);
+
 mKernel.$define_method('frozen?', VN.obj_frozen_p, 0);
 
 

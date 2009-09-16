@@ -27,6 +27,10 @@
 String.prototype.$klass = cString ;
 String.prototype.$type = VN.STRING ;
 
+String.prototype.$call = RObject.prototype.$call;
+
+
+
 cString.$define_alloc_func(function() {
   return new String();
 });
@@ -35,19 +39,57 @@ cString.$define_singleton_method('try_convert', function(obj) {
   
 });
 
-cString.$define_method('initialize', VN.str_init, -1);
-cString.$define_method('initialize_copy', VN.str_replace, 1);
-cString.$define_method('<=>', VN.str_cmp_m, 1);
-cString.$define_method('==', VN.str_equal, 1);
-cString.$define_method('eql?', VN.str_eql, 1);
-cString.$define_method('hash', VN.str_hash_m, 0);
-cString.$define_method('casecmp', VN.str_casecmp, 1);
-cString.$define_method('+', VN.str_plus, 1);
-cString.$define_method('*', VN.str_times, 1);
-cString.$define_method('%', VN.str_format_m, 1);
-cString.$define_method('[]', VN.str_aref_m, -1);
-cString.$define_method('[]=', VN.str_aset_m, -1);
-cString.$define_method('insert', VN.str_insert, 2);
+cString.$define_method('initialize', function(str_init) {
+  
+});
+
+cString.$define_method('initialize_copy', function(str_replace) {
+  
+});
+
+cString.$define_method('<=>', function(str_cmp_m) {
+  
+});
+
+cString.$define_method('==', function(str_equal) {
+  
+});
+
+cString.$define_method('eql?', function(str_eql) {
+  
+});
+
+cString.$define_method('hash', function(str_hash_m) {
+  
+});
+
+cString.$define_method('casecmp', function(str_casecmp) {
+  
+});
+
+cString.$define_method('+', function(str_plus) {
+  
+});
+
+cString.$define_method('*', function(str_times) {
+  
+});
+
+cString.$define_method('%', function(str_format_m) {
+  
+});
+
+cString.$define_method('[]', function(str_aref_m) {
+  
+});
+
+cString.$define_method('[]=', function(str_aset_m) {
+  
+});
+
+cString.$define_method('insert', function(str_insert) {
+  
+});
 
 cString.$define_method('length', function() {
   return this.length;
@@ -57,40 +99,71 @@ cString.$define_method('size', function() {
   return this.length;
 });
 
-cString.$define_method('bytesize', VN.str_bytesize, 0);
-cString.$define_method('empty?', VN.str_empty, 0);
-cString.$define_method('=~', VN.str_match, 1);
-cString.$define_method('match', VN.str_match_m, -1);
-cString.$define_method('succ', VN.str_succ, 0);
-cString.$define_method('succ!', VN.str_succ_bang, 0);
-cString.$define_method('next', VN.str_succ, 0);
-cString.$define_method('next!', VN.str_succ_bang, 0);
-cString.$define_method('upto', VN.str_upto, -1);
-cString.$define_method('index', VN.str_index_m, -1);
-cString.$define_method('rindex', VN.str_rindex_m, -1);
-cString.$define_method('replace', VN.str_replace, 1);
-cString.$define_method('clear', VN.str_clear, 0);
-cString.$define_method('chr', VN.str_chr, 0);
-cString.$define_method('getbyte', VN.str_getbyte, 1);
-cString.$define_method('setbyte', VN.str_setbyte, 2);
-
-VN.str_to_i = function(argc, argv, self) {
-  var base ;
-  if (argc == 0) {
-    base = 10 ;
-  }
-  else {
-    base = argv[0] ;
-  }
+cString.$define_method('bytesize', function(str_bytesize) {
   
-  if (base < 0) {
-    VN.arg_error('invalid radix: ' + base);
-  }
-  return VN.str_to_inum(self, base, VN.Qfalse);
-}
+});
 
-cString.$define_method('to_i', VN.str_to_i, -1);
-cString.$define_method('to_f', VN.str_to_f, 0);
+cString.$define_method('empty?', function(str_empty) {
+  
+});
+
+cString.$define_method('=~', function(str_match) {
+  
+});
+
+cString.$define_method('match', function(str_match_m) {
+  
+});
+
+cString.$define_method('succ', function(str_succ) {
+  
+});
+
+cString.$define_method('next', function(str_succ) {
+  
+});
+
+cString.$define_method('upto', function(str_upto) {
+  
+});
+
+cString.$define_method('index', function(str_index_m) {
+  
+});
+
+cString.$define_method('rindex', function(str_rindex_m) {
+  
+});
+
+cString.$define_method('replace', function(str_replace) {
+  
+});
+
+cString.$define_method('clear', function(str_clear) {
+  
+});
+
+cString.$define_method('chr', function(str_chr) {
+  
+});
+
+cString.$define_method('getbyte', function(str_getbyte) {
+  
+});
+
+cString.$define_method('setbyte', function(str_setbyte) {
+  
+});
+
+
+cString.$define_method('to_i', function(str_to_i) {
+
+});
+
+cString.$define_method('to_f', function(str_to_f) {
+  
+});
+
 
 cString.$define_method('to_s', function() {
   return new String(this);

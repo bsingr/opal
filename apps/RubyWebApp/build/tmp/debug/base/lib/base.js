@@ -141,4 +141,23 @@ VN.require('core/module');
 
 VN.require('core/class');
 
+VN.require('core/top_self');
+
+
+VN.require('core/comparable');
+
+VN.require('core/enumerable');
+
 VN.require('core/string');
+
+VN.require('core/numeric');
+
+VN.require('core/array');
+// require('core/hash');
+// require('core/struct');
+// require('core/regexp');
+// require('core/range');
+// require('core/time');
+// require('core/proc');
+// require('core/math');
+// require('core/enumerator');
