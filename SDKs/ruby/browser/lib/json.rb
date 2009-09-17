@@ -43,3 +43,5 @@ class JSON
   end
   
 end
+
+require 'json/parse'

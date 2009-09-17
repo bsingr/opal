@@ -1,5 +1,5 @@
 # 
-# models.rb
+# generate.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -28,21 +28,8 @@ module Vienna
   
   class RubyParser
     
-    class RModule
-      
-      def initialize(options)
-        @body = options[:body]
-        puts options[:cpath]
-      end
-    end
-    
-    class RClass
-      
-      def initialize(options)
-        @cpath = options[:cpath]
-        @superclass = options[:superclass]
-        @bodystmt = options[:bodystmt]
-      end
+    def generate_class(klass)
+      write "var #{klass.js_name} = RClass.define('#{klass.klass_name}', #{klass.super_klass}) ;"
     end
     
   end

@@ -29,11 +29,11 @@ module Vienna
   class RubyParser
     
     def node_module(options)
-      Vienna::RubyParser::RModule.new(options)
+      Vienna::RubyParser::RModule.new(self, options)
     end
     
     def node_class(options)
-      Vienna::RubyParser::RClass.new(options)
+      Vienna::RubyParser::RClass.new(self, options)
     end
     
     # instance level def
@@ -47,8 +47,72 @@ module Vienna
     end
     
     # generic node, for use anywhere...
-    def node_generic(type, options)
+    def node_generic(type, options={})
+      Vienna::RubyParser::RNode.new type, options
     end
+    
+    class RModule
+      
+      def initialize(parser, options)
+        @parser = parser
+        
+        @body = options[:body]
+        # puts options[:cpath]
+      end
+    end
+    
+    class RClass
+      
+      attr_accessor :parser
+      
+      def initialize(parser, options)
+        @parser = parser
+        
+        @cpath = options[:cpath]
+        @superclass = options[:superclass]
+        @bodystmt = options[:bodystmt]
+        
+        # @parser.write "Writing class definition\n"
+        # @parser.write "#{@cpath}\n"
+        # @parser.write "#{@superclass}\n"
+        # @parser.write "#{@bodystmt}\n"
+        # @parser.write self
+        @parser.generate_class self
+      end
+      
+      def js_name
+        "c#{@cpath[:cname]}"
+      end
+      
+      def klass_name
+        @cpath[:cname]
+      end
+      
+      def super_klass
+        # @superclass
+        ""
+      end
+    end
+    
+    class RNode
+      
+      def initialize(type, options={})
+        @type = type
+        @options = options
+      end
+      
+      def [](id)
+        @options[id]
+      end
+      
+      def type
+        @type
+      end
+      
+      def to_s
+        "(#{@type}: #{@options.inspect})"
+      end
+    end
+    
   end
-  
 end

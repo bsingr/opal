@@ -70,10 +70,15 @@ class Vienna::RubyParser < Racc::Parser
 	
 	def build!
 	  puts "Buildingggggggg #{@source}"
-	  o = File.new(@destination, 'w')
-	  o.write ""
-	  o.close
+	  @output_file = File.new @destination, 'w'
+    # o.write ""
+    # o.close
     puts do_parse
+    @output_file.close
+	end
+	
+	def write(str)
+	 @output_file.write str
 	end
 	
 	KEYWORDS = {

@@ -161,3 +161,6 @@ VN.require('core/hash');
 // require('core/proc');
 // require('core/math');
 // require('core/enumerator');
+
+VN.require('core/other');
+

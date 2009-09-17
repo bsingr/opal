@@ -26,6 +26,6 @@
 
 class History
   
-  
+
   
 end

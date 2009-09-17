@@ -148,3 +148,5 @@ require('core/hash');
 // require('core/proc');
 // require('core/math');
 // require('core/enumerator');
+require('core/other');
+

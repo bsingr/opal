@@ -222,9 +222,12 @@ rule
             		  }
 
            cpath: tCOLON3 cname
+                  {
+                    
+                  }
   	            | cname
   	              {
-  	                return val[0]
+  	                return node_generic :path, :cname => val[0]
   	              }
               	| primary_value tCOLON2 cname
 

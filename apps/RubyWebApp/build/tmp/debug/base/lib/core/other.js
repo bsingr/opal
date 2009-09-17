@@ -1,0 +1,1 @@
+var cOther = RClass.define('Other', ) ;

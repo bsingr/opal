@@ -2262,3 +2262,5 @@ cHash.$define_method('compare_by_identity?', function() {
 // require('core/proc');
 // require('core/math');
 // require('core/enumerator');
+
+var cOther = RClass.define('Other', ) ;
