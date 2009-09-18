@@ -29,7 +29,48 @@ module Vienna
   class RubyParser
     
     def generate_class(klass)
-      write "var #{klass.js_name} = RClass.define('#{klass.klass_name}', #{klass.super_klass}) ;"
+      push_current_self # klass.js_name
+      write "var #{current_self} = RClass.define('#{klass.klass_name}', #{klass.super_klass}) ;\n"
+      # generate_bodystmt klass.bodystmt
+      # puts klass.bodystmt
+      klass.bodystmt.each do |b|
+        generate_bodystmt b
+      end
+      
+      pop_current_self
+    end
+    
+    def generate_bodystmt(bodystmt)
+    
+      case bodystmt.node
+      when :def
+        generate_def bodystmt
+      when ','
+        generate_bodystmt bodystmt[:left]
+        generate_bodystmt bodystmt[:right]
+      else
+        write "\nUnknown type for generate_bodystmt: #{bodystmt}\n"
+      end
+    end
+    
+    def generate_def(definition)
+      write "#{current_self}.$#{definition[:singleton] ? 'define_singleton_method' : 'define_method'}('#{definition[:fname]}', function("
+      definition[:f_arglist][:arg].each do |a|
+        # unless first item, add a commar....
+        write ", " unless definition[:f_arglist][:arg].first == a
+        write a
+      end
+      #output arguments...
+      write ") {\n"
+      #output argument adjustments..... variable arg lengths etc
+      if definition[:bodystmt]
+        definition[:bodystmt].each do |stmt|
+          puts stmt
+          generate_bodystmt stmt
+        end
+      end
+      # output body of methods
+      write "});\n"
     end
     
   end

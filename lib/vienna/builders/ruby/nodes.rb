@@ -63,7 +63,7 @@ module Vienna
     
     class RClass
       
-      attr_accessor :parser
+      attr_accessor :parser, :bodystmt
       
       def initialize(parser, options)
         @parser = parser
@@ -81,23 +81,22 @@ module Vienna
       end
       
       def js_name
-        "c#{@cpath[:cname]}"
+        @js_name ||= "c#{@cpath[:cname]}"
       end
       
       def klass_name
-        @cpath[:cname]
+        @klass_name ||= @cpath[:cname]
       end
       
       def super_klass
-        # @superclass
-        ""
+        "cObject"
       end
     end
     
     class RNode
       
-      def initialize(type, options={})
-        @type = type
+      def initialize(node, options={})
+        @node = node
         @options = options
       end
       
@@ -105,12 +104,16 @@ module Vienna
         @options[id]
       end
       
-      def type
-        @type
+      def node
+        @node
       end
       
       def to_s
-        "(#{@type}: #{@options.inspect})"
+        "('#{@node}' #{@options.inspect})"
+      end
+      
+      def inspect
+        "('#{@node}' #{@options.inspect})"
       end
     end
     

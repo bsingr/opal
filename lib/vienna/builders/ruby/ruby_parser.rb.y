@@ -79,8 +79,6 @@ rule
                 top_compstmt
                   {
                     result = val[0]
-                    puts "result///"
-                    puts result
                   }
 
     top_compstmt: top_stmts opt_terms
@@ -94,14 +92,24 @@ rule
   	            | kBEGIN
 
         bodystmt: compstmt opt_rescue opt_else opt_ensure
+                  {
+                    result = val[0]
+                  }
 
-        compstmt:
-                # none opt_terms
-        stmts opt_terms
+        compstmt: stmts opt_terms
+                  {
+                    result = val[0]
+                  }
 
            stmts: none
                 | stmt
+                  {
+                    result = [val[0]]
+                  }
 		            | stmts terms stmt
+		              {
+                    result = val[0] + [val[2]]
+		              }
 		            | error stmt
 
             stmt: kALIAS fitem
@@ -137,6 +145,7 @@ rule
             		| mlhs '=' arg_value
             		| mlhs '=' mrhs
             		| expr
+            		
 
             expr: command_call
               	| expr kAND expr
@@ -218,7 +227,7 @@ rule
                   }
             		| tCONSTANT
             		  {
-            		    return val[0]
+            		    result = val[0]
             		  }
 
            cpath: tCOLON3 cname
@@ -227,7 +236,7 @@ rule
                   }
   	            | cname
   	              {
-  	                return node_generic :path, :cname => val[0]
+  	                result = node_generic :path, :cname => val[0]
   	              }
               	| primary_value tCOLON2 cname
 
@@ -404,11 +413,11 @@ rule
             		  }
             		| k_def fname f_arglist bodystmt k_end
             		  {
-            		    result = self.node_def(val[1], val[2], val[3])
+            		    result = self.node_generic(:def, :fname => val[1], :f_arglist => val[2], :bodystmt => val[3])
             		  }
             		| k_def singleton dot_or_colon fname f_arglist bodystmt k_end
             		  {
-            		    result = self.node_defs(val[1], val[3], val[4], val[5])
+            		    result = self.node_generic(:def, :singleton => val[1], :fname => val[3], :f_arglist => val[4], :bodystmt => val[5])
             		  }
             		| kBREAK
             		| kNEXT
@@ -634,29 +643,76 @@ xstring_contents: /* none */
 
        f_arglist: '(' f_args rparen
                   {
+                    result = val[1]
                     self.lex_state = :EXPR_BEG
                   }
               	| f_args term
               	  {
-                    puts 'so, yteah, done this'
+                    result = val[0]
                     self.lex_state = :EXPR_BEG
                   }
 
           f_args: f_arg ',' f_optarg ',' f_rest_arg opt_f_block_arg
+                  {
+             		    result = node_generic :arg, :arg => val[0], :optarg => val[2], :rest_arg => val[4], :opt_block_arg => val[5]
+             		  }
               	| f_arg ',' f_optarg ',' f_rest_arg ',' f_arg opt_f_block_arg
+              	  {
+             		    result = node_generic :arg, :arg => val[0], :optarg => val[2], :rest_arg => val[4], :arg2 => val[6], :opt_block_arg => val[7]
+             		  }
               	| f_arg ',' f_optarg opt_f_block_arg
+              	  {
+              	    result = node_generic :arg, :arg => val[0], :optarg => val[2], :opt_block_arg => val[3]
+              	  }
             		| f_arg ',' f_optarg ',' f_arg opt_f_block_arg
+            		  {
+              	    result = node_generic :arg, :arg => val[0], :optarg => val[2], :arg2 => val[4], :opt_block_arg => val[5]
+              	  }
             		| f_arg ',' f_rest_arg opt_f_block_arg
+            		  {
+            		    result = node_generic :arg, :arg => val[0], :rest_arg => val[2], :opt_block_arg => val[3]
+            		  }
              		| f_arg ',' f_rest_arg ',' f_arg opt_f_block_arg
+             		  {
+            		    result = node_generic :arg, :arg => val[0], :rest_arg => val[2], :arg2 => val[4], :opt_block_arg => val[5]
+            		  }
              		| f_arg opt_f_block_arg
+             		  {
+             		    result = node_generic :arg, :arg => val[0], :opt_block_arg => val[1]
+             		  }
             		| f_optarg ',' f_rest_arg opt_f_block_arg
+            		  {
+            		    result = node_generic :optarg, :optarg => val[0], :rest_arg => val[2], :opt_block_arg => val[3]
+            		  }
             		| f_optarg ',' f_rest_arg ',' f_arg opt_f_block_arg
+            		  {
+            		    result = node_generic :optarg, :optarg => val[0], :rest_arg => val[2], :arg => val[4], :opt_block_arg => val[5]
+            		  }
              		| f_optarg opt_f_block_arg
+             		  {
+             		    result = node_generic :optarg, :optarg => val[0], :opt_block_arg => val[1]
+             		  }
             		| f_optarg ',' f_arg opt_f_block_arg
+            		  {
+             		    result = node_generic :optarg, :optarg => val[0], :arg => val[2], :opt_block_arg => val[3]
+             		  }
               	| f_rest_arg opt_f_block_arg
+            	    {
+             		    result = node_generic :rest_arg, :rest_arg => val[0], :opt_block_arg => val[1]
+             		  }
             		| f_rest_arg ',' f_arg opt_f_block_arg
+            		  {
+             		    result = node_generic :rest_arg, :rest_arg => val[0], :arg => val[2], :opt_block_arg => val[3]
+             		  }
             		| f_block_arg
-              	| /* none */
+            		  {
+             		    result = node_generic :block_arg, :block_arg => val[0]
+             		  }
+              	| 
+              	  {
+              	    # none...
+              	    result = nil
+              	  }
 
        f_bad_arg: tCONSTANT
               	| tIVAR
@@ -665,12 +721,25 @@ xstring_contents: /* none */
 
       f_norm_arg: f_bad_arg
               	| tIDENTIFIER
+              	  {
+              	    result = val[0]
+              	  }
 
       f_arg_item: f_norm_arg
+                  {
+                    result = val[0]
+                  }
             		| tLPAREN f_margs rparen
 
            f_arg: f_arg_item
+                  {
+                    result = [val[0]]
+                  }
             		| f_arg ',' f_arg_item
+            		  {
+                    # val[0] + val[2]
+                    result = val[0] + [val[2]]
+            		  }
 
            f_opt: tIDENTIFIER '=' arg_value
 

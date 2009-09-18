@@ -60,6 +60,7 @@ class Vienna::RubyParser < Racc::Parser
 	  @destination = dest
 	  @project = project
 	  @requirements = []
+	  @current_self = 0
 	  
 	  File.open(@source) do |f|
 	    @scanner = StringScanner.new(f.read)
@@ -77,8 +78,37 @@ class Vienna::RubyParser < Racc::Parser
     @output_file.close
 	end
 	
+  # This should simpy parse the given string, and return a syntax tree.
+  # This method is heavily used for parsing ruby code within other contexts,
+  # for example: processing strings containing ruby: "bob is #{@bob.to_a}"
+	def self.parse_to_tree str
+	  return nil
+	end
+	
+  # parse the inpit file, to a destination file, using the given project
+	def self.parse_to_file source, destination, project
+	
+	end
+	
+	# Parse the input, and return a string as output
+	def self.parse str
+	  
+	end
+	
 	def write(str)
 	 @output_file.write str
+	end
+	
+	def push_current_self
+    @current_self += 1
+	end
+	
+	def pop_current_self
+	  @current_self -= 1
+	end
+	
+	def current_self
+	  "$_vn_#{@current_self}"
 	end
 	
 	KEYWORDS = {
@@ -185,13 +215,13 @@ class Vienna::RubyParser < Racc::Parser
       
       # '('
       elsif scanner.scan(/\(/)
-        result = :tLPAREN2
+        result = '('
         if lex_state == :EXPR_BEG || lex_state == :EXPR_MID
           result = :tLPAREN
         elsif space_seen
-          if lex_state = :EXPR_CMDARG
+          if lex_state == :EXPR_CMDARG
             result = :tLPAREN_ARG
-          elsif lex_state = :EXPR_ARG
+          elsif lex_state == :EXPR_ARG
             # throw warning to not put space before arguments
             result = :tLPAREN2
           end

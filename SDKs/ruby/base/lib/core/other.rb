@@ -1,7 +1,11 @@
 class Other
   
-  def initialize
+  def initialize(name)
     
+  end
+  
+  def self.adam william, john, adam
+  
   end
   
 end
