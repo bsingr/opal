@@ -132,7 +132,7 @@ rule
                 | klEND '{' compstmt '}'
             		| lhs '=' command_call
             		  {
-            		    result = self.node_assign(val[0], val[2])
+            		    result = node_generic :assign, :lhs => val[0], :rhs => val[2]
             		  }
             		| mlhs '=' command_call
             		| var_lhs tOP_ASGN command_call
@@ -144,8 +144,7 @@ rule
             		| lhs '=' mrhs
             		| mlhs '=' arg_value
             		| mlhs '=' mrhs
-            		| expr
-            		
+            		| expr            		
 
             expr: command_call
               	| expr kAND expr
@@ -215,6 +214,9 @@ rule
              lhs: variable
 		            | primary_value '[' opt_call_args rbracket
             		| primary_value '.' tIDENTIFIER
+            		  {
+            		    puts 'ZABADOO'
+            		  }
             		| primary_value tCOLON2 tIDENTIFIER
             		| primary_value '.' tCONSTANT
             		| primary_value tCOLON2 tCONSTANT
@@ -285,6 +287,9 @@ rule
             		| kWHILE             | kUNTIL
 
              arg: lhs '=' arg
+                  {
+                    result = node_generic :assign, :lhs => val[0], :rhs => val[2]
+                  }
             		| lhs '=' arg kRESCUE_MOD arg
             		| var_lhs tOP_ASGN arg
             		| var_lhs tOP_ASGN arg kRESCUE_MOD arg
@@ -298,31 +303,100 @@ rule
             		| arg tDOT2 arg
             		| arg tDOT3 arg
             		| arg '+' arg
+            		  {
+            		    result = node_generic :call, :recv => val[0], :meth => '+', :args => [val[2]]
+            		  }
             		| arg '-' arg
+            		  {
+            		    result = node_generic :call, :recv => val[0], :meth => '-', :args => [val[2]]
+            		  }
             		| arg '*' arg
+            		  {
+            		    result = node_generic :call, :recv => val[0], :meth => '*', :args => [val[2]]
+            		  }
             		| arg '/' arg
+            		  {
+            		    result = node_generic :call, :recv => val[0], :meth => '/', :args => [val[2]]
+            		  }
             		| arg '%' arg
+            		  {
+            		    result = node_generic :call, :recv => val[0], :meth => '%', :args => [val[2]]
+            		  }
             		| arg tPOW arg
+            		  {
+            		    result = node_generic :call, :recv => val[0], :meth => '**', :args => [val[2]]
+            		  }
             		| tUMINUS_NUM tINTEGER tPOW arg
             		| tUMINUS_NUM tFLOAT tPOW arg
             		| tUPLUS arg
             		| tUMINUS arg
+            		  {
+            		    result = node_generic :call, :recv => val[1], :meth => '-@', :args => []
+            		  }
             		| arg '|' arg
+            		  {
+            		    result = node_generic :call, :recv => val[0], :meth => '|', :args => [val[2]]
+            		  }
             		| arg '^' arg
+            		  {
+            		    result = node_generic :call, :recv => val[0], :meth => '^', :args => [val[2]]
+            		  }
             		| arg '&' arg
+            		  {
+            		    result = node_generic :call, :recv => val[0], :meth => '&', :args => [val[2]]
+            		  }
             		| arg tCMP arg
+            		  {
+            		    result = node_generic :call, :recv => val[0], :meth => '<=>', :args => [val[2]]
+            		  }
             		| arg '>' arg
+            		  {
+            		    result = node_generic :call, :recv => val[0], :meth => '>', :args => [val[2]]
+            		  }
             		| arg tGEQ arg
+            		  {
+            		    result = node_generic :call, :recv => val[0], :meth => '>=', :args => [val[2]]
+            		  }
             		| arg '<' arg
+            		  {
+            		    result = node_generic :call, :recv => val[0], :meth => '<', :args => [val[2]]
+            		  }
             		| arg tLEQ arg
+            		  {
+            		    result = node_generic :call, :recv => val[0], :meth => '<=', :args => [val[2]]
+            		  }
             		| arg tEQ arg
+            		  {
+            		    result = node_generic :call, :recv => val[0], :meth => '==', :args => [val[2]]
+            		  }
             		| arg tEQQ arg
+            		  {
+            		    result = node_generic :call, :recv => val[0], :meth => '===', :args => [val[2]]
+            		  }
             		| arg tNEQ arg
+            		  {
+            		    result = node_generic :call, :recv => val[0], :meth => '!=', :args => [val[2]]
+            		  }
             		| arg tMATCH arg
+            		  {
+            		    result = node_generic :call, :recv => val[0], :meth => '=~', :args => [val[2]]
+            		  }
             		| arg tNMATCH arg
+            		  {
+            		    result = node_generic :call, :recv => val[0], :meth => '!~', :args => [val[2]]
+            		  }
             		| '~' arg
+            		  {
+            		    result = node_generic :call, :recv => val[1], :meth => '~', :args => []
+            		  }
             		| arg tLSHFT arg
+            		  {
+            		    result = node_generic :call, :recv => val[0], :meth => '<<', :args => [val[2]]
+            		  }
             		| arg tRSHFT arg
+            		  {
+            		    result = node_generic :call, :recv => val[0], :meth => '>>', :args => [val[2]]
+            		  }
             		| arg tANDOP arg
             		| arg tOROP arg
             		| kDEFined opt_nl arg
@@ -337,6 +411,9 @@ rule
             		| assocs trailer
 
       paren_args: '(' opt_call_args rparen
+                  {
+                    result = val[1]
+                  }
 
   opt_paren_args: none
   	            | paren_args
@@ -359,9 +436,21 @@ rule
 		            | none
 
             args: arg_value
+                  {
+                    result = [val[0]]
+                  }
 		            | tSTAR arg_value
+		              {
+		                result = [val[1]]
+		              }
 		            | args ',' arg_value
+		              {
+		                result = val[0] + [val[2]]
+		              }
 		            | args ',' tSTAR arg_value
+		              {
+		                result = val[0] + [val[3]]
+		              }
 
             mrhs: args ',' arg_value
 		            | args ',' tSTAR arg_value
@@ -382,6 +471,9 @@ rule
             		| primary_value tCOLON2 tCONSTANT
             		| tCOLON3 tCONSTANT
             		| tLBRACK aref_args ']'
+            		  {
+            		    result = node_generic :array, :args => val[1]
+            		  }
             		| tLBRACE assoc_list '}'
             		| kRETURN
             		| kYIELD '(' call_args rparen
@@ -527,9 +619,21 @@ rule
             		| block_call tCOLON2 operation2 opt_paren_args
 
      method_call: operation paren_args
+                  {
+                    result = node_generic :call, :recv => nil, :meth => val[0], :args => val[1]
+                  }
               	| primary_value '.' operation2 opt_paren_args
+              	  {
+                    result = node_generic :call, :recv => val[0], :meth => val[2], :args => val[3]
+                  }
               	| primary_value tCOLON2 operation2 paren_args
+              	  {
+              	    puts 'SCOOOBY DOOOOOOOOOOOOOOOOOOOOOOOOOOOOO 2'
+              	  }
             		| primary_value tCOLON2 operation3
+            		  {
+              	    puts 'SCOOOBY DOOOOOOOOOOOOOOOOOOOOOOOOOOOOO 3'
+              	  }
             		| primary_value '.' paren_args
             		| primary_value tCOLON2 paren_args
             		| kSUPER paren_args
@@ -613,22 +717,64 @@ xstring_contents: /* none */
             dsym: tSYMBEG xstring_contents tSTRING_END
 
          numeric: tINTEGER
+                  {
+                    result = node_generic :numeric, :value => val[0], :float => false
+                  }
               	| tFLOAT
+              	  {
+                    result = node_generic :numeric, :value => val[0], :float => true
+                  }
               	| tUMINUS_NUM tINTEGER
             		| tUMINUS_NUM tFLOAT
 
         variable: tIDENTIFIER
+                  {
+                    result = node_generic :identifier, :name => val[0]
+                  }
             		| tIVAR
+            		  {
+                    result = node_generic :ivar, :name => val[0]
+                  }
             		| tGVAR
+            		  {
+                    result = node_generic :gvar, :name => val[0]
+                  }
             		| tCONSTANT
+            		  {
+                    result = node_generic :constant, :name => val[0]
+                  }
             		| tCVAR
+            		  {
+                    result = node_generic :cvar, :name => val[0]
+                  }
             		| kNIL
+            		  {
+                    result = node_generic :nil, :name => val[0]
+                  }
             		| kSELF
+            		  {
+                    result = node_generic :self, :name => val[0]
+                  }
             		| kTRUE
+            		  {
+                    result = node_generic :true, :name => val[0]
+                  }
             		| kFALSE
+            		  {
+                    result = node_generic :false, :name => val[0]
+                  }
             		| k__FILE__
+            		  {
+                    result = node_generic :__FILE__, :name => val[0]
+                  }
             		| k__LINE__
+            		  {
+                    result = node_generic :__LINE__, :name => val[0]
+                  }
             		| k__ENCODING__
+            		  {
+                    result = node_generic :__ENCODING__, :name => val[0]
+                  }
 
          var_ref: variable
 

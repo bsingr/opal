@@ -27,7 +27,8 @@
 class AJAX
   
   def initialize(options={})
-    
+    @request = `new XMLHttpRequest();
+    #[@request].send(null);`
   end
   
 end

@@ -2264,7 +2264,12 @@ cHash.$define_method('compare_by_identity?', function() {
 // require('core/enumerator');
 
 var $_vn_1 = RClass.define('Other', cObject) ;
-$_vn_1.$define_method('initialize', function(name) {
+assign$_vn_1.$define_method('initialize', function(name) {
+this.$call('adam', ).$call('assign', );
+adam.$call('==', );
+this.$call('become_very_fast', );
+[1,2,3].$call('pretty_print', );
+var adam = 10;
 });
 $_vn_1.$define_singleton_method('adam', function(william, john, adam) {
 });

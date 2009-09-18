@@ -61,6 +61,8 @@ class Vienna::RubyParser < Racc::Parser
 	  @project = project
 	  @requirements = []
 	  @current_self = 0
+	  @current_self_in_def = false
+	  @context_var_stack = []
 	  
 	  File.open(@source) do |f|
 	    @scanner = StringScanner.new(f.read)
@@ -107,54 +109,35 @@ class Vienna::RubyParser < Racc::Parser
 	  @current_self -= 1
 	end
 	
-	def current_self
-	  "$_vn_#{@current_self}"
+	def current_self_start_def
+	  @current_self_in_def = true
 	end
 	
-	KEYWORDS = {
-	  'class' => :kCLASS,
-	  'module' => :kMODULE,
-	  'def' => :kDEF,
-	  'undef' => :kUNDEF,
-	  'begin' => :kBEGIN,
-	  'rescue' => :kRESCUE,
-	  'ensure' => :kENSURE,
-	  'end' => :kEND,
-	  'if' => :kIF,
-	  'unless' => :kUNLESS,
-	  'then' => :kTHEN,
-	  'elsif' => :kELSIF,
-	  'else' => :kELSE,
-	  'case' => :kCASE,
-	  'when' => :kWHEN,
-	  'while' => :kWHILE,
-	  'until' => :kUNTIL,
-	  'for' => :kFOR,
-	  'break' => :kBREAK,
-	  'next' => :kNEXT,
-	  'redo' => :kREDO,
-	  'retry' => :kRETRY,
-	  'in' => :kIN,
-	  'do' => :kDO,
-	  'return' => :kRETURN,
-	  'yield' => :kYIELD,
-	  'super' => :kSUPER,
-	  'self' => :kSELF,
-	  'nil' => :kNIL,
-	  'true' => :kTRUE,
-	  'false' => :kFALSE,
-	  'and' => :kAND,
-	  'or' => :kOR,
-	  'not' => :kNOT,
-	  'alias' => :kALIAS,
-	  'defined?' => :kDEFINED,
-	  'BEGIN' => :klBEGIN,
-	  'END' => :klEND,
-	  '__LINE__' => :k__LINE__,
-	  '__FILE__' => :k__FILE__,
-	  '__ENCODING__' => :k__ENCODING__
-	}
-
+	def current_self_end_def
+	  @current_self_in_def = false
+	end
+	
+  # The JS var holding the 'self' within the current code context
+	def current_self
+	  @current_self_in_def ? 'this' : "$_vn_#{@current_self}"
+	end
+	
+  # Context for declared variables.... if an identifier isnt in this list,
+  # thenis is assumed to be a method name for the current self
+	def push_context_stack
+	  @context_var_stack << []
+	end
+	
+	def pop_context_stack
+	  @context_var_stack.pop
+	end
+	
+	def add_to_context_stack str
+	  @context_var_stack.last << str 
+	end
+	 
+	
+	
   # returns the next token (token/value array)
 	def next_token
 	  t = get_next_token
@@ -257,9 +240,18 @@ class Vienna::RubyParser < Racc::Parser
           self.lex_state = :EXPR_BEG
           return [:tCOLON, scanner.matched]
         end
+      
+      # Parse a number. 
       elsif scanner.check(/[0-9]/)
-        scanner.scan(/[0-9]/)
-        return [:tINTEGER, scanner.matched] # need to parse number
+        self.lex_state = :EXPR_END
+        if scanner.scan(/[\d_]+\.[\d_]+\b/)
+          return [:tFLOAT, scanner.matched.gsub(/_/, '')]
+        elsif scanner.scan(/[\d_]+\b/)
+          return [:tINTEGER, scanner.matched.gsub(/_/, '')]
+        else
+          puts "error: unexpected number type: #{scanner.peek(10)}"
+        end
+      
       elsif scanner.scan(/\[/)
         result = scanner.matched
         
@@ -273,7 +265,12 @@ class Vienna::RubyParser < Racc::Parser
           else
             puts "error - unexpected '[' token"
           end
+        elsif lex_state == :EXPR_BEG || lex_state == :EXPR_MID
+          return [:tLBRACK, scanner.matched]
         end
+        # puts 'HMHMHMHMHMHMHMHMHH'
+        # puts lex_state
+        return ['[', scanner.matched]
       elsif scanner.scan(/\'(\\.|[^\'])*\'/)
         self.lex_state = :EXPR_END
         return [:tSTRING, scanner.matched[1..-2].gsub(/\\\\/, "\\").gsub(/\\'/, "'")]
@@ -464,6 +461,8 @@ class Vienna::RubyParser < Racc::Parser
         when 'if'
           # self.lex_state = 
           return [:kIF, scanner.matched]
+        when 'self'
+          return [:kSELF, scanner.matched]
         end
         
         # if Vienna::RubyParser::KEYWORDS.has_key?(scanner.matched)

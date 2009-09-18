@@ -40,16 +40,28 @@ module Vienna
       pop_current_self
     end
     
-    def generate_bodystmt(bodystmt)
+    def generate_bodystmt(stmt)
     
-      case bodystmt.node
+      case stmt.node
       when :def
-        generate_def bodystmt
-      when ','
-        generate_bodystmt bodystmt[:left]
-        generate_bodystmt bodystmt[:right]
+        generate_def stmt
+      when :numeric
+        generate_numeric stmt
+      when :call
+        generate_call stmt
+      when :identifier
+        generate_identifier stmt
+      when :self
+        generate_self stmt
+      when :array
+        generate_array stmt
+      when :assign
+        generate_assign stmt
+      # when ','
+      #   generate_bodystmt bodystmt[:left]
+      #   generate_bodystmt bodystmt[:right]
       else
-        write "\nUnknown type for generate_bodystmt: #{bodystmt}\n"
+        write "\nUnknown type for generate_bodystmt: #{stmt}\n"
       end
     end
     
@@ -62,15 +74,67 @@ module Vienna
       end
       #output arguments...
       write ") {\n"
+      
+      self.current_self_start_def
+      
       #output argument adjustments..... variable arg lengths etc
       if definition[:bodystmt]
         definition[:bodystmt].each do |stmt|
-          puts stmt
+          # puts stmt
           generate_bodystmt stmt
+          write ";\n"
         end
       end
+      
+      self.current_self_end_def
+      
       # output body of methods
       write "});\n"
+    end
+    
+    
+    def generate_assign stmt
+      write 'var '
+      generate_bodystmt stmt[:lhs]
+      write ' = '
+      generate_bodystmt stmt[:rhs]
+    end
+    
+    
+    
+    def generate_array stmt
+      write '['
+      
+      stmt[:args].each do |a|
+        write ',' unless stmt[:args].first == a
+        generate_bodystmt a
+      end
+      
+      write ']'
+    end
+    
+    
+    def generate_identifier identifier
+      write identifier[:name]
+    end
+    
+    def generate_self identifier
+      write current_self
+    end
+    
+    def generate_call call
+      if call[:recv]
+        generate_bodystmt call[:recv]
+      else
+        write current_self
+      end
+        
+      write ".$call('#{call[:meth]}', )"
+    end
+    
+    
+    def generate_numeric numeric
+      write numeric[:value]
     end
     
   end

@@ -13,7 +13,7 @@ require 'strscan'
 module Vienna
   class RubyParser < Racc::Parser
 
-module_eval(<<'...end ruby_parser.rb.y/module_eval...', 'ruby_parser.rb.y', 826)
+module_eval(<<'...end ruby_parser.rb.y/module_eval...', 'ruby_parser.rb.y', 972)
 
 
 ...end ruby_parser.rb.y/module_eval...
@@ -1915,7 +1915,7 @@ racc_reduce_table = [
   1, 185, :_reduce_none,
   1, 157, :_reduce_none,
   4, 157, :_reduce_none,
-  3, 157, :_reduce_none,
+  3, 157, :_reduce_95,
   3, 157, :_reduce_none,
   3, 157, :_reduce_none,
   3, 157, :_reduce_none,
@@ -2007,7 +2007,7 @@ racc_reduce_table = [
   1, 192, :_reduce_none,
   1, 192, :_reduce_none,
   1, 192, :_reduce_none,
-  3, 170, :_reduce_none,
+  3, 170, :_reduce_187,
   5, 170, :_reduce_none,
   3, 170, :_reduce_none,
   5, 170, :_reduce_none,
@@ -2020,32 +2020,32 @@ racc_reduce_table = [
   3, 170, :_reduce_none,
   3, 170, :_reduce_none,
   3, 170, :_reduce_none,
-  3, 170, :_reduce_none,
-  3, 170, :_reduce_none,
-  3, 170, :_reduce_none,
-  3, 170, :_reduce_none,
-  3, 170, :_reduce_none,
-  3, 170, :_reduce_none,
+  3, 170, :_reduce_200,
+  3, 170, :_reduce_201,
+  3, 170, :_reduce_202,
+  3, 170, :_reduce_203,
+  3, 170, :_reduce_204,
+  3, 170, :_reduce_205,
   4, 170, :_reduce_none,
   4, 170, :_reduce_none,
   2, 170, :_reduce_none,
-  2, 170, :_reduce_none,
-  3, 170, :_reduce_none,
-  3, 170, :_reduce_none,
-  3, 170, :_reduce_none,
-  3, 170, :_reduce_none,
-  3, 170, :_reduce_none,
-  3, 170, :_reduce_none,
-  3, 170, :_reduce_none,
-  3, 170, :_reduce_none,
-  3, 170, :_reduce_none,
-  3, 170, :_reduce_none,
-  3, 170, :_reduce_none,
-  3, 170, :_reduce_none,
-  3, 170, :_reduce_none,
-  2, 170, :_reduce_none,
-  3, 170, :_reduce_none,
-  3, 170, :_reduce_none,
+  2, 170, :_reduce_209,
+  3, 170, :_reduce_210,
+  3, 170, :_reduce_211,
+  3, 170, :_reduce_212,
+  3, 170, :_reduce_213,
+  3, 170, :_reduce_214,
+  3, 170, :_reduce_215,
+  3, 170, :_reduce_216,
+  3, 170, :_reduce_217,
+  3, 170, :_reduce_218,
+  3, 170, :_reduce_219,
+  3, 170, :_reduce_220,
+  3, 170, :_reduce_221,
+  3, 170, :_reduce_222,
+  2, 170, :_reduce_223,
+  3, 170, :_reduce_224,
+  3, 170, :_reduce_225,
   3, 170, :_reduce_none,
   3, 170, :_reduce_none,
   3, 170, :_reduce_none,
@@ -2056,7 +2056,7 @@ racc_reduce_table = [
   2, 197, :_reduce_none,
   4, 197, :_reduce_none,
   2, 197, :_reduce_none,
-  3, 201, :_reduce_none,
+  3, 201, :_reduce_236,
   1, 202, :_reduce_none,
   1, 202, :_reduce_none,
   1, 162, :_reduce_none,
@@ -2071,10 +2071,10 @@ racc_reduce_table = [
   2, 203, :_reduce_none,
   1, 203, :_reduce_none,
   1, 203, :_reduce_none,
-  1, 198, :_reduce_none,
-  2, 198, :_reduce_none,
-  3, 198, :_reduce_none,
-  4, 198, :_reduce_none,
+  1, 198, :_reduce_251,
+  2, 198, :_reduce_252,
+  3, 198, :_reduce_253,
+  4, 198, :_reduce_254,
   3, 165, :_reduce_none,
   4, 165, :_reduce_none,
   2, 165, :_reduce_none,
@@ -2092,7 +2092,7 @@ racc_reduce_table = [
   3, 196, :_reduce_none,
   3, 196, :_reduce_none,
   2, 196, :_reduce_none,
-  3, 196, :_reduce_none,
+  3, 196, :_reduce_272,
   3, 196, :_reduce_none,
   1, 196, :_reduce_none,
   4, 196, :_reduce_none,
@@ -2192,10 +2192,10 @@ racc_reduce_table = [
   2, 174, :_reduce_none,
   4, 174, :_reduce_none,
   4, 174, :_reduce_none,
-  2, 216, :_reduce_none,
-  4, 216, :_reduce_none,
-  4, 216, :_reduce_none,
-  3, 216, :_reduce_none,
+  2, 216, :_reduce_372,
+  4, 216, :_reduce_373,
+  4, 216, :_reduce_374,
+  3, 216, :_reduce_375,
   3, 216, :_reduce_none,
   3, 216, :_reduce_none,
   2, 216, :_reduce_none,
@@ -2252,22 +2252,22 @@ racc_reduce_table = [
   1, 270, :_reduce_none,
   1, 270, :_reduce_none,
   3, 195, :_reduce_none,
-  1, 260, :_reduce_none,
-  1, 260, :_reduce_none,
+  1, 260, :_reduce_432,
+  1, 260, :_reduce_433,
   2, 260, :_reduce_none,
   2, 260, :_reduce_none,
-  1, 187, :_reduce_none,
-  1, 187, :_reduce_none,
-  1, 187, :_reduce_none,
-  1, 187, :_reduce_none,
-  1, 187, :_reduce_none,
-  1, 187, :_reduce_none,
-  1, 187, :_reduce_none,
-  1, 187, :_reduce_none,
-  1, 187, :_reduce_none,
-  1, 187, :_reduce_none,
-  1, 187, :_reduce_none,
-  1, 187, :_reduce_none,
+  1, 187, :_reduce_436,
+  1, 187, :_reduce_437,
+  1, 187, :_reduce_438,
+  1, 187, :_reduce_439,
+  1, 187, :_reduce_440,
+  1, 187, :_reduce_441,
+  1, 187, :_reduce_442,
+  1, 187, :_reduce_443,
+  1, 187, :_reduce_444,
+  1, 187, :_reduce_445,
+  1, 187, :_reduce_446,
+  1, 187, :_reduce_447,
   1, 211, :_reduce_none,
   1, 160, :_reduce_none,
   1, 164, :_reduce_none,
@@ -2906,7 +2906,7 @@ module_eval(<<'.,.,', 'ruby_parser.rb.y', 121)
 
 module_eval(<<'.,.,', 'ruby_parser.rb.y', 134)
   def _reduce_29(val, _values, result)
-                		    result = self.node_assign(val[0], val[2])
+                		    result = node_generic :assign, :lhs => val[0], :rhs => val[2]
             		  
     result
   end
@@ -3042,7 +3042,13 @@ module_eval(<<'.,.,', 'ruby_parser.rb.y', 134)
 
 # reduce 94 omitted
 
-# reduce 95 omitted
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 217)
+  def _reduce_95(val, _values, result)
+                		    puts 'ZABADOO'
+            		  
+    result
+  end
+.,.,
 
 # reduce 96 omitted
 
@@ -3054,7 +3060,7 @@ module_eval(<<'.,.,', 'ruby_parser.rb.y', 134)
 
 # reduce 100 omitted
 
-module_eval(<<'.,.,', 'ruby_parser.rb.y', 225)
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 227)
   def _reduce_101(val, _values, result)
                         puts 'ERROR: cant use identifier for class/mod name'
                   
@@ -3062,7 +3068,7 @@ module_eval(<<'.,.,', 'ruby_parser.rb.y', 225)
   end
 .,.,
 
-module_eval(<<'.,.,', 'ruby_parser.rb.y', 229)
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 231)
   def _reduce_102(val, _values, result)
                 		    result = val[0]
             		  
@@ -3070,14 +3076,14 @@ module_eval(<<'.,.,', 'ruby_parser.rb.y', 229)
   end
 .,.,
 
-module_eval(<<'.,.,', 'ruby_parser.rb.y', 235)
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 237)
   def _reduce_103(val, _values, result)
                       
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'ruby_parser.rb.y', 238)
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 240)
   def _reduce_104(val, _values, result)
       	                result = node_generic :path, :cname => val[0]
   	              
@@ -3093,7 +3099,7 @@ module_eval(<<'.,.,', 'ruby_parser.rb.y', 238)
 
 # reduce 108 omitted
 
-module_eval(<<'.,.,', 'ruby_parser.rb.y', 247)
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 249)
   def _reduce_109(val, _values, result)
     		                self.lex_state = :EXPR_END
 		                result = val[0]
@@ -3102,7 +3108,7 @@ module_eval(<<'.,.,', 'ruby_parser.rb.y', 247)
   end
 .,.,
 
-module_eval(<<'.,.,', 'ruby_parser.rb.y', 252)
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 254)
   def _reduce_110(val, _values, result)
     		                self.lex_state = :EXPR_END
 		                result = val[0]
@@ -3263,7 +3269,13 @@ module_eval(<<'.,.,', 'ruby_parser.rb.y', 252)
 
 # reduce 186 omitted
 
-# reduce 187 omitted
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 290)
+  def _reduce_187(val, _values, result)
+                        result = node_generic :assign, :lhs => val[0], :rhs => val[2]
+                  
+    result
+  end
+.,.,
 
 # reduce 188 omitted
 
@@ -3289,17 +3301,53 @@ module_eval(<<'.,.,', 'ruby_parser.rb.y', 252)
 
 # reduce 199 omitted
 
-# reduce 200 omitted
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 306)
+  def _reduce_200(val, _values, result)
+                		    result = node_generic :call, :recv => val[0], :meth => '+', :args => [val[2]]
+            		  
+    result
+  end
+.,.,
 
-# reduce 201 omitted
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 310)
+  def _reduce_201(val, _values, result)
+                		    result = node_generic :call, :recv => val[0], :meth => '-', :args => [val[2]]
+            		  
+    result
+  end
+.,.,
 
-# reduce 202 omitted
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 314)
+  def _reduce_202(val, _values, result)
+                		    result = node_generic :call, :recv => val[0], :meth => '*', :args => [val[2]]
+            		  
+    result
+  end
+.,.,
 
-# reduce 203 omitted
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 318)
+  def _reduce_203(val, _values, result)
+                		    result = node_generic :call, :recv => val[0], :meth => '/', :args => [val[2]]
+            		  
+    result
+  end
+.,.,
 
-# reduce 204 omitted
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 322)
+  def _reduce_204(val, _values, result)
+                		    result = node_generic :call, :recv => val[0], :meth => '%', :args => [val[2]]
+            		  
+    result
+  end
+.,.,
 
-# reduce 205 omitted
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 326)
+  def _reduce_205(val, _values, result)
+                		    result = node_generic :call, :recv => val[0], :meth => '**', :args => [val[2]]
+            		  
+    result
+  end
+.,.,
 
 # reduce 206 omitted
 
@@ -3307,39 +3355,141 @@ module_eval(<<'.,.,', 'ruby_parser.rb.y', 252)
 
 # reduce 208 omitted
 
-# reduce 209 omitted
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 333)
+  def _reduce_209(val, _values, result)
+                		    result = node_generic :call, :recv => val[1], :meth => '-@', :args => []
+            		  
+    result
+  end
+.,.,
 
-# reduce 210 omitted
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 337)
+  def _reduce_210(val, _values, result)
+                		    result = node_generic :call, :recv => val[0], :meth => '|', :args => [val[2]]
+            		  
+    result
+  end
+.,.,
 
-# reduce 211 omitted
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 341)
+  def _reduce_211(val, _values, result)
+                		    result = node_generic :call, :recv => val[0], :meth => '^', :args => [val[2]]
+            		  
+    result
+  end
+.,.,
 
-# reduce 212 omitted
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 345)
+  def _reduce_212(val, _values, result)
+                		    result = node_generic :call, :recv => val[0], :meth => '&', :args => [val[2]]
+            		  
+    result
+  end
+.,.,
 
-# reduce 213 omitted
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 349)
+  def _reduce_213(val, _values, result)
+                		    result = node_generic :call, :recv => val[0], :meth => '<=>', :args => [val[2]]
+            		  
+    result
+  end
+.,.,
 
-# reduce 214 omitted
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 353)
+  def _reduce_214(val, _values, result)
+                		    result = node_generic :call, :recv => val[0], :meth => '>', :args => [val[2]]
+            		  
+    result
+  end
+.,.,
 
-# reduce 215 omitted
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 357)
+  def _reduce_215(val, _values, result)
+                		    result = node_generic :call, :recv => val[0], :meth => '>=', :args => [val[2]]
+            		  
+    result
+  end
+.,.,
 
-# reduce 216 omitted
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 361)
+  def _reduce_216(val, _values, result)
+                		    result = node_generic :call, :recv => val[0], :meth => '<', :args => [val[2]]
+            		  
+    result
+  end
+.,.,
 
-# reduce 217 omitted
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 365)
+  def _reduce_217(val, _values, result)
+                		    result = node_generic :call, :recv => val[0], :meth => '<=', :args => [val[2]]
+            		  
+    result
+  end
+.,.,
 
-# reduce 218 omitted
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 369)
+  def _reduce_218(val, _values, result)
+                		    result = node_generic :call, :recv => val[0], :meth => '==', :args => [val[2]]
+            		  
+    result
+  end
+.,.,
 
-# reduce 219 omitted
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 373)
+  def _reduce_219(val, _values, result)
+                		    result = node_generic :call, :recv => val[0], :meth => '===', :args => [val[2]]
+            		  
+    result
+  end
+.,.,
 
-# reduce 220 omitted
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 377)
+  def _reduce_220(val, _values, result)
+                		    result = node_generic :call, :recv => val[0], :meth => '!=', :args => [val[2]]
+            		  
+    result
+  end
+.,.,
 
-# reduce 221 omitted
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 381)
+  def _reduce_221(val, _values, result)
+                		    result = node_generic :call, :recv => val[0], :meth => '=~', :args => [val[2]]
+            		  
+    result
+  end
+.,.,
 
-# reduce 222 omitted
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 385)
+  def _reduce_222(val, _values, result)
+                		    result = node_generic :call, :recv => val[0], :meth => '!~', :args => [val[2]]
+            		  
+    result
+  end
+.,.,
 
-# reduce 223 omitted
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 389)
+  def _reduce_223(val, _values, result)
+                		    result = node_generic :call, :recv => val[1], :meth => '~', :args => []
+            		  
+    result
+  end
+.,.,
 
-# reduce 224 omitted
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 393)
+  def _reduce_224(val, _values, result)
+                		    result = node_generic :call, :recv => val[0], :meth => '<<', :args => [val[2]]
+            		  
+    result
+  end
+.,.,
 
-# reduce 225 omitted
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 397)
+  def _reduce_225(val, _values, result)
+                		    result = node_generic :call, :recv => val[0], :meth => '>>', :args => [val[2]]
+            		  
+    result
+  end
+.,.,
 
 # reduce 226 omitted
 
@@ -3361,7 +3511,13 @@ module_eval(<<'.,.,', 'ruby_parser.rb.y', 252)
 
 # reduce 235 omitted
 
-# reduce 236 omitted
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 414)
+  def _reduce_236(val, _values, result)
+                        result = val[1]
+                  
+    result
+  end
+.,.,
 
 # reduce 237 omitted
 
@@ -3391,13 +3547,37 @@ module_eval(<<'.,.,', 'ruby_parser.rb.y', 252)
 
 # reduce 250 omitted
 
-# reduce 251 omitted
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 439)
+  def _reduce_251(val, _values, result)
+                        result = [val[0]]
+                  
+    result
+  end
+.,.,
 
-# reduce 252 omitted
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 443)
+  def _reduce_252(val, _values, result)
+    		                result = [val[1]]
+		              
+    result
+  end
+.,.,
 
-# reduce 253 omitted
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 447)
+  def _reduce_253(val, _values, result)
+    		                result = val[0] + [val[2]]
+		              
+    result
+  end
+.,.,
 
-# reduce 254 omitted
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 451)
+  def _reduce_254(val, _values, result)
+    		                result = val[0] + [val[3]]
+		              
+    result
+  end
+.,.,
 
 # reduce 255 omitted
 
@@ -3433,7 +3613,13 @@ module_eval(<<'.,.,', 'ruby_parser.rb.y', 252)
 
 # reduce 271 omitted
 
-# reduce 272 omitted
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 474)
+  def _reduce_272(val, _values, result)
+                		    result = node_generic :array, :args => val[1]
+            		  
+    result
+  end
+.,.,
 
 # reduce 273 omitted
 
@@ -3473,7 +3659,7 @@ module_eval(<<'.,.,', 'ruby_parser.rb.y', 252)
 
 # reduce 291 omitted
 
-module_eval(<<'.,.,', 'ruby_parser.rb.y', 405)
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 497)
   def _reduce_292(val, _values, result)
                 		    result = self.node_class(:cpath => val[1], :superclass => val[2], :bodystmt => val[3])
             		  
@@ -3483,7 +3669,7 @@ module_eval(<<'.,.,', 'ruby_parser.rb.y', 405)
 
 # reduce 293 omitted
 
-module_eval(<<'.,.,', 'ruby_parser.rb.y', 410)
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 502)
   def _reduce_294(val, _values, result)
                         # result = self.node_module(val[1], val[2])
             		    result = self.node_module(:cpath => val[1], :body => val[2])
@@ -3492,7 +3678,7 @@ module_eval(<<'.,.,', 'ruby_parser.rb.y', 410)
   end
 .,.,
 
-module_eval(<<'.,.,', 'ruby_parser.rb.y', 415)
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 507)
   def _reduce_295(val, _values, result)
                 		    result = self.node_generic(:def, :fname => val[1], :f_arglist => val[2], :bodystmt => val[3])
             		  
@@ -3500,7 +3686,7 @@ module_eval(<<'.,.,', 'ruby_parser.rb.y', 415)
   end
 .,.,
 
-module_eval(<<'.,.,', 'ruby_parser.rb.y', 419)
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 511)
   def _reduce_296(val, _values, result)
                 		    result = self.node_generic(:def, :singleton => val[1], :fname => val[3], :f_arglist => val[4], :bodystmt => val[5])
             		  
@@ -3658,13 +3844,37 @@ module_eval(<<'.,.,', 'ruby_parser.rb.y', 419)
 
 # reduce 371 omitted
 
-# reduce 372 omitted
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 622)
+  def _reduce_372(val, _values, result)
+                        result = node_generic :call, :recv => nil, :meth => val[0], :args => val[1]
+                  
+    result
+  end
+.,.,
 
-# reduce 373 omitted
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 626)
+  def _reduce_373(val, _values, result)
+                        result = node_generic :call, :recv => val[0], :meth => val[2], :args => val[3]
+                  
+    result
+  end
+.,.,
 
-# reduce 374 omitted
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 630)
+  def _reduce_374(val, _values, result)
+                  	    puts 'SCOOOBY DOOOOOOOOOOOOOOOOOOOOOOOOOOOOO 2'
+              	  
+    result
+  end
+.,.,
 
-# reduce 375 omitted
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 634)
+  def _reduce_375(val, _values, result)
+                  	    puts 'SCOOOBY DOOOOOOOOOOOOOOOOOOOOOOOOOOOOO 3'
+              	  
+    result
+  end
+.,.,
 
 # reduce 376 omitted
 
@@ -3778,37 +3988,121 @@ module_eval(<<'.,.,', 'ruby_parser.rb.y', 419)
 
 # reduce 431 omitted
 
-# reduce 432 omitted
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 720)
+  def _reduce_432(val, _values, result)
+                        result = node_generic :numeric, :value => val[0], :float => false
+                  
+    result
+  end
+.,.,
 
-# reduce 433 omitted
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 724)
+  def _reduce_433(val, _values, result)
+                        result = node_generic :numeric, :value => val[0], :float => true
+                  
+    result
+  end
+.,.,
 
 # reduce 434 omitted
 
 # reduce 435 omitted
 
-# reduce 436 omitted
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 731)
+  def _reduce_436(val, _values, result)
+                        result = node_generic :identifier, :name => val[0]
+                  
+    result
+  end
+.,.,
 
-# reduce 437 omitted
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 735)
+  def _reduce_437(val, _values, result)
+                        result = node_generic :ivar, :name => val[0]
+                  
+    result
+  end
+.,.,
 
-# reduce 438 omitted
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 739)
+  def _reduce_438(val, _values, result)
+                        result = node_generic :gvar, :name => val[0]
+                  
+    result
+  end
+.,.,
 
-# reduce 439 omitted
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 743)
+  def _reduce_439(val, _values, result)
+                        result = node_generic :constant, :name => val[0]
+                  
+    result
+  end
+.,.,
 
-# reduce 440 omitted
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 747)
+  def _reduce_440(val, _values, result)
+                        result = node_generic :cvar, :name => val[0]
+                  
+    result
+  end
+.,.,
 
-# reduce 441 omitted
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 751)
+  def _reduce_441(val, _values, result)
+                        result = node_generic :nil, :name => val[0]
+                  
+    result
+  end
+.,.,
 
-# reduce 442 omitted
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 755)
+  def _reduce_442(val, _values, result)
+                        result = node_generic :self, :name => val[0]
+                  
+    result
+  end
+.,.,
 
-# reduce 443 omitted
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 759)
+  def _reduce_443(val, _values, result)
+                        result = node_generic :true, :name => val[0]
+                  
+    result
+  end
+.,.,
 
-# reduce 444 omitted
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 763)
+  def _reduce_444(val, _values, result)
+                        result = node_generic :false, :name => val[0]
+                  
+    result
+  end
+.,.,
 
-# reduce 445 omitted
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 767)
+  def _reduce_445(val, _values, result)
+                        result = node_generic :__FILE__, :name => val[0]
+                  
+    result
+  end
+.,.,
 
-# reduce 446 omitted
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 771)
+  def _reduce_446(val, _values, result)
+                        result = node_generic :__LINE__, :name => val[0]
+                  
+    result
+  end
+.,.,
 
-# reduce 447 omitted
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 775)
+  def _reduce_447(val, _values, result)
+                        result = node_generic :__ENCODING__, :name => val[0]
+                  
+    result
+  end
+.,.,
 
 # reduce 448 omitted
 
@@ -3822,14 +4116,14 @@ module_eval(<<'.,.,', 'ruby_parser.rb.y', 419)
 
 # reduce 453 omitted
 
-module_eval(<<'.,.,', 'ruby_parser.rb.y', 641)
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 787)
   def _reduce_454(val, _values, result)
      puts 'OMFG' 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'ruby_parser.rb.y', 645)
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 791)
   def _reduce_455(val, _values, result)
                         result = val[1]
                     self.lex_state = :EXPR_BEG
@@ -3838,7 +4132,7 @@ module_eval(<<'.,.,', 'ruby_parser.rb.y', 645)
   end
 .,.,
 
-module_eval(<<'.,.,', 'ruby_parser.rb.y', 650)
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 796)
   def _reduce_456(val, _values, result)
                         result = val[0]
                     self.lex_state = :EXPR_BEG
@@ -3847,7 +4141,7 @@ module_eval(<<'.,.,', 'ruby_parser.rb.y', 650)
   end
 .,.,
 
-module_eval(<<'.,.,', 'ruby_parser.rb.y', 656)
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 802)
   def _reduce_457(val, _values, result)
                  		    result = node_generic :arg, :arg => val[0], :optarg => val[2], :rest_arg => val[4], :opt_block_arg => val[5]
              		  
@@ -3855,7 +4149,7 @@ module_eval(<<'.,.,', 'ruby_parser.rb.y', 656)
   end
 .,.,
 
-module_eval(<<'.,.,', 'ruby_parser.rb.y', 660)
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 806)
   def _reduce_458(val, _values, result)
                  		    result = node_generic :arg, :arg => val[0], :optarg => val[2], :rest_arg => val[4], :arg2 => val[6], :opt_block_arg => val[7]
              		  
@@ -3863,7 +4157,7 @@ module_eval(<<'.,.,', 'ruby_parser.rb.y', 660)
   end
 .,.,
 
-module_eval(<<'.,.,', 'ruby_parser.rb.y', 664)
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 810)
   def _reduce_459(val, _values, result)
                   	    result = node_generic :arg, :arg => val[0], :optarg => val[2], :opt_block_arg => val[3]
               	  
@@ -3871,7 +4165,7 @@ module_eval(<<'.,.,', 'ruby_parser.rb.y', 664)
   end
 .,.,
 
-module_eval(<<'.,.,', 'ruby_parser.rb.y', 668)
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 814)
   def _reduce_460(val, _values, result)
                   	    result = node_generic :arg, :arg => val[0], :optarg => val[2], :arg2 => val[4], :opt_block_arg => val[5]
               	  
@@ -3879,7 +4173,7 @@ module_eval(<<'.,.,', 'ruby_parser.rb.y', 668)
   end
 .,.,
 
-module_eval(<<'.,.,', 'ruby_parser.rb.y', 672)
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 818)
   def _reduce_461(val, _values, result)
                 		    result = node_generic :arg, :arg => val[0], :rest_arg => val[2], :opt_block_arg => val[3]
             		  
@@ -3887,7 +4181,7 @@ module_eval(<<'.,.,', 'ruby_parser.rb.y', 672)
   end
 .,.,
 
-module_eval(<<'.,.,', 'ruby_parser.rb.y', 676)
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 822)
   def _reduce_462(val, _values, result)
                 		    result = node_generic :arg, :arg => val[0], :rest_arg => val[2], :arg2 => val[4], :opt_block_arg => val[5]
             		  
@@ -3895,7 +4189,7 @@ module_eval(<<'.,.,', 'ruby_parser.rb.y', 676)
   end
 .,.,
 
-module_eval(<<'.,.,', 'ruby_parser.rb.y', 680)
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 826)
   def _reduce_463(val, _values, result)
                  		    result = node_generic :arg, :arg => val[0], :opt_block_arg => val[1]
              		  
@@ -3903,7 +4197,7 @@ module_eval(<<'.,.,', 'ruby_parser.rb.y', 680)
   end
 .,.,
 
-module_eval(<<'.,.,', 'ruby_parser.rb.y', 684)
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 830)
   def _reduce_464(val, _values, result)
                 		    result = node_generic :optarg, :optarg => val[0], :rest_arg => val[2], :opt_block_arg => val[3]
             		  
@@ -3911,7 +4205,7 @@ module_eval(<<'.,.,', 'ruby_parser.rb.y', 684)
   end
 .,.,
 
-module_eval(<<'.,.,', 'ruby_parser.rb.y', 688)
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 834)
   def _reduce_465(val, _values, result)
                 		    result = node_generic :optarg, :optarg => val[0], :rest_arg => val[2], :arg => val[4], :opt_block_arg => val[5]
             		  
@@ -3919,7 +4213,7 @@ module_eval(<<'.,.,', 'ruby_parser.rb.y', 688)
   end
 .,.,
 
-module_eval(<<'.,.,', 'ruby_parser.rb.y', 692)
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 838)
   def _reduce_466(val, _values, result)
                  		    result = node_generic :optarg, :optarg => val[0], :opt_block_arg => val[1]
              		  
@@ -3927,7 +4221,7 @@ module_eval(<<'.,.,', 'ruby_parser.rb.y', 692)
   end
 .,.,
 
-module_eval(<<'.,.,', 'ruby_parser.rb.y', 696)
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 842)
   def _reduce_467(val, _values, result)
                  		    result = node_generic :optarg, :optarg => val[0], :arg => val[2], :opt_block_arg => val[3]
              		  
@@ -3935,7 +4229,7 @@ module_eval(<<'.,.,', 'ruby_parser.rb.y', 696)
   end
 .,.,
 
-module_eval(<<'.,.,', 'ruby_parser.rb.y', 700)
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 846)
   def _reduce_468(val, _values, result)
                  		    result = node_generic :rest_arg, :rest_arg => val[0], :opt_block_arg => val[1]
              		  
@@ -3943,7 +4237,7 @@ module_eval(<<'.,.,', 'ruby_parser.rb.y', 700)
   end
 .,.,
 
-module_eval(<<'.,.,', 'ruby_parser.rb.y', 704)
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 850)
   def _reduce_469(val, _values, result)
                  		    result = node_generic :rest_arg, :rest_arg => val[0], :arg => val[2], :opt_block_arg => val[3]
              		  
@@ -3951,7 +4245,7 @@ module_eval(<<'.,.,', 'ruby_parser.rb.y', 704)
   end
 .,.,
 
-module_eval(<<'.,.,', 'ruby_parser.rb.y', 708)
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 854)
   def _reduce_470(val, _values, result)
                  		    result = node_generic :block_arg, :block_arg => val[0]
              		  
@@ -3959,7 +4253,7 @@ module_eval(<<'.,.,', 'ruby_parser.rb.y', 708)
   end
 .,.,
 
-module_eval(<<'.,.,', 'ruby_parser.rb.y', 712)
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 858)
   def _reduce_471(val, _values, result)
                   	    # none...
               	    result = nil
@@ -3978,7 +4272,7 @@ module_eval(<<'.,.,', 'ruby_parser.rb.y', 712)
 
 # reduce 476 omitted
 
-module_eval(<<'.,.,', 'ruby_parser.rb.y', 724)
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 870)
   def _reduce_477(val, _values, result)
                   	    result = val[0]
               	  
@@ -3986,7 +4280,7 @@ module_eval(<<'.,.,', 'ruby_parser.rb.y', 724)
   end
 .,.,
 
-module_eval(<<'.,.,', 'ruby_parser.rb.y', 729)
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 875)
   def _reduce_478(val, _values, result)
                         result = val[0]
                   
@@ -3996,7 +4290,7 @@ module_eval(<<'.,.,', 'ruby_parser.rb.y', 729)
 
 # reduce 479 omitted
 
-module_eval(<<'.,.,', 'ruby_parser.rb.y', 735)
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 881)
   def _reduce_480(val, _values, result)
                         result = [val[0]]
                   
@@ -4004,7 +4298,7 @@ module_eval(<<'.,.,', 'ruby_parser.rb.y', 735)
   end
 .,.,
 
-module_eval(<<'.,.,', 'ruby_parser.rb.y', 739)
+module_eval(<<'.,.,', 'ruby_parser.rb.y', 885)
   def _reduce_481(val, _values, result)
                         # val[0] + val[2]
                     result = val[0] + [val[2]]
