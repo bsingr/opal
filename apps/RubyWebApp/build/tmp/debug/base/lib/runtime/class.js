@@ -64,7 +64,7 @@ RClass.define = function(id, super_klass) {
 RClass.define_under = function(outer, id, super_klass) {
   var klass;
   // if already defined in context... just ensure it is a macthing class def
-  if (VN.const_defined_at(outer, id)) {
+  if (outer.$const_defined(id)) {
     klass = VN.const_get_at(outer, id);
     if (klass.$type != VN.CLASS) {
       VN.type_error(id + ' is not a class');
@@ -78,9 +78,10 @@ RClass.define_under = function(outer, id, super_klass) {
   if (!super_klass) {
     VN.warning('no super class for `' + VN.class2name(outer), + '::' + id + '`, Object assumed');
   }
-  klass = RClass.define_id(id, super_klass);
-  VN.set_class_path(klass, outer, id);
-  VN.const_set(outer, id, klass);
+  klass = RClass.define_class_id(id, super_klass);
+  // VN.set_class_path(klass, outer, id);
+  // VN.const_set(outer, id, klass);
+  outer.$const_set(id, klass);
   RClass.inherited(super_klass, klass);
 
   return klass;

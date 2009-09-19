@@ -29,11 +29,11 @@ module Vienna
   class RubyParser
     
     def node_module(options)
-      Vienna::RubyParser::RModule.new(self, options)
+      Vienna::RubyParser::RModule.new options
     end
     
     def node_class(options)
-      Vienna::RubyParser::RClass.new(self, options)
+      Vienna::RubyParser::RClass.new options
     end
     
     # instance level def
@@ -47,37 +47,49 @@ module Vienna
     end
     
     # generic node, for use anywhere...
-    def node_generic(type, options={})
+    def node type, options={}
       Vienna::RubyParser::RNode.new type, options
     end
     
     class RModule
       
-      def initialize(parser, options)
-        @parser = parser
-        
-        @body = options[:body]
+      attr_accessor :bodystmt
+      
+      def initialize options
+        @bodystmt = options[:body]
+        @cpath = options[:cpath]
         # puts options[:cpath]
+      end
+      
+      def node
+        :module
+      end
+      
+      def js_name
+        @js_name ||= "m#{@cpath[:cname]}"
+      end
+      
+      def klass_name
+        @klass_name ||= @cpath[:cname]
+      end
+      
+      def super_klass
+        "cObject"
       end
     end
     
     class RClass
       
-      attr_accessor :parser, :bodystmt
+      attr_accessor :bodystmt
       
-      def initialize(parser, options)
-        @parser = parser
-        
+      def initialize options      
         @cpath = options[:cpath]
         @superclass = options[:superclass]
         @bodystmt = options[:bodystmt]
-        
-        # @parser.write "Writing class definition\n"
-        # @parser.write "#{@cpath}\n"
-        # @parser.write "#{@superclass}\n"
-        # @parser.write "#{@bodystmt}\n"
-        # @parser.write self
-        @parser.generate_class self
+      end
+      
+      def node
+        :klass
       end
       
       def js_name
@@ -102,6 +114,10 @@ module Vienna
       
       def [](id)
         @options[id]
+      end
+      
+      def []=(id, val)
+        @options[id] = val
       end
       
       def node

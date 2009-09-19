@@ -60,8 +60,8 @@ class Vienna::RubyParser < Racc::Parser
 	  @destination = dest
 	  @project = project
 	  @requirements = []
-	  @current_self = 0
-	  @current_self_in_def = false
+	  @current_self = ['VN.top_self']
+	  @current_self_stack_counter = 0
 	  @context_var_stack = []
 	  
 	  File.open(@source) do |f|
@@ -72,11 +72,10 @@ class Vienna::RubyParser < Racc::Parser
 	end
 	
 	def build!
-	  puts "Buildingggggggg #{@source}"
+	  puts "Building #{@source}"
 	  @output_file = File.new @destination, 'w'
-    # o.write ""
-    # o.close
-    puts do_parse
+    do_parse
+    generate_tree @parser_result unless @parser_result.nil?
     @output_file.close
 	end
 	
@@ -102,24 +101,27 @@ class Vienna::RubyParser < Racc::Parser
 	end
 	
 	def push_current_self
-    @current_self += 1
+    @current_self_stack_counter += 1
+    @current_self << "$VN_#{@current_self_stack_counter}"
 	end
 	
 	def pop_current_self
-	  @current_self -= 1
+	  @current_self_stack_counter -= 1
+    @current_self.pop
 	end
 	
 	def current_self_start_def
-	  @current_self_in_def = true
+	  @current_self << 'this'
 	end
 	
 	def current_self_end_def
-	  @current_self_in_def = false
+	  @current_self.pop
 	end
 	
   # The JS var holding the 'self' within the current code context
 	def current_self
-	  @current_self_in_def ? 'this' : "$_vn_#{@current_self}"
+    # @current_self_in_def ? 'this' : "$_vn_#{@current_self}"
+	  @current_self.last
 	end
 	
   # Context for declared variables.... if an identifier isnt in this list,
@@ -222,7 +224,16 @@ class Vienna::RubyParser < Racc::Parser
         return [:tASSOC, scanner.matched]
       elsif scanner.scan(/\=/)
         return ['=', scanner.matched]
-        
+      
+      # Class variables
+      elsif scanner.scan(/\@\@\w*/)
+        return [:tCVAR, scanner.matched]
+      
+      # Instance variables
+      elsif scanner.scan(/\@\w*/)
+        return [:tIVAR, scanner.matched]
+      
+      
       elsif scanner.scan(/\"(([^\{\#\@\$\"\\])|[^\"\\\#])*\"/o)
         self.lex_state = :EXPR_END
         return [:tSTRING, scanner.matched]
@@ -240,6 +251,9 @@ class Vienna::RubyParser < Racc::Parser
           self.lex_state = :EXPR_BEG
           return [:tCOLON, scanner.matched]
         end
+        
+        self.lex_state = :EXPR_FNAME
+        return [:tSYMBEG, scanner.matched]
       
       # Parse a number. 
       elsif scanner.check(/[0-9]/)
@@ -472,7 +486,7 @@ class Vienna::RubyParser < Racc::Parser
         return [scanner.matched =~ /^[A-Z]/ ? :tCONSTANT : :tIDENTIFIER, scanner.matched]
       
       else
-        puts "got to end with #{scanner.peek(10)}"
+
         return [false, false]
         puts 'here'
         return [:kDEF, 'def']

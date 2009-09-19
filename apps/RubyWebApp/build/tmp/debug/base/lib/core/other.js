@@ -1,10 +1,8 @@
-var $_vn_1 = RClass.define('Other', cObject) ;
-assign$_vn_1.$define_method('initialize', function(name) {
-this.$call('adam', ).$call('assign', );
-adam.$call('==', );
-this.$call('become_very_fast', );
-[1,2,3].$call('pretty_print', );
-var adam = 10;
+VN.top_self.$define_singleton_method('john', function(bob,now,older){
+var adam = 4;
+this.$call('john', [])return ben = 10;
 });
-$_vn_1.$define_singleton_method('adam', function(william, john, adam) {
+cObject.$const_set('VN',10);
+var $VN_1 = RClass.define('Other', cObject);
+$VN_1.$define_method('adam', function(){
 });

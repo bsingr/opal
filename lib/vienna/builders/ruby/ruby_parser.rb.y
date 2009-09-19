@@ -71,24 +71,53 @@ class Vienna::RubyParser
 rule
 
           target: program
+                  {
+                    # puts 'well, we got here..'
+                    # puts val[0]
+                    @parser_result = val[0]
+                    result = val[0]
+                  }
 			
          program:
                   {
                     self.lex_state = :EXPR_BEG
                   }
-                top_compstmt
+                  top_compstmt
                   {
-                    result = val[0]
+                    # puts 'program'
+                    # puts val[1]
+                    result = val[1]
                   }
 
     top_compstmt: top_stmts opt_terms
+                  {
+                    # puts 'top_compstmt'
+                    # puts val[0]
+                    # puts val[1]
+                    result = val[0]
+                  }
 
        top_stmts: none
+                  {
+                    result = []
+                  }
                 | top_stmt
+                  {
+                    result = [val[0]]
+                  }
                 | top_stmts terms top_stmt
+                  {
+                    result = val[0] + [val[2]]
+                  }
                 | error top_stmt
+                  {
+                    result = val[1]
+                  }
 
         top_stmt: stmt
+                  {
+                    result = val[0]
+                  }
   	            | kBEGIN
 
         bodystmt: compstmt opt_rescue opt_else opt_ensure
@@ -102,6 +131,9 @@ rule
                   }
 
            stmts: none
+                  {
+                    result = []
+                  }
                 | stmt
                   {
                     result = [val[0]]
@@ -132,7 +164,7 @@ rule
                 | klEND '{' compstmt '}'
             		| lhs '=' command_call
             		  {
-            		    result = node_generic :assign, :lhs => val[0], :rhs => val[2]
+            		    result = node :assign, :lhs => val[0], :rhs => val[2]
             		  }
             		| mlhs '=' command_call
             		| var_lhs tOP_ASGN command_call
@@ -238,7 +270,7 @@ rule
                   }
   	            | cname
   	              {
-  	                result = node_generic :path, :cname => val[0]
+  	                result = node :path, :cname => val[0]
   	              }
               	| primary_value tCOLON2 cname
 
@@ -288,7 +320,7 @@ rule
 
              arg: lhs '=' arg
                   {
-                    result = node_generic :assign, :lhs => val[0], :rhs => val[2]
+                    result = node :assign, :lhs => val[0], :rhs => val[2]
                   }
             		| lhs '=' arg kRESCUE_MOD arg
             		| var_lhs tOP_ASGN arg
@@ -304,98 +336,98 @@ rule
             		| arg tDOT3 arg
             		| arg '+' arg
             		  {
-            		    result = node_generic :call, :recv => val[0], :meth => '+', :args => [val[2]]
+            		    result = node :call, :recv => val[0], :meth => '+', :args => [val[2]]
             		  }
             		| arg '-' arg
             		  {
-            		    result = node_generic :call, :recv => val[0], :meth => '-', :args => [val[2]]
+            		    result = node :call, :recv => val[0], :meth => '-', :args => [val[2]]
             		  }
             		| arg '*' arg
             		  {
-            		    result = node_generic :call, :recv => val[0], :meth => '*', :args => [val[2]]
+            		    result = node :call, :recv => val[0], :meth => '*', :args => [val[2]]
             		  }
             		| arg '/' arg
             		  {
-            		    result = node_generic :call, :recv => val[0], :meth => '/', :args => [val[2]]
+            		    result = node :call, :recv => val[0], :meth => '/', :args => [val[2]]
             		  }
             		| arg '%' arg
             		  {
-            		    result = node_generic :call, :recv => val[0], :meth => '%', :args => [val[2]]
+            		    result = node :call, :recv => val[0], :meth => '%', :args => [val[2]]
             		  }
             		| arg tPOW arg
             		  {
-            		    result = node_generic :call, :recv => val[0], :meth => '**', :args => [val[2]]
+            		    result = node :call, :recv => val[0], :meth => '**', :args => [val[2]]
             		  }
             		| tUMINUS_NUM tINTEGER tPOW arg
             		| tUMINUS_NUM tFLOAT tPOW arg
             		| tUPLUS arg
             		| tUMINUS arg
             		  {
-            		    result = node_generic :call, :recv => val[1], :meth => '-@', :args => []
+            		    result = node :call, :recv => val[1], :meth => '-@', :args => []
             		  }
             		| arg '|' arg
             		  {
-            		    result = node_generic :call, :recv => val[0], :meth => '|', :args => [val[2]]
+            		    result = node :call, :recv => val[0], :meth => '|', :args => [val[2]]
             		  }
             		| arg '^' arg
             		  {
-            		    result = node_generic :call, :recv => val[0], :meth => '^', :args => [val[2]]
+            		    result = node :call, :recv => val[0], :meth => '^', :args => [val[2]]
             		  }
             		| arg '&' arg
             		  {
-            		    result = node_generic :call, :recv => val[0], :meth => '&', :args => [val[2]]
+            		    result = node :call, :recv => val[0], :meth => '&', :args => [val[2]]
             		  }
             		| arg tCMP arg
             		  {
-            		    result = node_generic :call, :recv => val[0], :meth => '<=>', :args => [val[2]]
+            		    result = node :call, :recv => val[0], :meth => '<=>', :args => [val[2]]
             		  }
             		| arg '>' arg
             		  {
-            		    result = node_generic :call, :recv => val[0], :meth => '>', :args => [val[2]]
+            		    result = node :call, :recv => val[0], :meth => '>', :args => [val[2]]
             		  }
             		| arg tGEQ arg
             		  {
-            		    result = node_generic :call, :recv => val[0], :meth => '>=', :args => [val[2]]
+            		    result = node :call, :recv => val[0], :meth => '>=', :args => [val[2]]
             		  }
             		| arg '<' arg
             		  {
-            		    result = node_generic :call, :recv => val[0], :meth => '<', :args => [val[2]]
+            		    result = node :call, :recv => val[0], :meth => '<', :args => [val[2]]
             		  }
             		| arg tLEQ arg
             		  {
-            		    result = node_generic :call, :recv => val[0], :meth => '<=', :args => [val[2]]
+            		    result = node :call, :recv => val[0], :meth => '<=', :args => [val[2]]
             		  }
             		| arg tEQ arg
             		  {
-            		    result = node_generic :call, :recv => val[0], :meth => '==', :args => [val[2]]
+            		    result = node :call, :recv => val[0], :meth => '==', :args => [val[2]]
             		  }
             		| arg tEQQ arg
             		  {
-            		    result = node_generic :call, :recv => val[0], :meth => '===', :args => [val[2]]
+            		    result = node :call, :recv => val[0], :meth => '===', :args => [val[2]]
             		  }
             		| arg tNEQ arg
             		  {
-            		    result = node_generic :call, :recv => val[0], :meth => '!=', :args => [val[2]]
+            		    result = node :call, :recv => val[0], :meth => '!=', :args => [val[2]]
             		  }
             		| arg tMATCH arg
             		  {
-            		    result = node_generic :call, :recv => val[0], :meth => '=~', :args => [val[2]]
+            		    result = node :call, :recv => val[0], :meth => '=~', :args => [val[2]]
             		  }
             		| arg tNMATCH arg
             		  {
-            		    result = node_generic :call, :recv => val[0], :meth => '!~', :args => [val[2]]
+            		    result = node :call, :recv => val[0], :meth => '!~', :args => [val[2]]
             		  }
             		| '~' arg
             		  {
-            		    result = node_generic :call, :recv => val[1], :meth => '~', :args => []
+            		    result = node :call, :recv => val[1], :meth => '~', :args => []
             		  }
             		| arg tLSHFT arg
             		  {
-            		    result = node_generic :call, :recv => val[0], :meth => '<<', :args => [val[2]]
+            		    result = node :call, :recv => val[0], :meth => '<<', :args => [val[2]]
             		  }
             		| arg tRSHFT arg
             		  {
-            		    result = node_generic :call, :recv => val[0], :meth => '>>', :args => [val[2]]
+            		    result = node :call, :recv => val[0], :meth => '>>', :args => [val[2]]
             		  }
             		| arg tANDOP arg
             		| arg tOROP arg
@@ -419,6 +451,9 @@ rule
   	            | paren_args
 
    opt_call_args: none
+                  {
+                    result = []
+                  }
   	            | call_args
 
        call_args: command
@@ -472,9 +507,12 @@ rule
             		| tCOLON3 tCONSTANT
             		| tLBRACK aref_args ']'
             		  {
-            		    result = node_generic :array, :args => val[1]
+            		    result = node :array, :args => val[1]
             		  }
             		| tLBRACE assoc_list '}'
+            		  {
+            		    result = node :assoc_list, :list => val[1]
+            		  }
             		| kRETURN
             		| kYIELD '(' call_args rparen
             		| kYIELD '(' rparen
@@ -505,11 +543,11 @@ rule
             		  }
             		| k_def fname f_arglist bodystmt k_end
             		  {
-            		    result = self.node_generic(:def, :fname => val[1], :f_arglist => val[2], :bodystmt => val[3])
+            		    result = self.node :def, :fname => val[1], :arglist => val[2], :bodystmt => val[3]
             		  }
             		| k_def singleton dot_or_colon fname f_arglist bodystmt k_end
             		  {
-            		    result = self.node_generic(:def, :singleton => val[1], :fname => val[3], :f_arglist => val[4], :bodystmt => val[5])
+            		    result = self.node :def, :singleton => val[1], :fname => val[3], :arglist => val[4], :bodystmt => val[5]
             		  }
             		| kBREAK
             		| kNEXT
@@ -620,11 +658,11 @@ rule
 
      method_call: operation paren_args
                   {
-                    result = node_generic :call, :recv => nil, :meth => val[0], :args => val[1]
+                    result = node :call, :recv => nil, :meth => val[0], :args => val[1]
                   }
               	| primary_value '.' operation2 opt_paren_args
               	  {
-                    result = node_generic :call, :recv => val[0], :meth => val[2], :args => val[3]
+                    result = node :call, :recv => val[0], :meth => val[2], :args => val[3]
                   }
               	| primary_value tCOLON2 operation2 paren_args
               	  {
@@ -708,6 +746,9 @@ xstring_contents: /* none */
             		| backref
 
           symbol: tSYMBEG sym
+                  {
+                    result = node :symbol, :name => val[1]
+                  }
 
              sym: fname
               	| tIVAR
@@ -718,62 +759,62 @@ xstring_contents: /* none */
 
          numeric: tINTEGER
                   {
-                    result = node_generic :numeric, :value => val[0], :float => false
+                    result = node :numeric, :value => val[0], :float => false
                   }
               	| tFLOAT
               	  {
-                    result = node_generic :numeric, :value => val[0], :float => true
+                    result = node :numeric, :value => val[0], :float => true
                   }
               	| tUMINUS_NUM tINTEGER
             		| tUMINUS_NUM tFLOAT
 
         variable: tIDENTIFIER
                   {
-                    result = node_generic :identifier, :name => val[0]
+                    result = node :identifier, :name => val[0]
                   }
             		| tIVAR
             		  {
-                    result = node_generic :ivar, :name => val[0]
+                    result = node :ivar, :name => val[0]
                   }
             		| tGVAR
             		  {
-                    result = node_generic :gvar, :name => val[0]
+                    result = node :gvar, :name => val[0]
                   }
             		| tCONSTANT
             		  {
-                    result = node_generic :constant, :name => val[0]
+                    result = node :constant, :name => val[0]
                   }
             		| tCVAR
             		  {
-                    result = node_generic :cvar, :name => val[0]
+                    result = node :cvar, :name => val[0]
                   }
             		| kNIL
             		  {
-                    result = node_generic :nil, :name => val[0]
+                    result = node :nil, :name => val[0]
                   }
             		| kSELF
             		  {
-                    result = node_generic :self, :name => val[0]
+                    result = node :self, :name => val[0]
                   }
             		| kTRUE
             		  {
-                    result = node_generic :true, :name => val[0]
+                    result = node :true, :name => val[0]
                   }
             		| kFALSE
             		  {
-                    result = node_generic :false, :name => val[0]
+                    result = node :false, :name => val[0]
                   }
             		| k__FILE__
             		  {
-                    result = node_generic :__FILE__, :name => val[0]
+                    result = node :__FILE__, :name => val[0]
                   }
             		| k__LINE__
             		  {
-                    result = node_generic :__LINE__, :name => val[0]
+                    result = node :__LINE__, :name => val[0]
                   }
             		| k__ENCODING__
             		  {
-                    result = node_generic :__ENCODING__, :name => val[0]
+                    result = node :__ENCODING__, :name => val[0]
                   }
 
          var_ref: variable
@@ -800,59 +841,59 @@ xstring_contents: /* none */
 
           f_args: f_arg ',' f_optarg ',' f_rest_arg opt_f_block_arg
                   {
-             		    result = node_generic :arg, :arg => val[0], :optarg => val[2], :rest_arg => val[4], :opt_block_arg => val[5]
+             		    result = node :arg, :arg => val[0], :optarg => val[2], :rest_arg => val[4], :opt_block_arg => val[5]
              		  }
               	| f_arg ',' f_optarg ',' f_rest_arg ',' f_arg opt_f_block_arg
               	  {
-             		    result = node_generic :arg, :arg => val[0], :optarg => val[2], :rest_arg => val[4], :arg2 => val[6], :opt_block_arg => val[7]
+             		    result = node :arg, :arg => val[0], :optarg => val[2], :rest_arg => val[4], :arg2 => val[6], :opt_block_arg => val[7]
              		  }
               	| f_arg ',' f_optarg opt_f_block_arg
               	  {
-              	    result = node_generic :arg, :arg => val[0], :optarg => val[2], :opt_block_arg => val[3]
+              	    result = node :arg, :arg => val[0], :optarg => val[2], :opt_block_arg => val[3]
               	  }
             		| f_arg ',' f_optarg ',' f_arg opt_f_block_arg
             		  {
-              	    result = node_generic :arg, :arg => val[0], :optarg => val[2], :arg2 => val[4], :opt_block_arg => val[5]
+              	    result = node :arg, :arg => val[0], :optarg => val[2], :arg2 => val[4], :opt_block_arg => val[5]
               	  }
             		| f_arg ',' f_rest_arg opt_f_block_arg
             		  {
-            		    result = node_generic :arg, :arg => val[0], :rest_arg => val[2], :opt_block_arg => val[3]
+            		    result = node :arg, :arg => val[0], :rest_arg => val[2], :opt_block_arg => val[3]
             		  }
              		| f_arg ',' f_rest_arg ',' f_arg opt_f_block_arg
              		  {
-            		    result = node_generic :arg, :arg => val[0], :rest_arg => val[2], :arg2 => val[4], :opt_block_arg => val[5]
+            		    result = node :arg, :arg => val[0], :rest_arg => val[2], :arg2 => val[4], :opt_block_arg => val[5]
             		  }
              		| f_arg opt_f_block_arg
              		  {
-             		    result = node_generic :arg, :arg => val[0], :opt_block_arg => val[1]
+             		    result = node :arg, :arg => val[0], :opt_block_arg => val[1]
              		  }
             		| f_optarg ',' f_rest_arg opt_f_block_arg
             		  {
-            		    result = node_generic :optarg, :optarg => val[0], :rest_arg => val[2], :opt_block_arg => val[3]
+            		    result = node :optarg, :optarg => val[0], :rest_arg => val[2], :opt_block_arg => val[3]
             		  }
             		| f_optarg ',' f_rest_arg ',' f_arg opt_f_block_arg
             		  {
-            		    result = node_generic :optarg, :optarg => val[0], :rest_arg => val[2], :arg => val[4], :opt_block_arg => val[5]
+            		    result = node :optarg, :optarg => val[0], :rest_arg => val[2], :arg => val[4], :opt_block_arg => val[5]
             		  }
              		| f_optarg opt_f_block_arg
              		  {
-             		    result = node_generic :optarg, :optarg => val[0], :opt_block_arg => val[1]
+             		    result = node :optarg, :optarg => val[0], :opt_block_arg => val[1]
              		  }
             		| f_optarg ',' f_arg opt_f_block_arg
             		  {
-             		    result = node_generic :optarg, :optarg => val[0], :arg => val[2], :opt_block_arg => val[3]
+             		    result = node :optarg, :optarg => val[0], :arg => val[2], :opt_block_arg => val[3]
              		  }
               	| f_rest_arg opt_f_block_arg
             	    {
-             		    result = node_generic :rest_arg, :rest_arg => val[0], :opt_block_arg => val[1]
+             		    result = node :rest_arg, :rest_arg => val[0], :opt_block_arg => val[1]
              		  }
             		| f_rest_arg ',' f_arg opt_f_block_arg
             		  {
-             		    result = node_generic :rest_arg, :rest_arg => val[0], :arg => val[2], :opt_block_arg => val[3]
+             		    result = node :rest_arg, :rest_arg => val[0], :arg => val[2], :opt_block_arg => val[3]
              		  }
             		| f_block_arg
             		  {
-             		    result = node_generic :block_arg, :block_arg => val[0]
+             		    result = node :block_arg, :block_arg => val[0]
              		  }
               	| 
               	  {
@@ -915,13 +956,31 @@ xstring_contents: /* none */
             		| '(' expr rparen
 
       assoc_list: none
+                  {
+                    result = []
+                  }
               	| assocs trailer
+              	  {
+              	    result = val[0]
+              	  }
 
           assocs: assoc
+                  {
+                    result = [val[0]]
+                  }
             		| assocs ',' assoc
+            		  {
+            		    result = val[0] + [val[2]]
+            		  }
 
            assoc: arg_value tASSOC arg_value
+                  {
+                    result = node :assoc, :key => val[0], :value => val[2]
+                  }
                 | tLABEL arg_value
+                  {
+                    result = node :assoc, :key => val[0], :value => val[1]
+                  }
 
        operation: tIDENTIFIER
               	| tCONSTANT

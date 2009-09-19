@@ -189,7 +189,7 @@ RClass.define = function(id, super_klass) {
 RClass.define_under = function(outer, id, super_klass) {
   var klass;
   // if already defined in context... just ensure it is a macthing class def
-  if (VN.const_defined_at(outer, id)) {
+  if (outer.$const_defined(id)) {
     klass = VN.const_get_at(outer, id);
     if (klass.$type != VN.CLASS) {
       VN.type_error(id + ' is not a class');
@@ -203,9 +203,10 @@ RClass.define_under = function(outer, id, super_klass) {
   if (!super_klass) {
     VN.warning('no super class for `' + VN.class2name(outer), + '::' + id + '`, Object assumed');
   }
-  klass = RClass.define_id(id, super_klass);
-  VN.set_class_path(klass, outer, id);
-  VN.const_set(outer, id, klass);
+  klass = RClass.define_class_id(id, super_klass);
+  // VN.set_class_path(klass, outer, id);
+  // VN.const_set(outer, id, klass);
+  outer.$const_set(id, klass);
   RClass.inherited(super_klass, klass);
 
   return klass;
@@ -2263,14 +2264,12 @@ cHash.$define_method('compare_by_identity?', function() {
 // require('core/math');
 // require('core/enumerator');
 
-var $_vn_1 = RClass.define('Other', cObject) ;
-assign$_vn_1.$define_method('initialize', function(name) {
-this.$call('adam', ).$call('assign', );
-adam.$call('==', );
-this.$call('become_very_fast', );
-[1,2,3].$call('pretty_print', );
-var adam = 10;
+VN.top_self.$define_singleton_method('john', function(bob,now,older){
+var adam = 4;
+this.$call('john', [])return ben = 10;
 });
-$_vn_1.$define_singleton_method('adam', function(william, john, adam) {
+cObject.$const_set('VN',10);
+var $VN_1 = RClass.define('Other', cObject);
+$VN_1.$define_method('adam', function(){
 });
 
