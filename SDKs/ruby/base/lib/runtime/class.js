@@ -34,7 +34,7 @@ var RClass = function(klass, super_klass) {
 
 RClass.inherited = function(super_klass, klass) {
   if (!super_klass) super_klass = cObject ;
-  return super_klass.$call('inherited', [klass]) ;
+  return super_klass.$('inherited', [klass]) ;
 };
   
 RClass.define = function(id, super_klass) {
@@ -224,7 +224,7 @@ RClass.prototype.$singleton_class_attached = function(obj) {
 };
 
 
-RClass.prototype.$call = function(id, args) {
+RClass.prototype.$ = function(id, args) {
   var method = this.$klass.$search_method(id);
   // console.log('searching for: ' + id);
   // console.log(this.$klass);
@@ -303,7 +303,7 @@ RClass.prototype.$search_method = function(id) {
   return func;
 };
 
-RClass.prototype.$call = function(id, args) {
+RClass.prototype.$ = function(id, args) {
   // var method = this.$search_method(this.$klass, id);
   var method = this.$klass.$search_method(id);
   if (!method) throw 'VN#funcall cannot find method: ' + id ;

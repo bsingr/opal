@@ -90,7 +90,7 @@ VN.boot_defmetametaclass = function(klass, metametaclass) {
 };
 
 VN.obj_alloc = function(klass) {
-  var obj = klass.$call('allocate', []);
+  var obj = klass.$('allocate', []);
   return obj;
 };
 
@@ -159,7 +159,7 @@ var RClass = function(klass, super_klass) {
 
 RClass.inherited = function(super_klass, klass) {
   if (!super_klass) super_klass = cObject ;
-  return super_klass.$call('inherited', [klass]) ;
+  return super_klass.$('inherited', [klass]) ;
 };
   
 RClass.define = function(id, super_klass) {
@@ -349,7 +349,7 @@ RClass.prototype.$singleton_class_attached = function(obj) {
 };
 
 
-RClass.prototype.$call = function(id, args) {
+RClass.prototype.$ = function(id, args) {
   var method = this.$klass.$search_method(id);
   // console.log('searching for: ' + id);
   // console.log(this.$klass);
@@ -428,7 +428,7 @@ RClass.prototype.$search_method = function(id) {
   return func;
 };
 
-RClass.prototype.$call = function(id, args) {
+RClass.prototype.$ = function(id, args) {
   // var method = this.$search_method(this.$klass, id);
   var method = this.$klass.$search_method(id);
   if (!method) throw 'VN#funcall cannot find method: ' + id ;
@@ -588,7 +588,12 @@ RObject.prototype.$ivar_get = function(id) {
   return this[id] ;
 };
 
-RObject.prototype.$call = function(id, args) {
+/*
+  $ - call method
+  @param id - method name
+  @param args - array of all arguments
+*/
+RObject.prototype.$ = function(id, args) {
   var method = this.$klass.$search_method(id);
   if (!method) throw 'RObject#call cannot find method: ' + id ;
   return method.apply(this, args) ;
@@ -2264,12 +2269,11 @@ cHash.$define_method('compare_by_identity?', function() {
 // require('core/math');
 // require('core/enumerator');
 
-VN.top_self.$define_singleton_method('john', function(bob,now,older){
-var adam = 4;
-this.$call('john', [])return ben = 10;
-});
-cObject.$const_set('VN',10);
 var $VN_1 = RClass.define('Other', cObject);
-$VN_1.$define_method('adam', function(){
+$VN_1.$def('method_name',function(){
+});
+$VN_1.$def_s('assignmtn',function(){
+});
+$VN_1.$def_s('[]',function(name){
 });
 

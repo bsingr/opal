@@ -90,7 +90,7 @@ VN.boot_defmetametaclass = function(klass, metametaclass) {
 };
 
 VN.obj_alloc = function(klass) {
-  var obj = klass.$call('allocate', []);
+  var obj = klass.$('allocate', []);
   return obj;
 };
 

@@ -60,7 +60,7 @@ class Vienna::RubyParser < Racc::Parser
 	  @destination = dest
 	  @project = project
 	  @requirements = []
-	  @current_self = ['VN.top_self']
+	  @current_self = ['VN.self']
 	  @current_self_stack_counter = 0
 	  @context_var_stack = []
 	  
@@ -300,7 +300,7 @@ class Vienna::RubyParser < Racc::Parser
           return [:tOP_ASSIGN, scanner.matched]
         elsif scanner.scan(/\|/)
           self.lex_state = :EXPR_BEG
-          return [:tPIPE, scanner.matched]
+          return ['|', scanner.matched]
         end
       elsif scanner.scan(/\{/)
         result = if self.lex_state == :EXPR_END
@@ -472,6 +472,9 @@ class Vienna::RubyParser < Racc::Parser
         when 'module'
           self.lex_state = :EXPR_BEG
           return [:kMODULE, scanner.matched]
+        when 'do'
+          self.lex_state = :EXPR_BEG
+          return [:kDO, scanner.matched]
         when 'if'
           # self.lex_state = 
           return [:kIF, scanner.matched]

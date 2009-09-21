@@ -39,7 +39,12 @@ RObject.prototype.$ivar_get = function(id) {
   return this[id] ;
 };
 
-RObject.prototype.$call = function(id, args) {
+/*
+  $ - call method
+  @param id - method name
+  @param args - array of all arguments
+*/
+RObject.prototype.$ = function(id, args) {
   var method = this.$klass.$search_method(id);
   if (!method) throw 'RObject#call cannot find method: ' + id ;
   return method.apply(this, args) ;

@@ -36,17 +36,17 @@ module Vienna
     # to reference Constants etc. The context is maintained as a hash. All keys
     # used as listed here:
     # 
-    #   :instance - if present, then the current context is inside an instance
-    #               method def, or the top self context. If not present, then
-    #               the context is inside a class/module definition
-    #   :last_stmt - the current stmt is the last in some context/block, so an
-    #               implicit return is required. This is handled differently by
-    #               different types of stmt. If statements, for example, need 
-    #               to apply this to each of it's last statements, for each
-    #               possible if/elsif/else value.
-    #   :full_stmt - the current stmt is a full statement (in real terms, this
-    #               means that we need to insert a ';\n' after the currently
-    #               processed statement, as to complete it).
+    #  :instance - if present, then the current context is inside an instance
+    #              method def, or the top self context. If not present, then
+    #              the context is inside a class/module definition
+    #  :last_stmt - the current stmt is the last in some context/block, so an
+    #              implicit return is required. This is handled differently by
+    #              different types of stmt. If statements, for example, need 
+    #              to apply this to each of it's last statements, for each
+    #              possible if/elsif/else value.
+    #  :full_stmt - the current stmt is a full statement (in real terms, this
+    #              means that we need to insert a ';\n' after the currently
+    #              processed statement, as to complete it).
     # 
     def generate_tree tree
       tree.each do |stmt|
@@ -93,7 +93,7 @@ module Vienna
     # 
     def generate_class klass, context
       # top-level
-      if context[:self] == 'VN.top_self'
+      if context[:self] == 'VN.self'
         push_current_self
         write "var #{current_self} = RClass.define('#{klass.klass_name}', #{klass.super_klass});\n"
       else # nested class
@@ -121,10 +121,10 @@ module Vienna
     # 
     def generate_def definition, context
       # all methods in top self must be added as singleton methods
-      if definition[:singleton] or context[:self] == 'VN.top_self'
-        write "#{context[:self]}.$define_singleton_method('#{definition[:fname]}', function("
+      if definition[:singleton] or context[:self] == 'VN.self'
+        write "#{context[:self]}.$def_s('#{definition[:fname]}',function("
       else
-        write "#{context[:self]}.$define_method('#{definition[:fname]}', function("
+        write "#{context[:self]}.$def('#{definition[:fname]}',function("
       end
       
       # arglist
@@ -173,13 +173,13 @@ module Vienna
       
       # If LHS is an @instance_variable
       elsif stmt[:lhs].node == :ivar
-        write "#{context[:self]}.$ivar_set('#{stmt[:lhs][:name]}',"
+        write "#{context[:self]}.$i_s('#{stmt[:lhs][:name]}',"
         generate_stmt stmt[:rhs], :instance => context[:instance], context[:full_stmt] => false, context[:last_stmt] => true, :self => context[:self]
         write ')'
       
       # IF LHS is a CONSTANT
       elsif stmt[:lhs].node == :constant
-        if context[:self] == 'VN.top_self'
+        if context[:self] == 'VN.self'
           write 'cObject'
         elsif context[:instance]
           write "#{context[:self]}.$klass"
@@ -188,7 +188,7 @@ module Vienna
         end
              
         write ".$const_set('#{stmt[:lhs][:name]}',"
-        generate_stmt stmt[:rhs], :instance => context[:instance], context[:full_stmt] => false, context[:last_stmt] => true, :self => context[:self]
+        generate_stmt stmt[:rhs], :instance => context[:instance], context[:full_stmt] => false, :last_stmt => context[:last_stmt], :self => context[:self]
         write ')'
       else
         write stmt
@@ -196,6 +196,26 @@ module Vienna
       
       write ";\n" if context[:full_stmt]
       
+    end
+    
+    # Generate method-call
+    # 
+    def generate_call call, context
+      if call[:recv]
+        generate_stmt call[:recv], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self =>context[:self]
+      else
+        write current_self
+      end
+        
+      write ".$('#{call[:meth]}',["
+      unless call[:args].nil?
+        call[:args].each do |arg|
+          generate_stmt arg, :instance => context[:instance], :full_stmt => false
+          write ',' unless arg == call[:args].last
+        end
+      end
+      write "])"
+      write ";\n" if context[:full_stmt]
     end
     
     
@@ -230,7 +250,7 @@ module Vienna
     end
     
     def generate_constant const, context
-      if current_self == 'VN.top_self'
+      if current_self == 'VN.self'
         write "cObject.$const_get('#{const[:name]}')"
       else
         write "#{current_self}.$klass.$const_get('#{const[:name]}')"
@@ -269,7 +289,8 @@ module Vienna
     # a varname, or a method call on self.
     def generate_identifier identifier, context
       # method call
-      write "#{current_self}.$call('#{identifier[:name]}', [])"
+      write "#{current_self}.$('#{identifier[:name]}', [])"
+      write ";\n" if context[:full_stmt]
       # varname
       # write identifier[:name]
     end
@@ -278,22 +299,7 @@ module Vienna
       write current_self
     end
     
-    def generate_call call, context
-      if call[:recv]
-        generate_stmt call[:recv]
-      else
-        write current_self
-      end
-        
-      write ".$call('#{call[:meth]}',["
-      unless call[:args].nil?
-        call[:args].each do |arg|
-          generate_stmt arg
-          write ',' unless arg == call[:args].last
-        end
-      end
-      write "])"
-    end
+    
     
     
     def generate_numeric numeric, context
@@ -302,3 +308,37 @@ module Vienna
     
   end
 end
+
+
+
+
+
+
+
+
+# 
+# f_arg: 1 or more normal args, with commars
+# f_optarg: name = val, with a commar
+# f_rest_arg: *args
+# opt_f_block: &block
+# 
+
+# f_arg ',' f_optarg ',' f_rest_arg opt_f_block_arg
+# f_arg ',' f_optarg ',' f_rest_arg ',' f_arg opt_f_block_arg
+# f_arg ',' f_optarg opt_f_block_arg
+# f_arg ',' f_optarg ',' f_arg opt_f_block_arg
+# f_arg ',' f_rest_arg opt_f_block_arg
+# f_arg ',' f_rest_arg ',' f_arg opt_f_block_arg
+# f_arg opt_f_block_arg
+
+# f_optarg ',' f_rest_arg opt_f_block_arg
+# f_optarg ',' f_rest_arg ',' f_arg opt_f_block_arg
+# f_optarg opt_f_block_arg
+# f_optarg ',' f_arg opt_f_block_arg
+
+# f_rest_arg opt_f_block_arg
+# f_rest_arg ',' f_arg opt_f_block_arg
+
+# f_block_arg
+# none...
+#
