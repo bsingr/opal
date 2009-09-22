@@ -76,6 +76,10 @@ module Vienna
         generate_symbol stmt, context
       when :self
         generate_self stmt, context
+      when :string
+        generate_string stmt, context
+      when :xstring
+        generate_xstring stmt, context
       when :array
         generate_array stmt, context
       when :assign
@@ -219,6 +223,22 @@ module Vienna
     end
     
     
+    # Generate a string
+    # 
+    def generate_string str, context
+      write "return " if context[:last_stmt] and context[:full_stmt]
+      write str[:value]
+      write ";\n" if context[:full_stmt]
+    end
+    
+    # Generate an X-string
+    # This basically holds Javascript code....
+    # 
+    def generate_xstring str, context
+      write "return " if context[:last_stmt] and context[:full_stmt]
+      write str[:value]
+      write ";\n" if context[:full_stmt]
+    end
     
     
     

@@ -143,7 +143,7 @@ class Vienna::RubyParser < Racc::Parser
   # returns the next token (token/value array)
 	def next_token
 	  t = get_next_token
-    # puts "#{t[0]} : #{t[1]} (#{self.lex_state})"
+    puts "#{t[0]} : #{t[1]} (#{self.lex_state})"
 	  return t
 	end
 	
@@ -234,9 +234,23 @@ class Vienna::RubyParser < Racc::Parser
         return [:tIVAR, scanner.matched]
       
       
-      elsif scanner.scan(/\"(([^\{\#\@\$\"\\])|[^\"\\\#])*\"/o)
-        self.lex_state = :EXPR_END
-        return [:tSTRING, scanner.matched]
+      
+      # Strings, in order: double, single, xstring
+      elsif scanner.scan(/\"/)
+        self.string_parse = { :type => :dquote, :beg => '"' } 
+        return [:tSTRING_BEG, scanner.matched]
+      
+      elsif scanner.scan(/\'/)
+        self.string_parse = { :type => :squote, :beg => "'" } 
+        return [:tSTRING_BEG, scanner.matched]
+        
+      elsif scanner.scan(/\`/)
+        self.string_parse = { :type => :xstring, :beg => '`' } 
+        return [:tXSTRING_BEG, scanner.matched]
+      
+      
+      
+      
       elsif scanner.scan(/\=/)
         return [:tSTRING_BEG, scanner.matched]
       elsif scanner.scan(/\:\:/)
