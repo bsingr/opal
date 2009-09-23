@@ -103,3 +103,23 @@ class Element
   end
   
 end
+
+
+Element.find(:body) do |body|
+  
+  body.css :alignment => :left, :width => '100px', :height => '150px'
+  body << Element.new :id => 'notification', :class => ['alert', 'shadow'], :tooltip => 'Notification area'
+
+  body.on :mousedown do |evt|
+    body.css :color => :red
+  end
+  
+  body.on :mousedown do |evt| 
+    body.css :color => :green
+  end
+  
+end
+
+
+
+
