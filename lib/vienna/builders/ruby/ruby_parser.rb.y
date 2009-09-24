@@ -66,7 +66,7 @@ class Vienna::RubyParser
   token tLPAREN	tLPAREN_ARG	tRPAREN tLBRACK tLBRACE tLBRACE_ARG tSTAR tAMPER
   token tLAMBDA tSYMBEG tSTRING_BEG tXSTRING_BEG tREGEXP_BEG tWORDS_BEG
   token tQWORDS_BEG tSTRING_DBEG tSTRING_DVAR tSTRING_END tLAMBEG tUMINUS_NUM
-  token tSTRING tXSTRING
+  token tSTRING tXSTRING_END
 	
 
 rule
@@ -712,12 +712,12 @@ rule
 
          string1: tSTRING_BEG string_contents tSTRING_END
                   {
-                    result = node :string, :value => val[0]
+                    result = node :string, :value => val[1]
                   }  
 
-         xstring: tXSTRING_BEG xstring_contents tSTRING_END
+         xstring: tXSTRING_BEG xstring_contents tXSTRING_END
                   {
-                    result = node :xstring, :value => val[0]
+                    result = node :xstring, :value => val[1]
                   }
 
           regexp: tREGEXP_BEG xstring_contents tREGEXP_END

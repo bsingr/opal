@@ -42,6 +42,8 @@ class Vienna::RubyParser < Racc::Parser
   #   :EXPR_VALUE 
   attr_accessor :lex_state
   
+  attr_accessor :string_parse
+  
   # last read token
   attr_accessor :token
   
@@ -140,18 +142,44 @@ class Vienna::RubyParser < Racc::Parser
 	 
 	
 	
+	
   # returns the next token (token/value array)
 	def next_token
 	  t = get_next_token
-    puts "#{t[0]} : #{t[1]} (#{self.lex_state})"
+    # puts "#{t[0]} : #{t[1]} (#{self.lex_state})"
 	  return t
 	end
+	
+	
+	def get_next_string_token
+	  string_type = string_parse[:type]
+	  string_beg = string_parse[:beg]
+	  
+	  if scanner.scan(/#{Regexp.escape string_beg}/)
+	    if string_type == :dquote or string_type == :squote
+	      self.string_parse = nil
+	      return [:tSTRING_END, scanner.matched]
+	    elsif string_type == :regexp
+	    
+	    else # assume to be an xstring
+	      self.string_parse = nil
+	      return [:tXSTRING_END, scanner.matched]
+	    end
+	  end
+	  
+	  return [:tSTRING_END, scanner.matched]
+	  
+	end
+	
+	
 	
 	def get_next_token
 	  c = ''
 	  space_seen = false
 	  cmd_state = 0
 	  last_state = lex_state
+	  
+	  return get_next_string_token if string_parse
 	  
     loop do
       # puts "starting loop with: #{self.lex_state}"

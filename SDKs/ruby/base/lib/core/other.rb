@@ -1,17 +1,11 @@
-class Other
+class Element
   
-  def method_name
-    "adam"
-    'bonno'
-    `function`
-  end
-  
-  def self.assignmtn
-  
-  end
-  
-  def self.[](name)
-    
+  def initialize type, options, block
+    # @element = `document.createElement(#{type})`
+    @element = ``
   end
   
 end
+
+
+bob = Element.new

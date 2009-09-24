@@ -227,7 +227,9 @@ module Vienna
     # 
     def generate_string str, context
       write "return " if context[:last_stmt] and context[:full_stmt]
+      write "'"
       write str[:value]
+      write "'"
       write ";\n" if context[:full_stmt]
     end
     
@@ -236,6 +238,7 @@ module Vienna
     # 
     def generate_xstring str, context
       write "return " if context[:last_stmt] and context[:full_stmt]
+      write '/* JS: function() */'
       write str[:value]
       write ";\n" if context[:full_stmt]
     end
