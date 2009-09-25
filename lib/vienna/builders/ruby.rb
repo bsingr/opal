@@ -150,11 +150,13 @@ class Vienna::RubyParser < Racc::Parser
 	  return t
 	end
 	
-	
+  # Returns serialized tokens for strings. these could be dvars, contents or
+  # the end of string markers, and these must be returned as appropriate.
 	def get_next_string_token
 	  string_type = string_parse[:type]
 	  string_beg = string_parse[:beg]
 	  
+    # Read end of string/xstring/regexp markers
 	  if scanner.scan(/#{Regexp.escape string_beg}/)
 	    if string_type == :dquote or string_type == :squote
 	      self.string_parse = nil
@@ -167,7 +169,20 @@ class Vienna::RubyParser < Racc::Parser
 	    end
 	  end
 	  
-	  return [:tSTRING_END, scanner.matched]
+    # not end of string, so must be contents..
+    
+    case
+    when scanner.scan(/#(\$|\@)/)
+      return [:tSTRING_DVAR, scanner.matched]
+    when scanner.scan(/#\{/)
+      return [:tSTRING_DBEG, scanner.matched]
+    when scanner.scan(/#/)
+      # add '#' to buffer
+    end
+    
+    
+    scanner.scan(/./)
+    return [:tSTRING_CONTENT, scanner.matched]
 	  
 	end
 	

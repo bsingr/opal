@@ -20,7 +20,7 @@ module Vienna
   # Returns the version string for the library.
   #
   def self.version
-  VERSION
+    VERSION
   end
 
   # Returns the library path for the module. If any arguments are given,
@@ -28,7 +28,7 @@ module Vienna
   # <tt>File.join</tt>.
   #
   def self.libpath( *args )
-  args.empty? ? LIBPATH : ::File.join(LIBPATH, args.flatten)
+    args.empty? ? LIBPATH : ::File.join(LIBPATH, args.flatten)
   end
 
   # Returns the lpath for the module. If any arguments are given,
@@ -36,7 +36,7 @@ module Vienna
   # <tt>File.join</tt>.
   #
   def self.path( *args )
-  args.empty? ? PATH : ::File.join(PATH, args.flatten)
+    args.empty? ? PATH : ::File.join(PATH, args.flatten)
   end
 
   # Utility method used to require all files ending in .rb that lie in the
@@ -45,11 +45,11 @@ module Vienna
   # the _filename_ does not have to be equivalent to the directory.
   #
   def self.require_all_libs_relative_to( fname, dir = nil )
-  dir ||= ::File.basename(fname, '.*')
-  search_me = ::File.expand_path(
-    ::File.join(::File.dirname(fname), dir, '**', '*.rb'))
+    dir ||= ::File.basename(fname, '.*')
+    search_me = ::File.expand_path(
+      ::File.join(::File.dirname(fname), dir, '**', '*.rb'))
 
-  Dir.glob(search_me).sort.each {|rb| require rb}
+    Dir.glob(search_me).sort.each {|rb| require rb}
   end
   
   def self.underscore(str)

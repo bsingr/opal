@@ -2269,9 +2269,5 @@ cHash.$define_method('compare_by_identity?', function() {
 // require('core/math');
 // require('core/enumerator');
 
-var $VN_1 = RClass.define('Element', cObject);
-$VN_1.$def('initialize',function(type,options,block){
-return this.$i_s('@element',/* JS: function() */);
-});
-var bob = cObject.$const_get('Element').$('new',[]);
+'';
 
