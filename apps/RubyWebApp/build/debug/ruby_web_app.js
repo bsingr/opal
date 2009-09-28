@@ -2269,5 +2269,5 @@ cHash.$define_method('compare_by_identity?', function() {
 // require('core/math');
 // require('core/enumerator');
 
-'';
+var bob = '';
 

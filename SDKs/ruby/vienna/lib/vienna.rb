@@ -10,7 +10,6 @@ require 'browser'
 
 module Vienna
   
-  
   # We can now use Vienna.app.*.* as a key path, or, using the shorteer version
   # VN.app.*.*.....
   def app
