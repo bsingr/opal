@@ -25,12 +25,27 @@
  */
  
  // Object
- Object.extend = function(target, props) {
-   for (var key in props) {
-     target[key] = props[key];
-   }
-   return target;
- };
+Object.extend = function(target, props) {
+ for (var key in props) {
+   target[key] = props[key];
+ }
+ return target;
+};
+
+/*
+  Basic Object
+*/
+var BasicObject = function() {
+  return this ;
+};
+
+BasicObject.prototype.initialize = function() {
+  console.log('Initializing basic object');
+  return this;
+};
+
+BasicObject.prototype.klass = BasicObject;
+BasicObject.prototype.superklass = BasicObject;
 
 /**
   var Animal = new Class('Animal', superKlass, { ... });
