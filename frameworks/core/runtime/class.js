@@ -49,6 +49,52 @@ BasicObject.prototype.superklass = BasicObject;
 
 /**
   var Animal = new Class('Animal', superKlass, { ... });
+  
+  Properties
+  ==========
+  
+  Properties should be added, with some special cases:
+  
+  1. Constants
+  ------------
+  Any prop starting with a capital letter should be seen as a constant: a value,
+  module, or class. Therefore they should be added to the prototype, as well as
+  the class, so both meta and instance methods can reference the values by the
+  this.Constant syntax.
+  
+  2. Class methods
+  ----------------
+  Class methods are defined within the 'self' property, which itself contains an
+  object of class method names to the relevant functions. These should each be 
+  added to the class, and not the prototype.
+  
+  3. attrReader, attrWriter, attrAccessor
+  ---------------------------------------
+  Each of these takes a string, or array of property names that should have 
+  their relevanr methods automatically generated.
+  
+  4. setKeyName
+  -------------
+  Any method of this name should have the actual function redefined in the form
+  $setKeyName. the setKeyName method will be custom defined to call this method,
+  but also to call this.didChangeValueForKey() to allow for automatic KVO calls.
+  
+  5. Instance variables
+  ---------------------
+  All instance varibales should be anmed starting with a '$' to avoid name clashes
+  with getter functions, for example : 
+  
+    - Ivar name:  this.$bob
+    - Getter:     this.bob()
+    - Setter:     this.setBob(val);
+  
+  6. Include
+  ----------
+  Includes a module into the Class.
+  
+  -
+  
+  
 */
 var Class = function() {
   return this.initialize.apply(this, arguments);
