@@ -23,7 +23,38 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
+ 
 var Module = function() {
-  
+  return this.initialize.apply(this, arguments);
 };
+
+Object.extend(Module.prototype, {
+  
+  initialize: function(name, props) {
+    // If we pass in a name, use it. otherwise move other args to suit.
+    if (typeof name === 'string') {
+      this.__classid__ = this.displayName = name ;
+    }
+    else {
+      this.__classid__ = this.displayName = '' ;
+      props = name;
+    }
+    
+    var module = { } ;
+    module.prototype = { };
+    
+     // Copy all Module (this) methods into the new class
+    for (var key in this) {
+      module[key] = this[key];
+    }
+    
+    module.extend(props);
+    return module;
+  },
+  
+  include: function() {
+    
+  },
+  
+  extend: Class.prototype.extend
+});

@@ -53,17 +53,17 @@ Object.extend(VN.Rect.prototype, {
     return this.origin.x + this.size.width;
   },
   
+  toString: function() {
+    return '{' + this.origin.toString() + ', ' + this.size.toString() + '}';
+  },
+  
+  toArray: function() {
+    return [this.origin.x, this.origin.y, this.size.width, this.size.height];
+  },
   
   containsPoint: function(point) {
     
-  }
-  
-  function CGRectContainsPoint(rect, point)
-  {
-  	return point.x >= CGRectGetMinX(rect) && point.y >= CGRectGetMinY(rect) && point.x < CGRectGetMaxX(rect) && point.y < CGRectGetMaxY(rect);
-  }
-  
-  
+  }  
 });
 
 Object.extend(VN.Point.prototype, {

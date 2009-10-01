@@ -1,6 +1,6 @@
 
 var require=function require(){};if(typeof console==='undefined'){var console=console||window.console||{};console.log=console.info=console.warn=console.error=function(){};}
-Object.extend=function(target,props){for(var key in props){target[key]=options[key];}
+Object.extend=function(target,props){for(var key in props){target[key]=props[key];}
 return target;};
 VN.require('/Users/adam/Development/vienna/apps/JSWebApp/build/tmp/debug/core/lib/runtime/class.js');
 

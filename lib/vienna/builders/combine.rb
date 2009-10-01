@@ -44,7 +44,7 @@ module Vienna
       # js_file - path to a js file to combine
       # to_file - an already open file, ready to be written to
       def initialize(js_file, to_file, project)
-        puts "Combining #{js_file}"
+        # puts "Combining #{js_file}"
         File.readlines(js_file).map do |l|
           # to_file.write l
           if match = l.match(/^VN\.require\(\'(.*)\'\)/)

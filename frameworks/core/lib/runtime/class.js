@@ -23,19 +23,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
- 
- // Object
-Object.extend = function(target, props) {
- for (var key in props) {
-   target[key] = props[key];
- }
- return target;
-};
 
-/**
-  var Animal = new Class('Animal', superKlass, { ... });
-  
-*/
 var Class = function() {
   return this.initialize.apply(this, arguments);
 };
@@ -43,7 +31,7 @@ var Class = function() {
 Object.extend(Class.prototype, {
   
   initialize: function(name, superklass, props) {
-
+    console.log(name);
     // If we pass in a name, use it. otherwise move other args to suit.
     if (typeof name === 'string') {
       this.__classid__ = this.displayName = name ;

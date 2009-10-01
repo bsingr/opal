@@ -63,6 +63,8 @@ BasicObject.prototype.initialize = function() {
   return this;
 };
 
+BasicObject.extend = Class.prototype.extend;
+
 BasicObject.addSetterMethod = function(key, funcName, func) {
   // var methodBody = 'console.log("setting key: ' + key + '");';
   var methodBody = '';

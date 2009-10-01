@@ -40,5 +40,5 @@ var VN = Vienna ;
 var YES = true;
 var NO = false;
 
-// require('foundation');
-// require('app_kit');
+require('foundation/foundation');
+require('app_kit/app_kit');

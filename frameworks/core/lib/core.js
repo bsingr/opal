@@ -35,7 +35,7 @@ if (typeof console === 'undefined') {
 
 Object.extend = function(target, props) {
   for (var key in props) {
-    target[key] = options[key];
+    target[key] = props[key];
   }
   return target;
 };

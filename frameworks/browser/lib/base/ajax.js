@@ -24,6 +24,13 @@
  * THE SOFTWARE.
  */
 
+/*
+  Handles Ajax requests
+*/
 var Ajax = new Class('Ajax', {
+  
+  initialize: function(options) {
+    console.log('Yeahhh');
+  }
   
 });

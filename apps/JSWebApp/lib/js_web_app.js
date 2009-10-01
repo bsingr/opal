@@ -26,3 +26,4 @@
 
 require('core');
 require('browser');
+require('vienna');
