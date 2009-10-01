@@ -44,11 +44,13 @@ module Vienna
       # js_file - path to a js file to combine
       # to_file - an already open file, ready to be written to
       def initialize(js_file, to_file, project)
+        puts "Combining #{js_file}"
         File.readlines(js_file).map do |l|
           # to_file.write l
-          if match = l.match(/VN\.require\(\'(.*)\'\)\;/)
+          if match = l.match(/^VN\.require\(\'(.*)\'\)/)
             # to_file.write file_for_require_relative_to(File.join(project.project_root, js_file), match[1])
-            Vienna::Builder::Combine.new file_for_require_relative_to(File.join(project.project_root, js_file), match[1]), to_file, project
+            # Vienna::Builder::Combine.new file_for_require_relative_to(File.join(project.project_root, js_file), match[1]), to_file, project
+            Vienna::Builder::Combine.new(match[1], to_file, project)
             # to_file.write "wopwopwow"
           else
             to_file.write l

@@ -1,5 +1,5 @@
 # 
-# ruby_project.rb
+# new_project.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -28,7 +28,7 @@ module Vienna
   
   attr_accessor :project_root
   
-  class RubyProject
+  class NewProject
     
     def initialize(project_root)
       @project_root = File.expand_path(project_root)
@@ -42,7 +42,7 @@ module Vienna
       # if it is defined, use that, other wise use underscore-case vesion
       # of project name (.rb), e.g. MyApp => my_app.rb .. also assume it 
       # is inside the lib folder? project_root/lib/my_app.rb
-      @root_file ||= File.expand_path(File.join(project_root, (rakefile.config_for(build_mode)[:root_file] || File.join('lib', Vienna.underscore(project_name)) + '.rb')))
+      @root_file ||= File.expand_path(File.join(project_root, (rakefile.config_for(build_mode)[:root_file] || File.join('lib', Vienna.underscore(project_name)) + '.js')))
     end
     
     def project_name
@@ -53,9 +53,13 @@ module Vienna
       @project_root
     end
     
+    def project_lib_root
+      @project_lib_root ||= File.expand_path(File.join(project_root, 'lib'))
+    end
+    
     # Location of the system libraries: base, browser, vienna, etc.
     def system_lib_root
-      @system_lib_root ||= File.expand_path(File.join(Vienna::PATH, 'SDKs', 'ruby'))
+      @system_lib_root ||= File.expand_path(File.join(Vienna::PATH, 'frameworks'))
     end
     
     # Where the project can put other 'libraries' to be optionally built in.
@@ -78,14 +82,26 @@ module Vienna
       
       # puts js_build_path
       o = File.new(js_build_path, 'w')
-      root_combiner = Vienna::Builder::Combine.new File.join(tmp_prefix, 'base', 'lib', 'base.js'), o, self
+      root_combiner = Vienna::Builder::Combine.new File.join(tmp_prefix, project_name, 'lib', 'js_web_app.js'), o, self
       o.close
       
     end
     
     def build_file(file)
-      # we get the relative path to lib_root... this is where, relative to the build directory, where we need to put the file
-      file_dir = File.dirname(file.match(/^#{system_lib_root}(.*)/)[1])
+      # file_dir is the relative file_name to place the built file in the tmp diectoty.
+      file_dir =  if match = file.match(/^#{system_lib_root}(.*)/)
+                    File.dirname(match[1])
+                  elsif match = file.match(/^#{project_root}(.*)/)
+                    File.dirname(File.join(project_name, match[1]))
+                  end
+      
+      unless file_dir
+        puts "cannot find file_dir for #{file}"
+        exit
+      end
+      
+      # puts match[1]
+      
       build_dir = File.join(project_root, tmp_prefix, file_dir)
       FileUtils.mkdir_p build_dir
       
@@ -101,15 +117,17 @@ module Vienna
       
       builder.build!
       
-      builder.requirements.each do |r|
-        # puts file_for_require_relative_to file, r
-        req_file = file_for_require_relative_to(file, r)
-        if req_file.nil?
-          puts "CANNOT include file: #{r}"
-        else
-          build_file req_file
-        end
-      end
+      # builder.requirements.each do |r|
+      #   # puts file_for_require_relative_to file, r
+      #   req_file = file_for_require_relative_to(file, r)
+      #   if req_file.nil?
+      #     puts "CANNOT include file: #{r}"
+      #   else
+      #     build_file req_file
+      #   end
+      # end
+      
+      build_path
     end
     
     # Get the actual file needed when a require statement is found inside `file`
@@ -123,6 +141,15 @@ module Vienna
       end
       try_path = File.join(file_dir, require_path) + '.rb'
       if File.exists? try_path
+        return try_path
+      end
+      # Check vendor bundles...
+      
+      # Check system library bundles
+      try_path = File.join(system_lib_root, require_path, 'lib', require_path) + '.js'
+      if File.exists? try_path
+        # add the library to project lubraries, so css etc can all be added later.. as well
+        # as adding languages, etc.
         return try_path
       end
     end

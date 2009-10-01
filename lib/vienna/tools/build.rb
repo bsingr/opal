@@ -15,7 +15,7 @@ module Vienna
     # etc...
     def self.build
       # p = Project.new Dir.getwd
-      p = Vienna::RubyProject.new Dir.getwd
+      p = Vienna::NewProject.new Dir.getwd
       puts "preparing: #{p.project_root}"
       p.prepare!
       puts "building: #{p.project_name}"

@@ -40,5 +40,17 @@ Object.extend = function(target, props) {
   return target;
 };
 
+/**
+  Runtime.
+*/
 require('runtime/class');
 require('runtime/module');
+
+/**
+  Core Library
+*/
+require('core_library/basic_object');
+require('core_library/kernel');
+require('core_library/array');
+require('core_library/hash');
+

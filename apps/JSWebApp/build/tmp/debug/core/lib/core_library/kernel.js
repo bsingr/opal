@@ -1,0 +1,2 @@
+
+var Kernel=new Module('Kernel',{});var Adam=new Class('Adam',{$sharedApplication:function(){return VN.App;},attrAccessor:['width','height'],attrReader:'knowledge',VERSION:10,SubClass:new Class('SubClass',{}),initialize:function(){return this;},log:function(){},setAge:function(age){},_privateMethod:function(alignment){}});var Ben=new Class('Ben',Adam,{});

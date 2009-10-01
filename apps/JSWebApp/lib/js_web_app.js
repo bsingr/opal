@@ -1,5 +1,5 @@
 /* 
- * element.js
+ * js_web_app.js
  * vienna
  * 
  * Created by Adam Beynon.
@@ -24,6 +24,5 @@
  * THE SOFTWARE.
  */
 
-var Element = new Class('Element', {
-  
-});
+require('core');
+require('browser');

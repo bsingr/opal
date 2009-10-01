@@ -1,5 +1,5 @@
 /* 
- * basic_object.js
+ * array.js
  * vienna
  * 
  * Created by Adam Beynon.
@@ -24,11 +24,4 @@
  * THE SOFTWARE.
  */
 
-/**
-  This is the core/root object inside vienna, and ideally all objects will 
-  inherit from this root object. 'Object' is avoided for the root class as
-  to avoid infecting json objects and dynamic objects with these core methods.
-*/
-var BasicObject = new Class('BasicObject', null, {
-  
-});
+

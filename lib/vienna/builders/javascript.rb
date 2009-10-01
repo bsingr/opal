@@ -59,19 +59,22 @@ module Vienna
       File.readlines(@source).map do |l|
         if match = l.match(/^require\(\'(.*)\'\)/) # ^ to make sure it is not commented out..
           # add the requirement to '@requirements' for the project to get at
-          @requirements << match[1]
-          # o.write(JSMin.minify(t))
-          o.write t
+          # @requirements << match[1]
+          o.write(JSMin.minify(t))
+          # o.write t
           t = "" # clear t so that we do not carry on minifying stuff before the require statement
-          o.write "\nVN.require('#{match[1]}');\n"
+          require_path = @project.file_for_require_relative_to(@source, match[1])
+          build_path = @project.build_file(require_path)
+          o.write "\nVN.require('#{build_path}');\n"
+          # puts "\nVN.require('#{require_path}');\n"
         else
           t << l
         end
       end
     
       # write minified of the remaining content... if any
-      # o.write(JSMin.minify(t))
-      o.write t
+      o.write(JSMin.minify(t))
+      # o.write t
       # o.write(t)
       o.close
     end
