@@ -43,6 +43,7 @@ Object.extend = function(target, props) {
 /**
   Runtime.
 */
+require('runtime/core');
 require('runtime/class');
 require('runtime/module');
 
@@ -53,4 +54,5 @@ require('core_library/basic_object');
 require('core_library/kernel');
 require('core_library/array');
 require('core_library/hash');
+require('core_library/string');
 

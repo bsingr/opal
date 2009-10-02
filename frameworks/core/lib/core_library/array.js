@@ -24,4 +24,12 @@
  * THE SOFTWARE.
  */
 
+// Add Core Methods
+Object.extend(Array, Object.VNCoreMethods);
 
+Array.extend({
+  
+  wow: function() {
+    
+  }
+});

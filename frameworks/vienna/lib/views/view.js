@@ -39,24 +39,35 @@ Vienna.extend({
       accessed in initWithOptions
     */
     $defaultOptions: function(options) {
-      
+      var superDefaults = this.superklass.getConst('DEFAULT_OPTIONS');
+      if (!superDefaults) {
+        // super does not have defaults (so this must be top level))
+        this.setConst('DEFAULT_OPTIONS', new Hash(options));
+      }
+      else {
+        // must also use supers' default and merge two together
+        var hash = new Hash(superDefaults);
+        hash.merge(options);
+        this.setConst('DEFAULT_OPTIONS', hash);
+      }
     },
     
     $build: function(options, block) {
       var obj = this.allocate();
       
       // here we need to add options into the this.DEFAULT_OPTIONS constant
-      obj.initWithOptions(options);
-      // call block with the view as the param
-      if (typeof block != 'undefined') {
-        block.call(obj, obj);
-      }
+      // obj.initWithOptions(options);
+      //       // call block with the view as the param
+      //       if (typeof block != 'undefined') {
+      //         block.call(obj, obj);
+      //       }
       return obj;
     },
     
     initialize: function(frame) {
       // frame = frame.toRect(); // catch array being passed as framesize
       console.log('init frame');
+      this.$frame = frame;
     },
     
     initWithOptions: function(options) {

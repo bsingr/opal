@@ -56,5 +56,8 @@ Object.extend(Module.prototype, {
     
   },
   
-  extend: Class.prototype.extend
+  extend: Class.prototype.extend,
+  
+  setConst: Class.prototype.setConst
 });
+

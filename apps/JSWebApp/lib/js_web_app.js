@@ -27,3 +27,15 @@
 require('core');
 require('browser');
 require('vienna');
+
+
+// Vienna.Window.build({ title: 'My Window', frame: new VN.Rect(100, 100, 200, 200) }, function(win) {
+//   
+//   win.addSubview(Vienna.Button.build({ title: 'Push me!' }), function(button) {
+//     
+//     button.onAction(function(event) {
+//       
+//       button.setTitle('I was pressed');
+//     });
+//   });
+// });

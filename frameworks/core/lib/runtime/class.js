@@ -31,7 +31,7 @@ var Class = function() {
 Object.extend(Class.prototype, {
   
   initialize: function(name, superklass, props) {
-    console.log(name);
+    // console.log(name);
     // If we pass in a name, use it. otherwise move other args to suit.
     if (typeof name === 'string') {
       this.__classid__ = this.displayName = name ;
@@ -72,102 +72,7 @@ Object.extend(Class.prototype, {
     return klass;
   },
   
-  /*
-    One time call only - overrides prototype
-  */
-  inherit: function(klass) {
-    // class methods
-    for (var prop in klass) {
-      this[prop] = klass[prop];
-    }
-    
-    this.superklass = klass ;
-    
-    // Copy all super's methods without initialzing new object - prototype
-    var bridge = function() { } ;
-    bridge.prototype = klass.prototype;
-    this.prototype = new bridge();
-    this.prototype.klass = this.prototype.constructor = this;
-  },
-  
-  allocate: function() {
-    var bridge = function() { } ;
-    bridge.prototype = this.prototype;
-    return new bridge();
-  },
-  
-  // Include a module
-  include: function() {
-    
-  },
-  
-  /**
-    When defining/extending a class, the following lists, in catch order, how
-    statements/names are intepreted by Vienna's class definition
-    
-    1. Constants
-    ============
-    Constants are any name where the first letter is a capital letter. Constants
-    are added to the Class level scope, as well as the prototype level scope. 
-    The unique use of a starting Capital letter, to match class definitons, will
-    ensure that the name does not clash on either Class or instance levels.
-    
-    2. Class method
-    ===============
-    Start with $ for a class method (like self.name in ruby)
-    
-    3. Meta-programming hook
-    ========================
-    If not constant, then all non methods are metaProgramming hooks.
-    
-    4. KeyValueCoding 'set' methods
-    ===============================
-    Special kind of meta programming
-    
-    5. Everything else: Instance methods
-    ====================================
-    Everything else is a method .. cannot have 'default variables' in Vienna
-    classes, for good reason. these should be setup on initialize.
-    
-     - Instance/class methods = $variableName.
-    
-  */
-  extend: function(props) {
-    var result;
-    for (var prop in props) {    
-      
-      if (result = prop.match(/^[A-Z][a-zA-Z_]*/)) {
-        // Constant name: starts with capital letter, followed by lower, supper, under
-        this[prop] = props[prop];
-        this.prototype[prop] = props[prop];
-      }
-      
-      else if(result = prop.match(/^\$([A-Za-z_]*)/)) {
-        // Class/self level function
-        this[result[1]] = props[prop];
-      }
-      
-      else if(typeof props[prop] != 'function') {
-        // Meta-programming call
-        console.log('Found meta: ' + prop);
-        if (props[prop] instanceof Array) {
-          this[prop].apply(this, props[prop]);
-        }
-        else {
-          this[prop].call(this, props[prop]);
-        }
-      }
-      
-      else if (result = prop.match(/^set([A-Za-z_]*)/)) {
-        // set attribute - KVO/KVC compliance catch
-        this.addSetterMethod(result[1], result[0], props[prop]);
-      }
-      
-      else {
-        // Else: regular instance method
-        this.prototype[prop] = props[prop];
-      }
-    }
-    return this;
-  }
+
 });
+
+Object.extend(Class.prototype, Object.VNCoreMethods);
