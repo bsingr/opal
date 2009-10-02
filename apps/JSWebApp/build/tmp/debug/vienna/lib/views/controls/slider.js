@@ -1,0 +1,2 @@
+
+Vienna.extend({TICK_MARK_BELOW:0,TICK_MARK_ABOVE:1,TICK_MARK_LEFT:1,TICK_MARK_RIGHT:0,LINEAR_SLIDER:0,CIRCULAR_SLIDER:1,Slider:new Class('Slider',Vienna.Control,{TRACK_PADDING:2.0,KNOB_PADDING:9.5,KNOB_PADDING_MINI:6.5,attrAccessor:['minValue','maxValue'],displayProperties:['minValue','maxValue'],bind:function(binding,obj,keyPath,options){}})});

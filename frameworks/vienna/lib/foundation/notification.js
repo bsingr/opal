@@ -1,5 +1,5 @@
 /* 
- * control.js
+ * notification.js
  * vienna
  * 
  * Created by Adam Beynon.
@@ -23,53 +23,48 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
- 
-VN.extend({
-  
-  MIXED_STATE: 'mixed',
-  OFF_STATE: 'off',
-  ON_STATE: 'on',
-  
-  REGULAR_CONTROL_SIZE: 'regular',
-  SMALL_CONTROL_SIZE: 'small',
-  MINI_CONTROL_SIZE: 'mini',
 
-  CONTROL_TEXT_DID_BEGIN_EDITING_NOTIFICATION: "VNControlTextDidBeginEditingNotification",
-  CONTROL_TEXT_DID_END_EDITING_NOTIFICATION: "VNControlTextDidEndEditingNotification",
-  CONTROL_TEXT_DID_CHANGE_NOTIFICATION: "VNControlTextDidChangeNotification",
+Vienna.extend({
   
+  /**
+    @class VN.Notification
+    
+  */
+  Notification: new Class('Notification', {
+    
+    attrAccessor: ['name', 'obj', 'info'],
+    
+    initialize: function(name, obj, info) {
+      this.$name = name ;
+      this.$obj = obj ;
+      this.$info = info;
+    }
+  }),
   
-  Control: new Class('Control', VN.View, {
+  /**
+    @class VN.NotificationCenter
     
-    displayProperties: ['enabled', 'selected', 'state'],
+  */
+  NotificationCenter: new Class('NotificationCenter', {
     
-    initialize: function(frame) {
-      this.callSuper(frame);
-      return this;
+    initialize: function() {
+      this.callSuper();
+      this.$dispatchTable = [ ] ;
     },
     
-    sizeToFit: function() {
-      
-    },
-    
-    calcSize: function() {
-      
-    },
-
-    bind: function(binding, toObject, keyPath, options) {
-      
-    },
-    
-    sendAction: function(action, target) {
-      if (action && target) {
-        VN.App.sendAction(action, target, this);
-        return true;
+    $defaultCenter: function() {
+      if (!this.$defaultCenter) {
+        this.$defaultCenter = new VN.NotificationCenter();
       }
-      return false;
+      return this.$defaultCenter;
     },
     
-    takeValueFrom: function(sender) {
-      this.setValue(sender.value());
-    }    
+    addObserver: function(observer, action, name, sender) {
+      
+    },
+    
+    postNotification: function(name, sender, info) {
+      
+    }
   })
 });

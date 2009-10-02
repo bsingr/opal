@@ -1,5 +1,5 @@
 /* 
- * view.js
+ * geometry.js
  * vienna
  * 
  * Created by Adam Beynon.
@@ -24,27 +24,58 @@
  * THE SOFTWARE.
  */
 
+VN.Point = function(x, y) {
+  this.x = x;
+  this.y = y;
+};
 
-Vienna.extend({
-  View: new Class('View', Vienna.Responder, {
+VN.Size = function(w, h) {
+  this.width = w;
+  this.height = h;
+};
+
+VN.Rect = function(x, y, w, h) {
+  this.origin = new VN.Point(x, y);
+  this.size = new VN.Size(w, h);
+};
+
+Object.extend(VN.Rect.prototype, {
+  
+  minX: function() {
+    return this.origin.x;
+  },
+  
+  midX: function() {
+    return this.origin.x + (this.size.width / 2.0) ;
+  },
+  
+  maxX: function() {
+    return this.origin.x + this.size.width;
+  },
+  
+  toString: function() {
+    return '{' + this.origin.toString() + ', ' + this.size.toString() + '}';
+  },
+  
+  toArray: function() {
+    return [this.origin.x, this.origin.y, this.size.width, this.size.height];
+  },
+  
+  containsPoint: function(point) {
     
-    $displayProperties: function() {
-      // set class constant DISPLAY_PROPERTIES to this, plus, check if superklass
-      // has any, and append this klass' onto those (inherit display props)
-      console.log(arguments);
-    },
-    
-    displayProperties: ['frame', 'frameOrigin', 'frameSize'],
-    
-    initialize: function(frame) {
-      frame = frame.toRect(); // catch array being passed as framesize
-    },
-    
-    bobobobob: function() {
-      
-    }
-  })
+  }  
 });
 
-require('controls/control');
+Object.extend(VN.Point.prototype, {
 
+  equalTo: function(point) {
+    return (this.x == point.x) && (this.y == point.y);
+  }
+});
+
+Object.extend(VN.Size.prototype, {
+
+  equalTo: function(size) {
+    return (this.width == size.width) && (this.height == size.height);
+  }
+});

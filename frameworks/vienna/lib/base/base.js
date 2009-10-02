@@ -1,5 +1,5 @@
 /* 
- * foundation.js
+ * base.js
  * vienna
  * 
  * Created by Adam Beynon.
@@ -23,8 +23,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
- 
-require('object');
-require('key_value_coding');
-require('key_value_observing');
-require('notification');
+
+
+require('responder');
+require('application');

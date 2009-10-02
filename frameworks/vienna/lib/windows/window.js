@@ -1,5 +1,5 @@
 /* 
- * responder.js
+ * window.js
  * vienna
  * 
  * Created by Adam Beynon.
@@ -23,45 +23,44 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
- 
+
 Vienna.extend({
   
-  KEY_BINDINGS: {
-    escape: 'cancel',
-    backspace: 'deleteBackward',
-    'delete': 'deleteForward',
-    'return': 'insertNewline',
-    tab: 'insertTab',
-    left: 'moveLeft',
-    right: 'moveRight',
-    up: 'moveUp',
-    down: 'moveDown',
-    home: 'moveToBeginningOfDocument',
-    end: 'moveToEndOfDocument',
-    pagedown: 'pageDown',
-    pageup: 'pageUp',
-    shift_tab: 'insertBacktab',
-    shift_left: 'moveLeftAndModifySelection',
-    shift_right: 'moveRightAndModifySelection',
-    shift_up: 'moveUpAndModifySelection',
-    shift_down: 'moveDownAndModifySelection',
-    alt_left: 'moveLeftAndModifySelection',
-    alt_right: 'moveRightAndModifySelection',
-    alt_up: 'moveUpAndModifySelection',
-    alt_down: 'moveDownAndModifySelection',
-    ctrl_a: 'selectAll'
-  },
+  // Notifications
+  WINDOW_DID_BECOME_KEY: 'VNWindowDidBecomeKey',
+  WINDOW_DID_BECOME_MAIN: 'VNWindowDidBecomeKey',
+  WINDOW_DID_MINIATURIZE: 'VNWindowDidBecomeKey',
+  WINDOW_DID_EXPOSE: 'VNWindowDidBecomeKey',
+  WINDOW_DID_DEMINIATURIZE: 'VNWindowDidBecomeKey',
+  WINDOW_DID_MOVE: 'VNWindowDidBecomeKey',
+  WINDOW_DID_RESIGN_KEY: 'VNWindowDidBecomeKey',
+  WINDOW_DID_RESIGN_MAIN: 'VNWindowDidBecomeKey',
+  WINDOW_DID_RESIZE: 'VNWindowDidBecomeKey',
+  WINDOW_DID_UPDATE: 'VNWindowDidBecomeKey',
+  WINDOW_WILL_CLOSE: 'VNWindowDidBecomeKey',
+  WINDOW_WILL_MINIATURIZE: 'VNWindowDidBecomeKey',
+  WINDOW_WILL_MOVE: 'VNWindowDidBecomeKey',
+  WINDOW_WILL_BEGIN_SHEET: 'VNWindowDidBecomeKey',
+  WINDOW_DID_END_SHEET: 'VNWindowDidBecomeKey',
   
-  Responder: new Class('Responder', {
+  
+  Window: new Class('Window', Vienna.Responder, {
     
-    tryToPerform: function(action, object) {
-      if (this.respondsTo(action)) {
-        this.perform(action, object);
-        return true;
-      }
-      return this.nextResponder().tryToPerform(action, object);
+    attrAccessor: ['hasShadow', 'level', 'minSize', 'maxSize', 'firstResponder'],
+    
+    initialize: function(rect, style) {
+      
     },
     
+    contentRectForFrameRect: function(rect) {
+      var offset = new VN.Rect(0, 0, 0, 0);
+      if (this.$shadow) {
+        
+      }
+    },
     
+    frameRectForContentRect: function(rect) {
+      
+    }    
   })
 });

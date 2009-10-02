@@ -90,6 +90,12 @@ Object.extend(Class.prototype, {
     this.prototype.klass = this.prototype.constructor = this;
   },
   
+  allocate: function() {
+    var bridge = function() { } ;
+    bridge.prototype = this.prototype;
+    return new bridge();
+  },
+  
   // Include a module
   include: function() {
     
@@ -162,5 +168,6 @@ Object.extend(Class.prototype, {
         this.prototype[prop] = props[prop];
       }
     }
+    return this;
   }
 });

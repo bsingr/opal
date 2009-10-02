@@ -1,5 +1,5 @@
 /* 
- * application.js
+ * shadow.js
  * vienna
  * 
  * Created by Adam Beynon.
@@ -24,43 +24,24 @@
  * THE SOFTWARE.
  */
 
-Module('Vienna', {
+Vienna.extend({
   
-  Application: Class('Application', Vienna.Responder, {
+  Shadow: new Class('Shadow', {
     
-    self: {
-      
-      sharedApplication: function() {
-        return VN.app || VN.app = new Vienna.Application() ;
-      }
+    attrAccessor: ['offset', 'radius', 'color'],
+    
+    initialize: function(offset, radius, color) {
+      this.$offset = offset;
+      this.$radius = radius;
+      this.$color = color;
     },
     
-    sendAction: function(action, target, sender) {
-      // do something
+    $defaultShadow: function() {
+      return new Vienna.Shadow(new VN.Size(0, 0), 0.0, new Vienna.Color(0.0, 0.0, 0.0, 0.333));
     },
     
-    addWindow: function(aWindow) {
-      this.windows.push(aWindow);
+    set: function() {
+      Vienna.GraphicsContext.currentContext().setShadow(this);
     }
-    
-  });
-  
+  })
 });
-
-Vienna.Application = new Class('Application', Vienna.Responder, {
-  
-  MAX_WINDOWS: 1000,
-  
-  HOME_URL_PATH: 'http://www.google.com/~myApp/User?234938474',
-  
-  self: {
-    
-    sharedApplication: function() {
-      
-    },
-  },
-  
-  addWindow: function(aWindow) {
-    if (count < this.MAX_WINDOWS)
-  }
-})

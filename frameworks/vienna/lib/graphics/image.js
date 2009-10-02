@@ -1,5 +1,5 @@
 /* 
- * foundation.js
+ * image.js
  * vienna
  * 
  * Created by Adam Beynon.
@@ -23,8 +23,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
- 
-require('object');
-require('key_value_coding');
-require('key_value_observing');
-require('notification');
+
+Vienna.extend({
+  
+  Image: new Class('Image', {
+    
+    $imageNamed: function(name) {
+      return new Vienna.Image(Vienna.IMAGE_RESOURCE_PATH + '/' + name);
+    }
+  })
+});

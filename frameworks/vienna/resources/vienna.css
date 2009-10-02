@@ -1,5 +1,5 @@
 /* 
- * foundation.js
+ * vienna.css
  * vienna
  * 
  * Created by Adam Beynon.
@@ -23,8 +23,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
- 
-require('object');
-require('key_value_coding');
-require('key_value_observing');
-require('notification');
+
+body {
+	margin:0;
+	padding:0;
+	position:absolute;
+	bottom:0px;
+	left:0px;
+	display:block;
+	width: 100%;
+	height: 100%;
+	overflow-x:hidden;
+	overflow-y:hidden;
+}
+
+div {
+  position: absolute;
+  display:block;
+}

@@ -1,0 +1,3 @@
+
+Vienna.extend({Notification:new Class('Notification',{attrAccessor:['name','obj','info'],initialize:function(name,obj,info){this.$name=name;this.$obj=obj;this.$info=info;}}),NotificationCenter:new Class('NotificationCenter',{initialize:function(){this.callSuper();this.$dispatchTable=[];},$defaultCenter:function(){if(!this.$defaultCenter){this.$defaultCenter=new VN.NotificationCenter();}
+return this.$defaultCenter;},addObserver:function(observer,action,name,sender){},postNotification:function(name,sender,info){}})});

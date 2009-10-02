@@ -1,5 +1,5 @@
 /* 
- * app_kit.js
+ * control.js
  * vienna
  * 
  * Created by Adam Beynon.
@@ -23,7 +23,57 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+ 
+VN.extend({
+  
+  MIXED_STATE: 'mixed',
+  OFF_STATE: 'off',
+  ON_STATE: 'on',
+  
+  REGULAR_CONTROL_SIZE: 'regular',
+  SMALL_CONTROL_SIZE: 'small',
+  MINI_CONTROL_SIZE: 'mini',
 
+  CONTROL_TEXT_DID_BEGIN_EDITING: "VNControlTextDidBeginEditingNotification",
+  CONTROL_TEXT_DID_END_EDITING: "VNControlTextDidEndEditingNotification",
+  CONTROL_TEXT_DID_CHANGE: "VNControlTextDidChangeNotification",
+  
+  
+  Control: new Class('Control', VN.View, {
+    
+    displayProperties: ['enabled', 'selected', 'state'],
+    
+    initialize: function(frame) {
+      this.callSuper(frame);
+      return this;
+    },
+    
+    sizeToFit: function() {
+      
+    },
+    
+    calcSize: function() {
+      
+    },
 
-require('responder');
-require('views/view');
+    bind: function(binding, toObject, keyPath, options) {
+      
+    },
+    
+    sendAction: function(action, target) {
+      if (action && target) {
+        VN.App.sendAction(action, target, this);
+        return true;
+      }
+      return false;
+    },
+    
+    takeValueFrom: function(sender) {
+      this.setValue(sender.value());
+    }    
+  })
+});
+
+require('button');
+require('slider');
+

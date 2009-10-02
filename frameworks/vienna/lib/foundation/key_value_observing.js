@@ -1,5 +1,5 @@
 /* 
- * foundation.js
+ * key_value_observing.js
  * vienna
  * 
  * Created by Adam Beynon.
@@ -23,8 +23,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
- 
-require('object');
-require('key_value_coding');
-require('key_value_observing');
-require('notification');
+
+Vienna.extend({
+  
+  KVO_OPTION_NEW: 'VNKVOOptionNew',
+  KVO_OPTION_OLD: 'VNKVOOptionOld',
+  KVO_OPTION_INITIAL: 'VNKVOOptionInitial',
+  KVO_OPTION_PRIOR: 'VNKVOOptionPrior'
+});

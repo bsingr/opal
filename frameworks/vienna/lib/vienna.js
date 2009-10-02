@@ -41,4 +41,6 @@ var YES = true;
 var NO = false;
 
 require('foundation/foundation');
-require('app_kit/app_kit');
+require('base/base');
+require('graphics/graphics');
+require('views/view');
