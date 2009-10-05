@@ -23,6 +23,16 @@ String.extend({
   },
   
   format: function() {
-    
+    var i = 0, args = arguments;
+    return this.replace(/%@/g, function(s) {
+      if (i < args.length) {
+        var ret = args[i];
+        i++;
+        return ret.toString();
+      }
+      else {
+        return '(null)';
+      }
+    });
   }
 });

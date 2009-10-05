@@ -72,55 +72,57 @@ Object.VNCoreMethods = {
     var result;
     for (var prop in props) {    
       
+      // Constant
       if (result = prop.match(/^[A-Z][a-zA-Z_]*/)) {
-        // Constant name: starts with capital letter, followed by lower, supper, under
-        // this[prop] = props[prop];
-        //         this.prototype[prop] = props[prop];
         this.setConst(prop, props[prop]);
       }
       
+      // Class method
       else if(result = prop.match(/^\$([A-Za-z_]*)/)) {
-        // Class/self level function
         this[result[1]] = props[prop];
       }
       
+      // Metaprogramming
       else if(typeof props[prop] != 'function') {
-        // Meta-programming call
-        // console.log('Found meta: ' + prop);
         if (props[prop] instanceof Array) {
-          this[prop].apply(this, props[prop]);
-        }
-        else {
+          this[prop].apply(this, props[prop]) ;
+        } else {
           this[prop].call(this, props[prop]);
         }
       }
       
+      // setKey
       else if (result = prop.match(/^set([A-Za-z_]*)/)) {
-        // set attribute - KVO/KVC compliance catch
         this.addSetterMethod(result[1], result[0], props[prop]);
       }
       
+      // Else: Instance method
       else {
-        // Else: regular instance method
-        // this.prototype[prop] = props[prop];
-        this.prototype[prop] = 
-          (this.superklass && typeof this.superklass.prototype[prop] == 'function') ?
-                                (function(name, func) {
-                                  return function() {
-                                    // console.log('Doing this ' + name);
-                                    // console.log(func);
-                                    // console.log(this);
-                                    var tmp = this.callSuper;
-                                    this.callSuper = this.superklass.prototype[name];
-                                    var ret = func.apply(this, arguments);
-                                    this.callSuper = tmp;
-                                    return ret;
-                                  };
-                                })(prop, props[prop])
-                                : props[prop];
+        this.define(prop, props[prop]);
       }
     }
     return this;
+  },
+  
+  define: function(name, meth) {
+    var self = this; // we need to keep a track of this, as it will chnage inside the method.
+    this.prototype[name] = 
+      (this.superklass && typeof this.superklass.prototype[name] == 'function') ?
+                            (function(name, func) {
+                              
+                              return function() {
+                                // console.log(self);
+                                var tmp = this.callSuper;
+                                // stop infiinite loop, by assinging self to be the current
+                                // actual prototype. using this.superklass will keep refering
+                                // to the current object's super, and wont follow up the chain.
+                                this.callSuper = self.superklass.prototype[name];
+                                var ret = func.apply(this, arguments);
+                                this.callSuper = tmp;
+                                return ret;
+                              };
+                            })(name, meth)
+                            : meth;
   },
   
   create: function() {
@@ -129,6 +131,12 @@ Object.VNCoreMethods = {
     var C = this;
     var obj = C.allocate();
     obj.initialize.apply(obj, arguments);
+    return obj;
+  },
+  
+  singleton: function(props) {
+    var klass = Class.create(this, props);
+    var obj = new klass;
     return obj;
   },
   

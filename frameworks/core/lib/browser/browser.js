@@ -24,6 +24,6 @@
  * THE SOFTWARE.
  */
 
-require('base/ajax');
-require('base/element');
-require('base/json');
+require('ajax');
+require('element');
+require('json');

@@ -25,6 +25,7 @@
  */
  
 require('object');
+require('array');
 require('key_value_coding');
 require('key_value_observing');
 require('notification');

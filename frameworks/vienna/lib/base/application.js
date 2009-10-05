@@ -41,6 +41,17 @@ Vienna.extend({
   APP_WILL_TERMINATE: "VNApplicationWillTerminateNotification",
   APP_DID_CHANGE_SCREEN_PARAMETERS: "VNApplicationDidChangeScreenParametersNotification",
   
+  /*
+    Create the application delegate, set it, and run the app
+    - This should be almost equivalent to NSApplicationMain();
+  */
+  AppDelegate: function(props) {    
+    var obj = VN.Object.singleton(props);
+    VN.App.setDelegate(obj);
+    VN.App.run();
+    return obj;
+  },
+  
   /**
     Main class for controlling application lifecycle
   */
@@ -50,12 +61,23 @@ Vienna.extend({
     attrReader: ['delegate'],
     
     initialize: function() {
-      console.log('Hell yeah :D');
       this.callSuper();
       this.$windows = [];
       this.$eventQueue = [];
       this.$viewsNeedingDisplay = [];
       return this;
+    },
+    
+    run: function() {
+      // attach all events, window resize.etc
+      this.finishLaunching();
+    },
+    
+    finishLaunching: function() {
+      var nc = VN.NotificationCenter.defaultCenter();
+      nc.postNotification(VN.APP_WILL_FINISH_LAUNCHING, this);
+      nc.postNotification(VN.APP_DID_FINISH_LAUNCHING, this);
+      this.displayRequiredViews();
     },
     
     /**

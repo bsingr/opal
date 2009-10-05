@@ -29,5 +29,16 @@ Vienna.extend({
   KVO_OPTION_NEW: 'VNKVOOptionNew',
   KVO_OPTION_OLD: 'VNKVOOptionOld',
   KVO_OPTION_INITIAL: 'VNKVOOptionInitial',
-  KVO_OPTION_PRIOR: 'VNKVOOptionPrior'
+  KVO_OPTION_PRIOR: 'VNKVOOptionPrior',
+  
+  Object: Vienna.Object.extend({
+    
+    willChangeValueForKey: function(key) {
+      // console.log('Object#willChangeValueForKey: %@'.format(key));
+    },
+    
+    didChangeValueForKey: function(key) {
+      // console.log('Object#didChangeValueForKey: %@'.format(key));
+    }
+  })
 });

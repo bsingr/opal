@@ -17,3 +17,5 @@ VN.require('/Users/adam/Development/vienna/apps/JSWebApp/build/tmp/debug/core/li
 VN.require('/Users/adam/Development/vienna/apps/JSWebApp/build/tmp/debug/core/lib/core_library/hash.js');
 
 VN.require('/Users/adam/Development/vienna/apps/JSWebApp/build/tmp/debug/core/lib/core_library/string.js');
+
+VN.require('/Users/adam/Development/vienna/apps/JSWebApp/build/tmp/debug/core/lib/browser/browser.js');

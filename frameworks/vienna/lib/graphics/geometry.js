@@ -54,7 +54,7 @@ Object.extend(VN.Rect.prototype, {
   },
   
   toString: function() {
-    return '{' + this.origin.toString() + ', ' + this.size.toString() + '}';
+    return '{%@, %@}'.format(this.origin, this.size);
   },
   
   toArray: function() {

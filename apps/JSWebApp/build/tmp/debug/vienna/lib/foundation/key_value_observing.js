@@ -1,2 +1,2 @@
 
-Vienna.extend({KVO_OPTION_NEW:'VNKVOOptionNew',KVO_OPTION_OLD:'VNKVOOptionOld',KVO_OPTION_INITIAL:'VNKVOOptionInitial',KVO_OPTION_PRIOR:'VNKVOOptionPrior'});
+Vienna.extend({KVO_OPTION_NEW:'VNKVOOptionNew',KVO_OPTION_OLD:'VNKVOOptionOld',KVO_OPTION_INITIAL:'VNKVOOptionInitial',KVO_OPTION_PRIOR:'VNKVOOptionPrior',Object:Vienna.Object.extend({willChangeValueForKey:function(key){},didChangeValueForKey:function(key){}})});

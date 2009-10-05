@@ -23,19 +23,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
-BasicObject.extend({
+ 
+Vienna.extend({
   
-  respondsTo: function(name) {
-    return (this[name] && (typeof this[name] == 'function')) ? true : false;
-  },
-  
-  perform: function(name, obj1, obj2) {
-    if (this.respondsTo(name)) {
-      return this[name].call(this, obj1, obj2);
+  /*
+    Extend BasicObject, but also set VN.Object, for completeness. Changes to
+    VN.Object or BasicOBject affect the same underlying object. Chnages should
+    be made to VN.Object for unified code.
+  */
+  Object: BasicObject.extend({
+    
+    respondsTo: function(name) {
+      return (this[name] && (typeof this[name] == 'function')) ? true : false ;
+    },
+    
+    /*
+      TODO: get args, slice from 1, and apply to func (unlimited args)
+    */
+    perform: function(name, obj1, obj2) {
+      if (this.respondsTo(name)) {
+        return this[name].call(this, obj1, obj2);
+      }
+      else {
+        return null ;
+      }
     }
-    else {
-      return null;
-    }
-  }
+  })
 });

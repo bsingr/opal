@@ -56,3 +56,8 @@ require('core_library/array');
 require('core_library/hash');
 require('core_library/string');
 
+/*
+  Browser stuff
+*/
+require('browser/browser');
+

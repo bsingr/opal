@@ -23,6 +23,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+ 
+ /*
+  TODO: Tidy up this class.
+ */
 
 /**
   This is the core/root object inside vienna, and ideally all objects will 
@@ -34,6 +38,7 @@
 */
 var BasicObject = function() {
   this.initialize.apply(this, arguments) ;
+  return this;
 };
 
 BasicObject.attrAccessor = function() {
@@ -44,14 +49,14 @@ BasicObject.attrAccessor = function() {
 BasicObject.attrWriter = function() {
   for (var i = 0; i < arguments.length; i++) {
     var name = arguments[i];
-    this.prototype['set' + name] = new Function('val', 'this.$' + name + ' = val;');
+    this.prototype['set' + name] = new Function('val', 'this.$%@ = val;'.format(name));
   };
 };
 
 BasicObject.attrReader = function() {
   for (var i = 0; i < arguments.length; i++) {
     var name = arguments[i];
-    this.prototype[name] = new Function('return this.$' + name + ';');
+    this.prototype[name] = new Function('return this.%@;'.format(name));
   };
 };
 
@@ -60,16 +65,43 @@ BasicObject.prototype.superklass = BasicObject;
 
 BasicObject.prototype.initialize = function() {
   // console.log('Initializing basic object');
-  console.log('oh yeahhh');
+  // console.log('oh yeahhh');
   return this;
 };
 
 BasicObject.extend = Class.prototype.extend;
+BasicObject.define = Class.prototype.define;
+BasicObject.singleton = Class.prototype.singleton;
 
+BasicObject.prototype.extend = Class.prototype.extend;
+
+BasicObject.create = function() {
+  var c = (new this);
+  return c.initialize.apply(c, arguments);
+};
+
+/*
+  TODO: does not currently allow calling 'callSuper'.
+*/
 BasicObject.addSetterMethod = function(key, funcName, func) {
-  // var methodBody = 'console.log("setting key: ' + key + '");';
-  var methodBody = '';
-  methodBody += 'this._$' + funcName + '(val);';
-  this.prototype[funcName] = new Function('val', methodBody);
-  this.prototype['_$' + funcName] = func;
+  this.prototype[funcName] = (function(name, func) {
+    return function() {
+      this.willChangeValueForKey(key);
+      var ret = func.apply(this, arguments);
+      this.didChangeValueForKey(key);
+      return ret;
+    };
+  })(key, func);
+};
+
+BasicObject.prototype.setConst = function(name, val) {
+  if (val.__classid__ != undefined && !val.__classid__) {
+      val.__classid__ = name
+  }
+  
+  this[name] = val ;
+};
+
+BasicObject.prototype.define = function(name, meth) {
+  this[name] = meth;
 };

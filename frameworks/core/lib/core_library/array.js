@@ -24,6 +24,20 @@
  * THE SOFTWARE.
  */
 
+
+// Fix for IE not having indexOf property.
+if (!Array.prototype.indexOf) {
+  Array.prototype.indexOf = function(item, i) {
+    i || (i = 0);
+    var len = this.length;
+    if (i < 0) i = len + i;
+    for (; i < len; i++)
+      if (this[i] === item) return i;
+      return -1;
+  };
+}
+
+
 // Add Core Methods
 Object.extend(Array, Object.VNCoreMethods);
 

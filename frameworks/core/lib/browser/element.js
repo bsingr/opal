@@ -24,14 +24,9 @@
  * THE SOFTWARE.
  */
 
-var Element = new Class('Element', {
-  
-  $find: function(name) {
-    
-  },
-  
-  initialize: function(options) {
-    options = new Hash({ type: 'div', className: '', id: '' }).merge(options);
-  }
+// Check first to see if !Element. If not, create from scratch.
+Object.extend(Element, Object.VNCoreMethods);
+
+Element.extend({
   
 });
