@@ -23,6 +23,7 @@ Object.VNCoreMethods = {
     bridge.prototype = klass.prototype;
     this.prototype = new bridge();
     this.prototype.klass = this.prototype.constructor = this;
+    this.prototype.superklass = this.superklass;
   },
   
   allocate: function() {
@@ -101,7 +102,22 @@ Object.VNCoreMethods = {
       
       else {
         // Else: regular instance method
-        this.prototype[prop] = props[prop];
+        // this.prototype[prop] = props[prop];
+        this.prototype[prop] = 
+          (this.superklass && typeof this.superklass.prototype[prop] == 'function') ?
+                                (function(name, func) {
+                                  return function() {
+                                    // console.log('Doing this ' + name);
+                                    // console.log(func);
+                                    // console.log(this);
+                                    var tmp = this.callSuper;
+                                    this.callSuper = this.superklass.prototype[name];
+                                    var ret = func.apply(this, arguments);
+                                    this.callSuper = tmp;
+                                    return ret;
+                                  };
+                                })(prop, props[prop])
+                                : props[prop];
       }
     }
     return this;
@@ -120,6 +136,15 @@ Object.VNCoreMethods = {
     Sets a constant on both the class, and its prototype
   */
   setConst: function(name, val) {
+    // If its a class/module, without a name, then we can use this name param to
+    // set it (makes for smaller coding and repetitivve class namign)
+    if (val.__classid__ != undefined && !val.__classid__) {
+      // if (!val.__classid__) {
+        // console.log(name);
+        val.__classid__ = name
+      // }
+    }
+    
     this[name] = val ;
     this.prototype[name] = val;
   },

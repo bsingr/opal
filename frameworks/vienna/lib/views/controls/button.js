@@ -52,38 +52,15 @@ Vienna.extend({
   ON_OFF_BUTTON: 6,
   MOMENTARY_PUSH_IN_BUTTON: 7,
   
-  Button: new Class('Button', Vienna.Control, {
-    
+  Button: new Class(Vienna.Control, {
+        
     defaultOptions: {
       bezel: 'rounded'
-    }
+    },
     
-    // ROUNDED_NORMAL_LEFT: VN.Image.sprite('controls.png', new VN.Rect(0, 20, 16, 24)),
-    //    ROUNDED_NORMAL_MIDDLE:
-    //    
-    //    IMAGES: {
-    //      rounded: {
-    //        normal: {
-    //          left: VN.Image.sprite('controls.png', new VN.Rect(0, 20, 16, 24)),
-    //          middle: VN.Image.sprite('controls.png', new VN.Rect(0, 20, 16, 24)),
-    //          right: VN.Image.sprite('controls.png', new VN.Rect(0, 20, 16, 24))
-    //        },
-    //        disabled: {
-    //          left: VN.Image.sprite('controls.png', new VN.Rect(0, 20, 16, 24)),
-    //          middle: VN.Image.sprite('controls.png', new VN.Rect(0, 20, 16, 24)),
-    //          right: VN.Image.sprite('controls.png', new VN.Rect(0, 20, 16, 24))
-    //        },
-    //        pressed: {
-    //          left: VN.Image.sprite('controls.png', new VN.Rect(0, 20, 16, 24)),
-    //          middle: VN.Image.sprite('controls.png', new VN.Rect(0, 20, 16, 24)),
-    //          right: VN.Image.sprite('controls.png', new VN.Rect(0, 20, 16, 24))
-    //        },
-    //      }
-    //    }
-    //    
-    //    drawRect: function(rect) {
-    //      var leftImg = this.IMAGES['rounded']['normal']['left']
-    //      leftImg.drawInRect()
-    //    }
+    initialize: function() {
+      this.callSuper();
+      console.log('Initing button!');
+    }
   })
 });

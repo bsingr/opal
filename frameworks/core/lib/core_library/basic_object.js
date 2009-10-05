@@ -60,6 +60,7 @@ BasicObject.prototype.superklass = BasicObject;
 
 BasicObject.prototype.initialize = function() {
   // console.log('Initializing basic object');
+  console.log('oh yeahhh');
   return this;
 };
 

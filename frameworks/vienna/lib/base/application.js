@@ -50,6 +50,8 @@ Vienna.extend({
     attrReader: ['delegate'],
     
     initialize: function() {
+      console.log('Hell yeah :D');
+      this.callSuper();
       this.$windows = [];
       this.$eventQueue = [];
       this.$viewsNeedingDisplay = [];

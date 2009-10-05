@@ -56,6 +56,10 @@ Vienna.extend({
     
     attrAccessor: ['menu', 'nextResponder'],
     
+    initialize: function() {
+      console.log('Initing responder');
+    },
+    
     tryToPerform: function(action, object) {
       if (this.respondsTo(action)) {
         this.perform(action, object);

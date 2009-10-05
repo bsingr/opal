@@ -16,5 +16,13 @@ String.extend({
   
   w: function() {
     return this.split(' ');
+  },
+  
+  toArray: function() {
+    return this.split('');
+  },
+  
+  format: function() {
+    
   }
 });

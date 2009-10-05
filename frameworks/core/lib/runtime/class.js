@@ -28,16 +28,23 @@ var Class = function() {
   return this.initialize.apply(this, arguments);
 };
 
+Class.create = function() {
+  var c = (new this);
+  return c.initialize.apply(c, arguments);
+};
+
 Object.extend(Class.prototype, {
   
   initialize: function(name, superklass, props) {
     // console.log(name);
     // If we pass in a name, use it. otherwise move other args to suit.
+    var classid;
     if (typeof name === 'string') {
-      this.__classid__ = this.displayName = name ;
+      classid = name ;
     }
     else {
-      this.__classid__ = this.displayName = '' ;
+      classid = '';
+      
       props = superklass;
       superklass = name;
     }
@@ -68,6 +75,8 @@ Object.extend(Class.prototype, {
     
     // Add the given properties
     klass.extend(props);
+    
+    klass.__classid__ = klass.displayName = classid;
     
     return klass;
   },

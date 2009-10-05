@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
  
-VN.extend({
+Vienna.extend({
   
   MIXED_STATE: 'mixed',
   OFF_STATE: 'off',
@@ -39,11 +39,13 @@ VN.extend({
   CONTROL_TEXT_DID_CHANGE: "VNControlTextDidChangeNotification",
   
   
-  Control: new Class('Control', VN.View, {
+  Control: Class.create(Vienna.View, {
     
     displayProperties: ['enabled', 'selected', 'state'],
     
     initialize: function(frame) {
+      console.log('control calling super');
+      // console.log(this.callSuper);
       this.callSuper(frame);
       return this;
     },
