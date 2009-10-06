@@ -24,9 +24,16 @@
 # THE SOFTWARE.
 #
 
-require 'browser'   # require browser addons: Ajax, Element, etc.
-# require 'vienna'  for the cocoa inspired frameworks...
+require 'base'
 
-Document.ready? do |event|
-  # do stuff once the browser is ready...
+module RubyWebApp
+  
+  VERSION = '0.0.1'
+  
+  class AppDelegate
+    
+    
+    
+  end
+  
 end

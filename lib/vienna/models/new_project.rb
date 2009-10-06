@@ -42,7 +42,9 @@ module Vienna
       # if it is defined, use that, other wise use underscore-case vesion
       # of project name (.rb), e.g. MyApp => my_app.rb .. also assume it 
       # is inside the lib folder? project_root/lib/my_app.rb
-      @root_file ||= File.expand_path(File.join(project_root, (rakefile.config_for(build_mode)[:root_file] || File.join('lib', Vienna.underscore(project_name)) + '.js')))
+      # @root_file ||= File.expand_path(File.join(project_root, (rakefile.config_for(build_mode)[:root_file] || File.join('lib', Vienna.underscore(project_name)) + '.js')))
+      @root_file ||= File.expand_path(File.join(project_root, (rakefile.config_for(build_mode)[:root_file] || File.join('lib', Vienna.underscore(project_name)) + '.rb')))
+      
     end
     
     def project_name
@@ -82,7 +84,7 @@ module Vienna
       
       # puts js_build_path
       o = File.new(js_build_path, 'w')
-      root_combiner = Vienna::Builder::Combine.new File.join(tmp_prefix, project_name, 'lib', 'js_web_app.js'), o, self
+      root_combiner = Vienna::Builder::Combine.new File.join(tmp_prefix, project_name, 'lib', 'ruby_web_app.js'), o, self
       o.close
       
     end

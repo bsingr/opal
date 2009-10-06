@@ -24,7 +24,6 @@
  * THE SOFTWARE.
  */
 
-require('core');
 require('vienna');
 
 var JSWebApp = Vienna.AppDelegate({
@@ -33,12 +32,21 @@ var JSWebApp = Vienna.AppDelegate({
   
   attrAccessor: 'url home currentSize'.w(),
   
+  main: function() {
+    // Set anything here.... before anything gets run
+  },
+  
   willFinishLaunching: function(notification) {
     console.log('YEAHHH');
-    console.log(this);
+  },
+  
+  didFinishLaunching: function(notification) {
+    console.log('Did finish launching');
   },
   
   Temp: Class.create({
     BOB: 10
-  })
+  }),
+  
+  AGE: 10
 });

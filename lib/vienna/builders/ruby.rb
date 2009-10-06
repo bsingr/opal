@@ -65,6 +65,8 @@ class Vienna::RubyParser < Racc::Parser
 	  @current_self = ['VN.self']
 	  @current_self_stack_counter = 0
 	  @context_var_stack = []
+    # Array of arrays
+	  @nametable = []
 	  
 	  File.open(@source) do |f|
 	    @scanner = StringScanner.new(f.read)
@@ -102,6 +104,34 @@ class Vienna::RubyParser < Racc::Parser
 	 @output_file.write str
 	end
 	
+  # Push new context onto the nametable (var lookup)
+  # 
+	def push_nametable
+    @nametable << []
+	end
+	
+  # Pop current context from nametable
+  # 
+  def pop_nametable
+    @nametable.pop()
+  end
+  
+  # Check if variable is named in nametable
+  # 
+  def nametable_include?(name)
+    @nametable.each do |n|
+      return true if n.include? name
+    end
+    false
+  end
+  
+  # Add into current context of nametable
+  # 
+  def add_to_nametable(name)
+    @nametable.last << name
+  end
+	
+	
 	def push_current_self
     @current_self_stack_counter += 1
     @current_self << "$VN_#{@current_self_stack_counter}"
@@ -113,7 +143,7 @@ class Vienna::RubyParser < Racc::Parser
 	end
 	
 	def current_self_start_def
-	  @current_self << 'this'
+	  @current_self << 'self'
 	end
 	
 	def current_self_end_def
@@ -160,11 +190,13 @@ class Vienna::RubyParser < Racc::Parser
 	  if scanner.scan(/#{Regexp.escape string_beg}/)
 	    if string_type == :dquote or string_type == :squote
 	      self.string_parse = nil
+	      self.lex_state = :EXPR_END
 	      return [:tSTRING_END, scanner.matched]
 	    elsif string_type == :regexp
 	    
 	    else # assume to be an xstring
 	      self.string_parse = nil
+	      self.lex_state = :EXPR_END
 	      return [:tXSTRING_END, scanner.matched]
 	    end
 	  end
@@ -181,13 +213,14 @@ class Vienna::RubyParser < Racc::Parser
     end
     
     
-    scanner.scan(/./)
+    scanner.scan(/(.|\s)/)
     return [:tSTRING_CONTENT, scanner.matched]
 	  
 	end
 	
 	
-	
+  # Next token
+  # 
 	def get_next_token
 	  c = ''
 	  space_seen = false
@@ -219,10 +252,13 @@ class Vienna::RubyParser < Racc::Parser
       
       # ']', ')', '}'
       elsif scanner.scan(/\]/)
+        self.lex_state = :EXPR_END
         return [']', scanner.matched]
       elsif scanner.scan(/\)/)
+        self.lex_state = :EXPR_END
         return [')', scanner.matched]
       elsif scanner.scan(/\}/)
+        self.lex_state = :EXPR_END
         return ['}', scanner.matched]
       
       # '...', '..', '.'
@@ -266,6 +302,7 @@ class Vienna::RubyParser < Racc::Parser
       elsif scanner.scan(/\=\>/)
         return [:tASSOC, scanner.matched]
       elsif scanner.scan(/\=/)
+        self.lex_state = :EXPR_BEG
         return ['=', scanner.matched]
       
       # Class variables
@@ -306,7 +343,7 @@ class Vienna::RubyParser < Racc::Parser
       elsif scanner.scan(/\:/)
         if lex_state == :EXPR_END || lex_state == :EXPR_ENDARG || scanner.check(/\s/)
           self.lex_state = :EXPR_BEG
-          return [:tCOLON, scanner.matched]
+          return [:tSYMBEG, scanner.matched]
         end
         
         self.lex_state = :EXPR_FNAME
@@ -341,7 +378,7 @@ class Vienna::RubyParser < Racc::Parser
         end
         # puts 'HMHMHMHMHMHMHMHMHH'
         # puts lex_state
-        return ['[', scanner.matched]
+        return [:tLBRACK, scanner.matched]
       elsif scanner.scan(/\'(\\.|[^\'])*\'/)
         self.lex_state = :EXPR_END
         return [:tSTRING, scanner.matched[1..-2].gsub(/\\\\/, "\\").gsub(/\\'/, "'")]
@@ -367,6 +404,7 @@ class Vienna::RubyParser < Racc::Parser
         else
           :tLBRACE # hash
         end
+        # puts "returning #{result}"
         return [result, scanner.matched]
       # +/- as methods/unary etc
       elsif scanner.scan(/[+-]/)
@@ -478,8 +516,10 @@ class Vienna::RubyParser < Racc::Parser
       elsif scanner.scan(/\&/)
         result = if space_seen && !scanner.check(/\s/)
                     # warning: & as prefix
-                    :tAMPER
+                    # :tAMPER
+                    '&'
                   elsif lex_state == :EXPR_BEG || lex_state == :EXPR_MID
+                    # used to be tAMPER
                     :tAMPER
                   else
                     :tAMPER2
@@ -491,7 +531,7 @@ class Vienna::RubyParser < Racc::Parser
         self.lex_state = :EXPR_BEG
         return [:tOP_ASGN, '^=']
       elsif scanner.scan(/\^/)
-        return [:tCARET, '^']
+        return ['^', '^']
       elsif scanner.scan(/\;/)
         self.lex_state = :EXPR_BEG
         return [:tSEMI, ';']
@@ -535,8 +575,23 @@ class Vienna::RubyParser < Racc::Parser
         when 'if'
           # self.lex_state = 
           return [:kIF, scanner.matched]
+        when 'then'
+          # self.lex_state = 
+          return [:kTHEN, scanner.matched]
+        when 'else'
+          return [:kELSE, scanner.matched]
+        when 'elsif'
+          return [:kELSIF, scanner.matched]
+        when 'unless'
+          return [:kUNLESS, scanner.matched]
         when 'self'
           return [:kSELF, scanner.matched]
+        when 'true'
+          return [:kTRUE, scanner.matched]
+        when 'false'
+          return [:kFALSE, scanner.matched]
+        when 'nil'
+          return [:kNIL, scanner.matched]
         end
         
         # if Vienna::RubyParser::KEYWORDS.has_key?(scanner.matched)

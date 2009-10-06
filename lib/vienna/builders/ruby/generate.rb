@@ -76,6 +76,16 @@ module Vienna
         generate_symbol stmt, context
       when :self
         generate_self stmt, context
+      when :true
+        generate_true stmt, context
+      when :false
+        generate_false stmt, context
+      when :nil
+        generate_nil stmt, context
+      when :if
+        generate_if stmt, context
+      when :unless
+        generate_if stmt, context
       when :string
         generate_string stmt, context
       when :xstring
@@ -88,6 +98,64 @@ module Vienna
         generate_assoc_list stmt, context
       else
         write "\n[Unknown type for generate_stmt: #{stmt}]\n"
+      end
+    end
+      
+    def generate_if stmt, context
+      # if ((e=stmt, e!==nil && e!==false)) {
+      write 'if((e='
+      # ((e=stmt, e!==nil && e!==false))
+      generate_stmt stmt[:expr],:instance => false,     # all class methods/references in current scope
+                                :full_stmt => false,     # full statements, so insert relevant ';' etc
+                                :self => current_self,  # current 'self' reference
+                                :last_stmt => false
+                                
+      if stmt.node == :if
+        write ",e!==nil && e!==false)){\n"
+      else
+        # unless...
+        write ",e==nil || e==false)){\n"
+      end
+      
+      if stmt[:compstmt]
+        stmt[:compstmt].each do |c|
+          generate_stmt c,  :instance => true,     # all class methods/references in current scope
+                            :full_stmt => true,     # full statements, so insert relevant ';' etc
+                            :self => current_self,  # current 'self' reference
+                            :last_stmt => (stmt[:compstmt].last == c ? true : false) # also check if the actual 'if' statement is last?
+        end
+      end
+      
+      write "}\n"
+      if stmt[:tail]
+        stmt[:tail].each do |t|
+          
+          if t.node == :elsif
+            write 'else if((e='
+            # ((e=stmt, e!==nil && e!==false))
+            generate_stmt t[:expr],:instance => false,     # all class methods/references in current scope
+                                      :full_stmt => false,     # full statements, so insert relevant ';' etc
+                                      :self => current_self,  # current 'self' reference
+                                      :last_stmt => false
+            write ",e!==nil && e!==false)){\n"
+          else
+            # normal else statement
+            write "else{\n"
+          end
+          
+          if t[:compstmt]
+            t[:compstmt].each do |c|
+              generate_stmt c,  :instance => true,     # all class methods/references in current scope
+                                :full_stmt => true,     # full statements, so insert relevant ';' etc
+                                :self => current_self,  # current 'self' reference
+                                :last_stmt => (t[:compstmt].last == c ? true : false) # also check if the actual 'if' statement is last?
+            end
+          end
+                    
+          
+          write "}\n"
+          
+        end 
       end
     end
     
@@ -112,7 +180,8 @@ module Vienna
           generate_stmt stmt, :instance => false,     # all class methods/references in current scope
                               :full_stmt => true,     # full statements, so insert relevant ';' etc
                               :self => current_self,  # current 'self' reference
-                              :last_stmt => (klass.bodystmt.last == stmt ? true : false)
+                              # :last_stmt => (klass.bodystmt.last == stmt ? true : false)
+                              :last_stmt => false
         end
       end
       
@@ -124,6 +193,8 @@ module Vienna
     # on a specified object that is passed to the context
     # 
     def generate_def definition, context
+      push_nametable # push new nametable
+      
       # all methods in top self must be added as singleton methods
       if definition[:singleton] or context[:self] == 'VN.self'
         write "#{context[:self]}.$def_s('#{definition[:fname]}',function("
@@ -135,11 +206,15 @@ module Vienna
       if definition[:arglist]
         definition[:arglist][:arg].each do |arg|
           write arg
+          add_to_nametable arg
           write ',' unless definition[:arglist][:arg].last == arg
         end
       end
       
       write "){\n"
+      # use self inside functions, to avoid blocks/functions from overwriting meaning
+      # of 'this'
+      write "var self=this;\n"
       
       self.current_self_start_def
       # def statements
@@ -155,8 +230,10 @@ module Vienna
       end
             
       self.current_self_end_def
+      pop_nametable # pop new nametable
       
       write "});\n"
+
     end
     
     # Main entry point for assignments (with one lhs/rhs)
@@ -171,7 +248,7 @@ module Vienna
         # if already in var table, just put name = ...
         # if not in var table, make new var, and add it
         # we do not write var if we have just put a return before it....js error
-        write 'var ' unless context[:last_stmt] and context[:full_stmt]
+        write 'var ' unless (context[:last_stmt] and context[:full_stmt]) or nametable_include? stmt[:lhs][:name]
         write "#{stmt[:lhs][:name]} = "
         generate_stmt stmt[:rhs], :instance => context[:instance], context[:full_stmt] => false, context[:last_stmt] => true, :self => context[:self]
       
@@ -191,7 +268,7 @@ module Vienna
           write context[:self]
         end
              
-        write ".$const_set('#{stmt[:lhs][:name]}',"
+        write ".$c_s('#{stmt[:lhs][:name]}',"
         generate_stmt stmt[:rhs], :instance => context[:instance], context[:full_stmt] => false, :last_stmt => context[:last_stmt], :self => context[:self]
         write ')'
       else
@@ -205,6 +282,17 @@ module Vienna
     # Generate method-call
     # 
     def generate_call call, context
+      # Capture require calls...
+      if call[:meth] == 'require' and not call[:recv]
+        # puts "ignoring:"
+        # puts call
+        require_path = @project.file_for_require_relative_to(@source, call[:args][0][:value].join)
+        puts call[:args][0][:value].join
+        build_path = @project.build_file(require_path)
+        write "\nVN.require('#{build_path}');\n"
+        return
+      end
+      
       if call[:recv]
         generate_stmt call[:recv], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self =>context[:self]
       else
@@ -237,10 +325,10 @@ module Vienna
     # This basically holds Javascript code....
     # 
     def generate_xstring str, context
-      write "return " if context[:last_stmt] and context[:full_stmt]
-      write '/* JS: function() */'
+      # write "return " if context[:last_stmt] and context[:full_stmt]
+      # write '/* JS: function() */'
       write str[:value]
-      write ";\n" if context[:full_stmt]
+      # write ";\n" if context[:full_stmt]
     end
     
     
@@ -254,8 +342,12 @@ module Vienna
       
       if mod.bodystmt
         mod.bodystmt.each do |b|
-          generate_stmt b
-          write ";\n" unless [:klass, :module].include? b.node
+          generate_stmt b, :instance => false,     # all class methods/references in current scope
+                              :full_stmt => true,     # full statements, so insert relevant ';' etc
+                              :self => current_self  # current 'self' reference
+                              # :last_stmt => (mod.bodystmt.last == b ? true : false)
+                              
+          # write ";\n" unless [:klass, :module].include? b.node
         end
       end
       
@@ -273,11 +365,17 @@ module Vienna
     end
     
     def generate_constant const, context
+      write 'return ' if context[:last_stmt] and context[:full_stmt]
+      
       if current_self == 'VN.self'
-        write "cObject.$const_get('#{const[:name]}')"
+        write "cObject.$c_g('#{const[:name]}')"
+      elsif context[:instance]
+        write "#{current_self}.$klass.$c_g('#{const[:name]}')"
       else
-        write "#{current_self}.$klass.$const_get('#{const[:name]}')"
+        write "#{current_self}.$c_g('#{const[:name]}')"
       end
+      
+      write ";\n" if context[:full_stmt]
     end
     
     
@@ -285,9 +383,9 @@ module Vienna
       write "VN.$h("
       
       list[:list].each do |l|
-        generate_stmt l[:key]
+        generate_stmt l[:key], context
         write ', '
-        generate_stmt l[:value]
+        generate_stmt l[:value], context
         write ', ' unless list[:list].last == l
       end
       
@@ -298,35 +396,54 @@ module Vienna
     
     
     def generate_array stmt, context
+      write 'return ' if context[:last_stmt] and context[:full_stmt]
+      
       write '['
       
       stmt[:args].each do |a|
         write ',' unless stmt[:args].first == a
-        generate_stmt a
+        generate_stmt a, context
       end
       
       write ']'
+      write ";\n" if context[:full_stmt]
     end
     
     # This method must handle identifiying whether an identifier as actually
     # a varname, or a method call on self.
     def generate_identifier identifier, context
-      # method call
-      write "#{current_self}.$('#{identifier[:name]}', [])"
+      write 'return ' if context[:last_stmt] and context[:full_stmt]
+      
+      if nametable_include? identifier[:name]
+        write identifier[:name]
+      else
+        # method call
+        write "#{current_self}.$('#{identifier[:name]}', [])"
+      end
       write ";\n" if context[:full_stmt]
-      # varname
-      # write identifier[:name]
     end
     
     def generate_self identifier, context
       write current_self
     end
     
+    def generate_true identifier, context
+      write 'true'
+    end
     
+    def generate_false identifier, context
+      write 'false'
+    end
+    
+    def generate_nil identifier, context
+      write 'nil'
+    end
     
     
     def generate_numeric numeric, context
+      write 'return ' if context[:last_stmt] and context[:full_stmt]
       write numeric[:value]
+      write ";\n" if context[:full_stmt]
     end
     
   end

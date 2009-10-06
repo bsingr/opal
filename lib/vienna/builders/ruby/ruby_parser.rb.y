@@ -177,7 +177,7 @@ rule
             		| lhs '=' mrhs
             		| mlhs '=' arg_value
             		| mlhs '=' mrhs
-            		| expr            		
+            		| expr
 
             expr: command_call
               	| expr kAND expr
@@ -201,6 +201,10 @@ rule
  cmd_brace_block: tLBRACE_ARG opt_block_param compstmt '}'
 
          command: operation command_args
+                  {
+                    # command call - no brackets/recv
+          		      result = node :call, :recv => nil, :meth => val[0], :args => val[1]
+                  }
         	      | operation command_args cmd_brace_block
         	      | primary_value '.' operation2 command_args
         	      | primary_value '.' operation2 command_args cmd_brace_block
@@ -522,11 +526,26 @@ rule
             		| kNOT '(' expr rparen
             		| kNOT '(' rparen
             		| operation brace_block
+            		  {
+            		    puts 1
+            		  }
             		| method_call
+            		  {
+            		    puts 2
+            		  }
             		| method_call brace_block
+            		  {
+            		    puts 3
+            		  }
             		| tLAMBDA lambda
             		| k_if expr_value then compstmt if_tail k_end
+            		  {
+            		    result = self.node :if, :expr => val[1], :compstmt => val[3], :tail => val[4]
+            		  }
             		| k_unless expr_value then compstmt opt_else k_end
+            		  {
+            		    result = self.node :unless, :expr => val[1], :compstmt => val[3], :tail => val[4]
+            		  }
             		| k_while expr_value do compstmt k_end
             		| k_until expr_value do compstmt k_end
             		| k_case expr_value opt_terms case_body k_end
@@ -539,7 +558,6 @@ rule
             		| k_class tLSHFT expr term bodystmt k_end
             		| k_module cpath bodystmt k_end
             		  {
-                    # result = self.node_module(val[1], val[2])
             		    result = self.node_module(:cpath => val[1], :body => val[2])
             		  }
             		| k_def fname f_arglist bodystmt k_end
@@ -587,10 +605,22 @@ rule
 		            | kDO_COND
 
          if_tail: opt_else
+                  {
+                    result = val[0]
+                  }
               	| kELSIF expr_value then compstmt if_tail
+              	  {
+              	    result = [self.node(:elsif, :expr => val[1], :compstmt => val[3])] + val[4]
+              	  }
 
         opt_else: none
+                  {
+                    result = []
+                  }
               	| kELSE compstmt
+              	  {
+              	    result = [self.node(:else, :compstmt => val[1])]
+              	  }
 
          for_var: lhs
               	| mlhs
@@ -679,6 +709,7 @@ rule
             		| kSUPER
             		| primary_value '[' opt_call_args rbracket
 
+
      brace_block: '{' opt_block_param compstmt '}'
             		| kDO opt_block_param compstmt kEND
 
@@ -747,6 +778,9 @@ rule
                     result = []
                   }
             		| string_contents string_content
+            		  {
+            		    result = val[0] + [val[1]]
+            		  }
 
 xstring_contents: 
                   {
@@ -754,8 +788,14 @@ xstring_contents:
                     result = []
                   }
               	| xstring_contents string_content
+              	  {
+            		    result = val[0] + [val[1]]
+            		  }
 
   string_content: tSTRING_CONTENT
+                  {
+                    result = val[0]
+                  }
               	| tSTRING_DVAR string_dvar
               	| tSTRING_DBEG compstmt '}'
 
