@@ -24,6 +24,47 @@
  * THE SOFTWARE.
  */
 
+// module Kernel
+//   
+//   def nil?
+//     false
+//   end
+//   
+//   def ===(other)
+//     
+//   end
+//   
+//   def =~(obj)
+//     nil
+//   end
+//   
+//   def !=(obj)
+//     self =~ obj ? false : true
+//   end
+//   
+//   def eql?(obj)
+//     
+//   end
+//   
+//   def class
+//     
+//   end
+//   
+//   def clone
+//     
+//   end
+//   
+//   def dup
+//     
+//   end
+//   
+//   def initialize_copy (orig)
+//     
+//   end
+//   
+// end
+
+
 mKernel.$def('nil?', function() {
   return false;
 });

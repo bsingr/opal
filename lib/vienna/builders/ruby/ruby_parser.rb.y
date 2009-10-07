@@ -158,7 +158,13 @@ rule
             		| kALIAS tGVAR tNTH_REF
             		| kUNDEF undef_list
             		| stmt kIF_MOD expr_value
+            		  {
+            		    result = node :if_mod, :stmt => val[0], :expr => val[2]
+            		  }
             		| stmt kUNLESS_MOD expr_value
+            		  {
+            		    result = node :unless_mod, :stmt => val[0], :expr => val[2]
+            		  }
             		| stmt kWHILE_MOD expr_value
             		| stmt kUNTIL_MOD expr_value
             		| stmt kRESCUE_MOD stmt
@@ -470,8 +476,14 @@ rule
     command_args: call_args
 
        block_arg: tAMPER arg_value
+                  {
+                    result = self.node :block_arg, :arg => val[1]
+                  }
 
    opt_block_arg: ',' block_arg
+                  {
+                    resul = val[1]
+                  }
 		            | ','
 		            | none
 
@@ -535,7 +547,8 @@ rule
             		  }
             		| method_call brace_block
             		  {
-            		    puts 3
+            		    val[0][:brace_block] = val[1]
+            		    result = val[0]
             		  }
             		| tLAMBDA lambda
             		| k_if expr_value then compstmt if_tail k_end
@@ -711,7 +724,13 @@ rule
 
 
      brace_block: '{' opt_block_param compstmt '}'
+                  {
+                    
+                  }
             		| kDO opt_block_param compstmt kEND
+            		  {
+            		    result = node :brace_block, :params => val[1], :compstmt => val[2]
+            		  }
 
        case_body: kWHEN args then compstmt cases
 
@@ -794,10 +813,16 @@ xstring_contents:
 
   string_content: tSTRING_CONTENT
                   {
-                    result = val[0]
+                    result = node :string_content, :value => val[0]
                   }
               	| tSTRING_DVAR string_dvar
+              	  {
+                    result = node :string_dvar, :value => val[1]
+                  }
               	| tSTRING_DBEG compstmt '}'
+              	  {
+                    result = node :string_dbeg, :value => val[1]
+                  }
 
      string_dvar: tGVAR
             		| tIVAR
@@ -1007,8 +1032,14 @@ xstring_contents:
               	| tAMPER
 
      f_block_arg: blkarg_mark tIDENTIFIER
+                  {
+                    result = val[1]
+                  }
 
  opt_f_block_arg: ',' f_block_arg
+                  {
+                    result = val[1]
+                  }
             		| none
 
        singleton: var_ref

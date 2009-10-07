@@ -30,7 +30,7 @@ class Element
   
   def self.find(the_id)
     # document.getElementById(the_id)
-    `document.getElementById(#{the_id}.ptr)`
+    `document.getElementById(#{the_id})`
   end
   
   def initialize(type, class_name, the_id)

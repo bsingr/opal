@@ -1,5 +1,5 @@
 # 
-# document.rb
+# object.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,18 +24,3 @@
 # THE SOFTWARE.
 #
 
-class Document
-  
-  # pass in a block to be run when the document is ready. these are run on a
-  # 'first come first served basis', i.e. multiple blocks can be added and 
-  # each will be run
-  # def self.ready?(&block)
-  #   blocks = @@blocks ||= []
-  #   blocks << &block
-  # end
-  
-  def self.ready?
-    `console.log('go to this point');`
-  end
-  
-end

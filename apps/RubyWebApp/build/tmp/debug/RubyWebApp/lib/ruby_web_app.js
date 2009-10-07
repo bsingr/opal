@@ -1,5 +1,12 @@
 
 VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/base/lib/base.js');
-var $VN_1 = RModule.define('RubyWebApp');
-$VN_1.$c_s('VERSION','0.0.1');
-var $VN_2 = RClass.define_under($VN_1, 'AppDelegate', cObject);
+cObject.$c_g('Document').$('ready?',[function(){
+if((e=VN.self.$('adam', []),e!==nil && e!==false)){
+}
+}]);
+var adam = ['adam',(100000000),'sisisiswd s s s'].join('');
+'OMG';
+console.log(adam);VN.self.$('puts',['101']);
+var type = 'div';
+var my_element = document.createElement(type);
+VN.self.$('puts',[my_element]);

@@ -53,11 +53,10 @@ return false;});mKernel.$def('puts',function(val){console.log(101010101);});mKer
 cModule.$def('freeze',function(mod_freeze){});cModule.$def('===',function(mod_eqq){});cModule.$def('==',function(obj_equal){});cModule.$def('<=>',function(mod_cmp){});cModule.$def('<',function(mod_lt){});cModule.$def('<=',function(class_inherited_p){});cModule.$def('>',function(mod_gt){});cModule.$def('>=',function(mod_ge){});cModule.$def('initialize_copy',function(mod_init_copy){});cModule.$def('to_s',function(mod_to_s){});cModule.$def('included_modules',function(mod_included_modules){});cModule.$def('include?',function(mod_include_p){});cModule.$def('name',function(mod_name){});cModule.$def('ancestors',function(mod_ancestors){});cModule.$define_private_method('attr',function(mod_attr){});cModule.$define_private_method('attr_reader',function(mod_attr_reader){});cModule.$define_private_method('attr_writer',function(mod_attr_writer){});cModule.$define_private_method('attr_accessor',function(mod_attr_accessor){});cModule.$define_alloc_func(function(module_s_alloc){});cModule.$def('initialize',function(mod_initialize){});cModule.$def('instance_methods',function(class_instance_methods){});cModule.$def('public_instance_methods',function(class_public_instance_methods){});cModule.$def('protected_instance_methods',function(class_protected_instance_methods){});cModule.$def('private_instance_methods',function(class_private_instance_methods){});cModule.$def('constants',function(mod_constants){});cModule.$def('const_get',function(mod_const_get){});cModule.$def('const_set',function(mod_const_set){});cModule.$def('const_defined?',function(mod_const_defined){});cModule.$define_private_method('remove_const',function(mod_remove_const){});cModule.$def('const_missing',function(mod_const_missing){});cModule.$def('class_variables',function(mod_class_variables){});cModule.$def('remove_class_variable',function(mod_remove_cvar){});cModule.$def('class_variable_get',function(mod_cvar_get){});cModule.$def('class_variable_set',function(mod_cvar_set){});cModule.$def('class_variable_defined?',function(mod_cvar_defined){});
 
 cClass.$def('new',function(){var obj=this.$('allocate',[]);obj.$('initialize',arguments);return obj;});cClass.$def('allocate',function(obj_alloc){});cClass.$def('initialize',function(class_initialize){});cClass.$def('initialize_copy',function(class_init_copy){});cClass.$def('superclass',function(class_superclass){});cClass.$define_alloc_func(function(class_s_alloc){});
-VN.top_self = VN.obj_alloc(cObject);
-
-VN.top_self.$def_s('to_s', function() {
-  return 'main' ;
-});
+VN.self = VN.obj_alloc(cObject);
+VN.self.$def_s('to_s', function() { 
+  return 'main' ;}
+);
 
 var mComparable=RModule.define('Comparable');mComparable.$def('==',function(obj){if(this==obj)return true;return false;});mComparable.$def('>',function(cmp_gt){});mComparable.$def('>=',function(cmp_ge){});mComparable.$def('<',function(cmp_lt){});mComparable.$def('<=',function(cmp_le){});mComparable.$def('between?',function(cmp_between){});
 
@@ -97,12 +96,236 @@ if (this) {
       return obj ? true : false ;
     }});
 
+var RHash = function() {
+  this.$klass = cHash ;
+  this.$type = VN.HASH ;
+  this.$keys = [] ;
+  this.$values = { } ;
+  this.$ifnone = nil ;
+  return this;
+};
 
-var RHash=function(){this.$klass=cHash;this.$type=VN.HASH;this.$keys=[];this.$values={};this.$ifnone=nil;return this;};RHash.prototype.$ivar_set=RObject.prototype.$ivar_set;RHash.prototype.$ivar_get=RObject.prototype.$ivar_get;RHash.prototype.$call=RObject.prototype.$call;RHash.prototype.$define_singleton_method=RObject.prototype.$define_singleton_method;RHash.prototype.$make_metaclass=RObject.prototype.$make_metaclass;VN.$h=function(){var hash=cHash.$call('new',[]);for(var i=0;i<arguments.length;i++){hash.$call('[]=',[arguments[i][0],arguments[i][1]]);}
-return hash;};var cHash=RClass.define('Hash',cObject);RModule.include(cHash,mEnumerable);cHash.$define_alloc_func(function(){return new RHash();});cHash.$def_s('[]',function(){});cHash.$def_s('try_convert',function(){});cHash.$def('initialize',function(){if(arguments.length>0){this.$ifnone=arguments[0];}});cHash.$def('initialize_copy',function(){});cHash.$def('rehash',function(){});cHash.$def('to_hash',function(){return this;});cHash.$def('to_a',function(){var ary=[];for(var i=0;i<this.$keys.length;i++){ary.push([this.$keys[i],this.$values[this.$keys[i]]]);}
-return ary;});cHash.$def('to_s',function(){if(this.$keys.length==0)return'{...}';var str='{'+this.$keys[0].$call('inspect',[])+'=>'+this.$values[this.$keys[0]].$call('inspect',[]);for(var i=1;i<this.$keys.length;i++){str+=(', '+this.$keys[i].$call('inspect',[])+'=>'+this.$values[this.$keys[i]].$call('inspect',[]))}
-str+='}';return str;});cHash.$def('inspect',function(){return this.$call('to_s',[]);});cHash.$def('==',function(){});cHash.$def('[]',function(key){if(!this.$values.hasOwnProperty(key)){return this.$call('default',[key]);}
-return this.$values[key];});cHash.$def('hash',function(){});cHash.$def('eql?',function(){});cHash.$def('fetch',function(){});cHash.$def('[]=',function(key,val){if(!this.$values.hasOwnProperty(key)){this.$keys.push(key);}
-this.$values[key]=val;return val;});cHash.$def('store',function(key,val){return this.$call('[]=',[key,val]);});cHash.$def('default',function(){return this.$ifnone;});cHash.$def('default=',function(ifnone){this.$ifnone=ifnone;return ifnone;});cHash.$def('default_proc',function(){});cHash.$def('default_proc=',function(){});cHash.$def('key',function(){});cHash.$def('index',function(){});cHash.$def('size',function(){});cHash.$def('length',function(){});cHash.$def('empty?',function(){});cHash.$def('each_value',function(){});cHash.$def('each_key',function(){});cHash.$def('each_pair',function(){});cHash.$def('each',function(){});cHash.$def('keys',function(){});cHash.$def('values',function(){});cHash.$def('values_at',function(){});cHash.$def('shift',function(){});cHash.$def('delete',function(){});cHash.$def('delete_if',function(){});cHash.$def('select',function(){});cHash.$def('reject',function(){});cHash.$def('reject!',function(){});cHash.$def('clear',function(){});cHash.$def('invert',function(){});cHash.$def('update',function(){});cHash.$def('replace',function(){});cHash.$def('merge!',function(){});cHash.$def('merge',function(){});cHash.$def('assoc',function(){});cHash.$def('rassoc',function(){});cHash.$def('flatten',function(){});cHash.$def('include?',function(){});cHash.$def('member?',function(){});cHash.$def('has_key?',function(){});cHash.$def('has_value?',function(){});cHash.$def('key?',function(){});cHash.$def('value?',function(){});cHash.$def('compare_by_identity',function(){});cHash.$def('compare_by_identity?',function(){});var $VN_1 = RModule.define('RubyWebApp');
-$VN_1.$c_s('VERSION','0.0.1');
-var $VN_2 = RClass.define_under($VN_1, 'AppDelegate', cObject);
+RHash.prototype.$ivar_set = RObject.prototype.$ivar_set;
+RHash.prototype.$ivar_get = RObject.prototype.$ivar_get;
+RHash.prototype.$call = RObject.prototype.$call;
+RHash.prototype.$define_singleton_method = RObject.prototype.$define_singleton_method;
+RHash.prototype.$make_metaclass = RObject.prototype.$make_metaclass;
+
+VN.$h = function() {
+  var hash = cHash.$call('new', []) ;
+  for (var i = 0; i < arguments.length; i++) {
+    hash.$call('[]=', [arguments[i][0], arguments[i][1]]);
+  }
+  return hash;
+};
+
+var cHash = RClass.define('Hash', cObject) ;
+
+RModule.include(cHash, mEnumerable);
+
+cHash.$define_alloc_func(function() {
+  return new RHash();
+}); var $VN_1 = RClass.define('Hash', cObject);
+$VN_1.$def_s('[]',function(){
+var self=this;
+});
+$VN_1.$def_s('try_convert',function(){
+var self=this;
+});
+$VN_1.$def('initialize',function(){
+var self=this;
+if (arguments.length > 0) {
+      this.$ifnone = arguments[0] ;
+    } });
+$VN_1.$def('initialize_copy',function(){
+var self=this;
+});
+$VN_1.$def('rehash',function(){
+var self=this;
+});
+$VN_1.$def('to_hash',function(){
+var self=this;
+self});
+$VN_1.$def('to_a',function(){
+var self=this;
+var ary = [];
+    for (var i = 0; i < this.$keys.length; i++) {
+      ary.push([this.$keys[i], this.$values[this.$keys[i]]]);
+    }
+    return ary; });
+$VN_1.$def('to_s',function(){
+var self=this;
+if (this.$keys.length == 0) return '{...}';
+  
+    var str = '{' + this.$keys[0].$call('inspect', []) + '=>' + this.$values[this.$keys[0]].$call('inspect', []);
+    for (var i = 1; i < this.$keys.length; i++) {
+      str += (', ' + this.$keys[i].$call('inspect', []) + '=>' + this.$values[this.$keys[i]].$call('inspect', []))
+    }
+    str += '}';
+    return str;});
+$VN_1.$def('inspect',function(){
+var self=this;
+return self.$('to_s', []);
+});
+$VN_1.$def('==',function(obj){
+var self=this;
+});
+$VN_1.$def('[]',function(key){
+var self=this;
+if (!this.$values.hasOwnProperty(key)) {
+      return this.$call('default', [key]);
+    }
+    return this.$values[key] ;});
+$VN_1.$def('hash',function(){
+var self=this;
+});
+$VN_1.$def('eql?',function(){
+var self=this;
+});
+$VN_1.$def('fetch',function(){
+var self=this;
+});
+$VN_1.$def('[]=',function(key,val){
+var self=this;
+self.$('store',[key,val]);
+});
+$VN_1.$def('store',function(key,val){
+var self=this;
+if (!this.$values.hasOwnProperty(key)) {
+      this.$keys.push(key);
+    }
+  
+    this.$values[key] = val ;
+    return val ;});
+$VN_1.$def('default',function(){
+var self=this;
+return self.$ifnone});
+$VN_1.$def('default=',function(default){
+var self=this;
+this.$ifnone = ifnone;
+    return ifnone;});
+$VN_1.$def('default_proc',function(){
+var self=this;
+});
+$VN_1.$def('default_proc=',function(proc){
+var self=this;
+});
+$VN_1.$def('key',function(){
+var self=this;
+});
+$VN_1.$def('index',function(){
+var self=this;
+});
+$VN_1.$def('size',function(){
+var self=this;
+});
+$VN_1.$def('length',function(){
+var self=this;
+return self.$('size', []);
+});
+$VN_1.$def('empty?',function(){
+var self=this;
+});
+$VN_1.$def('each_value',function(){
+var self=this;
+});
+$VN_1.$def('each_key',function(){
+var self=this;
+});
+$VN_1.$def('each_pair',function(){
+var self=this;
+});
+$VN_1.$def('each',function(){
+var self=this;
+});
+$VN_1.$def('keys',function(){
+var self=this;
+});
+$VN_1.$def('values',function(){
+var self=this;
+});
+$VN_1.$def('values_at',function(){
+var self=this;
+});
+$VN_1.$def('shift',function(){
+var self=this;
+});
+$VN_1.$def('delete',function(){
+var self=this;
+});
+$VN_1.$def('delete_if',function(){
+var self=this;
+});
+$VN_1.$def('select',function(){
+var self=this;
+});
+$VN_1.$def('reject',function(){
+var self=this;
+});
+$VN_1.$def('reject!',function(){
+var self=this;
+});
+$VN_1.$def('clear',function(){
+var self=this;
+});
+$VN_1.$def('invert',function(){
+var self=this;
+});
+$VN_1.$def('update',function(){
+var self=this;
+});
+$VN_1.$def('replace',function(){
+var self=this;
+});
+$VN_1.$def('merge!',function(){
+var self=this;
+});
+$VN_1.$def('merge',function(){
+var self=this;
+});
+$VN_1.$def('assoc',function(){
+var self=this;
+});
+$VN_1.$def('rassoc',function(){
+var self=this;
+});
+$VN_1.$def('flatten',function(){
+var self=this;
+});
+$VN_1.$def('include?',function(obj){
+var self=this;
+});
+$VN_1.$def('member?',function(obj){
+var self=this;
+self.$('include?',[obj]);
+});
+$VN_1.$def('has_key?',function(key){
+var self=this;
+});
+$VN_1.$def('has_value?',function(val){
+var self=this;
+});
+$VN_1.$def('key?',function(key){
+var self=this;
+self.$('has_key?',[key]);
+});
+$VN_1.$def('value?',function(val){
+var self=this;
+self.$('has_value?',[val]);
+});
+$VN_1.$def('compare_by_identity',function(){
+var self=this;
+});
+$VN_1.$def('compare_by_identity?',function(){
+var self=this;
+});
+cObject.$c_g('Document').$('ready?',[function(){
+if((e=VN.self.$('adam', []),e!==nil && e!==false)){
+}
+}]);
+var adam = ['adam',(100000000),'sisisiswd s s s'].join('');
+'OMG';
+console.log(adam);VN.self.$('puts',['101']);
+var type = 'div';
+var my_element = document.createElement(type);
+VN.self.$('puts',[my_element]);

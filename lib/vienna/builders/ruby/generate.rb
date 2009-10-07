@@ -49,9 +49,11 @@ module Vienna
     #              processed statement, as to complete it).
     # 
     def generate_tree tree
+      push_nametable
       tree.each do |stmt|
         generate_stmt stmt, :instance => true, :full_stmt => true, :last_stmt => false, :self => current_self
       end
+      pop_nametable
     end
     
     # Generate any type of statement with the given options
@@ -86,6 +88,10 @@ module Vienna
         generate_if stmt, context
       when :unless
         generate_if stmt, context
+      when :if_mod
+        generate_if_mod stmt, context
+      when :unless_mod
+        generate_if_mod stmt, context  
       when :string
         generate_string stmt, context
       when :xstring
@@ -101,28 +107,21 @@ module Vienna
       end
     end
       
+    # Generate if, unless statemets
     def generate_if stmt, context
-      # if ((e=stmt, e!==nil && e!==false)) {
       write 'if((e='
-      # ((e=stmt, e!==nil && e!==false))
-      generate_stmt stmt[:expr],:instance => false,     # all class methods/references in current scope
-                                :full_stmt => false,     # full statements, so insert relevant ';' etc
-                                :self => current_self,  # current 'self' reference
-                                :last_stmt => false
+      generate_stmt stmt[:expr],:instance => false, :full_stmt => false, :self => current_self, :last_stmt => false
                                 
       if stmt.node == :if
+        # falseiness determined by not nil or false
         write ",e!==nil && e!==false)){\n"
-      else
-        # unless...
+      else # unless
         write ",e==nil || e==false)){\n"
       end
       
       if stmt[:compstmt]
         stmt[:compstmt].each do |c|
-          generate_stmt c,  :instance => true,     # all class methods/references in current scope
-                            :full_stmt => true,     # full statements, so insert relevant ';' etc
-                            :self => current_self,  # current 'self' reference
-                            :last_stmt => (stmt[:compstmt].last == c ? true : false) # also check if the actual 'if' statement is last?
+          generate_stmt c, :instance => true, :full_stmt => true, :self => current_self, :last_stmt => (stmt[:compstmt].last == c ? true : false) # also check if the actual 'if' statement is last?
         end
       end
       
@@ -132,31 +131,27 @@ module Vienna
           
           if t.node == :elsif
             write 'else if((e='
-            # ((e=stmt, e!==nil && e!==false))
-            generate_stmt t[:expr],:instance => false,     # all class methods/references in current scope
-                                      :full_stmt => false,     # full statements, so insert relevant ';' etc
-                                      :self => current_self,  # current 'self' reference
-                                      :last_stmt => false
+            generate_stmt t[:expr], :instance => false, :full_stmt => false, :self => current_self, :last_stmt => false
             write ",e!==nil && e!==false)){\n"
-          else
-            # normal else statement
+          else # normal else
             write "else{\n"
           end
           
           if t[:compstmt]
             t[:compstmt].each do |c|
-              generate_stmt c,  :instance => true,     # all class methods/references in current scope
-                                :full_stmt => true,     # full statements, so insert relevant ';' etc
-                                :self => current_self,  # current 'self' reference
-                                :last_stmt => (t[:compstmt].last == c ? true : false) # also check if the actual 'if' statement is last?
+              generate_stmt c, :instance => true, :full_stmt => true,:self => current_self, :last_stmt => (t[:compstmt].last == c ? true : false) # also check if the actual 'if' statement is last?
             end
           end
                     
-          
           write "}\n"
-          
         end 
       end
+    end
+    
+    # If/unless mod ... statement after 
+    # 
+    def generate_if_mod stmt, context
+      
     end
     
     
@@ -209,8 +204,14 @@ module Vienna
           add_to_nametable arg
           write ',' unless definition[:arglist][:arg].last == arg
         end
+        
+        if definition[:arglist][:opt_block_arg]
+          write ','
+          write definition[:arglist][:opt_block_arg]
+          add_to_nametable definition[:arglist][:opt_block_arg]
+        end  
       end
-      
+        
       write "){\n"
       # use self inside functions, to avoid blocks/functions from overwriting meaning
       # of 'this'
@@ -249,8 +250,10 @@ module Vienna
         # if not in var table, make new var, and add it
         # we do not write var if we have just put a return before it....js error
         write 'var ' unless (context[:last_stmt] and context[:full_stmt]) or nametable_include? stmt[:lhs][:name]
+        add_to_nametable(stmt[:lhs][:name]) unless nametable_include? stmt[:lhs][:name]
         write "#{stmt[:lhs][:name]} = "
         generate_stmt stmt[:rhs], :instance => context[:instance], context[:full_stmt] => false, context[:last_stmt] => true, :self => context[:self]
+        
       
       # If LHS is an @instance_variable
       elsif stmt[:lhs].node == :ivar
@@ -284,10 +287,8 @@ module Vienna
     def generate_call call, context
       # Capture require calls...
       if call[:meth] == 'require' and not call[:recv]
-        # puts "ignoring:"
-        # puts call
-        require_path = @project.file_for_require_relative_to(@source, call[:args][0][:value].join)
-        puts call[:args][0][:value].join
+        require_path = @project.file_for_require_relative_to(@source, call[:args][0][:value][0][:value])
+        # puts call[:args][0][:value][0][:value]
         build_path = @project.build_file(require_path)
         write "\nVN.require('#{build_path}');\n"
         return
@@ -300,24 +301,78 @@ module Vienna
       end
         
       write ".$('#{call[:meth]}',["
+      # normal call args
       unless call[:args].nil?
         call[:args].each do |arg|
           generate_stmt arg, :instance => context[:instance], :full_stmt => false
-          write ',' unless arg == call[:args].last
+          write ',' unless arg == call[:args].last && call[:brace_block].nil?
         end
+      end
+      # block
+      unless call[:brace_block].nil?
+        write "function("
+        write "){\n"
+        
+        if call[:brace_block][:compstmt]
+          call[:brace_block][:compstmt].each do |stmt|
+
+            generate_stmt stmt, :instance => (context[:singleton] ? false : true),
+                                :full_stmt => true, 
+                                :last_stmt => (call[:brace_block][:compstmt].last == stmt ? true : false), 
+                                :self => current_self
+
+          end
+        end        
+        
+        write "}"
       end
       write "])"
       write ";\n" if context[:full_stmt]
+      
+      # write call[:brace_block]
     end
+  
     
     
     # Generate a string
     # 
     def generate_string str, context
       write "return " if context[:last_stmt] and context[:full_stmt]
-      write "'"
-      write str[:value]
-      write "'"
+
+      case str[:value].length
+      when 0
+        write "''"
+      when 1
+        write "'"
+        write str[:value][0][:value]
+        write "'"
+      else
+        
+        write "["
+        
+        str[:value].each do |s|
+          
+          case s.node
+          when :string_content
+            write "'"
+            write s[:value]
+            write "'"
+          when :string_dbeg
+            write "("
+                    
+            s[:value].each do |stmt|
+              generate_stmt stmt, :instance => (context[:singleton] ? false : true), :full_stmt => false, :last_stmt => false,  :self => current_self
+            end
+            
+            write ")"
+          end
+          
+          write "," unless str[:value].last == s
+        end
+        
+        write "].join('')"        
+      end
+
       write ";\n" if context[:full_stmt]
     end
     
@@ -325,10 +380,22 @@ module Vienna
     # This basically holds Javascript code....
     # 
     def generate_xstring str, context
-      # write "return " if context[:last_stmt] and context[:full_stmt]
-      # write '/* JS: function() */'
-      write str[:value]
-      # write ";\n" if context[:full_stmt]
+      case str[:value].length
+      when 0
+      when 1
+        write str[:value][0][:value]
+      else
+        str[:value].each do |s|
+          case s.node
+          when :string_content
+            write s[:value]
+          when :string_dbeg
+            s[:value].each do |stmt|
+              generate_stmt stmt, :instance => (context[:singleton] ? false : true), :full_stmt => false, :last_stmt => false,  :self => current_self
+            end
+          end
+        end
+      end
     end
     
     

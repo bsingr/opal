@@ -154,6 +154,13 @@ module Vienna
         # as adding languages, etc.
         return try_path
       end
+      
+      try_path = File.join(system_lib_root, require_path, 'lib', require_path) + '.rb'
+      if File.exists? try_path
+        # add the library to project lubraries, so css etc can all be added later.. as well
+        # as adding languages, etc.
+        return try_path
+      end
     end
     
     # The actual path where the final my_app_name.js file will be built to. This
