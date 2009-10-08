@@ -65,5 +65,10 @@ def something
   
   return 4
   
-  
+  return 14 if adam.age
+  return 34, 35
 end
+
+# VN.self.$('kind_of?', [])
+
+self.kind_of?

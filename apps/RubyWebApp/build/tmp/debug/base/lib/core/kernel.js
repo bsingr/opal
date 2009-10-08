@@ -1,10 +1,145 @@
-
-mKernel.$def('nil?',function(){return false;});mKernel.$def('===',function(){});mKernel.$def('=~',function(obj){return nil;});mKernel.$def('!=',function(obj){return this.$call('=~',obj)?false:true;});mKernel.$def('eql?',function(){});mKernel.$def('class',VN.obj_class,0);mKernel.$def('clone',VN.obj_clone,0);mKernel.$def('dup',VN.obj_dup,0);mKernel.$def('initialize_copy',function(orig){if(orig==this)return this;if(this.$type!=orig.$type||this.$klass!=orig.$klass){VN.type_error('initialize_copy should take same class object');}
-return this;});mKernel.$def('taint',VN.obj_taint,0);mKernel.$def('tainted?',VN.obj_tainted,0);mKernel.$def('untaint',VN.obj_untaint,0);mKernel.$def('untrust',VN.obj_untrust,0);mKernel.$def('untrusted?',VN.obj_untrusted,0);mKernel.$def('trust',VN.obj_trust,0);mKernel.$def('freeze',VN.obj_freeze,0);mKernel.$def('frozen?',VN.obj_frozen_p,0);mKernel.$def('to_s',function(){return"#<"+RClass.obj_classname(this)+":0x00000000>";});mKernel.$def('inspect',function(){return"";});mKernel.$def('methods',function(){});mKernel.$def('singleton_methods',function(){});mKernel.$def('protected_methods',function(){});mKernel.$def('private_methods',function(){});mKernel.$def('public_methods',function(){});mKernel.$def('instance_variables',function(){});mKernel.$def('instance_variables_get',function(iv){return this.$ivar_get(iv);});mKernel.$def('instance_variables_set',function(iv,val){return this.$ivar_set(iv,val);});mKernel.$def('instance_variables_defined?',function(iv){return this.$ivar_defined(iv);});mKernel.$define_private_method('remove_instance_variable',function(iv){});mKernel.$def('instance_of?',function(klass){switch(klass.$type){case VN.MODULE:case VN.CLASS:case VN.ICLASS:break;default:VN.type_error('class or module required');}
-if(this.$klass==klass)return true;return false;});mKernel.$def('kind_of?',function(klass){switch(klass.$type){case VN.MODULE:case VN.CLASS:case VN.ICLASS:break;default:VN.type_error('class or module required');}
-var k=self.$klass;while(k){if(k==klass){return true;}
-k=k.$super;}
-return false;});mKernel.$def('is_a?',function(klass){switch(klass.$type){case VN.MODULE:case VN.CLASS:case VN.ICLASS:break;default:VN.type_error('class or module required');}
-var k=self.$klass;while(k){if(k==klass){return true;}
-k=k.$super;}
-return false;});mKernel.$def('puts',function(val){console.log(101010101);});mKernel.$def('tap',function(){VN.warning('Kernel#tap is unimplemented');});
+var $VN_1 = RModule.define('Kernel');
+$VN_1.$def('nil?',function(){
+var self=this;
+return false;
+});
+$VN_1.$def('===',function(other){
+var self=this;
+});
+$VN_1.$def('=~',function(obj){
+var self=this;
+return nil;
+});
+$VN_1.$def('!=',function(obj){
+var self=this;
+});
+$VN_1.$def('eql?',function(obj){
+var self=this;
+});
+$VN_1.$def('class',function(){
+var self=this;
+});
+$VN_1.$def('clone',function(){
+var self=this;
+});
+$VN_1.$def('dup',function(){
+var self=this;
+});
+$VN_1.$def('initialize_copy',function(orig){
+var self=this;
+});
+$VN_1.$def('taint',function(){
+var self=this;
+});
+$VN_1.$def('tainted?',function(){
+var self=this;
+});
+$VN_1.$def('untaint',function(){
+var self=this;
+});
+$VN_1.$def('untrust',function(){
+var self=this;
+});
+$VN_1.$def('untrusted?',function(){
+var self=this;
+});
+$VN_1.$def('trust',function(){
+var self=this;
+});
+$VN_1.$def('freeze',function(){
+var self=this;
+});
+$VN_1.$def('frozen?',function(){
+var self=this;
+});
+$VN_1.$def('to_s',function(){
+var self=this;
+return "#<" + RClass.obj_classname(this) + ":0x00000000>" ;});
+$VN_1.$def('inspect',function(){
+var self=this;
+return '';
+});
+$VN_1.$def('methods',function(){
+var self=this;
+});
+$VN_1.$def('singleton_methods',function(){
+var self=this;
+});
+$VN_1.$def('protected_methods',function(){
+var self=this;
+});
+$VN_1.$def('private_methods',function(){
+var self=this;
+});
+$VN_1.$def('public_methods',function(){
+var self=this;
+});
+$VN_1.$def('instance_variables',function(){
+var self=this;
+});
+$VN_1.$def('instance_variable_get',function(){
+var self=this;
+});
+$VN_1.$def('instance_variable_set',function(){
+var self=this;
+});
+$VN_1.$def('instance_variable_defined?',function(){
+var self=this;
+});
+$VN_1.$def('remove_instance_variable',function(){
+var self=this;
+});
+$VN_1.$def('instance_of?',function(){
+var self=this;
+switch (klass.$type) {
+      case VN.MODULE:
+      case VN.CLASS:
+      case VN.ICLASS:
+      break ;
+     default:
+       VN.type_error('class or module required');
+     }
+     if (this.$klass == klass) return true ;
+    return false ;});
+$VN_1.$def('kind_of?',function(){
+var self=this;
+switch (klass.$type) {
+      case VN.MODULE:
+      case VN.CLASS:
+      case VN.ICLASS:
+        break ;
+      default:
+        VN.type_error('class or module required');
+    }
+    var k = self.$klass ;
+    while (k) {
+      if (k == klass) {
+        return true;
+      }
+      k = k.$super;
+    }
+    return false; });
+$VN_1.$def('is_a?',function(){
+var self=this;
+switch (klass.$type) {
+      case VN.MODULE:
+      case VN.CLASS:
+      case VN.ICLASS:
+        break ;
+      default:
+        VN.type_error('class or module required');
+    }
+    var k = self.$klass ;
+    while (k) {
+      if (k == klass) {
+        return true;
+      }
+      k = k.$super;
+    }
+    return false;    });
+$VN_1.$def('puts',function(){
+var self=this;
+});
+$VN_1.$def('taps',function(){
+var self=this;
+});

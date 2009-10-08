@@ -380,7 +380,7 @@ module Vienna
     
     def generate_label_styled_call call, context
       if call[:recv]
-        generate_stmt call[:recv], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self =>context[:self]
+        generate_stmt call[:recv], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self =>context[:self], :call_recv => true
       else
         write current_self
       end
@@ -421,7 +421,7 @@ module Vienna
       end
       
       if call[:recv]
-        generate_stmt call[:recv], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self =>context[:self]
+        generate_stmt call[:recv], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self =>context[:self], :call_recv => true
       else
         write current_self
       end
@@ -655,7 +655,9 @@ module Vienna
     
     def generate_numeric numeric, context
       write 'return ' if context[:last_stmt] and context[:full_stmt]
-      write "(#{numeric[:value]})"
+      write '(' if context[:call_recv] # is number is the reciever of a call, we need to wrap it in params
+      write "#{numeric[:value]}"
+      write ')' if context[:call_recv]
       write ";\n" if context[:full_stmt]
     end
     
@@ -706,7 +708,16 @@ module Vienna
       write 'return '
       
       if stmt[:call_args]
-        generate_stmt stmt[:call_args][:args][0], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self => context[:self]
+        if stmt[:call_args][:args].length == 1
+          generate_stmt stmt[:call_args][:args][0], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self => context[:self]
+        else
+          write '['
+          stmt[:call_args][:args].each do |r|
+            generate_stmt r, :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self => context[:self]
+            write ',' unless r == stmt[:call_args][:args].last
+          end
+          write ']'
+        end
       end
       
       write ";\n" if context[:full_stmt]
