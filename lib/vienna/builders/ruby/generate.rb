@@ -104,6 +104,12 @@ module Vienna
         generate_assign stmt, context
       when :assoc_list
         generate_assoc_list stmt, context
+      when :op_asgn
+        generate_op_asgn stmt, context
+      when :lparen
+        generate_lparen stmt, context
+      when :return
+        generate_return stmt, context
       else
         write "\n[Unknown type for generate_stmt: #{stmt}]\n"
       end
@@ -229,6 +235,8 @@ module Vienna
         write ',' unless definition[:arglist][:arg].last == a
       end
       
+      # TODO: check if block_var has been defined, and if label, add onto name
+      
       write "){\n"
       write "var self=this;\n"
       
@@ -239,6 +247,8 @@ module Vienna
           generate_stmt stmt, :instance => (definition[:singleton] ? false : true), :full_stmt => true, :last_stmt => (definition[:bodystmt].last == stmt ? true : false), :self => current_self
         end
       end
+      
+      # TODO: check for block...
             
       self.current_self_end_def
       pop_nametable # pop new nametable
@@ -358,12 +368,52 @@ module Vienna
       
     end
     
+    # Returns true if the method call is manufactured to look like an objc style call
+    # 
+    def label_styled_call? call
+      # puts call
+      if call[:call_args] and call[:call_args][:assocs]
+        return true if call[:call_args][:assocs].first.node == :label_assoc
+      end
+      false
+    end
+    
+    def generate_label_styled_call call, context
+      if call[:recv]
+        generate_stmt call[:recv], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self =>context[:self]
+      else
+        write current_self
+      end
+      
+      method_name = call[:meth] << ':'
+      
+      call[:call_args][:assocs].each do |a|
+        method_name << a[:key]
+      end
+      
+      write ".$('#{method_name}',["
+      
+      generate_stmt call[:call_args][:args][0], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self =>context[:self]
+      
+      call[:call_args][:assocs].each do |a|
+        write ","
+        generate_stmt a[:value], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self =>context[:self]
+      end
+      
+      write "])"
+      write ";\n" if context[:full_stmt]
+      
+    end
+    
     # Generate method-call
     # 
     def generate_call call, context
+      # capture objc style calls
+      return generate_label_styled_call(call, context) if label_styled_call? call
+      
       # Capture require calls...
       if call[:meth] == 'require' and not call[:recv]
-        require_path = @project.file_for_require_relative_to(@source, call[:args][0][:value][0][:value])
+        require_path = @project.file_for_require_relative_to(@source, call[:call_args][:args][0][:value][0][:value])
         # puts call[:args][0][:value][0][:value]
         build_path = @project.build_file(require_path)
         write "\nVN.require('#{build_path}');\n"
@@ -378,10 +428,10 @@ module Vienna
         
       write ".$('#{call[:meth]}',["
       # normal call args
-      unless call[:args].nil?
-        call[:args].each do |arg|
+      unless call[:call_args].nil? or call[:call_args][:args].nil?
+        call[:call_args][:args].each do |arg|
           generate_stmt arg, :instance => context[:instance], :full_stmt => false
-          write ',' unless arg == call[:args].last && call[:brace_block].nil?
+          write ',' unless arg == call[:call_args][:args].last && call[:call_args][:brace_block].nil?
         end
       end
       # block
@@ -523,16 +573,22 @@ module Vienna
     
     
     def generate_assoc_list list, context
+      write 'return ' if context[:last_stmt] and context[:full_stmt]
       write "VN.$h("
       
       list[:list].each do |l|
-        generate_stmt l[:key], context
+        if l.node == :label_assoc
+          write "'#{l[:key].slice(0, l[:key].length - 1)}'"
+        else
+          generate_stmt l[:key], :instance => (context[:singleton] ? false : true), :full_stmt => false, :last_stmt => false,  :self => current_self
+        end
         write ', '
-        generate_stmt l[:value], context
+        generate_stmt l[:value], :instance => (context[:singleton] ? false : true), :full_stmt => false, :last_stmt => false,  :self => current_self
         write ', ' unless list[:list].last == l
       end
       
       write ")"
+      write ";\n" if context[:full_stmt]
     end
   
     
@@ -573,25 +629,86 @@ module Vienna
     end
     
     def generate_self identifier, context
+      write 'return ' if context[:last_stmt] and context[:full_stmt]
       write current_self
+      write ";\n" if context[:full_stmt]
     end
     
     def generate_true identifier, context
+      write 'return ' if context[:last_stmt] and context[:full_stmt]
       write 'true'
+      write ";\n" if context[:full_stmt]
     end
     
     def generate_false identifier, context
+      write 'return ' if context[:last_stmt] and context[:full_stmt]
       write 'false'
+      write ";\n" if context[:full_stmt]
     end
     
     def generate_nil identifier, context
+      write 'return ' if context[:last_stmt] and context[:full_stmt]
       write 'nil'
+      write ";\n" if context[:full_stmt]
     end
     
     
     def generate_numeric numeric, context
       write 'return ' if context[:last_stmt] and context[:full_stmt]
-      write numeric[:value]
+      write "(#{numeric[:value]})"
+      write ";\n" if context[:full_stmt]
+    end
+    
+    
+    # ||=, &&= etc - assign methods that cannot be overridden
+    # 
+    def generate_op_asgn stmt, context
+      write 'return ' if context[:last_stmt] and context[:full_stmt]
+      case stmt[:op]
+      when '||='
+        case stmt[:lhs].node
+        when :cvar
+          # lhs
+          class_access = context[:instance] ? '.$klass' : ''  
+          
+          # upto ?
+          write "(#{current_self}#{class_access}.$k_d('#{stmt[:lhs][:name]}') ? "
+          # upto :
+          write "#{current_self}#{class_access}.$k_g('#{stmt[:lhs][:name]}') : "
+          # rest
+          write "#{context[:self]}#{class_access}.$k_s('#{stmt[:lhs][:name]}',"
+          generate_stmt stmt[:rhs], :instance => context[:instance], context[:full_stmt] => false, context[:last_stmt] => true, :self => context[:self]
+          write '))'
+          # 
+          # 
+          #         
+          # write "#{current_self}#{class_access}.$k_g('#{stmt[:lhs][:name]}')"
+          # write "||"
+          # write "#{context[:self]}#{class_access}.$k_s('#{stmt[:lhs][:name]}',"
+          # generate_stmt stmt[:rhs], :instance => context[:instance], context[:full_stmt] => false, context[:last_stmt] => true, :self => context[:self]
+          # write ')'
+        end
+      end
+      write ";\n" if context[:full_stmt]
+    end
+    
+    def generate_lparen stmt, context
+      write 'return ' if context[:last_stmt] and context[:full_stmt]
+      write '('
+      stmt[:stmt].each do |s|
+        generate_stmt s, :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self => context[:self]
+      end
+      write ')'
+      write ";\n" if context[:full_stmt]
+    end
+    
+    def generate_return stmt, context
+      write 'return '
+      
+      if stmt[:call_args]
+        generate_stmt stmt[:call_args][:args][0], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self => context[:self]
+      end
+      
       write ";\n" if context[:full_stmt]
     end
     

@@ -54,7 +54,7 @@ module Vienna
     end
     
     def set_value value, for_key:key
-      
+      puts "Setting value for #{key}"
     end
     
     def validate_value value, for_key:key, error:out_error

@@ -3,12 +3,14 @@ $VN_1.$c_s('UNDEFINED_KEY_EXCEPTION','VNUndefinedKeyException');
 var $VN_2 = RClass.define_under($VN_1, 'Object', cObject);
 $VN_2.$def_s('access_instance_variables_directly?',function(){
 var self=this;
-true});
+return true;
+});
 $VN_2.$def('value_for_key',function(key){
 var self=this;
 });
 $VN_2.$def('set_value:for_key:',function(value,key){
 var self=this;
+self.$('puts',[['Setting value for ',(key)].join('')]);
 });
 $VN_2.$def('validate_value:for_key:error:',function(value,key,out_error){
 var self=this;

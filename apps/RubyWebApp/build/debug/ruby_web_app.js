@@ -22,13 +22,14 @@ else{klass=obj.$make_metaclass(obj.$klass);}
 if(obj.$type==VN.CLASS){if(klass.$klass.$ivar_get('__attached__')!=klass){RClass.make_metametaclass(klass);}}
 return klass;};RClass.prototype.$name=function(id){this['__classid__']=id;};RClass.prototype.$class_name=function(){return VN.class_path(klass.$real());};RClass.prototype.$make_metaclass=function(super_klass){if(this.$type==VN.CLASS&&this.$singleton==true){return this.$make_metametaclass();}
 else{var klass=RClass.boot(super_klass);klass.$singleton=true;this.$klass=klass;klass.$singleton_class_attached(this);var metasuper=klass.$klass;if(metasuper){klass.$klass=metasuper;}
-return klass;}};RClass.prototype.$singleton_class_attached=function(obj){if(this.$singleton==true){this['__attached__']=obj;}};RClass.prototype.$=function(id,args){var method=this.$klass.$search_method(id);if(!method)throw'VN#funcall cannot find method: '+id;return method.apply(this,args);};RClass.prototype.$cvar_get=function(id){var tmp=this;var value;while(tmp){if(value=tmp[id]){return value;}
+return klass;}};RClass.prototype.$singleton_class_attached=function(obj){if(this.$singleton==true){this['__attached__']=obj;}};RClass.prototype.$=function(id,args){var method=this.$klass.$search_method(id);if(!method)throw'VN#funcall cannot find method: '+id;return method.apply(this,args);};RClass.prototype.$k_g=function(id){var tmp=this;var value;while(tmp){if(value=tmp[id]){return value;}
 tmp=tmp.$super;}
-VN.name_error('uninitialized class variable '+id+' in '+klass.name);return nil;};RClass.prototype.$ivar_get=function(id){return this[id];};RClass.prototype.$ivar_set=function(id,val){this[id]=val;return val;}
+VN.name_error('uninitialized class variable '+id+' in '+this);return nil;};RClass.prototype.$k_d=function(id){var tmp=this;var value;while(tmp){if(value=tmp[id]){return true;}
+tmp=tmp.$super;}
+return false;}
+RClass.prototype.$k_s=function(id,val){return this[id]=val;};RClass.prototype.$ivar_get=function(id){return this[id];};RClass.prototype.$ivar_set=function(id,val){this[id]=val;return val;}
 RClass.prototype.$def=function(name,func){this.$add_method(name,func);};RClass.prototype.$define_protected_method=function(name,func){this.$add_method(name,func);};RClass.prototype.$define_private_method=function(name,func){this.$add_method(name,func);};RClass.prototype.$undef_method=function(name,func){this.$add_method(name,func);};RClass.prototype.$add_method=function(name,func){this[name]=func;};RClass.prototype.$def_s=function(name,func){RClass.singleton_class(this).$def(name,func);};RClass.prototype.$define_alias=function(id1,id2){};RClass.prototype.$define_alloc_func=function(func){RClass.singleton_class(this).$add_method('allocate',func);};RClass.prototype.$undef_alloc_func=function(){RClass.singleton_class(this).$add_method('allocate',null);};RClass.prototype.$search_method=function(id){var klass=this;var func;while(!(func=klass[id])){klass=klass.$super;if(!klass)return undefined;}
-return func;};RClass.prototype.$=function(id,args){var method=this.$klass.$search_method(id);if(!method)throw'VN#funcall cannot find method: '+id;return method.apply(this,args);};RClass.prototype.$cvar_get=function(id){var tmp=this;var value;while(tmp){if(value=tmp[id]){return value;}
-tmp=tmp.$super;}
-VN.name_error(id,'uninitialized class variable '+id+' in '+klass.name);return nil;};RClass.prototype.$c_s=function(id,val){this.$mod_av_set(id,val,true);};RClass.prototype.$mod_av_set=function(id,val,isconst){this[id]=val;};RClass.prototype.$c_g=function(id){var tmp=this;var value;while(tmp){if(value=tmp[id]){return value;}
+return func;};RClass.prototype.$=function(id,args){var method=this.$klass.$search_method(id);if(!method)throw'VN#funcall cannot find method: '+id;return method.apply(this,args);};RClass.prototype.$c_s=function(id,val){this.$mod_av_set(id,val,true);};RClass.prototype.$mod_av_set=function(id,val,isconst){this[id]=val;};RClass.prototype.$c_g=function(id){var tmp=this;var value;while(tmp){if(value=tmp[id]){return value;}
 tmp=tmp.$super;}
 VN.name_error(id,'uninitialized constant '+id+' in '+klass.name);return nil;};RClass.prototype.$c_d=function(id){var tmp=this;var value;while(tmp){if(value=tmp[id]){return true;}
 tmp=tmp.$super;}
@@ -65,10 +66,319 @@ VN.self.$def_s('to_s', function() {
 var mComparable=RModule.define('Comparable');mComparable.$def('==',function(obj){if(this==obj)return true;return false;});mComparable.$def('>',function(cmp_gt){});mComparable.$def('>=',function(cmp_ge){});mComparable.$def('<',function(cmp_lt){});mComparable.$def('<=',function(cmp_le){});mComparable.$def('between?',function(cmp_between){});
 
 var mEnumerable=RModule.define('Enumerable');mEnumerable.$def('to_a',function(enum_to_a){});mEnumerable.$def('entries',function(enum_to_a){});mEnumerable.$def('sort',function(enum_sort){});mEnumerable.$def('sort_by',function(enum_sort_by){});mEnumerable.$def('grep',function(enum_grep){});mEnumerable.$def('count',function(enum_count){});mEnumerable.$def('find',function(enum_find){});mEnumerable.$def('detect',function(enum_find){});mEnumerable.$def('find_index',function(enum_find_index){});mEnumerable.$def('find_all',function(enum_find_all){});mEnumerable.$def('select',function(enum_find_all){});mEnumerable.$def('reject',function(enum_reject){});mEnumerable.$def('collect',function(enum_collect){});mEnumerable.$def('map',function(enum_collect){});mEnumerable.$def('inject',function(enum_inject){});mEnumerable.$def('reduce',function(enum_inject){});mEnumerable.$def('partition',function(enum_partition){});mEnumerable.$def('group_by',function(enum_group_by){});mEnumerable.$def('first',function(enum_first){});mEnumerable.$def('all',function(enum_all){});mEnumerable.$def('any?',function(enum_any){});mEnumerable.$def('one?',function(enum_one){});mEnumerable.$def('none?',function(enum_none){});mEnumerable.$def('min',function(enum_min){});mEnumerable.$def('max',function(enum_max){});mEnumerable.$def('minmax',function(enum_minmax){});mEnumerable.$def('min_by',function(enum_min_by){});mEnumerable.$def('max_by',function(enum_max_by){});mEnumerable.$def('minmax_by',function(enum_minmax_by){});mEnumerable.$def('include?',function(enum_member){});mEnumerable.$def('member?',function(enum_member){});mEnumerable.$def('each_with_index',function(enum_each_with_index){});mEnumerable.$def('reverse_each',function(enum_reverse_each){});mEnumerable.$def('zip',function(enum_zip){});mEnumerable.$def('take',function(enum_take){});mEnumerable.$def('take_while',function(enum_take_while){});mEnumerable.$def('drop',function(enum_drop){});mEnumerable.$def('drop_while',function(enum_drop_while){});mEnumerable.$def('cycle',function(enum_cycle){});
+String.prototype.$klass = cString
+String.prototype.$type = VN.STRING;
 
-String.prototype.$klass=cString;String.prototype.$type=VN.STRING;String.prototype.$call=RObject.prototype.$call;cString.$define_alloc_func(function(){return new String();});cString.$def_s('try_convert',function(obj){});cString.$def('initialize',function(str_init){});cString.$def('initialize_copy',function(str_replace){});cString.$def('<=>',function(str_cmp_m){});cString.$def('==',function(str_equal){});cString.$def('eql?',function(str_eql){});cString.$def('hash',function(str_hash_m){});cString.$def('casecmp',function(str_casecmp){});cString.$def('+',function(str_plus){});cString.$def('*',function(str_times){});cString.$def('%',function(str_format_m){});cString.$def('[]',function(str_aref_m){});cString.$def('[]=',function(str_aset_m){});cString.$def('insert',function(str_insert){});cString.$def('length',function(){return this.length;});cString.$def('size',function(){return this.length;});cString.$def('bytesize',function(str_bytesize){});cString.$def('empty?',function(str_empty){});cString.$def('=~',function(str_match){});cString.$def('match',function(str_match_m){});cString.$def('succ',function(str_succ){});cString.$def('next',function(str_succ){});cString.$def('upto',function(str_upto){});cString.$def('index',function(str_index_m){});cString.$def('rindex',function(str_rindex_m){});cString.$def('replace',function(str_replace){});cString.$def('clear',function(str_clear){});cString.$def('chr',function(str_chr){});cString.$def('getbyte',function(str_getbyte){});cString.$def('setbyte',function(str_setbyte){});cString.$def('to_i',function(str_to_i){});cString.$def('to_f',function(str_to_f){});cString.$def('to_s',function(){return new String(this);});cString.$def('to_str',function(){return new String(this);});cString.$def('inspect',function(){return new String('"'+this+'"');});cString.$def('dump',VN.str_dump,0);cString.$def('upcase',VN.str_upcase,0);cString.$def('downcase',VN.str_downcase,0);cString.$def('capitalize',VN.str_capitalize,0);cString.$def('swapcase',VN.str_swapcase,0);cString.$def('upcase!',VN.str_upcase_bang,0);cString.$def('downcase!',VN.str_downcase_bang,0);cString.$def('capitalize!',VN.str_capitalize_bang,0);cString.$def('swapcase!',VN.str_swapcase_bang,0);cString.$def('hex',VN.str_hex,0);cString.$def('oct',VN.str_oct,0);cString.$def('split',VN.str_split_m,-1);cString.$def('lines',VN.str_each_line,-1);cString.$def('bytes',VN.str_each_byte,0);cString.$def('chars',VN.str_each_char,0);cString.$def('codepoints',VN.str_each_codepoint,0);cString.$def('reverse',VN.str_reverse,0);cString.$def('reverse!',VN.str_reverse_bang,0);cString.$def('concat',VN.str_concat,1);cString.$def('<<',VN.str_concat,1);cString.$def('crypt',VN.str_crypt,1);cString.$def('intern',VN.str_intern,0);cString.$def('to_sym',VN.str_intern,0);cString.$def('ord',VN.str_ord,0);cString.$def('include?',VN.str_include,1);cString.$def('start_with?',VN.str_start_with,-1);cString.$def('end_with?',VN.str_end_with,-1);cString.$def('scan',VN.str_scan,1);cString.$def('ljust',VN.str_ljust,-1);cString.$def('rjust',VN.str_rjust,-1);cString.$def('center',VN.str_center,-1);cString.$def('sub',VN.str_sub,-1);cString.$def('gsub',VN.str_gsub,-1);cString.$def('chop',VN.str_chop,0);cString.$def('chomp',VN.str_chomp,-1);cString.$def('strip',VN.str_strip,0);cString.$def('lstrip',VN.str_lstrip,0);cString.$def('rstrip',VN.str_rstrip,0);cString.$def('sub!',VN.str_sub_bang,-1);cString.$def('gsub!',VN.str_gsub_bang,-1);cString.$def('chop!',VN.str_chop_bang,0);cString.$def('chomp!',VN.str_chomp_bang,-1);cString.$def('strip!',VN.str_strip_bang,0);cString.$def('lstrip!',VN.str_lstrip_bang,0);cString.$def('rstrip!',VN.str_rstrip_bang,0);cString.$def('tr',VN.str_tr,2);cString.$def('tr_s',VN.str_tr_s,2);cString.$def('delete',VN.str_delete,-1);cString.$def('squeeze',VN.str_squeeze,-1);cString.$def('count',VN.str_count,-1);cString.$def('tr!',VN.str_tr_bang,2);cString.$def('tr_s!',VN.str_tr_s_bang,2);cString.$def('delete!',VN.str_delete_bang,-1);cString.$def('squeeze!',VN.str_squeeze_bang,-1);cString.$def('each_line',VN.str_each_line,-1);cString.$def('each_byte',VN.str_each_byte,0);cString.$def('each_char',VN.str_each_char,0);cString.$def('each_codepoint',VN.str_each_codepoint,0);cString.$def('sum',VN.str_sum,-1);cString.$def('slice',VN.str_aref_m,-1);cString.$def('slice!',VN.str_slice_bang,-1);cString.$def('partition',VN.str_partition,1);cString.$def('rpartition',VN.str_rpartition,1);cString.$def('encoding',VN.obj_encoding,0);cString.$def('force_encoding',VN.str_force_encoding,1);cString.$def('valid_encoding?',VN.str_valid_encoding_p,0);cString.$def('ascii_only?',VN.str_is_ascii_only_p,0);
+String.prototype.$ = RObject.prototype.$;
 
-Number.prototype.$klass=cNumeric;Number.prototype.$type=VN.NUMBER;RModule.include(cNumeric,mComparable);cNumeric.$def('singleton_method_added',function(){});cNumeric.$def('initialize_copy',function(){});cNumeric.$def('coerce',function(){});cNumeric.$def('+@',function(){});cNumeric.$def('-@',function(){});cNumeric.$def('<=>',function(){});cNumeric.$def('eql?',function(){});cNumeric.$def('quo',function(){});cNumeric.$def('fdiv',function(){});cNumeric.$def('div',function(){});cNumeric.$def('divmod',function(){});cNumeric.$def('modulo',function(){});cNumeric.$def('remainder',function(){});cNumeric.$def('abs',function(){});cNumeric.$def('magnitude',function(){});cNumeric.$def('to_int',function(){});cNumeric.$def('real?',function(){});cNumeric.$def('integer?',function(){});cNumeric.$def('zero?',function(){});cNumeric.$def('nonzero?',function(){});cNumeric.$def('floor',function(){});cNumeric.$def('ceil',function(){});cNumeric.$def('round',function(){});cNumeric.$def('truncate',function(){});cNumeric.$def('step',function(){});cNumeric.$def('odd?',function(){});cNumeric.$def('even?',function(){});cNumeric.$def('upto',function(){});cNumeric.$def('downto',function(){});cNumeric.$def('times',function(){});cNumeric.$def('succ',function(){});cNumeric.$def('next',function(){});cNumeric.$def('pred',function(){});cNumeric.$def('chr',function(){});cNumeric.$def('ord',function(){});cNumeric.$def('to_i',function(){});cNumeric.$def('to_s',function(){});cNumeric.$def('+',function(){});cNumeric.$def('-',function(){});cNumeric.$def('*',function(){});cNumeric.$def('/',function(){});cNumeric.$def('%',function(){});cNumeric.$def('**',function(){});cNumeric.$def('==',function(){});cNumeric.$def('>',function(){});cNumeric.$def('>=',function(){});cNumeric.$def('<',function(){});cNumeric.$def('<=',function(){});cNumeric.$def('~',function(){});cNumeric.$def('&',function(){});cNumeric.$def('|',function(){});cNumeric.$def('^',function(){});cNumeric.$def('[]',function(){});cNumeric.$def('<<',function(){});cNumeric.$def('>>',function(){});cNumeric.$def('to_f',function(){});
+cString.$define_alloc_func(function() {
+  return new String();
+}); var $VN_1 = RClass.define('String', cObject);
+$VN_1.$def('try_convert',function(){
+var self=this;
+});
+$VN_1.$def('initialize',function(){
+var self=this;
+});
+$VN_1.$def('initialize_copy',function(){
+var self=this;
+});
+$VN_1.$def('<=>',function(obj){
+var self=this;
+});
+$VN_1.$def('==',function(obj){
+var self=this;
+});
+$VN_1.$def('eql?',function(obj){
+var self=this;
+});
+$VN_1.$def('hash',function(obj){
+var self=this;
+});
+$VN_1.$def('casecmp',function(obj){
+var self=this;
+});
+$VN_1.$def('+',function(obj){
+var self=this;
+self.$('puts',['wow']);
+});
+$VN_1.$def('(',function(obj){
+var self=this;
+});
+$VN_1.$def('%',function(obj){
+var self=this;
+});
+$VN_1.$def('[]',function(key){
+var self=this;
+});
+$VN_1.$def('[]=',function(key,val){
+var self=this;
+});
+$VN_1.$def('insert',function(){
+var self=this;
+});
+$VN_1.$def('length',function(){
+var self=this;
+return this.length;});
+$VN_1.$def('size',function(){
+var self=this;
+return this.length});
+$VN_1.$def('empty?',function(){
+var self=this;
+});
+$VN_1.$def('=~',function(match){
+var self=this;
+});
+$VN_1.$def('match',function(match){
+var self=this;
+});
+$VN_1.$def('succ',function(){
+var self=this;
+});
+$VN_1.$def('next',function(){
+var self=this;
+});
+$VN_1.$def('upto',function(){
+var self=this;
+});
+$VN_1.$def('index',function(){
+var self=this;
+});
+$VN_1.$def('rindex',function(){
+var self=this;
+});
+$VN_1.$def('replace',function(){
+var self=this;
+});
+$VN_1.$def('clear',function(){
+var self=this;
+});
+$VN_1.$def('chr',function(){
+var self=this;
+});
+$VN_1.$def('to_i',function(){
+var self=this;
+});
+$VN_1.$def('to_f',function(){
+var self=this;
+});
+$VN_1.$def('to_s',function(){
+var self=this;
+return new String(this);});
+$VN_1.$def('to_str',function(){
+var self=this;
+return self.$('to_s', []);
+});
+$VN_1.$def('inspect',function(){
+var self=this;
+return new String('"' + this + '"');});
+$VN_1.$def('dump',function(){
+var self=this;
+});
+$VN_1.$def('upcase',function(){
+var self=this;
+});
+$VN_1.$def('downcase',function(){
+var self=this;
+});
+$VN_1.$def('capitalize',function(){
+var self=this;
+});
+$VN_1.$def('swapcase',function(){
+var self=this;
+});
+$VN_1.$def('hex',function(){
+var self=this;
+});
+$VN_1.$def('oct',function(){
+var self=this;
+});
+$VN_1.$def('split',function(){
+var self=this;
+});
+$VN_1.$def('lines',function(){
+var self=this;
+});
+$VN_1.$def('bytes',function(){
+var self=this;
+});
+$VN_1.$def('chars',function(){
+var self=this;
+});
+$VN_1.$def('codepoints',function(){
+var self=this;
+});
+$VN_1.$def('reverse',function(){
+var self=this;
+});
+$VN_1.$def('concat',function(){
+var self=this;
+});
+$VN_1.$def('<<',function(){
+var self=this;
+});
+$VN_1.$def('crypt',function(){
+var self=this;
+});
+$VN_1.$def('intern',function(){
+var self=this;
+});
+$VN_1.$def('to_sym',function(){
+var self=this;
+return new String(this);});
+$VN_1.$def('ord',function(){
+var self=this;
+});
+$VN_1.$def('include?',function(){
+var self=this;
+});
+$VN_1.$def('start_with?',function(){
+var self=this;
+});
+$VN_1.$def('end_with?',function(){
+var self=this;
+});
+$VN_1.$def('scan',function(){
+var self=this;
+});
+$VN_1.$def('ljust',function(){
+var self=this;
+});
+$VN_1.$def('rjust',function(){
+var self=this;
+});
+$VN_1.$def('center',function(){
+var self=this;
+});
+$VN_1.$def('sub',function(){
+var self=this;
+});
+$VN_1.$def('gsub',function(){
+var self=this;
+});
+$VN_1.$def('chop',function(){
+var self=this;
+});
+$VN_1.$def('chomp',function(){
+var self=this;
+});
+$VN_1.$def('strip',function(){
+var self=this;
+});
+$VN_1.$def('lstrip',function(){
+var self=this;
+});
+$VN_1.$def('rstrip',function(){
+var self=this;
+});
+$VN_1.$def('tr',function(){
+var self=this;
+});
+$VN_1.$def('tr_s',function(){
+var self=this;
+});
+$VN_1.$def('delete',function(){
+var self=this;
+});
+$VN_1.$def('squeeze',function(){
+var self=this;
+});
+$VN_1.$def('count',function(){
+var self=this;
+});
+$VN_1.$def('each_line',function(){
+var self=this;
+});
+$VN_1.$def('each_byte',function(){
+var self=this;
+});
+$VN_1.$def('each_char',function(){
+var self=this;
+});
+$VN_1.$def('each_codepoint',function(){
+var self=this;
+});
+$VN_1.$def('sum',function(){
+var self=this;
+});
+$VN_1.$def('slice!',function(){
+var self=this;
+});
+$VN_1.$def('partition',function(){
+var self=this;
+});
+$VN_1.$def('rpartition',function(){
+var self=this;
+});
+
+
+Number.prototype.$klass=cNumeric;Number.prototype.$type=VN.NUMBER;Number.prototype.$=RObject.prototype.$;RModule.include(cNumeric,mComparable);cNumeric.$def('singleton_method_added',function(){});cNumeric.$def('initialize_copy',function(){});cNumeric.$def('coerce',function(){});cNumeric.$def('+@',function(){});cNumeric.$def('-@',function(){});cNumeric.$def('<=>',function(){});cNumeric.$def('eql?',function(){});cNumeric.$def('quo',function(){});cNumeric.$def('fdiv',function(){});cNumeric.$def('div',function(){});cNumeric.$def('divmod',function(){});cNumeric.$def('modulo',function(){});cNumeric.$def('remainder',function(){});cNumeric.$def('abs',function(){});cNumeric.$def('magnitude',function(){});cNumeric.$def('to_int',function(){});cNumeric.$def('real?',function(){});cNumeric.$def('integer?',function(){});cNumeric.$def('zero?',function(){});cNumeric.$def('nonzero?',function(){});cNumeric.$def('floor',function(){});cNumeric.$def('ceil',function(){});cNumeric.$def('round',function(){});cNumeric.$def('truncate',function(){});cNumeric.$def('step',function(){});cNumeric.$def('odd?',function(){});cNumeric.$def('even?',function(){});cNumeric.$def('upto',function(){});cNumeric.$def('downto',function(){});cNumeric.$def('times',function(){});cNumeric.$def('succ',function(){});cNumeric.$def('next',function(){});cNumeric.$def('pred',function(){});cNumeric.$def('chr',function(){});cNumeric.$def('ord',function(){});cNumeric.$def('to_i',function(){});cNumeric.$def('to_s',function(){});cNumeric.$def('+',function(i){return this+i;});cNumeric.$def('-',function(i){return this-i;});cNumeric.$def('*',function(){});cNumeric.$def('/',function(){});cNumeric.$def('%',function(){});cNumeric.$def('**',function(){});cNumeric.$def('==',function(){});cNumeric.$def('>',function(){});cNumeric.$def('>=',function(){});cNumeric.$def('<',function(){});cNumeric.$def('<=',function(){});cNumeric.$def('~',function(){});cNumeric.$def('&',function(){});cNumeric.$def('|',function(){});cNumeric.$def('^',function(){});cNumeric.$def('[]',function(){});cNumeric.$def('<<',function(){});cNumeric.$def('>>',function(){});cNumeric.$def('to_f',function(){});
+
+Array.prototype.$klass = cArray
+Array.prototype.$type = VN.T_ARRAY;
+
+Array.prototype.$ = RObject.prototype.$;
+
+RModule.include(cArray, mEnumerable);
+
+cArray.$define_alloc_func(function() {
+  return new Array();
+});
+
+cArray.$def_s('[]', function() {
+  
+});
+
+cArray.$def_s('try_convert', function() {
+  
+});
+var $VN_1 = RClass.define('Array', cObject);
+$VN_1.$def('initialize',function(){
+var self=this;
+for (var i = 0; i < arguments.length; i++) {
+      this.push(arguments[i]);
+    }});
+$VN_1.$def('initialize_copy',function(){
+var self=this;
+});
+$VN_1.$def('to_s',function(){
+var self=this;
+if (this.length == 0) return '[]';
+    var str = '[';
+    for (var i = 0; i < (this.length - 1); i++) {
+      str += (this[i].$('inspect', []) + ', ');
+    }
+    str += (this[this.length - 1].$('inspect', []) + ']');
+    return str ;});
+$VN_1.$def('inspect',function(){
+var self=this;
+return self.$('to_s', []);
+});
+$VN_1.$def('to_a',function(){
+var self=this;
+return self;
+});
+$VN_1.$def('to_ary',function(){
+var self=this;
+return self;
+});
+$VN_1.$def('==',function(ary){
+var self=this;
+if (ary == this) return true;
+    if (ary.$type != VN.T_ARRAY) {
+      if (ary.$('respond_to?', ['to_a'])) {
+        return false;
+      }
+    }
+    if (this.length != ary.length) return false ;
+    return true;});
+$VN_1.$def('eql?',function(other){
+var self=this;
+});
+$VN_1.$def('hash',function(){
+var self=this;
+});
+
 Boolean.prototype.$klass = cBoolean;
 Boolean.prototype.$type = VN.T_BOOLEAN;
 Boolean.prototype.$ = RObject.prototype.$;var $VN_1 = RClass.define('Boolean', cObject);
@@ -149,7 +459,8 @@ var self=this;
 });
 $VN_1.$def('to_hash',function(){
 var self=this;
-self});
+return self;
+});
 $VN_1.$def('to_a',function(){
 var self=this;
 var ary = [];
@@ -324,6 +635,251 @@ $VN_1.$def('compare_by_identity?',function(){
 var self=this;
 });
 
+String.prototype.$klass = cString
+String.prototype.$type = VN.STRING;
+
+String.prototype.$ = RObject.prototype.$;
+
+cString.$define_alloc_func(function() {
+  return new String();
+}); var $VN_1 = RClass.define('String', cObject);
+$VN_1.$def('try_convert',function(){
+var self=this;
+});
+$VN_1.$def('initialize',function(){
+var self=this;
+});
+$VN_1.$def('initialize_copy',function(){
+var self=this;
+});
+$VN_1.$def('<=>',function(obj){
+var self=this;
+});
+$VN_1.$def('==',function(obj){
+var self=this;
+});
+$VN_1.$def('eql?',function(obj){
+var self=this;
+});
+$VN_1.$def('hash',function(obj){
+var self=this;
+});
+$VN_1.$def('casecmp',function(obj){
+var self=this;
+});
+$VN_1.$def('+',function(obj){
+var self=this;
+self.$('puts',['wow']);
+});
+$VN_1.$def('(',function(obj){
+var self=this;
+});
+$VN_1.$def('%',function(obj){
+var self=this;
+});
+$VN_1.$def('[]',function(key){
+var self=this;
+});
+$VN_1.$def('[]=',function(key,val){
+var self=this;
+});
+$VN_1.$def('insert',function(){
+var self=this;
+});
+$VN_1.$def('length',function(){
+var self=this;
+return this.length;});
+$VN_1.$def('size',function(){
+var self=this;
+return this.length});
+$VN_1.$def('empty?',function(){
+var self=this;
+});
+$VN_1.$def('=~',function(match){
+var self=this;
+});
+$VN_1.$def('match',function(match){
+var self=this;
+});
+$VN_1.$def('succ',function(){
+var self=this;
+});
+$VN_1.$def('next',function(){
+var self=this;
+});
+$VN_1.$def('upto',function(){
+var self=this;
+});
+$VN_1.$def('index',function(){
+var self=this;
+});
+$VN_1.$def('rindex',function(){
+var self=this;
+});
+$VN_1.$def('replace',function(){
+var self=this;
+});
+$VN_1.$def('clear',function(){
+var self=this;
+});
+$VN_1.$def('chr',function(){
+var self=this;
+});
+$VN_1.$def('to_i',function(){
+var self=this;
+});
+$VN_1.$def('to_f',function(){
+var self=this;
+});
+$VN_1.$def('to_s',function(){
+var self=this;
+return new String(this);});
+$VN_1.$def('to_str',function(){
+var self=this;
+return self.$('to_s', []);
+});
+$VN_1.$def('inspect',function(){
+var self=this;
+return new String('"' + this + '"');});
+$VN_1.$def('dump',function(){
+var self=this;
+});
+$VN_1.$def('upcase',function(){
+var self=this;
+});
+$VN_1.$def('downcase',function(){
+var self=this;
+});
+$VN_1.$def('capitalize',function(){
+var self=this;
+});
+$VN_1.$def('swapcase',function(){
+var self=this;
+});
+$VN_1.$def('hex',function(){
+var self=this;
+});
+$VN_1.$def('oct',function(){
+var self=this;
+});
+$VN_1.$def('split',function(){
+var self=this;
+});
+$VN_1.$def('lines',function(){
+var self=this;
+});
+$VN_1.$def('bytes',function(){
+var self=this;
+});
+$VN_1.$def('chars',function(){
+var self=this;
+});
+$VN_1.$def('codepoints',function(){
+var self=this;
+});
+$VN_1.$def('reverse',function(){
+var self=this;
+});
+$VN_1.$def('concat',function(){
+var self=this;
+});
+$VN_1.$def('<<',function(){
+var self=this;
+});
+$VN_1.$def('crypt',function(){
+var self=this;
+});
+$VN_1.$def('intern',function(){
+var self=this;
+});
+$VN_1.$def('to_sym',function(){
+var self=this;
+return new String(this);});
+$VN_1.$def('ord',function(){
+var self=this;
+});
+$VN_1.$def('include?',function(){
+var self=this;
+});
+$VN_1.$def('start_with?',function(){
+var self=this;
+});
+$VN_1.$def('end_with?',function(){
+var self=this;
+});
+$VN_1.$def('scan',function(){
+var self=this;
+});
+$VN_1.$def('ljust',function(){
+var self=this;
+});
+$VN_1.$def('rjust',function(){
+var self=this;
+});
+$VN_1.$def('center',function(){
+var self=this;
+});
+$VN_1.$def('sub',function(){
+var self=this;
+});
+$VN_1.$def('gsub',function(){
+var self=this;
+});
+$VN_1.$def('chop',function(){
+var self=this;
+});
+$VN_1.$def('chomp',function(){
+var self=this;
+});
+$VN_1.$def('strip',function(){
+var self=this;
+});
+$VN_1.$def('lstrip',function(){
+var self=this;
+});
+$VN_1.$def('rstrip',function(){
+var self=this;
+});
+$VN_1.$def('tr',function(){
+var self=this;
+});
+$VN_1.$def('tr_s',function(){
+var self=this;
+});
+$VN_1.$def('delete',function(){
+var self=this;
+});
+$VN_1.$def('squeeze',function(){
+var self=this;
+});
+$VN_1.$def('count',function(){
+var self=this;
+});
+$VN_1.$def('each_line',function(){
+var self=this;
+});
+$VN_1.$def('each_byte',function(){
+var self=this;
+});
+$VN_1.$def('each_char',function(){
+var self=this;
+});
+$VN_1.$def('each_codepoint',function(){
+var self=this;
+});
+$VN_1.$def('sum',function(){
+var self=this;
+});
+$VN_1.$def('slice!',function(){
+var self=this;
+});
+$VN_1.$def('partition',function(){
+var self=this;
+});
+$VN_1.$def('rpartition',function(){
+var self=this;
+});
+
 
 var $VN_1 = RClass.define('Document', cObject);
 $VN_1.$def_s('ready?',function(block){
@@ -353,12 +909,14 @@ $VN_1.$c_s('UNDEFINED_KEY_EXCEPTION','VNUndefinedKeyException');
 var $VN_2 = RClass.define_under($VN_1, 'Object', cObject);
 $VN_2.$def_s('access_instance_variables_directly?',function(){
 var self=this;
-true});
+return true;
+});
 $VN_2.$def('value_for_key',function(key){
 var self=this;
 });
 $VN_2.$def('set_value:for_key:',function(value,key){
 var self=this;
+self.$('puts',[['Setting value for ',(key)].join('')]);
 });
 $VN_2.$def('validate_value:for_key:error:',function(value,key,out_error){
 var self=this;
@@ -432,13 +990,57 @@ var self=this;
 $VN_2.$def('remove_observer:for_key_path:',function(observer,key_path){
 var self=this;
 });
+
+var $VN_1 = RModule.define('Vienna');
+var $VN_2 = RClass.define_under($VN_1, 'Notification', cObject);
+$VN_2.$('attr_reader',['name','object','user_info']);
+$VN_2.$def('initialize',function(name,obj,info){
+var self=this;
+self.$i_s('@name',name);
+self.$i_s('@object',obj);
+return self.$i_s('@user_info',info);
+});
+$VN_2.$def_s('notification_with_name:object:',function(name,obj){
+var self=this;
+self.$('notification_with_name:object:user_info:',[name,obj,nil]);
+});
+$VN_2.$def_s('notification_with_name:object:user_info:',function(name,obj,info){
+var self=this;
+self.$('new',[name,obj,info]);
+});
+var $VN_2 = RClass.define_under($VN_1, 'NotificationCenter', cObject);
+$VN_2.$def_s('default_center',function(){
+var self=this;
+return (self.$k_d('@@default_center') ? self.$k_g('@@default_center') : self.$k_s('@@default_center',self.$('new',[])));
+});
+$VN_2.$def('add_observer:selector:name:object:',function(observer,selector,name,obj){
+var self=this;
+});
+$VN_2.$def('post_notification',function(notification){
+var self=this;
+});
+$VN_2.$def('post_notification_name:object:',function(name,obj){
+var self=this;
+});
+$VN_2.$def('post_notification_name:object:user_info:',function(name,obj,info){
+var self=this;
+});
+$VN_2.$def('remove_observer',function(observer){
+var self=this;
+});
+$VN_2.$def('remove_observer:name:object:',function(observer,name,obj){
+var self=this;
+});
+$VN_2.$def('add_observer_for_name:object:queue:',function(name,obj,queue){
+var self=this;
+});
 var $VN_1 = RModule.define('RubyWebApp');
 $VN_1.$c_s('VERSION','0.0.1');
 var $VN_2 = RClass.define_under($VN_1, 'AppDelegate', cObject);
-$VN_2.$def('initialize:john:assign:key:',function(bob,adam,fors,adam){
+$VN_2.$def('initialize_with:john:assign:key:',function(bob,adam,fors,adam){
 var self=this;
-self.$i_s('@adam',10);
-self.$('bob',[10,34,self.$i_g('@benny')]);
+self.$i_s('@adam',(10));
+self.$('bob',[(10),(34),self.$i_g('@benny')]);
 });
 $VN_2.$def('will_finish_launching',function(notification){
 var self=this;
@@ -447,4 +1049,16 @@ self.$('puts',['Application will finish launching!']);
 $VN_2.$def('did_finish_launching',function(notification){
 var self=this;
 self.$('puts',['Application did finish launching!!']);
+});
+VN.self.$('set_value:for_key:',[(10),'bob']);
+VN.self.$('set_value:for_key:',[(100),'adam']);
+var adam = cObject.$c_g('Object').$('allocate',[]);
+VN.self.$('puts',[adam]);
+(4).$('+',[(2)]);
+VN.self.$('puts',[(4).$('-',[(45)])]);
+'bob'.$('+',[(10)]);
+adam = [(12),(14),(15)];
+VN.self.$def_s('something',function(){
+var self=this;
+return (4);
 });

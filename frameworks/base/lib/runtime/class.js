@@ -258,7 +258,10 @@ RClass.prototype.$ = function(id, args) {
   return method.apply(this, args) ;
 };
 
-RClass.prototype.$cvar_get = function(id) {
+/**
+  cvar_get (klassvar_get)
+*/
+RClass.prototype.$k_g = function(id) {
   var tmp = this;
   var value;
   while(tmp) {
@@ -267,8 +270,30 @@ RClass.prototype.$cvar_get = function(id) {
     }
     tmp = tmp.$super;
   }
-  VN.name_error('uninitialized class variable ' + id + ' in ' + klass.name);
+  VN.name_error('uninitialized class variable ' + id + ' in ' + this);
   return nil ;
+};
+
+/**
+  class var defined
+*/
+RClass.prototype.$k_d = function(id) {
+  var tmp = this;
+  var value;
+  while(tmp) {
+    if (value = tmp[id]) {
+      return true;
+    }
+    tmp = tmp.$super;
+  }
+  return false;
+}
+
+/**
+  cvar_set (klassvar_set)
+*/
+RClass.prototype.$k_s = function(id, val) {
+  return this[id] = val;
 };
 
 RClass.prototype.$ivar_get = function(id) {
@@ -336,18 +361,18 @@ RClass.prototype.$ = function(id, args) {
   return method.apply(this, args) ;
 };
 
-RClass.prototype.$cvar_get = function(id) {
-  var tmp = this;
-  var value ;
-  while (tmp) {
-    if (value = tmp[id]) {
-      return value;
-    }
-    tmp = tmp.$super;
-  }
-  VN.name_error(id, 'uninitialized class variable ' + id + ' in ' + klass.name);
-  return nil;
-};
+// RClass.prototype.$cvar_get = function(id) {
+//   var tmp = this;
+//   var value ;
+//   while (tmp) {
+//     if (value = tmp[id]) {
+//       return value;
+//     }
+//     tmp = tmp.$super;
+//   }
+//   VN.name_error(id, 'uninitialized class variable ' + id + ' in ' + klass.name);
+//   return nil;
+// };
 
 /**
   $const_set

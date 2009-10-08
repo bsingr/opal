@@ -197,6 +197,9 @@ rule
     command_call: command
               	| block_command
               	| kRETURN call_args
+              	  {
+              	    result = node :return, :call_args => val[1]
+              	  }
             	  | kBREAK call_args
             	  | kNEXT call_args
 
@@ -209,10 +212,13 @@ rule
          command: operation command_args
                   {
                     # command call - no brackets/recv
-          		      result = node :call, :recv => nil, :meth => val[0], :args => val[1]
+          		      result = node :call, :recv => nil, :meth => val[0], :call_args => val[1]
                   }
         	      | operation command_args cmd_brace_block
         	      | primary_value '.' operation2 command_args
+        	        {
+          		      result = node :call, :recv => val[0], :meth => val[2], :call_args => val[3]
+                  }
         	      | primary_value '.' operation2 command_args cmd_brace_block
         	      | primary_value tCOLON2 operation2 command_args
       		      | primary_value tCOLON2 operation2 command_args cmd_brace_block
@@ -335,6 +341,9 @@ rule
                   }
             		| lhs '=' arg kRESCUE_MOD arg
             		| var_lhs tOP_ASGN arg
+            		  {
+            		    result = node :op_asgn, :lhs => val[0], :op => val[1], :rhs => val[2]
+            		  }
             		| var_lhs tOP_ASGN arg kRESCUE_MOD arg
             		| primary_value '[' opt_call_args rbracket tOP_ASGN arg
             		| primary_value '.' tIDENTIFIER tOP_ASGN arg
@@ -347,98 +356,98 @@ rule
             		| arg tDOT3 arg
             		| arg '+' arg
             		  {
-            		    result = node :call, :recv => val[0], :meth => '+', :args => [val[2]]
+            		    result = node :call, :recv => val[0], :meth => '+', :call_args => { :args => [val[2]]}
             		  }
             		| arg '-' arg
             		  {
-            		    result = node :call, :recv => val[0], :meth => '-', :args => [val[2]]
+            		    result = node :call, :recv => val[0], :meth => '-', :call_args => { :args => [val[2]]}
             		  }
             		| arg '*' arg
             		  {
-            		    result = node :call, :recv => val[0], :meth => '*', :args => [val[2]]
+            		    result = node :call, :recv => val[0], :meth => '*', :call_args => [val[2]]
             		  }
             		| arg '/' arg
             		  {
-            		    result = node :call, :recv => val[0], :meth => '/', :args => [val[2]]
+            		    result = node :call, :recv => val[0], :meth => '/', :call_args => [val[2]]
             		  }
             		| arg '%' arg
             		  {
-            		    result = node :call, :recv => val[0], :meth => '%', :args => [val[2]]
+            		    result = node :call, :recv => val[0], :meth => '%', :call_args => [val[2]]
             		  }
             		| arg tPOW arg
             		  {
-            		    result = node :call, :recv => val[0], :meth => '**', :args => [val[2]]
+            		    result = node :call, :recv => val[0], :meth => '**', :call_args => [val[2]]
             		  }
             		| tUMINUS_NUM tINTEGER tPOW arg
             		| tUMINUS_NUM tFLOAT tPOW arg
             		| tUPLUS arg
             		| tUMINUS arg
             		  {
-            		    result = node :call, :recv => val[1], :meth => '-@', :args => []
+            		    result = node :call, :recv => val[1], :meth => '-@', :call_args => []
             		  }
             		| arg '|' arg
             		  {
-            		    result = node :call, :recv => val[0], :meth => '|', :args => [val[2]]
+            		    result = node :call, :recv => val[0], :meth => '|', :call_args => [val[2]]
             		  }
             		| arg '^' arg
             		  {
-            		    result = node :call, :recv => val[0], :meth => '^', :args => [val[2]]
+            		    result = node :call, :recv => val[0], :meth => '^', :call_args => [val[2]]
             		  }
             		| arg '&' arg
             		  {
-            		    result = node :call, :recv => val[0], :meth => '&', :args => [val[2]]
+            		    result = node :call, :recv => val[0], :meth => '&', :call_args => [val[2]]
             		  }
             		| arg tCMP arg
             		  {
-            		    result = node :call, :recv => val[0], :meth => '<=>', :args => [val[2]]
+            		    result = node :call, :recv => val[0], :meth => '<=>', :call_args => [val[2]]
             		  }
             		| arg '>' arg
             		  {
-            		    result = node :call, :recv => val[0], :meth => '>', :args => [val[2]]
+            		    result = node :call, :recv => val[0], :meth => '>', :call_args => [val[2]]
             		  }
             		| arg tGEQ arg
             		  {
-            		    result = node :call, :recv => val[0], :meth => '>=', :args => [val[2]]
+            		    result = node :call, :recv => val[0], :meth => '>=', :call_args => [val[2]]
             		  }
             		| arg '<' arg
             		  {
-            		    result = node :call, :recv => val[0], :meth => '<', :args => [val[2]]
+            		    result = node :call, :recv => val[0], :meth => '<', :call_args => [val[2]]
             		  }
             		| arg tLEQ arg
             		  {
-            		    result = node :call, :recv => val[0], :meth => '<=', :args => [val[2]]
+            		    result = node :call, :recv => val[0], :meth => '<=', :call_args => [val[2]]
             		  }
             		| arg tEQ arg
             		  {
-            		    result = node :call, :recv => val[0], :meth => '==', :args => [val[2]]
+            		    result = node :call, :recv => val[0], :meth => '==', :call_args => [val[2]]
             		  }
             		| arg tEQQ arg
             		  {
-            		    result = node :call, :recv => val[0], :meth => '===', :args => [val[2]]
+            		    result = node :call, :recv => val[0], :meth => '===', :call_args => [val[2]]
             		  }
             		| arg tNEQ arg
             		  {
-            		    result = node :call, :recv => val[0], :meth => '!=', :args => [val[2]]
+            		    result = node :call, :recv => val[0], :meth => '!=', :call_args => [val[2]]
             		  }
             		| arg tMATCH arg
             		  {
-            		    result = node :call, :recv => val[0], :meth => '=~', :args => [val[2]]
+            		    result = node :call, :recv => val[0], :meth => '=~', :call_args => [val[2]]
             		  }
             		| arg tNMATCH arg
             		  {
-            		    result = node :call, :recv => val[0], :meth => '!~', :args => [val[2]]
+            		    result = node :call, :recv => val[0], :meth => '!~', :call_args => [val[2]]
             		  }
             		| '~' arg
             		  {
-            		    result = node :call, :recv => val[1], :meth => '~', :args => []
+            		    result = node :call, :recv => val[1], :meth => '~', :call_args => []
             		  }
             		| arg tLSHFT arg
             		  {
-            		    result = node :call, :recv => val[0], :meth => '<<', :args => [val[2]]
+            		    result = node :call, :recv => val[0], :meth => '<<', :call_args => [val[2]]
             		  }
             		| arg tRSHFT arg
             		  {
-            		    result = node :call, :recv => val[0], :meth => '>>', :args => [val[2]]
+            		    result = node :call, :recv => val[0], :meth => '>>', :call_args => [val[2]]
             		  }
             		| arg tANDOP arg
             		| arg tOROP arg
@@ -459,19 +468,37 @@ rule
                   }
 
   opt_paren_args: none
+                  {
+                    result = node :call_args, :args => nil
+                  }
   	            | paren_args
 
    opt_call_args: none
                   {
-                    result = []
+                    result = node :call_args, :args => nil
                   }
   	            | call_args
 
        call_args: command
+                  {
+            		    result = node :call_args, :args => [val[0]]
+            		  }
             		| args opt_block_arg
+            		  {
+            		    result = node :call_args, :args => val[0], :block_arg => val[1]
+            		  }
 		            | assocs opt_block_arg
+		              {
+            		    result = node :call_args, :assocs => val[0], :block_arg => val[1]
+            		  }
 		            | args ',' assocs opt_block_arg
+		              {
+            		    result = node :call_args, :args => val[0], :assocs => val[2], :block_arg => val[3]
+            		  }
 		            | block_arg
+		              {
+            		    result = node :call_args, :block_arg => val[0]
+            		  }
 
     command_args: call_args
 
@@ -520,6 +547,9 @@ rule
               	| k_begin bodystmt k_end
             		| tLPAREN_ARG expr rparen
             		| tLPAREN compstmt ')'
+            		  {
+            		    result = node :lparen, :stmt => val[1]
+            		  }
             		| primary_value tCOLON2 tCONSTANT
             		| tCOLON3 tCONSTANT
             		| tLBRACK aref_args ']'
@@ -531,6 +561,9 @@ rule
             		    result = node :assoc_list, :list => val[1]
             		  }
             		| kRETURN
+            		  {
+            		    result = node :return
+            		  }
             		| kYIELD '(' call_args rparen
             		| kYIELD '(' rparen
             		| kYIELD
@@ -702,11 +735,11 @@ rule
 
      method_call: operation paren_args
                   {
-                    result = node :call, :recv => nil, :meth => val[0], :args => val[1]
+                    result = node :call, :recv => nil, :meth => val[0], :call_args => val[1]
                   }
               	| primary_value '.' operation2 opt_paren_args
               	  {
-                    result = node :call, :recv => val[0], :meth => val[2], :args => val[3]
+                    result = node :call, :recv => val[0], :meth => val[2], :call_args => val[3]
                   }
               	| primary_value tCOLON2 operation2 paren_args
               	  {
@@ -1044,6 +1077,10 @@ xstring_contents:
                   {
                     result = val[1]
                   }
+                | tLABEL blkarg_mark tIDENTIFIER
+                  {
+                    result = node :label_arg, :name => val[0], :value => val[1]
+                  }
 
  opt_f_block_arg: ',' f_block_arg
                   {
@@ -1078,7 +1115,7 @@ xstring_contents:
                   }
                 | tLABEL arg_value
                   {
-                    result = node :assoc, :key => val[0], :value => val[1]
+                    result = node :label_assoc, :key => val[0], :value => val[1]
                   }
 
        operation: tIDENTIFIER

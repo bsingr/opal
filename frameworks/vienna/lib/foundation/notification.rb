@@ -69,7 +69,7 @@ module Vienna
       
     end
     
-    def remove_observer:observer
+    def remove_observer observer
       
     end
     
@@ -77,6 +77,7 @@ module Vienna
       
     end
     
+    # required block (by definiton in method name). Should be Proc?
     def add_observer_for_name name, object:obj, queue:queue, using_block:&block
       
     end

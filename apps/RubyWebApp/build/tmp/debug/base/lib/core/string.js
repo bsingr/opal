@@ -1,2 +1,244 @@
+String.prototype.$klass = cString
+String.prototype.$type = VN.STRING;
 
-String.prototype.$klass=cString;String.prototype.$type=VN.STRING;String.prototype.$call=RObject.prototype.$call;cString.$define_alloc_func(function(){return new String();});cString.$def_s('try_convert',function(obj){});cString.$def('initialize',function(str_init){});cString.$def('initialize_copy',function(str_replace){});cString.$def('<=>',function(str_cmp_m){});cString.$def('==',function(str_equal){});cString.$def('eql?',function(str_eql){});cString.$def('hash',function(str_hash_m){});cString.$def('casecmp',function(str_casecmp){});cString.$def('+',function(str_plus){});cString.$def('*',function(str_times){});cString.$def('%',function(str_format_m){});cString.$def('[]',function(str_aref_m){});cString.$def('[]=',function(str_aset_m){});cString.$def('insert',function(str_insert){});cString.$def('length',function(){return this.length;});cString.$def('size',function(){return this.length;});cString.$def('bytesize',function(str_bytesize){});cString.$def('empty?',function(str_empty){});cString.$def('=~',function(str_match){});cString.$def('match',function(str_match_m){});cString.$def('succ',function(str_succ){});cString.$def('next',function(str_succ){});cString.$def('upto',function(str_upto){});cString.$def('index',function(str_index_m){});cString.$def('rindex',function(str_rindex_m){});cString.$def('replace',function(str_replace){});cString.$def('clear',function(str_clear){});cString.$def('chr',function(str_chr){});cString.$def('getbyte',function(str_getbyte){});cString.$def('setbyte',function(str_setbyte){});cString.$def('to_i',function(str_to_i){});cString.$def('to_f',function(str_to_f){});cString.$def('to_s',function(){return new String(this);});cString.$def('to_str',function(){return new String(this);});cString.$def('inspect',function(){return new String('"'+this+'"');});cString.$def('dump',VN.str_dump,0);cString.$def('upcase',VN.str_upcase,0);cString.$def('downcase',VN.str_downcase,0);cString.$def('capitalize',VN.str_capitalize,0);cString.$def('swapcase',VN.str_swapcase,0);cString.$def('upcase!',VN.str_upcase_bang,0);cString.$def('downcase!',VN.str_downcase_bang,0);cString.$def('capitalize!',VN.str_capitalize_bang,0);cString.$def('swapcase!',VN.str_swapcase_bang,0);cString.$def('hex',VN.str_hex,0);cString.$def('oct',VN.str_oct,0);cString.$def('split',VN.str_split_m,-1);cString.$def('lines',VN.str_each_line,-1);cString.$def('bytes',VN.str_each_byte,0);cString.$def('chars',VN.str_each_char,0);cString.$def('codepoints',VN.str_each_codepoint,0);cString.$def('reverse',VN.str_reverse,0);cString.$def('reverse!',VN.str_reverse_bang,0);cString.$def('concat',VN.str_concat,1);cString.$def('<<',VN.str_concat,1);cString.$def('crypt',VN.str_crypt,1);cString.$def('intern',VN.str_intern,0);cString.$def('to_sym',VN.str_intern,0);cString.$def('ord',VN.str_ord,0);cString.$def('include?',VN.str_include,1);cString.$def('start_with?',VN.str_start_with,-1);cString.$def('end_with?',VN.str_end_with,-1);cString.$def('scan',VN.str_scan,1);cString.$def('ljust',VN.str_ljust,-1);cString.$def('rjust',VN.str_rjust,-1);cString.$def('center',VN.str_center,-1);cString.$def('sub',VN.str_sub,-1);cString.$def('gsub',VN.str_gsub,-1);cString.$def('chop',VN.str_chop,0);cString.$def('chomp',VN.str_chomp,-1);cString.$def('strip',VN.str_strip,0);cString.$def('lstrip',VN.str_lstrip,0);cString.$def('rstrip',VN.str_rstrip,0);cString.$def('sub!',VN.str_sub_bang,-1);cString.$def('gsub!',VN.str_gsub_bang,-1);cString.$def('chop!',VN.str_chop_bang,0);cString.$def('chomp!',VN.str_chomp_bang,-1);cString.$def('strip!',VN.str_strip_bang,0);cString.$def('lstrip!',VN.str_lstrip_bang,0);cString.$def('rstrip!',VN.str_rstrip_bang,0);cString.$def('tr',VN.str_tr,2);cString.$def('tr_s',VN.str_tr_s,2);cString.$def('delete',VN.str_delete,-1);cString.$def('squeeze',VN.str_squeeze,-1);cString.$def('count',VN.str_count,-1);cString.$def('tr!',VN.str_tr_bang,2);cString.$def('tr_s!',VN.str_tr_s_bang,2);cString.$def('delete!',VN.str_delete_bang,-1);cString.$def('squeeze!',VN.str_squeeze_bang,-1);cString.$def('each_line',VN.str_each_line,-1);cString.$def('each_byte',VN.str_each_byte,0);cString.$def('each_char',VN.str_each_char,0);cString.$def('each_codepoint',VN.str_each_codepoint,0);cString.$def('sum',VN.str_sum,-1);cString.$def('slice',VN.str_aref_m,-1);cString.$def('slice!',VN.str_slice_bang,-1);cString.$def('partition',VN.str_partition,1);cString.$def('rpartition',VN.str_rpartition,1);cString.$def('encoding',VN.obj_encoding,0);cString.$def('force_encoding',VN.str_force_encoding,1);cString.$def('valid_encoding?',VN.str_valid_encoding_p,0);cString.$def('ascii_only?',VN.str_is_ascii_only_p,0);
+String.prototype.$ = RObject.prototype.$;
+
+cString.$define_alloc_func(function() {
+  return new String();
+}); var $VN_1 = RClass.define('String', cObject);
+$VN_1.$def('try_convert',function(){
+var self=this;
+});
+$VN_1.$def('initialize',function(){
+var self=this;
+});
+$VN_1.$def('initialize_copy',function(){
+var self=this;
+});
+$VN_1.$def('<=>',function(obj){
+var self=this;
+});
+$VN_1.$def('==',function(obj){
+var self=this;
+});
+$VN_1.$def('eql?',function(obj){
+var self=this;
+});
+$VN_1.$def('hash',function(obj){
+var self=this;
+});
+$VN_1.$def('casecmp',function(obj){
+var self=this;
+});
+$VN_1.$def('+',function(obj){
+var self=this;
+self.$('puts',['wow']);
+});
+$VN_1.$def('(',function(obj){
+var self=this;
+});
+$VN_1.$def('%',function(obj){
+var self=this;
+});
+$VN_1.$def('[]',function(key){
+var self=this;
+});
+$VN_1.$def('[]=',function(key,val){
+var self=this;
+});
+$VN_1.$def('insert',function(){
+var self=this;
+});
+$VN_1.$def('length',function(){
+var self=this;
+return this.length;});
+$VN_1.$def('size',function(){
+var self=this;
+return this.length});
+$VN_1.$def('empty?',function(){
+var self=this;
+});
+$VN_1.$def('=~',function(match){
+var self=this;
+});
+$VN_1.$def('match',function(match){
+var self=this;
+});
+$VN_1.$def('succ',function(){
+var self=this;
+});
+$VN_1.$def('next',function(){
+var self=this;
+});
+$VN_1.$def('upto',function(){
+var self=this;
+});
+$VN_1.$def('index',function(){
+var self=this;
+});
+$VN_1.$def('rindex',function(){
+var self=this;
+});
+$VN_1.$def('replace',function(){
+var self=this;
+});
+$VN_1.$def('clear',function(){
+var self=this;
+});
+$VN_1.$def('chr',function(){
+var self=this;
+});
+$VN_1.$def('to_i',function(){
+var self=this;
+});
+$VN_1.$def('to_f',function(){
+var self=this;
+});
+$VN_1.$def('to_s',function(){
+var self=this;
+return new String(this);});
+$VN_1.$def('to_str',function(){
+var self=this;
+return self.$('to_s', []);
+});
+$VN_1.$def('inspect',function(){
+var self=this;
+return new String('"' + this + '"');});
+$VN_1.$def('dump',function(){
+var self=this;
+});
+$VN_1.$def('upcase',function(){
+var self=this;
+});
+$VN_1.$def('downcase',function(){
+var self=this;
+});
+$VN_1.$def('capitalize',function(){
+var self=this;
+});
+$VN_1.$def('swapcase',function(){
+var self=this;
+});
+$VN_1.$def('hex',function(){
+var self=this;
+});
+$VN_1.$def('oct',function(){
+var self=this;
+});
+$VN_1.$def('split',function(){
+var self=this;
+});
+$VN_1.$def('lines',function(){
+var self=this;
+});
+$VN_1.$def('bytes',function(){
+var self=this;
+});
+$VN_1.$def('chars',function(){
+var self=this;
+});
+$VN_1.$def('codepoints',function(){
+var self=this;
+});
+$VN_1.$def('reverse',function(){
+var self=this;
+});
+$VN_1.$def('concat',function(){
+var self=this;
+});
+$VN_1.$def('<<',function(){
+var self=this;
+});
+$VN_1.$def('crypt',function(){
+var self=this;
+});
+$VN_1.$def('intern',function(){
+var self=this;
+});
+$VN_1.$def('to_sym',function(){
+var self=this;
+return new String(this);});
+$VN_1.$def('ord',function(){
+var self=this;
+});
+$VN_1.$def('include?',function(){
+var self=this;
+});
+$VN_1.$def('start_with?',function(){
+var self=this;
+});
+$VN_1.$def('end_with?',function(){
+var self=this;
+});
+$VN_1.$def('scan',function(){
+var self=this;
+});
+$VN_1.$def('ljust',function(){
+var self=this;
+});
+$VN_1.$def('rjust',function(){
+var self=this;
+});
+$VN_1.$def('center',function(){
+var self=this;
+});
+$VN_1.$def('sub',function(){
+var self=this;
+});
+$VN_1.$def('gsub',function(){
+var self=this;
+});
+$VN_1.$def('chop',function(){
+var self=this;
+});
+$VN_1.$def('chomp',function(){
+var self=this;
+});
+$VN_1.$def('strip',function(){
+var self=this;
+});
+$VN_1.$def('lstrip',function(){
+var self=this;
+});
+$VN_1.$def('rstrip',function(){
+var self=this;
+});
+$VN_1.$def('tr',function(){
+var self=this;
+});
+$VN_1.$def('tr_s',function(){
+var self=this;
+});
+$VN_1.$def('delete',function(){
+var self=this;
+});
+$VN_1.$def('squeeze',function(){
+var self=this;
+});
+$VN_1.$def('count',function(){
+var self=this;
+});
+$VN_1.$def('each_line',function(){
+var self=this;
+});
+$VN_1.$def('each_byte',function(){
+var self=this;
+});
+$VN_1.$def('each_char',function(){
+var self=this;
+});
+$VN_1.$def('each_codepoint',function(){
+var self=this;
+});
+$VN_1.$def('sum',function(){
+var self=this;
+});
+$VN_1.$def('slice!',function(){
+var self=this;
+});
+$VN_1.$def('partition',function(){
+var self=this;
+});
+$VN_1.$def('rpartition',function(){
+var self=this;
+});

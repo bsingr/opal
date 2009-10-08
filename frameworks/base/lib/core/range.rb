@@ -1,5 +1,5 @@
 # 
-# ruby_web_app.rb
+# range.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,46 +24,87 @@
 # THE SOFTWARE.
 #
 
-require 'base'
-require 'browser'
-require 'vienna'
 
-module RubyWebApp
+class Range
   
-  VERSION = "0.0.1"
-  
-  class AppDelegate
+  def initialize
     
-    def initialize_with bob, john:adam, assign:fors, key:adam
-      @adam = 10
-      bob(10, 34, @benny)
-    end
-    
-    def will_finish_launching (notification)
-      puts 'Application will finish launching!'
-    end
-    
-    def did_finish_launching (notification)
-      puts 'Application did finish launching!!'
-    end
   end
-end
-
-self.set_value(10, for_key:'bob')
-self.set_value 100, for_key:'adam'
-
-adam = Object.allocate
-puts adam
-4 + 2
-puts (4 - 45)
-
-"bob" + 10
-
-adam = [12, 14, 15]
-
-def something
   
-  return 4
+  def initialize_copy
+    
+  end
   
+  def ==(obj)
+    
+  end
+  
+  def ===(obj)
+    
+  end
+  
+  def eql?(obj)
+    
+  end
+  
+  def hash
+    
+  end
+  
+  def each
+    
+  end
+  
+  def step
+    
+  end
+  
+  def begin
+    
+  end
+  
+  def end
+    
+  end
+  
+  def first
+    
+  end
+  
+  def last
+    
+  end
+  
+  def min
+    
+  end
+  
+  def max
+    
+  end
+  
+  def to_s
+    
+  end
+  
+  def inspect
+    
+  end
+  
+  def exclude_end?
+    
+  end
+  
+  def member?
+    
+  end
+  
+  def include?
+    
+  end
+  
+  def cover?
+    
+  end
   
 end

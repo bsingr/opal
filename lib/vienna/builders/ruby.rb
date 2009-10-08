@@ -408,7 +408,7 @@ class Vienna::RubyParser < Racc::Parser
       elsif scanner.check(/\|/)
         if scanner.scan(/\|\|\=/)
           self.lex_state = :EXPR_BEG
-          return [:tOP_ASSIGN, scanner.matched]
+          return [:tOP_ASGN, scanner.matched]
         elsif scanner.scan(/\|\|/)
           self.lex_state = :EXPR_BEG
           return [:tOROP, scanner.matched]
@@ -433,7 +433,6 @@ class Vienna::RubyParser < Racc::Parser
       elsif scanner.scan(/[+-]/)
         result = scanner.matched
         sign = (result == "+") ? :tUPLUS : :tUMINUS
-        
         # if this is a func name def, or a method of an object ( def +(other))
         if self.lex_state == :EXPR_FNAME || self.lex_state == :EXPR_DOT
           self.lex_state = :EXPR_ARG
@@ -454,7 +453,7 @@ class Vienna::RubyParser < Racc::Parser
           return [sign, result]
         end
         
-        return [sign, result]
+        return [result, result]
       elsif scanner.scan(/\*\*\=/)
         self.lex_state = :EXPR_BEG
         return [:tOP_ASGN, '**=']
@@ -573,7 +572,7 @@ class Vienna::RubyParser < Racc::Parser
           self.lex_state = :EXPR_BEG
           return [:tOP_ASGN, '%=']
         end
-        return [:tPERCENT, '%']
+        return ['%', '%']
       
         if scanner.scan(/(\$_)(\w+)/)
         end
@@ -619,7 +618,11 @@ class Vienna::RubyParser < Racc::Parser
           self.lex_state = :EXPR_END
           return [:kFALSE, scanner.matched]
         when 'nil'
+          self.lex_state = :EXPR_END
           return [:kNIL, scanner.matched]
+        when 'return'
+          self.lex_state = :EXPR_MID
+          return [:kRETURN, scanner.matched]
         end
         
         matched = scanner.matched

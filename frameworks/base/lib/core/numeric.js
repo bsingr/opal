@@ -26,6 +26,7 @@
  
 Number.prototype.$klass = cNumeric ;
 Number.prototype.$type = VN.NUMBER ;
+Number.prototype.$ = RObject.prototype.$;
 
 // VN.include_module(VN.cNumeric, VN.mComparable);
 RModule.include(cNumeric, mComparable);
@@ -178,12 +179,12 @@ cNumeric.$def('to_s', function() {
   
 });
 
-cNumeric.$def('+', function() {
-  
+cNumeric.$def('+', function(i) {
+  return this + i;
 });
 
-cNumeric.$def('-', function() {
-  
+cNumeric.$def('-', function(i) {
+  return this - i;
 });
 
 cNumeric.$def('*', function() {

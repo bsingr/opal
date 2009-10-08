@@ -47,7 +47,8 @@ var self=this;
 });
 $VN_1.$def('to_hash',function(){
 var self=this;
-self});
+return self;
+});
 $VN_1.$def('to_a',function(){
 var self=this;
 var ary = [];
