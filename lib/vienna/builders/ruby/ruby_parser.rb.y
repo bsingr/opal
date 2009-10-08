@@ -977,7 +977,7 @@ xstring_contents:
              		  }
             		| f_block_arg
             		  {
-             		    result = node :block_arg, :block_arg => val[0]
+             		    result = node :arg, :opt_block_arg => val[0]
              		  }
               	| 
               	  {
@@ -993,8 +993,17 @@ xstring_contents:
       f_norm_arg: f_bad_arg
               	| tIDENTIFIER
               	  {
-              	    result = val[0]
+                    # result = val[0]
+              	    result = node :norm_arg, :value => val[0]
               	  }
+              	| tIDENTIFIER tASSOC tIDENTIFIER
+                  {
+                  
+                  }
+                | tLABEL tIDENTIFIER
+                  {
+                    result = node :label_arg, :name => val[0], :value => val[1]
+                  }
 
       f_arg_item: f_norm_arg
                   {

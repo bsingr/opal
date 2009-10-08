@@ -72,6 +72,8 @@ module Vienna
         generate_call stmt, context
       when :identifier
         generate_identifier stmt, context
+      when :ivar
+        generate_ivar stmt, context
       when :constant
         generate_constant stmt, context
       when :symbol
@@ -151,7 +153,20 @@ module Vienna
     # If/unless mod ... statement after 
     # 
     def generate_if_mod stmt, context
+      write 'if((e='
+      generate_stmt stmt[:expr],:instance => false, :full_stmt => false, :self => current_self, :last_stmt => false
       
+      if stmt.node == :if_mod
+        write ",e!==nil && e!==false)){\n"
+      else
+        write ",e==nil || e==false)){\n"
+      end
+      
+      if stmt[:stmt]
+        generate_stmt stmt[:stmt], :instance => true, :full_stmt => true, :self => current_self, :last_stmt => true # also check if the actual 'if' statement is last?
+      end
+      
+      write "}\n"
     end
     
     
@@ -183,11 +198,67 @@ module Vienna
       pop_current_self
     end
     
+    # Returns true if the method uses obj-c style named arguments
+    def label_styled_args?(definition)
+      if definition[:arglist] and definition[:arglist][:arg]
+        definition[:arglist][:arg].last.node == :label_arg
+      end
+    end
+    
+    # generate objc style name def
+    def generate_label_styled_def definition, context
+      push_nametable
+      # get actual method name
+      method_name = definition[:fname] << ':'
+      definition[:arglist][:arg].each do |a|
+        next if definition[:arglist][:arg].first == a 
+        method_name << a[:name]
+      end
+      
+      # main func def
+      if definition[:singleton] or context[:self] == 'VN.self'
+        write "#{context[:self]}.$def_s('#{method_name}',function("
+      else
+        write "#{context[:self]}.$def('#{method_name}',function("
+      end
+      
+      # go through arglist val names
+      definition[:arglist][:arg].each do |a|
+        write a[:value]
+        add_to_nametable a[:value]
+        write ',' unless definition[:arglist][:arg].last == a
+      end
+      
+      write "){\n"
+      write "var self=this;\n"
+      
+      self.current_self_start_def
+      # def statements - note: can have block...
+      if definition[:bodystmt]
+        definition[:bodystmt].each do |stmt|
+          generate_stmt stmt, :instance => (definition[:singleton] ? false : true), :full_stmt => true, :last_stmt => (definition[:bodystmt].last == stmt ? true : false), :self => current_self
+        end
+      end
+            
+      self.current_self_end_def
+      pop_nametable # pop new nametable
+      
+      write "});\n"
+    end
+    
+    
+    
     
     # Generates a method definition statement. This can be an instance, class or
     # on a specified object that is passed to the context
     # 
     def generate_def definition, context
+      
+      if label_styled_args? definition
+        generate_label_styled_def definition, context
+        return
+      end
+      
       push_nametable # push new nametable
       
       # all methods in top self must be added as singleton methods
@@ -197,16 +268,20 @@ module Vienna
         write "#{context[:self]}.$def('#{definition[:fname]}',function("
       end
       
+      # write definition[:arglist]
+      
       # arglist
       if definition[:arglist]
-        definition[:arglist][:arg].each do |arg|
-          write arg
-          add_to_nametable arg
-          write ',' unless definition[:arglist][:arg].last == arg
+        if definition[:arglist][:arg]
+          definition[:arglist][:arg].each do |arg|
+            write arg[:value]
+            add_to_nametable arg[:value]
+            write ',' unless definition[:arglist][:arg].last == arg
+          end
         end
         
         if definition[:arglist][:opt_block_arg]
-          write ','
+          write ',' if definition[:arglist][:arg]
           write definition[:arglist][:opt_block_arg]
           add_to_nametable definition[:arglist][:opt_block_arg]
         end  
@@ -264,6 +339,7 @@ module Vienna
       # IF LHS is a CONSTANT
       elsif stmt[:lhs].node == :constant
         if context[:self] == 'VN.self'
+          puts stmt[:lhs][:name]
           write 'cObject'
         elsif context[:instance]
           write "#{context[:self]}.$klass"
@@ -475,6 +551,12 @@ module Vienna
       write ']'
       write ";\n" if context[:full_stmt]
     end
+    
+    
+    def generate_ivar stmt, context
+      write "#{current_self}.$i_g('#{stmt[:name]}')"
+    end
+    
     
     # This method must handle identifiying whether an identifier as actually
     # a varname, or a method call on self.

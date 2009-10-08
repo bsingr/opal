@@ -68,34 +68,15 @@ module Vienna
       @views_needing_display = []
     end
     
-    # Set App delegate
-    # 
-    def delegate=(obj)
-      return if @dleegate == obj
-      
-      nc = VN::NotificationCenter.default_center
-      
-      if @delegate
-        nc.remove_observer(@delegate, VN::APP_WILL_FINISH_LAUNCHING, self)
-        nc.remove_observer(@delegate, VN::APP_DID_FINISH_LAUNCHING, self)
-        nc.remove_observer(@delegate, VN::APP_DID_CHANGE_SCREEN_PARAMETERS, self)
-      end
-      
-      @delegate = obj
-      
-      if @delegate.respond_to? :will_finish_launching
-        nc.add_observer(@delegate, :will_finish_launching, VN::APP_WILL_FINISH_LAUNCHING, self)
-      end
-      
-      if @delegate.respond_to? :did_finish_launching
-        nc.add_observer(@delegate, :did_finish_launching, VN::APP_DID_FINISH_LAUNCHING, self)
-      end
-    end
-    
+        
     # Add window
     # 
     def add_window(window)
       @windows << window
+    end
+    
+    def <<(window)
+      add_window window
     end
     
     # Get shared app
@@ -103,6 +84,45 @@ module Vienna
     def self.shared_application
       @@app ||= Application.new()
     end
-  end
   
+    # Set App delegate
+    # 
+    def delegate=(obj)
+      return if @delegate == obj
+    
+      nc = VN::NotificationCenter.default_center
+    
+      if @delegate
+        nc.remove_observer @delegate, name:APP_WILL_FINISH_LAUNCHING, object:self
+        nc.remove_observer @delegate, name:APP_DID_FINISH_LAUNCHING, object:self
+        nc.remove_observer @delegate, name:APP_DID_CHANGE_SCREEN_PARAMETERS, object:self
+      end
+    
+      @delegate = obj
+    
+      if @delegate.respond_to? :will_finish_launching
+        nc.add_observer @delegate, selector:'will_finish_launching', name:APP_WILL_FINISH_LAUNCHING, object:self
+      end
+    
+      if @delegate.respond_to? :did_finish_launching
+        nc.add_observer @delegate, selector:'did_finish_launching', name:APP_DID_FINISH_LAUNCHING, object:self
+      end
+    end
+  
+  
+    def running?
+      true
+    end
+  
+    def finish_launching
+      nc = NotificationCenter.default_center
+      nc.post_notification_name APP_WILL_FINISH_LAUNCHING, object:self
+      nc.post_notification_name APP_DID_FINISH_LAUNCHING, object:self
+    end
+  
+    def run
+      # attatch events
+      finish_launching
+    end  
+  end
 end

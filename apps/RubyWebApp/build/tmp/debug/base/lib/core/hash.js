@@ -102,7 +102,7 @@ if (!this.$values.hasOwnProperty(key)) {
 $VN_1.$def('default',function(){
 var self=this;
 return self.$ifnone});
-$VN_1.$def('default=',function(default){
+$VN_1.$def('default=',function(def_obj){
 var self=this;
 this.$ifnone = ifnone;
     return ifnone;});

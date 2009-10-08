@@ -47,7 +47,13 @@ RClass.define = function(id, super_klass) {
       VN.type_error(id + ' is not a class');
     }
     if (klass.$super != super_klass) {
-      VN.name_error(id + ' is already defined');
+      // bail out for Object...error if Object is assigned to another nam (e.g. VNObject)
+      if (klass != cObject) {
+        // console.log(klass);
+        // console.log('wow');
+        VN.name_error(id + ' is already defined');
+      }
+      
     }
     return klass;
   }
@@ -61,17 +67,36 @@ RClass.define = function(id, super_klass) {
   RClass.inherited(super_klass, klass);
   return klass;
 };
-  
+
+/**
+  TODO: Need to stop search going up through chain. Object inside Vienna, for instance, should
+  not reference the Base Object class as the same, unless it is set to equal that. Also, VN::Array
+  should not be mapped to ::Array. different classes. Need to stop $c_d and $c_g going up through
+  the chain. They should only go up when looking for a constant inside the code, not for defining new
+  classes.
+*/
 RClass.define_under = function(outer, id, super_klass) {
   var klass;
   // if already defined in context... just ensure it is a macthing class def
-  if (outer.$c_d(id)) {
-    klass = VN.const_get_at(outer, id);
+  /**
+    this should be const_defined_at
+  */
+  if (outer.$c_d_a(id)) {
+    // klass = VN.const_get_at(outer, id);
+    /**
+      this should be const_get_at
+    */
+    klass = outer.$c_g_a(id);
+    // console.log(klass);
     if (klass.$type != VN.CLASS) {
       VN.type_error(id + ' is not a class');
     }
-    if (VN.class_real(klass.$super) != super_klass) {
-      VN.name_error(id + ' is already defined');
+    if (RClass.real(klass.$super) != super_klass) {
+      // avoid error for cObject
+      if (klass != cObject) {
+        VN.name_error(id + ' is already defined');
+      }
+      
     }
     return klass;
   }
@@ -339,16 +364,45 @@ RClass.prototype.$mod_av_set = function(id, val, isconst) {
   $c_g
 */
 RClass.prototype.$c_g = function(id) {
-  return this[id];
+  var tmp = this;
+  var value;
+  while (tmp) {
+    if (value = tmp[id]) {
+      return value;
+    }
+    tmp = tmp.$super;
+  }
+  VN.name_error(id, 'uninitialized constant ' + id + ' in ' + klass.name);
+  return nil;
 };
 
 /**
   $const)defined
 */
 RClass.prototype.$c_d = function(id) {
-  // console.log('checking: ' + id);
-  // console.log(this[id]);
-  return (this[id]) ? true : false ;
+  var tmp = this;
+  var value;
+  while (tmp) {
+    if (value = tmp[id]) {
+      return true;
+    }
+    tmp = tmp.$super;
+  }
+  return false;
+};
+
+/**
+  const_defined_at
+*/
+RClass.prototype.$c_d_a = function(id) {
+  return (this[id]) ? true : false;
+};
+
+/**
+  const_get_at
+*/
+RClass.prototype.$c_g_a = function(id) {
+  return (this[id]) ? this[id] : nil;
 };
 
 RClass.prototype.$define_const = function(id, val) {

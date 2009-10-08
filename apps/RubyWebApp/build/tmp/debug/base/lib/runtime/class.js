@@ -1,10 +1,10 @@
 
 var RClass=function(klass,super_klass){this.$klass=klass;this.$super=super_klass;this.$type=VN.CLASS;this.$singleton=false;return this;};RClass.inherited=function(super_klass,klass){if(!super_klass)super_klass=cObject;return super_klass.$('inherited',[klass]);};RClass.define=function(id,super_klass){var klass;if(cObject.$c_d(id)){klass=cObject.$c_g(id);if(klass.$type!=VN.CLASS){VN.type_error(id+' is not a class');}
-if(klass.$super!=super_klass){VN.name_error(id+' is already defined');}
+if(klass.$super!=super_klass){if(klass!=cObject){VN.name_error(id+' is already defined');}}
 return klass;}
 if(!super_klass){VN.warning('no super class for `'+id+'`, Object assumed')}
-klass=RClass.define_class_id(id,super_klass);VN.class_tbl[id]=klass;klass.$name(id);cObject.$c_s(id,klass);RClass.inherited(super_klass,klass);return klass;};RClass.define_under=function(outer,id,super_klass){var klass;if(outer.$c_d(id)){klass=VN.const_get_at(outer,id);if(klass.$type!=VN.CLASS){VN.type_error(id+' is not a class');}
-if(VN.class_real(klass.$super)!=super_klass){VN.name_error(id+' is already defined');}
+klass=RClass.define_class_id(id,super_klass);VN.class_tbl[id]=klass;klass.$name(id);cObject.$c_s(id,klass);RClass.inherited(super_klass,klass);return klass;};RClass.define_under=function(outer,id,super_klass){var klass;if(outer.$c_d_a(id)){klass=outer.$c_g_a(id);if(klass.$type!=VN.CLASS){VN.type_error(id+' is not a class');}
+if(RClass.real(klass.$super)!=super_klass){if(klass!=cObject){VN.name_error(id+' is already defined');}}
 return klass;}
 if(!super_klass){VN.warning('no super class for `'+VN.class2name(outer),+'::'+id+'`, Object assumed');}
 klass=RClass.define_class_id(id,super_klass);outer.$c_s(id,klass);RClass.inherited(super_klass,klass);return klass;};RClass.class2name=function(klass){return klass.$class_name();};RClass.obj_classname=function(obj){return VN.class2name(obj.$klass);};RClass.make_metametaclass=function(metaclass){var metametaclass,super_of_metaclass;if(metaclass.$klass==metaclass){metametaclass=RClass.boot(null);metametaclass.$klass=metametaclass;}
@@ -24,4 +24,8 @@ VN.name_error('uninitialized class variable '+id+' in '+klass.name);return nil;}
 RClass.prototype.$def=function(name,func){this.$add_method(name,func);};RClass.prototype.$define_protected_method=function(name,func){this.$add_method(name,func);};RClass.prototype.$define_private_method=function(name,func){this.$add_method(name,func);};RClass.prototype.$undef_method=function(name,func){this.$add_method(name,func);};RClass.prototype.$add_method=function(name,func){this[name]=func;};RClass.prototype.$def_s=function(name,func){RClass.singleton_class(this).$def(name,func);};RClass.prototype.$define_alias=function(id1,id2){};RClass.prototype.$define_alloc_func=function(func){RClass.singleton_class(this).$add_method('allocate',func);};RClass.prototype.$undef_alloc_func=function(){RClass.singleton_class(this).$add_method('allocate',null);};RClass.prototype.$search_method=function(id){var klass=this;var func;while(!(func=klass[id])){klass=klass.$super;if(!klass)return undefined;}
 return func;};RClass.prototype.$=function(id,args){var method=this.$klass.$search_method(id);if(!method)throw'VN#funcall cannot find method: '+id;return method.apply(this,args);};RClass.prototype.$cvar_get=function(id){var tmp=this;var value;while(tmp){if(value=tmp[id]){return value;}
 tmp=tmp.$super;}
-VN.name_error(id,'uninitialized class variable '+id+' in '+klass.name);return nil;};RClass.prototype.$c_s=function(id,val){this.$mod_av_set(id,val,true);};RClass.prototype.$mod_av_set=function(id,val,isconst){this[id]=val;};RClass.prototype.$c_g=function(id){return this[id];};RClass.prototype.$c_d=function(id){return(this[id])?true:false;};RClass.prototype.$define_const=function(id,val){};
+VN.name_error(id,'uninitialized class variable '+id+' in '+klass.name);return nil;};RClass.prototype.$c_s=function(id,val){this.$mod_av_set(id,val,true);};RClass.prototype.$mod_av_set=function(id,val,isconst){this[id]=val;};RClass.prototype.$c_g=function(id){var tmp=this;var value;while(tmp){if(value=tmp[id]){return value;}
+tmp=tmp.$super;}
+VN.name_error(id,'uninitialized constant '+id+' in '+klass.name);return nil;};RClass.prototype.$c_d=function(id){var tmp=this;var value;while(tmp){if(value=tmp[id]){return true;}
+tmp=tmp.$super;}
+return false;};RClass.prototype.$c_d_a=function(id){return(this[id])?true:false;};RClass.prototype.$c_g_a=function(id){return(this[id])?this[id]:nil;};RClass.prototype.$define_const=function(id,val){};

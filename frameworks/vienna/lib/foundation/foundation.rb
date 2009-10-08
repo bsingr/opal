@@ -1,5 +1,5 @@
 # 
-# document.rb
+# foundation.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,21 +24,16 @@
 # THE SOFTWARE.
 #
 
-class Document
+module Vienna
   
-  # pass in a block to be run when the document is ready. these are run on a
-  # 'first come first served basis', i.e. multiple blocks can be added and 
-  # each will be run
-  # def self.ready?(&block)
-  #   blocks = @@blocks ||= []
-  #   blocks << &block
-  # end
-  # 
-  # return ready stste of browser regarless. if beowser not ready, return false,
-  # or return true otherwise
-  def self.ready? &block
-    # `console.log('go to this point');
-    # console.log(block)`
-  end
+  # Object = ::Object
+  # Array = ::Array
+  # Dictionary = ::Hash
+  Object = Object
+  Array = Array
+  Dictionary = Hash
   
 end
+
+require 'key_value_coding'
+require 'key_value_observing'

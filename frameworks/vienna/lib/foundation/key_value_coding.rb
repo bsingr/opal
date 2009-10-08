@@ -24,18 +24,130 @@
 # THE SOFTWARE.
 #
 
-require 'array'
-require 'dictionary'
-require 'set'
+module Vienna
+  
+  UNDEFINED_KEY_EXCEPTION = 'VNUndefinedKeyException'
+    
+  # Key value operator constants
+  # ============================
+  # :average
+  # :count
+  # :distinct_union_arrays
+  # :distinct_union_objects
+  # :distinct_union_sets
+  # :max
+  # :min
+  # :sum
+  # :union_arrays
+  # :union_objects
+  # :union_sets
+  
+  
+  class Object
+    
+    def self.access_instance_variables_directly?
+      true
+    end
+    
+    def value_for_key key
+      
+    end
+    
+    def set_value value, for_key:key
+      
+    end
+    
+    def validate_value value, for_key:key, error:out_error
+      
+    end
+    
+    def array_value_for_key key
+      
+    end
+    
+    def set_value_for_key key
+      
+    end
+    
+    def value_for_key_path path
+      
+    end
+    
+    def set_value value, for_key_path:path
+      
+    end
+    
+    def validate_value value, for_key_path:path, error:out_error
+      
+    end
+    
+    def array_value_for_key_path path
+      
+    end
+    
+    def set_value_for_key_path path
+      
+    end
+    
+    def value_for_undefined_key key
+      
+    end
+    
+    def set_value value, for_undefined_key:key
+      
+    end
+    
+    def set_nil_value_for_key key
+      
+    end
+    
+    def dictionary_with_values_for_keys keys
+      
+    end
+    
+    def set_values_for_keys_with_dictionary keyed_values
+      
+    end
+  end
 
-class Object
-  
-  def get(key)
+
+
+  class Array
+    
+    def value_for_key key
+      
+    end
+    
+    def set_value value, for_key:key
+      
+    end
     
   end
-  
-  def set(key, value)
+
+
+
+  class Dictionary
     
-  end
+    def value_for_key key
+      
+    end
+    
+    def set_value value, for_key:key
+      
+    end
   
+  end
+
+
+
+  class Set
+  
+    def value_for_key key
+      
+    end
+    
+    def set_value value, for_key:key
+      
+    end
+  end
 end

@@ -149,7 +149,7 @@ class Hash
     `return self.$ifnone`
   end
   
-  def default=(default)
+  def default=(def_obj)
     `this.$ifnone = ifnone;
     return ifnone;`
   end

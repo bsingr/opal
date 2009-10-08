@@ -24,119 +24,86 @@
 # THE SOFTWARE.
 #
 
-require 'object'
-require 'key_value_coding'
-
 module Vienna
   
-  KVO_OPTION_OLD = 'VNKVOOptionOld'
-  KVO_OPTION_NEW = 'VNKVOOptionNew'
-  KVO_OPTION_INITIAL = 'VNKVOOptionInitial'
-  KVO_OPTION_prior = 'VNKVOOptionPrior'
+  # KVO options
+  # ===========
+  # :new, :old, :initial, :prior
   
+  # KVO Change kind
+  # ===============
+  # :change_kind => :new, :old, :indexes, :prior_notification
+
   class Object
     
-    def observe_value_for_key_path path, object, change, context
-      puts "Observer notification for keyPath: #{path}"
-    end
-    
-    def add_observer observer, path, options, context
-      if !observer or !path
-        return
-      end
+    def observe_value_for_key_path path, of_object:object, change:change, context:context
       
-      @kvo_observers << {
-        :observer => observer,
-        :key_path => path,
-        :options => options,
-        :context => context
-      }
     end
-    
-    # 
-    # 
-    def will_chnage_value_for_key observer, path
-      @kvo_old_values[key] = value_for_key(key)
+  
+    def add_observer observer, for_key_path:key_path, options:options, context:context
+  
     end
-    
-    # 
-    # 
-    def did_change_value_for_key key
-      (0..@kvo_observers.length).each do |idx|
-        current = @kvo_observers[i]
-        
-        if current.key_path == key
-          
-          change_dict = {
-            
-          }
-          
-        end
-        
-      end
+  
+    def remove_observer observer, for_key_path:key_path
+  
     end
-    
+  
   end
-  
+  # 
+  # 
+  # class Array
+  # 
+  #   def add_observer observer, to_objects_at_indexes:indexes, for_key_path:key_path, options:options, context:context
+  # 
+  #   end
+  # 
+  #   def remove_observer observer, from_objects_at_indexes:indexes, for_key_path:keyPath
+  # 
+  #   end
+  # 
+  #   def add_observer observer, for_key_path:key_path, options:options, context:context
+  # 
+  #   end
+  # 
+  #   def remove_observer observer, for_key_path:key_path
+  # 
+  #   end
+  # 
+  # end
+  # 
+  # 
+  # class Object
+  # 
+  #   def will_change_value_for_key key
+  # 
+  #   end
+  # 
+  #   def did_change_value_for_key key
+  # 
+  #   end
+  # 
+  #   def will_change changeKind, values_at_indexes:indexes, for_key:key
+  # 
+  #   end
+  # 
+  #   def did_change changeKind, values_at_indexes:indexes, for_key:key
+  # 
+  #   end
+  # 
+  #   def self.key_paths_for_values_affecting_value_for_key key
+  # 
+  #   end
+  # 
+  #   def automatically_notifies_observers_for_key key
+  #     true
+  #   end
+  # 
+  #   def observation_info=(info)
+  #     @observation_info = info
+  #   end
+  # 
+  #   def observation_info
+  #     @observation_info
+  #   end
+  # end
 end
-
-  
-  KeyValueObserverNotification: VN.Object.mixin({
-    
-    willChangeValueForKey: function(key) {
-      this.$kvoOldValues[key] = this.valueForKey(key) ;
-    },
-    
-    didChangeValueForKey: function(key) {
-      
-      for (var i = 0; i < this.$kvoObservers.length; i++) {
-        
-        var current = this.$kvoObservers[i];
-        if (current.keyPath === key) {
-          
-          var changeDict = new Hash(
-            VN.KVO_OPTION_OLD,    this.$kvoOldValues.get(key),
-            VN.KVO_OPTION_NEW,    this.get(key)
-          );
-          
-          current.get('observer').observeValueForKeyPath(key, this, changeDict, current.get('context'));
-        }
-      }
-    },
-    
-    willChangeValuesAtIndexesForKey: function(kind, indexes, key) {
-      
-    },
-    
-    didChangeValuesAtIndexesForKey: function(kind, indexes, key) {
-      
-    },
-    
-    willChangeValueForKeyWithSetMutation: function(key, mutation, objects) {
-      
-    },
-    
-    didChangeValueForKeyWithSetMutation: function(key, mutation, objects) {
-      
-    }
-  }),
-  
-  KeyValueObservingCustomization: VN.Object.mixin({
-    
-    $keyPathsForValuesAffectingValueForKey: function(key) {
-      
-    },
-    
-    $automaticallyNotifiesObserversForKey: function(key) {
-      return true ;
-    },
-    
-    setObservationInfo: function(info) {
-      
-    }.raw(),
-    
-    observationInfo: function() {
-      
-    }
-  })
-});

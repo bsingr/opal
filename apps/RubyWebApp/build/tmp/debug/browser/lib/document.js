@@ -1,4 +1,4 @@
 var $VN_1 = RClass.define('Document', cObject);
-$VN_1.$def_s('ready?',function(){
+$VN_1.$def_s('ready?',function(block){
 var self=this;
-console.log('go to this point');});
+});

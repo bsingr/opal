@@ -1,5 +1,5 @@
 # 
-# object.rb
+# notification.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,3 +24,61 @@
 # THE SOFTWARE.
 #
 
+module Vienna
+  
+  class Notification
+    
+    attr_reader :name, :object, :user_info
+    
+    def initialize name, obj, info
+      @name = name
+      @object = obj
+      @user_info = info
+    end
+    
+    def self.notification_with_name name, object:obj
+      notification_with_name name, object:obj, user_info:nil
+    end
+    
+    def self.notification_with_name name, object:obj, user_info:info
+      self.new(name, obj, info)
+    end
+  end
+  
+  
+  
+  class NotificationCenter
+    
+    def self.default_center
+      @@default_center ||= self.new()
+    end
+    
+    def add_observer observer, selector:selector, name:name, object:obj
+      
+    end
+    
+    def post_notification notification
+      
+    end
+    
+    def post_notification_name name, object:obj
+      
+    end
+    
+    def post_notification_name name, object:obj, user_info:info
+      
+    end
+    
+    def remove_observer:observer
+      
+    end
+    
+    def remove_observer observer, name:name, object:obj
+      
+    end
+    
+    def add_observer_for_name name, object:obj, queue:queue, using_block:&block
+      
+    end
+  end
+end

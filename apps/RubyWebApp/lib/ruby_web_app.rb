@@ -25,54 +25,26 @@
 #
 
 require 'base'
+require 'browser'
+require 'vienna'
 
-Document.ready? do |event|
-  puts 'wow' if bob
+module RubyWebApp
   
-  if adam
-    10 if bob
-    34 unless true
+  VERSION = "0.0.1"
+  
+  class AppDelegate
+    
+    def initialize bob, john:adam, assign:fors, key:adam
+      @adam = 10
+      bob(10, 34, @benny)
+    end
+    
+    def will_finish_launching (notification)
+      puts 'Application will finish launching!'
+    end
+    
+    def did_finish_launching (notification)
+      puts 'Application did finish launching!!'
+    end
   end
 end
-
-
-
-
-
-
-# require 'browser'
-
-# module RubyWebApp
-#   
-#   VERSION = "0.0.1#{}"
-#   
-#   class AppDelegate
-#     
-#     def initialize
-#       @adam = 10
-#       bob(10, 34, @benny)
-#     end
-#     
-#   end
-#   
-# end
-# 
-# Document.ready? do |evt|
-#   alert 'wow'
-# end
-# 
-# adam = NSView.new(NSRect.new(0, 24, 45, 46))
-# 
-# adam = NSView.newWithFrame(NSRect.new(0, 24, 45, 56))
-
-adam = "adam#{100_000_000}sisisiswd s s s"
-
-'OMG'
-
-`console.log(#{adam});`
-
-puts "101"
-
-type = "div"
-my_element = `document.createElement(#{type})`
-puts my_element

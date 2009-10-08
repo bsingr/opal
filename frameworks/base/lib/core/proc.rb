@@ -1,5 +1,5 @@
 # 
-# application.rb
+# proc.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,20 +24,75 @@
 # THE SOFTWARE.
 #
 
-VNModalPanelRunLoopMode = 'VNModalPanelRunLoopMode'
-VNEventTrackingRunLoopMode = 'VNEventTrackingRunLoopMode'
 
-class VNApplication < VNResponder
+class Proc
   
-  def initialize
-    super
-    
-    @windows = []
-    @event_queue = []
+  def self.new
+  
   end
   
-  def self.shared_application
+  def call
+    
+  end
   
+  def []
+    
+  end
+  
+  def ===
+    
+  end
+  
+  def yield
+    
+  end
+  
+  def to_proc
+    
+  end
+  
+  def arity
+    
+  end
+  
+  def clone
+    
+  end
+  
+  def dup
+    
+  end
+  
+  def ==
+    
+  end
+  
+  def eql?
+    
+  end
+  
+  def hash
+    
+  end
+  
+  def to_s
+    
+  end
+  
+  def lambda?
+    
+  end
+  
+  def binding
+    
+  end
+  
+  def curry
+    
+  end
+  
+  def source_location
+    
   end
   
 end

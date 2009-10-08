@@ -545,7 +545,7 @@ class Vienna::RubyParser < Racc::Parser
                     # used to be tAMPER
                     :tAMPER
                   else
-                    :tAMPER2
+                    '&'
                   end
         
         return [result, '&']
@@ -613,8 +613,10 @@ class Vienna::RubyParser < Racc::Parser
         when 'self'
           return [:kSELF, scanner.matched]
         when 'true'
+          self.lex_state = :EXPR_END
           return [:kTRUE, scanner.matched]
         when 'false'
+          self.lex_state = :EXPR_END
           return [:kFALSE, scanner.matched]
         when 'nil'
           return [:kNIL, scanner.matched]
@@ -622,8 +624,16 @@ class Vienna::RubyParser < Racc::Parser
         
         matched = scanner.matched
         
+        # labels
+        if scanner.scan(/\:/)
+          # puts "LABEL!!!!! #{matched + scanner.matched}"
+          return [:tLABEL, matched + scanner.matched]
+        end
+        
+        
         if self.lex_state == :EXPR_FNAME then
           if scanner.scan(/=(?:(?![~>=])|(?==>))/) then
+            self.lex_state = :EXPR_END
             return [:tIDENTIFIER, matched + scanner.matched]
           end
         end
