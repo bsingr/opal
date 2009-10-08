@@ -53,6 +53,16 @@ end
 self.set_value(10, for_key:'bob')
 self.set_value 100, for_key:'adam'
 
+# self.set_value 100, :for_key => 'adam'
+
+if true
+  puts 3
+else
+  puts 5
+end
+
+dave = 34
+
 # BOB
 
  # VN::Notification.test

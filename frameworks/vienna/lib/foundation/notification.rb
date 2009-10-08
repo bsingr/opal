@@ -53,20 +53,39 @@ module Vienna
       @@default_center ||= self.new()
     end
     
+    def initialize
+      super
+      @dispatch_table = []
+    end
+    
     def add_observer observer, selector:selector, name:name, object:obj
-      
+      @dispatch_table << {
+        :observer => observer,
+        :selector => selector,
+        :name => name,
+        :sender => obj,
+        :active => true
+      }
     end
     
     def post_notification notification
-      
+      post_notification_name notification.name, object:notification.object, user_info:notification.user_info
     end
     
     def post_notification_name name, object:obj
-      
+      post_notification_name name, object:obj, user_info:nil
     end
     
     def post_notification_name name, object:obj, user_info:info
-      
+      # fastest loop access
+      length = @dispatch_table.length
+      `for (var idx = 0; idx < length; idx++) {`
+        # idx as xstring to avoid it being a method call instead of a variable
+        the_object = @dispatch_table[`idx`] 
+        if the_object.name == name
+          the_object.observer.perform(the_object.selector, obj, info)
+        end
+      `} `
     end
     
     def remove_observer observer

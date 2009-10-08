@@ -29,9 +29,9 @@ module Vienna
   # Object = ::Object
   # Array = ::Array
   # Dictionary = ::Hash
-  Object = Object
-  Array = Array
-  Dictionary = Hash
+  Object = ::Object
+  Array = ::Array
+  Dictionary = ::Hash
   
 end
 

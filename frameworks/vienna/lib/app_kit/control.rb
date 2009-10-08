@@ -56,6 +56,209 @@ module Vienna
       end
     end
     
+    def size_to_fit
+        
+    end
+    
+    def calc_size
+      
+    end
+    
+    def cell
+      
+    end
+    
+    def cell=(a_cell)
+      
+    end
+    
+    def selected_cell
+      
+    end
+    
+    def target
+      
+    end
+    
+    def target=(obj)
+      
+    end
+    
+    def action
+      
+    end
+    
+    def action=(selector)
+      
+    end
+    
+    def tag
+      
+    end
+    
+    def tag=(tag)
+      
+    end
+    
+    def selected_tag
+      
+    end
+    
+    def ignores_multi_click=(flag)
+      
+    end
+    
+    def ignores_multi_click?
+      
+    end
+    
+    def send_action_on mask
+      
+    end
+    
+    def continuous?
+      
+    end
+    
+    def continuous=(flag)
+      
+    end
+    
+    def enabled?
+      
+    end
+    
+    def enabled=(flag)
+      
+    end
+    
+    def alignment
+      
+    end
+    
+    def alignment=(mode)
+      
+    end
+    
+    def font
+      
+    end
+    
+    def font=(font)
+      
+    end
+    
+    def formatter=(new_formatter)
+      
+    end
+    
+    def formatter
+      
+    end
+    
+    def object_value=(obj)
+      
+    end
+    
+    def string_value=(obj)
+      
+    end
+    
+    def int_value=(val)
+      
+    end
+    
+    def float_value=(val)
+      
+    end
+    
+    def double_value=(val)
+      
+    end
+    
+    def object_value
+      
+    end
+    
+    def string_value
+      
+    end
+    
+    def int_value
+      
+    end
+    
+    def float_value
+      
+    end
+    
+    def double_value
+      
+    end
+    
+    def needs_display
+      
+    end
+    
+    def update_cell cell
+      
+    end
+    
+    def update_cell_inside cell
+      
+    end
+    
+    def draw_cell_inside cell
+      
+    end
+    
+    def draw_cell cell
+      
+    end
+    
+    def select_cell cell
+      
+    end
+    
+    def send_action action, to:target
+      
+    end
+    
+    def take_int_value_from sender
+      
+    end
+    
+    def take_float_value_from sender
+      
+    end
+    
+    def take_double_value_from sender
+      
+    end
+    
+    def take_object_value_from sender
+      
+    end
+    
+    def take_string_value_from sender
+      
+    end
+    
+    def current_editor
+      
+    end
+    
+    def abort_editing
+      
+    end
+    
+    def validate_editing
+      
+    end
+    
+    def mouse_down the_event
+      
+    end
+    
   end
 end
-

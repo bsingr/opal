@@ -23,3 +23,10 @@ return self.$('puts',['Application did finish launching!!']);
 });
 VN.self.$('set_value:for_key:',[10,'bob']);
 VN.self.$('set_value:for_key:',[100,'adam']);
+if((e=true,e!==nil && e!==false)){
+VN.self.$('puts',[3]);
+}
+else{
+VN.self.$('puts',[5]);
+}
+var dave = 34;

@@ -123,6 +123,8 @@ module Vienna
         generate_return stmt, context
       when :colon2
         generate_colon2 stmt, context
+      when :colon3
+        generate_colon3 stmt, context
       else
         write "\n[Unknown type for generate_stmt: #{stmt}]\n"
       end
@@ -142,7 +144,7 @@ module Vienna
       
       if stmt[:compstmt]
         stmt[:compstmt].each do |c|
-          generate_stmt c, :instance => true, :full_stmt => true, :self => current_self, :last_stmt => (stmt[:compstmt].last == c ? true : false) # also check if the actual 'if' statement is last?
+          generate_stmt c, :instance => true, :full_stmt => true, :self => current_self, :last_stmt => context[:laststmt] && (stmt[:compstmt].last == c ? true : false)  # also check if the actual 'if' statement is last?
         end
       end
       
@@ -160,7 +162,7 @@ module Vienna
           
           if t[:compstmt]
             t[:compstmt].each do |c|
-              generate_stmt c, :instance => true, :full_stmt => true,:self => current_self, :last_stmt => (t[:compstmt].last == c ? true : false) # also check if the actual 'if' statement is last?
+              generate_stmt c, :instance => true, :full_stmt => true,:self => current_self, :last_stmt => context[:laststmt] && (t[:compstmt].last == c ? true : false) # also check if the actual 'if' statement is last?
             end
           end
                     
@@ -753,6 +755,12 @@ module Vienna
       # write '.$c_g('
       # generate_stmt stmt[:rhs], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self => context[:self]
       write ".$c_g('#{stmt[:rhs]}')"
+      write ";\n" if context[:full_stmt]
+    end
+    
+    def generate_colon3 stmt, context
+      write 'return ' if context[:last_stmt] and context[:full_stmt]
+      write "cObject.$c_g('#{stmt[:rhs]}')"
       write ";\n" if context[:full_stmt]
     end
     

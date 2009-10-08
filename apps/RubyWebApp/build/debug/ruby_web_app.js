@@ -1142,9 +1142,9 @@ cObject.$c_s('YES',true);
 cObject.$c_s('NO',false);
 
 var $VN_1 = RModule.define('Vienna');
-$VN_1.$c_s('Object',$VN_1.$c_g_full('Object'));
-$VN_1.$c_s('Array',$VN_1.$c_g_full('Array'));
-$VN_1.$c_s('Dictionary',$VN_1.$c_g_full('Hash'));
+$VN_1.$c_s('Object',cObject.$c_g('Object'));
+$VN_1.$c_s('Array',cObject.$c_g('Array'));
+$VN_1.$c_s('Dictionary',cObject.$c_g('Hash'));
 
 var $VN_1 = RModule.define('Vienna');
 $VN_1.$c_s('UNDEFINED_KEY_EXCEPTION','VNUndefinedKeyException');
@@ -1255,18 +1255,31 @@ $VN_2.$def_s('default_center',function(){
 var self=this;
 return (self.$k_d('@@default_center') ? self.$k_g('@@default_center') : self.$k_s('@@default_center',self.$('new',[])));
 });
+$VN_2.$def('initialize',function(){
+var self=this;
+self.$('super', []);
+return self.$i_s('@dispatch_table',[]);
+});
 $VN_2.$def('add_observer:selector:name:object:',function(observer,selector,name,obj){
 var self=this;
+return self.$i_g('@dispatch_table').$('<<',[VN.$h('observer', observer, 'selector', selector, 'name', name, 'sender', obj, 'active', true)]);
 });
 $VN_2.$def('post_notification',function(notification){
 var self=this;
+return self.$('post_notification_name:object:user_info:',[notification.$('name',[]),notification.$('object',[]),notification.$('user_info',[])]);
 });
 $VN_2.$def('post_notification_name:object:',function(name,obj){
 var self=this;
+return self.$('post_notification_name:object:user_info:',[name,obj,nil]);
 });
 $VN_2.$def('post_notification_name:object:user_info:',function(name,obj,info){
 var self=this;
-});
+var length = self.$i_g('@dispatch_table').$('length',[]);
+for (var idx = 0; idx < length; idx++) {var the_object = self.$i_g('@dispatch_table').$('[]',[idx]);
+if((e=the_object.$('name',[]).$('==',[name]),e!==nil && e!==false)){
+the_object.$('observer',[]).$('perform',[the_object.$('selector',[]),obj,info]);
+}
+} });
 $VN_2.$def('remove_observer',function(observer){
 var self=this;
 });
@@ -1295,3 +1308,10 @@ return self.$('puts',['Application did finish launching!!']);
 });
 VN.self.$('set_value:for_key:',[10,'bob']);
 VN.self.$('set_value:for_key:',[100,'adam']);
+if((e=true,e!==nil && e!==false)){
+VN.self.$('puts',[3]);
+}
+else{
+VN.self.$('puts',[5]);
+}
+var dave = 34;

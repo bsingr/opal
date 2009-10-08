@@ -330,10 +330,12 @@ class Vienna::RubyParser < Racc::Parser
       
       # Class variables
       elsif scanner.scan(/\@\@\w*/)
+        self.lex_state = :EXPR_END
         return [:tCVAR, scanner.matched]
       
       # Instance variables
       elsif scanner.scan(/\@\w*/)
+        self.lex_state = :EXPR_END
         return [:tIVAR, scanner.matched]
       
       
@@ -401,7 +403,7 @@ class Vienna::RubyParser < Racc::Parser
         end
         # puts 'HMHMHMHMHMHMHMHMHH'
         # puts lex_state
-        return [:tLBRACK, scanner.matched]
+        return ['[', scanner.matched]
       elsif scanner.scan(/\'(\\.|[^\'])*\'/)
         self.lex_state = :EXPR_END
         return [:tSTRING, scanner.matched[1..-2].gsub(/\\\\/, "\\").gsub(/\\'/, "'")]
@@ -480,7 +482,8 @@ class Vienna::RubyParser < Racc::Parser
         return [:tNMATCH, '!~']
       elsif scanner.scan(/\!/)
         self.lex_state = :EXPR_BEG
-        return [:tBANG, '!']
+        # puts 'HERE""""'
+        return ['!', '!']
       
       elsif scanner.scan(/\<\=\>/)
         return [:tCMP, '<=>']
@@ -493,6 +496,8 @@ class Vienna::RubyParser < Racc::Parser
         if (! [:EXPR_END, :EXPR_DOT, :EXPR_ENDARG, :EXPR_CLASS].include?(lex_state) && space_seen)
           return [:tLSHFT, '<<']
         end
+        self.lex_state = :EXPR_BEG
+        return [:tLSHFT, '<<']
       elsif scanner.scan(/\</)
         return [:tLT, '<']
       
