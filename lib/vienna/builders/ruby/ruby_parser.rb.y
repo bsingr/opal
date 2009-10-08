@@ -551,7 +551,13 @@ rule
             		    result = node :lparen, :stmt => val[1]
             		  }
             		| primary_value tCOLON2 tCONSTANT
+            		  {
+            		    result = node :colon2, :lhs => val[0], :rhs => val[2]
+            		  }
             		| tCOLON3 tCONSTANT
+            		  {
+            		    result = node :colon3, :rhs => val[1]
+            		  }
             		| tLBRACK aref_args ']'
             		  {
             		    result = node :array, :args => val[1]

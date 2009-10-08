@@ -48,6 +48,17 @@ module Vienna
     #              means that we need to insert a ';\n' after the currently
     #              processed statement, as to complete it).
     # 
+    #  :call_recv - when the stateent is the reciever of a method call. useful
+    #             for numbers, which need to be surrounded in parantheses
+    # 
+    #  :scope_constant - When true, only lookup in current class. dont look up
+    #             nearby when the current constant is the first in a list, or by
+    #             itself. in this case, a full search must take place so that
+    #             nearby and parent classes/modules are also searched. If the
+    #             constant is y in X::Y, then once we have X, we know Y must be
+    #             a direct child of X. IF we just had X, then X could be defined
+    #             locally, or in Object, or, as we want, might be nearby in the
+    #             same module, or indeed the parent module.
     def generate_tree tree
       push_nametable
       tree.each do |stmt|
@@ -110,6 +121,8 @@ module Vienna
         generate_lparen stmt, context
       when :return
         generate_return stmt, context
+      when :colon2
+        generate_colon2 stmt, context
       else
         write "\n[Unknown type for generate_stmt: #{stmt}]\n"
       end
@@ -379,6 +392,8 @@ module Vienna
     end
     
     def generate_label_styled_call call, context
+      write "return " if context[:last_stmt] and context[:full_stmt]
+      
       if call[:recv]
         generate_stmt call[:recv], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self =>context[:self], :call_recv => true
       else
@@ -419,6 +434,8 @@ module Vienna
         write "\nVN.require('#{build_path}');\n"
         return
       end
+      
+      write "return " if context[:last_stmt] and context[:full_stmt]
       
       if call[:recv]
         generate_stmt call[:recv], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self =>context[:self], :call_recv => true
@@ -560,12 +577,15 @@ module Vienna
     def generate_constant const, context
       write 'return ' if context[:last_stmt] and context[:full_stmt]
       
+      constant_scope = context[:scope_constant] ? '$c_g' : '$c_g_full'
+      
       if current_self == 'VN.self'
+        # nothing else to look around, so normal check..
         write "cObject.$c_g('#{const[:name]}')"
       elsif context[:instance]
-        write "#{current_self}.$klass.$c_g('#{const[:name]}')"
+        write "#{current_self}.$klass.#{constant_scope}('#{const[:name]}')"
       else
-        write "#{current_self}.$c_g('#{const[:name]}')"
+        write "#{current_self}.#{constant_scope}('#{const[:name]}')"
       end
       
       write ";\n" if context[:full_stmt]
@@ -598,10 +618,11 @@ module Vienna
       write 'return ' if context[:last_stmt] and context[:full_stmt]
       
       write '['
-      
-      stmt[:args].each do |a|
-        write ',' unless stmt[:args].first == a
-        generate_stmt a, context
+      if stmt[:args]
+        stmt[:args].each do |a|
+          write ',' unless stmt[:args].first == a
+          generate_stmt a, context
+        end
       end
       
       write ']'
@@ -720,6 +741,18 @@ module Vienna
         end
       end
       
+      write ";\n" if context[:full_stmt]
+    end
+    
+    
+    
+    # primay::CONST
+    def generate_colon2 stmt, context
+      write 'return ' if context[:last_stmt] and context[:full_stmt]
+      generate_stmt stmt[:lhs], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self => context[:self]
+      # write '.$c_g('
+      # generate_stmt stmt[:rhs], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self => context[:self]
+      write ".$c_g('#{stmt[:rhs]}')"
       write ";\n" if context[:full_stmt]
     end
     

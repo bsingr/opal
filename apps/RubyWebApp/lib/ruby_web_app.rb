@@ -41,6 +41,7 @@ module RubyWebApp
     
     def will_finish_launching (notification)
       puts 'Application will finish launching!'
+      VN::Application
     end
     
     def did_finish_launching (notification)
@@ -52,23 +53,27 @@ end
 self.set_value(10, for_key:'bob')
 self.set_value 100, for_key:'adam'
 
-adam = Object.allocate
-puts adam
-4 + 2
-puts (4 - 45)
+# BOB
 
-"bob" + 10
+ # VN::Notification.test
 
-adam = [12, 14, 15]
-
-def something
-  
-  return 4
-  
-  return 14 if adam.age
-  return 34, 35
-end
-
-# VN.self.$('kind_of?', [])
-
-self.kind_of?
+# adam = Object.allocate
+# puts adam
+# 4 + 2
+# puts (4 - 45)
+# 
+# "bob" + 10
+# 
+# adam = [12, 14, 15]
+# 
+# def something
+#   
+#   return 4
+#   
+#   return 14 if adam.age
+#   return 34, 35
+# end
+# 
+# # VN.self.$('kind_of?', [])
+# 
+# self.kind_of?

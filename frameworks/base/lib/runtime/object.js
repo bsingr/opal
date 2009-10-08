@@ -27,6 +27,7 @@
 var RObject = function(klass, type) {
   this.$klass = klass ;
   this.$type = type ;
+  this.$iv_tbl = {};
   return this;
 };
 
@@ -37,7 +38,7 @@ var RObject = function(klass, type) {
   @param val - Value
 */
 RObject.prototype.$i_s = function(id, val) {
-  this[id] = val ;
+  this.$iv_tbl[id] = val ;
   return val ;
 };
 
@@ -47,7 +48,7 @@ RObject.prototype.$i_s = function(id, val) {
   @param id - Ivar name
 */
 RObject.prototype.$i_g = function(id) {
-  return this[id] ;
+  return this.$iv_tbl[id] ;
 };
 
 /*

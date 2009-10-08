@@ -9,11 +9,11 @@ return self.$i_s('@user_info',info);
 });
 $VN_2.$def_s('notification_with_name:object:',function(name,obj){
 var self=this;
-self.$('notification_with_name:object:user_info:',[name,obj,nil]);
+return self.$('notification_with_name:object:user_info:',[name,obj,nil]);
 });
 $VN_2.$def_s('notification_with_name:object:user_info:',function(name,obj,info){
 var self=this;
-self.$('new',[name,obj,info]);
+return self.$('new',[name,obj,info]);
 });
 var $VN_2 = RClass.define_under($VN_1, 'NotificationCenter', cObject);
 $VN_2.$def_s('default_center',function(){

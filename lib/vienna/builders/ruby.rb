@@ -628,8 +628,10 @@ class Vienna::RubyParser < Racc::Parser
         matched = scanner.matched
         
         # labels
-        if scanner.scan(/\:/)
+        # avoid us picking up a mod/class divide name
+        if scanner.peek(2) != '::' and scanner.scan(/\:/)
           # puts "LABEL!!!!! #{matched + scanner.matched}"
+          # puts self.lex_state
           return [:tLABEL, matched + scanner.matched]
         end
         

@@ -90,7 +90,7 @@ var self=this;
 });
 $VN_1.$def('[]=',function(key,val){
 var self=this;
-self.$('store',[key,val]);
+return self.$('store',[key,val]);
 });
 $VN_1.$def('store',function(key,val){
 var self=this;
@@ -200,7 +200,7 @@ var self=this;
 });
 $VN_1.$def('member?',function(obj){
 var self=this;
-self.$('include?',[obj]);
+return self.$('include?',[obj]);
 });
 $VN_1.$def('has_key?',function(key){
 var self=this;
@@ -210,11 +210,11 @@ var self=this;
 });
 $VN_1.$def('key?',function(key){
 var self=this;
-self.$('has_key?',[key]);
+return self.$('has_key?',[key]);
 });
 $VN_1.$def('value?',function(val){
 var self=this;
-self.$('has_value?',[val]);
+return self.$('has_value?',[val]);
 });
 $VN_1.$def('compare_by_identity',function(){
 var self=this;

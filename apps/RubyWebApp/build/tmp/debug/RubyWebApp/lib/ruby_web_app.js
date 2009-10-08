@@ -10,30 +10,16 @@ var $VN_2 = RClass.define_under($VN_1, 'AppDelegate', cObject);
 $VN_2.$def('initialize_with:john:assign:key:',function(bob,adam,fors,adam){
 var self=this;
 self.$i_s('@adam',10);
-self.$('bob',[10,34,self.$i_g('@benny')]);
+return self.$('bob',[10,34,self.$i_g('@benny')]);
 });
 $VN_2.$def('will_finish_launching',function(notification){
 var self=this;
 self.$('puts',['Application will finish launching!']);
+return self.$klass.$c_g_full('VN').$c_g('Application');
 });
 $VN_2.$def('did_finish_launching',function(notification){
 var self=this;
-self.$('puts',['Application did finish launching!!']);
+return self.$('puts',['Application did finish launching!!']);
 });
 VN.self.$('set_value:for_key:',[10,'bob']);
 VN.self.$('set_value:for_key:',[100,'adam']);
-var adam = cObject.$c_g('Object').$('allocate',[]);
-VN.self.$('puts',[adam]);
-(4).$('+',[2]);
-VN.self.$('puts',[(4).$('-',[45])]);
-'bob'.$('+',[10]);
-adam = [12,14,15];
-VN.self.$def_s('something',function(){
-var self=this;
-return 4;
-if((e=adam.$('age',[]),e!==nil && e!==false)){
-return 14;
-}
-return [34,35];
-});
-VN.self.$('kind_of?',[]);

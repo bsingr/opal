@@ -1,2 +1,99 @@
-
-cModule.$def('freeze',function(mod_freeze){});cModule.$def('===',function(mod_eqq){});cModule.$def('==',function(obj_equal){});cModule.$def('<=>',function(mod_cmp){});cModule.$def('<',function(mod_lt){});cModule.$def('<=',function(class_inherited_p){});cModule.$def('>',function(mod_gt){});cModule.$def('>=',function(mod_ge){});cModule.$def('initialize_copy',function(mod_init_copy){});cModule.$def('to_s',function(mod_to_s){});cModule.$def('included_modules',function(mod_included_modules){});cModule.$def('include?',function(mod_include_p){});cModule.$def('name',function(mod_name){});cModule.$def('ancestors',function(mod_ancestors){});cModule.$define_private_method('attr',function(mod_attr){});cModule.$define_private_method('attr_reader',function(mod_attr_reader){});cModule.$define_private_method('attr_writer',function(mod_attr_writer){});cModule.$define_private_method('attr_accessor',function(mod_attr_accessor){});cModule.$define_alloc_func(function(module_s_alloc){});cModule.$def('initialize',function(mod_initialize){});cModule.$def('instance_methods',function(class_instance_methods){});cModule.$def('public_instance_methods',function(class_public_instance_methods){});cModule.$def('protected_instance_methods',function(class_protected_instance_methods){});cModule.$def('private_instance_methods',function(class_private_instance_methods){});cModule.$def('constants',function(mod_constants){});cModule.$def('const_get',function(mod_const_get){});cModule.$def('const_set',function(mod_const_set){});cModule.$def('const_defined?',function(mod_const_defined){});cModule.$define_private_method('remove_const',function(mod_remove_const){});cModule.$def('const_missing',function(mod_const_missing){});cModule.$def('class_variables',function(mod_class_variables){});cModule.$def('remove_class_variable',function(mod_remove_cvar){});cModule.$def('class_variable_get',function(mod_cvar_get){});cModule.$def('class_variable_set',function(mod_cvar_set){});cModule.$def('class_variable_defined?',function(mod_cvar_defined){});
+cModule.$define_alloc_func(function(module_s_alloc) {
+  
+});var $VN_1 = RClass.define('Module', cObject);
+$VN_1.$def('freeze',function(){
+var self=this;
+});
+$VN_1.$def('===',function(){
+var self=this;
+});
+$VN_1.$def('==',function(){
+var self=this;
+});
+$VN_1.$def('<=>',function(){
+var self=this;
+});
+$VN_1.$def('initialize_copy',function(){
+var self=this;
+});
+$VN_1.$def('to_s',function(){
+var self=this;
+});
+$VN_1.$def('included_modules',function(){
+var self=this;
+});
+$VN_1.$def('include?',function(){
+var self=this;
+});
+$VN_1.$def('name',function(){
+var self=this;
+});
+$VN_1.$def('ancestors',function(){
+var self=this;
+});
+$VN_1.$def('attr',function(){
+var self=this;
+});
+$VN_1.$def('attr_reader',function(){
+var self=this;
+console.log(this);var argname = arguments[0];
+    this.$def(arguments[0], function() {
+      return this.$i_g('@' + argname);
+    });});
+$VN_1.$def('attr_writer',function(){
+var self=this;
+console.log("calling writer!");});
+$VN_1.$def('attr_accessor',function(){
+var self=this;
+for (var i = 0; i < arguments.length; i++) {
+      this.$('attr_reader', [arguments[i]]);
+      this.$('attr_writer', [arguments[i]]);
+    }});
+$VN_1.$def('initialize',function(){
+var self=this;
+});
+$VN_1.$def('instance_methods',function(){
+var self=this;
+});
+$VN_1.$def('public_instance_methods',function(){
+var self=this;
+});
+$VN_1.$def('protected_instance_methods',function(){
+var self=this;
+});
+$VN_1.$def('private_instance_methods',function(){
+var self=this;
+});
+$VN_1.$def('constants',function(){
+var self=this;
+});
+$VN_1.$def('const_get',function(){
+var self=this;
+});
+$VN_1.$def('const_set',function(){
+var self=this;
+});
+$VN_1.$def('const_defined?',function(){
+var self=this;
+});
+$VN_1.$def('remove_const',function(){
+var self=this;
+});
+$VN_1.$def('const_missing',function(){
+var self=this;
+});
+$VN_1.$def('class_variables',function(){
+var self=this;
+});
+$VN_1.$def('remove_class_variable',function(){
+var self=this;
+});
+$VN_1.$def('class_variable_get',function(){
+var self=this;
+});
+$VN_1.$def('class_variable_set',function(){
+var self=this;
+});
+$VN_1.$def('class_variable_defined?',function(){
+var self=this;
+});

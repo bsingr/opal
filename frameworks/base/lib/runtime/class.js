@@ -29,6 +29,8 @@ var RClass = function(klass, super_klass) {
  this.$super = super_klass ;
  this.$type = VN.CLASS ;
  this.$singleton = false ;
+ this.$m_tbl = { };
+ this.$iv_tbl = { };
  return this ;
 };
 
@@ -105,6 +107,8 @@ RClass.define_under = function(outer, id, super_klass) {
     VN.warning('no super class for `' + VN.class2name(outer), + '::' + id + '`, Object assumed');
   }
   klass = RClass.define_class_id(id, super_klass);
+  // sets that the klass knows about its outer, i.e. classes within modules know about the module
+  klass.$parent = outer;
   // VN.set_class_path(klass, outer, id);
   // VN.const_set(outer, id, klass);
   outer.$c_s(id, klass);
@@ -144,7 +148,7 @@ RClass.make_metametaclass = function(metaclass) {
     super_of_metaclass = super_of_metaclass.$super;
   }
 
-  metametaclass.$super = super_of_metaclass.$klass.$ivar_get('__attached__') == super_of_metaclass ? super_of_metaclass.$klass : RClass.make_metametaclass(super_of_metaclass);
+  metametaclass.$super = super_of_metaclass.$klass.$i_g('__attached__') == super_of_metaclass ? super_of_metaclass.$klass : RClass.make_metametaclass(super_of_metaclass);
   return metametaclass;
 };
 
@@ -198,7 +202,7 @@ RClass.singleton_class = function(obj) {
     VN.type_error('can\'t define singleton');
   }
 
-  if (obj.$klass.$singleton && obj.$klass['__attached__'] == obj) {
+  if (obj.$klass.$singleton && obj.$klass.$i_g('__attached__') == obj) {
     klass = obj.$klass;
   }
   else {
@@ -208,7 +212,7 @@ RClass.singleton_class = function(obj) {
   }
 
   if (obj.$type == VN.CLASS) {
-    if (klass.$klass.$ivar_get('__attached__') != klass) {
+    if (klass.$klass.$i_g('__attached__') != klass) {
       RClass.make_metametaclass(klass);
     }
   }
@@ -217,7 +221,7 @@ RClass.singleton_class = function(obj) {
 };
 
 RClass.prototype.$name = function(id) {
-  this['__classid__'] = id;
+  this.$i_s('__classid__', id);
 };
 
 RClass.prototype.$class_name = function() {
@@ -245,7 +249,7 @@ RClass.prototype.$make_metaclass = function(super_klass) {
 
 RClass.prototype.$singleton_class_attached = function(obj) {
   if (this.$singleton == true) {
-    this['__attached__'] = obj;
+    this.$i_s('__attached__', obj);
   }
 };
 
@@ -265,7 +269,7 @@ RClass.prototype.$k_g = function(id) {
   var tmp = this;
   var value;
   while(tmp) {
-    if (value = tmp[id]) {
+    if (value = tmp.$iv_tbl[id]) {
       return value;
     }
     tmp = tmp.$super;
@@ -281,7 +285,7 @@ RClass.prototype.$k_d = function(id) {
   var tmp = this;
   var value;
   while(tmp) {
-    if (value = tmp[id]) {
+    if (value = tmp.$iv_tbl[id]) {
       return true;
     }
     tmp = tmp.$super;
@@ -293,15 +297,15 @@ RClass.prototype.$k_d = function(id) {
   cvar_set (klassvar_set)
 */
 RClass.prototype.$k_s = function(id, val) {
-  return this[id] = val;
+  return this.$iv_tbl[id] = val;
 };
 
-RClass.prototype.$ivar_get = function(id) {
-  return this[id];
+RClass.prototype.$i_g = function(id) {
+  return this.$iv_tbl[id];
 };
 
-RClass.prototype.$ivar_set = function(id, val) {
-  this[id] = val;
+RClass.prototype.$i_s = function(id, val) {
+  this.$iv_tbl[id] = val;
   return val ;
 }
 
@@ -322,7 +326,7 @@ RClass.prototype.$undef_method = function(name, func) {
 };
 
 RClass.prototype.$add_method = function(name, func) {
-  this[name] = func;
+  this.$m_tbl[name] = func;
 };
 
 RClass.prototype.$def_s = function(name, func) {
@@ -346,7 +350,7 @@ RClass.prototype.$search_method = function(id) {
   // console.log(id);
   // console.log(klass);
   // return null ;
-  while (!(func = klass[id])) {
+  while (!(func = klass.$m_tbl[id])) {
     klass = klass.$super;
     // console.log(this.$super.__classid__);
     if (!klass) return undefined;
@@ -361,19 +365,6 @@ RClass.prototype.$ = function(id, args) {
   return method.apply(this, args) ;
 };
 
-// RClass.prototype.$cvar_get = function(id) {
-//   var tmp = this;
-//   var value ;
-//   while (tmp) {
-//     if (value = tmp[id]) {
-//       return value;
-//     }
-//     tmp = tmp.$super;
-//   }
-//   VN.name_error(id, 'uninitialized class variable ' + id + ' in ' + klass.name);
-//   return nil;
-// };
-
 /**
   $const_set
 */
@@ -382,7 +373,7 @@ RClass.prototype.$c_s = function(id, val) {
 };
 
 RClass.prototype.$mod_av_set = function(id, val, isconst) {
-  this[id] = val ;
+  this.$iv_tbl[id] = val ;
 };
 
 /**
@@ -392,13 +383,64 @@ RClass.prototype.$c_g = function(id) {
   var tmp = this;
   var value;
   while (tmp) {
-    if (value = tmp[id]) {
+    if (value = tmp.$iv_tbl[id]) {
       return value;
     }
     tmp = tmp.$super;
   }
-  VN.name_error(id, 'uninitialized constant ' + id + ' in ' + klass.name);
+  VN.name_error(id, 'uninitialized constant ' + id + ' in ' + this.name);
   return nil;
+};
+
+/**
+  Get constant, but look in the classes' parent as well
+  -const_get_full (full search)
+  Note: This does not work within objects copied from another context. E.g, from VN::Object, we cannot
+  search for things indside Vienna... just doesnt work - no $parent on top object, but we dont want to
+  chnage this..
+*/
+RClass.prototype.$c_g_full = function(id) {
+  var tmp = this;
+  var value;
+  while (tmp) {
+    if (value = tmp.$iv_tbl[id]) {
+      return value;
+    }
+    tmp = tmp.$super;
+  }
+  // now try parent instead..
+  var tmp = this.$parent;
+  while (tmp) {
+    if (value = tmp.$iv_tbl[id]) {
+      return value;
+    }
+    tmp = tmp.$parent
+  }
+  VN.name_error(id, 'uninitialized constant ' + id + ' in ' + this.name);
+  return nil;
+};
+
+/**
+  SAME AS ABOVE BUT CHECK IF DEFINED
+*/
+RClass.prototype.$c_d_full = function(id) {
+  var tmp = this;
+  var value;
+  while (tmp) {
+    if (value = tmp.$iv_tbl[id]) {
+      return true;
+    }
+    tmp = tmp.$super;
+  }
+  // now try parent instead..
+  var tmp = this.$parent;
+  while (tmp) {
+    if (value = tmp.$iv_tbl[id]) {
+      return true;
+    }
+    tmp = tmp.$parent
+  }
+  return false;
 };
 
 /**
@@ -408,7 +450,7 @@ RClass.prototype.$c_d = function(id) {
   var tmp = this;
   var value;
   while (tmp) {
-    if (value = tmp[id]) {
+    if (value = tmp.$iv_tbl[id]) {
       return true;
     }
     tmp = tmp.$super;
@@ -420,14 +462,14 @@ RClass.prototype.$c_d = function(id) {
   const_defined_at
 */
 RClass.prototype.$c_d_a = function(id) {
-  return (this[id]) ? true : false;
+  return (this.$iv_tbl[id]) ? true : false;
 };
 
 /**
   const_get_at
 */
 RClass.prototype.$c_g_a = function(id) {
-  return (this[id]) ? this[id] : nil;
+  return (this.$iv_tbl[id]) ? this.$iv_tbl[id] : nil;
 };
 
 RClass.prototype.$define_const = function(id, val) {

@@ -32,7 +32,7 @@ var self=this;
 });
 $VN_1.$def('+',function(obj){
 var self=this;
-self.$('puts',['wow']);
+return self.$('puts',['wow']);
 });
 $VN_1.$def('(',function(obj){
 var self=this;

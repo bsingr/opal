@@ -10,7 +10,7 @@ var self=this;
 });
 $VN_2.$def('set_value:for_key:',function(value,key){
 var self=this;
-self.$('puts',[['Setting value for ',(key)].join('')]);
+return self.$('puts',[['Setting value for ',(key)].join('')]);
 });
 $VN_2.$def('validate_value:for_key:error:',function(value,key,out_error){
 var self=this;
