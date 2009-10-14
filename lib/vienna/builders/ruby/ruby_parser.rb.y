@@ -223,7 +223,13 @@ rule
         	      | primary_value tCOLON2 operation2 command_args
       		      | primary_value tCOLON2 operation2 command_args cmd_brace_block
       		      | kSUPER command_args
+      		        {
+      		          result = node :super, :call_args => val[1]
+      		        }
         	      | kYIELD command_args
+        	        {
+        	          result = node :yield, :call_args => val[1]
+        	        }
 
             mlhs: mlhs_basic
   	            | tLPAREN mlhs_inner rparen
@@ -262,10 +268,13 @@ rule
 
              lhs: variable
 		            | primary_value '[' opt_call_args rbracket
+		              {
+		                result = node :call, :recv => val[0], :meth => '[]', :args => val[2]
+		              }
             		| primary_value '.' tIDENTIFIER
             		  {
-            		    puts 'ZABADOO'
-            		  }
+          		      result = node :call, :recv => val[0], :meth => val[2]
+                  }
             		| primary_value tCOLON2 tIDENTIFIER
             		| primary_value '.' tCONSTANT
             		| primary_value tCOLON2 tCONSTANT
@@ -571,18 +580,27 @@ rule
             		    result = node :return
             		  }
             		| kYIELD '(' call_args rparen
+            		  {
+        	          result = node :yield, :call_args => val[2]
+        	        }
             		| kYIELD '(' rparen
+            		  {
+        	          result = node :yield
+        	        }
             		| kYIELD
+            		  {
+        	          result = node :yield
+        	        }
             		| kDEFined opt_nl '(' expr rparen
             		| kNOT '(' expr rparen
             		| kNOT '(' rparen
             		| operation brace_block
             		  {
-            		    puts 1
+                    # puts 1
             		  }
             		| method_call
             		  {
-            		    puts 2
+            		    # puts 2
             		  }
             		| method_call brace_block
             		  {
@@ -592,16 +610,22 @@ rule
             		| tLAMBDA lambda
             		| k_if expr_value then compstmt if_tail k_end
             		  {
-            		    result = self.node :if, :expr => val[1], :compstmt => val[3], :tail => val[4]
+            		    result = self.node :if, :expr => val[1], :stmt => val[3], :tail => val[4]
             		  }
             		| k_unless expr_value then compstmt opt_else k_end
             		  {
-            		    result = self.node :unless, :expr => val[1], :compstmt => val[3], :tail => val[4]
+            		    result = self.node :unless, :expr => val[1], :stmt => val[3], :tail => val[4]
             		  }
             		| k_while expr_value do compstmt k_end
             		| k_until expr_value do compstmt k_end
             		| k_case expr_value opt_terms case_body k_end
+            		  {
+            		    result = node :case, :expr => val[1], :body => val[3]
+            		  }
             		| k_case opt_terms case_body k_end
+            		  {
+            		    result = node :case, :expr => nil, :body => val[2]
+            		  }
             		| k_for for_var kIN expr_value do compstmt k_end
             		| k_class cpath superclass bodystmt k_end
             		  {
@@ -662,7 +686,7 @@ rule
                   }
               	| kELSIF expr_value then compstmt if_tail
               	  {
-              	    result = [self.node(:elsif, :expr => val[1], :compstmt => val[3])] + val[4]
+              	    result = [self.node(:elsif, :expr => val[1], :stmt => val[3])] + val[4]
               	  }
 
         opt_else: none
@@ -671,7 +695,7 @@ rule
                   }
               	| kELSE compstmt
               	  {
-              	    result = [self.node(:else, :compstmt => val[1])]
+              	    result = [self.node(:else, :stmt => val[1])]
               	  }
 
          for_var: lhs
@@ -710,11 +734,17 @@ rule
             		| f_block_arg
 
  opt_block_param: none
+                  {
+                    result = nil
+                  }
               	| block_param_def
 
  block_param_def: '|' opt_bv_decl '|'
             		| tOROP
             		| '|' block_param opt_bv_decl '|'
+            		  {
+            		    result = val[1]
+            		  }
 
      opt_bv_decl: none
               	| ';' bv_decls
@@ -758,7 +788,13 @@ rule
             		| primary_value '.' paren_args
             		| primary_value tCOLON2 paren_args
             		| kSUPER paren_args
+            		  {
+            		    result = node :super, :call_args => val[1]
+            		  }
             		| kSUPER
+            		  {
+            		    result = node :super, :call_args => nil
+            		  }
             		| primary_value '[' opt_call_args rbracket
             		  {
                     result = node :call, :recv => val[0], :meth => '[]', :call_args => val[2]
@@ -771,12 +807,18 @@ rule
                   }
             		| kDO opt_block_param compstmt kEND
             		  {
-            		    result = node :brace_block, :params => val[1], :compstmt => val[2]
+            		    result = node :brace_block, :params => val[1], :stmt => val[2]
             		  }
 
        case_body: kWHEN args then compstmt cases
+                  {
+                    result = [node(:when, :args => val[1], :stmt => val[3])] + val[4]
+                  }
 
            cases: opt_else
+                  {
+                    result = val[0]
+                  }
               	| case_body
 
       opt_rescue: kRESCUE exc_list exc_var then compstmt opt_rescue
@@ -951,7 +993,13 @@ xstring_contents:
   	            | tBACK_REF
 
       superclass: term
+                  {
+                    result = nil
+                  }
             		| '<' expr_value term
+            		  {
+            		    result = node :superclass, :expr => val[1]
+            		  }
             		| error term { puts 'OMFG' }
 
        f_arglist: '(' f_args rparen

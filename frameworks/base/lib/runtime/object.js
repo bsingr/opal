@@ -25,6 +25,10 @@
  */
 
 var RObject = function(klass, type) {
+  
+  // console.log('in here!');
+  // console.log(klass);
+  
   this.$klass = klass ;
   this.$type = type ;
   this.$iv_tbl = {};
@@ -59,6 +63,54 @@ RObject.prototype.$i_g = function(id) {
 RObject.prototype.$ = function(id, args) {
   var method = this.$klass.$search_method(id);
   if (!method) throw 'RObject#call cannot find method: ' + id ;
+  return method.apply(this, args) ;
+};
+
+/**
+  new calling func
+*/
+var VN$ = function(self, id) {
+  // console.log(self);
+  // console.log(id);
+  
+  var method = self.$klass.$search_method(id);
+  if (!method) throw 'RObject#call cannot find method: ' + id ;
+  // console.log(Array.prototype.slice.call(arguments));
+  switch(arguments.length) {
+    case 2: return method(self, id);
+    case 3: return method(self, id, arguments[2]);
+    case 4: return method(self, id, arguments[2], arguments[3]);
+    case 5: return method(self, id, arguments[2], arguments[3], arguments[4]);
+  }
+  
+  return method.apply(self, arguments);
+};
+
+var VN$sup = function(from, self, id, args) {
+  var method = self.$klass.$search_super_method(from, id);
+  if (!method) throw 'RObject#call cannot find super method for: ' + id ;
+  
+  switch(args.length) {
+    case 0: return method(self, id);
+    case 1: return method(self, id, args[0]);
+    case 2: return method(self, id, args[0], args[1]);
+    case 3: return method(self, id, args[0], args[1], args[2]);
+  }
+  
+  return method.apply(self, arguments);
+};
+
+/**
+  Call super
+  - from = callee
+*/
+RObject.prototype.$sup = function(from, id, args) {
+  // console.log('callee');
+  // console.log(from);
+  var method = this.$klass.$search_super_method(from, id);
+  if (!method) throw 'RObject#call cannot find super method for: ' + id ;
+  // console.log('got super');
+  // console.log(method);
   return method.apply(this, args) ;
 };
 

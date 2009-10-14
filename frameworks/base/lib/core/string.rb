@@ -27,8 +27,6 @@
 `String.prototype.$klass = cString
 String.prototype.$type = VN.STRING;
 
-String.prototype.$ = RObject.prototype.$;
-
 cString.$define_alloc_func(function() {
   return new String();
 }); `
@@ -92,11 +90,11 @@ class String
   end
   
   def length
-    `return this.length;`
+    `return self.length;`
   end
   
   def size
-    `return this.length`
+    `return self.length`
   end
   
   def empty?
@@ -152,7 +150,7 @@ class String
   end
   
   def to_s
-    `return new String(this);`
+    `return new String(self);`
   end
   
   def to_str
@@ -160,7 +158,7 @@ class String
   end
   
   def inspect
-    `return new String('"' + this + '"');`
+    `return new String('"' + self + '"');`
   end
   
   def dump
@@ -232,7 +230,7 @@ class String
   end
   
   def to_sym
-    `return new String(this);`
+    `return new String(self);`
   end
   
   def ord

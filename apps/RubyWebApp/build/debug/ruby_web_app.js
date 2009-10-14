@@ -1,7 +1,7 @@
 
 
 var nil=null;var VN={CLASS:0,MODULE:1,OBJECT:2,BOOLEAN:3,STRING:4,ARRAY:5,NUMBER:6,PROC:7};VN.warning=function(msg){console.log('Vienna warning: '+msg);};VN.type_error=function(msg){throw'Vienna TypeError: '+msg;};VN.name_error=function(msg){throw'Vienna NameError: '+msg;}
-VN.top_const_get=function(id){return undefined;};VN.define_global_const=function(id,val){cObject.$define_const(id,val);};VN.class_tbl={};VN.global_tbl={};VN.gvar_get=function(id){};VN.gvar_set=function(id,val){};VN.boot_defclass=function(id,super_klass){var obj=RClass.boot(super_klass);obj.$name(id);(cObject?cObject:obj).$c_s(id,obj);return obj;};VN.boot_defmetametaclass=function(klass,metametaclass){klass.$klass.$klass=metametaclass;};VN.obj_alloc=function(klass){var obj=klass.$('allocate',[]);return obj;};VN.class_allocate_instance=function(){var obj=new RObject(this,VN.OBJECT);return obj;};VN.obj_dummy=function(){return nil;};VN.equal=function(obj){if(obj==this)return true;var result=this.$funcall('==',[obj]);if(result)return true;return false;};VN.eql=function(obj){return this.$funcall('==',[obj]);};VN.obj_equal=function(obj){return(obj==this)?true:false;};
+VN.top_const_get=function(id){return undefined;};VN.define_global_const=function(id,val){cObject.$define_const(id,val);};VN.class_tbl={};VN.global_tbl={};VN.gvar_get=function(id){};VN.gvar_set=function(id,val){};VN.boot_defclass=function(id,super_klass){var obj=RClass.boot(super_klass);obj.$name(id);(cObject?cObject:obj).$c_s(id,obj);return obj;};VN.boot_defmetametaclass=function(klass,metametaclass){klass.$klass.$klass=metametaclass;};VN.obj_alloc=function(klass){var obj=VN$(klass,'allocate');return obj;};VN.class_allocate_instance=function(){var obj=new RObject(this,VN.OBJECT);return obj;};VN.obj_dummy=function(){return nil;};VN.equal=function(obj){if(obj==this)return true;var result=this.$funcall('==',[obj]);if(result)return true;return false;};VN.eql=function(obj){return this.$funcall('==',[obj]);};VN.obj_equal=function(obj){return(obj==this)?true:false;};
 
 var RClass=function(klass,super_klass){this.$klass=klass;this.$super=super_klass;this.$type=VN.CLASS;this.$singleton=false;this.$m_tbl={};this.$iv_tbl={};return this;};RClass.inherited=function(super_klass,klass){if(!super_klass)super_klass=cObject;return super_klass.$('inherited',[klass]);};RClass.define=function(id,super_klass){var klass;if(cObject.$c_d(id)){klass=cObject.$c_g(id);if(klass.$type!=VN.CLASS){VN.type_error(id+' is not a class');}
 if(klass.$super!=super_klass){if(klass!=cObject){VN.name_error(id+' is already defined');}}
@@ -29,6 +29,8 @@ tmp=tmp.$super;}
 return false;}
 RClass.prototype.$k_s=function(id,val){return this.$iv_tbl[id]=val;};RClass.prototype.$i_g=function(id){return this.$iv_tbl[id];};RClass.prototype.$i_s=function(id,val){this.$iv_tbl[id]=val;return val;}
 RClass.prototype.$def=function(name,func){this.$add_method(name,func);};RClass.prototype.$define_protected_method=function(name,func){this.$add_method(name,func);};RClass.prototype.$define_private_method=function(name,func){this.$add_method(name,func);};RClass.prototype.$undef_method=function(name,func){this.$add_method(name,func);};RClass.prototype.$add_method=function(name,func){this.$m_tbl[name]=func;};RClass.prototype.$def_s=function(name,func){RClass.singleton_class(this).$def(name,func);};RClass.prototype.$define_alias=function(id1,id2){};RClass.prototype.$define_alloc_func=function(func){RClass.singleton_class(this).$add_method('allocate',func);};RClass.prototype.$undef_alloc_func=function(){RClass.singleton_class(this).$add_method('allocate',null);};RClass.prototype.$search_method=function(id){var klass=this;var func;while(!(func=klass.$m_tbl[id])){klass=klass.$super;if(!klass)return undefined;}
+return func;};RClass.prototype.$search_super_method=function(from,id){var klass=this;var func;while(!((func=klass.$m_tbl[id])&&func==from)){klass=klass.$super;if(!klass)return undefined;}
+klass=klass.$super;if(!klass)return undefined;while(!(func=klass.$m_tbl[id])){klass=klass.$super;if(!klass)return undefined;}
 return func;};RClass.prototype.$=function(id,args){var method=this.$klass.$search_method(id);if(!method)throw'VN#funcall cannot find method: '+id;return method.apply(this,args);};RClass.prototype.$c_s=function(id,val){this.$mod_av_set(id,val,true);};RClass.prototype.$mod_av_set=function(id,val,isconst){this.$iv_tbl[id]=val;};RClass.prototype.$c_g=function(id){var tmp=this;var value;while(tmp){if(value=tmp.$iv_tbl[id]){return value;}
 tmp=tmp.$super;}
 VN.name_error(id,'uninitialized constant '+id+' in '+this.name);return nil;};RClass.prototype.$c_g_full=function(id){var tmp=this;var value;while(tmp){if(value=tmp.$iv_tbl[id]){return value;}
@@ -49,102 +51,74 @@ module=RModule.define_module_id(id);VN.class_tbl[id]=module;cObject.$c_s(id,modu
 VN.type_error(id+' is not a module');}
 module=VN.define_module_id(id);VN.const_set(outer,id,module);VN.set_class_path(module,outer,name);return module;};RModule.define_module_id=function(id){var mdl=RModule.create();mdl.$name(id);return mdl;};RModule.create=function(){var mdl=RClass.alloc(VN.MODULE,cModule);mdl.$super=cObject;return mdl;};RModule.include=function(klass,module){RModule.include_class_new(module,klass);};RModule.include_class_new=function(mod,sup){var klass=RClass.alloc(VN.T_ICLASS,cClass);klass.iv_tbl=mod.iv_tbl;klass.m_tbl=mod.m_tbl;klass.$super=sup;klass.$klass=mod;return klass;};
 
-var RObject=function(klass,type){this.$klass=klass;this.$type=type;this.$iv_tbl={};return this;};RObject.prototype.$i_s=function(id,val){this.$iv_tbl[id]=val;return val;};RObject.prototype.$i_g=function(id){return this.$iv_tbl[id];};RObject.prototype.$=function(id,args){var method=this.$klass.$search_method(id);if(!method)throw'RObject#call cannot find method: '+id;return method.apply(this,args);};RObject.prototype.$def_s=RClass.prototype.$def_s;RObject.prototype.$make_metaclass=RClass.prototype.$make_metaclass;
+var RObject=function(klass,type){this.$klass=klass;this.$type=type;this.$iv_tbl={};return this;};RObject.prototype.$i_s=function(id,val){this.$iv_tbl[id]=val;return val;};RObject.prototype.$i_g=function(id){return this.$iv_tbl[id];};RObject.prototype.$=function(id,args){var method=this.$klass.$search_method(id);if(!method)throw'RObject#call cannot find method: '+id;return method.apply(this,args);};var VN$=function(self,id){var method=self.$klass.$search_method(id);if(!method)throw'RObject#call cannot find method: '+id;switch(arguments.length){case 2:return method(self,id);case 3:return method(self,id,arguments[2]);case 4:return method(self,id,arguments[2],arguments[3]);case 5:return method(self,id,arguments[2],arguments[3],arguments[4]);}
+return method.apply(self,arguments);};var VN$sup=function(from,self,id,args){var method=self.$klass.$search_super_method(from,id);if(!method)throw'RObject#call cannot find super method for: '+id;switch(args.length){case 0:return method(self,id);case 1:return method(self,id,args[0]);case 2:return method(self,id,args[0],args[1]);case 3:return method(self,id,args[0],args[1],args[2]);}
+return method.apply(self,arguments);};RObject.prototype.$sup=function(from,id,args){var method=this.$klass.$search_super_method(from,id);if(!method)throw'RObject#call cannot find super method for: '+id;return method.apply(this,args);};RObject.prototype.$def_s=RClass.prototype.$def_s;RObject.prototype.$make_metaclass=RClass.prototype.$make_metaclass;
 
-var metaclass;var cBasicObject=VN.boot_defclass('BasicObject',null);var cObject=VN.boot_defclass('Object',cBasicObject);var cModule=VN.boot_defclass('Module',cObject);var cClass=VN.boot_defclass('Class',cModule);metaclass=cBasicObject.$make_metaclass(cClass);metaclass=cObject.$make_metaclass(metaclass);metaclass=cModule.$make_metaclass(metaclass);metaclass=cClass.$make_metaclass(metaclass);VN.boot_defmetametaclass(cModule,metaclass);VN.boot_defmetametaclass(cObject,metaclass);VN.boot_defmetametaclass(cBasicObject,metaclass);cBasicObject.$define_private_method('initialize',function(){return nil;});cBasicObject.$define_alloc_func(function(){var obj=new RObject(this,VN.OBJECT);return obj;});cBasicObject.$def('==',function(obj){return(obj==this)?true:false;});cBasicObject.$def('equal?',function(obj){return(obj==this)?true:false;});cBasicObject.$def('!',function(){});cBasicObject.$def('!=',function(){});cBasicObject.$define_private_method('singleton_method_added',function(){return nil;});cBasicObject.$define_private_method('singleton_method_removed',function(){return nil;});cBasicObject.$define_private_method('singleton_method_undefined',function(){return nil;});cBasicObject.$def('puts',function(val){console.log(val);});mKernel=RModule.define("Kernel");RModule.include(cObject,mKernel);cClass.$define_private_method('inherited',function(){return nil;});cModule.$define_private_method('included',function(){return nil;});cModule.$define_private_method('extended',function(){return nil;});cModule.$define_private_method('method_added',function(){return nil;});cModule.$define_private_method('method_removed',function(){return nil;});cModule.$define_private_method('method_undefined',function(){return nil;});var cNilClass=RClass.define('NilClass',cObject);var cBoolean=RClass.define('Boolean',cObject);var cArray=RClass.define('Array',cObject);var cString=RClass.define('String',cObject);var cNumeric=RClass.define('Numeric',cObject);
+var metaclass;var cBasicObject=VN.boot_defclass('BasicObject',null);var cObject=VN.boot_defclass('Object',cBasicObject);var cModule=VN.boot_defclass('Module',cObject);var cClass=VN.boot_defclass('Class',cModule);metaclass=cBasicObject.$make_metaclass(cClass);metaclass=cObject.$make_metaclass(metaclass);metaclass=cModule.$make_metaclass(metaclass);metaclass=cClass.$make_metaclass(metaclass);VN.boot_defmetametaclass(cModule,metaclass);VN.boot_defmetametaclass(cObject,metaclass);VN.boot_defmetametaclass(cBasicObject,metaclass);cBasicObject.$define_private_method('initialize',function(){return nil;});cBasicObject.$define_alloc_func(function(self,_cmd){var obj=new RObject(self,VN.OBJECT);return obj;});cBasicObject.$def('==',function(self,_cmd,obj){return(self==obj)?true:false;});cBasicObject.$def('equal?',function(self,_cmd,obj){return(self==obj)?true:false;});cBasicObject.$def('!',function(self,_cmd,obj){});cBasicObject.$def('!=',function(self,_cmd,obj){});cBasicObject.$define_private_method('singleton_method_added',function(){return nil;});cBasicObject.$define_private_method('singleton_method_removed',function(){return nil;});cBasicObject.$define_private_method('singleton_method_undefined',function(){return nil;});cBasicObject.$def('puts',function(self,_cmd,val){console.log(val);});cBasicObject.$def('===',function(self,_cmd,other){return self==other;});mKernel=RModule.define("Kernel");RModule.include(cObject,mKernel);cClass.$define_private_method('inherited',function(){return nil;});cModule.$define_private_method('included',function(){return nil;});cModule.$define_private_method('extended',function(){return nil;});cModule.$define_private_method('method_added',function(){return nil;});cModule.$define_private_method('method_removed',function(){return nil;});cModule.$define_private_method('method_undefined',function(){return nil;});var cNilClass=RClass.define('NilClass',cObject);var cBoolean=RClass.define('Boolean',cObject);var cArray=RClass.define('Array',cObject);var cString=RClass.define('String',cObject);var cNumeric=RClass.define('Numeric',cObject);
 var $VN_1 = RModule.define('Kernel');
-$VN_1.$def('nil?',function(){
-var self=this;
+$VN_1.$def('nil?',function(self,_cmd){
 return false;
 });
-$VN_1.$def('===',function(other){
-var self=this;
+$VN_1.$def('===',function(self,_cmd,other){
 });
-$VN_1.$def('=~',function(obj){
-var self=this;
+$VN_1.$def('=~',function(self,_cmd,obj){
 return nil;
 });
-$VN_1.$def('!=',function(obj){
-var self=this;
+$VN_1.$def('!=',function(self,_cmd,obj){
 });
-$VN_1.$def('eql?',function(obj){
-var self=this;
+$VN_1.$def('eql?',function(self,_cmd,obj){
 });
-$VN_1.$def('class',function(){
-var self=this;
+$VN_1.$def('class',function(self,_cmd){
 });
-$VN_1.$def('clone',function(){
-var self=this;
+$VN_1.$def('clone',function(self,_cmd){
 });
-$VN_1.$def('dup',function(){
-var self=this;
+$VN_1.$def('dup',function(self,_cmd){
 });
-$VN_1.$def('initialize_copy',function(orig){
-var self=this;
+$VN_1.$def('initialize_copy',function(self,_cmd,orig){
 });
-$VN_1.$def('taint',function(){
-var self=this;
+$VN_1.$def('taint',function(self,_cmd){
 });
-$VN_1.$def('tainted?',function(){
-var self=this;
+$VN_1.$def('tainted?',function(self,_cmd){
 });
-$VN_1.$def('untaint',function(){
-var self=this;
+$VN_1.$def('untaint',function(self,_cmd){
 });
-$VN_1.$def('untrust',function(){
-var self=this;
+$VN_1.$def('untrust',function(self,_cmd){
 });
-$VN_1.$def('untrusted?',function(){
-var self=this;
+$VN_1.$def('untrusted?',function(self,_cmd){
 });
-$VN_1.$def('trust',function(){
-var self=this;
+$VN_1.$def('trust',function(self,_cmd){
 });
-$VN_1.$def('freeze',function(){
-var self=this;
+$VN_1.$def('freeze',function(self,_cmd){
 });
-$VN_1.$def('frozen?',function(){
-var self=this;
+$VN_1.$def('frozen?',function(self,_cmd){
 });
-$VN_1.$def('to_s',function(){
-var self=this;
+$VN_1.$def('to_s',function(self,_cmd){
 return "#<" + RClass.obj_classname(this) + ":0x00000000>" ;});
-$VN_1.$def('inspect',function(){
-var self=this;
+$VN_1.$def('inspect',function(self,_cmd){
 return '';
 });
-$VN_1.$def('methods',function(){
-var self=this;
+$VN_1.$def('methods',function(self,_cmd){
 });
-$VN_1.$def('singleton_methods',function(){
-var self=this;
+$VN_1.$def('singleton_methods',function(self,_cmd){
 });
-$VN_1.$def('protected_methods',function(){
-var self=this;
+$VN_1.$def('protected_methods',function(self,_cmd){
 });
-$VN_1.$def('private_methods',function(){
-var self=this;
+$VN_1.$def('private_methods',function(self,_cmd){
 });
-$VN_1.$def('public_methods',function(){
-var self=this;
+$VN_1.$def('public_methods',function(self,_cmd){
 });
-$VN_1.$def('instance_variables',function(){
-var self=this;
+$VN_1.$def('instance_variables',function(self,_cmd){
 });
-$VN_1.$def('instance_variable_get',function(){
-var self=this;
+$VN_1.$def('instance_variable_get',function(self,_cmd){
 });
-$VN_1.$def('instance_variable_set',function(){
-var self=this;
+$VN_1.$def('instance_variable_set',function(self,_cmd){
 });
-$VN_1.$def('instance_variable_defined?',function(){
-var self=this;
+$VN_1.$def('instance_variable_defined?',function(self,_cmd){
 });
-$VN_1.$def('remove_instance_variable',function(){
-var self=this;
+$VN_1.$def('remove_instance_variable',function(self,_cmd){
 });
-$VN_1.$def('instance_of?',function(){
-var self=this;
+$VN_1.$def('instance_of?',function(self,_cmd){
 switch (klass.$type) {
       case VN.MODULE:
       case VN.CLASS:
@@ -155,8 +129,7 @@ switch (klass.$type) {
      }
      if (this.$klass == klass) return true ;
     return false ;});
-$VN_1.$def('kind_of?',function(){
-var self=this;
+$VN_1.$def('kind_of?',function(self,_cmd){
 switch (klass.$type) {
       case VN.MODULE:
       case VN.CLASS:
@@ -173,8 +146,7 @@ switch (klass.$type) {
       k = k.$super;
     }
     return false; });
-$VN_1.$def('is_a?',function(){
-var self=this;
+$VN_1.$def('is_a?',function(self,_cmd){
 switch (klass.$type) {
       case VN.MODULE:
       case VN.CLASS:
@@ -191,115 +163,91 @@ switch (klass.$type) {
       k = k.$super;
     }
     return false;    });
-$VN_1.$def('puts',function(){
-var self=this;
+$VN_1.$def('puts',function(self,_cmd){
 });
-$VN_1.$def('taps',function(){
-var self=this;
+$VN_1.$def('taps',function(self,_cmd){
 });
 
 cModule.$define_alloc_func(function(module_s_alloc) {
   
-});var $VN_1 = RClass.define('Module', cObject);
-$VN_1.$def('freeze',function(){
-var self=this;
+});var $VN_1 = RClass.define('Module',cObject);
+$VN_1.$def('freeze',function(self,_cmd){
 });
-$VN_1.$def('===',function(){
-var self=this;
+$VN_1.$def('===',function(self,_cmd){
 });
-$VN_1.$def('==',function(){
-var self=this;
+$VN_1.$def('==',function(self,_cmd){
 });
-$VN_1.$def('<=>',function(){
-var self=this;
+$VN_1.$def('<=>',function(self,_cmd){
 });
-$VN_1.$def('initialize_copy',function(){
-var self=this;
+$VN_1.$def('initialize_copy',function(self,_cmd){
 });
-$VN_1.$def('to_s',function(){
-var self=this;
+$VN_1.$def('to_s',function(self,_cmd){
 });
-$VN_1.$def('included_modules',function(){
-var self=this;
+$VN_1.$def('included_modules',function(self,_cmd){
 });
-$VN_1.$def('include?',function(){
-var self=this;
+$VN_1.$def('include?',function(self,_cmd){
 });
-$VN_1.$def('name',function(){
-var self=this;
+$VN_1.$def('name',function(self,_cmd){
 });
-$VN_1.$def('ancestors',function(){
-var self=this;
+$VN_1.$def('ancestors',function(self,_cmd){
 });
-$VN_1.$def('attr',function(){
-var self=this;
+$VN_1.$def('attr',function(self,_cmd){
 });
-$VN_1.$def('attr_reader',function(){
-var self=this;
-console.log(this);var argname = arguments[0];
-    this.$def(arguments[0], function() {
-      return this.$i_g('@' + argname);
-    });});
-$VN_1.$def('attr_writer',function(){
-var self=this;
-console.log("calling writer!");});
-$VN_1.$def('attr_accessor',function(){
-var self=this;
-for (var i = 0; i < arguments.length; i++) {
-      this.$('attr_reader', [arguments[i]]);
-      this.$('attr_writer', [arguments[i]]);
+$VN_1.$def('attr_reader',function(self,_cmd){
+var args = Array.prototype.slice.call(arguments, 2);
+    for (var i = 0; i < args.length; i++) {
+      
+      var body = new Function('self', '_cmd', 'return self.$i_g("@' + args[i] + '");')
+      self.$def(args[i], body);
     }});
-$VN_1.$def('initialize',function(){
-var self=this;
+$VN_1.$def('attr_writer',function(self,_cmd){
+var args = Array.prototype.slice.call(arguments, 2);
+    for (var i = 0; i < args.length; i++) {
+      
+      var body = new Function('self', '_cmd', 'val', 'VN$(self, "will_change_value_for_key","' + args[i] + '"); var ret = self.$i_s("@' + args[i] + '",val); VN$(self, "did_change_value_for_key","' + args[i] + '"); return ret;');
+      self.$def(args[i] + '=', body);
+    }});
+$VN_1.$def('attr_accessor',function(self,_cmd){
+var args = Array.prototype.slice.call(arguments, 2);
+    for (var i = 0; i < args.length; i++) {
+      VN$(self, 'attr_reader', args[i]);
+      VN$(self, 'attr_writer', args[i]);
+    }});
+$VN_1.$def('initialize',function(self,_cmd){
 });
-$VN_1.$def('instance_methods',function(){
-var self=this;
+$VN_1.$def('instance_methods',function(self,_cmd){
 });
-$VN_1.$def('public_instance_methods',function(){
-var self=this;
+$VN_1.$def('public_instance_methods',function(self,_cmd){
 });
-$VN_1.$def('protected_instance_methods',function(){
-var self=this;
+$VN_1.$def('protected_instance_methods',function(self,_cmd){
 });
-$VN_1.$def('private_instance_methods',function(){
-var self=this;
+$VN_1.$def('private_instance_methods',function(self,_cmd){
 });
-$VN_1.$def('constants',function(){
-var self=this;
+$VN_1.$def('constants',function(self,_cmd){
 });
-$VN_1.$def('const_get',function(){
-var self=this;
+$VN_1.$def('const_get',function(self,_cmd){
 });
-$VN_1.$def('const_set',function(){
-var self=this;
+$VN_1.$def('const_set',function(self,_cmd){
 });
-$VN_1.$def('const_defined?',function(){
-var self=this;
+$VN_1.$def('const_defined?',function(self,_cmd){
 });
-$VN_1.$def('remove_const',function(){
-var self=this;
+$VN_1.$def('remove_const',function(self,_cmd){
 });
-$VN_1.$def('const_missing',function(){
-var self=this;
+$VN_1.$def('const_missing',function(self,_cmd){
 });
-$VN_1.$def('class_variables',function(){
-var self=this;
+$VN_1.$def('class_variables',function(self,_cmd){
 });
-$VN_1.$def('remove_class_variable',function(){
-var self=this;
+$VN_1.$def('remove_class_variable',function(self,_cmd){
 });
-$VN_1.$def('class_variable_get',function(){
-var self=this;
+$VN_1.$def('class_variable_get',function(self,_cmd){
 });
-$VN_1.$def('class_variable_set',function(){
-var self=this;
+$VN_1.$def('class_variable_set',function(self,_cmd){
 });
-$VN_1.$def('class_variable_defined?',function(){
-var self=this;
+$VN_1.$def('class_variable_defined?',function(self,_cmd){
 });
 
 
-cClass.$def('new',function(){var obj=this.$('allocate',[]);obj.$('initialize',arguments);return obj;});cClass.$def('allocate',function(obj_alloc){});cClass.$def('initialize',function(class_initialize){});cClass.$def('initialize_copy',function(class_init_copy){});cClass.$def('superclass',function(class_superclass){});cClass.$define_alloc_func(function(class_s_alloc){});
+cClass.$def('new',function(self,_cmd){var obj=VN$(self,'allocate');arguments[0]=obj;arguments[1]='initialize';VN$.apply(obj,arguments);return obj;});cClass.$def('allocate',function(obj_alloc){});cClass.$def('initialize',function(class_initialize){});cClass.$def('initialize_copy',function(class_init_copy){});cClass.$def('superclass',function(class_superclass){});cClass.$define_alloc_func(function(class_s_alloc){});
 VN.self = VN.obj_alloc(cObject);
 VN.self.$def_s('to_s', function() { 
   return 'main' ;}
@@ -311,255 +259,173 @@ var mEnumerable=RModule.define('Enumerable');mEnumerable.$def('to_a',function(en
 String.prototype.$klass = cString
 String.prototype.$type = VN.STRING;
 
-String.prototype.$ = RObject.prototype.$;
-
 cString.$define_alloc_func(function() {
   return new String();
-}); var $VN_1 = RClass.define('String', cObject);
-$VN_1.$def('try_convert',function(){
-var self=this;
+}); var $VN_1 = RClass.define('String',cObject);
+$VN_1.$def('try_convert',function(self,_cmd){
 });
-$VN_1.$def('initialize',function(){
-var self=this;
+$VN_1.$def('initialize',function(self,_cmd){
 });
-$VN_1.$def('initialize_copy',function(){
-var self=this;
+$VN_1.$def('initialize_copy',function(self,_cmd){
 });
-$VN_1.$def('<=>',function(obj){
-var self=this;
+$VN_1.$def('<=>',function(self,_cmd,obj){
 });
-$VN_1.$def('==',function(obj){
-var self=this;
+$VN_1.$def('==',function(self,_cmd,obj){
 });
-$VN_1.$def('eql?',function(obj){
-var self=this;
+$VN_1.$def('eql?',function(self,_cmd,obj){
 });
-$VN_1.$def('hash',function(obj){
-var self=this;
+$VN_1.$def('hash',function(self,_cmd,obj){
 });
-$VN_1.$def('casecmp',function(obj){
-var self=this;
+$VN_1.$def('casecmp',function(self,_cmd,obj){
 });
-$VN_1.$def('+',function(obj){
-var self=this;
-return self.$('puts',['wow']);
+$VN_1.$def('+',function(self,_cmd,obj){
+return VN$(self,'puts','wow');
 });
-$VN_1.$def('(',function(obj){
-var self=this;
+$VN_1.$def('(',function(self,_cmd,obj){
 });
-$VN_1.$def('%',function(obj){
-var self=this;
+$VN_1.$def('%',function(self,_cmd,obj){
 });
-$VN_1.$def('[]',function(key){
-var self=this;
+$VN_1.$def('[]',function(self,_cmd,key){
 });
-$VN_1.$def('[]=',function(key,val){
-var self=this;
+$VN_1.$def('[]=',function(self,_cmd,key,val){
 });
-$VN_1.$def('insert',function(){
-var self=this;
+$VN_1.$def('insert',function(self,_cmd){
 });
-$VN_1.$def('length',function(){
-var self=this;
-return this.length;});
-$VN_1.$def('size',function(){
-var self=this;
-return this.length});
-$VN_1.$def('empty?',function(){
-var self=this;
+$VN_1.$def('length',function(self,_cmd){
+return self.length;});
+$VN_1.$def('size',function(self,_cmd){
+return self.length});
+$VN_1.$def('empty?',function(self,_cmd){
 });
-$VN_1.$def('=~',function(match){
-var self=this;
+$VN_1.$def('=~',function(self,_cmd,match){
 });
-$VN_1.$def('match',function(match){
-var self=this;
+$VN_1.$def('match',function(self,_cmd,match){
 });
-$VN_1.$def('succ',function(){
-var self=this;
+$VN_1.$def('succ',function(self,_cmd){
 });
-$VN_1.$def('next',function(){
-var self=this;
+$VN_1.$def('next',function(self,_cmd){
 });
-$VN_1.$def('upto',function(){
-var self=this;
+$VN_1.$def('upto',function(self,_cmd){
 });
-$VN_1.$def('index',function(){
-var self=this;
+$VN_1.$def('index',function(self,_cmd){
 });
-$VN_1.$def('rindex',function(){
-var self=this;
+$VN_1.$def('rindex',function(self,_cmd){
 });
-$VN_1.$def('replace',function(){
-var self=this;
+$VN_1.$def('replace',function(self,_cmd){
 });
-$VN_1.$def('clear',function(){
-var self=this;
+$VN_1.$def('clear',function(self,_cmd){
 });
-$VN_1.$def('chr',function(){
-var self=this;
+$VN_1.$def('chr',function(self,_cmd){
 });
-$VN_1.$def('to_i',function(){
-var self=this;
+$VN_1.$def('to_i',function(self,_cmd){
 });
-$VN_1.$def('to_f',function(){
-var self=this;
+$VN_1.$def('to_f',function(self,_cmd){
 });
-$VN_1.$def('to_s',function(){
-var self=this;
-return new String(this);});
-$VN_1.$def('to_str',function(){
-var self=this;
-return self.$('to_s', []);
+$VN_1.$def('to_s',function(self,_cmd){
+return new String(self);});
+$VN_1.$def('to_str',function(self,_cmd){
+return VN$(self, 'to_s');
 });
-$VN_1.$def('inspect',function(){
-var self=this;
-return new String('"' + this + '"');});
-$VN_1.$def('dump',function(){
-var self=this;
+$VN_1.$def('inspect',function(self,_cmd){
+return new String('"' + self + '"');});
+$VN_1.$def('dump',function(self,_cmd){
 });
-$VN_1.$def('upcase',function(){
-var self=this;
+$VN_1.$def('upcase',function(self,_cmd){
 });
-$VN_1.$def('downcase',function(){
-var self=this;
+$VN_1.$def('downcase',function(self,_cmd){
 });
-$VN_1.$def('capitalize',function(){
-var self=this;
+$VN_1.$def('capitalize',function(self,_cmd){
 });
-$VN_1.$def('swapcase',function(){
-var self=this;
+$VN_1.$def('swapcase',function(self,_cmd){
 });
-$VN_1.$def('hex',function(){
-var self=this;
+$VN_1.$def('hex',function(self,_cmd){
 });
-$VN_1.$def('oct',function(){
-var self=this;
+$VN_1.$def('oct',function(self,_cmd){
 });
-$VN_1.$def('split',function(){
-var self=this;
+$VN_1.$def('split',function(self,_cmd){
 });
-$VN_1.$def('lines',function(){
-var self=this;
+$VN_1.$def('lines',function(self,_cmd){
 });
-$VN_1.$def('bytes',function(){
-var self=this;
+$VN_1.$def('bytes',function(self,_cmd){
 });
-$VN_1.$def('chars',function(){
-var self=this;
+$VN_1.$def('chars',function(self,_cmd){
 });
-$VN_1.$def('codepoints',function(){
-var self=this;
+$VN_1.$def('codepoints',function(self,_cmd){
 });
-$VN_1.$def('reverse',function(){
-var self=this;
+$VN_1.$def('reverse',function(self,_cmd){
 });
-$VN_1.$def('concat',function(){
-var self=this;
+$VN_1.$def('concat',function(self,_cmd){
 });
-$VN_1.$def('<<',function(){
-var self=this;
+$VN_1.$def('<<',function(self,_cmd){
 });
-$VN_1.$def('crypt',function(){
-var self=this;
+$VN_1.$def('crypt',function(self,_cmd){
 });
-$VN_1.$def('intern',function(){
-var self=this;
+$VN_1.$def('intern',function(self,_cmd){
 });
-$VN_1.$def('to_sym',function(){
-var self=this;
-return new String(this);});
-$VN_1.$def('ord',function(){
-var self=this;
+$VN_1.$def('to_sym',function(self,_cmd){
+return new String(self);});
+$VN_1.$def('ord',function(self,_cmd){
 });
-$VN_1.$def('include?',function(){
-var self=this;
+$VN_1.$def('include?',function(self,_cmd){
 });
-$VN_1.$def('start_with?',function(){
-var self=this;
+$VN_1.$def('start_with?',function(self,_cmd){
 });
-$VN_1.$def('end_with?',function(){
-var self=this;
+$VN_1.$def('end_with?',function(self,_cmd){
 });
-$VN_1.$def('scan',function(){
-var self=this;
+$VN_1.$def('scan',function(self,_cmd){
 });
-$VN_1.$def('ljust',function(){
-var self=this;
+$VN_1.$def('ljust',function(self,_cmd){
 });
-$VN_1.$def('rjust',function(){
-var self=this;
+$VN_1.$def('rjust',function(self,_cmd){
 });
-$VN_1.$def('center',function(){
-var self=this;
+$VN_1.$def('center',function(self,_cmd){
 });
-$VN_1.$def('sub',function(){
-var self=this;
+$VN_1.$def('sub',function(self,_cmd){
 });
-$VN_1.$def('gsub',function(){
-var self=this;
+$VN_1.$def('gsub',function(self,_cmd){
 });
-$VN_1.$def('chop',function(){
-var self=this;
+$VN_1.$def('chop',function(self,_cmd){
 });
-$VN_1.$def('chomp',function(){
-var self=this;
+$VN_1.$def('chomp',function(self,_cmd){
 });
-$VN_1.$def('strip',function(){
-var self=this;
+$VN_1.$def('strip',function(self,_cmd){
 });
-$VN_1.$def('lstrip',function(){
-var self=this;
+$VN_1.$def('lstrip',function(self,_cmd){
 });
-$VN_1.$def('rstrip',function(){
-var self=this;
+$VN_1.$def('rstrip',function(self,_cmd){
 });
-$VN_1.$def('tr',function(){
-var self=this;
+$VN_1.$def('tr',function(self,_cmd){
 });
-$VN_1.$def('tr_s',function(){
-var self=this;
+$VN_1.$def('tr_s',function(self,_cmd){
 });
-$VN_1.$def('delete',function(){
-var self=this;
+$VN_1.$def('delete',function(self,_cmd){
 });
-$VN_1.$def('squeeze',function(){
-var self=this;
+$VN_1.$def('squeeze',function(self,_cmd){
 });
-$VN_1.$def('count',function(){
-var self=this;
+$VN_1.$def('count',function(self,_cmd){
 });
-$VN_1.$def('each_line',function(){
-var self=this;
+$VN_1.$def('each_line',function(self,_cmd){
 });
-$VN_1.$def('each_byte',function(){
-var self=this;
+$VN_1.$def('each_byte',function(self,_cmd){
 });
-$VN_1.$def('each_char',function(){
-var self=this;
+$VN_1.$def('each_char',function(self,_cmd){
 });
-$VN_1.$def('each_codepoint',function(){
-var self=this;
+$VN_1.$def('each_codepoint',function(self,_cmd){
 });
-$VN_1.$def('sum',function(){
-var self=this;
+$VN_1.$def('sum',function(self,_cmd){
 });
-$VN_1.$def('slice!',function(){
-var self=this;
+$VN_1.$def('slice!',function(self,_cmd){
 });
-$VN_1.$def('partition',function(){
-var self=this;
+$VN_1.$def('partition',function(self,_cmd){
 });
-$VN_1.$def('rpartition',function(){
-var self=this;
+$VN_1.$def('rpartition',function(self,_cmd){
 });
 
 
 Number.prototype.$klass=cNumeric;Number.prototype.$type=VN.NUMBER;Number.prototype.$=RObject.prototype.$;RModule.include(cNumeric,mComparable);cNumeric.$def('singleton_method_added',function(){});cNumeric.$def('initialize_copy',function(){});cNumeric.$def('coerce',function(){});cNumeric.$def('+@',function(){});cNumeric.$def('-@',function(){});cNumeric.$def('<=>',function(){});cNumeric.$def('eql?',function(){});cNumeric.$def('quo',function(){});cNumeric.$def('fdiv',function(){});cNumeric.$def('div',function(){});cNumeric.$def('divmod',function(){});cNumeric.$def('modulo',function(){});cNumeric.$def('remainder',function(){});cNumeric.$def('abs',function(){});cNumeric.$def('magnitude',function(){});cNumeric.$def('to_int',function(){});cNumeric.$def('real?',function(){});cNumeric.$def('integer?',function(){});cNumeric.$def('zero?',function(){});cNumeric.$def('nonzero?',function(){});cNumeric.$def('floor',function(){});cNumeric.$def('ceil',function(){});cNumeric.$def('round',function(){});cNumeric.$def('truncate',function(){});cNumeric.$def('step',function(){});cNumeric.$def('odd?',function(){});cNumeric.$def('even?',function(){});cNumeric.$def('upto',function(){});cNumeric.$def('downto',function(){});cNumeric.$def('times',function(){});cNumeric.$def('succ',function(){});cNumeric.$def('next',function(){});cNumeric.$def('pred',function(){});cNumeric.$def('chr',function(){});cNumeric.$def('ord',function(){});cNumeric.$def('to_i',function(){});cNumeric.$def('to_s',function(){});cNumeric.$def('+',function(i){return this+i;});cNumeric.$def('-',function(i){return this-i;});cNumeric.$def('*',function(){});cNumeric.$def('/',function(){});cNumeric.$def('%',function(){});cNumeric.$def('**',function(){});cNumeric.$def('==',function(){});cNumeric.$def('>',function(){});cNumeric.$def('>=',function(){});cNumeric.$def('<',function(){});cNumeric.$def('<=',function(){});cNumeric.$def('~',function(){});cNumeric.$def('&',function(){});cNumeric.$def('|',function(){});cNumeric.$def('^',function(){});cNumeric.$def('[]',function(){});cNumeric.$def('<<',function(){});cNumeric.$def('>>',function(){});cNumeric.$def('to_f',function(){});
 
 Array.prototype.$klass = cArray
-Array.prototype.$type = VN.T_ARRAY;
-
-Array.prototype.$ = RObject.prototype.$;
+Array.prototype.$type = VN.ARRAY;
 
 RModule.include(cArray, mEnumerable);
 
@@ -574,38 +440,31 @@ cArray.$def_s('[]', function() {
 cArray.$def_s('try_convert', function() {
   
 });
-var $VN_1 = RClass.define('Array', cObject);
-$VN_1.$def('initialize',function(){
-var self=this;
+var $VN_1 = RClass.define('Array',cObject);
+$VN_1.$def('initialize',function(self,_cmd){
 for (var i = 0; i < arguments.length; i++) {
-      this.push(arguments[i]);
+      self.push(arguments[i]);
     }});
-$VN_1.$def('initialize_copy',function(){
-var self=this;
+$VN_1.$def('initialize_copy',function(self,_cmd){
 });
-$VN_1.$def('to_s',function(){
-var self=this;
-if (this.length == 0) return '[]';
+$VN_1.$def('to_s',function(self,_cmd){
+if (self.length == 0) return '[]';
     var str = '[';
-    for (var i = 0; i < (this.length - 1); i++) {
-      str += (this[i].$('inspect', []) + ', ');
+    for (var i = 0; i < (self.length - 1); i++) {
+      str += (self[i].$('inspect', []) + ', ');
     }
-    str += (this[this.length - 1].$('inspect', []) + ']');
+    str += (self[self.length - 1].$('inspect', []) + ']');
     return str ;});
-$VN_1.$def('inspect',function(){
-var self=this;
-return self.$('to_s', []);
+$VN_1.$def('inspect',function(self,_cmd){
+return VN$(self, 'to_s');
 });
-$VN_1.$def('to_a',function(){
-var self=this;
+$VN_1.$def('to_a',function(self,_cmd){
 return self;
 });
-$VN_1.$def('to_ary',function(){
-var self=this;
+$VN_1.$def('to_ary',function(self,_cmd){
 return self;
 });
-$VN_1.$def('==',function(ary){
-var self=this;
+$VN_1.$def('==',function(self,_cmd,ary){
 if (ary == this) return true;
     if (ary.$type != VN.T_ARRAY) {
       if (ary.$('respond_to?', ['to_a'])) {
@@ -614,38 +473,163 @@ if (ary == this) return true;
     }
     if (this.length != ary.length) return false ;
     return true;});
-$VN_1.$def('eql?',function(other){
-var self=this;
+$VN_1.$def('eql?',function(self,_cmd,other){
 });
-$VN_1.$def('hash',function(){
-var self=this;
+$VN_1.$def('hash',function(self,_cmd){
+});
+$VN_1.$def('at',function(self,_cmd){
+});
+$VN_1.$def('fetch',function(self,_cmd){
+});
+$VN_1.$def('first',function(self,_cmd){
+return self[0];});
+$VN_1.$def('last',function(self,_cmd){
+return self[self.length-1];});
+$VN_1.$def('concat',function(self,_cmd){
+});
+$VN_1.$def('<<',function(self,_cmd,obj){
+return self.push(obj);});
+$VN_1.$def('push',function(self,_cmd,obj){
+return self.push(obj);});
+$VN_1.$def('pop',function(self,_cmd){
+return self.pop();});
+$VN_1.$def('shift',function(self,_cmd){
+});
+$VN_1.$def('unshift',function(self,_cmd){
+});
+$VN_1.$def('insert',function(self,_cmd){
+});
+$VN_1.$def('each',function(self,_cmd,block){
+for (var i = 0; i < self.length; i++) {arguments[arguments.length -1](self[i]);
+}return self;
+});
+$VN_1.$def('each_index',function(self,_cmd){
+});
+$VN_1.$def('reverse_each',function(self,_cmd){
+});
+$VN_1.$def('length',function(self,_cmd){
+return self.length;});
+$VN_1.$def('size',function(self,_cmd){
+return self.length;});
+$VN_1.$def('empty?',function(self,_cmd){
+});
+$VN_1.$def('find_index',function(self,_cmd){
+});
+$VN_1.$def('rindex',function(self,_cmd){
+});
+$VN_1.$def('index',function(self,_cmd){
+});
+$VN_1.$def('join',function(self,_cmd){
+});
+$VN_1.$def('reverse',function(self,_cmd){
+});
+$VN_1.$def('reverse!',function(self,_cmd){
+});
+$VN_1.$def('sort',function(self,_cmd){
+});
+$VN_1.$def('sort!',function(self,_cmd){
+});
+$VN_1.$def('collect',function(self,_cmd){
+});
+$VN_1.$def('collect!',function(self,_cmd){
+});
+$VN_1.$def('map',function(self,_cmd){
+});
+$VN_1.$def('map!',function(self,_cmd){
+});
+$VN_1.$def('select',function(self,_cmd){
+});
+$VN_1.$def('values_at',function(self,_cmd){
+});
+$VN_1.$def('delete',function(self,_cmd){
+});
+$VN_1.$def('delete_at',function(self,_cmd){
+});
+$VN_1.$def('delete_if',function(self,_cmd){
+});
+$VN_1.$def('reject',function(self,_cmd){
+});
+$VN_1.$def('reject!',function(self,_cmd){
+});
+$VN_1.$def('zip',function(self,_cmd){
+});
+$VN_1.$def('transpose',function(self,_cmd){
+});
+$VN_1.$def('replace',function(self,_cmd){
+});
+$VN_1.$def('clear',function(self,_cmd){
+});
+$VN_1.$def('fill',function(self,_cmd){
+});
+$VN_1.$def('include?',function(self,_cmd){
+});
+$VN_1.$def('<=>',function(self,_cmd){
+});
+$VN_1.$def('slice',function(self,_cmd){
+});
+$VN_1.$def('slice!',function(self,_cmd){
+});
+$VN_1.$def('assoc',function(self,_cmd){
+});
+$VN_1.$def('rassoc',function(self,_cmd){
+});
+$VN_1.$def('uniq',function(self,_cmd){
+});
+$VN_1.$def('uniq!',function(self,_cmd){
+});
+$VN_1.$def('compact',function(self,_cmd){
+});
+$VN_1.$def('compact!',function(self,_cmd){
+});
+$VN_1.$def('flatten',function(self,_cmd){
+});
+$VN_1.$def('flatten!',function(self,_cmd){
+});
+$VN_1.$def('count',function(self,_cmd){
+});
+$VN_1.$def('shuffle',function(self,_cmd){
+});
+$VN_1.$def('shuffle!',function(self,_cmd){
+});
+$VN_1.$def('sample',function(self,_cmd){
+});
+$VN_1.$def('cycle',function(self,_cmd){
+});
+$VN_1.$def('permutation',function(self,_cmd){
+});
+$VN_1.$def('combination',function(self,_cmd){
+});
+$VN_1.$def('product',function(self,_cmd){
+});
+$VN_1.$def('take',function(self,_cmd){
+});
+$VN_1.$def('take_while',function(self,_cmd){
+});
+$VN_1.$def('drop',function(self,_cmd){
+});
+$VN_1.$def('drop_while',function(self,_cmd){
 });
 
 Boolean.prototype.$klass = cBoolean;
-Boolean.prototype.$type = VN.T_BOOLEAN;
-Boolean.prototype.$ = RObject.prototype.$;var $VN_1 = RClass.define('Boolean', cObject);
-$VN_1.$def('to_s',function(){
-var self=this;
-return this ? 'true' : 'false';});
-$VN_1.$def('&',function(obj){
-var self=this;
-if (this) {
+Boolean.prototype.$type = VN.BOOLEAN; var $VN_1 = RClass.define('Boolean',cObject);
+$VN_1.$def('to_s',function(self,_cmd){
+return self ? 'true' : 'false';});
+$VN_1.$def('&',function(self,_cmd,obj){
+if (self) {
       return obj ? true : false ;
     }
     else {
       return false;
     }});
-$VN_1.$def('|',function(obj){
-var self=this;
-if (this) {
+$VN_1.$def('|',function(self,_cmd,obj){
+if (self) {
       return true ;
     }
     else {
       return obj ? true : false ;
     }});
-$VN_1.$def('^',function(obj){
-var self=this;
-if (this) {
+$VN_1.$def('^',function(self,_cmd,obj){
+if (self) {
       return obj ? false : true ;
     }
     else {
@@ -668,9 +652,11 @@ RHash.prototype.$define_singleton_method = RObject.prototype.$define_singleton_m
 RHash.prototype.$make_metaclass = RObject.prototype.$make_metaclass;
 
 VN.$h = function() {
-  var hash = cHash.$call('new', []) ;
+  var hash = new RHash();
+  console.log(hash);
   for (var i = 0; i < arguments.length; i++) {
-    hash.$call('[]=', [arguments[i][0], arguments[i][1]]);
+    VN$(hash, '[]=', arguments[i], arguments[i + 1]);
+    i++;
   }
   return hash;
 };
@@ -681,461 +667,359 @@ RModule.include(cHash, mEnumerable);
 
 cHash.$define_alloc_func(function() {
   return new RHash();
-}); var $VN_1 = RClass.define('Hash', cObject);
-$VN_1.$def_s('[]',function(){
-var self=this;
+}); var $VN_1 = RClass.define('Hash',cObject);
+$VN_1.$def_s('[]',function(self,_cmd){
 });
-$VN_1.$def_s('try_convert',function(){
-var self=this;
+$VN_1.$def_s('try_convert',function(self,_cmd){
 });
-$VN_1.$def('initialize',function(){
-var self=this;
+$VN_1.$def('initialize',function(self,_cmd){
 if (arguments.length > 0) {
-      this.$ifnone = arguments[0] ;
+      self.$ifnone = arguments[0] ;
     } });
-$VN_1.$def('initialize_copy',function(){
-var self=this;
+$VN_1.$def('initialize_copy',function(self,_cmd){
 });
-$VN_1.$def('rehash',function(){
-var self=this;
+$VN_1.$def('rehash',function(self,_cmd){
 });
-$VN_1.$def('to_hash',function(){
-var self=this;
+$VN_1.$def('to_hash',function(self,_cmd){
 return self;
 });
-$VN_1.$def('to_a',function(){
-var self=this;
+$VN_1.$def('to_a',function(self,_cmd){
 var ary = [];
-    for (var i = 0; i < this.$keys.length; i++) {
-      ary.push([this.$keys[i], this.$values[this.$keys[i]]]);
+    for (var i = 0; i < self.$keys.length; i++) {
+      ary.push([self.$keys[i], self.$values[self.$keys[i]]]);
     }
     return ary; });
-$VN_1.$def('to_s',function(){
-var self=this;
-if (this.$keys.length == 0) return '{...}';
+$VN_1.$def('to_s',function(self,_cmd){
+if (self.$keys.length == 0) return '{...}';
   
-    var str = '{' + this.$keys[0].$call('inspect', []) + '=>' + this.$values[this.$keys[0]].$call('inspect', []);
-    for (var i = 1; i < this.$keys.length; i++) {
-      str += (', ' + this.$keys[i].$call('inspect', []) + '=>' + this.$values[this.$keys[i]].$call('inspect', []))
+    var str = '{' + self.$keys[0].$call('inspect', []) + '=>' + self.$values[self.$keys[0]].$call('inspect', []);
+    for (var i = 1; i < self.$keys.length; i++) {
+      str += (', ' + self.$keys[i].$call('inspect', []) + '=>' + self.$values[self.$keys[i]].$call('inspect', []))
     }
     str += '}';
     return str;});
-$VN_1.$def('inspect',function(){
-var self=this;
-return self.$('to_s', []);
+$VN_1.$def('inspect',function(self,_cmd){
+return VN$(self, 'to_s');
 });
-$VN_1.$def('==',function(obj){
-var self=this;
+$VN_1.$def('==',function(self,_cmd,obj){
 });
-$VN_1.$def('[]',function(key){
-var self=this;
-if (!this.$values.hasOwnProperty(key)) {
-      return this.$call('default', [key]);
+$VN_1.$def('[]',function(self,_cmd,key){
+if (!self.$values.hasOwnProperty(key)) {
+      return self.$call('default', [key]);
     }
-    return this.$values[key] ;});
-$VN_1.$def('hash',function(){
-var self=this;
+    return self.$values[key] ;});
+$VN_1.$def('hash',function(self,_cmd){
 });
-$VN_1.$def('eql?',function(){
-var self=this;
+$VN_1.$def('eql?',function(self,_cmd){
 });
-$VN_1.$def('fetch',function(){
-var self=this;
+$VN_1.$def('fetch',function(self,_cmd){
 });
-$VN_1.$def('[]=',function(key,val){
-var self=this;
-return self.$('store',[key,val]);
+$VN_1.$def('[]=',function(self,_cmd,key,val){
+VN$(self,'puts',['setting ',(val),' for ',(key)].join(''));
+return VN$(self,'store',key,val);
 });
-$VN_1.$def('store',function(key,val){
-var self=this;
-if (!this.$values.hasOwnProperty(key)) {
-      this.$keys.push(key);
+$VN_1.$def('store',function(self,_cmd,key,val){
+if (self.$values[key] === undefined) {
+      self.$keys.push(key);
     }
   
-    this.$values[key] = val ;
+    self.$values[key] = val ;
     return val ;});
-$VN_1.$def('default',function(){
-var self=this;
+$VN_1.$def('default',function(self,_cmd){
 return self.$ifnone});
-$VN_1.$def('default=',function(def_obj){
-var self=this;
-this.$ifnone = ifnone;
-    return ifnone;});
-$VN_1.$def('default_proc',function(){
-var self=this;
+$VN_1.$def('default=',function(self,_cmd,def_obj){
+VN$(self, 'will_change_value_for_key', 'default');
+self.$ifnone = ifnone;
+    return ifnone;VN$(self, 'did_change_value_for_key', 'default');
 });
-$VN_1.$def('default_proc=',function(proc){
-var self=this;
+$VN_1.$def('default_proc',function(self,_cmd){
 });
-$VN_1.$def('key',function(){
-var self=this;
+$VN_1.$def('default_proc=',function(self,_cmd,proc){
+VN$(self, 'will_change_value_for_key', 'default_proc');
+VN$(self, 'did_change_value_for_key', 'default_proc');
 });
-$VN_1.$def('index',function(){
-var self=this;
+$VN_1.$def('key',function(self,_cmd){
 });
-$VN_1.$def('size',function(){
-var self=this;
+$VN_1.$def('index',function(self,_cmd){
 });
-$VN_1.$def('length',function(){
-var self=this;
-return self.$('size', []);
+$VN_1.$def('size',function(self,_cmd){
 });
-$VN_1.$def('empty?',function(){
-var self=this;
+$VN_1.$def('length',function(self,_cmd){
+return VN$(self, 'size');
 });
-$VN_1.$def('each_value',function(){
-var self=this;
+$VN_1.$def('empty?',function(self,_cmd){
 });
-$VN_1.$def('each_key',function(){
-var self=this;
+$VN_1.$def('each_value',function(self,_cmd){
 });
-$VN_1.$def('each_pair',function(){
-var self=this;
+$VN_1.$def('each_key',function(self,_cmd){
 });
-$VN_1.$def('each',function(){
-var self=this;
+$VN_1.$def('each_pair',function(self,_cmd){
 });
-$VN_1.$def('keys',function(){
-var self=this;
+$VN_1.$def('each',function(self,_cmd){
 });
-$VN_1.$def('values',function(){
-var self=this;
+$VN_1.$def('keys',function(self,_cmd){
 });
-$VN_1.$def('values_at',function(){
-var self=this;
+$VN_1.$def('values',function(self,_cmd){
 });
-$VN_1.$def('shift',function(){
-var self=this;
+$VN_1.$def('values_at',function(self,_cmd){
 });
-$VN_1.$def('delete',function(){
-var self=this;
+$VN_1.$def('shift',function(self,_cmd){
 });
-$VN_1.$def('delete_if',function(){
-var self=this;
+$VN_1.$def('delete',function(self,_cmd){
 });
-$VN_1.$def('select',function(){
-var self=this;
+$VN_1.$def('delete_if',function(self,_cmd){
 });
-$VN_1.$def('reject',function(){
-var self=this;
+$VN_1.$def('select',function(self,_cmd){
 });
-$VN_1.$def('reject!',function(){
-var self=this;
+$VN_1.$def('reject',function(self,_cmd){
 });
-$VN_1.$def('clear',function(){
-var self=this;
+$VN_1.$def('reject!',function(self,_cmd){
 });
-$VN_1.$def('invert',function(){
-var self=this;
+$VN_1.$def('clear',function(self,_cmd){
 });
-$VN_1.$def('update',function(){
-var self=this;
+$VN_1.$def('invert',function(self,_cmd){
 });
-$VN_1.$def('replace',function(){
-var self=this;
+$VN_1.$def('update',function(self,_cmd){
 });
-$VN_1.$def('merge!',function(){
-var self=this;
+$VN_1.$def('replace',function(self,_cmd){
 });
-$VN_1.$def('merge',function(){
-var self=this;
+$VN_1.$def('merge!',function(self,_cmd){
 });
-$VN_1.$def('assoc',function(){
-var self=this;
+$VN_1.$def('merge',function(self,_cmd){
 });
-$VN_1.$def('rassoc',function(){
-var self=this;
+$VN_1.$def('assoc',function(self,_cmd){
 });
-$VN_1.$def('flatten',function(){
-var self=this;
+$VN_1.$def('rassoc',function(self,_cmd){
 });
-$VN_1.$def('include?',function(obj){
-var self=this;
+$VN_1.$def('flatten',function(self,_cmd){
 });
-$VN_1.$def('member?',function(obj){
-var self=this;
-return self.$('include?',[obj]);
+$VN_1.$def('include?',function(self,_cmd,obj){
 });
-$VN_1.$def('has_key?',function(key){
-var self=this;
+$VN_1.$def('member?',function(self,_cmd,obj){
+return VN$(self,'include?',obj);
 });
-$VN_1.$def('has_value?',function(val){
-var self=this;
+$VN_1.$def('has_key?',function(self,_cmd,key){
 });
-$VN_1.$def('key?',function(key){
-var self=this;
-return self.$('has_key?',[key]);
+$VN_1.$def('has_value?',function(self,_cmd,val){
 });
-$VN_1.$def('value?',function(val){
-var self=this;
-return self.$('has_value?',[val]);
+$VN_1.$def('key?',function(self,_cmd,key){
+return VN$(self,'has_key?',key);
 });
-$VN_1.$def('compare_by_identity',function(){
-var self=this;
+$VN_1.$def('value?',function(self,_cmd,val){
+return VN$(self,'has_value?',val);
 });
-$VN_1.$def('compare_by_identity?',function(){
-var self=this;
+$VN_1.$def('compare_by_identity',function(self,_cmd){
+});
+$VN_1.$def('compare_by_identity?',function(self,_cmd){
 });
 
 String.prototype.$klass = cString
 String.prototype.$type = VN.STRING;
 
-String.prototype.$ = RObject.prototype.$;
-
 cString.$define_alloc_func(function() {
   return new String();
-}); var $VN_1 = RClass.define('String', cObject);
-$VN_1.$def('try_convert',function(){
-var self=this;
+}); var $VN_1 = RClass.define('String',cObject);
+$VN_1.$def('try_convert',function(self,_cmd){
 });
-$VN_1.$def('initialize',function(){
-var self=this;
+$VN_1.$def('initialize',function(self,_cmd){
 });
-$VN_1.$def('initialize_copy',function(){
-var self=this;
+$VN_1.$def('initialize_copy',function(self,_cmd){
 });
-$VN_1.$def('<=>',function(obj){
-var self=this;
+$VN_1.$def('<=>',function(self,_cmd,obj){
 });
-$VN_1.$def('==',function(obj){
-var self=this;
+$VN_1.$def('==',function(self,_cmd,obj){
 });
-$VN_1.$def('eql?',function(obj){
-var self=this;
+$VN_1.$def('eql?',function(self,_cmd,obj){
 });
-$VN_1.$def('hash',function(obj){
-var self=this;
+$VN_1.$def('hash',function(self,_cmd,obj){
 });
-$VN_1.$def('casecmp',function(obj){
-var self=this;
+$VN_1.$def('casecmp',function(self,_cmd,obj){
 });
-$VN_1.$def('+',function(obj){
-var self=this;
-return self.$('puts',['wow']);
+$VN_1.$def('+',function(self,_cmd,obj){
+return VN$(self,'puts','wow');
 });
-$VN_1.$def('(',function(obj){
-var self=this;
+$VN_1.$def('(',function(self,_cmd,obj){
 });
-$VN_1.$def('%',function(obj){
-var self=this;
+$VN_1.$def('%',function(self,_cmd,obj){
 });
-$VN_1.$def('[]',function(key){
-var self=this;
+$VN_1.$def('[]',function(self,_cmd,key){
 });
-$VN_1.$def('[]=',function(key,val){
-var self=this;
+$VN_1.$def('[]=',function(self,_cmd,key,val){
 });
-$VN_1.$def('insert',function(){
-var self=this;
+$VN_1.$def('insert',function(self,_cmd){
 });
-$VN_1.$def('length',function(){
-var self=this;
-return this.length;});
-$VN_1.$def('size',function(){
-var self=this;
-return this.length});
-$VN_1.$def('empty?',function(){
-var self=this;
+$VN_1.$def('length',function(self,_cmd){
+return self.length;});
+$VN_1.$def('size',function(self,_cmd){
+return self.length});
+$VN_1.$def('empty?',function(self,_cmd){
 });
-$VN_1.$def('=~',function(match){
-var self=this;
+$VN_1.$def('=~',function(self,_cmd,match){
 });
-$VN_1.$def('match',function(match){
-var self=this;
+$VN_1.$def('match',function(self,_cmd,match){
 });
-$VN_1.$def('succ',function(){
-var self=this;
+$VN_1.$def('succ',function(self,_cmd){
 });
-$VN_1.$def('next',function(){
-var self=this;
+$VN_1.$def('next',function(self,_cmd){
 });
-$VN_1.$def('upto',function(){
-var self=this;
+$VN_1.$def('upto',function(self,_cmd){
 });
-$VN_1.$def('index',function(){
-var self=this;
+$VN_1.$def('index',function(self,_cmd){
 });
-$VN_1.$def('rindex',function(){
-var self=this;
+$VN_1.$def('rindex',function(self,_cmd){
 });
-$VN_1.$def('replace',function(){
-var self=this;
+$VN_1.$def('replace',function(self,_cmd){
 });
-$VN_1.$def('clear',function(){
-var self=this;
+$VN_1.$def('clear',function(self,_cmd){
 });
-$VN_1.$def('chr',function(){
-var self=this;
+$VN_1.$def('chr',function(self,_cmd){
 });
-$VN_1.$def('to_i',function(){
-var self=this;
+$VN_1.$def('to_i',function(self,_cmd){
 });
-$VN_1.$def('to_f',function(){
-var self=this;
+$VN_1.$def('to_f',function(self,_cmd){
 });
-$VN_1.$def('to_s',function(){
-var self=this;
-return new String(this);});
-$VN_1.$def('to_str',function(){
-var self=this;
-return self.$('to_s', []);
+$VN_1.$def('to_s',function(self,_cmd){
+return new String(self);});
+$VN_1.$def('to_str',function(self,_cmd){
+return VN$(self, 'to_s');
 });
-$VN_1.$def('inspect',function(){
-var self=this;
-return new String('"' + this + '"');});
-$VN_1.$def('dump',function(){
-var self=this;
+$VN_1.$def('inspect',function(self,_cmd){
+return new String('"' + self + '"');});
+$VN_1.$def('dump',function(self,_cmd){
 });
-$VN_1.$def('upcase',function(){
-var self=this;
+$VN_1.$def('upcase',function(self,_cmd){
 });
-$VN_1.$def('downcase',function(){
-var self=this;
+$VN_1.$def('downcase',function(self,_cmd){
 });
-$VN_1.$def('capitalize',function(){
-var self=this;
+$VN_1.$def('capitalize',function(self,_cmd){
 });
-$VN_1.$def('swapcase',function(){
-var self=this;
+$VN_1.$def('swapcase',function(self,_cmd){
 });
-$VN_1.$def('hex',function(){
-var self=this;
+$VN_1.$def('hex',function(self,_cmd){
 });
-$VN_1.$def('oct',function(){
-var self=this;
+$VN_1.$def('oct',function(self,_cmd){
 });
-$VN_1.$def('split',function(){
-var self=this;
+$VN_1.$def('split',function(self,_cmd){
 });
-$VN_1.$def('lines',function(){
-var self=this;
+$VN_1.$def('lines',function(self,_cmd){
 });
-$VN_1.$def('bytes',function(){
-var self=this;
+$VN_1.$def('bytes',function(self,_cmd){
 });
-$VN_1.$def('chars',function(){
-var self=this;
+$VN_1.$def('chars',function(self,_cmd){
 });
-$VN_1.$def('codepoints',function(){
-var self=this;
+$VN_1.$def('codepoints',function(self,_cmd){
 });
-$VN_1.$def('reverse',function(){
-var self=this;
+$VN_1.$def('reverse',function(self,_cmd){
 });
-$VN_1.$def('concat',function(){
-var self=this;
+$VN_1.$def('concat',function(self,_cmd){
 });
-$VN_1.$def('<<',function(){
-var self=this;
+$VN_1.$def('<<',function(self,_cmd){
 });
-$VN_1.$def('crypt',function(){
-var self=this;
+$VN_1.$def('crypt',function(self,_cmd){
 });
-$VN_1.$def('intern',function(){
-var self=this;
+$VN_1.$def('intern',function(self,_cmd){
 });
-$VN_1.$def('to_sym',function(){
-var self=this;
-return new String(this);});
-$VN_1.$def('ord',function(){
-var self=this;
+$VN_1.$def('to_sym',function(self,_cmd){
+return new String(self);});
+$VN_1.$def('ord',function(self,_cmd){
 });
-$VN_1.$def('include?',function(){
-var self=this;
+$VN_1.$def('include?',function(self,_cmd){
 });
-$VN_1.$def('start_with?',function(){
-var self=this;
+$VN_1.$def('start_with?',function(self,_cmd){
 });
-$VN_1.$def('end_with?',function(){
-var self=this;
+$VN_1.$def('end_with?',function(self,_cmd){
 });
-$VN_1.$def('scan',function(){
-var self=this;
+$VN_1.$def('scan',function(self,_cmd){
 });
-$VN_1.$def('ljust',function(){
-var self=this;
+$VN_1.$def('ljust',function(self,_cmd){
 });
-$VN_1.$def('rjust',function(){
-var self=this;
+$VN_1.$def('rjust',function(self,_cmd){
 });
-$VN_1.$def('center',function(){
-var self=this;
+$VN_1.$def('center',function(self,_cmd){
 });
-$VN_1.$def('sub',function(){
-var self=this;
+$VN_1.$def('sub',function(self,_cmd){
 });
-$VN_1.$def('gsub',function(){
-var self=this;
+$VN_1.$def('gsub',function(self,_cmd){
 });
-$VN_1.$def('chop',function(){
-var self=this;
+$VN_1.$def('chop',function(self,_cmd){
 });
-$VN_1.$def('chomp',function(){
-var self=this;
+$VN_1.$def('chomp',function(self,_cmd){
 });
-$VN_1.$def('strip',function(){
-var self=this;
+$VN_1.$def('strip',function(self,_cmd){
 });
-$VN_1.$def('lstrip',function(){
-var self=this;
+$VN_1.$def('lstrip',function(self,_cmd){
 });
-$VN_1.$def('rstrip',function(){
-var self=this;
+$VN_1.$def('rstrip',function(self,_cmd){
 });
-$VN_1.$def('tr',function(){
-var self=this;
+$VN_1.$def('tr',function(self,_cmd){
 });
-$VN_1.$def('tr_s',function(){
-var self=this;
+$VN_1.$def('tr_s',function(self,_cmd){
 });
-$VN_1.$def('delete',function(){
-var self=this;
+$VN_1.$def('delete',function(self,_cmd){
 });
-$VN_1.$def('squeeze',function(){
-var self=this;
+$VN_1.$def('squeeze',function(self,_cmd){
 });
-$VN_1.$def('count',function(){
-var self=this;
+$VN_1.$def('count',function(self,_cmd){
 });
-$VN_1.$def('each_line',function(){
-var self=this;
+$VN_1.$def('each_line',function(self,_cmd){
 });
-$VN_1.$def('each_byte',function(){
-var self=this;
+$VN_1.$def('each_byte',function(self,_cmd){
 });
-$VN_1.$def('each_char',function(){
-var self=this;
+$VN_1.$def('each_char',function(self,_cmd){
 });
-$VN_1.$def('each_codepoint',function(){
-var self=this;
+$VN_1.$def('each_codepoint',function(self,_cmd){
 });
-$VN_1.$def('sum',function(){
-var self=this;
+$VN_1.$def('sum',function(self,_cmd){
 });
-$VN_1.$def('slice!',function(){
-var self=this;
+$VN_1.$def('slice!',function(self,_cmd){
 });
-$VN_1.$def('partition',function(){
-var self=this;
+$VN_1.$def('partition',function(self,_cmd){
 });
-$VN_1.$def('rpartition',function(){
-var self=this;
+$VN_1.$def('rpartition',function(self,_cmd){
 });
 
 
-var $VN_1 = RClass.define('Document', cObject);
-$VN_1.$def_s('ready?',function(block){
-var self=this;
+var $VN_1 = RClass.define('Document',cObject);
+$VN_1.$def_s('ready?',function(self,_cmd,block){
 });
+$VN_1.$def_s('<<',function(self,_cmd,elem){
+var e = elem.$i_g('@element');
+document.body.appendChild(e);});
+
+var $VN_1 = RClass.define('Element',cObject);
+VN$($VN_1,'attr_accessor','element');
+$VN_1.$def_s('find',function(self,_cmd,the_id){
+document.getElementById(the_id)});
+$VN_1.$def('initialize',function(self,_cmd,type,class_name,the_id){
+self.$i_s('@element',document.createElement(type));
+self.$i_s('@type',type);
+self.$i_s('@class_name',class_name);
+return self.$i_s('@id',the_id);
+});
+$VN_1.$def_s('element_with_type:class_name:id:',function(self,_cmd,type,class_name,the_id){
+return VN$(self,'new',type,class_name,the_id);
+});
+$VN_1.$def('element',function(self,_cmd){
+return self.$i_g('@element');
+});
+$VN_1.$def('<<',function(self,_cmd,other){
+self.$i_g('@element').appendChild(VN$(other,'element'))});
+$VN_1.$def('add_event_listener',function(self,_cmd,type,listener){
+if (document.addEventListener) {
+      self.$i_g('@element').addEventListener(type, listener, false);
+    }
+    else {
+      self.$i_g('@element').attachEvent(type, listener);
+    }});
 
 var $VN_1 = RModule.define('Vienna');
 $VN_1.$c_s('VERSION','0.0.1');
-$VN_1.$def_s('version',function(){
-var self=this;
+$VN_1.$def_s('version',function(self,_cmd){
 return self.$c_g_full('VERSION');
 });
-$VN_1.$def('app',function(){
-var self=this;
+$VN_1.$def_s('display_mode',function(self,_cmd){
+return 'render';});
+$VN_1.$def('app',function(self,_cmd){
 });
 cObject.$c_s('VN',cObject.$c_g('Vienna'));
 cObject.$c_s('YES',true);
@@ -1145,173 +1029,1371 @@ var $VN_1 = RModule.define('Vienna');
 $VN_1.$c_s('Object',cObject.$c_g('Object'));
 $VN_1.$c_s('Array',cObject.$c_g('Array'));
 $VN_1.$c_s('Dictionary',cObject.$c_g('Hash'));
+var $VN_2 = RClass.define_under($VN_1, 'Object',cObject);
+$VN_2.$def('initialize',function(self,_cmd){
+self.$i_s('@kvo_observers',[]);
+return self.$i_s('@kvo_old_values',VN.$h());
+});
 
 var $VN_1 = RModule.define('Vienna');
 $VN_1.$c_s('UNDEFINED_KEY_EXCEPTION','VNUndefinedKeyException');
-var $VN_2 = RClass.define_under($VN_1, 'Object', cObject);
-$VN_2.$def_s('access_instance_variables_directly?',function(){
-var self=this;
+var $VN_2 = RClass.define_under($VN_1, 'Object',cObject);
+$VN_2.$def_s('access_instance_variables_directly?',function(self,_cmd){
 return true;
 });
-$VN_2.$def('value_for_key',function(key){
-var self=this;
+$VN_2.$def('value_for_key',function(self,_cmd,key){
+return self.$i_g('@' + key);});
+$VN_2.$def('set_value:for_key:',function(self,_cmd,value,key){
+return VN$(self,'puts',['Setting value for ',(key)].join(''));
 });
-$VN_2.$def('set_value:for_key:',function(value,key){
-var self=this;
-return self.$('puts',[['Setting value for ',(key)].join('')]);
+$VN_2.$def('validate_value:for_key:error:',function(self,_cmd,value,key,out_error){
 });
-$VN_2.$def('validate_value:for_key:error:',function(value,key,out_error){
-var self=this;
+$VN_2.$def('array_value_for_key',function(self,_cmd,key){
 });
-$VN_2.$def('array_value_for_key',function(key){
-var self=this;
+$VN_2.$def('set_value_for_key',function(self,_cmd,key){
 });
-$VN_2.$def('set_value_for_key',function(key){
-var self=this;
+$VN_2.$def('value_for_key_path',function(self,_cmd,path){
 });
-$VN_2.$def('value_for_key_path',function(path){
-var self=this;
+$VN_2.$def('set_value:for_key_path:',function(self,_cmd,value,path){
 });
-$VN_2.$def('set_value:for_key_path:',function(value,path){
-var self=this;
+$VN_2.$def('validate_value:for_key_path:error:',function(self,_cmd,value,path,out_error){
 });
-$VN_2.$def('validate_value:for_key_path:error:',function(value,path,out_error){
-var self=this;
+$VN_2.$def('array_value_for_key_path',function(self,_cmd,path){
 });
-$VN_2.$def('array_value_for_key_path',function(path){
-var self=this;
+$VN_2.$def('set_value_for_key_path',function(self,_cmd,path){
 });
-$VN_2.$def('set_value_for_key_path',function(path){
-var self=this;
+$VN_2.$def('value_for_undefined_key',function(self,_cmd,key){
 });
-$VN_2.$def('value_for_undefined_key',function(key){
-var self=this;
+$VN_2.$def('set_value:for_undefined_key:',function(self,_cmd,value,key){
 });
-$VN_2.$def('set_value:for_undefined_key:',function(value,key){
-var self=this;
+$VN_2.$def('set_nil_value_for_key',function(self,_cmd,key){
 });
-$VN_2.$def('set_nil_value_for_key',function(key){
-var self=this;
+$VN_2.$def('dictionary_with_values_for_keys',function(self,_cmd,keys){
 });
-$VN_2.$def('dictionary_with_values_for_keys',function(keys){
-var self=this;
+$VN_2.$def('set_values_for_keys_with_dictionary',function(self,_cmd,keyed_values){
 });
-$VN_2.$def('set_values_for_keys_with_dictionary',function(keyed_values){
-var self=this;
+var $VN_2 = RClass.define_under($VN_1, 'Array',cObject);
+$VN_2.$def('value_for_key',function(self,_cmd,key){
 });
-var $VN_2 = RClass.define_under($VN_1, 'Array', cObject);
-$VN_2.$def('value_for_key',function(key){
-var self=this;
+$VN_2.$def('set_value:for_key:',function(self,_cmd,value,key){
 });
-$VN_2.$def('set_value:for_key:',function(value,key){
-var self=this;
+var $VN_2 = RClass.define_under($VN_1, 'Dictionary',cObject);
+$VN_2.$def('value_for_key',function(self,_cmd,key){
 });
-var $VN_2 = RClass.define_under($VN_1, 'Dictionary', cObject);
-$VN_2.$def('value_for_key',function(key){
-var self=this;
+$VN_2.$def('set_value:for_key:',function(self,_cmd,value,key){
 });
-$VN_2.$def('set_value:for_key:',function(value,key){
-var self=this;
+var $VN_2 = RClass.define_under($VN_1, 'Set',cObject);
+$VN_2.$def('value_for_key',function(self,_cmd,key){
 });
-var $VN_2 = RClass.define_under($VN_1, 'Set', cObject);
-$VN_2.$def('value_for_key',function(key){
-var self=this;
-});
-$VN_2.$def('set_value:for_key:',function(value,key){
-var self=this;
+$VN_2.$def('set_value:for_key:',function(self,_cmd,value,key){
 });
 
 var $VN_1 = RModule.define('Vienna');
-var $VN_2 = RClass.define_under($VN_1, 'Object', cObject);
-$VN_2.$def('observe_value_for_key_path:of_object:change:context:',function(path,object,change,context){
-var self=this;
+var $VN_2 = RClass.define_under($VN_1, 'Object',cObject);
+$VN_2.$def('observe_value_for_key_path:of_object:change:context:',function(self,_cmd,path,object,change,context){
 });
-$VN_2.$def('add_observer:for_key_path:options:context:',function(observer,key_path,options,context){
-var self=this;
+$VN_2.$def('add_observer:for_key_path:options:context:',function(self,_cmd,observer,key_path,options,context){
 });
-$VN_2.$def('remove_observer:for_key_path:',function(observer,key_path){
-var self=this;
+$VN_2.$def('remove_observer:for_key_path:',function(self,_cmd,observer,key_path){
+});
+var $VN_2 = RClass.define_under($VN_1, 'Array',cObject);
+$VN_2.$def('add_observer:to_objects_at_indexes:for_key_path:options:context:',function(self,_cmd,observer,indexes,key_path,options,context){
+});
+$VN_2.$def('remove_observer:from_objects_at_indexes:for_key_path:',function(self,_cmd,observer,indexes,keyPath){
+});
+$VN_2.$def('add_observer:for_key_path:options:context:',function(self,_cmd,observer,key_path,options,context){
+});
+$VN_2.$def('remove_observer:for_key_path:',function(self,_cmd,observer,key_path){
+});
+var $VN_2 = RClass.define_under($VN_1, 'Object',cObject);
+$VN_2.$def('will_change_value_for_key',function(self,_cmd,key){
+return VN$(self.$i_g('@kvo_old_values'),'[]=',VN$(self,'value_for_key',key));
+});
+$VN_2.$def('did_change_value_for_key',function(self,_cmd,key){
+return VN$(self.$i_g('@kvo_observers'),'each',function(current){
+if((e=VN$(VN$(current,'[]','key_path'),'==',key),e!==nil && e!==false)){
+var change_dict = VN.$h('old', VN$(self.$i_g('@kvo_old_values'),'[]',key), 'new', VN$(self,'value_for_key',key));
+VN$(VN$(current,'[]','observer'),'observe_value_for_key_path:of_object:change:context:',key,self,change_dict,VN$(current,'[]','context'));
+}
+});
+});
+$VN_2.$def('will_change:values_at_indexes:for_key:',function(self,_cmd,changeKind,indexes,key){
+});
+$VN_2.$def('did_change:values_at_indexes:for_key:',function(self,_cmd,changeKind,indexes,key){
+});
+$VN_2.$def_s('key_paths_for_values_affecting_value_for_key',function(self,_cmd,key){
+});
+$VN_2.$def('automatically_notifies_observers_for_key',function(self,_cmd,key){
+return true;
+});
+$VN_2.$def('observation_info=',function(self,_cmd,info){
+VN$(self, 'will_change_value_for_key', 'observation_info');
+self.$i_s('@observation_info',info);
+VN$(self, 'did_change_value_for_key', 'observation_info');
+});
+$VN_2.$def('observation_info',function(self,_cmd){
+return self.$i_g('@observation_info');
 });
 
 var $VN_1 = RModule.define('Vienna');
-var $VN_2 = RClass.define_under($VN_1, 'Notification', cObject);
-$VN_2.$('attr_reader',['name','object','user_info']);
-$VN_2.$def('initialize',function(name,obj,info){
-var self=this;
+var $VN_2 = RClass.define_under($VN_1, 'Notification',cObject);
+VN$($VN_2,'attr_reader','name','object','user_info');
+VN$($VN_2,'attr_writer','name','object','user_info');
+$VN_2.$def('initialize',function(self,_cmd,name,obj,info){
 self.$i_s('@name',name);
 self.$i_s('@object',obj);
 return self.$i_s('@user_info',info);
 });
-$VN_2.$def_s('notification_with_name:object:',function(name,obj){
-var self=this;
-return self.$('notification_with_name:object:user_info:',[name,obj,nil]);
+$VN_2.$def_s('notification_with_name:object:',function(self,_cmd,name,obj){
+return VN$(self,'notification_with_name:object:user_info:',name,obj,nil);
 });
-$VN_2.$def_s('notification_with_name:object:user_info:',function(name,obj,info){
-var self=this;
-return self.$('new',[name,obj,info]);
+$VN_2.$def_s('notification_with_name:object:user_info:',function(self,_cmd,name,obj,info){
+return VN$(self,'new',name,obj,info);
 });
-var $VN_2 = RClass.define_under($VN_1, 'NotificationCenter', cObject);
-$VN_2.$def_s('default_center',function(){
-var self=this;
-return (self.$k_d('@@default_center') ? self.$k_g('@@default_center') : self.$k_s('@@default_center',self.$('new',[])));
+var $VN_2 = RClass.define_under($VN_1, 'NotificationCenter',cObject);
+$VN_2.$def_s('default_center',function(self,_cmd){
+return (self.$k_d('@@default_center') ? self.$k_g('@@default_center') : self.$k_s('@@default_center',VN$(self,'new')));
 });
-$VN_2.$def('initialize',function(){
-var self=this;
-self.$('super', []);
+$VN_2.$def('initialize',function(self,_cmd){
 return self.$i_s('@dispatch_table',[]);
 });
-$VN_2.$def('add_observer:selector:name:object:',function(observer,selector,name,obj){
-var self=this;
-return self.$i_g('@dispatch_table').$('<<',[VN.$h('observer', observer, 'selector', selector, 'name', name, 'sender', obj, 'active', true)]);
+$VN_2.$def('add_observer:selector:name:object:',function(self,_cmd,observer,selector,name,obj){
+return VN$(self.$i_g('@dispatch_table'),'<<',VN.$h('observer', observer, 'selector', selector, 'name', name, 'sender', obj, 'active', true));
 });
-$VN_2.$def('post_notification',function(notification){
-var self=this;
-return self.$('post_notification_name:object:user_info:',[notification.$('name',[]),notification.$('object',[]),notification.$('user_info',[])]);
+$VN_2.$def('post_notification',function(self,_cmd,notification){
+return VN$(self,'post_notification_name:object:user_info:',VN$(notification,'name'),VN$(notification,'object'),VN$(notification,'user_info'));
 });
-$VN_2.$def('post_notification_name:object:',function(name,obj){
-var self=this;
-return self.$('post_notification_name:object:user_info:',[name,obj,nil]);
+$VN_2.$def('post_notification_name:object:',function(self,_cmd,name,obj){
+return VN$(self,'post_notification_name:object:user_info:',name,obj,nil);
 });
-$VN_2.$def('post_notification_name:object:user_info:',function(name,obj,info){
-var self=this;
-var length = self.$i_g('@dispatch_table').$('length',[]);
-for (var idx = 0; idx < length; idx++) {var the_object = self.$i_g('@dispatch_table').$('[]',[idx]);
-if((e=the_object.$('name',[]).$('==',[name]),e!==nil && e!==false)){
-the_object.$('observer',[]).$('perform',[the_object.$('selector',[]),obj,info]);
+$VN_2.$def('post_notification_name:object:user_info:',function(self,_cmd,name,obj,info){
+return VN$(self.$i_g('@dispatch_table'),'each',function(the_obj){
+if((e=VN$(VN$(the_obj,'[]','name'),'==',name),e!==nil && e!==false)){
+VN$(VN$(the_obj,'[]','observer'),'perform_selector:with_object:with_object:',VN$(the_obj,'[]','selector'),obj,info);
 }
-} });
-$VN_2.$def('remove_observer',function(observer){
-var self=this;
 });
-$VN_2.$def('remove_observer:name:object:',function(observer,name,obj){
-var self=this;
 });
-$VN_2.$def('add_observer_for_name:object:queue:',function(name,obj,queue){
-var self=this;
+$VN_2.$def('remove_observer',function(self,_cmd,observer){
+});
+$VN_2.$def('remove_observer:name:object:',function(self,_cmd,observer,name,obj){
+});
+$VN_2.$def('add_observer_for_name:object:queue:',function(self,_cmd,name,obj,queue){
+});
+
+
+var $VN_1 = RModule.define('Vienna');
+var $VN_2 = RClass.define_under($VN_1, 'Responder',$VN_2.$c_g_full('Object'));
+$VN_2.$def('initialize',function(self,_cmd){
+VN$(self,'puts','initialising responder');
+return VN$sup(arguments.callee, self,_cmd,[]);
+});
+
+var $VN_1 = RModule.define('Vienna');
+var $VN_2 = RClass.define_under($VN_1, 'Application',cObject);
+VN$($VN_2,'attr_accessor','windows','event_queue','views_needing_display');
+VN$($VN_2,'attr_reader','delegate');
+$VN_2.$def('initialize',function(self,_cmd){
+self.$i_s('@windows',[]);
+self.$i_s('@event_queue',[]);
+return self.$i_s('@views_needing_display',[]);
+});
+$VN_2.$def('run',function(self,_cmd){
+return VN$(self, 'finish_launching');
+});
+$VN_2.$def('finish_launching',function(self,_cmd){
+var nc = VN$(self.$klass.$c_g_full('NotificationCenter'),'default_center');
+VN$(nc,'post_notification_name:object:',self.$klass.$c_g_full('APP_WILL_FINISH_LAUNCHING'),self);
+VN$(nc,'post_notification_name:object:',self.$klass.$c_g_full('APP_DID_FINISH_LAUNCHING'),self);
+return VN$(self, 'display_required_views');
+});
+$VN_2.$def('mark_view_for_display',function(self,_cmd,view,flag){
+if((e=VN$(self.$i_g('@views_needing_display'),'contains?',view),e==nil || e==false)){
+VN$(self.$i_g('@views_needing_display'),'<<',view);
+}
+});
+$VN_2.$def('display_required_views',function(self,_cmd){
+VN$(self.$i_g('@views_needing_display'),'each',function(view){
+return VN$(view,'draw_rect');
+});
+return self.$i_s('@views_needing_display',[]);
+});
+$VN_2.$def('add_window',function(self,_cmd,window){
+return 0;
+});
+$VN_2.$def('<<',function(self,_cmd,window){
+return VN$(self,'add_window',window);
+});
+$VN_2.$def_s('shared_application',function(self,_cmd){
+return (self.$k_d('@@app') ? self.$k_g('@@app') : self.$k_s('@@app',VN$(self,'new')));
+});
+$VN_2.$def('delegate=',function(self,_cmd,obj){
+VN$(self, 'will_change_value_for_key', 'delegate');
+if((e=VN$(self.$i_g('@delegate'),'==',obj),e!==nil && e!==false)){
+return ;
+}
+var nc = VN$(self.$klass.$c_g_full('VN').$c_g('NotificationCenter'),'default_center');
+if((e=self.$i_g('@delegate'),e!==nil && e!==false)){
+VN$(nc,'remove_observer:name:object:',self.$i_g('@delegate'),self.$klass.$c_g_full('APP_WILL_FINISH_LAUNCHING'),self);
+VN$(nc,'remove_observer:name:object:',self.$i_g('@delegate'),self.$klass.$c_g_full('APP_DID_FINISH_LAUNCHING'),self);
+VN$(nc,'remove_observer:name:object:',self.$i_g('@delegate'),self.$klass.$c_g_full('APP_DID_CHANGE_SCREEN_PARAMETERS'),self);
+}
+self.$i_s('@delegate',obj);
+if((e=VN$(self.$i_g('@delegate'),'respond_to?','will_finish_launching'),e!==nil && e!==false)){
+VN$(nc,'add_observer:selector:name:object:',self.$i_g('@delegate'),'will_finish_launching',self.$klass.$c_g_full('APP_WILL_FINISH_LAUNCHING'),self);
+}
+if((e=VN$(self.$i_g('@delegate'),'respond_to?','did_finish_launching'),e!==nil && e!==false)){
+VN$(nc,'add_observer:selector:name:object:',self.$i_g('@delegate'),'did_finish_launching',self.$klass.$c_g_full('APP_DID_FINISH_LAUNCHING'),self);
+}
+VN$(self, 'did_change_value_for_key', 'delegate');
+});
+$VN_2.$def('running?',function(self,_cmd){
+return true;
+});
+$VN_2.$def('finish_launching',function(self,_cmd){
+var nc = VN$(self.$klass.$c_g_full('NotificationCenter'),'default_center');
+VN$(nc,'post_notification_name:object:',self.$klass.$c_g_full('APP_WILL_FINISH_LAUNCHING'),self);
+return VN$(nc,'post_notification_name:object:',self.$klass.$c_g_full('APP_DID_FINISH_LAUNCHING'),self);
+});
+$VN_2.$def('run',function(self,_cmd){
+return VN$(self, 'finish_launching');
+});
+$VN_1.$c_s('App',VN$($VN_1.$c_g_full('Application'),'shared_application'));
+
+var cEvent = RClass.define_under(cObject.$c_g_full('Vienna'), 'Event', cObject);
+
+Event.prototype.$klass = cEvent
+Event.prototype.$type = VN.CLASS;
+
+cEvent.$define_alloc_func(function() {
+}); var $VN_1 = RModule.define('Vienna');
+var $VN_2 = RClass.define_under($VN_1, 'Event',cObject);
+$VN_2.$def('type',function(self,_cmd){
+});
+$VN_2.$def('modifier_flags',function(self,_cmd){
+});
+$VN_2.$def('timestamp',function(self,_cmd){
+});
+$VN_2.$def('window',function(self,_cmd){
+});
+$VN_2.$def('window_number',function(self,_cmd){
+});
+$VN_2.$def('context',function(self,_cmd){
+});
+$VN_2.$def('click_count',function(self,_cmd){
+});
+$VN_2.$def('button_number',function(self,_cmd){
+});
+$VN_2.$def('event_number',function(self,_cmd){
+});
+$VN_2.$def('location_in_window',function(self,_cmd){
+});
+$VN_2.$def('characters',function(self,_cmd){
+});
+$VN_2.$def('characters_ignoring_modifiers',function(self,_cmd){
+});
+$VN_2.$def('repeat?',function(self,_cmd){
+});
+$VN_2.$def('key_code',function(self,_cmd){
+});
+$VN_2.$def('tracking_number',function(self,_cmd){
+});
+$VN_2.$def('user_data',function(self,_cmd){
+});
+$VN_2.$def('tracking_area',function(self,_cmd){
+});
+$VN_2.$def_s('mouse_location',function(self,_cmd){
+});
+
+var $VN_1 = RModule.define('Vienna');
+var $VN_2 = RClass.define_under($VN_1, 'Window',$VN_2.$c_g_full('Responder'));
+$VN_2.$def('initialize',function(self,_cmd,content_rect,style_mask){
+VN$sup(arguments.callee, self,_cmd,[]);
+VN$(self, 'setup_display_context');
+self.$i_s('@window_number',VN$(self.$klass.$c_g_full('App'),'add_window',self));
+self.$i_s('@style_mask',style_mask);
+VN$(self,'level=','normal');
+self.$i_s('@min_size',VN$(self.$klass.$c_g_full('Size'),'new',0.0,0.0));
+self.$i_s('@max_size',VN$(self.$klass.$c_g_full('Size'),'new',9999.0,9999.0));
+self.$i_s('@first_responder',self);
+return self.$i_s('@next_responder',self.$klass.$c_g_full('App'));
+});
+$VN_2.$def('setup_display_context',function(self,_cmd){
+self.$i_s('@element',VN$(self.$klass.$c_g_full('Element'),'element_with_type:class_name:id:','div','',''));
+self.$i_s('@display_element',VN$(self.$klass.$c_g_full('Element'),'element_with_type:class_name:id:','canvas','',''));
+VN$(self.$i_g('@element'),'<<',self.$i_g('@display_element'));
+VN$(self.$klass.$c_g_full('Document'),'<<',self.$i_g('@element'));
+VN$(self.$i_g('@display_element'),'add_event_listener','mousedown',function() { console.log('yeah!'); console.log(self); });
+return VN$(self.$i_g('@display_element'),'add_event_listener','mouseup',function() { console.log('yeah up!'); });
+});
+$VN_2.$def_s('frame_rect_for_content_rect:style_mask:',function(self,_cmd,rect,style){
+});
+$VN_2.$def_s('content_rect_for_frame_rect:style_mask:',function(self,_cmd,rect,style){
+});
+$VN_2.$def_s('min_frame_width_with_title:style_mask:',function(self,_cmd,title,style){
+});
+$VN_2.$def('frame_rect_for_content_rect',function(self,_cmd,rect){
+});
+$VN_2.$def('content_rect_for_frame_rect',function(self,_cmd,rect){
+});
+$VN_2.$def('title',function(self,_cmd){
+return self.$i_g('@title');
+});
+$VN_2.$def('title=',function(self,_cmd,str){
+VN$(self, 'will_change_value_for_key', 'title');
+self.$i_s('@title',str);
+VN$(self, 'did_change_value_for_key', 'title');
+});
+$VN_2.$def('represnted_url=',function(self,_cmd,str){
+VN$(self, 'will_change_value_for_key', 'represnted_url');
+VN$(self, 'did_change_value_for_key', 'represnted_url');
+});
+$VN_2.$def('represented_url',function(self,_cmd){
+});
+$VN_2.$def('represented_filename',function(self,_cmd){
+});
+$VN_2.$def('represented_filename=',function(self,_cmd,filename){
+VN$(self, 'will_change_value_for_key', 'represented_filename');
+VN$(self, 'did_change_value_for_key', 'represented_filename');
+});
+$VN_2.$def('set_title_with_represented_filename',function(self,_cmd,filename){
+});
+$VN_2.$def('excluded_from_windows_menu=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'excluded_from_windows_menu');
+self.$i_s('@excluded_from_windows_menu',flag);
+VN$(self, 'did_change_value_for_key', 'excluded_from_windows_menu');
+});
+$VN_2.$def('excluded_from_windows_menu?',function(self,_cmd){
+return self.$i_g('@excluded_from_windows_menu');
+});
+$VN_2.$def('content_view=',function(self,_cmd,view){
+VN$(self, 'will_change_value_for_key', 'content_view');
+self.$i_s('@content_view',view);
+VN$(self, 'did_change_value_for_key', 'content_view');
+});
+$VN_2.$def('content_view',function(self,_cmd){
+return self.$i_g('@content_view');
+});
+$VN_2.$def('delegate=',function(self,_cmd,obj){
+VN$(self, 'will_change_value_for_key', 'delegate');
+self.$i_s('@delegate',obj);
+VN$(self, 'did_change_value_for_key', 'delegate');
+});
+$VN_2.$def('delegate',function(self,_cmd){
+});
+$VN_2.$def('window_number',function(self,_cmd){
+return self.$i_g('@window_number');
+});
+$VN_2.$def('style_mask',function(self,_cmd){
+return self.$i_g('@style_mask');
+});
+$VN_2.$def('style_mask=',function(self,_cmd,mask){
+VN$(self, 'will_change_value_for_key', 'style_mask');
+self.$i_s('@style_mask',mask);
+VN$(self, 'did_change_value_for_key', 'style_mask');
+});
+$VN_2.$def('field_editor:for_object:',function(self,_cmd,create_flag,obj){
+});
+$VN_2.$def('end_editing_for',function(self,_cmd,obj){
+});
+$VN_2.$def('set_frame:display:',function(self,_cmd,frame_rect,flag){
+return VN$(self,'set_frame:display:animate:',frame_rect,flag,false);
+});
+$VN_2.$def('content_size=',function(self,_cmd,size){
+VN$(self, 'will_change_value_for_key', 'content_size');
+VN$(self, 'did_change_value_for_key', 'content_size');
+});
+$VN_2.$def('frame_origin=',function(self,_cmd,origin){
+VN$(self, 'will_change_value_for_key', 'frame_origin');
+VN$(self, 'did_change_value_for_key', 'frame_origin');
+});
+$VN_2.$def('frame_top_left_point=',function(self,_cmd,point){
+VN$(self, 'will_change_value_for_key', 'frame_top_left_point');
+VN$(self, 'did_change_value_for_key', 'frame_top_left_point');
+});
+$VN_2.$def('cascade_top_left_from_point',function(self,_cmd,point){
+});
+$VN_2.$def('frame',function(self,_cmd){
+return self.$i_g('@frame');
+});
+$VN_2.$def('frame=',function(self,_cmd,frame){
+VN$(self, 'will_change_value_for_key', 'frame');
+VN$(self,'set_frame:display:animate:',frame,true,false);
+VN$(self, 'did_change_value_for_key', 'frame');
+});
+$VN_2.$def('animation_resize_time',function(self,_cmd,new_frame){
+});
+$VN_2.$def('set_frame:display:animate:',function(self,_cmd,frame_rect,flag,animate_flag){
+});
+$VN_2.$def('in_live_resize?',function(self,_cmd){
+});
+$VN_2.$def('shows_resize_indicator=',function(self,_cmd,show){
+VN$(self, 'will_change_value_for_key', 'shows_resize_indicator');
+self.$i_s('@shows_resize_indicator',show);
+VN$(self, 'did_change_value_for_key', 'shows_resize_indicator');
+});
+$VN_2.$def('shows_resize_indicator?',function(self,_cmd){
+return self.$i_g('@shows_resize_indicator');
+});
+$VN_2.$def('resize_increments=',function(self,_cmd,increments){
+VN$(self, 'will_change_value_for_key', 'resize_increments');
+self.$i_s('@resize_increments',increments);
+VN$(self, 'did_change_value_for_key', 'resize_increments');
+});
+$VN_2.$def('resize_incremenets',function(self,_cmd){
+return self.$i_g('@resize_increments');
+});
+$VN_2.$def('aspect_ratio=',function(self,_cmd,ratio){
+VN$(self, 'will_change_value_for_key', 'aspect_ratio');
+self.$i_s('@aspect_ratio',ratio);
+VN$(self, 'did_change_value_for_key', 'aspect_ratio');
+});
+$VN_2.$def('aspect_ratio',function(self,_cmd){
+return self.$i_g('@aspect_ratio');
+});
+$VN_2.$def('display',function(self,_cmd){
+});
+$VN_2.$def('preserves_content_during_live_resize?',function(self,_cmd){
+return self.$i_g('@preserves_content_during_live_resize');
+});
+$VN_2.$def('preserves_content_during_live_resize=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'preserves_content_during_live_resize');
+self.$i_s('@preserves_content_during_live_resize',flag);
+VN$(self, 'did_change_value_for_key', 'preserves_content_during_live_resize');
+});
+$VN_2.$def('update',function(self,_cmd){
+});
+$VN_2.$def('make_first_responder',function(self,_cmd,responder){
+});
+$VN_2.$def('first_responder',function(self,_cmd){
+});
+$VN_2.$def('resize_flags',function(self,_cmd){
+});
+$VN_2.$def('key_down',function(self,_cmd,the_event){
+});
+$VN_2.$def('close',function(self,_cmd){
+});
+$VN_2.$def('released_when_closed=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'released_when_closed');
+self.$i_s('@released_when_closed',flag);
+VN$(self, 'did_change_value_for_key', 'released_when_closed');
+});
+$VN_2.$def('released_when_closed?',function(self,_cmd){
+return self.$i_g('@released_when_closed');
+});
+$VN_2.$def('miniaturize',function(self,_cmd,sender){
+});
+$VN_2.$def('deminiaturize',function(self,_cmd,sender){
+});
+$VN_2.$def('zoomed?',function(self,_cmd){
+return self.$i_g('@zoomed');
+});
+$VN_2.$def('zoom',function(self,_cmd,sender){
+});
+$VN_2.$def('miniaturized?',function(self,_cmd){
+return self.$i_g('@miniaturized');
+});
+$VN_2.$def('try_to_perform:with:',function(self,_cmd,action,object){
+});
+$VN_2.$def('background_color=',function(self,_cmd,color){
+VN$(self, 'will_change_value_for_key', 'background_color');
+self.$i_s('@background_color',color);
+VN$(self, 'did_change_value_for_key', 'background_color');
+});
+$VN_2.$def('background_color',function(self,_cmd){
+return self.$i_g('@background_color');
+});
+$VN_2.$def('movable=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'movable');
+self.$i_s('@movable',flag);
+VN$(self, 'did_change_value_for_key', 'movable');
+});
+$VN_2.$def('movable?',function(self,_cmd){
+return self.$i_g('@movable');
+});
+$VN_2.$def('movable_by_window_background=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'movable_by_window_background');
+self.$i_g('@movable_by_window_background');
+VN$(self, 'did_change_value_for_key', 'movable_by_window_background');
+});
+$VN_2.$def('movable_by_window_background?',function(self,_cmd){
+return self.$i_g('@movable_by_window_background');
+});
+$VN_2.$def('hides_on_deactivate=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'hides_on_deactivate');
+self.$i_s('@hides_on_deactivate',flag);
+VN$(self, 'did_change_value_for_key', 'hides_on_deactivate');
+});
+$VN_2.$def('hides_on_deactivate?',function(self,_cmd){
+return self.$i_g('@hides_on_deactivate');
+});
+$VN_2.$def('center',function(self,_cmd){
+});
+$VN_2.$def('make_key_and_order_front',function(self,_cmd,sender){
+});
+$VN_2.$def('order_front',function(self,_cmd,sender){
+});
+$VN_2.$def('order_back',function(self,_cmd,sender){
+});
+$VN_2.$def('order_out',function(self,_cmd,sender){
+});
+$VN_2.$def('order_window:relative_to:',function(self,_cmd,place,other_win){
+});
+$VN_2.$def('order_front_regardless',function(self,_cmd){
+});
+$VN_2.$def('document_edited=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'document_edited');
+self.$i_s('@document_edited',flag);
+VN$(self, 'did_change_value_for_key', 'document_edited');
+});
+$VN_2.$def('document_edited?',function(self,_cmd){
+return self.$i_g('@document_edited');
+});
+$VN_2.$def('visible?',function(self,_cmd){
+return self.$i_g('@visible');
+});
+$VN_2.$def('key_window?',function(self,_cmd){
+return self.$i_g('@key_window');
+});
+$VN_2.$def('main_window?',function(self,_cmd){
+return self.$i_g('@main_window');
+});
+$VN_2.$def('can_become_key_window?',function(self,_cmd){
+});
+$VN_2.$def('can_become_main_window?',function(self,_cmd){
+});
+$VN_2.$def('make_key_window',function(self,_cmd){
+});
+$VN_2.$def('make_main_window',function(self,_cmd){
+});
+$VN_2.$def('become_key_window',function(self,_cmd){
+});
+$VN_2.$def('become_main_window',function(self,_cmd){
+});
+$VN_2.$def('resign_key_window',function(self,_cmd){
+});
+$VN_2.$def('resign_main_window',function(self,_cmd){
+});
+$VN_2.$def('works_when_modal?',function(self,_cmd){
+});
+$VN_2.$def('convert_base_to_screen',function(self,_cmd,point){
+});
+$VN_2.$def('convert_screen_to_base',function(self,_cmd,point){
+});
+$VN_2.$def('perform_close',function(self,_cmd,sender){
+});
+$VN_2.$def('perform_miniaturize',function(self,_cmd,sender){
+});
+$VN_2.$def('perform_zoom',function(self,_cmd,sender){
+});
+$VN_2.$def('level=',function(self,_cmd,level){
+VN$(self, 'will_change_value_for_key', 'level');
+self.$i_s('@level',level);
+VN$(self, 'did_change_value_for_key', 'level');
+});
+$VN_2.$def('level',function(self,_cmd){
+return self.$i_g('@level');
+});
+$VN_2.$def('has_shadow=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'has_shadow');
+self.$i_s('@has_shadow',flag);
+VN$(self, 'did_change_value_for_key', 'has_shadow');
+});
+$VN_2.$def('has_shadow?',function(self,_cmd){
+return self.$i_g('@has_shadow');
+});
+$VN_2.$def('min_size',function(self,_cmd){
+return self.$i_g('@min_size');
+});
+$VN_2.$def('max_size',function(self,_cmd){
+return self.$i_g('@max_size');
+});
+$VN_2.$def('min_size=',function(self,_cmd,size){
+VN$(self, 'will_change_value_for_key', 'min_size');
+self.$i_s('@min_size',size);
+VN$(self, 'did_change_value_for_key', 'min_size');
+});
+$VN_2.$def('max_size=',function(self,_cmd,size){
+VN$(self, 'will_change_value_for_key', 'max_size');
+self.$i_s('@max_size',size);
+VN$(self, 'did_change_value_for_key', 'max_size');
+});
+$VN_2.$def('next_event_matching_mask',function(self,_cmd,mask){
+});
+$VN_2.$def('post_event:at_start:',function(self,_cmd,event,flag){
+});
+$VN_2.$def('current_event',function(self,_cmd){
+return self.$i_g('@current_event');
+});
+$VN_2.$def('accepts_mouse_moved_events=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'accepts_mouse_moved_events');
+self.$i_s('@accepts_mouse_moved_events',flag);
+VN$(self, 'did_change_value_for_key', 'accepts_mouse_moved_events');
+});
+$VN_2.$def('accepts_mouse_moved_events?',function(self,_cmd){
+return self.$i_g('@accepts_mouse_moved_events');
+});
+$VN_2.$def('ignores_mouse_events=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'ignores_mouse_events');
+self.$i_s('@ignores_mouse_events',flag);
+VN$(self, 'did_change_value_for_key', 'ignores_mouse_events');
+});
+$VN_2.$def('ignores_mouse_events?',function(self,_cmd){
+return self.$i_g('@ignores_mouse_events');
+});
+$VN_2.$def('send_event',function(self,_cmd,event){
+return (function($v){
+if(($e = VN$('key_up', '===', $v),$e!==nil && $e!==false)){
+return VN$(VN$(self, 'first_responder'),'key_up',event);
+}
+else if(($e = VN$('key_down', '===', $v),$e!==nil && $e!==false)){
+return VN$(VN$(self, 'first_responder'),'key_down',event);
+}
+else if(($e = VN$('scroll_wheel', '===', $v),$e!==nil && $e!==false)){
+}
+else if(($e = VN$('left_mouse_up', '===', $v),$e!==nil && $e!==false)){
+}
+})(VN$(event,'type'));
+});
+$VN_2.$def('window_controller',function(self,_cmd){
+return self.$i_g('@window_controller');
+});
+$VN_2.$def('window_controller=',function(self,_cmd,controller){
+VN$(self, 'will_change_value_for_key', 'window_controller');
+self.$i_s('@window_controller',controller);
+VN$(self, 'did_change_value_for_key', 'window_controller');
+});
+$VN_2.$def('sheet?',function(self,_cmd){
+return self.$i_g('@sheet');
+});
+$VN_2.$def('attatched_sheet',function(self,_cmd){
+return self.$i_g('@attached_sheet');
+});
+$VN_2.$def('add_child_window:ordered:',function(self,_cmd,win,place){
+});
+$VN_2.$def('remove_child_window',function(self,_cmd,win){
+});
+$VN_2.$def('child_windows',function(self,_cmd){
+return self.$i_g('@child_windows');
+});
+$VN_2.$def('parent_window',function(self,_cmd){
+return self.$i_g('@parent_window');
+});
+$VN_2.$def('parent_window=',function(self,_cmd,win){
+VN$(self, 'will_change_value_for_key', 'parent_window');
+self.$i_s('@parent_window',win);
+VN$(self, 'did_change_value_for_key', 'parent_window');
+});
+$VN_2.$def('graphics_context',function(self,_cmd){
+return self.$i_g('@graphics_context');
+});
+$VN_2.$def('initial_first_responder=',function(self,_cmd,view){
+VN$(self, 'will_change_value_for_key', 'initial_first_responder');
+self.$i_s('@initial_first_responder',view);
+VN$(self, 'did_change_value_for_key', 'initial_first_responder');
+});
+$VN_2.$def('initial_first_responder',function(self,_cmd){
+return self.$i_g('@initial_first_responder');
+});
+$VN_2.$def('select_next_key_view',function(self,_cmd,sender){
+});
+$VN_2.$def('select_previous_key_view',function(self,_cmd,sender){
+});
+$VN_2.$def('select_key_view_following_view',function(self,_cmd,view){
+});
+$VN_2.$def('select_key_view_preceding_view',function(self,_cmd,view){
+});
+$VN_2.$def('autorecalculates_key_view_loop',function(self,_cmd,flag){
+return self.$i_s('@autorecalculates_key_view_loop',flag);
+});
+$VN_2.$def('autorecalculates_key_view_loop?',function(self,_cmd){
+return self.$i_g('@autorecalculates_key_view_loop');
+});
+$VN_2.$def('recalculate_key_view_loop',function(self,_cmd){
+});
+$VN_2.$def('toolbar=',function(self,_cmd,toolbar){
+VN$(self, 'will_change_value_for_key', 'toolbar');
+self.$i_s('@toolbar',toolbar);
+VN$(self, 'did_change_value_for_key', 'toolbar');
+});
+$VN_2.$def('toolbar',function(self,_cmd){
+return self.$i_g('@toolbar');
+});
+$VN_2.$def('toggle_toolbar_shown',function(self,_cmd,sender){
+});
+$VN_2.$def('run_toolbar_customization_palette',function(self,_cmd,sender){
+});
+$VN_2.$def('shows_toolbar_button=',function(self,_cmd,show){
+VN$(self, 'will_change_value_for_key', 'shows_toolbar_button');
+self.$i_g('@shows_toolbar_button');
+VN$(self, 'did_change_value_for_key', 'shows_toolbar_button');
+});
+$VN_2.$def('shows_toolbar_button?',function(self,_cmd){
+return self.$i_g('@shows_toolbar_button');
+});
+
+var $VN_1 = RModule.define('Vienna');
+var $VN_2 = RClass.define_under($VN_1, 'View',$VN_2.$c_g_full('Responder'));
+$VN_2.$def('initialize',function(self,_cmd,frame){
+VN$(self,'puts','initialising view');
+VN$sup(arguments.callee, self,_cmd,[]);
+return VN$(self,'setup_drawing_context');
+});
+$VN_2.$def('element',function(self,_cmd){
+return self.$i_g('@element');
+});
+$VN_2.$def('display_mode',function(self,_cmd){
+return VN$(self.$klass.$c_g_full('Vienna'),'display_mode');
+});
+$VN_2.$def('setup_display_context',function(self,_cmd){
+if((e=VN$(VN$(self, 'drawing_mode'),'==','render'),e!==nil && e!==false)){
+VN$(self, 'setup_render_context');
+}
+else{
+VN$(self, 'setup_drawing_context');
+}
+});
+$VN_2.$def('setup_drawing_context',function(self,_cmd){
+self.$i_s('@element',VN$(self.$klass.$c_g_full('Element'),'element_with_type:class_name:id:','div','',''));
+self.$i_s('@draw_element',VN$(self.$klass.$c_g_full('Element'),'element_with_type:class_name:id:','canvas','',''));
+VN$(self.$i_g('@element'),'<<',self.$i_g('@draw_element'));
+return VN$(self.$klass.$c_g_full('Document'),'<<',self.$i_g('@element'));
+});
+$VN_2.$def('setup_render_context',function(self,_cmd){
+self.$i_s('@element',VN$(self.$klass.$c_g_full('Element'),'element_with_type:class_name:id:','div','',''));
+self.$i_s('@draw_element',VN$(self.$klass.$c_g_full('Element'),'element_with_type:class_name:id:','div','',''));
+VN$(self.$i_g('@element'),'<<',self.$i_g('@draw_element'));
+return VN$(self.$klass.$c_g_full('Document'),'<<',self.$i_g('@element'));
+});
+$VN_2.$def('initialize_with_coder',function(self,_cmd,coder){
+});
+$VN_2.$def('initialize_with_builder',function(self,_cmd,builder){
+});
+$VN_2.$def_s('display_properties',function(self,_cmd){
+return VN$(self,'puts','in display properties..');
+});
+VN$($VN_2,'display_properties','frame','frame_size');
+$VN_2.$def('did_change_value_for_key',function(self,_cmd){
+});
+$VN_2.$def('window',function(self,_cmd){
+});
+$VN_2.$def('superview',function(self,_cmd){
+});
+$VN_2.$def('subviews',function(self,_cmd){
+});
+$VN_2.$def('descendant_of?',function(self,_cmd,a_view){
+});
+$VN_2.$def('ancestor_shared_with_view',function(self,_cmd,a_view){
+});
+$VN_2.$def('opaque_ancestor',function(self,_cmd){
+});
+$VN_2.$def('hidden=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'hidden');
+VN$(self, 'did_change_value_for_key', 'hidden');
+});
+$VN_2.$def('hidden?',function(self,_cmd){
+});
+$VN_2.$def('hidden_or_has_hidden_ancestor?',function(self,_cmd){
+});
+$VN_2.$def('view_did_hide',function(self,_cmd){
+});
+$VN_2.$def('view_did_unhide',function(self,_cmd){
+});
+$VN_2.$def('subviews=',function(self,_cmd,new_subviews){
+VN$(self, 'will_change_value_for_key', 'subviews');
+VN$(self, 'did_change_value_for_key', 'subviews');
+});
+$VN_2.$def('add_subview',function(self,_cmd,a_view){
+return VN$(self.$i_g('@element'),'<<',VN$(a_view,'element'));
+});
+$VN_2.$def('<<',function(self,_cmd,a_view){
+return VN$(self,'add_subview',a_view);
+});
+$VN_2.$def('add_subview:positioned:relative_to:',function(self,_cmd,a_view,place,other_view){
+});
+$VN_2.$def('view_will_move_to_window',function(self,_cmd,win){
+});
+$VN_2.$def('view_did_move_to_window',function(self,_cmd){
+});
+$VN_2.$def('view_will_move_to_superview',function(self,_cmd,new_super){
+});
+$VN_2.$def('view_did_move_to_superview',function(self,_cmd){
+});
+$VN_2.$def('did_add_subview',function(self,_cmd,subview){
+});
+$VN_2.$def('will_remove_subview',function(self,_cmd,subview){
+});
+$VN_2.$def('remove_from_superview',function(self,_cmd){
+});
+$VN_2.$def('replace_subview:with:',function(self,_cmd,old_view,new_view){
+});
+$VN_2.$def('posts_frame_changed_notifications=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'posts_frame_changed_notifications');
+VN$(self, 'did_change_value_for_key', 'posts_frame_changed_notifications');
+});
+$VN_2.$def('posts_frame_changed_notifications?',function(self,_cmd){
+});
+$VN_2.$def('resize_subviews_with_old_size',function(self,_cmd,size){
+});
+$VN_2.$def('resize_with_old_superview_size',function(self,_cmd,old){
+});
+$VN_2.$def('autoresizes_subviews=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'autoresizes_subviews');
+VN$(self, 'did_change_value_for_key', 'autoresizes_subviews');
+});
+$VN_2.$def('autoresizes_subviews?',function(self,_cmd){
+});
+$VN_2.$def('autoresizing_mask=',function(self,_cmd,mask){
+VN$(self, 'will_change_value_for_key', 'autoresizing_mask');
+VN$(self, 'did_change_value_for_key', 'autoresizing_mask');
+});
+$VN_2.$def('autoresizing_mask',function(self,_cmd){
+});
+$VN_2.$def('frame_origin=',function(self,_cmd,new_origin){
+VN$(self, 'will_change_value_for_key', 'frame_origin');
+VN$(self, 'did_change_value_for_key', 'frame_origin');
+});
+$VN_2.$def('frame_size=',function(self,_cmd,new_size){
+VN$(self, 'will_change_value_for_key', 'frame_size');
+VN$(self, 'did_change_value_for_key', 'frame_size');
+});
+$VN_2.$def('frame=',function(self,_cmd,frame){
+VN$(self, 'will_change_value_for_key', 'frame');
+VN$(self, 'did_change_value_for_key', 'frame');
+});
+$VN_2.$def('frame',function(self,_cmd){
+return self.$i_g('@frame');
+});
+$VN_2.$def('frame_rotation=',function(self,_cmd,angle){
+VN$(self, 'will_change_value_for_key', 'frame_rotation');
+VN$(self, 'did_change_value_for_key', 'frame_rotation');
+});
+$VN_2.$def('frame_rotation',function(self,_cmd){
+return self.$i_g('@frame_rotation');
+});
+$VN_2.$def('frame_center_rotation=',function(self,_cmd,angle){
+VN$(self, 'will_change_value_for_key', 'frame_center_rotation');
+VN$(self, 'did_change_value_for_key', 'frame_center_rotation');
+});
+$VN_2.$def('frame_center_rotation',function(self,_cmd){
+});
+$VN_2.$def('bounds_origin=',function(self,_cmd,new_origin){
+VN$(self, 'will_change_value_for_key', 'bounds_origin');
+VN$(self, 'did_change_value_for_key', 'bounds_origin');
+});
+$VN_2.$def('bounds_size=',function(self,_cmd,new_size){
+VN$(self, 'will_change_value_for_key', 'bounds_size');
+VN$(self, 'did_change_value_for_key', 'bounds_size');
+});
+$VN_2.$def('bounds_rotation=',function(self,_cmd,angle){
+VN$(self, 'will_change_value_for_key', 'bounds_rotation');
+VN$(self, 'did_change_value_for_key', 'bounds_rotation');
+});
+$VN_2.$def('bounds_rotation',function(self,_cmd){
+});
+$VN_2.$def('translate_origin_to_point',function(self,_cmd,translation){
+});
+$VN_2.$def('rotate_by_angle',function(self,_cmd,angle){
+});
+$VN_2.$def('bounds=',function(self,_cmd,bounds){
+VN$(self, 'will_change_value_for_key', 'bounds');
+VN$(self, 'did_change_value_for_key', 'bounds');
+});
+$VN_2.$def('bounds',function(self,_cmd){
+return self.$i_g('@bounds');
+});
+$VN_2.$def('flipped?',function(self,_cmd){
+});
+$VN_2.$def('rotated_from_base?',function(self,_cmd){
+});
+$VN_2.$def('rotated_or_scaled_from_base?',function(self,_cmd){
+});
+$VN_2.$def('opaque?',function(self,_cmd){
+});
+$VN_2.$def('convert_point:from_view:',function(self,_cmd,point,view){
+});
+$VN_2.$def('convert_point:to_view:',function(self,_cmd,point,view){
+});
+$VN_2.$def('convert_size:from_view:',function(self,_cmd,size,view){
+});
+$VN_2.$def('convert_size:to_view:',function(self,_cmd,size,view){
+});
+$VN_2.$def('convert_rect:from_view:',function(self,_cmd,rect,view){
+});
+$VN_2.$def('convert_rect:to_view:',function(self,_cmd,rect,view){
+});
+$VN_2.$def('convert_point_to_base',function(self,_cmd,point){
+});
+$VN_2.$def('convert_point_from_base',function(self,_cmd,point){
+});
+$VN_2.$def('convert_size_to_base',function(self,_cmd,size){
+});
+$VN_2.$def('convert_size_from_base',function(self,_cmd,size){
+});
+$VN_2.$def('convert_rect_to_base',function(self,_cmd,rect){
+});
+$VN_2.$def('convert_rect_from_base',function(self,_cmd,rect){
+});
+$VN_2.$def('can_draw?',function(self,_cmd){
+});
+$VN_2.$def('needs_display=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'needs_display');
+self.$i_s('@needs_display',flag);
+VN$(self, 'did_change_value_for_key', 'needs_display');
+});
+$VN_2.$def('needs_display_in_rect',function(self,_cmd,invalid_rect){
+return self.$i_g('@needs_display');
+});
+$VN_2.$def('needs_display?',function(self,_cmd){
+return self.$i_g('@needs_display');
+});
+$VN_2.$def('lock_focus',function(self,_cmd){
+});
+$VN_2.$def('unlock_focus',function(self,_cmd){
+});
+$VN_2.$def_s('focus_view',function(self,_cmd){
+});
+$VN_2.$def('visible_rect',function(self,_cmd){
+});
+$VN_2.$def('display',function(self,_cmd){
+if((e=self.$i_g('@needs_display'),e!==nil && e!==false)){
+}
+});
+$VN_2.$def('draw_rect',function(self,_cmd,rect){
+});
+$VN_2.$def('view_will_draw',function(self,_cmd){
+});
+$VN_2.$def('hit_test',function(self,_cmd,point){
+});
+$VN_2.$def('mouse:in_rect:',function(self,_cmd,point,rect){
+});
+
+var $VN_1 = RModule.define('Vienna');
+var $VN_2 = RClass.define_under($VN_1, 'Control',$VN_2.$c_g_full('View'));
+$VN_2.$def('initialize',function(self,_cmd,frame){
+VN$(self,'puts','control calling super');
+return VN$sup(arguments.callee, self,_cmd,[]);
+});
+$VN_2.$def('send_action',function(self,_cmd,action,target){
+if((e=VN$(self,'action',VN$(self,'and',target)),e!==nil && e!==false)){
+VN$(self.$klass.$c_g_full('VN').$c_g('App'),'send_action',action,target,self);
+true;
+}
+else{
+false;
+}
+});
+$VN_2.$def('size_to_fit',function(self,_cmd){
+});
+$VN_2.$def('calc_size',function(self,_cmd){
+});
+$VN_2.$def('cell',function(self,_cmd){
+});
+$VN_2.$def('cell=',function(self,_cmd,a_cell){
+VN$(self, 'will_change_value_for_key', 'cell');
+VN$(self, 'did_change_value_for_key', 'cell');
+});
+$VN_2.$def('selected_cell',function(self,_cmd){
+});
+$VN_2.$def('target',function(self,_cmd){
+});
+$VN_2.$def('target=',function(self,_cmd,obj){
+VN$(self, 'will_change_value_for_key', 'target');
+VN$(self, 'did_change_value_for_key', 'target');
+});
+$VN_2.$def('action',function(self,_cmd){
+});
+$VN_2.$def('action=',function(self,_cmd,selector){
+VN$(self, 'will_change_value_for_key', 'action');
+VN$(self, 'did_change_value_for_key', 'action');
+});
+$VN_2.$def('tag',function(self,_cmd){
+});
+$VN_2.$def('tag=',function(self,_cmd,tag){
+VN$(self, 'will_change_value_for_key', 'tag');
+VN$(self, 'did_change_value_for_key', 'tag');
+});
+$VN_2.$def('selected_tag',function(self,_cmd){
+});
+$VN_2.$def('ignores_multi_click=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'ignores_multi_click');
+VN$(self, 'did_change_value_for_key', 'ignores_multi_click');
+});
+$VN_2.$def('ignores_multi_click?',function(self,_cmd){
+});
+$VN_2.$def('send_action_on',function(self,_cmd,mask){
+});
+$VN_2.$def('continuous?',function(self,_cmd){
+});
+$VN_2.$def('continuous=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'continuous');
+VN$(self, 'did_change_value_for_key', 'continuous');
+});
+$VN_2.$def('enabled?',function(self,_cmd){
+});
+$VN_2.$def('enabled=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'enabled');
+VN$(self, 'did_change_value_for_key', 'enabled');
+});
+$VN_2.$def('alignment',function(self,_cmd){
+});
+$VN_2.$def('alignment=',function(self,_cmd,mode){
+VN$(self, 'will_change_value_for_key', 'alignment');
+VN$(self, 'did_change_value_for_key', 'alignment');
+});
+$VN_2.$def('font',function(self,_cmd){
+});
+$VN_2.$def('font=',function(self,_cmd,font){
+VN$(self, 'will_change_value_for_key', 'font');
+VN$(self, 'did_change_value_for_key', 'font');
+});
+$VN_2.$def('formatter=',function(self,_cmd,new_formatter){
+VN$(self, 'will_change_value_for_key', 'formatter');
+VN$(self, 'did_change_value_for_key', 'formatter');
+});
+$VN_2.$def('formatter',function(self,_cmd){
+});
+$VN_2.$def('object_value=',function(self,_cmd,obj){
+VN$(self, 'will_change_value_for_key', 'object_value');
+VN$(self, 'did_change_value_for_key', 'object_value');
+});
+$VN_2.$def('string_value=',function(self,_cmd,obj){
+VN$(self, 'will_change_value_for_key', 'string_value');
+VN$(self, 'did_change_value_for_key', 'string_value');
+});
+$VN_2.$def('text=',function(self,_cmd,text){
+VN$(self, 'will_change_value_for_key', 'text');
+var string_value = text;
+VN$(self, 'did_change_value_for_key', 'text');
+});
+$VN_2.$def('int_value=',function(self,_cmd,val){
+VN$(self, 'will_change_value_for_key', 'int_value');
+VN$(self, 'did_change_value_for_key', 'int_value');
+});
+$VN_2.$def('float_value=',function(self,_cmd,val){
+VN$(self, 'will_change_value_for_key', 'float_value');
+VN$(self, 'did_change_value_for_key', 'float_value');
+});
+$VN_2.$def('double_value=',function(self,_cmd,val){
+VN$(self, 'will_change_value_for_key', 'double_value');
+VN$(self, 'did_change_value_for_key', 'double_value');
+});
+$VN_2.$def('object_value',function(self,_cmd){
+});
+$VN_2.$def('string_value',function(self,_cmd){
+});
+$VN_2.$def('to_s',function(self,_cmd){
+return VN$(self, 'string_value');
+});
+$VN_2.$def('int_value',function(self,_cmd){
+});
+$VN_2.$def('to_i',function(self,_cmd){
+return VN$(self, 'int_value');
+});
+$VN_2.$def('float_value',function(self,_cmd){
+});
+$VN_2.$def('to_f',function(self,_cmd){
+return VN$(self, 'float_value');
+});
+$VN_2.$def('double_value',function(self,_cmd){
+});
+$VN_2.$def('needs_display',function(self,_cmd){
+});
+$VN_2.$def('update_cell',function(self,_cmd,cell){
+});
+$VN_2.$def('update_cell_inside',function(self,_cmd,cell){
+});
+$VN_2.$def('draw_cell_inside',function(self,_cmd,cell){
+});
+$VN_2.$def('draw_cell',function(self,_cmd,cell){
+});
+$VN_2.$def('select_cell',function(self,_cmd,cell){
+});
+$VN_2.$def('send_action:to:',function(self,_cmd,action,target){
+});
+$VN_2.$def('take_int_value_from',function(self,_cmd,sender){
+});
+$VN_2.$def('take_float_value_from',function(self,_cmd,sender){
+});
+$VN_2.$def('take_double_value_from',function(self,_cmd,sender){
+});
+$VN_2.$def('take_object_value_from',function(self,_cmd,sender){
+});
+$VN_2.$def('take_string_value_from',function(self,_cmd,sender){
+});
+$VN_2.$def('current_editor',function(self,_cmd){
+});
+$VN_2.$def('abort_editing',function(self,_cmd){
+});
+$VN_2.$def('validate_editing',function(self,_cmd){
+});
+$VN_2.$def('mouse_down',function(self,_cmd,the_event){
+});
+
+var $VN_1 = RModule.define('Vienna');
+var $VN_2 = RClass.define_under($VN_1, 'Button',$VN_2.$c_g_full('Control'));
+VN$($VN_2,'attr_reader','title','alternate_title','image','image_position');
+$VN_2.$def('initialize',function(self,_cmd,frame){
+VN$(self,'puts','initilising button');
+return VN$sup(arguments.callee, self,_cmd,[]);
+});
+$VN_2.$def('title=',function(self,_cmd,str){
+VN$(self, 'will_change_value_for_key', 'title');
+VN$(self, 'did_change_value_for_key', 'title');
+});
+$VN_2.$def('alternate_title=',function(self,_cmd,str){
+VN$(self, 'will_change_value_for_key', 'alternate_title');
+VN$(self, 'did_change_value_for_key', 'alternate_title');
+});
+$VN_2.$def('image=',function(self,_cmd,image){
+VN$(self, 'will_change_value_for_key', 'image');
+VN$(self, 'did_change_value_for_key', 'image');
+});
+$VN_2.$def('image_position=',function(self,_cmd,position){
+VN$(self, 'will_change_value_for_key', 'image_position');
+VN$(self, 'did_change_value_for_key', 'image_position');
+});
+$VN_2.$def('button_type=',function(self,_cmd,type){
+VN$(self, 'will_change_value_for_key', 'button_type');
+VN$(self, 'did_change_value_for_key', 'button_type');
+});
+$VN_2.$def('type=',function(self,_cmd,type){
+VN$(self, 'will_change_value_for_key', 'type');
+var button_type = type;
+VN$(self, 'did_change_value_for_key', 'type');
+});
+$VN_2.$def('state',function(self,_cmd){
+});
+$VN_2.$def('state=',function(self,_cmd,val){
+VN$(self, 'will_change_value_for_key', 'state');
+VN$(self, 'did_change_value_for_key', 'state');
+});
+$VN_2.$def('on?',function(self,_cmd){
+return VN$(self.$i_g('@state'),'==','on');
+});
+$VN_2.$def('off?',function(self,_cmd){
+return VN$(self.$i_g('@state'),'==','off');
+});
+$VN_2.$def('mixed?',function(self,_cmd){
+return VN$(self.$i_g('@state'),'==','mixed');
+});
+$VN_2.$def('bordered?',function(self,_cmd){
+});
+$VN_2.$def('bordered=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'bordered');
+VN$(self, 'did_change_value_for_key', 'bordered');
+});
+$VN_2.$def('transparent?',function(self,_cmd){
+});
+$VN_2.$def('transparent=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'transparent');
+VN$(self, 'did_change_value_for_key', 'transparent');
+});
+$VN_2.$def('key_equivalent',function(self,_cmd){
+});
+$VN_2.$def('key_equivalent=',function(self,_cmd,code){
+VN$(self, 'will_change_value_for_key', 'key_equivalent');
+VN$(self, 'did_change_value_for_key', 'key_equivalent');
+});
+$VN_2.$def('key_equivalent_modifier_mask',function(self,_cmd){
+});
+$VN_2.$def('key_equivalent_modifier_mask=',function(self,_cmd,mask){
+VN$(self, 'will_change_value_for_key', 'key_equivalent_modifier_mask');
+VN$(self, 'did_change_value_for_key', 'key_equivalent_modifier_mask');
+});
+$VN_2.$def('highlight=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'highlight');
+VN$(self, 'did_change_value_for_key', 'highlight');
+});
+$VN_2.$def('perform_key_equivalent',function(self,_cmd,key){
+});
+$VN_2.$def('bezel_style=',function(self,_cmd,style){
+VN$(self, 'will_change_value_for_key', 'bezel_style');
+VN$(self, 'did_change_value_for_key', 'bezel_style');
+});
+$VN_2.$def('bezel=',function(self,_cmd,style){
+VN$(self, 'will_change_value_for_key', 'bezel');
+var bezel_style = style;
+VN$(self, 'did_change_value_for_key', 'bezel');
+});
+$VN_2.$def('bezel_style',function(self,_cmd){
+});
+$VN_2.$def('allows_mixed_state=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'allows_mixed_state');
+VN$(self, 'did_change_value_for_key', 'allows_mixed_state');
+});
+$VN_2.$def('allows_mixed_state',function(self,_cmd){
+});
+$VN_2.$def('next_state',function(self,_cmd){
+});
+
+var $VN_1 = RModule.define('Vienna');
+var $VN_2 = RClass.define_under($VN_1, 'GraphicsContext',cObject);
+$VN_2.$def('initialize',function(self,_cmd,graphics_port,flip_state){
+self.$i_s('@ctx',graphics_port);
+return self.$i_s('@flip_state',flip_state);
+});
+$VN_2.$def('graphics_port',function(self,_cmd){
+return self.$i_g('@ctx');
+});
+$VN_2.$def('flipped?',function(self,_cmd){
+return self.$i_g('@flip_state');
+});
+$VN_2.$def_s('current_context',function(self,_cmd){
+});
+$VN_2.$def_s('current_context=',function(self,_cmd,context){
+VN$(self, 'will_change_value_for_key', 'current_context');
+VN$(self, 'did_change_value_for_key', 'current_context');
+});
+$VN_2.$def('save_graphics_state',function(self,_cmd){
+});
+$VN_2.$def('line_width=',function(self,_cmd,width){
+VN$(self, 'will_change_value_for_key', 'line_width');
+self.$i_g('@ctx').lineWidth = widthVN$(self, 'did_change_value_for_key', 'line_width');
+});
+$VN_2.$def('line_cap=',function(self,_cmd,cap){
+VN$(self, 'will_change_value_for_key', 'line_cap');
+self.$i_g('@ctx').lineCap = capVN$(self, 'did_change_value_for_key', 'line_cap');
+});
+$VN_2.$def('line_join=',function(self,_cmd,join){
+VN$(self, 'will_change_value_for_key', 'line_join');
+self.$i_g('@ctx').lineJoin = joinVN$(self, 'did_change_value_for_key', 'line_join');
+});
+$VN_2.$def('miter_limit=',function(self,_cmd,limit){
+VN$(self, 'will_change_value_for_key', 'miter_limit');
+self.$i_g('@ctx').miterLimit = limitVN$(self, 'did_change_value_for_key', 'miter_limit');
+});
+$VN_2.$def('alpha=',function(self,_cmd,alpha){
+VN$(self, 'will_change_value_for_key', 'alpha');
+self.$i_g('@ctx').globalAlpha = alphaVN$(self, 'did_change_value_for_key', 'alpha');
+});
+$VN_2.$def('begin_path',function(self,_cmd){
+self.$i_g('@ctx').beginPath()});
+$VN_2.$def('move_to_point',function(self,_cmd,point){
+self.$i_g('@ctx').moveTo(VN$(point,'x'),VN$(point,'y'))});
+$VN_2.$def('add_line_to_point',function(self,_cmd,point){
+self.$i_g('@ctx').lineTo(VN$(point,'x'),VN$(point,'y'))});
+$VN_2.$def('add_curve_to_point',function(self,_cmd,cp1,cp2,point){
+self.$i_g('@ctx').bezierCurveTo(VN$(cp1,'x'),VN$(cp1,'y'),VN$(cp2,'x'),VN$(cp2,'y'),VN$(point,'x'),VN$(point,'y'))});
+$VN_2.$def('add_lines',function(self,_cmd,points){
+});
+
+var $VN_1 = RModule.define('Vienna');
+var $VN_2 = RClass.define_under($VN_1, 'Rect',cObject);
+$VN_2.$def('initialize',function(self,_cmd,x,y,w,h){
+self.$i_s('@origin',VN$(self.$klass.$c_g_full('Point'),'new',x,y));
+return self.$i_s('@size',VN$(self.$klass.$c_g_full('Size'),'new',w,h));
+});
+$VN_2.$def('x',function(self,_cmd){
+return VN$(self.$i_g('@origin'),'x');
+});
+$VN_2.$def('y',function(self,_cmd){
+return VN$(self.$i_g('@origin'),'y');
+});
+$VN_2.$def('width',function(self,_cmd){
+return VN$(self.$i_g('@size'),'width');
+});
+$VN_2.$def('height',function(self,_cmd){
+return VN$(self.$i_g('@size'),'height');
+});
+$VN_2.$def('x=',function(self,_cmd,x){
+VN$(self, 'will_change_value_for_key', 'x');
+VN$(self.$i_g('@origin'),'x=',x);
+VN$(self, 'did_change_value_for_key', 'x');
+});
+$VN_2.$def('y=',function(self,_cmd,y){
+VN$(self, 'will_change_value_for_key', 'y');
+VN$(self.$i_g('@origin'),'y=',y);
+VN$(self, 'did_change_value_for_key', 'y');
+});
+$VN_2.$def('width=',function(self,_cmd,w){
+VN$(self, 'will_change_value_for_key', 'width');
+VN$(self.$i_g('@size'),'width=',w);
+VN$(self, 'did_change_value_for_key', 'width');
+});
+$VN_2.$def('height=',function(self,_cmd,h){
+VN$(self, 'will_change_value_for_key', 'height');
+VN$(self.$i_g('@size'),'height=',h);
+VN$(self, 'did_change_value_for_key', 'height');
+});
+$VN_2.$def('to_a',function(self,_cmd){
+return [VN$(self, 'x'),VN$(self, 'y'),VN$(self, 'w'),VN$(self, 'h')];
+});
+$VN_2.$def('center',function(self,_cmd){
+});
+$VN_2.$def('contain?',function(self,_cmd){
+});
+$VN_2.$def('to_s',function(self,_cmd){
+return ['{{',(VN$(self, 'x')),', ',(VN$(self, 'y')),'}, {',(VN$(self, 'width')),', ',(VN$(self, 'height')),'}}'].join('');
+});
+$VN_2.$def('inspect',function(self,_cmd){
+});
+var $VN_2 = RClass.define_under($VN_1, 'Point',cObject);
+$VN_2.$def('initialize',function(self,_cmd,x,y){
+self.$i_s('@x',x);
+return self.$i_s('@y',y);
+});
+$VN_2.$def('x',function(self,_cmd){
+return self.$i_g('@x');
+});
+$VN_2.$def('x=',function(self,_cmd,x){
+VN$(self, 'will_change_value_for_key', 'x');
+self.$i_s('@x',x);
+VN$(self, 'did_change_value_for_key', 'x');
+});
+$VN_2.$def('y',function(self,_cmd){
+return self.$i_g('@y');
+});
+$VN_2.$def('y=',function(self,_cmd,y){
+VN$(self, 'will_change_value_for_key', 'y');
+self.$i_s('@y',y);
+VN$(self, 'did_change_value_for_key', 'y');
+});
+var $VN_2 = RClass.define_under($VN_1, 'Size',cObject);
+$VN_2.$def('initialize',function(self,_cmd,w,h){
+self.$i_s('@width',w);
+return self.$i_s('@height',h);
+});
+$VN_2.$def('width',function(self,_cmd){
+return self.$i_g('@width');
+});
+$VN_2.$def('width=',function(self,_cmd,w){
+VN$(self, 'will_change_value_for_key', 'width');
+self.$i_s('@width',w);
+VN$(self, 'did_change_value_for_key', 'width');
+});
+$VN_2.$def('height',function(self,_cmd){
+return self.$i_g('@height');
+});
+$VN_2.$def('height=',function(self,_cmd,h){
+VN$(self, 'will_change_value_for_key', 'height');
+self.$i_s('@height',h);
+VN$(self, 'did_change_value_for_key', 'height');
 });
 var $VN_1 = RModule.define('RubyWebApp');
 $VN_1.$c_s('VERSION','0.0.1');
-var $VN_2 = RClass.define_under($VN_1, 'AppDelegate', cObject);
-$VN_2.$def('initialize_with:john:assign:key:',function(bob,adam,fors,adam){
-var self=this;
+var $VN_2 = RClass.define_under($VN_1, 'AppDelegate',cObject);
+$VN_2.$def('initialize_with:john:assign:key:',function(self,_cmd,bob,adam,fors,adam){
 self.$i_s('@adam',10);
-return self.$('bob',[10,34,self.$i_g('@benny')]);
+return VN$(self,'bob',10,34,self.$i_g('@benny'));
 });
-$VN_2.$def('will_finish_launching',function(notification){
-var self=this;
-self.$('puts',['Application will finish launching!']);
+$VN_2.$def('will_finish_launching',function(self,_cmd,notification){
+VN$(self,'puts','Application will finish launching!');
 return self.$klass.$c_g_full('VN').$c_g('Application');
 });
-$VN_2.$def('did_finish_launching',function(notification){
-var self=this;
-return self.$('puts',['Application did finish launching!!']);
+$VN_2.$def('did_finish_launching',function(self,_cmd,notification){
+return VN$(self,'puts','Application did finish launching!!');
 });
-VN.self.$('set_value:for_key:',[10,'bob']);
-VN.self.$('set_value:for_key:',[100,'adam']);
-if((e=true,e!==nil && e!==false)){
-VN.self.$('puts',[3]);
-}
-else{
-VN.self.$('puts',[5]);
-}
-var dave = 34;
+$VN_2.$def('adam=',function(self,_cmd,obj){
+VN$(self, 'will_change_value_for_key', 'adam');
+VN$(self, 'did_change_value_for_key', 'adam');
+});
+$VN_2.$def('other_object=',function(self,_cmd,now){
+VN$(self, 'will_change_value_for_key', 'other_object');
+VN$(self,'puts',now);
+VN$(self, 'did_change_value_for_key', 'other_object');
+});
+VN.self.$def_s('main',function(self,_cmd){
+var app_delegate = VN$(self.$klass.$c_g_full('RubyWebApp').$c_g('AppDelegate'),'new');
+VN$(self.$klass.$c_g_full('Vienna').$c_g('App'),'run');
+return my_win = VN$(self.$klass.$c_g_full('Vienna').$c_g('Window'),'new',VN$(self.$klass.$c_g_full('Vienna').$c_g('Rect'),'new',100,100),[]);
+});

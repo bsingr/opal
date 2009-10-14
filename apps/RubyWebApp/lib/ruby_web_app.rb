@@ -30,9 +30,17 @@ require 'vienna'
 
 module RubyWebApp
   
+  # By default include vienna, so we can access View etc by their name, rather than
+  # by VN::View etc... more convience when dealing with points, rect etc, but also,
+  # by including the module, the lookup time is MUCH quicker, than having to first
+  # reference Vienna, then to reference View.
+  
+  # include Vienna
+  
   VERSION = "0.0.1"
   
-  class AppDelegate
+  class AppDelegate #< VN::View
+  # class AppDelegate
     
     def initialize_with bob, john:adam, assign:fors, key:adam
       @adam = 10
@@ -47,43 +55,19 @@ module RubyWebApp
     def did_finish_launching (notification)
       puts 'Application did finish launching!!'
     end
+    
+    def adam=(obj)
+      
+    end
+    
+    def other_object=(now)
+      puts now
+    end
   end
 end
 
-self.set_value(10, for_key:'bob')
-self.set_value 100, for_key:'adam'
-
-# self.set_value 100, :for_key => 'adam'
-
-if true
-  puts 3
-else
-  puts 5
+def main
+  app_delegate = RubyWebApp::AppDelegate.new
+  Vienna::App.run
+  my_win = Vienna::Window.new(Vienna::Rect.new(100, 100), [])
 end
-
-dave = 34
-
-# BOB
-
- # VN::Notification.test
-
-# adam = Object.allocate
-# puts adam
-# 4 + 2
-# puts (4 - 45)
-# 
-# "bob" + 10
-# 
-# adam = [12, 14, 15]
-# 
-# def something
-#   
-#   return 4
-#   
-#   return 14 if adam.age
-#   return 34, 35
-# end
-# 
-# # VN.self.$('kind_of?', [])
-# 
-# self.kind_of?

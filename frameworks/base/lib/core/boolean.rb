@@ -25,17 +25,16 @@
 #
 
 `Boolean.prototype.$klass = cBoolean;
-Boolean.prototype.$type = VN.T_BOOLEAN;
-Boolean.prototype.$ = RObject.prototype.$;`
+Boolean.prototype.$type = VN.BOOLEAN; `
 
 class Boolean
   
   def to_s
-    `return this ? 'true' : 'false';`
+    `return self ? 'true' : 'false';`
   end
   
   def &(obj)
-    `if (this) {
+    `if (self) {
       return obj ? true : false ;
     }
     else {
@@ -44,7 +43,7 @@ class Boolean
   end
   
   def |(obj)
-    `if (this) {
+    `if (self) {
       return true ;
     }
     else {
@@ -53,7 +52,7 @@ class Boolean
   end
 
   def ^(obj)
-    `if (this) {
+    `if (self) {
       return obj ? false : true ;
     }
     else {

@@ -50,7 +50,7 @@ module Vienna
     end
     
     def value_for_key key
-      
+      `return self.$i_g('@' + #{key});`
     end
     
     def set_value value, for_key:key

@@ -101,7 +101,7 @@ module Vienna
       end
       
       def super_klass
-        "cObject"
+        @superclass
       end
     end
     

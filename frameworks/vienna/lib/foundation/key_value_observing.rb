@@ -49,61 +49,66 @@ module Vienna
     end
   
   end
-  # 
-  # 
-  # class Array
-  # 
-  #   def add_observer observer, to_objects_at_indexes:indexes, for_key_path:key_path, options:options, context:context
-  # 
-  #   end
-  # 
-  #   def remove_observer observer, from_objects_at_indexes:indexes, for_key_path:keyPath
-  # 
-  #   end
-  # 
-  #   def add_observer observer, for_key_path:key_path, options:options, context:context
-  # 
-  #   end
-  # 
-  #   def remove_observer observer, for_key_path:key_path
-  # 
-  #   end
-  # 
-  # end
-  # 
-  # 
-  # class Object
-  # 
-  #   def will_change_value_for_key key
-  # 
-  #   end
-  # 
-  #   def did_change_value_for_key key
-  # 
-  #   end
-  # 
-  #   def will_change changeKind, values_at_indexes:indexes, for_key:key
-  # 
-  #   end
-  # 
-  #   def did_change changeKind, values_at_indexes:indexes, for_key:key
-  # 
-  #   end
-  # 
-  #   def self.key_paths_for_values_affecting_value_for_key key
-  # 
-  #   end
-  # 
-  #   def automatically_notifies_observers_for_key key
-  #     true
-  #   end
-  # 
-  #   def observation_info=(info)
-  #     @observation_info = info
-  #   end
-  # 
-  #   def observation_info
-  #     @observation_info
-  #   end
-  # end
+  
+  
+  class Array
+  
+    def add_observer observer, to_objects_at_indexes:indexes, for_key_path:key_path, options:options, context:context
+  
+    end
+  
+    def remove_observer observer, from_objects_at_indexes:indexes, for_key_path:keyPath
+  
+    end
+  
+    def add_observer observer, for_key_path:key_path, options:options, context:context
+  
+    end
+  
+    def remove_observer observer, for_key_path:key_path
+  
+    end
+  
+  end
+  
+  
+  class Object
+  
+    def will_change_value_for_key key
+      @kvo_old_values[key] = value_for_key(key)
+    end
+  
+    def did_change_value_for_key key
+      @kvo_observers.each do |current|
+        if current[:key_path] == key
+          change_dict = { :old => @kvo_old_values[key], :new => value_for_key(key) }
+          current[:observer].observe_value_for_key_path key, of_object:self, change:change_dict, context:current[:context]
+        end
+      end
+    end
+  
+    def will_change changeKind, values_at_indexes:indexes, for_key:key
+  
+    end
+  
+    def did_change changeKind, values_at_indexes:indexes, for_key:key
+  
+    end
+  
+    def self.key_paths_for_values_affecting_value_for_key key
+  
+    end
+  
+    def automatically_notifies_observers_for_key key
+      true
+    end
+  
+    def observation_info=(info)
+      @observation_info = info
+    end
+  
+    def observation_info
+      @observation_info
+    end
+  end
 end

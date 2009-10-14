@@ -25,27 +25,7 @@
 #
 
 module Vienna
-  
-  LINE_JOIN_MITER = 'miter'
-  LINE_JOIN_ROUND = 'round'
-  LINE_JOIN_BEVEL = 'bevel'
-  
-  LINE_CAP_BUTT = 'butt'
-  LINE_CAP_ROUND = 'round'
-  LINE_CAP_SQUARE = 'square'
-
-  PATH_FILL = 0
-  PATH_EOFILL = 1
-  PATH_STROKE = 2
-  PATH_FILL_STROKE = 3
-  EOFILL_STROKE = 4
-
-  TEXT_FILL = 0
-  TEXT_STROKE = 1
-  FILL_STROKE = 2
-  TEXT_INVISIBLE = 3
-  TEXT_FILL_CLIP = 4
-  
+    
   class GraphicsContext
     
     def initialize graphics_port, flip_state
@@ -62,45 +42,49 @@ module Vienna
     end
     
     def self.current_context
-      @@current_context
+         # @@current_context
     end
-    
+
     def self.current_context= context
-      @@current_context = context
+     # @@current_context = context
     end
-    
+
     def save_graphics_state
-      
+  
     end
-    
+
     def line_width= width
       `#{@ctx}.lineWidth = #{width}`
     end
-    
+
+    # Sets the line cap style. Valid:
+    # :butt, :round, :square
     def line_cap= cap
       `#{@ctx}.lineCap = #{cap}`
     end
-    
+
+    # Sets the line join style. Valid values are:
+    # :miter, :round, :bevel
     def line_join= join
       `#{@ctx}.lineJoin = #{join}`
     end
-    
+
     def miter_limit= limit
       `#{@ctx}.miterLimit = #{limit}`
     end
-    
+
     def alpha= alpha
       `#{@ctx}.globalAlpha = #{alpha}`
     end
-    
+
     def begin_path
       `#{@ctx}.beginPath()`
     end
-    
+
     def move_to_point point
       `#{@ctx}.moveTo(#{point.x},#{point.y})`
     end
-    
+
     def add_line_to_point point
       `#{@ctx}.lineTo(#{point.x},#{point.y})`
     end
@@ -108,12 +92,12 @@ module Vienna
     def add_curve_to_point cp1, cp2, point
       `#{@ctx}.bezierCurveTo(#{cp1.x},#{cp1.y},#{cp2.x},#{cp2.y},#{point.x},#{point.y})`
     end
-    
+
     def add_lines points
-      `for (var i = 0; i < points.length; i++) {
-        #{add_line_to_point(points[i])}
-        add_line_to_point points[i]
-      }`
+      # `for (var i = 0; i < points.length; i++) {
+      #         #{add_line_to_point(points[i])}
+      #         add_line_to_point points[i]
+      #       }`
     end  
   end
 end

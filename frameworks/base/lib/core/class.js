@@ -25,9 +25,16 @@
  */
 
 
-cClass.$def('new', function() {
-  var obj = this.$('allocate', []);
-  obj.$('initialize', arguments);
+cClass.$def('new', function(self, _cmd) {
+  // var obj = this.$('allocate', []);
+  // console.log('In new');
+  var obj = VN$(self, 'allocate');
+  // split args from 2 (to avoid sending self, _cmd)
+  arguments[0] = obj;
+  arguments[1] = 'initialize';
+  // VN$(obj, 'initialize');
+  VN$.apply(obj, arguments);
+  // obj.$('initialize', arguments);
   return obj;
 });
 

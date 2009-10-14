@@ -26,25 +26,28 @@
 
 module Vienna
 
-  MIXED_STATE = 'mixed'
-  OFF_STATE = 'off'
-  ON_STATE = 'on'
+  # replace with ruby style symbols etc
   
-  REGULAR_CONTROL_SIZE = 'regular'
-  SMALL_CONTROL_SIZE = 'small'
-  MINI_CONTROL_SIZE = 'mini'
-
-  CONTROL_TEXT_DID_BEGIN_EDITING = "VNControlTextDidBeginEditingNotification"
-  CONTROL_TEXT_DID_END_EDITING = "VNControlTextDidEndEditingNotification"
-  CONTROL_TEXT_DID_CHANGE = "VNControlTextDidChangeNotification"
+  # MIXED_STATE = 'mixed'
+  #  OFF_STATE = 'off'
+  #  ON_STATE = 'on'
+  #  
+  #  REGULAR_CONTROL_SIZE = 'regular'
+  #  SMALL_CONTROL_SIZE = 'small'
+  #  MINI_CONTROL_SIZE = 'mini'
+  # 
+  #  CONTROL_TEXT_DID_BEGIN_EDITING = "VNControlTextDidBeginEditingNotification"
+  #  CONTROL_TEXT_DID_END_EDITING = "VNControlTextDidEndEditingNotification"
+  #  CONTROL_TEXT_DID_CHANGE = "VNControlTextDidChangeNotification"
   
-  class Control << View
+  class Control < View
     
-    display_properties :enabled, :selected, :state
+    # display_properties :enabled, :selected, :state
     
     def initialize frame
       puts 'control calling super'
-      super frame
+      # super frame
+      super
     end
     
     def send_action action, target
@@ -136,6 +139,9 @@ module Vienna
       
     end
     
+    # Valid alignments
+    # :left, :right, :center, :justified, :natural
+    # 
     def alignment=(mode)
       
     end
@@ -164,6 +170,12 @@ module Vienna
       
     end
     
+    # Alias for string value
+    def text=(text)
+      string_value = text
+    end
+    
+    
     def int_value=(val)
       
     end
@@ -184,12 +196,24 @@ module Vienna
       
     end
     
+    def to_s
+      string_value
+    end
+    
     def int_value
       
     end
     
+    def to_i
+      int_value
+    end
+    
     def float_value
       
+    end
+    
+    def to_f
+      float_value
     end
     
     def double_value

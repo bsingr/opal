@@ -28,12 +28,12 @@ module Vienna
   
   
   class Application
-    
+        
     attr_accessor :windows, :event_queue, :views_needing_display
     attr_reader :delegate
     
     def initialize
-      super
+      # super
       @windows = []
       @event_queue = []
       @views_needing_display = []
@@ -45,9 +45,9 @@ module Vienna
     end
     
     def finish_launching
-      nc = VN::NotificationCenter.default_center
-      nc.post_notification VN::APP_WILL_FINISH_LAUNCHING, self
-      nc.post_notification VN::APP_DID_FINISH_LAUNCHING, self
+      nc = NotificationCenter.default_center
+      nc.post_notification_name APP_WILL_FINISH_LAUNCHING, object:self
+      nc.post_notification_name APP_DID_FINISH_LAUNCHING, object:self
       display_required_views
     end
     
@@ -72,7 +72,8 @@ module Vienna
     # Add window
     # 
     def add_window(window)
-      @windows << window
+      # @windows << window
+      0
     end
     
     def <<(window)
@@ -82,7 +83,7 @@ module Vienna
     # Get shared app
     # 
     def self.shared_application
-      @@app ||= Application.new()
+      @@app ||= self.new()
     end
   
     # Set App delegate
@@ -91,22 +92,22 @@ module Vienna
       return if @delegate == obj
     
       nc = VN::NotificationCenter.default_center
-    
-      if @delegate
-        nc.remove_observer @delegate, name:APP_WILL_FINISH_LAUNCHING, object:self
-        nc.remove_observer @delegate, name:APP_DID_FINISH_LAUNCHING, object:self
-        nc.remove_observer @delegate, name:APP_DID_CHANGE_SCREEN_PARAMETERS, object:self
-      end
-    
-      @delegate = obj
-    
-      if @delegate.respond_to? :will_finish_launching
-        nc.add_observer @delegate, selector:'will_finish_launching', name:APP_WILL_FINISH_LAUNCHING, object:self
-      end
-    
-      if @delegate.respond_to? :did_finish_launching
-        nc.add_observer @delegate, selector:'did_finish_launching', name:APP_DID_FINISH_LAUNCHING, object:self
-      end
+          
+        if @delegate
+          nc.remove_observer @delegate, name:APP_WILL_FINISH_LAUNCHING, object:self
+          nc.remove_observer @delegate, name:APP_DID_FINISH_LAUNCHING, object:self
+          nc.remove_observer @delegate, name:APP_DID_CHANGE_SCREEN_PARAMETERS, object:self
+        end
+      
+        @delegate = obj
+      
+        if @delegate.respond_to? :will_finish_launching
+          nc.add_observer @delegate, selector:'will_finish_launching', name:APP_WILL_FINISH_LAUNCHING, object:self
+        end
+      
+        if @delegate.respond_to? :did_finish_launching
+          nc.add_observer @delegate, selector:'did_finish_launching', name:APP_DID_FINISH_LAUNCHING, object:self
+        end
     end
   
   
@@ -125,4 +126,8 @@ module Vienna
       finish_launching
     end  
   end
+  
+  # Vienna::App
+  App = Application.shared_application
+  
 end

@@ -41,4 +41,14 @@ class Document
     # console.log(block)`
   end
   
+  # Adds the element 'element' as a root element in the body tag of the document
+  # 
+  # - {Element} element
+  # 
+  def self.<< (elem)
+    e = `elem.$i_g('@element')`
+    
+    # puts `document.body`
+    `document.body.appendChild(#{e});`
+  end
 end

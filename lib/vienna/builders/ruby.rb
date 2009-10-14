@@ -292,7 +292,7 @@ class Vienna::RubyParser < Racc::Parser
         self.lex_state = :EXPR_BEG
         return [:tDOT2, scanner.matched]
       elsif scanner.scan(/\./)
-        self.lex_state = :EXPR_DOT
+        self.lex_state = :EXPR_DOT unless self.lex_state == :EXPR_FNAME
         return ['.', scanner.matched]
       
       # ','
@@ -423,7 +423,7 @@ class Vienna::RubyParser < Racc::Parser
         end
       elsif scanner.scan(/\{/)
         result = if self.lex_state == :EXPR_END
-          :tLCURLY # primary block
+          '{' # primary block
         elsif self.lex_state == :EXPR_ENDARG
           :tLBRACE_ARG # expr block
         else
@@ -499,7 +499,7 @@ class Vienna::RubyParser < Racc::Parser
         self.lex_state = :EXPR_BEG
         return [:tLSHFT, '<<']
       elsif scanner.scan(/\</)
-        return [:tLT, '<']
+        return ['<', '<']
       
       elsif scanner.scan(/\>\=/)
         return [:tGEQ, '>=']
@@ -597,7 +597,11 @@ class Vienna::RubyParser < Racc::Parser
           self.lex_state = :EXPR_BEG
           return [:kMODULE, scanner.matched]
         when 'do'
-          self.lex_state = :EXPR_BEG
+          # puts "do lex state is #{self.lex_state}"
+          if lex_state == :EXPR_ENDARG
+            self.lex_state = :EXPR_BEG
+            return [:kDO_BLOCK, scanner.matched] 
+          end
           return [:kDO, scanner.matched]
         when 'if'
           return [:kIF, scanner.matched] if lex_state == :EXPR_BEG
@@ -615,7 +619,11 @@ class Vienna::RubyParser < Racc::Parser
           self.lex_state = :EXPR_BEG
           return [:kUNLESS_MOD, scanner.matched]
         when 'self'
+          self.lex_state = :EXPR_END unless self.lex_state == :EXPR_FNAME
           return [:kSELF, scanner.matched]
+        when 'super'
+          self.lex_state = :EXPR_ARG
+          return [:kSUPER, scanner.matched]
         when 'true'
           self.lex_state = :EXPR_END
           return [:kTRUE, scanner.matched]
@@ -628,6 +636,15 @@ class Vienna::RubyParser < Racc::Parser
         when 'return'
           self.lex_state = :EXPR_MID
           return [:kRETURN, scanner.matched]
+        when 'case'
+          self.lex_state = :EXPR_BEG
+          return [:kCASE, scanner.matched]
+        when 'when'
+          self.lex_state = :EXPR_BEG
+          return [:kWHEN, scanner.matched]
+        when 'yield'
+          self.lex_state = :EXPR_ARG
+          return [:kYIELD, scanner.matched]
         end
         
         matched = scanner.matched

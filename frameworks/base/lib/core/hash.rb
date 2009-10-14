@@ -40,9 +40,11 @@ RHash.prototype.$define_singleton_method = RObject.prototype.$define_singleton_m
 RHash.prototype.$make_metaclass = RObject.prototype.$make_metaclass;
 
 VN.$h = function() {
-  var hash = cHash.$call('new', []) ;
+  var hash = new RHash();
+  console.log(hash);
   for (var i = 0; i < arguments.length; i++) {
-    hash.$call('[]=', [arguments[i][0], arguments[i][1]]);
+    VN$(hash, '[]=', arguments[i], arguments[i + 1]);
+    i++;
   }
   return hash;
 };
@@ -68,7 +70,7 @@ class Hash
   # for now, just set the arg, if exists, as the ifnone for the hash
   def initialize
     `if (arguments.length > 0) {
-      this.$ifnone = arguments[0] ;
+      self.$ifnone = arguments[0] ;
     } `  
   end
   
@@ -86,18 +88,18 @@ class Hash
   
   def to_a
     `var ary = [];
-    for (var i = 0; i < this.$keys.length; i++) {
-      ary.push([this.$keys[i], this.$values[this.$keys[i]]]);
+    for (var i = 0; i < self.$keys.length; i++) {
+      ary.push([self.$keys[i], self.$values[self.$keys[i]]]);
     }
     return ary; `
   end
   
   def to_s
-    `if (this.$keys.length == 0) return '{...}';
+    `if (self.$keys.length == 0) return '{...}';
   
-    var str = '{' + this.$keys[0].$call('inspect', []) + '=>' + this.$values[this.$keys[0]].$call('inspect', []);
-    for (var i = 1; i < this.$keys.length; i++) {
-      str += (', ' + this.$keys[i].$call('inspect', []) + '=>' + this.$values[this.$keys[i]].$call('inspect', []))
+    var str = '{' + self.$keys[0].$call('inspect', []) + '=>' + self.$values[self.$keys[0]].$call('inspect', []);
+    for (var i = 1; i < self.$keys.length; i++) {
+      str += (', ' + self.$keys[i].$call('inspect', []) + '=>' + self.$values[self.$keys[i]].$call('inspect', []))
     }
     str += '}';
     return str;`
@@ -112,10 +114,10 @@ class Hash
   end
   
   def [](key)
-    `if (!this.$values.hasOwnProperty(key)) {
-      return this.$call('default', [key]);
+    `if (!self.$values.hasOwnProperty(key)) {
+      return self.$call('default', [key]);
     }
-    return this.$values[key] ;`
+    return self.$values[key] ;`
   end
   
   def hash
@@ -131,17 +133,18 @@ class Hash
   end
   
   def []=(key, val)
+    puts "setting #{val} for #{key}"
     store key, val
   end
   
   def store key, val
     # if we dont have the key, add it to the ordered array so that we can keep
     # the hash ordered.
-    `if (!this.$values.hasOwnProperty(key)) {
-      this.$keys.push(key);
+    `if (self.$values[key] === undefined) {
+      self.$keys.push(key);
     }
   
-    this.$values[key] = val ;
+    self.$values[key] = val ;
     return val ;`
   end
   
@@ -150,7 +153,7 @@ class Hash
   end
   
   def default=(def_obj)
-    `this.$ifnone = ifnone;
+    `self.$ifnone = ifnone;
     return ifnone;`
   end
   

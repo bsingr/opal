@@ -33,6 +33,15 @@ module Vienna
   Array = ::Array
   Dictionary = ::Hash
   
+  class Object
+    
+    def initialize
+      @kvo_observers = []
+      @kvo_old_values = {}
+    end
+    
+  end
+  
 end
 
 require 'key_value_coding'

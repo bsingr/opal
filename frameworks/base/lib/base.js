@@ -90,11 +90,14 @@ VN.boot_defmetametaclass = function(klass, metametaclass) {
 };
 
 VN.obj_alloc = function(klass) {
-  var obj = klass.$('allocate', []);
+  // console.log('in base.js, obj_alloc ' + arguments.length);
+  // var obj = klass.$('allocate', []);
+  var obj = VN$(klass, 'allocate');
   return obj;
 };
 
 VN.class_allocate_instance = function() {
+  // console.log('doing VN.class_allocate_instance');
   var obj = new RObject(this, VN.OBJECT) ;
   return obj;
 };

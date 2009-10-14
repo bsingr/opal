@@ -29,7 +29,7 @@ module Vienna
   class Notification
     
     attr_reader :name, :object, :user_info
-    
+    attr_writer :name, :object, :user_info
     def initialize name, obj, info
       @name = name
       @object = obj
@@ -54,7 +54,7 @@ module Vienna
     end
     
     def initialize
-      super
+      # super
       @dispatch_table = []
     end
     
@@ -77,15 +77,11 @@ module Vienna
     end
     
     def post_notification_name name, object:obj, user_info:info
-      # fastest loop access
-      length = @dispatch_table.length
-      `for (var idx = 0; idx < length; idx++) {`
-        # idx as xstring to avoid it being a method call instead of a variable
-        the_object = @dispatch_table[`idx`] 
-        if the_object.name == name
-          the_object.observer.perform(the_object.selector, obj, info)
+      @dispatch_table.each do |the_obj|
+        if the_obj[:name] == name
+          the_obj[:observer].perform_selector the_obj[:selector], with_object:obj, with_object:info
         end
-      `} `
+      end
     end
     
     def remove_observer observer

@@ -91,21 +91,28 @@ class Module
   end
   
   def attr_reader
-    `console.log(this);`
-    `var argname = arguments[0];
-    this.$def(arguments[0], function() {
-      return this.$i_g('@' + argname);
-    });`
+    `var args = Array.prototype.slice.call(arguments, 2);
+    for (var i = 0; i < args.length; i++) {
+      
+      var body = new Function('self', '_cmd', 'return self.$i_g("@' + args[i] + '");')
+      self.$def(args[i], body);
+    }`
   end
   
   def attr_writer
-    `console.log("calling writer!");`
+    `var args = Array.prototype.slice.call(arguments, 2);
+    for (var i = 0; i < args.length; i++) {
+      
+      var body = new Function('self', '_cmd', 'val', 'VN$(self, "will_change_value_for_key","' + args[i] + '"); var ret = self.$i_s("@' + args[i] + '",val); VN$(self, "did_change_value_for_key","' + args[i] + '"); return ret;');
+      self.$def(args[i] + '=', body);
+    }`
   end
   
   def attr_accessor
-    `for (var i = 0; i < arguments.length; i++) {
-      this.$('attr_reader', [arguments[i]]);
-      this.$('attr_writer', [arguments[i]]);
+    `var args = Array.prototype.slice.call(arguments, 2);
+    for (var i = 0; i < args.length; i++) {
+      VN$(self, 'attr_reader', args[i]);
+      VN$(self, 'attr_writer', args[i]);
     }`
   end
   

@@ -46,24 +46,28 @@ cBasicObject.$define_private_method('initialize', function() {
   return nil ;
 });
 
-cBasicObject.$define_alloc_func(function() {
-  var obj = new RObject(this, VN.OBJECT) ;
+cBasicObject.$define_alloc_func(function(self, _cmd) {
+  // console.log('HMMMM');
+  // console.log(self);
+  // console.log(_cmd);
+  var obj = new RObject(self, VN.OBJECT) ;
+  // Cruical ivar setup
   return obj;
 });
 
-cBasicObject.$def('==', function(obj) {
-  return (obj == this) ? true : false ;
+cBasicObject.$def('==', function(self, _cmd, obj) {
+  return (self == obj) ? true : false ;
 });
 
-cBasicObject.$def('equal?', function(obj) {
-  return (obj == this) ? true : false ;
+cBasicObject.$def('equal?', function(self, _cmd, obj) {
+  return (self == obj) ? true : false ;
 });
 
-cBasicObject.$def('!', function() {
+cBasicObject.$def('!', function(self, _cmd, obj) {
   
 });
 
-cBasicObject.$def('!=', function() {
+cBasicObject.$def('!=', function(self, _cmd, obj) {
   
 });
 
@@ -79,8 +83,15 @@ cBasicObject.$define_private_method('singleton_method_undefined', function() {
   return nil ;
 });
 
-cBasicObject.$def('puts', function(val) {
+// TODO: remove and put in kernel
+cBasicObject.$def('puts', function(self, _cmd, val) {
+  // console.log('in here pal');
   console.log(val);
+});
+
+// TODO: remove and put in kernel
+cBasicObject.$def('===', function(self, _cmd, other) {
+  return self == other;
 });
 
 /**

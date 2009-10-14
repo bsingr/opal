@@ -197,6 +197,8 @@ RClass.define_class_id = function(id, super_klass) {
 
 RClass.singleton_class = function(obj) {
   var klass;
+  
+  // console.log(obj);
 
   if (obj.$type == VN.T_FIXNUM || obj.$type == VN.T_SYMBOL) {
     VN.type_error('can\'t define singleton');
@@ -346,6 +348,8 @@ RClass.prototype.$undef_alloc_func = function() {
 };
 
 RClass.prototype.$search_method = function(id) {
+  // console.log('checking ' + id);
+  // console.log(this);
   var klass = this; var func ;
   // console.log(id);
   // console.log(klass);
@@ -355,7 +359,69 @@ RClass.prototype.$search_method = function(id) {
     // console.log(this.$super.__classid__);
     if (!klass) return undefined;
   }
+  // console.log('returning true for ' + id);
   return func;
+};
+
+RClass.prototype.$search_super_method = function(from,id) {
+  // get current
+  
+  /**
+    Match func = from, to match current function
+    THEN search by name from there up, otherwise, chains of more then
+    2 supers will keep rematching second super
+  */
+  var klass = this; var func;
+  while (!((func = klass.$m_tbl[id]) && func == from)) {
+    klass = klass.$super;
+    if (!klass) return undefined;
+  }
+  // now skip up one
+  klass = klass.$super;
+  if (!klass) return undefined;
+  while (!(func = klass.$m_tbl[id])) {
+     klass = klass.$super;
+     if(!klass) return undefined;
+   }
+   return func;
+  
+    // 
+    // var klass = this; var func;
+    // while (!((func = klass.$m_tbl[id]) && func != from)) {
+    //    klass = klass.$super;
+    //    if(!klass) return undefined;
+    //  }
+    // 
+    // var klass = this; var func;
+    // // console.log('from');
+    // // console.log(from);
+    // // console.log('views');
+    // // console.log(klass.$m_tbl[id]);
+    // // console.log(klass.$m_tbl[id] === from);
+    // // console.log(klass.$m_tbl[id]);
+    // while (!((func = klass.$m_tbl[id]) && func != from)) {
+    //    klass = klass.$super;
+    //    if(!klass) return undefined;
+    //  }
+    // // return func = klass.$m_tbl[id];
+    // // return func = klass.$m_tbl[id];
+    // return func;
+
+  // var klass = this; var func ;
+  // 
+  // while (!(func = klass.$m_tbl[id])) {
+  //   klass = klass.$super;
+  //   if (!klass) return undefined;
+  // }
+  // console.log('this point');
+  // // we have the current impl, now we need to search for the super from this point..
+  // klass = klass.$super;
+  // if (!klass) return undefined;
+  // while (!(func = klass.$m_tbl[id])) {
+  //   klass = klass.$super;
+  //   if (!klass) return undefined;
+  // }
+  // return func;
 };
 
 RClass.prototype.$ = function(id, args) {

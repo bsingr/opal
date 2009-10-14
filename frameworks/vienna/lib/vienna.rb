@@ -32,6 +32,11 @@ module Vienna
     VERSION
   end
   
+  # returns the drawing mode. This will either be :render, or :draw
+  def self.display_mode
+    `return 'render';`
+  end
+  
   
   # We can now use Vienna.app.*.* as a key path, or, using the shorteer version
   # VN.app.*.*.....
@@ -47,4 +52,4 @@ YES = true
 NO = false
 
 require 'foundation/foundation'
-# require 'app_kit'
+require 'app_kit/app_kit'

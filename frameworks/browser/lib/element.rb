@@ -34,92 +34,34 @@ class Element
   end
   
   def initialize(type, class_name, the_id)
-    @element = `document.createElement(#{type}.ptr)`
+    # puts type
+    @element = `document.createElement(#{type})`
     @type = type
     @class_name = class_name
     @id = the_id
   end
   
+  def self.element_with_type type, class_name:class_name, id:the_id
+    new type, class_name, the_id
+  end
+  
+  def element
+    @element
+  end
+  
   def <<(other)
+    # puts @element
+    # puts other.element
     # @element.appendChild(other.element)
-    `VN.get_ivar(self, '__element__')`
+    `#{@element}.appendChild(#{other.element})`
   end
   
-  def css(options={})
-    # using each option, apply style to __element__.style
+  def add_event_listener type, listener
+    `if (document.addEventListener) {
+      #{@element}.addEventListener(#{type}, #{listener}, false);
+    }
+    else {
+      #{@element}.attachEvent(#{type}, #{listener});
+    }`
   end
-  
-  def mouse_down(&block)
-    @element.mouse_down do |event|
-      @element.css background_color: 'blue', font: 'Helvetica', color: 'green'
-
-      @element << Element.new :div, class_name: 'child_type', id: 'top_alignment'
-      Ajax.new type: 'GET', url: 'test.js', data_type: 'script', success: do |msg|
-        alert "Data saved: #{msg}"
-        Element.find('results').append '<bx>wow</bx>'
-        @element.after "<br>assingment</br>"
-        
-      end
-    end
-    
-    Document.ready? do |event|
-      Element.find('p').text "The DOM is loaded and ready to be manipulated."
-    end
-    
-    Ajax.new type: :get, url: 'test.js', jsonp: true, success: do |m|
-      m.to_a.each do |a|
-        puts a.to_s
-      end
-    end
-    
-    Element.find('adam').click do |e|
-      str = "bob"
-      e.assign 23
-    end
-  end
-  
-  def add_class(name)
-  
-  end
-  
-  def has_class?(name)
-    
-  end
-  
-  def remove_class(name)
-    
-  end
-  
-  def toggle_class(name, switch=true)
-  
-  end
-  
-  def text
-  
-  end
-  
-  def text=(str)
-  
-  end
-  
 end
-
-
-Element.find(:body) do |body|
-  
-  body.css :alignment => :left, :width => '100px', :height => '150px'
-  body << Element.new :id => 'notification', :class => ['alert', 'shadow'], :tooltip => 'Notification area'
-
-  body.on :mousedown do |evt|
-    body.css :color => :red
-  end
-  
-  body.on :mousedown do |evt| 
-    body.css :color => :green
-  end
-  
-end
-
-
-
-

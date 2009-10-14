@@ -26,9 +26,7 @@
 
 `
 Array.prototype.$klass = cArray
-Array.prototype.$type = VN.T_ARRAY;
-
-Array.prototype.$ = RObject.prototype.$;
+Array.prototype.$type = VN.ARRAY;
 
 RModule.include(cArray, mEnumerable);
 
@@ -49,7 +47,7 @@ class Array
   
   def initialize 
     `for (var i = 0; i < arguments.length; i++) {
-      this.push(arguments[i]);
+      self.push(arguments[i]);
     }`
   end
   
@@ -58,12 +56,12 @@ class Array
   end
   
   def to_s
-    `if (this.length == 0) return '[]';
+    `if (self.length == 0) return '[]';
     var str = '[';
-    for (var i = 0; i < (this.length - 1); i++) {
-      str += (this[i].$('inspect', []) + ', ');
+    for (var i = 0; i < (self.length - 1); i++) {
+      str += (self[i].$('inspect', []) + ', ');
     }
-    str += (this[this.length - 1].$('inspect', []) + ']');
+    str += (self[self.length - 1].$('inspect', []) + ']');
     return str ;`
   end
   
@@ -111,84 +109,289 @@ class Array
   #   
   # end
   
+  def at
+    
+  end
+  
+  def fetch
+    
+  end
+  
+  def first
+    `return self[0];`
+  end
+  
+  def last
+    `return self[self.length-1];`
+  end
+  
+  def concat
+    
+  end
+  
+  def <<(obj)
+    `return self.push(#{obj});`
+  end
+  
+  def push(obj)
+    `return self.push(#{obj});`
+  end
+  
+  def pop
+    `return self.pop();`
+  end
+  
+  def shift
+    
+  end
+  
+  def unshift
+    
+  end
+  
+  def insert
+    
+  end
+  
+  # yield for each item in array, then return self
+  # 
+  def each (&block)
+    `for (var i = 0; i < self.length; i++) {`
+      yield `self[i]`
+    `}`
+    self
+  end
+  
+  def each_index
+    
+  end
+  
+  def reverse_each
+    
+  end
+  
+  def length
+    `return self.length;`
+  end
+  
+  def size
+    `return self.length;`
+  end
+  
+  def empty?
+    
+  end
+  
+  def find_index
+    
+  end
+  
+  def rindex
+    
+  end
+  
+  def index
+    
+  end
+  
+  def join
+    
+  end
+  
+  def reverse
+    
+  end
+  
+  def reverse!
+    
+  end
+  
+  def sort
+    
+  end
+  
+  def sort!
+    
+  end
+  
+  def collect
+    
+  end
+  
+  def collect!
+    
+  end
+  
+  def map
+    
+  end
+  
+  def map!
+    
+  end
+  
+  def select
+    
+  end
+  
+  def values_at
+    
+  end
+  
+  def delete
+    
+  end
+  
+  def delete_at
+    
+  end
+  
+  def delete_if
+    
+  end
+  
+  def reject
+    
+  end
+  
+  def reject!
+    
+  end
+  
+  def zip
+    
+  end
+  
+  def transpose
+    
+  end
+  
+  def replace
+    
+  end
+  
+  def clear
+    
+  end
+  
+  def fill
+    
+  end
+  
+  def include?
+    
+  end
+  
+  def <=>
+    
+  end
+  
+  def slice
+    
+  end
+  
+  def slice!
+    
+  end
+  
+  def assoc
+    
+  end
+  
+  def rassoc
+    
+  end
+  
+  # def +
+  #   
+  # end
+  # 
+  # def *
+  #   
+  # end
+  # 
+  # def -
+  #   
+  # end
+  # 
+  # def &
+  #   
+  # end
+  # 
+  # def |
+  #   
+  # end
+  
+  def uniq
+    
+  end
+  
+  def uniq!
+    
+  end
+  
+  def compact
+    
+  end
+  
+  def compact!
+    
+  end
+  
+  def flatten
+    
+  end
+  
+  def flatten!
+    
+  end
+  
+  def count
+    
+  end
+  
+  def shuffle
+    
+  end
+  
+  def shuffle!
+    
+  end
+  
+  def sample
+    
+  end
+  
+  def cycle
+    
+  end
+  
+  def permutation
+    
+  end
+  
+  def combination
+    
+  end
+  
+  def product
+    
+  end
+  
+  def take
+    
+  end
+  
+  def take_while
+    
+  end
+  
+  def drop
+    
+  end
+  
+  def drop_while
+    
+  end
+  
 end
-
-# cArray.$def('at', VN.ary_at, 1);
-# cArray.$def('fetch', VN.ary_fetch, -1);
-# cArray.$def('first', VN.ary_first, -1);
-# cArray.$def('last', VN.ary_last, -1);
-# cArray.$def('concat', VN.ary_concat, 1);
-# cArray.$def('<<', VN.ary_push, 1);
-# cArray.$def('push', VN.ary_push_m, -1);
-# cArray.$def('pop', VN.ary_pop_m, -1);
-# cArray.$def('shift', VN.ary_shift_m, -1);
-# cArray.$def('unshift', VN.ary_unshift_m, -1);
-# cArray.$def('insert', VN.ary_insert, -1);
-# cArray.$def('each', VN.ary_each, 0);
-# cArray.$def('each_index', VN.ary_each_index, 0);
-# cArray.$def('reverse_each', VN.ary_reverse_each, 0);
-# cArray.$def('length', VN.ary_length, 0);
-# cArray.$define_alias'size', 'length');
-# cArray.$def('empty?', VN.ary_empty_p, 0);
-# cArray.$def('find_index', VN.ary_index, -1);
-# cArray.$def('index', VN.ary_index, -1);
-# cArray.$def('rindex', VN.ary_rindex, -1);
-# cArray.$def('join', VN.ary_join_m, -1);
-# cArray.$def('reverse', VN.ary_reverse_m, 0);
-# cArray.$def('reverse!', VN.ary_reverse_bang, 0);
-# cArray.$def('sort', VN.ary_sort, 0);
-# cArray.$def('sort!', VN.ary_sort_bang, 0);
-# cArray.$def('collect', VN.ary_collect, 0);
-# cArray.$def('collect!', VN.ary_collect_bang, 0);
-# cArray.$def('map', VN.ary_collect, 0);
-# cArray.$def('map!', VN.ary_collect_bang, 0);
-# cArray.$def('select', VN.ary_select, 0);
-# cArray.$def('values_at', VN.ary_values_at, -1);
-# cArray.$def('delete', VN.ary_delete, 1);
-# cArray.$def('delete_at', VN.ary_delete_at_m, 1);
-# cArray.$def('delete_if', VN.ary_delete_if, 0);
-# cArray.$def('reject', VN.ary_reject, 0);
-# cArray.$def('reject!', VN.ary_reject_bang, 0);
-# cArray.$def('zip', VN.ary_zip, -1);
-# cArray.$def('transpose', VN.ary_transpose, 0);
-# cArray.$def('replace', VN.ary_replace, 1);
-# cArray.$def('clear', VN.ary_clear, 0);
-# cArray.$def('fill', VN.ary_fill, -1);
-# cArray.$def('include?', VN.ary_includes, 1);
-# cArray.$def('<=>', VN.ary_cmp, 1);
-# 
-# cArray.$def('slice', VN.ary_aref, -1);
-# cArray.$def('slice!', VN.ary_slice_bang, -1);
-# 
-# cArray.$def('assoc', VN.ary_assoc, 1);
-# cArray.$def('rassoc', VN.ary_rassoc, 1);
-# 
-# cArray.$def('+', VN.ary_plus, 1);
-# cArray.$def('*', VN.ary_times, 1);
-# 
-# cArray.$def('-', VN.ary_diff, 1);
-# cArray.$def('&', VN.ary_and, 1);
-# cArray.$def('|', VN.ary_or, 1);
-# 
-# cArray.$def('uniq', VN.ary_uniq, 0);
-# cArray.$def('uniq!', VN.ary_uniq_bang, 0);
-# cArray.$def('compact', VN.ary_compact, 0);
-# cArray.$def('compact!', VN.ary_compact_bang, 0);
-# cArray.$def('flatten', VN.ary_flatten, -1);
-# cArray.$def('flatten!', VN.ary_flatten_bang, -1);
-# cArray.$def('count', VN.ary_count, -1);
-# cArray.$def('shuffle!', VN.ary_shuffle_bang, 0);
-# cArray.$def('shuffle', VN.ary_shuffle, 0);
-# cArray.$def('sample', VN.ary_sample, -1);
-# cArray.$def('cycle', VN.ary_cycle, -1);
-# cArray.$def('permutation', VN.ary_permutation, -1);
-# cArray.$def('combination', VN.ary_combination, 1);
-# cArray.$def('product', VN.ary_product, -1);
-# 
-# cArray.$def('take', VN.ary_take, 1);
-# cArray.$def('take_while', VN.ary_take_while, 0);
-# cArray.$def('drop', VN.ary_drop, 1);
-# cArray.$def('drop_while', VN.ary_drop_while, 0);
-# 
-# 
-# 
