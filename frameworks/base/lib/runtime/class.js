@@ -311,6 +311,9 @@ RClass.prototype.$i_s = function(id, val) {
   return val ;
 }
 
+/**
+  Define 'normal' method
+*/
 RClass.prototype.$def = function(name, func) {
   this.$add_method(name, func);
 };
@@ -331,6 +334,9 @@ RClass.prototype.$add_method = function(name, func) {
   this.$m_tbl[name] = func;
 };
 
+/**
+  Define singleton
+*/
 RClass.prototype.$def_s = function(name, func) {
   RClass.singleton_class(this).$def(name, func);
 };

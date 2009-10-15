@@ -26,39 +26,33 @@
 
 module Vienna
 
-  # replace with ruby style symbols etc
-  
-  # MIXED_STATE = 'mixed'
-  #  OFF_STATE = 'off'
-  #  ON_STATE = 'on'
-  #  
-  #  REGULAR_CONTROL_SIZE = 'regular'
-  #  SMALL_CONTROL_SIZE = 'small'
-  #  MINI_CONTROL_SIZE = 'mini'
-  # 
-  #  CONTROL_TEXT_DID_BEGIN_EDITING = "VNControlTextDidBeginEditingNotification"
-  #  CONTROL_TEXT_DID_END_EDITING = "VNControlTextDidEndEditingNotification"
-  #  CONTROL_TEXT_DID_CHANGE = "VNControlTextDidChangeNotification"
-  
   class Control < View
+    
+    # cell_reader <- automatically return cell's value
+    # cell_writer <- automatically set cell's value
+    # combination of the above
     
     # display_properties :enabled, :selected, :state
     
     def initialize frame
       puts 'control calling super'
-      # super frame
-      super
+      super frame
+      @cell = self.class.cell_class.new
     end
     
-    def send_action action, target
-      if action and target
-        VN::App.send_action action, target, self
-        true
-      else
-        false
-      end
+    def self.cell_class= cell_class
+      # @@cell_class = cell_class
     end
     
+    def self.cell_class
+      @@cell_class ||= Vienna::Cell
+    end
+    
+    def draw_rect rect
+      puts 'drawing rect from control'
+      @cell.draw_with_frame @bounds, in_view:self
+    end
+        
     def size_to_fit
         
     end

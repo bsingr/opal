@@ -136,7 +136,7 @@ require('core/object');
 require('core/kernel');
 require('core/module');
 require('core/class');
-require('core/top_self');
+
 
 require('core/comparable');
 require('core/enumerable');
@@ -154,3 +154,9 @@ require('core/string');
 // require('core/math');
 // require('core/enumerator');
 // 
+
+require('core/top_self');
+
+require('core/nil_class');
+nil = VN$(cObject.$k_g('NilClass'), 'new');
+nil.toString = function() { return 'nil';};

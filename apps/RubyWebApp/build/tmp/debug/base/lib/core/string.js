@@ -13,7 +13,7 @@ $VN_1.$def('initialize_copy',function(self,_cmd){
 $VN_1.$def('<=>',function(self,_cmd,obj){
 });
 $VN_1.$def('==',function(self,_cmd,obj){
-});
+return (self == obj) ? true : false;});
 $VN_1.$def('eql?',function(self,_cmd,obj){
 });
 $VN_1.$def('hash',function(self,_cmd,obj){

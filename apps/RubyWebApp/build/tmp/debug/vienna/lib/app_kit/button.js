@@ -3,7 +3,10 @@ var $VN_2 = RClass.define_under($VN_1, 'Button',$VN_2.$c_g_full('Control'));
 VN$($VN_2,'attr_reader','title','alternate_title','image','image_position');
 $VN_2.$def('initialize',function(self,_cmd,frame){
 VN$(self,'puts','initilising button');
-return VN$sup(arguments.callee, self,_cmd,[]);
+return VN$sup(arguments.callee, self,_cmd,[frame]);
+});
+$VN_2.$def_s('cell_class',function(self,_cmd){
+return self.$c_g_full('ButtonCell');
 });
 $VN_2.$def('title=',function(self,_cmd,str){
 VN$(self, 'will_change_value_for_key', 'title');

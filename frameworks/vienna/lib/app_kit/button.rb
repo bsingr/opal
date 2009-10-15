@@ -33,7 +33,11 @@ module Vienna
     def initialize frame
       # setup_drawing_context
       puts 'initilising button'
-      super
+      super frame
+    end
+    
+    def self.cell_class
+      ButtonCell
     end
     
     def title=(str)

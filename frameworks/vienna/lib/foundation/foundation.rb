@@ -36,8 +36,12 @@ module Vienna
   class Object
     
     def initialize
-      @kvo_observers = []
-      @kvo_old_values = {}
+      # @kvo_observers = []
+      #      @kvo_old_values = {}
+    end
+    
+    def perform_selector selector, with_object:obj1, with_object:obj2
+      `return VN$(self, selector, obj1, obj2);`
     end
     
   end

@@ -35,6 +35,11 @@ var RObject = function(klass, type) {
   return this;
 };
 
+RObject.prototype.toString = function() {
+  // console.log('calling toString');
+  return VN$(this, 'to_s');
+}
+
 /**
   $ivar_set
   
@@ -70,8 +75,13 @@ RObject.prototype.$ = function(id, args) {
   new calling func
 */
 var VN$ = function(self, id) {
-  // console.log(self);
-  // console.log(id);
+ 
+ if (!self) {
+   // console.log(self);
+   // console.log(id);
+   throw 'Vienna: VN$ - Trying to call `' + id + '` on null/undefined object'   
+ }
+
   
   var method = self.$klass.$search_method(id);
   if (!method) throw 'RObject#call cannot find method: ' + id ;

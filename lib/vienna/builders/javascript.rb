@@ -60,8 +60,8 @@ module Vienna
         if match = l.match(/^require\(\'(.*)\'\)/) # ^ to make sure it is not commented out..
           # add the requirement to '@requirements' for the project to get at
           # @requirements << match[1]
-          o.write(JSMin.minify(t))
-          # o.write t
+          # o.write(JSMin.minify(t))
+          o.write t
           t = "" # clear t so that we do not carry on minifying stuff before the require statement
           require_path = @project.file_for_require_relative_to(@source, match[1])
           build_path = @project.build_file(require_path)
@@ -73,8 +73,8 @@ module Vienna
       end
     
       # write minified of the remaining content... if any
-      o.write(JSMin.minify(t))
-      # o.write t
+      # o.write(JSMin.minify(t))
+      o.write t
       # o.write(t)
       o.close
     end

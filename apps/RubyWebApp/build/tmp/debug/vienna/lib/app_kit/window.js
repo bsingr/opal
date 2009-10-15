@@ -3,19 +3,22 @@ var $VN_2 = RClass.define_under($VN_1, 'Window',$VN_2.$c_g_full('Responder'));
 $VN_2.$def('initialize',function(self,_cmd,content_rect,style_mask){
 VN$sup(arguments.callee, self,_cmd,[]);
 VN$(self, 'setup_display_context');
+self.$i_s('@frame',content_rect);
 self.$i_s('@window_number',VN$(self.$klass.$c_g_full('App'),'add_window',self));
 self.$i_s('@style_mask',style_mask);
 VN$(self,'level=','normal');
 self.$i_s('@min_size',VN$(self.$klass.$c_g_full('Size'),'new',0.0,0.0));
 self.$i_s('@max_size',VN$(self.$klass.$c_g_full('Size'),'new',9999.0,9999.0));
 self.$i_s('@first_responder',self);
-return self.$i_s('@next_responder',self.$klass.$c_g_full('App'));
+self.$i_s('@next_responder',self.$klass.$c_g_full('App'));
+return VN$(self,'content_view=',VN$(self.$klass.$c_g_full('View'),'new',VN$(self.$klass.$c_g_full('Rect'),'new',100,100,100,100)));
 });
 $VN_2.$def('setup_display_context',function(self,_cmd){
 self.$i_s('@element',VN$(self.$klass.$c_g_full('Element'),'element_with_type:class_name:id:','div','',''));
 self.$i_s('@display_element',VN$(self.$klass.$c_g_full('Element'),'element_with_type:class_name:id:','canvas','',''));
 VN$(self.$i_g('@element'),'<<',self.$i_g('@display_element'));
 VN$(self.$klass.$c_g_full('Document'),'<<',self.$i_g('@element'));
+self.$i_s('@graphics_context',VN$(self.$klass.$c_g_full('GraphicsContext'),'new',VN$(self.$i_g('@display_element'),'element').getContext('2d'),false));
 VN$(self.$i_g('@display_element'),'add_event_listener','mousedown',function() { console.log('yeah!'); console.log(self); });
 return VN$(self.$i_g('@display_element'),'add_event_listener','mouseup',function() { console.log('yeah up!'); });
 });
@@ -61,11 +64,19 @@ return self.$i_g('@excluded_from_windows_menu');
 });
 $VN_2.$def('content_view=',function(self,_cmd,view){
 VN$(self, 'will_change_value_for_key', 'content_view');
+VN$(view,'view_will_move_to_window',self);
+var bounds = VN$(self.$klass.$c_g_full('Rect'),'new',0,0,VN$(VN$(self.$i_g('@frame'),'size'),'width'),VN$(VN$(self.$i_g('@frame'),'size'),'height'));
 self.$i_s('@content_view',view);
+VN$(self.$i_g('@content_view'),'frame=',VN$(self,'content_rect_for_frame_rect',bounds));
+VN$(view,'view_did_move_to_window');
+VN$(self.$i_g('@element'),'<<',VN$(self.$i_g('@content_view'),'element'));
 VN$(self, 'did_change_value_for_key', 'content_view');
 });
 $VN_2.$def('content_view',function(self,_cmd){
 return self.$i_g('@content_view');
+});
+$VN_2.$def('<<',function(self,_cmd,view){
+return VN$(self.$i_g('@content_view'),'<<',view);
 });
 $VN_2.$def('delegate=',function(self,_cmd,obj){
 VN$(self, 'will_change_value_for_key', 'delegate');

@@ -3,6 +3,7 @@ var $VN_2 = RClass.define_under($VN_1, 'Notification',cObject);
 VN$($VN_2,'attr_reader','name','object','user_info');
 VN$($VN_2,'attr_writer','name','object','user_info');
 $VN_2.$def('initialize',function(self,_cmd,name,obj,info){
+VN$sup(arguments.callee, self,_cmd,[]);
 self.$i_s('@name',name);
 self.$i_s('@object',obj);
 return self.$i_s('@user_info',info);
@@ -18,6 +19,7 @@ $VN_2.$def_s('default_center',function(self,_cmd){
 return (self.$k_d('@@default_center') ? self.$k_g('@@default_center') : self.$k_s('@@default_center',VN$(self,'new')));
 });
 $VN_2.$def('initialize',function(self,_cmd){
+VN$sup(arguments.callee, self,_cmd,[]);
 return self.$i_s('@dispatch_table',[]);
 });
 $VN_2.$def('add_observer:selector:name:object:',function(self,_cmd,observer,selector,name,obj){

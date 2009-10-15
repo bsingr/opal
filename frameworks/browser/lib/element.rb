@@ -49,6 +49,14 @@ class Element
     @element
   end
   
+  def origin= new_origin
+    
+  end
+  
+  def size= new_size
+    
+  end
+  
   def <<(other)
     # puts @element
     # puts other.element

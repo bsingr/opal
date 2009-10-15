@@ -79,7 +79,7 @@ class Array
   
   def ==(ary)
     `if (ary == this) return true;
-    if (ary.$type != VN.T_ARRAY) {
+    if (ary.$type != VN.ARRAY) {
       if (ary.$('respond_to?', ['to_a'])) {
         return false;
       }
@@ -179,7 +179,7 @@ class Array
   end
   
   def empty?
-    
+    `return (self.length == 0) ? true : false;`
   end
   
   def find_index
@@ -278,8 +278,8 @@ class Array
     
   end
   
-  def include?
-    
+  def include? obj
+    `return (self.indexOf(obj) == -1) ? false : true;`
   end
   
   def <=>

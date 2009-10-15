@@ -50,7 +50,7 @@ class String
   end
   
   def ==(obj)
-    
+    `return (self == obj) ? true : false;`
   end
   
   def eql?(obj)

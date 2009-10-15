@@ -50,12 +50,22 @@ module Vienna
     def initialize(frame)
       puts 'initialising view'
       # super frame
-      super
-      # super()
-      # super(1, 2, 4)
-      # @frame = frame
-      # self.frame = @frame
-      setup_drawing_context()
+      super()
+      setup_display_context
+      
+      @frame = Rect.new(100, 100, 100, 100)
+      @bounds = Rect.new(0, 0, 100, 100)
+      
+      @subviews = []
+      @window = nil
+      @superview = nil
+      
+      @posts_frame_changed_notifications = false
+      @autoresizes_subviews = true
+      
+      # Tracking areas for mouse events. Important to intiialize early, so views
+      # can set up tracking as soon as they like
+      @tracking_areas = []
     end
     
     def element
@@ -71,27 +81,24 @@ module Vienna
     end
     
     def setup_display_context
-      
-      if drawing_mode == :render
-        setup_render_context
-      else
-        setup_drawing_context
-      end
-      
+      # Currently force views to use drawing based display
+      setup_drawing_context
     end
     
     def setup_drawing_context
       @element = Element.element_with_type :div, class_name:'', id:''
-      @draw_element = Element.element_with_type :canvas, class_name:'', id:''
-      @element << @draw_element
-      Document << @element
+      @display_element = Element.element_with_type :canvas, class_name:'', id:''
+      @element << @display_element
     end
     
     def setup_render_context
       @element = Element.element_with_type :div, class_name:'', id:''
-      @draw_element = Element.element_with_type :div, class_name:'', id:''
-      @element << @draw_element
-      Document << @element
+      @display_element = Element.element_with_type :div, class_name:'', id:''
+      @element << @display_element
+    end
+    
+    def graphics_port
+      `return #{@display_element.element}.getContext('2d');`
     end
     
     # Called when View.from_coder(coder) is called
@@ -108,6 +115,7 @@ module Vienna
     
     def self.display_properties
       # add to constant DISPLAY_PROPERTIES, but, also add in superclass'
+      # should be a class variable?
       puts 'in display properties..'
     end
     
@@ -169,8 +177,23 @@ module Vienna
     end
     
     def add_subview(a_view)
-      # puts a_view
+      if @subviews.include? a_view
+        return
+      end
+      
+      a_view.remove_from_superview
+      a_view.view_will_move_to_superview self
+      a_view.view_will_move_to_window @window
+      
+      @subviews << a_view
+      
+      # add element to our own
       @element << a_view.element
+      
+      a_view.next_responder = self
+      a_view.view_did_move_to_superview
+      a_view.view_did_move_to_window
+      did_add_subview self
     end
     
     def <<(a_view)
@@ -182,7 +205,7 @@ module Vienna
     end
     
     def view_will_move_to_window win
-      
+      @window = win
     end
     
     def view_did_move_to_window
@@ -190,7 +213,7 @@ module Vienna
     end
     
     def view_will_move_to_superview new_super
-      
+      @superview = new_super
     end
     
     def view_did_move_to_superview
@@ -247,18 +270,52 @@ module Vienna
     
     # 
     # Frame
-    # 
-    
+    #
     def frame_origin=(new_origin)
+
+      @frame.x = new_origin.x
+      @frame.y = new_origin.y
+      @element.origin = new_origin
       
+      if @posts_frame_changed_notifications
+        nc = NotificationCenter.default_center
+        nc.post_notification_name 'frame chnage notification', object:self
+      end
     end
     
     def frame_size=(new_size)
       
+      old_size = Size.new(@frame.width, @frame.height)
+            
+      @frame.size.width = new_size.width
+      @frame.size.height = new_size.height
+      
+      # bounds
+      @bounds.size.width = new_size.width
+      @bounds.size.height = new_size.height      
+      # bound end
+      
+      self.resize_subviews_with_old_size(old_size) if @autoresizes_subviews
+      self.needs_display = true
+      
+      @element.size = new_size
+      @display_element.size = new_size
+    
+      if @posts_frame_changed_notifications
+        nc = NotificationCenter.default_center
+        nc.post_notification_name 'frame chnage notification', object:self
+      end          
     end
     
     def frame=(frame)
+      frame = Rect.new(100, 100, 100,100)
+      self.frame_origin = frame.origin
+      self.frame_size = frame.size
       
+      if @posts_frame_changed_notifications
+        nc = NotificationCenter.default_center
+        nc.post_notification_name 'view chnages notification', object:self
+      end
     end
     
     def frame
@@ -392,10 +449,25 @@ module Vienna
       
     end
     
+    # Clear the whole view for display - i.e. draw everything from scratch - remove any clipping
     def needs_display=(flag)
       @needs_display = flag
+      
+      # FIXME: this shouldnt be done here
+      # puts 'drawing rect!'
+      # puts bounds.to_s
+      
+      graphics_context = @window.graphics_context
+      GraphicsContext.current_context = graphics_context
+      graphics_context.graphics_port = self.graphics_port
+      puts 'now showing graphics context'
+      puts graphics_context
+      
+      draw_rect bounds
     end
     
+    
+    # Clear the given rect, and set clipping to this rect as well
     def needs_display_in_rect invalid_rect
       @needs_display
     end
@@ -429,7 +501,7 @@ module Vienna
     end
     
     def draw_rect rect
-      
+      puts 'drawing rect'
     end
     
     def view_will_draw
@@ -443,6 +515,42 @@ module Vienna
     end
     
     def mouse point, in_rect:rect
+      
+    end
+    
+    
+    # TODO: Force depreciate these? tracking_areas are more useful than these 'legacy' methods
+    # ----------------------------------------------------------------------------------------
+    # # Returns a tag to use for reference... this could be our unique reference for the DOM
+    # def add_tracking_rect rect, owner:an_object, user_data:data, assume_inside:flag
+    #   
+    # end
+    # 
+    # def remove_tracking_rect tag
+    #   
+    # end
+    
+    def add_tracking_area tracking_area
+      # Only attatch events if there are no current tracking areas. It is expensive to needlesly add new event handlers
+      if @tracking_areas.empty?
+        # for now, assume maximum of 1 tracking_area, and that it covers entire view. Adding more
+        # to parts of the view can be done later, but for now, one area to resive events.
+        @element.add_event_listener :mouseover, `function() { console.log('OMG, mouse over!'); }`
+        @element.add_event_listener :mouseout, `function() { console.log('OMG, mouse out of the element!'); }`
+      end
+      
+      @tracking_areas << tracking_area    
+    end
+    
+    def remove_tracking_area tracking_area
+      
+    end
+    
+    def tracking_areas
+      @tracking_areas
+    end
+    
+    def update_tracking_areas
       
     end
   end

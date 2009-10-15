@@ -591,6 +591,7 @@ class Vienna::RubyParser < Racc::Parser
           self.lex_state = :EXPR_END
           return [:kEND, scanner.matched]
         when 'class'
+          return [:tIDENTIFIER, scanner.matched] if self.lex_state == :EXPR_DOT
           self.lex_state = :EXPR_CLASS
           return [:kCLASS, scanner.matched]
         when 'module'

@@ -26,6 +26,11 @@
 
 module Vienna
   
+  # Application notifications
+  APP_WILL_FINISH_LAUNCHING = 'APP_WILL_FINISH_LAUNCHING'
+  APP_DID_FINISH_LAUNCHING = 'APP_DID_FINISH_LAUNCHING'
+  APP_DID_CHANGE_SCREEN_PARAMETERS = 'APP_DID_CHANGE_SCREEN_PARAMETERS'
+  
   
   class Application
         
@@ -37,6 +42,8 @@ module Vienna
       @windows = []
       @event_queue = []
       @views_needing_display = []
+      
+      @delegate = nil
     end
     
     def run
@@ -46,8 +53,8 @@ module Vienna
     
     def finish_launching
       nc = NotificationCenter.default_center
-      nc.post_notification_name APP_WILL_FINISH_LAUNCHING, object:self
-      nc.post_notification_name APP_DID_FINISH_LAUNCHING, object:self
+      # nc.post_notification_name APP_WILL_FINISH_LAUNCHING, object:self
+      # nc.post_notification_name APP_DID_FINISH_LAUNCHING, object:self
       display_required_views
     end
     
@@ -89,6 +96,7 @@ module Vienna
     # Set App delegate
     # 
     def delegate=(obj)
+      puts @delegate
       return if @delegate == obj
     
       nc = VN::NotificationCenter.default_center
@@ -104,7 +112,7 @@ module Vienna
         if @delegate.respond_to? :will_finish_launching
           nc.add_observer @delegate, selector:'will_finish_launching', name:APP_WILL_FINISH_LAUNCHING, object:self
         end
-      
+              
         if @delegate.respond_to? :did_finish_launching
           nc.add_observer @delegate, selector:'did_finish_launching', name:APP_DID_FINISH_LAUNCHING, object:self
         end

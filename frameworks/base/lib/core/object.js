@@ -42,7 +42,10 @@ VN.boot_defmetametaclass(cBasicObject, metaclass);
 /**
   BasicObject necessary methods
 */
-cBasicObject.$define_private_method('initialize', function() {
+cBasicObject.$define_private_method('initialize', function(self, _cmd) {
+  
+
+  
   return nil ;
 });
 
@@ -52,6 +55,11 @@ cBasicObject.$define_alloc_func(function(self, _cmd) {
   // console.log(_cmd);
   var obj = new RObject(self, VN.OBJECT) ;
   // Cruical ivar setup
+  // console.log('HERE');
+  obj.$i_s('@kvo_observers', new Array());
+  obj.$i_s('@kvo_old_values', VN.$h());
+   // # @kvo_observers = []
+    // #      @kvo_old_values = {}
   return obj;
 });
 
@@ -92,6 +100,17 @@ cBasicObject.$def('puts', function(self, _cmd, val) {
 // TODO: remove and put in kernel
 cBasicObject.$def('===', function(self, _cmd, other) {
   return self == other;
+});
+
+cBasicObject.$def('class', function(self, _cmd) {
+  console.log('returning class...');
+  return self.$klass;
+});
+
+cBasicObject.$def('respond_to?', function(self, _cmd, selector) {
+  var method = self.$klass.$search_method(selector);
+  if (!selector) return false;
+  return true
 });
 
 /**

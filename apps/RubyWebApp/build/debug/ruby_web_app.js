@@ -1,61 +1,1059 @@
 
+/* 
+ * base.js
+ * vienna
+ * 
+ * Created by Adam Beynon.
+ * Copyright 2009 Adam Beynon.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+ 
+// temp..
+var nil = null;
 
-var nil=null;var VN={CLASS:0,MODULE:1,OBJECT:2,BOOLEAN:3,STRING:4,ARRAY:5,NUMBER:6,PROC:7};VN.warning=function(msg){console.log('Vienna warning: '+msg);};VN.type_error=function(msg){throw'Vienna TypeError: '+msg;};VN.name_error=function(msg){throw'Vienna NameError: '+msg;}
-VN.top_const_get=function(id){return undefined;};VN.define_global_const=function(id,val){cObject.$define_const(id,val);};VN.class_tbl={};VN.global_tbl={};VN.gvar_get=function(id){};VN.gvar_set=function(id,val){};VN.boot_defclass=function(id,super_klass){var obj=RClass.boot(super_klass);obj.$name(id);(cObject?cObject:obj).$c_s(id,obj);return obj;};VN.boot_defmetametaclass=function(klass,metametaclass){klass.$klass.$klass=metametaclass;};VN.obj_alloc=function(klass){var obj=VN$(klass,'allocate');return obj;};VN.class_allocate_instance=function(){var obj=new RObject(this,VN.OBJECT);return obj;};VN.obj_dummy=function(){return nil;};VN.equal=function(obj){if(obj==this)return true;var result=this.$funcall('==',[obj]);if(result)return true;return false;};VN.eql=function(obj){return this.$funcall('==',[obj]);};VN.obj_equal=function(obj){return(obj==this)?true:false;};
+var VN = {
+  
+  CLASS: 0,
+  MODULE: 1,
 
-var RClass=function(klass,super_klass){this.$klass=klass;this.$super=super_klass;this.$type=VN.CLASS;this.$singleton=false;this.$m_tbl={};this.$iv_tbl={};return this;};RClass.inherited=function(super_klass,klass){if(!super_klass)super_klass=cObject;return super_klass.$('inherited',[klass]);};RClass.define=function(id,super_klass){var klass;if(cObject.$c_d(id)){klass=cObject.$c_g(id);if(klass.$type!=VN.CLASS){VN.type_error(id+' is not a class');}
-if(klass.$super!=super_klass){if(klass!=cObject){VN.name_error(id+' is already defined');}}
-return klass;}
-if(!super_klass){VN.warning('no super class for `'+id+'`, Object assumed')}
-klass=RClass.define_class_id(id,super_klass);VN.class_tbl[id]=klass;klass.$name(id);cObject.$c_s(id,klass);RClass.inherited(super_klass,klass);return klass;};RClass.define_under=function(outer,id,super_klass){var klass;if(outer.$c_d_a(id)){klass=outer.$c_g_a(id);if(klass.$type!=VN.CLASS){VN.type_error(id+' is not a class');}
-if(RClass.real(klass.$super)!=super_klass){if(klass!=cObject){VN.name_error(id+' is already defined');}}
-return klass;}
-if(!super_klass){VN.warning('no super class for `'+VN.class2name(outer),+'::'+id+'`, Object assumed');}
-klass=RClass.define_class_id(id,super_klass);klass.$parent=outer;outer.$c_s(id,klass);RClass.inherited(super_klass,klass);return klass;};RClass.class2name=function(klass){return klass.$class_name();};RClass.obj_classname=function(obj){return VN.class2name(obj.$klass);};RClass.make_metametaclass=function(metaclass){var metametaclass,super_of_metaclass;if(metaclass.$klass==metaclass){metametaclass=RClass.boot(null);metametaclass.$klass=metametaclass;}
-else{metametaclass=RClass.boot(null);metametaclass.$klass=metaclass.$klass.$klass==metaclass.$klass?VN.make_metametaclass(metaclass.$klass):metaclass.$klass.$klass;}
-metametaclass.$singleton=true;metametaclass.$singleton_class_attached(metaclass);metaclass.$klass=metametaclass;super_of_metaclass=metaclass.$super;while(super_of_metaclass.$type==VN.ICLASS){super_of_metaclass=super_of_metaclass.$super;}
-metametaclass.$super=super_of_metaclass.$klass.$i_g('__attached__')==super_of_metaclass?super_of_metaclass.$klass:RClass.make_metametaclass(super_of_metaclass);return metametaclass;};RClass.real=function(klass){return klass;};RClass.alloc=function(type,klass){var obj=new RClass();obj.$klass=klass;obj.$type=type;return obj;};RClass.boot=function(super_klass){var klass=RClass.alloc(VN.CLASS,cClass);klass.$super=super_klass;return klass;};RClass.check_inheritable=function(super_klass){if(super_klass.$type!=VN.CLASS){VN.type_error('super class must be a Class ('+VN.obj_classname(super_klass)+' given)');}
-if(super_klass.singleton){VN.type_error('can\'t make a subclass of singleton class');}};RClass.create=function(super_klass){RClass.check_inheritable(super_klass);if(super_klass==cClass){VN.raise(VN.TypeError,"can't make subclass of Class")}
-return RClass.boot(super_klass);};RClass.define_class_id=function(id,super_klass){var klass;if(!super_klass)super_klass=cObject;klass=RClass.create(super_klass);klass.$make_metaclass(super_klass.$klass);return klass;};RClass.singleton_class=function(obj){var klass;if(obj.$type==VN.T_FIXNUM||obj.$type==VN.T_SYMBOL){VN.type_error('can\'t define singleton');}
-if(obj.$klass.$singleton&&obj.$klass.$i_g('__attached__')==obj){klass=obj.$klass;}
-else{klass=obj.$make_metaclass(obj.$klass);}
-if(obj.$type==VN.CLASS){if(klass.$klass.$i_g('__attached__')!=klass){RClass.make_metametaclass(klass);}}
-return klass;};RClass.prototype.$name=function(id){this.$i_s('__classid__',id);};RClass.prototype.$class_name=function(){return VN.class_path(klass.$real());};RClass.prototype.$make_metaclass=function(super_klass){if(this.$type==VN.CLASS&&this.$singleton==true){return this.$make_metametaclass();}
-else{var klass=RClass.boot(super_klass);klass.$singleton=true;this.$klass=klass;klass.$singleton_class_attached(this);var metasuper=klass.$klass;if(metasuper){klass.$klass=metasuper;}
-return klass;}};RClass.prototype.$singleton_class_attached=function(obj){if(this.$singleton==true){this.$i_s('__attached__',obj);}};RClass.prototype.$=function(id,args){var method=this.$klass.$search_method(id);if(!method)throw'VN#funcall cannot find method: '+id;return method.apply(this,args);};RClass.prototype.$k_g=function(id){var tmp=this;var value;while(tmp){if(value=tmp.$iv_tbl[id]){return value;}
-tmp=tmp.$super;}
-VN.name_error('uninitialized class variable '+id+' in '+this);return nil;};RClass.prototype.$k_d=function(id){var tmp=this;var value;while(tmp){if(value=tmp.$iv_tbl[id]){return true;}
-tmp=tmp.$super;}
-return false;}
-RClass.prototype.$k_s=function(id,val){return this.$iv_tbl[id]=val;};RClass.prototype.$i_g=function(id){return this.$iv_tbl[id];};RClass.prototype.$i_s=function(id,val){this.$iv_tbl[id]=val;return val;}
-RClass.prototype.$def=function(name,func){this.$add_method(name,func);};RClass.prototype.$define_protected_method=function(name,func){this.$add_method(name,func);};RClass.prototype.$define_private_method=function(name,func){this.$add_method(name,func);};RClass.prototype.$undef_method=function(name,func){this.$add_method(name,func);};RClass.prototype.$add_method=function(name,func){this.$m_tbl[name]=func;};RClass.prototype.$def_s=function(name,func){RClass.singleton_class(this).$def(name,func);};RClass.prototype.$define_alias=function(id1,id2){};RClass.prototype.$define_alloc_func=function(func){RClass.singleton_class(this).$add_method('allocate',func);};RClass.prototype.$undef_alloc_func=function(){RClass.singleton_class(this).$add_method('allocate',null);};RClass.prototype.$search_method=function(id){var klass=this;var func;while(!(func=klass.$m_tbl[id])){klass=klass.$super;if(!klass)return undefined;}
-return func;};RClass.prototype.$search_super_method=function(from,id){var klass=this;var func;while(!((func=klass.$m_tbl[id])&&func==from)){klass=klass.$super;if(!klass)return undefined;}
-klass=klass.$super;if(!klass)return undefined;while(!(func=klass.$m_tbl[id])){klass=klass.$super;if(!klass)return undefined;}
-return func;};RClass.prototype.$=function(id,args){var method=this.$klass.$search_method(id);if(!method)throw'VN#funcall cannot find method: '+id;return method.apply(this,args);};RClass.prototype.$c_s=function(id,val){this.$mod_av_set(id,val,true);};RClass.prototype.$mod_av_set=function(id,val,isconst){this.$iv_tbl[id]=val;};RClass.prototype.$c_g=function(id){var tmp=this;var value;while(tmp){if(value=tmp.$iv_tbl[id]){return value;}
-tmp=tmp.$super;}
-VN.name_error(id,'uninitialized constant '+id+' in '+this.name);return nil;};RClass.prototype.$c_g_full=function(id){var tmp=this;var value;while(tmp){if(value=tmp.$iv_tbl[id]){return value;}
-tmp=tmp.$super;}
-var tmp=this.$parent;while(tmp){if(value=tmp.$iv_tbl[id]){return value;}
-tmp=tmp.$parent}
-VN.name_error(id,'uninitialized constant '+id+' in '+this.name);return nil;};RClass.prototype.$c_d_full=function(id){var tmp=this;var value;while(tmp){if(value=tmp.$iv_tbl[id]){return true;}
-tmp=tmp.$super;}
-var tmp=this.$parent;while(tmp){if(value=tmp.$iv_tbl[id]){return true;}
-tmp=tmp.$parent}
-return false;};RClass.prototype.$c_d=function(id){var tmp=this;var value;while(tmp){if(value=tmp.$iv_tbl[id]){return true;}
-tmp=tmp.$super;}
-return false;};RClass.prototype.$c_d_a=function(id){return(this.$iv_tbl[id])?true:false;};RClass.prototype.$c_g_a=function(id){return(this.$iv_tbl[id])?this.$iv_tbl[id]:nil;};RClass.prototype.$define_const=function(id,val){};
+  OBJECT: 2,
+  BOOLEAN: 3,
+  STRING: 4,
+  ARRAY: 5,
+  NUMBER: 6,
+  PROC: 7
 
-var RModule={};RModule.define=function(id){var module;if(cObject.$c_d(id)){module=cObject.$c_g(id);if(module.$type==VN.MODULE){return module;}
-VN.type_error(id+' is not a module');}
-module=RModule.define_module_id(id);VN.class_tbl[id]=module;cObject.$c_s(id,module);return module;};RModule.define_module_under=function(){var module;if(VN.const_defined_at(outer,id)){module=VN.const_get_at(outer,id);if(module.type==VN.MODULE){return module;}
-VN.type_error(id+' is not a module');}
-module=VN.define_module_id(id);VN.const_set(outer,id,module);VN.set_class_path(module,outer,name);return module;};RModule.define_module_id=function(id){var mdl=RModule.create();mdl.$name(id);return mdl;};RModule.create=function(){var mdl=RClass.alloc(VN.MODULE,cModule);mdl.$super=cObject;return mdl;};RModule.include=function(klass,module){RModule.include_class_new(module,klass);};RModule.include_class_new=function(mod,sup){var klass=RClass.alloc(VN.T_ICLASS,cClass);klass.iv_tbl=mod.iv_tbl;klass.m_tbl=mod.m_tbl;klass.$super=sup;klass.$klass=mod;return klass;};
+};
 
-var RObject=function(klass,type){this.$klass=klass;this.$type=type;this.$iv_tbl={};return this;};RObject.prototype.$i_s=function(id,val){this.$iv_tbl[id]=val;return val;};RObject.prototype.$i_g=function(id){return this.$iv_tbl[id];};RObject.prototype.$=function(id,args){var method=this.$klass.$search_method(id);if(!method)throw'RObject#call cannot find method: '+id;return method.apply(this,args);};var VN$=function(self,id){var method=self.$klass.$search_method(id);if(!method)throw'RObject#call cannot find method: '+id;switch(arguments.length){case 2:return method(self,id);case 3:return method(self,id,arguments[2]);case 4:return method(self,id,arguments[2],arguments[3]);case 5:return method(self,id,arguments[2],arguments[3],arguments[4]);}
-return method.apply(self,arguments);};var VN$sup=function(from,self,id,args){var method=self.$klass.$search_super_method(from,id);if(!method)throw'RObject#call cannot find super method for: '+id;switch(args.length){case 0:return method(self,id);case 1:return method(self,id,args[0]);case 2:return method(self,id,args[0],args[1]);case 3:return method(self,id,args[0],args[1],args[2]);}
-return method.apply(self,arguments);};RObject.prototype.$sup=function(from,id,args){var method=this.$klass.$search_super_method(from,id);if(!method)throw'RObject#call cannot find super method for: '+id;return method.apply(this,args);};RObject.prototype.$def_s=RClass.prototype.$def_s;RObject.prototype.$make_metaclass=RClass.prototype.$make_metaclass;
+VN.warning = function(msg) {
+  console.log('Vienna warning: ' + msg);
+};
 
-var metaclass;var cBasicObject=VN.boot_defclass('BasicObject',null);var cObject=VN.boot_defclass('Object',cBasicObject);var cModule=VN.boot_defclass('Module',cObject);var cClass=VN.boot_defclass('Class',cModule);metaclass=cBasicObject.$make_metaclass(cClass);metaclass=cObject.$make_metaclass(metaclass);metaclass=cModule.$make_metaclass(metaclass);metaclass=cClass.$make_metaclass(metaclass);VN.boot_defmetametaclass(cModule,metaclass);VN.boot_defmetametaclass(cObject,metaclass);VN.boot_defmetametaclass(cBasicObject,metaclass);cBasicObject.$define_private_method('initialize',function(){return nil;});cBasicObject.$define_alloc_func(function(self,_cmd){var obj=new RObject(self,VN.OBJECT);return obj;});cBasicObject.$def('==',function(self,_cmd,obj){return(self==obj)?true:false;});cBasicObject.$def('equal?',function(self,_cmd,obj){return(self==obj)?true:false;});cBasicObject.$def('!',function(self,_cmd,obj){});cBasicObject.$def('!=',function(self,_cmd,obj){});cBasicObject.$define_private_method('singleton_method_added',function(){return nil;});cBasicObject.$define_private_method('singleton_method_removed',function(){return nil;});cBasicObject.$define_private_method('singleton_method_undefined',function(){return nil;});cBasicObject.$def('puts',function(self,_cmd,val){console.log(val);});cBasicObject.$def('===',function(self,_cmd,other){return self==other;});mKernel=RModule.define("Kernel");RModule.include(cObject,mKernel);cClass.$define_private_method('inherited',function(){return nil;});cModule.$define_private_method('included',function(){return nil;});cModule.$define_private_method('extended',function(){return nil;});cModule.$define_private_method('method_added',function(){return nil;});cModule.$define_private_method('method_removed',function(){return nil;});cModule.$define_private_method('method_undefined',function(){return nil;});var cNilClass=RClass.define('NilClass',cObject);var cBoolean=RClass.define('Boolean',cObject);var cArray=RClass.define('Array',cObject);var cString=RClass.define('String',cObject);var cNumeric=RClass.define('Numeric',cObject);
+VN.type_error = function(msg) {
+  throw 'Vienna TypeError: ' + msg;
+};
+
+VN.name_error = function(msg) {
+  throw 'Vienna NameError: ' + msg;
+}
+
+VN.top_const_get = function(id) {
+  return undefined ;
+};
+
+VN.define_global_const = function(id, val) {
+  cObject.$define_const(id, val);
+};
+
+VN.class_tbl = { } ;  // all classes are stored here
+VN.global_tbl = { } ; // globals are stored here
+
+VN.gvar_get = function(id) {
+  
+};
+
+VN.gvar_set = function(id, val) {
+  
+};
+
+
+
+/**
+  Object
+*/
+VN.boot_defclass = function(id, super_klass) {
+  var obj = RClass.boot(super_klass);
+  obj.$name(id);
+  (cObject ? cObject : obj).$c_s(id, obj);
+  
+  return obj;
+};
+
+VN.boot_defmetametaclass = function(klass, metametaclass) {
+  klass.$klass.$klass = metametaclass;
+};
+
+VN.obj_alloc = function(klass) {
+  // console.log('in base.js, obj_alloc ' + arguments.length);
+  // var obj = klass.$('allocate', []);
+  var obj = VN$(klass, 'allocate');
+  return obj;
+};
+
+VN.class_allocate_instance = function() {
+  // console.log('doing VN.class_allocate_instance');
+  var obj = new RObject(this, VN.OBJECT) ;
+  return obj;
+};
+
+VN.obj_dummy = function() {
+  return nil ;
+};
+
+VN.equal = function(obj) {
+  if (obj == this) return true ;
+  var result = this.$funcall('==', [obj]);
+  if (result) return true ;
+  return false ;
+};
+
+VN.eql = function(obj) {
+  return this.$funcall('==', [obj]);
+};
+
+VN.obj_equal = function(obj) {
+  return (obj == this) ? true : false ;
+};
+
+
+/**
+  Require the runtime
+*/
+
+/* 
+ * class.js
+ * vienna
+ * 
+ * Created by Adam Beynon.
+ * Copyright 2009 Adam Beynon.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+var RClass = function(klass, super_klass) {
+ this.$klass = klass ;
+ this.$super = super_klass ;
+ this.$type = VN.CLASS ;
+ this.$singleton = false ;
+ this.$m_tbl = { };
+ this.$iv_tbl = { };
+ return this ;
+};
+
+RClass.inherited = function(super_klass, klass) {
+  if (!super_klass) super_klass = cObject ;
+  return super_klass.$('inherited', [klass]) ;
+};
+  
+RClass.define = function(id, super_klass) {
+  var klass;
+  // if already defined, just ensure right type then return existing class/mod.
+  if (cObject.$c_d(id)) {
+    // console.log('returning current class for ' + id);
+    klass = cObject.$c_g(id);
+    if (klass.$type != VN.CLASS) {
+      VN.type_error(id + ' is not a class');
+    }
+    if (klass.$super != super_klass) {
+      // bail out for Object...error if Object is assigned to another nam (e.g. VNObject)
+      if (klass != cObject) {
+        // console.log(klass);
+        // console.log('wow');
+        VN.name_error(id + ' is already defined');
+      }
+      
+    }
+    return klass;
+  }
+  if (!super_klass) {
+    VN.warning('no super class for `' + id + '`, Object assumed')
+  }
+  klass = RClass.define_class_id(id, super_klass);
+  VN.class_tbl[id] = klass;
+  klass.$name(id);
+  cObject.$c_s(id, klass);
+  RClass.inherited(super_klass, klass);
+  return klass;
+};
+
+/**
+  TODO: Need to stop search going up through chain. Object inside Vienna, for instance, should
+  not reference the Base Object class as the same, unless it is set to equal that. Also, VN::Array
+  should not be mapped to ::Array. different classes. Need to stop $c_d and $c_g going up through
+  the chain. They should only go up when looking for a constant inside the code, not for defining new
+  classes.
+*/
+RClass.define_under = function(outer, id, super_klass) {
+  var klass;
+  // if already defined in context... just ensure it is a macthing class def
+  /**
+    this should be const_defined_at
+  */
+  if (outer.$c_d_a(id)) {
+    // klass = VN.const_get_at(outer, id);
+    /**
+      this should be const_get_at
+    */
+    klass = outer.$c_g_a(id);
+    // console.log(klass);
+    if (klass.$type != VN.CLASS) {
+      VN.type_error(id + ' is not a class');
+    }
+    if (RClass.real(klass.$super) != super_klass) {
+      // avoid error for cObject
+      if (klass != cObject) {
+        VN.name_error(id + ' is already defined');
+      }
+      
+    }
+    return klass;
+  }
+  // not existing...
+  if (!super_klass) {
+    VN.warning('no super class for `' + VN.class2name(outer), + '::' + id + '`, Object assumed');
+  }
+  klass = RClass.define_class_id(id, super_klass);
+  // sets that the klass knows about its outer, i.e. classes within modules know about the module
+  klass.$parent = outer;
+  // VN.set_class_path(klass, outer, id);
+  // VN.const_set(outer, id, klass);
+  outer.$c_s(id, klass);
+  RClass.inherited(super_klass, klass);
+
+  return klass;
+};
+
+
+
+RClass.class2name = function(klass) {
+  return klass.$class_name();
+};
+
+RClass.obj_classname = function(obj) {
+  return VN.class2name(obj.$klass);
+};
+
+
+RClass.make_metametaclass = function(metaclass) {
+  var metametaclass, super_of_metaclass;
+
+  if (metaclass.$klass == metaclass) {
+    metametaclass = RClass.boot(null);
+    metametaclass.$klass = metametaclass;
+  }
+  else {
+    metametaclass = RClass.boot(null);
+    metametaclass.$klass = metaclass.$klass.$klass == metaclass.$klass ? VN.make_metametaclass(metaclass.$klass) : metaclass.$klass.$klass;
+  }
+  metametaclass.$singleton = true;
+  metametaclass.$singleton_class_attached(metaclass);
+  metaclass.$klass = metametaclass;
+
+  super_of_metaclass = metaclass.$super;
+  while (super_of_metaclass.$type == VN.ICLASS) {
+    super_of_metaclass = super_of_metaclass.$super;
+  }
+
+  metametaclass.$super = super_of_metaclass.$klass.$i_g('__attached__') == super_of_metaclass ? super_of_metaclass.$klass : RClass.make_metametaclass(super_of_metaclass);
+  return metametaclass;
+};
+
+RClass.real = function(klass) {
+  return klass ;
+};
+
+RClass.alloc = function(type, klass) {
+  var obj = new RClass();
+  obj.$klass = klass;
+  obj.$type = type;
+  return obj;
+};
+
+RClass.boot = function(super_klass) {
+  var klass = RClass.alloc(VN.CLASS, cClass);
+  klass.$super = super_klass; 
+  return klass;
+};
+
+RClass.check_inheritable = function(super_klass) {
+  if (super_klass.$type != VN.CLASS) {
+    VN.type_error('super class must be a Class (' + VN.obj_classname(super_klass) + ' given)');
+  }
+  if (super_klass.singleton) {
+    VN.type_error('can\'t make a subclass of singleton class');
+  }
+};
+
+RClass.create = function(super_klass) {
+  RClass.check_inheritable(super_klass);
+
+  if (super_klass == cClass) {
+    VN.raise(VN.TypeError, "can't make subclass of Class")
+  }
+  return RClass.boot(super_klass);
+};
+
+RClass.define_class_id = function(id, super_klass) {
+  var klass;
+  if (!super_klass) super_klass = cObject;
+  klass = RClass.create(super_klass);
+  klass.$make_metaclass(super_klass.$klass);
+  return klass;
+};
+
+RClass.singleton_class = function(obj) {
+  var klass;
+  
+  // console.log(obj);
+
+  if (obj.$type == VN.T_FIXNUM || obj.$type == VN.T_SYMBOL) {
+    VN.type_error('can\'t define singleton');
+  }
+
+  if (obj.$klass.$singleton && obj.$klass.$i_g('__attached__') == obj) {
+    klass = obj.$klass;
+  }
+  else {
+    // klass = RClass.make_metaclass(obj, obj.$klass);
+    // console.log(obj);
+    klass = obj.$make_metaclass(obj.$klass) ;
+  }
+
+  if (obj.$type == VN.CLASS) {
+    if (klass.$klass.$i_g('__attached__') != klass) {
+      RClass.make_metametaclass(klass);
+    }
+  }
+
+  return klass;
+};
+
+RClass.prototype.$name = function(id) {
+  this.$i_s('__classid__', id);
+};
+
+RClass.prototype.$class_name = function() {
+  return VN.class_path(klass.$real());
+};
+
+RClass.prototype.$make_metaclass = function(super_klass) {
+  // obj is a metaclass...
+  if (this.$type == VN.CLASS && this.$singleton == true) {
+    return this.$make_metametaclass();
+  }
+  else {
+    var klass = RClass.boot(super_klass);
+    klass.$singleton = true;
+    this.$klass = klass;
+    klass.$singleton_class_attached(this);
+  
+    var metasuper = klass.$klass;
+    if (metasuper) {
+      klass.$klass = metasuper;
+    }
+    return klass;
+  }
+};
+
+RClass.prototype.$singleton_class_attached = function(obj) {
+  if (this.$singleton == true) {
+    this.$i_s('__attached__', obj);
+  }
+};
+
+
+RClass.prototype.$ = function(id, args) {
+  var method = this.$klass.$search_method(id);
+  // console.log('searching for: ' + id);
+  // console.log(this.$klass);
+  if (!method) throw 'VN#funcall cannot find method: ' + id ;
+  return method.apply(this, args) ;
+};
+
+/**
+  cvar_get (klassvar_get)
+*/
+RClass.prototype.$k_g = function(id) {
+  var tmp = this;
+  var value;
+  while(tmp) {
+    if (value = tmp.$iv_tbl[id]) {
+      return value;
+    }
+    tmp = tmp.$super;
+  }
+  VN.name_error('uninitialized class variable ' + id + ' in ' + this);
+  return nil ;
+};
+
+/**
+  class var defined
+*/
+RClass.prototype.$k_d = function(id) {
+  var tmp = this;
+  var value;
+  while(tmp) {
+    if (value = tmp.$iv_tbl[id]) {
+      return true;
+    }
+    tmp = tmp.$super;
+  }
+  return false;
+}
+
+/**
+  cvar_set (klassvar_set)
+*/
+RClass.prototype.$k_s = function(id, val) {
+  return this.$iv_tbl[id] = val;
+};
+
+RClass.prototype.$i_g = function(id) {
+  return this.$iv_tbl[id];
+};
+
+RClass.prototype.$i_s = function(id, val) {
+  this.$iv_tbl[id] = val;
+  return val ;
+}
+
+/**
+  Define 'normal' method
+*/
+RClass.prototype.$def = function(name, func) {
+  this.$add_method(name, func);
+};
+
+RClass.prototype.$define_protected_method = function(name, func) {
+  this.$add_method(name, func);
+};
+
+RClass.prototype.$define_private_method = function(name, func) {
+  this.$add_method(name, func);
+};
+
+RClass.prototype.$undef_method = function(name, func) {
+  this.$add_method(name, func);
+};
+
+RClass.prototype.$add_method = function(name, func) {
+  this.$m_tbl[name] = func;
+};
+
+/**
+  Define singleton
+*/
+RClass.prototype.$def_s = function(name, func) {
+  RClass.singleton_class(this).$def(name, func);
+};
+
+RClass.prototype.$define_alias = function(id1, id2) {
+  
+};
+
+RClass.prototype.$define_alloc_func = function(func) {
+  RClass.singleton_class(this).$add_method('allocate', func);
+};
+
+RClass.prototype.$undef_alloc_func = function() {
+  RClass.singleton_class(this).$add_method('allocate', null);
+};
+
+RClass.prototype.$search_method = function(id) {
+  // console.log('checking ' + id);
+  // console.log(this);
+  var klass = this; var func ;
+  // console.log(id);
+  // console.log(klass);
+  // return null ;
+  while (!(func = klass.$m_tbl[id])) {
+    klass = klass.$super;
+    // console.log(this.$super.__classid__);
+    if (!klass) return undefined;
+  }
+  // console.log('returning true for ' + id);
+  return func;
+};
+
+RClass.prototype.$search_super_method = function(from,id) {
+  // get current
+  
+  /**
+    Match func = from, to match current function
+    THEN search by name from there up, otherwise, chains of more then
+    2 supers will keep rematching second super
+  */
+  var klass = this; var func;
+  while (!((func = klass.$m_tbl[id]) && func == from)) {
+    klass = klass.$super;
+    if (!klass) return undefined;
+  }
+  // now skip up one
+  klass = klass.$super;
+  if (!klass) return undefined;
+  while (!(func = klass.$m_tbl[id])) {
+     klass = klass.$super;
+     if(!klass) return undefined;
+   }
+   return func;
+  
+    // 
+    // var klass = this; var func;
+    // while (!((func = klass.$m_tbl[id]) && func != from)) {
+    //    klass = klass.$super;
+    //    if(!klass) return undefined;
+    //  }
+    // 
+    // var klass = this; var func;
+    // // console.log('from');
+    // // console.log(from);
+    // // console.log('views');
+    // // console.log(klass.$m_tbl[id]);
+    // // console.log(klass.$m_tbl[id] === from);
+    // // console.log(klass.$m_tbl[id]);
+    // while (!((func = klass.$m_tbl[id]) && func != from)) {
+    //    klass = klass.$super;
+    //    if(!klass) return undefined;
+    //  }
+    // // return func = klass.$m_tbl[id];
+    // // return func = klass.$m_tbl[id];
+    // return func;
+
+  // var klass = this; var func ;
+  // 
+  // while (!(func = klass.$m_tbl[id])) {
+  //   klass = klass.$super;
+  //   if (!klass) return undefined;
+  // }
+  // console.log('this point');
+  // // we have the current impl, now we need to search for the super from this point..
+  // klass = klass.$super;
+  // if (!klass) return undefined;
+  // while (!(func = klass.$m_tbl[id])) {
+  //   klass = klass.$super;
+  //   if (!klass) return undefined;
+  // }
+  // return func;
+};
+
+RClass.prototype.$ = function(id, args) {
+  // var method = this.$search_method(this.$klass, id);
+  var method = this.$klass.$search_method(id);
+  if (!method) throw 'VN#funcall cannot find method: ' + id ;
+  return method.apply(this, args) ;
+};
+
+/**
+  $const_set
+*/
+RClass.prototype.$c_s = function(id, val) {
+  this.$mod_av_set(id, val, true);
+};
+
+RClass.prototype.$mod_av_set = function(id, val, isconst) {
+  this.$iv_tbl[id] = val ;
+};
+
+/**
+  $c_g
+*/
+RClass.prototype.$c_g = function(id) {
+  var tmp = this;
+  var value;
+  while (tmp) {
+    if (value = tmp.$iv_tbl[id]) {
+      return value;
+    }
+    tmp = tmp.$super;
+  }
+  VN.name_error(id, 'uninitialized constant ' + id + ' in ' + this.name);
+  return nil;
+};
+
+/**
+  Get constant, but look in the classes' parent as well
+  -const_get_full (full search)
+  Note: This does not work within objects copied from another context. E.g, from VN::Object, we cannot
+  search for things indside Vienna... just doesnt work - no $parent on top object, but we dont want to
+  chnage this..
+*/
+RClass.prototype.$c_g_full = function(id) {
+  var tmp = this;
+  var value;
+  while (tmp) {
+    if (value = tmp.$iv_tbl[id]) {
+      return value;
+    }
+    tmp = tmp.$super;
+  }
+  // now try parent instead..
+  var tmp = this.$parent;
+  while (tmp) {
+    if (value = tmp.$iv_tbl[id]) {
+      return value;
+    }
+    tmp = tmp.$parent
+  }
+  VN.name_error(id, 'uninitialized constant ' + id + ' in ' + this.name);
+  return nil;
+};
+
+/**
+  SAME AS ABOVE BUT CHECK IF DEFINED
+*/
+RClass.prototype.$c_d_full = function(id) {
+  var tmp = this;
+  var value;
+  while (tmp) {
+    if (value = tmp.$iv_tbl[id]) {
+      return true;
+    }
+    tmp = tmp.$super;
+  }
+  // now try parent instead..
+  var tmp = this.$parent;
+  while (tmp) {
+    if (value = tmp.$iv_tbl[id]) {
+      return true;
+    }
+    tmp = tmp.$parent
+  }
+  return false;
+};
+
+/**
+  $const)defined
+*/
+RClass.prototype.$c_d = function(id) {
+  var tmp = this;
+  var value;
+  while (tmp) {
+    if (value = tmp.$iv_tbl[id]) {
+      return true;
+    }
+    tmp = tmp.$super;
+  }
+  return false;
+};
+
+/**
+  const_defined_at
+*/
+RClass.prototype.$c_d_a = function(id) {
+  return (this.$iv_tbl[id]) ? true : false;
+};
+
+/**
+  const_get_at
+*/
+RClass.prototype.$c_g_a = function(id) {
+  return (this.$iv_tbl[id]) ? this.$iv_tbl[id] : nil;
+};
+
+RClass.prototype.$define_const = function(id, val) {
+  
+};
+
+/* 
+ * module.js
+ * vienna
+ * 
+ * Created by Adam Beynon.
+ * Copyright 2009 Adam Beynon.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+var RModule = { } ;
+
+RModule.define = function(id) {
+  var module;
+  if (cObject.$c_d(id)) {
+    module = cObject.$c_g(id);
+    if (module.$type == VN.MODULE) {
+      return module;
+    }
+    VN.type_error(id + ' is not a module');
+  }
+  module = RModule.define_module_id(id);
+  VN.class_tbl[id] = module;
+  cObject.$c_s(id, module);
+
+  return module;
+};
+
+RModule.define_module_under = function() {
+  var module;
+  if (VN.const_defined_at(outer, id)) {
+    module = VN.const_get_at(outer, id);
+    if (module.type == VN.MODULE) {
+      return module;
+    }
+    VN.type_error(id + ' is not a module');
+  }
+  module = VN.define_module_id(id);
+  VN.const_set(outer, id, module);
+  VN.set_class_path(module, outer, name);
+  return module;
+};
+
+RModule.define_module_id = function(id) {
+  var mdl = RModule.create();
+  // VN.name_class(mdl, id);
+  mdl.$name(id);
+  // mdl.$name(id);
+  return mdl;
+};
+
+RModule.create = function() {
+  var mdl = RClass.alloc(VN.MODULE, cModule);
+  mdl.$super = cObject;
+  return mdl;
+};
+
+RModule.include = function(klass, module) {
+  RModule.include_class_new(module, klass);
+};
+
+
+RModule.include_class_new = function(mod, sup) {
+  var klass = RClass.alloc(VN.T_ICLASS, cClass);
+  klass.iv_tbl = mod.iv_tbl;
+  klass.m_tbl = mod.m_tbl;
+  klass.$super = sup;
+  klass.$klass = mod;
+  return klass;
+};
+
+/* 
+ * object.js
+ * vienna
+ * 
+ * Created by Adam Beynon.
+ * Copyright 2009 Adam Beynon.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+var RObject = function(klass, type) {
+  
+  // console.log('in here!');
+  // console.log(klass);
+  
+  this.$klass = klass ;
+  this.$type = type ;
+  this.$iv_tbl = {};
+  return this;
+};
+
+RObject.prototype.toString = function() {
+  // console.log('calling toString');
+  return VN$(this, 'to_s');
+}
+
+/**
+  $ivar_set
+  
+  @param id - Ivar name
+  @param val - Value
+*/
+RObject.prototype.$i_s = function(id, val) {
+  this.$iv_tbl[id] = val ;
+  return val ;
+};
+
+/**
+  $ivar_get
+  
+  @param id - Ivar name
+*/
+RObject.prototype.$i_g = function(id) {
+  return this.$iv_tbl[id] ;
+};
+
+/*
+  $ - call method
+  @param id - method name
+  @param args - array of all arguments
+*/
+RObject.prototype.$ = function(id, args) {
+  var method = this.$klass.$search_method(id);
+  if (!method) throw 'RObject#call cannot find method: ' + id ;
+  return method.apply(this, args) ;
+};
+
+/**
+  new calling func
+*/
+var VN$ = function(self, id) {
+ 
+ if (!self) {
+   // console.log(self);
+   // console.log(id);
+   throw 'Vienna: VN$ - Trying to call `' + id + '` on null/undefined object'   
+ }
+
+  
+  var method = self.$klass.$search_method(id);
+  if (!method) throw 'RObject#call cannot find method: ' + id ;
+  // console.log(Array.prototype.slice.call(arguments));
+  switch(arguments.length) {
+    case 2: return method(self, id);
+    case 3: return method(self, id, arguments[2]);
+    case 4: return method(self, id, arguments[2], arguments[3]);
+    case 5: return method(self, id, arguments[2], arguments[3], arguments[4]);
+  }
+  
+  return method.apply(self, arguments);
+};
+
+var VN$sup = function(from, self, id, args) {
+  var method = self.$klass.$search_super_method(from, id);
+  if (!method) throw 'RObject#call cannot find super method for: ' + id ;
+  
+  switch(args.length) {
+    case 0: return method(self, id);
+    case 1: return method(self, id, args[0]);
+    case 2: return method(self, id, args[0], args[1]);
+    case 3: return method(self, id, args[0], args[1], args[2]);
+  }
+  
+  return method.apply(self, arguments);
+};
+
+/**
+  Call super
+  - from = callee
+*/
+RObject.prototype.$sup = function(from, id, args) {
+  // console.log('callee');
+  // console.log(from);
+  var method = this.$klass.$search_super_method(from, id);
+  if (!method) throw 'RObject#call cannot find super method for: ' + id ;
+  // console.log('got super');
+  // console.log(method);
+  return method.apply(this, args) ;
+};
+
+/**
+  We need to copy some of RClass' methods for singletons
+*/
+RObject.prototype.$def_s = RClass.prototype.$def_s;
+RObject.prototype.$make_metaclass = RClass.prototype.$make_metaclass;
+/**
+  Require core library
+*/
+
+/* 
+ * object.js
+ * vienna
+ * 
+ * Created by Adam Beynon.
+ * Copyright 2009 Adam Beynon.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+var metaclass;
+var cBasicObject = VN.boot_defclass('BasicObject', null);
+var cObject = VN.boot_defclass('Object', cBasicObject);
+var cModule = VN.boot_defclass('Module', cObject);
+var cClass = VN.boot_defclass('Class', cModule);
+
+metaclass = cBasicObject.$make_metaclass(cClass);
+metaclass = cObject.$make_metaclass(metaclass);
+metaclass = cModule.$make_metaclass(metaclass);
+metaclass = cClass.$make_metaclass(metaclass);
+
+VN.boot_defmetametaclass(cModule, metaclass);
+VN.boot_defmetametaclass(cObject, metaclass);
+VN.boot_defmetametaclass(cBasicObject, metaclass);
+
+/**
+  BasicObject necessary methods
+*/
+cBasicObject.$define_private_method('initialize', function(self, _cmd) {
+  
+
+  
+  return nil ;
+});
+
+cBasicObject.$define_alloc_func(function(self, _cmd) {
+  // console.log('HMMMM');
+  // console.log(self);
+  // console.log(_cmd);
+  var obj = new RObject(self, VN.OBJECT) ;
+  // Cruical ivar setup
+  // console.log('HERE');
+  obj.$i_s('@kvo_observers', new Array());
+  obj.$i_s('@kvo_old_values', VN.$h());
+   // # @kvo_observers = []
+    // #      @kvo_old_values = {}
+  return obj;
+});
+
+cBasicObject.$def('==', function(self, _cmd, obj) {
+  return (self == obj) ? true : false ;
+});
+
+cBasicObject.$def('equal?', function(self, _cmd, obj) {
+  return (self == obj) ? true : false ;
+});
+
+cBasicObject.$def('!', function(self, _cmd, obj) {
+  
+});
+
+cBasicObject.$def('!=', function(self, _cmd, obj) {
+  
+});
+
+cBasicObject.$define_private_method('singleton_method_added', function() {
+  return nil ;
+});
+
+cBasicObject.$define_private_method('singleton_method_removed', function() {
+  return nil ;
+});
+
+cBasicObject.$define_private_method('singleton_method_undefined', function() {
+  return nil ;
+});
+
+// TODO: remove and put in kernel
+cBasicObject.$def('puts', function(self, _cmd, val) {
+  // console.log('in here pal');
+  console.log(val);
+});
+
+// TODO: remove and put in kernel
+cBasicObject.$def('===', function(self, _cmd, other) {
+  return self == other;
+});
+
+cBasicObject.$def('class', function(self, _cmd) {
+  console.log('returning class...');
+  return self.$klass;
+});
+
+cBasicObject.$def('respond_to?', function(self, _cmd, selector) {
+  var method = self.$klass.$search_method(selector);
+  if (!selector) return false;
+  return true
+});
+
+/**
+  Kernel neccessary methods
+*/
+mKernel = RModule.define("Kernel");
+
+RModule.include(cObject, mKernel);
+
+cClass.$define_private_method('inherited', function() {
+  return nil ;
+});
+
+cModule.$define_private_method('included', function() {
+  return nil ;
+});
+
+cModule.$define_private_method('extended', function() {
+  return nil ;
+});
+
+cModule.$define_private_method('method_added', function() {
+  return nil ;
+});
+
+cModule.$define_private_method('method_removed', function() {
+  return nil ;
+});
+
+cModule.$define_private_method('method_undefined', function() {
+  return nil ;
+});
+
+/**
+  Base Classes/Modules
+*/
+var cNilClass = RClass.define('NilClass', cObject);
+var cBoolean = RClass.define('Boolean', cObject);
+var cArray = RClass.define('Array', cObject);
+var cString = RClass.define('String', cObject);
+var cNumeric = RClass.define('Numeric', cObject);
+
 var $VN_1 = RModule.define('Kernel');
 $VN_1.$def('nil?',function(self,_cmd){
 return false;
@@ -246,16 +1244,308 @@ $VN_1.$def('class_variable_set',function(self,_cmd){
 $VN_1.$def('class_variable_defined?',function(self,_cmd){
 });
 
+/* 
+ * class.js
+ * vienna
+ * 
+ * Created by Adam Beynon.
+ * Copyright 2009 Adam Beynon.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 
-cClass.$def('new',function(self,_cmd){var obj=VN$(self,'allocate');arguments[0]=obj;arguments[1]='initialize';VN$.apply(obj,arguments);return obj;});cClass.$def('allocate',function(obj_alloc){});cClass.$def('initialize',function(class_initialize){});cClass.$def('initialize_copy',function(class_init_copy){});cClass.$def('superclass',function(class_superclass){});cClass.$define_alloc_func(function(class_s_alloc){});
-VN.self = VN.obj_alloc(cObject);
-VN.self.$def_s('to_s', function() { 
-  return 'main' ;}
-);
 
-var mComparable=RModule.define('Comparable');mComparable.$def('==',function(obj){if(this==obj)return true;return false;});mComparable.$def('>',function(cmp_gt){});mComparable.$def('>=',function(cmp_ge){});mComparable.$def('<',function(cmp_lt){});mComparable.$def('<=',function(cmp_le){});mComparable.$def('between?',function(cmp_between){});
+cClass.$def('new', function(self, _cmd) {
+  // var obj = this.$('allocate', []);
+  // console.log('In new');
+  var obj = VN$(self, 'allocate');
+  // split args from 2 (to avoid sending self, _cmd)
+  arguments[0] = obj;
+  arguments[1] = 'initialize';
+  // VN$(obj, 'initialize');
+  VN$.apply(obj, arguments);
+  // obj.$('initialize', arguments);
+  return obj;
+});
 
-var mEnumerable=RModule.define('Enumerable');mEnumerable.$def('to_a',function(enum_to_a){});mEnumerable.$def('entries',function(enum_to_a){});mEnumerable.$def('sort',function(enum_sort){});mEnumerable.$def('sort_by',function(enum_sort_by){});mEnumerable.$def('grep',function(enum_grep){});mEnumerable.$def('count',function(enum_count){});mEnumerable.$def('find',function(enum_find){});mEnumerable.$def('detect',function(enum_find){});mEnumerable.$def('find_index',function(enum_find_index){});mEnumerable.$def('find_all',function(enum_find_all){});mEnumerable.$def('select',function(enum_find_all){});mEnumerable.$def('reject',function(enum_reject){});mEnumerable.$def('collect',function(enum_collect){});mEnumerable.$def('map',function(enum_collect){});mEnumerable.$def('inject',function(enum_inject){});mEnumerable.$def('reduce',function(enum_inject){});mEnumerable.$def('partition',function(enum_partition){});mEnumerable.$def('group_by',function(enum_group_by){});mEnumerable.$def('first',function(enum_first){});mEnumerable.$def('all',function(enum_all){});mEnumerable.$def('any?',function(enum_any){});mEnumerable.$def('one?',function(enum_one){});mEnumerable.$def('none?',function(enum_none){});mEnumerable.$def('min',function(enum_min){});mEnumerable.$def('max',function(enum_max){});mEnumerable.$def('minmax',function(enum_minmax){});mEnumerable.$def('min_by',function(enum_min_by){});mEnumerable.$def('max_by',function(enum_max_by){});mEnumerable.$def('minmax_by',function(enum_minmax_by){});mEnumerable.$def('include?',function(enum_member){});mEnumerable.$def('member?',function(enum_member){});mEnumerable.$def('each_with_index',function(enum_each_with_index){});mEnumerable.$def('reverse_each',function(enum_reverse_each){});mEnumerable.$def('zip',function(enum_zip){});mEnumerable.$def('take',function(enum_take){});mEnumerable.$def('take_while',function(enum_take_while){});mEnumerable.$def('drop',function(enum_drop){});mEnumerable.$def('drop_while',function(enum_drop_while){});mEnumerable.$def('cycle',function(enum_cycle){});
+cClass.$def('allocate', function(obj_alloc) {
+  
+});
+
+cClass.$def('initialize', function(class_initialize) {
+  
+});
+
+cClass.$def('initialize_copy', function(class_init_copy) {
+  
+});
+
+cClass.$def('superclass', function(class_superclass) {
+  
+});
+
+cClass.$define_alloc_func(function(class_s_alloc) {
+  
+});
+
+// VN.undef_method(VN.cClass, 'extend_object');
+// VN.undef_method(VN.cClass, 'append_features');
+
+
+
+/* 
+ * comparable.js
+ * vienna
+ * 
+ * Created by Adam Beynon.
+ * Copyright 2009 Adam Beynon.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+var mComparable = RModule.define('Comparable');
+
+mComparable.$def('==', function(obj) {
+  if (this == obj) return true ;
+  return false;
+});
+
+mComparable.$def('>', function(cmp_gt) {
+  
+});
+
+mComparable.$def('>=', function(cmp_ge) {
+  
+});
+
+mComparable.$def('<', function(cmp_lt) {
+  
+});
+
+mComparable.$def('<=', function(cmp_le) {
+  
+});
+
+mComparable.$def('between?', function(cmp_between) {
+  
+});
+
+/* 
+ * enumerable.js
+ * vienna
+ * 
+ * Created by Adam Beynon.
+ * Copyright 2009 Adam Beynon.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+var mEnumerable = RModule.define('Enumerable');
+
+mEnumerable.$def('to_a', function(enum_to_a) {
+  
+});
+
+mEnumerable.$def('entries', function(enum_to_a) {
+  
+});
+
+mEnumerable.$def('sort', function(enum_sort) {
+  
+});
+
+mEnumerable.$def('sort_by', function(enum_sort_by) {
+  
+});
+
+mEnumerable.$def('grep', function(enum_grep) {
+  
+});
+
+mEnumerable.$def('count', function(enum_count) {
+  
+});
+
+mEnumerable.$def('find', function(enum_find) {
+  
+});
+
+mEnumerable.$def('detect', function(enum_find) {
+  
+});
+
+mEnumerable.$def('find_index', function(enum_find_index) {
+  
+});
+
+mEnumerable.$def('find_all', function(enum_find_all) {
+  
+});
+
+mEnumerable.$def('select', function(enum_find_all) {
+  
+});
+
+mEnumerable.$def('reject', function(enum_reject) {
+  
+});
+
+mEnumerable.$def('collect', function(enum_collect) {
+  
+});
+
+mEnumerable.$def('map', function(enum_collect) {
+  
+});
+
+mEnumerable.$def('inject', function(enum_inject) {
+  
+});
+
+mEnumerable.$def('reduce', function(enum_inject) {
+  
+});
+
+mEnumerable.$def('partition', function(enum_partition) {
+  
+});
+
+mEnumerable.$def('group_by', function(enum_group_by) {
+  
+});
+
+mEnumerable.$def('first', function(enum_first) {
+  
+});
+
+mEnumerable.$def('all', function(enum_all) {
+  
+});
+
+mEnumerable.$def('any?', function(enum_any) {
+  
+});
+
+mEnumerable.$def('one?', function(enum_one) {
+  
+});
+
+mEnumerable.$def('none?', function(enum_none) {
+  
+});
+
+mEnumerable.$def('min', function(enum_min) {
+  
+});
+
+mEnumerable.$def('max', function(enum_max) {
+  
+});
+
+mEnumerable.$def('minmax', function(enum_minmax) {
+  
+});
+
+mEnumerable.$def('min_by', function(enum_min_by) {
+  
+});
+
+mEnumerable.$def('max_by', function(enum_max_by) {
+  
+});
+
+mEnumerable.$def('minmax_by', function(enum_minmax_by) {
+  
+});
+
+mEnumerable.$def('include?', function(enum_member) {
+  
+});
+
+mEnumerable.$def('member?', function(enum_member) {
+  
+});
+
+mEnumerable.$def('each_with_index', function(enum_each_with_index) {
+  
+});
+
+mEnumerable.$def('reverse_each', function(enum_reverse_each) {
+  
+});
+
+mEnumerable.$def('zip', function(enum_zip) {
+  
+});
+
+mEnumerable.$def('take', function(enum_take) {
+  
+});
+
+mEnumerable.$def('take_while', function(enum_take_while) {
+  
+});
+
+mEnumerable.$def('drop', function(enum_drop) {
+  
+});
+
+mEnumerable.$def('drop_while', function(enum_drop_while) {
+  
+});
+
+mEnumerable.$def('cycle', function(enum_cycle) {
+  
+});
+
 String.prototype.$klass = cString
 String.prototype.$type = VN.STRING;
 
@@ -271,7 +1561,7 @@ $VN_1.$def('initialize_copy',function(self,_cmd){
 $VN_1.$def('<=>',function(self,_cmd,obj){
 });
 $VN_1.$def('==',function(self,_cmd,obj){
-});
+return (self == obj) ? true : false;});
 $VN_1.$def('eql?',function(self,_cmd,obj){
 });
 $VN_1.$def('hash',function(self,_cmd,obj){
@@ -421,8 +1711,263 @@ $VN_1.$def('partition',function(self,_cmd){
 $VN_1.$def('rpartition',function(self,_cmd){
 });
 
+/* 
+ * string.js
+ * vienna
+ * 
+ * Created by Adam Beynon.
+ * Copyright 2009 Adam Beynon.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+ 
+Number.prototype.$klass = cNumeric ;
+Number.prototype.$type = VN.NUMBER ;
+Number.prototype.$ = RObject.prototype.$;
 
-Number.prototype.$klass=cNumeric;Number.prototype.$type=VN.NUMBER;Number.prototype.$=RObject.prototype.$;RModule.include(cNumeric,mComparable);cNumeric.$def('singleton_method_added',function(){});cNumeric.$def('initialize_copy',function(){});cNumeric.$def('coerce',function(){});cNumeric.$def('+@',function(){});cNumeric.$def('-@',function(){});cNumeric.$def('<=>',function(){});cNumeric.$def('eql?',function(){});cNumeric.$def('quo',function(){});cNumeric.$def('fdiv',function(){});cNumeric.$def('div',function(){});cNumeric.$def('divmod',function(){});cNumeric.$def('modulo',function(){});cNumeric.$def('remainder',function(){});cNumeric.$def('abs',function(){});cNumeric.$def('magnitude',function(){});cNumeric.$def('to_int',function(){});cNumeric.$def('real?',function(){});cNumeric.$def('integer?',function(){});cNumeric.$def('zero?',function(){});cNumeric.$def('nonzero?',function(){});cNumeric.$def('floor',function(){});cNumeric.$def('ceil',function(){});cNumeric.$def('round',function(){});cNumeric.$def('truncate',function(){});cNumeric.$def('step',function(){});cNumeric.$def('odd?',function(){});cNumeric.$def('even?',function(){});cNumeric.$def('upto',function(){});cNumeric.$def('downto',function(){});cNumeric.$def('times',function(){});cNumeric.$def('succ',function(){});cNumeric.$def('next',function(){});cNumeric.$def('pred',function(){});cNumeric.$def('chr',function(){});cNumeric.$def('ord',function(){});cNumeric.$def('to_i',function(){});cNumeric.$def('to_s',function(){});cNumeric.$def('+',function(i){return this+i;});cNumeric.$def('-',function(i){return this-i;});cNumeric.$def('*',function(){});cNumeric.$def('/',function(){});cNumeric.$def('%',function(){});cNumeric.$def('**',function(){});cNumeric.$def('==',function(){});cNumeric.$def('>',function(){});cNumeric.$def('>=',function(){});cNumeric.$def('<',function(){});cNumeric.$def('<=',function(){});cNumeric.$def('~',function(){});cNumeric.$def('&',function(){});cNumeric.$def('|',function(){});cNumeric.$def('^',function(){});cNumeric.$def('[]',function(){});cNumeric.$def('<<',function(){});cNumeric.$def('>>',function(){});cNumeric.$def('to_f',function(){});
+// VN.include_module(VN.cNumeric, VN.mComparable);
+RModule.include(cNumeric, mComparable);
+
+cNumeric.$def('singleton_method_added', function() {
+  
+});
+
+cNumeric.$def('initialize_copy', function() {
+  
+});
+
+cNumeric.$def('coerce', function() {
+  
+});
+
+cNumeric.$def('+@', function() {
+  
+});
+
+cNumeric.$def('-@', function() {
+  
+});
+
+cNumeric.$def('<=>', function() {
+  
+});
+
+cNumeric.$def('eql?', function() {
+  
+});
+
+cNumeric.$def('quo', function() {
+  
+});
+
+cNumeric.$def('fdiv', function() {
+  
+});
+
+cNumeric.$def('div', function() {
+  
+});
+
+cNumeric.$def('divmod', function() {
+  
+});
+
+cNumeric.$def('modulo', function() {
+  
+});
+
+cNumeric.$def('remainder', function() {
+  
+});
+
+cNumeric.$def('abs', function() {
+  
+});
+
+cNumeric.$def('magnitude', function() {
+  
+});
+
+cNumeric.$def('to_int', function() {
+  
+});
+
+cNumeric.$def('real?', function() {
+  
+});
+
+cNumeric.$def('integer?', function() {
+  
+});
+
+cNumeric.$def('zero?', function() {
+  
+});
+
+cNumeric.$def('nonzero?', function() {
+  
+});
+
+cNumeric.$def('floor', function() {
+  
+});
+
+cNumeric.$def('ceil', function() {
+  
+});
+
+cNumeric.$def('round', function() {
+  
+});
+
+cNumeric.$def('truncate', function() {
+  
+});
+
+cNumeric.$def('step', function() {
+  
+});
+
+cNumeric.$def('odd?', function() {
+  
+});
+
+cNumeric.$def('even?', function() {
+  
+});
+
+cNumeric.$def('upto', function() {
+  
+});
+
+cNumeric.$def('downto', function() {
+  
+});
+
+cNumeric.$def('times', function() {
+  
+});
+
+cNumeric.$def('succ', function() {
+  
+});
+
+cNumeric.$def('next', function() {
+  
+});
+
+cNumeric.$def('pred', function() {
+  
+});
+
+cNumeric.$def('chr', function() {
+  
+});
+
+cNumeric.$def('ord', function() {
+  
+});
+
+cNumeric.$def('to_i', function() {
+  
+});
+
+cNumeric.$def('to_s', function() {
+  
+});
+
+cNumeric.$def('+', function(i) {
+  return this + i;
+});
+
+cNumeric.$def('-', function(i) {
+  return this - i;
+});
+
+cNumeric.$def('*', function() {
+  
+});
+
+cNumeric.$def('/', function() {
+  
+});
+
+cNumeric.$def('%', function() {
+  
+});
+
+cNumeric.$def('**', function() {
+  
+});
+
+cNumeric.$def('==', function() {
+  
+});
+
+cNumeric.$def('>', function() {
+  
+});
+
+cNumeric.$def('>=', function() {
+  
+});
+
+cNumeric.$def('<', function() {
+  
+});
+
+cNumeric.$def('<=', function() {
+  
+});
+
+cNumeric.$def('~', function() {
+  
+});
+
+cNumeric.$def('&', function() {
+  
+});
+
+cNumeric.$def('|', function() {
+  
+});
+
+cNumeric.$def('^', function() {
+  
+});
+
+cNumeric.$def('[]', function() {
+  
+});
+
+cNumeric.$def('<<', function() {
+  
+});
+
+cNumeric.$def('>>', function() {
+  
+});
+
+cNumeric.$def('to_f', function() {
+  
+});
+
 
 Array.prototype.$klass = cArray
 Array.prototype.$type = VN.ARRAY;
@@ -466,7 +2011,7 @@ return self;
 });
 $VN_1.$def('==',function(self,_cmd,ary){
 if (ary == this) return true;
-    if (ary.$type != VN.T_ARRAY) {
+    if (ary.$type != VN.ARRAY) {
       if (ary.$('respond_to?', ['to_a'])) {
         return false;
       }
@@ -512,7 +2057,7 @@ return self.length;});
 $VN_1.$def('size',function(self,_cmd){
 return self.length;});
 $VN_1.$def('empty?',function(self,_cmd){
-});
+return (self.length == 0) ? true : false;});
 $VN_1.$def('find_index',function(self,_cmd){
 });
 $VN_1.$def('rindex',function(self,_cmd){
@@ -561,8 +2106,8 @@ $VN_1.$def('clear',function(self,_cmd){
 });
 $VN_1.$def('fill',function(self,_cmd){
 });
-$VN_1.$def('include?',function(self,_cmd){
-});
+$VN_1.$def('include?',function(self,_cmd,obj){
+return (self.indexOf(obj) == -1) ? false : true;});
 $VN_1.$def('<=>',function(self,_cmd){
 });
 $VN_1.$def('slice',function(self,_cmd){
@@ -653,7 +2198,6 @@ RHash.prototype.$make_metaclass = RObject.prototype.$make_metaclass;
 
 VN.$h = function() {
   var hash = new RHash();
-  console.log(hash);
   for (var i = 0; i < arguments.length; i++) {
     VN$(hash, '[]=', arguments[i], arguments[i + 1]);
     i++;
@@ -705,7 +2249,7 @@ $VN_1.$def('==',function(self,_cmd,obj){
 });
 $VN_1.$def('[]',function(self,_cmd,key){
 if (!self.$values.hasOwnProperty(key)) {
-      return self.$call('default', [key]);
+      return VN$(self, 'default', [key]);
     }
     return self.$values[key] ;});
 $VN_1.$def('hash',function(self,_cmd){
@@ -715,7 +2259,6 @@ $VN_1.$def('eql?',function(self,_cmd){
 $VN_1.$def('fetch',function(self,_cmd){
 });
 $VN_1.$def('[]=',function(self,_cmd,key,val){
-VN$(self,'puts',['setting ',(val),' for ',(key)].join(''));
 return VN$(self,'store',key,val);
 });
 $VN_1.$def('store',function(self,_cmd,key,val){
@@ -828,7 +2371,7 @@ $VN_1.$def('initialize_copy',function(self,_cmd){
 $VN_1.$def('<=>',function(self,_cmd,obj){
 });
 $VN_1.$def('==',function(self,_cmd,obj){
-});
+return (self == obj) ? true : false;});
 $VN_1.$def('eql?',function(self,_cmd,obj){
 });
 $VN_1.$def('hash',function(self,_cmd,obj){
@@ -977,6 +2520,49 @@ $VN_1.$def('partition',function(self,_cmd){
 });
 $VN_1.$def('rpartition',function(self,_cmd){
 });
+// require('core/struct');
+// require('core/regexp');
+// require('core/range');
+// require('core/time');
+// require('core/proc');
+// require('core/math');
+// require('core/enumerator');
+// 
+
+
+VN.self = VN.obj_alloc(cObject);
+VN.self.$def_s('to_s', function() { 
+  return 'main' ;}
+);
+
+var $VN_1 = RClass.define('NilClass',cObject);
+$VN_1.$def('nil?',function(self,_cmd){
+return true;
+});
+$VN_1.$def('to_i',function(self,_cmd){
+return 0;
+});
+$VN_1.$def('to_f',function(self,_cmd){
+return 0.0;
+});
+$VN_1.$def('to_s',function(self,_cmd){
+return 'nil';
+});
+$VN_1.$def('to_a',function(self,_cmd){
+return [];
+});
+$VN_1.$def('inspect',function(self,_cmd){
+return 'nil';
+});
+$VN_1.$def('&',function(self,_cmd,other){
+return false;
+});
+$VN_1.$def('|',function(self,_cmd,other){
+});
+$VN_1.$def('^',function(self,_cmd,other){
+});
+nil = VN$(cObject.$k_g('NilClass'), 'new');
+nil.toString = function() { return 'nil';};
 
 
 var $VN_1 = RClass.define('Document',cObject);
@@ -1001,6 +2587,14 @@ return VN$(self,'new',type,class_name,the_id);
 });
 $VN_1.$def('element',function(self,_cmd){
 return self.$i_g('@element');
+});
+$VN_1.$def('origin=',function(self,_cmd,new_origin){
+VN$(self, 'will_change_value_for_key', 'origin');
+VN$(self, 'did_change_value_for_key', 'origin');
+});
+$VN_1.$def('size=',function(self,_cmd,new_size){
+VN$(self, 'will_change_value_for_key', 'size');
+VN$(self, 'did_change_value_for_key', 'size');
 });
 $VN_1.$def('<<',function(self,_cmd,other){
 self.$i_g('@element').appendChild(VN$(other,'element'))});
@@ -1031,9 +2625,9 @@ $VN_1.$c_s('Array',cObject.$c_g('Array'));
 $VN_1.$c_s('Dictionary',cObject.$c_g('Hash'));
 var $VN_2 = RClass.define_under($VN_1, 'Object',cObject);
 $VN_2.$def('initialize',function(self,_cmd){
-self.$i_s('@kvo_observers',[]);
-return self.$i_s('@kvo_old_values',VN.$h());
 });
+$VN_2.$def('perform_selector:with_object:with_object:',function(self,_cmd,selector,obj1,obj2){
+return VN$(self, selector, obj1, obj2);});
 
 var $VN_1 = RModule.define('Vienna');
 $VN_1.$c_s('UNDEFINED_KEY_EXCEPTION','VNUndefinedKeyException');
@@ -1093,6 +2687,7 @@ var $VN_2 = RClass.define_under($VN_1, 'Object',cObject);
 $VN_2.$def('observe_value_for_key_path:of_object:change:context:',function(self,_cmd,path,object,change,context){
 });
 $VN_2.$def('add_observer:for_key_path:options:context:',function(self,_cmd,observer,key_path,options,context){
+return VN$(self.$i_g('@kvo_observers'),'<<',VN.$h('observer', observer, 'key_path', key_path, 'options', options, 'context', context));
 });
 $VN_2.$def('remove_observer:for_key_path:',function(self,_cmd,observer,key_path){
 });
@@ -1140,6 +2735,7 @@ var $VN_2 = RClass.define_under($VN_1, 'Notification',cObject);
 VN$($VN_2,'attr_reader','name','object','user_info');
 VN$($VN_2,'attr_writer','name','object','user_info');
 $VN_2.$def('initialize',function(self,_cmd,name,obj,info){
+VN$sup(arguments.callee, self,_cmd,[]);
 self.$i_s('@name',name);
 self.$i_s('@object',obj);
 return self.$i_s('@user_info',info);
@@ -1155,6 +2751,7 @@ $VN_2.$def_s('default_center',function(self,_cmd){
 return (self.$k_d('@@default_center') ? self.$k_g('@@default_center') : self.$k_s('@@default_center',VN$(self,'new')));
 });
 $VN_2.$def('initialize',function(self,_cmd){
+VN$sup(arguments.callee, self,_cmd,[]);
 return self.$i_s('@dispatch_table',[]);
 });
 $VN_2.$def('add_observer:selector:name:object:',function(self,_cmd,observer,selector,name,obj){
@@ -1185,25 +2782,38 @@ var $VN_1 = RModule.define('Vienna');
 var $VN_2 = RClass.define_under($VN_1, 'Responder',$VN_2.$c_g_full('Object'));
 $VN_2.$def('initialize',function(self,_cmd){
 VN$(self,'puts','initialising responder');
-return VN$sup(arguments.callee, self,_cmd,[]);
+VN$sup(arguments.callee, self,_cmd,[]);
+return self.$i_s('@next_responder',nil);
+});
+$VN_2.$def('next_responder=',function(self,_cmd,a_responder){
+VN$(self, 'will_change_value_for_key', 'next_responder');
+self.$i_s('@next_responder',a_responder);
+VN$(self, 'did_change_value_for_key', 'next_responder');
+});
+$VN_2.$def('next_responder',function(self,_cmd){
+return self.$i_g('@next_responder');
+});
+$VN_2.$def('try_to_perform:with:',function(self,_cmd,an_action,an_object){
 });
 
 var $VN_1 = RModule.define('Vienna');
+$VN_1.$c_s('APP_WILL_FINISH_LAUNCHING','APP_WILL_FINISH_LAUNCHING');
+$VN_1.$c_s('APP_DID_FINISH_LAUNCHING','APP_DID_FINISH_LAUNCHING');
+$VN_1.$c_s('APP_DID_CHANGE_SCREEN_PARAMETERS','APP_DID_CHANGE_SCREEN_PARAMETERS');
 var $VN_2 = RClass.define_under($VN_1, 'Application',cObject);
 VN$($VN_2,'attr_accessor','windows','event_queue','views_needing_display');
 VN$($VN_2,'attr_reader','delegate');
 $VN_2.$def('initialize',function(self,_cmd){
 self.$i_s('@windows',[]);
 self.$i_s('@event_queue',[]);
-return self.$i_s('@views_needing_display',[]);
+self.$i_s('@views_needing_display',[]);
+return self.$i_s('@delegate',nil);
 });
 $VN_2.$def('run',function(self,_cmd){
 return VN$(self, 'finish_launching');
 });
 $VN_2.$def('finish_launching',function(self,_cmd){
 var nc = VN$(self.$klass.$c_g_full('NotificationCenter'),'default_center');
-VN$(nc,'post_notification_name:object:',self.$klass.$c_g_full('APP_WILL_FINISH_LAUNCHING'),self);
-VN$(nc,'post_notification_name:object:',self.$klass.$c_g_full('APP_DID_FINISH_LAUNCHING'),self);
 return VN$(self, 'display_required_views');
 });
 $VN_2.$def('mark_view_for_display',function(self,_cmd,view,flag){
@@ -1228,6 +2838,7 @@ return (self.$k_d('@@app') ? self.$k_g('@@app') : self.$k_s('@@app',VN$(self,'ne
 });
 $VN_2.$def('delegate=',function(self,_cmd,obj){
 VN$(self, 'will_change_value_for_key', 'delegate');
+VN$(self,'puts',self.$i_g('@delegate'));
 if((e=VN$(self.$i_g('@delegate'),'==',obj),e!==nil && e!==false)){
 return ;
 }
@@ -1309,19 +2920,22 @@ var $VN_2 = RClass.define_under($VN_1, 'Window',$VN_2.$c_g_full('Responder'));
 $VN_2.$def('initialize',function(self,_cmd,content_rect,style_mask){
 VN$sup(arguments.callee, self,_cmd,[]);
 VN$(self, 'setup_display_context');
+self.$i_s('@frame',content_rect);
 self.$i_s('@window_number',VN$(self.$klass.$c_g_full('App'),'add_window',self));
 self.$i_s('@style_mask',style_mask);
 VN$(self,'level=','normal');
 self.$i_s('@min_size',VN$(self.$klass.$c_g_full('Size'),'new',0.0,0.0));
 self.$i_s('@max_size',VN$(self.$klass.$c_g_full('Size'),'new',9999.0,9999.0));
 self.$i_s('@first_responder',self);
-return self.$i_s('@next_responder',self.$klass.$c_g_full('App'));
+self.$i_s('@next_responder',self.$klass.$c_g_full('App'));
+return VN$(self,'content_view=',VN$(self.$klass.$c_g_full('View'),'new',VN$(self.$klass.$c_g_full('Rect'),'new',100,100,100,100)));
 });
 $VN_2.$def('setup_display_context',function(self,_cmd){
 self.$i_s('@element',VN$(self.$klass.$c_g_full('Element'),'element_with_type:class_name:id:','div','',''));
 self.$i_s('@display_element',VN$(self.$klass.$c_g_full('Element'),'element_with_type:class_name:id:','canvas','',''));
 VN$(self.$i_g('@element'),'<<',self.$i_g('@display_element'));
 VN$(self.$klass.$c_g_full('Document'),'<<',self.$i_g('@element'));
+self.$i_s('@graphics_context',VN$(self.$klass.$c_g_full('GraphicsContext'),'new',VN$(self.$i_g('@display_element'),'element').getContext('2d'),false));
 VN$(self.$i_g('@display_element'),'add_event_listener','mousedown',function() { console.log('yeah!'); console.log(self); });
 return VN$(self.$i_g('@display_element'),'add_event_listener','mouseup',function() { console.log('yeah up!'); });
 });
@@ -1367,11 +2981,19 @@ return self.$i_g('@excluded_from_windows_menu');
 });
 $VN_2.$def('content_view=',function(self,_cmd,view){
 VN$(self, 'will_change_value_for_key', 'content_view');
+VN$(view,'view_will_move_to_window',self);
+var bounds = VN$(self.$klass.$c_g_full('Rect'),'new',0,0,VN$(VN$(self.$i_g('@frame'),'size'),'width'),VN$(VN$(self.$i_g('@frame'),'size'),'height'));
 self.$i_s('@content_view',view);
+VN$(self.$i_g('@content_view'),'frame=',VN$(self,'content_rect_for_frame_rect',bounds));
+VN$(view,'view_did_move_to_window');
+VN$(self.$i_g('@element'),'<<',VN$(self.$i_g('@content_view'),'element'));
 VN$(self, 'did_change_value_for_key', 'content_view');
 });
 $VN_2.$def('content_view',function(self,_cmd){
 return self.$i_g('@content_view');
+});
+$VN_2.$def('<<',function(self,_cmd,view){
+return VN$(self.$i_g('@content_view'),'<<',view);
 });
 $VN_2.$def('delegate=',function(self,_cmd,obj){
 VN$(self, 'will_change_value_for_key', 'delegate');
@@ -1736,7 +3358,15 @@ var $VN_2 = RClass.define_under($VN_1, 'View',$VN_2.$c_g_full('Responder'));
 $VN_2.$def('initialize',function(self,_cmd,frame){
 VN$(self,'puts','initialising view');
 VN$sup(arguments.callee, self,_cmd,[]);
-return VN$(self,'setup_drawing_context');
+VN$(self, 'setup_display_context');
+self.$i_s('@frame',VN$(self.$klass.$c_g_full('Rect'),'new',100,100,100,100));
+self.$i_s('@bounds',VN$(self.$klass.$c_g_full('Rect'),'new',0,0,100,100));
+self.$i_s('@subviews',[]);
+self.$i_s('@window',nil);
+self.$i_s('@superview',nil);
+self.$i_s('@posts_frame_changed_notifications',false);
+self.$i_s('@autoresizes_subviews',true);
+return self.$i_s('@tracking_areas',[]);
 });
 $VN_2.$def('element',function(self,_cmd){
 return self.$i_g('@element');
@@ -1745,25 +3375,20 @@ $VN_2.$def('display_mode',function(self,_cmd){
 return VN$(self.$klass.$c_g_full('Vienna'),'display_mode');
 });
 $VN_2.$def('setup_display_context',function(self,_cmd){
-if((e=VN$(VN$(self, 'drawing_mode'),'==','render'),e!==nil && e!==false)){
-VN$(self, 'setup_render_context');
-}
-else{
-VN$(self, 'setup_drawing_context');
-}
+return VN$(self, 'setup_drawing_context');
 });
 $VN_2.$def('setup_drawing_context',function(self,_cmd){
 self.$i_s('@element',VN$(self.$klass.$c_g_full('Element'),'element_with_type:class_name:id:','div','',''));
-self.$i_s('@draw_element',VN$(self.$klass.$c_g_full('Element'),'element_with_type:class_name:id:','canvas','',''));
-VN$(self.$i_g('@element'),'<<',self.$i_g('@draw_element'));
-return VN$(self.$klass.$c_g_full('Document'),'<<',self.$i_g('@element'));
+self.$i_s('@display_element',VN$(self.$klass.$c_g_full('Element'),'element_with_type:class_name:id:','canvas','',''));
+return VN$(self.$i_g('@element'),'<<',self.$i_g('@display_element'));
 });
 $VN_2.$def('setup_render_context',function(self,_cmd){
 self.$i_s('@element',VN$(self.$klass.$c_g_full('Element'),'element_with_type:class_name:id:','div','',''));
-self.$i_s('@draw_element',VN$(self.$klass.$c_g_full('Element'),'element_with_type:class_name:id:','div','',''));
-VN$(self.$i_g('@element'),'<<',self.$i_g('@draw_element'));
-return VN$(self.$klass.$c_g_full('Document'),'<<',self.$i_g('@element'));
+self.$i_s('@display_element',VN$(self.$klass.$c_g_full('Element'),'element_with_type:class_name:id:','div','',''));
+return VN$(self.$i_g('@element'),'<<',self.$i_g('@display_element'));
 });
+$VN_2.$def('graphics_port',function(self,_cmd){
+return VN$(self.$i_g('@display_element'),'element').getContext('2d');});
 $VN_2.$def('initialize_with_coder',function(self,_cmd,coder){
 });
 $VN_2.$def('initialize_with_builder',function(self,_cmd,builder){
@@ -1803,7 +3428,18 @@ VN$(self, 'will_change_value_for_key', 'subviews');
 VN$(self, 'did_change_value_for_key', 'subviews');
 });
 $VN_2.$def('add_subview',function(self,_cmd,a_view){
-return VN$(self.$i_g('@element'),'<<',VN$(a_view,'element'));
+if((e=VN$(self.$i_g('@subviews'),'include?',a_view),e!==nil && e!==false)){
+return ;
+}
+VN$(a_view,'remove_from_superview');
+VN$(a_view,'view_will_move_to_superview',self);
+VN$(a_view,'view_will_move_to_window',self.$i_g('@window'));
+VN$(self.$i_g('@subviews'),'<<',a_view);
+VN$(self.$i_g('@element'),'<<',VN$(a_view,'element'));
+VN$(a_view,'next_responder=',self);
+VN$(a_view,'view_did_move_to_superview');
+VN$(a_view,'view_did_move_to_window');
+return VN$(self,'did_add_subview',self);
 });
 $VN_2.$def('<<',function(self,_cmd,a_view){
 return VN$(self,'add_subview',a_view);
@@ -1811,10 +3447,12 @@ return VN$(self,'add_subview',a_view);
 $VN_2.$def('add_subview:positioned:relative_to:',function(self,_cmd,a_view,place,other_view){
 });
 $VN_2.$def('view_will_move_to_window',function(self,_cmd,win){
+return self.$i_s('@window',win);
 });
 $VN_2.$def('view_did_move_to_window',function(self,_cmd){
 });
 $VN_2.$def('view_will_move_to_superview',function(self,_cmd,new_super){
+return self.$i_s('@superview',new_super);
 });
 $VN_2.$def('view_did_move_to_superview',function(self,_cmd){
 });
@@ -1850,14 +3488,43 @@ $VN_2.$def('autoresizing_mask',function(self,_cmd){
 });
 $VN_2.$def('frame_origin=',function(self,_cmd,new_origin){
 VN$(self, 'will_change_value_for_key', 'frame_origin');
+VN$(self.$i_g('@frame'),'x=',VN$(new_origin,'x'));
+VN$(self.$i_g('@frame'),'y=',VN$(new_origin,'y'));
+VN$(self.$i_g('@element'),'origin=',new_origin);
+if((e=self.$i_g('@posts_frame_changed_notifications'),e!==nil && e!==false)){
+var nc = VN$(self.$klass.$c_g_full('NotificationCenter'),'default_center');
+VN$(nc,'post_notification_name:object:','frame chnage notification',self);
+}
 VN$(self, 'did_change_value_for_key', 'frame_origin');
 });
 $VN_2.$def('frame_size=',function(self,_cmd,new_size){
 VN$(self, 'will_change_value_for_key', 'frame_size');
+var old_size = VN$(self.$klass.$c_g_full('Size'),'new',VN$(self.$i_g('@frame'),'width'),VN$(self.$i_g('@frame'),'height'));
+VN$(VN$(self.$i_g('@frame'),'size'),'width=',VN$(new_size,'width'));
+VN$(VN$(self.$i_g('@frame'),'size'),'height=',VN$(new_size,'height'));
+VN$(VN$(self.$i_g('@bounds'),'size'),'width=',VN$(new_size,'width'));
+VN$(VN$(self.$i_g('@bounds'),'size'),'height=',VN$(new_size,'height'));
+if((e=self.$i_g('@autoresizes_subviews'),e!==nil && e!==false)){
+return VN$(self,'resize_subviews_with_old_size',old_size);
+}
+VN$(self,'needs_display=',true);
+VN$(self.$i_g('@element'),'size=',new_size);
+VN$(self.$i_g('@display_element'),'size=',new_size);
+if((e=self.$i_g('@posts_frame_changed_notifications'),e!==nil && e!==false)){
+var nc = VN$(self.$klass.$c_g_full('NotificationCenter'),'default_center');
+VN$(nc,'post_notification_name:object:','frame chnage notification',self);
+}
 VN$(self, 'did_change_value_for_key', 'frame_size');
 });
 $VN_2.$def('frame=',function(self,_cmd,frame){
 VN$(self, 'will_change_value_for_key', 'frame');
+frame = VN$(self.$klass.$c_g_full('Rect'),'new',100,100,100,100);
+VN$(self,'frame_origin=',VN$(frame,'origin'));
+VN$(self,'frame_size=',VN$(frame,'size'));
+if((e=self.$i_g('@posts_frame_changed_notifications'),e!==nil && e!==false)){
+var nc = VN$(self.$klass.$c_g_full('NotificationCenter'),'default_center');
+VN$(nc,'post_notification_name:object:','view chnages notification',self);
+}
 VN$(self, 'did_change_value_for_key', 'frame');
 });
 $VN_2.$def('frame',function(self,_cmd){
@@ -1938,6 +3605,12 @@ $VN_2.$def('can_draw?',function(self,_cmd){
 $VN_2.$def('needs_display=',function(self,_cmd,flag){
 VN$(self, 'will_change_value_for_key', 'needs_display');
 self.$i_s('@needs_display',flag);
+var graphics_context = VN$(self.$i_g('@window'),'graphics_context');
+VN$(self.$klass.$c_g_full('GraphicsContext'),'current_context=',graphics_context);
+VN$(graphics_context,'graphics_port=',VN$(self,'graphics_port'));
+VN$(self,'puts','now showing graphics context');
+VN$(self,'puts',graphics_context);
+VN$(self,'draw_rect',VN$(self, 'bounds'));
 VN$(self, 'did_change_value_for_key', 'needs_display');
 });
 $VN_2.$def('needs_display_in_rect',function(self,_cmd,invalid_rect){
@@ -1959,6 +3632,7 @@ if((e=self.$i_g('@needs_display'),e!==nil && e!==false)){
 }
 });
 $VN_2.$def('draw_rect',function(self,_cmd,rect){
+return VN$(self,'puts','drawing rect');
 });
 $VN_2.$def('view_will_draw',function(self,_cmd){
 });
@@ -1966,21 +3640,36 @@ $VN_2.$def('hit_test',function(self,_cmd,point){
 });
 $VN_2.$def('mouse:in_rect:',function(self,_cmd,point,rect){
 });
+$VN_2.$def('add_tracking_area',function(self,_cmd,tracking_area){
+if((e=VN$(self.$i_g('@tracking_areas'),'empty?'),e!==nil && e!==false)){
+VN$(self.$i_g('@element'),'add_event_listener','mouseover',function() { console.log('OMG, mouse over!'); });
+VN$(self.$i_g('@element'),'add_event_listener','mouseout',function() { console.log('OMG, mouse out of the element!'); });
+}
+return VN$(self.$i_g('@tracking_areas'),'<<',tracking_area);
+});
+$VN_2.$def('remove_tracking_area',function(self,_cmd,tracking_area){
+});
+$VN_2.$def('tracking_areas',function(self,_cmd){
+return self.$i_g('@tracking_areas');
+});
+$VN_2.$def('update_tracking_areas',function(self,_cmd){
+});
 
 var $VN_1 = RModule.define('Vienna');
 var $VN_2 = RClass.define_under($VN_1, 'Control',$VN_2.$c_g_full('View'));
 $VN_2.$def('initialize',function(self,_cmd,frame){
 VN$(self,'puts','control calling super');
-return VN$sup(arguments.callee, self,_cmd,[]);
+VN$sup(arguments.callee, self,_cmd,[frame]);
+return self.$i_s('@cell',VN$(VN$(VN$(self,'class'),'cell_class'),'new'));
 });
-$VN_2.$def('send_action',function(self,_cmd,action,target){
-if((e=VN$(self,'action',VN$(self,'and',target)),e!==nil && e!==false)){
-VN$(self.$klass.$c_g_full('VN').$c_g('App'),'send_action',action,target,self);
-true;
-}
-else{
-false;
-}
+$VN_2.$def_s('cell_class=',function(self,_cmd,cell_class){
+});
+$VN_2.$def_s('cell_class',function(self,_cmd){
+return (self.$k_d('@@cell_class') ? self.$k_g('@@cell_class') : self.$k_s('@@cell_class',self.$c_g_full('Vienna').$c_g('Cell')));
+});
+$VN_2.$def('draw_rect',function(self,_cmd,rect){
+VN$(self,'puts','drawing rect from control');
+return VN$(self.$i_g('@cell'),'draw_with_frame:in_view:',self.$i_g('@bounds'),self);
 });
 $VN_2.$def('size_to_fit',function(self,_cmd){
 });
@@ -2134,7 +3823,10 @@ var $VN_2 = RClass.define_under($VN_1, 'Button',$VN_2.$c_g_full('Control'));
 VN$($VN_2,'attr_reader','title','alternate_title','image','image_position');
 $VN_2.$def('initialize',function(self,_cmd,frame){
 VN$(self,'puts','initilising button');
-return VN$sup(arguments.callee, self,_cmd,[]);
+return VN$sup(arguments.callee, self,_cmd,[frame]);
+});
+$VN_2.$def_s('cell_class',function(self,_cmd){
+return self.$c_g_full('ButtonCell');
 });
 $VN_2.$def('title=',function(self,_cmd,str){
 VN$(self, 'will_change_value_for_key', 'title');
@@ -2227,6 +3919,591 @@ $VN_2.$def('next_state',function(self,_cmd){
 });
 
 var $VN_1 = RModule.define('Vienna');
+var $VN_2 = RClass.define_under($VN_1, 'Cell',cObject);
+$VN_2.$def_s('prefers_tracking_until_mouse_up',function(self,_cmd){
+return true;
+});
+$VN_2.$def('init_text_cell',function(self,_cmd,string){
+});
+$VN_2.$def('init_image_cell',function(self,_cmd,image){
+});
+$VN_2.$def('control_view',function(self,_cmd){
+return self.$i_g('@control_view');
+});
+$VN_2.$def('control_view=',function(self,_cmd,view){
+VN$(self, 'will_change_value_for_key', 'control_view');
+self.$i_s('@control_view',view);
+VN$(self, 'did_change_value_for_key', 'control_view');
+});
+$VN_2.$def('type',function(self,_cmd){
+return self.$i_g('@type');
+});
+$VN_2.$def('type=',function(self,_cmd,type){
+VN$(self, 'will_change_value_for_key', 'type');
+self.$i_s('@type',type);
+VN$(self, 'did_change_value_for_key', 'type');
+});
+$VN_2.$def('state',function(self,_cmd){
+return self.$i_g('@state');
+});
+$VN_2.$def('state=',function(self,_cmd,state){
+VN$(self, 'will_change_value_for_key', 'state');
+self.$i_s('@state',state);
+VN$(self, 'did_change_value_for_key', 'state');
+});
+$VN_2.$def('target',function(self,_cmd){
+return self.$i_g('@target');
+});
+$VN_2.$def('target=',function(self,_cmd,obj){
+VN$(self, 'will_change_value_for_key', 'target');
+self.$i_s('@target',obj);
+VN$(self, 'did_change_value_for_key', 'target');
+});
+$VN_2.$def('action',function(self,_cmd){
+return self.$i_g('@action');
+});
+$VN_2.$def('action=',function(self,_cmd,selector){
+VN$(self, 'will_change_value_for_key', 'action');
+self.$i_s('@action',selector);
+VN$(self, 'did_change_value_for_key', 'action');
+});
+$VN_2.$def('tag',function(self,_cmd){
+return self.$i_g('@tag');
+});
+$VN_2.$def('tag=',function(self,_cmd,tag){
+VN$(self, 'will_change_value_for_key', 'tag');
+self.$i_s('@tag',tag);
+VN$(self, 'did_change_value_for_key', 'tag');
+});
+$VN_2.$def('title',function(self,_cmd){
+return self.$i_g('@title');
+});
+$VN_2.$def('title=',function(self,_cmd,str){
+VN$(self, 'will_change_value_for_key', 'title');
+self.$i_s('@title',str);
+VN$(self, 'did_change_value_for_key', 'title');
+});
+$VN_2.$def('opaque?',function(self,_cmd){
+return self.$i_g('@opaque');
+});
+$VN_2.$def('enabled?',function(self,_cmd){
+return self.$i_g('@enabled');
+});
+$VN_2.$def('enabled=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'enabled');
+self.$i_s('@enabled',flag);
+VN$(self, 'did_change_value_for_key', 'enabled');
+});
+$VN_2.$def('continuous?',function(self,_cmd){
+return self.$i_g('@continuous');
+});
+$VN_2.$def('continuous=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'continuous');
+self.$i_s('@continuous',flag);
+VN$(self, 'did_change_value_for_key', 'continuous');
+});
+$VN_2.$def('editable?',function(self,_cmd){
+return self.$i_g('@editable');
+});
+$VN_2.$def('editable=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'editable');
+self.$i_s('@editable',flag);
+VN$(self, 'did_change_value_for_key', 'editable');
+});
+$VN_2.$def('selectable?',function(self,_cmd){
+return self.$i_g('@selectable');
+});
+$VN_2.$def('selectable=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'selectable');
+self.$i_s('@selectable',flag);
+VN$(self, 'did_change_value_for_key', 'selectable');
+});
+$VN_2.$def('bordered?',function(self,_cmd){
+return self.$i_g('@bordered');
+});
+$VN_2.$def('bordered=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'bordered');
+self.$i_s('@bordered',flag);
+VN$(self, 'did_change_value_for_key', 'bordered');
+});
+$VN_2.$def('bezeled?',function(self,_cmd){
+return self.$i_g('@bezeled');
+});
+$VN_2.$def('bezeled=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'bezeled');
+self.$i_s('@bezeled',flag);
+VN$(self, 'did_change_value_for_key', 'bezeled');
+});
+$VN_2.$def('scrollable?',function(self,_cmd){
+return self.$i_g('@scrollable');
+});
+$VN_2.$def('scrollable=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'scrollable');
+self.$i_s('@scrollable',flag);
+if((e=flag,e!==nil && e!==false)){
+return wraps = false;
+}
+VN$(self, 'did_change_value_for_key', 'scrollable');
+});
+$VN_2.$def('highlighted?',function(self,_cmd){
+return self.$i_g('@highlighted');
+});
+$VN_2.$def('highlighted=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'highlighted');
+self.$i_s('@highlighted',flag);
+VN$(self, 'did_change_value_for_key', 'highlighted');
+});
+$VN_2.$def('alignment',function(self,_cmd){
+return self.$i_g('@alignment');
+});
+$VN_2.$def('alignment=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'alignment');
+self.$i_s('@alignment',flag);
+VN$(self, 'did_change_value_for_key', 'alignment');
+});
+$VN_2.$def('wraps?',function(self,_cmd){
+return self.$i_g('@wraps');
+});
+$VN_2.$def('wraps=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'wraps');
+self.$i_s('@wraps',flag);
+if((e=flag,e!==nil && e!==false)){
+return scrollable = false;
+}
+VN$(self, 'did_change_value_for_key', 'wraps');
+});
+$VN_2.$def('font',function(self,_cmd){
+return self.$i_g('@font');
+});
+$VN_2.$def('font=',function(self,_cmd,font){
+VN$(self, 'will_change_value_for_key', 'font');
+self.$i_s('@font',font);
+VN$(self, 'did_change_value_for_key', 'font');
+});
+$VN_2.$def('entry_acceptable?',function(self,_cmd,str){
+return true;
+});
+$VN_2.$def('key_equivalent',function(self,_cmd){
+return self.$i_g('@key_equivalent');
+});
+$VN_2.$def('formatter=',function(self,_cmd,new_formatter){
+VN$(self, 'will_change_value_for_key', 'formatter');
+self.$i_s('@formatter',new_formatter);
+VN$(self, 'did_change_value_for_key', 'formatter');
+});
+$VN_2.$def('formatter',function(self,_cmd){
+return self.$i_g('@formatter');
+});
+$VN_2.$def('object_value',function(self,_cmd){
+});
+$VN_2.$def('object_value=',function(self,_cmd,obj){
+VN$(self, 'will_change_value_for_key', 'object_value');
+VN$(self, 'did_change_value_for_key', 'object_value');
+});
+$VN_2.$def('valid_object_value?',function(self,_cmd){
+return true;
+});
+$VN_2.$def('string_value',function(self,_cmd){
+});
+$VN_2.$def('string_value=',function(self,_cmd,str){
+VN$(self, 'will_change_value_for_key', 'string_value');
+VN$(self, 'did_change_value_for_key', 'string_value');
+});
+$VN_2.$def('compare',function(self,_cmd,other_cell){
+});
+$VN_2.$def('int_value',function(self,_cmd){
+});
+$VN_2.$def('int_value=',function(self,_cmd,an_int){
+VN$(self, 'will_change_value_for_key', 'int_value');
+VN$(self, 'did_change_value_for_key', 'int_value');
+});
+$VN_2.$def('float_value',function(self,_cmd){
+});
+$VN_2.$def('float_value=',function(self,_cmd,a_float){
+VN$(self, 'will_change_value_for_key', 'float_value');
+VN$(self, 'did_change_value_for_key', 'float_value');
+});
+$VN_2.$def('double_value',function(self,_cmd){
+});
+$VN_2.$def('double_value=',function(self,_cmd,a_double){
+VN$(self, 'will_change_value_for_key', 'double_value');
+VN$(self, 'did_change_value_for_key', 'double_value');
+});
+$VN_2.$def('take_int_value_from',function(self,_cmd,sender){
+});
+$VN_2.$def('take_float_value_from',function(self,_cmd,sender){
+});
+$VN_2.$def('take_double_value_from',function(self,_cmd,sender){
+});
+$VN_2.$def('take_string_value_from',function(self,_cmd,sender){
+});
+$VN_2.$def('take_object_value_from',function(self,_cmd,sender){
+});
+$VN_2.$def('image',function(self,_cmd){
+return self.$i_g('@image');
+});
+$VN_2.$def('image=',function(self,_cmd,img){
+VN$(self, 'will_change_value_for_key', 'image');
+self.$i_s('@image',img);
+VN$(self, 'did_change_value_for_key', 'image');
+});
+$VN_2.$def('control_tint=',function(self,_cmd,control_tint){
+VN$(self, 'will_change_value_for_key', 'control_tint');
+self.$i_s('@control_tint',control_tint);
+VN$(self, 'did_change_value_for_key', 'control_tint');
+});
+$VN_2.$def('control_tint',function(self,_cmd){
+return self.$i_g('@control_tint');
+});
+$VN_2.$def('control_size',function(self,_cmd){
+return self.$i_g('@control_size');
+});
+$VN_2.$def('control_size=',function(self,_cmd,size){
+VN$(self, 'will_change_value_for_key', 'control_size');
+self.$i_s('@control_size',size);
+VN$(self, 'did_change_value_for_key', 'control_size');
+});
+$VN_2.$def('represented_object',function(self,_cmd){
+return self.$i_g('@represented_object');
+});
+$VN_2.$def('represented_object=',function(self,_cmd,obj){
+VN$(self, 'will_change_value_for_key', 'represented_object');
+self.$i_s('@represented_object',obj);
+VN$(self, 'did_change_value_for_key', 'represented_object');
+});
+$VN_2.$def('cell_attribute',function(self,_cmd,param){
+});
+$VN_2.$def('set_cell_attribute:to:',function(self,_cmd,param,value){
+});
+$VN_2.$def('image_rect_for_bounds',function(self,_cmd,rect){
+});
+$VN_2.$def('title_rect_for_bounds',function(self,_cmd,rect){
+});
+$VN_2.$def('drawing_rect_for_bounds',function(self,_cmd,rect){
+});
+$VN_2.$def('cell_size',function(self,_cmd){
+});
+$VN_2.$def('cell_size_for_bounds',function(self,_cmd,rect){
+});
+$VN_2.$def('highlight_color_with_frame:in_view:',function(self,_cmd,cell_frame,control_view){
+});
+$VN_2.$def('calc_draw_info',function(self,_cmd){
+});
+$VN_2.$def('setup_field_editor_attributes',function(self,_cmd,text_obj){
+});
+$VN_2.$def('draw_interior_with_frame:in_view:',function(self,_cmd,cell_frame,control_view){
+});
+$VN_2.$def('draw_with_frame:in_view:',function(self,_cmd,cell_frame,control_view){
+VN$(self,'puts','current context is:');
+var ctx = VN$(self.$klass.$c_g_full('GraphicsContext'),'current_context');
+VN$(ctx,'graphics_port').fillRect(20, 20, 100, 100);VN$(ctx,'graphics_port').clearRect(40, 40, 60, 60);});
+$VN_2.$def('highlight:with_frame:in_view:',function(self,_cmd,flag,cell_frame,control_view){
+});
+$VN_2.$def('mouse_down_flags',function(self,_cmd){
+});
+$VN_2.$def('get_periodic_delay:interval:',function(self,_cmd,delay,interval){
+});
+$VN_2.$def('start_tracking_at:in_view:',function(self,_cmd,start_point,control_view){
+});
+$VN_2.$def('continue_tracking:at:in_view:',function(self,_cmd,last_point,current_point,control_view){
+});
+$VN_2.$def('stop_tracking:at:in_view:mouse_is_up:',function(self,_cmd,last_point,stop_point,control_view,flag){
+});
+$VN_2.$def('track_mouse:in_rect:of_view:until_mouse_up:',function(self,_cmd,the_event,cell_frame,control_view,flag){
+});
+$VN_2.$def('edit_with_frame:in_view:editor:delegate:event:',function(self,_cmd,rect,control_view,text_obj,an_obj,the_event){
+});
+$VN_2.$def('select_with_frame:in_view:editor:delegate:start:length:',function(self,_cmd,rect,control_view,text_obj,an_obj,sel_start,sel_length){
+});
+$VN_2.$def('end_editing',function(self,_cmd,text_obj){
+});
+$VN_2.$def('reset_cursor_rect:in_view:',function(self,_cmd,cell_frame,control_view){
+});
+$VN_2.$def('menu=',function(self,_cmd,menu){
+VN$(self, 'will_change_value_for_key', 'menu');
+self.$i_s('@menu',menu);
+VN$(self, 'did_change_value_for_key', 'menu');
+});
+$VN_2.$def('menu',function(self,_cmd){
+return self.$i_g('@menu');
+});
+$VN_2.$def('menu_for_event:in_rect:of_view:',function(self,_cmd,event,cell_frame,view){
+});
+$VN_2.$def_s('default_menu',function(self,_cmd){
+});
+$VN_2.$def('sends_action_on_end_editing=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'sends_action_on_end_editing');
+self.$i_s('@sends_action_on_end_editing',flag);
+VN$(self, 'did_change_value_for_key', 'sends_action_on_end_editing');
+});
+$VN_2.$def('sends_action_on_end_editing?',function(self,_cmd){
+return self.$i_g('@sends_action_on_end_editing');
+});
+$VN_2.$def('base_writing_direction',function(self,_cmd){
+return self.$i_g('@base_writing_direction');
+});
+$VN_2.$def('base_writing_direction=',function(self,_cmd,direction){
+VN$(self, 'will_change_value_for_key', 'base_writing_direction');
+self.$i_s('@base_writing_direction',direction);
+VN$(self, 'did_change_value_for_key', 'base_writing_direction');
+});
+$VN_2.$def('line_break_mode=',function(self,_cmd,mode){
+VN$(self, 'will_change_value_for_key', 'line_break_mode');
+self.$i_s('@line_break_mode',mode);
+VN$(self, 'did_change_value_for_key', 'line_break_mode');
+});
+$VN_2.$def('line_break_mode',function(self,_cmd){
+return self.$i_g('@line_break_mode');
+});
+$VN_2.$def('allows_undo=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'allows_undo');
+self.$i_s('@allows_undo',flag);
+VN$(self, 'did_change_value_for_key', 'allows_undo');
+});
+$VN_2.$def('allows_undo?',function(self,_cmd){
+return self.$i_g('@allows_undo');
+});
+$VN_2.$def('truncates_last_visible_line?',function(self,_cmd){
+return self.$i_g('@truncates_last_visible_line');
+});
+$VN_2.$def('truncates_last_visible_line=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'truncates_last_visible_line');
+self.$i_s('@truncates_last_visible_line',flag);
+VN$(self, 'did_change_value_for_key', 'truncates_last_visible_line');
+});
+$VN_2.$def('refuses_first_responder=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'refuses_first_responder');
+self.$i_s('@refuses_first_responder',flag);
+VN$(self, 'did_change_value_for_key', 'refuses_first_responder');
+});
+$VN_2.$def('refuses_first_responder?',function(self,_cmd){
+return self.$i_g('@refuses_first_responder');
+});
+$VN_2.$def('accepts_first_responder?',function(self,_cmd){
+return self.$i_g('@accepts_first_responder');
+});
+$VN_2.$def('shows_first_responder=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'shows_first_responder');
+self.$i_s('@shows_first_responder',flag);
+VN$(self, 'did_change_value_for_key', 'shows_first_responder');
+});
+$VN_2.$def('shows_first_responder?',function(self,_cmd){
+return self.$i_g('@shows_first_responder');
+});
+$VN_2.$def('perform_click',function(self,_cmd,sender){
+});
+$VN_2.$def('focus_ring_type=',function(self,_cmd,type){
+VN$(self, 'will_change_value_for_key', 'focus_ring_type');
+self.$i_s('@focus_ring_type',type);
+VN$(self, 'did_change_value_for_key', 'focus_ring_type');
+});
+$VN_2.$def('focus_ring_type',function(self,_cmd){
+return self.$i_g('@focus_ring_type');
+});
+$VN_2.$def_s('default_focus_ring_type',function(self,_cmd){
+});
+$VN_2.$def('attributed_string_value',function(self,_cmd){
+});
+$VN_2.$def('attributed_string_value=',function(self,_cmd,obj){
+VN$(self, 'will_change_value_for_key', 'attributed_string_value');
+VN$(self, 'did_change_value_for_key', 'attributed_string_value');
+});
+$VN_2.$def('allows_editing_text_attributes?',function(self,_cmd){
+return self.$i_g('@allows_editing_text_attributes');
+});
+$VN_2.$def('allows_editing_text_attributes=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'allows_editing_text_attributes');
+self.$i_s('@allows_editing_text_attributes',flag);
+if((e=flag,e==nil || e==false)){
+return imports_graphics = false;
+}
+VN$(self, 'did_change_value_for_key', 'allows_editing_text_attributes');
+});
+$VN_2.$def('imports_graphics?',function(self,_cmd){
+return self.$i_g('@imports_graphics');
+});
+$VN_2.$def('imports_graphics=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'imports_graphics');
+self.$i_s('@imports_graphics',flag);
+if((e=flag,e!==nil && e!==false)){
+return self.$i_s('@allows_editing_text_attributes',true);
+}
+VN$(self, 'did_change_value_for_key', 'imports_graphics');
+});
+$VN_2.$def('allows_mixed_state=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'allows_mixed_state');
+self.$i_s('@allows_mixed_state',flag);
+VN$(self, 'did_change_value_for_key', 'allows_mixed_state');
+});
+$VN_2.$def('allows_mixed_state?',function(self,_cmd){
+return self.$i_g('@allows_mixed_state');
+});
+$VN_2.$def('next_state',function(self,_cmd){
+});
+$VN_2.$def('set_next_state',function(self,_cmd){
+});
+$VN_2.$def('hit_test_for_event:in_rect:of_view:',function(self,_cmd,event,cell_frame,control_view){
+});
+$VN_2.$def('background_style',function(self,_cmd){
+return self.$i_g('@background_style');
+});
+$VN_2.$def('background_style=',function(self,_cmd,style){
+VN$(self, 'will_change_value_for_key', 'background_style');
+self.$i_s('@background_style',style);
+VN$(self, 'did_change_value_for_key', 'background_style');
+});
+
+var $VN_1 = RModule.define('Vienna');
+var $VN_2 = RClass.define_under($VN_1, 'ButtonCell',$VN_2.$c_g_full('Cell'));
+$VN_2.$def('title',function(self,_cmd){
+return self.$i_g('@title');
+});
+$VN_2.$def('title=',function(self,_cmd,str){
+VN$(self, 'will_change_value_for_key', 'title');
+self.$i_s('@title',str);
+VN$(self, 'did_change_value_for_key', 'title');
+});
+$VN_2.$def('alternate_title',function(self,_cmd){
+return self.$i_g('@alternate_title');
+});
+$VN_2.$def('alternate_title=',function(self,_cmd,str){
+VN$(self, 'will_change_value_for_key', 'alternate_title');
+self.$i_s('@alternate_title',str);
+VN$(self, 'did_change_value_for_key', 'alternate_title');
+});
+$VN_2.$def('alternate_image',function(self,_cmd){
+return self.$i_g('@alternate_image');
+});
+$VN_2.$def('alternate_image=',function(self,_cmd,img){
+VN$(self, 'will_change_value_for_key', 'alternate_image');
+self.$i_s('@alternate_image',img);
+VN$(self, 'did_change_value_for_key', 'alternate_image');
+});
+$VN_2.$def('image_position',function(self,_cmd){
+return self.$i_g('@image_position');
+});
+$VN_2.$def('image_position=',function(self,_cmd,pos){
+VN$(self, 'will_change_value_for_key', 'image_position');
+self.$i_s('@image_position',pos);
+VN$(self, 'did_change_value_for_key', 'image_position');
+});
+$VN_2.$def('image_scaling',function(self,_cmd){
+return self.$i_g('@image_scaling');
+});
+$VN_2.$def('image_scaling=',function(self,_cmd,scaling){
+VN$(self, 'will_change_value_for_key', 'image_scaling');
+self.$i_s('@image_scaling',scaling);
+VN$(self, 'did_change_value_for_key', 'image_scaling');
+});
+$VN_2.$def('highlights_by',function(self,_cmd){
+return self.$i_g('@highlights_by');
+});
+$VN_2.$def('highlights_by=',function(self,_cmd,type){
+VN$(self, 'will_change_value_for_key', 'highlights_by');
+self.$i_s('@highlights_by',type);
+VN$(self, 'did_change_value_for_key', 'highlights_by');
+});
+$VN_2.$def('shows_state_by',function(self,_cmd){
+return self.$i_g('@shows_state_by');
+});
+$VN_2.$def('shows_state_by=',function(self,_cmd,type){
+VN$(self, 'will_change_value_for_key', 'shows_state_by');
+self.$i_s('@shows_state_by',type);
+VN$(self, 'did_change_value_for_key', 'shows_state_by');
+});
+$VN_2.$def('button_type=',function(self,_cmd,type){
+VN$(self, 'will_change_value_for_key', 'button_type');
+VN$(self, 'did_change_value_for_key', 'button_type');
+});
+$VN_2.$def('opaque?',function(self,_cmd){
+});
+$VN_2.$def('font=',function(self,_cmd,font_obj){
+VN$(self, 'will_change_value_for_key', 'font');
+VN$(self, 'did_change_value_for_key', 'font');
+});
+$VN_2.$def('transparent?',function(self,_cmd){
+return self.$i_g('@transparent');
+});
+$VN_2.$def('transparent=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'transparent');
+self.$i_s('@transparent',flag);
+VN$(self, 'did_change_value_for_key', 'transparent');
+});
+$VN_2.$def('key_equivalent',function(self,_cmd){
+return self.$i_g('@key_equivalent');
+});
+$VN_2.$def('key_equivalent=',function(self,_cmd,keys){
+VN$(self, 'will_change_value_for_key', 'key_equivalent');
+self.$i_s('@key_equivalent',keys);
+VN$(self, 'did_change_value_for_key', 'key_equivalent');
+});
+$VN_2.$def('key_equivalent_modifier_mask',function(self,_cmd){
+return self.$i_g('@key_equivalent_modifier_mask');
+});
+$VN_2.$def('key_equivalent_modifier_mask=',function(self,_cmd,mask){
+VN$(self, 'will_change_value_for_key', 'key_equivalent_modifier_mask');
+self.$i_s('@key_equivalent_modifier_mask',mask);
+VN$(self, 'did_change_value_for_key', 'key_equivalent_modifier_mask');
+});
+$VN_2.$def('perform_click',function(self,_cmd,sender){
+});
+$VN_2.$def('draw_image:with_frame:in_view:',function(self,_cmd,image,frame,control_view){
+});
+$VN_2.$def('draw_title:with_frame:in_view:',function(self,_cmd,title,frame,control_view){
+});
+$VN_2.$def('draw_bezel_with_frame:in_view:',function(self,_cmd,frame,control_view){
+});
+$VN_2.$def('mouse_entered',function(self,_cmd,event){
+});
+$VN_2.$def('mouse_exited',function(self,_cmd,event){
+});
+$VN_2.$def('background_color',function(self,_cmd){
+return self.$i_g('@background_color');
+});
+$VN_2.$def('background_color=',function(self,_cmd,color){
+VN$(self, 'will_change_value_for_key', 'background_color');
+self.$i_s('@background_color',color);
+VN$(self, 'did_change_value_for_key', 'background_color');
+});
+$VN_2.$def('attributed_title',function(self,_cmd){
+return self.$i_g('@attributed_title');
+});
+$VN_2.$def('attributed_title=',function(self,_cmd,obj){
+VN$(self, 'will_change_value_for_key', 'attributed_title');
+self.$i_s('@attributed_title',obj);
+VN$(self, 'did_change_value_for_key', 'attributed_title');
+});
+$VN_2.$def('attributed_alternate_title',function(self,_cmd){
+return self.$i_g('@attributed_alternate_title');
+});
+$VN_2.$def('attributed_alternate_title=',function(self,_cmd,obj){
+VN$(self, 'will_change_value_for_key', 'attributed_alternate_title');
+self.$i_s('@attributed_alternate_title',obj);
+VN$(self, 'did_change_value_for_key', 'attributed_alternate_title');
+});
+$VN_2.$def('bezel_style=',function(self,_cmd,style){
+VN$(self, 'will_change_value_for_key', 'bezel_style');
+self.$i_s('@bezel_style',style);
+VN$(self, 'did_change_value_for_key', 'bezel_style');
+});
+$VN_2.$def('bezel_style',function(self,_cmd){
+return self.$i_g('@bezel_style');
+});
+
+var $VN_1 = RModule.define('Vienna');
+var $VN_2 = RClass.define_under($VN_1, 'TrackingArea',cObject);
+VN$($VN_2,'attr_reader','rect','options','owner','user_info');
+$VN_2.$def('initialize',function(self,_cmd,rect,options,owner,user_info){
+self.$i_s('@rect',rect);
+self.$i_s('@options',options);
+self.$i_s('@owner',owner);
+return self.$i_s('@user_info',user_info);
+});
+$VN_2.$def_s('tracking_area_with_rect:options:owner:user_info:',function(self,_cmd,rect,options,owner,user_info){
+return VN$(self,'new',rect,options,owner,user_info);
+});
+
+var $VN_1 = RModule.define('Vienna');
 var $VN_2 = RClass.define_under($VN_1, 'GraphicsContext',cObject);
 $VN_2.$def('initialize',function(self,_cmd,graphics_port,flip_state){
 self.$i_s('@ctx',graphics_port);
@@ -2235,16 +4512,23 @@ return self.$i_s('@flip_state',flip_state);
 $VN_2.$def('graphics_port',function(self,_cmd){
 return self.$i_g('@ctx');
 });
+$VN_2.$def('graphics_port=',function(self,_cmd,graphics_port){
+VN$(self, 'will_change_value_for_key', 'graphics_port');
+self.$i_s('@ctx',graphics_port);
+VN$(self, 'did_change_value_for_key', 'graphics_port');
+});
 $VN_2.$def('flipped?',function(self,_cmd){
 return self.$i_g('@flip_state');
 });
 $VN_2.$def_s('current_context',function(self,_cmd){
+return self.$k_g('@@current_context');
 });
 $VN_2.$def_s('current_context=',function(self,_cmd,context){
-VN$(self, 'will_change_value_for_key', 'current_context');
-VN$(self, 'did_change_value_for_key', 'current_context');
+return self.$k_s('@@current_context',context);
 });
 $VN_2.$def('save_graphics_state',function(self,_cmd){
+});
+$VN_2.$def('restore_graphics_state',function(self,_cmd){
 });
 $VN_2.$def('line_width=',function(self,_cmd,width){
 VN$(self, 'will_change_value_for_key', 'line_width');
@@ -2276,12 +4560,54 @@ $VN_2.$def('add_curve_to_point',function(self,_cmd,cp1,cp2,point){
 self.$i_g('@ctx').bezierCurveTo(VN$(cp1,'x'),VN$(cp1,'y'),VN$(cp2,'x'),VN$(cp2,'y'),VN$(point,'x'),VN$(point,'y'))});
 $VN_2.$def('add_lines',function(self,_cmd,points){
 });
+$VN_2.$def('scale_ctm',function(self,_cmd,sx,sy){
+});
+$VN_2.$def('translate_ctm',function(self,_cmd,tx,ty){
+});
+$VN_2.$def('rotate_ctm',function(self,_cmd,angle){
+});
+$VN_2.$def('concat_ctm',function(self,_cmd,transform){
+});
+$VN_2.$def('ctm',function(self,_cmd){
+});
+$VN_2.$def('add_ellipse_in_rect',function(self,_cmd,rect){
+});
+$VN_2.$def('add_arc',function(self,_cmd,point,radius,start_angle,end_angle,clock_wise){
+});
+$VN_2.$def('arc_to_point',function(self,_cmd,point1,point2,radius){
+});
+$VN_2.$def('add_path',function(self,_cmd,path){
+});
+$VN_2.$def('path_empty?',function(self,_cmd){
+});
+$VN_2.$def('path_current_point',function(self,_cmd){
+});
+$VN_2.$def('path_bounding_box',function(self,_cmd){
+});
+$VN_2.$def('path_contains_point?',function(self,_cmd,point){
+});
 
 var $VN_1 = RModule.define('Vienna');
 var $VN_2 = RClass.define_under($VN_1, 'Rect',cObject);
 $VN_2.$def('initialize',function(self,_cmd,x,y,w,h){
 self.$i_s('@origin',VN$(self.$klass.$c_g_full('Point'),'new',x,y));
 return self.$i_s('@size',VN$(self.$klass.$c_g_full('Size'),'new',w,h));
+});
+$VN_2.$def('size',function(self,_cmd){
+return self.$i_g('@size');
+});
+$VN_2.$def('size=',function(self,_cmd,size){
+VN$(self, 'will_change_value_for_key', 'size');
+self.$i_s('@size',size);
+VN$(self, 'did_change_value_for_key', 'size');
+});
+$VN_2.$def('origin',function(self,_cmd){
+return self.$i_g('@origin');
+});
+$VN_2.$def('origin=',function(self,_cmd,point){
+VN$(self, 'will_change_value_for_key', 'origin');
+self.$i_s('@origin',point);
+VN$(self, 'did_change_value_for_key', 'origin');
 });
 $VN_2.$def('x',function(self,_cmd){
 return VN$(self.$i_g('@origin'),'x');
@@ -2297,7 +4623,6 @@ return VN$(self.$i_g('@size'),'height');
 });
 $VN_2.$def('x=',function(self,_cmd,x){
 VN$(self, 'will_change_value_for_key', 'x');
-VN$(self.$i_g('@origin'),'x=',x);
 VN$(self, 'did_change_value_for_key', 'x');
 });
 $VN_2.$def('y=',function(self,_cmd,y){
@@ -2372,9 +4697,8 @@ VN$(self, 'did_change_value_for_key', 'height');
 var $VN_1 = RModule.define('RubyWebApp');
 $VN_1.$c_s('VERSION','0.0.1');
 var $VN_2 = RClass.define_under($VN_1, 'AppDelegate',cObject);
-$VN_2.$def('initialize_with:john:assign:key:',function(self,_cmd,bob,adam,fors,adam){
-self.$i_s('@adam',10);
-return VN$(self,'bob',10,34,self.$i_g('@benny'));
+$VN_2.$def('initialize',function(self,_cmd){
+return self.$i_s('@adam',10);
 });
 $VN_2.$def('will_finish_launching',function(self,_cmd,notification){
 VN$(self,'puts','Application will finish launching!');
@@ -2392,8 +4716,27 @@ VN$(self, 'will_change_value_for_key', 'other_object');
 VN$(self,'puts',now);
 VN$(self, 'did_change_value_for_key', 'other_object');
 });
+var $VN_2 = RClass.define_under($VN_1, 'TempObserver',cObject);
+$VN_2.$def('observe_value_for_key_path:of_object:change:context:',function(self,_cmd,path,object,change,context){
+VN$(self,'puts','holy macaranieieejjcjcjkjkjnjnwkejndwjednjwej');
+VN$(self,'puts',['old value is ',(VN$(change,'[]','old'))].join(''));
+return VN$(self,'puts',['new value is ',(VN$(change,'[]','new'))].join(''));
+});
 VN.self.$def_s('main',function(self,_cmd){
 var app_delegate = VN$(self.$klass.$c_g_full('RubyWebApp').$c_g('AppDelegate'),'new');
+VN$(self.$klass.$c_g_full('Vienna').$c_g('App'),'delegate=',app_delegate);
 VN$(self.$klass.$c_g_full('Vienna').$c_g('App'),'run');
-return my_win = VN$(self.$klass.$c_g_full('Vienna').$c_g('Window'),'new',VN$(self.$klass.$c_g_full('Vienna').$c_g('Rect'),'new',100,100),[]);
+var my_win = VN$(self.$klass.$c_g_full('Vienna').$c_g('Window'),'new',VN$(self.$klass.$c_g_full('Vienna').$c_g('Rect'),'new',100,100,100,100),[]);
+var my_button = VN$(self.$klass.$c_g_full('Vienna').$c_g('Button'),'new',VN$(self.$klass.$c_g_full('Vienna').$c_g('Rect'),'new',100,100,100,100));
+VN$(my_win,'<<',my_button);
+VN$(my_button,'needs_display=',true);
+VN$(self,'puts','done');
+VN$(self,'puts',my_button);
+var tracking_area = VN$(self.$klass.$c_g_full('VN').$c_g('TrackingArea'),'tracking_area_with_rect:options:owner:user_info:',nil,nil,nil,nil);
+VN$(my_button,'add_tracking_area',tracking_area);
+VN$(self,'puts','==================================');
+var temp = VN$(self.$klass.$c_g_full('RubyWebApp').$c_g('TempObserver'),'new');
+VN$(app_delegate,'add_observer:for_key_path:options:context:',temp,'adam',nil,nil);
+VN$(self,'puts','setting value to 10...');
+return VN$(app_delegate,'adam=',10);
 });

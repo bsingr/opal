@@ -35,6 +35,8 @@ module Vienna
       
       setup_display_context
       
+      @frame = content_rect
+      
       @window_number = App.add_window self
       @style_mask = style_mask
       self.level = :normal
@@ -42,6 +44,8 @@ module Vienna
       @max_size = Size.new(9999.0, 9999.0)
       @first_responder = self
       @next_responder = App
+      
+      self.content_view = View.new(Rect.new(100, 100, 100, 100))
     end
     
     def setup_display_context
@@ -50,20 +54,12 @@ module Vienna
       @element << @display_element
       Document << @element
       
+      # Graphics context
+      @graphics_context = GraphicsContext.new(`#{@display_element.element}.getContext('2d')`, false)
+      
       # Events
       @display_element.add_event_listener 'mousedown', `function() { console.log('yeah!'); console.log(#{self}); }`
-      @display_element.add_event_listener 'mouseup', `function() { console.log('yeah up!'); }`
-      
-      
-      # Window.build :bob => 10, :adam => 100 do |variable|
-      #         
-      #       end
-            
-      # @display_element.add_event_listener :mousedown, Proc.new { |evt| puts 'yeah, mouse down!' }
-      # @display_element.add_event_listener :mouseup, Proc.new { |evt| puts 'yeah, mouse up!' }
-      
-      
-      
+      @display_element.add_event_listener 'mouseup', `function() { console.log('yeah up!'); }`    
     end
     
     def self.frame_rect_for_content_rect rect, style_mask:style
@@ -124,12 +120,24 @@ module Vienna
       @excluded_from_windows_menu
     end
     
+    # Set the content view for the window
+    # 
     def content_view=(view)
+      # @content_view.remove_from_superview if @content_view
+      view.view_will_move_to_window self
+      bounds = Rect.new(0, 0, @frame.size.width, @frame.size.height)
       @content_view = view
+      @content_view.frame = content_rect_for_frame_rect(bounds)
+      view.view_did_move_to_window
+      @element << @content_view.element
     end
     
     def content_view
       @content_view
+    end
+    
+    def << view
+      @content_view << view
     end
     
     def delegate=(obj)

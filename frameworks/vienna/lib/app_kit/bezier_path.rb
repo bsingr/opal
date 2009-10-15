@@ -1,5 +1,5 @@
 # 
-# app_kit.rb
+# bezier_path.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,24 +24,49 @@
 # THE SOFTWARE.
 #
 
-require 'responder'
-require 'application'
-
-require 'event'
-
-require 'window'
-
-# Views
-require 'view'
-require 'control'
-require 'button'
-
-require 'cell'
-require 'button_cell'
-
-
-require 'tracking_area'
-
-# Graphics
-require 'graphics_context'
-require 'geometry'
+module Vienna
+  
+  class BezierPath
+    
+    def self.bezier_path
+      
+    end
+    
+    def self.bezier_path_with_rect rect
+      
+    end
+    
+    def self.bezier_path_with_oval_in_rect rect
+      
+    end
+    
+    def self.bezier_path_with_rounded_rect rect, x_radius:x, y_radius:y
+      
+    end
+    
+    # 
+    # Common paths
+    # 
+    def self.fill_rect rect
+      
+    end
+    
+    def self.stroke_rect rect
+      
+    end
+    
+    def self.clip_rect rect
+    
+    end
+    
+    def self.stroke_line_from_point point1, to_point:point2
+      
+    end
+    
+    # 
+    # Path rendering
+    # 
+     
+  end
+  
+end

@@ -41,7 +41,14 @@ module Vienna
     end
   
     def add_observer observer, for_key_path:key_path, options:options, context:context
-  
+      # return unless observer and key_path
+      
+      @kvo_observers << {
+        :observer => observer,
+        :key_path => key_path,
+        :options => options,
+        :context => context
+      }
     end
   
     def remove_observer observer, for_key_path:key_path
@@ -75,10 +82,12 @@ module Vienna
   class Object
   
     def will_change_value_for_key key
+      # puts self
       @kvo_old_values[key] = value_for_key(key)
     end
   
     def did_change_value_for_key key
+      # puts 'yeap, in did_change'
       @kvo_observers.each do |current|
         if current[:key_path] == key
           change_dict = { :old => @kvo_old_values[key], :new => value_for_key(key) }

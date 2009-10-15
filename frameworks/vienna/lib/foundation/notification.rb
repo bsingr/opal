@@ -30,7 +30,9 @@ module Vienna
     
     attr_reader :name, :object, :user_info
     attr_writer :name, :object, :user_info
+    
     def initialize name, obj, info
+      super()
       @name = name
       @object = obj
       @user_info = info
@@ -54,7 +56,7 @@ module Vienna
     end
     
     def initialize
-      # super
+      super()
       @dispatch_table = []
     end
     

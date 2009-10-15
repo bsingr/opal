@@ -37,20 +37,28 @@ module Vienna
       @ctx
     end
     
+    def graphics_port= graphics_port
+      @ctx = graphics_port
+    end
+    
     def flipped?
       @flip_state
     end
     
     def self.current_context
-         # @@current_context
+      @@current_context
     end
 
     def self.current_context= context
-     # @@current_context = context
+      @@current_context = context
     end
 
     def save_graphics_state
   
+    end
+    
+    def restore_graphics_state
+      
     end
 
     def line_width= width
@@ -98,6 +106,58 @@ module Vienna
       #         #{add_line_to_point(points[i])}
       #         add_line_to_point points[i]
       #       }`
-    end  
+    end
+    
+    def scale_ctm sx, sy
+      
+    end
+    
+    def translate_ctm tx, ty
+      
+    end
+    
+    def rotate_ctm angle
+      
+    end
+    
+    def concat_ctm transform
+      
+    end
+    
+    def ctm
+      
+    end
+    
+    def add_ellipse_in_rect rect
+      
+    end
+    
+    def add_arc point, radius, start_angle, end_angle, clock_wise
+      
+    end
+    
+    def arc_to_point point1, point2, radius
+      
+    end
+    
+    def add_path path
+      
+    end
+    
+    def path_empty?
+      
+    end
+    
+    def path_current_point
+      
+    end
+    
+    def path_bounding_box
+      
+    end
+    
+    def path_contains_point? point
+      
+    end    
   end
 end

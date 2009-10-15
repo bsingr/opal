@@ -1,5 +1,5 @@
 # 
-# geometry.rb
+# image.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -26,131 +26,121 @@
 
 module Vienna
   
-  class Rect
+  class Image
     
-    def initialize x, y, w, h
-      @origin = Point.new(x, y)
-      @size = Size.new(w, h)
+    
+    # Image Load Statuses
+    # -------------------
+    # :completed
+    # :cancelled
+    # :invalid_data
+    # :unexpected_eof
+    # :read_error
+    
+    def self.image_named name
+      
+    end
+    
+    def init_with_size size
+      
+    end
+    
+    def init_with_data data
+      
+    end
+    
+    def init_with_contents_of_url url
+      
+    end
+    
+    
+    def size= size
+      @size = size
     end
     
     def size
       @size
     end
     
-    def size= size
-      @size = size
+    def name= name
+      @name = name
     end
     
-    def origin
-      @origin
+    def name
+      @name
     end
     
-    def origin= point
-      @origin = point
+    def background_color= color
+      @background_color = color
     end
     
-    def x
-      @origin.x
+    def background_color
+      @background_color
     end
     
-    def y
-      @origin.y
-    end
-    
-    def width
-      @size.width
-    end
-    
-    def height
-      @size.height
-    end
-    
-    def x=(x)
-      # @origin.x = x
-    end
-    
-    def y=(y)
-      @origin.y = y
-    end
-    
-    def width=(w)
-      @size.width = w
-    end
-    
-    def height=(h)
-      @size.height = h
-    end
-    
-    def to_a
-      [x, y, w, h]
-    end
-    
-    def center
+    def draw_at_point point, from_rect:from_rect, operation:op, fraction:delta
       
     end
     
-    def contain?
+    def draw_in_rect rect, from_rect:from_rect, operation:op, fraction:delta
       
     end
     
-    def to_s
-      "{{#{x}, #{y}}, {#{width}, #{height}}}"
+    def draw_representation image_rep, in_rect:rect
+      
     end
     
-    def inspect
-      # "#<#{self.class} x=#{x}, y=#{y}, width=#{width}, height=#{height}"
-    end
-  end
-  
-  
-  
-  
-  class Point
-    
-    def initialize x, y
-      @x = x
-      @y = y
+    def representations
+      @representations
     end
     
-    def x
-      @x
+    def add_representations image_reps
+      
     end
     
-    def x=(x)
-      @x = x
+    def add_representation image_rep
+      
     end
     
-    def y
-      @y
+    def remove_representation image_rep
+      
     end
     
-    def y=(y)
-      @y = y
-    end
-  end
-  
-  class Size
-    
-    def initialize w, h
-      @width = w
-      @height = h
+    def valid?
+      
     end
     
-    def width
-      @width
+    def lock_focus
+      
     end
     
-    def width=(w)
-      @width = w
+    def unlock_focus
+      
     end
     
-    def height
-      @height
+    
+    # Image Delegates can optionally respond to any of the following methods:
+    # 
+    # image_did_not_draw sender, in_rect:a_rect
+    # 
+    # image image, will_load_representation:rep
+    # image image, did_load_representation:rep, with_status:status
+    def delegate= obj
+      @delegate = obj
     end
     
-    def height=(h)
-      @height = h
+    def delegate
+      @delegate
+    end
+    
+    def alignment_rect
+      @alignment_rect
+    end
+    
+    def alignment_rect= rect
+      @alignment_rect = rect
     end
   end
   
 end
+

@@ -41,7 +41,7 @@ return self;
 });
 $VN_1.$def('==',function(self,_cmd,ary){
 if (ary == this) return true;
-    if (ary.$type != VN.T_ARRAY) {
+    if (ary.$type != VN.ARRAY) {
       if (ary.$('respond_to?', ['to_a'])) {
         return false;
       }
@@ -87,7 +87,7 @@ return self.length;});
 $VN_1.$def('size',function(self,_cmd){
 return self.length;});
 $VN_1.$def('empty?',function(self,_cmd){
-});
+return (self.length == 0) ? true : false;});
 $VN_1.$def('find_index',function(self,_cmd){
 });
 $VN_1.$def('rindex',function(self,_cmd){
@@ -136,8 +136,8 @@ $VN_1.$def('clear',function(self,_cmd){
 });
 $VN_1.$def('fill',function(self,_cmd){
 });
-$VN_1.$def('include?',function(self,_cmd){
-});
+$VN_1.$def('include?',function(self,_cmd,obj){
+return (self.indexOf(obj) == -1) ? false : true;});
 $VN_1.$def('<=>',function(self,_cmd){
 });
 $VN_1.$def('slice',function(self,_cmd){

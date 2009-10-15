@@ -2,16 +2,17 @@ var $VN_1 = RModule.define('Vienna');
 var $VN_2 = RClass.define_under($VN_1, 'Control',$VN_2.$c_g_full('View'));
 $VN_2.$def('initialize',function(self,_cmd,frame){
 VN$(self,'puts','control calling super');
-return VN$sup(arguments.callee, self,_cmd,[]);
+VN$sup(arguments.callee, self,_cmd,[frame]);
+return self.$i_s('@cell',VN$(VN$(VN$(self,'class'),'cell_class'),'new'));
 });
-$VN_2.$def('send_action',function(self,_cmd,action,target){
-if((e=VN$(self,'action',VN$(self,'and',target)),e!==nil && e!==false)){
-VN$(self.$klass.$c_g_full('VN').$c_g('App'),'send_action',action,target,self);
-true;
-}
-else{
-false;
-}
+$VN_2.$def_s('cell_class=',function(self,_cmd,cell_class){
+});
+$VN_2.$def_s('cell_class',function(self,_cmd){
+return (self.$k_d('@@cell_class') ? self.$k_g('@@cell_class') : self.$k_s('@@cell_class',self.$c_g_full('Vienna').$c_g('Cell')));
+});
+$VN_2.$def('draw_rect',function(self,_cmd,rect){
+VN$(self,'puts','drawing rect from control');
+return VN$(self.$i_g('@cell'),'draw_with_frame:in_view:',self.$i_g('@bounds'),self);
 });
 $VN_2.$def('size_to_fit',function(self,_cmd){
 });

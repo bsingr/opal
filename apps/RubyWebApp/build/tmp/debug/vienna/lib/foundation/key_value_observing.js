@@ -3,6 +3,7 @@ var $VN_2 = RClass.define_under($VN_1, 'Object',cObject);
 $VN_2.$def('observe_value_for_key_path:of_object:change:context:',function(self,_cmd,path,object,change,context){
 });
 $VN_2.$def('add_observer:for_key_path:options:context:',function(self,_cmd,observer,key_path,options,context){
+return VN$(self.$i_g('@kvo_observers'),'<<',VN.$h('observer', observer, 'key_path', key_path, 'options', options, 'context', context));
 });
 $VN_2.$def('remove_observer:for_key_path:',function(self,_cmd,observer,key_path){
 });

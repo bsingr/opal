@@ -15,7 +15,6 @@ RHash.prototype.$make_metaclass = RObject.prototype.$make_metaclass;
 
 VN.$h = function() {
   var hash = new RHash();
-  console.log(hash);
   for (var i = 0; i < arguments.length; i++) {
     VN$(hash, '[]=', arguments[i], arguments[i + 1]);
     i++;
@@ -67,7 +66,7 @@ $VN_1.$def('==',function(self,_cmd,obj){
 });
 $VN_1.$def('[]',function(self,_cmd,key){
 if (!self.$values.hasOwnProperty(key)) {
-      return self.$call('default', [key]);
+      return VN$(self, 'default', [key]);
     }
     return self.$values[key] ;});
 $VN_1.$def('hash',function(self,_cmd){
@@ -77,7 +76,6 @@ $VN_1.$def('eql?',function(self,_cmd){
 $VN_1.$def('fetch',function(self,_cmd){
 });
 $VN_1.$def('[]=',function(self,_cmd,key,val){
-VN$(self,'puts',['setting ',(val),' for ',(key)].join(''));
 return VN$(self,'store',key,val);
 });
 $VN_1.$def('store',function(self,_cmd,key,val){

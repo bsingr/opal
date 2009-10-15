@@ -58,6 +58,19 @@ module Vienna
       puts 'initialising responder'
       # puts `arguments.callee`
       super
+      @next_responder = nil
+    end
+    
+    def next_responder= a_responder
+      @next_responder = a_responder
+    end
+    
+    def next_responder
+      @next_responder
+    end
+    
+    def try_to_perform an_action, with:an_object
+      
     end
     
   end

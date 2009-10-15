@@ -87,6 +87,8 @@ module Vienna
         generate_identifier stmt, context
       when :ivar
         generate_ivar stmt, context
+      when :cvar
+        generate_cvar stmt, context
       when :constant
         generate_constant stmt, context
       when :symbol
@@ -326,7 +328,8 @@ module Vienna
       # we do not need this on objc style methods, as they are not, by definition, 
       # KVO compliant.
       kvo_match = definition[:fname].match(/^([a-zA-Z_]*)\=$/)
-      
+      # force self. methods to be ignored... we dont want them KVO compliant
+      kvo_match = nil if definition[:singleton] or context[:self] == 'VN.self'
       # all methods in top self must be added as singleton methods
       if definition[:singleton] or context[:self] == 'VN.self'
         write "#{context[:self]}.$def_s('#{definition[:fname]}',function(self,_cmd"
@@ -406,6 +409,14 @@ module Vienna
         write "#{context[:self]}.$i_s('#{stmt[:lhs][:name]}',"
         generate_stmt stmt[:rhs], :instance => context[:instance], context[:full_stmt] => false, context[:last_stmt] => true, :self => context[:self]
         write ')'
+      
+      
+      # Class var
+      elsif stmt[:lhs].node == :cvar
+        write "#{context[:self]}.$k_s('#{stmt[:lhs][:name]}',"
+        generate_stmt stmt[:rhs], :instance => context[:instance], context[:full_stmt] => false, context[:last_stmt] => true, :self => context[:self]
+        write ')'
+      
       
       # IF LHS is a CONSTANT
       elsif stmt[:lhs].node == :constant
@@ -904,5 +915,13 @@ module Vienna
       write ")"
       write ";\n" if context[:full_stmt]
     end
+    
+    
+    def generate_cvar stmt, context
+      write 'return ' if context[:last_stmt] and context[:full_stmt]
+      write "self.$k_g('#{stmt[:name]}')"
+      write ";\n" if context[:full_stmt]
+    end
+    
   end
 end

@@ -1,5 +1,5 @@
 # 
-# app_kit.rb
+# image_rep.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,24 +24,49 @@
 # THE SOFTWARE.
 #
 
-require 'responder'
-require 'application'
-
-require 'event'
-
-require 'window'
-
-# Views
-require 'view'
-require 'control'
-require 'button'
-
-require 'cell'
-require 'button_cell'
-
-
-require 'tracking_area'
-
-# Graphics
-require 'graphics_context'
-require 'geometry'
+module Vienna
+  
+  class ImageRep
+    
+    def draw
+      
+    end
+    
+    def draw_at_point point
+      
+    end
+    
+    def draw_in_rect rect
+      
+    end
+    
+    
+    
+    
+    def size= size
+      @size = size
+    end
+    
+    def size
+      @size
+    end
+    
+    def alpha= flag
+      @alpha = flag
+    end
+    
+    def alpha?
+      @alpha
+    end
+    
+    def opaque= flag
+      @opaque = flag
+    end
+    
+    def opaque?
+      @opaque
+    end
+    
+  end
+  
+end

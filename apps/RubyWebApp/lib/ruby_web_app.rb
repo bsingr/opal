@@ -39,12 +39,10 @@ module RubyWebApp
   
   VERSION = "0.0.1"
   
-  class AppDelegate #< VN::View
-  # class AppDelegate
-    
-    def initialize_with bob, john:adam, assign:fors, key:adam
+  class AppDelegate
+        
+    def initialize
       @adam = 10
-      bob(10, 34, @benny)
     end
     
     def will_finish_launching (notification)
@@ -64,10 +62,40 @@ module RubyWebApp
       puts now
     end
   end
+  
+  class TempObserver
+    
+    def observe_value_for_key_path path, of_object:object, change:change, context:context
+      puts 'holy macaranieieejjcjcjkjkjnjnwkejndwjednjwej'
+      puts "old value is #{change[:old]}"
+      puts "new value is #{change[:new]}"
+    end
+    
+  end
+  
 end
 
 def main
   app_delegate = RubyWebApp::AppDelegate.new
+  
+  Vienna::App.delegate = app_delegate
+  
   Vienna::App.run
-  my_win = Vienna::Window.new(Vienna::Rect.new(100, 100), [])
+  my_win = Vienna::Window.new(Vienna::Rect.new(100, 100, 100, 100), [])
+  my_button = Vienna::Button.new(Vienna::Rect.new(100, 100, 100, 100))
+  my_win << my_button
+  my_button.needs_display = true
+  puts 'done'
+  puts my_button
+  
+  
+  tracking_area = VN::TrackingArea.tracking_area_with_rect nil, options:nil, owner:nil, user_info:nil
+  my_button.add_tracking_area tracking_area
+  
+  puts '=================================='
+  
+  temp = RubyWebApp::TempObserver.new
+  app_delegate.add_observer temp, for_key_path:'adam', options:nil, context:nil
+  puts 'setting value to 10...'
+  app_delegate.adam = 10
 end

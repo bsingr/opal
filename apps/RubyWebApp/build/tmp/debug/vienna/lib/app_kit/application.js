@@ -1,19 +1,21 @@
 var $VN_1 = RModule.define('Vienna');
+$VN_1.$c_s('APP_WILL_FINISH_LAUNCHING','APP_WILL_FINISH_LAUNCHING');
+$VN_1.$c_s('APP_DID_FINISH_LAUNCHING','APP_DID_FINISH_LAUNCHING');
+$VN_1.$c_s('APP_DID_CHANGE_SCREEN_PARAMETERS','APP_DID_CHANGE_SCREEN_PARAMETERS');
 var $VN_2 = RClass.define_under($VN_1, 'Application',cObject);
 VN$($VN_2,'attr_accessor','windows','event_queue','views_needing_display');
 VN$($VN_2,'attr_reader','delegate');
 $VN_2.$def('initialize',function(self,_cmd){
 self.$i_s('@windows',[]);
 self.$i_s('@event_queue',[]);
-return self.$i_s('@views_needing_display',[]);
+self.$i_s('@views_needing_display',[]);
+return self.$i_s('@delegate',nil);
 });
 $VN_2.$def('run',function(self,_cmd){
 return VN$(self, 'finish_launching');
 });
 $VN_2.$def('finish_launching',function(self,_cmd){
 var nc = VN$(self.$klass.$c_g_full('NotificationCenter'),'default_center');
-VN$(nc,'post_notification_name:object:',self.$klass.$c_g_full('APP_WILL_FINISH_LAUNCHING'),self);
-VN$(nc,'post_notification_name:object:',self.$klass.$c_g_full('APP_DID_FINISH_LAUNCHING'),self);
 return VN$(self, 'display_required_views');
 });
 $VN_2.$def('mark_view_for_display',function(self,_cmd,view,flag){
@@ -38,6 +40,7 @@ return (self.$k_d('@@app') ? self.$k_g('@@app') : self.$k_s('@@app',VN$(self,'ne
 });
 $VN_2.$def('delegate=',function(self,_cmd,obj){
 VN$(self, 'will_change_value_for_key', 'delegate');
+VN$(self,'puts',self.$i_g('@delegate'));
 if((e=VN$(self.$i_g('@delegate'),'==',obj),e!==nil && e!==false)){
 return ;
 }

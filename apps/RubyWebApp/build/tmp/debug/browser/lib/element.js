@@ -14,6 +14,14 @@ return VN$(self,'new',type,class_name,the_id);
 $VN_1.$def('element',function(self,_cmd){
 return self.$i_g('@element');
 });
+$VN_1.$def('origin=',function(self,_cmd,new_origin){
+VN$(self, 'will_change_value_for_key', 'origin');
+VN$(self, 'did_change_value_for_key', 'origin');
+});
+$VN_1.$def('size=',function(self,_cmd,new_size){
+VN$(self, 'will_change_value_for_key', 'size');
+VN$(self, 'did_change_value_for_key', 'size');
+});
 $VN_1.$def('<<',function(self,_cmd,other){
 self.$i_g('@element').appendChild(VN$(other,'element'))});
 $VN_1.$def('add_event_listener',function(self,_cmd,type,listener){

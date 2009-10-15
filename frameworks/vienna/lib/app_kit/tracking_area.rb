@@ -1,5 +1,5 @@
 # 
-# app_kit.rb
+# tracking_area.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,24 +24,22 @@
 # THE SOFTWARE.
 #
 
-require 'responder'
-require 'application'
-
-require 'event'
-
-require 'window'
-
-# Views
-require 'view'
-require 'control'
-require 'button'
-
-require 'cell'
-require 'button_cell'
-
-
-require 'tracking_area'
-
-# Graphics
-require 'graphics_context'
-require 'geometry'
+module Vienna
+  
+  class TrackingArea
+    
+    attr_reader :rect, :options, :owner, :user_info
+    
+    def initialize rect, options, owner, user_info
+      @rect = rect
+      @options = options
+      @owner = owner
+      @user_info = user_info
+    end
+    
+    def self.tracking_area_with_rect rect, options:options, owner:owner, user_info:user_info
+      self.new(rect, options, owner, user_info)      
+    end
+    
+  end
+end

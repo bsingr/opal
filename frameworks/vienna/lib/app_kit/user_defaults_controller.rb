@@ -1,5 +1,5 @@
 # 
-# app_kit.rb
+# user_defaults_controller.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,24 +24,40 @@
 # THE SOFTWARE.
 #
 
-require 'responder'
-require 'application'
+module Vienna
+  
+  class UserDefaultsController
+    
+    attr_reader :defaults, :initial_values, :applies_immediately
+    attr_writer :initial_values, :applies_immediately
+    
+    def init_with_defaults defaults, initial_values:initial_values
+      self
+    end
+    
+    def self.shared_user_defaults_controller
+      @@shared_user_defaults_controller
+    end
+    
+    def unapplied_changes?
+      false
+    end
+    
+    def values
+      nil
+    end
+    
+    def revert sender
+      
+    end
+    
+    def save sender
+      
+    end
+    
+    def revert_to_initial_values sender
+      
+    end
+  end
+end
 
-require 'event'
-
-require 'window'
-
-# Views
-require 'view'
-require 'control'
-require 'button'
-
-require 'cell'
-require 'button_cell'
-
-
-require 'tracking_area'
-
-# Graphics
-require 'graphics_context'
-require 'geometry'

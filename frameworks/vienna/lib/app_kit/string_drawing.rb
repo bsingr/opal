@@ -1,5 +1,5 @@
 # 
-# app_kit.rb
+# string_drawing.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,24 +24,53 @@
 # THE SOFTWARE.
 #
 
-require 'responder'
-require 'application'
-
-require 'event'
-
-require 'window'
-
-# Views
-require 'view'
-require 'control'
-require 'button'
-
-require 'cell'
-require 'button_cell'
-
-
-require 'tracking_area'
-
-# Graphics
-require 'graphics_context'
-require 'geometry'
+module Vienna
+  
+  class String
+    
+    def size_with_attributes attrs
+      
+    end
+    
+    def draw_at_point point, with_attributes:attrs
+      
+    end
+    
+    def draw_in_rect rect, with_attributes:attrs
+      
+    end
+    
+    def draw_with_rect rect, options:options, attributes:attributes
+      
+    end
+    
+    def bounding_rect_with_size size, options:options, attributes:attributes
+      
+    end
+  end
+  
+  
+  
+  class AttributedString
+    
+    def size
+      
+    end
+    
+    def draw_at_point point
+      
+    end
+    
+    def draw_in_rect rect
+      
+    end
+    
+    def draw_with_rect rect, options:options
+      
+    end
+    
+    def bounding_rect_with_size size, options:options
+      
+    end
+  end
+end

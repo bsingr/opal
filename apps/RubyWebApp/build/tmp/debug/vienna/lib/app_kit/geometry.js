@@ -4,6 +4,22 @@ $VN_2.$def('initialize',function(self,_cmd,x,y,w,h){
 self.$i_s('@origin',VN$(self.$klass.$c_g_full('Point'),'new',x,y));
 return self.$i_s('@size',VN$(self.$klass.$c_g_full('Size'),'new',w,h));
 });
+$VN_2.$def('size',function(self,_cmd){
+return self.$i_g('@size');
+});
+$VN_2.$def('size=',function(self,_cmd,size){
+VN$(self, 'will_change_value_for_key', 'size');
+self.$i_s('@size',size);
+VN$(self, 'did_change_value_for_key', 'size');
+});
+$VN_2.$def('origin',function(self,_cmd){
+return self.$i_g('@origin');
+});
+$VN_2.$def('origin=',function(self,_cmd,point){
+VN$(self, 'will_change_value_for_key', 'origin');
+self.$i_s('@origin',point);
+VN$(self, 'did_change_value_for_key', 'origin');
+});
 $VN_2.$def('x',function(self,_cmd){
 return VN$(self.$i_g('@origin'),'x');
 });
@@ -18,7 +34,6 @@ return VN$(self.$i_g('@size'),'height');
 });
 $VN_2.$def('x=',function(self,_cmd,x){
 VN$(self, 'will_change_value_for_key', 'x');
-VN$(self.$i_g('@origin'),'x=',x);
 VN$(self, 'did_change_value_for_key', 'x');
 });
 $VN_2.$def('y=',function(self,_cmd,y){

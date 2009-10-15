@@ -41,7 +41,6 @@ RHash.prototype.$make_metaclass = RObject.prototype.$make_metaclass;
 
 VN.$h = function() {
   var hash = new RHash();
-  console.log(hash);
   for (var i = 0; i < arguments.length; i++) {
     VN$(hash, '[]=', arguments[i], arguments[i + 1]);
     i++;
@@ -115,7 +114,7 @@ class Hash
   
   def [](key)
     `if (!self.$values.hasOwnProperty(key)) {
-      return self.$call('default', [key]);
+      return VN$(self, 'default', [key]);
     }
     return self.$values[key] ;`
   end
@@ -133,7 +132,7 @@ class Hash
   end
   
   def []=(key, val)
-    puts "setting #{val} for #{key}"
+    # puts "setting #{val} for #{key}"
     store key, val
   end
   

@@ -7,16 +7,23 @@ return self.$i_s('@flip_state',flip_state);
 $VN_2.$def('graphics_port',function(self,_cmd){
 return self.$i_g('@ctx');
 });
+$VN_2.$def('graphics_port=',function(self,_cmd,graphics_port){
+VN$(self, 'will_change_value_for_key', 'graphics_port');
+self.$i_s('@ctx',graphics_port);
+VN$(self, 'did_change_value_for_key', 'graphics_port');
+});
 $VN_2.$def('flipped?',function(self,_cmd){
 return self.$i_g('@flip_state');
 });
 $VN_2.$def_s('current_context',function(self,_cmd){
+return self.$k_g('@@current_context');
 });
 $VN_2.$def_s('current_context=',function(self,_cmd,context){
-VN$(self, 'will_change_value_for_key', 'current_context');
-VN$(self, 'did_change_value_for_key', 'current_context');
+return self.$k_s('@@current_context',context);
 });
 $VN_2.$def('save_graphics_state',function(self,_cmd){
+});
+$VN_2.$def('restore_graphics_state',function(self,_cmd){
 });
 $VN_2.$def('line_width=',function(self,_cmd,width){
 VN$(self, 'will_change_value_for_key', 'line_width');
@@ -47,4 +54,30 @@ self.$i_g('@ctx').lineTo(VN$(point,'x'),VN$(point,'y'))});
 $VN_2.$def('add_curve_to_point',function(self,_cmd,cp1,cp2,point){
 self.$i_g('@ctx').bezierCurveTo(VN$(cp1,'x'),VN$(cp1,'y'),VN$(cp2,'x'),VN$(cp2,'y'),VN$(point,'x'),VN$(point,'y'))});
 $VN_2.$def('add_lines',function(self,_cmd,points){
+});
+$VN_2.$def('scale_ctm',function(self,_cmd,sx,sy){
+});
+$VN_2.$def('translate_ctm',function(self,_cmd,tx,ty){
+});
+$VN_2.$def('rotate_ctm',function(self,_cmd,angle){
+});
+$VN_2.$def('concat_ctm',function(self,_cmd,transform){
+});
+$VN_2.$def('ctm',function(self,_cmd){
+});
+$VN_2.$def('add_ellipse_in_rect',function(self,_cmd,rect){
+});
+$VN_2.$def('add_arc',function(self,_cmd,point,radius,start_angle,end_angle,clock_wise){
+});
+$VN_2.$def('arc_to_point',function(self,_cmd,point1,point2,radius){
+});
+$VN_2.$def('add_path',function(self,_cmd,path){
+});
+$VN_2.$def('path_empty?',function(self,_cmd){
+});
+$VN_2.$def('path_current_point',function(self,_cmd){
+});
+$VN_2.$def('path_bounding_box',function(self,_cmd){
+});
+$VN_2.$def('path_contains_point?',function(self,_cmd,point){
 });
