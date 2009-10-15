@@ -40,13 +40,8 @@ var my_win = VN$(self.$klass.$c_g_full('Vienna').$c_g('Window'),'new',VN$(self.$
 var my_button = VN$(self.$klass.$c_g_full('Vienna').$c_g('Button'),'new',VN$(self.$klass.$c_g_full('Vienna').$c_g('Rect'),'new',100,100,100,100));
 VN$(my_win,'<<',my_button);
 VN$(my_button,'needs_display=',true);
-VN$(self,'puts','done');
-VN$(self,'puts',my_button);
 var tracking_area = VN$(self.$klass.$c_g_full('VN').$c_g('TrackingArea'),'tracking_area_with_rect:options:owner:user_info:',nil,nil,nil,nil);
 VN$(my_button,'add_tracking_area',tracking_area);
-VN$(self,'puts','==================================');
 var temp = VN$(self.$klass.$c_g_full('RubyWebApp').$c_g('TempObserver'),'new');
-VN$(app_delegate,'add_observer:for_key_path:options:context:',temp,'adam',nil,nil);
-VN$(self,'puts','setting value to 10...');
-return VN$(app_delegate,'adam=',10);
+return VN$(app_delegate,'add_observer:for_key_path:options:context:',temp,'adam',nil,nil);
 });

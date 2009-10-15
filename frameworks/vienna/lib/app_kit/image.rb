@@ -31,6 +31,7 @@ module Vienna
     
     # Image Load Statuses
     # -------------------
+    # :loading
     # :completed
     # :cancelled
     # :invalid_data
@@ -38,7 +39,55 @@ module Vienna
     # :read_error
     
     def self.image_named name
+      # puts named_images
+      # first check hash of images
+      if named_images.has_key? name
+        return named_images[name]
+      end
+      # then try declared sprites
+      if sprite_images.has_key? name
+        
+      end
+      # lastly, try and load from a url
+      img = image_with_contents_of_url name
+      named_images[name] = img
+      img
+      #    need to add to known images...
+    end
+    
+    # Hash. key - image name, value - Image instance
+    def self.named_images
+      @@named_images ||= {}
+    end
+    
+    # All defined sprite images. These are stored until they are needed. The
+    # hash uses the image name as the key, and an array as the value: containing
+    # the 'parent' image at index 0, and it's rect, as an array, at index 2.
+    def self.sprite_images
+      @@sprite_images ||= {}
+    end
+    
+    def self.define_sprite_image_named name, in_image:image, with_rect:rect
+      sprite_images[name] = [image, rect]
+    end
+    
+    # state that we want this resource, so start downloading it IF NOT already
+    # done so. also, run the block, as it might use the resource
+    # 
+    # Also, the app cannot be run until all resources are downloaded/or they
+    # fail to download.
+    def self.resource name, &block
+      img = image_named name
+      yield img
       
+      # if named_images.has_key? name
+        # return named_images[name]
+        # yield named_images[name]
+      # end
+    end
+    
+    def initialize
+      super
     end
     
     def init_with_size size
@@ -49,8 +98,65 @@ module Vienna
       
     end
     
+    def self.image_with_contents_of_url url
+      obj = allocate
+      obj.init_with_contents_of_url url
+      obj
+    end
+    
     def init_with_contents_of_url url
+      initialize
+      # puts 'needs image named #{url}'
+      @filename = url
+      @status = :loading
+      @image = nil
+      load
+    end
+    
+    def status
+      @status
+    end
+    
+    def load
+      return if @status == :loading || @status == :completed
+      # if bob == 10 || bob == 23
       
+      # end
+      
+      @status = :loading
+      
+      `self.$i_s('@image', new Image());
+      
+      #{@image}.onload = function() {
+        #{self._image_did_load}
+      };
+      
+      #{@image}.onerror = function() {
+        #{self._image_did_error}
+      };
+      
+      #{@image}.onabort = function() {
+        #{self._image_did_error}
+      };
+      
+      #{@image}.src = #{@filename};
+      `
+    end
+    
+    def _image_did_error
+      @status = :read_error
+      
+      if @delegate && @delegate.respond_to? (:image_did_error)
+        @delegate.image_did_error self
+      end
+    end
+    
+    def _image_did_load
+      puts 'WAYYY'
+    end
+    
+    def sprite name, rect
+      puts "Making sprite named #{name}"
     end
     
     

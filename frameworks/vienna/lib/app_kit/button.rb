@@ -25,15 +25,16 @@
 #
 
 module Vienna
-  
+    
   class Button < Control
     
     attr_reader :title, :alternate_title, :image, :image_position
     
     def initialize frame
       # setup_drawing_context
-      puts 'initilising button'
+      # puts 'initilising button'
       super frame
+      # puts' _finished in button_'
     end
     
     def self.cell_class

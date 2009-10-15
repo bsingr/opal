@@ -1,7 +1,6 @@
 var $VN_1 = RModule.define('Vienna');
 var $VN_2 = RClass.define_under($VN_1, 'Control',$VN_2.$c_g_full('View'));
 $VN_2.$def('initialize',function(self,_cmd,frame){
-VN$(self,'puts','control calling super');
 VN$sup(arguments.callee, self,_cmd,[frame]);
 return self.$i_s('@cell',VN$(VN$(VN$(self,'class'),'cell_class'),'new'));
 });

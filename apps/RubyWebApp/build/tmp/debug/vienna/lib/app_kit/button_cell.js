@@ -1,4 +1,33 @@
 var $VN_1 = RModule.define('Vienna');
+VN$($VN_1.$c_g_full('Image'),'resource','controls.png',function(img){
+VN$(img,'sprite','rounded_bezel_enabled_regular_left',[0,0,36,24]);
+VN$(img,'sprite','rounded_bezel_enabled_regular_middle',[0,24,36,24]);
+VN$(img,'sprite','rounded_bezel_enabled_regular_right',[0,48,36,24]);
+VN$(img,'sprite','rounded_bezel_disabled_regular_left',[0,0,36,24]);
+VN$(img,'sprite','rounded_bezel_disabled_regular_middle',[0,24,36,24]);
+VN$(img,'sprite','rounded_bezel_disabled_regular_right',[0,48,36,24]);
+VN$(img,'sprite','rounded_bezel_pushed_regular_left',[0,0,36,24]);
+VN$(img,'sprite','rounded_bezel_pushed_regular_middle',[0,24,36,24]);
+VN$(img,'sprite','rounded_bezel_pushed_regular_right',[0,48,36,24]);
+VN$(img,'sprite','rounded_bezel_enabled_small_left',[0,0,36,24]);
+VN$(img,'sprite','rounded_bezel_enabled_small_middle',[0,24,36,24]);
+VN$(img,'sprite','rounded_bezel_enabled_small_right',[0,48,36,24]);
+VN$(img,'sprite','rounded_bezel_disabled_small_left',[0,0,36,24]);
+VN$(img,'sprite','rounded_bezel_disabled_small_middle',[0,24,36,24]);
+VN$(img,'sprite','rounded_bezel_disabled_small_right',[0,48,36,24]);
+VN$(img,'sprite','rounded_bezel_pushed_small_left',[0,0,36,24]);
+VN$(img,'sprite','rounded_bezel_pushed_small_middle',[0,24,36,24]);
+VN$(img,'sprite','rounded_bezel_pushed_small_right',[0,48,36,24]);
+VN$(img,'sprite','rounded_bezel_enabled_mini_left',[0,0,36,24]);
+VN$(img,'sprite','rounded_bezel_enabled_mini_middle',[0,24,36,24]);
+VN$(img,'sprite','rounded_bezel_enabled_mini_right',[0,48,36,24]);
+VN$(img,'sprite','rounded_bezel_disabled_mini_left',[0,0,36,24]);
+VN$(img,'sprite','rounded_bezel_disabled_mini_middle',[0,24,36,24]);
+VN$(img,'sprite','rounded_bezel_disabled_mini_right',[0,48,36,24]);
+VN$(img,'sprite','rounded_bezel_pushed_mini_left',[0,0,36,24]);
+VN$(img,'sprite','rounded_bezel_pushed_mini_middle',[0,24,36,24]);
+return VN$(img,'sprite','rounded_bezel_pushed_mini_right',[0,48,36,24]);
+});
 var $VN_2 = RClass.define_under($VN_1, 'ButtonCell',$VN_2.$c_g_full('Cell'));
 $VN_2.$def('title',function(self,_cmd){
 return self.$i_g('@title');

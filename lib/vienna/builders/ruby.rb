@@ -319,6 +319,7 @@ class Vienna::RubyParser < Racc::Parser
       elsif scanner.scan(/\=\=\=/)
         return [:tEQQ, scanner.matched]
       elsif scanner.scan(/\=\=/)
+        self.lex_state = :EXPR_BEG
         return [:tEQ, scanner.matched]
       elsif scanner.scan(/\=\~/)
         return [:tMATCH, scanner.matched]

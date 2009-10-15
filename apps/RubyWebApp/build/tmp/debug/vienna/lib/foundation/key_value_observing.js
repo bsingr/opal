@@ -18,11 +18,11 @@ $VN_2.$def('remove_observer:for_key_path:',function(self,_cmd,observer,key_path)
 });
 var $VN_2 = RClass.define_under($VN_1, 'Object',cObject);
 $VN_2.$def('will_change_value_for_key',function(self,_cmd,key){
-return VN$(self.$i_g('@kvo_old_values'),'[]=',VN$(self,'value_for_key',key));
+return VN$(self.$i_g('@kvo_old_values'),'[]=',key,VN$(self,'value_for_key',key));
 });
 $VN_2.$def('did_change_value_for_key',function(self,_cmd,key){
 return VN$(self.$i_g('@kvo_observers'),'each',function(current){
-if((e=VN$(VN$(current,'[]','key_path'),'==',key),e!==nil && e!==false)){
+if(RTEST(VN$(VN$(current,'[]','key_path'),'==',key))){
 var change_dict = VN.$h('old', VN$(self.$i_g('@kvo_old_values'),'[]',key), 'new', VN$(self,'value_for_key',key));
 VN$(VN$(current,'[]','observer'),'observe_value_for_key_path:of_object:change:context:',key,self,change_dict,VN$(current,'[]','context'));
 }

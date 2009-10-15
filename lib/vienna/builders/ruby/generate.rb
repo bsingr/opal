@@ -133,6 +133,10 @@ module Vienna
         generate_case stmt, context
       when :yield
         generate_yield stmt, context
+      when :orop
+        generate_orop stmt, context
+      when :andop
+        generate_andop stmt, context
       else
         write "\n[Unknown type for generate_stmt: #{stmt}]\n"
       end
@@ -163,15 +167,15 @@ module Vienna
       
     # Generate if, unless statemets
     def generate_if stmt, context
-      write 'if((e='
-      generate_stmt stmt[:expr],:instance => false, :full_stmt => false, :self => current_self, :last_stmt => false
-                                
       if stmt.node == :if
-        # falseiness determined by not nil or false
-        write ",e!==nil && e!==false)){\n"
-      else # unless
-        write ",e==nil || e==false)){\n"
+        write "if(RTEST("
+      else
+        write "if(!RTEST("
       end
+      
+      generate_stmt stmt[:expr],:instance => false, :full_stmt => false, :self => current_self, :last_stmt => false
+      
+      write ")){\n"
       
       if stmt[:stmt]
         stmt[:stmt].each do |c|
@@ -184,9 +188,9 @@ module Vienna
         stmt[:tail].each do |t|
           
           if t.node == :elsif
-            write 'else if((e='
+            write 'else if(RTEST('
             generate_stmt t[:expr], :instance => false, :full_stmt => false, :self => current_self, :last_stmt => false
-            write ",e!==nil && e!==false)){\n"
+            write ")){\n"
           else # normal else
             write "else{\n"
           end
@@ -205,14 +209,15 @@ module Vienna
     # If/unless mod ... statement after 
     # 
     def generate_if_mod stmt, context
-      write 'if((e='
+      if stmt.node == :if
+        write "if(RTEST("
+      else
+        write "if(!RTEST("
+      end
+
       generate_stmt stmt[:expr],:instance => false, :full_stmt => false, :self => current_self, :last_stmt => false
       
-      if stmt.node == :if_mod
-        write ",e!==nil && e!==false)){\n"
-      else
-        write ",e==nil || e==false)){\n"
-      end
+      write ")){\n"
       
       if stmt[:stmt]
         generate_stmt stmt[:stmt], :instance => true, :full_stmt => true, :self => current_self, :last_stmt => true # also check if the actual 'if' statement is last?
@@ -438,6 +443,13 @@ module Vienna
         write "VN$("
         generate_stmt stmt[:lhs][:recv], :instance => context[:instance], context[:full_stmt] => false, :last_stmt => context[:last_stmt], :self => context[:self]
         write ",'#{stmt[:lhs][:meth]}=',"
+        # if its []= then we need to output 2 args
+        if stmt[:lhs][:meth] == '[]'
+          # write stmt[:]
+          generate_stmt stmt[:lhs][:args][:args][0],
+           :instance => context[:instance], context[:full_stmt] => false, :last_stmt => context[:last_stmt], :self => context[:self]
+          write ','
+        end
         generate_stmt stmt[:rhs], :instance => context[:instance], context[:full_stmt] => false, :last_stmt => context[:last_stmt], :self => context[:self]
         write ")"
       else
@@ -530,6 +542,13 @@ module Vienna
           # write ',' unless arg == call[:call_args][:args].last && call[:call_args][:brace_block].nil?
         end
       end
+      
+      # write call
+      # if call[:meth] == 'sprite'
+        # puts 'gmmm'
+        # puts call[:call_args][:brace_block]
+      # end
+      
       # block
       unless call[:brace_block].nil?
         push_nametable
@@ -920,6 +939,31 @@ module Vienna
     def generate_cvar stmt, context
       write 'return ' if context[:last_stmt] and context[:full_stmt]
       write "self.$k_g('#{stmt[:name]}')"
+      write ";\n" if context[:full_stmt]
+    end
+    
+    
+    def generate_orop stmt, context
+      write 'return ' if context[:last_stmt] and context[:full_stmt]
+      
+      write "ORTEST("
+      generate_stmt stmt[:lhs], :instance => context[:instance], :full_stmt => false, :last_stmt => false, :self => context[:self]
+      write ","
+      generate_stmt stmt[:rhs], :instance => context[:instance], :full_stmt => false, :last_stmt => false, :self => context[:self]
+      write ")"
+      
+      write ";\n" if context[:full_stmt]
+    end
+    
+    def generate_andop stmt, context
+      write 'return ' if context[:last_stmt] and context[:full_stmt]
+      
+      write "ANDTEST("
+      generate_stmt stmt[:lhs], :instance => context[:instance], :full_stmt => false, :last_stmt => false, :self => context[:self]
+      write ","
+      generate_stmt stmt[:rhs], :instance => context[:instance], :full_stmt => false, :last_stmt => false, :self => context[:self]
+      write ")"
+      
       write ";\n" if context[:full_stmt]
     end
     

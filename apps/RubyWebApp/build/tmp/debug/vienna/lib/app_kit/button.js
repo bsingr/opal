@@ -2,7 +2,6 @@ var $VN_1 = RModule.define('Vienna');
 var $VN_2 = RClass.define_under($VN_1, 'Button',$VN_2.$c_g_full('Control'));
 VN$($VN_2,'attr_reader','title','alternate_title','image','image_position');
 $VN_2.$def('initialize',function(self,_cmd,frame){
-VN$(self,'puts','initilising button');
 return VN$sup(arguments.callee, self,_cmd,[frame]);
 });
 $VN_2.$def_s('cell_class',function(self,_cmd){

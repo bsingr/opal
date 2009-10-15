@@ -16,10 +16,14 @@ return self.$i_g('@element');
 });
 $VN_1.$def('origin=',function(self,_cmd,new_origin){
 VN$(self, 'will_change_value_for_key', 'origin');
-VN$(self, 'did_change_value_for_key', 'origin');
+self.$i_g('@element').style.x = VN$(new_origin,'x');self.$i_g('@element').style.y = VN$(new_origin,'y');VN$(self, 'did_change_value_for_key', 'origin');
 });
 $VN_1.$def('size=',function(self,_cmd,new_size){
 VN$(self, 'will_change_value_for_key', 'size');
+if(RTEST(VN$(self.$i_g('@type'),'==','canvas'))){
+self.$i_g('@element').width = VN$(new_size,'width');self.$i_g('@element').height = VN$(new_size,'height');}
+else{
+self.$i_g('@element').style.width = VN$(new_size,'width');self.$i_g('@element').style.height = VN$(new_size,'height');}
 VN$(self, 'did_change_value_for_key', 'size');
 });
 $VN_1.$def('<<',function(self,_cmd,other){

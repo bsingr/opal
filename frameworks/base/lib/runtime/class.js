@@ -353,7 +353,7 @@ RClass.prototype.$undef_alloc_func = function() {
   RClass.singleton_class(this).$add_method('allocate', null);
 };
 
-RClass.prototype.$search_method = function(id) {
+RClass.prototype.$search_method = function search_method(id) {
   // console.log('checking ' + id);
   // console.log(this);
   var klass = this; var func ;

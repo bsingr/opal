@@ -85,17 +85,17 @@ def main
   my_button = Vienna::Button.new(Vienna::Rect.new(100, 100, 100, 100))
   my_win << my_button
   my_button.needs_display = true
-  puts 'done'
-  puts my_button
+  # puts 'done'
+  # puts my_button
   
   
   tracking_area = VN::TrackingArea.tracking_area_with_rect nil, options:nil, owner:nil, user_info:nil
   my_button.add_tracking_area tracking_area
   
-  puts '=================================='
+  # puts '=================================='
   
   temp = RubyWebApp::TempObserver.new
   app_delegate.add_observer temp, for_key_path:'adam', options:nil, context:nil
-  puts 'setting value to 10...'
-  app_delegate.adam = 10
+  # puts 'setting value to 10...'
+  # app_delegate.adam = 10
 end

@@ -33,7 +33,7 @@ return VN$(self,'post_notification_name:object:user_info:',name,obj,nil);
 });
 $VN_2.$def('post_notification_name:object:user_info:',function(self,_cmd,name,obj,info){
 return VN$(self.$i_g('@dispatch_table'),'each',function(the_obj){
-if((e=VN$(VN$(the_obj,'[]','name'),'==',name),e!==nil && e!==false)){
+if(RTEST(VN$(VN$(the_obj,'[]','name'),'==',name))){
 VN$(VN$(the_obj,'[]','observer'),'perform_selector:with_object:with_object:',VN$(the_obj,'[]','selector'),obj,info);
 }
 });

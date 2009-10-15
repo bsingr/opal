@@ -26,10 +26,15 @@
 
 require 'responder'
 require 'application'
-
 require 'event'
-
 require 'window'
+
+# Graphics
+require 'graphics_context'
+require 'geometry'
+
+# get images loaded early, so controls can load sprites etc.
+require 'image'
 
 # Views
 require 'view'
@@ -42,6 +47,5 @@ require 'button_cell'
 
 require 'tracking_area'
 
-# Graphics
-require 'graphics_context'
-require 'geometry'
+
+

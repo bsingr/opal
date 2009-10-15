@@ -159,7 +159,10 @@ $VN_1.$def('member?',function(self,_cmd,obj){
 return VN$(self,'include?',obj);
 });
 $VN_1.$def('has_key?',function(self,_cmd,key){
-});
+if (!self.$values.hasOwnProperty(key)) {
+      return false;
+    }
+    return true ;});
 $VN_1.$def('has_value?',function(self,_cmd,val){
 });
 $VN_1.$def('key?',function(self,_cmd,key){

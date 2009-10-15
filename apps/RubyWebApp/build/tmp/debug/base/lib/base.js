@@ -27,6 +27,31 @@
 // temp..
 var nil = null;
 
+// Boolean test. false if null, undefined, nil, or false
+var RTEST = function RTEST(val) {
+  return (val != null && val != undefined && val != nil && val != false) ? true : false;
+};
+
+var ORTEST = function ORTEST(lhs, rhs) {
+  if (lhs == null || lhs == undefined) lhs = nil;
+  if (rhs == null || rhs == undefined) rhs = nil;
+  
+  if (lhs == nil || lhs == false) {
+    return rhs;
+  }
+  return lhs;
+};
+
+var ANDTEST = function ANDTEST(lhs, rhs) {
+  if (lhs == null || lhs == undefined) lhs = nil;
+  if (rhs == null || rhs == undefined) rhs = nil;
+  
+  if (lhs == nil || lhs == false) {
+    return lhs;
+  }
+  return rhs;
+};
+
 var VN = {
   
   CLASS: 0,

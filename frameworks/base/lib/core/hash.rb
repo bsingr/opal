@@ -273,7 +273,7 @@ class Hash
   end
   
   def include?(obj)
-    
+
   end
   
   def member?(obj)
@@ -281,7 +281,10 @@ class Hash
   end
   
   def has_key?(key)
-    
+    `if (!self.$values.hasOwnProperty(key)) {
+      return false;
+    }
+    return true ;`
   end
   
   def has_value?(val)

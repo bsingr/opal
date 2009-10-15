@@ -19,7 +19,7 @@ var nc = VN$(self.$klass.$c_g_full('NotificationCenter'),'default_center');
 return VN$(self, 'display_required_views');
 });
 $VN_2.$def('mark_view_for_display',function(self,_cmd,view,flag){
-if((e=VN$(self.$i_g('@views_needing_display'),'contains?',view),e==nil || e==false)){
+if(!RTEST(VN$(self.$i_g('@views_needing_display'),'contains?',view))){
 VN$(self.$i_g('@views_needing_display'),'<<',view);
 }
 });
@@ -41,20 +41,20 @@ return (self.$k_d('@@app') ? self.$k_g('@@app') : self.$k_s('@@app',VN$(self,'ne
 $VN_2.$def('delegate=',function(self,_cmd,obj){
 VN$(self, 'will_change_value_for_key', 'delegate');
 VN$(self,'puts',self.$i_g('@delegate'));
-if((e=VN$(self.$i_g('@delegate'),'==',obj),e!==nil && e!==false)){
+if(!RTEST(VN$(self.$i_g('@delegate'),'==',obj))){
 return ;
 }
 var nc = VN$(self.$klass.$c_g_full('VN').$c_g('NotificationCenter'),'default_center');
-if((e=self.$i_g('@delegate'),e!==nil && e!==false)){
+if(RTEST(self.$i_g('@delegate'))){
 VN$(nc,'remove_observer:name:object:',self.$i_g('@delegate'),self.$klass.$c_g_full('APP_WILL_FINISH_LAUNCHING'),self);
 VN$(nc,'remove_observer:name:object:',self.$i_g('@delegate'),self.$klass.$c_g_full('APP_DID_FINISH_LAUNCHING'),self);
 VN$(nc,'remove_observer:name:object:',self.$i_g('@delegate'),self.$klass.$c_g_full('APP_DID_CHANGE_SCREEN_PARAMETERS'),self);
 }
 self.$i_s('@delegate',obj);
-if((e=VN$(self.$i_g('@delegate'),'respond_to?','will_finish_launching'),e!==nil && e!==false)){
+if(RTEST(VN$(self.$i_g('@delegate'),'respond_to?','will_finish_launching'))){
 VN$(nc,'add_observer:selector:name:object:',self.$i_g('@delegate'),'will_finish_launching',self.$klass.$c_g_full('APP_WILL_FINISH_LAUNCHING'),self);
 }
-if((e=VN$(self.$i_g('@delegate'),'respond_to?','did_finish_launching'),e!==nil && e!==false)){
+if(RTEST(VN$(self.$i_g('@delegate'),'respond_to?','did_finish_launching'))){
 VN$(nc,'add_observer:selector:name:object:',self.$i_g('@delegate'),'did_finish_launching',self.$klass.$c_g_full('APP_DID_FINISH_LAUNCHING'),self);
 }
 VN$(self, 'did_change_value_for_key', 'delegate');

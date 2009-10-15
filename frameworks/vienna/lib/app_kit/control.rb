@@ -35,8 +35,9 @@ module Vienna
     # display_properties :enabled, :selected, :state
     
     def initialize frame
-      puts 'control calling super'
+      # puts 'control calling super'
       super frame
+      # puts '_in control_'
       @cell = self.class.cell_class.new
     end
     

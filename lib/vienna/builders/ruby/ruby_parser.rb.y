@@ -458,8 +458,26 @@ rule
             		  {
             		    result = node :call, :recv => val[0], :meth => '>>', :call_args => { :args => [val[2]]}
             		  }
-            		| arg tANDOP arg
-            		| arg tOROP arg
+          		  | arg
+          		      {
+                      # weird? unless break here, it throws an error? hmm...
+                      # we must use val[3] then as this counts as one match....
+              		  }
+              		tANDOP
+              		arg
+            		  {
+            		    result = node :andop, :lhs => val[0], :rhs => val[3]
+            		  }
+            		| arg
+            		  {
+                    # weird? unless break here, it throws an error? hmm...
+                    # we must use val[3] then as this counts as one match....
+            		  }
+            		  tOROP
+            		  arg
+            		  {
+            		    result = node :orop, :lhs => val[0], :rhs => val[3]
+            		  }
             		| kDEFined opt_nl arg
             		| arg '?' arg opt_nl ':' arg
             		| primary
@@ -764,8 +782,16 @@ rule
             		| kDO_LAMBDA compstmt kEND
 
         do_block: kDO_BLOCK opt_block_param compstmt kEND
+                | kDO opt_block_param compstmt kEND
+                  {
+                    result = node :brace_block, :params => val[1], :stmt => val[2]
+                  }
 
       block_call: command do_block
+                  {
+                    val[0][:brace_block] = val[1]
+                    result = val[0]
+                  }
             		| block_call '.' operation2 opt_paren_args
             		| block_call tCOLON2 operation2 opt_paren_args
 

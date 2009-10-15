@@ -50,11 +50,20 @@ class Element
   end
   
   def origin= new_origin
-    
+    `#{@element}.style.x = #{new_origin.x};`
+    `#{@element}.style.y = #{new_origin.y};`
   end
   
   def size= new_size
-    
+    # puts 'settig size to'
+    # puts new_size
+    if @type == :canvas
+      `#{@element}.width = #{new_size.width};`
+      `#{@element}.height = #{new_size.height};`
+    else
+      `#{@element}.style.width = #{new_size.width};`
+      `#{@element}.style.height = #{new_size.height};`
+    end
   end
   
   def <<(other)

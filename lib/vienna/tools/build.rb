@@ -22,6 +22,9 @@ module Vienna
       p.build!
       puts "root file: #{p.root_file}"
       puts "library path: #{p.system_lib_root}"
+      
+      puts "all frameworks used:"
+      puts p.all_frameworks
     end
   
     # Cleans a vienna project working directory. Basically removes the build 

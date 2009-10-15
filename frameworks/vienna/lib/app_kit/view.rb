@@ -53,8 +53,14 @@ module Vienna
       super()
       setup_display_context
       
-      @frame = Rect.new(100, 100, 100, 100)
-      @bounds = Rect.new(0, 0, 100, 100)
+      @frame = frame
+      @bounds = Rect.new(0, 0, frame.width, frame.height)
+      
+      puts '________in initialize___________'
+      puts frame
+      self.frame = frame
+      
+      puts '_done this bit_'
       
       @subviews = []
       @window = nil
@@ -66,6 +72,8 @@ module Vienna
       # Tracking areas for mouse events. Important to intiialize early, so views
       # can set up tracking as soon as they like
       @tracking_areas = []
+      
+      puts '_done in initialize view_'
     end
     
     def element
@@ -284,19 +292,22 @@ module Vienna
     end
     
     def frame_size=(new_size)
-      
+      # puts 'OMFG, why isnt this working?!?!?!'
       old_size = Size.new(@frame.width, @frame.height)
-            
+      # puts 1
       @frame.size.width = new_size.width
       @frame.size.height = new_size.height
-      
+      # puts 2
       # bounds
       @bounds.size.width = new_size.width
       @bounds.size.height = new_size.height      
       # bound end
-      
-      self.resize_subviews_with_old_size(old_size) if @autoresizes_subviews
+      # puts 3
+      # self.resize_subviews_with_old_size(old_size) if @autoresizes_subviews
+      # puts 4
       self.needs_display = true
+      # puts 5
+      # puts "------------HERE-------------"
       
       @element.size = new_size
       @display_element.size = new_size
@@ -308,14 +319,20 @@ module Vienna
     end
     
     def frame=(frame)
-      frame = Rect.new(100, 100, 100,100)
+      # frame = Rect.new(100, 100, 100,100)
+      # puts '____in frame=______'
+      # puts frame
       self.frame_origin = frame.origin
+      # puts '_yeah, here_'
       self.frame_size = frame.size
+      # puts '_hmmm_'
       
       if @posts_frame_changed_notifications
         nc = NotificationCenter.default_center
         nc.post_notification_name 'view chnages notification', object:self
       end
+      
+      # puts' ___wow __ '
     end
     
     def frame
@@ -451,6 +468,10 @@ module Vienna
     
     # Clear the whole view for display - i.e. draw everything from scratch - remove any clipping
     def needs_display=(flag)
+      unless @window
+        return
+      end
+      
       @needs_display = flag
       
       # FIXME: this shouldnt be done here
@@ -534,9 +555,14 @@ module Vienna
       # Only attatch events if there are no current tracking areas. It is expensive to needlesly add new event handlers
       if @tracking_areas.empty?
         # for now, assume maximum of 1 tracking_area, and that it covers entire view. Adding more
-        # to parts of the view can be done later, but for now, one area to resive events.
-        @element.add_event_listener :mouseover, `function() { console.log('OMG, mouse over!'); }`
-        @element.add_event_listener :mouseout, `function() { console.log('OMG, mouse out of the element!'); }`
+        # to parts of the view can be done later, but for now, one area to resive events
+        @element.add_event_listener :mouseover do |evt|
+          puts 'OMG, mouse over!'
+        end
+        
+        @element.add_event_listener :mouseout do |evt|
+          puts 'OMG, mouse out of element'
+        end
       end
       
       @tracking_areas << tracking_area    

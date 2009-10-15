@@ -4,14 +4,19 @@ $VN_2.$def('initialize',function(self,_cmd,frame){
 VN$(self,'puts','initialising view');
 VN$sup(arguments.callee, self,_cmd,[]);
 VN$(self, 'setup_display_context');
-self.$i_s('@frame',VN$(self.$klass.$c_g_full('Rect'),'new',100,100,100,100));
-self.$i_s('@bounds',VN$(self.$klass.$c_g_full('Rect'),'new',0,0,100,100));
+self.$i_s('@frame',frame);
+self.$i_s('@bounds',VN$(self.$klass.$c_g_full('Rect'),'new',0,0,VN$(frame,'width'),VN$(frame,'height')));
+VN$(self,'puts','________in initialize___________');
+VN$(self,'puts',frame);
+VN$(self,'frame=',frame);
+VN$(self,'puts','_done this bit_');
 self.$i_s('@subviews',[]);
 self.$i_s('@window',nil);
 self.$i_s('@superview',nil);
 self.$i_s('@posts_frame_changed_notifications',false);
 self.$i_s('@autoresizes_subviews',true);
-return self.$i_s('@tracking_areas',[]);
+self.$i_s('@tracking_areas',[]);
+return VN$(self,'puts','_done in initialize view_');
 });
 $VN_2.$def('element',function(self,_cmd){
 return self.$i_g('@element');
@@ -73,7 +78,7 @@ VN$(self, 'will_change_value_for_key', 'subviews');
 VN$(self, 'did_change_value_for_key', 'subviews');
 });
 $VN_2.$def('add_subview',function(self,_cmd,a_view){
-if((e=VN$(self.$i_g('@subviews'),'include?',a_view),e!==nil && e!==false)){
+if(RTEST(VN$(self.$i_g('@subviews'),'include?',a_view))){
 return ;
 }
 VN$(a_view,'remove_from_superview');
@@ -136,7 +141,7 @@ VN$(self, 'will_change_value_for_key', 'frame_origin');
 VN$(self.$i_g('@frame'),'x=',VN$(new_origin,'x'));
 VN$(self.$i_g('@frame'),'y=',VN$(new_origin,'y'));
 VN$(self.$i_g('@element'),'origin=',new_origin);
-if((e=self.$i_g('@posts_frame_changed_notifications'),e!==nil && e!==false)){
+if(RTEST(self.$i_g('@posts_frame_changed_notifications'))){
 var nc = VN$(self.$klass.$c_g_full('NotificationCenter'),'default_center');
 VN$(nc,'post_notification_name:object:','frame chnage notification',self);
 }
@@ -149,13 +154,10 @@ VN$(VN$(self.$i_g('@frame'),'size'),'width=',VN$(new_size,'width'));
 VN$(VN$(self.$i_g('@frame'),'size'),'height=',VN$(new_size,'height'));
 VN$(VN$(self.$i_g('@bounds'),'size'),'width=',VN$(new_size,'width'));
 VN$(VN$(self.$i_g('@bounds'),'size'),'height=',VN$(new_size,'height'));
-if((e=self.$i_g('@autoresizes_subviews'),e!==nil && e!==false)){
-return VN$(self,'resize_subviews_with_old_size',old_size);
-}
 VN$(self,'needs_display=',true);
 VN$(self.$i_g('@element'),'size=',new_size);
 VN$(self.$i_g('@display_element'),'size=',new_size);
-if((e=self.$i_g('@posts_frame_changed_notifications'),e!==nil && e!==false)){
+if(RTEST(self.$i_g('@posts_frame_changed_notifications'))){
 var nc = VN$(self.$klass.$c_g_full('NotificationCenter'),'default_center');
 VN$(nc,'post_notification_name:object:','frame chnage notification',self);
 }
@@ -163,10 +165,9 @@ VN$(self, 'did_change_value_for_key', 'frame_size');
 });
 $VN_2.$def('frame=',function(self,_cmd,frame){
 VN$(self, 'will_change_value_for_key', 'frame');
-frame = VN$(self.$klass.$c_g_full('Rect'),'new',100,100,100,100);
 VN$(self,'frame_origin=',VN$(frame,'origin'));
 VN$(self,'frame_size=',VN$(frame,'size'));
-if((e=self.$i_g('@posts_frame_changed_notifications'),e!==nil && e!==false)){
+if(RTEST(self.$i_g('@posts_frame_changed_notifications'))){
 var nc = VN$(self.$klass.$c_g_full('NotificationCenter'),'default_center');
 VN$(nc,'post_notification_name:object:','view chnages notification',self);
 }
@@ -249,6 +250,9 @@ $VN_2.$def('can_draw?',function(self,_cmd){
 });
 $VN_2.$def('needs_display=',function(self,_cmd,flag){
 VN$(self, 'will_change_value_for_key', 'needs_display');
+if(!RTEST(self.$i_g('@window'))){
+return ;
+}
 self.$i_s('@needs_display',flag);
 var graphics_context = VN$(self.$i_g('@window'),'graphics_context');
 VN$(self.$klass.$c_g_full('GraphicsContext'),'current_context=',graphics_context);
@@ -273,7 +277,7 @@ $VN_2.$def_s('focus_view',function(self,_cmd){
 $VN_2.$def('visible_rect',function(self,_cmd){
 });
 $VN_2.$def('display',function(self,_cmd){
-if((e=self.$i_g('@needs_display'),e!==nil && e!==false)){
+if(RTEST(self.$i_g('@needs_display'))){
 }
 });
 $VN_2.$def('draw_rect',function(self,_cmd,rect){
@@ -286,9 +290,13 @@ $VN_2.$def('hit_test',function(self,_cmd,point){
 $VN_2.$def('mouse:in_rect:',function(self,_cmd,point,rect){
 });
 $VN_2.$def('add_tracking_area',function(self,_cmd,tracking_area){
-if((e=VN$(self.$i_g('@tracking_areas'),'empty?'),e!==nil && e!==false)){
-VN$(self.$i_g('@element'),'add_event_listener','mouseover',function() { console.log('OMG, mouse over!'); });
-VN$(self.$i_g('@element'),'add_event_listener','mouseout',function() { console.log('OMG, mouse out of the element!'); });
+if(RTEST(VN$(self.$i_g('@tracking_areas'),'empty?'))){
+VN$(self.$i_g('@element'),'add_event_listener','mouseover',function(evt){
+return VN$(self,'puts','OMG, mouse over!');
+});
+VN$(self.$i_g('@element'),'add_event_listener','mouseout',function(evt){
+return VN$(self,'puts','OMG, mouse out of element');
+});
 }
 return VN$(self.$i_g('@tracking_areas'),'<<',tracking_area);
 });

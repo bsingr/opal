@@ -120,7 +120,7 @@ return self.$i_g('@scrollable');
 $VN_2.$def('scrollable=',function(self,_cmd,flag){
 VN$(self, 'will_change_value_for_key', 'scrollable');
 self.$i_s('@scrollable',flag);
-if((e=flag,e!==nil && e!==false)){
+if(!RTEST(flag)){
 return wraps = false;
 }
 VN$(self, 'did_change_value_for_key', 'scrollable');
@@ -147,7 +147,7 @@ return self.$i_g('@wraps');
 $VN_2.$def('wraps=',function(self,_cmd,flag){
 VN$(self, 'will_change_value_for_key', 'wraps');
 self.$i_s('@wraps',flag);
-if((e=flag,e!==nil && e!==false)){
+if(!RTEST(flag)){
 return scrollable = false;
 }
 VN$(self, 'did_change_value_for_key', 'wraps');
@@ -394,7 +394,7 @@ return self.$i_g('@allows_editing_text_attributes');
 $VN_2.$def('allows_editing_text_attributes=',function(self,_cmd,flag){
 VN$(self, 'will_change_value_for_key', 'allows_editing_text_attributes');
 self.$i_s('@allows_editing_text_attributes',flag);
-if((e=flag,e==nil || e==false)){
+if(!RTEST(flag)){
 return imports_graphics = false;
 }
 VN$(self, 'did_change_value_for_key', 'allows_editing_text_attributes');
@@ -405,7 +405,7 @@ return self.$i_g('@imports_graphics');
 $VN_2.$def('imports_graphics=',function(self,_cmd,flag){
 VN$(self, 'will_change_value_for_key', 'imports_graphics');
 self.$i_s('@imports_graphics',flag);
-if((e=flag,e!==nil && e!==false)){
+if(!RTEST(flag)){
 return self.$i_s('@allows_editing_text_attributes',true);
 }
 VN$(self, 'did_change_value_for_key', 'imports_graphics');

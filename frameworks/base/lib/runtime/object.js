@@ -35,10 +35,10 @@ var RObject = function(klass, type) {
   return this;
 };
 
-RObject.prototype.toString = function() {
+// RObject.prototype.toString = function() {
   // console.log('calling toString');
-  return VN$(this, 'to_s');
-}
+  // return VN$(this, 'to_s');
+// }
 
 /**
   $ivar_set
@@ -57,7 +57,7 @@ RObject.prototype.$i_s = function(id, val) {
   @param id - Ivar name
 */
 RObject.prototype.$i_g = function(id) {
-  return this.$iv_tbl[id] ;
+  return this.$iv_tbl[id] || nil;
 };
 
 /*
@@ -74,11 +74,10 @@ RObject.prototype.$ = function(id, args) {
 /**
   new calling func
 */
-var VN$ = function(self, id) {
- 
+var VN$ = function VN$(self, id) {
+ // console.log(' >>> ' + id);
  if (!self) {
    // console.log(self);
-   // console.log(id);
    throw 'Vienna: VN$ - Trying to call `' + id + '` on null/undefined object'   
  }
 

@@ -31,6 +31,7 @@ $VN_2.$def_s('min_frame_width_with_title:style_mask:',function(self,_cmd,title,s
 $VN_2.$def('frame_rect_for_content_rect',function(self,_cmd,rect){
 });
 $VN_2.$def('content_rect_for_frame_rect',function(self,_cmd,rect){
+return rect;
 });
 $VN_2.$def('title',function(self,_cmd){
 return self.$i_g('@title');

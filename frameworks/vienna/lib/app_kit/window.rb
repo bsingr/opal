@@ -79,7 +79,7 @@ module Vienna
     end
     
     def content_rect_for_frame_rect rect
-      
+      rect
     end
     
     
