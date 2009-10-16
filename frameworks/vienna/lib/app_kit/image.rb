@@ -156,7 +156,7 @@ module Vienna
     end
     
     def sprite name, rect
-      puts "Making sprite named #{name}"
+      # puts "Making sprite named #{name}"
     end
     
     

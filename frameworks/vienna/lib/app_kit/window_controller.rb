@@ -1,5 +1,5 @@
 # 
-# app_kit.rb
+# window_controller.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,29 +24,34 @@
 # THE SOFTWARE.
 #
 
-require 'responder'
-require 'application'
-require 'event'
-require 'window'
+@interface NSWindowController : NSResponder <NSCoding> {
+    @private
+    NSWindow *_window;
+    NSString *_windowNibName;
+    NSDocument *_document;
+    NSArray *_topLevelObjects;
+    id _owner;
+    struct __wcFlags {
+        unsigned int shouldCloseDocument:1;
+        unsigned int shouldCascade:1;
+        unsigned int nibIsLoaded:1;
+        unsigned int nibNameIsPath:1;
+        unsigned int RESERVED:28;
+    } _wcFlags;
+    NSString *_frameAutosaveName;
+    id _moreVars;
+}
 
-# Graphics
-require 'graphics_context'
-require 'geometry'
-
-# get images loaded early, so controls can load sprites etc.
-require 'image'
-
-# Views
-require 'view'
-require 'control'
-require 'button'
-
-require 'cell'
-require 'button_cell'
-
-
-require 'tracking_area'
-
-require 'builder/builder'
-
-
+module Vienna
+  
+  class WindowController < Responder
+    
+    attr_reader :window_nib_name, :window, :owner
+    
+    def initialize win
+      
+    end
+    
+  end
+  
+end

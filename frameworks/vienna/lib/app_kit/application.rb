@@ -96,26 +96,25 @@ module Vienna
     # Set App delegate
     # 
     def delegate=(obj)
-      puts @delegate
       return if @delegate == obj
-    
+
       nc = VN::NotificationCenter.default_center
           
-        if @delegate
-          nc.remove_observer @delegate, name:APP_WILL_FINISH_LAUNCHING, object:self
-          nc.remove_observer @delegate, name:APP_DID_FINISH_LAUNCHING, object:self
-          nc.remove_observer @delegate, name:APP_DID_CHANGE_SCREEN_PARAMETERS, object:self
-        end
-      
-        @delegate = obj
-      
-        if @delegate.respond_to? :will_finish_launching
-          nc.add_observer @delegate, selector:'will_finish_launching', name:APP_WILL_FINISH_LAUNCHING, object:self
-        end
-              
-        if @delegate.respond_to? :did_finish_launching
-          nc.add_observer @delegate, selector:'did_finish_launching', name:APP_DID_FINISH_LAUNCHING, object:self
-        end
+      if @delegate
+        nc.remove_observer @delegate, name:APP_WILL_FINISH_LAUNCHING, object:self
+        nc.remove_observer @delegate, name:APP_DID_FINISH_LAUNCHING, object:self
+        nc.remove_observer @delegate, name:APP_DID_CHANGE_SCREEN_PARAMETERS, object:self
+      end
+    
+      @delegate = obj
+    
+      if @delegate.respond_to? :will_finish_launching
+        nc.add_observer @delegate, selector:'will_finish_launching', name:APP_WILL_FINISH_LAUNCHING, object:self
+      end
+            
+      if @delegate.respond_to? :did_finish_launching
+        nc.add_observer @delegate, selector:'did_finish_launching', name:APP_DID_FINISH_LAUNCHING, object:self
+      end
     end
   
   
@@ -124,14 +123,22 @@ module Vienna
     end
   
     def finish_launching
+      if @run_block
+        @run_block.call self
+      end
+      
+      puts '===== In: Application#finish_launching'
+      puts @delegate 
+      # attatch events
       nc = NotificationCenter.default_center
       nc.post_notification_name APP_WILL_FINISH_LAUNCHING, object:self
       nc.post_notification_name APP_DID_FINISH_LAUNCHING, object:self
     end
   
-    def run
-      # attatch events
-      finish_launching
+    def run (&block)
+      # puts "in run"
+      # puts block
+      @run_block = block
     end  
   end
   
@@ -139,3 +146,6 @@ module Vienna
   App = Application.shared_application
   
 end
+
+# Attach events to window to capture finished loading...
+

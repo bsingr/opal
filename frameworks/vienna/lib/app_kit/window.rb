@@ -62,6 +62,14 @@ module Vienna
       @display_element.add_event_listener 'mouseup', `function() { console.log('yeah up!'); }`    
     end
     
+    def self.build options, &block
+      win = self.new Rect.new(100, 100, 100, 100), nil      
+      if block
+        yield win
+      end
+      win
+    end
+    
     def self.frame_rect_for_content_rect rect, style_mask:style
       
     end

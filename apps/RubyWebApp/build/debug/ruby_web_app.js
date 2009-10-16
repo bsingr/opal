@@ -34,6 +34,9 @@ var RTEST = function RTEST(val) {
   return (val != null && val != undefined && val != nil && val != false) ? true : false;
 };
 
+/**
+  Performs an 'or op' with lhs and rhs
+*/
 var ORTEST = function ORTEST(lhs, rhs) {
   if (lhs == null || lhs == undefined) lhs = nil;
   if (rhs == null || rhs == undefined) rhs = nil;
@@ -44,6 +47,9 @@ var ORTEST = function ORTEST(lhs, rhs) {
   return lhs;
 };
 
+/**
+  Performs an 'and op' with lhs and rhs
+*/
 var ANDTEST = function ANDTEST(lhs, rhs) {
   if (lhs == null || lhs == undefined) lhs = nil;
   if (rhs == null || rhs == undefined) rhs = nil;
@@ -849,7 +855,10 @@ RObject.prototype.$i_s = function(id, val) {
   @param id - Ivar name
 */
 RObject.prototype.$i_g = function(id) {
-  return this.$iv_tbl[id] || nil;
+  if (this.$iv_tbl[id] == undefined || this.$iv_tbl[id] == null) {
+    return nil;
+  }
+  return this.$iv_tbl[id];
 };
 
 /*
@@ -1078,6 +1087,7 @@ var cBoolean = RClass.define('Boolean', cObject);
 var cArray = RClass.define('Array', cObject);
 var cString = RClass.define('String', cObject);
 var cNumeric = RClass.define('Numeric', cObject);
+var cProc = RClass.define('Proc', cObject);
 
 var $VN_1 = RModule.define('Kernel');
 $VN_1.$def('nil?',function(self,_cmd){
@@ -2552,7 +2562,46 @@ $VN_1.$def('rpartition',function(self,_cmd){
 // require('core/regexp');
 // require('core/range');
 // require('core/time');
-// require('core/proc');
+
+
+Function.prototype.$klass = cProc
+Function.prototype.$type = VN.PROC;
+var $VN_1 = RClass.define('Proc',cObject);
+$VN_1.$def_s('new',function(self,_cmd){
+});
+$VN_1.$def('call',function(self,_cmd){
+return self.apply(self, [arguments[2]]);;
+});
+$VN_1.$def('[]',function(self,_cmd){
+});
+$VN_1.$def('===',function(self,_cmd){
+});
+$VN_1.$def('yield',function(self,_cmd){
+});
+$VN_1.$def('to_proc',function(self,_cmd){
+});
+$VN_1.$def('arity',function(self,_cmd){
+});
+$VN_1.$def('clone',function(self,_cmd){
+});
+$VN_1.$def('dup',function(self,_cmd){
+});
+$VN_1.$def('==',function(self,_cmd){
+});
+$VN_1.$def('eql?',function(self,_cmd){
+});
+$VN_1.$def('hash',function(self,_cmd){
+});
+$VN_1.$def('to_s',function(self,_cmd){
+});
+$VN_1.$def('lambda?',function(self,_cmd){
+});
+$VN_1.$def('binding',function(self,_cmd){
+});
+$VN_1.$def('curry',function(self,_cmd){
+});
+$VN_1.$def('source_location',function(self,_cmd){
+});
 // require('core/math');
 // require('core/enumerator');
 // 
@@ -2870,8 +2919,7 @@ return (self.$k_d('@@app') ? self.$k_g('@@app') : self.$k_s('@@app',VN$(self,'ne
 });
 $VN_2.$def('delegate=',function(self,_cmd,obj){
 VN$(self, 'will_change_value_for_key', 'delegate');
-VN$(self,'puts',self.$i_g('@delegate'));
-if(!RTEST(VN$(self.$i_g('@delegate'),'==',obj))){
+if(RTEST(VN$(self.$i_g('@delegate'),'==',obj))){
 return ;
 }
 var nc = VN$(self.$klass.$c_g_full('VN').$c_g('NotificationCenter'),'default_center');
@@ -2893,12 +2941,17 @@ $VN_2.$def('running?',function(self,_cmd){
 return true;
 });
 $VN_2.$def('finish_launching',function(self,_cmd){
+if(RTEST(self.$i_g('@run_block'))){
+VN$(self.$i_g('@run_block'),'call',self);
+}
+VN$(self,'puts',['===== In: Application','#finish_launching'].join(''));
+VN$(self,'puts',self.$i_g('@delegate'));
 var nc = VN$(self.$klass.$c_g_full('NotificationCenter'),'default_center');
 VN$(nc,'post_notification_name:object:',self.$klass.$c_g_full('APP_WILL_FINISH_LAUNCHING'),self);
 return VN$(nc,'post_notification_name:object:',self.$klass.$c_g_full('APP_DID_FINISH_LAUNCHING'),self);
 });
-$VN_2.$def('run',function(self,_cmd){
-return VN$(self, 'finish_launching');
+$VN_2.$def('run',function(self,_cmd,block){
+return self.$i_s('@run_block',block);
 });
 $VN_1.$c_s('App',VN$($VN_1.$c_g_full('Application'),'shared_application'));
 
@@ -2970,6 +3023,13 @@ VN$(self.$klass.$c_g_full('Document'),'<<',self.$i_g('@element'));
 self.$i_s('@graphics_context',VN$(self.$klass.$c_g_full('GraphicsContext'),'new',VN$(self.$i_g('@display_element'),'element').getContext('2d'),false));
 VN$(self.$i_g('@display_element'),'add_event_listener','mousedown',function() { console.log('yeah!'); console.log(self); });
 return VN$(self.$i_g('@display_element'),'add_event_listener','mouseup',function() { console.log('yeah up!'); });
+});
+$VN_2.$def_s('build',function(self,_cmd,options,block){
+var win = VN$(self,'new',VN$(self.$c_g_full('Rect'),'new',100,100,100,100),nil);
+if(RTEST(block)){
+arguments[arguments.length -1](win);
+}
+return win;
 });
 $VN_2.$def_s('frame_rect_for_content_rect:style_mask:',function(self,_cmd,rect,style){
 });
@@ -3626,7 +3686,7 @@ $VN_2.$def('status',function(self,_cmd){
 return self.$i_g('@status');
 });
 $VN_2.$def('load',function(self,_cmd){
-if(!RTEST(VN$(ORTEST(VN$(self.$i_g('@status'),'==','loading'),self.$i_g('@status')),'==','completed'))){
+if(RTEST(VN$(ORTEST(VN$(self.$i_g('@status'),'==','loading'),self.$i_g('@status')),'==','completed'))){
 return ;
 }
 self.$i_s('@status','loading');
@@ -3656,7 +3716,6 @@ $VN_2.$def('_image_did_load',function(self,_cmd){
 return VN$(self,'puts','WAYYY');
 });
 $VN_2.$def('sprite',function(self,_cmd,name,rect){
-return VN$(self,'puts',['Making sprite named ',(name)].join(''));
 });
 $VN_2.$def('size=',function(self,_cmd,size){
 VN$(self, 'will_change_value_for_key', 'size');
@@ -4413,7 +4472,7 @@ return self.$i_g('@scrollable');
 $VN_2.$def('scrollable=',function(self,_cmd,flag){
 VN$(self, 'will_change_value_for_key', 'scrollable');
 self.$i_s('@scrollable',flag);
-if(!RTEST(flag)){
+if(RTEST(flag)){
 return wraps = false;
 }
 VN$(self, 'did_change_value_for_key', 'scrollable');
@@ -4440,7 +4499,7 @@ return self.$i_g('@wraps');
 $VN_2.$def('wraps=',function(self,_cmd,flag){
 VN$(self, 'will_change_value_for_key', 'wraps');
 self.$i_s('@wraps',flag);
-if(!RTEST(flag)){
+if(RTEST(flag)){
 return scrollable = false;
 }
 VN$(self, 'did_change_value_for_key', 'wraps');
@@ -4698,7 +4757,7 @@ return self.$i_g('@imports_graphics');
 $VN_2.$def('imports_graphics=',function(self,_cmd,flag){
 VN$(self, 'will_change_value_for_key', 'imports_graphics');
 self.$i_s('@imports_graphics',flag);
-if(!RTEST(flag)){
+if(RTEST(flag)){
 return self.$i_s('@allows_editing_text_attributes',true);
 }
 VN$(self, 'did_change_value_for_key', 'imports_graphics');
@@ -4904,44 +4963,64 @@ return self.$i_s('@user_info',user_info);
 $VN_2.$def_s('tracking_area_with_rect:options:owner:user_info:',function(self,_cmd,rect,options,owner,user_info){
 return VN$(self,'new',rect,options,owner,user_info);
 });
+
+var $VN_1 = RModule.define('Vienna');
+var $VN_2 = RClass.define_under($VN_1, 'Builder',cObject);
+VN$($VN_2,'attr_accessor','owner');
+$VN_2.$c_s('BUILDERS',VN.$h());
+$VN_2.$def('initialize',function(self,_cmd,name,block){
+self.$i_s('@name',name);
+self.$i_s('@builder',block);
+self.$i_s('@top_level_objects',[]);
+return VN$(self.$klass.$c_g_full('BUILDERS'),'[]=',name,self);
+});
+$VN_2.$def_s('build',function(self,_cmd,name,options,block){
+var builder = VN$(self.$c_g_full('BUILDERS'),'[]',name);
+return VN$(builder,'build!',options,block);
+});
+$VN_2.$def('build!',function(self,_cmd,options,block){
+VN$(self,'puts',['Building UI: ',(self.$i_g('@name'))].join(''));
+VN$(self.$i_g('@builder'),'call',self);
+VN$(self,'puts','Options:');
+VN$(self,'puts',options);
+return arguments[arguments.length -1](self);
+});
+$VN_2.$def('top',function(self,_cmd,obj){
+return VN$(self.$i_g('@top_level_objects'),'<<',obj);
+});
+$VN_2.$def('owner',function(self,_cmd){
+return self.$i_g('@owner');
+});
+$VN_2.$def('menu=',function(self,_cmd,a_menu){
+VN$(self, 'will_change_value_for_key', 'menu');
+VN$(self, 'did_change_value_for_key', 'menu');
+});
 var $VN_1 = RModule.define('RubyWebApp');
 $VN_1.$c_s('VERSION','0.0.1');
-var $VN_2 = RClass.define_under($VN_1, 'AppDelegate',cObject);
+$VN_1.$def_s('version',function(self,_cmd){
+return self.$c_g_full('VERSION');
+});
+
+var $VN_1 = RModule.define('RubyWebApp');
+VN$($VN_1.$c_g_full('Vienna').$c_g('Builder'),'new','main_menu',function(b){
+var app_delegate = VN$($VN_1.$klass.$c_g_full('RubyWebApp').$c_g('AppController'),'new');
+return VN$($VN_1.$klass.$c_g_full('VN').$c_g('App'),'delegate=',app_delegate);
+});
+
+var $VN_1 = RModule.define('RubyWebApp');
+var $VN_2 = RClass.define_under($VN_1, 'AppController',cObject);
 $VN_2.$def('initialize',function(self,_cmd){
+VN$(self,'puts','initialising app controller');
 return self.$i_s('@adam',10);
 });
 $VN_2.$def('will_finish_launching',function(self,_cmd,notification){
-VN$(self,'puts','Application will finish launching!');
-return self.$klass.$c_g_full('VN').$c_g('Application');
+return VN$(self,'puts','Application will finish launching!');
 });
 $VN_2.$def('did_finish_launching',function(self,_cmd,notification){
 return VN$(self,'puts','Application did finish launching!!');
 });
-$VN_2.$def('adam=',function(self,_cmd,obj){
-VN$(self, 'will_change_value_for_key', 'adam');
-VN$(self, 'did_change_value_for_key', 'adam');
+VN$(cObject.$c_g('Vienna').$c_g('App'),'run',function(app){
+return VN$(cObject.$c_g('VN').$c_g('Builder'),'build','main_menu',VN.$h('owner',cObject.$c_g('VN').$c_g('App'),'top_level_objects',[]),function(builder){
+return VN$(VN.self,'puts','builder finished!');
 });
-$VN_2.$def('other_object=',function(self,_cmd,now){
-VN$(self, 'will_change_value_for_key', 'other_object');
-VN$(self,'puts',now);
-VN$(self, 'did_change_value_for_key', 'other_object');
-});
-var $VN_2 = RClass.define_under($VN_1, 'TempObserver',cObject);
-$VN_2.$def('observe_value_for_key_path:of_object:change:context:',function(self,_cmd,path,object,change,context){
-VN$(self,'puts','holy macaranieieejjcjcjkjkjnjnwkejndwjednjwej');
-VN$(self,'puts',['old value is ',(VN$(change,'[]','old'))].join(''));
-return VN$(self,'puts',['new value is ',(VN$(change,'[]','new'))].join(''));
-});
-VN.self.$def_s('main',function(self,_cmd){
-var app_delegate = VN$(self.$klass.$c_g_full('RubyWebApp').$c_g('AppDelegate'),'new');
-VN$(self.$klass.$c_g_full('Vienna').$c_g('App'),'delegate=',app_delegate);
-VN$(self.$klass.$c_g_full('Vienna').$c_g('App'),'run');
-var my_win = VN$(self.$klass.$c_g_full('Vienna').$c_g('Window'),'new',VN$(self.$klass.$c_g_full('Vienna').$c_g('Rect'),'new',100,100,100,100),[]);
-var my_button = VN$(self.$klass.$c_g_full('Vienna').$c_g('Button'),'new',VN$(self.$klass.$c_g_full('Vienna').$c_g('Rect'),'new',100,100,100,100));
-VN$(my_win,'<<',my_button);
-VN$(my_button,'needs_display=',true);
-var tracking_area = VN$(self.$klass.$c_g_full('VN').$c_g('TrackingArea'),'tracking_area_with_rect:options:owner:user_info:',nil,nil,nil,nil);
-VN$(my_button,'add_tracking_area',tracking_area);
-var temp = VN$(self.$klass.$c_g_full('RubyWebApp').$c_g('TempObserver'),'new');
-return VN$(app_delegate,'add_observer:for_key_path:options:context:',temp,'adam',nil,nil);
 });

@@ -1,5 +1,5 @@
 # 
-# app_kit.rb
+# app_controller.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,29 +24,23 @@
 # THE SOFTWARE.
 #
 
-require 'responder'
-require 'application'
-require 'event'
-require 'window'
+module RubyWebApp
+  
+  class AppController
+    
+    def initialize
+      puts 'initialising app controller'
+      @adam = 10
+    end
 
-# Graphics
-require 'graphics_context'
-require 'geometry'
+    def will_finish_launching (notification)
+      puts 'Application will finish launching!'
+    end
 
-# get images loaded early, so controls can load sprites etc.
-require 'image'
-
-# Views
-require 'view'
-require 'control'
-require 'button'
-
-require 'cell'
-require 'button_cell'
-
-
-require 'tracking_area'
-
-require 'builder/builder'
-
-
+    def did_finish_launching (notification)
+      puts 'Application did finish launching!!'
+    end
+    
+  end
+  
+end

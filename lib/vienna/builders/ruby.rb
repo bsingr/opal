@@ -324,6 +324,8 @@ class Vienna::RubyParser < Racc::Parser
       elsif scanner.scan(/\=\~/)
         return [:tMATCH, scanner.matched]
       elsif scanner.scan(/\=\>/)
+        # puts self.lex_state
+        self.lex_state = :EXPR_BEG
         return [:tASSOC, scanner.matched]
       elsif scanner.scan(/\=/)
         self.lex_state = :EXPR_BEG
@@ -497,7 +499,9 @@ class Vienna::RubyParser < Racc::Parser
         if (! [:EXPR_END, :EXPR_DOT, :EXPR_ENDARG, :EXPR_CLASS].include?(lex_state) && space_seen)
           return [:tLSHFT, '<<']
         end
+        # self.lex_state = :EXPR_BEG
         self.lex_state = :EXPR_BEG
+        # puts "HERE on ERROR"
         return [:tLSHFT, '<<']
       elsif scanner.scan(/\</)
         return ['<', '<']

@@ -32,6 +32,9 @@ var RTEST = function RTEST(val) {
   return (val != null && val != undefined && val != nil && val != false) ? true : false;
 };
 
+/**
+  Performs an 'or op' with lhs and rhs
+*/
 var ORTEST = function ORTEST(lhs, rhs) {
   if (lhs == null || lhs == undefined) lhs = nil;
   if (rhs == null || rhs == undefined) rhs = nil;
@@ -42,6 +45,9 @@ var ORTEST = function ORTEST(lhs, rhs) {
   return lhs;
 };
 
+/**
+  Performs an 'and op' with lhs and rhs
+*/
 var ANDTEST = function ANDTEST(lhs, rhs) {
   if (lhs == null || lhs == undefined) lhs = nil;
   if (rhs == null || rhs == undefined) rhs = nil;
@@ -190,7 +196,8 @@ VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/base/
 // require('core/regexp');
 // require('core/range');
 // require('core/time');
-// require('core/proc');
+
+VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/base/lib/core/proc.js');
 // require('core/math');
 // require('core/enumerator');
 // 

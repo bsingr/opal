@@ -24,3 +24,5 @@ VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/vienn
 VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/vienna/lib/app_kit/button_cell.js');
 
 VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/vienna/lib/app_kit/tracking_area.js');
+
+VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/vienna/lib/app_kit/builder/builder.js');

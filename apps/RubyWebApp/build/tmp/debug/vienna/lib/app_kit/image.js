@@ -46,7 +46,7 @@ $VN_2.$def('status',function(self,_cmd){
 return self.$i_g('@status');
 });
 $VN_2.$def('load',function(self,_cmd){
-if(!RTEST(VN$(ORTEST(VN$(self.$i_g('@status'),'==','loading'),self.$i_g('@status')),'==','completed'))){
+if(RTEST(VN$(ORTEST(VN$(self.$i_g('@status'),'==','loading'),self.$i_g('@status')),'==','completed'))){
 return ;
 }
 self.$i_s('@status','loading');
@@ -76,7 +76,6 @@ $VN_2.$def('_image_did_load',function(self,_cmd){
 return VN$(self,'puts','WAYYY');
 });
 $VN_2.$def('sprite',function(self,_cmd,name,rect){
-return VN$(self,'puts',['Making sprite named ',(name)].join(''));
 });
 $VN_2.$def('size=',function(self,_cmd,size){
 VN$(self, 'will_change_value_for_key', 'size');

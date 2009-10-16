@@ -24,6 +24,10 @@
 # THE SOFTWARE.
 #
 
+`
+Function.prototype.$klass = cProc
+Function.prototype.$type = VN.PROC;
+`
 
 class Proc
   
@@ -32,7 +36,8 @@ class Proc
   end
   
   def call
-    
+    # puts "calling this..."
+    return `self.apply(self, [arguments[2]]);`
   end
   
   def []

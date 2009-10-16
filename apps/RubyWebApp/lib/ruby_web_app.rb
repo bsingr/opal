@@ -30,72 +30,22 @@ require 'vienna'
 
 module RubyWebApp
   
-  # By default include vienna, so we can access View etc by their name, rather than
-  # by VN::View etc... more convience when dealing with points, rect etc, but also,
-  # by including the module, the lookup time is MUCH quicker, than having to first
-  # reference Vienna, then to reference View.
-  
   # include Vienna
   
   VERSION = "0.0.1"
   
-  class AppDelegate
-        
-    def initialize
-      @adam = 10
-    end
-    
-    def will_finish_launching (notification)
-      puts 'Application will finish launching!'
-      VN::Application
-    end
-    
-    def did_finish_launching (notification)
-      puts 'Application did finish launching!!'
-    end
-    
-    def adam=(obj)
-      
-    end
-    
-    def other_object=(now)
-      puts now
-    end
+  def self.version
+    VERSION
   end
-  
-  class TempObserver
-    
-    def observe_value_for_key_path path, of_object:object, change:change, context:context
-      puts 'holy macaranieieejjcjcjkjkjnjnwkejndwjednjwej'
-      puts "old value is #{change[:old]}"
-      puts "new value is #{change[:new]}"
-    end
-    
-  end
-  
 end
 
-def main
-  app_delegate = RubyWebApp::AppDelegate.new
+require 'builders/main_menu'
+require 'controllers/app_controller'
+
+Vienna::App.run do |app|
   
-  Vienna::App.delegate = app_delegate
-  
-  Vienna::App.run
-  my_win = Vienna::Window.new(Vienna::Rect.new(100, 100, 100, 100), [])
-  my_button = Vienna::Button.new(Vienna::Rect.new(100, 100, 100, 100))
-  my_win << my_button
-  my_button.needs_display = true
-  # puts 'done'
-  # puts my_button
-  
-  
-  tracking_area = VN::TrackingArea.tracking_area_with_rect nil, options:nil, owner:nil, user_info:nil
-  my_button.add_tracking_area tracking_area
-  
-  # puts '=================================='
-  
-  temp = RubyWebApp::TempObserver.new
-  app_delegate.add_observer temp, for_key_path:'adam', options:nil, context:nil
-  # puts 'setting value to 10...'
-  # app_delegate.adam = 10
+  VN::Builder.build :main_menu, :owner => VN::App, :top_level_objects => [] do |builder|
+    puts "builder finished!"
+  end
+
 end

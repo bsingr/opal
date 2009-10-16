@@ -17,3 +17,9 @@ Finish these off. Havent done situtation with no case value. Checking for true i
 Blocks
 ======
 Add block params into local namespace - push then pop nametable for declared.
+
+
+Next
+====
+Finish resources: copy images to images/, or rakefile specified address
+- set images_dir in VN$ENV so VN::Image can access it

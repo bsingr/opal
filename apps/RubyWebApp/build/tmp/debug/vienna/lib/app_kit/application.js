@@ -40,8 +40,7 @@ return (self.$k_d('@@app') ? self.$k_g('@@app') : self.$k_s('@@app',VN$(self,'ne
 });
 $VN_2.$def('delegate=',function(self,_cmd,obj){
 VN$(self, 'will_change_value_for_key', 'delegate');
-VN$(self,'puts',self.$i_g('@delegate'));
-if(!RTEST(VN$(self.$i_g('@delegate'),'==',obj))){
+if(RTEST(VN$(self.$i_g('@delegate'),'==',obj))){
 return ;
 }
 var nc = VN$(self.$klass.$c_g_full('VN').$c_g('NotificationCenter'),'default_center');
@@ -63,11 +62,16 @@ $VN_2.$def('running?',function(self,_cmd){
 return true;
 });
 $VN_2.$def('finish_launching',function(self,_cmd){
+if(RTEST(self.$i_g('@run_block'))){
+VN$(self.$i_g('@run_block'),'call',self);
+}
+VN$(self,'puts',['===== In: Application','#finish_launching'].join(''));
+VN$(self,'puts',self.$i_g('@delegate'));
 var nc = VN$(self.$klass.$c_g_full('NotificationCenter'),'default_center');
 VN$(nc,'post_notification_name:object:',self.$klass.$c_g_full('APP_WILL_FINISH_LAUNCHING'),self);
 return VN$(nc,'post_notification_name:object:',self.$klass.$c_g_full('APP_DID_FINISH_LAUNCHING'),self);
 });
-$VN_2.$def('run',function(self,_cmd){
-return VN$(self, 'finish_launching');
+$VN_2.$def('run',function(self,_cmd,block){
+return self.$i_s('@run_block',block);
 });
 $VN_1.$c_s('App',VN$($VN_1.$c_g_full('Application'),'shared_application'));

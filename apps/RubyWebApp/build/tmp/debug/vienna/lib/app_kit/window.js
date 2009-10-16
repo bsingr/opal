@@ -22,6 +22,13 @@ self.$i_s('@graphics_context',VN$(self.$klass.$c_g_full('GraphicsContext'),'new'
 VN$(self.$i_g('@display_element'),'add_event_listener','mousedown',function() { console.log('yeah!'); console.log(self); });
 return VN$(self.$i_g('@display_element'),'add_event_listener','mouseup',function() { console.log('yeah up!'); });
 });
+$VN_2.$def_s('build',function(self,_cmd,options,block){
+var win = VN$(self,'new',VN$(self.$c_g_full('Rect'),'new',100,100,100,100),nil);
+if(RTEST(block)){
+arguments[arguments.length -1](win);
+}
+return win;
+});
 $VN_2.$def_s('frame_rect_for_content_rect:style_mask:',function(self,_cmd,rect,style){
 });
 $VN_2.$def_s('content_rect_for_frame_rect:style_mask:',function(self,_cmd,rect,style){

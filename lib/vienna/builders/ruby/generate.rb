@@ -209,7 +209,9 @@ module Vienna
     # If/unless mod ... statement after 
     # 
     def generate_if_mod stmt, context
-      if stmt.node == :if
+      # puts "IF node"
+      # puts stmt
+      if stmt.node == :if_mod
         write "if(RTEST("
       else
         write "if(!RTEST("
@@ -543,6 +545,22 @@ module Vienna
         end
       end
       
+      # assocs
+      if call[:call_args] and call[:call_args][:assocs]
+        write ","
+        # puts call[:call_args][:assocs]
+        write "VN.$h("
+        call[:call_args][:assocs].each do |a|
+          write "," unless call[:call_args][:assocs].first == a
+          
+          generate_stmt a[:key], :instance => context[:instance], :full_stmt => false
+          write ","
+          generate_stmt a[:value], :instance => context[:instance], :full_stmt => false
+          # write a
+        end
+        write ")"
+        # generate_assoc_list call[:call_args][:assocs], :instance => context[:instance], :full_stmt => false
+      end
       # write call
       # if call[:meth] == 'sprite'
         # puts 'gmmm'

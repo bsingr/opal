@@ -57,7 +57,10 @@ RObject.prototype.$i_s = function(id, val) {
   @param id - Ivar name
 */
 RObject.prototype.$i_g = function(id) {
-  return this.$iv_tbl[id] || nil;
+  if (this.$iv_tbl[id] == undefined || this.$iv_tbl[id] == null) {
+    return nil;
+  }
+  return this.$iv_tbl[id];
 };
 
 /*
