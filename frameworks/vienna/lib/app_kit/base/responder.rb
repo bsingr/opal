@@ -52,7 +52,7 @@ module Vienna
   #       :ctrl_a => 'select_all'
   #     }
   
-  class Responder < Object
+  class Responder
     
     def initialize
       puts 'initialising responder'

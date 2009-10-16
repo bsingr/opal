@@ -76,6 +76,14 @@ module Vienna
       puts '_done in initialize view_'
     end
     
+    def self.build options, &block
+      view = self.new Rect.new(0, 0, 100, 100)     
+      if block
+        yield view
+      end
+      view
+    end
+    
     def element
       @element
     end
@@ -468,23 +476,10 @@ module Vienna
     
     # Clear the whole view for display - i.e. draw everything from scratch - remove any clipping
     def needs_display=(flag)
-      unless @window
-        return
-      end
+      return unless @window
       
-      @needs_display = flag
       
-      # FIXME: this shouldnt be done here
-      # puts 'drawing rect!'
-      # puts bounds.to_s
-      
-      graphics_context = @window.graphics_context
-      GraphicsContext.current_context = graphics_context
-      graphics_context.graphics_port = self.graphics_port
-      puts 'now showing graphics context'
-      puts graphics_context
-      
-      draw_rect bounds
+      display
     end
     
     
@@ -516,10 +511,16 @@ module Vienna
     
     
     def display
-      if @needs_display
-        # display
-      end
+      return unless @window
+      view_will_draw
+      
+      graphics_context = @window.graphics_context
+      GraphicsContext.current_context = graphics_context
+      graphics_context.graphics_port = self.graphics_port
+      
+      draw_rect bounds
     end
+    
     
     def draw_rect rect
       puts 'drawing rect'

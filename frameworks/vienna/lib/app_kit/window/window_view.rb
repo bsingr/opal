@@ -1,5 +1,5 @@
 # 
-# app_kit.rb
+# window_view.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,28 +24,19 @@
 # THE SOFTWARE.
 #
 
-# Base
-require 'base/responder'
-require 'base/application'
-require 'base/event'
-require 'base/tracking_area'
+# Require each type of window view here...
 
-# # Graphics
-require 'graphics/graphics_context'
-require 'graphics/geometry'
-require 'graphics/image'
-# require 'graphics/array_geometry_additions'
-
-# Views
-require 'views/view'
-require 'views/controls/control'
-require 'views/controls/button'
-require 'views/cells/cell'
-require 'views/cells/button_cell'
-
-# Windows
-require 'window/window'
-require 'window/panel'
-
-# Builder
-require 'builder/builder'
+module Vienna
+  
+  # Base window view
+  class WindowView < View
+    
+    
+    def draw_rect rect
+      # Drawing done here
+      
+    end
+    
+  end
+  
+end

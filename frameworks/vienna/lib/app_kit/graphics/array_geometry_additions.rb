@@ -1,5 +1,5 @@
 # 
-# app_kit.rb
+# array_geometry_additions.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,28 +24,38 @@
 # THE SOFTWARE.
 #
 
-# Base
-require 'base/responder'
-require 'base/application'
-require 'base/event'
-require 'base/tracking_area'
-
-# # Graphics
-require 'graphics/graphics_context'
-require 'graphics/geometry'
-require 'graphics/image'
-# require 'graphics/array_geometry_additions'
-
-# Views
-require 'views/view'
-require 'views/controls/control'
-require 'views/controls/button'
-require 'views/cells/cell'
-require 'views/cells/button_cell'
-
-# Windows
-require 'window/window'
-require 'window/panel'
-
-# Builder
-require 'builder/builder'
+module Vienna
+  
+  # Additions to array so that arrays can be used instead of rects, points and
+  # size classes.
+  class Array
+    
+    def to_rect
+      if length == 4
+        Rect.new(`self[0]`, `self[1]`, `self[2]`, `self[3]`)
+      else
+        Rect.new(0,0,0,0)
+      end
+    end
+    
+    def to_size
+      if length == 2
+        Size.new(`self[0]`, `self[1]`)
+      elsif length == 4
+        Size.new(`self[2]`, `self[3]`)
+      else
+        Size.new(0,0)
+      end
+    end
+    
+    def to_point
+      if length == 2
+        Point.new(`self[0]`, `self[1]`)
+      elsif length == 4
+        Point.new(`self[0]`, `self[1]`)
+      else
+        Point.new(0,0)
+      end
+    end
+  end
+end

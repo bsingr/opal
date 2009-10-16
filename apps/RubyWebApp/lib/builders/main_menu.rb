@@ -23,52 +23,25 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 #
+
 module RubyWebApp
   
-  Vienna::Builder.new :main_menu do |b|
+  Vienna::Builder.new :main_menu do |builder|
     
     app_delegate = RubyWebApp::AppController.new
+    VN::App.delegate = app_delegate
     
-    # main_menu = VN::Window.build :frame => VN::Rect.new(0, 0, 100, 100), :title => 100 do |win|
-    #       puts "built window!"
-    #       puts win
-    #       my_button = Vienna::Button.new(Vienna::Rect.new(100, 100, 100, 100))
-    #         win << my_button
-    #         my_button.needs_display = true
-    #       # win.add_subview Vienna::Button.build :style => :bezel, :target => app_delegate, :action =>'button_clicked' do |button|
-    #         # app_delegate.my_button = button
-    #       # end
-    #     end
-       
-         # Set app's delegate to our appdelegate class
-         VN::App.delegate = app_delegate
-       
-    # some outlets..
-    # app_delegate.window = main_window
+    Vienna::Window.build :frame => [0,0,100,100], :title => 'My Window!' do |win|
+        
+      my_button = Vienna::Button.build :frame => [0,0,100,100], :bezel => :rounded
+      win << my_button
+      my_button.needs_display = true
+      
+      my_buttons = Vienna::Button.build :frame => [0,0,100,100], :bezel => :rounded
+      win << my_buttons
+      my_button.needs_display = true
+    
+    end
+    
   end
 end
-
-# def main
-#   app_delegate = RubyWebApp::AppDelegate.new
-#   
-#   Vienna::App.delegate = app_delegate
-#   
-#   Vienna::App.run
-#   my_win = Vienna::Window.new(Vienna::Rect.new(100, 100, 100, 100), [])
-#   my_button = Vienna::Button.new(Vienna::Rect.new(100, 100, 100, 100))
-#   my_win << my_button
-#   my_button.needs_display = true
-#   # puts 'done'
-#   # puts my_button
-#   
-#   
-#   tracking_area = VN::TrackingArea.tracking_area_with_rect nil, options:nil, owner:nil, user_info:nil
-#   my_button.add_tracking_area tracking_area
-#   
-#   # puts '=================================='
-#   
-#   temp = RubyWebApp::TempObserver.new
-#   app_delegate.add_observer temp, for_key_path:'adam', options:nil, context:nil
-#   # puts 'setting value to 10...'
-#   # app_delegate.adam = 10
-# end

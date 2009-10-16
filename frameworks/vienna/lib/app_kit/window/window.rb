@@ -24,6 +24,8 @@
 # THE SOFTWARE.
 #
 
+require 'window_view'
+
 module Vienna
   
   class Window < Responder

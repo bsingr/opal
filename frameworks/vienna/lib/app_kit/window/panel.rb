@@ -1,5 +1,5 @@
 # 
-# app_kit.rb
+# panel.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,28 +24,10 @@
 # THE SOFTWARE.
 #
 
-# Base
-require 'base/responder'
-require 'base/application'
-require 'base/event'
-require 'base/tracking_area'
-
-# # Graphics
-require 'graphics/graphics_context'
-require 'graphics/geometry'
-require 'graphics/image'
-# require 'graphics/array_geometry_additions'
-
-# Views
-require 'views/view'
-require 'views/controls/control'
-require 'views/controls/button'
-require 'views/cells/cell'
-require 'views/cells/button_cell'
-
-# Windows
-require 'window/window'
-require 'window/panel'
-
-# Builder
-require 'builder/builder'
+module Vienna
+  
+  class Panel < Window
+    
+  end
+  
+end

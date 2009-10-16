@@ -33,6 +33,10 @@ module Vienna
       @size = Size.new(w, h)
     end
     
+    def to_rect
+      self
+    end
+    
     def size
       @size
     end
@@ -112,6 +116,10 @@ module Vienna
       @y = y
     end
     
+    def to_point
+      self
+    end
+    
     def x
       @x
     end
@@ -129,11 +137,18 @@ module Vienna
     end
   end
   
+  
+  
+  
   class Size
     
     def initialize w, h
       @width = w
       @height = h
+    end
+    
+    def to_size
+      self
     end
     
     def width
