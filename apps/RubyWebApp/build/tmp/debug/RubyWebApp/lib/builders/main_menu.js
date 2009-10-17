@@ -6,8 +6,8 @@ return VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('Window'),'build',VN.$h('frame'
 var my_button = VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('Button'),'build',VN.$h('frame',[0,0,100,100],'bezel','rounded'));
 VN$(win,'<<',my_button);
 VN$(my_button,'needs_display=',true);
-var my_buttons = VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('Button'),'build',VN.$h('frame',[0,0,100,100],'bezel','rounded'));
-VN$(win,'<<',my_buttons);
-return VN$(my_button,'needs_display=',true);
+var my_slider = VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('Slider'),'build',VN.$h('frame',[0,0,100,100]));
+VN$(win,'<<',my_slider);
+return VN$(my_slider,'needs_display=',true);
 });
 });

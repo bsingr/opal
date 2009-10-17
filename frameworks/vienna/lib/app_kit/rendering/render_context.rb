@@ -1,5 +1,5 @@
 # 
-# main_menu.rb
+# render_context.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,24 +24,12 @@
 # THE SOFTWARE.
 #
 
-module RubyWebApp
+module Vienna
   
-  Vienna::Builder.new :main_menu do |builder|
-    
-    app_delegate = RubyWebApp::AppController.new
-    VN::App.delegate = app_delegate
-    
-    Vienna::Window.build :frame => [0,0,100,100], :title => 'My Window!' do |win|
-        
-      my_button = Vienna::Button.build :frame => [0,0,100,100], :bezel => :rounded
-      win << my_button
-      my_button.needs_display = true
-      
-      my_slider = Vienna::Slider.build :frame => [0,0,100,100]
-      win << my_slider
-      my_slider.needs_display = true
-    
-    end
+  # Render context is a special type of element with additions relevant to 
+  # rendering views within Vienna
+  class RenderContext < Element
     
   end
+  
 end

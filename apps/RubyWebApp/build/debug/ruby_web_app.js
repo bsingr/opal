@@ -1,4 +1,4 @@
-VN$ENV = { };
+VN$ENV = { 'display_mode': 'render', 'image_dir': 'images' };
 
 /* 
  * base.js
@@ -2611,6 +2611,39 @@ VN.self = VN.obj_alloc(cObject);
 VN.self.$def_s('to_s', function() { 
   return 'main' ;}
 );
+/* 
+ * env.js
+ * vienna
+ * 
+ * Created by Adam Beynon.
+ * Copyright 2009 Adam Beynon.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+ 
+var VN$ENVhash = VN.$h();
+for (prop in VN$ENV) {
+  VN$(VN$ENVhash, '[]=', prop, VN$ENV[prop]);
+}
+
+cObject.$c_s('ENV', VN$ENVhash);
+
 
 var $VN_1 = RClass.define('NilClass',cObject);
 $VN_1.$def('nil?',function(self,_cmd){
@@ -3356,24 +3389,22 @@ VN$(self, 'did_change_value_for_key', 'alignment_rect');
 });
 
 var $VN_1 = RModule.define('Vienna');
+var $VN_2 = RClass.define_under($VN_1, 'RenderContext',$VN_2.$c_g_full('Element'));
+
+var $VN_1 = RModule.define('Vienna');
 var $VN_2 = RClass.define_under($VN_1, 'View',$VN_2.$c_g_full('Responder'));
 $VN_2.$def('initialize',function(self,_cmd,frame){
-VN$(self,'puts','initialising view');
 VN$sup(arguments.callee, self,_cmd,[]);
 VN$(self, 'setup_display_context');
 self.$i_s('@frame',frame);
 self.$i_s('@bounds',VN$(self.$klass.$c_g_full('Rect'),'new',0,0,VN$(frame,'width'),VN$(frame,'height')));
-VN$(self,'puts','________in initialize___________');
-VN$(self,'puts',frame);
 VN$(self,'frame=',frame);
-VN$(self,'puts','_done this bit_');
 self.$i_s('@subviews',[]);
 self.$i_s('@window',nil);
 self.$i_s('@superview',nil);
 self.$i_s('@posts_frame_changed_notifications',false);
 self.$i_s('@autoresizes_subviews',true);
-self.$i_s('@tracking_areas',[]);
-return VN$(self,'puts','_done in initialize view_');
+return self.$i_s('@tracking_areas',[]);
 });
 $VN_2.$def_s('build',function(self,_cmd,options,block){
 var view = VN$(self,'new',VN$(self.$c_g_full('Rect'),'new',0,0,100,100));
@@ -3835,105 +3866,6 @@ $VN_2.$def('mouse_down',function(self,_cmd,the_event){
 });
 
 var $VN_1 = RModule.define('Vienna');
-var $VN_2 = RClass.define_under($VN_1, 'Button',$VN_2.$c_g_full('Control'));
-VN$($VN_2,'attr_reader','title','alternate_title','image','image_position');
-$VN_2.$def('initialize',function(self,_cmd,frame){
-return VN$sup(arguments.callee, self,_cmd,[frame]);
-});
-$VN_2.$def_s('cell_class',function(self,_cmd){
-return self.$c_g_full('ButtonCell');
-});
-$VN_2.$def('title=',function(self,_cmd,str){
-VN$(self, 'will_change_value_for_key', 'title');
-VN$(self, 'did_change_value_for_key', 'title');
-});
-$VN_2.$def('alternate_title=',function(self,_cmd,str){
-VN$(self, 'will_change_value_for_key', 'alternate_title');
-VN$(self, 'did_change_value_for_key', 'alternate_title');
-});
-$VN_2.$def('image=',function(self,_cmd,image){
-VN$(self, 'will_change_value_for_key', 'image');
-VN$(self, 'did_change_value_for_key', 'image');
-});
-$VN_2.$def('image_position=',function(self,_cmd,position){
-VN$(self, 'will_change_value_for_key', 'image_position');
-VN$(self, 'did_change_value_for_key', 'image_position');
-});
-$VN_2.$def('button_type=',function(self,_cmd,type){
-VN$(self, 'will_change_value_for_key', 'button_type');
-VN$(self, 'did_change_value_for_key', 'button_type');
-});
-$VN_2.$def('type=',function(self,_cmd,type){
-VN$(self, 'will_change_value_for_key', 'type');
-var button_type = type;
-VN$(self, 'did_change_value_for_key', 'type');
-});
-$VN_2.$def('state',function(self,_cmd){
-});
-$VN_2.$def('state=',function(self,_cmd,val){
-VN$(self, 'will_change_value_for_key', 'state');
-VN$(self, 'did_change_value_for_key', 'state');
-});
-$VN_2.$def('on?',function(self,_cmd){
-return VN$(self.$i_g('@state'),'==','on');
-});
-$VN_2.$def('off?',function(self,_cmd){
-return VN$(self.$i_g('@state'),'==','off');
-});
-$VN_2.$def('mixed?',function(self,_cmd){
-return VN$(self.$i_g('@state'),'==','mixed');
-});
-$VN_2.$def('bordered?',function(self,_cmd){
-});
-$VN_2.$def('bordered=',function(self,_cmd,flag){
-VN$(self, 'will_change_value_for_key', 'bordered');
-VN$(self, 'did_change_value_for_key', 'bordered');
-});
-$VN_2.$def('transparent?',function(self,_cmd){
-});
-$VN_2.$def('transparent=',function(self,_cmd,flag){
-VN$(self, 'will_change_value_for_key', 'transparent');
-VN$(self, 'did_change_value_for_key', 'transparent');
-});
-$VN_2.$def('key_equivalent',function(self,_cmd){
-});
-$VN_2.$def('key_equivalent=',function(self,_cmd,code){
-VN$(self, 'will_change_value_for_key', 'key_equivalent');
-VN$(self, 'did_change_value_for_key', 'key_equivalent');
-});
-$VN_2.$def('key_equivalent_modifier_mask',function(self,_cmd){
-});
-$VN_2.$def('key_equivalent_modifier_mask=',function(self,_cmd,mask){
-VN$(self, 'will_change_value_for_key', 'key_equivalent_modifier_mask');
-VN$(self, 'did_change_value_for_key', 'key_equivalent_modifier_mask');
-});
-$VN_2.$def('highlight=',function(self,_cmd,flag){
-VN$(self, 'will_change_value_for_key', 'highlight');
-VN$(self, 'did_change_value_for_key', 'highlight');
-});
-$VN_2.$def('perform_key_equivalent',function(self,_cmd,key){
-});
-$VN_2.$def('bezel_style=',function(self,_cmd,style){
-VN$(self, 'will_change_value_for_key', 'bezel_style');
-VN$(self, 'did_change_value_for_key', 'bezel_style');
-});
-$VN_2.$def('bezel=',function(self,_cmd,style){
-VN$(self, 'will_change_value_for_key', 'bezel');
-var bezel_style = style;
-VN$(self, 'did_change_value_for_key', 'bezel');
-});
-$VN_2.$def('bezel_style',function(self,_cmd){
-});
-$VN_2.$def('allows_mixed_state=',function(self,_cmd,flag){
-VN$(self, 'will_change_value_for_key', 'allows_mixed_state');
-VN$(self, 'did_change_value_for_key', 'allows_mixed_state');
-});
-$VN_2.$def('allows_mixed_state',function(self,_cmd){
-});
-$VN_2.$def('next_state',function(self,_cmd){
-});
-
-var $VN_1 = RModule.define('Vienna');
 var $VN_2 = RClass.define_under($VN_1, 'Cell',cObject);
 $VN_2.$def_s('prefers_tracking_until_mouse_up',function(self,_cmd){
 return true;
@@ -4369,6 +4301,107 @@ VN$(self, 'did_change_value_for_key', 'background_style');
 });
 
 var $VN_1 = RModule.define('Vienna');
+var $VN_2 = RClass.define_under($VN_1, 'Button',$VN_2.$c_g_full('Control'));
+VN$($VN_2,'attr_reader','title','alternate_title','image','image_position');
+$VN_2.$def('initialize',function(self,_cmd,frame){
+return VN$sup(arguments.callee, self,_cmd,[frame]);
+});
+$VN_2.$def_s('cell_class',function(self,_cmd){
+return self.$c_g_full('ButtonCell');
+});
+$VN_2.$def('title=',function(self,_cmd,str){
+VN$(self, 'will_change_value_for_key', 'title');
+VN$(self, 'did_change_value_for_key', 'title');
+});
+$VN_2.$def('alternate_title=',function(self,_cmd,str){
+VN$(self, 'will_change_value_for_key', 'alternate_title');
+VN$(self, 'did_change_value_for_key', 'alternate_title');
+});
+$VN_2.$def('image=',function(self,_cmd,image){
+VN$(self, 'will_change_value_for_key', 'image');
+VN$(self, 'did_change_value_for_key', 'image');
+});
+$VN_2.$def('image_position=',function(self,_cmd,position){
+VN$(self, 'will_change_value_for_key', 'image_position');
+VN$(self, 'did_change_value_for_key', 'image_position');
+});
+$VN_2.$def('button_type=',function(self,_cmd,type){
+VN$(self, 'will_change_value_for_key', 'button_type');
+VN$(self, 'did_change_value_for_key', 'button_type');
+});
+$VN_2.$def('type=',function(self,_cmd,type){
+VN$(self, 'will_change_value_for_key', 'type');
+var button_type = type;
+VN$(self, 'did_change_value_for_key', 'type');
+});
+$VN_2.$def('state',function(self,_cmd){
+return self.$i_g('@state');
+});
+$VN_2.$def('state=',function(self,_cmd,val){
+VN$(self, 'will_change_value_for_key', 'state');
+self.$i_s('@state',val);
+VN$(self, 'did_change_value_for_key', 'state');
+});
+$VN_2.$def('on?',function(self,_cmd){
+return VN$(self.$i_g('@state'),'==','on');
+});
+$VN_2.$def('off?',function(self,_cmd){
+return VN$(self.$i_g('@state'),'==','off');
+});
+$VN_2.$def('mixed?',function(self,_cmd){
+return VN$(self.$i_g('@state'),'==','mixed');
+});
+$VN_2.$def('bordered?',function(self,_cmd){
+});
+$VN_2.$def('bordered=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'bordered');
+VN$(self, 'did_change_value_for_key', 'bordered');
+});
+$VN_2.$def('transparent?',function(self,_cmd){
+});
+$VN_2.$def('transparent=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'transparent');
+VN$(self, 'did_change_value_for_key', 'transparent');
+});
+$VN_2.$def('key_equivalent',function(self,_cmd){
+});
+$VN_2.$def('key_equivalent=',function(self,_cmd,code){
+VN$(self, 'will_change_value_for_key', 'key_equivalent');
+VN$(self, 'did_change_value_for_key', 'key_equivalent');
+});
+$VN_2.$def('key_equivalent_modifier_mask',function(self,_cmd){
+});
+$VN_2.$def('key_equivalent_modifier_mask=',function(self,_cmd,mask){
+VN$(self, 'will_change_value_for_key', 'key_equivalent_modifier_mask');
+VN$(self, 'did_change_value_for_key', 'key_equivalent_modifier_mask');
+});
+$VN_2.$def('highlight=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'highlight');
+VN$(self, 'did_change_value_for_key', 'highlight');
+});
+$VN_2.$def('perform_key_equivalent',function(self,_cmd,key){
+});
+$VN_2.$def('bezel_style=',function(self,_cmd,style){
+VN$(self, 'will_change_value_for_key', 'bezel_style');
+VN$(self, 'did_change_value_for_key', 'bezel_style');
+});
+$VN_2.$def('bezel=',function(self,_cmd,style){
+VN$(self, 'will_change_value_for_key', 'bezel');
+var bezel_style = style;
+VN$(self, 'did_change_value_for_key', 'bezel');
+});
+$VN_2.$def('bezel_style',function(self,_cmd){
+});
+$VN_2.$def('allows_mixed_state=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'allows_mixed_state');
+VN$(self, 'did_change_value_for_key', 'allows_mixed_state');
+});
+$VN_2.$def('allows_mixed_state',function(self,_cmd){
+});
+$VN_2.$def('next_state',function(self,_cmd){
+});
+
+var $VN_1 = RModule.define('Vienna');
 VN$($VN_1.$c_g_full('Image'),'resource','controls.png',function(img){
 VN$(img,'sprite','rounded_bezel_enabled_regular_left',[0,0,36,24]);
 VN$(img,'sprite','rounded_bezel_enabled_regular_middle',[0,24,36,24]);
@@ -4534,6 +4567,244 @@ $VN_2.$def('bezel_style',function(self,_cmd){
 return self.$i_g('@bezel_style');
 });
 
+var $VN_1 = RModule.define('Vienna');
+var $VN_2 = RClass.define_under($VN_1, 'Slider',$VN_2.$c_g_full('Control'));
+$VN_2.$def('initialize',function(self,_cmd,frame){
+return VN$sup(arguments.callee, self,_cmd,[frame]);
+});
+$VN_2.$def_s('cell_class',function(self,_cmd){
+return self.$c_g_full('SliderCell');
+});
+$VN_2.$def('min_value',function(self,_cmd){
+return self.$i_g('@min_value');
+});
+$VN_2.$def('min_value=',function(self,_cmd,a_double){
+VN$(self, 'will_change_value_for_key', 'min_value');
+self.$i_s('@min_value',a_double);
+VN$(self, 'did_change_value_for_key', 'min_value');
+});
+$VN_2.$def('max_value',function(self,_cmd){
+return self.$i_g('@max_value');
+});
+$VN_2.$def('max_value=',function(self,_cmd,a_double){
+VN$(self, 'will_change_value_for_key', 'max_value');
+self.$i_s('@max_value',a_double);
+VN$(self, 'did_change_value_for_key', 'max_value');
+});
+$VN_2.$def('alt_increment_value=',function(self,_cmd,inc_value){
+VN$(self, 'will_change_value_for_key', 'alt_increment_value');
+self.$i_s('@alt_increment_value',inc_value);
+VN$(self, 'did_change_value_for_key', 'alt_increment_value');
+});
+$VN_2.$def('alt_increment_value',function(self,_cmd){
+return self.$i_g('@alt_increment_value');
+});
+$VN_2.$def('title_cell=',function(self,_cmd,cell){
+VN$(self, 'will_change_value_for_key', 'title_cell');
+self.$i_s('@title_cell',cell);
+VN$(self, 'did_change_value_for_key', 'title_cell');
+});
+$VN_2.$def('title_cell',function(self,_cmd){
+return self.$i_g('@title_cell');
+});
+$VN_2.$def('title_color=',function(self,_cmd,color){
+VN$(self, 'will_change_value_for_key', 'title_color');
+self.$i_s('@title_color',color);
+VN$(self, 'did_change_value_for_key', 'title_color');
+});
+$VN_2.$def('title_color',function(self,_cmd){
+return self.$i_g('@title_color');
+});
+$VN_2.$def('title_font=',function(self,_cmd,font){
+VN$(self, 'will_change_value_for_key', 'title_font');
+self.$i_s('@title_font',font);
+VN$(self, 'did_change_value_for_key', 'title_font');
+});
+$VN_2.$def('title_font',function(self,_cmd){
+return self.$i_g('@title_font');
+});
+$VN_2.$def('title',function(self,_cmd){
+return self.$i_g('@title');
+});
+$VN_2.$def('title=',function(self,_cmd,str){
+VN$(self, 'will_change_value_for_key', 'title');
+self.$i_s('@title',str);
+VN$(self, 'did_change_value_for_key', 'title');
+});
+$VN_2.$def('knob_thickness=',function(self,_cmd,a_float){
+VN$(self, 'will_change_value_for_key', 'knob_thickness');
+self.$i_s('@knob_thickness',a_float);
+VN$(self, 'did_change_value_for_key', 'knob_thickness');
+});
+$VN_2.$def('knob_thickness',function(self,_cmd){
+return self.$i_g('@knob_thickness');
+});
+$VN_2.$def('image=',function(self,_cmd,img){
+VN$(self, 'will_change_value_for_key', 'image');
+self.$i_s('@image',img);
+VN$(self, 'did_change_value_for_key', 'image');
+});
+$VN_2.$def('image',function(self,_cmd){
+return self.$i_g('@image');
+});
+$VN_2.$def('vertical?',function(self,_cmd){
+return self.$i_g('@vertical');
+});
+$VN_2.$def('accepts_first_mouse',function(self,_cmd,event){
+return true;
+});
+$VN_2.$def('number_of_tick_marks=',function(self,_cmd,count){
+VN$(self, 'will_change_value_for_key', 'number_of_tick_marks');
+self.$i_s('@number_of_tick_marks',count);
+VN$(self, 'did_change_value_for_key', 'number_of_tick_marks');
+});
+$VN_2.$def('number_of_tick_marks',function(self,_cmd){
+return self.$i_g('@number_of_tick_marks');
+});
+$VN_2.$def('tick_mark_position=',function(self,_cmd,pos){
+VN$(self, 'will_change_value_for_key', 'tick_mark_position');
+self.$i_s('@tick_mark_position',pos);
+VN$(self, 'did_change_value_for_key', 'tick_mark_position');
+});
+$VN_2.$def('tick_mark_position',function(self,_cmd){
+return self.$i_g('@tick_mark_position');
+});
+$VN_2.$def('allows_tick_mark_values_only=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'allows_tick_mark_values_only');
+self.$i_s('@allows_tick_mark_values_only',flag);
+VN$(self, 'did_change_value_for_key', 'allows_tick_mark_values_only');
+});
+$VN_2.$def('allows_tick_mark_values_only?',function(self,_cmd){
+return self.$i_g('@allows_tick_mark_values_only');
+});
+$VN_2.$def('tick_mark_value_at_index',function(self,_cmd,index){
+});
+$VN_2.$def('rect_of_tick_mark_at_index',function(self,_cmd,index){
+});
+$VN_2.$def('index_of_tick_mark_at_point',function(self,_cmd,point){
+});
+$VN_2.$def('closest_tick_mark_value_to_value',function(self,_cmd,value){
+});
+
+var $VN_1 = RModule.define('Vienna');
+var $VN_2 = RClass.define_under($VN_1, 'SliderCell',$VN_2.$c_g_full('Cell'));
+$VN_2.$def_s('prefers_tracking_until_mouse_up',function(self,_cmd){
+return true;
+});
+$VN_2.$def('min_value',function(self,_cmd){
+return self.$i_g('@min_value');
+});
+$VN_2.$def('min_value=',function(self,_cmd,a_double){
+VN$(self, 'will_change_value_for_key', 'min_value');
+self.$i_s('@min_value',a_double);
+VN$(self, 'did_change_value_for_key', 'min_value');
+});
+$VN_2.$def('max_value',function(self,_cmd){
+return self.$i_g('@max_value');
+});
+$VN_2.$def('max_value=',function(self,_cmd,a_double){
+VN$(self, 'will_change_value_for_key', 'max_value');
+self.$i_s('@max_value',a_double);
+VN$(self, 'did_change_value_for_key', 'max_value');
+});
+$VN_2.$def('alt_increment_value=',function(self,_cmd,inc_value){
+VN$(self, 'will_change_value_for_key', 'alt_increment_value');
+self.$i_s('@alt_increment_value',inc_value);
+VN$(self, 'did_change_value_for_key', 'alt_increment_value');
+});
+$VN_2.$def('alt_increment_value',function(self,_cmd){
+return self.$i_g('@alt_increment_value');
+});
+$VN_2.$def('title_cell=',function(self,_cmd,cell){
+VN$(self, 'will_change_value_for_key', 'title_cell');
+self.$i_s('@title_cell',cell);
+VN$(self, 'did_change_value_for_key', 'title_cell');
+});
+$VN_2.$def('title_cell',function(self,_cmd){
+return self.$i_g('@title_cell');
+});
+$VN_2.$def('title_color=',function(self,_cmd,color){
+VN$(self, 'will_change_value_for_key', 'title_color');
+self.$i_s('@title_color',color);
+VN$(self, 'did_change_value_for_key', 'title_color');
+});
+$VN_2.$def('title_color',function(self,_cmd){
+return self.$i_g('@title_color');
+});
+$VN_2.$def('title_font=',function(self,_cmd,font){
+VN$(self, 'will_change_value_for_key', 'title_font');
+self.$i_s('@title_font',font);
+VN$(self, 'did_change_value_for_key', 'title_font');
+});
+$VN_2.$def('title_font',function(self,_cmd){
+return self.$i_g('@title_font');
+});
+$VN_2.$def('title',function(self,_cmd){
+return self.$i_g('@title');
+});
+$VN_2.$def('title=',function(self,_cmd,str){
+VN$(self, 'will_change_value_for_key', 'title');
+self.$i_s('@title',str);
+VN$(self, 'did_change_value_for_key', 'title');
+});
+$VN_2.$def('knob_thickness=',function(self,_cmd,a_float){
+VN$(self, 'will_change_value_for_key', 'knob_thickness');
+self.$i_s('@knob_thickness',a_float);
+VN$(self, 'did_change_value_for_key', 'knob_thickness');
+});
+$VN_2.$def('knob_thickness',function(self,_cmd){
+return self.$i_g('@knob_thickness');
+});
+$VN_2.$def('vertical?',function(self,_cmd){
+return self.$i_g('@vertical');
+});
+$VN_2.$def('draw_knob',function(self,_cmd,knob_rect){
+});
+$VN_2.$def('draw_bar_inside',function(self,_cmd,rect){
+});
+$VN_2.$def('track_rect',function(self,_cmd){
+});
+$VN_2.$def('slider_type=',function(self,_cmd,type){
+VN$(self, 'will_change_value_for_key', 'slider_type');
+self.$i_s('@slider_type',type);
+VN$(self, 'did_change_value_for_key', 'slider_type');
+});
+$VN_2.$def('slider_type',function(self,_cmd){
+return self.$i_g('@slider_type');
+});
+$VN_2.$def('number_of_tick_marks=',function(self,_cmd,count){
+VN$(self, 'will_change_value_for_key', 'number_of_tick_marks');
+self.$i_s('@number_of_tick_marks',count);
+VN$(self, 'did_change_value_for_key', 'number_of_tick_marks');
+});
+$VN_2.$def('number_of_tick_marks',function(self,_cmd){
+return self.$i_g('@number_of_tick_marks');
+});
+$VN_2.$def('tick_mark_position=',function(self,_cmd,pos){
+VN$(self, 'will_change_value_for_key', 'tick_mark_position');
+self.$i_s('@tick_mark_position',pos);
+VN$(self, 'did_change_value_for_key', 'tick_mark_position');
+});
+$VN_2.$def('tick_mark_position',function(self,_cmd){
+return self.$i_g('@tick_mark_position');
+});
+$VN_2.$def('allows_tick_mark_values_only=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'allows_tick_mark_values_only');
+self.$i_s('@allows_tick_mark_values_only',flag);
+VN$(self, 'did_change_value_for_key', 'allows_tick_mark_values_only');
+});
+$VN_2.$def('allows_tick_mark_values_only?',function(self,_cmd){
+return self.$i_g('@allows_tick_mark_values_only');
+});
+$VN_2.$def('tick_mark_value_at_index',function(self,_cmd,index){
+});
+$VN_2.$def('rect_of_tick_mark_at_index',function(self,_cmd,index){
+});
+$VN_2.$def('index_of_tick_mark_at_point',function(self,_cmd,point){
+});
+$VN_2.$def('closest_tick_mark_value_to_value',function(self,_cmd,value){
+});
+
 
 var $VN_1 = RModule.define('Vienna');
 var $VN_2 = RClass.define_under($VN_1, 'WindowView',$VN_2.$c_g_full('View'));
@@ -4560,8 +4831,12 @@ self.$i_s('@display_element',VN$(self.$klass.$c_g_full('Element'),'element_with_
 VN$(self.$i_g('@element'),'<<',self.$i_g('@display_element'));
 VN$(self.$klass.$c_g_full('Document'),'<<',self.$i_g('@element'));
 self.$i_s('@graphics_context',VN$(self.$klass.$c_g_full('GraphicsContext'),'new',VN$(self.$i_g('@display_element'),'element').getContext('2d'),false));
-VN$(self.$i_g('@display_element'),'add_event_listener','mousedown',function() { console.log('yeah!'); console.log(self); });
-return VN$(self.$i_g('@display_element'),'add_event_listener','mouseup',function() { console.log('yeah up!'); });
+VN$(self.$i_g('@element'),'add_event_listener','mousedown',function(event){
+return VN$(self,'puts','Yeah! mouse down inside window..');
+});
+return VN$(self.$i_g('@element'),'add_event_listener','mouseup',function(event){
+return VN$(self,'puts','...and the mouse is up again.');
+});
 });
 $VN_2.$def_s('build',function(self,_cmd,options,block){
 var win = VN$(self,'new',VN$(self.$c_g_full('Rect'),'new',100,100,100,100),nil);
@@ -5033,9 +5308,9 @@ return VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('Window'),'build',VN.$h('frame'
 var my_button = VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('Button'),'build',VN.$h('frame',[0,0,100,100],'bezel','rounded'));
 VN$(win,'<<',my_button);
 VN$(my_button,'needs_display=',true);
-var my_buttons = VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('Button'),'build',VN.$h('frame',[0,0,100,100],'bezel','rounded'));
-VN$(win,'<<',my_buttons);
-return VN$(my_button,'needs_display=',true);
+var my_slider = VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('Slider'),'build',VN.$h('frame',[0,0,100,100]));
+VN$(win,'<<',my_slider);
+return VN$(my_slider,'needs_display=',true);
 });
 });
 

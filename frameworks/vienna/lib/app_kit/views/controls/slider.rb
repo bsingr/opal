@@ -28,6 +28,14 @@ module Vienna
   
   class Slider < Control
     
+    def initialize frame
+      super frame
+    end
+    
+    def self.cell_class
+      SliderCell
+    end
+    
     def min_value
       @min_value
     end

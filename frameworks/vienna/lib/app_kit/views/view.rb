@@ -26,7 +26,7 @@
 
 module Vienna
   
-  # Auto resixzing masks
+  # Auto resizing masks
   # ====================
   # :none   
   # :width
@@ -48,7 +48,6 @@ module Vienna
     
     
     def initialize(frame)
-      puts 'initialising view'
       # super frame
       super()
       setup_display_context
@@ -56,11 +55,7 @@ module Vienna
       @frame = frame
       @bounds = Rect.new(0, 0, frame.width, frame.height)
       
-      puts '________in initialize___________'
-      puts frame
       self.frame = frame
-      
-      puts '_done this bit_'
       
       @subviews = []
       @window = nil
@@ -73,7 +68,6 @@ module Vienna
       # can set up tracking as soon as they like
       @tracking_areas = []
       
-      puts '_done in initialize view_'
     end
     
     def self.build options, &block

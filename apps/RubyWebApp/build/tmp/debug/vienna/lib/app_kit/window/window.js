@@ -21,8 +21,12 @@ self.$i_s('@display_element',VN$(self.$klass.$c_g_full('Element'),'element_with_
 VN$(self.$i_g('@element'),'<<',self.$i_g('@display_element'));
 VN$(self.$klass.$c_g_full('Document'),'<<',self.$i_g('@element'));
 self.$i_s('@graphics_context',VN$(self.$klass.$c_g_full('GraphicsContext'),'new',VN$(self.$i_g('@display_element'),'element').getContext('2d'),false));
-VN$(self.$i_g('@display_element'),'add_event_listener','mousedown',function() { console.log('yeah!'); console.log(self); });
-return VN$(self.$i_g('@display_element'),'add_event_listener','mouseup',function() { console.log('yeah up!'); });
+VN$(self.$i_g('@element'),'add_event_listener','mousedown',function(event){
+return VN$(self,'puts','Yeah! mouse down inside window..');
+});
+return VN$(self.$i_g('@element'),'add_event_listener','mouseup',function(event){
+return VN$(self,'puts','...and the mouse is up again.');
+});
 });
 $VN_2.$def_s('build',function(self,_cmd,options,block){
 var win = VN$(self,'new',VN$(self.$c_g_full('Rect'),'new',100,100,100,100),nil);

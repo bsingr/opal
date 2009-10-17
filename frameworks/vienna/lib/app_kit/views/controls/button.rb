@@ -31,10 +31,7 @@ module Vienna
     attr_reader :title, :alternate_title, :image, :image_position
     
     def initialize frame
-      # setup_drawing_context
-      # puts 'initilising button'
       super frame
-      # puts' _finished in button_'
     end
     
     def self.cell_class
@@ -71,13 +68,13 @@ module Vienna
     end
     
     def state
-      
+      @state
     end
     
     # Values can be
     # :on :off, :mixed
     def state=(val)
-      
+      @state = val
     end
     
     def on?

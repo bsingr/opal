@@ -51,6 +51,7 @@ module Vienna
     
     def draw_rect rect
       puts 'drawing rect from control'
+      # puts @cell
       @cell.draw_with_frame @bounds, in_view:self
     end
         

@@ -82,6 +82,7 @@ module Vienna
     def prepare!
       FileUtils.mkdir_p(build_prefix)
       FileUtils.mkdir_p(tmp_prefix)
+      FileUtils.mkdir_p(img_build_path)
     end
     
     def build!
@@ -115,6 +116,7 @@ module Vienna
         images = File.join(f, "resources", "**", "*.{png,jpg,jpeg}")
         Dir.glob(images).each do |img|
           # puts "Found image: #{img}"
+          File.copy(img, File.expand_path(File.join(img_build_path, File.basename(img))))
         end
       end
     end
@@ -127,7 +129,7 @@ module Vienna
     # We can include ENV settings from user's Rakefile, as well as other bits and pieces.
     # We can also hardcode image urls, css urls etc
     def write_env_to_output file
-      file.write "VN$ENV = { };\n"
+      file.write "VN$ENV = { 'display_mode': 'render', 'image_dir': 'images' };\n"
     end
     
     
@@ -216,6 +218,10 @@ module Vienna
     
     def css_build_path
       File.expand_path(File.join(project_root, build_prefix, Vienna.underscore(project_name)) + '.css')
+    end
+    
+    def img_build_path
+      File.expand_path(File.join(project_root, build_prefix, 'images'))
     end
     
     def build_prefix

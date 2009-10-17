@@ -26,7 +26,7 @@
 
 module Vienna
   
-  class SliderCell
+  class SliderCell < Cell
     
     def self.prefers_tracking_until_mouse_up
       true

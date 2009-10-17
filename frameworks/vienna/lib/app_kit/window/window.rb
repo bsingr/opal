@@ -59,9 +59,16 @@ module Vienna
       # Graphics context
       @graphics_context = GraphicsContext.new(`#{@display_element.element}.getContext('2d')`, false)
       
-      # Events
-      @display_element.add_event_listener 'mousedown', `function() { console.log('yeah!'); console.log(#{self}); }`
-      @display_element.add_event_listener 'mouseup', `function() { console.log('yeah up!'); }`    
+      # Events - should attach these to the windowview...all relevant elements are subviews of this,
+      # and, we wont capture events outside the visible window (e.g. the shadow which might be drawn
+      # on the @element)
+      @element.add_event_listener :mousedown do |event|
+        puts 'Yeah! mouse down inside window..'
+      end
+      
+      @element.add_event_listener :mouseup do |event|
+        puts '...and the mouse is up again.'
+      end   
     end
     
     def self.build options, &block

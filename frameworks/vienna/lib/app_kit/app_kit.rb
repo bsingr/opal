@@ -36,12 +36,19 @@ require 'graphics/geometry'
 require 'graphics/image'
 # require 'graphics/array_geometry_additions'
 
+# Rendering
+require 'rendering/render_context'
+
 # Views
 require 'views/view'
 require 'views/controls/control'
-require 'views/controls/button'
 require 'views/cells/cell'
+
+require 'views/controls/button'
 require 'views/cells/button_cell'
+
+require 'views/controls/slider'
+require 'views/cells/slider_cell'
 
 # Windows
 require 'window/window'

@@ -33,9 +33,11 @@ var button_type = type;
 VN$(self, 'did_change_value_for_key', 'type');
 });
 $VN_2.$def('state',function(self,_cmd){
+return self.$i_g('@state');
 });
 $VN_2.$def('state=',function(self,_cmd,val){
 VN$(self, 'will_change_value_for_key', 'state');
+self.$i_s('@state',val);
 VN$(self, 'did_change_value_for_key', 'state');
 });
 $VN_2.$def('on?',function(self,_cmd){

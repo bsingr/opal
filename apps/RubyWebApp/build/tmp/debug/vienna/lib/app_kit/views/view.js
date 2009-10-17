@@ -1,22 +1,17 @@
 var $VN_1 = RModule.define('Vienna');
 var $VN_2 = RClass.define_under($VN_1, 'View',$VN_2.$c_g_full('Responder'));
 $VN_2.$def('initialize',function(self,_cmd,frame){
-VN$(self,'puts','initialising view');
 VN$sup(arguments.callee, self,_cmd,[]);
 VN$(self, 'setup_display_context');
 self.$i_s('@frame',frame);
 self.$i_s('@bounds',VN$(self.$klass.$c_g_full('Rect'),'new',0,0,VN$(frame,'width'),VN$(frame,'height')));
-VN$(self,'puts','________in initialize___________');
-VN$(self,'puts',frame);
 VN$(self,'frame=',frame);
-VN$(self,'puts','_done this bit_');
 self.$i_s('@subviews',[]);
 self.$i_s('@window',nil);
 self.$i_s('@superview',nil);
 self.$i_s('@posts_frame_changed_notifications',false);
 self.$i_s('@autoresizes_subviews',true);
-self.$i_s('@tracking_areas',[]);
-return VN$(self,'puts','_done in initialize view_');
+return self.$i_s('@tracking_areas',[]);
 });
 $VN_2.$def_s('build',function(self,_cmd,options,block){
 var view = VN$(self,'new',VN$(self.$c_g_full('Rect'),'new',0,0,100,100));

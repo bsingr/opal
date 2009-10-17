@@ -187,6 +187,7 @@ require('core/proc');
 // 
 
 require('core/top_self');
+require('core/env');
 
 require('core/nil_class');
 nil = VN$(cObject.$k_g('NilClass'), 'new');
