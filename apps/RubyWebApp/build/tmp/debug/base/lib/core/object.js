@@ -103,7 +103,7 @@ cBasicObject.$def('===', function(self, _cmd, other) {
 });
 
 cBasicObject.$def('class', function(self, _cmd) {
-  console.log('returning class...');
+  // console.log('returning class...');
   return self.$klass;
 });
 
@@ -111,6 +111,19 @@ cBasicObject.$def('respond_to?', function(self, _cmd, selector) {
   var method = self.$klass.$search_method(selector);
   if (!selector) return false;
   return true
+});
+
+cBasicObject.$def('instance_of?', function(self, _cmd, klass) {
+  return self.$klass == klass ? true : false;
+});
+
+// these should allow super checking as well
+cBasicObject.$def('kind_of?', function(self, _cmd, klass) {
+  return self.$klass == klass ? true : false;
+});
+
+cBasicObject.$def('is_a?', function(self, _cmd, klass) {
+  return self.$klass == klass ? true : false;
 });
 
 /**

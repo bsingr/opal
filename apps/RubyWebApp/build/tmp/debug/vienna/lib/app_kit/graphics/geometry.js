@@ -62,7 +62,7 @@ $VN_2.$def('center',function(self,_cmd){
 $VN_2.$def('contain?',function(self,_cmd){
 });
 $VN_2.$def('to_s',function(self,_cmd){
-return ['{{',(VN$(self, 'x')),', ',(VN$(self, 'y')),'}, {',(VN$(self, 'width')),', ',(VN$(self, 'height')),'}}'].join('');
+return ["{{",(VN$(self, 'x')),", ",(VN$(self, 'y')),"}, {",(VN$(self, 'width')),", ",(VN$(self, 'height')),"}}"].join('');
 });
 $VN_2.$def('inspect',function(self,_cmd){
 });

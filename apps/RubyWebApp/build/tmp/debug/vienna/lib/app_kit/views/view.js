@@ -24,23 +24,28 @@ $VN_2.$def('element',function(self,_cmd){
 return self.$i_g('@element');
 });
 $VN_2.$def('display_mode',function(self,_cmd){
-return VN$(self.$klass.$c_g_full('Vienna'),'display_mode');
+return VN$(self.$klass.$c_g_full('ENV'),'[]','display_mode');
 });
 $VN_2.$def('setup_display_context',function(self,_cmd){
-return VN$(self, 'setup_drawing_context');
-});
-$VN_2.$def('setup_drawing_context',function(self,_cmd){
-self.$i_s('@element',VN$(self.$klass.$c_g_full('Element'),'element_with_type:class_name:id:','div','',''));
-self.$i_s('@display_element',VN$(self.$klass.$c_g_full('Element'),'element_with_type:class_name:id:','canvas','',''));
-return VN$(self.$i_g('@element'),'<<',self.$i_g('@display_element'));
+if(RTEST(VN$(VN$(self, 'display_mode'),'==','render'))){
+VN$(self, 'setup_render_context');
+}
+else{
+VN$(self, 'setup_drawing_context');
+}
 });
 $VN_2.$def('setup_render_context',function(self,_cmd){
 self.$i_s('@element',VN$(self.$klass.$c_g_full('Element'),'element_with_type:class_name:id:','div','',''));
-self.$i_s('@display_element',VN$(self.$klass.$c_g_full('Element'),'element_with_type:class_name:id:','div','',''));
-return VN$(self.$i_g('@element'),'<<',self.$i_g('@display_element'));
+self.$i_s('@display_context',VN$(self.$klass.$c_g_full('RenderContext'),'new','div',nil));
+return VN$(self.$i_g('@element'),'<<',self.$i_g('@display_context'));
+});
+$VN_2.$def('setup_drawing_context',function(self,_cmd){
+self.$i_s('@element',VN$(self.$klass.$c_g_full('Element'),'element_with_type:class_name:id:','div','',''));
+self.$i_s('@display_context',VN$(self.$klass.$c_g_full('Element'),'element_with_type:class_name:id:','canvas','',''));
+return VN$(self.$i_g('@element'),'<<',self.$i_g('@display_context'));
 });
 $VN_2.$def('graphics_port',function(self,_cmd){
-return VN$(self.$i_g('@display_element'),'element').getContext('2d');});
+return VN$(self.$i_g('@display_context'),'element').getContext('2d');});
 $VN_2.$def('initialize_with_coder',function(self,_cmd,coder){
 });
 $VN_2.$def('initialize_with_builder',function(self,_cmd,builder){
@@ -158,7 +163,7 @@ VN$(VN$(self.$i_g('@bounds'),'size'),'width=',VN$(new_size,'width'));
 VN$(VN$(self.$i_g('@bounds'),'size'),'height=',VN$(new_size,'height'));
 VN$(self,'needs_display=',true);
 VN$(self.$i_g('@element'),'size=',new_size);
-VN$(self.$i_g('@display_element'),'size=',new_size);
+VN$(self.$i_g('@display_context'),'size=',new_size);
 if(RTEST(self.$i_g('@posts_frame_changed_notifications'))){
 var nc = VN$(self.$klass.$c_g_full('NotificationCenter'),'default_center');
 VN$(nc,'post_notification_name:object:','frame chnage notification',self);
@@ -277,10 +282,21 @@ if(!RTEST(self.$i_g('@window'))){
 return ;
 }
 VN$(self, 'view_will_draw');
+if(RTEST(VN$(VN$(self, 'display_mode'),'==','render'))){
+VN$(self,'puts','Rendering....?');
+VN$(self,'render',self.$i_g('@display_context'));
+}
+else{
 var graphics_context = VN$(self.$i_g('@window'),'graphics_context');
 VN$(self.$klass.$c_g_full('GraphicsContext'),'current_context=',graphics_context);
 VN$(graphics_context,'graphics_port=',VN$(self,'graphics_port'));
-return VN$(self,'draw_rect',VN$(self, 'bounds'));
+VN$(self,'draw_rect',VN$(self, 'bounds'));
+}
+});
+$VN_2.$def('render',function(self,_cmd,context){
+VN$(self,'puts','REDNERING');
+VN$(context,'<<',"<div class='well'></div>");
+return VN$(context,'<<',"<div>adam</div>");
 });
 $VN_2.$def('draw_rect',function(self,_cmd,rect){
 return VN$(self,'puts','drawing rect');

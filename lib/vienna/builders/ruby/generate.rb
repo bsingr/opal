@@ -173,13 +173,13 @@ module Vienna
         write "if(!RTEST("
       end
       
-      generate_stmt stmt[:expr],:instance => false, :full_stmt => false, :self => current_self, :last_stmt => false
+      generate_stmt stmt[:expr],:instance => context[:instance], :full_stmt => false, :self => current_self, :last_stmt => false
       
       write ")){\n"
       
       if stmt[:stmt]
         stmt[:stmt].each do |c|
-          generate_stmt c, :instance => true, :full_stmt => true, :self => current_self, :last_stmt => context[:laststmt] && (stmt[:stmt].last == c ? true : false)  # also check if the actual 'if' statement is last?
+          generate_stmt c, :instance => context[:instance], :full_stmt => true, :self => current_self, :last_stmt => context[:laststmt] && (stmt[:stmt].last == c ? true : false)  # also check if the actual 'if' statement is last?
         end
       end
       
@@ -189,7 +189,7 @@ module Vienna
           
           if t.node == :elsif
             write 'else if(RTEST('
-            generate_stmt t[:expr], :instance => false, :full_stmt => false, :self => current_self, :last_stmt => false
+            generate_stmt t[:expr], :instance => context[:instance], :full_stmt => false, :self => current_self, :last_stmt => false
             write ")){\n"
           else # normal else
             write "else{\n"
@@ -197,7 +197,7 @@ module Vienna
           
           if t[:stmt]
             t[:stmt].each do |c|
-              generate_stmt c, :instance => true, :full_stmt => true,:self => current_self, :last_stmt => context[:laststmt] && (t[:stmt].last == c ? true : false) # also check if the actual 'if' statement is last?
+              generate_stmt c, :instance => context[:instance], :full_stmt => true,:self => current_self, :last_stmt => context[:laststmt] && (t[:stmt].last == c ? true : false) # also check if the actual 'if' statement is last?
             end
           end
                     
@@ -615,9 +615,11 @@ module Vienna
       when 0
         write "''"
       when 1
-        write "'"
+        # write "'"
+        write str[:beg]
         write str[:value][0][:value]
-        write "'"
+        write str[:beg]
+        # write "'"
       else
         
         write "["
@@ -626,9 +628,9 @@ module Vienna
           
           case s.node
           when :string_content
-            write "'"
+            write str[:beg]
             write s[:value]
-            write "'"
+            write str[:beg]
           when :string_dbeg
             write "("
                     
@@ -707,7 +709,6 @@ module Vienna
       write 'return ' if context[:last_stmt] and context[:full_stmt]
       
       constant_scope = context[:scope_constant] ? '$c_g' : '$c_g_full'
-      
       if current_self == 'VN.self'
         # nothing else to look around, so normal check..
         write "cObject.$c_g('#{const[:name]}')"

@@ -94,8 +94,8 @@ $VN_1.$def('rindex',function(self,_cmd){
 });
 $VN_1.$def('index',function(self,_cmd){
 });
-$VN_1.$def('join',function(self,_cmd){
-});
+$VN_1.$def('join',function(self,_cmd,sep){
+return self.join(sep);});
 $VN_1.$def('reverse',function(self,_cmd){
 });
 $VN_1.$def('reverse!',function(self,_cmd){

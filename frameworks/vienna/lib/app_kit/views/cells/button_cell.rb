@@ -171,7 +171,32 @@ module Vienna
       # major overhaul... must click itself to show user feedback
     end
     
+    def render_with_context context, in_view:control_view
+      # better way to say that we have done this, instead of setting first_time
+      # to false...??? FIXME: ..
+      if context.first_time?
+        context << "<div class='button_left'></div>"
+        context << "<div class='button_right'></div>"
+        context << "<div class='button_title'></div>"
+        context.first_time = false
+      end
+      
+      context.class_name = [:vn_button, :bezel, :regular, :enabled].join(' ')
+      
+      context.selector '#button_title' do |title|
+        title.inner_html = 'My Button!'
+        title.frame = title_rect_for_bounds @bounds
+      end
+    end
     
+    
+    
+    def draw_with_frame cell_frame, in_view:control_view
+      puts 'current context is:'
+      ctx = GraphicsContext.current_context
+      `#{ctx.graphics_port}.fillRect(20, 20, 100, 100);`
+      `#{ctx.graphics_port}.clearRect(40, 40, 60, 60);`
+    end
     
     def draw_image image, with_frame:frame, in_view:control_view
       

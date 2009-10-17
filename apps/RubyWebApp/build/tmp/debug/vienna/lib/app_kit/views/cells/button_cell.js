@@ -121,6 +121,23 @@ VN$(self, 'did_change_value_for_key', 'key_equivalent_modifier_mask');
 });
 $VN_2.$def('perform_click',function(self,_cmd,sender){
 });
+$VN_2.$def('render_with_context:in_view:',function(self,_cmd,context,control_view){
+if(RTEST(VN$(context,'first_time?'))){
+VN$(context,'<<',"<div class='button_left'></div>");
+VN$(context,'<<',"<div class='button_right'></div>");
+VN$(context,'<<',"<div class='button_title'></div>");
+VN$(context,'first_time=',false);
+}
+VN$(context,'class_name=',VN$(['vn_button','bezel','regular','enabled'],'join',' '));
+return VN$(context,'selector','#button_title',function(title){
+VN$(title,'inner_html=','My Button!');
+return VN$(title,'frame=',VN$(self,'title_rect_for_bounds',self.$i_g('@bounds')));
+});
+});
+$VN_2.$def('draw_with_frame:in_view:',function(self,_cmd,cell_frame,control_view){
+VN$(self,'puts','current context is:');
+var ctx = VN$(self.$klass.$c_g_full('GraphicsContext'),'current_context');
+VN$(ctx,'graphics_port').fillRect(20, 20, 100, 100);VN$(ctx,'graphics_port').clearRect(40, 40, 60, 60);});
 $VN_2.$def('draw_image:with_frame:in_view:',function(self,_cmd,image,frame,control_view){
 });
 $VN_2.$def('draw_title:with_frame:in_view:',function(self,_cmd,title,frame,control_view){

@@ -50,35 +50,38 @@ class Element
   end
   
   def origin= new_origin
-    `#{@element}.style.x = #{new_origin.x};`
-    `#{@element}.style.y = #{new_origin.y};`
+    `#{element}.style.x = #{new_origin.x};`
+    `#{element}.style.y = #{new_origin.y};`
   end
   
   def size= new_size
     # puts 'settig size to'
     # puts new_size
     if @type == :canvas
-      `#{@element}.width = #{new_size.width};`
-      `#{@element}.height = #{new_size.height};`
+      `#{element}.width = #{new_size.width};`
+      `#{element}.height = #{new_size.height};`
     else
-      `#{@element}.style.width = #{new_size.width};`
-      `#{@element}.style.height = #{new_size.height};`
+      `#{element}.style.width = #{new_size.width};`
+      `#{element}.style.height = #{new_size.height};`
     end
   end
   
   def <<(other)
-    # puts @element
-    # puts other.element
-    # @element.appendChild(other.element)
-    `#{@element}.appendChild(#{other.element})`
+    if other.instance_of? String
+      `#{element}.innerHTML += other`
+    else
+      # must be an element
+      `#{element}.appendChild(#{other.element})`
+    end
+    
   end
   
   def add_event_listener type, listener
     `if (document.addEventListener) {
-      #{@element}.addEventListener(#{type}, #{listener}, false);
+      #{element}.addEventListener(#{type}, #{listener}, false);
     }
     else {
-      #{@element}.attachEvent(#{type}, #{listener});
+      #{element}.attachEvent(#{type}, #{listener});
     }`
   end
 end

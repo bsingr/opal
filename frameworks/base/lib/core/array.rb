@@ -194,8 +194,8 @@ class Array
     
   end
   
-  def join
-    
+  def join sep
+    `return self.join(#{sep});`
   end
   
   def reverse

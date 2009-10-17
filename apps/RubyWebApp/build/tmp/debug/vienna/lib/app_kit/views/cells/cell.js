@@ -274,9 +274,7 @@ $VN_2.$def('setup_field_editor_attributes',function(self,_cmd,text_obj){
 $VN_2.$def('draw_interior_with_frame:in_view:',function(self,_cmd,cell_frame,control_view){
 });
 $VN_2.$def('draw_with_frame:in_view:',function(self,_cmd,cell_frame,control_view){
-VN$(self,'puts','current context is:');
-var ctx = VN$(self.$klass.$c_g_full('GraphicsContext'),'current_context');
-VN$(ctx,'graphics_port').fillRect(20, 20, 100, 100);VN$(ctx,'graphics_port').clearRect(40, 40, 60, 60);});
+});
 $VN_2.$def('highlight:with_frame:in_view:',function(self,_cmd,flag,cell_frame,control_view){
 });
 $VN_2.$def('mouse_down_flags',function(self,_cmd){

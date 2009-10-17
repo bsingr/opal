@@ -16,22 +16,26 @@ return self.$i_g('@element');
 });
 $VN_1.$def('origin=',function(self,_cmd,new_origin){
 VN$(self, 'will_change_value_for_key', 'origin');
-self.$i_g('@element').style.x = VN$(new_origin,'x');self.$i_g('@element').style.y = VN$(new_origin,'y');VN$(self, 'did_change_value_for_key', 'origin');
+VN$(self, 'element').style.x = VN$(new_origin,'x');VN$(self, 'element').style.y = VN$(new_origin,'y');VN$(self, 'did_change_value_for_key', 'origin');
 });
 $VN_1.$def('size=',function(self,_cmd,new_size){
 VN$(self, 'will_change_value_for_key', 'size');
 if(RTEST(VN$(self.$i_g('@type'),'==','canvas'))){
-self.$i_g('@element').width = VN$(new_size,'width');self.$i_g('@element').height = VN$(new_size,'height');}
+VN$(self, 'element').width = VN$(new_size,'width');VN$(self, 'element').height = VN$(new_size,'height');}
 else{
-self.$i_g('@element').style.width = VN$(new_size,'width');self.$i_g('@element').style.height = VN$(new_size,'height');}
+VN$(self, 'element').style.width = VN$(new_size,'width');VN$(self, 'element').style.height = VN$(new_size,'height');}
 VN$(self, 'did_change_value_for_key', 'size');
 });
 $VN_1.$def('<<',function(self,_cmd,other){
-self.$i_g('@element').appendChild(VN$(other,'element'))});
+if(RTEST(VN$(other,'instance_of?',self.$klass.$c_g_full('String')))){
+VN$(self, 'element').innerHTML += other}
+else{
+VN$(self, 'element').appendChild(VN$(other,'element'))}
+});
 $VN_1.$def('add_event_listener',function(self,_cmd,type,listener){
 if (document.addEventListener) {
-      self.$i_g('@element').addEventListener(type, listener, false);
+      VN$(self, 'element').addEventListener(type, listener, false);
     }
     else {
-      self.$i_g('@element').attachEvent(type, listener);
+      VN$(self, 'element').attachEvent(type, listener);
     }});

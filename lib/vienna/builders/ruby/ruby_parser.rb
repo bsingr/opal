@@ -4340,7 +4340,7 @@ module_eval(<<'.,.,', 'ruby_parser.rb.y', 845)
 
 module_eval(<<'.,.,', 'ruby_parser.rb.y', 874)
   def _reduce_405(val, _values, result)
-                        result = node :string, :value => val[1]
+                        result = node :string, :value => val[1], :beg => val[0]
                   
     result
   end

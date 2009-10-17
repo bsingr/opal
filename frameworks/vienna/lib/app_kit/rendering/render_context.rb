@@ -30,6 +30,44 @@ module Vienna
   # rendering views within Vienna
   class RenderContext < Element
     
+    def initialize tag_name, options
+      @element_stack = [`document.createElement(#{tag_name})`]
+      @first_time = true
+    end
+    
+    def first_time?
+      @first_time
+    end
+    
+    def first_time= first_time
+      @first_time = first_time
+    end
+    
+    def element
+      @element_stack.last
+    end
+    
+    def push_element_stack element
+      @element_stack << element
+    end
+    
+    def pop_element_stack
+      @element_stack.pop
+    end
+    
+    def selector a_selector, &block
+      element = find_selector a_selector
+      push_element_stack element
+      # we are actually just returning this object, just changing which element
+      # any chnages are applied too.
+      yield self
+      pop_element_stack
+    end
+    
+    def find_selector a_selector
+      element
+    end
+    
   end
   
 end

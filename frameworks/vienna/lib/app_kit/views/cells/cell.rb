@@ -361,10 +361,7 @@ module Vienna
     end
     
     def draw_with_frame cell_frame, in_view:control_view
-      puts 'current context is:'
-      ctx = GraphicsContext.current_context
-      `#{ctx.graphics_port}.fillRect(20, 20, 100, 100);`
-      `#{ctx.graphics_port}.clearRect(40, 40, 60, 60);`
+
     end
     
     def highlight flag, with_frame:cell_frame, in_view:control_view

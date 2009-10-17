@@ -872,7 +872,7 @@ rule
 
          string1: tSTRING_BEG string_contents tSTRING_END
                   {
-                    result = node :string, :value => val[1]
+                    result = node :string, :value => val[1], :beg => val[0]
                   }  
 
          xstring: tXSTRING_BEG xstring_contents tXSTRING_END

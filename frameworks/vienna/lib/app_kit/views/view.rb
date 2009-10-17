@@ -46,7 +46,6 @@ module Vienna
   
   class View < Responder
     
-    
     def initialize(frame)
       # super frame
       super()
@@ -82,33 +81,37 @@ module Vienna
       @element
     end
     
-    # Override to force a mode for drawing/rendering. Default is to follow suit
-    # from Vienna.drawing_mode, but some classes may like to force a mode
-    # regardless of system context. For example, TextField always renders for
-    # efficiency, and some complex views may only be able to draw, not render
     def display_mode
-      Vienna.display_mode
+      ENV[:display_mode]
     end
     
     def setup_display_context
+      if display_mode == :render
+        setup_render_context
+      else
+        setup_drawing_context
+      end
+      
+      # puts "Setting up #{display_mode} context for view"
       # Currently force views to use drawing based display
-      setup_drawing_context
-    end
-    
-    def setup_drawing_context
-      @element = Element.element_with_type :div, class_name:'', id:''
-      @display_element = Element.element_with_type :canvas, class_name:'', id:''
-      @element << @display_element
+      
     end
     
     def setup_render_context
       @element = Element.element_with_type :div, class_name:'', id:''
-      @display_element = Element.element_with_type :div, class_name:'', id:''
-      @element << @display_element
+      # @display_context = Element.element_with_type :div, class_name:'', id:''
+      @display_context = RenderContext.new :div, nil
+      @element << @display_context
+    end
+    
+    def setup_drawing_context
+      @element = Element.element_with_type :div, class_name:'', id:''
+      @display_context = Element.element_with_type :canvas, class_name:'', id:''
+      @element << @display_context
     end
     
     def graphics_port
-      `return #{@display_element.element}.getContext('2d');`
+      `return #{@display_context.element}.getContext('2d');`
     end
     
     # Called when View.from_coder(coder) is called
@@ -312,7 +315,7 @@ module Vienna
       # puts "------------HERE-------------"
       
       @element.size = new_size
-      @display_element.size = new_size
+      @display_context.size = new_size
     
       if @posts_frame_changed_notifications
         nc = NotificationCenter.default_center
@@ -508,11 +511,24 @@ module Vienna
       return unless @window
       view_will_draw
       
-      graphics_context = @window.graphics_context
-      GraphicsContext.current_context = graphics_context
-      graphics_context.graphics_port = self.graphics_port
-      
-      draw_rect bounds
+      if display_mode == :render
+        puts 'Rendering....?'
+        render @display_context
+      else
+        graphics_context = @window.graphics_context
+        GraphicsContext.current_context = graphics_context
+        graphics_context.graphics_port = self.graphics_port
+        
+        draw_rect bounds
+      end
+    end
+    
+        
+    
+    def render context
+      puts 'REDNERING'
+      context << "<div class='well'></div>"
+      context << "<div>adam</div>"
     end
     
     

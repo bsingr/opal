@@ -7,7 +7,7 @@ return true;
 $VN_2.$def('value_for_key',function(self,_cmd,key){
 return self.$i_g('@' + key);});
 $VN_2.$def('set_value:for_key:',function(self,_cmd,value,key){
-return VN$(self,'puts',['Setting value for ',(key)].join(''));
+return VN$(self,'puts',["Setting value for ",(key)].join(''));
 });
 $VN_2.$def('validate_value:for_key:error:',function(self,_cmd,value,key,out_error){
 });
