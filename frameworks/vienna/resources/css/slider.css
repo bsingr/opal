@@ -1,0 +1,45 @@
+.vn-slider {
+  position: absolute;
+  display:block;
+  height: 21px;
+}
+
+.vn-slider .track-middle {
+  position: absolute;
+  background: url('images/slider_track_horizontal.png') repeat-x;
+  height: 5px;
+  top: 8px;
+  left: 9px;
+  right: 9px;
+}
+
+.vn-slider .track-left {
+  position: absolute;
+  background: url('images/slider_track_left.png');
+  height: 5px;
+  left: 4px;
+  top: 8px;
+  width: 5px;
+}
+
+.vn-slider .track-right {
+  position: absolute;
+  background: url('images/slider_track_right.png');
+  height: 5px;
+  right: 4px;
+  top: 8px;
+  width: 5px;
+}
+
+.vn-slider .knob {
+  position: absolute;
+  background-image: url('images/slider_knob.png');
+  height: 19px;
+  width: 19px;
+  top: 1px;
+  left: 34px;
+}
+
+.vn-slider.disabled .knob {
+  background-image: url('images/slider_knob_disabled.png');
+}

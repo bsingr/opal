@@ -115,7 +115,9 @@ $VN_1.$def('each_key',function(self,_cmd){
 });
 $VN_1.$def('each_pair',function(self,_cmd){
 });
-$VN_1.$def('each',function(self,_cmd){
+$VN_1.$def('each',function(self,_cmd,block){
+for (var i = 0; i < self.$keys.length; i++) {arguments[arguments.length -1](self.$keys[i],self.$values[self.$keys[i]]);
+}return self;
 });
 $VN_1.$def('keys',function(self,_cmd){
 });

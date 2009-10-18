@@ -96,25 +96,20 @@ class Array
   
   end
   
-  # def [](*args)
-  #   `if (arguments.length == 2) {
-  #     var begin = arguments[0] ;
-  #     var end = arguments[1] ;
-  #     if (begin < 0) begin += this.length ;
-  #     return VN.ary_subseq.call(this, begin, length) ;
-  #   }`
-  # end
-  # 
-  # def []=(adam, *args)
-  #   
-  # end
-  
-  def at
-    
+  def [] idx
+    `return self[idx];`
   end
   
-  def fetch
-    
+  def []= idx, value
+    `return self[idx] = value;`
+  end
+  
+  def at index
+    `return self[index];`
+  end
+  
+  def fetch index, the_default
+    `return self[index];`
   end
   
   def first
@@ -190,8 +185,9 @@ class Array
     
   end
   
-  def index
-    
+  def index obj
+     `var idx = self.indexOf(obj);
+     return idx == -1 ? idx : nil;`
   end
   
   def join sep

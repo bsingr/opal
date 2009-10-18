@@ -16,17 +16,16 @@ self.$i_s('@next_responder',self.$klass.$c_g_full('App'));
 return VN$(self,'content_view=',VN$(self.$klass.$c_g_full('View'),'new',VN$(self.$klass.$c_g_full('Rect'),'new',100,100,100,100)));
 });
 $VN_2.$def('setup_display_context',function(self,_cmd){
-self.$i_s('@element',VN$(self.$klass.$c_g_full('Element'),'element_with_type:class_name:id:','div','',''));
-self.$i_s('@display_element',VN$(self.$klass.$c_g_full('Element'),'element_with_type:class_name:id:','canvas','',''));
-VN$(self.$i_g('@element'),'<<',self.$i_g('@display_element'));
+self.$i_s('@element',VN$(self.$klass.$c_g_full('Element'),'new','div'));
+self.$i_s('@display_context',VN$(self.$klass.$c_g_full('RenderContext'),'new','div'));
+VN$(self.$i_g('@element'),'<<',self.$i_g('@display_context'));
 VN$(self.$klass.$c_g_full('Document'),'<<',self.$i_g('@element'));
-self.$i_s('@graphics_context',VN$(self.$klass.$c_g_full('GraphicsContext'),'new',VN$(self.$i_g('@display_element'),'element').getContext('2d'),false));
 VN$(self.$i_g('@element'),'add_event_listener','mousedown',function(event){
-return VN$(self,'puts','Yeah! mouse down inside window..');
-});
+VN$(self,'puts','Yeah! mouse down inside window..');
+event.preventDefault ? event.preventDefault() : event.returnValue = false;});
 return VN$(self.$i_g('@element'),'add_event_listener','mouseup',function(event){
-return VN$(self,'puts','...and the mouse is up again.');
-});
+VN$(self,'puts','And now the mouse is back up, happy days!');
+event.preventDefault ? event.preventDefault() : event.returnValue = false;});
 });
 $VN_2.$def_s('build',function(self,_cmd,options,block){
 var win = VN$(self,'new',VN$(self.$c_g_full('Rect'),'new',100,100,100,100),nil);

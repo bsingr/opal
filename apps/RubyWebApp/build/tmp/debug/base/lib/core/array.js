@@ -52,10 +52,14 @@ $VN_1.$def('eql?',function(self,_cmd,other){
 });
 $VN_1.$def('hash',function(self,_cmd){
 });
-$VN_1.$def('at',function(self,_cmd){
-});
-$VN_1.$def('fetch',function(self,_cmd){
-});
+$VN_1.$def('[]',function(self,_cmd,idx){
+return self[idx];});
+$VN_1.$def('[]=',function(self,_cmd,idx,value){
+return self[idx] = value;});
+$VN_1.$def('at',function(self,_cmd,index){
+return self[index];});
+$VN_1.$def('fetch',function(self,_cmd,index,the_default){
+return self[index];});
 $VN_1.$def('first',function(self,_cmd){
 return self[0];});
 $VN_1.$def('last',function(self,_cmd){
@@ -92,8 +96,9 @@ $VN_1.$def('find_index',function(self,_cmd){
 });
 $VN_1.$def('rindex',function(self,_cmd){
 });
-$VN_1.$def('index',function(self,_cmd){
-});
+$VN_1.$def('index',function(self,_cmd,obj){
+var idx = self.indexOf(obj);
+     return idx == -1 ? idx : nil;});
 $VN_1.$def('join',function(self,_cmd,sep){
 return self.join(sep);});
 $VN_1.$def('reverse',function(self,_cmd){

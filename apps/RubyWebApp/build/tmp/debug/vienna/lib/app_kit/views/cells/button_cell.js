@@ -1,33 +1,4 @@
 var $VN_1 = RModule.define('Vienna');
-VN$($VN_1.$c_g_full('Image'),'resource','controls.png',function(img){
-VN$(img,'sprite','rounded_bezel_enabled_regular_left',[0,0,36,24]);
-VN$(img,'sprite','rounded_bezel_enabled_regular_middle',[0,24,36,24]);
-VN$(img,'sprite','rounded_bezel_enabled_regular_right',[0,48,36,24]);
-VN$(img,'sprite','rounded_bezel_disabled_regular_left',[0,0,36,24]);
-VN$(img,'sprite','rounded_bezel_disabled_regular_middle',[0,24,36,24]);
-VN$(img,'sprite','rounded_bezel_disabled_regular_right',[0,48,36,24]);
-VN$(img,'sprite','rounded_bezel_pushed_regular_left',[0,0,36,24]);
-VN$(img,'sprite','rounded_bezel_pushed_regular_middle',[0,24,36,24]);
-VN$(img,'sprite','rounded_bezel_pushed_regular_right',[0,48,36,24]);
-VN$(img,'sprite','rounded_bezel_enabled_small_left',[0,0,36,24]);
-VN$(img,'sprite','rounded_bezel_enabled_small_middle',[0,24,36,24]);
-VN$(img,'sprite','rounded_bezel_enabled_small_right',[0,48,36,24]);
-VN$(img,'sprite','rounded_bezel_disabled_small_left',[0,0,36,24]);
-VN$(img,'sprite','rounded_bezel_disabled_small_middle',[0,24,36,24]);
-VN$(img,'sprite','rounded_bezel_disabled_small_right',[0,48,36,24]);
-VN$(img,'sprite','rounded_bezel_pushed_small_left',[0,0,36,24]);
-VN$(img,'sprite','rounded_bezel_pushed_small_middle',[0,24,36,24]);
-VN$(img,'sprite','rounded_bezel_pushed_small_right',[0,48,36,24]);
-VN$(img,'sprite','rounded_bezel_enabled_mini_left',[0,0,36,24]);
-VN$(img,'sprite','rounded_bezel_enabled_mini_middle',[0,24,36,24]);
-VN$(img,'sprite','rounded_bezel_enabled_mini_right',[0,48,36,24]);
-VN$(img,'sprite','rounded_bezel_disabled_mini_left',[0,0,36,24]);
-VN$(img,'sprite','rounded_bezel_disabled_mini_middle',[0,24,36,24]);
-VN$(img,'sprite','rounded_bezel_disabled_mini_right',[0,48,36,24]);
-VN$(img,'sprite','rounded_bezel_pushed_mini_left',[0,0,36,24]);
-VN$(img,'sprite','rounded_bezel_pushed_mini_middle',[0,24,36,24]);
-return VN$(img,'sprite','rounded_bezel_pushed_mini_right',[0,48,36,24]);
-});
 var $VN_2 = RClass.define_under($VN_1, 'ButtonCell',$VN_2.$c_g_full('Cell'));
 $VN_2.$def('title',function(self,_cmd){
 return self.$i_g('@title');
@@ -122,22 +93,14 @@ VN$(self, 'did_change_value_for_key', 'key_equivalent_modifier_mask');
 $VN_2.$def('perform_click',function(self,_cmd,sender){
 });
 $VN_2.$def('render_with_context:in_view:',function(self,_cmd,context,control_view){
-if(RTEST(VN$(context,'first_time?'))){
-VN$(context,'<<',"<div class='button_left'></div>");
-VN$(context,'<<',"<div class='button_right'></div>");
-VN$(context,'<<',"<div class='button_title'></div>");
-VN$(context,'first_time=',false);
-}
-VN$(context,'class_name=',VN$(['vn_button','bezel','regular','enabled'],'join',' '));
-return VN$(context,'selector','#button_title',function(title){
-VN$(title,'inner_html=','My Button!');
-return VN$(title,'frame=',VN$(self,'title_rect_for_bounds',self.$i_g('@bounds')));
-});
 });
 $VN_2.$def('draw_with_frame:in_view:',function(self,_cmd,cell_frame,control_view){
 VN$(self,'puts','current context is:');
 var ctx = VN$(self.$klass.$c_g_full('GraphicsContext'),'current_context');
 VN$(ctx,'graphics_port').fillRect(20, 20, 100, 100);VN$(ctx,'graphics_port').clearRect(40, 40, 60, 60);});
+$VN_2.$def('title_rect_for_bounds',function(self,_cmd,bounds){
+return VN$(self.$klass.$c_g_full('Rect'),'new',5,3,100,23);
+});
 $VN_2.$def('draw_image:with_frame:in_view:',function(self,_cmd,image,frame,control_view){
 });
 $VN_2.$def('draw_title:with_frame:in_view:',function(self,_cmd,title,frame,control_view){

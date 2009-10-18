@@ -31,17 +31,16 @@ module RubyWebApp
     app_delegate = RubyWebApp::AppController.new
     VN::App.delegate = app_delegate
     
-    Vienna::Window.build :frame => [0,0,100,100], :title => 'My Window!' do |win|
+    Vienna::Window.build :frame => VN::Rect.new(0, 0, 100, 100), :title => 'My Window!' do |win|
         
-      my_button = Vienna::Button.build :frame => [0,0,100,100], :bezel => :rounded
+      my_button = Vienna::Button.build :frame => VN::Rect.new(10,10,90,24), :bezel => :rounded
       win << my_button
       my_button.needs_display = true
       
-      my_slider = Vienna::Slider.build :frame => [0,0,100,100]
+      my_slider = Vienna::Slider.build :frame => VN::Rect.new(10,50,90,24), :bezel => :rounded
       win << my_slider
       my_slider.needs_display = true
     
-    end
-    
+    end  
   end
 end

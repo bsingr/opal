@@ -25,6 +25,50 @@
 #
 
 module Vienna
+  
+  # Image.resource 'controls.png' do |img|
+  #   
+  #   img.sprite :rounded_bezel_enabled_regular_left, [0, 0, 36, 24]
+  #   img.sprite :rounded_bezel_enabled_regular_middle, [0, 24, 36, 24]
+  #   img.sprite :rounded_bezel_enabled_regular_right, [0, 48, 36, 24]
+  #   
+  #   img.sprite :rounded_bezel_disabled_regular_left, [0, 0, 36, 24]
+  #   img.sprite :rounded_bezel_disabled_regular_middle, [0, 24, 36, 24]
+  #   img.sprite :rounded_bezel_disabled_regular_right, [0, 48, 36, 24]
+  #   
+  #   img.sprite :rounded_bezel_pushed_regular_left, [0, 0, 36, 24]
+  #   img.sprite :rounded_bezel_pushed_regular_middle, [0, 24, 36, 24]
+  #   img.sprite :rounded_bezel_pushed_regular_right, [0, 48, 36, 24]
+  #   
+  #   
+  #   
+  #   img.sprite :rounded_bezel_enabled_small_left, [0, 0, 36, 24]
+  #   img.sprite :rounded_bezel_enabled_small_middle, [0, 24, 36, 24]
+  #   img.sprite :rounded_bezel_enabled_small_right, [0, 48, 36, 24]
+  #   
+  #   img.sprite :rounded_bezel_disabled_small_left, [0, 0, 36, 24]
+  #   img.sprite :rounded_bezel_disabled_small_middle, [0, 24, 36, 24]
+  #   img.sprite :rounded_bezel_disabled_small_right, [0, 48, 36, 24]
+  #   
+  #   img.sprite :rounded_bezel_pushed_small_left, [0, 0, 36, 24]
+  #   img.sprite :rounded_bezel_pushed_small_middle, [0, 24, 36, 24]
+  #   img.sprite :rounded_bezel_pushed_small_right, [0, 48, 36, 24]
+  #   
+  #   
+  #   
+  #   img.sprite :rounded_bezel_enabled_mini_left, [0, 0, 36, 24]
+  #   img.sprite :rounded_bezel_enabled_mini_middle, [0, 24, 36, 24]
+  #   img.sprite :rounded_bezel_enabled_mini_right, [0, 48, 36, 24]
+  #   
+  #   img.sprite :rounded_bezel_disabled_mini_left, [0, 0, 36, 24]
+  #   img.sprite :rounded_bezel_disabled_mini_middle, [0, 24, 36, 24]
+  #   img.sprite :rounded_bezel_disabled_mini_right, [0, 48, 36, 24]
+  #   
+  #   img.sprite :rounded_bezel_pushed_mini_left, [0, 0, 36, 24]
+  #   img.sprite :rounded_bezel_pushed_mini_middle, [0, 24, 36, 24]
+  #   img.sprite :rounded_bezel_pushed_mini_right, [0, 48, 36, 24]
+  #   
+  # end
     
   class Button < Control
     
@@ -33,11 +77,7 @@ module Vienna
     def initialize frame
       super frame
     end
-    
-    def self.cell_class
-      ButtonCell
-    end
-    
+        
     def title=(str)
       
     end
@@ -58,23 +98,21 @@ module Vienna
     # :momentary_light, :push_on_push_off, :toggle, :switch, :radio, 
     # :momentary_change, :on_off, :momentary_push_in, :momentary_push
     # 
-    def button_type=(type)
-      
+    def type=(type)
+      @type = type
     end
     
-    # New method alias for button_type
-    def type=(type)
-      button_type = type
+    def type
+      @type
+    end
+    
+    # Values can be - :on :off, :mixed
+    def state=(val)
+      @state = val
     end
     
     def state
       @state
-    end
-    
-    # Values can be
-    # :on :off, :mixed
-    def state=(val)
-      @state = val
     end
     
     def on?
@@ -90,35 +128,35 @@ module Vienna
     end
     
     def bordered?
-      
+      @bordered
     end
     
     def bordered=(flag)
-      
+      @bordered = flag
     end
     
     def transparent?
-      
+      @transparent
     end
     
     def transparent=(flag)
-      
+      @transparent = flag
     end
     
     def key_equivalent
-      
+      @key_equivalent
     end
     
     def key_equivalent=(code)
-      
+      @key_equivalent = code
     end
     
     def key_equivalent_modifier_mask
-      
+      @key_equivalent_modifier_mask
     end
     
     def key_equivalent_modifier_mask=(mask)
-      
+      @key_equivalent_modifier_mask = mask
     end
     
     def highlight=(flag)
@@ -129,29 +167,47 @@ module Vienna
       
     end
     
-    def bezel_style=(style)
-      
-    end
-    
     # added
     def bezel=(style)
-      bezel_style = style
+      @bezel = style
     end
     
-    def bezel_style
-      
+    def bezel
+      @bezel
     end
     
     def allows_mixed_state=(flag)
-      
+      @allows_mixed_state = flag
     end
     
-    def allows_mixed_state
-      
+    def allows_mixed_state?
+      @allows_mixed_state
     end
     
     def next_state
       # set_next_state
+    end
+    
+    def class_name
+      @class_name || 'vn-button'
+    end
+    
+    def render context
+      if context.first_time?
+        context << "<div class='left'></div>"
+        context << "<div class='middle'></div>"
+        context << "<div class='right'></div>"
+        context << "<div class='title'>Wow!</div>"
+        context.first_time = false
+      end
+      
+      context.class_name = [class_name, :bordered, :bezel, :regular, :enabled].join(' ')
+      # context.class_name = [class_name, :bordered, bezel, control_size, ]
+      
+      context.selector 'title' do |title|
+        title.inner_html = 'My Button!'
+        # title.frame = title_rect_for_bounds @bounds
+      end
     end
     
   end

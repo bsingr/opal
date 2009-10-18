@@ -32,10 +32,10 @@ module Vienna
       super frame
     end
     
-    def self.cell_class
-      SliderCell
+    def class_name
+      'vn-slider'
     end
-    
+        
     def min_value
       @min_value
     end
@@ -60,32 +60,14 @@ module Vienna
       @alt_increment_value
     end
     
-    def title_cell= cell
-      @title_cell = cell
-    end
-    
-    def title_cell
-      @title_cell
-    end
+    attr_reader :title_color, :title_font, :title, :knob_thickness, :image
     
     def title_color= color
       @title_color = color
     end
-    
-    def title_color
-      @title_color
-    end
-    
+
     def title_font= font
       @title_font = font
-    end
-    
-    def title_font
-      @title_font
-    end
-    
-    def title
-      @title
     end
     
     def title= str
@@ -96,16 +78,8 @@ module Vienna
       @knob_thickness = a_float
     end
     
-    def knob_thickness
-      @knob_thickness
-    end
-    
     def image= img
       @image = img
-    end
-    
-    def image
-      @image
     end
     
     def vertical?
@@ -117,23 +91,35 @@ module Vienna
     end
     
     
+    def render context
+      if context.first_time?
+        context << "<div class='track-left'></div>"
+        context << "<div class='track-middle'></div>"
+        context << "<div class='track-right'></div>"
+        context << "<div class='knob'></div>"
+      end
+      
+      context.class_name = class_name
+      
+      context.selector :knob do |knob|
+        # TODO: Calculate the knob position
+        knob_position = 37
+        knob.css :left => knob_position
+      end
+    end
+    
+    
     # 
     # Tick mark support
     # 
+    attr_reader :number_of_tick_marks, :tick_mark_position
+    
     def number_of_tick_marks= count
       @number_of_tick_marks = count
     end
     
-    def number_of_tick_marks
-      @number_of_tick_marks
-    end
-    
     def tick_mark_position= pos
       @tick_mark_position = pos
-    end
-    
-    def tick_mark_position
-      @tick_mark_position
     end
     
     def allows_tick_mark_values_only= flag

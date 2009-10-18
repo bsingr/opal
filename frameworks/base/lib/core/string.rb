@@ -181,6 +181,22 @@ class String
     
   end
   
+  def camelize
+    `var parts = self.split('_');
+    var length = parts.length;
+
+    if (length == 1) return parts[0];
+
+    var camelized = self.charAt(0) == '-'
+      ? parts[0].charAt(0).toUpperCase() + parts[0].substring(1)
+      : parts[0];
+
+    for (var i = 1; i < length; i++)
+      camelized += parts[i].charAt(0).toUpperCase() + parts[i].substring(1);
+
+    return camelized;`
+  end
+  
   def hex
     
   end

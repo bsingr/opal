@@ -14,7 +14,7 @@ self.$i_s('@autoresizes_subviews',true);
 return self.$i_s('@tracking_areas',[]);
 });
 $VN_2.$def_s('build',function(self,_cmd,options,block){
-var view = VN$(self,'new',VN$(self.$c_g_full('Rect'),'new',0,0,100,100));
+var view = VN$(self,'new',VN$(options,'[]','frame'));
 if(RTEST(block)){
 arguments[arguments.length -1](view);
 }
@@ -28,21 +28,23 @@ return VN$(self.$klass.$c_g_full('ENV'),'[]','display_mode');
 });
 $VN_2.$def('setup_display_context',function(self,_cmd){
 if(RTEST(VN$(VN$(self, 'display_mode'),'==','render'))){
-VN$(self, 'setup_render_context');
+self.$i_s('@element',VN$(self.$klass.$c_g_full('Element'),'new','div',VN.$h('class_name',VN$(self, 'class_name'),'id','')));
+self.$i_s('@display_context',VN$(self.$klass.$c_g_full('RenderContext'),'new','div',nil));
+VN$(self.$i_g('@element'),'<<',self.$i_g('@display_context'));
 }
 else{
-VN$(self, 'setup_drawing_context');
+self.$i_s('@element',VN$(self.$klass.$c_g_full('Element'),'new','div'));
+self.$i_s('@display_context',VN$(self.$klass.$c_g_full('GraphicsContext'),'new'));
+VN$(self.$i_g('@element'),'<',self.$i_g('@display_context'));
 }
 });
-$VN_2.$def('setup_render_context',function(self,_cmd){
-self.$i_s('@element',VN$(self.$klass.$c_g_full('Element'),'element_with_type:class_name:id:','div','',''));
-self.$i_s('@display_context',VN$(self.$klass.$c_g_full('RenderContext'),'new','div',nil));
-return VN$(self.$i_g('@element'),'<<',self.$i_g('@display_context'));
+$VN_2.$def('class_name',function(self,_cmd){
+return ORTEST(self.$i_g('@class_name'),'vn-view');
 });
-$VN_2.$def('setup_drawing_context',function(self,_cmd){
-self.$i_s('@element',VN$(self.$klass.$c_g_full('Element'),'element_with_type:class_name:id:','div','',''));
-self.$i_s('@display_context',VN$(self.$klass.$c_g_full('Element'),'element_with_type:class_name:id:','canvas','',''));
-return VN$(self.$i_g('@element'),'<<',self.$i_g('@display_context'));
+$VN_2.$def('class_name=',function(self,_cmd,a_class){
+VN$(self, 'will_change_value_for_key', 'class_name');
+self.$i_s('@class_name',a_class);
+VN$(self, 'did_change_value_for_key', 'class_name');
 });
 $VN_2.$def('graphics_port',function(self,_cmd){
 return VN$(self.$i_g('@display_context'),'element').getContext('2d');});
@@ -294,9 +296,6 @@ VN$(self,'draw_rect',VN$(self, 'bounds'));
 }
 });
 $VN_2.$def('render',function(self,_cmd,context){
-VN$(self,'puts','REDNERING');
-VN$(context,'<<',"<div class='well'></div>");
-return VN$(context,'<<',"<div>adam</div>");
 });
 $VN_2.$def('draw_rect',function(self,_cmd,rect){
 return VN$(self,'puts','drawing rect');

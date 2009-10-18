@@ -1,0 +1,50 @@
+.vn-button {
+  position: absolute;
+  display: block;
+}
+
+.vn-button .title {
+  position: absolute;
+  text-align:center;
+  cursor: default;
+  text-decoration: none;
+  text-shadow: rgba(206, 214, 221, 0.644) 0px 1px 0px;
+  font-family: Arial, "MS Trebuchet", sans-serif;
+  font-size: 12px;
+  font-weight: bold;
+  color: rgb(79, 79, 79);
+  
+}
+
+.vn-button .image {
+  position: absolute;
+  text-align:center;
+}
+
+.vn-button.bordered .left {
+  background: url('images/button_bezel_left.png');
+  position: absolute;
+  height: 24px;
+  width: 6px;
+  top: 0px;
+  left: 0px;
+}
+
+.vn-button.bordered .middle {
+  background: url('images/button_bezel_middle.png');
+  background-repeat: repeat-x;
+  position: absolute;
+  top: 0px;
+  left: 6px;
+  right: 6px;
+  height: 24px;
+}
+
+.vn-button.bordered .right {
+  background: url('images/button_bezel_right.png');
+  position: absolute;
+  height: 24px;
+  width: 6px;
+  top: 0px;
+  right: 0px;
+}

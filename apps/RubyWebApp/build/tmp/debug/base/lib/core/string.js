@@ -80,6 +80,20 @@ $VN_1.$def('capitalize',function(self,_cmd){
 });
 $VN_1.$def('swapcase',function(self,_cmd){
 });
+$VN_1.$def('camelize',function(self,_cmd){
+var parts = self.split('_');
+    var length = parts.length;
+
+    if (length == 1) return parts[0];
+
+    var camelized = self.charAt(0) == '-'
+      ? parts[0].charAt(0).toUpperCase() + parts[0].substring(1)
+      : parts[0];
+
+    for (var i = 1; i < length; i++)
+      camelized += parts[i].charAt(0).toUpperCase() + parts[i].substring(1);
+
+    return camelized;});
 $VN_1.$def('hex',function(self,_cmd){
 });
 $VN_1.$def('oct',function(self,_cmd){

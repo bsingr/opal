@@ -30,8 +30,6 @@ module Vienna
   
   class Window < Responder
     
-    # Main initializer for window
-    # 
     def initialize content_rect, style_mask
       super() # Responder#initialize
       
@@ -51,23 +49,24 @@ module Vienna
     end
     
     def setup_display_context
-      @element = Element.element_with_type :div, class_name:'', id:''
-      @display_element = Element.element_with_type :canvas, class_name:'', id:''
-      @element << @display_element
+      @element = Element.new :div
+      @display_context = RenderContext.new :div
+      @element << @display_context
       Document << @element
-      
-      # Graphics context
-      @graphics_context = GraphicsContext.new(`#{@display_element.element}.getContext('2d')`, false)
       
       # Events - should attach these to the windowview...all relevant elements are subviews of this,
       # and, we wont capture events outside the visible window (e.g. the shadow which might be drawn
       # on the @element)
       @element.add_event_listener :mousedown do |event|
         puts 'Yeah! mouse down inside window..'
+        # Cross browser way to avoid event propagation
+        `event.preventDefault ? event.preventDefault() : event.returnValue = false;`
       end
       
       @element.add_event_listener :mouseup do |event|
-        puts '...and the mouse is up again.'
+        puts 'And now the mouse is back up, happy days!'
+        # Cross browser way to avoid event propagation
+        `event.preventDefault ? event.preventDefault() : event.returnValue = false;`
       end   
     end
     

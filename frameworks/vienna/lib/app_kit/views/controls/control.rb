@@ -27,32 +27,19 @@
 module Vienna
 
   class Control < View
-    
-    # cell_reader <- automatically return cell's value
-    # cell_writer <- automatically set cell's value
-    # combination of the above
-    
+      
     # display_properties :enabled, :selected, :state
     
     def initialize frame
-      # puts 'control calling super'
       super frame
-      # puts '_in control_'
-      @cell = self.class.cell_class.new
     end
     
-    def self.cell_class= cell_class
-      # @@cell_class = cell_class
-    end
-    
-    def self.cell_class
-      @@cell_class ||= Vienna::Cell
+    def render context
+      # render nothing
     end
     
     def draw_rect rect
       puts 'drawing rect from control'
-      # puts @cell
-      @cell.draw_with_frame @bounds, in_view:self
     end
         
     def size_to_fit
@@ -60,18 +47,6 @@ module Vienna
     end
     
     def calc_size
-      
-    end
-    
-    def cell
-      
-    end
-    
-    def cell=(a_cell)
-      
-    end
-    
-    def selected_cell
       
     end
     
@@ -220,25 +195,7 @@ module Vienna
       
     end
     
-    def update_cell cell
-      
-    end
-    
-    def update_cell_inside cell
-      
-    end
-    
-    def draw_cell_inside cell
-      
-    end
-    
-    def draw_cell cell
-      
-    end
-    
-    def select_cell cell
-      
-    end
+  
     
     def send_action action, to:target
       

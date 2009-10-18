@@ -113,6 +113,7 @@ RClass.define_under = function(outer, id, super_klass) {
   // VN.const_set(outer, id, klass);
   outer.$c_s(id, klass);
   RClass.inherited(super_klass, klass);
+  klass.$name(id);
 
   return klass;
 };

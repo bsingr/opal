@@ -70,6 +70,7 @@ RObject.prototype.$i_g = function(id) {
 */
 RObject.prototype.$ = function(id, args) {
   var method = this.$klass.$search_method(id);
+  
   if (!method) throw 'RObject#call cannot find method: ' + id ;
   return method.apply(this, args) ;
 };
@@ -86,7 +87,11 @@ var VN$ = function VN$(self, id) {
 
   
   var method = self.$klass.$search_method(id);
-  if (!method) throw 'RObject#call cannot find method: ' + id ;
+  
+  if (!method) {
+    console.log(self);
+    throw 'RObject#call cannot find method: ' + id ;
+  } 
   // console.log(Array.prototype.slice.call(arguments));
   switch(arguments.length) {
     case 2: return method(self, id);

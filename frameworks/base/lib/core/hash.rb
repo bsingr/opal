@@ -196,8 +196,11 @@ class Hash
     
   end
   
-  def each
-    
+  def each (&block)
+    `for (var i = 0; i < self.$keys.length; i++) {`
+      yield `self.$keys[i]`, `self.$values[self.$keys[i]]`
+    `}`
+    self
   end
   
   def keys

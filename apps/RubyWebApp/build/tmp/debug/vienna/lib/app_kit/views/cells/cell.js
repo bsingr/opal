@@ -271,6 +271,8 @@ $VN_2.$def('calc_draw_info',function(self,_cmd){
 });
 $VN_2.$def('setup_field_editor_attributes',function(self,_cmd,text_obj){
 });
+$VN_2.$def('render_with_context:in_view:',function(self,_cmd,context,control_view){
+});
 $VN_2.$def('draw_interior_with_frame:in_view:',function(self,_cmd,cell_frame,control_view){
 });
 $VN_2.$def('draw_with_frame:in_view:',function(self,_cmd,cell_frame,control_view){

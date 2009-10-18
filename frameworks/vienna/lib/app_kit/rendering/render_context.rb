@@ -33,6 +33,7 @@ module Vienna
     def initialize tag_name, options
       @element_stack = [`document.createElement(#{tag_name})`]
       @first_time = true
+      @type = tag_name
     end
     
     def first_time?
@@ -55,17 +56,17 @@ module Vienna
       @element_stack.pop
     end
     
+    # we are actually just returning this object, just changing which element
+    # any chnages are applied too.
     def selector a_selector, &block
       element = find_selector a_selector
       push_element_stack element
-      # we are actually just returning this object, just changing which element
-      # any chnages are applied too.
       yield self
       pop_element_stack
     end
     
     def find_selector a_selector
-      element
+      `return #{element}.getElementsByClassName(#{a_selector})[0];`
     end
     
   end

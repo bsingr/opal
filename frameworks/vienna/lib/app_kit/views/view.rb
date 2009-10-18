@@ -70,7 +70,7 @@ module Vienna
     end
     
     def self.build options, &block
-      view = self.new Rect.new(0, 0, 100, 100)     
+      view = self.new(options[:frame]) 
       if block
         yield view
       end
@@ -87,27 +87,24 @@ module Vienna
     
     def setup_display_context
       if display_mode == :render
-        setup_render_context
+        @element = Element.new :div, :class_name => class_name, :id => ""
+        @display_context = RenderContext.new :div, nil
+        @element << @display_context
       else
-        setup_drawing_context
+        @element = Element.new :div
+        @display_context = GraphicsContext.new
+        @element < @display_context
       end
-      
-      # puts "Setting up #{display_mode} context for view"
-      # Currently force views to use drawing based display
-      
     end
     
-    def setup_render_context
-      @element = Element.element_with_type :div, class_name:'', id:''
-      # @display_context = Element.element_with_type :div, class_name:'', id:''
-      @display_context = RenderContext.new :div, nil
-      @element << @display_context
+    # The root CSS class name used for rendering the view. This can be used as a basis
+    # for setting the className for the DIV element
+    def class_name
+      @class_name || 'vn-view'
     end
     
-    def setup_drawing_context
-      @element = Element.element_with_type :div, class_name:'', id:''
-      @display_context = Element.element_with_type :canvas, class_name:'', id:''
-      @element << @display_context
+    def class_name= a_class
+      @class_name = a_class
     end
     
     def graphics_port
@@ -526,9 +523,9 @@ module Vienna
         
     
     def render context
-      puts 'REDNERING'
-      context << "<div class='well'></div>"
-      context << "<div>adam</div>"
+      # puts 'REDNERING'
+      # context << "<div class='well'></div>"
+      # context << "<div>adam</div>"
     end
     
     

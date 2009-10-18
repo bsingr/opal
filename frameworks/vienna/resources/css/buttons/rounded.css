@@ -1,0 +1,34 @@
+/* ======================= */
+/* = Rounded bezel style = */
+/* ======================= */
+
+.vn-button.bordered.rounded .vn-button-left {
+  background-position: 0px -250px;
+  width: 14px;
+}
+
+.vn-button.bordered.rounded .vn-button-middle {
+  background-position: 0px -277px;
+  left: 14px;
+  right: 14px;
+}
+
+.vn-button.bordered.rounded .vn-button-right {
+  background-position: -18px -250px;
+  width: 14px;
+}
+
+/* disabled */
+
+/* highlighted */
+.vn-button.bordered.rounded.highlighted .vn-button-left {
+  background-position: 0px -304px;
+}
+
+.vn-button.bordered.rounded.highlighted .vn-button-middle {
+  background-position: 0px -331px;
+}
+
+.vn-button.bordered.rounded.highlighted .vn-button-right {
+  background-position: -18px -304px;
+}

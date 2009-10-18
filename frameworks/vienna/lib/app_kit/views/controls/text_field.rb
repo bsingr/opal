@@ -1,5 +1,5 @@
 # 
-# app_kit.rb
+# text_field.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,30 +24,33 @@
 # THE SOFTWARE.
 #
 
-# Base
-require 'base/responder'
-require 'base/application'
-require 'base/event'
-require 'base/tracking_area'
-
-# # Graphics
-require 'graphics/graphics_context'
-require 'graphics/geometry'
-require 'graphics/image'
-# require 'graphics/array_geometry_additions'
-
-# Rendering
-require 'rendering/render_context'
-
-# Views
-require 'views/view'
-require 'views/controls/control'
-require 'views/controls/button'
-require 'views/controls/slider'
-
-# Windows
-require 'window/window'
-require 'window/panel'
-
-# Builder
-require 'builder/builder'
+module Vienna
+  
+  class TextField < Control
+    
+    def class_name
+      'vn-text-field'
+    end
+    
+    # Textfield created inside Div... the border, highlight etc are drawn with three
+    # div and their classes, while the actual input is a raw DOM input... it handles
+    # all the precise rendering, selection etc for us, so we can leave it to do its 
+    # thing.
+    # 
+    # Extending this, for secure fields, or search fields is simply a case of 
+    # swapping the css values (probably).
+    def render context
+      if context.first_time?
+        context << "<div class='left'></div>"
+        context << "<div class='middle'></div>"
+        context << "<div class='right'></div>"
+        context << "<input class='text_field'></div>"
+      end
+      
+      context.class_name = class_name
+    end
+    
+    
+  end
+  
+end

@@ -33,25 +33,41 @@ class Element
     `document.getElementById(#{the_id})`
   end
   
-  def initialize(type, class_name, the_id)
+  def initialize(type, options)
     # puts type
     @element = `document.createElement(#{type})`
     @type = type
-    @class_name = class_name
-    @id = the_id
-  end
-  
-  def self.element_with_type type, class_name:class_name, id:the_id
-    new type, class_name, the_id
+    # @class_name = class_name
+    # @id = the_id
   end
   
   def element
     @element
   end
   
+  def class_name= name
+    `#{element}.className = name;`
+  end
+  
+  # Sets the CSS style on the element with the given hash of CSS selector names
+  # These will override any CSS class defintions as per usual
+  def css options
+    options.each do |key, value|
+      `#{element}.style[#{key.camelize}] = value;`
+    end
+    self
+  end
+  
+  def frame= new_frame
+    puts 'Setting element frame to'
+    puts new_frame
+    self.origin = new_frame.origin
+    self.size = new_frame.size
+  end
+  
   def origin= new_origin
-    `#{element}.style.x = #{new_origin.x};`
-    `#{element}.style.y = #{new_origin.y};`
+    `#{element}.style.left = #{new_origin.x};`
+    `#{element}.style.top = #{new_origin.y};`
   end
   
   def size= new_size
@@ -68,12 +84,16 @@ class Element
   
   def <<(other)
     if other.instance_of? String
-      `#{element}.innerHTML += other`
+      `#{element}.innerHTML += other;`
     else
       # must be an element
-      `#{element}.appendChild(#{other.element})`
+      `#{element}.appendChild(#{other.element});`
     end
     
+  end
+  
+  def inner_html= str
+     `#{element}.innerHTML = str;`
   end
   
   def add_event_listener type, listener

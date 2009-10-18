@@ -1,29 +1,16 @@
 var $VN_1 = RModule.define('Vienna');
 var $VN_2 = RClass.define_under($VN_1, 'Control',$VN_2.$c_g_full('View'));
 $VN_2.$def('initialize',function(self,_cmd,frame){
-VN$sup(arguments.callee, self,_cmd,[frame]);
-return self.$i_s('@cell',VN$(VN$(VN$(self,'class'),'cell_class'),'new'));
+return VN$sup(arguments.callee, self,_cmd,[frame]);
 });
-$VN_2.$def_s('cell_class=',function(self,_cmd,cell_class){
-});
-$VN_2.$def_s('cell_class',function(self,_cmd){
-return (self.$k_d('@@cell_class') ? self.$k_g('@@cell_class') : self.$k_s('@@cell_class',self.$c_g_full('Vienna').$c_g('Cell')));
+$VN_2.$def('render',function(self,_cmd,context){
 });
 $VN_2.$def('draw_rect',function(self,_cmd,rect){
-VN$(self,'puts','drawing rect from control');
-return VN$(self.$i_g('@cell'),'draw_with_frame:in_view:',self.$i_g('@bounds'),self);
+return VN$(self,'puts','drawing rect from control');
 });
 $VN_2.$def('size_to_fit',function(self,_cmd){
 });
 $VN_2.$def('calc_size',function(self,_cmd){
-});
-$VN_2.$def('cell',function(self,_cmd){
-});
-$VN_2.$def('cell=',function(self,_cmd,a_cell){
-VN$(self, 'will_change_value_for_key', 'cell');
-VN$(self, 'did_change_value_for_key', 'cell');
-});
-$VN_2.$def('selected_cell',function(self,_cmd){
 });
 $VN_2.$def('target',function(self,_cmd){
 });
@@ -128,16 +115,6 @@ return VN$(self, 'float_value');
 $VN_2.$def('double_value',function(self,_cmd){
 });
 $VN_2.$def('needs_display',function(self,_cmd){
-});
-$VN_2.$def('update_cell',function(self,_cmd,cell){
-});
-$VN_2.$def('update_cell_inside',function(self,_cmd,cell){
-});
-$VN_2.$def('draw_cell_inside',function(self,_cmd,cell){
-});
-$VN_2.$def('draw_cell',function(self,_cmd,cell){
-});
-$VN_2.$def('select_cell',function(self,_cmd,cell){
 });
 $VN_2.$def('send_action:to:',function(self,_cmd,action,target){
 });
