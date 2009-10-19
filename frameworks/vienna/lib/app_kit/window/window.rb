@@ -86,7 +86,7 @@ module Vienna
       
       @window_view.needs_display = true
       
-      self.content_view = View.new(Rect.new(100, 100, 100, 100))
+      self.content_view = View.new(Rect.new(0, 0, @frame.width, @frame.height))
     end
     
     def self.build options, &block
@@ -121,14 +121,14 @@ module Vienna
       # and, we wont capture events outside the visible window (e.g. the shadow which might be drawn
       # on the @element)
       @window_view.element.add_event_listener :mousedown do |event|
-        puts 'Yeah! mouse down inside window..'
-        # Cross browser way to avoid event propagation
+        the_event = Event.from_native_event event, with_window:self, with_type:'left_mouse_down'
+        self.send_event the_event
         `event.preventDefault ? event.preventDefault() : event.returnValue = false;`
       end
       
       @window_view.element.add_event_listener :mouseup do |event|
-        puts 'And now the mouse is back up, happy days!'
-        # Cross browser way to avoid event propagation
+        the_event = Event.from_native_event event, with_window:self, with_type:'left_mouse_up'
+        self.send_event the_event
         `event.preventDefault ? event.preventDefault() : event.returnValue = false;`
       end
     end
@@ -200,7 +200,7 @@ module Vienna
       @content_view = view
       @content_view.frame = content_rect_for_frame_rect(bounds)
       view.view_did_move_to_window
-      @window_view.element << @content_view.element
+      @window_view << @content_view
     end
     
     def content_view
@@ -541,7 +541,10 @@ module Vienna
     end
     
     def convert_screen_to_base point
-      
+      # puts 'in here convert_screen_to_base'
+      res = Point.new(point.x - @frame.x, point.y - @frame.y)
+      # puts res
+      res
     end
     
     def perform_close sender
@@ -623,19 +626,41 @@ module Vienna
     end
     
     def send_event event
+      point = event.location_in_window
+      
       case event.type
       when :key_up
-        return first_responder.key_up event
+        puts 'key_up'
       when :key_down
-        return first_responder.key_down event
-      when :scroll_wheel
-      
+        puts 'key_down'
+      when :left_mouse_down
+        hit_test = @window_view.hit_test(point)
+        # puts hit_test.class_name
+        hit_test.mouse_down event
+        # if hit_test != @first_responder && hit_test.accepts_first_responder
+        #   make_first_responder hit_test
+        # end
+        # 
+        # if self.key_window?
+        #   return hit_test.mouse_down event
+        # else
+        #   self.make_key_and_order_front self
+        #   return hit_test.mouse_down event
+        # end
       when :left_mouse_up
-    
+        puts 'left_mouse_up'
+      when :left_mouse_dragged
+        puts 'left_mouse_dragged'
+      when :scroll_wheel
+        puts 'scroll_wheel'
+      when :right_mouse_down
+        puts 'right_mouse_down'
+      when :right_mouse_up
+        puts 'right_mouse_up'
+      when :right_mouse_dragged
+        puts 'right_mouse_dragged'
       end
     end
-    
-    
     
     def window_controller
       @window_controller

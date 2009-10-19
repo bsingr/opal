@@ -101,7 +101,7 @@ class Element
       #{element}.addEventListener(#{type}, #{listener}, false);
     }
     else {
-      #{element}.attachEvent(#{type}, #{listener});
+      #{element}.attachEvent('on' + #{type}, #{listener});
     }`
   end
 end

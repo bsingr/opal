@@ -26,38 +26,64 @@
 
 class Vienna::RubyParser
 
+  #   prechigh
+  #     nonassoc tLOWEST
+  #     nonassoc tLBRACE_ARG
+  #     
+  #     left  tLSHFT tRSHFT
+  #     nonassoc  kIF_MOD kUNLESS_MOD kWHILE_MOD kUNTIL_MOD
+  #     left  kOR kAND
+  #     right kNOT
+  #     nonassoc kDEFined
+  #     right '=' tOP_ASGN
+  #     left kRESCUE_MOD
+  #     right '?' ':'
+  #     nonassoc tDOT2 tDOT3
+  #     left  tOROP
+  #     left  tANDOP
+  #     nonassoc  tCMP tEQ tEQQ tNEQ tMATCH tNMATCH
+  #     left  '>' tGEQ '<' tLEQ
+  #     left  '|' '^'
+  #     left  '&'
+  #     left  '+' '-'
+  #     left  '*' '/' '%'
+  #     right tUMINUS_NUM tUMINUS
+  #     right tPOW
+  #     right '!' '~' tUPLUS
+  # preclow
+  
   prechigh
-  	nonassoc tLOWEST
-    nonassoc tLBRACE_ARG
-    
-    left  tLSHFT tRSHFT
-    nonassoc  kIF_MOD kUNLESS_MOD kWHILE_MOD kUNTIL_MOD
-    left  kOR kAND
-    right kNOT
-    nonassoc kDEFined
-    right '=' tOP_ASGN
-    left kRESCUE_MOD
-    right '?' ':'
+    right    tBANG tTILDE tUPLUS
+    right    tPOW
+    right    tUMINUS_NUM tUMINUS
+    left     tSTAR2 tDIVIDE tPERCENT
+    left     tPLUS tMINUS
+    left     tLSHFT tRSHFT
+    left     tAMPER2
+    left     tPIPE tCARET
+    left     tGT tGEQ tLT tLEQ
+    nonassoc tCMP tEQ tEQQ tNEQ tMATCH tNMATCH
+    left     tANDOP
+    left     tOROP
     nonassoc tDOT2 tDOT3
-    left  tOROP
-    left  tANDOP
-    nonassoc  tCMP tEQ tEQQ tNEQ tMATCH tNMATCH
-    left  '>' tGEQ '<' tLEQ
-    left  '|' '^'
-    left  '&'
-    left  '+' '-'
-    left  '*' '/' '%'
-    right tUMINUS_NUM tUMINUS
-    right tPOW
-    right '!' '~' tUPLUS
-	preclow
+    right    tEH tCOLON
+    left     kRESCUE_MOD
+    right    tEQL tOP_ASGN
+    # nonassoc kDEFINED
+    right    kNOT
+    left     kOR kAND
+    nonassoc kIF_MOD kUNLESS_MOD kWHILE_MOD kUNTIL_MOD
+    nonassoc tLBRACE_ARG
+    nonassoc tLOWEST
+  preclow
 	  
   token kCLASS kMODULE kDEF kUNDEF kBEGIN kRESCUE kENSURE kEND kIF kUNLESS
   token kTHEN kELSIF kELSE kCASE kWHEN kWHILE kUNTIL kFOR kBREAK kNEXT
   token kREDO kRETRY kIN kDO kDO_COND kDO_BLOCK kDO_LAMBDA kRETURN kYIELD
   token kSUPER kSELF kNIL kTRUE kFALSE kAND kOR kNOT kIF_MOD kUNLESS_MOD
   token kWHILE_MOD kUNTIL_MOD kRESCUE_MOD kALIAS kDEFINED klBEGIN klEND
-  token k__LINE__ k__FILE__ k__ENCODING__
+  token k__LINE__ k__FILE__ k__ENCODING__ 
+  token kDEFined
 
   token tIDENTIFIER tFID tGVAR tIVAR tCONSTANT tCVAR tLABEL tINTEGER tFLOAT
   token tSTRING_CONTENT tCHAR tNTH_REF tBACK_REF tREGEXP_END tUPLUS tUMINUS

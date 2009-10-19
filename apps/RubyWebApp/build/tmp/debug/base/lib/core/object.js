@@ -164,5 +164,5 @@ var cNilClass = RClass.define('NilClass', cObject);
 var cBoolean = RClass.define('Boolean', cObject);
 var cArray = RClass.define('Array', cObject);
 var cString = RClass.define('String', cObject);
-var cNumeric = RClass.define('Numeric', cObject);
+var cNumber = RClass.define('Number', cObject);
 var cProc = RClass.define('Proc', cObject);

@@ -94,7 +94,10 @@ self.$i_s('@y',y);
 VN$(self, 'did_change_value_for_key', 'y');
 });
 $VN_2.$def('eql?',function(self,_cmd,other){
-return VN$(ANDTEST(VN$(self.$i_g('@x'),'==',VN$(other,'x')),self.$i_g('@y')),'==',VN$(other,'y'));
+return ANDTEST(VN$(self.$i_g('@x'),'==',VN$(other,'x')),VN$(self.$i_g('@y'),'==',VN$(other,'y')));
+});
+$VN_2.$def('in_rect?',function(self,_cmd,a_rect){
+return ANDTEST(VN$(VN$(self, 'x'),'>=',VN$(a_rect,'x')),ANDTEST(VN$(VN$(self, 'y'),'>=',VN$(a_rect,'y')),ANDTEST(VN$(VN$(self, 'x'),'<',VN$(VN$(a_rect,'x'),'+',VN$(a_rect,'width'))),VN$(VN$(self, 'y'),'<',VN$(VN$(a_rect,'y'),'+',VN$(a_rect,'height'))))));
 });
 var $VN_2 = RClass.define_under($VN_1, 'Size',cObject);
 $VN_2.$def('initialize',function(self,_cmd,w,h){
@@ -121,5 +124,5 @@ self.$i_s('@height',h);
 VN$(self, 'did_change_value_for_key', 'height');
 });
 $VN_2.$def('eql?',function(self,_cmd,other){
-return VN$(ANDTEST(VN$(self.$i_g('@width'),'==',VN$(other,'width')),self.$i_g('@height')),'==',VN$(other,'height'));
+return ANDTEST(VN$(self.$i_g('@width'),'==',VN$(other,'width')),VN$(self.$i_g('@height'),'==',VN$(other,'height')));
 });

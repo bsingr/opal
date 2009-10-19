@@ -22,7 +22,8 @@
 }
 
 .vn-button.bordered .left {
-  background: url('images/button_bezel_left.png');
+  background: url('images/controls.png');
+  background-position: 0px 0px;
   position: absolute;
   height: 24px;
   width: 6px;
@@ -31,8 +32,9 @@
 }
 
 .vn-button.bordered .middle {
-  background: url('images/button_bezel_middle.png');
+  background: url('images/controls.png');
   background-repeat: repeat-x;
+  background-position: 0px -52px;
   position: absolute;
   top: 0px;
   left: 6px;
@@ -41,7 +43,8 @@
 }
 
 .vn-button.bordered .right {
-  background: url('images/button_bezel_right.png');
+  background: url('images/controls.png');
+  background-position: 0px -26px;
   position: absolute;
   height: 24px;
   width: 6px;
@@ -51,26 +54,25 @@
 
 /* Disabled */
 .vn-button.bordered.disabled .left {
-  background: url('images/button_disabled_left.png');
+  background-position: -10px 0px;
 }
 
 .vn-button.bordered.disabled .middle {
-  background: url('images/button_disabled_middle.png');
+  background-position: 0px -78px;
 }
 
 .vn-button.bordered.disabled .right {
-  background: url('images/button_disabled_right.png');
+  background-position: -10px -26px;
 }
 
 /* State on */
 .vn-button.bordered.on .left {
-  background: url('images/button_highlighted_left.png');
+  background-position: -10px 0px;
 }
 
 .vn-button.bordered.on .middle {
-  background: url('images/button_highlighted_middle.png');
+  background-position: 0px -78px;
 }
 
 .vn-button.bordered.on .right {
-  background: url('images/button_highlighted_right.png');
-}
+background-position: -10px -26px;}

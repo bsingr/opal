@@ -878,7 +878,10 @@ RObject.prototype.$i_g = function(id) {
 RObject.prototype.$ = function(id, args) {
   var method = this.$klass.$search_method(id);
   
-  if (!method) throw 'RObject#call cannot find method: ' + id ;
+  if (!method) {
+    console.log(this);
+    throw 'RObject#call cannot find method: ' + id ;
+  } 
   return method.apply(this, args) ;
 };
 
@@ -1113,7 +1116,7 @@ var cNilClass = RClass.define('NilClass', cObject);
 var cBoolean = RClass.define('Boolean', cObject);
 var cArray = RClass.define('Array', cObject);
 var cString = RClass.define('String', cObject);
-var cNumeric = RClass.define('Numeric', cObject);
+var cNumber = RClass.define('Number', cObject);
 var cProc = RClass.define('Proc', cObject);
 
 var $VN_1 = RModule.define('Kernel');
@@ -1248,7 +1251,7 @@ $VN_1.$def('included_modules',function(self,_cmd){
 $VN_1.$def('include?',function(self,_cmd){
 });
 $VN_1.$def('name',function(self,_cmd){
-});
+return self.$iv_tbl['__classid__'];});
 $VN_1.$def('ancestors',function(self,_cmd){
 });
 $VN_1.$def('attr',function(self,_cmd){
@@ -1787,261 +1790,117 @@ $VN_1.$def('partition',function(self,_cmd){
 $VN_1.$def('rpartition',function(self,_cmd){
 });
 
-/* 
- * string.js
- * vienna
- * 
- * Created by Adam Beynon.
- * Copyright 2009 Adam Beynon.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
- 
-Number.prototype.$klass = cNumeric ;
+Number.prototype.$klass = cNumber ;
 Number.prototype.$type = VN.NUMBER ;
 Number.prototype.$ = RObject.prototype.$;
 
-// VN.include_module(VN.cNumeric, VN.mComparable);
-RModule.include(cNumeric, mComparable);
-
-cNumeric.$def('singleton_method_added', function() {
-  
+// VN.include_module(VN.cNumber, VN.mComparable);
+RModule.include(cNumber, mComparable);var $VN_1 = RClass.define('Number',cObject);
+$VN_1.$def('coerce',function(self,_cmd){
 });
-
-cNumeric.$def('initialize_copy', function() {
-  
+$VN_1.$def('+@',function(self,_cmd){
 });
-
-cNumeric.$def('coerce', function() {
-  
+$VN_1.$def('-@',function(self,_cmd){
 });
-
-cNumeric.$def('+@', function() {
-  
+$VN_1.$def('<=>',function(self,_cmd){
 });
-
-cNumeric.$def('-@', function() {
-  
+$VN_1.$def('eql?',function(self,_cmd){
 });
-
-cNumeric.$def('<=>', function() {
-  
+$VN_1.$def('quo',function(self,_cmd){
 });
-
-cNumeric.$def('eql?', function() {
-  
+$VN_1.$def('fdiv',function(self,_cmd){
 });
-
-cNumeric.$def('quo', function() {
-  
+$VN_1.$def('div',function(self,_cmd){
 });
-
-cNumeric.$def('fdiv', function() {
-  
+$VN_1.$def('divmod',function(self,_cmd){
 });
-
-cNumeric.$def('div', function() {
-  
+$VN_1.$def('modulo',function(self,_cmd){
 });
-
-cNumeric.$def('divmod', function() {
-  
+$VN_1.$def('remainder',function(self,_cmd){
 });
-
-cNumeric.$def('modulo', function() {
-  
+$VN_1.$def('abs',function(self,_cmd){
 });
-
-cNumeric.$def('remainder', function() {
-  
+$VN_1.$def('magnitude',function(self,_cmd){
 });
-
-cNumeric.$def('abs', function() {
-  
+$VN_1.$def('to_int',function(self,_cmd){
 });
-
-cNumeric.$def('magnitude', function() {
-  
+$VN_1.$def('real?',function(self,_cmd){
 });
-
-cNumeric.$def('to_int', function() {
-  
+$VN_1.$def('integer?',function(self,_cmd){
 });
-
-cNumeric.$def('real?', function() {
-  
+$VN_1.$def('zero?',function(self,_cmd){
 });
-
-cNumeric.$def('integer?', function() {
-  
+$VN_1.$def('nonzero?',function(self,_cmd){
 });
-
-cNumeric.$def('zero?', function() {
-  
+$VN_1.$def('floor',function(self,_cmd){
 });
-
-cNumeric.$def('nonzero?', function() {
-  
+$VN_1.$def('ceil',function(self,_cmd){
 });
-
-cNumeric.$def('floor', function() {
-  
+$VN_1.$def('round',function(self,_cmd){
 });
-
-cNumeric.$def('ceil', function() {
-  
+$VN_1.$def('truncate',function(self,_cmd){
 });
-
-cNumeric.$def('round', function() {
-  
+$VN_1.$def('step',function(self,_cmd){
 });
-
-cNumeric.$def('truncate', function() {
-  
+$VN_1.$def('odd?',function(self,_cmd){
 });
-
-cNumeric.$def('step', function() {
-  
+$VN_1.$def('even?',function(self,_cmd){
 });
-
-cNumeric.$def('odd?', function() {
-  
+$VN_1.$def('upto',function(self,_cmd){
 });
-
-cNumeric.$def('even?', function() {
-  
+$VN_1.$def('downto',function(self,_cmd){
 });
-
-cNumeric.$def('upto', function() {
-  
+$VN_1.$def('times',function(self,_cmd){
 });
-
-cNumeric.$def('downto', function() {
-  
+$VN_1.$def('succ',function(self,_cmd){
 });
-
-cNumeric.$def('times', function() {
-  
+$VN_1.$def('next',function(self,_cmd){
 });
-
-cNumeric.$def('succ', function() {
-  
+$VN_1.$def('pred',function(self,_cmd){
 });
-
-cNumeric.$def('next', function() {
-  
+$VN_1.$def('chr',function(self,_cmd){
 });
-
-cNumeric.$def('pred', function() {
-  
+$VN_1.$def('ord',function(self,_cmd){
 });
-
-cNumeric.$def('chr', function() {
-  
+$VN_1.$def('to_i',function(self,_cmd){
 });
-
-cNumeric.$def('ord', function() {
-  
+$VN_1.$def('to_s',function(self,_cmd){
 });
-
-cNumeric.$def('to_i', function() {
-  
+$VN_1.$def('+',function(self,_cmd,i){
+return self + i;});
+$VN_1.$def('-',function(self,_cmd,i){
+return self - i;});
+$VN_1.$def('(',function(self,_cmd,i){
+return self * i;});
+$VN_1.$def('%',function(self,_cmd){
 });
-
-cNumeric.$def('to_s', function() {
-  
+$VN_1.$def('**',function(self,_cmd){
 });
-
-cNumeric.$def('+', function(i) {
-  return this + i;
+$VN_1.$def('==',function(self,_cmd,other){
+return self == other ? true : false;});
+$VN_1.$def('>',function(self,_cmd,other){
+return self > other;});
+$VN_1.$def('>=',function(self,_cmd,other){
+return self >= other;});
+$VN_1.$def('<',function(self,_cmd,other){
+return self < other;});
+$VN_1.$def('<=',function(self,_cmd,other){
+return self <= other;});
+$VN_1.$def('~',function(self,_cmd){
 });
-
-cNumeric.$def('-', function(i) {
-  return this - i;
+$VN_1.$def('&',function(self,_cmd,other){
+return self & other;});
+$VN_1.$def('|',function(self,_cmd,other){
+return self | other;});
+$VN_1.$def('^',function(self,_cmd){
 });
-
-cNumeric.$def('*', function() {
-  
+$VN_1.$def('[]',function(self,_cmd){
 });
-
-cNumeric.$def('/', function() {
-  
+$VN_1.$def('<<',function(self,_cmd,other){
+return self << other});
+$VN_1.$def('>>',function(self,_cmd){
 });
-
-cNumeric.$def('%', function() {
-  
-});
-
-cNumeric.$def('**', function() {
-  
-});
-
-cNumeric.$def('==', function(self, _cmd, other) {
-  return self == other ? true : false;
-});
-
-cNumeric.$def('>', function() {
-  
-});
-
-cNumeric.$def('>=', function() {
-  
-});
-
-cNumeric.$def('<', function() {
-  
-});
-
-cNumeric.$def('<=', function() {
-  
-});
-
-cNumeric.$def('~', function() {
-  
-});
-
-cNumeric.$def('&', function(self, _cmd, other) {
-  return self & other;
-});
-
-cNumeric.$def('|', function(self, _cmd, other) {
-  return self | other;
-});
-
-cNumeric.$def('^', function(self, _cmd, other) {
-  
-});
-
-cNumeric.$def('[]', function() {
-  
-});
-
-cNumeric.$def('<<', function(self, _cmd, other) {
-  return self << other;
-});
-
-cNumeric.$def('>>', function() {
-  
-});
-
-cNumeric.$def('to_f', function() {
-  
+$VN_1.$def('to_f',function(self,_cmd){
 });
 
 
@@ -2810,7 +2669,7 @@ if (document.addEventListener) {
       VN$(self, 'element').addEventListener(type, listener, false);
     }
     else {
-      VN$(self, 'element').attachEvent(type, listener);
+      VN$(self, 'element').attachEvent('on' + type, listener);
     }});
 
 var $VN_1 = RModule.define('Vienna');
@@ -3085,15 +2944,28 @@ window.onload = function() {VN$(cObject.$c_g('VN').$c_g('App'),'finish_launching
 var $VN_1 = RModule.define('Vienna');
 $VN_1.$c_s('EVENT_TYPES',VN.$h('left_mouse_down', 1, 'left_mouse_up', 2, 'right_mouse_down', 3, 'right_mouse_up', 4, 'mouse_moved', 5, 'left_mouse_dragged', 6, 'right_mouse_dragged', 7, 'mouse_entered', 8, 'mouse_exited', 9, 'key_down', 10, 'key_up', 11, 'flags_changed', 12, 'app_kit_defined', 13, 'system_defined', 14, 'application_defined', 15, 'periodic', 16, 'cursor_update', 17, 'scroll_wheel', 22, 'other_mouse_down', 25, 'other_mouse_up', 26, 'other_mouse_dragged', 27));
 var $VN_2 = RClass.define_under($VN_1, 'Event',cObject);
+$VN_2.$def_s('from_native_event:with_window:with_type:',function(self,_cmd,event,win,type){
+var obj = VN$(self,'allocate');
+VN$(obj,'initialize_with_native_event:with_window:with_type:',event,win,type);
+return obj;
+});
+$VN_2.$def('initialize_with_native_event:with_window:with_type:',function(self,_cmd,event,win,type){
+self.$i_s('@event',event);
+self.$i_s('@window',win);
+return self.$i_s('@type',type);
+});
 $VN_2.$def('type',function(self,_cmd){
+return self.$i_g('@type');
 });
 $VN_2.$def('modifier_flags',function(self,_cmd){
 });
 $VN_2.$def('timestamp',function(self,_cmd){
 });
 $VN_2.$def('window',function(self,_cmd){
+return self.$i_g('@window');
 });
 $VN_2.$def('window_number',function(self,_cmd){
+return VN$(self.$i_g('@window'),'window_number');
 });
 $VN_2.$def('context',function(self,_cmd){
 });
@@ -3104,6 +2976,7 @@ $VN_2.$def('button_number',function(self,_cmd){
 $VN_2.$def('event_number',function(self,_cmd){
 });
 $VN_2.$def('location_in_window',function(self,_cmd){
+return VN$(self.$i_g('@window'),'convert_screen_to_base',VN$(self.$klass.$c_g_full('Point'),'new',self.$i_g('@event').clientX,self.$i_g('@event').clientY));
 });
 $VN_2.$def('characters',function(self,_cmd){
 });
@@ -3315,7 +3188,10 @@ self.$i_s('@y',y);
 VN$(self, 'did_change_value_for_key', 'y');
 });
 $VN_2.$def('eql?',function(self,_cmd,other){
-return VN$(ANDTEST(VN$(self.$i_g('@x'),'==',VN$(other,'x')),self.$i_g('@y')),'==',VN$(other,'y'));
+return ANDTEST(VN$(self.$i_g('@x'),'==',VN$(other,'x')),VN$(self.$i_g('@y'),'==',VN$(other,'y')));
+});
+$VN_2.$def('in_rect?',function(self,_cmd,a_rect){
+return ANDTEST(VN$(VN$(self, 'x'),'>=',VN$(a_rect,'x')),ANDTEST(VN$(VN$(self, 'y'),'>=',VN$(a_rect,'y')),ANDTEST(VN$(VN$(self, 'x'),'<',VN$(VN$(a_rect,'x'),'+',VN$(a_rect,'width'))),VN$(VN$(self, 'y'),'<',VN$(VN$(a_rect,'y'),'+',VN$(a_rect,'height'))))));
 });
 var $VN_2 = RClass.define_under($VN_1, 'Size',cObject);
 $VN_2.$def('initialize',function(self,_cmd,w,h){
@@ -3342,7 +3218,7 @@ self.$i_s('@height',h);
 VN$(self, 'did_change_value_for_key', 'height');
 });
 $VN_2.$def('eql?',function(self,_cmd,other){
-return VN$(ANDTEST(VN$(self.$i_g('@width'),'==',VN$(other,'width')),self.$i_g('@height')),'==',VN$(other,'height'));
+return ANDTEST(VN$(self.$i_g('@width'),'==',VN$(other,'width')),VN$(self.$i_g('@height'),'==',VN$(other,'height')));
 });
 
 var $VN_1 = RModule.define('Vienna');
@@ -3393,7 +3269,7 @@ $VN_2.$def('status',function(self,_cmd){
 return self.$i_g('@status');
 });
 $VN_2.$def('load',function(self,_cmd){
-if(RTEST(VN$(ORTEST(VN$(self.$i_g('@status'),'==','loading'),self.$i_g('@status')),'==','completed'))){
+if(RTEST(ORTEST(VN$(self.$i_g('@status'),'==','loading'),VN$(self.$i_g('@status'),'==','completed')))){
 return ;
 }
 self.$i_s('@status','loading');
@@ -3753,6 +3629,10 @@ $VN_2.$def('rotated_or_scaled_from_base?',function(self,_cmd){
 $VN_2.$def('opaque?',function(self,_cmd){
 });
 $VN_2.$def('convert_point:from_view:',function(self,_cmd,point,view){
+if(!RTEST(view)){
+return point;
+}
+return VN$(self.$klass.$c_g_full('Point'),'new',VN$(VN$(point,'x'),'-',VN$(self.$i_g('@frame'),'x')),VN$(VN$(point,'y'),'-',VN$(self.$i_g('@frame'),'y')));
 });
 $VN_2.$def('convert_point:to_view:',function(self,_cmd,point,view){
 });
@@ -3828,6 +3708,18 @@ return VN$(self,'puts','drawing rect');
 $VN_2.$def('view_will_draw',function(self,_cmd){
 });
 $VN_2.$def('hit_test',function(self,_cmd,point){
+point = VN$(self,'convert_point:from_view:',point,self.$i_g('@superview'));
+if(!RTEST(VN$(point,'in_rect?',VN$(self, 'bounds')))){
+return nil;
+}
+var count = VN$(self.$i_g('@subviews'),'length');
+var i = 0;
+for (i = 0; i < count; i++) {var view_to_check = VN$(self.$i_g('@subviews'),'[]',i);
+var hit_test = VN$(view_to_check,'hit_test',point);
+if(RTEST(hit_test)){
+return hit_test;
+}
+}return self;
 });
 $VN_2.$def('mouse:in_rect:',function(self,_cmd,point,rect){
 });
@@ -3862,20 +3754,30 @@ $VN_2.$def('render',function(self,_cmd,context){
 $VN_2.$def('draw_rect',function(self,_cmd,rect){
 return VN$(self,'puts','drawing rect from control');
 });
+$VN_2.$def('image_rect_for_bounds',function(self,_cmd,the_rect){
+return the_rect;
+});
+$VN_2.$def('title_rect_for_bounds',function(self,_cmd,the_rect){
+return the_rect;
+});
 $VN_2.$def('size_to_fit',function(self,_cmd){
 });
 $VN_2.$def('calc_size',function(self,_cmd){
 });
 $VN_2.$def('target',function(self,_cmd){
+return self.$i_g('@target');
 });
 $VN_2.$def('target=',function(self,_cmd,obj){
 VN$(self, 'will_change_value_for_key', 'target');
+self.$i_s('@target',obj);
 VN$(self, 'did_change_value_for_key', 'target');
 });
 $VN_2.$def('action',function(self,_cmd){
+return self.$i_g('@action');
 });
 $VN_2.$def('action=',function(self,_cmd,selector){
 VN$(self, 'will_change_value_for_key', 'action');
+self.$i_s('@action',selector);
 VN$(self, 'did_change_value_for_key', 'action');
 });
 $VN_2.$def('tag',function(self,_cmd){
@@ -3991,6 +3893,21 @@ $VN_2.$def('abort_editing',function(self,_cmd){
 $VN_2.$def('validate_editing',function(self,_cmd){
 });
 $VN_2.$def('mouse_down',function(self,_cmd,the_event){
+if(!RTEST(VN$(self, 'enabled?'))){
+return ;
+}
+return VN$(self,'track_mouse:until_mouse_up:',the_event,true);
+});
+$VN_2.$def('start_tracking_at',function(self,_cmd,start_point){
+VN$(self,'highlight',true);
+return true;
+});
+$VN_2.$def('continue_tracking:at:',function(self,_cmd,last_point,current_point){
+});
+$VN_2.$def('stop_tracking:at:mouse_is_up:',function(self,_cmd,last_point,stop_point,flag){
+return VN$(self,'highlight',false);
+});
+$VN_2.$def('track_mouse:until_mouse_up:',function(self,_cmd,the_event,flag){
 });
 
 var $VN_1 = RModule.define('Vienna');
@@ -4289,7 +4206,7 @@ self.$i_s('@next_responder',self.$klass.$c_g_full('App'));
 VN$(self,'setup_window_view');
 VN$(self,'frame=',content_rect);
 VN$(self.$i_g('@window_view'),'needs_display=',true);
-return VN$(self,'content_view=',VN$(self.$klass.$c_g_full('View'),'new',VN$(self.$klass.$c_g_full('Rect'),'new',100,100,100,100)));
+return VN$(self,'content_view=',VN$(self.$klass.$c_g_full('View'),'new',VN$(self.$klass.$c_g_full('Rect'),'new',0,0,VN$(self.$i_g('@frame'),'width'),VN$(self.$i_g('@frame'),'height'))));
 });
 $VN_2.$def_s('build',function(self,_cmd,options,block){
 var win = VN$(self,'new',VN$(options,'[]','frame'),VN$(options,'[]','style'));
@@ -4310,10 +4227,12 @@ VN$(self.$i_g('@window_view'),'window=',self);
 VN$(self.$i_g('@window_view'),'next_responder=',self);
 VN$(self.$i_g('@element'),'<<',VN$(self.$i_g('@window_view'),'element'));
 VN$(VN$(self.$i_g('@window_view'),'element'),'add_event_listener','mousedown',function(event){
-VN$(self,'puts','Yeah! mouse down inside window..');
+var the_event = VN$(self.$klass.$c_g_full('Event'),'from_native_event:with_window:with_type:',event,self,'left_mouse_down');
+VN$(self,'send_event',the_event);
 event.preventDefault ? event.preventDefault() : event.returnValue = false;});
 return VN$(VN$(self.$i_g('@window_view'),'element'),'add_event_listener','mouseup',function(event){
-VN$(self,'puts','And now the mouse is back up, happy days!');
+var the_event = VN$(self.$klass.$c_g_full('Event'),'from_native_event:with_window:with_type:',event,self,'left_mouse_up');
+VN$(self,'send_event',the_event);
 event.preventDefault ? event.preventDefault() : event.returnValue = false;});
 });
 $VN_2.$def_s('frame_rect_for_content_rect:style_mask:',function(self,_cmd,rect,style){
@@ -4364,7 +4283,7 @@ var bounds = VN$(self.$klass.$c_g_full('Rect'),'new',0,0,VN$(VN$(self.$i_g('@fra
 self.$i_s('@content_view',view);
 VN$(self.$i_g('@content_view'),'frame=',VN$(self,'content_rect_for_frame_rect',bounds));
 VN$(view,'view_did_move_to_window');
-VN$(VN$(self.$i_g('@window_view'),'element'),'<<',VN$(self.$i_g('@content_view'),'element'));
+VN$(self.$i_g('@window_view'),'<<',self.$i_g('@content_view'));
 VN$(self, 'did_change_value_for_key', 'content_view');
 });
 $VN_2.$def('content_view',function(self,_cmd){
@@ -4605,6 +4524,8 @@ $VN_2.$def('works_when_modal?',function(self,_cmd){
 $VN_2.$def('convert_base_to_screen',function(self,_cmd,point){
 });
 $VN_2.$def('convert_screen_to_base',function(self,_cmd,point){
+var res = VN$(self.$klass.$c_g_full('Point'),'new',VN$(VN$(point,'x'),'-',VN$(self.$i_g('@frame'),'x')),VN$(VN$(point,'y'),'-',VN$(self.$i_g('@frame'),'y')));
+return res;
 });
 $VN_2.$def('perform_close',function(self,_cmd,sender){
 });
@@ -4668,16 +4589,35 @@ $VN_2.$def('ignores_mouse_events?',function(self,_cmd){
 return self.$i_g('@ignores_mouse_events');
 });
 $VN_2.$def('send_event',function(self,_cmd,event){
+var point = VN$(event,'location_in_window');
 return (function($v){
 if(($e = VN$('key_up', '===', $v),$e!==nil && $e!==false)){
-return VN$(VN$(self, 'first_responder'),'key_up',event);
+return VN$(self,'puts','key_up');
 }
 else if(($e = VN$('key_down', '===', $v),$e!==nil && $e!==false)){
-return VN$(VN$(self, 'first_responder'),'key_down',event);
+return VN$(self,'puts','key_down');
 }
-else if(($e = VN$('scroll_wheel', '===', $v),$e!==nil && $e!==false)){
+else if(($e = VN$('left_mouse_down', '===', $v),$e!==nil && $e!==false)){
+var hit_test = VN$(self.$i_g('@window_view'),'hit_test',point);
+return VN$(hit_test,'mouse_down',event);
 }
 else if(($e = VN$('left_mouse_up', '===', $v),$e!==nil && $e!==false)){
+return VN$(self,'puts','left_mouse_up');
+}
+else if(($e = VN$('left_mouse_dragged', '===', $v),$e!==nil && $e!==false)){
+return VN$(self,'puts','left_mouse_dragged');
+}
+else if(($e = VN$('scroll_wheel', '===', $v),$e!==nil && $e!==false)){
+return VN$(self,'puts','scroll_wheel');
+}
+else if(($e = VN$('right_mouse_down', '===', $v),$e!==nil && $e!==false)){
+return VN$(self,'puts','right_mouse_down');
+}
+else if(($e = VN$('right_mouse_up', '===', $v),$e!==nil && $e!==false)){
+return VN$(self,'puts','right_mouse_up');
+}
+else if(($e = VN$('right_mouse_dragged', '===', $v),$e!==nil && $e!==false)){
+return VN$(self,'puts','right_mouse_dragged');
 }
 })(VN$(event,'type'));
 });
@@ -4803,18 +4743,22 @@ VN$($VN_1.$c_g_full('Vienna').$c_g('Builder'),'new','main_menu',function(builder
 var app_delegate = VN$($VN_1.$klass.$c_g_full('RubyWebApp').$c_g('AppController'),'new');
 VN$($VN_1.$klass.$c_g_full('VN').$c_g('App'),'delegate=',app_delegate);
 return VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('Window'),'build',VN.$h('frame',VN$($VN_1.$klass.$c_g_full('VN').$c_g('Rect'),'new',100,100,400,400),'title','My Window!'),function(win){
-var my_button = VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('Button'),'build',VN.$h('frame',VN$($VN_1.$klass.$c_g_full('VN').$c_g('Rect'),'new',10,10,90,24),'bezel','rounded'));
-VN$(win,'<<',my_button);
-VN$(my_button,'needs_display=',true);
-var my_slider = VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('Slider'),'build',VN.$h('frame',VN$($VN_1.$klass.$c_g_full('VN').$c_g('Rect'),'new',10,50,90,24),'bezel','rounded'));
-VN$(win,'<<',my_slider);
-VN$(my_slider,'needs_display=',true);
-var my_text_field = VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('TextField'),'build',VN.$h('frame',VN$($VN_1.$klass.$c_g_full('VN').$c_g('Rect'),'new',10,70,180,32)));
-VN$(win,'<<',my_text_field);
-VN$(my_text_field,'needs_display=',true);
-var my_check = VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('CheckBox'),'build',VN.$h('frame',VN$($VN_1.$klass.$c_g_full('VN').$c_g('Rect'),'new',10,100,90,24),'bezel','rounded'));
-VN$(win,'<<',my_check);
-return VN$(my_check,'needs_display=',true);
+VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('Button'),'build',VN.$h('frame',VN$($VN_1.$klass.$c_g_full('VN').$c_g('Rect'),'new',10,10,90,24),'bezel','rounded'),function(button){
+VN$(win,'<<',button);
+return VN$(button,'needs_display=',true);
+});
+VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('Slider'),'build',VN.$h('frame',VN$($VN_1.$klass.$c_g_full('VN').$c_g('Rect'),'new',10,50,90,24),'bezel','rounded'),function(slider){
+VN$(win,'<<',slider);
+return VN$(slider,'needs_display=',true);
+});
+VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('TextField'),'build',VN.$h('frame',VN$($VN_1.$klass.$c_g_full('VN').$c_g('Rect'),'new',10,70,180,32),'editable',true),function(text){
+VN$(win,'<<',text);
+return VN$(text,'needs_display=',true);
+});
+return VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('CheckBox'),'build',VN.$h('frame',VN$($VN_1.$klass.$c_g_full('VN').$c_g('Rect'),'new',10,100,90,24),'bezel','rounded'),function(check){
+VN$(win,'<<',check);
+return VN$(check,'needs_display=',true);
+});
 });
 });
 

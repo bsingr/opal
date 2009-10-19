@@ -71,7 +71,10 @@ RObject.prototype.$i_g = function(id) {
 RObject.prototype.$ = function(id, args) {
   var method = this.$klass.$search_method(id);
   
-  if (!method) throw 'RObject#call cannot find method: ' + id ;
+  if (!method) {
+    console.log(this);
+    throw 'RObject#call cannot find method: ' + id ;
+  } 
   return method.apply(this, args) ;
 };
 

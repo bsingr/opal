@@ -46,7 +46,7 @@ $VN_2.$def('status',function(self,_cmd){
 return self.$i_g('@status');
 });
 $VN_2.$def('load',function(self,_cmd){
-if(RTEST(VN$(ORTEST(VN$(self.$i_g('@status'),'==','loading'),self.$i_g('@status')),'==','completed'))){
+if(RTEST(ORTEST(VN$(self.$i_g('@status'),'==','loading'),VN$(self.$i_g('@status'),'==','completed')))){
 return ;
 }
 self.$i_s('@status','loading');

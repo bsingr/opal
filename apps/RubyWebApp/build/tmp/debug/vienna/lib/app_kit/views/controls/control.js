@@ -10,20 +10,30 @@ $VN_2.$def('render',function(self,_cmd,context){
 $VN_2.$def('draw_rect',function(self,_cmd,rect){
 return VN$(self,'puts','drawing rect from control');
 });
+$VN_2.$def('image_rect_for_bounds',function(self,_cmd,the_rect){
+return the_rect;
+});
+$VN_2.$def('title_rect_for_bounds',function(self,_cmd,the_rect){
+return the_rect;
+});
 $VN_2.$def('size_to_fit',function(self,_cmd){
 });
 $VN_2.$def('calc_size',function(self,_cmd){
 });
 $VN_2.$def('target',function(self,_cmd){
+return self.$i_g('@target');
 });
 $VN_2.$def('target=',function(self,_cmd,obj){
 VN$(self, 'will_change_value_for_key', 'target');
+self.$i_s('@target',obj);
 VN$(self, 'did_change_value_for_key', 'target');
 });
 $VN_2.$def('action',function(self,_cmd){
+return self.$i_g('@action');
 });
 $VN_2.$def('action=',function(self,_cmd,selector){
 VN$(self, 'will_change_value_for_key', 'action');
+self.$i_s('@action',selector);
 VN$(self, 'did_change_value_for_key', 'action');
 });
 $VN_2.$def('tag',function(self,_cmd){
@@ -139,4 +149,19 @@ $VN_2.$def('abort_editing',function(self,_cmd){
 $VN_2.$def('validate_editing',function(self,_cmd){
 });
 $VN_2.$def('mouse_down',function(self,_cmd,the_event){
+if(!RTEST(VN$(self, 'enabled?'))){
+return ;
+}
+return VN$(self,'track_mouse:until_mouse_up:',the_event,true);
+});
+$VN_2.$def('start_tracking_at',function(self,_cmd,start_point){
+VN$(self,'highlight',true);
+return true;
+});
+$VN_2.$def('continue_tracking:at:',function(self,_cmd,last_point,current_point){
+});
+$VN_2.$def('stop_tracking:at:mouse_is_up:',function(self,_cmd,last_point,stop_point,flag){
+return VN$(self,'highlight',false);
+});
+$VN_2.$def('track_mouse:until_mouse_up:',function(self,_cmd,the_event,flag){
 });

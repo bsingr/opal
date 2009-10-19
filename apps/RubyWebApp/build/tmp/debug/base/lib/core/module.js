@@ -18,7 +18,7 @@ $VN_1.$def('included_modules',function(self,_cmd){
 $VN_1.$def('include?',function(self,_cmd){
 });
 $VN_1.$def('name',function(self,_cmd){
-});
+return self.$iv_tbl['__classid__'];});
 $VN_1.$def('ancestors',function(self,_cmd){
 });
 $VN_1.$def('attr',function(self,_cmd){

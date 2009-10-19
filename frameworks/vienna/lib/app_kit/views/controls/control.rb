@@ -53,6 +53,14 @@ module Vienna
     def draw_rect rect
       puts 'drawing rect from control'
     end
+    
+    def image_rect_for_bounds the_rect
+      the_rect
+    end
+    
+    def title_rect_for_bounds the_rect
+      the_rect
+    end
         
     def size_to_fit
         
@@ -63,19 +71,19 @@ module Vienna
     end
     
     def target
-      
+      @target
     end
     
     def target=(obj)
-      
+      @target = obj
     end
     
     def action
-      
+      @action
     end
     
     def action=(selector)
-      
+      @action = selector
     end
     
     def tag
@@ -247,7 +255,26 @@ module Vienna
     
     def mouse_down the_event
       
+      return unless enabled?
+      
+      track_mouse the_event, until_mouse_up:true
     end
     
+    def start_tracking_at start_point
+      self.highlight true
+      true
+    end
+    
+    def continue_tracking last_point, at:current_point
+      
+    end
+    
+    def stop_tracking last_point, at:stop_point, mouse_is_up:flag
+      self.highlight false
+    end
+    
+    def track_mouse the_event, until_mouse_up:flag
+      
+    end    
   end
 end

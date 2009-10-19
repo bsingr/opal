@@ -504,6 +504,7 @@ class Vienna::RubyParser < Racc::Parser
         # puts "HERE on ERROR"
         return [:tLSHFT, '<<']
       elsif scanner.scan(/\</)
+        self.lex_state = :EXPR_BEG
         return ['<', '<']
       
       elsif scanner.scan(/\>\=/)
@@ -514,7 +515,8 @@ class Vienna::RubyParser < Racc::Parser
       elsif scanner.scan(/\>\>/)
         return [:tRSHFT, '>>']
       elsif scanner.scan(/\>/)
-        return [:tGT, '>']
+        self.lex_state = :EXPR_BEG
+        return ['>', '>']
       
       elsif scanner.scan(/\`/)
         case self.lex_state
@@ -568,7 +570,8 @@ class Vienna::RubyParser < Racc::Parser
         self.lex_state = :EXPR_BEG
         return [:tSEMI, ';']
       elsif scanner.scan(/\~/)
-        return [:tTILDE, '~']
+        self.lex_state = :EXPR_BEG
+        return ['~', '~']
       
       elsif scanner.scan(/\\/)
         if scanner.scan(/\n/)

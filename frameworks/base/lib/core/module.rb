@@ -79,7 +79,7 @@ class Module
   end
   
   def name
-    
+    `return self.$iv_tbl['__classid__'];`
   end
   
   def ancestors

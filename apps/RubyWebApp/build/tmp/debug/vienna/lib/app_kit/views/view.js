@@ -232,6 +232,10 @@ $VN_2.$def('rotated_or_scaled_from_base?',function(self,_cmd){
 $VN_2.$def('opaque?',function(self,_cmd){
 });
 $VN_2.$def('convert_point:from_view:',function(self,_cmd,point,view){
+if(!RTEST(view)){
+return point;
+}
+return VN$(self.$klass.$c_g_full('Point'),'new',VN$(VN$(point,'x'),'-',VN$(self.$i_g('@frame'),'x')),VN$(VN$(point,'y'),'-',VN$(self.$i_g('@frame'),'y')));
 });
 $VN_2.$def('convert_point:to_view:',function(self,_cmd,point,view){
 });
@@ -307,6 +311,18 @@ return VN$(self,'puts','drawing rect');
 $VN_2.$def('view_will_draw',function(self,_cmd){
 });
 $VN_2.$def('hit_test',function(self,_cmd,point){
+point = VN$(self,'convert_point:from_view:',point,self.$i_g('@superview'));
+if(!RTEST(VN$(point,'in_rect?',VN$(self, 'bounds')))){
+return nil;
+}
+var count = VN$(self.$i_g('@subviews'),'length');
+var i = 0;
+for (i = 0; i < count; i++) {var view_to_check = VN$(self.$i_g('@subviews'),'[]',i);
+var hit_test = VN$(view_to_check,'hit_test',point);
+if(RTEST(hit_test)){
+return hit_test;
+}
+}return self;
 });
 $VN_2.$def('mouse:in_rect:',function(self,_cmd,point,rect){
 });

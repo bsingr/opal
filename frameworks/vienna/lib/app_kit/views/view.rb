@@ -400,7 +400,10 @@ module Vienna
 
     
     def convert_point point, from_view:view
+      # no view means no parent view, just return point
+      return point unless view
       
+      Point.new(point.x - @frame.x, point.y - @frame.y)
     end
     
     def convert_point point, to_view:view
@@ -531,7 +534,19 @@ module Vienna
 
     
     def hit_test point
+      point = convert_point point, from_view:@superview
+      return nil unless point.in_rect?(bounds)
+
+      count = @subviews.length
+      i = 0
+
+      `for (i = 0; i < count; i++) {`
+        view_to_check = @subviews[i]
+        hit_test = view_to_check.hit_test(point)
+        return hit_test if hit_test
+      `}`
       
+      self
     end
     
     def mouse point, in_rect:rect

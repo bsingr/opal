@@ -179,12 +179,12 @@ cNumeric.$def('to_s', function() {
   
 });
 
-cNumeric.$def('+', function(i) {
-  return this + i;
+cNumeric.$def('+', function(self, _cmd, i) {
+  return self + i;
 });
 
-cNumeric.$def('-', function(i) {
-  return this - i;
+cNumeric.$def('-', function(self, _cmd, i) {
+  return self - i;
 });
 
 cNumeric.$def('*', function() {
@@ -207,20 +207,20 @@ cNumeric.$def('==', function(self, _cmd, other) {
   return self == other ? true : false;
 });
 
-cNumeric.$def('>', function() {
-  
+cNumeric.$def('>', function(self, _cmd, other) {
+  return self > other;
 });
 
-cNumeric.$def('>=', function() {
-  
+cNumeric.$def('>=', function(self, _cmd, other) {
+  return self >= other;
 });
 
-cNumeric.$def('<', function() {
-  
+cNumeric.$def('<', function(self, _cmd, other) {
+  return self < other;
 });
 
-cNumeric.$def('<=', function() {
-  
+cNumeric.$def('<=', function(self, _cmd, other) {
+  return self <= other;
 });
 
 cNumeric.$def('~', function() {

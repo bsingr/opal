@@ -59,7 +59,19 @@ module Vienna
   }
   
   class Event
-        
+    
+    def self.from_native_event event, with_window:win, with_type:type
+      obj = self.allocate
+      obj.initialize_with_native_event event, with_window:win, with_type:type
+      obj
+    end
+    
+    def initialize_with_native_event event, with_window:win, with_type:type
+      @event = event
+      @window = win
+      @type = type
+    end
+    
     # Event types
     # -----------
     # :left_mouse_down, :left_mouse_up, :left_mouse_dragged
@@ -67,7 +79,7 @@ module Vienna
     # :mouse_moved, :mouse_entered, :mouse_exited, :scroll_wheel
     # :key_down, :key_up
     def type
-      
+      @type
     end
     
     def modifier_flags
@@ -79,11 +91,11 @@ module Vienna
     end
     
     def window
-      
+      @window
     end
     
     def window_number
-      
+      @window.window_number
     end
     
     def context
@@ -105,7 +117,7 @@ module Vienna
     end
     
     def location_in_window
-      
+      @window.convert_screen_to_base(Point.new(`#{@event}.clientX`, `#{@event}.clientY`))
     end
     
     def characters

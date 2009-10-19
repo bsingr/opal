@@ -33,22 +33,25 @@ module RubyWebApp
     
     Vienna::Window.build :frame => VN::Rect.new(100, 100, 400, 400), :title => 'My Window!' do |win|
         
-      my_button = Vienna::Button.build :frame => VN::Rect.new(10,10,90,24), :bezel => :rounded
-      win << my_button
-      my_button.needs_display = true
+      Vienna::Button.build :frame => VN::Rect.new(10,10,90,24), :bezel => :rounded do |button|
+        win << button
+        button.needs_display = true
+      end
+          
+      Vienna::Slider.build :frame => VN::Rect.new(10,50,90,24), :bezel => :rounded do |slider|
+        win << slider
+        slider.needs_display = true
+      end
       
-      my_slider = Vienna::Slider.build :frame => VN::Rect.new(10,50,90,24), :bezel => :rounded
-      win << my_slider
-      my_slider.needs_display = true
+      Vienna::TextField.build :frame => VN::Rect.new(10, 70, 180, 32), :editable => true do |text|
+        win << text
+        text.needs_display = true
+      end
       
-      my_text_field = Vienna::TextField.build :frame => VN::Rect.new(10, 70, 180, 32)
-      win << my_text_field
-      my_text_field.needs_display = true
-      
-      my_check = Vienna::CheckBox.build :frame => VN::Rect.new(10,100,90,24), :bezel => :rounded
-      win << my_check
-      my_check.needs_display = true
-    
+      Vienna::CheckBox.build :frame => VN::Rect.new(10,100,90,24), :bezel => :rounded do |check|
+        win << check
+        check.needs_display = true
+      end    
     end  
   end
 end

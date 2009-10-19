@@ -18,7 +18,7 @@ self.$i_s('@next_responder',self.$klass.$c_g_full('App'));
 VN$(self,'setup_window_view');
 VN$(self,'frame=',content_rect);
 VN$(self.$i_g('@window_view'),'needs_display=',true);
-return VN$(self,'content_view=',VN$(self.$klass.$c_g_full('View'),'new',VN$(self.$klass.$c_g_full('Rect'),'new',100,100,100,100)));
+return VN$(self,'content_view=',VN$(self.$klass.$c_g_full('View'),'new',VN$(self.$klass.$c_g_full('Rect'),'new',0,0,VN$(self.$i_g('@frame'),'width'),VN$(self.$i_g('@frame'),'height'))));
 });
 $VN_2.$def_s('build',function(self,_cmd,options,block){
 var win = VN$(self,'new',VN$(options,'[]','frame'),VN$(options,'[]','style'));
@@ -39,10 +39,12 @@ VN$(self.$i_g('@window_view'),'window=',self);
 VN$(self.$i_g('@window_view'),'next_responder=',self);
 VN$(self.$i_g('@element'),'<<',VN$(self.$i_g('@window_view'),'element'));
 VN$(VN$(self.$i_g('@window_view'),'element'),'add_event_listener','mousedown',function(event){
-VN$(self,'puts','Yeah! mouse down inside window..');
+var the_event = VN$(self.$klass.$c_g_full('Event'),'from_native_event:with_window:with_type:',event,self,'left_mouse_down');
+VN$(self,'send_event',the_event);
 event.preventDefault ? event.preventDefault() : event.returnValue = false;});
 return VN$(VN$(self.$i_g('@window_view'),'element'),'add_event_listener','mouseup',function(event){
-VN$(self,'puts','And now the mouse is back up, happy days!');
+var the_event = VN$(self.$klass.$c_g_full('Event'),'from_native_event:with_window:with_type:',event,self,'left_mouse_up');
+VN$(self,'send_event',the_event);
 event.preventDefault ? event.preventDefault() : event.returnValue = false;});
 });
 $VN_2.$def_s('frame_rect_for_content_rect:style_mask:',function(self,_cmd,rect,style){
@@ -93,7 +95,7 @@ var bounds = VN$(self.$klass.$c_g_full('Rect'),'new',0,0,VN$(VN$(self.$i_g('@fra
 self.$i_s('@content_view',view);
 VN$(self.$i_g('@content_view'),'frame=',VN$(self,'content_rect_for_frame_rect',bounds));
 VN$(view,'view_did_move_to_window');
-VN$(VN$(self.$i_g('@window_view'),'element'),'<<',VN$(self.$i_g('@content_view'),'element'));
+VN$(self.$i_g('@window_view'),'<<',self.$i_g('@content_view'));
 VN$(self, 'did_change_value_for_key', 'content_view');
 });
 $VN_2.$def('content_view',function(self,_cmd){
@@ -334,6 +336,8 @@ $VN_2.$def('works_when_modal?',function(self,_cmd){
 $VN_2.$def('convert_base_to_screen',function(self,_cmd,point){
 });
 $VN_2.$def('convert_screen_to_base',function(self,_cmd,point){
+var res = VN$(self.$klass.$c_g_full('Point'),'new',VN$(VN$(point,'x'),'-',VN$(self.$i_g('@frame'),'x')),VN$(VN$(point,'y'),'-',VN$(self.$i_g('@frame'),'y')));
+return res;
 });
 $VN_2.$def('perform_close',function(self,_cmd,sender){
 });
@@ -397,16 +401,35 @@ $VN_2.$def('ignores_mouse_events?',function(self,_cmd){
 return self.$i_g('@ignores_mouse_events');
 });
 $VN_2.$def('send_event',function(self,_cmd,event){
+var point = VN$(event,'location_in_window');
 return (function($v){
 if(($e = VN$('key_up', '===', $v),$e!==nil && $e!==false)){
-return VN$(VN$(self, 'first_responder'),'key_up',event);
+return VN$(self,'puts','key_up');
 }
 else if(($e = VN$('key_down', '===', $v),$e!==nil && $e!==false)){
-return VN$(VN$(self, 'first_responder'),'key_down',event);
+return VN$(self,'puts','key_down');
 }
-else if(($e = VN$('scroll_wheel', '===', $v),$e!==nil && $e!==false)){
+else if(($e = VN$('left_mouse_down', '===', $v),$e!==nil && $e!==false)){
+var hit_test = VN$(self.$i_g('@window_view'),'hit_test',point);
+return VN$(hit_test,'mouse_down',event);
 }
 else if(($e = VN$('left_mouse_up', '===', $v),$e!==nil && $e!==false)){
+return VN$(self,'puts','left_mouse_up');
+}
+else if(($e = VN$('left_mouse_dragged', '===', $v),$e!==nil && $e!==false)){
+return VN$(self,'puts','left_mouse_dragged');
+}
+else if(($e = VN$('scroll_wheel', '===', $v),$e!==nil && $e!==false)){
+return VN$(self,'puts','scroll_wheel');
+}
+else if(($e = VN$('right_mouse_down', '===', $v),$e!==nil && $e!==false)){
+return VN$(self,'puts','right_mouse_down');
+}
+else if(($e = VN$('right_mouse_up', '===', $v),$e!==nil && $e!==false)){
+return VN$(self,'puts','right_mouse_up');
+}
+else if(($e = VN$('right_mouse_dragged', '===', $v),$e!==nil && $e!==false)){
+return VN$(self,'puts','right_mouse_dragged');
 }
 })(VN$(event,'type'));
 });

@@ -180,7 +180,7 @@ require('core/class');
 require('core/comparable');
 require('core/enumerable');
 require('core/string');
-require('core/numeric');
+require('core/number');
 require('core/array');
 require('core/boolean');
 require('core/hash');

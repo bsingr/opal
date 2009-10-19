@@ -53,5 +53,5 @@ if (document.addEventListener) {
       VN$(self, 'element').addEventListener(type, listener, false);
     }
     else {
-      VN$(self, 'element').attachEvent(type, listener);
+      VN$(self, 'element').attachEvent('on' + type, listener);
     }});
