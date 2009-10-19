@@ -296,6 +296,10 @@ VN$(self,'draw_rect',VN$(self, 'bounds'));
 }
 });
 $VN_2.$def('render',function(self,_cmd,context){
+if(RTEST(VN$(context,'first_time?'))){
+VN$(context,'class_name=',VN$(self, 'class_name'));
+VN$(context,'first_time=',false);
+}
 });
 $VN_2.$def('draw_rect',function(self,_cmd,rect){
 return VN$(self,'puts','drawing rect');

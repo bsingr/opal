@@ -75,6 +75,32 @@ canvas {
   top: 0px;
   right: 0px;
 }
+
+/* Disabled */
+.vn-button.bordered.disabled .left {
+  background: url('images/button_disabled_left.png');
+}
+
+.vn-button.bordered.disabled .middle {
+  background: url('images/button_disabled_middle.png');
+}
+
+.vn-button.bordered.disabled .right {
+  background: url('images/button_disabled_right.png');
+}
+
+/* State on */
+.vn-button.bordered.on .left {
+  background: url('images/button_highlighted_left.png');
+}
+
+.vn-button.bordered.on .middle {
+  background: url('images/button_highlighted_middle.png');
+}
+
+.vn-button.bordered.on .right {
+  background: url('images/button_highlighted_right.png');
+}
 /* ======================= */
 /* = Rounded bezel style = */
 /* ======================= */
@@ -149,6 +175,55 @@ canvas {
 .vn-button.bordered.textured-rounded.highlighted .right {
   background-position: -10px -26px;
 }
+.vn-check-box {
+  position: absolute;
+  display: block;
+}
+
+.vn-check-box .title {
+  position: absolute;
+  text-align:center;
+  cursor: default;
+  text-decoration: none;
+  text-shadow: rgba(206, 214, 221, 0.644) 0px 1px 0px;
+  font-family: Arial, "MS Trebuchet", sans-serif;
+  font-size: 12px;
+  font-weight: bold;
+  color: rgb(79, 79, 79);
+  
+}
+
+/*off state*/
+.vn-check-box .image {
+  position: absolute;
+  text-align:center;
+  width: 15px;
+  height: 15px;
+  background-image: url('images/check_box_off_normal.png');
+}
+
+.vn-check-box.on .image {
+  background-image: url('images/check_box_on_normal.png');
+  width: 16px;
+  height: 16px;
+}
+
+.vn-check-box.mixed .image {
+  background-color: yellow;
+}
+
+/* Disabled */
+.vn-check-box.disabled .image {
+  background-color: red;
+}
+
+.vn-check-box.disabled.on .image {
+  background-color: purple;
+}
+
+.vn-check-box.disabled.mixed .image {
+  background-color: orange;
+}
 .vn-slider {
   position: absolute;
   display:block;
@@ -193,4 +268,13 @@ canvas {
 
 .vn-slider.disabled .knob {
   background-image: url('images/slider_knob_disabled.png');
+}
+.vn-text-field {
+  position: absolute;
+  display:block;
+  height: 21px;
+}.vn-window-view {
+  position: absolute;
+  display: block;
+  background-color: rgb(242,242,242);
 }

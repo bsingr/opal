@@ -1,7 +1,9 @@
 var $VN_1 = RModule.define('Vienna');
+$VN_1.$c_s('IMAGE_POSITIONS',VN.$h('text_only', 0, 'image_only', 1, 'left', 2, 'right', 3, 'below', 4, 'above', 5, 'overlaps', 6));
 var $VN_2 = RClass.define_under($VN_1, 'Control',$VN_2.$c_g_full('View'));
 $VN_2.$def('initialize',function(self,_cmd,frame){
-return VN$sup(arguments.callee, self,_cmd,[frame]);
+VN$sup(arguments.callee, self,_cmd,[frame]);
+return self.$i_s('@enabled',true);
 });
 $VN_2.$def('render',function(self,_cmd,context){
 });
@@ -47,9 +49,11 @@ VN$(self, 'will_change_value_for_key', 'continuous');
 VN$(self, 'did_change_value_for_key', 'continuous');
 });
 $VN_2.$def('enabled?',function(self,_cmd){
+return self.$i_g('@enabled');
 });
 $VN_2.$def('enabled=',function(self,_cmd,flag){
 VN$(self, 'will_change_value_for_key', 'enabled');
+self.$i_s('@enabled',flag);
 VN$(self, 'did_change_value_for_key', 'enabled');
 });
 $VN_2.$def('alignment',function(self,_cmd){

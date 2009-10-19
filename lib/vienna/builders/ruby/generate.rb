@@ -222,7 +222,7 @@ module Vienna
       write ")){\n"
       
       if stmt[:stmt]
-        generate_stmt stmt[:stmt], :instance => true, :full_stmt => true, :self => current_self, :last_stmt => true # also check if the actual 'if' statement is last?
+        generate_stmt stmt[:stmt], :instance => true, :full_stmt => true, :self => current_self, :last_stmt => false # also check if the actual 'if' statement is last?
       end
       
       write "}\n"

@@ -43,7 +43,9 @@ require 'rendering/render_context'
 require 'views/view'
 require 'views/controls/control'
 require 'views/controls/button'
+require 'views/controls/check_box'
 require 'views/controls/slider'
+require 'views/controls/text_field'
 
 # Windows
 require 'window/window'

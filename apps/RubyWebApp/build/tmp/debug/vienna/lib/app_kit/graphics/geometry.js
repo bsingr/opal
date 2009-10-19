@@ -66,6 +66,9 @@ return ["{{",(VN$(self, 'x')),", ",(VN$(self, 'y')),"}, {",(VN$(self, 'width')),
 });
 $VN_2.$def('inspect',function(self,_cmd){
 });
+$VN_2.$def('eql?',function(self,_cmd,other){
+return ANDTEST(VN$(self.$i_g('@size'),'eql?',VN$(other,'size')),VN$(self.$i_g('@origin'),'eql?',VN$(other,'origin')));
+});
 var $VN_2 = RClass.define_under($VN_1, 'Point',cObject);
 $VN_2.$def('initialize',function(self,_cmd,x,y){
 self.$i_s('@x',x);
@@ -90,6 +93,9 @@ VN$(self, 'will_change_value_for_key', 'y');
 self.$i_s('@y',y);
 VN$(self, 'did_change_value_for_key', 'y');
 });
+$VN_2.$def('eql?',function(self,_cmd,other){
+return VN$(ANDTEST(VN$(self.$i_g('@x'),'==',VN$(other,'x')),self.$i_g('@y')),'==',VN$(other,'y'));
+});
 var $VN_2 = RClass.define_under($VN_1, 'Size',cObject);
 $VN_2.$def('initialize',function(self,_cmd,w,h){
 self.$i_s('@width',w);
@@ -113,4 +119,7 @@ $VN_2.$def('height=',function(self,_cmd,h){
 VN$(self, 'will_change_value_for_key', 'height');
 self.$i_s('@height',h);
 VN$(self, 'did_change_value_for_key', 'height');
+});
+$VN_2.$def('eql?',function(self,_cmd,other){
+return VN$(ANDTEST(VN$(self.$i_g('@width'),'==',VN$(other,'width')),self.$i_g('@height')),'==',VN$(other,'height'));
 });

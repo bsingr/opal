@@ -76,6 +76,9 @@ module Vienna
     
     def initialize frame
       super frame
+      @state = :off
+      @allows_mixed_state = false
+      @bordered = true
     end
         
     def title=(str)
@@ -192,26 +195,35 @@ module Vienna
       @class_name || 'vn-button'
     end
     
+    # Renders the button
+    # Override an instances' class_name to avoid having to subclass
     def render context
       if context.first_time?
         context << "<div class='left'></div>"
         context << "<div class='middle'></div>"
         context << "<div class='right'></div>"
         context << "<div class='title'>Wow!</div>"
+        context << "<div class='image'></div>"
         context.first_time = false
       end
       
-      context.class_name = [class_name, :bordered, :bezel, :regular, :enabled].join(' ')
-      # context.class_name = [class_name, :bordered, bezel, control_size, ]
+      class_name_array = [class_name] 
+      class_name_array << :disabled unless enabled?
+      
+      # if bordered?    
+      class_name_array << :bordered if bordered?
+      # end
+      
+      if on? || mixed?
+        class_name_array << state
+      end
+      
+      context.class_name = class_name_array.join(' ')
       
       # context.selector 'title' do |title|
       #   title.inner_html = 'My Button!'
       #   # title.frame = title_rect_for_bounds @bounds
       # end
     end
-    
-  end
-  
+  end  
 end
-
-

@@ -104,6 +104,10 @@ module Vienna
     def inspect
       # "#<#{self.class} x=#{x}, y=#{y}, width=#{width}, height=#{height}"
     end
+    
+    def eql? (other)
+      @size.eql?(other.size) && @origin.eql?(other.origin)
+    end
   end
   
   
@@ -135,6 +139,10 @@ module Vienna
     def y=(y)
       @y = y
     end
+    
+    def eql? (other)
+      @x == other.x && @y == other.y
+    end
   end
   
   
@@ -165,6 +173,10 @@ module Vienna
     
     def height=(h)
       @height = h
+    end
+    
+    def eql? (other)
+      @width == other.width && @height == other.height
     end
   end
   

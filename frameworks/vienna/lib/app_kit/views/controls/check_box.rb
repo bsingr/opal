@@ -24,5 +24,20 @@
 # THE SOFTWARE.
 #
 
-
-# easy creation of a checkbox
+module Vienna
+  
+  class CheckBox < Button
+    
+    def initialize frame
+      super frame
+      @allows_mixed_state = true
+      @bordered = false
+    end
+    
+    def class_name
+      @class_name || 'vn-check-box'
+    end
+    
+  end
+  
+end

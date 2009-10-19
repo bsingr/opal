@@ -887,10 +887,10 @@ RObject.prototype.$ = function(id, args) {
 */
 var VN$ = function VN$(self, id) {
  // console.log(' >>> ' + id);
- if (!self) {
+ // if (!self) {
    // console.log(self);
-   throw 'Vienna: VN$ - Trying to call `' + id + '` on null/undefined object'   
- }
+   // throw 'Vienna: VN$ - Trying to call `' + id + '` on null/undefined object'   
+ // }
 
   
   var method = self.$klass.$search_method(id);
@@ -1992,8 +1992,8 @@ cNumeric.$def('**', function() {
   
 });
 
-cNumeric.$def('==', function() {
-  
+cNumeric.$def('==', function(self, _cmd, other) {
+  return self == other ? true : false;
 });
 
 cNumeric.$def('>', function() {
@@ -2016,15 +2016,15 @@ cNumeric.$def('~', function() {
   
 });
 
-cNumeric.$def('&', function() {
-  
+cNumeric.$def('&', function(self, _cmd, other) {
+  return self & other;
 });
 
-cNumeric.$def('|', function() {
-  
+cNumeric.$def('|', function(self, _cmd, other) {
+  return self | other;
 });
 
-cNumeric.$def('^', function() {
+cNumeric.$def('^', function(self, _cmd, other) {
   
 });
 
@@ -2032,8 +2032,8 @@ cNumeric.$def('[]', function() {
   
 });
 
-cNumeric.$def('<<', function() {
-  
+cNumeric.$def('<<', function(self, _cmd, other) {
+  return self << other;
 });
 
 cNumeric.$def('>>', function() {
@@ -3083,6 +3083,7 @@ $VN_1.$c_s('App',VN$($VN_1.$c_g_full('Application'),'shared_application'));
 window.onload = function() {VN$(cObject.$c_g('VN').$c_g('App'),'finish_launching');
 };
 var $VN_1 = RModule.define('Vienna');
+$VN_1.$c_s('EVENT_TYPES',VN.$h('left_mouse_down', 1, 'left_mouse_up', 2, 'right_mouse_down', 3, 'right_mouse_up', 4, 'mouse_moved', 5, 'left_mouse_dragged', 6, 'right_mouse_dragged', 7, 'mouse_entered', 8, 'mouse_exited', 9, 'key_down', 10, 'key_up', 11, 'flags_changed', 12, 'app_kit_defined', 13, 'system_defined', 14, 'application_defined', 15, 'periodic', 16, 'cursor_update', 17, 'scroll_wheel', 22, 'other_mouse_down', 25, 'other_mouse_up', 26, 'other_mouse_dragged', 27));
 var $VN_2 = RClass.define_under($VN_1, 'Event',cObject);
 $VN_2.$def('type',function(self,_cmd){
 });
@@ -3286,6 +3287,9 @@ return ["{{",(VN$(self, 'x')),", ",(VN$(self, 'y')),"}, {",(VN$(self, 'width')),
 });
 $VN_2.$def('inspect',function(self,_cmd){
 });
+$VN_2.$def('eql?',function(self,_cmd,other){
+return ANDTEST(VN$(self.$i_g('@size'),'eql?',VN$(other,'size')),VN$(self.$i_g('@origin'),'eql?',VN$(other,'origin')));
+});
 var $VN_2 = RClass.define_under($VN_1, 'Point',cObject);
 $VN_2.$def('initialize',function(self,_cmd,x,y){
 self.$i_s('@x',x);
@@ -3310,6 +3314,9 @@ VN$(self, 'will_change_value_for_key', 'y');
 self.$i_s('@y',y);
 VN$(self, 'did_change_value_for_key', 'y');
 });
+$VN_2.$def('eql?',function(self,_cmd,other){
+return VN$(ANDTEST(VN$(self.$i_g('@x'),'==',VN$(other,'x')),self.$i_g('@y')),'==',VN$(other,'y'));
+});
 var $VN_2 = RClass.define_under($VN_1, 'Size',cObject);
 $VN_2.$def('initialize',function(self,_cmd,w,h){
 self.$i_s('@width',w);
@@ -3333,6 +3340,9 @@ $VN_2.$def('height=',function(self,_cmd,h){
 VN$(self, 'will_change_value_for_key', 'height');
 self.$i_s('@height',h);
 VN$(self, 'did_change_value_for_key', 'height');
+});
+$VN_2.$def('eql?',function(self,_cmd,other){
+return VN$(ANDTEST(VN$(self.$i_g('@width'),'==',VN$(other,'width')),self.$i_g('@height')),'==',VN$(other,'height'));
 });
 
 var $VN_1 = RModule.define('Vienna');
@@ -3807,6 +3817,10 @@ VN$(self,'draw_rect',VN$(self, 'bounds'));
 }
 });
 $VN_2.$def('render',function(self,_cmd,context){
+if(RTEST(VN$(context,'first_time?'))){
+VN$(context,'class_name=',VN$(self, 'class_name'));
+VN$(context,'first_time=',false);
+}
 });
 $VN_2.$def('draw_rect',function(self,_cmd,rect){
 return VN$(self,'puts','drawing rect');
@@ -3837,9 +3851,11 @@ $VN_2.$def('update_tracking_areas',function(self,_cmd){
 });
 
 var $VN_1 = RModule.define('Vienna');
+$VN_1.$c_s('IMAGE_POSITIONS',VN.$h('text_only', 0, 'image_only', 1, 'left', 2, 'right', 3, 'below', 4, 'above', 5, 'overlaps', 6));
 var $VN_2 = RClass.define_under($VN_1, 'Control',$VN_2.$c_g_full('View'));
 $VN_2.$def('initialize',function(self,_cmd,frame){
-return VN$sup(arguments.callee, self,_cmd,[frame]);
+VN$sup(arguments.callee, self,_cmd,[frame]);
+return self.$i_s('@enabled',true);
 });
 $VN_2.$def('render',function(self,_cmd,context){
 });
@@ -3885,9 +3901,11 @@ VN$(self, 'will_change_value_for_key', 'continuous');
 VN$(self, 'did_change_value_for_key', 'continuous');
 });
 $VN_2.$def('enabled?',function(self,_cmd){
+return self.$i_g('@enabled');
 });
 $VN_2.$def('enabled=',function(self,_cmd,flag){
 VN$(self, 'will_change_value_for_key', 'enabled');
+self.$i_s('@enabled',flag);
 VN$(self, 'did_change_value_for_key', 'enabled');
 });
 $VN_2.$def('alignment',function(self,_cmd){
@@ -3979,7 +3997,10 @@ var $VN_1 = RModule.define('Vienna');
 var $VN_2 = RClass.define_under($VN_1, 'Button',$VN_2.$c_g_full('Control'));
 VN$($VN_2,'attr_reader','title','alternate_title','image','image_position');
 $VN_2.$def('initialize',function(self,_cmd,frame){
-return VN$sup(arguments.callee, self,_cmd,[frame]);
+VN$sup(arguments.callee, self,_cmd,[frame]);
+self.$i_s('@state','off');
+self.$i_s('@allows_mixed_state',false);
+return self.$i_s('@bordered',true);
 });
 $VN_2.$def('title=',function(self,_cmd,str){
 VN$(self, 'will_change_value_for_key', 'title');
@@ -4087,9 +4108,31 @@ VN$(context,'<<',"<div class='left'></div>");
 VN$(context,'<<',"<div class='middle'></div>");
 VN$(context,'<<',"<div class='right'></div>");
 VN$(context,'<<',"<div class='title'>Wow!</div>");
+VN$(context,'<<',"<div class='image'></div>");
 VN$(context,'first_time=',false);
 }
-return VN$(context,'class_name=',VN$([VN$(self, 'class_name'),'bordered','bezel','regular','enabled'],'join',' '));
+var class_name_array = [VN$(self, 'class_name')];
+if(!RTEST(VN$(self, 'enabled?'))){
+VN$(class_name_array,'<<','disabled');
+}
+if(RTEST(VN$(self, 'bordered?'))){
+VN$(class_name_array,'<<','bordered');
+}
+if(RTEST(ORTEST(VN$(self, 'on?'),VN$(self, 'mixed?')))){
+VN$(class_name_array,'<<',VN$(self, 'state'));
+}
+return VN$(context,'class_name=',VN$(class_name_array,'join',' '));
+});
+
+var $VN_1 = RModule.define('Vienna');
+var $VN_2 = RClass.define_under($VN_1, 'CheckBox',$VN_2.$c_g_full('Button'));
+$VN_2.$def('initialize',function(self,_cmd,frame){
+VN$sup(arguments.callee, self,_cmd,[frame]);
+self.$i_s('@allows_mixed_state',true);
+return self.$i_s('@bordered',false);
+});
+$VN_2.$def('class_name',function(self,_cmd){
+return ORTEST(self.$i_g('@class_name'),'vn-check-box');
 });
 
 var $VN_1 = RModule.define('Vienna');
@@ -4193,17 +4236,49 @@ $VN_2.$def('index_of_tick_mark_at_point',function(self,_cmd,point){
 $VN_2.$def('closest_tick_mark_value_to_value',function(self,_cmd,value){
 });
 
+var $VN_1 = RModule.define('Vienna');
+var $VN_2 = RClass.define_under($VN_1, 'TextField',$VN_2.$c_g_full('Control'));
+$VN_2.$def('class_name',function(self,_cmd){
+return 'vn-text-field';
+});
+$VN_2.$def('render',function(self,_cmd,context){
+if(RTEST(VN$(context,'first_time?'))){
+VN$(context,'<<',"<div class='left'></div>");
+VN$(context,'<<',"<div class='middle'></div>");
+VN$(context,'<<',"<div class='right'></div>");
+VN$(context,'<<',"<input class='text_field'></div>");
+}
+return VN$(context,'class_name=',VN$(self, 'class_name'));
+});
+
 
 var $VN_1 = RModule.define('Vienna');
 var $VN_2 = RClass.define_under($VN_1, 'WindowView',$VN_2.$c_g_full('View'));
-$VN_2.$def('draw_rect',function(self,_cmd,rect){
+$VN_2.$def('initialize',function(self,_cmd,frame,style_mask){
+return VN$sup(arguments.callee, self,_cmd,[frame]);
+});
+$VN_2.$def('class_name',function(self,_cmd){
+return 'vn-window-view';
+});
+$VN_2.$def('window=',function(self,_cmd,win){
+VN$(self, 'will_change_value_for_key', 'window');
+self.$i_s('@window',win);
+VN$(self, 'did_change_value_for_key', 'window');
+});
+$VN_2.$def('render',function(self,_cmd,context){
+if(RTEST(VN$(context,'first_time?'))){
+VN$(context,'first_time=',false);
+}
+return VN$(context,'class_name=',VN$(['vn-window-view'],'join',' '));
 });
 var $VN_1 = RModule.define('Vienna');
+$VN_1.$c_s('WINDOW_MASKS',VN.$h('borderless', 0, 'titled', VN$((1),'<<',0), 'closable', VN$((1),'<<',1), 'miniaturizable', VN$((1),'<<',2), 'resizable', VN$((1),'<<',3), 'textured_background', VN$((1),'<<',8), 'unified_title_and_toolbar', VN$((1),'<<',12), 'close_button', 1, 'miniaturize_button', 1, 'zoom_button', 1, 'toolbar_button', 1, 'document_icon_button', 1, 'utility', VN$((1),'<<',4), 'doc_modal', VN$((1),'<<',6), 'hud', VN$((1),'<<',13)));
+$VN_1.$c_s('WINDOW_LEVELS',VN.$h('normal', 0, 'floating', 0, 'submenu', 0, 'torn_off_menu', 0, 'main_menu', 0, 'status', 0, 'modal_panel', 0, 'pop_up_menu', 0, 'screen_saver', 0));
 var $VN_2 = RClass.define_under($VN_1, 'Window',$VN_2.$c_g_full('Responder'));
 $VN_2.$def('initialize',function(self,_cmd,content_rect,style_mask){
 VN$sup(arguments.callee, self,_cmd,[]);
 VN$(self, 'setup_display_context');
-self.$i_s('@frame',content_rect);
+self.$i_s('@frame',VN$(self.$klass.$c_g_full('Rect'),'new',0,0,0,0));
 self.$i_s('@window_number',VN$(self.$klass.$c_g_full('App'),'add_window',self));
 self.$i_s('@style_mask',style_mask);
 VN$(self,'level=','normal');
@@ -4211,26 +4286,35 @@ self.$i_s('@min_size',VN$(self.$klass.$c_g_full('Size'),'new',0.0,0.0));
 self.$i_s('@max_size',VN$(self.$klass.$c_g_full('Size'),'new',9999.0,9999.0));
 self.$i_s('@first_responder',self);
 self.$i_s('@next_responder',self.$klass.$c_g_full('App'));
+VN$(self,'setup_window_view');
+VN$(self,'frame=',content_rect);
+VN$(self.$i_g('@window_view'),'needs_display=',true);
 return VN$(self,'content_view=',VN$(self.$klass.$c_g_full('View'),'new',VN$(self.$klass.$c_g_full('Rect'),'new',100,100,100,100)));
+});
+$VN_2.$def_s('build',function(self,_cmd,options,block){
+var win = VN$(self,'new',VN$(options,'[]','frame'),VN$(options,'[]','style'));
+if(RTEST(block)){
+arguments[arguments.length -1](win);
+}
+return win;
 });
 $VN_2.$def('setup_display_context',function(self,_cmd){
 self.$i_s('@element',VN$(self.$klass.$c_g_full('Element'),'new','div'));
 self.$i_s('@display_context',VN$(self.$klass.$c_g_full('RenderContext'),'new','div'));
 VN$(self.$i_g('@element'),'<<',self.$i_g('@display_context'));
-VN$(self.$klass.$c_g_full('Document'),'<<',self.$i_g('@element'));
-VN$(self.$i_g('@element'),'add_event_listener','mousedown',function(event){
+return VN$(self.$klass.$c_g_full('Document'),'<<',self.$i_g('@element'));
+});
+$VN_2.$def('setup_window_view',function(self,_cmd){
+self.$i_s('@window_view',VN$(self.$klass.$c_g_full('WindowView'),'new',VN$(self.$klass.$c_g_full('Rect'),'new',0,0,100,100),VN$(self, 'style_mask')));
+VN$(self.$i_g('@window_view'),'window=',self);
+VN$(self.$i_g('@window_view'),'next_responder=',self);
+VN$(self.$i_g('@element'),'<<',VN$(self.$i_g('@window_view'),'element'));
+VN$(VN$(self.$i_g('@window_view'),'element'),'add_event_listener','mousedown',function(event){
 VN$(self,'puts','Yeah! mouse down inside window..');
 event.preventDefault ? event.preventDefault() : event.returnValue = false;});
-return VN$(self.$i_g('@element'),'add_event_listener','mouseup',function(event){
+return VN$(VN$(self.$i_g('@window_view'),'element'),'add_event_listener','mouseup',function(event){
 VN$(self,'puts','And now the mouse is back up, happy days!');
 event.preventDefault ? event.preventDefault() : event.returnValue = false;});
-});
-$VN_2.$def_s('build',function(self,_cmd,options,block){
-var win = VN$(self,'new',VN$(self.$c_g_full('Rect'),'new',100,100,100,100),nil);
-if(RTEST(block)){
-arguments[arguments.length -1](win);
-}
-return win;
 });
 $VN_2.$def_s('frame_rect_for_content_rect:style_mask:',function(self,_cmd,rect,style){
 });
@@ -4280,7 +4364,7 @@ var bounds = VN$(self.$klass.$c_g_full('Rect'),'new',0,0,VN$(VN$(self.$i_g('@fra
 self.$i_s('@content_view',view);
 VN$(self.$i_g('@content_view'),'frame=',VN$(self,'content_rect_for_frame_rect',bounds));
 VN$(view,'view_did_move_to_window');
-VN$(self.$i_g('@element'),'<<',VN$(self.$i_g('@content_view'),'element'));
+VN$(VN$(self.$i_g('@window_view'),'element'),'<<',VN$(self.$i_g('@content_view'),'element'));
 VN$(self, 'did_change_value_for_key', 'content_view');
 });
 $VN_2.$def('content_view',function(self,_cmd){
@@ -4311,16 +4395,9 @@ $VN_2.$def('field_editor:for_object:',function(self,_cmd,create_flag,obj){
 });
 $VN_2.$def('end_editing_for',function(self,_cmd,obj){
 });
-$VN_2.$def('set_frame:display:',function(self,_cmd,frame_rect,flag){
-return VN$(self,'set_frame:display:animate:',frame_rect,flag,false);
-});
 $VN_2.$def('content_size=',function(self,_cmd,size){
 VN$(self, 'will_change_value_for_key', 'content_size');
 VN$(self, 'did_change_value_for_key', 'content_size');
-});
-$VN_2.$def('frame_origin=',function(self,_cmd,origin){
-VN$(self, 'will_change_value_for_key', 'frame_origin');
-VN$(self, 'did_change_value_for_key', 'frame_origin');
 });
 $VN_2.$def('frame_top_left_point=',function(self,_cmd,point){
 VN$(self, 'will_change_value_for_key', 'frame_top_left_point');
@@ -4336,9 +4413,43 @@ VN$(self, 'will_change_value_for_key', 'frame');
 VN$(self,'set_frame:display:animate:',frame,true,false);
 VN$(self, 'did_change_value_for_key', 'frame');
 });
-$VN_2.$def('animation_resize_time',function(self,_cmd,new_frame){
+$VN_2.$def('set_frame:display:',function(self,_cmd,frame_rect,flag){
+return VN$(self,'set_frame:display:animate:',frame_rect,flag,false);
 });
 $VN_2.$def('set_frame:display:animate:',function(self,_cmd,frame_rect,flag,animate_flag){
+if(RTEST(animate_flag)){
+}
+else{
+var origin = VN$(self.$i_g('@frame'),'origin');
+var size = VN$(self.$i_g('@frame'),'size');
+var new_origin = VN$(frame_rect,'origin');
+var new_size = VN$(frame_rect,'size');
+VN$(self,'puts','about to check!!!!!!!!!!!!!');
+VN$(self,'puts',origin.$iv_tbl);
+VN$(self,'puts','..');
+VN$(self,'puts',new_origin.$iv_tbl);
+if(!RTEST(VN$(origin,'eql?',new_origin))){
+VN$(self,'puts','Origins are not the same!');
+VN$(origin,'x=',VN$(new_origin,'x'));
+VN$(origin,'y=',VN$(new_origin,'y'));
+VN$(self.$i_g('@element'),'origin=',origin);
+VN$(VN$(self.$klass.$c_g_full('NotificationCenter'),'default_center'),'post_notification_name:object:','window did move',self);
+}
+if(!RTEST(VN$(size,'eql?',new_size))){
+VN$(self,'puts','Sizes are not the same!');
+VN$(size,'width=',VN$(new_size,'width'));
+VN$(size,'height=',VN$(new_size,'height'));
+VN$(self.$i_g('@window_view'),'frame_size=',size);
+VN$(self.$i_g('@element'),'size=',size);
+VN$(VN$(self.$klass.$c_g_full('NotificationCenter'),'default_center'),'post_notification_name:object:','window did resize',self);
+}
+}
+});
+$VN_2.$def('frame_origin=',function(self,_cmd,origin){
+VN$(self, 'will_change_value_for_key', 'frame_origin');
+VN$(self, 'did_change_value_for_key', 'frame_origin');
+});
+$VN_2.$def('animation_resize_time',function(self,_cmd,new_frame){
 });
 $VN_2.$def('in_live_resize?',function(self,_cmd){
 });
@@ -4691,13 +4802,19 @@ var $VN_1 = RModule.define('RubyWebApp');
 VN$($VN_1.$c_g_full('Vienna').$c_g('Builder'),'new','main_menu',function(builder){
 var app_delegate = VN$($VN_1.$klass.$c_g_full('RubyWebApp').$c_g('AppController'),'new');
 VN$($VN_1.$klass.$c_g_full('VN').$c_g('App'),'delegate=',app_delegate);
-return VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('Window'),'build',VN.$h('frame',VN$($VN_1.$klass.$c_g_full('VN').$c_g('Rect'),'new',0,0,100,100),'title','My Window!'),function(win){
+return VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('Window'),'build',VN.$h('frame',VN$($VN_1.$klass.$c_g_full('VN').$c_g('Rect'),'new',100,100,400,400),'title','My Window!'),function(win){
 var my_button = VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('Button'),'build',VN.$h('frame',VN$($VN_1.$klass.$c_g_full('VN').$c_g('Rect'),'new',10,10,90,24),'bezel','rounded'));
 VN$(win,'<<',my_button);
 VN$(my_button,'needs_display=',true);
 var my_slider = VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('Slider'),'build',VN.$h('frame',VN$($VN_1.$klass.$c_g_full('VN').$c_g('Rect'),'new',10,50,90,24),'bezel','rounded'));
 VN$(win,'<<',my_slider);
-return VN$(my_slider,'needs_display=',true);
+VN$(my_slider,'needs_display=',true);
+var my_text_field = VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('TextField'),'build',VN.$h('frame',VN$($VN_1.$klass.$c_g_full('VN').$c_g('Rect'),'new',10,70,180,32)));
+VN$(win,'<<',my_text_field);
+VN$(my_text_field,'needs_display=',true);
+var my_check = VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('CheckBox'),'build',VN.$h('frame',VN$($VN_1.$klass.$c_g_full('VN').$c_g('Rect'),'new',10,100,90,24),'bezel','rounded'));
+VN$(win,'<<',my_check);
+return VN$(my_check,'needs_display=',true);
 });
 });
 

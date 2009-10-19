@@ -29,7 +29,8 @@ class Vienna::RubyParser
   prechigh
   	nonassoc tLOWEST
     nonassoc tLBRACE_ARG
-
+    
+    left  tLSHFT tRSHFT
     nonassoc  kIF_MOD kUNLESS_MOD kWHILE_MOD kUNTIL_MOD
     left  kOR kAND
     right kNOT
@@ -44,7 +45,6 @@ class Vienna::RubyParser
     left  '>' tGEQ '<' tLEQ
     left  '|' '^'
     left  '&'
-    left  tLSHFT tRSHFT
     left  '+' '-'
     left  '*' '/' '%'
     right tUMINUS_NUM tUMINUS

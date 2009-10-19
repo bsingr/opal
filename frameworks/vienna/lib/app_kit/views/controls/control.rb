@@ -25,6 +25,17 @@
 #
 
 module Vienna
+  
+  # Image positions
+  IMAGE_POSITIONS = {
+    :text_only          => 0,
+    :image_only         => 1,
+    :left               => 2,
+    :right              => 3,
+    :below              => 4,
+    :above              => 5,
+    :overlaps           => 6
+  }
 
   class Control < View
       
@@ -32,6 +43,7 @@ module Vienna
     
     def initialize frame
       super frame
+      @enabled = true
     end
     
     def render context
@@ -99,11 +111,11 @@ module Vienna
     end
     
     def enabled?
-      
+      @enabled
     end
     
     def enabled=(flag)
-      
+      @enabled = flag
     end
     
     def alignment

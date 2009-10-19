@@ -1,4 +1,5 @@
 var $VN_1 = RModule.define('Vienna');
+$VN_1.$c_s('EVENT_TYPES',VN.$h('left_mouse_down', 1, 'left_mouse_up', 2, 'right_mouse_down', 3, 'right_mouse_up', 4, 'mouse_moved', 5, 'left_mouse_dragged', 6, 'right_mouse_dragged', 7, 'mouse_entered', 8, 'mouse_exited', 9, 'key_down', 10, 'key_up', 11, 'flags_changed', 12, 'app_kit_defined', 13, 'system_defined', 14, 'application_defined', 15, 'periodic', 16, 'cursor_update', 17, 'scroll_wheel', 22, 'other_mouse_down', 25, 'other_mouse_up', 26, 'other_mouse_dragged', 27));
 var $VN_2 = RClass.define_under($VN_1, 'Event',cObject);
 $VN_2.$def('type',function(self,_cmd){
 });

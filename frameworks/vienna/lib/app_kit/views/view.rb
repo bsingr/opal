@@ -294,22 +294,15 @@ module Vienna
     end
     
     def frame_size=(new_size)
-      # puts 'OMFG, why isnt this working?!?!?!'
       old_size = Size.new(@frame.width, @frame.height)
-      # puts 1
+
       @frame.size.width = new_size.width
       @frame.size.height = new_size.height
-      # puts 2
-      # bounds
+      
       @bounds.size.width = new_size.width
-      @bounds.size.height = new_size.height      
-      # bound end
-      # puts 3
-      # self.resize_subviews_with_old_size(old_size) if @autoresizes_subviews
-      # puts 4
+      @bounds.size.height = new_size.height
+      
       self.needs_display = true
-      # puts 5
-      # puts "------------HERE-------------"
       
       @element.size = new_size
       @display_context.size = new_size
@@ -321,20 +314,13 @@ module Vienna
     end
     
     def frame=(frame)
-      # frame = Rect.new(100, 100, 100,100)
-      # puts '____in frame=______'
-      # puts frame
       self.frame_origin = frame.origin
-      # puts '_yeah, here_'
       self.frame_size = frame.size
-      # puts '_hmmm_'
       
       if @posts_frame_changed_notifications
         nc = NotificationCenter.default_center
         nc.post_notification_name 'view chnages notification', object:self
       end
-      
-      # puts' ___wow __ '
     end
     
     def frame
@@ -523,9 +509,14 @@ module Vienna
         
     
     def render context
-      # puts 'REDNERING'
-      # context << "<div class='well'></div>"
-      # context << "<div>adam</div>"
+      if context.first_time?
+        context.class_name = class_name
+        context.first_time = false
+      end
+      
+      # Default imp: just fill the element with the given background color
+      # if background_color
+      # end
     end
     
     

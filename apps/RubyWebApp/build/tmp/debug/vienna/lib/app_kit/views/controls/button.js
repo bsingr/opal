@@ -2,7 +2,10 @@ var $VN_1 = RModule.define('Vienna');
 var $VN_2 = RClass.define_under($VN_1, 'Button',$VN_2.$c_g_full('Control'));
 VN$($VN_2,'attr_reader','title','alternate_title','image','image_position');
 $VN_2.$def('initialize',function(self,_cmd,frame){
-return VN$sup(arguments.callee, self,_cmd,[frame]);
+VN$sup(arguments.callee, self,_cmd,[frame]);
+self.$i_s('@state','off');
+self.$i_s('@allows_mixed_state',false);
+return self.$i_s('@bordered',true);
 });
 $VN_2.$def('title=',function(self,_cmd,str){
 VN$(self, 'will_change_value_for_key', 'title');
@@ -110,7 +113,18 @@ VN$(context,'<<',"<div class='left'></div>");
 VN$(context,'<<',"<div class='middle'></div>");
 VN$(context,'<<',"<div class='right'></div>");
 VN$(context,'<<',"<div class='title'>Wow!</div>");
+VN$(context,'<<',"<div class='image'></div>");
 VN$(context,'first_time=',false);
 }
-return VN$(context,'class_name=',VN$([VN$(self, 'class_name'),'bordered','bezel','regular','enabled'],'join',' '));
+var class_name_array = [VN$(self, 'class_name')];
+if(!RTEST(VN$(self, 'enabled?'))){
+VN$(class_name_array,'<<','disabled');
+}
+if(RTEST(VN$(self, 'bordered?'))){
+VN$(class_name_array,'<<','bordered');
+}
+if(RTEST(ORTEST(VN$(self, 'on?'),VN$(self, 'mixed?')))){
+VN$(class_name_array,'<<',VN$(self, 'state'));
+}
+return VN$(context,'class_name=',VN$(class_name_array,'join',' '));
 });

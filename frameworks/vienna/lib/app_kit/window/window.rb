@@ -28,14 +28,49 @@ require 'window_view'
 
 module Vienna
   
-  class Window < Responder
+  WINDOW_MASKS = {
+    :borderless => 0,
+    :titled => 1 << 0,
+    :closable => 1 << 1,
+    :miniaturizable => 1 << 2,
+    :resizable => 1 << 3,
+    :textured_background => 1 << 8,
+    :unified_title_and_toolbar => 1 << 12,
     
+    # buttons
+    :close_button => 1,
+    :miniaturize_button => 1,
+    :zoom_button => 1,
+    :toolbar_button => 1,
+    :document_icon_button => 1,
+    
+    # Panel window masks:
+    :utility => 1 << 4,
+    :doc_modal => 1 << 6,
+    :hud => 1 << 13
+  }
+
+  WINDOW_LEVELS = {
+    :normal => 0,
+    :floating => 0,
+    :submenu => 0,
+    :torn_off_menu => 0,
+    :main_menu => 0,
+    :status => 0,
+    
+    :modal_panel => 0,
+    :pop_up_menu => 0,
+    :screen_saver => 0
+  }
+
+  class Window < Responder
+        
     def initialize content_rect, style_mask
-      super() # Responder#initialize
+      super()
       
       setup_display_context
       
-      @frame = content_rect
+      @frame = Rect.new(0, 0, 0, 0)
       
       @window_number = App.add_window self
       @style_mask = style_mask
@@ -44,8 +79,22 @@ module Vienna
       @max_size = Size.new(9999.0, 9999.0)
       @first_responder = self
       @next_responder = App
+            
+      setup_window_view()
+      
+      self.frame = content_rect
+      
+      @window_view.needs_display = true
       
       self.content_view = View.new(Rect.new(100, 100, 100, 100))
+    end
+    
+    def self.build options, &block
+      win = self.new options[:frame], options[:style]      
+      if block
+        yield win
+      end
+      win
     end
     
     def setup_display_context
@@ -53,29 +102,35 @@ module Vienna
       @display_context = RenderContext.new :div
       @element << @display_context
       Document << @element
+    end
+    
+    # All drawing for window is actually done with the windows window_view,
+    # which is also used as the root of the window hierarchy. Shadows are
+    # actually drawn by the window, and nothing else is. Mouse down and
+    # mouse up events are captured on the window_views' element, as anything
+    # inside the window view counts as a click on the window. This avoids
+    # clicks being registered for clicking on a shadow, or any window
+    # padding.
+    def setup_window_view
+      @window_view = WindowView.new(Rect.new(0, 0, 100, 100), style_mask)
+      @window_view.window = self
+      @window_view.next_responder = self
+      @element << @window_view.element
       
       # Events - should attach these to the windowview...all relevant elements are subviews of this,
       # and, we wont capture events outside the visible window (e.g. the shadow which might be drawn
       # on the @element)
-      @element.add_event_listener :mousedown do |event|
+      @window_view.element.add_event_listener :mousedown do |event|
         puts 'Yeah! mouse down inside window..'
         # Cross browser way to avoid event propagation
         `event.preventDefault ? event.preventDefault() : event.returnValue = false;`
       end
       
-      @element.add_event_listener :mouseup do |event|
+      @window_view.element.add_event_listener :mouseup do |event|
         puts 'And now the mouse is back up, happy days!'
         # Cross browser way to avoid event propagation
         `event.preventDefault ? event.preventDefault() : event.returnValue = false;`
-      end   
-    end
-    
-    def self.build options, &block
-      win = self.new Rect.new(100, 100, 100, 100), nil      
-      if block
-        yield win
       end
-      win
     end
     
     def self.frame_rect_for_content_rect rect, style_mask:style
@@ -145,7 +200,7 @@ module Vienna
       @content_view = view
       @content_view.frame = content_rect_for_frame_rect(bounds)
       view.view_did_move_to_window
-      @element << @content_view.element
+      @window_view.element << @content_view.element
     end
     
     def content_view
@@ -184,15 +239,9 @@ module Vienna
       
     end
     
-    def set_frame frame_rect, display:flag
-      set_frame frame_rect, display:flag, animate:false
-    end
+    
     
     def content_size= size
-      
-    end
-    
-    def frame_origin= origin
       
     end
     
@@ -209,14 +258,59 @@ module Vienna
     end
     
     def frame=(frame)
+      # puts 'SETTING frame YALL'
       set_frame frame, display:true, animate:false
     end
     
-    def animation_resize_time new_frame
+    def set_frame frame_rect, display:flag
+      set_frame frame_rect, display:flag, animate:false
+    end
+    
+    
+    def set_frame frame_rect, display:flag, animate:animate_flag
+      if animate_flag
+        # `throw Window#SetFrame animate not yet implemented`
+      else
+        # normal set_Frame
+        origin = @frame.origin
+        size = @frame.size
+        new_origin = frame_rect.origin
+        new_size = frame_rect.size
+        
+        puts 'about to check!!!!!!!!!!!!!'
+        puts `origin.$iv_tbl`
+        puts '..'
+        puts `new_origin.$iv_tbl`
+        # Origin changes
+        unless origin.eql? new_origin
+          puts 'Origins are not the same!'
+          origin.x = new_origin.x
+          origin.y = new_origin.y
+          @element.origin = origin
+          
+          NotificationCenter.default_center.post_notification_name 'window did move', object:self
+        end
+        
+        # Size changes
+        unless size.eql? new_size
+          puts 'Sizes are not the same!'
+          # need to check max/min size conformance
+          size.width = new_size.width
+          size.height = new_size.height
+          @window_view.frame_size = size
+          @element.size = size
+          
+          NotificationCenter.default_center.post_notification_name 'window did resize', object:self
+        end
+      end
+    end
+    
+    
+    def frame_origin= origin
       
     end
     
-    def set_frame frame_rect, display:flag, animate:animate_flag
+    def animation_resize_time new_frame
       
     end
     

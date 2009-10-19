@@ -80,10 +80,10 @@ RObject.prototype.$ = function(id, args) {
 */
 var VN$ = function VN$(self, id) {
  // console.log(' >>> ' + id);
- if (!self) {
+ // if (!self) {
    // console.log(self);
-   throw 'Vienna: VN$ - Trying to call `' + id + '` on null/undefined object'   
- }
+   // throw 'Vienna: VN$ - Trying to call `' + id + '` on null/undefined object'   
+ // }
 
   
   var method = self.$klass.$search_method(id);

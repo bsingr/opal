@@ -31,7 +31,7 @@ module RubyWebApp
     app_delegate = RubyWebApp::AppController.new
     VN::App.delegate = app_delegate
     
-    Vienna::Window.build :frame => VN::Rect.new(0, 0, 100, 100), :title => 'My Window!' do |win|
+    Vienna::Window.build :frame => VN::Rect.new(100, 100, 400, 400), :title => 'My Window!' do |win|
         
       my_button = Vienna::Button.build :frame => VN::Rect.new(10,10,90,24), :bezel => :rounded
       win << my_button
@@ -40,6 +40,14 @@ module RubyWebApp
       my_slider = Vienna::Slider.build :frame => VN::Rect.new(10,50,90,24), :bezel => :rounded
       win << my_slider
       my_slider.needs_display = true
+      
+      my_text_field = Vienna::TextField.build :frame => VN::Rect.new(10, 70, 180, 32)
+      win << my_text_field
+      my_text_field.needs_display = true
+      
+      my_check = Vienna::CheckBox.build :frame => VN::Rect.new(10,100,90,24), :bezel => :rounded
+      win << my_check
+      my_check.needs_display = true
     
     end  
   end

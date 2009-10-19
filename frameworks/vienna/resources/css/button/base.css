@@ -48,3 +48,29 @@
   top: 0px;
   right: 0px;
 }
+
+/* Disabled */
+.vn-button.bordered.disabled .left {
+  background: url('images/button_disabled_left.png');
+}
+
+.vn-button.bordered.disabled .middle {
+  background: url('images/button_disabled_middle.png');
+}
+
+.vn-button.bordered.disabled .right {
+  background: url('images/button_disabled_right.png');
+}
+
+/* State on */
+.vn-button.bordered.on .left {
+  background: url('images/button_highlighted_left.png');
+}
+
+.vn-button.bordered.on .middle {
+  background: url('images/button_highlighted_middle.png');
+}
+
+.vn-button.bordered.on .right {
+  background: url('images/button_highlighted_right.png');
+}

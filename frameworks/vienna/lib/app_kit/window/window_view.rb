@@ -31,10 +31,26 @@ module Vienna
   # Base window view
   class WindowView < View
     
+    def initialize(frame, style_mask)
+      super frame
+    end
     
-    def draw_rect rect
-      # Drawing done here
+    def class_name
+      'vn-window-view'
+    end
+    
+    # Shortcut method for adding base view to a window
+    def window= (win)
+      @window = win
+    end
+    
+    
+    def render context
+      if context.first_time?
+        context.first_time = false
+      end
       
+      context.class_name = ['vn-window-view'].join(' ')
     end
     
   end
