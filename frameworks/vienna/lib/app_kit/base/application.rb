@@ -148,4 +148,6 @@ module Vienna
 end
 
 # Attach events to window to capture finished loading...
-
+`window.onload = function() {`
+	VN::App.finish_launching
+`};`

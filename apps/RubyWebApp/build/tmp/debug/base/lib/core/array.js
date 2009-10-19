@@ -15,6 +15,17 @@ cArray.$def_s('[]', function() {
 cArray.$def_s('try_convert', function() {
   
 });
+
+if (!Array.prototype.indexOf) {
+  Array.prototype.indexOf = function(item, i) {
+    i || (i = 0);
+    var len = this.length;
+    if (i < 0) i = len + i;
+    for (; i < len; i++)
+      if (this[i] === item) return i;
+      return -1;
+  };
+}
 var $VN_1 = RClass.define('Array',cObject);
 $VN_1.$def('initialize',function(self,_cmd){
 for (var i = 0; i < arguments.length; i++) {

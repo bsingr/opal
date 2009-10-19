@@ -1,10 +1,4 @@
-var cEvent = RClass.define_under(cObject.$c_g_full('Vienna'), 'Event', cObject);
-
-Event.prototype.$klass = cEvent
-Event.prototype.$type = VN.CLASS;
-
-cEvent.$define_alloc_func(function() {
-}); var $VN_1 = RModule.define('Vienna');
+var $VN_1 = RModule.define('Vienna');
 var $VN_2 = RClass.define_under($VN_1, 'Event',cObject);
 $VN_2.$def('type',function(self,_cmd){
 });

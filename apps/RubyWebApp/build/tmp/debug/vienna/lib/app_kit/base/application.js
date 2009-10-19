@@ -75,3 +75,5 @@ $VN_2.$def('run',function(self,_cmd,block){
 return self.$i_s('@run_block',block);
 });
 $VN_1.$c_s('App',VN$($VN_1.$c_g_full('Application'),'shared_application'));
+window.onload = function() {VN$(cObject.$c_g('VN').$c_g('App'),'finish_launching');
+};

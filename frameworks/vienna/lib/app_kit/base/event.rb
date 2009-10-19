@@ -24,13 +24,13 @@
 # THE SOFTWARE.
 #
 
-`var cEvent = RClass.define_under(cObject.$c_g_full('Vienna'), 'Event', cObject);
-
-Event.prototype.$klass = cEvent
-Event.prototype.$type = VN.CLASS;
-
-cEvent.$define_alloc_func(function() {
-}); `
+# `var cEvent = RClass.define_under(cObject.$c_g_full('Vienna'), 'Event', cObject);
+# 
+# Event.prototype.$klass = cEvent
+# Event.prototype.$type = VN.CLASS;
+# 
+# cEvent.$define_alloc_func(function() {
+# }); `
 
 module Vienna
   

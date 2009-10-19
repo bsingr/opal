@@ -56,11 +56,10 @@ module Vienna
       @element_stack.pop
     end
     
-    # we are actually just returning this object, just changing which element
-    # any chnages are applied too.
     def selector a_selector, &block
       element = find_selector a_selector
       push_element_stack element
+
       yield self
       pop_element_stack
     end

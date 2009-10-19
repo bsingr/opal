@@ -112,8 +112,5 @@ VN$(context,'<<',"<div class='right'></div>");
 VN$(context,'<<',"<div class='title'>Wow!</div>");
 VN$(context,'first_time=',false);
 }
-VN$(context,'class_name=',VN$([VN$(self, 'class_name'),'bordered','bezel','regular','enabled'],'join',' '));
-return VN$(context,'selector','title',function(title){
-return VN$(title,'inner_html=','My Button!');
-});
+return VN$(context,'class_name=',VN$([VN$(self, 'class_name'),'bordered','bezel','regular','enabled'],'join',' '));
 });

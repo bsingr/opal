@@ -58,6 +58,14 @@ var ANDTEST = function ANDTEST(lhs, rhs) {
   return rhs;
 };
 
+/**
+  Fix for browsers not having console
+*/
+if (typeof console === 'undefined') {
+ var console = console || window.console || { };
+ console.log = console.info = console.warn = console.error = function() { };
+}
+
 var VN = {
   
   CLASS: 0,

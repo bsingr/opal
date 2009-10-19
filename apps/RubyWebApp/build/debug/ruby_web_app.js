@@ -60,6 +60,14 @@ var ANDTEST = function ANDTEST(lhs, rhs) {
   return rhs;
 };
 
+/**
+  Fix for browsers not having console
+*/
+if (typeof console === 'undefined') {
+ var console = console || window.console || { };
+ console.log = console.info = console.warn = console.error = function() { };
+}
+
 var VN = {
   
   CLASS: 0,
@@ -2053,6 +2061,17 @@ cArray.$def_s('[]', function() {
 cArray.$def_s('try_convert', function() {
   
 });
+
+if (!Array.prototype.indexOf) {
+  Array.prototype.indexOf = function(item, i) {
+    i || (i = 0);
+    var len = this.length;
+    if (i < 0) i = len + i;
+    for (; i < len; i++)
+      if (this[i] === item) return i;
+      return -1;
+  };
+}
 var $VN_1 = RClass.define('Array',cObject);
 $VN_1.$def('initialize',function(self,_cmd){
 for (var i = 0; i < arguments.length; i++) {
@@ -2766,14 +2785,14 @@ VN$(self, 'did_change_value_for_key', 'frame');
 });
 $VN_1.$def('origin=',function(self,_cmd,new_origin){
 VN$(self, 'will_change_value_for_key', 'origin');
-VN$(self, 'element').style.left = VN$(new_origin,'x');VN$(self, 'element').style.top = VN$(new_origin,'y');VN$(self, 'did_change_value_for_key', 'origin');
+VN$(self, 'element').style.left = VN$(new_origin,'x') + 'px';VN$(self, 'element').style.top = VN$(new_origin,'y') + 'px';VN$(self, 'did_change_value_for_key', 'origin');
 });
 $VN_1.$def('size=',function(self,_cmd,new_size){
 VN$(self, 'will_change_value_for_key', 'size');
 if(RTEST(VN$(self.$i_g('@type'),'==','canvas'))){
 VN$(self, 'element').width = VN$(new_size,'width');VN$(self, 'element').height = VN$(new_size,'height');}
 else{
-VN$(self, 'element').style.width = VN$(new_size,'width');VN$(self, 'element').style.height = VN$(new_size,'height');}
+VN$(self, 'element').style.width = VN$(new_size,'width') + 'px';VN$(self, 'element').style.height = VN$(new_size,'height') + 'px';}
 VN$(self, 'did_change_value_for_key', 'size');
 });
 $VN_1.$def('<<',function(self,_cmd,other){
@@ -3061,14 +3080,9 @@ $VN_2.$def('run',function(self,_cmd,block){
 return self.$i_s('@run_block',block);
 });
 $VN_1.$c_s('App',VN$($VN_1.$c_g_full('Application'),'shared_application'));
-
-var cEvent = RClass.define_under(cObject.$c_g_full('Vienna'), 'Event', cObject);
-
-Event.prototype.$klass = cEvent
-Event.prototype.$type = VN.CLASS;
-
-cEvent.$define_alloc_func(function() {
-}); var $VN_1 = RModule.define('Vienna');
+window.onload = function() {VN$(cObject.$c_g('VN').$c_g('App'),'finish_launching');
+};
+var $VN_1 = RModule.define('Vienna');
 var $VN_2 = RClass.define_under($VN_1, 'Event',cObject);
 $VN_2.$def('type',function(self,_cmd){
 });
@@ -4075,10 +4089,7 @@ VN$(context,'<<',"<div class='right'></div>");
 VN$(context,'<<',"<div class='title'>Wow!</div>");
 VN$(context,'first_time=',false);
 }
-VN$(context,'class_name=',VN$([VN$(self, 'class_name'),'bordered','bezel','regular','enabled'],'join',' '));
-return VN$(context,'selector','title',function(title){
-return VN$(title,'inner_html=','My Button!');
-});
+return VN$(context,'class_name=',VN$([VN$(self, 'class_name'),'bordered','bezel','regular','enabled'],'join',' '));
 });
 
 var $VN_1 = RModule.define('Vienna');
@@ -4152,11 +4163,7 @@ VN$(context,'<<',"<div class='track-middle'></div>");
 VN$(context,'<<',"<div class='track-right'></div>");
 VN$(context,'<<',"<div class='knob'></div>");
 }
-VN$(context,'class_name=',VN$(self, 'class_name'));
-return VN$(context,'selector','knob',function(knob){
-var knob_position = 37;
-return VN$(knob,'css',VN.$h('left',knob_position));
-});
+return VN$(context,'class_name=',VN$(self, 'class_name'));
 });
 VN$($VN_2,'attr_reader','number_of_tick_marks','tick_mark_position');
 $VN_2.$def('number_of_tick_marks=',function(self,_cmd,count){

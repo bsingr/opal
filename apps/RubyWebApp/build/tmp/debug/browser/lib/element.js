@@ -28,14 +28,14 @@ VN$(self, 'did_change_value_for_key', 'frame');
 });
 $VN_1.$def('origin=',function(self,_cmd,new_origin){
 VN$(self, 'will_change_value_for_key', 'origin');
-VN$(self, 'element').style.left = VN$(new_origin,'x');VN$(self, 'element').style.top = VN$(new_origin,'y');VN$(self, 'did_change_value_for_key', 'origin');
+VN$(self, 'element').style.left = VN$(new_origin,'x') + 'px';VN$(self, 'element').style.top = VN$(new_origin,'y') + 'px';VN$(self, 'did_change_value_for_key', 'origin');
 });
 $VN_1.$def('size=',function(self,_cmd,new_size){
 VN$(self, 'will_change_value_for_key', 'size');
 if(RTEST(VN$(self.$i_g('@type'),'==','canvas'))){
 VN$(self, 'element').width = VN$(new_size,'width');VN$(self, 'element').height = VN$(new_size,'height');}
 else{
-VN$(self, 'element').style.width = VN$(new_size,'width');VN$(self, 'element').style.height = VN$(new_size,'height');}
+VN$(self, 'element').style.width = VN$(new_size,'width') + 'px';VN$(self, 'element').style.height = VN$(new_size,'height') + 'px';}
 VN$(self, 'did_change_value_for_key', 'size');
 });
 $VN_1.$def('<<',function(self,_cmd,other){

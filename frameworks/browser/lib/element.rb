@@ -66,8 +66,8 @@ class Element
   end
   
   def origin= new_origin
-    `#{element}.style.left = #{new_origin.x};`
-    `#{element}.style.top = #{new_origin.y};`
+    `#{element}.style.left = #{new_origin.x} + 'px';`
+    `#{element}.style.top = #{new_origin.y} + 'px';`
   end
   
   def size= new_size
@@ -77,8 +77,8 @@ class Element
       `#{element}.width = #{new_size.width};`
       `#{element}.height = #{new_size.height};`
     else
-      `#{element}.style.width = #{new_size.width};`
-      `#{element}.style.height = #{new_size.height};`
+      `#{element}.style.width = #{new_size.width} + 'px';`
+      `#{element}.style.height = #{new_size.height} + 'px';`
     end
   end
   

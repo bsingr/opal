@@ -69,11 +69,7 @@ VN$(context,'<<',"<div class='track-middle'></div>");
 VN$(context,'<<',"<div class='track-right'></div>");
 VN$(context,'<<',"<div class='knob'></div>");
 }
-VN$(context,'class_name=',VN$(self, 'class_name'));
-return VN$(context,'selector','knob',function(knob){
-var knob_position = 37;
-return VN$(knob,'css',VN.$h('left',knob_position));
-});
+return VN$(context,'class_name=',VN$(self, 'class_name'));
 });
 VN$($VN_2,'attr_reader','number_of_tick_marks','tick_mark_position');
 $VN_2.$def('number_of_tick_marks=',function(self,_cmd,count){

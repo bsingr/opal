@@ -101,11 +101,11 @@ module Vienna
       
       context.class_name = class_name
       
-      context.selector :knob do |knob|
-        # TODO: Calculate the knob position
-        knob_position = 37
-        knob.css :left => knob_position
-      end
+      # context.selector :knob do |knob|
+      #   # TODO: Calculate the knob position
+      #   knob_position = 37
+      #   knob.css :left => knob_position
+      # end
     end
     
     

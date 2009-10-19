@@ -204,10 +204,10 @@ module Vienna
       context.class_name = [class_name, :bordered, :bezel, :regular, :enabled].join(' ')
       # context.class_name = [class_name, :bordered, bezel, control_size, ]
       
-      context.selector 'title' do |title|
-        title.inner_html = 'My Button!'
-        # title.frame = title_rect_for_bounds @bounds
-      end
+      # context.selector 'title' do |title|
+      #   title.inner_html = 'My Button!'
+      #   # title.frame = title_rect_for_bounds @bounds
+      # end
     end
     
   end

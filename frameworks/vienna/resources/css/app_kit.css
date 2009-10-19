@@ -10,20 +10,19 @@ body {
 	overflow-x:hidden;
 	overflow-y:hidden;
 }
+
 div {
-	margin:0;
-	padding:0;
-	position:absolute;
-	display:block;
-/*  overflow-x:hidden;
-  overflow-y:hidden;*/
+  margin:0;
+  padding:0;
+  position:absolute;
+  display:block;
 }
 
 canvas {
-	margin:0;
-	padding:0;
-	position:absolute;
-	display:block;
-	overflow-x:hidden;
-	overflow-y:hidden;
+  margin:0;
+  padding:0;
+  position:absolute;
+  display:block;
+  overflow-x:hidden;
+  overflow-y:hidden;
 }
