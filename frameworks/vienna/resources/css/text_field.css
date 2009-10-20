@@ -3,3 +3,10 @@
   display:block;
   height: 21px;
 }
+
+.vn-text-field .input {
+  background: transparent;
+  border: none;
+  outline: none; /* remove 'glow' in safari */
+}
+

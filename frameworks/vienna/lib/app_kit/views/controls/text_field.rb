@@ -32,6 +32,25 @@ module Vienna
       'vn-text-field'
     end
     
+    # Override textfield to take charge of handling events:
+    # 
+    # 1. mousedown/mouseup - allow the browser to take control so that selecting
+    # text etc is not affected, and offers a smooth selection process.
+    # 
+    # 2. Keydown/keyup etc - override these methods. Check that events do not look
+    # like keyequivalents etc, if not: pass them into textfield. If they look like
+    # key equivs then we pass them upto App#send_event.
+    def setup_display_context
+      super
+      @display_context.add_event_listener :mousedown do |event|
+        `event._vn_allow_event_propagation = true;`
+      end
+      
+      @display_context.add_event_listener :mouseup do |event|
+        `event._vn_allow_event_propagation = true;`
+      end
+    end
+    
     # Textfield created inside Div... the border, highlight etc are drawn with three
     # div and their classes, while the actual input is a raw DOM input... it handles
     # all the precise rendering, selection etc for us, so we can leave it to do its 
@@ -44,7 +63,7 @@ module Vienna
         context << "<div class='left'></div>"
         context << "<div class='middle'></div>"
         context << "<div class='right'></div>"
-        context << "<input class='text_field'></div>"
+        context << "<input class='input'></div>"
       end
       
       context.class_name = class_name

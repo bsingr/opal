@@ -46,6 +46,14 @@ VN$(self, 'will_change_value_for_key', 'class_name');
 self.$i_s('@class_name',a_class);
 VN$(self, 'did_change_value_for_key', 'class_name');
 });
+$VN_2.$def('theme_name',function(self,_cmd){
+return ORTEST(self.$i_g('@theme_name'),'');
+});
+$VN_2.$def('theme_name=',function(self,_cmd,a_theme){
+VN$(self, 'will_change_value_for_key', 'theme_name');
+self.$i_s('@theme_name',a_theme);
+VN$(self, 'did_change_value_for_key', 'theme_name');
+});
 $VN_2.$def('graphics_port',function(self,_cmd){
 return VN$(self.$i_g('@display_context'),'element').getContext('2d');});
 $VN_2.$def('initialize_with_coder',function(self,_cmd,coder){

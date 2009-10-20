@@ -261,7 +261,7 @@ module Vienna
     end
     
     def start_tracking_at start_point
-      self.highlight true
+      # self.highlight true
       true
     end
     
@@ -270,11 +270,52 @@ module Vienna
     end
     
     def stop_tracking last_point, at:stop_point, mouse_is_up:flag
-      self.highlight false
+      # self.highlight false
     end
     
     def track_mouse the_event, until_mouse_up:flag
+      location = convert_point(the_event.location_in_window, from_view: nil)
       
+      unless start_tracking_at the_event.location_in_window
+        return false
+      end
+      # highlight_with_frame
+      App.send_action @action, to:@target, from:self if continuous?
+      
+      # capture further events
+      puts 'requesting binding'
+      App.bind_events [:left_mouse_up, :left_mouse_dragged] do |the_event|
+        # location = convert_point the_event.location_in_window, from_view:nil
+        puts the_event.type
+        
+        if the_event.type == :left_mouse_up
+          App.unbind_events
+        end
+        # if flag
+        #           if the_event.type == :left_mouse_up
+        #             stop_tracking the_event.location_in_window, at:the_event.location_in_window, mouse_is_up:true
+        #             App.unbind_events
+        #             # set next state
+        #             
+        #             if location.in_rect? bounds
+        #               App.send_action @action, to:@target, from:self
+        #             end
+        #             
+        #             # highlight false
+        #             return
+        #           else
+        #             unless continue_tracking the_event.location_in_window, the_event.location_in_window
+        #               App.unbind_events
+        #             end
+        #             
+        #             # highlight false?
+        #           end
+        #         elsif location.in_rect? bounds
+        #           puts 'Control#track_mouse Got here.'
+        #         else
+        #           
+        #         end
+      end
     end    
   end
 end

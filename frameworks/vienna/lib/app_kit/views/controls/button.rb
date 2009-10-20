@@ -207,7 +207,7 @@ module Vienna
         context.first_time = false
       end
       
-      class_name_array = [class_name] 
+      class_name_array = [class_name, theme_name] 
       class_name_array << :disabled unless enabled?
       
       # if bordered?    

@@ -40,12 +40,18 @@ VN$(self.$i_g('@window_view'),'next_responder=',self);
 VN$(self.$i_g('@element'),'<<',VN$(self.$i_g('@window_view'),'element'));
 VN$(VN$(self.$i_g('@window_view'),'element'),'add_event_listener','mousedown',function(event){
 var the_event = VN$(self.$klass.$c_g_full('Event'),'from_native_event:with_window:with_type:',event,self,'left_mouse_down');
-VN$(self,'send_event',the_event);
-event.preventDefault ? event.preventDefault() : event.returnValue = false;});
+if(!RTEST(VN$(the_event,'allows_propagation?'))){
+VN$(self.$klass.$c_g_full('App'),'send_event',the_event);
+VN$(the_event,'stop_propagation');
+}
+});
 return VN$(VN$(self.$i_g('@window_view'),'element'),'add_event_listener','mouseup',function(event){
 var the_event = VN$(self.$klass.$c_g_full('Event'),'from_native_event:with_window:with_type:',event,self,'left_mouse_up');
-VN$(self,'send_event',the_event);
-event.preventDefault ? event.preventDefault() : event.returnValue = false;});
+if(!RTEST(VN$(the_event,'allows_propagation?'))){
+VN$(self.$klass.$c_g_full('App'),'send_event',the_event);
+VN$(the_event,'stop_propagation');
+}
+});
 });
 $VN_2.$def_s('frame_rect_for_content_rect:style_mask:',function(self,_cmd,rect,style){
 });
@@ -348,6 +354,7 @@ $VN_2.$def('perform_zoom',function(self,_cmd,sender){
 $VN_2.$def('level=',function(self,_cmd,level){
 VN$(self, 'will_change_value_for_key', 'level');
 self.$i_s('@level',level);
+VN$(self.$i_g('@element'),'css',VN.$h('z_index',VN$(self.$klass.$c_g_full('WINDOW_LEVELS'),'[]',level)));
 VN$(self, 'did_change_value_for_key', 'level');
 });
 $VN_2.$def('level',function(self,_cmd){

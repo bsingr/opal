@@ -122,14 +122,18 @@ module Vienna
       # on the @element)
       @window_view.element.add_event_listener :mousedown do |event|
         the_event = Event.from_native_event event, with_window:self, with_type:'left_mouse_down'
-        self.send_event the_event
-        `event.preventDefault ? event.preventDefault() : event.returnValue = false;`
+        unless the_event.allows_propagation?
+          App.send_event the_event
+          the_event.stop_propagation
+        end
       end
       
       @window_view.element.add_event_listener :mouseup do |event|
         the_event = Event.from_native_event event, with_window:self, with_type:'left_mouse_up'
-        self.send_event the_event
-        `event.preventDefault ? event.preventDefault() : event.returnValue = false;`
+        unless the_event.allows_propagation?
+          App.send_event the_event
+          the_event.stop_propagation
+        end
       end
     end
     
@@ -563,6 +567,7 @@ module Vienna
     
     def level=(level)
       @level = level
+      @element.css :z_index => WINDOW_LEVELS[level]
     end
     
     def level

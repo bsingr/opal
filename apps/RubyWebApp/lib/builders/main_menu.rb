@@ -35,6 +35,7 @@ module RubyWebApp
         
       Vienna::Button.build :frame => VN::Rect.new(10,10,90,24), :bezel => :rounded do |button|
         win << button
+        # button.theme_name = :my_theme
         button.needs_display = true
       end
           

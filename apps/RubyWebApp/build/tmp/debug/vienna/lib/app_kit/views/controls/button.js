@@ -116,7 +116,7 @@ VN$(context,'<<',"<div class='title'>Wow!</div>");
 VN$(context,'<<',"<div class='image'></div>");
 VN$(context,'first_time=',false);
 }
-var class_name_array = [VN$(self, 'class_name')];
+var class_name_array = [VN$(self, 'class_name'),VN$(self, 'theme_name')];
 if(!RTEST(VN$(self, 'enabled?'))){
 VN$(class_name_array,'<<','disabled');
 }

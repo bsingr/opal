@@ -11,6 +11,8 @@ VN$(self, 'will_change_value_for_key', 'window');
 self.$i_s('@window',win);
 VN$(self, 'did_change_value_for_key', 'window');
 });
+$VN_2.$def('mouse_down',function(self,_cmd,the_event){
+});
 $VN_2.$def('render',function(self,_cmd,context){
 if(RTEST(VN$(context,'first_time?'))){
 VN$(context,'first_time=',false);

@@ -55,8 +55,6 @@ module Vienna
   class Responder
     
     def initialize
-      puts 'initialising responder'
-      # puts `arguments.callee`
       super
       @next_responder = nil
     end
@@ -73,5 +71,133 @@ module Vienna
       
     end
     
+    def perform_key_equivalent the_event
+      false
+    end
+    
+    def mouse_down the_event
+      @next_responder.mouse_down the_event
+    end
+    
+    def right_mouse_down the_event
+      @next_responder.right_mouse_down the_event
+    end
+    
+    def other_mouse_down the_event
+      @next_responder.other_mouse_down the_event
+    end
+    
+    def mouse_up the_event
+      @next_responder.mouse_up the_event
+    end
+    
+    def right_mouse_up the_event
+      @next_responder.right_mouse_up the_event
+    end
+    
+    def other_mouse_up the_event
+      @next_responder.other_mouse_up the_event
+    end
+    
+    def mouse_moved the_event
+      @next_responder.mouse_moved the_event
+    end
+    
+    def mouse_dragged the_event
+      @next_responder.mouse_dragged the_event
+    end
+    
+    def scroll_wheel the_event
+      @next_responder.scroll_wheel the_event
+    end
+    
+    def right_mouse_dragged the_event
+      @next_responder.right_mouse_dragged the_event
+    end
+    
+    def other_mouse_dragged the_event
+      @next_responder.other_mouse_dragged the_event
+    end
+    
+    def mouse_entered the_event
+      @next_responder.mouse_entered the_event
+    end
+    
+    def mouse_exited the_event
+      @next_responder.mouse_exited the_event
+    end
+    
+    def key_down the_event
+      @next_responder.key_down the_event
+    end
+    
+    def key_up the_event
+      @next_responder.key_up the_event
+    end
+    
+    def flags_changed the_event
+      
+    end
+    
+    def cursor_update the_event
+      
+    end
+    
+    
+    
+    def no_responder_for event_selector
+      
+    end
+    
+    def accepts_first_responder
+      false
+    end
+    
+    def become_first_responder
+      true
+    end
+    
+    def resign_first_responder
+      true
+    end
+    
+    
+    
+    def interpret_key_events event_array
+      
+    end
+    
+    def flush_buffered_key_events
+      
+    end
+    
+    
+    
+    
+    def menu=(menu)
+      @menu = menu
+    end
+    
+    def menu
+      @menu
+    end
+    
+    
+    
+    def show_context_help sender
+      
+    end
+    
+    
+    
+    def help_requested the_event
+      
+    end
+    
+    
+    
+    def undo_manager
+      @next_responder.undo_manager
+    end
   end
 end

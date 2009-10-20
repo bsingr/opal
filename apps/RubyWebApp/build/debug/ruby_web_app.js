@@ -612,6 +612,7 @@ RClass.prototype.$ = function(id, args) {
 */
 RClass.prototype.$c_s = function(id, val) {
   this.$mod_av_set(id, val, true);
+  return val;
 };
 
 RClass.prototype.$mod_av_set = function(id, val, isconst) {
@@ -890,10 +891,11 @@ RObject.prototype.$ = function(id, args) {
 */
 var VN$ = function VN$(self, id) {
  // console.log(' >>> ' + id);
- // if (!self) {
-   // console.log(self);
+ if (!self.$klass) {
+   console.log(self);
+   console.log(id);
    // throw 'Vienna: VN$ - Trying to call `' + id + '` on null/undefined object'   
- // }
+ }
 
   
   var method = self.$klass.$search_method(id);
@@ -2613,6 +2615,23 @@ $VN_1.$def_s('ready?',function(self,_cmd,block){
 $VN_1.$def_s('<<',function(self,_cmd,elem){
 var e = elem.$i_g('@element');
 document.body.appendChild(e);});
+$VN_1.$def_s('add_event_listener',function(self,_cmd,type,listener){
+(self.$k_d('@@event_listeners') ? self.$k_g('@@event_listeners') : self.$k_s('@@event_listeners',VN.$h()));
+VN$(self.$k_g('@@event_listeners'),'[]=',type,listener);
+if (document.addEventListener) {
+      document.body.addEventListener(type, listener, false);
+    }
+    else {
+      document.body.attachEvent('on' + type, listener);
+    }});
+$VN_1.$def_s('remove_event_listener',function(self,_cmd,type){
+var listener = VN$(self.$k_g('@@event_listeners'),'[]',type);
+if (document.addEventListener) {
+      document.body.removeEventListener(type, listener, false);
+    }
+    else {
+      document.body.detachEvent('on' + type, listener);
+    }});
 
 var $VN_1 = RClass.define('Element',cObject);
 VN$($VN_1,'attr_accessor','element');
@@ -2847,7 +2866,6 @@ $VN_2.$def('add_observer_for_name:object:queue:',function(self,_cmd,name,obj,que
 var $VN_1 = RModule.define('Vienna');
 var $VN_2 = RClass.define_under($VN_1, 'Responder',cObject);
 $VN_2.$def('initialize',function(self,_cmd){
-VN$(self,'puts','initialising responder');
 VN$sup(arguments.callee, self,_cmd,[]);
 return self.$i_s('@next_responder',nil);
 });
@@ -2861,11 +2879,94 @@ return self.$i_g('@next_responder');
 });
 $VN_2.$def('try_to_perform:with:',function(self,_cmd,an_action,an_object){
 });
+$VN_2.$def('perform_key_equivalent',function(self,_cmd,the_event){
+return false;
+});
+$VN_2.$def('mouse_down',function(self,_cmd,the_event){
+return VN$(self.$i_g('@next_responder'),'mouse_down',the_event);
+});
+$VN_2.$def('right_mouse_down',function(self,_cmd,the_event){
+return VN$(self.$i_g('@next_responder'),'right_mouse_down',the_event);
+});
+$VN_2.$def('other_mouse_down',function(self,_cmd,the_event){
+return VN$(self.$i_g('@next_responder'),'other_mouse_down',the_event);
+});
+$VN_2.$def('mouse_up',function(self,_cmd,the_event){
+return VN$(self.$i_g('@next_responder'),'mouse_up',the_event);
+});
+$VN_2.$def('right_mouse_up',function(self,_cmd,the_event){
+return VN$(self.$i_g('@next_responder'),'right_mouse_up',the_event);
+});
+$VN_2.$def('other_mouse_up',function(self,_cmd,the_event){
+return VN$(self.$i_g('@next_responder'),'other_mouse_up',the_event);
+});
+$VN_2.$def('mouse_moved',function(self,_cmd,the_event){
+return VN$(self.$i_g('@next_responder'),'mouse_moved',the_event);
+});
+$VN_2.$def('mouse_dragged',function(self,_cmd,the_event){
+return VN$(self.$i_g('@next_responder'),'mouse_dragged',the_event);
+});
+$VN_2.$def('scroll_wheel',function(self,_cmd,the_event){
+return VN$(self.$i_g('@next_responder'),'scroll_wheel',the_event);
+});
+$VN_2.$def('right_mouse_dragged',function(self,_cmd,the_event){
+return VN$(self.$i_g('@next_responder'),'right_mouse_dragged',the_event);
+});
+$VN_2.$def('other_mouse_dragged',function(self,_cmd,the_event){
+return VN$(self.$i_g('@next_responder'),'other_mouse_dragged',the_event);
+});
+$VN_2.$def('mouse_entered',function(self,_cmd,the_event){
+return VN$(self.$i_g('@next_responder'),'mouse_entered',the_event);
+});
+$VN_2.$def('mouse_exited',function(self,_cmd,the_event){
+return VN$(self.$i_g('@next_responder'),'mouse_exited',the_event);
+});
+$VN_2.$def('key_down',function(self,_cmd,the_event){
+return VN$(self.$i_g('@next_responder'),'key_down',the_event);
+});
+$VN_2.$def('key_up',function(self,_cmd,the_event){
+return VN$(self.$i_g('@next_responder'),'key_up',the_event);
+});
+$VN_2.$def('flags_changed',function(self,_cmd,the_event){
+});
+$VN_2.$def('cursor_update',function(self,_cmd,the_event){
+});
+$VN_2.$def('no_responder_for',function(self,_cmd,event_selector){
+});
+$VN_2.$def('accepts_first_responder',function(self,_cmd){
+return false;
+});
+$VN_2.$def('become_first_responder',function(self,_cmd){
+return true;
+});
+$VN_2.$def('resign_first_responder',function(self,_cmd){
+return true;
+});
+$VN_2.$def('interpret_key_events',function(self,_cmd,event_array){
+});
+$VN_2.$def('flush_buffered_key_events',function(self,_cmd){
+});
+$VN_2.$def('menu=',function(self,_cmd,menu){
+VN$(self, 'will_change_value_for_key', 'menu');
+self.$i_s('@menu',menu);
+VN$(self, 'did_change_value_for_key', 'menu');
+});
+$VN_2.$def('menu',function(self,_cmd){
+return self.$i_g('@menu');
+});
+$VN_2.$def('show_context_help',function(self,_cmd,sender){
+});
+$VN_2.$def('help_requested',function(self,_cmd,the_event){
+});
+$VN_2.$def('undo_manager',function(self,_cmd){
+return VN$(self.$i_g('@next_responder'),'undo_manager');
+});
 
 var $VN_1 = RModule.define('Vienna');
 $VN_1.$c_s('APP_WILL_FINISH_LAUNCHING','APP_WILL_FINISH_LAUNCHING');
 $VN_1.$c_s('APP_DID_FINISH_LAUNCHING','APP_DID_FINISH_LAUNCHING');
 $VN_1.$c_s('APP_DID_CHANGE_SCREEN_PARAMETERS','APP_DID_CHANGE_SCREEN_PARAMETERS');
+$VN_1.$c_s('RUN_LOOP_MODES',VN.$h('normal', 0, 'modal_panel', 1, 'event_tracking', 2));
 var $VN_2 = RClass.define_under($VN_1, 'Application',cObject);
 VN$($VN_2,'attr_accessor','windows','event_queue','views_needing_display');
 VN$($VN_2,'attr_reader','delegate');
@@ -2873,14 +2974,41 @@ $VN_2.$def('initialize',function(self,_cmd){
 self.$i_s('@windows',[]);
 self.$i_s('@event_queue',[]);
 self.$i_s('@views_needing_display',[]);
-return self.$i_s('@delegate',nil);
+self.$i_s('@delegate',nil);
+return self.$i_s('@run_loop_mode','normal');
 });
-$VN_2.$def('run',function(self,_cmd){
-return VN$(self, 'finish_launching');
+$VN_2.$def('run_loop_mode',function(self,_cmd){
+return self.$i_g('@run_loop_mode');
 });
-$VN_2.$def('finish_launching',function(self,_cmd){
-var nc = VN$(self.$klass.$c_g_full('NotificationCenter'),'default_center');
-return VN$(self, 'display_required_views');
+$VN_2.$def('bind_events',function(self,_cmd,types,block){
+self.$i_s('@run_loop_mode','event_tracking');
+self.$i_s('@event_binding_mask',types);
+self.$i_s('@event_binding_block',block);
+if(RTEST(VN$(types,'include?','left_mouse_dragged'))){
+VN$(self.$klass.$c_g_full('Document'),'add_event_listener','mousemove',function(evt){
+var the_event = VN$(self.$klass.$c_g_full('Event'),'from_native_event:with_window:with_type:',evt,nil,'left_mouse_dragged');
+return VN$(self,'send_event',the_event);
+});
+}
+});
+$VN_2.$def('unbind_events',function(self,_cmd){
+self.$i_s('@run_loop_mode','normal');
+if(RTEST(VN$(self.$i_g('@event_binding_mask'),'include?','left_mouse_dragged'))){
+VN$(self.$klass.$c_g_full('Document'),'remove_event_listener','mousemove');
+}
+});
+$VN_2.$def('current_event',function(self,_cmd){
+return self.$i_g('@current_event');
+});
+$VN_2.$def('send_event',function(self,_cmd,the_event){
+self.$i_s('@current_event',the_event);
+if(RTEST(VN$(self.$i_g('@run_loop_mode'),'==','event_tracking'))){
+if(RTEST(VN$(self.$i_g('@event_binding_mask'),'include?',VN$(the_event,'type')))){
+VN$(self.$i_g('@event_binding_block'),'call',the_event);
+}
+return ;
+}
+return VN$(VN$(the_event,'window'),'send_event',the_event);
 });
 $VN_2.$def('mark_view_for_display',function(self,_cmd,view,flag){
 if(!RTEST(VN$(self.$i_g('@views_needing_display'),'contains?',view))){
@@ -2929,14 +3057,26 @@ $VN_2.$def('finish_launching',function(self,_cmd){
 if(RTEST(self.$i_g('@run_block'))){
 VN$(self.$i_g('@run_block'),'call',self);
 }
-VN$(self,'puts',['===== In: Application','#finish_launching'].join(''));
-VN$(self,'puts',self.$i_g('@delegate'));
+VN$(self.$klass.$c_g_full('Document'),'add_event_listener','mousedown',function(evt){
+if(RTEST(VN$(VN$(self.$klass.$c_g_full('App'),'run_loop_mode'),'==','event_tracking'))){
+var the_event = VN$(self.$klass.$c_g_full('Event'),'from_native_event:with_window:with_type:',evt,nil,'left_mouse_down');
+VN$(self,'send_event',the_event);
+}
+});
+VN$(self.$klass.$c_g_full('Document'),'add_event_listener','mouseup',function(evt){
+if(RTEST(VN$(VN$(self.$klass.$c_g_full('App'),'run_loop_mode'),'==','event_tracking'))){
+var the_event = VN$(self.$klass.$c_g_full('Event'),'from_native_event:with_window:with_type:',evt,nil,'left_mouse_up');
+VN$(self,'send_event',the_event);
+}
+});
 var nc = VN$(self.$klass.$c_g_full('NotificationCenter'),'default_center');
 VN$(nc,'post_notification_name:object:',self.$klass.$c_g_full('APP_WILL_FINISH_LAUNCHING'),self);
 return VN$(nc,'post_notification_name:object:',self.$klass.$c_g_full('APP_DID_FINISH_LAUNCHING'),self);
 });
 $VN_2.$def('run',function(self,_cmd,block){
 return self.$i_s('@run_block',block);
+});
+$VN_2.$def('send_action:to:from:',function(self,_cmd,action,target,sender){
 });
 $VN_1.$c_s('App',VN$($VN_1.$c_g_full('Application'),'shared_application'));
 window.onload = function() {VN$(cObject.$c_g('VN').$c_g('App'),'finish_launching');
@@ -2954,6 +3094,17 @@ self.$i_s('@event',event);
 self.$i_s('@window',win);
 return self.$i_s('@type',type);
 });
+$VN_2.$def('stop_propagation',function(self,_cmd){
+var event = self.$i_g('@event');
+if (event.stopPropagation) {
+        event.stopPropagation()
+        event.preventDefault();
+      } else {
+        window.event.cancelBubble = true;
+        window.event.returnValue = false;
+      }});
+$VN_2.$def('allows_propagation?',function(self,_cmd){
+return self.$i_g('@event')._vn_allow_event_propagation? true : false;});
 $VN_2.$def('type',function(self,_cmd){
 return self.$i_g('@type');
 });
@@ -3443,6 +3594,14 @@ VN$(self, 'will_change_value_for_key', 'class_name');
 self.$i_s('@class_name',a_class);
 VN$(self, 'did_change_value_for_key', 'class_name');
 });
+$VN_2.$def('theme_name',function(self,_cmd){
+return ORTEST(self.$i_g('@theme_name'),'');
+});
+$VN_2.$def('theme_name=',function(self,_cmd,a_theme){
+VN$(self, 'will_change_value_for_key', 'theme_name');
+self.$i_s('@theme_name',a_theme);
+VN$(self, 'did_change_value_for_key', 'theme_name');
+});
 $VN_2.$def('graphics_port',function(self,_cmd){
 return VN$(self.$i_g('@display_context'),'element').getContext('2d');});
 $VN_2.$def('initialize_with_coder',function(self,_cmd,coder){
@@ -3899,15 +4058,27 @@ return ;
 return VN$(self,'track_mouse:until_mouse_up:',the_event,true);
 });
 $VN_2.$def('start_tracking_at',function(self,_cmd,start_point){
-VN$(self,'highlight',true);
 return true;
 });
 $VN_2.$def('continue_tracking:at:',function(self,_cmd,last_point,current_point){
 });
 $VN_2.$def('stop_tracking:at:mouse_is_up:',function(self,_cmd,last_point,stop_point,flag){
-return VN$(self,'highlight',false);
 });
 $VN_2.$def('track_mouse:until_mouse_up:',function(self,_cmd,the_event,flag){
+var location = VN$(self,'convert_point:from_view:',VN$(the_event,'location_in_window'),nil);
+if(!RTEST(VN$(self,'start_tracking_at',VN$(the_event,'location_in_window')))){
+return false;
+}
+if(RTEST(VN$(self, 'continuous?'))){
+VN$(self.$klass.$c_g_full('App'),'send_action:to:from:',self.$i_g('@action'),self.$i_g('@target'),self);
+}
+VN$(self,'puts','requesting binding');
+return VN$(self.$klass.$c_g_full('App'),'bind_events',['left_mouse_up','left_mouse_dragged'],function(the_event){
+VN$(self,'puts',VN$(the_event,'type'));
+if(RTEST(VN$(VN$(the_event,'type'),'==','left_mouse_up'))){
+VN$(self.$klass.$c_g_full('App'),'unbind_events');
+}
+});
 });
 
 var $VN_1 = RModule.define('Vienna');
@@ -4028,7 +4199,7 @@ VN$(context,'<<',"<div class='title'>Wow!</div>");
 VN$(context,'<<',"<div class='image'></div>");
 VN$(context,'first_time=',false);
 }
-var class_name_array = [VN$(self, 'class_name')];
+var class_name_array = [VN$(self, 'class_name'),VN$(self, 'theme_name')];
 if(!RTEST(VN$(self, 'enabled?'))){
 VN$(class_name_array,'<<','disabled');
 }
@@ -4158,12 +4329,19 @@ var $VN_2 = RClass.define_under($VN_1, 'TextField',$VN_2.$c_g_full('Control'));
 $VN_2.$def('class_name',function(self,_cmd){
 return 'vn-text-field';
 });
+$VN_2.$def('setup_display_context',function(self,_cmd){
+VN$sup(arguments.callee, self,_cmd,[]);
+VN$(self.$i_g('@display_context'),'add_event_listener','mousedown',function(event){
+event._vn_allow_event_propagation = true;});
+return VN$(self.$i_g('@display_context'),'add_event_listener','mouseup',function(event){
+event._vn_allow_event_propagation = true;});
+});
 $VN_2.$def('render',function(self,_cmd,context){
 if(RTEST(VN$(context,'first_time?'))){
 VN$(context,'<<',"<div class='left'></div>");
 VN$(context,'<<',"<div class='middle'></div>");
 VN$(context,'<<',"<div class='right'></div>");
-VN$(context,'<<',"<input class='text_field'></div>");
+VN$(context,'<<',"<input class='input'></div>");
 }
 return VN$(context,'class_name=',VN$(self, 'class_name'));
 });
@@ -4181,6 +4359,8 @@ $VN_2.$def('window=',function(self,_cmd,win){
 VN$(self, 'will_change_value_for_key', 'window');
 self.$i_s('@window',win);
 VN$(self, 'did_change_value_for_key', 'window');
+});
+$VN_2.$def('mouse_down',function(self,_cmd,the_event){
 });
 $VN_2.$def('render',function(self,_cmd,context){
 if(RTEST(VN$(context,'first_time?'))){
@@ -4228,12 +4408,18 @@ VN$(self.$i_g('@window_view'),'next_responder=',self);
 VN$(self.$i_g('@element'),'<<',VN$(self.$i_g('@window_view'),'element'));
 VN$(VN$(self.$i_g('@window_view'),'element'),'add_event_listener','mousedown',function(event){
 var the_event = VN$(self.$klass.$c_g_full('Event'),'from_native_event:with_window:with_type:',event,self,'left_mouse_down');
-VN$(self,'send_event',the_event);
-event.preventDefault ? event.preventDefault() : event.returnValue = false;});
+if(!RTEST(VN$(the_event,'allows_propagation?'))){
+VN$(self.$klass.$c_g_full('App'),'send_event',the_event);
+VN$(the_event,'stop_propagation');
+}
+});
 return VN$(VN$(self.$i_g('@window_view'),'element'),'add_event_listener','mouseup',function(event){
 var the_event = VN$(self.$klass.$c_g_full('Event'),'from_native_event:with_window:with_type:',event,self,'left_mouse_up');
-VN$(self,'send_event',the_event);
-event.preventDefault ? event.preventDefault() : event.returnValue = false;});
+if(!RTEST(VN$(the_event,'allows_propagation?'))){
+VN$(self.$klass.$c_g_full('App'),'send_event',the_event);
+VN$(the_event,'stop_propagation');
+}
+});
 });
 $VN_2.$def_s('frame_rect_for_content_rect:style_mask:',function(self,_cmd,rect,style){
 });
@@ -4536,6 +4722,7 @@ $VN_2.$def('perform_zoom',function(self,_cmd,sender){
 $VN_2.$def('level=',function(self,_cmd,level){
 VN$(self, 'will_change_value_for_key', 'level');
 self.$i_s('@level',level);
+VN$(self.$i_g('@element'),'css',VN.$h('z_index',VN$(self.$klass.$c_g_full('WINDOW_LEVELS'),'[]',level)));
 VN$(self, 'did_change_value_for_key', 'level');
 });
 $VN_2.$def('level',function(self,_cmd){

@@ -78,6 +78,23 @@ module Vienna
     # :right_mouse_down, :right_mouse_up, :right_mouse_dragged
     # :mouse_moved, :mouse_entered, :mouse_exited, :scroll_wheel
     # :key_down, :key_up
+    
+    def stop_propagation
+      event = @event
+      `if (event.stopPropagation) {
+        event.stopPropagation()
+        event.preventDefault();
+      } else {
+        window.event.cancelBubble = true;
+        window.event.returnValue = false;
+      }`
+    end
+    
+    # If the element has been set to force allow propagation - APPKIT will ignore this event
+    def allows_propagation?
+      `return #{@event}._vn_allow_event_propagation? true : false;`
+    end
+    
     def type
       @type
     end

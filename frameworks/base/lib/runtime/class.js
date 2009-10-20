@@ -443,6 +443,7 @@ RClass.prototype.$ = function(id, args) {
 */
 RClass.prototype.$c_s = function(id, val) {
   this.$mod_av_set(id, val, true);
+  return val;
 };
 
 RClass.prototype.$mod_av_set = function(id, val, isconst) {

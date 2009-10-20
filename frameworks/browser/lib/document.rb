@@ -24,6 +24,8 @@
 # THE SOFTWARE.
 #
 
+# `var oDocument = cObject.$c_s('Document', VN$())`
+
 class Document
   
   # pass in a block to be run when the document is ready. these are run on a
@@ -50,5 +52,26 @@ class Document
     
     # puts `document.body`
     `document.body.appendChild(#{e});`
+  end
+  
+  def self.add_event_listener type, listener
+    @@event_listeners ||= {}
+    @@event_listeners[type] = listener
+    `if (document.addEventListener) {
+      document.body.addEventListener(#{type}, #{listener}, false);
+    }
+    else {
+      document.body.attachEvent('on' + #{type}, #{listener});
+    }`
+  end
+  
+  def self.remove_event_listener type
+    listener = @@event_listeners[type]
+    `if (document.addEventListener) {
+      document.body.removeEventListener(#{type}, #{listener}, false);
+    }
+    else {
+      document.body.detachEvent('on' + #{type}, #{listener});
+    }`
   end
 end

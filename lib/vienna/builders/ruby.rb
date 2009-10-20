@@ -401,7 +401,9 @@ class Vienna::RubyParser < Racc::Parser
           else
             puts "error - unexpected '[' token"
           end
-        elsif lex_state == :EXPR_BEG || lex_state == :EXPR_MID
+        # space_seen allows for method calls with an array as first param - otherwise it
+        # thinks its calling the method []
+        elsif lex_state == :EXPR_BEG || lex_state == :EXPR_MID || space_seen
           return [:tLBRACK, scanner.matched]
         end
         # puts 'HMHMHMHMHMHMHMHMHH'

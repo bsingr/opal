@@ -11,6 +11,17 @@ self.$i_s('@event',event);
 self.$i_s('@window',win);
 return self.$i_s('@type',type);
 });
+$VN_2.$def('stop_propagation',function(self,_cmd){
+var event = self.$i_g('@event');
+if (event.stopPropagation) {
+        event.stopPropagation()
+        event.preventDefault();
+      } else {
+        window.event.cancelBubble = true;
+        window.event.returnValue = false;
+      }});
+$VN_2.$def('allows_propagation?',function(self,_cmd){
+return self.$i_g('@event')._vn_allow_event_propagation? true : false;});
 $VN_2.$def('type',function(self,_cmd){
 return self.$i_g('@type');
 });

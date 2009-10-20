@@ -155,13 +155,25 @@ return ;
 return VN$(self,'track_mouse:until_mouse_up:',the_event,true);
 });
 $VN_2.$def('start_tracking_at',function(self,_cmd,start_point){
-VN$(self,'highlight',true);
 return true;
 });
 $VN_2.$def('continue_tracking:at:',function(self,_cmd,last_point,current_point){
 });
 $VN_2.$def('stop_tracking:at:mouse_is_up:',function(self,_cmd,last_point,stop_point,flag){
-return VN$(self,'highlight',false);
 });
 $VN_2.$def('track_mouse:until_mouse_up:',function(self,_cmd,the_event,flag){
+var location = VN$(self,'convert_point:from_view:',VN$(the_event,'location_in_window'),nil);
+if(!RTEST(VN$(self,'start_tracking_at',VN$(the_event,'location_in_window')))){
+return false;
+}
+if(RTEST(VN$(self, 'continuous?'))){
+VN$(self.$klass.$c_g_full('App'),'send_action:to:from:',self.$i_g('@action'),self.$i_g('@target'),self);
+}
+VN$(self,'puts','requesting binding');
+return VN$(self.$klass.$c_g_full('App'),'bind_events',['left_mouse_up','left_mouse_dragged'],function(the_event){
+VN$(self,'puts',VN$(the_event,'type'));
+if(RTEST(VN$(VN$(the_event,'type'),'==','left_mouse_up'))){
+VN$(self.$klass.$c_g_full('App'),'unbind_events');
+}
+});
 });

@@ -31,6 +31,12 @@ module Vienna
   APP_DID_FINISH_LAUNCHING = 'APP_DID_FINISH_LAUNCHING'
   APP_DID_CHANGE_SCREEN_PARAMETERS = 'APP_DID_CHANGE_SCREEN_PARAMETERS'
   
+  # Run loop modes
+  RUN_LOOP_MODES = {
+    :normal => 0,
+    :modal_panel => 1,
+    :event_tracking => 2
+  }
   
   class Application
         
@@ -44,20 +50,60 @@ module Vienna
       @views_needing_display = []
       
       @delegate = nil
+      @run_loop_mode = :normal
     end
     
-    def run
-      # attatch all events...
-      finish_launching
+    def run_loop_mode
+      @run_loop_mode
     end
     
-    def finish_launching
-      nc = NotificationCenter.default_center
-      # nc.post_notification_name APP_WILL_FINISH_LAUNCHING, object:self
-      # nc.post_notification_name APP_DID_FINISH_LAUNCHING, object:self
-      display_required_views
+    # Event capture bindings
+    def bind_events types, &block
+      @run_loop_mode = :event_tracking
+      @event_binding_mask = types
+      @event_binding_block = block
+      
+      # We can capture mouse movements if needed
+      # puts 'types:'
+      # puts types
+      if types.include? :left_mouse_dragged
+        # puts 'Addng mouse moved!'
+        Document.add_event_listener :mousemove do |evt|
+          the_event = Event.from_native_event evt, with_window:nil, with_type:'left_mouse_dragged'
+          send_event the_event
+        end
+      end
     end
     
+    def unbind_events
+      @run_loop_mode = :normal
+      
+      # Remove mouse mvoed event listener
+      if @event_binding_mask.include? :left_mouse_dragged
+        Document.remove_event_listener :mousemove
+      end
+    end
+    
+    def current_event
+      @current_event
+    end
+    
+    def send_event the_event
+      @current_event = the_event
+      # key events
+      
+      # event binding
+      if @run_loop_mode == :event_tracking
+        if @event_binding_mask.include? the_event.type
+          @event_binding_block.call the_event
+        end
+        return # if not, ignore event
+      end
+      
+      # All other cases, send to window (should only likely be key events)
+      the_event.window.send_event the_event      
+    end
+      
     # Mark view as needing display at the end of the current run loop
     # 
     def mark_view_for_display view, flag
@@ -126,20 +172,33 @@ module Vienna
       if @run_block
         @run_block.call self
       end
+                
+      Document.add_event_listener :mousedown do |evt|
+        if App.run_loop_mode == :event_tracking
+          the_event = Event.from_native_event evt, with_window:nil, with_type:'left_mouse_down'
+          send_event the_event
+        end
+      end
       
-      puts '===== In: Application#finish_launching'
-      puts @delegate 
-      # attatch events
+      Document.add_event_listener :mouseup do |evt|
+        if App.run_loop_mode == :event_tracking
+          the_event = Event.from_native_event evt, with_window:nil, with_type:'left_mouse_up'
+          send_event the_event
+        end
+      end
+      
       nc = NotificationCenter.default_center
       nc.post_notification_name APP_WILL_FINISH_LAUNCHING, object:self
       nc.post_notification_name APP_DID_FINISH_LAUNCHING, object:self
     end
   
     def run (&block)
-      # puts "in run"
-      # puts block
       @run_block = block
-    end  
+    end
+    
+    def send_action action, to:target, from:sender
+      
+    end
   end
   
   # Vienna::App

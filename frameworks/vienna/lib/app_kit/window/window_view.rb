@@ -44,6 +44,12 @@ module Vienna
       @window = win
     end
     
+    def mouse_down the_event
+      # check if inside resize indicator && should resize..
+      
+      # check if window is movable by background, if so, do move..
+    end
+    
     
     def render context
       if context.first_time?

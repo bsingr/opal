@@ -107,6 +107,18 @@ module Vienna
       @class_name = a_class
     end
     
+    # Themed class name. This is, by default, nil in all Vienna Classes. But adding a
+    # custom class name allows themed controls without having to exclude the base class
+    # name. This saves having to reimplement all the CSS stylings from the base Vienna
+    # control - just swap in images etc
+    def theme_name
+      @theme_name || ''
+    end
+    
+    def theme_name= a_theme
+      @theme_name = a_theme
+    end
+    
     def graphics_port
       `return #{@display_context.element}.getContext('2d');`
     end
