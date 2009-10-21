@@ -1,31 +1,9 @@
+
+VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/vienna/lib/app_kit/views/controls/button_cell_images.js');
 var $VN_1 = RModule.define('Vienna');
 var $VN_2 = RClass.define_under($VN_1, 'ButtonCell',$VN_2.$c_g_full('Cell'));
 $VN_2.$c_s('SWITCH_IMAGE',VN$($VN_2.$c_g_full('Image'),'sprite','controls',[0,357,16,16]));
 $VN_2.$c_s('SWITCH_HIGHLIGHTED_IMAGE',VN$($VN_2.$c_g_full('Image'),'sprite','controls',[16,357,16,16]));
-$VN_2.$c_s('ASWITCH_IMAGE',VN$($VN_2.$c_g_full('Image'),'sprite_cell_masks','controls',function(s){
-VN$(s,'add_representation:size:rect:','normal','regular',[0,357,16,16]);
-VN$(s,'add_representation:size:rect:','gray_mask','regular',[0,357,16,16]);
-VN$(s,'add_representation:size:rect:','disabled','regular',[0,357,16,16]);
-VN$(s,'add_representation:size:rect:','normal','small',[0,357,16,16]);
-VN$(s,'add_representation:size:rect:','gray_mask','small',[0,357,16,16]);
-VN$(s,'add_representation:size:rect:','disabled','small',[0,357,16,16]);
-VN$(s,'add_representation:size:rect:','normal','mini',[0,357,16,16]);
-VN$(s,'add_representation:size:rect:','gray_mask','mini',[0,357,16,16]);
-return VN$(s,'add_representation:size:rect:','disabled','mini',[0,357,16,16]);
-}));
-VN$($VN_2,'puts','DONE ASWITCH_IMAGE');
-VN$($VN_2,'puts',$VN_2.$c_g_full('ASWITCH_IMAGE'));
-$VN_2.$c_s('ASWITCH_HIGHLIGHTED_IMAGE',VN$($VN_2.$c_g_full('Image'),'sprite_cell_masks','controls',function(s){
-VN$(s,'add_representation:size:rect:','normal','regular',[16,357,16,16]);
-VN$(s,'add_representation:size:rect:','gray_mask','regular',[16,357,16,16]);
-VN$(s,'add_representation:size:rect:','disabled','regular',[16,357,16,16]);
-VN$(s,'add_representation:size:rect:','normal','small',[16,357,16,16]);
-VN$(s,'add_representation:size:rect:','gray_mask','small',[16,357,16,16]);
-VN$(s,'add_representation:size:rect:','disabled','small',[16,357,16,16]);
-VN$(s,'add_representation:size:rect:','normal','mini',[16,357,16,16]);
-VN$(s,'add_representation:size:rect:','gray_mask','mini',[16,357,16,16]);
-return VN$(s,'add_representation:size:rect:','disabled','mini',[16,357,16,16]);
-}));
 $VN_2.$def('init_text_cell',function(self,_cmd,str){
 VN$sup(arguments.callee, self,_cmd,[str]);
 self.$i_s('@transparent',false);
@@ -44,6 +22,55 @@ $VN_2.$def('init_image_cell',function(self,_cmd,img){
 });
 $VN_2.$def('initialize',function(self,_cmd){
 return VN$(self,'init_text_cell','ButtonCell');
+});
+$VN_2.$def('control_tint=',function(self,_cmd,control_tint){
+VN$(self, 'will_change_value_for_key', 'control_tint');
+VN$sup(arguments.callee, self,_cmd,[control_tint]);
+if(RTEST(ORTEST(VN$(self.$i_g('@type'),'==','switch'),VN$(self.$i_g('@type'),'==','radio')))){
+VN$(self, '_update_button_images');
+}
+VN$(self, 'did_change_value_for_key', 'control_tint');
+});
+$VN_2.$def('control_size=',function(self,_cmd,size){
+VN$(self, 'will_change_value_for_key', 'control_size');
+VN$sup(arguments.callee, self,_cmd,[size]);
+if(RTEST(ORTEST(VN$(self.$i_g('@type'),'==','switch'),VN$(self.$i_g('@type'),'==','radio')))){
+VN$(self, '_update_button_images');
+}
+VN$(self, 'did_change_value_for_key', 'control_size');
+});
+$VN_2.$def('_update_button_images',function(self,_cmd){
+var size_str = '';
+var tint_str = '';
+(function($v){
+if(($e = VN$('regular', '===', $v),$e!==nil && $e!==false)){
+return size_str = '_REGULAR';
+}
+else if(($e = VN$('small', '===', $v),$e!==nil && $e!==false)){
+return size_str = '_SMALL';
+}
+else if(($e = VN$('mini', '===', $v),$e!==nil && $e!==false)){
+return size_str = '_MINI';
+}
+})(self.$i_g('@control_size'));
+(function($v){
+if(($e = VN$('blue', '===', $v),$e!==nil && $e!==false)){
+return tint_str = '_BLUE';
+}
+else if(($e = VN$('hud', '===', $v),$e!==nil && $e!==false)){
+return tint_str = '_HUD';
+}
+else {
+}
+})(self.$i_g('@control_tint'));
+if(RTEST(VN$(self.$i_g('@type'),'==','switch'))){
+self.$i_s('@image',["SWITCH_IMAGE",(size_str),(tint_str)].join(''));
+self.$i_s('@alternate_image',["SWITCH_HIGHLIGHTED_IMAGE",(size_str),(tint_str)].join(''));
+}
+else if(RTEST(VN$(self.$i_g('@type'),'==','radio'))){
+self.$i_s('@image',["RADIO_IMAGE",(size_str),(tint_str)].join(''));
+self.$i_s('@alternate_image',["RADIO_HIGHLIGHTED_IMAGE",(size_str),(tint_str)].join(''));
+}
 });
 $VN_2.$def('class_name',function(self,_cmd){
 return 'vn-button';
@@ -336,3 +363,5 @@ VN$(self, 'did_change_value_for_key', 'sound');
 $VN_2.$def('sound',function(self,_cmd){
 return self.$i_g('@sound');
 });
+VN$(VN.self,'puts','BUTTON CELL');
+VN$(VN.self,'puts',cObject.$c_g('VN').$c_g('ButtonCell'));

@@ -16,9 +16,6 @@ return (self.$k_d('@@named_images') ? self.$k_g('@@named_images') : self.$k_s('@
 $VN_2.$def_s('sprite_images',function(self,_cmd){
 return (self.$k_d('@@sprite_images') ? self.$k_g('@@sprite_images') : self.$k_s('@@sprite_images',VN.$h()));
 });
-$VN_2.$def_s('define_sprite_image_named:in_image:with_rect:',function(self,_cmd,name,image,rect){
-return VN$(VN$(self, 'sprite_images'),'[]=',name,[image,rect]);
-});
 $VN_2.$def_s('resource',function(self,_cmd,name,block){
 var img = VN$(self,'image_named',name);
 return arguments[arguments.length -1](img);
@@ -40,11 +37,14 @@ VN$(obj,'filename=',VN$(img,'filename'));
 arguments[arguments.length -1](obj);
 return obj;
 });
-$VN_2.$def('add_representation:size:rect:',function(self,_cmd,type,size,array_rect){
-if(!RTEST(VN$(self.$i_g('@representations'),'has_key?',size))){
-VN$(self.$i_g('@representations'),'[]=',size,VN.$h());
+$VN_2.$def('add_representation:rect:',function(self,_cmd,type,array_rect){
+return VN$(self.$i_g('@representations'),'[]=',type,array_rect);
+});
+$VN_2.$def('add_representation_rect',function(self,_cmd,array_rect){
+if(!RTEST(VN$(self.$i_g('@representations'),'has_key?','regular'))){
+VN$(self.$i_g('@representations'),'[]=','regular',VN.$h());
 }
-return VN$(VN$(self.$i_g('@representations'),'[]',size),'[]=',type,array_rect);
+return VN$(self.$i_g('@representations'),'[]=','normal',array_rect);
 });
 $VN_2.$def('initialize',function(self,_cmd){
 VN$sup(arguments.callee, self,_cmd,[]);

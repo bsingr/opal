@@ -3,7 +3,7 @@ $VN_1.$c_s('CELL_TYPES',VN.$h('null', 0, 'text', 1, 'image', 2));
 $VN_1.$c_s('IMAGE_POSITIONS',VN.$h('text_only', 0, 'image_only', 1, 'left', 2, 'right', 3, 'below', 4, 'above', 5, 'overlaps', 6));
 $VN_1.$c_s('CELL_STATES',VN.$h('off', 0, 'on', 1));
 $VN_1.$c_s('CELL_MASKS',VN.$h('none', 0, 'contents', 1, 'push_in', 2, 'change_gray', 4, 'change_background', 8));
-$VN_1.$c_s('CONTROL_TINTS',VN.$h('default', 0, 'blue', 1, 'graphite', 6, 'clear', 7));
+$VN_1.$c_s('CONTROL_TINTS',VN.$h('default', 0, 'blue', 1, 'graphite', 6, 'clear', 7, 'hud', 10));
 $VN_1.$c_s('CONTROL_SIZES',VN.$h('regular', 0, 'small', 1, 'mini', 2));
 var $VN_2 = RClass.define_under($VN_1, 'Cell',cObject);
 $VN_2.$def_s('prefers_tracking_until_mouse_up',function(self,_cmd){

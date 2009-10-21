@@ -62,7 +62,8 @@ module Vienna
     :default            => 0,
     :blue               => 1,
     :graphite           => 6,
-    :clear              => 7
+    :clear              => 7,
+    :hud                => 10
   }
 
   CONTROL_SIZES = {

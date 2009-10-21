@@ -3409,9 +3409,6 @@ return (self.$k_d('@@named_images') ? self.$k_g('@@named_images') : self.$k_s('@
 $VN_2.$def_s('sprite_images',function(self,_cmd){
 return (self.$k_d('@@sprite_images') ? self.$k_g('@@sprite_images') : self.$k_s('@@sprite_images',VN.$h()));
 });
-$VN_2.$def_s('define_sprite_image_named:in_image:with_rect:',function(self,_cmd,name,image,rect){
-return VN$(VN$(self, 'sprite_images'),'[]=',name,[image,rect]);
-});
 $VN_2.$def_s('resource',function(self,_cmd,name,block){
 var img = VN$(self,'image_named',name);
 return arguments[arguments.length -1](img);
@@ -3433,11 +3430,14 @@ VN$(obj,'filename=',VN$(img,'filename'));
 arguments[arguments.length -1](obj);
 return obj;
 });
-$VN_2.$def('add_representation:size:rect:',function(self,_cmd,type,size,array_rect){
-if(!RTEST(VN$(self.$i_g('@representations'),'has_key?',size))){
-VN$(self.$i_g('@representations'),'[]=',size,VN.$h());
+$VN_2.$def('add_representation:rect:',function(self,_cmd,type,array_rect){
+return VN$(self.$i_g('@representations'),'[]=',type,array_rect);
+});
+$VN_2.$def('add_representation_rect',function(self,_cmd,array_rect){
+if(!RTEST(VN$(self.$i_g('@representations'),'has_key?','regular'))){
+VN$(self.$i_g('@representations'),'[]=','regular',VN.$h());
 }
-return VN$(VN$(self.$i_g('@representations'),'[]',size),'[]=',type,array_rect);
+return VN$(self.$i_g('@representations'),'[]=','normal',array_rect);
 });
 $VN_2.$def('initialize',function(self,_cmd){
 VN$sup(arguments.callee, self,_cmd,[]);
@@ -4236,7 +4236,7 @@ $VN_1.$c_s('CELL_TYPES',VN.$h('null', 0, 'text', 1, 'image', 2));
 $VN_1.$c_s('IMAGE_POSITIONS',VN.$h('text_only', 0, 'image_only', 1, 'left', 2, 'right', 3, 'below', 4, 'above', 5, 'overlaps', 6));
 $VN_1.$c_s('CELL_STATES',VN.$h('off', 0, 'on', 1));
 $VN_1.$c_s('CELL_MASKS',VN.$h('none', 0, 'contents', 1, 'push_in', 2, 'change_gray', 4, 'change_background', 8));
-$VN_1.$c_s('CONTROL_TINTS',VN.$h('default', 0, 'blue', 1, 'graphite', 6, 'clear', 7));
+$VN_1.$c_s('CONTROL_TINTS',VN.$h('default', 0, 'blue', 1, 'graphite', 6, 'clear', 7, 'hud', 10));
 $VN_1.$c_s('CONTROL_SIZES',VN.$h('regular', 0, 'small', 1, 'mini', 2));
 var $VN_2 = RClass.define_under($VN_1, 'Cell',cObject);
 $VN_2.$def_s('prefers_tracking_until_mouse_up',function(self,_cmd){
@@ -4836,34 +4836,91 @@ return VN$(self.$i_g('@cell'),'allows_mixed_state?');
 $VN_2.$def('next_state',function(self,_cmd){
 });
 
+
+var $VN_1 = RModule.define('Vienna');
+var $VN_2 = RClass.define_under($VN_1, 'ButtonCell',$VN_2.$c_g_full('Cell'));
+$VN_2.$c_s('SWITCH_IMAGE_REGULAR',VN$($VN_2.$c_g_full('Image'),'sprite_cell_masks','controls',function(s){
+VN$(s,'add_representation:rect:','normal',[0,357,16,16]);
+VN$(s,'add_representation:rect:','gray_mask',[0,357,16,16]);
+return VN$(s,'add_representation:rect:','disabled',[0,357,16,16]);
+}));
+$VN_2.$c_s('SWITCH_IMAGE_SMALL',VN$($VN_2.$c_g_full('Image'),'sprite_cell_masks','controls',function(s){
+VN$(s,'add_representation:rect:','normal',[0,357,16,16]);
+VN$(s,'add_representation:rect:','gray_mask',[0,357,16,16]);
+return VN$(s,'add_representation:rect:','disabled',[0,357,16,16]);
+}));
+$VN_2.$c_s('SWITCH_IMAGE_MINI',VN$($VN_2.$c_g_full('Image'),'sprite_cell_masks','controls',function(s){
+VN$(s,'add_representation:rect:','normal',[0,357,16,16]);
+VN$(s,'add_representation:rect:','gray_mask',[0,357,16,16]);
+return VN$(s,'add_representation:rect:','disabled',[0,357,16,16]);
+}));
+$VN_2.$c_s('SWITCH_HIGHLIGHTED_IMAGE_REGULAR',VN$($VN_2.$c_g_full('Image'),'sprite_cell_masks','controls',function(s){
+VN$(s,'add_representation:rect:','normal',[16,357,16,16]);
+VN$(s,'add_representation:rect:','gray_mask',[16,357,16,16]);
+return VN$(s,'add_representation:rect:','disabled',[16,357,16,16]);
+}));
+$VN_2.$c_s('SWITCH_HIGHLIGHTED_IMAGE_SMALL',VN$($VN_2.$c_g_full('Image'),'sprite_cell_masks','controls',function(s){
+VN$(s,'add_representation:rect:','normal',[16,357,16,16]);
+VN$(s,'add_representation:rect:','gray_mask',[16,357,16,16]);
+return VN$(s,'add_representation:rect:','disabled',[16,357,16,16]);
+}));
+$VN_2.$c_s('SWITCH_HIGHLIGHTED_IMAGE_MINI',VN$($VN_2.$c_g_full('Image'),'sprite_cell_masks','controls',function(s){
+VN$(s,'add_representation:rect:','normal',[16,357,16,16]);
+VN$(s,'add_representation:rect:','gray_mask',[16,357,16,16]);
+return VN$(s,'add_representation:rect:','disabled',[16,357,16,16]);
+}));
+$VN_2.$c_s('SWITCH_IMAGE_REGULAR_BLUE',$VN_2.$c_g_full('SWITCH_IMAGE_REGULAR'));
+$VN_2.$c_s('SWITCH_IMAGE_SMALL_BLUE',$VN_2.$c_g_full('SWITCH_IMAGE_SMALL'));
+$VN_2.$c_s('SWITCH_IMAGE_MINI_BLUE',$VN_2.$c_g_full('SWITCH_IMAGE_MINI'));
+$VN_2.$c_s('SWITCH_HIGHLIGHTED_IMAGE_REGULAR_BLUE',VN$($VN_2.$c_g_full('Image'),'sprite_cell_masks','controls',function(s){
+VN$(s,'add_representation:rect:','normal',[16,357,16,16]);
+VN$(s,'add_representation:rect:','gray_mask',[16,357,16,16]);
+return VN$(s,'add_representation:rect:','disabled',[16,357,16,16]);
+}));
+$VN_2.$c_s('SWITCH_HIGHLIGHTED_IMAGE_SMALL_BLUE',VN$($VN_2.$c_g_full('Image'),'sprite_cell_masks','controls',function(s){
+VN$(s,'add_representation:rect:','normal',[16,357,16,16]);
+VN$(s,'add_representation:rect:','gray_mask',[16,357,16,16]);
+return VN$(s,'add_representation:rect:','disabled',[16,357,16,16]);
+}));
+$VN_2.$c_s('SWITCH_HIGHLIGHTED_IMAGE_MINI_BLUE',VN$($VN_2.$c_g_full('Image'),'sprite_cell_masks','controls',function(s){
+VN$(s,'add_representation:rect:','normal',[16,357,16,16]);
+VN$(s,'add_representation:rect:','gray_mask',[16,357,16,16]);
+return VN$(s,'add_representation:rect:','disabled',[16,357,16,16]);
+}));
+$VN_2.$c_s('SWITCH_IMAGE_REGULAR_HUD',VN$($VN_2.$c_g_full('Image'),'sprite_cell_masks','controls',function(s){
+VN$(s,'add_representation:rect:','normal',[0,357,16,16]);
+VN$(s,'add_representation:rect:','gray_mask',[0,357,16,16]);
+return VN$(s,'add_representation:rect:','disabled',[0,357,16,16]);
+}));
+$VN_2.$c_s('SWITCH_IMAGE_SMALL_HUD',VN$($VN_2.$c_g_full('Image'),'sprite_cell_masks','controls',function(s){
+VN$(s,'add_representation:rect:','normal',[0,357,16,16]);
+VN$(s,'add_representation:rect:','gray_mask',[0,357,16,16]);
+return VN$(s,'add_representation:rect:','disabled',[0,357,16,16]);
+}));
+$VN_2.$c_s('SWITCH_IMAGE_MINI_HUD',VN$($VN_2.$c_g_full('Image'),'sprite_cell_masks','controls',function(s){
+VN$(s,'add_representation:rect:','normal',[0,357,16,16]);
+VN$(s,'add_representation:rect:','gray_mask',[0,357,16,16]);
+return VN$(s,'add_representation:rect:','disabled',[0,357,16,16]);
+}));
+$VN_2.$c_s('SWITCH_HIGHLIGHTED_IMAGE_REGULAR_HUD',VN$($VN_2.$c_g_full('Image'),'sprite_cell_masks','controls',function(s){
+VN$(s,'add_representation:rect:','normal',[16,357,16,16]);
+VN$(s,'add_representation:rect:','gray_mask',[16,357,16,16]);
+return VN$(s,'add_representation:rect:','disabled',[16,357,16,16]);
+}));
+$VN_2.$c_s('SWITCH_HIGHLIGHTED_IMAGE_SMALL_HUD',VN$($VN_2.$c_g_full('Image'),'sprite_cell_masks','controls',function(s){
+VN$(s,'add_representation:rect:','normal',[16,357,16,16]);
+VN$(s,'add_representation:rect:','gray_mask',[16,357,16,16]);
+return VN$(s,'add_representation:rect:','disabled',[16,357,16,16]);
+}));
+$VN_2.$c_s('SWITCH_HIGHLIGHTED_IMAGE_MINI_HUD',VN$($VN_2.$c_g_full('Image'),'sprite_cell_masks','controls',function(s){
+VN$(s,'add_representation:rect:','normal',[16,357,16,16]);
+VN$(s,'add_representation:rect:','gray_mask',[16,357,16,16]);
+return VN$(s,'add_representation:rect:','disabled',[16,357,16,16]);
+}));
 var $VN_1 = RModule.define('Vienna');
 var $VN_2 = RClass.define_under($VN_1, 'ButtonCell',$VN_2.$c_g_full('Cell'));
 $VN_2.$c_s('SWITCH_IMAGE',VN$($VN_2.$c_g_full('Image'),'sprite','controls',[0,357,16,16]));
 $VN_2.$c_s('SWITCH_HIGHLIGHTED_IMAGE',VN$($VN_2.$c_g_full('Image'),'sprite','controls',[16,357,16,16]));
-$VN_2.$c_s('ASWITCH_IMAGE',VN$($VN_2.$c_g_full('Image'),'sprite_cell_masks','controls',function(s){
-VN$(s,'add_representation:size:rect:','normal','regular',[0,357,16,16]);
-VN$(s,'add_representation:size:rect:','gray_mask','regular',[0,357,16,16]);
-VN$(s,'add_representation:size:rect:','disabled','regular',[0,357,16,16]);
-VN$(s,'add_representation:size:rect:','normal','small',[0,357,16,16]);
-VN$(s,'add_representation:size:rect:','gray_mask','small',[0,357,16,16]);
-VN$(s,'add_representation:size:rect:','disabled','small',[0,357,16,16]);
-VN$(s,'add_representation:size:rect:','normal','mini',[0,357,16,16]);
-VN$(s,'add_representation:size:rect:','gray_mask','mini',[0,357,16,16]);
-return VN$(s,'add_representation:size:rect:','disabled','mini',[0,357,16,16]);
-}));
-VN$($VN_2,'puts','DONE ASWITCH_IMAGE');
-VN$($VN_2,'puts',$VN_2.$c_g_full('ASWITCH_IMAGE'));
-$VN_2.$c_s('ASWITCH_HIGHLIGHTED_IMAGE',VN$($VN_2.$c_g_full('Image'),'sprite_cell_masks','controls',function(s){
-VN$(s,'add_representation:size:rect:','normal','regular',[16,357,16,16]);
-VN$(s,'add_representation:size:rect:','gray_mask','regular',[16,357,16,16]);
-VN$(s,'add_representation:size:rect:','disabled','regular',[16,357,16,16]);
-VN$(s,'add_representation:size:rect:','normal','small',[16,357,16,16]);
-VN$(s,'add_representation:size:rect:','gray_mask','small',[16,357,16,16]);
-VN$(s,'add_representation:size:rect:','disabled','small',[16,357,16,16]);
-VN$(s,'add_representation:size:rect:','normal','mini',[16,357,16,16]);
-VN$(s,'add_representation:size:rect:','gray_mask','mini',[16,357,16,16]);
-return VN$(s,'add_representation:size:rect:','disabled','mini',[16,357,16,16]);
-}));
 $VN_2.$def('init_text_cell',function(self,_cmd,str){
 VN$sup(arguments.callee, self,_cmd,[str]);
 self.$i_s('@transparent',false);
@@ -4882,6 +4939,55 @@ $VN_2.$def('init_image_cell',function(self,_cmd,img){
 });
 $VN_2.$def('initialize',function(self,_cmd){
 return VN$(self,'init_text_cell','ButtonCell');
+});
+$VN_2.$def('control_tint=',function(self,_cmd,control_tint){
+VN$(self, 'will_change_value_for_key', 'control_tint');
+VN$sup(arguments.callee, self,_cmd,[control_tint]);
+if(RTEST(ORTEST(VN$(self.$i_g('@type'),'==','switch'),VN$(self.$i_g('@type'),'==','radio')))){
+VN$(self, '_update_button_images');
+}
+VN$(self, 'did_change_value_for_key', 'control_tint');
+});
+$VN_2.$def('control_size=',function(self,_cmd,size){
+VN$(self, 'will_change_value_for_key', 'control_size');
+VN$sup(arguments.callee, self,_cmd,[size]);
+if(RTEST(ORTEST(VN$(self.$i_g('@type'),'==','switch'),VN$(self.$i_g('@type'),'==','radio')))){
+VN$(self, '_update_button_images');
+}
+VN$(self, 'did_change_value_for_key', 'control_size');
+});
+$VN_2.$def('_update_button_images',function(self,_cmd){
+var size_str = '';
+var tint_str = '';
+(function($v){
+if(($e = VN$('regular', '===', $v),$e!==nil && $e!==false)){
+return size_str = '_REGULAR';
+}
+else if(($e = VN$('small', '===', $v),$e!==nil && $e!==false)){
+return size_str = '_SMALL';
+}
+else if(($e = VN$('mini', '===', $v),$e!==nil && $e!==false)){
+return size_str = '_MINI';
+}
+})(self.$i_g('@control_size'));
+(function($v){
+if(($e = VN$('blue', '===', $v),$e!==nil && $e!==false)){
+return tint_str = '_BLUE';
+}
+else if(($e = VN$('hud', '===', $v),$e!==nil && $e!==false)){
+return tint_str = '_HUD';
+}
+else {
+}
+})(self.$i_g('@control_tint'));
+if(RTEST(VN$(self.$i_g('@type'),'==','switch'))){
+self.$i_s('@image',["SWITCH_IMAGE",(size_str),(tint_str)].join(''));
+self.$i_s('@alternate_image',["SWITCH_HIGHLIGHTED_IMAGE",(size_str),(tint_str)].join(''));
+}
+else if(RTEST(VN$(self.$i_g('@type'),'==','radio'))){
+self.$i_s('@image',["RADIO_IMAGE",(size_str),(tint_str)].join(''));
+self.$i_s('@alternate_image',["RADIO_HIGHLIGHTED_IMAGE",(size_str),(tint_str)].join(''));
+}
 });
 $VN_2.$def('class_name',function(self,_cmd){
 return 'vn-button';
@@ -5174,6 +5280,8 @@ VN$(self, 'did_change_value_for_key', 'sound');
 $VN_2.$def('sound',function(self,_cmd){
 return self.$i_g('@sound');
 });
+VN$(VN.self,'puts','BUTTON CELL');
+VN$(VN.self,'puts',cObject.$c_g('VN').$c_g('ButtonCell'));
 
 var $VN_1 = RModule.define('Vienna');
 var $VN_2 = RClass.define_under($VN_1, 'CheckBox',$VN_2.$c_g_full('Button'));

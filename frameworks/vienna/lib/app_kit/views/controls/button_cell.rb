@@ -24,99 +24,15 @@
 # THE SOFTWARE.
 #
 
+require 'button_cell_images'
+
 module Vienna
   
-  # Image.resource 'controls.png' do |img|
-  #   
-  #   img.sprite :rounded_bezel_enabled_regular_left, [0, 0, 36, 24]
-  #   img.sprite :rounded_bezel_enabled_regular_middle, [0, 24, 36, 24]
-  #   img.sprite :rounded_bezel_enabled_regular_right, [0, 48, 36, 24]
-  #   
-  #   img.sprite :rounded_bezel_disabled_regular_left, [0, 0, 36, 24]
-  #   img.sprite :rounded_bezel_disabled_regular_middle, [0, 24, 36, 24]
-  #   img.sprite :rounded_bezel_disabled_regular_right, [0, 48, 36, 24]
-  #   
-  #   img.sprite :rounded_bezel_pushed_regular_left, [0, 0, 36, 24]
-  #   img.sprite :rounded_bezel_pushed_regular_middle, [0, 24, 36, 24]
-  #   img.sprite :rounded_bezel_pushed_regular_right, [0, 48, 36, 24]
-  #   
-  #   
-  #   
-  #   img.sprite :rounded_bezel_enabled_small_left, [0, 0, 36, 24]
-  #   img.sprite :rounded_bezel_enabled_small_middle, [0, 24, 36, 24]
-  #   img.sprite :rounded_bezel_enabled_small_right, [0, 48, 36, 24]
-  #   
-  #   img.sprite :rounded_bezel_disabled_small_left, [0, 0, 36, 24]
-  #   img.sprite :rounded_bezel_disabled_small_middle, [0, 24, 36, 24]
-  #   img.sprite :rounded_bezel_disabled_small_right, [0, 48, 36, 24]
-  #   
-  #   img.sprite :rounded_bezel_pushed_small_left, [0, 0, 36, 24]
-  #   img.sprite :rounded_bezel_pushed_small_middle, [0, 24, 36, 24]
-  #   img.sprite :rounded_bezel_pushed_small_right, [0, 48, 36, 24]
-  #   
-  #   
-  #   
-  #   img.sprite :rounded_bezel_enabled_mini_left, [0, 0, 36, 24]
-  #   img.sprite :rounded_bezel_enabled_mini_middle, [0, 24, 36, 24]
-  #   img.sprite :rounded_bezel_enabled_mini_right, [0, 48, 36, 24]
-  #   
-  #   img.sprite :rounded_bezel_disabled_mini_left, [0, 0, 36, 24]
-  #   img.sprite :rounded_bezel_disabled_mini_middle, [0, 24, 36, 24]
-  #   img.sprite :rounded_bezel_disabled_mini_right, [0, 48, 36, 24]
-  #   
-  #   img.sprite :rounded_bezel_pushed_mini_left, [0, 0, 36, 24]
-  #   img.sprite :rounded_bezel_pushed_mini_middle, [0, 24, 36, 24]
-  #   img.sprite :rounded_bezel_pushed_mini_right, [0, 48, 36, 24]
-  #   
-  # end
-  
-  # Image.resource 'controls.png' do |img|
-  #   img.sprite :vn_switch, [0, 0, 36, 36]
-  #   img.sprite :vn_highlighted_switch, [0, 36, 36, 36]
-  #   
-  #   img.sprite :vn_radio, [0, 0, 36, 36]
-  #   img.sprite :vn_highlighted_radio, [0, 36, 36, 36]
-  # end
-    
   class ButtonCell < Cell
     
     SWITCH_IMAGE = Image.sprite :controls, [0, 357, 16, 16]
     SWITCH_HIGHLIGHTED_IMAGE = Image.sprite :controls, [16, 357, 16, 16]
-    
-    ASWITCH_IMAGE = Image.sprite_cell_masks :controls do |s|
-      # regular
-      s.add_representation :normal, size:'regular', rect:[0, 357, 16, 16]
-      s.add_representation :gray_mask, size:'regular', rect:[0, 357, 16, 16]
-      s.add_representation :disabled, size:'regular', rect:[0, 357, 16, 16]
-      # small
-      s.add_representation :normal, size:'small', rect:[0, 357, 16, 16]
-      s.add_representation :gray_mask, size:'small', rect:[0, 357, 16, 16]
-      s.add_representation :disabled, size:'small', rect:[0, 357, 16, 16]
-      # mini
-      s.add_representation :normal, size:'mini', rect:[0, 357, 16, 16]
-      s.add_representation :gray_mask, size:'mini', rect:[0, 357, 16, 16]
-      s.add_representation :disabled, size:'mini', rect:[0, 357, 16, 16]
-    end
-    
-    puts 'DONE ASWITCH_IMAGE'
-    puts ASWITCH_IMAGE
-    
-    ASWITCH_HIGHLIGHTED_IMAGE = Image.sprite_cell_masks :controls do |s|
-      # regular
-      s.add_representation :normal, size:'regular', rect:[16, 357, 16, 16]
-      s.add_representation :gray_mask, size:'regular', rect:[16, 357, 16, 16]
-      s.add_representation :disabled, size:'regular', rect:[16, 357, 16, 16]
-      # small
-      s.add_representation :normal, size:'small', rect:[16, 357, 16, 16]
-      s.add_representation :gray_mask, size:'small', rect:[16, 357, 16, 16]
-      s.add_representation :disabled, size:'small', rect:[16, 357, 16, 16]
-      # mini
-      s.add_representation :normal, size:'mini', rect:[16, 357, 16, 16]
-      s.add_representation :gray_mask, size:'mini', rect:[16, 357, 16, 16]
-      s.add_representation :disabled, size:'mini', rect:[16, 357, 16, 16]
-    end    
-
-    
+        
     def init_text_cell str
       super str
       @transparent = false
@@ -140,6 +56,59 @@ module Vienna
     def initialize
       init_text_cell 'ButtonCell'
     end
+    
+    # Button override
+    def control_tint= control_tint
+      super control_tint
+      _update_button_images if @type == :switch || @type == :radio
+    end
+
+    # Button override
+    def control_size= size
+      super size
+      _update_button_images if @type == :switch || @type == :radio
+    end
+    
+    # Updates button images only if they are built in switch/radio
+    # We should really keep track if user manually sets the image or alt image
+    # for the cell - if so, we should not do any of this, and just use the user
+    # supplied images. - Add bool to image= and alternate_image= so we can catch
+    # this. To make sure we dont accidentally set it, only use @image to set
+    # images. Nice and clean?
+    # FIXME: Also decide on blue or graphite as default - blue makes more sense?
+    # in which case change _BLUE to _GRAPHITE so default also lies to _BLUE, as 
+    # well as if the user doesnt set anything (i.e. it uses default => blue)
+    def _update_button_images
+      size_str = ''
+      tint_str = ''
+      
+      case @control_size
+      when :regular
+        size_str = '_REGULAR'
+      when :small
+        size_str = '_SMALL'
+      when :mini
+        size_str = '_MINI'
+      end
+      
+      case @control_tint
+      when :blue
+        tint_str = '_BLUE'
+      when :hud
+        tint_str = '_HUD'
+      else
+        # graphite or default, or anything else really..
+      end
+      
+      if @type == :switch
+        @image = "SWITCH_IMAGE#{size_str}#{tint_str}"
+        @alternate_image = "SWITCH_HIGHLIGHTED_IMAGE#{size_str}#{tint_str}"
+      elsif @type == :radio
+        @image = "RADIO_IMAGE#{size_str}#{tint_str}"
+        @alternate_image = "RADIO_HIGHLIGHTED_IMAGE#{size_str}#{tint_str}"
+      end
+    end
+    
     
     def class_name
       'vn-button'
@@ -489,3 +458,6 @@ module Vienna
     
   end
 end
+
+puts 'BUTTON CELL'
+puts VN::ButtonCell

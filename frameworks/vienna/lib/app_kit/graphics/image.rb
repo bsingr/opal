@@ -68,9 +68,9 @@ module Vienna
       @@sprite_images ||= {}
     end
     
-    def self.define_sprite_image_named name, in_image:image, with_rect:rect
-      sprite_images[name] = [image, rect]
-    end
+    # def self.define_sprite_image_named name, in_image:image, with_rect:rect
+    #   sprite_images[name] = [image, rect]
+    # end
     
     # state that we want this resource, so start downloading it IF NOT already
     # done so. also, run the block, as it might use the resource
@@ -104,11 +104,15 @@ module Vienna
       obj
     end
     
-    def add_representation type, size:size, rect:array_rect
-      unless @representations.has_key? size
-        @representations[size] = {}
+    def add_representation type, rect:array_rect
+      @representations[type] = array_rect
+    end
+    
+    def add_representation_rect array_rect
+      unless @representations.has_key? :regular
+        @representations[:regular] = {}
       end
-      @representations[size][type] = array_rect
+      @representations[:normal] = array_rect
     end
     
     def initialize
