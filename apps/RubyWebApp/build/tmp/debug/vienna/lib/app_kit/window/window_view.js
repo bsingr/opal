@@ -1,7 +1,8 @@
 var $VN_1 = RModule.define('Vienna');
 var $VN_2 = RClass.define_under($VN_1, 'WindowView',$VN_2.$c_g_full('View'));
 $VN_2.$def('initialize',function(self,_cmd,frame,style_mask){
-return VN$sup(arguments.callee, self,_cmd,[frame]);
+VN$sup(arguments.callee, self,_cmd,[frame]);
+return self.$i_s('@style_mask',style_mask);
 });
 $VN_2.$def('class_name',function(self,_cmd){
 return 'vn-window-view';

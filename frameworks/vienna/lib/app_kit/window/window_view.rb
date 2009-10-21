@@ -33,6 +33,7 @@ module Vienna
     
     def initialize(frame, style_mask)
       super frame
+      @style_mask = style_mask
     end
     
     def class_name

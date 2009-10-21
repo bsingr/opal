@@ -62,6 +62,7 @@ module Vienna
       @run_loop_mode = :event_tracking
       @event_binding_mask = types
       @event_binding_block = block
+      @event_binding_window = self.current_event.window
       
       # We can capture mouse movements if needed
       # puts 'types:'
@@ -95,6 +96,8 @@ module Vienna
       # event binding
       if @run_loop_mode == :event_tracking
         if @event_binding_mask.include? the_event.type
+          # some events might not have their window set..
+          the_event.window = @event_binding_window
           @event_binding_block.call the_event
         end
         return # if not, ignore event
@@ -176,6 +179,7 @@ module Vienna
       Document.add_event_listener :mousedown do |evt|
         if App.run_loop_mode == :event_tracking
           the_event = Event.from_native_event evt, with_window:nil, with_type:'left_mouse_down'
+          puts 'sending event from here'
           send_event the_event
         end
       end

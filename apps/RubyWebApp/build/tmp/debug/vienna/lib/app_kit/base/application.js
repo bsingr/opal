@@ -20,6 +20,7 @@ $VN_2.$def('bind_events',function(self,_cmd,types,block){
 self.$i_s('@run_loop_mode','event_tracking');
 self.$i_s('@event_binding_mask',types);
 self.$i_s('@event_binding_block',block);
+self.$i_s('@event_binding_window',VN$(VN$(self,'current_event'),'window'));
 if(RTEST(VN$(types,'include?','left_mouse_dragged'))){
 VN$(self.$klass.$c_g_full('Document'),'add_event_listener','mousemove',function(evt){
 var the_event = VN$(self.$klass.$c_g_full('Event'),'from_native_event:with_window:with_type:',evt,nil,'left_mouse_dragged');
@@ -40,6 +41,7 @@ $VN_2.$def('send_event',function(self,_cmd,the_event){
 self.$i_s('@current_event',the_event);
 if(RTEST(VN$(self.$i_g('@run_loop_mode'),'==','event_tracking'))){
 if(RTEST(VN$(self.$i_g('@event_binding_mask'),'include?',VN$(the_event,'type')))){
+VN$(the_event,'window=',self.$i_g('@event_binding_window'));
 VN$(self.$i_g('@event_binding_block'),'call',the_event);
 }
 return ;
@@ -96,6 +98,7 @@ VN$(self.$i_g('@run_block'),'call',self);
 VN$(self.$klass.$c_g_full('Document'),'add_event_listener','mousedown',function(evt){
 if(RTEST(VN$(VN$(self.$klass.$c_g_full('App'),'run_loop_mode'),'==','event_tracking'))){
 var the_event = VN$(self.$klass.$c_g_full('Event'),'from_native_event:with_window:with_type:',evt,nil,'left_mouse_down');
+VN$(self,'puts','sending event from here');
 VN$(self,'send_event',the_event);
 }
 });

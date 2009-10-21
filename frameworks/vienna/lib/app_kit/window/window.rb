@@ -25,6 +25,7 @@
 #
 
 require 'window_view'
+require 'normal_window_view'
 
 module Vienna
   
@@ -90,7 +91,7 @@ module Vienna
     end
     
     def self.build options, &block
-      win = self.new options[:frame], options[:style]      
+      win = self.new options[:frame], [:titled, :closable]      
       if block
         yield win
       end
@@ -112,26 +113,27 @@ module Vienna
     # clicks being registered for clicking on a shadow, or any window
     # padding.
     def setup_window_view
-      @window_view = WindowView.new(Rect.new(0, 0, 100, 100), style_mask)
-      @window_view.window = self
+      @window_view = NormalWindowView.new(Rect.new(0, 0, 100, 100), @style_mask)
+      @window_view.view_will_move_to_window self
       @window_view.next_responder = self
       @element << @window_view.element
+      @window_view.view_did_move_to_window
       
       # Events - should attach these to the windowview...all relevant elements are subviews of this,
       # and, we wont capture events outside the visible window (e.g. the shadow which might be drawn
       # on the @element)
       @window_view.element.add_event_listener :mousedown do |event|
         the_event = Event.from_native_event event, with_window:self, with_type:'left_mouse_down'
-        unless the_event.allows_propagation?
           App.send_event the_event
+        unless the_event.allows_propagation?
           the_event.stop_propagation
         end
       end
       
       @window_view.element.add_event_listener :mouseup do |event|
         the_event = Event.from_native_event event, with_window:self, with_type:'left_mouse_up'
-        unless the_event.allows_propagation?
           App.send_event the_event
+        unless the_event.allows_propagation?
           the_event.stop_propagation
         end
       end
@@ -364,6 +366,18 @@ module Vienna
     
     def make_first_responder responder
       
+      return true if @first_responder == responder
+      
+      return false unless @first_responder.resign_first_responder
+      
+      if !responder || !responder.accepts_first_responder || !responder.become_first_responder
+        @first_responder = self
+        puts 'Cant make responder the first responder :('
+        return false
+      end
+      
+      @first_responder = responder
+      true
     end
     
     def first_responder
@@ -640,18 +654,15 @@ module Vienna
         puts 'key_down'
       when :left_mouse_down
         hit_test = @window_view.hit_test(point)
-        # puts hit_test.class_name
-        hit_test.mouse_down event
-        # if hit_test != @first_responder && hit_test.accepts_first_responder
-        #   make_first_responder hit_test
-        # end
-        # 
-        # if self.key_window?
-        #   return hit_test.mouse_down event
-        # else
-        #   self.make_key_and_order_front self
-        #   return hit_test.mouse_down event
-        # end
+                
+        if hit_test != @first_responder && hit_test.accepts_first_responder
+          make_first_responder hit_test
+        end
+        
+        if hit_test.accepts_first_mouse event
+          return hit_test.mouse_down event
+        end
+                
       when :left_mouse_up
         puts 'left_mouse_up'
       when :left_mouse_dragged

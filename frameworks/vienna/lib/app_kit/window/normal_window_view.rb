@@ -1,5 +1,5 @@
 # 
-# render_context.rb
+# normal_window_view
 # vienna
 # 
 # Created by Adam Beynon.
@@ -26,48 +26,37 @@
 
 module Vienna
   
-  # Render context is a special type of element with additions relevant to 
-  # rendering views within Vienna
-  class RenderContext < Element
+  # 'Normal' window view for standard windows
+  class NormalWindowView < WindowView
+        
+    CLOSE_IMAGE = Image.sprite :controls, [10, 10, 36, 36]
+    CLOSE_HIGHLIGHTED_IMAGE = Image.sprite :controls, [0, 0, 36, 36]
     
-    def initialize tag_name, options
-      @element_stack = [`document.createElement(#{tag_name})`]
-      @first_time = true
-      @type = tag_name
+    # CLOSE_IMAGE = Image.image_named :vn_normal_win_close
+    # CLOSE_HIGHLIGHTED_IMAGE = Image.image_named :vn_normal_win_close_highlight
+    
+    def initialize frame, style_mask
+      super frame, style_mask
+      
+      if @style_mask.include? :closable
+        @close_button = Button.build :frame => Rect.new(206, 6, 20, 20), :bordered => false do |close|
+          close.bordered = false
+          close.image_position = :image_only
+          close.image = CLOSE_IMAGE
+          close.alternate_image = CLOSE_HIGHLIGHTED_IMAGE
+          self << close
+          close.needs_display = true
+        end
+      end
+      
+      if @style_mask.include? :miniaturizable
+        @min_button = Button.build :frame => Rect.new(10, 10, 300, 300), :bordered => false do |min|
+          # min.image = 
+          # min.alternate_image = 
+          self << min
+        end
+      end
     end
     
-    def first_time?
-      @first_time
-    end
-    
-    def first_time= first_time
-      @first_time = first_time
-    end
-    
-    def element
-      @element_stack.last
-    end
-    
-    def push_element_stack element
-      @element_stack << element
-    end
-    
-    def pop_element_stack
-      @element_stack.pop
-    end
-    
-    def selector a_selector, &block
-      element = find_selector a_selector
-      push_element_stack element
-
-      yield self
-      pop_element_stack
-    end
-    
-    def find_selector a_selector
-      `return #{element}.getElementsByClassName(#{a_selector})[0];`
-    end
-    
-  end
-  
+  end  
 end

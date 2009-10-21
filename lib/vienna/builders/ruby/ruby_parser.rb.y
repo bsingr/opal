@@ -53,7 +53,7 @@ class Vienna::RubyParser
   # preclow
   
   prechigh
-    right    tBANG tTILDE tUPLUS
+    right    '!' tTILDE tUPLUS
     right    tPOW
     right    tUMINUS_NUM tUMINUS
     left     tSTAR2 tDIVIDE tPERCENT
@@ -215,6 +215,9 @@ rule
               	| expr kAND expr
               	| expr kOR expr
               	| kNOT opt_nl expr
+              	  {
+              	    result = node :not, :expr => val[2]
+              	  }
               	| '!' command_call
               	| arg
 
@@ -472,6 +475,10 @@ rule
             		  {
             		    result = node :call, :recv => val[0], :meth => '!~', :call_args => { :args => [val[2]]}
             		  }
+            		| '!' arg
+              	  {
+              	    result = node :not, :expr => val[1]
+              	  }
             		| '~' arg
             		  {
             		    result = node :call, :recv => val[1], :meth => '~', :call_args => { :args => [val[2]]}

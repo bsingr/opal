@@ -1,0 +1,91 @@
+# 
+# text_field_cell.rb
+# vienna
+# 
+# Created by Adam Beynon.
+# Copyright 2009 Adam Beynon.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+# 
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+# 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+#
+
+module Vienna
+  
+  class TextFieldCell < Cell
+    
+    def class_name
+      'vn-text-field'
+    end
+    
+    def background_color= color
+      @background_color = color
+    end
+    
+    def background_color
+      @background_color
+    end
+    
+    def draws_background= flag
+      @draws_background = flag
+    end
+    
+    def draws_background?
+      @draws_background
+    end
+    
+    def text_color= color
+      @text_color = color
+    end
+    
+    def text_color
+      @text_color
+    end
+    
+    def set_up_field_editor_attributes text_obj
+      text_obj
+    end
+    
+    
+    
+    def bezel_style= style
+      @bezel_style = style
+    end
+    
+    def bezel_style
+      @bezel_style
+    end
+    
+    
+    
+    def placeholder_string= string
+      @placeholder_string = string
+    end
+    
+    def placeholder_string
+      @placeholder_string
+    end
+    
+    def placeholder_attributed_string= str
+      @placeholder_attributed_string
+    end
+    
+    def placeholder_attributed_string
+      @placeholder_attributed_string
+    end    
+  end
+end

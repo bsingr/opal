@@ -32,6 +32,10 @@ module Vienna
       super frame
     end
     
+    def self.cell_class
+      SliderCell
+    end
+    
     def class_name
       'vn-slider'
     end
@@ -89,25 +93,6 @@ module Vienna
     def accepts_first_mouse event
       true
     end
-    
-    
-    def render context
-      if context.first_time?
-        context << "<div class='track-left'></div>"
-        context << "<div class='track-middle'></div>"
-        context << "<div class='track-right'></div>"
-        context << "<div class='knob'></div>"
-      end
-      
-      context.class_name = class_name
-      
-      # context.selector :knob do |knob|
-      #   # TODO: Calculate the knob position
-      #   knob_position = 37
-      #   knob.css :left => knob_position
-      # end
-    end
-    
     
     # 
     # Tick mark support

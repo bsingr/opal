@@ -6,7 +6,7 @@ return VN$(VN$(self, 'named_images'),'[]',name);
 }
 if(RTEST(VN$(VN$(self, 'sprite_images'),'has_key?',name))){
 }
-var img = VN$(self,'image_with_contents_of_url',name);
+var img = VN$(self,'image_with_contents_of_url',["images/",(name),".png"].join(''));
 VN$(VN$(self, 'named_images'),'[]=',name,img);
 return img;
 });
@@ -23,8 +23,32 @@ $VN_2.$def_s('resource',function(self,_cmd,name,block){
 var img = VN$(self,'image_named',name);
 return arguments[arguments.length -1](img);
 });
+$VN_2.$def_s('sprite',function(self,_cmd,name,rect){
+var img = VN$(self,'image_named',name);
+var obj = VN$(self,'new');
+VN$(obj,'image=',VN$(img,'image'));
+VN$(obj,'filename=',VN$(img,'filename'));
+VN$(obj,'size=',VN$(self.$c_g_full('Size'),'new',VN$(rect,'[]',2),VN$(rect,'[]',3)));
+VN$(obj,'sprite_origin=',VN$(self.$c_g_full('Point'),'new',VN$(rect,'[]',0),VN$(rect,'[]',1)));
+return obj;
+});
+$VN_2.$def_s('sprite_cell_masks',function(self,_cmd,name,block){
+var img = VN$(self,'image_named',name);
+var obj = VN$(self,'new');
+VN$(obj,'image=',VN$(img,'image'));
+VN$(obj,'filename=',VN$(img,'filename'));
+arguments[arguments.length -1](obj);
+return obj;
+});
+$VN_2.$def('add_representation:size:rect:',function(self,_cmd,type,size,array_rect){
+if(!RTEST(VN$(self.$i_g('@representations'),'has_key?',size))){
+VN$(self.$i_g('@representations'),'[]=',size,VN.$h());
+}
+return VN$(VN$(self.$i_g('@representations'),'[]',size),'[]=',type,array_rect);
+});
 $VN_2.$def('initialize',function(self,_cmd){
-return VN$sup(arguments.callee, self,_cmd,[]);
+VN$sup(arguments.callee, self,_cmd,[]);
+return self.$i_s('@representations',VN.$h());
 });
 $VN_2.$def('init_with_size',function(self,_cmd,size){
 });
@@ -37,8 +61,8 @@ return obj;
 });
 $VN_2.$def('init_with_contents_of_url',function(self,_cmd,url){
 VN$(self, 'initialize');
+VN$(self,'puts',['needs image named ',(url)].join(''));
 self.$i_s('@filename',url);
-self.$i_s('@status','loading');
 self.$i_s('@image',nil);
 return VN$(self, 'load');
 });
@@ -73,9 +97,33 @@ VN$(self.$i_g('@delegate'),'image_did_error',self);
 }
 });
 $VN_2.$def('_image_did_load',function(self,_cmd){
-return VN$(self,'puts','WAYYY');
+self.$i_s('@size',VN$(self.$klass.$c_g_full('Size'),'new',self.$i_g('@image').width,self.$i_g('@image').height));
+return VN$(self,'puts','SETTING size to ');
 });
 $VN_2.$def('sprite',function(self,_cmd,name,rect){
+VN$(self,'puts',["Making sprite named ",(name)].join(''));
+return self;
+});
+$VN_2.$def('image',function(self,_cmd){
+return self.$i_g('@image');
+});
+$VN_2.$def('image=',function(self,_cmd,img){
+VN$(self, 'will_change_value_for_key', 'image');
+self.$i_s('@image',img);
+VN$(self, 'did_change_value_for_key', 'image');
+});
+$VN_2.$def('filename=',function(self,_cmd,name){
+VN$(self, 'will_change_value_for_key', 'filename');
+self.$i_s('@filename',name);
+VN$(self, 'did_change_value_for_key', 'filename');
+});
+$VN_2.$def('filename',function(self,_cmd){
+return self.$i_g('@filename');
+});
+$VN_2.$def('sprite_origin=',function(self,_cmd,point){
+VN$(self, 'will_change_value_for_key', 'sprite_origin');
+self.$i_s('@sprite_origin',point);
+VN$(self, 'did_change_value_for_key', 'sprite_origin');
 });
 $VN_2.$def('size=',function(self,_cmd,size){
 VN$(self, 'will_change_value_for_key', 'size');
@@ -83,7 +131,7 @@ self.$i_s('@size',size);
 VN$(self, 'did_change_value_for_key', 'size');
 });
 $VN_2.$def('size',function(self,_cmd){
-return self.$i_g('@size');
+return ORTEST(self.$i_g('@size'),VN$(self.$klass.$c_g_full('Size'),'new',0,0));
 });
 $VN_2.$def('name=',function(self,_cmd,name){
 VN$(self, 'will_change_value_for_key', 'name');
@@ -104,6 +152,15 @@ return self.$i_g('@background_color');
 $VN_2.$def('draw_at_point:from_rect:operation:fraction:',function(self,_cmd,point,from_rect,op,delta){
 });
 $VN_2.$def('draw_in_rect:from_rect:operation:fraction:',function(self,_cmd,rect,from_rect,op,delta){
+});
+$VN_2.$def('render_in_rect',function(self,_cmd,rect){
+var ctx = VN$(self.$klass.$c_g_full('RenderContext'),'current_context');
+VN$(ctx,'css',VN.$h('display','block','background_image',["url('",(VN$(self, 'filename')),"')"].join('')));
+VN$(ctx,'css',VN.$h('width',[(VN$(rect,'width')),"px"].join(''),'height',[(VN$(rect,'height')),"px"].join('')));
+VN$(ctx,'css',VN.$h('left',[(VN$(rect,'x')),"px"].join(''),'top',[(VN$(rect,'y')),"px"].join('')));
+if(RTEST(self.$i_g('@sprite_origin'))){
+VN$(ctx,'css',VN.$h('background_position',["-",(VN$(self.$i_g('@sprite_origin'),'x')),"px -",(VN$(self.$i_g('@sprite_origin'),'y')),"px"].join('')));
+}
 });
 $VN_2.$def('draw_representation:in_rect:',function(self,_cmd,image_rep,rect){
 });

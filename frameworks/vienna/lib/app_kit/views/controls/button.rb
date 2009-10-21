@@ -25,141 +25,104 @@
 #
 
 module Vienna
-  
-  # Image.resource 'controls.png' do |img|
-  #   
-  #   img.sprite :rounded_bezel_enabled_regular_left, [0, 0, 36, 24]
-  #   img.sprite :rounded_bezel_enabled_regular_middle, [0, 24, 36, 24]
-  #   img.sprite :rounded_bezel_enabled_regular_right, [0, 48, 36, 24]
-  #   
-  #   img.sprite :rounded_bezel_disabled_regular_left, [0, 0, 36, 24]
-  #   img.sprite :rounded_bezel_disabled_regular_middle, [0, 24, 36, 24]
-  #   img.sprite :rounded_bezel_disabled_regular_right, [0, 48, 36, 24]
-  #   
-  #   img.sprite :rounded_bezel_pushed_regular_left, [0, 0, 36, 24]
-  #   img.sprite :rounded_bezel_pushed_regular_middle, [0, 24, 36, 24]
-  #   img.sprite :rounded_bezel_pushed_regular_right, [0, 48, 36, 24]
-  #   
-  #   
-  #   
-  #   img.sprite :rounded_bezel_enabled_small_left, [0, 0, 36, 24]
-  #   img.sprite :rounded_bezel_enabled_small_middle, [0, 24, 36, 24]
-  #   img.sprite :rounded_bezel_enabled_small_right, [0, 48, 36, 24]
-  #   
-  #   img.sprite :rounded_bezel_disabled_small_left, [0, 0, 36, 24]
-  #   img.sprite :rounded_bezel_disabled_small_middle, [0, 24, 36, 24]
-  #   img.sprite :rounded_bezel_disabled_small_right, [0, 48, 36, 24]
-  #   
-  #   img.sprite :rounded_bezel_pushed_small_left, [0, 0, 36, 24]
-  #   img.sprite :rounded_bezel_pushed_small_middle, [0, 24, 36, 24]
-  #   img.sprite :rounded_bezel_pushed_small_right, [0, 48, 36, 24]
-  #   
-  #   
-  #   
-  #   img.sprite :rounded_bezel_enabled_mini_left, [0, 0, 36, 24]
-  #   img.sprite :rounded_bezel_enabled_mini_middle, [0, 24, 36, 24]
-  #   img.sprite :rounded_bezel_enabled_mini_right, [0, 48, 36, 24]
-  #   
-  #   img.sprite :rounded_bezel_disabled_mini_left, [0, 0, 36, 24]
-  #   img.sprite :rounded_bezel_disabled_mini_middle, [0, 24, 36, 24]
-  #   img.sprite :rounded_bezel_disabled_mini_right, [0, 48, 36, 24]
-  #   
-  #   img.sprite :rounded_bezel_pushed_mini_left, [0, 0, 36, 24]
-  #   img.sprite :rounded_bezel_pushed_mini_middle, [0, 24, 36, 24]
-  #   img.sprite :rounded_bezel_pushed_mini_right, [0, 48, 36, 24]
-  #   
-  # end
-    
+      
   class Button < Control
-    
-    attr_reader :title, :alternate_title, :image, :image_position
-    
+        
     def initialize frame
       super frame
-      @state = :off
-      @allows_mixed_state = false
-      @bordered = true
+    end
+    
+    def self.cell_class
+      ButtonCell
     end
         
     def title=(str)
-      
+      @cell.title = str
     end
     
     def alternate_title=(str)
-      
+      @cell.alternate_title = str
+    end
+    
+    def alternate_image
+      @cell.alternate_image
+    end
+    
+    def alternate_image= img
+      @cell.alternate_image = img
     end
     
     def image=(image)
-      
+      @cell.image = image
     end
     
     def image_position=(position)
-      
+      @cell.image_position = position
     end
     
-    # Type of button. Valid values:
-    # :momentary_light, :push_on_push_off, :toggle, :switch, :radio, 
-    # :momentary_change, :on_off, :momentary_push_in, :momentary_push
-    # 
     def type=(type)
-      @type = type
+      @cell.type = type
     end
     
     def type
-      @type
+      @cell.type
     end
     
-    # Values can be - :on :off, :mixed
+
+
     def state=(val)
-      @state = val
+      @cell.state = val
     end
     
     def state
-      @state
+      @cell.state
     end
     
     def on?
-      @state == :on
+      @cell.on?
     end
     
     def off?
-      @state == :off
+      @cell.off?
     end
     
     def mixed?
-      @state == :mixed
+      @cell.mixed?
     end
     
+    
+    
+    
     def bordered?
-      @bordered
+      @cell.bordered?
     end
     
     def bordered=(flag)
-      @bordered = flag
+      @cell.bordered = flag
     end
     
     def transparent?
-      @transparent
+      @cell.transparent?
     end
     
     def transparent=(flag)
-      @transparent = flag
+      @cell.transparent = flag
     end
     
     def key_equivalent
-      @key_equivalent
+      @cell.key_equivalent
     end
     
     def key_equivalent=(code)
-      @key_equivalent = code
+      @cell.key_equivalent = code
     end
     
     def key_equivalent_modifier_mask
-      @key_equivalent_modifier_mask
+      @cell.key_equivalent_modifier_mask
     end
     
     def key_equivalent_modifier_mask=(mask)
-      @key_equivalent_modifier_mask = mask
+      @cell.key_equivalent_modifier_mask = mask
     end
     
     def highlight=(flag)
@@ -172,58 +135,23 @@ module Vienna
     
     # added
     def bezel=(style)
-      @bezel = style
+      @cell.bezel = style
     end
     
     def bezel
-      @bezel
+      @cell.bezel
     end
     
     def allows_mixed_state=(flag)
-      @allows_mixed_state = flag
+      @cell.allows_mixed_state = flag
     end
     
     def allows_mixed_state?
-      @allows_mixed_state
+      @cell.allows_mixed_state?
     end
     
     def next_state
       # set_next_state
-    end
-    
-    def class_name
-      @class_name || 'vn-button'
-    end
-    
-    # Renders the button
-    # Override an instances' class_name to avoid having to subclass
-    def render context
-      if context.first_time?
-        context << "<div class='left'></div>"
-        context << "<div class='middle'></div>"
-        context << "<div class='right'></div>"
-        context << "<div class='title'>Wow!</div>"
-        context << "<div class='image'></div>"
-        context.first_time = false
-      end
-      
-      class_name_array = [class_name, theme_name] 
-      class_name_array << :disabled unless enabled?
-      
-      # if bordered?    
-      class_name_array << :bordered if bordered?
-      # end
-      
-      if on? || mixed?
-        class_name_array << state
-      end
-      
-      context.class_name = class_name_array.join(' ')
-      
-      # context.selector 'title' do |title|
-      #   title.inner_html = 'My Button!'
-      #   # title.frame = title_rect_for_bounds @bounds
-      # end
     end
   end  
 end

@@ -65,13 +65,13 @@
 }
 
 /* State on */
-.vn-button.bordered.on .left {
+.vn-button.bordered.highlighted .left {
   background-position: -10px 0px;
 }
 
-.vn-button.bordered.on .middle {
+.vn-button.bordered.highlighted .middle {
   background-position: 0px -78px;
 }
 
-.vn-button.bordered.on .right {
+.vn-button.bordered.highlighted .right {
 background-position: -10px -26px;}

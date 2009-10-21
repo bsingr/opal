@@ -18,6 +18,10 @@ VN$(options,'each',function(key,value){
 VN$(self, 'element').style[VN$(key,'camelize')] = value;});
 return self;
 });
+$VN_1.$def('src=',function(self,_cmd,obj){
+VN$(self, 'will_change_value_for_key', 'src');
+VN$(self, 'element').src = obj;VN$(self, 'did_change_value_for_key', 'src');
+});
 $VN_1.$def('frame=',function(self,_cmd,new_frame){
 VN$(self, 'will_change_value_for_key', 'frame');
 VN$(self,'puts','Setting element frame to');

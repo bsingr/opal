@@ -1,5 +1,7 @@
 
 VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/vienna/lib/app_kit/window/window_view.js');
+
+VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/vienna/lib/app_kit/window/normal_window_view.js');
 var $VN_1 = RModule.define('Vienna');
 $VN_1.$c_s('WINDOW_MASKS',VN.$h('borderless', 0, 'titled', VN$((1),'<<',0), 'closable', VN$((1),'<<',1), 'miniaturizable', VN$((1),'<<',2), 'resizable', VN$((1),'<<',3), 'textured_background', VN$((1),'<<',8), 'unified_title_and_toolbar', VN$((1),'<<',12), 'close_button', 1, 'miniaturize_button', 1, 'zoom_button', 1, 'toolbar_button', 1, 'document_icon_button', 1, 'utility', VN$((1),'<<',4), 'doc_modal', VN$((1),'<<',6), 'hud', VN$((1),'<<',13)));
 $VN_1.$c_s('WINDOW_LEVELS',VN.$h('normal', 0, 'floating', 0, 'submenu', 0, 'torn_off_menu', 0, 'main_menu', 0, 'status', 0, 'modal_panel', 0, 'pop_up_menu', 0, 'screen_saver', 0));
@@ -21,7 +23,7 @@ VN$(self.$i_g('@window_view'),'needs_display=',true);
 return VN$(self,'content_view=',VN$(self.$klass.$c_g_full('View'),'new',VN$(self.$klass.$c_g_full('Rect'),'new',0,0,VN$(self.$i_g('@frame'),'width'),VN$(self.$i_g('@frame'),'height'))));
 });
 $VN_2.$def_s('build',function(self,_cmd,options,block){
-var win = VN$(self,'new',VN$(options,'[]','frame'),VN$(options,'[]','style'));
+var win = VN$(self,'new',VN$(options,'[]','frame'),['titled','closable']);
 if(RTEST(block)){
 arguments[arguments.length -1](win);
 }
@@ -34,21 +36,22 @@ VN$(self.$i_g('@element'),'<<',self.$i_g('@display_context'));
 return VN$(self.$klass.$c_g_full('Document'),'<<',self.$i_g('@element'));
 });
 $VN_2.$def('setup_window_view',function(self,_cmd){
-self.$i_s('@window_view',VN$(self.$klass.$c_g_full('WindowView'),'new',VN$(self.$klass.$c_g_full('Rect'),'new',0,0,100,100),VN$(self, 'style_mask')));
-VN$(self.$i_g('@window_view'),'window=',self);
+self.$i_s('@window_view',VN$(self.$klass.$c_g_full('NormalWindowView'),'new',VN$(self.$klass.$c_g_full('Rect'),'new',0,0,100,100),self.$i_g('@style_mask')));
+VN$(self.$i_g('@window_view'),'view_will_move_to_window',self);
 VN$(self.$i_g('@window_view'),'next_responder=',self);
 VN$(self.$i_g('@element'),'<<',VN$(self.$i_g('@window_view'),'element'));
+VN$(self.$i_g('@window_view'),'view_did_move_to_window');
 VN$(VN$(self.$i_g('@window_view'),'element'),'add_event_listener','mousedown',function(event){
 var the_event = VN$(self.$klass.$c_g_full('Event'),'from_native_event:with_window:with_type:',event,self,'left_mouse_down');
-if(!RTEST(VN$(the_event,'allows_propagation?'))){
 VN$(self.$klass.$c_g_full('App'),'send_event',the_event);
+if(!RTEST(VN$(the_event,'allows_propagation?'))){
 VN$(the_event,'stop_propagation');
 }
 });
 return VN$(VN$(self.$i_g('@window_view'),'element'),'add_event_listener','mouseup',function(event){
 var the_event = VN$(self.$klass.$c_g_full('Event'),'from_native_event:with_window:with_type:',event,self,'left_mouse_up');
-if(!RTEST(VN$(the_event,'allows_propagation?'))){
 VN$(self.$klass.$c_g_full('App'),'send_event',the_event);
+if(!RTEST(VN$(the_event,'allows_propagation?'))){
 VN$(the_event,'stop_propagation');
 }
 });
@@ -227,6 +230,19 @@ VN$(self, 'did_change_value_for_key', 'preserves_content_during_live_resize');
 $VN_2.$def('update',function(self,_cmd){
 });
 $VN_2.$def('make_first_responder',function(self,_cmd,responder){
+if(RTEST(VN$(self.$i_g('@first_responder'),'==',responder))){
+return true;
+}
+if(!RTEST(VN$(self.$i_g('@first_responder'),'resign_first_responder'))){
+return false;
+}
+if(RTEST(ORTEST(NOTTEST(responder),ORTEST(NOTTEST(VN$(responder,'accepts_first_responder')),NOTTEST(VN$(responder,'become_first_responder')))))){
+self.$i_s('@first_responder',self);
+VN$(self,'puts','Cant make responder the first responder :(');
+return false;
+}
+self.$i_s('@first_responder',responder);
+return true;
 });
 $VN_2.$def('first_responder',function(self,_cmd){
 });
@@ -418,7 +434,12 @@ return VN$(self,'puts','key_down');
 }
 else if(($e = VN$('left_mouse_down', '===', $v),$e!==nil && $e!==false)){
 var hit_test = VN$(self.$i_g('@window_view'),'hit_test',point);
+if(RTEST(ANDTEST(VN$(hit_test,'!=',self.$i_g('@first_responder')),VN$(hit_test,'accepts_first_responder')))){
+VN$(self,'make_first_responder',hit_test);
+}
+if(RTEST(VN$(hit_test,'accepts_first_mouse',event))){
 return VN$(hit_test,'mouse_down',event);
+}
 }
 else if(($e = VN$('left_mouse_up', '===', $v),$e!==nil && $e!==false)){
 return VN$(self,'puts','left_mouse_up');

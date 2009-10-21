@@ -37,15 +37,19 @@ require 'graphics/image'
 # require 'graphics/array_geometry_additions'
 
 # Rendering
-require 'rendering/render_context'
+require 'graphics/render_context'
 
 # Views
 require 'views/view'
 require 'views/controls/control'
+require 'views/controls/cell'
 require 'views/controls/button'
+require 'views/controls/button_cell'
 require 'views/controls/check_box'
 require 'views/controls/slider'
+require 'views/controls/slider_cell'
 require 'views/controls/text_field'
+require 'views/controls/text_field_cell'
 
 # Windows
 require 'window/window'

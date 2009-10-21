@@ -26,50 +26,158 @@
 
 module Vienna
   
+  TEXTFIELD_BEZEL_STYLES = {
+    :square => 0,
+    :rounded => 1
+  }
+  
   class TextField < Control
+    
+    def initialize frame
+      super frame
+      @editable = true
+      @selectable = true
+    end
+    
+    def self.cell_class
+      TextFieldCell
+    end
     
     def class_name
       'vn-text-field'
     end
     
-    # Override textfield to take charge of handling events:
-    # 
-    # 1. mousedown/mouseup - allow the browser to take control so that selecting
-    # text etc is not affected, and offers a smooth selection process.
-    # 
-    # 2. Keydown/keyup etc - override these methods. Check that events do not look
-    # like keyequivalents etc, if not: pass them into textfield. If they look like
-    # key equivs then we pass them upto App#send_event.
-    def setup_display_context
-      super
-      @display_context.add_event_listener :mousedown do |event|
-        `event._vn_allow_event_propagation = true;`
-      end
-      
-      @display_context.add_event_listener :mouseup do |event|
-        `event._vn_allow_event_propagation = true;`
-      end
+    # def render context
+    #   if context.first_time?
+    #     context << "<div class='left'></div>"
+    #     context << "<div class='middle'></div>"
+    #     context << "<div class='right'></div>"
+    #     context << "<input class='input'></div>"
+    #   end
+    #   
+    #   context.class_name = [class_name, theme_name].join ' '
+    # end
+    
+    def resign_first_responder
+      puts 'resign first responder....'
+      true
     end
     
-    # Textfield created inside Div... the border, highlight etc are drawn with three
-    # div and their classes, while the actual input is a raw DOM input... it handles
-    # all the precise rendering, selection etc for us, so we can leave it to do its 
-    # thing.
-    # 
-    # Extending this, for secure fields, or search fields is simply a case of 
-    # swapping the css values (probably).
-    def render context
-      if context.first_time?
-        context << "<div class='left'></div>"
-        context << "<div class='middle'></div>"
-        context << "<div class='right'></div>"
-        context << "<input class='input'></div>"
-      end
-      
-      context.class_name = class_name
+    def become_first_responder
+      puts 'becoming first responder!!'
+      App.current_event.allows_propagation = true
+      true
     end
+    
+    def mouse_down the_event
+      App.current_event.allows_propagation = true
+    end
+    
+    
+    
+    def background_color= color
+      @background_color = color
+    end
+    
+    def background_color
+      @background_color
+    end
+    
+    def draws_background= flag
+      @draws_background = flag
+    end
+    
+    def draws_background?
+      @draws_background
+    end
+    
+    def text_color= color
+      @text_color = color
+    end
+    
+    def text_color
+      @text_color
+    end
+    
+    def bordered?
+      @bordered
+    end
+    
+    def bordered= flag
+      @bordered = flag
+    end
+    
+    def bezeled?
+      @bezeled
+    end
+    
+    def bezeled= flag
+      @bezeled = flag
+    end
+    
+    def editable?
+      @editable
+    end
+    
+    def editable= flag
+      @editable = flag
+    end
+    
+    def selectable?
+      @selectable
+    end
+    
+    def selectable= flag
+      @selectable = flag
+    end
+    
+    def select_text sender
+      
+    end
+    
+    def delegate
+      @delegate
+    end
+    
+    def delegate= an_obj
+      @delegate = an_obj
+    end
+    
+    def text_should_begin_editing? text_object
+      true
+    end
+    
+    def text_should_end_editing? text_object
+      true
+    end
+    
+    def text_did_begin_editing notification
+      
+    end
+    
+    def text_did_end_editing notification
+      
+    end
+    
+    def text_did_change notification
+      
+    end
+    
+    # def accepts_first_responder
+      # 
+    # end
+    
+    def bezel_style= stlye
+      @bezel_style = style
+    end
+    
+    def bezel_style
+      @bezel_style
+    end
+    
     
     
   end
   
 end
+

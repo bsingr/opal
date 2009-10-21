@@ -58,6 +58,10 @@ class Element
     self
   end
   
+  def src= obj
+    `#{element}.src = obj;`
+  end
+  
   def frame= new_frame
     puts 'Setting element frame to'
     puts new_frame

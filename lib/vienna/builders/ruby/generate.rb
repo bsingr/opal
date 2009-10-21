@@ -137,6 +137,8 @@ module Vienna
         generate_orop stmt, context
       when :andop
         generate_andop stmt, context
+      when :not
+        generate_not stmt, context
       else
         write "\n[Unknown type for generate_stmt: #{stmt}]\n"
       end
@@ -983,6 +985,14 @@ module Vienna
       generate_stmt stmt[:rhs], :instance => context[:instance], :full_stmt => false, :last_stmt => false, :self => context[:self]
       write ")"
       
+      write ";\n" if context[:full_stmt]
+    end
+    
+    def generate_not stmt, context
+      write 'return ' if context[:last_stmt] and context[:full_stmt]
+      write "NOTTEST("
+      generate_stmt stmt[:expr], :instance => context[:instance], :full_stmt => false, :last_stmt => false, :self => context[:self]
+      write ")"
       write ";\n" if context[:full_stmt]
     end
     

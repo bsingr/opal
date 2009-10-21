@@ -2,11 +2,17 @@
   position: absolute;
   display:block;
   height: 21px;
+  background-color: white;
 }
 
 .vn-text-field .input {
   background: transparent;
   border: none;
   outline: none; /* remove 'glow' in safari */
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
 }
 

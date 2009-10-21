@@ -66,7 +66,7 @@ class String
   end
   
   def +(obj)
-    puts 'wow'
+    `return self + obj;`
   end
   # 
   def *(obj)

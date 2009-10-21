@@ -26,40 +26,51 @@
 
 module Vienna
   
-  # Image positions
-  IMAGE_POSITIONS = {
-    :text_only          => 0,
-    :image_only         => 1,
-    :left               => 2,
-    :right              => 3,
-    :below              => 4,
-    :above              => 5,
-    :overlaps           => 6
-  }
-
   class Control < View
       
     # display_properties :enabled, :selected, :state
     
     def initialize frame
       super frame
-      @enabled = true
+      @cell = self.class.cell_class.new
+      @cell.render_context = @display_context
+    end
+    
+    def self.cell_class
+      Cell
     end
     
     def render context
-      # render nothing
+      RenderContext.current_context = context
+      @cell.render_with_frame bounds, in_view:self
     end
     
-    def draw_rect rect
-      puts 'drawing rect from control'
+    def class_name= class_name
+      @cell.class_name = class_name
     end
     
-    def image_rect_for_bounds the_rect
-      the_rect
+    def class_name
+      @cell.class_name
     end
     
-    def title_rect_for_bounds the_rect
-      the_rect
+    def theme_name= theme_name
+      @cell.theme_name = theme_name
+    end
+    
+    def theme_name
+      @cell.theme_name
+    end
+    
+    def cell
+      @cell
+    end
+    
+    def cell= a_cell
+      @cell
+    end
+    
+    def selected_cell
+      @cell
     end
         
     def size_to_fit
@@ -71,39 +82,39 @@ module Vienna
     end
     
     def target
-      @target
+      @cell.target
     end
     
     def target=(obj)
-      @target = obj
+      @cell.target = obj
     end
     
     def action
-      @action
+      @cell.action
     end
     
     def action=(selector)
-      @action = selector
+      @cell.action = selector
     end
     
     def tag
-      
+      @cell.tag
     end
     
     def tag=(tag)
-      
+      @cell.tag = tag
     end
     
     def selected_tag
-      
+      @cell.tag
     end
     
     def ignores_multi_click=(flag)
-      
+      @cell.ignores_multi_click = flag
     end
     
     def ignores_multi_click?
-      
+      @cell.ignores_multi_click?
     end
     
     def send_action_on mask
@@ -111,46 +122,46 @@ module Vienna
     end
     
     def continuous?
-      
+      @cell.continuous?
     end
     
     def continuous=(flag)
-      
+      @cell.continuous = flag
     end
     
     def enabled?
-      @enabled
+      @cell.enabled?
     end
     
     def enabled=(flag)
-      @enabled = flag
+      @cell.enabled = flag
     end
     
     def alignment
-      
+      @cell.alignment
     end
     
     # Valid alignments
     # :left, :right, :center, :justified, :natural
     # 
     def alignment=(mode)
-      
+      @cell.alignment = mode
     end
     
     def font
-      
+      @cell.font
     end
     
     def font=(font)
-      
+      @cell.font = font
     end
     
     def formatter=(new_formatter)
-      
+      @cell.formatter = new_formatter
     end
     
     def formatter
-      
+      @cell.formatter
     end
     
     def object_value=(obj)
@@ -211,7 +222,26 @@ module Vienna
       
     end
     
-    def needs_display
+    
+    
+    
+    def update_cell a_cell
+      
+    end
+    
+    def update_cell_inside a_cell
+      
+    end
+    
+    def draw_cell_inside a_cell
+      
+    end
+    
+    def draw_cell a_cell
+      
+    end
+    
+    def select_cell a_cell
       
     end
     
@@ -245,7 +275,7 @@ module Vienna
       
     end
     
-    def abort_editing
+    def abort_editing?
       
     end
     
@@ -254,68 +284,53 @@ module Vienna
     end
     
     def mouse_down the_event
-      
       return unless enabled?
-      
-      track_mouse the_event, until_mouse_up:true
+      # FIXME: should this be sending the frame or the bounds?!?!?!?!
+      self.lock_focus
+      @cell.track_mouse the_event, in_rect:frame, of_view:self, until_mouse_up:true
+      self.unlock_focus
     end
     
-    def start_tracking_at start_point
-      # self.highlight true
-      true
-    end
     
-    def continue_tracking last_point, at:current_point
+    
+    def perform_click sender
       
     end
     
-    def stop_tracking last_point, at:stop_point, mouse_is_up:flag
-      # self.highlight false
+    def refuses_first_responder= flag
+      @cell.refuses_first_responder = flag
     end
     
-    def track_mouse the_event, until_mouse_up:flag
-      location = convert_point(the_event.location_in_window, from_view: nil)
+    def refuses_first_responder?
+      @cell.refuses_first_responder?
+    end
+    
+    
+    
+    def control_text_did_begin_editing notification
       
-      unless start_tracking_at the_event.location_in_window
-        return false
-      end
-      # highlight_with_frame
-      App.send_action @action, to:@target, from:self if continuous?
+    end
+    
+    def control_text_did_end_editing notification
       
-      # capture further events
-      puts 'requesting binding'
-      App.bind_events [:left_mouse_up, :left_mouse_dragged] do |the_event|
-        # location = convert_point the_event.location_in_window, from_view:nil
-        puts the_event.type
-        
-        if the_event.type == :left_mouse_up
-          App.unbind_events
-        end
-        # if flag
-        #           if the_event.type == :left_mouse_up
-        #             stop_tracking the_event.location_in_window, at:the_event.location_in_window, mouse_is_up:true
-        #             App.unbind_events
-        #             # set next state
-        #             
-        #             if location.in_rect? bounds
-        #               App.send_action @action, to:@target, from:self
-        #             end
-        #             
-        #             # highlight false
-        #             return
-        #           else
-        #             unless continue_tracking the_event.location_in_window, the_event.location_in_window
-        #               App.unbind_events
-        #             end
-        #             
-        #             # highlight false?
-        #           end
-        #         elsif location.in_rect? bounds
-        #           puts 'Control#track_mouse Got here.'
-        #         else
-        #           
-        #         end
-      end
-    end    
+    end
+    
+    def control_text_did_change notification
+      
+    end
+    
+    
+    
+    
+    def attributed_string_value
+      @cell.attributed_string_value
+    end
+    
+    def attributed_string_value= val
+      @cell.attributed_string_value = val
+    end
+    
+    
+
   end
 end

@@ -92,15 +92,15 @@ canvas {
 }
 
 /* State on */
-.vn-button.bordered.on .left {
+.vn-button.bordered.highlighted .left {
   background-position: -10px 0px;
 }
 
-.vn-button.bordered.on .middle {
+.vn-button.bordered.highlighted .middle {
   background-position: 0px -78px;
 }
 
-.vn-button.bordered.on .right {
+.vn-button.bordered.highlighted .right {
 background-position: -10px -26px;}
 /* ======================= */
 /* = Rounded bezel style = */
@@ -274,15 +274,23 @@ background-position: -10px -26px;}
   position: absolute;
   display:block;
   height: 21px;
+  background-color: white;
 }
 
 .vn-text-field .input {
   background: transparent;
   border: none;
   outline: none; /* remove 'glow' in safari */
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
 }
 
-.vn-window-view {
+.vn-button.vn-normal-window-view-close {
+  background-color: blue;
+}.vn-window-view {
   position: absolute;
   display: block;
   background-color: rgb(242,242,242);

@@ -87,7 +87,7 @@ module Vienna
     
     def setup_display_context
       if display_mode == :render
-        @element = Element.new :div, :class_name => class_name, :id => ""
+        @element = Element.new :div, nil
         @display_context = RenderContext.new :div, nil
         @element << @display_context
       else
@@ -95,6 +95,14 @@ module Vienna
         @display_context = GraphicsContext.new
         @element < @display_context
       end
+    end
+    
+    def accepts_first_mouse the_event
+      true
+    end
+    
+    def accepts_first_responder
+      true
     end
     
     # The root CSS class name used for rendering the view. This can be used as a basis
@@ -228,10 +236,16 @@ module Vienna
     
     def view_will_move_to_window win
       @window = win
+      @subviews.each do |s|
+        s.view_will_move_to_window win
+      end
     end
     
     def view_did_move_to_window
-      
+      @subviews.each do |s|
+        s.view_did_move_to_window
+      end
+      self.needs_display = true
     end
     
     def view_will_move_to_superview new_super
@@ -488,7 +502,7 @@ module Vienna
     end
     
     def lock_focus
-      
+      RenderContext.current_context = @display_context
     end
     
     def unlock_focus

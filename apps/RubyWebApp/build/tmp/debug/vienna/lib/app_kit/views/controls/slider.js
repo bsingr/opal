@@ -3,6 +3,9 @@ var $VN_2 = RClass.define_under($VN_1, 'Slider',$VN_2.$c_g_full('Control'));
 $VN_2.$def('initialize',function(self,_cmd,frame){
 return VN$sup(arguments.callee, self,_cmd,[frame]);
 });
+$VN_2.$def_s('cell_class',function(self,_cmd){
+return self.$c_g_full('SliderCell');
+});
 $VN_2.$def('class_name',function(self,_cmd){
 return 'vn-slider';
 });
@@ -61,15 +64,6 @@ return self.$i_g('@vertical');
 });
 $VN_2.$def('accepts_first_mouse',function(self,_cmd,event){
 return true;
-});
-$VN_2.$def('render',function(self,_cmd,context){
-if(RTEST(VN$(context,'first_time?'))){
-VN$(context,'<<',"<div class='track-left'></div>");
-VN$(context,'<<',"<div class='track-middle'></div>");
-VN$(context,'<<',"<div class='track-right'></div>");
-VN$(context,'<<',"<div class='knob'></div>");
-}
-return VN$(context,'class_name=',VN$(self, 'class_name'));
 });
 VN$($VN_2,'attr_reader','number_of_tick_marks','tick_mark_position');
 $VN_2.$def('number_of_tick_marks=',function(self,_cmd,count){

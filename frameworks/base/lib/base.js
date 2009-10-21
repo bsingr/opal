@@ -58,6 +58,11 @@ var ANDTEST = function ANDTEST(lhs, rhs) {
   return rhs;
 };
 
+var NOTTEST = function NOTTEST(expr) {
+  if (expr == null || expr == undefined || expr == nil || expr == false) return true;
+  return false;
+};
+
 /**
   Fix for browsers not having console
 */

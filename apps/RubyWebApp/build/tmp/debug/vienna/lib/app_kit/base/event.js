@@ -22,12 +22,21 @@ if (event.stopPropagation) {
       }});
 $VN_2.$def('allows_propagation?',function(self,_cmd){
 return self.$i_g('@event')._vn_allow_event_propagation? true : false;});
+$VN_2.$def('allows_propagation=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'allows_propagation');
+self.$i_g('@event')._vn_allow_event_propagation = flag;VN$(self, 'did_change_value_for_key', 'allows_propagation');
+});
 $VN_2.$def('type',function(self,_cmd){
 return self.$i_g('@type');
 });
 $VN_2.$def('modifier_flags',function(self,_cmd){
 });
 $VN_2.$def('timestamp',function(self,_cmd){
+});
+$VN_2.$def('window=',function(self,_cmd,a_window){
+VN$(self, 'will_change_value_for_key', 'window');
+self.$i_s('@window',a_window);
+VN$(self, 'did_change_value_for_key', 'window');
 });
 $VN_2.$def('window',function(self,_cmd){
 return self.$i_g('@window');

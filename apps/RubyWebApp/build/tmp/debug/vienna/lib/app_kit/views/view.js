@@ -28,7 +28,7 @@ return VN$(self.$klass.$c_g_full('ENV'),'[]','display_mode');
 });
 $VN_2.$def('setup_display_context',function(self,_cmd){
 if(RTEST(VN$(VN$(self, 'display_mode'),'==','render'))){
-self.$i_s('@element',VN$(self.$klass.$c_g_full('Element'),'new','div',VN.$h('class_name',VN$(self, 'class_name'),'id','')));
+self.$i_s('@element',VN$(self.$klass.$c_g_full('Element'),'new','div',nil));
 self.$i_s('@display_context',VN$(self.$klass.$c_g_full('RenderContext'),'new','div',nil));
 VN$(self.$i_g('@element'),'<<',self.$i_g('@display_context'));
 }
@@ -37,6 +37,12 @@ self.$i_s('@element',VN$(self.$klass.$c_g_full('Element'),'new','div'));
 self.$i_s('@display_context',VN$(self.$klass.$c_g_full('GraphicsContext'),'new'));
 VN$(self.$i_g('@element'),'<',self.$i_g('@display_context'));
 }
+});
+$VN_2.$def('accepts_first_mouse',function(self,_cmd,the_event){
+return true;
+});
+$VN_2.$def('accepts_first_responder',function(self,_cmd){
+return true;
 });
 $VN_2.$def('class_name',function(self,_cmd){
 return ORTEST(self.$i_g('@class_name'),'vn-view');
@@ -114,9 +120,16 @@ return VN$(self,'add_subview',a_view);
 $VN_2.$def('add_subview:positioned:relative_to:',function(self,_cmd,a_view,place,other_view){
 });
 $VN_2.$def('view_will_move_to_window',function(self,_cmd,win){
-return self.$i_s('@window',win);
+self.$i_s('@window',win);
+return VN$(self.$i_g('@subviews'),'each',function(s){
+return VN$(s,'view_will_move_to_window',win);
+});
 });
 $VN_2.$def('view_did_move_to_window',function(self,_cmd){
+VN$(self.$i_g('@subviews'),'each',function(s){
+return VN$(s,'view_did_move_to_window');
+});
+return VN$(self,'needs_display=',true);
 });
 $VN_2.$def('view_will_move_to_superview',function(self,_cmd,new_super){
 return self.$i_s('@superview',new_super);
@@ -284,6 +297,7 @@ $VN_2.$def('needs_display?',function(self,_cmd){
 return self.$i_g('@needs_display');
 });
 $VN_2.$def('lock_focus',function(self,_cmd){
+return VN$(self.$klass.$c_g_full('RenderContext'),'current_context=',self.$i_g('@display_context'));
 });
 $VN_2.$def('unlock_focus',function(self,_cmd){
 });

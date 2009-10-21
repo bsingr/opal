@@ -30,14 +30,9 @@ module Vienna
     
     def initialize frame
       super frame
-      @allows_mixed_state = true
-      @bordered = false
+      self.type = :switch
     end
-    
-    def class_name
-      @class_name || 'vn-check-box'
-    end
-    
+        
   end
   
 end

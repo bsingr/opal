@@ -60,6 +60,11 @@ var ANDTEST = function ANDTEST(lhs, rhs) {
   return rhs;
 };
 
+var NOTTEST = function NOTTEST(expr) {
+  if (expr == null || expr == undefined || expr == nil || expr == false) return true;
+  return false;
+};
+
 /**
   Fix for browsers not having console
 */
@@ -1030,7 +1035,7 @@ cBasicObject.$def('!', function(self, _cmd, obj) {
 });
 
 cBasicObject.$def('!=', function(self, _cmd, obj) {
-  
+  return (self == obj) ? false : true ;
 });
 
 cBasicObject.$define_private_method('singleton_method_added', function() {
@@ -1636,8 +1641,7 @@ $VN_1.$def('hash',function(self,_cmd,obj){
 $VN_1.$def('casecmp',function(self,_cmd,obj){
 });
 $VN_1.$def('+',function(self,_cmd,obj){
-return VN$(self,'puts','wow');
-});
+return self + obj;});
 $VN_1.$def('(',function(self,_cmd,obj){
 });
 $VN_1.$def('%',function(self,_cmd,obj){
@@ -2337,8 +2341,7 @@ $VN_1.$def('hash',function(self,_cmd,obj){
 $VN_1.$def('casecmp',function(self,_cmd,obj){
 });
 $VN_1.$def('+',function(self,_cmd,obj){
-return VN$(self,'puts','wow');
-});
+return self + obj;});
 $VN_1.$def('(',function(self,_cmd,obj){
 });
 $VN_1.$def('%',function(self,_cmd,obj){
@@ -2652,6 +2655,10 @@ $VN_1.$def('css',function(self,_cmd,options){
 VN$(options,'each',function(key,value){
 VN$(self, 'element').style[VN$(key,'camelize')] = value;});
 return self;
+});
+$VN_1.$def('src=',function(self,_cmd,obj){
+VN$(self, 'will_change_value_for_key', 'src');
+VN$(self, 'element').src = obj;VN$(self, 'did_change_value_for_key', 'src');
 });
 $VN_1.$def('frame=',function(self,_cmd,new_frame){
 VN$(self, 'will_change_value_for_key', 'frame');
@@ -2984,6 +2991,7 @@ $VN_2.$def('bind_events',function(self,_cmd,types,block){
 self.$i_s('@run_loop_mode','event_tracking');
 self.$i_s('@event_binding_mask',types);
 self.$i_s('@event_binding_block',block);
+self.$i_s('@event_binding_window',VN$(VN$(self,'current_event'),'window'));
 if(RTEST(VN$(types,'include?','left_mouse_dragged'))){
 VN$(self.$klass.$c_g_full('Document'),'add_event_listener','mousemove',function(evt){
 var the_event = VN$(self.$klass.$c_g_full('Event'),'from_native_event:with_window:with_type:',evt,nil,'left_mouse_dragged');
@@ -3004,6 +3012,7 @@ $VN_2.$def('send_event',function(self,_cmd,the_event){
 self.$i_s('@current_event',the_event);
 if(RTEST(VN$(self.$i_g('@run_loop_mode'),'==','event_tracking'))){
 if(RTEST(VN$(self.$i_g('@event_binding_mask'),'include?',VN$(the_event,'type')))){
+VN$(the_event,'window=',self.$i_g('@event_binding_window'));
 VN$(self.$i_g('@event_binding_block'),'call',the_event);
 }
 return ;
@@ -3060,6 +3069,7 @@ VN$(self.$i_g('@run_block'),'call',self);
 VN$(self.$klass.$c_g_full('Document'),'add_event_listener','mousedown',function(evt){
 if(RTEST(VN$(VN$(self.$klass.$c_g_full('App'),'run_loop_mode'),'==','event_tracking'))){
 var the_event = VN$(self.$klass.$c_g_full('Event'),'from_native_event:with_window:with_type:',evt,nil,'left_mouse_down');
+VN$(self,'puts','sending event from here');
 VN$(self,'send_event',the_event);
 }
 });
@@ -3105,12 +3115,21 @@ if (event.stopPropagation) {
       }});
 $VN_2.$def('allows_propagation?',function(self,_cmd){
 return self.$i_g('@event')._vn_allow_event_propagation? true : false;});
+$VN_2.$def('allows_propagation=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'allows_propagation');
+self.$i_g('@event')._vn_allow_event_propagation = flag;VN$(self, 'did_change_value_for_key', 'allows_propagation');
+});
 $VN_2.$def('type',function(self,_cmd){
 return self.$i_g('@type');
 });
 $VN_2.$def('modifier_flags',function(self,_cmd){
 });
 $VN_2.$def('timestamp',function(self,_cmd){
+});
+$VN_2.$def('window=',function(self,_cmd,a_window){
+VN$(self, 'will_change_value_for_key', 'window');
+self.$i_s('@window',a_window);
+VN$(self, 'did_change_value_for_key', 'window');
 });
 $VN_2.$def('window',function(self,_cmd){
 return self.$i_g('@window');
@@ -3380,7 +3399,7 @@ return VN$(VN$(self, 'named_images'),'[]',name);
 }
 if(RTEST(VN$(VN$(self, 'sprite_images'),'has_key?',name))){
 }
-var img = VN$(self,'image_with_contents_of_url',name);
+var img = VN$(self,'image_with_contents_of_url',["images/",(name),".png"].join(''));
 VN$(VN$(self, 'named_images'),'[]=',name,img);
 return img;
 });
@@ -3397,8 +3416,32 @@ $VN_2.$def_s('resource',function(self,_cmd,name,block){
 var img = VN$(self,'image_named',name);
 return arguments[arguments.length -1](img);
 });
+$VN_2.$def_s('sprite',function(self,_cmd,name,rect){
+var img = VN$(self,'image_named',name);
+var obj = VN$(self,'new');
+VN$(obj,'image=',VN$(img,'image'));
+VN$(obj,'filename=',VN$(img,'filename'));
+VN$(obj,'size=',VN$(self.$c_g_full('Size'),'new',VN$(rect,'[]',2),VN$(rect,'[]',3)));
+VN$(obj,'sprite_origin=',VN$(self.$c_g_full('Point'),'new',VN$(rect,'[]',0),VN$(rect,'[]',1)));
+return obj;
+});
+$VN_2.$def_s('sprite_cell_masks',function(self,_cmd,name,block){
+var img = VN$(self,'image_named',name);
+var obj = VN$(self,'new');
+VN$(obj,'image=',VN$(img,'image'));
+VN$(obj,'filename=',VN$(img,'filename'));
+arguments[arguments.length -1](obj);
+return obj;
+});
+$VN_2.$def('add_representation:size:rect:',function(self,_cmd,type,size,array_rect){
+if(!RTEST(VN$(self.$i_g('@representations'),'has_key?',size))){
+VN$(self.$i_g('@representations'),'[]=',size,VN.$h());
+}
+return VN$(VN$(self.$i_g('@representations'),'[]',size),'[]=',type,array_rect);
+});
 $VN_2.$def('initialize',function(self,_cmd){
-return VN$sup(arguments.callee, self,_cmd,[]);
+VN$sup(arguments.callee, self,_cmd,[]);
+return self.$i_s('@representations',VN.$h());
 });
 $VN_2.$def('init_with_size',function(self,_cmd,size){
 });
@@ -3411,8 +3454,8 @@ return obj;
 });
 $VN_2.$def('init_with_contents_of_url',function(self,_cmd,url){
 VN$(self, 'initialize');
+VN$(self,'puts',['needs image named ',(url)].join(''));
 self.$i_s('@filename',url);
-self.$i_s('@status','loading');
 self.$i_s('@image',nil);
 return VN$(self, 'load');
 });
@@ -3447,9 +3490,33 @@ VN$(self.$i_g('@delegate'),'image_did_error',self);
 }
 });
 $VN_2.$def('_image_did_load',function(self,_cmd){
-return VN$(self,'puts','WAYYY');
+self.$i_s('@size',VN$(self.$klass.$c_g_full('Size'),'new',self.$i_g('@image').width,self.$i_g('@image').height));
+return VN$(self,'puts','SETTING size to ');
 });
 $VN_2.$def('sprite',function(self,_cmd,name,rect){
+VN$(self,'puts',["Making sprite named ",(name)].join(''));
+return self;
+});
+$VN_2.$def('image',function(self,_cmd){
+return self.$i_g('@image');
+});
+$VN_2.$def('image=',function(self,_cmd,img){
+VN$(self, 'will_change_value_for_key', 'image');
+self.$i_s('@image',img);
+VN$(self, 'did_change_value_for_key', 'image');
+});
+$VN_2.$def('filename=',function(self,_cmd,name){
+VN$(self, 'will_change_value_for_key', 'filename');
+self.$i_s('@filename',name);
+VN$(self, 'did_change_value_for_key', 'filename');
+});
+$VN_2.$def('filename',function(self,_cmd){
+return self.$i_g('@filename');
+});
+$VN_2.$def('sprite_origin=',function(self,_cmd,point){
+VN$(self, 'will_change_value_for_key', 'sprite_origin');
+self.$i_s('@sprite_origin',point);
+VN$(self, 'did_change_value_for_key', 'sprite_origin');
 });
 $VN_2.$def('size=',function(self,_cmd,size){
 VN$(self, 'will_change_value_for_key', 'size');
@@ -3457,7 +3524,7 @@ self.$i_s('@size',size);
 VN$(self, 'did_change_value_for_key', 'size');
 });
 $VN_2.$def('size',function(self,_cmd){
-return self.$i_g('@size');
+return ORTEST(self.$i_g('@size'),VN$(self.$klass.$c_g_full('Size'),'new',0,0));
 });
 $VN_2.$def('name=',function(self,_cmd,name){
 VN$(self, 'will_change_value_for_key', 'name');
@@ -3478,6 +3545,15 @@ return self.$i_g('@background_color');
 $VN_2.$def('draw_at_point:from_rect:operation:fraction:',function(self,_cmd,point,from_rect,op,delta){
 });
 $VN_2.$def('draw_in_rect:from_rect:operation:fraction:',function(self,_cmd,rect,from_rect,op,delta){
+});
+$VN_2.$def('render_in_rect',function(self,_cmd,rect){
+var ctx = VN$(self.$klass.$c_g_full('RenderContext'),'current_context');
+VN$(ctx,'css',VN.$h('display','block','background_image',["url('",(VN$(self, 'filename')),"')"].join('')));
+VN$(ctx,'css',VN.$h('width',[(VN$(rect,'width')),"px"].join(''),'height',[(VN$(rect,'height')),"px"].join('')));
+VN$(ctx,'css',VN.$h('left',[(VN$(rect,'x')),"px"].join(''),'top',[(VN$(rect,'y')),"px"].join('')));
+if(RTEST(self.$i_g('@sprite_origin'))){
+VN$(ctx,'css',VN.$h('background_position',["-",(VN$(self.$i_g('@sprite_origin'),'x')),"px -",(VN$(self.$i_g('@sprite_origin'),'y')),"px"].join('')));
+}
 });
 $VN_2.$def('draw_representation:in_rect:',function(self,_cmd,image_rep,rect){
 });
@@ -3520,6 +3596,12 @@ self.$i_s('@element_stack',[document.createElement(tag_name)]);
 self.$i_s('@first_time',true);
 return self.$i_s('@type',tag_name);
 });
+$VN_2.$def_s('current_context=',function(self,_cmd,current_context){
+return self.$i_s('@current_context',current_context);
+});
+$VN_2.$def_s('current_context',function(self,_cmd){
+return self.$i_g('@current_context');
+});
 $VN_2.$def('first_time?',function(self,_cmd){
 return self.$i_g('@first_time');
 });
@@ -3544,7 +3626,14 @@ arguments[arguments.length -1](self);
 return VN$(self, 'pop_element_stack');
 });
 $VN_2.$def('find_selector',function(self,_cmd,a_selector){
-return VN$(self, 'element').getElementsByClassName(a_selector)[0];});
+var nodes = VN$(self, 'element').childNodes;
+      var length = nodes.length;
+      for (var i = 0; i < length; i++) {
+        if(nodes[i].className == a_selector) {
+          return nodes[i];
+        }
+      }
+      return VN$(self, 'element')});
 
 var $VN_1 = RModule.define('Vienna');
 var $VN_2 = RClass.define_under($VN_1, 'View',$VN_2.$c_g_full('Responder'));
@@ -3576,7 +3665,7 @@ return VN$(self.$klass.$c_g_full('ENV'),'[]','display_mode');
 });
 $VN_2.$def('setup_display_context',function(self,_cmd){
 if(RTEST(VN$(VN$(self, 'display_mode'),'==','render'))){
-self.$i_s('@element',VN$(self.$klass.$c_g_full('Element'),'new','div',VN.$h('class_name',VN$(self, 'class_name'),'id','')));
+self.$i_s('@element',VN$(self.$klass.$c_g_full('Element'),'new','div',nil));
 self.$i_s('@display_context',VN$(self.$klass.$c_g_full('RenderContext'),'new','div',nil));
 VN$(self.$i_g('@element'),'<<',self.$i_g('@display_context'));
 }
@@ -3585,6 +3674,12 @@ self.$i_s('@element',VN$(self.$klass.$c_g_full('Element'),'new','div'));
 self.$i_s('@display_context',VN$(self.$klass.$c_g_full('GraphicsContext'),'new'));
 VN$(self.$i_g('@element'),'<',self.$i_g('@display_context'));
 }
+});
+$VN_2.$def('accepts_first_mouse',function(self,_cmd,the_event){
+return true;
+});
+$VN_2.$def('accepts_first_responder',function(self,_cmd){
+return true;
 });
 $VN_2.$def('class_name',function(self,_cmd){
 return ORTEST(self.$i_g('@class_name'),'vn-view');
@@ -3662,9 +3757,16 @@ return VN$(self,'add_subview',a_view);
 $VN_2.$def('add_subview:positioned:relative_to:',function(self,_cmd,a_view,place,other_view){
 });
 $VN_2.$def('view_will_move_to_window',function(self,_cmd,win){
-return self.$i_s('@window',win);
+self.$i_s('@window',win);
+return VN$(self.$i_g('@subviews'),'each',function(s){
+return VN$(s,'view_will_move_to_window',win);
+});
 });
 $VN_2.$def('view_did_move_to_window',function(self,_cmd){
+VN$(self.$i_g('@subviews'),'each',function(s){
+return VN$(s,'view_did_move_to_window');
+});
+return VN$(self,'needs_display=',true);
 });
 $VN_2.$def('view_will_move_to_superview',function(self,_cmd,new_super){
 return self.$i_s('@superview',new_super);
@@ -3832,6 +3934,7 @@ $VN_2.$def('needs_display?',function(self,_cmd){
 return self.$i_g('@needs_display');
 });
 $VN_2.$def('lock_focus',function(self,_cmd){
+return VN$(self.$klass.$c_g_full('RenderContext'),'current_context=',self.$i_g('@display_context'));
 });
 $VN_2.$def('unlock_focus',function(self,_cmd){
 });
@@ -3902,90 +4005,126 @@ $VN_2.$def('update_tracking_areas',function(self,_cmd){
 });
 
 var $VN_1 = RModule.define('Vienna');
-$VN_1.$c_s('IMAGE_POSITIONS',VN.$h('text_only', 0, 'image_only', 1, 'left', 2, 'right', 3, 'below', 4, 'above', 5, 'overlaps', 6));
 var $VN_2 = RClass.define_under($VN_1, 'Control',$VN_2.$c_g_full('View'));
 $VN_2.$def('initialize',function(self,_cmd,frame){
 VN$sup(arguments.callee, self,_cmd,[frame]);
-return self.$i_s('@enabled',true);
+self.$i_s('@cell',VN$(VN$(VN$(self,'class'),'cell_class'),'new'));
+return VN$(self.$i_g('@cell'),'render_context=',self.$i_g('@display_context'));
+});
+$VN_2.$def_s('cell_class',function(self,_cmd){
+return self.$c_g_full('Cell');
 });
 $VN_2.$def('render',function(self,_cmd,context){
+VN$(self.$klass.$c_g_full('RenderContext'),'current_context=',context);
+return VN$(self.$i_g('@cell'),'render_with_frame:in_view:',VN$(self, 'bounds'),self);
 });
-$VN_2.$def('draw_rect',function(self,_cmd,rect){
-return VN$(self,'puts','drawing rect from control');
+$VN_2.$def('class_name=',function(self,_cmd,class_name){
+VN$(self, 'will_change_value_for_key', 'class_name');
+VN$(self.$i_g('@cell'),'class_name=',class_name);
+VN$(self, 'did_change_value_for_key', 'class_name');
 });
-$VN_2.$def('image_rect_for_bounds',function(self,_cmd,the_rect){
-return the_rect;
+$VN_2.$def('class_name',function(self,_cmd){
+return VN$(self.$i_g('@cell'),'class_name');
 });
-$VN_2.$def('title_rect_for_bounds',function(self,_cmd,the_rect){
-return the_rect;
+$VN_2.$def('theme_name=',function(self,_cmd,theme_name){
+VN$(self, 'will_change_value_for_key', 'theme_name');
+VN$(self.$i_g('@cell'),'theme_name=',theme_name);
+VN$(self, 'did_change_value_for_key', 'theme_name');
+});
+$VN_2.$def('theme_name',function(self,_cmd){
+return VN$(self.$i_g('@cell'),'theme_name');
+});
+$VN_2.$def('cell',function(self,_cmd){
+return self.$i_g('@cell');
+});
+$VN_2.$def('cell=',function(self,_cmd,a_cell){
+VN$(self, 'will_change_value_for_key', 'cell');
+self.$i_g('@cell');
+VN$(self, 'did_change_value_for_key', 'cell');
+});
+$VN_2.$def('selected_cell',function(self,_cmd){
+return self.$i_g('@cell');
 });
 $VN_2.$def('size_to_fit',function(self,_cmd){
 });
 $VN_2.$def('calc_size',function(self,_cmd){
 });
 $VN_2.$def('target',function(self,_cmd){
-return self.$i_g('@target');
+return VN$(self.$i_g('@cell'),'target');
 });
 $VN_2.$def('target=',function(self,_cmd,obj){
 VN$(self, 'will_change_value_for_key', 'target');
-self.$i_s('@target',obj);
+VN$(self.$i_g('@cell'),'target=',obj);
 VN$(self, 'did_change_value_for_key', 'target');
 });
 $VN_2.$def('action',function(self,_cmd){
-return self.$i_g('@action');
+return VN$(self.$i_g('@cell'),'action');
 });
 $VN_2.$def('action=',function(self,_cmd,selector){
 VN$(self, 'will_change_value_for_key', 'action');
-self.$i_s('@action',selector);
+VN$(self.$i_g('@cell'),'action=',selector);
 VN$(self, 'did_change_value_for_key', 'action');
 });
 $VN_2.$def('tag',function(self,_cmd){
+return VN$(self.$i_g('@cell'),'tag');
 });
 $VN_2.$def('tag=',function(self,_cmd,tag){
 VN$(self, 'will_change_value_for_key', 'tag');
+VN$(self.$i_g('@cell'),'tag=',tag);
 VN$(self, 'did_change_value_for_key', 'tag');
 });
 $VN_2.$def('selected_tag',function(self,_cmd){
+return VN$(self.$i_g('@cell'),'tag');
 });
 $VN_2.$def('ignores_multi_click=',function(self,_cmd,flag){
 VN$(self, 'will_change_value_for_key', 'ignores_multi_click');
+VN$(self.$i_g('@cell'),'ignores_multi_click=',flag);
 VN$(self, 'did_change_value_for_key', 'ignores_multi_click');
 });
 $VN_2.$def('ignores_multi_click?',function(self,_cmd){
+return VN$(self.$i_g('@cell'),'ignores_multi_click?');
 });
 $VN_2.$def('send_action_on',function(self,_cmd,mask){
 });
 $VN_2.$def('continuous?',function(self,_cmd){
+return VN$(self.$i_g('@cell'),'continuous?');
 });
 $VN_2.$def('continuous=',function(self,_cmd,flag){
 VN$(self, 'will_change_value_for_key', 'continuous');
+VN$(self.$i_g('@cell'),'continuous=',flag);
 VN$(self, 'did_change_value_for_key', 'continuous');
 });
 $VN_2.$def('enabled?',function(self,_cmd){
-return self.$i_g('@enabled');
+return VN$(self.$i_g('@cell'),'enabled?');
 });
 $VN_2.$def('enabled=',function(self,_cmd,flag){
 VN$(self, 'will_change_value_for_key', 'enabled');
-self.$i_s('@enabled',flag);
+VN$(self.$i_g('@cell'),'enabled=',flag);
 VN$(self, 'did_change_value_for_key', 'enabled');
 });
 $VN_2.$def('alignment',function(self,_cmd){
+return VN$(self.$i_g('@cell'),'alignment');
 });
 $VN_2.$def('alignment=',function(self,_cmd,mode){
 VN$(self, 'will_change_value_for_key', 'alignment');
+VN$(self.$i_g('@cell'),'alignment=',mode);
 VN$(self, 'did_change_value_for_key', 'alignment');
 });
 $VN_2.$def('font',function(self,_cmd){
+return VN$(self.$i_g('@cell'),'font');
 });
 $VN_2.$def('font=',function(self,_cmd,font){
 VN$(self, 'will_change_value_for_key', 'font');
+VN$(self.$i_g('@cell'),'font=',font);
 VN$(self, 'did_change_value_for_key', 'font');
 });
 $VN_2.$def('formatter=',function(self,_cmd,new_formatter){
 VN$(self, 'will_change_value_for_key', 'formatter');
+VN$(self.$i_g('@cell'),'formatter=',new_formatter);
 VN$(self, 'did_change_value_for_key', 'formatter');
 });
 $VN_2.$def('formatter',function(self,_cmd){
+return VN$(self.$i_g('@cell'),'formatter');
 });
 $VN_2.$def('object_value=',function(self,_cmd,obj){
 VN$(self, 'will_change_value_for_key', 'object_value');
@@ -4031,7 +4170,15 @@ return VN$(self, 'float_value');
 });
 $VN_2.$def('double_value',function(self,_cmd){
 });
-$VN_2.$def('needs_display',function(self,_cmd){
+$VN_2.$def('update_cell',function(self,_cmd,a_cell){
+});
+$VN_2.$def('update_cell_inside',function(self,_cmd,a_cell){
+});
+$VN_2.$def('draw_cell_inside',function(self,_cmd,a_cell){
+});
+$VN_2.$def('draw_cell',function(self,_cmd,a_cell){
+});
+$VN_2.$def('select_cell',function(self,_cmd,a_cell){
 });
 $VN_2.$def('send_action:to:',function(self,_cmd,action,target){
 });
@@ -4047,7 +4194,7 @@ $VN_2.$def('take_string_value_from',function(self,_cmd,sender){
 });
 $VN_2.$def('current_editor',function(self,_cmd){
 });
-$VN_2.$def('abort_editing',function(self,_cmd){
+$VN_2.$def('abort_editing?',function(self,_cmd){
 });
 $VN_2.$def('validate_editing',function(self,_cmd){
 });
@@ -4055,64 +4202,729 @@ $VN_2.$def('mouse_down',function(self,_cmd,the_event){
 if(!RTEST(VN$(self, 'enabled?'))){
 return ;
 }
-return VN$(self,'track_mouse:until_mouse_up:',the_event,true);
+VN$(self,'lock_focus');
+VN$(self.$i_g('@cell'),'track_mouse:in_rect:of_view:until_mouse_up:',the_event,VN$(self, 'frame'),self,true);
+return VN$(self,'unlock_focus');
 });
-$VN_2.$def('start_tracking_at',function(self,_cmd,start_point){
+$VN_2.$def('perform_click',function(self,_cmd,sender){
+});
+$VN_2.$def('refuses_first_responder=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'refuses_first_responder');
+VN$(self.$i_g('@cell'),'refuses_first_responder=',flag);
+VN$(self, 'did_change_value_for_key', 'refuses_first_responder');
+});
+$VN_2.$def('refuses_first_responder?',function(self,_cmd){
+return VN$(self.$i_g('@cell'),'refuses_first_responder?');
+});
+$VN_2.$def('control_text_did_begin_editing',function(self,_cmd,notification){
+});
+$VN_2.$def('control_text_did_end_editing',function(self,_cmd,notification){
+});
+$VN_2.$def('control_text_did_change',function(self,_cmd,notification){
+});
+$VN_2.$def('attributed_string_value',function(self,_cmd){
+return VN$(self.$i_g('@cell'),'attributed_string_value');
+});
+$VN_2.$def('attributed_string_value=',function(self,_cmd,val){
+VN$(self, 'will_change_value_for_key', 'attributed_string_value');
+VN$(self.$i_g('@cell'),'attributed_string_value=',val);
+VN$(self, 'did_change_value_for_key', 'attributed_string_value');
+});
+
+var $VN_1 = RModule.define('Vienna');
+$VN_1.$c_s('CELL_TYPES',VN.$h('null', 0, 'text', 1, 'image', 2));
+$VN_1.$c_s('IMAGE_POSITIONS',VN.$h('text_only', 0, 'image_only', 1, 'left', 2, 'right', 3, 'below', 4, 'above', 5, 'overlaps', 6));
+$VN_1.$c_s('CELL_STATES',VN.$h('off', 0, 'on', 1));
+$VN_1.$c_s('CELL_MASKS',VN.$h('none', 0, 'contents', 1, 'push_in', 2, 'change_gray', 4, 'change_background', 8));
+$VN_1.$c_s('CONTROL_TINTS',VN.$h('default', 0, 'blue', 1, 'graphite', 6, 'clear', 7));
+$VN_1.$c_s('CONTROL_SIZES',VN.$h('regular', 0, 'small', 1, 'mini', 2));
+var $VN_2 = RClass.define_under($VN_1, 'Cell',cObject);
+$VN_2.$def_s('prefers_tracking_until_mouse_up',function(self,_cmd){
+});
+$VN_2.$def('init_text_cell',function(self,_cmd,str){
+self.$i_s('@cell_type','text');
+self.$i_s('@enabled',true);
+self.$i_s('@editable',false);
+self.$i_s('@selectable',false);
+self.$i_s('@state','off');
+self.$i_s('@title',str);
+self.$i_s('@image',nil);
+self.$i_s('@bordered',false);
+self.$i_s('@bezeled',false);
+self.$i_s('@highlighted',false);
+return self.$i_s('@refuses_first_responder',false);
+});
+$VN_2.$def('init_image_cell',function(self,_cmd,img){
+});
+$VN_2.$def('initialize',function(self,_cmd){
+return VN$(self,'init_text_cell','Cell');
+});
+$VN_2.$def('class_name=',function(self,_cmd,class_name){
+VN$(self, 'will_change_value_for_key', 'class_name');
+self.$i_s('@class_name',class_name);
+VN$(self, 'did_change_value_for_key', 'class_name');
+});
+$VN_2.$def('class_name',function(self,_cmd){
+return ORTEST(self.$i_g('@class_name'),'vn-control');
+});
+$VN_2.$def('theme_name=',function(self,_cmd,theme_name){
+VN$(self, 'will_change_value_for_key', 'theme_name');
+self.$i_s('@theme_name',theme_name);
+VN$(self, 'did_change_value_for_key', 'theme_name');
+});
+$VN_2.$def('theme_name',function(self,_cmd){
+return ORTEST(self.$i_g('@theme_name'),'');
+});
+$VN_2.$def('control_view',function(self,_cmd){
+return self.$i_g('@control_view');
+});
+$VN_2.$def('control_view=',function(self,_cmd,view){
+VN$(self, 'will_change_value_for_key', 'control_view');
+self.$i_s('@control_view',view);
+VN$(self, 'did_change_value_for_key', 'control_view');
+});
+$VN_2.$def('type',function(self,_cmd){
+return self.$i_g('@type');
+});
+$VN_2.$def('type=',function(self,_cmd,a_type){
+VN$(self, 'will_change_value_for_key', 'type');
+self.$i_s('@type',a_type);
+VN$(self, 'did_change_value_for_key', 'type');
+});
+$VN_2.$def('state',function(self,_cmd){
+return self.$i_g('@state');
+});
+$VN_2.$def('state=',function(self,_cmd,state){
+VN$(self, 'will_change_value_for_key', 'state');
+self.$i_s('@state',state);
+VN$(self, 'did_change_value_for_key', 'state');
+});
+$VN_2.$def('target',function(self,_cmd){
+return self.$i_g('@target');
+});
+$VN_2.$def('target=',function(self,_cmd,target){
+VN$(self, 'will_change_value_for_key', 'target');
+self.$i_s('@target',target);
+VN$(self, 'did_change_value_for_key', 'target');
+});
+$VN_2.$def('action',function(self,_cmd){
+return self.$i_g('@action');
+});
+$VN_2.$def('action=',function(self,_cmd,action){
+VN$(self, 'will_change_value_for_key', 'action');
+self.$i_s('@action',action);
+VN$(self, 'did_change_value_for_key', 'action');
+});
+$VN_2.$def('tag',function(self,_cmd){
+return self.$i_g('@tag');
+});
+$VN_2.$def('tag=',function(self,_cmd,tag){
+VN$(self, 'will_change_value_for_key', 'tag');
+self.$i_s('@tag',tag);
+VN$(self, 'did_change_value_for_key', 'tag');
+});
+$VN_2.$def('title',function(self,_cmd){
+return self.$i_g('@title');
+});
+$VN_2.$def('title=',function(self,_cmd,title){
+VN$(self, 'will_change_value_for_key', 'title');
+self.$i_s('@title',title);
+VN$(self, 'did_change_value_for_key', 'title');
+});
+$VN_2.$def('opaque?',function(self,_cmd){
+return self.$i_g('@opaque');
+});
+$VN_2.$def('enabled?',function(self,_cmd){
+return self.$i_g('@enabled');
+});
+$VN_2.$def('enabled=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'enabled');
+self.$i_s('@enabled',flag);
+VN$(self, 'did_change_value_for_key', 'enabled');
+});
+$VN_2.$def('send_action_on',function(self,_cmd,mask){
+});
+$VN_2.$def('continuous?',function(self,_cmd){
+return self.$i_g('@continuous');
+});
+$VN_2.$def('continuous=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'continuous');
+self.$i_s('@continuous',flag);
+VN$(self, 'did_change_value_for_key', 'continuous');
+});
+$VN_2.$def('editable?',function(self,_cmd){
+return self.$i_g('@editable');
+});
+$VN_2.$def('editable=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'editable');
+self.$i_s('@editable',flag);
+VN$(self, 'did_change_value_for_key', 'editable');
+});
+$VN_2.$def('selectable?',function(self,_cmd){
+return self.$i_g('@selectable');
+});
+$VN_2.$def('selectable=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'selectable');
+self.$i_s('@selectable',flag);
+VN$(self, 'did_change_value_for_key', 'selectable');
+});
+$VN_2.$def('bordered?',function(self,_cmd){
+return self.$i_g('@bordered');
+});
+$VN_2.$def('bordered=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'bordered');
+self.$i_s('@bordered',flag);
+VN$(self, 'did_change_value_for_key', 'bordered');
+});
+$VN_2.$def('bezeled?',function(self,_cmd){
+return self.$i_g('@bezeled');
+});
+$VN_2.$def('bezeled=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'bezeled');
+self.$i_s('@bezeled',flag);
+VN$(self, 'did_change_value_for_key', 'bezeled');
+});
+$VN_2.$def('scrollable?',function(self,_cmd){
+return self.$i_g('@scrollable');
+});
+$VN_2.$def('scrollable=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'scrollable');
+self.$i_s('@scrollable',flag);
+if(RTEST(flag)){
+VN$(self,'wraps=',false);
+}
+VN$(self, 'did_change_value_for_key', 'scrollable');
+});
+$VN_2.$def('highlighted?',function(self,_cmd){
+return self.$i_g('@highlighted');
+});
+$VN_2.$def('highlighted=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'highlighted');
+self.$i_s('@highlighted',flag);
+VN$(self, 'did_change_value_for_key', 'highlighted');
+});
+$VN_2.$def('alignment',function(self,_cmd){
+return self.$i_g('@alignment');
+});
+$VN_2.$def('alignment=',function(self,_cmd,align){
+VN$(self, 'will_change_value_for_key', 'alignment');
+self.$i_s('@alignment',align);
+VN$(self, 'did_change_value_for_key', 'alignment');
+});
+$VN_2.$def('wraps?',function(self,_cmd){
+return self.$i_g('@wraps');
+});
+$VN_2.$def('wraps=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'wraps');
+self.$i_s('@wraps',flag);
+if(RTEST(flag)){
+VN$(self,'scrollable=',false);
+}
+VN$(self, 'did_change_value_for_key', 'wraps');
+});
+$VN_2.$def('font',function(self,_cmd){
+return self.$i_g('@font');
+});
+$VN_2.$def('font=',function(self,_cmd,obj){
+VN$(self, 'will_change_value_for_key', 'font');
+self.$i_s('@font',obj);
+VN$(self, 'did_change_value_for_key', 'font');
+});
+$VN_2.$def('entry_acceptable?',function(self,_cmd,str){
 return true;
 });
-$VN_2.$def('continue_tracking:at:',function(self,_cmd,last_point,current_point){
+$VN_2.$def('key_equivalent',function(self,_cmd){
+return self.$i_g('@key_equivalent');
 });
-$VN_2.$def('stop_tracking:at:mouse_is_up:',function(self,_cmd,last_point,stop_point,flag){
+$VN_2.$def('formatter=',function(self,_cmd,formatter){
+VN$(self, 'will_change_value_for_key', 'formatter');
+self.$i_s('@formatter',formatter);
+VN$(self, 'did_change_value_for_key', 'formatter');
 });
-$VN_2.$def('track_mouse:until_mouse_up:',function(self,_cmd,the_event,flag){
-var location = VN$(self,'convert_point:from_view:',VN$(the_event,'location_in_window'),nil);
-if(!RTEST(VN$(self,'start_tracking_at',VN$(the_event,'location_in_window')))){
+$VN_2.$def('formatter',function(self,_cmd){
+return self.$i_g('@formatter');
+});
+$VN_2.$def('object_value',function(self,_cmd){
+});
+$VN_2.$def('object_value=',function(self,_cmd,obj){
+VN$(self, 'will_change_value_for_key', 'object_value');
+VN$(self, 'did_change_value_for_key', 'object_value');
+});
+$VN_2.$def('valid_object_value?',function(self,_cmd){
+return true;
+});
+$VN_2.$def('string_value',function(self,_cmd){
+});
+$VN_2.$def('string_value=',function(self,_cmd,str){
+VN$(self, 'will_change_value_for_key', 'string_value');
+VN$(self, 'did_change_value_for_key', 'string_value');
+});
+$VN_2.$def('int_value',function(self,_cmd){
+});
+$VN_2.$def('int_value=',function(self,_cmd,val){
+VN$(self, 'will_change_value_for_key', 'int_value');
+VN$(self, 'did_change_value_for_key', 'int_value');
+});
+$VN_2.$def('float_value',function(self,_cmd){
+});
+$VN_2.$def('float_value=',function(self,_cmd,val){
+VN$(self, 'will_change_value_for_key', 'float_value');
+VN$(self, 'did_change_value_for_key', 'float_value');
+});
+$VN_2.$def('double_value',function(self,_cmd){
+});
+$VN_2.$def('double_value=',function(self,_cmd,val){
+VN$(self, 'will_change_value_for_key', 'double_value');
+VN$(self, 'did_change_value_for_key', 'double_value');
+});
+$VN_2.$def('compare',function(self,_cmd,other_cell){
+});
+$VN_2.$def('take_int_value_from',function(self,_cmd,sender){
+});
+$VN_2.$def('take_float_value_from',function(self,_cmd,sender){
+});
+$VN_2.$def('take_double_value_from',function(self,_cmd,sender){
+});
+$VN_2.$def('take_string_value_from',function(self,_cmd,sender){
+});
+$VN_2.$def('take_object_value_from',function(self,_cmd,sender){
+});
+$VN_2.$def('image',function(self,_cmd){
+return self.$i_g('@image');
+});
+$VN_2.$def('image=',function(self,_cmd,img){
+VN$(self, 'will_change_value_for_key', 'image');
+self.$i_s('@image',img);
+VN$(self, 'did_change_value_for_key', 'image');
+});
+$VN_2.$def('control_tint',function(self,_cmd){
+return self.$i_g('@control_tint');
+});
+$VN_2.$def('control_tint=',function(self,_cmd,control_tint){
+VN$(self, 'will_change_value_for_key', 'control_tint');
+self.$i_s('@control_tint',control_tint);
+VN$(self, 'did_change_value_for_key', 'control_tint');
+});
+$VN_2.$def('control_size=',function(self,_cmd,size){
+VN$(self, 'will_change_value_for_key', 'control_size');
+self.$i_s('@control_size',size);
+VN$(self, 'did_change_value_for_key', 'control_size');
+});
+$VN_2.$def('control_size',function(self,_cmd){
+return self.$i_g('@control_size');
+});
+$VN_2.$def('represented_object',function(self,_cmd){
+return self.$i_g('@represented_object');
+});
+$VN_2.$def('represented_object=',function(self,_cmd,obj){
+VN$(self, 'will_change_value_for_key', 'represented_object');
+self.$i_s('@represented_object',obj);
+VN$(self, 'did_change_value_for_key', 'represented_object');
+});
+$VN_2.$def('cell_attribute',function(self,_cmd,a_parameter){
+});
+$VN_2.$def('set_cell_attribute:to:',function(self,_cmd,a_parameter,value){
+});
+$VN_2.$def('image_rect_for_bounds',function(self,_cmd,the_rect){
+return the_rect;
+});
+$VN_2.$def('title_rect_for_bounds',function(self,_cmd,the_rect){
+return the_rect;
+});
+$VN_2.$def('drawing_rect_for_bounds',function(self,_cmd,the_rect){
+return the_rect;
+});
+$VN_2.$def('cell_size',function(self,_cmd){
+});
+$VN_2.$def('cell_size_for_bounds',function(self,_cmd,a_rect){
+});
+$VN_2.$def('highlight_color_with_frame:in_view:',function(self,_cmd,cell_frame,control_view){
+});
+$VN_2.$def('calc_draw_info',function(self,_cmd,a_rect){
+});
+$VN_2.$def('set_up_field_editor_attributes',function(self,_cmd,text_obj){
+return text_obj;
+});
+$VN_2.$def('render_interior_with_frame:in_view:',function(self,_cmd,cell_frame,control_view){
+});
+$VN_2.$def('render_with_frame:in_view:',function(self,_cmd,cell_frame,control_view){
+});
+$VN_2.$def('draw_interior_with_frame:in_view:',function(self,_cmd,cell_frame,control_view){
+});
+$VN_2.$def('draw_with_frame:in_view:',function(self,_cmd,cell_frame,control_view){
+});
+$VN_2.$def('highlight:with_frame:in_view:',function(self,_cmd,flag,cell_frame,control_view){
+if(RTEST(VN$(self.$i_g('@highlighted'),'!=',flag))){
+self.$i_s('@highlighted',flag);
+VN$(self,'render_with_frame:in_view:',cell_frame,control_view);
+}
+});
+$VN_2.$def('mouse_down_flags',function(self,_cmd){
+});
+$VN_2.$def('get_periodic_delay:interval:',function(self,_cmd,delay,interval){
+});
+$VN_2.$def('render_context=',function(self,_cmd,a_context){
+VN$(self, 'will_change_value_for_key', 'render_context');
+self.$i_s('@render_context',a_context);
+VN$(self, 'did_change_value_for_key', 'render_context');
+});
+$VN_2.$def('render_context',function(self,_cmd){
+return self.$i_g('@render_context');
+});
+$VN_2.$def('start_tracking_at:in_view:',function(self,_cmd,start_point,control_view){
+return true;
+});
+$VN_2.$def('continue_tracking:at:in_view:',function(self,_cmd,last_point,current_point,control_view){
+});
+$VN_2.$def('stop_tracking:at:in_view:mouse_is_up:',function(self,_cmd,last_point,stop_point,control_view,flag){
+});
+$VN_2.$def('track_mouse:in_rect:of_view:until_mouse_up:',function(self,_cmd,the_event,cell_frame,control_view,flag){
+var location = VN$(control_view,'convert_point:from_view:',VN$(the_event,'location_in_window'),nil);
+if(!RTEST(VN$(self,'start_tracking_at:in_view:',VN$(the_event,'location_in_window'),control_view))){
 return false;
 }
+VN$(self,'highlight:with_frame:in_view:',true,cell_frame,control_view);
 if(RTEST(VN$(self, 'continuous?'))){
-VN$(self.$klass.$c_g_full('App'),'send_action:to:from:',self.$i_g('@action'),self.$i_g('@target'),self);
+VN$(self.$klass.$c_g_full('App'),'send_action:to:from:',VN$(self, 'action'),VN$(self, 'target'),self);
 }
-VN$(self,'puts','requesting binding');
+VN$(self,'puts','Requesting binding');
 return VN$(self.$klass.$c_g_full('App'),'bind_events',['left_mouse_up','left_mouse_dragged'],function(the_event){
+location = VN$(control_view,'convert_point:from_view:',VN$(the_event,'location_in_window'),nil);
 VN$(self,'puts',VN$(the_event,'type'));
 if(RTEST(VN$(VN$(the_event,'type'),'==','left_mouse_up'))){
 VN$(self.$klass.$c_g_full('App'),'unbind_events');
 }
+if(RTEST(VN$(location,'in_rect?',cell_frame))){
+VN$(self,'highlight:with_frame:in_view:',true,cell_frame,control_view);
+}
+else{
+VN$(self,'highlight:with_frame:in_view:',false,cell_frame,control_view);
+}
 });
+});
+$VN_2.$def('edit_with_frame:in_view:editor:delegate:event:',function(self,_cmd,a_rect,control_view,text_obj,an_obj,the_event){
+});
+$VN_2.$def('select_with_frame:in_view:editor:delegate:start:length:',function(self,_cmd,a_rect,control_view,text_obj,an_obj,sel_start,sel_length){
+});
+$VN_2.$def('end_editing',function(self,_cmd,text_obj){
+});
+$VN_2.$def('reset_cursor_rect:in_view:',function(self,_cmd,cell_frame,control_view){
+});
+$VN_2.$def('menu=',function(self,_cmd,a_menu){
+VN$(self, 'will_change_value_for_key', 'menu');
+self.$i_s('@menu',a_menu);
+VN$(self, 'did_change_value_for_key', 'menu');
+});
+$VN_2.$def('menu',function(self,_cmd){
+return self.$i_g('@menu');
+});
+$VN_2.$def('menu_for_event:in_rect:of_view:',function(self,_cmd,the_event,cell_frame,view){
+});
+$VN_2.$def_s('default_menu',function(self,_cmd){
+});
+$VN_2.$def('sends_action_on_end_editing=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'sends_action_on_end_editing');
+self.$i_s('@sends_action_on_end_editing',flag);
+VN$(self, 'did_change_value_for_key', 'sends_action_on_end_editing');
+});
+$VN_2.$def('sends_action_on_end_editing?',function(self,_cmd){
+return self.$i_g('@sends_action_on_end_editing');
+});
+$VN_2.$def('base_writing_direction',function(self,_cmd){
+return self.$i_g('@base_writing_direction');
+});
+$VN_2.$def('base_writing_direction=',function(self,_cmd,direction){
+VN$(self, 'will_change_value_for_key', 'base_writing_direction');
+self.$i_s('@base_writing_direction',direction);
+VN$(self, 'did_change_value_for_key', 'base_writing_direction');
+});
+$VN_2.$def('line_break_mode=',function(self,_cmd,mode){
+VN$(self, 'will_change_value_for_key', 'line_break_mode');
+self.$i_s('@line_break_mode',mode);
+VN$(self, 'did_change_value_for_key', 'line_break_mode');
+});
+$VN_2.$def('line_break_mode',function(self,_cmd){
+return self.$i_g('@line_break_mode');
+});
+$VN_2.$def('allows_undo=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'allows_undo');
+self.$i_s('@allows_undo',flag);
+VN$(self, 'did_change_value_for_key', 'allows_undo');
+});
+$VN_2.$def('allows_undo?',function(self,_cmd){
+return self.$i_g('@allows_undo');
+});
+$VN_2.$def('refuses_first_responder=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'refuses_first_responder');
+self.$i_s('@refuses_first_responder',flag);
+VN$(self, 'did_change_value_for_key', 'refuses_first_responder');
+});
+$VN_2.$def('refuses_first_responder?',function(self,_cmd){
+return self.$i_g('@refuses_first_responder');
+});
+$VN_2.$def('accepts_first_responder?',function(self,_cmd){
+return true;
+});
+$VN_2.$def('shows_first_responder?',function(self,_cmd){
+return self.$i_g('@shows_first_responder');
+});
+$VN_2.$def('shows_first_responder=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'shows_first_responder');
+self.$i_s('@shows_first_responder',flag);
+VN$(self, 'did_change_value_for_key', 'shows_first_responder');
+});
+$VN_2.$def('perform_click',function(self,_cmd,sender){
+});
+$VN_2.$def('attributed_string_value',function(self,_cmd){
+});
+$VN_2.$def('attributed_string_value=',function(self,_cmd,obj){
+VN$(self, 'will_change_value_for_key', 'attributed_string_value');
+VN$(self, 'did_change_value_for_key', 'attributed_string_value');
+});
+$VN_2.$def('allows_editing_text_attributes?',function(self,_cmd){
+return self.$i_g('@allows_editing_text_attributes');
+});
+$VN_2.$def('allows_editing_text_attributes=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'allows_editing_text_attributes');
+self.$i_s('@allows_editing_text_attributes',flag);
+if(!RTEST(flag)){
+VN$(self,'imports_graphics=',false);
+}
+VN$(self, 'did_change_value_for_key', 'allows_editing_text_attributes');
+});
+$VN_2.$def('imports_graphics?',function(self,_cmd){
+return self.$i_g('@imports_graphics');
+});
+$VN_2.$def('imports_graphics=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'imports_graphics');
+self.$i_s('@imports_graphics',flag);
+if(RTEST(flag)){
+var allows_editing_text_attributes = true;
+}
+VN$(self, 'did_change_value_for_key', 'imports_graphics');
+});
+$VN_2.$def('allows_mixed_state=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'allows_mixed_state');
+self.$i_s('@allows_mixed_state',flag);
+VN$(self, 'did_change_value_for_key', 'allows_mixed_state');
+});
+$VN_2.$def('allows_mixed_state?',function(self,_cmd){
+return self.$i_g('@allows_mixed_state');
+});
+$VN_2.$def('next_state',function(self,_cmd){
+});
+$VN_2.$def('set_next_state',function(self,_cmd){
+});
+$VN_2.$def('hit_test_for_event:in_rect:of_view:',function(self,_cmd,event,cell_frame,control_view){
 });
 
 var $VN_1 = RModule.define('Vienna');
 var $VN_2 = RClass.define_under($VN_1, 'Button',$VN_2.$c_g_full('Control'));
-VN$($VN_2,'attr_reader','title','alternate_title','image','image_position');
 $VN_2.$def('initialize',function(self,_cmd,frame){
-VN$sup(arguments.callee, self,_cmd,[frame]);
-self.$i_s('@state','off');
-self.$i_s('@allows_mixed_state',false);
-return self.$i_s('@bordered',true);
+return VN$sup(arguments.callee, self,_cmd,[frame]);
+});
+$VN_2.$def_s('cell_class',function(self,_cmd){
+return self.$c_g_full('ButtonCell');
 });
 $VN_2.$def('title=',function(self,_cmd,str){
 VN$(self, 'will_change_value_for_key', 'title');
+VN$(self.$i_g('@cell'),'title=',str);
 VN$(self, 'did_change_value_for_key', 'title');
 });
 $VN_2.$def('alternate_title=',function(self,_cmd,str){
 VN$(self, 'will_change_value_for_key', 'alternate_title');
+VN$(self.$i_g('@cell'),'alternate_title=',str);
 VN$(self, 'did_change_value_for_key', 'alternate_title');
+});
+$VN_2.$def('alternate_image',function(self,_cmd){
+return VN$(self.$i_g('@cell'),'alternate_image');
+});
+$VN_2.$def('alternate_image=',function(self,_cmd,img){
+VN$(self, 'will_change_value_for_key', 'alternate_image');
+VN$(self.$i_g('@cell'),'alternate_image=',img);
+VN$(self, 'did_change_value_for_key', 'alternate_image');
 });
 $VN_2.$def('image=',function(self,_cmd,image){
 VN$(self, 'will_change_value_for_key', 'image');
+VN$(self.$i_g('@cell'),'image=',image);
 VN$(self, 'did_change_value_for_key', 'image');
 });
 $VN_2.$def('image_position=',function(self,_cmd,position){
 VN$(self, 'will_change_value_for_key', 'image_position');
+VN$(self.$i_g('@cell'),'image_position=',position);
 VN$(self, 'did_change_value_for_key', 'image_position');
 });
 $VN_2.$def('type=',function(self,_cmd,type){
 VN$(self, 'will_change_value_for_key', 'type');
-self.$i_s('@type',type);
+VN$(self.$i_g('@cell'),'type=',type);
 VN$(self, 'did_change_value_for_key', 'type');
 });
 $VN_2.$def('type',function(self,_cmd){
-return self.$i_g('@type');
+return VN$(self.$i_g('@cell'),'type');
+});
+$VN_2.$def('state=',function(self,_cmd,val){
+VN$(self, 'will_change_value_for_key', 'state');
+VN$(self.$i_g('@cell'),'state=',val);
+VN$(self, 'did_change_value_for_key', 'state');
+});
+$VN_2.$def('state',function(self,_cmd){
+return VN$(self.$i_g('@cell'),'state');
+});
+$VN_2.$def('on?',function(self,_cmd){
+return VN$(self.$i_g('@cell'),'on?');
+});
+$VN_2.$def('off?',function(self,_cmd){
+return VN$(self.$i_g('@cell'),'off?');
+});
+$VN_2.$def('mixed?',function(self,_cmd){
+return VN$(self.$i_g('@cell'),'mixed?');
+});
+$VN_2.$def('bordered?',function(self,_cmd){
+return VN$(self.$i_g('@cell'),'bordered?');
+});
+$VN_2.$def('bordered=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'bordered');
+VN$(self.$i_g('@cell'),'bordered=',flag);
+VN$(self, 'did_change_value_for_key', 'bordered');
+});
+$VN_2.$def('transparent?',function(self,_cmd){
+return VN$(self.$i_g('@cell'),'transparent?');
+});
+$VN_2.$def('transparent=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'transparent');
+VN$(self.$i_g('@cell'),'transparent=',flag);
+VN$(self, 'did_change_value_for_key', 'transparent');
+});
+$VN_2.$def('key_equivalent',function(self,_cmd){
+return VN$(self.$i_g('@cell'),'key_equivalent');
+});
+$VN_2.$def('key_equivalent=',function(self,_cmd,code){
+VN$(self, 'will_change_value_for_key', 'key_equivalent');
+VN$(self.$i_g('@cell'),'key_equivalent=',code);
+VN$(self, 'did_change_value_for_key', 'key_equivalent');
+});
+$VN_2.$def('key_equivalent_modifier_mask',function(self,_cmd){
+return VN$(self.$i_g('@cell'),'key_equivalent_modifier_mask');
+});
+$VN_2.$def('key_equivalent_modifier_mask=',function(self,_cmd,mask){
+VN$(self, 'will_change_value_for_key', 'key_equivalent_modifier_mask');
+VN$(self.$i_g('@cell'),'key_equivalent_modifier_mask=',mask);
+VN$(self, 'did_change_value_for_key', 'key_equivalent_modifier_mask');
+});
+$VN_2.$def('highlight=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'highlight');
+VN$(self, 'did_change_value_for_key', 'highlight');
+});
+$VN_2.$def('perform_key_equivalent',function(self,_cmd,key){
+});
+$VN_2.$def('bezel=',function(self,_cmd,style){
+VN$(self, 'will_change_value_for_key', 'bezel');
+VN$(self.$i_g('@cell'),'bezel=',style);
+VN$(self, 'did_change_value_for_key', 'bezel');
+});
+$VN_2.$def('bezel',function(self,_cmd){
+return VN$(self.$i_g('@cell'),'bezel');
+});
+$VN_2.$def('allows_mixed_state=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'allows_mixed_state');
+VN$(self.$i_g('@cell'),'allows_mixed_state=',flag);
+VN$(self, 'did_change_value_for_key', 'allows_mixed_state');
+});
+$VN_2.$def('allows_mixed_state?',function(self,_cmd){
+return VN$(self.$i_g('@cell'),'allows_mixed_state?');
+});
+$VN_2.$def('next_state',function(self,_cmd){
+});
+
+var $VN_1 = RModule.define('Vienna');
+var $VN_2 = RClass.define_under($VN_1, 'ButtonCell',$VN_2.$c_g_full('Cell'));
+$VN_2.$c_s('SWITCH_IMAGE',VN$($VN_2.$c_g_full('Image'),'sprite','controls',[0,357,16,16]));
+$VN_2.$c_s('SWITCH_HIGHLIGHTED_IMAGE',VN$($VN_2.$c_g_full('Image'),'sprite','controls',[16,357,16,16]));
+$VN_2.$c_s('ASWITCH_IMAGE',VN$($VN_2.$c_g_full('Image'),'sprite_cell_masks','controls',function(s){
+VN$(s,'add_representation:size:rect:','normal','regular',[0,357,16,16]);
+VN$(s,'add_representation:size:rect:','gray_mask','regular',[0,357,16,16]);
+VN$(s,'add_representation:size:rect:','disabled','regular',[0,357,16,16]);
+VN$(s,'add_representation:size:rect:','normal','small',[0,357,16,16]);
+VN$(s,'add_representation:size:rect:','gray_mask','small',[0,357,16,16]);
+VN$(s,'add_representation:size:rect:','disabled','small',[0,357,16,16]);
+VN$(s,'add_representation:size:rect:','normal','mini',[0,357,16,16]);
+VN$(s,'add_representation:size:rect:','gray_mask','mini',[0,357,16,16]);
+return VN$(s,'add_representation:size:rect:','disabled','mini',[0,357,16,16]);
+}));
+VN$($VN_2,'puts','DONE ASWITCH_IMAGE');
+VN$($VN_2,'puts',$VN_2.$c_g_full('ASWITCH_IMAGE'));
+$VN_2.$c_s('ASWITCH_HIGHLIGHTED_IMAGE',VN$($VN_2.$c_g_full('Image'),'sprite_cell_masks','controls',function(s){
+VN$(s,'add_representation:size:rect:','normal','regular',[16,357,16,16]);
+VN$(s,'add_representation:size:rect:','gray_mask','regular',[16,357,16,16]);
+VN$(s,'add_representation:size:rect:','disabled','regular',[16,357,16,16]);
+VN$(s,'add_representation:size:rect:','normal','small',[16,357,16,16]);
+VN$(s,'add_representation:size:rect:','gray_mask','small',[16,357,16,16]);
+VN$(s,'add_representation:size:rect:','disabled','small',[16,357,16,16]);
+VN$(s,'add_representation:size:rect:','normal','mini',[16,357,16,16]);
+VN$(s,'add_representation:size:rect:','gray_mask','mini',[16,357,16,16]);
+return VN$(s,'add_representation:size:rect:','disabled','mini',[16,357,16,16]);
+}));
+$VN_2.$def('init_text_cell',function(self,_cmd,str){
+VN$sup(arguments.callee, self,_cmd,[str]);
+self.$i_s('@transparent',false);
+self.$i_s('@highlights_by','push_in');
+self.$i_s('@shows_state_by','none');
+self.$i_s('@alternate_title','');
+self.$i_s('@alternate_image',nil);
+self.$i_s('@image_dims_when_disabled',false);
+self.$i_s('@bordered',true);
+self.$i_s('@bezeled',true);
+self.$i_s('@alignment','center');
+self.$i_s('@key_equivalent','');
+return self.$i_s('@key_equivalent_modifier_mask',0);
+});
+$VN_2.$def('init_image_cell',function(self,_cmd,img){
+});
+$VN_2.$def('initialize',function(self,_cmd){
+return VN$(self,'init_text_cell','ButtonCell');
+});
+$VN_2.$def('class_name',function(self,_cmd){
+return 'vn-button';
+});
+$VN_2.$def('title',function(self,_cmd){
+return self.$i_g('@title');
+});
+$VN_2.$def('title=',function(self,_cmd,str){
+VN$(self, 'will_change_value_for_key', 'title');
+self.$i_s('@title',str);
+VN$(self, 'did_change_value_for_key', 'title');
+});
+$VN_2.$def('alternate_title',function(self,_cmd){
+return self.$i_g('@alternate_title');
+});
+$VN_2.$def('alteernate_title=',function(self,_cmd,str){
+VN$(self, 'will_change_value_for_key', 'alteernate_title');
+self.$i_s('@alternate_title',str);
+VN$(self, 'did_change_value_for_key', 'alteernate_title');
+});
+$VN_2.$def('alternate_image',function(self,_cmd){
+return self.$i_g('@alternate_image');
+});
+$VN_2.$def('alternate_image=',function(self,_cmd,img){
+VN$(self, 'will_change_value_for_key', 'alternate_image');
+self.$i_s('@alternate_image',img);
+VN$(self, 'did_change_value_for_key', 'alternate_image');
+});
+$VN_2.$def('image_position',function(self,_cmd){
+return self.$i_g('@image_position');
+});
+$VN_2.$def('image_position=',function(self,_cmd,position){
+VN$(self, 'will_change_value_for_key', 'image_position');
+self.$i_s('@image_position',position);
+VN$(self, 'did_change_value_for_key', 'image_position');
+});
+$VN_2.$def('image_scaling',function(self,_cmd){
+return self.$i_g('@image_scaling');
+});
+$VN_2.$def('image_scaling=',function(self,_cmd,image_scaling){
+VN$(self, 'will_change_value_for_key', 'image_scaling');
+self.$i_s('@image_scaling',image_scaling);
+VN$(self, 'did_change_value_for_key', 'image_scaling');
 });
 $VN_2.$def('state=',function(self,_cmd,val){
 VN$(self, 'will_change_value_for_key', 'state');
@@ -4131,13 +4943,91 @@ return VN$(self.$i_g('@state'),'==','off');
 $VN_2.$def('mixed?',function(self,_cmd){
 return VN$(self.$i_g('@state'),'==','mixed');
 });
-$VN_2.$def('bordered?',function(self,_cmd){
-return self.$i_g('@bordered');
+$VN_2.$def('highlights_by',function(self,_cmd){
+return self.$i_g('@highlights_by');
 });
-$VN_2.$def('bordered=',function(self,_cmd,flag){
-VN$(self, 'will_change_value_for_key', 'bordered');
-self.$i_s('@bordered',flag);
-VN$(self, 'did_change_value_for_key', 'bordered');
+$VN_2.$def('highlights_by=',function(self,_cmd,a_type){
+VN$(self, 'will_change_value_for_key', 'highlights_by');
+self.$i_s('@highlights_by',a_type);
+VN$(self, 'did_change_value_for_key', 'highlights_by');
+});
+$VN_2.$def('shows_state_by=',function(self,_cmd,a_type){
+VN$(self, 'will_change_value_for_key', 'shows_state_by');
+self.$i_s('@shows_state_by',a_type);
+VN$(self, 'did_change_value_for_key', 'shows_state_by');
+});
+$VN_2.$def('shows_state_by',function(self,_cmd){
+return self.$i_g('@shows_state_by');
+});
+$VN_2.$def('type=',function(self,_cmd,a_type){
+VN$(self, 'will_change_value_for_key', 'type');
+self.$i_s('@type',a_type);
+(function($v){
+if(($e = VN$('momentary_light', '===', $v),$e!==nil && $e!==false)){
+self.$i_s('@highlights_by','change_background');
+self.$i_s('@shows_state_by','none');
+return self.$i_s('@image_dims_when_disabled',true);
+}
+else if(($e = VN$('push_on_push_off', '===', $v),$e!==nil && $e!==false)){
+self.$i_s('@highlights_by','push_in');
+self.$i_s('@shows_state_by','change_background');
+return self.$i_s('@image_dims_when_disabled',true);
+}
+else if(($e = VN$('toggle', '===', $v),$e!==nil && $e!==false)){
+self.$i_s('@highlights_by','push_in');
+self.$i_s('@shows_state_by','contents');
+return self.$i_s('@image_dims_when_disabled',true);
+}
+else if(($e = VN$('switch', '===', $v),$e!==nil && $e!==false)){
+self.$i_s('@highlights_by','contents');
+self.$i_s('@shows_state_by','contents');
+self.$i_s('@image_dims_when_disabled',false);
+self.$i_s('@image_position','left');
+self.$i_s('@image',self.$klass.$c_g_full('SWITCH_IMAGE'));
+self.$i_s('@alternate_image',self.$klass.$c_g_full('SWITCH_HIGHLIGHTED_IMAGE'));
+self.$i_s('@bordered',false);
+self.$i_s('@bezeled',false);
+return self.$i_s('@alignment','left');
+}
+else if(($e = VN$('radio', '===', $v),$e!==nil && $e!==false)){
+self.$i_s('@highlights_by','contents');
+self.$i_s('@shows_state_by','contents');
+self.$i_s('@image_dims_when_disabled',false);
+self.$i_s('@image_position','left');
+self.$i_s('@image',VN$(self.$klass.$c_g_full('Image'),'image_named','vn_radio'));
+self.$i_s('@alternate_image',VN$(self.$klass.$c_g_full('Image'),'image_named','vn_highlighted_radio'));
+self.$i_s('@bordered',false);
+self.$i_s('@bezeled',false);
+return self.$i_s('@alignment','left');
+}
+else if(($e = VN$('momentary_change', '===', $v),$e!==nil && $e!==false)){
+self.$i_s('@highlights_by','contents');
+self.$i_s('@shows_state_by','none');
+return self.$i_s('@image_dims_when_disabled',true);
+}
+else if(($e = VN$('on_off', '===', $v),$e!==nil && $e!==false)){
+self.$i_s('@highlights_by','change_background');
+self.$i_s('@shows_state_by','change_background');
+return self.$i_s('@image_dims_when_disabled',true);
+}
+else if(($e = VN$('momentary_push_in', '===', $v),$e!==nil && $e!==false)){
+self.$i_s('@highlights_by','push_in');
+self.$i_s('@shows_state_by','none');
+return self.$i_s('@image_dims_when_disabled',true);
+}
+})(a_type);
+VN$(self, 'did_change_value_for_key', 'type');
+});
+$VN_2.$def('type',function(self,_cmd){
+return self.$i_g('@type');
+});
+$VN_2.$def('opaque?',function(self,_cmd){
+return self.$i_g('@opaue');
+});
+$VN_2.$def('font=',function(self,_cmd,font_obj){
+VN$(self, 'will_change_value_for_key', 'font');
+self.$i_s('@font',font_obj);
+VN$(self, 'did_change_value_for_key', 'font');
 });
 $VN_2.$def('transparent?',function(self,_cmd){
 return self.$i_g('@transparent');
@@ -4147,57 +5037,53 @@ VN$(self, 'will_change_value_for_key', 'transparent');
 self.$i_s('@transparent',flag);
 VN$(self, 'did_change_value_for_key', 'transparent');
 });
+$VN_2.$def('set_periodic_delay:interval:',function(self,_cmd,delay,interval){
+});
+$VN_2.$def('get_periodic_delay:interval:',function(self,_cmd,delay,interval){
+});
 $VN_2.$def('key_equivalent',function(self,_cmd){
 return self.$i_g('@key_equivalent');
 });
-$VN_2.$def('key_equivalent=',function(self,_cmd,code){
+$VN_2.$def('key_equivalent=',function(self,_cmd,equiv){
 VN$(self, 'will_change_value_for_key', 'key_equivalent');
-self.$i_s('@key_equivalent',code);
+self.$i_s('@key_equivalent',equiv);
 VN$(self, 'did_change_value_for_key', 'key_equivalent');
-});
-$VN_2.$def('key_equivalent_modifier_mask',function(self,_cmd){
-return self.$i_g('@key_equivalent_modifier_mask');
 });
 $VN_2.$def('key_equivalent_modifier_mask=',function(self,_cmd,mask){
 VN$(self, 'will_change_value_for_key', 'key_equivalent_modifier_mask');
 self.$i_s('@key_equivalent_modifier_mask',mask);
 VN$(self, 'did_change_value_for_key', 'key_equivalent_modifier_mask');
 });
-$VN_2.$def('highlight=',function(self,_cmd,flag){
-VN$(self, 'will_change_value_for_key', 'highlight');
-VN$(self, 'did_change_value_for_key', 'highlight');
+$VN_2.$def('key_equivalent_modifier_mask',function(self,_cmd){
+return self.$i_g('@key_equivalent_modifier_mask');
 });
-$VN_2.$def('perform_key_equivalent',function(self,_cmd,key){
+$VN_2.$def('key_equivalent_font=',function(self,_cmd,font){
+VN$(self, 'will_change_value_for_key', 'key_equivalent_font');
+self.$i_s('@key_equivalent_font',font);
+VN$(self, 'did_change_value_for_key', 'key_equivalent_font');
 });
-$VN_2.$def('bezel=',function(self,_cmd,style){
-VN$(self, 'will_change_value_for_key', 'bezel');
-self.$i_s('@bezel',style);
-VN$(self, 'did_change_value_for_key', 'bezel');
+$VN_2.$def('key_equivalent_font',function(self,_cmd){
+return self.$i_g('@key_equivalent_font');
 });
-$VN_2.$def('bezel',function(self,_cmd){
-return self.$i_g('@bezel');
+$VN_2.$def('set_key_equivalent_font:size:',function(self,_cmd,font_name,size){
 });
-$VN_2.$def('allows_mixed_state=',function(self,_cmd,flag){
-VN$(self, 'will_change_value_for_key', 'allows_mixed_state');
-self.$i_s('@allows_mixed_state',flag);
-VN$(self, 'did_change_value_for_key', 'allows_mixed_state');
+$VN_2.$def('perform_click',function(self,_cmd,sender){
 });
-$VN_2.$def('allows_mixed_state?',function(self,_cmd){
-return self.$i_g('@allows_mixed_state');
+$VN_2.$def('draw_image:with_frame:in_view:',function(self,_cmd,images,frame,control_view){
 });
-$VN_2.$def('next_state',function(self,_cmd){
+$VN_2.$def('draw_title:with_frame:in_view:',function(self,_cmd,title,frame,control_view){
 });
-$VN_2.$def('class_name',function(self,_cmd){
-return ORTEST(self.$i_g('@class_name'),'vn-button');
+$VN_2.$def('draw_bezel_with_frame:in_view:',function(self,_cmd,frame,control_view){
 });
-$VN_2.$def('render',function(self,_cmd,context){
-if(RTEST(VN$(context,'first_time?'))){
-VN$(context,'<<',"<div class='left'></div>");
-VN$(context,'<<',"<div class='middle'></div>");
-VN$(context,'<<',"<div class='right'></div>");
-VN$(context,'<<',"<div class='title'>Wow!</div>");
-VN$(context,'<<',"<div class='image'></div>");
-VN$(context,'first_time=',false);
+$VN_2.$def('render_bezel_with_frame:in_view:',function(self,_cmd,cell_frame,control_view){
+var ctx = VN$(self.$klass.$c_g_full('RenderContext'),'current_context');
+if(RTEST(VN$(ctx,'first_time?'))){
+VN$(ctx,'<<',"<div class='left'></div>");
+VN$(ctx,'<<',"<div class='middle'></div>");
+VN$(ctx,'<<',"<div class='right'></div>");
+VN$(ctx,'<<',"<div class='title'>Wow!</div>");
+VN$(ctx,'<<',"<div class='image'></div>");
+VN$(ctx,'first_time=',false);
 }
 var class_name_array = [VN$(self, 'class_name'),VN$(self, 'theme_name')];
 if(!RTEST(VN$(self, 'enabled?'))){
@@ -4205,28 +5091,104 @@ VN$(class_name_array,'<<','disabled');
 }
 if(RTEST(VN$(self, 'bordered?'))){
 VN$(class_name_array,'<<','bordered');
+if(RTEST(ANDTEST(VN$(self, 'highlighted?'),VN$(self.$i_g('@highlights_by'),'==','push_in')))){
+VN$(class_name_array,'<<','highlighted');
 }
-if(RTEST(ORTEST(VN$(self, 'on?'),VN$(self, 'mixed?')))){
-VN$(class_name_array,'<<',VN$(self, 'state'));
+else{
 }
-return VN$(context,'class_name=',VN$(class_name_array,'join',' '));
+}
+return VN$(ctx,'class_name=',VN$(class_name_array,'join',' '));
+});
+$VN_2.$def('render_interior_with_frame:in_view:',function(self,_cmd,cell_frame,control_view){
+var ctx = VN$(self.$klass.$c_g_full('RenderContext'),'current_context');
+VN$(ctx,'selector','title',function(title){
+VN$(title,'inner_html=',self.$i_g('@title'));
+return VN$(title,'css',VN.$h('text_align',VN$(self, 'alignment')));
+});
+if(RTEST(self.$i_g('@image'))){
+if(RTEST(VN$(self, 'on?'))){
+VN$(self,'render_image:with_frame:in_view:',self.$i_g('@alternate_image'),cell_frame,control_view);
+}
+else{
+VN$(self,'render_image:with_frame:in_view:',self.$i_g('@image'),cell_frame,control_view);
+}
+}
+});
+$VN_2.$def('render_image:with_frame:in_view:',function(self,_cmd,image,frame,control_view){
+var ctx = VN$(self.$klass.$c_g_full('RenderContext'),'current_context');
+return VN$(ctx,'selector','image',function(img){
+return VN$(image,'render_in_rect',VN$(self.$klass.$c_g_full('Rect'),'new',0,0,VN$(VN$(image,'size'),'width'),VN$(VN$(image,'size'),'height')));
+});
+});
+$VN_2.$def('render_title:with_frame:in_view:',function(self,_cmd,title,frame,control_view){
+});
+$VN_2.$def('render_with_frame:in_view:',function(self,_cmd,cell_frame,control_view){
+self.$i_s('@control_view',control_view);
+if(RTEST(VN$(self, 'transparent?'))){
+return ;
+}
+VN$(self,'render_bezel_with_frame:in_view:',cell_frame,control_view);
+return VN$(self,'render_interior_with_frame:in_view:',cell_frame,control_view);
+});
+$VN_2.$def('mouse_entered',function(self,_cmd,the_event){
+});
+$VN_2.$def('mouse_exited',function(self,_cmd,the_event){
+});
+$VN_2.$def('background_color',function(self,_cmd){
+return self.$i_g('@background_color');
+});
+$VN_2.$def('background_color=',function(self,_cmd,color){
+VN$(self, 'will_change_value_for_key', 'background_color');
+self.$i_s('@background_color',color);
+VN$(self, 'did_change_value_for_key', 'background_color');
+});
+$VN_2.$def('attributed_title',function(self,_cmd){
+return self.$i_g('@attributed_title');
+});
+$VN_2.$def('attributed_title=',function(self,_cmd,obj){
+VN$(self, 'will_change_value_for_key', 'attributed_title');
+self.$i_s('@attributed_title',obj);
+VN$(self, 'did_change_value_for_key', 'attributed_title');
+});
+$VN_2.$def('attributed_alternate_title',function(self,_cmd){
+return self.$i_g('@attributed_alternate_title');
+});
+$VN_2.$def('attributed_alternate_title=',function(self,_cmd,obj){
+VN$(self, 'will_change_value_for_key', 'attributed_alternate_title');
+self.$i_s('@attributed_alternate_title',obj);
+VN$(self, 'did_change_value_for_key', 'attributed_alternate_title');
+});
+$VN_2.$def('bezel_style=',function(self,_cmd,bezel_style){
+VN$(self, 'will_change_value_for_key', 'bezel_style');
+self.$i_s('@bezel_style',bezel_style);
+VN$(self, 'did_change_value_for_key', 'bezel_style');
+});
+$VN_2.$def('bezel_style',function(self,_cmd){
+return self.$i_g('@bezel_style');
+});
+$VN_2.$def('sound=',function(self,_cmd,a_sound){
+VN$(self, 'will_change_value_for_key', 'sound');
+self.$i_g('@sound');
+VN$(self, 'did_change_value_for_key', 'sound');
+});
+$VN_2.$def('sound',function(self,_cmd){
+return self.$i_g('@sound');
 });
 
 var $VN_1 = RModule.define('Vienna');
 var $VN_2 = RClass.define_under($VN_1, 'CheckBox',$VN_2.$c_g_full('Button'));
 $VN_2.$def('initialize',function(self,_cmd,frame){
 VN$sup(arguments.callee, self,_cmd,[frame]);
-self.$i_s('@allows_mixed_state',true);
-return self.$i_s('@bordered',false);
-});
-$VN_2.$def('class_name',function(self,_cmd){
-return ORTEST(self.$i_g('@class_name'),'vn-check-box');
+return VN$(self,'type=','switch');
 });
 
 var $VN_1 = RModule.define('Vienna');
 var $VN_2 = RClass.define_under($VN_1, 'Slider',$VN_2.$c_g_full('Control'));
 $VN_2.$def('initialize',function(self,_cmd,frame){
 return VN$sup(arguments.callee, self,_cmd,[frame]);
+});
+$VN_2.$def_s('cell_class',function(self,_cmd){
+return self.$c_g_full('SliderCell');
 });
 $VN_2.$def('class_name',function(self,_cmd){
 return 'vn-slider';
@@ -4287,15 +5249,6 @@ return self.$i_g('@vertical');
 $VN_2.$def('accepts_first_mouse',function(self,_cmd,event){
 return true;
 });
-$VN_2.$def('render',function(self,_cmd,context){
-if(RTEST(VN$(context,'first_time?'))){
-VN$(context,'<<',"<div class='track-left'></div>");
-VN$(context,'<<',"<div class='track-middle'></div>");
-VN$(context,'<<',"<div class='track-right'></div>");
-VN$(context,'<<',"<div class='knob'></div>");
-}
-return VN$(context,'class_name=',VN$(self, 'class_name'));
-});
 VN$($VN_2,'attr_reader','number_of_tick_marks','tick_mark_position');
 $VN_2.$def('number_of_tick_marks=',function(self,_cmd,count){
 VN$(self, 'will_change_value_for_key', 'number_of_tick_marks');
@@ -4325,32 +5278,280 @@ $VN_2.$def('closest_tick_mark_value_to_value',function(self,_cmd,value){
 });
 
 var $VN_1 = RModule.define('Vienna');
+var $VN_2 = RClass.define_under($VN_1, 'SliderCell',$VN_2.$c_g_full('Cell'));
+$VN_2.$def_s('prefers_tracking_until_mouse_up',function(self,_cmd){
+return true;
+});
+$VN_2.$def('initialize',function(self,_cmd){
+return VN$sup(arguments.callee, self,_cmd,[]);
+});
+$VN_2.$def('class_name',function(self,_cmd){
+return 'vn-slider';
+});
+$VN_2.$def('render_with_frame:in_view:',function(self,_cmd,cell_frame,control_view){
+if(RTEST(VN$(VN$(self, 'render_context'),'first_time?'))){
+VN$(VN$(self, 'render_context'),'<<',"<div class='track-left'></div>");
+VN$(VN$(self, 'render_context'),'<<',"<div class='track-middle'></div>");
+VN$(VN$(self, 'render_context'),'<<',"<div class='track-right'></div>");
+VN$(VN$(self, 'render_context'),'<<',"<div class='knob'></div>");
+}
+return VN$(VN$(self, 'render_context'),'class_name=',VN$(self, 'class_name'));
+});
+$VN_2.$def('min_value',function(self,_cmd){
+return self.$i_g('@min_value');
+});
+$VN_2.$def('min_value=',function(self,_cmd,a_double){
+VN$(self, 'will_change_value_for_key', 'min_value');
+self.$i_s('@min_value',a_double);
+VN$(self, 'did_change_value_for_key', 'min_value');
+});
+$VN_2.$def('max_value',function(self,_cmd){
+return self.$i_g('@max_value');
+});
+$VN_2.$def('max_value=',function(self,_cmd,a_double){
+VN$(self, 'will_change_value_for_key', 'max_value');
+self.$i_s('@max_value',a_double);
+VN$(self, 'did_change_value_for_key', 'max_value');
+});
+$VN_2.$def('alt_increment_value=',function(self,_cmd,inc_value){
+VN$(self, 'will_change_value_for_key', 'alt_increment_value');
+self.$i_s('@alt_increment_value',inc_value);
+VN$(self, 'did_change_value_for_key', 'alt_increment_value');
+});
+$VN_2.$def('alt_increment_value',function(self,_cmd){
+return self.$i_g('@alt_increment_value');
+});
+$VN_2.$def('vertical?',function(self,_cmd){
+return false;
+});
+$VN_2.$def('title_color=',function(self,_cmd,color){
+VN$(self, 'will_change_value_for_key', 'title_color');
+self.$i_s('@title_color',color);
+VN$(self, 'did_change_value_for_key', 'title_color');
+});
+$VN_2.$def('title_font=',function(self,_cmd,font){
+VN$(self, 'will_change_value_for_key', 'title_font');
+self.$i_s('@title_font',font);
+VN$(self, 'did_change_value_for_key', 'title_font');
+});
+$VN_2.$def('title=',function(self,_cmd,str){
+VN$(self, 'will_change_value_for_key', 'title');
+self.$i_s('@title',str);
+VN$(self, 'did_change_value_for_key', 'title');
+});
+$VN_2.$def('knob_thickness=',function(self,_cmd,a_float){
+VN$(self, 'will_change_value_for_key', 'knob_thickness');
+self.$i_s('@knob_thickness',a_float);
+VN$(self, 'did_change_value_for_key', 'knob_thickness');
+});
+$VN_2.$def('image=',function(self,_cmd,img){
+VN$(self, 'will_change_value_for_key', 'image');
+self.$i_s('@image',img);
+VN$(self, 'did_change_value_for_key', 'image');
+});
+$VN_2.$def('number_of_tick_marks=',function(self,_cmd,count){
+VN$(self, 'will_change_value_for_key', 'number_of_tick_marks');
+self.$i_s('@number_of_tick_marks',count);
+VN$(self, 'did_change_value_for_key', 'number_of_tick_marks');
+});
+$VN_2.$def('tick_mark_position=',function(self,_cmd,pos){
+VN$(self, 'will_change_value_for_key', 'tick_mark_position');
+self.$i_s('@tick_mark_position',pos);
+VN$(self, 'did_change_value_for_key', 'tick_mark_position');
+});
+$VN_2.$def('allows_tick_mark_values_only=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'allows_tick_mark_values_only');
+self.$i_s('@allows_tick_mark_values_only',flag);
+VN$(self, 'did_change_value_for_key', 'allows_tick_mark_values_only');
+});
+$VN_2.$def('allows_tick_mark_values_only?',function(self,_cmd){
+return self.$i_g('@allows_tick_mark_values_only');
+});
+$VN_2.$def('tick_mark_value_at_index',function(self,_cmd,index){
+});
+$VN_2.$def('rect_of_tick_mark_at_index',function(self,_cmd,index){
+});
+$VN_2.$def('index_of_tick_mark_at_point',function(self,_cmd,point){
+});
+$VN_2.$def('closest_tick_mark_value_to_value',function(self,_cmd,value){
+});
+
+var $VN_1 = RModule.define('Vienna');
+$VN_1.$c_s('TEXTFIELD_BEZEL_STYLES',VN.$h('square', 0, 'rounded', 1));
 var $VN_2 = RClass.define_under($VN_1, 'TextField',$VN_2.$c_g_full('Control'));
+$VN_2.$def('initialize',function(self,_cmd,frame){
+VN$sup(arguments.callee, self,_cmd,[frame]);
+self.$i_s('@editable',true);
+return self.$i_s('@selectable',true);
+});
+$VN_2.$def_s('cell_class',function(self,_cmd){
+return self.$c_g_full('TextFieldCell');
+});
 $VN_2.$def('class_name',function(self,_cmd){
 return 'vn-text-field';
 });
-$VN_2.$def('setup_display_context',function(self,_cmd){
-VN$sup(arguments.callee, self,_cmd,[]);
-VN$(self.$i_g('@display_context'),'add_event_listener','mousedown',function(event){
-event._vn_allow_event_propagation = true;});
-return VN$(self.$i_g('@display_context'),'add_event_listener','mouseup',function(event){
-event._vn_allow_event_propagation = true;});
+$VN_2.$def('resign_first_responder',function(self,_cmd){
+VN$(self,'puts','resign first responder....');
+return true;
 });
-$VN_2.$def('render',function(self,_cmd,context){
-if(RTEST(VN$(context,'first_time?'))){
-VN$(context,'<<',"<div class='left'></div>");
-VN$(context,'<<',"<div class='middle'></div>");
-VN$(context,'<<',"<div class='right'></div>");
-VN$(context,'<<',"<input class='input'></div>");
-}
-return VN$(context,'class_name=',VN$(self, 'class_name'));
+$VN_2.$def('become_first_responder',function(self,_cmd){
+VN$(self,'puts','becoming first responder!!');
+VN$(VN$(self.$klass.$c_g_full('App'),'current_event'),'allows_propagation=',true);
+return true;
+});
+$VN_2.$def('mouse_down',function(self,_cmd,the_event){
+return VN$(VN$(self.$klass.$c_g_full('App'),'current_event'),'allows_propagation=',true);
+});
+$VN_2.$def('background_color=',function(self,_cmd,color){
+VN$(self, 'will_change_value_for_key', 'background_color');
+self.$i_s('@background_color',color);
+VN$(self, 'did_change_value_for_key', 'background_color');
+});
+$VN_2.$def('background_color',function(self,_cmd){
+return self.$i_g('@background_color');
+});
+$VN_2.$def('draws_background=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'draws_background');
+self.$i_s('@draws_background',flag);
+VN$(self, 'did_change_value_for_key', 'draws_background');
+});
+$VN_2.$def('draws_background?',function(self,_cmd){
+return self.$i_g('@draws_background');
+});
+$VN_2.$def('text_color=',function(self,_cmd,color){
+VN$(self, 'will_change_value_for_key', 'text_color');
+self.$i_s('@text_color',color);
+VN$(self, 'did_change_value_for_key', 'text_color');
+});
+$VN_2.$def('text_color',function(self,_cmd){
+return self.$i_g('@text_color');
+});
+$VN_2.$def('bordered?',function(self,_cmd){
+return self.$i_g('@bordered');
+});
+$VN_2.$def('bordered=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'bordered');
+self.$i_s('@bordered',flag);
+VN$(self, 'did_change_value_for_key', 'bordered');
+});
+$VN_2.$def('bezeled?',function(self,_cmd){
+return self.$i_g('@bezeled');
+});
+$VN_2.$def('bezeled=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'bezeled');
+self.$i_s('@bezeled',flag);
+VN$(self, 'did_change_value_for_key', 'bezeled');
+});
+$VN_2.$def('editable?',function(self,_cmd){
+return self.$i_g('@editable');
+});
+$VN_2.$def('editable=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'editable');
+self.$i_s('@editable',flag);
+VN$(self, 'did_change_value_for_key', 'editable');
+});
+$VN_2.$def('selectable?',function(self,_cmd){
+return self.$i_g('@selectable');
+});
+$VN_2.$def('selectable=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'selectable');
+self.$i_s('@selectable',flag);
+VN$(self, 'did_change_value_for_key', 'selectable');
+});
+$VN_2.$def('select_text',function(self,_cmd,sender){
+});
+$VN_2.$def('delegate',function(self,_cmd){
+return self.$i_g('@delegate');
+});
+$VN_2.$def('delegate=',function(self,_cmd,an_obj){
+VN$(self, 'will_change_value_for_key', 'delegate');
+self.$i_s('@delegate',an_obj);
+VN$(self, 'did_change_value_for_key', 'delegate');
+});
+$VN_2.$def('text_should_begin_editing?',function(self,_cmd,text_object){
+return true;
+});
+$VN_2.$def('text_should_end_editing?',function(self,_cmd,text_object){
+return true;
+});
+$VN_2.$def('text_did_begin_editing',function(self,_cmd,notification){
+});
+$VN_2.$def('text_did_end_editing',function(self,_cmd,notification){
+});
+$VN_2.$def('text_did_change',function(self,_cmd,notification){
+});
+$VN_2.$def('bezel_style=',function(self,_cmd,stlye){
+VN$(self, 'will_change_value_for_key', 'bezel_style');
+self.$i_s('@bezel_style',VN$(self, 'style'));
+VN$(self, 'did_change_value_for_key', 'bezel_style');
+});
+$VN_2.$def('bezel_style',function(self,_cmd){
+return self.$i_g('@bezel_style');
+});
+
+var $VN_1 = RModule.define('Vienna');
+var $VN_2 = RClass.define_under($VN_1, 'TextFieldCell',$VN_2.$c_g_full('Cell'));
+$VN_2.$def('class_name',function(self,_cmd){
+return 'vn-text-field';
+});
+$VN_2.$def('background_color=',function(self,_cmd,color){
+VN$(self, 'will_change_value_for_key', 'background_color');
+self.$i_s('@background_color',color);
+VN$(self, 'did_change_value_for_key', 'background_color');
+});
+$VN_2.$def('background_color',function(self,_cmd){
+return self.$i_g('@background_color');
+});
+$VN_2.$def('draws_background=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'draws_background');
+self.$i_s('@draws_background',flag);
+VN$(self, 'did_change_value_for_key', 'draws_background');
+});
+$VN_2.$def('draws_background?',function(self,_cmd){
+return self.$i_g('@draws_background');
+});
+$VN_2.$def('text_color=',function(self,_cmd,color){
+VN$(self, 'will_change_value_for_key', 'text_color');
+self.$i_s('@text_color',color);
+VN$(self, 'did_change_value_for_key', 'text_color');
+});
+$VN_2.$def('text_color',function(self,_cmd){
+return self.$i_g('@text_color');
+});
+$VN_2.$def('set_up_field_editor_attributes',function(self,_cmd,text_obj){
+return text_obj;
+});
+$VN_2.$def('bezel_style=',function(self,_cmd,style){
+VN$(self, 'will_change_value_for_key', 'bezel_style');
+self.$i_s('@bezel_style',style);
+VN$(self, 'did_change_value_for_key', 'bezel_style');
+});
+$VN_2.$def('bezel_style',function(self,_cmd){
+return self.$i_g('@bezel_style');
+});
+$VN_2.$def('placeholder_string=',function(self,_cmd,string){
+VN$(self, 'will_change_value_for_key', 'placeholder_string');
+self.$i_s('@placeholder_string',string);
+VN$(self, 'did_change_value_for_key', 'placeholder_string');
+});
+$VN_2.$def('placeholder_string',function(self,_cmd){
+return self.$i_g('@placeholder_string');
+});
+$VN_2.$def('placeholder_attributed_string=',function(self,_cmd,str){
+VN$(self, 'will_change_value_for_key', 'placeholder_attributed_string');
+self.$i_g('@placeholder_attributed_string');
+VN$(self, 'did_change_value_for_key', 'placeholder_attributed_string');
+});
+$VN_2.$def('placeholder_attributed_string',function(self,_cmd){
+return self.$i_g('@placeholder_attributed_string');
 });
 
 
 var $VN_1 = RModule.define('Vienna');
 var $VN_2 = RClass.define_under($VN_1, 'WindowView',$VN_2.$c_g_full('View'));
 $VN_2.$def('initialize',function(self,_cmd,frame,style_mask){
-return VN$sup(arguments.callee, self,_cmd,[frame]);
+VN$sup(arguments.callee, self,_cmd,[frame]);
+return self.$i_s('@style_mask',style_mask);
 });
 $VN_2.$def('class_name',function(self,_cmd){
 return 'vn-window-view';
@@ -4367,6 +5568,29 @@ if(RTEST(VN$(context,'first_time?'))){
 VN$(context,'first_time=',false);
 }
 return VN$(context,'class_name=',VN$(['vn-window-view'],'join',' '));
+});
+
+var $VN_1 = RModule.define('Vienna');
+var $VN_2 = RClass.define_under($VN_1, 'NormalWindowView',$VN_2.$c_g_full('WindowView'));
+$VN_2.$c_s('CLOSE_IMAGE',VN$($VN_2.$c_g_full('Image'),'sprite','controls',[10,10,36,36]));
+$VN_2.$c_s('CLOSE_HIGHLIGHTED_IMAGE',VN$($VN_2.$c_g_full('Image'),'sprite','controls',[0,0,36,36]));
+$VN_2.$def('initialize',function(self,_cmd,frame,style_mask){
+VN$sup(arguments.callee, self,_cmd,[frame,style_mask]);
+if(RTEST(VN$(self.$i_g('@style_mask'),'include?','closable'))){
+self.$i_s('@close_button',VN$(self.$klass.$c_g_full('Button'),'build',VN.$h('frame',VN$(self.$klass.$c_g_full('Rect'),'new',206,6,20,20),'bordered',false),function(close){
+VN$(close,'bordered=',false);
+VN$(close,'image_position=','image_only');
+VN$(close,'image=',self.$klass.$c_g_full('CLOSE_IMAGE'));
+VN$(close,'alternate_image=',self.$klass.$c_g_full('CLOSE_HIGHLIGHTED_IMAGE'));
+VN$(self,'<<',close);
+return VN$(close,'needs_display=',true);
+}));
+}
+if(RTEST(VN$(self.$i_g('@style_mask'),'include?','miniaturizable'))){
+self.$i_s('@min_button',VN$(self.$klass.$c_g_full('Button'),'build',VN.$h('frame',VN$(self.$klass.$c_g_full('Rect'),'new',10,10,300,300),'bordered',false),function(min){
+return VN$(self,'<<',min);
+}));
+}
 });
 var $VN_1 = RModule.define('Vienna');
 $VN_1.$c_s('WINDOW_MASKS',VN.$h('borderless', 0, 'titled', VN$((1),'<<',0), 'closable', VN$((1),'<<',1), 'miniaturizable', VN$((1),'<<',2), 'resizable', VN$((1),'<<',3), 'textured_background', VN$((1),'<<',8), 'unified_title_and_toolbar', VN$((1),'<<',12), 'close_button', 1, 'miniaturize_button', 1, 'zoom_button', 1, 'toolbar_button', 1, 'document_icon_button', 1, 'utility', VN$((1),'<<',4), 'doc_modal', VN$((1),'<<',6), 'hud', VN$((1),'<<',13)));
@@ -4389,7 +5613,7 @@ VN$(self.$i_g('@window_view'),'needs_display=',true);
 return VN$(self,'content_view=',VN$(self.$klass.$c_g_full('View'),'new',VN$(self.$klass.$c_g_full('Rect'),'new',0,0,VN$(self.$i_g('@frame'),'width'),VN$(self.$i_g('@frame'),'height'))));
 });
 $VN_2.$def_s('build',function(self,_cmd,options,block){
-var win = VN$(self,'new',VN$(options,'[]','frame'),VN$(options,'[]','style'));
+var win = VN$(self,'new',VN$(options,'[]','frame'),['titled','closable']);
 if(RTEST(block)){
 arguments[arguments.length -1](win);
 }
@@ -4402,21 +5626,22 @@ VN$(self.$i_g('@element'),'<<',self.$i_g('@display_context'));
 return VN$(self.$klass.$c_g_full('Document'),'<<',self.$i_g('@element'));
 });
 $VN_2.$def('setup_window_view',function(self,_cmd){
-self.$i_s('@window_view',VN$(self.$klass.$c_g_full('WindowView'),'new',VN$(self.$klass.$c_g_full('Rect'),'new',0,0,100,100),VN$(self, 'style_mask')));
-VN$(self.$i_g('@window_view'),'window=',self);
+self.$i_s('@window_view',VN$(self.$klass.$c_g_full('NormalWindowView'),'new',VN$(self.$klass.$c_g_full('Rect'),'new',0,0,100,100),self.$i_g('@style_mask')));
+VN$(self.$i_g('@window_view'),'view_will_move_to_window',self);
 VN$(self.$i_g('@window_view'),'next_responder=',self);
 VN$(self.$i_g('@element'),'<<',VN$(self.$i_g('@window_view'),'element'));
+VN$(self.$i_g('@window_view'),'view_did_move_to_window');
 VN$(VN$(self.$i_g('@window_view'),'element'),'add_event_listener','mousedown',function(event){
 var the_event = VN$(self.$klass.$c_g_full('Event'),'from_native_event:with_window:with_type:',event,self,'left_mouse_down');
-if(!RTEST(VN$(the_event,'allows_propagation?'))){
 VN$(self.$klass.$c_g_full('App'),'send_event',the_event);
+if(!RTEST(VN$(the_event,'allows_propagation?'))){
 VN$(the_event,'stop_propagation');
 }
 });
 return VN$(VN$(self.$i_g('@window_view'),'element'),'add_event_listener','mouseup',function(event){
 var the_event = VN$(self.$klass.$c_g_full('Event'),'from_native_event:with_window:with_type:',event,self,'left_mouse_up');
-if(!RTEST(VN$(the_event,'allows_propagation?'))){
 VN$(self.$klass.$c_g_full('App'),'send_event',the_event);
+if(!RTEST(VN$(the_event,'allows_propagation?'))){
 VN$(the_event,'stop_propagation');
 }
 });
@@ -4595,6 +5820,19 @@ VN$(self, 'did_change_value_for_key', 'preserves_content_during_live_resize');
 $VN_2.$def('update',function(self,_cmd){
 });
 $VN_2.$def('make_first_responder',function(self,_cmd,responder){
+if(RTEST(VN$(self.$i_g('@first_responder'),'==',responder))){
+return true;
+}
+if(!RTEST(VN$(self.$i_g('@first_responder'),'resign_first_responder'))){
+return false;
+}
+if(RTEST(ORTEST(NOTTEST(responder),ORTEST(NOTTEST(VN$(responder,'accepts_first_responder')),NOTTEST(VN$(responder,'become_first_responder')))))){
+self.$i_s('@first_responder',self);
+VN$(self,'puts','Cant make responder the first responder :(');
+return false;
+}
+self.$i_s('@first_responder',responder);
+return true;
 });
 $VN_2.$def('first_responder',function(self,_cmd){
 });
@@ -4786,7 +6024,12 @@ return VN$(self,'puts','key_down');
 }
 else if(($e = VN$('left_mouse_down', '===', $v),$e!==nil && $e!==false)){
 var hit_test = VN$(self.$i_g('@window_view'),'hit_test',point);
+if(RTEST(ANDTEST(VN$(hit_test,'!=',self.$i_g('@first_responder')),VN$(hit_test,'accepts_first_responder')))){
+VN$(self,'make_first_responder',hit_test);
+}
+if(RTEST(VN$(hit_test,'accepts_first_mouse',event))){
 return VN$(hit_test,'mouse_down',event);
+}
 }
 else if(($e = VN$('left_mouse_up', '===', $v),$e!==nil && $e!==false)){
 return VN$(self,'puts','left_mouse_up');
@@ -4932,19 +6175,35 @@ VN$($VN_1.$klass.$c_g_full('VN').$c_g('App'),'delegate=',app_delegate);
 return VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('Window'),'build',VN.$h('frame',VN$($VN_1.$klass.$c_g_full('VN').$c_g('Rect'),'new',100,100,400,400),'title','My Window!'),function(win){
 VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('Button'),'build',VN.$h('frame',VN$($VN_1.$klass.$c_g_full('VN').$c_g('Rect'),'new',10,10,90,24),'bezel','rounded'),function(button){
 VN$(win,'<<',button);
+VN$(button,'title=','Normal');
+VN$(button,'alignment=','left');
 return VN$(button,'needs_display=',true);
 });
-VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('Slider'),'build',VN.$h('frame',VN$($VN_1.$klass.$c_g_full('VN').$c_g('Rect'),'new',10,50,90,24),'bezel','rounded'),function(slider){
-VN$(win,'<<',slider);
-return VN$(slider,'needs_display=',true);
+VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('Button'),'build',VN.$h('frame',VN$($VN_1.$klass.$c_g_full('VN').$c_g('Rect'),'new',10,40,90,24),'bezel','rounded'),function(button){
+VN$(win,'<<',button);
+VN$(button,'title=','Disabled');
+VN$(button,'enabled=',false);
+VN$(button,'alignment=','center');
+return VN$(button,'needs_display=',true);
 });
-VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('TextField'),'build',VN.$h('frame',VN$($VN_1.$klass.$c_g_full('VN').$c_g('Rect'),'new',10,70,180,32),'editable',true),function(text){
-VN$(win,'<<',text);
-return VN$(text,'needs_display=',true);
+VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('Button'),'build',VN.$h('frame',VN$($VN_1.$klass.$c_g_full('VN').$c_g('Rect'),'new',10,70,90,24),'bezel','rounded'),function(button){
+VN$(win,'<<',button);
+VN$(button,'title=','Right');
+VN$(button,'enabled=',false);
+VN$(button,'alignment=','right');
+return VN$(button,'needs_display=',true);
 });
-return VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('CheckBox'),'build',VN.$h('frame',VN$($VN_1.$klass.$c_g_full('VN').$c_g('Rect'),'new',10,100,90,24),'bezel','rounded'),function(check){
-VN$(win,'<<',check);
-return VN$(check,'needs_display=',true);
+VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('CheckBox'),'build',VN.$h('frame',VN$($VN_1.$klass.$c_g_full('VN').$c_g('Rect'),'new',10,100,90,24),'bezel','rounded'),function(button){
+VN$(win,'<<',button);
+VN$(button,'title=','Check');
+VN$(button,'enabled=',true);
+return VN$(button,'needs_display=',true);
+});
+return VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('CheckBox'),'build',VN.$h('frame',VN$($VN_1.$klass.$c_g_full('VN').$c_g('Rect'),'new',10,130,90,24),'bezel','rounded'),function(button){
+VN$(win,'<<',button);
+VN$(button,'title=','Checkon');
+VN$(button,'state=','on');
+return VN$(button,'needs_display=',true);
 });
 });
 });

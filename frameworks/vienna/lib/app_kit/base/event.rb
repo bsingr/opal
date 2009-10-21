@@ -95,6 +95,10 @@ module Vienna
       `return #{@event}._vn_allow_event_propagation? true : false;`
     end
     
+    def allows_propagation= flag
+      `#{@event}._vn_allow_event_propagation = flag;`
+    end
+    
     def type
       @type
     end
@@ -105,6 +109,10 @@ module Vienna
     
     def timestamp
       
+    end
+    
+    def window= a_window
+      @window = a_window
     end
     
     def window

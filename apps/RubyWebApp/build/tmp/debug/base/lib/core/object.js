@@ -76,7 +76,7 @@ cBasicObject.$def('!', function(self, _cmd, obj) {
 });
 
 cBasicObject.$def('!=', function(self, _cmd, obj) {
-  
+  return (self == obj) ? false : true ;
 });
 
 cBasicObject.$define_private_method('singleton_method_added', function() {

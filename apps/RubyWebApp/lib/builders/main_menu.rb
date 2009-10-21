@@ -35,24 +35,60 @@ module RubyWebApp
         
       Vienna::Button.build :frame => VN::Rect.new(10,10,90,24), :bezel => :rounded do |button|
         win << button
+        button.title = 'Normal'
+        button.alignment = :left
         # button.theme_name = :my_theme
         button.needs_display = true
       end
-          
-      Vienna::Slider.build :frame => VN::Rect.new(10,50,90,24), :bezel => :rounded do |slider|
-        win << slider
-        slider.needs_display = true
+      
+      Vienna::Button.build :frame => VN::Rect.new(10,40,90,24), :bezel => :rounded do |button|
+        win << button
+        button.title = 'Disabled'
+        button.enabled = false
+        button.alignment = :center
+        # button.theme_name = :my_theme
+        button.needs_display = true
       end
       
-      Vienna::TextField.build :frame => VN::Rect.new(10, 70, 180, 32), :editable => true do |text|
-        win << text
-        text.needs_display = true
+      Vienna::Button.build :frame => VN::Rect.new(10,70,90,24), :bezel => :rounded do |button|
+        win << button
+        button.title = 'Right'
+        button.enabled = false
+        button.alignment = :right
+        # button.theme_name = :my_theme
+        button.needs_display = true
       end
       
-      Vienna::CheckBox.build :frame => VN::Rect.new(10,100,90,24), :bezel => :rounded do |check|
-        win << check
-        check.needs_display = true
-      end    
+      Vienna::CheckBox.build :frame => VN::Rect.new(10,100,90,24), :bezel => :rounded do |button|
+        win << button
+        button.title = 'Check'
+        button.enabled = true
+
+        button.needs_display = true
+      end
+    
+      Vienna::CheckBox.build :frame => VN::Rect.new(10,130,90,24), :bezel => :rounded do |button|
+        win << button
+        button.title = 'Checkon'
+        button.state = :on
+
+        button.needs_display = true
+      end
+      #     
+      # Vienna::Slider.build :frame => VN::Rect.new(10,50,90,24), :bezel => :rounded do |slider|
+      #   win << slider
+      #   slider.needs_display = true
+      # end
+      # 
+      # Vienna::TextField.build :frame => VN::Rect.new(10, 70, 180, 26), :editable => true do |text|
+      #   win << text
+      #   text.needs_display = true
+      # end
+      # 
+      # Vienna::CheckBox.build :frame => VN::Rect.new(10,100,90,24), :bezel => :rounded do |check|
+      #   win << check
+      #   check.needs_display = true
+      # end    
     end  
   end
 end

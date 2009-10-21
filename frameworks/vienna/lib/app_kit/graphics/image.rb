@@ -49,7 +49,8 @@ module Vienna
         
       end
       # lastly, try and load from a url
-      img = image_with_contents_of_url name
+      # img = image_with_contents_of_url 'images/' + name + '.png'
+      img = image_with_contents_of_url "images/#{name}.png"
       named_images[name] = img
       img
       #    need to add to known images...
@@ -79,15 +80,40 @@ module Vienna
     def self.resource name, &block
       img = image_named name
       yield img
-      
-      # if named_images.has_key? name
-        # return named_images[name]
-        # yield named_images[name]
-      # end
+    end
+    
+    def self.sprite name, rect
+      # puts 'lookinf for #{name}'
+      img = image_named name
+      # puts img
+      obj = self.new
+      obj.image = img.image
+      obj.filename = img.filename
+      obj.size = Size.new(rect[2], rect[3])
+      obj.sprite_origin = Point.new(rect[0], rect[1])
+      obj
+    end
+    
+    # Sprite cell masks to add any representations in block into the image
+    def self.sprite_cell_masks name, &block
+      img = image_named name
+      obj = self.new
+      obj.image = img.image
+      obj.filename = img.filename
+      yield obj
+      obj
+    end
+    
+    def add_representation type, size:size, rect:array_rect
+      unless @representations.has_key? size
+        @representations[size] = {}
+      end
+      @representations[size][type] = array_rect
     end
     
     def initialize
       super
+      @representations = {}
     end
     
     def init_with_size size
@@ -106,9 +132,9 @@ module Vienna
     
     def init_with_contents_of_url url
       initialize
-      # puts 'needs image named #{url}'
+      puts 'needs image named #{url}'
       @filename = url
-      @status = :loading
+      # @status = :loading
       @image = nil
       load
     end
@@ -152,20 +178,42 @@ module Vienna
     end
     
     def _image_did_load
-      puts 'WAYYY'
+      @size =  Size.new(`#{@image}.width`, `#{@image}.height`)
+      puts 'SETTING size to '
     end
     
     def sprite name, rect
-      # puts "Making sprite named #{name}"
+      puts "Making sprite named #{name}"
+      self
     end
     
+    def image
+      @image
+    end
+    
+    def image= img
+      @image = img
+    end
+    
+    def filename= name
+      @filename = name
+    end
+    
+    def filename
+      @filename
+    end
+    
+    def sprite_origin= point
+      @sprite_origin = point
+    end
     
     def size= size
       @size = size
     end
     
     def size
-      @size
+      # if not loaded, set size to 0x0
+      @size || Size.new(0, 0)
     end
     
     def name= name
@@ -190,6 +238,17 @@ module Vienna
     
     def draw_in_rect rect, from_rect:from_rect, operation:op, fraction:delta
       
+    end
+    
+    def render_in_rect rect
+      ctx = RenderContext.current_context
+      ctx.css :display => :block, :background_image => "url('#{filename}')"
+      ctx.css :width => "#{rect.width}px", :height => "#{rect.height}px"
+      ctx.css :left => "#{rect.x}px", :top => "#{rect.y}px"
+      
+      if @sprite_origin
+        ctx.css :background_position =>"-#{@sprite_origin.x}px -#{@sprite_origin.y}px"
+      end
     end
     
     def draw_representation image_rep, in_rect:rect
