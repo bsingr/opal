@@ -1,80 +1,14 @@
 var $VN_1 = RModule.define('Vienna');
 var $VN_2 = RClass.define_under($VN_1, 'ButtonCell',$VN_2.$c_g_full('Cell'));
-$VN_2.$c_s('SWITCH_IMAGE_REGULAR',VN$($VN_2.$c_g_full('Image'),'sprite_cell_masks','controls',function(s){
-VN$(s,'add_representation:rect:','normal',[0,357,16,16]);
-VN$(s,'add_representation:rect:','gray_mask',[0,357,16,16]);
-return VN$(s,'add_representation:rect:','disabled',[0,357,16,16]);
-}));
-$VN_2.$c_s('SWITCH_IMAGE_SMALL',VN$($VN_2.$c_g_full('Image'),'sprite_cell_masks','controls',function(s){
-VN$(s,'add_representation:rect:','normal',[0,357,16,16]);
-VN$(s,'add_representation:rect:','gray_mask',[0,357,16,16]);
-return VN$(s,'add_representation:rect:','disabled',[0,357,16,16]);
-}));
-$VN_2.$c_s('SWITCH_IMAGE_MINI',VN$($VN_2.$c_g_full('Image'),'sprite_cell_masks','controls',function(s){
-VN$(s,'add_representation:rect:','normal',[0,357,16,16]);
-VN$(s,'add_representation:rect:','gray_mask',[0,357,16,16]);
-return VN$(s,'add_representation:rect:','disabled',[0,357,16,16]);
-}));
-$VN_2.$c_s('SWITCH_HIGHLIGHTED_IMAGE_REGULAR',VN$($VN_2.$c_g_full('Image'),'sprite_cell_masks','controls',function(s){
-VN$(s,'add_representation:rect:','normal',[16,357,16,16]);
-VN$(s,'add_representation:rect:','gray_mask',[16,357,16,16]);
-return VN$(s,'add_representation:rect:','disabled',[16,357,16,16]);
-}));
-$VN_2.$c_s('SWITCH_HIGHLIGHTED_IMAGE_SMALL',VN$($VN_2.$c_g_full('Image'),'sprite_cell_masks','controls',function(s){
-VN$(s,'add_representation:rect:','normal',[16,357,16,16]);
-VN$(s,'add_representation:rect:','gray_mask',[16,357,16,16]);
-return VN$(s,'add_representation:rect:','disabled',[16,357,16,16]);
-}));
-$VN_2.$c_s('SWITCH_HIGHLIGHTED_IMAGE_MINI',VN$($VN_2.$c_g_full('Image'),'sprite_cell_masks','controls',function(s){
-VN$(s,'add_representation:rect:','normal',[16,357,16,16]);
-VN$(s,'add_representation:rect:','gray_mask',[16,357,16,16]);
-return VN$(s,'add_representation:rect:','disabled',[16,357,16,16]);
-}));
-$VN_2.$c_s('SWITCH_IMAGE_REGULAR_GRAPHITE',$VN_2.$c_g_full('SWITCH_IMAGE_REGULAR'));
-$VN_2.$c_s('SWITCH_IMAGE_SMALL_GRAPHITE',$VN_2.$c_g_full('SWITCH_IMAGE_SMALL'));
-$VN_2.$c_s('SWITCH_IMAGE_MINI_GRAPHITE',$VN_2.$c_g_full('SWITCH_IMAGE_MINI'));
-$VN_2.$c_s('SWITCH_HIGHLIGHTED_IMAGE_REGULAR_GRAPHITE',VN$($VN_2.$c_g_full('Image'),'sprite_cell_masks','controls',function(s){
-VN$(s,'add_representation:rect:','normal',[16,357,16,16]);
-VN$(s,'add_representation:rect:','gray_mask',[16,357,16,16]);
-return VN$(s,'add_representation:rect:','disabled',[16,357,16,16]);
-}));
-$VN_2.$c_s('SWITCH_HIGHLIGHTED_IMAGE_SMALL_GRAPHITE',VN$($VN_2.$c_g_full('Image'),'sprite_cell_masks','controls',function(s){
-VN$(s,'add_representation:rect:','normal',[16,357,16,16]);
-VN$(s,'add_representation:rect:','gray_mask',[16,357,16,16]);
-return VN$(s,'add_representation:rect:','disabled',[16,357,16,16]);
-}));
-$VN_2.$c_s('SWITCH_HIGHLIGHTED_IMAGE_MINI_GRAPHITE',VN$($VN_2.$c_g_full('Image'),'sprite_cell_masks','controls',function(s){
-VN$(s,'add_representation:rect:','normal',[16,357,16,16]);
-VN$(s,'add_representation:rect:','gray_mask',[16,357,16,16]);
-return VN$(s,'add_representation:rect:','disabled',[16,357,16,16]);
-}));
-$VN_2.$c_s('SWITCH_IMAGE_REGULAR_HUD',VN$($VN_2.$c_g_full('Image'),'sprite_cell_masks','controls',function(s){
-VN$(s,'add_representation:rect:','normal',[0,357,16,16]);
-VN$(s,'add_representation:rect:','gray_mask',[0,357,16,16]);
-return VN$(s,'add_representation:rect:','disabled',[0,357,16,16]);
-}));
-$VN_2.$c_s('SWITCH_IMAGE_SMALL_HUD',VN$($VN_2.$c_g_full('Image'),'sprite_cell_masks','controls',function(s){
-VN$(s,'add_representation:rect:','normal',[0,357,16,16]);
-VN$(s,'add_representation:rect:','gray_mask',[0,357,16,16]);
-return VN$(s,'add_representation:rect:','disabled',[0,357,16,16]);
-}));
-$VN_2.$c_s('SWITCH_IMAGE_MINI_HUD',VN$($VN_2.$c_g_full('Image'),'sprite_cell_masks','controls',function(s){
-VN$(s,'add_representation:rect:','normal',[0,357,16,16]);
-VN$(s,'add_representation:rect:','gray_mask',[0,357,16,16]);
-return VN$(s,'add_representation:rect:','disabled',[0,357,16,16]);
-}));
-$VN_2.$c_s('SWITCH_HIGHLIGHTED_IMAGE_REGULAR_HUD',VN$($VN_2.$c_g_full('Image'),'sprite_cell_masks','controls',function(s){
-VN$(s,'add_representation:rect:','normal',[16,357,16,16]);
-VN$(s,'add_representation:rect:','gray_mask',[16,357,16,16]);
-return VN$(s,'add_representation:rect:','disabled',[16,357,16,16]);
-}));
-$VN_2.$c_s('SWITCH_HIGHLIGHTED_IMAGE_SMALL_HUD',VN$($VN_2.$c_g_full('Image'),'sprite_cell_masks','controls',function(s){
-VN$(s,'add_representation:rect:','normal',[16,357,16,16]);
-VN$(s,'add_representation:rect:','gray_mask',[16,357,16,16]);
-return VN$(s,'add_representation:rect:','disabled',[16,357,16,16]);
-}));
-$VN_2.$c_s('SWITCH_HIGHLIGHTED_IMAGE_MINI_HUD',VN$($VN_2.$c_g_full('Image'),'sprite_cell_masks','controls',function(s){
-VN$(s,'add_representation:rect:','normal',[16,357,16,16]);
-VN$(s,'add_representation:rect:','gray_mask',[16,357,16,16]);
-return VN$(s,'add_representation:rect:','disabled',[16,357,16,16]);
-}));
+$VN_2.$c_s('SWITCH_IMAGE_REGULAR',VN$($VN_2.$c_g_full('Image'),'sprite:normal:gray_mask:disabled:','controls',[0,0,15,16],[0,17,15,16],[0,34,15,16]));
+$VN_2.$c_s('SWITCH_HIGHLIGHTED_IMAGE_REGULAR',VN$($VN_2.$c_g_full('Image'),'sprite:normal:gray_mask:disabled:','controls',[16,0,15,16],[16,17,15,16],[16,34,15,16]));
+$VN_2.$c_s('SWITCH_IMAGE_SMALL',VN$($VN_2.$c_g_full('Image'),'sprite:normal:gray_mask:disabled:','controls',[0,51,12,13],[0,65,12,13],[0,79,12,13]));
+$VN_2.$c_s('SWITCH_HIGHLIGHTED_IMAGE_SMALL',VN$($VN_2.$c_g_full('Image'),'sprite:normal:gray_mask:disabled:','controls',[13,51,12,13],[13,65,12,13],[13,79,12,13]));
+$VN_2.$c_s('SWITCH_IMAGE_MINI',VN$($VN_2.$c_g_full('Image'),'sprite:normal:gray_mask:disabled:','controls',[0,93,10,11],[0,105,10,11],[0,117,10,11]));
+$VN_2.$c_s('SWITCH_HIGHLIGHTED_IMAGE_MINI',VN$($VN_2.$c_g_full('Image'),'sprite:normal:gray_mask:disabled:','controls',[11,93,10,11],[11,105,10,11],[11,117,10,11]));
+$VN_2.$c_s('SWITCH_IMAGE_REGULAR_GRAPHITE',VN$($VN_2.$c_g_full('Image'),'sprite:normal:gray_mask:disabled:','controls',[0,129,15,16],[0,146,15,16],[0,163,15,16]));
+$VN_2.$c_s('SWITCH_HIGHLIGHTED_IMAGE_REGULAR_GRAPHITE',VN$($VN_2.$c_g_full('Image'),'sprite:normal:gray_mask:disabled:','controls',[16,129,15,16],[16,146,15,16],[16,163,15,16]));
+$VN_2.$c_s('SWITCH_IMAGE_SMALL_GRAPHITE',VN$($VN_2.$c_g_full('Image'),'sprite:normal:gray_mask:disabled:','controls',[0,180,12,13],[0,194,12,13],[0,208,12,13]));
+$VN_2.$c_s('SWITCH_HIGHLIGHTED_IMAGE_SMALL_GRAPHITE',VN$($VN_2.$c_g_full('Image'),'sprite:normal:gray_mask:disabled:','controls',[13,180,12,13],[13,194,12,13],[13,208,12,13]));
+$VN_2.$c_s('SWITCH_IMAGE_MINI_GRAPHITE',VN$($VN_2.$c_g_full('Image'),'sprite:normal:gray_mask:disabled:','controls',[0,222,10,11],[0,234,10,11],[0,246,10,11]));
+$VN_2.$c_s('SWITCH_HIGHLIGHTED_IMAGE_MINI_GRAPHITE',VN$($VN_2.$c_g_full('Image'),'sprite:normal:gray_mask:disabled:','controls',[11,222,10,11],[11,234,10,11],[11,246,10,11]));

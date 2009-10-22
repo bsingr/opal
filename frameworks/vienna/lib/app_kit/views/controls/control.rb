@@ -137,6 +137,22 @@ module Vienna
       @cell.enabled = flag
     end
     
+    def control_tint
+      @cell.control_tint
+    end
+    
+    def control_tint= control_tint
+      @cell.control_tint = control_tint
+    end
+    
+    def control_size= size
+      @cell.control_size = size
+    end
+    
+    def control_size
+      @cell.control_size
+    end
+    
     def alignment
       @cell.alignment
     end

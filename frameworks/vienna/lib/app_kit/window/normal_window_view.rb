@@ -29,8 +29,14 @@ module Vienna
   # 'Normal' window view for standard windows
   class NormalWindowView < WindowView
         
-    CLOSE_IMAGE = Image.sprite :controls, [10, 10, 36, 36]
-    CLOSE_HIGHLIGHTED_IMAGE = Image.sprite :controls, [0, 0, 36, 36]
+    CLOSE_IMAGE = Image.sprite :controls, [0, 855, 16, 16]
+    CLOSE_HIGHLIGHTED_IMAGE = Image.sprite :controls, [16, 855, 16, 16]
+    
+    MIN_IMAGE = Image.sprite :controls, [0, 872, 16, 16]
+    MIN_HIGHLIGHTED_IMAGE = Image.sprite :controls, [16, 872, 16, 16]
+    
+    ZOOM_IMAGE = Image.sprite :controls, [0, 889, 16, 16]
+    ZOOM_HIGHLIGHTED_IMAGE = Image.sprite :controls, [16, 889, 16, 16]
     
     # CLOSE_IMAGE = Image.image_named :vn_normal_win_close
     # CLOSE_HIGHLIGHTED_IMAGE = Image.image_named :vn_normal_win_close_highlight
@@ -39,7 +45,7 @@ module Vienna
       super frame, style_mask
       
       if @style_mask.include? :closable
-        @close_button = Button.build :frame => Rect.new(206, 6, 20, 20), :bordered => false do |close|
+        @close_button = Button.build :frame => Rect.new(206, 6, 16, 16), :bordered => false do |close|
           close.bordered = false
           close.image_position = :image_only
           close.image = CLOSE_IMAGE

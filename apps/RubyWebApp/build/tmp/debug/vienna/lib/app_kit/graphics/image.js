@@ -28,6 +28,16 @@ VN$(obj,'filename=',VN$(img,'filename'));
 VN$(obj,'add_representation:rect:','normal',rect);
 return obj;
 });
+$VN_2.$def_s('sprite:normal:gray_mask:disabled:',function(self,_cmd,image,normal,gray_mask,disabled){
+var img = VN$(self,'image_named',image);
+var obj = VN$(self,'new');
+VN$(obj,'image=',VN$(img,'image'));
+VN$(obj,'filename=',VN$(img,'filename'));
+VN$(obj,'add_representation:rect:','normal',normal);
+VN$(obj,'add_representation:rect:','gray_mask',gray_mask);
+VN$(obj,'add_representation:rect:','disabled',disabled);
+return obj;
+});
 $VN_2.$def_s('sprite_cell_masks',function(self,_cmd,name,block){
 var img = VN$(self,'image_named',name);
 var obj = VN$(self,'new');

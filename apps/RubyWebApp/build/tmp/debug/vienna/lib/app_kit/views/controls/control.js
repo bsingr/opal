@@ -96,6 +96,22 @@ VN$(self, 'will_change_value_for_key', 'enabled');
 VN$(self.$i_g('@cell'),'enabled=',flag);
 VN$(self, 'did_change_value_for_key', 'enabled');
 });
+$VN_2.$def('control_tint',function(self,_cmd){
+return VN$(self.$i_g('@cell'),'control_tint');
+});
+$VN_2.$def('control_tint=',function(self,_cmd,control_tint){
+VN$(self, 'will_change_value_for_key', 'control_tint');
+VN$(self.$i_g('@cell'),'control_tint=',control_tint);
+VN$(self, 'did_change_value_for_key', 'control_tint');
+});
+$VN_2.$def('control_size=',function(self,_cmd,size){
+VN$(self, 'will_change_value_for_key', 'control_size');
+VN$(self.$i_g('@cell'),'control_size=',size);
+VN$(self, 'did_change_value_for_key', 'control_size');
+});
+$VN_2.$def('control_size',function(self,_cmd){
+return VN$(self.$i_g('@cell'),'control_size');
+});
 $VN_2.$def('alignment',function(self,_cmd){
 return VN$(self.$i_g('@cell'),'alignment');
 });

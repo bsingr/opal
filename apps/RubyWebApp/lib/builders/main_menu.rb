@@ -63,6 +63,8 @@ module RubyWebApp
         win << button
         button.title = 'Check'
         button.enabled = true
+        
+        button.control_size = :small
 
         button.needs_display = true
       end
@@ -71,6 +73,7 @@ module RubyWebApp
         win << button
         button.title = 'Checkon'
         button.state = :on
+        button.control_tint = :graphite
 
         button.needs_display = true
       end

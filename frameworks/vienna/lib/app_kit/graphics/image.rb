@@ -83,6 +83,7 @@ module Vienna
     end
     
     def self.sprite name, rect
+      # puts 'self.sprite'
       img = image_named name
       obj = self.new
       obj.image = img.image
@@ -93,8 +94,24 @@ module Vienna
       obj
     end
     
+    
+    def self.sprite image, normal:normal, gray_mask:gray_mask, disabled:disabled
+      # puts 'self.sprite:normal:gray_mask:disabled: #{image}'
+      img = image_named image
+      obj = self.new
+      obj.image = img.image
+      obj.filename = img.filename
+      obj.add_representation :normal, rect:normal
+      obj.add_representation :gray_mask, rect:gray_mask
+      obj.add_representation :disabled, rect:disabled
+      obj
+    end
+    
+    
+    
     # Sprite cell masks to add any representations in block into the image
     def self.sprite_cell_masks name, &block
+      # puts 'self.sprite_cell_masks'
       img = image_named name
       obj = self.new
       obj.image = img.image

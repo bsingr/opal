@@ -27,12 +27,14 @@ VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('CheckBox'),'build',VN.$h('frame',VN$(
 VN$(win,'<<',button);
 VN$(button,'title=','Check');
 VN$(button,'enabled=',true);
+VN$(button,'control_size=','small');
 return VN$(button,'needs_display=',true);
 });
 return VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('CheckBox'),'build',VN.$h('frame',VN$($VN_1.$klass.$c_g_full('VN').$c_g('Rect'),'new',10,130,90,24),'bezel','rounded'),function(button){
 VN$(win,'<<',button);
 VN$(button,'title=','Checkon');
 VN$(button,'state=','on');
+VN$(button,'control_tint=','graphite');
 return VN$(button,'needs_display=',true);
 });
 });
