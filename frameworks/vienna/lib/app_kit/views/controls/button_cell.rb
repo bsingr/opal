@@ -30,8 +30,8 @@ module Vienna
   
   class ButtonCell < Cell
     
-    SWITCH_IMAGE = Image.sprite :controls, [0, 357, 16, 16]
-    SWITCH_HIGHLIGHTED_IMAGE = Image.sprite :controls, [16, 357, 16, 16]
+    # SWITCH_IMAGE = Image.sprite :controls, [0, 357, 16, 16]
+    # SWITCH_HIGHLIGHTED_IMAGE = Image.sprite :controls, [16, 357, 16, 16]
         
     def init_text_cell str
       super str
@@ -79,34 +79,35 @@ module Vienna
     # in which case change _BLUE to _GRAPHITE so default also lies to _BLUE, as 
     # well as if the user doesnt set anything (i.e. it uses default => blue)
     def _update_button_images
-      size_str = ''
-      tint_str = ''
-      
-      case @control_size
-      when :regular
-        size_str = '_REGULAR'
+
+      size_str = case @control_size
       when :small
-        size_str = '_SMALL'
+        '_SMALL'
       when :mini
-        size_str = '_MINI'
-      end
-      
-      case @control_tint
-      when :blue
-        tint_str = '_BLUE'
-      when :hud
-        tint_str = '_HUD'
+        '_MINI'
       else
-        # graphite or default, or anything else really..
+        '_REGULAR'
+      end
+
+      tint_str = case @control_tint
+      when :graphite
+        '_GRAPHITE'
+      when :hud
+        '_HUD'
+      else
+        ''
       end
       
       if @type == :switch
-        @image = "SWITCH_IMAGE#{size_str}#{tint_str}"
-        @alternate_image = "SWITCH_HIGHLIGHTED_IMAGE#{size_str}#{tint_str}"
+        img_name = "SWITCH_IMAGE#{size_str}#{tint_str}"
+        alt_img_name = "SWITCH_HIGHLIGHTED_IMAGE#{size_str}#{tint_str}"
       elsif @type == :radio
-        @image = "RADIO_IMAGE#{size_str}#{tint_str}"
-        @alternate_image = "RADIO_HIGHLIGHTED_IMAGE#{size_str}#{tint_str}"
+        img_name = "RADIO_IMAGE#{size_str}#{tint_str}"
+        alt_img_name= "SWITCH_HIGHLIGHTED_IMAGE#{size_str}#{tint_str}"
       end
+      
+      @image = `self.$klass.$c_g(#{img_name})`
+      @alternate_image = `self.$klass.$c_g(#{alt_img_name})`
     end
     
     
@@ -216,10 +217,13 @@ module Vienna
       when :switch
         @highlights_by = :contents
         @shows_state_by = :contents
-        @image_dims_when_disabled = false
+        # @image_dims_when_disabled = false
+        # true for 'better looking'
+        @image_dims_when_disabled = true
         @image_position = :left
-        @image = SWITCH_IMAGE
-        @alternate_image = SWITCH_HIGHLIGHTED_IMAGE
+        # @image = SWITCH_IMAGE
+        # @alternate_image = SWITCH_HIGHLIGHTED_IMAGE
+        _update_button_images
         @bordered = false
         @bezeled = false
         @alignment = :left
@@ -227,10 +231,13 @@ module Vienna
       when :radio
         @highlights_by = :contents
         @shows_state_by = :contents
-        @image_dims_when_disabled = false
+        # @image_dims_when_disabled = false
+        # true for 'better looking'
+        @image_dims_when_disabled = true
         @image_position = :left
-        @image = Image.image_named :vn_radio
-        @alternate_image = Image.image_named :vn_highlighted_radio
+        # @image = Image.image_named :vn_radio
+        # @alternate_image = Image.image_named :vn_highlighted_radio
+        _update_button_images
         @bordered = false
         @bezeled = false
         @alignment = :left
@@ -378,10 +385,12 @@ module Vienna
     
     
     def render_image image, with_frame:frame, in_view:control_view
+      enabled = @enabled ? true : !@image_dims_when_disabled    
+      gray_mask = false # set to true when we want gray mask?
       ctx = RenderContext.current_context
-      
+
       ctx.selector 'image' do |img|
-        image.render_in_rect Rect.new(0, 0, image.size.width, image.size.height)
+        image.render_in_rect Rect.new(0, 0, image.size.width, image.size.height), enabled:enabled, gray_mask:gray_mask
       end
     end
     

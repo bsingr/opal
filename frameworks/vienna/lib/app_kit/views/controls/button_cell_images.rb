@@ -28,7 +28,7 @@ module Vienna
   
   class ButtonCell < Cell
     
-    # Switch Images - default graphite control tint
+    # Switch Images - default blue control tint
     SWITCH_IMAGE_REGULAR = Image.sprite_cell_masks :controls do |s|
       s.add_representation :normal, rect:[0, 357, 16, 16]
       s.add_representation :gray_mask, rect:[0, 357, 16, 16]
@@ -65,24 +65,24 @@ module Vienna
       s.add_representation :disabled, rect:[16, 357, 16, 16]
     end
     
-    # Switch Images - blue control tint
-    SWITCH_IMAGE_REGULAR_BLUE = SWITCH_IMAGE_REGULAR
-    SWITCH_IMAGE_SMALL_BLUE = SWITCH_IMAGE_SMALL
-    SWITCH_IMAGE_MINI_BLUE = SWITCH_IMAGE_MINI
+    # Switch Images - graphite control tint
+    SWITCH_IMAGE_REGULAR_GRAPHITE = SWITCH_IMAGE_REGULAR
+    SWITCH_IMAGE_SMALL_GRAPHITE = SWITCH_IMAGE_SMALL
+    SWITCH_IMAGE_MINI_GRAPHITE = SWITCH_IMAGE_MINI
 
-    SWITCH_HIGHLIGHTED_IMAGE_REGULAR_BLUE = Image.sprite_cell_masks :controls do |s|
+    SWITCH_HIGHLIGHTED_IMAGE_REGULAR_GRAPHITE = Image.sprite_cell_masks :controls do |s|
       s.add_representation :normal, rect:[16, 357, 16, 16]
       s.add_representation :gray_mask, rect:[16, 357, 16, 16]
       s.add_representation :disabled, rect:[16, 357, 16, 16]
     end
     
-    SWITCH_HIGHLIGHTED_IMAGE_SMALL_BLUE = Image.sprite_cell_masks :controls do |s|
+    SWITCH_HIGHLIGHTED_IMAGE_SMALL_GRAPHITE = Image.sprite_cell_masks :controls do |s|
       s.add_representation :normal, rect:[16, 357, 16, 16]
       s.add_representation :gray_mask, rect:[16, 357, 16, 16]
       s.add_representation :disabled, rect:[16, 357, 16, 16]
     end
     
-    SWITCH_HIGHLIGHTED_IMAGE_MINI_BLUE = Image.sprite_cell_masks :controls do |s|
+    SWITCH_HIGHLIGHTED_IMAGE_MINI_GRAPHITE = Image.sprite_cell_masks :controls do |s|
       s.add_representation :normal, rect:[16, 357, 16, 16]
       s.add_representation :gray_mask, rect:[16, 357, 16, 16]
       s.add_representation :disabled, rect:[16, 357, 16, 16]

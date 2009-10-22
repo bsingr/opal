@@ -68,7 +68,7 @@ class Vienna::RubyParser
     nonassoc tDOT2 tDOT3
     right    tEH tCOLON
     left     kRESCUE_MOD
-    right    tEQL tOP_ASGN
+    right    '=' tOP_ASGN
     # nonassoc kDEFINED
     right    kNOT
     left     kOR kAND
@@ -513,6 +513,9 @@ rule
             		  }
             		| kDEFined opt_nl arg
             		| arg '?' arg opt_nl ':' arg
+            		  {
+            		    result = node :tertiary, :expr => val[0], :true => val[2], :false => val[5]
+            		  }
             		| primary
 
        arg_value: arg

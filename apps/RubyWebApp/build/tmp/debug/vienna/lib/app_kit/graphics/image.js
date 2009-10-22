@@ -25,8 +25,7 @@ var img = VN$(self,'image_named',name);
 var obj = VN$(self,'new');
 VN$(obj,'image=',VN$(img,'image'));
 VN$(obj,'filename=',VN$(img,'filename'));
-VN$(obj,'size=',VN$(self.$c_g_full('Size'),'new',VN$(rect,'[]',2),VN$(rect,'[]',3)));
-VN$(obj,'sprite_origin=',VN$(self.$c_g_full('Point'),'new',VN$(rect,'[]',0),VN$(rect,'[]',1)));
+VN$(obj,'add_representation:rect:','normal',rect);
 return obj;
 });
 $VN_2.$def_s('sprite_cell_masks',function(self,_cmd,name,block){
@@ -38,13 +37,10 @@ arguments[arguments.length -1](obj);
 return obj;
 });
 $VN_2.$def('add_representation:rect:',function(self,_cmd,type,array_rect){
-return VN$(self.$i_g('@representations'),'[]=',type,array_rect);
-});
-$VN_2.$def('add_representation_rect',function(self,_cmd,array_rect){
-if(!RTEST(VN$(self.$i_g('@representations'),'has_key?','regular'))){
-VN$(self.$i_g('@representations'),'[]=','regular',VN.$h());
+VN$(self.$i_g('@representations'),'[]=',type,array_rect);
+if(RTEST(VN$(type,'==','normal'))){
+self.$i_s('@size',VN$(self.$klass.$c_g_full('Size'),'new',VN$(array_rect,'[]',2),VN$(array_rect,'[]',3)));
 }
-return VN$(self.$i_g('@representations'),'[]=','normal',array_rect);
 });
 $VN_2.$def('initialize',function(self,_cmd){
 VN$sup(arguments.callee, self,_cmd,[]);
@@ -153,14 +149,16 @@ $VN_2.$def('draw_at_point:from_rect:operation:fraction:',function(self,_cmd,poin
 });
 $VN_2.$def('draw_in_rect:from_rect:operation:fraction:',function(self,_cmd,rect,from_rect,op,delta){
 });
-$VN_2.$def('render_in_rect',function(self,_cmd,rect){
+$VN_2.$def('render_in_rect:enabled:gray_mask:',function(self,_cmd,rect,enabled,gray_mask){
 var ctx = VN$(self.$klass.$c_g_full('RenderContext'),'current_context');
 VN$(ctx,'css',VN.$h('display','block','background_image',["url('",(VN$(self, 'filename')),"')"].join('')));
 VN$(ctx,'css',VN.$h('width',[(VN$(rect,'width')),"px"].join(''),'height',[(VN$(rect,'height')),"px"].join('')));
 VN$(ctx,'css',VN.$h('left',[(VN$(rect,'x')),"px"].join(''),'top',[(VN$(rect,'y')),"px"].join('')));
-if(RTEST(self.$i_g('@sprite_origin'))){
-VN$(ctx,'css',VN.$h('background_position',["-",(VN$(self.$i_g('@sprite_origin'),'x')),"px -",(VN$(self.$i_g('@sprite_origin'),'y')),"px"].join('')));
-}
+var rep = VN$(self.$i_g('@representations'),'[]','normal');
+return VN$(ctx,'css',VN.$h('background_position',["-",(VN$(rep,'[]',0)),"px -",(VN$(rep,'[]',1)),"px"].join('')));
+});
+$VN_2.$def('render_in_rect',function(self,_cmd,rect){
+return VN$(self,'render_in_rect:enabled:gray_mask:',rect,true,false);
 });
 $VN_2.$def('draw_representation:in_rect:',function(self,_cmd,image_rep,rect){
 });

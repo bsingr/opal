@@ -370,13 +370,25 @@ class Vienna::RubyParser < Racc::Parser
         return [:tCOLON2, scanner.matched]
       elsif scanner.scan(/\:/)
         if lex_state == :EXPR_END || lex_state == :EXPR_ENDARG || scanner.check(/\s/)
+          
+          # FIXME: hack for tertiary if statements.....
+          unless scanner.check(/\w/)
+            return [':', scanner.matched]
+          end
+          # END HACK
+          
+          # puts "#{lex_state} ===== #{scanner.check(/\w/)}"
           self.lex_state = :EXPR_BEG
           return [:tSYMBEG, scanner.matched]
         end
         
-        self.lex_state = :EXPR_FNAME
-        return [:tSYMBEG, scanner.matched]
-      
+        # FIXME: space_seen hack... ? : syaye,emts might not have space...
+        # if space_seen && scanner.check(/\W/)
+        #   return [':', scanner.matched]
+        # else
+          self.lex_state = :EXPR_FNAME
+          return [:tSYMBEG, scanner.matched]
+        # end
       # Parse a number. 
       elsif scanner.check(/[0-9]/)
         self.lex_state = :EXPR_END
@@ -534,9 +546,9 @@ class Vienna::RubyParser < Racc::Parser
       elsif scanner.scan(/\?/)
         if lex_state == :EXPR_END || lex_state == :EXPR_ENDARG
           self.lex_state = :EXPR_BEG
-          return [:tEH, '?']
+          
         end
-        
+        return ['?', '?']
         # if scanner.check(/\s|\v/)
           # unless lex_state == :EXPR_ARG
       

@@ -83,14 +83,13 @@ module Vienna
     end
     
     def self.sprite name, rect
-      # puts 'lookinf for #{name}'
       img = image_named name
-      # puts img
       obj = self.new
       obj.image = img.image
       obj.filename = img.filename
-      obj.size = Size.new(rect[2], rect[3])
-      obj.sprite_origin = Point.new(rect[0], rect[1])
+      obj.add_representation :normal, rect:rect      
+      # obj.size = Size.new(rect[2], rect[3])
+      # obj.sprite_origin = Point.new(rect[0], rect[1])
       obj
     end
     
@@ -106,14 +105,17 @@ module Vienna
     
     def add_representation type, rect:array_rect
       @representations[type] = array_rect
+      if type == :normal
+        @size = Size.new(array_rect[2], array_rect[3])
+      end
     end
     
-    def add_representation_rect array_rect
-      unless @representations.has_key? :regular
-        @representations[:regular] = {}
-      end
-      @representations[:normal] = array_rect
-    end
+    # def add_representation_rect array_rect
+    #   unless @representations.has_key? :regular
+    #     @representations[:regular] = {}
+    #   end
+    #   @representations[:normal] = array_rect
+    # end
     
     def initialize
       super
@@ -217,7 +219,7 @@ module Vienna
     
     def size
       # if not loaded, set size to 0x0
-      @size || Size.new(0, 0)
+      @size || Size.new(0,0)
     end
     
     def name= name
@@ -244,15 +246,18 @@ module Vienna
       
     end
     
-    def render_in_rect rect
+    def render_in_rect rect, enabled:enabled, gray_mask:gray_mask
       ctx = RenderContext.current_context
       ctx.css :display => :block, :background_image => "url('#{filename}')"
       ctx.css :width => "#{rect.width}px", :height => "#{rect.height}px"
       ctx.css :left => "#{rect.x}px", :top => "#{rect.y}px"
       
-      if @sprite_origin
-        ctx.css :background_position =>"-#{@sprite_origin.x}px -#{@sprite_origin.y}px"
-      end
+      rep = @representations[:normal]
+      ctx.css :background_position =>"-#{rep[0]}px -#{rep[1]}px"
+    end
+    
+    def render_in_rect rect
+      render_in_rect rect, enabled:true, gray_mask:false
     end
     
     def draw_representation image_rep, in_rect:rect

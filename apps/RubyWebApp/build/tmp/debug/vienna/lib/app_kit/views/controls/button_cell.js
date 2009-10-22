@@ -2,8 +2,6 @@
 VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/vienna/lib/app_kit/views/controls/button_cell_images.js');
 var $VN_1 = RModule.define('Vienna');
 var $VN_2 = RClass.define_under($VN_1, 'ButtonCell',$VN_2.$c_g_full('Cell'));
-$VN_2.$c_s('SWITCH_IMAGE',VN$($VN_2.$c_g_full('Image'),'sprite','controls',[0,357,16,16]));
-$VN_2.$c_s('SWITCH_HIGHLIGHTED_IMAGE',VN$($VN_2.$c_g_full('Image'),'sprite','controls',[16,357,16,16]));
 $VN_2.$def('init_text_cell',function(self,_cmd,str){
 VN$sup(arguments.callee, self,_cmd,[str]);
 self.$i_s('@transparent',false);
@@ -40,37 +38,38 @@ VN$(self, '_update_button_images');
 VN$(self, 'did_change_value_for_key', 'control_size');
 });
 $VN_2.$def('_update_button_images',function(self,_cmd){
-var size_str = '';
-var tint_str = '';
-(function($v){
-if(($e = VN$('regular', '===', $v),$e!==nil && $e!==false)){
-return size_str = '_REGULAR';
-}
-else if(($e = VN$('small', '===', $v),$e!==nil && $e!==false)){
-return size_str = '_SMALL';
+var size_str = (function($v){
+if(($e = VN$('small', '===', $v),$e!==nil && $e!==false)){
+return '_SMALL';
 }
 else if(($e = VN$('mini', '===', $v),$e!==nil && $e!==false)){
-return size_str = '_MINI';
-}
-})(self.$i_g('@control_size'));
-(function($v){
-if(($e = VN$('blue', '===', $v),$e!==nil && $e!==false)){
-return tint_str = '_BLUE';
-}
-else if(($e = VN$('hud', '===', $v),$e!==nil && $e!==false)){
-return tint_str = '_HUD';
+return '_MINI';
 }
 else {
+return '_REGULAR';
+}
+})(self.$i_g('@control_size'));
+var tint_str = (function($v){
+if(($e = VN$('graphite', '===', $v),$e!==nil && $e!==false)){
+return '_GRAPHITE';
+}
+else if(($e = VN$('hud', '===', $v),$e!==nil && $e!==false)){
+return '_HUD';
+}
+else {
+return '';
 }
 })(self.$i_g('@control_tint'));
 if(RTEST(VN$(self.$i_g('@type'),'==','switch'))){
-self.$i_s('@image',["SWITCH_IMAGE",(size_str),(tint_str)].join(''));
-self.$i_s('@alternate_image',["SWITCH_HIGHLIGHTED_IMAGE",(size_str),(tint_str)].join(''));
+var img_name = ["SWITCH_IMAGE",(size_str),(tint_str)].join('');
+var alt_img_name = ["SWITCH_HIGHLIGHTED_IMAGE",(size_str),(tint_str)].join('');
 }
 else if(RTEST(VN$(self.$i_g('@type'),'==','radio'))){
-self.$i_s('@image',["RADIO_IMAGE",(size_str),(tint_str)].join(''));
-self.$i_s('@alternate_image',["RADIO_HIGHLIGHTED_IMAGE",(size_str),(tint_str)].join(''));
+img_name = ["RADIO_IMAGE",(size_str),(tint_str)].join('');
+alt_img_name = ["SWITCH_HIGHLIGHTED_IMAGE",(size_str),(tint_str)].join('');
 }
+self.$i_s('@image',self.$klass.$c_g(img_name));
+return self.$i_s('@alternate_image',self.$klass.$c_g(alt_img_name));
 });
 $VN_2.$def('class_name',function(self,_cmd){
 return 'vn-button';
@@ -170,10 +169,9 @@ return self.$i_s('@image_dims_when_disabled',true);
 else if(($e = VN$('switch', '===', $v),$e!==nil && $e!==false)){
 self.$i_s('@highlights_by','contents');
 self.$i_s('@shows_state_by','contents');
-self.$i_s('@image_dims_when_disabled',false);
+self.$i_s('@image_dims_when_disabled',true);
 self.$i_s('@image_position','left');
-self.$i_s('@image',self.$klass.$c_g_full('SWITCH_IMAGE'));
-self.$i_s('@alternate_image',self.$klass.$c_g_full('SWITCH_HIGHLIGHTED_IMAGE'));
+VN$(self, '_update_button_images');
 self.$i_s('@bordered',false);
 self.$i_s('@bezeled',false);
 return self.$i_s('@alignment','left');
@@ -181,10 +179,9 @@ return self.$i_s('@alignment','left');
 else if(($e = VN$('radio', '===', $v),$e!==nil && $e!==false)){
 self.$i_s('@highlights_by','contents');
 self.$i_s('@shows_state_by','contents');
-self.$i_s('@image_dims_when_disabled',false);
+self.$i_s('@image_dims_when_disabled',true);
 self.$i_s('@image_position','left');
-self.$i_s('@image',VN$(self.$klass.$c_g_full('Image'),'image_named','vn_radio'));
-self.$i_s('@alternate_image',VN$(self.$klass.$c_g_full('Image'),'image_named','vn_highlighted_radio'));
+VN$(self, '_update_button_images');
 self.$i_s('@bordered',false);
 self.$i_s('@bezeled',false);
 return self.$i_s('@alignment','left');
@@ -304,9 +301,11 @@ VN$(self,'render_image:with_frame:in_view:',self.$i_g('@image'),cell_frame,contr
 }
 });
 $VN_2.$def('render_image:with_frame:in_view:',function(self,_cmd,image,frame,control_view){
+var enabled = self.$i_g('@enabled') ? true : NOTTEST(self.$i_g('@image_dims_when_disabled'));
+var gray_mask = false;
 var ctx = VN$(self.$klass.$c_g_full('RenderContext'),'current_context');
 return VN$(ctx,'selector','image',function(img){
-return VN$(image,'render_in_rect',VN$(self.$klass.$c_g_full('Rect'),'new',0,0,VN$(VN$(image,'size'),'width'),VN$(VN$(image,'size'),'height')));
+return VN$(image,'render_in_rect:enabled:gray_mask:',VN$(self.$klass.$c_g_full('Rect'),'new',0,0,VN$(VN$(image,'size'),'width'),VN$(VN$(image,'size'),'height')),enabled,gray_mask);
 });
 });
 $VN_2.$def('render_title:with_frame:in_view:',function(self,_cmd,title,frame,control_view){
