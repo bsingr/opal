@@ -3557,7 +3557,10 @@ var ctx = VN$(self.$klass.$c_g_full('RenderContext'),'current_context');
 VN$(ctx,'css',VN.$h('display','block','background_image',["url('",(VN$(self, 'filename')),"')"].join('')));
 VN$(ctx,'css',VN.$h('width',[(VN$(rect,'width')),"px"].join(''),'height',[(VN$(rect,'height')),"px"].join('')));
 VN$(ctx,'css',VN.$h('left',[(VN$(rect,'x')),"px"].join(''),'top',[(VN$(rect,'y')),"px"].join('')));
-var rep = VN$(self.$i_g('@representations'),'[]','normal');
+var rep = gray_mask ? VN$(self.$i_g('@representations'),'[]','gray_mask') : VN$(self.$i_g('@representations'),'[]','normal');
+if(!RTEST(enabled)){
+rep = VN$(self.$i_g('@representations'),'[]','disabled');
+}
 return VN$(ctx,'css',VN.$h('background_position',["-",(VN$(rep,'[]',0)),"px -",(VN$(rep,'[]',1)),"px"].join('')));
 });
 $VN_2.$def('render_in_rect',function(self,_cmd,rect){
@@ -4611,18 +4614,27 @@ VN$(self,'highlight:with_frame:in_view:',true,cell_frame,control_view);
 if(RTEST(VN$(self, 'continuous?'))){
 VN$(self.$klass.$c_g_full('App'),'send_action:to:from:',VN$(self, 'action'),VN$(self, 'target'),self);
 }
-VN$(self,'puts','Requesting binding');
 return VN$(self.$klass.$c_g_full('App'),'bind_events',['left_mouse_up','left_mouse_dragged'],function(the_event){
 location = VN$(control_view,'convert_point:from_view:',VN$(the_event,'location_in_window'),nil);
-VN$(self,'puts',VN$(the_event,'type'));
+if(RTEST(flag)){
 if(RTEST(VN$(VN$(the_event,'type'),'==','left_mouse_up'))){
+VN$(self,'stop_tracking:at:in_view:mouse_is_up:',VN$(the_event,'location_in_window'),VN$(the_event,'location_in_window'),control_view,true);
 VN$(self.$klass.$c_g_full('App'),'unbind_events');
-}
-if(RTEST(VN$(location,'in_rect?',cell_frame))){
-VN$(self,'highlight:with_frame:in_view:',true,cell_frame,control_view);
+if(RTEST(VN$(self.$i_g('@state'),'==','on'))){
+self.$i_s('@state','off');
 }
 else{
+self.$i_s('@state','on');
+}
 VN$(self,'highlight:with_frame:in_view:',false,cell_frame,control_view);
+return ;
+}
+else{
+if(!RTEST(VN$(self,'continue_tracking',VN$(the_event,'location_in_window'),VN$(the_event,'location_in_window')))){
+VN$(self.$klass.$c_g_full('App'),'unbind_events');
+}
+VN$(self,'highlight:with_frame:in_view:',VN$(location,'in_rect?',cell_frame) ? true : false,cell_frame,control_view);
+}
 }
 });
 });
@@ -5176,8 +5188,9 @@ VN$(self,'render_image:with_frame:in_view:',self.$i_g('@image'),cell_frame,contr
 }
 });
 $VN_2.$def('render_image:with_frame:in_view:',function(self,_cmd,image,frame,control_view){
+VN$(self,'puts',['Rendering button cell highlughted ',(self.$i_g('@highlighted'))].join(''));
 var enabled = self.$i_g('@enabled') ? true : NOTTEST(self.$i_g('@image_dims_when_disabled'));
-var gray_mask = false;
+var gray_mask = self.$i_g('@highlighted');
 var ctx = VN$(self.$klass.$c_g_full('RenderContext'),'current_context');
 return VN$(ctx,'selector','image',function(img){
 return VN$(image,'render_in_rect:enabled:gray_mask:',VN$(self.$klass.$c_g_full('Rect'),'new',0,0,VN$(VN$(image,'size'),'width'),VN$(VN$(image,'size'),'height')),enabled,gray_mask);
@@ -6269,11 +6282,17 @@ VN$(button,'enabled=',true);
 VN$(button,'control_size=','small');
 return VN$(button,'needs_display=',true);
 });
-return VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('CheckBox'),'build',VN.$h('frame',VN$($VN_1.$klass.$c_g_full('VN').$c_g('Rect'),'new',10,130,90,24),'bezel','rounded'),function(button){
+VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('CheckBox'),'build',VN.$h('frame',VN$($VN_1.$klass.$c_g_full('VN').$c_g('Rect'),'new',10,130,90,24),'bezel','rounded'),function(button){
 VN$(win,'<<',button);
 VN$(button,'title=','Checkon');
 VN$(button,'state=','on');
-VN$(button,'control_tint=','graphite');
+return VN$(button,'needs_display=',true);
+});
+return VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('CheckBox'),'build',VN.$h('frame',VN$($VN_1.$klass.$c_g_full('VN').$c_g('Rect'),'new',10,160,90,24),'bezel','rounded'),function(button){
+VN$(win,'<<',button);
+VN$(button,'title=','Checkon');
+VN$(button,'state=','on');
+VN$(button,'enabled=',false);
 return VN$(button,'needs_display=',true);
 });
 });

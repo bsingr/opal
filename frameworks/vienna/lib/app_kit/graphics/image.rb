@@ -269,7 +269,8 @@ module Vienna
       ctx.css :width => "#{rect.width}px", :height => "#{rect.height}px"
       ctx.css :left => "#{rect.x}px", :top => "#{rect.y}px"
       
-      rep = @representations[:normal]
+      rep = gray_mask ? @representations[:gray_mask] : @representations[:normal]
+      rep = @representations[:disabled] unless enabled
       ctx.css :background_position =>"-#{rep[0]}px -#{rep[1]}px"
     end
     

@@ -385,8 +385,9 @@ module Vienna
     
     
     def render_image image, with_frame:frame, in_view:control_view
+      puts 'Rendering button cell highlughted #{@highlighted}'
       enabled = @enabled ? true : !@image_dims_when_disabled    
-      gray_mask = false # set to true when we want gray mask?
+      gray_mask = @highlighted # set to true when we want gray mask?
       ctx = RenderContext.current_context
 
       ctx.selector 'image' do |img|

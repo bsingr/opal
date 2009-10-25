@@ -301,8 +301,9 @@ VN$(self,'render_image:with_frame:in_view:',self.$i_g('@image'),cell_frame,contr
 }
 });
 $VN_2.$def('render_image:with_frame:in_view:',function(self,_cmd,image,frame,control_view){
+VN$(self,'puts',['Rendering button cell highlughted ',(self.$i_g('@highlighted'))].join(''));
 var enabled = self.$i_g('@enabled') ? true : NOTTEST(self.$i_g('@image_dims_when_disabled'));
-var gray_mask = false;
+var gray_mask = self.$i_g('@highlighted');
 var ctx = VN$(self.$klass.$c_g_full('RenderContext'),'current_context');
 return VN$(ctx,'selector','image',function(img){
 return VN$(image,'render_in_rect:enabled:gray_mask:',VN$(self.$klass.$c_g_full('Rect'),'new',0,0,VN$(VN$(image,'size'),'width'),VN$(VN$(image,'size'),'height')),enabled,gray_mask);

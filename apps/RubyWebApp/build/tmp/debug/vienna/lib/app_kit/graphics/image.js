@@ -164,7 +164,10 @@ var ctx = VN$(self.$klass.$c_g_full('RenderContext'),'current_context');
 VN$(ctx,'css',VN.$h('display','block','background_image',["url('",(VN$(self, 'filename')),"')"].join('')));
 VN$(ctx,'css',VN.$h('width',[(VN$(rect,'width')),"px"].join(''),'height',[(VN$(rect,'height')),"px"].join('')));
 VN$(ctx,'css',VN.$h('left',[(VN$(rect,'x')),"px"].join(''),'top',[(VN$(rect,'y')),"px"].join('')));
-var rep = VN$(self.$i_g('@representations'),'[]','normal');
+var rep = gray_mask ? VN$(self.$i_g('@representations'),'[]','gray_mask') : VN$(self.$i_g('@representations'),'[]','normal');
+if(!RTEST(enabled)){
+rep = VN$(self.$i_g('@representations'),'[]','disabled');
+}
 return VN$(ctx,'css',VN.$h('background_position',["-",(VN$(rep,'[]',0)),"px -",(VN$(rep,'[]',1)),"px"].join('')));
 });
 $VN_2.$def('render_in_rect',function(self,_cmd,rect){

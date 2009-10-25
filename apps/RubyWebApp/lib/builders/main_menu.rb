@@ -73,7 +73,17 @@ module RubyWebApp
         win << button
         button.title = 'Checkon'
         button.state = :on
-        button.control_tint = :graphite
+        # button.control_tint = :graphite
+
+        button.needs_display = true
+      end
+      
+      Vienna::CheckBox.build :frame => VN::Rect.new(10,160,90,24), :bezel => :rounded do |button|
+        win << button
+        button.title = 'Checkon'
+        button.state = :on
+        button.enabled = false
+        # button.control_tint = :graphite
 
         button.needs_display = true
       end

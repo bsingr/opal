@@ -499,50 +499,33 @@ module Vienna
       end
       
       highlight true, with_frame:cell_frame, in_view:control_view
-      
-      # highlight with frame
       App.send_action action, to:target, from:self if continuous?
       
-      # capture further events
-      puts 'Requesting binding'
       App.bind_events [:left_mouse_up, :left_mouse_dragged] do |the_event|
         location = control_view.convert_point the_event.location_in_window, from_view:nil
-        puts the_event.type
-      
-        if the_event.type == :left_mouse_up
-          App.unbind_events
+                
+        if flag
+          if the_event.type == :left_mouse_up
+            stop_tracking the_event.location_in_window, at:the_event.location_in_window, in_view:control_view, mouse_is_up:true
+            App.unbind_events
+            # set next state
+            if @state == :on
+              @state = :off
+            else
+              @state = :on
+            end
+            
+            # App.send_action @action, to:@target, from:self if location.in_rect? cell_frame
+            highlight false, with_frame:cell_frame, in_view:control_view
+            return
+          else # mouse_dragged
+            unless continue_tracking the_event.location_in_window, the_event.location_in_window
+              App.unbind_events
+            end
+            highlight location.in_rect?(cell_frame) ? true : false, with_frame:cell_frame, in_view:control_view
+            
+          end
         end
-        
-        if location.in_rect? cell_frame
-          highlight true, with_frame:cell_frame, in_view:control_view
-        else
-          highlight false, with_frame:cell_frame, in_view:control_view
-        end
-        
-        # if flag
-        #           if the_event.type == :left_mouse_up
-        #             stop_tracking the_event.location_in_window, at:the_event.location_in_window, mouse_is_up:true
-        #             App.unbind_events
-        #             # set next state
-        #             
-        #             if location.in_rect? bounds
-        #               App.send_action @action, to:@target, from:self
-        #             end
-        #             
-        #             # highlight false
-        #             return
-        #           else
-        #             unless continue_tracking the_event.location_in_window, the_event.location_in_window
-        #               App.unbind_events
-        #             end
-        #             
-        #             # highlight false?
-        #           end
-        #         elsif location.in_rect? bounds
-        #           puts 'Control#track_mouse Got here.'
-        #         else
-        #           
-        #         end
       end
     end
     
