@@ -78,8 +78,10 @@ $VN_1.$def('+',function(self,_cmd,i){
 return self + i;});
 $VN_1.$def('-',function(self,_cmd,i){
 return self - i;});
-$VN_1.$def('(',function(self,_cmd,i){
+$VN_1.$def('*',function(self,_cmd,i){
 return self * i;});
+$VN_1.$def('/',function(self,_cmd,i){
+return self / i;});
 $VN_1.$def('%',function(self,_cmd){
 });
 $VN_1.$def('**',function(self,_cmd){

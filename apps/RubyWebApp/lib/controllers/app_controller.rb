@@ -31,6 +31,19 @@ module RubyWebApp
     def initialize
       puts 'initialising app controller'
       @adam = 10
+      @test_binding = false
+    end
+    
+    def adam?
+      @adam
+    end
+    
+    def test_binding
+      @test_binding
+    end
+    
+    def test_binding= aValue
+      @test_binding = aValue
     end
 
     def will_finish_launching (notification)

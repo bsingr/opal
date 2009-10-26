@@ -28,6 +28,12 @@ module Vienna
   
   class SliderCell < Cell
     
+    TRACK_PADDING = 2.0
+    
+    KNOB_PADDING_REGULAR = 9.5
+    KNOB_PADDING_SMALL = 8
+    KNOB_PADDING_MINI = 6.5
+        
     def self.prefers_tracking_until_mouse_up
       true
     end
@@ -41,20 +47,27 @@ module Vienna
     end
     
     def render_with_frame cell_frame, in_view:control_view
-      if render_context.first_time?
-        render_context << "<div class='track-left'></div>"
-        render_context << "<div class='track-middle'></div>"
-        render_context << "<div class='track-right'></div>"
-        render_context << "<div class='knob'></div>"
+      ctx = RenderContext.current_context
+      if ctx.first_time?
+        ctx << "<div class='track-left'></div>"
+        ctx << "<div class='track-middle'></div>"
+        ctx << "<div class='track-right'></div>"
+        ctx << "<div class='knob'></div>"
+        ctx.first_time = false
       end
       
-      render_context.class_name = class_name
+      ctx.class_name = class_name
       
-      # context.selector :knob do |knob|
-      #   # TODO: Calculate the knob position
-      #   knob_position = 37
-      #   knob.css :left => knob_position
-      # end
+      ctx.selector :knob do |knob|
+        
+        min = 0
+        max = 100
+        value = 0
+        
+        # TODO: Calculate the knob position
+        knob_position = (value / (max - min)) * ((cell_frame.width - (2 * KNOB_PADDING_REGULAR)))
+        knob.css :left => "#{knob_position}px"
+      end
     end
     
     def min_value
@@ -136,6 +149,19 @@ module Vienna
     
     def closest_tick_mark_value_to_value value
       
+    end
+    
+    def start_tracking_at start_point, in_view:control_view
+      highlight true, with_frame:nil, in_view:control_view
+      true
+    end
+    
+    def continue_tracking last_point, at:current_point, in_view:control_view
+      true
+    end
+    
+    def stop_tracking last_point, at:stop_point, in_view:control_view, mouse_is_up:flag
+      highlight false, with_frame:nil, in_view:control_view
     end
   end
   

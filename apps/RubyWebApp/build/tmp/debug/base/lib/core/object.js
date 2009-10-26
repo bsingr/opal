@@ -58,6 +58,7 @@ cBasicObject.$define_alloc_func(function(self, _cmd) {
   // console.log('HERE');
   obj.$i_s('@kvo_observers', new Array());
   obj.$i_s('@kvo_old_values', VN.$h());
+  obj.$i_s('@kvb_info', VN.$h());
    // # @kvo_observers = []
     // #      @kvo_old_values = {}
   return obj;
@@ -109,7 +110,7 @@ cBasicObject.$def('class', function(self, _cmd) {
 
 cBasicObject.$def('respond_to?', function(self, _cmd, selector) {
   var method = self.$klass.$search_method(selector);
-  if (!selector) return false;
+  if (!method) return false;
   return true
 });
 

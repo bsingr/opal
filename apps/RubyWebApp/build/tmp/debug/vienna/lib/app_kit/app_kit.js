@@ -5,6 +5,8 @@ VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/vienn
 
 VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/vienna/lib/app_kit/base/event.js');
 
+VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/vienna/lib/app_kit/base/key_value_binding.js');
+
 VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/vienna/lib/app_kit/base/tracking_area.js');
 
 VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/vienna/lib/app_kit/graphics/graphics_context.js');

@@ -301,7 +301,6 @@ VN$(self,'render_image:with_frame:in_view:',self.$i_g('@image'),cell_frame,contr
 }
 });
 $VN_2.$def('render_image:with_frame:in_view:',function(self,_cmd,image,frame,control_view){
-VN$(self,'puts',['Rendering button cell highlughted ',(self.$i_g('@highlighted'))].join(''));
 var enabled = self.$i_g('@enabled') ? true : NOTTEST(self.$i_g('@image_dims_when_disabled'));
 var gray_mask = self.$i_g('@highlighted');
 var ctx = VN$(self.$klass.$c_g_full('RenderContext'),'current_context');
@@ -363,5 +362,3 @@ VN$(self, 'did_change_value_for_key', 'sound');
 $VN_2.$def('sound',function(self,_cmd){
 return self.$i_g('@sound');
 });
-VN$(VN.self,'puts','BUTTON CELL');
-VN$(VN.self,'puts',cObject.$c_g('VN').$c_g('ButtonCell'));

@@ -342,6 +342,7 @@ $VN_2.$def('start_tracking_at:in_view:',function(self,_cmd,start_point,control_v
 return true;
 });
 $VN_2.$def('continue_tracking:at:in_view:',function(self,_cmd,last_point,current_point,control_view){
+return true;
 });
 $VN_2.$def('stop_tracking:at:in_view:mouse_is_up:',function(self,_cmd,last_point,stop_point,control_view,flag){
 });

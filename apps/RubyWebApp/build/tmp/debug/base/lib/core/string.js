@@ -22,7 +22,7 @@ $VN_1.$def('casecmp',function(self,_cmd,obj){
 });
 $VN_1.$def('+',function(self,_cmd,obj){
 return self + obj;});
-$VN_1.$def('(',function(self,_cmd,obj){
+$VN_1.$def('*',function(self,_cmd,obj){
 });
 $VN_1.$def('%',function(self,_cmd,obj){
 });

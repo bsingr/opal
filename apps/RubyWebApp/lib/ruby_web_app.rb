@@ -46,6 +46,14 @@ Vienna::App.run do |app|
   
   VN::Builder.build :main_menu, :owner => VN::App, :top_level_objects => [] do |builder|
     puts "builder finished!"
+    
+    puts 'AppDelegate'
+    puts VN::App.delegate
+    
+    puts 'Setting value for adam to 20'
+    VN::App.delegate.set_value 20, for_key:'adam'
+    puts VN::App.delegate.value_for_key 'adam'
+    
   end
 
 end

@@ -37,6 +37,7 @@ module RubyWebApp
         win << button
         button.title = 'Normal'
         button.alignment = :left
+        button.bind :enabled, to_object:app_delegate, with_key_path:'test_binding', options:nil        
         # button.theme_name = :my_theme
         button.needs_display = true
       end
@@ -87,11 +88,11 @@ module RubyWebApp
 
         button.needs_display = true
       end
-      #     
-      # Vienna::Slider.build :frame => VN::Rect.new(10,50,90,24), :bezel => :rounded do |slider|
-      #   win << slider
-      #   slider.needs_display = true
-      # end
+          
+      Vienna::Slider.build :frame => VN::Rect.new(10,190,90,24), :bezel => :rounded do |slider|
+        win << slider
+        slider.needs_display = true
+      end
       # 
       # Vienna::TextField.build :frame => VN::Rect.new(10, 70, 180, 26), :editable => true do |text|
       #   win << text

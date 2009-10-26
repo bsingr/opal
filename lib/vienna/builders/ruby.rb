@@ -471,8 +471,13 @@ class Vienna::RubyParser < Racc::Parser
           self.lex_state = :EXPR_BEG
           return [sign, result]
         end
-        
+        self.lex_state = :EXPR_BEG
         return [result, result]
+      
+      elsif scanner.scan(/\//)
+        self.lex_state = :EXPR_BEG
+        return ['/', scanner.matched]
+      
       elsif scanner.scan(/\*\*\=/)
         self.lex_state = :EXPR_BEG
         return [:tOP_ASGN, '**=']
@@ -482,13 +487,16 @@ class Vienna::RubyParser < Racc::Parser
         self.lex_state = :EXPR_BEG
         return [:tOP_ASGN, '*=']
       elsif scanner.scan(/\*/)
-        result =  if space_seen && scanner.check(/\S/)
-                    # warning: * interp as arg prefix
+        result =  if lex_state == :EXPR_FNAME
+                    self.lex_state = :EXPR_BEG
+                    '*'
+                  elsif space_seen && scanner.check(/\S/)
                     :tSTAR
                   elsif lex_state == :EXPR_BEG || lex_state == :EXPR_MID
                     :tSTAR
                   else
-                    :tSTAR2
+                    self.lex_state = :EXPR_BEG
+                    '*'
                   end
         return [result, scanner.matched]
       elsif scanner.scan(/\!\=/)

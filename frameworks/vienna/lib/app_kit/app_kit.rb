@@ -28,6 +28,7 @@
 require 'base/responder'
 require 'base/application'
 require 'base/event'
+require 'base/key_value_binding'
 require 'base/tracking_area'
 
 # # Graphics

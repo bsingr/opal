@@ -345,8 +345,30 @@ module Vienna
     def attributed_string_value= val
       @cell.attributed_string_value = val
     end
-    
-    
 
+
+     
+    def observe_value_for_key_path path, of_object:object, change:change, context:context
+      if context == :enabled
+        puts 'received notification of chnage to enabled property..'
+        self.enabled = object.value_for_key_path(path)
+        self.needs_display = true
+      end
+    end
+    
+    # def bind binding, to_object:observable, with_key_path:key_path, options:options
+    #   if binding == :enabled
+    #     observable.add_observer self, for_key_path:key_path, options:nil, context: :enabled
+    #     @kvb_info[:enabled] = {
+    #       :observed_object => observable,
+    #       :observed_key_path => key_path,
+    #       :options => options
+    #     }
+    #     # Check options to see if we should do initial...?
+    #     puts 'checking key path for binding'
+    #     
+    #     self.enabled = observable.value_for_key_path(key_path)
+    #   end
+    # end
   end
 end

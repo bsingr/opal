@@ -1,5 +1,9 @@
 var $VN_1 = RModule.define('Vienna');
 var $VN_2 = RClass.define_under($VN_1, 'SliderCell',$VN_2.$c_g_full('Cell'));
+$VN_2.$c_s('TRACK_PADDING',2.0);
+$VN_2.$c_s('KNOB_PADDING_REGULAR',9.5);
+$VN_2.$c_s('KNOB_PADDING_SMALL',8);
+$VN_2.$c_s('KNOB_PADDING_MINI',6.5);
 $VN_2.$def_s('prefers_tracking_until_mouse_up',function(self,_cmd){
 return true;
 });
@@ -10,13 +14,22 @@ $VN_2.$def('class_name',function(self,_cmd){
 return 'vn-slider';
 });
 $VN_2.$def('render_with_frame:in_view:',function(self,_cmd,cell_frame,control_view){
-if(RTEST(VN$(VN$(self, 'render_context'),'first_time?'))){
-VN$(VN$(self, 'render_context'),'<<',"<div class='track-left'></div>");
-VN$(VN$(self, 'render_context'),'<<',"<div class='track-middle'></div>");
-VN$(VN$(self, 'render_context'),'<<',"<div class='track-right'></div>");
-VN$(VN$(self, 'render_context'),'<<',"<div class='knob'></div>");
+var ctx = VN$(self.$klass.$c_g_full('RenderContext'),'current_context');
+if(RTEST(VN$(ctx,'first_time?'))){
+VN$(ctx,'<<',"<div class='track-left'></div>");
+VN$(ctx,'<<',"<div class='track-middle'></div>");
+VN$(ctx,'<<',"<div class='track-right'></div>");
+VN$(ctx,'<<',"<div class='knob'></div>");
+VN$(ctx,'first_time=',false);
 }
-return VN$(VN$(self, 'render_context'),'class_name=',VN$(self, 'class_name'));
+VN$(ctx,'class_name=',VN$(self, 'class_name'));
+return VN$(ctx,'selector','knob',function(knob){
+var min = 0;
+var max = 100;
+var value = 0;
+var knob_position = VN$((VN$(value,'/',(VN$(max,'-',min)))),'*',((VN$(VN$(cell_frame,'width'),'-',(VN$((2),'*',self.$klass.$c_g_full('KNOB_PADDING_REGULAR')))))));
+return VN$(knob,'css',VN.$h('left',[(knob_position),"px"].join('')));
+});
 });
 $VN_2.$def('min_value',function(self,_cmd){
 return self.$i_g('@min_value');
@@ -95,4 +108,14 @@ $VN_2.$def('rect_of_tick_mark_at_index',function(self,_cmd,index){
 $VN_2.$def('index_of_tick_mark_at_point',function(self,_cmd,point){
 });
 $VN_2.$def('closest_tick_mark_value_to_value',function(self,_cmd,value){
+});
+$VN_2.$def('start_tracking_at:in_view:',function(self,_cmd,start_point,control_view){
+VN$(self,'highlight:with_frame:in_view:',true,nil,control_view);
+return true;
+});
+$VN_2.$def('continue_tracking:at:in_view:',function(self,_cmd,last_point,current_point,control_view){
+return true;
+});
+$VN_2.$def('stop_tracking:at:in_view:mouse_is_up:',function(self,_cmd,last_point,stop_point,control_view,flag){
+return VN$(self,'highlight:with_frame:in_view:',false,nil,control_view);
 });

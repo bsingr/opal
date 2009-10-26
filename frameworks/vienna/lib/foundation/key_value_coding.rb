@@ -50,11 +50,43 @@ module Vienna
     end
     
     def value_for_key key
-      `return self.$i_g('@' + #{key});`
+      accessor = key
+      if respond_to? accessor
+        return perform_selector accessor
+      end
+      
+      accessor = "#{key}?"
+      if respond_to? accessor
+        return perform_selector accessor
+      end
+      
+      if self.class.access_instance_variables_directly?
+        `if (typeof self.$iv_tbl['@' + key] != 'undefined') {`
+          return `self.$iv_tbl['@' + key]`
+        `}`
+      end
+      
+      value_for_undefined_key key
     end
     
     def set_value value, for_key:key
-      puts "Setting value for #{key}"
+
+      accessor = "#{key}="
+      if respond_to? accessor
+        # we dont need these KVO..automatically done
+        # perform accessor, value
+        return value
+      end
+      
+      if self.class.access_instance_variables_directly?
+        `if (typeof self.$iv_tbl['@' + key] != 'undefined') {`
+          will_change_value_for_key key          
+          `self.$iv_tbl['@' + key] = value;`
+          did_change_value_for_key key
+          return value
+        `}`
+      end
+      set_value value, for_undefined_key:key
     end
     
     def validate_value value, for_key:key, error:out_error
@@ -70,11 +102,11 @@ module Vienna
     end
     
     def value_for_key_path path
-      
+      value_for_key path
     end
     
     def set_value value, for_key_path:path
-      
+      set_value value, for_key:path
     end
     
     def validate_value value, for_key_path:path, error:out_error

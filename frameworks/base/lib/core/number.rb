@@ -184,10 +184,10 @@ class Number
   def *(i)
     `return self * i;`
   end
-  # 
-  # def /(i)
-  #   `return self / i;`
-  # end
+   
+  def /(i)
+    `return self / i;`
+  end
   
   def %
   

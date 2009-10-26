@@ -479,16 +479,14 @@ module Vienna
     
       
     def start_tracking_at start_point, in_view:control_view
-      # highlight true
       true
     end
     
     def continue_tracking last_point, at:current_point, in_view:control_view
-      
+      true
     end
     
     def stop_tracking last_point, at:stop_point, in_view:control_view, mouse_is_up:flag
-      # highlight false
     end
     
     def track_mouse the_event, in_rect:cell_frame, of_view:control_view, until_mouse_up:flag
@@ -497,7 +495,7 @@ module Vienna
       unless start_tracking_at the_event.location_in_window, in_view:control_view
         return false
       end
-      
+            
       highlight true, with_frame:cell_frame, in_view:control_view
       App.send_action action, to:target, from:self if continuous?
       
@@ -522,6 +520,7 @@ module Vienna
             unless continue_tracking the_event.location_in_window, the_event.location_in_window
               App.unbind_events
             end
+                      
             highlight location.in_rect?(cell_frame) ? true : false, with_frame:cell_frame, in_view:control_view
             
           end

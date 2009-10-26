@@ -7,6 +7,7 @@ VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('Button'),'build',VN.$h('frame',VN$($V
 VN$(win,'<<',button);
 VN$(button,'title=','Normal');
 VN$(button,'alignment=','left');
+VN$(button,'bind:to_object:with_key_path:options:','enabled',app_delegate,'test_binding',nil);
 return VN$(button,'needs_display=',true);
 });
 VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('Button'),'build',VN.$h('frame',VN$($VN_1.$klass.$c_g_full('VN').$c_g('Rect'),'new',10,40,90,24),'bezel','rounded'),function(button){
@@ -36,12 +37,16 @@ VN$(button,'title=','Checkon');
 VN$(button,'state=','on');
 return VN$(button,'needs_display=',true);
 });
-return VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('CheckBox'),'build',VN.$h('frame',VN$($VN_1.$klass.$c_g_full('VN').$c_g('Rect'),'new',10,160,90,24),'bezel','rounded'),function(button){
+VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('CheckBox'),'build',VN.$h('frame',VN$($VN_1.$klass.$c_g_full('VN').$c_g('Rect'),'new',10,160,90,24),'bezel','rounded'),function(button){
 VN$(win,'<<',button);
 VN$(button,'title=','Checkon');
 VN$(button,'state=','on');
 VN$(button,'enabled=',false);
 return VN$(button,'needs_display=',true);
+});
+return VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('Slider'),'build',VN.$h('frame',VN$($VN_1.$klass.$c_g_full('VN').$c_g('Rect'),'new',10,190,90,24),'bezel','rounded'),function(slider){
+VN$(win,'<<',slider);
+return VN$(slider,'needs_display=',true);
 });
 });
 });

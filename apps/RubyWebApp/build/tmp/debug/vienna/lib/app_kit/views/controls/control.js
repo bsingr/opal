@@ -240,3 +240,10 @@ VN$(self, 'will_change_value_for_key', 'attributed_string_value');
 VN$(self.$i_g('@cell'),'attributed_string_value=',val);
 VN$(self, 'did_change_value_for_key', 'attributed_string_value');
 });
+$VN_2.$def('observe_value_for_key_path:of_object:change:context:',function(self,_cmd,path,object,change,context){
+if(RTEST(VN$(context,'==','enabled'))){
+VN$(self,'puts','received notification of chnage to enabled property..');
+VN$(self,'enabled=',VN$(object,'value_for_key_path',path));
+VN$(self,'needs_display=',true);
+}
+});
