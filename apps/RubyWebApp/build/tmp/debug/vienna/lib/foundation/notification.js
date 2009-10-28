@@ -16,7 +16,7 @@ return VN$(self,'new',name,obj,info);
 });
 var $VN_2 = RClass.define_under($VN_1, 'NotificationCenter',cObject);
 $VN_2.$def_s('default_center',function(self,_cmd){
-return (self.$k_d('@@default_center') ? self.$k_g('@@default_center') : self.$k_s('@@default_center',VN$(self,'new')));
+return self.$i_s('@default_center',ORTEST(self.$i_g('@default_center'),VN$(self,'new')));
 });
 $VN_2.$def('initialize',function(self,_cmd){
 VN$sup(arguments.callee, self,_cmd,[]);

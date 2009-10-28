@@ -67,7 +67,6 @@ $VN_2.$def('initialize_with_coder',function(self,_cmd,coder){
 $VN_2.$def('initialize_with_builder',function(self,_cmd,builder){
 });
 $VN_2.$def_s('display_properties',function(self,_cmd){
-return VN$(self,'puts','in display properties..');
 });
 VN$($VN_2,'display_properties','frame','frame_size');
 $VN_2.$def('did_change_value_for_key',function(self,_cmd){
@@ -311,7 +310,6 @@ return ;
 }
 VN$(self, 'view_will_draw');
 if(RTEST(VN$(VN$(self, 'display_mode'),'==','render'))){
-VN$(self,'puts','Rendering....?');
 VN$(self,'render',self.$i_g('@display_context'));
 }
 else{
@@ -328,7 +326,6 @@ VN$(context,'first_time=',false);
 }
 });
 $VN_2.$def('draw_rect',function(self,_cmd,rect){
-return VN$(self,'puts','drawing rect');
 });
 $VN_2.$def('view_will_draw',function(self,_cmd){
 });
@@ -351,10 +348,8 @@ $VN_2.$def('mouse:in_rect:',function(self,_cmd,point,rect){
 $VN_2.$def('add_tracking_area',function(self,_cmd,tracking_area){
 if(RTEST(VN$(self.$i_g('@tracking_areas'),'empty?'))){
 VN$(self.$i_g('@element'),'add_event_listener','mouseover',function(evt){
-return VN$(self,'puts','OMG, mouse over!');
 });
 VN$(self.$i_g('@element'),'add_event_listener','mouseout',function(evt){
-return VN$(self,'puts','OMG, mouse out of element');
 });
 }
 return VN$(self.$i_g('@tracking_areas'),'<<',tracking_area);

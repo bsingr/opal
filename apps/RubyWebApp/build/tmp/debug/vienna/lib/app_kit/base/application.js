@@ -66,7 +66,7 @@ $VN_2.$def('<<',function(self,_cmd,window){
 return VN$(self,'add_window',window);
 });
 $VN_2.$def_s('shared_application',function(self,_cmd){
-return (self.$k_d('@@app') ? self.$k_g('@@app') : self.$k_s('@@app',VN$(self,'new')));
+return self.$i_s('@app',ORTEST(self.$i_g('@app'),VN$(self,'new')));
 });
 $VN_2.$def('delegate=',function(self,_cmd,obj){
 VN$(self, 'will_change_value_for_key', 'delegate');

@@ -72,6 +72,21 @@ module Vienna
       pop_element_stack
     end
     
+    # Returns Integer number of child nodes of current element
+    def child_nodes
+      `return #{element}.childNodes.length;`
+    end
+    
+    # Selects the child node of the current element. This number is the element order within
+    # the current context, i.e. `e.child_node(4) will select the fourth child.
+    # This is only kept in context during the block execution.
+    def child_node a_number, &block
+      e = `#{element}.childNodes[a_number]`
+      push_element_stack e
+      yield self
+      pop_element_stack
+    end
+    
     def find_selector a_selector
       # `return #{element}.getElementsByClassName(#{a_selector})[0];`
       `var nodes = #{element}.childNodes;

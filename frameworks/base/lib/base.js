@@ -195,7 +195,7 @@ require('core/string');
 // require('core/range');
 // require('core/time');
 require('core/proc');
-// require('core/math');
+require('core/math');
 // require('core/enumerator');
 // 
 

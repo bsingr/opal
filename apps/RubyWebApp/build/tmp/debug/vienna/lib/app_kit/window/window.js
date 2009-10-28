@@ -2,12 +2,18 @@
 VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/vienna/lib/app_kit/window/window_view.js');
 
 VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/vienna/lib/app_kit/window/normal_window_view.js');
+
+VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/vienna/lib/app_kit/window/hud_window_view.js');
+
+VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/vienna/lib/app_kit/window/borderless_window_view.js');
 var $VN_1 = RModule.define('Vienna');
 $VN_1.$c_s('WINDOW_MASKS',VN.$h('borderless', 0, 'titled', VN$((1),'<<',0), 'closable', VN$((1),'<<',1), 'miniaturizable', VN$((1),'<<',2), 'resizable', VN$((1),'<<',3), 'textured_background', VN$((1),'<<',8), 'unified_title_and_toolbar', VN$((1),'<<',12), 'close_button', 1, 'miniaturize_button', 1, 'zoom_button', 1, 'toolbar_button', 1, 'document_icon_button', 1, 'utility', VN$((1),'<<',4), 'doc_modal', VN$((1),'<<',6), 'hud', VN$((1),'<<',13)));
 $VN_1.$c_s('WINDOW_LEVELS',VN.$h('normal', 0, 'floating', 0, 'submenu', 0, 'torn_off_menu', 0, 'main_menu', 0, 'status', 0, 'modal_panel', 0, 'pop_up_menu', 0, 'screen_saver', 0));
 var $VN_2 = RClass.define_under($VN_1, 'Window',$VN_2.$c_g_full('Responder'));
 $VN_2.$def('initialize',function(self,_cmd,content_rect,style_mask){
-VN$sup(arguments.callee, self,_cmd,[]);
+return VN$(self,'init_with_content_rect:style_mask:',content_rect,style_mask);
+});
+$VN_2.$def('init_with_content_rect:style_mask:',function(self,_cmd,content_rect,style_mask){
 VN$(self, 'setup_display_context');
 self.$i_s('@frame',VN$(self.$klass.$c_g_full('Rect'),'new',0,0,0,0));
 self.$i_s('@window_number',VN$(self.$klass.$c_g_full('App'),'add_window',self));
@@ -20,10 +26,11 @@ self.$i_s('@next_responder',self.$klass.$c_g_full('App'));
 VN$(self,'setup_window_view');
 VN$(self,'frame=',content_rect);
 VN$(self.$i_g('@window_view'),'needs_display=',true);
-return VN$(self,'content_view=',VN$(self.$klass.$c_g_full('View'),'new',VN$(self.$klass.$c_g_full('Rect'),'new',0,0,VN$(self.$i_g('@frame'),'width'),VN$(self.$i_g('@frame'),'height'))));
+VN$(self,'content_view=',VN$(self.$klass.$c_g_full('View'),'new',VN$(self.$klass.$c_g_full('Rect'),'new',0,0,VN$(self.$i_g('@frame'),'width'),VN$(self.$i_g('@frame'),'height'))));
+return self;
 });
 $VN_2.$def_s('build',function(self,_cmd,options,block){
-var win = VN$(self,'new',VN$(options,'[]','frame'),['titled','closable']);
+var win = VN$(VN$(self,'alloc'),'init_with_content_rect:style_mask:',VN$(options,'[]','frame'),['titled','closable']);
 if(RTEST(block)){
 arguments[arguments.length -1](win);
 }
@@ -36,11 +43,13 @@ VN$(self.$i_g('@element'),'<<',self.$i_g('@display_context'));
 return VN$(self.$klass.$c_g_full('Document'),'<<',self.$i_g('@element'));
 });
 $VN_2.$def('setup_window_view',function(self,_cmd){
-self.$i_s('@window_view',VN$(self.$klass.$c_g_full('NormalWindowView'),'new',VN$(self.$klass.$c_g_full('Rect'),'new',0,0,100,100),self.$i_g('@style_mask')));
+var view_class = VN$(self,'_window_view_class_for_style_mask',self.$i_g('@style_mask'));
+self.$i_s('@window_view',VN$(view_class,'new',VN$(self.$klass.$c_g_full('Rect'),'new',0,0,100,100),self.$i_g('@style_mask')));
 VN$(self.$i_g('@window_view'),'view_will_move_to_window',self);
 VN$(self.$i_g('@window_view'),'next_responder=',self);
 VN$(self.$i_g('@element'),'<<',VN$(self.$i_g('@window_view'),'element'));
 VN$(self.$i_g('@window_view'),'view_did_move_to_window');
+VN$(self.$i_g('@window_view'),'needs_display=',true);
 VN$(VN$(self.$i_g('@window_view'),'element'),'add_event_listener','mousedown',function(event){
 var the_event = VN$(self.$klass.$c_g_full('Event'),'from_native_event:with_window:with_type:',event,self,'left_mouse_down');
 VN$(self.$klass.$c_g_full('App'),'send_event',the_event);
@@ -55,6 +64,17 @@ if(!RTEST(VN$(the_event,'allows_propagation?'))){
 VN$(the_event,'stop_propagation');
 }
 });
+});
+$VN_2.$def('_window_view_class_for_style_mask',function(self,_cmd,style_mask){
+if(RTEST(VN$(style_mask,'include?','borderless'))){
+return self.$klass.$c_g_full('BorderlessWindowView');
+}
+else if(RTEST(VN$(style_mask,'include?','hud'))){
+return self.$klass.$c_g_full('HUDWindowView');
+}
+else{
+return self.$klass.$c_g_full('NormalWindowView');
+}
 });
 $VN_2.$def_s('frame_rect_for_content_rect:style_mask:',function(self,_cmd,rect,style){
 });
@@ -164,19 +184,13 @@ var origin = VN$(self.$i_g('@frame'),'origin');
 var size = VN$(self.$i_g('@frame'),'size');
 var new_origin = VN$(frame_rect,'origin');
 var new_size = VN$(frame_rect,'size');
-VN$(self,'puts','about to check!!!!!!!!!!!!!');
-VN$(self,'puts',origin.$iv_tbl);
-VN$(self,'puts','..');
-VN$(self,'puts',new_origin.$iv_tbl);
 if(!RTEST(VN$(origin,'eql?',new_origin))){
-VN$(self,'puts','Origins are not the same!');
 VN$(origin,'x=',VN$(new_origin,'x'));
 VN$(origin,'y=',VN$(new_origin,'y'));
 VN$(self.$i_g('@element'),'origin=',origin);
 VN$(VN$(self.$klass.$c_g_full('NotificationCenter'),'default_center'),'post_notification_name:object:','window did move',self);
 }
 if(!RTEST(VN$(size,'eql?',new_size))){
-VN$(self,'puts','Sizes are not the same!');
 VN$(size,'width=',VN$(new_size,'width'));
 VN$(size,'height=',VN$(new_size,'height'));
 VN$(self.$i_g('@window_view'),'frame_size=',size);
@@ -187,6 +201,12 @@ VN$(VN$(self.$klass.$c_g_full('NotificationCenter'),'default_center'),'post_noti
 });
 $VN_2.$def('frame_origin=',function(self,_cmd,origin){
 VN$(self, 'will_change_value_for_key', 'frame_origin');
+if(!RTEST(VN$(origin,'eql?',VN$(self.$i_g('@frame'),'origin')))){
+VN$(VN$(self.$i_g('@frame'),'origin'),'x=',VN$(origin,'x'));
+VN$(VN$(self.$i_g('@frame'),'origin'),'y=',VN$(origin,'y'));
+VN$(self.$i_g('@element'),'origin=',origin);
+VN$(VN$(self.$klass.$c_g_full('NotificationCenter'),'default_center'),'post_notification_name:object:','window did move',self);
+}
 VN$(self, 'did_change_value_for_key', 'frame_origin');
 });
 $VN_2.$def('animation_resize_time',function(self,_cmd,new_frame){
@@ -309,6 +329,9 @@ return self.$i_g('@hides_on_deactivate');
 $VN_2.$def('center',function(self,_cmd){
 });
 $VN_2.$def('make_key_and_order_front',function(self,_cmd,sender){
+VN$(self,'order_front',self);
+VN$(self, 'make_key_window');
+return VN$(self, 'make_main_window');
 });
 $VN_2.$def('order_front',function(self,_cmd,sender){
 });
@@ -356,6 +379,7 @@ $VN_2.$def('resign_main_window',function(self,_cmd){
 $VN_2.$def('works_when_modal?',function(self,_cmd){
 });
 $VN_2.$def('convert_base_to_screen',function(self,_cmd,point){
+return VN$(self.$klass.$c_g_full('Point'),'new',VN$(VN$(point,'x'),'+',VN$(self.$i_g('@frame'),'x')),VN$(VN$(point,'y'),'+',VN$(self.$i_g('@frame'),'y')));
 });
 $VN_2.$def('convert_screen_to_base',function(self,_cmd,point){
 var res = VN$(self.$klass.$c_g_full('Point'),'new',VN$(VN$(point,'x'),'-',VN$(self.$i_g('@frame'),'x')),VN$(VN$(point,'y'),'-',VN$(self.$i_g('@frame'),'y')));
@@ -437,6 +461,7 @@ var hit_test = VN$(self.$i_g('@window_view'),'hit_test',point);
 if(RTEST(ANDTEST(VN$(hit_test,'!=',self.$i_g('@first_responder')),VN$(hit_test,'accepts_first_responder')))){
 VN$(self,'make_first_responder',hit_test);
 }
+VN$(self,'make_key_and_order_front',self);
 if(RTEST(VN$(hit_test,'accepts_first_mouse',event))){
 return VN$(hit_test,'mouse_down',event);
 }

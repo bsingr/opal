@@ -324,6 +324,16 @@ module Vienna
     
     
     
+    def object_value= obj
+      if !obj || obj == 0 || obj == :off
+        obj = :off
+      else
+        obj = :on
+      end
+      
+      super obj
+    end
+    
     def draw_image images, with_frame:frame, in_view:control_view
       
     end
@@ -344,7 +354,7 @@ module Vienna
         ctx << "<div class='left'></div>"
         ctx << "<div class='middle'></div>"
         ctx << "<div class='right'></div>"
-        ctx << "<div class='title'>Wow!</div>"
+        ctx << "<div class='title'></div>"
         ctx << "<div class='image'></div>"
         ctx.first_time = false
       end
@@ -367,10 +377,12 @@ module Vienna
     def render_interior_with_frame cell_frame, in_view:control_view
       ctx = RenderContext.current_context
       
-      ctx.selector 'title' do |title|
-        title.inner_html = @title
-        title.css :text_align => alignment
-        # title.frame = title_rect_for_bounds cell_frame
+      unless image_position == :image_only
+        ctx.selector 'title' do |title|
+          title.inner_html = @title
+          title.css :text_align => alignment
+          # title.frame = title_rect_for_bounds cell_frame
+        end
       end
       
       if @image
@@ -385,7 +397,6 @@ module Vienna
     
     
     def render_image image, with_frame:frame, in_view:control_view
-      # puts 'Rendering button cell highlughted #{@highlighted}'
       enabled = @enabled ? true : !@image_dims_when_disabled    
       gray_mask = @highlighted # set to true when we want gray mask?
       ctx = RenderContext.current_context

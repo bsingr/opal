@@ -343,7 +343,9 @@ module Vienna
       kvo_match = nil if definition[:singleton] or context[:self] == 'VN.self'
       # all methods in top self must be added as singleton methods
       if definition[:singleton] or context[:self] == 'VN.self'
-        write "#{context[:self]}.$def_s('#{definition[:fname]}',function(self,_cmd"
+        generate_stmt definition[:singleton], :instance => definition[:instance], :full_stmt => false, :last_stmt => false
+        # write "#{context[:self]}"
+        write ".$def_s('#{definition[:fname]}',function(self,_cmd"
       else
         write "#{context[:self]}.$def('#{definition[:fname]}',function(self,_cmd"
       end
@@ -824,23 +826,20 @@ module Vienna
     # 
     def generate_op_asgn stmt, context
       write 'return ' if context[:last_stmt] and context[:full_stmt]
-      case stmt[:op]
-      when '||='
-        case stmt[:lhs].node
-        when :cvar
-          # lhs
-          class_access = context[:instance] ? '.$klass' : ''  
-          
-          # upto ?
-          write "(#{current_self}#{class_access}.$k_d('#{stmt[:lhs][:name]}') ? "
-          # upto :
-          write "#{current_self}#{class_access}.$k_g('#{stmt[:lhs][:name]}') : "
-          # rest
-          write "#{context[:self]}#{class_access}.$k_s('#{stmt[:lhs][:name]}',"
-          generate_stmt stmt[:rhs], :instance => context[:instance], context[:full_stmt] => false, context[:last_stmt] => true, :self => context[:self]
-          write '))'
-        end
+      
+      op_node = case stmt[:op]
+      when '||'
+        node :orop, :lhs => stmt[:lhs], :rhs => stmt[:rhs]
+      when '&&'
+        node :andop, :lhs => stmt[:lhs], :rhs => stmt[:rhs]
+      when '+'
+        node :call, :recv => stmt[:lhs], :meth => '+', :call_args => { :args => [stmt[:rhs]] }
+      when '-'
+        node :call, :recv => stmt[:lhs], :meth => '-', :call_args => { :args => [stmt[:rhs]] }
       end
+
+      generate_stmt node(:assign, :lhs => stmt[:lhs], :rhs => op_node), :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self => context[:self]
+      
       write ";\n" if context[:full_stmt]
     end
     

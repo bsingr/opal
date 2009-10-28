@@ -1,0 +1,83 @@
+.vn-hud-window-view {
+  position: absolute;
+  display: block;
+}
+
+.vn-hud-window-view .titlebar {
+  height: 19px;
+  left: 0px;
+  right: 0px;
+  top: 0px;
+}
+
+.vn-hud-window-view .titlebar .left {
+  background: url('images/controls.png');
+  background-position: 0px -1204px;
+  height: 19px;
+  left: 0px;
+  width: 7px;
+  top: 0px;
+}
+
+.vn-hud-window-view .titlebar .middle {
+  background: url('images/controls.png');
+  background-repeat: repeat-x;
+  background-position: 0px -1224px;
+  height: 19px;
+  left: 7px;
+  right: 7px;
+  top: 0px;
+}
+
+.vn-hud-window-view .titlebar .right {
+  background: url('images/controls.png');
+  background-position: -8px -1204px;
+  height: 19px;
+  right: 0px;
+  width: 7px;
+  top: 0px;
+}
+
+.vn-hud-window-view .body {
+  left: 0px;
+  right: 0px;
+  bottom: 7px;
+  top: 19px;
+  background: url('images/hud_window_background.png');
+  background-repeat: repeat;
+}
+
+.vn-hud-window-view .bottom {
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  height: 7px;
+  background-color: rgb(245,245,245);
+}
+
+.vn-hud-window-view .bottom .left {
+  width: 7px;
+  height: 7px;
+  left: 0px;
+  bottom: 0px;
+  background: url('images/controls.png');
+  background-position: -0px -1264px;
+}
+
+.vn-hud-window-view .bottom .middle {
+  left: 7px;
+  right: 7px;
+  bottom: 0px;
+  height: 7px;
+  background: url('images/controls.png');
+  background-position: -0px -1272px;
+}
+
+.vn-hud-window-view .bottom .right {
+  width: 7px;
+  height: 7px;
+  right: 0px;
+  bottom: 0px;
+  background: url('images/controls.png');
+  background-position: -8px -1264px;
+}

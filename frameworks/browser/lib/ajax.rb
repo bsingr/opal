@@ -31,4 +31,13 @@ class AJAX
     #[@request].send(null);`
   end
   
+  # Usage:
+  # 
+  #   AJAX.get my_js_file.js, :option_1 => 'something', :option_2 => 'something_else' do |response|
+  #     puts 'received response!
+  #   end
+  def self.get(url, options, &block)
+    
+  end
+  
 end

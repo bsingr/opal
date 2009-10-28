@@ -3,6 +3,17 @@ var $VN_2 = RClass.define_under($VN_1, 'TextFieldCell',$VN_2.$c_g_full('Cell'));
 $VN_2.$def('class_name',function(self,_cmd){
 return 'vn-text-field';
 });
+$VN_2.$def('render_with_frame:in_view:',function(self,_cmd,cell_frame,control_view){
+var ctx = VN$(self.$klass.$c_g_full('RenderContext'),'current_context');
+if(RTEST(VN$(ctx,'first_time?'))){
+VN$(ctx,'<<',"<div class='left'></div>");
+VN$(ctx,'<<',"<div class='middle'></div>");
+VN$(ctx,'<<',"<div class='right'></div>");
+VN$(ctx,'<<',"<input class='input'></div>");
+VN$(ctx,'first_time=',false);
+}
+return VN$(ctx,'class_name=',VN$([VN$(self, 'class_name'),VN$(self, 'theme_name')],'join',' '));
+});
 $VN_2.$def('background_color=',function(self,_cmd,color){
 VN$(self, 'will_change_value_for_key', 'background_color');
 self.$i_s('@background_color',color);

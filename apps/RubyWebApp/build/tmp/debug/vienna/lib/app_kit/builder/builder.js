@@ -13,10 +13,7 @@ var builder = VN$(self.$c_g_full('BUILDERS'),'[]',name);
 return VN$(builder,'build!',options,block);
 });
 $VN_2.$def('build!',function(self,_cmd,options,block){
-VN$(self,'puts',["Building UI: ",(self.$i_g('@name'))].join(''));
 VN$(self.$i_g('@builder'),'call',self);
-VN$(self,'puts',"Options:");
-VN$(self,'puts',options);
 return arguments[arguments.length -1](self);
 });
 $VN_2.$def('top',function(self,_cmd,obj){

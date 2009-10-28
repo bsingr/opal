@@ -32,6 +32,19 @@ module Vienna
       'vn-text-field'
     end
     
+    def render_with_frame cell_frame, in_view:control_view
+      ctx = RenderContext.current_context
+      if ctx.first_time?
+        ctx << "<div class='left'></div>"
+        ctx << "<div class='middle'></div>"
+        ctx << "<div class='right'></div>"
+        ctx << "<input class='input'></div>"
+        ctx.first_time = false
+      end
+      
+      ctx.class_name = [class_name, theme_name].join ' '
+    end
+    
     def background_color= color
       @background_color = color
     end

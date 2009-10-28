@@ -34,6 +34,14 @@ VN$(self,'push_element_stack',element);
 arguments[arguments.length -1](self);
 return VN$(self, 'pop_element_stack');
 });
+$VN_2.$def('child_nodes',function(self,_cmd){
+return VN$(self, 'element').childNodes.length;});
+$VN_2.$def('child_node',function(self,_cmd,a_number,block){
+var e = VN$(self, 'element').childNodes[a_number];
+VN$(self,'push_element_stack',e);
+arguments[arguments.length -1](self);
+return VN$(self, 'pop_element_stack');
+});
 $VN_2.$def('find_selector',function(self,_cmd,a_selector){
 var nodes = VN$(self, 'element').childNodes;
       var length = nodes.length;

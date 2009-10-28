@@ -36,6 +36,26 @@ module Vienna
       @style_mask = style_mask
     end
     
+    def self.frame_rect_for_content_rect rect, style_mask:style
+      Rect.new(rect.x, rect.y, rect.width, rect.height)
+    end
+    
+    def self.content_rect_for_frame_rect rect, style_mask:style
+      Rect.new(rect.x, rect.y, rect.width, rect.height)
+    end
+    
+    def self.min_frame_width_with_title title, style_mask:style
+      
+    end
+    
+    def frame_rect_for_content_rect rect
+      Rect.new(rect.x, rect.y, rect.width, rect.height)
+    end
+    
+    def content_rect_for_frame_rect rect
+      Rect.new(rect.x, rect.y, rect.width, rect.height)
+    end
+    
     def class_name
       'vn-window-view'
     end
@@ -47,8 +67,22 @@ module Vienna
     
     def mouse_down the_event
       # check if inside resize indicator && should resize..
-      
+
       # check if window is movable by background, if so, do move..
+      # @mouse_down_point = @window.convert_base_to_screen the_event.location_in_window
+      @mouse_down_point = the_event.location_in_window
+      # @mouse_down_window_origin = @window.frame.origin
+      App.bind_events [:left_mouse_up, :left_mouse_dragged] do |the_event|
+        if the_event.type == :left_mouse_up
+          App.unbind_events
+        else
+          window_point = the_event.location_in_window
+          @window_origin = @window.frame.origin
+          @delta_x = window_point.x - @mouse_down_point.x
+          @delta_y = window_point.y - @mouse_down_point.y
+          @window.frame_origin = Point.new(@window_origin.x + @delta_x, @window_origin.y + @delta_y)
+        end
+      end
     end
     
     

@@ -427,7 +427,7 @@ class Vienna::RubyParser < Racc::Parser
       elsif scanner.check(/\|/)
         if scanner.scan(/\|\|\=/)
           self.lex_state = :EXPR_BEG
-          return [:tOP_ASGN, scanner.matched]
+          return [:tOP_ASGN, '||']
         elsif scanner.scan(/\|\|/)
           self.lex_state = :EXPR_BEG
           return [:tOROP, scanner.matched]
@@ -464,7 +464,7 @@ class Vienna::RubyParser < Racc::Parser
         # += or -=
         if scanner.scan(/\=/)
           self.lex_state = :EXPR_BEG
-          return [:tOP_ASGN, "#{result}#{scanner.matched}"]
+          return [:tOP_ASGN, "#{result}"]
         end
         
         if lex_state == :EXPR_BEG || lex_state == :EXPR_MID
@@ -480,12 +480,12 @@ class Vienna::RubyParser < Racc::Parser
       
       elsif scanner.scan(/\*\*\=/)
         self.lex_state = :EXPR_BEG
-        return [:tOP_ASGN, '**=']
+        return [:tOP_ASGN, '**']
       elsif scanner.scan(/\*\*/)
         return [:tPOW, '**']
       elsif scanner.scan(/\*\=/)
         self.lex_state = :EXPR_BEG
-        return [:tOP_ASGN, '*=']
+        return [:tOP_ASGN, '*']
       elsif scanner.scan(/\*/)
         result =  if lex_state == :EXPR_FNAME
                     self.lex_state = :EXPR_BEG
@@ -516,7 +516,7 @@ class Vienna::RubyParser < Racc::Parser
         return [:tLEQ, '<=']
       elsif scanner.scan(/\<\<\=/)
         self.lex_state = :EXPR_BEG
-        return [:tOP_ASGN, '<<=']
+        return [:tOP_ASGN, '<<']
       elsif scanner.scan(/\<\</)
         if (! [:EXPR_END, :EXPR_DOT, :EXPR_ENDARG, :EXPR_CLASS].include?(lex_state) && space_seen)
           return [:tLSHFT, '<<']
@@ -533,7 +533,7 @@ class Vienna::RubyParser < Racc::Parser
         return [:tGEQ, '>=']
       elsif scanner.scan(/\>\>\=/)
         self.lex_state = :EXPR_BEG
-        return [:tOP_ASGN, '>>=']
+        return [:tOP_ASGN, '>>']
       elsif scanner.scan(/\>\>/)
         return [:tRSHFT, '>>']
       elsif scanner.scan(/\>/)
@@ -562,13 +562,13 @@ class Vienna::RubyParser < Racc::Parser
       
       elsif scanner.scan(/\&\&\=/)
         self.lex_state = :EXPR_BEG
-        return [:tOP_ASGN, '&&=']
+        return [:tOP_ASGN, '&&']
       elsif scanner.scan(/\&\&/)
         self.lex_state = :EXPR_BEG
         return [:tANDOP, '&&']
       elsif scanner.scan(/\&\=/)
         self.lex_state = :EXPR_BEG
-        return [:tOP_ASGN, '&=']
+        return [:tOP_ASGN, '&']
       elsif scanner.scan(/\&/)
         result = if space_seen && !scanner.check(/\s/)
                     # warning: & as prefix
@@ -585,7 +585,7 @@ class Vienna::RubyParser < Racc::Parser
       
       elsif scanner.scan(/\^\=/)
         self.lex_state = :EXPR_BEG
-        return [:tOP_ASGN, '^=']
+        return [:tOP_ASGN, '^']
       elsif scanner.scan(/\^/)
         return ['^', '^']
       elsif scanner.scan(/\;/)
@@ -605,7 +605,7 @@ class Vienna::RubyParser < Racc::Parser
       elsif scanner.scan(/\%/)
         if scanner.scan(/\=/)
           self.lex_state = :EXPR_BEG
-          return [:tOP_ASGN, '%=']
+          return [:tOP_ASGN, '%']
         end
         return ['%', '%']
       

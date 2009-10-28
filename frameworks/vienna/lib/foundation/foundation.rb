@@ -44,6 +44,10 @@ module Vienna
       `return VN$(self, selector, obj1, obj2);`
     end
     
+    def perform_selector selector, with_object:obj
+      `return VN$(self, selector, obj);`
+    end
+    
     def perform_selector selector
       `return VN$(self, selector);`
     end

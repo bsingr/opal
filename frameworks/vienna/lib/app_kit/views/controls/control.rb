@@ -135,6 +135,7 @@ module Vienna
     
     def enabled=(flag)
       @cell.enabled = flag
+      self.needs_display = true
     end
     
     def control_tint
@@ -264,7 +265,11 @@ module Vienna
   
     
     def send_action action, to:target
-      
+      puts 'sending action on'
+      # update binding. Value binding is always set as actions are sent, so do both
+      propagate_binding(:value) if info_for_binding(:value)       
+      # action
+      App.send_action action, to:target, from:self
     end
     
     def take_int_value_from sender
@@ -345,30 +350,25 @@ module Vienna
     def attributed_string_value= val
       @cell.attributed_string_value = val
     end
-
-
-     
-    def observe_value_for_key_path path, of_object:object, change:change, context:context
-      if context == :enabled
-        puts 'received notification of chnage to enabled property..'
-        self.enabled = object.value_for_key_path(path)
-        self.needs_display = true
+    
+    # Catch value bindings. these must be referenced back to object_value
+    # two-way
+    # basically, we override to ensure that object_value is the key to be synced
+    def bind binding, to_object:observable, with_key_path:key_path, options:options
+      if binding == :value
+        unbind binding
+        observable.add_observer self, for_key_path:key_path, options:options, context:binding
+        binding_dict = {
+          :observed_object => observable,
+          :observed_key_path => key_path,
+          :options => options,
+          :key => 'object_value'
+        }
+        set_info binding_dict, for_binding:binding
+        set_value_for_binding binding
+      else
+        super binding, observable, key_path, options
       end
     end
-    
-    # def bind binding, to_object:observable, with_key_path:key_path, options:options
-    #   if binding == :enabled
-    #     observable.add_observer self, for_key_path:key_path, options:nil, context: :enabled
-    #     @kvb_info[:enabled] = {
-    #       :observed_object => observable,
-    #       :observed_key_path => key_path,
-    #       :options => options
-    #     }
-    #     # Check options to see if we should do initial...?
-    #     puts 'checking key path for binding'
-    #     
-    #     self.enabled = observable.value_for_key_path(key_path)
-    #   end
-    # end
   end
 end

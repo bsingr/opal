@@ -28,6 +28,31 @@ module Vienna
   
   class TableView < Control
     
+    def initialize frame
+      super frame
+      
+      @row_height = 17.0
+      @intercell_spacing = Size.new(3.0, 2.0)
+      @number_of_rows = -1
+      @table_columns = []
+    end
+    
+    # Required
+    #   number_of_rows_in_table_view(table_view)
+    #   table_view(table_view, object_value_for_table_column:table_column, row:row)
+    # 
+    # Optional - Editing
+    #   table_view(table_view, set_object_value:object, for_table_column:table_column, row:row)
+    # 
+    # Optional - Sorting
+    #   table_view(table_view, sort_descriptors_did_change:old_descriptors)
+    # 
+    # Optional - Drag and drop
+    #   table_view(table_view, write_rows_with_indexes:row_indexes, to_pasteboard:pasteboard)
+    #   table_view(table_view, validate_drop:info, proposed_row:row, proposed_drop_operation:drop_operation)
+    #   table_view(table_view, accept_drop:info, row:row, drop_operation:drop_operation)
+    #   table_view(table_view, names_of_promised_files_dropped_at_destination:drop_destination, for_dragged_rows_with_indexes:index_set)
+    # 
     def data_source= a_source
       @data_source = a_source
     end
@@ -35,8 +60,16 @@ module Vienna
     def data_source
       @data_source
     end
-      
     
+    # 
+    # Setup required cells for drawing (do not actually draw here)
+    #   table_view(table_view, will_display_cell:cell, for_table_column:table_column, row:row)
+    # 
+    # Return boolean whether the tableview can allow editing of the cell at row column
+    #   table_view(table_view, should_edit_table_column:table_column, row:row)
+    # 
+    #   selection_should_change_in_table_view?(table_view)
+    # 
     def delegate= a_delegate
       @delegate
     end
@@ -49,7 +82,7 @@ module Vienna
       @header_view = header_view
     end
     
-    def header_View
+    def header_view
       @header_view
     end
     
@@ -70,7 +103,7 @@ module Vienna
     end
 
     
-    def allows_column_resizing = flag
+    def allows_column_resizing= flag
       @allows_column_resizing = flag
     end
     
@@ -78,7 +111,7 @@ module Vienna
       @allows_column_resizing
     end
     
-    def column_autoresizing_style = style
+    def column_autoresizing_style= style
       @column_autoresizing_style = style
     end
     
@@ -148,11 +181,26 @@ module Vienna
     end
     
     def number_of_rows
+      if @number_of_rows < 0
+        if @data_source
+          if @data_source.respond_to?(:number_of_rows_in_table_view)
+            @number_of_rows = @data_source.number_of_rows_in_table_view(self)
+          else
+            puts 'ERROR: @data_source does not respond to #number_of_rows_in_table_view'
+            @number_of_rows = 0
+          end
+        else
+          @number_of_rows = 0
+        end
+      end
       
+      @number_of_rows
     end
     
-    def add_table_column table_column
+    def add_table_column(table_column)
       @table_columns << table_column
+      table_column.table_view = self
+      reload_data
     end
     
     def remove_table_column table_column
@@ -192,14 +240,94 @@ module Vienna
     end
     
     def reload_data
-      
+      note_number_of_rows_changed    
+      self.needs_display = true
     end
     
     def note_number_of_rows_changed
-      
+      @number_of_rows = -1
+  
+      rows = self.number_of_rows
+      size = Size.new(@frame.width, @frame.height)
+
+      if rows > 0
+        size.width = rect_of_row(0).width
+      end
+
+      if @table_columns.length > 0
+        size.height = rect_of_column(0).height
+      end
+      # self.frame_size = size
     end
     
-    def reload_data_for_row_indexes row_indexes, column_indexes:column_indexes
+    # Complete render (every row, every cell)
+    def render(context)
+      _synchronize_render_context_with_data(context)
+      render_background_in_clip_rect(@bounds, context)
+    end
+    
+    # this method makes sure that there are enough rows and columns for rendering.
+    # In raw terms, each row is contained within a DIV. Each column has a DIV inside
+    # every row. Looking like this:
+    # 
+    # -------------------------------------------------------------------------
+    # ------------  --------------  --------------  --------------  -----------
+    # | r0 c0    |  | r0 c1      |  | r0 c2      |  | r0 c3      |  | r0 c4   |
+    # ------------  --------------  --------------  --------------  -----------
+    # -------------------------------------------------------------------------
+    # 
+    # -------------------------------------------------------------------------
+    # ------------  --------------  --------------  --------------  -----------
+    # | r1 c0    |  | r1 c1      |  | r1 c2      |  | r1 c3      |  | r1 c4   |
+    # ------------  --------------  --------------  --------------  -----------
+    # -------------------------------------------------------------------------
+    # 
+    # This process involves checking the number of child elements in the render
+    # context, and if it is equal to the current number of rows, then that is
+    # fine. If it is less, then we need to add more divs to make the number equal
+    # and, if it is more, then we need to remove these extra divs. The same
+    # process is then repeated for columns per row. This is likely to change less
+    # often than row numbers changing
+    def _synchronize_render_context_with_data(context)
+      children = context.child_nodes
+      rows = number_of_rows
+
+      if children < rows
+        # we need to add extra rows!
+        # first, make sure current rows are right size
+        children.times do |i|
+          rect = rect_of_row(i)
+          context.child_node i { |elem| elem.css :width => "#{rect.width}px" }
+        end
+        # 'extra' rows
+        (rows - children).times do |i|
+          rect = rect_of_row(children + i)
+          context << "<div style='top:#{rect.y}px;left:#{rect.x}px;width:#{rect.width}px;height:#{rect.height}px;'></div>"
+        end
+      elsif rows < children
+        # we need to remove surplus rows
+      else
+        children.times do |i|
+          rect = rect_of_row(i)
+          context.child_node(i) { |elem| elem.css :width => "#{rect.width}px" }
+        end
+      end
+    end
+    
+    # need to remove this second param
+    def render_background_in_clip_rect(clip_rect, context)
+      # puts "Rendering background in"
+      # puts clip_rect
+    end
+    
+    def render_row row, clip_rect:clip_rect
+      
+    end
+
+    
+    
+    
+    def reload_data_for_row_indexes(row_indexes, column_indexes:column_indexes)
       
     end
     
@@ -382,12 +510,43 @@ module Vienna
       @dragging_destination_feedback_style
     end
     
-    def rect_of_column column
+    # Calculates the full rect of the specified column number
+    def rect_of_column(column)
+      result = Rect.new(0,0,0,0)
+      return result if column < 0 || column >= @table_columns.length
       
+      rows = number_of_rows
+      i = 0
+      
+      `for (i = 0; i < column; i++) {`
+        result.x += @table_columns[i].width + @intercell_spacing.width
+      `}`
+      
+      `for (i = 0; i < rows; i++) {`
+        result.height += @row_height + @intercell_spacing.height
+      `}`
+      
+      result
     end
     
-    def rect_of_row row
+    # Calculates the full rect of the specified row
+    def rect_of_row(row)
+      result = Rect.new(0, 0, 0, 0)
+      return result if row < 0 || row >= self.number_of_rows
       
+      i = 0
+      `for (i = 0; i < row; i++) {`
+        result.y += @row_height + @intercell_spacing.height
+      `}`
+      
+      
+      column = @table_columns.length
+      `for (i = 0; i < column; i++) {`
+        result.width += @table_columns[i].width + @intercell_spacing.width
+      `}`
+      
+      result.height = @row_height + @intercell_spacing.height
+      result
     end
     
     def column_indexes_in_rect rect

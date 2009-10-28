@@ -47,23 +47,12 @@ module Vienna
       'vn-text-field'
     end
     
-    # def render context
-    #   if context.first_time?
-    #     context << "<div class='left'></div>"
-    #     context << "<div class='middle'></div>"
-    #     context << "<div class='right'></div>"
-    #     context << "<input class='input'></div>"
-    #   end
-    #   
-    #   context.class_name = [class_name, theme_name].join ' '
-    # end
-    
-    def resign_first_responder
+    def resign_first_responder?
       puts 'resign first responder....'
       true
     end
     
-    def become_first_responder
+    def become_first_responder?
       puts 'becoming first responder!!'
       App.current_event.allows_propagation = true
       true

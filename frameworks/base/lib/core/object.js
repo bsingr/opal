@@ -49,7 +49,7 @@ cBasicObject.$define_private_method('initialize', function(self, _cmd) {
   return nil ;
 });
 
-cBasicObject.$define_alloc_func(function(self, _cmd) {
+VN.cBasicObjectAlloc = function(self, _cmd) {
   // console.log('HMMMM');
   // console.log(self);
   // console.log(_cmd);
@@ -62,7 +62,11 @@ cBasicObject.$define_alloc_func(function(self, _cmd) {
    // # @kvo_observers = []
     // #      @kvo_old_values = {}
   return obj;
-});
+};
+
+cBasicObject.$define_alloc_func(VN.cBasicObjectAlloc);
+
+cBasicObject.$def_s('alloc', VN.cBasicObjectAlloc);
 
 cBasicObject.$def('==', function(self, _cmd, obj) {
   return (self == obj) ? true : false ;

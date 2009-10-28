@@ -55,25 +55,43 @@ module Vienna
       @kvb_info[binding] = {
         :observed_object => observable,
         :observed_key_path => key_path,
-        :options => options
+        :options => options,
+        :key => binding
       }
 
       set_value_for_binding binding
     end
     
+    def observe_value_for_key_path path, of_object:object, change:change, context:context
+      if info_for_binding(context)
+        puts 'KVB: received notification for chnage of context #{context}'
+        set_value_for_binding context
+      end
+    end
+    
     # set the value from the observable's keypath
     def set_value_for_binding binding
-      dict = @kvb_info[binding]
+      dict = info_for_binding binding
       obj = dict[:observed_object]
       path = dict[:observed_key_path]
+      key = dict[:key]
       value = obj.value_for_key_path path
-      # do transform?!?!      
-      set_value value, for_key:binding
+      # do transform?!?!     
+      set_value value, for_key:key
     end
     
     # For chnages in views etc, propagate the new value to bound object
-    def propagate_value value, for_binding:binding
+    def propagate_binding binding
       
+      binding_dict = info_for_binding binding
+      return nil unless binding_dict
+      
+      # transform value?
+      obj = dict[:observed_object]
+      path = dict[:observed_key_path]
+      value = value_for_key(dict[:key])
+      
+      obj.set_value value, for_key_path:path
     end
         
     def unbind binding
@@ -81,7 +99,11 @@ module Vienna
     end
     
     def info_for_binding binding
-      
+      @kvb_info[binding]
+    end
+    
+    def set_info info, for_binding:binding
+      @kvb_info[binding] = info
     end
     
     def option_descriptions_for_binding binding

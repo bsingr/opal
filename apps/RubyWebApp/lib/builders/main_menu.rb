@@ -26,21 +26,16 @@
 
 module RubyWebApp
   
+  
   Vienna::Builder.new :main_menu do |builder|
     
     app_delegate = RubyWebApp::AppController.new
     VN::App.delegate = app_delegate
     
-    Vienna::Window.build :frame => VN::Rect.new(100, 100, 400, 400), :title => 'My Window!' do |win|
-        
-      Vienna::Button.build :frame => VN::Rect.new(10,10,90,24), :bezel => :rounded do |button|
-        win << button
-        button.title = 'Normal'
-        button.alignment = :left
-        button.bind :enabled, to_object:app_delegate, with_key_path:'test_binding', options:nil        
-        # button.theme_name = :my_theme
-        button.needs_display = true
-      end
+    hud_window = Vienna::Window.new VN::Rect.new(800, 100, 400, 250), [:hud, :closable]
+    
+    Vienna::Window.build :frame => VN::Rect.new(50, 100, 700, 400), :title => 'My Window!' do |win|
+      
       
       Vienna::Button.build :frame => VN::Rect.new(10,40,90,24), :bezel => :rounded do |button|
         win << button
@@ -94,10 +89,36 @@ module RubyWebApp
         slider.needs_display = true
       end
       # 
-      # Vienna::TextField.build :frame => VN::Rect.new(10, 70, 180, 26), :editable => true do |text|
-      #   win << text
-      #   text.needs_display = true
-      # end
+      Vienna::TextField.build :frame => VN::Rect.new(10, 210, 180, 26), :editable => true do |text|
+        win << text
+        text.needs_display = true
+      end
+      
+      Vienna::Button.build :frame => VN::Rect.new(10,240,90,24), :bezel => :rounded do |button|
+        win << button
+        button.title = 'Normal'
+        button.alignment = :left
+        button.bind :enabled, to_object:app_delegate, with_key_path:'test_binding', options:nil        
+        # button.theme_name = :my_theme
+        button.needs_display = true
+      end
+      
+      Vienna::TableView.build :frame => VN::Rect.new(240, 60, 400, 200), :something => true do |table_view|
+        win << table_view
+        table_view.data_source = app_delegate
+        
+        name_col = Vienna::TableColumn.new('name')
+        table_view.add_table_column name_col
+        age_col = Vienna::TableColumn.new('age')
+        table_view.add_table_column age_col
+        band_col = Vienna::TableColumn.new('band')
+        table_view.add_table_column band_col
+        
+        
+        table_view.reload_data
+        # table_view.needs_display = true
+      end
+      
       # 
       # Vienna::CheckBox.build :frame => VN::Rect.new(10,100,90,24), :bezel => :rounded do |check|
       #   win << check

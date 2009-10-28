@@ -58,14 +58,14 @@ module Vienna
     
     # Hash. key - image name, value - Image instance
     def self.named_images
-      @@named_images ||= {}
+      @named_images ||= {}
     end
     
     # All defined sprite images. These are stored until they are needed. The
     # hash uses the image name as the key, and an array as the value: containing
     # the 'parent' image at index 0, and it's rect, as an array, at index 2.
     def self.sprite_images
-      @@sprite_images ||= {}
+      @sprite_images ||= {}
     end
     
     # def self.define_sprite_image_named name, in_image:image, with_rect:rect
@@ -155,7 +155,7 @@ module Vienna
     
     def init_with_contents_of_url url
       initialize
-      puts 'needs image named #{url}'
+      # puts 'needs image named #{url}'
       @filename = url
       # @status = :loading
       @image = nil
@@ -202,11 +202,11 @@ module Vienna
     
     def _image_did_load
       @size =  Size.new(`#{@image}.width`, `#{@image}.height`)
-      puts 'SETTING size to '
+      # puts 'SETTING size to '
     end
     
     def sprite name, rect
-      puts "Making sprite named #{name}"
+      # puts "Making sprite named #{name}"
       self
     end
     

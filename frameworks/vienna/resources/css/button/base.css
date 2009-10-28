@@ -8,7 +8,7 @@
   text-align:center;
   cursor: default;
   text-decoration: none;
-  text-shadow: rgba(206, 214, 221, 0.644) 0px 1px 0px;
+  text-shadow: rgba(245, 245, 245, 0.744) 0px 1px 0px;
   font-family: Arial, "MS Trebuchet", sans-serif;
   font-size: 12px;
   font-weight: bold;
@@ -22,7 +22,7 @@
 
 .vn-button.bordered .left {
   background: url('images/controls.png');
-  background-position: 0px -906px;
+  background-position: 0px -1020px;
   position: absolute;
   height: 24px;
   width: 4px;
@@ -33,7 +33,7 @@
 .vn-button.bordered .middle {
   background: url('images/controls.png');
   background-repeat: repeat-x;
-  background-position: 0px -931px;
+  background-position: 0px -1045px;
   position: absolute;
   top: 0px;
   left: 4px;
@@ -43,7 +43,7 @@
 
 .vn-button.bordered .right {
   background: url('images/controls.png');
-  background-position: -5px -906px;
+  background-position: -5px -1020px;
   position: absolute;
   height: 24px;
   width: 4px;
@@ -53,25 +53,25 @@
 
 /* Disabled */
 .vn-button.bordered.disabled .left {
-  background-position: -10px 0px;
+  background-position: -20px -1020px;
 }
 
 .vn-button.bordered.disabled .middle {
-  background-position: 0px -78px;
+  background-position: 0px -1095px;
 }
 
 .vn-button.bordered.disabled .right {
-  background-position: -10px -26px;
+  background-position: -25px -1020px;
 }
 
 /* State on */
 .vn-button.bordered.highlighted .left {
-  background-position: -10px 0px;
+  background-position: -10px 1020px;
 }
 
 .vn-button.bordered.highlighted .middle {
-  background-position: 0px -78px;
+  background-position: 0px -1070px;
 }
 
 .vn-button.bordered.highlighted .right {
-background-position: -10px -26px;}
+background-position: -10px -1020px;}

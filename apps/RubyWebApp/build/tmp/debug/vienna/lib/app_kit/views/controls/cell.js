@@ -353,7 +353,7 @@ return false;
 }
 VN$(self,'highlight:with_frame:in_view:',true,cell_frame,control_view);
 if(RTEST(VN$(self, 'continuous?'))){
-VN$(self.$klass.$c_g_full('App'),'send_action:to:from:',VN$(self, 'action'),VN$(self, 'target'),self);
+VN$(control_view,'send_action:to:',VN$(self, 'action'),VN$(self, 'target'));
 }
 return VN$(self.$klass.$c_g_full('App'),'bind_events',['left_mouse_up','left_mouse_dragged'],function(the_event){
 location = VN$(control_view,'convert_point:from_view:',VN$(the_event,'location_in_window'),nil);
@@ -361,17 +361,20 @@ if(RTEST(flag)){
 if(RTEST(VN$(VN$(the_event,'type'),'==','left_mouse_up'))){
 VN$(self,'stop_tracking:at:in_view:mouse_is_up:',VN$(the_event,'location_in_window'),VN$(the_event,'location_in_window'),control_view,true);
 VN$(self.$klass.$c_g_full('App'),'unbind_events');
+if(RTEST(VN$(location,'in_rect?',cell_frame))){
 if(RTEST(VN$(self.$i_g('@state'),'==','on'))){
 self.$i_s('@state','off');
 }
 else{
 self.$i_s('@state','on');
 }
+VN$(control_view,'send_action:to:',VN$(self, 'action'),VN$(self, 'target'));
+}
 VN$(self,'highlight:with_frame:in_view:',false,cell_frame,control_view);
 return ;
 }
 else{
-if(!RTEST(VN$(self,'continue_tracking',VN$(the_event,'location_in_window'),VN$(the_event,'location_in_window')))){
+if(!RTEST(VN$(self,'continue_tracking:at:in_view:',VN$(the_event,'location_in_window'),VN$(the_event,'location_in_window'),control_view))){
 VN$(self.$klass.$c_g_full('App'),'unbind_events');
 }
 VN$(self,'highlight:with_frame:in_view:',VN$(location,'in_rect?',cell_frame) ? true : false,cell_frame,control_view);

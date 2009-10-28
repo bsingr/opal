@@ -7,6 +7,8 @@ $VN_2.$def('initialize',function(self,_cmd){
 });
 $VN_2.$def('perform_selector:with_object:with_object:',function(self,_cmd,selector,obj1,obj2){
 return VN$(self, selector, obj1, obj2);});
+$VN_2.$def('perform_selector:with_object:',function(self,_cmd,selector,obj){
+return VN$(self, selector, obj);});
 $VN_2.$def('perform_selector',function(self,_cmd,selector){
 return VN$(self, selector);});
 

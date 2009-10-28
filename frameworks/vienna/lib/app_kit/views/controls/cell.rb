@@ -497,7 +497,7 @@ module Vienna
       end
             
       highlight true, with_frame:cell_frame, in_view:control_view
-      App.send_action action, to:target, from:self if continuous?
+      control_view.send_action action, to:target if continuous?
       
       App.bind_events [:left_mouse_up, :left_mouse_dragged] do |the_event|
         location = control_view.convert_point the_event.location_in_window, from_view:nil
@@ -506,18 +506,22 @@ module Vienna
           if the_event.type == :left_mouse_up
             stop_tracking the_event.location_in_window, at:the_event.location_in_window, in_view:control_view, mouse_is_up:true
             App.unbind_events
-            # set next state
-            if @state == :on
-              @state = :off
-            else
-              @state = :on
+            
+            if location.in_rect?(cell_frame)
+              # set next state
+              if @state == :on
+                @state = :off
+              else
+                @state = :on
+              end
+            
+              control_view.send_action action, to:target
             end
             
-            # App.send_action @action, to:@target, from:self if location.in_rect? cell_frame
             highlight false, with_frame:cell_frame, in_view:control_view
             return
           else # mouse_dragged
-            unless continue_tracking the_event.location_in_window, the_event.location_in_window
+            unless continue_tracking the_event.location_in_window, at:the_event.location_in_window, in_view:control_view
               App.unbind_events
             end
                       

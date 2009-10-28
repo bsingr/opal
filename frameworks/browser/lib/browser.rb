@@ -26,3 +26,4 @@
 
 require 'document'
 require 'element'
+require 'json'

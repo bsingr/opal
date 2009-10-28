@@ -9,7 +9,7 @@ $VN_1.$def('coerce',function(self,_cmd){
 $VN_1.$def('+@',function(self,_cmd){
 });
 $VN_1.$def('-@',function(self,_cmd){
-});
+return self * -1;});
 $VN_1.$def('<=>',function(self,_cmd){
 });
 $VN_1.$def('eql?',function(self,_cmd){
@@ -58,7 +58,10 @@ $VN_1.$def('upto',function(self,_cmd){
 });
 $VN_1.$def('downto',function(self,_cmd){
 });
-$VN_1.$def('times',function(self,_cmd){
+$VN_1.$def('times',function(self,_cmd,block){
+for (var i = 0; i < self; i++) {
+      VN$(block, 'call', i);
+    }return self;
 });
 $VN_1.$def('succ',function(self,_cmd){
 });

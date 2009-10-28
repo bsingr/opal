@@ -139,7 +139,7 @@ module Vienna
     # Get shared app
     # 
     def self.shared_application
-      @@app ||= self.new()
+      @app ||= self.new()
     end
   
     # Set App delegate

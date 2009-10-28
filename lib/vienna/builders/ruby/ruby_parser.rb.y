@@ -61,12 +61,12 @@ class Vienna::RubyParser
     left     tLSHFT tRSHFT
     left     tAMPER2
     left     tPIPE tCARET
-    left     tGT tGEQ tLT tLEQ
+    left     '>' tGEQ '<' tLEQ
     nonassoc tCMP tEQ tEQQ tNEQ tMATCH tNMATCH
     left     tANDOP
     left     tOROP
     nonassoc tDOT2 tDOT3
-    right    tEH tCOLON
+    right    '?' ':'
     left     kRESCUE_MOD
     right    '=' tOP_ASGN
     # nonassoc kDEFINED
@@ -385,6 +385,10 @@ rule
             		| var_lhs tOP_ASGN arg kRESCUE_MOD arg
             		| primary_value '[' opt_call_args rbracket tOP_ASGN arg
             		| primary_value '.' tIDENTIFIER tOP_ASGN arg
+            		  {
+            		    result = node :op_asgn, :lhs => node(:call, :recv => val[0], :meth => val[2]), :op => val[3], :rhs => val[4]
+                    # result = node :dot_identifier_op_asgn, :lhs => node(:call, :recv => val[0], :meth => val[2]), :op => val[3], :rhs => val[4]
+            		  }
             		| primary_value '.' tCONSTANT tOP_ASGN arg
             		| primary_value tCOLON2 tIDENTIFIER tOP_ASGN arg
             		| primary_value tCOLON2 tCONSTANT tOP_ASGN arg
@@ -421,7 +425,7 @@ rule
             		| tUPLUS arg
             		| tUMINUS arg
             		  {
-            		    result = node :call, :recv => val[1], :meth => '-@', :call_args => []
+            		    result = node :call, :recv => val[1], :meth => '-@', :call_args => { :args => []}
             		  }
             		| arg '|' arg
             		  {
@@ -865,8 +869,8 @@ rule
 
      brace_block: '{' opt_block_param compstmt '}'
                   {
-                    
-                  }
+            		    result = node :brace_block, :params => val[1], :stmt => val[2]
+            		  }
             		| kDO opt_block_param compstmt kEND
             		  {
             		    result = node :brace_block, :params => val[1], :stmt => val[2]

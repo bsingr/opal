@@ -38,6 +38,9 @@ module Vienna
     ZOOM_IMAGE = Image.sprite :controls, [0, 889, 16, 16]
     ZOOM_HIGHLIGHTED_IMAGE = Image.sprite :controls, [16, 889, 16, 16]
     
+    
+    TITLEBAR_HEIGHT = 24.0
+    
     # CLOSE_IMAGE = Image.image_named :vn_normal_win_close
     # CLOSE_HIGHLIGHTED_IMAGE = Image.image_named :vn_normal_win_close_highlight
     
@@ -45,7 +48,7 @@ module Vienna
       super frame, style_mask
       
       if @style_mask.include? :closable
-        @close_button = Button.build :frame => Rect.new(206, 6, 16, 16), :bordered => false do |close|
+        @close_button = Button.build :frame => Rect.new(6, 6, 16, 16), :bordered => false do |close|
           close.bordered = false
           close.image_position = :image_only
           close.image = CLOSE_IMAGE
@@ -64,5 +67,37 @@ module Vienna
       end
     end
     
+    def class_name
+      'vn-normal-window-view'
+    end
+    
+    def render context
+      if context.first_time?
+        context << "<div class='titlebar'><div class='left'></div><div class='middle'></div><div class='right'></div><div class='splitter'></div></div>"
+        context << "<div class='body'></div>"
+        context.first_time = false
+      end
+      context.class_name = class_name
+    end
+    
+    def self.frame_rect_for_content_rect rect, style_mask:style
+      Rect.new(rect.x, rect.y, rect.width, rect.height)
+    end
+    
+    def self.content_rect_for_frame_rect rect, style_mask:style
+      Rect.new(rect.x, rect.y, rect.width, rect.height)
+    end
+    
+    def self.min_frame_width_with_title title, style_mask:style
+      
+    end
+    
+    def frame_rect_for_content_rect rect
+      Rect.new(rect.x, rect.y, rect.width, rect.height)
+    end
+    
+    def content_rect_for_frame_rect rect
+      Rect.new(rect.x, rect.y, rect.width, rect.height)
+    end
   end  
 end

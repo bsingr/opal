@@ -26,6 +26,8 @@
 
 require 'window_view'
 require 'normal_window_view'
+require 'hud_window_view'
+require 'borderless_window_view'
 
 module Vienna
   
@@ -65,10 +67,12 @@ module Vienna
   }
 
   class Window < Responder
-        
+    
     def initialize content_rect, style_mask
-      super()
-      
+      init_with_content_rect content_rect, style_mask:style_mask
+    end
+    
+    def init_with_content_rect content_rect, style_mask:style_mask  
       setup_display_context
       
       @frame = Rect.new(0, 0, 0, 0)
@@ -88,10 +92,11 @@ module Vienna
       @window_view.needs_display = true
       
       self.content_view = View.new(Rect.new(0, 0, @frame.width, @frame.height))
+      self
     end
     
     def self.build options, &block
-      win = self.new options[:frame], [:titled, :closable]      
+      win = self.alloc.init_with_content_rect options[:frame], style_mask:[:titled, :closable]      
       if block
         yield win
       end
@@ -113,12 +118,13 @@ module Vienna
     # clicks being registered for clicking on a shadow, or any window
     # padding.
     def setup_window_view
-      @window_view = NormalWindowView.new(Rect.new(0, 0, 100, 100), @style_mask)
+      view_class = _window_view_class_for_style_mask @style_mask
+      @window_view = view_class.new(Rect.new(0, 0, 100, 100), @style_mask)
       @window_view.view_will_move_to_window self
       @window_view.next_responder = self
       @element << @window_view.element
       @window_view.view_did_move_to_window
-      
+      @window_view.needs_display = true
       # Events - should attach these to the windowview...all relevant elements are subviews of this,
       # and, we wont capture events outside the visible window (e.g. the shadow which might be drawn
       # on the @element)
@@ -136,6 +142,17 @@ module Vienna
         unless the_event.allows_propagation?
           the_event.stop_propagation
         end
+      end  
+    end
+    
+    
+    def _window_view_class_for_style_mask style_mask
+      if style_mask.include? :borderless
+        return BorderlessWindowView
+      elsif style_mask.include? :hud
+        return HUDWindowView
+      else
+        return NormalWindowView
       end
     end
     
@@ -283,13 +300,13 @@ module Vienna
         new_origin = frame_rect.origin
         new_size = frame_rect.size
         
-        puts 'about to check!!!!!!!!!!!!!'
-        puts `origin.$iv_tbl`
-        puts '..'
-        puts `new_origin.$iv_tbl`
+        # puts ' about to check!!!!!!!!!!!!!'
+        # puts `origin.$iv_tbl`
+        # puts '..'
+        # puts `new_origin.$iv_tbl`
         # Origin changes
         unless origin.eql? new_origin
-          puts 'Origins are not the same!'
+          # puts 'Origins are not the same!'
           origin.x = new_origin.x
           origin.y = new_origin.y
           @element.origin = origin
@@ -299,7 +316,7 @@ module Vienna
         
         # Size changes
         unless size.eql? new_size
-          puts 'Sizes are not the same!'
+          # puts 'Sizes are not the same!'
           # need to check max/min size conformance
           size.width = new_size.width
           size.height = new_size.height
@@ -313,7 +330,14 @@ module Vienna
     
     
     def frame_origin= origin
-      
+      unless origin.eql? @frame.origin
+        # puts 'Origins are not the same!'
+        @frame.origin.x = origin.x
+        @frame.origin.y = origin.y
+        @element.origin = origin
+        
+        NotificationCenter.default_center.post_notification_name 'window did move', object:self
+      end
     end
     
     def animation_resize_time new_frame
@@ -468,7 +492,9 @@ module Vienna
     end
     
     def make_key_and_order_front(sender)
-      
+      order_front self
+      make_key_window
+      make_main_window
     end
     
     def order_front(sender)
@@ -555,7 +581,7 @@ module Vienna
     
     
     def convert_base_to_screen point
-      
+      Point.new(point.x + @frame.x, point.y + @frame.y)
     end
     
     def convert_screen_to_base point
@@ -652,12 +678,14 @@ module Vienna
         puts 'key_up'
       when :key_down
         puts 'key_down'
-      when :left_mouse_down
+      when :left_mouse_down        
         hit_test = @window_view.hit_test(point)
-                
+  
         if hit_test != @first_responder && hit_test.accepts_first_responder
           make_first_responder hit_test
         end
+        
+        make_key_and_order_front(self)
         
         if hit_test.accepts_first_mouse event
           return hit_test.mouse_down event

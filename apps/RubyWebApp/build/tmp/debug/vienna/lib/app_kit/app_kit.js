@@ -37,6 +37,10 @@ VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/vienn
 
 VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/vienna/lib/app_kit/views/controls/text_field_cell.js');
 
+VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/vienna/lib/app_kit/table_view/table_view.js');
+
+VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/vienna/lib/app_kit/table_view/table_column.js');
+
 VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/vienna/lib/app_kit/window/window.js');
 
 VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/vienna/lib/app_kit/window/panel.js');

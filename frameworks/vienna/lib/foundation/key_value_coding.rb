@@ -70,13 +70,13 @@ module Vienna
     end
     
     def set_value value, for_key:key
-
       accessor = "#{key}="
       if respond_to? accessor
         # we dont need these KVO..automatically done
-        # perform accessor, value
+        perform_selector accessor, with_object:value
         return value
       end
+      
       
       if self.class.access_instance_variables_directly?
         `if (typeof self.$iv_tbl['@' + key] != 'undefined') {`

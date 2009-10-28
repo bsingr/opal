@@ -50,10 +50,10 @@ module Vienna
     # Actually build the UI etc.
     # options should contains the owner etc and top level objects
     def build! options, &block
-      puts "Building UI: #{@name}"
+      # puts "Building UI: #{@name}"
       @builder.call self
-      puts "Options:"
-      puts options
+      # puts "Options:"
+      # puts options
       yield self
     end
     

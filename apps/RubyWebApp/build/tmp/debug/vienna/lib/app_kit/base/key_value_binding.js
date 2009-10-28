@@ -1,11 +1,11 @@
 var $VN_1 = RModule.define('Vienna');
 var $VN_2 = RClass.define_under($VN_1, 'Object',cObject);
-$VN_2.$def_s('expose_binding',function(self,_cmd,aBinding){
+$VN_2.$def_s('expose_binding',function(self,_cmd,binding){
 });
 $VN_2.$def('exposed_bindings',function(self,_cmd){
 return [];
 });
-$VN_2.$def('value_class_for_binding',function(self,_cmd,aBinding){
+$VN_2.$def('value_class_for_binding',function(self,_cmd,binding){
 });
 $VN_2.$def('bind:to_object:with_key_path:options:',function(self,_cmd,binding,observable,key_path,options){
 if(!RTEST(VN$(VN$(self, 'exposed_bindings'),'include?',binding))){
@@ -16,23 +16,42 @@ VN$(self,'puts',["KVB: bad path/object for binding '",(binding),"' to '",(key_pa
 }
 VN$(self,'unbind',binding);
 VN$(observable,'add_observer:for_key_path:options:context:',self,key_path,options,binding);
-VN$(self.$i_g('@kvb_info'),'[]=',binding,VN.$h('observed_object', observable, 'observed_key_path', key_path, 'options', options));
+VN$(self.$i_g('@kvb_info'),'[]=',binding,VN.$h('observed_object', observable, 'observed_key_path', key_path, 'options', options, 'key', binding));
 return VN$(self,'set_value_for_binding',binding);
 });
+$VN_2.$def('observe_value_for_key_path:of_object:change:context:',function(self,_cmd,path,object,change,context){
+if(RTEST(VN$(self,'info_for_binding',context))){
+VN$(self,'puts',['KVB: received notification for chnage of context ',(context)].join(''));
+VN$(self,'set_value_for_binding',context);
+}
+});
 $VN_2.$def('set_value_for_binding',function(self,_cmd,binding){
-var dict = VN$(self.$i_g('@kvb_info'),'[]',binding);
+var dict = VN$(self,'info_for_binding',binding);
 var obj = VN$(dict,'[]','observed_object');
 var path = VN$(dict,'[]','observed_key_path');
+var key = VN$(dict,'[]','key');
 var value = VN$(obj,'value_for_key_path',path);
-return VN$(self,'set_value:for_key:',value,binding);
+return VN$(self,'set_value:for_key:',value,key);
 });
-$VN_2.$def('propagate_value:for_binding:',function(self,_cmd,value,binding){
+$VN_2.$def('propagate_binding',function(self,_cmd,binding){
+var binding_dict = VN$(self,'info_for_binding',binding);
+if(!RTEST(binding_dict)){
+return nil;
+}
+var obj = VN$(VN$(self, 'dict'),'[]','observed_object');
+var path = VN$(VN$(self, 'dict'),'[]','observed_key_path');
+var value = VN$(self,'value_for_key',VN$(VN$(self, 'dict'),'[]','key'));
+return VN$(obj,'set_value:for_key_path:',value,path);
 });
-$VN_2.$def('unbind',function(self,_cmd,aBinding){
+$VN_2.$def('unbind',function(self,_cmd,binding){
 });
-$VN_2.$def('info_for_binding',function(self,_cmd,aBinding){
+$VN_2.$def('info_for_binding',function(self,_cmd,binding){
+return VN$(self.$i_g('@kvb_info'),'[]',binding);
 });
-$VN_2.$def('option_descriptions_for_binding',function(self,_cmd,aBinding){
+$VN_2.$def('set_info:for_binding:',function(self,_cmd,info,binding){
+return VN$(self.$i_g('@kvb_info'),'[]=',binding,info);
+});
+$VN_2.$def('option_descriptions_for_binding',function(self,_cmd,binding){
 });
 var $VN_2 = RClass.define_under($VN_1, 'Object',cObject);
 $VN_2.$def_s('set_default_placeholder:for_marker:with_binding:',function(self,_cmd,placeholder,marker,binding){

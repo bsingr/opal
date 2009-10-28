@@ -24,24 +24,60 @@
 # THE SOFTWARE.
 #
 
-class String
-  
-  def to_json
-    
-  end
-  
-end
-
+# JSON responses will plain text, so we must parse it using JSON parser.
 class JSON
   
-  def self.parse(str)
-  
-  end
-  
-  def self.generate(obj)
+  def initialize(url, options, &block)
     
   end
   
+  def self.get(url, options, &block)
+    # detect if jsonp, if so, pass these params onto JSONP
+    # for now, assume it is jsonp
+    # - detect JSONP by looking at url.. is it same as window url
+    JSONP.get(url, options, block)
+  end
+end
+
+# JSONP results will already be a Javascript object, so we must go through and
+# convert it into a ruby based object: swap out objects for hashes.
+class JSONP
+  
+  # An array of all the callback methods so that they can be manually deleted, altered
+  # etc
+  # NOTE: all functions are actually added to the window namespace... easily accessible,
+  # and are of the form vn_jsonp_callback_id, where id is a number starting from 0, and
+  # incremented per request
+  JSONP_CALLBACKS = []
+  
+  def initialize(url, options, &block)
+    @url = url
+    @callback = "vn_jsonp_callback_0"
+    @block = block
+    JSONP_CALLBACKS << @callback
+    puts "Initializing JSNOP connection with url: #{@url}"
+    get!
+  end
+  
+  def get!
+    `window[#{@callback}] = function(response) {
+      VN$(self, 'got_response', response);
+    };`
+    @script = `document.createElement('script')`
+    `#{@script}.setAttribute('type', 'text/javascript');`
+    `#{@script}.setAttribute('src', #{@url});`
+    `document.body.appendChild(#{@script});`
+  end
+  
+  def got_response response
+    puts 'got response! toot!'
+    @block.call `JSONParserReformatter(response)`
+  end
+  
+  def self.get(url, options, &block)
+    new(url, options, block)
+  end
 end
 
 require 'json/parse'
+require 'json/reformatter'

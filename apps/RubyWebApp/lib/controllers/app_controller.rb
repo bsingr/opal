@@ -28,10 +28,27 @@ module RubyWebApp
   
   class AppController
     
+    TABLE_VIEW_DATA = [
+      { :name => 'Adam', :age => 23, :band => 'Led Zepplin' },
+      { :name => 'Ben', :age => 20, :band => 'Pendulum' },
+      { :name => 'Tom', :age => 30, :band => 'Tweenies' },
+      { :name => 'Becky', :age => 12, :band => '50 pence' },
+      { :name => 'Dad', :age => 24, :band => 'Take That' },
+      { :name => 'Mum', :age => 25, :band => 'Rod Stewart' }
+    ]
+    
     def initialize
-      puts 'initialising app controller'
+      # puts 'initialising app controller'
       @adam = 10
       @test_binding = false
+    end
+    
+    def number_of_rows_in_table_view(table_view)
+      TABLE_VIEW_DATA.length
+    end
+    
+    def table_view(table_view, object_value_for_table_column:table_column, row:row)
+      # TABLE_VIEW_DATA[row][table_column.identifier]
     end
     
     def adam?
@@ -47,13 +64,19 @@ module RubyWebApp
     end
 
     def will_finish_launching (notification)
-      puts 'Application will finish launching!'
+      # puts 'Application will finish launching!'
     end
 
     def did_finish_launching (notification)
-      puts 'Application did finish launching!!'
+      # puts 'Application did finish launching!!'
+      # JSON.get('http://search.twitter.com/trends.json?callback=vn_jsonp_callback_0', nil) do |json|
+      #         puts json
+      #         json[:trends].each do |trend|
+      #           puts trend[:name]
+      #         end
+      #         # json is either an object with the result from the json feed, or, nil. nil is likely if an 
+      #         # error occured
+      #       end
     end
-    
   end
-  
 end

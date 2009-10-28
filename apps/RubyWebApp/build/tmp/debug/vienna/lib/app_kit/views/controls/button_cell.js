@@ -255,6 +255,17 @@ $VN_2.$def('set_key_equivalent_font:size:',function(self,_cmd,font_name,size){
 });
 $VN_2.$def('perform_click',function(self,_cmd,sender){
 });
+$VN_2.$def('object_value=',function(self,_cmd,obj){
+VN$(self, 'will_change_value_for_key', 'object_value');
+if(RTEST(ORTEST(NOTTEST(obj),ORTEST(VN$(obj,'==',0),VN$(obj,'==','off'))))){
+obj = 'off';
+}
+else{
+obj = 'on';
+}
+VN$sup(arguments.callee, self,_cmd,[obj]);
+VN$(self, 'did_change_value_for_key', 'object_value');
+});
 $VN_2.$def('draw_image:with_frame:in_view:',function(self,_cmd,images,frame,control_view){
 });
 $VN_2.$def('draw_title:with_frame:in_view:',function(self,_cmd,title,frame,control_view){
@@ -267,7 +278,7 @@ if(RTEST(VN$(ctx,'first_time?'))){
 VN$(ctx,'<<',"<div class='left'></div>");
 VN$(ctx,'<<',"<div class='middle'></div>");
 VN$(ctx,'<<',"<div class='right'></div>");
-VN$(ctx,'<<',"<div class='title'>Wow!</div>");
+VN$(ctx,'<<',"<div class='title'></div>");
 VN$(ctx,'<<',"<div class='image'></div>");
 VN$(ctx,'first_time=',false);
 }
@@ -287,10 +298,12 @@ return VN$(ctx,'class_name=',VN$(class_name_array,'join',' '));
 });
 $VN_2.$def('render_interior_with_frame:in_view:',function(self,_cmd,cell_frame,control_view){
 var ctx = VN$(self.$klass.$c_g_full('RenderContext'),'current_context');
+if(!RTEST(VN$(VN$(self, 'image_position'),'==','image_only'))){
 VN$(ctx,'selector','title',function(title){
 VN$(title,'inner_html=',self.$i_g('@title'));
 return VN$(title,'css',VN.$h('text_align',VN$(self, 'alignment')));
 });
+}
 if(RTEST(self.$i_g('@image'))){
 if(RTEST(VN$(self, 'on?'))){
 VN$(self,'render_image:with_frame:in_view:',self.$i_g('@alternate_image'),cell_frame,control_view);

@@ -94,6 +94,7 @@ return VN$(self.$i_g('@cell'),'enabled?');
 $VN_2.$def('enabled=',function(self,_cmd,flag){
 VN$(self, 'will_change_value_for_key', 'enabled');
 VN$(self.$i_g('@cell'),'enabled=',flag);
+VN$(self,'needs_display=',true);
 VN$(self, 'did_change_value_for_key', 'enabled');
 });
 $VN_2.$def('control_tint',function(self,_cmd){
@@ -191,6 +192,11 @@ $VN_2.$def('draw_cell',function(self,_cmd,a_cell){
 $VN_2.$def('select_cell',function(self,_cmd,a_cell){
 });
 $VN_2.$def('send_action:to:',function(self,_cmd,action,target){
+VN$(self,'puts','sending action on');
+if(RTEST(VN$(self,'info_for_binding','value'))){
+VN$(self,'propagate_binding','value');
+}
+return VN$(self.$klass.$c_g_full('App'),'send_action:to:from:',action,target,self);
 });
 $VN_2.$def('take_int_value_from',function(self,_cmd,sender){
 });
@@ -240,10 +246,15 @@ VN$(self, 'will_change_value_for_key', 'attributed_string_value');
 VN$(self.$i_g('@cell'),'attributed_string_value=',val);
 VN$(self, 'did_change_value_for_key', 'attributed_string_value');
 });
-$VN_2.$def('observe_value_for_key_path:of_object:change:context:',function(self,_cmd,path,object,change,context){
-if(RTEST(VN$(context,'==','enabled'))){
-VN$(self,'puts','received notification of chnage to enabled property..');
-VN$(self,'enabled=',VN$(object,'value_for_key_path',path));
-VN$(self,'needs_display=',true);
+$VN_2.$def('bind:to_object:with_key_path:options:',function(self,_cmd,binding,observable,key_path,options){
+if(RTEST(VN$(binding,'==','value'))){
+VN$(self,'unbind',binding);
+VN$(observable,'add_observer:for_key_path:options:context:',self,key_path,options,binding);
+var binding_dict = VN.$h('observed_object', observable, 'observed_key_path', key_path, 'options', options, 'key', 'object_value');
+VN$(self,'set_info:for_binding:',binding_dict,binding);
+VN$(self,'set_value_for_binding',binding);
+}
+else{
+VN$sup(arguments.callee, self,_cmd,[binding,observable,key_path,options]);
 }
 });

@@ -42,7 +42,7 @@ class Number
   end
   
   def -@
-    
+    `return self * -1;`
   end
   
   def <=>
@@ -141,8 +141,11 @@ class Number
     
   end
   
-  def times
-    
+  def times(&block)
+    `for (var i = 0; i < self; i++) {
+      VN$(block, 'call', i);
+    }`
+    self
   end
   
   def succ

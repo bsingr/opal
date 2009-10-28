@@ -55,8 +55,8 @@ class Document
   end
   
   def self.add_event_listener type, listener
-    @@event_listeners ||= {}
-    @@event_listeners[type] = listener
+    @event_listeners ||= {}
+    @event_listeners[type] = listener
     `if (document.addEventListener) {
       document.body.addEventListener(#{type}, #{listener}, false);
     }
@@ -66,12 +66,16 @@ class Document
   end
   
   def self.remove_event_listener type
-    listener = @@event_listeners[type]
+    listener = @event_listeners[type]
     `if (document.addEventListener) {
       document.body.removeEventListener(#{type}, #{listener}, false);
     }
     else {
       document.body.detachEvent('on' + #{type}, #{listener});
     }`
+  end
+  
+  def Document.age
+    3
   end
 end

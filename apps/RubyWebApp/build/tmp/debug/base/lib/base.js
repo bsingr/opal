@@ -211,7 +211,8 @@ VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/base/
 // require('core/time');
 
 VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/base/lib/core/proc.js');
-// require('core/math');
+
+VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/base/lib/core/math.js');
 // require('core/enumerator');
 // 
 

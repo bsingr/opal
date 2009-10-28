@@ -146,7 +146,7 @@ module Vienna
     def self.display_properties
       # add to constant DISPLAY_PROPERTIES, but, also add in superclass'
       # should be a class variable?
-      puts 'in display properties..'
+      # puts 'in display properties..'
     end
     
     display_properties :frame, :frame_size
@@ -524,7 +524,7 @@ module Vienna
       view_will_draw
       
       if display_mode == :render
-        puts 'Rendering....?'
+        # puts 'Rendering....?'
         render @display_context
       else
         graphics_context = @window.graphics_context
@@ -550,7 +550,7 @@ module Vienna
     
     
     def draw_rect rect
-      puts 'drawing rect'
+      # puts 'drawing rect'
     end
     
     def view_will_draw
@@ -597,11 +597,11 @@ module Vienna
         # for now, assume maximum of 1 tracking_area, and that it covers entire view. Adding more
         # to parts of the view can be done later, but for now, one area to resive events
         @element.add_event_listener :mouseover do |evt|
-          puts 'OMG, mouse over!'
+          # puts 'OMG, mouse over!'
         end
         
         @element.add_event_listener :mouseout do |evt|
-          puts 'OMG, mouse out of element'
+          # puts 'OMG, mouse out of element'
         end
       end
       

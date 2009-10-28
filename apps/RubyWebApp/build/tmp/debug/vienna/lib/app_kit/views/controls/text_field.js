@@ -12,11 +12,11 @@ return self.$c_g_full('TextFieldCell');
 $VN_2.$def('class_name',function(self,_cmd){
 return 'vn-text-field';
 });
-$VN_2.$def('resign_first_responder',function(self,_cmd){
+$VN_2.$def('resign_first_responder?',function(self,_cmd){
 VN$(self,'puts','resign first responder....');
 return true;
 });
-$VN_2.$def('become_first_responder',function(self,_cmd){
+$VN_2.$def('become_first_responder?',function(self,_cmd){
 VN$(self,'puts','becoming first responder!!');
 VN$(VN$(self.$klass.$c_g_full('App'),'current_event'),'allows_propagation=',true);
 return true;

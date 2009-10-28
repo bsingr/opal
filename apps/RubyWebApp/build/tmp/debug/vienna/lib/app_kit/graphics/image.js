@@ -11,10 +11,10 @@ VN$(VN$(self, 'named_images'),'[]=',name,img);
 return img;
 });
 $VN_2.$def_s('named_images',function(self,_cmd){
-return (self.$k_d('@@named_images') ? self.$k_g('@@named_images') : self.$k_s('@@named_images',VN.$h()));
+return self.$i_s('@named_images',ORTEST(self.$i_g('@named_images'),VN.$h()));
 });
 $VN_2.$def_s('sprite_images',function(self,_cmd){
-return (self.$k_d('@@sprite_images') ? self.$k_g('@@sprite_images') : self.$k_s('@@sprite_images',VN.$h()));
+return self.$i_s('@sprite_images',ORTEST(self.$i_g('@sprite_images'),VN.$h()));
 });
 $VN_2.$def_s('resource',function(self,_cmd,name,block){
 var img = VN$(self,'image_named',name);
@@ -67,7 +67,6 @@ return obj;
 });
 $VN_2.$def('init_with_contents_of_url',function(self,_cmd,url){
 VN$(self, 'initialize');
-VN$(self,'puts',['needs image named ',(url)].join(''));
 self.$i_s('@filename',url);
 self.$i_s('@image',nil);
 return VN$(self, 'load');
@@ -103,11 +102,9 @@ VN$(self.$i_g('@delegate'),'image_did_error',self);
 }
 });
 $VN_2.$def('_image_did_load',function(self,_cmd){
-self.$i_s('@size',VN$(self.$klass.$c_g_full('Size'),'new',self.$i_g('@image').width,self.$i_g('@image').height));
-return VN$(self,'puts','SETTING size to ');
+return self.$i_s('@size',VN$(self.$klass.$c_g_full('Size'),'new',self.$i_g('@image').width,self.$i_g('@image').height));
 });
 $VN_2.$def('sprite',function(self,_cmd,name,rect){
-VN$(self,'puts',["Making sprite named ",(name)].join(''));
 return self;
 });
 $VN_2.$def('image',function(self,_cmd){

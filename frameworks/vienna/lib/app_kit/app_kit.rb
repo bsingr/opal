@@ -52,6 +52,11 @@ require 'views/controls/slider_cell'
 require 'views/controls/text_field'
 require 'views/controls/text_field_cell'
 
+
+require 'table_view/table_view'
+require 'table_view/table_column'
+
+
 # Windows
 require 'window/window'
 require 'window/panel'

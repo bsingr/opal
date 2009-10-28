@@ -21,6 +21,7 @@ return VN$(self,'value_for_undefined_key',key);
 $VN_2.$def('set_value:for_key:',function(self,_cmd,value,key){
 var accessor = [(key),"="].join('');
 if(RTEST(VN$(self,'respond_to?',accessor))){
+VN$(self,'perform_selector:with_object:',accessor,value);
 return value;
 }
 if(RTEST(VN$(VN$(self,'class'),'access_instance_variables_directly?'))){

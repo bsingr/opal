@@ -52,7 +52,7 @@ module Vienna
   class NotificationCenter
     
     def self.default_center
-      @@default_center ||= self.new()
+      @default_center ||= self.new()
     end
     
     def initialize

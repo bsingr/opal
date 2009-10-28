@@ -35,7 +35,7 @@ canvas {
   text-align:center;
   cursor: default;
   text-decoration: none;
-  text-shadow: rgba(206, 214, 221, 0.644) 0px 1px 0px;
+  text-shadow: rgba(245, 245, 245, 0.744) 0px 1px 0px;
   font-family: Arial, "MS Trebuchet", sans-serif;
   font-size: 12px;
   font-weight: bold;
@@ -49,7 +49,7 @@ canvas {
 
 .vn-button.bordered .left {
   background: url('images/controls.png');
-  background-position: 0px -906px;
+  background-position: 0px -1020px;
   position: absolute;
   height: 24px;
   width: 4px;
@@ -60,7 +60,7 @@ canvas {
 .vn-button.bordered .middle {
   background: url('images/controls.png');
   background-repeat: repeat-x;
-  background-position: 0px -931px;
+  background-position: 0px -1045px;
   position: absolute;
   top: 0px;
   left: 4px;
@@ -70,7 +70,7 @@ canvas {
 
 .vn-button.bordered .right {
   background: url('images/controls.png');
-  background-position: -5px -906px;
+  background-position: -5px -1020px;
   position: absolute;
   height: 24px;
   width: 4px;
@@ -80,28 +80,28 @@ canvas {
 
 /* Disabled */
 .vn-button.bordered.disabled .left {
-  background-position: -10px 0px;
+  background-position: -20px -1020px;
 }
 
 .vn-button.bordered.disabled .middle {
-  background-position: 0px -78px;
+  background-position: 0px -1095px;
 }
 
 .vn-button.bordered.disabled .right {
-  background-position: -10px -26px;
+  background-position: -25px -1020px;
 }
 
 /* State on */
 .vn-button.bordered.highlighted .left {
-  background-position: -10px 0px;
+  background-position: -10px 1020px;
 }
 
 .vn-button.bordered.highlighted .middle {
-  background-position: 0px -78px;
+  background-position: 0px -1070px;
 }
 
 .vn-button.bordered.highlighted .right {
-background-position: -10px -26px;}
+background-position: -10px -1020px;}
 /* ======================= */
 /* = Rounded bezel style = */
 /* ======================= */
@@ -288,10 +288,145 @@ background-position: -10px -26px;}
   bottom: 0px;
 }
 
-.vn-button.vn-normal-window-view-close {
-  background-color: blue;
-}.vn-window-view {
+.vn-hud-window-view {
   position: absolute;
   display: block;
-  background-color: rgb(242,242,242);
+}
+
+.vn-hud-window-view .titlebar {
+  height: 19px;
+  left: 0px;
+  right: 0px;
+  top: 0px;
+}
+
+.vn-hud-window-view .titlebar .left {
+  background: url('images/controls.png');
+  background-position: 0px -1204px;
+  height: 19px;
+  left: 0px;
+  width: 7px;
+  top: 0px;
+}
+
+.vn-hud-window-view .titlebar .middle {
+  background: url('images/controls.png');
+  background-repeat: repeat-x;
+  background-position: 0px -1224px;
+  height: 19px;
+  left: 7px;
+  right: 7px;
+  top: 0px;
+}
+
+.vn-hud-window-view .titlebar .right {
+  background: url('images/controls.png');
+  background-position: -8px -1204px;
+  height: 19px;
+  right: 0px;
+  width: 7px;
+  top: 0px;
+}
+
+.vn-hud-window-view .body {
+  left: 0px;
+  right: 0px;
+  bottom: 7px;
+  top: 19px;
+  background: url('images/hud_window_background.png');
+  background-repeat: repeat;
+}
+
+.vn-hud-window-view .bottom {
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  height: 7px;
+  background-color: rgb(245,245,245);
+}
+
+.vn-hud-window-view .bottom .left {
+  width: 7px;
+  height: 7px;
+  left: 0px;
+  bottom: 0px;
+  background: url('images/controls.png');
+  background-position: -0px -1264px;
+}
+
+.vn-hud-window-view .bottom .middle {
+  left: 7px;
+  right: 7px;
+  bottom: 0px;
+  height: 7px;
+  background: url('images/controls.png');
+  background-position: -0px -1272px;
+}
+
+.vn-hud-window-view .bottom .right {
+  width: 7px;
+  height: 7px;
+  right: 0px;
+  bottom: 0px;
+  background: url('images/controls.png');
+  background-position: -8px -1264px;
+}.vn-normal-window-view {
+  position: absolute;
+  display: block;
+}
+
+.vn-normal-window-view .titlebar {
+  height: 24px;
+  left: 0px;
+  right: 0px;
+  top: 0px;
+}
+
+.vn-normal-window-view .titlebar .left {
+  background: url('images/controls.png');
+  background-position: 0px -906px;
+  height: 24px;
+  left: 0px;
+  width: 6px;
+  top: 0px;
+}
+
+.vn-normal-window-view .titlebar .middle {
+  background: url('images/controls.png');
+  background-repeat: repeat-x;
+  background-position: 0px -962px;
+  height: 24px;
+  left: 6px;
+  right: 6px;
+  top: 0px;
+}
+
+.vn-normal-window-view .titlebar .right {
+  background: url('images/controls.png');
+  background-position: -7px -906px;
+  height: 24px;
+  right: 0px;
+  width: 6px;
+  top: 0px;
+}
+
+.vn-normal-window-view .titlebar .splitter {
+  background: url('images/controls.png');
+  background-position: 0px -1018px;
+  height: 1px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+}
+
+.vn-normal-window-view .body {
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  top: 24px;
+  background-color: rgb(245,245,245);
+}
+.vn-window-view {
+  position: absolute;
+  display: block;
 }
