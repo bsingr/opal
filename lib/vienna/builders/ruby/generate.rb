@@ -141,6 +141,8 @@ module Vienna
         generate_not stmt, context
       when :tertiary
         generate_tertiary stmt, context
+      when :dot2
+        generate_dot2 stmt, context
       else
         write "\n[Unknown type for generate_stmt: #{stmt}]\n"
       end
@@ -1004,6 +1006,18 @@ module Vienna
       generate_stmt stmt[:true], :instance => context[:instance], :full_stmt => false, :last_stmt => false, :self => context[:self]
       write " : "
       generate_stmt stmt[:false], :instance => context[:instance], :full_stmt => false, :last_stmt => false, :self => context[:self]
+      write ";\n" if context[:full_stmt]
+    end
+    
+    
+    def generate_dot2 stmt, context
+      write 'return ' if context[:last_stmt] and context[:full_stmt]
+      
+      write "VN.$r("
+      generate_stmt stmt[:start], :instance => context[:instance], :full_stmt => false, :last_stmt => false, :self => context[:self]
+      write ","
+      generate_stmt stmt[:ending], :instance => context[:instance], :full_stmt => false, :last_stmt => false, :self => context[:self]
+      write ",false)"
       write ";\n" if context[:full_stmt]
     end
     

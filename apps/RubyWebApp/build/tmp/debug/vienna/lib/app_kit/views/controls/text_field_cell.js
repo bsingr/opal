@@ -1,5 +1,14 @@
 var $VN_1 = RModule.define('Vienna');
 var $VN_2 = RClass.define_under($VN_1, 'TextFieldCell',$VN_2.$c_g_full('Cell'));
+$VN_2.$def('init_text_cell',function(self,_cmd,str){
+VN$sup(arguments.callee, self,_cmd,[str]);
+self.$i_s('@editable',true);
+self.$i_s('@selectable',true);
+self.$i_s('@bezeled',true);
+self.$i_s('@text_input_type','input');
+self.$i_s('@value','');
+return self;
+});
 $VN_2.$def('class_name',function(self,_cmd){
 return 'vn-text-field';
 });
@@ -9,10 +18,22 @@ if(RTEST(VN$(ctx,'first_time?'))){
 VN$(ctx,'<<',"<div class='left'></div>");
 VN$(ctx,'<<',"<div class='middle'></div>");
 VN$(ctx,'<<',"<div class='right'></div>");
-VN$(ctx,'<<',"<input class='input'></div>");
+if(RTEST(VN$(control_view,'is_a?',self.$klass.$c_g_full('TextField')))){
+VN$(ctx,'<<',"<input class='input'></input>");
+}
+else{
+VN$(ctx,'<<',"<div class='input'></input>");
+}
 VN$(ctx,'first_time=',false);
 }
-return VN$(ctx,'class_name=',VN$([VN$(self, 'class_name'),VN$(self, 'theme_name')],'join',' '));
+VN$(ctx,'class_name=',VN$([VN$(self, 'class_name'),VN$(self, 'theme_name')],'join',' '));
+if(RTEST(VN$(control_view,'is_a?',self.$klass.$c_g_full('TextField')))){
+}
+else{
+VN$(ctx,'selector','input',function(input){
+return VN$(input,'inner_text=',self.$i_g('@value'));
+});
+}
 });
 $VN_2.$def('background_color=',function(self,_cmd,color){
 VN$(self, 'will_change_value_for_key', 'background_color');

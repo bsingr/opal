@@ -62,7 +62,7 @@ self.$i_s('@data_cell',data_cell);
 VN$(self, 'did_change_value_for_key', 'data_cell');
 });
 $VN_2.$def('data_cell_for_row',function(self,_cmd){
-return self.$i_g('@data_cell_for_row');
+return self.$i_g('@data_cell');
 });
 $VN_2.$def('editable=',function(self,_cmd,flag){
 VN$(self, 'will_change_value_for_key', 'editable');

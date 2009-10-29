@@ -29,6 +29,7 @@ return VN$(self.$klass.$c_g_full('ENV'),'[]','display_mode');
 $VN_2.$def('setup_display_context',function(self,_cmd){
 if(RTEST(VN$(VN$(self, 'display_mode'),'==','render'))){
 self.$i_s('@element',VN$(self.$klass.$c_g_full('Element'),'new','div',nil));
+VN$(self.$i_g('@element'),'css',VN.$h('overflow','hidden'));
 self.$i_s('@display_context',VN$(self.$klass.$c_g_full('RenderContext'),'new','div',nil));
 VN$(self.$i_g('@element'),'<<',self.$i_g('@display_context'));
 }
@@ -253,7 +254,7 @@ $VN_2.$def('opaque?',function(self,_cmd){
 });
 $VN_2.$def('convert_point:from_view:',function(self,_cmd,point,view){
 if(!RTEST(view)){
-return point;
+return VN$(self,'convert_point_from_base',point);
 }
 return VN$(self.$klass.$c_g_full('Point'),'new',VN$(VN$(point,'x'),'-',VN$(self.$i_g('@frame'),'x')),VN$(VN$(point,'y'),'-',VN$(self.$i_g('@frame'),'y')));
 });
@@ -270,6 +271,12 @@ $VN_2.$def('convert_rect:to_view:',function(self,_cmd,rect,view){
 $VN_2.$def('convert_point_to_base',function(self,_cmd,point){
 });
 $VN_2.$def('convert_point_from_base',function(self,_cmd,point){
+if(RTEST(self.$i_g('@superview'))){
+return VN$(self.$i_g('@superview'),'convert_point_from_base',VN$(self.$klass.$c_g_full('Point'),'new',VN$(VN$(point,'x'),'-',VN$(self.$i_g('@frame'),'x')),VN$(VN$(point,'y'),'-',VN$(self.$i_g('@frame'),'y'))));
+}
+else{
+return point;
+}
 });
 $VN_2.$def('convert_size_to_base',function(self,_cmd,size){
 });

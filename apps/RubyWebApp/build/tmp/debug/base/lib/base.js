@@ -207,7 +207,8 @@ VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/base/
 VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/base/lib/core/string.js');
 // require('core/struct');
 // require('core/regexp');
-// require('core/range');
+
+VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/base/lib/core/range.js');
 // require('core/time');
 
 VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/base/lib/core/proc.js');

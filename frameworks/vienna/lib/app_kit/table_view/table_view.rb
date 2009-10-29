@@ -35,6 +35,10 @@ module Vienna
       @intercell_spacing = Size.new(3.0, 2.0)
       @number_of_rows = -1
       @table_columns = []
+      
+      # cache row/column rects
+      @row_rects = []
+      @column_rects = []
     end
     
     # Required
@@ -262,8 +266,13 @@ module Vienna
     
     # Complete render (every row, every cell)
     def render(context)
-      _synchronize_render_context_with_data(context)
+      _synchronize_render_context_with_row_data(context)
       render_background_in_clip_rect(@bounds, context)
+      
+      number_of_rows.times do |row|
+        context.child_node(row) { |row_element| render_row(row, @bounds, row_element) }
+      end
+      
     end
     
     # this method makes sure that there are enough rows and columns for rendering.
@@ -287,8 +296,12 @@ module Vienna
     # fine. If it is less, then we need to add more divs to make the number equal
     # and, if it is more, then we need to remove these extra divs. The same
     # process is then repeated for columns per row. This is likely to change less
-    # often than row numbers changing
-    def _synchronize_render_context_with_data(context)
+    # often than row numbers changing.
+    # 
+    # At the moment, with just sets the right number of rows. The columns/cells per
+    # row is currently done in TableView#render_row(row, clip_rect, context).
+    # 
+    def _synchronize_render_context_with_row_data(context)
       children = context.child_nodes
       rows = number_of_rows
 
@@ -297,7 +310,7 @@ module Vienna
         # first, make sure current rows are right size
         children.times do |i|
           rect = rect_of_row(i)
-          context.child_node i { |elem| elem.css :width => "#{rect.width}px" }
+          context.child_node(i) { |elem| elem.css :width => "#{rect.width}px" }
         end
         # 'extra' rows
         (rows - children).times do |i|
@@ -314,14 +327,63 @@ module Vienna
       end
     end
     
-    # need to remove this second param
+    # Render background: this jsut sets the whole background. Rendering individaul
+    # rows and highlight rows are done withing #render_row(row, clip_rect, context)
     def render_background_in_clip_rect(clip_rect, context)
       # puts "Rendering background in"
       # puts clip_rect
+      context.css :background_color => 'white'
     end
     
-    def render_row row, clip_rect:clip_rect
+    # Render the row number, row, with context. This context is the row context, not
+    # the tableview's main context.
+    def render_row(row, clip_rect, context)
+      color = (row * 10) + 150
+      # context.css # :background_color => "rgb(#{color},#{color},#{color})"
+      # check we have enough 'children' i.e. enough columns to draw in
+      children = context.child_nodes
+      columns = number_of_columns
+      # puts "Row #{row} needs #{columns} children, but only has #{children} currently."
+      if children < columns
+        (columns - children).times do |i|
+          context << "<div></div>"
+        end
+      elsif columns < children
+        # need to remove surplus rows
+      else
+        # we have the right number... dont add/remove anything...
+      end
       
+      # background color
+      if row.odd?
+        context.css :background_color => 'rgb(234, 234, 234)'
+      end
+      
+      columns.times do |column|
+        data_cell = prepared_cell_at_column(column, row:row)
+        table_column = @table_columns[column]
+        
+        if @delegate && @delegate.respond_to?('table_view:will_display_cell:for_table_column:row:')
+          @delegate.table_view(self, will_display_cell:data_cell, for_table_column:table_column, row:row)
+        end
+        
+        cell_frame = frame_of_cell_at_column(column, row:row)
+
+        context.child_node(column) do |column_context|
+          # not first time if less than original children
+          if column < children
+            column_context.first_time = false
+          else # first time if not less than original children
+            column_context.first_time = true
+          end
+          RenderContext.current_context = column_context
+          
+          # column_context.css :width => '100px', :height => '19px'
+          column_context.frame = cell_frame
+          
+          data_cell.render_with_frame(cell_frame, in_view:self)
+        end
+      end
     end
 
     
@@ -540,10 +602,12 @@ module Vienna
       `}`
       
       
-      column = @table_columns.length
-      `for (i = 0; i < column; i++) {`
-        result.width += @table_columns[i].width + @intercell_spacing.width
-      `}`
+      # column = @table_columns.length
+      # `for (i = 0; i < column; i++) {`
+      #   result.width += @table_columns[i].width + @intercell_spacing.width
+      # `}`
+      
+      result.width = @bounds.width
       
       result.height = @row_height + @intercell_spacing.height
       result
@@ -565,12 +629,33 @@ module Vienna
       
     end
     
-    def frame_of_cell_at_column column, row:row
+    def frame_of_cell_at_column(column, row:row)
+      result = Rect.new(0, 0, 0, 0)
       
+      return result if column < 0 || column > number_of_columns
+      
+      
+      column.times do |i|
+        result.x += @table_columns[i].width + @intercell_spacing.width
+      end
+
+      # dont do this in render mode....
+      # row.times do |i|
+      #   result.y += @row_height + @intercell_spacing.height
+      # end
+      
+      result.width = @table_columns[column].width + @intercell_spacing.width
+      result.height = @row_height + @intercell_spacing.height
+            
+      result
     end
     
-    def prepared_cell_at_column column, row:row
-      
+    # Cell at column index of row index
+    def prepared_cell_at_column(column, row:row)
+      table_column = @table_columns[column]
+      cell = table_column.data_cell_for_row row
+      cell.object_value = @data_source.table_view(self, object_value_for_table_column:table_column, row:row)
+      cell
     end
     
     
@@ -631,6 +716,12 @@ module Vienna
       
     end
     
+    
+    def mouse_down(the_event)
+      puts 'mouse down'
+      location = convert_point(the_event.location_in_window, from_view:nil)
+      puts "#{location.x}, #{location.y}"
+    end
     
     
     

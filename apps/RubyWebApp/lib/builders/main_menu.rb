@@ -103,21 +103,45 @@ module RubyWebApp
         button.needs_display = true
       end
       
-      Vienna::TableView.build :frame => VN::Rect.new(240, 60, 400, 200), :something => true do |table_view|
-        win << table_view
-        table_view.data_source = app_delegate
+      # scroller/tableview
+      
+      scroll_view = Vienna::ScrollView.build :frame => VN::Rect.new(300, 100, 250, 150), :something => true do |scroll_view|
         
-        name_col = Vienna::TableColumn.new('name')
-        table_view.add_table_column name_col
-        age_col = Vienna::TableColumn.new('age')
-        table_view.add_table_column age_col
-        band_col = Vienna::TableColumn.new('band')
-        table_view.add_table_column band_col
+        # scroll_view.has_vertical_scroller = true
+        # scroll_view.vertical_scroller.needs_display = true
+        # 
+        # scroll_view.has_horizontal_scroller = true
+        # scroll_view.horizontal_scroller.needs_display = true
         
+        win << scroll_view
+        # Table view
+        table_view = Vienna::TableView.build :frame => VN::Rect.new(-20, -20, 400, 200), :something => true do |table_view|
+          
+          table_view.data_source = app_delegate
+
+          name_col = Vienna::TableColumn.new('name')
+          table_view.add_table_column name_col
+          age_col = Vienna::TableColumn.new('age')
+          table_view.add_table_column age_col
+          band_col = Vienna::TableColumn.new('band')
+          table_view.add_table_column band_col
+          
+          table_view.reload_data
+          # table_view.needs_display = true
+        end
         
-        table_view.reload_data
-        # table_view.needs_display = true
+        scroll_view.document_view = table_view
+        scroll_view.tile
       end
+      
+      # clip_view = Vienna::ClipView.build :frame => VN::Rect.new(300, 100, 200, 100), :else => true do |clip_view|
+      #   win << clip_view
+      #   clip_view.needs_display = true
+      # end
+      # 
+      # `window.adams_clip_view = clip_view;`
+      # 
+
       
       # 
       # Vienna::CheckBox.build :frame => VN::Rect.new(10,100,90,24), :bezel => :rounded do |check|

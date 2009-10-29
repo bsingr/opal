@@ -126,11 +126,11 @@ class Number
   end
   
   def odd?
-    
+    `return (self %2 == 0) ? false : true;`
   end
   
   def even?
-    
+    `return (self %2 == 0) ? true : false;`
   end
   
   def upto

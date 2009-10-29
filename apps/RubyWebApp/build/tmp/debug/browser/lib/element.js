@@ -18,14 +18,18 @@ VN$(options,'each',function(key,value){
 VN$(self, 'element').style[VN$(key,'camelize')] = value;});
 return self;
 });
+$VN_1.$def('set_attribute',function(self,_cmd,key,value){
+VN$(self, 'element').setAttribute(key, value);});
 $VN_1.$def('src=',function(self,_cmd,obj){
 VN$(self, 'will_change_value_for_key', 'src');
 VN$(self, 'element').src = obj;VN$(self, 'did_change_value_for_key', 'src');
 });
+$VN_1.$def('inner_text=',function(self,_cmd,str){
+VN$(self, 'will_change_value_for_key', 'inner_text');
+VN$(self, 'element').innerHTML = str;VN$(self, 'did_change_value_for_key', 'inner_text');
+});
 $VN_1.$def('frame=',function(self,_cmd,new_frame){
 VN$(self, 'will_change_value_for_key', 'frame');
-VN$(self,'puts','Setting element frame to');
-VN$(self,'puts',new_frame);
 VN$(self,'origin=',VN$(new_frame,'origin'));
 VN$(self,'size=',VN$(new_frame,'size'));
 VN$(self, 'did_change_value_for_key', 'frame');

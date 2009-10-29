@@ -1,5 +1,5 @@
 # 
-# app_kit.rb
+# index_set.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,47 +24,41 @@
 # THE SOFTWARE.
 #
 
-# Base
-require 'base/responder'
-require 'base/application'
-require 'base/event'
-require 'base/key_value_binding'
-require 'base/tracking_area'
-
-# # Graphics
-require 'graphics/graphics_context'
-require 'graphics/geometry'
-require 'graphics/image'
-# require 'graphics/array_geometry_additions'
-
-# Rendering
-require 'graphics/render_context'
-
-# Views
-require 'views/view'
-require 'views/controls/control'
-require 'views/controls/cell'
-require 'views/controls/button'
-require 'views/controls/button_cell'
-require 'views/controls/check_box'
-require 'views/controls/slider'
-require 'views/controls/slider_cell'
-require 'views/controls/text_field'
-require 'views/controls/text_field_cell'
-
-
-require 'views/scroll_view'
-require 'views/scroller'
-require 'views/clip_view'
-
-
-require 'table_view/table_view'
-require 'table_view/table_column'
-
-
-# Windows
-require 'window/window'
-require 'window/panel'
-
-# Builder
-require 'builder/builder'
+module Vienna
+  
+  class IndexSet
+    
+    def initialize
+      @count = 0
+      @ranges = []
+    end
+    
+    def self.index_set
+      self.new
+    end
+    
+    def self.index_set_with_index(value)
+      obj = self.new
+      obj.add_index(value)
+      obj
+    end
+    
+    def self.index_set_with_indexes_in_range(range)
+      obj = self.new
+      obj.add_indexes_in_range(range)
+      obj     
+    end
+    
+    def equal_to_index_set?(index_set)
+      false
+    end
+    
+    def count
+      @count
+    end
+    
+    def first_index
+      
+    end
+  end
+end

@@ -93,7 +93,7 @@ module Vienna
     end
     
     def data_cell_for_row
-      @data_cell_for_row
+      @data_cell
     end
     
     def editable=(flag)

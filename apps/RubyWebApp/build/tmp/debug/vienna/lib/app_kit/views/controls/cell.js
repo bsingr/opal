@@ -215,6 +215,7 @@ $VN_2.$def('object_value',function(self,_cmd){
 });
 $VN_2.$def('object_value=',function(self,_cmd,obj){
 VN$(self, 'will_change_value_for_key', 'object_value');
+self.$i_s('@value',obj);
 VN$(self, 'did_change_value_for_key', 'object_value');
 });
 $VN_2.$def('valid_object_value?',function(self,_cmd){

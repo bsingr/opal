@@ -5,7 +5,9 @@ VN$sup(arguments.callee, self,_cmd,[frame]);
 self.$i_s('@row_height',17.0);
 self.$i_s('@intercell_spacing',VN$(self.$klass.$c_g_full('Size'),'new',3.0,2.0));
 self.$i_s('@number_of_rows',VN$((1),'-@'));
-return self.$i_s('@table_columns',[]);
+self.$i_s('@table_columns',[]);
+self.$i_s('@row_rects',[]);
+return self.$i_s('@column_rects',[]);
 });
 $VN_2.$def('data_source=',function(self,_cmd,a_source){
 VN$(self, 'will_change_value_for_key', 'data_source');
@@ -175,10 +177,15 @@ VN$(size,'height=',VN$(VN$(self,'rect_of_column',0),'height'));
 }
 });
 $VN_2.$def('render',function(self,_cmd,context){
-VN$(self,'_synchronize_render_context_with_data',context);
-return VN$(self,'render_background_in_clip_rect',self.$i_g('@bounds'),context);
+VN$(self,'_synchronize_render_context_with_row_data',context);
+VN$(self,'render_background_in_clip_rect',self.$i_g('@bounds'),context);
+return VN$(VN$(self, 'number_of_rows'),'times',function(row){
+return VN$(context,'child_node',row,function(row_element){
+return VN$(self,'render_row',row,self.$i_g('@bounds'),row_element);
 });
-$VN_2.$def('_synchronize_render_context_with_data',function(self,_cmd,context){
+});
+});
+$VN_2.$def('_synchronize_render_context_with_row_data',function(self,_cmd,context){
 var children = VN$(context,'child_nodes');
 var rows = VN$(self, 'number_of_rows');
 if(RTEST(VN$(children,'<',rows))){
@@ -205,6 +212,43 @@ return VN$(elem,'css',VN.$h('width',[(VN$(rect,'width')),"px"].join('')));
 }
 });
 $VN_2.$def('render_background_in_clip_rect',function(self,_cmd,clip_rect,context){
+return VN$(context,'css',VN.$h('background_color','white'));
+});
+$VN_2.$def('render_row',function(self,_cmd,row,clip_rect,context){
+var color = VN$((VN$(row,'*',10)),'+',150);
+var children = VN$(context,'child_nodes');
+var columns = VN$(self, 'number_of_columns');
+if(RTEST(VN$(children,'<',columns))){
+VN$((VN$(columns,'-',children)),'times',function(i){
+return VN$(context,'<<',"<div></div>");
+});
+}
+else if(RTEST(VN$(columns,'<',children))){
+}
+else{
+}
+if(RTEST(VN$(row,'odd?'))){
+VN$(context,'css',VN.$h('background_color','rgb(234, 234, 234)'));
+}
+return VN$(columns,'times',function(column){
+var data_cell = VN$(self,'prepared_cell_at_column:row:',column,row);
+var table_column = VN$(self.$i_g('@table_columns'),'[]',column);
+if(RTEST(ANDTEST(self.$i_g('@delegate'),VN$(self.$i_g('@delegate'),'respond_to?','table_view:will_display_cell:for_table_column:row:')))){
+VN$(self.$i_g('@delegate'),'table_view:will_display_cell:for_table_column:row:',self,data_cell,table_column,row);
+}
+var cell_frame = VN$(self,'frame_of_cell_at_column:row:',column,row);
+return VN$(context,'child_node',column,function(column_context){
+if(RTEST(VN$(column,'<',children))){
+VN$(column_context,'first_time=',false);
+}
+else{
+VN$(column_context,'first_time=',true);
+}
+VN$(self.$klass.$c_g_full('RenderContext'),'current_context=',column_context);
+VN$(column_context,'frame=',cell_frame);
+return VN$(data_cell,'render_with_frame:in_view:',cell_frame,self);
+});
+});
 });
 $VN_2.$def('reload_data_for_row_indexes:column_indexes:',function(self,_cmd,row_indexes,column_indexes){
 });
@@ -356,9 +400,8 @@ return result;
 }
 var i = 0;
 for (i = 0; i < row; i++) {VN$(result,'y=',VN$(VN$(result,'y'),'+',VN$(self.$i_g('@row_height'),'+',VN$(self.$i_g('@intercell_spacing'),'height'))));
-}var column = VN$(self.$i_g('@table_columns'),'length');
-for (i = 0; i < column; i++) {VN$(result,'width=',VN$(VN$(result,'width'),'+',VN$(VN$(VN$(self.$i_g('@table_columns'),'[]',i),'width'),'+',VN$(self.$i_g('@intercell_spacing'),'width'))));
-}VN$(result,'height=',VN$(self.$i_g('@row_height'),'+',VN$(self.$i_g('@intercell_spacing'),'height')));
+}VN$(result,'width=',VN$(self.$i_g('@bounds'),'width'));
+VN$(result,'height=',VN$(self.$i_g('@row_height'),'+',VN$(self.$i_g('@intercell_spacing'),'height')));
 return result;
 });
 $VN_2.$def('column_indexes_in_rect',function(self,_cmd,rect){
@@ -370,8 +413,22 @@ $VN_2.$def('column_at_point',function(self,_cmd,point){
 $VN_2.$def('row_at_point',function(self,_cmd,point){
 });
 $VN_2.$def('frame_of_cell_at_column:row:',function(self,_cmd,column,row){
+var result = VN$(self.$klass.$c_g_full('Rect'),'new',0,0,0,0);
+if(RTEST(ORTEST(VN$(column,'<',0),VN$(column,'>',VN$(self, 'number_of_columns'))))){
+return result;
+}
+VN$(column,'times',function(i){
+return VN$(result,'x=',VN$(VN$(result,'x'),'+',VN$(VN$(VN$(self.$i_g('@table_columns'),'[]',i),'width'),'+',VN$(self.$i_g('@intercell_spacing'),'width'))));
+});
+VN$(result,'width=',VN$(VN$(VN$(self.$i_g('@table_columns'),'[]',column),'width'),'+',VN$(self.$i_g('@intercell_spacing'),'width')));
+VN$(result,'height=',VN$(self.$i_g('@row_height'),'+',VN$(self.$i_g('@intercell_spacing'),'height')));
+return result;
 });
 $VN_2.$def('prepared_cell_at_column:row:',function(self,_cmd,column,row){
+var table_column = VN$(self.$i_g('@table_columns'),'[]',column);
+var cell = VN$(table_column,'data_cell_for_row',row);
+VN$(cell,'object_value=',VN$(self.$i_g('@data_source'),'table_view:object_value_for_table_column:row:',self,table_column,row));
+return cell;
 });
 $VN_2.$def('text_should_begin_editing?',function(self,_cmd,text_obj){
 });
@@ -410,6 +467,11 @@ self.$i_s('@focused_column',column);
 VN$(self, 'did_change_value_for_key', 'focused_column');
 });
 $VN_2.$def('perform_click_on_cell_at_column:row:',function(self,_cmd,column,row){
+});
+$VN_2.$def('mouse_down',function(self,_cmd,the_event){
+VN$(self,'puts','mouse down');
+var location = VN$(self,'convert_point:from_view:',VN$(the_event,'location_in_window'),nil);
+return VN$(self,'puts',[(VN$(location,'x')),", ",(VN$(location,'y'))].join(''));
 });
 $VN_2.$def('edit_column:row:with_event:select:',function(self,_cmd,column,row,the_event,select){
 });

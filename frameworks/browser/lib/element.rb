@@ -58,13 +58,21 @@ class Element
     self
   end
   
+  def set_attribute(key, value)
+    `#{element}.setAttribute(#{key}, value);`
+  end
+  
   def src= obj
     `#{element}.src = obj;`
   end
   
+  def inner_text=(str)
+    `#{element}.innerHTML = str;`
+  end
+  
   def frame= new_frame
-    puts 'Setting element frame to'
-    puts new_frame
+    # puts 'Setting element frame to'
+    # puts new_frame
     self.origin = new_frame.origin
     self.size = new_frame.size
   end

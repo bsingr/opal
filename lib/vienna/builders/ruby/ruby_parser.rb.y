@@ -395,7 +395,13 @@ rule
             		| tCOLON3 tCONSTANT tOP_ASGN arg
             		| backref tOP_ASGN arg
             		| arg tDOT2 arg
+            		  {
+            		    result = node :dot2, :start => val[0], :ending => val[2]
+            		  }
             		| arg tDOT3 arg
+            		  {
+            		    result = node :dot3, :start => val[0], :ending => val[2]
+            		  }
             		| arg '+' arg
             		  {
             		    result = node :call, :recv => val[0], :meth => '+', :call_args => { :args => [val[2]]}

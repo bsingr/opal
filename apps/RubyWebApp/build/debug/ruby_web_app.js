@@ -1131,6 +1131,8 @@ var cArray = RClass.define('Array', cObject);
 var cString = RClass.define('String', cObject);
 var cNumber = RClass.define('Number', cObject);
 var cProc = RClass.define('Proc', cObject);
+var cRange = RClass.define('Range', cObject);
+
 
 var $VN_1 = RModule.define('Kernel');
 $VN_1.$def('nil?',function(self,_cmd){
@@ -1855,9 +1857,9 @@ $VN_1.$def('truncate',function(self,_cmd){
 $VN_1.$def('step',function(self,_cmd){
 });
 $VN_1.$def('odd?',function(self,_cmd){
-});
+return (self %2 == 0) ? false : true;});
 $VN_1.$def('even?',function(self,_cmd){
-});
+return (self %2 == 0) ? true : false;});
 $VN_1.$def('upto',function(self,_cmd){
 });
 $VN_1.$def('downto',function(self,_cmd){
@@ -2508,7 +2510,57 @@ $VN_1.$def('rpartition',function(self,_cmd){
 });
 // require('core/struct');
 // require('core/regexp');
-// require('core/range');
+
+
+VN.$r = function(start, ending, exclusive) {
+  return VN$(cRange, 'new', start, ending, exclusive);
+}
+var $VN_1 = RClass.define('Range',cObject);
+$VN_1.$def('initialize',function(self,_cmd,start,ending,exclusive){
+self.$i_s('@start',start);
+return self.$i_s('@ending',ending);
+});
+$VN_1.$def('initialize_copy',function(self,_cmd){
+});
+$VN_1.$def('==',function(self,_cmd,obj){
+});
+$VN_1.$def('===',function(self,_cmd,obj){
+});
+$VN_1.$def('eql?',function(self,_cmd,obj){
+});
+$VN_1.$def('hash',function(self,_cmd){
+});
+$VN_1.$def('each',function(self,_cmd,block){
+for (var i = self.$i_g('@start'); i <= self.$i_g('@ending'); i++) {
+      VN$(block, 'call', i);
+    }return self;
+});
+$VN_1.$def('step',function(self,_cmd){
+});
+$VN_1.$def('begin',function(self,_cmd){
+});
+$VN_1.$def('end',function(self,_cmd){
+});
+$VN_1.$def('first',function(self,_cmd){
+});
+$VN_1.$def('last',function(self,_cmd){
+});
+$VN_1.$def('min',function(self,_cmd){
+});
+$VN_1.$def('max',function(self,_cmd){
+});
+$VN_1.$def('to_s',function(self,_cmd){
+});
+$VN_1.$def('inspect',function(self,_cmd){
+});
+$VN_1.$def('exclude_end?',function(self,_cmd){
+});
+$VN_1.$def('member?',function(self,_cmd){
+});
+$VN_1.$def('include?',function(self,_cmd){
+});
+$VN_1.$def('cover?',function(self,_cmd){
+});
 // require('core/time');
 
 
@@ -2680,14 +2732,18 @@ VN$(options,'each',function(key,value){
 VN$(self, 'element').style[VN$(key,'camelize')] = value;});
 return self;
 });
+$VN_1.$def('set_attribute',function(self,_cmd,key,value){
+VN$(self, 'element').setAttribute(key, value);});
 $VN_1.$def('src=',function(self,_cmd,obj){
 VN$(self, 'will_change_value_for_key', 'src');
 VN$(self, 'element').src = obj;VN$(self, 'did_change_value_for_key', 'src');
 });
+$VN_1.$def('inner_text=',function(self,_cmd,str){
+VN$(self, 'will_change_value_for_key', 'inner_text');
+VN$(self, 'element').innerHTML = str;VN$(self, 'did_change_value_for_key', 'inner_text');
+});
 $VN_1.$def('frame=',function(self,_cmd,new_frame){
 VN$(self, 'will_change_value_for_key', 'frame');
-VN$(self,'puts','Setting element frame to');
-VN$(self,'puts',new_frame);
 VN$(self,'origin=',VN$(new_frame,'origin'));
 VN$(self,'size=',VN$(new_frame,'size'));
 VN$(self, 'did_change_value_for_key', 'frame');
@@ -3768,6 +3824,7 @@ return VN$(self.$i_g('@size'),'height');
 });
 $VN_2.$def('x=',function(self,_cmd,x){
 VN$(self, 'will_change_value_for_key', 'x');
+VN$(self.$i_g('@origin'),'x=',x);
 VN$(self, 'did_change_value_for_key', 'x');
 });
 $VN_2.$def('y=',function(self,_cmd,y){
@@ -4149,6 +4206,7 @@ return VN$(self.$klass.$c_g_full('ENV'),'[]','display_mode');
 $VN_2.$def('setup_display_context',function(self,_cmd){
 if(RTEST(VN$(VN$(self, 'display_mode'),'==','render'))){
 self.$i_s('@element',VN$(self.$klass.$c_g_full('Element'),'new','div',nil));
+VN$(self.$i_g('@element'),'css',VN.$h('overflow','hidden'));
 self.$i_s('@display_context',VN$(self.$klass.$c_g_full('RenderContext'),'new','div',nil));
 VN$(self.$i_g('@element'),'<<',self.$i_g('@display_context'));
 }
@@ -4373,7 +4431,7 @@ $VN_2.$def('opaque?',function(self,_cmd){
 });
 $VN_2.$def('convert_point:from_view:',function(self,_cmd,point,view){
 if(!RTEST(view)){
-return point;
+return VN$(self,'convert_point_from_base',point);
 }
 return VN$(self.$klass.$c_g_full('Point'),'new',VN$(VN$(point,'x'),'-',VN$(self.$i_g('@frame'),'x')),VN$(VN$(point,'y'),'-',VN$(self.$i_g('@frame'),'y')));
 });
@@ -4390,6 +4448,12 @@ $VN_2.$def('convert_rect:to_view:',function(self,_cmd,rect,view){
 $VN_2.$def('convert_point_to_base',function(self,_cmd,point){
 });
 $VN_2.$def('convert_point_from_base',function(self,_cmd,point){
+if(RTEST(self.$i_g('@superview'))){
+return VN$(self.$i_g('@superview'),'convert_point_from_base',VN$(self.$klass.$c_g_full('Point'),'new',VN$(VN$(point,'x'),'-',VN$(self.$i_g('@frame'),'x')),VN$(VN$(point,'y'),'-',VN$(self.$i_g('@frame'),'y'))));
+}
+else{
+return point;
+}
 });
 $VN_2.$def('convert_size_to_base',function(self,_cmd,size){
 });
@@ -4960,6 +5024,7 @@ $VN_2.$def('object_value',function(self,_cmd){
 });
 $VN_2.$def('object_value=',function(self,_cmd,obj){
 VN$(self, 'will_change_value_for_key', 'object_value');
+self.$i_s('@value',obj);
 VN$(self, 'did_change_value_for_key', 'object_value');
 });
 $VN_2.$def('valid_object_value?',function(self,_cmd){
@@ -6091,6 +6156,15 @@ return self.$i_g('@bezel_style');
 
 var $VN_1 = RModule.define('Vienna');
 var $VN_2 = RClass.define_under($VN_1, 'TextFieldCell',$VN_2.$c_g_full('Cell'));
+$VN_2.$def('init_text_cell',function(self,_cmd,str){
+VN$sup(arguments.callee, self,_cmd,[str]);
+self.$i_s('@editable',true);
+self.$i_s('@selectable',true);
+self.$i_s('@bezeled',true);
+self.$i_s('@text_input_type','input');
+self.$i_s('@value','');
+return self;
+});
 $VN_2.$def('class_name',function(self,_cmd){
 return 'vn-text-field';
 });
@@ -6100,10 +6174,22 @@ if(RTEST(VN$(ctx,'first_time?'))){
 VN$(ctx,'<<',"<div class='left'></div>");
 VN$(ctx,'<<',"<div class='middle'></div>");
 VN$(ctx,'<<',"<div class='right'></div>");
-VN$(ctx,'<<',"<input class='input'></div>");
+if(RTEST(VN$(control_view,'is_a?',self.$klass.$c_g_full('TextField')))){
+VN$(ctx,'<<',"<input class='input'></input>");
+}
+else{
+VN$(ctx,'<<',"<div class='input'></input>");
+}
 VN$(ctx,'first_time=',false);
 }
-return VN$(ctx,'class_name=',VN$([VN$(self, 'class_name'),VN$(self, 'theme_name')],'join',' '));
+VN$(ctx,'class_name=',VN$([VN$(self, 'class_name'),VN$(self, 'theme_name')],'join',' '));
+if(RTEST(VN$(control_view,'is_a?',self.$klass.$c_g_full('TextField')))){
+}
+else{
+VN$(ctx,'selector','input',function(input){
+return VN$(input,'inner_text=',self.$i_g('@value'));
+});
+}
 });
 $VN_2.$def('background_color=',function(self,_cmd,color){
 VN$(self, 'will_change_value_for_key', 'background_color');
@@ -6158,13 +6244,415 @@ return self.$i_g('@placeholder_attributed_string');
 });
 
 var $VN_1 = RModule.define('Vienna');
+var $VN_2 = RClass.define_under($VN_1, 'ScrollView',$VN_2.$c_g_full('View'));
+$VN_2.$def_s('frame_size_for_content_size:has_horizontal_scroller:has_vertical_scroller:border_type:',function(self,_cmd,content_size,h_flag,v_flag,a_type){
+});
+$VN_2.$def_s('content_size_for_frame_size:has_horizontal_scroller:has_vertical_scroller:border_type:',function(self,_cmd,content_size,h_flag,v_flag,a_type){
+});
+$VN_2.$def('initialize',function(self,_cmd,frame){
+VN$sup(arguments.callee, self,_cmd,[frame]);
+self.$i_s('@content_view',VN$(self.$klass.$c_g_full('ClipView'),'new',VN$(self.$klass.$c_g_full('Rect'),'new',0,0,100,100)));
+self.$i_s('@border_type','none');
+return VN$(self,'add_subview',self.$i_g('@content_view'));
+});
+$VN_2.$def('class_name',function(self,_cmd){
+return 'vn-scroll-view';
+});
+$VN_2.$def('document_visible_rect',function(self,_cmd){
+});
+$VN_2.$def('content_size',function(self,_cmd){
+});
+$VN_2.$def('document_view=',function(self,_cmd,a_view){
+VN$(self, 'will_change_value_for_key', 'document_view');
+VN$(self.$i_g('@content_view'),'document_view=',a_view);
+VN$(self,'reflect_scrolled_clip_view',self.$i_g('@content_view'));
+VN$(self, 'did_change_value_for_key', 'document_view');
+});
+$VN_2.$def('document_view',function(self,_cmd){
+return VN$(self.$i_g('@content_view'),'document_view');
+});
+$VN_2.$def('content_view=',function(self,_cmd,content_view){
+VN$(self, 'will_change_value_for_key', 'content_view');
+VN$(self.$i_g('@content_view'),'remove_from_superview');
+self.$i_s('@content_view',content_view);
+VN$(self,'add_subview',self.$i_g('@content_view'));
+VN$(self, 'tile');
+VN$(self, 'did_change_value_for_key', 'content_view');
+});
+$VN_2.$def('content_view',function(self,_cmd){
+return self.$i_g('@content_view');
+});
+$VN_2.$def('document_cursor=',function(self,_cmd,an_obj){
+VN$(self, 'will_change_value_for_key', 'document_cursor');
+self.$i_s('@document_cursor',an_obj);
+VN$(self, 'did_change_value_for_key', 'document_cursor');
+});
+$VN_2.$def('document_cursor',function(self,_cmd){
+return self.$i_g('@document_cursor');
+});
+$VN_2.$def('border_type=',function(self,_cmd,a_type){
+VN$(self, 'will_change_value_for_key', 'border_type');
+self.$i_s('@border_type',a_type);
+VN$(self, 'did_change_value_for_key', 'border_type');
+});
+$VN_2.$def('border_type',function(self,_cmd){
+return self.$i_g('@border_type');
+});
+$VN_2.$def('background_color=',function(self,_cmd,a_color){
+VN$(self, 'will_change_value_for_key', 'background_color');
+self.$i_s('@background_color',a_color);
+VN$(self, 'did_change_value_for_key', 'background_color');
+});
+$VN_2.$def('background_color',function(self,_cmd){
+return self.$i_g('@background_color');
+});
+$VN_2.$def('draws_background=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'draws_background');
+self.$i_s('@draws_background',flag);
+VN$(self, 'did_change_value_for_key', 'draws_background');
+});
+$VN_2.$def('draws_background',function(self,_cmd){
+return self.$i_g('@draws_background');
+});
+$VN_2.$def('has_vertical_scroller=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'has_vertical_scroller');
+if(RTEST(flag)){
+if(!RTEST(self.$i_g('@has_vertical_scroller'))){
+self.$i_s('@has_vertical_scroller',true);
+if(!RTEST(self.$i_g('@vertical_scroller'))){
+self.$i_s('@vertical_scroller',VN$(self.$klass.$c_g_full('Scroller'),'new',VN$(self.$klass.$c_g_full('Rect'),'new',150,40,40,15)));
+VN$(self.$i_g('@vertical_scroller'),'target=',self);
+VN$(self.$i_g('@vertical_scroller'),'action=','scroll_v');
+}
+VN$(self,'add_subview',self.$i_g('@vertical_scroller'));
+}
+}
+else{
+if(RTEST(self.$i_g('@has_vertical_scroller'))){
+self.$i_s('@has_vertical_scroller',false);
+VN$(self.$i_g('@vertical_scroller'),'remove_from_superview');
+}
+}
+VN$(self, 'tile');
+VN$(self, 'did_change_value_for_key', 'has_vertical_scroller');
+});
+$VN_2.$def('has_vertical_scroller?',function(self,_cmd){
+return self.$i_g('@has_vertical_scroller');
+});
+$VN_2.$def('has_horizontal_scroller=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'has_horizontal_scroller');
+if(RTEST(flag)){
+if(!RTEST(self.$i_g('@has_horizontal_scroller'))){
+self.$i_s('@has_horizontal_scroller',true);
+if(!RTEST(self.$i_g('@horizontal_scroller'))){
+self.$i_s('@horizontal_scroller',VN$(self.$klass.$c_g_full('Scroller'),'new',VN$(self.$klass.$c_g_full('Rect'),'new',150,20,40,15)));
+VN$(self.$i_g('@horizontal_scroller'),'target=',self);
+VN$(self.$i_g('@horizontal_scroller'),'action=','scroll_h');
+}
+VN$(self,'add_subview',self.$i_g('@horizontal_scroller'));
+}
+}
+else{
+if(RTEST(self.$i_g('@has_horizontal_scroller'))){
+self.$i_s('@has_horizontal_scroller',false);
+VN$(self.$i_g('@horizontal_scroller'),'remove_from_superview');
+}
+}
+VN$(self, 'tile');
+VN$(self, 'did_change_value_for_key', 'has_horizontal_scroller');
+});
+$VN_2.$def('has_horizontal_scroller?',function(self,_cmd){
+return self.$i_g('@has_horizontal_scroller');
+});
+$VN_2.$def('vertical_scroller=',function(self,_cmd,a_scroller){
+VN$(self, 'will_change_value_for_key', 'vertical_scroller');
+self.$i_s('@vertical_scroller',a_scroller);
+VN$(self, 'did_change_value_for_key', 'vertical_scroller');
+});
+$VN_2.$def('vertical_scroller',function(self,_cmd){
+return self.$i_g('@vertical_scroller');
+});
+$VN_2.$def('horizontal_scroller=',function(self,_cmd,a_scroller){
+VN$(self, 'will_change_value_for_key', 'horizontal_scroller');
+self.$i_s('@horizontal_scroller',a_scroller);
+VN$(self, 'did_change_value_for_key', 'horizontal_scroller');
+});
+$VN_2.$def('horizontal_scroller',function(self,_cmd){
+return self.$i_g('@horizontal_scroller');
+});
+$VN_2.$def('autohides_scrollers?',function(self,_cmd){
+return self.$i_g('@autohides_scrollers');
+});
+$VN_2.$def('autohides_scrollers=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'autohides_scrollers');
+self.$i_s('@autohides_scrollers',flag);
+VN$(self, 'did_change_value_for_key', 'autohides_scrollers');
+});
+$VN_2.$def('horizontal_line_scroll=',function(self,_cmd,value){
+VN$(self, 'will_change_value_for_key', 'horizontal_line_scroll');
+self.$i_s('@horizontal_line_scroll',value);
+VN$(self, 'did_change_value_for_key', 'horizontal_line_scroll');
+});
+$VN_2.$def('horizontal_line_scroll',function(self,_cmd){
+return self.$i_g('@horizontal_line_scroll');
+});
+$VN_2.$def('vertical_line_scroll=',function(self,_cmd,value){
+VN$(self, 'will_change_value_for_key', 'vertical_line_scroll');
+self.$i_s('@vertical_line_scroll',value);
+VN$(self, 'did_change_value_for_key', 'vertical_line_scroll');
+});
+$VN_2.$def('vertical_line_scroll',function(self,_cmd){
+return self.$i_g('@vertical_line_scroll');
+});
+$VN_2.$def('line_scroll=',function(self,_cmd,value){
+VN$(self, 'will_change_value_for_key', 'line_scroll');
+self.$i_s('@line_scroll',value);
+VN$(self, 'did_change_value_for_key', 'line_scroll');
+});
+$VN_2.$def('line_scroll',function(self,_cmd){
+return self.$i_g('@line_scroll');
+});
+$VN_2.$def('horizontal_page_scroll=',function(self,_cmd,value){
+VN$(self, 'will_change_value_for_key', 'horizontal_page_scroll');
+self.$i_s('@horizontal_page_scroll',value);
+VN$(self, 'did_change_value_for_key', 'horizontal_page_scroll');
+});
+$VN_2.$def('horizontal_page_scroll',function(self,_cmd){
+return self.$i_g('@horizontal_page_scroll');
+});
+$VN_2.$def('vertical_page_scroll=',function(self,_cmd,value){
+VN$(self, 'will_change_value_for_key', 'vertical_page_scroll');
+self.$i_s('@vertical_page_scroll',value);
+VN$(self, 'did_change_value_for_key', 'vertical_page_scroll');
+});
+$VN_2.$def('vertical_page_scroll',function(self,_cmd){
+return self.$i_g('@vertical_page_scroll');
+});
+$VN_2.$def('page_scroll=',function(self,_cmd,value){
+VN$(self, 'will_change_value_for_key', 'page_scroll');
+self.$i_s('@page_scroll',value);
+VN$(self, 'did_change_value_for_key', 'page_scroll');
+});
+$VN_2.$def('page_scroll',function(self,_cmd){
+return self.$i_g('@page_scroll');
+});
+$VN_2.$def('scrolls_dynamically=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'scrolls_dynamically');
+self.$i_s('@scrolls_dynamically',flag);
+VN$(self, 'did_change_value_for_key', 'scrolls_dynamically');
+});
+$VN_2.$def('scrolls_dynamically?',function(self,_cmd){
+return self.$i_g('@scrolls_dynamically');
+});
+$VN_2.$def('tile',function(self,_cmd){
+if(RTEST(self.$i_g('@has_vertical_scroller'))){
+var frame = VN$(self.$klass.$c_g_full('Rect'),'new',0,0,0,0);
+VN$(frame,'x=',VN$(VN$(self.$i_g('@bounds'),'width'),'-',VN$(self.$klass.$c_g_full('Scroller'),'scroller_width')));
+VN$(frame,'width=',VN$(self.$klass.$c_g_full('Scroller'),'scroller_width'));
+VN$(frame,'height=',VN$(self.$i_g('@bounds'),'height'));
+if(RTEST(self.$i_g('@has_horizontal_scroller'))){
+VN$(frame,'height=',VN$(VN$(frame,'height'),'-',VN$(self.$klass.$c_g_full('Scroller'),'scroller_width')));
+}
+VN$(self.$i_g('@vertical_scroller'),'frame=',frame);
+}
+if(RTEST(self.$i_g('@has_horizontal_scroller'))){
+frame = VN$(self.$klass.$c_g_full('Rect'),'new',0,0,0,0);
+VN$(frame,'y=',VN$(VN$(self.$i_g('@bounds'),'height'),'-',VN$(self.$klass.$c_g_full('Scroller'),'scroller_width')));
+VN$(frame,'width=',VN$(self.$i_g('@bounds'),'width'));
+VN$(frame,'height=',VN$(self.$klass.$c_g_full('Scroller'),'scroller_width'));
+if(RTEST(self.$i_g('@has_vertical_scroller'))){
+VN$(frame,'width=',VN$(VN$(frame,'width'),'-',VN$(self.$klass.$c_g_full('Scroller'),'scroller_width')));
+}
+VN$(self.$i_g('@horizontal_scroller'),'frame=',frame);
+}
+if(RTEST(self.$i_g('@content_view'))){
+frame = VN$(self.$klass.$c_g_full('Rect'),'new',0,0,0,0);
+VN$(frame,'width=',VN$(self.$i_g('@bounds'),'width'));
+if(RTEST(self.$i_g('@has_vertical_scroller'))){
+VN$(frame,'width=',VN$(VN$(frame,'width'),'-',VN$(self.$klass.$c_g_full('Scroller'),'scroller_width')));
+}
+VN$(frame,'height=',VN$(self.$i_g('@bounds'),'height'));
+if(RTEST(self.$i_g('@has_horizontal_scroller'))){
+VN$(frame,'height=',VN$(VN$(frame,'height'),'-',VN$(self.$klass.$c_g_full('Scroller'),'scroller_width')));
+}
+VN$(self.$i_g('@content_view'),'frame=',frame);
+}
+});
+$VN_2.$def('reflect_scrolled_clip_view',function(self,_cmd,clip_view){
+});
+$VN_2.$def('scroll_wheel',function(self,_cmd,the_event){
+});
+
+var $VN_1 = RModule.define('Vienna');
+var $VN_2 = RClass.define_under($VN_1, 'Scroller',$VN_2.$c_g_full('Control'));
+$VN_2.$def_s('scroller_width',function(self,_cmd){
+return 15;
+});
+$VN_2.$def_s('scroller_width_for_control_size',function(self,_cmd,control_size){
+return 15;
+});
+$VN_2.$def('class_name',function(self,_cmd){
+return VN$(VN$(self.$i_g('@frame'),'width'),'<',VN$(self.$i_g('@frame'),'height')) ? 'vn-vertical-scroller' : 'vn-horizontal-scroller';
+});
+$VN_2.$def('render',function(self,_cmd,context){
+return VN$(context,'css',VN.$h('background_color','rgb(220,220,220)'));
+});
+$VN_2.$def('draw_parts',function(self,_cmd){
+});
+$VN_2.$def('rect_for_part',function(self,_cmd,part){
+});
+$VN_2.$def('check_space_for_parts',function(self,_cmd){
+});
+$VN_2.$def('usable_parts',function(self,_cmd){
+});
+$VN_2.$def('arrows_position=',function(self,_cmd,position){
+VN$(self, 'will_change_value_for_key', 'arrows_position');
+self.$i_s('@arrows_position',position);
+VN$(self, 'did_change_value_for_key', 'arrows_position');
+});
+$VN_2.$def('arrows_position',function(self,_cmd){
+return self.$i_g('@arrows_position');
+});
+$VN_2.$def('control_tint=',function(self,_cmd,control_tint){
+VN$(self, 'will_change_value_for_key', 'control_tint');
+self.$i_s('@control_tint',control_tint);
+VN$(self, 'did_change_value_for_key', 'control_tint');
+});
+$VN_2.$def('control_tint',function(self,_cmd){
+return self.$i_g('@control_tint');
+});
+$VN_2.$def('control_size=',function(self,_cmd,control_size){
+VN$(self, 'will_change_value_for_key', 'control_size');
+self.$i_s('@control_size',control_size);
+VN$(self, 'did_change_value_for_key', 'control_size');
+});
+$VN_2.$def('control_size',function(self,_cmd){
+return self.$i_g('@control_size');
+});
+$VN_2.$def('draw_arrow:highlight:',function(self,_cmd,which_arrow,flag){
+});
+$VN_2.$def('draw_knob',function(self,_cmd){
+});
+$VN_2.$def('draw_knob_slot_in_rect:highlight:',function(self,_cmd,slot_rect,flag){
+});
+$VN_2.$def('highlight',function(self,_cmd,flag){
+});
+$VN_2.$def('test_part',function(self,_cmd,the_point){
+});
+$VN_2.$def('track_knob',function(self,_cmd,the_event){
+});
+$VN_2.$def('track_scroll_buttons',function(self,_cmd,the_event){
+});
+$VN_2.$def('hit_part',function(self,_cmd){
+});
+$VN_2.$def('knob_proportion',function(self,_cmd){
+return self.$i_g('@knob_proportion');
+});
+$VN_2.$def('knob_proportion=',function(self,_cmd,proportion){
+VN$(self, 'will_change_value_for_key', 'knob_proportion');
+self.$i_s('@knob_proportion',proportion);
+VN$(self, 'did_change_value_for_key', 'knob_proportion');
+});
+
+var $VN_1 = RModule.define('Vienna');
+var $VN_2 = RClass.define_under($VN_1, 'ClipView',$VN_2.$c_g_full('View'));
+$VN_2.$def('initialize',function(self,_cmd,frame){
+return VN$sup(arguments.callee, self,_cmd,[frame]);
+});
+$VN_2.$def('setup_display_context',function(self,_cmd){
+VN$sup(arguments.callee, self,_cmd,[]);
+return VN$(self.$i_g('@element'),'css',VN.$h('overflow','hidden'));
+});
+$VN_2.$def('class_name',function(self,_cmd){
+return 'vn-clip-view';
+});
+$VN_2.$def('background_color=',function(self,_cmd,color){
+VN$(self, 'will_change_value_for_key', 'background_color');
+self.$i_s('@background_color',color);
+VN$(self, 'did_change_value_for_key', 'background_color');
+});
+$VN_2.$def('background_color',function(self,_cmd){
+return self.$i_g('@background_color');
+});
+$VN_2.$def('draws_background=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'draws_background');
+self.$i_s('@draws_background',flag);
+VN$(self, 'did_change_value_for_key', 'draws_background');
+});
+$VN_2.$def('draws_background?',function(self,_cmd){
+return self.$i_g('@draws_background');
+});
+$VN_2.$def('document_view=',function(self,_cmd,a_view){
+VN$(self, 'will_change_value_for_key', 'document_view');
+var default_center = VN$(self.$klass.$c_g_full('NotificationCenter'),'default_center');
+if(RTEST(self.$i_g('@document_view'))){
+VN$(default_center,'remove_observer:name:object:',self,self.$klass.$c_g_full('VIEW_FRAME_DID_CHANGE_NOTIFICATION'),self.$i_g('@document_view'));
+VN$(default_center,'remove_observer:name:object:',self,self.$klass.$c_g_full('VIEW_BOUNDS_DID_CHANGE_NOTIFICATION'),self.$i_g('@document_view'));
+VN$(self.$i_g('@document_view'),'remove_from_superview');
+}
+self.$i_s('@document_view',a_view);
+VN$(self,'add_subview',a_view);
+VN$(self, 'did_change_value_for_key', 'document_view');
+});
+$VN_2.$def('document_view',function(self,_cmd){
+return self.$i_g('@document_view');
+});
+$VN_2.$def('document_rect',function(self,_cmd){
+return VN$(self.$klass.$c_g_full('Rect'),'new',0,0,0,0);
+});
+$VN_2.$def('document_cursor=',function(self,_cmd,an_obj){
+VN$(self, 'will_change_value_for_key', 'document_cursor');
+self.$i_s('@document_cursor',an_obj);
+VN$(self, 'did_change_value_for_key', 'document_cursor');
+});
+$VN_2.$def('document_cursor',function(self,_cmd){
+return self.$i_g('@document_cursor');
+});
+$VN_2.$def('document_visible_rect',function(self,_cmd){
+return VN$(self,'convert_rect:to_view:',self.$i_g('@bounds'),self.$i_g('@document_view'));
+});
+$VN_2.$def('view_frame_changed',function(self,_cmd,notification){
+});
+$VN_2.$def('view_bounds_changed',function(self,_cmd,notification){
+});
+$VN_2.$def('copies_on_scroll=',function(self,_cmd,flag){
+VN$(self, 'will_change_value_for_key', 'copies_on_scroll');
+self.$i_s('@copies_on_scroll',flag);
+VN$(self, 'did_change_value_for_key', 'copies_on_scroll');
+});
+$VN_2.$def('copies_on_scroll',function(self,_cmd){
+return self.$i_g('@copies_on_scroll');
+});
+$VN_2.$def('auto_scroll?',function(self,_cmd,the_event){
+return false;
+});
+$VN_2.$def('constrain_scroll_point',function(self,_cmd,new_origin){
+return new_origin;
+});
+$VN_2.$def('scroll_to_point',function(self,_cmd,new_origin){
+if(RTEST(VN$(VN$(self.$i_g('@subviews'),'length'),'>',0))){
+VN$(VN$(self.$i_g('@subviews'),'[]',0),'frame_origin=',VN$(self.$klass.$c_g_full('Point'),'new',VN$((0),'-',VN$(new_origin,'x')),VN$((0),'-',VN$(new_origin,'y'))));
+}
+});
+$VN_2.$def('scroll_x_y',function(self,_cmd,x,y){
+return VN$(self,'scroll_to_point',VN$(self.$klass.$c_g_full('Point'),'new',x,y));
+});
+var $VN_2 = RClass.define_under($VN_1, 'View',$VN_2.$c_g_full('Responder'));
+$VN_2.$def('reflect_scrolled_clip_view',function(self,_cmd,a_clip_view){
+});
+$VN_2.$def('scroll_clip_view:to_point:',function(self,_cmd,a_clip_view,a_point){
+});
+
+var $VN_1 = RModule.define('Vienna');
 var $VN_2 = RClass.define_under($VN_1, 'TableView',$VN_2.$c_g_full('Control'));
 $VN_2.$def('initialize',function(self,_cmd,frame){
 VN$sup(arguments.callee, self,_cmd,[frame]);
 self.$i_s('@row_height',17.0);
 self.$i_s('@intercell_spacing',VN$(self.$klass.$c_g_full('Size'),'new',3.0,2.0));
 self.$i_s('@number_of_rows',VN$((1),'-@'));
-return self.$i_s('@table_columns',[]);
+self.$i_s('@table_columns',[]);
+self.$i_s('@row_rects',[]);
+return self.$i_s('@column_rects',[]);
 });
 $VN_2.$def('data_source=',function(self,_cmd,a_source){
 VN$(self, 'will_change_value_for_key', 'data_source');
@@ -6334,10 +6822,15 @@ VN$(size,'height=',VN$(VN$(self,'rect_of_column',0),'height'));
 }
 });
 $VN_2.$def('render',function(self,_cmd,context){
-VN$(self,'_synchronize_render_context_with_data',context);
-return VN$(self,'render_background_in_clip_rect',self.$i_g('@bounds'),context);
+VN$(self,'_synchronize_render_context_with_row_data',context);
+VN$(self,'render_background_in_clip_rect',self.$i_g('@bounds'),context);
+return VN$(VN$(self, 'number_of_rows'),'times',function(row){
+return VN$(context,'child_node',row,function(row_element){
+return VN$(self,'render_row',row,self.$i_g('@bounds'),row_element);
 });
-$VN_2.$def('_synchronize_render_context_with_data',function(self,_cmd,context){
+});
+});
+$VN_2.$def('_synchronize_render_context_with_row_data',function(self,_cmd,context){
 var children = VN$(context,'child_nodes');
 var rows = VN$(self, 'number_of_rows');
 if(RTEST(VN$(children,'<',rows))){
@@ -6364,6 +6857,43 @@ return VN$(elem,'css',VN.$h('width',[(VN$(rect,'width')),"px"].join('')));
 }
 });
 $VN_2.$def('render_background_in_clip_rect',function(self,_cmd,clip_rect,context){
+return VN$(context,'css',VN.$h('background_color','white'));
+});
+$VN_2.$def('render_row',function(self,_cmd,row,clip_rect,context){
+var color = VN$((VN$(row,'*',10)),'+',150);
+var children = VN$(context,'child_nodes');
+var columns = VN$(self, 'number_of_columns');
+if(RTEST(VN$(children,'<',columns))){
+VN$((VN$(columns,'-',children)),'times',function(i){
+return VN$(context,'<<',"<div></div>");
+});
+}
+else if(RTEST(VN$(columns,'<',children))){
+}
+else{
+}
+if(RTEST(VN$(row,'odd?'))){
+VN$(context,'css',VN.$h('background_color','rgb(234, 234, 234)'));
+}
+return VN$(columns,'times',function(column){
+var data_cell = VN$(self,'prepared_cell_at_column:row:',column,row);
+var table_column = VN$(self.$i_g('@table_columns'),'[]',column);
+if(RTEST(ANDTEST(self.$i_g('@delegate'),VN$(self.$i_g('@delegate'),'respond_to?','table_view:will_display_cell:for_table_column:row:')))){
+VN$(self.$i_g('@delegate'),'table_view:will_display_cell:for_table_column:row:',self,data_cell,table_column,row);
+}
+var cell_frame = VN$(self,'frame_of_cell_at_column:row:',column,row);
+return VN$(context,'child_node',column,function(column_context){
+if(RTEST(VN$(column,'<',children))){
+VN$(column_context,'first_time=',false);
+}
+else{
+VN$(column_context,'first_time=',true);
+}
+VN$(self.$klass.$c_g_full('RenderContext'),'current_context=',column_context);
+VN$(column_context,'frame=',cell_frame);
+return VN$(data_cell,'render_with_frame:in_view:',cell_frame,self);
+});
+});
 });
 $VN_2.$def('reload_data_for_row_indexes:column_indexes:',function(self,_cmd,row_indexes,column_indexes){
 });
@@ -6515,9 +7045,8 @@ return result;
 }
 var i = 0;
 for (i = 0; i < row; i++) {VN$(result,'y=',VN$(VN$(result,'y'),'+',VN$(self.$i_g('@row_height'),'+',VN$(self.$i_g('@intercell_spacing'),'height'))));
-}var column = VN$(self.$i_g('@table_columns'),'length');
-for (i = 0; i < column; i++) {VN$(result,'width=',VN$(VN$(result,'width'),'+',VN$(VN$(VN$(self.$i_g('@table_columns'),'[]',i),'width'),'+',VN$(self.$i_g('@intercell_spacing'),'width'))));
-}VN$(result,'height=',VN$(self.$i_g('@row_height'),'+',VN$(self.$i_g('@intercell_spacing'),'height')));
+}VN$(result,'width=',VN$(self.$i_g('@bounds'),'width'));
+VN$(result,'height=',VN$(self.$i_g('@row_height'),'+',VN$(self.$i_g('@intercell_spacing'),'height')));
 return result;
 });
 $VN_2.$def('column_indexes_in_rect',function(self,_cmd,rect){
@@ -6529,8 +7058,22 @@ $VN_2.$def('column_at_point',function(self,_cmd,point){
 $VN_2.$def('row_at_point',function(self,_cmd,point){
 });
 $VN_2.$def('frame_of_cell_at_column:row:',function(self,_cmd,column,row){
+var result = VN$(self.$klass.$c_g_full('Rect'),'new',0,0,0,0);
+if(RTEST(ORTEST(VN$(column,'<',0),VN$(column,'>',VN$(self, 'number_of_columns'))))){
+return result;
+}
+VN$(column,'times',function(i){
+return VN$(result,'x=',VN$(VN$(result,'x'),'+',VN$(VN$(VN$(self.$i_g('@table_columns'),'[]',i),'width'),'+',VN$(self.$i_g('@intercell_spacing'),'width'))));
+});
+VN$(result,'width=',VN$(VN$(VN$(self.$i_g('@table_columns'),'[]',column),'width'),'+',VN$(self.$i_g('@intercell_spacing'),'width')));
+VN$(result,'height=',VN$(self.$i_g('@row_height'),'+',VN$(self.$i_g('@intercell_spacing'),'height')));
+return result;
 });
 $VN_2.$def('prepared_cell_at_column:row:',function(self,_cmd,column,row){
+var table_column = VN$(self.$i_g('@table_columns'),'[]',column);
+var cell = VN$(table_column,'data_cell_for_row',row);
+VN$(cell,'object_value=',VN$(self.$i_g('@data_source'),'table_view:object_value_for_table_column:row:',self,table_column,row));
+return cell;
 });
 $VN_2.$def('text_should_begin_editing?',function(self,_cmd,text_obj){
 });
@@ -6569,6 +7112,11 @@ self.$i_s('@focused_column',column);
 VN$(self, 'did_change_value_for_key', 'focused_column');
 });
 $VN_2.$def('perform_click_on_cell_at_column:row:',function(self,_cmd,column,row){
+});
+$VN_2.$def('mouse_down',function(self,_cmd,the_event){
+VN$(self,'puts','mouse down');
+var location = VN$(self,'convert_point:from_view:',VN$(the_event,'location_in_window'),nil);
+return VN$(self,'puts',[(VN$(location,'x')),", ",(VN$(location,'y'))].join(''));
 });
 $VN_2.$def('edit_column:row:with_event:select:',function(self,_cmd,column,row,the_event,select){
 });
@@ -6645,7 +7193,7 @@ self.$i_s('@data_cell',data_cell);
 VN$(self, 'did_change_value_for_key', 'data_cell');
 });
 $VN_2.$def('data_cell_for_row',function(self,_cmd){
-return self.$i_g('@data_cell_for_row');
+return self.$i_g('@data_cell');
 });
 $VN_2.$def('editable=',function(self,_cmd,flag){
 VN$(self, 'will_change_value_for_key', 'editable');
@@ -7476,8 +8024,9 @@ VN$(button,'alignment=','left');
 VN$(button,'bind:to_object:with_key_path:options:','enabled',app_delegate,'test_binding',nil);
 return VN$(button,'needs_display=',true);
 });
-return VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('TableView'),'build',VN.$h('frame',VN$($VN_1.$klass.$c_g_full('VN').$c_g('Rect'),'new',240,60,400,200),'something',true),function(table_view){
-VN$(win,'<<',table_view);
+return scroll_view = VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('ScrollView'),'build',VN.$h('frame',VN$($VN_1.$klass.$c_g_full('VN').$c_g('Rect'),'new',300,100,250,150),'something',true),function(scroll_view){
+VN$(win,'<<',scroll_view);
+var table_view = VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('TableView'),'build',VN.$h('frame',VN$($VN_1.$klass.$c_g_full('VN').$c_g('Rect'),'new',VN$((20),'-@'),VN$((20),'-@'),400,200),'something',true),function(table_view){
 VN$(table_view,'data_source=',app_delegate);
 var name_col = VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('TableColumn'),'new','name');
 VN$(table_view,'add_table_column',name_col);
@@ -7486,6 +8035,9 @@ VN$(table_view,'add_table_column',age_col);
 var band_col = VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('TableColumn'),'new','band');
 VN$(table_view,'add_table_column',band_col);
 return VN$(table_view,'reload_data');
+});
+VN$(scroll_view,'document_view=',table_view);
+return VN$(scroll_view,'tile');
 });
 });
 });
@@ -7501,6 +8053,7 @@ $VN_2.$def('number_of_rows_in_table_view',function(self,_cmd,table_view){
 return VN$(self.$klass.$c_g_full('TABLE_VIEW_DATA'),'length');
 });
 $VN_2.$def('table_view:object_value_for_table_column:row:',function(self,_cmd,table_view,table_column,row){
+return VN$(VN$(self.$klass.$c_g_full('TABLE_VIEW_DATA'),'[]',row),'[]',VN$(table_column,'identifier'));
 });
 $VN_2.$def('adam?',function(self,_cmd){
 return self.$i_g('@adam');

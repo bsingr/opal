@@ -313,6 +313,7 @@ class Vienna::RubyParser < Racc::Parser
             result = :tLPAREN2
           end
         end
+        self.lex_state = :EXPR_BEG
         return [result, scanner.matched]
       
       # '===', '==', '=~', '=>', '='
@@ -453,6 +454,7 @@ class Vienna::RubyParser < Racc::Parser
         result = scanner.matched
         sign = (result == "+") ? :tUPLUS : :tUMINUS
         # if this is a func name def, or a method of an object ( def +(other))
+        # puts self.lex_state
         if self.lex_state == :EXPR_FNAME || self.lex_state == :EXPR_DOT
           self.lex_state = :EXPR_ARG
           if scanner.scan(/@/)

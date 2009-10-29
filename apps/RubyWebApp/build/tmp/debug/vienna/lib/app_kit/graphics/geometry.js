@@ -37,6 +37,7 @@ return VN$(self.$i_g('@size'),'height');
 });
 $VN_2.$def('x=',function(self,_cmd,x){
 VN$(self, 'will_change_value_for_key', 'x');
+VN$(self.$i_g('@origin'),'x=',x);
 VN$(self, 'did_change_value_for_key', 'x');
 });
 $VN_2.$def('y=',function(self,_cmd,y){

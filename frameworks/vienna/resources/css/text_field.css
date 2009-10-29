@@ -2,17 +2,30 @@
   position: absolute;
   display:block;
   height: 21px;
-  background-color: white;
 }
 
 .vn-text-field .input {
   background: transparent;
   border: none;
+  height: 24px;
+/*  width: 100px;*/
   outline: none; /* remove 'glow' in safari */
-  position: absolute;
+/*  position:absolute;*/
+  
+  overflow-x: hidden;
+  overflow-y: hidden;
+  display:block; 
   top: 0px;
   left: 0px;
   right: 0px;
   bottom: 0px;
+  
+  
+
+  cursor: default;
+  text-decoration: none;
+  font-family: Arial, "MS Trebuchet", sans-serif;
+  font-size: 12px;
+  color: rgb(0, 0, 0);
 }
 

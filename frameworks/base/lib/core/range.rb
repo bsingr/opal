@@ -24,11 +24,18 @@
 # THE SOFTWARE.
 #
 
+`
+VN.$r = function(start, ending, exclusive) {
+  return VN$(cRange, 'new', start, ending, exclusive);
+}
+`
+
 
 class Range
   
-  def initialize
-    
+  def initialize(start, ending, exclusive)
+    @start = start
+    @ending = ending
   end
   
   def initialize_copy
@@ -51,8 +58,11 @@ class Range
     
   end
   
-  def each
-    
+  def each(&block)
+    `for (var i = #{@start}; i <= #{@ending}; i++) {
+      VN$(block, 'call', i);
+    }`
+    self
   end
   
   def step

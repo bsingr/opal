@@ -70,7 +70,7 @@ module Vienna
     end
     
     def x=(x)
-      # @origin.x = x
+      @origin.x = x
     end
     
     def y=(y)

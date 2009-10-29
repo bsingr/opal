@@ -88,6 +88,7 @@ module Vienna
     def setup_display_context
       if display_mode == :render
         @element = Element.new :div, nil
+        @element.css :overflow => 'hidden'
         @display_context = RenderContext.new :div, nil
         @element << @display_context
       else
@@ -425,9 +426,9 @@ module Vienna
     
 
     
-    def convert_point point, from_view:view
+    def convert_point(point, from_view:view)
       # no view means no parent view, just return point
-      return point unless view
+      return convert_point_from_base(point) unless view
       
       Point.new(point.x - @frame.x, point.y - @frame.y)
     end
@@ -448,7 +449,7 @@ module Vienna
       
     end
     
-    def convert_rect rect, to_view:view
+    def convert_rect(rect, to_view:view)
       
     end
 
@@ -458,8 +459,12 @@ module Vienna
       
     end
     
-    def convert_point_from_base point
-      
+    def convert_point_from_base(point)
+      if @superview
+        return @superview.convert_point_from_base(Point.new(point.x - @frame.x, point.y - @frame.y))
+      else
+        return point
+      end
     end
     
     def convert_size_to_base size

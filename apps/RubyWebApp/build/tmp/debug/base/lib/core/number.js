@@ -51,9 +51,9 @@ $VN_1.$def('truncate',function(self,_cmd){
 $VN_1.$def('step',function(self,_cmd){
 });
 $VN_1.$def('odd?',function(self,_cmd){
-});
+return (self %2 == 0) ? false : true;});
 $VN_1.$def('even?',function(self,_cmd){
-});
+return (self %2 == 0) ? true : false;});
 $VN_1.$def('upto',function(self,_cmd){
 });
 $VN_1.$def('downto',function(self,_cmd){

@@ -28,6 +28,17 @@ module Vienna
   
   class TextFieldCell < Cell
     
+    def init_text_cell(str)
+      super str
+      @editable = true
+      @selectable = true
+      @bezeled = true
+      # current input type. input, if editable etc, or span if not.
+      @text_input_type = :input
+      @value = ""
+      self
+    end
+    
     def class_name
       'vn-text-field'
     end
@@ -38,11 +49,28 @@ module Vienna
         ctx << "<div class='left'></div>"
         ctx << "<div class='middle'></div>"
         ctx << "<div class='right'></div>"
-        ctx << "<input class='input'></div>"
+        
+        # if controlview is a textfield, then use input, otherwise use a span
+        # we do not want tableviews etc to become littered with input elements
+        if control_view.is_a?(TextField)
+          ctx << "<input class='input'></input>"
+        else
+          ctx << "<div class='input'></input>"
+        end
         ctx.first_time = false
       end
-      
+            
       ctx.class_name = [class_name, theme_name].join ' '
+      
+      if control_view.is_a?(TextField)
+
+      else
+        ctx.selector :input do |input|
+          input.inner_text = @value
+        end
+      end
+
+      
     end
     
     def background_color= color

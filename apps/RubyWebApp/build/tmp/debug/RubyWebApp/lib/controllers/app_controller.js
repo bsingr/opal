@@ -9,6 +9,7 @@ $VN_2.$def('number_of_rows_in_table_view',function(self,_cmd,table_view){
 return VN$(self.$klass.$c_g_full('TABLE_VIEW_DATA'),'length');
 });
 $VN_2.$def('table_view:object_value_for_table_column:row:',function(self,_cmd,table_view,table_column,row){
+return VN$(VN$(self.$klass.$c_g_full('TABLE_VIEW_DATA'),'[]',row),'[]',VN$(table_column,'identifier'));
 });
 $VN_2.$def('adam?',function(self,_cmd){
 return self.$i_g('@adam');

@@ -48,7 +48,7 @@ module RubyWebApp
     end
     
     def table_view(table_view, object_value_for_table_column:table_column, row:row)
-      # TABLE_VIEW_DATA[row][table_column.identifier]
+      TABLE_VIEW_DATA[row][table_column.identifier]
     end
     
     def adam?

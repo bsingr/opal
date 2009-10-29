@@ -1,5 +1,5 @@
 # 
-# app_kit.rb
+# table_header_view.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,47 +24,42 @@
 # THE SOFTWARE.
 #
 
-# Base
-require 'base/responder'
-require 'base/application'
-require 'base/event'
-require 'base/key_value_binding'
-require 'base/tracking_area'
-
-# # Graphics
-require 'graphics/graphics_context'
-require 'graphics/geometry'
-require 'graphics/image'
-# require 'graphics/array_geometry_additions'
-
-# Rendering
-require 'graphics/render_context'
-
-# Views
-require 'views/view'
-require 'views/controls/control'
-require 'views/controls/cell'
-require 'views/controls/button'
-require 'views/controls/button_cell'
-require 'views/controls/check_box'
-require 'views/controls/slider'
-require 'views/controls/slider_cell'
-require 'views/controls/text_field'
-require 'views/controls/text_field_cell'
-
-
-require 'views/scroll_view'
-require 'views/scroller'
-require 'views/clip_view'
-
-
-require 'table_view/table_view'
-require 'table_view/table_column'
-
-
-# Windows
-require 'window/window'
-require 'window/panel'
-
-# Builder
-require 'builder/builder'
+module Vienna
+  
+  class TableHeaderView < View
+    
+    def initialize(frame)
+      super frame
+    end
+    
+    def table_view=(table_view)
+      @table_view = table_view
+    end
+    
+    def table_view
+      @table_view
+    end
+    
+    def dragged_column
+      @dragged_column
+    end
+    
+    def dragged_distance
+      @dragged_distance
+    end
+    
+    def resized_column
+      @resized_column
+    end
+    
+    # Column index
+    def header_rect_of_column(column)
+      
+    end
+    
+    # Retunrs column index
+    def column_at_point(point)
+      
+    end
+  end
+end

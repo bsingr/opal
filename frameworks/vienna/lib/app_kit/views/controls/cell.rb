@@ -293,7 +293,7 @@ module Vienna
     end
     
     def object_value= obj
-      
+      @value = obj
     end
     
     def valid_object_value?

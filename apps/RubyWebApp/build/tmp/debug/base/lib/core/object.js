@@ -171,3 +171,5 @@ var cArray = RClass.define('Array', cObject);
 var cString = RClass.define('String', cObject);
 var cNumber = RClass.define('Number', cObject);
 var cProc = RClass.define('Proc', cObject);
+var cRange = RClass.define('Range', cObject);
+

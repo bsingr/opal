@@ -192,7 +192,7 @@ require('core/hash');
 require('core/string');
 // require('core/struct');
 // require('core/regexp');
-// require('core/range');
+require('core/range');
 // require('core/time');
 require('core/proc');
 require('core/math');
