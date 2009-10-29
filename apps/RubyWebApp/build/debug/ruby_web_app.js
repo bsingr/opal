@@ -6258,6 +6258,9 @@ return VN$(self,'add_subview',self.$i_g('@content_view'));
 $VN_2.$def('class_name',function(self,_cmd){
 return 'vn-scroll-view';
 });
+$VN_2.$def('render',function(self,_cmd,context){
+return VN$(context,'css',VN.$h('background_color','rgb(190, 190, 190)'));
+});
 $VN_2.$def('document_visible_rect',function(self,_cmd){
 });
 $VN_2.$def('content_size',function(self,_cmd){
@@ -6445,11 +6448,13 @@ $VN_2.$def('scrolls_dynamically?',function(self,_cmd){
 return self.$i_g('@scrolls_dynamically');
 });
 $VN_2.$def('tile',function(self,_cmd){
+var bounds = VN$(self.$klass.$c_g_full('Rect'),'new',1,1,VN$(VN$(self.$i_g('@bounds'),'width'),'-',2),VN$(VN$(self.$i_g('@bounds'),'height'),'-',2));
 if(RTEST(self.$i_g('@has_vertical_scroller'))){
 var frame = VN$(self.$klass.$c_g_full('Rect'),'new',0,0,0,0);
-VN$(frame,'x=',VN$(VN$(self.$i_g('@bounds'),'width'),'-',VN$(self.$klass.$c_g_full('Scroller'),'scroller_width')));
+VN$(frame,'x=',VN$((VN$(VN$(bounds,'x'),'+',VN$(bounds,'width'))),'-',VN$(self.$klass.$c_g_full('Scroller'),'scroller_width')));
+VN$(frame,'y=',VN$(bounds,'y'));
 VN$(frame,'width=',VN$(self.$klass.$c_g_full('Scroller'),'scroller_width'));
-VN$(frame,'height=',VN$(self.$i_g('@bounds'),'height'));
+VN$(frame,'height=',VN$(bounds,'height'));
 if(RTEST(self.$i_g('@has_horizontal_scroller'))){
 VN$(frame,'height=',VN$(VN$(frame,'height'),'-',VN$(self.$klass.$c_g_full('Scroller'),'scroller_width')));
 }
@@ -6457,8 +6462,9 @@ VN$(self.$i_g('@vertical_scroller'),'frame=',frame);
 }
 if(RTEST(self.$i_g('@has_horizontal_scroller'))){
 frame = VN$(self.$klass.$c_g_full('Rect'),'new',0,0,0,0);
-VN$(frame,'y=',VN$(VN$(self.$i_g('@bounds'),'height'),'-',VN$(self.$klass.$c_g_full('Scroller'),'scroller_width')));
-VN$(frame,'width=',VN$(self.$i_g('@bounds'),'width'));
+VN$(frame,'y=',VN$((VN$(VN$(bounds,'y'),'+',VN$(bounds,'height'))),'-',VN$(self.$klass.$c_g_full('Scroller'),'scroller_width')));
+VN$(frame,'x=',VN$(bounds,'x'));
+VN$(frame,'width=',VN$(bounds,'width'));
 VN$(frame,'height=',VN$(self.$klass.$c_g_full('Scroller'),'scroller_width'));
 if(RTEST(self.$i_g('@has_vertical_scroller'))){
 VN$(frame,'width=',VN$(VN$(frame,'width'),'-',VN$(self.$klass.$c_g_full('Scroller'),'scroller_width')));
@@ -6467,11 +6473,13 @@ VN$(self.$i_g('@horizontal_scroller'),'frame=',frame);
 }
 if(RTEST(self.$i_g('@content_view'))){
 frame = VN$(self.$klass.$c_g_full('Rect'),'new',0,0,0,0);
-VN$(frame,'width=',VN$(self.$i_g('@bounds'),'width'));
+VN$(frame,'x=',VN$(bounds,'x'));
+VN$(frame,'y=',VN$(bounds,'y'));
+VN$(frame,'width=',VN$(bounds,'width'));
 if(RTEST(self.$i_g('@has_vertical_scroller'))){
 VN$(frame,'width=',VN$(VN$(frame,'width'),'-',VN$(self.$klass.$c_g_full('Scroller'),'scroller_width')));
 }
-VN$(frame,'height=',VN$(self.$i_g('@bounds'),'height'));
+VN$(frame,'height=',VN$(bounds,'height'));
 if(RTEST(self.$i_g('@has_horizontal_scroller'))){
 VN$(frame,'height=',VN$(VN$(frame,'height'),'-',VN$(self.$klass.$c_g_full('Scroller'),'scroller_width')));
 }
@@ -6644,6 +6652,9 @@ $VN_2.$def('scroll_clip_view:to_point:',function(self,_cmd,a_clip_view,a_point){
 });
 
 var $VN_1 = RModule.define('Vienna');
+var $VN_2 = RClass.define_under($VN_1, 'TableCornerView',$VN_2.$c_g_full('View'));
+
+var $VN_1 = RModule.define('Vienna');
 var $VN_2 = RClass.define_under($VN_1, 'TableView',$VN_2.$c_g_full('Control'));
 $VN_2.$def('initialize',function(self,_cmd,frame){
 VN$sup(arguments.callee, self,_cmd,[frame]);
@@ -6652,7 +6663,10 @@ self.$i_s('@intercell_spacing',VN$(self.$klass.$c_g_full('Size'),'new',3.0,2.0))
 self.$i_s('@number_of_rows',VN$((1),'-@'));
 self.$i_s('@table_columns',[]);
 self.$i_s('@row_rects',[]);
-return self.$i_s('@column_rects',[]);
+self.$i_s('@column_rects',[]);
+self.$i_s('@header_view',VN$(self.$klass.$c_g_full('TableHeaderView'),'new',VN$(self.$klass.$c_g_full('Rect'),'new',0,0,VN$(self.$i_g('@bounds'),'width'),17)));
+VN$(self.$i_g('@header_view'),'table_view=',self);
+return self.$i_s('@corner_view',VN$(self.$klass.$c_g_full('TableCornerView'),'new',VN$(self.$klass.$c_g_full('Rect'),'new',0,0,VN$(self.$klass.$c_g_full('Scroller'),'scroller_width'),VN$(self.$klass.$c_g_full('Scroller'),'scroller_width'))));
 });
 $VN_2.$def('data_source=',function(self,_cmd,a_source){
 VN$(self, 'will_change_value_for_key', 'data_source');
@@ -7236,6 +7250,33 @@ $VN_2.$def('hidden=',function(self,_cmd,flag){
 VN$(self, 'will_change_value_for_key', 'hidden');
 self.$i_s('@hidden',flag);
 VN$(self, 'did_change_value_for_key', 'hidden');
+});
+
+var $VN_1 = RModule.define('Vienna');
+var $VN_2 = RClass.define_under($VN_1, 'TableHeaderView',$VN_2.$c_g_full('View'));
+$VN_2.$def('initialize',function(self,_cmd,frame){
+return VN$sup(arguments.callee, self,_cmd,[frame]);
+});
+$VN_2.$def('table_view=',function(self,_cmd,table_view){
+VN$(self, 'will_change_value_for_key', 'table_view');
+self.$i_s('@table_view',table_view);
+VN$(self, 'did_change_value_for_key', 'table_view');
+});
+$VN_2.$def('table_view',function(self,_cmd){
+return self.$i_g('@table_view');
+});
+$VN_2.$def('dragged_column',function(self,_cmd){
+return self.$i_g('@dragged_column');
+});
+$VN_2.$def('dragged_distance',function(self,_cmd){
+return self.$i_g('@dragged_distance');
+});
+$VN_2.$def('resized_column',function(self,_cmd){
+return self.$i_g('@resized_column');
+});
+$VN_2.$def('header_rect_of_column',function(self,_cmd,column){
+});
+$VN_2.$def('column_at_point',function(self,_cmd,point){
 });
 
 
@@ -8025,6 +8066,10 @@ VN$(button,'bind:to_object:with_key_path:options:','enabled',app_delegate,'test_
 return VN$(button,'needs_display=',true);
 });
 return scroll_view = VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('ScrollView'),'build',VN.$h('frame',VN$($VN_1.$klass.$c_g_full('VN').$c_g('Rect'),'new',300,100,250,150),'something',true),function(scroll_view){
+VN$(scroll_view,'has_vertical_scroller=',true);
+VN$(VN$(scroll_view,'vertical_scroller'),'needs_display=',true);
+VN$(scroll_view,'has_horizontal_scroller=',true);
+VN$(VN$(scroll_view,'horizontal_scroller'),'needs_display=',true);
 VN$(win,'<<',scroll_view);
 var table_view = VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('TableView'),'build',VN.$h('frame',VN$($VN_1.$klass.$c_g_full('VN').$c_g('Rect'),'new',VN$((20),'-@'),VN$((20),'-@'),400,200),'something',true),function(table_view){
 VN$(table_view,'data_source=',app_delegate);

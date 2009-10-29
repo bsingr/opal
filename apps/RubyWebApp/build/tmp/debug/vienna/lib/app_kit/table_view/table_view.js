@@ -7,7 +7,10 @@ self.$i_s('@intercell_spacing',VN$(self.$klass.$c_g_full('Size'),'new',3.0,2.0))
 self.$i_s('@number_of_rows',VN$((1),'-@'));
 self.$i_s('@table_columns',[]);
 self.$i_s('@row_rects',[]);
-return self.$i_s('@column_rects',[]);
+self.$i_s('@column_rects',[]);
+self.$i_s('@header_view',VN$(self.$klass.$c_g_full('TableHeaderView'),'new',VN$(self.$klass.$c_g_full('Rect'),'new',0,0,VN$(self.$i_g('@bounds'),'width'),17)));
+VN$(self.$i_g('@header_view'),'table_view=',self);
+return self.$i_s('@corner_view',VN$(self.$klass.$c_g_full('TableCornerView'),'new',VN$(self.$klass.$c_g_full('Rect'),'new',0,0,VN$(self.$klass.$c_g_full('Scroller'),'scroller_width'),VN$(self.$klass.$c_g_full('Scroller'),'scroller_width'))));
 });
 $VN_2.$def('data_source=',function(self,_cmd,a_source){
 VN$(self, 'will_change_value_for_key', 'data_source');

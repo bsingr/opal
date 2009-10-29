@@ -47,6 +47,14 @@ module Vienna
       'vn-scroll-view'
     end
     
+    def render(context)
+      # This in all likelyhood only draws in the bottom right, the square
+      # between the vertical and horizontal scrollers, unless the content
+      # view has transparent parts. This should use the @background_color
+      # and @draws_background respectively.
+      context.css :background_color => 'rgb(190, 190, 190)'
+    end
+    
     def document_visible_rect
       
     end
@@ -246,12 +254,13 @@ module Vienna
     end
     
     def tile
-      
+      bounds = Rect.new(1, 1, @bounds.width - 2, @bounds.height - 2)
       if @has_vertical_scroller
         frame = Rect.new(0, 0, 0, 0)
-        frame.x = @bounds.width - Scroller.scroller_width
+        frame.x = (bounds.x + bounds.width) - Scroller.scroller_width
+        frame.y = bounds.y
         frame.width = Scroller.scroller_width
-        frame.height = @bounds.height
+        frame.height = bounds.height
         frame.height -= Scroller.scroller_width if @has_horizontal_scroller
         
         @vertical_scroller.frame = frame
@@ -259,8 +268,9 @@ module Vienna
       
       if @has_horizontal_scroller
         frame = Rect.new(0, 0, 0, 0)
-        frame.y = @bounds.height - Scroller.scroller_width
-        frame.width = @bounds.width
+        frame.y = (bounds.y + bounds.height) - Scroller.scroller_width
+        frame.x = bounds.x
+        frame.width = bounds.width
         frame.height = Scroller.scroller_width
         frame.width -= Scroller.scroller_width if @has_vertical_scroller
         
@@ -269,9 +279,11 @@ module Vienna
       
       if @content_view
         frame = Rect.new(0, 0, 0, 0)
-        frame.width = @bounds.width
+        frame.x = bounds.x
+        frame.y = bounds.y
+        frame.width = bounds.width
         frame.width -= Scroller.scroller_width if @has_vertical_scroller
-        frame.height = @bounds.height
+        frame.height = bounds.height
         frame.height -= Scroller.scroller_width if @has_horizontal_scroller
         
         @content_view.frame = frame

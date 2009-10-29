@@ -54,6 +54,10 @@ VN$(button,'bind:to_object:with_key_path:options:','enabled',app_delegate,'test_
 return VN$(button,'needs_display=',true);
 });
 return scroll_view = VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('ScrollView'),'build',VN.$h('frame',VN$($VN_1.$klass.$c_g_full('VN').$c_g('Rect'),'new',300,100,250,150),'something',true),function(scroll_view){
+VN$(scroll_view,'has_vertical_scroller=',true);
+VN$(VN$(scroll_view,'vertical_scroller'),'needs_display=',true);
+VN$(scroll_view,'has_horizontal_scroller=',true);
+VN$(VN$(scroll_view,'horizontal_scroller'),'needs_display=',true);
 VN$(win,'<<',scroll_view);
 var table_view = VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('TableView'),'build',VN.$h('frame',VN$($VN_1.$klass.$c_g_full('VN').$c_g('Rect'),'new',VN$((20),'-@'),VN$((20),'-@'),400,200),'something',true),function(table_view){
 VN$(table_view,'data_source=',app_delegate);

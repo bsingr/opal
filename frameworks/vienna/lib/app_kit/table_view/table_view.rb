@@ -39,6 +39,11 @@ module Vienna
       # cache row/column rects
       @row_rects = []
       @column_rects = []
+      
+      @header_view = TableHeaderView.new(Rect.new(0, 0, @bounds.width, 17))
+      @header_view.table_view = self
+      
+      @corner_view = TableCornerView.new(Rect.new(0, 0, Scroller.scroller_width, Scroller.scroller_width))
     end
     
     # Required

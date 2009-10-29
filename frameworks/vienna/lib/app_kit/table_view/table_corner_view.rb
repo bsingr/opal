@@ -1,5 +1,5 @@
 # 
-# app_kit.rb
+# corner_view.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,48 +24,9 @@
 # THE SOFTWARE.
 #
 
-# Base
-require 'base/responder'
-require 'base/application'
-require 'base/event'
-require 'base/key_value_binding'
-require 'base/tracking_area'
-
-# # Graphics
-require 'graphics/graphics_context'
-require 'graphics/geometry'
-require 'graphics/image'
-# require 'graphics/array_geometry_additions'
-
-# Rendering
-require 'graphics/render_context'
-
-# Views
-require 'views/view'
-require 'views/controls/control'
-require 'views/controls/cell'
-require 'views/controls/button'
-require 'views/controls/button_cell'
-require 'views/controls/check_box'
-require 'views/controls/slider'
-require 'views/controls/slider_cell'
-require 'views/controls/text_field'
-require 'views/controls/text_field_cell'
-
-
-require 'table_view/scroll_view'
-require 'table_view/scroller'
-require 'table_view/clip_view'
-
-require 'table_view/table_corner_view'
-require 'table_view/table_view'
-require 'table_view/table_column'
-require 'table_view/table_header_view'
-
-
-# Windows
-require 'window/window'
-require 'window/panel'
-
-# Builder
-require 'builder/builder'
+module Vienna
+  
+  class TableCornerView < View
+    
+  end
+end

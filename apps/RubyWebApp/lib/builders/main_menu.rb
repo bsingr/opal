@@ -107,11 +107,11 @@ module RubyWebApp
       
       scroll_view = Vienna::ScrollView.build :frame => VN::Rect.new(300, 100, 250, 150), :something => true do |scroll_view|
         
-        # scroll_view.has_vertical_scroller = true
-        # scroll_view.vertical_scroller.needs_display = true
-        # 
-        # scroll_view.has_horizontal_scroller = true
-        # scroll_view.horizontal_scroller.needs_display = true
+        scroll_view.has_vertical_scroller = true
+        scroll_view.vertical_scroller.needs_display = true
+        
+        scroll_view.has_horizontal_scroller = true
+        scroll_view.horizontal_scroller.needs_display = true
         
         win << scroll_view
         # Table view
