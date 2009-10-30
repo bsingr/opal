@@ -696,6 +696,9 @@ rule
             		    result = self.node_class(:cpath => val[1], :superclass => val[2], :bodystmt => val[3])
             		  }
             		| k_class tLSHFT expr term bodystmt k_end
+            		  {
+            		    result = node :class_shift, :expr => val[2], :bodystmt => val[4]
+            		  }
             		| k_module cpath bodystmt k_end
             		  {
             		    result = self.node_module(:cpath => val[1], :body => val[2])

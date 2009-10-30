@@ -154,7 +154,10 @@ RClass.make_metametaclass = function(metaclass) {
 };
 
 RClass.real = function(klass) {
-  return klass ;
+  while ((klass.$singleton == true) || (klass.$type == VN.ICLASS)) {
+    klass = klass.$super
+  }
+  return klass
 };
 
 RClass.alloc = function(type, klass) {

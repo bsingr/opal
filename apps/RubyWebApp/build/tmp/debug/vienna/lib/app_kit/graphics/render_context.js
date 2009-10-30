@@ -15,9 +15,7 @@ $VN_2.$def('first_time?',function(self,_cmd){
 return self.$i_g('@first_time');
 });
 $VN_2.$def('first_time=',function(self,_cmd,first_time){
-VN$(self, 'will_change_value_for_key', 'first_time');
-self.$i_s('@first_time',first_time);
-VN$(self, 'did_change_value_for_key', 'first_time');
+return self.$i_s('@first_time',first_time);
 });
 $VN_2.$def('element',function(self,_cmd){
 return VN$(self.$i_g('@element_stack'),'last');

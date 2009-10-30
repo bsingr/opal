@@ -8,9 +8,7 @@ $VN_2.$def('graphics_port',function(self,_cmd){
 return self.$i_g('@ctx');
 });
 $VN_2.$def('graphics_port=',function(self,_cmd,graphics_port){
-VN$(self, 'will_change_value_for_key', 'graphics_port');
-self.$i_s('@ctx',graphics_port);
-VN$(self, 'did_change_value_for_key', 'graphics_port');
+return self.$i_s('@ctx',graphics_port);
 });
 $VN_2.$def('flipped?',function(self,_cmd){
 return self.$i_g('@flip_state');
@@ -26,25 +24,15 @@ $VN_2.$def('save_graphics_state',function(self,_cmd){
 $VN_2.$def('restore_graphics_state',function(self,_cmd){
 });
 $VN_2.$def('line_width=',function(self,_cmd,width){
-VN$(self, 'will_change_value_for_key', 'line_width');
-self.$i_g('@ctx').lineWidth = widthVN$(self, 'did_change_value_for_key', 'line_width');
-});
+self.$i_g('@ctx').lineWidth = width});
 $VN_2.$def('line_cap=',function(self,_cmd,cap){
-VN$(self, 'will_change_value_for_key', 'line_cap');
-self.$i_g('@ctx').lineCap = capVN$(self, 'did_change_value_for_key', 'line_cap');
-});
+self.$i_g('@ctx').lineCap = cap});
 $VN_2.$def('line_join=',function(self,_cmd,join){
-VN$(self, 'will_change_value_for_key', 'line_join');
-self.$i_g('@ctx').lineJoin = joinVN$(self, 'did_change_value_for_key', 'line_join');
-});
+self.$i_g('@ctx').lineJoin = join});
 $VN_2.$def('miter_limit=',function(self,_cmd,limit){
-VN$(self, 'will_change_value_for_key', 'miter_limit');
-self.$i_g('@ctx').miterLimit = limitVN$(self, 'did_change_value_for_key', 'miter_limit');
-});
+self.$i_g('@ctx').miterLimit = limit});
 $VN_2.$def('alpha=',function(self,_cmd,alpha){
-VN$(self, 'will_change_value_for_key', 'alpha');
-self.$i_g('@ctx').globalAlpha = alphaVN$(self, 'did_change_value_for_key', 'alpha');
-});
+self.$i_g('@ctx').globalAlpha = alpha});
 $VN_2.$def('begin_path',function(self,_cmd){
 self.$i_g('@ctx').beginPath()});
 $VN_2.$def('move_to_point',function(self,_cmd,point){

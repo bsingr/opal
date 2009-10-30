@@ -21,25 +21,19 @@ $VN_2.$def('check_space_for_parts',function(self,_cmd){
 $VN_2.$def('usable_parts',function(self,_cmd){
 });
 $VN_2.$def('arrows_position=',function(self,_cmd,position){
-VN$(self, 'will_change_value_for_key', 'arrows_position');
-self.$i_s('@arrows_position',position);
-VN$(self, 'did_change_value_for_key', 'arrows_position');
+return self.$i_s('@arrows_position',position);
 });
 $VN_2.$def('arrows_position',function(self,_cmd){
 return self.$i_g('@arrows_position');
 });
 $VN_2.$def('control_tint=',function(self,_cmd,control_tint){
-VN$(self, 'will_change_value_for_key', 'control_tint');
-self.$i_s('@control_tint',control_tint);
-VN$(self, 'did_change_value_for_key', 'control_tint');
+return self.$i_s('@control_tint',control_tint);
 });
 $VN_2.$def('control_tint',function(self,_cmd){
 return self.$i_g('@control_tint');
 });
 $VN_2.$def('control_size=',function(self,_cmd,control_size){
-VN$(self, 'will_change_value_for_key', 'control_size');
-self.$i_s('@control_size',control_size);
-VN$(self, 'did_change_value_for_key', 'control_size');
+return self.$i_s('@control_size',control_size);
 });
 $VN_2.$def('control_size',function(self,_cmd){
 return self.$i_g('@control_size');
@@ -64,7 +58,5 @@ $VN_2.$def('knob_proportion',function(self,_cmd){
 return self.$i_g('@knob_proportion');
 });
 $VN_2.$def('knob_proportion=',function(self,_cmd,proportion){
-VN$(self, 'will_change_value_for_key', 'knob_proportion');
-self.$i_s('@knob_proportion',proportion);
-VN$(self, 'did_change_value_for_key', 'knob_proportion');
+return self.$i_s('@knob_proportion',proportion);
 });

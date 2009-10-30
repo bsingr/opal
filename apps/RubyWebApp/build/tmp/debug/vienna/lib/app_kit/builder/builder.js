@@ -23,6 +23,4 @@ $VN_2.$def('owner',function(self,_cmd){
 return self.$i_g('@owner');
 });
 $VN_2.$def('menu=',function(self,_cmd,a_menu){
-VN$(self, 'will_change_value_for_key', 'menu');
-VN$(self, 'did_change_value_for_key', 'menu');
 });

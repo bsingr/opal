@@ -13,17 +13,13 @@ VN$(self.$klass.$c_g_full('RenderContext'),'current_context=',context);
 return VN$(self.$i_g('@cell'),'render_with_frame:in_view:',VN$(self, 'bounds'),self);
 });
 $VN_2.$def('class_name=',function(self,_cmd,class_name){
-VN$(self, 'will_change_value_for_key', 'class_name');
-VN$(self.$i_g('@cell'),'class_name=',class_name);
-VN$(self, 'did_change_value_for_key', 'class_name');
+return VN$(self.$i_g('@cell'),'class_name=',class_name);
 });
 $VN_2.$def('class_name',function(self,_cmd){
 return VN$(self.$i_g('@cell'),'class_name');
 });
 $VN_2.$def('theme_name=',function(self,_cmd,theme_name){
-VN$(self, 'will_change_value_for_key', 'theme_name');
-VN$(self.$i_g('@cell'),'theme_name=',theme_name);
-VN$(self, 'did_change_value_for_key', 'theme_name');
+return VN$(self.$i_g('@cell'),'theme_name=',theme_name);
 });
 $VN_2.$def('theme_name',function(self,_cmd){
 return VN$(self.$i_g('@cell'),'theme_name');
@@ -32,9 +28,7 @@ $VN_2.$def('cell',function(self,_cmd){
 return self.$i_g('@cell');
 });
 $VN_2.$def('cell=',function(self,_cmd,a_cell){
-VN$(self, 'will_change_value_for_key', 'cell');
-self.$i_g('@cell');
-VN$(self, 'did_change_value_for_key', 'cell');
+return self.$i_g('@cell');
 });
 $VN_2.$def('selected_cell',function(self,_cmd){
 return self.$i_g('@cell');
@@ -47,33 +41,25 @@ $VN_2.$def('target',function(self,_cmd){
 return VN$(self.$i_g('@cell'),'target');
 });
 $VN_2.$def('target=',function(self,_cmd,obj){
-VN$(self, 'will_change_value_for_key', 'target');
-VN$(self.$i_g('@cell'),'target=',obj);
-VN$(self, 'did_change_value_for_key', 'target');
+return VN$(self.$i_g('@cell'),'target=',obj);
 });
 $VN_2.$def('action',function(self,_cmd){
 return VN$(self.$i_g('@cell'),'action');
 });
 $VN_2.$def('action=',function(self,_cmd,selector){
-VN$(self, 'will_change_value_for_key', 'action');
-VN$(self.$i_g('@cell'),'action=',selector);
-VN$(self, 'did_change_value_for_key', 'action');
+return VN$(self.$i_g('@cell'),'action=',selector);
 });
 $VN_2.$def('tag',function(self,_cmd){
 return VN$(self.$i_g('@cell'),'tag');
 });
 $VN_2.$def('tag=',function(self,_cmd,tag){
-VN$(self, 'will_change_value_for_key', 'tag');
-VN$(self.$i_g('@cell'),'tag=',tag);
-VN$(self, 'did_change_value_for_key', 'tag');
+return VN$(self.$i_g('@cell'),'tag=',tag);
 });
 $VN_2.$def('selected_tag',function(self,_cmd){
 return VN$(self.$i_g('@cell'),'tag');
 });
 $VN_2.$def('ignores_multi_click=',function(self,_cmd,flag){
-VN$(self, 'will_change_value_for_key', 'ignores_multi_click');
-VN$(self.$i_g('@cell'),'ignores_multi_click=',flag);
-VN$(self, 'did_change_value_for_key', 'ignores_multi_click');
+return VN$(self.$i_g('@cell'),'ignores_multi_click=',flag);
 });
 $VN_2.$def('ignores_multi_click?',function(self,_cmd){
 return VN$(self.$i_g('@cell'),'ignores_multi_click?');
@@ -84,31 +70,23 @@ $VN_2.$def('continuous?',function(self,_cmd){
 return VN$(self.$i_g('@cell'),'continuous?');
 });
 $VN_2.$def('continuous=',function(self,_cmd,flag){
-VN$(self, 'will_change_value_for_key', 'continuous');
-VN$(self.$i_g('@cell'),'continuous=',flag);
-VN$(self, 'did_change_value_for_key', 'continuous');
+return VN$(self.$i_g('@cell'),'continuous=',flag);
 });
 $VN_2.$def('enabled?',function(self,_cmd){
 return VN$(self.$i_g('@cell'),'enabled?');
 });
 $VN_2.$def('enabled=',function(self,_cmd,flag){
-VN$(self, 'will_change_value_for_key', 'enabled');
 VN$(self.$i_g('@cell'),'enabled=',flag);
-VN$(self,'needs_display=',true);
-VN$(self, 'did_change_value_for_key', 'enabled');
+return VN$(self,'needs_display=',true);
 });
 $VN_2.$def('control_tint',function(self,_cmd){
 return VN$(self.$i_g('@cell'),'control_tint');
 });
 $VN_2.$def('control_tint=',function(self,_cmd,control_tint){
-VN$(self, 'will_change_value_for_key', 'control_tint');
-VN$(self.$i_g('@cell'),'control_tint=',control_tint);
-VN$(self, 'did_change_value_for_key', 'control_tint');
+return VN$(self.$i_g('@cell'),'control_tint=',control_tint);
 });
 $VN_2.$def('control_size=',function(self,_cmd,size){
-VN$(self, 'will_change_value_for_key', 'control_size');
-VN$(self.$i_g('@cell'),'control_size=',size);
-VN$(self, 'did_change_value_for_key', 'control_size');
+return VN$(self.$i_g('@cell'),'control_size=',size);
 });
 $VN_2.$def('control_size',function(self,_cmd){
 return VN$(self.$i_g('@cell'),'control_size');
@@ -117,50 +95,32 @@ $VN_2.$def('alignment',function(self,_cmd){
 return VN$(self.$i_g('@cell'),'alignment');
 });
 $VN_2.$def('alignment=',function(self,_cmd,mode){
-VN$(self, 'will_change_value_for_key', 'alignment');
-VN$(self.$i_g('@cell'),'alignment=',mode);
-VN$(self, 'did_change_value_for_key', 'alignment');
+return VN$(self.$i_g('@cell'),'alignment=',mode);
 });
 $VN_2.$def('font',function(self,_cmd){
 return VN$(self.$i_g('@cell'),'font');
 });
 $VN_2.$def('font=',function(self,_cmd,font){
-VN$(self, 'will_change_value_for_key', 'font');
-VN$(self.$i_g('@cell'),'font=',font);
-VN$(self, 'did_change_value_for_key', 'font');
+return VN$(self.$i_g('@cell'),'font=',font);
 });
 $VN_2.$def('formatter=',function(self,_cmd,new_formatter){
-VN$(self, 'will_change_value_for_key', 'formatter');
-VN$(self.$i_g('@cell'),'formatter=',new_formatter);
-VN$(self, 'did_change_value_for_key', 'formatter');
+return VN$(self.$i_g('@cell'),'formatter=',new_formatter);
 });
 $VN_2.$def('formatter',function(self,_cmd){
 return VN$(self.$i_g('@cell'),'formatter');
 });
 $VN_2.$def('object_value=',function(self,_cmd,obj){
-VN$(self, 'will_change_value_for_key', 'object_value');
-VN$(self, 'did_change_value_for_key', 'object_value');
 });
 $VN_2.$def('string_value=',function(self,_cmd,obj){
-VN$(self, 'will_change_value_for_key', 'string_value');
-VN$(self, 'did_change_value_for_key', 'string_value');
 });
 $VN_2.$def('text=',function(self,_cmd,text){
-VN$(self, 'will_change_value_for_key', 'text');
-var string_value = text;
-VN$(self, 'did_change_value_for_key', 'text');
+return string_value = text;
 });
 $VN_2.$def('int_value=',function(self,_cmd,val){
-VN$(self, 'will_change_value_for_key', 'int_value');
-VN$(self, 'did_change_value_for_key', 'int_value');
 });
 $VN_2.$def('float_value=',function(self,_cmd,val){
-VN$(self, 'will_change_value_for_key', 'float_value');
-VN$(self, 'did_change_value_for_key', 'float_value');
 });
 $VN_2.$def('double_value=',function(self,_cmd,val){
-VN$(self, 'will_change_value_for_key', 'double_value');
-VN$(self, 'did_change_value_for_key', 'double_value');
 });
 $VN_2.$def('object_value',function(self,_cmd){
 });
@@ -225,9 +185,7 @@ return VN$(self,'unlock_focus');
 $VN_2.$def('perform_click',function(self,_cmd,sender){
 });
 $VN_2.$def('refuses_first_responder=',function(self,_cmd,flag){
-VN$(self, 'will_change_value_for_key', 'refuses_first_responder');
-VN$(self.$i_g('@cell'),'refuses_first_responder=',flag);
-VN$(self, 'did_change_value_for_key', 'refuses_first_responder');
+return VN$(self.$i_g('@cell'),'refuses_first_responder=',flag);
 });
 $VN_2.$def('refuses_first_responder?',function(self,_cmd){
 return VN$(self.$i_g('@cell'),'refuses_first_responder?');
@@ -242,9 +200,7 @@ $VN_2.$def('attributed_string_value',function(self,_cmd){
 return VN$(self.$i_g('@cell'),'attributed_string_value');
 });
 $VN_2.$def('attributed_string_value=',function(self,_cmd,val){
-VN$(self, 'will_change_value_for_key', 'attributed_string_value');
-VN$(self.$i_g('@cell'),'attributed_string_value=',val);
-VN$(self, 'did_change_value_for_key', 'attributed_string_value');
+return VN$(self.$i_g('@cell'),'attributed_string_value=',val);
 });
 $VN_2.$def('bind:to_object:with_key_path:options:',function(self,_cmd,binding,observable,key_path,options){
 if(RTEST(VN$(binding,'==','value'))){

@@ -2,6 +2,22 @@ var $VN_1 = RModule.define('RubyWebApp');
 VN$($VN_1.$c_g_full('Vienna').$c_g('Builder'),'new','main_menu',function(builder){
 var app_delegate = VN$($VN_1.$klass.$c_g_full('RubyWebApp').$c_g('AppController'),'new');
 VN$($VN_1.$klass.$c_g_full('VN').$c_g('App'),'delegate=',app_delegate);
+window.app_delegate = app_delegate;
+    VN$(((function(self) {
+return self;
+})(app_delegate)),'class_eval',function(){
+return VN$($VN_1,'define_method','my_method',function(something){
+return 8;
+});
+});
+(function(self) {
+self.$def_s('bob_uncle',function(self,_cmd){
+return 45;
+});
+})(app_delegate);
+app_delegate.$def_s('adams',function(self,_cmd){
+return 10;
+});
 var hud_window = VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('Window'),'new',VN$($VN_1.$klass.$c_g_full('VN').$c_g('Rect'),'new',800,100,400,250),['hud','closable']);
 return VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('Window'),'build',VN.$h('frame',VN$($VN_1.$klass.$c_g_full('VN').$c_g('Rect'),'new',50,100,700,400),'title','My Window!'),function(win){
 VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('Button'),'build',VN.$h('frame',VN$($VN_1.$klass.$c_g_full('VN').$c_g('Rect'),'new',10,40,90,24),'bezel','rounded'),function(button){
@@ -50,7 +66,6 @@ VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('Button'),'build',VN.$h('frame',VN$($V
 VN$(win,'<<',button);
 VN$(button,'title=','Normal');
 VN$(button,'alignment=','left');
-VN$(button,'bind:to_object:with_key_path:options:','enabled',app_delegate,'test_binding',nil);
 return VN$(button,'needs_display=',true);
 });
 return scroll_view = VN$($VN_1.$klass.$c_g_full('Vienna').$c_g('ScrollView'),'build',VN.$h('frame',VN$($VN_1.$klass.$c_g_full('VN').$c_g('Rect'),'new',300,100,250,150),'something',true),function(scroll_view){

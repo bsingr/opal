@@ -22,9 +22,7 @@ $VN_2.$def('class_name',function(self,_cmd){
 return 'vn-window-view';
 });
 $VN_2.$def('window=',function(self,_cmd,win){
-VN$(self, 'will_change_value_for_key', 'window');
-self.$i_s('@window',win);
-VN$(self, 'did_change_value_for_key', 'window');
+return self.$i_s('@window',win);
 });
 $VN_2.$def('mouse_down',function(self,_cmd,the_event){
 self.$i_s('@mouse_down_point',VN$(the_event,'location_in_window'));

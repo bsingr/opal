@@ -5,9 +5,7 @@ VN$sup(arguments.callee, self,_cmd,[]);
 return self.$i_s('@next_responder',nil);
 });
 $VN_2.$def('next_responder=',function(self,_cmd,a_responder){
-VN$(self, 'will_change_value_for_key', 'next_responder');
-self.$i_s('@next_responder',a_responder);
-VN$(self, 'did_change_value_for_key', 'next_responder');
+return self.$i_s('@next_responder',a_responder);
 });
 $VN_2.$def('next_responder',function(self,_cmd){
 return self.$i_g('@next_responder');
@@ -82,9 +80,7 @@ $VN_2.$def('interpret_key_events',function(self,_cmd,event_array){
 $VN_2.$def('flush_buffered_key_events',function(self,_cmd){
 });
 $VN_2.$def('menu=',function(self,_cmd,menu){
-VN$(self, 'will_change_value_for_key', 'menu');
-self.$i_s('@menu',menu);
-VN$(self, 'did_change_value_for_key', 'menu');
+return self.$i_s('@menu',menu);
 });
 $VN_2.$def('menu',function(self,_cmd){
 return self.$i_g('@menu');

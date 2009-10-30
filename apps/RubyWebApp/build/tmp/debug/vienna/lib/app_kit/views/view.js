@@ -49,17 +49,13 @@ $VN_2.$def('class_name',function(self,_cmd){
 return ORTEST(self.$i_g('@class_name'),'vn-view');
 });
 $VN_2.$def('class_name=',function(self,_cmd,a_class){
-VN$(self, 'will_change_value_for_key', 'class_name');
-self.$i_s('@class_name',a_class);
-VN$(self, 'did_change_value_for_key', 'class_name');
+return self.$i_s('@class_name',a_class);
 });
 $VN_2.$def('theme_name',function(self,_cmd){
 return ORTEST(self.$i_g('@theme_name'),'');
 });
 $VN_2.$def('theme_name=',function(self,_cmd,a_theme){
-VN$(self, 'will_change_value_for_key', 'theme_name');
-self.$i_s('@theme_name',a_theme);
-VN$(self, 'did_change_value_for_key', 'theme_name');
+return self.$i_s('@theme_name',a_theme);
 });
 $VN_2.$def('graphics_port',function(self,_cmd){
 return VN$(self.$i_g('@display_context'),'element').getContext('2d');});
@@ -85,8 +81,6 @@ $VN_2.$def('ancestor_shared_with_view',function(self,_cmd,a_view){
 $VN_2.$def('opaque_ancestor',function(self,_cmd){
 });
 $VN_2.$def('hidden=',function(self,_cmd,flag){
-VN$(self, 'will_change_value_for_key', 'hidden');
-VN$(self, 'did_change_value_for_key', 'hidden');
 });
 $VN_2.$def('hidden?',function(self,_cmd){
 });
@@ -97,8 +91,6 @@ $VN_2.$def('view_did_hide',function(self,_cmd){
 $VN_2.$def('view_did_unhide',function(self,_cmd){
 });
 $VN_2.$def('subviews=',function(self,_cmd,new_subviews){
-VN$(self, 'will_change_value_for_key', 'subviews');
-VN$(self, 'did_change_value_for_key', 'subviews');
 });
 $VN_2.$def('add_subview',function(self,_cmd,a_view){
 if(RTEST(VN$(self.$i_g('@subviews'),'include?',a_view))){
@@ -145,8 +137,6 @@ $VN_2.$def('remove_from_superview',function(self,_cmd){
 $VN_2.$def('replace_subview:with:',function(self,_cmd,old_view,new_view){
 });
 $VN_2.$def('posts_frame_changed_notifications=',function(self,_cmd,flag){
-VN$(self, 'will_change_value_for_key', 'posts_frame_changed_notifications');
-VN$(self, 'did_change_value_for_key', 'posts_frame_changed_notifications');
 });
 $VN_2.$def('posts_frame_changed_notifications?',function(self,_cmd){
 });
@@ -155,19 +145,14 @@ $VN_2.$def('resize_subviews_with_old_size',function(self,_cmd,size){
 $VN_2.$def('resize_with_old_superview_size',function(self,_cmd,old){
 });
 $VN_2.$def('autoresizes_subviews=',function(self,_cmd,flag){
-VN$(self, 'will_change_value_for_key', 'autoresizes_subviews');
-VN$(self, 'did_change_value_for_key', 'autoresizes_subviews');
 });
 $VN_2.$def('autoresizes_subviews?',function(self,_cmd){
 });
 $VN_2.$def('autoresizing_mask=',function(self,_cmd,mask){
-VN$(self, 'will_change_value_for_key', 'autoresizing_mask');
-VN$(self, 'did_change_value_for_key', 'autoresizing_mask');
 });
 $VN_2.$def('autoresizing_mask',function(self,_cmd){
 });
 $VN_2.$def('frame_origin=',function(self,_cmd,new_origin){
-VN$(self, 'will_change_value_for_key', 'frame_origin');
 VN$(self.$i_g('@frame'),'x=',VN$(new_origin,'x'));
 VN$(self.$i_g('@frame'),'y=',VN$(new_origin,'y'));
 VN$(self.$i_g('@element'),'origin=',new_origin);
@@ -175,10 +160,8 @@ if(RTEST(self.$i_g('@posts_frame_changed_notifications'))){
 var nc = VN$(self.$klass.$c_g_full('NotificationCenter'),'default_center');
 VN$(nc,'post_notification_name:object:','frame chnage notification',self);
 }
-VN$(self, 'did_change_value_for_key', 'frame_origin');
 });
 $VN_2.$def('frame_size=',function(self,_cmd,new_size){
-VN$(self, 'will_change_value_for_key', 'frame_size');
 var old_size = VN$(self.$klass.$c_g_full('Size'),'new',VN$(self.$i_g('@frame'),'width'),VN$(self.$i_g('@frame'),'height'));
 VN$(VN$(self.$i_g('@frame'),'size'),'width=',VN$(new_size,'width'));
 VN$(VN$(self.$i_g('@frame'),'size'),'height=',VN$(new_size,'height'));
@@ -191,45 +174,32 @@ if(RTEST(self.$i_g('@posts_frame_changed_notifications'))){
 var nc = VN$(self.$klass.$c_g_full('NotificationCenter'),'default_center');
 VN$(nc,'post_notification_name:object:','frame chnage notification',self);
 }
-VN$(self, 'did_change_value_for_key', 'frame_size');
 });
 $VN_2.$def('frame=',function(self,_cmd,frame){
-VN$(self, 'will_change_value_for_key', 'frame');
 VN$(self,'frame_origin=',VN$(frame,'origin'));
 VN$(self,'frame_size=',VN$(frame,'size'));
 if(RTEST(self.$i_g('@posts_frame_changed_notifications'))){
 var nc = VN$(self.$klass.$c_g_full('NotificationCenter'),'default_center');
 VN$(nc,'post_notification_name:object:','view chnages notification',self);
 }
-VN$(self, 'did_change_value_for_key', 'frame');
 });
 $VN_2.$def('frame',function(self,_cmd){
 return self.$i_g('@frame');
 });
 $VN_2.$def('frame_rotation=',function(self,_cmd,angle){
-VN$(self, 'will_change_value_for_key', 'frame_rotation');
-VN$(self, 'did_change_value_for_key', 'frame_rotation');
 });
 $VN_2.$def('frame_rotation',function(self,_cmd){
 return self.$i_g('@frame_rotation');
 });
 $VN_2.$def('frame_center_rotation=',function(self,_cmd,angle){
-VN$(self, 'will_change_value_for_key', 'frame_center_rotation');
-VN$(self, 'did_change_value_for_key', 'frame_center_rotation');
 });
 $VN_2.$def('frame_center_rotation',function(self,_cmd){
 });
 $VN_2.$def('bounds_origin=',function(self,_cmd,new_origin){
-VN$(self, 'will_change_value_for_key', 'bounds_origin');
-VN$(self, 'did_change_value_for_key', 'bounds_origin');
 });
 $VN_2.$def('bounds_size=',function(self,_cmd,new_size){
-VN$(self, 'will_change_value_for_key', 'bounds_size');
-VN$(self, 'did_change_value_for_key', 'bounds_size');
 });
 $VN_2.$def('bounds_rotation=',function(self,_cmd,angle){
-VN$(self, 'will_change_value_for_key', 'bounds_rotation');
-VN$(self, 'did_change_value_for_key', 'bounds_rotation');
 });
 $VN_2.$def('bounds_rotation',function(self,_cmd){
 });
@@ -238,8 +208,6 @@ $VN_2.$def('translate_origin_to_point',function(self,_cmd,translation){
 $VN_2.$def('rotate_by_angle',function(self,_cmd,angle){
 });
 $VN_2.$def('bounds=',function(self,_cmd,bounds){
-VN$(self, 'will_change_value_for_key', 'bounds');
-VN$(self, 'did_change_value_for_key', 'bounds');
 });
 $VN_2.$def('bounds',function(self,_cmd){
 return self.$i_g('@bounds');
@@ -289,12 +257,10 @@ $VN_2.$def('convert_rect_from_base',function(self,_cmd,rect){
 $VN_2.$def('can_draw?',function(self,_cmd){
 });
 $VN_2.$def('needs_display=',function(self,_cmd,flag){
-VN$(self, 'will_change_value_for_key', 'needs_display');
 if(!RTEST(self.$i_g('@window'))){
 return ;
 }
-VN$(self, 'display');
-VN$(self, 'did_change_value_for_key', 'needs_display');
+return VN$(self, 'display');
 });
 $VN_2.$def('needs_display_in_rect',function(self,_cmd,invalid_rect){
 return self.$i_g('@needs_display');

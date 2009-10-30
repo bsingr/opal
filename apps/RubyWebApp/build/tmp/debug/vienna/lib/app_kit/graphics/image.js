@@ -111,43 +111,31 @@ $VN_2.$def('image',function(self,_cmd){
 return self.$i_g('@image');
 });
 $VN_2.$def('image=',function(self,_cmd,img){
-VN$(self, 'will_change_value_for_key', 'image');
-self.$i_s('@image',img);
-VN$(self, 'did_change_value_for_key', 'image');
+return self.$i_s('@image',img);
 });
 $VN_2.$def('filename=',function(self,_cmd,name){
-VN$(self, 'will_change_value_for_key', 'filename');
-self.$i_s('@filename',name);
-VN$(self, 'did_change_value_for_key', 'filename');
+return self.$i_s('@filename',name);
 });
 $VN_2.$def('filename',function(self,_cmd){
 return self.$i_g('@filename');
 });
 $VN_2.$def('sprite_origin=',function(self,_cmd,point){
-VN$(self, 'will_change_value_for_key', 'sprite_origin');
-self.$i_s('@sprite_origin',point);
-VN$(self, 'did_change_value_for_key', 'sprite_origin');
+return self.$i_s('@sprite_origin',point);
 });
 $VN_2.$def('size=',function(self,_cmd,size){
-VN$(self, 'will_change_value_for_key', 'size');
-self.$i_s('@size',size);
-VN$(self, 'did_change_value_for_key', 'size');
+return self.$i_s('@size',size);
 });
 $VN_2.$def('size',function(self,_cmd){
 return ORTEST(self.$i_g('@size'),VN$(self.$klass.$c_g_full('Size'),'new',0,0));
 });
 $VN_2.$def('name=',function(self,_cmd,name){
-VN$(self, 'will_change_value_for_key', 'name');
-self.$i_s('@name',name);
-VN$(self, 'did_change_value_for_key', 'name');
+return self.$i_s('@name',name);
 });
 $VN_2.$def('name',function(self,_cmd){
 return self.$i_g('@name');
 });
 $VN_2.$def('background_color=',function(self,_cmd,color){
-VN$(self, 'will_change_value_for_key', 'background_color');
-self.$i_s('@background_color',color);
-VN$(self, 'did_change_value_for_key', 'background_color');
+return self.$i_s('@background_color',color);
 });
 $VN_2.$def('background_color',function(self,_cmd){
 return self.$i_g('@background_color');
@@ -188,9 +176,7 @@ $VN_2.$def('lock_focus',function(self,_cmd){
 $VN_2.$def('unlock_focus',function(self,_cmd){
 });
 $VN_2.$def('delegate=',function(self,_cmd,obj){
-VN$(self, 'will_change_value_for_key', 'delegate');
-self.$i_s('@delegate',obj);
-VN$(self, 'did_change_value_for_key', 'delegate');
+return self.$i_s('@delegate',obj);
 });
 $VN_2.$def('delegate',function(self,_cmd){
 return self.$i_g('@delegate');
@@ -199,7 +185,5 @@ $VN_2.$def('alignment_rect',function(self,_cmd){
 return self.$i_g('@alignment_rect');
 });
 $VN_2.$def('alignment_rect=',function(self,_cmd,rect){
-VN$(self, 'will_change_value_for_key', 'alignment_rect');
-self.$i_s('@alignment_rect',rect);
-VN$(self, 'did_change_value_for_key', 'alignment_rect');
+return self.$i_s('@alignment_rect',rect);
 });

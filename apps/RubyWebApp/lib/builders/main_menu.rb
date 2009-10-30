@@ -32,6 +32,26 @@ module RubyWebApp
     app_delegate = RubyWebApp::AppController.new
     VN::App.delegate = app_delegate
     
+    `window.app_delegate = app_delegate;
+    `
+    
+    (class << app_delegate; self; end).class_eval {
+      define_method('my_method') do |something|
+        8
+      end
+    }
+    
+    class << app_delegate
+      def bob_uncle
+        45
+      end
+    end
+    
+    def app_delegate.adams
+      10
+    end
+    
+    
     hud_window = Vienna::Window.new VN::Rect.new(800, 100, 400, 250), [:hud, :closable]
     
     Vienna::Window.build :frame => VN::Rect.new(50, 100, 700, 400), :title => 'My Window!' do |win|
@@ -98,7 +118,7 @@ module RubyWebApp
         win << button
         button.title = 'Normal'
         button.alignment = :left
-        button.bind :enabled, to_object:app_delegate, with_key_path:'test_binding', options:nil        
+        # button.bind :enabled, to_object:app_delegate, with_key_path:'test_binding', options:nil        
         # button.theme_name = :my_theme
         button.needs_display = true
       end

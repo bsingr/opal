@@ -75,6 +75,8 @@ module Vienna
         generate_class stmt, context
       when :module
         generate_module stmt, context
+      when :class_shift
+        generate_class_shift stmt, context
       when :def
         generate_def stmt, context
       when :numeric
@@ -147,6 +149,31 @@ module Vienna
         write "\n[Unknown type for generate_stmt: #{stmt}]\n"
       end
     end
+    
+    
+    
+    def generate_class_shift stmt, context
+      write "(function(self) {\n"
+      push_nametable
+      current_self_start_def
+      
+      
+      if stmt[:bodystmt]
+        stmt[:bodystmt].each do |bodystmt|
+          bodystmt[:singleton] = node(:self, :name => 'self')
+          generate_stmt bodystmt, :instance => false, :full_stmt => true, :last_stmt => bodystmt == stmt[:bodystmt].last
+        end
+      end
+      
+      current_self_end_def
+      pop_nametable
+      write "})("
+      generate_stmt stmt[:expr], :instance => false, :full_stmt => false, :last_stmt => false
+      write ")"
+      write ";\n" if context[:full_stmt]
+    end
+    
+    
     
     
     def generate_super stmt, context
@@ -336,13 +363,7 @@ module Vienna
       end
       
       push_nametable # push new nametable
-      
-      # capture KVO compliant setter methods
-      # we do not need this on objc style methods, as they are not, by definition, 
-      # KVO compliant.
-      kvo_match = definition[:fname].match(/^([a-zA-Z_]*)\=$/)
-      # force self. methods to be ignored... we dont want them KVO compliant
-      kvo_match = nil if definition[:singleton] or context[:self] == 'VN.self'
+
       # all methods in top self must be added as singleton methods
       if definition[:singleton] or context[:self] == 'VN.self'
         generate_stmt definition[:singleton], :instance => definition[:instance], :full_stmt => false, :last_stmt => false
@@ -374,9 +395,6 @@ module Vienna
         
       write "){\n"
       
-      # if kvo
-      write "VN$(self, 'will_change_value_for_key', '#{kvo_match[1]}');\n" if kvo_match
-      
       self.current_self_start_def
       # def statements
       if definition[:bodystmt]
@@ -384,7 +402,7 @@ module Vienna
           
           generate_stmt stmt, :instance => (definition[:singleton] ? false : true),
                               :full_stmt => true, 
-                              :last_stmt => ((definition[:bodystmt].last == stmt) and !kvo_match ? true : false), 
+                              :last_stmt => (definition[:bodystmt].last == stmt), 
                               :self => current_self,
                               :fname => definition[:fname]
           
@@ -393,9 +411,6 @@ module Vienna
             
       self.current_self_end_def
       pop_nametable # pop new nametable
-      
-      # end kvo_match
-      write "VN$(self, 'did_change_value_for_key', '#{kvo_match[1]}');\n" if kvo_match
       
       write "});\n"
 

@@ -11,23 +11,18 @@ $VN_2.$def('class_name',function(self,_cmd){
 return 'vn-clip-view';
 });
 $VN_2.$def('background_color=',function(self,_cmd,color){
-VN$(self, 'will_change_value_for_key', 'background_color');
-self.$i_s('@background_color',color);
-VN$(self, 'did_change_value_for_key', 'background_color');
+return self.$i_s('@background_color',color);
 });
 $VN_2.$def('background_color',function(self,_cmd){
 return self.$i_g('@background_color');
 });
 $VN_2.$def('draws_background=',function(self,_cmd,flag){
-VN$(self, 'will_change_value_for_key', 'draws_background');
-self.$i_s('@draws_background',flag);
-VN$(self, 'did_change_value_for_key', 'draws_background');
+return self.$i_s('@draws_background',flag);
 });
 $VN_2.$def('draws_background?',function(self,_cmd){
 return self.$i_g('@draws_background');
 });
 $VN_2.$def('document_view=',function(self,_cmd,a_view){
-VN$(self, 'will_change_value_for_key', 'document_view');
 var default_center = VN$(self.$klass.$c_g_full('NotificationCenter'),'default_center');
 if(RTEST(self.$i_g('@document_view'))){
 VN$(default_center,'remove_observer:name:object:',self,self.$klass.$c_g_full('VIEW_FRAME_DID_CHANGE_NOTIFICATION'),self.$i_g('@document_view'));
@@ -35,8 +30,7 @@ VN$(default_center,'remove_observer:name:object:',self,self.$klass.$c_g_full('VI
 VN$(self.$i_g('@document_view'),'remove_from_superview');
 }
 self.$i_s('@document_view',a_view);
-VN$(self,'add_subview',a_view);
-VN$(self, 'did_change_value_for_key', 'document_view');
+return VN$(self,'add_subview',a_view);
 });
 $VN_2.$def('document_view',function(self,_cmd){
 return self.$i_g('@document_view');
@@ -45,9 +39,7 @@ $VN_2.$def('document_rect',function(self,_cmd){
 return VN$(self.$klass.$c_g_full('Rect'),'new',0,0,0,0);
 });
 $VN_2.$def('document_cursor=',function(self,_cmd,an_obj){
-VN$(self, 'will_change_value_for_key', 'document_cursor');
-self.$i_s('@document_cursor',an_obj);
-VN$(self, 'did_change_value_for_key', 'document_cursor');
+return self.$i_s('@document_cursor',an_obj);
 });
 $VN_2.$def('document_cursor',function(self,_cmd){
 return self.$i_g('@document_cursor');
@@ -60,9 +52,7 @@ $VN_2.$def('view_frame_changed',function(self,_cmd,notification){
 $VN_2.$def('view_bounds_changed',function(self,_cmd,notification){
 });
 $VN_2.$def('copies_on_scroll=',function(self,_cmd,flag){
-VN$(self, 'will_change_value_for_key', 'copies_on_scroll');
-self.$i_s('@copies_on_scroll',flag);
-VN$(self, 'did_change_value_for_key', 'copies_on_scroll');
+return self.$i_s('@copies_on_scroll',flag);
 });
 $VN_2.$def('copies_on_scroll',function(self,_cmd){
 return self.$i_g('@copies_on_scroll');

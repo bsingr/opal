@@ -56,9 +56,9 @@ VN.cBasicObjectAlloc = function(self, _cmd) {
   var obj = new RObject(self, VN.OBJECT) ;
   // Cruical ivar setup
   // console.log('HERE');
-  obj.$i_s('@kvo_observers', new Array());
-  obj.$i_s('@kvo_old_values', VN.$h());
-  obj.$i_s('@kvb_info', VN.$h());
+  // obj.$i_s('@kvo_observers', new Array());
+  // obj.$i_s('@kvo_old_values', VN.$h());
+  // obj.$i_s('@kvb_info', VN.$h());
    // # @kvo_observers = []
     // #      @kvo_old_values = {}
   return obj;
@@ -109,7 +109,7 @@ cBasicObject.$def('===', function(self, _cmd, other) {
 
 cBasicObject.$def('class', function(self, _cmd) {
   // console.log('returning class...');
-  return self.$klass;
+  return RClass.real(self.$klass);
 });
 
 cBasicObject.$def('respond_to?', function(self, _cmd, selector) {

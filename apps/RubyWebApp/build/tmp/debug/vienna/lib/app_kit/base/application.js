@@ -69,7 +69,6 @@ $VN_2.$def_s('shared_application',function(self,_cmd){
 return self.$i_s('@app',ORTEST(self.$i_g('@app'),VN$(self,'new')));
 });
 $VN_2.$def('delegate=',function(self,_cmd,obj){
-VN$(self, 'will_change_value_for_key', 'delegate');
 if(RTEST(VN$(self.$i_g('@delegate'),'==',obj))){
 return ;
 }
@@ -86,7 +85,6 @@ VN$(nc,'add_observer:selector:name:object:',self.$i_g('@delegate'),'will_finish_
 if(RTEST(VN$(self.$i_g('@delegate'),'respond_to?','did_finish_launching'))){
 VN$(nc,'add_observer:selector:name:object:',self.$i_g('@delegate'),'did_finish_launching',self.$klass.$c_g_full('APP_DID_FINISH_LAUNCHING'),self);
 }
-VN$(self, 'did_change_value_for_key', 'delegate');
 });
 $VN_2.$def('running?',function(self,_cmd){
 return true;

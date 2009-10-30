@@ -88,15 +88,11 @@ if (self.$values[key] === undefined) {
 $VN_1.$def('default',function(self,_cmd){
 return self.$ifnone});
 $VN_1.$def('default=',function(self,_cmd,def_obj){
-VN$(self, 'will_change_value_for_key', 'default');
 self.$ifnone = ifnone;
-    return ifnone;VN$(self, 'did_change_value_for_key', 'default');
-});
+    return ifnone;});
 $VN_1.$def('default_proc',function(self,_cmd){
 });
 $VN_1.$def('default_proc=',function(self,_cmd,proc){
-VN$(self, 'will_change_value_for_key', 'default_proc');
-VN$(self, 'did_change_value_for_key', 'default_proc');
 });
 $VN_1.$def('key',function(self,_cmd){
 });

@@ -592,7 +592,7 @@ class Vienna::RubyParser < Racc::Parser
         return ['^', '^']
       elsif scanner.scan(/\;/)
         self.lex_state = :EXPR_BEG
-        return [:tSEMI, ';']
+        return [';', ';']
       elsif scanner.scan(/\~/)
         self.lex_state = :EXPR_BEG
         return ['~', '~']

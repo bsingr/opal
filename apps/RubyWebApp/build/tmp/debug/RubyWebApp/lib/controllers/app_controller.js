@@ -18,9 +18,7 @@ $VN_2.$def('test_binding',function(self,_cmd){
 return self.$i_g('@test_binding');
 });
 $VN_2.$def('test_binding=',function(self,_cmd,aValue){
-VN$(self, 'will_change_value_for_key', 'test_binding');
-self.$i_s('@test_binding',aValue);
-VN$(self, 'did_change_value_for_key', 'test_binding');
+return self.$i_s('@test_binding',aValue);
 });
 $VN_2.$def('will_finish_launching',function(self,_cmd,notification){
 });

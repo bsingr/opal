@@ -24,7 +24,19 @@
 # THE SOFTWARE.
 #
 
+# Key Value observing in this ruby implementation makes heavy use of ruby's
+# singleton abilities, and will not sit well above pure objc runtime.
 module Vienna
+    
+  (class << self; self; end)
+  
+  class << self
+    
+    def access_all
+      true
+    end
+    
+  end
   
   # KVO options
   # ===========
@@ -41,14 +53,14 @@ module Vienna
     end
   
     def add_observer observer, for_key_path:key_path, options:options, context:context
-      # return unless observer and key_path
-      
-      @kvo_observers << {
-        :observer => observer,
-        :key_path => key_path,
-        :options => options,
-        :context => context
-      }
+      # # return unless observer and key_path
+      # 
+      # @kvo_observers << {
+      #   :observer => observer,
+      #   :key_path => key_path,
+      #   :options => options,
+      #   :context => context
+      # }
     end
   
     def remove_observer observer, for_key_path:key_path
@@ -82,18 +94,18 @@ module Vienna
   class Object
   
     def will_change_value_for_key key
-      # puts self
-      @kvo_old_values[key] = value_for_key(key)
+      # # puts self
+      # @kvo_old_values[key] = value_for_key(key)
     end
   
     def did_change_value_for_key key
-      # puts 'yeap, in did_change'
-      @kvo_observers.each do |current|
-        if current[:key_path] == key
-          change_dict = { :old => @kvo_old_values[key], :new => value_for_key(key) }
-          current[:observer].observe_value_for_key_path key, of_object:self, change:change_dict, context:current[:context]
-        end
-      end
+      # # puts 'yeap, in did_change'
+      # @kvo_observers.each do |current|
+      #   if current[:key_path] == key
+      #     change_dict = { :old => @kvo_old_values[key], :new => value_for_key(key) }
+      #     current[:observer].observe_value_for_key_path key, of_object:self, change:change_dict, context:current[:context]
+      #   end
+      # end
     end
   
     def will_change changeKind, values_at_indexes:indexes, for_key:key

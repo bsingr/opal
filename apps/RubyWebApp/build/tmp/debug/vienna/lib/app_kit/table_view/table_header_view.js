@@ -4,9 +4,7 @@ $VN_2.$def('initialize',function(self,_cmd,frame){
 return VN$sup(arguments.callee, self,_cmd,[frame]);
 });
 $VN_2.$def('table_view=',function(self,_cmd,table_view){
-VN$(self, 'will_change_value_for_key', 'table_view');
-self.$i_s('@table_view',table_view);
-VN$(self, 'did_change_value_for_key', 'table_view');
+return self.$i_s('@table_view',table_view);
 });
 $VN_2.$def('table_view',function(self,_cmd){
 return self.$i_g('@table_view');
