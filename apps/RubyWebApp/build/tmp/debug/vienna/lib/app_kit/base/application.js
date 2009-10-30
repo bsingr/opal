@@ -1,120 +1,122 @@
-var $VN_1 = RModule.define('Vienna');
-$VN_1.$c_s('APP_WILL_FINISH_LAUNCHING','APP_WILL_FINISH_LAUNCHING');
-$VN_1.$c_s('APP_DID_FINISH_LAUNCHING','APP_DID_FINISH_LAUNCHING');
-$VN_1.$c_s('APP_DID_CHANGE_SCREEN_PARAMETERS','APP_DID_CHANGE_SCREEN_PARAMETERS');
-$VN_1.$c_s('RUN_LOOP_MODES',VN.$h('normal', 0, 'modal_panel', 1, 'event_tracking', 2));
-var $VN_2 = RClass.define_under($VN_1, 'Application',cObject);
-VN$($VN_2,'attr_accessor','windows','event_queue','views_needing_display');
-VN$($VN_2,'attr_reader','delegate');
-$VN_2.$def('initialize',function(self,_cmd){
-self.$i_s('@windows',[]);
-self.$i_s('@event_queue',[]);
-self.$i_s('@views_needing_display',[]);
-self.$i_s('@delegate',nil);
-return self.$i_s('@run_loop_mode','normal');
+(function(self) {
+self.$c_s('APP_WILL_FINISH_LAUNCHING','APP_WILL_FINISH_LAUNCHING');
+self.$c_s('APP_DID_FINISH_LAUNCHING','APP_DID_FINISH_LAUNCHING');
+self.$c_s('APP_DID_CHANGE_SCREEN_PARAMETERS','APP_DID_CHANGE_SCREEN_PARAMETERS');
+self.$c_s('RUN_LOOP_MODES',VN.$h(_$u, 0, _$v, 1, _$w, 2));
+(function(self) {
+VN$(self,s$ar,_$x,_$y,_$z);
+VN$(self,s$ap,_$aa);
+self.$def(s$as,function(self,_cmd){
+self.$i_s(i$s,[]);
+self.$i_s(i$t,[]);
+self.$i_s(i$u,[]);
+self.$i_s(i$v,nil);
+return self.$i_s(i$w,_$u);
 });
-$VN_2.$def('run_loop_mode',function(self,_cmd){
-return self.$i_g('@run_loop_mode');
+self.$def(s$na,function(self,_cmd){
+return self.$i_g(i$w);
 });
-$VN_2.$def('bind_events',function(self,_cmd,types,block){
-self.$i_s('@run_loop_mode','event_tracking');
-self.$i_s('@event_binding_mask',types);
-self.$i_s('@event_binding_block',block);
-self.$i_s('@event_binding_window',VN$(VN$(self,'current_event'),'window'));
-if(RTEST(VN$(types,'include?','left_mouse_dragged'))){
-VN$(self.$klass.$c_g_full('Document'),'add_event_listener','mousemove',function(evt){
-var the_event = VN$(self.$klass.$c_g_full('Event'),'from_native_event:with_window:with_type:',evt,nil,'left_mouse_dragged');
-return VN$(self,'send_event',the_event);
+self.$def(s$nb,function(self,_cmd,types,block){
+self.$i_s(i$w,_$w);
+self.$i_s(i$x,types);
+self.$i_s(i$y,block);
+self.$i_s(i$z,VN$(VN$(self,s$nc),s$nd));
+if(RTEST(VN$(types,s$al,_$ab))){
+VN$(self.$klass.$c_g_full('Document'),s$jb,_$ac,function(evt){
+var the_event = VN$(self.$klass.$c_g_full('Event'),s$ne,evt,nil,'left_mouse_dragged');
+return VN$(self,s$nf,the_event);
 });
 }
 });
-$VN_2.$def('unbind_events',function(self,_cmd){
-self.$i_s('@run_loop_mode','normal');
-if(RTEST(VN$(self.$i_g('@event_binding_mask'),'include?','left_mouse_dragged'))){
-VN$(self.$klass.$c_g_full('Document'),'remove_event_listener','mousemove');
+self.$def(s$ng,function(self,_cmd){
+self.$i_s(i$w,_$u);
+if(RTEST(VN$(self.$i_g(i$x),s$al,_$ab))){
+VN$(self.$klass.$c_g_full('Document'),s$jc,_$ac);
 }
 });
-$VN_2.$def('current_event',function(self,_cmd){
-return self.$i_g('@current_event');
+self.$def(s$nc,function(self,_cmd){
+return self.$i_g(i$aa);
 });
-$VN_2.$def('send_event',function(self,_cmd,the_event){
-self.$i_s('@current_event',the_event);
-if(RTEST(VN$(self.$i_g('@run_loop_mode'),'==','event_tracking'))){
-if(RTEST(VN$(self.$i_g('@event_binding_mask'),'include?',VN$(the_event,'type')))){
-VN$(the_event,'window=',self.$i_g('@event_binding_window'));
-VN$(self.$i_g('@event_binding_block'),'call',the_event);
+self.$def(s$nf,function(self,_cmd,the_event){
+self.$i_s(i$aa,the_event);
+if(RTEST(VN$(self.$i_g(i$w),s$ai,_$w))){
+if(RTEST(VN$(self.$i_g(i$x),s$al,VN$(the_event,s$nh)))){
+VN$(the_event,'window=',self.$i_g(i$z));
+VN$(self.$i_g(i$y),s$it,the_event);
 }
 return ;
 }
-return VN$(VN$(the_event,'window'),'send_event',the_event);
+return VN$(VN$(the_event,s$nd),s$nf,the_event);
 });
-$VN_2.$def('mark_view_for_display',function(self,_cmd,view,flag){
-if(!RTEST(VN$(self.$i_g('@views_needing_display'),'contains?',view))){
-VN$(self.$i_g('@views_needing_display'),'<<',view);
+self.$def(s$ni,function(self,_cmd,view,flag){
+if(!RTEST(VN$(self.$i_g(i$u),s$nj,view))){
+VN$(self.$i_g(i$u),s$cv,view);
 }
 });
-$VN_2.$def('display_required_views',function(self,_cmd){
-VN$(self.$i_g('@views_needing_display'),'each',function(view){
-return VN$(view,'draw_rect');
+self.$def(s$nk,function(self,_cmd){
+VN$(self.$i_g(i$u),s$ga,function(view){
+return VN$(view,s$nl);
 });
-return self.$i_s('@views_needing_display',[]);
+return self.$i_s(i$u,[]);
 });
-$VN_2.$def('add_window',function(self,_cmd,window){
+self.$def(s$nm,function(self,_cmd,window){
 return 0;
 });
-$VN_2.$def('<<',function(self,_cmd,window){
-return VN$(self,'add_window',window);
+self.$def(s$cv,function(self,_cmd,window){
+return VN$(self,s$nm,window);
 });
-$VN_2.$def_s('shared_application',function(self,_cmd){
-return self.$i_s('@app',ORTEST(self.$i_g('@app'),VN$(self,'new')));
+self.$def_s(s$nn,function(self,_cmd){
+return self.$i_s(i$ab,ORTEST(self.$i_g(i$ab),VN$(self,s$is)));
 });
-$VN_2.$def('delegate=',function(self,_cmd,obj){
-if(RTEST(VN$(self.$i_g('@delegate'),'==',obj))){
+self.$def(s$no,function(self,_cmd,obj){
+if(RTEST(VN$(self.$i_g(i$v),s$ai,obj))){
 return ;
 }
-var nc = VN$(self.$klass.$c_g_full('VN').$c_g('NotificationCenter'),'default_center');
-if(RTEST(self.$i_g('@delegate'))){
-VN$(nc,'remove_observer:name:object:',self.$i_g('@delegate'),self.$klass.$c_g_full('APP_WILL_FINISH_LAUNCHING'),self);
-VN$(nc,'remove_observer:name:object:',self.$i_g('@delegate'),self.$klass.$c_g_full('APP_DID_FINISH_LAUNCHING'),self);
-VN$(nc,'remove_observer:name:object:',self.$i_g('@delegate'),self.$klass.$c_g_full('APP_DID_CHANGE_SCREEN_PARAMETERS'),self);
+var nc = VN$(self.$klass.$c_g_full('VN').$c_g('NotificationCenter'),s$lk);
+if(RTEST(self.$i_g(i$v))){
+VN$(nc,s$ls,self.$i_g(i$v),self.$klass.$c_g_full('APP_WILL_FINISH_LAUNCHING'),self);
+VN$(nc,s$ls,self.$i_g(i$v),self.$klass.$c_g_full('APP_DID_FINISH_LAUNCHING'),self);
+VN$(nc,s$ls,self.$i_g(i$v),self.$klass.$c_g_full('APP_DID_CHANGE_SCREEN_PARAMETERS'),self);
 }
-self.$i_s('@delegate',obj);
-if(RTEST(VN$(self.$i_g('@delegate'),'respond_to?','will_finish_launching'))){
-VN$(nc,'add_observer:selector:name:object:',self.$i_g('@delegate'),'will_finish_launching',self.$klass.$c_g_full('APP_WILL_FINISH_LAUNCHING'),self);
+self.$i_s(i$v,obj);
+if(RTEST(VN$(self.$i_g(i$v),s$kf,_$ad))){
+VN$(nc,s$ll,self.$i_g(i$v),'will_finish_launching',self.$klass.$c_g_full('APP_WILL_FINISH_LAUNCHING'),self);
 }
-if(RTEST(VN$(self.$i_g('@delegate'),'respond_to?','did_finish_launching'))){
-VN$(nc,'add_observer:selector:name:object:',self.$i_g('@delegate'),'did_finish_launching',self.$klass.$c_g_full('APP_DID_FINISH_LAUNCHING'),self);
+if(RTEST(VN$(self.$i_g(i$v),s$kf,_$ae))){
+VN$(nc,s$ll,self.$i_g(i$v),'did_finish_launching',self.$klass.$c_g_full('APP_DID_FINISH_LAUNCHING'),self);
 }
 });
-$VN_2.$def('running?',function(self,_cmd){
+self.$def(s$np,function(self,_cmd){
 return true;
 });
-$VN_2.$def('finish_launching',function(self,_cmd){
-if(RTEST(self.$i_g('@run_block'))){
-VN$(self.$i_g('@run_block'),'call',self);
+self.$def(s$nq,function(self,_cmd){
+if(RTEST(self.$i_g(i$ac))){
+VN$(self.$i_g(i$ac),s$it,self);
 }
-VN$(self.$klass.$c_g_full('Document'),'add_event_listener','mousedown',function(evt){
-if(RTEST(VN$(VN$(self.$klass.$c_g_full('App'),'run_loop_mode'),'==','event_tracking'))){
-var the_event = VN$(self.$klass.$c_g_full('Event'),'from_native_event:with_window:with_type:',evt,nil,'left_mouse_down');
-VN$(self,'puts','sending event from here');
-VN$(self,'send_event',the_event);
-}
-});
-VN$(self.$klass.$c_g_full('Document'),'add_event_listener','mouseup',function(evt){
-if(RTEST(VN$(VN$(self.$klass.$c_g_full('App'),'run_loop_mode'),'==','event_tracking'))){
-var the_event = VN$(self.$klass.$c_g_full('Event'),'from_native_event:with_window:with_type:',evt,nil,'left_mouse_up');
-VN$(self,'send_event',the_event);
+VN$(self.$klass.$c_g_full('Document'),s$jb,_$af,function(evt){
+if(RTEST(VN$(VN$(self.$klass.$c_g_full('App'),s$na),s$ai,_$w))){
+var the_event = VN$(self.$klass.$c_g_full('Event'),s$ne,evt,nil,'left_mouse_down');
+VN$(self,s$ag,'sending event from here');
+VN$(self,s$nf,the_event);
 }
 });
-var nc = VN$(self.$klass.$c_g_full('NotificationCenter'),'default_center');
-VN$(nc,'post_notification_name:object:',self.$klass.$c_g_full('APP_WILL_FINISH_LAUNCHING'),self);
-return VN$(nc,'post_notification_name:object:',self.$klass.$c_g_full('APP_DID_FINISH_LAUNCHING'),self);
+VN$(self.$klass.$c_g_full('Document'),s$jb,_$ag,function(evt){
+if(RTEST(VN$(VN$(self.$klass.$c_g_full('App'),s$na),s$ai,_$w))){
+var the_event = VN$(self.$klass.$c_g_full('Event'),s$ne,evt,nil,'left_mouse_up');
+VN$(self,s$nf,the_event);
+}
 });
-$VN_2.$def('run',function(self,_cmd,block){
-return self.$i_s('@run_block',block);
+var nc = VN$(self.$klass.$c_g_full('NotificationCenter'),s$lk);
+VN$(nc,s$lq,self.$klass.$c_g_full('APP_WILL_FINISH_LAUNCHING'),self);
+return VN$(nc,s$lq,self.$klass.$c_g_full('APP_DID_FINISH_LAUNCHING'),self);
 });
-$VN_2.$def('send_action:to:from:',function(self,_cmd,action,target,sender){
+self.$def(s$nr,function(self,_cmd,block){
+return self.$i_s(i$ac,block);
 });
-$VN_1.$c_s('App',VN$($VN_1.$c_g_full('Application'),'shared_application'));
-window.onload = function() {VN$(cObject.$c_g('VN').$c_g('App'),'finish_launching');
+self.$def(s$ns,function(self,_cmd,action,target,sender){
+});
+})(RClass.define_under(self,'Application',cObject));
+console.log('this pare');self.$c_s('App',VN$(self.$c_g_full('Application'),s$nn));
+console.log('ermmm');})(RModule.define('Vienna'));
+window.onload = function() {VN$(cObject.$c_g('VN').$c_g('App'),s$nq);
 };

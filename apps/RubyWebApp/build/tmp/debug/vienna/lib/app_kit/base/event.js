@@ -1,18 +1,18 @@
-var $VN_1 = RModule.define('Vienna');
-$VN_1.$c_s('EVENT_TYPES',VN.$h('left_mouse_down', 1, 'left_mouse_up', 2, 'right_mouse_down', 3, 'right_mouse_up', 4, 'mouse_moved', 5, 'left_mouse_dragged', 6, 'right_mouse_dragged', 7, 'mouse_entered', 8, 'mouse_exited', 9, 'key_down', 10, 'key_up', 11, 'flags_changed', 12, 'app_kit_defined', 13, 'system_defined', 14, 'application_defined', 15, 'periodic', 16, 'cursor_update', 17, 'scroll_wheel', 22, 'other_mouse_down', 25, 'other_mouse_up', 26, 'other_mouse_dragged', 27));
-var $VN_2 = RClass.define_under($VN_1, 'Event',cObject);
-$VN_2.$def_s('from_native_event:with_window:with_type:',function(self,_cmd,event,win,type){
-var obj = VN$(self,'allocate');
-VN$(obj,'initialize_with_native_event:with_window:with_type:',event,win,type);
+(function(self) {
+self.$c_s('EVENT_TYPES',VN.$h(_$ah, 1, _$ai, 2, _$aj, 3, _$ak, 4, _$al, 5, _$ab, 6, _$am, 7, _$an, 8, _$ao, 9, _$ap, 10, _$aq, 11, _$ar, 12, _$as, 13, _$at, 14, _$au, 15, _$av, 16, _$aw, 17, _$ax, 22, _$ay, 25, _$az, 26, _$ba, 27));
+(function(self) {
+self.$def_s(s$ne,function(self,_cmd,event,win,type){
+var obj = VN$(self,s$nt);
+VN$(obj,s$nu,event,win,type);
 return obj;
 });
-$VN_2.$def('initialize_with_native_event:with_window:with_type:',function(self,_cmd,event,win,type){
-self.$i_s('@event',event);
-self.$i_s('@window',win);
-return self.$i_s('@type',type);
+self.$def(s$nu,function(self,_cmd,event,win,type){
+self.$i_s(i$ad,event);
+self.$i_s(i$ae,win);
+return self.$i_s(i$e,type);
 });
-$VN_2.$def('stop_propagation',function(self,_cmd){
-var event = self.$i_g('@event');
+self.$def(s$nv,function(self,_cmd){
+var event = self.$i_g(i$ad);
 if (event.stopPropagation) {
         event.stopPropagation()
         event.preventDefault();
@@ -20,50 +20,52 @@ if (event.stopPropagation) {
         window.event.cancelBubble = true;
         window.event.returnValue = false;
       }});
-$VN_2.$def('allows_propagation?',function(self,_cmd){
-return self.$i_g('@event')._vn_allow_event_propagation? true : false;});
-$VN_2.$def('allows_propagation=',function(self,_cmd,flag){
-self.$i_g('@event')._vn_allow_event_propagation = flag;});
-$VN_2.$def('type',function(self,_cmd){
-return self.$i_g('@type');
+self.$def(s$nw,function(self,_cmd){
+return self.$i_g(i$ad)._vn_allow_event_propagation? true : false;});
+self.$def(s$nx,function(self,_cmd,flag){
+self.$i_g(i$ad)._vn_allow_event_propagation = flag;});
+self.$def(s$nh,function(self,_cmd){
+return self.$i_g(i$e);
 });
-$VN_2.$def('modifier_flags',function(self,_cmd){
+self.$def(s$ny,function(self,_cmd){
 });
-$VN_2.$def('timestamp',function(self,_cmd){
+self.$def(s$nz,function(self,_cmd){
 });
-$VN_2.$def('window=',function(self,_cmd,a_window){
-return self.$i_s('@window',a_window);
+self.$def(s$oa,function(self,_cmd,a_window){
+return self.$i_s(i$ae,a_window);
 });
-$VN_2.$def('window',function(self,_cmd){
-return self.$i_g('@window');
+self.$def(s$nd,function(self,_cmd){
+return self.$i_g(i$ae);
 });
-$VN_2.$def('window_number',function(self,_cmd){
-return VN$(self.$i_g('@window'),'window_number');
+self.$def(s$ob,function(self,_cmd){
+return VN$(self.$i_g(i$ae),s$ob);
 });
-$VN_2.$def('context',function(self,_cmd){
+self.$def(s$oc,function(self,_cmd){
 });
-$VN_2.$def('click_count',function(self,_cmd){
+self.$def(s$od,function(self,_cmd){
 });
-$VN_2.$def('button_number',function(self,_cmd){
+self.$def(s$oe,function(self,_cmd){
 });
-$VN_2.$def('event_number',function(self,_cmd){
+self.$def(s$of,function(self,_cmd){
 });
-$VN_2.$def('location_in_window',function(self,_cmd){
-return VN$(self.$i_g('@window'),'convert_screen_to_base',VN$(self.$klass.$c_g_full('Point'),'new',self.$i_g('@event').clientX,self.$i_g('@event').clientY));
+self.$def(s$og,function(self,_cmd){
+return VN$(self.$i_g(i$ae),s$oh,VN$(self.$klass.$c_g_full('Point'),s$is,self.$i_g(i$ad).clientX,self.$i_g(i$ad).clientY));
 });
-$VN_2.$def('characters',function(self,_cmd){
+self.$def(s$oi,function(self,_cmd){
 });
-$VN_2.$def('characters_ignoring_modifiers',function(self,_cmd){
+self.$def(s$oj,function(self,_cmd){
 });
-$VN_2.$def('repeat?',function(self,_cmd){
+self.$def(s$ok,function(self,_cmd){
 });
-$VN_2.$def('key_code',function(self,_cmd){
+self.$def(s$ol,function(self,_cmd){
 });
-$VN_2.$def('tracking_number',function(self,_cmd){
+self.$def(s$om,function(self,_cmd){
 });
-$VN_2.$def('user_data',function(self,_cmd){
+self.$def(s$on,function(self,_cmd){
 });
-$VN_2.$def('tracking_area',function(self,_cmd){
+self.$def(s$oo,function(self,_cmd){
 });
-$VN_2.$def_s('mouse_location',function(self,_cmd){
+self.$def_s(s$op,function(self,_cmd){
 });
+})(RClass.define_under(self,'Event',cObject));
+})(RModule.define('Vienna'));

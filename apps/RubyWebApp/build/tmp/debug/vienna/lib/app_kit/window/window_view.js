@@ -1,47 +1,49 @@
-var $VN_1 = RModule.define('Vienna');
-var $VN_2 = RClass.define_under($VN_1, 'WindowView',$VN_2.$c_g_full('View'));
-$VN_2.$def('initialize',function(self,_cmd,frame,style_mask){
+(function(self) {
+(function(self) {
+self.$def(s$as,function(self,_cmd,frame,style_mask){
 VN$sup(arguments.callee, self,_cmd,[frame]);
-return self.$i_s('@style_mask',style_mask);
+return self.$i_s(i$go,style_mask);
 });
-$VN_2.$def_s('frame_rect_for_content_rect:style_mask:',function(self,_cmd,rect,style){
-return VN$(self.$c_g_full('Rect'),'new',VN$(rect,'x'),VN$(rect,'y'),VN$(rect,'width'),VN$(rect,'height'));
+self.$def_s(s$amd,function(self,_cmd,rect,style){
+return VN$(self.$c_g_full('Rect'),s$is,VN$(rect,s$jo),VN$(rect,s$jp),VN$(rect,s$jr),VN$(rect,s$js));
 });
-$VN_2.$def_s('content_rect_for_frame_rect:style_mask:',function(self,_cmd,rect,style){
-return VN$(self.$c_g_full('Rect'),'new',VN$(rect,'x'),VN$(rect,'y'),VN$(rect,'width'),VN$(rect,'height'));
+self.$def_s(s$ame,function(self,_cmd,rect,style){
+return VN$(self.$c_g_full('Rect'),s$is,VN$(rect,s$jo),VN$(rect,s$jp),VN$(rect,s$jr),VN$(rect,s$js));
 });
-$VN_2.$def_s('min_frame_width_with_title:style_mask:',function(self,_cmd,title,style){
+self.$def_s(s$amf,function(self,_cmd,title,style){
 });
-$VN_2.$def('frame_rect_for_content_rect',function(self,_cmd,rect){
-return VN$(self.$klass.$c_g_full('Rect'),'new',VN$(rect,'x'),VN$(rect,'y'),VN$(rect,'width'),VN$(rect,'height'));
+self.$def(s$amg,function(self,_cmd,rect){
+return VN$(self.$klass.$c_g_full('Rect'),s$is,VN$(rect,s$jo),VN$(rect,s$jp),VN$(rect,s$jr),VN$(rect,s$js));
 });
-$VN_2.$def('content_rect_for_frame_rect',function(self,_cmd,rect){
-return VN$(self.$klass.$c_g_full('Rect'),'new',VN$(rect,'x'),VN$(rect,'y'),VN$(rect,'width'),VN$(rect,'height'));
+self.$def(s$amh,function(self,_cmd,rect){
+return VN$(self.$klass.$c_g_full('Rect'),s$is,VN$(rect,s$jo),VN$(rect,s$jp),VN$(rect,s$jr),VN$(rect,s$js));
 });
-$VN_2.$def('class_name',function(self,_cmd){
+self.$def(s$sy,function(self,_cmd){
 return 'vn-window-view';
 });
-$VN_2.$def('window=',function(self,_cmd,win){
-return self.$i_s('@window',win);
+self.$def(s$oa,function(self,_cmd,win){
+return self.$i_s(i$ae,win);
 });
-$VN_2.$def('mouse_down',function(self,_cmd,the_event){
-self.$i_s('@mouse_down_point',VN$(the_event,'location_in_window'));
-return VN$(self.$klass.$c_g_full('App'),'bind_events',['left_mouse_up','left_mouse_dragged'],function(the_event){
-if(RTEST(VN$(VN$(the_event,'type'),'==','left_mouse_up'))){
-VN$(self.$klass.$c_g_full('App'),'unbind_events');
+self.$def(s$ly,function(self,_cmd,the_event){
+self.$i_s(i$gp,VN$(the_event,s$og));
+return VN$(self.$klass.$c_g_full('App'),s$nb,[_$ai,_$ab],function(the_event){
+if(RTEST(VN$(VN$(the_event,s$nh),s$ai,_$ai))){
+VN$(self.$klass.$c_g_full('App'),s$ng);
 }
 else{
-var window_point = VN$(the_event,'location_in_window');
-self.$i_s('@window_origin',VN$(VN$(self.$i_g('@window'),'frame'),'origin'));
-self.$i_s('@delta_x',VN$(VN$(window_point,'x'),'-',VN$(self.$i_g('@mouse_down_point'),'x')));
-self.$i_s('@delta_y',VN$(VN$(window_point,'y'),'-',VN$(self.$i_g('@mouse_down_point'),'y')));
-VN$(self.$i_g('@window'),'frame_origin=',VN$(self.$klass.$c_g_full('Point'),'new',VN$(VN$(self.$i_g('@window_origin'),'x'),'+',self.$i_g('@delta_x')),VN$(VN$(self.$i_g('@window_origin'),'y'),'+',self.$i_g('@delta_y'))));
+var window_point = VN$(the_event,s$og);
+self.$i_s(i$gq,VN$(VN$(self.$i_g(i$ae),s$uj),s$jm));
+self.$i_s(i$gr,VN$(VN$(window_point,s$jo),s$fe,VN$(self.$i_g(i$gp),s$jo)));
+self.$i_s(i$gs,VN$(VN$(window_point,s$jp),s$fe,VN$(self.$i_g(i$gp),s$jp)));
+VN$(self.$i_g(i$ae),'frame_origin=',VN$(self.$klass.$c_g_full('Point'),s$is,VN$(VN$(self.$i_g(i$gq),s$jo),s$bl,self.$i_g(i$gr)),VN$(VN$(self.$i_g(i$gq),s$jp),s$bl,self.$i_g(i$gs))));
 }
 });
 });
-$VN_2.$def('render',function(self,_cmd,context){
-if(RTEST(VN$(context,'first_time?'))){
+self.$def(s$vt,function(self,_cmd,context){
+if(RTEST(VN$(context,s$sn))){
 VN$(context,'first_time=',false);
 }
-return VN$(context,'class_name=',VN$(['vn-window-view'],'join',' '));
+return VN$(context,'class_name=',VN$(['vn-window-view'],s$ge,' '));
 });
+})(RClass.define_under(self,'WindowView',self.$c_g_full('View')));
+})(RModule.define('Vienna'));

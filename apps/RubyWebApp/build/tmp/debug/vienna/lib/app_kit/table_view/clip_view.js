@@ -1,78 +1,81 @@
-var $VN_1 = RModule.define('Vienna');
-var $VN_2 = RClass.define_under($VN_1, 'ClipView',$VN_2.$c_g_full('View'));
-$VN_2.$def('initialize',function(self,_cmd,frame){
+(function(self) {
+(function(self) {
+self.$def(s$as,function(self,_cmd,frame){
 return VN$sup(arguments.callee, self,_cmd,[frame]);
 });
-$VN_2.$def('setup_display_context',function(self,_cmd){
+self.$def(s$sv,function(self,_cmd){
 VN$sup(arguments.callee, self,_cmd,[]);
-return VN$(self.$i_g('@element'),'css',VN.$h('overflow','hidden'));
+return VN$(self.$i_g(i$d),s$jh,VN.$h(_$fx,'hidden'));
 });
-$VN_2.$def('class_name',function(self,_cmd){
+self.$def(s$sy,function(self,_cmd){
 return 'vn-clip-view';
 });
-$VN_2.$def('background_color=',function(self,_cmd,color){
-return self.$i_s('@background_color',color);
+self.$def(s$rw,function(self,_cmd,color){
+return self.$i_s(i$ay,color);
 });
-$VN_2.$def('background_color',function(self,_cmd){
-return self.$i_g('@background_color');
+self.$def(s$rx,function(self,_cmd){
+return self.$i_g(i$ay);
 });
-$VN_2.$def('draws_background=',function(self,_cmd,flag){
-return self.$i_s('@draws_background',flag);
+self.$def(s$ady,function(self,_cmd,flag){
+return self.$i_s(i$dy,flag);
 });
-$VN_2.$def('draws_background?',function(self,_cmd){
-return self.$i_g('@draws_background');
+self.$def(s$adz,function(self,_cmd){
+return self.$i_g(i$dy);
 });
-$VN_2.$def('document_view=',function(self,_cmd,a_view){
-var default_center = VN$(self.$klass.$c_g_full('NotificationCenter'),'default_center');
-if(RTEST(self.$i_g('@document_view'))){
-VN$(default_center,'remove_observer:name:object:',self,self.$klass.$c_g_full('VIEW_FRAME_DID_CHANGE_NOTIFICATION'),self.$i_g('@document_view'));
-VN$(default_center,'remove_observer:name:object:',self,self.$klass.$c_g_full('VIEW_BOUNDS_DID_CHANGE_NOTIFICATION'),self.$i_g('@document_view'));
-VN$(self.$i_g('@document_view'),'remove_from_superview');
+self.$def(s$aer,function(self,_cmd,a_view){
+var default_center = VN$(self.$klass.$c_g_full('NotificationCenter'),s$lk);
+if(RTEST(self.$i_g(i$eu))){
+VN$(default_center,s$ls,self,self.$klass.$c_g_full('VIEW_FRAME_DID_CHANGE_NOTIFICATION'),self.$i_g(i$eu));
+VN$(default_center,s$ls,self,self.$klass.$c_g_full('VIEW_BOUNDS_DID_CHANGE_NOTIFICATION'),self.$i_g(i$eu));
+VN$(self.$i_g(i$eu),s$tq);
 }
-self.$i_s('@document_view',a_view);
-return VN$(self,'add_subview',a_view);
+self.$i_s(i$eu,a_view);
+return VN$(self,s$tp,a_view);
 });
-$VN_2.$def('document_view',function(self,_cmd){
-return self.$i_g('@document_view');
+self.$def(s$aet,function(self,_cmd){
+return self.$i_g(i$eu);
 });
-$VN_2.$def('document_rect',function(self,_cmd){
-return VN$(self.$klass.$c_g_full('Rect'),'new',0,0,0,0);
+self.$def(s$ags,function(self,_cmd){
+return VN$(self.$klass.$c_g_full('Rect'),s$is,0,0,0,0);
 });
-$VN_2.$def('document_cursor=',function(self,_cmd,an_obj){
-return self.$i_s('@document_cursor',an_obj);
+self.$def(s$aex,function(self,_cmd,an_obj){
+return self.$i_s(i$ef,an_obj);
 });
-$VN_2.$def('document_cursor',function(self,_cmd){
-return self.$i_g('@document_cursor');
+self.$def(s$aey,function(self,_cmd){
+return self.$i_g(i$ef);
 });
-$VN_2.$def('document_visible_rect',function(self,_cmd){
-return VN$(self,'convert_rect:to_view:',self.$i_g('@bounds'),self.$i_g('@document_view'));
+self.$def(s$aep,function(self,_cmd){
+return VN$(self,s$vf,self.$i_g(i$be),self.$i_g(i$eu));
 });
-$VN_2.$def('view_frame_changed',function(self,_cmd,notification){
+self.$def(s$agt,function(self,_cmd,notification){
 });
-$VN_2.$def('view_bounds_changed',function(self,_cmd,notification){
+self.$def(s$agu,function(self,_cmd,notification){
 });
-$VN_2.$def('copies_on_scroll=',function(self,_cmd,flag){
-return self.$i_s('@copies_on_scroll',flag);
+self.$def(s$agv,function(self,_cmd,flag){
+return self.$i_s(i$ev,flag);
 });
-$VN_2.$def('copies_on_scroll',function(self,_cmd){
-return self.$i_g('@copies_on_scroll');
+self.$def(s$agw,function(self,_cmd){
+return self.$i_g(i$ev);
 });
-$VN_2.$def('auto_scroll?',function(self,_cmd,the_event){
+self.$def(s$agx,function(self,_cmd,the_event){
 return false;
 });
-$VN_2.$def('constrain_scroll_point',function(self,_cmd,new_origin){
+self.$def(s$agy,function(self,_cmd,new_origin){
 return new_origin;
 });
-$VN_2.$def('scroll_to_point',function(self,_cmd,new_origin){
-if(RTEST(VN$(VN$(self.$i_g('@subviews'),'length'),'>',0))){
-VN$(VN$(self.$i_g('@subviews'),'[]',0),'frame_origin=',VN$(self.$klass.$c_g_full('Point'),'new',VN$((0),'-',VN$(new_origin,'x')),VN$((0),'-',VN$(new_origin,'y'))));
+self.$def(s$agz,function(self,_cmd,new_origin){
+if(RTEST(VN$(VN$(self.$i_g(i$bf),s$br),s$fh,0))){
+VN$(VN$(self.$i_g(i$bf),s$bo,0),'frame_origin=',VN$(self.$klass.$c_g_full('Point'),s$is,VN$((0),s$fe,VN$(new_origin,s$jo)),VN$((0),s$fe,VN$(new_origin,s$jp))));
 }
 });
-$VN_2.$def('scroll_x_y',function(self,_cmd,x,y){
-return VN$(self,'scroll_to_point',VN$(self.$klass.$c_g_full('Point'),'new',x,y));
+self.$def(s$aha,function(self,_cmd,x,y){
+return VN$(self,s$agz,VN$(self.$klass.$c_g_full('Point'),s$is,x,y));
 });
-var $VN_2 = RClass.define_under($VN_1, 'View',$VN_2.$c_g_full('Responder'));
-$VN_2.$def('reflect_scrolled_clip_view',function(self,_cmd,a_clip_view){
+})(RClass.define_under(self,'ClipView',self.$c_g_full('View')));
+(function(self) {
+self.$def(s$aes,function(self,_cmd,a_clip_view){
 });
-$VN_2.$def('scroll_clip_view:to_point:',function(self,_cmd,a_clip_view,a_point){
+self.$def(s$ahb,function(self,_cmd,a_clip_view,a_point){
 });
+})(RClass.define_under(self,'View',self.$c_g_full('Responder')));
+})(RModule.define('Vienna'));

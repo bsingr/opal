@@ -1,94 +1,96 @@
-var $VN_1 = RModule.define('Vienna');
-var $VN_2 = RClass.define_under($VN_1, 'Responder',cObject);
-$VN_2.$def('initialize',function(self,_cmd){
+(function(self) {
+(function(self) {
+self.$def(s$as,function(self,_cmd){
 VN$sup(arguments.callee, self,_cmd,[]);
-return self.$i_s('@next_responder',nil);
+return self.$i_s(i$q,nil);
 });
-$VN_2.$def('next_responder=',function(self,_cmd,a_responder){
-return self.$i_s('@next_responder',a_responder);
+self.$def(s$lu,function(self,_cmd,a_responder){
+return self.$i_s(i$q,a_responder);
 });
-$VN_2.$def('next_responder',function(self,_cmd){
-return self.$i_g('@next_responder');
+self.$def(s$lv,function(self,_cmd){
+return self.$i_g(i$q);
 });
-$VN_2.$def('try_to_perform:with:',function(self,_cmd,an_action,an_object){
+self.$def(s$lw,function(self,_cmd,an_action,an_object){
 });
-$VN_2.$def('perform_key_equivalent',function(self,_cmd,the_event){
+self.$def(s$lx,function(self,_cmd,the_event){
 return false;
 });
-$VN_2.$def('mouse_down',function(self,_cmd,the_event){
-return VN$(self.$i_g('@next_responder'),'mouse_down',the_event);
+self.$def(s$ly,function(self,_cmd,the_event){
+return VN$(self.$i_g(i$q),s$ly,the_event);
 });
-$VN_2.$def('right_mouse_down',function(self,_cmd,the_event){
-return VN$(self.$i_g('@next_responder'),'right_mouse_down',the_event);
+self.$def(s$lz,function(self,_cmd,the_event){
+return VN$(self.$i_g(i$q),s$lz,the_event);
 });
-$VN_2.$def('other_mouse_down',function(self,_cmd,the_event){
-return VN$(self.$i_g('@next_responder'),'other_mouse_down',the_event);
+self.$def(s$ma,function(self,_cmd,the_event){
+return VN$(self.$i_g(i$q),s$ma,the_event);
 });
-$VN_2.$def('mouse_up',function(self,_cmd,the_event){
-return VN$(self.$i_g('@next_responder'),'mouse_up',the_event);
+self.$def(s$mb,function(self,_cmd,the_event){
+return VN$(self.$i_g(i$q),s$mb,the_event);
 });
-$VN_2.$def('right_mouse_up',function(self,_cmd,the_event){
-return VN$(self.$i_g('@next_responder'),'right_mouse_up',the_event);
+self.$def(s$mc,function(self,_cmd,the_event){
+return VN$(self.$i_g(i$q),s$mc,the_event);
 });
-$VN_2.$def('other_mouse_up',function(self,_cmd,the_event){
-return VN$(self.$i_g('@next_responder'),'other_mouse_up',the_event);
+self.$def(s$md,function(self,_cmd,the_event){
+return VN$(self.$i_g(i$q),s$md,the_event);
 });
-$VN_2.$def('mouse_moved',function(self,_cmd,the_event){
-return VN$(self.$i_g('@next_responder'),'mouse_moved',the_event);
+self.$def(s$me,function(self,_cmd,the_event){
+return VN$(self.$i_g(i$q),s$me,the_event);
 });
-$VN_2.$def('mouse_dragged',function(self,_cmd,the_event){
-return VN$(self.$i_g('@next_responder'),'mouse_dragged',the_event);
+self.$def(s$mf,function(self,_cmd,the_event){
+return VN$(self.$i_g(i$q),s$mf,the_event);
 });
-$VN_2.$def('scroll_wheel',function(self,_cmd,the_event){
-return VN$(self.$i_g('@next_responder'),'scroll_wheel',the_event);
+self.$def(s$mg,function(self,_cmd,the_event){
+return VN$(self.$i_g(i$q),s$mg,the_event);
 });
-$VN_2.$def('right_mouse_dragged',function(self,_cmd,the_event){
-return VN$(self.$i_g('@next_responder'),'right_mouse_dragged',the_event);
+self.$def(s$mh,function(self,_cmd,the_event){
+return VN$(self.$i_g(i$q),s$mh,the_event);
 });
-$VN_2.$def('other_mouse_dragged',function(self,_cmd,the_event){
-return VN$(self.$i_g('@next_responder'),'other_mouse_dragged',the_event);
+self.$def(s$mi,function(self,_cmd,the_event){
+return VN$(self.$i_g(i$q),s$mi,the_event);
 });
-$VN_2.$def('mouse_entered',function(self,_cmd,the_event){
-return VN$(self.$i_g('@next_responder'),'mouse_entered',the_event);
+self.$def(s$mj,function(self,_cmd,the_event){
+return VN$(self.$i_g(i$q),s$mj,the_event);
 });
-$VN_2.$def('mouse_exited',function(self,_cmd,the_event){
-return VN$(self.$i_g('@next_responder'),'mouse_exited',the_event);
+self.$def(s$mk,function(self,_cmd,the_event){
+return VN$(self.$i_g(i$q),s$mk,the_event);
 });
-$VN_2.$def('key_down',function(self,_cmd,the_event){
-return VN$(self.$i_g('@next_responder'),'key_down',the_event);
+self.$def(s$ml,function(self,_cmd,the_event){
+return VN$(self.$i_g(i$q),s$ml,the_event);
 });
-$VN_2.$def('key_up',function(self,_cmd,the_event){
-return VN$(self.$i_g('@next_responder'),'key_up',the_event);
+self.$def(s$mm,function(self,_cmd,the_event){
+return VN$(self.$i_g(i$q),s$mm,the_event);
 });
-$VN_2.$def('flags_changed',function(self,_cmd,the_event){
+self.$def(s$mn,function(self,_cmd,the_event){
 });
-$VN_2.$def('cursor_update',function(self,_cmd,the_event){
+self.$def(s$mo,function(self,_cmd,the_event){
 });
-$VN_2.$def('no_responder_for',function(self,_cmd,event_selector){
+self.$def(s$mp,function(self,_cmd,event_selector){
 });
-$VN_2.$def('accepts_first_responder',function(self,_cmd){
+self.$def(s$mq,function(self,_cmd){
 return false;
 });
-$VN_2.$def('become_first_responder',function(self,_cmd){
+self.$def(s$mr,function(self,_cmd){
 return true;
 });
-$VN_2.$def('resign_first_responder',function(self,_cmd){
+self.$def(s$ms,function(self,_cmd){
 return true;
 });
-$VN_2.$def('interpret_key_events',function(self,_cmd,event_array){
+self.$def(s$mt,function(self,_cmd,event_array){
 });
-$VN_2.$def('flush_buffered_key_events',function(self,_cmd){
+self.$def(s$mu,function(self,_cmd){
 });
-$VN_2.$def('menu=',function(self,_cmd,menu){
-return self.$i_s('@menu',menu);
+self.$def(s$mv,function(self,_cmd,menu){
+return self.$i_s(i$r,menu);
 });
-$VN_2.$def('menu',function(self,_cmd){
-return self.$i_g('@menu');
+self.$def(s$mw,function(self,_cmd){
+return self.$i_g(i$r);
 });
-$VN_2.$def('show_context_help',function(self,_cmd,sender){
+self.$def(s$mx,function(self,_cmd,sender){
 });
-$VN_2.$def('help_requested',function(self,_cmd,the_event){
+self.$def(s$my,function(self,_cmd,the_event){
 });
-$VN_2.$def('undo_manager',function(self,_cmd){
-return VN$(self.$i_g('@next_responder'),'undo_manager');
+self.$def(s$mz,function(self,_cmd){
+return VN$(self.$i_g(i$q),s$mz);
 });
+})(RClass.define_under(self,'Responder',cObject));
+})(RModule.define('Vienna'));

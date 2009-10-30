@@ -95,6 +95,22 @@ class Vienna::RubyParser < Racc::Parser
 	
 	end
 	
+  
+  # the id for the given string when used at runtime
+  def js_id_for_string(str)
+    @project.js_id_for_string(str)
+  end
+  
+  # the id for the given symbol when used at runtime
+  def js_id_for_symbol(sym)
+    @project.js_id_for_symbol(sym)
+  end
+
+  def js_id_for_ivar(ivar)
+    @project.js_id_for_ivar(ivar)
+  end
+  
+	
 	# Parse the input, and return a string as output
 	def self.parse str
 	  

@@ -32,6 +32,14 @@ module Vienna
     
     def initialize(project_root)
       @project_root = File.expand_path(project_root)
+      
+      # ruby/js specific requirements
+      @js_str_to_id = {}
+      @js_str_prefix = "a"
+      @js_sym_to_id = {}
+      @js_sym_prefix = "a"
+      @js_ivar_to_id = {}
+      @js_ivar_prefix = "a"
     end
     
     def rakefile
@@ -119,6 +127,9 @@ module Vienna
           File.copy(img, File.expand_path(File.join(img_build_path, File.basename(img))))
         end
       end
+      
+      puts @js_sym_to_id.inspect
+      puts @js_str_to_id.inspect
     end
   
     
@@ -129,7 +140,21 @@ module Vienna
     # We can include ENV settings from user's Rakefile, as well as other bits and pieces.
     # We can also hardcode image urls, css urls etc
     def write_env_to_output file
-      file.write "VN$ENV = { 'display_mode': 'render', 'image_dir': 'images' };\n"
+      @js_sym_to_id.each_pair do |key, value|
+        file.write "_$#{value}='#{key}';"
+      end 
+      file.write "\n"
+      # file.write "\n\n\n\n"
+      @js_str_to_id.each_pair do |key, value|
+        file.write "s$#{value}='#{key}';"
+      end 
+      file.write "\n"
+      # file.write "\n\n\n\n"
+      @js_ivar_to_id.each_pair do |key, value|
+        file.write "i$#{value}='#{key}';"
+      end    
+      # file.write "console.profile();"
+      file.write "VN$ENV = { 'display_mode': 'render', 'image_dir': 'images' };"
     end
     
     
@@ -236,5 +261,46 @@ module Vienna
       @build_mode ||= :debug
     end
     
+    
+    
+    # runtime specific things
+    
+    # the id for the given string when used at runtime
+    def js_id_for_string(str)
+      if @js_str_to_id.has_key?(str)
+        # puts "has #{sym}"
+        return @js_str_to_id[str]
+      else
+        res = String.new(@js_str_prefix)
+        @js_str_to_id[str] = res
+        @js_str_prefix.succ!
+        res
+      end
+    end
+
+    # the id for the given symbol when used at runtime
+    def js_id_for_symbol(sym)
+      if @js_sym_to_id.has_key?(sym)
+        # puts "has #{sym}"
+        return @js_sym_to_id[sym]
+      else
+        res = String.new(@js_sym_prefix)
+        @js_sym_to_id[sym] = res
+        @js_sym_prefix.succ!
+        res
+      end
+    end
+    
+    def js_id_for_ivar(ivar)
+      if @js_ivar_to_id.has_key?(ivar)
+        # puts "has #{sym}"
+        return @js_ivar_to_id[ivar]
+      else
+        res = String.new(@js_ivar_prefix)
+        @js_ivar_to_id[ivar] = res
+        @js_ivar_prefix.succ!
+        res
+      end      
+    end
   end
 end

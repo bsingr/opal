@@ -51,9 +51,10 @@ Vienna::App.run do |app|
     # puts VN::App.delegate
     
     # puts 'Setting value for adam to 20'
-    VN::App.delegate.set_value 20, for_key:'adam'
+    # VN::App.delegate.set_value 20, for_key:'adam'
     # puts VN::App.delegate.value_for_key 'adam'
     
   end
 
 end
+

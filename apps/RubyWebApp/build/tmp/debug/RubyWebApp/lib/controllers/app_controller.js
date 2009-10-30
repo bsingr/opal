@@ -1,26 +1,28 @@
-var $VN_1 = RModule.define('RubyWebApp');
-var $VN_2 = RClass.define_under($VN_1, 'AppController',cObject);
-$VN_2.$c_s('TABLE_VIEW_DATA',[VN.$h('name', 'Adam', 'age', 23, 'band', 'Led Zepplin'),VN.$h('name', 'Ben', 'age', 20, 'band', 'Pendulum'),VN.$h('name', 'Tom', 'age', 30, 'band', 'Tweenies'),VN.$h('name', 'Becky', 'age', 12, 'band', '50 pence'),VN.$h('name', 'Dad', 'age', 24, 'band', 'Take That'),VN.$h('name', 'Mum', 'age', 25, 'band', 'Rod Stewart')]);
-$VN_2.$def('initialize',function(self,_cmd){
-self.$i_s('@adam',10);
-return self.$i_s('@test_binding',false);
+(function(self) {
+(function(self) {
+self.$c_s('TABLE_VIEW_DATA',[VN.$h(_$o, 'Adam', _$ix, 23, _$iy, 'Led Zepplin'),VN.$h(_$o, 'Ben', _$ix, 20, _$iy, 'Pendulum'),VN.$h(_$o, 'Tom', _$ix, 30, _$iy, 'Tweenies'),VN.$h(_$o, 'Becky', _$ix, 12, _$iy, '50 pence'),VN.$h(_$o, 'Dad', _$ix, 24, _$iy, 'Take That'),VN.$h(_$o, 'Mum', _$ix, 25, _$iy, 'Rod Stewart')]);
+self.$def(s$as,function(self,_cmd){
+self.$i_s(i$if,10);
+return self.$i_s(i$ig,false);
 });
-$VN_2.$def('number_of_rows_in_table_view',function(self,_cmd,table_view){
-return VN$(self.$klass.$c_g_full('TABLE_VIEW_DATA'),'length');
+self.$def(s$aic,function(self,_cmd,table_view){
+return VN$(self.$klass.$c_g_full('TABLE_VIEW_DATA'),s$br);
 });
-$VN_2.$def('table_view:object_value_for_table_column:row:',function(self,_cmd,table_view,table_column,row){
-return VN$(VN$(self.$klass.$c_g_full('TABLE_VIEW_DATA'),'[]',row),'[]',VN$(table_column,'identifier'));
+self.$def(s$akt,function(self,_cmd,table_view,table_column,row){
+return VN$(VN$(self.$klass.$c_g_full('TABLE_VIEW_DATA'),s$bo,row),s$bo,VN$(table_column,s$ali));
 });
-$VN_2.$def('adam?',function(self,_cmd){
-return self.$i_g('@adam');
+self.$def(s$aqq,function(self,_cmd){
+return self.$i_g(i$if);
 });
-$VN_2.$def('test_binding',function(self,_cmd){
-return self.$i_g('@test_binding');
+self.$def(s$aqr,function(self,_cmd){
+return self.$i_g(i$ig);
 });
-$VN_2.$def('test_binding=',function(self,_cmd,aValue){
-return self.$i_s('@test_binding',aValue);
+self.$def(s$aqs,function(self,_cmd,aValue){
+return self.$i_s(i$ig,aValue);
 });
-$VN_2.$def('will_finish_launching',function(self,_cmd,notification){
+self.$def(s$aqt,function(self,_cmd,notification){
 });
-$VN_2.$def('did_finish_launching',function(self,_cmd,notification){
+self.$def(s$aqu,function(self,_cmd,notification){
 });
+})(RClass.define_under(self,'AppController',cObject));
+})(RModule.define('RubyWebApp'));

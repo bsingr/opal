@@ -6,495 +6,497 @@ VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/vienn
 VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/vienna/lib/app_kit/window/hud_window_view.js');
 
 VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/vienna/lib/app_kit/window/borderless_window_view.js');
-var $VN_1 = RModule.define('Vienna');
-$VN_1.$c_s('WINDOW_MASKS',VN.$h('borderless', 0, 'titled', VN$((1),'<<',0), 'closable', VN$((1),'<<',1), 'miniaturizable', VN$((1),'<<',2), 'resizable', VN$((1),'<<',3), 'textured_background', VN$((1),'<<',8), 'unified_title_and_toolbar', VN$((1),'<<',12), 'close_button', 1, 'miniaturize_button', 1, 'zoom_button', 1, 'toolbar_button', 1, 'document_icon_button', 1, 'utility', VN$((1),'<<',4), 'doc_modal', VN$((1),'<<',6), 'hud', VN$((1),'<<',13)));
-$VN_1.$c_s('WINDOW_LEVELS',VN.$h('normal', 0, 'floating', 0, 'submenu', 0, 'torn_off_menu', 0, 'main_menu', 0, 'status', 0, 'modal_panel', 0, 'pop_up_menu', 0, 'screen_saver', 0));
-var $VN_2 = RClass.define_under($VN_1, 'Window',$VN_2.$c_g_full('Responder'));
-$VN_2.$def('initialize',function(self,_cmd,content_rect,style_mask){
-return VN$(self,'init_with_content_rect:style_mask:',content_rect,style_mask);
+(function(self) {
+self.$c_s('WINDOW_MASKS',VN.$h(_$ib, 0, _$ic, VN$((1),s$cv,0), _$hz, VN$((1),s$cv,1), _$ia, VN$((1),s$cv,2), _$id, VN$((1),s$cv,3), _$ie, VN$((1),s$cv,8), _$if, VN$((1),s$cv,12), _$ig, 1, _$ih, 1, _$ii, 1, _$ij, 1, _$ik, 1, _$il, VN$((1),s$cv,4), _$im, VN$((1),s$cv,6), _$gu, VN$((1),s$cv,13)));
+self.$c_s('WINDOW_LEVELS',VN.$h(_$u, 0, _$in, 0, _$io, 0, _$ip, 0, _$iq, 0, _$ir, 0, _$v, 0, _$is, 0, _$it, 0));
+(function(self) {
+self.$def(s$as,function(self,_cmd,content_rect,style_mask){
+return VN$(self,s$ami,content_rect,style_mask);
 });
-$VN_2.$def('init_with_content_rect:style_mask:',function(self,_cmd,content_rect,style_mask){
-VN$(self, 'setup_display_context');
-self.$i_s('@frame',VN$(self.$klass.$c_g_full('Rect'),'new',0,0,0,0));
-self.$i_s('@window_number',VN$(self.$klass.$c_g_full('App'),'add_window',self));
-self.$i_s('@style_mask',style_mask);
-VN$(self,'level=','normal');
-self.$i_s('@min_size',VN$(self.$klass.$c_g_full('Size'),'new',0.0,0.0));
-self.$i_s('@max_size',VN$(self.$klass.$c_g_full('Size'),'new',9999.0,9999.0));
-self.$i_s('@first_responder',self);
-self.$i_s('@next_responder',self.$klass.$c_g_full('App'));
-VN$(self,'setup_window_view');
+self.$def(s$ami,function(self,_cmd,content_rect,style_mask){
+VN$(self, s$sv);
+self.$i_s(i$bd,VN$(self.$klass.$c_g_full('Rect'),s$is,0,0,0,0));
+self.$i_s(i$gv,VN$(self.$klass.$c_g_full('App'),s$nm,self));
+self.$i_s(i$go,style_mask);
+VN$(self,'level=',_$u);
+self.$i_s(i$gw,VN$(self.$klass.$c_g_full('Size'),s$is,0.0,0.0));
+self.$i_s(i$gx,VN$(self.$klass.$c_g_full('Size'),s$is,9999.0,9999.0));
+self.$i_s(i$gy,self);
+self.$i_s(i$q,self.$klass.$c_g_full('App'));
+VN$(self,s$amj);
 VN$(self,'frame=',content_rect);
-VN$(self.$i_g('@window_view'),'needs_display=',true);
-VN$(self,'content_view=',VN$(self.$klass.$c_g_full('View'),'new',VN$(self.$klass.$c_g_full('Rect'),'new',0,0,VN$(self.$i_g('@frame'),'width'),VN$(self.$i_g('@frame'),'height'))));
+VN$(self.$i_g(i$gz),'needs_display=',true);
+VN$(self,'content_view=',VN$(self.$klass.$c_g_full('View'),s$is,VN$(self.$klass.$c_g_full('Rect'),s$is,0,0,VN$(self.$i_g(i$bd),s$jr),VN$(self.$i_g(i$bd),s$js))));
 return self;
 });
-$VN_2.$def_s('build',function(self,_cmd,options,block){
-var win = VN$(VN$(self,'alloc'),'init_with_content_rect:style_mask:',VN$(options,'[]','frame'),['titled','closable']);
+self.$def_s(s$sw,function(self,_cmd,options,block){
+var win = VN$(VN$(self,s$amk),s$ami,VN$(options,s$bo,_$ft),[_$ic,_$hz]);
 if(RTEST(block)){
 arguments[arguments.length -1](win);
 }
 return win;
 });
-$VN_2.$def('setup_display_context',function(self,_cmd){
-self.$i_s('@element',VN$(self.$klass.$c_g_full('Element'),'new','div'));
-self.$i_s('@display_context',VN$(self.$klass.$c_g_full('RenderContext'),'new','div'));
-VN$(self.$i_g('@element'),'<<',self.$i_g('@display_context'));
-return VN$(self.$klass.$c_g_full('Document'),'<<',self.$i_g('@element'));
+self.$def(s$sv,function(self,_cmd){
+self.$i_s(i$d,VN$(self.$klass.$c_g_full('Element'),s$is,_$fw));
+self.$i_s(i$bk,VN$(self.$klass.$c_g_full('RenderContext'),s$is,_$fw));
+VN$(self.$i_g(i$d),s$cv,self.$i_g(i$bk));
+return VN$(self.$klass.$c_g_full('Document'),s$cv,self.$i_g(i$d));
 });
-$VN_2.$def('setup_window_view',function(self,_cmd){
-var view_class = VN$(self,'_window_view_class_for_style_mask',self.$i_g('@style_mask'));
-self.$i_s('@window_view',VN$(view_class,'new',VN$(self.$klass.$c_g_full('Rect'),'new',0,0,100,100),self.$i_g('@style_mask')));
-VN$(self.$i_g('@window_view'),'view_will_move_to_window',self);
-VN$(self.$i_g('@window_view'),'next_responder=',self);
-VN$(self.$i_g('@element'),'<<',VN$(self.$i_g('@window_view'),'element'));
-VN$(self.$i_g('@window_view'),'view_did_move_to_window');
-VN$(self.$i_g('@window_view'),'needs_display=',true);
-VN$(VN$(self.$i_g('@window_view'),'element'),'add_event_listener','mousedown',function(event){
-var the_event = VN$(self.$klass.$c_g_full('Event'),'from_native_event:with_window:with_type:',event,self,'left_mouse_down');
-VN$(self.$klass.$c_g_full('App'),'send_event',the_event);
-if(!RTEST(VN$(the_event,'allows_propagation?'))){
-VN$(the_event,'stop_propagation');
+self.$def(s$amj,function(self,_cmd){
+var view_class = VN$(self,s$aml,self.$i_g(i$go));
+self.$i_s(i$gz,VN$(view_class,s$is,VN$(self.$klass.$c_g_full('Rect'),s$is,0,0,100,100),self.$i_g(i$go)));
+VN$(self.$i_g(i$gz),s$ts,self);
+VN$(self.$i_g(i$gz),'next_responder=',self);
+VN$(self.$i_g(i$d),s$cv,VN$(self.$i_g(i$gz),s$jf));
+VN$(self.$i_g(i$gz),s$tu);
+VN$(self.$i_g(i$gz),'needs_display=',true);
+VN$(VN$(self.$i_g(i$gz),s$jf),s$jb,_$af,function(event){
+var the_event = VN$(self.$klass.$c_g_full('Event'),s$ne,event,self,'left_mouse_down');
+VN$(self.$klass.$c_g_full('App'),s$nf,the_event);
+if(!RTEST(VN$(the_event,s$nw))){
+VN$(the_event,s$nv);
 }
 });
-return VN$(VN$(self.$i_g('@window_view'),'element'),'add_event_listener','mouseup',function(event){
-var the_event = VN$(self.$klass.$c_g_full('Event'),'from_native_event:with_window:with_type:',event,self,'left_mouse_up');
-VN$(self.$klass.$c_g_full('App'),'send_event',the_event);
-if(!RTEST(VN$(the_event,'allows_propagation?'))){
-VN$(the_event,'stop_propagation');
+return VN$(VN$(self.$i_g(i$gz),s$jf),s$jb,_$ag,function(event){
+var the_event = VN$(self.$klass.$c_g_full('Event'),s$ne,event,self,'left_mouse_up');
+VN$(self.$klass.$c_g_full('App'),s$nf,the_event);
+if(!RTEST(VN$(the_event,s$nw))){
+VN$(the_event,s$nv);
 }
 });
 });
-$VN_2.$def('_window_view_class_for_style_mask',function(self,_cmd,style_mask){
-if(RTEST(VN$(style_mask,'include?','borderless'))){
+self.$def(s$aml,function(self,_cmd,style_mask){
+if(RTEST(VN$(style_mask,s$al,_$ib))){
 return self.$klass.$c_g_full('BorderlessWindowView');
 }
-else if(RTEST(VN$(style_mask,'include?','hud'))){
+else if(RTEST(VN$(style_mask,s$al,_$gu))){
 return self.$klass.$c_g_full('HUDWindowView');
 }
 else{
 return self.$klass.$c_g_full('NormalWindowView');
 }
 });
-$VN_2.$def_s('frame_rect_for_content_rect:style_mask:',function(self,_cmd,rect,style){
+self.$def_s(s$amd,function(self,_cmd,rect,style){
 });
-$VN_2.$def_s('content_rect_for_frame_rect:style_mask:',function(self,_cmd,rect,style){
+self.$def_s(s$ame,function(self,_cmd,rect,style){
 });
-$VN_2.$def_s('min_frame_width_with_title:style_mask:',function(self,_cmd,title,style){
+self.$def_s(s$amf,function(self,_cmd,title,style){
 });
-$VN_2.$def('frame_rect_for_content_rect',function(self,_cmd,rect){
+self.$def(s$amg,function(self,_cmd,rect){
 });
-$VN_2.$def('content_rect_for_frame_rect',function(self,_cmd,rect){
+self.$def(s$amh,function(self,_cmd,rect){
 return rect;
 });
-$VN_2.$def('title',function(self,_cmd){
-return self.$i_g('@title');
+self.$def(s$yw,function(self,_cmd){
+return self.$i_g(i$bv);
 });
-$VN_2.$def('title=',function(self,_cmd,str){
-return self.$i_s('@title',str);
+self.$def(s$yx,function(self,_cmd,str){
+return self.$i_s(i$bv,str);
 });
-$VN_2.$def('represnted_url=',function(self,_cmd,str){
+self.$def(s$amm,function(self,_cmd,str){
 });
-$VN_2.$def('represented_url',function(self,_cmd){
+self.$def(s$amn,function(self,_cmd){
 });
-$VN_2.$def('represented_filename',function(self,_cmd){
+self.$def(s$amo,function(self,_cmd){
 });
-$VN_2.$def('represented_filename=',function(self,_cmd,filename){
+self.$def(s$amp,function(self,_cmd,filename){
 });
-$VN_2.$def('set_title_with_represented_filename',function(self,_cmd,filename){
+self.$def(s$amq,function(self,_cmd,filename){
 });
-$VN_2.$def('excluded_from_windows_menu=',function(self,_cmd,flag){
-return self.$i_s('@excluded_from_windows_menu',flag);
+self.$def(s$amr,function(self,_cmd,flag){
+return self.$i_s(i$ha,flag);
 });
-$VN_2.$def('excluded_from_windows_menu?',function(self,_cmd){
-return self.$i_g('@excluded_from_windows_menu');
+self.$def(s$ams,function(self,_cmd){
+return self.$i_g(i$ha);
 });
-$VN_2.$def('content_view=',function(self,_cmd,view){
-VN$(view,'view_will_move_to_window',self);
-var bounds = VN$(self.$klass.$c_g_full('Rect'),'new',0,0,VN$(VN$(self.$i_g('@frame'),'size'),'width'),VN$(VN$(self.$i_g('@frame'),'size'),'height'));
-self.$i_s('@content_view',view);
-VN$(self.$i_g('@content_view'),'frame=',VN$(self,'content_rect_for_frame_rect',bounds));
-VN$(view,'view_did_move_to_window');
-return VN$(self.$i_g('@window_view'),'<<',self.$i_g('@content_view'));
+self.$def(s$aeu,function(self,_cmd,view){
+VN$(view,s$ts,self);
+var bounds = VN$(self.$klass.$c_g_full('Rect'),s$is,0,0,VN$(VN$(self.$i_g(i$bd),s$bs),s$jr),VN$(VN$(self.$i_g(i$bd),s$bs),s$js));
+self.$i_s(i$ed,view);
+VN$(self.$i_g(i$ed),'frame=',VN$(self,s$amh,bounds));
+VN$(view,s$tu);
+return VN$(self.$i_g(i$gz),s$cv,self.$i_g(i$ed));
 });
-$VN_2.$def('content_view',function(self,_cmd){
-return self.$i_g('@content_view');
+self.$def(s$aew,function(self,_cmd){
+return self.$i_g(i$ed);
 });
-$VN_2.$def('<<',function(self,_cmd,view){
-return VN$(self.$i_g('@content_view'),'<<',view);
+self.$def(s$cv,function(self,_cmd,view){
+return VN$(self.$i_g(i$ed),s$cv,view);
 });
-$VN_2.$def('delegate=',function(self,_cmd,obj){
-return self.$i_s('@delegate',obj);
+self.$def(s$no,function(self,_cmd,obj){
+return self.$i_s(i$v,obj);
 });
-$VN_2.$def('delegate',function(self,_cmd){
+self.$def(s$sk,function(self,_cmd){
 });
-$VN_2.$def('window_number',function(self,_cmd){
-return self.$i_g('@window_number');
+self.$def(s$ob,function(self,_cmd){
+return self.$i_g(i$gv);
 });
-$VN_2.$def('style_mask',function(self,_cmd){
-return self.$i_g('@style_mask');
+self.$def(s$amt,function(self,_cmd){
+return self.$i_g(i$go);
 });
-$VN_2.$def('style_mask=',function(self,_cmd,mask){
-return self.$i_s('@style_mask',mask);
+self.$def(s$amu,function(self,_cmd,mask){
+return self.$i_s(i$go,mask);
 });
-$VN_2.$def('field_editor:for_object:',function(self,_cmd,create_flag,obj){
+self.$def(s$amv,function(self,_cmd,create_flag,obj){
 });
-$VN_2.$def('end_editing_for',function(self,_cmd,obj){
+self.$def(s$amw,function(self,_cmd,obj){
 });
-$VN_2.$def('content_size=',function(self,_cmd,size){
+self.$def(s$amx,function(self,_cmd,size){
 });
-$VN_2.$def('frame_top_left_point=',function(self,_cmd,point){
+self.$def(s$amy,function(self,_cmd,point){
 });
-$VN_2.$def('cascade_top_left_from_point',function(self,_cmd,point){
+self.$def(s$amz,function(self,_cmd,point){
 });
-$VN_2.$def('frame',function(self,_cmd){
-return self.$i_g('@frame');
+self.$def(s$uj,function(self,_cmd){
+return self.$i_g(i$bd);
 });
-$VN_2.$def('frame=',function(self,_cmd,frame){
-return VN$(self,'set_frame:display:animate:',frame,true,false);
+self.$def(s$jl,function(self,_cmd,frame){
+return VN$(self,s$ana,frame,true,false);
 });
-$VN_2.$def('set_frame:display:',function(self,_cmd,frame_rect,flag){
-return VN$(self,'set_frame:display:animate:',frame_rect,flag,false);
+self.$def(s$anb,function(self,_cmd,frame_rect,flag){
+return VN$(self,s$ana,frame_rect,flag,false);
 });
-$VN_2.$def('set_frame:display:animate:',function(self,_cmd,frame_rect,flag,animate_flag){
+self.$def(s$ana,function(self,_cmd,frame_rect,flag,animate_flag){
 if(RTEST(animate_flag)){
 }
 else{
-var origin = VN$(self.$i_g('@frame'),'origin');
-var size = VN$(self.$i_g('@frame'),'size');
-var new_origin = VN$(frame_rect,'origin');
-var new_size = VN$(frame_rect,'size');
-if(!RTEST(VN$(origin,'eql?',new_origin))){
-VN$(origin,'x=',VN$(new_origin,'x'));
-VN$(origin,'y=',VN$(new_origin,'y'));
-VN$(self.$i_g('@element'),'origin=',origin);
-VN$(VN$(self.$klass.$c_g_full('NotificationCenter'),'default_center'),'post_notification_name:object:','window did move',self);
+var origin = VN$(self.$i_g(i$bd),s$jm);
+var size = VN$(self.$i_g(i$bd),s$bs);
+var new_origin = VN$(frame_rect,s$jm);
+var new_size = VN$(frame_rect,s$bs);
+if(!RTEST(VN$(origin,s$e,new_origin))){
+VN$(origin,'x=',VN$(new_origin,s$jo));
+VN$(origin,'y=',VN$(new_origin,s$jp));
+VN$(self.$i_g(i$d),'origin=',origin);
+VN$(VN$(self.$klass.$c_g_full('NotificationCenter'),s$lk),s$lq,'window did move',self);
 }
-if(!RTEST(VN$(size,'eql?',new_size))){
-VN$(size,'width=',VN$(new_size,'width'));
-VN$(size,'height=',VN$(new_size,'height'));
-VN$(self.$i_g('@window_view'),'frame_size=',size);
-VN$(self.$i_g('@element'),'size=',size);
-VN$(VN$(self.$klass.$c_g_full('NotificationCenter'),'default_center'),'post_notification_name:object:','window did resize',self);
+if(!RTEST(VN$(size,s$e,new_size))){
+VN$(size,'width=',VN$(new_size,s$jr));
+VN$(size,'height=',VN$(new_size,s$js));
+VN$(self.$i_g(i$gz),'frame_size=',size);
+VN$(self.$i_g(i$d),'size=',size);
+VN$(VN$(self.$klass.$c_g_full('NotificationCenter'),s$lk),s$lq,'window did resize',self);
 }
-}
-});
-$VN_2.$def('frame_origin=',function(self,_cmd,origin){
-if(!RTEST(VN$(origin,'eql?',VN$(self.$i_g('@frame'),'origin')))){
-VN$(VN$(self.$i_g('@frame'),'origin'),'x=',VN$(origin,'x'));
-VN$(VN$(self.$i_g('@frame'),'origin'),'y=',VN$(origin,'y'));
-VN$(self.$i_g('@element'),'origin=',origin);
-VN$(VN$(self.$klass.$c_g_full('NotificationCenter'),'default_center'),'post_notification_name:object:','window did move',self);
 }
 });
-$VN_2.$def('animation_resize_time',function(self,_cmd,new_frame){
+self.$def(s$uh,function(self,_cmd,origin){
+if(!RTEST(VN$(origin,s$e,VN$(self.$i_g(i$bd),s$jm)))){
+VN$(VN$(self.$i_g(i$bd),s$jm),'x=',VN$(origin,s$jo));
+VN$(VN$(self.$i_g(i$bd),s$jm),'y=',VN$(origin,s$jp));
+VN$(self.$i_g(i$d),'origin=',origin);
+VN$(VN$(self.$klass.$c_g_full('NotificationCenter'),s$lk),s$lq,'window did move',self);
+}
 });
-$VN_2.$def('in_live_resize?',function(self,_cmd){
+self.$def(s$anc,function(self,_cmd,new_frame){
 });
-$VN_2.$def('shows_resize_indicator=',function(self,_cmd,show){
-return self.$i_s('@shows_resize_indicator',show);
+self.$def(s$and,function(self,_cmd){
 });
-$VN_2.$def('shows_resize_indicator?',function(self,_cmd){
-return self.$i_g('@shows_resize_indicator');
+self.$def(s$ane,function(self,_cmd,show){
+return self.$i_s(i$hb,show);
 });
-$VN_2.$def('resize_increments=',function(self,_cmd,increments){
-return self.$i_s('@resize_increments',increments);
+self.$def(s$anf,function(self,_cmd){
+return self.$i_g(i$hb);
 });
-$VN_2.$def('resize_incremenets',function(self,_cmd){
-return self.$i_g('@resize_increments');
+self.$def(s$ang,function(self,_cmd,increments){
+return self.$i_s(i$hc,increments);
 });
-$VN_2.$def('aspect_ratio=',function(self,_cmd,ratio){
-return self.$i_s('@aspect_ratio',ratio);
+self.$def(s$anh,function(self,_cmd){
+return self.$i_g(i$hc);
 });
-$VN_2.$def('aspect_ratio',function(self,_cmd){
-return self.$i_g('@aspect_ratio');
+self.$def(s$ani,function(self,_cmd,ratio){
+return self.$i_s(i$hd,ratio);
 });
-$VN_2.$def('display',function(self,_cmd){
+self.$def(s$anj,function(self,_cmd){
+return self.$i_g(i$hd);
 });
-$VN_2.$def('preserves_content_during_live_resize?',function(self,_cmd){
-return self.$i_g('@preserves_content_during_live_resize');
+self.$def(s$vn,function(self,_cmd){
 });
-$VN_2.$def('preserves_content_during_live_resize=',function(self,_cmd,flag){
-return self.$i_s('@preserves_content_during_live_resize',flag);
+self.$def(s$ank,function(self,_cmd){
+return self.$i_g(i$he);
 });
-$VN_2.$def('update',function(self,_cmd){
+self.$def(s$anl,function(self,_cmd,flag){
+return self.$i_s(i$he,flag);
 });
-$VN_2.$def('make_first_responder',function(self,_cmd,responder){
-if(RTEST(VN$(self.$i_g('@first_responder'),'==',responder))){
+self.$def(s$ic,function(self,_cmd){
+});
+self.$def(s$anm,function(self,_cmd,responder){
+if(RTEST(VN$(self.$i_g(i$gy),s$ai,responder))){
 return true;
 }
-if(!RTEST(VN$(self.$i_g('@first_responder'),'resign_first_responder'))){
+if(!RTEST(VN$(self.$i_g(i$gy),s$ms))){
 return false;
 }
-if(RTEST(ORTEST(NOTTEST(responder),ORTEST(NOTTEST(VN$(responder,'accepts_first_responder')),NOTTEST(VN$(responder,'become_first_responder')))))){
-self.$i_s('@first_responder',self);
-VN$(self,'puts','Cant make responder the first responder :(');
+if(RTEST(ORTEST(NOTTEST(responder),ORTEST(NOTTEST(VN$(responder,s$mq)),NOTTEST(VN$(responder,s$mr)))))){
+self.$i_s(i$gy,self);
+VN$(self,s$ag,'Cant make responder the first responder :(');
 return false;
 }
-self.$i_s('@first_responder',responder);
+self.$i_s(i$gy,responder);
 return true;
 });
-$VN_2.$def('first_responder',function(self,_cmd){
+self.$def(s$ann,function(self,_cmd){
 });
-$VN_2.$def('resize_flags',function(self,_cmd){
+self.$def(s$ano,function(self,_cmd){
 });
-$VN_2.$def('key_down',function(self,_cmd,the_event){
+self.$def(s$ml,function(self,_cmd,the_event){
 });
-$VN_2.$def('close',function(self,_cmd){
+self.$def(s$anp,function(self,_cmd){
 });
-$VN_2.$def('released_when_closed=',function(self,_cmd,flag){
-return self.$i_s('@released_when_closed',flag);
+self.$def(s$anq,function(self,_cmd,flag){
+return self.$i_s(i$hf,flag);
 });
-$VN_2.$def('released_when_closed?',function(self,_cmd){
-return self.$i_g('@released_when_closed');
+self.$def(s$anr,function(self,_cmd){
+return self.$i_g(i$hf);
 });
-$VN_2.$def('miniaturize',function(self,_cmd,sender){
+self.$def(s$ans,function(self,_cmd,sender){
 });
-$VN_2.$def('deminiaturize',function(self,_cmd,sender){
+self.$def(s$ant,function(self,_cmd,sender){
 });
-$VN_2.$def('zoomed?',function(self,_cmd){
-return self.$i_g('@zoomed');
+self.$def(s$anu,function(self,_cmd){
+return self.$i_g(i$hg);
 });
-$VN_2.$def('zoom',function(self,_cmd,sender){
+self.$def(s$anv,function(self,_cmd,sender){
 });
-$VN_2.$def('miniaturized?',function(self,_cmd){
-return self.$i_g('@miniaturized');
+self.$def(s$anw,function(self,_cmd){
+return self.$i_g(i$hh);
 });
-$VN_2.$def('try_to_perform:with:',function(self,_cmd,action,object){
+self.$def(s$lw,function(self,_cmd,action,object){
 });
-$VN_2.$def('background_color=',function(self,_cmd,color){
-return self.$i_s('@background_color',color);
+self.$def(s$rw,function(self,_cmd,color){
+return self.$i_s(i$ay,color);
 });
-$VN_2.$def('background_color',function(self,_cmd){
-return self.$i_g('@background_color');
+self.$def(s$rx,function(self,_cmd){
+return self.$i_g(i$ay);
 });
-$VN_2.$def('movable=',function(self,_cmd,flag){
-return self.$i_s('@movable',flag);
+self.$def(s$anx,function(self,_cmd,flag){
+return self.$i_s(i$hi,flag);
 });
-$VN_2.$def('movable?',function(self,_cmd){
-return self.$i_g('@movable');
+self.$def(s$any,function(self,_cmd){
+return self.$i_g(i$hi);
 });
-$VN_2.$def('movable_by_window_background=',function(self,_cmd,flag){
-return self.$i_g('@movable_by_window_background');
+self.$def(s$anz,function(self,_cmd,flag){
+return self.$i_g(i$hj);
 });
-$VN_2.$def('movable_by_window_background?',function(self,_cmd){
-return self.$i_g('@movable_by_window_background');
+self.$def(s$aoa,function(self,_cmd){
+return self.$i_g(i$hj);
 });
-$VN_2.$def('hides_on_deactivate=',function(self,_cmd,flag){
-return self.$i_s('@hides_on_deactivate',flag);
+self.$def(s$aob,function(self,_cmd,flag){
+return self.$i_s(i$hk,flag);
 });
-$VN_2.$def('hides_on_deactivate?',function(self,_cmd){
-return self.$i_g('@hides_on_deactivate');
+self.$def(s$aoc,function(self,_cmd){
+return self.$i_g(i$hk);
 });
-$VN_2.$def('center',function(self,_cmd){
+self.$def(s$df,function(self,_cmd){
 });
-$VN_2.$def('make_key_and_order_front',function(self,_cmd,sender){
-VN$(self,'order_front',self);
-VN$(self, 'make_key_window');
-return VN$(self, 'make_main_window');
+self.$def(s$aod,function(self,_cmd,sender){
+VN$(self,s$aoe,self);
+VN$(self, s$aof);
+return VN$(self, s$aog);
 });
-$VN_2.$def('order_front',function(self,_cmd,sender){
+self.$def(s$aoe,function(self,_cmd,sender){
 });
-$VN_2.$def('order_back',function(self,_cmd,sender){
+self.$def(s$aoh,function(self,_cmd,sender){
 });
-$VN_2.$def('order_out',function(self,_cmd,sender){
+self.$def(s$aoi,function(self,_cmd,sender){
 });
-$VN_2.$def('order_window:relative_to:',function(self,_cmd,place,other_win){
+self.$def(s$aoj,function(self,_cmd,place,other_win){
 });
-$VN_2.$def('order_front_regardless',function(self,_cmd){
+self.$def(s$aok,function(self,_cmd){
 });
-$VN_2.$def('document_edited=',function(self,_cmd,flag){
-return self.$i_s('@document_edited',flag);
+self.$def(s$aol,function(self,_cmd,flag){
+return self.$i_s(i$hl,flag);
 });
-$VN_2.$def('document_edited?',function(self,_cmd){
-return self.$i_g('@document_edited');
+self.$def(s$aom,function(self,_cmd){
+return self.$i_g(i$hl);
 });
-$VN_2.$def('visible?',function(self,_cmd){
-return self.$i_g('@visible');
+self.$def(s$aon,function(self,_cmd){
+return self.$i_g(i$hm);
 });
-$VN_2.$def('key_window?',function(self,_cmd){
-return self.$i_g('@key_window');
+self.$def(s$aoo,function(self,_cmd){
+return self.$i_g(i$hn);
 });
-$VN_2.$def('main_window?',function(self,_cmd){
-return self.$i_g('@main_window');
+self.$def(s$aop,function(self,_cmd){
+return self.$i_g(i$ho);
 });
-$VN_2.$def('can_become_key_window?',function(self,_cmd){
+self.$def(s$aoq,function(self,_cmd){
 });
-$VN_2.$def('can_become_main_window?',function(self,_cmd){
+self.$def(s$aor,function(self,_cmd){
 });
-$VN_2.$def('make_key_window',function(self,_cmd){
+self.$def(s$aof,function(self,_cmd){
 });
-$VN_2.$def('make_main_window',function(self,_cmd){
+self.$def(s$aog,function(self,_cmd){
 });
-$VN_2.$def('become_key_window',function(self,_cmd){
+self.$def(s$aos,function(self,_cmd){
 });
-$VN_2.$def('become_main_window',function(self,_cmd){
+self.$def(s$aot,function(self,_cmd){
 });
-$VN_2.$def('resign_key_window',function(self,_cmd){
+self.$def(s$aou,function(self,_cmd){
 });
-$VN_2.$def('resign_main_window',function(self,_cmd){
+self.$def(s$aov,function(self,_cmd){
 });
-$VN_2.$def('works_when_modal?',function(self,_cmd){
+self.$def(s$aow,function(self,_cmd){
 });
-$VN_2.$def('convert_base_to_screen',function(self,_cmd,point){
-return VN$(self.$klass.$c_g_full('Point'),'new',VN$(VN$(point,'x'),'+',VN$(self.$i_g('@frame'),'x')),VN$(VN$(point,'y'),'+',VN$(self.$i_g('@frame'),'y')));
+self.$def(s$aox,function(self,_cmd,point){
+return VN$(self.$klass.$c_g_full('Point'),s$is,VN$(VN$(point,s$jo),s$bl,VN$(self.$i_g(i$bd),s$jo)),VN$(VN$(point,s$jp),s$bl,VN$(self.$i_g(i$bd),s$jp)));
 });
-$VN_2.$def('convert_screen_to_base',function(self,_cmd,point){
-var res = VN$(self.$klass.$c_g_full('Point'),'new',VN$(VN$(point,'x'),'-',VN$(self.$i_g('@frame'),'x')),VN$(VN$(point,'y'),'-',VN$(self.$i_g('@frame'),'y')));
+self.$def(s$oh,function(self,_cmd,point){
+var res = VN$(self.$klass.$c_g_full('Point'),s$is,VN$(VN$(point,s$jo),s$fe,VN$(self.$i_g(i$bd),s$jo)),VN$(VN$(point,s$jp),s$fe,VN$(self.$i_g(i$bd),s$jp)));
 return res;
 });
-$VN_2.$def('perform_close',function(self,_cmd,sender){
+self.$def(s$aoy,function(self,_cmd,sender){
 });
-$VN_2.$def('perform_miniaturize',function(self,_cmd,sender){
+self.$def(s$aoz,function(self,_cmd,sender){
 });
-$VN_2.$def('perform_zoom',function(self,_cmd,sender){
+self.$def(s$apa,function(self,_cmd,sender){
 });
-$VN_2.$def('level=',function(self,_cmd,level){
-self.$i_s('@level',level);
-return VN$(self.$i_g('@element'),'css',VN.$h('z_index',VN$(self.$klass.$c_g_full('WINDOW_LEVELS'),'[]',level)));
+self.$def(s$apb,function(self,_cmd,level){
+self.$i_s(i$hp,level);
+return VN$(self.$i_g(i$d),s$jh,VN.$h(_$iu,VN$(self.$klass.$c_g_full('WINDOW_LEVELS'),s$bo,level)));
 });
-$VN_2.$def('level',function(self,_cmd){
-return self.$i_g('@level');
+self.$def(s$apc,function(self,_cmd){
+return self.$i_g(i$hp);
 });
-$VN_2.$def('has_shadow=',function(self,_cmd,flag){
-return self.$i_s('@has_shadow',flag);
+self.$def(s$apd,function(self,_cmd,flag){
+return self.$i_s(i$hq,flag);
 });
-$VN_2.$def('has_shadow?',function(self,_cmd){
-return self.$i_g('@has_shadow');
+self.$def(s$ape,function(self,_cmd){
+return self.$i_g(i$hq);
 });
-$VN_2.$def('min_size',function(self,_cmd){
-return self.$i_g('@min_size');
+self.$def(s$apf,function(self,_cmd){
+return self.$i_g(i$gw);
 });
-$VN_2.$def('max_size',function(self,_cmd){
-return self.$i_g('@max_size');
+self.$def(s$apg,function(self,_cmd){
+return self.$i_g(i$gx);
 });
-$VN_2.$def('min_size=',function(self,_cmd,size){
-return self.$i_s('@min_size',size);
+self.$def(s$aph,function(self,_cmd,size){
+return self.$i_s(i$gw,size);
 });
-$VN_2.$def('max_size=',function(self,_cmd,size){
-return self.$i_s('@max_size',size);
+self.$def(s$api,function(self,_cmd,size){
+return self.$i_s(i$gx,size);
 });
-$VN_2.$def('next_event_matching_mask',function(self,_cmd,mask){
+self.$def(s$apj,function(self,_cmd,mask){
 });
-$VN_2.$def('post_event:at_start:',function(self,_cmd,event,flag){
+self.$def(s$apk,function(self,_cmd,event,flag){
 });
-$VN_2.$def('current_event',function(self,_cmd){
-return self.$i_g('@current_event');
+self.$def(s$nc,function(self,_cmd){
+return self.$i_g(i$aa);
 });
-$VN_2.$def('accepts_mouse_moved_events=',function(self,_cmd,flag){
-return self.$i_s('@accepts_mouse_moved_events',flag);
+self.$def(s$apl,function(self,_cmd,flag){
+return self.$i_s(i$hr,flag);
 });
-$VN_2.$def('accepts_mouse_moved_events?',function(self,_cmd){
-return self.$i_g('@accepts_mouse_moved_events');
+self.$def(s$apm,function(self,_cmd){
+return self.$i_g(i$hr);
 });
-$VN_2.$def('ignores_mouse_events=',function(self,_cmd,flag){
-return self.$i_s('@ignores_mouse_events',flag);
+self.$def(s$apn,function(self,_cmd,flag){
+return self.$i_s(i$hs,flag);
 });
-$VN_2.$def('ignores_mouse_events?',function(self,_cmd){
-return self.$i_g('@ignores_mouse_events');
+self.$def(s$apo,function(self,_cmd){
+return self.$i_g(i$hs);
 });
-$VN_2.$def('send_event',function(self,_cmd,event){
-var point = VN$(event,'location_in_window');
+self.$def(s$nf,function(self,_cmd,event){
+var point = VN$(event,s$og);
 return (function($v){
-if(($e = VN$('key_up', '===', $v),$e!==nil && $e!==false)){
-return VN$(self,'puts','key_up');
+if(($e = VN$(_$aq, '===', $v),$e!==nil && $e!==false)){
+return VN$(self,s$ag,'key_up');
 }
-else if(($e = VN$('key_down', '===', $v),$e!==nil && $e!==false)){
-return VN$(self,'puts','key_down');
+else if(($e = VN$(_$ap, '===', $v),$e!==nil && $e!==false)){
+return VN$(self,s$ag,'key_down');
 }
-else if(($e = VN$('left_mouse_down', '===', $v),$e!==nil && $e!==false)){
-var hit_test = VN$(self.$i_g('@window_view'),'hit_test',point);
-if(RTEST(ANDTEST(VN$(hit_test,'!=',self.$i_g('@first_responder')),VN$(hit_test,'accepts_first_responder')))){
-VN$(self,'make_first_responder',hit_test);
+else if(($e = VN$(_$ah, '===', $v),$e!==nil && $e!==false)){
+var hit_test = VN$(self.$i_g(i$gz),s$vv,point);
+if(RTEST(ANDTEST(VN$(hit_test,s$d,self.$i_g(i$gy)),VN$(hit_test,s$mq)))){
+VN$(self,s$anm,hit_test);
 }
-VN$(self,'make_key_and_order_front',self);
-if(RTEST(VN$(hit_test,'accepts_first_mouse',event))){
-return VN$(hit_test,'mouse_down',event);
+VN$(self,s$aod,self);
+if(RTEST(VN$(hit_test,s$sx,event))){
+return VN$(hit_test,s$ly,event);
 }
 }
-else if(($e = VN$('left_mouse_up', '===', $v),$e!==nil && $e!==false)){
-return VN$(self,'puts','left_mouse_up');
+else if(($e = VN$(_$ai, '===', $v),$e!==nil && $e!==false)){
+return VN$(self,s$ag,'left_mouse_up');
 }
-else if(($e = VN$('left_mouse_dragged', '===', $v),$e!==nil && $e!==false)){
-return VN$(self,'puts','left_mouse_dragged');
+else if(($e = VN$(_$ab, '===', $v),$e!==nil && $e!==false)){
+return VN$(self,s$ag,'left_mouse_dragged');
 }
-else if(($e = VN$('scroll_wheel', '===', $v),$e!==nil && $e!==false)){
-return VN$(self,'puts','scroll_wheel');
+else if(($e = VN$(_$ax, '===', $v),$e!==nil && $e!==false)){
+return VN$(self,s$ag,'scroll_wheel');
 }
-else if(($e = VN$('right_mouse_down', '===', $v),$e!==nil && $e!==false)){
-return VN$(self,'puts','right_mouse_down');
+else if(($e = VN$(_$aj, '===', $v),$e!==nil && $e!==false)){
+return VN$(self,s$ag,'right_mouse_down');
 }
-else if(($e = VN$('right_mouse_up', '===', $v),$e!==nil && $e!==false)){
-return VN$(self,'puts','right_mouse_up');
+else if(($e = VN$(_$ak, '===', $v),$e!==nil && $e!==false)){
+return VN$(self,s$ag,'right_mouse_up');
 }
-else if(($e = VN$('right_mouse_dragged', '===', $v),$e!==nil && $e!==false)){
-return VN$(self,'puts','right_mouse_dragged');
+else if(($e = VN$(_$am, '===', $v),$e!==nil && $e!==false)){
+return VN$(self,s$ag,'right_mouse_dragged');
 }
-})(VN$(event,'type'));
+})(VN$(event,s$nh));
 });
-$VN_2.$def('window_controller',function(self,_cmd){
-return self.$i_g('@window_controller');
+self.$def(s$app,function(self,_cmd){
+return self.$i_g(i$ht);
 });
-$VN_2.$def('window_controller=',function(self,_cmd,controller){
-return self.$i_s('@window_controller',controller);
+self.$def(s$apq,function(self,_cmd,controller){
+return self.$i_s(i$ht,controller);
 });
-$VN_2.$def('sheet?',function(self,_cmd){
-return self.$i_g('@sheet');
+self.$def(s$apr,function(self,_cmd){
+return self.$i_g(i$hu);
 });
-$VN_2.$def('attatched_sheet',function(self,_cmd){
-return self.$i_g('@attached_sheet');
+self.$def(s$aps,function(self,_cmd){
+return self.$i_g(i$hv);
 });
-$VN_2.$def('add_child_window:ordered:',function(self,_cmd,win,place){
+self.$def(s$apt,function(self,_cmd,win,place){
 });
-$VN_2.$def('remove_child_window',function(self,_cmd,win){
+self.$def(s$apu,function(self,_cmd,win){
 });
-$VN_2.$def('child_windows',function(self,_cmd){
-return self.$i_g('@child_windows');
+self.$def(s$apv,function(self,_cmd){
+return self.$i_g(i$hw);
 });
-$VN_2.$def('parent_window',function(self,_cmd){
-return self.$i_g('@parent_window');
+self.$def(s$apw,function(self,_cmd){
+return self.$i_g(i$hx);
 });
-$VN_2.$def('parent_window=',function(self,_cmd,win){
-return self.$i_s('@parent_window',win);
+self.$def(s$apx,function(self,_cmd,win){
+return self.$i_s(i$hx,win);
 });
-$VN_2.$def('graphics_context',function(self,_cmd){
-return self.$i_g('@graphics_context');
+self.$def(s$vu,function(self,_cmd){
+return self.$i_g(i$hy);
 });
-$VN_2.$def('initial_first_responder=',function(self,_cmd,view){
-return self.$i_s('@initial_first_responder',view);
+self.$def(s$apy,function(self,_cmd,view){
+return self.$i_s(i$hz,view);
 });
-$VN_2.$def('initial_first_responder',function(self,_cmd){
-return self.$i_g('@initial_first_responder');
+self.$def(s$apz,function(self,_cmd){
+return self.$i_g(i$hz);
 });
-$VN_2.$def('select_next_key_view',function(self,_cmd,sender){
+self.$def(s$aqa,function(self,_cmd,sender){
 });
-$VN_2.$def('select_previous_key_view',function(self,_cmd,sender){
+self.$def(s$aqb,function(self,_cmd,sender){
 });
-$VN_2.$def('select_key_view_following_view',function(self,_cmd,view){
+self.$def(s$aqc,function(self,_cmd,view){
 });
-$VN_2.$def('select_key_view_preceding_view',function(self,_cmd,view){
+self.$def(s$aqd,function(self,_cmd,view){
 });
-$VN_2.$def('autorecalculates_key_view_loop',function(self,_cmd,flag){
-return self.$i_s('@autorecalculates_key_view_loop',flag);
+self.$def(s$aqe,function(self,_cmd,flag){
+return self.$i_s(i$ia,flag);
 });
-$VN_2.$def('autorecalculates_key_view_loop?',function(self,_cmd){
-return self.$i_g('@autorecalculates_key_view_loop');
+self.$def(s$aqf,function(self,_cmd){
+return self.$i_g(i$ia);
 });
-$VN_2.$def('recalculate_key_view_loop',function(self,_cmd){
+self.$def(s$aqg,function(self,_cmd){
 });
-$VN_2.$def('toolbar=',function(self,_cmd,toolbar){
-return self.$i_s('@toolbar',toolbar);
+self.$def(s$aqh,function(self,_cmd,toolbar){
+return self.$i_s(i$ib,toolbar);
 });
-$VN_2.$def('toolbar',function(self,_cmd){
-return self.$i_g('@toolbar');
+self.$def(s$aqi,function(self,_cmd){
+return self.$i_g(i$ib);
 });
-$VN_2.$def('toggle_toolbar_shown',function(self,_cmd,sender){
+self.$def(s$aqj,function(self,_cmd,sender){
 });
-$VN_2.$def('run_toolbar_customization_palette',function(self,_cmd,sender){
+self.$def(s$aqk,function(self,_cmd,sender){
 });
-$VN_2.$def('shows_toolbar_button=',function(self,_cmd,show){
-return self.$i_g('@shows_toolbar_button');
+self.$def(s$aql,function(self,_cmd,show){
+return self.$i_g(i$ic);
 });
-$VN_2.$def('shows_toolbar_button?',function(self,_cmd){
-return self.$i_g('@shows_toolbar_button');
+self.$def(s$aqm,function(self,_cmd){
+return self.$i_g(i$ic);
 });
+})(RClass.define_under(self,'Window',self.$c_g_full('Responder')));
+})(RModule.define('Vienna'));

@@ -1,336 +1,338 @@
-var $VN_1 = RModule.define('Vienna');
-var $VN_2 = RClass.define_under($VN_1, 'View',$VN_2.$c_g_full('Responder'));
-$VN_2.$def('initialize',function(self,_cmd,frame){
+(function(self) {
+(function(self) {
+self.$def(s$as,function(self,_cmd,frame){
 VN$sup(arguments.callee, self,_cmd,[]);
-VN$(self, 'setup_display_context');
-self.$i_s('@frame',frame);
-self.$i_s('@bounds',VN$(self.$klass.$c_g_full('Rect'),'new',0,0,VN$(frame,'width'),VN$(frame,'height')));
+VN$(self, s$sv);
+self.$i_s(i$bd,frame);
+self.$i_s(i$be,VN$(self.$klass.$c_g_full('Rect'),s$is,0,0,VN$(frame,s$jr),VN$(frame,s$js)));
 VN$(self,'frame=',frame);
-self.$i_s('@subviews',[]);
-self.$i_s('@window',nil);
-self.$i_s('@superview',nil);
-self.$i_s('@posts_frame_changed_notifications',false);
-self.$i_s('@autoresizes_subviews',true);
-return self.$i_s('@tracking_areas',[]);
+self.$i_s(i$bf,[]);
+self.$i_s(i$ae,nil);
+self.$i_s(i$bg,nil);
+self.$i_s(i$bh,false);
+self.$i_s(i$bi,true);
+return self.$i_s(i$bj,[]);
 });
-$VN_2.$def_s('build',function(self,_cmd,options,block){
-var view = VN$(self,'new',VN$(options,'[]','frame'));
+self.$def_s(s$sw,function(self,_cmd,options,block){
+var view = VN$(self,s$is,VN$(options,s$bo,_$ft));
 if(RTEST(block)){
 arguments[arguments.length -1](view);
 }
 return view;
 });
-$VN_2.$def('element',function(self,_cmd){
-return self.$i_g('@element');
+self.$def(s$jf,function(self,_cmd){
+return self.$i_g(i$d);
 });
-$VN_2.$def('display_mode',function(self,_cmd){
-return VN$(self.$klass.$c_g_full('ENV'),'[]','display_mode');
+self.$def(s$jy,function(self,_cmd){
+return VN$(self.$klass.$c_g_full('ENV'),s$bo,_$fu);
 });
-$VN_2.$def('setup_display_context',function(self,_cmd){
-if(RTEST(VN$(VN$(self, 'display_mode'),'==','render'))){
-self.$i_s('@element',VN$(self.$klass.$c_g_full('Element'),'new','div',nil));
-VN$(self.$i_g('@element'),'css',VN.$h('overflow','hidden'));
-self.$i_s('@display_context',VN$(self.$klass.$c_g_full('RenderContext'),'new','div',nil));
-VN$(self.$i_g('@element'),'<<',self.$i_g('@display_context'));
+self.$def(s$sv,function(self,_cmd){
+if(RTEST(VN$(VN$(self, s$jy),s$ai,_$fv))){
+self.$i_s(i$d,VN$(self.$klass.$c_g_full('Element'),s$is,_$fw,nil));
+VN$(self.$i_g(i$d),s$jh,VN.$h(_$fx,'hidden'));
+self.$i_s(i$bk,VN$(self.$klass.$c_g_full('RenderContext'),s$is,_$fw,nil));
+VN$(self.$i_g(i$d),s$cv,self.$i_g(i$bk));
 }
 else{
-self.$i_s('@element',VN$(self.$klass.$c_g_full('Element'),'new','div'));
-self.$i_s('@display_context',VN$(self.$klass.$c_g_full('GraphicsContext'),'new'));
-VN$(self.$i_g('@element'),'<',self.$i_g('@display_context'));
+self.$i_s(i$d,VN$(self.$klass.$c_g_full('Element'),s$is,_$fw));
+self.$i_s(i$bk,VN$(self.$klass.$c_g_full('GraphicsContext'),s$is));
+VN$(self.$i_g(i$d),s$fj,self.$i_g(i$bk));
 }
 });
-$VN_2.$def('accepts_first_mouse',function(self,_cmd,the_event){
+self.$def(s$sx,function(self,_cmd,the_event){
 return true;
 });
-$VN_2.$def('accepts_first_responder',function(self,_cmd){
+self.$def(s$mq,function(self,_cmd){
 return true;
 });
-$VN_2.$def('class_name',function(self,_cmd){
-return ORTEST(self.$i_g('@class_name'),'vn-view');
+self.$def(s$sy,function(self,_cmd){
+return ORTEST(self.$i_g(i$bl),'vn-view');
 });
-$VN_2.$def('class_name=',function(self,_cmd,a_class){
-return self.$i_s('@class_name',a_class);
+self.$def(s$jg,function(self,_cmd,a_class){
+return self.$i_s(i$bl,a_class);
 });
-$VN_2.$def('theme_name',function(self,_cmd){
-return ORTEST(self.$i_g('@theme_name'),'');
+self.$def(s$sz,function(self,_cmd){
+return ORTEST(self.$i_g(i$bm),'');
 });
-$VN_2.$def('theme_name=',function(self,_cmd,a_theme){
-return self.$i_s('@theme_name',a_theme);
+self.$def(s$ta,function(self,_cmd,a_theme){
+return self.$i_s(i$bm,a_theme);
 });
-$VN_2.$def('graphics_port',function(self,_cmd){
-return VN$(self.$i_g('@display_context'),'element').getContext('2d');});
-$VN_2.$def('initialize_with_coder',function(self,_cmd,coder){
+self.$def(s$pk,function(self,_cmd){
+return VN$(self.$i_g(i$bk),s$jf).getContext('2d');});
+self.$def(s$tb,function(self,_cmd,coder){
 });
-$VN_2.$def('initialize_with_builder',function(self,_cmd,builder){
+self.$def(s$tc,function(self,_cmd,builder){
 });
-$VN_2.$def_s('display_properties',function(self,_cmd){
+self.$def_s(s$td,function(self,_cmd){
 });
-VN$($VN_2,'display_properties','frame','frame_size');
-$VN_2.$def('did_change_value_for_key',function(self,_cmd){
+VN$(self,s$td,_$ft,_$fy);
+self.$def(s$kj,function(self,_cmd){
 });
-$VN_2.$def('window',function(self,_cmd){
+self.$def(s$nd,function(self,_cmd){
 });
-$VN_2.$def('superview',function(self,_cmd){
+self.$def(s$te,function(self,_cmd){
 });
-$VN_2.$def('subviews',function(self,_cmd){
+self.$def(s$tf,function(self,_cmd){
 });
-$VN_2.$def('descendant_of?',function(self,_cmd,a_view){
+self.$def(s$tg,function(self,_cmd,a_view){
 });
-$VN_2.$def('ancestor_shared_with_view',function(self,_cmd,a_view){
+self.$def(s$th,function(self,_cmd,a_view){
 });
-$VN_2.$def('opaque_ancestor',function(self,_cmd){
+self.$def(s$ti,function(self,_cmd){
 });
-$VN_2.$def('hidden=',function(self,_cmd,flag){
+self.$def(s$tj,function(self,_cmd,flag){
 });
-$VN_2.$def('hidden?',function(self,_cmd){
+self.$def(s$tk,function(self,_cmd){
 });
-$VN_2.$def('hidden_or_has_hidden_ancestor?',function(self,_cmd){
+self.$def(s$tl,function(self,_cmd){
 });
-$VN_2.$def('view_did_hide',function(self,_cmd){
+self.$def(s$tm,function(self,_cmd){
 });
-$VN_2.$def('view_did_unhide',function(self,_cmd){
+self.$def(s$tn,function(self,_cmd){
 });
-$VN_2.$def('subviews=',function(self,_cmd,new_subviews){
+self.$def(s$to,function(self,_cmd,new_subviews){
 });
-$VN_2.$def('add_subview',function(self,_cmd,a_view){
-if(RTEST(VN$(self.$i_g('@subviews'),'include?',a_view))){
+self.$def(s$tp,function(self,_cmd,a_view){
+if(RTEST(VN$(self.$i_g(i$bf),s$al,a_view))){
 return ;
 }
-VN$(a_view,'remove_from_superview');
-VN$(a_view,'view_will_move_to_superview',self);
-VN$(a_view,'view_will_move_to_window',self.$i_g('@window'));
-VN$(self.$i_g('@subviews'),'<<',a_view);
-VN$(self.$i_g('@element'),'<<',VN$(a_view,'element'));
+VN$(a_view,s$tq);
+VN$(a_view,s$tr,self);
+VN$(a_view,s$ts,self.$i_g(i$ae));
+VN$(self.$i_g(i$bf),s$cv,a_view);
+VN$(self.$i_g(i$d),s$cv,VN$(a_view,s$jf));
 VN$(a_view,'next_responder=',self);
-VN$(a_view,'view_did_move_to_superview');
-VN$(a_view,'view_did_move_to_window');
-return VN$(self,'did_add_subview',self);
+VN$(a_view,s$tt);
+VN$(a_view,s$tu);
+return VN$(self,s$tv,self);
 });
-$VN_2.$def('<<',function(self,_cmd,a_view){
-return VN$(self,'add_subview',a_view);
+self.$def(s$cv,function(self,_cmd,a_view){
+return VN$(self,s$tp,a_view);
 });
-$VN_2.$def('add_subview:positioned:relative_to:',function(self,_cmd,a_view,place,other_view){
+self.$def(s$tw,function(self,_cmd,a_view,place,other_view){
 });
-$VN_2.$def('view_will_move_to_window',function(self,_cmd,win){
-self.$i_s('@window',win);
-return VN$(self.$i_g('@subviews'),'each',function(s){
-return VN$(s,'view_will_move_to_window',win);
+self.$def(s$ts,function(self,_cmd,win){
+self.$i_s(i$ae,win);
+return VN$(self.$i_g(i$bf),s$ga,function(s){
+return VN$(s,s$ts,win);
 });
 });
-$VN_2.$def('view_did_move_to_window',function(self,_cmd){
-VN$(self.$i_g('@subviews'),'each',function(s){
-return VN$(s,'view_did_move_to_window');
+self.$def(s$tu,function(self,_cmd){
+VN$(self.$i_g(i$bf),s$ga,function(s){
+return VN$(s,s$tu);
 });
 return VN$(self,'needs_display=',true);
 });
-$VN_2.$def('view_will_move_to_superview',function(self,_cmd,new_super){
-return self.$i_s('@superview',new_super);
+self.$def(s$tr,function(self,_cmd,new_super){
+return self.$i_s(i$bg,new_super);
 });
-$VN_2.$def('view_did_move_to_superview',function(self,_cmd){
+self.$def(s$tt,function(self,_cmd){
 });
-$VN_2.$def('did_add_subview',function(self,_cmd,subview){
+self.$def(s$tv,function(self,_cmd,subview){
 });
-$VN_2.$def('will_remove_subview',function(self,_cmd,subview){
+self.$def(s$tx,function(self,_cmd,subview){
 });
-$VN_2.$def('remove_from_superview',function(self,_cmd){
+self.$def(s$tq,function(self,_cmd){
 });
-$VN_2.$def('replace_subview:with:',function(self,_cmd,old_view,new_view){
+self.$def(s$ty,function(self,_cmd,old_view,new_view){
 });
-$VN_2.$def('posts_frame_changed_notifications=',function(self,_cmd,flag){
+self.$def(s$tz,function(self,_cmd,flag){
 });
-$VN_2.$def('posts_frame_changed_notifications?',function(self,_cmd){
+self.$def(s$ua,function(self,_cmd){
 });
-$VN_2.$def('resize_subviews_with_old_size',function(self,_cmd,size){
+self.$def(s$ub,function(self,_cmd,size){
 });
-$VN_2.$def('resize_with_old_superview_size',function(self,_cmd,old){
+self.$def(s$uc,function(self,_cmd,old){
 });
-$VN_2.$def('autoresizes_subviews=',function(self,_cmd,flag){
+self.$def(s$ud,function(self,_cmd,flag){
 });
-$VN_2.$def('autoresizes_subviews?',function(self,_cmd){
+self.$def(s$ue,function(self,_cmd){
 });
-$VN_2.$def('autoresizing_mask=',function(self,_cmd,mask){
+self.$def(s$uf,function(self,_cmd,mask){
 });
-$VN_2.$def('autoresizing_mask',function(self,_cmd){
+self.$def(s$ug,function(self,_cmd){
 });
-$VN_2.$def('frame_origin=',function(self,_cmd,new_origin){
-VN$(self.$i_g('@frame'),'x=',VN$(new_origin,'x'));
-VN$(self.$i_g('@frame'),'y=',VN$(new_origin,'y'));
-VN$(self.$i_g('@element'),'origin=',new_origin);
-if(RTEST(self.$i_g('@posts_frame_changed_notifications'))){
-var nc = VN$(self.$klass.$c_g_full('NotificationCenter'),'default_center');
-VN$(nc,'post_notification_name:object:','frame chnage notification',self);
+self.$def(s$uh,function(self,_cmd,new_origin){
+VN$(self.$i_g(i$bd),'x=',VN$(new_origin,s$jo));
+VN$(self.$i_g(i$bd),'y=',VN$(new_origin,s$jp));
+VN$(self.$i_g(i$d),'origin=',new_origin);
+if(RTEST(self.$i_g(i$bh))){
+var nc = VN$(self.$klass.$c_g_full('NotificationCenter'),s$lk);
+VN$(nc,s$lq,'frame chnage notification',self);
 }
 });
-$VN_2.$def('frame_size=',function(self,_cmd,new_size){
-var old_size = VN$(self.$klass.$c_g_full('Size'),'new',VN$(self.$i_g('@frame'),'width'),VN$(self.$i_g('@frame'),'height'));
-VN$(VN$(self.$i_g('@frame'),'size'),'width=',VN$(new_size,'width'));
-VN$(VN$(self.$i_g('@frame'),'size'),'height=',VN$(new_size,'height'));
-VN$(VN$(self.$i_g('@bounds'),'size'),'width=',VN$(new_size,'width'));
-VN$(VN$(self.$i_g('@bounds'),'size'),'height=',VN$(new_size,'height'));
+self.$def(s$ui,function(self,_cmd,new_size){
+var old_size = VN$(self.$klass.$c_g_full('Size'),s$is,VN$(self.$i_g(i$bd),s$jr),VN$(self.$i_g(i$bd),s$js));
+VN$(VN$(self.$i_g(i$bd),s$bs),'width=',VN$(new_size,s$jr));
+VN$(VN$(self.$i_g(i$bd),s$bs),'height=',VN$(new_size,s$js));
+VN$(VN$(self.$i_g(i$be),s$bs),'width=',VN$(new_size,s$jr));
+VN$(VN$(self.$i_g(i$be),s$bs),'height=',VN$(new_size,s$js));
 VN$(self,'needs_display=',true);
-VN$(self.$i_g('@element'),'size=',new_size);
-VN$(self.$i_g('@display_context'),'size=',new_size);
-if(RTEST(self.$i_g('@posts_frame_changed_notifications'))){
-var nc = VN$(self.$klass.$c_g_full('NotificationCenter'),'default_center');
-VN$(nc,'post_notification_name:object:','frame chnage notification',self);
+VN$(self.$i_g(i$d),'size=',new_size);
+VN$(self.$i_g(i$bk),'size=',new_size);
+if(RTEST(self.$i_g(i$bh))){
+var nc = VN$(self.$klass.$c_g_full('NotificationCenter'),s$lk);
+VN$(nc,s$lq,'frame chnage notification',self);
 }
 });
-$VN_2.$def('frame=',function(self,_cmd,frame){
-VN$(self,'frame_origin=',VN$(frame,'origin'));
-VN$(self,'frame_size=',VN$(frame,'size'));
-if(RTEST(self.$i_g('@posts_frame_changed_notifications'))){
-var nc = VN$(self.$klass.$c_g_full('NotificationCenter'),'default_center');
-VN$(nc,'post_notification_name:object:','view chnages notification',self);
+self.$def(s$jl,function(self,_cmd,frame){
+VN$(self,'frame_origin=',VN$(frame,s$jm));
+VN$(self,'frame_size=',VN$(frame,s$bs));
+if(RTEST(self.$i_g(i$bh))){
+var nc = VN$(self.$klass.$c_g_full('NotificationCenter'),s$lk);
+VN$(nc,s$lq,'view chnages notification',self);
 }
 });
-$VN_2.$def('frame',function(self,_cmd){
-return self.$i_g('@frame');
+self.$def(s$uj,function(self,_cmd){
+return self.$i_g(i$bd);
 });
-$VN_2.$def('frame_rotation=',function(self,_cmd,angle){
+self.$def(s$uk,function(self,_cmd,angle){
 });
-$VN_2.$def('frame_rotation',function(self,_cmd){
-return self.$i_g('@frame_rotation');
+self.$def(s$ul,function(self,_cmd){
+return self.$i_g(i$bn);
 });
-$VN_2.$def('frame_center_rotation=',function(self,_cmd,angle){
+self.$def(s$um,function(self,_cmd,angle){
 });
-$VN_2.$def('frame_center_rotation',function(self,_cmd){
+self.$def(s$un,function(self,_cmd){
 });
-$VN_2.$def('bounds_origin=',function(self,_cmd,new_origin){
+self.$def(s$uo,function(self,_cmd,new_origin){
 });
-$VN_2.$def('bounds_size=',function(self,_cmd,new_size){
+self.$def(s$up,function(self,_cmd,new_size){
 });
-$VN_2.$def('bounds_rotation=',function(self,_cmd,angle){
+self.$def(s$uq,function(self,_cmd,angle){
 });
-$VN_2.$def('bounds_rotation',function(self,_cmd){
+self.$def(s$ur,function(self,_cmd){
 });
-$VN_2.$def('translate_origin_to_point',function(self,_cmd,translation){
+self.$def(s$us,function(self,_cmd,translation){
 });
-$VN_2.$def('rotate_by_angle',function(self,_cmd,angle){
+self.$def(s$ut,function(self,_cmd,angle){
 });
-$VN_2.$def('bounds=',function(self,_cmd,bounds){
+self.$def(s$uu,function(self,_cmd,bounds){
 });
-$VN_2.$def('bounds',function(self,_cmd){
-return self.$i_g('@bounds');
+self.$def(s$uv,function(self,_cmd){
+return self.$i_g(i$be);
 });
-$VN_2.$def('flipped?',function(self,_cmd){
+self.$def(s$pm,function(self,_cmd){
 });
-$VN_2.$def('rotated_from_base?',function(self,_cmd){
+self.$def(s$uw,function(self,_cmd){
 });
-$VN_2.$def('rotated_or_scaled_from_base?',function(self,_cmd){
+self.$def(s$ux,function(self,_cmd){
 });
-$VN_2.$def('opaque?',function(self,_cmd){
+self.$def(s$uy,function(self,_cmd){
 });
-$VN_2.$def('convert_point:from_view:',function(self,_cmd,point,view){
+self.$def(s$uz,function(self,_cmd,point,view){
 if(!RTEST(view)){
-return VN$(self,'convert_point_from_base',point);
+return VN$(self,s$va,point);
 }
-return VN$(self.$klass.$c_g_full('Point'),'new',VN$(VN$(point,'x'),'-',VN$(self.$i_g('@frame'),'x')),VN$(VN$(point,'y'),'-',VN$(self.$i_g('@frame'),'y')));
+return VN$(self.$klass.$c_g_full('Point'),s$is,VN$(VN$(point,s$jo),s$fe,VN$(self.$i_g(i$bd),s$jo)),VN$(VN$(point,s$jp),s$fe,VN$(self.$i_g(i$bd),s$jp)));
 });
-$VN_2.$def('convert_point:to_view:',function(self,_cmd,point,view){
+self.$def(s$vb,function(self,_cmd,point,view){
 });
-$VN_2.$def('convert_size:from_view:',function(self,_cmd,size,view){
+self.$def(s$vc,function(self,_cmd,size,view){
 });
-$VN_2.$def('convert_size:to_view:',function(self,_cmd,size,view){
+self.$def(s$vd,function(self,_cmd,size,view){
 });
-$VN_2.$def('convert_rect:from_view:',function(self,_cmd,rect,view){
+self.$def(s$ve,function(self,_cmd,rect,view){
 });
-$VN_2.$def('convert_rect:to_view:',function(self,_cmd,rect,view){
+self.$def(s$vf,function(self,_cmd,rect,view){
 });
-$VN_2.$def('convert_point_to_base',function(self,_cmd,point){
+self.$def(s$vg,function(self,_cmd,point){
 });
-$VN_2.$def('convert_point_from_base',function(self,_cmd,point){
-if(RTEST(self.$i_g('@superview'))){
-return VN$(self.$i_g('@superview'),'convert_point_from_base',VN$(self.$klass.$c_g_full('Point'),'new',VN$(VN$(point,'x'),'-',VN$(self.$i_g('@frame'),'x')),VN$(VN$(point,'y'),'-',VN$(self.$i_g('@frame'),'y'))));
+self.$def(s$va,function(self,_cmd,point){
+if(RTEST(self.$i_g(i$bg))){
+return VN$(self.$i_g(i$bg),s$va,VN$(self.$klass.$c_g_full('Point'),s$is,VN$(VN$(point,s$jo),s$fe,VN$(self.$i_g(i$bd),s$jo)),VN$(VN$(point,s$jp),s$fe,VN$(self.$i_g(i$bd),s$jp))));
 }
 else{
 return point;
 }
 });
-$VN_2.$def('convert_size_to_base',function(self,_cmd,size){
+self.$def(s$vh,function(self,_cmd,size){
 });
-$VN_2.$def('convert_size_from_base',function(self,_cmd,size){
+self.$def(s$vi,function(self,_cmd,size){
 });
-$VN_2.$def('convert_rect_to_base',function(self,_cmd,rect){
+self.$def(s$vj,function(self,_cmd,rect){
 });
-$VN_2.$def('convert_rect_from_base',function(self,_cmd,rect){
+self.$def(s$vk,function(self,_cmd,rect){
 });
-$VN_2.$def('can_draw?',function(self,_cmd){
+self.$def(s$vl,function(self,_cmd){
 });
-$VN_2.$def('needs_display=',function(self,_cmd,flag){
-if(!RTEST(self.$i_g('@window'))){
+self.$def(s$vm,function(self,_cmd,flag){
+if(!RTEST(self.$i_g(i$ae))){
 return ;
 }
-return VN$(self, 'display');
+return VN$(self, s$vn);
 });
-$VN_2.$def('needs_display_in_rect',function(self,_cmd,invalid_rect){
-return self.$i_g('@needs_display');
+self.$def(s$vo,function(self,_cmd,invalid_rect){
+return self.$i_g(i$bo);
 });
-$VN_2.$def('needs_display?',function(self,_cmd){
-return self.$i_g('@needs_display');
+self.$def(s$vp,function(self,_cmd){
+return self.$i_g(i$bo);
 });
-$VN_2.$def('lock_focus',function(self,_cmd){
-return VN$(self.$klass.$c_g_full('RenderContext'),'current_context=',self.$i_g('@display_context'));
+self.$def(s$si,function(self,_cmd){
+return VN$(self.$klass.$c_g_full('RenderContext'),'current_context=',self.$i_g(i$bk));
 });
-$VN_2.$def('unlock_focus',function(self,_cmd){
+self.$def(s$sj,function(self,_cmd){
 });
-$VN_2.$def_s('focus_view',function(self,_cmd){
+self.$def_s(s$vq,function(self,_cmd){
 });
-$VN_2.$def('visible_rect',function(self,_cmd){
+self.$def(s$vr,function(self,_cmd){
 });
-$VN_2.$def('display',function(self,_cmd){
-if(!RTEST(self.$i_g('@window'))){
+self.$def(s$vn,function(self,_cmd){
+if(!RTEST(self.$i_g(i$ae))){
 return ;
 }
-VN$(self, 'view_will_draw');
-if(RTEST(VN$(VN$(self, 'display_mode'),'==','render'))){
-VN$(self,'render',self.$i_g('@display_context'));
+VN$(self, s$vs);
+if(RTEST(VN$(VN$(self, s$jy),s$ai,_$fv))){
+VN$(self,s$vt,self.$i_g(i$bk));
 }
 else{
-var graphics_context = VN$(self.$i_g('@window'),'graphics_context');
+var graphics_context = VN$(self.$i_g(i$ae),s$vu);
 VN$(self.$klass.$c_g_full('GraphicsContext'),'current_context=',graphics_context);
-VN$(graphics_context,'graphics_port=',VN$(self,'graphics_port'));
-VN$(self,'draw_rect',VN$(self, 'bounds'));
+VN$(graphics_context,'graphics_port=',VN$(self,s$pk));
+VN$(self,s$nl,VN$(self, s$uv));
 }
 });
-$VN_2.$def('render',function(self,_cmd,context){
-if(RTEST(VN$(context,'first_time?'))){
-VN$(context,'class_name=',VN$(self, 'class_name'));
+self.$def(s$vt,function(self,_cmd,context){
+if(RTEST(VN$(context,s$sn))){
+VN$(context,'class_name=',VN$(self, s$sy));
 VN$(context,'first_time=',false);
 }
 });
-$VN_2.$def('draw_rect',function(self,_cmd,rect){
+self.$def(s$nl,function(self,_cmd,rect){
 });
-$VN_2.$def('view_will_draw',function(self,_cmd){
+self.$def(s$vs,function(self,_cmd){
 });
-$VN_2.$def('hit_test',function(self,_cmd,point){
-point = VN$(self,'convert_point:from_view:',point,self.$i_g('@superview'));
-if(!RTEST(VN$(point,'in_rect?',VN$(self, 'bounds')))){
+self.$def(s$vv,function(self,_cmd,point){
+point = VN$(self,s$uz,point,self.$i_g(i$bg));
+if(!RTEST(VN$(point,s$qx,VN$(self, s$uv)))){
 return nil;
 }
-var count = VN$(self.$i_g('@subviews'),'length');
+var count = VN$(self.$i_g(i$bf),s$br);
 var i = 0;
-for (i = 0; i < count; i++) {var view_to_check = VN$(self.$i_g('@subviews'),'[]',i);
-var hit_test = VN$(view_to_check,'hit_test',point);
+for (i = 0; i < count; i++) {var view_to_check = VN$(self.$i_g(i$bf),s$bo,i);
+var hit_test = VN$(view_to_check,s$vv,point);
 if(RTEST(hit_test)){
 return hit_test;
 }
 }return self;
 });
-$VN_2.$def('mouse:in_rect:',function(self,_cmd,point,rect){
+self.$def(s$vw,function(self,_cmd,point,rect){
 });
-$VN_2.$def('add_tracking_area',function(self,_cmd,tracking_area){
-if(RTEST(VN$(self.$i_g('@tracking_areas'),'empty?'))){
-VN$(self.$i_g('@element'),'add_event_listener','mouseover',function(evt){
+self.$def(s$vx,function(self,_cmd,tracking_area){
+if(RTEST(VN$(self.$i_g(i$bj),s$bt))){
+VN$(self.$i_g(i$d),s$jb,_$fz,function(evt){
 });
-VN$(self.$i_g('@element'),'add_event_listener','mouseout',function(evt){
+VN$(self.$i_g(i$d),s$jb,_$ga,function(evt){
 });
 }
-return VN$(self.$i_g('@tracking_areas'),'<<',tracking_area);
+return VN$(self.$i_g(i$bj),s$cv,tracking_area);
 });
-$VN_2.$def('remove_tracking_area',function(self,_cmd,tracking_area){
+self.$def(s$vy,function(self,_cmd,tracking_area){
 });
-$VN_2.$def('tracking_areas',function(self,_cmd){
-return self.$i_g('@tracking_areas');
+self.$def(s$vz,function(self,_cmd){
+return self.$i_g(i$bj);
 });
-$VN_2.$def('update_tracking_areas',function(self,_cmd){
+self.$def(s$wa,function(self,_cmd){
 });
+})(RClass.define_under(self,'View',self.$c_g_full('Responder')));
+})(RModule.define('Vienna'));

@@ -32,24 +32,29 @@ module RubyWebApp
     app_delegate = RubyWebApp::AppController.new
     VN::App.delegate = app_delegate
     
+    app_observer = Object.new
+    `window.app_observer = app_observer;`
+    
+    app_delegate.add_observer app_observer, for_key_path:'adam', options:nil, context:'adams context'
+  
     `window.app_delegate = app_delegate;
     `
     
-    (class << app_delegate; self; end).class_eval {
-      define_method('my_method') do |something|
-        8
-      end
-    }
+    # (class << app_delegate; self; end).class_eval {
+    #   define_method('my_method') do |something|
+    #     8
+    #   end
+    # }
     
-    class << app_delegate
-      def bob_uncle
-        45
-      end
-    end
-    
-    def app_delegate.adams
-      10
-    end
+    # class << app_delegate
+    #   def bob_uncle
+    #     45
+    #   end
+    # end
+    # 
+    # def app_delegate.adams
+    #   10
+    # end
     
     
     hud_window = Vienna::Window.new VN::Rect.new(800, 100, 400, 250), [:hud, :closable]

@@ -27,46 +27,93 @@
 # Key Value observing in this ruby implementation makes heavy use of ruby's
 # singleton abilities, and will not sit well above pure objc runtime.
 module Vienna
-    
-  (class << self; self; end)
   
-  class << self
-    
-    def access_all
-      true
-    end
-    
-  end
-  
-  # KVO options
-  # ===========
-  # :new, :old, :initial, :prior
-  
-  # KVO Change kind
-  # ===============
-  # :change_kind => :new, :old, :indexes, :prior_notification
+  # Keys in hash sent to observe_value_for_key_path(of_object:change:context:)
+  KEY_VALUE_CHANGE_KIND_KEY = 'KEY_VALUE_CHANGE_KIND_KEY'
+  KEY_VALUE_CHANGE_NEW_KEY = 'KEY_VALUE_CHANGE_NEW_KEY'
+  KEY_VALUE_CHANGE_OLD_KEY = 'KEY_VALUE_CHANGE_OLD_KEY'
+  KEY_VALUE_CHANGE_INDEXES_KEY = 'KEY_VALUE_CHANGE_INDEXES_KEY'
+  KEY_VALUE_CHANGE_NOTIFICATION_IS_PRIOR_KEY = 'KEY_VALUE_CHANGE_NOTIFICATION_IS_PRIOR_KEY'
 
+  # Options passed to add_observer(...) to determine what is returned
+  KEY_VALUE_OBSERVING_OPTIONS = {
+    # change dictionary should provide the new value
+    :new          => 1,
+    # change dictionary should provide the old value
+    :old          => 2,
+    # notification should be sent to receiver immediately
+    :initial      => 4,
+    # seperate notifications should be sent, or, if not, a single one after change
+    :prior        => 8
+  }
+  
+  KEY_VALUE_CHANGE = {
+    :setting      => 0,
+    :insertion    => 1,
+    :removal      => 2,
+    :replacement  => 3
+  }
+  
   class Object
     
-    def observe_value_for_key_path path, of_object:object, change:change, context:context
+    def observe_value_for_key_path(path, of_object:object, change:change, context:context)
       
     end
   
-    def add_observer observer, for_key_path:key_path, options:options, context:context
-      # # return unless observer and key_path
-      # 
-      # @kvo_observers << {
-      #   :observer => observer,
-      #   :key_path => key_path,
-      #   :options => options,
-      #   :context => context
-      # }
+    def add_observer(observer, for_key_path:key_path, options:options, context:context)
+      _kvo_setup
+      
+      key_observers = @_kvo_observers[key_path]
+      
+      unless key_observers
+        key_observers = {}
+        @_kvo_observers[key_path] = key_observers
+      end
+      
+      key_observers[observer] = {
+        :observer => observer,
+        :key_path => key_path,
+        :options => options,
+        :context => context
+      }
+      
+      # if options.include? :initial
+      #   will_change_value_for_key key_path
+      #   did_change_value_for_key key_path
+      # end
     end
   
-    def remove_observer observer, for_key_path:key_path
+    def remove_observer(observer, for_key_path:key_path)
   
     end
-  
+    
+    def _kvo_setup
+      # if this ivar exists, then we have already done this for this object, so
+      # we can just skip
+      return if @_kvo_observers
+
+      class << self
+        
+        def will_change_value_for_key(a_key)
+          super a_key
+        end
+        
+        def did_change_value_for_key(a_key)
+          
+        end
+        
+        def will_change(change, values_at_indexes:indexes, for_key:a_key)
+          
+        end
+        
+        def did_change(change, values_at_indexes:indexes, for_key:a_key)
+          
+        end
+      end
+      
+      # hash to store observers for a key. Key is the hash key, hash is the value
+      @_kvo_observers = {}
+    end
   end
   
   
@@ -96,6 +143,7 @@ module Vienna
     def will_change_value_for_key key
       # # puts self
       # @kvo_old_values[key] = value_for_key(key)
+      puts key
     end
   
     def did_change_value_for_key key

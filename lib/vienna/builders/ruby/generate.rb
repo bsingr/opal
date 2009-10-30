@@ -60,9 +60,10 @@ module Vienna
     #             locally, or in Object, or, as we want, might be nearby in the
     #             same module, or indeed the parent module.
     def generate_tree tree
+      # write "console.log('#{@source}');"
       push_nametable
       tree.each do |stmt|
-        generate_stmt stmt, :instance => true, :full_stmt => true, :last_stmt => false, :self => current_self
+        generate_stmt stmt, :instance => true, :full_stmt => true, :last_stmt => false, :top_level => true, :self => current_self
       end
       pop_nametable
     end
@@ -70,6 +71,7 @@ module Vienna
     # Generate any type of statement with the given options
     # 
     def generate_stmt stmt, context
+      # puts stmt
       case stmt.node
       when :klass
         generate_class stmt, context
@@ -266,37 +268,79 @@ module Vienna
     # klass, and might be nested indefinately deep within such combinations
     # 
     def generate_class klass, context
-      # top-level
-      if context[:self] == 'VN.self'
-        push_current_self
-        write "var #{current_self} = RClass.define('#{klass.klass_name}',"
-      else # nested class
-        outer = context[:self]
-        push_current_self
-        write "var #{current_self} = RClass.define_under(#{outer}, '#{klass.klass_name}'," 
-      end
-
-      # superclass...
-      if klass.super_klass
-        generate_stmt klass.super_klass[:expr], :instance => false, :full_stmt => false, :self => current_self, :last_stmt => false
-        write ");\n"
-      else
-        write "cObject);\n"
-      end
       
-      # statements
+      write "(function(self) {\n"
+      
+      
+      # Statements
       if klass.bodystmt
         klass.bodystmt.each do |stmt|
           generate_stmt stmt, :instance => false,     # all class methods/references in current scope
                               :full_stmt => true,     # full statements, so insert relevant ';' etc
                               :self => current_self,  # current 'self' reference
-                              # :last_stmt => (klass.bodystmt.last == stmt ? true : false)
-                              :last_stmt => false
+                              :last_stmt => (klass.bodystmt.last == stmt ? true : false)
         end
       end
       
-      pop_current_self
+      write "})("
+      if context[:top_level]
+        # top level
+        write "RClass.define('#{klass.klass_name}',"
+      else
+         # nested
+          write "RClass.define_under(self,'#{klass.klass_name}',"
+      end
+      
+      # superclass..
+      if klass.super_klass
+        generate_stmt klass.super_klass[:expr], :instance => false, :full_stmt => false, :self => current_self, :last_stmt => false
+        write ")"
+      else
+        write "cObject)"
+      end
+      
+      write ");\n"
+      
+      # # top-level
+      # if context[:self] == 'VN.self'
+      #   push_current_self
+      #   write "var #{current_self} = RClass.define('#{klass.klass_name}',"
+      # else # nested class
+      #   outer = context[:self]
+      #   push_current_self
+      #   write "var #{current_self} = RClass.define_under(#{outer}, '#{klass.klass_name}'," 
+      # end
+      # 
+      # # superclass...
+      # if klass.super_klass
+      #   generate_stmt klass.super_klass[:expr], :instance => false, :full_stmt => false, :self => current_self, :last_stmt => false
+      #   write ");\n"
+      # else
+      #   write "cObject);\n"
+      # end
+      # 
+      # # statements
+      # if klass.bodystmt
+      #   klass.bodystmt.each do |stmt|
+      #     generate_stmt stmt, :instance => false,     # all class methods/references in current scope
+      #                         :full_stmt => true,     # full statements, so insert relevant ';' etc
+      #                         :self => current_self,  # current 'self' reference
+      #                         # :last_stmt => (klass.bodystmt.last == stmt ? true : false)
+      #                         :last_stmt => false
+      #   end
+      # end
+      # 
+      # pop_current_self
     end
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     # Returns true if the method uses obj-c style named arguments
     def label_styled_args?(definition)
@@ -316,11 +360,14 @@ module Vienna
       end
       
       # main func def
-      if definition[:singleton] or context[:self] == 'VN.self'
-        write "#{context[:self]}.$def_s('#{method_name}',function(self,_cmd,"
+      if definition[:singleton]
+        generate_stmt definition[:singleton], :instance => definition[:instance], :full_stmt => false, :last_stmt => false
+        write ".$def_s(s$#{js_id_for_string(method_name)},function(self,_cmd,"
       else
-        write "#{context[:self]}.$def('#{method_name}',function(self,_cmd,"
+        write "self.$def(s$#{js_id_for_string(method_name)},function(self,_cmd,"
       end
+      
+      # js_id_for_string(method_name)
       
       # go through arglist val names
       definition[:arglist][:arg].each do |a|
@@ -356,22 +403,23 @@ module Vienna
     # on a specified object that is passed to the context
     # 
     def generate_def definition, context
-      
       if label_styled_args? definition
         generate_label_styled_def definition, context
         return
       end
       
       push_nametable # push new nametable
-
       # all methods in top self must be added as singleton methods
-      if definition[:singleton] or context[:self] == 'VN.self'
+      if definition[:singleton]
+        # puts definition[:singleton]
         generate_stmt definition[:singleton], :instance => definition[:instance], :full_stmt => false, :last_stmt => false
         # write "#{context[:self]}"
-        write ".$def_s('#{definition[:fname]}',function(self,_cmd"
+        write ".$def_s(s$#{js_id_for_string(definition[:fname])},function(self,_cmd"
       else
-        write "#{context[:self]}.$def('#{definition[:fname]}',function(self,_cmd"
+        write "self.$def(s$#{js_id_for_string(definition[:fname])},function(self,_cmd"
       end
+      
+      # js_id_for_string(definition[:fname])
       
       # write definition[:arglist]
       
@@ -436,7 +484,7 @@ module Vienna
       
       # If LHS is an @instance_variable
       elsif stmt[:lhs].node == :ivar
-        write "#{context[:self]}.$i_s('#{stmt[:lhs][:name]}',"
+        write "#{context[:self]}.$i_s(i$#{js_id_for_ivar(stmt[:lhs][:name])},"
         generate_stmt stmt[:rhs], :instance => context[:instance], context[:full_stmt] => false, context[:last_stmt] => true, :self => context[:self]
         write ')'
       
@@ -450,17 +498,17 @@ module Vienna
       
       # IF LHS is a CONSTANT
       elsif stmt[:lhs].node == :constant
-        if context[:self] == 'VN.self'
+        if context[:top_level]
           # puts stmt[:lhs][:name]
           write 'cObject'
         elsif context[:instance]
-          write "#{context[:self]}.$klass"
+          write "self.$klass"
         else
-          write context[:self]
+          write "self"
         end
              
         write ".$c_s('#{stmt[:lhs][:name]}',"
-        generate_stmt stmt[:rhs], :instance => context[:instance], context[:full_stmt] => false, :last_stmt => context[:last_stmt], :self => context[:self]
+        generate_stmt stmt[:rhs], :instance => context[:instance], context[:full_stmt] => false, :last_stmt => context[:last_stmt], :top_level => context[:top_level]
         write ')'
         
       # elsif LHS is a call (ass the equals sign onto call method, and use rhs as param)
@@ -501,9 +549,9 @@ module Vienna
       write "VN$("
       
       if call[:recv]
-        generate_stmt call[:recv], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self =>context[:self], :call_recv => true
+        generate_stmt call[:recv], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :top_level => context[:top_level], :call_recv => true
       else
-        write current_self
+        write "self"
       end
       
       method_name = call[:meth] << ':'
@@ -512,15 +560,16 @@ module Vienna
         method_name << a[:key]
       end
       
-      write",'#{method_name}',"
+      write",s$#{js_id_for_string(method_name)},"
+      # js_id_for_string(method_name)
       
       # write ".$('#{method_name}',["
       
-      generate_stmt call[:call_args][:args][0], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self =>context[:self]
+      generate_stmt call[:call_args][:args][0], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self =>context[:self], :top_level => context[:top_level]
       
       call[:call_args][:assocs].each do |a|
         write ","
-        generate_stmt a[:value], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self =>context[:self]
+        generate_stmt a[:value], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self =>context[:self], :top_level => context[:top_level]
       end
       
       # write "])"
@@ -549,12 +598,14 @@ module Vienna
       write "VN$("
       
       if call[:recv]
-        generate_stmt call[:recv], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self =>context[:self], :call_recv => true
+        generate_stmt call[:recv], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self =>context[:self], :call_recv => true, :top_level => context[:top_level]
       else
-        write current_self
+        write 'self'
+        # write current_self
       end
       
-      write ",'#{call[:meth]}'"
+      write ",s$#{js_id_for_string(call[:meth])}"
+      # js_id_for_string(call[:meth])
         
       # write ".$('#{call[:meth]}',["
       
@@ -576,12 +627,13 @@ module Vienna
         call[:call_args][:assocs].each do |a|
           write "," unless call[:call_args][:assocs].first == a
           
-          generate_stmt a[:key], :instance => context[:instance], :full_stmt => false
+          generate_stmt a[:key], :instance => context[:instance], :full_stmt => false, :top_level => context[:top_level]
           write ","
-          generate_stmt a[:value], :instance => context[:instance], :full_stmt => false
+          generate_stmt a[:value], :instance => context[:instance], :full_stmt => false, :top_level => context[:top_level]
           # write a
         end
         write ")"
+        
         # generate_assoc_list call[:call_args][:assocs], :instance => context[:instance], :full_stmt => false
       end
       # write call
@@ -611,7 +663,8 @@ module Vienna
             generate_stmt stmt, :instance => (context[:singleton] ? false : true),
                                 :full_stmt => true, 
                                 :last_stmt => (call[:brace_block][:stmt].last == stmt ? true : false), 
-                                :self => current_self
+                                :self => current_self,
+                                :top_level => context[:top_level]
 
           end
         end        
@@ -700,22 +753,25 @@ module Vienna
     
     
     def generate_module mod, context
-      push_current_self
       
-      write "var #{current_self} = RModule.define('#{mod.klass_name}');\n"
+      write "(function(self) {\n"
       
+      # Statements
       if mod.bodystmt
-        mod.bodystmt.each do |b|
-          generate_stmt b, :instance => false,     # all class methods/references in current scope
+        mod.bodystmt.each do |stmt|
+          # puts stmt
+          # puts stmt.node
+          generate_stmt stmt, :instance => false,     # all class methods/references in current scope
                               :full_stmt => true,     # full statements, so insert relevant ';' etc
-                              :self => current_self  # current 'self' reference
-                              # :last_stmt => (mod.bodystmt.last == b ? true : false)
-                              
-          # write ";\n" unless [:klass, :module].include? b.node
+                              :self => current_self,  # current 'self' reference
+                              :last_stmt => (mod.bodystmt.last == stmt ? true : false),
+                              :nested => true
         end
       end
       
-      pop_current_self
+      write "})("
+      write "RModule.define('#{mod.klass_name}')"
+      write ");\n"
     end
     
     
@@ -725,20 +781,21 @@ module Vienna
 
     
     def generate_symbol sym, context
-      write "'#{sym[:name]}'"
+      write "_$#{js_id_for_symbol(sym[:name])}"
+      # write "'#{sym[:name]}'"
     end
     
     def generate_constant const, context
       write 'return ' if context[:last_stmt] and context[:full_stmt]
       
       constant_scope = context[:scope_constant] ? '$c_g' : '$c_g_full'
-      if current_self == 'VN.self'
+      if context[:top_level]
         # nothing else to look around, so normal check..
         write "cObject.$c_g('#{const[:name]}')"
       elsif context[:instance]
-        write "#{current_self}.$klass.#{constant_scope}('#{const[:name]}')"
+        write "self.$klass.#{constant_scope}('#{const[:name]}')"
       else
-        write "#{current_self}.#{constant_scope}('#{const[:name]}')"
+        write "self.#{constant_scope}('#{const[:name]}')"
       end
       
       write ";\n" if context[:full_stmt]
@@ -751,7 +808,8 @@ module Vienna
       
       list[:list].each do |l|
         if l.node == :label_assoc
-          write "'#{l[:key].slice(0, l[:key].length - 1)}'"
+          key = l[:key].slice(0, l[:key].length - 1)
+          write "_$#{js_id_for_symbol(key)}"
         else
           generate_stmt l[:key], :instance => (context[:singleton] ? false : true), :full_stmt => false, :last_stmt => false,  :self => current_self
         end
@@ -785,7 +843,8 @@ module Vienna
     
     def generate_ivar stmt, context
       write 'return ' if context[:last_stmt] and context[:full_stmt]
-      write "#{current_self}.$i_g('#{stmt[:name]}')"
+      # write "#{current_self}.$i_g('#{stmt[:name]}')"
+      write "#{current_self}.$i_g(i$#{js_id_for_ivar(stmt[:name])})"
       write ";\n" if context[:full_stmt]
     end
     
@@ -800,14 +859,14 @@ module Vienna
       else
         # method call
         # write "#{current_self}.$('#{identifier[:name]}', [])"
-        write "VN$(#{current_self}, '#{identifier[:name]}')"
+        write "VN$(#{current_self}, s$#{js_id_for_string(identifier[:name])})"
       end
       write ";\n" if context[:full_stmt]
     end
     
     def generate_self identifier, context
       write 'return ' if context[:last_stmt] and context[:full_stmt]
-      write current_self
+      write "self"
       write ";\n" if context[:full_stmt]
     end
     
@@ -894,7 +953,7 @@ module Vienna
     # primay::CONST
     def generate_colon2 stmt, context
       write 'return ' if context[:last_stmt] and context[:full_stmt]
-      generate_stmt stmt[:lhs], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self => context[:self]
+      generate_stmt stmt[:lhs], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :top_level => context[:top_level]
       # write '.$c_g('
       # generate_stmt stmt[:rhs], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self => context[:self]
       write ".$c_g('#{stmt[:rhs]}')"

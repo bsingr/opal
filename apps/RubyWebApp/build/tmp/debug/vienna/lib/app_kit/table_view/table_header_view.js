@@ -1,24 +1,26 @@
-var $VN_1 = RModule.define('Vienna');
-var $VN_2 = RClass.define_under($VN_1, 'TableHeaderView',$VN_2.$c_g_full('View'));
-$VN_2.$def('initialize',function(self,_cmd,frame){
+(function(self) {
+(function(self) {
+self.$def(s$as,function(self,_cmd,frame){
 return VN$sup(arguments.callee, self,_cmd,[frame]);
 });
-$VN_2.$def('table_view=',function(self,_cmd,table_view){
-return self.$i_s('@table_view',table_view);
+self.$def(s$alj,function(self,_cmd,table_view){
+return self.$i_s(i$gc,table_view);
 });
-$VN_2.$def('table_view',function(self,_cmd){
-return self.$i_g('@table_view');
+self.$def(s$alk,function(self,_cmd){
+return self.$i_g(i$gc);
 });
-$VN_2.$def('dragged_column',function(self,_cmd){
-return self.$i_g('@dragged_column');
+self.$def(s$alz,function(self,_cmd){
+return self.$i_g(i$gl);
 });
-$VN_2.$def('dragged_distance',function(self,_cmd){
-return self.$i_g('@dragged_distance');
+self.$def(s$ama,function(self,_cmd){
+return self.$i_g(i$gm);
 });
-$VN_2.$def('resized_column',function(self,_cmd){
-return self.$i_g('@resized_column');
+self.$def(s$amb,function(self,_cmd){
+return self.$i_g(i$gn);
 });
-$VN_2.$def('header_rect_of_column',function(self,_cmd,column){
+self.$def(s$amc,function(self,_cmd,column){
 });
-$VN_2.$def('column_at_point',function(self,_cmd,point){
+self.$def(s$akq,function(self,_cmd,point){
 });
+})(RClass.define_under(self,'TableHeaderView',self.$c_g_full('View')));
+})(RModule.define('Vienna'));

@@ -48,8 +48,6 @@ end
 
 # Shorter namespaced name
 VN = Vienna
-YES = true
-NO = false
 
 require 'foundation/foundation'
 require 'app_kit/app_kit'

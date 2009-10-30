@@ -1,84 +1,86 @@
-var $VN_1 = RModule.define('Vienna');
-var $VN_2 = RClass.define_under($VN_1, 'TableColumn',cObject);
-$VN_2.$def('initialize',function(self,_cmd,identifier){
+(function(self) {
+(function(self) {
+self.$def(s$as,function(self,_cmd,identifier){
 VN$(self,'identifier=',identifier);
-self.$i_s('@data_cell',VN$(self.$klass.$c_g_full('TextFieldCell'),'new',''));
-return self.$i_s('@width',100);
+self.$i_s(i$ga,VN$(self.$klass.$c_g_full('TextFieldCell'),s$is,''));
+return self.$i_s(i$ap,100);
 });
-$VN_2.$def('identifier=',function(self,_cmd,identifier){
-return self.$i_s('@identifier',identifier);
+self.$def(s$alh,function(self,_cmd,identifier){
+return self.$i_s(i$gb,identifier);
 });
-$VN_2.$def('identifier',function(self,_cmd){
-return self.$i_g('@identifier');
+self.$def(s$ali,function(self,_cmd){
+return self.$i_g(i$gb);
 });
-$VN_2.$def('table_view=',function(self,_cmd,table_view){
-return self.$i_s('@table_view',table_view);
+self.$def(s$alj,function(self,_cmd,table_view){
+return self.$i_s(i$gc,table_view);
 });
-$VN_2.$def('table_view',function(self,_cmd){
-return self.$i_g('@table_view');
+self.$def(s$alk,function(self,_cmd){
+return self.$i_g(i$gc);
 });
-$VN_2.$def('width=',function(self,_cmd,width){
-return self.$i_g('@width');
+self.$def(s$qr,function(self,_cmd,width){
+return self.$i_g(i$ap);
 });
-$VN_2.$def('width',function(self,_cmd){
-return self.$i_g('@width');
+self.$def(s$jr,function(self,_cmd){
+return self.$i_g(i$ap);
 });
-$VN_2.$def('min_width=',function(self,_cmd,min_width){
-return self.$i_s('@min_width',min_width);
+self.$def(s$all,function(self,_cmd,min_width){
+return self.$i_s(i$gd,min_width);
 });
-$VN_2.$def('min_width',function(self,_cmd){
-return self.$i_g('@min_width');
+self.$def(s$alm,function(self,_cmd){
+return self.$i_g(i$gd);
 });
-$VN_2.$def('max_width=',function(self,_cmd,max_width){
-return self.$i_s('@max_width',max_width);
+self.$def(s$aln,function(self,_cmd,max_width){
+return self.$i_s(i$ge,max_width);
 });
-$VN_2.$def('max_width',function(self,_cmd){
-return self.$i_g('@max_width');
+self.$def(s$alo,function(self,_cmd){
+return self.$i_g(i$ge);
 });
-$VN_2.$def('header_cell=',function(self,_cmd,cell){
-return self.$i_s('@header_cell',cell);
+self.$def(s$alp,function(self,_cmd,cell){
+return self.$i_s(i$gf,cell);
 });
-$VN_2.$def('header_cell',function(self,_cmd){
-return self.$i_g('@header_cell');
+self.$def(s$alq,function(self,_cmd){
+return self.$i_g(i$gf);
 });
-$VN_2.$def('data_cell',function(self,_cmd){
-return self.$i_g('@data_cell');
+self.$def(s$alr,function(self,_cmd){
+return self.$i_g(i$ga);
 });
-$VN_2.$def('data_cell=',function(self,_cmd,data_cell){
-return self.$i_s('@data_cell',data_cell);
+self.$def(s$als,function(self,_cmd,data_cell){
+return self.$i_s(i$ga,data_cell);
 });
-$VN_2.$def('data_cell_for_row',function(self,_cmd){
-return self.$i_g('@data_cell');
+self.$def(s$aks,function(self,_cmd){
+return self.$i_g(i$ga);
 });
-$VN_2.$def('editable=',function(self,_cmd,flag){
-return self.$i_g('@editable');
+self.$def(s$yz,function(self,_cmd,flag){
+return self.$i_g(i$bs);
 });
-$VN_2.$def('editable?',function(self,_cmd){
-return self.$i_g('@editable');
+self.$def(s$yy,function(self,_cmd){
+return self.$i_g(i$bs);
 });
-$VN_2.$def('size_to_fit',function(self,_cmd){
+self.$def(s$wg,function(self,_cmd){
 });
-$VN_2.$def('sort_descriptor_prototype=',function(self,_cmd,sort_descriptor){
-return self.$i_s('@sort_descriptor_prototype',sort_descriptor);
+self.$def(s$alt,function(self,_cmd,sort_descriptor){
+return self.$i_s(i$gg,sort_descriptor);
 });
-$VN_2.$def('sort_descriptor_prototype',function(self,_cmd){
-return self.$i_g('@sort_descriptor_prototype');
+self.$def(s$alu,function(self,_cmd){
+return self.$i_g(i$gg);
 });
-$VN_2.$def('resizing_mask=',function(self,_cmd,resizing_mask){
-return self.$i_s('@resizing_mask',resizing_mask);
+self.$def(s$alv,function(self,_cmd,resizing_mask){
+return self.$i_s(i$gh,resizing_mask);
 });
-$VN_2.$def('resizing_mask',function(self,_cmd){
-return self.$i_g('@resizing_mask');
+self.$def(s$alw,function(self,_cmd){
+return self.$i_g(i$gh);
 });
-$VN_2.$def('header_tool_tip=',function(self,_cmd,string){
-return self.$i_s('@header_tool_tip',string);
+self.$def(s$alx,function(self,_cmd,string){
+return self.$i_s(i$gi,string);
 });
-$VN_2.$def('header_tool_tip',function(self,_cmd){
-return self.$i_g('@heder_tool_tip');
+self.$def(s$aly,function(self,_cmd){
+return self.$i_g(i$gj);
 });
-$VN_2.$def('hidden?',function(self,_cmd){
-return self.$i_g('@hidden');
+self.$def(s$tk,function(self,_cmd){
+return self.$i_g(i$gk);
 });
-$VN_2.$def('hidden=',function(self,_cmd,flag){
-return self.$i_s('@hidden',flag);
+self.$def(s$tj,function(self,_cmd,flag){
+return self.$i_s(i$gk,flag);
 });
+})(RClass.define_under(self,'TableColumn',cObject));
+})(RModule.define('Vienna'));

@@ -1,26 +1,27 @@
-var $VN_1 = RClass.define('Document',cObject);
-$VN_1.$def_s('ready?',function(self,_cmd,block){
+(function(self) {
+self.$def_s(s$ja,function(self,_cmd,block){
 });
-$VN_1.$def_s('<<',function(self,_cmd,elem){
+self.$def_s(s$cv,function(self,_cmd,elem){
 var e = elem.$i_g('@element');
 document.body.appendChild(e);});
-$VN_1.$def_s('add_event_listener',function(self,_cmd,type,listener){
-self.$i_s('@event_listeners',ORTEST(self.$i_g('@event_listeners'),VN.$h()));
-VN$(self.$i_g('@event_listeners'),'[]=',type,listener);
+self.$def_s(s$jb,function(self,_cmd,type,listener){
+self.$i_s(i$c,ORTEST(self.$i_g(i$c),VN.$h()));
+VN$(self.$i_g(i$c),'[]=',type,listener);
 if (document.addEventListener) {
       document.body.addEventListener(type, listener, false);
     }
     else {
       document.body.attachEvent('on' + type, listener);
     }});
-$VN_1.$def_s('remove_event_listener',function(self,_cmd,type){
-var listener = VN$(self.$i_g('@event_listeners'),'[]',type);
+self.$def_s(s$jc,function(self,_cmd,type){
+var listener = VN$(self.$i_g(i$c),s$bo,type);
 if (document.addEventListener) {
       document.body.removeEventListener(type, listener, false);
     }
     else {
       document.body.detachEvent('on' + type, listener);
     }});
-$VN_1.$c_g_full('Document').$def_s('age',function(self,_cmd){
+self.$c_g_full('Document').$def_s(s$jd,function(self,_cmd){
 return 3;
 });
+})(RClass.define('Document',cObject));

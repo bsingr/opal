@@ -1,26 +1,28 @@
-var $VN_1 = RModule.define('Vienna');
-var $VN_2 = RClass.define_under($VN_1, 'Builder',cObject);
-VN$($VN_2,'attr_accessor','owner');
-$VN_2.$c_s('BUILDERS',VN.$h());
-$VN_2.$def('initialize',function(self,_cmd,name,block){
-self.$i_s('@name',name);
-self.$i_s('@builder',block);
-self.$i_s('@top_level_objects',[]);
+(function(self) {
+(function(self) {
+VN$(self,s$ar,_$ff);
+self.$c_s('BUILDERS',VN.$h());
+self.$def(s$as,function(self,_cmd,name,block){
+self.$i_s(i$l,name);
+self.$i_s(i$id,block);
+self.$i_s(i$ie,[]);
 return VN$(self.$klass.$c_g_full('BUILDERS'),'[]=',name,self);
 });
-$VN_2.$def_s('build',function(self,_cmd,name,options,block){
-var builder = VN$(self.$c_g_full('BUILDERS'),'[]',name);
-return VN$(builder,'build!',options,block);
+self.$def_s(s$sw,function(self,_cmd,name,options,block){
+var builder = VN$(self.$c_g_full('BUILDERS'),s$bo,name);
+return VN$(builder,s$aqn,options,block);
 });
-$VN_2.$def('build!',function(self,_cmd,options,block){
-VN$(self.$i_g('@builder'),'call',self);
+self.$def(s$aqn,function(self,_cmd,options,block){
+VN$(self.$i_g(i$id),s$it,self);
 return arguments[arguments.length -1](self);
 });
-$VN_2.$def('top',function(self,_cmd,obj){
-return VN$(self.$i_g('@top_level_objects'),'<<',obj);
+self.$def(s$aqo,function(self,_cmd,obj){
+return VN$(self.$i_g(i$ie),s$cv,obj);
 });
-$VN_2.$def('owner',function(self,_cmd){
-return self.$i_g('@owner');
+self.$def(s$aqp,function(self,_cmd){
+return self.$i_g(i$ai);
 });
-$VN_2.$def('menu=',function(self,_cmd,a_menu){
+self.$def(s$mv,function(self,_cmd,a_menu){
 });
+})(RClass.define_under(self,'Builder',cObject));
+})(RModule.define('Vienna'));

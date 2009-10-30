@@ -1,71 +1,73 @@
-var $VN_1 = RModule.define('Vienna');
-var $VN_2 = RClass.define_under($VN_1, 'GraphicsContext',cObject);
-$VN_2.$def('initialize',function(self,_cmd,graphics_port,flip_state){
-self.$i_s('@ctx',graphics_port);
-return self.$i_s('@flip_state',flip_state);
+(function(self) {
+(function(self) {
+self.$def(s$as,function(self,_cmd,graphics_port,flip_state){
+self.$i_s(i$aj,graphics_port);
+return self.$i_s(i$ak,flip_state);
 });
-$VN_2.$def('graphics_port',function(self,_cmd){
-return self.$i_g('@ctx');
+self.$def(s$pk,function(self,_cmd){
+return self.$i_g(i$aj);
 });
-$VN_2.$def('graphics_port=',function(self,_cmd,graphics_port){
-return self.$i_s('@ctx',graphics_port);
+self.$def(s$pl,function(self,_cmd,graphics_port){
+return self.$i_s(i$aj,graphics_port);
 });
-$VN_2.$def('flipped?',function(self,_cmd){
-return self.$i_g('@flip_state');
+self.$def(s$pm,function(self,_cmd){
+return self.$i_g(i$ak);
 });
-$VN_2.$def_s('current_context',function(self,_cmd){
+self.$def_s(s$pn,function(self,_cmd){
 return self.$k_g('@@current_context');
 });
-$VN_2.$def_s('current_context=',function(self,_cmd,context){
+self.$def_s(s$po,function(self,_cmd,context){
 return self.$k_s('@@current_context',context);
 });
-$VN_2.$def('save_graphics_state',function(self,_cmd){
+self.$def(s$pp,function(self,_cmd){
 });
-$VN_2.$def('restore_graphics_state',function(self,_cmd){
+self.$def(s$pq,function(self,_cmd){
 });
-$VN_2.$def('line_width=',function(self,_cmd,width){
-self.$i_g('@ctx').lineWidth = width});
-$VN_2.$def('line_cap=',function(self,_cmd,cap){
-self.$i_g('@ctx').lineCap = cap});
-$VN_2.$def('line_join=',function(self,_cmd,join){
-self.$i_g('@ctx').lineJoin = join});
-$VN_2.$def('miter_limit=',function(self,_cmd,limit){
-self.$i_g('@ctx').miterLimit = limit});
-$VN_2.$def('alpha=',function(self,_cmd,alpha){
-self.$i_g('@ctx').globalAlpha = alpha});
-$VN_2.$def('begin_path',function(self,_cmd){
-self.$i_g('@ctx').beginPath()});
-$VN_2.$def('move_to_point',function(self,_cmd,point){
-self.$i_g('@ctx').moveTo(VN$(point,'x'),VN$(point,'y'))});
-$VN_2.$def('add_line_to_point',function(self,_cmd,point){
-self.$i_g('@ctx').lineTo(VN$(point,'x'),VN$(point,'y'))});
-$VN_2.$def('add_curve_to_point',function(self,_cmd,cp1,cp2,point){
-self.$i_g('@ctx').bezierCurveTo(VN$(cp1,'x'),VN$(cp1,'y'),VN$(cp2,'x'),VN$(cp2,'y'),VN$(point,'x'),VN$(point,'y'))});
-$VN_2.$def('add_lines',function(self,_cmd,points){
+self.$def(s$pr,function(self,_cmd,width){
+self.$i_g(i$aj).lineWidth = width});
+self.$def(s$ps,function(self,_cmd,cap){
+self.$i_g(i$aj).lineCap = cap});
+self.$def(s$pt,function(self,_cmd,join){
+self.$i_g(i$aj).lineJoin = join});
+self.$def(s$pu,function(self,_cmd,limit){
+self.$i_g(i$aj).miterLimit = limit});
+self.$def(s$pv,function(self,_cmd,alpha){
+self.$i_g(i$aj).globalAlpha = alpha});
+self.$def(s$pw,function(self,_cmd){
+self.$i_g(i$aj).beginPath()});
+self.$def(s$px,function(self,_cmd,point){
+self.$i_g(i$aj).moveTo(VN$(point,s$jo),VN$(point,s$jp))});
+self.$def(s$py,function(self,_cmd,point){
+self.$i_g(i$aj).lineTo(VN$(point,s$jo),VN$(point,s$jp))});
+self.$def(s$pz,function(self,_cmd,cp1,cp2,point){
+self.$i_g(i$aj).bezierCurveTo(VN$(cp1,s$jo),VN$(cp1,s$jp),VN$(cp2,s$jo),VN$(cp2,s$jp),VN$(point,s$jo),VN$(point,s$jp))});
+self.$def(s$qa,function(self,_cmd,points){
 });
-$VN_2.$def('scale_ctm',function(self,_cmd,sx,sy){
+self.$def(s$qb,function(self,_cmd,sx,sy){
 });
-$VN_2.$def('translate_ctm',function(self,_cmd,tx,ty){
+self.$def(s$qc,function(self,_cmd,tx,ty){
 });
-$VN_2.$def('rotate_ctm',function(self,_cmd,angle){
+self.$def(s$qd,function(self,_cmd,angle){
 });
-$VN_2.$def('concat_ctm',function(self,_cmd,transform){
+self.$def(s$qe,function(self,_cmd,transform){
 });
-$VN_2.$def('ctm',function(self,_cmd){
+self.$def(s$qf,function(self,_cmd){
 });
-$VN_2.$def('add_ellipse_in_rect',function(self,_cmd,rect){
+self.$def(s$qg,function(self,_cmd,rect){
 });
-$VN_2.$def('add_arc',function(self,_cmd,point,radius,start_angle,end_angle,clock_wise){
+self.$def(s$qh,function(self,_cmd,point,radius,start_angle,end_angle,clock_wise){
 });
-$VN_2.$def('arc_to_point',function(self,_cmd,point1,point2,radius){
+self.$def(s$qi,function(self,_cmd,point1,point2,radius){
 });
-$VN_2.$def('add_path',function(self,_cmd,path){
+self.$def(s$qj,function(self,_cmd,path){
 });
-$VN_2.$def('path_empty?',function(self,_cmd){
+self.$def(s$qk,function(self,_cmd){
 });
-$VN_2.$def('path_current_point',function(self,_cmd){
+self.$def(s$ql,function(self,_cmd){
 });
-$VN_2.$def('path_bounding_box',function(self,_cmd){
+self.$def(s$qm,function(self,_cmd){
 });
-$VN_2.$def('path_contains_point?',function(self,_cmd,point){
+self.$def(s$qn,function(self,_cmd,point){
 });
+})(RClass.define_under(self,'GraphicsContext',cObject));
+})(RModule.define('Vienna'));

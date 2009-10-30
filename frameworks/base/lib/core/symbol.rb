@@ -1,5 +1,5 @@
 # 
-# range.rb
+# symbol.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,97 +24,110 @@
 # THE SOFTWARE.
 #
 
-`
-VN.$r = function(start, ending, exclusive) {
-  return VN$(cRange, 'new', start, ending, exclusive);
-};
-`
+# `
+# rb_include_module(rb_cSymbol, rb_mComparable);
+# rb_undef_alloc_func(rb_cSymbol);
+# rb_undef_method(rb_cSymbol.$klass, 'new');
+# 
+# `
 
-
-class Range
+class Symbol
   
-  def initialize(start, ending, exclusive)
-    @start = start
-    @ending = ending
-  end
-  
-  def initialize_copy
-    
+  def Symbol.all_symbols
+    # return array of all symbols defined
   end
   
   def ==(obj)
-    
-  end
-  
-  def ===(obj)
-    
-  end
-  
-  def eql?(obj)
-    
-  end
-  
-  def hash
-    
-  end
-  
-  def each(&block)
-    `for (var i = #{@start}; i <= #{@ending}; i++) {
-      VN$(block, 'call', i);
-    }`
-    self
-  end
-  
-  def step
-    
-  end
-  
-  def begin
-    
-  end
-  
-  def end
-    
-  end
-  
-  def first
-    
-  end
-  
-  def last
-    
-  end
-  
-  def min
-    
-  end
-  
-  def max
-    
-  end
-  
-  def to_s
-    
+    false
   end
   
   def inspect
+    ""
+  end
+  
+  def to_s
+    ""
+  end
+  
+  def id2name
+    ""
+  end
+  
+  def intern
+    self
+  end
+  
+  def to_sym
+    self
+  end
+  
+  def to_proc
+    nil
+  end
+  
+  def succ
     
   end
   
-  def exclude_end?
+  def next
+    succ
+  end
+  
+  
+  
+  def <=>(obj)
     
   end
   
-  def member?
+  def casecmp(obj)
     
   end
   
-  def include?
+  def =~(match)
     
   end
   
-  def cover?
+  
+  
+  def [](index)
     
   end
   
+  def slice
+    
+  end
+  
+  def length
+    
+  end
+  
+  def size
+    
+  end
+  
+  def empty?
+    
+  end
+  
+  def match
+    
+  end
+  
+  
+  
+  def upcase
+    
+  end
+  
+  def downcase
+    
+  end
+  
+  def capitalize
+    
+  end
+  
+  def swapcase
+    
+  end
 end

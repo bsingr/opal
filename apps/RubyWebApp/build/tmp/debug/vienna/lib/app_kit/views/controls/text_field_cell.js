@@ -1,76 +1,78 @@
-var $VN_1 = RModule.define('Vienna');
-var $VN_2 = RClass.define_under($VN_1, 'TextFieldCell',$VN_2.$c_g_full('Cell'));
-$VN_2.$def('init_text_cell',function(self,_cmd,str){
+(function(self) {
+(function(self) {
+self.$def(s$yp,function(self,_cmd,str){
 VN$sup(arguments.callee, self,_cmd,[str]);
-self.$i_s('@editable',true);
-self.$i_s('@selectable',true);
-self.$i_s('@bezeled',true);
-self.$i_s('@text_input_type','input');
-self.$i_s('@value','');
+self.$i_s(i$bs,true);
+self.$i_s(i$bt,true);
+self.$i_s(i$bx,true);
+self.$i_s(i$ea,_$hu);
+self.$i_s(i$cm,'');
 return self;
 });
-$VN_2.$def('class_name',function(self,_cmd){
+self.$def(s$sy,function(self,_cmd){
 return 'vn-text-field';
 });
-$VN_2.$def('render_with_frame:in_view:',function(self,_cmd,cell_frame,control_view){
-var ctx = VN$(self.$klass.$c_g_full('RenderContext'),'current_context');
-if(RTEST(VN$(ctx,'first_time?'))){
-VN$(ctx,'<<',"<div class='left'></div>");
-VN$(ctx,'<<',"<div class='middle'></div>");
-VN$(ctx,'<<',"<div class='right'></div>");
-if(RTEST(VN$(control_view,'is_a?',self.$klass.$c_g_full('TextField')))){
-VN$(ctx,'<<',"<input class='input'></input>");
+self.$def(s$wc,function(self,_cmd,cell_frame,control_view){
+var ctx = VN$(self.$klass.$c_g_full('RenderContext'),s$pn);
+if(RTEST(VN$(ctx,s$sn))){
+VN$(ctx,s$cv,"<div class='left'></div>");
+VN$(ctx,s$cv,"<div class='middle'></div>");
+VN$(ctx,s$cv,"<div class='right'></div>");
+if(RTEST(VN$(control_view,s$af,self.$klass.$c_g_full('TextField')))){
+VN$(ctx,s$cv,"<input class='input'></input>");
 }
 else{
-VN$(ctx,'<<',"<div class='input'></input>");
+VN$(ctx,s$cv,"<div class='input'></input>");
 }
 VN$(ctx,'first_time=',false);
 }
-VN$(ctx,'class_name=',VN$([VN$(self, 'class_name'),VN$(self, 'theme_name')],'join',' '));
-if(RTEST(VN$(control_view,'is_a?',self.$klass.$c_g_full('TextField')))){
+VN$(ctx,'class_name=',VN$([VN$(self, s$sy),VN$(self, s$sz)],s$ge,' '));
+if(RTEST(VN$(control_view,s$af,self.$klass.$c_g_full('TextField')))){
 }
 else{
-VN$(ctx,'selector','input',function(input){
-return VN$(input,'inner_text=',self.$i_g('@value'));
+VN$(ctx,s$sr,_$hu,function(input){
+return VN$(input,'inner_text=',self.$i_g(i$cm));
 });
 }
 });
-$VN_2.$def('background_color=',function(self,_cmd,color){
-return self.$i_s('@background_color',color);
+self.$def(s$rw,function(self,_cmd,color){
+return self.$i_s(i$ay,color);
 });
-$VN_2.$def('background_color',function(self,_cmd){
-return self.$i_g('@background_color');
+self.$def(s$rx,function(self,_cmd){
+return self.$i_g(i$ay);
 });
-$VN_2.$def('draws_background=',function(self,_cmd,flag){
-return self.$i_s('@draws_background',flag);
+self.$def(s$ady,function(self,_cmd,flag){
+return self.$i_s(i$dy,flag);
 });
-$VN_2.$def('draws_background?',function(self,_cmd){
-return self.$i_g('@draws_background');
+self.$def(s$adz,function(self,_cmd){
+return self.$i_g(i$dy);
 });
-$VN_2.$def('text_color=',function(self,_cmd,color){
-return self.$i_s('@text_color',color);
+self.$def(s$aea,function(self,_cmd,color){
+return self.$i_s(i$dz,color);
 });
-$VN_2.$def('text_color',function(self,_cmd){
-return self.$i_g('@text_color');
+self.$def(s$aeb,function(self,_cmd){
+return self.$i_g(i$dz);
 });
-$VN_2.$def('set_up_field_editor_attributes',function(self,_cmd,text_obj){
+self.$def(s$aab,function(self,_cmd,text_obj){
 return text_obj;
 });
-$VN_2.$def('bezel_style=',function(self,_cmd,style){
-return self.$i_s('@bezel_style',style);
+self.$def(s$ada,function(self,_cmd,style){
+return self.$i_s(i$dm,style);
 });
-$VN_2.$def('bezel_style',function(self,_cmd){
-return self.$i_g('@bezel_style');
+self.$def(s$adb,function(self,_cmd){
+return self.$i_g(i$dm);
 });
-$VN_2.$def('placeholder_string=',function(self,_cmd,string){
-return self.$i_s('@placeholder_string',string);
+self.$def(s$aej,function(self,_cmd,string){
+return self.$i_s(i$eb,string);
 });
-$VN_2.$def('placeholder_string',function(self,_cmd){
-return self.$i_g('@placeholder_string');
+self.$def(s$aek,function(self,_cmd){
+return self.$i_g(i$eb);
 });
-$VN_2.$def('placeholder_attributed_string=',function(self,_cmd,str){
-return self.$i_g('@placeholder_attributed_string');
+self.$def(s$ael,function(self,_cmd,str){
+return self.$i_g(i$ec);
 });
-$VN_2.$def('placeholder_attributed_string',function(self,_cmd){
-return self.$i_g('@placeholder_attributed_string');
+self.$def(s$aem,function(self,_cmd){
+return self.$i_g(i$ec);
 });
+})(RClass.define_under(self,'TextFieldCell',self.$c_g_full('Cell')));
+})(RModule.define('Vienna'));

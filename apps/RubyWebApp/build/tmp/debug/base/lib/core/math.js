@@ -1,10 +1,11 @@
 var mMath = RModule.define('Math');
 
 mMath.$define_const('PI', 3.142);
-mMath.$define_const('E', 0.000001);var $VN_1 = RModule.define('Math');
-$VN_1.$def_s('min',function(self,_cmd,a,b){
-return VN$(a,'<',b) ? a : b;
+mMath.$define_const('E', 0.000001);(function(self) {
+self.$def_s(s$io,function(self,_cmd,a,b){
+return VN$(a,s$fj,b) ? a : b;
 });
-$VN_1.$def_s('max',function(self,_cmd,a,b){
-return VN$(a,'>',b) ? a : b;
+self.$def_s(s$ip,function(self,_cmd,a,b){
+return VN$(a,s$fh,b) ? a : b;
 });
+})(RModule.define('Math'));

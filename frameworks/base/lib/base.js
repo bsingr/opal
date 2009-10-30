@@ -185,6 +185,7 @@ require('core/class');
 require('core/comparable');
 require('core/enumerable');
 require('core/string');
+require('core/symbol');
 require('core/number');
 require('core/array');
 require('core/boolean');

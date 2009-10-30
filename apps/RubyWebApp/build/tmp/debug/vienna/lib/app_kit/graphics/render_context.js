@@ -1,51 +1,53 @@
-var $VN_1 = RModule.define('Vienna');
-var $VN_2 = RClass.define_under($VN_1, 'RenderContext',$VN_2.$c_g_full('Element'));
-$VN_2.$def('initialize',function(self,_cmd,tag_name,options){
-self.$i_s('@element_stack',[document.createElement(tag_name)]);
-self.$i_s('@first_time',true);
-return self.$i_s('@type',tag_name);
+(function(self) {
+(function(self) {
+self.$def(s$as,function(self,_cmd,tag_name,options){
+self.$i_s(i$ba,[document.createElement(tag_name)]);
+self.$i_s(i$bb,true);
+return self.$i_s(i$e,tag_name);
 });
-$VN_2.$def_s('current_context=',function(self,_cmd,current_context){
-return self.$i_s('@current_context',current_context);
+self.$def_s(s$po,function(self,_cmd,current_context){
+return self.$i_s(i$bc,current_context);
 });
-$VN_2.$def_s('current_context',function(self,_cmd){
-return self.$i_g('@current_context');
+self.$def_s(s$pn,function(self,_cmd){
+return self.$i_g(i$bc);
 });
-$VN_2.$def('first_time?',function(self,_cmd){
-return self.$i_g('@first_time');
+self.$def(s$sn,function(self,_cmd){
+return self.$i_g(i$bb);
 });
-$VN_2.$def('first_time=',function(self,_cmd,first_time){
-return self.$i_s('@first_time',first_time);
+self.$def(s$so,function(self,_cmd,first_time){
+return self.$i_s(i$bb,first_time);
 });
-$VN_2.$def('element',function(self,_cmd){
-return VN$(self.$i_g('@element_stack'),'last');
+self.$def(s$jf,function(self,_cmd){
+return VN$(self.$i_g(i$ba),s$fv);
 });
-$VN_2.$def('push_element_stack',function(self,_cmd,element){
-return VN$(self.$i_g('@element_stack'),'<<',element);
+self.$def(s$sp,function(self,_cmd,element){
+return VN$(self.$i_g(i$ba),s$cv,element);
 });
-$VN_2.$def('pop_element_stack',function(self,_cmd){
-return VN$(self.$i_g('@element_stack'),'pop');
+self.$def(s$sq,function(self,_cmd){
+return VN$(self.$i_g(i$ba),s$fx);
 });
-$VN_2.$def('selector',function(self,_cmd,a_selector,block){
-var element = VN$(self,'find_selector',a_selector);
-VN$(self,'push_element_stack',element);
+self.$def(s$sr,function(self,_cmd,a_selector,block){
+var element = VN$(self,s$ss,a_selector);
+VN$(self,s$sp,element);
 arguments[arguments.length -1](self);
-return VN$(self, 'pop_element_stack');
+return VN$(self, s$sq);
 });
-$VN_2.$def('child_nodes',function(self,_cmd){
-return VN$(self, 'element').childNodes.length;});
-$VN_2.$def('child_node',function(self,_cmd,a_number,block){
-var e = VN$(self, 'element').childNodes[a_number];
-VN$(self,'push_element_stack',e);
+self.$def(s$st,function(self,_cmd){
+return VN$(self, s$jf).childNodes.length;});
+self.$def(s$su,function(self,_cmd,a_number,block){
+var e = VN$(self, s$jf).childNodes[a_number];
+VN$(self,s$sp,e);
 arguments[arguments.length -1](self);
-return VN$(self, 'pop_element_stack');
+return VN$(self, s$sq);
 });
-$VN_2.$def('find_selector',function(self,_cmd,a_selector){
-var nodes = VN$(self, 'element').childNodes;
+self.$def(s$ss,function(self,_cmd,a_selector){
+var nodes = VN$(self, s$jf).childNodes;
       var length = nodes.length;
       for (var i = 0; i < length; i++) {
         if(nodes[i].className == a_selector) {
           return nodes[i];
         }
       }
-      return VN$(self, 'element')});
+      return VN$(self, s$jf)});
+})(RClass.define_under(self,'RenderContext',self.$c_g_full('Element')));
+})(RModule.define('Vienna'));

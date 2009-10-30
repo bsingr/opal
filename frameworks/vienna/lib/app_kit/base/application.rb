@@ -204,10 +204,10 @@ module Vienna
       
     end
   end
-  
+  `console.log('this pare');`
   # Vienna::App
   App = Application.shared_application
-  
+  `console.log('ermmm');`
 end
 
 # Attach events to window to capture finished loading...

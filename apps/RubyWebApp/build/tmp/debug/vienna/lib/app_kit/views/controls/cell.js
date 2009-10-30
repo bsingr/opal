@@ -1,416 +1,418 @@
-var $VN_1 = RModule.define('Vienna');
-$VN_1.$c_s('CELL_TYPES',VN.$h('null', 0, 'text', 1, 'image', 2));
-$VN_1.$c_s('IMAGE_POSITIONS',VN.$h('text_only', 0, 'image_only', 1, 'left', 2, 'right', 3, 'below', 4, 'above', 5, 'overlaps', 6));
-$VN_1.$c_s('CELL_STATES',VN.$h('off', 0, 'on', 1));
-$VN_1.$c_s('CELL_MASKS',VN.$h('none', 0, 'contents', 1, 'push_in', 2, 'change_gray', 4, 'change_background', 8));
-$VN_1.$c_s('CONTROL_TINTS',VN.$h('default', 0, 'blue', 1, 'graphite', 6, 'clear', 7, 'hud', 10));
-$VN_1.$c_s('CONTROL_SIZES',VN.$h('regular', 0, 'small', 1, 'mini', 2));
-var $VN_2 = RClass.define_under($VN_1, 'Cell',cObject);
-$VN_2.$def_s('prefers_tracking_until_mouse_up',function(self,_cmd){
+(function(self) {
+self.$c_s('CELL_TYPES',VN.$h(_$gb, 0, _$gc, 1, _$co, 2));
+self.$c_s('IMAGE_POSITIONS',VN.$h(_$gd, 0, _$ge, 1, _$fq, 2, _$gf, 3, _$gg, 4, _$gh, 5, _$gi, 6));
+self.$c_s('CELL_STATES',VN.$h(_$gj, 0, _$gk, 1));
+self.$c_s('CELL_MASKS',VN.$h(_$gl, 0, _$gm, 1, _$gn, 2, _$go, 4, _$gp, 8));
+self.$c_s('CONTROL_TINTS',VN.$h(_$gq, 0, _$gr, 1, _$gs, 6, _$gt, 7, _$gu, 10));
+self.$c_s('CONTROL_SIZES',VN.$h(_$gv, 0, _$gw, 1, _$gx, 2));
+(function(self) {
+self.$def_s(s$yo,function(self,_cmd){
 });
-$VN_2.$def('init_text_cell',function(self,_cmd,str){
-self.$i_s('@cell_type','text');
-self.$i_s('@enabled',true);
-self.$i_s('@editable',false);
-self.$i_s('@selectable',false);
-self.$i_s('@state','off');
-self.$i_s('@title',str);
-self.$i_s('@image',nil);
-self.$i_s('@bordered',false);
-self.$i_s('@bezeled',false);
-self.$i_s('@highlighted',false);
-return self.$i_s('@refuses_first_responder',false);
+self.$def(s$yp,function(self,_cmd,str){
+self.$i_s(i$bq,_$gc);
+self.$i_s(i$br,true);
+self.$i_s(i$bs,false);
+self.$i_s(i$bt,false);
+self.$i_s(i$bu,_$gj);
+self.$i_s(i$bv,str);
+self.$i_s(i$av,nil);
+self.$i_s(i$bw,false);
+self.$i_s(i$bx,false);
+self.$i_s(i$by,false);
+return self.$i_s(i$bz,false);
 });
-$VN_2.$def('init_image_cell',function(self,_cmd,img){
+self.$def(s$yq,function(self,_cmd,img){
 });
-$VN_2.$def('initialize',function(self,_cmd){
-return VN$(self,'init_text_cell','Cell');
+self.$def(s$as,function(self,_cmd){
+return VN$(self,s$yp,'Cell');
 });
-$VN_2.$def('class_name=',function(self,_cmd,class_name){
-return self.$i_s('@class_name',class_name);
+self.$def(s$jg,function(self,_cmd,class_name){
+return self.$i_s(i$bl,class_name);
 });
-$VN_2.$def('class_name',function(self,_cmd){
-return ORTEST(self.$i_g('@class_name'),'vn-control');
+self.$def(s$sy,function(self,_cmd){
+return ORTEST(self.$i_g(i$bl),'vn-control');
 });
-$VN_2.$def('theme_name=',function(self,_cmd,theme_name){
-return self.$i_s('@theme_name',theme_name);
+self.$def(s$ta,function(self,_cmd,theme_name){
+return self.$i_s(i$bm,theme_name);
 });
-$VN_2.$def('theme_name',function(self,_cmd){
-return ORTEST(self.$i_g('@theme_name'),'');
+self.$def(s$sz,function(self,_cmd){
+return ORTEST(self.$i_g(i$bm),'');
 });
-$VN_2.$def('control_view',function(self,_cmd){
-return self.$i_g('@control_view');
+self.$def(s$yr,function(self,_cmd){
+return self.$i_g(i$ca);
 });
-$VN_2.$def('control_view=',function(self,_cmd,view){
-return self.$i_s('@control_view',view);
+self.$def(s$ys,function(self,_cmd,view){
+return self.$i_s(i$ca,view);
 });
-$VN_2.$def('type',function(self,_cmd){
-return self.$i_g('@type');
+self.$def(s$nh,function(self,_cmd){
+return self.$i_g(i$e);
 });
-$VN_2.$def('type=',function(self,_cmd,a_type){
-return self.$i_s('@type',a_type);
+self.$def(s$yt,function(self,_cmd,a_type){
+return self.$i_s(i$e,a_type);
 });
-$VN_2.$def('state',function(self,_cmd){
-return self.$i_g('@state');
+self.$def(s$yu,function(self,_cmd){
+return self.$i_g(i$bu);
 });
-$VN_2.$def('state=',function(self,_cmd,state){
-return self.$i_s('@state',state);
+self.$def(s$yv,function(self,_cmd,state){
+return self.$i_s(i$bu,state);
 });
-$VN_2.$def('target',function(self,_cmd){
-return self.$i_g('@target');
+self.$def(s$wi,function(self,_cmd){
+return self.$i_g(i$cb);
 });
-$VN_2.$def('target=',function(self,_cmd,target){
-return self.$i_s('@target',target);
+self.$def(s$wj,function(self,_cmd,target){
+return self.$i_s(i$cb,target);
 });
-$VN_2.$def('action',function(self,_cmd){
-return self.$i_g('@action');
+self.$def(s$wk,function(self,_cmd){
+return self.$i_g(i$cc);
 });
-$VN_2.$def('action=',function(self,_cmd,action){
-return self.$i_s('@action',action);
+self.$def(s$wl,function(self,_cmd,action){
+return self.$i_s(i$cc,action);
 });
-$VN_2.$def('tag',function(self,_cmd){
-return self.$i_g('@tag');
+self.$def(s$wm,function(self,_cmd){
+return self.$i_g(i$cd);
 });
-$VN_2.$def('tag=',function(self,_cmd,tag){
-return self.$i_s('@tag',tag);
+self.$def(s$wn,function(self,_cmd,tag){
+return self.$i_s(i$cd,tag);
 });
-$VN_2.$def('title',function(self,_cmd){
-return self.$i_g('@title');
+self.$def(s$yw,function(self,_cmd){
+return self.$i_g(i$bv);
 });
-$VN_2.$def('title=',function(self,_cmd,title){
-return self.$i_s('@title',title);
+self.$def(s$yx,function(self,_cmd,title){
+return self.$i_s(i$bv,title);
 });
-$VN_2.$def('opaque?',function(self,_cmd){
-return self.$i_g('@opaque');
+self.$def(s$uy,function(self,_cmd){
+return self.$i_g(i$ce);
 });
-$VN_2.$def('enabled?',function(self,_cmd){
-return self.$i_g('@enabled');
+self.$def(s$wu,function(self,_cmd){
+return self.$i_g(i$br);
 });
-$VN_2.$def('enabled=',function(self,_cmd,flag){
-return self.$i_s('@enabled',flag);
+self.$def(s$wv,function(self,_cmd,flag){
+return self.$i_s(i$br,flag);
 });
-$VN_2.$def('send_action_on',function(self,_cmd,mask){
+self.$def(s$wr,function(self,_cmd,mask){
 });
-$VN_2.$def('continuous?',function(self,_cmd){
-return self.$i_g('@continuous');
+self.$def(s$ws,function(self,_cmd){
+return self.$i_g(i$cf);
 });
-$VN_2.$def('continuous=',function(self,_cmd,flag){
-return self.$i_s('@continuous',flag);
+self.$def(s$wt,function(self,_cmd,flag){
+return self.$i_s(i$cf,flag);
 });
-$VN_2.$def('editable?',function(self,_cmd){
-return self.$i_g('@editable');
+self.$def(s$yy,function(self,_cmd){
+return self.$i_g(i$bs);
 });
-$VN_2.$def('editable=',function(self,_cmd,flag){
-return self.$i_s('@editable',flag);
+self.$def(s$yz,function(self,_cmd,flag){
+return self.$i_s(i$bs,flag);
 });
-$VN_2.$def('selectable?',function(self,_cmd){
-return self.$i_g('@selectable');
+self.$def(s$za,function(self,_cmd){
+return self.$i_g(i$bt);
 });
-$VN_2.$def('selectable=',function(self,_cmd,flag){
-return self.$i_s('@selectable',flag);
+self.$def(s$zb,function(self,_cmd,flag){
+return self.$i_s(i$bt,flag);
 });
-$VN_2.$def('bordered?',function(self,_cmd){
-return self.$i_g('@bordered');
+self.$def(s$zc,function(self,_cmd){
+return self.$i_g(i$bw);
 });
-$VN_2.$def('bordered=',function(self,_cmd,flag){
-return self.$i_s('@bordered',flag);
+self.$def(s$zd,function(self,_cmd,flag){
+return self.$i_s(i$bw,flag);
 });
-$VN_2.$def('bezeled?',function(self,_cmd){
-return self.$i_g('@bezeled');
+self.$def(s$ze,function(self,_cmd){
+return self.$i_g(i$bx);
 });
-$VN_2.$def('bezeled=',function(self,_cmd,flag){
-return self.$i_s('@bezeled',flag);
+self.$def(s$zf,function(self,_cmd,flag){
+return self.$i_s(i$bx,flag);
 });
-$VN_2.$def('scrollable?',function(self,_cmd){
-return self.$i_g('@scrollable');
+self.$def(s$zg,function(self,_cmd){
+return self.$i_g(i$cg);
 });
-$VN_2.$def('scrollable=',function(self,_cmd,flag){
-self.$i_s('@scrollable',flag);
+self.$def(s$zh,function(self,_cmd,flag){
+self.$i_s(i$cg,flag);
 if(RTEST(flag)){
 VN$(self,'wraps=',false);
 }
 });
-$VN_2.$def('highlighted?',function(self,_cmd){
-return self.$i_g('@highlighted');
+self.$def(s$zi,function(self,_cmd){
+return self.$i_g(i$by);
 });
-$VN_2.$def('highlighted=',function(self,_cmd,flag){
-return self.$i_s('@highlighted',flag);
+self.$def(s$zj,function(self,_cmd,flag){
+return self.$i_s(i$by,flag);
 });
-$VN_2.$def('alignment',function(self,_cmd){
-return self.$i_g('@alignment');
+self.$def(s$xa,function(self,_cmd){
+return self.$i_g(i$ch);
 });
-$VN_2.$def('alignment=',function(self,_cmd,align){
-return self.$i_s('@alignment',align);
+self.$def(s$xb,function(self,_cmd,align){
+return self.$i_s(i$ch,align);
 });
-$VN_2.$def('wraps?',function(self,_cmd){
-return self.$i_g('@wraps');
+self.$def(s$zk,function(self,_cmd){
+return self.$i_g(i$ci);
 });
-$VN_2.$def('wraps=',function(self,_cmd,flag){
-self.$i_s('@wraps',flag);
+self.$def(s$zl,function(self,_cmd,flag){
+self.$i_s(i$ci,flag);
 if(RTEST(flag)){
 VN$(self,'scrollable=',false);
 }
 });
-$VN_2.$def('font',function(self,_cmd){
-return self.$i_g('@font');
+self.$def(s$xc,function(self,_cmd){
+return self.$i_g(i$cj);
 });
-$VN_2.$def('font=',function(self,_cmd,obj){
-return self.$i_s('@font',obj);
+self.$def(s$xd,function(self,_cmd,obj){
+return self.$i_s(i$cj,obj);
 });
-$VN_2.$def('entry_acceptable?',function(self,_cmd,str){
+self.$def(s$zm,function(self,_cmd,str){
 return true;
 });
-$VN_2.$def('key_equivalent',function(self,_cmd){
-return self.$i_g('@key_equivalent');
+self.$def(s$zn,function(self,_cmd){
+return self.$i_g(i$ck);
 });
-$VN_2.$def('formatter=',function(self,_cmd,formatter){
-return self.$i_s('@formatter',formatter);
+self.$def(s$xe,function(self,_cmd,formatter){
+return self.$i_s(i$cl,formatter);
 });
-$VN_2.$def('formatter',function(self,_cmd){
-return self.$i_g('@formatter');
+self.$def(s$xf,function(self,_cmd){
+return self.$i_g(i$cl);
 });
-$VN_2.$def('object_value',function(self,_cmd){
+self.$def(s$xm,function(self,_cmd){
 });
-$VN_2.$def('object_value=',function(self,_cmd,obj){
-return self.$i_s('@value',obj);
+self.$def(s$xg,function(self,_cmd,obj){
+return self.$i_s(i$cm,obj);
 });
-$VN_2.$def('valid_object_value?',function(self,_cmd){
+self.$def(s$zo,function(self,_cmd){
 return true;
 });
-$VN_2.$def('string_value',function(self,_cmd){
+self.$def(s$xn,function(self,_cmd){
 });
-$VN_2.$def('string_value=',function(self,_cmd,str){
+self.$def(s$xh,function(self,_cmd,str){
 });
-$VN_2.$def('int_value',function(self,_cmd){
+self.$def(s$xo,function(self,_cmd){
 });
-$VN_2.$def('int_value=',function(self,_cmd,val){
+self.$def(s$xj,function(self,_cmd,val){
 });
-$VN_2.$def('float_value',function(self,_cmd){
+self.$def(s$xp,function(self,_cmd){
 });
-$VN_2.$def('float_value=',function(self,_cmd,val){
+self.$def(s$xk,function(self,_cmd,val){
 });
-$VN_2.$def('double_value',function(self,_cmd){
+self.$def(s$xq,function(self,_cmd){
 });
-$VN_2.$def('double_value=',function(self,_cmd,val){
+self.$def(s$xl,function(self,_cmd,val){
 });
-$VN_2.$def('compare',function(self,_cmd,other_cell){
+self.$def(s$zp,function(self,_cmd,other_cell){
 });
-$VN_2.$def('take_int_value_from',function(self,_cmd,sender){
+self.$def(s$xx,function(self,_cmd,sender){
 });
-$VN_2.$def('take_float_value_from',function(self,_cmd,sender){
+self.$def(s$xy,function(self,_cmd,sender){
 });
-$VN_2.$def('take_double_value_from',function(self,_cmd,sender){
+self.$def(s$xz,function(self,_cmd,sender){
 });
-$VN_2.$def('take_string_value_from',function(self,_cmd,sender){
+self.$def(s$yb,function(self,_cmd,sender){
 });
-$VN_2.$def('take_object_value_from',function(self,_cmd,sender){
+self.$def(s$ya,function(self,_cmd,sender){
 });
-$VN_2.$def('image',function(self,_cmd){
-return self.$i_g('@image');
+self.$def(s$rf,function(self,_cmd){
+return self.$i_g(i$av);
 });
-$VN_2.$def('image=',function(self,_cmd,img){
-return self.$i_s('@image',img);
+self.$def(s$rs,function(self,_cmd,img){
+return self.$i_s(i$av,img);
 });
-$VN_2.$def('control_tint',function(self,_cmd){
-return self.$i_g('@control_tint');
+self.$def(s$ww,function(self,_cmd){
+return self.$i_g(i$cn);
 });
-$VN_2.$def('control_tint=',function(self,_cmd,control_tint){
-return self.$i_s('@control_tint',control_tint);
+self.$def(s$wx,function(self,_cmd,control_tint){
+return self.$i_s(i$cn,control_tint);
 });
-$VN_2.$def('control_size=',function(self,_cmd,size){
-return self.$i_s('@control_size',size);
+self.$def(s$wy,function(self,_cmd,size){
+return self.$i_s(i$co,size);
 });
-$VN_2.$def('control_size',function(self,_cmd){
-return self.$i_g('@control_size');
+self.$def(s$wz,function(self,_cmd){
+return self.$i_g(i$co);
 });
-$VN_2.$def('represented_object',function(self,_cmd){
-return self.$i_g('@represented_object');
+self.$def(s$zq,function(self,_cmd){
+return self.$i_g(i$cp);
 });
-$VN_2.$def('represented_object=',function(self,_cmd,obj){
-return self.$i_s('@represented_object',obj);
+self.$def(s$zr,function(self,_cmd,obj){
+return self.$i_s(i$cp,obj);
 });
-$VN_2.$def('cell_attribute',function(self,_cmd,a_parameter){
+self.$def(s$zs,function(self,_cmd,a_parameter){
 });
-$VN_2.$def('set_cell_attribute:to:',function(self,_cmd,a_parameter,value){
+self.$def(s$zt,function(self,_cmd,a_parameter,value){
 });
-$VN_2.$def('image_rect_for_bounds',function(self,_cmd,the_rect){
+self.$def(s$zu,function(self,_cmd,the_rect){
 return the_rect;
 });
-$VN_2.$def('title_rect_for_bounds',function(self,_cmd,the_rect){
+self.$def(s$zv,function(self,_cmd,the_rect){
 return the_rect;
 });
-$VN_2.$def('drawing_rect_for_bounds',function(self,_cmd,the_rect){
+self.$def(s$zw,function(self,_cmd,the_rect){
 return the_rect;
 });
-$VN_2.$def('cell_size',function(self,_cmd){
+self.$def(s$zx,function(self,_cmd){
 });
-$VN_2.$def('cell_size_for_bounds',function(self,_cmd,a_rect){
+self.$def(s$zy,function(self,_cmd,a_rect){
 });
-$VN_2.$def('highlight_color_with_frame:in_view:',function(self,_cmd,cell_frame,control_view){
+self.$def(s$zz,function(self,_cmd,cell_frame,control_view){
 });
-$VN_2.$def('calc_draw_info',function(self,_cmd,a_rect){
+self.$def(s$aaa,function(self,_cmd,a_rect){
 });
-$VN_2.$def('set_up_field_editor_attributes',function(self,_cmd,text_obj){
+self.$def(s$aab,function(self,_cmd,text_obj){
 return text_obj;
 });
-$VN_2.$def('render_interior_with_frame:in_view:',function(self,_cmd,cell_frame,control_view){
+self.$def(s$aac,function(self,_cmd,cell_frame,control_view){
 });
-$VN_2.$def('render_with_frame:in_view:',function(self,_cmd,cell_frame,control_view){
+self.$def(s$wc,function(self,_cmd,cell_frame,control_view){
 });
-$VN_2.$def('draw_interior_with_frame:in_view:',function(self,_cmd,cell_frame,control_view){
+self.$def(s$aad,function(self,_cmd,cell_frame,control_view){
 });
-$VN_2.$def('draw_with_frame:in_view:',function(self,_cmd,cell_frame,control_view){
+self.$def(s$aae,function(self,_cmd,cell_frame,control_view){
 });
-$VN_2.$def('highlight:with_frame:in_view:',function(self,_cmd,flag,cell_frame,control_view){
-if(RTEST(VN$(self.$i_g('@highlighted'),'!=',flag))){
-self.$i_s('@highlighted',flag);
-VN$(self,'render_with_frame:in_view:',cell_frame,control_view);
+self.$def(s$aaf,function(self,_cmd,flag,cell_frame,control_view){
+if(RTEST(VN$(self.$i_g(i$by),s$d,flag))){
+self.$i_s(i$by,flag);
+VN$(self,s$wc,cell_frame,control_view);
 }
 });
-$VN_2.$def('mouse_down_flags',function(self,_cmd){
+self.$def(s$aag,function(self,_cmd){
 });
-$VN_2.$def('get_periodic_delay:interval:',function(self,_cmd,delay,interval){
+self.$def(s$aah,function(self,_cmd,delay,interval){
 });
-$VN_2.$def('render_context=',function(self,_cmd,a_context){
-return self.$i_s('@render_context',a_context);
+self.$def(s$aai,function(self,_cmd,a_context){
+return self.$i_s(i$cq,a_context);
 });
-$VN_2.$def('render_context',function(self,_cmd){
-return self.$i_g('@render_context');
+self.$def(s$aaj,function(self,_cmd){
+return self.$i_g(i$cq);
 });
-$VN_2.$def('start_tracking_at:in_view:',function(self,_cmd,start_point,control_view){
+self.$def(s$aak,function(self,_cmd,start_point,control_view){
 return true;
 });
-$VN_2.$def('continue_tracking:at:in_view:',function(self,_cmd,last_point,current_point,control_view){
+self.$def(s$aal,function(self,_cmd,last_point,current_point,control_view){
 return true;
 });
-$VN_2.$def('stop_tracking:at:in_view:mouse_is_up:',function(self,_cmd,last_point,stop_point,control_view,flag){
+self.$def(s$aam,function(self,_cmd,last_point,stop_point,control_view,flag){
 });
-$VN_2.$def('track_mouse:in_rect:of_view:until_mouse_up:',function(self,_cmd,the_event,cell_frame,control_view,flag){
-var location = VN$(control_view,'convert_point:from_view:',VN$(the_event,'location_in_window'),nil);
-if(!RTEST(VN$(self,'start_tracking_at:in_view:',VN$(the_event,'location_in_window'),control_view))){
+self.$def(s$yf,function(self,_cmd,the_event,cell_frame,control_view,flag){
+var location = VN$(control_view,s$uz,VN$(the_event,s$og),nil);
+if(!RTEST(VN$(self,s$aak,VN$(the_event,s$og),control_view))){
 return false;
 }
-VN$(self,'highlight:with_frame:in_view:',true,cell_frame,control_view);
-if(RTEST(VN$(self, 'continuous?'))){
-VN$(control_view,'send_action:to:',VN$(self, 'action'),VN$(self, 'target'));
+VN$(self,s$aaf,true,cell_frame,control_view);
+if(RTEST(VN$(self, s$ws))){
+VN$(control_view,s$xw,VN$(self, s$wk),VN$(self, s$wi));
 }
-return VN$(self.$klass.$c_g_full('App'),'bind_events',['left_mouse_up','left_mouse_dragged'],function(the_event){
-location = VN$(control_view,'convert_point:from_view:',VN$(the_event,'location_in_window'),nil);
+return VN$(self.$klass.$c_g_full('App'),s$nb,[_$ai,_$ab],function(the_event){
+location = VN$(control_view,s$uz,VN$(the_event,s$og),nil);
 if(RTEST(flag)){
-if(RTEST(VN$(VN$(the_event,'type'),'==','left_mouse_up'))){
-VN$(self,'stop_tracking:at:in_view:mouse_is_up:',VN$(the_event,'location_in_window'),VN$(the_event,'location_in_window'),control_view,true);
-VN$(self.$klass.$c_g_full('App'),'unbind_events');
-if(RTEST(VN$(location,'in_rect?',cell_frame))){
-if(RTEST(VN$(self.$i_g('@state'),'==','on'))){
-self.$i_s('@state','off');
+if(RTEST(VN$(VN$(the_event,s$nh),s$ai,_$ai))){
+VN$(self,s$aam,VN$(the_event,s$og),VN$(the_event,s$og),control_view,true);
+VN$(self.$klass.$c_g_full('App'),s$ng);
+if(RTEST(VN$(location,s$qx,cell_frame))){
+if(RTEST(VN$(self.$i_g(i$bu),s$ai,_$gk))){
+self.$i_s(i$bu,_$gj);
 }
 else{
-self.$i_s('@state','on');
+self.$i_s(i$bu,_$gk);
 }
-VN$(control_view,'send_action:to:',VN$(self, 'action'),VN$(self, 'target'));
+VN$(control_view,s$xw,VN$(self, s$wk),VN$(self, s$wi));
 }
-VN$(self,'highlight:with_frame:in_view:',false,cell_frame,control_view);
+VN$(self,s$aaf,false,cell_frame,control_view);
 return ;
 }
 else{
-if(!RTEST(VN$(self,'continue_tracking:at:in_view:',VN$(the_event,'location_in_window'),VN$(the_event,'location_in_window'),control_view))){
-VN$(self.$klass.$c_g_full('App'),'unbind_events');
+if(!RTEST(VN$(self,s$aal,VN$(the_event,s$og),VN$(the_event,s$og),control_view))){
+VN$(self.$klass.$c_g_full('App'),s$ng);
 }
-VN$(self,'highlight:with_frame:in_view:',VN$(location,'in_rect?',cell_frame) ? true : false,cell_frame,control_view);
+VN$(self,s$aaf,VN$(location,s$qx,cell_frame) ? true : false,cell_frame,control_view);
 }
 }
 });
 });
-$VN_2.$def('edit_with_frame:in_view:editor:delegate:event:',function(self,_cmd,a_rect,control_view,text_obj,an_obj,the_event){
+self.$def(s$aan,function(self,_cmd,a_rect,control_view,text_obj,an_obj,the_event){
 });
-$VN_2.$def('select_with_frame:in_view:editor:delegate:start:length:',function(self,_cmd,a_rect,control_view,text_obj,an_obj,sel_start,sel_length){
+self.$def(s$aao,function(self,_cmd,a_rect,control_view,text_obj,an_obj,sel_start,sel_length){
 });
-$VN_2.$def('end_editing',function(self,_cmd,text_obj){
+self.$def(s$aap,function(self,_cmd,text_obj){
 });
-$VN_2.$def('reset_cursor_rect:in_view:',function(self,_cmd,cell_frame,control_view){
+self.$def(s$aaq,function(self,_cmd,cell_frame,control_view){
 });
-$VN_2.$def('menu=',function(self,_cmd,a_menu){
-return self.$i_s('@menu',a_menu);
+self.$def(s$mv,function(self,_cmd,a_menu){
+return self.$i_s(i$r,a_menu);
 });
-$VN_2.$def('menu',function(self,_cmd){
-return self.$i_g('@menu');
+self.$def(s$mw,function(self,_cmd){
+return self.$i_g(i$r);
 });
-$VN_2.$def('menu_for_event:in_rect:of_view:',function(self,_cmd,the_event,cell_frame,view){
+self.$def(s$aar,function(self,_cmd,the_event,cell_frame,view){
 });
-$VN_2.$def_s('default_menu',function(self,_cmd){
+self.$def_s(s$aas,function(self,_cmd){
 });
-$VN_2.$def('sends_action_on_end_editing=',function(self,_cmd,flag){
-return self.$i_s('@sends_action_on_end_editing',flag);
+self.$def(s$aat,function(self,_cmd,flag){
+return self.$i_s(i$cr,flag);
 });
-$VN_2.$def('sends_action_on_end_editing?',function(self,_cmd){
-return self.$i_g('@sends_action_on_end_editing');
+self.$def(s$aau,function(self,_cmd){
+return self.$i_g(i$cr);
 });
-$VN_2.$def('base_writing_direction',function(self,_cmd){
-return self.$i_g('@base_writing_direction');
+self.$def(s$aav,function(self,_cmd){
+return self.$i_g(i$cs);
 });
-$VN_2.$def('base_writing_direction=',function(self,_cmd,direction){
-return self.$i_s('@base_writing_direction',direction);
+self.$def(s$aaw,function(self,_cmd,direction){
+return self.$i_s(i$cs,direction);
 });
-$VN_2.$def('line_break_mode=',function(self,_cmd,mode){
-return self.$i_s('@line_break_mode',mode);
+self.$def(s$aax,function(self,_cmd,mode){
+return self.$i_s(i$ct,mode);
 });
-$VN_2.$def('line_break_mode',function(self,_cmd){
-return self.$i_g('@line_break_mode');
+self.$def(s$aay,function(self,_cmd){
+return self.$i_g(i$ct);
 });
-$VN_2.$def('allows_undo=',function(self,_cmd,flag){
-return self.$i_s('@allows_undo',flag);
+self.$def(s$aaz,function(self,_cmd,flag){
+return self.$i_s(i$cu,flag);
 });
-$VN_2.$def('allows_undo?',function(self,_cmd){
-return self.$i_g('@allows_undo');
+self.$def(s$aba,function(self,_cmd){
+return self.$i_g(i$cu);
 });
-$VN_2.$def('refuses_first_responder=',function(self,_cmd,flag){
-return self.$i_s('@refuses_first_responder',flag);
+self.$def(s$yh,function(self,_cmd,flag){
+return self.$i_s(i$bz,flag);
 });
-$VN_2.$def('refuses_first_responder?',function(self,_cmd){
-return self.$i_g('@refuses_first_responder');
+self.$def(s$yi,function(self,_cmd){
+return self.$i_g(i$bz);
 });
-$VN_2.$def('accepts_first_responder?',function(self,_cmd){
+self.$def(s$abb,function(self,_cmd){
 return true;
 });
-$VN_2.$def('shows_first_responder?',function(self,_cmd){
-return self.$i_g('@shows_first_responder');
+self.$def(s$abc,function(self,_cmd){
+return self.$i_g(i$cv);
 });
-$VN_2.$def('shows_first_responder=',function(self,_cmd,flag){
-return self.$i_s('@shows_first_responder',flag);
+self.$def(s$abd,function(self,_cmd,flag){
+return self.$i_s(i$cv,flag);
 });
-$VN_2.$def('perform_click',function(self,_cmd,sender){
+self.$def(s$yg,function(self,_cmd,sender){
 });
-$VN_2.$def('attributed_string_value',function(self,_cmd){
+self.$def(s$ym,function(self,_cmd){
 });
-$VN_2.$def('attributed_string_value=',function(self,_cmd,obj){
+self.$def(s$yn,function(self,_cmd,obj){
 });
-$VN_2.$def('allows_editing_text_attributes?',function(self,_cmd){
-return self.$i_g('@allows_editing_text_attributes');
+self.$def(s$abe,function(self,_cmd){
+return self.$i_g(i$cw);
 });
-$VN_2.$def('allows_editing_text_attributes=',function(self,_cmd,flag){
-self.$i_s('@allows_editing_text_attributes',flag);
+self.$def(s$abf,function(self,_cmd,flag){
+self.$i_s(i$cw,flag);
 if(!RTEST(flag)){
 VN$(self,'imports_graphics=',false);
 }
 });
-$VN_2.$def('imports_graphics?',function(self,_cmd){
-return self.$i_g('@imports_graphics');
+self.$def(s$abg,function(self,_cmd){
+return self.$i_g(i$cx);
 });
-$VN_2.$def('imports_graphics=',function(self,_cmd,flag){
-self.$i_s('@imports_graphics',flag);
+self.$def(s$abh,function(self,_cmd,flag){
+self.$i_s(i$cx,flag);
 if(RTEST(flag)){
 var allows_editing_text_attributes = true;
 }
 });
-$VN_2.$def('allows_mixed_state=',function(self,_cmd,flag){
-return self.$i_s('@allows_mixed_state',flag);
+self.$def(s$abi,function(self,_cmd,flag){
+return self.$i_s(i$cy,flag);
 });
-$VN_2.$def('allows_mixed_state?',function(self,_cmd){
-return self.$i_g('@allows_mixed_state');
+self.$def(s$abj,function(self,_cmd){
+return self.$i_g(i$cy);
 });
-$VN_2.$def('next_state',function(self,_cmd){
+self.$def(s$abk,function(self,_cmd){
 });
-$VN_2.$def('set_next_state',function(self,_cmd){
+self.$def(s$abl,function(self,_cmd){
 });
-$VN_2.$def('hit_test_for_event:in_rect:of_view:',function(self,_cmd,event,cell_frame,control_view){
+self.$def(s$abm,function(self,_cmd,event,cell_frame,control_view){
 });
+})(RClass.define_under(self,'Cell',cObject));
+})(RModule.define('Vienna'));
