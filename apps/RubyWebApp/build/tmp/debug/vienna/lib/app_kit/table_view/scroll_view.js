@@ -6,7 +6,7 @@ self.$def_s(s$aeo,function(self,_cmd,content_size,h_flag,v_flag,a_type){
 });
 self.$def(s$as,function(self,_cmd,frame){
 VN$sup(arguments.callee, self,_cmd,[frame]);
-self.$i_s(i$ed,VN$(self.$klass.$c_g_full('ClipView'),s$is,VN$(self.$klass.$c_g_full('Rect'),s$is,0,0,100,100)));
+self.$i_s(i$ed,VN$(self.$klass.$c_g_full(c$ah),s$is,VN$(self.$klass.$c_g_full(c$t),s$is,0,0,100,100)));
 self.$i_s(i$ee,_$gl);
 return VN$(self,s$tp,self.$i_g(i$ed));
 });
@@ -65,7 +65,7 @@ if(RTEST(flag)){
 if(!RTEST(self.$i_g(i$eg))){
 self.$i_s(i$eg,true);
 if(!RTEST(self.$i_g(i$eh))){
-self.$i_s(i$eh,VN$(self.$klass.$c_g_full('Scroller'),s$is,VN$(self.$klass.$c_g_full('Rect'),s$is,150,40,40,15)));
+self.$i_s(i$eh,VN$(self.$klass.$c_g_full(c$ai),s$is,VN$(self.$klass.$c_g_full(c$t),s$is,150,40,40,15)));
 VN$(self.$i_g(i$eh),'target=',self);
 VN$(self.$i_g(i$eh),'action=',_$hw);
 }
@@ -88,7 +88,7 @@ if(RTEST(flag)){
 if(!RTEST(self.$i_g(i$ei))){
 self.$i_s(i$ei,true);
 if(!RTEST(self.$i_g(i$ej))){
-self.$i_s(i$ej,VN$(self.$klass.$c_g_full('Scroller'),s$is,VN$(self.$klass.$c_g_full('Rect'),s$is,150,20,40,15)));
+self.$i_s(i$ej,VN$(self.$klass.$c_g_full(c$ai),s$is,VN$(self.$klass.$c_g_full(c$t),s$is,150,20,40,15)));
 VN$(self.$i_g(i$ej),'target=',self);
 VN$(self.$i_g(i$ej),'action=',_$hx);
 }
@@ -167,40 +167,40 @@ self.$def(s$afz,function(self,_cmd){
 return self.$i_g(i$er);
 });
 self.$def(s$aev,function(self,_cmd){
-var bounds = VN$(self.$klass.$c_g_full('Rect'),s$is,1,1,VN$(VN$(self.$i_g(i$be),s$jr),s$fe,2),VN$(VN$(self.$i_g(i$be),s$js),s$fe,2));
+var bounds = VN$(self.$klass.$c_g_full(c$t),s$is,1,1,VN$(VN$(self.$i_g(i$be),s$jr),s$fe,2),VN$(VN$(self.$i_g(i$be),s$js),s$fe,2));
 if(RTEST(self.$i_g(i$eg))){
-var frame = VN$(self.$klass.$c_g_full('Rect'),s$is,0,0,0,0);
-VN$(frame,'x=',VN$((VN$(VN$(bounds,s$jo),s$bl,VN$(bounds,s$jr))),s$fe,VN$(self.$klass.$c_g_full('Scroller'),s$aga)));
+var frame = VN$(self.$klass.$c_g_full(c$t),s$is,0,0,0,0);
+VN$(frame,'x=',VN$((VN$(VN$(bounds,s$jo),s$bl,VN$(bounds,s$jr))),s$fe,VN$(self.$klass.$c_g_full(c$ai),s$aga)));
 VN$(frame,'y=',VN$(bounds,s$jp));
-VN$(frame,'width=',VN$(self.$klass.$c_g_full('Scroller'),s$aga));
+VN$(frame,'width=',VN$(self.$klass.$c_g_full(c$ai),s$aga));
 VN$(frame,'height=',VN$(bounds,s$js));
 if(RTEST(self.$i_g(i$ei))){
-VN$(frame,'height=',VN$(VN$(frame,s$js),s$fe,VN$(self.$klass.$c_g_full('Scroller'),s$aga)));
+VN$(frame,'height=',VN$(VN$(frame,s$js),s$fe,VN$(self.$klass.$c_g_full(c$ai),s$aga)));
 }
 VN$(self.$i_g(i$eh),'frame=',frame);
 }
 if(RTEST(self.$i_g(i$ei))){
-frame = VN$(self.$klass.$c_g_full('Rect'),s$is,0,0,0,0);
-VN$(frame,'y=',VN$((VN$(VN$(bounds,s$jp),s$bl,VN$(bounds,s$js))),s$fe,VN$(self.$klass.$c_g_full('Scroller'),s$aga)));
+frame = VN$(self.$klass.$c_g_full(c$t),s$is,0,0,0,0);
+VN$(frame,'y=',VN$((VN$(VN$(bounds,s$jp),s$bl,VN$(bounds,s$js))),s$fe,VN$(self.$klass.$c_g_full(c$ai),s$aga)));
 VN$(frame,'x=',VN$(bounds,s$jo));
 VN$(frame,'width=',VN$(bounds,s$jr));
-VN$(frame,'height=',VN$(self.$klass.$c_g_full('Scroller'),s$aga));
+VN$(frame,'height=',VN$(self.$klass.$c_g_full(c$ai),s$aga));
 if(RTEST(self.$i_g(i$eg))){
-VN$(frame,'width=',VN$(VN$(frame,s$jr),s$fe,VN$(self.$klass.$c_g_full('Scroller'),s$aga)));
+VN$(frame,'width=',VN$(VN$(frame,s$jr),s$fe,VN$(self.$klass.$c_g_full(c$ai),s$aga)));
 }
 VN$(self.$i_g(i$ej),'frame=',frame);
 }
 if(RTEST(self.$i_g(i$ed))){
-frame = VN$(self.$klass.$c_g_full('Rect'),s$is,0,0,0,0);
+frame = VN$(self.$klass.$c_g_full(c$t),s$is,0,0,0,0);
 VN$(frame,'x=',VN$(bounds,s$jo));
 VN$(frame,'y=',VN$(bounds,s$jp));
 VN$(frame,'width=',VN$(bounds,s$jr));
 if(RTEST(self.$i_g(i$eg))){
-VN$(frame,'width=',VN$(VN$(frame,s$jr),s$fe,VN$(self.$klass.$c_g_full('Scroller'),s$aga)));
+VN$(frame,'width=',VN$(VN$(frame,s$jr),s$fe,VN$(self.$klass.$c_g_full(c$ai),s$aga)));
 }
 VN$(frame,'height=',VN$(bounds,s$js));
 if(RTEST(self.$i_g(i$ei))){
-VN$(frame,'height=',VN$(VN$(frame,s$js),s$fe,VN$(self.$klass.$c_g_full('Scroller'),s$aga)));
+VN$(frame,'height=',VN$(VN$(frame,s$js),s$fe,VN$(self.$klass.$c_g_full(c$ai),s$aga)));
 }
 VN$(self.$i_g(i$ed),'frame=',frame);
 }
@@ -209,5 +209,5 @@ self.$def(s$aes,function(self,_cmd,clip_view){
 });
 self.$def(s$mg,function(self,_cmd,the_event){
 });
-})(RClass.define_under(self,'ScrollView',self.$c_g_full('View')));
+})(RClass.define_under(self,'ScrollView',self.$c_g_full(c$y)));
 })(RModule.define('Vienna'));

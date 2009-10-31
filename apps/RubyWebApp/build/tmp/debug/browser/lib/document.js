@@ -21,7 +21,7 @@ if (document.addEventListener) {
     else {
       document.body.detachEvent('on' + type, listener);
     }});
-self.$c_g_full('Document').$def_s(s$jd,function(self,_cmd){
+self.$c_g_full(c$b).$def_s(s$jd,function(self,_cmd){
 return 3;
 });
 })(RClass.define('Document',cObject));

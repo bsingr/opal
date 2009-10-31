@@ -15,18 +15,18 @@ return VN$(self,s$ami,content_rect,style_mask);
 });
 self.$def(s$ami,function(self,_cmd,content_rect,style_mask){
 VN$(self, s$sv);
-self.$i_s(i$bd,VN$(self.$klass.$c_g_full('Rect'),s$is,0,0,0,0));
-self.$i_s(i$gv,VN$(self.$klass.$c_g_full('App'),s$nm,self));
+self.$i_s(i$bd,VN$(self.$klass.$c_g_full(c$t),s$is,0,0,0,0));
+self.$i_s(i$gv,VN$(self.$klass.$c_g_full(c$m),s$nm,self));
 self.$i_s(i$go,style_mask);
 VN$(self,'level=',_$u);
-self.$i_s(i$gw,VN$(self.$klass.$c_g_full('Size'),s$is,0.0,0.0));
-self.$i_s(i$gx,VN$(self.$klass.$c_g_full('Size'),s$is,9999.0,9999.0));
+self.$i_s(i$gw,VN$(self.$klass.$c_g_full(c$q),s$is,0.0,0.0));
+self.$i_s(i$gx,VN$(self.$klass.$c_g_full(c$q),s$is,9999.0,9999.0));
 self.$i_s(i$gy,self);
-self.$i_s(i$q,self.$klass.$c_g_full('App'));
+self.$i_s(i$q,self.$klass.$c_g_full(c$m));
 VN$(self,s$amj);
 VN$(self,'frame=',content_rect);
 VN$(self.$i_g(i$gz),'needs_display=',true);
-VN$(self,'content_view=',VN$(self.$klass.$c_g_full('View'),s$is,VN$(self.$klass.$c_g_full('Rect'),s$is,0,0,VN$(self.$i_g(i$bd),s$jr),VN$(self.$i_g(i$bd),s$js))));
+VN$(self,'content_view=',VN$(self.$klass.$c_g_full(c$y),s$is,VN$(self.$klass.$c_g_full(c$t),s$is,0,0,VN$(self.$i_g(i$bd),s$jr),VN$(self.$i_g(i$bd),s$js))));
 return self;
 });
 self.$def_s(s$sw,function(self,_cmd,options,block){
@@ -37,29 +37,29 @@ arguments[arguments.length -1](win);
 return win;
 });
 self.$def(s$sv,function(self,_cmd){
-self.$i_s(i$d,VN$(self.$klass.$c_g_full('Element'),s$is,_$fw));
-self.$i_s(i$bk,VN$(self.$klass.$c_g_full('RenderContext'),s$is,_$fw));
+self.$i_s(i$d,VN$(self.$klass.$c_g_full(c$s),s$is,_$fw));
+self.$i_s(i$bk,VN$(self.$klass.$c_g_full(c$r),s$is,_$fw));
 VN$(self.$i_g(i$d),s$cv,self.$i_g(i$bk));
-return VN$(self.$klass.$c_g_full('Document'),s$cv,self.$i_g(i$d));
+return VN$(self.$klass.$c_g_full(c$b),s$cv,self.$i_g(i$d));
 });
 self.$def(s$amj,function(self,_cmd){
 var view_class = VN$(self,s$aml,self.$i_g(i$go));
-self.$i_s(i$gz,VN$(view_class,s$is,VN$(self.$klass.$c_g_full('Rect'),s$is,0,0,100,100),self.$i_g(i$go)));
+self.$i_s(i$gz,VN$(view_class,s$is,VN$(self.$klass.$c_g_full(c$t),s$is,0,0,100,100),self.$i_g(i$go)));
 VN$(self.$i_g(i$gz),s$ts,self);
 VN$(self.$i_g(i$gz),'next_responder=',self);
 VN$(self.$i_g(i$d),s$cv,VN$(self.$i_g(i$gz),s$jf));
 VN$(self.$i_g(i$gz),s$tu);
 VN$(self.$i_g(i$gz),'needs_display=',true);
 VN$(VN$(self.$i_g(i$gz),s$jf),s$jb,_$af,function(event){
-var the_event = VN$(self.$klass.$c_g_full('Event'),s$ne,event,self,'left_mouse_down');
-VN$(self.$klass.$c_g_full('App'),s$nf,the_event);
+var the_event = VN$(self.$klass.$c_g_full(c$h),s$ne,event,self,'left_mouse_down');
+VN$(self.$klass.$c_g_full(c$m),s$nf,the_event);
 if(!RTEST(VN$(the_event,s$nw))){
 VN$(the_event,s$nv);
 }
 });
 return VN$(VN$(self.$i_g(i$gz),s$jf),s$jb,_$ag,function(event){
-var the_event = VN$(self.$klass.$c_g_full('Event'),s$ne,event,self,'left_mouse_up');
-VN$(self.$klass.$c_g_full('App'),s$nf,the_event);
+var the_event = VN$(self.$klass.$c_g_full(c$h),s$ne,event,self,'left_mouse_up');
+VN$(self.$klass.$c_g_full(c$m),s$nf,the_event);
 if(!RTEST(VN$(the_event,s$nw))){
 VN$(the_event,s$nv);
 }
@@ -67,13 +67,13 @@ VN$(the_event,s$nv);
 });
 self.$def(s$aml,function(self,_cmd,style_mask){
 if(RTEST(VN$(style_mask,s$al,_$ib))){
-return self.$klass.$c_g_full('BorderlessWindowView');
+return self.$klass.$c_g_full(c$aq);
 }
 else if(RTEST(VN$(style_mask,s$al,_$gu))){
-return self.$klass.$c_g_full('HUDWindowView');
+return self.$klass.$c_g_full(c$ar);
 }
 else{
-return self.$klass.$c_g_full('NormalWindowView');
+return self.$klass.$c_g_full(c$as);
 }
 });
 self.$def_s(s$amd,function(self,_cmd,rect,style){
@@ -111,7 +111,7 @@ return self.$i_g(i$ha);
 });
 self.$def(s$aeu,function(self,_cmd,view){
 VN$(view,s$ts,self);
-var bounds = VN$(self.$klass.$c_g_full('Rect'),s$is,0,0,VN$(VN$(self.$i_g(i$bd),s$bs),s$jr),VN$(VN$(self.$i_g(i$bd),s$bs),s$js));
+var bounds = VN$(self.$klass.$c_g_full(c$t),s$is,0,0,VN$(VN$(self.$i_g(i$bd),s$bs),s$jr),VN$(VN$(self.$i_g(i$bd),s$bs),s$js));
 self.$i_s(i$ed,view);
 VN$(self.$i_g(i$ed),'frame=',VN$(self,s$amh,bounds));
 VN$(view,s$tu);
@@ -168,14 +168,14 @@ if(!RTEST(VN$(origin,s$e,new_origin))){
 VN$(origin,'x=',VN$(new_origin,s$jo));
 VN$(origin,'y=',VN$(new_origin,s$jp));
 VN$(self.$i_g(i$d),'origin=',origin);
-VN$(VN$(self.$klass.$c_g_full('NotificationCenter'),s$lk),s$lq,'window did move',self);
+VN$(VN$(self.$klass.$c_g_full(c$n),s$lk),s$lq,'window did move',self);
 }
 if(!RTEST(VN$(size,s$e,new_size))){
 VN$(size,'width=',VN$(new_size,s$jr));
 VN$(size,'height=',VN$(new_size,s$js));
 VN$(self.$i_g(i$gz),'frame_size=',size);
 VN$(self.$i_g(i$d),'size=',size);
-VN$(VN$(self.$klass.$c_g_full('NotificationCenter'),s$lk),s$lq,'window did resize',self);
+VN$(VN$(self.$klass.$c_g_full(c$n),s$lk),s$lq,'window did resize',self);
 }
 }
 });
@@ -184,7 +184,7 @@ if(!RTEST(VN$(origin,s$e,VN$(self.$i_g(i$bd),s$jm)))){
 VN$(VN$(self.$i_g(i$bd),s$jm),'x=',VN$(origin,s$jo));
 VN$(VN$(self.$i_g(i$bd),s$jm),'y=',VN$(origin,s$jp));
 VN$(self.$i_g(i$d),'origin=',origin);
-VN$(VN$(self.$klass.$c_g_full('NotificationCenter'),s$lk),s$lq,'window did move',self);
+VN$(VN$(self.$klass.$c_g_full(c$n),s$lk),s$lq,'window did move',self);
 }
 });
 self.$def(s$anc,function(self,_cmd,new_frame){
@@ -337,10 +337,10 @@ self.$def(s$aov,function(self,_cmd){
 self.$def(s$aow,function(self,_cmd){
 });
 self.$def(s$aox,function(self,_cmd,point){
-return VN$(self.$klass.$c_g_full('Point'),s$is,VN$(VN$(point,s$jo),s$bl,VN$(self.$i_g(i$bd),s$jo)),VN$(VN$(point,s$jp),s$bl,VN$(self.$i_g(i$bd),s$jp)));
+return VN$(self.$klass.$c_g_full(c$p),s$is,VN$(VN$(point,s$jo),s$bl,VN$(self.$i_g(i$bd),s$jo)),VN$(VN$(point,s$jp),s$bl,VN$(self.$i_g(i$bd),s$jp)));
 });
 self.$def(s$oh,function(self,_cmd,point){
-var res = VN$(self.$klass.$c_g_full('Point'),s$is,VN$(VN$(point,s$jo),s$fe,VN$(self.$i_g(i$bd),s$jo)),VN$(VN$(point,s$jp),s$fe,VN$(self.$i_g(i$bd),s$jp)));
+var res = VN$(self.$klass.$c_g_full(c$p),s$is,VN$(VN$(point,s$jo),s$fe,VN$(self.$i_g(i$bd),s$jo)),VN$(VN$(point,s$jp),s$fe,VN$(self.$i_g(i$bd),s$jp)));
 return res;
 });
 self.$def(s$aoy,function(self,_cmd,sender){
@@ -351,7 +351,7 @@ self.$def(s$apa,function(self,_cmd,sender){
 });
 self.$def(s$apb,function(self,_cmd,level){
 self.$i_s(i$hp,level);
-return VN$(self.$i_g(i$d),s$jh,VN.$h(_$iu,VN$(self.$klass.$c_g_full('WINDOW_LEVELS'),s$bo,level)));
+return VN$(self.$i_g(i$d),s$jh,VN.$h(_$iu,VN$(self.$klass.$c_g_full(c$at),s$bo,level)));
 });
 self.$def(s$apc,function(self,_cmd){
 return self.$i_g(i$hp);
@@ -498,5 +498,5 @@ return self.$i_g(i$ic);
 self.$def(s$aqm,function(self,_cmd){
 return self.$i_g(i$ic);
 });
-})(RClass.define_under(self,'Window',self.$c_g_full('Responder')));
+})(RClass.define_under(self,'Window',self.$c_g_full(c$w)));
 })(RModule.define('Vienna'));

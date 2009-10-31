@@ -60,5 +60,5 @@ return self.$i_g(i$et);
 self.$def(s$agr,function(self,_cmd,proportion){
 return self.$i_s(i$et,proportion);
 });
-})(RClass.define_under(self,'Scroller',self.$c_g_full('Control')));
+})(RClass.define_under(self,'Scroller',self.$c_g_full(c$aa)));
 })(RModule.define('Vienna'));

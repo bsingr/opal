@@ -4,7 +4,7 @@ self.$def(s$as,function(self,_cmd,frame){
 return VN$sup(arguments.callee, self,_cmd,[frame]);
 });
 self.$def_s(s$wb,function(self,_cmd){
-return self.$c_g_full('ButtonCell');
+return self.$c_g_full(c$z);
 });
 self.$def(s$yx,function(self,_cmd,str){
 return VN$(self.$i_g(i$bp),'title=',str);
@@ -87,5 +87,5 @@ return VN$(self.$i_g(i$bp),s$abj);
 });
 self.$def(s$abk,function(self,_cmd){
 });
-})(RClass.define_under(self,'Button',self.$c_g_full('Control')));
+})(RClass.define_under(self,'Button',self.$c_g_full(c$aa)));
 })(RModule.define('Vienna'));

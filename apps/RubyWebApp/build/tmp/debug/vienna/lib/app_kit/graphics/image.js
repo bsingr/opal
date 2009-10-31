@@ -49,7 +49,7 @@ return obj;
 self.$def(s$rh,function(self,_cmd,type,array_rect){
 VN$(self.$i_g(i$at),'[]=',type,array_rect);
 if(RTEST(VN$(type,s$ai,_$u))){
-self.$i_s(i$am,VN$(self.$klass.$c_g_full('Size'),s$is,VN$(array_rect,s$bo,2),VN$(array_rect,s$bo,3)));
+self.$i_s(i$am,VN$(self.$klass.$c_g_full(c$q),s$is,VN$(array_rect,s$bo,2),VN$(array_rect,s$bo,3)));
 }
 });
 self.$def(s$as,function(self,_cmd){
@@ -102,7 +102,7 @@ VN$(self.$i_g(i$v),s$rr,self);
 }
 });
 self.$def(s$rp,function(self,_cmd){
-return self.$i_s(i$am,VN$(self.$klass.$c_g_full('Size'),s$is,self.$i_g(i$av).width,self.$i_g(i$av).height));
+return self.$i_s(i$am,VN$(self.$klass.$c_g_full(c$q),s$is,self.$i_g(i$av).width,self.$i_g(i$av).height));
 });
 self.$def(s$re,function(self,_cmd,name,rect){
 return self;
@@ -126,7 +126,7 @@ self.$def(s$jq,function(self,_cmd,size){
 return self.$i_s(i$am,size);
 });
 self.$def(s$bs,function(self,_cmd){
-return ORTEST(self.$i_g(i$am),VN$(self.$klass.$c_g_full('Size'),s$is,0,0));
+return ORTEST(self.$i_g(i$am),VN$(self.$klass.$c_g_full(c$q),s$is,0,0));
 });
 self.$def(s$rv,function(self,_cmd,name){
 return self.$i_s(i$l,name);
@@ -145,7 +145,7 @@ self.$def(s$ry,function(self,_cmd,point,from_rect,op,delta){
 self.$def(s$rz,function(self,_cmd,rect,from_rect,op,delta){
 });
 self.$def(s$sa,function(self,_cmd,rect,enabled,gray_mask){
-var ctx = VN$(self.$klass.$c_g_full('RenderContext'),s$pn);
+var ctx = VN$(self.$klass.$c_g_full(c$r),s$pn);
 VN$(ctx,s$jh,VN.$h(_$fm,_$fn,_$fo,["url('",(VN$(self, s$rg)),"')"].join('')));
 VN$(ctx,s$jh,VN.$h(_$ed,[(VN$(rect,s$jr)),"px"].join(''),_$fp,[(VN$(rect,s$js)),"px"].join('')));
 VN$(ctx,s$jh,VN.$h(_$fq,[(VN$(rect,s$jo)),"px"].join(''),_$fr,[(VN$(rect,s$jp)),"px"].join('')));

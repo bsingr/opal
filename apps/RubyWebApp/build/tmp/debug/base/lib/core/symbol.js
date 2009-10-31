@@ -1,5 +1,5 @@
 (function(self) {
-self.$c_g_full('Symbol').$def_s(s$ea,function(self,_cmd){
+self.$c_g_full(c$a).$def_s(s$ea,function(self,_cmd){
 });
 self.$def(s$ai,function(self,_cmd,obj){
 return false;

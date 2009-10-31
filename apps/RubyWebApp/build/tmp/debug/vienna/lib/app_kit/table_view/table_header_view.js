@@ -22,5 +22,5 @@ self.$def(s$amc,function(self,_cmd,column){
 });
 self.$def(s$akq,function(self,_cmd,point){
 });
-})(RClass.define_under(self,'TableHeaderView',self.$c_g_full('View')));
+})(RClass.define_under(self,'TableHeaderView',self.$c_g_full(c$y)));
 })(RModule.define('Vienna'));

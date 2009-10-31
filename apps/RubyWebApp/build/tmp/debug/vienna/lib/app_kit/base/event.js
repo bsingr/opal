@@ -49,7 +49,7 @@ self.$def(s$oe,function(self,_cmd){
 self.$def(s$of,function(self,_cmd){
 });
 self.$def(s$og,function(self,_cmd){
-return VN$(self.$i_g(i$ae),s$oh,VN$(self.$klass.$c_g_full('Point'),s$is,self.$i_g(i$ad).clientX,self.$i_g(i$ad).clientY));
+return VN$(self.$i_g(i$ae),s$oh,VN$(self.$klass.$c_g_full(c$p),s$is,self.$i_g(i$ad).clientX,self.$i_g(i$ad).clientY));
 });
 self.$def(s$oi,function(self,_cmd){
 });

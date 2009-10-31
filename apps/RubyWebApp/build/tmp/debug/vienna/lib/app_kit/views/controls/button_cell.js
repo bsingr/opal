@@ -239,7 +239,7 @@ self.$def(s$acr,function(self,_cmd,title,frame,control_view){
 self.$def(s$acs,function(self,_cmd,frame,control_view){
 });
 self.$def(s$act,function(self,_cmd,cell_frame,control_view){
-var ctx = VN$(self.$klass.$c_g_full('RenderContext'),s$pn);
+var ctx = VN$(self.$klass.$c_g_full(c$r),s$pn);
 if(RTEST(VN$(ctx,s$sn))){
 VN$(ctx,s$cv,"<div class='left'></div>");
 VN$(ctx,s$cv,"<div class='middle'></div>");
@@ -263,7 +263,7 @@ else{
 return VN$(ctx,'class_name=',VN$(class_name_array,s$ge,' '));
 });
 self.$def(s$aac,function(self,_cmd,cell_frame,control_view){
-var ctx = VN$(self.$klass.$c_g_full('RenderContext'),s$pn);
+var ctx = VN$(self.$klass.$c_g_full(c$r),s$pn);
 if(!RTEST(VN$(VN$(self, s$acf),s$ai,_$ge))){
 VN$(ctx,s$sr,'title',function(title){
 VN$(title,'inner_html=',self.$i_g(i$bv));
@@ -282,9 +282,9 @@ VN$(self,s$acu,self.$i_g(i$av),cell_frame,control_view);
 self.$def(s$acu,function(self,_cmd,image,frame,control_view){
 var enabled = self.$i_g(i$br) ? true : NOTTEST(self.$i_g(i$de));
 var gray_mask = self.$i_g(i$by);
-var ctx = VN$(self.$klass.$c_g_full('RenderContext'),s$pn);
+var ctx = VN$(self.$klass.$c_g_full(c$r),s$pn);
 return VN$(ctx,s$sr,'image',function(img){
-return VN$(image,s$sa,VN$(self.$klass.$c_g_full('Rect'),s$is,0,0,VN$(VN$(image,s$bs),s$jr),VN$(VN$(image,s$bs),s$js)),enabled,gray_mask);
+return VN$(image,s$sa,VN$(self.$klass.$c_g_full(c$t),s$is,0,0,VN$(VN$(image,s$bs),s$jr),VN$(VN$(image,s$bs),s$js)),enabled,gray_mask);
 });
 });
 self.$def(s$acv,function(self,_cmd,title,frame,control_view){
@@ -331,5 +331,5 @@ return self.$i_g(i$dn);
 self.$def(s$add,function(self,_cmd){
 return self.$i_g(i$dn);
 });
-})(RClass.define_under(self,'ButtonCell',self.$c_g_full('Cell')));
+})(RClass.define_under(self,'ButtonCell',self.$c_g_full(c$x)));
 })(RModule.define('Vienna'));

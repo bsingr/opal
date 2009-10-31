@@ -2,7 +2,7 @@
 self.$def(s$as,function(self,_cmd,url,options,block){
 });
 self.$def_s(s$ju,function(self,_cmd,url,options,block){
-return VN$(self.$c_g_full('JSONP'),s$ju,url,options,block);
+return VN$(self.$c_g_full(c$d),s$ju,url,options,block);
 });
 })(RClass.define('JSON',cObject));
 (function(self) {
@@ -11,7 +11,7 @@ self.$def(s$as,function(self,_cmd,url,options,block){
 self.$i_s(i$f,url);
 self.$i_s(i$g,"vn_jsonp_callback_0");
 self.$i_s(i$h,block);
-VN$(self.$klass.$c_g_full('JSONP_CALLBACKS'),s$cv,self.$i_g(i$g));
+VN$(self.$klass.$c_g_full(c$e),s$cv,self.$i_g(i$g));
 VN$(self,s$ag,["Initializing JSNOP connection with url: ",(self.$i_g(i$f))].join(''));
 return VN$(self, s$jv);
 });

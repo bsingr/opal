@@ -49,5 +49,5 @@ var nodes = VN$(self, s$jf).childNodes;
         }
       }
       return VN$(self, s$jf)});
-})(RClass.define_under(self,'RenderContext',self.$c_g_full('Element')));
+})(RClass.define_under(self,'RenderContext',self.$c_g_full(c$s)));
 })(RModule.define('Vienna'));

@@ -23,10 +23,10 @@ self.$def(s$adz,function(self,_cmd){
 return self.$i_g(i$dy);
 });
 self.$def(s$aer,function(self,_cmd,a_view){
-var default_center = VN$(self.$klass.$c_g_full('NotificationCenter'),s$lk);
+var default_center = VN$(self.$klass.$c_g_full(c$n),s$lk);
 if(RTEST(self.$i_g(i$eu))){
-VN$(default_center,s$ls,self,self.$klass.$c_g_full('VIEW_FRAME_DID_CHANGE_NOTIFICATION'),self.$i_g(i$eu));
-VN$(default_center,s$ls,self,self.$klass.$c_g_full('VIEW_BOUNDS_DID_CHANGE_NOTIFICATION'),self.$i_g(i$eu));
+VN$(default_center,s$ls,self,self.$klass.$c_g_full(c$aj),self.$i_g(i$eu));
+VN$(default_center,s$ls,self,self.$klass.$c_g_full(c$ak),self.$i_g(i$eu));
 VN$(self.$i_g(i$eu),s$tq);
 }
 self.$i_s(i$eu,a_view);
@@ -36,7 +36,7 @@ self.$def(s$aet,function(self,_cmd){
 return self.$i_g(i$eu);
 });
 self.$def(s$ags,function(self,_cmd){
-return VN$(self.$klass.$c_g_full('Rect'),s$is,0,0,0,0);
+return VN$(self.$klass.$c_g_full(c$t),s$is,0,0,0,0);
 });
 self.$def(s$aex,function(self,_cmd,an_obj){
 return self.$i_s(i$ef,an_obj);
@@ -65,17 +65,17 @@ return new_origin;
 });
 self.$def(s$agz,function(self,_cmd,new_origin){
 if(RTEST(VN$(VN$(self.$i_g(i$bf),s$br),s$fh,0))){
-VN$(VN$(self.$i_g(i$bf),s$bo,0),'frame_origin=',VN$(self.$klass.$c_g_full('Point'),s$is,VN$((0),s$fe,VN$(new_origin,s$jo)),VN$((0),s$fe,VN$(new_origin,s$jp))));
+VN$(VN$(self.$i_g(i$bf),s$bo,0),'frame_origin=',VN$(self.$klass.$c_g_full(c$p),s$is,VN$((0),s$fe,VN$(new_origin,s$jo)),VN$((0),s$fe,VN$(new_origin,s$jp))));
 }
 });
 self.$def(s$aha,function(self,_cmd,x,y){
-return VN$(self,s$agz,VN$(self.$klass.$c_g_full('Point'),s$is,x,y));
+return VN$(self,s$agz,VN$(self.$klass.$c_g_full(c$p),s$is,x,y));
 });
-})(RClass.define_under(self,'ClipView',self.$c_g_full('View')));
+})(RClass.define_under(self,'ClipView',self.$c_g_full(c$y)));
 (function(self) {
 self.$def(s$aes,function(self,_cmd,a_clip_view){
 });
 self.$def(s$ahb,function(self,_cmd,a_clip_view,a_point){
 });
-})(RClass.define_under(self,'View',self.$c_g_full('Responder')));
+})(RClass.define_under(self,'View',self.$c_g_full(c$w)));
 })(RModule.define('Vienna'));

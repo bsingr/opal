@@ -1,8 +1,8 @@
 (function(self) {
 (function(self) {
 self.$def(s$as,function(self,_cmd,x,y,w,h){
-self.$i_s(i$al,VN$(self.$klass.$c_g_full('Point'),s$is,x,y));
-return self.$i_s(i$am,VN$(self.$klass.$c_g_full('Size'),s$is,w,h));
+self.$i_s(i$al,VN$(self.$klass.$c_g_full(c$p),s$is,x,y));
+return self.$i_s(i$am,VN$(self.$klass.$c_g_full(c$q),s$is,w,h));
 });
 self.$def(s$qo,function(self,_cmd){
 return self;

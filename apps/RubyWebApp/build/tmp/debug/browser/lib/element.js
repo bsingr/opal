@@ -35,7 +35,7 @@ else{
 VN$(self, s$jf).style.width = VN$(new_size,s$jr) + 'px';VN$(self, s$jf).style.height = VN$(new_size,s$js) + 'px';}
 });
 self.$def(s$cv,function(self,_cmd,other){
-if(RTEST(VN$(other,s$ad,self.$klass.$c_g_full('String')))){
+if(RTEST(VN$(other,s$ad,self.$klass.$c_g_full(c$c)))){
 VN$(self, s$jf).innerHTML += other;}
 else{
 VN$(self, s$jf).appendChild(VN$(other,s$jf));}

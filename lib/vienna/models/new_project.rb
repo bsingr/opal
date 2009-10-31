@@ -40,6 +40,8 @@ module Vienna
       @js_sym_prefix = "a"
       @js_ivar_to_id = {}
       @js_ivar_prefix = "a"
+      @js_const_to_id = {}
+      @js_const_prefix = "a"
     end
     
     def rakefile
@@ -127,9 +129,6 @@ module Vienna
           File.copy(img, File.expand_path(File.join(img_build_path, File.basename(img))))
         end
       end
-      
-      puts @js_sym_to_id.inspect
-      puts @js_str_to_id.inspect
     end
   
     
@@ -153,6 +152,11 @@ module Vienna
       @js_ivar_to_id.each_pair do |key, value|
         file.write "i$#{value}='#{key}';"
       end    
+      file.write "\n"
+      # file.write "\n\n\n\n"
+      @js_const_to_id.each_pair do |key, value|
+        file.write "#{value}='#{key}';"
+      end
       # file.write "console.profile();"
       file.write "VN$ENV = { 'display_mode': 'render', 'image_dir': 'images' };"
     end
@@ -302,5 +306,17 @@ module Vienna
         res
       end      
     end
+
+    def js_id_for_const(const)
+       if @js_const_to_id.has_key?(const)
+         # puts "has #{sym}"
+         return @js_const_to_id[const]
+       else
+         res = "c$#{@js_const_prefix}"
+         @js_const_to_id[const] = res
+         @js_const_prefix.succ!
+         res
+       end      
+     end
   end
 end

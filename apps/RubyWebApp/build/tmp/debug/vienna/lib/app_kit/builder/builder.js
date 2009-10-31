@@ -6,10 +6,10 @@ self.$def(s$as,function(self,_cmd,name,block){
 self.$i_s(i$l,name);
 self.$i_s(i$id,block);
 self.$i_s(i$ie,[]);
-return VN$(self.$klass.$c_g_full('BUILDERS'),'[]=',name,self);
+return VN$(self.$klass.$c_g_full(c$av),'[]=',name,self);
 });
 self.$def_s(s$sw,function(self,_cmd,name,options,block){
-var builder = VN$(self.$c_g_full('BUILDERS'),s$bo,name);
+var builder = VN$(self.$c_g_full(c$av),s$bo,name);
 return VN$(builder,s$aqn,options,block);
 });
 self.$def(s$aqn,function(self,_cmd,options,block){

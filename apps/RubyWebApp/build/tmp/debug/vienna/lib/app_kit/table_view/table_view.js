@@ -3,14 +3,14 @@
 self.$def(s$as,function(self,_cmd,frame){
 VN$sup(arguments.callee, self,_cmd,[frame]);
 self.$i_s(i$ew,17.0);
-self.$i_s(i$ex,VN$(self.$klass.$c_g_full('Size'),s$is,3.0,2.0));
+self.$i_s(i$ex,VN$(self.$klass.$c_g_full(c$q),s$is,3.0,2.0));
 self.$i_s(i$ey,VN$((1),s$eg));
 self.$i_s(i$ez,[]);
 self.$i_s(i$fa,[]);
 self.$i_s(i$fb,[]);
-self.$i_s(i$fc,VN$(self.$klass.$c_g_full('TableHeaderView'),s$is,VN$(self.$klass.$c_g_full('Rect'),s$is,0,0,VN$(self.$i_g(i$be),s$jr),17)));
+self.$i_s(i$fc,VN$(self.$klass.$c_g_full(c$al),s$is,VN$(self.$klass.$c_g_full(c$t),s$is,0,0,VN$(self.$i_g(i$be),s$jr),17)));
 VN$(self.$i_g(i$fc),'table_view=',self);
-return self.$i_s(i$fd,VN$(self.$klass.$c_g_full('TableCornerView'),s$is,VN$(self.$klass.$c_g_full('Rect'),s$is,0,0,VN$(self.$klass.$c_g_full('Scroller'),s$aga),VN$(self.$klass.$c_g_full('Scroller'),s$aga))));
+return self.$i_s(i$fd,VN$(self.$klass.$c_g_full(c$am),s$is,VN$(self.$klass.$c_g_full(c$t),s$is,0,0,VN$(self.$klass.$c_g_full(c$ai),s$aga),VN$(self.$klass.$c_g_full(c$ai),s$aga))));
 });
 self.$def(s$ahc,function(self,_cmd,a_source){
 return self.$i_s(i$fe,a_source);
@@ -145,7 +145,7 @@ return VN$(self,'needs_display=',true);
 self.$def(s$aim,function(self,_cmd){
 self.$i_s(i$ey,VN$((1),s$eg));
 var rows = VN$(self,s$aib);
-var size = VN$(self.$klass.$c_g_full('Size'),s$is,VN$(self.$i_g(i$bd),s$jr),VN$(self.$i_g(i$bd),s$js));
+var size = VN$(self.$klass.$c_g_full(c$q),s$is,VN$(self.$i_g(i$bd),s$jr),VN$(self.$i_g(i$bd),s$js));
 if(RTEST(VN$(rows,s$fh,0))){
 VN$(size,'width=',VN$(VN$(self,s$ain,0),s$jr));
 }
@@ -221,7 +221,7 @@ VN$(column_context,'first_time=',false);
 else{
 VN$(column_context,'first_time=',true);
 }
-VN$(self.$klass.$c_g_full('RenderContext'),'current_context=',column_context);
+VN$(self.$klass.$c_g_full(c$r),'current_context=',column_context);
 VN$(column_context,'frame=',cell_frame);
 return VN$(data_cell,s$wc,cell_frame,self);
 });
@@ -340,7 +340,7 @@ self.$def(s$akn,function(self,_cmd){
 return self.$i_g(i$fw);
 });
 self.$def(s$aio,function(self,_cmd,column){
-var result = VN$(self.$klass.$c_g_full('Rect'),s$is,0,0,0,0);
+var result = VN$(self.$klass.$c_g_full(c$t),s$is,0,0,0,0);
 if(RTEST(ORTEST(VN$(column,s$fj,0),VN$(column,s$fi,VN$(self.$i_g(i$ez),s$br))))){
 return result;
 }
@@ -351,7 +351,7 @@ for (i = 0; i < column; i++) {VN$(result,'x=',VN$(VN$(result,s$jo),s$bl,VN$(VN$(
 }return result;
 });
 self.$def(s$ain,function(self,_cmd,row){
-var result = VN$(self.$klass.$c_g_full('Rect'),s$is,0,0,0,0);
+var result = VN$(self.$klass.$c_g_full(c$t),s$is,0,0,0,0);
 if(RTEST(ORTEST(VN$(row,s$fj,0),VN$(row,s$fi,VN$(self,s$aib))))){
 return result;
 }
@@ -370,7 +370,7 @@ self.$def(s$akq,function(self,_cmd,point){
 self.$def(s$akr,function(self,_cmd,point){
 });
 self.$def(s$aiu,function(self,_cmd,column,row){
-var result = VN$(self.$klass.$c_g_full('Rect'),s$is,0,0,0,0);
+var result = VN$(self.$klass.$c_g_full(c$t),s$is,0,0,0,0);
 if(RTEST(ORTEST(VN$(column,s$fj,0),VN$(column,s$fh,VN$(self, s$aia))))){
 return result;
 }
@@ -434,5 +434,5 @@ self.$def(s$alf,function(self,_cmd,clip_rect){
 });
 self.$def(s$alg,function(self,_cmd,clip_rect){
 });
-})(RClass.define_under(self,'TableView',self.$c_g_full('Control')));
+})(RClass.define_under(self,'TableView',self.$c_g_full(c$aa)));
 })(RModule.define('Vienna'));

@@ -87,18 +87,18 @@ class Hash
   
   def to_a
     `var ary = [];
-    for (var i = 0; i < self.$keys.length; i++) {
-      ary.push([self.$keys[i], self.$values[self.$keys[i]]]);
+    for (var i = 0; i < #{self}.$keys.length; i++) {
+      ary.push([#{self}.$keys[i], #{self}.$values[#{self}.$keys[i]]]);
     }
     return ary; `
   end
   
   def to_s
-    `if (self.$keys.length == 0) return '{...}';
+    `if (#{self}.$keys.length == 0) return '{...}';
   
-    var str = '{' + self.$keys[0].$call('inspect', []) + '=>' + self.$values[self.$keys[0]].$call('inspect', []);
-    for (var i = 1; i < self.$keys.length; i++) {
-      str += (', ' + self.$keys[i].$call('inspect', []) + '=>' + self.$values[self.$keys[i]].$call('inspect', []))
+    var str = '{' + #{self}.$keys[0].$call('inspect', []) + '=>' + #{self}.$values[#{self}.$keys[0]].$call('inspect', []);
+    for (var i = 1; i < #{self}.$keys.length; i++) {
+      str += (', ' + #{self}.$keys[i].$call('inspect', []) + '=>' + #{self}.$values[#{self}.$keys[i]].$call('inspect', []))
     }
     str += '}';
     return str;`
@@ -113,10 +113,10 @@ class Hash
   end
   
   def [](key)
-    `if (!self.$values.hasOwnProperty(key)) {
-      return VN$(self, 'default', [key]);
+    `if (!#{self}.$values.hasOwnProperty(key)) {
+      return VN$(#{self}, 'default', [key]);
     }
-    return self.$values[key] ;`
+    return #{self}.$values[key] ;`
   end
   
   def hash
@@ -139,20 +139,20 @@ class Hash
   def store key, val
     # if we dont have the key, add it to the ordered array so that we can keep
     # the hash ordered.
-    `if (self.$values[key] === undefined) {
-      self.$keys.push(key);
+    `if (#{self}.$values[key] === undefined) {
+      #{self}.$keys.push(key);
     }
   
-    self.$values[key] = val ;
+    #{self}.$values[key] = val ;
     return val ;`
   end
   
   def default
-    `return self.$ifnone`
+    `return #{self}.$ifnone`
   end
   
   def default=(def_obj)
-    `self.$ifnone = ifnone;
+    `#{self}.$ifnone = ifnone;
     return ifnone;`
   end
   
@@ -197,8 +197,8 @@ class Hash
   end
   
   def each (&block)
-    `for (var i = 0; i < self.$keys.length; i++) {`
-      yield `self.$keys[i]`, `self.$values[self.$keys[i]]`
+    `for (var i = 0; i < #{self}.$keys.length; i++) {`
+      yield `#{self}.$keys[i]`, `#{self}.$values[#{self}.$keys[i]]`
     `}`
     self
   end
@@ -284,7 +284,7 @@ class Hash
   end
   
   def has_key?(key)
-    `if (!self.$values.hasOwnProperty(key)) {
+    `if (!#{self}.$values.hasOwnProperty(key)) {
       return false;
     }
     return true ;`

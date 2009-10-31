@@ -109,6 +109,10 @@ class Vienna::RubyParser < Racc::Parser
   def js_id_for_ivar(ivar)
     @project.js_id_for_ivar(ivar)
   end
+
+  def js_id_for_const(const)
+    @project.js_id_for_const(const)
+  end
   
 	
 	# Parse the input, and return a string as output

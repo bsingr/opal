@@ -294,12 +294,12 @@ VN$(self,s$aaf,true,cell_frame,control_view);
 if(RTEST(VN$(self, s$ws))){
 VN$(control_view,s$xw,VN$(self, s$wk),VN$(self, s$wi));
 }
-return VN$(self.$klass.$c_g_full('App'),s$nb,[_$ai,_$ab],function(the_event){
+return VN$(self.$klass.$c_g_full(c$m),s$nb,[_$ai,_$ab],function(the_event){
 location = VN$(control_view,s$uz,VN$(the_event,s$og),nil);
 if(RTEST(flag)){
 if(RTEST(VN$(VN$(the_event,s$nh),s$ai,_$ai))){
 VN$(self,s$aam,VN$(the_event,s$og),VN$(the_event,s$og),control_view,true);
-VN$(self.$klass.$c_g_full('App'),s$ng);
+VN$(self.$klass.$c_g_full(c$m),s$ng);
 if(RTEST(VN$(location,s$qx,cell_frame))){
 if(RTEST(VN$(self.$i_g(i$bu),s$ai,_$gk))){
 self.$i_s(i$bu,_$gj);
@@ -314,7 +314,7 @@ return ;
 }
 else{
 if(!RTEST(VN$(self,s$aal,VN$(the_event,s$og),VN$(the_event,s$og),control_view))){
-VN$(self.$klass.$c_g_full('App'),s$ng);
+VN$(self.$klass.$c_g_full(c$m),s$ng);
 }
 VN$(self,s$aaf,VN$(location,s$qx,cell_frame) ? true : false,cell_frame,control_view);
 }

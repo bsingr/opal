@@ -791,11 +791,11 @@ module Vienna
       constant_scope = context[:scope_constant] ? '$c_g' : '$c_g_full'
       if context[:top_level]
         # nothing else to look around, so normal check..
-        write "cObject.$c_g('#{const[:name]}')"
+        write "cObject.$c_g(#{js_id_for_const(const[:name])})"
       elsif context[:instance]
-        write "self.$klass.#{constant_scope}('#{const[:name]}')"
+        write "self.$klass.#{constant_scope}(#{js_id_for_const(const[:name])})"
       else
-        write "self.#{constant_scope}('#{const[:name]}')"
+        write "self.#{constant_scope}(#{js_id_for_const(const[:name])})"
       end
       
       write ";\n" if context[:full_stmt]

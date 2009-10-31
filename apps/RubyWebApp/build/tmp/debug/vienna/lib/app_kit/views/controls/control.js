@@ -6,10 +6,10 @@ self.$i_s(i$bp,VN$(VN$(VN$(self,s$f),s$wb),s$is));
 return VN$(self.$i_g(i$bp),'render_context=',self.$i_g(i$bk));
 });
 self.$def_s(s$wb,function(self,_cmd){
-return self.$c_g_full('Cell');
+return self.$c_g_full(c$x);
 });
 self.$def(s$vt,function(self,_cmd,context){
-VN$(self.$klass.$c_g_full('RenderContext'),'current_context=',context);
+VN$(self.$klass.$c_g_full(c$r),'current_context=',context);
 return VN$(self.$i_g(i$bp),s$wc,VN$(self, s$uv),self);
 });
 self.$def(s$jg,function(self,_cmd,class_name){
@@ -156,7 +156,7 @@ VN$(self,s$ag,'sending action on');
 if(RTEST(VN$(self,s$ow,_$dy))){
 VN$(self,s$ox,_$dy);
 }
-return VN$(self.$klass.$c_g_full('App'),s$ns,action,target,self);
+return VN$(self.$klass.$c_g_full(c$m),s$ns,action,target,self);
 });
 self.$def(s$xx,function(self,_cmd,sender){
 });
@@ -214,5 +214,5 @@ else{
 VN$sup(arguments.callee, self,_cmd,[binding,observable,key_path,options]);
 }
 });
-})(RClass.define_under(self,'Control',self.$c_g_full('View')));
+})(RClass.define_under(self,'Control',self.$c_g_full(c$y)));
 })(RModule.define('Vienna'));

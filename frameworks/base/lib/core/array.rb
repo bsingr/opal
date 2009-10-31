@@ -67,12 +67,12 @@ class Array
   end
   
   def to_s
-    `if (self.length == 0) return '[]';
+    `if (#{self}.length == 0) return '[]';
     var str = '[';
-    for (var i = 0; i < (self.length - 1); i++) {
-      str += (self[i].$('inspect', []) + ', ');
+    for (var i = 0; i < (#{self}.length - 1); i++) {
+      str += (#{self}[i].$('inspect', []) + ', ');
     }
-    str += (self[self.length - 1].$('inspect', []) + ']');
+    str += (#{self}[self.length - 1].$('inspect', []) + ']');
     return str ;`
   end
   
@@ -89,13 +89,13 @@ class Array
   end
   
   def ==(ary)
-    `if (ary == this) return true;
+    `if (ary == #{self}) return true;
     if (ary.$type != VN.ARRAY) {
       if (ary.$('respond_to?', ['to_a'])) {
         return false;
       }
     }
-    if (this.length != ary.length) return false ;
+    if (#{self}.length != ary.length) return false ;
     return true;`
   end
   
@@ -108,27 +108,27 @@ class Array
   end
   
   def [] idx
-    `return self[idx];`
+    `return #{self}[idx];`
   end
   
   def []= idx, value
-    `return self[idx] = value;`
+    `return #{self}[idx] = value;`
   end
   
   def at index
-    `return self[index];`
+    `return #{self}[index];`
   end
   
   def fetch index, the_default
-    `return self[index];`
+    `return #{self}[index];`
   end
   
   def first
-    `return self[0];`
+    `return #{self}[0];`
   end
   
   def last
-    `return self[self.length-1];`
+    `return #{self}[#{self}.length-1];`
   end
   
   def concat
@@ -136,15 +136,15 @@ class Array
   end
   
   def <<(obj)
-    `return self.push(#{obj});`
+    `return #{self}.push(#{obj});`
   end
   
   def push(obj)
-    `return self.push(#{obj});`
+    `return #{self}.push(#{obj});`
   end
   
   def pop
-    `return self.pop();`
+    `return #{self}.pop();`
   end
   
   def shift
@@ -162,8 +162,8 @@ class Array
   # yield for each item in array, then return self
   # 
   def each (&block)
-    `for (var i = 0; i < self.length; i++) {`
-      yield `self[i]`
+    `for (var i = 0; i < #{self}.length; i++) {`
+      yield `#{self}[i]`
     `}`
     self
   end
@@ -177,15 +177,15 @@ class Array
   end
   
   def length
-    `return self.length;`
+    `return #{self}.length;`
   end
   
   def size
-    `return self.length;`
+    `return #{self}.length;`
   end
   
   def empty?
-    `return (self.length == 0) ? true : false;`
+    `return (#{self}.length == 0) ? true : false;`
   end
   
   def find_index
@@ -197,12 +197,12 @@ class Array
   end
   
   def index obj
-     `var idx = self.indexOf(obj);
+     `var idx = #{self}.indexOf(obj);
      return idx == -1 ? idx : nil;`
   end
   
   def join sep
-    `return self.join(#{sep});`
+    `return #{self}.join(#{sep});`
   end
   
   def reverse
@@ -286,7 +286,7 @@ class Array
   end
   
   def include? obj
-    `return (self.indexOf(obj) == -1) ? false : true;`
+    `return (#{self}.indexOf(obj) == -1) ? false : true;`
   end
   
   def <=>

@@ -13,12 +13,12 @@ self.$def(s$sy,function(self,_cmd){
 return 'vn-text-field';
 });
 self.$def(s$wc,function(self,_cmd,cell_frame,control_view){
-var ctx = VN$(self.$klass.$c_g_full('RenderContext'),s$pn);
+var ctx = VN$(self.$klass.$c_g_full(c$r),s$pn);
 if(RTEST(VN$(ctx,s$sn))){
 VN$(ctx,s$cv,"<div class='left'></div>");
 VN$(ctx,s$cv,"<div class='middle'></div>");
 VN$(ctx,s$cv,"<div class='right'></div>");
-if(RTEST(VN$(control_view,s$af,self.$klass.$c_g_full('TextField')))){
+if(RTEST(VN$(control_view,s$af,self.$klass.$c_g_full(c$ag)))){
 VN$(ctx,s$cv,"<input class='input'></input>");
 }
 else{
@@ -27,7 +27,7 @@ VN$(ctx,s$cv,"<div class='input'></input>");
 VN$(ctx,'first_time=',false);
 }
 VN$(ctx,'class_name=',VN$([VN$(self, s$sy),VN$(self, s$sz)],s$ge,' '));
-if(RTEST(VN$(control_view,s$af,self.$klass.$c_g_full('TextField')))){
+if(RTEST(VN$(control_view,s$af,self.$klass.$c_g_full(c$ag)))){
 }
 else{
 VN$(ctx,s$sr,_$hu,function(input){
@@ -74,5 +74,5 @@ return self.$i_g(i$ec);
 self.$def(s$aem,function(self,_cmd){
 return self.$i_g(i$ec);
 });
-})(RClass.define_under(self,'TextFieldCell',self.$c_g_full('Cell')));
+})(RClass.define_under(self,'TextFieldCell',self.$c_g_full(c$x)));
 })(RModule.define('Vienna'));

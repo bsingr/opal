@@ -4,7 +4,7 @@ self.$def(s$as,function(self,_cmd,frame){
 return VN$sup(arguments.callee, self,_cmd,[frame]);
 });
 self.$def_s(s$wb,function(self,_cmd){
-return self.$c_g_full('SliderCell');
+return self.$c_g_full(c$ad);
 });
 self.$def(s$sy,function(self,_cmd){
 return 'vn-slider';
@@ -70,5 +70,5 @@ self.$def(s$adu,function(self,_cmd,point){
 });
 self.$def(s$adv,function(self,_cmd,value){
 });
-})(RClass.define_under(self,'Slider',self.$c_g_full('Control')));
+})(RClass.define_under(self,'Slider',self.$c_g_full(c$aa)));
 })(RModule.define('Vienna'));

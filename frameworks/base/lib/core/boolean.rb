@@ -30,11 +30,11 @@ Boolean.prototype.$type = VN.BOOLEAN; `
 class Boolean
   
   def to_s
-    `return self ? 'true' : 'false';`
+    `return #{self} ? 'true' : 'false';`
   end
   
   def &(obj)
-    `if (self) {
+    `if (#{self}) {
       return obj ? true : false ;
     }
     else {
@@ -43,7 +43,7 @@ class Boolean
   end
   
   def |(obj)
-    `if (self) {
+    `if (#{self}) {
       return true ;
     }
     else {
@@ -52,7 +52,7 @@ class Boolean
   end
 
   def ^(obj)
-    `if (self) {
+    `if (#{self}) {
       return obj ? false : true ;
     }
     else {

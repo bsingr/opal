@@ -14,7 +14,7 @@ self.$def(s$sy,function(self,_cmd){
 return 'vn-slider';
 });
 self.$def(s$wc,function(self,_cmd,cell_frame,control_view){
-var ctx = VN$(self.$klass.$c_g_full('RenderContext'),s$pn);
+var ctx = VN$(self.$klass.$c_g_full(c$r),s$pn);
 if(RTEST(VN$(ctx,s$sn))){
 VN$(ctx,s$cv,"<div class='track-left'></div>");
 VN$(ctx,s$cv,"<div class='track-middle'></div>");
@@ -27,7 +27,7 @@ return VN$(ctx,s$sr,_$hr,function(knob){
 var min = 0;
 var max = 100;
 var value = 0;
-var knob_position = VN$((VN$(value,s$ff,(VN$(max,s$fe,min)))),s$bm,((VN$(VN$(cell_frame,s$jr),s$fe,(VN$((2),s$bm,self.$klass.$c_g_full('KNOB_PADDING_REGULAR')))))));
+var knob_position = VN$((VN$(value,s$ff,(VN$(max,s$fe,min)))),s$bm,((VN$(VN$(cell_frame,s$jr),s$fe,(VN$((2),s$bm,self.$klass.$c_g_full(c$ae)))))));
 return VN$(knob,s$jh,VN.$h(_$fq,[(knob_position),"px"].join('')));
 });
 });
@@ -97,5 +97,5 @@ return true;
 self.$def(s$aam,function(self,_cmd,last_point,stop_point,control_view,flag){
 return VN$(self,s$aaf,false,nil,control_view);
 });
-})(RClass.define_under(self,'SliderCell',self.$c_g_full('Cell')));
+})(RClass.define_under(self,'SliderCell',self.$c_g_full(c$x)));
 })(RModule.define('Vienna'));

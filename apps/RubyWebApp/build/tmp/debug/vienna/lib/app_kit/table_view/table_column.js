@@ -2,7 +2,7 @@
 (function(self) {
 self.$def(s$as,function(self,_cmd,identifier){
 VN$(self,'identifier=',identifier);
-self.$i_s(i$ga,VN$(self.$klass.$c_g_full('TextFieldCell'),s$is,''));
+self.$i_s(i$ga,VN$(self.$klass.$c_g_full(c$af),s$is,''));
 return self.$i_s(i$ap,100);
 });
 self.$def(s$alh,function(self,_cmd,identifier){

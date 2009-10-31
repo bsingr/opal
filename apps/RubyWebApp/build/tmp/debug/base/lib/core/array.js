@@ -51,13 +51,13 @@ self.$def(s$fr,function(self,_cmd){
 return self;
 });
 self.$def(s$ai,function(self,_cmd,ary){
-if (ary == this) return true;
+if (ary == self) return true;
     if (ary.$type != VN.ARRAY) {
       if (ary.$('respond_to?', ['to_a'])) {
         return false;
       }
     }
-    if (this.length != ary.length) return false ;
+    if (self.length != ary.length) return false ;
     return true;});
 self.$def(s$e,function(self,_cmd,other){
 });

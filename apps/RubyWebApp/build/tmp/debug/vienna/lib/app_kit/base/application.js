@@ -22,8 +22,8 @@ self.$i_s(i$x,types);
 self.$i_s(i$y,block);
 self.$i_s(i$z,VN$(VN$(self,s$nc),s$nd));
 if(RTEST(VN$(types,s$al,_$ab))){
-VN$(self.$klass.$c_g_full('Document'),s$jb,_$ac,function(evt){
-var the_event = VN$(self.$klass.$c_g_full('Event'),s$ne,evt,nil,'left_mouse_dragged');
+VN$(self.$klass.$c_g_full(c$b),s$jb,_$ac,function(evt){
+var the_event = VN$(self.$klass.$c_g_full(c$h),s$ne,evt,nil,'left_mouse_dragged');
 return VN$(self,s$nf,the_event);
 });
 }
@@ -31,7 +31,7 @@ return VN$(self,s$nf,the_event);
 self.$def(s$ng,function(self,_cmd){
 self.$i_s(i$w,_$u);
 if(RTEST(VN$(self.$i_g(i$x),s$al,_$ab))){
-VN$(self.$klass.$c_g_full('Document'),s$jc,_$ac);
+VN$(self.$klass.$c_g_full(c$b),s$jc,_$ac);
 }
 });
 self.$def(s$nc,function(self,_cmd){
@@ -72,18 +72,18 @@ self.$def(s$no,function(self,_cmd,obj){
 if(RTEST(VN$(self.$i_g(i$v),s$ai,obj))){
 return ;
 }
-var nc = VN$(self.$klass.$c_g_full('VN').$c_g('NotificationCenter'),s$lk);
+var nc = VN$(self.$klass.$c_g_full(c$i).$c_g('NotificationCenter'),s$lk);
 if(RTEST(self.$i_g(i$v))){
-VN$(nc,s$ls,self.$i_g(i$v),self.$klass.$c_g_full('APP_WILL_FINISH_LAUNCHING'),self);
-VN$(nc,s$ls,self.$i_g(i$v),self.$klass.$c_g_full('APP_DID_FINISH_LAUNCHING'),self);
-VN$(nc,s$ls,self.$i_g(i$v),self.$klass.$c_g_full('APP_DID_CHANGE_SCREEN_PARAMETERS'),self);
+VN$(nc,s$ls,self.$i_g(i$v),self.$klass.$c_g_full(c$j),self);
+VN$(nc,s$ls,self.$i_g(i$v),self.$klass.$c_g_full(c$k),self);
+VN$(nc,s$ls,self.$i_g(i$v),self.$klass.$c_g_full(c$l),self);
 }
 self.$i_s(i$v,obj);
 if(RTEST(VN$(self.$i_g(i$v),s$kf,_$ad))){
-VN$(nc,s$ll,self.$i_g(i$v),'will_finish_launching',self.$klass.$c_g_full('APP_WILL_FINISH_LAUNCHING'),self);
+VN$(nc,s$ll,self.$i_g(i$v),'will_finish_launching',self.$klass.$c_g_full(c$j),self);
 }
 if(RTEST(VN$(self.$i_g(i$v),s$kf,_$ae))){
-VN$(nc,s$ll,self.$i_g(i$v),'did_finish_launching',self.$klass.$c_g_full('APP_DID_FINISH_LAUNCHING'),self);
+VN$(nc,s$ll,self.$i_g(i$v),'did_finish_launching',self.$klass.$c_g_full(c$k),self);
 }
 });
 self.$def(s$np,function(self,_cmd){
@@ -93,22 +93,22 @@ self.$def(s$nq,function(self,_cmd){
 if(RTEST(self.$i_g(i$ac))){
 VN$(self.$i_g(i$ac),s$it,self);
 }
-VN$(self.$klass.$c_g_full('Document'),s$jb,_$af,function(evt){
-if(RTEST(VN$(VN$(self.$klass.$c_g_full('App'),s$na),s$ai,_$w))){
-var the_event = VN$(self.$klass.$c_g_full('Event'),s$ne,evt,nil,'left_mouse_down');
+VN$(self.$klass.$c_g_full(c$b),s$jb,_$af,function(evt){
+if(RTEST(VN$(VN$(self.$klass.$c_g_full(c$m),s$na),s$ai,_$w))){
+var the_event = VN$(self.$klass.$c_g_full(c$h),s$ne,evt,nil,'left_mouse_down');
 VN$(self,s$ag,'sending event from here');
 VN$(self,s$nf,the_event);
 }
 });
-VN$(self.$klass.$c_g_full('Document'),s$jb,_$ag,function(evt){
-if(RTEST(VN$(VN$(self.$klass.$c_g_full('App'),s$na),s$ai,_$w))){
-var the_event = VN$(self.$klass.$c_g_full('Event'),s$ne,evt,nil,'left_mouse_up');
+VN$(self.$klass.$c_g_full(c$b),s$jb,_$ag,function(evt){
+if(RTEST(VN$(VN$(self.$klass.$c_g_full(c$m),s$na),s$ai,_$w))){
+var the_event = VN$(self.$klass.$c_g_full(c$h),s$ne,evt,nil,'left_mouse_up');
 VN$(self,s$nf,the_event);
 }
 });
-var nc = VN$(self.$klass.$c_g_full('NotificationCenter'),s$lk);
-VN$(nc,s$lq,self.$klass.$c_g_full('APP_WILL_FINISH_LAUNCHING'),self);
-return VN$(nc,s$lq,self.$klass.$c_g_full('APP_DID_FINISH_LAUNCHING'),self);
+var nc = VN$(self.$klass.$c_g_full(c$n),s$lk);
+VN$(nc,s$lq,self.$klass.$c_g_full(c$j),self);
+return VN$(nc,s$lq,self.$klass.$c_g_full(c$k),self);
 });
 self.$def(s$nr,function(self,_cmd,block){
 return self.$i_s(i$ac,block);
@@ -116,7 +116,7 @@ return self.$i_s(i$ac,block);
 self.$def(s$ns,function(self,_cmd,action,target,sender){
 });
 })(RClass.define_under(self,'Application',cObject));
-console.log('this pare');self.$c_s('App',VN$(self.$c_g_full('Application'),s$nn));
+console.log('this pare');self.$c_s('App',VN$(self.$c_g_full(c$o),s$nn));
 console.log('ermmm');})(RModule.define('Vienna'));
-window.onload = function() {VN$(cObject.$c_g('VN').$c_g('App'),s$nq);
+window.onload = function() {VN$(cObject.$c_g(c$i).$c_g('App'),s$nq);
 };

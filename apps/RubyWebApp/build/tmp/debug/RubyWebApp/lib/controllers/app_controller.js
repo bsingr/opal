@@ -6,10 +6,10 @@ self.$i_s(i$if,10);
 return self.$i_s(i$ig,false);
 });
 self.$def(s$aic,function(self,_cmd,table_view){
-return VN$(self.$klass.$c_g_full('TABLE_VIEW_DATA'),s$br);
+return VN$(self.$klass.$c_g_full(c$ay),s$br);
 });
 self.$def(s$akt,function(self,_cmd,table_view,table_column,row){
-return VN$(VN$(self.$klass.$c_g_full('TABLE_VIEW_DATA'),s$bo,row),s$bo,VN$(table_column,s$ali));
+return VN$(VN$(self.$klass.$c_g_full(c$ay),s$bo,row),s$bo,VN$(table_column,s$ali));
 });
 self.$def(s$aqq,function(self,_cmd){
 return self.$i_g(i$if);
