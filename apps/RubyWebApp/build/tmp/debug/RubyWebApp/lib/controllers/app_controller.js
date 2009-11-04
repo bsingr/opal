@@ -1,28 +1,28 @@
 (function(self) {
 (function(self) {
-self.$c_s('TABLE_VIEW_DATA',[VN.$h(_$o, 'Adam', _$ix, 23, _$iy, 'Led Zepplin'),VN.$h(_$o, 'Ben', _$ix, 20, _$iy, 'Pendulum'),VN.$h(_$o, 'Tom', _$ix, 30, _$iy, 'Tweenies'),VN.$h(_$o, 'Becky', _$ix, 12, _$iy, '50 pence'),VN.$h(_$o, 'Dad', _$ix, 24, _$iy, 'Take That'),VN.$h(_$o, 'Mum', _$ix, 25, _$iy, 'Rod Stewart')]);
-self.$def(s$as,function(self,_cmd){
-self.$i_s(i$if,10);
-return self.$i_s(i$ig,false);
+self.$c_s('TABLE_VIEW_DATA',[VN.$h(_$o, 'Adam', _$jm, 23, _$jn, 'Led Zepplin'),VN.$h(_$o, 'Ben', _$jm, 20, _$jn, 'Pendulum'),VN.$h(_$o, 'Tom', _$jm, 30, _$jn, 'Tweenies'),VN.$h(_$o, 'Becky', _$jm, 12, _$jn, '50 pence'),VN.$h(_$o, 'Dad', _$jm, 24, _$jn, 'Take That'),VN.$h(_$o, 'Mum', _$jm, 25, _$jn, 'Rod Stewart')]);
+rb_define_method(self,s$l,function(self,_cmd){
+self.$i_s(i$id,10);
+return self.$i_s(i$ie,false);
 });
-self.$def(s$aic,function(self,_cmd,table_view){
-return VN$(self.$klass.$c_g_full(c$ay),s$br);
+rb_define_method(self,s$aae,function(self,_cmd,table_view){
+return rb_funcall(self.$klass.$c_g_full(c$bd),s$nb);
 });
-self.$def(s$akt,function(self,_cmd,table_view,table_column,row){
-return VN$(VN$(self.$klass.$c_g_full(c$ay),s$bo,row),s$bo,VN$(table_column,s$ali));
+self.$def(s$acx,function(self,_cmd,table_view,table_column,row){
+return rb_funcall(rb_funcall(self.$klass.$c_g_full(c$bd),s$h,row),s$h,rb_funcall(table_column,s$adm));
 });
-self.$def(s$aqq,function(self,_cmd){
-return self.$i_g(i$if);
+rb_define_method(self,s$aiy,function(self,_cmd){
+return rb_ivar_get(self, i$id);
 });
-self.$def(s$aqr,function(self,_cmd){
-return self.$i_g(i$ig);
+rb_define_method(self,s$aiz,function(self,_cmd){
+return rb_ivar_get(self, i$ie);
 });
-self.$def(s$aqs,function(self,_cmd,aValue){
-return self.$i_s(i$ig,aValue);
+rb_define_method(self,s$aja,function(self,_cmd,aValue){
+return self.$i_s(i$ie,aValue);
 });
-self.$def(s$aqt,function(self,_cmd,notification){
+rb_define_method(self,s$ajb,function(self,_cmd,notification){
 });
-self.$def(s$aqu,function(self,_cmd,notification){
+rb_define_method(self,s$ajc,function(self,_cmd,notification){
 });
 })(RClass.define_under(self,'AppController',cObject));
 })(RModule.define('RubyWebApp'));

@@ -1,49 +1,49 @@
 (function(self) {
 (function(self) {
-VN$(self,s$ap,_$o,_$p,_$q);
-VN$(self,s$aq,_$o,_$p,_$q);
-self.$def(s$as,function(self,_cmd,name,obj,info){
-VN$sup(arguments.callee, self,_cmd,[]);
-self.$i_s(i$l,name);
-self.$i_s(i$m,obj);
-return self.$i_s(i$n,info);
+rb_funcall(self,s$by,_$o,_$p,_$q);
+rb_funcall(self,s$bz,_$o,_$p,_$q);
+rb_define_method(self,s$i,function(self,_cmd,name,obj,info){
+rb_supcall(arguments.callee, self,_cmd,[]);
+self.$i_s(i$j,name);
+self.$i_s(i$k,obj);
+return self.$i_s(i$l,info);
 });
-self.$def_s(s$li,function(self,_cmd,name,obj){
-return VN$(self,s$lj,name,obj,nil);
+self.$def_s(s$ca,function(self,_cmd,name,obj){
+return rb_funcall(self,s$cb,name,obj,nil);
 });
-self.$def_s(s$lj,function(self,_cmd,name,obj,info){
-return VN$(self,s$is,name,obj,info);
+self.$def_s(s$cb,function(self,_cmd,name,obj,info){
+return rb_funcall(self,s$al,name,obj,info);
 });
 })(RClass.define_under(self,'Notification',cObject));
 (function(self) {
-self.$def_s(s$lk,function(self,_cmd){
-return self.$i_s(i$o,ORTEST(self.$i_g(i$o),VN$(self,s$is)));
+self.$def_s(s$cc,function(self,_cmd){
+return self.$i_s(i$m,ORTEST(rb_ivar_get(self, i$m),rb_funcall(self,s$al)));
 });
-self.$def(s$as,function(self,_cmd){
-VN$sup(arguments.callee, self,_cmd,[]);
-return self.$i_s(i$p,[]);
+rb_define_method(self,s$i,function(self,_cmd){
+rb_supcall(arguments.callee, self,_cmd,[]);
+return self.$i_s(i$n,[]);
 });
-self.$def(s$ll,function(self,_cmd,observer,selector,name,obj){
-return VN$(self.$i_g(i$p),s$cv,VN.$h(_$k, observer, _$r, selector, _$o, name, _$s, obj, _$t, true));
+self.$def(s$cd,function(self,_cmd,observer,selector,name,obj){
+return rb_funcall(rb_ivar_get(self, i$n),s$b,VN.$h(_$k, observer, _$r, selector, _$o, name, _$s, obj, _$t, true));
 });
-self.$def(s$lm,function(self,_cmd,notification){
-return VN$(self,s$ln,VN$(notification,s$am),VN$(notification,s$lo),VN$(notification,s$lp));
+rb_define_method(self,s$ce,function(self,_cmd,notification){
+return rb_funcall(self,s$cf,rb_funcall(notification,s$cg),rb_funcall(notification,s$ch),rb_funcall(notification,s$ci));
 });
-self.$def(s$lq,function(self,_cmd,name,obj){
-return VN$(self,s$ln,name,obj,nil);
+self.$def(s$cj,function(self,_cmd,name,obj){
+return rb_funcall(self,s$cf,name,obj,nil);
 });
-self.$def(s$ln,function(self,_cmd,name,obj,info){
-return VN$(self.$i_g(i$p),s$ga,function(the_obj){
-if(RTEST(VN$(VN$(the_obj,s$bo,_$o),s$ai,name))){
-VN$(VN$(the_obj,s$bo,_$k),s$ka,VN$(the_obj,s$bo,_$r),obj,info);
+self.$def(s$cf,function(self,_cmd,name,obj,info){
+return rb_funcall(rb_ivar_get(self, i$n),s$m,function(the_obj){
+if(RTEST(rb_funcall(rb_funcall(the_obj,s$e,_$o),s$y,name))){
+rb_funcall(rb_funcall(the_obj,s$e,_$k),s$ap,rb_funcall(the_obj,s$e,_$r),obj,info);
 }
 });
 });
-self.$def(s$lr,function(self,_cmd,observer){
+rb_define_method(self,s$ck,function(self,_cmd,observer){
 });
-self.$def(s$ls,function(self,_cmd,observer,name,obj){
+self.$def(s$cl,function(self,_cmd,observer,name,obj){
 });
-self.$def(s$lt,function(self,_cmd,name,obj,queue){
+self.$def(s$cm,function(self,_cmd,name,obj,queue){
 });
 })(RClass.define_under(self,'NotificationCenter',cObject));
 })(RModule.define('Vienna'));

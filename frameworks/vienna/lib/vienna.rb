@@ -49,5 +49,6 @@ end
 # Shorter namespaced name
 VN = Vienna
 
-require 'foundation/foundation'
-require 'app_kit/app_kit'
+require 'browser'
+require 'foundation'
+require 'app_kit'

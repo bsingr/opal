@@ -32,7 +32,7 @@ canvas {
 
 .vn-button .title {
   position: absolute;
-  text-align:center;
+/*  text-align:center;*/
   cursor: default;
   text-decoration: none;
   text-shadow: rgba(245, 245, 245, 0.744) 0px 1px 0px;
@@ -229,6 +229,74 @@ background-position: -10px -1020px;}
   overflow: hidden;
 }.vn-scroll-view {
   background-color: rgb(200, 200, 200);
+}
+
+/* Vertical */
+.vn-vertical-scroller {
+  background: url('images/controls-y.png');
+  background-position: 0px 0px;  
+}
+
+.vn-vertical-scroller .dec-line {
+  background: url('images/controls-y.png');
+  background-position: -18px 0px;
+  width: 17px;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  height: 30px;
+}
+
+.vn-vertical-scroller .inc-line {
+  background: url('images/controls-y.png');
+  background-position: -36px 0px;
+  width: 17px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  height: 28px;
+}
+
+.vn-vertical-scroller .knob {
+  width: 17px;
+  left: 0px;
+  right: 0px;
+  height: 40px;
+  top: 40px;
+}
+
+.vn-vertical-scroller .knob .start {
+  background: url('images/controls-y.png');
+  background-position: -54px 0px;
+  width: 17px;
+  left: 0px;
+  right: 0px;
+  height: 8px;
+  top: 0px;
+}
+
+.vn-vertical-scroller .knob .middle {
+  background: url('images/controls-y.png');
+  background-position: -72px 0px;
+  width: 17px;
+  left: 0px;
+  right: 0px;
+  bottom: 10px;
+  top: 8px;
+}
+
+.vn-vertical-scroller .knob .end {
+  background: url('images/controls-y.png');
+  background-position: -54px -9px;
+  width: 17px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  height: 10px;
+}
+
+.vn-horizontal-scroller .knob {
+  background-color: blue;
 }.vn-slider {
   position: absolute;
   display:block;
@@ -274,7 +342,10 @@ background-position: -10px -1020px;}
 .vn-slider.disabled .knob {
   background-image: url('images/slider_knob_disabled.png');
 }
-.vn-text-field {
+.vn-table-header-view {
+  background: url('images/controls.png');
+  background-position: 0px -1294px;
+}.vn-text-field {
   position: absolute;
   display:block;
   height: 21px;

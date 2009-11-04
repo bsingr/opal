@@ -26,23 +26,27 @@
 
 var metaclass;
 var cBasicObject = VN.boot_defclass('BasicObject', null);
-var cObject = VN.boot_defclass('Object', cBasicObject);
-var cModule = VN.boot_defclass('Module', cObject);
-var cClass = VN.boot_defclass('Class', cModule);
+var rb_cBasicObject = cBasicObject;
+var cObject = VN.boot_defclass('Object', rb_cBasicObject);
+var rb_cObject = cObject;
+var cModule = VN.boot_defclass('Module', rb_cObject);
+var rb_cModule = cModule;
+var cClass = VN.boot_defclass('Class', rb_cModule);
+var rb_cClass = cClass;
 
-metaclass = cBasicObject.$make_metaclass(cClass);
-metaclass = cObject.$make_metaclass(metaclass);
-metaclass = cModule.$make_metaclass(metaclass);
-metaclass = cClass.$make_metaclass(metaclass);
+metaclass = rb_cBasicObject.$make_metaclass(cClass);
+metaclass = rb_cObject.$make_metaclass(metaclass);
+metaclass = rb_cModule.$make_metaclass(metaclass);
+metaclass = rb_cClass.$make_metaclass(metaclass);
 
-VN.boot_defmetametaclass(cModule, metaclass);
-VN.boot_defmetametaclass(cObject, metaclass);
-VN.boot_defmetametaclass(cBasicObject, metaclass);
+VN.boot_defmetametaclass(rb_cModule, metaclass);
+VN.boot_defmetametaclass(rb_cObject, metaclass);
+VN.boot_defmetametaclass(rb_cBasicObject, metaclass);
 
 /**
   BasicObject necessary methods
 */
-cBasicObject.$define_private_method('initialize', function(self, _cmd) {
+rb_cBasicObject.$define_private_method('initialize', function(self, _cmd) {
   
 
   

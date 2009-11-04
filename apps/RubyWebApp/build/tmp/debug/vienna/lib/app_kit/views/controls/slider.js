@@ -1,74 +1,74 @@
 (function(self) {
 (function(self) {
-self.$def(s$as,function(self,_cmd,frame){
-return VN$sup(arguments.callee, self,_cmd,[frame]);
+rb_define_method(self,s$i,function(self,_cmd,frame){
+return rb_supcall(arguments.callee, self,_cmd,[frame]);
 });
-self.$def_s(s$wb,function(self,_cmd){
-return self.$c_g_full(c$ad);
+self.$def_s(s$ni,function(self,_cmd){
+return self.$c_g_full(c$ac);
 });
-self.$def(s$sy,function(self,_cmd){
+rb_define_method(self,s$kc,function(self,_cmd){
 return 'vn-slider';
 });
-self.$def(s$ade,function(self,_cmd){
-return self.$i_g(i$do);
+rb_define_method(self,s$up,function(self,_cmd){
+return rb_ivar_get(self, i$dm);
 });
-self.$def(s$adf,function(self,_cmd,a_double){
-return self.$i_s(i$do,a_double);
+rb_define_method(self,s$uq,function(self,_cmd,a_double){
+return self.$i_s(i$dm,a_double);
 });
-self.$def(s$adg,function(self,_cmd){
-return self.$i_g(i$dp);
+rb_define_method(self,s$ur,function(self,_cmd){
+return rb_ivar_get(self, i$dn);
 });
-self.$def(s$adh,function(self,_cmd,a_double){
-return self.$i_s(i$dp,a_double);
+rb_define_method(self,s$us,function(self,_cmd,a_double){
+return self.$i_s(i$dn,a_double);
 });
-self.$def(s$adi,function(self,_cmd,inc_value){
-return self.$i_s(i$dq,inc_value);
+rb_define_method(self,s$ut,function(self,_cmd,inc_value){
+return self.$i_s(i$do,inc_value);
 });
-self.$def(s$adj,function(self,_cmd){
-return self.$i_g(i$dq);
+rb_define_method(self,s$uu,function(self,_cmd){
+return rb_ivar_get(self, i$do);
 });
-VN$(self,s$ap,_$hm,_$hn,_$dv,_$ho,_$co);
-self.$def(s$adk,function(self,_cmd,color){
-return self.$i_s(i$dr,color);
+rb_funcall(self,s$by,_$hm,_$hn,_$dv,_$ho,_$co);
+rb_define_method(self,s$uv,function(self,_cmd,color){
+return self.$i_s(i$dp,color);
 });
-self.$def(s$adl,function(self,_cmd,font){
-return self.$i_s(i$ds,font);
+rb_define_method(self,s$uw,function(self,_cmd,font){
+return self.$i_s(i$dq,font);
 });
-self.$def(s$yx,function(self,_cmd,str){
-return self.$i_s(i$bv,str);
+rb_define_method(self,s$qg,function(self,_cmd,str){
+return self.$i_s(i$bt,str);
 });
-self.$def(s$adm,function(self,_cmd,a_float){
-return self.$i_s(i$dt,a_float);
+rb_define_method(self,s$ux,function(self,_cmd,a_float){
+return self.$i_s(i$dr,a_float);
 });
-self.$def(s$rs,function(self,_cmd,img){
-return self.$i_s(i$av,img);
+rb_define_method(self,s$iu,function(self,_cmd,img){
+return self.$i_s(i$at,img);
 });
-self.$def(s$adn,function(self,_cmd){
-return self.$i_g(i$du);
+rb_define_method(self,s$uy,function(self,_cmd){
+return rb_ivar_get(self, i$ds);
 });
-self.$def(s$sx,function(self,_cmd,event){
+rb_define_method(self,s$kb,function(self,_cmd,event){
 return true;
 });
-VN$(self,s$ap,_$hp,_$hq);
-self.$def(s$ado,function(self,_cmd,count){
-return self.$i_s(i$dv,count);
+rb_funcall(self,s$by,_$hp,_$hq);
+rb_define_method(self,s$uz,function(self,_cmd,count){
+return self.$i_s(i$dt,count);
 });
-self.$def(s$adp,function(self,_cmd,pos){
-return self.$i_s(i$dw,pos);
+rb_define_method(self,s$va,function(self,_cmd,pos){
+return self.$i_s(i$du,pos);
 });
-self.$def(s$adq,function(self,_cmd,flag){
-return self.$i_s(i$dx,flag);
+rb_define_method(self,s$vb,function(self,_cmd,flag){
+return self.$i_s(i$dv,flag);
 });
-self.$def(s$adr,function(self,_cmd){
-return self.$i_g(i$dx);
+rb_define_method(self,s$vc,function(self,_cmd){
+return rb_ivar_get(self, i$dv);
 });
-self.$def(s$ads,function(self,_cmd,index){
+rb_define_method(self,s$vd,function(self,_cmd,index){
 });
-self.$def(s$adt,function(self,_cmd,index){
+rb_define_method(self,s$ve,function(self,_cmd,index){
 });
-self.$def(s$adu,function(self,_cmd,point){
+rb_define_method(self,s$vf,function(self,_cmd,point){
 });
-self.$def(s$adv,function(self,_cmd,value){
+rb_define_method(self,s$vg,function(self,_cmd,value){
 });
-})(RClass.define_under(self,'Slider',self.$c_g_full(c$aa)));
+})(RClass.define_under(self,'Slider',self.$c_g_full(c$z)));
 })(RModule.define('Vienna'));

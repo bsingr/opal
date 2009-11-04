@@ -183,7 +183,7 @@ module Vienna
       if stmt[:call_args] and stmt[:call_args][:args]
         # use the given arguments for super
         # write "self.$sup(arguments.callee,'#{context[:fname]}', ["
-        write "VN$sup(arguments.callee, self,_cmd,["
+        write "rb_supcall(arguments.callee, self,_cmd,["
         
         stmt[:call_args][:args].each do |p|
           generate_stmt p, :instance => false, :full_stmt => false, :self => current_self, :last_stmt => false
@@ -195,7 +195,7 @@ module Vienna
         # write "self.$sup(arguments.callee,'#{context[:fname]}', arguments)"
         
         # here, split arguments into array, taking out the first two args (self, _cmd);
-        write "VN$sup(arguments.callee, self,_cmd,[])"
+        write "rb_supcall(arguments.callee, self,_cmd,[])"
       end
       write ";\n" if context[:full_stmt]
     end
@@ -409,14 +409,18 @@ module Vienna
       end
       
       push_nametable # push new nametable
+      
+      # write"rb_define_method("
       # all methods in top self must be added as singleton methods
       if definition[:singleton]
         # puts definition[:singleton]
         generate_stmt definition[:singleton], :instance => definition[:instance], :full_stmt => false, :last_stmt => false
         # write "#{context[:self]}"
         write ".$def_s(s$#{js_id_for_string(definition[:fname])},function(self,_cmd"
+        # write ",s$#{js_id_for_string(definition[:fname])}, function(self, _cmd"
       else
-        write "self.$def(s$#{js_id_for_string(definition[:fname])},function(self,_cmd"
+        # write "self.$def(s$#{js_id_for_string(definition[:fname])},function(self,_cmd"
+        write "rb_define_method(self,s$#{js_id_for_string(definition[:fname])},function(self,_cmd"
       end
       
       # js_id_for_string(definition[:fname])
@@ -513,7 +517,7 @@ module Vienna
         
       # elsif LHS is a call (ass the equals sign onto call method, and use rhs as param)
       elsif stmt[:lhs].node == :call
-        write "VN$("
+        write "rb_funcall("
         generate_stmt stmt[:lhs][:recv], :instance => context[:instance], context[:full_stmt] => false, :last_stmt => context[:last_stmt], :self => context[:self]
         write ",'#{stmt[:lhs][:meth]}=',"
         # if its []= then we need to output 2 args
@@ -546,7 +550,7 @@ module Vienna
     def generate_label_styled_call call, context
       write "return " if context[:last_stmt] and context[:full_stmt]
       
-      write "VN$("
+      write "rb_funcall("
       
       if call[:recv]
         generate_stmt call[:recv], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :top_level => context[:top_level], :call_recv => true
@@ -595,7 +599,7 @@ module Vienna
       
       write "return " if context[:last_stmt] and context[:full_stmt]
       
-      write "VN$("
+      write "rb_funcall("
       
       if call[:recv]
         generate_stmt call[:recv], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self =>context[:self], :call_recv => true, :top_level => context[:top_level]
@@ -844,7 +848,8 @@ module Vienna
     def generate_ivar stmt, context
       write 'return ' if context[:last_stmt] and context[:full_stmt]
       # write "#{current_self}.$i_g('#{stmt[:name]}')"
-      write "#{current_self}.$i_g(i$#{js_id_for_ivar(stmt[:name])})"
+      # write "#{current_self}.$i_g(i$#{js_id_for_ivar(stmt[:name])})"
+      write "rb_ivar_get(#{current_self}, i$#{js_id_for_ivar(stmt[:name])})"
       write ";\n" if context[:full_stmt]
     end
     
@@ -859,7 +864,7 @@ module Vienna
       else
         # method call
         # write "#{current_self}.$('#{identifier[:name]}', [])"
-        write "VN$(#{current_self}, s$#{js_id_for_string(identifier[:name])})"
+        write "rb_funcall(#{current_self}, s$#{js_id_for_string(identifier[:name])})"
       end
       write ";\n" if context[:full_stmt]
     end
@@ -975,7 +980,7 @@ module Vienna
       
       stmt[:body].each do |w|      
         if w == stmt[:body].first
-          write "if(($e = VN$("
+          write "if(($e = rb_funcall("
           generate_stmt w[:args][0], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self => context[:self]
           write ", '===', $v),$e!==nil && $e!==false)){\n"
           if w[:stmt]
@@ -995,7 +1000,7 @@ module Vienna
           write "}\n"
         # end
         else
-          write "else if(($e = VN$("
+          write "else if(($e = rb_funcall("
           generate_stmt w[:args][0], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self => context[:self]
           write ", '===', $v),$e!==nil && $e!==false)){\n"
           if w[:stmt]
@@ -1075,8 +1080,9 @@ module Vienna
     
     def generate_tertiary stmt, context
       write 'return ' if context[:last_stmt] and context[:full_stmt]
+      write "RTEST("
       generate_stmt stmt[:expr], :instance => context[:instance], :full_stmt => false, :last_stmt => false, :self => context[:self]
-      write " ? "
+      write ") ? "
       generate_stmt stmt[:true], :instance => context[:instance], :full_stmt => false, :last_stmt => false, :self => context[:self]
       write " : "
       generate_stmt stmt[:false], :instance => context[:instance], :full_stmt => false, :last_stmt => false, :self => context[:self]

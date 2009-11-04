@@ -1,113 +1,113 @@
 (function(self) {
 (function(self) {
-self.$def(s$as,function(self,_cmd,x,y,w,h){
-self.$i_s(i$al,VN$(self.$klass.$c_g_full(c$p),s$is,x,y));
-return self.$i_s(i$am,VN$(self.$klass.$c_g_full(c$q),s$is,w,h));
+rb_define_method(self,s$i,function(self,_cmd,x,y,w,h){
+self.$i_s(i$aj,rb_funcall(self.$klass.$c_g_full(c$o),s$al,x,y));
+return self.$i_s(i$ak,rb_funcall(self.$klass.$c_g_full(c$p),s$al,w,h));
 });
-self.$def(s$qo,function(self,_cmd){
+rb_define_method(self,s$hi,function(self,_cmd){
 return self;
 });
-self.$def(s$bs,function(self,_cmd){
-return self.$i_g(i$am);
+rb_define_method(self,s$t,function(self,_cmd){
+return rb_ivar_get(self, i$ak);
 });
-self.$def(s$jq,function(self,_cmd,size){
-return self.$i_s(i$am,size);
+rb_define_method(self,s$x,function(self,_cmd,size){
+return self.$i_s(i$ak,size);
 });
-self.$def(s$jm,function(self,_cmd){
-return self.$i_g(i$al);
+rb_define_method(self,s$s,function(self,_cmd){
+return rb_ivar_get(self, i$aj);
 });
-self.$def(s$jn,function(self,_cmd,point){
-return self.$i_s(i$al,point);
+rb_define_method(self,s$u,function(self,_cmd,point){
+return self.$i_s(i$aj,point);
 });
-self.$def(s$jo,function(self,_cmd){
-return VN$(self.$i_g(i$al),s$jo);
+rb_define_method(self,s$v,function(self,_cmd){
+return rb_funcall(rb_ivar_get(self, i$aj),s$v);
 });
-self.$def(s$jp,function(self,_cmd){
-return VN$(self.$i_g(i$al),s$jp);
+rb_define_method(self,s$w,function(self,_cmd){
+return rb_funcall(rb_ivar_get(self, i$aj),s$w);
 });
-self.$def(s$jr,function(self,_cmd){
-return VN$(self.$i_g(i$am),s$jr);
+rb_define_method(self,s$z,function(self,_cmd){
+return rb_funcall(rb_ivar_get(self, i$ak),s$z);
 });
-self.$def(s$js,function(self,_cmd){
-return VN$(self.$i_g(i$am),s$js);
+rb_define_method(self,s$aa,function(self,_cmd){
+return rb_funcall(rb_ivar_get(self, i$ak),s$aa);
 });
-self.$def(s$qp,function(self,_cmd,x){
-return VN$(self.$i_g(i$al),'x=',x);
+rb_define_method(self,s$hj,function(self,_cmd,x){
+return rb_funcall(rb_ivar_get(self, i$aj),'x=',x);
 });
-self.$def(s$qq,function(self,_cmd,y){
-return VN$(self.$i_g(i$al),'y=',y);
+rb_define_method(self,s$hk,function(self,_cmd,y){
+return rb_funcall(rb_ivar_get(self, i$aj),'y=',y);
 });
-self.$def(s$qr,function(self,_cmd,w){
-return VN$(self.$i_g(i$am),'width=',w);
+rb_define_method(self,s$hl,function(self,_cmd,w){
+return rb_funcall(rb_ivar_get(self, i$ak),'width=',w);
 });
-self.$def(s$qs,function(self,_cmd,h){
-return VN$(self.$i_g(i$am),'height=',h);
+rb_define_method(self,s$hm,function(self,_cmd,h){
+return rb_funcall(rb_ivar_get(self, i$ak),'height=',h);
 });
-self.$def(s$fq,function(self,_cmd){
-return [VN$(self, s$jo),VN$(self, s$jp),VN$(self, s$qt),VN$(self, s$qu)];
+rb_define_method(self,s$hn,function(self,_cmd){
+return [rb_funcall(self, s$v),rb_funcall(self, s$w),rb_funcall(self, s$ho),rb_funcall(self, s$hp)];
 });
-self.$def(s$df,function(self,_cmd){
+rb_define_method(self,s$hq,function(self,_cmd){
 });
-self.$def(s$qv,function(self,_cmd){
+rb_define_method(self,s$hr,function(self,_cmd){
 });
-self.$def(s$r,function(self,_cmd){
-return ["{{",(VN$(self, s$jo)),", ",(VN$(self, s$jp)),"}, {",(VN$(self, s$jr)),", ",(VN$(self, s$js)),"}}"].join('');
+rb_define_method(self,s$ae,function(self,_cmd){
+return ["{{",(rb_funcall(self, s$v)),", ",(rb_funcall(self, s$w)),"}, {",(rb_funcall(self, s$z)),", ",(rb_funcall(self, s$aa)),"}}"].join('');
 });
-self.$def(s$s,function(self,_cmd){
+rb_define_method(self,s$hs,function(self,_cmd){
 });
-self.$def(s$e,function(self,_cmd,other){
-return ANDTEST(VN$(self.$i_g(i$am),s$e,VN$(other,s$bs)),VN$(self.$i_g(i$al),s$e,VN$(other,s$jm)));
+rb_define_method(self,s$ht,function(self,_cmd,other){
+return ANDTEST(rb_funcall(rb_ivar_get(self, i$ak),s$ht,rb_funcall(other,s$t)),rb_funcall(rb_ivar_get(self, i$aj),s$ht,rb_funcall(other,s$s)));
 });
 })(RClass.define_under(self,'Rect',cObject));
 (function(self) {
-self.$def(s$as,function(self,_cmd,x,y){
-self.$i_s(i$an,x);
-return self.$i_s(i$ao,y);
+rb_define_method(self,s$i,function(self,_cmd,x,y){
+self.$i_s(i$al,x);
+return self.$i_s(i$am,y);
 });
-self.$def(s$qw,function(self,_cmd){
+rb_define_method(self,s$hu,function(self,_cmd){
 return self;
 });
-self.$def(s$jo,function(self,_cmd){
-return self.$i_g(i$an);
+rb_define_method(self,s$v,function(self,_cmd){
+return rb_ivar_get(self, i$al);
 });
-self.$def(s$qp,function(self,_cmd,x){
-return self.$i_s(i$an,x);
+rb_define_method(self,s$hj,function(self,_cmd,x){
+return self.$i_s(i$al,x);
 });
-self.$def(s$jp,function(self,_cmd){
-return self.$i_g(i$ao);
+rb_define_method(self,s$w,function(self,_cmd){
+return rb_ivar_get(self, i$am);
 });
-self.$def(s$qq,function(self,_cmd,y){
-return self.$i_s(i$ao,y);
+rb_define_method(self,s$hk,function(self,_cmd,y){
+return self.$i_s(i$am,y);
 });
-self.$def(s$e,function(self,_cmd,other){
-return ANDTEST(VN$(self.$i_g(i$an),s$ai,VN$(other,s$jo)),VN$(self.$i_g(i$ao),s$ai,VN$(other,s$jp)));
+rb_define_method(self,s$ht,function(self,_cmd,other){
+return ANDTEST(rb_funcall(rb_ivar_get(self, i$al),s$y,rb_funcall(other,s$v)),rb_funcall(rb_ivar_get(self, i$am),s$y,rb_funcall(other,s$w)));
 });
-self.$def(s$qx,function(self,_cmd,a_rect){
-return ANDTEST(VN$(VN$(self, s$jo),s$fi,VN$(a_rect,s$jo)),ANDTEST(VN$(VN$(self, s$jp),s$fi,VN$(a_rect,s$jp)),ANDTEST(VN$(VN$(self, s$jo),s$fj,VN$(VN$(a_rect,s$jo),s$bl,VN$(a_rect,s$jr))),VN$(VN$(self, s$jp),s$fj,VN$(VN$(a_rect,s$jp),s$bl,VN$(a_rect,s$js))))));
+rb_define_method(self,s$hv,function(self,_cmd,a_rect){
+return ANDTEST(rb_funcall(rb_funcall(self, s$v),s$hw,rb_funcall(a_rect,s$v)),ANDTEST(rb_funcall(rb_funcall(self, s$w),s$hw,rb_funcall(a_rect,s$w)),ANDTEST(rb_funcall(rb_funcall(self, s$v),s$hx,rb_funcall(rb_funcall(a_rect,s$v),s$hy,rb_funcall(a_rect,s$z))),rb_funcall(rb_funcall(self, s$w),s$hx,rb_funcall(rb_funcall(a_rect,s$w),s$hy,rb_funcall(a_rect,s$aa))))));
 });
 })(RClass.define_under(self,'Point',cObject));
 (function(self) {
-self.$def(s$as,function(self,_cmd,w,h){
-self.$i_s(i$ap,w);
-return self.$i_s(i$aq,h);
+rb_define_method(self,s$i,function(self,_cmd,w,h){
+self.$i_s(i$an,w);
+return self.$i_s(i$ao,h);
 });
-self.$def(s$qy,function(self,_cmd){
+rb_define_method(self,s$hz,function(self,_cmd){
 return self;
 });
-self.$def(s$jr,function(self,_cmd){
-return self.$i_g(i$ap);
+rb_define_method(self,s$z,function(self,_cmd){
+return rb_ivar_get(self, i$an);
 });
-self.$def(s$qr,function(self,_cmd,w){
-return self.$i_s(i$ap,w);
+rb_define_method(self,s$hl,function(self,_cmd,w){
+return self.$i_s(i$an,w);
 });
-self.$def(s$js,function(self,_cmd){
-return self.$i_g(i$aq);
+rb_define_method(self,s$aa,function(self,_cmd){
+return rb_ivar_get(self, i$ao);
 });
-self.$def(s$qs,function(self,_cmd,h){
-return self.$i_s(i$aq,h);
+rb_define_method(self,s$hm,function(self,_cmd,h){
+return self.$i_s(i$ao,h);
 });
-self.$def(s$e,function(self,_cmd,other){
-return ANDTEST(VN$(self.$i_g(i$ap),s$ai,VN$(other,s$jr)),VN$(self.$i_g(i$aq),s$ai,VN$(other,s$js)));
+rb_define_method(self,s$ht,function(self,_cmd,other){
+return ANDTEST(rb_funcall(rb_ivar_get(self, i$an),s$y,rb_funcall(other,s$z)),rb_funcall(rb_ivar_get(self, i$ao),s$y,rb_funcall(other,s$aa)));
 });
 })(RClass.define_under(self,'Size',cObject));
 })(RModule.define('Vienna'));

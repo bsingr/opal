@@ -4,119 +4,119 @@ self.$c_s('APP_DID_FINISH_LAUNCHING','APP_DID_FINISH_LAUNCHING');
 self.$c_s('APP_DID_CHANGE_SCREEN_PARAMETERS','APP_DID_CHANGE_SCREEN_PARAMETERS');
 self.$c_s('RUN_LOOP_MODES',VN.$h(_$u, 0, _$v, 1, _$w, 2));
 (function(self) {
-VN$(self,s$ar,_$x,_$y,_$z);
-VN$(self,s$ap,_$aa);
-self.$def(s$as,function(self,_cmd){
+rb_funcall(self,s$g,_$x,_$y,_$z);
+rb_funcall(self,s$by,_$aa);
+rb_define_method(self,s$i,function(self,_cmd){
+self.$i_s(i$q,[]);
+self.$i_s(i$r,[]);
 self.$i_s(i$s,[]);
-self.$i_s(i$t,[]);
-self.$i_s(i$u,[]);
-self.$i_s(i$v,nil);
-return self.$i_s(i$w,_$u);
+self.$i_s(i$t,nil);
+return self.$i_s(i$u,_$u);
 });
-self.$def(s$na,function(self,_cmd){
-return self.$i_g(i$w);
+rb_define_method(self,s$dt,function(self,_cmd){
+return rb_ivar_get(self, i$u);
 });
-self.$def(s$nb,function(self,_cmd,types,block){
-self.$i_s(i$w,_$w);
-self.$i_s(i$x,types);
-self.$i_s(i$y,block);
-self.$i_s(i$z,VN$(VN$(self,s$nc),s$nd));
-if(RTEST(VN$(types,s$al,_$ab))){
-VN$(self.$klass.$c_g_full(c$b),s$jb,_$ac,function(evt){
-var the_event = VN$(self.$klass.$c_g_full(c$h),s$ne,evt,nil,'left_mouse_dragged');
-return VN$(self,s$nf,the_event);
+rb_define_method(self,s$du,function(self,_cmd,types,block){
+self.$i_s(i$u,_$w);
+self.$i_s(i$v,types);
+self.$i_s(i$w,block);
+self.$i_s(i$x,rb_funcall(rb_funcall(self,s$dv),s$dw));
+if(RTEST(rb_funcall(types,s$dx,_$ab))){
+rb_funcall(self.$klass.$c_g_full(c$a),s$c,_$ac,function(evt){
+var the_event = rb_funcall(self.$klass.$c_g_full(c$g),s$dy,evt,nil,'left_mouse_dragged');
+return rb_funcall(self,s$dz,the_event);
 });
 }
 });
-self.$def(s$ng,function(self,_cmd){
-self.$i_s(i$w,_$u);
-if(RTEST(VN$(self.$i_g(i$x),s$al,_$ab))){
-VN$(self.$klass.$c_g_full(c$b),s$jc,_$ac);
+rb_define_method(self,s$ea,function(self,_cmd){
+self.$i_s(i$u,_$u);
+if(RTEST(rb_funcall(rb_ivar_get(self, i$v),s$dx,_$ab))){
+rb_funcall(self.$klass.$c_g_full(c$a),s$d,_$ac);
 }
 });
-self.$def(s$nc,function(self,_cmd){
-return self.$i_g(i$aa);
+rb_define_method(self,s$dv,function(self,_cmd){
+return rb_ivar_get(self, i$y);
 });
-self.$def(s$nf,function(self,_cmd,the_event){
-self.$i_s(i$aa,the_event);
-if(RTEST(VN$(self.$i_g(i$w),s$ai,_$w))){
-if(RTEST(VN$(self.$i_g(i$x),s$al,VN$(the_event,s$nh)))){
-VN$(the_event,'window=',self.$i_g(i$z));
-VN$(self.$i_g(i$y),s$it,the_event);
+rb_define_method(self,s$dz,function(self,_cmd,the_event){
+self.$i_s(i$y,the_event);
+if(RTEST(rb_funcall(rb_ivar_get(self, i$u),s$y,_$w))){
+if(RTEST(rb_funcall(rb_ivar_get(self, i$v),s$dx,rb_funcall(the_event,s$eb)))){
+rb_funcall(the_event,'window=',rb_ivar_get(self, i$x));
+rb_funcall(rb_ivar_get(self, i$w),s$ak,the_event);
 }
 return ;
 }
-return VN$(VN$(the_event,s$nd),s$nf,the_event);
+return rb_funcall(rb_funcall(the_event,s$dw),s$dz,the_event);
 });
-self.$def(s$ni,function(self,_cmd,view,flag){
-if(!RTEST(VN$(self.$i_g(i$u),s$nj,view))){
-VN$(self.$i_g(i$u),s$cv,view);
+rb_define_method(self,s$ec,function(self,_cmd,view,flag){
+if(!RTEST(rb_funcall(rb_ivar_get(self, i$s),s$ed,view))){
+rb_funcall(rb_ivar_get(self, i$s),s$b,view);
 }
 });
-self.$def(s$nk,function(self,_cmd){
-VN$(self.$i_g(i$u),s$ga,function(view){
-return VN$(view,s$nl);
+rb_define_method(self,s$ee,function(self,_cmd){
+rb_funcall(rb_ivar_get(self, i$s),s$m,function(view){
+return rb_funcall(view,s$ef);
 });
-return self.$i_s(i$u,[]);
+return self.$i_s(i$s,[]);
 });
-self.$def(s$nm,function(self,_cmd,window){
+rb_define_method(self,s$eg,function(self,_cmd,window){
 return 0;
 });
-self.$def(s$cv,function(self,_cmd,window){
-return VN$(self,s$nm,window);
+rb_define_method(self,s$b,function(self,_cmd,window){
+return rb_funcall(self,s$eg,window);
 });
-self.$def_s(s$nn,function(self,_cmd){
-return self.$i_s(i$ab,ORTEST(self.$i_g(i$ab),VN$(self,s$is)));
+self.$def_s(s$eh,function(self,_cmd){
+return self.$i_s(i$z,ORTEST(rb_ivar_get(self, i$z),rb_funcall(self,s$al)));
 });
-self.$def(s$no,function(self,_cmd,obj){
-if(RTEST(VN$(self.$i_g(i$v),s$ai,obj))){
+rb_define_method(self,s$ei,function(self,_cmd,obj){
+if(RTEST(rb_funcall(rb_ivar_get(self, i$t),s$y,obj))){
 return ;
 }
-var nc = VN$(self.$klass.$c_g_full(c$i).$c_g('NotificationCenter'),s$lk);
-if(RTEST(self.$i_g(i$v))){
-VN$(nc,s$ls,self.$i_g(i$v),self.$klass.$c_g_full(c$j),self);
-VN$(nc,s$ls,self.$i_g(i$v),self.$klass.$c_g_full(c$k),self);
-VN$(nc,s$ls,self.$i_g(i$v),self.$klass.$c_g_full(c$l),self);
+var nc = rb_funcall(self.$klass.$c_g_full(c$h).$c_g('NotificationCenter'),s$cc);
+if(RTEST(rb_ivar_get(self, i$t))){
+rb_funcall(nc,s$cl,rb_ivar_get(self, i$t),self.$klass.$c_g_full(c$i),self);
+rb_funcall(nc,s$cl,rb_ivar_get(self, i$t),self.$klass.$c_g_full(c$j),self);
+rb_funcall(nc,s$cl,rb_ivar_get(self, i$t),self.$klass.$c_g_full(c$k),self);
 }
-self.$i_s(i$v,obj);
-if(RTEST(VN$(self.$i_g(i$v),s$kf,_$ad))){
-VN$(nc,s$ll,self.$i_g(i$v),'will_finish_launching',self.$klass.$c_g_full(c$j),self);
+self.$i_s(i$t,obj);
+if(RTEST(rb_funcall(rb_ivar_get(self, i$t),s$au,_$ad))){
+rb_funcall(nc,s$cd,rb_ivar_get(self, i$t),'will_finish_launching',self.$klass.$c_g_full(c$i),self);
 }
-if(RTEST(VN$(self.$i_g(i$v),s$kf,_$ae))){
-VN$(nc,s$ll,self.$i_g(i$v),'did_finish_launching',self.$klass.$c_g_full(c$k),self);
+if(RTEST(rb_funcall(rb_ivar_get(self, i$t),s$au,_$ae))){
+rb_funcall(nc,s$cd,rb_ivar_get(self, i$t),'did_finish_launching',self.$klass.$c_g_full(c$j),self);
 }
 });
-self.$def(s$np,function(self,_cmd){
+rb_define_method(self,s$ej,function(self,_cmd){
 return true;
 });
-self.$def(s$nq,function(self,_cmd){
-if(RTEST(self.$i_g(i$ac))){
-VN$(self.$i_g(i$ac),s$it,self);
+rb_define_method(self,s$ek,function(self,_cmd){
+if(RTEST(rb_ivar_get(self, i$aa))){
+rb_funcall(rb_ivar_get(self, i$aa),s$ak,self);
 }
-VN$(self.$klass.$c_g_full(c$b),s$jb,_$af,function(evt){
-if(RTEST(VN$(VN$(self.$klass.$c_g_full(c$m),s$na),s$ai,_$w))){
-var the_event = VN$(self.$klass.$c_g_full(c$h),s$ne,evt,nil,'left_mouse_down');
-VN$(self,s$ag,'sending event from here');
-VN$(self,s$nf,the_event);
-}
-});
-VN$(self.$klass.$c_g_full(c$b),s$jb,_$ag,function(evt){
-if(RTEST(VN$(VN$(self.$klass.$c_g_full(c$m),s$na),s$ai,_$w))){
-var the_event = VN$(self.$klass.$c_g_full(c$h),s$ne,evt,nil,'left_mouse_up');
-VN$(self,s$nf,the_event);
+rb_funcall(self.$klass.$c_g_full(c$a),s$c,_$af,function(evt){
+if(RTEST(rb_funcall(rb_funcall(self.$klass.$c_g_full(c$l),s$dt),s$y,_$w))){
+var the_event = rb_funcall(self.$klass.$c_g_full(c$g),s$dy,evt,nil,'left_mouse_down');
+rb_funcall(self,s$ah,'sending event from here');
+rb_funcall(self,s$dz,the_event);
 }
 });
-var nc = VN$(self.$klass.$c_g_full(c$n),s$lk);
-VN$(nc,s$lq,self.$klass.$c_g_full(c$j),self);
-return VN$(nc,s$lq,self.$klass.$c_g_full(c$k),self);
+rb_funcall(self.$klass.$c_g_full(c$a),s$c,_$ag,function(evt){
+if(RTEST(rb_funcall(rb_funcall(self.$klass.$c_g_full(c$l),s$dt),s$y,_$w))){
+var the_event = rb_funcall(self.$klass.$c_g_full(c$g),s$dy,evt,nil,'left_mouse_up');
+rb_funcall(self,s$dz,the_event);
+}
 });
-self.$def(s$nr,function(self,_cmd,block){
-return self.$i_s(i$ac,block);
+var nc = rb_funcall(self.$klass.$c_g_full(c$m),s$cc);
+rb_funcall(nc,s$cj,self.$klass.$c_g_full(c$i),self);
+return rb_funcall(nc,s$cj,self.$klass.$c_g_full(c$j),self);
 });
-self.$def(s$ns,function(self,_cmd,action,target,sender){
+rb_define_method(self,s$el,function(self,_cmd,block){
+return self.$i_s(i$aa,block);
+});
+self.$def(s$em,function(self,_cmd,action,target,sender){
 });
 })(RClass.define_under(self,'Application',cObject));
-console.log('this pare');self.$c_s('App',VN$(self.$c_g_full(c$o),s$nn));
+console.log('this pare');self.$c_s('App',rb_funcall(self.$c_g_full(c$n),s$eh));
 console.log('ermmm');})(RModule.define('Vienna'));
-window.onload = function() {VN$(cObject.$c_g(c$i).$c_g('App'),s$nq);
+window.onload = function() {rb_funcall(cObject.$c_g(c$h).$c_g('App'),s$ek);
 };

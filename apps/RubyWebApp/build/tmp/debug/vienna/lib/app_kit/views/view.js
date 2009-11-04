@@ -1,338 +1,338 @@
 (function(self) {
 (function(self) {
-self.$def(s$as,function(self,_cmd,frame){
-VN$sup(arguments.callee, self,_cmd,[]);
-VN$(self, s$sv);
-self.$i_s(i$bd,frame);
-self.$i_s(i$be,VN$(self.$klass.$c_g_full(c$t),s$is,0,0,VN$(frame,s$jr),VN$(frame,s$js)));
-VN$(self,'frame=',frame);
-self.$i_s(i$bf,[]);
-self.$i_s(i$ae,nil);
-self.$i_s(i$bg,nil);
-self.$i_s(i$bh,false);
-self.$i_s(i$bi,true);
-return self.$i_s(i$bj,[]);
+rb_define_method(self,s$i,function(self,_cmd,frame){
+rb_supcall(arguments.callee, self,_cmd,[]);
+rb_funcall(self, s$jz);
+self.$i_s(i$bb,frame);
+self.$i_s(i$bc,rb_funcall(self.$klass.$c_g_full(c$s),s$al,0,0,rb_funcall(frame,s$z),rb_funcall(frame,s$aa)));
+rb_funcall(self,'frame=',frame);
+self.$i_s(i$bd,[]);
+self.$i_s(i$ac,nil);
+self.$i_s(i$be,nil);
+self.$i_s(i$bf,false);
+self.$i_s(i$bg,true);
+return self.$i_s(i$bh,[]);
 });
-self.$def_s(s$sw,function(self,_cmd,options,block){
-var view = VN$(self,s$is,VN$(options,s$bo,_$ft));
+self.$def_s(s$ka,function(self,_cmd,options,block){
+var view = rb_funcall(self,s$al,rb_funcall(options,s$e,_$ft));
 if(RTEST(block)){
 arguments[arguments.length -1](view);
 }
 return view;
 });
-self.$def(s$jf,function(self,_cmd){
-return self.$i_g(i$d);
+rb_define_method(self,s$j,function(self,_cmd){
+return rb_ivar_get(self, i$b);
 });
-self.$def(s$jy,function(self,_cmd){
-return VN$(self.$klass.$c_g_full(c$u),s$bo,_$fu);
+rb_define_method(self,s$an,function(self,_cmd){
+return rb_funcall(self.$klass.$c_g_full(c$t),s$e,_$fu);
 });
-self.$def(s$sv,function(self,_cmd){
-if(RTEST(VN$(VN$(self, s$jy),s$ai,_$fv))){
-self.$i_s(i$d,VN$(self.$klass.$c_g_full(c$s),s$is,_$fw,nil));
-VN$(self.$i_g(i$d),s$jh,VN.$h(_$fx,'hidden'));
-self.$i_s(i$bk,VN$(self.$klass.$c_g_full(c$r),s$is,_$fw,nil));
-VN$(self.$i_g(i$d),s$cv,self.$i_g(i$bk));
+rb_define_method(self,s$jz,function(self,_cmd){
+if(RTEST(rb_funcall(rb_funcall(self, s$an),s$y,_$fv))){
+self.$i_s(i$b,rb_funcall(self.$klass.$c_g_full(c$r),s$al,_$fw,nil));
+rb_funcall(rb_ivar_get(self, i$b),s$l,VN.$h(_$fx,'hidden'));
+self.$i_s(i$bi,rb_funcall(self.$klass.$c_g_full(c$q),s$al,_$fw,nil));
+rb_funcall(rb_ivar_get(self, i$b),s$b,rb_ivar_get(self, i$bi));
 }
 else{
-self.$i_s(i$d,VN$(self.$klass.$c_g_full(c$s),s$is,_$fw));
-self.$i_s(i$bk,VN$(self.$klass.$c_g_full(c$v),s$is));
-VN$(self.$i_g(i$d),s$fj,self.$i_g(i$bk));
+self.$i_s(i$b,rb_funcall(self.$klass.$c_g_full(c$r),s$al,_$fw));
+self.$i_s(i$bi,rb_funcall(self.$klass.$c_g_full(c$u),s$al));
+rb_funcall(rb_ivar_get(self, i$b),s$hx,rb_ivar_get(self, i$bi));
 }
 });
-self.$def(s$sx,function(self,_cmd,the_event){
+rb_define_method(self,s$kb,function(self,_cmd,the_event){
 return true;
 });
-self.$def(s$mq,function(self,_cmd){
+rb_define_method(self,s$dj,function(self,_cmd){
 return true;
 });
-self.$def(s$sy,function(self,_cmd){
-return ORTEST(self.$i_g(i$bl),'vn-view');
+rb_define_method(self,s$kc,function(self,_cmd){
+return ORTEST(rb_ivar_get(self, i$bj),'vn-view');
 });
-self.$def(s$jg,function(self,_cmd,a_class){
-return self.$i_s(i$bl,a_class);
+rb_define_method(self,s$k,function(self,_cmd,a_class){
+return self.$i_s(i$bj,a_class);
 });
-self.$def(s$sz,function(self,_cmd){
-return ORTEST(self.$i_g(i$bm),'');
+rb_define_method(self,s$kd,function(self,_cmd){
+return ORTEST(rb_ivar_get(self, i$bk),'');
 });
-self.$def(s$ta,function(self,_cmd,a_theme){
-return self.$i_s(i$bm,a_theme);
+rb_define_method(self,s$ke,function(self,_cmd,a_theme){
+return self.$i_s(i$bk,a_theme);
 });
-self.$def(s$pk,function(self,_cmd){
-return VN$(self.$i_g(i$bk),s$jf).getContext('2d');});
-self.$def(s$tb,function(self,_cmd,coder){
+rb_define_method(self,s$ge,function(self,_cmd){
+return rb_funcall(rb_ivar_get(self, i$bi),s$j).getContext('2d');});
+rb_define_method(self,s$kf,function(self,_cmd,coder){
 });
-self.$def(s$tc,function(self,_cmd,builder){
+rb_define_method(self,s$kg,function(self,_cmd,builder){
 });
-self.$def_s(s$td,function(self,_cmd){
+self.$def_s(s$kh,function(self,_cmd){
 });
-VN$(self,s$td,_$ft,_$fy);
-self.$def(s$kj,function(self,_cmd){
+rb_funcall(self,s$kh,_$ft,_$fy);
+rb_define_method(self,s$az,function(self,_cmd){
 });
-self.$def(s$nd,function(self,_cmd){
+rb_define_method(self,s$dw,function(self,_cmd){
 });
-self.$def(s$te,function(self,_cmd){
+rb_define_method(self,s$ki,function(self,_cmd){
 });
-self.$def(s$tf,function(self,_cmd){
+rb_define_method(self,s$kj,function(self,_cmd){
 });
-self.$def(s$tg,function(self,_cmd,a_view){
+rb_define_method(self,s$kk,function(self,_cmd,a_view){
 });
-self.$def(s$th,function(self,_cmd,a_view){
+rb_define_method(self,s$kl,function(self,_cmd,a_view){
 });
-self.$def(s$ti,function(self,_cmd){
+rb_define_method(self,s$km,function(self,_cmd){
 });
-self.$def(s$tj,function(self,_cmd,flag){
+rb_define_method(self,s$kn,function(self,_cmd,flag){
 });
-self.$def(s$tk,function(self,_cmd){
+rb_define_method(self,s$ko,function(self,_cmd){
 });
-self.$def(s$tl,function(self,_cmd){
+rb_define_method(self,s$kp,function(self,_cmd){
 });
-self.$def(s$tm,function(self,_cmd){
+rb_define_method(self,s$kq,function(self,_cmd){
 });
-self.$def(s$tn,function(self,_cmd){
+rb_define_method(self,s$kr,function(self,_cmd){
 });
-self.$def(s$to,function(self,_cmd,new_subviews){
+rb_define_method(self,s$ks,function(self,_cmd,new_subviews){
 });
-self.$def(s$tp,function(self,_cmd,a_view){
-if(RTEST(VN$(self.$i_g(i$bf),s$al,a_view))){
+rb_define_method(self,s$kt,function(self,_cmd,a_view){
+if(RTEST(rb_funcall(rb_ivar_get(self, i$bd),s$dx,a_view))){
 return ;
 }
-VN$(a_view,s$tq);
-VN$(a_view,s$tr,self);
-VN$(a_view,s$ts,self.$i_g(i$ae));
-VN$(self.$i_g(i$bf),s$cv,a_view);
-VN$(self.$i_g(i$d),s$cv,VN$(a_view,s$jf));
-VN$(a_view,'next_responder=',self);
-VN$(a_view,s$tt);
-VN$(a_view,s$tu);
-return VN$(self,s$tv,self);
+rb_funcall(a_view,s$ku);
+rb_funcall(a_view,s$kv,self);
+rb_funcall(a_view,s$kw,rb_ivar_get(self, i$ac));
+rb_funcall(rb_ivar_get(self, i$bd),s$b,a_view);
+rb_funcall(rb_ivar_get(self, i$b),s$b,rb_funcall(a_view,s$j));
+rb_funcall(a_view,'next_responder=',self);
+rb_funcall(a_view,s$kx);
+rb_funcall(a_view,s$ky);
+return rb_funcall(self,s$kz,self);
 });
-self.$def(s$cv,function(self,_cmd,a_view){
-return VN$(self,s$tp,a_view);
+rb_define_method(self,s$b,function(self,_cmd,a_view){
+return rb_funcall(self,s$kt,a_view);
 });
-self.$def(s$tw,function(self,_cmd,a_view,place,other_view){
+self.$def(s$la,function(self,_cmd,a_view,place,other_view){
 });
-self.$def(s$ts,function(self,_cmd,win){
-self.$i_s(i$ae,win);
-return VN$(self.$i_g(i$bf),s$ga,function(s){
-return VN$(s,s$ts,win);
+rb_define_method(self,s$kw,function(self,_cmd,win){
+self.$i_s(i$ac,win);
+return rb_funcall(rb_ivar_get(self, i$bd),s$m,function(s){
+return rb_funcall(s,s$kw,win);
 });
 });
-self.$def(s$tu,function(self,_cmd){
-VN$(self.$i_g(i$bf),s$ga,function(s){
-return VN$(s,s$tu);
+rb_define_method(self,s$ky,function(self,_cmd){
+rb_funcall(rb_ivar_get(self, i$bd),s$m,function(s){
+return rb_funcall(s,s$ky);
 });
-return VN$(self,'needs_display=',true);
+return rb_funcall(self,'needs_display=',true);
 });
-self.$def(s$tr,function(self,_cmd,new_super){
-return self.$i_s(i$bg,new_super);
+rb_define_method(self,s$kv,function(self,_cmd,new_super){
+return self.$i_s(i$be,new_super);
 });
-self.$def(s$tt,function(self,_cmd){
+rb_define_method(self,s$kx,function(self,_cmd){
 });
-self.$def(s$tv,function(self,_cmd,subview){
+rb_define_method(self,s$kz,function(self,_cmd,subview){
 });
-self.$def(s$tx,function(self,_cmd,subview){
+rb_define_method(self,s$lb,function(self,_cmd,subview){
 });
-self.$def(s$tq,function(self,_cmd){
+rb_define_method(self,s$ku,function(self,_cmd){
 });
-self.$def(s$ty,function(self,_cmd,old_view,new_view){
+self.$def(s$lc,function(self,_cmd,old_view,new_view){
 });
-self.$def(s$tz,function(self,_cmd,flag){
+rb_define_method(self,s$ld,function(self,_cmd,flag){
 });
-self.$def(s$ua,function(self,_cmd){
+rb_define_method(self,s$le,function(self,_cmd){
 });
-self.$def(s$ub,function(self,_cmd,size){
+rb_define_method(self,s$lf,function(self,_cmd,size){
 });
-self.$def(s$uc,function(self,_cmd,old){
+rb_define_method(self,s$lg,function(self,_cmd,old){
 });
-self.$def(s$ud,function(self,_cmd,flag){
+rb_define_method(self,s$lh,function(self,_cmd,flag){
 });
-self.$def(s$ue,function(self,_cmd){
+rb_define_method(self,s$li,function(self,_cmd){
 });
-self.$def(s$uf,function(self,_cmd,mask){
+rb_define_method(self,s$lj,function(self,_cmd,mask){
 });
-self.$def(s$ug,function(self,_cmd){
+rb_define_method(self,s$lk,function(self,_cmd){
 });
-self.$def(s$uh,function(self,_cmd,new_origin){
-VN$(self.$i_g(i$bd),'x=',VN$(new_origin,s$jo));
-VN$(self.$i_g(i$bd),'y=',VN$(new_origin,s$jp));
-VN$(self.$i_g(i$d),'origin=',new_origin);
-if(RTEST(self.$i_g(i$bh))){
-var nc = VN$(self.$klass.$c_g_full(c$n),s$lk);
-VN$(nc,s$lq,'frame chnage notification',self);
+rb_define_method(self,s$ll,function(self,_cmd,new_origin){
+rb_funcall(rb_ivar_get(self, i$bb),'x=',rb_funcall(new_origin,s$v));
+rb_funcall(rb_ivar_get(self, i$bb),'y=',rb_funcall(new_origin,s$w));
+rb_funcall(rb_ivar_get(self, i$b),'origin=',new_origin);
+if(RTEST(rb_ivar_get(self, i$bf))){
+var nc = rb_funcall(self.$klass.$c_g_full(c$m),s$cc);
+rb_funcall(nc,s$cj,'frame chnage notification',self);
 }
 });
-self.$def(s$ui,function(self,_cmd,new_size){
-var old_size = VN$(self.$klass.$c_g_full(c$q),s$is,VN$(self.$i_g(i$bd),s$jr),VN$(self.$i_g(i$bd),s$js));
-VN$(VN$(self.$i_g(i$bd),s$bs),'width=',VN$(new_size,s$jr));
-VN$(VN$(self.$i_g(i$bd),s$bs),'height=',VN$(new_size,s$js));
-VN$(VN$(self.$i_g(i$be),s$bs),'width=',VN$(new_size,s$jr));
-VN$(VN$(self.$i_g(i$be),s$bs),'height=',VN$(new_size,s$js));
-VN$(self,'needs_display=',true);
-VN$(self.$i_g(i$d),'size=',new_size);
-VN$(self.$i_g(i$bk),'size=',new_size);
-if(RTEST(self.$i_g(i$bh))){
-var nc = VN$(self.$klass.$c_g_full(c$n),s$lk);
-VN$(nc,s$lq,'frame chnage notification',self);
+rb_define_method(self,s$lm,function(self,_cmd,new_size){
+var old_size = rb_funcall(self.$klass.$c_g_full(c$p),s$al,rb_funcall(rb_ivar_get(self, i$bb),s$z),rb_funcall(rb_ivar_get(self, i$bb),s$aa));
+rb_funcall(rb_funcall(rb_ivar_get(self, i$bb),s$t),'width=',rb_funcall(new_size,s$z));
+rb_funcall(rb_funcall(rb_ivar_get(self, i$bb),s$t),'height=',rb_funcall(new_size,s$aa));
+rb_funcall(rb_funcall(rb_ivar_get(self, i$bc),s$t),'width=',rb_funcall(new_size,s$z));
+rb_funcall(rb_funcall(rb_ivar_get(self, i$bc),s$t),'height=',rb_funcall(new_size,s$aa));
+rb_funcall(self,'needs_display=',true);
+rb_funcall(rb_ivar_get(self, i$b),'size=',new_size);
+rb_funcall(rb_ivar_get(self, i$bi),'size=',new_size);
+if(RTEST(rb_ivar_get(self, i$bf))){
+var nc = rb_funcall(self.$klass.$c_g_full(c$m),s$cc);
+rb_funcall(nc,s$cj,'frame chnage notification',self);
 }
 });
-self.$def(s$jl,function(self,_cmd,frame){
-VN$(self,'frame_origin=',VN$(frame,s$jm));
-VN$(self,'frame_size=',VN$(frame,s$bs));
-if(RTEST(self.$i_g(i$bh))){
-var nc = VN$(self.$klass.$c_g_full(c$n),s$lk);
-VN$(nc,s$lq,'view chnages notification',self);
+rb_define_method(self,s$r,function(self,_cmd,frame){
+rb_funcall(self,'frame_origin=',rb_funcall(frame,s$s));
+rb_funcall(self,'frame_size=',rb_funcall(frame,s$t));
+if(RTEST(rb_ivar_get(self, i$bf))){
+var nc = rb_funcall(self.$klass.$c_g_full(c$m),s$cc);
+rb_funcall(nc,s$cj,'view chnages notification',self);
 }
 });
-self.$def(s$uj,function(self,_cmd){
-return self.$i_g(i$bd);
+rb_define_method(self,s$ln,function(self,_cmd){
+return rb_ivar_get(self, i$bb);
 });
-self.$def(s$uk,function(self,_cmd,angle){
+rb_define_method(self,s$lo,function(self,_cmd,angle){
 });
-self.$def(s$ul,function(self,_cmd){
-return self.$i_g(i$bn);
+rb_define_method(self,s$lp,function(self,_cmd){
+return rb_ivar_get(self, i$bl);
 });
-self.$def(s$um,function(self,_cmd,angle){
+rb_define_method(self,s$lq,function(self,_cmd,angle){
 });
-self.$def(s$un,function(self,_cmd){
+rb_define_method(self,s$lr,function(self,_cmd){
 });
-self.$def(s$uo,function(self,_cmd,new_origin){
+rb_define_method(self,s$ls,function(self,_cmd,new_origin){
 });
-self.$def(s$up,function(self,_cmd,new_size){
+rb_define_method(self,s$lt,function(self,_cmd,new_size){
 });
-self.$def(s$uq,function(self,_cmd,angle){
+rb_define_method(self,s$lu,function(self,_cmd,angle){
 });
-self.$def(s$ur,function(self,_cmd){
+rb_define_method(self,s$lv,function(self,_cmd){
 });
-self.$def(s$us,function(self,_cmd,translation){
+rb_define_method(self,s$lw,function(self,_cmd,translation){
 });
-self.$def(s$ut,function(self,_cmd,angle){
+rb_define_method(self,s$lx,function(self,_cmd,angle){
 });
-self.$def(s$uu,function(self,_cmd,bounds){
+rb_define_method(self,s$ly,function(self,_cmd,bounds){
 });
-self.$def(s$uv,function(self,_cmd){
-return self.$i_g(i$be);
+rb_define_method(self,s$lz,function(self,_cmd){
+return rb_ivar_get(self, i$bc);
 });
-self.$def(s$pm,function(self,_cmd){
+rb_define_method(self,s$gg,function(self,_cmd){
 });
-self.$def(s$uw,function(self,_cmd){
+rb_define_method(self,s$ma,function(self,_cmd){
 });
-self.$def(s$ux,function(self,_cmd){
+rb_define_method(self,s$mb,function(self,_cmd){
 });
-self.$def(s$uy,function(self,_cmd){
+rb_define_method(self,s$mc,function(self,_cmd){
 });
-self.$def(s$uz,function(self,_cmd,point,view){
+self.$def(s$md,function(self,_cmd,point,view){
 if(!RTEST(view)){
-return VN$(self,s$va,point);
+return rb_funcall(self,s$me,point);
 }
-return VN$(self.$klass.$c_g_full(c$p),s$is,VN$(VN$(point,s$jo),s$fe,VN$(self.$i_g(i$bd),s$jo)),VN$(VN$(point,s$jp),s$fe,VN$(self.$i_g(i$bd),s$jp)));
+return rb_funcall(self.$klass.$c_g_full(c$o),s$al,rb_funcall(rb_funcall(point,s$v),s$mf,rb_funcall(rb_ivar_get(self, i$bb),s$v)),rb_funcall(rb_funcall(point,s$w),s$mf,rb_funcall(rb_ivar_get(self, i$bb),s$w)));
 });
-self.$def(s$vb,function(self,_cmd,point,view){
+self.$def(s$mg,function(self,_cmd,point,view){
 });
-self.$def(s$vc,function(self,_cmd,size,view){
+self.$def(s$mh,function(self,_cmd,size,view){
 });
-self.$def(s$vd,function(self,_cmd,size,view){
+self.$def(s$mi,function(self,_cmd,size,view){
 });
-self.$def(s$ve,function(self,_cmd,rect,view){
+self.$def(s$mj,function(self,_cmd,rect,view){
 });
-self.$def(s$vf,function(self,_cmd,rect,view){
+self.$def(s$mk,function(self,_cmd,rect,view){
 });
-self.$def(s$vg,function(self,_cmd,point){
+rb_define_method(self,s$ml,function(self,_cmd,point){
 });
-self.$def(s$va,function(self,_cmd,point){
-if(RTEST(self.$i_g(i$bg))){
-return VN$(self.$i_g(i$bg),s$va,VN$(self.$klass.$c_g_full(c$p),s$is,VN$(VN$(point,s$jo),s$fe,VN$(self.$i_g(i$bd),s$jo)),VN$(VN$(point,s$jp),s$fe,VN$(self.$i_g(i$bd),s$jp))));
+rb_define_method(self,s$me,function(self,_cmd,point){
+if(RTEST(rb_ivar_get(self, i$be))){
+return rb_funcall(rb_ivar_get(self, i$be),s$me,rb_funcall(self.$klass.$c_g_full(c$o),s$al,rb_funcall(rb_funcall(point,s$v),s$mf,rb_funcall(rb_ivar_get(self, i$bb),s$v)),rb_funcall(rb_funcall(point,s$w),s$mf,rb_funcall(rb_ivar_get(self, i$bb),s$w))));
 }
 else{
 return point;
 }
 });
-self.$def(s$vh,function(self,_cmd,size){
+rb_define_method(self,s$mm,function(self,_cmd,size){
 });
-self.$def(s$vi,function(self,_cmd,size){
+rb_define_method(self,s$mn,function(self,_cmd,size){
 });
-self.$def(s$vj,function(self,_cmd,rect){
+rb_define_method(self,s$mo,function(self,_cmd,rect){
 });
-self.$def(s$vk,function(self,_cmd,rect){
+rb_define_method(self,s$mp,function(self,_cmd,rect){
 });
-self.$def(s$vl,function(self,_cmd){
+rb_define_method(self,s$mq,function(self,_cmd){
 });
-self.$def(s$vm,function(self,_cmd,flag){
-if(!RTEST(self.$i_g(i$ae))){
+rb_define_method(self,s$mr,function(self,_cmd,flag){
+if(!RTEST(rb_ivar_get(self, i$ac))){
 return ;
 }
-return VN$(self, s$vn);
+return rb_funcall(self, s$ms);
 });
-self.$def(s$vo,function(self,_cmd,invalid_rect){
-return self.$i_g(i$bo);
+rb_define_method(self,s$mt,function(self,_cmd,invalid_rect){
+return rb_ivar_get(self, i$bm);
 });
-self.$def(s$vp,function(self,_cmd){
-return self.$i_g(i$bo);
+rb_define_method(self,s$mu,function(self,_cmd){
+return rb_ivar_get(self, i$bm);
 });
-self.$def(s$si,function(self,_cmd){
-return VN$(self.$klass.$c_g_full(c$r),'current_context=',self.$i_g(i$bk));
+rb_define_method(self,s$jk,function(self,_cmd){
+return rb_funcall(self.$klass.$c_g_full(c$q),'current_context=',rb_ivar_get(self, i$bi));
 });
-self.$def(s$sj,function(self,_cmd){
+rb_define_method(self,s$jl,function(self,_cmd){
 });
-self.$def_s(s$vq,function(self,_cmd){
+self.$def_s(s$mv,function(self,_cmd){
 });
-self.$def(s$vr,function(self,_cmd){
+rb_define_method(self,s$mw,function(self,_cmd){
 });
-self.$def(s$vn,function(self,_cmd){
-if(!RTEST(self.$i_g(i$ae))){
+rb_define_method(self,s$ms,function(self,_cmd){
+if(!RTEST(rb_ivar_get(self, i$ac))){
 return ;
 }
-VN$(self, s$vs);
-if(RTEST(VN$(VN$(self, s$jy),s$ai,_$fv))){
-VN$(self,s$vt,self.$i_g(i$bk));
+rb_funcall(self, s$mx);
+if(RTEST(rb_funcall(rb_funcall(self, s$an),s$y,_$fv))){
+rb_funcall(self,s$my,rb_ivar_get(self, i$bi));
 }
 else{
-var graphics_context = VN$(self.$i_g(i$ae),s$vu);
-VN$(self.$klass.$c_g_full(c$v),'current_context=',graphics_context);
-VN$(graphics_context,'graphics_port=',VN$(self,s$pk));
-VN$(self,s$nl,VN$(self, s$uv));
+var graphics_context = rb_funcall(rb_ivar_get(self, i$ac),s$mz);
+rb_funcall(self.$klass.$c_g_full(c$u),'current_context=',graphics_context);
+rb_funcall(graphics_context,'graphics_port=',rb_funcall(self,s$ge));
+rb_funcall(self,s$ef,rb_funcall(self, s$lz));
 }
 });
-self.$def(s$vt,function(self,_cmd,context){
-if(RTEST(VN$(context,s$sn))){
-VN$(context,'class_name=',VN$(self, s$sy));
-VN$(context,'first_time=',false);
+rb_define_method(self,s$my,function(self,_cmd,context){
+if(RTEST(rb_funcall(context,s$jp))){
+rb_funcall(context,'class_name=',rb_funcall(self, s$kc));
+rb_funcall(context,'first_time=',false);
 }
 });
-self.$def(s$nl,function(self,_cmd,rect){
+rb_define_method(self,s$ef,function(self,_cmd,rect){
 });
-self.$def(s$vs,function(self,_cmd){
+rb_define_method(self,s$mx,function(self,_cmd){
 });
-self.$def(s$vv,function(self,_cmd,point){
-point = VN$(self,s$uz,point,self.$i_g(i$bg));
-if(!RTEST(VN$(point,s$qx,VN$(self, s$uv)))){
+rb_define_method(self,s$na,function(self,_cmd,point){
+point = rb_funcall(self,s$md,point,rb_ivar_get(self, i$be));
+if(!RTEST(rb_funcall(point,s$hv,rb_funcall(self, s$lz)))){
 return nil;
 }
-var count = VN$(self.$i_g(i$bf),s$br);
+var count = rb_funcall(rb_ivar_get(self, i$bd),s$nb);
 var i = 0;
-for (i = 0; i < count; i++) {var view_to_check = VN$(self.$i_g(i$bf),s$bo,i);
-var hit_test = VN$(view_to_check,s$vv,point);
+for (i = 0; i < count; i++) {var view_to_check = rb_funcall(rb_ivar_get(self, i$bd),s$e,i);
+var hit_test = rb_funcall(view_to_check,s$na,point);
 if(RTEST(hit_test)){
 return hit_test;
 }
 }return self;
 });
-self.$def(s$vw,function(self,_cmd,point,rect){
+self.$def(s$nc,function(self,_cmd,point,rect){
 });
-self.$def(s$vx,function(self,_cmd,tracking_area){
-if(RTEST(VN$(self.$i_g(i$bj),s$bt))){
-VN$(self.$i_g(i$d),s$jb,_$fz,function(evt){
+rb_define_method(self,s$nd,function(self,_cmd,tracking_area){
+if(RTEST(rb_funcall(rb_ivar_get(self, i$bh),s$ne))){
+rb_funcall(rb_ivar_get(self, i$b),s$c,_$fz,function(evt){
 });
-VN$(self.$i_g(i$d),s$jb,_$ga,function(evt){
+rb_funcall(rb_ivar_get(self, i$b),s$c,_$ga,function(evt){
 });
 }
-return VN$(self.$i_g(i$bj),s$cv,tracking_area);
+return rb_funcall(rb_ivar_get(self, i$bh),s$b,tracking_area);
 });
-self.$def(s$vy,function(self,_cmd,tracking_area){
+rb_define_method(self,s$nf,function(self,_cmd,tracking_area){
 });
-self.$def(s$vz,function(self,_cmd){
-return self.$i_g(i$bj);
+rb_define_method(self,s$ng,function(self,_cmd){
+return rb_ivar_get(self, i$bh);
 });
-self.$def(s$wa,function(self,_cmd){
+rb_define_method(self,s$nh,function(self,_cmd){
 });
-})(RClass.define_under(self,'View',self.$c_g_full(c$w)));
+})(RClass.define_under(self,'View',self.$c_g_full(c$v)));
 })(RModule.define('Vienna'));

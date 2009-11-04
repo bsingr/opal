@@ -96,13 +96,24 @@ module Vienna
     end
     
     def build!
+      o = File.new(js_build_path, 'w')
+      # FIXME:
+      # a. output/build 'base' library
+      base = build_file file_for_require_relative_to(root_file, 'base')
+      puts "build base to #{base}"
+      # here: use combiner to combine all base files into output..
+      base_combiner = Vienna::Builder::Combine.new base, o, self
+      # b. output string, symbols, consts etc
+      # c. output env as hash
+      # d. output all other frameworks
+      
       # 1. Build root file, which will recursively build all required source files, as well as
       # make up our list of 'all_frameworks
       build_file root_file
       
       # 2. Combine all these built source files into the calculated destination, which will be
       # app_name.js
-      o = File.new(js_build_path, 'w')
+      
       write_env_to_output o
       root_combiner = Vienna::Builder::Combine.new File.join(tmp_prefix, project_name, 'lib', 'ruby_web_app.js'), o, self
       o.close
@@ -140,25 +151,28 @@ module Vienna
     # We can also hardcode image urls, css urls etc
     def write_env_to_output file
       @js_sym_to_id.each_pair do |key, value|
-        file.write "_$#{value}='#{key}';"
+        file.write "_$#{value}='#{key}';\n"
       end 
       file.write "\n"
       # file.write "\n\n\n\n"
       @js_str_to_id.each_pair do |key, value|
-        file.write "s$#{value}='#{key}';"
+        file.write "s$#{value}='#{key}';\n"
       end 
       file.write "\n"
       # file.write "\n\n\n\n"
       @js_ivar_to_id.each_pair do |key, value|
-        file.write "i$#{value}='#{key}';"
+        file.write "i$#{value}='#{key}';\n"
       end    
       file.write "\n"
       # file.write "\n\n\n\n"
       @js_const_to_id.each_pair do |key, value|
-        file.write "#{value}='#{key}';"
+        file.write "#{value}='#{key}';\n"
       end
       # file.write "console.profile();"
-      file.write "VN$ENV = { 'display_mode': 'render', 'image_dir': 'images' };"
+      # file.write "VN$ENV = { 'display_mode': 'render', 'image_dir': 'images' };"
+      
+      file.write "rb_oENV = VN.$h('display_mode', 'render', 'image_dir', 'images');"
+      file.write "rb_cObject.$c_s('ENV', rb_oENV);"
     end
     
     
@@ -226,7 +240,7 @@ module Vienna
         # add the library to project lubraries, so css etc can all be added later.. as well
         # as adding languages, etc.
         all_frameworks << File.expand_path(File.join(system_lib_root, require_path))
-        
+        puts "Found framework: #{require_path}"
         return try_path
       end
       
@@ -235,6 +249,7 @@ module Vienna
         # add the library to project lubraries, so css etc can all be added later.. as well
         # as adding languages, etc.
         all_frameworks << File.expand_path(File.join(system_lib_root, require_path))
+        puts "Found framework: #{require_path}"
         return try_path
       end
     end

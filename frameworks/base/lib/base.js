@@ -82,8 +82,18 @@ var VN = {
   ARRAY: 5,
   NUMBER: 6,
   PROC: 7
-
 };
+
+var T_CLASS   = 0,
+    T_MODULE  = 1,
+    T_OBJECT  = 2,
+    T_BOOLEAN = 3,
+    T_STRING  = 4,
+    T_ARRAY   = 5,
+    T_NUMBER  = 6,
+    T_PROC    = 7,
+    T_SYMBOL  = 8,
+    T_HASH    = 9;
 
 VN.warning = function(msg) {
   console.log('Vienna warning: ' + msg);
@@ -177,7 +187,7 @@ require('runtime/object');
   Require core library
 */
 require('core/object');
-require('core/kernel');
+// require('core/kernel');
 require('core/module');
 require('core/class');
 

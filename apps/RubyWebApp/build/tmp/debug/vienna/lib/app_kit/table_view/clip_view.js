@@ -1,81 +1,81 @@
 (function(self) {
 (function(self) {
-self.$def(s$as,function(self,_cmd,frame){
-return VN$sup(arguments.callee, self,_cmd,[frame]);
+rb_define_method(self,s$i,function(self,_cmd,frame){
+return rb_supcall(arguments.callee, self,_cmd,[frame]);
 });
-self.$def(s$sv,function(self,_cmd){
-VN$sup(arguments.callee, self,_cmd,[]);
-return VN$(self.$i_g(i$d),s$jh,VN.$h(_$fx,'hidden'));
+rb_define_method(self,s$jz,function(self,_cmd){
+rb_supcall(arguments.callee, self,_cmd,[]);
+return rb_funcall(rb_ivar_get(self, i$b),s$l,VN.$h(_$fx,'hidden'));
 });
-self.$def(s$sy,function(self,_cmd){
+rb_define_method(self,s$kc,function(self,_cmd){
 return 'vn-clip-view';
 });
-self.$def(s$rw,function(self,_cmd,color){
-return self.$i_s(i$ay,color);
+rb_define_method(self,s$iy,function(self,_cmd,color){
+return self.$i_s(i$aw,color);
 });
-self.$def(s$rx,function(self,_cmd){
-return self.$i_g(i$ay);
+rb_define_method(self,s$iz,function(self,_cmd){
+return rb_ivar_get(self, i$aw);
 });
-self.$def(s$ady,function(self,_cmd,flag){
-return self.$i_s(i$dy,flag);
+rb_define_method(self,s$vl,function(self,_cmd,flag){
+return self.$i_s(i$dw,flag);
 });
-self.$def(s$adz,function(self,_cmd){
-return self.$i_g(i$dy);
+rb_define_method(self,s$vm,function(self,_cmd){
+return rb_ivar_get(self, i$dw);
 });
-self.$def(s$aer,function(self,_cmd,a_view){
-var default_center = VN$(self.$klass.$c_g_full(c$n),s$lk);
-if(RTEST(self.$i_g(i$eu))){
-VN$(default_center,s$ls,self,self.$klass.$c_g_full(c$aj),self.$i_g(i$eu));
-VN$(default_center,s$ls,self,self.$klass.$c_g_full(c$ak),self.$i_g(i$eu));
-VN$(self.$i_g(i$eu),s$tq);
+rb_define_method(self,s$wf,function(self,_cmd,a_view){
+var default_center = rb_funcall(self.$klass.$c_g_full(c$m),s$cc);
+if(RTEST(rb_ivar_get(self, i$es))){
+rb_funcall(default_center,s$cl,self,self.$klass.$c_g_full(c$ai),rb_ivar_get(self, i$es));
+rb_funcall(default_center,s$cl,self,self.$klass.$c_g_full(c$aj),rb_ivar_get(self, i$es));
+rb_funcall(rb_ivar_get(self, i$es),s$ku);
 }
-self.$i_s(i$eu,a_view);
-return VN$(self,s$tp,a_view);
+self.$i_s(i$es,a_view);
+return rb_funcall(self,s$kt,a_view);
 });
-self.$def(s$aet,function(self,_cmd){
-return self.$i_g(i$eu);
+rb_define_method(self,s$wh,function(self,_cmd){
+return rb_ivar_get(self, i$es);
 });
-self.$def(s$ags,function(self,_cmd){
-return VN$(self.$klass.$c_g_full(c$t),s$is,0,0,0,0);
+rb_define_method(self,s$yg,function(self,_cmd){
+return rb_funcall(self.$klass.$c_g_full(c$s),s$al,0,0,0,0);
 });
-self.$def(s$aex,function(self,_cmd,an_obj){
-return self.$i_s(i$ef,an_obj);
+rb_define_method(self,s$wl,function(self,_cmd,an_obj){
+return self.$i_s(i$ed,an_obj);
 });
-self.$def(s$aey,function(self,_cmd){
-return self.$i_g(i$ef);
+rb_define_method(self,s$wm,function(self,_cmd){
+return rb_ivar_get(self, i$ed);
 });
-self.$def(s$aep,function(self,_cmd){
-return VN$(self,s$vf,self.$i_g(i$be),self.$i_g(i$eu));
+rb_define_method(self,s$wd,function(self,_cmd){
+return rb_funcall(self,s$mk,rb_ivar_get(self, i$bc),rb_ivar_get(self, i$es));
 });
-self.$def(s$agt,function(self,_cmd,notification){
+rb_define_method(self,s$yh,function(self,_cmd,notification){
 });
-self.$def(s$agu,function(self,_cmd,notification){
+rb_define_method(self,s$yi,function(self,_cmd,notification){
 });
-self.$def(s$agv,function(self,_cmd,flag){
-return self.$i_s(i$ev,flag);
+rb_define_method(self,s$yj,function(self,_cmd,flag){
+return self.$i_s(i$et,flag);
 });
-self.$def(s$agw,function(self,_cmd){
-return self.$i_g(i$ev);
+rb_define_method(self,s$yk,function(self,_cmd){
+return rb_ivar_get(self, i$et);
 });
-self.$def(s$agx,function(self,_cmd,the_event){
+rb_define_method(self,s$yl,function(self,_cmd,the_event){
 return false;
 });
-self.$def(s$agy,function(self,_cmd,new_origin){
+rb_define_method(self,s$ym,function(self,_cmd,new_origin){
 return new_origin;
 });
-self.$def(s$agz,function(self,_cmd,new_origin){
-if(RTEST(VN$(VN$(self.$i_g(i$bf),s$br),s$fh,0))){
-VN$(VN$(self.$i_g(i$bf),s$bo,0),'frame_origin=',VN$(self.$klass.$c_g_full(c$p),s$is,VN$((0),s$fe,VN$(new_origin,s$jo)),VN$((0),s$fe,VN$(new_origin,s$jp))));
+rb_define_method(self,s$yn,function(self,_cmd,new_origin){
+if(RTEST(rb_funcall(rb_funcall(rb_ivar_get(self, i$bd),s$nb),s$yo,0))){
+rb_funcall(rb_funcall(rb_ivar_get(self, i$bd),s$e,0),'frame_origin=',rb_funcall(self.$klass.$c_g_full(c$o),s$al,rb_funcall((0),s$mf,rb_funcall(new_origin,s$v)),rb_funcall((0),s$mf,rb_funcall(new_origin,s$w))));
 }
 });
-self.$def(s$aha,function(self,_cmd,x,y){
-return VN$(self,s$agz,VN$(self.$klass.$c_g_full(c$p),s$is,x,y));
+rb_define_method(self,s$yp,function(self,_cmd,x,y){
+return rb_funcall(self,s$yn,rb_funcall(self.$klass.$c_g_full(c$o),s$al,x,y));
 });
-})(RClass.define_under(self,'ClipView',self.$c_g_full(c$y)));
+})(RClass.define_under(self,'ClipView',self.$c_g_full(c$x)));
 (function(self) {
-self.$def(s$aes,function(self,_cmd,a_clip_view){
+rb_define_method(self,s$wg,function(self,_cmd,a_clip_view){
 });
-self.$def(s$ahb,function(self,_cmd,a_clip_view,a_point){
+self.$def(s$yq,function(self,_cmd,a_clip_view,a_point){
 });
-})(RClass.define_under(self,'View',self.$c_g_full(c$w)));
+})(RClass.define_under(self,'View',self.$c_g_full(c$v)));
 })(RModule.define('Vienna'));

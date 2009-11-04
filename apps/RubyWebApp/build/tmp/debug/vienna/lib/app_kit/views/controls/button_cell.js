@@ -2,334 +2,334 @@
 VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/vienna/lib/app_kit/views/controls/button_cell_images.js');
 (function(self) {
 (function(self) {
-self.$def(s$yp,function(self,_cmd,str){
-VN$sup(arguments.callee, self,_cmd,[str]);
-self.$i_s(i$cz,false);
-self.$i_s(i$da,_$gn);
-self.$i_s(i$db,_$gl);
-self.$i_s(i$dc,'');
-self.$i_s(i$dd,nil);
-self.$i_s(i$de,false);
-self.$i_s(i$bw,true);
-self.$i_s(i$bx,true);
-self.$i_s(i$ch,_$gz);
-self.$i_s(i$ck,'');
-return self.$i_s(i$df,0);
+rb_define_method(self,s$py,function(self,_cmd,str){
+rb_supcall(arguments.callee, self,_cmd,[str]);
+self.$i_s(i$cx,false);
+self.$i_s(i$cy,_$gn);
+self.$i_s(i$cz,_$gl);
+self.$i_s(i$da,'');
+self.$i_s(i$db,nil);
+self.$i_s(i$dc,false);
+self.$i_s(i$bu,true);
+self.$i_s(i$bv,true);
+self.$i_s(i$cf,_$gz);
+self.$i_s(i$ci,'');
+return self.$i_s(i$dd,0);
 });
-self.$def(s$yq,function(self,_cmd,img){
+rb_define_method(self,s$pz,function(self,_cmd,img){
 });
-self.$def(s$as,function(self,_cmd){
-return VN$(self,s$yp,'ButtonCell');
+rb_define_method(self,s$i,function(self,_cmd){
+return rb_funcall(self,s$py,'ButtonCell');
 });
-self.$def(s$wx,function(self,_cmd,control_tint){
-VN$sup(arguments.callee, self,_cmd,[control_tint]);
-if(RTEST(ORTEST(VN$(self.$i_g(i$e),s$ai,_$ha),VN$(self.$i_g(i$e),s$ai,_$hb)))){
-VN$(self, s$acc);
+rb_define_method(self,s$oe,function(self,_cmd,control_tint){
+rb_supcall(arguments.callee, self,_cmd,[control_tint]);
+if(RTEST(ORTEST(rb_funcall(rb_ivar_get(self, i$c),s$y,_$ha),rb_funcall(rb_ivar_get(self, i$c),s$y,_$hb)))){
+rb_funcall(self, s$tm);
 }
 });
-self.$def(s$wy,function(self,_cmd,size){
-VN$sup(arguments.callee, self,_cmd,[size]);
-if(RTEST(ORTEST(VN$(self.$i_g(i$e),s$ai,_$ha),VN$(self.$i_g(i$e),s$ai,_$hb)))){
-VN$(self, s$acc);
+rb_define_method(self,s$of,function(self,_cmd,size){
+rb_supcall(arguments.callee, self,_cmd,[size]);
+if(RTEST(ORTEST(rb_funcall(rb_ivar_get(self, i$c),s$y,_$ha),rb_funcall(rb_ivar_get(self, i$c),s$y,_$hb)))){
+rb_funcall(self, s$tm);
 }
 });
-self.$def(s$acc,function(self,_cmd){
+rb_define_method(self,s$tm,function(self,_cmd){
 var size_str = (function($v){
-if(($e = VN$(_$gw, '===', $v),$e!==nil && $e!==false)){
+if(($e = rb_funcall(_$gw, '===', $v),$e!==nil && $e!==false)){
 return '_SMALL';
 }
-else if(($e = VN$(_$gx, '===', $v),$e!==nil && $e!==false)){
+else if(($e = rb_funcall(_$gx, '===', $v),$e!==nil && $e!==false)){
 return '_MINI';
 }
 else {
 return '_REGULAR';
 }
-})(self.$i_g(i$co));
+})(rb_ivar_get(self, i$cm));
 var tint_str = (function($v){
-if(($e = VN$(_$gs, '===', $v),$e!==nil && $e!==false)){
+if(($e = rb_funcall(_$gs, '===', $v),$e!==nil && $e!==false)){
 return '_GRAPHITE';
 }
-else if(($e = VN$(_$gu, '===', $v),$e!==nil && $e!==false)){
+else if(($e = rb_funcall(_$gu, '===', $v),$e!==nil && $e!==false)){
 return '_HUD';
 }
 else {
 return '';
 }
-})(self.$i_g(i$cn));
-if(RTEST(VN$(self.$i_g(i$e),s$ai,_$ha))){
+})(rb_ivar_get(self, i$cl));
+if(RTEST(rb_funcall(rb_ivar_get(self, i$c),s$y,_$ha))){
 var img_name = ["SWITCH_IMAGE",(size_str),(tint_str)].join('');
 var alt_img_name = ["SWITCH_HIGHLIGHTED_IMAGE",(size_str),(tint_str)].join('');
 }
-else if(RTEST(VN$(self.$i_g(i$e),s$ai,_$hb))){
+else if(RTEST(rb_funcall(rb_ivar_get(self, i$c),s$y,_$hb))){
 img_name = ["RADIO_IMAGE",(size_str),(tint_str)].join('');
 alt_img_name = ["SWITCH_HIGHLIGHTED_IMAGE",(size_str),(tint_str)].join('');
 }
-self.$i_s(i$av,self.$klass.$c_g(img_name));
-return self.$i_s(i$dd,self.$klass.$c_g(alt_img_name));
+self.$i_s(i$at,self.$klass.$c_g(img_name));
+return self.$i_s(i$db,self.$klass.$c_g(alt_img_name));
 });
-self.$def(s$sy,function(self,_cmd){
+rb_define_method(self,s$kc,function(self,_cmd){
 return 'vn-button';
 });
-self.$def(s$yw,function(self,_cmd){
-return self.$i_g(i$bv);
+rb_define_method(self,s$qf,function(self,_cmd){
+return rb_ivar_get(self, i$bt);
 });
-self.$def(s$yx,function(self,_cmd,str){
-return self.$i_s(i$bv,str);
+rb_define_method(self,s$qg,function(self,_cmd,str){
+return self.$i_s(i$bt,str);
 });
-self.$def(s$acd,function(self,_cmd){
-return self.$i_g(i$dc);
+rb_define_method(self,s$tn,function(self,_cmd){
+return rb_ivar_get(self, i$da);
 });
-self.$def(s$ace,function(self,_cmd,str){
-return self.$i_s(i$dc,str);
+rb_define_method(self,s$to,function(self,_cmd,str){
+return self.$i_s(i$da,str);
 });
-self.$def(s$abo,function(self,_cmd){
-return self.$i_g(i$dd);
+rb_define_method(self,s$sy,function(self,_cmd){
+return rb_ivar_get(self, i$db);
 });
-self.$def(s$abp,function(self,_cmd,img){
-return self.$i_s(i$dd,img);
+rb_define_method(self,s$sz,function(self,_cmd,img){
+return self.$i_s(i$db,img);
 });
-self.$def(s$acf,function(self,_cmd){
-return self.$i_g(i$dg);
+rb_define_method(self,s$tp,function(self,_cmd){
+return rb_ivar_get(self, i$de);
 });
-self.$def(s$abq,function(self,_cmd,position){
-return self.$i_s(i$dg,position);
+rb_define_method(self,s$ta,function(self,_cmd,position){
+return self.$i_s(i$de,position);
 });
-self.$def(s$acg,function(self,_cmd){
-return self.$i_g(i$dh);
+rb_define_method(self,s$tq,function(self,_cmd){
+return rb_ivar_get(self, i$df);
 });
-self.$def(s$ach,function(self,_cmd,image_scaling){
-return self.$i_s(i$dh,image_scaling);
+rb_define_method(self,s$tr,function(self,_cmd,image_scaling){
+return self.$i_s(i$df,image_scaling);
 });
-self.$def(s$yv,function(self,_cmd,val){
-return self.$i_s(i$bu,val);
+rb_define_method(self,s$qe,function(self,_cmd,val){
+return self.$i_s(i$bs,val);
 });
-self.$def(s$yu,function(self,_cmd){
-return self.$i_g(i$bu);
+rb_define_method(self,s$qd,function(self,_cmd){
+return rb_ivar_get(self, i$bs);
 });
-self.$def(s$abr,function(self,_cmd){
-return VN$(self.$i_g(i$bu),s$ai,_$gk);
+rb_define_method(self,s$tb,function(self,_cmd){
+return rb_funcall(rb_ivar_get(self, i$bs),s$y,_$gk);
 });
-self.$def(s$abs,function(self,_cmd){
-return VN$(self.$i_g(i$bu),s$ai,_$gj);
+rb_define_method(self,s$tc,function(self,_cmd){
+return rb_funcall(rb_ivar_get(self, i$bs),s$y,_$gj);
 });
-self.$def(s$abt,function(self,_cmd){
-return VN$(self.$i_g(i$bu),s$ai,_$hc);
+rb_define_method(self,s$td,function(self,_cmd){
+return rb_funcall(rb_ivar_get(self, i$bs),s$y,_$hc);
 });
-self.$def(s$aci,function(self,_cmd){
-return self.$i_g(i$da);
+rb_define_method(self,s$ts,function(self,_cmd){
+return rb_ivar_get(self, i$cy);
 });
-self.$def(s$acj,function(self,_cmd,a_type){
-return self.$i_s(i$da,a_type);
+rb_define_method(self,s$tt,function(self,_cmd,a_type){
+return self.$i_s(i$cy,a_type);
 });
-self.$def(s$ack,function(self,_cmd,a_type){
-return self.$i_s(i$db,a_type);
+rb_define_method(self,s$tu,function(self,_cmd,a_type){
+return self.$i_s(i$cz,a_type);
 });
-self.$def(s$acl,function(self,_cmd){
-return self.$i_g(i$db);
+rb_define_method(self,s$tv,function(self,_cmd){
+return rb_ivar_get(self, i$cz);
 });
-self.$def(s$yt,function(self,_cmd,a_type){
-self.$i_s(i$e,a_type);
+rb_define_method(self,s$qc,function(self,_cmd,a_type){
+self.$i_s(i$c,a_type);
 return (function($v){
-if(($e = VN$(_$hd, '===', $v),$e!==nil && $e!==false)){
-self.$i_s(i$da,_$gp);
-self.$i_s(i$db,_$gl);
-return self.$i_s(i$de,true);
+if(($e = rb_funcall(_$hd, '===', $v),$e!==nil && $e!==false)){
+self.$i_s(i$cy,_$gp);
+self.$i_s(i$cz,_$gl);
+return self.$i_s(i$dc,true);
 }
-else if(($e = VN$(_$he, '===', $v),$e!==nil && $e!==false)){
-self.$i_s(i$da,_$gn);
-self.$i_s(i$db,_$gp);
-return self.$i_s(i$de,true);
+else if(($e = rb_funcall(_$he, '===', $v),$e!==nil && $e!==false)){
+self.$i_s(i$cy,_$gn);
+self.$i_s(i$cz,_$gp);
+return self.$i_s(i$dc,true);
 }
-else if(($e = VN$(_$hf, '===', $v),$e!==nil && $e!==false)){
-self.$i_s(i$da,_$gn);
-self.$i_s(i$db,_$gm);
-return self.$i_s(i$de,true);
+else if(($e = rb_funcall(_$hf, '===', $v),$e!==nil && $e!==false)){
+self.$i_s(i$cy,_$gn);
+self.$i_s(i$cz,_$gm);
+return self.$i_s(i$dc,true);
 }
-else if(($e = VN$(_$ha, '===', $v),$e!==nil && $e!==false)){
-self.$i_s(i$da,_$gm);
-self.$i_s(i$db,_$gm);
-self.$i_s(i$de,true);
-self.$i_s(i$dg,_$fq);
-VN$(self, s$acc);
-self.$i_s(i$bw,false);
-self.$i_s(i$bx,false);
-return self.$i_s(i$ch,_$fq);
+else if(($e = rb_funcall(_$ha, '===', $v),$e!==nil && $e!==false)){
+self.$i_s(i$cy,_$gm);
+self.$i_s(i$cz,_$gm);
+self.$i_s(i$dc,true);
+self.$i_s(i$de,_$fq);
+rb_funcall(self, s$tm);
+self.$i_s(i$bu,false);
+self.$i_s(i$bv,false);
+return self.$i_s(i$cf,_$fq);
 }
-else if(($e = VN$(_$hb, '===', $v),$e!==nil && $e!==false)){
-self.$i_s(i$da,_$gm);
-self.$i_s(i$db,_$gm);
-self.$i_s(i$de,true);
-self.$i_s(i$dg,_$fq);
-VN$(self, s$acc);
-self.$i_s(i$bw,false);
-self.$i_s(i$bx,false);
-return self.$i_s(i$ch,_$fq);
+else if(($e = rb_funcall(_$hb, '===', $v),$e!==nil && $e!==false)){
+self.$i_s(i$cy,_$gm);
+self.$i_s(i$cz,_$gm);
+self.$i_s(i$dc,true);
+self.$i_s(i$de,_$fq);
+rb_funcall(self, s$tm);
+self.$i_s(i$bu,false);
+self.$i_s(i$bv,false);
+return self.$i_s(i$cf,_$fq);
 }
-else if(($e = VN$(_$hg, '===', $v),$e!==nil && $e!==false)){
-self.$i_s(i$da,_$gm);
-self.$i_s(i$db,_$gl);
-return self.$i_s(i$de,true);
+else if(($e = rb_funcall(_$hg, '===', $v),$e!==nil && $e!==false)){
+self.$i_s(i$cy,_$gm);
+self.$i_s(i$cz,_$gl);
+return self.$i_s(i$dc,true);
 }
-else if(($e = VN$(_$hh, '===', $v),$e!==nil && $e!==false)){
-self.$i_s(i$da,_$gp);
-self.$i_s(i$db,_$gp);
-return self.$i_s(i$de,true);
+else if(($e = rb_funcall(_$hh, '===', $v),$e!==nil && $e!==false)){
+self.$i_s(i$cy,_$gp);
+self.$i_s(i$cz,_$gp);
+return self.$i_s(i$dc,true);
 }
-else if(($e = VN$(_$hi, '===', $v),$e!==nil && $e!==false)){
-self.$i_s(i$da,_$gn);
-self.$i_s(i$db,_$gl);
-return self.$i_s(i$de,true);
+else if(($e = rb_funcall(_$hi, '===', $v),$e!==nil && $e!==false)){
+self.$i_s(i$cy,_$gn);
+self.$i_s(i$cz,_$gl);
+return self.$i_s(i$dc,true);
 }
 })(a_type);
 });
-self.$def(s$nh,function(self,_cmd){
-return self.$i_g(i$e);
+rb_define_method(self,s$eb,function(self,_cmd){
+return rb_ivar_get(self, i$c);
 });
-self.$def(s$uy,function(self,_cmd){
-return self.$i_g(i$di);
+rb_define_method(self,s$mc,function(self,_cmd){
+return rb_ivar_get(self, i$dg);
 });
-self.$def(s$xd,function(self,_cmd,font_obj){
-return self.$i_s(i$cj,font_obj);
+rb_define_method(self,s$ok,function(self,_cmd,font_obj){
+return self.$i_s(i$ch,font_obj);
 });
-self.$def(s$abu,function(self,_cmd){
-return self.$i_g(i$cz);
+rb_define_method(self,s$te,function(self,_cmd){
+return rb_ivar_get(self, i$cx);
 });
-self.$def(s$abv,function(self,_cmd,flag){
-return self.$i_s(i$cz,flag);
+rb_define_method(self,s$tf,function(self,_cmd,flag){
+return self.$i_s(i$cx,flag);
 });
-self.$def(s$acm,function(self,_cmd,delay,interval){
+self.$def(s$tw,function(self,_cmd,delay,interval){
 });
-self.$def(s$aah,function(self,_cmd,delay,interval){
+self.$def(s$rr,function(self,_cmd,delay,interval){
 });
-self.$def(s$zn,function(self,_cmd){
-return self.$i_g(i$ck);
+rb_define_method(self,s$qw,function(self,_cmd){
+return rb_ivar_get(self, i$ci);
 });
-self.$def(s$abw,function(self,_cmd,equiv){
-return self.$i_s(i$ck,equiv);
+rb_define_method(self,s$tg,function(self,_cmd,equiv){
+return self.$i_s(i$ci,equiv);
 });
-self.$def(s$aby,function(self,_cmd,mask){
-return self.$i_s(i$df,mask);
+rb_define_method(self,s$ti,function(self,_cmd,mask){
+return self.$i_s(i$dd,mask);
 });
-self.$def(s$abx,function(self,_cmd){
-return self.$i_g(i$df);
+rb_define_method(self,s$th,function(self,_cmd){
+return rb_ivar_get(self, i$dd);
 });
-self.$def(s$acn,function(self,_cmd,font){
-return self.$i_s(i$dj,font);
+rb_define_method(self,s$tx,function(self,_cmd,font){
+return self.$i_s(i$dh,font);
 });
-self.$def(s$aco,function(self,_cmd){
-return self.$i_g(i$dj);
+rb_define_method(self,s$ty,function(self,_cmd){
+return rb_ivar_get(self, i$dh);
 });
-self.$def(s$acp,function(self,_cmd,font_name,size){
+self.$def(s$tz,function(self,_cmd,font_name,size){
 });
-self.$def(s$yg,function(self,_cmd,sender){
+rb_define_method(self,s$pp,function(self,_cmd,sender){
 });
-self.$def(s$xg,function(self,_cmd,obj){
-if(RTEST(ORTEST(NOTTEST(obj),ORTEST(VN$(obj,s$ai,0),VN$(obj,s$ai,_$gj))))){
+rb_define_method(self,s$on,function(self,_cmd,obj){
+if(RTEST(ORTEST(NOTTEST(obj),ORTEST(rb_funcall(obj,s$y,0),rb_funcall(obj,s$y,_$gj))))){
 obj = _$gj;
 }
 else{
 obj = _$gk;
 }
-return VN$sup(arguments.callee, self,_cmd,[obj]);
+return rb_supcall(arguments.callee, self,_cmd,[obj]);
 });
-self.$def(s$acq,function(self,_cmd,images,frame,control_view){
+self.$def(s$ua,function(self,_cmd,images,frame,control_view){
 });
-self.$def(s$acr,function(self,_cmd,title,frame,control_view){
+self.$def(s$ub,function(self,_cmd,title,frame,control_view){
 });
-self.$def(s$acs,function(self,_cmd,frame,control_view){
+self.$def(s$uc,function(self,_cmd,frame,control_view){
 });
-self.$def(s$act,function(self,_cmd,cell_frame,control_view){
-var ctx = VN$(self.$klass.$c_g_full(c$r),s$pn);
-if(RTEST(VN$(ctx,s$sn))){
-VN$(ctx,s$cv,"<div class='left'></div>");
-VN$(ctx,s$cv,"<div class='middle'></div>");
-VN$(ctx,s$cv,"<div class='right'></div>");
-VN$(ctx,s$cv,"<div class='title'></div>");
-VN$(ctx,s$cv,"<div class='image'></div>");
-VN$(ctx,'first_time=',false);
+self.$def(s$ud,function(self,_cmd,cell_frame,control_view){
+var ctx = rb_funcall(self.$klass.$c_g_full(c$q),s$gh);
+if(RTEST(rb_funcall(ctx,s$jp))){
+rb_funcall(ctx,s$b,"<div class='left'></div>");
+rb_funcall(ctx,s$b,"<div class='middle'></div>");
+rb_funcall(ctx,s$b,"<div class='right'></div>");
+rb_funcall(ctx,s$b,"<div class='title'></div>");
+rb_funcall(ctx,s$b,"<div class='image'></div>");
+rb_funcall(ctx,'first_time=',false);
 }
-var class_name_array = [VN$(self, s$sy),VN$(self, s$sz)];
-if(!RTEST(VN$(self, s$wu))){
-VN$(class_name_array,s$cv,_$fh);
+var class_name_array = [rb_funcall(self, s$kc),rb_funcall(self, s$kd)];
+if(!RTEST(rb_funcall(self, s$ob))){
+rb_funcall(class_name_array,s$b,_$fh);
 }
-if(RTEST(VN$(self, s$zc))){
-VN$(class_name_array,s$cv,_$hj);
-if(RTEST(ANDTEST(VN$(self, s$zi),VN$(self.$i_g(i$da),s$ai,_$gn)))){
-VN$(class_name_array,s$cv,_$hk);
-}
-else{
-}
-}
-return VN$(ctx,'class_name=',VN$(class_name_array,s$ge,' '));
-});
-self.$def(s$aac,function(self,_cmd,cell_frame,control_view){
-var ctx = VN$(self.$klass.$c_g_full(c$r),s$pn);
-if(!RTEST(VN$(VN$(self, s$acf),s$ai,_$ge))){
-VN$(ctx,s$sr,'title',function(title){
-VN$(title,'inner_html=',self.$i_g(i$bv));
-return VN$(title,s$jh,VN.$h(_$hl,VN$(self, s$xa)));
-});
-}
-if(RTEST(self.$i_g(i$av))){
-if(RTEST(VN$(self, s$abr))){
-VN$(self,s$acu,self.$i_g(i$dd),cell_frame,control_view);
+if(RTEST(rb_funcall(self, s$ql))){
+rb_funcall(class_name_array,s$b,_$hj);
+if(RTEST(ANDTEST(rb_funcall(self, s$qr),rb_funcall(rb_ivar_get(self, i$cy),s$y,_$gn)))){
+rb_funcall(class_name_array,s$b,_$hk);
 }
 else{
-VN$(self,s$acu,self.$i_g(i$av),cell_frame,control_view);
+}
+}
+return rb_funcall(ctx,'class_name=',rb_funcall(class_name_array,s$ue,' '));
+});
+self.$def(s$rl,function(self,_cmd,cell_frame,control_view){
+var ctx = rb_funcall(self.$klass.$c_g_full(c$q),s$gh);
+if(!RTEST(rb_funcall(rb_funcall(self, s$tp),s$y,_$ge))){
+rb_funcall(ctx,s$jv,'title',function(title){
+rb_funcall(title,'inner_html=',rb_ivar_get(self, i$bt));
+return rb_funcall(title,s$l,VN.$h(_$hl,rb_funcall(self, s$oh)));
+});
+}
+if(RTEST(rb_ivar_get(self, i$at))){
+if(RTEST(rb_funcall(self, s$tb))){
+rb_funcall(self,s$uf,rb_ivar_get(self, i$db),cell_frame,control_view);
+}
+else{
+rb_funcall(self,s$uf,rb_ivar_get(self, i$at),cell_frame,control_view);
 }
 }
 });
-self.$def(s$acu,function(self,_cmd,image,frame,control_view){
-var enabled = self.$i_g(i$br) ? true : NOTTEST(self.$i_g(i$de));
-var gray_mask = self.$i_g(i$by);
-var ctx = VN$(self.$klass.$c_g_full(c$r),s$pn);
-return VN$(ctx,s$sr,'image',function(img){
-return VN$(image,s$sa,VN$(self.$klass.$c_g_full(c$t),s$is,0,0,VN$(VN$(image,s$bs),s$jr),VN$(VN$(image,s$bs),s$js)),enabled,gray_mask);
+self.$def(s$uf,function(self,_cmd,image,frame,control_view){
+var enabled = rb_ivar_get(self, i$bp) ? true : NOTTEST(rb_ivar_get(self, i$dc));
+var gray_mask = rb_ivar_get(self, i$bw);
+var ctx = rb_funcall(self.$klass.$c_g_full(c$q),s$gh);
+return rb_funcall(ctx,s$jv,'image',function(img){
+return rb_funcall(image,s$jc,rb_funcall(self.$klass.$c_g_full(c$s),s$al,0,0,rb_funcall(rb_funcall(image,s$t),s$z),rb_funcall(rb_funcall(image,s$t),s$aa)),enabled,gray_mask);
 });
 });
-self.$def(s$acv,function(self,_cmd,title,frame,control_view){
+self.$def(s$ug,function(self,_cmd,title,frame,control_view){
 });
-self.$def(s$wc,function(self,_cmd,cell_frame,control_view){
-self.$i_s(i$ca,control_view);
-if(RTEST(VN$(self, s$abu))){
+self.$def(s$nj,function(self,_cmd,cell_frame,control_view){
+self.$i_s(i$by,control_view);
+if(RTEST(rb_funcall(self, s$te))){
 return ;
 }
-VN$(self,s$act,cell_frame,control_view);
-return VN$(self,s$aac,cell_frame,control_view);
+rb_funcall(self,s$ud,cell_frame,control_view);
+return rb_funcall(self,s$rl,cell_frame,control_view);
 });
-self.$def(s$mj,function(self,_cmd,the_event){
+rb_define_method(self,s$dc,function(self,_cmd,the_event){
 });
-self.$def(s$mk,function(self,_cmd,the_event){
+rb_define_method(self,s$dd,function(self,_cmd,the_event){
 });
-self.$def(s$rx,function(self,_cmd){
-return self.$i_g(i$ay);
+rb_define_method(self,s$iz,function(self,_cmd){
+return rb_ivar_get(self, i$aw);
 });
-self.$def(s$rw,function(self,_cmd,color){
-return self.$i_s(i$ay,color);
+rb_define_method(self,s$iy,function(self,_cmd,color){
+return self.$i_s(i$aw,color);
 });
-self.$def(s$acw,function(self,_cmd){
-return self.$i_g(i$dk);
+rb_define_method(self,s$uh,function(self,_cmd){
+return rb_ivar_get(self, i$di);
 });
-self.$def(s$acx,function(self,_cmd,obj){
-return self.$i_s(i$dk,obj);
+rb_define_method(self,s$ui,function(self,_cmd,obj){
+return self.$i_s(i$di,obj);
 });
-self.$def(s$acy,function(self,_cmd){
-return self.$i_g(i$dl);
+rb_define_method(self,s$uj,function(self,_cmd){
+return rb_ivar_get(self, i$dj);
 });
-self.$def(s$acz,function(self,_cmd,obj){
-return self.$i_s(i$dl,obj);
+rb_define_method(self,s$uk,function(self,_cmd,obj){
+return self.$i_s(i$dj,obj);
 });
-self.$def(s$ada,function(self,_cmd,bezel_style){
-return self.$i_s(i$dm,bezel_style);
+rb_define_method(self,s$ul,function(self,_cmd,bezel_style){
+return self.$i_s(i$dk,bezel_style);
 });
-self.$def(s$adb,function(self,_cmd){
-return self.$i_g(i$dm);
+rb_define_method(self,s$um,function(self,_cmd){
+return rb_ivar_get(self, i$dk);
 });
-self.$def(s$adc,function(self,_cmd,a_sound){
-return self.$i_g(i$dn);
+rb_define_method(self,s$un,function(self,_cmd,a_sound){
+return rb_ivar_get(self, i$dl);
 });
-self.$def(s$add,function(self,_cmd){
-return self.$i_g(i$dn);
+rb_define_method(self,s$uo,function(self,_cmd){
+return rb_ivar_get(self, i$dl);
 });
-})(RClass.define_under(self,'ButtonCell',self.$c_g_full(c$x)));
+})(RClass.define_under(self,'ButtonCell',self.$c_g_full(c$w)));
 })(RModule.define('Vienna'));

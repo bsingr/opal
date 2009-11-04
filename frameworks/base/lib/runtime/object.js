@@ -40,21 +40,41 @@ var RObject = function(klass, type) {
   // return VN$(this, 'to_s');
 // }
 
+
 /**
-  $ivar_set
-  
-  @param id - Ivar name
-  @param val - Value
+  Set ivar
+  @param obj - object to set ivar on
+  @param id - name of variable, e.g. '@background_color'
+  @param val - value to set
+*/
+var rb_ivar_set = function rb_ivar_set(obj, id, val) {
+  obj.$iv_tbl[id] = val;
+  return val;
+};
+
+
+/**
+  For compatibility
 */
 RObject.prototype.$i_s = function(id, val) {
   this.$iv_tbl[id] = val ;
   return val ;
 };
 
+
 /**
-  $ivar_get
-  
-  @param id - Ivar name
+  Get ivar
+*/
+var rb_ivar_get = function rb_ivar_get(obj, id) {
+  if (obj.$iv_tbl[id] == undefined || obj.$iv_tbl[id] == null) {
+    return nil;
+  }
+  return obj.$iv_tbl[id];
+};
+
+
+/**
+  For compatibility
 */
 RObject.prototype.$i_g = function(id) {
   if (this.$iv_tbl[id] == undefined || this.$iv_tbl[id] == null) {
@@ -79,16 +99,15 @@ RObject.prototype.$ = function(id, args) {
 };
 
 /**
-  new calling func
+  Call method
 */
-var VN$ = function VN$(self, id) {
- // console.log(' >>> ' + id);
- if (!self.$klass) {
-   console.log(self);
-   console.log(id);
-   // throw 'Vienna: VN$ - Trying to call `' + id + '` on null/undefined object'   
- }
-
+var rb_funcall = function rb_funcall(self, id) {
+  
+  if (!self.$klass) {
+    console.log('ERROR: rb_funcall');
+    console.log(self);
+    console.log(id);
+  }
   
   var method = self.$klass.$search_method(id);
   
@@ -105,9 +124,17 @@ var VN$ = function VN$(self, id) {
   }
   
   return method.apply(self, arguments);
-};
+}
 
-var VN$sup = function(from, self, id, args) {
+/**
+  For compatibility
+*/
+var VN$ = rb_funcall;
+
+/**
+  Call super method
+*/
+var rb_supcall = function rb_supcall(from, self, id, args) {
   var method = self.$klass.$search_super_method(from, id);
   if (!method) throw 'RObject#call cannot find super method for: ' + id ;
   
@@ -121,6 +148,11 @@ var VN$sup = function(from, self, id, args) {
   
   return method.apply(self, arguments);
 };
+
+/**
+  For compatibility
+*/
+var VN$sup = rb_supcall;
 
 /**
   Call super

@@ -1,28 +1,28 @@
 (function(self) {
 (function(self) {
-VN$(self,s$ar,_$ff);
+rb_funcall(self,s$g,_$ff);
 self.$c_s('BUILDERS',VN.$h());
-self.$def(s$as,function(self,_cmd,name,block){
-self.$i_s(i$l,name);
-self.$i_s(i$id,block);
-self.$i_s(i$ie,[]);
-return VN$(self.$klass.$c_g_full(c$av),'[]=',name,self);
+rb_define_method(self,s$i,function(self,_cmd,name,block){
+self.$i_s(i$j,name);
+self.$i_s(i$ib,block);
+self.$i_s(i$ic,[]);
+return rb_funcall(self.$klass.$c_g_full(c$au),'[]=',name,self);
 });
-self.$def_s(s$sw,function(self,_cmd,name,options,block){
-var builder = VN$(self.$c_g_full(c$av),s$bo,name);
-return VN$(builder,s$aqn,options,block);
+self.$def_s(s$ka,function(self,_cmd,name,options,block){
+var builder = rb_funcall(self.$c_g_full(c$au),s$e,name);
+return rb_funcall(builder,s$aig,options,block);
 });
-self.$def(s$aqn,function(self,_cmd,options,block){
-VN$(self.$i_g(i$id),s$it,self);
+rb_define_method(self,s$aig,function(self,_cmd,options,block){
+rb_funcall(rb_ivar_get(self, i$ib),s$ak,self);
 return arguments[arguments.length -1](self);
 });
-self.$def(s$aqo,function(self,_cmd,obj){
-return VN$(self.$i_g(i$ie),s$cv,obj);
+rb_define_method(self,s$aih,function(self,_cmd,obj){
+return rb_funcall(rb_ivar_get(self, i$ic),s$b,obj);
 });
-self.$def(s$aqp,function(self,_cmd){
-return self.$i_g(i$ai);
+rb_define_method(self,s$aii,function(self,_cmd){
+return rb_ivar_get(self, i$ag);
 });
-self.$def(s$mv,function(self,_cmd,a_menu){
+rb_define_method(self,s$do,function(self,_cmd,a_menu){
 });
 })(RClass.define_under(self,'Builder',cObject));
 })(RModule.define('Vienna'));

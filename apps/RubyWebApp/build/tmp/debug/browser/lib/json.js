@@ -1,31 +1,31 @@
 (function(self) {
-self.$def(s$as,function(self,_cmd,url,options,block){
+rb_define_method(self,s$l,function(self,_cmd,url,options,block){
 });
-self.$def_s(s$ju,function(self,_cmd,url,options,block){
-return VN$(self.$c_g_full(c$d),s$ju,url,options,block);
+self.$def_s(s$aj,function(self,_cmd,url,options,block){
+return rb_funcall(self.$c_g_full(c$e),s$aj,url,options,block);
 });
 })(RClass.define('JSON',cObject));
 (function(self) {
 self.$c_s('JSONP_CALLBACKS',[]);
-self.$def(s$as,function(self,_cmd,url,options,block){
-self.$i_s(i$f,url);
-self.$i_s(i$g,"vn_jsonp_callback_0");
-self.$i_s(i$h,block);
-VN$(self.$klass.$c_g_full(c$e),s$cv,self.$i_g(i$g));
-VN$(self,s$ag,["Initializing JSNOP connection with url: ",(self.$i_g(i$f))].join(''));
-return VN$(self, s$jv);
+rb_define_method(self,s$l,function(self,_cmd,url,options,block){
+self.$i_s(i$d,url);
+self.$i_s(i$e,"vn_jsonp_callback_0");
+self.$i_s(i$f,block);
+rb_funcall(self.$klass.$c_g_full(c$f),s$e,rb_ivar_get(self, i$e));
+rb_funcall(self,s$ak,["Initializing JSNOP connection with url: ",(rb_ivar_get(self, i$d))].join(''));
+return rb_funcall(self, s$al);
 });
-self.$def(s$jv,function(self,_cmd){
-window[self.$i_g(i$g)] = function(response) {
+rb_define_method(self,s$al,function(self,_cmd){
+window[rb_ivar_get(self, i$e)] = function(response) {
       VN$(self, 'got_response', response);
-    };self.$i_s(i$i,document.createElement('script'));
-self.$i_g(i$i).setAttribute('type', 'text/javascript');self.$i_g(i$i).setAttribute('src', self.$i_g(i$f));document.body.appendChild(self.$i_g(i$i));});
-self.$def(s$jw,function(self,_cmd,response){
-VN$(self,s$ag,'got response! toot!');
-return VN$(self.$i_g(i$h),s$it,JSONParserReformatter(response));
+    };self.$i_s(i$g,document.createElement('script'));
+rb_ivar_get(self, i$g).setAttribute('type', 'text/javascript');rb_ivar_get(self, i$g).setAttribute('src', rb_ivar_get(self, i$d));document.body.appendChild(rb_ivar_get(self, i$g));});
+rb_define_method(self,s$am,function(self,_cmd,response){
+rb_funcall(self,s$ak,'got response! toot!');
+return rb_funcall(rb_ivar_get(self, i$f),s$an,JSONParserReformatter(response));
 });
-self.$def_s(s$ju,function(self,_cmd,url,options,block){
-return VN$(self,s$is,url,options,block);
+self.$def_s(s$aj,function(self,_cmd,url,options,block){
+return rb_funcall(self,s$ao,url,options,block);
 });
 })(RClass.define('JSONP',cObject));
 

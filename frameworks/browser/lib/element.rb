@@ -108,6 +108,19 @@ class Element
      `#{element}.innerHTML = str;`
   end
   
+  # New preferred way to add events to the element. Event handles are stored
+  # within the element object, so they can be easily removed.
+  def observe(type, &block)
+    @event_listeners ||= {}
+    @event_listeners[type] = block
+    `if (document.addEventListener) {
+      #{element}.addEventListener(#{type.to_s}, #{listener}, false);
+    }
+    else {
+      #{element}.attachEvent('on' + #{type.to_s}, #{listener});
+    }`
+  end
+  
   def add_event_listener type, listener
     `if (document.addEventListener) {
       #{element}.addEventListener(#{type}, #{listener}, false);
@@ -116,4 +129,25 @@ class Element
       #{element}.attachEvent('on' + #{type}, #{listener});
     }`
   end
+  
+  # def self.add_event_listener type, listener
+  #   @event_listeners ||= {}
+  #   @event_listeners[type] = listener
+  #   `if (document.addEventListener) {
+  #     document.body.addEventListener(#{type}, #{listener}, false);
+  #   }
+  #   else {
+  #     document.body.attachEvent('on' + #{type}, #{listener});
+  #   }`
+  # end
+  # 
+  # def self.remove_event_listener type
+  #   listener = @event_listeners[type]
+  #   `if (document.addEventListener) {
+  #     document.body.removeEventListener(#{type}, #{listener}, false);
+  #   }
+  #   else {
+  #     document.body.detachEvent('on' + #{type}, #{listener});
+  #   }`
+  # end
 end

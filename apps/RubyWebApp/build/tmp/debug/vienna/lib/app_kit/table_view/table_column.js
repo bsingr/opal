@@ -1,86 +1,86 @@
 (function(self) {
 (function(self) {
-self.$def(s$as,function(self,_cmd,identifier){
-VN$(self,'identifier=',identifier);
-self.$i_s(i$ga,VN$(self.$klass.$c_g_full(c$af),s$is,''));
-return self.$i_s(i$ap,100);
+rb_define_method(self,s$i,function(self,_cmd,identifier){
+rb_funcall(self,'identifier=',identifier);
+self.$i_s(i$fy,rb_funcall(self.$klass.$c_g_full(c$ae),s$al,''));
+return self.$i_s(i$an,100);
 });
-self.$def(s$alh,function(self,_cmd,identifier){
-return self.$i_s(i$gb,identifier);
+rb_define_method(self,s$acz,function(self,_cmd,identifier){
+return self.$i_s(i$fz,identifier);
 });
-self.$def(s$ali,function(self,_cmd){
-return self.$i_g(i$gb);
+rb_define_method(self,s$ada,function(self,_cmd){
+return rb_ivar_get(self, i$fz);
 });
-self.$def(s$alj,function(self,_cmd,table_view){
-return self.$i_s(i$gc,table_view);
+rb_define_method(self,s$adb,function(self,_cmd,table_view){
+return self.$i_s(i$ga,table_view);
 });
-self.$def(s$alk,function(self,_cmd){
-return self.$i_g(i$gc);
+rb_define_method(self,s$adc,function(self,_cmd){
+return rb_ivar_get(self, i$ga);
 });
-self.$def(s$qr,function(self,_cmd,width){
-return self.$i_g(i$ap);
+rb_define_method(self,s$hl,function(self,_cmd,width){
+return rb_ivar_get(self, i$an);
 });
-self.$def(s$jr,function(self,_cmd){
-return self.$i_g(i$ap);
+rb_define_method(self,s$z,function(self,_cmd){
+return rb_ivar_get(self, i$an);
 });
-self.$def(s$all,function(self,_cmd,min_width){
-return self.$i_s(i$gd,min_width);
+rb_define_method(self,s$add,function(self,_cmd,min_width){
+return self.$i_s(i$gb,min_width);
 });
-self.$def(s$alm,function(self,_cmd){
-return self.$i_g(i$gd);
+rb_define_method(self,s$ade,function(self,_cmd){
+return rb_ivar_get(self, i$gb);
 });
-self.$def(s$aln,function(self,_cmd,max_width){
-return self.$i_s(i$ge,max_width);
+rb_define_method(self,s$adf,function(self,_cmd,max_width){
+return self.$i_s(i$gc,max_width);
 });
-self.$def(s$alo,function(self,_cmd){
-return self.$i_g(i$ge);
+rb_define_method(self,s$adg,function(self,_cmd){
+return rb_ivar_get(self, i$gc);
 });
-self.$def(s$alp,function(self,_cmd,cell){
-return self.$i_s(i$gf,cell);
+rb_define_method(self,s$adh,function(self,_cmd,cell){
+return self.$i_s(i$gd,cell);
 });
-self.$def(s$alq,function(self,_cmd){
-return self.$i_g(i$gf);
+rb_define_method(self,s$adi,function(self,_cmd){
+return rb_ivar_get(self, i$gd);
 });
-self.$def(s$alr,function(self,_cmd){
-return self.$i_g(i$ga);
+rb_define_method(self,s$adj,function(self,_cmd){
+return rb_ivar_get(self, i$fy);
 });
-self.$def(s$als,function(self,_cmd,data_cell){
-return self.$i_s(i$ga,data_cell);
+rb_define_method(self,s$adk,function(self,_cmd,data_cell){
+return self.$i_s(i$fy,data_cell);
 });
-self.$def(s$aks,function(self,_cmd){
-return self.$i_g(i$ga);
+rb_define_method(self,s$ack,function(self,_cmd){
+return rb_ivar_get(self, i$fy);
 });
-self.$def(s$yz,function(self,_cmd,flag){
-return self.$i_g(i$bs);
+rb_define_method(self,s$qi,function(self,_cmd,flag){
+return rb_ivar_get(self, i$bq);
 });
-self.$def(s$yy,function(self,_cmd){
-return self.$i_g(i$bs);
+rb_define_method(self,s$qh,function(self,_cmd){
+return rb_ivar_get(self, i$bq);
 });
-self.$def(s$wg,function(self,_cmd){
+rb_define_method(self,s$nn,function(self,_cmd){
 });
-self.$def(s$alt,function(self,_cmd,sort_descriptor){
-return self.$i_s(i$gg,sort_descriptor);
+rb_define_method(self,s$adl,function(self,_cmd,sort_descriptor){
+return self.$i_s(i$ge,sort_descriptor);
 });
-self.$def(s$alu,function(self,_cmd){
-return self.$i_g(i$gg);
+rb_define_method(self,s$adm,function(self,_cmd){
+return rb_ivar_get(self, i$ge);
 });
-self.$def(s$alv,function(self,_cmd,resizing_mask){
-return self.$i_s(i$gh,resizing_mask);
+rb_define_method(self,s$adn,function(self,_cmd,resizing_mask){
+return self.$i_s(i$gf,resizing_mask);
 });
-self.$def(s$alw,function(self,_cmd){
-return self.$i_g(i$gh);
+rb_define_method(self,s$ado,function(self,_cmd){
+return rb_ivar_get(self, i$gf);
 });
-self.$def(s$alx,function(self,_cmd,string){
-return self.$i_s(i$gi,string);
+rb_define_method(self,s$adp,function(self,_cmd,string){
+return self.$i_s(i$gg,string);
 });
-self.$def(s$aly,function(self,_cmd){
-return self.$i_g(i$gj);
+rb_define_method(self,s$adq,function(self,_cmd){
+return rb_ivar_get(self, i$gh);
 });
-self.$def(s$tk,function(self,_cmd){
-return self.$i_g(i$gk);
+rb_define_method(self,s$ko,function(self,_cmd){
+return rb_ivar_get(self, i$gi);
 });
-self.$def(s$tj,function(self,_cmd,flag){
-return self.$i_s(i$gk,flag);
+rb_define_method(self,s$kn,function(self,_cmd,flag){
+return self.$i_s(i$gi,flag);
 });
 })(RClass.define_under(self,'TableColumn',cObject));
 })(RModule.define('Vienna'));

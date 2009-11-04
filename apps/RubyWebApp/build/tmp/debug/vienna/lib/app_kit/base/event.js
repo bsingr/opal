@@ -1,18 +1,18 @@
 (function(self) {
 self.$c_s('EVENT_TYPES',VN.$h(_$ah, 1, _$ai, 2, _$aj, 3, _$ak, 4, _$al, 5, _$ab, 6, _$am, 7, _$an, 8, _$ao, 9, _$ap, 10, _$aq, 11, _$ar, 12, _$as, 13, _$at, 14, _$au, 15, _$av, 16, _$aw, 17, _$ax, 22, _$ay, 25, _$az, 26, _$ba, 27));
 (function(self) {
-self.$def_s(s$ne,function(self,_cmd,event,win,type){
-var obj = VN$(self,s$nt);
-VN$(obj,s$nu,event,win,type);
+self.$def_s(s$dy,function(self,_cmd,event,win,type){
+var obj = rb_funcall(self,s$en);
+rb_funcall(obj,s$eo,event,win,type);
 return obj;
 });
-self.$def(s$nu,function(self,_cmd,event,win,type){
-self.$i_s(i$ad,event);
-self.$i_s(i$ae,win);
-return self.$i_s(i$e,type);
+self.$def(s$eo,function(self,_cmd,event,win,type){
+self.$i_s(i$ab,event);
+self.$i_s(i$ac,win);
+return self.$i_s(i$c,type);
 });
-self.$def(s$nv,function(self,_cmd){
-var event = self.$i_g(i$ad);
+rb_define_method(self,s$ep,function(self,_cmd){
+var event = rb_ivar_get(self, i$ab);
 if (event.stopPropagation) {
         event.stopPropagation()
         event.preventDefault();
@@ -20,52 +20,52 @@ if (event.stopPropagation) {
         window.event.cancelBubble = true;
         window.event.returnValue = false;
       }});
-self.$def(s$nw,function(self,_cmd){
-return self.$i_g(i$ad)._vn_allow_event_propagation? true : false;});
-self.$def(s$nx,function(self,_cmd,flag){
-self.$i_g(i$ad)._vn_allow_event_propagation = flag;});
-self.$def(s$nh,function(self,_cmd){
-return self.$i_g(i$e);
+rb_define_method(self,s$eq,function(self,_cmd){
+return rb_ivar_get(self, i$ab)._vn_allow_event_propagation? true : false;});
+rb_define_method(self,s$er,function(self,_cmd,flag){
+rb_ivar_get(self, i$ab)._vn_allow_event_propagation = flag;});
+rb_define_method(self,s$eb,function(self,_cmd){
+return rb_ivar_get(self, i$c);
 });
-self.$def(s$ny,function(self,_cmd){
+rb_define_method(self,s$es,function(self,_cmd){
 });
-self.$def(s$nz,function(self,_cmd){
+rb_define_method(self,s$et,function(self,_cmd){
 });
-self.$def(s$oa,function(self,_cmd,a_window){
-return self.$i_s(i$ae,a_window);
+rb_define_method(self,s$eu,function(self,_cmd,a_window){
+return self.$i_s(i$ac,a_window);
 });
-self.$def(s$nd,function(self,_cmd){
-return self.$i_g(i$ae);
+rb_define_method(self,s$dw,function(self,_cmd){
+return rb_ivar_get(self, i$ac);
 });
-self.$def(s$ob,function(self,_cmd){
-return VN$(self.$i_g(i$ae),s$ob);
+rb_define_method(self,s$ev,function(self,_cmd){
+return rb_funcall(rb_ivar_get(self, i$ac),s$ev);
 });
-self.$def(s$oc,function(self,_cmd){
+rb_define_method(self,s$ew,function(self,_cmd){
 });
-self.$def(s$od,function(self,_cmd){
+rb_define_method(self,s$ex,function(self,_cmd){
 });
-self.$def(s$oe,function(self,_cmd){
+rb_define_method(self,s$ey,function(self,_cmd){
 });
-self.$def(s$of,function(self,_cmd){
+rb_define_method(self,s$ez,function(self,_cmd){
 });
-self.$def(s$og,function(self,_cmd){
-return VN$(self.$i_g(i$ae),s$oh,VN$(self.$klass.$c_g_full(c$p),s$is,self.$i_g(i$ad).clientX,self.$i_g(i$ad).clientY));
+rb_define_method(self,s$fa,function(self,_cmd){
+return rb_funcall(rb_ivar_get(self, i$ac),s$fb,rb_funcall(self.$klass.$c_g_full(c$o),s$al,rb_ivar_get(self, i$ab).clientX,rb_ivar_get(self, i$ab).clientY));
 });
-self.$def(s$oi,function(self,_cmd){
+rb_define_method(self,s$fc,function(self,_cmd){
 });
-self.$def(s$oj,function(self,_cmd){
+rb_define_method(self,s$fd,function(self,_cmd){
 });
-self.$def(s$ok,function(self,_cmd){
+rb_define_method(self,s$fe,function(self,_cmd){
 });
-self.$def(s$ol,function(self,_cmd){
+rb_define_method(self,s$ff,function(self,_cmd){
 });
-self.$def(s$om,function(self,_cmd){
+rb_define_method(self,s$fg,function(self,_cmd){
 });
-self.$def(s$on,function(self,_cmd){
+rb_define_method(self,s$fh,function(self,_cmd){
 });
-self.$def(s$oo,function(self,_cmd){
+rb_define_method(self,s$fi,function(self,_cmd){
 });
-self.$def_s(s$op,function(self,_cmd){
+self.$def_s(s$fj,function(self,_cmd){
 });
 })(RClass.define_under(self,'Event',cObject));
 })(RModule.define('Vienna'));

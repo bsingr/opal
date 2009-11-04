@@ -1,96 +1,96 @@
 (function(self) {
 self.$c_s('TEXTFIELD_BEZEL_STYLES',VN.$h(_$hs, 0, _$ht, 1));
 (function(self) {
-self.$def(s$as,function(self,_cmd,frame){
-VN$sup(arguments.callee, self,_cmd,[frame]);
-self.$i_s(i$bs,true);
-return self.$i_s(i$bt,true);
+rb_define_method(self,s$i,function(self,_cmd,frame){
+rb_supcall(arguments.callee, self,_cmd,[frame]);
+self.$i_s(i$bq,true);
+return self.$i_s(i$br,true);
 });
-self.$def_s(s$wb,function(self,_cmd){
-return self.$c_g_full(c$af);
+self.$def_s(s$ni,function(self,_cmd){
+return self.$c_g_full(c$ae);
 });
-self.$def(s$sy,function(self,_cmd){
+rb_define_method(self,s$kc,function(self,_cmd){
 return 'vn-text-field';
 });
-self.$def(s$adw,function(self,_cmd){
-VN$(self,s$ag,'resign first responder....');
+rb_define_method(self,s$vj,function(self,_cmd){
+rb_funcall(self,s$ah,'resign first responder....');
 return true;
 });
-self.$def(s$adx,function(self,_cmd){
-VN$(self,s$ag,'becoming first responder!!');
-VN$(VN$(self.$klass.$c_g_full(c$m),s$nc),'allows_propagation=',true);
+rb_define_method(self,s$vk,function(self,_cmd){
+rb_funcall(self,s$ah,'becoming first responder!!');
+rb_funcall(rb_funcall(self.$klass.$c_g_full(c$l),s$dv),'allows_propagation=',true);
 return true;
 });
-self.$def(s$ly,function(self,_cmd,the_event){
-return VN$(VN$(self.$klass.$c_g_full(c$m),s$nc),'allows_propagation=',true);
+rb_define_method(self,s$cr,function(self,_cmd,the_event){
+return rb_funcall(rb_funcall(self.$klass.$c_g_full(c$l),s$dv),'allows_propagation=',true);
 });
-self.$def(s$rw,function(self,_cmd,color){
-return self.$i_s(i$ay,color);
+rb_define_method(self,s$iy,function(self,_cmd,color){
+return self.$i_s(i$aw,color);
 });
-self.$def(s$rx,function(self,_cmd){
-return self.$i_g(i$ay);
+rb_define_method(self,s$iz,function(self,_cmd){
+return rb_ivar_get(self, i$aw);
 });
-self.$def(s$ady,function(self,_cmd,flag){
-return self.$i_s(i$dy,flag);
+rb_define_method(self,s$vl,function(self,_cmd,flag){
+return self.$i_s(i$dw,flag);
 });
-self.$def(s$adz,function(self,_cmd){
-return self.$i_g(i$dy);
+rb_define_method(self,s$vm,function(self,_cmd){
+return rb_ivar_get(self, i$dw);
 });
-self.$def(s$aea,function(self,_cmd,color){
-return self.$i_s(i$dz,color);
+rb_define_method(self,s$vn,function(self,_cmd,color){
+return self.$i_s(i$dx,color);
 });
-self.$def(s$aeb,function(self,_cmd){
-return self.$i_g(i$dz);
+rb_define_method(self,s$vo,function(self,_cmd){
+return rb_ivar_get(self, i$dx);
 });
-self.$def(s$zc,function(self,_cmd){
-return self.$i_g(i$bw);
+rb_define_method(self,s$ql,function(self,_cmd){
+return rb_ivar_get(self, i$bu);
 });
-self.$def(s$zd,function(self,_cmd,flag){
-return self.$i_s(i$bw,flag);
+rb_define_method(self,s$qm,function(self,_cmd,flag){
+return self.$i_s(i$bu,flag);
 });
-self.$def(s$ze,function(self,_cmd){
-return self.$i_g(i$bx);
+rb_define_method(self,s$qn,function(self,_cmd){
+return rb_ivar_get(self, i$bv);
 });
-self.$def(s$zf,function(self,_cmd,flag){
-return self.$i_s(i$bx,flag);
+rb_define_method(self,s$qo,function(self,_cmd,flag){
+return self.$i_s(i$bv,flag);
 });
-self.$def(s$yy,function(self,_cmd){
-return self.$i_g(i$bs);
+rb_define_method(self,s$qh,function(self,_cmd){
+return rb_ivar_get(self, i$bq);
 });
-self.$def(s$yz,function(self,_cmd,flag){
-return self.$i_s(i$bs,flag);
+rb_define_method(self,s$qi,function(self,_cmd,flag){
+return self.$i_s(i$bq,flag);
 });
-self.$def(s$za,function(self,_cmd){
-return self.$i_g(i$bt);
+rb_define_method(self,s$qj,function(self,_cmd){
+return rb_ivar_get(self, i$br);
 });
-self.$def(s$zb,function(self,_cmd,flag){
-return self.$i_s(i$bt,flag);
+rb_define_method(self,s$qk,function(self,_cmd,flag){
+return self.$i_s(i$br,flag);
 });
-self.$def(s$aec,function(self,_cmd,sender){
+rb_define_method(self,s$vp,function(self,_cmd,sender){
 });
-self.$def(s$sk,function(self,_cmd){
-return self.$i_g(i$v);
+rb_define_method(self,s$jm,function(self,_cmd){
+return rb_ivar_get(self, i$t);
 });
-self.$def(s$no,function(self,_cmd,an_obj){
-return self.$i_s(i$v,an_obj);
+rb_define_method(self,s$ei,function(self,_cmd,an_obj){
+return self.$i_s(i$t,an_obj);
 });
-self.$def(s$aed,function(self,_cmd,text_object){
+rb_define_method(self,s$vq,function(self,_cmd,text_object){
 return true;
 });
-self.$def(s$aee,function(self,_cmd,text_object){
+rb_define_method(self,s$vr,function(self,_cmd,text_object){
 return true;
 });
-self.$def(s$aef,function(self,_cmd,notification){
+rb_define_method(self,s$vs,function(self,_cmd,notification){
 });
-self.$def(s$aeg,function(self,_cmd,notification){
+rb_define_method(self,s$vt,function(self,_cmd,notification){
 });
-self.$def(s$aeh,function(self,_cmd,notification){
+rb_define_method(self,s$vu,function(self,_cmd,notification){
 });
-self.$def(s$ada,function(self,_cmd,stlye){
-return self.$i_s(i$dm,VN$(self, s$aei));
+rb_define_method(self,s$ul,function(self,_cmd,stlye){
+return self.$i_s(i$dk,rb_funcall(self, s$vv));
 });
-self.$def(s$adb,function(self,_cmd){
-return self.$i_g(i$dm);
+rb_define_method(self,s$um,function(self,_cmd){
+return rb_ivar_get(self, i$dk);
 });
-})(RClass.define_under(self,'TextField',self.$c_g_full(c$aa)));
+})(RClass.define_under(self,'TextField',self.$c_g_full(c$z)));
 })(RModule.define('Vienna'));

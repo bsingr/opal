@@ -24,8 +24,6 @@
 # THE SOFTWARE.
 #
 
-require 'base'
-require 'browser'
 require 'vienna'
 
 module RubyWebApp

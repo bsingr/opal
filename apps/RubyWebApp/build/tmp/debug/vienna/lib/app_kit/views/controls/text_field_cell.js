@@ -1,78 +1,78 @@
 (function(self) {
 (function(self) {
-self.$def(s$yp,function(self,_cmd,str){
-VN$sup(arguments.callee, self,_cmd,[str]);
-self.$i_s(i$bs,true);
-self.$i_s(i$bt,true);
-self.$i_s(i$bx,true);
-self.$i_s(i$ea,_$hu);
-self.$i_s(i$cm,'');
+rb_define_method(self,s$py,function(self,_cmd,str){
+rb_supcall(arguments.callee, self,_cmd,[str]);
+self.$i_s(i$bq,true);
+self.$i_s(i$br,true);
+self.$i_s(i$bv,true);
+self.$i_s(i$dy,_$hu);
+self.$i_s(i$ck,'');
 return self;
 });
-self.$def(s$sy,function(self,_cmd){
+rb_define_method(self,s$kc,function(self,_cmd){
 return 'vn-text-field';
 });
-self.$def(s$wc,function(self,_cmd,cell_frame,control_view){
-var ctx = VN$(self.$klass.$c_g_full(c$r),s$pn);
-if(RTEST(VN$(ctx,s$sn))){
-VN$(ctx,s$cv,"<div class='left'></div>");
-VN$(ctx,s$cv,"<div class='middle'></div>");
-VN$(ctx,s$cv,"<div class='right'></div>");
-if(RTEST(VN$(control_view,s$af,self.$klass.$c_g_full(c$ag)))){
-VN$(ctx,s$cv,"<input class='input'></input>");
+self.$def(s$nj,function(self,_cmd,cell_frame,control_view){
+var ctx = rb_funcall(self.$klass.$c_g_full(c$q),s$gh);
+if(RTEST(rb_funcall(ctx,s$jp))){
+rb_funcall(ctx,s$b,"<div class='left'></div>");
+rb_funcall(ctx,s$b,"<div class='middle'></div>");
+rb_funcall(ctx,s$b,"<div class='right'></div>");
+if(RTEST(rb_funcall(control_view,s$vw,self.$klass.$c_g_full(c$af)))){
+rb_funcall(ctx,s$b,"<input class='input'></input>");
 }
 else{
-VN$(ctx,s$cv,"<div class='input'></input>");
+rb_funcall(ctx,s$b,"<div class='input'></input>");
 }
-VN$(ctx,'first_time=',false);
+rb_funcall(ctx,'first_time=',false);
 }
-VN$(ctx,'class_name=',VN$([VN$(self, s$sy),VN$(self, s$sz)],s$ge,' '));
-if(RTEST(VN$(control_view,s$af,self.$klass.$c_g_full(c$ag)))){
+rb_funcall(ctx,'class_name=',rb_funcall([rb_funcall(self, s$kc),rb_funcall(self, s$kd)],s$ue,' '));
+if(RTEST(rb_funcall(control_view,s$vw,self.$klass.$c_g_full(c$af)))){
 }
 else{
-VN$(ctx,s$sr,_$hu,function(input){
-return VN$(input,'inner_text=',self.$i_g(i$cm));
+rb_funcall(ctx,s$jv,_$hu,function(input){
+return rb_funcall(input,'inner_text=',rb_ivar_get(self, i$ck));
 });
 }
 });
-self.$def(s$rw,function(self,_cmd,color){
-return self.$i_s(i$ay,color);
+rb_define_method(self,s$iy,function(self,_cmd,color){
+return self.$i_s(i$aw,color);
 });
-self.$def(s$rx,function(self,_cmd){
-return self.$i_g(i$ay);
+rb_define_method(self,s$iz,function(self,_cmd){
+return rb_ivar_get(self, i$aw);
 });
-self.$def(s$ady,function(self,_cmd,flag){
-return self.$i_s(i$dy,flag);
+rb_define_method(self,s$vl,function(self,_cmd,flag){
+return self.$i_s(i$dw,flag);
 });
-self.$def(s$adz,function(self,_cmd){
-return self.$i_g(i$dy);
+rb_define_method(self,s$vm,function(self,_cmd){
+return rb_ivar_get(self, i$dw);
 });
-self.$def(s$aea,function(self,_cmd,color){
-return self.$i_s(i$dz,color);
+rb_define_method(self,s$vn,function(self,_cmd,color){
+return self.$i_s(i$dx,color);
 });
-self.$def(s$aeb,function(self,_cmd){
-return self.$i_g(i$dz);
+rb_define_method(self,s$vo,function(self,_cmd){
+return rb_ivar_get(self, i$dx);
 });
-self.$def(s$aab,function(self,_cmd,text_obj){
+rb_define_method(self,s$rk,function(self,_cmd,text_obj){
 return text_obj;
 });
-self.$def(s$ada,function(self,_cmd,style){
-return self.$i_s(i$dm,style);
+rb_define_method(self,s$ul,function(self,_cmd,style){
+return self.$i_s(i$dk,style);
 });
-self.$def(s$adb,function(self,_cmd){
-return self.$i_g(i$dm);
+rb_define_method(self,s$um,function(self,_cmd){
+return rb_ivar_get(self, i$dk);
 });
-self.$def(s$aej,function(self,_cmd,string){
-return self.$i_s(i$eb,string);
+rb_define_method(self,s$vx,function(self,_cmd,string){
+return self.$i_s(i$dz,string);
 });
-self.$def(s$aek,function(self,_cmd){
-return self.$i_g(i$eb);
+rb_define_method(self,s$vy,function(self,_cmd){
+return rb_ivar_get(self, i$dz);
 });
-self.$def(s$ael,function(self,_cmd,str){
-return self.$i_g(i$ec);
+rb_define_method(self,s$vz,function(self,_cmd,str){
+return rb_ivar_get(self, i$ea);
 });
-self.$def(s$aem,function(self,_cmd){
-return self.$i_g(i$ec);
+rb_define_method(self,s$wa,function(self,_cmd){
+return rb_ivar_get(self, i$ea);
 });
-})(RClass.define_under(self,'TextFieldCell',self.$c_g_full(c$x)));
+})(RClass.define_under(self,'TextFieldCell',self.$c_g_full(c$w)));
 })(RModule.define('Vienna'));

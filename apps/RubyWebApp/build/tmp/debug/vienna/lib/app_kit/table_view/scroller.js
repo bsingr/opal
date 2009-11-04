@@ -1,64 +1,64 @@
 (function(self) {
 (function(self) {
-self.$def_s(s$aga,function(self,_cmd){
+self.$def_s(s$xo,function(self,_cmd){
 return 15;
 });
-self.$def_s(s$agb,function(self,_cmd,control_size){
+self.$def_s(s$xp,function(self,_cmd,control_size){
 return 15;
 });
-self.$def(s$sy,function(self,_cmd){
-return VN$(VN$(self.$i_g(i$bd),s$jr),s$fj,VN$(self.$i_g(i$bd),s$js)) ? 'vn-vertical-scroller' : 'vn-horizontal-scroller';
+rb_define_method(self,s$kc,function(self,_cmd){
+return rb_funcall(rb_funcall(rb_ivar_get(self, i$bb),s$z),s$hx,rb_funcall(rb_ivar_get(self, i$bb),s$aa)) ? 'vn-vertical-scroller' : 'vn-horizontal-scroller';
 });
-self.$def(s$vt,function(self,_cmd,context){
-return VN$(context,s$jh,VN.$h(_$hv,'rgb(220,220,220)'));
+rb_define_method(self,s$my,function(self,_cmd,context){
+return rb_funcall(context,s$l,VN.$h(_$hv,'rgb(220,220,220)'));
 });
-self.$def(s$agc,function(self,_cmd){
+rb_define_method(self,s$xq,function(self,_cmd){
 });
-self.$def(s$agd,function(self,_cmd,part){
+rb_define_method(self,s$xr,function(self,_cmd,part){
 });
-self.$def(s$age,function(self,_cmd){
+rb_define_method(self,s$xs,function(self,_cmd){
 });
-self.$def(s$agf,function(self,_cmd){
+rb_define_method(self,s$xt,function(self,_cmd){
 });
-self.$def(s$agg,function(self,_cmd,position){
-return self.$i_s(i$es,position);
+rb_define_method(self,s$xu,function(self,_cmd,position){
+return self.$i_s(i$eq,position);
 });
-self.$def(s$agh,function(self,_cmd){
-return self.$i_g(i$es);
+rb_define_method(self,s$xv,function(self,_cmd){
+return rb_ivar_get(self, i$eq);
 });
-self.$def(s$wx,function(self,_cmd,control_tint){
-return self.$i_s(i$cn,control_tint);
+rb_define_method(self,s$oe,function(self,_cmd,control_tint){
+return self.$i_s(i$cl,control_tint);
 });
-self.$def(s$ww,function(self,_cmd){
-return self.$i_g(i$cn);
+rb_define_method(self,s$od,function(self,_cmd){
+return rb_ivar_get(self, i$cl);
 });
-self.$def(s$wy,function(self,_cmd,control_size){
-return self.$i_s(i$co,control_size);
+rb_define_method(self,s$of,function(self,_cmd,control_size){
+return self.$i_s(i$cm,control_size);
 });
-self.$def(s$wz,function(self,_cmd){
-return self.$i_g(i$co);
+rb_define_method(self,s$og,function(self,_cmd){
+return rb_ivar_get(self, i$cm);
 });
-self.$def(s$agi,function(self,_cmd,which_arrow,flag){
+self.$def(s$xw,function(self,_cmd,which_arrow,flag){
 });
-self.$def(s$agj,function(self,_cmd){
+rb_define_method(self,s$xx,function(self,_cmd){
 });
-self.$def(s$agk,function(self,_cmd,slot_rect,flag){
+self.$def(s$xy,function(self,_cmd,slot_rect,flag){
 });
-self.$def(s$agl,function(self,_cmd,flag){
+rb_define_method(self,s$xz,function(self,_cmd,flag){
 });
-self.$def(s$agm,function(self,_cmd,the_point){
+rb_define_method(self,s$ya,function(self,_cmd,the_point){
 });
-self.$def(s$agn,function(self,_cmd,the_event){
+rb_define_method(self,s$yb,function(self,_cmd,the_event){
 });
-self.$def(s$ago,function(self,_cmd,the_event){
+rb_define_method(self,s$yc,function(self,_cmd,the_event){
 });
-self.$def(s$agp,function(self,_cmd){
+rb_define_method(self,s$yd,function(self,_cmd){
 });
-self.$def(s$agq,function(self,_cmd){
-return self.$i_g(i$et);
+rb_define_method(self,s$ye,function(self,_cmd){
+return rb_ivar_get(self, i$er);
 });
-self.$def(s$agr,function(self,_cmd,proportion){
-return self.$i_s(i$et,proportion);
+rb_define_method(self,s$yf,function(self,_cmd,proportion){
+return self.$i_s(i$er,proportion);
 });
-})(RClass.define_under(self,'Scroller',self.$c_g_full(c$aa)));
+})(RClass.define_under(self,'Scroller',self.$c_g_full(c$z)));
 })(RModule.define('Vienna'));

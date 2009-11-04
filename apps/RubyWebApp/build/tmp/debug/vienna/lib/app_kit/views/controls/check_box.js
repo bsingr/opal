@@ -1,8 +1,8 @@
 (function(self) {
 (function(self) {
-self.$def(s$as,function(self,_cmd,frame){
-VN$sup(arguments.callee, self,_cmd,[frame]);
-return VN$(self,'type=',_$ha);
+rb_define_method(self,s$i,function(self,_cmd,frame){
+rb_supcall(arguments.callee, self,_cmd,[frame]);
+return rb_funcall(self,'type=',_$ha);
 });
-})(RClass.define_under(self,'CheckBox',self.$c_g_full(c$ac)));
+})(RClass.define_under(self,'CheckBox',self.$c_g_full(c$ab)));
 })(RModule.define('Vienna'));
