@@ -1,62 +1,62 @@
 (function(self) {
 (function(self) {
-rb_define_method(self,s$l,function(self,_cmd,frame){
-return rb_supcall(arguments.callee, self,_cmd,[frame]);
+_I(self,s$n,function(self,_,frame){
+return rb_supcall(arguments.callee, self,_,[frame]);
 });
-rb_define_method(self,s$kc,function(self,_cmd){
+_I(self,s$lx,function(self,_){
 return 'vn-table-header-view';
 });
-rb_define_method(self,s$my,function(self,_cmd,context){
-if(RTEST(rb_funcall(context,s$jp))){
-rb_funcall(context,'class_name=',rb_funcall(self, s$kc));
-rb_funcall(context,'first_time=',false);
+_I(self,s$ot,function(self,_,context){
+if(_A(_E(context,s$lk))){
+_E(context,s$p,_E(self,s$lx));
+_E(context,s$ll,false);
 }
-var children = rb_funcall(context,s$jx);
-var table_columns = rb_funcall(rb_ivar_get(self, i$gc),s$aab);
-var i = 0;
-var columns = rb_funcall(table_columns,s$nb);
-var intercell_spacing = rb_funcall(rb_ivar_get(self, i$gc),s$zt);
-var cell_frame = rb_funcall(self.$klass.$c_g_full(c$t),s$ao,0,0,rb_funcall(rb_funcall(self, s$lz),s$ac),rb_funcall(rb_funcall(self, s$lz),s$ad));
-if(RTEST(rb_funcall(children,s$hx,columns))){
-rb_funcall((rb_funcall(columns,s$mf,children)),s$aat,function(i){
-return rb_funcall(context,s$e,"<div></div>");
+var children=_E(context,s$ls);
+var table_columns=_E(_H(self,i$gc),s$abw);
+var i=0;
+var columns=_E(table_columns,s$ov);
+var intercell_spacing=_E(_H(self,i$gc),s$abo);
+var cell_frame=_E(self.$klass.$c_g_full(c$ad),s$ap,0,0,_E(_E(self,s$nv),s$ae),_E(_E(self,s$nv),s$af));
+if(_A(_E(children,s$js,columns))){
+_E((_E(columns,s$ob,children)),s$aco,function(i){
+return _E(context,s$e,"<div></div>");
 });
 }
-return rb_funcall(columns,s$aat,function(i){
-var column = rb_funcall(table_columns,s$h,i);
-var width = rb_funcall(rb_funcall(column,s$ac),s$hy,rb_funcall(intercell_spacing,s$ac));
-rb_funcall(cell_frame,'width=',width);
-rb_funcall(context,s$jy,i,function(column_context){
-if(RTEST(rb_funcall(i,s$hx,children))){
-rb_funcall(column_context,'first_time=',false);
+return _E(columns,s$aco,function(i){
+var column=_E(table_columns,s$j,i);
+var width=_E(_E(column,s$ae),s$jt,_E(intercell_spacing,s$ae));
+_E(cell_frame,s$jg,width);
+_E(context,s$lt,i,function(column_context){
+if(_A(_E(i,s$js,children))){
+_E(column_context,s$ll,false);
 }
 else{
-rb_funcall(column_context,'first_time=',true);
+_E(column_context,s$ll,true);
 }
-rb_funcall(column_context,'frame=',cell_frame);
-return rb_funcall(rb_funcall(column,s$adu),s$nj,cell_frame,self);
+_E(column_context,s$w,cell_frame);
+return _E(_E(column,s$afo),s$pd,cell_frame,self);
 });
-return rb_funcall(cell_frame,'x=',rb_funcall(rb_funcall(cell_frame,s$y),s$hy,width));
+return _E(cell_frame,s$je,_E(_E(cell_frame,s$ab),s$jt,width));
 });
 });
-rb_define_method(self,s$adn,function(self,_cmd,table_view){
+_I(self,s$aaz,function(self,_,table_view){
 return self.$i_s(i$gc,table_view);
 });
-rb_define_method(self,s$ado,function(self,_cmd){
-return rb_ivar_get(self, i$gc);
+_I(self,s$afi,function(self,_){
+return _H(self,i$gc);
 });
-rb_define_method(self,s$aed,function(self,_cmd){
-return rb_ivar_get(self, i$gk);
+_I(self,s$afx,function(self,_){
+return _H(self,i$gk);
 });
-rb_define_method(self,s$aee,function(self,_cmd){
-return rb_ivar_get(self, i$gl);
+_I(self,s$afy,function(self,_){
+return _H(self,i$gl);
 });
-rb_define_method(self,s$aef,function(self,_cmd){
-return rb_ivar_get(self, i$gm);
+_I(self,s$afz,function(self,_){
+return _H(self,i$gm);
 });
-rb_define_method(self,s$aeg,function(self,_cmd,column){
+_I(self,s$aga,function(self,_,column){
 });
-rb_define_method(self,s$acu,function(self,_cmd,point){
+_I(self,s$aep,function(self,_,point){
 });
-})(RClass.define_under(self,'TableHeaderView',self.$c_g_full(c$x)));
-})(RModule.define('Vienna'));
+})(_N(self,c$be,self.$c_g_full(c$ai)));
+})(_K(c$b));

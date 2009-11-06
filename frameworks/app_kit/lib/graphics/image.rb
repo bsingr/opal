@@ -39,6 +39,7 @@ module Vienna
     # :read_error
     
     def self.image_named name
+      name = name.to_s
       # puts named_images
       # first check hash of images
       if named_images.has_key? name
@@ -48,6 +49,16 @@ module Vienna
       if sprite_images.has_key? name
         
       end
+      
+      url = "images/#{name}.png"
+      
+      if name == 'controls'
+        image_name = "#{name}.png"
+        `if(vn_resource_stack.hasOwnProperty(#{image_name})) {`
+          url = `vn_resource_stack[#{image_name}]`
+        `}`
+      end
+      
       # lastly, try and load from a url
       # img = image_with_contents_of_url 'images/' + name + '.png'
       img = image_with_contents_of_url "images/#{name}.png"
@@ -331,6 +342,21 @@ module Vienna
     
     def alignment_rect= rect
       @alignment_rect = rect
+    end
+  end
+  
+  
+  class ThreePartImage
+    
+    def initialize(parts, vertical)
+      # if orientation is null, assume :horizontal. :vertical/:horizonal are the only valid values here
+    end
+  end
+  
+  class NinePartImage
+    
+    def initialize(parts)
+      
     end
   end
   

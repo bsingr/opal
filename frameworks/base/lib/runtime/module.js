@@ -26,7 +26,7 @@
 
 var RModule = { } ;
 
-RModule.define = function(id) {
+function rb_define_module(id) {
   var module;
   if (cObject.$c_d(id)) {
     module = cObject.$c_g(id);
@@ -42,7 +42,9 @@ RModule.define = function(id) {
   return module;
 };
 
-RModule.define_module_under = function() {
+RModule.define = rb_define_module;
+
+function rb_define_module_under() {
   var module;
   if (VN.const_defined_at(outer, id)) {
     module = VN.const_get_at(outer, id);
@@ -56,6 +58,8 @@ RModule.define_module_under = function() {
   VN.set_class_path(module, outer, name);
   return module;
 };
+
+RModule.define_module_under = rb_define_module_under;
 
 RModule.define_module_id = function(id) {
   var mdl = RModule.create();

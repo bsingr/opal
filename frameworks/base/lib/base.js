@@ -182,6 +182,7 @@ VN.obj_equal = function(obj) {
 require('runtime/class');
 require('runtime/module');
 require('runtime/object');
+require('runtime/system');
 
 /**
   Require core library
@@ -210,8 +211,9 @@ require('core/math');
 // require('core/enumerator');
 // 
 
+require('core/resources');
+
 require('core/top_self');
-require('core/env');
 
 require('core/nil_class');
 nil = VN$(cObject.$k_g('NilClass'), 'new');

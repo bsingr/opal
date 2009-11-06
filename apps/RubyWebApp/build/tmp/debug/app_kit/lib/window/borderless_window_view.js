@@ -1,4 +1,4 @@
 (function(self) {
 (function(self) {
-})(RClass.define_under(self,'BorderlessWindowView',self.$c_g_full(c$au)));
-})(RModule.define('Vienna'));
+})(_N(self,c$bn,self.$c_g_full(c$bi)));
+})(_K(c$b));

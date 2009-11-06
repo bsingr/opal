@@ -23,32 +23,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+ var rb_cHash = RClass.define('Hash', rb_cObject) ;
 
-var RHash = function() {
-  this.$klass = rb_cHash ;
-  this.$type = T_HASH;
-  
-  this.keys = [];
-  this.values = { };
-  this.ifnone = nil;
-  return this;
-};
-
-RHash.prototype.$define_singleton_method = RObject.prototype.$define_singleton_method;
-RHash.prototype.$make_metaclass = RObject.prototype.$make_metaclass;
-
-VN.$h = function() {
-  var hash = new RHash();
-  for (var i = 0; i < arguments.length; i++) {
-    VN$(hash, '[]=', arguments[i], arguments[i + 1]);
-    i++;
-  }
-  return hash;
-};
-
-var rb_cHash = RClass.define('Hash', rb_cObject) ;
-
-// RModule.include(cHash, mEnumerable);
+ // RModule.include(cHash, mEnumerable);
 
 rb_cHash.$define_alloc_func(function() {
   return new RHash();

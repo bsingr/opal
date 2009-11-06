@@ -1,81 +1,81 @@
 (function(self) {
 (function(self) {
-rb_define_method(self,s$l,function(self,_cmd,frame){
-return rb_supcall(arguments.callee, self,_cmd,[frame]);
+_I(self,s$n,function(self,_,frame){
+return rb_supcall(arguments.callee, self,_,[frame]);
 });
-rb_define_method(self,s$jz,function(self,_cmd){
-rb_supcall(arguments.callee, self,_cmd,[]);
-return rb_funcall(rb_ivar_get(self, i$b),s$o,VN.$h(_$fz,'hidden'));
+_I(self,s$lu,function(self,_){
+rb_supcall(arguments.callee, self,_,[]);
+return _E(_H(self,i$b),s$q,VN.$h(_$gf,'hidden'));
 });
-rb_define_method(self,s$kc,function(self,_cmd){
+_I(self,s$lx,function(self,_){
 return 'vn-clip-view';
 });
-rb_define_method(self,s$iy,function(self,_cmd,color){
-return self.$i_s(i$aw,color);
+_I(self,s$kt,function(self,_,color){
+return self.$i_s(i$ay,color);
 });
-rb_define_method(self,s$iz,function(self,_cmd){
-return rb_ivar_get(self, i$aw);
+_I(self,s$ku,function(self,_){
+return _H(self,i$ay);
 });
-rb_define_method(self,s$vw,function(self,_cmd,flag){
+_I(self,s$xq,function(self,_,flag){
 return self.$i_s(i$dw,flag);
 });
-rb_define_method(self,s$vx,function(self,_cmd){
-return rb_ivar_get(self, i$dw);
+_I(self,s$xr,function(self,_){
+return _H(self,i$dw);
 });
-rb_define_method(self,s$wp,function(self,_cmd,a_view){
-var default_center = rb_funcall(self.$klass.$c_g_full(c$n),s$cc);
-if(RTEST(rb_ivar_get(self, i$et))){
-rb_funcall(default_center,s$cl,self,self.$klass.$c_g_full(c$an),rb_ivar_get(self, i$et));
-rb_funcall(default_center,s$cl,self,self.$klass.$c_g_full(c$ao),rb_ivar_get(self, i$et));
-rb_funcall(rb_ivar_get(self, i$et),s$ku);
+_I(self,s$yj,function(self,_,a_view){
+var default_center=_E(self.$klass.$c_g_full(c$n),s$cd);
+if(_A(_H(self,i$et))){
+_E(default_center,s$cm,self,self.$klass.$c_g_full(c$bb),_H(self,i$et));
+_E(default_center,s$cm,self,self.$klass.$c_g_full(c$bc),_H(self,i$et));
+_E(_H(self,i$et),s$mp);
 }
 self.$i_s(i$et,a_view);
-return rb_funcall(self,s$kt,a_view);
+return _E(self,s$mo,a_view);
 });
-rb_define_method(self,s$wr,function(self,_cmd){
-return rb_ivar_get(self, i$et);
+_I(self,s$yl,function(self,_){
+return _H(self,i$et);
 });
-rb_define_method(self,s$yu,function(self,_cmd){
-return rb_funcall(self.$klass.$c_g_full(c$t),s$ao,0,0,0,0);
+_I(self,s$aao,function(self,_){
+return _E(self.$klass.$c_g_full(c$ad),s$ap,0,0,0,0);
 });
-rb_define_method(self,s$wv,function(self,_cmd,an_obj){
+_I(self,s$yp,function(self,_,an_obj){
 return self.$i_s(i$ed,an_obj);
 });
-rb_define_method(self,s$ww,function(self,_cmd){
-return rb_ivar_get(self, i$ed);
+_I(self,s$yq,function(self,_){
+return _H(self,i$ed);
 });
-rb_define_method(self,s$wn,function(self,_cmd){
-return rb_funcall(self,s$mk,rb_ivar_get(self, i$bc),rb_ivar_get(self, i$et));
+_I(self,s$yh,function(self,_){
+return _E(self,s$og,_H(self,i$bc),_H(self,i$et));
 });
-rb_define_method(self,s$yv,function(self,_cmd,notification){
+_I(self,s$aap,function(self,_,notification){
 });
-rb_define_method(self,s$yw,function(self,_cmd,notification){
+_I(self,s$aaq,function(self,_,notification){
 });
-rb_define_method(self,s$yx,function(self,_cmd,flag){
+_I(self,s$aar,function(self,_,flag){
 return self.$i_s(i$eu,flag);
 });
-rb_define_method(self,s$yy,function(self,_cmd){
-return rb_ivar_get(self, i$eu);
+_I(self,s$aas,function(self,_){
+return _H(self,i$eu);
 });
-rb_define_method(self,s$yz,function(self,_cmd,the_event){
+_I(self,s$aat,function(self,_,the_event){
 return false;
 });
-rb_define_method(self,s$za,function(self,_cmd,new_origin){
+_I(self,s$aau,function(self,_,new_origin){
 return new_origin;
 });
-rb_define_method(self,s$yb,function(self,_cmd,new_origin){
-if(RTEST(rb_funcall(rb_funcall(rb_ivar_get(self, i$bd),s$nb),s$zb,0))){
-rb_funcall(rb_funcall(rb_ivar_get(self, i$bd),s$h,0),'frame_origin=',rb_funcall(self.$klass.$c_g_full(c$p),s$ao,rb_funcall((0),s$mf,rb_funcall(new_origin,s$y)),rb_funcall((0),s$mf,rb_funcall(new_origin,s$z))));
+_I(self,s$zw,function(self,_,new_origin){
+if(_A(_E(_E(_H(self,i$bd),s$ov),s$aav,0))){
+_E(_E(_H(self,i$bd),s$j,0),s$nh,_E(self.$klass.$c_g_full(c$x),s$ap,_E((0),s$ob,_E(new_origin,s$ab)),_E((0),s$ob,_E(new_origin,s$ac))));
 }
 });
-rb_define_method(self,s$zc,function(self,_cmd,x,y){
-return rb_funcall(self,s$yb,rb_funcall(self.$klass.$c_g_full(c$p),s$ao,x,y));
+_I(self,s$aaw,function(self,_,x,y){
+return _E(self,s$zw,_E(self.$klass.$c_g_full(c$x),s$ap,x,y));
 });
-})(RClass.define_under(self,'ClipView',self.$c_g_full(c$x)));
+})(_N(self,c$ax,self.$c_g_full(c$ai)));
 (function(self) {
-rb_define_method(self,s$wq,function(self,_cmd,a_clip_view){
+_I(self,s$yk,function(self,_,a_clip_view){
 });
-self.$def(s$zd,function(self,_cmd,a_clip_view,a_point){
+self.$def(s$aax,function(self,_,a_clip_view,a_point){
 });
-})(RClass.define_under(self,'View',self.$c_g_full(c$v)));
-})(RModule.define('Vienna'));
+})(_N(self,c$ai,self.$c_g_full(c$o)));
+})(_K(c$b));

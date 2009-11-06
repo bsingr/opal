@@ -25,139 +25,153 @@
 #
 
 module Vienna
-    
-  class GraphicsContext
-    
-    def initialize graphics_port, flip_state
-      @ctx = graphics_port
-      @flip_state = flip_state
-    end
-    
-    def graphics_port
-      @ctx
-    end
-    
-    def graphics_port= graphics_port
-      @ctx = graphics_port
-    end
-    
-    def flipped?
-      @flip_state
-    end
-    
-    def self.current_context
-      @@current_context
-    end
 
-    def self.current_context= context
-      @@current_context = context
+  # Adds a nicer 'rubified' layer over graphicscontext.
+  # 
+  # All CG* functions are located in their respective vml/canvas files
+  # as these implement their respective 'raw' functions, to interact
+  # with canvas or vml as fit. Calling just methods within this file
+  # is usally sufficient to get the benefit out of using drawing routines
+  class GraphicsContext < Element
+    
+    # Fill the given rect
+    def rect(x, y, w, h)
+      `#{@ctx}.fillRect(#{x}, #{y}, #{w}, #{h});`
+      
+      # add_rect(Rect.new(x,y,w,h))
+      # draw_path(:fill_stroke)
     end
+    
+      # def initialize(graphics_port, flip_state)
+        # @ctx = graphics_port
+        # @flip_state = flip_state
+      # end
+    
+      def graphics_port
+        @ctx
+      end
+    
+      def graphics_port= graphics_port
+        @ctx = graphics_port
+      end
+    
+      def flipped?
+        @flip_state
+      end
+    
+      def self.current_context
+        @current_context
+      end
 
-    def save_graphics_state
+      def self.current_context= context
+        @current_context = context
+      end
+
+      def save_graphics_state
   
-    end
+      end
     
-    def restore_graphics_state
+      def restore_graphics_state
       
-    end
+      end
 
-    def line_width= width
-      `#{@ctx}.lineWidth = #{width}`
-    end
+      def line_width= width
+        `#{@ctx}.lineWidth = #{width}`
+      end
 
-    # Sets the line cap style. Valid:
-    # :butt, :round, :square
-    def line_cap= cap
-      `#{@ctx}.lineCap = #{cap}`
-    end
+      # Sets the line cap style. Valid:
+      # :butt, :round, :square
+      def line_cap= cap
+        `#{@ctx}.lineCap = #{cap}`
+      end
 
-    # Sets the line join style. Valid values are:
-    # :miter, :round, :bevel
-    def line_join= join
-      `#{@ctx}.lineJoin = #{join}`
-    end
+      # Sets the line join style. Valid values are:
+      # :miter, :round, :bevel
+      def line_join= join
+        `#{@ctx}.lineJoin = #{join}`
+      end
 
-    def miter_limit= limit
-      `#{@ctx}.miterLimit = #{limit}`
-    end
+      def miter_limit= limit
+        `#{@ctx}.miterLimit = #{limit}`
+      end
 
-    def alpha= alpha
-      `#{@ctx}.globalAlpha = #{alpha}`
-    end
+      def alpha= alpha
+        `#{@ctx}.globalAlpha = #{alpha}`
+      end
 
-    def begin_path
-      `#{@ctx}.beginPath()`
-    end
+      def begin_path
+        `#{@ctx}.beginPath()`
+      end
 
-    def move_to_point point
-      `#{@ctx}.moveTo(#{point.x},#{point.y})`
-    end
+      def move_to_point point
+        `#{@ctx}.moveTo(#{point.x},#{point.y})`
+      end
 
-    def add_line_to_point point
-      `#{@ctx}.lineTo(#{point.x},#{point.y})`
-    end
+      def add_line_to_point point
+        `#{@ctx}.lineTo(#{point.x},#{point.y})`
+      end
 
-    def add_curve_to_point cp1, cp2, point
-      `#{@ctx}.bezierCurveTo(#{cp1.x},#{cp1.y},#{cp2.x},#{cp2.y},#{point.x},#{point.y})`
-    end
+      def add_curve_to_point cp1, cp2, point
+        `#{@ctx}.bezierCurveTo(#{cp1.x},#{cp1.y},#{cp2.x},#{cp2.y},#{point.x},#{point.y})`
+      end
 
-    def add_lines points
-      # `for (var i = 0; i < points.length; i++) {
-      #         #{add_line_to_point(points[i])}
-      #         add_line_to_point points[i]
-      #       }`
-    end
+      def add_lines points
+        # `for (var i = 0; i < points.length; i++) {
+        #         #{add_line_to_point(points[i])}
+        #         add_line_to_point points[i]
+        #       }`
+      end
     
-    def scale_ctm sx, sy
+      def scale_ctm sx, sy
       
-    end
+      end
     
-    def translate_ctm tx, ty
+      def translate_ctm tx, ty
       
-    end
+      end
     
-    def rotate_ctm angle
+      def rotate_ctm angle
       
-    end
+      end
     
-    def concat_ctm transform
+      def concat_ctm transform
       
-    end
+      end
     
-    def ctm
+      def ctm
       
-    end
+      end
     
-    def add_ellipse_in_rect rect
+      def add_ellipse_in_rect rect
       
-    end
+      end
     
-    def add_arc point, radius, start_angle, end_angle, clock_wise
+      def add_arc point, radius, start_angle, end_angle, clock_wise
       
-    end
+      end
     
-    def arc_to_point point1, point2, radius
+      def arc_to_point point1, point2, radius
       
-    end
+      end
     
-    def add_path path
+      def add_path path
       
-    end
+      end
     
-    def path_empty?
+      def path_empty?
       
-    end
+      end
     
-    def path_current_point
+      def path_current_point
       
-    end
+      end
     
-    def path_bounding_box
+      def path_bounding_box
       
-    end
+      end
     
-    def path_contains_point? point
+      def path_contains_point? point
       
-    end    
+      end
   end
 end

@@ -50,10 +50,8 @@ module Vienna
       # super frame
       super()
       setup_display_context
-      
       @frame = frame
       @bounds = Rect.new(0, 0, frame.width, frame.height)
-      
       self.frame = frame
       
       @subviews = []
@@ -82,7 +80,8 @@ module Vienna
     end
     
     def display_mode
-      ENV[:display_mode]
+      # ENV[:display_mode]
+      :render
     end
     
     def setup_display_context
@@ -531,11 +530,14 @@ module Vienna
       if display_mode == :render
         # puts 'Rendering....?'
         lock_focus
+        RenderContext.current_context = @display_context
         render @display_context
+        @display_context.first_time = false
+        unlock_focus
       else
-        graphics_context = @window.graphics_context
-        GraphicsContext.current_context = graphics_context
-        graphics_context.graphics_port = self.graphics_port
+        # graphics_context = @window.graphics_context
+        GraphicsContext.current_context = @display_context
+        # graphics_context.graphics_port = self.graphics_port
         
         draw_rect bounds
       end
@@ -543,7 +545,7 @@ module Vienna
     
         
     
-    def render context
+    def render(context)
       if context.first_time?
         context.class_name = class_name
         context.first_time = false

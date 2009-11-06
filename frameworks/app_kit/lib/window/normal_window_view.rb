@@ -38,6 +38,9 @@ module Vienna
     ZOOM_IMAGE = Image.sprite :controls, [0, 889, 16, 16]
     ZOOM_HIGHLIGHTED_IMAGE = Image.sprite :controls, [16, 889, 16, 16]
     
+    # CLOSE_IMAGE = Image.image_named 'normal_window_close_button'
+    # CLOSE_HIGHLIGHTED_IMAGE = Image.image_named 'normal_window_highlighted_close_button'
+    
     
     TITLEBAR_HEIGHT = 24.0
     

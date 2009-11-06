@@ -33,16 +33,15 @@ module Vienna
     def initialize frame
       super frame
       @cell = self.class.cell_class.new
-      @cell.render_context = @display_context
+      # @cell.render_context = @display_context
     end
     
     def self.cell_class
       Cell
     end
     
-    def render context
-      RenderContext.current_context = context
-      @cell.render_with_frame bounds, in_view:self
+    def render(context)
+      @cell.render_with_frame(bounds, in_view:self)
     end
     
     def class_name= class_name
@@ -185,7 +184,7 @@ module Vienna
       unless obj == @cell.object_value
         abort_editing
         @cell.object_value = obj
-        needs_display = true
+        self.needs_display = true
       end
     end
     

@@ -23,31 +23,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+ 
+
 
 
 // rb_include_module(rb_cSymbol, rb_mComparable);
 // rb_undef_alloc_func(rb_cSymbol);
 // rb_undef_method(rb_cSymbol.$klass, 'new');
 
-
 rb_define_singleton_method(rb_cSymbol, 'all_symbols', function(self, _cmd) {
   // return an array of all symbols
 });
 
 rb_define_method(rb_cSymbol, '==', function(self, _cmd, obj) {
-  return false;
+  return (self == obj) && (obj.$type == T_SYMBOL) ? true : false;
 });
 
 rb_define_method(rb_cSymbol, 'inspect', function(self, _cmd) {
-  return ":";
+  return ":" + self.ptr;
 });
 
 rb_define_method(rb_cSymbol, 'to_s', function(self, _cmd) {
-  return "";
+  return self.ptr;
 });
 
 rb_define_method(rb_cSymbol, 'id2name', function(self, _cmd) {
-  return "";
+  return self.ptr;
 });
 
 rb_define_method(rb_cSymbol, 'intern', function(self, _cmd) {

@@ -1,33 +1,33 @@
 (function(self) {
-rb_define_method(self,s$l,function(self,_cmd,url,options,block){
+_I(self,s$n,function(self,_,url,options,block){
 });
-self.$def_s(s$aj,function(self,_cmd,url,options,block){
-return rb_funcall(self.$c_g_full(c$e),s$aj,url,options,block);
+self.$def_s(s$ak,function(self,_,url,options,block){
+return _E(self.$c_g_full(c$f),s$ak,url,options,block);
 });
-})(RClass.define('JSON',cObject));
+})(_M(c$g,cObject));
 (function(self) {
 self.$c_s('JSONP_CALLBACKS',[]);
-rb_define_method(self,s$l,function(self,_cmd,url,options,block){
+_I(self,s$n,function(self,_,url,options,block){
 self.$i_s(i$d,url);
 self.$i_s(i$e,"vn_jsonp_callback_0");
 self.$i_s(i$f,block);
-rb_funcall(self.$klass.$c_g_full(c$f),s$e,rb_ivar_get(self, i$e));
-rb_funcall(self,s$ak,["Initializing JSNOP connection with url: ",(rb_ivar_get(self, i$d))].join(''));
-return rb_funcall(self, s$al);
+_E(self.$klass.$c_g_full(c$h),s$e,_H(self,i$e));
+_E(self,s$al,["Initializing JSNOP connection with url: ",(_H(self,i$d))].join(''));
+return _E(self,s$am);
 });
-rb_define_method(self,s$al,function(self,_cmd){
-window[rb_ivar_get(self, i$e)] = function(response) {
+_I(self,s$am,function(self,_){
+window[_H(self,i$e)] = function(response) {
       VN$(self, 'got_response', response);
     };self.$i_s(i$g,document.createElement('script'));
-rb_ivar_get(self, i$g).setAttribute('type', 'text/javascript');rb_ivar_get(self, i$g).setAttribute('src', rb_ivar_get(self, i$d));document.body.appendChild(rb_ivar_get(self, i$g));});
-rb_define_method(self,s$am,function(self,_cmd,response){
-rb_funcall(self,s$ak,'got response! toot!');
-return rb_funcall(rb_ivar_get(self, i$f),s$an,JSONParserReformatter(response));
+_H(self,i$g).setAttribute('type', 'text/javascript');_H(self,i$g).setAttribute('src', _H(self,i$d));document.body.appendChild(_H(self,i$g));});
+_I(self,s$an,function(self,_,response){
+_E(self,s$al,'got response! toot!');
+return _E(_H(self,i$f),s$ao,JSONParserReformatter(response));
 });
-self.$def_s(s$aj,function(self,_cmd,url,options,block){
-return rb_funcall(self,s$ao,url,options,block);
+self.$def_s(s$ak,function(self,_,url,options,block){
+return _E(self,s$ap,url,options,block);
 });
-})(RClass.define('JSONP',cObject));
+})(_M(c$f,cObject));
 
 VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/browser/lib/json/parse.js');
 

@@ -8,6 +8,7 @@
 
 require 'FileUtils'
 require 'ftools'
+require 'base64'
 
 module Vienna
 

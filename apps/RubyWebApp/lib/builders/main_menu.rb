@@ -63,97 +63,100 @@ module RubyWebApp
       
       
       Vienna::Button.build :frame => VN::Rect.new(10,40,90,24), :bezel => :rounded do |button|
-        win << button
-        button.title = 'Disabled'
-        button.enabled = false
-        button.alignment = :center
-        # button.theme_name = :my_theme
-        button.needs_display = true
-      end
-      
-      Vienna::Button.build :frame => VN::Rect.new(10,70,90,24), :bezel => :rounded do |button|
-        win << button
-        button.title = 'Right'
-        button.enabled = false
-        button.alignment = :right
-        # button.theme_name = :my_theme
-        button.needs_display = true
-      end
-      
-      Vienna::CheckBox.build :frame => VN::Rect.new(10,100,90,24), :bezel => :rounded do |button|
-        win << button
-        button.title = 'Check'
-        button.enabled = true
-        
-        button.control_size = :small
-
-        button.needs_display = true
-      end
-    
-      Vienna::CheckBox.build :frame => VN::Rect.new(10,130,90,24), :bezel => :rounded do |button|
-        win << button
-        button.title = 'Checkon'
-        button.state = :on
-        # button.control_tint = :graphite
-
-        button.needs_display = true
-      end
-      
-      Vienna::CheckBox.build :frame => VN::Rect.new(10,160,90,24), :bezel => :rounded do |button|
-        win << button
-        button.title = 'Checkon'
-        button.state = :on
-        button.enabled = false
-        # button.control_tint = :graphite
-
-        button.needs_display = true
-      end
-          
-      Vienna::Slider.build :frame => VN::Rect.new(10,190,90,24), :bezel => :rounded do |slider|
-        win << slider
-        slider.needs_display = true
-      end
-      # 
-      Vienna::TextField.build :frame => VN::Rect.new(10, 210, 180, 26), :editable => true do |text|
-        win << text
-        text.needs_display = true
-      end
-      
-      Vienna::Button.build :frame => VN::Rect.new(10,240,90,24), :bezel => :rounded do |button|
-        win << button
-        button.title = 'Normal'
-        button.alignment = :left
-        # button.bind :enabled, to_object:app_delegate, with_key_path:'test_binding', options:nil        
-        # button.theme_name = :my_theme
-        button.needs_display = true
-      end
-      
-      # scroller/tableview
-      
-      scroll_view = Vienna::ScrollView.build :frame => VN::Rect.new(300, 100, 250, 150), :something => true do |scroll_view|
-        
-        scroll_view.has_vertical_scroller = true
-        scroll_view.vertical_scroller.needs_display = true
-        
-        scroll_view.has_horizontal_scroller = true
-        scroll_view.horizontal_scroller.needs_display = true
-        
-        win << scroll_view
-        # Table view
-        table_view = Vienna::TableView.build :frame => VN::Rect.new(0, 0, 400, 200), :something => true do |table_view|
-          
-          table_view.data_source = app_delegate
-          table_view.add_table_column(Vienna::TableColumn.new('name'))
-          table_view.add_table_column(Vienna::TableColumn.new('age'))
-          table_view.add_table_column(Vienna::TableColumn.new('band'))
-          table_view.reload_data
+          win << button
+          button.title = 'Disabled'
+          button.enabled = false
+          button.alignment = :center
+          # button.theme_name = :my_theme
+          button.needs_display = true
         end
         
-        scroll_view.document_view = table_view
-        scroll_view.tile
-      end
+        Vienna::Button.build :frame => VN::Rect.new(10,70,90,24), :bezel => :rounded do |button|
+          win << button
+          button.title = 'Right'
+          button.enabled = false
+          button.alignment = :right
+          # button.theme_name = :my_theme
+          button.needs_display = true
+        end
+        
+        Vienna::CheckBox.build :frame => VN::Rect.new(10,100,90,24), :bezel => :rounded do |button|
+          win << button
+          button.title = 'Check'
+          button.enabled = true
+          
+          button.control_size = :small
+        
+          button.needs_display = true
+        end
+            
+        Vienna::CheckBox.build :frame => VN::Rect.new(10,130,90,24), :bezel => :rounded do |button|
+          win << button
+          button.title = 'Checkon'
+          button.state = :on
+          # button.control_tint = :graphite
+        
+          button.needs_display = true
+        end
+        
+        Vienna::CheckBox.build :frame => VN::Rect.new(10,160,90,24), :bezel => :rounded do |button|
+          win << button
+          button.title = 'Checkon'
+          button.state = :on
+          button.enabled = false
+          # button.control_tint = :graphite
+        
+          button.needs_display = true
+        end
+            
+        Vienna::Slider.build :frame => VN::Rect.new(10,190,90,24), :bezel => :rounded do |slider|
+          win << slider
+          slider.needs_display = true
+        end
+        # 
+        Vienna::TextField.build :frame => VN::Rect.new(10, 210, 180, 26), :editable => true do |text|
+          win << text
+          text.needs_display = true
+        end
+        
+        Vienna::Button.build :frame => VN::Rect.new(10,240,90,24), :bezel => :rounded do |button|
+          win << button
+          button.title = 'Normal'
+          button.alignment = :left
+          # button.bind :enabled, to_object:app_delegate, with_key_path:'test_binding', options:nil        
+          # button.theme_name = :my_theme
+          button.needs_display = true
+        end
+        
+        # scroller/tableview
+        
+        scroll_view = Vienna::ScrollView.build :frame => VN::Rect.new(300, 100, 250, 150), :something => true do |scroll_view|
+          
+          scroll_view.has_vertical_scroller = true
+          scroll_view.vertical_scroller.needs_display = true
+          
+          scroll_view.has_horizontal_scroller = true
+          scroll_view.horizontal_scroller.needs_display = true
+          
+          win << scroll_view
+          # Table view
+          table_view = Vienna::TableView.build :frame => VN::Rect.new(0, 0, 400, 200), :something => true do |table_view|
+            
+            table_view.data_source = app_delegate
+            table_view.add_table_column(Vienna::TableColumn.new('name'))
+            table_view.add_table_column(Vienna::TableColumn.new('age'))
+            table_view.add_table_column(Vienna::TableColumn.new('band'))
+            table_view.reload_data
+          end
+          
+          scroll_view.document_view = table_view
+          scroll_view.tile
+        end
 
-
+        
+        gauge_view = Vienna::GaugeView.build :frame => VN::Rect.new(300, 275, 250, 100), :bob => true do |gauge_view|
+          win << gauge_view
+        end
     end  
   end
 end

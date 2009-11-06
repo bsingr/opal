@@ -40,15 +40,15 @@ module Vienna
       super frame, style_mask
       
       if @style_mask.include? :closable
-        @close_button = Button.build :frame => Rect.new(5, 3, 13, 13), :bordered => false do |close|
-          close.bordered = false
-          close.image_position = :image_only
-          close.image = CLOSE_IMAGE
-          close.alternate_image = CLOSE_HIGHLIGHTED_IMAGE
-          self << close
-          close.needs_display = true
-        end
-      end
+            @close_button = Button.build :frame => Rect.new(5, 3, 13, 13), :bordered => false do |close|
+              close.bordered = false
+              close.image_position = :image_only
+              close.image = CLOSE_IMAGE
+              close.alternate_image = CLOSE_HIGHLIGHTED_IMAGE
+              self << close
+              close.needs_display = true
+            end
+          end
     end
     
     def class_name

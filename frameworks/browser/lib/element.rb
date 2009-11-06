@@ -35,7 +35,7 @@ class Element
   
   def initialize(type, options)
     # puts type
-    @element = `document.createElement(#{type})`
+    @element = `document.createElement(#{type.to_s})`
     @type = type
     # @class_name = class_name
     # @id = the_id
@@ -53,7 +53,7 @@ class Element
   # These will override any CSS class defintions as per usual
   def css options
     options.each do |key, value|
-      `#{element}.style[#{key.camelize}] = value;`
+      `#{element}.style[#{key.to_s.camelize}] = value;`
     end
     self
   end
@@ -85,7 +85,7 @@ class Element
   def size= new_size
     # puts 'settig size to'
     # puts new_size
-    if @type == :canvas
+    if @type == 'canvas'
       `#{element}.width = #{new_size.width};`
       `#{element}.height = #{new_size.height};`
     else
@@ -123,10 +123,10 @@ class Element
   
   def add_event_listener type, listener
     `if (document.addEventListener) {
-      #{element}.addEventListener(#{type}, #{listener}, false);
+      #{element}.addEventListener(#{type.to_s}, #{listener}, false);
     }
     else {
-      #{element}.attachEvent('on' + #{type}, #{listener});
+      #{element}.attachEvent('on' + #{type.to_s}, #{listener});
     }`
   end
   

@@ -58,20 +58,21 @@ class Document
     @event_listeners ||= {}
     @event_listeners[type] = listener
     `if (document.addEventListener) {
-      document.body.addEventListener(#{type}, #{listener}, false);
+      console.log("binding " + #{type.to_s});
+      document.body.addEventListener(#{type.to_s}, #{listener}, false);
     }
     else {
-      document.body.attachEvent('on' + #{type}, #{listener});
+      document.body.attachEvent('on' + #{type.to_s}, #{listener});
     }`
   end
   
   def self.remove_event_listener type
     listener = @event_listeners[type]
     `if (document.addEventListener) {
-      document.body.removeEventListener(#{type}, #{listener}, false);
+      document.body.removeEventListener(#{type.to_s}, #{listener}, false);
     }
     else {
-      document.body.detachEvent('on' + #{type}, #{listener});
+      document.body.detachEvent('on' + #{type.to_s}, #{listener});
     }`
   end
   

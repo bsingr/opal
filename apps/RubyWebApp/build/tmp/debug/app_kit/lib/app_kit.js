@@ -9,13 +9,7 @@ VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/app_k
 
 VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/app_kit/lib/base/tracking_area.js');
 
-VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/app_kit/lib/graphics/graphics_context.js');
-
-VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/app_kit/lib/graphics/geometry.js');
-
-VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/app_kit/lib/graphics/image.js');
-
-VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/app_kit/lib/graphics/render_context.js');
+VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/app_kit/lib/graphics/graphics.js');
 
 VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/app_kit/lib/views/view.js');
 

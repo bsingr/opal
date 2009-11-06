@@ -70,7 +70,7 @@ module Vienna
       if types.include? :left_mouse_dragged
         # puts 'Addng mouse moved!'
         Document.add_event_listener :mousemove do |evt|
-          the_event = Event.from_native_event evt, with_window:nil, with_type:'left_mouse_dragged'
+          the_event = Event.from_native_event evt, with_window:nil, with_type: :left_mouse_dragged
           send_event the_event
         end
       end
@@ -181,15 +181,14 @@ module Vienna
                 
       Document.add_event_listener :mousedown do |evt|
         if App.run_loop_mode == :event_tracking
-          the_event = Event.from_native_event evt, with_window:nil, with_type:'left_mouse_down'
-          puts 'sending event from here'
+          the_event = Event.from_native_event evt, with_window:nil, with_type: :left_mouse_down
           send_event the_event
         end
       end
       
       Document.add_event_listener :mouseup do |evt|
         if App.run_loop_mode == :event_tracking
-          the_event = Event.from_native_event evt, with_window:nil, with_type:'left_mouse_up'
+          the_event = Event.from_native_event evt, with_window:nil, with_type: :left_mouse_up
           send_event the_event
         end
       end

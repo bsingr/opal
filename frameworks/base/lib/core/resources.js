@@ -1,5 +1,5 @@
 /* 
- * env.js
+ * resources.js
  * vienna
  * 
  * Created by Adam Beynon.
@@ -23,10 +23,5 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
- 
-// var VN$ENVhash = VN.$h();
-// for (prop in VN$ENV) {
-//   VN$(VN$ENVhash, '[]=', prop, VN$ENV[prop]);
-// }
-// 
-// cObject.$c_s('ENV', VN$ENVhash);
+
+var vn_resource_stack = { };

@@ -52,3 +52,5 @@ VN = Vienna
 require 'browser'
 require 'foundation'
 require 'app_kit'
+
+require 'views/gauge_view'

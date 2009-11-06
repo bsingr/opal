@@ -31,9 +31,9 @@ module Vienna
   class RenderContext < Element
     
     def initialize tag_name, options
-      @element_stack = [`document.createElement(#{tag_name})`]
+      @element_stack = [`document.createElement(#{tag_name.to_s})`]
       @first_time = true
-      @type = tag_name
+      @type = tag_name.to_s
     end
     
     def self.current_context= current_context
@@ -92,7 +92,7 @@ module Vienna
       `var nodes = #{element}.childNodes;
       var length = nodes.length;
       for (var i = 0; i < length; i++) {
-        if(nodes[i].className == a_selector) {
+        if(nodes[i].className == #{a_selector.to_s}) {
           return nodes[i];
         }
       }

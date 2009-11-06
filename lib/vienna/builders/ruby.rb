@@ -95,6 +95,10 @@ class Vienna::RubyParser < Racc::Parser
 	
 	end
 	
+	def js_replacement_function_name(name)
+	  @project.js_replacement_function_name(name)
+	end
+	
   
   # the id for the given string when used at runtime
   def js_id_for_string(str)

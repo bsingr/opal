@@ -31,14 +31,8 @@ require 'base/event'
 require 'base/key_value_binding'
 require 'base/tracking_area'
 
-# # Graphics
-require 'graphics/graphics_context'
-require 'graphics/geometry'
-require 'graphics/image'
-# require 'graphics/array_geometry_additions'
-
-# Rendering
-require 'graphics/render_context'
+# Graphics
+require 'graphics/graphics'
 
 # Views
 require 'views/view'

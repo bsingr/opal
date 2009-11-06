@@ -183,7 +183,7 @@ module Vienna
       if stmt[:call_args] and stmt[:call_args][:args]
         # use the given arguments for super
         # write "self.$sup(arguments.callee,'#{context[:fname]}', ["
-        write "rb_supcall(arguments.callee, self,_cmd,["
+        write "rb_supcall(arguments.callee, self,_,["
         
         stmt[:call_args][:args].each do |p|
           generate_stmt p, :instance => false, :full_stmt => false, :self => current_self, :last_stmt => false
@@ -195,7 +195,7 @@ module Vienna
         # write "self.$sup(arguments.callee,'#{context[:fname]}', arguments)"
         
         # here, split arguments into array, taking out the first two args (self, _cmd);
-        write "rb_supcall(arguments.callee, self,_cmd,[])"
+        write "rb_supcall(arguments.callee, self,_,[])"
       end
       write ";\n" if context[:full_stmt]
     end
@@ -203,9 +203,9 @@ module Vienna
     # Generate if, unless statemets
     def generate_if stmt, context
       if stmt.node == :if
-        write "if(RTEST("
+        write "if(#{js_replacement_function_name('RTEST')}("
       else
-        write "if(!RTEST("
+        write "if(!#{js_replacement_function_name('RTEST')}("
       end
       
       generate_stmt stmt[:expr],:instance => context[:instance], :full_stmt => false, :self => current_self, :last_stmt => false
@@ -223,7 +223,7 @@ module Vienna
         stmt[:tail].each do |t|
           
           if t.node == :elsif
-            write 'else if(RTEST('
+            write "else if(#{js_replacement_function_name('RTEST')}("
             generate_stmt t[:expr], :instance => context[:instance], :full_stmt => false, :self => current_self, :last_stmt => false
             write ")){\n"
           else # normal else
@@ -247,9 +247,9 @@ module Vienna
       # puts "IF node"
       # puts stmt
       if stmt.node == :if_mod
-        write "if(RTEST("
+        write "if(#{js_replacement_function_name('RTEST')}("
       else
-        write "if(!RTEST("
+        write "if(!#{js_replacement_function_name('RTEST')}("
       end
 
       generate_stmt stmt[:expr],:instance => false, :full_stmt => false, :self => current_self, :last_stmt => false
@@ -285,10 +285,16 @@ module Vienna
       write "})("
       if context[:top_level]
         # top level
-        write "RClass.define('#{klass.klass_name}',"
+        # write "RClass.define('#{klass.klass_name}',"
+        write "#{js_replacement_function_name('rb_define_class')}("
+        write js_id_for_const(klass.klass_name)
+        write ","
       else
          # nested
-          write "RClass.define_under(self,'#{klass.klass_name}',"
+          # write "RClass.define_under(self,'#{klass.klass_name}',"
+          write "#{js_replacement_function_name('rb_define_class_under')}(self,"
+          write js_id_for_const(klass.klass_name)
+          write ","
       end
       
       # superclass..
@@ -362,9 +368,9 @@ module Vienna
       # main func def
       if definition[:singleton]
         generate_stmt definition[:singleton], :instance => definition[:instance], :full_stmt => false, :last_stmt => false
-        write ".$def_s(s$#{js_id_for_string(method_name)},function(self,_cmd,"
+        write ".$def_s(s$#{js_id_for_string(method_name)},function(self,_,"
       else
-        write "self.$def(s$#{js_id_for_string(method_name)},function(self,_cmd,"
+        write "self.$def(s$#{js_id_for_string(method_name)},function(self,_,"
       end
       
       # js_id_for_string(method_name)
@@ -416,11 +422,11 @@ module Vienna
         # puts definition[:singleton]
         generate_stmt definition[:singleton], :instance => definition[:instance], :full_stmt => false, :last_stmt => false
         # write "#{context[:self]}"
-        write ".$def_s(s$#{js_id_for_string(definition[:fname])},function(self,_cmd"
+        write ".$def_s(s$#{js_id_for_string(definition[:fname])},function(self,_"
         # write ",s$#{js_id_for_string(definition[:fname])}, function(self, _cmd"
       else
         # write "self.$def(s$#{js_id_for_string(definition[:fname])},function(self,_cmd"
-        write "rb_define_method(self,s$#{js_id_for_string(definition[:fname])},function(self,_cmd"
+        write "#{js_replacement_function_name('rb_define_method')}(self,s$#{js_id_for_string(definition[:fname])},function(self,_"
       end
       
       # js_id_for_string(definition[:fname])
@@ -482,7 +488,7 @@ module Vienna
         # we do not write var if we have just put a return before it....js error
         write 'var ' unless (context[:last_stmt] and context[:full_stmt]) or nametable_include? stmt[:lhs][:name]
         add_to_nametable(stmt[:lhs][:name]) unless nametable_include? stmt[:lhs][:name]
-        write "#{stmt[:lhs][:name]} = "
+        write "#{stmt[:lhs][:name]}="
         generate_stmt stmt[:rhs], :instance => context[:instance], context[:full_stmt] => false, context[:last_stmt] => true, :self => context[:self]
         
       
@@ -515,11 +521,14 @@ module Vienna
         generate_stmt stmt[:rhs], :instance => context[:instance], context[:full_stmt] => false, :last_stmt => context[:last_stmt], :top_level => context[:top_level]
         write ')'
         
-      # elsif LHS is a call (ass the equals sign onto call method, and use rhs as param)
+      # elsif LHS is a call (as the equals sign onto call method, and use rhs as param)
       elsif stmt[:lhs].node == :call
-        write "rb_funcall("
+        write "#{js_replacement_function_name('rb_funcall')}("
         generate_stmt stmt[:lhs][:recv], :instance => context[:instance], context[:full_stmt] => false, :last_stmt => context[:last_stmt], :self => context[:self]
-        write ",'#{stmt[:lhs][:meth]}=',"
+        # write ",#{js_id_for_string("#{stmt[:lhs][:meth]}="}),"
+        write ",s$"
+        write js_id_for_string("#{stmt[:lhs][:meth]}=")
+        write ","
         # if its []= then we need to output 2 args
         if stmt[:lhs][:meth] == '[]'
           # write stmt[:]
@@ -550,7 +559,7 @@ module Vienna
     def generate_label_styled_call call, context
       write "return " if context[:last_stmt] and context[:full_stmt]
       
-      write "rb_funcall("
+      write "#{js_replacement_function_name('rb_funcall')}("
       
       if call[:recv]
         generate_stmt call[:recv], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :top_level => context[:top_level], :call_recv => true
@@ -599,7 +608,7 @@ module Vienna
       
       write "return " if context[:last_stmt] and context[:full_stmt]
       
-      write "rb_funcall("
+      write "#{js_replacement_function_name('rb_funcall')}("
       
       if call[:recv]
         generate_stmt call[:recv], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self =>context[:self], :call_recv => true, :top_level => context[:top_level]
@@ -774,7 +783,11 @@ module Vienna
       end
       
       write "})("
-      write "RModule.define('#{mod.klass_name}')"
+      # write "RModule.define('#{mod.klass_name}')"
+      write "#{js_replacement_function_name('rb_define_module')}("
+      # write "#{mod.klass_name}"
+      write js_id_for_const(mod.klass_name)
+      write ")"
       write ");\n"
     end
     
@@ -785,8 +798,10 @@ module Vienna
 
     
     def generate_symbol sym, context
+      write 'return ' if context[:last_stmt] and context[:full_stmt]
       write "_$#{js_id_for_symbol(sym[:name])}"
       # write "'#{sym[:name]}'"
+      write ";\n" if context[:full_stmt]
     end
     
     def generate_constant const, context
@@ -849,7 +864,7 @@ module Vienna
       write 'return ' if context[:last_stmt] and context[:full_stmt]
       # write "#{current_self}.$i_g('#{stmt[:name]}')"
       # write "#{current_self}.$i_g(i$#{js_id_for_ivar(stmt[:name])})"
-      write "rb_ivar_get(#{current_self}, i$#{js_id_for_ivar(stmt[:name])})"
+      write "#{js_replacement_function_name('rb_ivar_get')}(#{current_self},i$#{js_id_for_ivar(stmt[:name])})"
       write ";\n" if context[:full_stmt]
     end
     
@@ -864,7 +879,7 @@ module Vienna
       else
         # method call
         # write "#{current_self}.$('#{identifier[:name]}', [])"
-        write "rb_funcall(#{current_self}, s$#{js_id_for_string(identifier[:name])})"
+        write "#{js_replacement_function_name('rb_funcall')}(#{current_self},s$#{js_id_for_string(identifier[:name])})"
       end
       write ";\n" if context[:full_stmt]
     end
@@ -980,7 +995,7 @@ module Vienna
       
       stmt[:body].each do |w|      
         if w == stmt[:body].first
-          write "if(($e = rb_funcall("
+          write "if(($e = #{js_replacement_function_name('rb_funcall')}("
           generate_stmt w[:args][0], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self => context[:self]
           write ", '===', $v),$e!==nil && $e!==false)){\n"
           if w[:stmt]
@@ -1000,7 +1015,7 @@ module Vienna
           write "}\n"
         # end
         else
-          write "else if(($e = rb_funcall("
+          write "else if(($e = #{js_replacement_function_name('rb_funcall')}("
           generate_stmt w[:args][0], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self => context[:self]
           write ", '===', $v),$e!==nil && $e!==false)){\n"
           if w[:stmt]
@@ -1080,7 +1095,7 @@ module Vienna
     
     def generate_tertiary stmt, context
       write 'return ' if context[:last_stmt] and context[:full_stmt]
-      write "RTEST("
+      write "#{js_replacement_function_name('RTEST')}("
       generate_stmt stmt[:expr], :instance => context[:instance], :full_stmt => false, :last_stmt => false, :self => context[:self]
       write ") ? "
       generate_stmt stmt[:true], :instance => context[:instance], :full_stmt => false, :last_stmt => false, :self => context[:self]

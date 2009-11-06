@@ -23,9 +23,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
-var rb_top_self = VN.obj_alloc(rb_cObject);
-VN.self = rb_top_self;
+ 
+ var rb_top_self = VN.obj_alloc(rb_cObject);
+ VN.self = rb_top_self;
+ 
 
 rb_define_singleton_method(rb_top_self, 'to_s', function(self, _cmd) {
   return 'main';

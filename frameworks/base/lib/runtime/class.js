@@ -38,8 +38,8 @@ RClass.inherited = function(super_klass, klass) {
   if (!super_klass) super_klass = cObject ;
   return super_klass.$('inherited', [klass]) ;
 };
-  
-RClass.define = function(id, super_klass) {
+
+function rb_define_class(id, super_klass) {
   var klass;
   // if already defined, just ensure right type then return existing class/mod.
   if (cObject.$c_d(id)) {
@@ -69,15 +69,10 @@ RClass.define = function(id, super_klass) {
   RClass.inherited(super_klass, klass);
   return klass;
 };
+  
+RClass.define = rb_define_class;
 
-/**
-  TODO: Need to stop search going up through chain. Object inside Vienna, for instance, should
-  not reference the Base Object class as the same, unless it is set to equal that. Also, VN::Array
-  should not be mapped to ::Array. different classes. Need to stop $c_d and $c_g going up through
-  the chain. They should only go up when looking for a constant inside the code, not for defining new
-  classes.
-*/
-RClass.define_under = function(outer, id, super_klass) {
+function rb_define_class_under(outer, id, super_klass) {
   var klass;
   // if already defined in context... just ensure it is a macthing class def
   /**
@@ -118,6 +113,15 @@ RClass.define_under = function(outer, id, super_klass) {
   return klass;
 };
 
+
+/**
+  TODO: Need to stop search going up through chain. Object inside Vienna, for instance, should
+  not reference the Base Object class as the same, unless it is set to equal that. Also, VN::Array
+  should not be mapped to ::Array. different classes. Need to stop $c_d and $c_g going up through
+  the chain. They should only go up when looking for a constant inside the code, not for defining new
+  classes.
+*/
+RClass.define_under = rb_define_class_under;
 
 
 RClass.class2name = function(klass) {

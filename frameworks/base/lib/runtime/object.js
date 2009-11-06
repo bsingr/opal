@@ -102,7 +102,7 @@ RObject.prototype.$ = function(id, args) {
   Call method
 */
 var rb_funcall = function rb_funcall(self, id) {
-  
+  // console.log(id);
   if (!self.$klass) {
     console.log('ERROR: rb_funcall');
     console.log(self);

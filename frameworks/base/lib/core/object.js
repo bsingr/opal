@@ -24,34 +24,6 @@
  * THE SOFTWARE.
  */
 
-var metaclass;
-var cBasicObject = VN.boot_defclass('BasicObject', null);
-var rb_cBasicObject = cBasicObject;
-var cObject = VN.boot_defclass('Object', rb_cBasicObject);
-var rb_cObject = cObject;
-var cModule = VN.boot_defclass('Module', rb_cObject);
-var rb_cModule = cModule;
-var cClass = VN.boot_defclass('Class', rb_cModule);
-var rb_cClass = cClass;
-
-metaclass = rb_cBasicObject.$make_metaclass(cClass);
-metaclass = rb_cObject.$make_metaclass(metaclass);
-metaclass = rb_cModule.$make_metaclass(metaclass);
-metaclass = rb_cClass.$make_metaclass(metaclass);
-
-VN.boot_defmetametaclass(rb_cModule, metaclass);
-VN.boot_defmetametaclass(rb_cObject, metaclass);
-VN.boot_defmetametaclass(rb_cBasicObject, metaclass);
-
-/**
-  BasicObject necessary methods
-*/
-rb_cBasicObject.$define_private_method('initialize', function(self, _cmd) {
-  
-
-  
-  return nil ;
-});
 
 VN.cBasicObjectAlloc = function(self, _cmd) {
   // console.log('HMMMM');
@@ -117,7 +89,8 @@ cBasicObject.$def('class', function(self, _cmd) {
 });
 
 cBasicObject.$def('respond_to?', function(self, _cmd, selector) {
-  var method = self.$klass.$search_method(selector);
+  var method_name = rb_funcall(selector, 'to_s');
+  var method = self.$klass.$search_method(method_name);
   if (!method) return false;
   return true
 });

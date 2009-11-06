@@ -23,10 +23,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
-var rb_cArray = cArray;
-Array.prototype.$klass = rb_cArray
-Array.prototype.$type = T_ARRAY;
+ 
+ // Array
+ var rb_cArray = cArray;
+ Array.prototype.$klass = rb_cArray
+ Array.prototype.$type = T_ARRAY;
 
 RModule.include(rb_cArray, mEnumerable);
 

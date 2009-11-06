@@ -44,6 +44,42 @@ module Vienna
       @js_const_prefix = "a"
     end
     
+    # Hash of js functions that we can replace during compilation. Using the
+    # smaller names (the values _X) saved a lot of character typing, and over
+    # a large application will save HUGE amounts of bandwidth.
+    JS_FUNCTION_NAMES = {
+      'RTEST'                       => '_A',
+      'ORTEST'                      => '_B',
+      'ANDTEST'                     => '_C',
+      'NOTTEST'                     => '_D',
+      'rb_funcall'                  => '_E',
+      'rb_supcall'                  => '_F',
+      'rb_ivar_set'                 => '_G',
+      'rb_ivar_get'                 => '_H',
+      'rb_define_method'            => '_I',
+      'rb_define_singleton_method'  => '_J',
+      'rb_define_module'            => '_K',
+      'rb_define_module_under'      => '_L',
+      'rb_define_class'             => '_M',
+      'rb_define_class_under'       => '_N',
+      'ID2SYM'                      => '_O'
+    }
+    
+    def js_replacement_function_name(func_name)
+      if JS_FUNCTION_NAMES[func_name]
+        JS_FUNCTION_NAMES[func_name]
+      else
+        func_name
+      end
+    end
+    
+    # Hash of js var names to shorter equivalents... using rb_cObject lots will
+    # use a lot of extra bandwidth, so the shorter name is more ideal.
+    JS_VARIABLE_NAMES = {
+      'rb_cObject'                  => '_1',
+      'rb_top_self'                 => '_2'
+    }
+    
     def rakefile
       @rakefile ||= Rakefile.new.load!(@project_root)
     end
@@ -95,6 +131,13 @@ module Vienna
       FileUtils.mkdir_p(img_build_path)
     end
     
+    IMAGE_MIME_TYPES = {
+      'png'   => 'image/png',
+      'jpg'   => 'image/jpg',
+      'gif'   => 'image/gif',
+      'jpeg'  => 'image/jpg'
+    }
+    
     def build!
       o = File.new(js_build_path, 'w')
       # FIXME:
@@ -103,20 +146,45 @@ module Vienna
       puts "build base to #{base}"
       # here: use combiner to combine all base files into output..
       base_combiner = Vienna::Builder::Combine.new base, o, self
-      # b. output string, symbols, consts etc
-      # c. output env as hash
-      # d. output all other frameworks
       
       # 1. Build root file, which will recursively build all required source files, as well as
       # make up our list of 'all_frameworks
       build_file root_file
+      
+      # 4. Copy all image resources into the predetermined output folder
+      all_frameworks.each do |f|
+        images = File.join(f, "resources", "**", "*.{png,jpg,jpeg}")
+        Dir.glob(images).each do |img|
+          # puts "Found image: #{img} size: #{File.size(img)}"
+          
+          # 32kb * 1024.... make it compatible with IE8 etc
+          if File.size(img) < 32768
+            # puts img
+            o.write "vn_resource_stack['#{File.basename(img)}']="
+            o.write "\"data:#{IMAGE_MIME_TYPES['png']};base64,"
+            data = Base64.encode64(File.read(img))
+            data.each_line { |line| o.write line.gsub(/\n/, '') }
+            # o.write
+            o.write "\";"
+            # o.write "console.log('added #{File.basename(img)}');"
+          end
+          
+          File.copy(img, File.expand_path(File.join(img_build_path, File.basename(img))))
+        end
+      end
+      
+      # b. output string, symbols, consts etc
+      # c. output env as hash
+      # d. output all other frameworks
+      
+      
       
       # 2. Combine all these built source files into the calculated destination, which will be
       # app_name.js
       
       write_env_to_output o
       root_combiner = Vienna::Builder::Combine.new File.join(tmp_prefix, project_name, 'lib', 'ruby_web_app.js'), o, self
-      o.close
+      
       
       # 3. Copy and combine all CSS source files into a single file, app_name.css
       c = File.new(css_build_path, 'w')
@@ -132,14 +200,10 @@ module Vienna
       
       
       
-      # 4. Copy all image resources into the predetermined output folder
-      all_frameworks.each do |f|
-        images = File.join(f, "resources", "**", "*.{png,jpg,jpeg}")
-        Dir.glob(images).each do |img|
-          # puts "Found image: #{img}"
-          File.copy(img, File.expand_path(File.join(img_build_path, File.basename(img))))
-        end
-      end
+
+      
+      # close js file
+      o.close
     end
   
     
@@ -150,8 +214,12 @@ module Vienna
     # We can include ENV settings from user's Rakefile, as well as other bits and pieces.
     # We can also hardcode image urls, css urls etc
     def write_env_to_output file
+      file.write "\n"
+      JS_FUNCTION_NAMES.each_pair do |key, value|
+        file.write "#{value}=#{key};\n"
+      end
       @js_sym_to_id.each_pair do |key, value|
-        file.write "_$#{value}='#{key}';\n"
+        file.write "_$#{value}=#{js_replacement_function_name('ID2SYM')}('#{key}');\n"
       end 
       file.write "\n"
       # file.write "\n\n\n\n"

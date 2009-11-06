@@ -110,11 +110,6 @@ module Vienna
       @alternate_image = `self.$klass.$c_g(#{alt_img_name})`
     end
     
-    
-    def class_name
-      'vn-button'
-    end
-    
     def title
       @title.is_a?(AttributedString) ? @title.string : @title
     end
@@ -347,10 +342,10 @@ module Vienna
     end
     
     # Rendering
-    def render_bezel_with_frame cell_frame, in_view:control_view
+    def render_bezel_with_frame(cell_frame, in_view:control_view)
       ctx = RenderContext.current_context
       
-      if ctx.first_time?
+      if ctx.first_time?        
         ctx << "<div class='left'></div>"
         ctx << "<div class='middle'></div>"
         ctx << "<div class='right'></div>"
@@ -359,7 +354,7 @@ module Vienna
         ctx.first_time = false
       end
       
-      class_name_array = [class_name, theme_name]      
+      class_name_array = ['vn-button', theme_name]      
       class_name_array << :disabled unless enabled?
 
       if bordered?

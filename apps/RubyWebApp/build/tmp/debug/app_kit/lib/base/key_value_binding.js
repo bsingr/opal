@@ -1,81 +1,81 @@
 (function(self) {
 (function(self) {
-self.$def_s(s$fk,function(self,_cmd,binding){
+self.$def_s(s$fl,function(self,_,binding){
 });
-rb_define_method(self,s$fl,function(self,_cmd){
+_I(self,s$fm,function(self,_){
 return [];
 });
-rb_define_method(self,s$fm,function(self,_cmd,binding){
+_I(self,s$fn,function(self,_,binding){
 });
-self.$def(s$fn,function(self,_cmd,binding,observable,key_path,options){
-if(!RTEST(rb_funcall(rb_funcall(self, s$fl),s$dx,binding))){
-rb_funcall(self,s$ak,["KVB: '",(binding),"' is not exposed on object."].join(''));
+self.$def(s$fo,function(self,_,binding,observable,key_path,options){
+if(!_A(_E(_E(self,s$fm),s$dy,binding))){
+_E(self,s$al,["KVB: '",(binding),"' is not exposed on object."].join(''));
 }
-if(!RTEST(ANDTEST(observable,key_path))){
-rb_funcall(self,s$ak,["KVB: bad path/object for binding '",(binding),"' to '",(key_path),"'"].join(''));
+if(!_A(ANDTEST(observable,key_path))){
+_E(self,s$al,["KVB: bad path/object for binding '",(binding),"' to '",(key_path),"'"].join(''));
 }
-rb_funcall(self,s$fo,binding);
-rb_funcall(observable,s$bn,self,key_path,options,binding);
-rb_funcall(rb_ivar_get(self, i$ad),'[]=',binding,VN.$h(_$bd, observable, _$be, key_path, _$m, options, _$bf, binding));
-return rb_funcall(self,s$fp,binding);
+_E(self,s$fp,binding);
+_E(observable,s$bo,self,key_path,options,binding);
+_E(_H(self,i$ad),s$g,binding,VN.$h(_$bc, observable, _$bd, key_path, _$l, options, _$be, binding));
+return _E(self,s$fq,binding);
 });
-self.$def(s$bm,function(self,_cmd,path,object,change,context){
-if(RTEST(rb_funcall(self,s$fq,context))){
-rb_funcall(self,s$ak,['KVB: received notification for chnage of context ',(context)].join(''));
-rb_funcall(self,s$fp,context);
+self.$def(s$bn,function(self,_,path,object,change,context){
+if(_A(_E(self,s$fr,context))){
+_E(self,s$al,['KVB: received notification for chnage of context ',(context)].join(''));
+_E(self,s$fq,context);
 }
 });
-rb_define_method(self,s$fp,function(self,_cmd,binding){
-var dict = rb_funcall(self,s$fq,binding);
-var obj = rb_funcall(dict,s$h,_$bd);
-var path = rb_funcall(dict,s$h,_$be);
-var key = rb_funcall(dict,s$h,_$bf);
-var value = rb_funcall(obj,s$be,path);
-return rb_funcall(self,s$ax,value,key);
+_I(self,s$fq,function(self,_,binding){
+var dict=_E(self,s$fr,binding);
+var obj=_E(dict,s$j,_$bc);
+var path=_E(dict,s$j,_$bd);
+var key=_E(dict,s$j,_$be);
+var value=_E(obj,s$bf,path);
+return _E(self,s$ay,value,key);
 });
-rb_define_method(self,s$fr,function(self,_cmd,binding){
-var binding_dict = rb_funcall(self,s$fq,binding);
-if(!RTEST(binding_dict)){
+_I(self,s$fs,function(self,_,binding){
+var binding_dict=_E(self,s$fr,binding);
+if(!_A(binding_dict)){
 return nil;
 }
-var obj = rb_funcall(rb_funcall(self, s$fs),s$h,_$bd);
-var path = rb_funcall(rb_funcall(self, s$fs),s$h,_$be);
-var value = rb_funcall(self,s$at,rb_funcall(rb_funcall(self, s$fs),s$h,_$bf));
-return rb_funcall(obj,s$bf,value,path);
+var obj=_E(_E(self,s$ft),s$j,_$bc);
+var path=_E(_E(self,s$ft),s$j,_$bd);
+var value=_E(self,s$au,_E(_E(self,s$ft),s$j,_$be));
+return _E(obj,s$bg,value,path);
 });
-rb_define_method(self,s$fo,function(self,_cmd,binding){
+_I(self,s$fp,function(self,_,binding){
 });
-rb_define_method(self,s$fq,function(self,_cmd,binding){
-return rb_funcall(rb_ivar_get(self, i$ad),s$h,binding);
+_I(self,s$fr,function(self,_,binding){
+return _E(_H(self,i$ad),s$j,binding);
 });
-self.$def(s$ft,function(self,_cmd,info,binding){
-return rb_funcall(rb_ivar_get(self, i$ad),'[]=',binding,info);
+self.$def(s$fu,function(self,_,info,binding){
+return _E(_H(self,i$ad),s$g,binding,info);
 });
-rb_define_method(self,s$fu,function(self,_cmd,binding){
+_I(self,s$fv,function(self,_,binding){
 });
-})(RClass.define_under(self,'Object',cObject));
+})(_N(self,c$i,cObject));
 (function(self) {
-self.$def_s(s$fv,function(self,_cmd,placeholder,marker,binding){
+self.$def_s(s$fw,function(self,_,placeholder,marker,binding){
 });
-self.$def(s$fw,function(self,_cmd,marker,binding){
+self.$def(s$fx,function(self,_,marker,binding){
 });
-})(RClass.define_under(self,'Object',cObject));
+})(_N(self,c$i,cObject));
 (function(self) {
-rb_define_method(self,s$fx,function(self,_cmd,editor){
+_I(self,s$fy,function(self,_,editor){
 });
-rb_define_method(self,s$fy,function(self,_cmd,editor){
+_I(self,s$fz,function(self,_,editor){
 });
-})(RClass.define_under(self,'Object',cObject));
+})(_N(self,c$i,cObject));
 (function(self) {
-rb_define_method(self,s$fz,function(self,_cmd){
+_I(self,s$ga,function(self,_){
 });
-rb_define_method(self,s$ga,function(self,_cmd){
+_I(self,s$gb,function(self,_){
 });
-self.$def(s$gb,function(self,_cmd,editor,did_commit,context_info){
+self.$def(s$gc,function(self,_,editor,did_commit,context_info){
 });
-self.$def(s$gc,function(self,_cmd,delegate,did_commit_selector,context_info){
+self.$def(s$gd,function(self,_,delegate,did_commit_selector,context_info){
 });
-})(RClass.define_under(self,'Object',cObject));
-self.$c_s('BINDING_NAMES',VN.$h(_$bg, '', _$bh, '', _$bi, '', _$bj, '', _$bk, '', _$bl, '', _$bm, '', _$bn, '', _$bo, '', _$bp, '', _$bq, '', _$br, '', _$bs, '', _$bt, '', _$bu, '', _$bv, '', _$bw, '', _$bx, '', _$by, '', _$bz, '', _$ca, '', _$cb, '', _$cc, '', _$cd, '', _$ce, '', _$cf, '', _$cg, '', _$ch, '', _$ci, '', _$cj, '', _$ck, '', _$cl, '', _$cm, '', _$cn, '', _$co, '', _$cp, '', _$cq, '', _$cr, '', _$cs, '', _$ct, '', _$cu, '', _$cv, '', _$cw, '', _$cx, '', _$cy, '', _$cz, '', _$da, '', _$db, '', _$dc, '', _$dd, '', _$de, '', _$df, '', _$dg, '', _$dh, '', _$di, '', _$dj, '', _$dk, '', _$dl, '', _$dm, '', _$dn, '', _$do, '', _$dp, '', _$dq, '', _$dr, '', _$ds, '', _$dt, '', _$du, '', _$dv, '', _$dw, '', _$dx, '', _$dy, '', _$dz, '', _$ea, '', _$eb, '', _$ec, '', _$ed, '', _$ee, '', _$ef, ''));
-return self.$c_s('BINDING_OPTIONS',VN.$h(_$eg, '', _$eh, '', _$ei, '', _$ej, '', _$ek, '', _$el, '', _$em, '', _$en, '', _$eo, '', _$ep, '', _$eq, '', _$er, '', _$es, '', _$et, '', _$eu, '', _$ev, '', _$ew, '', _$ex, '', _$ey, '', _$ez, '', _$fa, '', _$fb, '', _$fc, '', _$fd, '', _$fe, '', _$ff, ''));
-})(RModule.define('Vienna'));
+})(_N(self,c$i,cObject));
+self.$c_s('BINDING_NAMES',VN.$h(_$bf, '', _$bg, '', _$bh, '', _$bi, '', _$bj, '', _$bk, '', _$bl, '', _$bm, '', _$bn, '', _$bo, '', _$bp, '', _$bq, '', _$br, '', _$bs, '', _$bt, '', _$bu, '', _$bv, '', _$bw, '', _$bx, '', _$by, '', _$bz, '', _$ca, '', _$cb, '', _$cc, '', _$cd, '', _$ce, '', _$cf, '', _$cg, '', _$ch, '', _$ci, '', _$cj, '', _$ck, '', _$cl, '', _$cm, '', _$cn, '', _$co, '', _$cp, '', _$cq, '', _$cr, '', _$cs, '', _$ct, '', _$cu, '', _$cv, '', _$cw, '', _$cx, '', _$cy, '', _$cz, '', _$da, '', _$db, '', _$dc, '', _$dd, '', _$de, '', _$df, '', _$dg, '', _$dh, '', _$di, '', _$dj, '', _$dk, '', _$dl, '', _$dm, '', _$dn, '', _$do, '', _$dp, '', _$dq, '', _$dr, '', _$ds, '', _$dt, '', _$du, '', _$dv, '', _$dw, '', _$dx, '', _$dy, '', _$dz, '', _$ea, '', _$eb, '', _$ec, '', _$ed, '', _$ee, ''));
+return self.$c_s('BINDING_OPTIONS',VN.$h(_$ef, '', _$eg, '', _$eh, '', _$ei, '', _$ej, '', _$ek, '', _$el, '', _$em, '', _$en, '', _$eo, '', _$ep, '', _$eq, '', _$er, '', _$es, '', _$et, '', _$eu, '', _$ev, '', _$ew, '', _$ex, '', _$ey, '', _$ez, '', _$fa, '', _$fb, '', _$fc, '', _$fd, '', _$fe, ''));
+})(_K(c$b));

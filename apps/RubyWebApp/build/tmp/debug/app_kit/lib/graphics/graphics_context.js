@@ -1,73 +1,71 @@
 (function(self) {
 (function(self) {
-rb_define_method(self,s$l,function(self,_cmd,graphics_port,flip_state){
-self.$i_s(i$ah,graphics_port);
-return self.$i_s(i$ai,flip_state);
+_I(self,s$gf,function(self,_,x,y,w,h){
+_H(self,i$ah).fillRect(x, y, w, h);});
+_I(self,s$gg,function(self,_){
+return _H(self,i$ah);
 });
-rb_define_method(self,s$ge,function(self,_cmd){
-return rb_ivar_get(self, i$ah);
-});
-rb_define_method(self,s$gf,function(self,_cmd,graphics_port){
+_I(self,s$gh,function(self,_,graphics_port){
 return self.$i_s(i$ah,graphics_port);
 });
-rb_define_method(self,s$gg,function(self,_cmd){
-return rb_ivar_get(self, i$ai);
+_I(self,s$gi,function(self,_){
+return _H(self,i$ai);
 });
-self.$def_s(s$gh,function(self,_cmd){
-return self.$k_g('@@current_context');
+self.$def_s(s$gj,function(self,_){
+return _H(self,i$aj);
 });
-self.$def_s(s$gi,function(self,_cmd,context){
-return self.$k_s('@@current_context',context);
+self.$def_s(s$gk,function(self,_,context){
+return self.$i_s(i$aj,context);
 });
-rb_define_method(self,s$gj,function(self,_cmd){
+_I(self,s$gl,function(self,_){
 });
-rb_define_method(self,s$gk,function(self,_cmd){
+_I(self,s$gm,function(self,_){
 });
-rb_define_method(self,s$gl,function(self,_cmd,width){
-rb_ivar_get(self, i$ah).lineWidth = width});
-rb_define_method(self,s$gm,function(self,_cmd,cap){
-rb_ivar_get(self, i$ah).lineCap = cap});
-rb_define_method(self,s$gn,function(self,_cmd,join){
-rb_ivar_get(self, i$ah).lineJoin = join});
-rb_define_method(self,s$go,function(self,_cmd,limit){
-rb_ivar_get(self, i$ah).miterLimit = limit});
-rb_define_method(self,s$gp,function(self,_cmd,alpha){
-rb_ivar_get(self, i$ah).globalAlpha = alpha});
-rb_define_method(self,s$gq,function(self,_cmd){
-rb_ivar_get(self, i$ah).beginPath()});
-rb_define_method(self,s$gr,function(self,_cmd,point){
-rb_ivar_get(self, i$ah).moveTo(rb_funcall(point,s$y),rb_funcall(point,s$z))});
-rb_define_method(self,s$gs,function(self,_cmd,point){
-rb_ivar_get(self, i$ah).lineTo(rb_funcall(point,s$y),rb_funcall(point,s$z))});
-rb_define_method(self,s$gt,function(self,_cmd,cp1,cp2,point){
-rb_ivar_get(self, i$ah).bezierCurveTo(rb_funcall(cp1,s$y),rb_funcall(cp1,s$z),rb_funcall(cp2,s$y),rb_funcall(cp2,s$z),rb_funcall(point,s$y),rb_funcall(point,s$z))});
-rb_define_method(self,s$gu,function(self,_cmd,points){
+_I(self,s$gn,function(self,_,width){
+_H(self,i$ah).lineWidth = width});
+_I(self,s$go,function(self,_,cap){
+_H(self,i$ah).lineCap = cap});
+_I(self,s$gp,function(self,_,join){
+_H(self,i$ah).lineJoin = join});
+_I(self,s$gq,function(self,_,limit){
+_H(self,i$ah).miterLimit = limit});
+_I(self,s$gr,function(self,_,alpha){
+_H(self,i$ah).globalAlpha = alpha});
+_I(self,s$gs,function(self,_){
+_H(self,i$ah).beginPath()});
+_I(self,s$gt,function(self,_,point){
+_H(self,i$ah).moveTo(_E(point,s$ab),_E(point,s$ac))});
+_I(self,s$gu,function(self,_,point){
+_H(self,i$ah).lineTo(_E(point,s$ab),_E(point,s$ac))});
+_I(self,s$gv,function(self,_,cp1,cp2,point){
+_H(self,i$ah).bezierCurveTo(_E(cp1,s$ab),_E(cp1,s$ac),_E(cp2,s$ab),_E(cp2,s$ac),_E(point,s$ab),_E(point,s$ac))});
+_I(self,s$gw,function(self,_,points){
 });
-rb_define_method(self,s$gv,function(self,_cmd,sx,sy){
+_I(self,s$gx,function(self,_,sx,sy){
 });
-rb_define_method(self,s$gw,function(self,_cmd,tx,ty){
+_I(self,s$gy,function(self,_,tx,ty){
 });
-rb_define_method(self,s$gx,function(self,_cmd,angle){
+_I(self,s$gz,function(self,_,angle){
 });
-rb_define_method(self,s$gy,function(self,_cmd,transform){
+_I(self,s$ha,function(self,_,transform){
 });
-rb_define_method(self,s$gz,function(self,_cmd){
+_I(self,s$hb,function(self,_){
 });
-rb_define_method(self,s$ha,function(self,_cmd,rect){
+_I(self,s$hc,function(self,_,rect){
 });
-rb_define_method(self,s$hb,function(self,_cmd,point,radius,start_angle,end_angle,clock_wise){
+_I(self,s$hd,function(self,_,point,radius,start_angle,end_angle,clock_wise){
 });
-rb_define_method(self,s$hc,function(self,_cmd,point1,point2,radius){
+_I(self,s$he,function(self,_,point1,point2,radius){
 });
-rb_define_method(self,s$hd,function(self,_cmd,path){
+_I(self,s$hf,function(self,_,path){
 });
-rb_define_method(self,s$he,function(self,_cmd){
+_I(self,s$hg,function(self,_){
 });
-rb_define_method(self,s$hf,function(self,_cmd){
+_I(self,s$hh,function(self,_){
 });
-rb_define_method(self,s$hg,function(self,_cmd){
+_I(self,s$hi,function(self,_){
 });
-rb_define_method(self,s$hh,function(self,_cmd,point){
+_I(self,s$hj,function(self,_,point){
 });
-})(RClass.define_under(self,'GraphicsContext',cObject));
-})(RModule.define('Vienna'));
+})(_N(self,c$z,self.$c_g_full(c$e)));
+})(_K(c$b));

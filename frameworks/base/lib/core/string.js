@@ -50,7 +50,7 @@ rb_define_method(rb_cString, "<=>", function(self, _cmd) {
 });
 
 rb_define_method(rb_cString, "==", function(self, _cmd, obj) {
-  return self == obj ? true : false;
+  return (self == obj) && (obj.$type == T_STRING) ? true : false;
 });
 
 rb_define_method(rb_cString, "eql?", function(self, _cmd) {

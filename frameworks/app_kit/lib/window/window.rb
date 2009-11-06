@@ -107,7 +107,6 @@ module Vienna
       
       if ENV[:platform] == :browser
       end
-      
       @element = Element.new :div
       @display_context = RenderContext.new :div
       @element << @display_context
@@ -133,7 +132,7 @@ module Vienna
       # and, we wont capture events outside the visible window (e.g. the shadow which might be drawn
       # on the @element)
       @window_view.element.add_event_listener :mousedown do |event|
-        the_event = Event.from_native_event event, with_window:self, with_type:'left_mouse_down'
+        the_event = Event.from_native_event event, with_window:self, with_type: :left_mouse_down
           App.send_event the_event
         unless the_event.allows_propagation?
           the_event.stop_propagation
@@ -141,7 +140,7 @@ module Vienna
       end
       
       @window_view.element.add_event_listener :mouseup do |event|
-        the_event = Event.from_native_event event, with_window:self, with_type:'left_mouse_up'
+        the_event = Event.from_native_event event, with_window:self, with_type: :left_mouse_up
           App.send_event the_event
         unless the_event.allows_propagation?
           the_event.stop_propagation

@@ -26,34 +26,42 @@
 
 module Vienna
   
+  SCROLLER_PARTS = {
+    :none             => 0,
+    :increment_line   => 1,
+    :decrement_line   => 2,
+    :increment_page   => 3,
+    :decrement_page   => 4,
+    :knob             => 5,
+    :knob_slot        => 6
+  }
+  
+  SCROLLER_ARROWS = {
+    :increment_arrow  => 0,
+    :decrement_arrow  => 1
+  }
+  
+  SCROLL_ARROW_POSITIONS = {
+    :none             => 1,
+    :min_end          => 2,
+    :max_end          => 3
+  }
+  
+  USABLE_SCROLLER_PARTS = {
+    :none             => 0,
+    :all              => 1,
+    :only_arrows      => 2
+  }
+  
   class Scroller < Control
     
-    SCROLLER_PARTS = {
-      :none             => 0,
-      :increment_line   => 1,
-      :decrement_line   => 2,
-      :increment_page   => 3,
-      :decrement_page   => 4,
-      :knob             => 5,
-      :knob_slot        => 6
-    }
+    V_KNOB_IMAGE = ThreePartImage.new([Image.image_named('scroller_vertical_knob_top'),
+                                       Image.image_named('scroller_vertical_knob_middle'),
+                                       Image.image_named('scroller_vertical_knob_bottom')], true)
     
-    SCROLLER_ARROWS = {
-      :increment_arrow  => 0,
-      :decrement_arrow  => 1
-    }
-    
-    SCROLL_ARROW_POSITIONS = {
-      :none             => 1,
-      :min_end          => 2,
-      :max_end          => 3
-    }
-    
-    USABLE_SCROLLER_PARTS = {
-      :none             => 0,
-      :all              => 1,
-      :only_arrows      => 2
-    }
+    H_KNOB_IMAGE = ThreePartImage.new([Image.image_named('scroller_horizontal_knob_left'),
+                                       Image.image_named('scroller_horizontal_knob_middle',
+                                       Image.image_named('scroller_horizontal_knob_right'))])
     
     def self.scroller_width
       17
