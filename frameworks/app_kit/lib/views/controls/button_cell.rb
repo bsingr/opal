@@ -29,9 +29,6 @@ require 'button_cell_images'
 module Vienna
   
   class ButtonCell < Cell
-    
-    # SWITCH_IMAGE = Image.sprite :controls, [0, 357, 16, 16]
-    # SWITCH_HIGHLIGHTED_IMAGE = Image.sprite :controls, [16, 357, 16, 16]
         
     def init_text_cell str
       super str
@@ -329,44 +326,81 @@ module Vienna
       super obj
     end
     
-    def draw_image images, with_frame:frame, in_view:control_view
+    
+    
+    def draw_with_frame(cell_frame, in_view:control_view)
+      @control_view = control_view
+      return if transparent?
       
+      # puts 're-drawing'
+      
+      `#{GraphicsContext.current_context.graphics_port}.clearRect(0, 0, #{cell_frame.width}, #{cell_frame.height});`
+      
+      draw_bezel_with_frame(cell_frame, in_view:control_view)
+      draw_interior_with_frame(cell_frame, in_view:control_view)
+    end
+    
+    def draw_interior_with_frame(cell_frame, in_view:control_view)
+      ctx = GraphicsContext.current_context
+      
+      unless @image_position == :image_only
+        draw_title(attributed_title, with_frame:cell_frame, in_view:control_view)
+      end
+      
+      if @image
+        case @highlights_by
+        when :contents
+          if on?
+            draw_image(@alternate_image, with_frame:cell_frame, in_view:control_view)
+          else
+            draw_image(@image, with_frame:cell_frame, in_view:control_view)
+          end
+        else
+          if @highlighted
+            draw_image(@alternate_image, with_frame:cell_frame, in_view:control_view)
+          else
+            draw_image(@image, with_frame:cell_frame, in_view:control_view)
+          end          
+        end
+      end
+    end
+    
+    
+    
+    def draw_image image, with_frame:frame, in_view:control_view
+      enabled = @enabled ? true : !@image_dims_when_disabled    
+      gray_mask = @highlighted # set to true when we want gray mask?
+      ctx = GraphicsContext.current_context
+      image.draw_in_rect Rect.new(0, 0, image.size.width, image.size.height), enabled:enabled, gray_mask:gray_mask
     end
     
     def draw_title title, with_frame:frame, in_view:control_view
-      
+      title.draw_in_rect(title_rect_for_bounds(frame))
     end
     
     def draw_bezel_with_frame frame, in_view:control_view
-      
+      ctx = GraphicsContext.current_context
+      if bordered?
+        bezel_img = BEZEL_IMAGES[:round_textured][:regular][@enabled ? (@highlighted ? :highlighted : :normal) : :disabled]
+        bezel_img.draw_with_frame(frame)
+      end
     end
     
     # Rendering
     def render_bezel_with_frame(cell_frame, in_view:control_view)
       ctx = RenderContext.current_context
       
-      if ctx.first_time?        
-        ctx << "<div class='left'></div>"
-        ctx << "<div class='middle'></div>"
-        ctx << "<div class='right'></div>"
+      if ctx.first_time?
+        ctx << "<div class='bezel' style='top:0px;left:0px;right:0px;bottom:0px;'></div>" 
         ctx << "<div class='title'></div>"
         ctx << "<div class='image'></div>"
-        ctx.first_time = false
       end
       
-      class_name_array = ['vn-button', theme_name]      
-      class_name_array << :disabled unless enabled?
-
       if bordered?
-        class_name_array << :bordered
-         if highlighted? && @highlights_by == :push_in
-           class_name_array << :highlighted
-         else
-           # normal button... not highlighted...
-         end
-      end
-      
-      ctx.class_name = class_name_array.join ' '
+        bezel_img = BEZEL_IMAGES[:round_textured][:regular][@enabled ? (@highlighted ? :highlighted : :normal) : :disabled]
+        # bezel image will be a three part image....probably?
+        ctx.selector('bezel') { bezel_img.render_with_frame(cell_frame) }
+      end      
     end
     
     def render_interior_with_frame cell_frame, in_view:control_view
@@ -374,7 +408,7 @@ module Vienna
             
       # Render title, only if we should..
       unless @image_position == :image_only
-        render_title(@title, with_frame:cell_frame, in_view:control_view)
+        render_title(attributed_title, with_frame:cell_frame, in_view:control_view)
       end
       
       if @image
@@ -431,8 +465,10 @@ module Vienna
     def render_title(title, with_frame:frame, in_view:control_view)
       ctx = RenderContext.current_context
       ctx.selector :title do |title_div|
-        title_div.inner_html = title
-        title_div.frame = title_rect_for_bounds(frame)
+        # title_div.inner_html = title
+        # title_div.frame = title_rect_for_bounds(frame)
+        # puts title
+        title.render_in_rect(title_rect_for_bounds(frame))
       end
     end
   
@@ -440,6 +476,7 @@ module Vienna
     # How to set first_time? for cells? make it Cell/View method? think of tableviews
     # re drawing cells= cells must keep state,plus tableview draws some stuff itself
     def render_with_frame cell_frame, in_view:control_view
+      # puts 'rendering'
       @control_view = control_view
       
       return if transparent?
@@ -468,6 +505,7 @@ module Vienna
     
     
     def attributed_title
+      # puts self
       return @title if @title.is_a?(AttributedString)
       
       attributes = { }
@@ -475,7 +513,7 @@ module Vienna
       attributes[:color] = (@enabled ? Color.control_text_color : Color.disabled_control_text_color)
       
       paragraph_style = ParagraphStyle.default_paragraph_style
-      paragraph_style.line_break_mode = @line_break_mode
+      # paragraph_style.line_break_mode = @line_break_mode
       paragraph_style.alignment = @alignment
       attributes[:paragraph_style] = paragraph_style
       
@@ -516,6 +554,3 @@ module Vienna
     
   end
 end
-
-# puts 'BUTTON CELL'
-# puts VN::ButtonCell

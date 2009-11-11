@@ -1,177 +1,175 @@
 (function(self) {
-self.$c_s('SCROLLER_PARTS',VN.$h(_$gt, 0, _$ih, 1, _$ii, 2, _$ij, 3, _$ik, 4, _$ia, 5, _$il, 6));
-self.$c_s('SCROLLER_ARROWS',VN.$h(_$im, 0, _$in, 1));
-self.$c_s('SCROLL_ARROW_POSITIONS',VN.$h(_$gt, 1, _$io, 2, _$ip, 3));
-self.$c_s('USABLE_SCROLLER_PARTS',VN.$h(_$gt, 0, _$iq, 1, _$ir, 2));
+self.$c_s('SCROLLER_PARTS',VN.$h(_$hg, 0, _$iv, 1, _$iw, 2, _$ix, 3, _$iy, 4, _$io, 5, _$iz, 6));
+self.$c_s('SCROLLER_ARROWS',VN.$h(_$ja, 0, _$jb, 1));
+self.$c_s('SCROLL_ARROW_POSITIONS',VN.$h(_$hg, 1, _$jc, 2, _$jd, 3));
+self.$c_s('USABLE_SCROLLER_PARTS',VN.$h(_$hg, 0, _$je, 1, _$jf, 2));
 (function(self) {
-self.$c_s('V_KNOB_IMAGE',_E(self.$c_g_full(c$ag),s$ap,[_E(self.$c_g_full(c$af),s$jv,'scroller_vertical_knob_top'),_E(self.$c_g_full(c$af),s$jv,'scroller_vertical_knob_middle'),_E(self.$c_g_full(c$af),s$jv,'scroller_vertical_knob_bottom')],true));
-self.$c_s('H_KNOB_IMAGE',_E(self.$c_g_full(c$ag),s$ap,[_E(self.$c_g_full(c$af),s$jv,'scroller_horizontal_knob_left'),_E(self.$c_g_full(c$af),s$jv,'scroller_horizontal_knob_middle',_E(self.$c_g_full(c$af),s$jv,'scroller_horizontal_knob_right'))]));
-self.$def_s(s$zt,function(self,_){
+self.$def_s(s$aec,function(self,_){
 return 17;
 });
-self.$def_s(s$zy,function(self,_,control_size){
+self.$def_s(s$aeh,function(self,_,control_size){
 return 17;
 });
 _I(self,s$n,function(self,_,frame){
 rb_supcall(arguments.callee, self,_,[frame]);
-self.$i_s(i$ck,0.0);
-return self.$i_s(i$er,1);
+self.$i_s(i$cx,0.0);
+return self.$i_s(i$fd,1);
 });
-_I(self,s$lx,function(self,_){
-return _A(_E(_E(_H(self,i$bb),s$ae),s$js,_E(_H(self,i$bb),s$af))) ? 'vn-vertical-scroller' : 'vn-horizontal-scroller';
+_I(self,s$qq,function(self,_){
+return _A(_E(_E(_H(self,i$bp),s$ae),s$kl,_E(_H(self,i$bp),s$af))) ? 'vn-vertical-scroller' : 'vn-horizontal-scroller';
 });
-_I(self,s$ot,function(self,_,context){
-if(_A(_E(context,s$lk))){
+_I(self,s$tl,function(self,_,context){
+if(_A(_E(context,s$oy))){
 _E(context,s$e,"<div class='dec-line'></div>");
 _E(context,s$e,"<div class='inc-line'></div>");
 _E(context,s$e,"<div class='knob'><div class='start'</div><div class='middle'></div><div class='end'></div></div>");
-_E(context,s$ll,false);
+_E(context,s$oz,false);
 }
-_E(context,s$p,_E(self,s$lx));
-return _E(context,s$lq,_$ia,function(knob){
-return _E(knob,s$w,_E(self,s$zz,_$ia));
+_E(context,s$p,_E(self,s$qq));
+return _E(context,s$pe,_$io,function(knob){
+return _E(knob,s$w,_E(self,s$aei,_$io));
 });
 });
-_I(self,s$aaa,function(self,_){
+_I(self,s$aej,function(self,_){
 });
 self.$c_s('DECREMENT_LINE_SIZE',22);
-_I(self,s$zz,function(self,_,part){
-var result=_E(self.$klass.$c_g_full(c$ad),s$ap,0,0,0,0);
-var increment_line=_E(self.$klass.$c_g_full(c$ad),s$ap,0,0,_E(_H(self,i$bc),s$ae),_E(_H(self,i$bc),s$af));
-var decrement_line=_E(self.$klass.$c_g_full(c$ad),s$ap,0,0,_E(_H(self,i$bc),s$ae),_E(_H(self,i$bc),s$af));
-var knob=_E(self.$klass.$c_g_full(c$ad),s$ap,0,0,_E(_H(self,i$bc),s$ae),_E(_H(self,i$bc),s$af));
-var knob_slot=_E(self.$klass.$c_g_full(c$ad),s$ap,0,0,_E(_H(self,i$bc),s$ae),_E(_H(self,i$bc),s$af));
-if(_A(_E(self,s$wz))){
-_E(decrement_line,s$jh,self.$klass.$c_g_full(c$ba));
-_E(increment_line,s$jh,self.$klass.$c_g_full(c$ba));
-_E(increment_line,s$jf,_E(_E(_H(self,i$bc),s$af),s$ob,self.$klass.$c_g_full(c$ba)));
-_E(knob_slot,s$jh,_E(_E(_H(self,i$bc),s$af),s$ob,(_E((2),s$xj,self.$klass.$c_g_full(c$ba)))));
-_E(knob_slot,s$jf,self.$klass.$c_g_full(c$ba));
-_E(knob,s$jh,_E(_E(knob_slot,s$af),s$xj,_H(self,i$er)));
-_E(knob,s$jf,_E((_E((_E(_E(knob_slot,s$af),s$ob,_E(knob,s$af))),s$xj,_H(self,i$ck))),s$jt,_E(knob_slot,s$ac)));
+_I(self,s$aei,function(self,_,part){
+var result=_E(self.$klass.$c_g_full(c$ae),s$ap,0,0,0,0);
+var increment_line=_E(self.$klass.$c_g_full(c$ae),s$ap,0,0,_E(_H(self,i$bq),s$ae),_E(_H(self,i$bq),s$af));
+var decrement_line=_E(self.$klass.$c_g_full(c$ae),s$ap,0,0,_E(_H(self,i$bq),s$ae),_E(_H(self,i$bq),s$af));
+var knob=_E(self.$klass.$c_g_full(c$ae),s$ap,0,0,_E(_H(self,i$bq),s$ae),_E(_H(self,i$bq),s$af));
+var knob_slot=_E(self.$klass.$c_g_full(c$ae),s$ap,0,0,_E(_H(self,i$bq),s$ae),_E(_H(self,i$bq),s$af));
+if(_A(_E(self,s$abk))){
+_E(decrement_line,s$ka,self.$klass.$c_g_full(c$bb));
+_E(increment_line,s$ka,self.$klass.$c_g_full(c$bb));
+_E(increment_line,s$jy,_E(_E(_H(self,i$bq),s$af),s$mg,self.$klass.$c_g_full(c$bb)));
+_E(knob_slot,s$ka,_E(_E(_H(self,i$bq),s$af),s$mg,(_E((2),s$mh,self.$klass.$c_g_full(c$bb)))));
+_E(knob_slot,s$jy,self.$klass.$c_g_full(c$bb));
+_E(knob,s$ka,_E(_E(knob_slot,s$af),s$mh,_H(self,i$fd)));
+_E(knob,s$jy,_E((_E((_E(_E(knob_slot,s$af),s$mg,_E(knob,s$af))),s$mh,_H(self,i$cx))),s$km,_E(knob_slot,s$ac)));
 }
 else{
-_E(decrement_line,s$jg,self.$klass.$c_g_full(c$ba));
-_E(increment_line,s$jg,self.$klass.$c_g_full(c$ba));
-_E(increment_line,s$jf,_E(_E(_H(self,i$bc),s$ae),s$ob,self.$klass.$c_g_full(c$ba)));
-_E(knob_slot,s$jg,_E(_E(_H(self,i$bc),s$ae),s$ob,(_E((2),s$xj,self.$klass.$c_g_full(c$ba)))));
-_E(knob_slot,s$je,self.$klass.$c_g_full(c$ba));
-_E(knob,s$jg,_E(_E(knob_slot,s$ae),s$xj,_H(self,i$er)));
-_E(knob,s$je,_E((_E((_E(_E(knob_slot,s$ae),s$ob,_E(knob,s$ae))),s$xj,_H(self,i$ck))),s$jt,_E(knob_slot,s$ab)));
+_E(decrement_line,s$jz,self.$klass.$c_g_full(c$bb));
+_E(increment_line,s$jz,self.$klass.$c_g_full(c$bb));
+_E(increment_line,s$jy,_E(_E(_H(self,i$bq),s$ae),s$mg,self.$klass.$c_g_full(c$bb)));
+_E(knob_slot,s$jz,_E(_E(_H(self,i$bq),s$ae),s$mg,(_E((2),s$mh,self.$klass.$c_g_full(c$bb)))));
+_E(knob_slot,s$jx,self.$klass.$c_g_full(c$bb));
+_E(knob,s$jz,_E(_E(knob_slot,s$ae),s$mh,_H(self,i$fd)));
+_E(knob,s$jx,_E((_E((_E(_E(knob_slot,s$ae),s$mg,_E(knob,s$ae))),s$mh,_H(self,i$cx))),s$km,_E(knob_slot,s$ab)));
 }
 return (function($v){
-if(($e = _E(_$gt, '===', $v),$e!==nil && $e!==false)){
+if(($e = _E(_$hg, '===', $v),$e!==nil && $e!==false)){
 return result;
 }
-else if(($e = _E(_$ih, '===', $v),$e!==nil && $e!==false)){
-if(_A(_E(self,s$wz))){
+else if(($e = _E(_$iv, '===', $v),$e!==nil && $e!==false)){
+if(_A(_E(self,s$abk))){
 }
 else{
 }
 }
-else if(($e = _E(_$ii, '===', $v),$e!==nil && $e!==false)){
+else if(($e = _E(_$iw, '===', $v),$e!==nil && $e!==false)){
 }
-else if(($e = _E(_$ij, '===', $v),$e!==nil && $e!==false)){
+else if(($e = _E(_$ix, '===', $v),$e!==nil && $e!==false)){
 }
-else if(($e = _E(_$ik, '===', $v),$e!==nil && $e!==false)){
+else if(($e = _E(_$iy, '===', $v),$e!==nil && $e!==false)){
 }
-else if(($e = _E(_$ia, '===', $v),$e!==nil && $e!==false)){
+else if(($e = _E(_$io, '===', $v),$e!==nil && $e!==false)){
 return knob;
 }
-else if(($e = _E(_$il, '===', $v),$e!==nil && $e!==false)){
+else if(($e = _E(_$iz, '===', $v),$e!==nil && $e!==false)){
 return knob_slot;
 }
 })(part);
 });
-_I(self,s$aab,function(self,_){
+_I(self,s$aek,function(self,_){
 });
-_I(self,s$aac,function(self,_){
+_I(self,s$ael,function(self,_){
 });
-_I(self,s$aad,function(self,_,position){
-return self.$i_s(i$es,position);
+_I(self,s$aem,function(self,_,position){
+return self.$i_s(i$fe,position);
 });
-_I(self,s$aae,function(self,_){
-return _H(self,i$es);
+_I(self,s$aen,function(self,_){
+return _H(self,i$fe);
 });
-_I(self,s$py,function(self,_,control_tint){
-return self.$i_s(i$cl,control_tint);
+_I(self,s$uq,function(self,_,control_tint){
+return self.$i_s(i$cy,control_tint);
 });
-_I(self,s$px,function(self,_){
-return _H(self,i$cl);
+_I(self,s$up,function(self,_){
+return _H(self,i$cy);
 });
-_I(self,s$pz,function(self,_,control_size){
-return self.$i_s(i$cm,control_size);
+_I(self,s$ur,function(self,_,control_size){
+return self.$i_s(i$cz,control_size);
 });
-_I(self,s$qa,function(self,_){
-return _H(self,i$cm);
+_I(self,s$us,function(self,_){
+return _H(self,i$cz);
 });
-self.$def(s$aaf,function(self,_,which_arrow,flag){
+self.$def(s$aeo,function(self,_,which_arrow,flag){
 });
-_I(self,s$aag,function(self,_){
+_I(self,s$aep,function(self,_){
 });
-self.$def(s$aah,function(self,_,slot_rect,flag){
+self.$def(s$aeq,function(self,_,slot_rect,flag){
 });
-_I(self,s$aai,function(self,_,flag){
+_I(self,s$aer,function(self,_,flag){
 });
-_I(self,s$aaj,function(self,_,the_point){
+_I(self,s$aes,function(self,_,the_point){
 });
-_I(self,s$cs,function(self,_,the_event){
-if(!_A(_E(self,s$pv))){
+_I(self,s$dm,function(self,_,the_event){
+if(!_A(_E(self,s$un))){
 return ;
 }
-var location=_E(self,s$nz,_E(the_event,s$fb),nil);
-return _E(self,s$aak,the_event);
+var location=_E(self,s$ss,_E(the_event,s$fv),nil);
+return _E(self,s$aet,the_event);
 });
-_I(self,s$aak,function(self,_,the_event){
-var original_value=_H(self,i$ck);
-var mouse_down_point=_E(self,s$nz,_E(the_event,s$fb),nil);
-var slot_rect=_E(self,s$zz,_$il);
-var knob_rect=_E(self,s$zz,_$ia);
-var size=_A(_E(self,s$wz)) ? _E(_E(slot_rect,s$af),s$ob,_E(knob_rect,s$af)) : _E(_E(slot_rect,s$ae),s$ob,_E(knob_rect,s$ae));
-return _E(self.$klass.$c_g_full(c$v),s$dv,[_$aj,_$aa],function(the_event){
-if(_A(_E(_E(the_event,s$ec),s$ad,_$aj))){
-_E(self.$klass.$c_g_full(c$v),s$eb);
+_I(self,s$aet,function(self,_,the_event){
+var original_value=_H(self,i$cx);
+var mouse_down_point=_E(self,s$ss,_E(the_event,s$fv),nil);
+var slot_rect=_E(self,s$aei,_$iz);
+var knob_rect=_E(self,s$aei,_$io);
+var size=_A(_E(self,s$abk)) ? _E(_E(slot_rect,s$af),s$mg,_E(knob_rect,s$af)) : _E(_E(slot_rect,s$ae),s$mg,_E(knob_rect,s$ae));
+return _E(self.$klass.$c_g_full(c$w),s$ep,[_$aj,_$aa],function(the_event){
+if(_A(_E(_E(the_event,s$ew),s$ad,_$aj))){
+_E(self.$klass.$c_g_full(c$w),s$ev);
 }
 else{
-var location=_E(self,s$nz,_E(the_event,s$fb),nil);
-var delta=_A(_E(self,s$wz)) ? _E(_E(location,s$ac),s$ob,_E(mouse_down_point,s$ac)) : _E(_E(location,s$ab),s$ob,_E(mouse_down_point,s$ab));
-_E(self,s$qo,_E(self.$klass.$c_g_full(c$au),s$xm,_E(self.$klass.$c_g_full(c$au),s$xn,0,_E(original_value,s$jt,(_E(delta,s$xk,size)))),1));
-_E(self,s$mw,true);
-_E(self,s$rb,_H(self,i$ca),_H(self,i$bz));
+var location=_E(self,s$ss,_E(the_event,s$fv),nil);
+var delta=_A(_E(self,s$abk)) ? _E(_E(location,s$ac),s$mg,_E(mouse_down_point,s$ac)) : _E(_E(location,s$ab),s$mg,_E(mouse_down_point,s$ab));
+_E(self,s$ve,_E(self.$klass.$c_g_full(c$av),s$abw,_E(self.$klass.$c_g_full(c$av),s$abx,0,_E(original_value,s$km,(_E(delta,s$abu,size)))),1));
+_E(self,s$rp,true);
+_E(self,s$vs,_H(self,i$co),_H(self,i$cn));
 }
 });
 });
-_I(self,s$aal,function(self,_,the_event){
+_I(self,s$aeu,function(self,_,the_event){
 });
-_I(self,s$aam,function(self,_){
+_I(self,s$aev,function(self,_){
 });
-_I(self,s$aan,function(self,_){
-return _H(self,i$er);
+_I(self,s$aew,function(self,_){
+return _H(self,i$fd);
 });
-_I(self,s$zu,function(self,_,proportion){
-self.$i_s(i$er,proportion);
-return _E(self,s$mw,true);
+_I(self,s$aed,function(self,_,proportion){
+self.$i_s(i$fd,proportion);
+return _E(self,s$rp,true);
 });
-_I(self,s$qo,function(self,_,a_float){
-return self.$i_s(i$ck,a_float);
+_I(self,s$ve,function(self,_,a_float){
+return self.$i_s(i$cx,a_float);
 });
-_I(self,s$qt,function(self,_){
-return _H(self,i$ck);
+_I(self,s$vj,function(self,_){
+return _H(self,i$cx);
 });
-_I(self,s$qv,function(self,_){
-return _H(self,i$ck);
+_I(self,s$vl,function(self,_){
+return _H(self,i$cx);
 });
-_I(self,s$qp,function(self,_,a_double){
-return self.$i_s(i$ck,a_double);
+_I(self,s$vf,function(self,_,a_double){
+return self.$i_s(i$cx,a_double);
 });
-_I(self,s$pm,function(self,_,an_action){
-return self.$i_s(i$ca,an_action);
+_I(self,s$ud,function(self,_,an_action){
+return self.$i_s(i$co,an_action);
 });
-_I(self,s$pk,function(self,_,a_target){
-return self.$i_s(i$bz,a_target);
+_I(self,s$ub,function(self,_,a_target){
+return self.$i_s(i$cn,a_target);
 });
-_I(self,s$wz,function(self,_){
-return _A(_E(_E(_H(self,i$bb),s$ae),s$js,_E(_H(self,i$bb),s$af))) ? true : false;
+_I(self,s$abk,function(self,_){
+return _A(_E(_E(_H(self,i$bp),s$ae),s$kl,_E(_H(self,i$bp),s$af))) ? true : false;
 });
-})(_N(self,c$ay,self.$c_g_full(c$ak)));
+})(_N(self,c$az,self.$c_g_full(c$an)));
 })(_K(c$b));

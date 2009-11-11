@@ -43,7 +43,8 @@ module Vienna
     def self.build name, options, &block
       # puts "Should build: #{name}"
       builder = BUILDERS[name]
-      puts builder
+      # puts BUILDERS
+      # puts "ermmmmmmmmm"
       builder.build! options, block
     end
     

@@ -108,6 +108,10 @@ cBasicObject.$def('is_a?', function(self, _cmd, klass) {
   return self.$klass == klass ? true : false;
 });
 
+rb_define_method(cBasicObject, 'instance_variable_set', function(self, _cmd, id, val) {
+  return rb_ivar_set(self, id, val);
+});
+
 /**
   Kernel neccessary methods
 */

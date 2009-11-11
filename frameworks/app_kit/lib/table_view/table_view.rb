@@ -750,4 +750,13 @@ module Vienna
       
     end
   end
+  
+  
+  module TableViewDelegate
+    
+  end
+  
+  module TableViewDataSource
+    
+  end
 end

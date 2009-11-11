@@ -79,10 +79,10 @@ rb_define_method(rb_cHash, "==", function(self, _cmd) {
 });
   
 rb_define_method(rb_cHash, "[]", function(self, _cmd, key) {
-  if (!self.values.hasOwnProperty(key)) {
+  if (!self.values.hasOwnProperty(key.toString())) {
     return self.ifnone;
   }
-  return self.values[key];
+  return self.values[key.toString()];
 });
 
 rb_define_method(rb_cHash, "hash", function(self, _cmd) {
@@ -104,11 +104,11 @@ rb_define_method(rb_cHash, "[]=", function(self, _cmd, key, value) {
 rb_define_method(rb_cHash, "store", function(self, _cmd, key, val) {
   // if we dont have the key, add it to the ordered array so that we can keep
   // the hash ordered.
-  if (self.values[key] === undefined) {
-    self.keys.push(key);
+  if (self.values[key.toString()] === undefined) {
+    self.keys.push(key.toString());
   }
 
-  self.values[key] = val ;
+  self.values[key.toString()] = val ;
   return val ;
 });
 

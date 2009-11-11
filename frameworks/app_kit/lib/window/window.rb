@@ -795,8 +795,11 @@ module Vienna
     
     
     
-    def toolbar= toolbar
+    def toolbar=(toolbar)
+      return if @toolbar == toolbar
+      
       @toolbar = toolbar
+      @toolbar.window = self
     end
     
     def toolbar

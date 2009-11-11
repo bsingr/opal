@@ -2,370 +2,402 @@
 VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/app_kit/lib/views/controls/button_cell_images.js');
 (function(self) {
 (function(self) {
-_I(self,s$ru,function(self,_,str){
+_I(self,s$wl,function(self,_,str){
 rb_supcall(arguments.callee, self,_,[str]);
-self.$i_s(i$cx,false);
-self.$i_s(i$cy,_$gv);
-self.$i_s(i$cz,_$gt);
-self.$i_s(i$da,'');
-self.$i_s(i$db,nil);
-self.$i_s(i$dc,false);
-self.$i_s(i$bu,true);
-self.$i_s(i$bv,true);
-self.$i_s(i$cf,_$hh);
-self.$i_s(i$ci,'');
-return self.$i_s(i$dd,0);
+self.$i_s(i$dk,false);
+self.$i_s(i$dl,_$hi);
+self.$i_s(i$dm,_$hg);
+self.$i_s(i$dn,'');
+self.$i_s(i$do,nil);
+self.$i_s(i$dp,false);
+self.$i_s(i$ci,true);
+self.$i_s(i$cj,true);
+self.$i_s(i$bj,_$gi);
+self.$i_s(i$cv,'');
+return self.$i_s(i$dq,0);
 });
-_I(self,s$rv,function(self,_,img){
+_I(self,s$wm,function(self,_,img){
 });
 _I(self,s$n,function(self,_){
-return _E(self,s$ru,'ButtonCell');
+return _E(self,s$wl,'ButtonCell');
 });
-_I(self,s$py,function(self,_,control_tint){
+_I(self,s$uq,function(self,_,control_tint){
 rb_supcall(arguments.callee, self,_,[control_tint]);
-if(_A(ORTEST(_E(_H(self,i$c),s$ad,_$hi),_E(_H(self,i$c),s$ad,_$hj)))){
-_E(self,s$vj);
+if(_A(ORTEST(_E(_H(self,i$c),s$ad,_$hz),_E(_H(self,i$c),s$ad,_$ia)))){
+_E(self,s$zz);
 }
 });
-_I(self,s$pz,function(self,_,size){
+_I(self,s$ur,function(self,_,size){
 rb_supcall(arguments.callee, self,_,[size]);
-if(_A(ORTEST(_E(_H(self,i$c),s$ad,_$hi),_E(_H(self,i$c),s$ad,_$hj)))){
-_E(self,s$vj);
+if(_A(ORTEST(_E(_H(self,i$c),s$ad,_$hz),_E(_H(self,i$c),s$ad,_$ia)))){
+_E(self,s$zz);
 }
 });
-_I(self,s$vj,function(self,_){
+_I(self,s$zz,function(self,_){
 var size_str=(function($v){
-if(($e = _E(_$he, '===', $v),$e!==nil && $e!==false)){
+if(($e = _E(_$hr, '===', $v),$e!==nil && $e!==false)){
 return '_SMALL';
 }
-else if(($e = _E(_$hf, '===', $v),$e!==nil && $e!==false)){
+else if(($e = _E(_$hs, '===', $v),$e!==nil && $e!==false)){
 return '_MINI';
 }
 else {
 return '_REGULAR';
 }
-})(_H(self,i$cm));
+})(_H(self,i$cz));
 var tint_str=(function($v){
-if(($e = _E(_$ha, '===', $v),$e!==nil && $e!==false)){
+if(($e = _E(_$hn, '===', $v),$e!==nil && $e!==false)){
 return '_GRAPHITE';
 }
-else if(($e = _E(_$hc, '===', $v),$e!==nil && $e!==false)){
+else if(($e = _E(_$hp, '===', $v),$e!==nil && $e!==false)){
 return '_HUD';
 }
 else {
 return '';
 }
-})(_H(self,i$cl));
-if(_A(_E(_H(self,i$c),s$ad,_$hi))){
+})(_H(self,i$cy));
+if(_A(_E(_H(self,i$c),s$ad,_$hz))){
 var img_name=["SWITCH_IMAGE",(size_str),(tint_str)].join('');
 var alt_img_name=["SWITCH_HIGHLIGHTED_IMAGE",(size_str),(tint_str)].join('');
 }
-else if(_A(_E(_H(self,i$c),s$ad,_$hj))){
+else if(_A(_E(_H(self,i$c),s$ad,_$ia))){
 img_name=["RADIO_IMAGE",(size_str),(tint_str)].join('');
 alt_img_name=["SWITCH_HIGHLIGHTED_IMAGE",(size_str),(tint_str)].join('');
 }
-self.$i_s(i$av,self.$klass.$c_g(img_name));
-return self.$i_s(i$db,self.$klass.$c_g(alt_img_name));
+self.$i_s(i$ax,self.$klass.$c_g(img_name));
+return self.$i_s(i$do,self.$klass.$c_g(alt_img_name));
 });
-_I(self,s$sb,function(self,_){
-return _A(_E(_H(self,i$bt),s$vk,self.$klass.$c_g_full(c$an))) ? _E(_H(self,i$bt),s$vl) : _H(self,i$bt);
+_I(self,s$wu,function(self,_){
+return _A(_E(_H(self,i$ch),s$aaa,self.$klass.$c_g_full(c$o))) ? _E(_H(self,i$ch),s$co) : _H(self,i$ch);
 });
-_I(self,s$sc,function(self,_,str){
-return self.$i_s(i$bt,str);
+_I(self,s$wv,function(self,_,str){
+return self.$i_s(i$ch,str);
 });
-_I(self,s$vm,function(self,_){
-return _H(self,i$da);
+_I(self,s$aab,function(self,_){
+return _H(self,i$dn);
 });
-_I(self,s$uu,function(self,_,str){
-return self.$i_s(i$da,str);
+_I(self,s$zk,function(self,_,str){
+return self.$i_s(i$dn,str);
 });
-_I(self,s$uv,function(self,_){
-return _H(self,i$db);
+_I(self,s$zl,function(self,_){
+return _H(self,i$do);
 });
-_I(self,s$uw,function(self,_,img){
-return self.$i_s(i$db,img);
+_I(self,s$zm,function(self,_,img){
+return self.$i_s(i$do,img);
 });
-_I(self,s$vn,function(self,_){
-return _H(self,i$de);
+_I(self,s$aac,function(self,_){
+return _H(self,i$dr);
 });
-_I(self,s$ux,function(self,_,position){
-return self.$i_s(i$de,position);
+_I(self,s$zn,function(self,_,position){
+return self.$i_s(i$dr,position);
 });
-_I(self,s$vo,function(self,_){
-return _H(self,i$df);
+_I(self,s$aad,function(self,_){
+return _H(self,i$ds);
 });
-_I(self,s$vp,function(self,_,image_scaling){
-return self.$i_s(i$df,image_scaling);
+_I(self,s$aae,function(self,_,image_scaling){
+return self.$i_s(i$ds,image_scaling);
 });
-_I(self,s$sa,function(self,_,val){
-return self.$i_s(i$bs,val);
+_I(self,s$wr,function(self,_,val){
+return self.$i_s(i$cg,val);
 });
-_I(self,s$rz,function(self,_){
-return _H(self,i$bs);
+_I(self,s$wq,function(self,_){
+return _H(self,i$cg);
 });
-_I(self,s$uy,function(self,_){
-return _E(_H(self,i$bs),s$ad,_$gs);
+_I(self,s$zo,function(self,_){
+return _E(_H(self,i$cg),s$ad,_$hf);
 });
-_I(self,s$uz,function(self,_){
-return _E(_H(self,i$bs),s$ad,_$gr);
+_I(self,s$zp,function(self,_){
+return _E(_H(self,i$cg),s$ad,_$he);
 });
-_I(self,s$va,function(self,_){
-return _E(_H(self,i$bs),s$ad,_$hk);
+_I(self,s$zq,function(self,_){
+return _E(_H(self,i$cg),s$ad,_$ib);
 });
-_I(self,s$vq,function(self,_){
-return _H(self,i$cy);
+_I(self,s$aaf,function(self,_){
+return _H(self,i$dl);
 });
-_I(self,s$vr,function(self,_,a_type){
-return self.$i_s(i$cy,a_type);
+_I(self,s$aag,function(self,_,a_type){
+return self.$i_s(i$dl,a_type);
 });
-_I(self,s$vs,function(self,_,a_type){
-return self.$i_s(i$cz,a_type);
+_I(self,s$aah,function(self,_,a_type){
+return self.$i_s(i$dm,a_type);
 });
-_I(self,s$vt,function(self,_){
-return _H(self,i$cz);
+_I(self,s$aai,function(self,_){
+return _H(self,i$dm);
 });
-_I(self,s$ry,function(self,_,a_type){
+_I(self,s$wp,function(self,_,a_type){
 self.$i_s(i$c,a_type);
 return (function($v){
-if(($e = _E(_$hl, '===', $v),$e!==nil && $e!==false)){
-self.$i_s(i$cy,_$gx);
-self.$i_s(i$cz,_$gt);
-return self.$i_s(i$dc,true);
+if(($e = _E(_$ic, '===', $v),$e!==nil && $e!==false)){
+self.$i_s(i$dl,_$hk);
+self.$i_s(i$dm,_$hg);
+return self.$i_s(i$dp,true);
 }
-else if(($e = _E(_$hm, '===', $v),$e!==nil && $e!==false)){
-self.$i_s(i$cy,_$gv);
-self.$i_s(i$cz,_$gx);
-return self.$i_s(i$dc,true);
+else if(($e = _E(_$id, '===', $v),$e!==nil && $e!==false)){
+self.$i_s(i$dl,_$hi);
+self.$i_s(i$dm,_$hk);
+return self.$i_s(i$dp,true);
 }
-else if(($e = _E(_$hn, '===', $v),$e!==nil && $e!==false)){
-self.$i_s(i$cy,_$gv);
-self.$i_s(i$cz,_$gu);
-return self.$i_s(i$dc,true);
+else if(($e = _E(_$ie, '===', $v),$e!==nil && $e!==false)){
+self.$i_s(i$dl,_$hi);
+self.$i_s(i$dm,_$hh);
+return self.$i_s(i$dp,true);
 }
-else if(($e = _E(_$hi, '===', $v),$e!==nil && $e!==false)){
-self.$i_s(i$cy,_$gu);
-self.$i_s(i$cz,_$gu);
-self.$i_s(i$dc,true);
-self.$i_s(i$de,_$fz);
-_E(self,s$vj);
-self.$i_s(i$bu,false);
-self.$i_s(i$bv,false);
-return self.$i_s(i$cf,_$fz);
+else if(($e = _E(_$hz, '===', $v),$e!==nil && $e!==false)){
+self.$i_s(i$dl,_$hh);
+self.$i_s(i$dm,_$hh);
+self.$i_s(i$dp,true);
+self.$i_s(i$dr,_$fy);
+_E(self,s$zz);
+self.$i_s(i$ci,false);
+self.$i_s(i$cj,false);
+return self.$i_s(i$bj,_$fy);
 }
-else if(($e = _E(_$hj, '===', $v),$e!==nil && $e!==false)){
-self.$i_s(i$cy,_$gu);
-self.$i_s(i$cz,_$gu);
-self.$i_s(i$dc,true);
-self.$i_s(i$de,_$fz);
-_E(self,s$vj);
-self.$i_s(i$bu,false);
-self.$i_s(i$bv,false);
-return self.$i_s(i$cf,_$fz);
+else if(($e = _E(_$ia, '===', $v),$e!==nil && $e!==false)){
+self.$i_s(i$dl,_$hh);
+self.$i_s(i$dm,_$hh);
+self.$i_s(i$dp,true);
+self.$i_s(i$dr,_$fy);
+_E(self,s$zz);
+self.$i_s(i$ci,false);
+self.$i_s(i$cj,false);
+return self.$i_s(i$bj,_$fy);
 }
-else if(($e = _E(_$ho, '===', $v),$e!==nil && $e!==false)){
-self.$i_s(i$cy,_$gu);
-self.$i_s(i$cz,_$gt);
-return self.$i_s(i$dc,true);
+else if(($e = _E(_$if, '===', $v),$e!==nil && $e!==false)){
+self.$i_s(i$dl,_$hh);
+self.$i_s(i$dm,_$hg);
+return self.$i_s(i$dp,true);
 }
-else if(($e = _E(_$hp, '===', $v),$e!==nil && $e!==false)){
-self.$i_s(i$cy,_$gx);
-self.$i_s(i$cz,_$gx);
-return self.$i_s(i$dc,true);
+else if(($e = _E(_$ig, '===', $v),$e!==nil && $e!==false)){
+self.$i_s(i$dl,_$hk);
+self.$i_s(i$dm,_$hk);
+return self.$i_s(i$dp,true);
 }
-else if(($e = _E(_$hq, '===', $v),$e!==nil && $e!==false)){
-self.$i_s(i$cy,_$gv);
-self.$i_s(i$cz,_$gt);
-return self.$i_s(i$dc,true);
+else if(($e = _E(_$ih, '===', $v),$e!==nil && $e!==false)){
+self.$i_s(i$dl,_$hi);
+self.$i_s(i$dm,_$hg);
+return self.$i_s(i$dp,true);
 }
 })(a_type);
 });
-_I(self,s$ec,function(self,_){
+_I(self,s$ew,function(self,_){
 return _H(self,i$c);
 });
-_I(self,s$ny,function(self,_){
-return _H(self,i$dg);
+_I(self,s$sr,function(self,_){
+return _H(self,i$dt);
 });
-_I(self,s$qe,function(self,_,font_obj){
-return self.$i_s(i$ch,font_obj);
+_I(self,s$uu,function(self,_,font_obj){
+return self.$i_s(i$cu,font_obj);
 });
-_I(self,s$vb,function(self,_){
-return _H(self,i$cx);
+_I(self,s$zr,function(self,_){
+return _H(self,i$dk);
 });
-_I(self,s$vc,function(self,_,flag){
-return self.$i_s(i$cx,flag);
+_I(self,s$zs,function(self,_,flag){
+return self.$i_s(i$dk,flag);
 });
-self.$def(s$vu,function(self,_,delay,interval){
+self.$def(s$aaj,function(self,_,delay,interval){
 });
-self.$def(s$to,function(self,_,delay,interval){
+self.$def(s$yg,function(self,_,delay,interval){
 });
-_I(self,s$ss,function(self,_){
-return _H(self,i$ci);
+_I(self,s$xl,function(self,_){
+return _H(self,i$cv);
 });
-_I(self,s$vd,function(self,_,equiv){
-return self.$i_s(i$ci,equiv);
+_I(self,s$zt,function(self,_,equiv){
+return self.$i_s(i$cv,equiv);
 });
-_I(self,s$vf,function(self,_,mask){
-return self.$i_s(i$dd,mask);
+_I(self,s$zv,function(self,_,mask){
+return self.$i_s(i$dq,mask);
 });
-_I(self,s$ve,function(self,_){
-return _H(self,i$dd);
+_I(self,s$zu,function(self,_){
+return _H(self,i$dq);
 });
-_I(self,s$vv,function(self,_,font){
-return self.$i_s(i$dh,font);
+_I(self,s$aak,function(self,_,font){
+return self.$i_s(i$du,font);
 });
-_I(self,s$vw,function(self,_){
-return _H(self,i$dh);
+_I(self,s$aal,function(self,_){
+return _H(self,i$du);
 });
-self.$def(s$vx,function(self,_,font_name,size){
+self.$def(s$aam,function(self,_,font_name,size){
 });
-_I(self,s$rl,function(self,_,sender){
+_I(self,s$wc,function(self,_,sender){
 });
-_I(self,s$qh,function(self,_,obj){
-if(_A(ORTEST(NOTTEST(obj),ORTEST(_E(obj,s$ad,0),_E(obj,s$ad,_$gr))))){
-obj=_$gr;
+_I(self,s$ux,function(self,_,obj){
+if(_A(ORTEST(NOTTEST(obj),ORTEST(_E(obj,s$ad,0),_E(obj,s$ad,_$he))))){
+obj=_$he;
 }
 else{
-obj=_$gs;
+obj=_$hf;
 }
 return rb_supcall(arguments.callee, self,_,[obj]);
 });
-self.$def(s$vy,function(self,_,images,frame,control_view){
-});
-self.$def(s$vz,function(self,_,title,frame,control_view){
-});
-self.$def(s$wa,function(self,_,frame,control_view){
-});
-self.$def(s$wb,function(self,_,cell_frame,control_view){
-var ctx=_E(self.$klass.$c_g_full(c$ae),s$gj);
-if(_A(_E(ctx,s$lk))){
-_E(ctx,s$e,"<div class='left'></div>");
-_E(ctx,s$e,"<div class='middle'></div>");
-_E(ctx,s$e,"<div class='right'></div>");
-_E(ctx,s$e,"<div class='title'></div>");
-_E(ctx,s$e,"<div class='image'></div>");
-_E(ctx,s$ll,false);
-}
-var class_name_array=['vn-button',_E(self,s$ly)];
-if(!_A(_E(self,s$pv))){
-_E(class_name_array,s$e,_$fq);
-}
-if(_A(_E(self,s$sh))){
-_E(class_name_array,s$e,_$hr);
-if(_A(ANDTEST(_E(self,s$so),_E(_H(self,i$cy),s$ad,_$gv)))){
-_E(class_name_array,s$e,_$hs);
-}
-else{
-}
-}
-return _E(ctx,s$p,_E(class_name_array,s$wc,' '));
-});
-self.$def(s$ti,function(self,_,cell_frame,control_view){
-var ctx=_E(self.$klass.$c_g_full(c$ae),s$gj);
-if(!_A(_E(_H(self,i$de),s$ad,_$gm))){
-_E(self,s$wd,_H(self,i$bt),cell_frame,control_view);
-}
-if(_A(_H(self,i$av))){
-if(_A(_E(self,s$uy))){
-_E(self,s$we,_H(self,i$db),cell_frame,control_view);
-}
-else{
-_E(self,s$we,_H(self,i$av),cell_frame,control_view);
-}
-}
-});
-self.$def(s$we,function(self,_,image,frame,control_view){
-var enabled=_A(_H(self,i$bp)) ? true : NOTTEST(_H(self,i$dc));
-var gray_mask=_H(self,i$bw);
-var ctx=_E(self.$klass.$c_g_full(c$ae),s$gj);
-return _E(ctx,s$lq,'image',function(img){
-return _E(image,s$kx,_E(self.$klass.$c_g_full(c$ad),s$ap,0,0,_E(_E(image,s$aa),s$ae),_E(_E(image,s$aa),s$af)),enabled,gray_mask);
-});
-});
-_I(self,s$tb,function(self,_,the_rect){
-var result=_E(self.$klass.$c_g_full(c$ad),s$ap,_E(the_rect,s$ab),_E(the_rect,s$ac),_E(the_rect,s$ae),_E(the_rect,s$af));
-var image_size=_A(_H(self,i$av)) ? _E(_H(self,i$av),s$aa) : _E(self.$klass.$c_g_full(c$ac),s$ap,0,0);
-if(_A(_H(self,i$bu))){
-_E(result,s$jg,_E(_E(result,s$ae),s$ob,4));
-_E(result,s$jh,_E(_E(result,s$af),s$ob,4));
-_E(result,s$je,_E(_E(result,s$ab),s$jt,2));
-_E(result,s$jf,_E(_E(result,s$ac),s$jt,2));
-}
-(function($v){
-if(($e = _E(_$fz, '===', $v),$e!==nil && $e!==false)){
-_E(result,s$je,_E(_E(result,s$ab),s$jt,(_E(_E(image_size,s$ae),s$jt,3))));
-return _E(result,s$jg,_E(_E(result,s$ae),s$ob,(_E(_E(image_size,s$ae),s$jt,3))));
-}
-else if(($e = _E(_$gn, '===', $v),$e!==nil && $e!==false)){
-}
-else if(($e = _E(_$go, '===', $v),$e!==nil && $e!==false)){
-}
-else if(($e = _E(_$gp, '===', $v),$e!==nil && $e!==false)){
-}
-else if(($e = _E(_$gq, '===', $v),$e!==nil && $e!==false)){
-}
-})(_H(self,i$de));
-return result;
-});
-self.$def(s$wd,function(self,_,title,frame,control_view){
-var ctx=_E(self.$klass.$c_g_full(c$ae),s$gj);
-return _E(ctx,s$lq,_$dw,function(title_div){
-_E(title_div,s$ah,title);
-return _E(title_div,s$w,_E(self,s$tb,frame));
-});
-});
-self.$def(s$pd,function(self,_,cell_frame,control_view){
-self.$i_s(i$by,control_view);
-if(_A(_E(self,s$vb))){
+self.$def(s$vm,function(self,_,cell_frame,control_view){
+self.$i_s(i$cm,control_view);
+if(_A(_E(self,s$zr))){
 return ;
 }
-_E(self,s$wb,cell_frame,control_view);
-return _E(self,s$ti,cell_frame,control_view);
+_E(_E(self.$klass.$c_g_full(c$aa),s$hd),s$ha).clearRect(0, 0, _E(cell_frame,s$ae), _E(cell_frame,s$af));_E(self,s$aan,cell_frame,control_view);
+return _E(self,s$yc,cell_frame,control_view);
 });
-_I(self,s$dd,function(self,_,the_event){
+self.$def(s$yc,function(self,_,cell_frame,control_view){
+var ctx=_E(self.$klass.$c_g_full(c$aa),s$hd);
+if(!_A(_E(_H(self,i$dr),s$ad,_$ha))){
+_E(self,s$aao,_E(self,s$aap),cell_frame,control_view);
+}
+if(_A(_H(self,i$ax))){
+(function($v){
+if(($e = _E(_$hh, '===', $v),$e!==nil && $e!==false)){
+if(_A(_E(self,s$zo))){
+_E(self,s$aaq,_H(self,i$do),cell_frame,control_view);
+}
+else{
+_E(self,s$aaq,_H(self,i$ax),cell_frame,control_view);
+}
+}
+else {
+if(_A(_H(self,i$ck))){
+_E(self,s$aaq,_H(self,i$do),cell_frame,control_view);
+}
+else{
+_E(self,s$aaq,_H(self,i$ax),cell_frame,control_view);
+}
+}
+})(_H(self,i$dl));
+}
 });
-_I(self,s$de,function(self,_,the_event){
+self.$def(s$aaq,function(self,_,image,frame,control_view){
+var enabled=_A(_H(self,i$cd)) ? true : NOTTEST(_H(self,i$dp));
+var gray_mask=_H(self,i$ck);
+var ctx=_E(self.$klass.$c_g_full(c$aa),s$hd);
+return _E(image,s$lq,_E(self.$klass.$c_g_full(c$ae),s$ap,0,0,_E(_E(image,s$aa),s$ae),_E(_E(image,s$aa),s$af)),enabled,gray_mask);
 });
-_I(self,s$ku,function(self,_){
-return _H(self,i$ay);
+self.$def(s$aao,function(self,_,title,frame,control_view){
+return _E(title,s$ov,_E(self,s$xu,frame));
 });
-_I(self,s$kt,function(self,_,color){
-return self.$i_s(i$ay,color);
+self.$def(s$aan,function(self,_,frame,control_view){
+var ctx=_E(self.$klass.$c_g_full(c$aa),s$hd);
+if(_A(_E(self,s$xa))){
+var bezel_img=_E(_E(_E(self.$klass.$c_g_full(c$aq),s$j,_$hv),s$j,_$hq),s$j,_A(_H(self,i$cd)) ? (_A(_H(self,i$ck)) ? _$hw : _$t) : _$fp);
+_E(bezel_img,s$mf,frame);
+}
 });
-_I(self,s$wf,function(self,_){
-if(_A(_E(_H(self,i$bt),s$vk,self.$c_g_full(c$an)))){
-return _H(self,i$bt);
+self.$def(s$aar,function(self,_,cell_frame,control_view){
+var ctx=_E(self.$klass.$c_g_full(c$af),s$hd);
+if(_A(_E(ctx,s$oy))){
+_E(ctx,s$e,"<div class='bezel' style='top:0px;left:0px;right:0px;bottom:0px;'></div>");
+_E(ctx,s$e,"<div class='title'></div>");
+_E(ctx,s$e,"<div class='image'></div>");
+}
+if(_A(_E(self,s$xa))){
+var bezel_img=_E(_E(_E(self.$klass.$c_g_full(c$aq),s$j,_$hv),s$j,_$hq),s$j,_A(_H(self,i$cd)) ? (_A(_H(self,i$ck)) ? _$hw : _$t) : _$fp);
+_E(ctx,s$pe,'bezel',function(){
+return _E(bezel_img,s$me,cell_frame);
+});
+}
+});
+self.$def(s$yb,function(self,_,cell_frame,control_view){
+var ctx=_E(self.$klass.$c_g_full(c$af),s$hd);
+if(!_A(_E(_H(self,i$dr),s$ad,_$ha))){
+_E(self,s$aas,_E(self,s$aap),cell_frame,control_view);
+}
+if(_A(_H(self,i$ax))){
+if(_A(_E(self,s$zo))){
+_E(self,s$aat,_H(self,i$do),cell_frame,control_view);
+}
+else{
+_E(self,s$aat,_H(self,i$ax),cell_frame,control_view);
+}
+}
+});
+self.$def(s$aat,function(self,_,image,frame,control_view){
+var enabled=_A(_H(self,i$cd)) ? true : NOTTEST(_H(self,i$dp));
+var gray_mask=_H(self,i$ck);
+var ctx=_E(self.$klass.$c_g_full(c$af),s$hd);
+return _E(ctx,s$pe,'image',function(img){
+return _E(image,s$lr,_E(self.$klass.$c_g_full(c$ae),s$ap,0,0,_E(_E(image,s$aa),s$ae),_E(_E(image,s$aa),s$af)),enabled,gray_mask);
+});
+});
+_I(self,s$xu,function(self,_,the_rect){
+var result=_E(self.$klass.$c_g_full(c$ae),s$ap,_E(the_rect,s$ab),_E(the_rect,s$ac),_E(the_rect,s$ae),_E(the_rect,s$af));
+var image_size=_A(_H(self,i$ax)) ? _E(_H(self,i$ax),s$aa) : _E(self.$klass.$c_g_full(c$ad),s$ap,0,0);
+if(_A(_H(self,i$ci))){
+_E(result,s$jz,_E(_E(result,s$ae),s$mg,4));
+_E(result,s$ka,_E(_E(result,s$af),s$mg,4));
+_E(result,s$jx,_E(_E(result,s$ab),s$km,2));
+_E(result,s$jy,_E(_E(result,s$ac),s$km,2));
+}
+(function($v){
+if(($e = _E(_$fy, '===', $v),$e!==nil && $e!==false)){
+_E(result,s$jx,_E(_E(result,s$ab),s$km,(_E(_E(image_size,s$ae),s$km,3))));
+return _E(result,s$jz,_E(_E(result,s$ae),s$mg,(_E(_E(image_size,s$ae),s$km,3))));
+}
+else if(($e = _E(_$gh, '===', $v),$e!==nil && $e!==false)){
+}
+else if(($e = _E(_$hb, '===', $v),$e!==nil && $e!==false)){
+}
+else if(($e = _E(_$hc, '===', $v),$e!==nil && $e!==false)){
+}
+else if(($e = _E(_$hd, '===', $v),$e!==nil && $e!==false)){
+}
+})(_H(self,i$dr));
+return result;
+});
+self.$def(s$aas,function(self,_,title,frame,control_view){
+var ctx=_E(self.$klass.$c_g_full(c$af),s$hd);
+return _E(ctx,s$pe,_$dw,function(title_div){
+return _E(title,s$ls,_E(self,s$xu,frame));
+});
+});
+self.$def(s$tu,function(self,_,cell_frame,control_view){
+self.$i_s(i$cm,control_view);
+if(_A(_E(self,s$zr))){
+return ;
+}
+_E(self,s$aar,cell_frame,control_view);
+return _E(self,s$yb,cell_frame,control_view);
+});
+_I(self,s$dx,function(self,_,the_event){
+});
+_I(self,s$dy,function(self,_,the_event){
+});
+_I(self,s$ln,function(self,_){
+return _H(self,i$ba);
+});
+_I(self,s$lm,function(self,_,color){
+return self.$i_s(i$ba,color);
+});
+_I(self,s$aap,function(self,_){
+if(_A(_E(_H(self,i$ch),s$aaa,self.$klass.$c_g_full(c$o)))){
+return _H(self,i$ch);
 }
 var attributes=VN.$h();
-if(_A(_H(self,i$ch))){
-_E(attributes,s$g,_$ch,_H(self,i$ch));
+if(_A(_H(self,i$cu))){
+_E(attributes,s$g,_$ch,_H(self,i$cu));
 }
-_E(attributes,s$g,_$ht,(_A(_H(self,i$bp)) ? _E(self.$klass.$c_g_full(c$ao),s$wg) : _E(self.$klass.$c_g_full(c$ao),s$wh)));
-var paragraph_style=_E(self.$klass.$c_g_full(c$ap),s$wi);
-_E(paragraph_style,s$ue,_H(self,i$cr));
-_E(paragraph_style,s$qc,_H(self,i$cf));
-_E(attributes,s$g,_$hu,paragraph_style);
-return _E(self.$klass.$c_g_full(c$an),s$ap,_H(self,i$bt),attributes);
+_E(attributes,s$g,_$gb,(_A(_H(self,i$cd)) ? _E(self.$klass.$c_g_full(c$aj),s$nf) : _E(self.$klass.$c_g_full(c$aj),s$nk)));
+var paragraph_style=_E(self.$klass.$c_g_full(c$ak),s$pt);
+_E(paragraph_style,s$qb,_H(self,i$bj));
+_E(attributes,s$g,_$ii,paragraph_style);
+return _E(self.$klass.$c_g_full(c$o),s$ap,_H(self,i$ch),attributes);
 });
-_I(self,s$wj,function(self,_,obj){
-return self.$i_s(i$bt,obj);
+_I(self,s$aau,function(self,_,obj){
+return self.$i_s(i$ch,obj);
 });
-_I(self,s$wk,function(self,_){
-return _H(self,i$di);
+_I(self,s$aav,function(self,_){
+return _H(self,i$dv);
 });
-_I(self,s$wl,function(self,_,obj){
-return self.$i_s(i$di,obj);
+_I(self,s$aaw,function(self,_,obj){
+return self.$i_s(i$dv,obj);
 });
-_I(self,s$wm,function(self,_,bezel_style){
-return self.$i_s(i$dj,bezel_style);
+_I(self,s$aax,function(self,_,bezel_style){
+return self.$i_s(i$dw,bezel_style);
 });
-_I(self,s$wn,function(self,_){
-return _H(self,i$dj);
+_I(self,s$aay,function(self,_){
+return _H(self,i$dw);
 });
-_I(self,s$wo,function(self,_,a_sound){
-return _H(self,i$dk);
+_I(self,s$aaz,function(self,_,a_sound){
+return _H(self,i$dx);
 });
-_I(self,s$wp,function(self,_){
-return _H(self,i$dk);
+_I(self,s$aba,function(self,_){
+return _H(self,i$dx);
 });
-})(_N(self,c$al,self.$c_g_full(c$aj)));
+})(_N(self,c$ao,self.$c_g_full(c$am)));
 })(_K(c$b));

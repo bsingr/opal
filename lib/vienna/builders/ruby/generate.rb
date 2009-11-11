@@ -252,12 +252,12 @@ module Vienna
         write "if(!#{js_replacement_function_name('RTEST')}("
       end
 
-      generate_stmt stmt[:expr],:instance => false, :full_stmt => false, :self => current_self, :last_stmt => false
+      generate_stmt stmt[:expr],:instance => context[:instance], :full_stmt => false, :self => current_self, :last_stmt => false
       
       write ")){\n"
       
       if stmt[:stmt]
-        generate_stmt stmt[:stmt], :instance => true, :full_stmt => true, :self => current_self, :last_stmt => false # also check if the actual 'if' statement is last?
+        generate_stmt stmt[:stmt], :instance => context[:instance], :full_stmt => true, :self => current_self, :last_stmt => false # also check if the actual 'if' statement is last?
       end
       
       write "}\n"
@@ -822,6 +822,8 @@ module Vienna
     
     
     def generate_assoc_list list, context
+      
+      # write "/* #{context[:instance]} */"
       write 'return ' if context[:last_stmt] and context[:full_stmt]
       write "VN.$h("
       
@@ -833,7 +835,8 @@ module Vienna
           generate_stmt l[:key], :instance => (context[:singleton] ? false : true), :full_stmt => false, :last_stmt => false,  :self => current_self
         end
         write ', '
-        generate_stmt l[:value], :instance => (context[:singleton] ? false : true), :full_stmt => false, :last_stmt => false,  :self => current_self
+        # generate_stmt l[:value], :instance => (context[:singleton] ? false : true), :full_stmt => false, :last_stmt => false,  :self => current_self
+        generate_stmt l[:value], :instance => context[:instance], :full_stmt => false, :last_stmt => false,  :self => current_self
         write ', ' unless list[:list].last == l
       end
       

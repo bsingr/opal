@@ -29,6 +29,8 @@ module RubyWebApp
   
   Vienna::Builder.new :main_menu do |builder|
     
+    puts "well, got here in builder"
+    
     app_delegate = RubyWebApp::AppController.new
     VN::App.delegate = app_delegate
     
@@ -74,7 +76,7 @@ module RubyWebApp
         Vienna::Button.build :frame => VN::Rect.new(10,70,90,24), :bezel => :rounded do |button|
           win << button
           button.title = 'Right'
-          button.enabled = false
+          # button.enabled = false
           button.alignment = :right
           # button.theme_name = :my_theme
           button.needs_display = true
@@ -112,9 +114,12 @@ module RubyWebApp
         Vienna::Slider.build :frame => VN::Rect.new(10,190,90,24), :bezel => :rounded do |slider|
           win << slider
           slider.needs_display = true
+          slider.on_action do |sender|
+            puts "yeah!"
+          end
         end
         # 
-        Vienna::TextField.build :frame => VN::Rect.new(10, 210, 180, 26), :editable => true do |text|
+        Vienna::TextField.build :frame => VN::Rect.new(50, 310, 180, 26), :editable => true do |text|
           win << text
           text.needs_display = true
         end

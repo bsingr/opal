@@ -19,3 +19,5 @@ VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/found
 VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/foundation/lib/key_value_observing.js');
 
 VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/foundation/lib/notification.js');
+
+VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/foundation/lib/attributed_string.js');

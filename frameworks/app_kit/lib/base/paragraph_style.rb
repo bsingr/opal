@@ -45,7 +45,14 @@ module Vienna
   class ParagraphStyle
     
     def ParagraphStyle.default_paragraph_style
-      
+      obj = self.alloc
+      obj.init_default_style
+      obj
+    end
+    
+    def init_default_style
+      @alignment = :left
+      self
     end
     
     def line_spacing

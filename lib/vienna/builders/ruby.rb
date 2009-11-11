@@ -76,7 +76,7 @@ class Vienna::RubyParser < Racc::Parser
 	end
 	
 	def build!
-    # puts "Building #{@source}"
+    puts "Building #{@source}"
 	  @output_file = File.new @destination, 'w'
     do_parse
     generate_tree @parser_result unless @parser_result.nil?
@@ -402,6 +402,9 @@ class Vienna::RubyParser < Racc::Parser
           end
           # END HACK
           
+
+  
+          
           # puts "#{lex_state} ===== #{scanner.check(/\w/)}"
           self.lex_state = :EXPR_BEG
           return [:tSYMBEG, scanner.matched]
@@ -411,8 +414,15 @@ class Vienna::RubyParser < Racc::Parser
         # if space_seen && scanner.check(/\W/)
         #   return [':', scanner.matched]
         # else
+        
+        
+        if scanner.scan(/\"/)
+          self.string_parse = { :type => :dquote, :beg => '"', :content => true } 
+          # return [:tSTRING_BEG, scanner.matched]
+        end
+        
           self.lex_state = :EXPR_FNAME
-          return [:tSYMBEG, scanner.matched]
+          return [:tSYMBEG, ':']
         # end
       # Parse a number. 
       elsif scanner.check(/[0-9]/)

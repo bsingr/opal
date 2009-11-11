@@ -37,7 +37,7 @@ module Vienna
     end
     
     def self.color_with_calibrated_red red, green:green, blue:blue, alpha:alpha
-      
+      self.new(red, green, blue, alpha)
     end
     
     def self.black_color
@@ -98,6 +98,182 @@ module Vienna
     
     def self.clear_color
       self.color_with_calibrated_red 0.0, green:0.0, blue:0.0, alpha:0.0
+    end
+    
+    
+    
+    class << Color
+      
+      def control_shadow_color
+        self.color_with_calibrated_red 0.0, green:0.0, blue:0.0, alpha:0.0
+      end
+      
+      def control_dark_shadow_color
+        self.color_with_calibrated_red 0.0, green:0.0, blue:0.0, alpha:0.0
+      end
+      
+      def control_color
+        self.color_with_calibrated_red 0.0, green:0.0, blue:0.0, alpha:0.0
+      end
+      
+      def control_highlight_color
+        self.color_with_calibrated_red 0.0, green:0.0, blue:0.0, alpha:0.0
+      end
+      
+      def control_light_highlight_color
+        self.color_with_calibrated_red 0.0, green:0.0, blue:0.0, alpha:0.0
+      end
+      
+      def control_text_color
+        self.color_with_calibrated_red 79, green:79, blue:79, alpha:1.0
+      end
+      
+      def control_background_color
+        self.color_with_calibrated_red 0.0, green:0.0, blue:0.0, alpha:0.0
+      end
+      
+      def selected_control_color
+        self.color_with_calibrated_red 0.0, green:0.0, blue:0.0, alpha:0.0
+      end
+      
+      def secondary_selected_control_color
+        self.color_with_calibrated_red 0.0, green:0.0, blue:0.0, alpha:0.0
+      end
+      
+      def selected_control_text_color
+        self.color_with_calibrated_red 0.0, green:0.0, blue:0.0, alpha:0.0
+      end
+      
+      def disabled_control_text_color
+        self.color_with_calibrated_red 164, green:164, blue:164, alpha:1.0
+      end
+      
+      def text_color
+        self.color_with_calibrated_red 0.0, green:0.0, blue:0.0, alpha:0.0
+      end
+      
+      def text_background_color
+        self.color_with_calibrated_red 0.0, green:0.0, blue:0.0, alpha:0.0
+      end
+      
+      def selected_text_color
+        self.color_with_calibrated_red 0.0, green:0.0, blue:0.0, alpha:0.0
+      end
+      
+      def selected_text_background_color
+        self.color_with_calibrated_red 0.0, green:0.0, blue:0.0, alpha:0.0
+      end
+      
+      def grid_color
+        self.color_with_calibrated_red 0.0, green:0.0, blue:0.0, alpha:0.0
+      end
+      
+      def keyboard_focus_indicator_color
+        self.color_with_calibrated_red 0.0, green:0.0, blue:0.0, alpha:0.0
+      end
+      
+      def window_background_color
+        self.color_with_calibrated_red 0.0, green:0.0, blue:0.0, alpha:0.0
+      end
+      
+      def scroll_bar_color
+        self.color_with_calibrated_red 0.0, green:0.0, blue:0.0, alpha:0.0
+      end
+      
+      def knob_color
+        self.color_with_calibrated_red 0.0, green:0.0, blue:0.0, alpha:0.0
+      end
+      
+      def selected_knob_color
+        self.color_with_calibrated_red 0.0, green:0.0, blue:0.0, alpha:0.0
+      end
+      
+      def window_frame_color
+        self.color_with_calibrated_red 0.0, green:0.0, blue:0.0, alpha:0.0
+      end
+      
+      def window_frame_text_color
+        self.color_with_calibrated_red 0.0, green:0.0, blue:0.0, alpha:0.0
+      end
+      
+      def selected_menu_item_color
+        self.color_with_calibrated_red 0.0, green:0.0, blue:0.0, alpha:0.0
+      end
+      
+      def selected_menu_item_text_color
+        self.color_with_calibrated_red 0.0, green:0.0, blue:0.0, alpha:0.0
+      end
+      
+      def highlight_color
+        self.color_with_calibrated_red 0.0, green:0.0, blue:0.0, alpha:0.0
+      end
+      
+      def shadow_color
+        self.color_with_calibrated_red 0.0, green:0.0, blue:0.0, alpha:0.0
+      end
+      
+      def header_color
+        self.color_with_calibrated_red 0.0, green:0.0, blue:0.0, alpha:0.0
+      end
+      
+      def header_text_color
+        self.color_with_calibrated_red 0.0, green:0.0, blue:0.0, alpha:0.0
+      end
+      
+      def alternate_selected_control_color
+        self.color_with_calibrated_red 0.0, green:0.0, blue:0.0, alpha:0.0
+      end
+      
+      def alternarte_selected_control_text_color
+        self.color_with_calibrated_red 0.0, green:0.0, blue:0.0, alpha:0.0
+      end
+      
+      def control_alternating_row_background_colors
+        self.color_with_calibrated_red 0.0, green:0.0, blue:0.0, alpha:0.0
+      end
+      
+      def color_for_control_tint(control_tint)
+        self.color_with_calibrated_red 0.0, green:0.0, blue:0.0, alpha:0.0
+      end
+      
+      def current_control_tint
+        
+      end
+    end
+    
+    def initialize(r,g,b,a)
+      @red = r
+      @green = g
+      @blue = b
+      @alpha = a
+    end
+    
+    def highlight_with_level(val)
+      
+    end
+    
+    def shadow_with_level(val)
+      
+    end
+    
+    def rgb_string
+      "rgb(#{@red},#{@green},#{@blue})"
+    end
+    
+    def rgba_string
+      "rgb(#{@red},#{@green},#{@blue},#{@alpha})"
+    end
+    
+    def set
+      
+    end
+    
+    def set_fill
+      
+    end
+    
+    def set_stroke
+      
     end
   end  
 end

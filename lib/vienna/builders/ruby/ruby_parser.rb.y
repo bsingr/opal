@@ -999,6 +999,9 @@ xstring_contents:
               	| tCVAR
 
             dsym: tSYMBEG xstring_contents tSTRING_END
+                  {
+                    result = node :dsym, :contents => val[1]
+                  }
 
          numeric: tINTEGER
                   {

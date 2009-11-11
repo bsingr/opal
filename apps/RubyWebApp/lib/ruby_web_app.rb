@@ -52,6 +52,10 @@ Vienna::App.run do |app|
     # VN::App.delegate.set_value 20, for_key:'adam'
     # puts VN::App.delegate.value_for_key 'adam'
     
+    # CGSetHeight(100)
+    
+    # :"set_value:for_key:"
+    
   end
 
 end

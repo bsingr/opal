@@ -158,6 +158,17 @@ module Vienna
       @action = action
     end
     
+    def on_action(&block)
+      obj = Object.new
+      obj.instance_variable_set('@action', block)
+      def obj.menu_item_action(sender)
+        @action.call(sender)
+      end
+      self.action = :menu_item_action
+      self.target = obj
+    end
+
+    
     def tag
       @tag
     end
@@ -446,8 +457,8 @@ module Vienna
       
     end
     
-    def draw_with_frame cell_frame, in_view:control_view
-      
+    def draw_with_frame(cell_frame, in_view:control_view)
+      # puts 'drawing cell'
     end
     
     
@@ -455,7 +466,13 @@ module Vienna
     def highlight flag, with_frame:cell_frame, in_view:control_view
       if @highlighted != flag
         @highlighted = flag
-        render_with_frame cell_frame, in_view:control_view
+        case control_view.display_mode
+        when :render
+          render_with_frame cell_frame, in_view:control_view
+        else
+          draw_with_frame cell_frame, in_view:control_view
+        end
+        
       end
     end
     
@@ -524,7 +541,8 @@ module Vienna
             unless continue_tracking location, at:location, in_view:control_view
               App.unbind_events
             end
-                      
+            
+            control_view.send_action(action, to:target) if continuous?         
             highlight location.in_rect?(cell_frame) ? true : false, with_frame:cell_frame, in_view:control_view
             
           end

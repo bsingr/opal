@@ -51,6 +51,8 @@ module Vienna
       super()
       setup_display_context
       @frame = frame
+      # puts "yeaappapapa"
+      # puts frame
       @bounds = Rect.new(0, 0, frame.width, frame.height)
       self.frame = frame
       
@@ -507,6 +509,10 @@ module Vienna
     
     def lock_focus
       RenderContext.current_context = @display_context
+      GraphicsContext.current_context = @display_context
+      unless display_mode == :render
+        `#{@display_context.graphics_port}.clearRect(0, 0, #{bounds.width}, #{bounds.height});`
+      end
     end
     
     def unlock_focus

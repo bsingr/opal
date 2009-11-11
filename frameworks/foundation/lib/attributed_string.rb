@@ -31,10 +31,11 @@ module Vienna
     def initialize str, attributes
       # attributes can be nil
       @string = str
+      @attributes = attributes
     end
     
     def string
-      
+      @string
     end
     
     def attributes_at_index location, effective_range:range

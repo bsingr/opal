@@ -24,21 +24,37 @@
 # THE SOFTWARE.
 #
 
-module Vienna
-  
-  # For IE browsers, use VML (as they do not support Canvas, yet).
-  if ENV[:graphics_context_platform] == :vml
-    
-    class GraphicsContext < Element
-      
-      def initialize
-        tag_name = 'div'
-        @first_time = true
-        @element = `document.createElement('div')`
-        # @ctx = `#{@element}.getContext('2d')`
-        @type = div
-      end
-    end
-
-  end
-end
+# module Vienna
+#   
+#   # For IE browsers, use VML (as they do not support Canvas, yet).
+#   if ENV[:graphics_context_platform] == :vml
+#     
+#     class GraphicsContext < Element
+#       
+#       def initialize
+#         tag_name = 'div'
+#         @first_time = true
+#         @element = `document.createElement('div')`
+#         # @ctx = `#{@element}.getContext('2d')`
+#         @type = div
+#         
+#         # VML specific
+#         @ctx_stack = []
+#         @ctx = 
+#       end
+#       
+#       def _create_new_context
+#         `return {
+#           alpha: 1.0, lineWidth: 1.0, lineJoin: 'miter', lineCap: 'flat'
+#         };`
+#       end
+#       
+#       def _create_copy_of_context(content)
+#         `return {
+#           alpha: context.alpha, lineWidth: context.lineWidth, lineJoin: context.lineJoin, lineCap: context.lineCap
+#         };`
+#       end
+#     end
+# 
+#   end
+# end

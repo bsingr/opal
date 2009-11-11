@@ -34,6 +34,9 @@ require 'base/tracking_area'
 # Graphics
 require 'graphics/graphics'
 
+require 'base/attributed_string'
+require 'base/paragraph_style'
+
 # Views
 require 'views/view'
 require 'views/controls/control'

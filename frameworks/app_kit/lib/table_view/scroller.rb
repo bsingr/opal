@@ -55,13 +55,13 @@ module Vienna
   
   class Scroller < Control
     
-    V_KNOB_IMAGE = ThreePartImage.new([Image.image_named('scroller_vertical_knob_top'),
-                                       Image.image_named('scroller_vertical_knob_middle'),
-                                       Image.image_named('scroller_vertical_knob_bottom')], true)
-    
-    H_KNOB_IMAGE = ThreePartImage.new([Image.image_named('scroller_horizontal_knob_left'),
-                                       Image.image_named('scroller_horizontal_knob_middle',
-                                       Image.image_named('scroller_horizontal_knob_right'))])
+    # V_KNOB_IMAGE = ThreePartImage.new([Image.image_named('scroller_vertical_knob_top'),
+    #                                    Image.image_named('scroller_vertical_knob_middle'),
+    #                                    Image.image_named('scroller_vertical_knob_bottom')], true)
+    # 
+    # H_KNOB_IMAGE = ThreePartImage.new([Image.image_named('scroller_horizontal_knob_left'),
+    #                                    Image.image_named('scroller_horizontal_knob_middle',
+    #                                    Image.image_named('scroller_horizontal_knob_right'))])
     
     def self.scroller_width
       17

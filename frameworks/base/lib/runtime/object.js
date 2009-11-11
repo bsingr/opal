@@ -101,8 +101,12 @@ RObject.prototype.$ = function(id, args) {
 /**
   Call method
 */
+
+var rb_funcall_stack = [];
+
 var rb_funcall = function rb_funcall(self, id) {
   // console.log(id);
+  // rb_funcall_stack.push(id);
   if (!self.$klass) {
     console.log('ERROR: rb_funcall');
     console.log(self);
@@ -112,6 +116,9 @@ var rb_funcall = function rb_funcall(self, id) {
   var method = self.$klass.$search_method(id);
   
   if (!method) {
+    // for (var i = 0; i < 20; i++) {
+    //   console.log(rb_funcall_stack.pop());
+    // }
     console.log(self);
     throw 'RObject#call cannot find method: ' + id ;
   } 

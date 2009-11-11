@@ -32,6 +32,10 @@ module Vienna
       super frame
     end
     
+    def display_mode
+      :draw
+    end
+    
     def self.cell_class
       ButtonCell
     end

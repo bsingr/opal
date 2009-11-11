@@ -52,12 +52,12 @@ module Vienna
       
       url = "images/#{name}.png"
       
-      if name == 'controls'
+      # if name == 'controls'
         image_name = "#{name}.png"
         `if(vn_resource_stack.hasOwnProperty(#{image_name})) {`
           url = `vn_resource_stack[#{image_name}]`
         `}`
-      end
+      # end
       
       # lastly, try and load from a url
       # img = image_with_contents_of_url 'images/' + name + '.png'
@@ -266,12 +266,21 @@ module Vienna
       @background_color
     end
     
-    def draw_at_point point, from_rect:from_rect, operation:op, fraction:delta
+    def draw_at_point(point, from_rect:from_rect, operation:op, fraction:delta)
       
     end
     
     def draw_in_rect rect, from_rect:from_rect, operation:op, fraction:delta
-      
+      ctx = GraphicsContext.current_context.graphics_port
+      `#{ctx}.drawImage(#{@image}, #{rect.x}, #{rect.y}, #{rect.width},#{rect.height})`
+    end
+    
+    def draw_in_rect(rect, enabled:enabled, gray_mask:gray_mask)
+      ctx = GraphicsContext.current_context.graphics_port
+      rep = gray_mask ? @representations[:gray_mask] : @representations[:normal]
+      rep = @representations[:disabled] unless enabled
+      rep = @representations[:normal] unless rep
+      `#{ctx}.drawImage(#{@image}, #{rep[0]}, #{rep[1]}, #{rep[2]},#{rep[3]}, #{rect.x}, #{rect.y}, #{rect.width},#{rect.height})`
     end
     
     def render_in_rect rect, enabled:enabled, gray_mask:gray_mask
@@ -348,15 +357,49 @@ module Vienna
   
   class ThreePartImage
     
-    def initialize(parts, vertical)
+    def initialize(part1, part2, part3, vertical)
       # if orientation is null, assume :horizontal. :vertical/:horizonal are the only valid values here
+      @parts = [part1, part2, part3]
+    end
+    
+    def render_with_frame(frame)
+      ctx = RenderContext.current_context
+      # puts 'renderinf with frame..'
+      ctx.inner_html = ""
+      ctx << "<div style='top:0px; left:0px; width:6px; height:#{frame.height}px; background-image: url(#{@parts[0].filename});'></div>"
+      ctx << "<div style='top:0px; left:6px; right:6px; height:#{frame.height}px; background-image: url(#{@parts[1].filename});'></div>"
+      ctx << "<div style='top:0px; width:6px; right:0px; height:#{frame.height}px; background-image: url(#{@parts[2].filename});'></div>"
+    end
+    
+    def draw_with_frame(frame)
+      @parts[0].draw_in_rect(Rect.new(0,0,6,24), from_rect:Rect.new(0,0,0,0), operation:nil, fraction:1.0)
+      @parts[1].draw_in_rect(Rect.new(6,0,frame.width - 12,24), from_rect:Rect.new(0,0,0,0), operation:nil, fraction:1.0)
+      @parts[2].draw_in_rect(Rect.new(frame.width - 6,0,6,24), from_rect:Rect.new(0,0,0,0), operation:nil, fraction:1.0)
     end
   end
   
   class NinePartImage
     
-    def initialize(parts)
-      
+    def initialize(part0, part1, part2, part3, part4, part5, part6, part7, part8, vertical)
+      @parts = [part0, part1, part2, part3, part4, part5, part6, part7, part8]
+      @vertical = vertical
+    end
+    
+    def draw_with_frame(frame)
+      top_left_size = @parts[0].size
+      bottom_left_size = @parts[6].size
+      # top 'row'
+      @parts[0].draw_in_rect(Rect.new(0,0,top_left_size.width,top_left_size.height), from_rect:Rect.new(0,0,0,0), operation:nil, fraction:1.0)
+      @parts[1].draw_in_rect(Rect.new(top_left_size.width,0,frame.width - (2 * top_left_size.width),top_left_size.height), from_rect:Rect.new(0,0,0,0), operation:nil, fraction:1.0)
+      @parts[2].draw_in_rect(Rect.new(frame.width - top_left_size.width, 0, top_left_size.width, top_left_size.height), from_rect:Rect.new(0,0,0,0), operation:nil, fraction:1.0)
+      # middle 'row'
+      @parts[3].draw_in_rect(Rect.new(0, top_left_size.height, top_left_size.width, frame.height - (top_left_size.height + bottom_left_size.height)), from_rect:Rect.new(0,0,0,0), operation:nil, fraction:1.0)
+      @parts[4].draw_in_rect(Rect.new(top_left_size.width, top_left_size.height, frame.width - (2 * top_left_size.width), frame.height - (top_left_size.height + bottom_left_size.height)), from_rect:Rect.new(0,0,0,0), operation:nil, fraction:1.0)
+      @parts[5].draw_in_rect(Rect.new(frame.width - top_left_size.width, top_left_size.height, top_left_size.width, frame.height - (top_left_size.height + bottom_left_size.height)), from_rect:Rect.new(0,0,0,0), operation:nil, fraction:1.0)
+      # bottom 'row'
+      @parts[6].draw_in_rect(Rect.new(0, frame.height - bottom_left_size.height, bottom_left_size.width, bottom_left_size.height), from_rect:Rect.new(0,0,0,0), operation:nil, fraction:1.0)
+      @parts[7].draw_in_rect(Rect.new(bottom_left_size.width, frame.height - bottom_left_size.height, frame.width - (2 * top_left_size.width),bottom_left_size.height), from_rect:Rect.new(0,0,0,0), operation:nil, fraction:1.0)
+      @parts[8].draw_in_rect(Rect.new(frame.width - bottom_left_size.width, frame.height - bottom_left_size.height, bottom_left_size.width, bottom_left_size.height), from_rect:Rect.new(0,0,0,0), operation:nil, fraction:1.0)
     end
   end
   

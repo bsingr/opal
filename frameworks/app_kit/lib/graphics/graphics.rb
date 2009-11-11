@@ -36,6 +36,8 @@ require 'core_graphics_canvas'
 require 'core_graphics_vml'
 require 'geometry'
 require 'image'
+require 'color'
+require 'string_drawing'
 # require 'graphics/array_geometry_additions'
 
 require 'render_context'

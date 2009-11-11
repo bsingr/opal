@@ -26,11 +26,6 @@
 
 module Vienna
   
-  TEXTFIELD_BEZEL_STYLES = {
-    :square => 0,
-    :rounded => 1
-  }
-  
   class TextField < Control
     
     def initialize frame
@@ -45,6 +40,10 @@ module Vienna
     
     def class_name
       'vn-text-field'
+    end
+    
+    def display_mode
+      :draw
     end
     
     def resign_first_responder?

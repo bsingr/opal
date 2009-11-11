@@ -96,6 +96,10 @@ module Vienna
       @cell.action = selector
     end
     
+    def on_action(&block)
+      @cell.on_action(block)
+    end
+    
     def tag
       @cell.tag
     end
@@ -243,6 +247,10 @@ module Vienna
     end
     
     
+    
+    def draw_rect(the_rect)
+      @cell.draw_with_frame(bounds, in_view:self)
+    end
     
     
     def update_cell a_cell

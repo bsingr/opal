@@ -28,6 +28,49 @@ module Vienna
   
   class ButtonCell < Cell
     
+    adam = ThreePartImage.new()
+    
+    BEZEL_IMAGES = {
+      # The 'default' look. Textured buttons
+      :round_textured => {
+        :regular => {
+          :normal => ThreePartImage.new(
+              Image.image_named('button_bezel_normal_regular_left'),
+              Image.image_named('button_bezel_normal_regular_middle'),
+              Image.image_named('button_bezel_normal_regular_right')),
+          
+          :highlighted => ThreePartImage.new(
+              Image.image_named('button_bezel_highlighted_regular_left'),
+              Image.image_named('button_bezel_highlighted_regular_middle'),
+              Image.image_named('button_bezel_highlighted_regular_right')),
+          
+          :disabled => ThreePartImage.new(
+              Image.image_named('button_bezel_disabled_regular_left'),
+              Image.image_named('button_bezel_disabled_regular_middle'),
+              Image.image_named('button_bezel_disabled_regular_right'))
+        },
+        :small => {
+          
+        },
+        :mini => {
+          
+        }
+      },
+      
+      # 'Push in' buttons
+      :push => {
+        :regular => {
+          
+        },
+        :small => {
+          
+        },
+        :mini => {
+          
+        }
+      }
+    }
+    
     # Switch Images - default blue control tint
     SWITCH_IMAGE_REGULAR = Image.sprite :controls, normal:[0, 0, 15, 16], gray_mask:[0, 17, 15, 16], disabled:[0, 34, 15, 16]
     SWITCH_HIGHLIGHTED_IMAGE_REGULAR = Image.sprite :controls, normal:[16, 0, 15, 16], gray_mask:[16, 17, 15, 16], disabled:[16, 34, 15, 16]

@@ -42,6 +42,7 @@ module Vienna
       @min_value = 0
       @max_value = 100
       @value = 0
+      @continuous = true
       super
     end
     
