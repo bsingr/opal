@@ -42,8 +42,13 @@ module Vienna
       @bezeled = true
       @alignment = :center
       
+      @control_tint = :blue
+      @control_size = :regular
+      
       @key_equivalent = ""
       @key_equivalent_modifier_mask = 0   
+      
+      @font = Font.bold_system_font_of_size(12)
     end
     
     def init_image_cell img
@@ -76,35 +81,14 @@ module Vienna
     # in which case change _BLUE to _GRAPHITE so default also lies to _BLUE, as 
     # well as if the user doesnt set anything (i.e. it uses default => blue)
     def _update_button_images
-
-      size_str = case @control_size
-      when :small
-        '_SMALL'
-      when :mini
-        '_MINI'
-      else
-        '_REGULAR'
-      end
-
-      tint_str = case @control_tint
-      when :graphite
-        '_GRAPHITE'
-      when :hud
-        '_HUD'
-      else
-        ''
-      end
-      
+          
       if @type == :switch
-        img_name = "SWITCH_IMAGE#{size_str}#{tint_str}"
-        alt_img_name = "SWITCH_HIGHLIGHTED_IMAGE#{size_str}#{tint_str}"
+        @image = SWITCH_IMAGES[@control_tint][@control_size][:normal]
+        @alternate_image = SWITCH_IMAGES[@control_tint][@control_size][:alternate]
       elsif @type == :radio
-        img_name = "RADIO_IMAGE#{size_str}#{tint_str}"
-        alt_img_name= "SWITCH_HIGHLIGHTED_IMAGE#{size_str}#{tint_str}"
+        # img_name = "RADIO_IMAGE#{size_str}#{tint_str}"
+        # alt_img_name= "SWITCH_HIGHLIGHTED_IMAGE#{size_str}#{tint_str}"
       end
-      
-      @image = `self.$klass.$c_g(#{img_name})`
-      @alternate_image = `self.$klass.$c_g(#{alt_img_name})`
     end
     
     def title
@@ -387,48 +371,13 @@ module Vienna
     end
     
     # Rendering
-    def render_bezel_with_frame(cell_frame, in_view:control_view)
-      ctx = RenderContext.current_context
-      
-      if ctx.first_time?
-        ctx << "<div class='bezel' style='top:0px;left:0px;right:0px;bottom:0px;'></div>" 
-        ctx << "<div class='title'></div>"
-        ctx << "<div class='image'></div>"
-      end
-      
-      if bordered?
-        bezel_img = BEZEL_IMAGES[:round_textured][:regular][@enabled ? (@highlighted ? :highlighted : :normal) : :disabled]
-        # bezel image will be a three part image....probably?
-        ctx.selector('bezel') { bezel_img.render_with_frame(cell_frame) }
-      end      
-    end
-    
-    def render_interior_with_frame cell_frame, in_view:control_view
-      ctx = RenderContext.current_context
-            
-      # Render title, only if we should..
-      unless @image_position == :image_only
-        render_title(attributed_title, with_frame:cell_frame, in_view:control_view)
-      end
-      
-      if @image
-        if on?
-          # img = @alternate_image || @image
-          render_image @alternate_image, with_frame:cell_frame, in_view:control_view
-        else
-          render_image @image, with_frame:cell_frame, in_view:control_view
-        end
-      end
-    end
     
     
-    def render_image image, with_frame:frame, in_view:control_view
-      enabled = @enabled ? true : !@image_dims_when_disabled    
-      gray_mask = @highlighted # set to true when we want gray mask?
-      ctx = RenderContext.current_context
-
-      ctx.selector 'image' do |img|
-        image.render_in_rect Rect.new(0, 0, image.size.width, image.size.height), enabled:enabled, gray_mask:gray_mask
+    def render_image(image, with_frame:frame, in_view:control_view)
+      if image.is_a?(ThreeStateImage)
+        image.render_with_frame(Rect.new(0, 0, image.size.width, image.size.height), (@enabled ? (@highlighted ? :highlighted : :normal) : :disabled))
+      else # normal image
+      image.render_with_frame(Rect.new(0, 0, image.size.width, image.size.height))
       end
     end
 
@@ -462,27 +411,57 @@ module Vienna
       result
     end
     
+    
     def render_title(title, with_frame:frame, in_view:control_view)
       ctx = RenderContext.current_context
-      ctx.selector :title do |title_div|
+      # ctx.selector :title do |title_div|
         # title_div.inner_html = title
         # title_div.frame = title_rect_for_bounds(frame)
         # puts title
         title.render_in_rect(title_rect_for_bounds(frame))
-      end
+      # end
     end
   
     
-    # How to set first_time? for cells? make it Cell/View method? think of tableviews
-    # re drawing cells= cells must keep state,plus tableview draws some stuff itself
-    def render_with_frame cell_frame, in_view:control_view
-      # puts 'rendering'
-      @control_view = control_view
-      
+    # Render the button
+    def render_with_frame(cell_frame, in_view:control_view)
+      @control_view = control_view 
       return if transparent?
+          
+      RenderContext.current_context.build do
+        render_bezel_with_frame cell_frame, in_view:control_view
+        render_interior_with_frame cell_frame, in_view:control_view
+      end
+    end
+    
+    # Renders the bezel
+    def render_bezel_with_frame(cell_frame, in_view:control_view)
+      if @bordered
+        RenderContext.current_context.append :div do |bezel|
+          bezel.css :top => '0px', :left => '0px', :right => '0px', :bottom => '0px'
+
+          bezel_img = BEZEL_IMAGES[:round_textured][:regular][@enabled ? (@highlighted ? :highlighted : :normal) : :disabled]
+          bezel_img.render_with_frame(cell_frame)
+        end
+      end
+    end
+    
+    # Render the interior: title & image
+    def render_interior_with_frame(cell_frame, in_view:control_view)
+            
+      # Render title, only if we should..
+      unless @image_position == :image_only
+        render_title(attributed_title, with_frame:cell_frame, in_view:control_view)
+      end
       
-      render_bezel_with_frame cell_frame, in_view:control_view
-      render_interior_with_frame cell_frame, in_view:control_view  
+      if @image
+        if on?
+          # img = @alternate_image || @image
+          render_image @alternate_image, with_frame:cell_frame, in_view:control_view
+        else
+          render_image @image, with_frame:cell_frame, in_view:control_view
+        end
+      end
     end
     
     def mouse_entered(the_event)

@@ -35,7 +35,7 @@ else{
 _E(self,s$o).style.width = _E(new_size,s$ae) + 'px';_E(self,s$o).style.height = _E(new_size,s$af) + 'px';}
 });
 _I(self,s$e,function(self,_,other){
-if(_A(_E(other,s$ag,self.$klass.$c_g_full(c$d)))){
+if(_A(ORTEST(_E(other,s$ag,self.$klass.$c_g_full(c$d)),_E(other,s$ag,self.$klass.$c_g_full(c$e))))){
 _E(self,s$o).innerHTML += other;}
 else{
 _E(self,s$o).appendChild(_E(other,s$o));}
@@ -58,4 +58,4 @@ if (document.addEventListener) {
     else {
       _E(self,s$o).attachEvent('on' + _E(type,s$h), listener);
     }});
-})(_M(c$e,cObject));
+})(_M(c$f,cObject));

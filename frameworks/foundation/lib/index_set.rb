@@ -28,9 +28,14 @@ module Vienna
   
   class IndexSet
     
-    def initialize
+    def initialize(obj)
       @count = 0
       @ranges = []
+      # if we had an argument..
+      # if obj
+        # if obj.is_a?(Number)
+        # add_index(obj)
+      # end
     end
     
     def self.index_set
@@ -57,7 +62,65 @@ module Vienna
       @count
     end
     
+    def ranges
+      @ranges
+    end
+    
     def first_index
+      # return NSNotFound (-1) if no ranges
+      return -1 if (@ranges.length == 0)
+      
+      first_index = @ranges[0].first
+      
+      @ranges.length.times do |range|
+        if @ranges[range].first < first_index
+          first_index = @ranges[range].first
+        end
+      end
+      
+      first_index
+    end
+    
+    def last_index
+      return -1 if (@ranges.length == 0)
+      # .last is the last one regarless, so take one from it
+      last_index = @ranges[0].last - 1
+      
+      @ranges.length.times do |range|
+        if (@ranges[range].last - 1) > last_index
+          last_index = @ranges[range].last - 1
+        end
+      end
+      
+      last_index
+    end
+    
+    def member?(index)
+      include?(index)
+    end
+    
+    def include?(index)
+      result = false
+      return result if @ranges.length == 0
+      
+      @ranges.length.times do |range|
+        if (index >= @ranges[range].first) && (@ranges[range].last > index)
+          result = true
+        end
+      end
+      
+      result      
+    end
+    
+    def add_index(index)
+      add_indexes_in_range(index..index+1)
+    end
+    
+    def add_indexes_in_range(range)
+      @ranges << range
+    end
+    
+    def add_indexes(indexes)
       
     end
   end

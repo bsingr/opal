@@ -34,8 +34,13 @@ end
 require 'graphics_context'
 require 'core_graphics_canvas'
 require 'core_graphics_vml'
+
+require 'core_graphics/canvas'
+
+
 require 'geometry'
 require 'image'
+require 'font'
 require 'color'
 require 'string_drawing'
 # require 'graphics/array_geometry_additions'

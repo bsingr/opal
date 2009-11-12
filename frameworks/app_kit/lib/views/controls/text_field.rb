@@ -42,9 +42,9 @@ module Vienna
       'vn-text-field'
     end
     
-    def display_mode
-      :draw
-    end
+    # def display_mode
+      # :draw
+    # end
     
     def resign_first_responder?
       puts 'resign first responder....'

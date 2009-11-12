@@ -95,7 +95,7 @@ class Element
   end
   
   def <<(other)
-    if other.instance_of? String
+    if other.instance_of?(String) || other.instance_of?(Number)
       `#{element}.innerHTML += other;`
     else
       # must be an element

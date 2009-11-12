@@ -2,19 +2,19 @@
 (function(self) {
 _I(self,s$n,function(self,_,frame){
 rb_supcall(arguments.callee, self,_,[]);
-_E(self,s$qn);
-self.$i_s(i$bp,frame);
-self.$i_s(i$bq,_E(self.$klass.$c_g_full(c$ae),s$ap,0,0,_E(frame,s$ae),_E(frame,s$af)));
+_E(self,s$tm);
+self.$i_s(i$by,frame);
+self.$i_s(i$bz,_E(self.$klass.$c_g_full(c$ag),s$ap,0,0,_E(frame,s$ae),_E(frame,s$af)));
 _E(self,s$w,frame);
-self.$i_s(i$br,[]);
-self.$i_s(i$ae,nil);
-self.$i_s(i$bs,nil);
-self.$i_s(i$bt,false);
-self.$i_s(i$bu,true);
-return self.$i_s(i$bv,[]);
+self.$i_s(i$ca,[]);
+self.$i_s(i$ag,nil);
+self.$i_s(i$cb,nil);
+self.$i_s(i$cc,false);
+self.$i_s(i$cd,true);
+return self.$i_s(i$ce,[]);
 });
-self.$def_s(s$qo,function(self,_,options,block){
-var view=_E(self,s$ap,_E(options,s$j,_$gq));
+self.$def_s(s$sc,function(self,_,options,block){
+var view=_E(self,s$ap,_E(options,s$j,_$gp));
 if(_A(block)){
 arguments[arguments.length -1](view);
 }
@@ -24,320 +24,322 @@ _I(self,s$o,function(self,_){
 return _H(self,i$b);
 });
 _I(self,s$b,function(self,_){
-return _$gr;
+return _$gq;
 });
-_I(self,s$qn,function(self,_){
-if(_A(_E(_E(self,s$b),s$ad,_$gr))){
-self.$i_s(i$b,_E(self.$klass.$c_g_full(c$e),s$ap,_$gs,nil));
-_E(_H(self,i$b),s$q,VN.$h(_$gt,'hidden'));
-self.$i_s(i$bw,_E(self.$klass.$c_g_full(c$af),s$ap,_$gs,nil));
-_E(_H(self,i$b),s$e,_H(self,i$bw));
+_I(self,s$tm,function(self,_){
+if(_A(_E(_E(self,s$b),s$ad,_$gq))){
+self.$i_s(i$b,_E(self.$klass.$c_g_full(c$f),s$ap,_$fu,nil));
+_E(_H(self,i$b),s$q,VN.$h(_$gr,'hidden'));
+self.$i_s(i$cf,_E(self.$klass.$c_g_full(c$ah),s$ap,_$fu,nil));
+_E(_H(self,i$b),s$e,_H(self,i$cf));
 }
 else{
-self.$i_s(i$b,_E(self.$klass.$c_g_full(c$e),s$ap,_$gs));
-self.$i_s(i$bw,_E(self.$klass.$c_g_full(c$aa),s$ap));
-_E(_H(self,i$b),s$e,_H(self,i$bw));
+self.$i_s(i$b,_E(self.$klass.$c_g_full(c$f),s$ap,_$fu));
+self.$i_s(i$cf,_E(self.$klass.$c_g_full(c$ac),s$ap));
+_E(_H(self,i$b),s$e,_H(self,i$cf));
 }
 });
-_I(self,s$qp,function(self,_,the_event){
+_I(self,s$tn,function(self,_,the_event){
 return true;
 });
-_I(self,s$ee,function(self,_){
+_I(self,s$fa,function(self,_){
 return true;
 });
-_I(self,s$qq,function(self,_){
-return ORTEST(_H(self,i$bx),'vn-view');
+_I(self,s$to,function(self,_){
+return ORTEST(_H(self,i$cg),'vn-view');
 });
 _I(self,s$p,function(self,_,a_class){
-return self.$i_s(i$bx,a_class);
+return self.$i_s(i$cg,a_class);
 });
-_I(self,s$qr,function(self,_){
-return ORTEST(_H(self,i$by),'');
+_I(self,s$tp,function(self,_){
+return ORTEST(_H(self,i$ch),'');
 });
-_I(self,s$qs,function(self,_,a_theme){
-return self.$i_s(i$by,a_theme);
+_I(self,s$tq,function(self,_,a_theme){
+return self.$i_s(i$ch,a_theme);
 });
-_I(self,s$ha,function(self,_){
-return _E(_H(self,i$bw),s$o).getContext('2d');});
-_I(self,s$qt,function(self,_,coder){
+_I(self,s$hv,function(self,_){
+return _E(_H(self,i$cf),s$o).getContext('2d');});
+_I(self,s$tr,function(self,_,coder){
 });
-_I(self,s$qu,function(self,_,builder){
+_I(self,s$ts,function(self,_,builder){
 });
-self.$def_s(s$qv,function(self,_){
+self.$def_s(s$tt,function(self,_){
 });
-_E(self,s$qv,_$gq,_$gu);
+_E(self,s$tt,_$gp,_$gs);
 _I(self,s$ba,function(self,_){
 });
-_I(self,s$er,function(self,_){
+_I(self,s$fn,function(self,_){
 });
-_I(self,s$qw,function(self,_){
+_I(self,s$tu,function(self,_){
 });
-_I(self,s$qx,function(self,_){
+_I(self,s$tv,function(self,_){
 });
-_I(self,s$qy,function(self,_,a_view){
+_I(self,s$tw,function(self,_,a_view){
 });
-_I(self,s$qz,function(self,_,a_view){
+_I(self,s$tx,function(self,_,a_view){
 });
-_I(self,s$ra,function(self,_){
+_I(self,s$ty,function(self,_){
 });
-_I(self,s$rb,function(self,_,flag){
+_I(self,s$tz,function(self,_,flag){
 });
-_I(self,s$rc,function(self,_){
+_I(self,s$ua,function(self,_){
 });
-_I(self,s$rd,function(self,_){
+_I(self,s$ub,function(self,_){
 });
-_I(self,s$re,function(self,_){
+_I(self,s$uc,function(self,_){
 });
-_I(self,s$rf,function(self,_){
+_I(self,s$ud,function(self,_){
 });
-_I(self,s$rg,function(self,_,new_subviews){
+_I(self,s$ue,function(self,_,new_subviews){
 });
-_I(self,s$rh,function(self,_,a_view){
-if(_A(_E(_H(self,i$br),s$es,a_view))){
+_I(self,s$uf,function(self,_,a_view){
+if(_A(_E(_H(self,i$ca),s$ea,a_view))){
 return ;
 }
-_E(a_view,s$ri);
-_E(a_view,s$rj,self);
-_E(a_view,s$rk,_H(self,i$ae));
-_E(_H(self,i$br),s$e,a_view);
+_E(a_view,s$ug);
+_E(a_view,s$uh,self);
+_E(a_view,s$ui,_H(self,i$ag));
+_E(_H(self,i$ca),s$e,a_view);
 _E(_H(self,i$b),s$e,_E(a_view,s$o));
-_E(a_view,s$di,self);
-_E(a_view,s$rl);
-_E(a_view,s$rm);
-return _E(self,s$rn,self);
+_E(a_view,s$ee,self);
+_E(a_view,s$uj);
+_E(a_view,s$uk);
+return _E(self,s$ul,self);
 });
 _I(self,s$e,function(self,_,a_view){
-return _E(self,s$rh,a_view);
+return _E(self,s$uf,a_view);
 });
-self.$def(s$ro,function(self,_,a_view,place,other_view){
+self.$def(s$um,function(self,_,a_view,place,other_view){
 });
-_I(self,s$rk,function(self,_,win){
-self.$i_s(i$ae,win);
-return _E(_H(self,i$br),s$r,function(s){
-return _E(s,s$rk,win);
+_I(self,s$ui,function(self,_,win){
+self.$i_s(i$ag,win);
+return _E(_H(self,i$ca),s$r,function(s){
+return _E(s,s$ui,win);
 });
 });
-_I(self,s$rm,function(self,_){
-_E(_H(self,i$br),s$r,function(s){
-return _E(s,s$rm);
+_I(self,s$uk,function(self,_){
+_E(_H(self,i$ca),s$r,function(s){
+return _E(s,s$uk);
 });
-return _E(self,s$rp,true);
+return _E(self,s$un,true);
 });
-_I(self,s$rj,function(self,_,new_super){
-return self.$i_s(i$bs,new_super);
+_I(self,s$uh,function(self,_,new_super){
+return self.$i_s(i$cb,new_super);
 });
-_I(self,s$rl,function(self,_){
+_I(self,s$uj,function(self,_){
 });
-_I(self,s$rn,function(self,_,subview){
+_I(self,s$ul,function(self,_,subview){
 });
-_I(self,s$rq,function(self,_,subview){
+_I(self,s$uo,function(self,_,subview){
 });
-_I(self,s$ri,function(self,_){
+_I(self,s$ug,function(self,_){
 });
-self.$def(s$rr,function(self,_,old_view,new_view){
+self.$def(s$up,function(self,_,old_view,new_view){
 });
-_I(self,s$rs,function(self,_,flag){
+_I(self,s$uq,function(self,_,flag){
 });
-_I(self,s$rt,function(self,_){
+_I(self,s$ur,function(self,_){
 });
-_I(self,s$ru,function(self,_,size){
+_I(self,s$us,function(self,_,size){
 });
-_I(self,s$rv,function(self,_,old){
+_I(self,s$ut,function(self,_,old){
 });
-_I(self,s$rw,function(self,_,flag){
+_I(self,s$uu,function(self,_,flag){
 });
-_I(self,s$rx,function(self,_){
+_I(self,s$uv,function(self,_){
 });
-_I(self,s$ry,function(self,_,mask){
+_I(self,s$uw,function(self,_,mask){
 });
-_I(self,s$rz,function(self,_){
+_I(self,s$ux,function(self,_){
 });
-_I(self,s$sa,function(self,_,new_origin){
-_E(_H(self,i$bp),s$jx,_E(new_origin,s$ab));
-_E(_H(self,i$bp),s$jy,_E(new_origin,s$ac));
+_I(self,s$uy,function(self,_,new_origin){
+_E(_H(self,i$by),s$mb,_E(new_origin,s$ab));
+_E(_H(self,i$by),s$mc,_E(new_origin,s$ac));
 _E(_H(self,i$b),s$x,new_origin);
-if(_A(_H(self,i$bt))){
-var nc=_E(self.$klass.$c_g_full(c$n),s$cd);
+if(_A(_H(self,i$cc))){
+var nc=_E(self.$klass.$c_g_full(c$o),s$cd);
 _E(nc,s$ck,'frame chnage notification',self);
 }
 });
-_I(self,s$sb,function(self,_,new_size){
-var old_size=_E(self.$klass.$c_g_full(c$ad),s$ap,_E(_H(self,i$bp),s$ae),_E(_H(self,i$bp),s$af));
-_E(_E(_H(self,i$bp),s$aa),s$jz,_E(new_size,s$ae));
-_E(_E(_H(self,i$bp),s$aa),s$ka,_E(new_size,s$af));
-_E(_E(_H(self,i$bq),s$aa),s$jz,_E(new_size,s$ae));
-_E(_E(_H(self,i$bq),s$aa),s$ka,_E(new_size,s$af));
-_E(self,s$rp,true);
+_I(self,s$uz,function(self,_,new_size){
+var old_size=_E(self.$klass.$c_g_full(c$af),s$ap,_E(_H(self,i$by),s$ae),_E(_H(self,i$by),s$af));
+_E(_E(_H(self,i$by),s$aa),s$md,_E(new_size,s$ae));
+_E(_E(_H(self,i$by),s$aa),s$me,_E(new_size,s$af));
+_E(_E(_H(self,i$bz),s$aa),s$md,_E(new_size,s$ae));
+_E(_E(_H(self,i$bz),s$aa),s$me,_E(new_size,s$af));
+_E(self,s$un,true);
 _E(_H(self,i$b),s$z,new_size);
-_E(_H(self,i$bw),s$z,new_size);
-if(_A(_H(self,i$bt))){
-var nc=_E(self.$klass.$c_g_full(c$n),s$cd);
+_E(_H(self,i$cf),s$z,new_size);
+if(_A(_H(self,i$cc))){
+var nc=_E(self.$klass.$c_g_full(c$o),s$cd);
 _E(nc,s$ck,'frame chnage notification',self);
 }
 });
 _I(self,s$w,function(self,_,frame){
-_E(self,s$sa,_E(frame,s$y));
-_E(self,s$sb,_E(frame,s$aa));
-if(_A(_H(self,i$bt))){
-var nc=_E(self.$klass.$c_g_full(c$n),s$cd);
+_E(self,s$uy,_E(frame,s$y));
+_E(self,s$uz,_E(frame,s$aa));
+if(_A(_H(self,i$cc))){
+var nc=_E(self.$klass.$c_g_full(c$o),s$cd);
 _E(nc,s$ck,'view chnages notification',self);
 }
 });
-_I(self,s$sc,function(self,_){
-return _H(self,i$bp);
+_I(self,s$va,function(self,_){
+return _H(self,i$by);
 });
-_I(self,s$sd,function(self,_,angle){
+_I(self,s$vb,function(self,_,angle){
 });
-_I(self,s$se,function(self,_){
+_I(self,s$vc,function(self,_){
+return _H(self,i$ci);
+});
+_I(self,s$vd,function(self,_,angle){
+});
+_I(self,s$ve,function(self,_){
+});
+_I(self,s$vf,function(self,_,new_origin){
+});
+_I(self,s$vg,function(self,_,new_size){
+});
+_I(self,s$vh,function(self,_,angle){
+});
+_I(self,s$vi,function(self,_){
+});
+_I(self,s$vj,function(self,_,translation){
+});
+_I(self,s$vk,function(self,_,angle){
+});
+_I(self,s$vl,function(self,_,bounds){
+});
+_I(self,s$vm,function(self,_){
 return _H(self,i$bz);
 });
-_I(self,s$sf,function(self,_,angle){
+_I(self,s$hx,function(self,_){
 });
-_I(self,s$sg,function(self,_){
+_I(self,s$vn,function(self,_){
 });
-_I(self,s$sh,function(self,_,new_origin){
+_I(self,s$vo,function(self,_){
 });
-_I(self,s$si,function(self,_,new_size){
+_I(self,s$vp,function(self,_){
 });
-_I(self,s$sj,function(self,_,angle){
-});
-_I(self,s$sk,function(self,_){
-});
-_I(self,s$sl,function(self,_,translation){
-});
-_I(self,s$sm,function(self,_,angle){
-});
-_I(self,s$sn,function(self,_,bounds){
-});
-_I(self,s$so,function(self,_){
-return _H(self,i$bq);
-});
-_I(self,s$hc,function(self,_){
-});
-_I(self,s$sp,function(self,_){
-});
-_I(self,s$sq,function(self,_){
-});
-_I(self,s$sr,function(self,_){
-});
-self.$def(s$ss,function(self,_,point,view){
+self.$def(s$vq,function(self,_,point,view){
 if(!_A(view)){
-return _E(self,s$st,point);
+return _E(self,s$vr,point);
 }
-return _E(self.$klass.$c_g_full(c$y),s$ap,_E(_E(point,s$ab),s$mg,_E(_H(self,i$bp),s$ab)),_E(_E(point,s$ac),s$mg,_E(_H(self,i$bp),s$ac)));
+return _E(self.$klass.$c_g_full(c$aa),s$ap,_E(_E(point,s$ab),s$dx,_E(_H(self,i$by),s$ab)),_E(_E(point,s$ac),s$dx,_E(_H(self,i$by),s$ac)));
 });
-self.$def(s$su,function(self,_,point,view){
+self.$def(s$vs,function(self,_,point,view){
 });
-self.$def(s$sv,function(self,_,size,view){
+self.$def(s$vt,function(self,_,size,view){
 });
-self.$def(s$sw,function(self,_,size,view){
+self.$def(s$vu,function(self,_,size,view){
 });
-self.$def(s$sx,function(self,_,rect,view){
+self.$def(s$vv,function(self,_,rect,view){
 });
-self.$def(s$sy,function(self,_,rect,view){
+self.$def(s$vw,function(self,_,rect,view){
 });
-_I(self,s$sz,function(self,_,point){
+_I(self,s$vx,function(self,_,point){
 });
-_I(self,s$st,function(self,_,point){
-if(_A(_H(self,i$bs))){
-return _E(_H(self,i$bs),s$st,_E(self.$klass.$c_g_full(c$y),s$ap,_E(_E(point,s$ab),s$mg,_E(_H(self,i$bp),s$ab)),_E(_E(point,s$ac),s$mg,_E(_H(self,i$bp),s$ac))));
+_I(self,s$vr,function(self,_,point){
+if(_A(_H(self,i$cb))){
+return _E(_H(self,i$cb),s$vr,_E(self.$klass.$c_g_full(c$aa),s$ap,_E(_E(point,s$ab),s$dx,_E(_H(self,i$by),s$ab)),_E(_E(point,s$ac),s$dx,_E(_H(self,i$by),s$ac))));
 }
 else{
 return point;
 }
 });
-_I(self,s$ta,function(self,_,size){
+_I(self,s$vy,function(self,_,size){
 });
-_I(self,s$tb,function(self,_,size){
+_I(self,s$vz,function(self,_,size){
 });
-_I(self,s$tc,function(self,_,rect){
+_I(self,s$wa,function(self,_,rect){
 });
-_I(self,s$td,function(self,_,rect){
+_I(self,s$wb,function(self,_,rect){
 });
-_I(self,s$te,function(self,_){
+_I(self,s$wc,function(self,_){
 });
-_I(self,s$rp,function(self,_,flag){
-if(!_A(_H(self,i$ae))){
+_I(self,s$un,function(self,_,flag){
+if(!_A(_H(self,i$ag))){
 return ;
 }
-return _E(self,s$tf);
+return _E(self,s$wd);
 });
-_I(self,s$tg,function(self,_,invalid_rect){
-return _H(self,i$ca);
+_I(self,s$we,function(self,_,invalid_rect){
+return _H(self,i$cj);
 });
-_I(self,s$th,function(self,_){
-return _H(self,i$ca);
+_I(self,s$wf,function(self,_){
+return _H(self,i$cj);
 });
-_I(self,s$lz,function(self,_){
-_E(self.$klass.$c_g_full(c$af),s$he,_H(self,i$bw));
-_E(self.$klass.$c_g_full(c$aa),s$he,_H(self,i$bw));
-if(!_A(_E(_E(self,s$b),s$ad,_$gr))){
-_E(_H(self,i$bw),s$ha).clearRect(0, 0, _E(_E(self,s$so),s$ae), _E(_E(self,s$so),s$af));}
+_I(self,s$oe,function(self,_){
+_E(self.$klass.$c_g_full(c$ah),s$hz,_H(self,i$cf));
+_E(self.$klass.$c_g_full(c$ac),s$hz,_H(self,i$cf));
+if(!_A(_E(_E(self,s$b),s$ad,_$gq))){
+_E(_H(self,i$cf),s$hv).clearRect(0, 0, _E(_E(self,s$vm),s$ae), _E(_E(self,s$vm),s$af));}
+else{
+}
 });
-_I(self,s$ma,function(self,_){
+_I(self,s$of,function(self,_){
 });
-self.$def_s(s$ti,function(self,_){
+self.$def_s(s$wg,function(self,_){
 });
-_I(self,s$tj,function(self,_){
+_I(self,s$wh,function(self,_){
 });
-_I(self,s$tf,function(self,_){
-if(!_A(_H(self,i$ae))){
+_I(self,s$wd,function(self,_){
+if(!_A(_H(self,i$ag))){
 return ;
 }
-_E(self,s$tk);
-if(_A(_E(_E(self,s$b),s$ad,_$gr))){
-_E(self,s$lz);
-_E(self.$klass.$c_g_full(c$af),s$he,_H(self,i$bw));
-_E(self,s$tl,_H(self,i$bw));
-_E(_H(self,i$bw),s$oz,false);
-_E(self,s$ma);
+_E(self,s$wi);
+if(_A(_E(_E(self,s$b),s$ad,_$gq))){
+_E(self,s$oe);
+_E(self.$klass.$c_g_full(c$ah),s$hz,_H(self,i$cf));
+_E(self,s$wj,_H(self,i$cf));
+_E(_H(self,i$cf),s$rw,false);
+_E(self,s$of);
 }
 else{
-_E(self.$klass.$c_g_full(c$aa),s$he,_H(self,i$bw));
-_E(self,s$fb,_E(self,s$so));
+_E(self.$klass.$c_g_full(c$ac),s$hz,_H(self,i$cf));
+_E(self,s$fw,_E(self,s$vm));
 }
 });
-_I(self,s$tl,function(self,_,context){
-if(_A(_E(context,s$oy))){
-_E(context,s$p,_E(self,s$qq));
-_E(context,s$oz,false);
+_I(self,s$wj,function(self,_,context){
+if(_A(_E(context,s$rv))){
+_E(context,s$p,_E(self,s$to));
+_E(context,s$rw,false);
 }
 });
-_I(self,s$fb,function(self,_,rect){
+_I(self,s$fw,function(self,_,rect){
 });
-_I(self,s$tk,function(self,_){
+_I(self,s$wi,function(self,_){
 });
-_I(self,s$tm,function(self,_,point){
-point=_E(self,s$ss,point,_H(self,i$bs));
-if(!_A(_E(point,s$kj,_E(self,s$so)))){
+_I(self,s$wk,function(self,_,point){
+point=_E(self,s$vq,point,_H(self,i$cb));
+if(!_A(_E(point,s$mn,_E(self,s$vm)))){
 return nil;
 }
-var count=_E(_H(self,i$br),s$cq);
+var count=_E(_H(self,i$ca),s$cq);
 var i=0;
-for (i = 0; i < count; i++) {var view_to_check=_E(_H(self,i$br),s$j,i);
-var hit_test=_E(view_to_check,s$tm,point);
+for (i = 0; i < count; i++) {var view_to_check=_E(_H(self,i$ca),s$j,i);
+var hit_test=_E(view_to_check,s$wk,point);
 if(_A(hit_test)){
 return hit_test;
 }
 }return self;
 });
-self.$def(s$tn,function(self,_,point,rect){
+self.$def(s$wl,function(self,_,point,rect){
 });
-_I(self,s$to,function(self,_,tracking_area){
-if(_A(_E(_H(self,i$bv),s$tp))){
-_E(_H(self,i$b),s$f,_$gv,function(evt){
+_I(self,s$wm,function(self,_,tracking_area){
+if(_A(_E(_H(self,i$ce),s$wn))){
+_E(_H(self,i$b),s$f,_$gt,function(evt){
 });
-_E(_H(self,i$b),s$f,_$gw,function(evt){
+_E(_H(self,i$b),s$f,_$gu,function(evt){
 });
 }
-return _E(_H(self,i$bv),s$e,tracking_area);
+return _E(_H(self,i$ce),s$e,tracking_area);
 });
-_I(self,s$tq,function(self,_,tracking_area){
+_I(self,s$wo,function(self,_,tracking_area){
 });
-_I(self,s$tr,function(self,_){
-return _H(self,i$bv);
+_I(self,s$wp,function(self,_){
+return _H(self,i$ce);
 });
-_I(self,s$ts,function(self,_){
+_I(self,s$wq,function(self,_){
 });
-})(_N(self,c$al,self.$c_g_full(c$p)));
+})(_N(self,c$ap,self.$c_g_full(c$r)));
 })(_K(c$b));

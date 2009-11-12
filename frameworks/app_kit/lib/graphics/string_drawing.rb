@@ -64,7 +64,7 @@ module Vienna
     def draw_in_rect rect
       ctx = GraphicsContext.current_context.graphics_port
       `if(!window.opera){`
-      `#{ctx}.font = 'bold 12px/2 Arial, sans-serif';`
+      `#{ctx}.font = 'normal 12px Arial, sans-serif';`
       `#{ctx}.fillStyle = #{@attributes[:color].rgb_string};`
       `#{ctx}.textBaseline = 'top';`
       `#{ctx}.fillText(#{@string}, #{rect.x}, #{rect.y});`
@@ -77,9 +77,18 @@ module Vienna
     
     def render_in_rect(rect)
       ctx = RenderContext.current_context
-      ctx.frame = rect
-      ctx.css :font_family => 'Arial', :font_size => '12px', :font_weight => 'bold', :color => @attributes[:color].rgb_string, :overflow_x => 'hidden', :overflow_y => 'hidden', :white_space => 'nowrap'
-      ctx.inner_html = @string
+      ctx.append :div do |text|
+        
+        
+        
+        text.frame = rect
+        text.css :color => @attributes[:color].rgb_string, :overflow_x => 'hidden', :overflow_y => 'hidden', :white_space => 'nowrap'
+        if @attributes[:font]
+          # puts @attributes[:font].css_string
+          text.css :font => @attributes[:font].css_string
+        end
+        text << @string
+      end
     end
     
     def bounding_rect_with_size size, options:options

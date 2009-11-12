@@ -14,7 +14,7 @@ return _E(self,s$cc,name,obj,nil);
 self.$def_s(s$cc,function(self,_,name,obj,info){
 return _E(self,s$ap,name,obj,info);
 });
-})(_N(self,c$m,cObject));
+})(_N(self,c$n,cObject));
 (function(self) {
 self.$def_s(s$cd,function(self,_){
 return self.$i_s(i$m,ORTEST(_H(self,i$m),_E(self,s$ap)));
@@ -45,5 +45,5 @@ self.$def(s$cm,function(self,_,observer,name,obj){
 });
 self.$def(s$cn,function(self,_,name,obj,queue){
 });
-})(_N(self,c$n,cObject));
+})(_N(self,c$o,cObject));
 })(_K(c$b));

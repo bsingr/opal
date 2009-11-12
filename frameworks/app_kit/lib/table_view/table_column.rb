@@ -31,7 +31,11 @@ module Vienna
     def initialize(identifier)
       self.identifier = identifier
       @header_cell = TableHeaderCell.new("")
+
+      
       @data_cell = TextFieldCell.new("")
+      @data_cell.bezel_style = :none
+      @data_cell.draws_background = false
       # 'nice' default width
       @width = 100
     end

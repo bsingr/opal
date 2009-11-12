@@ -56,6 +56,9 @@ module Vienna
         image_name = "#{name}.png"
         `if(vn_resource_stack.hasOwnProperty(#{image_name})) {`
           url = `vn_resource_stack[#{image_name}]`
+          img = image_with_contents_of_url url
+          named_images[name] = img
+          return img
         `}`
       # end
       
@@ -275,6 +278,19 @@ module Vienna
       `#{ctx}.drawImage(#{@image}, #{rect.x}, #{rect.y}, #{rect.width},#{rect.height})`
     end
     
+    def render_in_rect(rect, from_rect:from_rect, operation:op, fraction:delta)
+      ctx = RenderContext.current_context
+      
+      ctx.append :div do |ctx|
+        ctx.frame = rect
+        ctx.css :background_image => "url('#{filename}')"
+      end
+    end
+    
+    def render_with_frame(rect)
+      render_in_rect(rect, from_rect:Rect.new(0,0,0,0), operation:nil, fraction:1.0)
+    end
+
     def draw_in_rect(rect, enabled:enabled, gray_mask:gray_mask)
       ctx = GraphicsContext.current_context.graphics_port
       rep = gray_mask ? @representations[:gray_mask] : @representations[:normal]
@@ -285,13 +301,16 @@ module Vienna
     
     def render_in_rect rect, enabled:enabled, gray_mask:gray_mask
       ctx = RenderContext.current_context
-      ctx.css :display => :block, :background_image => "url('#{filename}')"
-      ctx.css :width => "#{rect.width}px", :height => "#{rect.height}px"
-      ctx.css :left => "#{rect.x}px", :top => "#{rect.y}px"
       
-      rep = gray_mask ? @representations[:gray_mask] : @representations[:normal]
-      rep = @representations[:disabled] unless enabled
-      ctx.css :background_position =>"-#{rep[0]}px -#{rep[1]}px"
+      ctx.append :div do |ctx|
+        ctx.frame = rect
+        ctx.css :background_image => "url('#{filename}')"
+        
+        # which version to draw...
+        rep = gray_mask ? @representations[:gray_mask] : @representations[:normal]
+        rep = @representations[:disabled] unless enabled
+        ctx.css :background_position =>"-#{rep[0]}px -#{rep[1]}px"
+      end
     end
     
     def render_in_rect rect
@@ -365,7 +384,7 @@ module Vienna
     def render_with_frame(frame)
       ctx = RenderContext.current_context
       # puts 'renderinf with frame..'
-      ctx.inner_html = ""
+      # ctx.inner_html = ""
       ctx << "<div style='top:0px; left:0px; width:6px; height:#{frame.height}px; background-image: url(#{@parts[0].filename});'></div>"
       ctx << "<div style='top:0px; left:6px; right:6px; height:#{frame.height}px; background-image: url(#{@parts[1].filename});'></div>"
       ctx << "<div style='top:0px; width:6px; right:0px; height:#{frame.height}px; background-image: url(#{@parts[2].filename});'></div>"
@@ -385,21 +404,74 @@ module Vienna
       @vertical = vertical
     end
     
+    def render_with_frame(frame)
+      top_left_size = @parts[0].size
+      bottom_left_size = @parts[6].size
+      # top 'row'
+      @parts[0].render_in_rect(Rect.new(frame.x + 0, frame.y, top_left_size.width, top_left_size.height), from_rect:Rect.new(0,0,0,0), operation:nil, fraction:1.0)
+      @parts[1].render_in_rect(Rect.new(frame.x + top_left_size.width, frame.y, frame.width - (2 * top_left_size.width), top_left_size.height), from_rect:Rect.new(0,0,0,0), operation:nil, fraction:1.0)
+      @parts[2].render_in_rect(Rect.new(frame.x + (frame.width - top_left_size.width), frame.y, top_left_size.width, top_left_size.height), from_rect:Rect.new(0,0,0,0), operation:nil, fraction:1.0)
+      # middle 'row'
+      @parts[3].render_in_rect(Rect.new(frame.x, frame.y + top_left_size.height, top_left_size.width, frame.height - (top_left_size.height + bottom_left_size.height)), from_rect:Rect.new(0,0,0,0), operation:nil, fraction:1.0)
+      @parts[4].render_in_rect(Rect.new(frame.x + top_left_size.width, frame.y + top_left_size.height, frame.width - (2 * top_left_size.width), frame.height - (top_left_size.height + bottom_left_size.height)), from_rect:Rect.new(0,0,0,0), operation:nil, fraction:1.0)
+      @parts[5].render_in_rect(Rect.new(frame.x + (frame.width - top_left_size.width), frame.y + top_left_size.height, top_left_size.width, frame.height - (top_left_size.height + bottom_left_size.height)), from_rect:Rect.new(0,0,0,0), operation:nil, fraction:1.0)
+      # bottom 'row'
+      @parts[6].render_in_rect(Rect.new(frame.x , frame.y + (frame.height - bottom_left_size.height), bottom_left_size.width, bottom_left_size.height), from_rect:Rect.new(0,0,0,0), operation:nil, fraction:1.0)
+      @parts[7].render_in_rect(Rect.new(frame.x + bottom_left_size.width, frame.y + (frame.height - bottom_left_size.height), frame.width - (2 * top_left_size.width),bottom_left_size.height), from_rect:Rect.new(0,0,0,0), operation:nil, fraction:1.0)
+      @parts[8].render_in_rect(Rect.new(frame.x + (frame.width - bottom_left_size.width), frame.y + (frame.height - bottom_left_size.height), bottom_left_size.width, bottom_left_size.height), from_rect:Rect.new(0,0,0,0), operation:nil, fraction:1.0)      
+    end
+    
     def draw_with_frame(frame)
       top_left_size = @parts[0].size
       bottom_left_size = @parts[6].size
       # top 'row'
-      @parts[0].draw_in_rect(Rect.new(0,0,top_left_size.width,top_left_size.height), from_rect:Rect.new(0,0,0,0), operation:nil, fraction:1.0)
-      @parts[1].draw_in_rect(Rect.new(top_left_size.width,0,frame.width - (2 * top_left_size.width),top_left_size.height), from_rect:Rect.new(0,0,0,0), operation:nil, fraction:1.0)
-      @parts[2].draw_in_rect(Rect.new(frame.width - top_left_size.width, 0, top_left_size.width, top_left_size.height), from_rect:Rect.new(0,0,0,0), operation:nil, fraction:1.0)
+      @parts[0].draw_in_rect(Rect.new(frame.x + 0, frame.y, top_left_size.width, top_left_size.height), from_rect:Rect.new(0,0,0,0), operation:nil, fraction:1.0)
+      @parts[1].draw_in_rect(Rect.new(frame.x + top_left_size.width, frame.y, frame.width - (2 * top_left_size.width), top_left_size.height), from_rect:Rect.new(0,0,0,0), operation:nil, fraction:1.0)
+      @parts[2].draw_in_rect(Rect.new(frame.x + (frame.width - top_left_size.width), frame.y, top_left_size.width, top_left_size.height), from_rect:Rect.new(0,0,0,0), operation:nil, fraction:1.0)
       # middle 'row'
-      @parts[3].draw_in_rect(Rect.new(0, top_left_size.height, top_left_size.width, frame.height - (top_left_size.height + bottom_left_size.height)), from_rect:Rect.new(0,0,0,0), operation:nil, fraction:1.0)
-      @parts[4].draw_in_rect(Rect.new(top_left_size.width, top_left_size.height, frame.width - (2 * top_left_size.width), frame.height - (top_left_size.height + bottom_left_size.height)), from_rect:Rect.new(0,0,0,0), operation:nil, fraction:1.0)
-      @parts[5].draw_in_rect(Rect.new(frame.width - top_left_size.width, top_left_size.height, top_left_size.width, frame.height - (top_left_size.height + bottom_left_size.height)), from_rect:Rect.new(0,0,0,0), operation:nil, fraction:1.0)
+      @parts[3].draw_in_rect(Rect.new(frame.x, frame.y + top_left_size.height, top_left_size.width, frame.height - (top_left_size.height + bottom_left_size.height)), from_rect:Rect.new(0,0,0,0), operation:nil, fraction:1.0)
+      @parts[4].draw_in_rect(Rect.new(frame.x + top_left_size.width, frame.y + top_left_size.height, frame.width - (2 * top_left_size.width), frame.height - (top_left_size.height + bottom_left_size.height)), from_rect:Rect.new(0,0,0,0), operation:nil, fraction:1.0)
+      @parts[5].draw_in_rect(Rect.new(frame.x + (frame.width - top_left_size.width), frame.y + top_left_size.height, top_left_size.width, frame.height - (top_left_size.height + bottom_left_size.height)), from_rect:Rect.new(0,0,0,0), operation:nil, fraction:1.0)
       # bottom 'row'
-      @parts[6].draw_in_rect(Rect.new(0, frame.height - bottom_left_size.height, bottom_left_size.width, bottom_left_size.height), from_rect:Rect.new(0,0,0,0), operation:nil, fraction:1.0)
-      @parts[7].draw_in_rect(Rect.new(bottom_left_size.width, frame.height - bottom_left_size.height, frame.width - (2 * top_left_size.width),bottom_left_size.height), from_rect:Rect.new(0,0,0,0), operation:nil, fraction:1.0)
-      @parts[8].draw_in_rect(Rect.new(frame.width - bottom_left_size.width, frame.height - bottom_left_size.height, bottom_left_size.width, bottom_left_size.height), from_rect:Rect.new(0,0,0,0), operation:nil, fraction:1.0)
+      @parts[6].draw_in_rect(Rect.new(frame.x , frame.y + (frame.height - bottom_left_size.height), bottom_left_size.width, bottom_left_size.height), from_rect:Rect.new(0,0,0,0), operation:nil, fraction:1.0)
+      @parts[7].draw_in_rect(Rect.new(frame.x + bottom_left_size.width, frame.y + (frame.height - bottom_left_size.height), frame.width - (2 * top_left_size.width),bottom_left_size.height), from_rect:Rect.new(0,0,0,0), operation:nil, fraction:1.0)
+      @parts[8].draw_in_rect(Rect.new(frame.x + (frame.width - bottom_left_size.width), frame.y + (frame.height - bottom_left_size.height), bottom_left_size.width, bottom_left_size.height), from_rect:Rect.new(0,0,0,0), operation:nil, fraction:1.0)
+    end
+  end
+  
+  # Different to a three part image. A three state image is useful for drawing
+  # controls that can be normal, highlighted and disabled. Usage:
+  # 
+  #   img = ThreestateImage(normal_img, highlighted_img, disabled_img)
+  # 
+  # Most appkit controls/cells will draw the appropriate representation for 
+  # the current cell state
+  class ThreeStateImage
+    
+    def initialize(normal, highlighted, disabled)
+      @normal = normal
+      @highlighted = highlighted
+      @disabled = disabled
+    end
+    
+    def size
+      @normal.size
+    end
+    
+    def filename
+      @normal.filename
+    end
+    
+    # State will be :normal/:highlighted/:disabled
+    def render_with_frame(frame, state)
+      case state
+      when :normal
+        @normal.render_with_frame(frame)
+      when :highlighted
+        @highlighted.render_with_frame(frame)
+      when :disabled
+        @disabled.render_with_frame(frame)
+      end
     end
   end
   

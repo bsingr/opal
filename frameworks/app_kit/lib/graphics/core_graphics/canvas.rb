@@ -151,3 +151,12 @@ end
 def CGContextGetPathBoundingBox(ctx)
   
 end
+
+def CGContextSetFillColor(ctx, color)
+  `#{ctx}.fillStyle = #{color.rgb_string};`
+end
+
+def CGContextSetStrokeColor(ctx, color)
+  `#{ctx}.strokeStyle = #{color.rgb_string};`
+end
+

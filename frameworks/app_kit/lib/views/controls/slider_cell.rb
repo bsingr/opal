@@ -51,20 +51,20 @@ module Vienna
     end
     
     def render_with_frame(cell_frame, in_view:control_view)
+      ctx = RenderContext.current_context
       # these two are useful for later
       @cell_frame = cell_frame
       @control_view = control_view
       
-      ctx = RenderContext.current_context
       if ctx.first_time?
-        ctx << "<div class='track-left'></div>"
-        ctx << "<div class='track-middle'></div>"
-        ctx << "<div class='track-right'></div>"
-        ctx << "<div class='knob'></div>"
-        ctx.first_time = false
+        ctx.append :div do |track|
+          track.class_name = "track"
+        end
+        
+        ctx.append :div do |knob|
+          knob.class_name = "knob"
+        end
       end
-      
-      ctx.class_name = class_name
       
       ctx.selector :knob do |knob|        
         knob_position = _knob_rect_for_value(@value)

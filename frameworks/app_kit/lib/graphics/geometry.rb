@@ -145,7 +145,7 @@ module Vienna
     end
     
     def in_rect? a_rect
-      x >= a_rect.x && y >= a_rect.y && x < a_rect.x + a_rect.width && y < a_rect.y + a_rect.height
+      x > a_rect.x && y > a_rect.y && x <= a_rect.x + a_rect.width && y <= a_rect.y + a_rect.height
     end
   end
   

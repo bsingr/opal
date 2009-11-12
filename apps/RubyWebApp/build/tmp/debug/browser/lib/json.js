@@ -2,16 +2,16 @@
 _I(self,s$n,function(self,_,url,options,block){
 });
 self.$def_s(s$ak,function(self,_,url,options,block){
-return _E(self.$c_g_full(c$f),s$ak,url,options,block);
+return _E(self.$c_g_full(c$g),s$ak,url,options,block);
 });
-})(_M(c$g,cObject));
+})(_M(c$h,cObject));
 (function(self) {
 self.$c_s('JSONP_CALLBACKS',[]);
 _I(self,s$n,function(self,_,url,options,block){
 self.$i_s(i$d,url);
 self.$i_s(i$e,"vn_jsonp_callback_0");
 self.$i_s(i$f,block);
-_E(self.$klass.$c_g_full(c$h),s$e,_H(self,i$e));
+_E(self.$klass.$c_g_full(c$i),s$e,_H(self,i$e));
 _E(self,s$al,["Initializing JSNOP connection with url: ",(_H(self,i$d))].join(''));
 return _E(self,s$am);
 });
@@ -27,7 +27,7 @@ return _E(_H(self,i$f),s$ao,JSONParserReformatter(response));
 self.$def_s(s$ak,function(self,_,url,options,block){
 return _E(self,s$ap,url,options,block);
 });
-})(_M(c$f,cObject));
+})(_M(c$g,cObject));
 
 VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/browser/lib/json/parse.js');
 

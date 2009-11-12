@@ -32,6 +32,7 @@ module Vienna
     
     def initialize tag_name, options
       @element_stack = [`document.createElement(#{tag_name.to_s})`]
+      @build_stack = []
       @first_time = true
       @type = tag_name.to_s
     end
@@ -70,6 +71,38 @@ module Vienna
 
       yield self
       pop_element_stack
+    end
+    
+    def append(tag_name, &block)
+      append_element = `document.createElement(#{tag_name.to_s})`
+      `#{element}.appendChild(#{append_element});`
+      push_element_stack(append_element)
+      yield self
+      pop_element_stack(append_element)
+    end
+    
+    # will erase inner contents, and append created into stack. use this for
+    # the content to be erased between changes
+    def build(&block)
+      # do this on the current context only... tableview etc use the same context
+      # for each row, so if we want to redraw a row, we dont have to use old style.
+      @build_stack << ""
+      self.inner_html = ""
+      block.call(self)
+      build_text = @build_stack.pop
+      
+      # if build_stack.length == 0, then apply the inner_html, otherwise, push it onto last one
+      # so that changed are pushed up through the build stacks back to the root build stack
+    end
+    
+    # begin tag
+    def begin(tag_name)
+      
+    end
+    
+    # end tag
+    def end
+      
     end
     
     # Returns Integer number of child nodes of current element

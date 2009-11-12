@@ -42,10 +42,17 @@ module Vienna
     # CLOSE_HIGHLIGHTED_IMAGE = Image.image_named 'normal_window_highlighted_close_button'
     
     
-    TITLEBAR_HEIGHT = 24.0
+    TITLEBAR_HEIGHT = 26.0
     
     # CLOSE_IMAGE = Image.image_named :vn_normal_win_close
     # CLOSE_HIGHLIGHTED_IMAGE = Image.image_named :vn_normal_win_close_highlight
+    
+    TITLEBAR_IMAGE = ThreePartImage.new(
+      Image.image_named('normal_window_titlebar_left'),
+      Image.image_named('normal_window_titlebar_middle'),
+      Image.image_named('normal_window_titlebar_right'))
+    
+    SPLITTER_IMAGE = Image.image_named('normal_window_titlebar_splitter')
     
     def initialize frame, style_mask
       super frame, style_mask
@@ -69,18 +76,25 @@ module Vienna
         end
       end
     end
-    
-    def class_name
-      'vn-normal-window-view'
-    end
-    
-    def render context
-      if context.first_time?
-        context << "<div class='titlebar'><div class='left'></div><div class='middle'></div><div class='right'></div><div class='splitter'></div></div>"
-        context << "<div class='body'></div>"
-        context.first_time = false
+        
+    def render(context)
+      context.build do
+        # Titlebar
+        context.append :div do |titlebar|
+          titlebar.frame = Rect.new(0,0,@bounds.width,TITLEBAR_HEIGHT)
+          TITLEBAR_IMAGE.render_with_frame(Rect.new(0,0,@bounds.width,TITLEBAR_HEIGHT))
+        end
+        # Splitter (line between titlebar and body)
+        context.append :div do |splitter|
+          splitter.frame = Rect.new(0, TITLEBAR_HEIGHT - 1,@bounds.width, 1)
+          SPLITTER_IMAGE.render_with_frame(Rect.new(0, 0, @bounds.width, 1))
+        end
+        # Basic window background
+        context.append :div do |body|
+          body.frame = Rect.new(0, TITLEBAR_HEIGHT, @bounds.width, @bounds.height - TITLEBAR_HEIGHT)
+          body.css :background_color => 'rgb(245,245,245)'
+        end
       end
-      context.class_name = class_name
     end
     
     def self.frame_rect_for_content_rect rect, style_mask:style

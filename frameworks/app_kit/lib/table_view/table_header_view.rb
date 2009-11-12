@@ -28,12 +28,23 @@ module Vienna
   
   class TableHeaderView < View
     
+    HEADER_BACKGROUND = Image.image_named('header_view_background')
+    
     def initialize(frame)
       super frame
     end
     
     def class_name
       'vn-table-header-view'
+    end
+    
+    # def display_mode
+      # :draw
+    # end
+    
+    def draw_rect(dirty_rect)
+      background_image = HEADER_BACKGROUND
+      background_image.draw_in_rect(dirty_rect, from_rect:Rect.new(0,0,0,0), operation:nil, fraction:1.0)
     end
     
     def render(context)

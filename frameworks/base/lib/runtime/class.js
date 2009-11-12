@@ -332,6 +332,7 @@ function rb_define_singleton_method(klass, name, func) {
 
 function rb_add_method(klass, name, func) {
   klass.$m_tbl[name] = func;
+  func.displayName = klass.$iv_tbl.__classid__ + "#" + name;
 }
 
 

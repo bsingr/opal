@@ -27,7 +27,7 @@
 module Vienna
   
   class Color
-    
+      
     def self.color_with_calibrated_white white, alpha:alpha
       
     end
@@ -53,7 +53,7 @@ module Vienna
     end
     
     def self.white_color
-      self.color_with_calibrated_red 1.0, green:1.0, blue:1.0, alpha:1.0
+      self.color_with_calibrated_red 255.0, green:255.0, blue:255.0, alpha:1.0
     end
     
     def self.gray_color
@@ -133,7 +133,7 @@ module Vienna
       end
       
       def selected_control_color
-        self.color_with_calibrated_red 0.0, green:0.0, blue:0.0, alpha:0.0
+        self.color_with_calibrated_red 119, green:141, blue:168, alpha:1.0
       end
       
       def secondary_selected_control_color
@@ -229,7 +229,7 @@ module Vienna
       end
       
       def control_alternating_row_background_colors
-        self.color_with_calibrated_red 0.0, green:0.0, blue:0.0, alpha:0.0
+        self.color_with_calibrated_red 234.0, green:234.0, blue:234.0, alpha:0.0
       end
       
       def color_for_control_tint(control_tint)
@@ -265,15 +265,18 @@ module Vienna
     end
     
     def set
-      
+      set_fill
+      set_stroke
     end
     
     def set_fill
-      
+      ctx = GraphicsContext.current_context.graphics_port
+      CGContextSetFillColor(ctx, self)
     end
     
     def set_stroke
-      
+      ctx = GraphicsContext.current_context.graphics_port
+      CGContextSetStrokeColor(ctx, self)
     end
   end  
 end

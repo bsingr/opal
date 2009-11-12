@@ -73,7 +73,7 @@ rb_define_method(rb_cRange, 'begin', function(self, _cmd) {
 });
 
 rb_define_method(rb_cRange, 'first', function(self, _cmd) {
-  
+  return rb_ivar_get(self, '@start');
 });
 
 rb_define_method(rb_cRange, 'end', function(self, _cmd) {
@@ -81,7 +81,7 @@ rb_define_method(rb_cRange, 'end', function(self, _cmd) {
 });
 
 rb_define_method(rb_cRange, 'last', function(self, _cmd) {
-  
+  return rb_ivar_get(self, '@ending');
 });
 
 rb_define_method(rb_cRange, 'min', function(self, _cmd) {

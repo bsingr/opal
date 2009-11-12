@@ -36,6 +36,10 @@ module Vienna
       @number_of_rows = -1
       @table_columns = []
       
+      @allows_multiple_selection = false
+      
+      @selected_row_indexes = IndexSet.new
+      
       # cache row/column rects
       @row_rects = []
       @column_rects = []
@@ -45,6 +49,10 @@ module Vienna
       
       @corner_view = TableCornerView.new(Rect.new(0, 0, Scroller.scroller_width, Scroller.scroller_width))
     end
+    
+    # def display_mode
+      # :draw
+    # end
     
     # Required
     #   number_of_rows_in_table_view(table_view)
@@ -269,8 +277,22 @@ module Vienna
       # self.frame_size = size
     end
     
+    def draw_rect(dirty_rect)
+      draw_background_in_clip_rect(@bounds)
+      
+      puts "drawing #{number_of_rows} rows"
+      
+      number_of_rows.times do |row|
+        draw_row(row, clip_rect:@bounds)
+      end
+    end
+    
+    
     # Complete render (every row, every cell)
     def render(context)
+      # puts 'rendering tableview..'
+      # puts "ranges: "
+      # puts @selected_row_indexes.ranges
       _synchronize_render_context_with_row_data(context)
       render_background_in_clip_rect(@bounds, context)
       
@@ -342,56 +364,45 @@ module Vienna
     
     # Render the row number, row, with context. This context is the row context, not
     # the tableview's main context.
-    def render_row(row, clip_rect, context)
-      color = (row * 10) + 150
-      # context.css # :background_color => "rgb(#{color},#{color},#{color})"
-      # check we have enough 'children' i.e. enough columns to draw in
-      children = context.child_nodes
-      columns = number_of_columns
-      # puts "Row #{row} needs #{columns} children, but only has #{children} currently."
-      if children < columns
-        (columns - children).times do |i|
-          context << "<div></div>"
-        end
-      elsif columns < children
-        # need to remove surplus rows
-      else
-        # we have the right number... dont add/remove anything...
-      end
-      
-      # background color
-      if row.odd?
-        context.css :background_color => 'rgb(234, 234, 234)'
-      end
-      
-      columns.times do |column|
-        data_cell = prepared_cell_at_column(column, row:row)
-        table_column = @table_columns[column]
-        
-        if @delegate && @delegate.respond_to?('table_view:will_display_cell:for_table_column:row:')
-          @delegate.table_view(self, will_display_cell:data_cell, for_table_column:table_column, row:row)
+    # 
+    # Everytime we want to alter a row, its easier just to redraw the whole row.
+    # Using the render caching, it makes it more efficient than to keep touching
+    # the dom to see where we are
+    # 
+    def render_row(row, clip_rect, row_context)
+      # row_is_selected = row_selected?(row)
+      # puts "renderinf row: #{row}"
+      row_context.build do
+        # # background color
+        if row.odd?
+          row_context.css :background_color => 'rgb(240, 240, 240)'
+        else
+          row_context.css :background => 'none'
         end
         
-        cell_frame = frame_of_cell_at_column(column, row:row)
+        if row_selected?(row)
+          row_context.css :background_color => Color.selected_control_color.rgb_string
+        end
+        
+        number_of_columns.times do |column|
+          data_cell = prepared_cell_at_column(column, row:row)
+          table_column = @table_columns[column]
 
-        context.child_node(column) do |column_context|
-          # not first time if less than original children
-          if column < children
-            column_context.first_time = false
-          else # first time if not less than original children
-            column_context.first_time = true
+          if @delegate && @delegate.respond_to?('table_view:will_display_cell:for_table_column:row:')
+            @delegate.table_view(self, will_display_cell:data_cell, for_table_column:table_column, row:row)
           end
-          RenderContext.current_context = column_context
           
-          # column_context.css :width => '100px', :height => '19px'
-          column_context.frame = cell_frame
-          
-          data_cell.render_with_frame(cell_frame, in_view:self)
+          cell_frame = frame_of_cell_at_column(column, row:row)
+
+          row_context.append :div do |column_context|
+            column_context.frame = cell_frame
+            data_cell.render_with_frame(cell_frame, in_view:self)
+          end
         end
+        
       end
     end
 
-    
     
     
     def reload_data_for_row_indexes(row_indexes, column_indexes:column_indexes)
@@ -506,8 +517,18 @@ module Vienna
       
     end
     
-    def select_row_indexes indexes, by_extending_selection:extend_flag
+    def select_row_indexes(indexes, by_extending_selection:extend_flag)
+      return if (indexes.first_index < 0) || (indexes.last_index >= number_of_rows)
       
+      if extend_flag
+        @selected_row_indexes.add_indexes(indexes)
+      else
+        @selected_row_indexes = indexes
+      end
+      
+      # FIXME: here, we could keep a list of exactly which rows have changed for
+      # more optimized drawing/rendering..
+      self.needs_display = true
     end
     
     def selected_column_indexes
@@ -538,8 +559,8 @@ module Vienna
       
     end
     
-    def row_selected? row
-      
+    def row_selected?(row)
+      @selected_row_indexes.include?(row) ? true : false
     end
     
     def number_of_selected_columns
@@ -593,6 +614,9 @@ module Vienna
         result.height += @row_height + @intercell_spacing.height
       `}`
       
+      result.width = @table_columns[column].width + @intercell_spacing.width
+      # result.height = @bounds.height
+      
       result
     end
     
@@ -618,20 +642,37 @@ module Vienna
       result
     end
     
-    def column_indexes_in_rect rect
+    def column_indexes_in_rect(rect)
       
     end
     
-    def rows_in_rect rect
+    def rows_in_rect(rect)
       
     end
     
-    def column_at_point point
-      
+    def column_at_point(point)
+      result = -1
+      i = 0
+      columns = number_of_columns
+      `for (i = 0; i < #{columns}; i++) {`
+        if point.in_rect?(rect_of_column(i))
+          return i
+        end
+      `}`
+      return result      
     end
     
-    def row_at_point point
+    def row_at_point(point)
+      result = -1
+      i = 0
+      rows = number_of_rows
       
+      `for (i = 0; i < #{rows}; i++) {`
+        if point.in_rect?(rect_of_row(i))
+          return i
+        end
+      `}`
+      return result
     end
     
     def frame_of_cell_at_column(column, row:row)
@@ -645,9 +686,11 @@ module Vienna
       end
 
       # dont do this in render mode....
-      # row.times do |i|
-      #   result.y += @row_height + @intercell_spacing.height
-      # end
+      unless display_mode == :render
+        row.times do |i|
+          result.y += @row_height + @intercell_spacing.height
+        end
+      end
       
       result.width = @table_columns[column].width + @intercell_spacing.width
       result.height = @row_height + @intercell_spacing.height
@@ -723,31 +766,132 @@ module Vienna
     
     
     def mouse_down(the_event)
-      puts 'mouse down'
+      # `console.profile('mouse down tableview');`
       location = convert_point(the_event.location_in_window, from_view:nil)
-      puts "#{location.x}, #{location.y}"
+      @clicked_column = column_at_point(location)
+      @clicked_row = row_at_point(location)
+      # puts "row was #{@clicked_row}, column was #{@clicked_column}"
+      
+      if @clicked_row == -1
+        select_row_indexes(IndexSet.new, by_extending_selection:false)
+      end
+      
+      # for the moment, assume no double click action... (this should be caught)
+      # double action ~ go into cell edit mode
+      if true
+        # check delegate to see if selection should chnage... return if not
+        
+        # assume no modification keys
+        if true
+          # asume nomal mouse action: dragging selects new rows etc
+          _track_selection_event(the_event)
+        end
+      end
+    end
+    
+    # handles selecting rows/cells without dragging the content out of the tableview
+    # i.e 'normal' mouse action inside table
+    def _track_selection_event(the_event)
+      select_row_indexes(IndexSet.index_set_with_index(@clicked_row), by_extending_selection:false)
+      mouse_down_row = @clicked_row
+      last_row = mouse_down_row
+      # only if table view allows multiple selections..    
+      if allows_multiple_selection? || true
+        App.bind_events [:left_mouse_up, :left_mouse_dragged] do |the_event|
+          # puts 'tracking mouse in table view..'
+          location = convert_point(the_event.location_in_window, from_view:nil)
+          @clicked_row = row_at_point(location)
+          # dont render if we are still in same row as last time... everytime we
+          # move mouse we would have to draw... very bad...
+          unless last_row == @clicked_row
+            # puts 'rendering..'
+            select_row_indexes(IndexSet.index_set_with_indexes_in_range(mouse_down_row..(@clicked_row + 1)), by_extending_selection:false)
+          end
+          last_row = @clicked_row
+          if the_event.type == :left_mouse_up
+            App.unbind_events
+            # `console.profileEnd();`
+          end
+        end
+      end
     end
     
     
     
-    def edit_column column, row:row, with_event:the_event, select:select
+    def edit_column(column, row:row, with_event:the_event, select:select)
       
     end
     
-    def draw_row row, clip_rect:clip_rect
+    def draw_row(row, clip_rect:clip_rect)
+      ctx = GraphicsContext.current_context.graphics_port
+      columns = number_of_columns
+      # This should be done somewhere else (draw_background_in_clip_rect....)
+      # this currently only draws background for number of rows... if tableview is
+      # bigger, then those rows will not be drawn with a background... looks a tad
+      # silly.
+      if row.odd?
+        rect_of_row = rect_of_row(row)
+        Color.control_alternating_row_background_colors.set
+        GraphicsContext.current_context.rect(rect_of_row.x, rect_of_row.y, rect_of_row.width, rect_of_row.height)
+      end
+      
+      columns.times do |column|
+        data_cell = prepared_cell_at_column(column, row:row)
+        table_column = @table_columns[column]
+        # allow delegate to alter cell, if needed
+        if @delegate && @delegate.respond_to?('table_view:will_display_cell:for_table_column:row:')
+          @delegate.table_view(self, will_display_cell:data_cell, for_table_column:table_column, row:row)
+        end
+        
+        cell_frame = frame_of_cell_at_column(column, row:row)
+        data_cell.draw_with_frame(cell_frame, in_view:self)
+      end
+      
+      # if row.odd?
+      #   context.css :background_color => 'rgb(234, 234, 234)'
+      # end
+      # 
+      # columns.times do |column|
+      #   data_cell = prepared_cell_at_column(column, row:row)
+      #   table_column = @table_columns[column]
+      #   
+      #   if @delegate && @delegate.respond_to?('table_view:will_display_cell:for_table_column:row:')
+      #     @delegate.table_view(self, will_display_cell:data_cell, for_table_column:table_column, row:row)
+      #   end
+      #   
+      #   cell_frame = frame_of_cell_at_column(column, row:row)
+      # 
+      #   context.child_node(column) do |column_context|
+      #     # not first time if less than original children
+      #     if column < children
+      #       column_context.first_time = false
+      #     else # first time if not less than original children
+      #       column_context.first_time = true
+      #     end
+      #     RenderContext.current_context = column_context
+      #     
+      #     # column_context.css :width => '100px', :height => '19px'
+      #     column_context.frame = cell_frame
+      #     
+      #     data_cell.render_with_frame(cell_frame, in_view:self)
+      #   end
+      # end
+    end
+    
+    def highlight_selection_in_clip_rect(clip_rect)
       
     end
     
-    def highlight_selection_in_clip_rect clip_rect
+    def draw_grid_in_clip_rect(clip_rect)
       
     end
     
-    def draw_grid_in_clip_rect clip_rect
+    def draw_background_in_clip_rect(clip_rect)
+      ctx = GraphicsContext.current_context
       
-    end
-    
-    def draw_background_in_clip_rect clip_rect
+      Color.white_color.set
       
+      ctx.rect(0,0,clip_rect.width, clip_rect.height)
     end
   end
   

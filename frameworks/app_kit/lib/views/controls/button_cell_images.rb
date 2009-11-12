@@ -72,23 +72,114 @@ module Vienna
     }
     
     # Switch Images - default blue control tint
-    SWITCH_IMAGE_REGULAR = Image.sprite :controls, normal:[0, 0, 15, 16], gray_mask:[0, 17, 15, 16], disabled:[0, 34, 15, 16]
-    SWITCH_HIGHLIGHTED_IMAGE_REGULAR = Image.sprite :controls, normal:[16, 0, 15, 16], gray_mask:[16, 17, 15, 16], disabled:[16, 34, 15, 16]
-    
-    SWITCH_IMAGE_SMALL = Image.sprite :controls, normal:[0, 51, 12, 13], gray_mask:[0, 65, 12, 13], disabled:[0, 79, 12, 13]
-    SWITCH_HIGHLIGHTED_IMAGE_SMALL = Image.sprite :controls, normal:[13, 51, 12, 13], gray_mask:[13, 65, 12, 13], disabled:[13, 79, 12, 13]
-    
-    SWITCH_IMAGE_MINI = Image.sprite :controls, normal:[0, 93, 10, 11], gray_mask:[0, 105, 10, 11], disabled:[0, 117, 10, 11]
-    SWITCH_HIGHLIGHTED_IMAGE_MINI = Image.sprite :controls, normal:[11, 93, 10, 11], gray_mask:[11, 105, 10, 11], disabled:[11, 117, 10, 11]
-    
-    # Switch Images - graphite control tint
-    SWITCH_IMAGE_REGULAR_GRAPHITE = Image.sprite :controls, normal:[0, 129, 15, 16], gray_mask:[0, 146, 15, 16], disabled:[0, 163, 15, 16]
-    SWITCH_HIGHLIGHTED_IMAGE_REGULAR_GRAPHITE = Image.sprite :controls, normal:[16, 129, 15, 16], gray_mask:[16, 146, 15, 16], disabled:[16, 163, 15, 16]
-    
-    SWITCH_IMAGE_SMALL_GRAPHITE = Image.sprite :controls, normal:[0, 180, 12, 13], gray_mask:[0, 194, 12, 13], disabled:[0, 208, 12, 13]
-    SWITCH_HIGHLIGHTED_IMAGE_SMALL_GRAPHITE = Image.sprite :controls, normal:[13, 180, 12, 13], gray_mask:[13, 194, 12, 13], disabled:[13, 208, 12, 13]
-    
-    SWITCH_IMAGE_MINI_GRAPHITE = Image.sprite :controls, normal:[0, 222, 10, 11], gray_mask:[0, 234, 10, 11], disabled:[0, 246, 10, 11]
-    SWITCH_HIGHLIGHTED_IMAGE_MINI_GRAPHITE = Image.sprite :controls, normal:[11, 222, 10, 11], gray_mask:[11, 234, 10, 11], disabled:[11, 246, 10, 11] 
+    SWITCH_IMAGES = {
+      :blue => {
+        :regular => {
+          :normal => ThreeStateImage.new(
+            Image.image_named('switch_blue_regular_normal'),
+            Image.image_named('switch_blue_regular_highlighted'),
+            Image.image_named('switch_blue_regular_disabled')),
+          
+          :alternate => ThreeStateImage.new(
+            Image.image_named('switch_blue_regular_alternate'),
+            Image.image_named('switch_blue_regular_alternate_highlighted'),
+            Image.image_named('switch_blue_regular_alternate_disabled'))
+        },
+        :small => {
+          :normal => ThreeStateImage.new(
+            Image.image_named('switch_blue_small_normal'),
+            Image.image_named('switch_blue_small_highlighted'),
+            Image.image_named('switch_blue_small_disabled')),
+          
+          :alternate => ThreeStateImage.new(
+            Image.image_named('switch_blue_small_alternate'),
+            Image.image_named('switch_blue_small_alternate_highlighted'),
+            Image.image_named('switch_blue_small_alternate_disabled'))
+        },
+        :mini => {
+          :normal => ThreeStateImage.new(
+            Image.image_named('switch_blue_mini_normal'),
+            Image.image_named('switch_blue_mini_highlighted'),
+            Image.image_named('switch_blue_mini_disabled')),
+          
+          :alternate => ThreeStateImage.new(
+            Image.image_named('switch_blue_mini_alternate'),
+            Image.image_named('switch_blue_mini_alternate_highlighted'),
+            Image.image_named('switch_blue_mini_alternate_disabled'))
+        }
+      },
+      
+      :graphite => {
+        :regular => {
+          :normal => ThreeStateImage.new(
+            Image.image_named('switch_blue_regular_normal'),
+            Image.image_named('switch_blue_regular_highlighted'),
+            Image.image_named('switch_blue_regular_disabled')),
+          
+          :alternate => ThreeStateImage.new(
+            Image.image_named('switch_blue_regular_alternate'),
+            Image.image_named('switch_blue_regular_alternate_highlighted'),
+            Image.image_named('switch_blue_regular_alternate_disabled'))
+        },
+        :small => {
+          :normal => ThreeStateImage.new(
+            Image.image_named('switch_blue_small_normal'),
+            Image.image_named('switch_blue_small_highlighted'),
+            Image.image_named('switch_blue_small_disabled')),
+          
+          :alternate => ThreeStateImage.new(
+            Image.image_named('switch_blue_small_alternate'),
+            Image.image_named('switch_blue_small_alternate_highlighted'),
+            Image.image_named('switch_blue_small_alternate_disabled'))
+        },
+        :mini => {
+          :normal => ThreeStateImage.new(
+            Image.image_named('switch_blue_mini_normal'),
+            Image.image_named('switch_blue_mini_highlighted'),
+            Image.image_named('switch_blue_mini_disabled')),
+          
+          :alternate => ThreeStateImage.new(
+            Image.image_named('switch_blue_mini_alternate'),
+            Image.image_named('switch_blue_mini_alternate_highlighted'),
+            Image.image_named('switch_blue_mini_alternate_disabled'))
+        }
+      },
+      
+      :hud => {
+        :regular => {
+          :normal => ThreeStateImage.new(
+            Image.image_named('switch_blue_regular_normal'),
+            Image.image_named('switch_blue_regular_highlighted'),
+            Image.image_named('switch_blue_regular_disabled')),
+          
+          :alternate => ThreeStateImage.new(
+            Image.image_named('switch_blue_regular_alternate'),
+            Image.image_named('switch_blue_regular_alternate_highlighted'),
+            Image.image_named('switch_blue_regular_alternate_disabled'))
+        },
+        :small => {
+          :normal => ThreeStateImage.new(
+            Image.image_named('switch_blue_small_normal'),
+            Image.image_named('switch_blue_small_highlighted'),
+            Image.image_named('switch_blue_small_disabled')),
+          
+          :alternate => ThreeStateImage.new(
+            Image.image_named('switch_blue_small_alternate'),
+            Image.image_named('switch_blue_small_alternate_highlighted'),
+            Image.image_named('switch_blue_small_alternate_disabled'))
+        },
+        :mini => {
+          :normal => ThreeStateImage.new(
+            Image.image_named('switch_blue_mini_normal'),
+            Image.image_named('switch_blue_mini_highlighted'),
+            Image.image_named('switch_blue_mini_disabled')),
+          
+          :alternate => ThreeStateImage.new(
+            Image.image_named('switch_blue_mini_alternate'),
+            Image.image_named('switch_blue_mini_alternate_highlighted'),
+            Image.image_named('switch_blue_mini_alternate_disabled'))
+        }
+      }
+    }
   end
 end

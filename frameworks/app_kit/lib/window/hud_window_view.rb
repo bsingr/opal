@@ -40,29 +40,21 @@ module Vienna
       super frame, style_mask
       
       if @style_mask.include? :closable
-            @close_button = Button.build :frame => Rect.new(5, 3, 13, 13), :bordered => false do |close|
-              close.bordered = false
-              close.image_position = :image_only
-              close.image = CLOSE_IMAGE
-              close.alternate_image = CLOSE_HIGHLIGHTED_IMAGE
-              self << close
-              close.needs_display = true
-            end
-          end
-    end
-    
-    def class_name
-      'vn-hud-window-view'
-    end
-    
-    def render context
-      if context.first_time?
-        context << "<div class='titlebar'><div class='left'></div><div class='middle'></div><div class='right'></div><div class='splitter'></div></div>"
-        context << "<div class='body'></div>"
-        context << "<div class='bottom'><div class='left'></div><div class='middle'></div><div class='right'></div></div>"
-        context.first_time = false
+        @close_button = Button.build :frame => Rect.new(5, 3, 13, 13), :bordered => false do |close|
+          close.bordered = false
+          close.image_position = :image_only
+          close.image = CLOSE_IMAGE
+          close.alternate_image = CLOSE_HIGHLIGHTED_IMAGE
+          self << close
+          close.needs_display = true
+        end
       end
-      context.class_name = class_name
+    end
+        
+    def render(context)
+      context.build do
+        context.css :background_color => 'rgba(35,35,35,0.85)'
+      end
     end
   end
   

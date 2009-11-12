@@ -37,7 +37,7 @@ self.$def_s(s$bs,function(self,_,change,indexes,a_key){
 })(self);
 return self.$i_s(i$h,VN.$h());
 });
-})(_N(self,c$i,cObject));
+})(_N(self,c$j,cObject));
 (function(self) {
 self.$def(s$bt,function(self,_,observer,indexes,key_path,options,context){
 });
@@ -47,7 +47,7 @@ self.$def(s$bo,function(self,_,observer,key_path,options,context){
 });
 self.$def(s$bq,function(self,_,observer,key_path){
 });
-})(_N(self,c$j,cObject));
+})(_N(self,c$k,cObject));
 (function(self) {
 _I(self,s$az,function(self,_,key){
 return _E(self,s$al,key);
@@ -69,5 +69,5 @@ return self.$i_s(i$i,info);
 _I(self,s$by,function(self,_){
 return _H(self,i$i);
 });
-})(_N(self,c$i,cObject));
+})(_N(self,c$j,cObject));
 })(_K(c$b));

@@ -119,7 +119,7 @@ module RubyWebApp
           end
         end
         # 
-        Vienna::TextField.build :frame => VN::Rect.new(50, 310, 180, 26), :editable => true do |text|
+        Vienna::TextField.build :frame => VN::Rect.new(50, 310, 180, 24), :editable => true do |text|
           win << text
           text.needs_display = true
         end
@@ -158,10 +158,10 @@ module RubyWebApp
           scroll_view.tile
         end
 
-        
-        gauge_view = Vienna::GaugeView.build :frame => VN::Rect.new(300, 275, 250, 100), :bob => true do |gauge_view|
-          win << gauge_view
-        end
+        # 
+        # gauge_view = Vienna::GaugeView.build :frame => VN::Rect.new(300, 275, 250, 100), :bob => true do |gauge_view|
+        #   win << gauge_view
+        # end
     end  
   end
 end

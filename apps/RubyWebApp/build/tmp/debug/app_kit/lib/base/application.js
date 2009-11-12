@@ -7,119 +7,119 @@ self.$c_s('RUN_LOOP_MODES',VN.$h(_$t, 0, _$u, 1, _$v, 2));
 _E(self,s$l,_$w,_$x,_$y);
 _E(self,s$bz,_$z);
 _I(self,s$n,function(self,_){
-self.$i_s(i$s,[]);
-self.$i_s(i$t,[]);
 self.$i_s(i$u,[]);
-self.$i_s(i$v,nil);
-return self.$i_s(i$w,_$t);
+self.$i_s(i$v,[]);
+self.$i_s(i$w,[]);
+self.$i_s(i$x,nil);
+return self.$i_s(i$y,_$t);
 });
-_I(self,s$eo,function(self,_){
-return _H(self,i$w);
+_I(self,s$fk,function(self,_){
+return _H(self,i$y);
 });
-_I(self,s$ep,function(self,_,types,block){
-self.$i_s(i$w,_$v);
-self.$i_s(i$x,types);
-self.$i_s(i$y,block);
-self.$i_s(i$z,_E(_E(self,s$eq),s$er));
-if(_A(_E(types,s$es,_$aa))){
+_I(self,s$fl,function(self,_,types,block){
+self.$i_s(i$y,_$v);
+self.$i_s(i$z,types);
+self.$i_s(i$aa,block);
+self.$i_s(i$ab,_E(_E(self,s$fm),s$fn));
+if(_A(_E(types,s$ea,_$aa))){
 _E(self.$klass.$c_g_full(c$c),s$f,_$ab,function(evt){
-var the_event=_E(self.$klass.$c_g_full(c$q),s$et,evt,nil,_$aa);
-return _E(self,s$eu,the_event);
+var the_event=_E(self.$klass.$c_g_full(c$s),s$fo,evt,nil,_$aa);
+return _E(self,s$fp,the_event);
 });
 }
 });
-_I(self,s$ev,function(self,_){
-self.$i_s(i$w,_$t);
-if(_A(_E(_H(self,i$x),s$es,_$aa))){
+_I(self,s$fq,function(self,_){
+self.$i_s(i$y,_$t);
+if(_A(_E(_H(self,i$z),s$ea,_$aa))){
 _E(self.$klass.$c_g_full(c$c),s$i,_$ab);
 }
 });
-_I(self,s$eq,function(self,_){
-return _H(self,i$aa);
+_I(self,s$fm,function(self,_){
+return _H(self,i$ac);
 });
-_I(self,s$eu,function(self,_,the_event){
-self.$i_s(i$aa,the_event);
-if(_A(_E(_H(self,i$w),s$ad,_$v))){
-if(_A(_E(_H(self,i$x),s$es,_E(the_event,s$ew)))){
-_E(the_event,s$ex,_H(self,i$z));
-_E(_H(self,i$y),s$ao,the_event);
+_I(self,s$fp,function(self,_,the_event){
+self.$i_s(i$ac,the_event);
+if(_A(_E(_H(self,i$y),s$ad,_$v))){
+if(_A(_E(_H(self,i$z),s$ea,_E(the_event,s$fr)))){
+_E(the_event,s$fs,_H(self,i$ab));
+_E(_H(self,i$aa),s$ao,the_event);
 }
 return ;
 }
-return _E(_E(the_event,s$er),s$eu,the_event);
+return _E(_E(the_event,s$fn),s$fp,the_event);
 });
-_I(self,s$ey,function(self,_,view,flag){
-if(!_A(_E(_H(self,i$u),s$ez,view))){
-_E(_H(self,i$u),s$e,view);
+_I(self,s$ft,function(self,_,view,flag){
+if(!_A(_E(_H(self,i$w),s$fu,view))){
+_E(_H(self,i$w),s$e,view);
 }
 });
-_I(self,s$fa,function(self,_){
-_E(_H(self,i$u),s$r,function(view){
-return _E(view,s$fb);
+_I(self,s$fv,function(self,_){
+_E(_H(self,i$w),s$r,function(view){
+return _E(view,s$fw);
 });
-return self.$i_s(i$u,[]);
+return self.$i_s(i$w,[]);
 });
-_I(self,s$fc,function(self,_,window){
+_I(self,s$fx,function(self,_,window){
 return 0;
 });
 _I(self,s$e,function(self,_,window){
-return _E(self,s$fc,window);
+return _E(self,s$fx,window);
 });
-self.$def_s(s$fd,function(self,_){
-return self.$i_s(i$ab,ORTEST(_H(self,i$ab),_E(self,s$ap)));
+self.$def_s(s$fy,function(self,_){
+return self.$i_s(i$ad,ORTEST(_H(self,i$ad),_E(self,s$ap)));
 });
-_I(self,s$fe,function(self,_,obj){
-if(_A(_E(_H(self,i$v),s$ad,obj))){
+_I(self,s$fz,function(self,_,obj){
+if(_A(_E(_H(self,i$x),s$ad,obj))){
 return ;
 }
-var nc=_E(self.$klass.$c_g_full(c$r).$c_g('NotificationCenter'),s$cd);
-if(_A(_H(self,i$v))){
-_E(nc,s$cm,_H(self,i$v),self.$klass.$c_g_full(c$s),self);
-_E(nc,s$cm,_H(self,i$v),self.$klass.$c_g_full(c$t),self);
-_E(nc,s$cm,_H(self,i$v),self.$klass.$c_g_full(c$u),self);
+var nc=_E(self.$klass.$c_g_full(c$t).$c_g('NotificationCenter'),s$cd);
+if(_A(_H(self,i$x))){
+_E(nc,s$cm,_H(self,i$x),self.$klass.$c_g_full(c$u),self);
+_E(nc,s$cm,_H(self,i$x),self.$klass.$c_g_full(c$v),self);
+_E(nc,s$cm,_H(self,i$x),self.$klass.$c_g_full(c$w),self);
 }
-self.$i_s(i$v,obj);
-if(_A(_E(_H(self,i$v),s$av,_$ac))){
-_E(nc,s$ce,_H(self,i$v),'will_finish_launching',self.$klass.$c_g_full(c$s),self);
+self.$i_s(i$x,obj);
+if(_A(_E(_H(self,i$x),s$av,_$ac))){
+_E(nc,s$ce,_H(self,i$x),'will_finish_launching',self.$klass.$c_g_full(c$u),self);
 }
-if(_A(_E(_H(self,i$v),s$av,_$ad))){
-_E(nc,s$ce,_H(self,i$v),'did_finish_launching',self.$klass.$c_g_full(c$t),self);
+if(_A(_E(_H(self,i$x),s$av,_$ad))){
+_E(nc,s$ce,_H(self,i$x),'did_finish_launching',self.$klass.$c_g_full(c$v),self);
 }
 });
-_I(self,s$ff,function(self,_){
+_I(self,s$ga,function(self,_){
 return true;
 });
-_I(self,s$fg,function(self,_){
-_E(self.$klass.$c_g_full(c$v),s$g,_$ae,_$af);
-if(_A(_H(self,i$ac))){
-_E(_H(self,i$ac),s$ao,self);
+_I(self,s$gb,function(self,_){
+_E(self.$klass.$c_g_full(c$x),s$g,_$ae,_$af);
+if(_A(_H(self,i$ae))){
+_E(_H(self,i$ae),s$ao,self);
 }
 _E(self.$klass.$c_g_full(c$c),s$f,_$ag,function(evt){
-if(_A(_E(_E(self.$klass.$c_g_full(c$w),s$eo),s$ad,_$v))){
-var the_event=_E(self.$klass.$c_g_full(c$q),s$et,evt,nil,_$ah);
-_E(self,s$eu,the_event);
+if(_A(_E(_E(self.$klass.$c_g_full(c$y),s$fk),s$ad,_$v))){
+var the_event=_E(self.$klass.$c_g_full(c$s),s$fo,evt,nil,_$ah);
+_E(self,s$fp,the_event);
 }
 });
 _E(self.$klass.$c_g_full(c$c),s$f,_$ai,function(evt){
-if(_A(_E(_E(self.$klass.$c_g_full(c$w),s$eo),s$ad,_$v))){
-var the_event=_E(self.$klass.$c_g_full(c$q),s$et,evt,nil,_$aj);
-_E(self,s$eu,the_event);
+if(_A(_E(_E(self.$klass.$c_g_full(c$y),s$fk),s$ad,_$v))){
+var the_event=_E(self.$klass.$c_g_full(c$s),s$fo,evt,nil,_$aj);
+_E(self,s$fp,the_event);
 }
 });
-var nc=_E(self.$klass.$c_g_full(c$n),s$cd);
-_E(nc,s$ck,self.$klass.$c_g_full(c$s),self);
-return _E(nc,s$ck,self.$klass.$c_g_full(c$t),self);
+var nc=_E(self.$klass.$c_g_full(c$o),s$cd);
+_E(nc,s$ck,self.$klass.$c_g_full(c$u),self);
+return _E(nc,s$ck,self.$klass.$c_g_full(c$v),self);
 });
-_I(self,s$fh,function(self,_,block){
-return self.$i_s(i$ac,block);
+_I(self,s$gc,function(self,_,block){
+return self.$i_s(i$ae,block);
 });
-self.$def(s$fi,function(self,_,action,target,sender){
+self.$def(s$gd,function(self,_,action,target,sender){
 if(_A(ANDTEST(action,target))){
 _E(target,s$ar,action,sender);
 }
 });
-})(_N(self,c$x,cObject));
-console.log('this pare');self.$c_s('App',_E(self.$c_g_full(c$x),s$fd));
+})(_N(self,c$z,cObject));
+console.log('this pare');self.$c_s('App',_E(self.$c_g_full(c$z),s$fy));
 console.log('ermmm');})(_K(c$b));
-window.onload = function() {_E(cObject.$c_g(c$r).$c_g('App'),s$fg);
+window.onload = function() {_E(cObject.$c_g(c$t).$c_g('App'),s$gb);
 };

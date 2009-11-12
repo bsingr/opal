@@ -426,7 +426,16 @@ module Vienna
         # write ",s$#{js_id_for_string(definition[:fname])}, function(self, _cmd"
       else
         # write "self.$def(s$#{js_id_for_string(definition[:fname])},function(self,_cmd"
-        write "#{js_replacement_function_name('rb_define_method')}(self,s$#{js_id_for_string(definition[:fname])},function(self,_"
+        write "#{js_replacement_function_name('rb_define_method')}("
+        
+        if context[:top_level]
+          write "rb_cObject"
+        else
+          write "self"
+        end
+        
+        write ",s$#{js_id_for_string(definition[:fname])},function(self,_"
+        # write "/* #{current_self} */"
       end
       
       # js_id_for_string(definition[:fname])

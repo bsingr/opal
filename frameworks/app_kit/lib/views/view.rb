@@ -512,6 +512,8 @@ module Vienna
       GraphicsContext.current_context = @display_context
       unless display_mode == :render
         `#{@display_context.graphics_port}.clearRect(0, 0, #{bounds.width}, #{bounds.height});`
+      else
+        # @display_context.inner_html = ""
       end
     end
     
