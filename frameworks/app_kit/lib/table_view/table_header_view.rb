@@ -48,43 +48,48 @@ module Vienna
     end
     
     def render(context)
-      if context.first_time?
-        context.class_name = class_name
-        context.first_time = false
+      
+      context.build do
+        HEADER_BACKGROUND.render_with_frame(@bounds)
       end
       
-      children = context.child_nodes
+      # if context.first_time?
+        # context.class_name = class_name
+        # context.first_time = false
+      # end
       
-      table_columns = @table_view.table_columns
-      i = 0
-      columns = table_columns.length
-      intercell_spacing = @table_view.intercell_spacing
-      cell_frame = Rect.new(0, 0, bounds.width, bounds.height)
-      
-      if children < columns
-        (columns - children).times do |i|
-          context << "<div></div>"
-        end
-      end
-      
-      columns.times do |i|
-        column = table_columns[i]
-        width = column.width + intercell_spacing.width
-        cell_frame.width = width
-        
-        context.child_node(i) do |column_context|
-          if i < children
-            column_context.first_time = false
-          else
-            column_context.first_time = true
-          end
-          # RenderContext.current_context = column_context
-          column_context.frame = cell_frame
-          column.header_cell.render_with_frame(cell_frame, in_view:self)
-        end
-
-        cell_frame.x += width
-      end
+      # children = context.child_nodes
+      # 
+      # table_columns = @table_view.table_columns
+      # i = 0
+      # columns = table_columns.length
+      # intercell_spacing = @table_view.intercell_spacing
+      # cell_frame = Rect.new(0, 0, bounds.width, bounds.height)
+      # 
+      # if children < columns
+      #   (columns - children).times do |i|
+      #     context << "<div></div>"
+      #   end
+      # end
+      # 
+      # columns.times do |i|
+      #   column = table_columns[i]
+      #   width = column.width + intercell_spacing.width
+      #   cell_frame.width = width
+      #   
+      #   context.child_node(i) do |column_context|
+      #     if i < children
+      #       column_context.first_time = false
+      #     else
+      #       column_context.first_time = true
+      #     end
+      #     # RenderContext.current_context = column_context
+      #     column_context.frame = cell_frame
+      #     column.header_cell.render_with_frame(cell_frame, in_view:self)
+      #   end
+      # 
+      #   cell_frame.x += width
+      # end
     end
     
     def table_view=(table_view)

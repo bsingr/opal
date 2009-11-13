@@ -362,6 +362,11 @@ module Vienna
       
     end
     
+    # override for custom behavious
+    def resize_subviews_with_old_size(size)
+      tile
+    end
+    
     
     def scroll_wheel(the_event)
       

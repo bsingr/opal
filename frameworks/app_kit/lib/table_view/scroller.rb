@@ -55,13 +55,37 @@ module Vienna
   
   class Scroller < Control
     
-    # V_KNOB_IMAGE = ThreePartImage.new([Image.image_named('scroller_vertical_knob_top'),
-    #                                    Image.image_named('scroller_vertical_knob_middle'),
-    #                                    Image.image_named('scroller_vertical_knob_bottom')], true)
-    # 
-    # H_KNOB_IMAGE = ThreePartImage.new([Image.image_named('scroller_horizontal_knob_left'),
-    #                                    Image.image_named('scroller_horizontal_knob_middle',
-    #                                    Image.image_named('scroller_horizontal_knob_right'))])
+    V_KNOB_IMAGE = ThreePartImage.new(Image.image_named('scroller_vertical_knob_top'),
+                                       Image.image_named('scroller_vertical_knob_middle'),
+                                       Image.image_named('scroller_vertical_knob_bottom'), true)
+    
+    H_KNOB_IMAGE = ThreePartImage.new(Image.image_named('scroller_horizontal_knob_left'),
+                                       Image.image_named('scroller_horizontal_knob_middle'),
+                                       Image.image_named('scroller_horizontal_knob_right'))
+                                       
+    LEFT_ARROW = {
+      :normal     => Image.image_named('scroller_left_arrow')
+    }
+    
+    RIGHT_ARROW = {
+      :normal     => Image.image_named('scroller_right_arrow')
+    }
+    
+    H_TRACK = {
+      :normal     => Image.image_named('scroller_horizontal_track')
+    }
+    
+    V_TRACK = {
+      :normal     => Image.image_named('scroller_vertical_track')
+    }
+    
+    TOP_ARROW = {
+      :normal     => Image.image_named('scroller_top_arrow')
+    }
+    
+    BOTTOM_ARROW = {
+      :normal     => Image.image_named('scroller_bottom_arrow')
+    }
     
     def self.scroller_width
       17
@@ -82,17 +106,47 @@ module Vienna
     end
     
     def render(context)
-      if context.first_time?
-        context << "<div class='dec-line'></div>"
-        context << "<div class='inc-line'></div>"
-        context << "<div class='knob'><div class='start'</div><div class='middle'></div><div class='end'></div></div>"
-        context.first_time = false
+      context.build do
+        if vertical?
+          # track
+          V_TRACK[:normal].render_with_frame(@bounds)
+          # arrows
+          TOP_ARROW[:normal].render_with_frame(Rect.new(0, 0, 17, 28))
+          BOTTOM_ARROW[:normal].render_with_frame(Rect.new(0, @bounds.height - 28, 17, 28))          
+        else
+          # track
+          H_TRACK[:normal].render_with_frame(@bounds)
+          # arrows
+          LEFT_ARROW[:normal].render_with_frame(Rect.new(0, 0, 28, 17))
+          RIGHT_ARROW[:normal].render_with_frame(Rect.new(@bounds.width - 28, 0, 28, 17))
+        end
+        
+        # knob
+        context.append :div do |knob|
+          knob_rect = rect_for_part(:knob)
+          knob.frame = knob_rect
+          knob_bounds = Rect.new(0, 0, knob_rect.width, knob_rect.height)
+          if vertical?
+            V_KNOB_IMAGE.render_with_frame(knob_bounds)
+          else
+            H_KNOB_IMAGE.render_with_frame(knob_bounds)
+          end
+        end
+        
+        
       end
-      context.class_name = class_name
       
-      context.selector :knob do |knob|
-        knob.frame = rect_for_part(:knob)
-      end
+      # if context.first_time?
+      #   context << "<div class='dec-line'></div>"
+      #   context << "<div class='inc-line'></div>"
+      #   context << "<div class='knob'><div class='start'</div><div class='middle'></div><div class='end'></div></div>"
+      #   context.first_time = false
+      # end
+      # context.class_name = class_name
+      # 
+      # context.selector :knob do |knob|
+      #   knob.frame = rect_for_part(:knob)
+      # end
       
     end
     

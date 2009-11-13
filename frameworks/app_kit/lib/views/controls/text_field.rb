@@ -59,6 +59,7 @@ module Vienna
     
     def mouse_down the_event
       App.current_event.allows_propagation = true
+      puts "mouse down in text field"
     end
     
     

@@ -1,5 +1,5 @@
 
-var RObject=function(klass,type){this.$klass=klass;this.$type=type;this.$iv_tbl={};return this;};var rb_ivar_set=function rb_ivar_set(obj,id,val){obj.$iv_tbl[id]=val;return val;};RObject.prototype.$i_s=function(id,val){this.$iv_tbl[id]=val;return val;};var rb_ivar_get=function rb_ivar_get(obj,id){if(obj.$iv_tbl[id]==undefined||obj.$iv_tbl[id]==null){return nil;}
+var RObject=function RObject(klass,type){this.$klass=klass;this.$type=type;this.$iv_tbl={};return this;};var rb_ivar_set=function rb_ivar_set(obj,id,val){obj.$iv_tbl[id]=val;return val;};RObject.prototype.$i_s=function(id,val){this.$iv_tbl[id]=val;return val;};var rb_ivar_get=function rb_ivar_get(obj,id){if(obj.$iv_tbl[id]==undefined||obj.$iv_tbl[id]==null){return nil;}
 return obj.$iv_tbl[id];};RObject.prototype.$i_g=function(id){if(this.$iv_tbl[id]==undefined||this.$iv_tbl[id]==null){return nil;}
 return this.$iv_tbl[id];};RObject.prototype.$=function(id,args){var method=this.$klass.$search_method(id);if(!method){console.log(this);throw'RObject#call cannot find method: '+id;}
 return method.apply(this,args);};var rb_funcall_stack=[];var rb_funcall=function rb_funcall(self,id){if(!self.$klass){console.log('ERROR: rb_funcall');console.log(self);console.log(id);}

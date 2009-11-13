@@ -425,6 +425,7 @@ module Vienna
     
     # Render the button
     def render_with_frame(cell_frame, in_view:control_view)
+      # puts "drawing button"
       @control_view = control_view 
       return if transparent?
           

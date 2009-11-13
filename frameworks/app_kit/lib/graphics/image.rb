@@ -379,15 +379,23 @@ module Vienna
     def initialize(part1, part2, part3, vertical)
       # if orientation is null, assume :horizontal. :vertical/:horizonal are the only valid values here
       @parts = [part1, part2, part3]
+      @vertical = vertical
     end
     
     def render_with_frame(frame)
-      ctx = RenderContext.current_context
-      # puts 'renderinf with frame..'
-      # ctx.inner_html = ""
-      ctx << "<div style='top:0px; left:0px; width:6px; height:#{frame.height}px; background-image: url(#{@parts[0].filename});'></div>"
-      ctx << "<div style='top:0px; left:6px; right:6px; height:#{frame.height}px; background-image: url(#{@parts[1].filename});'></div>"
-      ctx << "<div style='top:0px; width:6px; right:0px; height:#{frame.height}px; background-image: url(#{@parts[2].filename});'></div>"
+      if @vertical
+        top_size = @parts[0].size
+        bottom_size = @parts[2].size
+        @parts[0].render_in_rect(Rect.new(frame.x, frame.y, top_size.width, top_size.height), from_rect:Rect.new(0, 0, 0, 0), operation:nil, fraction:1.0)
+        @parts[1].render_in_rect(Rect.new(frame.x, frame.y + top_size.height, top_size.width, frame.height - (top_size.height + bottom_size.height)), from_rect:Rect.new(0, 0, 0, 0), operation:nil, fraction:1.0)
+        @parts[2].render_in_rect(Rect.new(frame.x, frame.height - bottom_size.height, top_size.width, bottom_size.height), from_rect:Rect.new(0, 0, 0, 0), operation:nil, fraction:1.0)
+      else
+        left_size = @parts[0].size
+        right_size = @parts[2].size
+        @parts[0].render_in_rect(Rect.new(frame.x, frame.y, left_size.width, left_size.height), from_rect:Rect.new(0, 0, 0, 0), operation:nil, fraction:1.0)
+        @parts[1].render_in_rect(Rect.new(frame.x + left_size.width, frame.y, frame.width - (left_size.width + right_size.width), left_size.height), from_rect:Rect.new(0, 0, 0, 0), operation:nil, fraction:1.0)
+        @parts[2].render_in_rect(Rect.new(frame.width - right_size.width, frame.y, right_size.width, left_size.height), from_rect:Rect.new(0, 0, 0, 0), operation:nil, fraction:1.0)
+      end
     end
     
     def draw_with_frame(frame)

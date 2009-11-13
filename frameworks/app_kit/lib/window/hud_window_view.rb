@@ -53,7 +53,7 @@ module Vienna
         
     def render(context)
       context.build do
-        context.css :background_color => 'rgba(35,35,35,0.85)'
+        context.css :background_color => 'rgb(35,35,35)'
       end
     end
   end

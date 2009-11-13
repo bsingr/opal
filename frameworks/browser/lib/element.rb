@@ -59,7 +59,7 @@ class Element
   end
   
   def set_attribute(key, value)
-    `#{element}.setAttribute(#{key}, value);`
+    `#{element}.setAttribute(#{key.to_s}, value);`
   end
   
   def src= obj
@@ -101,7 +101,10 @@ class Element
       # must be an element
       `#{element}.appendChild(#{other.element});`
     end
-    
+  end
+  
+  def append_raw_element(raw_element)
+    `#{element}.appendChild(#{raw_element});`
   end
   
   def inner_html= str

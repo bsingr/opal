@@ -1,79 +1,81 @@
 (function(self) {
-return _E(self.$c_g_full(c$b).$c_g('Builder'),s$ap,_$jv,function(builder){
-_E(self,s$al,"well, got here in builder");
-var app_delegate=_E(self.$klass.$c_g_full(c$cg).$c_g('AppController'),s$ap);
-_E(self.$klass.$c_g_full(c$t).$c_g('App'),s$fz,app_delegate);
-var app_observer=_E(self.$klass.$c_g_full(c$j),s$ap);
-window.app_observer = app_observer;_E(app_delegate,s$bo,app_observer,'adam',nil,'adams context');
+return _E(self.$c_g_full(c$b).$c_g('Builder'),s$aq,_$kg,function(builder){
+_E(self,s$am,"well, got here in builder");
+var app_delegate=_E(self.$klass.$c_g_full(c$cp).$c_g('AppController'),s$aq);
+_E(self.$klass.$c_g_full(c$t).$c_g('App'),s$ga,app_delegate);
+var app_observer=_E(self.$klass.$c_g_full(c$j),s$aq);
+window.app_observer = app_observer;_E(app_delegate,s$bp,app_observer,'adam',nil,'adams context');
 window.app_delegate = app_delegate;
-    var hud_window=_E(self.$klass.$c_g_full(c$b).$c_g('Window'),s$ap,_E(self.$klass.$c_g_full(c$t).$c_g('Rect'),s$ap,800,100,400,250),[_$hn,_$jd]);
-return _E(self.$klass.$c_g_full(c$b).$c_g('Window'),s$sc,VN.$h(_$gp,_E(self.$klass.$c_g_full(c$t).$c_g('Rect'),s$ap,50,100,700,400),_$dw,'My Window!'),function(win){
-_E(self.$klass.$c_g_full(c$b).$c_g('Button'),s$sc,VN.$h(_$gp,_E(self.$klass.$c_g_full(c$t).$c_g('Rect'),s$ap,10,40,90,24),_$kb,_$ik),function(button){
+    var hud_window=_E(self.$klass.$c_g_full(c$b).$c_g('Window'),s$aq,_E(self.$klass.$c_g_full(c$t).$c_g('Rect'),s$aq,800,100,400,250),[_$hs,_$jo]);
+return _E(self.$klass.$c_g_full(c$b).$c_g('Window'),s$se,VN.$h(_$gp,_E(self.$klass.$c_g_full(c$t).$c_g('Rect'),s$aq,50,100,700,400),_$dw,'My Window!'),function(win){
+_E(self.$klass.$c_g_full(c$b).$c_g('Button'),s$se,VN.$h(_$gp,_E(self.$klass.$c_g_full(c$t).$c_g('Rect'),s$aq,10,40,90,24),_$kl,_$ip),function(button){
 _E(win,s$e,button);
-_E(button,s$zt,'Disabled');
-_E(button,s$xm,false);
-_E(button,s$ta,_$gh);
-return _E(button,s$un,true);
+_E(button,s$zx,'Disabled');
+_E(button,s$xq,false);
+_E(button,s$tc,_$gh);
+return _E(button,s$um,true);
 });
-_E(self.$klass.$c_g_full(c$b).$c_g('Button'),s$sc,VN.$h(_$gp,_E(self.$klass.$c_g_full(c$t).$c_g('Rect'),s$ap,10,70,90,24),_$kb,_$ik),function(button){
+_E(self.$klass.$c_g_full(c$b).$c_g('Button'),s$se,VN.$h(_$gp,_E(self.$klass.$c_g_full(c$t).$c_g('Rect'),s$aq,10,70,90,24),_$kl,_$ip),function(button){
 _E(win,s$e,button);
-_E(button,s$zt,'Right');
-_E(button,s$ta,_$gg);
-return _E(button,s$un,true);
+_E(button,s$zx,'Right');
+_E(button,s$ux,[_$ee,_$gu]);
+_E(button,s$tc,_$gg);
+return _E(button,s$um,true);
 });
-_E(self.$klass.$c_g_full(c$b).$c_g('CheckBox'),s$sc,VN.$h(_$gp,_E(self.$klass.$c_g_full(c$t).$c_g('Rect'),s$ap,10,100,90,24),_$kb,_$ik),function(button){
+_E(self.$klass.$c_g_full(c$b).$c_g('CheckBox'),s$se,VN.$h(_$gp,_E(self.$klass.$c_g_full(c$t).$c_g('Rect'),s$aq,10,100,90,24),_$kl,_$ip),function(button){
 _E(win,s$e,button);
-_E(button,s$zt,'Check');
-_E(button,s$xm,true);
-_E(button,s$xp,_$fz);
-return _E(button,s$un,true);
+_E(button,s$zx,'Check');
+_E(button,s$xq,true);
+_E(button,s$xt,_$fz);
+return _E(button,s$um,true);
 });
-_E(self.$klass.$c_g_full(c$b).$c_g('CheckBox'),s$sc,VN.$h(_$gp,_E(self.$klass.$c_g_full(c$t).$c_g('Rect'),s$ap,10,130,90,24),_$kb,_$ik),function(button){
+_E(self.$klass.$c_g_full(c$b).$c_g('CheckBox'),s$se,VN.$h(_$gp,_E(self.$klass.$c_g_full(c$t).$c_g('Rect'),s$aq,10,130,90,24),_$kl,_$ip),function(button){
 _E(win,s$e,button);
-_E(button,s$zt,'Checkon');
-_E(button,s$zp,_$hd);
-return _E(button,s$un,true);
+_E(button,s$zx,'Checkon');
+_E(button,s$zt,_$hi);
+return _E(button,s$um,true);
 });
-_E(self.$klass.$c_g_full(c$b).$c_g('CheckBox'),s$sc,VN.$h(_$gp,_E(self.$klass.$c_g_full(c$t).$c_g('Rect'),s$ap,10,160,90,24),_$kb,_$ik),function(button){
+_E(self.$klass.$c_g_full(c$b).$c_g('CheckBox'),s$se,VN.$h(_$gp,_E(self.$klass.$c_g_full(c$t).$c_g('Rect'),s$aq,10,160,90,24),_$kl,_$ip),function(button){
 _E(win,s$e,button);
-_E(button,s$zt,'Checkon');
-_E(button,s$zp,_$hd);
-_E(button,s$xm,false);
-return _E(button,s$un,true);
+_E(button,s$zx,'Checkon');
+_E(button,s$zt,_$hi);
+_E(button,s$xq,false);
+return _E(button,s$um,true);
 });
-_E(self.$klass.$c_g_full(c$b).$c_g('Slider'),s$sc,VN.$h(_$gp,_E(self.$klass.$c_g_full(c$t).$c_g('Rect'),s$ap,10,190,90,24),_$kb,_$ik),function(slider){
+_E(self.$klass.$c_g_full(c$b).$c_g('Slider'),s$se,VN.$h(_$gp,_E(self.$klass.$c_g_full(c$t).$c_g('Rect'),s$aq,10,190,90,24),_$kl,_$ip),function(slider){
 _E(win,s$e,slider);
-_E(slider,s$un,true);
-return _E(slider,s$xc,function(sender){
-return _E(self,s$al,"yeah!");
+_E(slider,s$um,true);
+return _E(slider,s$xg,function(sender){
+return _E(self,s$am,"yeah!");
 });
 });
-_E(self.$klass.$c_g_full(c$b).$c_g('TextField'),s$sc,VN.$h(_$gp,_E(self.$klass.$c_g_full(c$t).$c_g('Rect'),s$ap,50,310,180,24),_$cd,true),function(text){
+_E(self.$klass.$c_g_full(c$b).$c_g('TextField'),s$se,VN.$h(_$gp,_E(self.$klass.$c_g_full(c$t).$c_g('Rect'),s$aq,50,310,180,24),_$cd,true),function(text){
 _E(win,s$e,text);
-return _E(text,s$un,true);
+return _E(text,s$um,true);
 });
-_E(self.$klass.$c_g_full(c$b).$c_g('Button'),s$sc,VN.$h(_$gp,_E(self.$klass.$c_g_full(c$t).$c_g('Rect'),s$ap,10,240,90,24),_$kb,_$ik),function(button){
+_E(self.$klass.$c_g_full(c$b).$c_g('Button'),s$se,VN.$h(_$gp,_E(self.$klass.$c_g_full(c$t).$c_g('Rect'),s$aq,10,240,90,24),_$kl,_$ip),function(button){
 _E(win,s$e,button);
-_E(button,s$zt,'Normal');
-_E(button,s$ta,_$gf);
-return _E(button,s$un,true);
+_E(button,s$zx,'Normal');
+_E(button,s$tc,_$gf);
+return _E(button,s$um,true);
 });
-return scroll_view=_E(self.$klass.$c_g_full(c$b).$c_g('ScrollView'),s$sc,VN.$h(_$gp,_E(self.$klass.$c_g_full(c$t).$c_g('Rect'),s$ap,300,100,250,150),_$kc,true),function(scroll_view){
-_E(scroll_view,s$agc,true);
-_E(_E(scroll_view,s$agh),s$un,true);
+return scroll_view=_E(self.$klass.$c_g_full(c$b).$c_g('ScrollView'),s$se,VN.$h(_$gp,_E(self.$klass.$c_g_full(c$t).$c_g('Rect'),s$aq,300,100,250,150),_$km,true),function(scroll_view){
 _E(scroll_view,s$age,true);
-_E(_E(scroll_view,s$agj),s$un,true);
+_E(_E(scroll_view,s$agj),s$um,true);
+_E(scroll_view,s$agg,true);
+_E(_E(scroll_view,s$agl),s$um,true);
+_E(scroll_view,s$ux,[_$ee,_$gw]);
 _E(win,s$e,scroll_view);
-var table_view=_E(self.$klass.$c_g_full(c$b).$c_g('TableView'),s$sc,VN.$h(_$gp,_E(self.$klass.$c_g_full(c$t).$c_g('Rect'),s$ap,0,0,400,200),_$kc,true),function(table_view){
-_E(table_view,s$aig,app_delegate);
-_E(table_view,s$ajf,_E(self.$klass.$c_g_full(c$b).$c_g('TableColumn'),s$ap,'name'));
-_E(table_view,s$ajf,_E(self.$klass.$c_g_full(c$b).$c_g('TableColumn'),s$ap,'age'));
-_E(table_view,s$ajf,_E(self.$klass.$c_g_full(c$b).$c_g('TableColumn'),s$ap,'band'));
-return _E(table_view,s$ajg);
+var table_view=_E(self.$klass.$c_g_full(c$b).$c_g('TableView'),s$se,VN.$h(_$gp,_E(self.$klass.$c_g_full(c$t).$c_g('Rect'),s$aq,0,0,400,200),_$km,true),function(table_view){
+_E(table_view,s$aii,app_delegate);
+_E(table_view,s$ajh,_E(self.$klass.$c_g_full(c$b).$c_g('TableColumn'),s$aq,'name'));
+_E(table_view,s$ajh,_E(self.$klass.$c_g_full(c$b).$c_g('TableColumn'),s$aq,'age'));
+_E(table_view,s$ajh,_E(self.$klass.$c_g_full(c$b).$c_g('TableColumn'),s$aq,'band'));
+return _E(table_view,s$aji);
 });
-_E(scroll_view,s$afr,table_view);
-return _E(scroll_view,s$afv);
+_E(scroll_view,s$aft,table_view);
+return _E(scroll_view,s$afx);
 });
 });
 });
-})(_K(c$cg));
+})(_K(c$cp));

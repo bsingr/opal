@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-var RObject = function(klass, type) {
+var RObject = function RObject(klass, type) {
   
   // console.log('in here!');
   // console.log(klass);

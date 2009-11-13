@@ -17,7 +17,7 @@ _E(self,s$o).style[_E(_E(key,s$h),s$s)] = value;});
 return self;
 });
 _I(self,s$t,function(self,_,key,value){
-_E(self,s$o).setAttribute(key, value);});
+_E(self,s$o).setAttribute(_E(key,s$h), value);});
 _I(self,s$u,function(self,_,obj){
 _E(self,s$o).src = obj;});
 _I(self,s$v,function(self,_,str){
@@ -40,16 +40,18 @@ _E(self,s$o).innerHTML += other;}
 else{
 _E(self,s$o).appendChild(_E(other,s$o));}
 });
-_I(self,s$ah,function(self,_,str){
+_I(self,s$ah,function(self,_,raw_element){
+_E(self,s$o).appendChild(raw_element);});
+_I(self,s$ai,function(self,_,str){
 _E(self,s$o).innerHTML = str;});
-_I(self,s$ai,function(self,_,type,block){
+_I(self,s$aj,function(self,_,type,block){
 self.$i_s(i$a,ORTEST(_H(self,i$a),VN.$h()));
 _E(_H(self,i$a),s$g,type,block);
 if (document.addEventListener) {
-      _E(self,s$o).addEventListener(_E(type,s$h), _E(self,s$aj), false);
+      _E(self,s$o).addEventListener(_E(type,s$h), _E(self,s$ak), false);
     }
     else {
-      _E(self,s$o).attachEvent('on' + _E(type,s$h), _E(self,s$aj));
+      _E(self,s$o).attachEvent('on' + _E(type,s$h), _E(self,s$ak));
     }});
 _I(self,s$f,function(self,_,type,listener){
 if (document.addEventListener) {

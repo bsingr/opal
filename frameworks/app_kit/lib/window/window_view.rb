@@ -65,8 +65,21 @@ module Vienna
       @window = win
     end
     
+    def resize_indicator_frame
+      Rect.new(@bounds.width - 14, @bounds.height - 14, 12, 12)
+    end
+    
     def mouse_down(the_event)
-
+      location = the_event.location_in_window
+      
+      if location.in_rect?(resize_indicator_frame)
+        track_window_resize_with_event(the_event)
+      else
+        track_window_move_with_event(the_event)
+      end
+    end
+    
+    def track_window_move_with_event(the_event)
       mouse_down_point = the_event.location_in_window
 
       App.bind_events [:left_mouse_up, :left_mouse_dragged] do |the_event|
@@ -78,6 +91,26 @@ module Vienna
           @delta_x = window_point.x - mouse_down_point.x
           @delta_y = window_point.y - mouse_down_point.y
           @window.frame_origin = Point.new(@window_origin.x + @delta_x, @window_origin.y + @delta_y)
+        end
+      end
+    end
+    
+    def track_window_resize_with_event(the_event)
+      mouse_down_point = the_event.location_in_window
+      # copy or we will get current frame..
+      original_frame = @window.frame.copy
+      # `console.profile('resize');`
+
+      App.bind_events [:left_mouse_up, :left_mouse_dragged] do |the_event|
+        if the_event.type == :left_mouse_up
+          App.unbind_events
+          # `console.profileEnd();`
+        else
+          mouse_point = the_event.location_in_window
+          new_width = original_frame.width + (mouse_point.x - mouse_down_point.x)
+          new_height = original_frame.height + (mouse_point.y - mouse_down_point.y)
+          # puts "#{original_frame.width}, #{original_frame.height} ..... #{mouse_point.x - mouse_down_point.x}, #{mouse_point.y - mouse_down_point.y}"
+          @window.frame = Rect.new(original_frame.x, original_frame.y, new_width, new_height)
         end
       end
     end

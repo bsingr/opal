@@ -135,7 +135,7 @@ module Vienna
         the_event = Event.from_native_event event, with_window:self, with_type: :left_mouse_down
           App.send_event the_event
         unless the_event.allows_propagation?
-          the_event.stop_propagation
+          # the_event.stop_propagation
         end
       end
       
@@ -143,7 +143,7 @@ module Vienna
         the_event = Event.from_native_event event, with_window:self, with_type: :left_mouse_up
           App.send_event the_event
         unless the_event.allows_propagation?
-          the_event.stop_propagation
+          # the_event.stop_propagation
         end
       end  
     end
@@ -225,6 +225,7 @@ module Vienna
       bounds = Rect.new(0, 0, @frame.size.width, @frame.size.height)
       @content_view = view
       @content_view.frame = content_rect_for_frame_rect(bounds)
+      @content_view.autoresizing_mask = [:width, :height]
       view.view_did_move_to_window
       @window_view << @content_view
     end

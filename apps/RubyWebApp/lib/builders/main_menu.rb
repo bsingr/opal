@@ -77,6 +77,7 @@ module RubyWebApp
           win << button
           button.title = 'Right'
           # button.enabled = false
+          button.autoresizing_mask = [:width, :max_x]
           button.alignment = :right
           # button.theme_name = :my_theme
           button.needs_display = true
@@ -142,6 +143,8 @@ module RubyWebApp
           
           scroll_view.has_horizontal_scroller = true
           scroll_view.horizontal_scroller.needs_display = true
+          
+          scroll_view.autoresizing_mask = [:width, :height]
           
           win << scroll_view
           # Table view

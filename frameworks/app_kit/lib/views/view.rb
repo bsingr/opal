@@ -62,6 +62,7 @@ module Vienna
       
       @posts_frame_changed_notifications = false
       @autoresizes_subviews = true
+      @autoresizing_mask = []
       
       # Tracking areas for mouse events. Important to intiialize early, so views
       # can set up tracking as soon as they like
@@ -105,28 +106,6 @@ module Vienna
     
     def accepts_first_responder
       true
-    end
-    
-    # The root CSS class name used for rendering the view. This can be used as a basis
-    # for setting the className for the DIV element
-    def class_name
-      @class_name || 'vn-view'
-    end
-    
-    def class_name= a_class
-      @class_name = a_class
-    end
-    
-    # Themed class name. This is, by default, nil in all Vienna Classes. But adding a
-    # custom class name allows themed controls without having to exclude the base class
-    # name. This saves having to reimplement all the CSS stylings from the base Vienna
-    # control - just swap in images etc
-    def theme_name
-      @theme_name || ''
-    end
-    
-    def theme_name= a_theme
-      @theme_name = a_theme
     end
     
     def graphics_port
@@ -282,28 +261,109 @@ module Vienna
       
     end
     
-    def resize_subviews_with_old_size size
-      
+    def resize_subviews_with_old_size(size)
+      @subviews.each do |subview|
+        subview.resize_with_old_superview_size(size)
+      end
     end
     
-    def resize_with_old_superview_size old
+    def resize_with_old_superview_size(old)
+      super_frame = @superview.frame
+      this_frame = @frame.copy
+      origin_changed = false
+      size_changed = false
+      mask = @autoresizing_mask
+
+      # x dimensions
+      if mask.include?(:min_x)
+        if mask.include?(:width)
+          if mask.include?(:max_x)
+            this_frame.x = this_frame.x + ((super_frame.width - old.width) / 3)
+            this_frame.width = this_frame.width + ((super_frame.width - old.width) / 3)
+          else
+            this_frame.x = this_frame.x + ((super_frame.width - old.width) / 2)
+            this_frame.width = this_frame.width + ((super_frame.width - old.width) / 2)
+          end
+          
+          size_changed = true
+          origin_changed = true
+        
+        elsif mask.include?(:max_x)
+          this_frame.x = this_frame.x + ((super_frame.width - old.width) / 2)
+          origin_changed = true
+        else
+          this_frame.x = this_frame.x + (super_frame.width - old.width) / 2
+          origin_changed = true
+        end
       
+      elsif mask.include?(:width)
+        if mask.include?(:max_x)
+          this_frame.width = this_frame.width + ((super_frame.width - old.width) / 2)
+        else
+          this_frame.width = this_frame.width + (super_frame.width - old.width)
+        end
+        size_changed = true
+      end
+      
+
+      
+      # y dimensions
+      if mask.include?(:min_y)
+        if mask.include?(:height)
+          if mask.include?(:max_y)
+            this_frame.y = this_frame.y + ((super_frame.height - old.height) / 3)
+            this_frame.height = this_frame.height + ((super_frame.height - old.height) / 3)
+          else
+            this_frame.y = this_frame.y + ((super_frame.height - old.height) / 2)
+            this_frame.height = this_frame.height + ((super_frame.height - old.height) / 2)
+          end
+          
+          size_changed = true
+          origin_changed = true
+        
+        elsif mask.include?(:max_y)
+          this_frame.y = this_frame.y + ((super_frame.height - old.height) / 2)
+          origin_changed = true
+        else
+          this_frame.y = this_frame.y + (super_frame.height - old.height) / 2
+          origin_changed = true
+        end
+      
+      elsif mask.include?(:height)
+        if mask.include?(:max_y)
+          this_frame.height = this_frame.height + ((super_frame.height - old.height) / 2)
+        else
+          this_frame.height = this_frame.height + (super_frame.height - old.height)
+        end
+        size_changed = true
+      end
+
+      if size_changed || origin_changed
+        self.frame = this_frame
+      end
     end
     
     def autoresizes_subviews=(flag)
-      
+      @autoresizes_subviews = flag
     end
     
     def autoresizes_subviews?
-      
+      @autoresizes_subviews
     end
     
     def autoresizing_mask=(mask)
-      
+      if mask.is_a?(Array)
+        # puts "setting array"
+        # puts mask
+        @autoresizing_mask = mask
+      else
+        # puts 'setting other'
+        @autoresizing_mask = [mask]
+      end
     end
     
     def autoresizing_mask
-      
+      @autoresizing_mask
     end
     
     # 
@@ -334,6 +394,10 @@ module Vienna
       
       @element.size = new_size
       @display_context.size = new_size
+      
+      if @autoresizes_subviews
+        resize_subviews_with_old_size(old_size)
+      end
     
       if @posts_frame_changed_notifications
         nc = NotificationCenter.default_center
@@ -553,12 +617,7 @@ module Vienna
     
         
     
-    def render(context)
-      if context.first_time?
-        context.class_name = class_name
-        context.first_time = false
-      end
-      
+    def render(context)    
       # Default imp: just fill the element with the given background color
       # if background_color
       # end

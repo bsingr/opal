@@ -60,7 +60,7 @@ module Vienna
       # to be because this is a label (non editable) or it is inside a tableview,
       # therefore not needing an input element.
       @input_element = nil
-      @value = ""
+      @value = "Hey there!"
       self
     end
     
@@ -92,6 +92,19 @@ module Vienna
     
     def render_with_frame(cell_frame, in_view:control_view)
       ctx = RenderContext.current_context
+      
+      @control_view = control_view
+      if control_view.is_a?(TextField)
+        unless @input_element
+          # @input_element = `document.createElement('input')`
+          @input_element = Element.new(:input)
+          @input_element.set_attribute :type, 'text'
+          @input_element.css :z_index => 1000, :position => 'absolute', :outline =>'none', :border => 0, :background => 'none'
+          @input_element.frame = cell_frame
+          `#{@input_element.element}.value = "wtf!!!!!";`
+          control_view.element << @input_element
+        end
+      end
       # if ctx.first_time?
         # ctx << "<div class='bezel' style='top:0px;right:0px;bottom:0px;left:0px'></div>"
       # end
@@ -103,9 +116,22 @@ module Vienna
           # BEZEL_IMAGES[@bezel_style].render_with_frame(cell_frame)
         # end
       # end
-      
-      attributed_value.render_in_rect(Rect.new(0,0,cell_frame.width, cell_frame.height))
-      
+      ctx.build do
+        # ctx.css :z_index => 0
+        # draw bezel
+        case @bezel_style
+        when :none
+        else
+          BEZEL_IMAGES[@bezel_style].render_with_frame(cell_frame)
+        end
+        
+        # title
+        # we dont want to render a title if we are a textfield, as the raw input
+        # element will render the title for us
+        unless @input_element
+          attributed_value.render_in_rect(Rect.new(2,2,cell_frame.width, cell_frame.height))
+        end
+      end
       # ctx = RenderContext.current_context
       # if ctx.first_time?
       #   ctx.css :background_color => 'white'

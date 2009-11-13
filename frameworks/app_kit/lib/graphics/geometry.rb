@@ -37,6 +37,10 @@ module Vienna
       self
     end
     
+    def copy
+      Rect.new(x, y, width, height)
+    end
+    
     def size
       @size
     end

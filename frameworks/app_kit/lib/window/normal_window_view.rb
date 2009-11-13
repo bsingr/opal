@@ -42,7 +42,7 @@ module Vienna
     # CLOSE_HIGHLIGHTED_IMAGE = Image.image_named 'normal_window_highlighted_close_button'
     
     
-    TITLEBAR_HEIGHT = 26.0
+    TITLEBAR_HEIGHT = 24.0
     
     # CLOSE_IMAGE = Image.image_named :vn_normal_win_close
     # CLOSE_HIGHLIGHTED_IMAGE = Image.image_named :vn_normal_win_close_highlight
@@ -53,6 +53,8 @@ module Vienna
       Image.image_named('normal_window_titlebar_right'))
     
     SPLITTER_IMAGE = Image.image_named('normal_window_titlebar_splitter')
+    
+    RESIZE_INDICATOR = Image.image_named('normal_window_resize_indicator')
     
     def initialize frame, style_mask
       super frame, style_mask
@@ -94,6 +96,8 @@ module Vienna
           body.frame = Rect.new(0, TITLEBAR_HEIGHT, @bounds.width, @bounds.height - TITLEBAR_HEIGHT)
           body.css :background_color => 'rgb(245,245,245)'
         end
+        # Resize indicator
+        RESIZE_INDICATOR.render_with_frame(resize_indicator_frame)
       end
     end
     
