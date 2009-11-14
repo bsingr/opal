@@ -76,7 +76,7 @@ class Vienna::RubyParser < Racc::Parser
 	end
 	
 	def build!
-    puts "Building #{@source}"
+    # puts "Building #{@source}"
 	  @output_file = File.new @destination, 'w'
     do_parse
     generate_tree @parser_result unless @parser_result.nil?

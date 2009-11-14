@@ -55,7 +55,6 @@ Vienna::App.run do |app|
     # CGSetHeight(100)
     
     # :"set_value:for_key:"
-    
   end
 
 end

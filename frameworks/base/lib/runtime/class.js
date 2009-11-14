@@ -64,6 +64,10 @@ function rb_define_class(id, super_klass) {
   }
   klass = RClass.define_class_id(id, super_klass);
   VN.class_tbl[id] = klass;
+  
+  // set class bundle here....
+  
+  
   klass.$name(id);
   cObject.$c_s(id, klass);
   RClass.inherited(super_klass, klass);
@@ -104,6 +108,9 @@ function rb_define_class_under(outer, id, super_klass) {
   klass = RClass.define_class_id(id, super_klass);
   // sets that the klass knows about its outer, i.e. classes within modules know about the module
   klass.$parent = outer;
+  
+  // set class bundle here....
+  
   // VN.set_class_path(klass, outer, id);
   // VN.const_set(outer, id, klass);
   outer.$c_s(id, klass);

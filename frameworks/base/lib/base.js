@@ -218,3 +218,6 @@ require('core/top_self');
 require('core/nil_class');
 nil = VN$(cObject.$k_g('NilClass'), 'new');
 nil.toString = function() { return 'nil';};
+
+require('core/bundle');
+require('core/json');

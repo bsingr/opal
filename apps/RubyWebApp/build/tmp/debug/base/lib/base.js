@@ -49,3 +49,6 @@ VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/base/
 VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/base/lib/core/nil_class.js');
 
 nil=VN$(cObject.$k_g('NilClass'),'new');nil.toString=function(){return'nil';};
+VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/base/lib/core/bundle.js');
+
+VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/base/lib/core/json.js');

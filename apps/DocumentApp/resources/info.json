@@ -1,0 +1,10 @@
+{
+  "development_region": "English",
+  "icon_file": "",
+  "identifier": "com.adambeynon.DocumentApp",
+  "name": "DocumentApp",
+  "package_type": "APPL",
+  "signature": "",
+  "main_vib_file": "main_menu",
+  "principal_class" "VN::Application"
+}

@@ -26,4 +26,12 @@
 
 module InterfaceBuilder
   
+  DIRECTIONS = {
+    :none         => 0,
+    :min_x        => 1,
+    :max_x        => 2,
+    :min_y        => 4,
+    :max_y        => 8
+  }
+  
 end

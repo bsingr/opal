@@ -121,8 +121,10 @@ module Vienna
     # all the frameworks. the main framework is added, and then each framework added after this
     # is automaticallty included. This helps with then finding resources, configs etc for adding
     # to the bundle, namely: css and image resources, as well as localizations etc
+    # 
+    # Add project root last....? shouldnt be first in the queue...
     def all_frameworks
-      @all_frameworks ||= [project_root]
+      @all_frameworks ||= [] # [project_root]
     end
     
     def prepare!
@@ -142,7 +144,9 @@ module Vienna
       o = File.new(js_build_path, 'w')
       # FIXME:
       # a. output/build 'base' library
-      base = build_file file_for_require_relative_to(root_file, 'base')
+      # we dont want base in frameworks array.... we should remove it....
+      # base = build_file file_for_require_relative_to(root_file, 'base')
+      base = build_file File.join(system_lib_root, 'base', 'lib', 'base') + '.js'
       puts "build base to #{base}"
       # here: use combiner to combine all base files into output..
       base_combiner = Vienna::Builder::Combine.new base, o, self
@@ -150,51 +154,66 @@ module Vienna
       # 1. Build root file, which will recursively build all required source files, as well as
       # make up our list of 'all_frameworks
       build_file root_file
+      # now add root framework...
+      @all_frameworks << project_root
       
-      # 4. Copy all image resources into the predetermined output folder
+      # Write Env.. this is the ENV hash. as well as string tables for the entire application
+      # from all the frameworks. This is put here so it will be globally accessible. It does
+      # not need to go before base beause 1) base defines some needed methods, for symbol etc
+      # and 2) base doesnt need these.... base is all js, no rb.
+      write_env_to_output o
+      
+    
+      # Output each bundle/framework in order (currently only resources)
+      # code is output all at the end (for now) until a fix is made
       all_frameworks.each do |f|
-        images = File.join(f, "resources", "**", "*.{png,jpg,jpeg}")
+        # 0) Start bundle in the code...
+        o.write "rb_funcall(vn_cBundle, 'begin_new_bundle', 'com.adambeynon.AppKit');"
+        # 1) Build all images
+        images = File.join(f, "resources", "**", "*.{png,jpg,jpeg,gif}")
         Dir.glob(images).each do |img|
-          # puts "Found image: #{img} size: #{File.size(img)}"
-          
           # 32kb * 1024.... make it compatible with IE8 etc
           if File.size(img) < 32768
-            # puts img
             o.write "vn_resource_stack['#{File.basename(img)}']="
             o.write "\"data:#{IMAGE_MIME_TYPES['png']};base64,"
             data = Base64.encode64(File.read(img))
             data.each_line { |line| o.write line.gsub(/\n/, '') }
-            # o.write
             o.write "\";"
-            # o.write "console.log('added #{File.basename(img)}');"
           end
-          
+          # useful to copy image to resource directory as well, incase its needed in raw form
           File.copy(img, File.expand_path(File.join(img_build_path, File.basename(img))))
         end
-      end
-      
-      # VIB: interface builder equivalent files
-      all_frameworks.each do |f|
-        images = File.join(f, "resources", "**", "*.{vib}")
-        Dir.glob(images).each do |vib|
+        
+        # 2) Build all vib interface files (these are json format, with a custom extension name)
+        vibs = File.join(f, "resources", "**", "*.{vib}")
+        Dir.glob(vibs).each do |vib|
           o.write "vn_resource_stack['#{File.basename(vib)}']="
           Vienna::Builder::Vib.new(vib, o, self).build!
           o.write ";"
         end
+        
+        # 3) Any json files
+        jsons = File.join(f, "resources", "**", "*.{json}")
+        Dir.glob(jsons).each do |json|
+          # o.write "vn_resource_stack['#{File.basename(json)}']="
+          # Vienna::Builder::Json.new(json, o, self).build!
+          puts "adding resource for #{json}"
+          o.write "rb_funcall(vn_cBundle, 'add_resource_to_current_bundle', '#{File.basename(json)}', "
+          o.write "{ }"
+          o.write ");"
+          # vn_bundle_add_resource_to_current_bundle(self, _cmd, resource_path, resource_text)
+          # o.write ";"
+        end
       end
-      
-      
-      # b. output string, symbols, consts etc
-      # c. output env as hash
-      # d. output all other frameworks
-      
-      
-      
-      # 2. Combine all these built source files into the calculated destination, which will be
-      # app_name.js
-      
-      write_env_to_output o
-      root_combiner = Vienna::Builder::Combine.new File.join(tmp_prefix, project_name, 'lib', 'ruby_web_app.js'), o, self
+
+      # # VIB: interface builder equivalent files
+      # all_frameworks.each do |f|
+      # 
+      # end
+
+
+      # output all application code, from all frameworks/bundles, into specified output file
+      root_combiner = Vienna::Builder::Combine.new File.join(tmp_prefix, project_name, 'lib', "#{Vienna.underscore(project_name)}.js"), o, self
       
       
       # 3. Copy and combine all CSS source files into a single file, app_name.css
@@ -209,11 +228,7 @@ module Vienna
       end
       c.close
       
-      
-      
-
-      
-      # close js file
+      # close output file
       o.close
     end
   

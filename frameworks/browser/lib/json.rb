@@ -79,5 +79,5 @@ class JSONP
   end
 end
 
-require 'json/parse'
-require 'json/reformatter'
+# require 'json/parse'
+# require 'json/reformatter'
