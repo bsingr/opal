@@ -68,11 +68,11 @@ module Vienna
 
   class Window < Responder
     
-    def initialize content_rect, style_mask
+    def initialize(content_rect, style_mask)
       init_with_content_rect content_rect, style_mask:style_mask
     end
     
-    def init_with_content_rect content_rect, style_mask:style_mask  
+    def init_with_content_rect(content_rect, style_mask:style_mask)
       setup_display_context
       
       @frame = Rect.new(0, 0, 0, 0)
@@ -220,14 +220,26 @@ module Vienna
     # Set the content view for the window
     # 
     def content_view=(view)
-      # @content_view.remove_from_superview if @content_view
+      # puts 1
+      @content_view.remove_from_superview if @content_view
       view.view_will_move_to_window self
+      # puts 2
       bounds = Rect.new(0, 0, @frame.size.width, @frame.size.height)
+      # puts 3
       @content_view = view
+      # puts 4
       @content_view.frame = content_rect_for_frame_rect(bounds)
+      # puts 5
       @content_view.autoresizing_mask = [:width, :height]
+      # puts 6
       view.view_did_move_to_window
+      # puts 7
+      # puts "adding to window_view"
+      # puts @window_view.subviews
       @window_view << @content_view
+      # puts "added.."
+      # puts @window_view.subviews
+      # puts 8
     end
     
     def content_view
@@ -684,7 +696,7 @@ module Vienna
         puts 'key_down'
       when :left_mouse_down        
         hit_test = @window_view.hit_test(point)
-  
+        
         if hit_test != @first_responder && hit_test.accepts_first_responder
           make_first_responder hit_test
         end

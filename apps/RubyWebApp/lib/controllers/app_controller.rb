@@ -63,8 +63,13 @@ module RubyWebApp
       @test_binding = aValue
     end
 
-    def will_finish_launching (notification)
-      # puts 'Application will finish launching!'
+    def will_finish_launching (notification)    
+      name_table = { 
+        :owner => VN::App.delegate
+      }
+
+      about_window_vib = VN::Vib.vib_named('about_window')
+      about_window_vib.instantiate_vib_with_external_name_table(name_table)
     end
 
     def did_finish_launching (notification)

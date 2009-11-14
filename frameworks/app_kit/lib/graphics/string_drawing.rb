@@ -80,7 +80,6 @@ module Vienna
       ctx.append :div do |text|
         
         
-        
         text.frame = rect
         text.css :color => @attributes[:color].rgb_string, :overflow_x => 'hidden', :overflow_y => 'hidden', :white_space => 'nowrap'
         if @attributes[:font]

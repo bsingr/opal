@@ -67,3 +67,6 @@ require 'window/panel'
 
 # Builder
 require 'builder/builder'
+
+# VIB
+require 'vib/vib'

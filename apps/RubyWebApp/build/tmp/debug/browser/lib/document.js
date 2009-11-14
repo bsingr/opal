@@ -8,7 +8,6 @@ self.$def_s(s$f,function(self,_,type,listener){
 self.$i_s(i$a,ORTEST(_H(self,i$a),VN.$h()));
 _E(_H(self,i$a),s$g,type,listener);
 if (document.addEventListener) {
-      console.log("binding " + _E(type,s$h));
       document.body.addEventListener(_E(type,s$h), listener, false);
     }
     else {

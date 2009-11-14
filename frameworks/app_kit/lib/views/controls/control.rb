@@ -30,10 +30,15 @@ module Vienna
       
     # display_properties :enabled, :selected, :state
     
-    def initialize frame
+    def initialize(frame)
       super frame
       @cell = self.class.cell_class.new
       # @cell.render_context = @display_context
+    end
+    
+    def init_with_coder(coder)
+      super coder
+      @cell = coder.decode_object :cell
     end
     
     def self.cell_class
@@ -41,7 +46,9 @@ module Vienna
     end
     
     def render(context)
+      # puts "A"
       @cell.render_with_frame(bounds, in_view:self)
+      # puts "B"
     end
     
     def class_name= class_name

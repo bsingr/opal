@@ -1,0 +1,2 @@
+
+function vn_vib_load_bang(self,_cmd){rb_ivar_set(self,'@top_level_objects',[]);rb_ivar_set(self,'@connections',[]);console.log("laoding!!!");};var vib_class=rb_cObject.$iv_tbl.Vienna.$iv_tbl.Vib;rb_define_method(vib_class,'load!',vn_vib_load_bang);

@@ -244,8 +244,8 @@ rb_define_method(rb_cArray, 'values_at', function(self, _cmd) {
 
 });
 
-rb_define_method(rb_cArray, 'delete', function(self, _cmd) {
-
+rb_define_method(rb_cArray, 'delete', function(self, _cmd, obj) {
+  return self.splice(self.indexOf(obj), 1)
 });
 
 rb_define_method(rb_cArray, 'delete_at', function(self, _cmd) {

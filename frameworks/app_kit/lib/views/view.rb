@@ -67,6 +67,30 @@ module Vienna
       # Tracking areas for mouse events. Important to intiialize early, so views
       # can set up tracking as soon as they like
       @tracking_areas = []
+    end
+    
+    def init_with_coder(coder)
+      super coder
+      setup_display_context
+      
+      @frame = Rect.new(0, 0, 0, 0)
+      @frame = coder.decode_rect :frame if coder.has_key?(:frame)
+      @bounds = Rect.new(0, 0, @frame.width, @frame.height)
+      
+      @posts_frame_changed_notifications = false
+      @tracking_areas = []
+      
+      @subviews = []
+      subviews = coder.decode_object :subviews
+      
+      if subviews
+        subviews.each do |subview|
+          self << subview
+          # subview.superview = self
+        end
+      end
+      
+      self.frame = @frame
       
     end
     
@@ -148,7 +172,7 @@ module Vienna
     end
     
     def subviews
-      
+      @subviews
     end
     
     def descendant_of?(a_view)
@@ -188,7 +212,9 @@ module Vienna
     end
     
     def add_subview(a_view)
+      # puts "adding subview"
       if @subviews.include? a_view
+        # puts "i already have this view!"
         return
       end
       
@@ -223,10 +249,15 @@ module Vienna
     end
     
     def view_did_move_to_window
+      # puts self
+      # puts "a"
       @subviews.each do |s|
+        # puts "b"
         s.view_did_move_to_window
       end
+      # puts "c"
       self.needs_display = true
+      # puts "d"
     end
     
     def view_will_move_to_superview new_super
@@ -246,7 +277,10 @@ module Vienna
     end
     
     def remove_from_superview
-      
+      if @superview
+        @superview.subviews.delete(self)
+        @superview.element.remove(@element)
+      end
     end
     
     def replace_subview old_view, with:new_view
@@ -598,7 +632,6 @@ module Vienna
     def display
       return unless @window
       view_will_draw
-      
       if display_mode == :render
         # puts 'Rendering....?'
         lock_focus
@@ -635,10 +668,13 @@ module Vienna
 
     
     def hit_test point
+      # puts self.class.name
+      # puts @superview
       point = convert_point point, from_view:@superview
+      # puts "#{point.x}, #{point.y}"
       return nil unless point.in_rect?(bounds)
-
       count = @subviews.length
+      # puts "subviews: #{count}"
       i = 0
 
       `for (i = 0; i < count; i++) {`

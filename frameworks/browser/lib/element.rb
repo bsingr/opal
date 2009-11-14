@@ -94,9 +94,15 @@ class Element
     end
   end
   
+  def remove(other)
+    `#{element}.removeChild(#{other.element});`
+  end
+  
   def <<(other)
     if other.instance_of?(String) || other.instance_of?(Number)
       `#{element}.innerHTML += other;`
+    elsif other.nil?
+      # do nothing..
     else
       # must be an element
       `#{element}.appendChild(#{other.element});`

@@ -58,7 +58,6 @@ class Document
     @event_listeners ||= {}
     @event_listeners[type] = listener
     `if (document.addEventListener) {
-      console.log("binding " + #{type.to_s});
       document.body.addEventListener(#{type.to_s}, #{listener}, false);
     }
     else {

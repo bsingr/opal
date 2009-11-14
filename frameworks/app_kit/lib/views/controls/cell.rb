@@ -92,6 +92,10 @@ module Vienna
       @refuses_first_responder = false      
     end
     
+    def init_with_coder(coder)
+      initialize
+    end
+    
     def init_image_cell img
       
     end

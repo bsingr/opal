@@ -414,6 +414,7 @@ module Vienna
     
     def render_title(title, with_frame:frame, in_view:control_view)
       ctx = RenderContext.current_context
+      
       # ctx.selector :title do |title_div|
         # title_div.inner_html = title
         # title_div.frame = title_rect_for_bounds(frame)
@@ -425,10 +426,9 @@ module Vienna
     
     # Render the button
     def render_with_frame(cell_frame, in_view:control_view)
-      # puts "drawing button"
       @control_view = control_view 
       return if transparent?
-          
+      # puts RenderContext.current_context
       RenderContext.current_context.build do
         render_bezel_with_frame cell_frame, in_view:control_view
         render_interior_with_frame cell_frame, in_view:control_view
@@ -449,11 +449,14 @@ module Vienna
     
     # Render the interior: title & image
     def render_interior_with_frame(cell_frame, in_view:control_view)
-            
+      # puts 1
       # Render title, only if we should..
       unless @image_position == :image_only
+        # puts 1.5
         render_title(attributed_title, with_frame:cell_frame, in_view:control_view)
       end
+      
+      # puts 2
       
       if @image
         if on?
@@ -463,6 +466,7 @@ module Vienna
           render_image @image, with_frame:cell_frame, in_view:control_view
         end
       end
+      # puts 3
     end
     
     def mouse_entered(the_event)

@@ -95,6 +95,10 @@ cBasicObject.$def('respond_to?', function(self, _cmd, selector) {
   return true
 });
 
+rb_define_method(cBasicObject, 'nil?', function(self, _cmd) {
+  return false;
+});
+
 cBasicObject.$def('instance_of?', function(self, _cmd, klass) {
   return self.$klass == klass ? true : false;
 });
@@ -110,6 +114,19 @@ cBasicObject.$def('is_a?', function(self, _cmd, klass) {
 
 rb_define_method(cBasicObject, 'instance_variable_set', function(self, _cmd, id, val) {
   return rb_ivar_set(self, id, val);
+});
+
+rb_define_singleton_method(cBasicObject, 'const_get', function(self, _cmd, name) {
+  
+});
+
+rb_define_singleton_method(cBasicObject, 'full_const_get', function(self, _cmd, name) {
+  var parts = name.split('::');
+  var obj = rb_cObject;
+  for (var i = 0; i < parts.length; i++) {
+    obj = obj.$c_g(parts[i]);
+  }
+  return obj;
 });
 
 /**

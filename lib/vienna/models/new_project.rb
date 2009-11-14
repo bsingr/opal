@@ -173,6 +173,17 @@ module Vienna
         end
       end
       
+      # VIB: interface builder equivalent files
+      all_frameworks.each do |f|
+        images = File.join(f, "resources", "**", "*.{vib}")
+        Dir.glob(images).each do |vib|
+          o.write "vn_resource_stack['#{File.basename(vib)}']="
+          Vienna::Builder::Vib.new(vib, o, self).build!
+          o.write ";"
+        end
+      end
+      
+      
       # b. output string, symbols, consts etc
       # c. output env as hash
       # d. output all other frameworks

@@ -56,3 +56,5 @@ VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/app_k
 VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/app_kit/lib/window/panel.js');
 
 VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/app_kit/lib/builder/builder.js');
+
+VN.require('/Users/adam/Development/vienna/apps/RubyWebApp/build/tmp/debug/app_kit/lib/vib/vib.js');

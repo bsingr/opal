@@ -34,24 +34,28 @@ _E(self,s$o).width = _E(new_size,s$ae);_E(self,s$o).height = _E(new_size,s$af);}
 else{
 _E(self,s$o).style.width = _E(new_size,s$ae) + 'px';_E(self,s$o).style.height = _E(new_size,s$af) + 'px';}
 });
+_I(self,s$ag,function(self,_,other){
+_E(self,s$o).removeChild(_E(other,s$o));});
 _I(self,s$e,function(self,_,other){
-if(_A(ORTEST(_E(other,s$ag,self.$klass.$c_g_full(c$d)),_E(other,s$ag,self.$klass.$c_g_full(c$e))))){
+if(_A(ORTEST(_E(other,s$ah,self.$klass.$c_g_full(c$d)),_E(other,s$ah,self.$klass.$c_g_full(c$e))))){
 _E(self,s$o).innerHTML += other;}
+else if(_A(_E(other,s$ai))){
+}
 else{
 _E(self,s$o).appendChild(_E(other,s$o));}
 });
-_I(self,s$ah,function(self,_,raw_element){
+_I(self,s$aj,function(self,_,raw_element){
 _E(self,s$o).appendChild(raw_element);});
-_I(self,s$ai,function(self,_,str){
+_I(self,s$ak,function(self,_,str){
 _E(self,s$o).innerHTML = str;});
-_I(self,s$aj,function(self,_,type,block){
+_I(self,s$al,function(self,_,type,block){
 self.$i_s(i$a,ORTEST(_H(self,i$a),VN.$h()));
 _E(_H(self,i$a),s$g,type,block);
 if (document.addEventListener) {
-      _E(self,s$o).addEventListener(_E(type,s$h), _E(self,s$ak), false);
+      _E(self,s$o).addEventListener(_E(type,s$h), _E(self,s$am), false);
     }
     else {
-      _E(self,s$o).attachEvent('on' + _E(type,s$h), _E(self,s$ak));
+      _E(self,s$o).attachEvent('on' + _E(type,s$h), _E(self,s$am));
     }});
 _I(self,s$f,function(self,_,type,listener){
 if (document.addEventListener) {

@@ -117,7 +117,7 @@ var rb_funcall = function rb_funcall(self, id) {
   
   if (!method) {
     // for (var i = 0; i < 20; i++) {
-    //   console.log(rb_funcall_stack.pop());
+      // console.log(rb_funcall_stack.pop());
     // }
     console.log(self);
     throw 'RObject#call cannot find method: ' + id ;

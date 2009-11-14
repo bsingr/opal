@@ -28,9 +28,15 @@ module Vienna
   
   class Rect
     
-    def initialize x, y, w, h
+    def initialize(x, y, w, h)
       @origin = Point.new(x, y)
       @size = Size.new(w, h)
+    end
+    
+    def self.from_string(string)
+      point = Point.from_string(`#{string}.substr(1, #{string}.indexOf("},") - 1)`)
+      size = Size.from_string(`#{string}.substr(#{string}.indexOf("},") + 3, #{string}.length - 3)`)
+      self.new(point.x, point.y, size.width, size.height)
     end
     
     def to_rect
@@ -128,6 +134,10 @@ module Vienna
       self
     end
     
+    def self.from_string(string)
+      self.new(`parseFloat(#{string}.substr(1, #{string}.indexOf(",") - 1))`, `parseFloat(#{string}.substr(#{string}.indexOf(",") + 1, #{string}.length - 1))`)
+    end
+    
     def x
       @x
     end
@@ -161,6 +171,10 @@ module Vienna
     def initialize w, h
       @width = w
       @height = h
+    end
+    
+    def self.from_string(string)
+      self.new(`parseFloat(#{string}.substr(1, #{string}.indexOf(",") - 1))`, `parseFloat(#{string}.substr(#{string}.indexOf(",") + 1, #{string}.length - 1))`)
     end
     
     def to_size
