@@ -167,120 +167,95 @@ module Vienna
       a_bundle.link!(@output_destination)
     end
     
+    # default bootstrap code... pull from rakefile for customization?
+    def bootstrap_code
+      %{
+        function vn_bootstrap_main() {
+          if (true) {
+            // html5
+            var lib_path = "#{Vienna.underscore(project_name)}_html5.js";
+            var lib = new vn_lib(lib_path, function(lib) {
+              console.log('lib loaded callback!');
+            });
+            lib.load();
+          } else {
+            // ie7
+          }
+        };
+
+        window.onload = vn_bootstrap_main;
+      }
+    end
+
+    
     def build!
       build_bundle!(@core_bundle)
       # This will also build every bundle required by the main bundle
       build_bundle!(@main_bundle)
       
       @output_destination = File.new(js_build_path, 'w')
-      # Combining:
-      # ----------
-      # 1) build core library and write it to output file
-      link_bundle!(@core_bundle)      
-      # 2) Write ENV
-      write_env_to_output @output_destination
-      # 3) Write string tables etc
-      # 4) then output main bundle, that will recursively output all required
-      #    bundles, in order.
-      
-      
-      # now step through and link each bundle
-      link_bundle!(@main_bundle)
-      
+      # basic bundle link
+      @core_bundle.basic_bundle_link!(@output_destination)
+      # bootstrap code
+      min_bootstrap = JSMin.minify(bootstrap_code)
+      @output_destination.write min_bootstrap
+      # finished with runtime
       @output_destination.close
       
-      # bundle_name
+      # lib js file
+      build_lib!
+
+    end
+    
+    # Wrong!!!!
+    # 
+    # This is silly...... instead, create two lib files: html5 and ie7. The bootstrap
+    # in core .js file decides which one to load... we could insert bootstrap into that
+    # original js file, which also states to load a lib file in the first place... no
+    # bootstrap code = regular ruby environament... much better. :D This way, the bundles
+    # will have to build twice... two modes: html, and ie7 mode. kapeche!!!
+    # 
+    # bootstrap code to include in main file. Basically, works out if we need to get
+    # html5 data ui resources, or older ie7 mhtml resource file, and adds it to the
+    # required libs, so that downloads. All bundle code exectutes when all resources
+    # etc have downloaded so there is no worry about resources not being available.
+    # lib code (outside bundles such as this) will execute on load, but resource
+    # declarations in bundles, libs etc will all run before bundle code is run. Finally,
+    # when all bundle code is run, then 'main' is called, which in turn calls 
+    # VN.ApplicationMain();
+    # BOOTSTRAP_CODE = %{
+    #   if (true) {
+    #     //html5
+    #     console.log('html5');
+    #   } else {
+    #     // ie7
+    #     console.log('ie7');
+    #   }
+    # }
+    
+    # Build the 'lib file'
+    def build_lib!
+      @lib_output_destination = File.new(js_lib_build_path, 'w')
+      # header
+      @lib_output_destination.write "vnlib$1.0$"
+      # env content - project wide stuff
+      env_content = { 'display_mode' => 'render', 'image_dir' => 'images' }.to_vnplist
+      @lib_output_destination.write "e#{env_content.length}$#{env_content}"
+      # bootstrap code.. none by default
+      # bootstrap_code = JSMin.minify(BOOTSTRAP_CODE)
+      # @lib_output_destination.write "c#{bootstrap_code.length}$#{bootstrap_code}"
       
-      # return
-      # o = File.new(js_build_path, 'w')
-      # # FIXME:
-      # # a. output/build 'base' library
-      # # we dont want base in frameworks array.... we should remove it....
-      # # base = build_file file_for_require_relative_to(root_file, 'base')
-      # base = build_file File.join(system_lib_root, 'base', 'lib', 'base') + '.js'
-      # puts "build base to #{base}"
-      # # here: use combiner to combine all base files into output..
-      # base_combiner = Vienna::Builder::Combine.new base, o, self
-      # 
-      # # 1. Build root file, which will recursively build all required source files, as well as
-      # # make up our list of 'all_frameworks
-      # build_file root_file
-      # # now add root framework...
-      # @all_frameworks << project_root
-      # 
-      # # Write Env.. this is the ENV hash. as well as string tables for the entire application
-      # # from all the frameworks. This is put here so it will be globally accessible. It does
-      # # not need to go before base beause 1) base defines some needed methods, for symbol etc
-      # # and 2) base doesnt need these.... base is all js, no rb.
-      # write_env_to_output o
-      # 
-      #     
-      # # Output each bundle/framework in order (currently only resources)
-      # # code is output all at the end (for now) until a fix is made
-      # all_frameworks.each do |f|
-      #   # 0) Start bundle in the code...
-      #   o.write "rb_funcall(vn_cBundle, 'begin_new_bundle', 'com.adambeynon.AppKit');"
-      #   # 1) Build all images
-      #   images = File.join(f, "resources", "**", "*.{png,jpg,jpeg,gif}")
-      #   Dir.glob(images).each do |img|
-      #     # 32kb * 1024.... make it compatible with IE8 etc
-      #     if File.size(img) < 32768
-      #       o.write "vn_resource_stack['#{File.basename(img)}']="
-      #       o.write "\"data:#{IMAGE_MIME_TYPES['png']};base64,"
-      #       data = Base64.encode64(File.read(img))
-      #       data.each_line { |line| o.write line.gsub(/\n/, '') }
-      #       o.write "\";"
-      #     end
-      #     # useful to copy image to resource directory as well, incase its needed in raw form
-      #     File.copy(img, File.expand_path(File.join(img_build_path, File.basename(img))))
-      #   end
-      #   
-      #   # 2) Build all vib interface files (these are json format, with a custom extension name)
-      #   vibs = File.join(f, "resources", "**", "*.{vib}")
-      #   Dir.glob(vibs).each do |vib|
-      #     o.write "vn_resource_stack['#{File.basename(vib)}']="
-      #     Vienna::Builder::Vib.new(vib, o, self).build!
-      #     o.write ";"
-      #   end
-      #   
-      #   # 3) Any json files
-      #   jsons = File.join(f, "resources", "**", "*.{json}")
-      #   Dir.glob(jsons).each do |json|
-      #     # o.write "vn_resource_stack['#{File.basename(json)}']="
-      #     # Vienna::Builder::Json.new(json, o, self).build!
-      #     puts "adding resource for #{json}"
-      #     o.write "rb_funcall(vn_cBundle, 'add_resource_to_current_bundle', '#{File.basename(json)}', "
-      #     o.write "{ }"
-      #     o.write ");"
-      #     # vn_bundle_add_resource_to_current_bundle(self, _cmd, resource_path, resource_text)
-      #     # o.write ";"
-      #   end
-      # end
-      # 
-      # # # VIB: interface builder equivalent files
-      # # all_frameworks.each do |f|
-      # # 
-      # # end
-      # 
-      # 
-      # # output all application code, from all frameworks/bundles, into specified output file
-      # root_combiner = Vienna::Builder::Combine.new File.join(tmp_prefix, project_name, 'lib', "#{Vienna.underscore(project_name)}.js"), o, self
-      # 
-      # 
-      # # 3. Copy and combine all CSS source files into a single file, app_name.css
-      # c = File.new(css_build_path, 'w')
-      # all_frameworks.each do |f|
-      #   cssfiles = File.join(f, "resources", "**", "*.css")
-      #   Dir.glob(cssfiles).each do |css|
-      #     File.readlines(css).map do |l|
-      #       c.write l
-      #     end
-      #   end
-      # end
-      # c.close
-      # 
-      # # close output file
-      # o.close
+      # symbol tables etc: just code to be executed...
+      # for now just function names.. we should check rakefile to see if user wants to 
+      # do this... might differ between debug mode and release mode...
+      sym_table_code = ""
+      JS_FUNCTION_NAMES.each do |key, value|
+        sym_table_code << "#{value}=#{key};"
+      end
+      @lib_output_destination.write "c#{sym_table_code.length}$#{sym_table_code}"
+      
+      
+      @lib_output_destination.close
     end
   
     
@@ -403,6 +378,11 @@ module Vienna
     # name includes the my_app_name.js filename
     def js_build_path
       File.expand_path(File.join(project_root, build_prefix, Vienna.underscore(project_name)) + '.js')
+    end
+    
+    # the lib object code
+    def js_lib_build_path
+      File.expand_path(File.join(project_root, build_prefix, Vienna.underscore(project_name)) + '_html5.js')
     end
     
     def css_build_path

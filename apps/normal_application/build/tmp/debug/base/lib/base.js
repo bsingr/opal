@@ -51,4 +51,8 @@ VN.require('/Users/adam/Development/vienna/apps/normal_application/build/tmp/deb
 
 VN.require('/Users/adam/Development/vienna/apps/normal_application/build/tmp/debug/base/lib/core/json.js');
 
+VN.require('/Users/adam/Development/vienna/apps/normal_application/build/tmp/debug/base/lib/core/yaml.js');
+
 VN.require('/Users/adam/Development/vienna/apps/normal_application/build/tmp/debug/base/lib/core/plist.js');
+
+VN.require('/Users/adam/Development/vienna/apps/normal_application/build/tmp/debug/base/lib/core/lib.js');

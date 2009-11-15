@@ -79,6 +79,18 @@ module Vienna
       build_file root_file
     end
     
+    # for the 'core'/runtime bundle.... this should be a subclass, but its here
+    # for the moment
+    def basic_bundle_link!(output_file)
+      # output_file.write "console.log('outputting #{@bundle_root}');"
+      # dependencies..
+      bundle_dependencies.each do |dependant|
+        dependant.link!(output_file)
+      end   
+      
+      Vienna::Builder::Combine.new root_file_tmp_path, output_file, self   
+    end
+    
     # Called after building, when all other bundles/frameworks are built.
     # This is where all the bundles' resources and code etc are placed
     # into the output file. The 'file' is already open, so just write
@@ -103,7 +115,8 @@ module Vienna
         # begin new bundle
         output_file.write "rb_funcall(vn_cBundle, 'begin_new_bundle', '#{bundle_identifier}');\n"
         # info dictionary
-        output_file.write "rb_funcall(vn_cBundle, 'set_info_dictionary_for_current_bundle', #{info_dictionary.to_json});\n"
+        # output_file.write "rb_funcall(vn_cBundle, 'set_info_dictionary_for_current_bundle', #{info_dictionary.to_json});\n"
+        puts info_dictionary.to_vnplist
         # image resources
         link_image_resources!(output_file)
       end

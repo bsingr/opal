@@ -1,5 +1,5 @@
 /* 
- * plist.js
+ * yaml.js
  * vienna
  * 
  * Created by Adam Beynon.
@@ -24,9 +24,14 @@
  * THE SOFTWARE.
  */
 
-// Modified json parser for custom plist format
-function vn_binary_plist_parse(parse_text) {
-  
+// Quickly loads the parse text of vienna's compressed yaml format, and loads
+// the resulting object and returns it. This, for the moment, assumes basic
+// types: hash, array, string, numbers, booleans and nil: 'extra' ruby objects
+// such as symbols and custom classes are not (yet supported).
+// 
+// NOTE: this only parses vienna's compressed yaml, it doest not actually parse
+// true yaml. This is forthcoming... if we actually need it....
+function vn_yaml_quick_parse_text(parse_text) {
   // begin parsing hash, and then return it
   var hash = function(c) {
     var result = { };
@@ -119,7 +124,7 @@ function vn_binary_plist_parse(parse_text) {
   // same.. otherwise, throw error
   var next = function(c) {
     if (c && c !== ch) {
-      console.log("plist error! Expected " + c + " instead of " + ch)
+      console.log("yaml parse error! Expected " + c + " instead of " + ch)
     }
     ch = text.charAt(at);
     at += 1;
@@ -149,40 +154,13 @@ function vn_binary_plist_parse(parse_text) {
     return parseInt(len);
   };
   
-  // gets format... binary etc
-  var plist_format = function() {
-    var marker = text.indexOf('$', at);
-    var format = text.substr(at, marker - at);
-    at = marker + 1;
-    return format;
-  };
-  
-  // get plist version number... this might be handy in future if we chnage anything
-  var plist_version = function() {
-    var marker = text.indexOf('$', at);
-    var version = text.substr(at, marker - at);
-    // console.log(" at is " + at);
-    at = marker + 1;
-    
-    // console.log("it now is " + at);
-    return version;
-  };
-  
   // current position in parse_text
   var at = 0;
   // current char
   var ch = '';
   // text to parse
   var text = parse_text
-  // parse plist type and version
-  var format = plist_format();
-  // version number
-  var version = plist_version();
   // value will return our top level object
   var result = value();
   return result;
 };
-
-var vn_plist_test_string = "vnplist$1.0$h7$s16$bundle_icon_file~$s17$bundle_identifiers32$com.adambeynon.NormalApplications15$principal_classs15$VN::Applications13$main_vib_files9$main_menus19$bundle_package_types4$APPLs11$bundle_names17$NormalApplications25$bundle_development_regions7$English";
-console.log('plist Result:');
-console.log(vn_binary_plist_parse(vn_plist_test_string));

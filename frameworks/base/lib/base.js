@@ -221,4 +221,6 @@ nil.toString = function() { return 'nil';};
 
 require('core/bundle');
 require('core/json');
+require('core/yaml');
 require('core/plist');
+require('core/lib');
