@@ -24,6 +24,10 @@
 # THE SOFTWARE.
 #
 
+require 'browser'
+require 'foundation'
+require 'app_kit'
+
 module Vienna
   
   VERSION = '0.0.1'
@@ -45,12 +49,5 @@ module Vienna
   end
   
 end
-
-# Shorter namespaced name
-VN = Vienna
-
-require 'browser'
-require 'foundation'
-require 'app_kit'
 
 require 'views/gauge_view'

@@ -1,0 +1,7 @@
+bundle_development_region: English
+bundle_icon_file: 
+bundle_identifier: com.adambeynon.NormalApplication
+bundle_name: NormalApplication
+bundle_package_type: APPL
+main_vib_file: main_menu
+principal_class: VN::Application

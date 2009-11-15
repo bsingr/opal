@@ -116,6 +116,8 @@ rb_define_method(cBasicObject, 'instance_variable_set', function(self, _cmd, id,
   return rb_ivar_set(self, id, val);
 });
 
+// rb_define_singleton_method(cBasicObject, 'const_set')
+
 rb_define_singleton_method(cBasicObject, 'const_get', function(self, _cmd, name) {
   
 });

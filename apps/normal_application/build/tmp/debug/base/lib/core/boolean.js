@@ -1,0 +1,2 @@
+
+var rb_cBoolean=cBoolean;Boolean.prototype.$klass=rb_cBoolean;Boolean.prototype.$type=T_BOOLEAN;rb_define_method(rb_cBoolean,'to_s',function(self,_cmd){return self?'true':'false';});rb_define_method(rb_cBoolean,'&',function(self,_cmd,obj){return(self)?(obj?true:false):false;});rb_define_method(rb_cBoolean,'|',function(self,_cmd,obj){return(self)?true:(obj?true:false);});rb_define_method(rb_cBoolean,'^',function(self,_cmd,obj){return self?(obj?false:true):(obj?true:false);});

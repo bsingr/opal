@@ -147,8 +147,8 @@ rb_define_method(rb_cModule, 'const_get', function(self, _cmd) {
   
 });
   
-rb_define_method(rb_cModule, 'const_set', function(self, _cmd) {
-  
+rb_define_method(rb_cModule, 'const_set', function(self, _cmd, id, val) {
+  return self.$iv_tbl[id] = val;
 });
 
 rb_define_method(rb_cModule, 'const_defined?', function(self, _cmd) {

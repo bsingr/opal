@@ -41,6 +41,9 @@
 
 var vn_cBundle = rb_define_class('Bundle', rb_cObject);
 
+var vn_current_bundle = null;
+var vn_all_bundles = []
+
 function vn_bundle_add_class_to_current_bundle(self, _cmd, klass) {
   if (!RTEST(rb_ivar_get(self, '@current_bundle'))) {
     // console.log('skipping: no current bundle for klass ' + klass);
@@ -52,7 +55,9 @@ function vn_bundle_add_class_to_current_bundle(self, _cmd, klass) {
 
 function vn_bundle_begin_new_bundle(self, _cmd, bundle_identifier) {
   var bundle = rb_funcall(self, 'new', bundle_identifier);
-  rb_ivar_set(self, '@current_bundle', bundle);
+  vn_all_bundles.push(bundle);
+  // rb_ivar_set(self, '@current_bundle', bundle);
+  vn_current_bundle = bundle;
 };
 
 function vn_bundle_initialize(self, _cmd, bundle_identifier) {
@@ -60,16 +65,16 @@ function vn_bundle_initialize(self, _cmd, bundle_identifier) {
 };
 
 function vn_bundle_add_resource_to_current_bundle(self, _cmd, resource_path, resource_text) {
-  var bundle = rb_ivar_get(self, '@current_bundle');
-  rb_funcall(bundle, 'add_resource', resource_path, resource_text);
+  // var bundle = rb_ivar_get(self, '@current_bundle');
+  // rb_funcall(bundle, 'add_resource', resource_path, resource_text);
 };
 
 // dont do this? just look for info.json file when we need it (or info.yaml)
 function vn_bundle_set_info_dictionary_for_current_bundle(self, _cmd, info_dictionary) {
-  var bundle = rb_ivar_get(self, '@current_bundle');
+  // var bundle = rb_ivar_get(self, '@current_bundle');
   // we should convert this to a hash.....
-  var info_hash = JSONParserReformatter(info_dictionary_text);
-  rb_funcall(bundle, 'info_dictionary=', info_hash);
+  // var info_hash = JSONParserReformatter(info_dictionary_text);
+  // rb_funcall(bundle, 'info_dictionary=', info_hash);
 };
 
 

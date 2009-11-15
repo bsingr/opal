@@ -368,9 +368,9 @@ module Vienna
       # main func def
       if definition[:singleton]
         generate_stmt definition[:singleton], :instance => definition[:instance], :full_stmt => false, :last_stmt => false
-        write ".$def_s(s$#{js_id_for_string(method_name)},function(self,_,"
+        write ".$def_s(#{js_id_for_string(method_name)},function(self,_,"
       else
-        write "self.$def(s$#{js_id_for_string(method_name)},function(self,_,"
+        write "self.$def(#{js_id_for_string(method_name)},function(self,_,"
       end
       
       # js_id_for_string(method_name)
@@ -422,7 +422,7 @@ module Vienna
         # puts definition[:singleton]
         generate_stmt definition[:singleton], :instance => definition[:instance], :full_stmt => false, :last_stmt => false
         # write "#{context[:self]}"
-        write ".$def_s(s$#{js_id_for_string(definition[:fname])},function(self,_"
+        write ".$def_s(#{js_id_for_string(definition[:fname])},function(self,_"
         # write ",s$#{js_id_for_string(definition[:fname])}, function(self, _cmd"
       else
         # write "self.$def(s$#{js_id_for_string(definition[:fname])},function(self,_cmd"
@@ -434,7 +434,7 @@ module Vienna
           write "self"
         end
         
-        write ",s$#{js_id_for_string(definition[:fname])},function(self,_"
+        write ",#{js_id_for_string(definition[:fname])},function(self,_"
         # write "/* #{current_self} */"
       end
       
@@ -503,7 +503,7 @@ module Vienna
       
       # If LHS is an @instance_variable
       elsif stmt[:lhs].node == :ivar
-        write "#{context[:self]}.$i_s(i$#{js_id_for_ivar(stmt[:lhs][:name])},"
+        write "#{context[:self]}.$i_s(#{js_id_for_ivar(stmt[:lhs][:name])},"
         generate_stmt stmt[:rhs], :instance => context[:instance], context[:full_stmt] => false, context[:last_stmt] => true, :self => context[:self]
         write ')'
       
@@ -535,7 +535,7 @@ module Vienna
         write "#{js_replacement_function_name('rb_funcall')}("
         generate_stmt stmt[:lhs][:recv], :instance => context[:instance], context[:full_stmt] => false, :last_stmt => context[:last_stmt], :self => context[:self]
         # write ",#{js_id_for_string("#{stmt[:lhs][:meth]}="}),"
-        write ",s$"
+        write ","
         write js_id_for_string("#{stmt[:lhs][:meth]}=")
         write ","
         # if its []= then we need to output 2 args
@@ -582,7 +582,7 @@ module Vienna
         method_name << a[:key]
       end
       
-      write",s$#{js_id_for_string(method_name)},"
+      write",#{js_id_for_string(method_name)},"
       # js_id_for_string(method_name)
       
       # write ".$('#{method_name}',["
@@ -608,10 +608,13 @@ module Vienna
       
       # Capture require calls...
       if call[:meth] == 'require' and not call[:recv]
-        require_path = @project.file_for_require_relative_to(@source, call[:call_args][:args][0][:value][0][:value])
+        require_path = @project.require_path_relative_to_file(@source, call[:call_args][:args][0][:value][0][:value])
         # puts call[:args][0][:value][0][:value]
-        build_path = @project.build_file(require_path)
-        write "\nVN.require('#{build_path}');\n"
+        if require_path
+          puts "requiring: #{require_path}"
+          build_path = @project.build_file(require_path)
+          write "\nVN.require('#{build_path}');\n"
+        end
         return
       end
       
@@ -626,7 +629,7 @@ module Vienna
         # write current_self
       end
       
-      write ",s$#{js_id_for_string(call[:meth])}"
+      write ",#{js_id_for_string(call[:meth])}"
       # js_id_for_string(call[:meth])
         
       # write ".$('#{call[:meth]}',["
@@ -808,7 +811,7 @@ module Vienna
     
     def generate_symbol sym, context
       write 'return ' if context[:last_stmt] and context[:full_stmt]
-      write "_$#{js_id_for_symbol(sym[:name])}"
+      write "#{js_id_for_symbol(sym[:name])}"
       # write "'#{sym[:name]}'"
       write ";\n" if context[:full_stmt]
     end
@@ -839,7 +842,7 @@ module Vienna
       list[:list].each do |l|
         if l.node == :label_assoc
           key = l[:key].slice(0, l[:key].length - 1)
-          write "_$#{js_id_for_symbol(key)}"
+          write "#{js_id_for_symbol(key)}"
         else
           generate_stmt l[:key], :instance => (context[:singleton] ? false : true), :full_stmt => false, :last_stmt => false,  :self => current_self
         end
@@ -876,7 +879,7 @@ module Vienna
       write 'return ' if context[:last_stmt] and context[:full_stmt]
       # write "#{current_self}.$i_g('#{stmt[:name]}')"
       # write "#{current_self}.$i_g(i$#{js_id_for_ivar(stmt[:name])})"
-      write "#{js_replacement_function_name('rb_ivar_get')}(#{current_self},i$#{js_id_for_ivar(stmt[:name])})"
+      write "#{js_replacement_function_name('rb_ivar_get')}(#{current_self},#{js_id_for_ivar(stmt[:name])})"
       write ";\n" if context[:full_stmt]
     end
     
@@ -891,7 +894,7 @@ module Vienna
       else
         # method call
         # write "#{current_self}.$('#{identifier[:name]}', [])"
-        write "#{js_replacement_function_name('rb_funcall')}(#{current_self},s$#{js_id_for_string(identifier[:name])})"
+        write "#{js_replacement_function_name('rb_funcall')}(#{current_self},#{js_id_for_string(identifier[:name])})"
       end
       write ";\n" if context[:full_stmt]
     end

@@ -172,6 +172,8 @@ module Vienna
     end
   
     def finish_launching
+      # `alert("finish launching");`
+      puts 'VN::Application#finish_launching'
       # force at the moment, this should detect runtime environment: browser or desktop
       ENV[:platform] = :browser
       
@@ -198,8 +200,12 @@ module Vienna
       nc.post_notification_name APP_DID_FINISH_LAUNCHING, object:self
     end
   
-    def run (&block)
-      @run_block = block
+    # def run (&block)
+    #   @run_block = block
+    # end
+    
+    def run
+      finish_launching
     end
     
     def send_action(action, to:target, from:sender)
@@ -209,13 +215,21 @@ module Vienna
       end
     end
   end
-  # `console.log('this pare');`
-  # Vienna::App
-  App = Application.shared_application
-  # `console.log('ermmm');`
+  
+  # App = Application.shared_application
+  
+  # Equivalent of NSApplicationMain
+  def VN.ApplicationMain
+    VN.const_set('App', Application.shared_application)
+    # main_bundle = Bundle.main_bundle
+    
+    # load main vib file.
+    
+    App.run
+  end
 end
 
 # Attach events to window to capture finished loading...
 `window.onload = function() {`
-	VN::App.finish_launching
+	VN.ApplicationMain();
 `};`

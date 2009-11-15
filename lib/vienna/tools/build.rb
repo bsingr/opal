@@ -16,15 +16,15 @@ module Vienna
     def self.build
       # p = Project.new Dir.getwd
       p = Vienna::NewProject.new Dir.getwd
-      puts "preparing: #{p.project_root}"
+      # puts "preparing: #{p.project_root}"
       p.prepare!
-      puts "building: #{p.project_name}"
+      # puts "building: #{p.project_name}"
       p.build!
-      puts "root file: #{p.root_file}"
-      puts "library path: #{p.system_lib_root}"
+      # puts "root file: #{p.root_file}"
+      # puts "library path: #{p.system_lib_root}"
       
-      puts "all frameworks used:"
-      puts p.all_frameworks
+      # puts "all frameworks used:"
+      # puts p.all_frameworks
     end
   
     # Cleans a vienna project working directory. Basically removes the build 

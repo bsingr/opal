@@ -1,316 +1,393 @@
 # 
-#  base.rb
-#  vienna
-#  
-#  Created by Adam Beynon on 2009-05-20.
-#  Copyright 2009 Adam Beynon. All rights reserved.
+# bundle.rb
+# vienna
 # 
+# Created by Adam Beynon.
+# Copyright 2009 Adam Beynon.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+# 
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+# 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+#
+
+require 'yaml'
 
 module Vienna
   
-  # Base class for applications and frameworks. Note: this is not used for locales
-  # as they require seperate behaviour, and an application and framework can have
-  # locales of their own. Both apps and frameworks can also have sub frameworks
-  # which they respectively contain. A framework relies on having a root project.
-  # 
-  # This will be extenede later to also hold bundles: kind of plugin system for 
-  # cocoa and vienna.
   class Bundle
-
-  def initialize(bundle_root, parent=nil)
-    @bundle_root = bundle_root
-    @parent = parent
-    @prepared = false
+        
+    # When building images to base-64, we need the corect mime types:
+    IMAGE_MIME_TYPES = {
+      'png'   => 'image/png',
+      'jpg'   => 'image/jpg',
+      'gif'   => 'image/gif',
+      'jpeg'  => 'image/jpg'
+    }
     
-    # Linking configuration
-    @link_config = {}
-    
-    # linked files
-    @linked_files = []
-    
-    @sub_frameworks = []
-  end
-
-  def rakefile
-    @rakefile ||= Rakefile.new.load!(@bundle_root)
-  end
-  
-  def bundle_root
-    @bundle_root
-  end
-  
-  # This looks in the project dir for all locale folders and makes an array
-  # of languages that need to be processed during the build stage
-  def locales
-    @locales ||= Dir.glob(File.join(bundle_root, '*.lproj'))
-  end
-  
-  # Gets a list of all Javascript source files to build. These do not really
-  # have to be processed, but out list will be passed on for combining
-  def javascript_sources
-    @javascript_soruces ||= Dir.glob(File.join(bundle_root, '*.js'))
-  end
-  
-  def objc_sources
-    @objc_sources ||= Dir.glob(File.join(bundle_root, '*.{m,c}'))
-  end
-  
-  def xib_sources
-    @xib_sources ||= Dir.glob(File.join(bundle_root, '*.xib'))
-  end
-  
-  def plist_sources
-    @plist_sources ||= Dir.glob(File.join(bundle_root, '*.plist'))
-  end
-  
-  def image_sources
-    @image_sources ||= Dir.glob(File.join(bundle_root, 'resources', '*.png'))
-  end
-  
-  def css_sources
-    @css_sources ||= Dir.glob(File.join(bundle_root, 'resources', '*.css'))
-  end
-  
-  def prepare!
-    # build paths
-    FileUtils.mkdir_p(build_prefix)
-    FileUtils.mkdir_p(File.join(build_prefix, 'Frameworks'))
-    FileUtils.mkdir_p(File.join(build_prefix, 'Resources'))
-    FileUtils.mkdir_p(tmp_prefix)
-    FileUtils.mkdir_p(File.join(tmp_prefix, project_name))
-  end
-  
-  def is_prepared?
-    @prepared
-  end
-  
-  # builds the bundle. Basically compiles each "good" file type, and puts it into the respective
-  # tmp directory. These are not combined. link! is VERY different from build!
-  # 
-  # build! is for each file, link! is for the bundle/framework/app.
-  def build!
-    prepare! unless is_prepared?
-    
-    puts "Building: #{bundle_name}"
-    
-    # Objective C Files
-    objc_sources.each do |c|
-    builder = ObjectiveCParser.new(c, File.join(@parent.tmp_prefix, bundle_name, 'objects', File.basename(c, '.*')) + '.js', @parent)
-    builder.build!
-    @link_config[File.basename(c, '.m') + '.js'] = builder.link_config
+    def initialize(bundle_root, project)
+      @bundle_root = bundle_root
+      @project = project
+      # bundles that this bundle has required
+      @required_bundles = []
+      # files, in this bundle, that are already built/required
+      @required_files = []
+      # this holds actual bundle objects that this bundle depends on
+      # not all dependencies will be here... if more than one framework
+      # depeaneds on anothre bundle, then the first one to 'claim' it will
+      # have it as a dependancy. These are added by @project
+      @bundle_dependencies = []
     end
     
-    # Javascript files
-    javascript_sources.each do |j|
-    builder = Vienna::Builder::Javascript.new(j, File.join(@parent.tmp_prefix, bundle_name, 'objects', File.basename(j)), @parent)
-    builder.build!
-    @link_config[File.basename(j)] = builder.link_config
-    builder.link_frameworks.each do |r|
-      if @parent.should_build_framework? r
-      required_frameworks << r
-      @parent.add_built_framework r
-      puts " -- Requiring #{r}"
+    # Basic bundles just output code... they skip resources etc and info.yml etc
+    def basic_bundle=(flag)
+      @basic_bundle = flag
+    end
+    
+    def required_bundles
+      @required_bundles
+    end
+    
+    def add_dependency(a_bundle)
+      @bundle_dependencies << a_bundle
+    end
+    
+    def bundle_dependencies
+      @bundle_dependencies
+    end
+    
+    # Compiles any sources/preprocesses any sources to output. Does NOT
+    # combine them to output, simply builds anything into the tmp
+    # directory
+    def build!
+      # puts "building main bundle"
+      # add root as required, so nothing else will 'accidentally include it'
+      @required_files << root_file
+      build_file root_file
+    end
+    
+    # Called after building, when all other bundles/frameworks are built.
+    # This is where all the bundles' resources and code etc are placed
+    # into the output file. The 'file' is already open, so just write
+    # the necessary stuff into the file:
+    # 
+    # 0) Dependencies
+    # 1) Declare new bundle
+    # 2) Info dictionary
+    # 3) Resources
+    # 4) Bundle Code
+    # 
+    # The project handles bundle requirmeents, and places them into the
+    # output in the correct order, so there is no need to do this manually.
+    def link!(output_file)
+      # output_file.write "console.log('outputting #{@bundle_root}');"
+      # dependencies..
+      bundle_dependencies.each do |dependant|
+        dependant.link!(output_file)
+      end
+      # output bundle stuff, unless this is a basic bundle
+      unless @basic_bundle
+        # begin new bundle
+        output_file.write "rb_funcall(vn_cBundle, 'begin_new_bundle', '#{bundle_identifier}');\n"
+        # info dictionary
+        output_file.write "rb_funcall(vn_cBundle, 'set_info_dictionary_for_current_bundle', #{info_dictionary.to_json});\n"
+        # image resources
+        link_image_resources!(output_file)
+      end
+      # output actual bundle code
+      # output_file.write "#{root_file_tmp_path}\n"
+      Vienna::Builder::Combine.new root_file_tmp_path, output_file, self
+      # output_file.write @bundle_root
+      # output_file.write "\n"
+    end
+    
+    def link_image_resources!(output_file)
+      images = File.join(@bundle_root, "resources", "**", "*.{png,jpg,jpeg,gif}")
+      Dir.glob(images).each do |img|
+        # 32kb * 1024.... make it compatible with IE8 etc
+        if File.size(img) < 32768
+          img_data = "data:image/png;base64,"
+          data = Base64.encode64(File.read(img))
+          data.each_line { |line| img_data << line.gsub(/\n/, '') }
+          # img path is img path relative to bundle_root
+          img_path = img.match(/^#{@bundle_root}(.*)/)[1]
+          output_file.write "rb_funcall(vn_cBundle, 'add_resource_to_current_bundle', \"#{img_path}\", \"#{img_data}\");\n"
+          
+          # o.write "vn_resource_stack['#{File.basename(img)}']="
+          # o.write "\"data:#{IMAGE_MIME_TYPES['png']};base64,"
+          # data = Base64.encode64(File.read(img))
+          # data.each_line { |line| o.write line.gsub(/\n/, '') }
+          # o.write "\";"
+        end
+        # useful to copy image to resource directory as well, incase its needed in raw form
+        # File.copy(img, File.expand_path(File.join(img_build_path, File.basename(img))))
       end
     end
-    end
     
-    # xib files
-    xib_sources.each do |x|
-    builder = Vienna::Builder::Xib.new(x, File.join(@parent.tmp_prefix, bundle_name, 'resources', File.basename(x, '.xib')) + '.json', @parent)
-    builder.build!
-    end
-    
-    # css sources
-    css_sources.each do |c|
-    builder = Vienna::Builder::Css.new(c, File.join(@parent.tmp_prefix, bundle_name, 'resources', File.basename(c)), @parent)
-    builder.build!
-    end
-    
-    # image_sources
-    image_sources.each do |i|
-    File.copy(i, File.join(@parent.tmp_prefix, bundle_name, 'resources', File.basename(i)))
-    end
-    
-    # save link config for the bundle, to speed up compiling (avoids rebuilding everyfile all the time)
-    File.open(File.join(@parent.tmp_prefix, bundle_name, 'objects') + '/Linkfile', 'w') do |out|
-    YAML.dump(@link_config, out)
-    end
+    # Collect any other resources - images, sounds etc into the specified
+    # directory. This folder should be treated as the base resources folder
+    # for the bundle. The fact that other bundles also write here is 
+    # irrelevant. (if they do....?)
+    def link_resources!(output_folder)
       
-    # go through all required frameworks..
-    required_frameworks.each do |f|
-    path = find_framework(f)
-    if path
-      framework = Framework.new path, @parent
-      framework.build!
-      @sub_frameworks << framework
-    else
-      puts " -- Error: cannot find framework named #{f}"
-    end
-    end
-  end
-  
-  # link all JS resources into the openFile, which, by name, is open (so just write)
-  def link_javascript!(openFile)
-    all_objects = Dir.glob(File.join(@parent.tmp_prefix, bundle_name, 'objects', '*.js'))
-    all_resources = Dir.glob(File.join(@parent.tmp_prefix, bundle_name, 'resources', '*.json'))
-    all_images = Dir.glob(File.join(@parent.tmp_prefix, bundle_name, 'resources', '*.png'))
-    
-    # do sub frameworks first
-    @sub_frameworks.each do |s|
-    s.link_javascript!(openFile)
     end
     
-    # this frameworks's files
-    all_objects.each do |f|
-    link_object_file(f, openFile)
+    # Build the given file, and return its build path
+    # return the build_path..... builders can use this to insert tags ready for
+    # including other files relative in their own bundle.
+    def build_file(file_path)
+      file_dir = file_path.match(/^#{@bundle_root}(.*)/)
+      
+      build_dir = File.join(tmp_directory, File.dirname(file_dir[1]))
+      FileUtils.mkdir_p build_dir
+      
+      if File.extname(file_path) == '.rb'
+        build_path = File.expand_path(File.join(build_dir, File.basename(file_path, '.rb')) + '.js')
+        builder = Vienna::RubyParser.new(file_path, build_path, self)
+      elsif File.extname(file_path) == '.js'
+        build_path = File.expand_path(File.join(build_dir, File.basename(file_path)))
+        builder = Vienna::Builder::Javascript.new(file_path, build_path, self)
+      end
+      
+      builder.build!
+      
+      build_path
     end
     
-    # this framework's resources
-    all_resources.each do |r|
-    link_resource_file(r, openFile)
+    def root_file_tmp_path
+      if File.extname(root_file) == '.rb'
+        File.join(tmp_directory, 'lib', File.basename(root_file, '.rb')) + '.js'
+      else
+        File.join(tmp_directory, 'lib', File.basename(root_file))
+      end
     end
     
-    # any image resources
-    all_images.each do |i|
-    File.copy(i, File.join(@parent.build_prefix, 'resources', File.basename(i)))
-    end
-  end
-  
-  # link all stylesheets into the provided file
-  def link_css!(openFile)
-    all_stylesheets = Dir.glob(File.join(@parent.tmp_prefix, bundle_name, 'resources', '*.css'))
-    
-    # sub frameworks
-    @sub_frameworks.each do |s|
-    s.link_css!(openFile)
+    # Temp directory for this bundle
+    def tmp_directory
+      File.join(@project.project_root, @project.tmp_prefix, File.basename(@bundle_root))
     end
     
-    all_stylesheets.each do |c|
-    f = File.new(c)
-    t = f.read
-    openFile.write t
-    f.close()
+    # The base file for the bundle. This will likely be a ruby file, or it
+    # might even rarely be a js file. This is usually in @bundle_root/lib/name.rb
+    def root_file
+      @root_file ||= File.exists?(File.expand_path(File.join(@bundle_root, 'lib', File.basename(@bundle_root)) + '.rb')) ? File.expand_path(File.join(@bundle_root, 'lib', File.basename(@bundle_root)) + '.rb') : File.expand_path(File.join(@bundle_root, 'lib', File.basename(@bundle_root)) + '.js')
     end
-  end
-  
-  # link an actual object file
-  def link_object_file(file, out)
+    
+    # info.yml file for the bundle. The object returned is a representation of
+    # the yml file ready for use
+    def info_dictionary
+      @info_dictionary ||= (File.exist?(File.join(@bundle_root, 'info.yml')) ? YAML.load_file(File.join(@bundle_root, 'info.yml')) : default_info_dictionary)
+    end
 
-    return if @linked_files.include? file
+    # If a bundle is for whatever reason missing one of these, then we will
+    # supply a default one, and try to supply as much info to it as we can.
+    # If it is missing a yml file, we will assume its an application.
+    # Should really throw error if no info file is present.
+    def default_info_dictionary
 
-    all_objects = Dir.glob(File.join(@parent.tmp_prefix, bundle_name, 'objects', '*.js'))
-    object_path = File.join(@parent.tmp_prefix, bundle_name, 'objects')
-    
-    return unless all_objects.include?(file)
-
-    @linked_files << file
-
-    if @link_config[File.basename(file)]
-    # has linked files, so include (.m, not .js)
-    @link_config[File.basename(file)]["dependencies"].each do |d|
-      link_object_file(File.join(object_path, d), out)
-    end
-    end
-    f = File.new(file)
-    t = f.read
-    out.write t
-    f.close();
-  end
-  
-  # Links a resource file into the specified file. This will only link files
-  # that can be inserted as json, plain text, or a string representation. For
-  # example, strings files are copied, as are xibs (in json format)
-  def link_resource_file(file, out)
-    f = File.new(file, 'r')
-    # t = f.read
-    out.write "__bootstrap_files[\"#{File.basename(file)}\"] = "
-    f.readlines.map {|line| out.write line}
-    # out.write IO.read(file)
-    # out.write JSMin.minify(file)
-    # File.open(file, 'r') {|aFile| out.write JSMin.minify(aFile) }
-    # out.write t
-    out.write ";"
-  end
-  
-  def build_prefix
-    @build_prefix ||= (rakefile.config_for(build_mode)[:build_prefix] || 'build')
-  end
-  
-  def tmp_prefix
-    @tmp_prefix ||= (rakefile.config_for(build_mode)[:tmp_prefix] || 'build/tmp')
-  end
-  
-  def copyright_notice
-    @copyright_notice ||= (rakefile.config_for(build_mode)[:copyright_notice] || '')
-  end
-  
-  def user_name
-    @user_name ||= (rakefile.config_for(build_mode)[:user_name] || 'Your Name')
-  end
-  
-  def organization_name
-    @organization_name ||= (rakefile.config_for(build_mode)[:organization_name] || 'My Company')
-  end
-  
-  def bundle_name
-    @project_name ||= File.basename(bundle_root)
-  end
-  
-  def sdk_root
-    @sdk_root ||= (rakefile.config_for(build_mode)[:sdk_root] || (File.join(LIBPATH, '..', 'SDKs')))
-  end
-  
-  def project_SDK
-    @project_SDK ||= (rakefile.config_for(build_mode)[:SDK] || 'javascript')
-  end
-  
-  def system_frameworks
-    @system_frameworks ||= File.expand_path(File.join(sdk_root, project_SDK, 'frameworks'))
-  end
-  
-  def project_frameworks
-    @project_frameworks ||= File.expand_path(File.join(bundle_root, 'frameworks'))
-  end
-  
-  def required_frameworks
-    @required_frameworks ||= []
-  end
-  
-  def required
-    return @required_frameworks if @required_frameworks
-    
-    r = rakefile.config_for(build_mode)[:required]
-    if r.class == Array
-    return r
-    elsif r.class == String or r.class == Symbol
-    return [r.to_s]
+      return {
+        'bundle_development_region' => 'English',
+        'bundle_icon_file'          => '',
+        'bundle_identifier'         => "com.yourcompany.#{File.basename(@bundle_root)}",
+        'bundle_name'               => File.basename(@bundle_root),
+        'bundle_package_type'       => 'APPL',
+        'main_vib_file'             => 'main_menu',
+        'principal_class'           => 'VN::Application'
+      }
     end
     
-    return []
-  end
-  
-  # Gets the build mode. If not set, defaults to debug
-  def build_mode
-    @build_mode ||= :debug
-  end
-  
-  # Sets build mode: optional.. defaults to debug if not set
-  def build_mode=(build)
-    @build_mode = build
-  end
-  
-  
-  def find_framework(name)
-    # normalize string
-    name = name.to_s.downcase
-    f = Dir.new(system_frameworks)
-    f.each do |x|
-    if x.downcase == name
-      return File.join(system_frameworks, x)
+    # The name of the bundle. This will be an uppercase/camelcase version, e.g.
+    # MyBundleName, rather than the underscore version.
+    def bundle_name
+      @bundle_name ||= info_dictionary['bundle_name']
     end
+    
+    # Underscore (rubyfied) version of bundle_name
+    def underscored_bundle_name
+      @underscored_bundle_name ||= Vienna.underscore(bundle_name)
     end
-    # else, return nil: cant find framework
-    return nil
-  end
+    
+    # bundle identifier (reverse url)
+    def bundle_identifier
+      @bundle_identifier ||= info_dictionary['bundle_identifier']
+    end
+    
+    def bundle_package_type
+      @bundle_package_type ||= info_dictionary['bundle_package_type']
+    end
+    
+    # Main vib file: note, this will only really be used for the main bundle. 
+    # We can assume the main bundle will be run as soon as the application
+    # loads, so we output this file directly as json, rather than a string.
+    def main_vib_file
+      @main_vib_file ||= info_dictionary['main_vib_file']
+    end
+    
+    # Location of all 'system' frameworks (just asks project)
+    def system_lib_root
+      @project.system_lib_root
+    end
+    
+    # Required bundles by this bundle. This is an array of absolute paths to
+    # the bundle, not Bundle objects
+    def required_bundles
+      @required_bundles
+    end
+    
+    # Require path. 
+    # ------------
+    # When a builder encounters a require statement, this method returns the
+    # path that should be built. This method returns nil if the file cannot
+    # be found, and it is up to the bundle to handle errors: NOT the builders.
+    # If the path is in another bundle/frameworks, then this method will
+    # itself notiffy the project that a bundle is required. When this method
+    # returns nil, the builder can silently ignore the require statement.
+    # 
+    #   file - the rb/js file that contains the require statement
+    #   require_path - the require statement string, e.g. "app_kit"
+    def require_path_relative_to_file(file, require_path)
+      # 1) Try local files relative to 'file'
+      # -------------------------------------
+      # If we find the file, we make sure that it has not already been included..
+      # if it has return nil: we do not want a file to be required more than
+      # once, otherwise we might create infinite loops of require statements.
+      file_dir = File.dirname(file)
+      # try .js first
+      try_path = File.join(file_dir, require_path) + '.js'
+      if File.exists? try_path
+        if @required_files.include?(try_path)
+          puts "already included #{try_path}"
+          return nil
+        else
+          @required_files << try_path
+          return try_path
+        end
+      end
+      try_path = File.join(file_dir, require_path) + '.rb'
+      if File.exists? try_path
+        if @required_files.include?(try_path)
+          puts "already included #{try_path}"
+          return nil
+        else
+          @required_files << try_path
+          return try_path
+        end
+      end
+      
+      # 2) Check 'vendor bundles' relative to the bundle root (bundle_path/vendor/require_name)
+      
+      # 3) Check system library bundles
+      # -------------------------------
+      # If the require file is found here, then return nil because we do not want a new
+      # bundle being built by a current bundle. We pass it off to the project, and
+      # let the project deal with it. This ensures that we keep bundles seperate.
+      # We maintiain a lit in this bundle of 'required bundles', which helps us maintain
+      # a list of depenencies ready for linking.
+      try_path = File.join(system_lib_root, require_path, 'lib', require_path) + '.js'
+      if File.exists? try_path
+        @required_bundles << File.join(system_lib_root, require_path)
+        # puts "Found framework: #{require_path}"
+        return nil
+      end
+      
+      try_path = File.join(system_lib_root, require_path, 'lib', require_path) + '.rb'
+      if File.exists? try_path
+        @required_bundles << File.join(system_lib_root, require_path)
+        # puts "Found framework: #{require_path}"
+        return nil
+      end
+      
+      # 4) Cannot find file
+      # -------------------
+      # If we get here, we cannot find the file to require, so show error?
+      # raise 'file error... or something similar'
+      puts "Cannot find requirement '#{require_path}' relative to '#{file}'"
+      
+      nil
+    end
+    
+    def minifies_ruby_output_strings
+      # true
+      false
+    end
+    
+    
+    
+    # The value to use as the generated text for strings within ruby code. By
+    # using this, we only output strings once, and save a lot of memory. Most
+    # strings are created, destroyed and wasted very quickly during message
+    # passing. Whatever value returned here should be used. If the compiler
+    # should not minimize a string, then the string is just returned - but
+    # in quotes, so that at runtime, a string is referenced. Similarly, if an
+    # object string reference is to be used, its actual name is retuened so
+    # that it can be directly output as it is.
+    # 
+    # All 4 of the following methods can be turned on/off on a per bundle basis.
+    # If on, the bundle jsut asks the info from the @project. If off, it just
+    # returns the same/relevant value (Symbol requires rewriting to ID2SYM).
+    # 
+    # string
+    # ------
+    # Used for method call names
+    def js_id_for_string(str)
+      if minifies_ruby_output_strings
+        return @project.js_id_for_string(str)
+      else
+        return "'#{str}'"
+      end
+    end
+    
+    # symbol
+    # ------
+    # References singleton symbols. Symbols are only created once in vienna, like
+    # in ruby, so these just point back to the singleton object, or the ID2SYM
+    # method, which just retireves the singleton anyway.
+    def js_id_for_symbol(sym)
+      if minifies_ruby_output_strings
+        return @project.js_id_for_symbol(sym)
+      else
+        return "ID2SYM('#{sym}')"
+      end
+    end
+    
+    # ivar
+    # ----
+    # Similar to string, acceses the table of strings representing ivar names
+    def js_id_for_ivar(ivar)
+      if minifies_ruby_output_strings
+        return @project.js_id_for_ivar(ivar)
+      else
+        return "'#{ivar}'"
+      end
+    end
+    
+    # Const
+    # -----
+    # Again, like string accesees singleton versions of constant names. This is
+    # also used for Classes, Modules, Constants etc.
+    def js_id_for_const(const)
+      if minifies_ruby_output_strings
+        return @project.js_id_for_const(const)
+      else
+        return "'#{const}'"
+      end
+    end
+    
+    def js_replacement_function_name(func_name)
+      func_name
+    end
   end
 end
