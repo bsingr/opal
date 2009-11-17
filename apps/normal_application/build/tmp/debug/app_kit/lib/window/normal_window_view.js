@@ -1,15 +1,16 @@
 (function(self) {
 (function(self) {
-self.$c_s('CLOSE_IMAGE',rb_funcall(self.$c_g_full('Image'),'sprite',ID2SYM('controls'),[0,855,16,16]));
-self.$c_s('CLOSE_HIGHLIGHTED_IMAGE',rb_funcall(self.$c_g_full('Image'),'sprite',ID2SYM('controls'),[16,855,16,16]));
-self.$c_s('MIN_IMAGE',rb_funcall(self.$c_g_full('Image'),'sprite',ID2SYM('controls'),[0,872,16,16]));
-self.$c_s('MIN_HIGHLIGHTED_IMAGE',rb_funcall(self.$c_g_full('Image'),'sprite',ID2SYM('controls'),[16,872,16,16]));
-self.$c_s('ZOOM_IMAGE',rb_funcall(self.$c_g_full('Image'),'sprite',ID2SYM('controls'),[0,889,16,16]));
-self.$c_s('ZOOM_HIGHLIGHTED_IMAGE',rb_funcall(self.$c_g_full('Image'),'sprite',ID2SYM('controls'),[16,889,16,16]));
+var bundle=rb_funcall(self.$c_g_full('Bundle'),'bundle_for_class',self);
+self.$c_s('TITLEBAR_IMAGE',rb_funcall(self.$c_g_full('ThreePartImage'),'new',rb_funcall(self.$c_g_full('Image'),'new',rb_funcall(bundle,'path_for_resource','window/normal/titlebar_left.png'),6,55),rb_funcall(self.$c_g_full('Image'),'new',rb_funcall(bundle,'path_for_resource','window/normal/titlebar_middle.png'),1,55),rb_funcall(self.$c_g_full('Image'),'new',rb_funcall(bundle,'path_for_resource','window/normal/titlebar_right.png'),6,55)));
+self.$c_s('CLOSE_IMAGE',rb_funcall(self.$c_g_full('Image'),'new',rb_funcall(bundle,'path_for_resource','window/normal/close_button.png')));
+self.$c_s('CLOSE_HIGHLIGHTED_IMAGE',rb_funcall(self.$c_g_full('Image'),'new',rb_funcall(bundle,'path_for_resource','window/normal/close_button_highlighted.png')));
+self.$c_s('MIN_IMAGE',rb_funcall(self.$c_g_full('Image'),'new',rb_funcall(bundle,'path_for_resource','window/normal/normal_window_titlebar_left.png')));
+self.$c_s('MIN_HIGHLIGHTED_IMAGE',rb_funcall(self.$c_g_full('Image'),'new',rb_funcall(bundle,'path_for_resource','window/normal/normal_window_titlebar_left.png')));
+self.$c_s('ZOOM_IMAGE',rb_funcall(self.$c_g_full('Image'),'new',rb_funcall(bundle,'path_for_resource','window/normal/normal_window_titlebar_left.png')));
+self.$c_s('ZOOM_HIGHLIGHTED_IMAGE',rb_funcall(self.$c_g_full('Image'),'new',rb_funcall(bundle,'path_for_resource','window/normal/normal_window_titlebar_left.png')));
+self.$c_s('SPLITTER_IMAGE',rb_funcall(self.$c_g_full('Image'),'new',rb_funcall(bundle,'path_for_resource','window/normal/splitter.png'),1,1));
+self.$c_s('RESIZE_IMAGE',rb_funcall(self.$c_g_full('Image'),'new',rb_funcall(bundle,'path_for_resource','window/normal/resize_indicator.png'),12,12));
 self.$c_s('TITLEBAR_HEIGHT',24.0);
-self.$c_s('TITLEBAR_IMAGE',rb_funcall(self.$c_g_full('ThreePartImage'),'new',rb_funcall(self.$c_g_full('Image'),'image_named','normal_window_titlebar_left'),rb_funcall(self.$c_g_full('Image'),'image_named','normal_window_titlebar_middle'),rb_funcall(self.$c_g_full('Image'),'image_named','normal_window_titlebar_right')));
-self.$c_s('SPLITTER_IMAGE',rb_funcall(self.$c_g_full('Image'),'image_named','normal_window_titlebar_splitter'));
-self.$c_s('RESIZE_INDICATOR',rb_funcall(self.$c_g_full('Image'),'image_named','normal_window_resize_indicator'));
 rb_define_method(self,'initialize',function(self,_,frame,style_mask){
 rb_supcall(arguments.callee, self,_,[frame,style_mask]);
 if(RTEST(rb_funcall(rb_ivar_get(self,'@style_mask'),'include?',ID2SYM('closable')))){
@@ -42,7 +43,7 @@ rb_funcall(context,'append',ID2SYM('div'),function(body){
 rb_funcall(body,'frame=',rb_funcall(self.$klass.$c_g_full('Rect'),'new',0,self.$klass.$c_g_full('TITLEBAR_HEIGHT'),rb_funcall(rb_ivar_get(self,'@bounds'),'width'),rb_funcall(rb_funcall(rb_ivar_get(self,'@bounds'),'height'),'-',self.$klass.$c_g_full('TITLEBAR_HEIGHT'))));
 return rb_funcall(body,'css',VN.$h(ID2SYM('background_color'),'rgb(245,245,245)'));
 });
-return rb_funcall(self.$klass.$c_g_full('RESIZE_INDICATOR'),'render_with_frame',rb_funcall(self,'resize_indicator_frame'));
+return rb_funcall(self.$klass.$c_g_full('RESIZE_IMAGE'),'render_with_frame',rb_funcall(self,'resize_indicator_frame'));
 });
 });
 self.$def_s('frame_rect_for_content_rect:style_mask:',function(self,_,rect,style){

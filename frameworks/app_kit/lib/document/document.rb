@@ -183,5 +183,93 @@ module Vienna
     def undo_manager
       @undo_manager
     end
+    
+    def has_undo_manager?
+      @undo_manager ? true : false
+    end
+    
+    def present_error(error, modal_for_window:window, delegate:delegate, did_present_selector:did_present_selector, context_info:context_info)
+      
+    end
+    
+    def present_error(error)
+      
+    end
+    
+    def will_present_error(error)
+      
+    end
+    
+    def make_window_controllers
+      
+    end
+    
+    def window_vib_name
+      
+    end
+    
+    def window_controller_will_load_vib(window_controller)
+      
+    end
+    
+    def window_controller_did_load_vib(window_controller)
+      
+    end
+    
+    def window=(a_window)
+      @window = a_window
+    end
+
+    def add_window_controller(window_controller)
+      
+    end
+    
+    def remove_window_controller(window_controller)
+      
+    end
+    
+    def show_windows
+      
+    end
+    
+    def window_controllers
+      @window_controllers
+    end
+    
+    def should_close_window_controller(window_controller, delegate:delegate, should_close_selector:should_close_selector, context_info:context_info)
+      
+    end
+
+    def display_name
+      
+    end
+    
+    def window_for_sheet
+      
+    end
+    
+    def Document.readable_types
+      []
+    end
+
+    def Document.writable_types
+      []
+    end
+    
+    def Document.native_type?(type)
+      
+    end
+
+    def writable_types_for_save_operation(save_operation)
+      
+    end
+
+    def file_name_extensions_for_type(type_name, save_operation:save_operation)
+      
+    end
+    
+    def validate_user_interface_item?(an_item)
+      
+    end    
   end
 end

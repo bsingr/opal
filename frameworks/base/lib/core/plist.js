@@ -29,12 +29,13 @@ function vn_binary_plist_parse(parse_text) {
   
   // begin parsing hash, and then return it
   var hash = function(c) {
-    var result = { };
+    var result = rb_hash_new();
     var hash_len = marker_count();
     for (var i = 0; i < hash_len; i++) {
       var key = value();
       var val = value();
-      result[key] = val;
+      // result[key] = val;
+      rb_funcall(result, 'store', key, val);
     }
     return result;
   };
@@ -173,7 +174,7 @@ function vn_binary_plist_parse(parse_text) {
   // current char
   var ch = '';
   // text to parse
-  var text = parse_text
+  var text = parse_text;
   // parse plist type and version
   var format = plist_format();
   // version number
@@ -182,7 +183,3 @@ function vn_binary_plist_parse(parse_text) {
   var result = value();
   return result;
 };
-
-var vn_plist_test_string = "vnplist$1.0$h7$s16$bundle_icon_file~$s17$bundle_identifiers32$com.adambeynon.NormalApplications15$principal_classs15$VN::Applications13$main_vib_files9$main_menus19$bundle_package_types4$APPLs11$bundle_names17$NormalApplications25$bundle_development_regions7$English";
-console.log('plist Result:');
-console.log(vn_binary_plist_parse(vn_plist_test_string));

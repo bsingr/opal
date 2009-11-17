@@ -31,3 +31,21 @@ class Array
     "a#{self.length}$#{arr.join('')}"
   end
 end
+
+class FalseClass
+  def to_vnplist
+    "f$"
+  end
+end
+
+class TrueClass
+  def to_vnplist
+    "t$"
+  end
+end
+
+class Fixnum
+  def to_vnplist
+    "d#{self.to_s.length}$#{self.to_s}"
+  end
+end

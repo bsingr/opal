@@ -28,6 +28,24 @@ require 'button_cell_images'
 
 module Vienna
   
+  # Only :rounded and :textured_rounded are supported
+  BEZEL_STYLES = {
+    :rounded             => 1,
+    :regular_square      => 2,
+    :thick_square        => 3,
+    :thicker_square      => 4,
+    :disclosure          => 5,
+    :shadowless_square   => 6,
+    :circular            => 7,
+    :textured_square     => 8,
+    :help_button         => 9,
+    :small_square        => 10,
+    :textured_rounded    => 11,
+    :round_rect          => 12,
+    :recessed            => 13,
+    :rounded_disclosure  => 14
+  }
+  
   class ButtonCell < Cell
         
     def init_text_cell str
@@ -49,6 +67,30 @@ module Vienna
       @key_equivalent_modifier_mask = 0   
       
       @font = Font.bold_system_font_of_size(12)
+    end
+    
+    def init_with_coder(coder)
+      super coder
+      flags = coder.decode_int :button_flags
+      flags2 = coder.decode_int :button_flags2
+    
+      @title = coder.decode_object :contents
+      @alternate_title = coder.decode_object :alternate_contents
+      
+      @transparent = (flags & 0x00008000).nonzero? ? true : false
+      @bordered = (flags & 0x00800000).nonzero? ? true : false
+      @image_dims_when_disabled = (flags2 & 0x00002000).nonzero? ? false : true
+      
+      bezel_style = (flags2 & 0x7) | ((flags2 & 0x20) >> 2)
+      @bezel_style =  case bezel_style
+        when 1
+          :rounded
+        when 11
+          :textured_rounded
+        else
+          # default for non supported types
+          :textured_rounded
+        end
     end
     
     def init_image_cell img
@@ -365,7 +407,7 @@ module Vienna
     def draw_bezel_with_frame frame, in_view:control_view
       ctx = GraphicsContext.current_context
       if bordered?
-        bezel_img = BEZEL_IMAGES[:round_textured][:regular][@enabled ? (@highlighted ? :highlighted : :normal) : :disabled]
+        bezel_img = BEZEL_IMAGES[@bezel_style][:regular][@enabled ? (@highlighted ? :highlighted : :normal) : :disabled]
         bezel_img.draw_with_frame(frame)
       end
     end
@@ -441,7 +483,7 @@ module Vienna
         RenderContext.current_context.append :div do |bezel|
           bezel.css :top => '0px', :left => '0px', :right => '0px', :bottom => '0px'
 
-          bezel_img = BEZEL_IMAGES[:round_textured][:regular][@enabled ? (@highlighted ? :highlighted : :normal) : :disabled]
+          bezel_img = BEZEL_IMAGES[@bezel_style][:regular][@enabled ? (@highlighted ? :highlighted : :normal) : :disabled]
           bezel_img.render_with_frame(cell_frame)
         end
       end

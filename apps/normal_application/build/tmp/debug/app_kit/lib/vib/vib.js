@@ -2,20 +2,17 @@
 VN.require('/Users/adam/Development/vienna/apps/normal_application/build/tmp/debug/app_kit/lib/vib/window_template.js');
 (function(self) {
 (function(self) {
-self.$def_s('vib_named',function(self,_,name){
-var vib_name=[(name),".vib"].join('');
-if(vn_resource_stack.hasOwnProperty(vib_name)) {var file=vn_resource_stack[vib_name];
-var obj=rb_funcall(self,'new',file);
-return obj;
-}alert('cannot find nib vib_name');});
-rb_define_method(self,'initialize',function(self,_,js_object){
-self.$i_s('@js_object',js_object);
-self.$i_s('@context_stack',[js_object]);
-return self.$i_s('@object_table',VN.$h());
+rb_define_method(self,'initialize',function(self,_,name,bundle,load_delegate){
+self.$i_s('@bundle',bundle);
+self.$i_s('@load_delegate',load_delegate);
+return self.$i_s('@contents',rb_funcall(bundle,'resource_contents_for_file:of_type:',name,"vib"));
 });
 rb_define_method(self,'instantiate_vib_with_external_name_table',function(self,_,name_table){
-self.$i_s('@name_table',name_table);
-return rb_funcall(self,'load!');
+self.$i_s('@unarchiver',rb_funcall(self.$klass.$c_g_full('KeyedUnarchiver'),'new',rb_ivar_get(self,'@contents')));
+var root_objects=rb_funcall(rb_ivar_get(self,'@unarchiver'),'decode_object',ID2SYM('root_objects'));
+var connections=rb_funcall(rb_ivar_get(self,'@unarchiver'),'decode_object',ID2SYM('connections'));
+var classes=rb_funcall(rb_ivar_get(self,'@unarchiver'),'decode_object',ID2SYM('classes'));
+return rb_funcall(self,'puts',rb_funcall(rb_ivar_get(self,'@unarchiver'),'current_context'));
 });
 rb_define_method(self,'load!',function(self,_){
 var top_level=rb_funcall(self,'decode_object',ID2SYM('root_objects'));

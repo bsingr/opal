@@ -28,26 +28,26 @@ module Vienna
   
   class ButtonCell < Cell
     
-    adam = ThreePartImage.new()
+    bundle = Bundle.bundle_for_class(self)
     
     BEZEL_IMAGES = {
       # The 'default' look. Textured buttons
-      :round_textured => {
+      :textured_rounded => {
         :regular => {
           :normal => ThreePartImage.new(
-              Image.image_named('button_bezel_normal_regular_left'),
-              Image.image_named('button_bezel_normal_regular_middle'),
-              Image.image_named('button_bezel_normal_regular_right')),
+              Image.new(bundle.path_for_resource('button/textured_rounded/regular/normal_left.png'), Size.new(6, 24)),
+              Image.new(bundle.path_for_resource('button/textured_rounded/regular/normal_middle.png'), Size.new(1, 24)),
+              Image.new(bundle.path_for_resource('button/textured_rounded/regular/normal_right.png'), Size.new(6, 24))),
           
           :highlighted => ThreePartImage.new(
-              Image.image_named('button_bezel_highlighted_regular_left'),
-              Image.image_named('button_bezel_highlighted_regular_middle'),
-              Image.image_named('button_bezel_highlighted_regular_right')),
+              Image.new(bundle.path_for_resource('button/textured_rounded/regular/highlighted_left.png'), Size.new(6, 24)),
+              Image.new(bundle.path_for_resource('button/textured_rounded/regular/highlighted_middle.png'), Size.new(1, 24)),
+              Image.new(bundle.path_for_resource('button/textured_rounded/regular/highlighted_right.png'), Size.new(6, 24))),
           
           :disabled => ThreePartImage.new(
-              Image.image_named('button_bezel_disabled_regular_left'),
-              Image.image_named('button_bezel_disabled_regular_middle'),
-              Image.image_named('button_bezel_disabled_regular_right'))
+              Image.new(bundle.path_for_resource('button/textured_rounded/regular/disabled_left.png'), Size.new(6, 24)),
+              Image.new(bundle.path_for_resource('button/textured_rounded/regular/disabled_middle.png'), Size.new(1, 24)),
+              Image.new(bundle.path_for_resource('button/textured_rounded/regular/disabled_right.png'), Size.new(6, 24)))
         },
         :small => {
           
@@ -58,9 +58,22 @@ module Vienna
       },
       
       # 'Push in' buttons
-      :push => {
+      :rounded => {
         :regular => {
+          :normal => ThreePartImage.new(
+              Image.new(bundle.path_for_resource('button/rounded/regular/normal_left.png'), Size.new(12, 24)),
+              Image.new(bundle.path_for_resource('button/rounded/regular/normal_middle.png'), Size.new(1, 24)),
+              Image.new(bundle.path_for_resource('button/rounded/regular/normal_right.png'), Size.new(12, 24))),
           
+          :highlighted => ThreePartImage.new(
+              Image.new(bundle.path_for_resource('button/rounded/regular/highlighted_left.png'), Size.new(12, 24)),
+              Image.new(bundle.path_for_resource('button/rounded/regular/highlighted_middle.png'), Size.new(1, 24)),
+              Image.new(bundle.path_for_resource('button/rounded/regular/highlighted_right.png'), Size.new(12, 24))),
+          
+          :disabled => ThreePartImage.new(
+              Image.new(bundle.path_for_resource('button/textured_rounded/regular/disabled_left.png'), Size.new(6, 24)),
+              Image.new(bundle.path_for_resource('button/textured_rounded/regular/disabled_middle.png'), Size.new(1, 24)),
+              Image.new(bundle.path_for_resource('button/textured_rounded/regular/disabled_right.png'), Size.new(6, 24)))
         },
         :small => {
           

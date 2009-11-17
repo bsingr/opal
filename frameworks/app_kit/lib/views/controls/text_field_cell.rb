@@ -34,17 +34,19 @@ module Vienna
   
   class TextFieldCell < Cell
     
+    bundle = Bundle.bundle_for_class(self)
+    
     BEZEL_IMAGES = {
       :square => NinePartImage.new(
-          Image.image_named('text_field_square_bezel_0'),
-          Image.image_named('text_field_square_bezel_1'),
-          Image.image_named('text_field_square_bezel_2'),
-          Image.image_named('text_field_square_bezel_3'),
-          Image.image_named('text_field_square_bezel_4'),
-          Image.image_named('text_field_square_bezel_5'),
-          Image.image_named('text_field_square_bezel_6'),
-          Image.image_named('text_field_square_bezel_7'),
-          Image.image_named('text_field_square_bezel_8')),
+          Image.new(bundle.path_for_resource('text_field/square/part_0.png'), Size.new(2, 3)),
+          Image.new(bundle.path_for_resource('text_field/square/part_1.png'), Size.new(1, 3)),
+          Image.new(bundle.path_for_resource('text_field/square/part_2.png'), Size.new(2, 3)),
+          Image.new(bundle.path_for_resource('text_field/square/part_3.png'), Size.new(2, 1)),
+          Image.new(bundle.path_for_resource('text_field/square/part_4.png'), Size.new(1, 1)),
+          Image.new(bundle.path_for_resource('text_field/square/part_5.png'), Size.new(2, 1)),
+          Image.new(bundle.path_for_resource('text_field/square/part_6.png'), Size.new(2, 2)),
+          Image.new(bundle.path_for_resource('text_field/square/part_7.png'), Size.new(1, 2)),
+          Image.new(bundle.path_for_resource('text_field/square/part_8.png'), Size.new(2, 2))),
      
       :rounded => ThreePartImage.new()
     }
@@ -62,6 +64,19 @@ module Vienna
       @input_element = nil
       @value = "Hey there!"
       self
+    end
+    
+    def init_with_coder(coder)
+      super coder
+      @draws_background = coder.decode_bool :draws_background
+      # hack for the moment..
+      if @draws_background
+        @bezel_style = :square
+      else
+        @bezel_style = :none
+      end
+      # @background_color = coder.decode_object :background_color
+      # @text_color = coder.decode_object :text_color
     end
     
     def class_name

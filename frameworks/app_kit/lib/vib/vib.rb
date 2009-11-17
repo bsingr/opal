@@ -30,27 +30,24 @@ module Vienna
   
   class Vib
     
-    def self.vib_named(name)
-      
-      vib_name = "#{name}.vib"
-      `if(vn_resource_stack.hasOwnProperty(vib_name)) {`
-        file = `vn_resource_stack[vib_name]`
-        obj = self.new(file)
-        return obj
-      `}`
-      `alert('cannot find nib #{vib_name}');`
-    end
-    
-    # js_object should be an actual json vib object
-    def initialize(js_object)
-      @js_object = js_object
-      @context_stack = [js_object]
-      @object_table = {}
+    def initialize(name, bundle, load_delegate)
+      @bundle = bundle
+      @load_delegate = load_delegate
+      @contents = bundle.resource_contents_for_file(name, of_type:"vib")
+      # puts "contents are"
+      # puts contents
+      # @js_object = js_object
+      # @context_stack = [js_object]
+      # @object_table = {}
     end
     
     def instantiate_vib_with_external_name_table(name_table)
-      @name_table = name_table
-      load!
+      @unarchiver = KeyedUnarchiver.new(@contents)
+      
+      root_objects = @unarchiver.decode_object(:root_objects)
+      connections = @unarchiver.decode_object(:connections)
+      classes = @unarchiver.decode_object(:classes)
+      puts @unarchiver.current_context
     end
     
     def load!

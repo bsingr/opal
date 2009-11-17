@@ -57,6 +57,10 @@ module Vienna
       @js_const_prefix = "a"
     end
     
+    def main_bundle
+      @main_bundle
+    end
+    
     # Hash of js functions that we can replace during compilation. Using the
     # smaller names (the values _X) saved a lot of character typing, and over
     # a large application will save HUGE amounts of bandwidth.
@@ -253,6 +257,10 @@ module Vienna
         sym_table_code << "#{value}=#{key};"
       end
       @lib_output_destination.write "c#{sym_table_code.length}$#{sym_table_code}"
+      
+      # now each bundle...
+      @main_bundle.link!(:html5)
+      @main_bundle.lib_link!(@lib_output_destination, :html5)
       
       
       @lib_output_destination.close

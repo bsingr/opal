@@ -66,6 +66,7 @@ function rb_define_class(id, super_klass) {
   VN.class_tbl[id] = klass;
   
   // set class bundle here....
+  rb_ivar_set(klass, '__bundle__', window.vn_current_bundle);
   
   
   klass.$name(id);
@@ -110,6 +111,8 @@ function rb_define_class_under(outer, id, super_klass) {
   klass.$parent = outer;
   
   // set class bundle here....
+  // console.log('current bundle ' + window.vn_current_bundle);
+  rb_ivar_set(klass, '__bundle__', window.vn_current_bundle);
   
   // VN.set_class_path(klass, outer, id);
   // VN.const_set(outer, id, klass);

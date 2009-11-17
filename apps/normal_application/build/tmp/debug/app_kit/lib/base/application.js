@@ -90,10 +90,12 @@ rb_define_method(self,'running?',function(self,_){
 return true;
 });
 rb_define_method(self,'finish_launching',function(self,_){
-rb_funcall(self,'puts',['VN::Application','#finish_launching'].join(''));
 rb_funcall(self.$klass.$c_g_full('ENV'),'[]=',ID2SYM('platform'),ID2SYM('browser'));
-if(RTEST(rb_ivar_get(self,'@run_block'))){
-rb_funcall(rb_ivar_get(self,'@run_block'),'call',self);
+var bundle=rb_funcall(self.$klass.$c_g_full('Bundle'),'main_bundle');
+var doc_types=rb_funcall(rb_funcall(bundle,'info_dictionary'),'[]','document_types');
+if(RTEST(doc_types)){
+rb_funcall(self,'puts',["Application: We have a document based application!!!! doc types: ",(rb_funcall(doc_types,'length'))].join(''));
+self.$i_s('@document_controller',rb_funcall(self.$klass.$c_g_full('DocumentController'),'shared_document_controller'));
 }
 rb_funcall(self.$klass.$c_g_full('Document'),'add_event_listener',ID2SYM('mousedown'),function(evt){
 if(RTEST(rb_funcall(rb_funcall(self.$klass.$c_g_full('App'),'run_loop_mode'),'==',ID2SYM('event_tracking')))){
@@ -122,8 +124,14 @@ rb_funcall(target,'perform_selector:with_object:',action,sender);
 })(rb_define_class_under(self,'Application',cObject));
 self.$c_g_full('VN').$def_s('ApplicationMain',function(self,_){
 rb_funcall(self.$c_g_full('VN'),'const_set','App',rb_funcall(self.$c_g_full('Application'),'shared_application'));
+var main_bundle=rb_funcall(self.$c_g_full('Bundle'),'main_bundle');
+var main_vib=rb_funcall(rb_funcall(main_bundle,'info_dictionary'),'[]','main_vib_file');
+if(RTEST(main_vib)){
+rb_funcall(main_bundle,'load_vib_named:external_name_table:load_delegate:',main_vib,nil,nil);
+}
+else{
+rb_funcall(self,'puts','warning: no main vib to load.');
+}
 return rb_funcall(self.$c_g_full('App'),'run');
 });
 })(rb_define_module('Vienna'));
-window.onload = function() {rb_funcall(cObject.$c_g('VN'),'ApplicationMain');
-};

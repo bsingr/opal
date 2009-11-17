@@ -23,14 +23,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 #
-@interface NSDocumentController : NSObject<NSCoding, NSUserInterfaceValidations> {
-    @private
-    id _documents;
-    id _moreVars;
-    NSArray *_cachedTypeDescriptions;
-    NSMutableDictionary *_recents;
-    int _recentsLimit;
-}
+
 module Vienna
   
   class DocumentController
@@ -43,7 +36,7 @@ module Vienna
       # 0 = dont autosave (for now)
       @autosaving_delay = 0
       @documents = []
-      # @file_types = Bundle.main_bundle.info_dictionary.object_for_key(:document_types)
+      @document_types = Bundle.main_bundle.info_dictionary['document_types']
     end
     
     def documents
@@ -51,11 +44,11 @@ module Vienna
     end
     
     def current_document
-      
+      App.main_window.window_controller.document
     end
     
     def current_directory
-      
+      puts "self #{_cmd} not implemented."
     end
     
     def document_for_url(absolute_url)
@@ -63,27 +56,41 @@ module Vienna
     end
     
     def document_for_window(window)
-      
+      window.window_controller.document
     end
     
     def add_document(document)
-      
+      @documents << document
     end
     
     def remove_document(document)
-      
+      @documents.delete(document)
     end
     
     def new_document(sender)
-      
+      type = @document_types[0]['type_name']
     end
     
     def open_untitled_document_and_display(display_document, error:out_error)
+      doc = make_untitled_document_of_type(default_type, error:nil)
       
+      add_document(doc) unless doc.nil?
+      doc.make_window_controllers
+      
+      doc.show_windows if display_document
+      doc
     end
     
     def make_untitled_document_of_type(type_name, error:out_error)
+      doc_class = document_class_for_type(type_name)
+      doc = doc_class.new(type_name, out_error)
       
+      unless doc
+        puts "Error creating document of type #{type_name}"
+        # present_error(out_error)
+      end
+      
+      doc
     end
     
     def open_document(sender)
@@ -165,7 +172,8 @@ module Vienna
     
     
     def default_type
-      
+      return nil if @document_types.length == 0
+      @document_types[0]['type_name']
     end
     
     def type_for_contents_of_url(in_absolute_url, error:out_error)

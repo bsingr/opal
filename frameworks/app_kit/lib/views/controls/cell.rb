@@ -93,7 +93,23 @@ module Vienna
     end
     
     def init_with_coder(coder)
-      initialize
+      # initialize
+      flags = coder.decode_int :cell_flags
+      flags2 = coder.decode_int :cell_flags2
+      
+      @enabled = (flags & 0x20000000).nonzero? ? false : true    
+      @editable = (flags & 0x10000000).nonzero? ? true : false
+      @selectable = (flags & 0x00200000).nonzero? ? true : false
+      @state = (flags & 0x80000000).nonzero? ? :on : :off
+      @title = "" # we dont want this here....
+      # @image
+      @bordered = (flags & 0x00800000).nonzero? ? true : false
+      # puts "bordered is #{flags}"
+      @bezeled = (flags & 0x00400000).nonzero? ? true : false
+      @highlighted = (flags & 0x40000000).nonzero? ? true : false
+      @refuses_first_responder = false # do we want this here?
+      
+      @font = coder.decode_object :font
     end
     
     def init_image_cell img

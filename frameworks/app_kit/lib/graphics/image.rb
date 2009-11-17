@@ -148,9 +148,19 @@ module Vienna
     #   @representations[:normal] = array_rect
     # end
     
-    def initialize
-      super
+    # optional width and height/.. these are useful when waiting for images to load
+    # it tells us how big they will be
+    # we should really embed this info into the header....? or should we... hmmm
+    def initialize(url, size)
+      # super
       @representations = {}
+      @filename = url
+      
+      if size
+        @size = size
+      end
+      
+      load
     end
     
     def init_with_size size
@@ -168,12 +178,12 @@ module Vienna
     end
     
     def init_with_contents_of_url url
-      initialize
+      initialize url
       # puts 'needs image named #{url}'
-      @filename = url
+      # @filename = url
       # @status = :loading
-      @image = nil
-      load
+      # @image = nil
+      # load
     end
     
     def status
@@ -216,6 +226,7 @@ module Vienna
     
     def _image_did_load
       @size =  Size.new(`#{@image}.width`, `#{@image}.height`)
+      # puts "image loaded ! #{@size.width}, #{@size.height}"
       # puts 'SETTING size to '
     end
     

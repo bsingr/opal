@@ -35,6 +35,15 @@ module Vienna
   # :min_y 
   # :max_x 
   # :max_y 
+  AUTO_RESIZING_MASKS = {
+    :none       => 0x00,
+    :min_x      => 0x01,
+    :width      => 0x02,
+    :max_x      => 0x04,
+    :min_y      => 0x08,
+    :height     => 0x10,
+    :max_y      => 0x20
+  }
   
   # Border masks
   # ============
@@ -72,6 +81,21 @@ module Vienna
     def init_with_coder(coder)
       super coder
       setup_display_context
+      view_flags = coder.decode_int :view_flags
+      
+      @autoresizing_mask = []
+      resize_mask = view_flags & 0x3F
+      # go through, and check each of our masks against possible values. If so, add
+      # to our 'rubified' masks array
+      AUTO_RESIZING_MASKS.each do |sym, mask|
+        if (resize_mask & mask).nonzero?
+          # puts sym.to_s
+          @autoresizing_mask << sym
+        end
+      end
+      
+      @autoresizes_subviews = (view_flags & 0x100).nonzero? ? true : false
+      # puts "view resizing: #{@autoresizes_subviews}"
       
       @frame = Rect.new(0, 0, 0, 0)
       @frame = coder.decode_rect :frame if coder.has_key?(:frame)

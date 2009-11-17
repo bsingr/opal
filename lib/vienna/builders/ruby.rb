@@ -431,6 +431,8 @@ class Vienna::RubyParser < Racc::Parser
           return [:tFLOAT, scanner.matched.gsub(/_/, '')]
         elsif scanner.scan(/[\d_]+\b/)
           return [:tINTEGER, scanner.matched.gsub(/_/, '')]
+        elsif scanner.scan(/0(x|X)(\d|[a-f]|[A-F])+/)
+          return [:tINTEGER, scanner.matched]
         else
           puts "error: unexpected number type: #{scanner.peek(10)}"
         end

@@ -1,0 +1,2 @@
+
+var mComparable=RModule.define('Comparable');mComparable.$def('==',function(obj){if(this==obj)return true;return false;});mComparable.$def('>',function(cmp_gt){});mComparable.$def('>=',function(cmp_ge){});mComparable.$def('<',function(cmp_lt){});mComparable.$def('<=',function(cmp_le){});mComparable.$def('between?',function(cmp_between){});

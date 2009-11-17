@@ -25,12 +25,12 @@
 #
 
 # Keypaths
-IBAttributeKeyPaths
-IBToOneRelationshipKeyPaths
-IBToManyRelationshipKeyPaths
-IBLocalizableStringKeyPaths
-IBLocalizableGeometryKeyPaths
-IBAdditionalLocalizableKeyPaths
+# IBAttributeKeyPaths
+# IBToOneRelationshipKeyPaths
+# IBToManyRelationshipKeyPaths
+# IBLocalizableStringKeyPaths
+# IBLocalizableGeometryKeyPaths
+# IBAdditionalLocalizableKeyPaths
 
 module Vienna
   

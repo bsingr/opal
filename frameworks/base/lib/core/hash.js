@@ -23,7 +23,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
- var rb_cHash = RClass.define('Hash', rb_cObject) ;
+var rb_cHash = RClass.define('Hash', rb_cObject) ;
+
+function rb_hash_new(self, _cmd) {
+  return new RHash();
+};
 
  // RModule.include(cHash, mEnumerable);
 

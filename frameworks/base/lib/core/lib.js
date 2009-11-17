@@ -42,10 +42,15 @@
 // they are not simply eval()'d, only 'code poritons' are executed. Libs dont
 // technically have to contain any executable code..
 
+
+
 // lib
 function vn_lib(path, load_callback) {
   this.path = path;
   this.load_callback = load_callback;
+  this.bundles = [];
+  // array of strings to be eval'd
+  this.executable_codes = [];
 };
 
 // Request the lib located at 'path', and run it (build bundles etc), then call
@@ -59,10 +64,27 @@ vn_lib.prototype.load = function() {
     if (request.readyState==4) {
       // console.log(request.responseText)
       lib.parse(request.responseText);
+      lib.finish_loading();
+      // alert('Lib has bundles: ' + lib.bundles.length);
       lib.load_callback(lib);
     }
   }
   request.send(null)
+};
+
+vn_lib.prototype.finish_loading = function() {
+  for (var i = 0; i < this.executable_codes.length; i++) {
+    // console.log('evaling ' + this.executable_codes[i]);
+    eval(this.executable_codes[i]);
+  }
+  
+  for (var b = 0; b < this.bundles.length; b++) {
+    // console.log('evaling ' + this.executable_codes[i]);
+    vn_bundle_finish_loading(this.bundles[b]);
+  }
+  
+  // call main?!?!?!?
+  rb_funcall(rb_cObject.$iv_tbl.Vienna, 'ApplicationMain');
 };
 
 // Given 'hash', add each of its keys to the ENV variable so that they are
@@ -75,9 +97,14 @@ vn_lib.prototype.add_environment_keys = function(hash) {
 
 // String will be JS text that needs to be eval'd and run.
 vn_lib.prototype.add_executable_code = function(str) {
-  // console.log('adding code fragment:...');
-  // console.log(str);
-  // eval(str);
+  this.executable_codes.push(str);
+};
+
+vn_lib.prototype.add_bundle = function(bundle_text) {
+  var the_bundle = vn_bundle_create_from_parse_text(bundle_text);
+  // alert(rb_ivar_get(the_bundle, '@bundle_path'));
+  this.bundles.push(the_bundle);
+  rb_funcall(vn_all_bundles, 'store', rb_ivar_get(the_bundle, '@bundle_path'), the_bundle);
 };
 
 
@@ -94,6 +121,12 @@ vn_lib.prototype.parse = function(parse_text) {
   
   var code = function() {
     // console.log('got in code...' + ch);
+    var str_len = marker_count();
+    var str = get_next(str_len);
+    return str;
+  };
+  
+  var bundle = function() {
     var str_len = marker_count();
     var str = get_next(str_len);
     return str;
@@ -140,7 +173,7 @@ vn_lib.prototype.parse = function(parse_text) {
   
   var at = 0;
   var ch = '';
-  var text = parse_text
+  var text = parse_text;
   var format = lib_format();
   var version = lib_version();
   
@@ -152,6 +185,9 @@ vn_lib.prototype.parse = function(parse_text) {
         break;
       case 'c':
         this.add_executable_code(code());
+        break;
+      case 'b':
+        this.add_bundle(bundle());
         break;
       default:
         console.log('wtf? lib parse unknown marker');

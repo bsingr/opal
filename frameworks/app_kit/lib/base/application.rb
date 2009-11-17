@@ -27,8 +27,8 @@
 module Vienna
   
   # Application notifications
-  APP_WILL_FINISH_LAUNCHING = 'APP_WILL_FINISH_LAUNCHING'
-  APP_DID_FINISH_LAUNCHING = 'APP_DID_FINISH_LAUNCHING'
+  APPLICATION_WILL_FINISH_LAUNCHING_NOTIFICATION = 'APP_WILL_FINISH_LAUNCHING'
+  APPLICATION_DID_FINISH_LAUNCHING_NOTIFICATION = 'APP_DID_FINISH_LAUNCHING'
   APP_DID_CHANGE_SCREEN_PARAMETERS = 'APP_DID_CHANGE_SCREEN_PARAMETERS'
   
   # Run loop modes
@@ -150,19 +150,19 @@ module Vienna
       nc = VN::NotificationCenter.default_center
           
       if @delegate
-        nc.remove_observer @delegate, name:APP_WILL_FINISH_LAUNCHING, object:self
-        nc.remove_observer @delegate, name:APP_DID_FINISH_LAUNCHING, object:self
+        nc.remove_observer @delegate, name:APPLICATION_WILL_FINISH_LAUNCHING_NOTIFICATION, object:self
+        nc.remove_observer @delegate, name:APPLICATION_DID_FINISH_LAUNCHING_NOTIFICATION, object:self
         nc.remove_observer @delegate, name:APP_DID_CHANGE_SCREEN_PARAMETERS, object:self
       end
     
       @delegate = obj
     
       if @delegate.respond_to? :will_finish_launching
-        nc.add_observer @delegate, selector:'will_finish_launching', name:APP_WILL_FINISH_LAUNCHING, object:self
+        nc.add_observer @delegate, selector:'will_finish_launching', name:APPLICATION_WILL_FINISH_LAUNCHING_NOTIFICATION, object:self
       end
             
       if @delegate.respond_to? :did_finish_launching
-        nc.add_observer @delegate, selector:'did_finish_launching', name:APP_DID_FINISH_LAUNCHING, object:self
+        nc.add_observer @delegate, selector:'did_finish_launching', name:APPLICATION_DID_FINISH_LAUNCHING_NOTIFICATION, object:self
       end
     end
   
@@ -172,15 +172,24 @@ module Vienna
     end
   
     def finish_launching
-      # `alert("finish launching");`
-      puts 'VN::Application#finish_launching'
-      # force at the moment, this should detect runtime environment: browser or desktop
       ENV[:platform] = :browser
-      
-      if @run_block
-        @run_block.call self
+      bundle = Bundle.main_bundle
+      doc_types = bundle.info_dictionary['document_types']
+      # only if we have a doc types array, and its longer than 0.
+      # if we have types, we must be a document based app, do the
+      # document_controller needs to be put into the responder chain.
+      # If its null (plist contains no doc types) then we can assume that we
+      # are not a doc based app?
+      # 
+      # FIXME: is there a better way to do this......?
+      if doc_types
+        # puts "Application: We have a document based application!!!! doc types: #{doc_types.length}"
+        puts doc_types
+        @document_controller = DocumentController.shared_document_controller
       end
-                
+
+      # FIXME: these shouldnt be here..... need to remove these from each window as well
+      # and maintain one per 'browser window'
       Document.add_event_listener :mousedown do |evt|
         if App.run_loop_mode == :event_tracking
           the_event = Event.from_native_event evt, with_window:nil, with_type: :left_mouse_down
@@ -188,6 +197,7 @@ module Vienna
         end
       end
       
+      # FIXME: ditto.
       Document.add_event_listener :mouseup do |evt|
         if App.run_loop_mode == :event_tracking
           the_event = Event.from_native_event evt, with_window:nil, with_type: :left_mouse_up
@@ -195,14 +205,11 @@ module Vienna
         end
       end
       
+      
       nc = NotificationCenter.default_center
-      nc.post_notification_name APP_WILL_FINISH_LAUNCHING, object:self
-      nc.post_notification_name APP_DID_FINISH_LAUNCHING, object:self
+      nc.post_notification_name(APPLICATION_WILL_FINISH_LAUNCHING_NOTIFICATION, object:self)
+      nc.post_notification_name(APPLICATION_DID_FINISH_LAUNCHING_NOTIFICATION, object:self)
     end
-  
-    # def run (&block)
-    #   @run_block = block
-    # end
     
     def run
       finish_launching
@@ -220,16 +227,28 @@ module Vienna
   
   # Equivalent of NSApplicationMain
   def VN.ApplicationMain
+    # puts "in application main!!!! oh yeah!"
     VN.const_set('App', Application.shared_application)
-    # main_bundle = Bundle.main_bundle
+    main_bundle = Bundle.main_bundle
+    main_vib = main_bundle.info_dictionary['main_vib_file']
     
-    # load main vib file.
+    if main_vib
+      main_bundle.load_vib_named(main_vib, external_name_table:nil, load_delegate:nil)
+    else
+      # no ui to load... throw error? hmmm....
+      puts 'warning: no main vib to load.'
+    end
     
+    # testing multipls vibs
+    # 10.times do |i|
+    #   main_bundle.load_vib_named('first_document', external_name_table:nil, load_delegate:nil)
+    # end
+
     App.run
   end
 end
 
 # Attach events to window to capture finished loading...
-`window.onload = function() {`
-	VN.ApplicationMain();
-`};`
+# `window.onload = function() {`
+#   VN.ApplicationMain();
+# `};`

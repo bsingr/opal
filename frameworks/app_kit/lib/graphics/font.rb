@@ -115,6 +115,12 @@ module Vienna
       @bold = is_bold
     end
     
+    def init_with_coder(coder)
+      @font_name = coder.decode_object :name
+      @size = coder.decode_int :size
+      @bold = coder.decode_bool :bold
+    end
+    
     def font_name
       @font_name
     end

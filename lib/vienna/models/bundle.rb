@@ -69,6 +69,11 @@ module Vienna
       @bundle_dependencies
     end
     
+    # returns true if this bundle is the main application bundle...
+    def main_bundle?
+      @project.main_bundle == self
+    end
+    
     # Compiles any sources/preprocesses any sources to output. Does NOT
     # combine them to output, simply builds anything into the tmp
     # directory
@@ -77,6 +82,15 @@ module Vienna
       # add root as required, so nothing else will 'accidentally include it'
       @required_files << root_file
       build_file root_file
+      staging_dir = staging_directory
+      FileUtils.mkdir_p staging_dir
+      staging_file = File.join(staging_directory, File.basename(@bundle_root)) + '.js'
+      
+      staging_output = File.new(staging_file, 'w')
+      Vienna::Builder::Combine.new root_file_tmp_path, staging_output, self 
+      staging_output.close
+      
+      # puts "staging in #{staging_file}"
     end
     
     # for the 'core'/runtime bundle.... this should be a subclass, but its here
@@ -91,42 +105,67 @@ module Vienna
       Vienna::Builder::Combine.new root_file_tmp_path, output_file, self   
     end
     
-    # Called after building, when all other bundles/frameworks are built.
-    # This is where all the bundles' resources and code etc are placed
-    # into the output file. The 'file' is already open, so just write
-    # the necessary stuff into the file:
+    # Link the output for the given build type (html5, ie7) and then return
+    # the path for the staged built file (so @project can link it if needed)
     # 
-    # 0) Dependencies
-    # 1) Declare new bundle
-    # 2) Info dictionary
-    # 3) Resources
-    # 4) Bundle Code
-    # 
-    # The project handles bundle requirmeents, and places them into the
-    # output in the correct order, so there is no need to do this manually.
-    def link!(output_file)
+    # for now just assume html5
+    def link!(mode = :html5)
+      output_path = File.join(staging_directory, File.basename(@bundle_root)) + '_html5.js'
+      output_file = File.new(output_path, 'w')
       # output_file.write "console.log('outputting #{@bundle_root}');"
       # dependencies..
       bundle_dependencies.each do |dependant|
-        dependant.link!(output_file)
+        dependant.link!(mode)
       end
-      # output bundle stuff, unless this is a basic bundle
-      unless @basic_bundle
-        # begin new bundle
-        output_file.write "rb_funcall(vn_cBundle, 'begin_new_bundle', '#{bundle_identifier}');\n"
-        # info dictionary
-        # output_file.write "rb_funcall(vn_cBundle, 'set_info_dictionary_for_current_bundle', #{info_dictionary.to_json});\n"
-        puts info_dictionary.to_vnplist
-        # image resources
-        link_image_resources!(output_file)
+
+      # begin new bundle
+      output_file.write "vnfmwk$1.0$"
+      # bundle path..
+      p_path = main_bundle? ? "" : "/#{underscored_bundle_name}"
+      output_file.write "p#{p_path.length}$#{p_path}"
+      # regular resources
+      link_resources!(output_file)      
+      # image resources
+      link_image_resources!(output_file)
+      
+
+      
+      # Actual Bundle code
+      staging_file = File.join(staging_directory, File.basename(@bundle_root)) + '.js'
+      staging_arr = File.read(staging_file)
+      staging_code = ''
+      staging_arr.each_line do |line|
+        staging_code << line
       end
-      # output actual bundle code
-      # output_file.write "#{root_file_tmp_path}\n"
-      Vienna::Builder::Combine.new root_file_tmp_path, output_file, self
-      # output_file.write @bundle_root
-      # output_file.write "\n"
+      output_file.write "c#{staging_code.length}$#{staging_code}"
+
+      output_file.close
     end
     
+    # link this bundle into the given lib path, for the build mode... html5, ie7 etc
+    # use the already built staged file (basically, we just pass in all our dependencies)
+    # and put their size etc
+    def lib_link!(lib_file, mode)
+      staged_file = File.join(staging_directory, File.basename(@bundle_root)) + '_html5.js'
+      
+      bundle_dependencies.each do |dependant|
+        dependant.lib_link!(lib_file, mode)
+      end
+      
+      file_data = File.read(staged_file)
+      file_str = ''
+      file_data.each_line do |line|
+        file_str << line
+      end
+      
+      lib_file.write "b#{file_str.length}$#{file_str}"
+    end
+    
+    # Images are treated like url mappers... we are not really encoding a file into the
+    # bundle, but we are specifying an 'alternative' url to get to the file. This data
+    # or mhtml url just so happens to include the data. Other resources are included
+    # usng an 'r' marker, as they are actually embedded within the bundle. The two
+    # types are very different...
     def link_image_resources!(output_file)
       images = File.join(@bundle_root, "resources", "**", "*.{png,jpg,jpeg,gif}")
       Dir.glob(images).each do |img|
@@ -136,14 +175,12 @@ module Vienna
           data = Base64.encode64(File.read(img))
           data.each_line { |line| img_data << line.gsub(/\n/, '') }
           # img path is img path relative to bundle_root
-          img_path = img.match(/^#{@bundle_root}(.*)/)[1]
-          output_file.write "rb_funcall(vn_cBundle, 'add_resource_to_current_bundle', \"#{img_path}\", \"#{img_data}\");\n"
+          img_path = img.match(/^#{@bundle_root}\/(.*)/)[1]
           
-          # o.write "vn_resource_stack['#{File.basename(img)}']="
-          # o.write "\"data:#{IMAGE_MIME_TYPES['png']};base64,"
-          # data = Base64.encode64(File.read(img))
-          # data.each_line { |line| o.write line.gsub(/\n/, '') }
-          # o.write "\";"
+          # full_url_map splits the url path and img data apart, and also inserts the length of
+          # each section, so we need to take these markers etc into consideration as well.
+          full_url_map = "#{img_path.length}$#{img_path}#{img_data.length}$#{img_data}"
+          output_file.write "u#{full_url_map.length}$#{full_url_map}"
         end
         # useful to copy image to resource directory as well, incase its needed in raw form
         # File.copy(img, File.expand_path(File.join(img_build_path, File.basename(img))))
@@ -154,8 +191,26 @@ module Vienna
     # directory. This folder should be treated as the base resources folder
     # for the bundle. The fact that other bundles also write here is 
     # irrelevant. (if they do....?)
-    def link_resources!(output_folder)
+    def link_resources!(output_file)
+      # info dictionary for starters
+      info_dict = "vnplist$1.0$#{info_dictionary.to_vnplist}"
+      info_dict_path = "info.yml"
+      info_dict_map = "#{info_dict_path.length}$#{info_dict_path}#{info_dict.length}$#{info_dict}"
+      output_file.write "r#{info_dict_map.length}$#{info_dict_map}"
       
+      # YIB Files: these are vib interface files, but in a more readable yaml format.
+      # These only exist as a gap between creating a proper gui builder.
+      yib_files = File.join(@bundle_root, 'resources', '**', '*.yib')
+      Dir.glob(yib_files).each do |yib|
+        # puts "Found yib: #{yib}"
+        plist = "vnplist$1.0$#{YAML.load_file(yib).to_vnplist}"
+        # rename .yib to .vib
+        plist_path = yib.match(/^#{@bundle_root}\/(.*)/)[1].gsub(/yib/, 'vib')
+        plist_map = "#{plist_path.length}$#{plist_path}#{plist.length}$#{plist}"
+        output_file.write "r#{plist_map.length}$#{plist_map}"
+        # puts plist
+        # puts plist_path
+      end
     end
     
     # Build the given file, and return its build path
@@ -191,6 +246,13 @@ module Vienna
     # Temp directory for this bundle
     def tmp_directory
       File.join(@project.project_root, @project.tmp_prefix, File.basename(@bundle_root))
+    end
+    
+    # here the bundle is 'staged' into its own file, will all collected source code etc
+    # and resources ready for linking. FIXME:: this should create each runtime...
+    # html5, ie7 etc
+    def staging_directory
+      File.join(@project.project_root, @project.tmp_prefix, File.basename(@bundle_root), 'build')
     end
     
     # The base file for the bundle. This will likely be a ruby file, or it

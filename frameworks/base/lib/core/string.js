@@ -137,12 +137,12 @@ rb_define_method(rb_cString, "chr", function(self, _cmd) {
   
 });
 
-rb_define_method(rb_cString, "to_i", function(self, _cmd) {
-  
+rb_define_method(rb_cString, "to_i", function(self, _cmd, i) {
+  return parseInt(i);
 });
 
-rb_define_method(rb_cString, "to_f", function(self, _cmd) {
-  
+rb_define_method(rb_cString, "to_f", function(self, _cmd, f) {
+  return parseFloat(f);
 });
  
 rb_define_method(rb_cString, "to_s", function(self, _cmd) {

@@ -39,11 +39,23 @@ module Vienna
     end
     
     def initialize
+      super
       @min_value = 0
       @max_value = 100
       @value = 0
       @continuous = true
+    end
+    
+    def init_with_coder(coder)
       super
+      
+      @min_value = coder.decode_double :min_value
+      @max_value = coder.decode_double :max_value
+      _minValue=[keyed decodeDoubleForKey:@"NSMinValue"];
+      _maxValue=[keyed decodeDoubleForKey:@"NSMaxValue"];
+      _numberOfTickMarks=[keyed decodeIntForKey:@"NSNumberOfTickMarks"];
+      _tickMarkPosition=[keyed decodeIntForKey:@"NSTickMarkPosition"];
+      _allowsTickMarkValuesOnly=[keyed decodeBoolForKey:@"NSAllowsTickMarkValuesOnly"];
     end
     
     def class_name

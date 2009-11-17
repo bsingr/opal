@@ -29,34 +29,31 @@ module Vienna
   # 'Normal' window view for standard windows
   class NormalWindowView < WindowView
         
-    CLOSE_IMAGE = Image.sprite :controls, [0, 855, 16, 16]
-    CLOSE_HIGHLIGHTED_IMAGE = Image.sprite :controls, [16, 855, 16, 16]
+    # hide this in block scope?
+    bundle = Bundle.bundle_for_class(self)
+    # draw gradient at top
+    TITLEBAR_IMAGE = ThreePartImage.new(
+      Image.new(bundle.path_for_resource('window/normal/titlebar_left.png'), Size.new(6, 55)),
+      Image.new(bundle.path_for_resource('window/normal/titlebar_middle.png'), Size.new(1, 55)),
+      Image.new(bundle.path_for_resource('window/normal/titlebar_right.png'), Size.new(6, 55)))
     
-    MIN_IMAGE = Image.sprite :controls, [0, 872, 16, 16]
-    MIN_HIGHLIGHTED_IMAGE = Image.sprite :controls, [16, 872, 16, 16]
-    
-    ZOOM_IMAGE = Image.sprite :controls, [0, 889, 16, 16]
-    ZOOM_HIGHLIGHTED_IMAGE = Image.sprite :controls, [16, 889, 16, 16]
-    
-    # CLOSE_IMAGE = Image.image_named 'normal_window_close_button'
-    # CLOSE_HIGHLIGHTED_IMAGE = Image.image_named 'normal_window_highlighted_close_button'
-    
-    
+    # standard close... not for document edited states
+    CLOSE_IMAGE = Image.new(bundle.path_for_resource('window/normal/close_button.png'))
+    CLOSE_HIGHLIGHTED_IMAGE = Image.new(bundle.path_for_resource('window/normal/close_button_highlighted.png'))
+    # minimize
+    MIN_IMAGE = Image.new(bundle.path_for_resource('window/normal/normal_window_titlebar_left.png'))
+    MIN_HIGHLIGHTED_IMAGE = Image.new(bundle.path_for_resource('window/normal/normal_window_titlebar_left.png'))
+    # maximize/zoom
+    ZOOM_IMAGE = Image.new(bundle.path_for_resource('window/normal/normal_window_titlebar_left.png'))
+    ZOOM_HIGHLIGHTED_IMAGE = Image.new(bundle.path_for_resource('window/normal/normal_window_titlebar_left.png'))
+    # spliiter/resize
+    SPLITTER_IMAGE = Image.new(bundle.path_for_resource('window/normal/splitter.png'), Size.new(1, 1))
+    RESIZE_IMAGE = Image.new(bundle.path_for_resource('window/normal/resize_indicator.png'), Size.new(12, 12))
+    # standard titlebar height
     TITLEBAR_HEIGHT = 24.0
     
-    # CLOSE_IMAGE = Image.image_named :vn_normal_win_close
-    # CLOSE_HIGHLIGHTED_IMAGE = Image.image_named :vn_normal_win_close_highlight
     
-    TITLEBAR_IMAGE = ThreePartImage.new(
-      Image.image_named('normal_window_titlebar_left'),
-      Image.image_named('normal_window_titlebar_middle'),
-      Image.image_named('normal_window_titlebar_right'))
-    
-    SPLITTER_IMAGE = Image.image_named('normal_window_titlebar_splitter')
-    
-    RESIZE_INDICATOR = Image.image_named('normal_window_resize_indicator')
-    
-    def initialize frame, style_mask
+    def initialize(frame, style_mask)
       super frame, style_mask
       
       if @style_mask.include? :closable
@@ -97,7 +94,7 @@ module Vienna
           body.css :background_color => 'rgb(245,245,245)'
         end
         # Resize indicator
-        RESIZE_INDICATOR.render_with_frame(resize_indicator_frame)
+        RESIZE_IMAGE.render_with_frame(resize_indicator_frame)
       end
     end
     

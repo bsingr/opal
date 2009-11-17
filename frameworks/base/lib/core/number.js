@@ -97,11 +97,11 @@ rb_define_method(rb_cNumber, 'integer?', function(self, _cmd) {
 });
 
 rb_define_method(rb_cNumber, 'zero?', function(self, _cmd) {
-  
+  return self == 0 ? true : false;
 });
 
 rb_define_method(rb_cNumber, 'nonzero?', function(self, _cmd) {
-  
+  return self == 0 ? false : true;
 });
 
 rb_define_method(rb_cNumber, 'floor', function(self, _cmd) {
@@ -168,11 +168,11 @@ rb_define_method(rb_cNumber, 'ord', function(self, _cmd) {
 }); 
 
 rb_define_method(rb_cNumber, 'to_i', function(self, _cmd) {
-  
+  return parseInt(self);
 });
 
 rb_define_method(rb_cNumber, 'to_s', function(self, _cmd) {
-  
+  return new String(self);
 });
   
 rb_define_method(rb_cNumber, '+', function(self, _cmd, i) {
@@ -243,10 +243,10 @@ rb_define_method(rb_cNumber, '<<', function(self, _cmd, other) {
   return self << other;
 });
   
-rb_define_method(rb_cNumber, '>>', function(self, _cmd) {
-  
+rb_define_method(rb_cNumber, '>>', function(self, _cmd, other) {
+  return self >> other;
 });
 
 rb_define_method(rb_cNumber, 'to_f', function(self, _cmd) {
-  
+  return parseFloat(self);
 });

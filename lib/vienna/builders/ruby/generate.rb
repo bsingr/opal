@@ -611,7 +611,7 @@ module Vienna
         require_path = @project.require_path_relative_to_file(@source, call[:call_args][:args][0][:value][0][:value])
         # puts call[:args][0][:value][0][:value]
         if require_path
-          puts "requiring: #{require_path}"
+          # puts "requiring: #{require_path}"
           build_path = @project.build_file(require_path)
           write "\nVN.require('#{build_path}');\n"
         end

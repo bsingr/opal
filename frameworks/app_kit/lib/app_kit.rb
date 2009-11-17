@@ -70,3 +70,7 @@ require 'builder/builder'
 
 # VIB
 require 'vib/vib'
+
+# document stuff
+require 'document/document_controller'
+require 'document/document'

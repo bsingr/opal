@@ -59,9 +59,13 @@ if(RTEST(rb_funcall(type,'==',ID2SYM('normal')))){
 self.$i_s('@size',rb_funcall(self.$klass.$c_g_full('Size'),'new',rb_funcall(array_rect,'[]',2),rb_funcall(array_rect,'[]',3)));
 }
 });
-rb_define_method(self,'initialize',function(self,_){
-rb_supcall(arguments.callee, self,_,[]);
-return self.$i_s('@representations',VN.$h());
+rb_define_method(self,'initialize',function(self,_,url,width,height){
+self.$i_s('@representations',VN.$h());
+self.$i_s('@filename',url);
+if(RTEST(width)){
+self.$i_s('@size',rb_funcall(self.$klass.$c_g_full('Size'),'new',width,height));
+}
+return rb_funcall(self,'load');
 });
 rb_define_method(self,'init_with_size',function(self,_,size){
 });
@@ -73,10 +77,7 @@ rb_funcall(obj,'init_with_contents_of_url',url);
 return obj;
 });
 rb_define_method(self,'init_with_contents_of_url',function(self,_,url){
-rb_funcall(self,'initialize');
-self.$i_s('@filename',url);
-self.$i_s('@image',nil);
-return rb_funcall(self,'load');
+return rb_funcall(self,'initialize',url);
 });
 rb_define_method(self,'status',function(self,_){
 return rb_ivar_get(self,'@status');

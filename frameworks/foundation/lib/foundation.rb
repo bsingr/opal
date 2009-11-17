@@ -26,12 +26,10 @@
 
 module Vienna
   
-  # Object = ::Object
-  # Array = ::Array
-  # Dictionary = ::Hash
   Object = ::Object
   Array = ::Array
   Dictionary = ::Hash
+  Bundle = ::Bundle
   
   class Object
       
@@ -59,3 +57,6 @@ require 'key_value_observing'
 require 'notification'
 require 'attributed_string'
 require 'index_set'
+require 'property_list'
+require 'bundle'
+require 'keyed_unarchiver'

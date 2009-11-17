@@ -53,7 +53,7 @@ var ANDTEST = function ANDTEST(lhs, rhs) {
   if (rhs == null || rhs == undefined) rhs = nil;
   
   if (lhs == nil || lhs == false) {
-    return lhs;
+    return nil;
   }
   return rhs;
 };
@@ -224,3 +224,4 @@ require('core/json');
 require('core/yaml');
 require('core/plist');
 require('core/lib');
+require('core/env');

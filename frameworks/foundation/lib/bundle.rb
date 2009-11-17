@@ -31,7 +31,7 @@ module Vienna
     class << self
       
       def main_bundle
-        self.new
+        @all_bundles['']
       end
       
       def bundle_with_path(path)
@@ -43,7 +43,7 @@ module Vienna
       end
       
       def bundle_for_class(a_class)
-        
+        `return rb_ivar_get(#{a_class}, '__bundle__');`
       end
       
       def bundle_with_identifier(identifier)
@@ -92,11 +92,11 @@ module Vienna
     end
     
     def bundle_path
-      
+      @bundle_path
     end
     
     def resource_path
-      
+      # @bundle_path + "/resources"
     end
     
     def executable_path
@@ -107,8 +107,30 @@ module Vienna
       
     end
     
+    def path_for_resource(name)
+      # puts "getting #{name} and got:"
+      # puts @url_map["resources/#{name}"]
+      @url_map["resources/#{name}"]
+    end
+    
     def path_for_resource(name, of_type:ext)
-      
+      # check images first, otherwise return normal path
+      "resources/#{name}.#{ext}"
+    end
+    
+    def load_vib_named(name, external_name_table:name_table, load_delegate:delegate)
+      # puts "load_vib_named"
+      vib = VN::Vib.new(name, self, delegate)
+      vib.instantiate_vib_with_external_name_table(name_table)
+      vib
+    end
+    
+    def resource_contents_for_file(name, of_type:ext)
+      @resources["resources/#{name}.#{ext}"]
+    end
+    
+    def info_dictionary
+      @info_dictionary
     end
     
   end

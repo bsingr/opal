@@ -33,6 +33,10 @@ module Vienna
       @title = coder.decode_object :title
       @class = coder.decode_object :class
       @content_view = coder.decode_object :content_view
+      
+      # puts "here in window template"
+      # puts self
+      # puts "ss"
       # 
       # if coder.has_key?(:min_size)
       #   @min_size = coder.decode_size :min_size

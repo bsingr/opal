@@ -34,12 +34,13 @@
 function vn_yaml_quick_parse_text(parse_text) {
   // begin parsing hash, and then return it
   var hash = function(c) {
-    var result = { };
+    var result = rb_hash_new();
     var hash_len = marker_count();
     for (var i = 0; i < hash_len; i++) {
       var key = value();
       var val = value();
-      result[key] = val;
+      // result[key] = val;
+      rb_funcall(result, 'store', key, val);
     }
     return result;
   };
