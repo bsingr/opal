@@ -28,6 +28,13 @@ module Vienna
   
   class SliderCell < Cell
     
+    bundle = Bundle.bundle_for_class(self)
+    
+    TRACK_NORMAL = ThreePartImage.new(
+      Image.new(bundle.path_for_resource('slider/track_left_normal.png'), Size.new(4, 5)),
+      Image.new(bundle.path_for_resource('slider/track_middle_normal.png'), Size.new(1, 5)),
+      Image.new(bundle.path_for_resource('slider/track_right_normal.png'), Size.new(4, 5)))
+    
     TRACK_PADDING = 2.0
     
     KNOB_PADDING_REGULAR = 9.5
@@ -47,10 +54,13 @@ module Vienna
     end
     
     def init_with_coder(coder)
-      super
+      super coder
+      # initialize
       
       @min_value = coder.decode_double :min_value
       @max_value = coder.decode_double :max_value
+      @value = 0
+      @continuous  = true
     end
     
     def class_name
@@ -63,20 +73,14 @@ module Vienna
       @cell_frame = cell_frame
       @control_view = control_view
       
-      if ctx.first_time?
-        ctx.append :div do |track|
-          track.class_name = "track"
-        end
-        
-        ctx.append :div do |knob|
-          knob.class_name = "knob"
-        end
+      ctx.build do
+        TRACK_NORMAL.render_with_frame(Rect.new(TRACK_PADDING, (cell_frame.height - 5) / 2, cell_frame.width - (2 * TRACK_PADDING), 5))
       end
       
-      ctx.selector :knob do |knob|        
-        knob_position = _knob_rect_for_value(@value)
-        knob.css :left => "#{knob_position}px"
-      end
+      # ctx.selector :knob do |knob|        
+      #   knob_position = _knob_rect_for_value(@value)
+      #   knob.css :left => "#{knob_position}px"
+      # end
     end
     
     def min_value
