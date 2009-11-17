@@ -51,11 +51,6 @@ module Vienna
       
       @min_value = coder.decode_double :min_value
       @max_value = coder.decode_double :max_value
-      _minValue=[keyed decodeDoubleForKey:@"NSMinValue"];
-      _maxValue=[keyed decodeDoubleForKey:@"NSMaxValue"];
-      _numberOfTickMarks=[keyed decodeIntForKey:@"NSNumberOfTickMarks"];
-      _tickMarkPosition=[keyed decodeIntForKey:@"NSTickMarkPosition"];
-      _allowsTickMarkValuesOnly=[keyed decodeBoolForKey:@"NSAllowsTickMarkValuesOnly"];
     end
     
     def class_name
