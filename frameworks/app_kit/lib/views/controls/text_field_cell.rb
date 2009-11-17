@@ -144,6 +144,7 @@ module Vienna
         # we dont want to render a title if we are a textfield, as the raw input
         # element will render the title for us
         unless @input_element
+          # puts rendering here..
           attributed_value.render_in_rect(Rect.new(2,2,cell_frame.width, cell_frame.height))
         end
       end

@@ -30,10 +30,18 @@ module Vienna
     
     bundle = Bundle.bundle_for_class(self)
     
-    TRACK_NORMAL = ThreePartImage.new(
-      Image.new(bundle.path_for_resource('slider/track_left_normal.png'), Size.new(4, 5)),
-      Image.new(bundle.path_for_resource('slider/track_middle_normal.png'), Size.new(1, 5)),
-      Image.new(bundle.path_for_resource('slider/track_right_normal.png'), Size.new(4, 5)))
+    TRACK_IMAGES = {
+      :vertical => {
+        :normal => ThreePartImage.new(
+          Image.new(bundle.path_for_resource('slider/track_left_normal.png'), Size.new(4, 5)),
+          Image.new(bundle.path_for_resource('slider/track_middle_normal.png'), Size.new(1, 5)),
+          Image.new(bundle.path_for_resource('slider/track_right_normal.png'), Size.new(4, 5)))
+      }
+    }
+    
+    KNOB_IMAGES = {
+      :normal =>Image.new(bundle.path_for_resource('slider/normal_knob.png'), Size.new(17, 17))
+    }
     
     TRACK_PADDING = 2.0
     
@@ -63,10 +71,6 @@ module Vienna
       @continuous  = true
     end
     
-    def class_name
-      'vn-slider'
-    end
-    
     def render_with_frame(cell_frame, in_view:control_view)
       ctx = RenderContext.current_context
       # these two are useful for later
@@ -74,7 +78,9 @@ module Vienna
       @control_view = control_view
       
       ctx.build do
-        TRACK_NORMAL.render_with_frame(Rect.new(TRACK_PADDING, (cell_frame.height - 5) / 2, cell_frame.width - (2 * TRACK_PADDING), 5))
+        TRACK_IMAGES[:vertical][:normal].render_with_frame(Rect.new(TRACK_PADDING, (cell_frame.height - 5) / 2, cell_frame.width - (2 * TRACK_PADDING), 5))
+        
+        KNOB_IMAGES[:normal].render_with_frame(_knob_rect_for_value(@value))
       end
       
       # ctx.selector :knob do |knob|        
@@ -166,8 +172,7 @@ module Vienna
     
     def _knob_rect_for_value(a_value)
       x = (@cell_frame.width - (2 * KNOB_PADDING_REGULAR)) * ((@value / (@max_value - @min_value)) + @min_value)
-      # x + (@cell_frame.x + KNOB_PADDING_REGULAR)
-      x
+      Rect.new(x, (@cell_frame.height - 17) / 2, 17, 17)
     end
     
     def _value_for_mouse_point(a_point)
