@@ -1,0 +1,16 @@
+<html>
+	<head><title>Ruby eval test..</title>
+	<script src="ruby_eval.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript" charset="utf-8">
+		var str = "1 + 2";
+		var parser = new vn_ruby_parser(str);
+		var tok;
+		while ((tok = parser.next_token())[0]) {
+			console.log ('ermm');
+		}
+	</script>
+	</head>
+	<body>
+		
+	</body>
+</html>
