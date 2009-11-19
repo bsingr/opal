@@ -169,11 +169,6 @@ var kCLASS = 0,
     
     tNL = 120,
     tSEMI = 121;
-    
-// Provides functions for parsing simple ruby directly within the browser. This 
-// is very experimental, and should only be used for simple statements, like eval()
-// for adding methods to classes. Supported language features are listed where
-// relevant.
 
 var vn_ruby_parser = function(str) {
 
@@ -198,7 +193,7 @@ var vn_ruby_parser = function(str) {
   
   var original_symbol = {
       nud: function () {
-          throw ("Undefined.");
+          return this;
       },
       led: function (left) {
           throw ("Missing operator.");
@@ -209,14 +204,14 @@ var vn_ruby_parser = function(str) {
     var sym = sym_tbl[id];
     binding_power = binding_power || 0;
     if (sym) {
-      if (binding_power >= sym.left_binding_power) {
-        sym.left_binding_power = binding_power;
+      if (binding_power >= sym.lbp) {
+        sym.lbp = binding_power;
       }
     }
     else {
       sym = object_create(original_symbol);
       sym.type = sym.value = id;
-      sym.left_binding_power = binding_power;
+      sym.lbp = binding_power;
       sym_tbl[id] = sym;
     }
     return sym;
@@ -285,6 +280,32 @@ var vn_ruby_parser = function(str) {
     return this;
   });
   
+  infix("[", 80, function (left) {
+          this.first = left;
+          this.second = expr(0);
+          this.arity = "binary";
+          next_token("]");
+          return this;
+      });
+  
+  infix(kIF_MOD, 10, function (left) {
+    this.first = left;
+    // need to make sure left is a valid receiver: self, true, false, nil, number, string, object, hash etc
+    
+    // if (token.arity !== "name") {
+      // token.error("Expected a property name.");
+      // throw token.value
+    // }
+    if (token.type !== tIDENTIFIER && token.type !== tCONSTANT) {
+      throw "expected identifier or constant method name . Got: " + token.value
+    }
+    token.arity = "literal";
+    this.second = token;
+    this.arity = "binary";
+    next_token();
+    return this;
+  });
+  
   // From ruby_parser.y - high => low
   // infixr(tUPLUS, 90);
   // right    '!' tTILDE tUPLUS
@@ -320,45 +341,128 @@ var vn_ruby_parser = function(str) {
   symbol(tNL).nud = function() { return this; };
   symbol(false).nud = function() { return this; };
   symbol(tIVAR).nud = function() { return this; };
+  symbol(tSYMBEG).nud = function() { console.log('thissss'); next_token(); this.$name = token; return this; };
   
-  // infix("+", 50);
-  
-  // identifier...could be a simple identifier, could be a full method call etc
-  // sym_stmt(tIDENTIFIER, function() {
-  //   var n = token;
-  //   
-  //   if (token.type === '.') {
-  //     // if tdot then its a primary.method_name type call, so catch all methods names
-  //   }
-  //   
-  //   console.log('here init ' + token.value);
-    // we assume not for now
-    
-    // check for l paren
-    // if (token.type === tLPAREN) {
-      // this.$lparen = token;
-      // next_token();
-    // }
-    
-    // this.$args = call_args();
-    
-    // if we have lparen, we must then have a closing paran
-    // if (this.$lparen) {
-      // if (token.type == ')') {
-        // next_token();
-      // }
-    // }
-    
-    
-  //   // console.log(token.value);
-  //   // throw "blah";
-  //   return this;
-  // });
-  
-  var call_args = function() {
+  // var call_args = function() {
     // var result = [];
     
-  };
+  // };
+  
+  sym_stmt(kIF, function() {
+    this.$expr = expr();
+    
+    var seen = false;
+    // pass optional term
+    if (token.type === tNL || token.type === tSEMI) {
+      next_token();
+      seen = true;
+    }
+    if (token.type === kTHEN) {
+      next_token();
+      seen = true;
+    }    
+    // either new line or then. neither is a syntax error (we can have both)
+    if (!seen) {
+      throw 'if statement did not have new line or kTHEN'
+    }
+    // now into body of if statement
+    this.$stmts = [];
+    // tails... made up of elsifs and one else (optional)
+    var opt_else = false;
+      var s;
+      while (true) {
+        if (token.type === kEND) {
+          next_token();
+          // if we hit end here just return... dont check for elsif/else etc
+          return this;
+        }
+        else if (token.type === kELSIF || token.type === kELSE) {
+          // break here, now go onto if tail (dont next_token as we want to carry on)
+          // from here.
+          break;
+        }
+        else if (token.type === false) {
+          throw "IF.. unexpectedly hit end of file without finding 'end'"
+        }
+        else {
+          if (s = stmt()) {
+            // easy get rid of new lines
+            if (s.type !== tNL) {
+              this.$stmts.push(s);
+            }
+            
+          }
+        }
+      }
+      // tail - elsif, else
+      while (true) {
+        if (token.type === kEND) {
+          next_token();
+          // we can end here
+          return this;
+        }
+        else if (token.type === kELSIF || token.type === kELSE) {
+          throw 'elsif/end unimplemented'
+        }
+        else if (token.type === false) {
+          throw "If.. unexpeced End of file"
+        }
+        else {
+          throw "unexpectred token within if: " + token.value
+        }
+      }
+    
+    // console.log(this);
+    // throw 1
+    return this;
+  });
+  
+  // infix(tSYMBEG, 100, function (left) {
+  //   console.log('heh');
+  // //   this.first = left;
+  // next_token();
+  //   throw 'alaphant'
+  // //   this.second = expr(0);
+  // //   this.arity = "binary";
+  // //   next_token("]");
+  // //   return this;
+  // });
+  
+  sym_stmt(kCLASS, function() {
+    var n = token;
+    // class path
+    if (token.type === tCONSTANT) {
+      this.$cname = token;
+      next_token();
+    }
+    else if (token.type === tIDENTIFIER) {
+      throw "cannot use identifer as class name"
+    }
+    // temp get rid of new line/semi colon
+    next_token();
+    this.$stmts = [];
+      var s;
+      while (true) {
+        if (token.type === kEND) {
+          next_token();
+          break;
+        }
+        else if (token.type === false) {
+          throw "Class.. unexpectedly hit end of file without finding 'end'"
+        }
+        else {
+          if (s = stmt()) {
+            // easy get rid of new lines
+            if (s.type !== tNL) {
+              this.$stmts.push(s);
+            }
+            
+          }
+        }
+      }
+    
+    return this;
+  });
   
   // Symbol statement. When we get kDEF, parse a full def statement
   sym_stmt(kDEF, function() {
@@ -392,7 +496,7 @@ var vn_ruby_parser = function(str) {
       if (bodystmt = stmt()) {
         this.$stmts.push(bodystmt);
       }
-      console.log('added stmt: current val is now ' + token.value);
+      // console.log('added stmt: current val is now ' + token.value);
       // at the end of each statement, parse a new line or a semi colon
       if (this.$stmts.length > 0) {
         if (token.type === tSEMI || token.type === tNL) {
@@ -424,7 +528,7 @@ var vn_ruby_parser = function(str) {
     
     
     if (p && token.type === ')') {
-      console.log('skipping over rparen');
+      // console.log('skipping over rparen');
       next_token();
     }
     
@@ -481,27 +585,38 @@ var vn_ruby_parser = function(str) {
     return result;
   };
   
+  // ruby makes it hard for us to use this... we cant just keep going until we hit
+  // 'end' as this wont always be the case.. if statements end on elsif, else, etc..
+  // looks like we have to implement this ourselves as appropriate... if must check
+  // for elsif, else and end statements
   var stmts = function() {
     var result = [], s;
     while (true) {
-      if (token.type === kEND || token.type === false) {
-        next_token();
-        // console.log('breaking stmts with ' + token.value);
+      // this probably shouldnt do kEND.. def, class etc all eat this up themselves
+      // if false, we should just end here.
+      if (token.type === false) {
+        console.log('got here..');
         break;
       }
       // if we have atleast one stmt, then we need to parse a 'term' (\n or ;) to
       // seperate stmt
       if (result.length > 0) {
         if (token.type === tSEMI || token.type === tNL) {
-          console.log('ahppy days, found a term in stmts');
+          // console.log('ahppy days, found a term in stmts');
           next_token();
+          // exit this iteration, and go back to start
+          continue;
         }
         else {
           throw 'error in stmts!!! no term between stmts';
         }
       }
       if (s = stmt()) {
-        result.push(s);
+        // easy get rid of new lines
+        if (s.type !== tNL) {
+          result.push(s);
+        }
+        
       };
     }
     return result;
@@ -524,10 +639,10 @@ var vn_ruby_parser = function(str) {
   
   var expr = function(right_binding_power) {
     var old = token;
-    console.log(old);
+    // console.log(old);
     var left = old.nud();
     next_token();
-    while (right_binding_power < token.left_binding_power) {
+    while (right_binding_power < token.lbp) {
       old = token;
       next_token();
       left = old.led(left);
@@ -625,6 +740,53 @@ var vn_ruby_parser = function(str) {
           return [false, false];
         }
       }
+      
+      else if (scanner.scan(/^\:/)) {
+        // console.log ("HERE " + lex_state);
+        if (lex_state === EXPR_END || lex_state === EXPR_ENDARG || scanner.check(/^\s/)) {
+          // FIXME: hack for tertiary statements
+          if (!scanner.check(/^\w/)) {
+            return [':', scanner.matched];
+          }
+          
+          lex_state = EXPR_BEG;
+          return [tSYMBEG, scanner.matched];
+        }
+        
+        lex_state = EXPR_FNAME;
+        return [tSYMBEG, ':'];
+      }
+      
+      else if (scanner.scan(/^\[/)) {
+        result = scanner.matched;
+        
+        if (lex_state == EXPR_FNAME || lex_state == EXPR_DOT) {
+          lex_state = EXPR_ARG
+          if (scanner.scan(/^\]\=/)) {
+            return [tASET, '[]='];
+          }
+          else if (scanner.scan(/^\]/)) {
+            return [tAREF, '[]'];
+          }
+          else {
+            throw "error, unexpecrted '[]' token"
+          }
+        }
+        // space seen allows for method calls with array as first param
+        // otherwise it thinks its calling the '[]' method
+        else if (lex_state == EXPR_BEG || lex_state == EXPR_MID || space_seen) {
+          return [tLBRACK, scanner.matched]
+        }
+        // hmm?
+        return ['[', scanner.matched]
+      }
+      
+      // ]
+      else if (scanner.scan(/^\]/)) {
+        lex_state = EXPR_END;
+        return [']', scanner.matched];
+      }      
+      
       else if (scanner.scan(/^\;/)) {
         lex_state = EXPR_BEG;
         return [tSEMI, ';'];
@@ -783,32 +945,6 @@ var vn_ruby_parser = function(str) {
     }
   };
   
-
-  
-  
-  
-  
-  
-  // def
-  // currenly assume no singleton
-  // stmt(kDEF, function () {
-  //   this.node = "def";
-  //   var name = singleton();
-  //   if (token[0] == kDOT) {
-  //     // we are in singleton method.., so name is the singleton
-  //     
-  //     // pass through the dot
-  //     next_token(kDOT);
-  //     var f_name = fname();
-  //   }
-  //   else {
-  //     // we are not in a singleton define. name should be a valid fname only.
-  //     // we checked for any singleton, so it might not be, in which case throw
-  //     // error (self can be singleton, but not fname)
-  //   }    
-  //   return this;
-  // });
-  
   // the parser - pass is the source to actually parse
   return function(parse_text) {
     scanner = new vn_ruby_string_scanner(parse_text);
@@ -829,17 +965,6 @@ var vn_ruby_string_scanner = function(str) {
   this.matched = "";
   // working string (basically str substr'd from the 'at' index to the end)
   this.working_string = str;
-};
-
-// adjusts the regexp so that it MUST start scanning from the beginning of the string.
-vn_ruby_string_scanner.prototype._fix_regexp_to_match_beg = function(reg) {
-  var old = reg.toString();
-  if (old.substr(0, 2) == "/^") {
-    return reg;
-  }
-  else {
-    return new RegExp("^" + old.substr(1, old.length - 2));
-  }
 };
 
 vn_ruby_string_scanner.prototype.scan = function(reg) {
