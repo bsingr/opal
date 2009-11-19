@@ -165,7 +165,10 @@ var kCLASS = 0,
     tXSTRING_END = 117,
     
     tPLUS = 118,
-    tMINUS = 119;
+    tMINUS = 119,
+    
+    tNL = 120,
+    tSEMI = 121;
     
 // Provides functions for parsing simple ruby directly within the browser. This 
 // is very experimental, and should only be used for simple statements, like eval()
@@ -225,6 +228,17 @@ var vn_ruby_parser = function(str) {
     return sym;
   };
   
+  var infixr = function (id, bp, led) {
+      var s = symbol(id, bp);
+      s.led = led || function (left) {
+          this.first = left;
+          this.second = expr(bp - 1);
+          this.arity = "binary";
+          return this;
+      };
+      return s;
+  };
+  
   // make a function for us that has a 'usual beahiour' (saves making a function
   // over and over) - +/-/*// all do the same thing etc
   var infix = function (id, bp, led) {
@@ -232,11 +246,44 @@ var vn_ruby_parser = function(str) {
       s.led = led || function (left) {
           this.$lhs = left;
           this.$rhs = expr(bp);
-          this.arity = "binary";
+          this.type = id;
           return this;
       };
       return s;
   };
+  
+  var assignment = function (id) {
+      return infixr(id, 10, function (left) {
+          if (left.type !== "." && left.type !== "[" && left.type !== tIDENTIFIER && left.type != tIVAR) {
+              left.error("Bad lvalue.");
+          }
+          this.$lhs = left;
+          this.$rhs = expr(9);
+          this.assignment = true;
+          // this.type = "assignment";
+          return this;
+      });
+  };
+  
+  assignment("=");
+  
+  infix(".", 80, function (left) {
+    this.first = left;
+    // need to make sure left is a valid receiver: self, true, false, nil, number, string, object, hash etc
+    
+    // if (token.arity !== "name") {
+      // token.error("Expected a property name.");
+      // throw token.value
+    // }
+    if (token.type !== tIDENTIFIER && token.type !== tCONSTANT) {
+      throw "expected identifier or constant method name . Got: " + token.value
+    }
+    token.arity = "literal";
+    this.second = token;
+    this.arity = "binary";
+    next_token();
+    return this;
+  });
   
   // From ruby_parser.y - high => low
   // infixr(tUPLUS, 90);
@@ -268,49 +315,170 @@ var vn_ruby_parser = function(str) {
   
   // symbols etc
   symbol(tINTEGER).nud = function() { return this; };
+  symbol(tIDENTIFIER).nud = function() { return this; };
+  symbol(tSEMI).nud = function() { return this; };
+  symbol(tNL).nud = function() { return this; };
+  symbol(false).nud = function() { return this; };
+  symbol(tIVAR).nud = function() { return this; };
+  
   // infix("+", 50);
   
+  // identifier...could be a simple identifier, could be a full method call etc
+  // sym_stmt(tIDENTIFIER, function() {
+  //   var n = token;
+  //   
+  //   if (token.type === '.') {
+  //     // if tdot then its a primary.method_name type call, so catch all methods names
+  //   }
+  //   
+  //   console.log('here init ' + token.value);
+    // we assume not for now
+    
+    // check for l paren
+    // if (token.type === tLPAREN) {
+      // this.$lparen = token;
+      // next_token();
+    // }
+    
+    // this.$args = call_args();
+    
+    // if we have lparen, we must then have a closing paran
+    // if (this.$lparen) {
+      // if (token.type == ')') {
+        // next_token();
+      // }
+    // }
+    
+    
+  //   // console.log(token.value);
+  //   // throw "blah";
+  //   return this;
+  // });
+  
+  var call_args = function() {
+    // var result = [];
+    
+  };
+  
+  // Symbol statement. When we get kDEF, parse a full def statement
   sym_stmt(kDEF, function() {
     // n = fname
     var n = token;
     
     if (n.type === tIDENTIFIER || n.type === tCONSTANT) {
-      console.log('it was!!!');
+      // console.log('it was!!!');
+      this.$fname = n;
     }
     else {
       console.log('wasnt what we expected');
       console.log(n);
     }
     next_token();
-    this.arglist = rule_arglist();
+    // console.log(token.value + '..' + token.type);
+    this.$arglist = rule_arglist();
     
     // until we hit an 'end' token, parse 0 or more stmts
-    var bodystmts = [];
+    this.$stmts = [];
     var bodystmt;
     
     while (true) {
+      // stop when we get to end of def (kEND or EOF)
+      // eof should throw error (didnt get kEND)
       if (token.type === kEND || token.type === false) {
-        console.log('token type..' + token.value);
         next_token();
         break;
-        // return this;
       }
+      
       if (bodystmt = stmt()) {
-        bodystmts.push(bodystmt);
+        this.$stmts.push(bodystmt);
       }
-    }
-    
-    
+      console.log('added stmt: current val is now ' + token.value);
+      // at the end of each statement, parse a new line or a semi colon
+      if (this.$stmts.length > 0) {
+        if (token.type === tSEMI || token.type === tNL) {
+          next_token();
+        }
+        else {
+          if (token.type !== kEND && token.type !== false) {
+            throw 'error in stmts!!! no term between stmts ' + token.value;
+          }
+          
+        }
+      }
+    }    
     return this;
   });
   
   // parse an arglist
   var rule_arglist = function() {
-    // if we have a term (\n or ;) then no args, so return empty array??
-    if (token.type === ';' || token.type === '\n') {
+    // p true if we fidn paran
+    var result = { }, p = false;
+    // check for left param..
+    if (token.type === '(') {
+      p = true;
       next_token();
-      return [];
     }
+    
+    // parse args
+    result.$args = rule_args();
+    
+    
+    if (p && token.type === ')') {
+      console.log('skipping over rparen');
+      next_token();
+    }
+    
+    // if we have a term (\n or ;) then no args, so return empty array??
+    if (token.type === tSEMI || token.type === tNL) {
+      next_token();
+      // return [];
+    }
+    
+    // set this ready for the next line... only if we had no rparen
+    // lex_state = EXPR_BEG;
+    return result;
+  };
+  
+  // parse args (not do block, just 'normal' argdefs)
+  var rule_args = function() {
+    var result = []
+    while (true) {
+      // console.log(token.value);
+      if (token.type == ')' || token.type === tSEMI || token.type === tNL) {
+        // console.log('breaking here');
+        break;
+      }
+      else {
+        // if not, must be an arg, so parse each (commar seperated)
+        if (token.type === tIDENTIFIER) {
+          result.push(token);
+          next_token();
+        }
+        else if (token.type === tCONSTANT) {
+          throw "Contants cannt be used as names for methods"
+        }
+        else if (token.type === tCVAR) {
+          throw "Class Variables cannt be used as names for methods"
+        }
+        else if (token.type === tIVAR) {
+          throw "Instance Variables cannt be used as names for methods"
+        }
+        else if (token.type === tGVAR) {
+          throw "Global Variables cannt be used as names for methods"
+        }
+        
+        if (token.type === ',') {
+          next_token();
+        }
+        else if (token.type == ')' || token.type === tSEMI || token.type === tNL) {
+          // these are all ok....
+        }
+        else {
+          throw "arg, unexpected " + token.value();
+        }
+      }
+    }
+    return result;
   };
   
   var stmts = function() {
@@ -318,13 +486,13 @@ var vn_ruby_parser = function(str) {
     while (true) {
       if (token.type === kEND || token.type === false) {
         next_token();
-        console.log('breaking stmts with ' + token.value);
+        // console.log('breaking stmts with ' + token.value);
         break;
       }
       // if we have atleast one stmt, then we need to parse a 'term' (\n or ;) to
       // seperate stmt
       if (result.length > 0) {
-        if (token.type === ';' || token.type === '\n') {
+        if (token.type === tSEMI || token.type === tNL) {
           console.log('ahppy days, found a term in stmts');
           next_token();
         }
@@ -371,7 +539,7 @@ var vn_ruby_parser = function(str) {
   // checks id of current token to make sure it matches, only if id is defined.
   var next_token = function(id) {
     var t = get_next_token();
-    // console.log('token: (' + t[0] + ' : ' + t[1] + ') lex_state: (' + lex_state + ')');
+    console.log('token: (' + t[0] + ' : ' + t[1] + ') lex_state: (' + lex_state + ')');
     // token = { type: t[0], value:t[1] };
     // token = {};
     token = object_create(sym_tbl[t[0]]);
@@ -386,32 +554,41 @@ var vn_ruby_parser = function(str) {
     var c = '',
         space_seen = false,
         last_state = lex_state;
-
+    
     while (true) {
-      if (scanner.scan(/\ |\t|\r/)) {
+      // console.log(scanner.working_string);
+      // if (scanner.scan(/\ |\t|\r/)) {
+        if(scanner.scan(/^(\ |\t|\r)/)) {
         space_seen = true;
         // console.log('found space: "' + scanner.matched + '"');
+        // console.log(scanner.working_string);
         continue;
       }
-      else if (scanner.scan(/^\n|#/)) {
+      else if (scanner.scan(/^(\n|#)/)) {
+        // console.log('found: ' + scanner.matched);
         c = scanner.matched;
         if (c == '#') {
-          scanner.scan(/^.*\n/);
+          scanner.scan(/^(.*\n)/);
         }
         // we can skip any more blank lines..(combine them into one..)
-        scanner.scan(/^\n+/);
+        scanner.scan(/^(\n+)/);
+        // console.log('we scanned lots');
+        // console.log(scanner.matched);
+        
+        if (lex_state == EXPR_BEG) {
+          continue;
+        }
 
-
-        this.lex_state = EXPR_BEG;
-        return ['\n', '\n'];
+        lex_state = EXPR_BEG;
+        return [tNL, '\n'];
       }
-      else if (scanner.scan(/[+-]/)) {
+      else if (scanner.scan(/^[+-]/)) {
         var result = scanner.matched == '+' ? tPLUS : tMINUS;
         var sign = (result == tPLUS) ? tUPLUS : tUMINUS;
         // method name
-        if (this.lex_state == EXPR_FNAME || this.lex_state == EXPR_DOT) {
-          this.lex_state = EXPR_ARG;
-          if (scanner.scan(/@/)) {
+        if (lex_state == EXPR_FNAME || lex_state == EXPR_DOT) {
+          lex_state = EXPR_ARG;
+          if (scanner.scan(/^@/)) {
             return [sign, result + '@'];
           }
           else {
@@ -419,28 +596,28 @@ var vn_ruby_parser = function(str) {
           }
         }
         // += or -=
-        if (scanner.scan(/\=/)) {
-          this.lex_state = EXPR_BEG;
+        if (scanner.scan(/^\=/)) {
+          lex_state = EXPR_BEG;
           return [tOP_ASGN, result];
         }
 
-        if (this.lex_state == EXPR_BEG || this.lex_state == EXPR_MID) {
-          this.lex_state = EXPR_BEG;
+        if (lex_state == EXPR_BEG || lex_state == EXPR_MID) {
+          lex_state = EXPR_BEG;
           return [sign, result];
         }
 
-        this.lex_state = EXPR_BEG;
+        lex_state = EXPR_BEG;
         return [result, scanner.matched];
       }
-      else if (scanner.check(/[0-9]/)) {
-        this.lex_state = EXPR_END;
-        if (scanner.scan(/[\d_]+\.[\d_]+\b/)) {
+      else if (scanner.check(/^[0-9]/)) {
+        lex_state = EXPR_END;
+        if (scanner.scan(/^[\d_]+\.[\d_]+\b/)) {
           return [tFLOAT, scanner.matched];
         }
-        else if (scanner.scan(/[\d_]+\b/)) {
+        else if (scanner.scan(/^[\d_]+\b/)) {
           return [tINTEGER, scanner.matched];
         }
-        else if (scanner.scan(/0(x|X)(\d|[a-f]|[A-F])+/)) {
+        else if (scanner.scan(/^0(x|X)(\d|[a-f]|[A-F])+/)) {
           return [tINTEGER, scanner.matched];
         }
         else {
@@ -448,41 +625,95 @@ var vn_ruby_parser = function(str) {
           return [false, false];
         }
       }
-      else if (scanner.scan(/\;/)) {
-        this.lex_state = EXPR_BEG;
-        return [';', ';'];
+      else if (scanner.scan(/^\;/)) {
+        lex_state = EXPR_BEG;
+        return [tSEMI, ';'];
       }
-      else if (scanner.scan(/\w+[\?\!]?/)) {
+      // #
+      else if (scanner.scan(/^\(/)) {
+        var result = '(';
+        if (lex_state == EXPR_BEG || lex_state == EXPR_MID) {
+          result = tLPAREN;
+        }
+        else if (space_seen) {
+          if (lex_state == EXPR_CMDARG) {
+            result = tLPAREN_ARG;
+          }
+          else if(lex_state == EXPR_ARG) {
+            // dont put space before arys
+            result = tLPAREN2;
+          }
+        }
+        lex_state = EXPR_BEG;
+        return [result, scanner.matched];
+      }
+      // )
+      else if (scanner.scan(/^\)/)) {
+        lex_state = EXPR_END;
+        return [')', scanner.matched];
+      }
+      
+      // .
+      else if (scanner.scan(/^\./)) {
+        if (lex_state == EXPR_FNAME) {
+          lex_state = EXPR_DOT;
+        }
+        return ['.', scanner.matched];
+      }
+      
+      // ,
+      else if (scanner.scan(/^\,/)) {
+        lex_state = EXPR_BEG;
+        return [',', scanner.matched];
+      }
+      
+      // Class variabled
+      else if (scanner.scan(/^\@\@\w*/)) {
+        lex_state = EXPR_END;
+        return [tCVAR, scanner.matched];
+      }
+      // Instance variables
+      else if (scanner.scan(/^\@\w*/)) {
+        lex_state = EXPR_END;
+        return [tIVAR, scanner.matched];
+      }
+      
+      else if (scanner.scan(/^\=/)) {
+        lex_state = EXPR_BEG;
+        return ['=', scanner.matched];
+      }
+              
+      else if (scanner.scan(/^\w+[\?\!]?/)) {
         switch (scanner.matched) {
           case 'def':
-            this.lex_state = EXPR_FNAME;
+            lex_state = EXPR_FNAME;
             return [kDEF, scanner.matched];
           case 'end':
-            this.lex_state = EXPR_END;
+            lex_state = EXPR_END;
             return [kEND, scanner.matched];
           case 'class':
             // catch 'class' being used as a method name. This only works when class is used
             // like object.class .. you cannot just use 'class' to call class method on self
             // without explicitly stating self as the receiver.
-            if (this.lex_state == EXPR_DOT) {
+            if (lex_state == EXPR_DOT) {
               return [tIDENTIFIER, scanner.matched];
             }
-            this.lex_state = EXPR_CLASS;
+            lex_state = EXPR_CLASS;
             return [kCLASS, scanner.matched];
           case 'module':
-            this.lex_state = EXPR_BEG;
+            lex_state = EXPR_BEG;
             return [kMODULE, scanner.matched];
           case 'do':
-            if (this.lex_state == EXPR_ENDARG) {
-              this.lex_state = EXPR_BEG;
+            if (lex_state == EXPR_ENDARG) {
+              lex_state = EXPR_BEG;
               return [kDO_BLOCK, scanner.matched];
             }
             return [kDO, scanner.matched];
           case 'if':
-            if (this.lex_state == EXPR_BEG) {
+            if (lex_state == EXPR_BEG) {
               return [kIF, scanner.matched];
             }
-            this.lex_state = EXPR_BEG;
+            lex_state = EXPR_BEG;
             return [kIF_MOD, scanner.matched];
           case 'then':
             return [kTHEN, scanner.matched];
@@ -491,57 +722,57 @@ var vn_ruby_parser = function(str) {
           case 'elsif':
             return [kELSIF, scanner.matched];
           case 'unless':
-            if (this.lex_state == EXPR_BEG) {
+            if (lex_state == EXPR_BEG) {
               return [kUNLESS, scanner.matched];
             }
-            this.lex_state = EXPR_BEG;
+            lex_state = EXPR_BEG;
             return [kUNLESS_MOD, scanner.matched];
           case 'self':
-            if (this.lex_state != EXPR_FNAME) {
-              this.lex_state = EXPR_END;
+            if (lex_state != EXPR_FNAME) {
+              lex_state = EXPR_END;
             }
             return [kSELF, scanner.matched];
           case 'super':
-            this.lex_state = EXPR_ARG;
+            lex_state = EXPR_ARG;
             return [kSUPER, scanner.matched];
           case 'true':
-            this.lex_state = EXPR_END;
+            lex_state = EXPR_END;
             return [kTRUE, scanner.matched];
           case 'false':
-            this.lex_state = EXPR_END;
+            lex_state = EXPR_END;
             return [kFALSE, scanner.matched];
           case 'nil':
-            this.lex_state = EXPR_END;
+            lex_state = EXPR_END;
             return [kNIL, scanner.matched];
           case 'return':
-            this.lex_state = EXPR_MID;
+            lex_state = EXPR_MID;
             return [kRETURN, scanner.matched];
           case 'case':
-            this.lex_state = EXPR_BEG;
+            lex_state = EXPR_BEG;
             return [kCASE, scanner.matched];
           case 'when':
-            this.lex_state = EXPR_BEG;
+            lex_state = EXPR_BEG;
             return [kWHEN, scanner.matched];
           case 'yield':
-            this.lex_state = EXPR_ARG;
+            lex_state = EXPR_ARG;
             return [kYIELD, scanner.matched]
         }
 
         var matched = scanner.matched;
 
         // labels - avoid picking up a mod/class divide name
-        if ((scanner.peek(2) != '::') && (scanner.scan(/\:/))) {
+        if ((scanner.peek(2) != '::') && (scanner.scan(/^\:/))) {
           return [tLABEL, matched + scanner.matched];
         }
 
-        if (this.lex_state == EXPR_FNAME) {
-          if (scanner.scan(/=(?:(?![~>=])|(?==>))/)) {
-            this.lex_state = EXPR_END;
+        if (lex_state == EXPR_FNAME) {
+          if (scanner.scan(/^=(?:(?![~>=])|(?==>))/)) {
+            lex_state = EXPR_END;
             return [tIDENTIFIER, matched + scanner.matched];
           }
         }
 
-        this.lex_state = EXPR_END;
+        lex_state = EXPR_END;
         return [matched.match(/^[A-Z]/) ? tCONSTANT : tIDENTIFIER, matched];
       }
 
@@ -612,7 +843,7 @@ vn_ruby_string_scanner.prototype._fix_regexp_to_match_beg = function(reg) {
 };
 
 vn_ruby_string_scanner.prototype.scan = function(reg) {
-  reg = this._fix_regexp_to_match_beg(reg);
+  // reg = this._fix_regexp_to_match_beg(reg);
   var res = reg.exec(this.working_string);
   if (res == null) {
     return false;
@@ -633,7 +864,7 @@ vn_ruby_string_scanner.prototype.scan = function(reg) {
 };
 
 vn_ruby_string_scanner.prototype.check = function(reg) {
-  reg = this._fix_regexp_to_match_beg(reg);
+  // reg = this._fix_regexp_to_match_beg(reg);
   var res = reg.exec(this.working_string);
   return res;
 };
