@@ -2,13 +2,12 @@
 	<head><title>Ruby eval test..</title>
 	<script src="ruby_eval.js" type="text/javascript" charset="utf-8"></script>
 	<script type="text/javascript" charset="utf-8">
-		var str = "1 + 2";
-		var parser = new vn_ruby_parser(str);
+		var str = "1 + 3 + 25 - 16";
+		var parser = vn_ruby_parser();
 		var tok;
-		while ((tok = parser.next_token())[0]) {
-			console.log ('ermm');
-		}
+		console.log(parser(str));
 	</script>
+
 	</head>
 	<body>
 		
