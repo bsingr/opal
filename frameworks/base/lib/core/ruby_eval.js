@@ -24,151 +24,54 @@
  * THE SOFTWARE.
  */
  
- // Inspiration
- // ===========
- // parse.js
- // Parser for Simplified JavaScript written in Simplified JavaScript
- // From Top Down Operator Precedence
- // http://javascript.crockford.com/tdop/index.html
- // Douglas Crockford
- // 2008-07-07
+// Inspiration
+// ===========
+// parse.js
+// Parser for Simplified JavaScript written in Simplified JavaScript
+// From Top Down Operator Precedence
+// http://javascript.crockford.com/tdop/index.html
+// Douglas Crockford
+// 2008-07-07
 
-var EXPR_BEG    = 0,
-    EXPR_END    = 1,
-    EXPR_ENDARG = 2,
-    EXPR_ARG    = 3,
-    EXPR_CMDARG = 4,
-    EXPR_MID    = 5,
-    EXPR_FNAME  = 6,
-    EXPR_DOT    = 7,
-    EXPR_CLASS  = 8,
-    EXPR_VALUE  = 9;
+    // lex states
+var EXPR_BEG    = 0,    EXPR_END    = 1,    EXPR_ENDARG = 2,    EXPR_ARG    = 3,
+    EXPR_CMDARG = 4,    EXPR_MID    = 5,    EXPR_FNAME  = 6,    EXPR_DOT    = 7,
+    EXPR_CLASS  = 8,    EXPR_VALUE  = 9;
 
-var kCLASS = 0,
-    kMODULE = 1,
-    kDEF = 2,
-    kUNDEF = 3,
-    kBEGIN = 4,
-    kRESCUE = 5,
-    kENSURE = 6,
-    kEND = 7,
-    kIF = 8,
-    kUNLESS = 9,
-    kTHEN = 10,
-    kELSIF = 11,
-    kELSE = 12,
-    kCASE = 13,
-    kWHEN = 14,
-    kWHILE = 15,
-    kUNTIL = 16,
-    kFOR = 17,
-    kBREAK = 18,
-    kNEXT = 19,
-    kREDO = 20,
-    kELSIF = 21,
-    kELSE = 22,
-    kCASE = 23, 
-    kWHEN = 24, 
-    kWHILE = 25, 
-    kUNTIL = 26,
-    kFOR = 27,
-    kBREAK = 28,
-    kNEXT= 29,
-    kREDO = 30,
-    kRETRY = 31,
-    kIN = 32,
-    kDO_COND = 33,
-    kDO_BLOCK = 34,
-    kDO_LAMBDA = 35,
-    kRETURN = 36,
-    kYIELD= 37,
-    kSUPER = 38,
-    kSELF = 39,
-    kNIL = 40,
-    kTRUE = 41,
-    kFALSE = 42,
-    kAND = 43,
-    kOR = 44,
-    kNOT = 45,
-    kIF_MOD = 46,
-    kUNLESS_MOD= 47,
-    kWHILE_MOD = 48,
-    kUNTIL_MOD = 49,
-    kRESCUE_MOD = 50,
-    kALIAS = 51,
-    kDEFINED = 52,
-    klBEGIN = 53,
-    klEND= 54,
-    k__LINE__ = 55,
-    k__FILE__ = 56,
-    kDO = 57,
-    kDEFined= 58,
-    
-    tIDENTIFIER = 59,
-    tFID = 60,
-    tGVAR = 61,
-    tIVAR = 62,
-    tCONSTANT = 63,
-    tCVAR = 64,
-    tLABEL = 65,
-    tINTEGER = 66,
-    tFLOAT= 67,
-    tSTRING_CONTENT= 68, 
-    tCHAR = 69,
-    tNTH_REF = 70,
-    tBACK_REF = 71,
-    tREGEXP_END = 72,
-    tUPLUS = 73,
-    tUMINUS= 74,
-    tPOW = 75,
-    tCMP = 76,
-    tEQ = 77,
-    tEQQ = 78,
-    tNEQ = 79,
-    tGEQ = 80,
-    tLEQ = 81,
-    tANDOP = 82,
-    tOROP = 83,
-    tMATCH = 84,
-    tNMATCH	= 85,
-    tDOT2= 86,
-    tDOT3 = 87,
-    tAREF = 88,
-    tASET = 89,
-    tLSHFT = 90,
-    tRSHFT = 91,
-    tCOLON2 = 92,
-    tCOLON3 = 93,
-    tOP_ASGN = 94,
-    tASSOC= 95,
-    tLPAREN	= 96,
-    tLPAREN_ARG	= 97,
-    tRPAREN = 98,
-    tLBRACK = 99,
-    tLBRACE = 100,
-    tLBRACE_ARG = 101,
-    tSTAR = 102,
-    tAMPER= 103,
-    tLAMBDA = 104,
-    tSYMBEG = 105,
-    tSTRING_BEG = 106,
-    tXSTRING_BEG = 107,
-    tREGEXP_BEG = 108,
-    tWORDS_BEG= 109,
-    tQWORDS_BEG = 110,
-    tSTRING_DBEG = 111,
-    tSTRING_DVAR = 112,
-    tSTRING_END = 113,
-    tLAMBEG = 114,
-    tUMINUS_NUM= 115,
-    tSTRING = 116,
-    tXSTRING_END = 117,
-    
-    tPLUS = 118,
-    tMINUS = 119,
-    
-    tNL = 120,
-    tSEMI = 121;
+    // keywords
+var kCLASS      = 0,    kMODULE     = 1,    kDEF        = 2,    kUNDEF      = 3,
+    kBEGIN      = 4,    kRESCUE     = 5,    kENSURE     = 6,    kEND        = 7,
+    kIF         = 8,    kUNLESS     = 9,    kTHEN       = 10,   kELSIF      = 11,
+    kELSE       = 12,   kCASE       = 13,   kWHEN       = 14,   kWHILE      = 15,
+    kUNTIL      = 16,   kFOR        = 17,   kBREAK      = 18,   kNEXT       = 19,
+    kREDO       = 20,   kELSIF      = 21,   kELSE       = 22,   kCASE       = 23, 
+    kWHEN       = 24,   kWHILE      = 25,   kUNTIL      = 26,   kFOR        = 27,
+    kBREAK      = 28,   kNEXT       = 29,   kREDO       = 30,   kRETRY      = 31,
+    kIN         = 32,   kDO_COND    = 33,   kDO_BLOCK   = 34,   kDO_LAMBDA  = 35,
+    kRETURN     = 36,   kYIELD      = 37,   kSUPER      = 38,   kSELF       = 39,
+    kNIL        = 40,   kTRUE       = 41,   kFALSE      = 42,   kAND        = 43,
+    kOR         = 44,   kNOT        = 45,   kIF_MOD     = 46,   kUNLESS_MOD = 47,
+    kWHILE_MOD  = 48,   kUNTIL_MOD  = 49,   kRESCUE_MOD = 50,   kALIAS      = 51,
+    kDEFINED    = 52,   klBEGIN     = 53,   klEND       = 54,   k__LINE__   = 55,
+    k__FILE__   = 56,   kDO         = 57,   kDEFined    = 58,
+    // tokens
+    tIDENTIFIER = 59,   tFID        = 60,   tGVAR       = 61,   tIVAR       = 62,
+    tCONSTANT   = 63,   tCVAR       = 64,   tLABEL      = 65,   tINTEGER    = 66,
+    tFLOAT      = 67,   tSTR_CONTENT= 68,   tCHAR       = 69,   tNTH_REF    = 70,
+    tBACK_REF   = 71,   tREGEXP_END = 72,   tUPLUS      = 73,   tUMINUS     = 74,
+    tPOW        = 75,   tCMP        = 76,   tEQ         = 77,   tEQQ        = 78, 
+    tNEQ        = 79,   tGEQ        = 80,   tLEQ        = 81,   tANDOP      = 82,
+    tOROP       = 83,   tMATCH      = 84,   tNMATCH	    = 85,   tDOT2       = 86, 
+    tDOT3       = 87,   tAREF       = 88,   tASET       = 89,   tLSHFT      = 90, 
+    tRSHFT      = 91,   tCOLON2     = 92,   tCOLON3     = 93,   tOP_ASGN    = 94, 
+    tASSOC      = 95,   tLPAREN	    = 96,   tLPAREN_ARG	= 97,   tRPAREN     = 98,  
+    tLBRACK     = 99,   tLBRACE     = 100,  tLBRACE_ARG = 101,  tSTAR       = 102,
+    tAMPER      = 103,  tLAMBDA     = 104,  tSYMBEG     = 105,  tSTRING_BEG = 106,
+    tXSTRING_BEG= 107,  tREGEXP_BEG = 108,  tWORDS_BEG  = 109,  tQWORDS_BEG = 110,
+    tSTRING_DBEG= 111,  tSTRING_DVAR= 112,  tSTRING_END = 113,  tLAMBEG     = 114,
+    tUMINUS_NUM = 115,  tSTRING     = 116,  tXSTRING_END= 117,
+        
+    tPLUS       = 118,  tMINUS      = 119,  tNL         = 120,  tSEMI       = 121;
 
 var vn_ruby_parser = function(str) {
 
@@ -180,6 +83,9 @@ var vn_ruby_parser = function(str) {
   var token;
   // 
   var sym_tbl = { };
+  // eval string..
+  var eval_arr = [];
+  
   
   // create object dup
   var object_create = function(obj) {
@@ -196,7 +102,7 @@ var vn_ruby_parser = function(str) {
           return this;
       },
       led: function (left) {
-          throw ("Missing operator.");
+          throw 'led unimplemented';
       }
   };
   
@@ -262,34 +168,30 @@ var vn_ruby_parser = function(str) {
   
   assignment("=");
   
+  // General case method call. used for integers etc
   infix(".", 80, function (left) {
-    this.first = left;
+    this.$recv = left;
     // need to make sure left is a valid receiver: self, true, false, nil, number, string, object, hash etc
     
-    // if (token.arity !== "name") {
-      // token.error("Expected a property name.");
-      // throw token.value
-    // }
     if (token.type !== tIDENTIFIER && token.type !== tCONSTANT) {
       throw "expected identifier or constant method name . Got: " + token.value
     }
-    token.arity = "literal";
-    this.second = token;
-    this.arity = "binary";
+    this.$call = token;
     next_token();
+    // check for params (if not new line, semi or commar then we should read it??)
     return this;
   });
   
   infix("[", 80, function (left) {
-          this.first = left;
-          this.second = expr(0);
-          this.arity = "binary";
-          next_token("]");
-          return this;
-      });
+    // Fixme.. can probably take this out.
+    this.$recv = left;
+    this.$aref = expr(0);
+    next_token("]");
+    return this;
+  });
   
   infix(kIF_MOD, 10, function (left) {
-    this.first = left;
+    this.$stmt = left;
     // need to make sure left is a valid receiver: self, true, false, nil, number, string, object, hash etc
     
     // if (token.arity !== "name") {
@@ -299,9 +201,7 @@ var vn_ruby_parser = function(str) {
     if (token.type !== tIDENTIFIER && token.type !== tCONSTANT) {
       throw "expected identifier or constant method name . Got: " + token.value
     }
-    token.arity = "literal";
-    this.second = token;
-    this.arity = "binary";
+    this.$expr = token;
     next_token();
     return this;
   });
@@ -335,7 +235,10 @@ var vn_ruby_parser = function(str) {
   // nonassoc tLOWEST
   
   // symbols etc
-  symbol(tINTEGER).nud = function() { return this; };
+  symbol(tINTEGER).nud = function() {
+    return this;
+  };
+  
   symbol(tSEMI).nud = function() { return this; };
   symbol(tNL).nud = function() { return this; };
   symbol(false).nud = function() { return this; };
@@ -350,9 +253,56 @@ var vn_ruby_parser = function(str) {
     return this;
   };
   
+  // This is basically where we handle all method calls which have a receiver. This
+  // is called from identifiers, arrays, strings, numbers ans hashes all as the recv.
+  sym_stmt('.', function() {
+    // temp naming schema
+    this.$desc = 'method_call';
+    this.$call = stmt();
+    // console.log(this);
+    // throw 'here..? ' + token.value
+    return this;
+  });
+  
+  // array literal
+  symbol(tLBRACK).nud = function() {
+    this.$values = [];
+    // throw next_token().value
+    next_token();
+    while (true) {
+      if (token.type === false) {
+        throw 'unexpected EOF in array literal'
+      }
+      else if (token.type === ']') {
+        next_token();
+        break;
+      }
+      else {
+        this.$values.push(stmt());
+        if (token.type === ',') {
+          next_token();
+          if (token.type === ']') {
+            throw 'trailing "," in array definition'
+          }
+        }
+      }
+    }
+    
+    // If this array is then used as the recv in a mesage call, set this all up.
+    // return the message_call, as thats the correct scope.
+    if (token.type === '.') {
+      var s = stmt();
+      s.$recv = this
+      return s;
+    }
+    return this;
+  };
+  
+  
   symbol(']');
-
+  
   // dont think we need this - correction: we do
+  // aref
   symbol('[').nud = function() {
     next_token();
     this.$aref = stmt();
@@ -368,27 +318,20 @@ var vn_ruby_parser = function(str) {
   
   // use this for statements starting with identifier
   sym_stmt(tIDENTIFIER, function() {
-    var result = this;
-    // if commar, then we are a parameter in another command call (unless syntax error..)
+    // If commar, then we are a parameter in another command call (unless syntax error..)
     if (token.type === ',') { 
-      return result;
+      return this;
     }
-    // nesetd calls..
+    // Handle nested called
     else if (token.type === '.') {
-      
-      next_token();
-      if (token.type === tNL || token.type === tSEMI) {
-        throw 'No receiver given for method call.'
-      }
-       // var s = stmt();
-       // s.$recv = result;
-       // result = s;
-       // FIXME: why wont this set?!?!
-       result.$call = stmt();
+      var s = stmt();
+      s.$recv = this
+      return s;      
     }
-    // aref (aset maybe)
+    // Handle aref (possible aset as well, unless we leave that to expr)
+    // currentl leave it to expr();
     else if (token.type === '[') {
-      result.$aref = stmt();
+      this.$aref = stmt();
       // next_token();
       // FIXME:: this might have to be stmt()
       // var aref = expr();
@@ -399,19 +342,19 @@ var vn_ruby_parser = function(str) {
     }
     else {
       // console.log('here with ' + this.value);
-      result.$args = [];
+      this.$args = [];
       if (token.type === tNL || token.type === tSEMI) {
-        return result;
+        return this;
       }
       // check for paranthesis?!
       else {
         // second param is if we have parathesis (might be useful for args parsing)
-        gather_command_args(result, false);
+        gather_command_args(this, false);
       }
     }
     
     
-    return result;
+    return this;
   });
   
  
@@ -596,7 +539,7 @@ var vn_ruby_parser = function(str) {
           }
         }
       }
-    
+            
     return this;
   });
   
@@ -775,7 +718,7 @@ var vn_ruby_parser = function(str) {
   
   var expr = function(right_binding_power) {
     var old = token;
-    // console.log(old);
+    console.log(old);
     var left = old.nud();
     next_token();
     while (right_binding_power < token.lbp) {
