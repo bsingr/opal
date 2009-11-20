@@ -253,7 +253,7 @@ var vn_ruby_parser = function(str) {
               left.error("Bad lvalue.");
           }
           this.$lhs = left;
-          this.$rhs = expr(9);
+          this.$rhs = stmt();
           this.assignment = true;
           // this.type = "assignment";
           return this;
@@ -336,17 +336,120 @@ var vn_ruby_parser = function(str) {
   
   // symbols etc
   symbol(tINTEGER).nud = function() { return this; };
-  symbol(tIDENTIFIER).nud = function() { return this; };
   symbol(tSEMI).nud = function() { return this; };
   symbol(tNL).nud = function() { return this; };
   symbol(false).nud = function() { return this; };
   symbol(tIVAR).nud = function() { return this; };
-  symbol(tSYMBEG).nud = function() { console.log('thissss'); next_token(); this.$name = token; return this; };
   
-  // var call_args = function() {
-    // var result = [];
+  symbol(tSYMBEG).nud = function() {
+    //  we expect a next token
     
-  // };
+    next_token(); 
+    this.$name = token; 
+    // console.log('yeap. here ' + token.value);
+    return this;
+  };
+  
+  symbol(']');
+
+  // dont think we need this - correction: we do
+  symbol('[').nud = function() {
+    next_token();
+    this.$aref = stmt();
+    // skip past closing bracket
+    next_token(']');
+    // catch aset
+    if (token.type === '=') {
+      next_token();
+      this.$aset = stmt();
+    }
+    return this;
+  };
+  
+  // use this for statements starting with identifier
+  sym_stmt(tIDENTIFIER, function() {
+    var result = this;
+    // if commar, then we are a parameter in another command call (unless syntax error..)
+    if (token.type === ',') { 
+      return result;
+    }
+    // nesetd calls..
+    else if (token.type === '.') {
+      
+      next_token();
+      if (token.type === tNL || token.type === tSEMI) {
+        throw 'No receiver given for method call.'
+      }
+       // var s = stmt();
+       // s.$recv = result;
+       // result = s;
+       // FIXME: why wont this set?!?!
+       result.$call = stmt();
+    }
+    // aref (aset maybe)
+    else if (token.type === '[') {
+      result.$aref = stmt();
+      // next_token();
+      // FIXME:: this might have to be stmt()
+      // var aref = expr();
+      // console.log(aref);
+      // result.$aref = aref;
+      // next_token(']');
+      // throw 'wait a sec'
+    }
+    else {
+      // console.log('here with ' + this.value);
+      result.$args = [];
+      if (token.type === tNL || token.type === tSEMI) {
+        return result;
+      }
+      // check for paranthesis?!
+      else {
+        // second param is if we have parathesis (might be useful for args parsing)
+        gather_command_args(result, false);
+      }
+    }
+    
+    
+    return result;
+  });
+  
+ 
+  
+  // gather more 'command_call' args into the cmd supplied. Add each one into the array
+  var gather_command_args = function(cmd, parans) {
+    while (true) {
+      if (token.type === false) {
+        // we might get false? maybe...?
+        throw 'command call: unexpected EOF'
+      }
+      else if (token.type === tNL || token.type === tSEMI) {
+        // next_token();
+        // finished
+        // break;
+        return;
+      }
+      // hack: dont pick up these tokens...
+      else if (token.type === ']') {
+        return;
+      }
+      else {
+        // console.log('in else with: ' + token.type);
+        if (s = stmt()) {
+          // console.log(s);
+          cmd.$args.push(s);
+          if (token.type === ',') {
+            next_token();
+          }
+        }
+        else {
+          throw 'expected a stmt..(or expr)'
+        };
+      }
+
+    }
+  };
+  
   
   sym_stmt(kIF, function() {
     this.$expr = expr();
@@ -417,16 +520,49 @@ var vn_ruby_parser = function(str) {
     return this;
   });
   
-  // infix(tSYMBEG, 100, function (left) {
-  //   console.log('heh');
-  // //   this.first = left;
-  // next_token();
-  //   throw 'alaphant'
-  // //   this.second = expr(0);
-  // //   this.arity = "binary";
-  // //   next_token("]");
-  // //   return this;
-  // });
+  // hash
+  sym_stmt(tLBRACE, function() {
+    // all key value pairs
+    this.$keys = [];
+    this.$values = [];
+    var key, value;
+    
+    while (true) {
+      // console.log('LOOPING ' + token.type);
+      if (token.type === false) {
+        throw 'in hash declaration: unexpectedly hit EOF.'
+      }
+      else if (token.type === tNL) {
+        next_token();
+        continue;
+      }
+      else if (token.type === '}') {
+        // console.log('hit end!!');
+        // hit end of hash
+        next_token();
+        break;
+      }
+      else {
+        key = stmt();
+        // pass tassoc
+        next_token(tASSOC);
+        value = stmt();
+        this.$keys.push(key);
+        this.$values.push(value);
+        
+        if (token.type === ',') {
+          next_token();
+          if (token.type === '}') {
+            throw 'trailing commar in hash definition'
+          }
+        }
+      }
+    }
+    // console.log('here like ' + token.value);
+    // console.log(expr());
+    // throw 'first key'
+    return this;
+  });
   
   sym_stmt(kCLASS, function() {
     var n = token;
@@ -595,7 +731,7 @@ var vn_ruby_parser = function(str) {
       // this probably shouldnt do kEND.. def, class etc all eat this up themselves
       // if false, we should just end here.
       if (token.type === false) {
-        console.log('got here..');
+        // console.log('got here..');
         break;
       }
       // if we have atleast one stmt, then we need to parse a 'term' (\n or ;) to
@@ -654,7 +790,7 @@ var vn_ruby_parser = function(str) {
   // checks id of current token to make sure it matches, only if id is defined.
   var next_token = function(id) {
     var t = get_next_token();
-    console.log('token: (' + t[0] + ' : ' + t[1] + ') lex_state: (' + lex_state + ')');
+    // console.log('token: (' + t[0] + ' : ' + t[1] + ') lex_state: (' + lex_state + ')');
     // token = { type: t[0], value:t[1] };
     // token = {};
     token = object_create(sym_tbl[t[0]]);
@@ -781,6 +917,23 @@ var vn_ruby_parser = function(str) {
         return ['[', scanner.matched]
       }
       
+      else if (scanner.scan(/^\{/)) {
+        var result;
+        if (lex_state == EXPR_END) {
+          // primary block
+          result = '{';
+        }
+        else if (lex_state == EXPR_ENDARG) {
+          // expr block
+          result = tLBRACE_ARG;
+        }
+        else {
+          // hash
+          result = tLBRACE;
+        }
+        return [result, scanner.matched];
+      }
+      
       // ]
       else if (scanner.scan(/^\]/)) {
         lex_state = EXPR_END;
@@ -815,6 +968,13 @@ var vn_ruby_parser = function(str) {
         return [')', scanner.matched];
       }
       
+      // }
+      else if (scanner.scan(/^\}/)) {
+        lex_state = EXPR_END;
+        // check if parsing string...
+        return ['}', scanner.matched];
+      }
+      
       // .
       else if (scanner.scan(/^\./)) {
         if (lex_state == EXPR_FNAME) {
@@ -838,6 +998,11 @@ var vn_ruby_parser = function(str) {
       else if (scanner.scan(/^\@\w*/)) {
         lex_state = EXPR_END;
         return [tIVAR, scanner.matched];
+      }
+      
+      else if (scanner.scan(/^\=\>/)) {
+        lex_state = EXPR_BEG;
+        return [tASSOC, scanner.matched];
       }
       
       else if (scanner.scan(/^\=/)) {
