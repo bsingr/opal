@@ -86,6 +86,26 @@ var vn_ruby_parser = function(str) {
   // eval string..
   var eval_arr = [];
   
+  /**
+    String parsing
+  */
+  var string_parse_stack = [];
+  
+  var push_string_parse = function(o) {
+    string_parse_stack.push(o);
+  };
+  
+  var pop_string_parse = function() {
+    string_parse_stack.pop();
+  };
+  
+  var current_string_parse = function() {
+    if (string_parse_stack.length == 0) {
+      return null;
+    }
+    return string_parse_stack[string_parse_stack.length - 1];
+  };
+  
   
   // create object dup
   var object_create = function(obj) {
@@ -233,6 +253,49 @@ var vn_ruby_parser = function(str) {
   // nonassoc kIF_MOD kUNLESS_MOD kWHILE_MOD kUNTIL_MOD
   // nonassoc tLBRACE_ARG
   // nonassoc tLOWEST
+  
+  // string parsing
+  symbol(tSTRING_BEG).nud = function() {
+  // sym_stmt(tSTRING_BEG, function() {
+    // array of parts belonging to string
+    // these will be string_contents mixed with actual ruby parse trees
+    this.$parts = [];
+    next_token();
+    // throw token.value
+    while (true) {
+      if (token.type === false) {
+        throw 'Parsing string error: not expecting EOF before end of string'
+      }
+      else {
+        // console.log(token.value);
+        if (token.type === tSTRING_END) {
+          // throw token.value
+          // console.log('skipping token');
+          // console.log(lex_state);
+          next_token();
+          // console.log(lex_state + ' after');
+          // next_token();
+          // end of string = time to finish!!
+          // next_token();
+          break;
+        }
+        else {
+          // console.log(token.type + '..string VALUE..' + token.value);
+          this.$parts.push(token);
+          next_token();
+        }
+        
+      }
+    }
+    // console.log(this);
+    // console.log(token.value);
+    // next_token();
+    // while (true) {
+      // next_token();
+    // }
+    // throw 'got to this bit'
+    return this;
+  };
   
   // symbols etc
   symbol(tINTEGER).nud = function() {
@@ -578,6 +641,7 @@ var vn_ruby_parser = function(str) {
       // console.log('added stmt: current val is now ' + token.value);
       // at the end of each statement, parse a new line or a semi colon
       if (this.$stmts.length > 0) {
+        // console.log('token type after stmt is ' + token.type);
         if (token.type === tSEMI || token.type === tNL) {
           next_token();
         }
@@ -671,26 +735,29 @@ var vn_ruby_parser = function(str) {
   var stmts = function() {
     var result = [], s;
     while (true) {
+      // console.log('STARTING LOOP ' + token.type + "...." + token.value);
       // this probably shouldnt do kEND.. def, class etc all eat this up themselves
       // if false, we should just end here.
       if (token.type === false) {
         // console.log('got here..');
         break;
       }
-      // if we have atleast one stmt, then we need to parse a 'term' (\n or ;) to
-      // seperate stmt
-      if (result.length > 0) {
-        if (token.type === tSEMI || token.type === tNL) {
-          // console.log('ahppy days, found a term in stmts');
-          next_token();
-          // exit this iteration, and go back to start
-          continue;
-        }
-        else {
-          throw 'error in stmts!!! no term between stmts';
-        }
-      }
-      if (s = stmt()) {
+      // This was dumb... lexer sorted this out for us. leaving in incase we need it again (for whateever reason);
+                      // if we have atleast one stmt, then we need to parse a 'term' (\n or ;) to
+                      // seperate stmt
+                      // if (result.length > 0) {
+                      //   console.log('type after stmts is ' + token.type);
+                      //   if (token.type === tSEMI || token.type === tNL) {
+                      //     console.log('ahppy days, found a term in stmts');
+                      //     next_token();
+                      //     // exit this iteration, and go back to start
+                      //     continue;
+                      //   }
+                      //   else {
+                      //     throw 'error in stmts!!! no term between stmts';
+                      //   }
+                      // }
+      else if (s = stmt()) {
         // easy get rid of new lines
         if (s.type !== tNL) {
           result.push(s);
@@ -718,7 +785,7 @@ var vn_ruby_parser = function(str) {
   
   var expr = function(right_binding_power) {
     var old = token;
-    console.log(old);
+    // console.log(old);
     var left = old.nud();
     next_token();
     while (right_binding_power < token.lbp) {
@@ -728,10 +795,65 @@ var vn_ruby_parser = function(str) {
     }
     return left;
   };
+  
+  var get_next_string_token = function() {
+    var str_parse = current_string_parse();
+    
+    // see if we can read end of string/xstring/regexp markers
+    if (scanner.scan( new RegExp('^\\' + str_parse.beg))) {
+      pop_string_parse();
+      if (str_parse.beg == '"' || str_parse.beg == "'") {
+        lex_state = EXPR_END;
+        return [tSTRING_END, scanner.matched];
+      }
+      else {
+        // assume to be xstring
+        return [tXSTRING_END, scanner.matched]
+      }
+    }
+    
+    // not end of string, so we must be parsing contents
+    var str_buffer = [];
+    
+    if (scanner.scan(/^#(\$|\@)/)) {
+      return [tSTRING_DVAR, scanner.matched];
+    }
+    else if (scanner.scan(/^#\{/)) {
+      // we are into ruby code, so stop parsing content (for the moment)
+      str_parse.content = false;
+      return [tSTRING_DBEG, scanner.matched];
+    }
+    else if (scanner.scan(/^#/)) {
+      str_buffer.push('#');
+    }
+    
+    // content regexp (what is valid content for strings..)
+    var reg_exp = (str_parse.beg == '`') ?
+                // xstring: CAN include new lines
+                new RegExp('[^\\' + str_parse.beg + '\#\0\\]+|.') :
+                // normal string: cannot include new lines
+                new RegExp('[^\\' + str_parse.beg + '\#\0\\\n]+|.');
+    
+    scanner.scan(reg_exp);
+    str_buffer.push(scanner.matched);
+    return [tSTR_CONTENT, str_buffer.join('')];
+  };
 
   
   // checks id of current token to make sure it matches, only if id is defined.
   var next_token = function(id) {
+    // capture string stuff
+    if (current_string_parse() && current_string_parse().content) {
+      // console.log('geting str token');
+      var t = get_next_string_token();
+      // console.log('string token: (' + t[0] + ' : ' + t[1] + ') lex_state: (' + lex_state + ')');
+      // token = object_create(sym_tblt);
+      token = { };
+      token.type = t[0];
+      token.value = t[1];
+      return token;
+    }    
+    
     var t = get_next_token();
     // console.log('token: (' + t[0] + ' : ' + t[1] + ') lex_state: (' + lex_state + ')');
     // token = { type: t[0], value:t[1] };
@@ -748,7 +870,8 @@ var vn_ruby_parser = function(str) {
     var c = '',
         space_seen = false,
         last_state = lex_state;
-    
+        
+      
     while (true) {
       // console.log(scanner.working_string);
       // if (scanner.scan(/\ |\t|\r/)) {
@@ -803,6 +926,22 @@ var vn_ruby_parser = function(str) {
         lex_state = EXPR_BEG;
         return [result, scanner.matched];
       }
+      
+      // strings.. in order: double, single, xstring
+      else if (scanner.scan(/^\"/)) {
+        push_string_parse({ beg: '"', content: true });
+        return [tSTRING_BEG, scanner.matched];
+      }
+      else if (scanner.scan(/^\'/)) {
+        push_string_parse({ beg: "'", content: true });
+        return [tSTRING_BEG, scanner.matched];
+      }
+      else if (scanner.scan(/^\`/)) {
+        push_string_parse({ beg: "`", content: true });
+        return [tXSTRING_BEG, scanner.matched];
+      }
+      
+      // numbers
       else if (scanner.check(/^[0-9]/)) {
         lex_state = EXPR_END;
         if (scanner.scan(/^[\d_]+\.[\d_]+\b/)) {
