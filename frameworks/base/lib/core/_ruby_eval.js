@@ -180,17 +180,6 @@ var vn_ruby_parser = function(str) {
       return s;
   };
   
-  var prefix = function (id, nud) {
-      var s = symbol(id);
-      s.nud = nud || function () {
-          scope.reserve(this);
-          this.first = expression(70);
-          this.arity = "unary";
-          return this;
-      };
-      return s;
-  };
-  
   var assignment = function (id) {
       return infixr(id, 10, function (left) {
           if (left.type !== "." && left.type !== "[" && left.type !== tIDENTIFIER && left.type != tIVAR) {
@@ -204,171 +193,655 @@ var vn_ruby_parser = function(str) {
       });
   };
   
+  assignment("=");
   
-  // Symbols
-  symbol(tIDENTIFIER).nud = function() { 
-    // check if local var. if so, dont add $recv => nil, $meth => value etc
+  // General case method call. used for integers etc
+  infix(".", 80, function (left) {
+    // console.log("'.' infix");
+    this.$recv = left;
+    // need to make sure left is a valid receiver: self, true, false, nil, number, string, object, hash etc
+    
+    if (token.type !== tIDENTIFIER && token.type !== tCONSTANT) {
+      throw "expected identifier or constant method name . Got: " + token.value
+    }
+    // this.$call = stmt();
+    this.$call = token;
+    next_token();
+    
+    // this should check for ANY valid param value..str, stmt etc etc... might be
+    // easier to check for non-valid values.. maybe check for paranthesis first..
+    // makes it easier..
+    // if ([tIDENTIFIER, tINTEGER, tFLOAT, tSTRING_BEG].indexOf(token.type) != -1) {
+      // console.log(token.value + ' is an identifier, use it as a param');
+      // parse call args..
+      // this.$arg =
+      // this.$arg = stmt();
+      // console.log(this.$arg);
+      // gather_command_args(this);
+    // }
+    // check for params (if not new line, semi or commar then we should read it??)
+    return this;
+  });
+  
+  infix("[", 80, function (left) {
+    // Fixme.. can probably take this out.
+    this.$recv = left;
+    this.$aref = expr(0);
+    next_token("]");
+    return this;
+  });
+  
+  infix(kIF_MOD, 10, function (left) {
+    this.$stmt = left;
+    // need to make sure left is a valid receiver: self, true, false, nil, number, string, object, hash etc
+    
+    // if (token.arity !== "name") {
+      // token.error("Expected a property name.");
+      // throw token.value
+    // }
+    // if (token.type !== tIDENTIFIER && token.type !== tCONSTANT) {
+      // throw "expected identifier or constant method name . Got: " + token.value
+    // }
+    this.$expr = stmt();
+    // next_token();
+    return this;
+  });
+  
+  // From ruby_parser.y - high => low
+  // infixr(tUPLUS, 90);
+  // right    '!' tTILDE tUPLUS
+  // right    tPOW
+  // infixr(tUMINUS, 70);
+  // right    tUMINUS_NUM tUMINUS
+  // left     tSTAR2 tDIVIDE tPERCENT
+  infix(tPLUS, 50); // '+'
+  infix(tMINUS, 50); // '-'
+  // left     tPLUS tMINUS
+  // left     tLSHFT tRSHFT
+  // left     tAMPER2
+  // left     tPIPE tCARET
+  // left     '>' tGEQ '<' tLEQ
+  // nonassoc tCMP tEQ tEQQ tNEQ tMATCH tNMATCH
+  // left     tANDOP
+  // left     tOROP
+  // nonassoc tDOT2 tDOT3
+  // right    '?' ':'
+  // left     kRESCUE_MOD
+  // right    '=' tOP_ASGN
+  // # nonassoc kDEFINED
+  // right    kNOT
+  // left     kOR kAND
+  // nonassoc kIF_MOD kUNLESS_MOD kWHILE_MOD kUNTIL_MOD
+  // nonassoc tLBRACE_ARG
+  // nonassoc tLOWEST
+  
+  // string parsing
+  symbol(tSTRING_BEG).nud = function() {
+
+    // these will be string_contents mixed with actual ruby parse trees
+    this.$parts = [];
+    next_token();
+    // throw token.value
+    while (true) {
+      if (token.type === false) {
+        throw 'Parsing string error: not expecting EOF before end of string'
+      }
+      else {
+        // console.log(token.value);
+        if (token.type === tSTRING_END) {
+          break;
+        }
+        else {
+          this.$parts.push(token);
+          next_token();
+        }
+        
+      }
+    }
     return this;
   };
-  symbol(tINTEGER).nud = function() { return this; };
   
-  // Dot notation
-  infix(".", 80, function (left) {
-    this.$recv = left;
-    this.$meth = token;
-    next_token();
+  // symbols etc
+  symbol(tINTEGER).nud = function() {
     return this;
-  });
+  };
   
-  // method calls (with paranthesis)
-  infix("(", 80, function (left) {
-    var args = [];
-    // valid left values
-    if (left.type === '.') {
-      // already a method call, so just set $args property
-      left.$args = args;
-    }
-    else if (left.type === tIDENTIFIER || left.type === tCONSTANT) {
-      // identifier/constant - turn them into a method call, with args
-      // as the args (and no receiver!)
-      // will identifier already be a method call? unless an actual identifier
-      left.$args = args;
-    }
-    else {
-      throw left.value + ' is not a valid receiver'
+  symbol(tSEMI).nud = function() { return this; };
+  symbol(tNL).nud = function() { return this; };
+  symbol(false).nud = function() { return this; };
+  symbol(tIVAR).nud = function() { return this; };
+  
+  symbol(tSYMBEG).nud = function() {
+    //  we expect a next token
+    
+    next_token(); 
+    this.$name = token; 
+    // console.log('yeap. here ' + token.value);
+    return this;
+  };
+  
+  // This is basically where we handle all method calls which have a receiver. This
+  // is called from identifiers, arrays, strings, numbers ans hashes all as the recv.
+  // sym_stmt('.', function() {
+  //   // should allow any op as well
+  //   if (token.type !== tIDENTIFIER && token.type !== tCONSTANT) {
+  //     throw 'Bad operation for dot notation: expected identifer, constant or op'
+  //   }
+  //   this.$meth = token.value;
+  //   
+  //   
+  //   // console.log('dot notation ' + token.value);
+  //   // temp naming schema
+  //   // this.$desc = 'method_call';
+  //   // this.$call = stmt();
+  //   // console.log(this);
+  //   // throw 'here..? ' + token.value
+  //   return this;
+  // });
+  
+  // array literal
+  symbol(tLBRACK).nud = function() {
+    this.$values = [];
+    // throw next_token().value
+    next_token();
+    while (true) {
+      if (token.type === false) {
+        throw 'unexpected EOF in array literal'
+      }
+      else if (token.type === ']') {
+        next_token();
+        break;
+      }
+      else {
+        this.$values.push(stmt());
+        if (token.type === ',') {
+          next_token();
+          if (token.type === ']') {
+            throw 'trailing "," in array definition'
+          }
+        }
+      }
     }
     
-    if (token.type !== ')') {
-      while (true) {
-        args.push(stmt());
-        if (token.type !== ',') {
-          break;
-        }
-        next_token(',');
-      }
+    // If this array is then used as the recv in a mesage call, set this all up.
+    // return the message_call, as thats the correct scope.
+    if (token.type === '.') {
+      var s = stmt();
+      s.$recv = this
+      return s;
     }
-    next_token(')');
+    return this;
+  };
+  
+  
+  symbol(']');
+  
+  // dont think we need this - correction: we do
+  // aref
+  symbol('[').nud = function() {
+    next_token();
+    this.$aref = stmt();
+    // skip past closing bracket
+    next_token(']');
+    // catch aset
+    if (token.type === '=') {
+      next_token();
+      this.$aset = stmt();
+    }
+    return this;
+  };
+  
+  symbol(tIDENTIFIER).nud = function() { 
+    console.log('tIDENTIFIER ' + this.value + '....' + token.value);
+    return this;
+  };
+  
+  infix(tIDENTIFIER, 80, function (left) {
+    console.log('infix identifier: ' + this.value + '        , left is ' + left.value + ' token is, ' + token.type);
+    console.log(left);
+    left.$args = left.$args || [];
+    left.$args.push([this]);
     return left;
+    // this.$args = [];
+    // this.$args.push(left);
+    // return this;
   });
   
-  // array declarations (explicit)
-  prefix(tLBRACK, function() {
-    var arr = [];
-    // throw token.value
-    if (token.type !== ']') {
+  // infixr(tIDENTIFIER, 90, function (left) {
+    // throw left.value + ', ' + this.value
+  // });
+  
+  // use this for statements starting with identifier
+  // sym_stmt(tIDENTIFIER, 0, function() {
+  //   return this;
+  // // infixr(tIDENTIFIER, 0, function() {
+  //   console.log('in identifier...');
+  //   // throw token.value;
+  //   // If commar, then we are a parameter in another command call (unless syntax error..)
+  //   if (token.type === ',') {
+  //     console.log('ignoring commar');
+  //     return this;
+  //   }
+  //   // assignment
+  //   if (token.type === '=') {
+  //     // throw this.value + ' /// ' + token.value
+  //     // go through assignment
+  //     next_token();
+  //     // value to se
+  //     var s = stmt();
+  //     console.log(s);
+  //     throw 'end stmt'
+  //   }
+  //   // Handle nested called
+  //   else if (token.type === '.') {
+  //     var s = stmt();
+  //     s.$recv = this
+  //     return s;      
+  //   }
+  //   // Handle aref (possible aset as well, unless we leave that to expr)
+  //   // currentl leave it to expr();
+  //   else if (token.type === '[') {
+  //     this.$aref = stmt();
+  //     // next_token();
+  //     // FIXME:: this might have to be stmt()
+  //     // var aref = expr();
+  //     // console.log(aref);
+  //     // result.$aref = aref;
+  //     // next_token(']');
+  //     // throw 'wait a sec'
+  //   }
+  //   else {
+  //     // console.log('here with ' + this.value);
+  //     this.$args = [];
+  //     if (token.type === tNL || token.type === tSEMI) {
+  //       return this;
+  //     }
+  //     // check for paranthesis?!
+  //     else {
+  //       // paranthesized mehod
+  //       if (token.type === '(') {
+  //         // throw 'parannss'
+  //         this.$paran = true;
+  //         next_token();
+  //       }
+  //       // second param is if we have parathesis (might be useful for args parsing)
+  //       gather_command_args(this, this.$paran);
+  //     }
+  //   }
+  //   
+  //   // throw token.value
+  //   
+  //   
+  //   return this;
+  // });
+  
+ 
+  
+  // gather more 'command_call' args into the cmd supplied. Add each one into the array
+  var gather_command_args = function(cmd, parans) {
+    cmd.$args = [];
+    while (true) {
+      // console.log(token.type);
+      if (token.type === false) {
+        // we might get false? maybe...?
+        throw 'command call: unexpected EOF'
+      }
+      else if (token.type === tNL || token.type === tSEMI) {
+        // console.log('last token : ' + last_token.value);
+        // if last token was a semi colon, we are allowed a new line (for params on seperate lines).
+        // note: the commar must NOT start on the new line, it must be before tNL to indicate its
+        // part of the method call
+        
+        // next_token();
+        // finished
+        // break;
+        return;
+      }
+      else if (token.type === ')') {
+        if (parans) {
+          // end params..
+          next_token();
+          return;
+        }
+        else {
+          throw 'Not expecting rparen ")" at end of args list'
+        }
+      }
+      // hack: dont pick up these tokens...
+      else if (token.type === ']') {
+        return;
+      }
+      else {
+        // console.log('in else with: ' + token.type);
+        if (s = stmt()) {
+          // console.log(s);
+          cmd.$args.push(s);
+          if (token.type === ',') {
+            next_token();
+          }
+        }
+        else {
+          throw 'expected a stmt..(or expr)'
+        };
+      }
+
+    }
+  };
+  
+  
+  sym_stmt(kIF, function() {
+    this.$expr = expr();
+    
+    var seen = false;
+    // pass optional term
+    if (token.type === tNL || token.type === tSEMI) {
+      next_token();
+      seen = true;
+    }
+    if (token.type === kTHEN) {
+      next_token();
+      seen = true;
+    }    
+    // either new line or then. neither is a syntax error (we can have both)
+    if (!seen) {
+      throw 'if statement did not have new line or kTHEN'
+    }
+    // now into body of if statement
+    this.$stmts = [];
+    // tails... made up of elsifs and one else (optional)
+    var opt_else = false;
+      var s;
       while (true) {
-        arr.push(stmt());
-        if (token.type !== ',') {
+        if (token.type === kEND) {
+          next_token();
+          // if we hit end here just return... dont check for elsif/else etc
+          return this;
+        }
+        else if (token.type === kELSIF || token.type === kELSE) {
+          // break here, now go onto if tail (dont next_token as we want to carry on)
+          // from here.
           break;
         }
-        next_token(',');
+        else if (token.type === false) {
+          throw "IF.. unexpectedly hit end of file without finding 'end'"
+        }
+        else {
+          if (s = stmt()) {
+            // easy get rid of new lines
+            if (s.type !== tNL) {
+              this.$stmts.push(s);
+            }
+            
+          }
+        }
       }
-    }
-    next_token(']');
-    this.$values = arr;
+      // tail - elsif, else
+      while (true) {
+        if (token.type === kEND) {
+          next_token();
+          // we can end here
+          return this;
+        }
+        else if (token.type === kELSIF || token.type === kELSE) {
+          throw 'elsif/end unimplemented'
+        }
+        else if (token.type === false) {
+          throw "If.. unexpeced End of file"
+        }
+        else {
+          throw "unexpectred token within if: " + token.value
+        }
+      }
+    
+    // console.log(this);
+    // throw 1
     return this;
   });
   
-  // hash literal
-  prefix(tLBRACE, function () {
+  // hash
+  sym_stmt(tLBRACE, function() {
+    // all key value pairs
     this.$keys = [];
     this.$values = [];
-    if (token.type !== '}') {
-      while (true) {
-        var t = token;
-        // check for valid key?
+    var key, value;
+    
+    while (true) {
+      // console.log('LOOPING ' + token.type);
+      if (token.type === false) {
+        throw 'in hash declaration: unexpectedly hit EOF.'
+      }
+      else if (token.type === tNL) {
         next_token();
-        // should this be a => ?? probbaly...
+        continue;
+      }
+      else if (token.type === '}') {
+        // console.log('hit end!!');
+        // hit end of hash
         next_token();
-        this.$keys.push(t);
-        this.$values.push(stmt());
-        if (token.type !== ',') {
-          break;
+        break;
+      }
+      else {
+        key = stmt();
+        // pass tassoc
+        next_token(tASSOC);
+        value = stmt();
+        this.$keys.push(key);
+        this.$values.push(value);
+        
+        if (token.type === ',') {
+          next_token();
+          if (token.type === '}') {
+            throw 'trailing commar in hash definition'
+          }
         }
-        next_token(',');
       }
     }
-    next_token('}');
+    // Handle nested call
+    if (token.type === '.') {
+      var s = stmt();
+      s.$recv = this
+      return s;      
+    }
     return this;
   });
   
-  // method definitions
-  sym_stmt(kDEF, function () {
+  sym_stmt(kCLASS, function() {
+    var n = token;
+    // class path
+    if (token.type === tCONSTANT) {
+      this.$cname = token;
+      next_token();
+    }
+    else if (token.type === tIDENTIFIER) {
+      throw "cannot use identifer as class name"
+    }
+    // temp get rid of new line/semi colon
+    new_line();
+    // get statements until we hit a kEND
+    this.$stmts = stmts([kEND]);
+    // eat up end token
+    next_token(kEND);
+    
+    return this;
+  });
+  
+  // Symbol statement. When we get kDEF, parse a full def statement
+  sym_stmt(kDEF, function() {
     
     if (token.type === tIDENTIFIER || token.type === tCONSTANT) {
       this.$fname = token;
     }
     else {
-      throw 'Method Defintion: expected identifier or constant as def name.'
+      throw 'DEF: expected identifier or constant as def name'
     }
-    // reads over the fname
+    // read over fname
     next_token();
     
-    // check if singleton definition
-    if (token.type === '.' || token.type === tCOLON2) {
-      // we have a singleton, so put old $fname as singleton name
-      this.$sname = this.$fname;
-      // stype is either '.' or tCOLON2 - might help code generation
-      this.$stype = token.type;
-      // now get real fname
-      next_token();
-      this.$fname = token;
-      // read over fname
-      next_token();
-    }
+    // arglist deals with the tNL/tSEMI after arglist for us
+    this.$arglist = rule_arglist();
     
-    // ignore arglist for the moment.
+    // parse stmts until we hit kEND - end of def
     this.$stmts = stmts([kEND]);
-    // read over kEND
-    next_token();
+    // read over kEND token
+    next_token(kEND);
+    
     return this;
   });
   
+  // parse an arglist
+  var rule_arglist = function() {
+    // p true if we fidn paran
+    var result = { }, p = false;
+    // check for left param..
+    if (token.type === '(') {
+      p = true;
+      next_token();
+    }
+    
+    // parse args
+    result.$args = rule_args();
+    
+    
+    if (p && token.type === ')') {
+      // console.log('skipping over rparen');
+      next_token();
+    }
+    
+    // if we have a term (\n or ;) then no args, so return empty array??
+    if (token.type === tSEMI || token.type === tNL) {
+      next_token();
+      // return [];
+    }
+    
+    // set this ready for the next line... only if we had no rparen
+    // lex_state = EXPR_BEG;
+    return result;
+  };
   
-  
-  var stmts = function(t) {
-    var s;
-    var r = [];
-    t = t || [];
+  // parse args (not do block, just 'normal' argdefs)
+  var rule_args = function() {
+    var result = []
     while (true) {
-      if (token.type === false) {
-        if (t.indexOf(false) === -1) {
-          break;
-        }
-        else {
-          throw 'stmts: got to EOF before reaching end of statements'
-        }
-      }
-      else if (t.indexOf(token.type) != -1) {
+      // console.log(token.value);
+      if (token.type == ')' || token.type === tSEMI || token.type === tNL) {
+        // console.log('breaking here');
         break;
       }
       else {
-        if (token.type === tNL || token.type === tSEMI) {
+        // if not, must be an arg, so parse each (commar seperated)
+        if (token.type === tIDENTIFIER) {
+          result.push(token);
           next_token();
         }
+        else if (token.type === tCONSTANT) {
+          throw "Contants cannt be used as names for methods"
+        }
+        else if (token.type === tCVAR) {
+          throw "Class Variables cannt be used as names for methods"
+        }
+        else if (token.type === tIVAR) {
+          throw "Instance Variables cannt be used as names for methods"
+        }
+        else if (token.type === tGVAR) {
+          throw "Global Variables cannt be used as names for methods"
+        }
+        
+        if (token.type === ',') {
+          next_token();
+        }
+        else if (token.type == ')' || token.type === tSEMI || token.type === tNL) {
+          // these are all ok....
+        }
         else {
-          s = stmt();
-          r.push(s);
+          throw "arg, unexpected " + token.value();
         }
       }
     }
-    return r;
+    return result;
+  };
+  
+  /**
+    Get an array of valid statements.
+    
+    @param u - an array of ending points.. when a token of one of these types is hit,
+            the collection process stops. This is useful for stating an ending point.
+            For example, class ends on a kEND token, so once we hit this, stop. This
+            token is not collected, i.e. when control returns, kEND will be the 
+            current token, so the caller deals with it as appropriate. If the EOF is
+            hit before the end token is found, then an exception is thrown. If no
+            ending points are provided, stmts are collected until EOF, but no 
+            exception is thrown in that case. Stmts *MUST* be seperated by either tNL
+            or tSEMI tokens.
+  */
+  var stmts = function(u) {
+    u = u || [];
+    var result = [], s;
+    while (true) {
+      // console.log('STARTING LOOP ' + token.type + "...." + token.value);
+      // this probably shouldnt do kEND.. def, class etc all eat this up themselves
+      // if false, we should just end here.
+      if (token.type === false) {
+        // throw error unless false is in 'u' ... EOF might be valid for top level statements
+        console.log('got to end of file..');
+        break;
+      }
+      else if (u.indexOf(token.type) != -1) {
+        // the token is in the array, so we must finish...
+        // dont read next token!!!! caller might need it.. (elsif etc)
+        break;
+      }
+      else {
+        // valid token stream..
+        // console.log('getting stmt ' + token.type);
+        s = stmt();
+        console.log('found statement: ' + s.type + ', ' + s.value);
+        // console.log(s.type);
+        // FIXME: this should really check for stmt, new line, stmt, new line .. etc
+        if (s.type !== tNL && s.type !== tSEMI) {
+          result.push(s);
+        }
+        
+      }
+    }
+    return result;
   };
   
   var stmt = function() {
-    var c = token;
-    if (c.std) {
+    var cur = token;
+    
+    if (cur.std) {
       next_token();
-      return c.std();
+      return cur.std();
     }
     var e = expr(0);
     return e;
+    // console.log('expression? ' + cur.value);
+    // could be command_call, x && y, x || y, not x, !x or an arg
+    // arg have assingments removed and put in stmt ^^
+    
+  };
+  
+  /**
+    Simply parses the next token ensuring it is a new line (tNL) and
+    returns. Throws an error if not a new line. Note: this also
+    allows the tSEMI token to parse, as this is a valid replacement
+    for tNL
+  */
+  var new_line = function() {
+    if (token.type === tNL || token.type === tSEMI) {
+      next_token();
+      return;
+    }
+    else {
+      throw 'Parsing error: did not get expected new line token.'
+    }
   };
   
   var expr = function(right_binding_power) {
     var old = token;
-    next_token();
+    // console.log(old);
     var left = old.nud();
+    next_token();
     while (right_binding_power < token.lbp) {
       old = token;
       next_token();
@@ -376,8 +849,6 @@ var vn_ruby_parser = function(str) {
     }
     return left;
   };
-  
-  
   
   var get_next_string_token = function() {
     var str_parse = current_string_parse();
@@ -440,9 +911,6 @@ var vn_ruby_parser = function(str) {
     }    
     
     var t = get_next_token();
-    if (id && (id !== token.type)) {
-      throw 'Unexpected value "' + token.value + '". Expecting: ' + id
-    }
     // console.log('token: (' + t[0] + ' : ' + t[1] + ') lex_state: (' + lex_state + ')');
     // token = { type: t[0], value:t[1] };
     // token = {};
