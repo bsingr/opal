@@ -77,12 +77,14 @@ var vn_ruby_parser = function(str) {
 
   // current lex state
   var lex_state = EXPR_BEG;
+  // last lexerparser state
+  var last_state;
   // the scanner
   var scanner; //= new vn_ruby_string_scanner(str);
   // current token
-  var token;
+  var token = { type: false, value: false };
   // last token
-  var last_token;
+  var last_token = { type: false, value: false };
   // 
   var sym_tbl = { };
   // eval string..
@@ -206,11 +208,104 @@ var vn_ruby_parser = function(str) {
   
   
   // Symbols
-  symbol(tIDENTIFIER).nud = function() { 
+  symbol(tIDENTIFIER).nud = function() {
+    var s;
+    // 'token' is actually the "next" token, so our first param for a cmd_arg
+    // so, if we had identifier, and in cmd arg, we can assume we are processing
+    // a cmd.
+    if ((token.type === tIDENTIFIER) && (lex_state === EXPR_CMDARG)) {
+      // make into a cmd regardless? even if the identifier is a local var, if we
+      // have argfuments, then we must assume its also a method name with self as
+      // the receiver
+      this.$args = [];
+      // console.log('tIDENTIFIER "' + token.value + '" lex state: ' + lex_state + ' last state: ' + last_state + ' ,last token: ' + last_token.value);
+      this.$args.push(stmt());
+      // collect remaining params
+      if (token.type === ',') {
+        // read over initial commar
+        next_token();
+        while (true) {
+          s = stmt();
+          // this.$args.push(stmt());
+          // check if tok is tASSOC.. if so, , then we
+          // are beginning a hash list, so dont add stmt to $args, but push it to
+          // the hash arg list instead
+          if (token.type === tASSOC) {
+            // should we check if we already have assoc list? having it more than once per cmd call
+            // might be an error
+            var a_keys = [], a_values = [];
+            this.$assocs = { '$keys': a_keys, '$values': a_values };
+            a_keys.push(s);
+            // read over tassoc
+            next_token();
+            a_values.push(stmt());
+            
+            while (true) {
+              if (token.type !== ',') {
+                // end of assoc list
+                break;
+              }
+              // read over commar
+              next_token(',');
+              a_keys.push(stmt());
+              next_token(tASSOC);
+              a_values.push(stmt());
+            }
+            
+            // console.log(this);
+            // throw 'hash begin!'
+          }
+          else {
+            this.$args.push(s);
+          }
+          // CHECK HERE for do_block
+          // move this outside of loop? once we have do_block, command is over
+          if (token.type === kDO) {
+            this.$block = gather_do_block();
+          }
+          
+          if (token.type !== ',') {
+            break;
+          }
+          // any other case, add it as an arg
+          
+          // console.log(token.type);
+          next_token(',');
+          // check for 'wrong' token types... a def, class, module etc are NOT valid tokens
+          if ([kDEF, kCLASS, kMODULE, kIF].indexOf(token.type) !== -1) {
+            throw 'Command Args: Not expecting token "' + token.type + '". Perhaps a trailing commar?'
+          }
+        }
+      }
+    }
     // check if local var. if so, dont add $recv => nil, $meth => value etc
+    // console.log('last token: ' + last_token.value + ' , this token: ' + this.value);
+    // console.log(last_token);
     return this;
   };
+  
+  // kDO opt_block_param compstmt kEND
+  var gather_do_block = function() {
+    var result = token;
+    // read over kDO
+    next_token();
+    result.$stmts = stmts([kEND]);
+    
+    // read over kEND
+    next_token();
+    // console.log(token.value);
+    // throw ''
+    // console.log(result);
+    // throw ''
+    return result;
+  }
+  
   symbol(tINTEGER).nud = function() { return this; };
+  
+  symbol(tSYMBEG).nud = function() {
+    this.$name = stmt();
+    return this;
+  };
   
   // Dot notation
   infix(".", 80, function (left) {
@@ -220,36 +315,61 @@ var vn_ruby_parser = function(str) {
     return this;
   });
   
+  // method calls without parans - identifiers
+  // this function could be saved as a var, and then shared between each type that
+  // might use it...strings, numbers, etc.. any valid first param
+  // infix(tIDENTIFIER, 80, function (left) {
+  //   // console.log(this.value)
+  //   // this will be all the arguments
+  //   var args = [];
+  //   // valid lhs types
+  //   if (left.type === tIDENTIFIER) {
+  //     // turn identifier into call?
+  //     left.$args = args
+  //   }
+  //   else if (left.type === '.') {
+  //     left.$args = args;
+  //   }
+  //   else {
+  //     throw left.value + ' is not a valid receiver'
+  //   }
+  //   // add this as argument
+  //   // hmmm, this might not work... how do we capture identifer.something..
+  //   throw token.value;
+  //   args.push(stmt());
+  //   return left;
+  // });
+  
   // method calls (with paranthesis)
   infix("(", 80, function (left) {
-    var args = [];
-    // valid left values
-    if (left.type === '.') {
-      // already a method call, so just set $args property
-      left.$args = args;
-    }
-    else if (left.type === tIDENTIFIER || left.type === tCONSTANT) {
-      // identifier/constant - turn them into a method call, with args
-      // as the args (and no receiver!)
-      // will identifier already be a method call? unless an actual identifier
-      left.$args = args;
-    }
-    else {
-      throw left.value + ' is not a valid receiver'
-    }
-    
-    if (token.type !== ')') {
-      while (true) {
-        args.push(stmt());
-        if (token.type !== ',') {
-          break;
-        }
-        next_token(',');
+      var args = [];
+      // valid left values
+      if (left.type === '.') {
+        // already a method call, so just set $args property
+        left.$args = args;
       }
-    }
-    next_token(')');
-    return left;
-  });
+      else if (left.type === tIDENTIFIER || left.type === tCONSTANT) {
+        // identifier/constant - turn them into a method call, with args
+        // as the args (and no receiver!)
+        // will identifier already be a method call? unless an actual identifier
+        left.$args = args;
+      }
+      else {
+        throw left.value + ' is not a valid receiver'
+      }
+      
+      if (token.type !== ')') {
+        while (true) {
+          args.push(stmt());
+          if (token.type !== ',') {
+            break;
+          }
+          next_token(',');
+        }
+      }
+      next_token(')');
+      return left;
+    });
   
   // array declarations (explicit)
   prefix(tLBRACK, function() {
@@ -449,15 +569,15 @@ var vn_ruby_parser = function(str) {
     token = object_create(sym_tbl[t[0]]);
     token.type = t[0];
     token.value = t[1];
-    // console.log(token);
+    // console.log(token.value + ', ' + last_token.value);
     return token;
   };
   
   // actually get the next token
   var get_next_token = function() {
-    var c = '',
-        space_seen = false,
-        last_state = lex_state;
+    var c = '', space_seen = false;
+    
+    last_state = lex_state;
         
       
     while (true) {
@@ -768,8 +888,14 @@ var vn_ruby_parser = function(str) {
             return [tIDENTIFIER, matched + scanner.matched];
           }
         }
-
-        lex_state = EXPR_END;
+        
+        if ([EXPR_BEG, EXPR_DOT, EXPR_MID, EXPR_ARG, EXPR_CMDARG].indexOf(lex_state) !== -1) {
+          lex_state = EXPR_CMDARG;
+        }
+        else {
+          lex_state = EXPR_END;
+        }
+        
         return [matched.match(/^[A-Z]/) ? tCONSTANT : tIDENTIFIER, matched];
       }
 
