@@ -3,7 +3,23 @@
 	<script src="ruby_eval.js" type="text/javascript" charset="utf-8"></script>
 	<script id="ruby_test_code" type="text/ruby" charset="utf-8">
 		
-		adam clown, 10, william(10, 13), :bob => 10, :william => 100 do
+		:assignment
+		
+		self.alloc.init 20, 23
+		
+		true
+		
+		false
+		
+		"benny#{self.alloc.init 20, 23}bombobobob#{'wow'}s"
+		
+		adam.each do
+		
+		end
+		
+		adam.height.assignment 12, william(12, 13)
+		
+		adam 12, 10, william(10, 13), :bob => 10, :william => 100 do
 			10
 			12.hippo
 		end
@@ -23,14 +39,15 @@
 		alignment
 		[10].height(10)
 		{ ben => john, adam => frank }.length
+	
 	</script>
 	<script type="text/javascript" charset="utf-8">
+	
 		var str = document.getElementById('ruby_test_code').innerHTML.toString();
-		// console.log(str);
-		// var str = "def adam; 1 + 3 + 25 - 16; end";
 		var parser = vn_ruby_parser();
 		var tok;
 		console.log(parser(str));
+	
 	</script>
 
 	</head>

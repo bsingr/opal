@@ -54,6 +54,12 @@ module Vienna
         
       end
       
+      def generate_class(klass, context)
+        
+        write "(function(self) \n"
+        
+      end
+      
     end
     
   end
