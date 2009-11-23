@@ -43,11 +43,6 @@ end
 # convert it into a ruby based object: swap out objects for hashes.
 class JSONP
   
-  # An array of all the callback methods so that they can be manually deleted, altered
-  # etc
-  # NOTE: all functions are actually added to the window namespace... easily accessible,
-  # and are of the form vn_jsonp_callback_id, where id is a number starting from 0, and
-  # incremented per request
   JSONP_CALLBACKS = []
   
   def initialize(url, options, &block)
@@ -61,7 +56,7 @@ class JSONP
   
   def get!
     `window[#{@callback}] = function(response) {
-      VN$(self, 'got_response', response);
+      rb_funcall(self, 'got_response', response);
     };`
     @script = `document.createElement('script')`
     `#{@script}.setAttribute('type', 'text/javascript');`
@@ -71,6 +66,8 @@ class JSONP
   
   def got_response response
     puts 'got response! toot!'
+    # turn js objects into Ruby hashes so we can nicely interact as JSON as a first class
+    # ruby obj
     @block.call `JSONParserReformatter(response)`
   end
   

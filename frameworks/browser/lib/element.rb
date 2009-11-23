@@ -28,9 +28,35 @@ class Element
   
   attr_accessor :element
   
-  def self.find(the_id)
-    # document.getElementById(the_id)
-    `document.getElementById(#{the_id})`
+  
+  
+  # class level methods
+  class << self
+    
+    # Needs to be more generic.
+    # 
+    # 1. If symbol, just find by id
+    # 2. Otherwise split into css3 selector, and search that way
+    def find(the_id)
+      # document.getElementById(the_id)
+      `document.getElementById(#{the_id})`
+    end
+    
+    # Might be nicer to read:
+    # 
+    # Usage:
+    # 
+    #   Element[:content_element]
+    #   Element.find(".navigation.first")
+    def [](id)
+      find(id)
+    end
+    
+    # shortcut to document.body. This is also stored in the Document constant.
+    def body
+      `document.body`
+    end
+    
   end
   
   def initialize(type, options)
@@ -51,10 +77,15 @@ class Element
   
   # Sets the CSS style on the element with the given hash of CSS selector names
   # These will override any CSS class defintions as per usual
+  # 
+  # Usage:
+  # 
+  #   element.css :background_color => 'blue', :height => '24px
   def css options
     options.each do |key, value|
-      `#{element}.style[#{key.to_s.camelize}] = value;`
+     `#{element}.style[#{key.to_s.camelize}] = value; `
     end
+    # incase we chain the result
     self
   end
   

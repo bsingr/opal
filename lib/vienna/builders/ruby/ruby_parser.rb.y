@@ -854,11 +854,13 @@ rule
                   }
               	| primary_value tCOLON2 operation2 paren_args
               	  {
-              	    puts 'SCOOOBY DOOOOOOOOOOOOOOOOOOOOOOOOOOOOO 2'
+              	    result = :tCOLON2call, :recv => val[0], :meth => val[2], :args => val[3]
+              	    puts "tCOLON2call"
               	  }
             		| primary_value tCOLON2 operation3
             		  {
-              	    puts 'SCOOOBY DOOOOOOOOOOOOOOOOOOOOOOOOOOOOO 3'
+              	    result = :tCOLON2call, :recv => val[0], :meth => val[2]
+              	    puts "tCOLON2call.noargs."
               	  }
             		| primary_value '.' paren_args
             		| primary_value tCOLON2 paren_args

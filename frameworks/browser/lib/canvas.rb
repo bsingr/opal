@@ -24,7 +24,9 @@
 # THE SOFTWARE.
 #
 
-class Canvas
+# Creates canvas element, or VML context for IE browsers. Drawing methods will
+# use VML if needed
+class Canvas < Element
   
   def initialize(options={}, &block)
     if options[:size]

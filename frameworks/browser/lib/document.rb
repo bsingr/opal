@@ -24,7 +24,7 @@
 # THE SOFTWARE.
 #
 
-# `var oDocument = cObject.$c_s('Document', VN$())`
+# Document = Element.body
 
 class Document
   
