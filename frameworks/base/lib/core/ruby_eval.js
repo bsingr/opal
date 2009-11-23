@@ -91,7 +91,7 @@ var vn_ruby_parser = function(str) {
   var eval_arr = [];
   // valid types of stmt that are valid as the first cmd args (helps us identify if the
   // next statemebnt should be appeneded to the current identifer as a cmd arg )
-  var valid_cmd_args = [tIDENTIFIER, tINTEGER, kDO];
+  var valid_cmd_args = [tIDENTIFIER, tINTEGER, kDO, '{'];
   
   /**
     String parsing
@@ -217,6 +217,15 @@ var vn_ruby_parser = function(str) {
     next_token();
     return this;
   };
+  
+  // alt block
+  symbol('{').nud = function() {
+    // read over {
+      this.$stmt = stmt();
+      // read over }
+      next_token('}');
+      return this;
+  };
 
   
   // self... simple, just return
@@ -299,7 +308,7 @@ var vn_ruby_parser = function(str) {
   var gather_command_args = function(cmd) {
     cmd.$args = [];
     // console.log('tIDENTIFIER "' + token.value + '" lex state: ' + lex_state + ' last state: ' + last_state + ' ,last token: ' + last_token.value);
-    if (token.type !== kDO) {
+    if ((token.type !== kDO) && (token.type !== '{')) {
       // dont add if next statement is kDO...
       
       cmd.$args.push(stmt());
@@ -361,7 +370,12 @@ var vn_ruby_parser = function(str) {
       }
     }
     if (token.type === kDO) {
-      cmd.$block = gather_do_block();
+      // gather do block
+      cmd.$block = stmt();
+    }
+    else if (token.type === '{') {
+      // gather rlcurly block
+      cmd.$block = stmt();
     }
   };
   
@@ -382,6 +396,18 @@ var vn_ruby_parser = function(str) {
   
   symbol(tSYMBEG).nud = function() {
     this.$name = stmt();
+    return this;
+  };
+  
+  symbol(tIVAR).nud = function() {
+    return this;
+  };
+  
+  symbol(tCVAR).nud = function() {
+    return this;
+  };
+  
+  symbol(tGVAR).nud = function() {
     return this;
   };
   
@@ -775,7 +801,7 @@ var vn_ruby_parser = function(str) {
       
       else if (scanner.scan(/^\{/)) {
         var result;
-        if (lex_state == EXPR_END) {
+        if ([EXPR_END, EXPR_CMDARG].indexOf(lex_state) !== -1) {
           // primary block
           result = '{';
         }
