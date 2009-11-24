@@ -91,7 +91,9 @@ var vn_ruby_parser = function(str) {
   var eval_arr = [];
   // valid types of stmt that are valid as the first cmd args (helps us identify if the
   // next statemebnt should be appeneded to the current identifer as a cmd arg )
-  var valid_cmd_args = [tIDENTIFIER, tINTEGER, kDO, '{'];
+  var valid_cmd_args = [tIDENTIFIER, tINTEGER, tSTRING_BEG, kDO, '{'];
+  // start of command (not stmt), when on new line etc
+  var cmd_start = false;
   
   /**
     String parsing
@@ -199,7 +201,7 @@ var vn_ruby_parser = function(str) {
   var assignment = function (id) {
       return infixr(id, 10, function (left) {
           if (left.type !== "." && left.type !== "[" && left.type !== tIDENTIFIER && left.type != tIVAR) {
-              left.error("Bad lvalue.");
+              throw 'bad lhs'
           }
           this.$lhs = left;
           this.$rhs = stmt();
@@ -302,6 +304,10 @@ var vn_ruby_parser = function(str) {
     return this;
   };
   
+  symbol(tCONSTANT).nud = function() {
+    return this;
+  };
+  
   // the 'command' to apply the argumens to
   // FIXME: rewrite to asume first arg is not neceserialy a arg, it could be start
   // of assocs, or might be start of kDO
@@ -320,11 +326,14 @@ var vn_ruby_parser = function(str) {
       next_token();
       while (true) {
         s = stmt();
+        // s = expr(80);
         // this.$args.push(stmt());
         // check if tok is tASSOC.. if so, , then we
         // are beginning a hash list, so dont add stmt to $args, but push it to
         // the hash arg list instead
+        // console.log(token.type);
         if (token.type === tASSOC) {
+          // console.log('found tassoc');
           // should we check if we already have assoc list? having it more than once per cmd call
           // might be an error
           var a_keys = [], a_values = [];
@@ -411,6 +420,28 @@ var vn_ruby_parser = function(str) {
     return this;
   };
   
+  
+  /**
+    Fixme!! this is going to break!!
+    
+    Argh! not sure how we are going to do mlghs, mrhs
+  */
+  // infix(',', 80, function(left) {
+  //   this.$lhs = left;
+  //   if (token.type === tSYMBEG) {
+  //     // throw 'we need to parse an assoc.'
+  //     next_token();
+  //     next_token();
+  //     next_token();
+  //     next_token();
+  //   }
+  //   else {
+  //     this.$rhs = stmt();
+  //   }
+  //   
+  //   return this;
+  // });
+  
   // Dot notation
   infix(".", 80, function (left) {
     // console.log('doing dot!')
@@ -459,6 +490,16 @@ var vn_ruby_parser = function(str) {
         }
       }
       next_token(')');
+      
+      if (token.type === kDO) {
+        // gather do block
+        left.$block = stmt();
+      }
+      else if (token.type === '{') {
+        // gather rlcurly block
+        left.$block = stmt();
+      }
+      
       return left;
     });
   
@@ -670,6 +711,7 @@ var vn_ruby_parser = function(str) {
     var c = '', space_seen = false;
     
     last_state = lex_state;
+    cmd_start = false;
         
       
     while (true) {
@@ -695,7 +737,7 @@ var vn_ruby_parser = function(str) {
         if (lex_state == EXPR_BEG) {
           continue;
         }
-
+        cmd_start = true;
         lex_state = EXPR_BEG;
         return [tNL, '\n'];
       }
