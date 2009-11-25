@@ -66,6 +66,12 @@ module Vienna
       root_parser.build!
     end
     
+    def build_ruby_file(file_path)
+      build_destination = file_path.match(/^#{Regexp.escape(File.join(project_root, 'lib/'))}(.*)\.rb/)[1]
+      p = Vienna::ObjjRuby.new(file_path, File.join(project_root, build_prefix, build_destination.vn_capitalize) + '.j', self)
+      p.build!
+    end
+    
     # when the file 'file_path' gets a require statement 'require_path'
     # returns the string for the @import statement. This will include
     # the @impor <... etc stuff, so just dump this raw string into the
@@ -76,7 +82,32 @@ module Vienna
       
       # not local file, wrap in angle brackets and uppercase. if like app_kit, then 
       # chnage to AppKit/AppKit.j
-      "@import <#{capitalize_string(require_path)}>"
+
+      # first try local files... if found, we want to build it. js + j simply copy to
+      # correct destination, .rb we need to compile it.
+      # Probbaly worth checking if the require statement explicitly states the type of
+      # file... its legit to say require "app_controller.rb", for example.
+      file_dir = File.dirname(file_path)
+      # try .j first, then .rb, then .js
+      try_path = File.join(file_dir, require_path) + '.j'
+      if File.exists? try_path
+        return "@import \"#{require_path}.j\""
+      end
+      try_path = File.join(file_dir, require_path) + '.rb'
+      if File.exists? try_path
+        # we capitalize .rb files as we convert the name to more objj like
+        # also, once we have compiled the file, it will be named with a .j extension
+        build_ruby_file(try_path)
+        return "@import \"#{require_path.vn_capitalize}.j\""
+      end
+      try_path = File.join(file_dir, require_path) + '.js'
+      if File.exists? try_path
+        return "@import \"#{require_path}.js\""
+      end
+      
+      # otherwise, must be a framework (cappuccino built in)
+      # raise "cannot find require file for #{require_path.vn_capitalize}"
+      "@import <#{require_path.vn_capitalize}/#{require_path.vn_capitalize}.j>"
     end
     
     def capitalize_string(str)
@@ -114,6 +145,7 @@ class String
   
   # if semi is true, this inserts a semi colon at the end as well
   def vn_selectorize(semi=false)
+    return self if self.match(/[\<\+\-\/\*\|\&\>\=\!\^\[\]]/)
     # allows for optinaol underscore for 'private' methods.
     split =  self.match(/^([_]?[^_]*)_(.*)/)
     
@@ -121,5 +153,9 @@ class String
     # puts "(#{self}) #{split[1]} ............... #{split[2]}"
     return "_#{split[2]}#{semi ? ":" : ""}" if split[1] == ""
     "#{split[1]}#{split[2].split(/[^a-z0-9]/i).map{|w| w.capitalize}.join}#{semi ? ":" : ""}"
+  end
+  
+  def vn_capitalize
+    self.split(/[^a-z0-9]/i).map{|w| w.capitalize}.join
   end
 end

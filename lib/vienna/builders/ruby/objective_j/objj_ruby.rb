@@ -293,7 +293,7 @@ class Vienna::ObjjRuby < Vienna::RubyParser
     
     # method name - we should really detect a possible objj call... one parameter, no assoc, no block
     # so we rename it like 'do_something' => 'doSomething:'
-    write ",'#{call[:meth]}'"
+    write ",'#{call[:meth].vn_selectorize(call[:call_args] && call[:call_args][:args])}'"
     
     # normal call args
     unless call[:call_args].nil? or call[:call_args][:args].nil?
@@ -442,6 +442,129 @@ class Vienna::ObjjRuby < Vienna::RubyParser
   def generate_ivar(stmt, context)
     write 'return ' if context[:last_stmt] and context[:full_stmt]
     write "rb_ivar_get(#{current_self},'#{stmt[:name].gsub(/@/, '').vn_selectorize(false)}')"
+    write ";\n" if context[:full_stmt]
+  end
+  
+  def generate_symbol sym, context
+    write 'return ' if context[:last_stmt] and context[:full_stmt]
+    write "ID2SYM('#{sym[:name]}')"
+    write ";\n" if context[:full_stmt]
+  end
+  
+  # Main entry point for assignments (with one lhs/rhs)
+  def generate_assign stmt, context
+    
+    if context[:last_stmt] and context[:full_stmt]
+      write 'return '
+    end     
+    
+    # if lhs is an identifier...
+    if stmt[:lhs].node == :identifier
+      # if already in var table, just put name = ...
+      # if not in var table, make new var, and add it
+      # we do not write var if we have just put a return before it....js error
+      write 'var ' unless (context[:last_stmt] and context[:full_stmt]) or nametable_include? stmt[:lhs][:name]
+      add_to_nametable(stmt[:lhs][:name]) unless nametable_include? stmt[:lhs][:name]
+      write "#{stmt[:lhs][:name]}="
+      generate_stmt stmt[:rhs], :instance => context[:instance], context[:full_stmt] => false, context[:last_stmt] => true, :self => context[:self]
+      
+    
+    # If LHS is an @instance_variable
+    elsif stmt[:lhs].node == :ivar
+      # write "#{context[:self]}.$i_s(#{js_id_for_ivar(stmt[:lhs][:name])},"
+      write "rb_ivar_set(#{current_self},'#{stmt[:lhs][:name].gsub(/@/, '').vn_selectorize}'"
+      generate_stmt stmt[:rhs], :instance => context[:instance], context[:full_stmt] => false, context[:last_stmt] => true, :self => context[:self]
+      write ')'
+    
+    
+    # Class var
+    elsif stmt[:lhs].node == :cvar
+      write "#{context[:self]}.$k_s('#{stmt[:lhs][:name]}',"
+      generate_stmt stmt[:rhs], :instance => context[:instance], context[:full_stmt] => false, context[:last_stmt] => true, :self => context[:self]
+      write ')'
+    
+    
+    # IF LHS is a CONSTANT
+    elsif stmt[:lhs].node == :constant
+      write "rb_const_set("
+      if context[:top_level]
+        # puts stmt[:lhs][:name]
+        write 'rb_top_self'
+      elsif context[:instance]
+        write "self.isa"
+      else
+        write "self"
+      end
+           
+      write ",'#{stmt[:lhs][:name]}',"
+      generate_stmt stmt[:rhs], :instance => context[:instance], context[:full_stmt] => false, :last_stmt => context[:last_stmt], :top_level => context[:top_level]
+      write ')'
+      
+    # elsif LHS is a call (as the equals sign onto call method, and use rhs as param)
+    elsif stmt[:lhs].node == :call
+      write "#{js_replacement_function_name('rb_funcall')}("
+      generate_stmt stmt[:lhs][:recv], :instance => context[:instance], context[:full_stmt] => false, :last_stmt => context[:last_stmt], :self => context[:self]
+      # write ",#{js_id_for_string("#{stmt[:lhs][:meth]}="}),"
+      write ","
+      write "'set#{stmt[:lhs][:meth].vn_capitalize}:'"
+      write ","
+      # if its []= then we need to output 2 args
+      if stmt[:lhs][:meth] == '[]'
+        # write stmt[:]
+        generate_stmt stmt[:lhs][:args][:args][0],
+         :instance => context[:instance], context[:full_stmt] => false, :last_stmt => context[:last_stmt], :self => context[:self]
+        write ','
+      end
+      generate_stmt stmt[:rhs], :instance => context[:instance], context[:full_stmt] => false, :last_stmt => context[:last_stmt], :self => context[:self]
+      write ")"
+    else
+      write stmt
+    end
+    
+    write ";\n" if context[:full_stmt]
+    
+  end
+  
+  
+  def generate_assoc_list list, context
+    
+    # write "/* #{context[:instance]} */"
+    write 'return ' if context[:last_stmt] and context[:full_stmt]
+    write "rb_hash_new("
+    
+    list[:list].each do |l|
+      if l.node == :label_assoc
+        key = l[:key].slice(0, l[:key].length - 1)
+        write "#{js_id_for_symbol(key)}"
+      else
+        generate_stmt l[:key], :instance => (context[:singleton] ? false : true), :full_stmt => false, :last_stmt => false,  :self => current_self
+      end
+      write ', '
+      # generate_stmt l[:value], :instance => (context[:singleton] ? false : true), :full_stmt => false, :last_stmt => false,  :self => current_self
+      generate_stmt l[:value], :instance => context[:instance], :full_stmt => false, :last_stmt => false,  :self => current_self
+      write ', ' unless list[:list].last == l
+    end
+    
+    write ")"
+    write ";\n" if context[:full_stmt]
+  end
+  
+  def generate_constant const, context
+    write 'return ' if context[:last_stmt] and context[:full_stmt]
+    
+    constant_scope = context[:scope_constant] ? 'rb_const_get' : 'rb_const_get_full'
+    if context[:top_level]
+      # nothing else to look around, so normal check..
+      # write "cObject.$c_g(#{const[:name]})"
+      write "rb_const_get(rb_top_self, #{const[:name]})"
+    elsif context[:instance]
+      write "#{constant_scope}(#{current_self}.isa,'#{const[:name]}')"
+      # write "self.$klass.#{constant_scope}(#{const[:name]})"
+    else
+      write "#{constant_scope}(#{current_self},'#{const[:name]}')"
+      # write "self.#{constant_scope}(#{const[:name]})"
+    end
+    
     write ";\n" if context[:full_stmt]
   end
   
