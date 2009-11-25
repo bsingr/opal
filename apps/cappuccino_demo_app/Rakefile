@@ -20,7 +20,7 @@ config :all,
   
   # Used for the generator to insert automatic names etc
   :user_name => 'Your Name',
-  :organization_name => 'My Company',
+  :organization_name => 'My Company'
   
 
   # :compiler_directives => {

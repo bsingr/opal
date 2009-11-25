@@ -2,15 +2,7 @@
 
 
 function rb_funcall(self, id) {
-  // console.log(id);
-  // rb_funcall_stack.push(id);
-  // if (self.isa) {
-  //   console.log('ERROR: rb_funcall');
-  //   console.log(self);
-  //   console.log(id);
-  //   throw '.'
-  // }
-  
+ 
   var method = self.isa.method_dtable[id];
   
   if (!method) {
@@ -28,6 +20,25 @@ function rb_funcall(self, id) {
   }
   
   return imp.apply(self, arguments);
+}
+
+function rb_funcall_block(args, block) {
+    var method = args[0].isa.method_dtable[args[1]];
+    
+    if (!method) {
+        console.log('ERROR: rb_funcall_block, no method found ' + args[1]);
+    }
+    
+    var imp = method.method_imp;
+    
+    // identify proc as a block
+    block.rb_is_block = true;
+    
+    // we need to add block to args
+    return imp.apply(args[0], args);
+    
+    // stop proc from being a block (we shouldnt need this, it will almost certainly go out of scope)
+    delete block.rb_is_block
 }
 
 function rb_ivar_set(obj, id, val) {
