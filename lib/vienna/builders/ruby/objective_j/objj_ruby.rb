@@ -142,6 +142,8 @@ class Vienna::ObjjRuby < Vienna::RubyParser
     # new nametabel scope
     push_nametable
     
+    selector_has_colon = (definition[:arglist] && definition[:arglist][:arg]) ? true : false
+    
     if definition[:singleton]
       write "rb_define_singleton_method("
       generate_stmt definition[:singleton], :instance => context[:instance], :full_stmt => false, :last_stmt => false
@@ -156,7 +158,7 @@ class Vienna::ObjjRuby < Vienna::RubyParser
       # 'normal' def methods should be checked to objj-ify them... turn them into a selector (colons) etc. 
       # basicallt, if they are not a label_styled_arg, but only take one parameter, they should really be
       # of the form fname: .. where the def name is also camelcased.
-      write "rb_define_singleton_method(#{current_self},'#{definition[:fname]}',function(self,_cmd"
+      write "rb_define_method(#{current_self},'#{definition[:fname].vn_selectorize(selector_has_colon)}',function(self,_cmd"
       current_self_push 'self'
     end
     
@@ -200,6 +202,65 @@ class Vienna::ObjjRuby < Vienna::RubyParser
     write "});\n"
   end
   
+  
+  # generate pbjj style name def
+  def generate_label_styled_def(definition, context)
+    push_nametable
+    # get actual method name
+    method_name = definition[:fname].vn_selectorize(true)
+    definition[:arglist][:arg].each do |a|
+      next if definition[:arglist][:arg].first == a 
+      # method_name << a[:name].vn_selectorize(true)
+      method_name << a[:name].gsub(/:/, '').vn_selectorize(true)
+    end
+    
+    # main func def
+    if definition[:singleton]
+      write "rb_define_singleton_method("
+      generate_stmt definition[:singleton], :instance => definition[:instance], :full_stmt => false, :last_stmt => false
+      write ","
+      write method_name
+      write ",function(self,_cmd"
+      # write ".$def_s(#{js_id_for_string(method_name)},function(self,_,"
+    else
+      write "rb_define_method("
+      write current_self
+      write ",'"
+      write method_name
+      write "',function(self,_cmd"
+      # write "self.$def(#{js_id_for_string(method_name)},function(self,_,"
+    end
+    
+    # js_id_for_string(method_name)
+    
+    # go through arglist val names
+    definition[:arglist][:arg].each do |a|
+      write ","
+      write a[:value]
+      add_to_nametable a[:value]
+    end
+    
+    # TODO: check if block_var has been defined, and if label, add onto name
+    
+    write "){\n"
+    
+    self.current_self_start_def
+    # def statements - note: can have block...
+    if definition[:bodystmt]
+      definition[:bodystmt].each do |stmt|
+        generate_stmt stmt, :instance => (definition[:singleton] ? false : true), :full_stmt => true, :last_stmt => (definition[:bodystmt].last == stmt ? true : false), :self => current_self, :fname => method_name
+      end
+    end
+    
+    # TODO: check for block...
+          
+    self.current_self_end_def
+    pop_nametable # pop new nametable
+    
+    write "});\n"
+  end
+  
+  
   # Generate a method call
   def generate_call(call, context)
     # capture objj style calls
@@ -225,7 +286,7 @@ class Vienna::ObjjRuby < Vienna::RubyParser
     
     # Receiver.
     if call[:recv]
-      generate_stmt call[:recv], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :call_recv => true, :top_level => context[:top_level]
+      generate_stmt call[:recv], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :top_level => context[:top_level]
     else
       write current_self
     end
@@ -297,4 +358,91 @@ class Vienna::ObjjRuby < Vienna::RubyParser
     
     # write call[:brace_block]
   end
+  
+  
+  def generate_label_styled_call call, context
+     write "return " if context[:last_stmt] and context[:full_stmt]
+     
+     write "rb_funcall("
+     
+     if call[:recv]
+       generate_stmt call[:recv], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :top_level => context[:top_level], :call_recv => true
+     else
+       write "self"
+     end
+     
+     method_name = call[:meth].vn_selectorize(true)
+     
+     call[:call_args][:assocs].each do |a|
+       method_name << a[:key].gsub(/:/, '').vn_selectorize(true)
+     end
+     
+     write",'#{method_name}',"
+     # js_id_for_string(method_name)
+     
+     # write ".$('#{method_name}',["
+     
+     generate_stmt call[:call_args][:args][0], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self =>context[:self], :top_level => context[:top_level]
+     
+     call[:call_args][:assocs].each do |a|
+       write ","
+       generate_stmt a[:value], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self =>context[:self], :top_level => context[:top_level]
+     end
+     
+     # write "])"
+     write ")"
+     write ";\n" if context[:full_stmt]
+     
+   end
+  
+  
+  # Class definition
+  def generate_class(klass, context)
+    write "(function(self) {\n"
+    # nametable stuff
+    push_nametable
+    current_self_push 'self'
+    
+    # Statements
+    if klass.bodystmt
+      klass.bodystmt.each do |stmt|
+        generate_stmt stmt, :instance => false,
+                            :full_stmt => true,
+                            :last_stmt => (klass.bodystmt.last == stmt ? true : false),
+                            :top_level => false
+      end
+    end
+    
+    write "})("
+    if context[:top_level]
+      write "rb_define_class('"
+      write klass.klass_name
+      write "',"
+    else
+       # nested
+        # write "RClass.define_under(self,'#{klass.klass_name}',"
+        write "#{js_replacement_function_name('rb_define_class_under')}(self,"
+        write "rb_define_class_under(#{current_self},'"
+        write klass.klass_name
+        write "',"
+    end
+    
+    # superclass..
+    if klass.super_klass
+      generate_stmt klass.super_klass[:expr], :instance => false, :full_stmt => false, :self => current_self, :last_stmt => false
+      write ")"
+    else
+      write "cObject)"
+    end
+    
+    write ");\n"
+  end
+  
+  
+  def generate_ivar(stmt, context)
+    write 'return ' if context[:last_stmt] and context[:full_stmt]
+    write "rb_ivar_get(#{current_self},'#{stmt[:name].gsub(/@/, '').vn_selectorize(false)}')"
+    write ";\n" if context[:full_stmt]
+  end
+  
 end

@@ -24,27 +24,84 @@ function rb_define_class(id, super_klass) {
     return klass;
 };
 
-function rb_define_method(klass, name, func) {
-  class_addMethod(klass, name, func, nil);
-  
-  
-  
-// function class_addMethod( aClass, aName, anImplementation, aType)  
-//   if (aClass.method_hash[aName])
-//       return NO;
-//   var method = new objj_method(aName, anImplementation, aType);
-//   aClass.method_list.push(method);
-//   aClass.method_dtable[aName] = method;
-//   method.method_imp.displayName = (((aClass.info & (CLS_META))) ? '+' : '-') + " [" + class_getName(aClass) + ' ' + method_getName(method) + ']';
-//   if (!((aClass.info & (CLS_META))) && (((aClass.info & (CLS_META))) ? aClass : aClass.isa).isa === (((aClass.info & (CLS_META))) ? aClass : aClass.isa))
-//       class_addMethod((((aClass.info & (CLS_META))) ? aClass : aClass.isa), method);
-//   return YES;
+function rb_define_class_under(outer, id, super_klass) {
+    var klass;
+    // check if class is already defined (at context)
+    if (rb_const_defined_at(outer, id)) {
+        klass = rb_const_get_at(outer, id);
+        
+        if (!(klass.info & CLS_META)) {
+            throw id + 'is not a class'
+        }
+        if (rb_class_real(klass.super_class) != super_klass) {
+            // avoid error for rb_cObject
+            if (klass != rb_cObject) {
+                throw id + ' is already defined'
+            }
+        }
+        return klass;
+    }
+    // class doesnt already exist
+    if (!super_klass) {
+        console.log('Warning: no superclass for ' + id + '. CPObject assumed');
+        super_klass = CPObject;
+    }
+    klass = objj_allocateClassPair(super_klass, id);
+    // ivars.....?
+    objj_registerClassPair(klass);
+    objj_addClassForBundle(klass, objj_getBundleWithPath(OBJJ_CURRENT_BUNDLE.path));
+    
+    // we can keep track of parent...
+    klass._rb_parent = outer;
+    
+    rb_const_set(outer, id, klass);
+    // rb_class_inherited(super_klass, klass).. dont need this....?
+    return klass;
 }
 
 
-// function rb_define_class_under(outer, id, super_klass) {
-// 
-// };
+
+
+
+
+function rb_define_method(klass, name, func) {
+  class_addMethod(klass, name, func, nil);
+}
+
+function rb_define_singleton_method(klass, name, func) {
+    
+    if (klass.info && (klass.info & CLS_META)) {
+        // klass is a class itself
+        
+        // we can just add methods to the class. we are defining methods
+        // on a class itself.
+        
+        class_addMethod(klass, name, func, nil);
+    }
+    else if ((klass.info && (klass.info & CLS_CLASS))) {
+        // klass is an instance of a class
+        
+        // we need to check if the object is already a singleton.. if not, make it one
+        // if it is a singleton, we can just add methods to the class, it wont affect 
+        // any other instances of this class
+
+        var CLS_SINGLETON = 0x16;
+        if (klass.info & CLS_SINGLETON) {
+            // already a singleton: woop! just add method
+        }
+        else {
+            // not a singleton... swizzle class, then add.
+        }
+    }
+    else {
+        // not a class, not a meta... hmm....?
+        throw 'rb_define_singleton_method: bad klass.'
+    }
+}
+
+
+
+
 // 
 // 
 // function rb_class2name(klass) {

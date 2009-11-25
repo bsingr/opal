@@ -109,3 +109,17 @@ module Vienna
     end
   end
 end
+
+class String
+  
+  # if semi is true, this inserts a semi colon at the end as well
+  def vn_selectorize(semi=false)
+    # allows for optinaol underscore for 'private' methods.
+    split =  self.match(/^([_]?[^_]*)_(.*)/)
+    
+    return "#{self}#{semi ? ":" : ""}" unless split
+    # puts "(#{self}) #{split[1]} ............... #{split[2]}"
+    return "_#{split[2]}#{semi ? ":" : ""}" if split[1] == ""
+    "#{split[1]}#{split[2].split(/[^a-z0-9]/i).map{|w| w.capitalize}.join}#{semi ? ":" : ""}"
+  end
+end
