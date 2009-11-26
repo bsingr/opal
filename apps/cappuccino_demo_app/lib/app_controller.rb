@@ -58,7 +58,7 @@ class AppController
     CPMenu.menu_bar_visible = true
     
     # puts calls CPLog for unification of methods.
-    puts "App finished launching!!"
+    # puts "App finished launching!!"
   end
   
   

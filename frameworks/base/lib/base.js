@@ -93,7 +93,8 @@ var T_CLASS   = 0,
     T_NUMBER  = 6,
     T_PROC    = 7,
     T_SYMBOL  = 8,
-    T_HASH    = 9;
+    T_HASH    = 9,
+    T_ICLASS  = 10;
 
 VN.warning = function(msg) {
   console.log('Vienna warning: ' + msg);

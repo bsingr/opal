@@ -28,10 +28,14 @@ require 'vienna'
 
 module DocumentApplication
   
+  include Vienna
+  
+  # puts Image
+  
   class AppController
     
     def application_will_finish_launching(notification)
-      
+      puts "app will finish launching!"
     end
     
   end

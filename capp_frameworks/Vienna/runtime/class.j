@@ -69,16 +69,20 @@ function rb_define_method(klass, name, func) {
 }
 
 function rb_define_singleton_method(klass, name, func) {
-    
+    // console.log(klass);
+    // throw name
     if (klass.info && (klass.info & CLS_META)) {
+        // throw 1
         // klass is a class itself
         
         // we can just add methods to the class. we are defining methods
         // on a class itself.
         
-        class_addMethod(klass, name, func, nil);
+        // class_addMethod(klass, name, func, nil);
+        rb_define_method(klass, name, func);
     }
     else if ((klass.info && (klass.info & CLS_CLASS))) {
+        throw 2
         // klass is an instance of a class
         
         // we need to check if the object is already a singleton.. if not, make it one

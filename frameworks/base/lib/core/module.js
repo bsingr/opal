@@ -182,3 +182,10 @@ rb_define_method(rb_cModule, 'class_variable_set', function(self, _cmd) {
 rb_define_method(rb_cModule, 'class_variable_defined?', function(self, _cmd) {
   
 });
+
+rb_define_method(rb_cModule, 'include', function(self, _cmd, mod) {
+  // console.log('including module: ')
+  rb_funcall(self, 'append_features', mod);
+  rb_funcall(self, 'included', mod);
+  return self;
+});

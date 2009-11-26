@@ -293,7 +293,14 @@ class Vienna::ObjjRuby < Vienna::RubyParser
     
     # method name - we should really detect a possible objj call... one parameter, no assoc, no block
     # so we rename it like 'do_something' => 'doSomething:'
-    write ",'#{call[:meth].vn_selectorize(call[:call_args] && call[:call_args][:args])}'"
+    
+    
+    # constant.. so dont 'objc style it..its a js function'
+    if call[:meth].match(/^[A-Z]/)
+      write ",'#{call[:meth]}'"
+    else
+      write ",'#{call[:meth].vn_selectorize(call[:call_args] && call[:call_args][:args])}'"
+    end
     
     # normal call args
     unless call[:call_args].nil? or call[:call_args][:args].nil?
@@ -432,7 +439,7 @@ class Vienna::ObjjRuby < Vienna::RubyParser
       generate_stmt klass.super_klass[:expr], :instance => false, :full_stmt => false, :self => current_self, :last_stmt => false
       write ")"
     else
-      write "cObject)"
+      write "rb_cObject)"
     end
     
     write ");\n"
@@ -472,7 +479,7 @@ class Vienna::ObjjRuby < Vienna::RubyParser
     # If LHS is an @instance_variable
     elsif stmt[:lhs].node == :ivar
       # write "#{context[:self]}.$i_s(#{js_id_for_ivar(stmt[:lhs][:name])},"
-      write "rb_ivar_set(#{current_self},'#{stmt[:lhs][:name].gsub(/@/, '').vn_selectorize}'"
+      write "rb_ivar_set(#{current_self},'#{stmt[:lhs][:name].gsub(/@/, '').vn_selectorize}',"
       generate_stmt stmt[:rhs], :instance => context[:instance], context[:full_stmt] => false, context[:last_stmt] => true, :self => context[:self]
       write ')'
     

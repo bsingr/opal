@@ -29,8 +29,15 @@ return 3;
 
 (function(self) {
 rb_funcall(self,'attr_accessor',ID2SYM('element'));
+(function(self) {
 self.$def_s('find',function(self,_,the_id){
 document.getElementById(the_id)});
+self.$def_s('[]',function(self,_,id){
+return rb_funcall(self,'find',id);
+});
+self.$def_s('body',function(self,_){
+document.body});
+})(self);
 rb_define_method(self,'initialize',function(self,_,type,options){
 self.$i_s('@element',document.createElement(rb_funcall(type,'to_s')));
 return self.$i_s('@type',type);
@@ -42,7 +49,7 @@ rb_define_method(self,'class_name=',function(self,_,name){
 rb_funcall(self,'element').className = name;});
 rb_define_method(self,'css',function(self,_,options){
 rb_funcall(options,'each',function(key,value){
-rb_funcall(self,'element').style[rb_funcall(rb_funcall(key,'to_s'),'camelize')] = value;});
+rb_funcall(self,'element').style[rb_funcall(rb_funcall(key,'to_s'),'camelize')] = value; });
 return self;
 });
 rb_define_method(self,'set_attribute',function(self,_,key,value){
@@ -114,7 +121,7 @@ return rb_funcall(self,'get!');
 });
 rb_define_method(self,'get!',function(self,_){
 window[rb_ivar_get(self,'@callback')] = function(response) {
-      VN$(self, 'got_response', response);
+      rb_funcall(self, 'got_response', response);
     };self.$i_s('@script',document.createElement('script'));
 rb_ivar_get(self,'@script').setAttribute('type', 'text/javascript');rb_ivar_get(self,'@script').setAttribute('src', rb_ivar_get(self,'@url'));document.body.appendChild(rb_ivar_get(self,'@script'));});
 rb_define_method(self,'got_response',function(self,_,response){

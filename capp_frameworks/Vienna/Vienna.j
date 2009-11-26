@@ -1,9 +1,11 @@
-// runtime
+
 @import "runtime/class.j"
 @import "runtime/object.j"
+@import "runtime/system.j"
 
-// ruby core objects
 @import "core/object.j"
+@import "core/module.j"
+@import "core/hash.j"
+@import "core/symbol.j"
 
-// cappuccino extensions
 @import "app_kit/view.j"

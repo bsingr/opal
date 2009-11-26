@@ -138,6 +138,20 @@ mKernel = RModule.define("Kernel");
 
 RModule.include(cObject, mKernel);
 
+rb_define_method(rb_cModule, 'append_features', function(self, _cmd, o) {
+  switch (o.$type) {
+    case T_CLASS:
+    case T_MODULE:
+      break;
+    default:
+      throw "wrong type for include"
+      break;
+  }
+  rb_include_module(o, self);
+
+  return self;
+});
+
 cClass.$define_private_method('inherited', function() {
   return nil ;
 });

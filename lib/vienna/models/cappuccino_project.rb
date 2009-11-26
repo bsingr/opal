@@ -68,7 +68,11 @@ module Vienna
     
     def build_ruby_file(file_path)
       build_destination = file_path.match(/^#{Regexp.escape(File.join(project_root, 'lib/'))}(.*)\.rb/)[1]
-      p = Vienna::ObjjRuby.new(file_path, File.join(project_root, build_prefix, build_destination.vn_capitalize) + '.j', self)
+      capp_name = build_destination.split(/\//).map{ |w| w.vn_capitalize }.join('/')
+      # puts "building to #{File.join(project_root, build_prefix, build_destination.vn_capitalize) + '.j'}"
+      FileUtils.mkdir_p(File.dirname(File.join(project_root, build_prefix, capp_name)))
+      # puts File.dirname(File.join(project_root, build_prefix, capp_name))
+      p = Vienna::ObjjRuby.new(file_path, File.join(project_root, build_prefix, capp_name) + '.j', self)
       p.build!
     end
     
@@ -91,6 +95,10 @@ module Vienna
       # try .j first, then .rb, then .js
       try_path = File.join(file_dir, require_path) + '.j'
       if File.exists? try_path
+        # erghhh..............
+        to_path = File.join(project_root, build_prefix, file_path.match(/#{Regexp.escape(File.join(project_root, 'lib/'))}(.*)[\.|\.j]/)[1], require_path) + '.j'
+        FileUtils.mkdir_p(File.dirname(to_path))
+        File.copy(try_path, to_path)
         return "@import \"#{require_path}.j\""
       end
       try_path = File.join(file_dir, require_path) + '.rb'
@@ -98,7 +106,7 @@ module Vienna
         # we capitalize .rb files as we convert the name to more objj like
         # also, once we have compiled the file, it will be named with a .j extension
         build_ruby_file(try_path)
-        return "@import \"#{require_path.vn_capitalize}.j\""
+        return "@import \"#{require_path.split(/\//).map{ |w| w.vn_capitalize }.join('/')}.j\""
       end
       try_path = File.join(file_dir, require_path) + '.js'
       if File.exists? try_path

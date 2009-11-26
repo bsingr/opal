@@ -75,16 +75,23 @@ RModule.create = function() {
   return mdl;
 };
 
+function rb_include_module(klass, module) {
+  RModule.include_class_new(module, klass);
+}
+
+
 RModule.include = function(klass, module) {
   RModule.include_class_new(module, klass);
 };
 
 
 RModule.include_class_new = function(mod, sup) {
-  var klass = RClass.alloc(VN.T_ICLASS, cClass);
-  klass.iv_tbl = mod.iv_tbl;
-  klass.m_tbl = mod.m_tbl;
+  var klass = RClass.alloc(T_ICLASS, cClass);
+  klass.$iv_tbl = mod.$iv_tbl;
+  klass.$m_tbl = mod.$m_tbl;
   klass.$super = sup;
   klass.$klass = mod;
+  // console.log('included class');
+  // console.log(klass);
   return klass;
 };

@@ -17,7 +17,7 @@ return rb_funcall(self,'get!');
 });
 rb_define_method(self,'get!',function(self,_){
 window[rb_ivar_get(self,'@callback')] = function(response) {
-      VN$(self, 'got_response', response);
+      rb_funcall(self, 'got_response', response);
     };self.$i_s('@script',document.createElement('script'));
 rb_ivar_get(self,'@script').setAttribute('type', 'text/javascript');rb_ivar_get(self,'@script').setAttribute('src', rb_ivar_get(self,'@url'));document.body.appendChild(rb_ivar_get(self,'@script'));});
 rb_define_method(self,'got_response',function(self,_,response){
