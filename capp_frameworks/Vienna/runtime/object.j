@@ -1,76 +1,88 @@
+// This shouldnt be here.. class tbl for all of ruby.
+rb_class_tbl = { };
 
-function rb_search_method(self, id) {
-    var method = self.isa.method_dtable[id];
-    // try window scope...for now.
-    if (!method) {
-        return window[id];
-    }
-    else {
-        return method.method_imp;
-    }
+function boot_defclass(id, superclass) {
+    var o = rb_class_boot(superclass);
+    rb_class_tbl[id] = o;
+    rb_const_set((rb_cObject ? rb_cObject : o), id, o);
+    return o;
 }
 
-function rb_funcall(self, id) {
+function rb_module_s_alloc() {
+    return rb_module_new();
+}
+
+function rb_class_s_alloc() {
+    return rb_class_boot();
+}
+
+function rb_class_new_instance_imp(klass, _cmd) {
+    var o = rb_funcall(klass, "alloc");
+    // FIXME: no initialize params being sent
+    rb_funcall(o, "initialize");
+    return o;
+}
+
+function rb_obj_dummy(self, _cmd) {
+    return rb_nil;
+}
+
+function rb_obj_equal(self, _cmd, other) {
+    return (self == other) ? true : false;
+}
+
+function rb_obj_not(self, _cmd) {
+    return RTEST(self) ? false : true;
+}
+
+function rb_obj_not_equal(self, _cmd, other) {
+    return (rb_funcall(self, "==", other)) ? false : true; 
+}
+
+function rb_obj_dummy2(self, _cmd, other) {
+    return rb_nil;
+}
+
+rb_cObject = objj_getClass("CPObject");
+rb_const_set(rb_cObject, "Object", rb_cObject);
+rb_cBasicObject = objj_duplicateClass(rb_cObject, "BasicObject");
+
+rb_const_set(rb_cObject, "BasicObject", rb_cBasicObject);
+rb_cModule = boot_defclass("Module", rb_cObject);
+rb_cClass = boot_defclass("Class", rb_cModule);
+
+
+
+rb_define_method(rb_cModule, "alloc", rb_module_s_alloc, 0);
+rb_define_method(rb_cClass, "alloc", rb_class_s_alloc, 0);
  
-  // var method = self.isa.method_dtable[id];
-  var method = rb_search_method(self, id);
-  
-  if (!method) {
-      console.log('ERROR: rb_funcall, no method found ' + id);
-      throw '.'
-  }
-  
-  // var imp = method.method_imp;
-  
-  switch (arguments.length) {
-      case 2: return method(self, id);
-      case 3: return method(self, id, arguments[2]);
-      case 4: return method(self, id, arguments[2], arguments[3]);
-      case 5: return method(self, id, arguments[2], arguments[3], arguments[4]);
-  }
-  
-  return method.apply(self, arguments);
-}
+rb_define_singleton_method(rb_cObject, "new:", rb_class_new_instance_imp, -1);
+ 
+rb_define_method(rb_cObject, "initialize", rb_obj_dummy, 0);
+rb_define_method(rb_cObject, "==", rb_obj_equal, 1);
+rb_define_method(rb_cObject, "equal?", rb_obj_equal, 1);
+rb_define_method(rb_cObject, "!", rb_obj_not, 0);
+rb_define_method(rb_cObject, "!=", rb_obj_not_equal, 1);
 
-function rb_funcall_block(args, block) {
-    var method = args[0].isa.method_dtable[args[1]];
-    
-    if (!method) {
-        console.log('ERROR: rb_funcall_block, no method found ' + args[1]);
-    }
-    
-    var imp = method.method_imp;
-    
-    // identify proc as a block
-    block.rb_is_block = true;
-    
-    // we need to add block to args
-    return imp.apply(args[0], args);
-    
-    // stop proc from being a block (we shouldnt need this, it will almost certainly go out of scope)
-    delete block.rb_is_block
-}
+rb_define_method(rb_cBasicObject, "initialize", rb_obj_dummy, 0);
+rb_define_method(rb_cBasicObject, "==", rb_obj_equal, 1);
+rb_define_method(rb_cBasicObject, "equal?", rb_obj_equal, 1);
+rb_define_method(rb_cBasicObject, "!", rb_obj_not, 0);
+rb_define_method(rb_cBasicObject, "!=", rb_obj_not_equal, 1);
 
-function rb_ivar_set(obj, id, val) {
-    obj[id] = val;
-    return val;
-}
+rb_define_method(rb_cObject, "singleton_method_added:", rb_obj_dummy2, 1);
+rb_define_method(rb_cObject, "singleton_method_removed:", rb_obj_dummy2, 1);
+rb_define_method(rb_cObject, "singleton_method_undefined:", rb_obj_dummy2, 1);
 
-function rb_ivar_get(obj, id) {
-    return obj[id];
-}
+rb_define_method(rb_cBasicObject, "singleton_method_added:", rb_obj_dummy2, 1);
+rb_define_method(rb_cBasicObject, "singleton_method_removed:", rb_obj_dummy2, 1);
+rb_define_method(rb_cBasicObject, "singleton_method_undefined:", rb_obj_dummy2, 1);
 
-function rb_const_get(obj, id) {
-    return window[id];
-}
-
-function rb_const_set(obj, id, val) {
-    obj[id] = val;
-    // if obj doesnt have it, go up through chain, finally checking in global namespace
-}
-
-function rb_const_get_full(obj, id) {
-    return window[id];
-}
-
-var rb_cObject = CPObject;
+rb_mKernel = rb_define_module("Kernel");
+// rb_include_module(rb_cObject, rb_mKernel);
+rb_define_method(rb_cClass, "inherited:", rb_obj_dummy2, 1);
+rb_define_method(rb_cModule, "included:", rb_obj_dummy2, 1);
+rb_define_method(rb_cModule, "extended:", rb_obj_dummy2, 1);
+rb_define_method(rb_cModule, "method_added:", rb_obj_dummy2, 1);
+rb_define_method(rb_cModule, "method_removed:", rb_obj_dummy2, 1);
+rb_define_method(rb_cModule, "method_undefined:", rb_obj_dummy2, 1);

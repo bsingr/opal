@@ -446,6 +446,41 @@ class Vienna::ObjjRuby < Vienna::RubyParser
   end
   
   
+  
+  
+  def generate_module mod, context
+    
+    write "(function(self) {\n"
+    
+    push_nametable
+    current_self_push "self"
+    
+    # Statements
+    if mod.bodystmt
+      mod.bodystmt.each do |stmt|
+        # puts stmt
+        # puts stmt.node
+        generate_stmt stmt, :instance => false,
+                            :full_stmt => true,
+                            :last_stmt => (mod.bodystmt.last == stmt ? true : false),
+                            :nested => true
+      end
+      
+    end
+    
+    pop_nametable
+    current_self_pop
+    
+    write "})("
+    # write "RModule.define('#{mod.klass_name}')"
+    write "rb_define_module('"
+    # write "#{mod.klass_name}"
+    write mod.klass_name
+    write "')"
+    write ");\n"
+  end
+  
+  
   def generate_ivar(stmt, context)
     write 'return ' if context[:last_stmt] and context[:full_stmt]
     write "rb_ivar_get(#{current_self},'#{stmt[:name].gsub(/@/, '').vn_selectorize(false)}')"

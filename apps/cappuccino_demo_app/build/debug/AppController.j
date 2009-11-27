@@ -11,7 +11,9 @@ rb_funcall(label,'setFont:',rb_funcall(rb_const_get_full(self.isa,'CPFont'),'bol
 rb_funcall(label,'sizeToFit');
 rb_funcall(content_view,'<<',label);
 rb_funcall(rb_ivar_get(self,'window'),'orderFront:',self);
-return rb_funcall(rb_const_get_full(self.isa,'CPMenu'),'setMenuBarVisible:',true);
+rb_funcall(rb_const_get_full(self.isa,'CPMenu'),'setMenuBarVisible:',true);
+rb_ivar_set(self,'sharedApplication',[CPApplication sharedApplication]);
+return rb_funcall(self,'puts:',"App finished launching!!");
 });
 rb_define_method(self,'numberOfRowsInTableView:',function(self,_cmd,table_view) {
 return rb_funcall(rb_const_get_full(self.isa,'TABLE_DATA'),'length');

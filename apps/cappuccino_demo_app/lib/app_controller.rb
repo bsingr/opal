@@ -57,8 +57,11 @@ class AppController
     
     CPMenu.menu_bar_visible = true
     
+    # Inline objective-c...
+    @shared_application = `[CPApplication sharedApplication]`
+    
     # puts calls CPLog for unification of methods.
-    # puts "App finished launching!!"
+    puts "App finished launching!!"
   end
   
   
