@@ -21,3 +21,40 @@ function rb_define_module(id) {
     rb_const_set(rb_cObject, id, m);
     return m;
 }
+
+/**
+    Objj wont natively support including modules, so instead, modules
+    are added to class's meta classes in an array, so rb_funcall can
+    check there if a method is not found otherwise. This is correct
+    behaviour as methods defined in modules, then included, should 
+    be checked after method defined on a class itself. Note, because
+    we use this, objj_msgSend cannot be used: rb_funcall must be used
+    instead.
+    
+    Also, these are stores on the klass in which the module was included.
+    For that reason, the entire inheritance stack must be searched all the
+    way back to CPObject (i.e. no more superclass.)
+    
+    This will only happen on module methods, not all the time, so there
+    wont be that much performance impact.
+*/
+function rb_include_module(klass, module) {
+    // copy module into klass
+    // console.log('copying ' + module.name + ' into ' + klass.name);
+    var t = klass.isa; // t = target
+    
+    if (!t._rb_included_modules) {
+        t._rb_included_modules = [];
+    }
+    if (t._rb_included_modules.indexOf(module) > -1) {
+        // already added, so return!
+        return;
+    }
+    // else, add it....
+    t._rb_included_modules.push(module);
+    
+    if (!module._rb_included_in_classes) {
+        module._rb_included_in_classes = [];
+    }
+    module._rb_included_in_classes.push(t);
+}

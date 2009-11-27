@@ -51,7 +51,7 @@ class Vienna::ObjjRuby < Vienna::RubyParser
   end
   
   def generate_stmt stmt, context
-    # puts stmt
+    # write "[..#{stmt.node}..]"
     case stmt.node
     when :klass
       generate_class stmt, context
@@ -263,6 +263,7 @@ class Vienna::ObjjRuby < Vienna::RubyParser
   
   # Generate a method call
   def generate_call(call, context)
+    # puts call
     # capture objj style calls
     return generate_label_styled_call(call, context) if label_styled_call? call
     
@@ -276,31 +277,57 @@ class Vienna::ObjjRuby < Vienna::RubyParser
     
     write "return " if context[:last_stmt] and context[:full_stmt]
     
-    # detect a block.....
-    if call[:brace_block]
-      write "rb_funcall_block(["
+    
+    
+    # if constant name, then just call a raw method...
+    if (call[:meth].match(/^[A-Z]/))
+      write call[:meth]
+      write "("
     else
-      # normal
-      write "rb_funcall("
+      # detect a block.....
+      if call[:brace_block]
+        write "rb_funcall_block(["
+      else
+        # normal
+        write "rb_funcall("
+      end
+      
+      # Receiver.
+      if call[:recv]
+        # puts "....#{call[:recv]}"
+        generate_stmt call[:recv], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :top_level => context[:top_level]
+      else
+        write current_self
+      end
+      
+      write ",'#{call[:meth]}"
+      
+      if call[:call_args] and call[:call_args][:args] and call[:call_args][:args].length == 1
+        write ":" unless call[:meth].match(/[\<\>\=\+\-\*\/\[\]\!\~\^\?]/)
+      end
+      
+      write "'"
     end
     
-    # Receiver.
-    if call[:recv]
-      generate_stmt call[:recv], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :top_level => context[:top_level]
-    else
-      write current_self
+    
+    def generate_identifier identifier, context
+      # puts identifier
+      
+      write 'return ' if context[:last_stmt] and context[:full_stmt]
+      
+      if nametable_include? identifier[:name]
+        write identifier[:name]
+      else
+        # method call
+        # write "#{current_self}.$('#{identifier[:name]}', [])"
+        write "rb_funcall(#{current_self},'#{identifier[:name]}')"
+      end
+      write ";\n" if context[:full_stmt]
     end
     
-    # method name - we should really detect a possible objj call... one parameter, no assoc, no block
-    # so we rename it like 'do_something' => 'doSomething:'
     
     
-    # constant.. so dont 'objc style it..its a js function'
-    if call[:meth].match(/^[A-Z]/)
-      write ",'#{call[:meth]}'"
-    else
-      write ",'#{call[:meth].vn_selectorize(call[:call_args] && call[:call_args][:args])}'"
-    end
+    
     
     # normal call args
     unless call[:call_args].nil? or call[:call_args][:args].nil?
@@ -548,7 +575,9 @@ class Vienna::ObjjRuby < Vienna::RubyParser
       generate_stmt stmt[:lhs][:recv], :instance => context[:instance], context[:full_stmt] => false, :last_stmt => context[:last_stmt], :self => context[:self]
       # write ",#{js_id_for_string("#{stmt[:lhs][:meth]}="}),"
       write ","
-      write "'set#{stmt[:lhs][:meth].vn_capitalize}:'"
+      meth = stmt[:lhs][:meth]
+      
+      write "'set#{meth[0..0].upcase + meth[1..meth.length - 1]}:'"
       write ","
       # if its []= then we need to output 2 args
       if stmt[:lhs][:meth] == '[]'

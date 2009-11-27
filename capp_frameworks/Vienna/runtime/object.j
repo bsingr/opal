@@ -24,7 +24,7 @@ function rb_class_new_instance_imp(klass, _cmd) {
 }
 
 function rb_obj_dummy(self, _cmd) {
-    return rb_nil;
+    return null;
 }
 
 function rb_obj_equal(self, _cmd, other) {
@@ -40,7 +40,50 @@ function rb_obj_not_equal(self, _cmd, other) {
 }
 
 function rb_obj_dummy2(self, _cmd, other) {
-    return rb_nil;
+    return null;
+}
+
+function rb_mod_attr(self, _cmd) {
+    console.log('in attr.');
+}
+
+function rb_mod_attr_reader(self, _cmd) {
+    var i, a = Array.prototype.slice.call(arguments, 2);
+    for (i = 0; i < a.length; i++) {
+        rb_objj_define_kvo_getter(self, a[i]);
+    }
+    return self;
+}
+
+function rb_mod_attr_writer(self, _cmd) {
+    var i, a = Array.prototype.slice.call(arguments, 2);
+    for (i = 0; i < a.length; i++) {
+        rb_objj_define_kvo_setter(self, a[i]);
+    }
+    return self;
+}
+
+function rb_mod_attr_accessor(self, _cmd) {
+    var i, a = Array.prototype.slice.call(arguments, 2);
+    for (i = 0; i < a.length; i++) {
+        rb_objj_define_kvo_setter(self, a[i]);
+        rb_objj_define_kvo_getter(self, a[i]);
+    }
+    return self;
+}
+
+function rb_objj_define_kvo_setter(klass, id) {
+    var k = 'set' + id.charAt(0).toUpperCase() + id.substr(1) + ':';
+    rb_define_method(klass, k, function(self, _cmd, v) {
+        var k = id;
+        return rb_ivar_set(self, k, v);
+    }, 1);
+}
+
+function rb_objj_define_kvo_getter(klass, id) {
+    rb_define_method(klass, id, function(self, _cmd) {
+        return rb_ivar_get(self, _cmd);
+    }, 0);
 }
 
 rb_cObject = objj_getClass("CPObject");
@@ -52,9 +95,11 @@ rb_cModule = boot_defclass("Module", rb_cObject);
 rb_cClass = boot_defclass("Class", rb_cModule);
 
 
-
 rb_define_method(rb_cModule, "alloc", rb_module_s_alloc, 0);
 rb_define_method(rb_cClass, "alloc", rb_class_s_alloc, 0);
+
+rb_include_module(rb_cObject, rb_cClass);
+rb_include_module(rb_cObject, rb_cModule);
  
 rb_define_singleton_method(rb_cObject, "new:", rb_class_new_instance_imp, -1);
  
@@ -79,10 +124,57 @@ rb_define_method(rb_cBasicObject, "singleton_method_removed:", rb_obj_dummy2, 1)
 rb_define_method(rb_cBasicObject, "singleton_method_undefined:", rb_obj_dummy2, 1);
 
 rb_mKernel = rb_define_module("Kernel");
-// rb_include_module(rb_cObject, rb_mKernel);
+rb_include_module(rb_cObject, rb_mKernel);
 rb_define_method(rb_cClass, "inherited:", rb_obj_dummy2, 1);
 rb_define_method(rb_cModule, "included:", rb_obj_dummy2, 1);
 rb_define_method(rb_cModule, "extended:", rb_obj_dummy2, 1);
 rb_define_method(rb_cModule, "method_added:", rb_obj_dummy2, 1);
 rb_define_method(rb_cModule, "method_removed:", rb_obj_dummy2, 1);
 rb_define_method(rb_cModule, "method_undefined:", rb_obj_dummy2, 1);
+
+rb_define_method(rb_mKernel, "nil?", rb_false, 0);
+rb_define_method(rb_mKernel, "===", rb_equal_imp, 1); 
+rb_define_method(rb_mKernel, "=~", rb_obj_match, 1);
+rb_define_method(rb_mKernel, "!~", rb_obj_not_match, 1);
+rb_define_method(rb_mKernel, "eql?", rb_obj_equal, 1);
+
+rb_define_method(rb_cObject, "clone", rb_obj_clone_imp, 0);
+rb_define_method(rb_cObject, "dup", rb_nsobj_dup, 0);
+
+rb_define_method(rb_mKernel, "to_s", rb_any_to_string, 0);
+rb_define_method(rb_mKernel, "inspect", rb_obj_inspect, 0);
+rb_define_method(rb_mKernel, "methods", rb_obj_methods, -1);
+
+rb_define_method(rb_mKernel, "singleton_methods", rb_obj_singleton_methods, -1);
+rb_define_method(rb_mKernel, "protected_methods", rb_obj_protected_methods, -1);
+rb_define_method(rb_mKernel, "private_methods", rb_obj_private_methods, -1);
+rb_define_method(rb_mKernel, "public_methods", rb_obj_public_methods, -1);
+rb_define_method(rb_mKernel, "instance_variables", rb_obj_instance_variables, 0);
+rb_define_method(rb_mKernel, "instance_variable_get", rb_obj_ivar_get, 1);
+rb_define_method(rb_mKernel, "instance_variable_set", rb_obj_ivar_set, 2);
+rb_define_method(rb_mKernel, "instance_variable_defined?", rb_obj_ivar_defined, 1);
+rb_define_method(rb_mKernel, "remove_instance_variable", rb_obj_remove_instance_variable, 1);
+
+rb_define_method(rb_mKernel, "instance_of?", rb_obj_is_instance_of_imp, 1);
+rb_define_method(rb_mKernel, "kind_of?", rb_obj_is_kind_of_imp, 1);
+rb_define_method(rb_mKernel, "is_a?", rb_obj_is_kind_of_imp, 1);
+rb_define_method(rb_mKernel, "tap", rb_obj_tap, 0);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+rb_define_method(rb_cModule, "attr:", rb_mod_attr, -1);
+rb_define_method(rb_cModule, "attr_reader:", rb_mod_attr_reader, -1);
+rb_define_method(rb_cModule, "attr_writer:", rb_mod_attr_writer, -1);
+rb_define_method(rb_cModule, "attr_accessor:", rb_mod_attr_accessor, -1);

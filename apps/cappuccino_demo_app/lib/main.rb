@@ -3,7 +3,7 @@ require 'app_kit'
 
 # loads all vienna stuff
 require 'vienna'
-# require 'app_controller'
+require 'app_controller'
 # require 'ruby_testing'
 
 # inline javascript/objective-j:

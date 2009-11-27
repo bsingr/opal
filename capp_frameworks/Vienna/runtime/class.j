@@ -19,6 +19,8 @@ function rb_define_class(id, super_klass) {
     // ivars....?
     objj_registerClassPair(klass);
     objj_addClassForBundle(klass, objj_getBundleWithPath(OBJJ_CURRENT_BUNDLE.path));
+    rb_class_tbl[id] = klass;
+    rb_const_set(rb_cObject, id, klass);
     return klass;
 };
 
@@ -69,11 +71,60 @@ function rb_define_singleton_method(klass, id, func, arity) {
 
 rb_funcall = objj_msgSend;
 
-// function rb_funcall(klass, _cmd) {
-//     if (!klass.isa) {
-//         // not a class... so we can check...
-//         if (klass === null || klass === undefined) {
-//             // use nil (note: objj overrides nil, so we should use rb_nil;)
-//         }
-//     }
-// }
+function rb_search_method(klass, _cmd) {
+    // FIXME: need to be a 'good citizen' and do this
+    // if (!ISINITIALIZED(klass))
+        // _class_initialize(klass);
+    
+    var method = klass.method_dtable[_cmd];
+
+    if (!method) {
+        klass = (klass & CLS_META) ? klass : klass.isa;
+        // check modules etc
+        while(klass) {
+            if (klass._rb_included_modules) {
+                // console.log('has included!');
+                for (var i = 0; i < klass._rb_included_modules.length; i++) {
+                    if (method = klass._rb_included_modules[i].method_dtable[_cmd]) {
+                        break;
+                    }
+                }
+                if (method) {
+                    break;
+                }
+            }
+            // console.log('trying ' + klass.name);
+            klass = klass.super_class;
+        }
+        // we found it..
+        if (method)
+            return method.method_imp;
+        
+        return null;
+    }
+    
+    return method.method_imp;
+}
+
+function rb_funcall(klass, _cmd) {
+    if ((klass == nil) || (!klass.isa)) {
+        throw 'sending to nil? or struct?'
+    }
+ 
+    var imp = rb_search_method(klass.isa, _cmd);
+    // could try checking for ir with/without semi colon? maybe the method takes var args..
+    
+    if (!imp) {
+        throw 'method not found... use method_missing?: ' + _cmd
+    }
+
+    switch(arguments.length)
+    {
+        case 2: return imp(klass, _cmd);
+        case 3: return imp(klass, _cmd, arguments[2]);
+        case 4: return imp(klass, _cmd, arguments[2], arguments[3]);
+        case 4: return imp(klass, _cmd, arguments[2], arguments[3], arguments[4]);
+    }
+
+    return imp.apply(klass, arguments);
+}

@@ -12,7 +12,7 @@
 // @import "core/object.j"
 // @import "core/module.j"
 // @import "core/top_self.j"
-// @import "core/hash.j"
-// @import "core/symbol.j"
+@import "core/hash.j"
+@import "core/symbol.j"
 
 // @import "app_kit/view.j"
