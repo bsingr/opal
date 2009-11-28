@@ -147,7 +147,7 @@ class Vienna::ObjjRuby < Vienna::RubyParser
     if definition[:singleton]
       write "rb_define_singleton_method("
       generate_stmt definition[:singleton], :instance => context[:instance], :full_stmt => false, :last_stmt => false
-      write ",'#{defintion[:fname]}',function(self,_cmd"
+      write ",'#{definition[:fname]}',function(self,_cmd"
       
       current_self_push 'self'
     elsif context[:top_level]
@@ -158,7 +158,13 @@ class Vienna::ObjjRuby < Vienna::RubyParser
       # 'normal' def methods should be checked to objj-ify them... turn them into a selector (colons) etc. 
       # basicallt, if they are not a label_styled_arg, but only take one parameter, they should really be
       # of the form fname: .. where the def name is also camelcased.
-      write "rb_define_method(#{current_self},'#{definition[:fname].vn_selectorize(selector_has_colon)}',function(self,_cmd"
+      write "rb_define_method(#{current_self}, '#{definition[:fname]}"
+      
+      if definition[:arglist] and definition[:arglist][:arg] and definition[:arglist][:arg].length == 1
+        write ":" unless definition[:fname].match(/[\<\>\=\+\-\*\/\[\]\!\~\^\?]/)
+      end
+      
+      write "',function(self,_cmd"
       current_self_push 'self'
     end
     
@@ -286,7 +292,7 @@ class Vienna::ObjjRuby < Vienna::RubyParser
     else
       # detect a block.....
       if call[:brace_block]
-        write "rb_funcall_block(["
+        write "rb_funcall_block("
       else
         # normal
         write "rb_funcall("
@@ -308,26 +314,6 @@ class Vienna::ObjjRuby < Vienna::RubyParser
       
       write "'"
     end
-    
-    
-    def generate_identifier identifier, context
-      # puts identifier
-      
-      write 'return ' if context[:last_stmt] and context[:full_stmt]
-      
-      if nametable_include? identifier[:name]
-        write identifier[:name]
-      else
-        # method call
-        # write "#{current_self}.$('#{identifier[:name]}', [])"
-        write "rb_funcall(#{current_self},'#{identifier[:name]}')"
-      end
-      write ";\n" if context[:full_stmt]
-    end
-    
-    
-    
-    
     
     # normal call args
     unless call[:call_args].nil? or call[:call_args][:args].nil?
@@ -391,6 +377,22 @@ class Vienna::ObjjRuby < Vienna::RubyParser
     write ";\n" if context[:full_stmt]
     
     # write call[:brace_block]
+  end
+  
+  
+  def generate_identifier identifier, context
+    # puts identifier
+    
+    write 'return ' if context[:last_stmt] and context[:full_stmt]
+    
+    if nametable_include? identifier[:name]
+      write identifier[:name]
+    else
+      # method call
+      # write "#{current_self}.$('#{identifier[:name]}', [])"
+      write "rb_funcall(#{current_self},'#{identifier[:name]}')"
+    end
+    write ";\n" if context[:full_stmt]
   end
   
   

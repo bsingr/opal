@@ -5,7 +5,7 @@
 class CPWindow < CPResponder
   
   def <<(view)
-    self.contentView << view
+    contentView << view
   end
 end
 
@@ -29,6 +29,12 @@ class AppController
   
   attr_accessor :window
   
+  def applicationWillFinishLaunching(notification)
+    [10, 11, 13].each do |i|
+      puts i
+    end
+  end
+  
   def applicationDidFinishLaunching(notification)
 
     @window = CPWindow.alloc.initWithContentRect(CGRectMakeZero(), styleMask:CPBorderlessBridgeWindowMask)
@@ -42,13 +48,20 @@ class AppController
     # content_view << label
     
     @window.orderFront self
-    CPMenu.menuBarVisible = true
+    
+    # CPMenu.menuBarVisible = true
     
     # Inline objective-c...
-    @shared_application = `[CPApplication sharedApplication]`
+    `[CPMenu setMenuBarVisible:true];`
 
     # 'puts' calls CPLog for unification of methods.
-    # puts "App finished launching!!"
+    puts "App finished launching!!"
+    
+    puts nil.nil?
+    
+    puts "window frame:"
+    f = CPPoint.new(10,10)
+    puts f.in_rect?(@window.frame)
   end
   
   def numberOfRowsInTableView(table_view)

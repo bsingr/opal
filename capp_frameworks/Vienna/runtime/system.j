@@ -10,10 +10,10 @@
     }
 */
 function rb_yield(args) {
-    if (rb_block_defined_p(args)) {
+    if (rb_block_given_p(args)) {
         // do block
-        var a = Array.prototype.slice.call(args, 1);
-        var b = arguments[arguments.length - 1];
+        var a = Array.prototype.slice.call(arguments, 1);
+        var b = args[args.length - 1];
         return b.apply(b, a);
     }
     throw 'yield: block not given exception.'
@@ -28,10 +28,21 @@ function rb_yield(args) {
     Temporarily, block_defined? is actually a keyword in the vienna parser. This
     will change soon once this method has had a rewrite.
 */
-function rb_block_defined_p(args) {
-    var b = arguments[arguments.length - 1];
-    if ((b.isa == rb_cProc) && (b.rb_is_block)) {
+function rb_block_given_p(args) {
+    var b = args[args.length - 1];
+    // fixme, check its a proc
+    // if ((b.isa == rb_cProc) && (b.rb_is_block)) {
+    if (b.rb_is_block) {
         return true;
     }
     return false;
+}
+
+/**
+    puts:
+    
+    Simply uses CPLog (normal)
+*/
+function rb_f_puts(self, _cmd, s) {
+    console.log(s);
 }

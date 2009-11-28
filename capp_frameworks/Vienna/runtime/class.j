@@ -106,13 +106,48 @@ function rb_search_method(klass, _cmd) {
     return method.method_imp;
 }
 
-function rb_funcall(klass, _cmd) {
-    if ((klass == nil) || (!klass.isa)) {
-        throw 'sending to nil? or struct?'
+// Returns true or false. true if we found a type, false if we didnt.
+// we set the isa on the struct for future reference. This will not affect
+// cappuccino etc, and it does not use a .isa property (hence why we are
+// trying to find one!)
+
+// Supported structs:
+//      CPRect, CPSize, CPPoint.
+function rb_resolve_struct_type(s) {
+    if (s.hasOwnProperty('size') && s.hasOwnProperty('origin')) {
+        s.isa = rb_const_get(rb_cObject, 'CPRect');
+        return true;
     }
- 
-    var imp = rb_search_method(klass.isa, _cmd);
-    // could try checking for ir with/without semi colon? maybe the method takes var args..
+    else if (s.hasOwnProperty('width') && s.hasOwnProperty('height')) {
+        s.isa = rb_const_get(rb_cObject, 'CPSize');
+        return true;
+    }
+    else if (s.hasOwnProperty('x') && s.hasOwnProperty('y')) {
+        s.isa = rb_const_get(rb_cObject, 'CPPoint');
+        return true;
+    }
+    
+    return false;
+}
+
+function rb_funcall(klass, _cmd) {
+    var imp;
+    if ((klass == nil) || (!klass.isa)) {
+        if (klass == null || klass == undefined) {
+            imp = rb_search_method(rb_cNilClass, _cmd);
+        }
+        else {
+            // Now we start to try and find the type of struct we found:
+            if (!rb_resolve_struct_type(klass)) {
+                throw 'sending "' + _cmd + '" to struct?'
+            }
+            console.log(klass);
+            imp = rb_search_method(klass.isa, _cmd);
+        }
+    }
+    else { // normal class, so...
+        imp = rb_search_method(klass.isa, _cmd);
+    }
     
     if (!imp) {
         throw 'method not found... use method_missing?: ' + _cmd
@@ -123,8 +158,15 @@ function rb_funcall(klass, _cmd) {
         case 2: return imp(klass, _cmd);
         case 3: return imp(klass, _cmd, arguments[2]);
         case 4: return imp(klass, _cmd, arguments[2], arguments[3]);
-        case 4: return imp(klass, _cmd, arguments[2], arguments[3], arguments[4]);
+        case 5: return imp(klass, _cmd, arguments[2], arguments[3], arguments[4]);
     }
 
     return imp.apply(klass, arguments);
+}
+
+function rb_funcall_block(klass, _cmd) {
+    var b = arguments[arguments.length - 1]
+    b.rb_is_block = true;
+    var r = rb_funcall.apply(klass, arguments);
+    return r;
 }
