@@ -1,5 +1,5 @@
 /**
-    Ruby object types.
+    Ruby object types. (not needed when sat on top of objj?)
 */
 RB_CLASS   = 0;
 RB_MODULE  = 1;

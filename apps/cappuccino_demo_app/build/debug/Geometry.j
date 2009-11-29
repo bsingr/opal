@@ -31,7 +31,13 @@ rb_define_method(self, 'height=',function(self,_cmd,h) {
 return rb_funcall(rb_ivar_get(self,'size'),'setHeight:',h);
 });
 rb_define_method(self, 'contains_point?',function(self,_cmd,point) {
-return ANDTEST((rb_funcall(rb_funcall(point,'x'),'>',rb_funcall(rb_ivar_get(self,'origin'),'x'))),ANDTEST((rb_funcall(rb_funcall(point,'y'),'>',rb_funcall(rb_ivar_get(self,'origin'),'y'))),ANDTEST((rb_funcall(rb_funcall(point,'x'),'<',(rb_funcall(rb_funcall(rb_ivar_get(self,'origin'),'x'),'+',rb_funcall(rb_ivar_get(self,'size'),'width'))))),(rb_funcall(rb_funcall(point,'y'),'<',(rb_funcall(rb_funcall(rb_ivar_get(self,'origin'),'y'),'+',rb_funcall(rb_ivar_get(self,'size'),'height'))))))));
+return ANDTEST(function(){return (rb_funcall(rb_funcall(point,'x'),'>',rb_funcall(rb_ivar_get(self,'origin'),'x')));
+},function(){return ANDTEST(function(){return (rb_funcall(rb_funcall(point,'y'),'>',rb_funcall(rb_ivar_get(self,'origin'),'y')));
+},function(){return ANDTEST(function(){return (rb_funcall(rb_funcall(point,'x'),'<',(rb_funcall(rb_funcall(rb_ivar_get(self,'origin'),'x'),'+',rb_funcall(rb_ivar_get(self,'size'),'width')))));
+},function(){return (rb_funcall(rb_funcall(point,'y'),'<',(rb_funcall(rb_funcall(rb_ivar_get(self,'origin'),'y'),'+',rb_funcall(rb_ivar_get(self,'size'),'height')))));
+});
+});
+});
 });
 })(rb_define_class('CPRect',rb_cObject));
 (function(self) {

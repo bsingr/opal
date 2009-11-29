@@ -73,6 +73,7 @@ function rb_mod_attr_accessor(self, _cmd) {
 }
 
 function rb_objj_define_kvo_setter(klass, id) {
+    id = rb_funcall(id, 'to_s');
     var k = 'set' + id.charAt(0).toUpperCase() + id.substr(1) + ':';
     rb_define_method(klass, k, function(self, _cmd, v) {
         var k = id;
@@ -81,6 +82,7 @@ function rb_objj_define_kvo_setter(klass, id) {
 }
 
 function rb_objj_define_kvo_getter(klass, id) {
+    id = rb_funcall(id, 'to_s');
     rb_define_method(klass, id, function(self, _cmd) {
         return rb_ivar_get(self, _cmd);
     }, 0);
@@ -163,11 +165,12 @@ rb_cModule = boot_defclass("Module", rb_cObject);
 rb_cClass = boot_defclass("Class", rb_cModule);
 
 
-rb_define_method(rb_cModule, "alloc", rb_module_s_alloc, 0);
-rb_define_method(rb_cClass, "alloc", rb_class_s_alloc, 0);
+rb_define_singleton_method(rb_cModule, "alloc", rb_module_s_alloc, 0);
+rb_define_singleton_method(rb_cClass, "alloc", rb_class_s_alloc, 0);
 
-rb_include_module(rb_cObject, rb_cClass);
-rb_include_module(rb_cObject, rb_cModule);
+// include class and module on the object meta.
+rb_include_module(rb_cObject.isa, rb_cClass);
+rb_include_module(rb_cObject.isa, rb_cModule);
  
 rb_define_singleton_method(rb_cObject, "new:", rb_class_new_instance_imp, -1);
  
@@ -194,8 +197,8 @@ rb_define_method(rb_cBasicObject, "singleton_method_undefined:", rb_obj_dummy2, 
 rb_mKernel = rb_define_module("Kernel");
 rb_include_module(rb_cObject, rb_mKernel);
 // puts, handle case where more than one arg is sent. This should be done by rb_funcall.
-rb_define_method(rb_cClass, "puts:", rb_f_puts, 1);
-rb_define_method(rb_cClass, "puts", rb_f_puts, 1);
+rb_define_method(rb_mKernel, "puts:", rb_f_puts, 1);
+rb_define_method(rb_mKernel, "puts", rb_f_puts, 1);
 
 rb_define_method(rb_cClass, "inherited:", rb_obj_dummy2, 1);
 rb_define_method(rb_cModule, "included:", rb_obj_dummy2, 1);
@@ -258,7 +261,8 @@ rb_define_method(rb_cNilClass, "nil?", rb_true, 0);
 
 
 
-
+// these need fixing.. we have now added module and class to the meta object (kernel remains on class object)
+// so, instances can access kernel methods, but only class level can accesss module and class, i.e. attr_accessor.
 rb_define_method(rb_cModule, "attr:", rb_mod_attr, -1);
 rb_define_method(rb_cModule, "attr_reader:", rb_mod_attr_reader, -1);
 rb_define_method(rb_cModule, "attr_writer:", rb_mod_attr_writer, -1);

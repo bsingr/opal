@@ -30,9 +30,10 @@ class AppController
   attr_accessor :window
   
   def applicationWillFinishLaunching(notification)
-    [10, 11, 13].each do |i|
-      puts i
-    end
+    a = ["adam", "charles", "beynon"]
+    puts "CPString block mapping:"
+    # can use cappuccino methods as procs as well [CPString uppercaseString];
+    puts a.map(&:uppercaseString)
   end
   
   def applicationDidFinishLaunching(notification)
@@ -55,13 +56,14 @@ class AppController
     `[CPMenu setMenuBarVisible:true];`
 
     # 'puts' calls CPLog for unification of methods.
-    puts "App finished launching!!"
+    # puts "App finished launching!!"
     
-    puts nil.nil?
+    # puts nil.nil?
     
-    puts "window frame:"
-    f = CPPoint.new(10,10)
-    puts f.in_rect?(@window.frame)
+    # puts "window frame:"
+    f = CPPoint.new(100,100)
+    f.in_rect?(@window.frame)
+    # puts @window.frame
   end
   
   def numberOfRowsInTableView(table_view)

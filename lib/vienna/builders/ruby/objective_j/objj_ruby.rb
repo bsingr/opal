@@ -291,7 +291,7 @@ class Vienna::ObjjRuby < Vienna::RubyParser
       write "("
     else
       # detect a block.....
-      if call[:brace_block]
+      if call[:brace_block] || call[:call_args][:block_arg]
         write "rb_funcall_block("
       else
         # normal
@@ -372,6 +372,14 @@ class Vienna::ObjjRuby < Vienna::RubyParser
       pop_nametable
       
     end # end block
+    
+    # symbol block: &:upcase etc.
+    # If symbol passed.... used symbol as block, and call to_proc on it
+    if call[:call_args][:block_arg]
+      write ",rb_funcall("
+      generate_stmt call[:call_args][:block_arg][:arg], :instance => context[:singleton], :full_stmt => false, :last_stmt => false, :top_level => context[:top_level]
+      write ",'to_proc')"  
+    end
     
     write ")"
     write ";\n" if context[:full_stmt]
@@ -637,6 +645,31 @@ class Vienna::ObjjRuby < Vienna::RubyParser
       write "#{constant_scope}(#{current_self},'#{const[:name]}')"
       # write "self.#{constant_scope}(#{const[:name]})"
     end
+    
+    write ";\n" if context[:full_stmt]
+  end
+  
+  
+  def generate_orop stmt, context
+    write 'return ' if context[:last_stmt] and context[:full_stmt]
+    
+    write "ORTEST(function(){"
+    generate_stmt stmt[:lhs], :instance => context[:instance], :full_stmt => true, :last_stmt => true, :self => context[:self]
+    write "},function(){"
+    generate_stmt stmt[:rhs], :instance => context[:instance], :full_stmt => true, :last_stmt => true, :self => context[:self]
+    write "})"
+    
+    write ";\n" if context[:full_stmt]
+  end
+  
+  def generate_andop stmt, context
+    write 'return ' if context[:last_stmt] and context[:full_stmt]
+    
+    write "ANDTEST(function(){"
+    generate_stmt stmt[:lhs], :instance => context[:instance], :full_stmt => true, :last_stmt => true, :self => context[:self]
+    write "},function(){"
+    generate_stmt stmt[:rhs], :instance => context[:instance], :full_stmt => true, :last_stmt => true, :self => context[:self]
+    write "})"
     
     write ";\n" if context[:full_stmt]
   end

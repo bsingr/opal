@@ -79,27 +79,19 @@ function rb_search_method(klass, _cmd) {
     var method = klass.method_dtable[_cmd];
 
     if (!method) {
-        klass = (klass & CLS_META) ? klass : klass.isa;
-        // check modules etc
         while(klass) {
             if (klass._rb_included_modules) {
-                // console.log('has included!');
                 for (var i = 0; i < klass._rb_included_modules.length; i++) {
                     if (method = klass._rb_included_modules[i].method_dtable[_cmd]) {
                         break;
                     }
                 }
-                if (method) {
-                    break;
-                }
+                if (method) break;
             }
-            // console.log('trying ' + klass.name);
             klass = klass.super_class;
         }
         // we found it..
-        if (method)
-            return method.method_imp;
-        
+        if (method) return method.method_imp;
         return null;
     }
     
@@ -150,7 +142,8 @@ function rb_funcall(klass, _cmd) {
     }
     
     if (!imp) {
-        throw 'method not found... use method_missing?: ' + _cmd
+        throw klass.isa.name + '#' + _cmd + ' is not defined. method_midding.'
+        // throw 'method not found... use method_missing?: ' + _cmd
     }
 
     switch(arguments.length)

@@ -41,20 +41,20 @@ function rb_define_module(id) {
 function rb_include_module(klass, module) {
     // copy module into klass
     // console.log('copying ' + module.name + ' into ' + klass.name);
-    var t = klass.isa; // t = target
+    // var t = klass.isa; // t = target
     
-    if (!t._rb_included_modules) {
-        t._rb_included_modules = [];
+    if (!klass._rb_included_modules) {
+        klass._rb_included_modules = [];
     }
-    if (t._rb_included_modules.indexOf(module) > -1) {
+    if (klass._rb_included_modules.indexOf(module) > -1) {
         // already added, so return!
         return;
     }
     // else, add it....
-    t._rb_included_modules.push(module);
+    klass._rb_included_modules.push(module);
     
     if (!module._rb_included_in_classes) {
         module._rb_included_in_classes = [];
     }
-    module._rb_included_in_classes.push(t);
+    module._rb_included_in_classes.push(klass);
 }
