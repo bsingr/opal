@@ -22,6 +22,18 @@ function rb_define_module(id) {
     return m;
 }
 
+function rb_define_module_under(outer, id) {
+    var m;
+    if (rb_const_defined(outer, id)) {
+        m = rb_const_get(outer, id);
+        // check type..
+        return m;
+    }
+    m = rb_define_module_id(id);
+    rb_const_set(outer, id, m);
+    return m;
+}
+
 /**
     Objj wont natively support including modules, so instead, modules
     are added to class's meta classes in an array, so rb_funcall can

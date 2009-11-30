@@ -22,9 +22,34 @@ function rb_define_class(id, super_klass) {
     rb_class_tbl[id] = klass;
     rb_const_set(rb_cObject, id, klass);
     return klass;
-};
+}
 
-// from class
+/**
+    Do NOT register class pair. If we register a class pair, they will be added to
+    global scope. This will break cappuccino side of things if we get name clashes.
+*/
+function rb_define_class_under(outer, id, super_class) {
+    var klass;
+    // class defined?
+    if (rb_const_defined(outer, id)) {
+        klass = rb_const_get(outer, id);
+        if ((super_class !== CPObject) && (klass.super_class !== super_class)) {
+            throw id + ' already exists! different super given..'
+        }
+        return klass;
+    }
+    
+    if (!super_class) {
+        console.log('warnng: no superclass given for ' + id + '. CPObject assumed');
+        super_class = CPObject;
+    }
+    klass = objj_allocateClassPair(super_class, id);
+    objj_addClassForBundle(klass, objj_getBundleWithPath(OBJJ_CURRENT_BUNDLE.path));
+    rb_const_set(outer, id, klass);
+    return klass;
+}
+
+
 function rb_class_boot(superclass) {
     return rb_objj_create_class(null, superclass);
 }
@@ -133,7 +158,7 @@ function rb_funcall(klass, _cmd) {
             if (!rb_resolve_struct_type(klass)) {
                 throw 'sending "' + _cmd + '" to struct?'
             }
-            console.log(klass);
+            // console.log(klass);
             imp = rb_search_method(klass.isa, _cmd);
         }
     }

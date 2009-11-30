@@ -12,7 +12,7 @@
 
 // @import "core/object.j"
 // @import "core/module.j"
-// @import "core/top_self.j"
+@import "core/top_self.j"
 @import "core/number.j"
 @import "core/array.j"
 @import "core/hash.j"

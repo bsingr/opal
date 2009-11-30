@@ -110,6 +110,9 @@ function rb_obj_not_match(self, _cmd, obj2) {
     return RTEST(rb_funcall(self, "=~", obj2)) ? true : false;
 }
 
+function rb_obj_include(self, _cmd, mod) {
+    return rb_include_module(self.isa, mod);
+}
 
 
 function false_and(self, _cmd, o) {
@@ -199,6 +202,9 @@ rb_include_module(rb_cObject, rb_mKernel);
 // puts, handle case where more than one arg is sent. This should be done by rb_funcall.
 rb_define_method(rb_mKernel, "puts:", rb_f_puts, 1);
 rb_define_method(rb_mKernel, "puts", rb_f_puts, 1);
+
+// added..
+rb_define_method(rb_mKernel, "include:", rb_obj_include, -1);
 
 rb_define_method(rb_cClass, "inherited:", rb_obj_dummy2, 1);
 rb_define_method(rb_cModule, "included:", rb_obj_dummy2, 1);

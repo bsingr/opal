@@ -3,9 +3,10 @@ require 'app_kit'
 
 # loads all vienna stuff
 require 'vienna'
+# actual vn module (will be inside vienna module once we add support for framework compiling)
+require 'vn/vienna'
+
 require 'app_controller'
-require 'geometry'
-# require 'ruby_testing'
 
 # inline javascript/objective-j:
 `

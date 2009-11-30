@@ -2,19 +2,8 @@
 # Adam Beynon
 # Vienna (VRuby).
 
-class CPWindow < CPResponder
-  
-  def <<(view)
-    contentView << view
-  end
-end
-
-class CPView < CPResponder
-  
-  def <<(view)
-    addSubview view
-  end
-end
+# so we can use the 'builder' methods.
+# include Vienna::Builder
 
 # Root object in vienna (for capp) is CPObject, so we can ommit the superclass
 class AppController
@@ -34,6 +23,8 @@ class AppController
     puts "CPString block mapping:"
     # can use cappuccino methods as procs as well [CPString uppercaseString];
     puts a.map(&:uppercaseString)
+
+    a = Object.new
   end
   
   def applicationDidFinishLaunching(notification)

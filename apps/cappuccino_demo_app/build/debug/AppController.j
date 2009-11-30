@@ -1,21 +1,12 @@
 (function(self) {
-rb_define_method(self, '<<',function(self,_cmd,view) {
-return rb_funcall(rb_funcall(self,'contentView'),'<<',view);
-});
-})(rb_define_class('CPWindow',rb_const_get_full(self,'CPResponder')));
-(function(self) {
-rb_define_method(self, '<<',function(self,_cmd,view) {
-return rb_funcall(self,'addSubview:',view);
-});
-})(rb_define_class('CPView',rb_const_get_full(self,'CPResponder')));
-(function(self) {
 rb_const_set(self,'MY_NAME',"Adam Beynon");
 rb_const_set(self,'TABLE_DATA',[rb_hash_new(ID2SYM('name'), 'Adam Beynon', ID2SYM('age'), 23),rb_hash_new(ID2SYM('name'), 'Spongebob Squarepants', ID2SYM('age'), 73),rb_hash_new(ID2SYM('name'), 'John Smith', ID2SYM('age'), 28)]);
 rb_funcall(self,'attr_accessor:',ID2SYM('window'));
 rb_define_method(self, 'applicationWillFinishLaunching:',function(self,_cmd,notification) {
 var a=["adam","charles","beynon"];
 rb_funcall(self,'puts:',"CPString block mapping:");
-return rb_funcall(self,'puts:',rb_funcall_block(a,'map',rb_funcall(ID2SYM('uppercaseString'),'to_proc')));
+rb_funcall(self,'puts:',rb_funcall_block(a,'map',rb_funcall(ID2SYM('uppercaseString'),'to_proc')));
+return a=rb_funcall(rb_const_get_full(self.isa,'Object'),'new');
 });
 rb_define_method(self, 'applicationDidFinishLaunching:',function(self,_cmd,notification) {
 rb_ivar_set(self,'window',rb_funcall(rb_funcall(rb_const_get_full(self.isa,'CPWindow'),'alloc'),'initWithContentRect:styleMask:',CGRectMakeZero(),rb_const_get_full(self.isa,'CPBorderlessBridgeWindowMask')));

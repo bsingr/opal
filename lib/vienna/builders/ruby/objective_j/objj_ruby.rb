@@ -465,7 +465,7 @@ class Vienna::ObjjRuby < Vienna::RubyParser
     else
        # nested
         # write "RClass.define_under(self,'#{klass.klass_name}',"
-        write "#{js_replacement_function_name('rb_define_class_under')}(self,"
+        # write "#{js_replacement_function_name('rb_define_class_under')}(self,"
         write "rb_define_class_under(#{current_self},'"
         write klass.klass_name
         write "',"
