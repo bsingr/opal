@@ -12,6 +12,8 @@
 function rb_yield(args) {
     if (rb_block_given_p(args)) {
         // do block
+        // console.log('in block: ' + arguments.length);
+        // console.log(Array.prototype.slice.call(arguments));
         var a = Array.prototype.slice.call(arguments, 1);
         var b = args[args.length - 1];
         return b.apply(b, a);

@@ -147,7 +147,13 @@ class Vienna::ObjjRuby < Vienna::RubyParser
     if definition[:singleton]
       write "rb_define_singleton_method("
       generate_stmt definition[:singleton], :instance => context[:instance], :full_stmt => false, :last_stmt => false
-      write ",'#{definition[:fname]}',function(self,_cmd"
+      write ",'#{definition[:fname]}"
+      
+      if definition[:arglist] and definition[:arglist][:arg] and definition[:arglist][:arg].length == 1
+        write ":" unless definition[:fname].match(/[\<\>\=\+\-\*\/\[\]\!\~\^\?]/)
+      end
+      
+      write "',function(self,_cmd"
       
       current_self_push 'self'
     elsif context[:top_level]
@@ -213,11 +219,11 @@ class Vienna::ObjjRuby < Vienna::RubyParser
   def generate_label_styled_def(definition, context)
     push_nametable
     # get actual method name
-    method_name = definition[:fname].vn_selectorize(true)
+    method_name = definition[:fname] + ':'
     definition[:arglist][:arg].each do |a|
       next if definition[:arglist][:arg].first == a 
       # method_name << a[:name].vn_selectorize(true)
-      method_name << a[:name].gsub(/:/, '').vn_selectorize(true)
+      method_name << a[:name]
     end
     
     # main func def
@@ -355,7 +361,8 @@ class Vienna::ObjjRuby < Vienna::RubyParser
         end
       end
       write "){\n"
-      
+      # support for context sensetive blocks
+      write "self = arguments.callee.self || self;\n"
       if call[:brace_block][:stmt]
         call[:brace_block][:stmt].each do |stmt|
 
@@ -415,10 +422,10 @@ class Vienna::ObjjRuby < Vienna::RubyParser
        write "self"
      end
      
-     method_name = call[:meth].vn_selectorize(true)
+     method_name = call[:meth] + ':'
      
      call[:call_args][:assocs].each do |a|
-       method_name << a[:key].gsub(/:/, '').vn_selectorize(true)
+       method_name << a[:key]
      end
      
      write",'#{method_name}',"
@@ -509,18 +516,32 @@ class Vienna::ObjjRuby < Vienna::RubyParser
     current_self_pop
     
     write "})("
-    # write "RModule.define('#{mod.klass_name}')"
-    write "rb_define_module('"
-    # write "#{mod.klass_name}"
-    write mod.klass_name
-    write "')"
-    write ");\n"
+    
+    if context[:top_level]
+      write "rb_define_module('"
+      write mod.klass_name
+      write "'));\n"
+    else
+        write "rb_define_module_under(#{current_self},'"
+        write mod.klass_name
+        write "'));\n"
+    end
+  end
+  
+  def generate_colon2 stmt, context
+    write 'return ' if context[:last_stmt] and context[:full_stmt]
+    write "rb_const_get("
+    generate_stmt stmt[:lhs], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :top_level => context[:top_level]
+    # write '.$c_g('
+    # generate_stmt stmt[:rhs], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self => context[:self]
+    write ",'#{stmt[:rhs]}')"
+    write ";\n" if context[:full_stmt]
   end
   
   
   def generate_ivar(stmt, context)
     write 'return ' if context[:last_stmt] and context[:full_stmt]
-    write "rb_ivar_get(#{current_self},'#{stmt[:name].gsub(/@/, '').vn_selectorize(false)}')"
+    write "rb_ivar_get(#{current_self},'#{stmt[:name].gsub(/@/, '')}')"
     write ";\n" if context[:full_stmt]
   end
   
@@ -551,7 +572,7 @@ class Vienna::ObjjRuby < Vienna::RubyParser
     # If LHS is an @instance_variable
     elsif stmt[:lhs].node == :ivar
       # write "#{context[:self]}.$i_s(#{js_id_for_ivar(stmt[:lhs][:name])},"
-      write "rb_ivar_set(#{current_self},'#{stmt[:lhs][:name].gsub(/@/, '').vn_selectorize}',"
+      write "rb_ivar_set(#{current_self},'#{stmt[:lhs][:name].gsub(/@/, '')}',"
       generate_stmt stmt[:rhs], :instance => context[:instance], context[:full_stmt] => false, context[:last_stmt] => true, :self => context[:self]
       write ')'
     

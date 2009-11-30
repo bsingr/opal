@@ -1,5 +1,5 @@
 # 
-# vienna.rb
+# control.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,22 +24,36 @@
 # THE SOFTWARE.
 #
 
-# Foundation extensions
-require 'foundation/array'
-
-# AppKit extensions
-require 'app_kit/geometry'
-require 'app_kit/window'
-require 'app_kit/view'
-require 'app_kit/control'
-require 'app_kit/button'
-
-# Builders etc
-require 'builder/builder'
-
-module Vienna
+class CPControl < CPView
   
-  class Something
+  def to_s
+    stringValue
+  end
+
+  def to_i
+    intValue
+  end
+
+  def to_f
+    doubleValue
+  end
+  
+  def on_action(&block)
+    puts "In on action... my target is:"
+    if target
+      # already has a target..
+    else
+      o = Object.new
+      o.instance_variable_set("@action_behavior", block)
+      self.target = o
+      puts o
+    end
+    # singleton method for action
+    def o.perform_action(sender)
+      @action_behavior.call
+      # puts "Oh :D it works!"
+    end
     
+    self.action = "perform_action:"
   end
 end

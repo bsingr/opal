@@ -27,6 +27,71 @@ function rb_hash_initialize(self, _cmd) {
     return self;
 }
 
+function rb_hash_to_hash(self, _cmd) {
+    return self;
+}
+
+function rb_hash_to_a(self, _cmd) {
+    // broken??
+    var i, r = [];
+    for (i = 0; i < self.count; i++)
+        r.push([self.keys[i], self.buckets[self.keys[i]]]);
+    return r;
+}
+
+function rb_hash_inspect(self, _cmd) {
+    // Use Cappuccino's descripstion method
+    return rb_funcall(self, "description");
+}
+
+function rb_hash_aref(self, _cmd, key) {
+    return dictionary_getValue(self, key);
+}
+
+function rb_hash_aset(self, _cmd, key, value) {
+    dictionary_setValue(self, key, value);
+}
+
+function rb_hash_size(self, _cmd) {
+    return self.count;
+}
+
+function rb_hash_empty_p(self, _cmd) {
+    return self.count === 0;
+}
+
+function rb_hash_each_key(self, _cmd) {
+    var i;
+    for (i = 0; i < self.count; i++) {
+        rb_yield(arguments, self._keys[i]);
+    }
+    return self;
+}
+
+function rb_hash_each_value(self, _cmd) {
+    var i;
+    for (i = 0; i < self.count; i++) {
+        rb_yield(arguments, dictionary_getValue(self, self._keys[i]));
+    }
+    return self;
+}
+
+function rb_hash_each_pair(self, _cmd) {
+    var i;
+    for (i = 0; i < self.count; i++) {
+        rb_yield(arguments, self._keys[i], dictionary_getValue(self, self._keys[i]));
+    }
+    return self;
+}
+
+function rb_hash_keys(self, _cmd) {
+    return self._keys;
+}
+
+function rb_hash_values(self, _cmd) {
+    return rb_funcall(self, "allValues");
+}
+
 rb_cHash = objj_getClass("CPDictionary");
 rb_const_set(rb_cObject, "Hash", rb_cHash);
 // rb_include_module(rb_cHash, rb_mEnumerable);
@@ -35,37 +100,37 @@ rb_const_set(rb_cObject, "Hash", rb_cHash);
 // rb_define_singleton_method(rb_cHash, "try_convert", rb_hash_s_try_convert, 1);
 rb_define_method(rb_cHash, "initialize", rb_hash_initialize, -1);
 
-// rb_define_method(rb_cHash, "to_hash", rb_hash_to_hash, 0);
-// rb_define_method(rb_cHash, "to_a", rb_hash_to_a, 0);
-// rb_define_method(rb_cHash, "to_s", rb_hash_inspect, 0);
-// rb_define_method(rb_cHash, "inspect", rb_hash_inspect, 0);
+rb_define_method(rb_cHash, "to_hash", rb_hash_to_hash, 0);
+rb_define_method(rb_cHash, "to_a", rb_hash_to_a, 0);
+rb_define_method(rb_cHash, "to_s", rb_hash_inspect, 0);
+rb_define_method(rb_cHash, "inspect", rb_hash_inspect, 0);
 
 // rb_define_method(rb_cHash, "==", rb_hash_equal, 1);
-// rb_define_method(rb_cHash, "[]", rb_hash_aref_imp, 1);
+rb_define_method(rb_cHash, "[]", rb_hash_aref, 1);
 // rb_define_method(rb_cHash, "eql?", rb_hash_eql, 1);
 // rb_define_method(rb_cHash, "fetch", rb_hash_fetch, -1);
-// rb_define_method(rb_cHash, "[]=", rb_hash_aset_imp, 2);
-// rb_define_method(rb_cHash, "store", rb_hash_aset_imp, 2);
+rb_define_method(rb_cHash, "[]=", rb_hash_aset, 2);
+rb_define_method(rb_cHash, "store", rb_hash_aset, 2);
 // rb_define_method(rb_cHash, "default", rb_hash_default, -1);
 // rb_define_method(rb_cHash, "default=", rb_hash_set_default, 1);
 // rb_define_method(rb_cHash, "default_proc", rb_hash_default_proc, 0);
 // rb_define_method(rb_cHash, "key", rb_hash_key, 1);
 // rb_define_method(rb_cHash, "index", rb_hash_index, 1);
-// rb_define_method(rb_cHash, "size", rb_hash_size, 0);
-// rb_define_method(rb_cHash, "length", rb_hash_size, 0);
-// rb_define_method(rb_cHash, "empty?", rb_hash_empty_p, 0);
+rb_define_method(rb_cHash, "size", rb_hash_size, 0);
+rb_define_method(rb_cHash, "length", rb_hash_size, 0);
+rb_define_method(rb_cHash, "empty?", rb_hash_empty_p, 0);
 
-// rb_define_method(rb_cHash, "each_value", rb_hash_each_value, 0);
-// rb_define_method(rb_cHash, "each_key", rb_hash_each_key, 0);
-// rb_define_method(rb_cHash, "each_pair", rb_hash_each_pair, 0);
-// rb_define_method(rb_cHash, "each", rb_hash_each_pair, 0);
+rb_define_method(rb_cHash, "each_value", rb_hash_each_value, 0);
+rb_define_method(rb_cHash, "each_key", rb_hash_each_key, 0);
+rb_define_method(rb_cHash, "each_pair", rb_hash_each_pair, 0);
+rb_define_method(rb_cHash, "each", rb_hash_each_pair, 0);
 
-// rb_define_method(rb_cHash, "keys", rb_hash_keys_imp, 0);
-// rb_define_method(rb_cHash, "values", rb_hash_values, 0);
+rb_define_method(rb_cHash, "keys", rb_hash_keys, 0);
+rb_define_method(rb_cHash, "values", rb_hash_values, 0);
 // rb_define_method(rb_cHash, "values_at", rb_hash_values_at, -1);
 
 // rb_define_method(rb_cHash, "shift", rb_hash_shift, 0);
-// rb_define_method(rb_cHash, "delete", rb_hash_delete_imp, 1);
+// rb_define_method(rb_cHash, "delete", rb_hash_delete, 1);
 // rb_define_method(rb_cHash, "delete_if", rb_hash_delete_if, 0);
 // rb_define_method(rb_cHash, "select", rb_hash_select, 0);
 // rb_define_method(rb_cHash, "reject", rb_hash_reject, 0);

@@ -1,5 +1,5 @@
 # 
-# vienna.rb
+# builder.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,22 +24,11 @@
 # THE SOFTWARE.
 #
 
-# Foundation extensions
-require 'foundation/array'
-
-# AppKit extensions
-require 'app_kit/geometry'
-require 'app_kit/window'
-require 'app_kit/view'
-require 'app_kit/control'
-require 'app_kit/button'
-
-# Builders etc
-require 'builder/builder'
-
+# Vienna::Builder is inspired by HotCocoa for providing an easy and clean way
+# to quickly build guis.
 module Vienna
   
-  class Something
+  module Builder
     
   end
 end

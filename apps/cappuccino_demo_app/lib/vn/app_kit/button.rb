@@ -1,5 +1,5 @@
 # 
-# vienna.rb
+# button.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,22 +24,24 @@
 # THE SOFTWARE.
 #
 
-# Foundation extensions
-require 'foundation/array'
-
-# AppKit extensions
-require 'app_kit/geometry'
-require 'app_kit/window'
-require 'app_kit/view'
-require 'app_kit/control'
-require 'app_kit/button'
-
-# Builders etc
-require 'builder/builder'
-
-module Vienna
+class CPButton < CPControl
   
-  class Something
-    
+  def init_with_options(frame)
+    # if we have a state option, if its a symbol, convert it to CPOnState, CPOffState
+    # etc as state => setState will just call the Cappuccino method which expects
+    # an integer
+    b = self.initWithFrame options.delete(:frame)
+  end
+  
+  def on?
+    state == CPOnState
+  end
+  
+  def off?
+    state == CPOffState
+  end
+  
+  def mixed?
+    state == CPMixedState
   end
 end

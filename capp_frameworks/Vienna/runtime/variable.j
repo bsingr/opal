@@ -3,7 +3,18 @@ function rb_const_set(klass, id, value) {
 }
 
 function rb_const_defined(klass, id) {
-    return (klass[id]) ? true : false;
+    while(klass) {
+        if (klass[id]) {
+            return true;
+        }
+        klass = klass.super_class;
+    }
+    // finally try window
+    if (window[id]) {
+        return true;
+    }
+    
+    return false;
 }
 
 function rb_const_get(klass, id) {
@@ -13,6 +24,11 @@ function rb_const_get(klass, id) {
         }
         klass = klass.super_class;
     }
+    
+    if (window[id]) {
+        return window[id];
+    }
+    
     throw 'cannot find constant ' + id + ' on klass '
 }
 
@@ -37,7 +53,7 @@ function rb_const_get_full(klass, id) {
         rb_const_set(rb_cObject, id, window[id]);
         return window[id];
     }
-    throw 'cannot find constant ' + id + ' on klass '
+    throw '!!cannot find constant ' + id + ' on klass '
 }
 
 function rb_ivar_set(klass, id, val) {

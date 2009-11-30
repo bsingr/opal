@@ -12,10 +12,12 @@
 
 // @import "core/object.j"
 // @import "core/module.j"
+@import "core/enum.j"
 @import "core/top_self.j"
 @import "core/number.j"
 @import "core/array.j"
 @import "core/hash.j"
 @import "core/symbol.j"
+@import "core/proc.j"
 
 // @import "app_kit/view.j"

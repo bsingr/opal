@@ -102,6 +102,13 @@ function rb_equal(obj1, obj2) {
     return false;
 }
 
+function rb_obj_ivar_set(self, _cmd, id, val) {
+    if (id.substr(0,1) == "@")
+        id = id.substr(1);
+    
+    return self[id] = val;
+}
+
 function rb_obj_match(self, _cmd, obj2) {
     return null;
 }
@@ -161,9 +168,20 @@ function nil_inspect(self, _cmd) {
 
 rb_cObject = objj_getClass("CPObject");
 rb_const_set(rb_cObject, "Object", rb_cObject);
-rb_cBasicObject = objj_duplicateClass(rb_cObject, "BasicObject");
 
+/**
+    BasicObject
+    ===========
+    
+    Make it a 'root' object in objj, so it doesnt get many methods. BasicObject is
+    REALLY useful for meta building etc. Object inherits most responsibility.
+    Because of the way objj is set up, the few methods that are defined on 
+    BasicObject must also be defined on Object, as BasicObject in objj isnt actually
+    a superclass of Object. There are only 7 methods, so not a big problem.
+*/
+rb_cBasicObject = objj_allocateClassPair(null, 'BasicObject');
 rb_const_set(rb_cObject, "BasicObject", rb_cBasicObject);
+
 rb_cModule = boot_defclass("Module", rb_cObject);
 rb_cClass = boot_defclass("Class", rb_cModule);
 
@@ -232,7 +250,7 @@ rb_define_method(rb_mKernel, "eql?", rb_obj_equal, 1);
 // rb_define_method(rb_mKernel, "public_methods", rb_obj_public_methods, -1);
 // rb_define_method(rb_mKernel, "instance_variables", rb_obj_instance_variables, 0);
 // rb_define_method(rb_mKernel, "instance_variable_get", rb_obj_ivar_get, 1);
-// rb_define_method(rb_mKernel, "instance_variable_set", rb_obj_ivar_set, 2);
+rb_define_method(rb_mKernel, "instance_variable_set", rb_obj_ivar_set, 2);
 // rb_define_method(rb_mKernel, "instance_variable_defined?", rb_obj_ivar_defined, 1);
 // rb_define_method(rb_mKernel, "remove_instance_variable", rb_obj_remove_instance_variable, 1);
 // 

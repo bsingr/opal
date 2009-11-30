@@ -2,14 +2,16 @@
 function rb_define_class(id, super_klass) {
     var klass;
     // check if defined
-    if (objj_lookUpClass(id)) {
-        klass = objj_lookUpClass(id);
+    if (rb_const_defined(rb_cObject, id)) {
+        klass = rb_const_get(rb_cObject, id);
         if ((super_klass !== CPObject) && (klass.super_class !== super_klass)) {
             throw id + ' already exists! (different super given)'
         }
         
         return klass;
     }
+    
+    console.log("making new class: " + id);
     
     if (!super_klass) {
         console.log('Warning: no superclass for ' + id + '. CPObject assumed');
@@ -77,6 +79,7 @@ function rb_objj_alloc_class(name, superclass, type, klass) {
 }
 
 function rb_define_method(klass, id, func, arity) {
+    
     var m = new objj_method(id, func, []);
     // in ruby, this is very useful
     m.arity = arity;
@@ -90,11 +93,39 @@ function rb_define_method(klass, id, func, arity) {
 }
 
 function rb_define_singleton_method(klass, id, func, arity) {
-    // check type... class, or obj etc.. might need singleton class
-    return rb_define_method(klass.isa, id, func, arity);
+    return rb_define_method(rb_singleton_class(klass), id, func, arity);
 }
 
-rb_funcall = objj_msgSend;
+/**
+    Returns the singleton class. Meta classes are already singleton classes,
+    so this method just returns the meta class itself. Classes in objj are
+    not singleton, so a new class will be created, and returned, and then 
+    injected into the hierarchy. CLS_META identifies meta classes, while
+    CLS_CLASS identifies classes. A singleton class will have a CLS_SINGLETON
+    also, which is added on creation. Note, althogh a meta class is singleton,
+    it will not have a CLS_SINGLETON mask
+*/
+function rb_singleton_class(klass) {
+    if (klass.isa.info & CLS_CLASS) {
+        if (klass.isa.info & CLS_SINGLETON) {
+            // already a singleton
+            return klass.isa;
+        }
+        else {
+            // not a singleton, so need to make it
+            // keep same name...
+            var s = objj_allocateClassPair(klass.isa, klass.isa.name);
+            _class_initialize(s);
+            s.info |= CLS_SINGLETON
+            klass.isa = s;
+            return klass.isa;
+        }
+    }
+    else {
+        // meta class:
+        return klass.isa
+    }
+}
 
 function rb_search_method(klass, _cmd) {
     // FIXME: need to be a 'good citizen' and do this
@@ -143,7 +174,6 @@ function rb_resolve_struct_type(s) {
         s.isa = rb_const_get(rb_cObject, 'CPPoint');
         return true;
     }
-    
     return false;
 }
 
@@ -156,9 +186,9 @@ function rb_funcall(klass, _cmd) {
         else {
             // Now we start to try and find the type of struct we found:
             if (!rb_resolve_struct_type(klass)) {
-                throw 'sending "' + _cmd + '" to struct?'
+                console.log(klass);
+                throw 'sending "' + _cmd + '" to struct? ' + klass
             }
-            // console.log(klass);
             imp = rb_search_method(klass.isa, _cmd);
         }
     }
@@ -170,7 +200,7 @@ function rb_funcall(klass, _cmd) {
         throw klass.isa.name + '#' + _cmd + ' is not defined. method_midding.'
         // throw 'method not found... use method_missing?: ' + _cmd
     }
-
+    
     switch(arguments.length)
     {
         case 2: return imp(klass, _cmd);
