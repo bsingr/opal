@@ -109,6 +109,10 @@ function rb_ary_fetch(self, _cmd) {
     return self[i];
 }
 
+function rb_ary_first(self, _cmd) {
+    return self[0];
+}
+
 function rb_ary_each(self, _cmd) {
     var i;
     for (i = 0; i < self.length; i++) {
@@ -167,7 +171,7 @@ rb_define_method(rb_cArray, "[]", rb_ary_aref, -1);
 rb_define_method(rb_cArray, "[]=", rb_ary_aset, -1);
 rb_define_method(rb_cArray, "at", rb_ary_at, 1);
 rb_define_method(rb_cArray, "fetch", rb_ary_fetch, -1);
-// rb_define_method(rb_cArray, "first", rb_ary_first, -1);
+rb_define_method(rb_cArray, "first", rb_ary_first, -1);
 // rb_define_method(rb_cArray, "last", rb_ary_last, -1);
 // rb_define_method(rb_cArray, "concat", rb_ary_concat_imp, 1);
 // rb_define_method(rb_cArray, "<<", rb_ary_push_imp, 1);

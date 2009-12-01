@@ -4,13 +4,13 @@ function rb_const_set(klass, id, value) {
 
 function rb_const_defined(klass, id) {
     while(klass) {
-        if (klass[id]) {
+        if (klass[id] !== undefined) {
             return true;
         }
         klass = klass.super_class;
     }
     // finally try window
-    if (window[id]) {
+    if (window[id] !== undefined) {
         return true;
     }
     
@@ -19,13 +19,13 @@ function rb_const_defined(klass, id) {
 
 function rb_const_get(klass, id) {
     while(klass) {
-        if (klass[id]) {
+        if (klass[id] !== undefined) {
             return klass[id];
         }
         klass = klass.super_class;
     }
     
-    if (window[id]) {
+    if (window[id] !== undefined) {
         return window[id];
     }
     
@@ -42,13 +42,13 @@ function rb_const_get_full(klass, id) {
     while(klass) {
         // console.log(klass);
         // console.log(klass.name);
-        if (klass[id]) {
+        if (klass[id] !== undefined) {
             return klass[id];
         }
         klass = klass.super_class;
     }
     // try window level scope (for cappuccino classes etc);
-    if (window[id]) {
+    if (window[id] !== undefined) {
         // save for future use
         rb_const_set(rb_cObject, id, window[id]);
         return window[id];

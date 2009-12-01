@@ -92,6 +92,16 @@ function rb_hash_values(self, _cmd) {
     return rb_funcall(self, "allValues");
 }
 
+function rb_hash_delete(self, _cmd, key) {
+    var r = dictionary_getValue(self, key);
+    dictionary_removeValue(self, key);
+    return r;
+}
+
+function rb_hash_merge(self, _cmd, options) {
+    rb_funcall(self, "addEntriesFromDictionary:", options);
+}
+
 rb_cHash = objj_getClass("CPDictionary");
 rb_const_set(rb_cObject, "Hash", rb_cHash);
 // rb_include_module(rb_cHash, rb_mEnumerable);
@@ -130,7 +140,7 @@ rb_define_method(rb_cHash, "values", rb_hash_values, 0);
 // rb_define_method(rb_cHash, "values_at", rb_hash_values_at, -1);
 
 // rb_define_method(rb_cHash, "shift", rb_hash_shift, 0);
-// rb_define_method(rb_cHash, "delete", rb_hash_delete, 1);
+rb_define_method(rb_cHash, "delete:", rb_hash_delete, 1);
 // rb_define_method(rb_cHash, "delete_if", rb_hash_delete_if, 0);
 // rb_define_method(rb_cHash, "select", rb_hash_select, 0);
 // rb_define_method(rb_cHash, "reject", rb_hash_reject, 0);
@@ -141,7 +151,7 @@ rb_define_method(rb_cHash, "values", rb_hash_values, 0);
 // rb_define_method(rb_cHash, "update", rb_hash_update, 1);
 // rb_define_method(rb_cHash, "replace", rb_hash_replace, 1);
 // rb_define_method(rb_cHash, "merge!", rb_hash_update, 1);
-// rb_define_method(rb_cHash, "merge", rb_hash_merge, 1);
+rb_define_method(rb_cHash, "merge:", rb_hash_merge, 1);
 // rb_define_method(rb_cHash, "assoc", rb_hash_assoc, 1);
 // rb_define_method(rb_cHash, "rassoc", rb_hash_rassoc, 1);
 // rb_define_method(rb_cHash, "flatten", rb_hash_flatten, -1);

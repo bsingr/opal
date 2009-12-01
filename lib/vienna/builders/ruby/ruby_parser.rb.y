@@ -238,18 +238,18 @@ rule
 
  cmd_brace_block: tLBRACE_ARG opt_block_param compstmt '}'
 
-         command: operation command_args
+         command: operation command_args =tLOWEST
                   {
                     # command call - no brackets/recv
           		      result = node :call, :recv => nil, :meth => val[0], :call_args => val[1]
                   }
         	      | operation command_args cmd_brace_block
-        	      | primary_value '.' operation2 command_args
+        	      | primary_value '.' operation2 command_args =tLOWEST
         	        {
           		      result = node :call, :recv => val[0], :meth => val[2], :call_args => val[3]
                   }
         	      | primary_value '.' operation2 command_args cmd_brace_block
-        	      | primary_value tCOLON2 operation2 command_args
+        	      | primary_value tCOLON2 operation2 command_args =tLOWEST
       		      | primary_value tCOLON2 operation2 command_args cmd_brace_block
       		      | kSUPER command_args
       		        {
@@ -614,6 +614,11 @@ rule
   	            | regexp
   	            | words
   	            | qwords
+  	            | var_ref do_block
+  	              {
+                    # HACK: this rule shouldnt even exist. But for now it must for "identifier do .. end"
+  	                result = node :call, :recv => nil, :meth => val[0][:name], :brace_block => val[1]
+  	              }
   	            | var_ref
   	            | backref
   	            | tFID
@@ -659,9 +664,6 @@ rule
             		| kNOT '(' expr rparen
             		| kNOT '(' rparen
             		| operation brace_block
-            		  {
-                    # puts 1
-            		  }
             		| method_call
             		  {
             		    # puts 2
@@ -854,12 +856,12 @@ rule
                   }
               	| primary_value tCOLON2 operation2 paren_args
               	  {
-              	    result = :tCOLON2call, :recv => val[0], :meth => val[2], :args => val[3]
+              	    result = node :tCOLON2call, :recv => val[0], :meth => val[2], :args => val[3]
               	    puts "tCOLON2call"
               	  }
             		| primary_value tCOLON2 operation3
             		  {
-              	    result = :tCOLON2call, :recv => val[0], :meth => val[2]
+              	    result = node :tCOLON2call, :recv => val[0], :meth => val[2]
               	    puts "tCOLON2call.noargs."
               	  }
             		| primary_value '.' paren_args
@@ -1018,6 +1020,7 @@ xstring_contents:
 
         variable: tIDENTIFIER
                   {
+                    
                     result = node :identifier, :name => val[0]
                   }
             		| tIVAR
@@ -1260,11 +1263,17 @@ xstring_contents:
               	| tFID
 
       operation2: tIDENTIFIER
+                  {
+                    
+                  }
               	| tCONSTANT
               	| tFID
               	| op
 
       operation3: tIDENTIFIER
+                  {
+                    puts 4
+                  }
               	| tFID
               	| op
 

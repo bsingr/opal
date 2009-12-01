@@ -72,6 +72,10 @@ class CPRect
   def contains_point?(point)
     (point.x > @origin.x) && (point.y > @origin.y) && (point.x < (@origin.x + @size.width)) &&  (point.y < (@origin.y + @size.height))
   end
+  
+  def to_rect
+    self
+  end
 end
 
 

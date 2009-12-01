@@ -38,6 +38,10 @@ class CPControl < CPView
     doubleValue
   end
   
+  def on_action=(block)
+    on_action block
+  end
+  
   def on_action(&block)
     puts "In on action... my target is:"
     if target

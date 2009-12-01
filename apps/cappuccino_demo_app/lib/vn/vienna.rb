@@ -32,10 +32,12 @@ require 'app_kit/geometry'
 require 'app_kit/window'
 require 'app_kit/view'
 require 'app_kit/control'
-require 'app_kit/button'
 
 # Builders etc
 require 'builder/builder'
+
+# Mappings
+require 'mappings'
 
 module Vienna
   

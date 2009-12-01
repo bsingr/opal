@@ -8,6 +8,9 @@ return rb_funcall(self,'intValue');
 rb_define_method(self, 'to_f',function(self,_cmd) {
 return rb_funcall(self,'doubleValue');
 });
+rb_define_method(self, 'setOn_action:',function(self,_cmd,block) {
+return rb_funcall(self,'on_action:',block);
+});
 rb_define_method(self, 'on_action',function(self,_cmd,block) {
 rb_funcall(self,'puts:',"In on action... my target is:");
 if(RTEST(rb_funcall(self,'target'))){

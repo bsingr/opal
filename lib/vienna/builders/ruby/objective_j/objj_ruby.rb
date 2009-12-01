@@ -164,7 +164,12 @@ class Vienna::ObjjRuby < Vienna::RubyParser
       # 'normal' def methods should be checked to objj-ify them... turn them into a selector (colons) etc. 
       # basicallt, if they are not a label_styled_arg, but only take one parameter, they should really be
       # of the form fname: .. where the def name is also camelcased.
-      write "rb_define_method(#{current_self}, '#{definition[:fname]}"
+      write "rb_define_method(#{current_self}, '"
+      if definition[:fname].match(/\=/)
+        write "set#{definition[:fname][0..0].upcase}#{definition[:fname][1..-2]}:"
+      else
+        write definition[:fname]
+      end
       
       if definition[:arglist] and definition[:arglist][:arg] and definition[:arglist][:arg].length == 1
         write ":" unless definition[:fname].match(/[\<\>\=\+\-\*\/\[\]\!\~\^\?]/)
@@ -314,7 +319,7 @@ class Vienna::ObjjRuby < Vienna::RubyParser
       
       write ",'#{call[:meth]}"
       
-      if call[:call_args] and call[:call_args][:args] and call[:call_args][:args].length == 1
+      if call[:call_args] and ((call[:call_args][:args] and call[:call_args][:args].length == 1) or (call[:call_args][:assocs]))
         write ":" unless call[:meth].match(/[\<\>\=\+\-\*\/\[\]\!\~\^\?]/)
       end
       
@@ -361,6 +366,13 @@ class Vienna::ObjjRuby < Vienna::RubyParser
         end
       end
       write "){\n"
+      # for top self....fix "self". we dont want inner things to think that this is the top
+      # self as if we use the block somewhere else, self will be references as top self, 
+      # which isnt the right behaviour.
+      if context[:top_level]
+        write "var self = #{current_self};"
+        current_self_push 'self'
+      end
       # support for context sensetive blocks
       write "self = arguments.callee.self || self;\n"
       if call[:brace_block][:stmt]
@@ -369,20 +381,23 @@ class Vienna::ObjjRuby < Vienna::RubyParser
           generate_stmt stmt, :instance => (context[:singleton] ? false : true),
                               :full_stmt => true, 
                               :last_stmt => (call[:brace_block][:stmt].last == stmt ? true : false), 
-                              :self => current_self,
-                              :top_level => context[:top_level]
+                              :self => current_self
 
         end
       end        
       
       write "}"
+      if context[:top_level]
+        current_self_pop
+      end
+      
       pop_nametable
       
     end # end block
     
     # symbol block: &:upcase etc.
     # If symbol passed.... used symbol as block, and call to_proc on it
-    if call[:call_args][:block_arg]
+    if call[:call_args] && call[:call_args][:block_arg]
       write ",rb_funcall("
       generate_stmt call[:call_args][:block_arg][:arg], :instance => context[:singleton], :full_stmt => false, :last_stmt => false, :top_level => context[:top_level]
       write ",'to_proc')"  
@@ -608,7 +623,11 @@ class Vienna::ObjjRuby < Vienna::RubyParser
       write ","
       meth = stmt[:lhs][:meth]
       
-      write "'set#{meth[0..0].upcase + meth[1..meth.length - 1]}:'"
+      if meth.match(/\[\]/)
+        write "'#{meth}='"
+      else
+        write "'set#{meth[0..0].upcase + meth[1..meth.length - 1]}:'"
+      end
       write ","
       # if its []= then we need to output 2 args
       if stmt[:lhs][:meth] == '[]'
@@ -658,7 +677,7 @@ class Vienna::ObjjRuby < Vienna::RubyParser
     if context[:top_level]
       # nothing else to look around, so normal check..
       # write "cObject.$c_g(#{const[:name]})"
-      write "rb_const_get(rb_top_self, #{const[:name]})"
+      write "rb_const_get(rb_top_self, '#{const[:name]}')"
     elsif context[:instance]
       write "#{constant_scope}(#{current_self}.isa,'#{const[:name]}')"
       # write "self.$klass.#{constant_scope}(#{const[:name]})"

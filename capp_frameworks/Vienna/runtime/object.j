@@ -164,6 +164,21 @@ function nil_inspect(self, _cmd) {
     return "nil";
 }
 
+function rb_mod_class_eval(self, _cmd, block) {
+    // console.log("in here");
+    block.self = self;
+    rb_yield(arguments);
+    // console.log(block);
+    // console.log(self);
+}
+
+function rb_cla_define_method(self, _cmd, name) {
+    // name = name.to_s?
+    rb_define_method(self, name, function(self, _cmd) {
+        console.log("in new method... just need to call it");
+    });
+}
+
 
 
 rb_cObject = objj_getClass("CPObject");
@@ -220,6 +235,8 @@ rb_include_module(rb_cObject, rb_mKernel);
 // puts, handle case where more than one arg is sent. This should be done by rb_funcall.
 rb_define_method(rb_mKernel, "puts:", rb_f_puts, 1);
 rb_define_method(rb_mKernel, "puts", rb_f_puts, 1);
+rb_define_method(rb_cModule, "puts:", rb_f_puts, 1);
+rb_define_method(rb_cModule, "puts", rb_f_puts, 1);
 
 // added..
 rb_define_method(rb_mKernel, "include:", rb_obj_include, -1);
@@ -259,6 +276,11 @@ rb_define_method(rb_mKernel, "instance_variable_set", rb_obj_ivar_set, 2);
 // rb_define_method(rb_mKernel, "is_a?", rb_obj_is_kind_of_imp, 1);
 // rb_define_method(rb_mKernel, "tap", rb_obj_tap, 0);
 
+
+rb_define_method(rb_cModule, "class_eval", rb_mod_class_eval, 0);
+rb_define_method(rb_cModule, "class_eval:", rb_mod_class_eval, 0);
+rb_define_method(rb_cClass, "define_method:", rb_cla_define_method, 1);
+
 /**
     rb_cNilClass
 */
@@ -281,7 +303,7 @@ rb_define_method(rb_cNilClass, "nil?", rb_true, 0);
 
 
 
-
+rb_define_method(rb_cModule, "instance_variable_set", rb_obj_ivar_set, 2);
 
 
 

@@ -3,8 +3,8 @@
 @import "AppKit/Window.j"
 @import "AppKit/View.j"
 @import "AppKit/Control.j"
-@import "AppKit/Button.j"
 @import "Builder/Builder.j"
+@import "Mappings.j"
 (function(self) {
 (function(self) {
 })(rb_define_class_under(self,'Something',rb_cObject));

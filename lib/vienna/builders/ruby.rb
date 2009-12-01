@@ -671,6 +671,11 @@ class Vienna::RubyParser < Racc::Parser
             self.lex_state = :EXPR_BEG
             return [:kDO_BLOCK, scanner.matched] 
           end
+          # this might be wrong
+          # if lex_state == :EXPR_CMDARG
+            # return [:kDO_BLOCK, scanner.matched]
+          # end
+          self.lex_state = :EXPR_BEG
           return [:kDO, scanner.matched]
         when 'if'
           return [:kIF, scanner.matched] if lex_state == :EXPR_BEG
@@ -735,7 +740,13 @@ class Vienna::RubyParser < Racc::Parser
         end
         
         
-        self.lex_state = :EXPR_END
+        if [:EXPR_BEG, :EXPR_DOT, :EXPR_MID, :EXPR_ARG, :EXPR_CMDARG].include?(self.lex_state)
+          self.lex_state = :EXPR_CMDARG
+        else
+          self.lex_state = :EXPR_END
+        end
+        
+        # self.lex_state = :EXPR_END
         return [matched =~ /^[A-Z]/ ? :tCONSTANT : :tIDENTIFIER, matched]
       
       else
