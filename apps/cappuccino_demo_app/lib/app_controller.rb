@@ -24,26 +24,10 @@
 # THE SOFTWARE.
 #
 
-if 3
-  "a"
-else
-  "b"
-end
-
-# so we can use the 'builder' methods.
 include Vienna::Mappings
 
-# Root object in vienna (for capp) is CPObject, so we can ommit the superclass
 class AppController
-  
-  def something()
-    a = [1,2, 3]
-    a.each do |i|
-      i == 2 ? next : puts(i)
-    end
-    return 4
-  end
-  
+    
   MY_NAME = "Adam Beynon"
   
   TABLE_DATA = [
@@ -56,7 +40,7 @@ class AppController
     
   def applicationWillFinishLaunching(notification)
     a = ["adam", "charles", "beynon"]
-        
+            
     # can use cappuccino methods as procs as well [CPString uppercaseString];
     a.map(&:uppercaseString)
     
@@ -64,37 +48,27 @@ class AppController
       name: "Adam Beynon",
       age: 23
     }`
-    j = JSONObject.new(d)
-    puts j.name 
+    # j = JSONObject.new(d)
+    # puts j.name 
   end
  
   def applicationDidFinishLaunching(notification)
 
     @window = window :title => "My Window", :style => [:bridge] do |win|
-      # win << button(:title => "adam", :frame => [50,50,300,24]) do |b|
-      #   b.on_action do
-      #     puts "button clicked!"
-      #   end
-      # end
-      win << button(:title => "adam", :frame => [50,50,300,24], :enabled => false, :on_action => Proc.new { puts "Button Clicked!" })
+      win << button(:title => "Adam's Button", :frame => [50,50,300,24], :on_action => Proc.new { puts "Button Clicked!" })
+      
+      win << scroll_view(:frame => [400, 50, 300, 250]) do |s|
+        s << table_view(:column => column(:id => "name", :title => "Name"), :data => self)
+      end
+
       win.orderFront self
     end
-      
-
-
-
-    # table = CPTableView.alloc.initWithFrame content_view.bounds
-    # table.addTableColumn column :id => 'Person', :title => "People"
-    # table.delegate = self
-    # table.dataSource = self
-
+    
     CPMenu.menuBarVisible = true
-    puts "trying something"
-    puts something
   end
 
   def numberOfRowsInTableView(table_view)
-    5
+    26
   end
 
   def tableView(table_view, objectValueForTableColumn:table_column, row:row)

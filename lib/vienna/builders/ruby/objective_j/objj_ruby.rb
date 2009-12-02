@@ -230,11 +230,14 @@ class Vienna::ObjjRuby < Vienna::RubyParser
     # args etc. So, in a method, a block will always be called $b. If
     # $b is undefined, then we know we didnt get a block..
     if definition[:arglist] && definition[:arglist][:opt_block_arg]
-      write "var #{definition[:arglist][:opt_block_arg]} = $b;"
+      write "var #{definition[:arglist][:opt_block_arg]} = $b;\n"
       add_to_nametable definition[:arglist][:opt_block_arg]
     end
     
     # stmts
+    push_string_buffer
+    push_nametable
+    
     if definition[:bodystmt]
       definition[:bodystmt].each do |stmt|
         
@@ -246,9 +249,23 @@ class Vienna::ObjjRuby < Vienna::RubyParser
       end
     end
     
-    # get rid of current self, also, pop nametable
+    # string buffer
+    body_contents = pop_string_buffer
+    name_table = pop_nametable
+    # write ivar definitions before we get to body stmts
+    # write name_table.to_s
+    if name_table.length > 0
+      write "var #{name_table.join(",")};\n"
+    end
+    
+    write body_contents
+    
+    
+    # get rid of current self, also, pop nametable. this nametable is for just the method
+    # arg names
     current_self_pop
     pop_nametable
+    
     
     write "});\n"
   end
@@ -612,7 +629,7 @@ class Vienna::ObjjRuby < Vienna::RubyParser
       # if already in var table, just put name = ...
       # if not in var table, make new var, and add it
       # we do not write var if we have just put a return before it....js error
-      write 'var ' unless (context[:last_stmt] and context[:full_stmt]) or nametable_include? stmt[:lhs][:name]
+      # write 'var ' unless (context[:last_stmt] and context[:full_stmt]) or nametable_include? stmt[:lhs][:name]
       add_to_nametable(stmt[:lhs][:name]) unless nametable_include? stmt[:lhs][:name]
       write "#{stmt[:lhs][:name]}="
       generate_stmt stmt[:rhs], :instance => context[:instance], context[:full_stmt] => false, context[:last_stmt] => true, :self => context[:self]
@@ -827,14 +844,15 @@ class Vienna::ObjjRuby < Vienna::RubyParser
   
   
   def generate_if stmt, context
-    # write 'return ' if context[:last_stmt] and context[:full_stmt]
-    # write "rb_if_stmt(function(){"
+    write 'return ' if context[:last_stmt] and context[:full_stmt]
+    write "(function(){"
     if stmt.node == :if
-      write "if(#{js_replacement_function_name('RTEST')}("
+      write "if(RTEST("
     else
-      write "if(!#{js_replacement_function_name('RTEST')}("
+      write "if(!RTEST("
     end
     
+    # RTEST expression
     generate_stmt stmt[:expr],:instance => context[:instance], :full_stmt => false, :self => current_self, :last_stmt => false
     
     write ")){\n"
@@ -867,12 +885,26 @@ class Vienna::ObjjRuby < Vienna::RubyParser
       end 
     end
     
-    # write "})"
-    # write ";\n" if context[:full_stmt]
+    write "})()"
+    write ";\n" if context[:full_stmt]
   end
   
   def generate_block_given(stmt, context)
     write "rb_block_given_p($b)"
+  end
+  
+  # yield..
+  def generate_yield stmt, context
+    write 'return ' if context[:last_stmt] and context[:full_stmt]
+    write "rb_yield($b,"
+    if stmt[:call_args] and stmt[:call_args][:args]
+      stmt[:call_args][:args].each do |arg|
+        write "," unless stmt[:call_args][:args].first == arg
+        generate_stmt arg, :instance => context[:instance], :full_stmt => false, :last_stmt => false, :self => context[:self]
+      end
+    end
+    write ")"
+    write ";\n" if context[:full_stmt]
   end
   
 end

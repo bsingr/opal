@@ -33,9 +33,9 @@ module Vienna
   module Mappings
     
     def self.map(options, &block)
-      if block_given?
-        puts 10
-      end
+      # if block_given?
+      #   puts 10
+      # end
       
       mname = options.keys.first.to_s
       mclass = `rb_const_get(rb_cObject, #{options.values.first.to_s})`
@@ -63,7 +63,10 @@ module Vienna
           end
           # finally, if we were given a block, call it
           if block
+            # puts "uielding #{mname}"
             yield o
+            # puts o
+            # yield o
           end
           # return new instance
           o
@@ -101,6 +104,8 @@ end
 
 require 'mappings/window'
 require 'mappings/view'
+require 'mappings/scroll_view'
+require 'mappings/table_view'
 require 'mappings/control'
 require 'mappings/button'
 require 'mappings/column'

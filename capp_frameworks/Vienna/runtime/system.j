@@ -17,9 +17,6 @@ function rb_next(args) {
     throw { type:"next", args:args, toString:function() { return "LocalJumpError: unexpected next" } }
 }
 
-function rb_yield(args) {
-    
-}
 
 function rb_if_stmt(f) {
     try {
@@ -35,6 +32,8 @@ function rb_if_stmt(f) {
     b == block (might be undefined), rest of args are actual args
 */
 function rb_yield(b) {
+    // console.log('in here..');
+    // console.log(Array.prototype.slice.call(arguments));
     if (rb_block_given_p(b)) {
         // console.log(Array.prototype.slice.call(b));
         var a = Array.prototype.slice.call(arguments, 1);

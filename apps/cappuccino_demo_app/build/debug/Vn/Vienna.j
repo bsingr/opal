@@ -1,7 +1,5 @@
 @import "Bridge/JsonObject.j"
-@import "Foundation/Array.j"
 @import "AppKit/Geometry.j"
-@import "Builder/Builder.j"
 @import "Mappings.j"
 (function(self) {
 (function(self) {

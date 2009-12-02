@@ -24,7 +24,7 @@ Vienna::Mappings.map :control => :CPControl do
       o = Object.new
       o.instance_variable_set("@action_behavior", block)
       self.target = o
-      puts o
+      # puts o
     end
     # singleton method for action
     def o.perform_action(sender)

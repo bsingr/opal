@@ -8,7 +8,6 @@ rb_define_method(self, 'title',function(self,_cmd,$b) {
 return rb_funcall(rb_funcall(self,'headerView'),'stringValue');
 });
 rb_define_method(self, 'setTitle:',function(self,_cmd,title,$b) {
-rb_funcall(self,'puts:',["setting title to: ",(title)].join(''));
 return rb_funcall(rb_funcall(self,'headerView'),'setStringValue:',title);
 });
 });

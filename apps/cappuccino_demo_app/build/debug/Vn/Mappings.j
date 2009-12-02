@@ -1,33 +1,36 @@
 (function(self) {
 (function(self) {
 rb_define_singleton_method(self,'map:',function(self,_cmd,options,$b) {
-var block = $b;if(RTEST(rb_block_given_p($b))){
-rb_funcall(self,'puts:',10);
-}
-var mname=rb_funcall(rb_funcall(rb_funcall(options,'keys'),'first'),'to_s');
-var mclass=rb_const_get(rb_cObject, rb_funcall(rb_funcall(rb_funcall(options,'values'),'first'),'to_s'));
+var block = $b;
+var mname,mclass;
+mname=rb_funcall(rb_funcall(rb_funcall(options,'keys'),'first'),'to_s');
+mclass=rb_const_get(rb_cObject, rb_funcall(rb_funcall(rb_funcall(options,'values'),'first'),'to_s'));
 rb_define_method(self, mname + ':', function(self, _cmd, options, block) {
         return rb_funcall(mclass, 'alloc_with_options:', options, block);
       });rb_funcall_block(mclass,'class_eval',function(){
 self = arguments.callee.self || self;
 rb_define_singleton_method(self,'alloc_with_options:',function(self,_cmd,options,$b) {
-var block = $b;var o=rb_funcall(self,'alloc');
-var opt=rb_hash_new();
+var block = $b;
+var o,opt;
+o=rb_funcall(self,'alloc');
+opt=rb_hash_new();
 rb_funcall(opt,'merge:',rb_funcall(self,'map_defaults'));
 rb_funcall(opt,'merge:',options);
 rb_funcall(o,'init_with_options:',opt);
 rb_funcall_block(opt,'each',function(key,value){
 self = arguments.callee.self || self;
-var k=rb_funcall(key,'to_s');
-if(RTEST(rb_funcall(rb_ivar_get(self,'map_constants'),'[]',key))){
+k=rb_funcall(key,'to_s');
+return (function(){if(RTEST(rb_funcall(rb_ivar_get(self,'map_constants'),'[]',key))){
 rb_funcall(self,'puts:',[(rb_funcall(key,'to_s'))," is a constant"].join(''));
 }
 else{
 rb_funcall(o, 'set' + k.charAt(0).toUpperCase() + k.substr(1) + ':', value);}
+})();
 });
-if(RTEST(block)){
-arguments[arguments.length -1](o);
+(function(){if(RTEST(block)){
+rb_yield($b,o);
 }
+})();
 return o;
 });
 rb_define_method(self, 'init_with_options:',function(self,_cmd,options,$b) {
@@ -54,6 +57,8 @@ return rb_funcall(mclass,'class_eval:',block);
 })(rb_define_module('Vienna'));
 @import "Mappings/Window.j"
 @import "Mappings/View.j"
+@import "Mappings/ScrollView.j"
+@import "Mappings/TableView.j"
 @import "Mappings/Control.j"
 @import "Mappings/Button.j"
 @import "Mappings/Column.j"

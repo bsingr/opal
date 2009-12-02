@@ -1,6 +1,7 @@
 (function(self) {
 rb_define_singleton_method(self,'new:',function(self,_cmd,obj,$b) {
-var o=rb_funcall(self,'alloc');
+var o;
+o=rb_funcall(self,'alloc');
 rb_funcall(o,'initialize:',obj);
 return o;
 });

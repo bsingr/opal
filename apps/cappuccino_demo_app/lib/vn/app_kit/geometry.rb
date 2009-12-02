@@ -113,3 +113,30 @@ class CPSize
     };`
   end
 end
+
+
+
+class Array
+  
+  # 
+  # call-seq:
+  #   arr.to_rect -> rect
+  # 
+  # Converts <i>arr</i> into an array, using the elements found between indexes
+  # 0 and 3.
+  # 
+  #   a = [10, 23, 24, 35]
+  #   a.to_rect   # =>  {{10, 23}, {24, 35}}
+  # 
+  def to_rect
+    CPRect.new(self[0], self[1], self[2], self[3])
+  end
+  
+  def to_point
+    CGPoint.new(self[0], self[1])
+  end
+  
+  def to_size
+    CGSize.new(self[0], self[1])
+  end
+end

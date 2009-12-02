@@ -27,14 +27,8 @@
 # Bridge/browser extensions/modifications
 require 'bridge/json_object'
 
-# Foundation extensions
-require 'foundation/array'
-
 # AppKit extensions
 require 'app_kit/geometry'
-
-# Builders etc
-require 'builder/builder'
 
 # Mappings
 require 'mappings'
