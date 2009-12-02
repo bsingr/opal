@@ -33,9 +33,11 @@ module Vienna
   module Mappings
     
     def self.map(options, &block)
+      if block_given?
+        puts 10
+      end
+      
       mname = options.keys.first.to_s
-      puts "mapping #{mname}"
-      puts self
       mclass = `rb_const_get(rb_cObject, #{options.values.first.to_s})`
       `rb_define_method(self, #{mname} + ':', function(self, _cmd, options, block) {
         return rb_funcall(#{mclass}, 'alloc_with_options:', options, block);
@@ -81,6 +83,10 @@ module Vienna
           @map_defaults || {}
         end
         
+        def self.map_constants
+          @map_constants
+        end
+        
         @map_constants = {}
         
         def self.constant(id, hash)
@@ -93,6 +99,8 @@ module Vienna
   end
 end
 
-require 'mappings/column'
+require 'mappings/window'
+require 'mappings/view'
+require 'mappings/control'
 require 'mappings/button'
-
+require 'mappings/column'

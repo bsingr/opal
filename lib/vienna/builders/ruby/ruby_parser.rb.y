@@ -83,7 +83,7 @@ class Vienna::RubyParser
   token kSUPER kSELF kNIL kTRUE kFALSE kAND kOR kNOT kIF_MOD kUNLESS_MOD
   token kWHILE_MOD kUNTIL_MOD kRESCUE_MOD kALIAS kDEFINED klBEGIN klEND
   token k__LINE__ k__FILE__ k__ENCODING__ 
-  token kDEFined
+  token kDEFined kBLOCK_GIVEN
 
   token tIDENTIFIER tFID tGVAR tIVAR tCONSTANT tCVAR tLABEL tINTEGER tFLOAT
   token tSTRING_CONTENT tCHAR tNTH_REF tBACK_REF tREGEXP_END tUPLUS tUMINUS
@@ -230,7 +230,13 @@ rule
               	    result = node :return, :call_args => val[1]
               	  }
             	  | kBREAK call_args
+            	    {
+            	      result = node :break, :call_args => val[1]
+            	    }
             	  | kNEXT call_args
+            	    {
+            	      result = node :next, :call_args => val[1]
+            	    }
 
    block_command: block_call
              	  | block_call '.' operation2 command_args
@@ -577,6 +583,7 @@ rule
 
        block_arg: tAMPER arg_value
                   {
+                    # puts "here for #{val[1]}"
                     result = self.node :block_arg, :arg => val[1]
                   }
 
@@ -714,7 +721,13 @@ rule
             		    result = self.node :def, :singleton => val[1], :fname => val[3], :arglist => val[4], :bodystmt => val[5]
             		  }
             		| kBREAK
+            		  {
+            		    result = node :break, :call_args => nil
+            		  }
             		| kNEXT
+            		  {
+            		    result = node :next, :call_args => nil
+            		  }
             		| kREDO
             		| kRETRY
 
@@ -1066,6 +1079,11 @@ xstring_contents:
             		| k__ENCODING__
             		  {
                     result = node :__ENCODING__, :name => val[0]
+                  }
+                | kBLOCK_GIVEN
+                  {
+                    # added for block_given? support.. :D
+                    result = node :block_given
                   }
 
          var_ref: variable

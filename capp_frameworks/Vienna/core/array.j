@@ -113,10 +113,10 @@ function rb_ary_first(self, _cmd) {
     return self[0];
 }
 
-function rb_ary_each(self, _cmd) {
+function rb_ary_each(self, _cmd, $b) {
     var i;
     for (i = 0; i < self.length; i++) {
-        rb_yield(arguments, self[i]);
+        rb_yield($b, self[i]);
     }
     return self;
 }
@@ -133,10 +133,10 @@ function rb_ary_length(self, _cmd) {
     return self.length;
 }
 
-function rb_ary_collect(self, _cmd) {
+function rb_ary_collect(self, _cmd, $b) {
     var i, r = [];
     for (i = 0; i < self.length; i++) {
-        r.push(rb_yield(arguments, self[i]))
+        r.push(rb_yield($b, self[i]))
     }
     return r;
 }

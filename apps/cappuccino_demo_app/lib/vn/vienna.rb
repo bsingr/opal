@@ -24,14 +24,14 @@
 # THE SOFTWARE.
 #
 
+# Bridge/browser extensions/modifications
+require 'bridge/json_object'
+
 # Foundation extensions
 require 'foundation/array'
 
 # AppKit extensions
 require 'app_kit/geometry'
-require 'app_kit/window'
-require 'app_kit/view'
-require 'app_kit/control'
 
 # Builders etc
 require 'builder/builder'

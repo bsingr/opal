@@ -17,6 +17,10 @@ function rb_proc_to_proc(self, _cmd) {
     return self;
 }
 
+function rb_proc_new(self, _cmd, block) {
+    return block;
+}
+
 
 rb_cProc = rb_define_class("Proc", rb_cObject);
 // rb_define_singleton_method(rb_cProc, "new", rb_proc_s_new, -1);
@@ -24,6 +28,7 @@ rb_cProc = rb_define_class("Proc", rb_cObject);
 // we want javascript functions to be Procs (instances of proc atleast...)
 Function.prototype.isa = rb_cProc;
 
+rb_define_singleton_method(rb_cProc, "new", rb_proc_new, 0);
 rb_define_method(rb_cProc, "call", rb_proc_call, -1);
 rb_define_method(rb_cProc, "[]", rb_proc_call, -1);
 rb_define_method(rb_cProc, "===", rb_proc_call, -1);

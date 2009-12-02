@@ -76,10 +76,10 @@ function rb_hash_each_value(self, _cmd) {
     return self;
 }
 
-function rb_hash_each_pair(self, _cmd) {
+function rb_hash_each_pair(self, _cmd, $b) {
     var i;
     for (i = 0; i < self.count; i++) {
-        rb_yield(arguments, self._keys[i], dictionary_getValue(self, self._keys[i]));
+        rb_yield($b, self._keys[i], dictionary_getValue(self, self._keys[i]));
     }
     return self;
 }

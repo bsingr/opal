@@ -476,9 +476,10 @@ class Vienna::RubyParser < Racc::Parser
           return ['|', scanner.matched]
         end
       elsif scanner.scan(/\{/)
-        result = if self.lex_state == :EXPR_END
+        # puts "{ lex state is #{self.lex_state}"
+        result = if (self.lex_state == :EXPR_END) || (self.lex_state == :EXPR_CMDARG)
           '{' # primary block
-        elsif self.lex_state == :EXPR_ENDARG
+        elsif (self.lex_state == :EXPR_ENDARG) 
           :tLBRACE_ARG # expr block
         else
           :tLBRACE # hash
@@ -608,14 +609,23 @@ class Vienna::RubyParser < Racc::Parser
         self.lex_state = :EXPR_BEG
         return [:tOP_ASGN, '&']
       elsif scanner.scan(/\&/)
+        # puts self.lex_state
         result = if space_seen && !scanner.check(/\s/)
+                    if self.lex_state == :EXPR_CMDARG
+                      :tAMPER
+                    else
+                      '&'
+                    end
+                    # puts "first for amper #{scanner.peek(20)}"
                     # warning: & as prefix
                     # :tAMPER
-                    '&'
+                    # '&'
                   elsif lex_state == :EXPR_BEG || lex_state == :EXPR_MID
+                    # puts "got amper here..#{scanner.peek(10)}"
                     # used to be tAMPER
                     :tAMPER
                   else
+                    # puts "last amper: #{scanner.peek(20)}"
                     '&'
                   end
         
@@ -701,6 +711,9 @@ class Vienna::RubyParser < Racc::Parser
         when 'true'
           self.lex_state = :EXPR_END
           return [:kTRUE, scanner.matched]
+        when 'block_given?'
+          self.lex_state = :EXPR_END
+          return [:kBLOCK_GIVEN, scanner.matched]
         when 'false'
           self.lex_state = :EXPR_END
           return [:kFALSE, scanner.matched]
@@ -710,6 +723,12 @@ class Vienna::RubyParser < Racc::Parser
         when 'return'
           self.lex_state = :EXPR_MID
           return [:kRETURN, scanner.matched]
+        when 'break'
+          self.lex_state = :EXPR_MID
+          return [:kBREAK, scanner.matched]
+        when 'next'
+          self.lex_state = :EXPR_MID
+          return [:kNEXT, scanner.matched]
         when 'case'
           self.lex_state = :EXPR_BEG
           return [:kCASE, scanner.matched]

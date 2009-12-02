@@ -11,7 +11,7 @@ function rb_define_class(id, super_klass) {
         return klass;
     }
     
-    console.log("making new class: " + id);
+    // console.log("making new class: " + id);
     
     if (!super_klass) {
         console.log('Warning: no superclass for ' + id + '. CPObject assumed');
@@ -197,24 +197,46 @@ function rb_funcall(klass, _cmd) {
     }
     
     if (!imp) {
-        throw klass.isa.name + '#' + _cmd + ' is not defined. method_midding.'
+        // should pass arguments as well..
+        return rb_funcall(klass, "method_missing:", _cmd);
+        // throw klass.isa.name + '#' + _cmd + ' is not defined. method_midding.'
         // throw 'method not found... use method_missing?: ' + _cmd
     }
-    
-    switch(arguments.length)
-    {
-        case 2: return imp(klass, _cmd);
-        case 3: return imp(klass, _cmd, arguments[2]);
-        case 4: return imp(klass, _cmd, arguments[2], arguments[3]);
-        case 5: return imp(klass, _cmd, arguments[2], arguments[3], arguments[4]);
-    }
+    try {
+        switch(arguments.length)
+        {
+            case 2: return imp(klass, _cmd);
+            case 3: return imp(klass, _cmd, arguments[2]);
+            case 4: return imp(klass, _cmd, arguments[2], arguments[3]);
+            case 5: return imp(klass, _cmd, arguments[2], arguments[3], arguments[4]);
+        }
 
-    return imp.apply(klass, arguments);
+        return imp.apply(klass, arguments);
+    }
+    catch (e) {
+        // Only catch "return statements", throw anything else (again)
+        // Also, if we are calling a block in this method call, then we should not capture the
+        // throw, and instead propagate the throw to the method containing the block (This is so
+        // that the method containing the block returns, not just the block.) Break can be used
+        // to exit the current block yielding.
+        if ((e.type === "return") && (!arguments[arguments.length - 1].rb_is_block)) return e.args
+        throw e
+    }
 }
 
+/**
+    Wont need this in about 10 mins. here for compatibility at the moemnt.
+*/
 function rb_funcall_block(klass, _cmd) {
-    var b = arguments[arguments.length - 1]
+    var b = arguments[arguments.length - 1];
     b.rb_is_block = true;
-    var r = rb_funcall.apply(klass, arguments);
-    return r;
+    
+    try {
+        return rb_funcall.apply(klass, arguments);
+    }
+    catch (e) {
+        // capture "break" - return any passed arg from block loop
+        if (e.type === "break") return e.args;
+        throw e
+    }
 }

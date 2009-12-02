@@ -42,6 +42,14 @@ function rb_num_le(self, _cmd, i) {
     return self <= i;
 }
 
+function rb_num_and(self, _cmd, i) {
+    return self & i;
+}
+
+function rb_num_or(self, _cmd, i) {
+    return self | i;
+}
+
 rb_cNumber = objj_getClass("CPNumber");
 rb_const_set(rb_cObject, "Number", rb_cNumber);
 
@@ -118,8 +126,8 @@ rb_define_method(rb_cNumber, "<", rb_num_lt, 1);
 rb_define_method(rb_cNumber, "<=", rb_num_le, 1);
 // 
 // rb_define_method(rb_cNumber, "~", fix_rev, 0);
-// rb_define_method(rb_cNumber, "&", fix_and, 1);
-// rb_define_method(rb_cNumber, "|", fix_or,  1);
+rb_define_method(rb_cNumber, "&", rb_num_and, 1);
+rb_define_method(rb_cNumber, "|", rb_num_or,  1);
 // rb_define_method(rb_cNumber, "^", fix_xor, 1);
 // rb_define_method(rb_cNumber, "[]", fix_aref, 1);
 // 

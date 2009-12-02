@@ -32,6 +32,7 @@ class Vienna::ObjjRuby < Vienna::RubyParser
   def initialize(source, destination, project)
     super
     @current_self = ['rb_top_self']
+    @string_buffers = []
   end
   
   def current_self_push(s)
@@ -44,11 +45,31 @@ class Vienna::ObjjRuby < Vienna::RubyParser
   
   def generate_tree(tree)
     push_nametable
+    push_string_buffer
     tree.each do |stmt|
       generate_stmt stmt, :instance => true, :full_stmt => true, :last_stmt => false, :top_level => true
     end
+    a = pop_string_buffer
+    @output_file.write a
     pop_nametable
   end
+  
+  # Write is overridden. write basically writes to a string buffer, that is then written altogether
+  # at the end. This is because sometimes we generate code, but we need to know stuff about the code
+  # afterwards. For example, when finding new identifiers, we need to insert var x; placeholders
+  # before the identifiers are assigned, so that they can be used in if contexts, case contextes etc.
+  def write(str)
+    # @output_file.write str
+    @string_buffers.last << str
+	end
+	
+	def push_string_buffer
+	  @string_buffers.push ""
+	end
+	
+	def pop_string_buffer
+	  @string_buffers.pop
+	end
   
   def generate_stmt stmt, context
     # write "[..#{stmt.node}..]"
@@ -109,6 +130,10 @@ class Vienna::ObjjRuby < Vienna::RubyParser
       generate_lparen stmt, context
     when :return
       generate_return stmt, context
+    when :break
+      generate_break stmt, context
+    when :next
+      generate_next stmt, context
     when :colon2
       generate_colon2 stmt, context
     when :colon3
@@ -117,6 +142,8 @@ class Vienna::ObjjRuby < Vienna::RubyParser
       generate_case stmt, context
     when :yield
       generate_yield stmt, context
+    when :block_given
+      generate_block_given stmt, context
     when :orop
       generate_orop stmt, context
     when :andop
@@ -188,17 +215,24 @@ class Vienna::ObjjRuby < Vienna::RubyParser
           add_to_nametable arg[:value]
           # write ',' unless definition[:arglist][:arg].last == arg
         end
-      end
-      # block
-      if definition[:arglist][:opt_block_arg]
-        write ','
-        write definition[:arglist][:opt_block_arg]
-        add_to_nametable definition[:arglist][:opt_block_arg]
       end  
     end
     
+    # block arg support - every method has a potential block arg
+    write ",$b"
+    
     
     write ") {\n"
+    
+    # block reference (if we name a block like def something(&block))
+    # the blk arg isnt actually an arg, so we can leave it out of our
+    # arguments list, that will make it very hand for variable number
+    # args etc. So, in a method, a block will always be called $b. If
+    # $b is undefined, then we know we didnt get a block..
+    if definition[:arglist] && definition[:arglist][:opt_block_arg]
+      write "var #{definition[:arglist][:opt_block_arg]} = $b;"
+      add_to_nametable definition[:arglist][:opt_block_arg]
+    end
     
     # stmts
     if definition[:bodystmt]
@@ -320,7 +354,7 @@ class Vienna::ObjjRuby < Vienna::RubyParser
       write ",'#{call[:meth]}"
       
       if call[:call_args] and ((call[:call_args][:args] and call[:call_args][:args].length == 1) or (call[:call_args][:assocs]))
-        write ":" unless call[:meth].match(/[\<\>\=\+\-\*\/\[\]\!\~\^\?]/)
+        write ":" unless call[:meth].match(/[\<\>\=\+\-\*\/\[\]\!\~\^\?\&\|]/)
       end
       
       write "'"
@@ -495,7 +529,7 @@ class Vienna::ObjjRuby < Vienna::RubyParser
     
     # superclass..
     if klass.super_klass
-      generate_stmt klass.super_klass[:expr], :instance => false, :full_stmt => false, :self => current_self, :last_stmt => false
+      generate_stmt klass.super_klass[:expr], :instance => false, :full_stmt => false, :self => current_self, :last_stmt => false, :top_level => context[:top_level]
       write ")"
     else
       write "rb_cObject)"
@@ -675,9 +709,10 @@ class Vienna::ObjjRuby < Vienna::RubyParser
     
     constant_scope = context[:scope_constant] ? 'rb_const_get' : 'rb_const_get_full'
     if context[:top_level]
+      # puts "in top level for #{const[:name]}"
       # nothing else to look around, so normal check..
       # write "cObject.$c_g(#{const[:name]})"
-      write "rb_const_get(rb_top_self, '#{const[:name]}')"
+      write "rb_const_get(rb_cObject, '#{const[:name]}')"
     elsif context[:instance]
       write "#{constant_scope}(#{current_self}.isa,'#{const[:name]}')"
       # write "self.$klass.#{constant_scope}(#{const[:name]})"
@@ -712,6 +747,132 @@ class Vienna::ObjjRuby < Vienna::RubyParser
     write "})"
     
     write ";\n" if context[:full_stmt]
+  end
+  
+  def generate_return stmt, context
+    # puts "doing return #{stmt}"
+    # write 'return '
+    
+    write "rb_return("
+    
+    if stmt[:call_args]
+      if stmt[:call_args][:args].length == 0
+        write "nil"
+      elsif stmt[:call_args][:args].length == 1
+        generate_stmt stmt[:call_args][:args][0], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self => context[:self]
+      else
+        write "["
+        stmt[:call_args][:args].each do |r|
+          generate_stmt r, :instance => context[:instance], :full_stmt => false, :last_stmt => false, :self => context[:self]
+          write ',' unless r == stmt[:call_args][:args].last
+        end
+        write "]"
+      end
+    end
+    
+    write ")"
+    
+    write ";\n" if context[:full_stmt]
+  end
+  
+  def generate_break stmt, context
+
+    write "rb_break("
+    
+    if stmt[:call_args]
+      if stmt[:call_args][:args].length == 0
+        write "nil"
+      elsif stmt[:call_args][:args].length == 1
+        generate_stmt stmt[:call_args][:args][0], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self => context[:self]
+      else
+        write "["
+        stmt[:call_args][:args].each do |r|
+          generate_stmt r, :instance => context[:instance], :full_stmt => false, :last_stmt => false, :self => context[:self]
+          write ',' unless r == stmt[:call_args][:args].last
+        end
+        write "]"
+      end
+    end
+    
+    write ")"
+    
+    write "\n" if context[:full_stmt]
+  end
+  
+  def generate_next stmt, context
+
+    write "rb_next("
+    
+    if stmt[:call_args]
+      if stmt[:call_args][:args].length == 0
+        write "nil"
+      elsif stmt[:call_args][:args].length == 1
+        generate_stmt stmt[:call_args][:args][0], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self => context[:self]
+      else
+        write "["
+        stmt[:call_args][:args].each do |r|
+          generate_stmt r, :instance => context[:instance], :full_stmt => false, :last_stmt => false, :self => context[:self]
+          write ',' unless r == stmt[:call_args][:args].last
+        end
+        write "]"
+      end
+    else
+      write "nil"
+    end
+    
+    write ")"
+    
+    write "\n" if context[:full_stmt]
+  end
+  
+  
+  def generate_if stmt, context
+    # write 'return ' if context[:last_stmt] and context[:full_stmt]
+    # write "rb_if_stmt(function(){"
+    if stmt.node == :if
+      write "if(#{js_replacement_function_name('RTEST')}("
+    else
+      write "if(!#{js_replacement_function_name('RTEST')}("
+    end
+    
+    generate_stmt stmt[:expr],:instance => context[:instance], :full_stmt => false, :self => current_self, :last_stmt => false
+    
+    write ")){\n"
+    
+    if stmt[:stmt]
+      stmt[:stmt].each do |c|
+        generate_stmt c, :instance => context[:instance], :full_stmt => true, :self => current_self, :last_stmt => context[:laststmt] && (stmt[:stmt].last == c ? true : false)  # also check if the actual 'if' statement is last?
+      end
+    end
+    
+    write "}\n"
+    if stmt[:tail]
+      stmt[:tail].each do |t|
+        
+        if t.node == :elsif
+          write "else if(#{js_replacement_function_name('RTEST')}("
+          generate_stmt t[:expr], :instance => context[:instance], :full_stmt => false, :self => current_self, :last_stmt => false
+          write ")){\n"
+        else # normal else
+          write "else{\n"
+        end
+        
+        if t[:stmt]
+          t[:stmt].each do |c|
+            generate_stmt c, :instance => context[:instance], :full_stmt => true,:self => current_self, :last_stmt => context[:laststmt] && (t[:stmt].last == c ? true : false) # also check if the actual 'if' statement is last?
+          end
+        end
+                  
+        write "}\n"
+      end 
+    end
+    
+    # write "})"
+    # write ";\n" if context[:full_stmt]
+  end
+  
+  def generate_block_given(stmt, context)
+    write "rb_block_given_p($b)"
   end
   
 end

@@ -167,7 +167,7 @@ function nil_inspect(self, _cmd) {
 function rb_mod_class_eval(self, _cmd, block) {
     // console.log("in here");
     block.self = self;
-    rb_yield(arguments);
+    rb_yield(block);
     // console.log(block);
     // console.log(self);
 }
@@ -177,6 +177,10 @@ function rb_cla_define_method(self, _cmd, name) {
     rb_define_method(self, name, function(self, _cmd) {
         console.log("in new method... just need to call it");
     });
+}
+
+function rb_obj_method_missing(self, _cmd, name) {
+    throw self + ' does not respond to #' + name
 }
 
 
@@ -194,8 +198,13 @@ rb_const_set(rb_cObject, "Object", rb_cObject);
     BasicObject must also be defined on Object, as BasicObject in objj isnt actually
     a superclass of Object. There are only 7 methods, so not a big problem.
 */
+function rb_basic_obj_alloc(self, _cmd) {
+    return class_createInstance(self);
+}
+
 rb_cBasicObject = objj_allocateClassPair(null, 'BasicObject');
 rb_const_set(rb_cObject, "BasicObject", rb_cBasicObject);
+rb_define_singleton_method(rb_cBasicObject, "alloc", rb_basic_obj_alloc, 0);
 
 rb_cModule = boot_defclass("Module", rb_cObject);
 rb_cClass = boot_defclass("Class", rb_cModule);
@@ -253,6 +262,8 @@ rb_define_method(rb_mKernel, "===", rb_equal_imp, 1);
 rb_define_method(rb_mKernel, "=~", rb_obj_match, 1);
 rb_define_method(rb_mKernel, "!~", rb_obj_not_match, 1);
 rb_define_method(rb_mKernel, "eql?", rb_obj_equal, 1);
+
+rb_define_method(rb_mKernel, "method_missing:", rb_obj_method_missing, 1);
 
 // rb_define_method(rb_cObject, "clone", rb_obj_clone_imp, 0);
 // rb_define_method(rb_cObject, "dup", rb_nsobj_dup, 0);

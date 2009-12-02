@@ -9,10 +9,9 @@ rb_define_method(self, 'to_f',function(self,_cmd) {
 return rb_funcall(self,'doubleValue');
 });
 rb_define_method(self, 'setOn_action:',function(self,_cmd,block) {
-return rb_funcall(self,'on_action:',block);
+return rb_funcall_block(self,'on_action',rb_funcall(block,'to_proc'));
 });
 rb_define_method(self, 'on_action',function(self,_cmd,block) {
-rb_funcall(self,'puts:',"In on action... my target is:");
 if(RTEST(rb_funcall(self,'target'))){
 }
 else{
@@ -26,4 +25,4 @@ return rb_funcall(rb_ivar_get(self,'action_behavior'),'call');
 });
 return rb_funcall(self,'setAction:',"perform_action:");
 });
-})(rb_define_class('CPControl',rb_const_get_full(self,'CPView')));
+})(rb_define_class('CPControl',rb_const_get(rb_cObject, 'CPView')));
