@@ -12,5 +12,10 @@ Vienna::Mappings.map :table_view => :CPTableView do
   
   def data=(data)
     setDataSource(data)
+    
+    case data
+    when Array
+      
+    end
   end
 end

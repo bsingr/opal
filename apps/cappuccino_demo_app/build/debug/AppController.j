@@ -1,14 +1,5 @@
 rb_funcall(rb_top_self,'include:',rb_const_get(rb_const_get_full(rb_top_self.isa,'Vienna'),'Mappings'));
 (function(self) {
-rb_define_method(self, 'something',function(self,_cmd,$b) {
-var a;
-a=[1,2,3];
-rb_funcall_block(a,'each',function(i){
-self = arguments.callee.self || self;
-return RTEST(rb_funcall(i,'==',2)) ? rb_next(nil) : rb_funcall(self,'puts:',i);
-});
-rb_return(4);
-});
 rb_const_set(self,'MY_NAME',"Adam Beynon");
 rb_const_set(self,'TABLE_DATA',[rb_hash_new(ID2SYM('name'), 'Adam Beynon', ID2SYM('age'), 23),rb_hash_new(ID2SYM('name'), 'Spongebob Squarepants', ID2SYM('age'), 73),rb_hash_new(ID2SYM('name'), 'John Smith', ID2SYM('age'), 28)]);
 rb_funcall(self,'attr_accessor:',ID2SYM('window'));
@@ -32,6 +23,7 @@ rb_funcall(win,'<<',rb_funcall_block(self,'scroll_view:',rb_hash_new(ID2SYM('fra
 self = arguments.callee.self || self;
 return rb_funcall(s,'<<',rb_funcall(self,'table_view:',rb_hash_new(ID2SYM('column'),rb_funcall(self,'column:',rb_hash_new(ID2SYM('id'),"name",ID2SYM('title'),"Name")),ID2SYM('data'),self)));
 }));
+rb_funcall(win,'<<',rb_funcall(rb_const_get_full(self.isa,'AdamsView'),'new:',[800,100,300,300]));
 return rb_funcall(win,'orderFront:',self);
 }));
 return rb_funcall(rb_const_get_full(self.isa,'CPMenu'),'setMenuBarVisible:',true);

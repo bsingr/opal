@@ -60,6 +60,8 @@ class AppController
       win << scroll_view(:frame => [400, 50, 300, 250]) do |s|
         s << table_view(:column => column(:id => "name", :title => "Name"), :data => self)
       end
+      
+      win << AdamsView.new([800, 100, 300, 300])
 
       win.orderFront self
     end

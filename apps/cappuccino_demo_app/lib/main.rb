@@ -7,6 +7,7 @@ require 'vienna'
 require 'vn/vienna'
 # 
 require 'app_controller'
+require 'adams_view'
 
 # inline javascript/objective-j:
 `
