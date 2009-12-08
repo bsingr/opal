@@ -1,32 +1,17 @@
-# Look in the tasks/setup.rb file for the various options that can be
-# configured in this Rakefile. The .rake files in the tasks directory
-# are where the options are used.
+require 'rubygems'
+require 'rake'
 
 begin
-  require 'bones'
-  Bones.setup
-rescue LoadError
-  begin
-  load 'tasks/setup.rb'
-  rescue LoadError
-  raise RuntimeError, '### please install the "bones" gem ###'
+  require 'jeweler'
+  Jeweler::Tasks.new do |gemspec|
+    gemspec.name = "vienna"
+    gemspec.summary = "Ruby compiler and runtime for the browser"
+    gemspec.description = "Ruby compiler and runtime for the browser"
+    gemspec.email = "adam@adambeynon.com"
+    gemspec.homepage = "http://github.com/adambeynon/vienna"
+    gemspec.authors = ["Adam Beynon"]
   end
+  Jeweler::GemcutterTasks.new
+rescue LoadError
+  puts "Jeweler not available. Install it with: sudo gem install jeweler"
 end
-
-ensure_in_path 'lib'
-require 'vienna'
-
-task :default => 'spec:run'
-
-PROJ.name = 'vienna'
-PROJ.authors = 'Adam Beynon'
-PROJ.email = 'adam@adambeynon.com'
-PROJ.url = 'http://www.adambeynon.com'
-PROJ.version = Vienna::VERSION
-PROJ.rubyforge.name = 'vienna'
-
-PROJ.spec.opts << '--color'
-
-PROJ.ignore_file = '.gitignore'
-
-# EOF
