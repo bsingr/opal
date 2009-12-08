@@ -35,7 +35,7 @@ class AppController
     { :name => 'Spongebob Squarepants', :age => 73 },
     { :name => 'John Smith', :age => 28 }
   ]
-  
+    
   attr_accessor :window
     
   def applicationWillFinishLaunching(notification)
@@ -56,16 +56,16 @@ class AppController
 
     @window = window :title => "My Window", :style => [:bridge] do |win|
       win << button(:title => "Adam's Button", :frame => [50,50,300,24], :on_action => Proc.new { puts "Button Clicked!" })
-      
+    #   
       win << scroll_view(:frame => [400, 50, 300, 250]) do |s|
         s << table_view(:column => column(:id => "name", :title => "Name"), :data => self)
       end
-      
-      win << AdamsView.new([800, 100, 300, 300])
-
+    #   
+    win << AdamsView.new([800, 100, 300, 300])
+    # 
       win.orderFront self
     end
-    
+    # 
     CPMenu.menuBarVisible = true
   end
 

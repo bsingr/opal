@@ -1,0 +1,29 @@
+#	vienna: Ruby compiler/runtime for the browser
+
+Vienna aims to provide the following:
+
+ * A ruby compiler for ahead-of-time compiling of ruby into javascript
+ * A ruby runtime, written in javascript, to support the previously generated code
+ * An application framework, written in ruby, for developing high grade web applications for the web.
+
+## Installing
+
+    # Insall gem from gemcutter
+    sudo gem install vienna
+	
+## Creating a project
+
+    vn-gen app MyApplication
+
+## Building
+
+    # In root directory of project
+    vn-build
+
+## Running
+
+... open index.html in a browser
+
+## Deploying
+
+...copy build/debug/* to any web server..

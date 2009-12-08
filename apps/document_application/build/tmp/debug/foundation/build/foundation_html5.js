@@ -1,4 +1,4 @@
-vnfmwk$1.0$p11$/foundationr268$8$info.yml254$vnplist$1.0$h7$s16$bundle_icon_files0$s17$bundle_identifiers26$com.yourcompany.foundations15$principal_classs15$VN::Applications13$main_vib_files9$main_menus19$bundle_package_types4$APPLs11$bundle_names10$foundations25$bundle_development_regions7$Englishc21624$(function(self) {
+vnfmwk$1.0$p11$/foundationr268$8$info.yml254$vnplist$1.0$h7$s16$bundle_icon_files0$s17$bundle_identifiers26$com.yourcompany.foundations15$principal_classs15$VN::Applications13$main_vib_files9$main_menus19$bundle_package_types4$APPLs11$bundle_names10$foundations25$bundle_development_regions7$Englishc21542$(function(self) {
 self.$c_s('Object',cObject.$c_g('Object'));
 self.$c_s('Array',cObject.$c_g('Array'));
 self.$c_s('Dictionary',cObject.$c_g('Hash'));
@@ -172,8 +172,7 @@ return rb_ivar_get(self,'@observation_info');
 
 (function(self) {
 (function(self) {
-rb_funcall(self,'attr_reader',ID2SYM('name'),ID2SYM('object'),ID2SYM('user_info'));
-rb_funcall(self,'attr_writer',ID2SYM('name'),ID2SYM('object'),ID2SYM('user_info'));
+rb_funcall(self,'attr_accessor',ID2SYM('name'),ID2SYM('object'),ID2SYM('user_info'));
 rb_define_method(self,'initialize',function(self,_,name,obj,info){
 rb_supcall(arguments.callee, self,_,[]);
 self.$i_s('@name',name);

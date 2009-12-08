@@ -28,10 +28,9 @@ module Vienna
   
   class Notification
     
-    attr_reader :name, :object, :user_info
-    attr_writer :name, :object, :user_info
-    
-    def initialize name, obj, info
+    attr_accessor :name, :object, :user_info
+        
+    def initialize(name, obj, info)
       super()
       @name = name
       @object = obj

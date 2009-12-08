@@ -10,19 +10,16 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Adam Beynon"]
   s.date = %q{2009-12-08}
-  s.default_executable = %q{vienna}
   s.description = %q{Ruby compiler and runtime for the browser}
   s.email = %q{adam@adambeynon.com}
-  s.executables = ["vienna"]
+  s.executables = ["vienna", "vn-gen"]
   s.extra_rdoc_files = [
-    "README.txt"
+    "README.markdown"
   ]
   s.files = [
     ".gitignore",
      "History.txt",
-     "README.txt",
      "Rakefile",
-     "TODO.md",
      "VERSION",
      "apps/cappuccino_demo_app/Info.plist",
      "apps/cappuccino_demo_app/Rakefile",
@@ -312,7 +309,6 @@ Gem::Specification.new do |s|
      "capp_frameworks/Vienna/runtime/runtime.j",
      "capp_frameworks/Vienna/runtime/system.j",
      "capp_frameworks/Vienna/runtime/variable.j",
-     "extras/image_sources/controls.psd",
      "frameworks/app_kit/design/controls/README.txt",
      "frameworks/app_kit/design/controls/controls-sprite-y.psd",
      "frameworks/app_kit/design/controls/controls-sprite.psd",

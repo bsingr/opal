@@ -6,7 +6,7 @@
 #  Copyright 2009 Adam Beynon. All rights reserved.
 # 
 
-require 'FileUtils'
+require 'fileutils'
 require 'ftools'
 require 'base64'
 

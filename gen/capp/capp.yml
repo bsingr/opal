@@ -1,0 +1,3 @@
+source: capp_name
+destination: ""
+description: "Generate a Cappuccino application"

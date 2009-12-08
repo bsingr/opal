@@ -172,8 +172,7 @@ return rb_ivar_get(self,'@observation_info');
 
 (function(self) {
 (function(self) {
-rb_funcall(self,'attr_reader',ID2SYM('name'),ID2SYM('object'),ID2SYM('user_info'));
-rb_funcall(self,'attr_writer',ID2SYM('name'),ID2SYM('object'),ID2SYM('user_info'));
+rb_funcall(self,'attr_accessor',ID2SYM('name'),ID2SYM('object'),ID2SYM('user_info'));
 rb_define_method(self,'initialize',function(self,_,name,obj,info){
 rb_supcall(arguments.callee, self,_,[]);
 self.$i_s('@name',name);

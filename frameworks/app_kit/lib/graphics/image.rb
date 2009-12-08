@@ -219,7 +219,7 @@ module Vienna
     def _image_did_error
       @status = :read_error
       
-      if @delegate && @delegate.respond_to? (:image_did_error)
+      if @delegate && @delegate.respond_to?(:image_did_error)
         @delegate.image_did_error self
       end
     end

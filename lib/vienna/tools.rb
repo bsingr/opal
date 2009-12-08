@@ -11,18 +11,19 @@
 module Vienna
   
   class Tools
-  def initialize
-  end
+    
+    def initialize
+    
+    end
   
-  def project=(project)
-    @project = project
-  end
+    def project=(project)
+      @project = project
+    end
   
-  def project
-    return @project if @project
+    def project
+      @project
+    end
   end
-  end
-  
 end
 
 Vienna.require_all_libs_relative_to(__FILE__)

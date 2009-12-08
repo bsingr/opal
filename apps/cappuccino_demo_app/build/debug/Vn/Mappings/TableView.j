@@ -8,10 +8,6 @@ rb_define_method(self, 'setColumn:',function(self,_cmd,a_column,$b) {
 return rb_funcall(self,'addTableColumn:',a_column);
 });
 rb_define_method(self, 'setData:',function(self,_cmd,data,$b) {
-rb_funcall(self,'setDataSource:',data);
-return (function($v){
-if(($e = rb_funcall(rb_const_get_full(self.isa,'Array'), '===', $v),$e!==nil && $e!==false)){
-}
-})(data);
+return rb_funcall(self,'setDataSource:',data);
 });
 });

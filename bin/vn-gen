@@ -1,0 +1,25 @@
+#!/usr/bin/env ruby
+
+# Usage:
+# 
+#   vn-gen <type> <optional name>
+# 
+#   [type]:
+#     - app     (Vienna application)
+#     - lib     (Vienna library/framework)
+#     - capp    (Cappuccino application)
+# 
+#     - controller
+#     - model
+#     - view
+# 
+#   Examples:
+# 
+#     vn-gen app MyApplication
+#     vn-gen model Person
+# 
+
+require File.expand_path(
+  File.join(File.dirname(__FILE__), %w[.. lib vienna]))
+
+puts 'Generating project..'
