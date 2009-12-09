@@ -56,24 +56,24 @@ module Vienna
     def initialize(frame, style_mask)
       super frame, style_mask
       
-      if @style_mask.include? :closable
-        @close_button = Button.build :frame => Rect.new(6, 6, 16, 16), :bordered => false do |close|
-          close.bordered = false
-          close.image_position = :image_only
-          close.image = CLOSE_IMAGE
-          close.alternate_image = CLOSE_HIGHLIGHTED_IMAGE
-          self << close
-          close.needs_display = true
-        end
-      end
-      
-      if @style_mask.include? :miniaturizable
-        @min_button = Button.build :frame => Rect.new(10, 10, 300, 300), :bordered => false do |min|
-          # min.image = 
-          # min.alternate_image = 
-          self << min
-        end
-      end
+      # if @style_mask.include? :closable
+      #   @close_button = Button.build :frame => Rect.new(6, 6, 16, 16), :bordered => false do |close|
+      #     close.bordered = false
+      #     close.image_position = :image_only
+      #     close.image = CLOSE_IMAGE
+      #     close.alternate_image = CLOSE_HIGHLIGHTED_IMAGE
+      #     self << close
+      #     close.needs_display = true
+      #   end
+      # end
+      # 
+      # if @style_mask.include? :miniaturizable
+      #   @min_button = Button.build :frame => Rect.new(10, 10, 300, 300), :bordered => false do |min|
+      #     # min.image = 
+      #     # min.alternate_image = 
+      #     self << min
+      #   end
+      # end
     end
         
     def render(context)

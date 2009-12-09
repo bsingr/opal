@@ -1,5 +1,5 @@
 # 
-# vienna.rb
+# mappings.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,31 +24,12 @@
 # THE SOFTWARE.
 #
 
-require 'browser'
-require 'foundation'
-require 'app_kit'
-
 module Vienna
   
-  VERSION = '0.0.1'
-  
-  def self.version
-    VERSION
+  module Mappings
+    
+    def self.map(options, &block)
+      
+    end
   end
-  
-  # returns the drawing mode. This will either be :render, or :draw
-  def self.display_mode
-    `return 'render';`
-  end
-  
-  
-  # We can now use Vienna.app.*.* as a key path, or, using the shorteer version
-  # VN.app.*.*.....
-  def app
-    # @@app ||= VN::Application.shared_application
-  end
-  
 end
-
-require 'mappings'
-require 'views/gauge_view'

@@ -1,10 +1,11 @@
-require 'rubygems'
-require 'rake'
 
-begin
-  require 'vienna'
-  puts "loaded vienna"
-rescue LoadError
-  puts "Vienna not available. Install it with: sudo gem install vienna"
-end
+# require 'rubygems'
+# require 'rake'
+# 
+# begin
+#   require 'vienna'
+#   puts "loaded vienna"
+# rescue LoadError
+#   puts "Vienna not available. Install it with: sudo gem install vienna"
+# end
 

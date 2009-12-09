@@ -28,23 +28,22 @@ var RModule = { } ;
 
 function rb_define_module(id) {
   var module;
-  if (cObject.$c_d(id)) {
-    module = cObject.$c_g(id);
-    if (module.$type == VN.MODULE) {
+  if (rb_const_defined(rb_cObject, id)) {
+    // module = cObject.$c_g(id);
+    module = rb_const_get(rb_cObject, id);
+    if (FL_TEST(module, T_MODULE)) {
       return module;
     }
-    VN.type_error(id + ' is not a module');
+    throw id + ' is not a module';
   }
-  module = RModule.define_module_id(id);
-  VN.class_tbl[id] = module;
-  cObject.$c_s(id, module);
+  module = rb_define_module_id(id);
+  rb_class_tbl[id] = module;
+  rb_const_set(rb_cObject, id, module);
 
   return module;
 };
 
-RModule.define = rb_define_module;
-
-function rb_define_module_under() {
+function rb_define_module_under(outer, id) {
   var module;
   if (VN.const_defined_at(outer, id)) {
     module = VN.const_get_at(outer, id);
@@ -59,38 +58,38 @@ function rb_define_module_under() {
   return module;
 };
 
-RModule.define_module_under = rb_define_module_under;
-
-RModule.define_module_id = function(id) {
-  var mdl = RModule.create();
+function rb_define_module_id(id) {
+  var mdl = rb_mod_create();
+  rb_name_class(mdl, id);
   // VN.name_class(mdl, id);
-  mdl.$name(id);
+  // mdl.$name(id);
   // mdl.$name(id);
   return mdl;
 };
 
-RModule.create = function() {
-  var mdl = RClass.alloc(VN.MODULE, cModule);
-  mdl.$super = cObject;
-  return mdl;
-};
+function rb_mod_create() {
+  var m = class_alloc(T_MODULE, rb_cModule);
+  m.sup = rb_cObject;
+  return m;
+}
+
+// RModule.create = function() {
+//   var mdl = RClass.alloc(VN.MODULE, cModule);
+//   mdl.$super = cObject;
+//   return mdl;
+// };
 
 function rb_include_module(klass, module) {
-  RModule.include_class_new(module, klass);
+  rb_include_class_new(module, klass);
 }
 
 
-RModule.include = function(klass, module) {
-  RModule.include_class_new(module, klass);
-};
-
-
-RModule.include_class_new = function(mod, sup) {
-  var klass = RClass.alloc(T_ICLASS, cClass);
-  klass.$iv_tbl = mod.$iv_tbl;
-  klass.$m_tbl = mod.$m_tbl;
-  klass.$super = sup;
-  klass.$klass = mod;
+function rb_include_class_new(mod, sup) {
+  var klass = class_alloc(T_ICLASS, rb_cClass);
+  klass.iv_tbl = mod.iv_tbl;
+  klass.m_tbl = mod.m_tbl;
+  klass.sup = sup;
+  klass.klass = mod;
   // console.log('included class');
   // console.log(klass);
   return klass;

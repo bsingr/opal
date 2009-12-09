@@ -24,58 +24,40 @@
  * THE SOFTWARE.
  */
 
-var RClass = function(klass, super_klass) {
- this.$klass = klass ;
- this.$super = super_klass ;
- this.$type = VN.CLASS ;
- this.$singleton = false ;
- this.$m_tbl = { };
- this.$iv_tbl = { };
- return this ;
+function rb_class_inherited(super_class, klass) {
+  if (!super_class) super_class = rb_cObject ;
+  return rb_funcall(super_class, "inherited", klass);
 };
 
-RClass.inherited = function(super_klass, klass) {
-  if (!super_klass) super_klass = cObject ;
-  return super_klass.$('inherited', [klass]) ;
-};
-
-function rb_define_class(id, super_klass) {
-  var klass;
+function rb_define_class(id, super_class) {
+  var k;
   // if already defined, just ensure right type then return existing class/mod.
-  if (cObject.$c_d(id)) {
-    // console.log('returning current class for ' + id);
-    klass = cObject.$c_g(id);
-    if (klass.$type != VN.CLASS) {
-      VN.type_error(id + ' is not a class');
+  if (rb_const_defined(rb_cObject, id)) {  
+    k = rb_const_get(rb_cObject, id);
+    if (!(k.flags & T_CLASS)) {
+      throw id + " is not a class"
     }
-    if (klass.$super != super_klass) {
-      // bail out for Object...error if Object is assigned to another nam (e.g. VNObject)
-      if (klass != cObject) {
-        // console.log(klass);
-        // console.log('wow');
-        VN.name_error(id + ' is already defined');
+    if (k.sup != super_class) {
+      if (k != rb_cObject) {
+        throw id + " is already defined"
       }
-      
     }
-    return klass;
+    return k
   }
-  if (!super_klass) {
-    VN.warning('no super class for `' + id + '`, Object assumed')
+  if (!super_class) {
+    console.log("no superclass given for " + id + " . Object assumed");
   }
-  klass = RClass.define_class_id(id, super_klass);
-  VN.class_tbl[id] = klass;
+  k = rb_define_class_id(id, super_class);
+  rb_class_tbl[id] = k;
   
-  // set class bundle here....
-  rb_ivar_set(klass, '__bundle__', window.vn_current_bundle);
+  // class bundle...?
+  rb_ivar_set(k, '__bundle__', window.vn_current_bundle);
   
-  
-  klass.$name(id);
-  cObject.$c_s(id, klass);
-  RClass.inherited(super_klass, klass);
-  return klass;
-};
-  
-RClass.define = rb_define_class;
+  rb_name_class(k, id);
+  rb_const_set(rb_cObject, id, k);
+  rb_class_inherited(super_class, k);
+  return k;
+}
 
 function rb_define_class_under(outer, id, super_klass) {
   var klass;
@@ -123,17 +105,6 @@ function rb_define_class_under(outer, id, super_klass) {
   return klass;
 };
 
-
-/**
-  TODO: Need to stop search going up through chain. Object inside Vienna, for instance, should
-  not reference the Base Object class as the same, unless it is set to equal that. Also, VN::Array
-  should not be mapped to ::Array. different classes. Need to stop $c_d and $c_g going up through
-  the chain. They should only go up when looking for a constant inside the code, not for defining new
-  classes.
-*/
-RClass.define_under = rb_define_class_under;
-
-
 RClass.class2name = function(klass) {
   return klass.$class_name();
 };
@@ -142,28 +113,28 @@ RClass.obj_classname = function(obj) {
   return VN.class2name(obj.$klass);
 };
 
-
-RClass.make_metametaclass = function(metaclass) {
+function make_metametaclass(metaclass) {
   var metametaclass, super_of_metaclass;
 
-  if (metaclass.$klass == metaclass) {
-    metametaclass = RClass.boot(null);
-    metametaclass.$klass = metametaclass;
+  if (metaclass.klass == metaclass) {
+    metametaclass = rb_class_boot(null);
+    metametaclass.klass = metametaclass;
   }
   else {
-    metametaclass = RClass.boot(null);
-    metametaclass.$klass = metaclass.$klass.$klass == metaclass.$klass ? VN.make_metametaclass(metaclass.$klass) : metaclass.$klass.$klass;
+    metametaclass = rb_class_boot(null);
+    metametaclass.klass = metaclass.klass.klass == metaclass.klass ? make_metametaclass(metaclass.klass) : metaclass.klass.klass;
   }
-  metametaclass.$singleton = true;
-  metametaclass.$singleton_class_attached(metaclass);
-  metaclass.$klass = metametaclass;
+  
+  FL_SET(metametaclass, FL_SINGLETON);
+  rb_singleton_class_attached(metametaclass, metaclass);
+  metaclass.klass = metametaclass;
 
-  super_of_metaclass = metaclass.$super;
-  while (super_of_metaclass.$type == VN.ICLASS) {
-    super_of_metaclass = super_of_metaclass.$super;
+  super_of_metaclass = metaclass.sup;
+  while (FL_TEST(super_of_metaclass, T_ICLASS)) {
+    super_of_metaclass = super_of_metaclass.sup;
   }
 
-  metametaclass.$super = super_of_metaclass.$klass.$i_g('__attached__') == super_of_metaclass ? super_of_metaclass.$klass : RClass.make_metametaclass(super_of_metaclass);
+  metametaclass.sup = rb_ivar_get(super_of_metaclass.klass, '__attached__') == super_of_metaclass ? super_of_metaclass.klass : make_metametaclass(super_of_metaclass);
   return metametaclass;
 };
 
@@ -174,25 +145,25 @@ RClass.real = function(klass) {
   return klass
 };
 
-RClass.alloc = function(type, klass) {
-  var obj = new RClass();
-  obj.$klass = klass;
-  obj.$type = type;
-  return obj;
-};
+function class_alloc(type, klass) {
+  var o = new RClass();
+  o.klass = klass;
+  o.flags |= type;
+  return o;
+}
 
-RClass.boot = function(super_klass) {
-  var klass = RClass.alloc(VN.CLASS, cClass);
-  klass.$super = super_klass; 
-  return klass;
-};
+function rb_class_boot(super_class) {
+  var k = class_alloc(T_CLASS, rb_cClass);
+  k.sup = super_class;
+  return k;
+}
 
-RClass.check_inheritable = function(super_klass) {
-  if (super_klass.$type != VN.CLASS) {
-    VN.type_error('super class must be a Class (' + VN.obj_classname(super_klass) + ' given)');
+function rb_check_inheritable(super_class) {
+  if (TYPE(super_class) != T_CLASS) {
+    throw 'super class must be a Class (' + VN.obj_classname(super_klass) + ' given)';
   }
-  if (super_klass.singleton) {
-    VN.type_error('can\'t make a subclass of singleton class');
+  if (super_class.flags & FL_SINGLETON) {
+    throw 'can\'t make a subclass of singleton class';
   }
 };
 
@@ -213,121 +184,121 @@ RClass.define_class_id = function(id, super_klass) {
   return klass;
 };
 
-RClass.singleton_class = function(obj) {
+function rb_singleton_class(obj) {
   var klass;
-  
-  // console.log(obj);
 
-  if (obj.$type == VN.T_FIXNUM || obj.$type == VN.T_SYMBOL) {
-    VN.type_error('can\'t define singleton');
+  if (FL_TEST(obj, T_NUMBER) || FL_TEST(obj, T_SYMBOL)) {
+    console.log(obj);
+    throw 'can\'t define singleton';
   }
 
-  if (obj.$klass.$singleton && obj.$klass.$i_g('__attached__') == obj) {
-    klass = obj.$klass;
+  if (FL_TEST(obj.klass, FL_SINGLETON) && rb_ivar_get(obj.klass, '__attached__') == obj) {
+    klass = obj.klass;
   }
   else {
     // klass = RClass.make_metaclass(obj, obj.$klass);
     // console.log(obj);
-    klass = obj.$make_metaclass(obj.$klass) ;
+    // klass = obj.$make_metaclass(obj.$klass) ;
+    klass = rb_make_metaclass(obj, obj.klass);
   }
 
-  if (obj.$type == VN.CLASS) {
-    if (klass.$klass.$i_g('__attached__') != klass) {
-      RClass.make_metametaclass(klass);
+  if (FL_TEST(obj, T_CLASS)) {
+    if (rb_ivar_get(klass.klass, '__attached__') != klass) {
+      make_metametaclass(klass);
+      // RClass.make_metametaclass(klass);
     }
   }
 
   return klass;
 };
 
-RClass.prototype.$name = function(id) {
-  this.$i_s('__classid__', id);
-};
+function rb_name_class(klass, id) {
+  rb_ivar_set(klass, '__classid__', id);
+}
 
-RClass.prototype.$class_name = function() {
-  return VN.class_path(klass.$real());
-};
+// RClass.prototype.$class_name = function() {
+//   return VN.class_path(klass.$real());
+// };
 
-RClass.prototype.$make_metaclass = function(super_klass) {
-  // obj is a metaclass...
-  if (this.$type == VN.CLASS && this.$singleton == true) {
-    return this.$make_metametaclass();
+function rb_make_metaclass(klass, super_class) {
+  if (FL_TEST(klass, T_CLASS) && FL_TEST(klass, FL_SINGLETON)) {
+    return make_metametaclass(klass);
   }
   else {
-    var klass = RClass.boot(super_klass);
-    klass.$singleton = true;
-    this.$klass = klass;
-    klass.$singleton_class_attached(this);
-  
-    var metasuper = klass.$klass;
+    var meta = rb_class_boot(super_class);
+    FL_SET(meta, FL_SINGLETON);
+    klass.klass = meta;
+    rb_singleton_class_attached(meta, klass);
+    
+    var metasuper = meta.klass;
     if (metasuper) {
-      klass.$klass = metasuper;
+      meta.klass = metasuper;
     }
-    return klass;
+    return meta;
   }
-};
-
-RClass.prototype.$singleton_class_attached = function(obj) {
-  if (this.$singleton == true) {
-    this.$i_s('__attached__', obj);
-  }
-};
-
-
-RClass.prototype.$ = function(id, args) {
-  var method = this.$klass.$search_method(id);
-  // console.log('searching for: ' + id);
-  // console.log(this.$klass);
-  if (!method) throw 'VN#funcall cannot find method: ' + id ;
-  return method.apply(this, args) ;
-};
-
-/**
-  cvar_get (klassvar_get)
-*/
-RClass.prototype.$k_g = function(id) {
-  var tmp = this;
-  var value;
-  while(tmp) {
-    if (value = tmp.$iv_tbl[id]) {
-      return value;
-    }
-    tmp = tmp.$super;
-  }
-  VN.name_error('uninitialized class variable ' + id + ' in ' + this);
-  return nil ;
-};
-
-/**
-  class var defined
-*/
-RClass.prototype.$k_d = function(id) {
-  var tmp = this;
-  var value;
-  while(tmp) {
-    if (value = tmp.$iv_tbl[id]) {
-      return true;
-    }
-    tmp = tmp.$super;
-  }
-  return false;
 }
 
-/**
-  cvar_set (klassvar_set)
-*/
-RClass.prototype.$k_s = function(id, val) {
-  return this.$iv_tbl[id] = val;
-};
-
-RClass.prototype.$i_g = function(id) {
-  return this.$iv_tbl[id];
-};
-
-RClass.prototype.$i_s = function(id, val) {
-  this.$iv_tbl[id] = val;
-  return val ;
+function rb_singleton_class_attached(klass, obj) {
+  if (FL_TEST(klass, FL_SINGLETON)) {
+    rb_ivar_set(klass, '__attached__', obj);
+  }
 }
+
+
+// RClass.prototype.$ = function(id, args) {
+//   var method = this.$klass.$search_method(id);
+//   // console.log('searching for: ' + id);
+//   // console.log(this.$klass);
+//   if (!method) throw 'VN#funcall cannot find method: ' + id ;
+//   return method.apply(this, args) ;
+// };
+// 
+// /**
+//   cvar_get (klassvar_get)
+// */
+// RClass.prototype.$k_g = function(id) {
+//   var tmp = this;
+//   var value;
+//   while(tmp) {
+//     if (value = tmp.$iv_tbl[id]) {
+//       return value;
+//     }
+//     tmp = tmp.$super;
+//   }
+//   VN.name_error('uninitialized class variable ' + id + ' in ' + this);
+//   return nil ;
+// };
+// 
+// /**
+//   class var defined
+// */
+// RClass.prototype.$k_d = function(id) {
+//   var tmp = this;
+//   var value;
+//   while(tmp) {
+//     if (value = tmp.$iv_tbl[id]) {
+//       return true;
+//     }
+//     tmp = tmp.$super;
+//   }
+//   return false;
+// }
+// 
+// /**
+//   cvar_set (klassvar_set)
+// */
+// RClass.prototype.$k_s = function(id, val) {
+//   return this.$iv_tbl[id] = val;
+// };
+// 
+// RClass.prototype.$i_g = function(id) {
+//   return this.$iv_tbl[id];
+// };
+// 
+// RClass.prototype.$i_s = function(id, val) {
+//   this.$iv_tbl[id] = val;
+//   return val ;
+// }
 
 /**
   Define 'normal' method
@@ -336,247 +307,147 @@ function rb_define_method(klass, name, func) {
   rb_add_method(klass, name, func);
 }
 
+function rb_define_private_method(klass, name, func) {
+  rb_add_method(klass, name, func);
+}
+
 function rb_define_singleton_method(klass, name, func) {
-  rb_define_method(RClass.singleton_class(klass), name, func);
+  rb_define_method(rb_singleton_class(klass), name, func);
 }
 
 function rb_add_method(klass, name, func) {
-  klass.$m_tbl[name] = func;
-  func.displayName = klass.$iv_tbl.__classid__ + "#" + name;
+  klass.m_tbl[name] = func;
+  func.displayName = klass.iv_tbl.__classid__ + "#" + name;
+}
+
+function rb_define_alloc_func(klass, func) {
+  rb_define_method(rb_singleton_class(klass), 'allocate', func);
 }
 
 
-RClass.prototype.$def = function(name, func) {
-  this.$add_method(name, func);
-};
-
-RClass.prototype.$define_protected_method = function(name, func) {
-  this.$add_method(name, func);
-};
-
-RClass.prototype.$define_private_method = function(name, func) {
-  this.$add_method(name, func);
-};
-
-RClass.prototype.$undef_method = function(name, func) {
-  this.$add_method(name, func);
-};
-
-RClass.prototype.$add_method = function(name, func) {
-  this.$m_tbl[name] = func;
-};
+// RClass.prototype.$def = function(name, func) {
+//   this.$add_method(name, func);
+// };
+// 
+// RClass.prototype.$define_protected_method = function(name, func) {
+//   this.$add_method(name, func);
+// };
+// 
+// RClass.prototype.$define_private_method = function(name, func) {
+//   this.$add_method(name, func);
+// };
+// 
+// RClass.prototype.$undef_method = function(name, func) {
+//   this.$add_method(name, func);
+// };
+// 
+// RClass.prototype.$add_method = function(name, func) {
+//   this.$m_tbl[name] = func;
+// };
 
 /**
   Define singleton
 */
-RClass.prototype.$def_s = function(name, func) {
-  RClass.singleton_class(this).$def(name, func);
-};
-
-RClass.prototype.$define_alias = function(id1, id2) {
-  
-};
-
-RClass.prototype.$define_alloc_func = function(func) {
-  RClass.singleton_class(this).$add_method('allocate', func);
-};
-
-RClass.prototype.$undef_alloc_func = function() {
-  RClass.singleton_class(this).$add_method('allocate', null);
-};
-
-RClass.prototype.$search_method = function search_method(id) {
-  // console.log('checking ' + id);
-  // console.log(this);
-  var klass = this; var func ;
-  // console.log(id);
-  // console.log(klass);
-  // return null ;
-  while (!(func = klass.$m_tbl[id])) {
-    klass = klass.$super;
-    // console.log(this.$super.__classid__);
-    if (!klass) return undefined;
-  }
-  // console.log('returning true for ' + id);
-  return func;
-};
-
-RClass.prototype.$search_super_method = function(from,id) {
-  // get current
-  
-  /**
-    Match func = from, to match current function
-    THEN search by name from there up, otherwise, chains of more then
-    2 supers will keep rematching second super
-  */
-  var klass = this; var func;
-  while (!((func = klass.$m_tbl[id]) && func == from)) {
-    klass = klass.$super;
-    if (!klass) return undefined;
-  }
-  // now skip up one
-  klass = klass.$super;
-  if (!klass) return undefined;
-  while (!(func = klass.$m_tbl[id])) {
-     klass = klass.$super;
-     if(!klass) return undefined;
-   }
-   return func;
-  
-    // 
-    // var klass = this; var func;
-    // while (!((func = klass.$m_tbl[id]) && func != from)) {
-    //    klass = klass.$super;
-    //    if(!klass) return undefined;
-    //  }
-    // 
-    // var klass = this; var func;
-    // // console.log('from');
-    // // console.log(from);
-    // // console.log('views');
-    // // console.log(klass.$m_tbl[id]);
-    // // console.log(klass.$m_tbl[id] === from);
-    // // console.log(klass.$m_tbl[id]);
-    // while (!((func = klass.$m_tbl[id]) && func != from)) {
-    //    klass = klass.$super;
-    //    if(!klass) return undefined;
-    //  }
-    // // return func = klass.$m_tbl[id];
-    // // return func = klass.$m_tbl[id];
-    // return func;
-
-  // var klass = this; var func ;
-  // 
-  // while (!(func = klass.$m_tbl[id])) {
-  //   klass = klass.$super;
-  //   if (!klass) return undefined;
-  // }
-  // console.log('this point');
-  // // we have the current impl, now we need to search for the super from this point..
-  // klass = klass.$super;
-  // if (!klass) return undefined;
-  // while (!(func = klass.$m_tbl[id])) {
-  //   klass = klass.$super;
-  //   if (!klass) return undefined;
-  // }
-  // return func;
-};
-
-RClass.prototype.$ = function(id, args) {
-  // var method = this.$search_method(this.$klass, id);
-  var method = this.$klass.$search_method(id);
-  if (!method) throw 'VN#funcall cannot find method: ' + id ;
-  return method.apply(this, args) ;
-};
+// RClass.prototype.$def_s = function(name, func) {
+//   RClass.singleton_class(this).$def(name, func);
+// };
+// 
+// RClass.prototype.$define_alias = function(id1, id2) {
+//   
+// };
+// 
+// RClass.prototype.$define_alloc_func = function(func) {
+//   RClass.singleton_class(this).$add_method('allocate', func);
+// };
+// 
+// RClass.prototype.$undef_alloc_func = function() {
+//   RClass.singleton_class(this).$add_method('allocate', null);
+// };
+// 
+// RClass.prototype.$search_method = function search_method(id) {
+//   // console.log('checking ' + id);
+//   // console.log(this);
+//   var klass = this; var func ;
+//   // console.log(id);
+//   // console.log(klass);
+//   // return null ;
+//   while (!(func = klass.$m_tbl[id])) {
+//     klass = klass.$super;
+//     // console.log(this.$super.__classid__);
+//     if (!klass) return undefined;
+//   }
+//   // console.log('returning true for ' + id);
+//   return func;
+// };
+// 
+// RClass.prototype.$search_super_method = function(from,id) {
+//   // get current
+//   
+//   /**
+//     Match func = from, to match current function
+//     THEN search by name from there up, otherwise, chains of more then
+//     2 supers will keep rematching second super
+//   */
+//   var klass = this; var func;
+//   while (!((func = klass.$m_tbl[id]) && func == from)) {
+//     klass = klass.$super;
+//     if (!klass) return undefined;
+//   }
+//   // now skip up one
+//   klass = klass.$super;
+//   if (!klass) return undefined;
+//   while (!(func = klass.$m_tbl[id])) {
+//      klass = klass.$super;
+//      if(!klass) return undefined;
+//    }
+//    return func;
+//   
+//     // 
+//     // var klass = this; var func;
+//     // while (!((func = klass.$m_tbl[id]) && func != from)) {
+//     //    klass = klass.$super;
+//     //    if(!klass) return undefined;
+//     //  }
+//     // 
+//     // var klass = this; var func;
+//     // // console.log('from');
+//     // // console.log(from);
+//     // // console.log('views');
+//     // // console.log(klass.$m_tbl[id]);
+//     // // console.log(klass.$m_tbl[id] === from);
+//     // // console.log(klass.$m_tbl[id]);
+//     // while (!((func = klass.$m_tbl[id]) && func != from)) {
+//     //    klass = klass.$super;
+//     //    if(!klass) return undefined;
+//     //  }
+//     // // return func = klass.$m_tbl[id];
+//     // // return func = klass.$m_tbl[id];
+//     // return func;
+// 
+//   // var klass = this; var func ;
+//   // 
+//   // while (!(func = klass.$m_tbl[id])) {
+//   //   klass = klass.$super;
+//   //   if (!klass) return undefined;
+//   // }
+//   // console.log('this point');
+//   // // we have the current impl, now we need to search for the super from this point..
+//   // klass = klass.$super;
+//   // if (!klass) return undefined;
+//   // while (!(func = klass.$m_tbl[id])) {
+//   //   klass = klass.$super;
+//   //   if (!klass) return undefined;
+//   // }
+//   // return func;
+// };
+// 
+// RClass.prototype.$ = function(id, args) {
+//   // var method = this.$search_method(this.$klass, id);
+//   var method = this.$klass.$search_method(id);
+//   if (!method) throw 'VN#funcall cannot find method: ' + id ;
+//   return method.apply(this, args) ;
+// };
 
 /**
   $const_set
 */
-RClass.prototype.$c_s = function(id, val) {
-  this.$mod_av_set(id, val, true);
-  return val;
-};
-
-RClass.prototype.$mod_av_set = function(id, val, isconst) {
-  this.$iv_tbl[id] = val ;
-};
-
-/**
-  $c_g
-*/
-RClass.prototype.$c_g = function(id) {
-  var tmp = this;
-  var value;
-  while (tmp) {
-    if (value = tmp.$iv_tbl[id]) {
-      return value;
-    }
-    tmp = tmp.$super;
-  }
-  VN.name_error(id, 'uninitialized constant ' + id + ' in ' + this.name);
-  return nil;
-};
-
-/**
-  Get constant, but look in the classes' parent as well
-  -const_get_full (full search)
-  Note: This does not work within objects copied from another context. E.g, from VN::Object, we cannot
-  search for things indside Vienna... just doesnt work - no $parent on top object, but we dont want to
-  chnage this..
-*/
-RClass.prototype.$c_g_full = function(id) {
-  var tmp = this;
-  var value;
-  while (tmp) {
-    if (value = tmp.$iv_tbl[id]) {
-      return value;
-    }
-    tmp = tmp.$super;
-  }
-  // now try parent instead..
-  var tmp = this.$parent;
-  while (tmp) {
-    if (value = tmp.$iv_tbl[id]) {
-      return value;
-    }
-    tmp = tmp.$parent
-  }
-  VN.name_error(id, 'uninitialized constant ' + id + ' in ' + this.name);
-  return nil;
-};
-
-/**
-  SAME AS ABOVE BUT CHECK IF DEFINED
-*/
-RClass.prototype.$c_d_full = function(id) {
-  var tmp = this;
-  var value;
-  while (tmp) {
-    if (value = tmp.$iv_tbl[id]) {
-      return true;
-    }
-    tmp = tmp.$super;
-  }
-  // now try parent instead..
-  var tmp = this.$parent;
-  while (tmp) {
-    if (value = tmp.$iv_tbl[id]) {
-      return true;
-    }
-    tmp = tmp.$parent
-  }
-  return false;
-};
-
-/**
-  $const)defined
-*/
-RClass.prototype.$c_d = function(id) {
-  var tmp = this;
-  var value;
-  while (tmp) {
-    if (value = tmp.$iv_tbl[id]) {
-      return true;
-    }
-    tmp = tmp.$super;
-  }
-  return false;
-};
-
-/**
-  const_defined_at
-*/
-RClass.prototype.$c_d_a = function(id) {
-  return (this.$iv_tbl[id]) ? true : false;
-};
-
-/**
-  const_get_at
-*/
-RClass.prototype.$c_g_a = function(id) {
-  return (this.$iv_tbl[id]) ? this.$iv_tbl[id] : nil;
-};
-
-RClass.prototype.$define_const = function(id, val) {
-  
-};

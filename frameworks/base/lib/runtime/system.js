@@ -25,61 +25,53 @@
  */
 
 // BasicObject, Object, etc.
- var metaclass;
- var cBasicObject = VN.boot_defclass('BasicObject', null);
- var rb_cBasicObject = cBasicObject;
- var cObject = VN.boot_defclass('Object', rb_cBasicObject);
- var rb_cObject = cObject;
- var cModule = VN.boot_defclass('Module', rb_cObject);
- var rb_cModule = cModule;
- var cClass = VN.boot_defclass('Class', rb_cModule);
- var rb_cClass = cClass;
+var metaclass;
+var rb_cBasicObject = boot_defclass('BasicObject', null);
+var rb_cObject = boot_defclass('Object', rb_cBasicObject);
+var rb_cModule = boot_defclass('Module', rb_cObject);
+var rb_cClass = boot_defclass('Class', rb_cModule);
 
- metaclass = rb_cBasicObject.$make_metaclass(cClass);
- metaclass = rb_cObject.$make_metaclass(metaclass);
- metaclass = rb_cModule.$make_metaclass(metaclass);
- metaclass = rb_cClass.$make_metaclass(metaclass);
+metaclass = rb_make_metaclass(rb_cBasicObject, rb_cClass);
+metaclass = rb_make_metaclass(rb_cObject, metaclass);
+metaclass = rb_make_metaclass(rb_cModule, metaclass);
+metaclass = rb_make_metaclass(rb_cClass, metaclass);
 
- VN.boot_defmetametaclass(rb_cModule, metaclass);
- VN.boot_defmetametaclass(rb_cObject, metaclass);
- VN.boot_defmetametaclass(rb_cBasicObject, metaclass);
+boot_defmetametaclass(rb_cModule, metaclass);
+boot_defmetametaclass(rb_cObject, metaclass);
+boot_defmetametaclass(rb_cBasicObject, metaclass);
 
- /**
-   BasicObject necessary methods
- */
- rb_cBasicObject.$define_private_method('initialize', function(self, _cmd) {
-
-
-
-   return nil ;
- });
+// RObject.prototype.toString = function() {
+  // console.log('calling toString');
+  // return VN$(this, 'to_s');
+// }
 
 
 
 
 
-//  Hash
-var RHash = function() {
- this.$klass = rb_cHash ;
- this.$type = T_HASH;
 
- this.keys = [];
- this.values = { };
- this.ifnone = nil;
- return this;
-};
-
-RHash.prototype.$define_singleton_method = RObject.prototype.$define_singleton_method;
-RHash.prototype.$make_metaclass = RObject.prototype.$make_metaclass;
-
-VN.$h = function() {
- var hash = new RHash();
- for (var i = 0; i < arguments.length; i++) {
-   VN$(hash, '[]=', arguments[i], arguments[i + 1]);
-   i++;
- }
- return hash;
-};
+// //  Hash
+// var RHash = function() {
+//  this.$klass = rb_cHash ;
+//  this.$type = T_HASH;
+// 
+//  this.keys = [];
+//  this.values = { };
+//  this.ifnone = nil;
+//  return this;
+// };
+// 
+// RHash.prototype.$define_singleton_method = RObject.prototype.$define_singleton_method;
+// RHash.prototype.$make_metaclass = RObject.prototype.$make_metaclass;
+// 
+// VN.$h = function() {
+//  var hash = new RHash();
+//  for (var i = 0; i < arguments.length; i++) {
+//    VN$(hash, '[]=', arguments[i], arguments[i + 1]);
+//    i++;
+//  }
+//  return hash;
+// };
 
 
 

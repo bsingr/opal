@@ -24,18 +24,22 @@
  * THE SOFTWARE.
  */
  
+function require() {
+  // do nothing..
+}
+ 
 // temp..
 var nil = null;
 
 // Boolean test. false if null, undefined, nil, or false
-var RTEST = function RTEST(val) {
+function RTEST(val) {
   return (val != null && val != undefined && val != nil && val != false) ? true : false;
 };
 
 /**
   Performs an 'or op' with lhs and rhs
 */
-var ORTEST = function ORTEST(lhs, rhs) {
+function ORTEST(lhs, rhs) {
   if (lhs == null || lhs == undefined) lhs = nil;
   if (rhs == null || rhs == undefined) rhs = nil;
   
@@ -48,7 +52,7 @@ var ORTEST = function ORTEST(lhs, rhs) {
 /**
   Performs an 'and op' with lhs and rhs
 */
-var ANDTEST = function ANDTEST(lhs, rhs) {
+function ANDTEST(lhs, rhs) {
   if (lhs == null || lhs == undefined) lhs = nil;
   if (rhs == null || rhs == undefined) rhs = nil;
   
@@ -58,7 +62,7 @@ var ANDTEST = function ANDTEST(lhs, rhs) {
   return rhs;
 };
 
-var NOTTEST = function NOTTEST(expr) {
+function NOTTEST(expr) {
   if (expr == null || expr == undefined || expr == nil || expr == false) return true;
   return false;
 };
@@ -71,108 +75,103 @@ if (typeof console === 'undefined') {
  console.log = console.info = console.warn = console.error = function() { };
 }
 
-var VN = {
-  
-  CLASS: 0,
-  MODULE: 1,
-
-  OBJECT: 2,
-  BOOLEAN: 3,
-  STRING: 4,
-  ARRAY: 5,
-  NUMBER: 6,
-  PROC: 7
-};
-
-var T_CLASS   = 0,
-    T_MODULE  = 1,
-    T_OBJECT  = 2,
-    T_BOOLEAN = 3,
-    T_STRING  = 4,
-    T_ARRAY   = 5,
-    T_NUMBER  = 6,
-    T_PROC    = 7,
-    T_SYMBOL  = 8,
-    T_HASH    = 9,
-    T_ICLASS  = 10;
-
-VN.warning = function(msg) {
-  console.log('Vienna warning: ' + msg);
-};
-
-VN.type_error = function(msg) {
-  throw 'Vienna TypeError: ' + msg;
-};
-
-VN.name_error = function(msg) {
-  throw 'Vienna NameError: ' + msg;
+function RObject(klass, type) {
+  this.klass = klass;
+  this.flags = type;
+  this.iv_tbl = { };
+  return this;
 }
 
-VN.top_const_get = function(id) {
-  return undefined ;
+function RClass(klass, super_klass) {
+  this.klass = klass ;
+  this.sup = super_klass ;
+  this.flags = T_CLASS ;
+  this.m_tbl = { };
+  this.iv_tbl = { };
+  return this;
 };
 
-VN.define_global_const = function(id, val) {
-  cObject.$define_const(id, val);
-};
+// Types
+var T_CLASS   = 1,
+    T_MODULE  = 2,
+    T_OBJECT  = 4,
+    T_BOOLEAN = 8,
+    T_STRING  = 16,
+    T_ARRAY   = 32,
+    T_NUMBER  = 64,
+    T_PROC    = 128,
+    T_SYMBOL  = 256,
+    T_HASH    = 512,
+    T_ICLASS  = 1024;
 
-VN.class_tbl = { } ;  // all classes are stored here
-VN.global_tbl = { } ; // globals are stored here
+// Flags
+var FL_SINGLETON = 2056;
 
-VN.gvar_get = function(id) {
+function FL_TEST(x, f) {
+  return x.flags & f;
+}
+
+function FL_SET(x, f) {
+  x.flags |= f;
+}
+
+function FL_UNSET(x, f) {
+  x.flags &= (~f);
+}
+
+rb_class_tbl = { } ;  // all classes are stored here
+rb_global_tbl = { } ; // globals are stored here
+
+function rb_gvar_get(id) {
   
 };
 
-VN.gvar_set = function(id, val) {
+function rb_gvar_set(id, val) {
   
 };
 
 
-
-/**
-  Object
-*/
-VN.boot_defclass = function(id, super_klass) {
-  var obj = RClass.boot(super_klass);
-  obj.$name(id);
-  (cObject ? cObject : obj).$c_s(id, obj);
-  
-  return obj;
+function boot_defclass(id, super_class) {
+  var o = rb_class_boot(super_class);
+  rb_name_class(o, id);
+  rb_class_tbl[id] = o;
+  rb_const_set((rb_cObject ? rb_cObject : o), id, o);
+  return o;
 };
 
-VN.boot_defmetametaclass = function(klass, metametaclass) {
-  klass.$klass.$klass = metametaclass;
+boot_defmetametaclass = function(klass, metametaclass) {
+  klass.klass.klass = metametaclass;
 };
 
-VN.obj_alloc = function(klass) {
+obj_alloc = function(klass) {
   // console.log('in base.js, obj_alloc ' + arguments.length);
   // var obj = klass.$('allocate', []);
   var obj = VN$(klass, 'allocate');
   return obj;
 };
 
-VN.class_allocate_instance = function() {
+class_allocate_instance = function() {
   // console.log('doing VN.class_allocate_instance');
-  var obj = new RObject(this, VN.OBJECT) ;
+  var obj = new RObject(this, T_OBJECT) ;
   return obj;
 };
 
-VN.obj_dummy = function() {
+obj_dummy = function() {
   return nil ;
 };
 
-VN.equal = function(obj) {
+equal = function(obj) {
   if (obj == this) return true ;
   var result = this.$funcall('==', [obj]);
   if (result) return true ;
   return false ;
 };
 
-VN.eql = function(obj) {
+eql = function(obj) {
   return this.$funcall('==', [obj]);
 };
 
-VN.obj_equal = function(obj) {
+obj_equal = function(obj) {
   return (obj == this) ? true : false ;
 };
 
@@ -217,8 +216,8 @@ require('core/resources');
 require('core/top_self');
 
 require('core/nil_class');
-nil = VN$(cObject.$k_g('NilClass'), 'new');
-nil.toString = function() { return 'nil';};
+// nil = VN$(cObject.$k_g('NilClass'), 'new');
+// nil.toString = function() { return 'nil';};
 
 require('core/bundle');
 require('core/json');
