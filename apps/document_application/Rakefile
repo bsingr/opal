@@ -1,11 +1,56 @@
 
-# require 'rubygems'
-# require 'rake'
-# 
-# begin
-#   require 'vienna'
-#   puts "loaded vienna"
-# rescue LoadError
-#   puts "Vienna not available. Install it with: sudo gem install vienna"
-# end
+config :all,
+  
+  # build paths etc REQUIRED
+  :build_prefix => 'build',
+  :tmp_prefix => 'build/tmp',
 
+  # minify javascript: default yes, for better bandwidth
+  :minimize_javascript => true,
+  
+  # Preferred lnaguage: default app language to suit English.lproj
+  :preferred_language => :en,
+  
+  # Used for the generator to insert automatic names etc
+  :user_name => 'Adam Beynon',
+  :organization_name => 'Adam Beynon',
+  
+  :sdk => 'vienna',
+  
+  # requirements.... saves having to put 'require `browser`' in app code
+  :require => 'browser',
+  
+  # Useful for developing core frameworks: saves reinstalling gem between edits
+  # :sdk_root => '/Users/adambeynon/Development/vienna/SDKs',
+  
+  # Used for inserting copyrights to the tops of files
+  :copyright_notice =>
+%q{Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.}
+
+config :debug,
+  :compress => false,
+  :build_prefix => 'build/debug',
+  :tmp_prefix => 'build/tmp/debug',
+  # do not minimize for debugging
+  :minimize_javascript => false
+
+config :release,
+  :compress => true,
+  :build_prefix => 'build/release',
+  :tmp_prefix => 'build/tmp/release'

@@ -110,6 +110,10 @@ module Vienna
       
     end
     
+    def sdk
+      'vienna'
+    end
+    
     def project_name
       @project_name ||= File.basename(project_root)
     end
@@ -124,7 +128,7 @@ module Vienna
     
     # Location of the system libraries: base, browser, vienna, etc.
     def system_lib_root
-      @system_lib_root ||= File.expand_path(File.join(Vienna::PATH, 'frameworks'))
+      @system_lib_root ||= File.expand_path(File.join(Vienna::PATH, 'sdk', sdk))
     end
     
     # Where the project can put other 'libraries' to be optionally built in.

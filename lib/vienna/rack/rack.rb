@@ -1,5 +1,5 @@
 # 
-# cappbuild.rb
+# rack.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -26,26 +26,17 @@
 
 module Vienna
   
-  class Tools
-  
-    def self.cappbuild
-      
-      p = CappuccinoProject.new Dir.getwd
-      p.prepare!
-      p.build!
-      
-      # puts 'doing cappbuild'
-      # p = Project.new Dir.getwd
-      # p = Vienna::NewProject.new Dir.getwd
-      # # puts "preparing: #{p.project_root}"
-      # p.prepare!
-      # # puts "building: #{p.project_name}"
-      # p.build!
-      # # puts "root file: #{p.root_file}"
-      # # puts "library path: #{p.system_lib_root}"
-      # 
-      # # puts "all frameworks used:"
-      # # puts p.all_frameworks
+  class Rack
+    
+    def initialize(project)
+      @project = project
+      port = 3030
+      puts "Starting server on port #{port}."
+      ::Rack::Handler::Mongrel.run self, :Port => port
     end
-  end  
+    
+    def call(env)
+      [200, {"Content-Type" => "text/html"}, File.open('build/debug/index.html')]
+    end
+  end
 end

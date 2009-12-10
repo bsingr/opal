@@ -42,6 +42,10 @@ module Vienna
       FileUtils.mkdir_p(tmp_prefix)
     end
     
+    def sdk
+      'cappuccino'
+    end
+    
     # Building will first compile all ruby files. For the moment, we assume only 
     # applications can be built. Support for Frameworks and bundles will follow.
     # Basically, find the main.rb file in lib, and recursively build. main.rb will

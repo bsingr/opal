@@ -10,6 +10,8 @@ when 'clean'
   Vienna::Tools.clean
 when 'cappbuild'
   Vienna::Tools.cappbuild
+when 'server'
+  Vienna::Tools.server
 else
   puts 'Use either "build" or "cappbuild"'
 end

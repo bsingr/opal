@@ -180,6 +180,7 @@ obj_equal = function(obj) {
   Require the runtime
 */
 require('runtime/class');
+require('runtime/variable');
 require('runtime/module');
 require('runtime/object');
 require('runtime/system');
@@ -187,41 +188,40 @@ require('runtime/system');
 /**
   Require core library
 */
-require('core/object');
-// require('core/kernel');
-require('core/module');
-require('core/class');
-
-
-require('core/comparable');
-require('core/enumerable');
-require('core/string');
-require('core/symbol');
-require('core/number');
-require('core/array');
-require('core/boolean');
-require('core/hash');
-require('core/string');
-// require('core/struct');
-// require('core/regexp');
-require('core/range');
-// require('core/time');
-require('core/proc');
-require('core/math');
-// require('core/enumerator');
+// require('core/object');
+// // require('core/kernel');
+// require('core/class');
 // 
-
-require('core/resources');
-
-require('core/top_self');
-
-require('core/nil_class');
-// nil = VN$(cObject.$k_g('NilClass'), 'new');
-// nil.toString = function() { return 'nil';};
-
-require('core/bundle');
-require('core/json');
-require('core/yaml');
-require('core/plist');
-require('core/lib');
-require('core/env');
+// 
+// require('core/comparable');
+// require('core/enumerable');
+// require('core/string');
+// require('core/symbol');
+// require('core/number');
+// require('core/array');
+// require('core/boolean');
+// require('core/hash');
+// require('core/string');
+// // require('core/struct');
+// // require('core/regexp');
+// require('core/range');
+// // require('core/time');
+// require('core/proc');
+// require('core/math');
+// // require('core/enumerator');
+// // 
+// 
+// require('core/resources');
+// 
+// require('core/top_self');
+// 
+// require('core/nil_class');
+// // nil = VN$(cObject.$k_g('NilClass'), 'new');
+// // nil.toString = function() { return 'nil';};
+// 
+// require('core/bundle');
+// require('core/json');
+// require('core/yaml');
+// require('core/plist');
+// require('core/lib');
+// require('core/env');

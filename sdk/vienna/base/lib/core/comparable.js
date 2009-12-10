@@ -1,5 +1,5 @@
 /* 
- * class.js
+ * comparable.js
  * vienna
  * 
  * Created by Adam Beynon.
@@ -24,39 +24,29 @@
  * THE SOFTWARE.
  */
 
-
-cClass.$def('new', function(self, _cmd) {
-  // var obj = this.$('allocate', []);
-  // console.log('In new');
-  var obj = VN$(self, 'allocate');
-  // split args from 2 (to avoid sending self, _cmd)
-  arguments[0] = obj;
-  arguments[1] = 'initialize';
-  // VN$(obj, 'initialize');
-  VN$.apply(obj, arguments);
-  // obj.$('initialize', arguments);
-  return obj;
-});
-
-cClass.$def('allocate', function(obj_alloc) {
-  
-});
-
-cClass.$def('initialize', function(class_initialize) {
-  
-});
-
-cClass.$def('initialize_copy', function(class_init_copy) {
-  
-});
-
-cClass.$def('superclass', function(class_superclass) {
-  
-});
-
-cClass.$define_alloc_func(function(class_s_alloc) {
-  
-});
-
-// VN.undef_method(VN.cClass, 'extend_object');
-// VN.undef_method(VN.cClass, 'append_features');
+// var mComparable = RModule.define('Comparable');
+// 
+// mComparable.$def('==', function(obj) {
+//   if (this == obj) return true ;
+//   return false;
+// });
+// 
+// mComparable.$def('>', function(cmp_gt) {
+//   
+// });
+// 
+// mComparable.$def('>=', function(cmp_ge) {
+//   
+// });
+// 
+// mComparable.$def('<', function(cmp_lt) {
+//   
+// });
+// 
+// mComparable.$def('<=', function(cmp_le) {
+//   
+// });
+// 
+// mComparable.$def('between?', function(cmp_between) {
+//   
+// });

@@ -9,4 +9,6 @@ rb_define_method(self,'app',function(self,_){
 });
 })(rb_define_module('Vienna'));
 
+VN.require('/Users/adam/Development/vienna/apps/document_application/build/tmp/debug/vienna/lib/mappings.js');
+
 VN.require('/Users/adam/Development/vienna/apps/document_application/build/tmp/debug/vienna/lib/views/gauge_view.js');

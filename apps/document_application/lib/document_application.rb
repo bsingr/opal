@@ -24,11 +24,11 @@
 # THE SOFTWARE.
 #
 
-require 'vienna'
+# require 'vienna'
 
 module DocumentApplication
   
-  include Vienna
+  # include Vienna
   
   # puts Image
   
