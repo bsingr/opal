@@ -23,3 +23,45 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 #
+
+module Vienna
+  
+  class Tools
+    
+    def gen
+      if ARGV.length < 2
+        abort "Error: At least 2 arguments required for vn-gen"
+      end
+      
+      g = ARGV[0]
+      case g
+      when "app"
+        gen_app(ARGV)
+      when "capp"
+        gen_capp(ARGV)
+      end
+    end
+    
+    def gen_app(args)
+      puts "need to generate app named #{args[1]}"
+    end
+    
+    def gen_capp(args)
+      unless `which capp`.length > 0
+        abort "Cappuccino is not available on your system."
+      end
+      
+      capp_name = args[1]
+      capp_path = File.join(Dir.getwd, capp_name)
+      if File.exist? capp_path
+        abort "'#{capp_path}' already exists. Choose a different project name."
+      end
+      
+      FileUtils.mkdir_p(File.join(Dir.getwd, capp_name))
+      # puts "Generating Cappuccino frameworks. Might take a second..."
+      # `capp gen #{capp_name} -f`
+      
+      
+    end
+  end
+end

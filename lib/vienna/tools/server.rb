@@ -37,6 +37,7 @@ module Vienna
     # index.html page. In future, this is likely to be more complex in determining
     # code builds.
     def server
+      find_project!
       Vienna::Rack.new(@project)
     end
   end

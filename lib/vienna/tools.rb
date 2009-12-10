@@ -35,9 +35,14 @@ module Vienna
     # cappuccino are the only valid sdks. 'browser' will be added for plain
     # ruby plus some browser extensions.
     # 
-    def initialize(tool)
+    def initialize(tool)      
+      self.send tool
+    end
+    
+    def find_project!
       unless File.exist? "Rakefile"
         puts "Vienna: Not in a project directory (missing Rakefile)."
+        abort
       end
       
       rakefile = Rakefile.new.load!(Dir.getwd)
@@ -50,7 +55,7 @@ module Vienna
         @project = Vienna::CappuccinoProject.new(Dir.getwd)
       end
       
-      self.send tool
+      @project
     end
   end
 end

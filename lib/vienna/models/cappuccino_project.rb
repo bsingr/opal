@@ -28,7 +28,7 @@ module Vienna
   
   class CappuccinoProject
     
-    attr_accessor :project_root
+    attr_reader :project_root
     
     def initialize(project_root)
       @project_root = project_root
@@ -56,7 +56,17 @@ module Vienna
     # 'app_kit/app_kit'
     def build!
       # puts "need to build root file: #{File.join(@project_root, 'lib', 'main.rb')}"
-      build_root_file
+      # build_root_file
+      @root_bundle = CappBundle.new(@project_root, self)
+      # puts @root_bundle.inspect
+      @root_bundle.prepare!
+      @root_bundle.build!
+    end
+    
+    def require_bundle(path)
+      b = CappBundle.new(path, self)
+      b.prepare!
+      b.build!
     end
     
     def build_root_file

@@ -1,5 +1,5 @@
 # 
-# build.rb
+# vienna.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,17 +24,21 @@
 # THE SOFTWARE.
 #
 
+require 'base/base'
+require 'mappings/mappings'
+# 
+# # Bridge/browser extensions/modifications
+# require 'bridge/json_object'
+# 
+# # AppKit extensions
+# require 'app_kit/geometry'
+# 
+# # Mappings
+# require 'mappings'
+
 module Vienna
   
-  class Tools
-  
-    # Builds a Vienna app in the current working directory.
-    # 
-    def build
-      find_project!
-      # puts "Building project."
-      @project.prepare!
-      @project.build!
-    end  
-  end  
+  class Something
+    
+  end
 end

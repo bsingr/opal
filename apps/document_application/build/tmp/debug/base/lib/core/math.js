@@ -1,2 +1,0 @@
-
-var rb_mMath=RModule.define('Math');rb_mMath.$define_const('PI',3.142);rb_mMath.$define_const('E',0.000001);rb_define_singleton_method(rb_mMath,'min',function(self,_cmd,a,b){return a<b?a:b;});rb_define_singleton_method(rb_mMath,'max',function(self,_cmd,a,b){return a>b?a:b;});
