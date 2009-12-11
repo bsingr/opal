@@ -72,6 +72,10 @@ var kCLASS      = 0,    kMODULE     = 1,    kDEF        = 2,    kUNDEF      = 3,
     tUMINUS_NUM = 115,  tSTRING     = 116,  tXSTRING_END= 117,
         
     tPLUS       = 118,  tMINUS      = 119,  tNL         = 120,  tSEMI       = 121;
+    
+    
+    // special tokens (used for generator)
+var tCALL       = 150;
 
 var vn_ruby_parser = function(str) {
 
@@ -302,6 +306,10 @@ var vn_ruby_parser = function(str) {
     // we need to check last_state, as lex_state (current) is overridden when parsing current token
     if ((valid_cmd_args.indexOf(token.type) != -1) && (last_state == EXPR_CMDARG)) {
       gather_command_args(this);
+      this.type = tCALL;
+      this.$recv = null;
+      this.$meth = this.value;
+      // this.$meth = this;
     }
     return this;
   };
@@ -314,12 +322,14 @@ var vn_ruby_parser = function(str) {
   // FIXME: rewrite to asume first arg is not neceserialy a arg, it could be start
   // of assocs, or might be start of kDO
   var gather_command_args = function(cmd) {
-    cmd.$args = [];
+    cmd.$call_args = {
+      args: []
+    };
     // console.log('tIDENTIFIER "' + token.value + '" lex state: ' + lex_state + ' last state: ' + last_state + ' ,last token: ' + last_token.value);
     if ((token.type !== kDO) && (token.type !== '{')) {
       // dont add if next statement is kDO...
       
-      cmd.$args.push(stmt());
+      cmd.$call_args.args.push(stmt());
     }
     
     // collect remaining params
@@ -361,7 +371,7 @@ var vn_ruby_parser = function(str) {
           // throw 'hash begin!'
         }
         else {
-          cmd.$args.push(s);
+          cmd.$call_args.args.push(s);
         }
         // CHECK HERE for do_block
         // move this outside of loop? once we have do_block, command is over
@@ -382,11 +392,11 @@ var vn_ruby_parser = function(str) {
     }
     if (token.type === kDO) {
       // gather do block
-      cmd.$block = stmt();
+      cmd.$brace_block = stmt();
     }
     else if (token.type === '{') {
       // gather rlcurly block
-      cmd.$block = stmt();
+      cmd.$brace_block = stmt();
     }
   };
   
@@ -455,6 +465,7 @@ var vn_ruby_parser = function(str) {
     // console.log('doing dot!')
     this.$recv = left;
     this.$meth = token;
+    this.type = tCALL;
     // skip over dot
     next_token();
     if ((valid_cmd_args.indexOf(token.type) != -1) && (last_state === EXPR_CMDARG)) {
@@ -469,20 +480,41 @@ var vn_ruby_parser = function(str) {
     
     return this;
   });
+  
+  // m - method name
+  //  b - binding power
+  // used for a + a, a - a,  a << a etc. (as m)
+  function meth_call(m, b) {
+    return infix(m, b, function(left) {
+      this.type = tCALL;
+      this.$recv = left;
+      this.$meth = this;
+      this.$call_args = {
+        args: [stmt()]
+      }
+      return this;
+    });
+  }
+  
+  meth_call(tPLUS, 80);
+  meth_call(tMINUS, 80);
+  
     
   // method calls (with paranthesis)
   infix("(", 80, function (left) {
-      var args = [];
+      var args = {
+        args: []
+      };
       // valid left values
       if (left.type === '.') {
         // already a method call, so just set $args property
-        left.$args = args;
+        left.$call_args = args;
       }
-      else if (left.type === tIDENTIFIER || left.type === tCONSTANT) {
+      else if (left.type === tIDENTIFIER || left.type === tCONSTANT || left.type === tCALL) {
         // identifier/constant - turn them into a method call, with args
         // as the args (and no receiver!)
         // will identifier already be a method call? unless an actual identifier
-        left.$args = args;
+        left.$call_args = args;
       }
       else {
         throw left.value + ' is not a valid receiver'
@@ -490,7 +522,7 @@ var vn_ruby_parser = function(str) {
       
       if (token.type !== ')') {
         while (true) {
-          args.push(stmt());
+          args.args.push(stmt());
           if (token.type !== ',') {
             break;
           }
@@ -877,6 +909,44 @@ var vn_ruby_parser = function(str) {
         lex_state = EXPR_BEG;
         return [result, scanner.matched];
       }
+      
+      
+      
+      
+      else if (scanner.scan(/^\//)) {
+        lex_state = EXPR_BEG;
+        return ['/', scanner.matched];
+      }
+      
+      else if (scanner.scan(/^\*\*\=/)) {
+        lex_state = EXPR_BEG;
+        return [tOP_ASGN, "**"];
+      }
+      else if (scanner.scan(/^\*\*/)) {
+        return [tPOW, "**"];
+      }
+      else if (scanner.scan(/^\*\=/)) {
+        lex_state = EXPR_BEG;
+        return [tOP_ASGN, "*"];
+      }
+      else if (scanner.scan(/^\*/)) {
+        var r;
+        if (lex_state == EXPR_FNAME) {
+          lex_state = EXPR_BEG;
+          r = "*";
+        }
+        else if (lex_state == EXPR_BEG || lex_state == EXPR_MID) {
+          r = tSTAR;
+        }
+        else {
+          lex_state = EXPR_BEG;
+          r = "*"
+        }
+        return [r, scanner.matched];
+      }
+      
+      
+      
       
       
       
@@ -1269,10 +1339,194 @@ var vn_ruby_parser = function(str) {
         generate_class(stmt, context);
         break;
       case kMODULE:
+        generate_module(stmt, context);
+        break;
+      case kDEF:
+        generate_def(stmt, context);
+        break;
+      case tCALL:
+        generate_call(stmt, context);
+        break;
+      case tSYMBEG:
+        generate_symbol(stmt, context);
+        break;
+      case tIDENTIFIER:
+        generate_identifier(stmt, context);
+        break;
+      case tINTEGER:
+        generate_integer(stmt, context);
+        break;
+      case kSELF:
+        generate_self(stmt, context);
         break;
       default:
-        throw "unknown generate_stmt type: " + stmt.type + ", " + stmt.value
+        console.log("unknown generate_stmt type: " + stmt.type + ", " + stmt.value);
     }
+  }
+  
+  function generate_self(stmt, context) {
+    if (context.last_stmt && context.full_stmt) write("return ");
+    write(current_self());
+    if (context.full_stmt) write(";\n;");
+  }
+  
+  function generate_integer(stmt, context) {
+    if (context.last_stmt && context.full_stmt) write("return ");
+    write(stmt.value);
+    if (context.full_stmt) write(";\n;");
+  }
+  
+  function generate_identifier(identifier, context) {
+    if (context.last_stmt && context.full_stmt) write("return ");
+    
+    // FIXME: check if nametable includes identifier...
+    if (false) {
+      
+    }
+    else {
+      write("rb_funcall(" + current_self() + ",'" + identifier.value + "')");
+    }
+    
+    if (context.full_stmt) write(";\n");
+  }
+  
+  function generate_symbol(sym, context) {
+    if (context.last_stmt && context.full_stmt) write("return ");
+    write("ID2SYM('" + sym.$name.value + "')");
+    if (context.full_stmt) write(";\n;");
+  }
+  
+  function generate_call(call, context) {
+    // capture objj style calls
+    
+    // capture "require" calls..
+    //  if call[:meth] == 'require' and not call[:recv]
+    //    require_path = @project.require_path_for_file(@source, call[:call_args][:args][0][:value][0][:value])
+    //    # puts "found require path: #{call[:call_args][:args][0][:value]}"
+    //    write "#{require_path}\n"
+    //    return
+    //  end
+    
+    if (context.last_stmt && context.last_stmt) write("return ");
+    
+    if(call.value.match(/^[A-Z]/)) {
+      write(call.value);
+      write("(");
+    }
+    else {
+      // detect block..
+      if (call.$brace_block) {
+        write("rb_block_funcall(");
+      }
+      else {
+        write("rb_funcall(");
+      }
+      
+      
+      if (call.$recv) {
+        generate_stmt(call.$recv, {instance:context.instance, full_stmt:false, last_stmt:context.last_stmt, top_level:context.top_level});
+      }
+      else {
+        write(current_self());
+      }
+      
+      write(",'" + call.$meth.value + "'");
+    }
+    
+    // normal args
+    if (call.$call_args && call.$call_args.args) {
+      var i, a = call.$call_args.args;
+      for (i = 0; i < a.length; i++) {
+        write(",");
+        generate_stmt(a[i], {instance:context.instance, full_stmt:false});
+      }
+    }
+    
+    // assocs
+    if (call.$call_args && call.$call_args.assocs) {
+      
+    }
+    
+    // block
+    if (call.$brace_block) {
+      
+    }
+
+    // sym block: &:upcase etc
+    if (call.$call_args && call.$call_args.block_arg) {
+      write(",rb_funcall(");
+      generate_stmt(call.$call_args.block_arg.arg, {instance:context.singleton, full_stmt:false, last_stmt:false, top_level:context.top_level});
+      write(",'to_proc')");
+    }
+
+    write(")");
+    if (context.full_stmt) write(";\n");
+  }
+  
+  function generate_def(definition, context) {
+    // objj style method capture?
+    push_nametable();
+    
+    if (definition.singleton) {
+      write("rb_define_singleton_method(");
+      generate_stmt(definition.singleton, {instance: context.instance, full_stmt:false, last_stmt:false});
+      write(",'" + defintion.$fname + "',function(self,_cmd");
+      current_self_push("self");
+    }
+    else if (context.top_level) {
+      write("rb_define_singleton_method(rb_top_self, " + defintion.$fname + "',function(self,_cmd");
+      current_self_push("self");
+    }
+    else {
+      write("rb_define_method(" + current_self() + ",'");
+      write(definition.$fname.value);
+      write("',function(self,_cmd");
+      current_self_push("self");
+    }
+
+    // arglist
+    if (definition.$arglist && definition.$arglist.arg) {
+      var i, a = definition.$arglist.arg;
+      for (i = 0; i < a.length; i++) {
+        write(",");
+        write(a[i].value);
+        // add_to_nametable(a[i].value);
+      }
+    }
+    
+    // block arg support - every method potentialy might have a block.
+    write(",$b");
+    
+    write("){\n");
+    
+    // block reference goes here (so if we say &block in params, map var block to $b)
+    //   if definition[:arglist] && definition[:arglist][:opt_block_arg]
+    //     write "var #{definition[:arglist][:opt_block_arg]} = $b;\n"
+    //     add_to_nametable definition[:arglist][:opt_block_arg]
+    //   end
+ 
+    // statements
+    push_string_buffer();
+    push_nametable();
+    
+    if (definition.$stmts) {
+      var i, s = definition.$stmts;
+      for (i = 0; i < s.length; i++) {
+        generate_stmt(s[i], {instance:(definition.$sname ? false : true), full_stmt:true, last_stmt:(s[s.length - 1] == s[i] ? true : false), name:definition.$fname});
+      }
+    }
+    
+    var body_contents = pop_string_buffer(), name_table = pop_nametable();
+    // write each ivar statements..
+    //   if name_table.length > 0
+    //     write "var #{name_table.join(",")};\n"
+    //   end
+    
+    write(body_contents);
+
+    current_self_pop();
+    pop_nametable();
+    write("});\n");
   }
   
   function generate_class(stmt, context) {
@@ -1280,16 +1534,15 @@ var vn_ruby_parser = function(str) {
     push_nametable();
     current_self_push("self");
     
-    // statements
-    // # Statements
-    // if klass.bodystmt
-    //   klass.bodystmt.each do |stmt|
-    //     generate_stmt stmt, :instance => false,
-    //                         :full_stmt => true,
-    //                         :last_stmt => (klass.bodystmt.last == stmt ? true : false),
-    //                         :top_level => false
-    //   end
-    // end
+    if (stmt.$stmts) {
+      var i, m = stmt.$stmts;
+      for (i = 0; i < m.length; i++) {
+        generate_stmt(m[i], {instance: false, full_stmt: true, last_stmt: (m[m.length -1] == m[i] ? true : false), top_level: false});
+      }
+    }
+    
+    pop_nametable();
+    current_self_pop();
     
     write("})(");
     
@@ -1299,12 +1552,9 @@ var vn_ruby_parser = function(str) {
       write("',");
     }
     else {
-      //    # nested
-      //     # write "RClass.define_under(self,'#{klass.klass_name}',"
-      //     # write "#{js_replacement_function_name('rb_define_class_under')}(self,"
-      //     write "rb_define_class_under(#{current_self},'"
-      //     write klass.klass_name
-      //     write "',"
+      write("rb_define_class_under(" + current_self() + ",'");
+      write(stmt.$kname.value);
+      write("',");
     }
     
     // superclass
@@ -1317,6 +1567,36 @@ var vn_ruby_parser = function(str) {
     
     write(");\n")
   }
+  
+  function generate_module(mod, context) {
+    write("(function(self) {\n");
+    push_nametable();
+    current_self_push("self");
+    
+    if (mod.$stmts) {
+      var i, m = mod.$stmts;
+      for (i = 0; i < m.length; i++) {
+        generate_stmt(m[i], {instance: false, full_stmt: false, last_stmt: (m[m.length -1] == m[i] ? true : false), nested: true});
+      }
+    }
+    
+    pop_nametable();
+    current_self_pop();
+    
+    write("})(");
+    
+    if (context.top_level) {
+      write("rb_define_module('");
+      write(mod.$kname.value);
+      write("'));\n");
+    }
+    else {
+      write("rb_define_module_under(" + current_self() + ",'");
+      write(mod.$kname.value);
+      write("'));\n")
+    }
+  }
+
   
   // the parser - pass is the source to actually parse
   return function(parse_text) {
