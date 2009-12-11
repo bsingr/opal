@@ -217,7 +217,7 @@ module Vienna
     # return the build_path..... builders can use this to insert tags ready for
     # including other files relative in their own bundle.
     def build_file(file_path)
-      puts file_path
+      # puts file_path
       file_dir = file_path.match(/^#{@bundle_root}(.*)/)
       
       build_dir = File.join(tmp_directory, File.dirname(file_dir[1]))

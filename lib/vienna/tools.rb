@@ -40,6 +40,8 @@ module Vienna
     end
     
     def find_project!
+      return @project if @project
+      
       unless File.exist? "Rakefile"
         puts "Vienna: Not in a project directory (missing Rakefile)."
         abort

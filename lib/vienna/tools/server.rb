@@ -38,7 +38,7 @@ module Vienna
     # code builds.
     def server
       find_project!
-      Vienna::Rack.new(@project)
+      Vienna::Rack.new(@project, self)
     end
   end
 end

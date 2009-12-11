@@ -26,7 +26,7 @@
 
 function rb_class_inherited(super_class, klass) {
   if (!super_class) super_class = rb_cObject ;
-  return rb_funcall(super_class, "inherited", klass);
+  // return rb_funcall(super_class, "inherited", klass);
 };
 
 function rb_define_class(id, super_class) {
@@ -159,7 +159,7 @@ function rb_class_boot(super_class) {
 }
 
 function rb_check_inheritable(super_class) {
-  if (TYPE(super_class) != T_CLASS) {
+  if (!FL_TEST(super_class, T_CLASS)) {
     throw 'super class must be a Class (' + VN.obj_classname(super_klass) + ' given)';
   }
   if (super_class.flags & FL_SINGLETON) {
@@ -167,20 +167,20 @@ function rb_check_inheritable(super_class) {
   }
 };
 
-RClass.create = function(super_klass) {
-  RClass.check_inheritable(super_klass);
+function rb_class_create(super_klass) {
+  rb_check_inheritable(super_klass);
 
-  if (super_klass == cClass) {
+  if (super_klass == rb_cClass) {
     VN.raise(VN.TypeError, "can't make subclass of Class")
   }
-  return RClass.boot(super_klass);
+  return rb_class_boot(super_klass);
 };
 
-RClass.define_class_id = function(id, super_klass) {
+function rb_define_class_id(klass, id, super_klass) {
   var klass;
-  if (!super_klass) super_klass = cObject;
-  klass = RClass.create(super_klass);
-  klass.$make_metaclass(super_klass.$klass);
+  if (!super_klass) super_klass = rb_cObject;
+  klass = rb_class_create(super_klass);
+  rb_make_metaclass(klass, super_klass.klass);
   return klass;
 };
 

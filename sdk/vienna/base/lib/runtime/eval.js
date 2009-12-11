@@ -91,7 +91,7 @@ var vn_ruby_parser = function(str) {
   var eval_arr = [];
   // valid types of stmt that are valid as the first cmd args (helps us identify if the
   // next statemebnt should be appeneded to the current identifer as a cmd arg )
-  var valid_cmd_args = [tIDENTIFIER, tINTEGER, tSTRING_BEG, kDO, '{'];
+  var valid_cmd_args = [tIDENTIFIER, tINTEGER, tSTRING_BEG, kDO, '{', tSYMBEG];
   // start of command (not stmt), when on new line etc
   var cmd_start = false;
   
@@ -210,6 +210,8 @@ var vn_ruby_parser = function(str) {
           return this;
       });
   };
+  
+  assignment("=");
   
   symbol(kDO).nud = function() {
     // read over kDO
@@ -420,6 +422,12 @@ var vn_ruby_parser = function(str) {
     return this;
   };
   
+  // Catching block definitions in Def statements.
+  symbol("&").nud = function() {
+    this.$name = stmt();
+    return this;
+  }
+  
   
   /**
     Fixme!! this is going to break!!
@@ -547,7 +555,7 @@ var vn_ruby_parser = function(str) {
   // method definitions
   sym_stmt(kDEF, function () {
     
-    if (token.type === tIDENTIFIER || token.type === tCONSTANT) {
+    if (token.type === tIDENTIFIER || token.type === tCONSTANT || token.type === kSELF) {
       this.$fname = token;
     }
     else {
@@ -568,10 +576,111 @@ var vn_ruby_parser = function(str) {
       // read over fname
       next_token();
     }
+    else {
+      // check we havent shot ourself in the foot
+      if (this.$fname.type === kSELF) {
+        throw "Cannot use keyword 'self' as method name"
+      }
+    }
     
     // ignore arglist for the moment.
+    if (token.type === tNL || token.type === tSEMI) {
+      // we can ignore... nothing to do
+    }
+    else {
+      
+      this.$arglist = {
+        arg: [],
+        rest_arg: [],
+        opt_arg: [],
+        opt_block_arg: null
+      };
+      
+      if (token.type === '(') {
+        // params with paranthesis
+        this.$paran = true;
+        next_token();
+      }
+      while (true) {
+        if (token.type === ')') {
+          // end of params..check if we actually had start paran?
+          next_token();
+          break;
+        }
+        else {
+          // for now assume every stmt will be a regular arg. need to check actual types
+          // later
+          var s = stmt();
+          this.$arglist.arg.push(s);
+          if (token.type == ',') {
+            // read over commar
+            next_token();
+          }
+          else {
+            
+            if (token.type === ')') continue;
+            else if (token.type == tNL || token.type == tSEMI) break;
+            else throw "Error: def, unsupported param type " + token.type
+          }
+        }
+      }
+    }
+    
+    // read stmts.
     this.$stmts = stmts([kEND]);
     // read over kEND
+    next_token();
+    return this;
+  });
+  
+  sym_stmt(kCLASS, function() {
+    
+    if (token.type === tIDENTIFIER) {
+      throw 'Class defintion: cannot use tIDENTIFIER as a class name. Expected tCONSTANT'
+    }
+    else if(token.type === tCONSTANT) {
+      this.$kname = token;
+    }
+    else {
+      throw 'Class definition: expected constant as class name'
+    }
+    // read over kname
+    next_token();
+    
+    if (token.type == '<') {
+      next_token();
+      // for now, only constant is valid superclass. we should allow other things..except new line.
+      if (token.type == tCONSTANT) {
+        this.$super = stmt();
+        next_token();
+      }
+      else {
+        throw "Class error: supername?"
+      }
+    }
+    
+    this.$stmts = stmts([kEND]);
+    // read over kEND
+    next_token();
+    return this;
+  });
+  
+  sym_stmt(kMODULE, function() {
+    if (token.type === tIDENTIFIER) {
+      throw "Module definition: cannot use tIDENTIFIER as a module name. Expected tCONSTANT"
+    }
+    else if (token.type === tCONSTANT) {
+      this.$kname = token;
+    }
+    else {
+      throw "Module definition: Expected tCONSTANT for module name"
+    }
+    
+    // name
+    next_token();
+    
+    this.$stmts = stmts([kEND]);
+    // kend
     next_token();
     return this;
   });
@@ -768,6 +877,63 @@ var vn_ruby_parser = function(str) {
         lex_state = EXPR_BEG;
         return [result, scanner.matched];
       }
+      
+      
+      
+      else if (scanner.scan(/^\<\=\>/)) {
+        return [tCMP, scanner.matched];
+      }
+      else if (scanner.scan(/^\<\=/)) {
+        return [tLEQ, "<="];
+      }
+      else if (scanner.scan(/^\<\<\=/)) {
+        lex_state = EXPR_BEG;
+        return [tOP_ASGN, "<<"];
+      }
+      else if (scanner.scan(/^\<\</)) {
+        if (([EXPR_END, EXPR_DOT, EXPR_ENDARG, EXPR_CLASS].indexOf(lex_state) != -1) && space_seen) {
+          return [tLSHFT, "<<"];
+        }
+        lex_state = EXPR_BEG;
+        return [tLSHFT, "<<"];
+      }
+      else if (scanner.scan(/^\</)) {
+        lex_state = EXPR_BEG;
+        return ["<", "<"];
+      }
+      
+      
+      
+      
+      else if (scanner.scan(/^\&\&\=/)) {
+        lex_state = EXPR_BEG;
+        return [tOP_ASGN, "&&"];
+      }
+      else if (scanner.scan(/^\&\&/)) {
+        lex_state = EXPR_BEG;
+        return [tANDOP, "&&"];
+      }
+      else if (scanner.scan(/^\&\=/)) {
+        lex_state = EXPR_BEG;
+        return [tOP_ASGN, "&"];
+      }
+      else if (scanner.scan(/^\&/)) {
+        var r;
+        if (space_seen && !scanner.check(/^\s/)) {
+          if (lex_state == EXPR_CMDARG) r = tAMPER;
+          else r = "&";
+        }
+        else if (lex_state == EXPR_BEG || lex_state == EXPR_MID) {
+          r = tAMPER;
+        }
+        else {
+          r = "&";
+        }
+        return [r, "&"];
+      }
+      
+      
+      
       
       // strings.. in order: double, single, xstring
       else if (scanner.scan(/^\"/)) {
@@ -1047,11 +1213,117 @@ var vn_ruby_parser = function(str) {
     }
   };
   
+  var string_buffers = [];
+  var name_tables = [];
+  var current_self_stack = ["rb_top_self"];
+  
+  function current_self_push(s) {
+    return current_self_stack.push(s);
+  }
+  
+  function current_self_pop() {
+    return current_self_stack.pop();
+  }
+  
+  function current_self() {
+    return current_self_stack[current_self_stack.length - 1];
+  }
+  
+  function push_nametable() {
+    return name_tables.push({});
+  }
+  
+  function pop_nametable() {
+    return name_tables.pop();
+  }
+  
+  function push_string_buffer() {
+    return string_buffers.push([]);
+  }
+  
+  function pop_string_buffer() {
+    return string_buffers.pop().join("");
+  }
+  
+  // write str to current buffer.
+  function write(str) {
+    string_buffers[string_buffers.length - 1].push(str);
+  }
+  
+  function generate_tree(tree) {
+    push_nametable();
+    push_string_buffer();
+    var i;
+    for (i = 0; i < tree.length; i++) {
+      generate_stmt(tree[i], { instance: true, full_stmt: true, last_stmt: false, top_level: true} );
+    }
+    var a = pop_string_buffer();
+    console.log(a);
+    // write to top level context? or just eval?
+    pop_nametable();
+  }
+  
+  function generate_stmt(stmt, context) {
+    switch (stmt.type) {
+      case kCLASS:
+        generate_class(stmt, context);
+        break;
+      case kMODULE:
+        break;
+      default:
+        throw "unknown generate_stmt type: " + stmt.type + ", " + stmt.value
+    }
+  }
+  
+  function generate_class(stmt, context) {
+    write("(function(self) {\n");
+    push_nametable();
+    current_self_push("self");
+    
+    // statements
+    // # Statements
+    // if klass.bodystmt
+    //   klass.bodystmt.each do |stmt|
+    //     generate_stmt stmt, :instance => false,
+    //                         :full_stmt => true,
+    //                         :last_stmt => (klass.bodystmt.last == stmt ? true : false),
+    //                         :top_level => false
+    //   end
+    // end
+    
+    write("})(");
+    
+    if (context.top_level) {
+      write("rb_define_class('")
+      write(stmt.$kname.value);
+      write("',");
+    }
+    else {
+      //    # nested
+      //     # write "RClass.define_under(self,'#{klass.klass_name}',"
+      //     # write "#{js_replacement_function_name('rb_define_class_under')}(self,"
+      //     write "rb_define_class_under(#{current_self},'"
+      //     write klass.klass_name
+      //     write "',"
+    }
+    
+    // superclass
+    if (stmt.$super) {
+      write("rb_const_get(self, '" + stmt.$super.value + "'))")
+    }
+    else {
+      write("rb_cObject)");
+    }
+    
+    write(");\n")
+  }
+  
   // the parser - pass is the source to actually parse
   return function(parse_text) {
     scanner = new vn_ruby_string_scanner(parse_text);
     next_token();
     var s = stmts();
+    generate_tree(s);
     return s;
   }
 };

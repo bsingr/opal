@@ -32,7 +32,10 @@ module Vienna
     
     def initialize(project_root)
       @project_root = File.expand_path(project_root)
-      
+      reset!
+    end
+    
+    def reset!
       @core_bundle = Vienna::Bundle.new(File.join(system_lib_root, 'base'), self)
       @core_bundle.basic_bundle = true
       @main_bundle = Vienna::Bundle.new(@project_root, self)
@@ -206,7 +209,7 @@ module Vienna
       @core_bundle.basic_bundle_link!(@output_destination)
       # bootstrap code
       min_bootstrap = JSMin.minify(bootstrap_code)
-      @output_destination.write min_bootstrap
+      # @output_destination.write min_bootstrap
       # finished with runtime
       @output_destination.close
       
