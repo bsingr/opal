@@ -498,6 +498,8 @@ var vn_ruby_parser = function(str) {
   
   meth_call(tPLUS, 80);
   meth_call(tMINUS, 80);
+  meth_call("*", 80);
+  meth_call("/", 80);
   
     
   // method calls (with paranthesis)
@@ -581,6 +583,98 @@ var vn_ruby_parser = function(str) {
       }
     }
     next_token('}');
+    return this;
+  });
+  
+  prefix(kCASE, function() {
+    this.$expr = stmt();
+    this.$body = [];
+    
+    if (token.type == tNL || token.type == tSEMI) next_token();
+    
+    while (true) {
+      if (token.type == kEND) {
+        next_token();
+        break;
+      }
+      else if (token.type == kWHEN) {
+        var s, t = token;
+        t.$args = [];
+        next_token();
+        if ([tNL, tSEMI, ","].indexOf(token.type) != -1) 
+          throw "kCASE: not expecting given token type"
+        while (true) {
+          s = stmt();
+          t.$args.push(s);
+          if (token.type == ",") next_token();
+          else break;
+        }
+        t.$stmts = stmts([kEND, kELSE, kWHEN]);
+      }
+      else if (token.type == kELSE) {
+        var t = token;
+        next_token();
+        // throw "jere"
+        t.$stmts = stmts([kEND]);
+        // throw "erm"
+      }
+    }
+    return this;
+  });
+  
+  // if statment - expression, not really a statement.
+  prefix(kIF, function() {
+    this.$expr = stmt();
+    this.$tail = [];
+    
+    if (token.type == tNL || token.type == tSEMI) {
+      next_token();
+      if (token.type == kTHEN) next_token();
+    }
+    else if (token.type == kTHEN) {
+      next_token();
+    }
+    else {
+      throw "kIF: expecting either term or kTHEN"
+    }
+    
+    this.$stmts = stmts([kEND, kELSE, kELSIF]);
+    
+    while (true) {
+      if (token.type == kEND) {
+        next_token();
+        break;
+      }
+      else if (token.type == kELSIF) {
+        var t = token;
+        next_token();
+        t.$expr = stmt();
+
+        if (token.type == tNL || token.type == tSEMI) {
+          next_token();
+          if (token.type == kTHEN) next_token();
+        }
+        else if (token.type == kTHEN) {
+          next_token();
+        }
+        else {
+          throw "kIF: expecting either term or kTHEN"
+        }
+        
+        t.$stmts = stmts([kEND, kELSIF, kELSE]);
+        this.$tail.push(t);
+      }
+      else if (token.type == kELSE) {
+        var t = token;
+        next_token();
+        t.$stmts = stmts([kEND]);
+        this.$tail.push(t);
+      }
+      else {
+        throw "kIF: unexpected token: " + token.type + ", " + token.value
+      }
+    }
+
     return this;
   });
   
@@ -1359,21 +1453,71 @@ var vn_ruby_parser = function(str) {
       case kSELF:
         generate_self(stmt, context);
         break;
+      case kIF:
+        generate_if(stmt, context);
+        break;
       default:
         console.log("unknown generate_stmt type: " + stmt.type + ", " + stmt.value);
     }
   }
   
+  function generate_if(stmt, context) {
+    if (context.last_stmt && context.full_stmt) write("return ");
+    write("(function(){");
+    
+    (stmt.type == kIF) ? write("if(RTEST(") : write("if(!RTEST(");
+    
+    // RTEST expression
+    generate_stmt(stmt.$expr, {instance:context.instance, full_stmt:false, last_stmt:false});
+    write(")){\n");
+    
+    if (stmt.$stmts) {
+      var i, s = stmt.$stmts;
+      for (i = 0; i < s.length; i++) {
+        generate_stmt(s[i], {instance:context.instance, full_stmt:true, last_stmt:(s[s.length -1] == s[i] ? true : false)});
+      }
+    }
+    
+    write("}\n");
+
+    if (stmt.$tail) {
+      var i, t = stmt.$tail;
+      for (i = 0; i < t.length; i++) {
+        if (t[i].type == kELSIF) {
+          write("else if(RTEST(");
+          generate_stmt(t[i].$expr, {instance:context.instance, full_stmt:false, last_stmt:false});
+          write(")){\n");
+        }
+        else {
+          write("else{\n");
+        }
+        
+        if (t[i].$stmts) {
+          var j, k = t[i].$stmts;
+          for (j = 0; j < k.length; j++) {
+            // console.log("doing " + k[j].value);
+            generate_stmt(k[j], {instance:context.instance, full_stmt:true, last_stmt:(k[k.length - 1] == k[i] ? true : false)});
+          }
+        }
+        
+        write("}\n");
+      }
+    }
+    
+    write("})()");
+    if (context.full_stmt) write(";\n");
+  }
+  
   function generate_self(stmt, context) {
     if (context.last_stmt && context.full_stmt) write("return ");
     write(current_self());
-    if (context.full_stmt) write(";\n;");
+    if (context.full_stmt) write(";\n");
   }
   
   function generate_integer(stmt, context) {
     if (context.last_stmt && context.full_stmt) write("return ");
     write(stmt.value);
-    if (context.full_stmt) write(";\n;");
+    if (context.full_stmt) write(";\n");
   }
   
   function generate_identifier(identifier, context) {
@@ -1393,7 +1537,7 @@ var vn_ruby_parser = function(str) {
   function generate_symbol(sym, context) {
     if (context.last_stmt && context.full_stmt) write("return ");
     write("ID2SYM('" + sym.$name.value + "')");
-    if (context.full_stmt) write(";\n;");
+    if (context.full_stmt) write(";\n");
   }
   
   function generate_call(call, context) {
