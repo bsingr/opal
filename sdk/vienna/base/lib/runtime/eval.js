@@ -75,7 +75,7 @@ var kCLASS      = 0,    kMODULE     = 1,    kDEF        = 2,    kUNDEF      = 3,
     
     
     // special tokens (used for generator)
-var tCALL       = 150;
+var tCALL       = 150,  tMLHS       = 151;
 
 var vn_ruby_parser = function(str) {
 
@@ -204,7 +204,7 @@ var vn_ruby_parser = function(str) {
   
   var assignment = function (id) {
       return infixr(id, 10, function (left) {
-          if (left.type !== "." && left.type !== "[" && left.type !== tIDENTIFIER && left.type != tIVAR) {
+          if (left.type !== "." && left.type !== "[" && left.type !== tIDENTIFIER && left.type != tIVAR && left.type !== tMLHS) {
               throw 'bad lhs'
           }
           this.$lhs = left;
@@ -305,6 +305,7 @@ var vn_ruby_parser = function(str) {
   symbol(tIDENTIFIER).nud = function() {
     // we need to check last_state, as lex_state (current) is overridden when parsing current token
     if ((valid_cmd_args.indexOf(token.type) != -1) && (last_state == EXPR_CMDARG)) {
+      console.log("about to gather command args..");
       gather_command_args(this);
       this.type = tCALL;
       this.$recv = null;
@@ -328,8 +329,8 @@ var vn_ruby_parser = function(str) {
     // console.log('tIDENTIFIER "' + token.value + '" lex state: ' + lex_state + ' last state: ' + last_state + ' ,last token: ' + last_token.value);
     if ((token.type !== kDO) && (token.type !== '{')) {
       // dont add if next statement is kDO...
-      
-      cmd.$call_args.args.push(stmt());
+      // console.log("getting exopr..");
+      cmd.$call_args.args.push(expr());
     }
     
     // collect remaining params
@@ -337,7 +338,7 @@ var vn_ruby_parser = function(str) {
       // read over initial commar
       next_token();
       while (true) {
-        s = stmt();
+        s = expr();
         // s = expr(80);
         // this.$args.push(stmt());
         // check if tok is tASSOC.. if so, , then we
@@ -353,7 +354,7 @@ var vn_ruby_parser = function(str) {
           a_keys.push(s);
           // read over tassoc
           next_token();
-          a_values.push(stmt());
+          a_values.push(expr());
           
           while (true) {
             if (token.type !== ',') {
@@ -362,9 +363,9 @@ var vn_ruby_parser = function(str) {
             }
             // read over commar
             next_token(',');
-            a_keys.push(stmt());
+            a_keys.push(expr());
             next_token(tASSOC);
-            a_values.push(stmt());
+            a_values.push(expr());
           }
           
           // console.log(this);
@@ -437,6 +438,30 @@ var vn_ruby_parser = function(str) {
     this.$name = stmt();
     return this;
   }
+  
+  
+  infix(",", 80, function(left) {
+    this.type = tMLHS;
+    // check if already part of a mLHS chain
+    if (left.type == tMLHS) {
+      // add to current chain
+      throw "in here.." + token.value
+    }
+    else {
+      // start new chain
+      this.$parts = [];
+      this.$parts.push(left);
+      this.$parts.push(expr(10));
+      // dont get next_token. expr() gets it for us.
+      // next_token();
+      // this.$parts.push(next_token());
+    }
+    // throw token.value
+    // throw "in here.." + token.value
+    
+    
+    return this;
+  });
   
   
   /**
@@ -524,7 +549,8 @@ var vn_ruby_parser = function(str) {
       
       if (token.type !== ')') {
         while (true) {
-          args.args.push(stmt());
+          // console.log("gaething..");
+          args.args.push(expr());
           if (token.type !== ',') {
             break;
           }

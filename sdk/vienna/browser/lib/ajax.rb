@@ -24,6 +24,8 @@
 # THE SOFTWARE.
 #
 
+# Used to perform AJAX requests to a server. AJAX wraps around the native request
+# in the browser, handling cross browser differences.
 class AJAX
   
   def initialize(options={})
@@ -36,6 +38,8 @@ class AJAX
   #   AJAX.get my_js_file.js, :option_1 => 'something', :option_2 => 'something_else' do |response|
   #     puts 'received response!
   #   end
+  # 
+  # finished.
   def self.get(url, options, &block)
     
   end
