@@ -24,10 +24,6 @@
  * THE SOFTWARE.
  */
  
-function require() {
-  // do nothing..
-}
- 
 // temp..
 var nil = null;
 
@@ -184,6 +180,8 @@ require('runtime/variable');
 require('runtime/module');
 require('runtime/object');
 require('runtime/system');
+require('runtime/file');
+require('runtime/eval');
 
 /**
   Require core library
@@ -200,7 +198,7 @@ require('runtime/system');
 // require('core/number');
 // require('core/array');
 // require('core/boolean');
-// require('core/hash');
+require('core/hash');
 // require('core/string');
 // // require('core/struct');
 // // require('core/regexp');

@@ -1,5 +1,5 @@
 # 
-# tools.rb
+# browser_project.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -26,41 +26,32 @@
 
 module Vienna
   
-  class Tools
+  class BrowserProject
     
-    attr_accessor :project
+    attr_reader :project_root
     
-    # Get the right type of project from the Rakefile. If not set (which it
-    # should always be), then default to vienna. Currently, vienna and 
-    # cappuccino are the only valid sdks. 'browser' will be added for plain
-    # ruby plus some browser extensions.
-    # 
-    def initialize(tool)      
-      self.send tool
+    def initialize(project_root)
+      @project_root = project_root
     end
     
-    def find_project!
-      return @project if @project
-      
-      unless File.exist? "Rakefile"
-        # no rakefile means we could be in a browser project
-        @project = Vienna::BrowserProject.new(Dir.getwd)
-        return @project
-      end
-      
-      rakefile = Rakefile.new.load!(Dir.getwd)
-      sdk = rakefile.config_for(:debug)[:sdk] || 'vienna'
-      
-      case sdk
-      when 'vienna'
-        @project = Vienna::NewProject.new(Dir.getwd)
-      when 'cappuccino'
-        @project = Vienna::CappuccinoProject.new(Dir.getwd)
-      end
-      
-      @project
+    # Creates a vienna.js file in the project root, or simply updates the existing
+    # one. This is useful for updating the runtime when a new version of vienna.gem
+    # is available. The server can use this to update the runtime between changes
+    # without having to recompile. Just call this on each request to index.html to
+    # make relevant chnages.
+    # 
+    # Note: the runtime includes the core lib (named base), AND the browser lib. 
+    # Having the user require this lib seems silly, as it is the main benefit of
+    # having a browser sdk. So include both.
+    def create_or_update_runtime
+      r = Vienna::BrowserRuntime.new(self)
+      r.build!(File.join(Dir.getwd, runtime_filename))
+    end
+    
+    # option incase in future we can dynamically name the runtime file, for now, it
+    # simply returns vienna.js
+    def runtime_filename
+      'vienna.js'
     end
   end
 end
-
-Vienna.require_all_libs_relative_to(__FILE__)

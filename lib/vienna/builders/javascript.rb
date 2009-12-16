@@ -63,15 +63,22 @@ module Vienna
           o.write(JSMin.minify(t))
           # o.write t
           t = "" # clear t so that we do not carry on minifying stuff before the require statement
-          require_path = @project.require_path_relative_to_file(@source, match[1])
+          # require_path = @project.require_path_relative_to_file(@source, match[1])
           
-          if require_path
-            # puts "require path #{require_path}"
-            build_path = @project.build_file(require_path)
-            o.write "\nVN.require('#{build_path}');\n"
-          else
-            # "cannot require #{require_path}"
+          
+          should = @project.file_requires_file(@source, match[1])
+          # should is nil if we shouldnt 'require' the given file
+          if should
+            o.write "\nrequire('#{match[1]}');\n"
           end
+          
+          # if require_path
+            # puts "require path #{require_path}"
+            # build_path = @project.build_file(require_path)
+            # o.write "\nVN.require('#{build_path}');\n"
+          # else
+            # "cannot require #{require_path}"
+          # end
           # puts "\nVN.require('#{require_path}');\n"
         else
           t << l

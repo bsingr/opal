@@ -23,6 +23,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
+// In contexts, this represents a 'require' directive within the code
+function vn_parser_require_context() {
+  
+}
+
+// In contexts, this represents plain old code....
+function rb_parser_code_context() {
+  
+}
  
 // Inspiration
 // ===========
@@ -73,11 +83,13 @@ var kCLASS      = 0,    kMODULE     = 1,    kDEF        = 2,    kUNDEF      = 3,
         
     tPLUS       = 118,  tMINUS      = 119,  tNL         = 120,  tSEMI       = 121;
     
-    
+    // aids parsing....
+var kREQUIRE    = 140;
+
     // special tokens (used for generator)
 var tCALL       = 150,  tMLHS       = 151;
 
-var vn_ruby_parser = function(str) {
+var vn_parser = function(str) {
 
   // current lex state
   var lex_state = EXPR_BEG;
@@ -98,6 +110,14 @@ var vn_ruby_parser = function(str) {
   var valid_cmd_args = [tIDENTIFIER, tINTEGER, tSTRING_BEG, kDO, '{', tSYMBEG];
   // start of command (not stmt), when on new line etc
   var cmd_start = false;
+  
+  // all contexts
+  var contexts = [];
+  
+  // function push_context(c) {
+  //   contexts.push(c);
+  // }
+  
   
   /**
     String parsing
@@ -234,6 +254,11 @@ var vn_ruby_parser = function(str) {
       next_token('}');
       return this;
   };
+  
+  symbol(kREQUIRE).nud = function() {
+    this.$path = expr();
+    return this;
+  }
 
   
   // self... simple, just return
@@ -1367,7 +1392,10 @@ var vn_ruby_parser = function(str) {
             return [kWHEN, scanner.matched];
           case 'yield':
             lex_state = EXPR_ARG;
-            return [kYIELD, scanner.matched]
+            return [kYIELD, scanner.matched];
+          case 'require':
+            lex_state = EXPR_CMDARG;
+            return [kREQUIRE, scanner.matched];
         }
 
         var matched = scanner.matched;
@@ -1448,9 +1476,10 @@ var vn_ruby_parser = function(str) {
       generate_stmt(tree[i], { instance: true, full_stmt: true, last_stmt: false, top_level: true} );
     }
     var a = pop_string_buffer();
-    console.log(a);
+    // console.log(a);
     // write to top level context? or just eval?
     pop_nametable();
+    return a;
   }
   
   function generate_stmt(stmt, context) {
@@ -1482,8 +1511,17 @@ var vn_ruby_parser = function(str) {
       case kIF:
         generate_if(stmt, context);
         break;
+      case kREQUIRE:
+        generate_require(stmt, context);
+        break;
       default:
         console.log("unknown generate_stmt type: " + stmt.type + ", " + stmt.value);
+    }
+  }
+  
+  function generate_require(stmt, context) {
+    if (!context.top_level) {
+      throw "require: a require statement must be in the top level (for now)"
     }
   }
   
@@ -1766,16 +1804,27 @@ var vn_ruby_parser = function(str) {
       write("'));\n")
     }
   }
-
   
-  // the parser - pass is the source to actually parse
-  return function(parse_text) {
-    scanner = new vn_ruby_string_scanner(parse_text);
+  this.parse = function(str) {
+    scanner = new vn_ruby_string_scanner(str);
     next_token();
     var s = stmts();
-    generate_tree(s);
-    return s;
+    return generate_tree(s);
   }
+  
+  this.contexts = function() {
+    return contexts;
+  }
+  
+  // the parser - pass is the source to actually parse
+  // return function(parse_text) {
+  //   scanner = new vn_ruby_string_scanner(parse_text);
+  //   next_token();
+  //   var s = stmts();
+  //   generate_tree(s);
+  //   return s;
+  // }
+  return this;
 };
 
 

@@ -103,4 +103,45 @@ function ID2SYM(id) {
 };
 
 
-// Top self
+
+
+
+
+
+
+
+
+
+
+// <html>
+//  <head><title>Ruby eval test..</title>
+//  <script src="runtime/eval.js" type="text/javascript" charset="utf-8"></script>
+//  
+//  <script id="ruby_test_code" type="text/ruby" charset="utf-8">
+//    
+//    adam, ben = john, adam(10, 13)
+//    
+//    adam ben, john, :tom => 100
+//    
+//    ben 1, 13, 14
+//    
+//    result = if adam
+//                10
+//              end
+//  
+//  </script>
+//  <script type="text/javascript" charset="utf-8">
+//  
+//    var str = document.getElementById('ruby_test_code').innerHTML.toString();
+//    var parser = vn_ruby_parser();
+//    var tok;
+//    console.log(parser(str));
+//  
+//  </script>
+// 
+//  </head>
+//  <body>
+//    
+//  </body>
+// </html>
+

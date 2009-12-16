@@ -39,6 +39,8 @@ module Vienna
         gen_app(ARGV)
       when "capp"
         gen_capp(ARGV)
+      when "browser"
+        gen_browser(ARGV)
       end
     end
     
@@ -62,6 +64,25 @@ module Vienna
       # `capp gen #{capp_name} -f`
       
       
+    end
+    
+    def gen_browser(args)
+      # find_project!
+      # puts "need to generate browser app named #{args[1]}"
+      name = args[1]
+      gen_dir = File.join(PATH, 'gen', 'browser')
+      FileUtils.mkdir_p(name)
+      Dir.chdir(name)
+      find_project!
+      
+      @project.create_or_update_runtime
+    end
+    
+    def show_help
+      s = "Usage:"
+      s << "  vn-gen [type] [app_name] [options]"
+      s << "\n"
+      puts s
     end
   end
 end
