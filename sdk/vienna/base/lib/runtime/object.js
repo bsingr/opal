@@ -75,39 +75,9 @@ function rb_ivar_get(obj, id) {
 
 
 
-function rb_funcall(self, id) {
- // console.log(id);
- // rb_funcall_stack.push(id);
- if (!self.klass) {
-   console.log('ERROR: rb_funcall');
-   console.log(self);
-   console.log(id);
- }
 
- var method = rb_search_method(self.klass, id);
 
- if (!method) {
-   // for (var i = 0; i < 20; i++) {
-     // console.log(rb_funcall_stack.pop());
-   // }
-   console.log(self);
-   throw 'RObject#call cannot find method: ' + id ;
- } 
- // console.log(Array.prototype.slice.call(arguments));
- switch(arguments.length) {
-   case 2: return method(self, id);
-   case 3: return method(self, id, arguments[2]);
-   case 4: return method(self, id, arguments[2], arguments[3]);
-   case 5: return method(self, id, arguments[2], arguments[3], arguments[4]);
- }
 
- return method.apply(self, arguments);
-}
-
- /**
-   For compatibility
- */
- var VN$ = rb_funcall;
 
  /**
    Call super method
@@ -127,21 +97,7 @@ function rb_funcall(self, id) {
    return method.apply(self, arguments);
  };
  
-function rb_search_method(klass, id) {
- // console.log('checking ' + id);
- // console.log(this);
- var f, k = klass;
- // console.log(id);
- // console.log(klass);
- // return null ;
- while (!(f = k.m_tbl[id])) {
-   k = k.sup;
-   // console.log(this.$super.__classid__);
-   if (!k) return undefined;
- }
- // console.log('returning true for ' + id);
- return f;
-};
+
 
  // RClass.prototype.$search_super_method = function(from,id) {
  //   // get current
@@ -230,118 +186,124 @@ function rb_search_method(klass, id) {
  // RObject.prototype.$make_metaclass = RClass.prototype.$make_metaclass;
  
  
- /* 
-  * object.js
-  * vienna
-  * 
-  * Created by Adam Beynon.
-  * Copyright 2009 Adam Beynon.
-  *
-  * Permission is hereby granted, free of charge, to any person obtaining a copy
-  * of this software and associated documentation files (the "Software"), to deal
-  * in the Software without restriction, including without limitation the rights
-  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-  * copies of the Software, and to permit persons to whom the Software is
-  * furnished to do so, subject to the following conditions:
-  * 
-  * The above copyright notice and this permission notice shall be included in
-  * all copies or substantial portions of the Software.
-  * 
-  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-  * THE SOFTWARE.
-  */
+/* 
+* object.js
+* vienna
+* 
+* Created by Adam Beynon.
+* Copyright 2009 Adam Beynon.
+*
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"), to deal
+* in the Software without restriction, including without limitation the rights
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+* copies of the Software, and to permit persons to whom the Software is
+* furnished to do so, subject to the following conditions:
+* 
+* The above copyright notice and this permission notice shall be included in
+* all copies or substantial portions of the Software.
+* 
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+* THE SOFTWARE.
+*/
 
- function rb_obj_alloc(klass) {
-   return rb_funcall(klass, 'allocate');
- }
+function rb_obj_alloc(klass) {
+ return rb_funcall(klass, 'allocate', 0);
+}
 
- function rb_obj_dummy() {
-   return nil;
- }
+function rb_obj_dummy() {
+ return nil;
+}
 
- function rb_class_allocate_instance(klass) {
-   var o = new RObject();
-   o.klass = klass;
-   FL_SET(o, T_OBJECT);
-   return o;
- }
+function rb_class_allocate_instance(klass) {
+ var o = new RObject();
+ o.klass = klass;
+ FL_SET(o, T_OBJECT);
+ return o;
+}
 
- function rb_obj_equal(self, _cmd, obj) {
-   if (self == obj) return true;
-   return false;
- }
+function rb_obj_equal(self, obj) {
+ if (self == obj) return true;
+ return false;
+}
 
- function rb_obj_not(self) {
-   return RTEST(self) ? false : true;
- }
+function rb_obj_not(self) {
+ return RTEST(self) ? false : true;
+}
 
- function rb_obj_not_equal(self, _cmd, obj) {
-   var r = rb_funcall(self, "==", obj);
-   return RTEST(r) ? false : true;
- }
+function rb_obj_not_equal(self, obj) {
+ var r = rb_funcall(self, "==", obj);
+ return RTEST(r) ? false : true;
+}
 
- function rb_false() {
-   return false;
- }
+function rb_false() {
+ return false;
+}
 
- function rb_true() {
-   return true;
- }
+function rb_true() {
+ return true;
+}
 
- function rb_equal(self, _cmd, obj) {
-   var r;
-   if (self == obj) return true;
-   r = rb_funcall(self, "==", obj);
-   if (RTEST(r)) return true;
-   return false;
- }
+function rb_equal(self, obj) {
+ var r;
+ if (self == obj) return true;
+ r = rb_funcall(self, "==", obj);
+ if (RTEST(r)) return true;
+ return false;
+}
 
- function rb_obj_match() {
-   return nil;
- }
+function rb_obj_match() {
+ return nil;
+}
 
- function rb_obj_not_match(self, _cmd, obj) {
-   var r = rb_funcall(self, "=~", obj);
-   return RTEST(r) ? false : true;
- }
+function rb_obj_not_match(self, obj) {
+ var r = rb_funcall(self, "=~", obj);
+ return RTEST(r) ? false : true;
+}
 
- function rb_class_real(klass) {
-   if (!klass) return nil;
-   while (FL_TEST(klass, FL_SINGLETON) || FL_TEST(klass, T_ICLASS)) {
-     klass = klass.sup;
-   }
-   return klass;
+function rb_class_real(klass) {
+ if (!klass) return nil;
+ while (FL_TEST(klass, FL_SINGLETON) || FL_TEST(klass, T_ICLASS)) {
+   klass = klass.sup;
  }
+ return klass;
+}
 
- function rb_obj_class(self) {
-   return rb_class_real(self.klass);
- }
+function rb_obj_class(self) {
+ return rb_class_real(self.klass);
+}
 
- function rb_obj_clone(self) {
-   return self;
- }
+function rb_obj_clone(self) {
+ return self;
+}
 
- function rb_obj_dup(self) {
-   return self;
- }
+function rb_obj_dup(self) {
+ return self;
+}
 
- function rb_obj_init_copy(self) {
-   return self;
- }
+function rb_obj_init_copy(self) {
+ return self;
+}
 
- function rb_any_to_s(self) {
-   var c = rb_obj_classname(self);
-   return "<" + c + ":0x000000>";
- }
+function rb_any_to_s(self) {
+ var c = rb_obj_classname(self);
+ return "<" + c + ":0x000000>";
+}
 
- function rb_obj_inspect(self) {
-   return rb_any_to_s(self);
- }
+function rb_obj_inspect(self) {
+ return rb_any_to_s(self);
+}
+
+function rb_class_new_instance(argc, argv, klass) {
+  var o = rb_obj_alloc(klass);
+  // call init here
+  return o;
+}
 
 
 
@@ -353,6 +315,9 @@ function Init_Object() {
   rb_cObject = boot_defclass('Object', rb_cBasicObject);
   rb_cModule = boot_defclass('Module', rb_cObject);
   rb_cClass = boot_defclass('Class', rb_cModule);
+  
+  // hmm, we jhave to set the const again... or should we?
+  rb_const_set(rb_cObject, "BaiscObject", rb_cBasicObject);
 
   metaclass = rb_make_metaclass(rb_cBasicObject, rb_cClass);
   metaclass = rb_make_metaclass(rb_cObject, metaclass);
@@ -485,7 +450,7 @@ function Init_Object() {
   // rb_define_method(rb_cModule, "class_variable_defined?", rb_mod_cvar_defined, 1);
   // 
   // rb_define_method(rb_cClass, "allocate", rb_obj_alloc, 0);
-  // rb_define_method(rb_cClass, "new", rb_class_new_instance, -1);
+  rb_define_method(rb_cClass, "new", rb_class_new_instance, -1);
   // rb_define_method(rb_cClass, "initialize", rb_class_initialize, -1);
   // rb_define_method(rb_cClass, "initialize_copy", rb_class_init_copy, 1);
   // rb_define_method(rb_cClass, "superclass", rb_class_superclass, 0);

@@ -80,7 +80,8 @@ function rb_mod_create() {
 // };
 
 function rb_include_module(klass, module) {
-  rb_include_class_new(module, klass);
+  // FIXME: need to check if already included, or its a parent etc etc.
+  klass.sup = rb_include_class_new(module, klass);
 }
 
 

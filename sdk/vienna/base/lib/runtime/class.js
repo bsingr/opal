@@ -138,6 +138,11 @@ function make_metametaclass(metaclass) {
   return metametaclass;
 };
 
+function rb_class_real(klass) {
+  while (klass.flags & FL_SINGLETON) klass = klass.sup;
+  return klass;
+}
+
 RClass.real = function(klass) {
   while ((klass.$singleton == true) || (klass.$type == VN.ICLASS)) {
     klass = klass.$super
@@ -303,25 +308,32 @@ function rb_singleton_class_attached(klass, obj) {
 /**
   Define 'normal' method
 */
-function rb_define_method(klass, name, func) {
-  rb_add_method(klass, name, func);
+function rb_define_method(klass, name, func, argc) {
+  func.rb_argc = argc;
+  rb_add_method(klass, name, func, NOEX_PUBLIC);
 }
 
-function rb_define_private_method(klass, name, func) {
-  rb_add_method(klass, name, func);
+function rb_define_private_method(klass, name, func, argc) {
+  func.rb_argc = argc;
+  rb_add_method(klass, name, func, NOEX_PRIVATE);
 }
 
-function rb_define_singleton_method(klass, name, func) {
-  rb_define_method(rb_singleton_class(klass), name, func);
+function rb_define_private_method(klass, name, func, argc) {
+  func.rb_argc = argc;
+  rb_add_method(klass, name, func, NOEX_PROTECTED);
+}
+
+function rb_define_singleton_method(klass, name, func, argc) {
+  rb_define_method(rb_singleton_class(klass), name, func, argc);
 }
 
 function rb_add_method(klass, name, func) {
   klass.m_tbl[name] = func;
-  func.displayName = klass.iv_tbl.__classid__ + "#" + name;
+  // func.displayName = klass.iv_tbl.__classid__ + "#" + name;
 }
 
 function rb_define_alloc_func(klass, func) {
-  rb_define_method(rb_singleton_class(klass), 'allocate', func);
+  rb_define_method(rb_singleton_class(klass), 'allocate', func, 0);
 }
 
 

@@ -144,6 +144,8 @@ function rb_vm() {
   
   // current frame pointer - rb_control_frame
   this.cfp = null;
+  // control frame stack
+  this.cfs = []
   
   // for iterations
   this.passed_block = null;
@@ -191,7 +193,7 @@ function rb_control_frame() {
 
 
 // currently the only vm. thread support is currently disabled
-rb_top_vm = null;
+var rb_top_vm = null;
 
 
 
@@ -218,6 +220,7 @@ function vm_exec(vm) {
   // console.log(vm);
   var sf = vm.cfp;
   // [7] are the actual opcodes
+  // console.log(vm);
   var iseq = sf.iseq[7];
   // run opcodes
   for (; sf.pc < iseq.length; sf.pc++) {
@@ -236,22 +239,25 @@ function vm_exec(vm) {
       case iGETCONSTANT:
         var base = vm.stack[--sf.sp];
         if (base === nil) {
-          console.log("rb_const_get(self, " + op[1] + ")");
-          vm.stack[sf.sp++] = { toString:function() { return "<Object:0x0000000>"; }};
+          // if current self is an insance, look in its class (meta)
+          var k = rb_class_real((sf.self.flags & T_OBJECT) ? sf.self.klass : sf.self);
+          vm.stack[sf.sp++] = rb_const_get(k, op[1]);
         }
         else {
-          console.log("getconstant " + op[1] + "," + base);
+          vm.stack[sf.sp++] = rb_const_get(base, op[1]);
         }
-        // console.log(vm.stack);
-        
-        // console.log(base);
-        // console.log(vm.stack[--sf.sp]);
         break;
       case iSEND:
-        console.log("send: " + op[1]);
+        var argc = op[2], mid = op[1];
+        
+        var recv = vm.stack[--sf.sp];
+        
+        // throw "calling " + mid + " with " + argc + " arguments."
+        var a = rb_call(recv.klass, recv, mid, argc, []);
         break;
       case iLEAVE:
         console.log("leave/return");
+        console.log(vm);
         break;
       default:
         console.log("unknown op code: " + op.join(","));
@@ -285,12 +291,144 @@ function vm_push_frame(vm, iseq, type, self, specval, pc, sp, lfp, local_size) {
   cfp.dfp = sp;
   cfp.proc = 0;
   
-  
   vm.cfp = cfp;
+  vm.cfs.push(cfp);
+  // vm.cfp = cfp;
   
   
   return cfp;
 }
+
+function rb_funcall(recv, mid, argc) {
+  var argv = Array.prototype.slice.call(arguments, 3, argc + 3);
+  
+  return rb_call(recv.klass, recv, mid, argc, argv);
+}
+
+function rb_call(klass, recv, mid, argc, argv) {
+  var body = rb_search_method(klass, mid);
+  
+  if (!body) {
+    throw "need to call method missing"
+  }
+  
+  return rb_vm_call(rb_top_vm, klass, recv, mid, mid, argc, argv, body, 0);
+}
+  
+  
+ // rb_funcall_stack.push(id);
+ // if (!self.klass) {
+ //   console.log('ERROR: rb_funcall');
+ //   console.log(self);
+ //   console.log(id);
+ // }
+ // 
+ // var method = rb_search_method(self.klass, id);
+ // 
+ // if (!method) {
+ //   // for (var i = 0; i < 20; i++) {
+ //     // console.log(rb_funcall_stack.pop());
+ //   // }
+ //   console.log(self);
+ //   throw 'RObject#call cannot find method: ' + id ;
+ // } 
+ // // console.log(Array.prototype.slice.call(arguments));
+ // switch(arguments.length) {
+ //   case 2: return method(self, id);
+ //   case 3: return method(self, id, arguments[2]);
+ //   case 4: return method(self, id, arguments[2], arguments[3]);
+ //   case 5: return method(self, id, arguments[2], arguments[3], arguments[4]);
+ // }
+ // 
+ // return method.apply(self, arguments);
+// }
+
+function rb_search_method(klass, id) {
+ // console.log('checking ' + id);
+ // console.log(this);
+ var f, k = klass;
+ // console.log(id);
+ // console.log(klass);
+ // return null ;
+ while (!(f = k.m_tbl[id])) {
+   k = k.sup;
+   // console.log(this.$super.__classid__);
+   if (!k) return undefined;
+ }
+ // console.log('returning true for ' + id);
+ return f;
+};
+
+function rb_vm_call(vm, klass, recv, id, oid, argc, argv, body, nosuper) {
+  if (typeof body === 'function') {
+    // console.log(vm);
+    // throw "here"
+    // parent stack frame
+    var pcf = vm.cfp;
+    // (new) current frame pointer
+    // var cfp = vm_push_frame(vm, 0, cfunc_type_number, recv, block_ptr?, 0, pcf.sp, 0, 1);
+    
+    // var val = call_cfunc(body, recv, body.rb_argc, argc, argv);
+    
+    // vm_pop_frame(vm);  
+  }
+  else {
+    // object, i.e. opcode (array)
+    throw "unknown body type"
+  }
+}
+
+function call_cfunc(func, recv, len, argc, argv) {
+
+  if (len >= 0 && argc != len) {
+    // rb_raise(rb_eArgError, "wrong number of arguments(" + argc + " for " + len + ")");
+    throw "rb_eArgError: wrong number of arguments(" + argc + " for " + len + ")"
+  }
+  
+  switch (len) {
+    case -2:
+      throw "call_cfunc: unimplemeneted: -2 arg length"
+    case -1:
+      return func(argc, argv, recv);
+    case 0:
+      return func(recv);
+    case 1:
+      return func(recv, argv[0]);
+    case 2:
+      return func(recv, argv[0], argv[1]);
+    case 3:
+      return func(recv, argv[0], argv[1], argv[2]);
+    case 4:
+      return func(recv, argv[0], argv[1], argv[2], argv[3]);
+    case 5:
+      return func(recv, argv[0], argv[1], argv[2], argv[3], argv[4]);
+    case 6:
+      return func(recv, argv[0], argv[1], argv[2], argv[3], argv[4], argv[5]);
+    case 7:
+      return func(recv, argv[0], argv[1], argv[2], argv[3], argv[4], argv[5], argv[6]);
+    case 8:
+      return func(recv, argv[0], argv[1], argv[2], argv[3], argv[4], argv[5], argv[6], argv[7]);
+    case 9:
+      return func(recv, argv[0], argv[1], argv[2], argv[3], argv[4], argv[5], argv[6], argv[7], argv[8]);
+    case 10:
+      return func(recv, argv[0], argv[1], argv[2], argv[3], argv[4], argv[5], argv[6], argv[7], argv[8], argv[9]);
+    case 11:
+      return func(recv, argv[0], argv[1], argv[2], argv[3], argv[4], argv[5], argv[6], argv[7], argv[8], argv[9], argv[10]);
+    case 12:
+      return func(recv, argv[0], argv[1], argv[2], argv[3], argv[4], argv[5], argv[6], argv[7], argv[8], argv[9], argv[10], argv[11]);
+    case 13:
+      return func(recv, argv[0], argv[1], argv[2], argv[3], argv[4], argv[5], argv[6], argv[7], argv[8], argv[9], argv[10], argv[11], argv[12]);
+    case 14:
+      return func(recv, argv[0], argv[1], argv[2], argv[3], argv[4], argv[5], argv[6], argv[7], argv[8], argv[9], argv[10], argv[11], argv[12], argv[13]);
+    case 15:
+      return func(recv, argv[0], argv[1], argv[2], argv[3], argv[4], argv[5], argv[6], argv[7], argv[8], argv[9], argv[10], argv[11], argv[12], argv[13], argv[14]);
+    default:
+      // rb_raise(rb_eArgError, "too many arguments(" + len + ")");
+      throw "rb_eArgError: too many arguments(" + len + ")"
+  }
+  throw "should never be reached"
+}
+
 
 // Initializie VM - this will run the main VM
 function Init_VM() {
@@ -311,6 +449,11 @@ function rb_vm_top_self() {
 
 // Initialize top self
 function Init_top_self() {
-  rb_top_self = rb_obj_alloc(rb_cObject);
-  rb_define_singleton_method(rb_top_self, 'to_s', main_to_s, 0);
+  /**
+    Hack. When we run this, our VM isnt actually running.... so we cant use methods.. hmmm
+  */
+  rb_top_self = new RObject();
+  rb_top_self.klass = rb_cObject;
+  FL_SET(rb_top_self, T_OBJECT);
+  rb_define_singleton_method(rb_top_self, 'to_s', main_to_s, 0); 
 }

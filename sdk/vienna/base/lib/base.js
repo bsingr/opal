@@ -27,6 +27,18 @@
 // temp..
 var nil = null;
 
+/**
+  nodes etc
+*/
+
+var NOEX_PUBLIC     = 0,
+    NOEX_NOSUPER    = 1,
+    NOEX_PRIVATE    = 2,
+    NOEX_PROTECTED  = 4,
+    NOEX_MASK       = 6,
+    NOEX_BASIC      = 8;
+
+
 function require() {
   
 };
