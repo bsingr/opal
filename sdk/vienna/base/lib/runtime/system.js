@@ -25,20 +25,6 @@
  */
 
 // BasicObject, Object, etc.
-var metaclass;
-var rb_cBasicObject = boot_defclass('BasicObject', null);
-var rb_cObject = boot_defclass('Object', rb_cBasicObject);
-var rb_cModule = boot_defclass('Module', rb_cObject);
-var rb_cClass = boot_defclass('Class', rb_cModule);
-
-metaclass = rb_make_metaclass(rb_cBasicObject, rb_cClass);
-metaclass = rb_make_metaclass(rb_cObject, metaclass);
-metaclass = rb_make_metaclass(rb_cModule, metaclass);
-metaclass = rb_make_metaclass(rb_cClass, metaclass);
-
-boot_defmetametaclass(rb_cModule, metaclass);
-boot_defmetametaclass(rb_cObject, metaclass);
-boot_defmetametaclass(rb_cBasicObject, metaclass);
 
 // RObject.prototype.toString = function() {
   // console.log('calling toString');

@@ -24,6 +24,9 @@
  * THE SOFTWARE.
  */
  
+// temp so we dont have to change code later;
+var nil = null;
+ 
 /**
   Instruction table (opcodes)
 */
@@ -136,8 +139,9 @@ function rb_vm() {
   this.self = null;
   
   this.running = 0;
-  // array
+  // value stack
   this.stack = [];
+  
   // current frame pointer - rb_control_frame
   this.cfp = null;
   
@@ -154,9 +158,11 @@ function rb_vm() {
 function rb_control_frame() {
   // program counter
   this.pc = 0;
-  // stack pointer
+  // stack pointer - will start 1 above previous stack frames so that we add onto stack passed
+  // end of previous frame's
   this.sp = 0;
-  // base pointer;
+  // base pointer - original stack pointer. when we pop stack, this is to know where we started,
+  // so we can go back
   this.bp = null;
   // instruction sequence (array we got from json, for now)
   this.iseq = null;
@@ -187,11 +193,7 @@ function rb_control_frame() {
 // currently the only vm. thread support is currently disabled
 rb_top_vm = null;
 
-// Initializie VM - this will run the main VM
-function Init_VM() {
-  rb_top_vm = new rb_vm();
-  rb_top_vm.top_self = { };
-}
+
 
 // Seq is an array, [:misc, :name etc....]
 function rb_iseq_eval(iseq) {
@@ -207,7 +209,55 @@ function vm_set_top_stack(vm, iseq) {
     throw 'rb_eTypeError: ' + 'Not a top level InstructionSequence'
   }
   
-  vm_push_frame(vm, iseq, ISEQ_TYPE_TOP, vm.top_self, 0, 0, vm.cfp.sp, 0, iseq.local_size)
+  // vm_push_frame(vm, iseq, ISEQ_TYPE_TOP, vm.top_self, 0, 0, vm.cfp.sp, 0, iseq.local_size)
+  // set top: no current frame: therefore no current stack pointer???? should top_self be a frame?
+  vm_push_frame(vm, iseq, ISEQ_TYPE_TOP, vm.top_self, 0, 0, -1, 0, iseq[0][1])
+}
+
+function vm_exec(vm) {
+  // console.log(vm);
+  var sf = vm.cfp;
+  // [7] are the actual opcodes
+  var iseq = sf.iseq[7];
+  // run opcodes
+  for (; sf.pc < iseq.length; sf.pc++) {
+    var op = iseq[sf.pc];
+    
+    // If we hit a number, its correcting the line number that the opcode is on
+    if (typeof op === 'number') {
+      sf.insn_info_table.line_no = op;
+      continue;
+    }
+    
+    switch (op[0]) {
+      case iPUTNIL:
+        vm.stack[sf.sp++] = nil;
+        break;
+      case iGETCONSTANT:
+        var base = vm.stack[--sf.sp];
+        if (base === nil) {
+          console.log("rb_const_get(self, " + op[1] + ")");
+          vm.stack[sf.sp++] = { toString:function() { return "<Object:0x0000000>"; }};
+        }
+        else {
+          console.log("getconstant " + op[1] + "," + base);
+        }
+        // console.log(vm.stack);
+        
+        // console.log(base);
+        // console.log(vm.stack[--sf.sp]);
+        break;
+      case iSEND:
+        console.log("send: " + op[1]);
+        break;
+      case iLEAVE:
+        console.log("leave/return");
+        break;
+      default:
+        console.log("unknown op code: " + op.join(","));
+        break
+    }
+  }
 }
 
 /**
@@ -224,6 +274,7 @@ function vm_set_top_stack(vm, iseq) {
 */
 function vm_push_frame(vm, iseq, type, self, specval, pc, sp, lfp, local_size) {
   var cfp = new rb_control_frame();
+  // push cfp onto stack, then increment sp??
   cfp.pc = pc;
   cfp.sp = sp + 1;
   cfp.bp = sp + 1;
@@ -233,19 +284,33 @@ function vm_push_frame(vm, iseq, type, self, specval, pc, sp, lfp, local_size) {
   cfp.lfp = lfp;
   cfp.dfp = sp;
   cfp.proc = 0;
+  
+  
+  vm.cfp = cfp;
+  
+  
   return cfp;
 }
 
+// Initializie VM - this will run the main VM
+function Init_VM() {
+  rb_top_vm = new rb_vm();
+  rb_top_vm.top_self = rb_top_self;
+}
+
+function main_to_s() {
+  return "main";
+}
+
+rb_top_self = null;
+
+function rb_vm_top_self() {
+  return rb_top_vm.top_self;
+}
 
 
-
-
-
-(function test() {
-  var test_vm_data = [[0,1,2],"<compiled>","src",ISEQ_TYPE_TOP,[],0,[],[1,[iPUTNIL],[iPUTNIL],[iDEFINECLASS,"Adam",[[0,1,1],"<class:Adam>","src",ISEQ_TYPE_CLASS,[],0,[],[3,[iPUTNIL],[iLEAVE]]],0],[iLEAVE]]];
-  Init_VM();
-  rb_iseq_eval(test_vm_data);
-})();
-
-
-
+// Initialize top self
+function Init_top_self() {
+  rb_top_self = rb_obj_alloc(rb_cObject);
+  rb_define_singleton_method(rb_top_self, 'to_s', main_to_s, 0);
+}
