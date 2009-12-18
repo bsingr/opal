@@ -89,7 +89,7 @@ function rb_include_class_new(mod, sup) {
   var klass = class_alloc(T_ICLASS, rb_cClass);
   klass.iv_tbl = mod.iv_tbl;
   klass.m_tbl = mod.m_tbl;
-  klass.sup = sup;
+  klass.sup = sup.sup;
   klass.klass = mod;
   // console.log('included class');
   // console.log(klass);

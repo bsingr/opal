@@ -305,6 +305,10 @@ function rb_class_new_instance(argc, argv, klass) {
   return o;
 }
 
+function rb_f_puts(argc, argv, recv) {
+  console.log(argv.join(""));
+}
+
 
 
 
@@ -367,7 +371,9 @@ function Init_Object() {
   // rb_define_method(rb_mKernel, "trust", rb_obj_trust, 0);
   // rb_define_method(rb_mKernel, "freeze", rb_obj_freeze, 0);
   // rb_define_method(rb_mKernel, "frozen?", rb_obj_frozen_p, 0);
-
+  
+  rb_define_method(rb_mKernel, "puts", rb_f_puts, -1);
+  
   rb_define_method(rb_mKernel, "to_s", rb_any_to_s, 0);
   rb_define_method(rb_mKernel, "inspect", rb_obj_inspect, 0);
   // rb_define_method(rb_mKernel, "methods", rb_obj_methods, -1);

@@ -23,6 +23,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
+/**
+  Jarv - (Javascript/Just) another ruby vm
+  Influenced by yarv, but opcodes are different.
+*/
  
 // temp so we dont have to change code later;
 var nil = null;
@@ -84,48 +89,17 @@ var ISEQ_TYPE_TOP    = 1,
     ISEQ_TYPE_EVAL   = 7,
     ISEQ_TYPE_MAIN   = 8;
 
-
-    // function rb_iseq_t() {
-    //   // iseq type
-    //   this.type = 0;
-    //   // iseq name
-    //   this.name = "";
-    //   // filename/info
-    //   this.filename = "";
-    //   // actual sequences
-    //   this.iseq = [];
-    //   
-    //   this.insn_info_table = {
-    //     position: 0, line_no: 0, sp: 0
-    //   };
-    //     
-    //   // locals
-    //   this.local_table = {};
-    //   
-    //   // Args.. see vm_core.h
-    //   this.argc = 0;
-    //   this.arg_simple = 0;
-    //   this.arg_rest = 0;
-    //   this.arg_block = 0;
-    //   this.arg_opts = 0;
-    //   this.arg_post_len = 0;
-    //   this.arg_post_start = 0;
-    //   
-    //   this.arg_size = 0;
-    //   
-    //   this.arg_opt_table = [];
-    //   
-    //   // stack overflow checking
-    //   this.stack_max = 0;
-    // 
-    //   // dynamics
-    //   this.self = null;
-    //   this.orig = null;
-    //   
-    //   this.cref_stack = null;
-    //   this.klass = null;
-    //   this.defined_method_id = null;
-    // }
+/**
+  call args
+*/
+var VM_CALL_ARGS_SPLAT_BIT    = 2,
+    VM_CALL_ARGS_BLOCKARG_BIT = 4,
+    VM_CALL_FCALL_BIT         = 8,
+    VM_CALL_VCALL_BIT         = 16,
+    VM_CALL_TAILCALL_BIT      = 32,
+    VM_CALL_TAILRECURSION_BIT = 64,
+    VM_CALL_SUPER_BIT         = 128,
+    VM_CALL_SEND_BIT          = 256;
 
 
 /**
@@ -139,8 +113,6 @@ function rb_vm() {
   this.self = null;
   
   this.running = 0;
-  // value stack
-  this.stack = [];
   
   // current frame pointer - rb_control_frame
   this.cfp = null;
@@ -158,14 +130,14 @@ function rb_vm() {
 }
 
 function rb_control_frame() {
+  // stack. every control frame manages its own stack
+  this.stack = []
+  // stack pointer
+  this.sp = 0;
   // program counter
   this.pc = 0;
-  // stack pointer - will start 1 above previous stack frames so that we add onto stack passed
-  // end of previous frame's
-  this.sp = 0;
-  // base pointer - original stack pointer. when we pop stack, this is to know where we started,
-  // so we can go back
-  this.bp = null;
+  // prev env
+  this.prev = null;
   // instruction sequence (array we got from json, for now)
   this.iseq = null;
   // local self
@@ -179,11 +151,13 @@ function rb_control_frame() {
   // proc - always 0/false for methods..
   this.proc = 0;
   
-  this.insn_info_table = {
-    position: 0, line_no: 0, sp: 0
-  };
+  // locals
+  this.locals = null;
   
-  
+  // this.insn_info_table = {
+  //   position: 0, line_no: 0, sp: 0
+  // };
+  this.line_no = 0;
   
   // 
   this.method_id = null;
@@ -211,30 +185,43 @@ function vm_set_top_stack(vm, iseq) {
     throw 'rb_eTypeError: ' + 'Not a top level InstructionSequence'
   }
   
-  // vm_push_frame(vm, iseq, ISEQ_TYPE_TOP, vm.top_self, 0, 0, vm.cfp.sp, 0, iseq.local_size)
-  // set top: no current frame: therefore no current stack pointer???? should top_self be a frame?
-  vm_push_frame(vm, iseq, ISEQ_TYPE_TOP, vm.top_self, 0, 0, -1, 0, iseq[0][1])
+
+  // vm_push_frame(vm, iseq, ISEQ_TYPE_TOP, vm.top_self, 0, 0, -1, 0, iseq[0][1])
+  vm_push_frame(vm, iseq, vm.top_self);
 }
 
 function vm_exec(vm) {
+  
+  
   // console.log(vm);
   var sf = vm.cfp;
+  console.log("locals: " + sf.locals.join(","))
+  
   // [7] are the actual opcodes
-  // console.log(vm);
-  var iseq = sf.iseq[7];
+  var iseq = sf.iseq[5];
   // run opcodes
   for (; sf.pc < iseq.length; sf.pc++) {
     var op = iseq[sf.pc];
     
     // If we hit a number, its correcting the line number that the opcode is on
     if (typeof op === 'number') {
-      sf.insn_info_table.line_no = op;
+      sf.line_no = op;
       continue;
     }
     
+    // throw "ok here " + op.join("   ,   ");
+    
     switch (op[0]) {
+      case iGETLOCAL:
+      sf.stack[sf.sp++] = sf.locals[op[1]];
+        // console.log(sf.stack);
+        // throw "get local " + op[1] + " is " + sf.locals[op[1]]
+        break;
       case iPUTNIL:
-        vm.stack[sf.sp++] = nil;
+        sf.stack[sf.sp++] = nil;
+        break;
+      case iPUTOBJECT:
+        sf.stack[sf.sp++] = op[1];
         break;
       case iGETCONSTANT:
         var base = vm.stack[--sf.sp];
@@ -247,21 +234,44 @@ function vm_exec(vm) {
           vm.stack[sf.sp++] = rb_const_get(base, op[1]);
         }
         break;
+      case iDEFINEMETHOD:
+        // console.log(vm);
+        // throw "in define method"
+        // for now, just continue:
+        // console.log('skipping idefinemethod : ' + sf.stack.join(","));
+        // continue;
+        var id = op[1], body = op[2], sing = op[3], klass = sf.stack[--sf.sp];
+        // we should check sing to see if it is a singleton. assume not for now, so define on self.
+        rb_add_method(sf.self.klass, id, body, NOEX_PUBLIC);
+        // throw "/"
+        break;
       case iSEND:
+        // console.log('skipping isend : ' + op.join(","));
+        // continue;
         var argc = op[2], mid = op[1];
+        var argv = sf.stack.slice(sf.sp - argc, sf.sp);
+        sf.sp -= argc;
+        var recv = sf.stack[--sf.sp];
         
-        var recv = vm.stack[--sf.sp];
-        
-        // throw "calling " + mid + " with " + argc + " arguments."
-        var a = rb_call(recv.klass, recv, mid, argc, []);
+        if (op[4] & VM_CALL_FCALL_BIT) recv = sf.self;
+        console.log(sf.self);
+        var a = rb_call(recv.klass, recv, mid, argc, argv);
+        sf.stack[sf.sp++] = a;
+        // console.log("return value is:");
+        // console.log(a);
+        // throw "here"
+        break;
+      case iPOP:
+        sf.sp--;
         break;
       case iLEAVE:
-        console.log("leave/return");
-        console.log(vm);
+        console.log("leave/return:" + sf.stack.join(",") + " ------ " + sf.sp);
+        return sf.stack[0];
+        // console.log(vm);
         break;
       default:
         console.log("unknown op code: " + op.join(","));
-        break
+        break;
     }
   }
 }
@@ -278,25 +288,46 @@ function vm_exec(vm) {
   @param VALUE lfp
   @param int local_size
 */
-function vm_push_frame(vm, iseq, type, self, specval, pc, sp, lfp, local_size) {
+// function vm_push_frame(vm, iseq, type, self, specval, pc, sp, lfp, local_size) {
+//   var cfp = new rb_control_frame();
+//   // push cfp onto stack, then increment sp??
+//   cfp.pc = pc;
+//   cfp.sp = sp + 1;
+//   cfp.bp = sp + 1;
+//   cfp.iseq = iseq;
+//   cfp.flag = type;
+//   cfp.self = self;
+//   cfp.lfp = lfp;
+//   cfp.dfp = sp;
+//   cfp.proc = 0;
+//   
+//   // console.log("locals size: " + local_size);  
+//   vm.cfp = cfp;
+//   vm.cfs.push(cfp);
+//   // vm.cfp = cfp;
+//   
+//   
+//   return cfp;
+// }
+
+function vm_push_frame(vm, iseq, self) {
   var cfp = new rb_control_frame();
-  // push cfp onto stack, then increment sp??
-  cfp.pc = pc;
-  cfp.sp = sp + 1;
-  cfp.bp = sp + 1;
   cfp.iseq = iseq;
-  cfp.flag = type;
   cfp.self = self;
-  cfp.lfp = lfp;
-  cfp.dfp = sp;
-  cfp.proc = 0;
+  cfp.pc = 0;
+  
+  cfp.locals = new Array(iseq[0] + iseq[1]);
   
   vm.cfp = cfp;
   vm.cfs.push(cfp);
-  // vm.cfp = cfp;
-  
-  
   return cfp;
+}
+
+function vm_pop_frame(vm) {
+  // console.log(vm);
+  // throw "."
+  vm.cfs.pop();
+  vm.cfp = vm.cfs[vm.cfs.length - 1];
 }
 
 function rb_funcall(recv, mid, argc) {
@@ -307,9 +338,8 @@ function rb_funcall(recv, mid, argc) {
 
 function rb_call(klass, recv, mid, argc, argv) {
   var body = rb_search_method(klass, mid);
-  
   if (!body) {
-    throw "need to call method missing"
+    return rb_call(klass, recv, "method_missing", argc, argv);
   }
   
   return rb_vm_call(rb_top_vm, klass, recv, mid, mid, argc, argv, body, 0);
@@ -361,20 +391,36 @@ function rb_search_method(klass, id) {
 
 function rb_vm_call(vm, klass, recv, id, oid, argc, argv, body, nosuper) {
   if (typeof body === 'function') {
-    // console.log(vm);
+    // console.log(id);
     // throw "here"
     // parent stack frame
     var pcf = vm.cfp;
     // (new) current frame pointer
-    // var cfp = vm_push_frame(vm, 0, cfunc_type_number, recv, block_ptr?, 0, pcf.sp, 0, 1);
+    // 3rd param should be cfunc_type
+    // 5th param should be a given block
+    // var cfp = vm_push_frame(vm, 0, 0, recv, null, 0, pcf.sp, 0, 1);
     
-    // var val = call_cfunc(body, recv, body.rb_argc, argc, argv);
+    // we pass 0,0 to state that we dont need any args spaces reserving.
+    // vm_push_frame expects an iseq, so we send it a fake one. mhahaha.
+    var cfp = vm_push_frame(vm, [0,0], recv);
+    var val = call_cfunc(body, recv, body.rb_argc, argc, argv);
     
-    // vm_pop_frame(vm);  
+    vm_pop_frame(vm);
+    return val;
   }
   else {
+    // throw "in send.."
     // object, i.e. opcode (array)
-    throw "unknown body type"
+    var pcf = vm.cfp;
+    var cfp = vm_push_frame(vm, body, recv);
+    // var cfp = vm_push_frame(vm, body, 0, recv, null, 0, pcf.sp, 0, body[0][1]);
+    for (var i = 0; i < argc; i++) {
+      cfp.locals[i] = argv[i];
+    }
+    
+    var val = vm_exec(vm);
+    vm_pop_frame(vm);
+    return val;
   }
 }
 
@@ -385,6 +431,8 @@ function call_cfunc(func, recv, len, argc, argv) {
     throw "rb_eArgError: wrong number of arguments(" + argc + " for " + len + ")"
   }
   
+  // even though 15 is acceptable, we should determine a cut off point. 5 seems reasonable, then after
+  // 5, we just push recv to start of argv, and apply().
   switch (len) {
     case -2:
       throw "call_cfunc: unimplemeneted: -2 arg length"
@@ -456,4 +504,35 @@ function Init_top_self() {
   rb_top_self.klass = rb_cObject;
   FL_SET(rb_top_self, T_OBJECT);
   rb_define_singleton_method(rb_top_self, 'to_s', main_to_s, 0); 
+}
+
+function rb_method_missing(argc, argv, recv) {
+  throw "method missing: " + argv.join(",")
+}
+
+function Init_vm_eval() {
+    // rb_define_method(rb_mKernel, "eval", rb_f_eval, -1);
+    // rb_define_method(rb_mKernel, "local_variables", rb_f_local_variables, 0);
+    // rb_define_method(rb_mKernel, "iterator?", rb_f_block_given_p, 0);
+    // rb_define_method(rb_mKernel, "block_given?", rb_f_block_given_p, 0);
+    // 
+    // rb_define_method(rb_mKernel, "catch", rb_f_catch, -1);
+    // rb_define_method(rb_mKernel, "throw", rb_f_throw, -1);
+    // 
+    // rb_define_method(rb_mKernel, "loop", rb_f_loop, 0);
+    // 
+    // rb_define_method(rb_cBasicObject, "instance_eval", rb_obj_instance_eval, -1);
+    // rb_define_method(rb_cBasicObject, "instance_exec", rb_obj_instance_exec, -1);
+    rb_define_private_method(rb_cBasicObject, "method_missing", rb_method_missing, -1);
+
+    // rb_define_method(rb_cBasicObject, "__send__", rb_f_send, -1);
+    // rb_define_method(rb_mKernel, "send", rb_f_send, -1);
+    // rb_define_method(rb_mKernel, "public_send", rb_f_public_send, -1);
+    // 
+    // rb_define_method(rb_cModule, "module_exec", rb_mod_module_exec, -1);
+    // rb_define_method(rb_cModule, "class_exec", rb_mod_module_exec, -1);
+    // rb_define_method(rb_cModule, "module_eval", rb_mod_module_eval, -1);
+    // rb_define_method(rb_cModule, "class_eval", rb_mod_module_eval, -1);
+    // 
+    // rb_define_method(rb_mKernel, "caller", rb_f_caller, -1);
 }

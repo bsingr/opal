@@ -1,0 +1,40 @@
+== JARV
+
+Jarv is a (bad) name for the op codes used by this ruby implementation. It is heavily influenced by the opcodes used by ruby. Jarv stands for (Javascript/Just) another ruby vm. Hence the prepended "bad name". Jarv takes out some of the data encoded within the instruction sequences, to provide the bare minimum to run the opcodes successfully. The following in a structure of an ISeq, which is represented as an array at runtime in javascript:
+
+	[arg_size, local_size, filename, type, catch_table, opcodes]
+	
+=== arg_size
+
+This is the number of arguments that the instruction sequence takes. Typically only methods and blocks take arguments, so the top sequence, class sequences etc will typically have a 0 in this space. This is nothing more than the total number of arguments that the method DEFINES that it takes.
+
+=== local_size
+
+The number of local variables that are defined in the opcodes. This is so we can reserve space for setting each one. Within the opcodes, these are referenced by numbers. Args are numbered from 0, then the locals follow. So if we have 3 args, the first local will be number "3", then the second number "4" etc. Like so:
+
+	[arg1, arg2, arg3, local1, local2...]
+
+=== filename
+
+The filename that the instruction sequence was defined in. Dynamically evaluated code will have "src" for this property.
+
+=== type
+
+The type of isequence. The available options are:
+
+* ISEQ_TYPE_TOP    
+* ISEQ_TYPE_METHOD 
+* ISEQ_TYPE_BLOCK  
+* ISEQ_TYPE_CLASS  
+* ISEQ_TYPE_RESCUE 
+* ISEQ_TYPE_ENSURE 
+* ISEQ_TYPE_EVAL   
+* ISEQ_TYPE_MAIN
+
+=== catch_table
+
+This is used to store info about catching local jumps: next, break, return, etc. 
+
+=== opcodes
+
+All opcodes belonging to scope/method/class etc. These are what are actually evaluated. Each opcode is an array with its type at index 0, and any options/properties to follow. If an opcode is not an array, and is instead an integer, then this is used to indicate a new line. The integer states the current line. This is useful for back stack tracing etc. Line numbers are stored incase of error.
