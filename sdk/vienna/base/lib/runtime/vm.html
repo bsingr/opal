@@ -6,6 +6,7 @@
 		<script src="variable.js" type="text/javascript" charset="utf-8"></script>
 		<script src="module.js" type="text/javascript" charset="utf-8"></script>
 		<script src="object.js" type="text/javascript" charset="utf-8"></script>
+		<script src="number.js" type="text/javascript" charset="utf-8"></script>
 		<script src="system.js" type="text/javascript" charset="utf-8"></script>
 		<script src="file.js" type="text/javascript" charset="utf-8"></script>
 		<script src="parse.js" type="text/javascript" charset="utf-8"></script>
@@ -14,12 +15,12 @@
 		<script type="text/javascript" charset="utf-8">
 		rb_call_inits();
 			(function test() {
-			  // var test_vm_data = [[0,1,1],"<compiled>","src",ISEQ_TYPE_TOP,[],0,[],[1, [iPUTNIL],[iGETCONSTANT,"Kernel"],[iGETCONSTANT,"Object"],[iSEND,"puts",0,null,0,null],[iLEAVE]]];
-			
-				// var test_vm_data = [[0,1,2],"<compiled>","src",ISEQ_TYPE_TOP,[],0,[],[1,[iPUTNIL],[iPUTOBJECT,10],[iSEND,"puts",1,null,8,null],[iLEAVE]]]
+			  
+				// var test_vm_data = [0, 0, "src", ISEQ_TYPE_TOP, [], [1, [iPUTNIL], [iDEFINEMETHOD, 'adam', [2, 0, "src", ISEQ_TYPE_METHOD, [], [2, [iPUTNIL], [iGETLOCAL, 0], [iSEND, 'puts', 1, null, 8, null], [iPOP], 3, [iPUTNIL], [iGETLOCAL, 2], [iSEND, 'puts', 1, null, 8, null], [iLEAVE]]], 0], 6, [iPUTNIL], [iPUTOBJECT, 10], [iPUTOBJECT, 15], [iSEND, 'adam', 2, null, 8, null], [iPOP], 7, [iPUTNIL], [iPUTOBJECT, 102], [iPUTOBJECT, 209], [iSEND, 'adam', 2, null, 8, null], [iLEAVE]]];
 				
-				var test_vm_data = [0, 0, "src", ISEQ_TYPE_TOP, [], [1, [iPUTNIL], [iDEFINEMETHOD, 'adam', [2, 0, "src", ISEQ_TYPE_METHOD, [], [2, [iPUTNIL], [iGETLOCAL, 0], [iSEND, 'puts', 1, null, 8, null], [iPOP], 3, [iPUTNIL], [iGETLOCAL, 2], [iSEND, 'puts', 1, null, 8, null], [iLEAVE]]], 0], 6, [iPUTNIL], [iPUTOBJECT, 10], [iPUTOBJECT, 15], [iSEND, 'adam', 2, null, 8, null], [iPOP], 7, [iPUTNIL], [iPUTOBJECT, 102], [iPUTOBJECT, 209], [iSEND, 'adam', 2, null, 8, null], [iLEAVE]]];
-			
+				var test_vm_data = [0, 0, "src", ISEQ_TYPE_TOP, [], [1, [iPUTNIL], [iDEFINEMETHOD, 'adam', [2, 0, "src", ISEQ_TYPE_METHOD, [], [2, [iGETLOCAL, 0], [iGETLOCAL, 1], [iSEND, '+', 1, null, 0, null], [iLEAVE]]], 0], [iPUTNIL], [iLEAVE]]];
+				 
+				
 			  // Init_VM();
 			  rb_iseq_eval(test_vm_data);
 			})();

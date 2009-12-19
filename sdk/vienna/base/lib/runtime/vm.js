@@ -175,7 +175,7 @@ var rb_top_vm = null;
 function rb_iseq_eval(iseq) {
   var val, vm = rb_top_vm;
   vm_set_top_stack(vm, iseq);
-  val = vm_exec(vm);
+  val = vm_run_mode_running(rb_top_vm);
   return val;
 }
 
@@ -190,6 +190,15 @@ function vm_set_top_stack(vm, iseq) {
   vm_push_frame(vm, iseq, vm.top_self);
 }
 
+function vm_run_mode_sleep(vm) {
+  vm.running = 0;
+}
+
+function vm_run_mode_running(vm) {
+  vm.running = 1;
+  return vm_exec(vm);
+}
+
 function vm_exec(vm) {
   
   
@@ -200,11 +209,13 @@ function vm_exec(vm) {
   // [7] are the actual opcodes
   var iseq = sf.iseq[5];
   // run opcodes
-  for (; sf.pc < iseq.length; sf.pc++) {
+  for (; (sf.pc < iseq.length) && vm.running; sf.pc++) {
     var op = iseq[sf.pc];
     
     // If we hit a number, its correcting the line number that the opcode is on
     if (typeof op === 'number') {
+      // console.log("got to line number: " + op + " , so stopping");
+      // vm_run_mode_sleep(vm);
       sf.line_no = op;
       continue;
     }

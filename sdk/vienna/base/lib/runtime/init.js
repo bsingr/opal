@@ -27,6 +27,7 @@
 function rb_call_inits() {
   Init_Object();
   Init_top_self();
+  Init_Number();
   Init_VM();
   Init_vm_eval();
 }
