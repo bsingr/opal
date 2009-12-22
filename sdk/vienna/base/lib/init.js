@@ -1,5 +1,5 @@
 /* 
- * file.js
+ * init.js
  * vienna
  * 
  * Created by Adam Beynon.
@@ -23,41 +23,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
- 
-VN_BASE_URL = "";
 
-/**
-  Require the file 'path'. This should not have an extension, as this is 
-  automatically determined. callback is called on completion. Note, this is not
-  the same as require(); (although this will be called by require)
-*/
-function vn_require(path, callback) {
-  console.log("requiring: " + path);
-  
-  var r = new XMLHttpRequest();
-  r.open("GET", path + '.rb', true);
-  r.onreadystatechange=function() {
-    if (r.readyState==4) {
-      var p = new vn_parser();
-      var g = p.parse(r.responseText);
-      console.log("generated:");
-      console.log(g);
-      eval(g);
-      // console.log(p(r.responseText))
-      // lib.parse(request.responseText);
-      // lib.finish_loading();
-      // // alert('Lib has bundles: ' + lib.bundles.length);
-      // lib.load_callback(lib);
-    }
-  }
-  r.send(null)
-}
-
-function vn_file() {
-  this.path = null;
-}
-
-
-if (!window.XMLHttpRequest) {
-  throw "XMLHttpRequest missing. currently unsupported browser. fix coming soon"
+function rb_call_inits() {
+  Init_Object();
+  Init_top_self();
+  Init_Number();
+  Init_VM();
+  Init_vm_eval();
+  Init_load();
+  Init_Bundle();
 }

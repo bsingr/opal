@@ -31,6 +31,7 @@ module Vienna
     attr_reader :project_root
     
     def initialize(project_root)
+      puts "initializing project root - #{project_root}"
       @project_root = project_root
     end
     

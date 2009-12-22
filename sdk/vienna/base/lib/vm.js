@@ -180,7 +180,7 @@ function rb_iseq_eval(iseq) {
 }
 
 function vm_set_top_stack(vm, iseq) {
-  if (iseq[3] != ISEQ_TYPE_TOP) {
+  if (iseq[4] != ISEQ_TYPE_TOP) {
     // rb_raise(rb_eTypeError, "Not a toplevel InstructionSequence");
     throw 'rb_eTypeError: ' + 'Not a top level InstructionSequence'
   }
@@ -207,7 +207,7 @@ function vm_exec(vm) {
   console.log("locals: " + sf.locals.join(","))
   
   // [7] are the actual opcodes
-  var iseq = sf.iseq[5];
+  var iseq = sf.iseq[7];
   // run opcodes
   for (; (sf.pc < iseq.length) && vm.running; sf.pc++) {
     var op = iseq[sf.pc];
@@ -232,6 +232,9 @@ function vm_exec(vm) {
         sf.stack[sf.sp++] = nil;
         break;
       case iPUTOBJECT:
+        sf.stack[sf.sp++] = op[1];
+        break;
+      case iPUTSTRING:
         sf.stack[sf.sp++] = op[1];
         break;
       case iGETCONSTANT:
@@ -522,6 +525,7 @@ function rb_method_missing(argc, argv, recv) {
 }
 
 function Init_vm_eval() {
+  
     // rb_define_method(rb_mKernel, "eval", rb_f_eval, -1);
     // rb_define_method(rb_mKernel, "local_variables", rb_f_local_variables, 0);
     // rb_define_method(rb_mKernel, "iterator?", rb_f_block_given_p, 0);
