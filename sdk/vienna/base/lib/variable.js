@@ -25,7 +25,7 @@
  */
 
 function rb_ivar_set(obj, id, val) {
-  ibj.iv_tbl[id] = val;
+  obj.iv_tbl[id] = val;
   return val;
 };
 

@@ -127,6 +127,9 @@ function rb_vm() {
   
   // eval env
   this.base_block = null;
+  
+  // search style.. search for local .rb or .vm files
+  this.search_style = ".rb";
 }
 
 function rb_control_frame() {

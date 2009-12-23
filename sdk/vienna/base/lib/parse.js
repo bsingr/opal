@@ -24,25 +24,6 @@
  * THE SOFTWARE.
  */
 
-// In contexts, this represents a 'require' directive within the code
-function vn_parser_require_context() {
-  
-}
-
-// In contexts, this represents plain old code....
-function rb_parser_code_context() {
-  
-}
- 
-// Inspiration
-// ===========
-// parse.js
-// Parser for Simplified JavaScript written in Simplified JavaScript
-// From Top Down Operator Precedence
-// http://javascript.crockford.com/tdop/index.html
-// Douglas Crockford
-// 2008-07-07
-
     // lex states
 var EXPR_BEG    = 0,    EXPR_END    = 1,    EXPR_ENDARG = 2,    EXPR_ARG    = 3,
     EXPR_CMDARG = 4,    EXPR_MID    = 5,    EXPR_FNAME  = 6,    EXPR_DOT    = 7,
@@ -89,7 +70,12 @@ var kREQUIRE    = 140;
     // special tokens (used for generator)
 var tCALL       = 150,  tMLHS       = 151;
 
-var vn_parser = function(str) {
+/**
+  Parse the given ruby code, str, with the given filename. This allows us to
+  dynamically set the filename, for example, with eval()'d code. This returns
+  an Instruction sequence, with all of its sub sequences, opcodes etc.
+*/
+var vn_parser = function(filename, str) {
 
   // current lex state
   var lex_state = EXPR_BEG;
@@ -1431,55 +1417,75 @@ var vn_parser = function(str) {
     }
   };
   
-  var string_buffers = [];
-  var name_tables = [];
-  var current_self_stack = ["rb_top_self"];
+  var iseq_stack = [], iseq_stack_current = null;
   
-  function current_self_push(s) {
-    return current_self_stack.push(s);
+  function iseq_stack_push(s) {
+    iseq_stack.push(s);
+    iseq_stack_current = s;
+    return s;
   }
   
-  function current_self_pop() {
-    return current_self_stack.pop();
+  function iseq_stack_pop() {
+    iseq_stack_current = iseq_stack[iseq_stack.length - 2];
+    return iseq_stack.pop();
   }
   
-  function current_self() {
-    return current_self_stack[current_self_stack.length - 1];
+  function iseq_opcode_push(opcode) {
+    iseq_stack_current[7].push(opcode);
   }
   
-  function push_nametable() {
-    return name_tables.push({});
-  }
+  // var string_buffers = [];
+  // var name_tables = [];
+  // var current_self_stack = ["rb_top_self"];
   
-  function pop_nametable() {
-    return name_tables.pop();
-  }
-  
-  function push_string_buffer() {
-    return string_buffers.push([]);
-  }
-  
-  function pop_string_buffer() {
-    return string_buffers.pop().join("");
-  }
-  
-  // write str to current buffer.
-  function write(str) {
-    string_buffers[string_buffers.length - 1].push(str);
-  }
+  // function current_self_push(s) {
+  //   return current_self_stack.push(s);
+  // }
+  // 
+  // function current_self_pop() {
+  //   return current_self_stack.pop();
+  // }
+  // 
+  // function current_self() {
+  //   return current_self_stack[current_self_stack.length - 1];
+  // }
+  // 
+  // function push_nametable() {
+  //   return name_tables.push({});
+  // }
+  // 
+  // function pop_nametable() {
+  //   return name_tables.pop();
+  // }
+  // 
+  // function push_string_buffer() {
+  //   return string_buffers.push([]);
+  // }
+  // 
+  // function pop_string_buffer() {
+  //   return string_buffers.pop().join("");
+  // }
+  // 
+  // // write str to current buffer.
+  // function write(str) {
+  //   string_buffers[string_buffers.length - 1].push(str);
+  // }
   
   function generate_tree(tree) {
-    push_nametable();
-    push_string_buffer();
+    var top_iseq = iseq_stack_push([0,0,"<compiled>",filename,ISEQ_TYPE_TOP,0,[],[]]);
+    
+    // push_nametable();
+    // push_string_buffer();
     var i;
+    // for (i = 0; i < 1; i++) {
     for (i = 0; i < tree.length; i++) {
-      generate_stmt(tree[i], { instance: true, full_stmt: true, last_stmt: false, top_level: true} );
+      generate_stmt(tree[i], { instance: true, full_stmt: true, last_stmt:(tree.length - 1) == i, top_level: true} );
     }
-    var a = pop_string_buffer();
-    // console.log(a);
+    // var a = pop_string_buffer();
+    console.log(iseq_stack_pop());
     // write to top level context? or just eval?
-    pop_nametable();
-    return a;
+    // pop_nametable();
+    return top_iseq;
   }
   
   function generate_stmt(stmt, context) {
@@ -1585,17 +1591,18 @@ var vn_parser = function(str) {
   }
   
   function generate_identifier(identifier, context) {
-    if (context.last_stmt && context.full_stmt) write("return ");
+    // for now, assumption is that they are all method calls. should check for local or dynamic
     
-    // FIXME: check if nametable includes identifier...
-    if (false) {
-      
+    // no receiver.
+    iseq_opcode_push([iPUTNIL]);
+    iseq_opcode_push([iSEND, identifier.value, 0, null, 8, null]);
+    
+    if (context.full_stmt && context.last_stmt) {
+      iseq_opcode_push([iLEAVE]);
     }
     else {
-      write("rb_funcall(" + current_self() + ",'" + identifier.value + "')");
+      iseq_opcode_push([iPOP]);
     }
-    
-    if (context.full_stmt) write(";\n");
   }
   
   function generate_symbol(sym, context) {
@@ -1672,40 +1679,46 @@ var vn_parser = function(str) {
   }
   
   function generate_def(definition, context) {
-    // objj style method capture?
-    push_nametable();
+    // assume not singleton for now, so define "on nil"
+    iseq_opcode_push([iPUTNIL]);
+    var iseq = [0, 0, definition.$fname.value, filename, ISEQ_TYPE_METHOD, 0, [], []];
+    var opcode = [iDEFINEMETHOD, definition.$fname.value, iseq, 0];
+    iseq_opcode_push(opcode);
+    iseq_stack_push(iseq);
     
-    if (definition.singleton) {
-      write("rb_define_singleton_method(");
-      generate_stmt(definition.singleton, {instance: context.instance, full_stmt:false, last_stmt:false});
-      write(",'" + defintion.$fname + "',function(self,_cmd");
-      current_self_push("self");
-    }
-    else if (context.top_level) {
-      write("rb_define_singleton_method(rb_top_self, " + defintion.$fname + "',function(self,_cmd");
-      current_self_push("self");
-    }
-    else {
-      write("rb_define_method(" + current_self() + ",'");
-      write(definition.$fname.value);
-      write("',function(self,_cmd");
-      current_self_push("self");
-    }
-
-    // arglist
-    if (definition.$arglist && definition.$arglist.arg) {
-      var i, a = definition.$arglist.arg;
-      for (i = 0; i < a.length; i++) {
-        write(",");
-        write(a[i].value);
-        // add_to_nametable(a[i].value);
-      }
-    }
     
-    // block arg support - every method potentialy might have a block.
-    write(",$b");
     
-    write("){\n");
+    // if (definition.singleton) {
+    //   write("rb_define_singleton_method(");
+    //   generate_stmt(definition.singleton, {instance: context.instance, full_stmt:false, last_stmt:false});
+    //   write(",'" + definition.$fname + "',function(self,_cmd");
+    //   current_self_push("self");
+    // }
+    // else if (context.top_level) {
+    //   write("rb_define_singleton_method(rb_top_self, " + definition.$fname + "',function(self,_cmd");
+    //   current_self_push("self");
+    // }
+    // else {
+    //   write("rb_define_method(" + current_self() + ",'");
+    //   write(definition.$fname.value);
+    //   write("',function(self,_cmd");
+    //   current_self_push("self");
+    // }
+    // 
+    // // arglist
+    // if (definition.$arglist && definition.$arglist.arg) {
+    //   var i, a = definition.$arglist.arg;
+    //   for (i = 0; i < a.length; i++) {
+    //     write(",");
+    //     write(a[i].value);
+    //     // add_to_nametable(a[i].value);
+    //   }
+    // }
+    // 
+    // // block arg support - every method potentialy might have a block.
+    // write(",$b");
+    // 
+    // write("){\n");
     
     // block reference goes here (so if we say &block in params, map var block to $b)
     //   if definition[:arglist] && definition[:arglist][:opt_block_arg]
@@ -1714,27 +1727,29 @@ var vn_parser = function(str) {
     //   end
  
     // statements
-    push_string_buffer();
-    push_nametable();
+    // push_string_buffer();
+    // push_nametable();
     
-    if (definition.$stmts) {
-      var i, s = definition.$stmts;
-      for (i = 0; i < s.length; i++) {
-        generate_stmt(s[i], {instance:(definition.$sname ? false : true), full_stmt:true, last_stmt:(s[s.length - 1] == s[i] ? true : false), name:definition.$fname});
-      }
-    }
+    // if (definition.$stmts) {
+      // var i, s = definition.$stmts;
+      // for (i = 0; i < s.length; i++) {
+        // generate_stmt(s[i], {instance:(definition.$sname ? false : true), full_stmt:true, last_stmt:(s[s.length - 1] == s[i] ? true : false), name:definition.$fname});
+      // }
+    // }
     
-    var body_contents = pop_string_buffer(), name_table = pop_nametable();
+    // var body_contents = pop_string_buffer(), name_table = pop_nametable();
     // write each ivar statements..
     //   if name_table.length > 0
     //     write "var #{name_table.join(",")};\n"
     //   end
     
-    write(body_contents);
+    // write(body_contents);
 
-    current_self_pop();
-    pop_nametable();
-    write("});\n");
+    // current_self_pop();
+    // pop_nametable();
+    // write("});\n");
+    
+    iseq_stack_pop();
   }
   
   function generate_class(stmt, context) {

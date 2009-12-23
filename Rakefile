@@ -76,7 +76,8 @@ task :vienna_js do
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */}
-  output.write JSMin.minify(t)
+  # output.write JSMin.minify(t)
+  output.write t
   output.close
 end
 

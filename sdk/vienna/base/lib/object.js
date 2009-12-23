@@ -333,7 +333,8 @@ function Init_Object() {
   boot_defmetametaclass(rb_cBasicObject, metaclass);
   
   rb_define_private_method(rb_cBasicObject, "initialize", rb_obj_dummy, 0);
-  rb_define_alloc_func(rb_cBasicObject, rb_class_allocate_instance);
+  // FIXME: wtf made this break?
+  // rb_define_alloc_func(rb_cBasicObject, rb_class_allocate_instance);
   rb_define_method(rb_cBasicObject, "==", rb_obj_equal, 1);
   rb_define_method(rb_cBasicObject, "equal?", rb_obj_equal, 1);
   rb_define_method(rb_cBasicObject, "!", rb_obj_not, 0);
