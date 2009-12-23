@@ -117,7 +117,8 @@ function rb_f_require(obj, path) {
       var rt = r.responseText;
       // console.log(r);
       var a = new vn_parser(path + '.rb', rt);
-      a.parse(rt);
+      var res = a.parse(rt);
+      rb_iseq_eval(res);
     }
   }
   r.send(null)

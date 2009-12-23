@@ -63,9 +63,6 @@ var kCLASS      = 0,    kMODULE     = 1,    kDEF        = 2,    kUNDEF      = 3,
     tUMINUS_NUM = 115,  tSTRING     = 116,  tXSTRING_END= 117,
         
     tPLUS       = 118,  tMINUS      = 119,  tNL         = 120,  tSEMI       = 121;
-    
-    // aids parsing....
-var kREQUIRE    = 140;
 
     // special tokens (used for generator)
 var tCALL       = 150,  tMLHS       = 151;
@@ -240,13 +237,7 @@ var vn_parser = function(filename, str) {
       next_token('}');
       return this;
   };
-  
-  symbol(kREQUIRE).nud = function() {
-    this.$path = expr();
-    return this;
-  }
-
-  
+    
   // self... simple, just return
   symbol(kSELF).nud = function() {
     return this;
@@ -1379,9 +1370,6 @@ var vn_parser = function(filename, str) {
           case 'yield':
             lex_state = EXPR_ARG;
             return [kYIELD, scanner.matched];
-          case 'require':
-            lex_state = EXPR_CMDARG;
-            return [kREQUIRE, scanner.matched];
         }
 
         var matched = scanner.matched;
@@ -1418,73 +1406,57 @@ var vn_parser = function(filename, str) {
   };
   
   var iseq_stack = [], iseq_stack_current = null;
+  var iseq_locals_stack = [], iseq_locals_current = null;
   
   function iseq_stack_push(s) {
+    iseq_locals_stack.push(iseq_locals_current = []);
     iseq_stack.push(s);
     iseq_stack_current = s;
     return s;
   }
   
   function iseq_stack_pop() {
+    iseq_locals_current = iseq_locals_stack[iseq_locals_stack.length - 2];
+    iseq_locals_stack.pop();
+    
     iseq_stack_current = iseq_stack[iseq_stack.length - 2];
     return iseq_stack.pop();
   }
   
   function iseq_opcode_push(opcode) {
     iseq_stack_current[7].push(opcode);
+    return opcode;
   }
   
-  // var string_buffers = [];
-  // var name_tables = [];
-  // var current_self_stack = ["rb_top_self"];
+  /**
+    checks the given name to see if its in the index. If the result is 0 or above,
+    it is, and the idx is the index in the locals array. -1 means it is not in the
+    array (so not a local)
+  */
+  function iseq_locals_idx(name) {
+    return iseq_locals_current.indexOf(name);
+  }
   
-  // function current_self_push(s) {
-  //   return current_self_stack.push(s);
-  // }
-  // 
-  // function current_self_pop() {
-  //   return current_self_stack.pop();
-  // }
-  // 
-  // function current_self() {
-  //   return current_self_stack[current_self_stack.length - 1];
-  // }
-  // 
-  // function push_nametable() {
-  //   return name_tables.push({});
-  // }
-  // 
-  // function pop_nametable() {
-  //   return name_tables.pop();
-  // }
-  // 
-  // function push_string_buffer() {
-  //   return string_buffers.push([]);
-  // }
-  // 
-  // function pop_string_buffer() {
-  //   return string_buffers.pop().join("");
-  // }
-  // 
-  // // write str to current buffer.
-  // function write(str) {
-  //   string_buffers[string_buffers.length - 1].push(str);
-  // }
+  /**
+    push locals name. the return value is the new index for the name
+  */
+  function iseq_locals_push(name) {
+    var len = iseq_locals_current.length;
+    iseq_locals_current.push(name);
+    return len;
+  }
   
   function generate_tree(tree) {
+    console.log("tree:");
+    console.log(tree);
     var top_iseq = iseq_stack_push([0,0,"<compiled>",filename,ISEQ_TYPE_TOP,0,[],[]]);
     
-    // push_nametable();
-    // push_string_buffer();
     var i;
-    // for (i = 0; i < 1; i++) {
     for (i = 0; i < tree.length; i++) {
       generate_stmt(tree[i], { instance: true, full_stmt: true, last_stmt:(tree.length - 1) == i, top_level: true} );
     }
-    // var a = pop_string_buffer();
     console.log(iseq_stack_pop());
-    // write to top level context? or just eval?
-    // pop_nametable();
+
     return top_iseq;
   }
   
@@ -1505,6 +1477,9 @@ var vn_parser = function(filename, str) {
       case tSYMBEG:
         generate_symbol(stmt, context);
         break;
+      case tCONSTANT:
+        generate_constant(stmt, context);
+        break;
       case tIDENTIFIER:
         generate_identifier(stmt, context);
         break;
@@ -1517,65 +1492,79 @@ var vn_parser = function(filename, str) {
       case kIF:
         generate_if(stmt, context);
         break;
-      case kREQUIRE:
-        generate_require(stmt, context);
+      case '=':
+        generate_assign(stmt, context);
         break;
       default:
         console.log("unknown generate_stmt type: " + stmt.type + ", " + stmt.value);
     }
   }
   
-  function generate_require(stmt, context) {
-    if (!context.top_level) {
-      throw "require: a require statement must be in the top level (for now)"
+  function generate_assign(stmt, context) {
+    generate_stmt(stmt.$rhs, {full_stmt: false, last_stmt: false});
+    
+    if (stmt.$lhs.type == tIDENTIFIER) {
+      var idx;
+      // iseq_opcode_push([iSETLOCAL, 0]);
+      if ((idx = iseq_locals_idx(stmt.$lhs.value)) == -1) {
+        // doesnt exist, so we need a new local
+        iseq_opcode_push([iSETLOCAL, iseq_locals_push(stmt.$lhs.value)]);
+      }
+      else {
+        // already a local, so just get the index
+        iseq_opcode_push([iSETLOCAL, idx]);
+      }
+    }
+    else {
+      throw "unpupported lhs, for now"
     }
   }
   
   function generate_if(stmt, context) {
-    if (context.last_stmt && context.full_stmt) write("return ");
-    write("(function(){");
-    
-    (stmt.type == kIF) ? write("if(RTEST(") : write("if(!RTEST(");
-    
-    // RTEST expression
-    generate_stmt(stmt.$expr, {instance:context.instance, full_stmt:false, last_stmt:false});
-    write(")){\n");
-    
-    if (stmt.$stmts) {
-      var i, s = stmt.$stmts;
-      for (i = 0; i < s.length; i++) {
-        generate_stmt(s[i], {instance:context.instance, full_stmt:true, last_stmt:(s[s.length -1] == s[i] ? true : false)});
-      }
-    }
-    
-    write("}\n");
-
-    if (stmt.$tail) {
-      var i, t = stmt.$tail;
-      for (i = 0; i < t.length; i++) {
-        if (t[i].type == kELSIF) {
-          write("else if(RTEST(");
-          generate_stmt(t[i].$expr, {instance:context.instance, full_stmt:false, last_stmt:false});
-          write(")){\n");
-        }
-        else {
-          write("else{\n");
-        }
-        
-        if (t[i].$stmts) {
-          var j, k = t[i].$stmts;
-          for (j = 0; j < k.length; j++) {
-            // console.log("doing " + k[j].value);
-            generate_stmt(k[j], {instance:context.instance, full_stmt:true, last_stmt:(k[k.length - 1] == k[i] ? true : false)});
-          }
-        }
-        
-        write("}\n");
-      }
-    }
-    
-    write("})()");
-    if (context.full_stmt) write(";\n");
+    // if (context.last_stmt && context.full_stmt) write("return ");
+    // write("(function(){");
+    // 
+    // (stmt.type == kIF) ? write("if(RTEST(") : write("if(!RTEST(");
+    // 
+    // // RTEST expression
+    // generate_stmt(stmt.$expr, {instance:context.instance, full_stmt:false, last_stmt:false});
+    // write(")){\n");
+    // 
+    // if (stmt.$stmts) {
+    //   var i, s = stmt.$stmts;
+    //   for (i = 0; i < s.length; i++) {
+    //     generate_stmt(s[i], {instance:context.instance, full_stmt:true, last_stmt:(s[s.length -1] == s[i] ? true : false)});
+    //   }
+    // }
+    // 
+    // write("}\n");
+    // 
+    // if (stmt.$tail) {
+    //   var i, t = stmt.$tail;
+    //   for (i = 0; i < t.length; i++) {
+    //     if (t[i].type == kELSIF) {
+    //       write("else if(RTEST(");
+    //       generate_stmt(t[i].$expr, {instance:context.instance, full_stmt:false, last_stmt:false});
+    //       write(")){\n");
+    //     }
+    //     else {
+    //       write("else{\n");
+    //     }
+    //     
+    //     if (t[i].$stmts) {
+    //       var j, k = t[i].$stmts;
+    //       for (j = 0; j < k.length; j++) {
+    //         // console.log("doing " + k[j].value);
+    //         generate_stmt(k[j], {instance:context.instance, full_stmt:true, last_stmt:(k[k.length - 1] == k[i] ? true : false)});
+    //       }
+    //     }
+    //     
+    //     write("}\n");
+    //   }
+    // }
+    // 
+    // write("})()");
+    // if (context.full_stmt) write(";\n");
   }
   
   function generate_self(stmt, context) {
@@ -1585,22 +1574,42 @@ var vn_parser = function(filename, str) {
   }
   
   function generate_integer(stmt, context) {
-    if (context.last_stmt && context.full_stmt) write("return ");
-    write(stmt.value);
-    if (context.full_stmt) write(";\n");
+    
+    iseq_opcode_push([iPUTOBJECT, parseInt(stmt.value)]);
+    
+    if (context.last_stmt && context.full_stmt) {
+      iseq_opcode_push([iLEAVE]);
+    }
+    // if (context.last_stmt && context.full_stmt) write("return ");
+    // write(stmt.value);
+    // if (context.full_stmt) write(";\n");
+  }
+  
+  function generate_constant(stmt, context) {
+    iseq_opcode_push([iPUTNIL]);
+    iseq_opcode_push([iGETCONSTANT, stmt.value]);
   }
   
   function generate_identifier(identifier, context) {
     // for now, assumption is that they are all method calls. should check for local or dynamic
     
     // no receiver.
-    iseq_opcode_push([iPUTNIL]);
-    iseq_opcode_push([iSEND, identifier.value, 0, null, 8, null]);
+    var idx;
+    if ((idx = iseq_locals_idx(identifier.value)) == -1) {
+      // not an identifier
+      iseq_opcode_push([iPUTNIL]);
+      iseq_opcode_push([iSEND, identifier.value, 0, null, 8, null]);
+    }
+    else {
+      // its an identifier
+      iseq_opcode_push([iGETLOCAL, idx]);
+    }
+    
     
     if (context.full_stmt && context.last_stmt) {
       iseq_opcode_push([iLEAVE]);
     }
-    else {
+    else if (context.full_stmt) {
       iseq_opcode_push([iPOP]);
     }
   }
@@ -1612,70 +1621,85 @@ var vn_parser = function(filename, str) {
   }
   
   function generate_call(call, context) {
-    // capture objj style calls
+    var iseq = [iSEND, call.value, 0, null, 8, null];
     
-    // capture "require" calls..
-    //  if call[:meth] == 'require' and not call[:recv]
-    //    require_path = @project.require_path_for_file(@source, call[:call_args][:args][0][:value][0][:value])
-    //    # puts "found require path: #{call[:call_args][:args][0][:value]}"
-    //    write "#{require_path}\n"
-    //    return
-    //  end
+    // receiver
+    iseq_opcode_push([iPUTNIL]);
     
-    if (context.last_stmt && context.last_stmt) write("return ");
-    
-    if(call.value.match(/^[A-Z]/)) {
-      write(call.value);
-      write("(");
-    }
-    else {
-      // detect block..
-      if (call.$brace_block) {
-        write("rb_block_funcall(");
-      }
-      else {
-        write("rb_funcall(");
-      }
-      
-      
-      if (call.$recv) {
-        generate_stmt(call.$recv, {instance:context.instance, full_stmt:false, last_stmt:context.last_stmt, top_level:context.top_level});
-      }
-      else {
-        write(current_self());
-      }
-      
-      write(",'" + call.$meth.value + "'");
-    }
-    
-    // normal args
+    // args..
     if (call.$call_args && call.$call_args.args) {
       var i, a = call.$call_args.args;
       for (i = 0; i < a.length; i++) {
-        write(",");
-        generate_stmt(a[i], {instance:context.instance, full_stmt:false});
+        generate_stmt(a[i], { instance:context.instance, full_stmt:false });
       }
+      iseq[2] = a.length;
     }
     
-    // assocs
-    if (call.$call_args && call.$call_args.assocs) {
-      
+    iseq_opcode_push(iseq);
+    
+    if (context.full_stmt && context.last_stmt) {
+      // if last stmt, we want to leave the context (with result of call on stack)
+      iseq_opcode_push([iLEAVE]);
+    }
+    else if (context.full_stmt) {
+      // if not last stmt, but a full stmt, remove result from stack. no-one wants it
+      iseq_opcode_push([iPOP]);
     }
     
-    // block
-    if (call.$brace_block) {
-      
-    }
-
-    // sym block: &:upcase etc
-    if (call.$call_args && call.$call_args.block_arg) {
-      write(",rb_funcall(");
-      generate_stmt(call.$call_args.block_arg.arg, {instance:context.singleton, full_stmt:false, last_stmt:false, top_level:context.top_level});
-      write(",'to_proc')");
-    }
-
-    write(")");
-    if (context.full_stmt) write(";\n");
+    // if (context.last_stmt && context.last_stmt) write("return ");
+    // 
+    // if(call.value.match(/^[A-Z]/)) {
+    //   write(call.value);
+    //   write("(");
+    // }
+    // else {
+    //   // detect block..
+    //   if (call.$brace_block) {
+    //     write("rb_block_funcall(");
+    //   }
+    //   else {
+    //     write("rb_funcall(");
+    //   }
+    //   
+    //   
+    //   if (call.$recv) {
+    //     generate_stmt(call.$recv, {instance:context.instance, full_stmt:false, last_stmt:context.last_stmt, top_level:context.top_level});
+    //   }
+    //   else {
+    //     write(current_self());
+    //   }
+    //   
+    //   write(",'" + call.$meth.value + "'");
+    // }
+    // 
+    // // normal args
+    // if (call.$call_args && call.$call_args.args) {
+    //   var i, a = call.$call_args.args;
+    //   for (i = 0; i < a.length; i++) {
+    //     write(",");
+    //     generate_stmt(a[i], {instance:context.instance, full_stmt:false});
+    //   }
+    // }
+    // 
+    // // assocs
+    // if (call.$call_args && call.$call_args.assocs) {
+    //   
+    // }
+    // 
+    // // block
+    // if (call.$brace_block) {
+    //   
+    // }
+    // 
+    // // sym block: &:upcase etc
+    // if (call.$call_args && call.$call_args.block_arg) {
+    //   write(",rb_funcall(");
+    //   generate_stmt(call.$call_args.block_arg.arg, {instance:context.singleton, full_stmt:false, last_stmt:false, top_level:context.top_level});
+    //   write(",'to_proc')");
+    // }
+    // 
+    // write(")");
+    // if (context.full_stmt) write(";\n");
   }
   
   function generate_def(definition, context) {
@@ -1685,6 +1709,13 @@ var vn_parser = function(filename, str) {
     var opcode = [iDEFINEMETHOD, definition.$fname.value, iseq, 0];
     iseq_opcode_push(opcode);
     iseq_stack_push(iseq);
+    
+    if (definition.$stmts) {
+      var i, s = definition.$stmts;
+      for (i = 0; i < s.length; i++) {
+        generate_stmt(s[i], {instance:(definition.$sname ? false : true), full_stmt:true, last_stmt:(s[s.length - 1] == s[i] ? true : false), name:definition.$fname});
+      }
+    }
     
     
     
@@ -1753,42 +1784,69 @@ var vn_parser = function(filename, str) {
   }
   
   function generate_class(stmt, context) {
-    write("(function(self) {\n");
-    push_nametable();
-    current_self_push("self");
+    // base (for class << Ben; ...; end)
+    iseq_opcode_push([iPUTNIL]);
+    // superclass
+    if (stmt.$super) {
+      // console.log("super..");
+      // console.log(stmt.$super);
+      generate_stmt(stmt.$super, {full_stmt: false, last_stmt:false});
+    }
+    else {
+     iseq_opcode_push([iPUTNIL]);
+    }
     
+    var iseq = [0, 0, "<class:" + stmt.$kname.value + ">", filename, ISEQ_TYPE_CLASS, 0, [], []];
+    var opcode = [iDEFINECLASS, stmt.$kname.value, iseq, 0];
+    iseq_opcode_push(opcode);
+    iseq_stack_push(iseq);
+    
+    // statements.
     if (stmt.$stmts) {
-      var i, m = stmt.$stmts;
-      for (i = 0; i < m.length; i++) {
-        generate_stmt(m[i], {instance: false, full_stmt: true, last_stmt: (m[m.length -1] == m[i] ? true : false), top_level: false});
+      var i, s = stmt.$stmts;
+      for (i = 0; i < s.length; i++) {
+        generate_stmt(s[i], {instance:false, full_stmt:true, last_stmt:(s[s.length - 1] == s[i] ? true : false), top_level:false});
       }
     }
     
-    pop_nametable();
-    current_self_pop();
+    iseq_stack_pop();
     
-    write("})(");
-    
-    if (context.top_level) {
-      write("rb_define_class('")
-      write(stmt.$kname.value);
-      write("',");
-    }
-    else {
-      write("rb_define_class_under(" + current_self() + ",'");
-      write(stmt.$kname.value);
-      write("',");
-    }
-    
-    // superclass
-    if (stmt.$super) {
-      write("rb_const_get(self, '" + stmt.$super.value + "'))")
-    }
-    else {
-      write("rb_cObject)");
-    }
-    
-    write(");\n")
+    // write("(function(self) {\n");
+    // push_nametable();
+    // current_self_push("self");
+    // 
+    // if (stmt.$stmts) {
+    //   var i, m = stmt.$stmts;
+    //   for (i = 0; i < m.length; i++) {
+    //     generate_stmt(m[i], {instance: false, full_stmt: true, last_stmt: (m[m.length -1] == m[i] ? true : false), top_level: false});
+    //   }
+    // }
+    // 
+    // pop_nametable();
+    // current_self_pop();
+    // 
+    // write("})(");
+    // 
+    // if (context.top_level) {
+    //   write("rb_define_class('")
+    //   write(stmt.$kname.value);
+    //   write("',");
+    // }
+    // else {
+    //   write("rb_define_class_under(" + current_self() + ",'");
+    //   write(stmt.$kname.value);
+    //   write("',");
+    // }
+    // 
+    // // superclass
+    // if (stmt.$super) {
+    //   write("rb_const_get(self, '" + stmt.$super.value + "'))")
+    // }
+    // else {
+    //   write("rb_cObject)");
+    // }
+    // 
+    // write(");\n")
   }
   
   function generate_module(mod, context) {

@@ -51,7 +51,7 @@ function rb_define_class(id, super_class) {
   rb_class_tbl[id] = k;
   
   // class bundle...?
-  rb_ivar_set(k, '__bundle__', window.vn_current_bundle);
+  // rb_ivar_set(k, '__bundle__', window.vn_current_bundle);
   
   rb_name_class(k, id);
   rb_const_set(rb_cObject, id, k);
@@ -181,7 +181,7 @@ function rb_class_create(super_klass) {
   return rb_class_boot(super_klass);
 };
 
-function rb_define_class_id(klass, id, super_klass) {
+function rb_define_class_id(id, super_klass) {
   var klass;
   if (!super_klass) super_klass = rb_cObject;
   klass = rb_class_create(super_klass);

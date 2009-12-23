@@ -307,6 +307,7 @@ function rb_class_new_instance(argc, argv, klass) {
 
 function rb_f_puts(argc, argv, recv) {
   console.log(argv.join(""));
+  // alert(argv.join(""));
 }
 
 

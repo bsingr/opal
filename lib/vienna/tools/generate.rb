@@ -27,7 +27,7 @@
 module Vienna
   
   class Tools
-    
+
     def gen
       if ARGV.length < 2
         abort "Error: At least 2 arguments required for vn-gen"

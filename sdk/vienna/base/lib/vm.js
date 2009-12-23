@@ -202,12 +202,32 @@ function vm_run_mode_running(vm) {
   return vm_exec(vm);
 }
 
+/**
+  Go through current iseq and execute all opcodes. There are three types of
+  opcode:
+  
+  == Numbers
+  
+  These represent line number changes. The numeric value is the actual line
+  number itself.
+  
+  == Strings
+  
+  These represent labels for jumps etc. If encountered, they can simply be
+  skipped. When a jump opcode occurs, the right place must be jumped to and
+  update the pc (program counter).
+  
+  == Arrays
+  
+  Actual opcodes. These should be executed, and are done so in the following
+  switch/case loop.
+*/
 function vm_exec(vm) {
   
   
   // console.log(vm);
   var sf = vm.cfp;
-  console.log("locals: " + sf.locals.join(","))
+  // console.log("locals: " + sf.locals.join(","))
   
   // [7] are the actual opcodes
   var iseq = sf.iseq[7];
@@ -226,6 +246,30 @@ function vm_exec(vm) {
     // throw "ok here " + op.join("   ,   ");
     
     switch (op[0]) {
+      
+      /**
+        == setlocal
+        
+        Set the local variable, referenced by idx, to val.
+        
+        === opcode structure
+        
+          [(int) iSETLOCAL, (int) idx]
+        
+        === stack
+        
+        before:                           after:
+                           
+        ---------------                     
+        | VALUE val   |         =>        <empty>
+        ---------------                   
+        
+        Nothing is left on stack( unless last stmt, but this is done by the parser).
+        This operation itself leaves nothing on stack.
+      */
+      case iSETLOCAL:
+        sf.locals[op[1]] = sf.stack[--sf.sp];
+        break;
       case iGETLOCAL:
       sf.stack[sf.sp++] = sf.locals[op[1]];
         // console.log(sf.stack);
@@ -241,25 +285,83 @@ function vm_exec(vm) {
         sf.stack[sf.sp++] = op[1];
         break;
       case iGETCONSTANT:
-        var base = vm.stack[--sf.sp];
+        var base = sf.stack[--sf.sp];
         if (base === nil) {
           // if current self is an insance, look in its class (meta)
           var k = rb_class_real((sf.self.flags & T_OBJECT) ? sf.self.klass : sf.self);
-          vm.stack[sf.sp++] = rb_const_get(k, op[1]);
+          sf.stack[sf.sp++] = rb_const_get(k, op[1]);
         }
         else {
-          vm.stack[sf.sp++] = rb_const_get(base, op[1]);
+          sf.stack[sf.sp++] = rb_const_get(base, op[1]);
+        }
+        break;
+      
+      /**
+        == defineclass
+        
+        Define a class with the given id, and body 'iseq'. The body is instantly
+        evaluated within the scope of the new class.
+        
+        === op structure
+        
+          [(int) iDEFINECLASS, (String) id, (Array) iseq, (int) define_type]
+        
+        define_type:
+        * 0 - normal class
+        * 1 - 
+        * 2 - module
+          
+        === stack
+        
+        before:                           after:
+        ---------------                   
+        | VALUE super |                   ---------------  
+        ---------------         =>        | VALUE val   |
+        | VALUE base  |                   ---------------
+        ---------------
+        
+        where val is the new class (i.e. it is left on top of stack);
+        base is the cbase for the class
+        super is the superclass. might be nil, in which case default to Object.
+        
+        == Discussion
+        
+        As with other statements, val is only left on the stack if the class is
+        either the last stmt in a sequences, or is assigned etc. If it is not
+        reused, it will be on the stack, but an iPOP opcode will follow to
+        remove it from usage.
+      */
+      case iDEFINECLASS:
+        var klass, sup = sf.stack[--sf.sp], base = sf.stack[--sf.sp], id = op[1];
+        switch (op[3]) {
+          case 0:
+            if (sup == nil) sup = rb_cObject;
+            if (base == nil) { /* get base from vm/thread */ }
+            // assume all top level.. should put it under 'self' if self is not topself..
+            klass = rb_define_class(id, sup);
+            vm_push_frame(vm, op[2], klass);
+            var val = vm_exec(vm);
+            vm_pop_frame(vm);
+            
+            break;
+          case 1:
+            break;
+          case 2:
+            break;
+          default:
+          	 throw "unknown defineclass type: " + op[3]
         }
         break;
       case iDEFINEMETHOD:
-        // console.log(vm);
-        // throw "in define method"
-        // for now, just continue:
-        // console.log('skipping idefinemethod : ' + sf.stack.join(","));
-        // continue;
         var id = op[1], body = op[2], sing = op[3], klass = sf.stack[--sf.sp];
         // we should check sing to see if it is a singleton. assume not for now, so define on self.
-        rb_add_method(sf.self.klass, id, body, NOEX_PUBLIC);
+        if (sf.self.flags & T_OBJECT) {
+          rb_add_method(sf.self.klass, id, body, NOEX_PUBLIC);
+        }
+        else {
+          rb_add_method(sf.self, id, body, NOEX_PUBLIC);
+        }
+          
         // throw "/"
         break;
       case iSEND:
@@ -271,7 +373,7 @@ function vm_exec(vm) {
         var recv = sf.stack[--sf.sp];
         
         if (op[4] & VM_CALL_FCALL_BIT) recv = sf.self;
-        console.log(sf.self);
+        // console.log(sf.self);
         var a = rb_call(recv.klass, recv, mid, argc, argv);
         sf.stack[sf.sp++] = a;
         // console.log("return value is:");
@@ -282,10 +384,21 @@ function vm_exec(vm) {
         sf.sp--;
         break;
       case iLEAVE:
-        console.log("leave/return:" + sf.stack.join(",") + " ------ " + sf.sp);
+        // console.log("leave/return:" + sf.stack.join(",") + " ------ " + sf.sp);
         return sf.stack[0];
         // console.log(vm);
         break;
+      
+      /**
+        == branchunless
+        
+        
+      */
+      case iBRANCHUNLESS:
+        var val = sf.stack[--sf.sp];
+        // do rtest on val
+        break;
+      
       default:
         console.log("unknown op code: " + op.join(","));
         break;
