@@ -111,7 +111,7 @@ function rb_f_require(obj, path) {
   // pause vm
   vm_run_mode_sleep(rb_top_vm);
   var r = new XMLHttpRequest();
-  r.open("GET", path + '.rb', true);
+  r.open("GET", path + '.rb', false);
   r.onreadystatechange=function() {
     if (r.readyState==4) {
       var rt = r.responseText;

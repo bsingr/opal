@@ -90,6 +90,8 @@ var ISEQ_TYPE_TOP    = 1,
     ISEQ_TYPE_MAIN   = 8;
 
 /**
+  == Depreceated
+
   call args
 */
 var VM_CALL_ARGS_SPLAT_BIT    = 2,
@@ -203,270 +205,40 @@ function vm_run_mode_running(vm) {
 }
 
 /**
-  Go through current iseq and execute all opcodes. There are three types of
-  opcode:
-  
-  == Numbers
-  
-  These represent line number changes. The numeric value is the actual line
-  number itself.
-  
-  == Strings
-  
-  These represent labels for jumps etc. If encountered, they can simply be
-  skipped. When a jump opcode occurs, the right place must be jumped to and
-  update the pc (program counter).
-  
-  == Arrays
-  
-  Actual opcodes. These should be executed, and are done so in the following
-  switch/case loop.
+  Execute iseq, for current frame pointer, which will be a function.
 */
 function vm_exec(vm) {
+  var iseq = vm.cfp.iseq[7];
+  return iseq();
+}
+
+
+/**
+  vm_setlocal(idx, val)
   
-  // console.log(vm);
-  var sf = vm.cfp;
-  // console.log("locals: " + sf.locals.join(","))
+  idx - index of local. Args, then locals.
+  val - actual value to set.
   
-  // [7] are the actual opcodes
-  var iseq = sf.iseq[7];
+  == Discussion
   
-  // check if we have setup jumps
-  if (!sf.jumps) {
-    sf.jumps = {};
-    var i, j;
-    for (i = 0; i < iseq.length; i++) {
-      j = iseq[i];
-      if (typeof j === 'string') {
-        sf.jumps[j] = i;
-      }
-    }
-  }
-  
-  // run opcodes
-  for (; (sf.pc < iseq.length) && vm.running; sf.pc++) {
-    var op = iseq[sf.pc];
-    
-    // console.log(op);
-    
-    // If we hit a number, its correcting the line number that the opcode is on
-    if (typeof op === 'number') {
-      // console.log("got to line number: " + op + " , so stopping");
-      // vm_run_mode_sleep(vm);
-      sf.line_no = op;
-      continue;
-    }
-    
-    // If we hit string, its a jmp destination..
-    if (typeof op === 'string') {
-      continue;
-    }
-    
-    // throw "ok here " + op.join("   ,   ");
-    
-    switch (op[0]) {
-      
-      /**
-        == setlocal
-        
-        Set the local variable, referenced by idx, to val.
-        
-        === opcode structure
-        
-          [(int) iSETLOCAL, (int) idx]
-        
-        === stack
-        
-        before:                           after:
-                           
-        ---------------                     
-        | VALUE val   |         =>        <empty>
-        ---------------                   
-        
-        Nothing is left on stack( unless last stmt, but this is done by the parser).
-        This operation itself leaves nothing on stack.
-      */
-      case iSETLOCAL:
-        sf.locals[op[1]] = sf.stack[--sf.sp];
-        break;
-      case iGETLOCAL:
-      sf.stack[sf.sp++] = sf.locals[op[1]];
-        // console.log(sf.stack);
-        // throw "get local " + op[1] + " is " + sf.locals[op[1]]
-        break;
-      case iPUTNIL:
-        sf.stack[sf.sp++] = nil;
-        break;
-      case iPUTOBJECT:
-        sf.stack[sf.sp++] = op[1];
-        break;
-      case iPUTSTRING:
-        sf.stack[sf.sp++] = op[1];
-        break;
-      case iGETCONSTANT:
-        var base = sf.stack[--sf.sp];
-        if (base === nil) {
-          // if current self is an insance, look in its class (meta)
-          var k = rb_class_real((sf.self.flags & T_OBJECT) ? sf.self.klass : sf.self);
-          sf.stack[sf.sp++] = rb_const_get(k, op[1]);
-        }
-        else {
-          sf.stack[sf.sp++] = rb_const_get(base, op[1]);
-        }
-        break;
-      
-      /**
-        == defineclass
-        
-        Define a class with the given id, and body 'iseq'. The body is instantly
-        evaluated within the scope of the new class.
-        
-        === op structure
-        
-          [(int) iDEFINECLASS, (String) id, (Array) iseq, (int) define_type]
-        
-        define_type:
-        * 0 - normal class
-        * 1 - 
-        * 2 - module
-          
-        === stack
-        
-        before:                           after:
-        ---------------                   
-        | VALUE super |                   ---------------  
-        ---------------         =>        | VALUE val   |
-        | VALUE base  |                   ---------------
-        ---------------
-        
-        where val is the new class (i.e. it is left on top of stack);
-        base is the cbase for the class
-        super is the superclass. might be nil, in which case default to Object.
-        
-        == Discussion
-        
-        As with other statements, val is only left on the stack if the class is
-        either the last stmt in a sequences, or is assigned etc. If it is not
-        reused, it will be on the stack, but an iPOP opcode will follow to
-        remove it from usage.
-      */
-      case iDEFINECLASS:
-        var klass, sup = sf.stack[--sf.sp], base = sf.stack[--sf.sp], id = op[1];
-        switch (op[3]) {
-          case 0:
-            if (sup == nil) sup = rb_cObject;
-            if (base == nil) { /* get base from vm/thread */ }
-            // assume all top level.. should put it under 'self' if self is not topself..
-            klass = rb_define_class(id, sup);
-            vm_push_frame(vm, op[2], klass);
-            var val = vm_exec(vm);
-            vm_pop_frame(vm);
-            
-            break;
-          case 1:
-            break;
-          case 2:
-            break;
-          default:
-          	 throw "unknown defineclass type: " + op[3]
-        }
-        break;
-      case iDEFINEMETHOD:
-        var id = op[1], body = op[2], sing = op[3], klass = sf.stack[--sf.sp];
-        // we should check sing to see if it is a singleton. assume not for now, so define on self.
-        if (sf.self.flags & T_OBJECT) {
-          rb_add_method(sf.self.klass, id, body, NOEX_PUBLIC);
-        }
-        else {
-          rb_add_method(sf.self, id, body, NOEX_PUBLIC);
-        }
-          
-        // throw "/"
-        break;
-      case iSEND:
-        // console.log('skipping isend : ' + op.join(","));
-        // continue;
-        var argc = op[2], mid = op[1];
-        var argv = sf.stack.slice(sf.sp - argc, sf.sp);
-        sf.sp -= argc;
-        var recv = sf.stack[--sf.sp];
-        
-        // console.log("sending msg: " + mid + ", " + op[4]);
-        // console.log(recv);
-        
-        if (op[4] & VM_CALL_FCALL_BIT) recv = sf.self;
-        // console.log(sf.self);
-        
-        // This is wrong....... nil might be the actual reciever, nil.nil?
-        // if (recv === nil) recv = sf.self;
-        
-        var a = rb_call(recv.klass, recv, mid, argc, argv, op[3]);
-        sf.stack[sf.sp++] = a;
-        // console.log("return value is:");
-        // console.log(a);
-        // throw "here"
-        break;
-      case iPOP:
-        sf.sp--;
-        break;
-      case iLEAVE:
-        // console.log("leave/return:" + sf.stack.join(",") + " ------ " + sf.sp);
-        return sf.stack[0];
-        // console.log(vm);
-        break;
-      
-      /**
-        == branchunless
-        
-        
-      */
-      case iBRANCHUNLESS:
-        var val = sf.stack[--sf.sp];
-        // do rtest on val - for speed just check on spot. falsy values are nil, null,
-        // false, undefined. null and undefined come from javascript, so, undefined vars
-        // etc, although these should be caught. they should not escape to ruby.
-        if (val === false || val === nil || val === null || val === undefined) {
-          // branch...
-          sf.pc = sf.jumps[op[1]];
-        }
-        break;
-      
-      /**
-        == newarray
-        
-        Create a new array with values on the stack, and pop the resulting array
-        object onto the stack.
-        
-        === op structure
-        
-          [iNEWARRAY, len]
-        
-        === stack
-        
-        before:                           after:
-        ---------------                   
-        | arg N       |                   ---------------  
-        ---------------         =>        | VALUE val   |
-        | ...         |                   ---------------
-        ---------------
-        | arg 0       | 
-        ---------------
-        
-        Gather N args, represented by len, and create a new array. Pop this array
-        onto the stack, i.e. val.
-      */
-      case iNEWARRAY:
-      var len = op[1];
-        var args = sf.stack.slice(sf.sp - len, sf.sp);
-        sf.sp -= len;
-        sf.stack[sf.sp++] = args;
-        break;
-      
-      default:
-        console.log("unknown op code: " + op.join(","));
-        break;
-    }
-  }
+  Sets local var value. Note, not local ivar.
+*/
+function vm_setlocal(idx, val) {
+  return rb_top_vm.cfp.locals[idx] = val;
+}
+
+/**
+  vm_send
+*/
+function vm_send(recv, id, argv, blockiseq) {
+  return rb_call(recv.klass, recv, id, argv.length, argv, blockiseq);
+}
+
+/**
+  get local self for env
+*/
+function vm_putself() {
+  return rb_top_vm.cfp.self;
 }
 
 /**
@@ -539,64 +311,22 @@ function rb_call(klass, recv, mid, argc, argv, blockptr) {
   
   return rb_vm_call(rb_top_vm, klass, recv, mid, mid, argc, argv, body, 0, blockptr);
 }
-  
-  
- // rb_funcall_stack.push(id);
- // if (!self.klass) {
- //   console.log('ERROR: rb_funcall');
- //   console.log(self);
- //   console.log(id);
- // }
- // 
- // var method = rb_search_method(self.klass, id);
- // 
- // if (!method) {
- //   // for (var i = 0; i < 20; i++) {
- //     // console.log(rb_funcall_stack.pop());
- //   // }
- //   console.log(self);
- //   throw 'RObject#call cannot find method: ' + id ;
- // } 
- // // console.log(Array.prototype.slice.call(arguments));
- // switch(arguments.length) {
- //   case 2: return method(self, id);
- //   case 3: return method(self, id, arguments[2]);
- //   case 4: return method(self, id, arguments[2], arguments[3]);
- //   case 5: return method(self, id, arguments[2], arguments[3], arguments[4]);
- // }
- // 
- // return method.apply(self, arguments);
-// }
 
 function rb_search_method(klass, id) {
- // console.log('checking ' + id);
- // console.log(this);
+
  var f, k = klass;
- // console.log(id);
- // console.log(klass);
- // return null ;
  while (!(f = k.m_tbl[id])) {
    k = k.sup;
-   // console.log(this.$super.__classid__);
    if (!k) return undefined;
  }
- // console.log('returning true for ' + id);
  return f;
 };
 
 function rb_vm_call(vm, klass, recv, id, oid, argc, argv, body, nosuper, blockptr) {
   if (typeof body === 'function') {
-    // console.log(id);
-    // throw "here"
-    // parent stack frame
+
     var pcf = vm.cfp;
-    // (new) current frame pointer
-    // 3rd param should be cfunc_type
-    // 5th param should be a given block
-    // var cfp = vm_push_frame(vm, 0, 0, recv, null, 0, pcf.sp, 0, 1);
-    
-    // we pass 0,0 to state that we dont need any args spaces reserving.
-    // vm_push_frame expects an iseq, so we send it a fake one. mhahaha.
+
     var cfp = vm_push_frame(vm, [0,0], recv);
     cfp.block_iseq = blockptr;
     var val = call_cfunc(body, recv, body.rb_argc, argc, argv);
@@ -605,12 +335,11 @@ function rb_vm_call(vm, klass, recv, id, oid, argc, argv, body, nosuper, blockpt
     return val;
   }
   else {
-    // throw "in send.."
-    // object, i.e. opcode (array)
+
     var pcf = vm.cfp;
     var cfp = vm_push_frame(vm, body, recv);
     cfp.block_iseq = blockptr;
-    // var cfp = vm_push_frame(vm, body, 0, recv, null, 0, pcf.sp, 0, body[0][1]);
+
     for (var i = 0; i < argc; i++) {
       cfp.locals[i] = argv[i];
     }

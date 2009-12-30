@@ -1466,6 +1466,15 @@ var vn_parser = function(filename, str) {
   }
   
   function iseq_stack_pop() {
+    // console.log(iseq_stack_current[7]);
+    // throw "a"
+    var f = iseq_stack_current[7].join("");
+    var func = new Function(f);
+    // console.log("here");
+    // console.log(iseq_stack_current);
+    iseq_stack_current[7] = func;
+    
+    
     iseq_jump_stack.pop();
     iseq_jump_current = iseq_jump_stack[iseq_jump_stack.length - 1];
     
@@ -1476,10 +1485,14 @@ var vn_parser = function(filename, str) {
     return iseq_stack.pop();
   }
   
-  function iseq_opcode_push(opcode) {
-    iseq_stack_current[7].push(opcode);
-    return opcode;
+  function write(str) {
+    iseq_stack_current[7].push(str);
   }
+  
+  // function iseq_opcode_push(opcode) {
+    // iseq_stack_current[7].push(opcode);
+    // return opcode;
+  // }
   
   /**
     checks the given name to see if its in the index. If the result is 0 or above,
@@ -1566,34 +1579,43 @@ var vn_parser = function(filename, str) {
   }
   
   function generate_array(stmt, context) {
+    write("[");
     if (stmt.$values) {
       var i;
       for (i = 0; i < stmt.$values.length; i++) {
+        if (i > 0) write(",");
         generate_stmt(stmt.$values[i], {full_stmt:false, last_stmt:false});
       }
     }
-        
-    iseq_opcode_push([iNEWARRAY, stmt.$values ? stmt.$values.length : 0]);
+    write("]");
+    // iseq_opcode_push([iNEWARRAY, stmt.$values ? stmt.$values.length : 0]);
   }
   
   function generate_assign(stmt, context) {
-    generate_stmt(stmt.$rhs, {full_stmt: false, last_stmt: false});
+    
+    if (context.last_stmt && context.full_stmt) write("return ");
+    
     
     if (stmt.$lhs.type == tIDENTIFIER) {
       var idx;
       // iseq_opcode_push([iSETLOCAL, 0]);
       if ((idx = iseq_locals_idx(stmt.$lhs.value)) == -1) {
         // doesnt exist, so we need a new local
-        iseq_opcode_push([iSETLOCAL, iseq_locals_push(stmt.$lhs.value)]);
+        // iseq_opcode_push([iSETLOCAL, iseq_locals_push(stmt.$lhs.value)]);
+        write('vm_setlocal(' + iseq_locals_push(stmt.$lhs.value) + ',');
+        generate_stmt(stmt.$rhs, {full_stmt: false, last_stmt: false});
+        write(')');
       }
       else {
         // already a local, so just get the index
-        iseq_opcode_push([iSETLOCAL, idx]);
+        // iseq_opcode_push([iSETLOCAL, idx]);
       }
     }
     else {
       throw "unsupported lhs, for now"
     }
+    
+    if (context.full_stmt) write(";");
   }
   
   function generate_if(stmt, context) {
@@ -1682,16 +1704,19 @@ var vn_parser = function(filename, str) {
   }
   
   function generate_string(stmt, context) {
-    iseq_opcode_push([iPUTSTRING, stmt.$parts[0].value]);
+    // iseq_opcode_push([iPUTSTRING, stmt.$parts[0].value]);
     
-    if (context.last_stmt && context.full_stmt) {
-      iseq_opcode_push([iLEAVE]);
-    }
+    // if (context.last_stmt && context.full_stmt) {
+      // iseq_opcode_push([iLEAVE]);
+    // }
+    
+    write("'" + stmt.$parts[0].value + "'");
   }
   
   function generate_integer(stmt, context) {
     
-    iseq_opcode_push([iPUTOBJECT, parseInt(stmt.value)]);
+    // iseq_opcode_push([iPUTOBJECT, parseInt(stmt.value)]);
+    write(parseInt(stmt.value));
     
     if (context.last_stmt && context.full_stmt) {
       iseq_opcode_push([iLEAVE]);
@@ -1740,63 +1765,99 @@ var vn_parser = function(filename, str) {
   }
   
   function generate_call(call, context) {
-    // console.log("call...");
-    // console.log(call);
-    
-    var mid = call.$meth;
-    if (typeof mid === 'object') {
-      mid = mid.value;
-    }
-    
-    var iseq = [iSEND, mid, 0, null, 8, null];
+
+    write("vm_send(");
     
     // receiver
     if (call.$recv) {
       generate_stmt(call.$recv, {instance:context.instance, full_stmt:false});
-      // fix fcall bit
-      iseq[4] = 0;
+      // fix fcall bit..?
     }
     else {
-      iseq_opcode_push([iPUTNIL]);
+      write("vm_putself()");
     }
     
-    // args..
+    // mid
+    var mid = call.$meth;
+    if (typeof mid === 'object') { mid = mid.value; }
+    write(",'" + mid + "',");
+    
+    // arguments (argv)
     if (call.$call_args && call.$call_args.args) {
-      var i, a = call.$call_args.args;
+      write("[");
+      var i = 0, a = call.$call_args.args;
       for (i = 0; i < a.length; i++) {
-        generate_stmt(a[i], { instance:context.instance, full_stmt:false });
+        if (i > 0) write(",");
+        generate_stmt(a[i], {instance:context.instance, full_stmt:false});
       }
-      iseq[2] = a.length;
+      write("],");
     }
-    
-    iseq_opcode_push(iseq);
-    
-    if (context.full_stmt && context.last_stmt) {
-      // if last stmt, we want to leave the context (with result of call on stack)
-      iseq_opcode_push([iLEAVE]);
-    }
-    else if (context.full_stmt) {
-      // if not last stmt, but a full stmt, remove result from stack. no-one wants it
-      iseq_opcode_push([iPOP]);
+    else {
+      write("[],");
     }
     
     // block
-    if (call.$brace_block) {
-      var b_seq = [0, 0, "block in <compiled>", filename, ISEQ_TYPE_BLOCK, 0, [], []];
-      iseq[3] = b_seq;
-      
-      if (call.$brace_block.$stmts) {
-        // generate stmts
-        iseq_stack_push(b_seq);
-        
-        var i, s = call.$brace_block.$stmts;
-        for (i = 0; i < s.length; i++) {
-          generate_stmt(s[i], {full_stmt:true, last_stmt:false});
-        }
-        
-        iseq_stack_pop();
-      }
-    }
+    write("null");
+
+    
+    // end
+    write(")");
+    
+    
+    // var mid = call.$meth;
+    // if (typeof mid === 'object') {
+    //   mid = mid.value;
+    // }
+    // 
+    // var iseq = [iSEND, mid, 0, null, 8, null];
+    // 
+    // // receiver
+    // if (call.$recv) {
+    //   generate_stmt(call.$recv, {instance:context.instance, full_stmt:false});
+    //   // fix fcall bit
+    //   iseq[4] = 0;
+    // }
+    // else {
+    //   iseq_opcode_push([iPUTNIL]);
+    // }
+    // 
+    // // args..
+    // if (call.$call_args && call.$call_args.args) {
+    //   var i, a = call.$call_args.args;
+    //   for (i = 0; i < a.length; i++) {
+    //     generate_stmt(a[i], { instance:context.instance, full_stmt:false });
+    //   }
+    //   iseq[2] = a.length;
+    // }
+    // 
+    // iseq_opcode_push(iseq);
+    // 
+    // if (context.full_stmt && context.last_stmt) {
+    //   // if last stmt, we want to leave the context (with result of call on stack)
+    //   iseq_opcode_push([iLEAVE]);
+    // }
+    // else if (context.full_stmt) {
+    //   // if not last stmt, but a full stmt, remove result from stack. no-one wants it
+    //   iseq_opcode_push([iPOP]);
+    // }
+    // 
+    // // block
+    // if (call.$brace_block) {
+    //   var b_seq = [0, 0, "block in <compiled>", filename, ISEQ_TYPE_BLOCK, 0, [], []];
+    //   iseq[3] = b_seq;
+    //   
+    //   if (call.$brace_block.$stmts) {
+    //     // generate stmts
+    //     iseq_stack_push(b_seq);
+    //     
+    //     var i, s = call.$brace_block.$stmts;
+    //     for (i = 0; i < s.length; i++) {
+    //       generate_stmt(s[i], {full_stmt:true, last_stmt:false});
+    //     }
+    //     
+    //     iseq_stack_pop();
+    //   }
+    // }
     
     
     
