@@ -207,7 +207,7 @@ var vn_parser = function(filename, str) {
   
   var assignment = function (id) {
       return infixr(id, 10, function (left) {
-          if (left.type !== "." && left.type !== "[" && left.type !== tIDENTIFIER && left.type != tIVAR && left.type !== tMLHS) {
+          if (left.type !== "." && left.type !== "[" && left.type !== tIDENTIFIER && left.type != tIVAR && left.type !== tMLHS && left.type !== tCONSTANT) {
               throw 'bad lhs'
           }
           this.$lhs = left;
@@ -307,7 +307,7 @@ var vn_parser = function(filename, str) {
   symbol(tIDENTIFIER).nud = function() {
     // we need to check last_state, as lex_state (current) is overridden when parsing current token
     if ((valid_cmd_args.indexOf(token.type) != -1) && (last_state == EXPR_CMDARG)) {
-      console.log("about to gather command args..");
+      // console.log("about to gather command args..");
       gather_command_args(this);
       this.type = tCALL;
       this.$recv = null;
@@ -579,7 +579,7 @@ var vn_parser = function(filename, str) {
     // throw token.value
     if (token.type !== ']') {
       while (true) {
-        arr.push(stmt());
+        arr.push(expr());
         if (token.type !== ',') {
           break;
         }
@@ -1407,8 +1407,16 @@ var vn_parser = function(filename, str) {
   
   var iseq_stack = [], iseq_stack_current = null;
   var iseq_locals_stack = [], iseq_locals_current = null;
+  var iseq_jump_stack = [], iseq_jump_current = null;
+  
+  function iseq_jump_idx() {
+    return (iseq_jump_current++).toString();
+  }
   
   function iseq_stack_push(s) {
+    iseq_jump_current = 0;
+    iseq_jump_stack.push(iseq_jump_current);
+    
     iseq_locals_stack.push(iseq_locals_current = []);
     iseq_stack.push(s);
     iseq_stack_current = s;
@@ -1416,6 +1424,9 @@ var vn_parser = function(filename, str) {
   }
   
   function iseq_stack_pop() {
+    iseq_jump_stack.pop();
+    iseq_jump_current = iseq_jump_stack[iseq_jump_stack.length - 1];
+    
     iseq_locals_current = iseq_locals_stack[iseq_locals_stack.length - 2];
     iseq_locals_stack.pop();
     
@@ -1486,6 +1497,9 @@ var vn_parser = function(filename, str) {
       case tINTEGER:
         generate_integer(stmt, context);
         break;
+      case tSTRING_BEG:
+        generate_string(stmt, context);
+        break;
       case kSELF:
         generate_self(stmt, context);
         break;
@@ -1495,9 +1509,29 @@ var vn_parser = function(filename, str) {
       case '=':
         generate_assign(stmt, context);
         break;
+      case kFALSE:
+        generate_false(stmt, context);
+        break;
+      case kTRUE:
+        generate_true(stmt, context);
+        break;
+      case tLBRACK:
+        generate_array(stmt, context);
+        break;
       default:
         console.log("unknown generate_stmt type: " + stmt.type + ", " + stmt.value);
     }
+  }
+  
+  function generate_array(stmt, context) {
+    if (stmt.$values) {
+      var i;
+      for (i = 0; i < stmt.$values.length; i++) {
+        generate_stmt(stmt.$values[i], {full_stmt:false, last_stmt:false});
+      }
+    }
+        
+    iseq_opcode_push([iNEWARRAY, stmt.$values ? stmt.$values.length : 0]);
   }
   
   function generate_assign(stmt, context) {
@@ -1516,11 +1550,26 @@ var vn_parser = function(filename, str) {
       }
     }
     else {
-      throw "unpupported lhs, for now"
+      throw "unsupported lhs, for now"
     }
   }
   
   function generate_if(stmt, context) {
+    // if expression..
+    generate_stmt(stmt.$expr, {instance:context.instance, full_stmt:false, last_stmt:false});
+    var jmp_label = iseq_jump_idx();
+    iseq_opcode_push([iBRANCHUNLESS, jmp_label]);
+    
+    // stmts
+    if (stmt.$stmts) {
+      var i, s = stmt.$stmts;
+      for (i = 0; i < s.length; i++) {
+        generate_stmt(s[i], {instance:context.instance, full_stmt:true, last_stmt:false});
+      }
+    }
+    
+    iseq_opcode_push(jmp_label);
+    
     // if (context.last_stmt && context.full_stmt) write("return ");
     // write("(function(){");
     // 
@@ -1567,10 +1616,35 @@ var vn_parser = function(filename, str) {
     // if (context.full_stmt) write(";\n");
   }
   
+  function generate_false(stmt, context) {
+    iseq_opcode_push([iPUTOBJECT, false]);
+    
+    if (context.last_stmt && context.full_stmt) {
+      iseq_opcode_push([iLEAVE]);
+    }
+  }
+  
+  function generate_true(stmt, context) {
+    iseq_opcode_push([iPUTOBJECT, true]);
+    
+    if (context.last_stmt && context.full_stmt) {
+      iseq_opcode_push([iLEAVE]);
+    }
+  }
+  
+  
   function generate_self(stmt, context) {
     if (context.last_stmt && context.full_stmt) write("return ");
     write(current_self());
     if (context.full_stmt) write(";\n");
+  }
+  
+  function generate_string(stmt, context) {
+    iseq_opcode_push([iPUTSTRING, stmt.$parts[0].value]);
+    
+    if (context.last_stmt && context.full_stmt) {
+      iseq_opcode_push([iLEAVE]);
+    }
   }
   
   function generate_integer(stmt, context) {
@@ -1580,9 +1654,6 @@ var vn_parser = function(filename, str) {
     if (context.last_stmt && context.full_stmt) {
       iseq_opcode_push([iLEAVE]);
     }
-    // if (context.last_stmt && context.full_stmt) write("return ");
-    // write(stmt.value);
-    // if (context.full_stmt) write(";\n");
   }
   
   function generate_constant(stmt, context) {
@@ -1621,10 +1692,25 @@ var vn_parser = function(filename, str) {
   }
   
   function generate_call(call, context) {
-    var iseq = [iSEND, call.value, 0, null, 8, null];
+    // console.log("call...");
+    // console.log(call);
+    
+    var mid = call.$meth;
+    if (typeof mid === 'object') {
+      mid = mid.value;
+    }
+    
+    var iseq = [iSEND, mid, 0, null, 8, null];
     
     // receiver
-    iseq_opcode_push([iPUTNIL]);
+    if (call.$recv) {
+      generate_stmt(call.$recv, {instance:context.instance, full_stmt:false});
+      // fix fcall bit
+      iseq[4] = 0;
+    }
+    else {
+      iseq_opcode_push([iPUTNIL]);
+    }
     
     // args..
     if (call.$call_args && call.$call_args.args) {
@@ -1644,6 +1730,12 @@ var vn_parser = function(filename, str) {
     else if (context.full_stmt) {
       // if not last stmt, but a full stmt, remove result from stack. no-one wants it
       iseq_opcode_push([iPOP]);
+    }
+    
+    // block
+    if (call.$brace_block) {
+      var b_seq = [0, 0, "block in <compiled>", filename, ISEQ_TYPE_BLOCK, 0, [], []];
+      iseq[3] = b_seq;
     }
     
     // if (context.last_stmt && context.last_stmt) write("return ");

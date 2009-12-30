@@ -224,22 +224,41 @@ function vm_run_mode_running(vm) {
 */
 function vm_exec(vm) {
   
-  
   // console.log(vm);
   var sf = vm.cfp;
   // console.log("locals: " + sf.locals.join(","))
   
   // [7] are the actual opcodes
   var iseq = sf.iseq[7];
+  
+  // check if we have setup jumps
+  if (!sf.jumps) {
+    sf.jumps = {};
+    var i, j;
+    for (i = 0; i < iseq.length; i++) {
+      j = iseq[i];
+      if (typeof j === 'string') {
+        sf.jumps[j] = i;
+      }
+    }
+  }
+  
   // run opcodes
   for (; (sf.pc < iseq.length) && vm.running; sf.pc++) {
     var op = iseq[sf.pc];
+    
+    // console.log(op);
     
     // If we hit a number, its correcting the line number that the opcode is on
     if (typeof op === 'number') {
       // console.log("got to line number: " + op + " , so stopping");
       // vm_run_mode_sleep(vm);
       sf.line_no = op;
+      continue;
+    }
+    
+    // If we hit string, its a jmp destination..
+    if (typeof op === 'string') {
       continue;
     }
     
@@ -372,8 +391,15 @@ function vm_exec(vm) {
         sf.sp -= argc;
         var recv = sf.stack[--sf.sp];
         
+        console.log("sending msg: " + mid + ", " + op[4]);
+        // console.log(recv);
+        
         if (op[4] & VM_CALL_FCALL_BIT) recv = sf.self;
         // console.log(sf.self);
+        
+        // This is wrong....... nil might be the actual reciever, nil.nil?
+        // if (recv === nil) recv = sf.self;
+        
         var a = rb_call(recv.klass, recv, mid, argc, argv);
         sf.stack[sf.sp++] = a;
         // console.log("return value is:");
@@ -396,7 +422,44 @@ function vm_exec(vm) {
       */
       case iBRANCHUNLESS:
         var val = sf.stack[--sf.sp];
-        // do rtest on val
+        // do rtest on val - for speed just check on spot. falsy values are nil, null,
+        // false, undefined. null and undefined come from javascript, so, undefined vars
+        // etc, although these should be caught. they should not escape to ruby.
+        if (val === false || val === nil || val === null || val === undefined) {
+          // branch...
+          sf.pc = sf.jumps[op[1]];
+        }
+        break;
+      
+      /**
+        == newarray
+        
+        Create a new array with values on the stack, and pop the resulting array
+        object onto the stack.
+        
+        === op structure
+        
+          [iNEWARRAY, len]
+        
+        === stack
+        
+        before:                           after:
+        ---------------                   
+        | arg N       |                   ---------------  
+        ---------------         =>        | VALUE val   |
+        | ...         |                   ---------------
+        ---------------
+        | arg 0       | 
+        ---------------
+        
+        Gather N args, represented by len, and create a new array. Pop this array
+        onto the stack, i.e. val.
+      */
+      case iNEWARRAY:
+      var len = op[1];
+        var args = sf.stack.slice(sf.sp - len, sf.sp);
+        sf.sp -= len;
+        sf.stack[sf.sp++] = args;
         break;
       
       default:
@@ -469,7 +532,9 @@ function rb_funcall(recv, mid, argc) {
 function rb_call(klass, recv, mid, argc, argv) {
   var body = rb_search_method(klass, mid);
   if (!body) {
-    return rb_call(klass, recv, "method_missing", argc, argv);
+    console.log("calling method missing with: " + mid);
+    console.log(recv);
+    return rb_call(klass, recv, "method_missing", 2, [mid, argv]);
   }
   
   return rb_vm_call(rb_top_vm, klass, recv, mid, mid, argc, argv, body, 0);

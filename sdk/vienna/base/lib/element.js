@@ -1,5 +1,5 @@
 /* 
- * init.js
+ * element.js
  * vienna
  * 
  * Created by Adam Beynon.
@@ -24,15 +24,18 @@
  * THE SOFTWARE.
  */
 
-function rb_call_inits() {
-  Init_Object();
-  Init_top_self();
-  Init_Array();
-  Init_Number();
-  Init_VM();
-  Init_vm_eval();
-  Init_load();
-  Init_Bundle();
+/**
+  Element class is used to access, add, modidy, remove Elements.
+*/
+var rb_cElement;
+
+/**
+  Document is a constant instance of the Element class with methods added that
+  are appropriate to the document context.
+*/
+
+
+function Init_Element() {
+  rb_cElement = rb_define_class("Element", rb_cObject);
   
-  Init_Element();
 }

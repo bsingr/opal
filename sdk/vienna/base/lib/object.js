@@ -213,7 +213,8 @@ function rb_ivar_get(obj, id) {
 */
 
 function rb_obj_alloc(klass) {
- return rb_funcall(klass, 'allocate', 0);
+  return rb_class_allocate_instance(klass);
+ // return rb_funcall(klass, 'allocate', 0);
 }
 
 function rb_obj_dummy() {
@@ -457,7 +458,7 @@ function Init_Object() {
   // rb_define_method(rb_cModule, "class_variable_set", rb_mod_cvar_set, 2);
   // rb_define_method(rb_cModule, "class_variable_defined?", rb_mod_cvar_defined, 1);
   // 
-  // rb_define_method(rb_cClass, "allocate", rb_obj_alloc, 0);
+  rb_define_method(rb_cClass, "allocate", rb_obj_alloc, 0);
   rb_define_method(rb_cClass, "new", rb_class_new_instance, -1);
   // rb_define_method(rb_cClass, "initialize", rb_class_initialize, -1);
   // rb_define_method(rb_cClass, "initialize_copy", rb_class_init_copy, 1);
