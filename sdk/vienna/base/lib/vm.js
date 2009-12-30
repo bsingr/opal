@@ -243,6 +243,13 @@ function vm_putself() {
 }
 
 /**
+  defineclass
+*/
+function vm_defineclass(base, sup, id, class_iseq, define_type) {
+  
+}
+
+/**
   For now, use vm instead of thread.
   @param {rb_thread} vm
   @param {rb_iseq} iseq

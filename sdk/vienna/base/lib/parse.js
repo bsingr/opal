@@ -2014,32 +2014,36 @@ var vn_parser = function(filename, str) {
   }
   
   function generate_class(stmt, context) {
+    
+    
+    
+    
     // base (for class << Ben; ...; end)
-    iseq_opcode_push([iPUTNIL]);
-    // superclass
-    if (stmt.$super) {
-      // console.log("super..");
-      // console.log(stmt.$super);
-      generate_stmt(stmt.$super, {full_stmt: false, last_stmt:false});
-    }
-    else {
-     iseq_opcode_push([iPUTNIL]);
-    }
-    
-    var iseq = [0, 0, "<class:" + stmt.$kname.value + ">", filename, ISEQ_TYPE_CLASS, 0, [], []];
-    var opcode = [iDEFINECLASS, stmt.$kname.value, iseq, 0];
-    iseq_opcode_push(opcode);
-    iseq_stack_push(iseq);
-    
-    // statements.
-    if (stmt.$stmts) {
-      var i, s = stmt.$stmts;
-      for (i = 0; i < s.length; i++) {
-        generate_stmt(s[i], {instance:false, full_stmt:true, last_stmt:(s[s.length - 1] == s[i] ? true : false), top_level:false});
-      }
-    }
-    
-    iseq_stack_pop();
+    // iseq_opcode_push([iPUTNIL]);
+    // // superclass
+    // if (stmt.$super) {
+    //   // console.log("super..");
+    //   // console.log(stmt.$super);
+    //   generate_stmt(stmt.$super, {full_stmt: false, last_stmt:false});
+    // }
+    // else {
+    //  iseq_opcode_push([iPUTNIL]);
+    // }
+    // 
+    // var iseq = [0, 0, "<class:" + stmt.$kname.value + ">", filename, ISEQ_TYPE_CLASS, 0, [], []];
+    // var opcode = [iDEFINECLASS, stmt.$kname.value, iseq, 0];
+    // iseq_opcode_push(opcode);
+    // iseq_stack_push(iseq);
+    // 
+    // // statements.
+    // if (stmt.$stmts) {
+    //   var i, s = stmt.$stmts;
+    //   for (i = 0; i < s.length; i++) {
+    //     generate_stmt(s[i], {instance:false, full_stmt:true, last_stmt:(s[s.length - 1] == s[i] ? true : false), top_level:false});
+    //   }
+    // }
+    // 
+    // iseq_stack_pop();
     
     // write("(function(self) {\n");
     // push_nametable();
