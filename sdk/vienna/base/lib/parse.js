@@ -221,8 +221,31 @@ var vn_parser = function(filename, str) {
   assignment("=");
   
   symbol(kDO).nud = function() {
-    // read over kDO
-    next_token();
+    if (token.type == '|') {
+      var e;
+      this.$args = [];
+      // gather block params
+      next_token();
+      e = expr();
+      this.$args.push(e);
+      while (true) {
+        if (token.type == "|") {
+          next_token();
+          break;
+        }
+        else if (token.type == ",") {
+          next_token();
+          continue;
+        }
+        else {
+          this.$args.push(expr());
+        }
+        // throw "erm.."
+      }
+    }
+    // throw token.value
+    // next_token();
+    // throw token.type
     this.$stmts = stmts([kEND]);
     // read over kEND
     next_token();
@@ -408,6 +431,7 @@ var vn_parser = function(filename, str) {
     var result = token;
     // read over kDO
     next_token();
+    // throw token.value
     result.$stmts = stmts([kEND]);
     // read over kEND
     next_token();
@@ -1159,6 +1183,24 @@ var vn_parser = function(filename, str) {
         }
       }
       
+      
+      else if (scanner.scan(/^\|\|\=/)) {
+        lex_state = EXPR_BEG;
+        return [tOP_ASGN, '||'];
+      }
+      else if (scanner.scan(/^\|\|/)) {
+        lex_state = EXPR_BEG;
+        return [tOROP, scanner.matched];
+      }
+      else if (scanner.scan(/^\|\=/)) {
+        lex_state = EXPR_BEG;
+        return [tOP_ASGN, '|'];
+      }
+      else if (scanner.scan(/^\|/)) {
+        lex_state = EXPR_BEG;
+        return ["|", scanner.matched];
+      }
+          
       else if (scanner.scan(/^\:/)) {
         // console.log ("HERE " + lex_state);
         if (lex_state === EXPR_END || lex_state === EXPR_ENDARG || scanner.check(/^\s/)) {
@@ -1686,9 +1728,15 @@ var vn_parser = function(filename, str) {
   }
   
   function generate_symbol(sym, context) {
-    if (context.last_stmt && context.full_stmt) write("return ");
-    write("ID2SYM('" + sym.$name.value + "')");
-    if (context.full_stmt) write(";\n");
+    
+    iseq_opcode_push([iPUTOBJECT, ID2SYM(sym.$name.value)]);
+    
+    if (context.full_stmt && context.last_stmt) {
+      iseq_opcode_push([iLEAVE]);
+    }
+    else if (context.full_stmt) {
+      iseq_opcode_push([iPOP]);
+    }
   }
   
   function generate_call(call, context) {
@@ -1736,7 +1784,36 @@ var vn_parser = function(filename, str) {
     if (call.$brace_block) {
       var b_seq = [0, 0, "block in <compiled>", filename, ISEQ_TYPE_BLOCK, 0, [], []];
       iseq[3] = b_seq;
+      
+      if (call.$brace_block.$stmts) {
+        // generate stmts
+        iseq_stack_push(b_seq);
+        
+        var i, s = call.$brace_block.$stmts;
+        for (i = 0; i < s.length; i++) {
+          generate_stmt(s[i], {full_stmt:true, last_stmt:false});
+        }
+        
+        iseq_stack_pop();
+      }
     }
+    
+    
+    
+    // iseq_opcode_push([iPUTNIL]);
+    // var iseq = [0, 0, definition.$fname.value, filename, ISEQ_TYPE_METHOD, 0, [], []];
+    // var opcode = [iDEFINEMETHOD, definition.$fname.value, iseq, 0];
+    // iseq_opcode_push(opcode);
+    // iseq_stack_push(iseq);
+    // 
+    // if (definition.$stmts) {
+    //   var i, s = definition.$stmts;
+    //   for (i = 0; i < s.length; i++) {
+    //     generate_stmt(s[i], {instance:(definition.$sname ? false : true), full_stmt:true, last_stmt:(s[s.length - 1] == s[i] ? true : false), name:definition.$fname});
+    //   }
+    // }
+    
+    
     
     // if (context.last_stmt && context.last_stmt) write("return ");
     // 

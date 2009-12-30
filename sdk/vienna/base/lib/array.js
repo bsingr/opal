@@ -32,8 +32,8 @@ function rb_ary_each(ary) {
     // throw "return enumerator thingy"
   // }
   for (i = 0; i < ary.length; i++) {
-    // rb_yield(ary[i]);
-    console.log("should yield: " + ary[i]);
+    rb_yield(ary[i]);
+    // console.log("should yield: " + ary[i]);
   }
   return ary;
 }

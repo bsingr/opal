@@ -391,7 +391,7 @@ function vm_exec(vm) {
         sf.sp -= argc;
         var recv = sf.stack[--sf.sp];
         
-        console.log("sending msg: " + mid + ", " + op[4]);
+        // console.log("sending msg: " + mid + ", " + op[4]);
         // console.log(recv);
         
         if (op[4] & VM_CALL_FCALL_BIT) recv = sf.self;
@@ -400,7 +400,7 @@ function vm_exec(vm) {
         // This is wrong....... nil might be the actual reciever, nil.nil?
         // if (recv === nil) recv = sf.self;
         
-        var a = rb_call(recv.klass, recv, mid, argc, argv);
+        var a = rb_call(recv.klass, recv, mid, argc, argv, op[3]);
         sf.stack[sf.sp++] = a;
         // console.log("return value is:");
         // console.log(a);
@@ -526,18 +526,18 @@ function vm_pop_frame(vm) {
 function rb_funcall(recv, mid, argc) {
   var argv = Array.prototype.slice.call(arguments, 3, argc + 3);
   
-  return rb_call(recv.klass, recv, mid, argc, argv);
+  return rb_call(recv.klass, recv, mid, argc, argv, nil);
 }
 
-function rb_call(klass, recv, mid, argc, argv) {
+function rb_call(klass, recv, mid, argc, argv, blockptr) {
   var body = rb_search_method(klass, mid);
   if (!body) {
     console.log("calling method missing with: " + mid);
     console.log(recv);
-    return rb_call(klass, recv, "method_missing", 2, [mid, argv]);
+    return rb_call(klass, recv, "method_missing", 2, [mid, argv], blockptr);
   }
   
-  return rb_vm_call(rb_top_vm, klass, recv, mid, mid, argc, argv, body, 0);
+  return rb_vm_call(rb_top_vm, klass, recv, mid, mid, argc, argv, body, 0, blockptr);
 }
   
   
@@ -584,7 +584,7 @@ function rb_search_method(klass, id) {
  return f;
 };
 
-function rb_vm_call(vm, klass, recv, id, oid, argc, argv, body, nosuper) {
+function rb_vm_call(vm, klass, recv, id, oid, argc, argv, body, nosuper, blockptr) {
   if (typeof body === 'function') {
     // console.log(id);
     // throw "here"
@@ -598,6 +598,7 @@ function rb_vm_call(vm, klass, recv, id, oid, argc, argv, body, nosuper) {
     // we pass 0,0 to state that we dont need any args spaces reserving.
     // vm_push_frame expects an iseq, so we send it a fake one. mhahaha.
     var cfp = vm_push_frame(vm, [0,0], recv);
+    cfp.block_iseq = blockptr;
     var val = call_cfunc(body, recv, body.rb_argc, argc, argv);
     
     vm_pop_frame(vm);
@@ -608,6 +609,7 @@ function rb_vm_call(vm, klass, recv, id, oid, argc, argv, body, nosuper) {
     // object, i.e. opcode (array)
     var pcf = vm.cfp;
     var cfp = vm_push_frame(vm, body, recv);
+    cfp.block_iseq = blockptr;
     // var cfp = vm_push_frame(vm, body, 0, recv, null, 0, pcf.sp, 0, body[0][1]);
     for (var i = 0; i < argc; i++) {
       cfp.locals[i] = argv[i];
@@ -670,6 +672,62 @@ function call_cfunc(func, recv, len, argc, argv) {
       throw "rb_eArgError: too many arguments(" + len + ")"
   }
   throw "should never be reached"
+}
+
+/**
+  Is block given. This is used from c functions that check the current frame
+  pointer to see if it has a block.
+*/
+function rb_block_given_p() {
+  
+}
+
+/**
+  Is block given. This method, accessible from ruby, checks the previous stack
+  frame for a block. Calling this method pushes a new stack frame onto the stack,
+  so the previous one must be checked.
+*/
+function rb_f_block_given_p(recv) {
+  
+}
+
+function rb_yield(val) {
+  if (val === nil) return rb_yield_0(0, []);
+  return rb_yield_0(1, [val]);
+}
+
+function rb_yield_0(argc, argv) {
+  var vm = rb_top_vm;
+  if (vm.cfp.block_iseq !== nil) {
+    var recv = 0; // FIXME: get the correct receiver..
+
+
+    var pcf = vm.cfp;
+    var cfp = vm_push_frame(vm, vm.cfp.block_iseq, recv);
+    // cfp.block_iseq = blockptr;
+    // var cfp = vm_push_frame(vm, body, 0, recv, null, 0, pcf.sp, 0, body[0][1]);
+    for (var i = 0; i < argc; i++) {
+      cfp.locals[i] = argv[i];
+    }
+    
+    var val = vm_exec(vm);
+    vm_pop_frame(vm);
+    return val;
+    
+    
+    
+    
+    
+    
+    
+    
+    // console.log("we have block, push then execute it");
+    // return nil;
+  }
+  throw "rb_yield_0: no block given";
+  // console.log("yielding with vm:");
+  // console.log(vm.cfp.block_iseq);
+  return nil;
 }
 
 
