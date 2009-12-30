@@ -91,6 +91,7 @@ var ISEQ_TYPE_TOP    = 1,
 
 /**
   == Depreceated
+  
 
   call args
 */
