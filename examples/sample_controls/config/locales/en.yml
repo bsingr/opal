@@ -1,0 +1,4 @@
+# locales: en default
+
+en:
+  hello: "Hello World!"

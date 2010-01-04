@@ -1,9 +1,9 @@
 # 
-# tools.rb
+# vienna.rb
 # vienna
 # 
 # Created by Adam Beynon.
-# Copyright 2009 Adam Beynon.
+# Copyright 2010 Adam Beynon.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -25,45 +25,11 @@
 #
 
 module Vienna
-  
-  class Tools
-    
-    attr_accessor :project
-    
-    # Get the right type of project from the Rakefile. If not set (which it
-    # should always be), then default to vienna. Currently, vienna and 
-    # cappuccino are the only valid sdks. 'browser' will be added for plain
-    # ruby plus some browser extensions.
-    # 
-    def initialize(tool)      
-      self.send tool
-    end
-    
-    def find_project!
-      return @project ||= Vienna::Project.new(Dir.getwd)
-      
-      # old...
-      
-      return @project if @project
-      
-      unless File.exist? "Rakefile"
-        # no rakefile means we could be in a browser project
-        @project = Vienna::BrowserProject.new(Dir.getwd)
-        return @project
-      end
-      
-      rakefile = Rakefile.new.load!(Dir.getwd)
-      sdk = rakefile.config_for(:debug)[:sdk] || 'vienna'
-      
-      case sdk
-      when 'vienna'
-        @project = Vienna::NewProject.new(Dir.getwd)
-      when 'cappuccino'
-        @project = Vienna::CappuccinoProject.new(Dir.getwd)
-      end
-      
-      @project
-    end
+
+  def self.require_all_libs_relative_to(fname, dir=nil)
+    dir ||= ::File.basename(fname, '.*')
+    search_me = ::File.expand_path(::File.join(::File.dirname(fname), dir, '**', '*.rb'))
+    Dir.glob(search_me).each {|rb| require rb}
   end
 end
 

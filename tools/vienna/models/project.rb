@@ -1,103 +1,125 @@
 # 
-#  project.rb
-#  vienna
-#  
-#  Created by Adam Beynon on 2009-05-02.
-#  Copyright 2009 Adam Beynon. All rights reserved.
+# project.rb
+# vienna
 # 
+# Created by Adam Beynon.
+# Copyright 2010 Adam Beynon.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+# 
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+# 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+#
 
 module Vienna
   
-  class Project < Vienna::Bundle
+  class Project
   
-  attr_accessor :project_root
+    attr_accessor :project_root
+    
+    attr_writer :project_name
+    
+    attr_reader :required_bundles
+    
+    # Hash. bundle_name => Vienna::Bundle instance. These are only for bundles/gems required
+    # by the application. The app itself does not have a bundle. The project class
+    # is used for building the bundle
+    attr_reader :bundles
   
-  # Initialize with a string for the root of the project. This is used by all
-  # subprojects etc as a reference point
-  def initialize(project_root)
-    super
-    @parent = self
-    # cached files - saves them being processed more than once (on large builds)
-    @cached_objc_files = Hash.new
-    # cache built frameworks so we do not have to rebuild them more than once
-    @built_frameworks = []
-  end
-  
-  def prepare!
-    @prepared_status = true
-    # build paths
-    FileUtils.mkdir_p(build_prefix)
-    FileUtils.mkdir_p(File.join(build_prefix, 'resources'))
-    FileUtils.mkdir_p(tmp_prefix)
-    FileUtils.mkdir_p(File.join(tmp_prefix, bundle_name, 'objects'))
-    FileUtils.mkdir_p(File.join(tmp_prefix, bundle_name, 'resources'))
-  end
-  
-  def clean!
-    puts "Cleaning project (Not yet implemented)"
-  end
-    
-  def build!
-    super
-    
-    # link javascript
-    f = File.new(File.join(@parent.build_prefix, 'application.js'), 'w')
-    link_javascript!(f)
-    f.close()
-    
-    # link stylesheets
-    f = File.new(File.join(@parent.build_prefix, 'style.css'), 'w')
-    link_css!(f)
-    f.close()
-    
-    # index.html
-    o = File.new(File.join(build_prefix, 'index.html'), 'w')
-    File.readlines('index.html').map do |f|
-    o.write f
+    def initialize(project_root)
+      @project_root = project_root
+      @required_bundles = ['vienna']
+      @bundles = {}
+      
+      unless File.exist?(File.join(project_root, 'config', 'environment.rb'))
+        abort 'Cannot find base environment file for project'
+      end
+      
+      f = open(File.join(project_root, 'config', 'environment.rb')).map {|l| l.rstrip}.join("\n")
+      instance_eval f
+      
+      # loaded environment.rb file. Now we can build each required gem/bundle.
+      @required_bundles.each do |bundle|
+        # find bundle
+        if bundle == 'vienna'
+          # if vienna, then use hardcoded path to vienna bundle
+          @bundles['vienna'] = Vienna::GemBundle.new(File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '..', 'lib', 'vienna')))
+        else
+          # find it in vendor path. if not exist, then error: we can't find it.
+          abort "vendor gems currently not supported (#{bundle})"
+        end
+      end
     end
-    o.close()
+    
+    def project_name
+      @project_name ||= File.basename(project_root)
+    end
+    
+    # Setup build directory:
+    # 
+    # project_root/
+    #   build/
+    #     tmp         # staging area
+    #     web         # html based build
+    #     osx         # mac osx compatible build
+    #     win32       # win32 compatible build
+    #     linux       # linux compatible build
+    # 
+    # For now, only 'web' is made (plus tmp for staging)
+    # 
+    def prepare!
+      # should we "clean" the build directory?
+      FileUtils.mkdir_p(File.join(project_root, 'build', 'tmp'))
+      FileUtils.mkdir_p(File.join(project_root, 'build', 'web'))
+    end
+    
+    def build!
+      # build:
+      # include ALL files in project_root/app and project_root/config
+      # resources/files from other places will be used as necessary.
+      # test will only be included for test runs, not default build.
+      # lib includes taks etc, so dont include
+      # bin are for building executables, not for runtime
+      # stylesheets/images are located inside app folder. any images.css
+      # outside should be ignored.
+      # 
+      # also, for web: include platforms/web .. this has extra stuff just
+      # for js env that cannot be dynamically loaded at runtime, so make 
+      # this part of the build hardcoded.
+      
+    end
+    
+    # Used for evaling in the environment.rb file
+    def application(options={}, &block)
+      block.call(self)
+    end
+    
+    # Used for evaling in environemtn.rb file. 
+    # Specifies a required gem for the application.
+    # 
+    # For now, the gem must be in the vendor directory, or an error will be
+    # thrown. 'vienna' is the only exception, as this is already added by 
+    # default.
+    def gem(name, options={})
+      @required_bundles.push(name) unless @required_bundles.include?(name)
+    end
+    
+    # Catch require statements. These should not be done until runtime.
+    def require(*paths)
+      # puts "require capture: #{paths}"
+    end
   end
-  
-  
-  # Gets the build mode. If not set, defaults to debug
-  def build_mode
-    @build_mode ||= :debug
-  end
-  
-  # Sets build mode: optional.. defaults to debug if not set
-  def build_mode=(build)
-    @build_mode = build
-  end
-  
-  def add_built_framework(a_framework)
-    @built_frameworks << a_framework
-  end
-  
-  def should_build_framework?(a_framework)
-    test = @built_frameworks.include?(a_framework) ? false : true
-    # puts test
-    return test
-  end
-  
-  # ========================================================================
-  # = Caching objective C files to avoid re-parsing headers multiple times =
-  # ========================================================================
-  
-  # add a file to the cache
-  def add_objc_file(file)
-    @cached_objc_files.store file.file_path, file
-  end
-  
-  # check to see if the file is cached
-  def has_objc_file?(file_path)
-    @cached_objc_files.has_key? file_path
-  end
-  
-  # return a cached file.
-  def get_objc_file(file_path)
-    @cached_objc_files[file_path]
-  end
-  
-  end
-  
 end

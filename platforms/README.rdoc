@@ -1,0 +1,13 @@
+== Platforms
+
+Platforms contain additional code that apply to specific platforms. Namely, they deal with creating the low level links between their runtime and the vienna frameworks. For example, they implement independent PlatformWindow, url connections etc that act differently depending on runtime. For example, the web platform uses DOM based "fake" windows where as OSX platform uses real NSWindow objects via MacRuby.
+
+These ruby files are loaded at runtime as required, with the exception of the web platform. This code is hardcoded into the vienna gem/bundle so it is instantly available.
+
+=== web
+
+=== osx
+
+=== win32
+
+=== linux
