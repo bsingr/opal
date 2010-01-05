@@ -28,6 +28,13 @@ require File.join(File.dirname(__FILE__), 'boot')
 
 application :name => 'sample_controls' do |app|
   
+  # custom place to put application gem/bundle - only applicable to web
+  # '/' by default (same path as index.html and vienna.js)
+  # app.application_path = '/'
+  
+  # custom place to look for vendor gems/bundles. '/vendor/' by default
+  # app.vendor_path = '/vendor'
+  
   # app.development_region = :en
   
   # app delegate class: must be a symbol to avoid loading errors...maybe string instead?

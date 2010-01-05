@@ -24,11 +24,29 @@
 # THE SOFTWARE.
 #
 
+framework 'Cocoa'
+require 'hotcocoa'
+
+
+
 module Vienna
   
-  class PlatformWindow
+  class PlatformWindow < ::NSWindow
     
-    
+    def initialize(rect, style)
+      initWithContentRect rect, styleMask:[:titled, :closable, :miniaturizable, :resizable], backing: :buffered, defer:true
+      puts "here"
+    end
     
   end
 end
+
+
+
+# start application
+HotCocoa.application :name => "Vienna" do |app|
+  puts "yahaha"
+  a = Vienna::PlatformWindow.new([100, 100, 400, 400],100)
+  puts 10
+end
+

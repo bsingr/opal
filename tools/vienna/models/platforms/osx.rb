@@ -1,5 +1,5 @@
 # 
-# application.rb
+# osx.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -26,18 +26,31 @@
 
 module Vienna
   
-  class Application
+  module Platforms
     
-    attr_accessor :name
-    
-    def initialize
+    class OSX
       
+      attr_reader :project
+      
+      def initialize(project)
+        @project = project
+      end
+      
+      def project_root
+        @project.project_root
+      end
+      
+      def project_name
+        @project.project_name
+      end
+      
+      def prepare!
+        
+      end
+      
+      def build!
+        puts "building osx platform at: #{project_root}"
+      end
     end
-    
-  end
+  end  
 end
-
-
-# for now, assume osx platform
-
-require File.join(File.dirname(__FILE__), '..', '..', '..', 'platforms', 'osx', 'platform_window')
