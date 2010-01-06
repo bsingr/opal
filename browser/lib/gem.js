@@ -46,3 +46,90 @@ function vn_gem() {
 
 // all gems/apps/bundles, name => gem object
 var vn_gem_all = { };
+
+/**
+  preload the gem at the given path so it will be ready. callbacks used for
+  chaining gem loading
+*/
+function vn_gem_preload(path, name) {
+  // preload.
+}
+
+/**
+  boot a gem with the given name, path and content (i.e. process it)
+*/
+function vn_gem_boot(name, path, content) {
+  var g = new vn_gem();
+  g.name = name;
+  g.path = path;
+  g.content = content;
+  vn_gem_all[name] = g;
+  vm_gem_load(g);
+  return g;
+}
+
+/**
+  Do actual gem processing
+*/
+function vm_gem_load(gem) {
+  if (gem.loaded) throw "Cannot load gem twice... something silly happened"
+  
+  var at = 0;
+  var ch = '';
+  var text = gem.content;
+  
+  // get gem format
+  var gem_format = (function() {
+    var marker = text.indexOf('$', at);
+    var format = text.substr(at, marker - at);
+    at = marker + 1;
+    return format;
+  })();
+  
+  // get gem version
+  var gem_version = (function() {
+    var marker = text.indexOf('$', at);
+    var version = text.substr(at, marker - at);
+    at = marker + 1;
+    return version;
+  })();
+  
+  var next = function(c) {
+    if (c && c !== ch) {
+      console.log('bundle parse error: Expected ' + c + ', but instead got ' + ch);
+    }
+    ch = text.charAt(at);
+    at += 1;
+    return ch;
+  };
+  
+  var get_next = function(i) {
+    var result = text.substr(at, i);
+    at += i;
+    return result;
+  };
+  
+  var marker_count = function() {
+    var len = '';
+    next();
+    while (ch >= '0' && ch <= '9') {
+      len += ch;
+      next(); // this will also pass us through the $ at the end of length
+    }
+    return parseInt(len);
+  };
+  
+  while (next()) {
+    switch (ch) {
+      case 'f':
+        // parse_file();
+        break;
+      default:
+        throw "unknown bundle part " + ch
+    }
+  }
+  
+  // make sure we dont do this again
+  gem.loaded = true;
+  return gem;
+}

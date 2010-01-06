@@ -387,6 +387,10 @@ function Init_Browser() {
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
+/**
+  This whole file is to be depreciated.
+*/
  
 var vn_all_bundles = { };
 
@@ -1116,6 +1120,140 @@ function Init_File() {
 }
 
 /* 
+ * gem.js
+ * vienna
+ * 
+ * Created by Adam Beynon.
+ * Copyright 2010 Adam Beynon.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+/**
+  Gem support: only for gems/bundles in the vngem format. Also provides some gem 
+  methods and classes that are useful. The majority is not implemented however
+  for usage patterns/reasons.
+  
+  name - gem name, e.g. 'vienna'
+  path - bundles will be '/vendor' or similar, app will be '/' or ''
+  content - string content of the vngem file. This will possibly be removed once
+            the content has been parsed and the necessary files have been created.
+  loaded - has this gem/bundle been required()? The content is not parsed or
+            processed until it is required... which usually happens straight away.
+            This property is useful to avoid loading a bundle twice.
+*/
+function vn_gem() {
+  this.name = "";
+  this.path = "";
+  this.content = "";
+  this.loaded = false;
+}
+
+// all gems/apps/bundles, name => gem object
+var vn_gem_all = { };
+
+/**
+  preload the gem at the given path so it will be ready. callbacks used for
+  chaining gem loading
+*/
+function vn_gem_preload(path, name) {
+  // preload.
+}
+
+/**
+  boot a gem with the given name, path and content (i.e. process it)
+*/
+function vn_gem_boot(name, path, content) {
+  var g = new vn_gem();
+  g.name = name;
+  g.path = path;
+  g.content = content;
+  vn_gem_all[name] = g;
+  vm_gem_load(g);
+  return g;
+}
+
+/**
+  Do actual gem processing
+*/
+function vm_gem_load(gem) {
+  if (gem.loaded) throw "Cannot load gem twice... something silly happened"
+  
+  var at = 0;
+  var ch = '';
+  var text = gem.content;
+  
+  // get gem format
+  var gem_format = (function() {
+    var marker = text.indexOf('$', at);
+    var format = text.substr(at, marker - at);
+    at = marker + 1;
+    return format;
+  })();
+  
+  // get gem version
+  var gem_version = (function() {
+    var marker = text.indexOf('$', at);
+    var version = text.substr(at, marker - at);
+    at = marker + 1;
+    return version;
+  })();
+  
+  var next = function(c) {
+    if (c && c !== ch) {
+      console.log('bundle parse error: Expected ' + c + ', but instead got ' + ch);
+    }
+    ch = text.charAt(at);
+    at += 1;
+    return ch;
+  };
+  
+  var get_next = function(i) {
+    var result = text.substr(at, i);
+    at += i;
+    return result;
+  };
+  
+  var marker_count = function() {
+    var len = '';
+    next();
+    while (ch >= '0' && ch <= '9') {
+      len += ch;
+      next(); // this will also pass us through the $ at the end of length
+    }
+    return parseInt(len);
+  };
+  
+  while (next()) {
+    switch (ch) {
+      case 'f':
+        // parse_file();
+        break;
+      default:
+        throw "unknown bundle part " + ch
+    }
+  }
+  
+  // make sure we dont do this again
+  gem.loaded = true;
+  return gem;
+}/* 
  * init.js
  * vienna
  * 
@@ -1227,32 +1365,19 @@ function vm_bundle_main(filename) {
   // VN_BOOTSTRAP_BUNDLES = ["vienna"];
   for (var i = 0; i < VN_BOOTSTRAP_BUNDLES.length; i++) {
     var fullpath = VN_VENDOR_PATH + '/' + VN_BOOTSTRAP_BUNDLES[i] + '.vngem';
-    console.log("Need to load: " + fullpath);
+    // console.log("Need to load: " + fullpath);
   }
   
   // app
   var fullpath = VN_BOOTSTRAP_APPLICATION + '.vngem';
-  console.log("need to load " + fullpath);
+  // console.log("need to load " + fullpath);
   var r = new XMLHttpRequest();
   r.open("GET", fullpath, false);
   r.send(null);
-  console.log(r.responseText);
-  // console.log(window.location);
+  // console.log(r.responseText);
   
-  // vm_run_mode_sleep(rb_top_vm);
-  // var r = new XMLHttpRequest();
-  // r.open("GET", path + '.rb', false);
-  // r.onreadystatechange=function() {
-  //   if (r.readyState==4) {
-  //     var rt = r.responseText;
-  //     // console.log(r);
-  //     var a = new vn_parser(path + '.rb', rt);
-  //     var res = a.parse(rt);
-  //     rb_iseq_eval(res);
-  //   }
-  // }
-  // r.send(null);
-  
+  // load the root gem
+  vn_gem_boot(VN_BOOTSTRAP_APPLICATION, "", r.responseText);
 }
 
 // /**
@@ -5191,3 +5316,35 @@ function Init_vm_eval() {
     // 
     // rb_define_method(rb_mKernel, "caller", rb_f_caller, -1);
 }
+/* 
+ * yaml.js
+ * vienna
+ * 
+ * Created by Adam Beynon.
+ * Copyright 2010 Adam Beynon.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+/**
+  YAML support: all yml files in the browser will be pre-compiled into the vnyml
+  format. They will still, however, have the .yml or .yaml extension. This library
+  will reproduce the functionality of vanilla yaml but using the vnyml format
+  instead.
+*/

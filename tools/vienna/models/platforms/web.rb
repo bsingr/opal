@@ -106,7 +106,7 @@ module Vienna
       def rebuild_runtime
         File.open(vienna_js_file, "wb") do |f|
           # hardcoded path.. fix this when moving base runtime around
-          sources = File.join(File.dirname(__FILE__), '..', '..', '..', '..', 'lib_old', 'vienna', 'base', 'lib', '**', '*.{js}')
+          sources = File.join(File.dirname(__FILE__), '..', '..', '..', '..', 'browser', 'lib', '**', '*.{js}')
           t = ""
           Dir.glob(sources).each do |s|
             open(s).each { |l| t << l }
