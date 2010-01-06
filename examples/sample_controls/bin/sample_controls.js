@@ -35,4 +35,4 @@
 // related functions to montior startup.
 
 // basically execute..
-vn_boot_require('sample_controls/config/environment');
+vm_bundle_main('config/environment');

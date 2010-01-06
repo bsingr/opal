@@ -54,9 +54,24 @@ function vm_rb_main(path) {
   Used for the bundles appraoch, where all files are already pre-compiled, or
   vn-server is used to deploy files. This basically means no raw .rb files will
   need to be compiled, so all searches take place for .vn files
-*/
-function vm_bundle_main(bundle_name) {
   
+  This loads the .rb file from the app bundle.
+  
+  This actually loads each vendor bundle and the app bundle from the server, and
+  then, only when that is complete, does it actually load and run the given file.
+  
+  For now, synchronous callbacks: in future, this will be async to avoid blocking
+  browser. Will need to make use of callbacks.
+*/
+function vm_bundle_main(filename) {
+  if (!window.VN_VENDOR_PATH) VN_VENDOR_PATH = '/vendor';
+  if (!window.VN_APPLICATION_PATH) VN_APPLICATION_PATH = '/';
+  // VN_BOOTSTRAP_APPLICATION = "sample_controls";
+  // VN_BOOTSTRAP_BUNDLES = ["vienna"];
+  for (var i = 0; i < VN_BOOTSTRAP_BUNDLES.length; i++) {
+    var fullpath = VN_VENDOR_PATH + '/' + VN_BOOTSTRAP_BUNDLES[i] + '.vngem';
+    console.log("Need to load: " + fullpath);
+  }
 }
 
 // /**

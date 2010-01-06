@@ -1,9 +1,9 @@
 # 
-# server.rb
+# inflector.rb
 # vienna
 # 
 # Created by Adam Beynon.
-# Copyright 2009 Adam Beynon.
+# Copyright 2010 Adam Beynon.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -24,21 +24,30 @@
 # THE SOFTWARE.
 #
 
-require 'rubygems'
-require 'rack'
-
 module Vienna
   
-  class Tools
+  class Inflector
     
-    # Used to start a rack server for testing the project. This saves building 
-    # between code chnages, as the project is dynamically built as required. 
-    # This is currently based on code chnages between refreshing the base
-    # index.html page. In future, this is likely to be more complex in determining
-    # code builds.
-    def server
-      find_project!
-      Vienna::Rack::AppServer.new(@project, self)
+    # makes/returns a singlular instance. calls block with instance if block is given.
+    def self.inflect
+      @inflect ||= self.new
+      
+      if block_given?
+        yield @inflect
+      end
+      
+      @inflect
+    end
+    
+    # define 'other' inflect... i.e. not a "usual" word
+    def other(singular, plural)
+      
     end
   end
+end
+
+# default inflectors
+Vienna::Inflector.inflect do |inflect|
+  
+  inflect.other 'person', 'people'
 end

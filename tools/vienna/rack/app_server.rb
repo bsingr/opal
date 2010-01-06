@@ -1,9 +1,9 @@
 # 
-# rack.rb
+# app_server.rb
 # vienna
 # 
 # Created by Adam Beynon.
-# Copyright 2009 Adam Beynon.
+# Copyright 2010 Adam Beynon.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -24,12 +24,84 @@
 # THE SOFTWARE.
 #
 
+require 'pp'
+
 module Vienna
   
   module Rack
     
     # Application server for a vienna project
     class AppServer
+      
+      attr_reader :project
+      
+      def initialize(project, tools)
+        @project = project
+        @tools = tools
+              
+        routes_path = File.join(@project.project_root, 'lib', 'routes.rb')        
+        abort "Cannot find routes.rb file" unless File.exist?(routes_path)
+        
+        f = open(File.join(@project.project_root, 'lib', 'routes.rb')).map {|l| l.rstrip}.join("\n")
+        instance_eval f
+        puts "Starting server on port #{3030}."
+        ::Rack::Handler::Mongrel.run self, :Port => 3030
+      end
+      
+      
+      # web app entry point
+      def call(env)
+        @env = env
+        pp env
+        # request_path = env['REQUEST_PATH']
+        # request_path = "/index.html" if request_path == "/"
+        #   
+        # # If we are accessing index.html, rebuild then deploy.
+        # if request_path == "/index.html"
+        #   rebuild!
+        # end
+        #   
+        # result = File.join(@project.project_root, @project.build_prefix, request_path)
+        #   
+        # return missing_file(result) unless File.exist?(result)
+        #   
+        # [200, {"Content-Type" => ::Rack::Mime.mime_type(File.extname(result), 'text/plain')}, File.open(result)]
+        [200, {"Content-Type" => 'text/plain'}, "Hey there"]
+      end
+      
+      # define a 'GET' request
+      def get(path, options={}, &block)
+        puts "get: #{path}" 
+      end
+      
+      # define a 'PUT' request
+      def put(path, options={}, &block)
+        
+      end
+      
+      # define a 'POST' request
+      def post(path, options={}, &block)
+        
+      end
+      
+      # define a 'DELETE' request
+      def delete(path, options={}, &block)
+        
+      end
+      
+      # define a (restful) resource
+      # name should be the plural
+      
+      # This will cause the following files to be loaded:
+      #   - project_root/lib/models/singular_name.rb
+      #   - project_root/lib/fixtures/name.yml
+      # 
+      # Fixtures will be used as the data source of the application, and the model
+      # will be the actual instance Record used to deal with the resource
+      def resource(name, options={})
+        puts "Need to load restful resource: #{name}"
+        
+      end
       
     end
   end
