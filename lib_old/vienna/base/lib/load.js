@@ -72,6 +72,30 @@ function vm_bundle_main(filename) {
     var fullpath = VN_VENDOR_PATH + '/' + VN_BOOTSTRAP_BUNDLES[i] + '.vngem';
     console.log("Need to load: " + fullpath);
   }
+  
+  // app
+  var fullpath = VN_BOOTSTRAP_APPLICATION + '.vngem';
+  console.log("need to load " + fullpath);
+  var r = new XMLHttpRequest();
+  r.open("GET", fullpath, false);
+  r.send(null);
+  console.log(r.responseText);
+  // console.log(window.location);
+  
+  // vm_run_mode_sleep(rb_top_vm);
+  // var r = new XMLHttpRequest();
+  // r.open("GET", path + '.rb', false);
+  // r.onreadystatechange=function() {
+  //   if (r.readyState==4) {
+  //     var rt = r.responseText;
+  //     // console.log(r);
+  //     var a = new vn_parser(path + '.rb', rt);
+  //     var res = a.parse(rt);
+  //     rb_iseq_eval(res);
+  //   }
+  // }
+  // r.send(null);
+  
 }
 
 // /**
@@ -136,7 +160,7 @@ function rb_f_require(obj, path) {
       rb_iseq_eval(res);
     }
   }
-  r.send(null)
+  r.send(null);
 }
 
 /**
