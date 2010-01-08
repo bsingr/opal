@@ -26,23 +26,23 @@
 
 require File.join(File.dirname(__FILE__), 'boot')
 
-application :name => 'sample_controls' do |app|
-  
-  # custom place to put application gem/bundle - only applicable to web
-  # '/' by default (same path as index.html and vienna.js)
-  # app.application_path = '/'
-  
-  # custom place to look for vendor gems/bundles. '/vendor/' by default
-  # app.vendor_path = '/vendor'
-  
-  # app.development_region = :en
-  
-  # app delegate class: must be a symbol to avoid loading errors...maybe string instead?
-  # app.application_contoller = :AppController
-  
-  # bundles that this application requires. These will be loaded into the browser
-  # runtime before the application is run. 'gem' used as a "compatible" keyword
-  # for vanilla ruby. This will infact only load vienna bundles located in the 
-  # vendor folder. 'vienna' gem is loaded automatically.
-  # app.gem 'interface_builder'
-end
+# application :name => 'sample_controls' do |app|
+#   
+#   # custom place to put application gem/bundle - only applicable to web
+#   # '/' by default (same path as index.html and vienna.js)
+#   # app.application_path = '/'
+#   
+#   # custom place to look for vendor gems/bundles. '/vendor/' by default
+#   # app.vendor_path = '/vendor'
+#   
+#   # app.development_region = :en
+#   
+#   # app delegate class: must be a symbol to avoid loading errors...maybe string instead?
+#   # app.application_contoller = :AppController
+#   
+#   # bundles that this application requires. These will be loaded into the browser
+#   # runtime before the application is run. 'gem' used as a "compatible" keyword
+#   # for vanilla ruby. This will infact only load vienna bundles located in the 
+#   # vendor folder. 'vienna' gem is loaded automatically.
+#   # app.gem 'interface_builder'
+# end

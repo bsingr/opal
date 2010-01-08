@@ -90,7 +90,14 @@ var ISEQ_TYPE_TOP    = 1,
     ISEQ_TYPE_MAIN   = 8;
 
 /**
-  == Depreceated
+  DEFINECLASS types
+*/
+var DEFINECLASS_CLASS   = 0,
+    DEFINECLASS_OTHER   = 1,
+    DEFINECLASS_MODULE  = 2;
+
+/**
+  == Depreceated?
   
 
   call args
@@ -214,6 +221,14 @@ function vm_exec(vm) {
 }
 
 /**
+  get current base
+*/
+function vm_get_base() {
+  // FIXME: get from current frame - for now everything is a child of Object, i.e. top leve;
+  return rb_cObject;
+}
+
+/**
   getconstant
 */
 function vm_getconstant(klass, id) {
@@ -249,7 +264,7 @@ function vm_send(recv, id, argv, blockiseq) {
 /**
   get local self for env
 */
-function vm_putself() {
+function vm_self() {
   return rb_top_vm.cfp.self;
 }
 
@@ -264,11 +279,40 @@ function vm_putnil() {
   defineclass
 */
 function vm_defineclass(base, sup, id, class_iseq, define_type) {
-  if (sup == nil) sup = rb_cObject;
-  var klass = rb_define_class(id, sup);
+  var klass;
+  switch (define_type) {
+    case DEFINECLASS_CLASS:
+      break;
+    case DEFINECLASS_OTHER:
+      break;
+    case DEFINECLASS_MODULE:
+      // module
+      if (base == nil) {
+        base = vm_get_base();
+      }
+      
+      // find current, if exists
+      if (rb_const_defined_at(base, id)) {
+        klass = rb_const_get_at(base, id);
+        if (!(klass.flags & T_MODULE)) {
+          throw "rb_eTypeError: " + id + " is not a module"
+        }
+      }
+      else {
+        // need to make a new module
+        klass = rb_define_module_id(id);
+        // set class path rb_set_class_path(klass, base, id);
+        rb_const_set(base, id, klass);
+      }
+      break;
+    default:
+      throw "Vienna: unknown defineclass type: " + define_type
+  }
+  
   // vm_push_frame(vm, op[2], klass);
   // var val = vm_exec(vm);
   // vm_pop_frame(vm);
+  // return val;
 }
 
 /**

@@ -29,8 +29,12 @@ module Vienna
   def self.boot!
     puts "Booting application"
     # for now, hardcode vienna path
-    require File.join(File.dirname(__FILE__), '..', '..', '..', 'lib', 'vienna')
+    # require File.join(File.dirname(__FILE__), '..', '..', '..', 'lib', 'vienna')
   end
 end
 
-Vienna.boot!
+# Vienna.boot!
+
+
+puts "adam"
+

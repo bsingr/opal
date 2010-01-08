@@ -92,6 +92,15 @@ function vn_fs_define_file(f, content) {
 }
 
 
+function rb_file_s_dirname(cls, dirname) {
+  return dirname.substr(0, dirname.lastIndexOf('/'));
+  // return "/dirname";
+}
+
+function rb_file_s_join(cls, args) {
+  return args.join("/");
+}
+
 function Init_File() {
   rb_cFile = rb_define_class("File", rb_cObject);
   
@@ -123,7 +132,7 @@ function Init_File() {
   // rb_define_singleton_method(rb_cFile, "expand_path", rb_file_s_expand_path, -1);
   // rb_define_singleton_method(rb_cFile, "absolute_path", rb_file_s_absolute_path, -1);
   // rb_define_singleton_method(rb_cFile, "basename", rb_file_s_basename, -1);
-  // rb_define_singleton_method(rb_cFile, "dirname", rb_file_s_dirname, 1);
+  rb_define_singleton_method(rb_cFile, "dirname", rb_file_s_dirname, 1);
   // rb_define_singleton_method(rb_cFile, "extname", rb_file_s_extname, 1);
   // rb_define_singleton_method(rb_cFile, "path", rb_file_s_path, 1);
   // 
@@ -132,6 +141,6 @@ function Init_File() {
   // rb_define_const(rb_cFile, "PATH_SEPARATOR", "/");
   // 
   // rb_define_singleton_method(rb_cFile, "split",  rb_file_s_split, 1);
-  // rb_define_singleton_method(rb_cFile, "join",   rb_file_s_join, -2);
+  rb_define_singleton_method(rb_cFile, "join",   rb_file_s_join, -1);
 }
 

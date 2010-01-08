@@ -127,49 +127,37 @@ function rb_require_file(file_path) {
 }
 
 /**
-  Main entry point for a require statement. Basically, this will require the path
-  given, unless it has already been required. The same file cannot be required
-  twice. This is done by pausing the current thread, doing all the AJAX file
-  retrieval, parsing/compiling if required, then executing it. Once the file has
-  been dealt with, then a return value of true is pushed onto the stack, and the
-  vm begins to run again, doing whatever steps are necessary. There are three
-  types of possible files that can be included:
-  
-  === Ruby source (.rb)
-  
-  These are parsed as expected. Default search type.
-  
-  === Javascript source (.js)
-  
-  As expected. These are the equivalent of .c libraries for vanilla ruby
-  
-  === Compiled ruby (.vn) <- filename to be determined
-  
-  Already compiled into bytecode formats.
-  
-  == On success
-  
-  Put 'true' on top of stack, and return
-  
-  == On failure
-  
-  Throw an eLoadError.
+  Main entry point for a require statement.
 */
 function rb_f_require(obj, path) {
-  // pause vm
-  vm_run_mode_sleep(rb_top_vm);
-  var r = new XMLHttpRequest();
-  r.open("GET", path + '.rb', false);
-  r.onreadystatechange=function() {
-    if (r.readyState==4) {
-      var rt = r.responseText;
-      // console.log(r);
-      var a = new vn_parser(path + '.rb', rt);
-      var res = a.parse(rt);
-      rb_iseq_eval(res);
-    }
+  var correct_path;
+  // console.log("want to require: " + path + '.rb');
+  // find the file..
+  
+  // first try absolute path
+  if (vn_fs_path_hash[path + '.rb']) {
+    correct_path = path + '.rb';
   }
-  r.send(null);
+  else {
+    throw "cannot find require: " + path;
+  }
+  
+  rb_iseq_eval(eval(vn_fs_path_hash[correct_path]));
+  return true;
+  // pause vm
+  // vm_run_mode_sleep(rb_top_vm);
+  // var r = new XMLHttpRequest();
+  // r.open("GET", path + '.rb', false);
+  // r.onreadystatechange=function() {
+  //   if (r.readyState==4) {
+  //     var rt = r.responseText;
+  //     // console.log(r);
+  //     var a = new vn_parser(path + '.rb', rt);
+  //     var res = a.parse(rt);
+  //     rb_iseq_eval(res);
+  //   }
+  // }
+  // r.send(null);
 }
 
 /**

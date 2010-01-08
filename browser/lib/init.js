@@ -30,9 +30,11 @@ function rb_call_inits() {
   Init_Array();
   Init_Number();
   Init_String();
+  Init_File();
   Init_VM();
   Init_vm_eval();
   Init_load();
+  
   Init_Bundle();
   
   Init_Browser();

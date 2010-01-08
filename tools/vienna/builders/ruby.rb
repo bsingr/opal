@@ -139,9 +139,9 @@ class Vienna::RubyParser < Racc::Parser
 	  
 	end
 	
-	def write(str)
-	 @output_file.write str
-	end
+  # def write(str)
+   # @output_file.write str
+  # end
 	
   # Push new context onto the nametable (var lookup)
   # 
@@ -753,6 +753,9 @@ class Vienna::RubyParser < Racc::Parser
         when 'yield'
           self.lex_state = :EXPR_ARG
           return [:kYIELD, scanner.matched]
+        when '__FILE__'
+          self.lex_state = :EXPR_END
+          return [:k__FILE__, scanner.matched]
         end
         
         matched = scanner.matched

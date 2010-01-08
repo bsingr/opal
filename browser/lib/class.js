@@ -114,18 +114,22 @@ RClass.obj_classname = function(obj) {
 };
 
 function make_metametaclass(metaclass) {
+  console.log("wwowow");
   var metametaclass, super_of_metaclass;
 
   if (metaclass.klass == metaclass) {
+    // console.log(1);
     metametaclass = rb_class_boot(null);
     metametaclass.klass = metametaclass;
   }
   else {
+    // console.log(2);
     metametaclass = rb_class_boot(null);
     metametaclass.klass = metaclass.klass.klass == metaclass.klass ? make_metametaclass(metaclass.klass) : metaclass.klass.klass;
   }
-  
+  // console.log(1);
   FL_SET(metametaclass, FL_SINGLETON);
+  // console.log(2);
   rb_singleton_class_attached(metametaclass, metaclass);
   metaclass.klass = metametaclass;
 
@@ -191,12 +195,13 @@ function rb_define_class_id(id, super_klass) {
 
 function rb_singleton_class(obj) {
   var klass;
-
+  // console.log(obj);
+  // console.log("here");
   if (FL_TEST(obj, T_NUMBER) || FL_TEST(obj, T_SYMBOL)) {
     console.log(obj);
     throw 'can\'t define singleton';
   }
-
+// console.log("yeap");
   if (FL_TEST(obj.klass, FL_SINGLETON) && rb_ivar_get(obj.klass, '__attached__') == obj) {
     klass = obj.klass;
   }
@@ -206,13 +211,18 @@ function rb_singleton_class(obj) {
     // klass = obj.$make_metaclass(obj.$klass) ;
     klass = rb_make_metaclass(obj, obj.klass);
   }
+  // console.log("nearly done");
 
   if (FL_TEST(obj, T_CLASS)) {
     if (rb_ivar_get(klass.klass, '__attached__') != klass) {
-      make_metametaclass(klass);
-      // RClass.make_metametaclass(klass);
+      // console.log("this far down");
+      // console.log(klass);
+      
+      //FIXME: def need to fix this.!!!!!!!!!!!!! uncomment basically.
+      // make_metametaclass(klass);
     }
   }
+  // console.log("completely done");
 
   return klass;
 };

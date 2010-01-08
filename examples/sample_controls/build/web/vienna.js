@@ -615,18 +615,22 @@ RClass.obj_classname = function(obj) {
 };
 
 function make_metametaclass(metaclass) {
+  console.log("wwowow");
   var metametaclass, super_of_metaclass;
 
   if (metaclass.klass == metaclass) {
+    // console.log(1);
     metametaclass = rb_class_boot(null);
     metametaclass.klass = metametaclass;
   }
   else {
+    // console.log(2);
     metametaclass = rb_class_boot(null);
     metametaclass.klass = metaclass.klass.klass == metaclass.klass ? make_metametaclass(metaclass.klass) : metaclass.klass.klass;
   }
-  
+  // console.log(1);
   FL_SET(metametaclass, FL_SINGLETON);
+  // console.log(2);
   rb_singleton_class_attached(metametaclass, metaclass);
   metaclass.klass = metametaclass;
 
@@ -692,12 +696,13 @@ function rb_define_class_id(id, super_klass) {
 
 function rb_singleton_class(obj) {
   var klass;
-
+  // console.log(obj);
+  // console.log("here");
   if (FL_TEST(obj, T_NUMBER) || FL_TEST(obj, T_SYMBOL)) {
     console.log(obj);
     throw 'can\'t define singleton';
   }
-
+// console.log("yeap");
   if (FL_TEST(obj.klass, FL_SINGLETON) && rb_ivar_get(obj.klass, '__attached__') == obj) {
     klass = obj.klass;
   }
@@ -707,13 +712,18 @@ function rb_singleton_class(obj) {
     // klass = obj.$make_metaclass(obj.$klass) ;
     klass = rb_make_metaclass(obj, obj.klass);
   }
+  // console.log("nearly done");
 
   if (FL_TEST(obj, T_CLASS)) {
     if (rb_ivar_get(klass.klass, '__attached__') != klass) {
-      make_metametaclass(klass);
-      // RClass.make_metametaclass(klass);
+      // console.log("this far down");
+      // console.log(klass);
+      
+      //FIXME: def need to fix this.!!!!!!!!!!!!! uncomment basically.
+      // make_metametaclass(klass);
     }
   }
+  // console.log("completely done");
 
   return klass;
 };
@@ -1099,6 +1109,15 @@ function vn_fs_define_file(f, content) {
 }
 
 
+function rb_file_s_dirname(cls, dirname) {
+  return dirname.substr(0, dirname.lastIndexOf('/'));
+  // return "/dirname";
+}
+
+function rb_file_s_join(cls, args) {
+  return args.join("/");
+}
+
 function Init_File() {
   rb_cFile = rb_define_class("File", rb_cObject);
   
@@ -1130,7 +1149,7 @@ function Init_File() {
   // rb_define_singleton_method(rb_cFile, "expand_path", rb_file_s_expand_path, -1);
   // rb_define_singleton_method(rb_cFile, "absolute_path", rb_file_s_absolute_path, -1);
   // rb_define_singleton_method(rb_cFile, "basename", rb_file_s_basename, -1);
-  // rb_define_singleton_method(rb_cFile, "dirname", rb_file_s_dirname, 1);
+  rb_define_singleton_method(rb_cFile, "dirname", rb_file_s_dirname, 1);
   // rb_define_singleton_method(rb_cFile, "extname", rb_file_s_extname, 1);
   // rb_define_singleton_method(rb_cFile, "path", rb_file_s_path, 1);
   // 
@@ -1139,7 +1158,7 @@ function Init_File() {
   // rb_define_const(rb_cFile, "PATH_SEPARATOR", "/");
   // 
   // rb_define_singleton_method(rb_cFile, "split",  rb_file_s_split, 1);
-  // rb_define_singleton_method(rb_cFile, "join",   rb_file_s_join, -2);
+  rb_define_singleton_method(rb_cFile, "join",   rb_file_s_join, -1);
 }
 
 /* 
@@ -1315,9 +1334,11 @@ function rb_call_inits() {
   Init_Array();
   Init_Number();
   Init_String();
+  Init_File();
   Init_VM();
   Init_vm_eval();
   Init_load();
+  
   Init_Bundle();
   
   Init_Browser();
@@ -1452,49 +1473,37 @@ function rb_require_file(file_path) {
 }
 
 /**
-  Main entry point for a require statement. Basically, this will require the path
-  given, unless it has already been required. The same file cannot be required
-  twice. This is done by pausing the current thread, doing all the AJAX file
-  retrieval, parsing/compiling if required, then executing it. Once the file has
-  been dealt with, then a return value of true is pushed onto the stack, and the
-  vm begins to run again, doing whatever steps are necessary. There are three
-  types of possible files that can be included:
-  
-  === Ruby source (.rb)
-  
-  These are parsed as expected. Default search type.
-  
-  === Javascript source (.js)
-  
-  As expected. These are the equivalent of .c libraries for vanilla ruby
-  
-  === Compiled ruby (.vn) <- filename to be determined
-  
-  Already compiled into bytecode formats.
-  
-  == On success
-  
-  Put 'true' on top of stack, and return
-  
-  == On failure
-  
-  Throw an eLoadError.
+  Main entry point for a require statement.
 */
 function rb_f_require(obj, path) {
-  // pause vm
-  vm_run_mode_sleep(rb_top_vm);
-  var r = new XMLHttpRequest();
-  r.open("GET", path + '.rb', false);
-  r.onreadystatechange=function() {
-    if (r.readyState==4) {
-      var rt = r.responseText;
-      // console.log(r);
-      var a = new vn_parser(path + '.rb', rt);
-      var res = a.parse(rt);
-      rb_iseq_eval(res);
-    }
+  var correct_path;
+  // console.log("want to require: " + path + '.rb');
+  // find the file..
+  
+  // first try absolute path
+  if (vn_fs_path_hash[path + '.rb']) {
+    correct_path = path + '.rb';
   }
-  r.send(null);
+  else {
+    throw "cannot find require: " + path;
+  }
+  
+  rb_iseq_eval(eval(vn_fs_path_hash[correct_path]));
+  return true;
+  // pause vm
+  // vm_run_mode_sleep(rb_top_vm);
+  // var r = new XMLHttpRequest();
+  // r.open("GET", path + '.rb', false);
+  // r.onreadystatechange=function() {
+  //   if (r.readyState==4) {
+  //     var rt = r.responseText;
+  //     // console.log(r);
+  //     var a = new vn_parser(path + '.rb', rt);
+  //     var res = a.parse(rt);
+  //     rb_iseq_eval(res);
+  //   }
+  // }
+  // r.send(null);
 }
 
 /**
@@ -4909,7 +4918,14 @@ var ISEQ_TYPE_TOP    = 1,
     ISEQ_TYPE_MAIN   = 8;
 
 /**
-  == Depreceated
+  DEFINECLASS types
+*/
+var DEFINECLASS_CLASS   = 0,
+    DEFINECLASS_OTHER   = 1,
+    DEFINECLASS_MODULE  = 2;
+
+/**
+  == Depreceated?
   
 
   call args
@@ -5033,6 +5049,14 @@ function vm_exec(vm) {
 }
 
 /**
+  get current base
+*/
+function vm_get_base() {
+  // FIXME: get from current frame - for now everything is a child of Object, i.e. top leve;
+  return rb_cObject;
+}
+
+/**
   getconstant
 */
 function vm_getconstant(klass, id) {
@@ -5068,7 +5092,7 @@ function vm_send(recv, id, argv, blockiseq) {
 /**
   get local self for env
 */
-function vm_putself() {
+function vm_self() {
   return rb_top_vm.cfp.self;
 }
 
@@ -5083,11 +5107,40 @@ function vm_putnil() {
   defineclass
 */
 function vm_defineclass(base, sup, id, class_iseq, define_type) {
-  if (sup == nil) sup = rb_cObject;
-  var klass = rb_define_class(id, sup);
+  var klass;
+  switch (define_type) {
+    case DEFINECLASS_CLASS:
+      break;
+    case DEFINECLASS_OTHER:
+      break;
+    case DEFINECLASS_MODULE:
+      // module
+      if (base == nil) {
+        base = vm_get_base();
+      }
+      
+      // find current, if exists
+      if (rb_const_defined_at(base, id)) {
+        klass = rb_const_get_at(base, id);
+        if (!(klass.flags & T_MODULE)) {
+          throw "rb_eTypeError: " + id + " is not a module"
+        }
+      }
+      else {
+        // need to make a new module
+        klass = rb_define_module_id(id);
+        // set class path rb_set_class_path(klass, base, id);
+        rb_const_set(base, id, klass);
+      }
+      break;
+    default:
+      throw "Vienna: unknown defineclass type: " + define_type
+  }
+  
   // vm_push_frame(vm, op[2], klass);
   // var val = vm_exec(vm);
   // vm_pop_frame(vm);
+  // return val;
 }
 
 /**
