@@ -78,6 +78,13 @@ function vm_gem_load(gem) {
   var ch = '';
   var text = gem.content;
   
+  // parse a file
+  function parse_file() {
+    var f = get_next(marker_count());
+    var c = get_next(marker_count());
+    vn_fs_define_file(f, c);
+  }
+  
   // get gem format
   var gem_format = (function() {
     var marker = text.indexOf('$', at);
@@ -122,7 +129,7 @@ function vm_gem_load(gem) {
   while (next()) {
     switch (ch) {
       case 'f':
-        // parse_file();
+        parse_file();
         break;
       default:
         throw "unknown bundle part " + ch

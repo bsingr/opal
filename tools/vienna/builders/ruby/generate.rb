@@ -28,6 +28,39 @@ module Vienna
   
   class RubyParser
     
+    class ISEQ
+      
+      def initialize(type, filename)
+        @type = type
+        @filename = filename
+      end
+      
+      def to_s
+        %{[0,0,"<compiled>","#{@filename}",#{@type},0,[],function(){}]}
+      end
+    end
+    
+    ISEQ_TYPE_TOP    = 1
+    ISEQ_TYPE_METHOD = 2
+    ISEQ_TYPE_BLOCK  = 3
+    ISEQ_TYPE_CLASS  = 4
+    ISEQ_TYPE_RESCUE = 5
+    ISEQ_TYPE_ENSURE = 6
+    ISEQ_TYPE_EVAL   = 7
+    ISEQ_TYPE_MAIN   = 8
+    
+    # iseq is a ruby array containing iseq structure
+    def iseq_stack_push(type)
+      @iseq_stack << ISEQ.new(type, @build_name)
+    end
+    
+    # returns full string representation of iseq
+    def iseq_stack_pop
+      iseq = @iseq_stack.last
+      @iseq_stack_pop
+      iseq.to_s
+    end
+    
     # Generates the given parse tree. A context is maintained for each stage to
     # ensure that the correct format is kept for developing the tree. This
     # involves keeping a track of aspects such as is the current context an
@@ -60,12 +93,13 @@ module Vienna
     #             locally, or in Object, or, as we want, might be nearby in the
     #             same module, or indeed the parent module.
     def generate_tree tree
-      # write "console.log('#{@source}');"
-      push_nametable
+      
+      # top_iseq = iseq_stack_push([0, 0, "<compiled>", "filename", ISEQ_TYPE_TOP,0,[],[]])
+      top_iseq = iseq_stack_push(ISEQ_TYPE_TOP)
       tree.each do |stmt|
-        generate_stmt stmt, :instance => true, :full_stmt => true, :last_stmt => false, :top_level => true, :self => current_self
+        # generate_stmt stmt, :instance => true, :full_stmt => true, :last_stmt => false, :top_level => true
       end
-      pop_nametable
+      iseq_stack_pop
     end
     
     # Generate any type of statement with the given options

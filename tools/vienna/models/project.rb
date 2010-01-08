@@ -90,18 +90,7 @@ module Vienna
      end
 
      def build!
-       # build:
-       # include ALL files in project_root/app and project_root/config
-       # resources/files from other places will be used as necessary.
-       # test will only be included for test runs, not default build.
-       # lib includes taks etc, so dont include
-       # bin are for building executables, not for runtime
-       # stylesheets/images are located inside app folder. any images.css
-       # outside should be ignored.
-       # 
-       # also, for web: include platforms/web .. this has extra stuff just
-       # for js env that cannot be dynamically loaded at runtime, so make 
-       # this part of the build hardcoded.
+       
 
        # hardcoded web build
        @web_platform = Vienna::Platforms::Web.new(self)

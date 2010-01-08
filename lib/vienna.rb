@@ -33,4 +33,6 @@ module Vienna
   end
 end
 
-Vienna.require_all_libs_relative_to(__FILE__)
+# Vienna.require_all_libs_relative_to(__FILE__)
+
+puts "ZOMG!!!"

@@ -57,30 +57,45 @@ class Vienna::RubyParser < Racc::Parser
 		new(file_name)
 	end
 	
-	def initialize(source, dest, project)
-	  @source = source
-	  @destination = dest
-	  @project = project
-	  @requirements = []
-	  @current_self = ['VN.self']
-	  @current_self_stack_counter = 0
-	  @context_var_stack = []
-    # Array of arrays
-	  @nametable = []
-	  
-	  File.open(@source) do |f|
-	    @scanner = StringScanner.new(f.read)
-    end
+  # Rewrite to simply return the "compiled" source as a string. This will make
+  # testing incredibly easy.
+  def initialize(source, project, build_name)
+    @source = source
+    @project = project
+    @build_name = build_name
+    File.open(@source) { |f| @scanner = StringScanner.new(f.read) }
     
-    # do_parse
-	end
+    # For generate:
+    @iseq_stack = []
+  end
+	
+  # def initialize(source, dest, project)
+  #   @source = source
+  #   @destination = dest
+  #   @project = project
+  #   @requirements = []
+  #   @current_self = ['VN.self']
+  #   @current_self_stack_counter = 0
+  #   @context_var_stack = []
+  #     # Array of arrays
+  #   @nametable = []
+  #   
+  #   File.open(@source) do |f|
+  #     @scanner = StringScanner.new(f.read)
+  #     end
+  #     
+  #     # do_parse
+  # end
 	
 	def build!
+	  do_parse
+    # this will return the needed string
+	  generate_tree @parser_result unless @parser_result.nil?
     # puts "Building #{@source}"
-	  @output_file = File.new @destination, 'w'
-    do_parse
-    generate_tree @parser_result unless @parser_result.nil?
-    @output_file.close
+    # @output_file = File.new @destination, 'w'
+    #     do_parse
+    #     generate_tree @parser_result unless @parser_result.nil?
+    #     @output_file.close
 	end
 	
   # This should simpy parse the given string, and return a syntax tree.

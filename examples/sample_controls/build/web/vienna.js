@@ -1076,6 +1076,29 @@ var vn_fs_path_hash = {
   "/": vn_fs_root
 };
 
+/**
+  define a new file by filename (f), and filecontent (c)
+*/
+function vn_fs_define_file(f, content) {
+  vn_fs_path_hash[f] = content;
+  var p = f.split("/");
+  var i, c = vn_fs_root, b;
+  // for each path segment, except first (which will be empty) and
+  // last, which will be a file, so treat differently
+  for (i = 1; i < p.length - 1; i++) {
+    b = p[i];
+    if (c[b] === undefined) {
+      c[b] = { };
+      c[b]['.'] = c[b];
+      c[b]['..'] = c;
+      c[b]['$'] = b;
+    }
+    c = c[b];
+  }
+  c[p[p.length - 1]] = content;
+}
+
+
 function Init_File() {
   rb_cFile = rb_define_class("File", rb_cObject);
   
@@ -1199,6 +1222,13 @@ function vm_gem_load(gem) {
   var ch = '';
   var text = gem.content;
   
+  // parse a file
+  function parse_file() {
+    var f = get_next(marker_count());
+    var c = get_next(marker_count());
+    vn_fs_define_file(f, c);
+  }
+  
   // get gem format
   var gem_format = (function() {
     var marker = text.indexOf('$', at);
@@ -1243,7 +1273,7 @@ function vm_gem_load(gem) {
   while (next()) {
     switch (ch) {
       case 'f':
-        // parse_file();
+        parse_file();
         break;
       default:
         throw "unknown bundle part " + ch
@@ -1348,7 +1378,7 @@ function vm_rb_main(path) {
   
   Used for the bundles appraoch, where all files are already pre-compiled, or
   vn-server is used to deploy files. This basically means no raw .rb files will
-  need to be compiled, so all searches take place for .vn files
+  need to be compiled, so all searches take place for .vngem files
   
   This loads the .rb file from the app bundle.
   
@@ -1378,6 +1408,17 @@ function vm_bundle_main(filename) {
   
   // load the root gem
   vn_gem_boot(VN_BOOTSTRAP_APPLICATION, "", r.responseText);
+  
+  // we can now start the VM
+  rb_call_inits();
+  
+  
+  
+  // run the main file
+  filename = '/' + filename + '.rb';
+  // console.log(filename);
+  // console.log(vn_fs_path_hash[filename]);
+  rb_require_file(filename);
 }
 
 // /**
@@ -1398,6 +1439,17 @@ function vm_bundle_main(filename) {
 //     rb_iseq_eval(o);
 //   });
 // }
+
+/**
+  Actually do a require with the given filename.
+  
+  Already checked file exists, and we pass the raw filename which is already in
+  the vn_fs_path_hash. This method marks the file as being already required and
+  will then exectute the file, by putting it to the top of the vm.
+*/
+function rb_require_file(file_path) {
+  rb_iseq_eval(eval(vn_fs_path_hash[file_path]));
+}
 
 /**
   Main entry point for a require statement. Basically, this will require the path

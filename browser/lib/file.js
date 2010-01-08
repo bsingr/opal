@@ -69,6 +69,29 @@ var vn_fs_path_hash = {
   "/": vn_fs_root
 };
 
+/**
+  define a new file by filename (f), and filecontent (c)
+*/
+function vn_fs_define_file(f, content) {
+  vn_fs_path_hash[f] = content;
+  var p = f.split("/");
+  var i, c = vn_fs_root, b;
+  // for each path segment, except first (which will be empty) and
+  // last, which will be a file, so treat differently
+  for (i = 1; i < p.length - 1; i++) {
+    b = p[i];
+    if (c[b] === undefined) {
+      c[b] = { };
+      c[b]['.'] = c[b];
+      c[b]['..'] = c;
+      c[b]['$'] = b;
+    }
+    c = c[b];
+  }
+  c[p[p.length - 1]] = content;
+}
+
+
 function Init_File() {
   rb_cFile = rb_define_class("File", rb_cObject);
   

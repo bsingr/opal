@@ -30,10 +30,11 @@ module Vienna
     
     class Web
       
-      attr_reader :project
+      attr_reader :project, :app_gem
       
       def initialize(project)
         @project = project
+        @app_gem = WebAppGem.new(project_root, project)
       end
       
       def project_root
@@ -52,6 +53,14 @@ module Vienna
         puts "building web platform at: #{project_root}"
         rebuild_index
         rebuild_runtime
+        rebuild_gems
+      end
+      
+      def rebuild_gems
+        # rebuild all gems
+        
+        @app_gem.prepare!
+        @app_gem.build!
       end
       
       # full path to index.html build file
