@@ -34,7 +34,3 @@ module Vienna
 end
 
 # Vienna.boot!
-
-
-puts "adam"
-

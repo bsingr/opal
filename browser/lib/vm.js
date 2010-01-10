@@ -255,6 +255,13 @@ function vm_setlocal(idx, val) {
 }
 
 /**
+  Getlocal(idx)
+*/
+function vm_getlocal(idx) {
+  return rb_top_vm.cfp.locals[idx];
+}
+
+/**
   vm_send
 */
 function vm_send(recv, id, argv, blockiseq) {
@@ -269,7 +276,9 @@ function vm_self() {
 }
 
 /**
-  put nil
+  put nil.
+  
+  depreceate, just have "nil" directly?
 */
 function vm_putnil() {
   return nil;

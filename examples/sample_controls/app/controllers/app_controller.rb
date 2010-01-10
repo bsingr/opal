@@ -1,4 +1,4 @@
-# Delegate of VN::Application
+# # Delegate of VN::Application
 # class AppController
 #   
 #   VERSION = '0.0.1'
@@ -21,3 +21,5 @@
 #     end
 #   end
 # end
+# 
+# 

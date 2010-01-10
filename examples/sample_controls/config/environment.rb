@@ -46,3 +46,6 @@ require File.join(File.dirname(__FILE__), 'boot')
 #   # vendor folder. 'vienna' gem is loaded automatically.
 #   # app.gem 'interface_builder'
 # end
+
+adam = 10
+puts adam

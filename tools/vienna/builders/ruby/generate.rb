@@ -30,10 +30,25 @@ module Vienna
     
     class ISEQ
       
+      # some iseqs can have a dynamic frame pointer that point to a parent iseq.
+      # for example, blocks can reference locals from their parent, so this will
+      # let us get to them. Might be nil if this tyope cannot reference parent,
+      # i.e. is not a block.
+      attr_accessor :dynamic_frame_pointer
+      
+      # store a list of locals
+      # Array, where index is the local position (reference 0, or 1 etc) and
+      # the value
+      attr_reader :locals
+      # stores the args for iseq
+      attr_reader :args
+      
       def initialize(type, filename)
         @type = type
         @filename = filename
         @opcodes = []
+        @locals = []
+        @args = []
       end
       
       # push the given string as an opcode onto the opcodes
@@ -41,8 +56,43 @@ module Vienna
         @opcodes << str
       end
       
+      # to_s: ready for spitting out to javascript.
       def to_s
+        s = "["
+        s << %{#{@args.length},}
+        s << %{#{@locals.length},}
+        s << %{"<compiled>",}
+        s << %{#{@filename},}
+        s << %{#{@type},}
+        s << %{0,}
+        s << %{[],}
+        s << %{function(){#{@opcodes.join("")}}}
+        s << %{]}
         %{[0,0,"<compiled>","#{@filename}",#{@type},0,[],function(){#{@opcodes.join("")}}]}
+      end
+      
+      # boolean: has a local (can include dynamic...)
+      def has_local?(name)
+        @locals.include?(name) || @args.include?(name)
+      end
+      
+      # returns idx of new local
+      def push_local(name)
+        r = @locals.length
+        @locals << (name)
+        r
+      end
+      
+      # returns [idx, fp]
+      # fp = 0 for local, > 1 for dynamic
+      def local_index(name)
+        if @args.include?(name)
+          return [@args.index(name), 0]
+        elsif @locals.include?(name)
+          return [@locals.index(name), 0]
+        else
+          raise "not implemeneted.. look up dynamic"
+        end
       end
     end
     
@@ -64,19 +114,20 @@ module Vienna
     
     # iseq is a ruby array containing iseq structure
     def iseq_stack_push(type)
-      @iseq_stack << ISEQ.new(type, @build_name)
+      @iseq_current = ISEQ.new(type, @build_name)
+      @iseq_stack << @iseq_current
     end
     
     # returns full string representation of iseq
     def iseq_stack_pop
       iseq = @iseq_stack.last
-      @iseq_stack_pop
+      @iseq_current = @iseq_stack.last
       iseq.to_s
     end
     
     # write the opcode to the current iseq
     def write(str)
-      @iseq_stack.last.write(str)
+      @iseq_current.write(str)
     end
     
     def generate_tree tree
@@ -520,13 +571,24 @@ module Vienna
       
       # if lhs is an identifier...
       if stmt[:lhs].node == :identifier
+        
+        if @iseq_current.has_local?(stmt[:lhs][:name])
+          write %{"yes!"}
+        else
+          # write %{"no!"}
+          idx = @iseq_current.push_local(stmt[:lhs][:name])
+          write %{vm_setlocal(#{idx},}
+          generate_stmt stmt[:rhs], :full_stmt => false, :last_stmt => false
+          write ")"
+        end
+        
         # if already in var table, just put name = ...
         # if not in var table, make new var, and add it
         # we do not write var if we have just put a return before it....js error
-        write 'var ' unless (context[:last_stmt] and context[:full_stmt]) or nametable_include? stmt[:lhs][:name]
-        add_to_nametable(stmt[:lhs][:name]) unless nametable_include? stmt[:lhs][:name]
-        write "#{stmt[:lhs][:name]}="
-        generate_stmt stmt[:rhs], :instance => context[:instance], context[:full_stmt] => false, context[:last_stmt] => true, :self => context[:self]
+        # write 'var ' unless (context[:last_stmt] and context[:full_stmt]) or nametable_include? stmt[:lhs][:name]
+        # add_to_nametable(stmt[:lhs][:name]) unless nametable_include? stmt[:lhs][:name]
+        # write "#{stmt[:lhs][:name]}="
+        # generate_stmt stmt[:rhs], :instance => context[:instance], context[:full_stmt] => false, context[:last_stmt] => true, :self => context[:self]
         
       
       # If LHS is an @instance_variable
@@ -579,7 +641,7 @@ module Vienna
         write stmt
       end
       
-      write ";\n" if context[:full_stmt]
+      write ";" if context[:full_stmt]
       
     end
     
@@ -818,7 +880,14 @@ module Vienna
     
     def generate_module mod, context
       
-      write %{vm_defineclass(nil,nil,"#{mod.klass_name}",nil,#{DEFINECLASS_MODULE});}
+      # mod_iseq = iseq_stack_push(ISEQ_TYPE_CLASS)
+      # tree.each do |stmt|
+        # generate_stmt stmt, :instance => true, :full_stmt => true, :last_stmt => false, :top_level => true
+      # end
+      # mod_str = iseq_stack_pop
+      # puts mod_str
+      
+      # write %{vm_defineclass(nil,nil,"#{mod.klass_name}",nil,#{DEFINECLASS_MODULE});}
       
       # write "(function(self) {\n"
       # 
@@ -851,10 +920,12 @@ module Vienna
 
     
     def generate_symbol sym, context
-      write 'return ' if context[:last_stmt] and context[:full_stmt]
-      write "#{js_id_for_symbol(sym[:name])}"
+      write "return " if context[:last_stmt] and context[:full_stmt]
+      write %{ID2SYM("#{sym[:name]}")}
+      
+      # write "#{js_id_for_symbol(sym[:name])}"
       # write "'#{sym[:name]}'"
-      write ";\n" if context[:full_stmt]
+      write ";" if context[:full_stmt]
     end
     
     def generate_constant const, context
@@ -932,15 +1003,39 @@ module Vienna
     # a varname, or a method call on self.
     def generate_identifier identifier, context
       
+      # if context[:last_stmt] and context[:full_stmt]
+      #   write 'return '
+      # end     
+      # 
+      # # if lhs is an identifier...
+      # if stmt[:lhs].node == :identifier
+      #   
+      #   if @iseq_current.has_local?(stmt[:lhs][:name])
+      #     write %{"yes!"}
+      #   else
+      #     # write %{"no!"}
+      #     idx = @iseq_current.push_local(stmt[:lhs][:name])
+      #     write %{vm_setlocal(#{idx},}
+      #     generate_stmt stmt[:rhs], :full_stmt => false, :last_stmt => false
+      #     write ")"
+      #   end
+      
       write 'return ' if context[:last_stmt] and context[:full_stmt]
       
-      # if nametable_include? identifier[:name]
-        write identifier[:name]
-      # else
-        # method call
-        # write "#{current_self}.$('#{identifier[:name]}', [])"
-        # write "#{js_replacement_function_name('rb_funcall')}(#{current_self},#{js_id_for_string(identifier[:name])})"
-      # end
+      if @iseq_current.has_local?(identifier[:name])
+        # idx is index, fp is the lfp or dynamic frame. if 0, local, if > 0
+        # then it is a dynamic frame pointer
+        idx, fp = @iseq_current.local_index(identifier[:name])
+        if fp == 0
+          write %{vm_getlocal(#{idx})}
+        else
+          # dynamic
+          write "erm, fix"
+        end
+      else
+        write "yada"
+      end
+      
       write ";" if context[:full_stmt]
     end
     
