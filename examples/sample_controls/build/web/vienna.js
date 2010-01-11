@@ -4684,7 +4684,7 @@ function rb_ivar_set(obj, id, val) {
 };
 
 function rb_ivar_get(obj, id) {
-  return obj[id];
+  return obj.iv_tbl[id];
 }
 
 function rb_const_set(k, id, val) {
@@ -5044,8 +5044,336 @@ function vm_run_mode_running(vm) {
   Execute iseq, for current frame pointer, which will be a function.
 */
 function vm_exec(vm) {
-  var iseq = vm.cfp.iseq[7];
-  return iseq();
+  var iseq = vm.cfp.iseq[7], op, sf = vm.cfp;
+  // console.log("executing iseq: " + iseq);
+  for (; sf.pc < iseq.length; sf.pc++) {
+    op = iseq[sf.pc];
+    
+    if (typeof op === 'number') {
+      // console.log("at line number " + op);
+      continue;
+    }
+    
+    switch (op[0]) {
+      /**
+        putobject
+        
+        put an object onto the stack
+        
+        == operands
+        
+        VALUE val
+        
+        == stack
+        
+        before:             after:
+        
+                            ----------
+        ==========    =>     val
+                            ----------
+      */
+      case iPUTOBJECT:
+        // console.log("putobject" + sf.sp);
+        sf.stack[sf.sp++] = op[1];
+        break;
+      
+      /**
+        getlocal
+        
+        get local from locals array, and put onto stack
+        
+        == operands
+        
+        idx
+        
+        == stack
+        
+        before:             after:
+        
+                            ----------
+        ==========    =>     val
+                            ----------
+      */
+      case iGETLOCAL:
+        // console.log("getlocal" + sf.sp);
+        sf.stack[sf.sp++] = sf.locals[op[1]];
+        break;
+        
+        /**
+          setlocal
+          
+          == operands
+
+          idx - index of local. Args, then locals.
+          
+          == stack
+
+          before:             after:
+
+          ----------         
+           val          =>   ==========
+          ----------         
+
+          == Discussion
+
+          Sets local var value. Note, not local ivar.
+        */
+      case iSETLOCAL:
+        // console.log("setlocal" + sf.sp);
+        sf.locals[op[1]] = sf.stack[--sf.sp];
+        // console.log("after: " + sf.sp);
+        break;
+      
+      /**
+        getdynamic
+        
+        == operands
+        
+        idx - idx in locals
+        level - level to search, 0 = current frame
+        
+      */
+      case iGETDYNAMIC:
+      // cheat, only works for level [0] at the moment, i.e. local frame and use
+      // the first index..basically, just so we can get things working.
+        sf.stack[sf.sp++] = sf.locals[0];
+        // throw ""
+        break;
+      
+      /**
+        setinstancevariable
+        
+        == operands
+        
+        id
+      */
+      case iSETINSTANCEVARIABLE:
+        rb_ivar_set(sf.self, op[1], sf.stack[--sf.sp]);
+        break;
+      
+      /**
+        getinstancevariable
+        
+        == operands
+        
+        id
+        
+        == stack
+        
+        val put onto stack
+      */
+      case iGETINSTANCEVARIABLE:
+        sf.stack[sf.sp++] = rb_ivar_get(sf.self, op[1]);
+        break;
+      
+      /**
+        getconstant
+        
+        == operands
+        
+        id - constant id
+        
+        == stack
+        
+        before:             after:
+        
+        ----------          ----------
+         klass        =>     val
+        ----------          ----------
+        
+        == discussion
+        
+        klass is the base klass to look on.
+        val is the constant itself
+      */
+      case iGETCONSTANT:
+        var const_klass = sf.stack[--sf.sp], const_id = op[1];
+        
+        if (const_klass == nil) {
+          if (sf.self.flags & T_OBJECT) {
+            const_klass = rb_class_real(sf.self.klass);
+          }
+          else {
+            const_klass = sf.self;
+          }
+        }
+        
+        sf.stack[sf.sp++] = rb_const_get(const_klass, const_id);
+        break;
+      
+      /**
+        putnil
+        
+        == operands
+        
+        none
+        
+        == stack
+        
+        before:             after:
+        
+                            ----------
+        ==========    =>     nil
+                            ----------
+      */
+      case iPUTNIL:
+        // console.log("nil" + sf.sp);
+        sf.stack[sf.sp++] = nil;
+        break;
+      
+        /**
+          putnil
+
+          == operands
+
+          none
+
+          == stack
+
+          before:             after:
+
+                              ----------
+          ==========    =>     self
+                              ----------
+        */
+      case iPUTSELF:
+        sf.stack[sf.sp++] = sf.self;
+        break;
+      
+      /**
+        pop
+        
+        == operands
+        
+        none
+        
+        == stack
+        
+        before:             after:
+
+        ----------         
+         val          =>   ==========
+        ----------
+      */
+      case iPOP:
+        // console.log("pop" +  sf.sp);
+        sf.sp--;
+        break;
+      
+      /**
+        defineclass
+        
+        == operands
+        
+        class_id      - class name
+        class_iseq    - class body/sequences
+        define_type   - 0, 1 or 2.
+        
+        == stack
+        
+        before:             after:
+        
+        ----------
+         super              ----------
+        ----------    =>     val
+         base               ----------
+        ----------
+        
+        == discussion
+        
+        val, the return value, is the class object itself.
+      */
+      case iDEFINECLASS:
+        var klass, class_id = op[1], class_iseq = op[2], define_type = op[3];
+        
+        var class_super = sf.stack[--sf.sp];
+        var class_base = sf.stack[--sf.sp];
+        
+        switch (define_type) {
+          case DEFINECLASS_CLASS:
+            
+            if (class_super == nil) {
+              class_super = rb_cObject;
+            }
+            
+            if (class_base == nil) {
+              // this isn't right.
+              class_base = sf.self;
+              // if class_base is an object, then we need to get its klass.
+              if (class_base.flags & T_OBJECT) {
+                class_base = rb_class_real(class_base.klass);
+              }
+            }
+            
+            // find klass, if it already exists
+            if (rb_const_defined_at(class_base, class_id)) {
+              throw "defined"
+            }
+            else {
+              // define new class
+              klass = rb_define_class_id(class_id, class_super);
+              // rb_class_set_path(klass, class_base, id)
+              rb_const_set(class_base, class_id, klass);
+              // rb_class_inherited(class_super, klass);
+            }
+            break;
+          
+          case DEFINECLASS_OTHER:
+            break;
+          
+          case DEFINECLASS_MODULE:
+            break;
+          
+          default:
+            throw "error, unknown iDEFINECLASS definetype"
+        } 
+        break;
+      
+      /**
+        send
+        
+        == operands
+        
+        == stack
+        
+      */
+      case iSEND:
+        // get off arguments first, then get off recv.
+        var argc = op[2], mid = op[1];
+        var argv = sf.stack.slice(sf.sp - argc, sf.sp);
+        sf.sp -= argc;
+        var recv = sf.stack[--sf.sp];
+        
+        // if this is set, then we did not give an explicit receiver, so assume
+        // self (we can use this info for PRIVATE/PUBLIC calls)
+        if (op[4] & VM_CALL_FCALL_BIT) {
+          // console.log("changing receiver: " + argv.join(", "));
+          recv = sf.self;
+        }
+        // console.log("recv is");
+        // console.log(recv);
+        // pop result of call onto stack
+        sf.stack[sf.sp++] = rb_call(recv.klass, recv, mid, argc, argv, op[3]);
+
+        break;
+      
+      /**
+        newarray
+        
+      */
+      case iNEWARRAY:
+        var argc = op[1];
+        var ary = sf.stack.slice(sf.ap - argc, sf.sp);
+        sf.sp -= argc;
+        sf.stack[sf.sp++] = ary;
+        break;
+      
+      default:
+        throw "unknown opcode " + op.toString()
+    }
+  }
+  return nil;
+  // return iseq();
 }
 
 /**
@@ -5104,7 +5432,9 @@ function vm_self() {
 }
 
 /**
-  put nil
+  put nil.
+  
+  depreceate, just have "nil" directly?
 */
 function vm_putnil() {
   return nil;
@@ -5189,6 +5519,8 @@ function vm_push_frame(vm, iseq, self) {
   cfp.iseq = iseq;
   cfp.self = self;
   cfp.pc = 0;
+  cfp.stack = [];
+  cfp.sp = 0;
   
   cfp.locals = new Array(iseq[0] + iseq[1]);
   

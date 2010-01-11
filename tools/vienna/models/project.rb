@@ -52,7 +52,7 @@ module Vienna
       end
       
       f = open(File.join(project_root, 'config', 'environment.rb')).map {|l| l.rstrip}.join("\n")
-      instance_eval f
+      # instance_eval f
       
       # loaded environment.rb file. Now we can build each required gem/bundle.
       @required_bundles.each do |bundle|

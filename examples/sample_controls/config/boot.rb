@@ -24,13 +24,13 @@
 # THE SOFTWARE.
 #
 
-module Vienna
-  
-  def self.boot!
-    puts "Booting application"
-    # for now, hardcode vienna path
-    # require File.join(File.dirname(__FILE__), '..', '..', '..', 'lib', 'vienna')
-  end
-end
+# module Vienna
+#   
+#   def self.boot!
+#     puts "Booting application"
+#     # for now, hardcode vienna path
+#     # require File.join(File.dirname(__FILE__), '..', '..', '..', 'lib', 'vienna')
+#   end
+# end
 
 # Vienna.boot!

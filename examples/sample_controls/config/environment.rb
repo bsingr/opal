@@ -24,7 +24,7 @@
 # THE SOFTWARE.
 #
 
-require File.join(File.dirname(__FILE__), 'boot')
+# require File.join(File.dirname(__FILE__), 'boot')
 
 # application :name => 'sample_controls' do |app|
 #   
@@ -47,5 +47,6 @@ require File.join(File.dirname(__FILE__), 'boot')
 #   # app.gem 'interface_builder'
 # end
 
-adam = 10
-puts adam
+class Adam < Object
+
+end

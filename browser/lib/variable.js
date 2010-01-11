@@ -30,7 +30,7 @@ function rb_ivar_set(obj, id, val) {
 };
 
 function rb_ivar_get(obj, id) {
-  return obj[id];
+  return obj.iv_tbl[id];
 }
 
 function rb_const_set(k, id, val) {

@@ -34,7 +34,9 @@ module Vienna
       # for example, blocks can reference locals from their parent, so this will
       # let us get to them. Might be nil if this tyope cannot reference parent,
       # i.e. is not a block.
-      attr_accessor :dynamic_frame_pointer
+      # 
+      # Depreceated
+      # attr_accessor :dynamic_frame_pointer
       
       # store a list of locals
       # Array, where index is the local position (reference 0, or 1 etc) and
@@ -42,6 +44,8 @@ module Vienna
       attr_reader :locals
       # stores the args for iseq
       attr_reader :args
+      # for dynamics
+      attr_accessor :parent_iseq
       
       def initialize(type, filename)
         @type = type
@@ -49,6 +53,16 @@ module Vienna
         @opcodes = []
         @locals = []
         @args = []
+      end
+      
+      # total required arg length for iseq
+      def args_length
+        @args.length
+      end
+      
+      # total required locals length
+      def locals_length
+        @locals.length
       end
       
       # push the given string as an opcode onto the opcodes
@@ -62,13 +76,36 @@ module Vienna
         s << %{#{@args.length},}
         s << %{#{@locals.length},}
         s << %{"<compiled>",}
-        s << %{#{@filename},}
+        s << %{"#{@filename}",}
         s << %{#{@type},}
         s << %{0,}
         s << %{[],}
-        s << %{function(){#{@opcodes.join("")}}}
+        s << %{[#{@opcodes.join(",")}]}
         s << %{]}
-        %{[0,0,"<compiled>","#{@filename}",#{@type},0,[],function(){#{@opcodes.join("")}}]}
+        s
+      end
+      
+      # returns the idx of a local arg or local var. returns nil if one does not
+      # exist. Blocks cannot have locals, so return nil always if a block
+      def local_variable(name)
+        if [ISEQ_TYPE_TOP, ISEQ_TYPE_METHOD, ISEQ_TYPE_CLASS].include? @type and @locals.include?(name)
+          @locals.index(name)
+        else
+          nil
+        end
+      end
+      
+      # returns an array if a dynamic var of name exists. If a block, then this
+      # will be the case. Blocks do not reference locals, they use dynamics. The
+      # array has the idx as the first param, and the level as the second param.
+      # A level of 0 is the current frame, 1 is the parent of the current frame
+      # etc.
+      def dynamic_variable(name)
+        if @type == ISEQ_TYPE_BLOCK and @locals.include?(name)
+          [@locals.index(name), 0]
+        else
+          search_dynamic(name, 0)
+        end
       end
       
       # boolean: has a local (can include dynamic...)
@@ -94,6 +131,19 @@ module Vienna
           raise "not implemeneted.. look up dynamic"
         end
       end
+      
+      def search_dynamic(name, level)
+        if @locals.include?(name)
+          # if we have it, return array - [idx, level]
+          [@locals.index(name), level]
+        elsif @parent_iseq
+          # if we have a parent, try there and increment level
+          @parent_iseq.search_dynamic(name, level.succ)
+        else
+          # no parent, so it isnt in chain. return nil
+          nil
+        end
+      end
     end
     
     # ISEQ types
@@ -111,16 +161,184 @@ module Vienna
     DEFINECLASS_OTHER = 1
     DEFINECLASS_MODULE = 2
     
+    # opcodes => opcode id
+    # INOP                    = 0
+    # IGETLOCAL               = 1
+    # ISETLOCAL               = 2
+    # IGETSPECIAL             = 3
+    # ISETSPECIAL             = 4          
+    # IGETDYNAMIC             = 5
+    # ISETDYNAMIC             = 6              
+    # IGETINSTANCEVARIABLE    = 7
+    # ISETINSTANCEVARIABLE    = 8,             
+    # IGETCLASSVARIABLE       = 9
+    # ISETCLASSVARIABLE       = 10            
+    # IGETCONSTANT            = 11
+    # ISETCONSTANT            = 12             
+    # IGETGLOBAL              = 13
+    # ISETGLOBAL              = 14             
+    # IPUTNIL                 = 15
+    # IPUTSELF                = 16             
+    # IPUTOBJECT              = 17
+    # IPUTSTRING              = 18             
+    # ICONCATSTRINGS          = 19
+    # ITOSTRING               = 20             
+    # ITOREGEXP               = 21
+    # INEWARRAY               = 22             
+    # IDUPARRAY               = 23
+    # IEXPANDARRAY            = 24             
+    # ICONCATARRAY            = 25
+    # ISPLATARRAY             = 26             
+    # ICHECKINCLUDEARRAY      = 27
+    # INEWHASH                = 28             
+    # INEWRANGE               = 29
+    # IPOP                    = 30             
+    # IDUP                    = 31
+    # IDUPN                   = 32             
+    # ISWAP                   = 33
+    # IREPUT                  = 34             
+    # ITOPN                   = 35
+    # ISETN                   = 36             
+    # IADJUSTSTACK            = 37
+    # IDEFINEMETHOD           = 38             
+    # IALIAS                  = 39
+    # IUNDEF                  = 40             
+    # IDEFINED                = 41
+    # IPOSTEXE                = 42             
+    # ITRACE                  = 43
+    # IDEFINECLASS            = 44             
+    # ISEND                   = 45
+    # IINVOKESUPER            = 46             
+    # IINVOKEBLOCK            = 47
+    # ILEAVE                  = 48             
+    # IFINISH                 = 49
+    # ITHROW                  = 50             
+    # IJUMP                   = 51
+    # IBRANCHIF               = 52             
+    # IBRANCHUNLESS           = 53
+    # IGETINLINECACHE         = 54             
+    # IONCEINLINECACHE        = 55
+    # ISETINLINECACHE         = 56             
+    # IOPT_CASE_DISPATCH      = 57
+    # IOPT_CHECKENV           = 58             
+    # IOPT_PLUS               = 59
+    # IOPT_MINUS              = 60             
+    # IOPT_MULT               = 61
+    # IOPT_DIV                = 62             
+    # IOPT_MOD                = 63
+    # IOPT_EQ                 = 64             
+    # IOPT_NEQ                = 65
+    # IOPT_LT                 = 66             
+    # IOPT_LE                 = 67
+    # IOPT_GT                 = 68             
+    # IOPT_GE                 = 69
+    # IOPT_LTLT               = 70             
+    # IOPT_AREF               = 71
+    # IOPT_ASET               = 72             
+    # IOPT_LENGTH             = 73
+    # IOPT_SUCC               = 74             
+    # IOPT_NOT                = 75
+    # IOPT_REGEXPMATCH1       = 76             
+    # IOPT_REGEXPMATCH2       = 77
+    # IOPT_CALL_C_FUNCTION    = 78             
+    # IBITBLT                 = 79
+    # IANSWER                 = 80
+    
+    # for debugging..
+    INOP                    = 'iNOOP'
+    IGETLOCAL               = 'iGETLOCAL'
+    ISETLOCAL               = 'iSETLOCAL'
+    IGETSPECIAL             = 3
+    ISETSPECIAL             = 4          
+    IGETDYNAMIC             = 'iGETDYNAMIC'
+    ISETDYNAMIC             = 6              
+    IGETINSTANCEVARIABLE    = 'iGETINSTANCEVARIABLE'
+    ISETINSTANCEVARIABLE    = 'iSETINSTANCEVARIABLE'             
+    IGETCLASSVARIABLE       = 9
+    ISETCLASSVARIABLE       = 10            
+    IGETCONSTANT            = 'iGETCONSTANT'
+    ISETCONSTANT            = 12             
+    IGETGLOBAL              = 13
+    ISETGLOBAL              = 14             
+    IPUTNIL                 = 'iPUTNIL'
+    IPUTSELF                = 'iPUTSELF'             
+    IPUTOBJECT              = 'iPUTOBJECT'
+    IPUTSTRING              = 'iPUTSTRING'             
+    ICONCATSTRINGS          = 19
+    ITOSTRING               = 20             
+    ITOREGEXP               = 21
+    INEWARRAY               = 'iNEWARRAY'             
+    IDUPARRAY               = 23
+    IEXPANDARRAY            = 24             
+    ICONCATARRAY            = 25
+    ISPLATARRAY             = 26             
+    ICHECKINCLUDEARRAY      = 27
+    INEWHASH                = 28             
+    INEWRANGE               = 29
+    IPOP                    = 'iPOP'             
+    IDUP                    = 'iDUP'
+    IDUPN                   = 32             
+    ISWAP                   = 33
+    IREPUT                  = 34             
+    ITOPN                   = 35
+    ISETN                   = 36             
+    IADJUSTSTACK            = 37
+    IDEFINEMETHOD           = 38             
+    IALIAS                  = 39
+    IUNDEF                  = 40             
+    IDEFINED                = 41
+    IPOSTEXE                = 42             
+    ITRACE                  = 43
+    IDEFINECLASS            = 'iDEFINECLASS'             
+    ISEND                   = 'iSEND'
+    IINVOKESUPER            = 46             
+    IINVOKEBLOCK            = 47
+    ILEAVE                  = 48             
+    IFINISH                 = 49
+    ITHROW                  = 50             
+    IJUMP                   = 51
+    IBRANCHIF               = 52             
+    IBRANCHUNLESS           = 53
+    IGETINLINECACHE         = 54             
+    IONCEINLINECACHE        = 55
+    ISETINLINECACHE         = 56             
+    IOPT_CASE_DISPATCH      = 57
+    IOPT_CHECKENV           = 58             
+    IOPT_PLUS               = 59
+    IOPT_MINUS              = 60             
+    IOPT_MULT               = 61
+    IOPT_DIV                = 62             
+    IOPT_MOD                = 63
+    IOPT_EQ                 = 64             
+    IOPT_NEQ                = 65
+    IOPT_LT                 = 66             
+    IOPT_LE                 = 67
+    IOPT_GT                 = 68             
+    IOPT_GE                 = 69
+    IOPT_LTLT               = 70             
+    IOPT_AREF               = 71
+    IOPT_ASET               = 72             
+    IOPT_LENGTH             = 73
+    IOPT_SUCC               = 74             
+    IOPT_NOT                = 75
+    IOPT_REGEXPMATCH1       = 76             
+    IOPT_REGEXPMATCH2       = 77
+    IOPT_CALL_C_FUNCTION    = 78             
+    IBITBLT                 = 79
+    IANSWER                 = 80
+    
     
     # iseq is a ruby array containing iseq structure
     def iseq_stack_push(type)
       @iseq_current = ISEQ.new(type, @build_name)
       @iseq_stack << @iseq_current
+      @iseq_current
     end
     
     # returns full string representation of iseq
     def iseq_stack_pop
       iseq = @iseq_stack.last
+      @iseq_stack.pop
       @iseq_current = @iseq_stack.last
       iseq.to_s
     end
@@ -134,6 +352,8 @@ module Vienna
       
       top_iseq = iseq_stack_push(ISEQ_TYPE_TOP)
       tree.each do |stmt|
+        # until we have line numbers, between each stmt fake at line number '0'
+        write "0"
         generate_stmt stmt, :instance => true, :full_stmt => true, :last_stmt => false, :top_level => true
       end
       iseq_stack_pop
@@ -347,7 +567,28 @@ module Vienna
     # klass, and might be nested indefinately deep within such combinations
     # 
     def generate_class klass, context
-      write "vm_defineclass();"
+      # do class body first
+      current_iseq = @iseq_current
+      class_iseq = iseq_stack_push(ISEQ_TYPE_CLASS)
+      # for dynamics..
+      class_iseq.parent_iseq = current_iseq
+      # generate body stmts
+      iseq_stack_pop
+
+      # base
+      write %{[#{IPUTNIL}]}
+      # super
+      if klass.super_klass
+        generate_stmt klass.super_klass[:expr], :full_stmt => false, :last_stmt => false
+      else
+       write %{[#{IPUTNIL}]}
+      end
+      
+      
+      # defineclass
+      write %{[#{IDEFINECLASS},"#{klass.klass_name}",#{class_iseq},0]}    
+      
+      # write "vm_defineclass();"
       # write "(function(self) {\n"
       #    
       #    
@@ -564,23 +805,46 @@ module Vienna
     
     # Main entry point for assignments (with one lhs/rhs)
     def generate_assign stmt, context
-      
-      if context[:last_stmt] and context[:full_stmt]
-        write 'return '
-      end     
+       
       
       # if lhs is an identifier...
       if stmt[:lhs].node == :identifier
         
-        if @iseq_current.has_local?(stmt[:lhs][:name])
-          write %{"yes!"}
+        # put val onto stack
+        generate_stmt stmt[:rhs], :full_stmt => false, :last_stmt => false
+        
+        # try local
+        local_idx = @iseq_current.local_variable(stmt[:lhs][:name])
+        if local_idx
+          # local already exsists, so just set current idx.
+          abort "lhs unsupported"
         else
-          # write %{"no!"}
-          idx = @iseq_current.push_local(stmt[:lhs][:name])
-          write %{vm_setlocal(#{idx},}
-          generate_stmt stmt[:rhs], :full_stmt => false, :last_stmt => false
-          write ")"
+          # try dynamic
+          if false
+          
+          else
+            idx = @iseq_current.push_local(stmt[:lhs][:name])
+            write %{[#{ISETLOCAL},#{idx}]}
+          end
         end
+ 
+        write "[#{ILEAVE}]" if context[:last_stmt] and context[:full_stmt]
+      
+      # If LHS is an @instance_variable
+      elsif stmt[:lhs].node == :ivar
+        # put val onto stack
+        generate_stmt stmt[:rhs], :full_stmt => false, :last_stmt => false
+        write %{[#{ISETINSTANCEVARIABLE},"#{stmt[:lhs][:name]}"]}
+        # elsif stmt[:lhs].node == :ivar
+        #   write "#{context[:self]}.$i_s(#{js_id_for_ivar(stmt[:lhs][:name])},"
+        #   generate_stmt stmt[:rhs], :instance => context[:instance], context[:full_stmt] => false, context[:last_stmt] => true, :self => context[:self]
+        #   write ')'
+      
+      else
+        abort "unabled assign"
+      end
+      
+      # write "," if context[:full_stmt]
         
         # if already in var table, just put name = ...
         # if not in var table, make new var, and add it
@@ -591,58 +855,55 @@ module Vienna
         # generate_stmt stmt[:rhs], :instance => context[:instance], context[:full_stmt] => false, context[:last_stmt] => true, :self => context[:self]
         
       
-      # If LHS is an @instance_variable
-      elsif stmt[:lhs].node == :ivar
-        write "#{context[:self]}.$i_s(#{js_id_for_ivar(stmt[:lhs][:name])},"
-        generate_stmt stmt[:rhs], :instance => context[:instance], context[:full_stmt] => false, context[:last_stmt] => true, :self => context[:self]
-        write ')'
-      
-      
-      # Class var
-      elsif stmt[:lhs].node == :cvar
-        write "#{context[:self]}.$k_s('#{stmt[:lhs][:name]}',"
-        generate_stmt stmt[:rhs], :instance => context[:instance], context[:full_stmt] => false, context[:last_stmt] => true, :self => context[:self]
-        write ')'
-      
-      
-      # IF LHS is a CONSTANT
-      elsif stmt[:lhs].node == :constant
-        if context[:top_level]
-          # puts stmt[:lhs][:name]
-          write 'cObject'
-        elsif context[:instance]
-          write "self.$klass"
-        else
-          write "self"
-        end
-             
-        write ".$c_s('#{stmt[:lhs][:name]}',"
-        generate_stmt stmt[:rhs], :instance => context[:instance], context[:full_stmt] => false, :last_stmt => context[:last_stmt], :top_level => context[:top_level]
-        write ')'
-        
-      # elsif LHS is a call (as the equals sign onto call method, and use rhs as param)
-      elsif stmt[:lhs].node == :call
-        write "#{js_replacement_function_name('rb_funcall')}("
-        generate_stmt stmt[:lhs][:recv], :instance => context[:instance], context[:full_stmt] => false, :last_stmt => context[:last_stmt], :self => context[:self]
-        # write ",#{js_id_for_string("#{stmt[:lhs][:meth]}="}),"
-        write ","
-        write js_id_for_string("#{stmt[:lhs][:meth]}=")
-        write ","
-        # if its []= then we need to output 2 args
-        if stmt[:lhs][:meth] == '[]'
-          # write stmt[:]
-          generate_stmt stmt[:lhs][:args][:args][0],
-           :instance => context[:instance], context[:full_stmt] => false, :last_stmt => context[:last_stmt], :self => context[:self]
-          write ','
-        end
-        generate_stmt stmt[:rhs], :instance => context[:instance], context[:full_stmt] => false, :last_stmt => context[:last_stmt], :self => context[:self]
-        write ")"
-      else
-        write stmt
-      end
-      
-      write ";" if context[:full_stmt]
-      
+      # # If LHS is an @instance_variable
+      # elsif stmt[:lhs].node == :ivar
+      #   write "#{context[:self]}.$i_s(#{js_id_for_ivar(stmt[:lhs][:name])},"
+      #   generate_stmt stmt[:rhs], :instance => context[:instance], context[:full_stmt] => false, context[:last_stmt] => true, :self => context[:self]
+      #   write ')'
+      # 
+      # 
+      # # Class var
+      # elsif stmt[:lhs].node == :cvar
+      #   write "#{context[:self]}.$k_s('#{stmt[:lhs][:name]}',"
+      #   generate_stmt stmt[:rhs], :instance => context[:instance], context[:full_stmt] => false, context[:last_stmt] => true, :self => context[:self]
+      #   write ')'
+      # 
+      # 
+      # # IF LHS is a CONSTANT
+      # elsif stmt[:lhs].node == :constant
+      #   if context[:top_level]
+      #     # puts stmt[:lhs][:name]
+      #     write 'cObject'
+      #   elsif context[:instance]
+      #     write "self.$klass"
+      #   else
+      #     write "self"
+      #   end
+      #        
+      #   write ".$c_s('#{stmt[:lhs][:name]}',"
+      #   generate_stmt stmt[:rhs], :instance => context[:instance], context[:full_stmt] => false, :last_stmt => context[:last_stmt], :top_level => context[:top_level]
+      #   write ')'
+      #   
+      # # elsif LHS is a call (as the equals sign onto call method, and use rhs as param)
+      # elsif stmt[:lhs].node == :call
+      #   write "#{js_replacement_function_name('rb_funcall')}("
+      #   generate_stmt stmt[:lhs][:recv], :instance => context[:instance], context[:full_stmt] => false, :last_stmt => context[:last_stmt], :self => context[:self]
+      #   # write ",#{js_id_for_string("#{stmt[:lhs][:meth]}="}),"
+      #   write ","
+      #   write js_id_for_string("#{stmt[:lhs][:meth]}=")
+      #   write ","
+      #   # if its []= then we need to output 2 args
+      #   if stmt[:lhs][:meth] == '[]'
+      #     # write stmt[:]
+      #     generate_stmt stmt[:lhs][:args][:args][0],
+      #      :instance => context[:instance], context[:full_stmt] => false, :last_stmt => context[:last_stmt], :self => context[:self]
+      #     write ','
+      #   end
+      #   generate_stmt stmt[:rhs], :instance => context[:instance], context[:full_stmt] => false, :last_stmt => context[:last_stmt], :self => context[:self]
+      #   write ")"
+      # else
+      #   write stmt
+      # end      
     end
     
     # Returns true if the method call is manufactured to look like an objc style call
@@ -693,29 +954,131 @@ module Vienna
     # Generate method-call
     # 
     def generate_call call, context
-      write "return " if context[:last_stmt] and context[:full_stmt]
-      write "vm_send("
       
-      if call[:recv]
-        generate_stmt call[:recv], :full_stmt => false, :last_stmt => context[:last_stmt]
-      else
-        write "vm_self()"
-      end
-      
-      write %{,"#{call[:meth]}",[}
-      
-      # normal call args
-      unless call[:call_args].nil? or call[:call_args][:args].nil?
-        call[:call_args][:args].each do |arg|
-          write "," unless arg == call[:call_args][:args].first
-          generate_stmt arg, :full_stmt => false
-          # write ',' unless arg == call[:call_args][:args].last && call[:call_args][:brace_block].nil?
+      # if we have a block, do the block first
+      if call[:brace_block]
+        current_iseq = @iseq_current
+        block_iseq = iseq_stack_push(ISEQ_TYPE_BLOCK)
+        # for dynamics..
+        block_iseq.parent_iseq = current_iseq
+        
+        if call[:brace_block][:stmt]
+          call[:brace_block][:stmt].each do |a|
+            generate_stmt a, :full_stmt => true, :last_stmt => call[:brace_block][:stmt].last == a
+          end
         end
+        
+        # top_iseq = iseq_stack_push(ISEQ_TYPE_TOP)
+        # tree.each do |stmt|
+        #   # until we have line numbers, between each stmt fake at line number '0'
+        #   write "0"
+        #   generate_stmt stmt, :instance => true, :full_stmt => true, :last_stmt => false, :top_level => true
+        # end
+        iseq_stack_pop
+      else
+        block_iseq = "null"
+      end
+      # unless call[:brace_block].nil?
+      #   push_nametable
+      #   
+      #   write ","
+      #   write "function("
+      #   if call[:brace_block][:params]
+      #     call[:brace_block][:params].each do |p|
+      #       write "," unless call[:brace_block][:params].first == p
+      #       write p[:value]
+      #       add_to_nametable p[:value]
+      #     end
+      #   end
+      #   write "){\n"
+      #   
+      #   if call[:brace_block][:stmt]
+      #     call[:brace_block][:stmt].each do |stmt|
+      # 
+      #       generate_stmt stmt, :instance => (context[:singleton] ? false : true),
+      #                           :full_stmt => true, 
+      #                           :last_stmt => (call[:brace_block][:stmt].last == stmt ? true : false), 
+      #                           :self => current_self,
+      #                           :top_level => context[:top_level]
+      # 
+      #     end
+      #   end        
+      #   
+      #   write "}"
+      #   pop_nametable
+      #   
+      # end # end block
+      
+      
+      # receiver
+      if call[:recv]
+        # bits
+        call_bit = 0
+        generate_stmt call[:recv], :full_stmt => false, :last_stmt => false
+      else
+        call_bit = 8
+        write %{[#{IPUTNIL}]}
       end
       
-      write %{],nil)}
+      # arguments
+      unless call[:call_args].nil? or call[:call_args][:args].nil?
+        arg_length = call[:call_args][:args].length
+        call[:call_args][:args].each do |arg|
+          generate_stmt arg, :full_stmt => false
+        end
+      else
+        arg_length = 0
+      end
       
-      write ";" if context[:full_stmt]
+      # call
+      write %{[#{ISEND},"#{call[:meth]}",#{arg_length},#{block_iseq},#{call_bit},null]}
+      
+      if context[:full_stmt] and not context[:last_stmt]
+        write "[#{IPOP}]"
+      end
+      
+      
+      
+      
+      # write %{[#{ISEND},}
+      # put receiver onto stack
+      # if call[:recv]
+      #   # generate stmt
+      # else
+      #   write 
+      # 
+      
+      
+      # return
+      # write "return " if context[:last_stmt] and context[:full_stmt]
+      # write "vm_send("
+      # 
+      # if call[:recv]
+      #   generate_stmt call[:recv], :full_stmt => false, :last_stmt => context[:last_stmt]
+      # else
+      #   write "vm_self()"
+      # end
+      # 
+      # write %{,"#{call[:meth]}",[}
+      # 
+      # # normal call args
+      # unless call[:call_args].nil? or call[:call_args][:args].nil?
+      #   call[:call_args][:args].each do |arg|
+      #     write "," unless arg == call[:call_args][:args].first
+      #     generate_stmt arg, :full_stmt => false
+      #     # write ',' unless arg == call[:call_args][:args].last && call[:call_args][:brace_block].nil?
+      #   end
+      # end
+      # 
+      # write %{],nil)}
+      
+      
+      
+      
+      
+      
+      
+      # write "," if context[:full_stmt]
       
       # puts call
       # write "vm_send();"
@@ -929,9 +1292,13 @@ module Vienna
     end
     
     def generate_constant const, context
-      write "return " if context[:last_stmt] and context[:full_stmt]
-      write %{vm_getconstant(nil,"#{const[:name]}")}
-      write ";" if context[:full_stmt]
+      # no klass searh for just constant
+      write %{[#{IPUTNIL}]}
+      write %{[#{IGETCONSTANT},"#{const[:name]}"]}
+      
+      # write "return " if context[:last_stmt] and context[:full_stmt]
+      # write %{vm_getconstant(nil,"#{const[:name]}")}
+      # write ";" if context[:full_stmt]
       # write 'return ' if context[:last_stmt] and context[:full_stmt]
       # 
       # constant_scope = context[:scope_constant] ? '$c_g' : '$c_g_full'
@@ -975,27 +1342,33 @@ module Vienna
     
     
     def generate_array stmt, context
-      write 'return ' if context[:last_stmt] and context[:full_stmt]
       
-      write '['
-      if stmt[:args]
-        stmt[:args].each do |a|
-          write ',' unless stmt[:args].first == a
-          generate_stmt a, :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt],  :self => current_self
-        end
-      end
+      stmt[:args].each { |a| generate_stmt a, :full_stmt => false, :last_stmt => false }
       
-      write ']'
-      write ";\n" if context[:full_stmt]
+      write %{[#{INEWARRAY},#{stmt[:args].length}]}
+      
+      # write 'return ' if context[:last_stmt] and context[:full_stmt]
+      # 
+      # write '['
+      # if stmt[:args]
+      #   stmt[:args].each do |a|
+      #     write ',' unless stmt[:args].first == a
+      #     generate_stmt a, :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt],  :self => current_self
+      #   end
+      # end
+      # 
+      # write ']'
+      # write ";\n" if context[:full_stmt]
     end
     
     
     def generate_ivar stmt, context
-      write 'return ' if context[:last_stmt] and context[:full_stmt]
-      # write "#{current_self}.$i_g('#{stmt[:name]}')"
-      # write "#{current_self}.$i_g(i$#{js_id_for_ivar(stmt[:name])})"
-      write "#{js_replacement_function_name('rb_ivar_get')}(#{current_self},#{js_id_for_ivar(stmt[:name])})"
-      write ";\n" if context[:full_stmt]
+      write %{[#{IGETINSTANCEVARIABLE},"#{stmt[:name]}"]}
+      # write 'return ' if context[:last_stmt] and context[:full_stmt]
+      # # write "#{current_self}.$i_g('#{stmt[:name]}')"
+      # # write "#{current_self}.$i_g(i$#{js_id_for_ivar(stmt[:name])})"
+      # write "#{js_replacement_function_name('rb_ivar_get')}(#{current_self},#{js_id_for_ivar(stmt[:name])})"
+      # write ";\n" if context[:full_stmt]
     end
     
     
@@ -1020,29 +1393,45 @@ module Vienna
       #     write ")"
       #   end
       
-      write 'return ' if context[:last_stmt] and context[:full_stmt]
+      # write 'return ' if context[:last_stmt] and context[:full_stmt]
       
-      if @iseq_current.has_local?(identifier[:name])
-        # idx is index, fp is the lfp or dynamic frame. if 0, local, if > 0
-        # then it is a dynamic frame pointer
-        idx, fp = @iseq_current.local_index(identifier[:name])
-        if fp == 0
-          write %{vm_getlocal(#{idx})}
-        else
-          # dynamic
-          write "erm, fix"
-        end
+      # try local first
+      local_idx = @iseq_current.local_variable(identifier[:name])
+      if local_idx
+        write %{[#{IGETLOCAL},#{local_idx}]}
       else
-        write "yada"
+        dynamic_idx = @iseq_current.dynamic_variable(identifier[:name])
+        if dynamic_idx
+          write %{[#{IGETDYNAMIC},#{dynamic_idx[0]},#{dynamic_idx[1]}]}
+        else
+          # must be a method call
+          write "n"
+        end
       end
       
-      write ";" if context[:full_stmt]
+      # if @iseq_current.has_local?(identifier[:name])
+      #   # idx is index, fp is the lfp or dynamic frame. if 0, local, if > 0
+      #   # then it is a dynamic frame pointer
+      #   idx, fp = @iseq_current.local_index(identifier[:name])
+      #   if fp == 0
+      #     write %{[#{IGETLOCAL},#{idx}]}
+      #     # write %{vm_getlocal(#{idx})}
+      #   else
+      #     # dynamic
+      #     write "erm, fix"
+      #   end
+      # else
+      #   write "yada"
+      # end
+      
+      # write ";" if context[:full_stmt]
     end
     
     def generate_self identifier, context
-      write 'return ' if context[:last_stmt] and context[:full_stmt]
-      write "self"
-      write ";\n" if context[:full_stmt]
+      write %{[#{IPUTSELF}]}
+      # write 'return ' if context[:last_stmt] and context[:full_stmt]
+      # write "self"
+      # write ";\n" if context[:full_stmt]
     end
     
     def generate_true identifier, context
@@ -1065,11 +1454,13 @@ module Vienna
     
     
     def generate_numeric numeric, context
-      write 'return ' if context[:last_stmt] and context[:full_stmt]
-      write '(' if context[:call_recv] # is number is the reciever of a call, we need to wrap it in params
-      write "#{numeric[:value]}"
-      write ')' if context[:call_recv]
-      write ";\n" if context[:full_stmt]
+      write %{[#{IPUTOBJECT},#{numeric[:value]}]}
+      
+      # write 'return ' if context[:last_stmt] and context[:full_stmt]
+      # write '(' if context[:call_recv] # is number is the reciever of a call, we need to wrap it in params
+      # write "#{numeric[:value]}"
+      # write ')' if context[:call_recv]
+      # write ";\n" if context[:full_stmt]
     end
     
     
