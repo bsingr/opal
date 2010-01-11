@@ -24,9 +24,10 @@
 # THE SOFTWARE.
 #
 
-# module Vienna
-#   
-#   class View < Responder
-#     
-#   end
-# end
+module Vienna
+  
+  # responder should be included?
+  class View < Responder
+    
+  end
+end

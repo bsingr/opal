@@ -31,6 +31,7 @@ function rb_call_inits() {
   Init_Number();
   Init_String();
   Init_File();
+  Init_Dir();
   Init_VM();
   Init_vm_eval();
   Init_load();

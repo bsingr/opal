@@ -130,6 +130,8 @@ function rb_require_file(file_path) {
   Main entry point for a require statement.
 */
 function rb_f_require(obj, path) {
+  // the file this was called from (basically last but one sf)
+  var called_from_file = rb_top_vm.cfs[rb_top_vm.cfs.length - 2].iseq[3];
   var correct_path;
   // console.log("want to require: " + path + '.rb');
   // find the file..
@@ -138,8 +140,12 @@ function rb_f_require(obj, path) {
   if (vn_fs_path_hash[path + '.rb']) {
     correct_path = path + '.rb';
   }
+  // try in vendor path, i.e. /vendor/path.rb
+  else if (vn_fs_path_hash['/vendor/' + path + '.rb']) {
+    throw "found a vendor lib!"
+  }
   else {
-    throw "cannot find require: " + path;
+    throw "cannot find require: " + path + ", called from " + called_from_file;
   }
   
   rb_iseq_eval(eval(vn_fs_path_hash[correct_path]));

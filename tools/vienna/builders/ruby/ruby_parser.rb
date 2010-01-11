@@ -3685,7 +3685,7 @@ module_eval(<<'.,.,', 'ruby_parser.rb.y', 408)
 
 module_eval(<<'.,.,', 'ruby_parser.rb.y', 412)
   def _reduce_200(val, _values, result)
-                		    result = node :call, :recv => val[0], :meth => '+', :call_args => { :args => [val[2]]}
+                		    result = node :opt_plus, :recv => val[0], :meth => '+', :call_args => { :args => [val[2]]}
             		  
     result
   end
@@ -3693,7 +3693,7 @@ module_eval(<<'.,.,', 'ruby_parser.rb.y', 412)
 
 module_eval(<<'.,.,', 'ruby_parser.rb.y', 416)
   def _reduce_201(val, _values, result)
-                		    result = node :call, :recv => val[0], :meth => '-', :call_args => { :args => [val[2]]}
+                		    result = node :opt_minus, :recv => val[0], :meth => '-', :call_args => { :args => [val[2]]}
             		  
     result
   end
@@ -3701,7 +3701,7 @@ module_eval(<<'.,.,', 'ruby_parser.rb.y', 416)
 
 module_eval(<<'.,.,', 'ruby_parser.rb.y', 420)
   def _reduce_202(val, _values, result)
-                		    result = node :call, :recv => val[0], :meth => '*', :call_args => { :args => [val[2]]}
+                		    result = node :opt_mult, :recv => val[0], :meth => '*', :call_args => { :args => [val[2]]}
             		  
     result
   end
@@ -3709,7 +3709,7 @@ module_eval(<<'.,.,', 'ruby_parser.rb.y', 420)
 
 module_eval(<<'.,.,', 'ruby_parser.rb.y', 424)
   def _reduce_203(val, _values, result)
-                		    result = node :call, :recv => val[0], :meth => '/', :call_args => { :args => [val[2]]}
+                		    result = node :opt_div, :recv => val[0], :meth => '/', :call_args => { :args => [val[2]]}
             		  
     result
   end
@@ -3717,7 +3717,7 @@ module_eval(<<'.,.,', 'ruby_parser.rb.y', 424)
 
 module_eval(<<'.,.,', 'ruby_parser.rb.y', 428)
   def _reduce_204(val, _values, result)
-                		    result = node :call, :recv => val[0], :meth => '%', :call_args => { :args => [val[2]]}
+                		    result = node :opt_mod, :recv => val[0], :meth => '%', :call_args => { :args => [val[2]]}
             		  
     result
   end

@@ -975,6 +975,119 @@ function rb_define_alloc_func(klass, func) {
   $const_set
 */
 /* 
+ * dir.js
+ * vienna
+ * 
+ * Created by Adam Beynon.
+ * Copyright 2010 Adam Beynon.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+var rb_cDir;
+
+// glob
+// /^\/app\/.*\/charles\/[^\/]*\.rb$/
+//   \/app\/.*\/[^\/]*\.rb
+function dir_s_glob(argc, argv, dir) {
+  if (argc > 1) throw "unsupported Dir.glob.. FIXME"
+  
+  var result = [], eof = false;
+  
+  var scanner = new vn_ruby_string_scanner(argv[0]);
+  while (!eof) {
+    // ** does not HAVE to include a dir, so capture **/ to match .* which will
+    // match a dir, or no dir.. allows both to work together.
+    if (scanner.scan(/^\*\*\//)) {
+      result.push('.*');
+    }
+    else if (scanner.scan(/^\*\*/)) {
+      result.push('.*');
+    }
+    else if (scanner.scan(/^\//)) {
+      result.push('\\/');
+    }
+    else if (scanner.scan(/^\*/)) {
+      result.push('[^\\/]*');
+    }
+    else if (scanner.scan(/^[a-zA-Z_]+/)) {
+      result.push(scanner.matched);
+    }
+    else if (scanner.scan(/^\./)) {
+      result.push('\\.');
+    }
+    else {
+      eof = true;
+    }
+    // if (result.length > 108)
+    // throw result.join("") + scanner.peek(10);
+  }
+  
+  var reg =  new RegExp('^' + result.join("") + '$');
+  var matching = [];
+  for (prop in vn_fs_path_hash) {
+    if (reg.exec(prop)) {
+      matching.push(prop);
+    }
+  }
+  return matching;
+}
+
+function Init_Dir() {
+  
+  rb_cDir = rb_define_class("Dir", rb_cObject);
+  // rb_include_module(rb_cDir, rb_mEnumerable);
+  
+  // rb_define_alloc_func(rb_cDir, dir_s_alloc);
+  // rb_define_singleton_method(rb_cDir, "open", dir_s_open, -1);
+  // rb_define_singleton_method(rb_cDir, "foreach", dir_foreach, -1);
+  // rb_define_singleton_method(rb_cDir, "entries", dir_entries, -1);
+  // 
+  // rb_define_method(rb_cDir,"initialize", dir_initialize, -1);
+  // rb_define_method(rb_cDir,"path", dir_path, 0);
+  // rb_define_method(rb_cDir,"inspect", dir_inspect, 0);
+  // rb_define_method(rb_cDir,"read", dir_read, 0);
+  // rb_define_method(rb_cDir,"each", dir_each, 0);
+  // rb_define_method(rb_cDir,"rewind", dir_rewind, 0);
+  // rb_define_method(rb_cDir,"tell", dir_tell, 0);
+  // rb_define_method(rb_cDir,"seek", dir_seek, 1);
+  // rb_define_method(rb_cDir,"pos", dir_tell, 0);
+  // rb_define_method(rb_cDir,"pos=", dir_set_pos, 1);
+  // rb_define_method(rb_cDir,"close", dir_close, 0);
+  // 
+  // rb_define_singleton_method(rb_cDir,"chdir", dir_s_chdir, -1);
+  // rb_define_singleton_method(rb_cDir,"getwd", dir_s_getwd, 0);
+  // rb_define_singleton_method(rb_cDir,"pwd", dir_s_getwd, 0);
+  // rb_define_singleton_method(rb_cDir,"chroot", dir_s_chroot, 1);
+  // rb_define_singleton_method(rb_cDir,"mkdir", dir_s_mkdir, -1);
+  // rb_define_singleton_method(rb_cDir,"rmdir", dir_s_rmdir, 1);
+  // rb_define_singleton_method(rb_cDir,"delete", dir_s_rmdir, 1);
+  // rb_define_singleton_method(rb_cDir,"unlink", dir_s_rmdir, 1);
+  // 
+  rb_define_singleton_method(rb_cDir,"glob", dir_s_glob, -1);
+  // rb_define_singleton_method(rb_cDir,"[]", dir_s_aref, -1);
+  // rb_define_singleton_method(rb_cDir,"exist?", rb_file_directory_p, 1);
+  // rb_define_singleton_method(rb_cDir,"exists?", rb_file_directory_p, 1);
+  // 
+  // rb_define_singleton_method(rb_cFile,"fnmatch", file_s_fnmatch, -1);
+  // rb_define_singleton_method(rb_cFile,"fnmatch?", file_s_fnmatch, -1);
+}/* 
  * element.js
  * vienna
  * 
@@ -1118,6 +1231,24 @@ function rb_file_s_join(cls, args) {
   return args.join("/");
 }
 
+function rb_file_s_expand_path(argc, args, obj) {
+  var res_stack = [], cur;
+  args = args[0].split("/")
+  for (var i = 0; i < args.length; i++) {
+    cur = args[i];
+    if (cur == '..') {
+      res_stack.pop();
+    }
+    else if (cur == '.' || cur == '') {
+      // do nothing
+    }
+    else {
+      res_stack.push(cur);
+    }
+  }
+  return "/" + res_stack.join("/");
+}
+
 function Init_File() {
   rb_cFile = rb_define_class("File", rb_cObject);
   
@@ -1146,7 +1277,7 @@ function Init_File() {
   // rb_define_singleton_method(rb_cFile, "rename", rb_file_s_rename, 2);
   // rb_define_singleton_method(rb_cFile, "umask", rb_file_s_umask, -1);
   // rb_define_singleton_method(rb_cFile, "truncate", rb_file_s_truncate, 2);
-  // rb_define_singleton_method(rb_cFile, "expand_path", rb_file_s_expand_path, -1);
+  rb_define_singleton_method(rb_cFile, "expand_path", rb_file_s_expand_path, -1);
   // rb_define_singleton_method(rb_cFile, "absolute_path", rb_file_s_absolute_path, -1);
   // rb_define_singleton_method(rb_cFile, "basename", rb_file_s_basename, -1);
   rb_define_singleton_method(rb_cFile, "dirname", rb_file_s_dirname, 1);
@@ -1335,6 +1466,7 @@ function rb_call_inits() {
   Init_Number();
   Init_String();
   Init_File();
+  Init_Dir();
   Init_VM();
   Init_vm_eval();
   Init_load();
@@ -1476,6 +1608,8 @@ function rb_require_file(file_path) {
   Main entry point for a require statement.
 */
 function rb_f_require(obj, path) {
+  // the file this was called from (basically last but one sf)
+  var called_from_file = rb_top_vm.cfs[rb_top_vm.cfs.length - 2].iseq[3];
   var correct_path;
   // console.log("want to require: " + path + '.rb');
   // find the file..
@@ -1484,8 +1618,12 @@ function rb_f_require(obj, path) {
   if (vn_fs_path_hash[path + '.rb']) {
     correct_path = path + '.rb';
   }
+  // try in vendor path, i.e. /vendor/path.rb
+  else if (vn_fs_path_hash['/vendor/' + path + '.rb']) {
+    throw "found a vendor lib!"
+  }
   else {
-    throw "cannot find require: " + path;
+    throw "cannot find require: " + path + ", called from " + called_from_file;
   }
   
   rb_iseq_eval(eval(vn_fs_path_hash[correct_path]));
@@ -1692,6 +1830,7 @@ function Init_Number() {
   
   rb_cNumber = rb_define_class("Number", rb_cObject);
   Number.prototype.klass = rb_cNumber;
+  Number.prototype.flags = T_NUMBER;
   
   // rb_define_method(rb_cNumber, "singleton_method_added", rb_num_sadded, 1);
   // rb_include_module(rb_cNumber, rb_mComparable);
@@ -4854,7 +4993,8 @@ function rb_const_get_at(k, id) {
 
 /**
   Jarv - (Javascript/Just) another ruby vm
-  Influenced by yarv, but opcodes are different.
+  Influenced by yarv, but opcodes are (slightly) different.
+  Main difference are the stack frames and stacks themselves.
 */
  
 // temp so we dont have to change code later;
@@ -5261,6 +5401,27 @@ function vm_exec(vm) {
         break;
       
       /**
+        definemethod
+        
+        == operands
+        
+        method_id     - method id
+        method_iseq   - body of method
+        is_singleton  - whether the method is a singleton or not
+        
+        == stack
+        
+        before:             after:
+
+        ----------         
+         val          =>   ==========
+        ----------
+      */
+      case iDEFINEMETHOD:
+        
+        break;
+      
+      /**
         defineclass
         
         == operands
@@ -5312,6 +5473,7 @@ function vm_exec(vm) {
             else {
               // define new class
               klass = rb_define_class_id(class_id, class_super);
+              rb_name_class(klass, class_id);
               // rb_class_set_path(klass, class_base, id)
               rb_const_set(class_base, class_id, klass);
               // rb_class_inherited(class_super, klass);
@@ -5319,14 +5481,47 @@ function vm_exec(vm) {
             break;
           
           case DEFINECLASS_OTHER:
+            // singleton reference class << self; end
             break;
           
           case DEFINECLASS_MODULE:
+          
+            if (class_base == nil) {
+              class_base = sf.self;
+              if (class_base.flags & T_OBJECT) {
+                class_base = rb_class_real(class_base.klass);
+              }
+            }
+            
+            if (rb_const_defined_at(class_base, class_id)) {
+              klass = rb_const_get_at(class_base, class_id);
+              if (!(klass.flags & T_MODULE)) {
+                throw class_id + " is not a module"
+                // rb_raise
+              }
+            }
+            else {
+              // new module
+              klass = rb_define_module_id(class_id);
+              rb_name_class(klass, class_id);
+              // rb_set_class_path(klass, class_base, class_id);
+              rb_const_set(class_base, class_id, klass);
+            }
             break;
           
           default:
             throw "error, unknown iDEFINECLASS definetype"
-        } 
+        }
+        
+        // do body..
+        var pcf = vm.cfp;
+        var cfp = vm_push_frame(vm, class_iseq, klass);
+        cfp.block_iseq = nil;
+
+        var val = vm_exec(vm);
+        vm_pop_frame(vm);
+        // return val;
+        // puts val on stack
         break;
       
       /**
@@ -5358,6 +5553,42 @@ function vm_exec(vm) {
         break;
       
       /**
+        opt_plus
+        
+        == operands
+        
+        none
+        
+        == stack
+        
+        before:             after:
+        
+        ----------
+         obj                ----------
+        ----------    =>     val
+         recv               ----------
+        ----------
+        
+        == discussion
+        
+        Optomised way to send '+' between numbers. If both are numbers, then
+        we can just do a plus and pop value onto stack. If not, then we need to
+        set up a normal iSEND.
+      */
+      case iOPT_PLUS:
+        var opt_obj = sf.stack[--sf.sp];
+        var opt_recv = sf.stack[--sf.sp];
+        // if both numbers, do fast track, otherwise we need to send it, as per
+        // normal
+        if ((opt_obj.flags & T_NUMBER) && (opt_recv.flags & T_NUMBER)) {
+          sf.stack[sf.sp++] = opt_obj + opt_recv;
+        }
+        else {
+          throw "opt_plus: need to send as normal iSEND"
+        }
+        break;
+      
+      /**
         newarray
         
       */
@@ -5376,143 +5607,6 @@ function vm_exec(vm) {
   // return iseq();
 }
 
-/**
-  get current base
-*/
-function vm_get_base() {
-  // FIXME: get from current frame - for now everything is a child of Object, i.e. top leve;
-  return rb_cObject;
-}
-
-/**
-  getconstant
-*/
-function vm_getconstant(klass, id) {
-  if (klass == nil) {
-    // FIXME
-    klass = rb_cObject;
-  }
-  return rb_const_get(klass, id);
-}
-
-
-/**
-  vm_setlocal(idx, val)
-  
-  idx - index of local. Args, then locals.
-  val - actual value to set.
-  
-  == Discussion
-  
-  Sets local var value. Note, not local ivar.
-*/
-function vm_setlocal(idx, val) {
-  return rb_top_vm.cfp.locals[idx] = val;
-}
-
-/**
-  Getlocal(idx)
-*/
-function vm_getlocal(idx) {
-  return rb_top_vm.cfp.locals[idx];
-}
-
-/**
-  vm_send
-*/
-function vm_send(recv, id, argv, blockiseq) {
-  return rb_call(recv.klass, recv, id, argv.length, argv, blockiseq);
-}
-
-/**
-  get local self for env
-*/
-function vm_self() {
-  return rb_top_vm.cfp.self;
-}
-
-/**
-  put nil.
-  
-  depreceate, just have "nil" directly?
-*/
-function vm_putnil() {
-  return nil;
-}
-
-/**
-  defineclass
-*/
-function vm_defineclass(base, sup, id, class_iseq, define_type) {
-  var klass;
-  switch (define_type) {
-    case DEFINECLASS_CLASS:
-      break;
-    case DEFINECLASS_OTHER:
-      break;
-    case DEFINECLASS_MODULE:
-      // module
-      if (base == nil) {
-        base = vm_get_base();
-      }
-      
-      // find current, if exists
-      if (rb_const_defined_at(base, id)) {
-        klass = rb_const_get_at(base, id);
-        if (!(klass.flags & T_MODULE)) {
-          throw "rb_eTypeError: " + id + " is not a module"
-        }
-      }
-      else {
-        // need to make a new module
-        klass = rb_define_module_id(id);
-        // set class path rb_set_class_path(klass, base, id);
-        rb_const_set(base, id, klass);
-      }
-      break;
-    default:
-      throw "Vienna: unknown defineclass type: " + define_type
-  }
-  
-  // vm_push_frame(vm, op[2], klass);
-  // var val = vm_exec(vm);
-  // vm_pop_frame(vm);
-  // return val;
-}
-
-/**
-  For now, use vm instead of thread.
-  @param {rb_thread} vm
-  @param {rb_iseq} iseq
-  @param VALUE type
-  @param VALUE self
-  @param VALUE specval
-  @param VALUE pc
-  @param VALUE sp
-  @param VALUE lfp
-  @param int local_size
-*/
-// function vm_push_frame(vm, iseq, type, self, specval, pc, sp, lfp, local_size) {
-//   var cfp = new rb_control_frame();
-//   // push cfp onto stack, then increment sp??
-//   cfp.pc = pc;
-//   cfp.sp = sp + 1;
-//   cfp.bp = sp + 1;
-//   cfp.iseq = iseq;
-//   cfp.flag = type;
-//   cfp.self = self;
-//   cfp.lfp = lfp;
-//   cfp.dfp = sp;
-//   cfp.proc = 0;
-//   
-//   // console.log("locals size: " + local_size);  
-//   vm.cfp = cfp;
-//   vm.cfs.push(cfp);
-//   // vm.cfp = cfp;
-//   
-//   
-//   return cfp;
-// }
 
 function vm_push_frame(vm, iseq, self) {
   var cfp = new rb_control_frame();

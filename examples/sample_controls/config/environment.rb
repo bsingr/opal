@@ -24,7 +24,7 @@
 # THE SOFTWARE.
 #
 
-# require File.join(File.dirname(__FILE__), 'boot')
+require File.join(File.dirname(__FILE__), 'boot')
 
 # application :name => 'sample_controls' do |app|
 #   
@@ -46,7 +46,3 @@
 #   # vendor folder. 'vienna' gem is loaded automatically.
 #   # app.gem 'interface_builder'
 # end
-
-class Adam < Object
-
-end

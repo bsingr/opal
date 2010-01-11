@@ -26,7 +26,8 @@
 
 /**
   Jarv - (Javascript/Just) another ruby vm
-  Influenced by yarv, but opcodes are different.
+  Influenced by yarv, but opcodes are (slightly) different.
+  Main difference are the stack frames and stacks themselves.
 */
  
 // temp so we dont have to change code later;
@@ -433,6 +434,27 @@ function vm_exec(vm) {
         break;
       
       /**
+        definemethod
+        
+        == operands
+        
+        method_id     - method id
+        method_iseq   - body of method
+        is_singleton  - whether the method is a singleton or not
+        
+        == stack
+        
+        before:             after:
+
+        ----------         
+         val          =>   ==========
+        ----------
+      */
+      case iDEFINEMETHOD:
+        
+        break;
+      
+      /**
         defineclass
         
         == operands
@@ -484,6 +506,7 @@ function vm_exec(vm) {
             else {
               // define new class
               klass = rb_define_class_id(class_id, class_super);
+              rb_name_class(klass, class_id);
               // rb_class_set_path(klass, class_base, id)
               rb_const_set(class_base, class_id, klass);
               // rb_class_inherited(class_super, klass);
@@ -491,14 +514,47 @@ function vm_exec(vm) {
             break;
           
           case DEFINECLASS_OTHER:
+            // singleton reference class << self; end
             break;
           
           case DEFINECLASS_MODULE:
+          
+            if (class_base == nil) {
+              class_base = sf.self;
+              if (class_base.flags & T_OBJECT) {
+                class_base = rb_class_real(class_base.klass);
+              }
+            }
+            
+            if (rb_const_defined_at(class_base, class_id)) {
+              klass = rb_const_get_at(class_base, class_id);
+              if (!(klass.flags & T_MODULE)) {
+                throw class_id + " is not a module"
+                // rb_raise
+              }
+            }
+            else {
+              // new module
+              klass = rb_define_module_id(class_id);
+              rb_name_class(klass, class_id);
+              // rb_set_class_path(klass, class_base, class_id);
+              rb_const_set(class_base, class_id, klass);
+            }
             break;
           
           default:
             throw "error, unknown iDEFINECLASS definetype"
-        } 
+        }
+        
+        // do body..
+        var pcf = vm.cfp;
+        var cfp = vm_push_frame(vm, class_iseq, klass);
+        cfp.block_iseq = nil;
+
+        var val = vm_exec(vm);
+        vm_pop_frame(vm);
+        // return val;
+        // puts val on stack
         break;
       
       /**
@@ -530,6 +586,42 @@ function vm_exec(vm) {
         break;
       
       /**
+        opt_plus
+        
+        == operands
+        
+        none
+        
+        == stack
+        
+        before:             after:
+        
+        ----------
+         obj                ----------
+        ----------    =>     val
+         recv               ----------
+        ----------
+        
+        == discussion
+        
+        Optomised way to send '+' between numbers. If both are numbers, then
+        we can just do a plus and pop value onto stack. If not, then we need to
+        set up a normal iSEND.
+      */
+      case iOPT_PLUS:
+        var opt_obj = sf.stack[--sf.sp];
+        var opt_recv = sf.stack[--sf.sp];
+        // if both numbers, do fast track, otherwise we need to send it, as per
+        // normal
+        if ((opt_obj.flags & T_NUMBER) && (opt_recv.flags & T_NUMBER)) {
+          sf.stack[sf.sp++] = opt_obj + opt_recv;
+        }
+        else {
+          throw "opt_plus: need to send as normal iSEND"
+        }
+        break;
+      
+      /**
         newarray
         
       */
@@ -548,143 +640,6 @@ function vm_exec(vm) {
   // return iseq();
 }
 
-/**
-  get current base
-*/
-function vm_get_base() {
-  // FIXME: get from current frame - for now everything is a child of Object, i.e. top leve;
-  return rb_cObject;
-}
-
-/**
-  getconstant
-*/
-function vm_getconstant(klass, id) {
-  if (klass == nil) {
-    // FIXME
-    klass = rb_cObject;
-  }
-  return rb_const_get(klass, id);
-}
-
-
-/**
-  vm_setlocal(idx, val)
-  
-  idx - index of local. Args, then locals.
-  val - actual value to set.
-  
-  == Discussion
-  
-  Sets local var value. Note, not local ivar.
-*/
-function vm_setlocal(idx, val) {
-  return rb_top_vm.cfp.locals[idx] = val;
-}
-
-/**
-  Getlocal(idx)
-*/
-function vm_getlocal(idx) {
-  return rb_top_vm.cfp.locals[idx];
-}
-
-/**
-  vm_send
-*/
-function vm_send(recv, id, argv, blockiseq) {
-  return rb_call(recv.klass, recv, id, argv.length, argv, blockiseq);
-}
-
-/**
-  get local self for env
-*/
-function vm_self() {
-  return rb_top_vm.cfp.self;
-}
-
-/**
-  put nil.
-  
-  depreceate, just have "nil" directly?
-*/
-function vm_putnil() {
-  return nil;
-}
-
-/**
-  defineclass
-*/
-function vm_defineclass(base, sup, id, class_iseq, define_type) {
-  var klass;
-  switch (define_type) {
-    case DEFINECLASS_CLASS:
-      break;
-    case DEFINECLASS_OTHER:
-      break;
-    case DEFINECLASS_MODULE:
-      // module
-      if (base == nil) {
-        base = vm_get_base();
-      }
-      
-      // find current, if exists
-      if (rb_const_defined_at(base, id)) {
-        klass = rb_const_get_at(base, id);
-        if (!(klass.flags & T_MODULE)) {
-          throw "rb_eTypeError: " + id + " is not a module"
-        }
-      }
-      else {
-        // need to make a new module
-        klass = rb_define_module_id(id);
-        // set class path rb_set_class_path(klass, base, id);
-        rb_const_set(base, id, klass);
-      }
-      break;
-    default:
-      throw "Vienna: unknown defineclass type: " + define_type
-  }
-  
-  // vm_push_frame(vm, op[2], klass);
-  // var val = vm_exec(vm);
-  // vm_pop_frame(vm);
-  // return val;
-}
-
-/**
-  For now, use vm instead of thread.
-  @param {rb_thread} vm
-  @param {rb_iseq} iseq
-  @param VALUE type
-  @param VALUE self
-  @param VALUE specval
-  @param VALUE pc
-  @param VALUE sp
-  @param VALUE lfp
-  @param int local_size
-*/
-// function vm_push_frame(vm, iseq, type, self, specval, pc, sp, lfp, local_size) {
-//   var cfp = new rb_control_frame();
-//   // push cfp onto stack, then increment sp??
-//   cfp.pc = pc;
-//   cfp.sp = sp + 1;
-//   cfp.bp = sp + 1;
-//   cfp.iseq = iseq;
-//   cfp.flag = type;
-//   cfp.self = self;
-//   cfp.lfp = lfp;
-//   cfp.dfp = sp;
-//   cfp.proc = 0;
-//   
-//   // console.log("locals size: " + local_size);  
-//   vm.cfp = cfp;
-//   vm.cfs.push(cfp);
-//   // vm.cfp = cfp;
-//   
-//   
-//   return cfp;
-// }
 
 function vm_push_frame(vm, iseq, self) {
   var cfp = new rb_control_frame();

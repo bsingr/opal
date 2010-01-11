@@ -410,23 +410,23 @@ rule
             		  }
             		| arg '+' arg
             		  {
-            		    result = node :call, :recv => val[0], :meth => '+', :call_args => { :args => [val[2]]}
+            		    result = node :opt_plus, :recv => val[0], :meth => '+', :call_args => { :args => [val[2]]}
             		  }
             		| arg '-' arg
             		  {
-            		    result = node :call, :recv => val[0], :meth => '-', :call_args => { :args => [val[2]]}
+            		    result = node :opt_minus, :recv => val[0], :meth => '-', :call_args => { :args => [val[2]]}
             		  }
             		| arg '*' arg
             		  {
-            		    result = node :call, :recv => val[0], :meth => '*', :call_args => { :args => [val[2]]}
+            		    result = node :opt_mult, :recv => val[0], :meth => '*', :call_args => { :args => [val[2]]}
             		  }
             		| arg '/' arg
             		  {
-            		    result = node :call, :recv => val[0], :meth => '/', :call_args => { :args => [val[2]]}
+            		    result = node :opt_div, :recv => val[0], :meth => '/', :call_args => { :args => [val[2]]}
             		  }
             		| arg '%' arg
             		  {
-            		    result = node :call, :recv => val[0], :meth => '%', :call_args => { :args => [val[2]]}
+            		    result = node :opt_mod, :recv => val[0], :meth => '%', :call_args => { :args => [val[2]]}
             		  }
             		| arg tPOW arg
             		  {

@@ -47,9 +47,10 @@ module Vienna
       # for dynamics
       attr_accessor :parent_iseq
       
-      def initialize(type, filename)
+      def initialize(type, filename, name)
         @type = type
         @filename = filename
+        @name = name
         @opcodes = []
         @locals = []
         @args = []
@@ -75,7 +76,7 @@ module Vienna
         s = "["
         s << %{#{@args.length},}
         s << %{#{@locals.length},}
-        s << %{"<compiled>",}
+        s << %{"#{@name}",}
         s << %{"#{@filename}",}
         s << %{#{@type},}
         s << %{0,}
@@ -146,191 +147,215 @@ module Vienna
       end
     end
     
-    # ISEQ types
-    ISEQ_TYPE_TOP    = 1
-    ISEQ_TYPE_METHOD = 2
-    ISEQ_TYPE_BLOCK  = 3
-    ISEQ_TYPE_CLASS  = 4
-    ISEQ_TYPE_RESCUE = 5
-    ISEQ_TYPE_ENSURE = 6
-    ISEQ_TYPE_EVAL   = 7
-    ISEQ_TYPE_MAIN   = 8
+    @debug_mode = true
     
-    # DEFINECLASS types
-    DEFINECLASS_CLASS = 0
-    DEFINECLASS_OTHER = 1
-    DEFINECLASS_MODULE = 2
+    if @debug_mode
+      
+      # ISEQ types
+      ISEQ_TYPE_TOP           = 'ISEQ_TYPE_TOP'
+      ISEQ_TYPE_METHOD        = 'ISEQ_TYPE_METHOD'
+      ISEQ_TYPE_BLOCK         = 'ISEQ_TYPE_BLOCK'
+      ISEQ_TYPE_CLASS         = 'ISEQ_TYPE_CLASS'
+      ISEQ_TYPE_RESCUE        = 'ISEQ_TYPE_RESCUE'
+      ISEQ_TYPE_ENSURE        = 'ISEQ_TYPE_ENSURE'
+      ISEQ_TYPE_EVAL          = 'ISEQ_TYPE_EVAL'
+      ISEQ_TYPE_MAIN          = 'ISEQ_TYPE_MAIN'
     
-    # opcodes => opcode id
-    # INOP                    = 0
-    # IGETLOCAL               = 1
-    # ISETLOCAL               = 2
-    # IGETSPECIAL             = 3
-    # ISETSPECIAL             = 4          
-    # IGETDYNAMIC             = 5
-    # ISETDYNAMIC             = 6              
-    # IGETINSTANCEVARIABLE    = 7
-    # ISETINSTANCEVARIABLE    = 8,             
-    # IGETCLASSVARIABLE       = 9
-    # ISETCLASSVARIABLE       = 10            
-    # IGETCONSTANT            = 11
-    # ISETCONSTANT            = 12             
-    # IGETGLOBAL              = 13
-    # ISETGLOBAL              = 14             
-    # IPUTNIL                 = 15
-    # IPUTSELF                = 16             
-    # IPUTOBJECT              = 17
-    # IPUTSTRING              = 18             
-    # ICONCATSTRINGS          = 19
-    # ITOSTRING               = 20             
-    # ITOREGEXP               = 21
-    # INEWARRAY               = 22             
-    # IDUPARRAY               = 23
-    # IEXPANDARRAY            = 24             
-    # ICONCATARRAY            = 25
-    # ISPLATARRAY             = 26             
-    # ICHECKINCLUDEARRAY      = 27
-    # INEWHASH                = 28             
-    # INEWRANGE               = 29
-    # IPOP                    = 30             
-    # IDUP                    = 31
-    # IDUPN                   = 32             
-    # ISWAP                   = 33
-    # IREPUT                  = 34             
-    # ITOPN                   = 35
-    # ISETN                   = 36             
-    # IADJUSTSTACK            = 37
-    # IDEFINEMETHOD           = 38             
-    # IALIAS                  = 39
-    # IUNDEF                  = 40             
-    # IDEFINED                = 41
-    # IPOSTEXE                = 42             
-    # ITRACE                  = 43
-    # IDEFINECLASS            = 44             
-    # ISEND                   = 45
-    # IINVOKESUPER            = 46             
-    # IINVOKEBLOCK            = 47
-    # ILEAVE                  = 48             
-    # IFINISH                 = 49
-    # ITHROW                  = 50             
-    # IJUMP                   = 51
-    # IBRANCHIF               = 52             
-    # IBRANCHUNLESS           = 53
-    # IGETINLINECACHE         = 54             
-    # IONCEINLINECACHE        = 55
-    # ISETINLINECACHE         = 56             
-    # IOPT_CASE_DISPATCH      = 57
-    # IOPT_CHECKENV           = 58             
-    # IOPT_PLUS               = 59
-    # IOPT_MINUS              = 60             
-    # IOPT_MULT               = 61
-    # IOPT_DIV                = 62             
-    # IOPT_MOD                = 63
-    # IOPT_EQ                 = 64             
-    # IOPT_NEQ                = 65
-    # IOPT_LT                 = 66             
-    # IOPT_LE                 = 67
-    # IOPT_GT                 = 68             
-    # IOPT_GE                 = 69
-    # IOPT_LTLT               = 70             
-    # IOPT_AREF               = 71
-    # IOPT_ASET               = 72             
-    # IOPT_LENGTH             = 73
-    # IOPT_SUCC               = 74             
-    # IOPT_NOT                = 75
-    # IOPT_REGEXPMATCH1       = 76             
-    # IOPT_REGEXPMATCH2       = 77
-    # IOPT_CALL_C_FUNCTION    = 78             
-    # IBITBLT                 = 79
-    # IANSWER                 = 80
+      # DEFINECLASS types
+      DEFINECLASS_CLASS       = 'DEFINECLASS_CLASS'
+      DEFINECLASS_OTHER       = 'DEFINECLASS_OTHER'
+      DEFINECLASS_MODULE      = 'DEFINECLASS_MODULE'
+      
+      # for debugging..
+      INOP                    = 'iNOOP'
+      IGETLOCAL               = 'iGETLOCAL'
+      ISETLOCAL               = 'iSETLOCAL'
+      IGETSPECIAL             = 3
+      ISETSPECIAL             = 4          
+      IGETDYNAMIC             = 'iGETDYNAMIC'
+      ISETDYNAMIC             = 6              
+      IGETINSTANCEVARIABLE    = 'iGETINSTANCEVARIABLE'
+      ISETINSTANCEVARIABLE    = 'iSETINSTANCEVARIABLE'             
+      IGETCLASSVARIABLE       = 9
+      ISETCLASSVARIABLE       = 10            
+      IGETCONSTANT            = 'iGETCONSTANT'
+      ISETCONSTANT            = 12             
+      IGETGLOBAL              = 13
+      ISETGLOBAL              = 14             
+      IPUTNIL                 = 'iPUTNIL'
+      IPUTSELF                = 'iPUTSELF'             
+      IPUTOBJECT              = 'iPUTOBJECT'
+      IPUTSTRING              = 'iPUTSTRING'             
+      ICONCATSTRINGS          = 19
+      ITOSTRING               = 20             
+      ITOREGEXP               = 21
+      INEWARRAY               = 'iNEWARRAY'             
+      IDUPARRAY               = 23
+      IEXPANDARRAY            = 24             
+      ICONCATARRAY            = 25
+      ISPLATARRAY             = 26             
+      ICHECKINCLUDEARRAY      = 27
+      INEWHASH                = 28             
+      INEWRANGE               = 29
+      IPOP                    = 'iPOP'             
+      IDUP                    = 'iDUP'
+      IDUPN                   = 32             
+      ISWAP                   = 33
+      IREPUT                  = 34             
+      ITOPN                   = 35
+      ISETN                   = 36             
+      IADJUSTSTACK            = 37
+      IDEFINEMETHOD           = 'iDEFINEMETHOD'             
+      IALIAS                  = 39
+      IUNDEF                  = 40             
+      IDEFINED                = 41
+      IPOSTEXE                = 42             
+      ITRACE                  = 43
+      IDEFINECLASS            = 'iDEFINECLASS'             
+      ISEND                   = 'iSEND'
+      IINVOKESUPER            = 46             
+      IINVOKEBLOCK            = 47
+      ILEAVE                  = 'iLEAVE'             
+      IFINISH                 = 49
+      ITHROW                  = 50             
+      IJUMP                   = 51
+      IBRANCHIF               = 52             
+      IBRANCHUNLESS           = 53
+      IGETINLINECACHE         = 54             
+      IONCEINLINECACHE        = 55
+      ISETINLINECACHE         = 56             
+      IOPT_CASE_DISPATCH      = 57
+      IOPT_CHECKENV           = 58             
+      IOPT_PLUS               = 'iOPT_PLUS'
+      IOPT_MINUS              = 60             
+      IOPT_MULT               = 61
+      IOPT_DIV                = 62             
+      IOPT_MOD                = 63
+      IOPT_EQ                 = 64             
+      IOPT_NEQ                = 65
+      IOPT_LT                 = 66             
+      IOPT_LE                 = 67
+      IOPT_GT                 = 68             
+      IOPT_GE                 = 69
+      IOPT_LTLT               = 70             
+      IOPT_AREF               = 71
+      IOPT_ASET               = 72             
+      IOPT_LENGTH             = 73
+      IOPT_SUCC               = 74             
+      IOPT_NOT                = 75
+      IOPT_REGEXPMATCH1       = 76             
+      IOPT_REGEXPMATCH2       = 77
+      IOPT_CALL_C_FUNCTION    = 78             
+      IBITBLT                 = 79
+      IANSWER                 = 80
     
-    # for debugging..
-    INOP                    = 'iNOOP'
-    IGETLOCAL               = 'iGETLOCAL'
-    ISETLOCAL               = 'iSETLOCAL'
-    IGETSPECIAL             = 3
-    ISETSPECIAL             = 4          
-    IGETDYNAMIC             = 'iGETDYNAMIC'
-    ISETDYNAMIC             = 6              
-    IGETINSTANCEVARIABLE    = 'iGETINSTANCEVARIABLE'
-    ISETINSTANCEVARIABLE    = 'iSETINSTANCEVARIABLE'             
-    IGETCLASSVARIABLE       = 9
-    ISETCLASSVARIABLE       = 10            
-    IGETCONSTANT            = 'iGETCONSTANT'
-    ISETCONSTANT            = 12             
-    IGETGLOBAL              = 13
-    ISETGLOBAL              = 14             
-    IPUTNIL                 = 'iPUTNIL'
-    IPUTSELF                = 'iPUTSELF'             
-    IPUTOBJECT              = 'iPUTOBJECT'
-    IPUTSTRING              = 'iPUTSTRING'             
-    ICONCATSTRINGS          = 19
-    ITOSTRING               = 20             
-    ITOREGEXP               = 21
-    INEWARRAY               = 'iNEWARRAY'             
-    IDUPARRAY               = 23
-    IEXPANDARRAY            = 24             
-    ICONCATARRAY            = 25
-    ISPLATARRAY             = 26             
-    ICHECKINCLUDEARRAY      = 27
-    INEWHASH                = 28             
-    INEWRANGE               = 29
-    IPOP                    = 'iPOP'             
-    IDUP                    = 'iDUP'
-    IDUPN                   = 32             
-    ISWAP                   = 33
-    IREPUT                  = 34             
-    ITOPN                   = 35
-    ISETN                   = 36             
-    IADJUSTSTACK            = 37
-    IDEFINEMETHOD           = 38             
-    IALIAS                  = 39
-    IUNDEF                  = 40             
-    IDEFINED                = 41
-    IPOSTEXE                = 42             
-    ITRACE                  = 43
-    IDEFINECLASS            = 'iDEFINECLASS'             
-    ISEND                   = 'iSEND'
-    IINVOKESUPER            = 46             
-    IINVOKEBLOCK            = 47
-    ILEAVE                  = 48             
-    IFINISH                 = 49
-    ITHROW                  = 50             
-    IJUMP                   = 51
-    IBRANCHIF               = 52             
-    IBRANCHUNLESS           = 53
-    IGETINLINECACHE         = 54             
-    IONCEINLINECACHE        = 55
-    ISETINLINECACHE         = 56             
-    IOPT_CASE_DISPATCH      = 57
-    IOPT_CHECKENV           = 58             
-    IOPT_PLUS               = 59
-    IOPT_MINUS              = 60             
-    IOPT_MULT               = 61
-    IOPT_DIV                = 62             
-    IOPT_MOD                = 63
-    IOPT_EQ                 = 64             
-    IOPT_NEQ                = 65
-    IOPT_LT                 = 66             
-    IOPT_LE                 = 67
-    IOPT_GT                 = 68             
-    IOPT_GE                 = 69
-    IOPT_LTLT               = 70             
-    IOPT_AREF               = 71
-    IOPT_ASET               = 72             
-    IOPT_LENGTH             = 73
-    IOPT_SUCC               = 74             
-    IOPT_NOT                = 75
-    IOPT_REGEXPMATCH1       = 76             
-    IOPT_REGEXPMATCH2       = 77
-    IOPT_CALL_C_FUNCTION    = 78             
-    IBITBLT                 = 79
-    IANSWER                 = 80
+    
+    else # normal mode
+      
+      # ISEQ types
+      ISEQ_TYPE_TOP    = 1
+      ISEQ_TYPE_METHOD = 2
+      ISEQ_TYPE_BLOCK  = 3
+      ISEQ_TYPE_CLASS  = 4
+      ISEQ_TYPE_RESCUE = 5
+      ISEQ_TYPE_ENSURE = 6
+      ISEQ_TYPE_EVAL   = 7
+      ISEQ_TYPE_MAIN   = 8
+    
+      # DEFINECLASS types
+      DEFINECLASS_CLASS = 0
+      DEFINECLASS_OTHER = 1
+      DEFINECLASS_MODULE = 2
+    
+      # opcodes => opcode id
+      INOP                    = 0
+      IGETLOCAL               = 1
+      ISETLOCAL               = 2
+      IGETSPECIAL             = 3
+      ISETSPECIAL             = 4          
+      IGETDYNAMIC             = 5
+      ISETDYNAMIC             = 6              
+      IGETINSTANCEVARIABLE    = 7
+      ISETINSTANCEVARIABLE    = 8,             
+      IGETCLASSVARIABLE       = 9
+      ISETCLASSVARIABLE       = 10            
+      IGETCONSTANT            = 11
+      ISETCONSTANT            = 12             
+      IGETGLOBAL              = 13
+      ISETGLOBAL              = 14             
+      IPUTNIL                 = 15
+      IPUTSELF                = 16             
+      IPUTOBJECT              = 17
+      IPUTSTRING              = 18             
+      ICONCATSTRINGS          = 19
+      ITOSTRING               = 20             
+      ITOREGEXP               = 21
+      INEWARRAY               = 22             
+      IDUPARRAY               = 23
+      IEXPANDARRAY            = 24             
+      ICONCATARRAY            = 25
+      ISPLATARRAY             = 26             
+      ICHECKINCLUDEARRAY      = 27
+      INEWHASH                = 28             
+      INEWRANGE               = 29
+      IPOP                    = 30             
+      IDUP                    = 31
+      IDUPN                   = 32             
+      ISWAP                   = 33
+      IREPUT                  = 34             
+      ITOPN                   = 35
+      ISETN                   = 36             
+      IADJUSTSTACK            = 37
+      IDEFINEMETHOD           = 38             
+      IALIAS                  = 39
+      IUNDEF                  = 40             
+      IDEFINED                = 41
+      IPOSTEXE                = 42             
+      ITRACE                  = 43
+      IDEFINECLASS            = 44             
+      ISEND                   = 45
+      IINVOKESUPER            = 46             
+      IINVOKEBLOCK            = 47
+      ILEAVE                  = 48             
+      IFINISH                 = 49
+      ITHROW                  = 50             
+      IJUMP                   = 51
+      IBRANCHIF               = 52             
+      IBRANCHUNLESS           = 53
+      IGETINLINECACHE         = 54             
+      IONCEINLINECACHE        = 55
+      ISETINLINECACHE         = 56             
+      IOPT_CASE_DISPATCH      = 57
+      IOPT_CHECKENV           = 58             
+      IOPT_PLUS               = 59
+      IOPT_MINUS              = 60             
+      IOPT_MULT               = 61
+      IOPT_DIV                = 62             
+      IOPT_MOD                = 63
+      IOPT_EQ                 = 64             
+      IOPT_NEQ                = 65
+      IOPT_LT                 = 66             
+      IOPT_LE                 = 67
+      IOPT_GT                 = 68             
+      IOPT_GE                 = 69
+      IOPT_LTLT               = 70             
+      IOPT_AREF               = 71
+      IOPT_ASET               = 72             
+      IOPT_LENGTH             = 73
+      IOPT_SUCC               = 74             
+      IOPT_NOT                = 75
+      IOPT_REGEXPMATCH1       = 76             
+      IOPT_REGEXPMATCH2       = 77
+      IOPT_CALL_C_FUNCTION    = 78             
+      IBITBLT                 = 79
+      IANSWER                 = 80
+    end
+    
     
     
     # iseq is a ruby array containing iseq structure
-    def iseq_stack_push(type)
-      @iseq_current = ISEQ.new(type, @build_name)
+    def iseq_stack_push(type,name="<compiled>")
+      @iseq_current = ISEQ.new(type, @build_name, name)
       @iseq_stack << @iseq_current
       @iseq_current
     end
@@ -440,15 +465,35 @@ module Vienna
         generate_dot2 stmt, context
       when :__FILE__
         generate__FILE__ stmt, context
+      when :opt_plus
+        generate_opt_plus stmt, context
+      when :opt_minus
+        generate_opt_minus stmt, context
+      when :opt_mult
+        generate_opt_mult stmt, context
+      when :opt_div
+        generate_opt_div stmt, context
+      when :opt_mod
+        generate_opt_mod stmt, context
       else
         write "\n[Unknown type for generate_stmt: #{stmt}]\n"
       end
     end
     
+    def generate_opt_plus(stmt, context)
+      # recv on stack
+      generate_stmt stmt[:recv], :last_stmt => false, :full_stmt => false
+      # arg0 on stack
+      generate_stmt stmt[:call_args][:args][0], :last_stmt => false, :full_stmt => false
+      
+      # op itself
+      write %{[#{IOPT_PLUS}]}
+    end
+    
     def generate__FILE__ stmt, context
-      write "return " if context[:last_stmt] and context[:full_stmt]
-      write %{"#{@build_name}"}
-      write ";" if context[:full_stmt]
+      # write "return " if context[:last_stmt] and context[:full_stmt]
+      write %{[#{IPUTOBJECT},"#{@build_name}"]}
+      # write ";" if context[:full_stmt]
     end
     
     
@@ -569,10 +614,13 @@ module Vienna
     def generate_class klass, context
       # do class body first
       current_iseq = @iseq_current
-      class_iseq = iseq_stack_push(ISEQ_TYPE_CLASS)
+      class_iseq = iseq_stack_push(ISEQ_TYPE_CLASS,"<class:#{klass.klass_name}>")
       # for dynamics..
       class_iseq.parent_iseq = current_iseq
       # generate body stmts
+      klass.bodystmt.each do |b|
+        generate_stmt b, :full_stmt => false, :last_stmt => false
+      end
       iseq_stack_pop
 
       # base
@@ -729,77 +777,98 @@ module Vienna
     # on a specified object that is passed to the context
     # 
     def generate_def definition, context
-      if label_styled_args? definition
-        generate_label_styled_def definition, context
-        return
+      
+      current_iseq = @iseq_current
+      def_iseq = iseq_stack_push(ISEQ_TYPE_METHOD, definition[:fname])
+      # for dynamics..
+      def_iseq.parent_iseq = current_iseq
+      # generate body stmts
+      definition[:bodystmt].each do |b|
+        generate_stmt b, :last_stmt => definition[:bodystmt].last == b, :full_stmt => true
       end
+      iseq_stack_pop
+
+      # base (singleton method)
+      write %{[#{IPUTNIL}]}
+    
+      # defineclass
+      write %{[#{IDEFINEMETHOD},"#{definition[:fname]}",#{def_iseq},0]}
       
-      push_nametable # push new nametable
       
-      # write"rb_define_method("
-      # all methods in top self must be added as singleton methods
-      if definition[:singleton]
-        # puts definition[:singleton]
-        generate_stmt definition[:singleton], :instance => definition[:instance], :full_stmt => false, :last_stmt => false
-        # write "#{context[:self]}"
-        write ".$def_s(#{js_id_for_string(definition[:fname])},function(self,_"
-        # write ",s$#{js_id_for_string(definition[:fname])}, function(self, _cmd"
-      else
-        # write "self.$def(s$#{js_id_for_string(definition[:fname])},function(self,_cmd"
-        write "#{js_replacement_function_name('rb_define_method')}("
-        
-        if context[:top_level]
-          write "rb_cObject"
-        else
-          write "self"
-        end
-        
-        write ",#{js_id_for_string(definition[:fname])},function(self,_"
-        # write "/* #{current_self} */"
-      end
       
-      # js_id_for_string(definition[:fname])
       
-      # write definition[:arglist]
       
-      # arglist
-      if definition[:arglist]
-        if definition[:arglist][:arg]
-          definition[:arglist][:arg].each do |arg|
-            write ","
-            write arg[:value]
-            add_to_nametable arg[:value]
-            # write ',' unless definition[:arglist][:arg].last == arg
-          end
-        end
-        # block
-        if definition[:arglist][:opt_block_arg]
-          write ','
-          write definition[:arglist][:opt_block_arg]
-          add_to_nametable definition[:arglist][:opt_block_arg]
-        end  
-      end
-        
-      write "){\n"
-      
-      self.current_self_start_def
-      # def statements
-      if definition[:bodystmt]
-        definition[:bodystmt].each do |stmt|
-          
-          generate_stmt stmt, :instance => (definition[:singleton] ? false : true),
-                              :full_stmt => true, 
-                              :last_stmt => (definition[:bodystmt].last == stmt), 
-                              :self => current_self,
-                              :fname => definition[:fname]
-          
-        end
-      end
-            
-      self.current_self_end_def
-      pop_nametable # pop new nametable
-      
-      write "});\n"
+      # if label_styled_args? definition
+      #   generate_label_styled_def definition, context
+      #   return
+      # end
+      # 
+      # push_nametable # push new nametable
+      # 
+      # # write"rb_define_method("
+      # # all methods in top self must be added as singleton methods
+      # if definition[:singleton]
+      #   # puts definition[:singleton]
+      #   generate_stmt definition[:singleton], :instance => definition[:instance], :full_stmt => false, :last_stmt => false
+      #   # write "#{context[:self]}"
+      #   write ".$def_s(#{js_id_for_string(definition[:fname])},function(self,_"
+      #   # write ",s$#{js_id_for_string(definition[:fname])}, function(self, _cmd"
+      # else
+      #   # write "self.$def(s$#{js_id_for_string(definition[:fname])},function(self,_cmd"
+      #   write "#{js_replacement_function_name('rb_define_method')}("
+      #   
+      #   if context[:top_level]
+      #     write "rb_cObject"
+      #   else
+      #     write "self"
+      #   end
+      #   
+      #   write ",#{js_id_for_string(definition[:fname])},function(self,_"
+      #   # write "/* #{current_self} */"
+      # end
+      # 
+      # # js_id_for_string(definition[:fname])
+      # 
+      # # write definition[:arglist]
+      # 
+      # # arglist
+      # if definition[:arglist]
+      #   if definition[:arglist][:arg]
+      #     definition[:arglist][:arg].each do |arg|
+      #       write ","
+      #       write arg[:value]
+      #       add_to_nametable arg[:value]
+      #       # write ',' unless definition[:arglist][:arg].last == arg
+      #     end
+      #   end
+      #   # block
+      #   if definition[:arglist][:opt_block_arg]
+      #     write ','
+      #     write definition[:arglist][:opt_block_arg]
+      #     add_to_nametable definition[:arglist][:opt_block_arg]
+      #   end  
+      # end
+      #   
+      # write "){\n"
+      # 
+      # self.current_self_start_def
+      # # def statements
+      # if definition[:bodystmt]
+      #   definition[:bodystmt].each do |stmt|
+      #     
+      #     generate_stmt stmt, :instance => (definition[:singleton] ? false : true),
+      #                         :full_stmt => true, 
+      #                         :last_stmt => (definition[:bodystmt].last == stmt), 
+      #                         :self => current_self,
+      #                         :fname => definition[:fname]
+      #     
+      #   end
+      # end
+      #       
+      # self.current_self_end_def
+      # pop_nametable # pop new nametable
+      # 
+      # write "});\n"
 
     end
     
@@ -976,7 +1045,7 @@ module Vienna
         # end
         iseq_stack_pop
       else
-        block_iseq = "null"
+        block_iseq = "nil"
       end
       # unless call[:brace_block].nil?
       #   push_nametable
@@ -1031,10 +1100,12 @@ module Vienna
       end
       
       # call
-      write %{[#{ISEND},"#{call[:meth]}",#{arg_length},#{block_iseq},#{call_bit},null]}
+      write %{[#{ISEND},"#{call[:meth]}",#{arg_length},#{block_iseq},#{call_bit},nil]}
       
       if context[:full_stmt] and not context[:last_stmt]
         write "[#{IPOP}]"
+      elsif context[:full_stmt] and context[:last_stmt]
+        write %{[#{ILEAVE}]}
       end
       
       
@@ -1174,45 +1245,46 @@ module Vienna
     # Generate a string
     # 
     def generate_string str, context
-      write "return " if context[:last_stmt] and context[:full_stmt]
-
-      case str[:value].length
-      when 0
-        write "''"
-      when 1
-        # write "'"
-        write str[:beg]
-        write str[:value][0][:value]
-        write str[:beg]
-        # write "'"
-      else
-        
-        write "["
-        
-        str[:value].each do |s|
-          
-          case s.node
-          when :string_content
-            write str[:beg]
-            write s[:value]
-            write str[:beg]
-          when :string_dbeg
-            write "("
-                    
-            s[:value].each do |stmt|
-              generate_stmt stmt, :instance => (context[:singleton] ? false : true), :full_stmt => false, :last_stmt => false,  :self => current_self
-            end
-            
-            write ")"
-          end
-          
-          write "," unless str[:value].last == s
-        end
-        
-        write "].join('')"        
-      end
-
-      write ";\n" if context[:full_stmt]
+      write %{[#{IPUTOBJECT},"#{str[:value][0][:value]}"]}
+      # write "return " if context[:last_stmt] and context[:full_stmt]
+      # 
+      # case str[:value].length
+      # when 0
+      #   write "''"
+      # when 1
+      #   # write "'"
+      #   write str[:beg]
+      #   write str[:value][0][:value]
+      #   write str[:beg]
+      #   # write "'"
+      # else
+      #   
+      #   write "["
+      #   
+      #   str[:value].each do |s|
+      #     
+      #     case s.node
+      #     when :string_content
+      #       write str[:beg]
+      #       write s[:value]
+      #       write str[:beg]
+      #     when :string_dbeg
+      #       write "("
+      #               
+      #       s[:value].each do |stmt|
+      #         generate_stmt stmt, :instance => (context[:singleton] ? false : true), :full_stmt => false, :last_stmt => false,  :self => current_self
+      #       end
+      #       
+      #       write ")"
+      #     end
+      #     
+      #     write "," unless str[:value].last == s
+      #   end
+      #   
+      #   write "].join('')"        
+      # end
+      # 
+      # write ";\n" if context[:full_stmt]
     end
     
     # Generate an X-string
@@ -1242,7 +1314,25 @@ module Vienna
     
     
     def generate_module mod, context
+      # do class body first
+      current_iseq = @iseq_current
+      class_iseq = iseq_stack_push(ISEQ_TYPE_CLASS,"<module:#{mod.klass_name}>")
+      # for dynamics..
+      class_iseq.parent_iseq = current_iseq
+      # generate body stmts
+      mod.bodystmt.each do |b|
+        generate_stmt b, :full_stmt => false, :last_stmt => false
+      end
       
+      iseq_stack_pop
+
+      # base
+      write %{[#{IPUTNIL}]}
+      # super
+      write %{[#{IPUTNIL}]}
+      
+      # defineclass
+      write %{[#{IDEFINECLASS},"#{mod.klass_name}",#{class_iseq},2]}
       # mod_iseq = iseq_stack_push(ISEQ_TYPE_CLASS)
       # tree.each do |stmt|
         # generate_stmt stmt, :instance => true, :full_stmt => true, :last_stmt => false, :top_level => true
