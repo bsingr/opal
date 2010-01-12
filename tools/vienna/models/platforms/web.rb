@@ -61,6 +61,16 @@ module Vienna
         
         @app_gem.prepare!
         @app_gem.build!
+        
+        @project.required_bundles.each do |bundle_name|
+          bundle_path = bundle_name == 'vienna' ?
+                        File.join(File.dirname(Vienna::LIBPATH)) :
+                        File.join(project_root, 'vendor', bundle_name)
+                      
+          bundle = WebGem.new(bundle_path, project)
+          bundle.prepare!
+          bundle.build!
+        end
       end
       
       # full path to index.html build file

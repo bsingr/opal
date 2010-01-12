@@ -93,9 +93,9 @@ var ISEQ_TYPE_TOP    = 1,
 /**
   DEFINECLASS types
 */
-var DEFINECLASS_CLASS   = 0,
-    DEFINECLASS_OTHER   = 1,
-    DEFINECLASS_MODULE  = 2;
+var DEFINECLASS_CLASS       = 0,
+    DEFINECLASS_SINGLETON   = 1,
+    DEFINECLASS_MODULE      = 2;
 
 /**
   == Depreceated?
@@ -217,10 +217,11 @@ function vm_run_mode_running(vm) {
   Execute iseq, for current frame pointer, which will be a function.
 */
 function vm_exec(vm) {
-  var iseq = vm.cfp.iseq[7], op, sf = vm.cfp;
+  var jumps = vm.cfp.iseq[7], iseq = vm.cfp.iseq[8], op, sf = vm.cfp;
   // console.log("executing iseq: " + iseq);
   for (; sf.pc < iseq.length; sf.pc++) {
     op = iseq[sf.pc];
+    // console.log(sf.pc);
     
     if (typeof op === 'number') {
       // console.log("at line number " + op);
@@ -434,6 +435,60 @@ function vm_exec(vm) {
         break;
       
       /**
+        branchunless
+        
+        == operands
+        
+        lbl - jump label to jump to if val is false or nil (RTEST)
+        
+        == stack
+        
+        before:             after:
+
+        ----------         
+         val          =>   ==========
+        ----------
+      */
+      case iBRANCHUNLESS:
+        var jmp_label = op[1], jmp_test = sf.stack[--sf.sp];
+        if (jmp_test === nil || jmp_test === false) {
+          // actually do jump
+          // console.log(jumps[op[1]] + " ..branch unless jump: " + jmp_test);
+          // the loop does pc++, so we go to one less than what we actually need
+          sf.pc = jumps[op[1]] - 1;
+        }
+        else {
+          // console.log("branch unless do not jump: " + jmp_test);
+        }
+        
+        // if RTEST was okay, do nothing..
+        break;
+      
+      /**
+        jump
+        
+        == operands
+        
+        ==stack
+        
+      */
+      case iJUMP:
+        // pc ++ in loop makes us go to actual - 1
+        sf.pc = jumps[op[1]] - 1;
+        break;
+      
+      /**
+        leave
+        
+        == discussion
+        
+        on iLEAVE, return the value on top of the stack
+      */
+      case iLEAVE:
+        return sf.stack[--sf.sp];
+        break;
+      
+      /**
         definemethod
         
         == operands
@@ -451,7 +506,19 @@ function vm_exec(vm) {
         ----------
       */
       case iDEFINEMETHOD:
+        var def_obj = sf.stack[--sf.sp];
+        var method_id = op[1], method_iseq = op[2], is_singleton = op[3];
         
+        if (def_obj === nil) {
+          if (sf.self.flags & T_OBJECT)
+            def_obj = rb_class_real(sf.self.klass);
+          else
+            def_obj = sf.self;
+        }
+        
+        rb_define_method(def_obj, method_id, method_iseq, 0);
+        // console.log(def_obj);
+        // throw "dmethod"
         break;
       
       /**
@@ -513,8 +580,9 @@ function vm_exec(vm) {
             }
             break;
           
-          case DEFINECLASS_OTHER:
+          case DEFINECLASS_SINGLETON:
             // singleton reference class << self; end
+            klass = rb_singleton_class(class_base);
             break;
           
           case DEFINECLASS_MODULE:
@@ -555,6 +623,7 @@ function vm_exec(vm) {
         vm_pop_frame(vm);
         // return val;
         // puts val on stack
+        sf.stack[sf.sp++] = val;
         break;
       
       /**

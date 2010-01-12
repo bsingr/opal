@@ -47,6 +47,8 @@ module Vienna
       # for dynamics
       attr_accessor :parent_iseq
       
+      attr_reader :type
+      
       def initialize(type, filename, name)
         @type = type
         @filename = filename
@@ -54,6 +56,16 @@ module Vienna
         @opcodes = []
         @locals = []
         @args = []
+        @label_count = 0
+        @jumps = []
+      end
+      
+      # gets the next jump label string
+      def create_jump_label
+        r = @label_count
+        @label_count += 1
+        @jumps[r] = 0
+        r
       end
       
       # total required arg length for iseq
@@ -67,8 +79,15 @@ module Vienna
       end
       
       # push the given string as an opcode onto the opcodes
-      def write(str)
-        @opcodes << str
+      def write(opcode)
+        @opcodes << opcode
+      end
+      
+      # write a abel to this line. this opcode will be marked by the given label
+      # so that any jumps to this label will change the pc to point to this op
+      # code
+      def write_label(label)
+        @jumps[label] = @opcodes.length
       end
       
       # to_s: ready for spitting out to javascript.
@@ -80,7 +99,14 @@ module Vienna
         s << %{"#{@filename}",}
         s << %{#{@type},}
         s << %{0,}
+        # catch table
         s << %{[],}
+        # jumps
+        s << "["
+        # s << @jumps.to_a.map { |e| %{"#{e[0]}":#{e[1]}} }.join(",")
+        s << @jumps.map { |e| "#{e}" }.join(",")
+        s << "],"
+        # opcodes
         s << %{[#{@opcodes.join(",")}]}
         s << %{]}
         s
@@ -147,7 +173,18 @@ module Vienna
       end
     end
     
+    # Set debug mode for generator. Debug mode on makes the opcode output nicer
+    # to read using full opcode names, rather that integers, and also using full
+    # label jump names, instead of abbreviated strings.
     @debug_mode = true
+    
+    def self.debug_mode?
+      @debug_mode
+    end
+    
+    def debug_mode?
+      self.class.debug_mode?
+    end
     
     if @debug_mode
       
@@ -218,9 +255,9 @@ module Vienna
       ILEAVE                  = 'iLEAVE'             
       IFINISH                 = 49
       ITHROW                  = 50             
-      IJUMP                   = 51
-      IBRANCHIF               = 52             
-      IBRANCHUNLESS           = 53
+      IJUMP                   = 'iJUMP'
+      IBRANCHIF               = 'iBRANCHIF'             
+      IBRANCHUNLESS           = 'iBRANCHUNLESS'
       IGETINLINECACHE         = 54             
       IONCEINLINECACHE        = 55
       ISETINLINECACHE         = 56             
@@ -373,13 +410,18 @@ module Vienna
       @iseq_current.write(str)
     end
     
+    # write label
+    def write_label(label)
+      @iseq_current.write_label(label)      
+    end
+    
     def generate_tree tree
       
       top_iseq = iseq_stack_push(ISEQ_TYPE_TOP)
       tree.each do |stmt|
         # until we have line numbers, between each stmt fake at line number '0'
         write "0"
-        generate_stmt stmt, :instance => true, :full_stmt => true, :last_stmt => false, :top_level => true
+        generate_stmt stmt, :full_stmt => true, :last_stmt => tree.last == stmt
       end
       iseq_stack_pop
     end
@@ -484,7 +526,8 @@ module Vienna
       # recv on stack
       generate_stmt stmt[:recv], :last_stmt => false, :full_stmt => false
       # arg0 on stack
-      generate_stmt stmt[:call_args][:args][0], :last_stmt => false, :full_stmt => false
+      generate_stmt stmt[:call_args][:args][0], :last_stmt => false, 
+                                                :full_stmt => false
       
       # op itself
       write %{[#{IOPT_PLUS}]}
@@ -499,90 +542,161 @@ module Vienna
     
     
     def generate_class_shift stmt, context
-      write "(function(self) {\n"
-      push_nametable
-      current_self_start_def
-      
-      
-      if stmt[:bodystmt]
-        stmt[:bodystmt].each do |bodystmt|
-          bodystmt[:singleton] = node(:self, :name => 'self')
-          generate_stmt bodystmt, :instance => false, :full_stmt => true, :last_stmt => bodystmt == stmt[:bodystmt].last
-        end
+      # singleton class body first
+      current_iseq = @iseq_current
+      class_iseq = iseq_stack_push(ISEQ_TYPE_CLASS,"singletonclass")
+      # dynamics
+      class_iseq.parent_iseq = current_iseq
+      # generate singleton class' body stsmts
+      stmt[:bodystmt].each do |b|
+        generate_stmt b, :full_stmt => true, 
+                         :last_stmt => stmt[:bodystmt].last == b
       end
       
-      current_self_end_def
-      pop_nametable
-      write "})("
-      generate_stmt stmt[:expr], :instance => false, :full_stmt => false, :last_stmt => false
-      write ")"
-      write ";\n" if context[:full_stmt]
+      # no statements..
+      if stmt[:bodystmt].length == 0
+        write %{[#{IPUTNIL}]} 
+        write %{[#{ILEAVE}]}
+      end
+      
+      iseq_stack_pop
+      
+      # base - what are we doing a singleton on? self? etc..
+      generate_stmt stmt[:expr], :full_stmt => false, :last_stmt => false
+      
+      # superclass: nil, fake param
+      write %{[#{IPUTNIL}]}
+      
+      # actual defineclass
+      write %{[#{IDEFINECLASS},"singletonclass",#{class_iseq},1]}    
+      
+      if context[:last_stmt] and context[:full_stmt]
+        write %{[#{ILEAVE}]}
+      end
     end
     
     
     
     
     def generate_super stmt, context
-      write "return " if context[:last_stmt] and context[:full_stmt]
-      if stmt[:call_args] and stmt[:call_args][:args]
-        # use the given arguments for super
-        # write "self.$sup(arguments.callee,'#{context[:fname]}', ["
-        write "rb_supcall(arguments.callee, self,_,["
-        
-        stmt[:call_args][:args].each do |p|
-          generate_stmt p, :instance => false, :full_stmt => false, :self => current_self, :last_stmt => false
-          write ',' unless p == stmt[:call_args][:args].last
-        end              
-        write "])"
-      else
-        # no args given, so just reuse provided arguments
-        # write "self.$sup(arguments.callee,'#{context[:fname]}', arguments)"
-        
-        # here, split arguments into array, taking out the first two args (self, _cmd);
-        write "rb_supcall(arguments.callee, self,_,[])"
-      end
-      write ";\n" if context[:full_stmt]
+      # write "return " if context[:last_stmt] and context[:full_stmt]
+      # if stmt[:call_args] and stmt[:call_args][:args]
+      #   # use the given arguments for super
+      #   # write "self.$sup(arguments.callee,'#{context[:fname]}', ["
+      #   write "rb_supcall(arguments.callee, self,_,["
+      #   
+      #   stmt[:call_args][:args].each do |p|
+      #     generate_stmt p, :instance => false, :full_stmt => false, :self => current_self, :last_stmt => false
+      #     write ',' unless p == stmt[:call_args][:args].last
+      #   end              
+      #   write "])"
+      # else
+      #   # no args given, so just reuse provided arguments
+      #   # write "self.$sup(arguments.callee,'#{context[:fname]}', arguments)"
+      #   
+      #   # here, split arguments into array, taking out the first two args (self, _cmd);
+      #   write "rb_supcall(arguments.callee, self,_,[])"
+      # end
+      # write ";\n" if context[:full_stmt]
     end
       
     # Generate if, unless statemets
-    def generate_if stmt, context
+    def generate_if(stmt, context)
+      # if expr
+      generate_stmt stmt[:expr], :full_stmt => false, :last_stmt => false
+      
+      main_jump = @iseq_current.create_jump_label
+      
+      # if/unless clause
       if stmt.node == :if
-        write "if(#{js_replacement_function_name('RTEST')}("
-      else
-        write "if(!#{js_replacement_function_name('RTEST')}("
+        write %{[#{IBRANCHUNLESS},#{main_jump}]}
+      else # unless stmt
+        write %{[#{IBRANCHIF},#{main_jump}]}
       end
       
-      generate_stmt stmt[:expr],:instance => context[:instance], :full_stmt => false, :self => current_self, :last_stmt => false
-      
-      write ")){\n"
-      
-      if stmt[:stmt]
-        stmt[:stmt].each do |c|
-          generate_stmt c, :instance => context[:instance], :full_stmt => true, :self => current_self, :last_stmt => context[:laststmt] && (stmt[:stmt].last == c ? true : false)  # also check if the actual 'if' statement is last?
-        end
+      stmt[:stmt].each do |s|
+        # if the IF stmt is the last stmt, then :last_stmt should be true only
+        # for the last s stmt.
+        generate_stmt s, :full_stmt => true, :last_stmt => false
       end
       
-      write "}\n"
+      # write_label %{#{main_jump}}
+      
       if stmt[:tail]
+        # if we have a tail, then this jump will be a global jump destination to
+        # get to the end of the IF/ELSIF/ELSE statement.
+        global_end_jump = @iseq_current.create_jump_label
+        
+        # now we have a global, if the RTEST for IF passes, we will need to jump
+        # to it, so:
+        write %{[#{IJUMP},#{global_end_jump}]}
+        
+        # have the IF statement part fail go to after the JUMP opcode
+        write_label main_jump
+        
+        # now, for each elsif/else part, we need to output val, branch, stmt, 
+        # jump
         stmt[:tail].each do |t|
-          
           if t.node == :elsif
-            write "else if(#{js_replacement_function_name('RTEST')}("
-            generate_stmt t[:expr], :instance => context[:instance], :full_stmt => false, :self => current_self, :last_stmt => false
-            write ")){\n"
-          else # normal else
-            write "else{\n"
-          end
-          
-          if t[:stmt]
-            t[:stmt].each do |c|
-              generate_stmt c, :instance => context[:instance], :full_stmt => true,:self => current_self, :last_stmt => context[:laststmt] && (t[:stmt].last == c ? true : false) # also check if the actual 'if' statement is last?
+            generate_stmt t[:expr], :full_stmt => false, :last_stmt => false
+            cur_jump = @iseq_current.create_jump_label
+            write %{[#{IBRANCHUNLESS},#{cur_jump}]}
+            # stmts
+            t[:stmt].each do |s|
+              generate_stmt s, :full_stmt => true, :last_stmt => false
+            end
+            # jump to end of if/else/if
+            write %{[#{IJUMP},#{global_end_jump}]}
+            # label for if elsif rtest fails..
+            write_label cur_jump
+          else # else node
+            # if we get to here, we run the else command no matter what. 'else'
+            t[:stmt].each do |s|
+              generate_stmt s, :full_stmt => true, :last_stmt => false
             end
           end
-                    
-          write "}\n"
-        end 
+        end
+        
+        # end of IF/ELSIF/ELSE, so have global_end_jump destination here
+        write_label global_end_jump
       end
+      # if stmt.node == :if
+      #   write "if(#{js_replacement_function_name('RTEST')}("
+      # else
+      #   write "if(!#{js_replacement_function_name('RTEST')}("
+      # end
+      # 
+      # generate_stmt stmt[:expr],:instance => context[:instance], :full_stmt => false, :self => current_self, :last_stmt => false
+      # 
+      # write ")){\n"
+      # 
+      # if stmt[:stmt]
+      #   stmt[:stmt].each do |c|
+      #     generate_stmt c, :instance => context[:instance], :full_stmt => true, :self => current_self, :last_stmt => context[:laststmt] && (stmt[:stmt].last == c ? true : false)  # also check if the actual 'if' statement is last?
+      #   end
+      # end
+      # 
+      # write "}\n"
+      # if stmt[:tail]
+      #   stmt[:tail].each do |t|
+      #     
+      #     if t.node == :elsif
+      #       write "else if(#{js_replacement_function_name('RTEST')}("
+      #       generate_stmt t[:expr], :instance => context[:instance], :full_stmt => false, :self => current_self, :last_stmt => false
+      #       write ")){\n"
+      #     else # normal else
+      #       write "else{\n"
+      #     end
+      #     
+      #     if t[:stmt]
+      #       t[:stmt].each do |c|
+      #         generate_stmt c, :instance => context[:instance], :full_stmt => true,:self => current_self, :last_stmt => context[:laststmt] && (t[:stmt].last == c ? true : false) # also check if the actual 'if' statement is last?
+      #       end
+      #     end
+      #               
+      #     write "}\n"
+      #   end 
+      # end
     end
     
     # If/unless mod ... statement after 
@@ -590,21 +704,21 @@ module Vienna
     def generate_if_mod stmt, context
       # puts "IF node"
       # puts stmt
-      if stmt.node == :if_mod
-        write "if(#{js_replacement_function_name('RTEST')}("
-      else
-        write "if(!#{js_replacement_function_name('RTEST')}("
-      end
-
-      generate_stmt stmt[:expr],:instance => context[:instance], :full_stmt => false, :self => current_self, :last_stmt => false
-      
-      write ")){\n"
-      
-      if stmt[:stmt]
-        generate_stmt stmt[:stmt], :instance => context[:instance], :full_stmt => true, :self => current_self, :last_stmt => false # also check if the actual 'if' statement is last?
-      end
-      
-      write "}\n"
+      # if stmt.node == :if_mod
+      #   write "if(#{js_replacement_function_name('RTEST')}("
+      # else
+      #   write "if(!#{js_replacement_function_name('RTEST')}("
+      # end
+      # 
+      # generate_stmt stmt[:expr],:instance => context[:instance], :full_stmt => false, :self => current_self, :last_stmt => false
+      # 
+      # write ")){\n"
+      # 
+      # if stmt[:stmt]
+      #   generate_stmt stmt[:stmt], :instance => context[:instance], :full_stmt => true, :self => current_self, :last_stmt => false # also check if the actual 'if' statement is last?
+      # end
+      # 
+      # write "}\n"
     end
     
     
@@ -621,6 +735,13 @@ module Vienna
       klass.bodystmt.each do |b|
         generate_stmt b, :full_stmt => false, :last_stmt => false
       end
+      
+      # if no stmts, put nil as return value - its not actually used
+      if klass.bodystmt.length == 0
+        write %{[#{IPUTNIL}]} 
+        write %{[#{ILEAVE}]} 
+      end
+      
       iseq_stack_pop
 
       # base
@@ -632,9 +753,15 @@ module Vienna
        write %{[#{IPUTNIL}]}
       end
       
+            
+      
       
       # defineclass
       write %{[#{IDEFINECLASS},"#{klass.klass_name}",#{class_iseq},0]}    
+      
+      if context[:last_stmt] and context[:full_stmt]
+        write %{[#{ILEAVE}]}
+      end
       
       # write "vm_defineclass();"
       # write "(function(self) {\n"
@@ -1031,6 +1158,14 @@ module Vienna
         # for dynamics..
         block_iseq.parent_iseq = current_iseq
         
+        # block arg names
+        if call[:brace_block][:params]
+          call[:brace_block][:params].each do |p|
+            @iseq_current.push_local(p[:value])
+          end
+        end
+        
+        # block stmts
         if call[:brace_block][:stmt]
           call[:brace_block][:stmt].each do |a|
             generate_stmt a, :full_stmt => true, :last_stmt => call[:brace_block][:stmt].last == a
@@ -1102,10 +1237,12 @@ module Vienna
       # call
       write %{[#{ISEND},"#{call[:meth]}",#{arg_length},#{block_iseq},#{call_bit},nil]}
       
-      if context[:full_stmt] and not context[:last_stmt]
-        write "[#{IPOP}]"
-      elsif context[:full_stmt] and context[:last_stmt]
-        write %{[#{ILEAVE}]}
+      unless @iseq_current.type == ISEQ_TYPE_BLOCK
+        if context[:full_stmt] and not context[:last_stmt]
+          write "[#{IPOP}]"
+        elsif context[:full_stmt] and context[:last_stmt]
+          write %{[#{ILEAVE}]}
+        end      
       end
       
       
@@ -1321,7 +1458,13 @@ module Vienna
       class_iseq.parent_iseq = current_iseq
       # generate body stmts
       mod.bodystmt.each do |b|
-        generate_stmt b, :full_stmt => false, :last_stmt => false
+        generate_stmt b, :full_stmt => true,:last_stmt => mod.bodystmt.last == b
+      end
+      
+      # if no stmts, put nil as return value - its not actually used
+      if mod.bodystmt.length == 0
+        write %{[#{IPUTNIL}]} 
+        write %{[#{ILEAVE}]} 
       end
       
       iseq_stack_pop
@@ -1333,6 +1476,14 @@ module Vienna
       
       # defineclass
       write %{[#{IDEFINECLASS},"#{mod.klass_name}",#{class_iseq},2]}
+      
+            
+      if context[:last_stmt] and context[:full_stmt]
+        write %{[#{ILEAVE}]}
+      end
+      
+      
+      
       # mod_iseq = iseq_stack_push(ISEQ_TYPE_CLASS)
       # tree.each do |stmt|
         # generate_stmt stmt, :instance => true, :full_stmt => true, :last_stmt => false, :top_level => true
@@ -1408,24 +1559,24 @@ module Vienna
     def generate_assoc_list list, context
       
       # write "/* #{context[:instance]} */"
-      write 'return ' if context[:last_stmt] and context[:full_stmt]
-      write "VN.$h("
-      
-      list[:list].each do |l|
-        if l.node == :label_assoc
-          key = l[:key].slice(0, l[:key].length - 1)
-          write "#{js_id_for_symbol(key)}"
-        else
-          generate_stmt l[:key], :instance => (context[:singleton] ? false : true), :full_stmt => false, :last_stmt => false,  :self => current_self
-        end
-        write ', '
-        # generate_stmt l[:value], :instance => (context[:singleton] ? false : true), :full_stmt => false, :last_stmt => false,  :self => current_self
-        generate_stmt l[:value], :instance => context[:instance], :full_stmt => false, :last_stmt => false,  :self => current_self
-        write ', ' unless list[:list].last == l
-      end
-      
-      write ")"
-      write ";\n" if context[:full_stmt]
+      # write 'return ' if context[:last_stmt] and context[:full_stmt]
+      # write "VN.$h("
+      # 
+      # list[:list].each do |l|
+      #   if l.node == :label_assoc
+      #     key = l[:key].slice(0, l[:key].length - 1)
+      #     write "#{js_id_for_symbol(key)}"
+      #   else
+      #     generate_stmt l[:key], :instance => (context[:singleton] ? false : true), :full_stmt => false, :last_stmt => false,  :self => current_self
+      #   end
+      #   write ', '
+      #   # generate_stmt l[:value], :instance => (context[:singleton] ? false : true), :full_stmt => false, :last_stmt => false,  :self => current_self
+      #   generate_stmt l[:value], :instance => context[:instance], :full_stmt => false, :last_stmt => false,  :self => current_self
+      #   write ', ' unless list[:list].last == l
+      # end
+      # 
+      # write ")"
+      # write ";\n" if context[:full_stmt]
     end
   
     
@@ -1519,237 +1670,222 @@ module Vienna
     
     def generate_self identifier, context
       write %{[#{IPUTSELF}]}
-      # write 'return ' if context[:last_stmt] and context[:full_stmt]
-      # write "self"
-      # write ";\n" if context[:full_stmt]
     end
     
     def generate_true identifier, context
-      write 'return ' if context[:last_stmt] and context[:full_stmt]
-      write 'true'
-      write ";\n" if context[:full_stmt]
+      write %{[#{IPUTOBJECT},true]}
     end
     
     def generate_false identifier, context
-      write 'return ' if context[:last_stmt] and context[:full_stmt]
-      write 'false'
-      write ";\n" if context[:full_stmt]
+      write %{[#{IPUTOBJECT},false]}
     end
     
     def generate_nil identifier, context
-      write 'return ' if context[:last_stmt] and context[:full_stmt]
-      write 'nil'
-      write ";\n" if context[:full_stmt]
+      write %{[#{IPUTNIL}]}
     end
     
     
     def generate_numeric numeric, context
       write %{[#{IPUTOBJECT},#{numeric[:value]}]}
-      
-      # write 'return ' if context[:last_stmt] and context[:full_stmt]
-      # write '(' if context[:call_recv] # is number is the reciever of a call, we need to wrap it in params
-      # write "#{numeric[:value]}"
-      # write ')' if context[:call_recv]
-      # write ";\n" if context[:full_stmt]
     end
     
     
     # ||=, &&= etc - assign methods that cannot be overridden
     # 
     def generate_op_asgn stmt, context
-      write 'return ' if context[:last_stmt] and context[:full_stmt]
-      
-      op_node = case stmt[:op]
-      when '||'
-        node :orop, :lhs => stmt[:lhs], :rhs => stmt[:rhs]
-      when '&&'
-        node :andop, :lhs => stmt[:lhs], :rhs => stmt[:rhs]
-      when '+'
-        node :call, :recv => stmt[:lhs], :meth => '+', :call_args => { :args => [stmt[:rhs]] }
-      when '-'
-        node :call, :recv => stmt[:lhs], :meth => '-', :call_args => { :args => [stmt[:rhs]] }
-      end
-
-      generate_stmt node(:assign, :lhs => stmt[:lhs], :rhs => op_node), :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self => context[:self]
-      
-      write ";\n" if context[:full_stmt]
-    end
-    
-    def generate_lparen stmt, context
-      write 'return ' if context[:last_stmt] and context[:full_stmt]
-      write '('
-      stmt[:stmt].each do |s|
-        generate_stmt s, :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self => context[:self]
-      end
-      write ')'
-      write ";\n" if context[:full_stmt]
-    end
-    
-    def generate_return stmt, context
-      write 'return '
-      
-      if stmt[:call_args]
-        if stmt[:call_args][:args].length == 1
-          generate_stmt stmt[:call_args][:args][0], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self => context[:self]
-        else
-          write '['
-          stmt[:call_args][:args].each do |r|
-            generate_stmt r, :instance => context[:instance], :full_stmt => false, :last_stmt => false, :self => context[:self]
-            write ',' unless r == stmt[:call_args][:args].last
-          end
-          write ']'
-        end
-      end
-      
-      write ";\n" if context[:full_stmt]
+    #   write 'return ' if context[:last_stmt] and context[:full_stmt]
+    #   
+    #   op_node = case stmt[:op]
+    #   when '||'
+    #     node :orop, :lhs => stmt[:lhs], :rhs => stmt[:rhs]
+    #   when '&&'
+    #     node :andop, :lhs => stmt[:lhs], :rhs => stmt[:rhs]
+    #   when '+'
+    #     node :call, :recv => stmt[:lhs], :meth => '+', :call_args => { :args => [stmt[:rhs]] }
+    #   when '-'
+    #     node :call, :recv => stmt[:lhs], :meth => '-', :call_args => { :args => [stmt[:rhs]] }
+    #   end
+    # 
+    #   generate_stmt node(:assign, :lhs => stmt[:lhs], :rhs => op_node), :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self => context[:self]
+    #   
+    #   write ";\n" if context[:full_stmt]
+    # end
+    # 
+    # def generate_lparen stmt, context
+    #   write 'return ' if context[:last_stmt] and context[:full_stmt]
+    #   write '('
+    #   stmt[:stmt].each do |s|
+    #     generate_stmt s, :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self => context[:self]
+    #   end
+    #   write ')'
+    #   write ";\n" if context[:full_stmt]
+    # end
+    # 
+    # def generate_return stmt, context
+    #   write 'return '
+    #   
+    #   if stmt[:call_args]
+    #     if stmt[:call_args][:args].length == 1
+    #       generate_stmt stmt[:call_args][:args][0], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self => context[:self]
+    #     else
+    #       write '['
+    #       stmt[:call_args][:args].each do |r|
+    #         generate_stmt r, :instance => context[:instance], :full_stmt => false, :last_stmt => false, :self => context[:self]
+    #         write ',' unless r == stmt[:call_args][:args].last
+    #       end
+    #       write ']'
+    #     end
+    #   end
+    #   
+    #   write ";\n" if context[:full_stmt]
     end
     
     
     
     # primay::CONST
     def generate_colon2 stmt, context
-      write 'return ' if context[:last_stmt] and context[:full_stmt]
-      generate_stmt stmt[:lhs], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :top_level => context[:top_level]
-      # write '.$c_g('
-      # generate_stmt stmt[:rhs], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self => context[:self]
-      write ".$c_g('#{stmt[:rhs]}')"
-      write ";\n" if context[:full_stmt]
+      # write 'return ' if context[:last_stmt] and context[:full_stmt]
+      # generate_stmt stmt[:lhs], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :top_level => context[:top_level]
+      # # write '.$c_g('
+      # # generate_stmt stmt[:rhs], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self => context[:self]
+      # write ".$c_g('#{stmt[:rhs]}')"
+      # write ";\n" if context[:full_stmt]
     end
     
     def generate_colon3 stmt, context
-      write 'return ' if context[:last_stmt] and context[:full_stmt]
-      write "cObject.$c_g('#{stmt[:rhs]}')"
-      write ";\n" if context[:full_stmt]
+      # write 'return ' if context[:last_stmt] and context[:full_stmt]
+      # write "cObject.$c_g('#{stmt[:rhs]}')"
+      # write ";\n" if context[:full_stmt]
     end
     
     
     # Case/when statements
     def generate_case stmt, context
-      write 'return ' if context[:last_stmt] and context[:full_stmt]
-      
-      write "(function($v){\n"
-      
-      stmt[:body].each do |w|      
-        if w == stmt[:body].first
-          write "if(($e = #{js_replacement_function_name('rb_funcall')}("
-          generate_stmt w[:args][0], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self => context[:self]
-          write ", '===', $v),$e!==nil && $e!==false)){\n"
-          if w[:stmt]
-            w[:stmt].each do |s|
-              generate_stmt s, :instance => context[:instance], :full_stmt => true, :last_stmt => w[:stmt].last == s, :self => context[:self]
-            end
-          end
-          write "}\n"
-        elsif (w == stmt[:body].last) and (w.node == :else)
-          write "else {\n"
-          # write w
-          if w[:stmt]
-            w[:stmt].each do |s|
-              generate_stmt s, :instance => context[:instance], :full_stmt => true, :last_stmt => w[:stmt].last == s, :self => context[:self]
-            end
-          end
-          write "}\n"
-        # end
-        else
-          write "else if(($e = #{js_replacement_function_name('rb_funcall')}("
-          generate_stmt w[:args][0], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self => context[:self]
-          write ", '===', $v),$e!==nil && $e!==false)){\n"
-          if w[:stmt]
-            w[:stmt].each do |s|
-              generate_stmt s, :instance => context[:instance], :full_stmt => true, :last_stmt => w[:stmt].last == s, :self => context[:self]
-            end
-          end
-          write "}\n"
-        end
-      end
-            
-      write "})("
-      if stmt[:expr]
-        generate_stmt stmt[:expr], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self => context[:self]
-      else
-        write "true"
-      end
-      write ")"
-      
-      
-      write ";\n" if context[:full_stmt]
+      # write 'return ' if context[:last_stmt] and context[:full_stmt]
+      # 
+      # write "(function($v){\n"
+      # 
+      # stmt[:body].each do |w|      
+      #   if w == stmt[:body].first
+      #     write "if(($e = #{js_replacement_function_name('rb_funcall')}("
+      #     generate_stmt w[:args][0], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self => context[:self]
+      #     write ", '===', $v),$e!==nil && $e!==false)){\n"
+      #     if w[:stmt]
+      #       w[:stmt].each do |s|
+      #         generate_stmt s, :instance => context[:instance], :full_stmt => true, :last_stmt => w[:stmt].last == s, :self => context[:self]
+      #       end
+      #     end
+      #     write "}\n"
+      #   elsif (w == stmt[:body].last) and (w.node == :else)
+      #     write "else {\n"
+      #     # write w
+      #     if w[:stmt]
+      #       w[:stmt].each do |s|
+      #         generate_stmt s, :instance => context[:instance], :full_stmt => true, :last_stmt => w[:stmt].last == s, :self => context[:self]
+      #       end
+      #     end
+      #     write "}\n"
+      #   # end
+      #   else
+      #     write "else if(($e = #{js_replacement_function_name('rb_funcall')}("
+      #     generate_stmt w[:args][0], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self => context[:self]
+      #     write ", '===', $v),$e!==nil && $e!==false)){\n"
+      #     if w[:stmt]
+      #       w[:stmt].each do |s|
+      #         generate_stmt s, :instance => context[:instance], :full_stmt => true, :last_stmt => w[:stmt].last == s, :self => context[:self]
+      #       end
+      #     end
+      #     write "}\n"
+      #   end
+      # end
+      #       
+      # write "})("
+      # if stmt[:expr]
+      #   generate_stmt stmt[:expr], :instance => context[:instance], :full_stmt => false, :last_stmt => context[:last_stmt], :self => context[:self]
+      # else
+      #   write "true"
+      # end
+      # write ")"
+      # 
+      # 
+      # write ";\n" if context[:full_stmt]
     end
     
     # yield..
     def generate_yield stmt, context
-      write 'return ' if context[:last_stmt] and context[:full_stmt]
-      write "arguments[arguments.length -1]("
-      if stmt[:call_args] and stmt[:call_args][:args]
-        stmt[:call_args][:args].each do |arg|
-          write "," unless stmt[:call_args][:args].first == arg
-          generate_stmt arg, :instance => context[:instance], :full_stmt => false, :last_stmt => false, :self => context[:self]
-        end
-      end
-      write ")"
-      write ";\n" if context[:full_stmt]
+      # write 'return ' if context[:last_stmt] and context[:full_stmt]
+      # write "arguments[arguments.length -1]("
+      # if stmt[:call_args] and stmt[:call_args][:args]
+      #   stmt[:call_args][:args].each do |arg|
+      #     write "," unless stmt[:call_args][:args].first == arg
+      #     generate_stmt arg, :instance => context[:instance], :full_stmt => false, :last_stmt => false, :self => context[:self]
+      #   end
+      # end
+      # write ")"
+      # write ";\n" if context[:full_stmt]
     end
     
     
     def generate_cvar stmt, context
-      write 'return ' if context[:last_stmt] and context[:full_stmt]
-      write "self.$k_g('#{stmt[:name]}')"
-      write ";\n" if context[:full_stmt]
+      # write 'return ' if context[:last_stmt] and context[:full_stmt]
+      # write "self.$k_g('#{stmt[:name]}')"
+      # write ";\n" if context[:full_stmt]
     end
     
     
     def generate_orop stmt, context
-      write 'return ' if context[:last_stmt] and context[:full_stmt]
-      
-      write "ORTEST("
-      generate_stmt stmt[:lhs], :instance => context[:instance], :full_stmt => false, :last_stmt => false, :self => context[:self]
-      write ","
-      generate_stmt stmt[:rhs], :instance => context[:instance], :full_stmt => false, :last_stmt => false, :self => context[:self]
-      write ")"
-      
-      write ";\n" if context[:full_stmt]
+      # write 'return ' if context[:last_stmt] and context[:full_stmt]
+      # 
+      # write "ORTEST("
+      # generate_stmt stmt[:lhs], :instance => context[:instance], :full_stmt => false, :last_stmt => false, :self => context[:self]
+      # write ","
+      # generate_stmt stmt[:rhs], :instance => context[:instance], :full_stmt => false, :last_stmt => false, :self => context[:self]
+      # write ")"
+      # 
+      # write ";\n" if context[:full_stmt]
     end
     
     def generate_andop stmt, context
-      write 'return ' if context[:last_stmt] and context[:full_stmt]
-      
-      write "ANDTEST("
-      generate_stmt stmt[:lhs], :instance => context[:instance], :full_stmt => false, :last_stmt => false, :self => context[:self]
-      write ","
-      generate_stmt stmt[:rhs], :instance => context[:instance], :full_stmt => false, :last_stmt => false, :self => context[:self]
-      write ")"
-      
-      write ";\n" if context[:full_stmt]
+      # write 'return ' if context[:last_stmt] and context[:full_stmt]
+      # 
+      # write "ANDTEST("
+      # generate_stmt stmt[:lhs], :instance => context[:instance], :full_stmt => false, :last_stmt => false, :self => context[:self]
+      # write ","
+      # generate_stmt stmt[:rhs], :instance => context[:instance], :full_stmt => false, :last_stmt => false, :self => context[:self]
+      # write ")"
+      # 
+      # write ";\n" if context[:full_stmt]
     end
     
     def generate_not stmt, context
-      write 'return ' if context[:last_stmt] and context[:full_stmt]
-      write "NOTTEST("
-      generate_stmt stmt[:expr], :instance => context[:instance], :full_stmt => false, :last_stmt => false, :self => context[:self]
-      write ")"
-      write ";\n" if context[:full_stmt]
+      # write 'return ' if context[:last_stmt] and context[:full_stmt]
+      # write "NOTTEST("
+      # generate_stmt stmt[:expr], :instance => context[:instance], :full_stmt => false, :last_stmt => false, :self => context[:self]
+      # write ")"
+      # write ";\n" if context[:full_stmt]
     end
     
     def generate_tertiary stmt, context
-      write 'return ' if context[:last_stmt] and context[:full_stmt]
-      write "#{js_replacement_function_name('RTEST')}("
-      generate_stmt stmt[:expr], :instance => context[:instance], :full_stmt => false, :last_stmt => false, :self => context[:self]
-      write ") ? "
-      generate_stmt stmt[:true], :instance => context[:instance], :full_stmt => false, :last_stmt => false, :self => context[:self]
-      write " : "
-      generate_stmt stmt[:false], :instance => context[:instance], :full_stmt => false, :last_stmt => false, :self => context[:self]
-      write ";\n" if context[:full_stmt]
+      # write 'return ' if context[:last_stmt] and context[:full_stmt]
+      # write "#{js_replacement_function_name('RTEST')}("
+      # generate_stmt stmt[:expr], :instance => context[:instance], :full_stmt => false, :last_stmt => false, :self => context[:self]
+      # write ") ? "
+      # generate_stmt stmt[:true], :instance => context[:instance], :full_stmt => false, :last_stmt => false, :self => context[:self]
+      # write " : "
+      # generate_stmt stmt[:false], :instance => context[:instance], :full_stmt => false, :last_stmt => false, :self => context[:self]
+      # write ";\n" if context[:full_stmt]
     end
     
     
     def generate_dot2 stmt, context
-      write 'return ' if context[:last_stmt] and context[:full_stmt]
-      
-      write "VN.$r("
-      generate_stmt stmt[:start], :instance => context[:instance], :full_stmt => false, :last_stmt => false, :self => context[:self]
-      write ","
-      generate_stmt stmt[:ending], :instance => context[:instance], :full_stmt => false, :last_stmt => false, :self => context[:self]
-      write ",false)"
-      write ";\n" if context[:full_stmt]
+      # write 'return ' if context[:last_stmt] and context[:full_stmt]
+      # 
+      # write "VN.$r("
+      # generate_stmt stmt[:start], :instance => context[:instance], :full_stmt => false, :last_stmt => false, :self => context[:self]
+      # write ","
+      # generate_stmt stmt[:ending], :instance => context[:instance], :full_stmt => false, :last_stmt => false, :self => context[:self]
+      # write ",false)"
+      # write ";\n" if context[:full_stmt]
     end
     
   end

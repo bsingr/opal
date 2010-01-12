@@ -24,27 +24,20 @@
 # THE SOFTWARE.
 #
 
-module Vienna
-  
-  def self.boot!
-    puts "= Booting application"
-    puts "== requiring vienna"
-    require 'vienna'
-    puts "== requiring all app libs"
-    require_all_app_libs()
-    puts "= Finished booting."
-  end
-  
-  # require() every .rb file located in /app/**
-  def self.require_all_app_libs()
-    dir = File.join(File.dirname(__FILE__), '..', 'app', '**', '*.rb')
-    # Dir.glob(File.expand_path(dir)).each { |rb| require rb }
-  end
-end
-
-# Vienna.boot!
-
-dir = File.join(File.dirname(__FILE__), '..', 'app', '**', '*.rb')
-puts dir
-puts File.expand_path(dir)
-puts Dir.glob(File.expand_path(dir))
+# module Vienna
+#   
+#   def self.boot!
+#     puts "= Booting application"
+#     puts "== requiring vienna"
+#     require 'vienna'
+#     puts "== requiring all app libs"
+#     require_all_app_libs()
+#     puts "= Finished booting."
+#   end
+#   
+#   # require() every .rb file located in /app/**/*.rb
+#   def self.require_all_app_libs()
+#     dir = File.join(File.dirname(__FILE__), '..', 'app', '**', '*.rb')
+#     Dir.glob(File.expand_path(dir)).each { |rb| require rb }
+#   end
+# end

@@ -29,7 +29,7 @@ var rb_cDir;
 // glob
 // /^\/app\/.*\/charles\/[^\/]*\.rb$/
 //   \/app\/.*\/[^\/]*\.rb
-function dir_s_glob(argc, argv, dir) {
+function rb_dir_s_glob(argc, argv, dir) {
   if (argc > 1) throw "unsupported Dir.glob.. FIXME"
   
   var result = [], eof = false;
@@ -78,37 +78,37 @@ function Init_Dir() {
   rb_cDir = rb_define_class("Dir", rb_cObject);
   // rb_include_module(rb_cDir, rb_mEnumerable);
   
-  // rb_define_alloc_func(rb_cDir, dir_s_alloc);
-  // rb_define_singleton_method(rb_cDir, "open", dir_s_open, -1);
-  // rb_define_singleton_method(rb_cDir, "foreach", dir_foreach, -1);
-  // rb_define_singleton_method(rb_cDir, "entries", dir_entries, -1);
+  // rb_define_alloc_func(rb_cDir, rb_dir_s_alloc);
+  // rb_define_singleton_method(rb_cDir, "open", rb_dir_s_open, -1);
+  // rb_define_singleton_method(rb_cDir, "foreach", rb_dir_foreach, -1);
+  // rb_define_singleton_method(rb_cDir, "entries", rb_dir_entries, -1);
   // 
-  // rb_define_method(rb_cDir,"initialize", dir_initialize, -1);
-  // rb_define_method(rb_cDir,"path", dir_path, 0);
-  // rb_define_method(rb_cDir,"inspect", dir_inspect, 0);
-  // rb_define_method(rb_cDir,"read", dir_read, 0);
-  // rb_define_method(rb_cDir,"each", dir_each, 0);
-  // rb_define_method(rb_cDir,"rewind", dir_rewind, 0);
-  // rb_define_method(rb_cDir,"tell", dir_tell, 0);
-  // rb_define_method(rb_cDir,"seek", dir_seek, 1);
-  // rb_define_method(rb_cDir,"pos", dir_tell, 0);
-  // rb_define_method(rb_cDir,"pos=", dir_set_pos, 1);
-  // rb_define_method(rb_cDir,"close", dir_close, 0);
+  // rb_define_method(rb_cDir,"initialize", rb_dir_initialize, -1);
+  // rb_define_method(rb_cDir,"path", rb_dir_path, 0);
+  // rb_define_method(rb_cDir,"inspect", rb_dir_inspect, 0);
+  // rb_define_method(rb_cDir,"read", rb_dir_read, 0);
+  // rb_define_method(rb_cDir,"each", rb_dir_each, 0);
+  // rb_define_method(rb_cDir,"rewind", rb_dir_rewind, 0);
+  // rb_define_method(rb_cDir,"tell", rb_dir_tell, 0);
+  // rb_define_method(rb_cDir,"seek", rb_dir_seek, 1);
+  // rb_define_method(rb_cDir,"pos", rb_dir_tell, 0);
+  // rb_define_method(rb_cDir,"pos=", rb_dir_set_pos, 1);
+  // rb_define_method(rb_cDir,"close", rb_dir_close, 0);
   // 
-  // rb_define_singleton_method(rb_cDir,"chdir", dir_s_chdir, -1);
-  // rb_define_singleton_method(rb_cDir,"getwd", dir_s_getwd, 0);
-  // rb_define_singleton_method(rb_cDir,"pwd", dir_s_getwd, 0);
-  // rb_define_singleton_method(rb_cDir,"chroot", dir_s_chroot, 1);
-  // rb_define_singleton_method(rb_cDir,"mkdir", dir_s_mkdir, -1);
-  // rb_define_singleton_method(rb_cDir,"rmdir", dir_s_rmdir, 1);
-  // rb_define_singleton_method(rb_cDir,"delete", dir_s_rmdir, 1);
-  // rb_define_singleton_method(rb_cDir,"unlink", dir_s_rmdir, 1);
+  // rb_define_singleton_method(rb_cDir,"chdir", rb_dir_s_chdir, -1);
+  // rb_define_singleton_method(rb_cDir,"getwd", rb_dir_s_getwd, 0);
+  // rb_define_singleton_method(rb_cDir,"pwd", rb_dir_s_getwd, 0);
+  // rb_define_singleton_method(rb_cDir,"chroot", rb_dir_s_chroot, 1);
+  // rb_define_singleton_method(rb_cDir,"mkdir", rb_dir_s_mkdir, -1);
+  // rb_define_singleton_method(rb_cDir,"rmdir", rb_dir_s_rmdir, 1);
+  // rb_define_singleton_method(rb_cDir,"delete", rb_dir_s_rmdir, 1);
+  // rb_define_singleton_method(rb_cDir,"unlink", rb_dir_s_rmdir, 1);
   // 
-  rb_define_singleton_method(rb_cDir,"glob", dir_s_glob, -1);
-  // rb_define_singleton_method(rb_cDir,"[]", dir_s_aref, -1);
+  rb_define_singleton_method(rb_cDir,"glob", rb_dir_s_glob, -1);
+  // rb_define_singleton_method(rb_cDir,"[]", rb_dir_s_aref, -1);
   // rb_define_singleton_method(rb_cDir,"exist?", rb_file_directory_p, 1);
   // rb_define_singleton_method(rb_cDir,"exists?", rb_file_directory_p, 1);
   // 
-  // rb_define_singleton_method(rb_cFile,"fnmatch", file_s_fnmatch, -1);
-  // rb_define_singleton_method(rb_cFile,"fnmatch?", file_s_fnmatch, -1);
+  // rb_define_singleton_method(rb_cFile,"fnmatch", rb_file_s_fnmatch, -1);
+  // rb_define_singleton_method(rb_cFile,"fnmatch?", rb_file_s_fnmatch, -1);
 }
