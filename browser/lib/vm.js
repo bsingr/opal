@@ -76,7 +76,9 @@ var iNOP                    = 0,              iGETLOCAL               = 1,
     iOPT_SUCC               = 74,             iOPT_NOT                = 75,
     iOPT_REGEXPMATCH1       = 76,             iOPT_REGEXPMATCH2       = 77,
     iOPT_CALL_C_FUNCTION    = 78,             iBITBLT                 = 79,
-    iANSWER                 = 80;     
+    iANSWER                 = 80,
+    // JARV additions to YARV
+    iPUTSYMBOL              = 81;
 
 /**
   iseq types
@@ -249,6 +251,25 @@ function vm_exec(vm) {
       case iPUTOBJECT:
         // console.log("putobject" + sf.sp);
         sf.stack[sf.sp++] = op[1];
+        break;
+      
+      /**
+        putsymbol
+        
+        == operands
+        
+        ptr - string value for symbol
+        
+        == stack
+        
+        before:             after:
+        
+                            ----------
+        ==========    =>     val
+                            ----------
+      */
+      case iPUTSYMBOL:
+        sf.stack[sf.sp++] = ID2SYM(op[1]);
         break;
       
       /**
@@ -486,6 +507,32 @@ function vm_exec(vm) {
       */
       case iLEAVE:
         return sf.stack[--sf.sp];
+        break;
+      
+      /**
+        newhash
+        
+        == operands
+        
+        num - number of hash arguments to take from stack
+        
+         == stack
+
+          before:             after:
+
+          ----------         ----------
+           n args..     =>    hash     
+          ----------         ----------
+      */
+      case iNEWHASH:
+        var i, k, v, res = rb_hash_new(), num = op[1];
+        var ary = sf.stack.slice(sf.sp - num, sf.sp);
+        sf.sp -= num;
+        
+        for (i = 0; i < num; i += 2) {
+          rb_hash_aset(res, ary[i], ary[i + 1])
+        }
+        sf.stack[sf.sp++] = res;
         break;
       
       /**

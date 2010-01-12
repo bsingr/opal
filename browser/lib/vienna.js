@@ -103,6 +103,17 @@ function RClass(klass, super_klass) {
   return this;
 };
 
+function RHash() {
+  this.klass = nil;
+  this.flags = nil;
+  this.ifnone = nil;
+  // ordered keys
+  this.keys = [];
+  // keys.to_s => values
+  this.dict = { };
+  return this;
+}
+
 // Types
 var T_CLASS   = 1,
     T_MODULE  = 2,

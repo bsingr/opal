@@ -232,7 +232,7 @@ module Vienna
       ICONCATARRAY            = 25
       ISPLATARRAY             = 26             
       ICHECKINCLUDEARRAY      = 27
-      INEWHASH                = 28             
+      INEWHASH                = 'iNEWHASH'             
       INEWRANGE               = 29
       IPOP                    = 'iPOP'             
       IDUP                    = 'iDUP'
@@ -285,7 +285,8 @@ module Vienna
       IOPT_CALL_C_FUNCTION    = 78             
       IBITBLT                 = 79
       IANSWER                 = 80
-    
+      # JARV additions to YARV
+      IPUTSYMBOL              = 'iPUTSYMBOL'
     
     else # normal mode
       
@@ -881,12 +882,12 @@ module Vienna
 
     
     def generate_symbol sym, context
-      write "return " if context[:last_stmt] and context[:full_stmt]
-      write %{ID2SYM("#{sym[:name]}")}
+      # write "return " if context[:last_stmt] and context[:full_stmt]
+      write %{[#{IPUTSYMBOL},"#{sym[:name]}"]}
       
       # write "#{js_id_for_symbol(sym[:name])}"
       # write "'#{sym[:name]}'"
-      write ";" if context[:full_stmt]
+      # write ";" if context[:full_stmt]
     end
     
     def generate_constant const, context
@@ -897,8 +898,12 @@ module Vienna
    end
     
     
-    def generate_assoc_list list, context
-      
+    def generate_assoc_list(list, context)
+      list[:list].each do |assoc|
+        generate_stmt assoc[:key], :full_stmt => false, :last_stmt => false
+        generate_stmt assoc[:value], :full_stmt => false, :last_stmt => false
+      end
+      write %{[#{INEWHASH},#{list[:list].length * 2}]}
     end
   
     

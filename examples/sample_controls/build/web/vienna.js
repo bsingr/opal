@@ -141,365 +141,6 @@ function Init_Array() {
   // rb_define_method(rb_cArray, "drop_while", rb_ary_drop_while, 0);
 }
 /* 
- * base.js
- * vienna
- * 
- * Created by Adam Beynon.
- * Copyright 2009 Adam Beynon.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
- 
-// temp..
-var nil = null;
-
-/**
-  nodes etc
-*/
-
-var NOEX_PUBLIC     = 0,
-    NOEX_NOSUPER    = 1,
-    NOEX_PRIVATE    = 2,
-    NOEX_PROTECTED  = 4,
-    NOEX_MASK       = 6,
-    NOEX_BASIC      = 8;
-
-
-function require() {
-  
-};
-
-// Boolean test. false if null, undefined, nil, or false
-function RTEST(val) {
-  return (val != null && val != undefined && val != nil && val != false) ? true : false;
-};
-
-/**
-  Performs an 'or op' with lhs and rhs
-*/
-function ORTEST(lhs, rhs) {
-  if (lhs == null || lhs == undefined) lhs = nil;
-  if (rhs == null || rhs == undefined) rhs = nil;
-  
-  if (lhs == nil || lhs == false) {
-    return rhs;
-  }
-  return lhs;
-};
-
-/**
-  Performs an 'and op' with lhs and rhs
-*/
-function ANDTEST(lhs, rhs) {
-  if (lhs == null || lhs == undefined) lhs = nil;
-  if (rhs == null || rhs == undefined) rhs = nil;
-  
-  if (lhs == nil || lhs == false) {
-    return nil;
-  }
-  return rhs;
-};
-
-function NOTTEST(expr) {
-  if (expr == null || expr == undefined || expr == nil || expr == false) return true;
-  return false;
-};
-
-/**
-  Fix for browsers not having console
-*/
-if (typeof console === 'undefined') {
- var console = console || window.console || { };
- console.log = console.info = console.warn = console.error = function() { };
-}
-
-function RObject(klass, type) {
-  this.klass = klass;
-  this.flags = type;
-  this.iv_tbl = { };
-  return this;
-}
-
-function RClass(klass, super_klass) {
-  this.klass = klass ;
-  this.sup = super_klass ;
-  this.flags = T_CLASS ;
-  this.m_tbl = { };
-  this.iv_tbl = { };
-  return this;
-};
-
-// Types
-var T_CLASS   = 1,
-    T_MODULE  = 2,
-    T_OBJECT  = 4,
-    T_BOOLEAN = 8,
-    T_STRING  = 16,
-    T_ARRAY   = 32,
-    T_NUMBER  = 64,
-    T_PROC    = 128,
-    T_SYMBOL  = 256,
-    T_HASH    = 512,
-    T_ICLASS  = 1024;
-
-// Flags
-var FL_SINGLETON = 2056;
-
-function FL_TEST(x, f) {
-  return x.flags & f;
-}
-
-function FL_SET(x, f) {
-  x.flags |= f;
-}
-
-function FL_UNSET(x, f) {
-  x.flags &= (~f);
-}
-
-rb_class_tbl = { } ;  // all classes are stored here
-rb_global_tbl = { } ; // globals are stored here
-
-function rb_gvar_get(id) {
-  
-};
-
-function rb_gvar_set(id, val) {
-  
-};
-
-
-function boot_defclass(id, super_class) {
-  var o = rb_class_boot(super_class);
-  rb_name_class(o, id);
-  rb_class_tbl[id] = o;
-  rb_const_set((rb_cObject ? rb_cObject : o), id, o);
-  return o;
-};
-
-boot_defmetametaclass = function(klass, metametaclass) {
-  klass.klass.klass = metametaclass;
-};
-
-obj_alloc = function(klass) {
-  // console.log('in base.js, obj_alloc ' + arguments.length);
-  // var obj = klass.$('allocate', []);
-  var obj = VN$(klass, 'allocate');
-  return obj;
-};
-
-class_allocate_instance = function() {
-  // console.log('doing VN.class_allocate_instance');
-  var obj = new RObject(this, T_OBJECT) ;
-  return obj;
-};
-
-obj_dummy = function() {
-  return nil ;
-};
-
-equal = function(obj) {
-  if (obj == this) return true ;
-  var result = this.$funcall('==', [obj]);
-  if (result) return true ;
-  return false ;
-};
-
-eql = function(obj) {
-  return this.$funcall('==', [obj]);
-};
-
-obj_equal = function(obj) {
-  return (obj == this) ? true : false ;
-};
-/* 
- * browser.js
- * vienna
- * 
- * Created by Adam Beynon.
- * Copyright 2009 Adam Beynon.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
-function rb_browser_alert(recv, str) {
-  alert(str);
-  return nil;
-}
-
-function Init_Browser() {
-  
-  rb_define_method(rb_mKernel, "alert", rb_browser_alert, 1);
-}/* 
- * bundle.js
- * vienna
- * 
- * Created by Adam Beynon.
- * Copyright 2009 Adam Beynon.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
-/**
-  This whole file is to be depreciated.
-*/
- 
-var vn_all_bundles = { };
-
-function vn_bundle() {
-  this.path = null;
-  this.files = { };
-}
-
-function vn_file() {
-  this.path = null;
-  this.source = "";
-  this.required = false;
-}
-
-function Init_Bundle() {
-  // do we actually need to do anything?
-}
-
-function vn_bundle_load_at_path(path, callback) {
-  console.log("load: " + path + ".vn");
-  var r = new XMLHttpRequest();
-  r.open("GET", path + '.vn', true);
-  r.onreadystatechange=function() {
-    if (r.readyState==4) {
-      var rt = r.responseText;
-      var b = new vn_bundle();
-      b.path = path;
-      vn_bundle_initialize_with_content(b, rt);
-      vn_all_bundles[path] = b;
-      callback(b);
-    }
-  }
-  r.send(null);
-}
-
-
-function vn_bundle_initialize_with_content(bundle, content) {
-  
-  var parse_file = function() {
-    var flen = marker_count();
-    var fname = get_next(flen);
-    var clen = marker_count();
-    var fcontent = get_next(clen);
-    var file = new vn_file();
-    file.path = fname;
-    file.source = fcontent;
-    
-    bundle.files[fname] = file; 
-  }
-  
-  
-  var next = function(c) {
-    if (c && c !== ch) {
-      console.log('bundle parse error: Expected ' + c + ', but instead got ' + ch);
-    }
-    ch = text.charAt(at);
-    at += 1;
-    return ch;
-  };
-  
-  var get_next = function(i) {
-    var result = text.substr(at, i);
-    at += i;
-    return result;
-  };
-  
-  var marker_count = function() {
-    var len = '';
-    next();
-    while (ch >= '0' && ch <= '9') {
-      len += ch;
-      next(); // this will also pass us through the $ at the end of length
-    }
-    return parseInt(len);
-  };
-  
-  var at = 0;
-  var ch = '';
-  var text = content;
-  
-  // get bundle format
-  var bundle_format = (function() {
-    var marker = text.indexOf('$', at);
-    var format = text.substr(at, marker - at);
-    at = marker + 1;
-    return format;
-  })();
-  
-  // get bundle version
-  var bundle_version = (function() {
-    var marker = text.indexOf('$', at);
-    var version = text.substr(at, marker - at);
-    at = marker + 1;
-    return version;
-  })();
-  
-  while (next()) {
-    switch (ch) {
-      case 'f':
-        parse_file();
-        break;
-      default:
-        throw "unknown bundle part " + ch
-    }
-  }
-  
-  return bundle;
-}
-/* 
  * class.js
  * vienna
  * 
@@ -975,6 +616,43 @@ function rb_define_alloc_func(klass, func) {
   $const_set
 */
 /* 
+ * compar.js
+ * vienna
+ * 
+ * Created by Adam Beynon.
+ * Copyright 2010 Adam Beynon.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+var rb_mComparable;
+
+function Init_Comparable() {
+  rb_mComparable = rb_define_module("Comparable");
+  // rb_define_method(rb_mComparable, "==", rb_cmp_equal, 1);
+  // rb_define_method(rb_mComparable, ">", rb_cmp_gt, 1);
+  // rb_define_method(rb_mComparable, ">=", rb_cmp_ge, 1);
+  // rb_define_method(rb_mComparable, "<", rb_cmp_lt, 1);
+  // rb_define_method(rb_mComparable, "<=", rb_cmp_le, 1);
+  // rb_define_method(rb_mComparable, "between?", rb_cmp_between, 2);
+}
+/* 
  * dir.js
  * vienna
  * 
@@ -1088,11 +766,11 @@ function Init_Dir() {
   // rb_define_singleton_method(rb_cFile,"fnmatch", rb_file_s_fnmatch, -1);
   // rb_define_singleton_method(rb_cFile,"fnmatch?", rb_file_s_fnmatch, -1);
 }/* 
- * element.js
+ * enum.js
  * vienna
  * 
  * Created by Adam Beynon.
- * Copyright 2009 Adam Beynon.
+ * Copyright 2010 Adam Beynon.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -1113,20 +791,51 @@ function Init_Dir() {
  * THE SOFTWARE.
  */
 
-/**
-  Element class is used to access, add, modidy, remove Elements.
-*/
-var rb_cElement;
+var rb_mEnumerable;
 
-/**
-  Document is a constant instance of the Element class with methods added that
-  are appropriate to the document context.
-*/
-
-
-function Init_Element() {
-  rb_cElement = rb_define_class("Element", rb_cObject);
+function Init_Enumerable() {
+  rb_mEnumerable = rb_define_module("Enumerable");
   
+  rb_define_method(rb_mEnumerable, "to_a", rb_enum_to_a, -1);
+  rb_define_method(rb_mEnumerable, "entries", rb_enum_to_a, -1);
+
+  rb_define_method(rb_mEnumerable, "sort", rb_enum_sort, 0);
+  rb_define_method(rb_mEnumerable, "sort_by", rb_enum_sort_by, 0);
+  rb_define_method(rb_mEnumerable, "grep", rb_enum_grep, 1);
+  rb_define_method(rb_mEnumerable, "count", rb_enum_count, -1);
+  rb_define_method(rb_mEnumerable, "find", rb_enum_find, -1);
+  rb_define_method(rb_mEnumerable, "detect", rb_enum_find, -1);
+  rb_define_method(rb_mEnumerable, "find_index", rb_enum_find_index, -1);
+  rb_define_method(rb_mEnumerable, "find_all", rb_enum_find_all, 0);
+  rb_define_method(rb_mEnumerable, "select", rb_enum_find_all, 0);
+  rb_define_method(rb_mEnumerable, "reject", rb_enum_reject, 0);
+  rb_define_method(rb_mEnumerable, "collect", rb_enum_collect, 0);
+  rb_define_method(rb_mEnumerable, "map", rb_enum_collect, 0);
+  rb_define_method(rb_mEnumerable, "inject", rb_enum_inject, -1);
+  rb_define_method(rb_mEnumerable, "reduce", rb_enum_inject, -1);
+  rb_define_method(rb_mEnumerable, "partition", rb_enum_partition, 0);
+  rb_define_method(rb_mEnumerable, "group_by", rb_enum_group_by, 0);
+  rb_define_method(rb_mEnumerable, "first", rb_enum_first, -1);
+  rb_define_method(rb_mEnumerable, "all?", rb_enum_all, 0);
+  rb_define_method(rb_mEnumerable, "any?", rb_enum_any, 0);
+  rb_define_method(rb_mEnumerable, "one?", rb_enum_one, 0);
+  rb_define_method(rb_mEnumerable, "none?", rb_enum_none, 0);
+  rb_define_method(rb_mEnumerable, "min", rb_enum_min, 0);
+  rb_define_method(rb_mEnumerable, "max", rb_enum_max, 0);
+  rb_define_method(rb_mEnumerable, "minmax", rb_enum_minmax, 0);
+  rb_define_method(rb_mEnumerable, "min_by", rb_enum_min_by, 0);
+  rb_define_method(rb_mEnumerable, "max_by", rb_enum_max_by, 0);
+  rb_define_method(rb_mEnumerable, "minmax_by", rb_enum_minmax_by, 0);
+  rb_define_method(rb_mEnumerable, "member?", rb_enum_member, 1);
+  rb_define_method(rb_mEnumerable, "include?", rb_enum_member, 1);
+  rb_define_method(rb_mEnumerable, "each_with_index", rb_enum_each_with_index, -1);
+  rb_define_method(rb_mEnumerable, "reverse_each", rb_enum_reverse_each, -1);
+  rb_define_method(rb_mEnumerable, "zip", rb_enum_zip, -1);
+  rb_define_method(rb_mEnumerable, "take", rb_enum_take, 1);
+  rb_define_method(rb_mEnumerable, "take_while", rb_enum_take_while, 0);
+  rb_define_method(rb_mEnumerable, "drop", rb_enum_drop, 1);
+  rb_define_method(rb_mEnumerable, "drop_while", rb_enum_drop_while, 0);
+  rb_define_method(rb_mEnumerable, "cycle", rb_enum_cycle, -1);
 }
 /* 
  * file.js
@@ -1434,6 +1143,168 @@ function vm_gem_load(gem) {
   gem.loaded = true;
   return gem;
 }/* 
+ * hash.js
+ * vienna
+ * 
+ * Created by Adam Beynon.
+ * Copyright 2010 Adam Beynon.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+var rb_cHash, rb_envtbl;
+
+function rb_hash_alloc(klass) {
+  var hash = new RHash();
+  hash.klass = klass;
+  FL_SET(hash, T_HASH);
+  hash.ifnone = nil;
+  return hash;
+}
+
+function rb_hash_new() {
+  return rb_hash_alloc(rb_cHash);
+}
+
+function rb_hash_aset(hash, k, v) {
+  if (hash.keys.indexOf(k) == -1) {
+    hash.keys.push(k);
+  }
+  hash.dict[k] = v;
+  return v;
+}
+
+function Init_Hash() {
+  rb_cHash = rb_define_class("Hash", rb_cObject);
+  // rb_include_module(rb_cHash, rb_mEnumerable);
+  // rb_define_alloc_func(rb_cHash, rb_hash_alloc);
+  
+  // rb_define_singleton_method(rb_cHash, "[]", rb_hash_s_create, -1);
+  // rb_define_singleton_method(rb_cHash, "try_convert", rb_hash_s_try_convert, 1);
+  
+  // rb_define_method(rb_cHash,"initialize", rb_hash_initialize, -1);
+  // rb_define_method(rb_cHash,"initialize_copy", rb_hash_replace, 1);
+  // rb_define_method(rb_cHash,"rehash", rb_hash_rehash, 0);
+
+  // rb_define_method(rb_cHash,"to_hash", rb_hash_to_hash, 0);
+  // rb_define_method(rb_cHash,"to_a", rb_hash_to_a, 0);
+  // rb_define_method(rb_cHash,"to_s", rb_hash_inspect, 0);
+  // rb_define_method(rb_cHash,"inspect", rb_hash_inspect, 0);
+
+  // rb_define_method(rb_cHash,"==", rb_hash_equal, 1);
+  // rb_define_method(rb_cHash,"[]", rb_hash_aref, 1);
+  // rb_define_method(rb_cHash,"hash", rb_hash_hash, 0);
+  // rb_define_method(rb_cHash,"eql?", rb_hash_eql, 1);
+  // rb_define_method(rb_cHash,"fetch", rb_hash_fetch_m, -1);
+  rb_define_method(rb_cHash,"[]=", rb_hash_aset, 2);
+  // rb_define_method(rb_cHash,"store", rb_hash_aset, 2);
+  // rb_define_method(rb_cHash,"default", rb_hash_default, -1);
+  // rb_define_method(rb_cHash,"default=", rb_hash_set_default, 1);
+  // rb_define_method(rb_cHash,"default_proc", rb_hash_default_proc, 0);
+  // rb_define_method(rb_cHash,"default_proc=", rb_hash_set_default_proc, 1);
+  // rb_define_method(rb_cHash,"key", rb_hash_key, 1);
+  // rb_define_method(rb_cHash,"index", rb_hash_index, 1);
+  // rb_define_method(rb_cHash,"size", rb_hash_size, 0);
+  // rb_define_method(rb_cHash,"length", rb_hash_size, 0);
+  // rb_define_method(rb_cHash,"empty?", rb_hash_empty_p, 0);
+
+  // rb_define_method(rb_cHash,"each_value", rb_hash_each_value, 0);
+  // rb_define_method(rb_cHash,"each_key", rb_hash_each_key, 0);
+  // rb_define_method(rb_cHash,"each_pair", rb_hash_each_pair, 0);
+  // rb_define_method(rb_cHash,"each", rb_hash_each_pair, 0);
+
+  // rb_define_method(rb_cHash,"keys", rb_hash_keys, 0);
+  // rb_define_method(rb_cHash,"values", rb_hash_values, 0);
+  // rb_define_method(rb_cHash,"values_at", rb_hash_values_at, -1);
+
+  // rb_define_method(rb_cHash,"shift", rb_hash_shift, 0);
+  // rb_define_method(rb_cHash,"delete", rb_hash_delete, 1);
+  // rb_define_method(rb_cHash,"delete_if", rb_hash_delete_if, 0);
+  // rb_define_method(rb_cHash,"select", rb_hash_select, 0);
+  // rb_define_method(rb_cHash,"reject", rb_hash_reject, 0);
+  // rb_define_method(rb_cHash,"reject!", rb_hash_reject_bang, 0);
+  // rb_define_method(rb_cHash,"clear", rb_hash_clear, 0);
+  // rb_define_method(rb_cHash,"invert", rb_hash_invert, 0);
+  // rb_define_method(rb_cHash,"update", rb_hash_update, 1);
+  // rb_define_method(rb_cHash,"replace", rb_hash_replace, 1);
+  // rb_define_method(rb_cHash,"merge!", rb_hash_update, 1);
+  // rb_define_method(rb_cHash,"merge", rb_hash_merge, 1);
+  // rb_define_method(rb_cHash, "assoc", rb_hash_assoc, 1);
+  // rb_define_method(rb_cHash, "rassoc", rb_hash_rassoc, 1);
+  // rb_define_method(rb_cHash, "flatten", rb_hash_flatten, -1);
+
+  // rb_define_method(rb_cHash,"include?", rb_hash_has_key, 1);
+  // rb_define_method(rb_cHash,"member?", rb_hash_has_key, 1);
+  // rb_define_method(rb_cHash,"has_key?", rb_hash_has_key, 1);
+  // rb_define_method(rb_cHash,"has_value?", rb_hash_has_value, 1);
+  // rb_define_method(rb_cHash,"key?", rb_hash_has_key, 1);
+  // rb_define_method(rb_cHash,"value?", rb_hash_has_value, 1);
+
+  // rb_define_method(rb_cHash,"compare_by_identity", rb_hash_compare_by_id, 0);
+  // rb_define_method(rb_cHash,"compare_by_identity?",rb_hash_compare_by_id_p, 0);
+
+  // rb_envtbl = rb_obj_alloc(rb_cObject);
+  // rb_extend_object(rb_envtbl, rb_mEnumerable);
+
+  // rb_define_singleton_method(rb_envtbl,"[]", rb_f_getenv, 1);
+  // rb_define_singleton_method(rb_envtbl,"fetch", env_fetch, -1);
+  // rb_define_singleton_method(rb_envtbl,"[]=", env_aset, 2);
+  // rb_define_singleton_method(rb_envtbl,"store", env_aset, 2);
+  // rb_define_singleton_method(rb_envtbl,"each", env_each_pair, 0);
+  // rb_define_singleton_method(rb_envtbl,"each_pair", env_each_pair, 0);
+  // rb_define_singleton_method(rb_envtbl,"each_key", env_each_key, 0);
+  // rb_define_singleton_method(rb_envtbl,"each_value", env_each_value, 0);
+  // rb_define_singleton_method(rb_envtbl,"delete", env_delete_m, 1);
+  // rb_define_singleton_method(rb_envtbl,"delete_if", env_delete_if, 0);
+  // rb_define_singleton_method(rb_envtbl,"clear", rb_env_clear, 0);
+  // rb_define_singleton_method(rb_envtbl,"reject", env_reject, 0);
+  // rb_define_singleton_method(rb_envtbl,"reject!", env_reject_bang, 0);
+  // rb_define_singleton_method(rb_envtbl,"select", env_select, 0);
+  // rb_define_singleton_method(rb_envtbl,"shift", env_shift, 0);
+  // rb_define_singleton_method(rb_envtbl,"invert", env_invert, 0);
+  // rb_define_singleton_method(rb_envtbl,"replace", env_replace, 1);
+  // rb_define_singleton_method(rb_envtbl,"update", env_update, 1);
+  // rb_define_singleton_method(rb_envtbl,"inspect", env_inspect, 0);
+  // rb_define_singleton_method(rb_envtbl,"rehash", env_none, 0);
+  // rb_define_singleton_method(rb_envtbl,"to_a", env_to_a, 0);
+  // rb_define_singleton_method(rb_envtbl,"to_s", env_to_s, 0);
+  // rb_define_singleton_method(rb_envtbl,"key", env_key, 1);
+  // rb_define_singleton_method(rb_envtbl,"index", env_index, 1);
+  // rb_define_singleton_method(rb_envtbl,"size", env_size, 0);
+  // rb_define_singleton_method(rb_envtbl,"length", env_size, 0);
+  // rb_define_singleton_method(rb_envtbl,"empty?", env_empty_p, 0);
+  // rb_define_singleton_method(rb_envtbl,"keys", env_keys, 0);
+  // rb_define_singleton_method(rb_envtbl,"values", env_values, 0);
+  // rb_define_singleton_method(rb_envtbl,"values_at", env_values_at, -1);
+  // rb_define_singleton_method(rb_envtbl,"include?", env_has_key, 1);
+  // rb_define_singleton_method(rb_envtbl,"member?", env_has_key, 1);
+  // rb_define_singleton_method(rb_envtbl,"has_key?", env_has_key, 1);
+  // rb_define_singleton_method(rb_envtbl,"has_value?", env_has_value, 1);
+  // rb_define_singleton_method(rb_envtbl,"key?", env_has_key, 1);
+  // rb_define_singleton_method(rb_envtbl,"value?", env_has_value, 1);
+  // rb_define_singleton_method(rb_envtbl,"to_hash", env_to_hash, 0);
+  // rb_define_singleton_method(rb_envtbl,"assoc", env_assoc, 1);
+  // rb_define_singleton_method(rb_envtbl,"rassoc", env_rassoc, 1);
+
+  // rb_define_global_const("ENV", rb_envtbl);
+}
+/* 
  * init.js
  * vienna
  * 
@@ -1465,16 +1336,14 @@ function rb_call_inits() {
   Init_Array();
   Init_Number();
   Init_String();
+  Init_Hash();
+  Init_Range();
+  Init_Regexp();
   Init_File();
   Init_Dir();
   Init_VM();
   Init_vm_eval();
   Init_load();
-  
-  Init_Bundle();
-  
-  Init_Browser();
-  Init_Element();
 }
 /* 
  * load.js
@@ -4603,6 +4472,151 @@ vn_ruby_string_scanner.prototype.peek = function(len) {
 };
 
 /* 
+ * range.js
+ * vienna
+ * 
+ * Created by Adam Beynon.
+ * Copyright 2010 Adam Beynon.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+var rb_cRange;
+
+function Init_Range() {
+  rb_cRange = rb_define_class("Range", rb_cObject);
+  // rb_include_module(rb_cRange, rb_cEnumerable);
+
+  // rb_define_method(rb_cRange, "initialize", rb_range_initialize, -1);
+  // rb_define_method(rb_cRange, "initialize_copy",rb_range_initialize_copy, 1);
+  // rb_define_method(rb_cRange, "==", rb_range_eq, 1);
+  // rb_define_method(rb_cRange, "===", rb_range_eqq, 1);
+  // rb_define_method(rb_cRange, "eql?", rb_range_eql, 1);
+  // rb_define_method(rb_cRange, "hash", rb_range_hash, 0);
+  // rb_define_method(rb_cRange, "each", rb_range_each, 0);
+  // rb_define_method(rb_cRange, "step", rb_range_step, -1);
+  // rb_define_method(rb_cRange, "begin", rb_range_begin, 0);
+  // rb_define_method(rb_cRange, "end", rb_range_end, 0);
+  // rb_define_method(rb_cRange, "first", rb_range_first, -1);
+  // rb_define_method(rb_cRange, "last", rb_range_last, -1);
+  // rb_define_method(rb_cRange, "min", rb_range_min, 0);
+  // rb_define_method(rb_cRange, "max", rb_range_max, 0);
+  // rb_define_method(rb_cRange, "to_s", rb_range_to_s, 0);
+  // rb_define_method(rb_cRange, "inspect", rb_range_inspect, 0);
+
+  // rb_define_method(rb_cRange, "exclude_end?", rb_range_exclude_end_p, 0);
+
+  // rb_define_method(rb_cRange, "member?", rb_range_include, 1);
+  // rb_define_method(rb_cRange, "include?", rrb_ange_include, 1);
+  // rb_define_method(rb_cRange, "cover?", rb_range_cover, 1);
+}
+/* 
+ * re.js
+ * vienna
+ * 
+ * Created by Adam Beynon.
+ * Copyright 2010 Adam Beynon.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+var rb_cRegexp, rb_eRegexpError, rb_cMatch;
+
+function Init_Regexp() {
+  // rb_eRegexpError = rb_define_class("RegexpError", rb_eStandardError);
+  
+  // rb_define_virtual_variable("$~", rb_match_getter, rb_match_setter);
+  // rb_define_virtual_variable("$&", rb_last_match_getter, 0);
+  // rb_define_virtual_variable("$`", rb_prematch_getter, 0);
+  // rb_define_virtual_variable("$'", rb_postmatch_getter, 0);
+  // rb_define_virtual_variable("$+", rb_last_paren_match_getter, 0);
+
+  // rb_define_virtual_variable("$=", rb_ignorecase_getter, rb_ignorecase_setter);
+  // rb_define_virtual_variable("$KCODE", rb_kcode_getter, rb_kcode_setter);
+  // rb_define_virtual_variable("$-K", rb_kcode_getter, rb_kcode_setter);
+
+  rb_cRegexp = rb_define_class("Regexp", rb_cObject);
+  // rb_define_alloc_func(rb_cRegexp, rb_reg_s_alloc);
+  // rb_define_singleton_method(rb_cRegexp, "compile", rb_class_new_instance, -1);
+  // rb_define_singleton_method(rb_cRegexp, "quote", rb_reg_s_quote, 1);
+  // rb_define_singleton_method(rb_cRegexp, "escape", rb_reg_s_quote, 1);
+  // rb_define_singleton_method(rb_cRegexp, "union", rb_reg_s_union_m, -2);
+  // rb_define_singleton_method(rb_cRegexp, "last_match", rb_reg_s_last_match, -1);
+  // rb_define_singleton_method(rb_cRegexp, "try_convert", rb_reg_s_try_convert, 1);
+
+  // rb_define_method(rb_cRegexp, "initialize", rb_reg_initialize_m, -1);
+  // rb_define_method(rb_cRegexp, "initialize_copy", rb_reg_init_copy, 1);
+  // rb_define_method(rb_cRegexp, "hash", rb_reg_hash, 0);
+  // rb_define_method(rb_cRegexp, "eql?", rb_reg_equal, 1);
+  // rb_define_method(rb_cRegexp, "==", rb_reg_equal, 1);
+  // rb_define_method(rb_cRegexp, "=~", rb_reg_match, 1);
+  // rb_define_method(rb_cRegexp, "===", rb_reg_eqq, 1);
+  // rb_define_method(rb_cRegexp, "~", rb_reg_match2, 0);
+  // rb_define_method(rb_cRegexp, "match", rb_reg_match_m, -1);
+  // rb_define_method(rb_cRegexp, "to_s", rb_reg_to_s, 0);
+  // rb_define_method(rb_cRegexp, "inspect", rb_reg_inspect, 0);
+  // rb_define_method(rb_cRegexp, "source", rb_reg_source, 0);
+  // rb_define_method(rb_cRegexp, "casefold?", rb_reg_casefold_p, 0);
+  // rb_define_method(rb_cRegexp, "options", rb_reg_options_m, 0);
+  // rb_define_method(rb_cRegexp, "encoding", rb_obj_encoding, 0);
+  // rb_define_method(rb_cRegexp, "fixed_encoding?", rb_reg_fixed_encoding_p, 0);
+  // rb_define_method(rb_cRegexp, "names", rb_reg_names, 0);
+  // rb_define_method(rb_cRegexp, "named_captures", rb_reg_named_captures, 0);
+ 
+  rb_cMatch  = rb_define_class("MatchData", rb_cObject);
+  // rb_define_alloc_func(rb_cMatch, match_alloc);
+
+  // rb_define_method(rb_cMatch, "initialize_copy", match_init_copy, 1);
+  // rb_define_method(rb_cMatch, "regexp", match_regexp, 0);
+  // rb_define_method(rb_cMatch, "names", match_names, 0);
+  // rb_define_method(rb_cMatch, "size", match_size, 0);
+  // rb_define_method(rb_cMatch, "length", match_size, 0);
+  // rb_define_method(rb_cMatch, "offset", match_offset, 1);
+  // rb_define_method(rb_cMatch, "begin", match_begin, 1);
+  // rb_define_method(rb_cMatch, "end", match_end, 1);
+  // rb_define_method(rb_cMatch, "to_a", match_to_a, 0);
+  // rb_define_method(rb_cMatch, "[]", match_aref, -1);
+  // rb_define_method(rb_cMatch, "captures", match_captures, 0);
+  // rb_define_method(rb_cMatch, "values_at", match_values_at, -1);
+  // rb_define_method(rb_cMatch, "pre_match", rb_reg_match_pre, 0);
+  // rb_define_method(rb_cMatch, "post_match", rb_reg_match_post, 0);
+  // rb_define_method(rb_cMatch, "to_s", match_to_s, 0);
+  // rb_define_method(rb_cMatch, "inspect", match_inspect, 0);
+  // rb_define_method(rb_cMatch, "string", match_string, 0);
+}
+/* 
  * string.js
  * vienna
  * 
@@ -4966,6 +4980,205 @@ function rb_const_get_at(k, id) {
 //   return method.apply(this, args) ;
 // };
 /* 
+ * base.js
+ * vienna
+ * 
+ * Created by Adam Beynon.
+ * Copyright 2009 Adam Beynon.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+ 
+// temp..
+var nil = null;
+
+/**
+  nodes etc
+*/
+
+var NOEX_PUBLIC     = 0,
+    NOEX_NOSUPER    = 1,
+    NOEX_PRIVATE    = 2,
+    NOEX_PROTECTED  = 4,
+    NOEX_MASK       = 6,
+    NOEX_BASIC      = 8;
+
+
+function require() {
+  
+};
+
+// Boolean test. false if null, undefined, nil, or false
+function RTEST(val) {
+  return (val != null && val != undefined && val != nil && val != false) ? true : false;
+};
+
+/**
+  Performs an 'or op' with lhs and rhs
+*/
+function ORTEST(lhs, rhs) {
+  if (lhs == null || lhs == undefined) lhs = nil;
+  if (rhs == null || rhs == undefined) rhs = nil;
+  
+  if (lhs == nil || lhs == false) {
+    return rhs;
+  }
+  return lhs;
+};
+
+/**
+  Performs an 'and op' with lhs and rhs
+*/
+function ANDTEST(lhs, rhs) {
+  if (lhs == null || lhs == undefined) lhs = nil;
+  if (rhs == null || rhs == undefined) rhs = nil;
+  
+  if (lhs == nil || lhs == false) {
+    return nil;
+  }
+  return rhs;
+};
+
+function NOTTEST(expr) {
+  if (expr == null || expr == undefined || expr == nil || expr == false) return true;
+  return false;
+};
+
+/**
+  Fix for browsers not having console
+*/
+if (typeof console === 'undefined') {
+ var console = console || window.console || { };
+ console.log = console.info = console.warn = console.error = function() { };
+}
+
+function RObject(klass, type) {
+  this.klass = klass;
+  this.flags = type;
+  this.iv_tbl = { };
+  return this;
+}
+
+function RClass(klass, super_klass) {
+  this.klass = klass ;
+  this.sup = super_klass ;
+  this.flags = T_CLASS ;
+  this.m_tbl = { };
+  this.iv_tbl = { };
+  return this;
+};
+
+function RHash() {
+  this.klass = nil;
+  this.flags = nil;
+  this.ifnone = nil;
+  // ordered keys
+  this.keys = [];
+  // keys.to_s => values
+  this.dict = { };
+  return this;
+}
+
+// Types
+var T_CLASS   = 1,
+    T_MODULE  = 2,
+    T_OBJECT  = 4,
+    T_BOOLEAN = 8,
+    T_STRING  = 16,
+    T_ARRAY   = 32,
+    T_NUMBER  = 64,
+    T_PROC    = 128,
+    T_SYMBOL  = 256,
+    T_HASH    = 512,
+    T_ICLASS  = 1024;
+
+// Flags
+var FL_SINGLETON = 2056;
+
+function FL_TEST(x, f) {
+  return x.flags & f;
+}
+
+function FL_SET(x, f) {
+  x.flags |= f;
+}
+
+function FL_UNSET(x, f) {
+  x.flags &= (~f);
+}
+
+rb_class_tbl = { } ;  // all classes are stored here
+rb_global_tbl = { } ; // globals are stored here
+
+function rb_gvar_get(id) {
+  
+};
+
+function rb_gvar_set(id, val) {
+  
+};
+
+
+function boot_defclass(id, super_class) {
+  var o = rb_class_boot(super_class);
+  rb_name_class(o, id);
+  rb_class_tbl[id] = o;
+  rb_const_set((rb_cObject ? rb_cObject : o), id, o);
+  return o;
+};
+
+boot_defmetametaclass = function(klass, metametaclass) {
+  klass.klass.klass = metametaclass;
+};
+
+obj_alloc = function(klass) {
+  // console.log('in base.js, obj_alloc ' + arguments.length);
+  // var obj = klass.$('allocate', []);
+  var obj = VN$(klass, 'allocate');
+  return obj;
+};
+
+class_allocate_instance = function() {
+  // console.log('doing VN.class_allocate_instance');
+  var obj = new RObject(this, T_OBJECT) ;
+  return obj;
+};
+
+obj_dummy = function() {
+  return nil ;
+};
+
+equal = function(obj) {
+  if (obj == this) return true ;
+  var result = this.$funcall('==', [obj]);
+  if (result) return true ;
+  return false ;
+};
+
+eql = function(obj) {
+  return this.$funcall('==', [obj]);
+};
+
+obj_equal = function(obj) {
+  return (obj == this) ? true : false ;
+};
+/* 
  * vm.js
  * vienna
  * 
@@ -5043,7 +5256,9 @@ var iNOP                    = 0,              iGETLOCAL               = 1,
     iOPT_SUCC               = 74,             iOPT_NOT                = 75,
     iOPT_REGEXPMATCH1       = 76,             iOPT_REGEXPMATCH2       = 77,
     iOPT_CALL_C_FUNCTION    = 78,             iBITBLT                 = 79,
-    iANSWER                 = 80;     
+    iANSWER                 = 80,
+    // JARV additions to YARV
+    iPUTSYMBOL              = 81;
 
 /**
   iseq types
@@ -5216,6 +5431,25 @@ function vm_exec(vm) {
       case iPUTOBJECT:
         // console.log("putobject" + sf.sp);
         sf.stack[sf.sp++] = op[1];
+        break;
+      
+      /**
+        putsymbol
+        
+        == operands
+        
+        ptr - string value for symbol
+        
+        == stack
+        
+        before:             after:
+        
+                            ----------
+        ==========    =>     val
+                            ----------
+      */
+      case iPUTSYMBOL:
+        sf.stack[sf.sp++] = ID2SYM(op[1]);
         break;
       
       /**
@@ -5453,6 +5687,32 @@ function vm_exec(vm) {
       */
       case iLEAVE:
         return sf.stack[--sf.sp];
+        break;
+      
+      /**
+        newhash
+        
+        == operands
+        
+        num - number of hash arguments to take from stack
+        
+         == stack
+
+          before:             after:
+
+          ----------         ----------
+           n args..     =>    hash     
+          ----------         ----------
+      */
+      case iNEWHASH:
+        var i, k, v, res = rb_hash_new(), num = op[1];
+        var ary = sf.stack.slice(sf.sp - num, sf.sp);
+        sf.sp -= num;
+        
+        for (i = 0; i < num; i += 2) {
+          rb_hash_aset(res, ary[i], ary[i + 1])
+        }
+        sf.stack[sf.sp++] = res;
         break;
       
       /**

@@ -1,9 +1,9 @@
 /* 
- * element.js
+ * compar.js
  * vienna
  * 
  * Created by Adam Beynon.
- * Copyright 2009 Adam Beynon.
+ * Copyright 2010 Adam Beynon.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,18 +24,14 @@
  * THE SOFTWARE.
  */
 
-/**
-  Element class is used to access, add, modidy, remove Elements.
-*/
-var rb_cElement;
+var rb_mComparable;
 
-/**
-  Document is a constant instance of the Element class with methods added that
-  are appropriate to the document context.
-*/
-
-
-function Init_Element() {
-  rb_cElement = rb_define_class("Element", rb_cObject);
-  
+function Init_Comparable() {
+  rb_mComparable = rb_define_module("Comparable");
+  // rb_define_method(rb_mComparable, "==", rb_cmp_equal, 1);
+  // rb_define_method(rb_mComparable, ">", rb_cmp_gt, 1);
+  // rb_define_method(rb_mComparable, ">=", rb_cmp_ge, 1);
+  // rb_define_method(rb_mComparable, "<", rb_cmp_lt, 1);
+  // rb_define_method(rb_mComparable, "<=", rb_cmp_le, 1);
+  // rb_define_method(rb_mComparable, "between?", rb_cmp_between, 2);
 }

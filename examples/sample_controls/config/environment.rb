@@ -63,3 +63,6 @@ class View
 end
 
 View.adam
+
+adam = { :age => 100, :width => 700, :height => 930 }
+puts adam
