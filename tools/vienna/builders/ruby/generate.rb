@@ -98,6 +98,10 @@ module Vienna
         s << %{"#{@name}",}
         s << %{"#{@filename}",}
         s << %{#{@type},}
+        # local names
+        s << "["
+        s << @locals.map { |l| %{"#{l}"} }.join(",")
+        s << "],"
         s << %{0,}
         # catch table
         s << %{[],}
@@ -176,7 +180,7 @@ module Vienna
     # Set debug mode for generator. Debug mode on makes the opcode output nicer
     # to read using full opcode names, rather that integers, and also using full
     # label jump names, instead of abbreviated strings.
-    @debug_mode = true
+    @debug_mode = false
     
     def self.debug_mode?
       @debug_mode
@@ -387,6 +391,8 @@ module Vienna
       IOPT_CALL_C_FUNCTION    = 78             
       IBITBLT                 = 79
       IANSWER                 = 80
+      # JARV additions to YARV
+      IPUTSYMBOL              = 81
     end
     
     

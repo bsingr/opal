@@ -219,7 +219,7 @@ function vm_run_mode_running(vm) {
   Execute iseq, for current frame pointer, which will be a function.
 */
 function vm_exec(vm) {
-  var jumps = vm.cfp.iseq[7], iseq = vm.cfp.iseq[8], op, sf = vm.cfp;
+  var jumps = vm.cfp.iseq[8], iseq = vm.cfp.iseq[9], op, sf = vm.cfp;
   // console.log("executing iseq: " + iseq);
   for (; sf.pc < iseq.length; sf.pc++) {
     op = iseq[sf.pc];
