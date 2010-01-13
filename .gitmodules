@@ -1,0 +1,3 @@
+[submodule "platforms/web/charles"]
+	path = platforms/web/charles
+	url = git://github.com/adambeynon/charles.git
