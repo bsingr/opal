@@ -27,7 +27,7 @@
 module Vienna
   
   # responder should be included?
-  class View < Responder
+  class View
     
   end
 end

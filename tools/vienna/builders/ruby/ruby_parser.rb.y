@@ -1116,64 +1116,63 @@ xstring_contents:
 
           f_args: f_arg ',' f_optarg ',' f_rest_arg opt_f_block_arg
                   {
-             		    result = node :arg, :arg => val[0], :optarg => val[2], :rest_arg => val[4], :opt_block_arg => val[5]
+                    result = node_args(val[0], val[2], val[4], nil, val[5])
              		  }
               	| f_arg ',' f_optarg ',' f_rest_arg ',' f_arg opt_f_block_arg
               	  {
-             		    result = node :arg, :arg => val[0], :optarg => val[2], :rest_arg => val[4], :arg2 => val[6], :opt_block_arg => val[7]
+             		    result = node_args(val[0], val[2], val[4], val[6], val[7])
              		  }
               	| f_arg ',' f_optarg opt_f_block_arg
               	  {
-              	    result = node :arg, :arg => val[0], :optarg => val[2], :opt_block_arg => val[3]
+              	    result = node_args(val[0], val[2], nil, nil, val[3])
               	  }
             		| f_arg ',' f_optarg ',' f_arg opt_f_block_arg
             		  {
-              	    result = node :arg, :arg => val[0], :optarg => val[2], :arg2 => val[4], :opt_block_arg => val[5]
+            		    result = node_args(val[0], val[2], nil, val[4], val[5])
               	  }
             		| f_arg ',' f_rest_arg opt_f_block_arg
             		  {
-            		    result = node :arg, :arg => val[0], :rest_arg => val[2], :opt_block_arg => val[3]
+            		    result = node_args(val[0], nil, val[2], nil, val[3])
             		  }
              		| f_arg ',' f_rest_arg ',' f_arg opt_f_block_arg
              		  {
-            		    result = node :arg, :arg => val[0], :rest_arg => val[2], :arg2 => val[4], :opt_block_arg => val[5]
+            		    result = node_args(val[0], nil, val[2], val[4], val[5])
             		  }
              		| f_arg opt_f_block_arg
              		  {
-             		    result = node :arg, :arg => val[0], :opt_block_arg => val[1]
+             		    result = node_args(val[0], nil, nil, nil, val[1])
              		  }
             		| f_optarg ',' f_rest_arg opt_f_block_arg
             		  {
-            		    result = node :optarg, :optarg => val[0], :rest_arg => val[2], :opt_block_arg => val[3]
+            		    result = node_args(nil, val[0], val[2], nil, val[3])
             		  }
             		| f_optarg ',' f_rest_arg ',' f_arg opt_f_block_arg
             		  {
-            		    result = node :optarg, :optarg => val[0], :rest_arg => val[2], :arg => val[4], :opt_block_arg => val[5]
+            		    result = node_args(nil, val[0], val[2], val[4], val[5])
             		  }
              		| f_optarg opt_f_block_arg
              		  {
-             		    result = node :optarg, :optarg => val[0], :opt_block_arg => val[1]
+             		    result = node_args(nil, val[0], nil, nil, val[1])
              		  }
             		| f_optarg ',' f_arg opt_f_block_arg
             		  {
-             		    result = node :optarg, :optarg => val[0], :arg => val[2], :opt_block_arg => val[3]
+             		    result = node_args(nil, val[0], nil, val[2], val[3])
              		  }
               	| f_rest_arg opt_f_block_arg
             	    {
-             		    result = node :rest_arg, :rest_arg => val[0], :opt_block_arg => val[1]
+             		    result = node_args(nil, nil, val[0], nil, val[1])
              		  }
             		| f_rest_arg ',' f_arg opt_f_block_arg
             		  {
-             		    result = node :rest_arg, :rest_arg => val[0], :arg => val[2], :opt_block_arg => val[3]
+             		    result = node_args(nil, nil, val[0], val[2], val[3])
              		  }
             		| f_block_arg
             		  {
-             		    result = node :arg, :opt_block_arg => val[0]
+             		    result = node_args(nil, nil, nil, nil, val[0])
              		  }
-              	| 
+              	| # none ..
               	  {
-              	    # none...
-              	    result = nil
+              	    result = node_args(nil, nil, nil, nil, nil)
               	  }
 
        f_bad_arg: tCONSTANT

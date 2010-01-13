@@ -28,6 +28,10 @@ module Vienna
   
   class RubyParser
     
+    def node_args(arg, opt, rest, post, block)
+      Vienna::RubyParser::RArgsNode.new arg, opt, rest, post, block
+    end
+    
     def node_module(options)
       Vienna::RubyParser::RModule.new options
     end
@@ -49,6 +53,44 @@ module Vienna
     # generic node, for use anywhere...
     def node type, options={}
       Vienna::RubyParser::RNode.new type, options
+    end
+    
+    class RArgsNode
+      
+      attr_reader :arg, :opt, :rest, :post, :block
+      
+      def initialize(a,o,r,p,b)
+        @arg = a
+        @opt = o
+        @rest = r
+        @post = p
+        @block = b
+      end
+      
+      # for generator
+      def to_s
+        arg_length
+      end
+      
+      def arg_length
+        @arg ? @arg.length : 0
+      end
+      
+      def opt_length
+        @opt ? @opt.length : 0
+      end
+      
+      def rest_length
+        @rest ? @rest.length : 0
+      end
+      
+      def post_length
+        @post ? @post.length : 0
+      end
+      
+      def block_length
+        @block ? @block.length : 0
+      end
     end
     
     class RModule

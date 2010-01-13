@@ -41,11 +41,16 @@ module Vienna
     
     # defaults are nil. only do something if these are not nil, i.e. use custom location
     attr_reader :application_path, :vendor_path
+    
+    # build_options from config/build.yml
+    attr_reader :build_options
   
     def initialize(project_root)
       @project_root = project_root
       @required_bundles = ['vienna']
       @bundles = {}
+      
+      @build_options = YAML.load_file(File.join(project_root, 'config', 'build.yml'))
       
       unless File.exist?(File.join(project_root, 'config', 'environment.rb'))
         abort 'Cannot find base environment file for project'

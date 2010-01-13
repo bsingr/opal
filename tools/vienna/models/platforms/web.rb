@@ -105,7 +105,8 @@ module Vienna
       # js bin code for project (can be default if no file specified)
       # project_root/bin/project_name.js
       def js_bin_code
-        JSMin.minify(open(File.join(project_root, 'bin', project_name) + '.js'))
+        %{vm_bundle_main("config/environment");}
+        # JSMin.minify(open(File.join(project_root, 'bin', project_name) + '.js'))
       end
       
       # build test.html

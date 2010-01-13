@@ -47,32 +47,44 @@ module Vienna
         # ..
       end
       
-      def build!
-        File.open(gem_file_path, "wb") do |f|
-          f.write %{vngem$1.0$}
-          rb_files_in_gem.each do |rb|
-            filename = normalized_name(rb)
-            b = Vienna::RubyParser.new(rb, project, filename)
-            # s now holds built string (executable code for file)
-            s = b.build!
-            # puts s
-            f.write %{f#{filename.length}$#{filename}#{s.length}$#{s}}
+      # all ruby sources for app, all gems etc
+      def ruby_sources
+        vienna_root = File.expand_path(File.join(Vienna::LIBPATH, '..', 'lib'))
+        ruby_sources = {}
+        # app sources
+        @project.build_options['sources'].each do |a|
+          Dir.glob(File.join(@project.project_root, a)).each do |s|
+            ruby_sources[s] = /^#{@project.project_root}(.*)/.match(s)[1]
           end
         end
-        # build:
-         # include ALL files in project_root/app and project_root/config
-         # resources/files from other places will be used as necessary.
-         # test will only be included for test runs, not default build.
-         # lib includes taks etc, so dont include
-         # bin are for building executables, not for runtime
-         # stylesheets/images are located inside app folder. any images.css
-         # outside should be ignored.
-         # 
-         # also, for web: include platforms/web .. this has extra stuff just
-         # for js env that cannot be dynamically loaded at runtime, so make 
-         # this part of the build hardcoded.
-        puts "building #{gem_file_path}" 
         
+        # vienna sources
+        Dir.glob(File.join(vienna_root, '**', '*.rb')).each do |v|
+          ruby_sources[v] = '/vendor/vienna/lib' + /^#{vienna_root}(.*)/.match(v)[1]
+        end
+          
+        ruby_sources
+      end
+      
+      def build!
+        
+        # puts @project.build_options['sources']
+        # pp ruby_sources
+        
+        File.open(gem_file_path, "wb") do |f|
+          # vienna app magic marker
+          f.write %{vnapp$1.0$}
+          
+          # list each of our 'gems' - app doesnt count
+          f.write %{g6$vienna14$/vendor/vienna}
+          
+          # output all of our ruby sources
+          ruby_sources.each_pair do |path, name|
+            b = Vienna::RubyParser.new(path, project, name)
+            s = b.build!
+            f.write %{f#{name.length}$#{name}#{s.length}$#{s}}
+          end
+        end        
       end
       
       # normalized filename (relative to project root)

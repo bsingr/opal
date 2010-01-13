@@ -563,7 +563,13 @@ function vm_exec(vm) {
             def_obj = sf.self;
         }
         
-        rb_define_method(def_obj, method_id, method_iseq, 0);
+        if (is_singleton) {
+          rb_define_method(rb_singleton_class(def_obj), method_id, method_iseq, 0);
+        }
+        else {
+          rb_define_method(def_obj, method_id, method_iseq, 0);
+        }
+        
         // console.log(def_obj);
         // throw "dmethod"
         break;

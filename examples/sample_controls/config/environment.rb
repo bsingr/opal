@@ -24,12 +24,8 @@
 # THE SOFTWARE.
 #
 
-# require File.join(File.dirname(__FILE__), 'boot')
-# 
-# # applications main() method. Handle app loading etc in app delegate, in
-# # app/controllers/app_controller.rb to:
-# #   - handle loading
-# #   - load gui
+require File.join(File.dirname(__FILE__), 'boot')
+
 # application do |app|
 #   
 #   # custom place to put application gem/bundle - only applicable to web
@@ -50,19 +46,3 @@
 #   # vendor folder. 'vienna' gem is loaded automatically.
 #   # app.gem 'interface_builder'
 # end
-
-class View
-  class << self
-    def adam
-      puts 1000
-    end
-  end
-  def bob
-    puts 10
-  end
-end
-
-View.adam
-
-adam = { :age => 100, :width => 700, :height => 930 }
-puts adam

@@ -643,14 +643,49 @@ function rb_define_alloc_func(klass, func) {
 
 var rb_mComparable;
 
+function rb_cmp_equal(x, y) {
+  if (x == y) return true;
+  // rescue..
+}
+
+function rb_cmp_gt(x, y) {
+  var c = rb_funcall(x, "<=>", 1, y);
+  if (c > 0) return true;
+  return false;
+}
+
+function rb_cmp_ge(x, y) {
+  var c = rb_funcall(x, "<=>", 1, y);
+  if (c >= 0) return true;
+  return false;
+}
+
+function rb_cmp_lt(x, y) {
+  var c = rb_funcall(x, "<=>", 1, y);
+  if (c < 0) return true;
+  return false;
+}
+
+function rb_cmp_le(x, y) {
+  var c = rb_funcall(x, "<=>", 1, y);
+  if (c <= 0) return true;
+  return false;
+}
+
+function rb_cmp_between(obj, min, max) {
+  if (RTEST(rb_cmp_lt(obj, min))) return false;
+  if (RTEST(rb_cmp_gt(obj, max))) return false;
+  return true;
+}
+
 function Init_Comparable() {
   rb_mComparable = rb_define_module("Comparable");
-  // rb_define_method(rb_mComparable, "==", rb_cmp_equal, 1);
-  // rb_define_method(rb_mComparable, ">", rb_cmp_gt, 1);
-  // rb_define_method(rb_mComparable, ">=", rb_cmp_ge, 1);
-  // rb_define_method(rb_mComparable, "<", rb_cmp_lt, 1);
-  // rb_define_method(rb_mComparable, "<=", rb_cmp_le, 1);
-  // rb_define_method(rb_mComparable, "between?", rb_cmp_between, 2);
+  rb_define_method(rb_mComparable, "==", rb_cmp_equal, 1);
+  rb_define_method(rb_mComparable, ">", rb_cmp_gt, 1);
+  rb_define_method(rb_mComparable, ">=", rb_cmp_ge, 1);
+  rb_define_method(rb_mComparable, "<", rb_cmp_lt, 1);
+  rb_define_method(rb_mComparable, "<=", rb_cmp_le, 1);
+  rb_define_method(rb_mComparable, "between?", rb_cmp_between, 2);
 }
 /* 
  * dir.js
@@ -1088,6 +1123,19 @@ function vm_gem_load(gem) {
     vn_fs_define_file(f, c);
   }
   
+  // parse gem definiton
+  function parse_gem_def() {
+    var g = get_next(marker_count());
+    var p = get_next(marker_count());
+    console.log('found ' + g + ' at ' + p);
+  }
+  
+  // parse_locales
+  // parse a list of locales that this application has defined
+  function parse_locales() {
+    
+  }
+  
   // get gem format
   var gem_format = (function() {
     var marker = text.indexOf('$', at);
@@ -1133,6 +1181,18 @@ function vm_gem_load(gem) {
     switch (ch) {
       case 'f':
         parse_file();
+        break;
+      case 'g':
+        parse_gem_def();
+        break;
+      case 'l':
+        parse_locales();
+        break;
+      case 's':
+        parse_string_table();
+        break;
+      case 'p':
+        parse_platform_list();
         break;
       default:
         throw "unknown bundle part " + ch
@@ -1487,9 +1547,17 @@ function rb_f_require(obj, path) {
   if (vn_fs_path_hash[path + '.rb']) {
     correct_path = path + '.rb';
   }
+  // try if we assume .rb is already in the path
+  else if (vn_fs_path_hash[path]) {
+    correct_path = path;
+  }
   // try in vendor path, i.e. /vendor/path.rb
   else if (vn_fs_path_hash['/vendor/' + path + '.rb']) {
     throw "found a vendor lib!"
+  }
+  // cheat..manually check gem name in /vendor/name/lib/name.rb
+  else if (vn_fs_path_hash['/vendor/' + path + '/lib/' + path + '.rb']) {
+    correct_path = '/vendor/' + path + '/lib/' + path + '.rb';
   }
   else {
     throw "cannot find require: " + path + ", called from " + called_from_file;
@@ -5743,7 +5811,13 @@ function vm_exec(vm) {
             def_obj = sf.self;
         }
         
-        rb_define_method(def_obj, method_id, method_iseq, 0);
+        if (is_singleton) {
+          rb_define_method(rb_singleton_class(def_obj), method_id, method_iseq, 0);
+        }
+        else {
+          rb_define_method(def_obj, method_id, method_iseq, 0);
+        }
+        
         // console.log(def_obj);
         // throw "dmethod"
         break;

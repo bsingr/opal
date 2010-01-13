@@ -49,6 +49,8 @@ module Vienna
       
       attr_reader :type
       
+      attr_writer :args_list
+      
       def initialize(type, filename, name)
         @type = type
         @filename = filename
@@ -102,7 +104,8 @@ module Vienna
         s << "["
         s << @locals.map { |l| %{"#{l}"} }.join(",")
         s << "],"
-        s << %{0,}
+        # argslist
+        s << (@args_list ? %{#{@args_list.to_s},} : %{0,})
         # catch table
         s << %{[],}
         # jumps
@@ -180,7 +183,7 @@ module Vienna
     # Set debug mode for generator. Debug mode on makes the opcode output nicer
     # to read using full opcode names, rather that integers, and also using full
     # label jump names, instead of abbreviated strings.
-    @debug_mode = false
+    @debug_mode = true
     
     def self.debug_mode?
       @debug_mode
@@ -706,21 +709,38 @@ module Vienna
     # 
     def generate_def definition, context
       
+      is_singleton = definition[:singleton] ? 1 : 0
+      
       current_iseq = @iseq_current
       def_iseq = iseq_stack_push(ISEQ_TYPE_METHOD, definition[:fname])
       # for dynamics..
       def_iseq.parent_iseq = current_iseq
+      
+      # arg names
+      if definition[:arglist].arg
+        definition[:arglist].arg.each { |a| @iseq_current.push_local a[:value] }
+      end
+      
+      @iseq_current.args_list = definition[:arglist]
+            
       # generate body stmts
       definition[:bodystmt].each do |b|
-        generate_stmt b, :last_stmt => definition[:bodystmt].last == b, :full_stmt => true
+        generate_stmt b, :last_stmt => definition[:bodystmt].last == b, 
+                         :full_stmt => true
       end
       iseq_stack_pop
 
       # base (singleton method)
-      write %{[#{IPUTNIL}]}
+      if definition[:singleton]
+        generate_stmt definition[:singleton], :full_stmt => false, 
+                                              :last_stmt => false
+      else
+        write %{[#{IPUTNIL}]}
+      end
+      
     
       # defineclass
-      write %{[#{IDEFINEMETHOD},"#{definition[:fname]}",#{def_iseq},0]}
+      write %{[#{IDEFINEMETHOD},"#{definition[:fname]}",#{def_iseq},#{is_singleton}]}
       
     end
     
@@ -945,7 +965,15 @@ module Vienna
           write %{[#{IGETDYNAMIC},#{dynamic_idx[0]},#{dynamic_idx[1]}]}
         else
           # must be a method call
-          write "n"
+          write %{[#{ISEND},"#{identifier[:name]}",0,nil,8,nil]}
+
+          unless @iseq_current.type == ISEQ_TYPE_BLOCK
+            if context[:full_stmt] and not context[:last_stmt]
+              write "[#{IPOP}]"
+            elsif context[:full_stmt] and context[:last_stmt]
+              write %{[#{ILEAVE}]}
+            end      
+          end
         end
       end
 

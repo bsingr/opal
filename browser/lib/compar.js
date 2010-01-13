@@ -26,12 +26,47 @@
 
 var rb_mComparable;
 
+function rb_cmp_equal(x, y) {
+  if (x == y) return true;
+  // rescue..
+}
+
+function rb_cmp_gt(x, y) {
+  var c = rb_funcall(x, "<=>", 1, y);
+  if (c > 0) return true;
+  return false;
+}
+
+function rb_cmp_ge(x, y) {
+  var c = rb_funcall(x, "<=>", 1, y);
+  if (c >= 0) return true;
+  return false;
+}
+
+function rb_cmp_lt(x, y) {
+  var c = rb_funcall(x, "<=>", 1, y);
+  if (c < 0) return true;
+  return false;
+}
+
+function rb_cmp_le(x, y) {
+  var c = rb_funcall(x, "<=>", 1, y);
+  if (c <= 0) return true;
+  return false;
+}
+
+function rb_cmp_between(obj, min, max) {
+  if (RTEST(rb_cmp_lt(obj, min))) return false;
+  if (RTEST(rb_cmp_gt(obj, max))) return false;
+  return true;
+}
+
 function Init_Comparable() {
   rb_mComparable = rb_define_module("Comparable");
-  // rb_define_method(rb_mComparable, "==", rb_cmp_equal, 1);
-  // rb_define_method(rb_mComparable, ">", rb_cmp_gt, 1);
-  // rb_define_method(rb_mComparable, ">=", rb_cmp_ge, 1);
-  // rb_define_method(rb_mComparable, "<", rb_cmp_lt, 1);
-  // rb_define_method(rb_mComparable, "<=", rb_cmp_le, 1);
-  // rb_define_method(rb_mComparable, "between?", rb_cmp_between, 2);
+  rb_define_method(rb_mComparable, "==", rb_cmp_equal, 1);
+  rb_define_method(rb_mComparable, ">", rb_cmp_gt, 1);
+  rb_define_method(rb_mComparable, ">=", rb_cmp_ge, 1);
+  rb_define_method(rb_mComparable, "<", rb_cmp_lt, 1);
+  rb_define_method(rb_mComparable, "<=", rb_cmp_le, 1);
+  rb_define_method(rb_mComparable, "between?", rb_cmp_between, 2);
 }

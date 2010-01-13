@@ -85,6 +85,19 @@ function vm_gem_load(gem) {
     vn_fs_define_file(f, c);
   }
   
+  // parse gem definiton
+  function parse_gem_def() {
+    var g = get_next(marker_count());
+    var p = get_next(marker_count());
+    console.log('found ' + g + ' at ' + p);
+  }
+  
+  // parse_locales
+  // parse a list of locales that this application has defined
+  function parse_locales() {
+    
+  }
+  
   // get gem format
   var gem_format = (function() {
     var marker = text.indexOf('$', at);
@@ -130,6 +143,18 @@ function vm_gem_load(gem) {
     switch (ch) {
       case 'f':
         parse_file();
+        break;
+      case 'g':
+        parse_gem_def();
+        break;
+      case 'l':
+        parse_locales();
+        break;
+      case 's':
+        parse_string_table();
+        break;
+      case 'p':
+        parse_platform_list();
         break;
       default:
         throw "unknown bundle part " + ch

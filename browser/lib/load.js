@@ -140,9 +140,17 @@ function rb_f_require(obj, path) {
   if (vn_fs_path_hash[path + '.rb']) {
     correct_path = path + '.rb';
   }
+  // try if we assume .rb is already in the path
+  else if (vn_fs_path_hash[path]) {
+    correct_path = path;
+  }
   // try in vendor path, i.e. /vendor/path.rb
   else if (vn_fs_path_hash['/vendor/' + path + '.rb']) {
     throw "found a vendor lib!"
+  }
+  // cheat..manually check gem name in /vendor/name/lib/name.rb
+  else if (vn_fs_path_hash['/vendor/' + path + '/lib/' + path + '.rb']) {
+    correct_path = '/vendor/' + path + '/lib/' + path + '.rb';
   }
   else {
     throw "cannot find require: " + path + ", called from " + called_from_file;
