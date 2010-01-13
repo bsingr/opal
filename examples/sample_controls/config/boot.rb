@@ -39,4 +39,3 @@ module Vienna
 end
 
 Vienna.boot!
-

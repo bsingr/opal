@@ -1,9 +1,9 @@
 /* 
  * load.js
- * vienna
+ * charles
  * 
  * Created by Adam Beynon.
- * Copyright 2009 Adam Beynon.
+ * Copyright 2010 Adam Beynon.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,6 +23,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
  
 /**
   Entry point 1.
@@ -151,6 +152,10 @@ function rb_f_require(obj, path) {
   // cheat..manually check gem name in /vendor/name/lib/name.rb
   else if (vn_fs_path_hash['/vendor/' + path + '/lib/' + path + '.rb']) {
     correct_path = '/vendor/' + path + '/lib/' + path + '.rb';
+  }
+  // try relative to local path
+  else if (vn_fs_path_hash[rb_file_s_dirname(nil, called_from_file) + '/' + path + '.rb']) {
+    correct_path = rb_file_s_dirname(nil, called_from_file) + '/' + path + '.rb';
   }
   else {
     throw "cannot find require: " + path + ", called from " + called_from_file;

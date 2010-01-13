@@ -1,9 +1,9 @@
 /* 
  * vm.js
- * vienna
+ * charles
  * 
  * Created by Adam Beynon.
- * Copyright 2009 Adam Beynon.
+ * Copyright 2010 Adam Beynon.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,6 +23,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 
 /**
   Jarv - (Javascript/Just) another ruby vm
@@ -192,6 +193,8 @@ function rb_iseq_eval(iseq) {
   var val, vm = rb_top_vm;
   vm_set_top_stack(vm, iseq);
   val = vm_run_mode_running(rb_top_vm);
+  // must pop frame when we are done with it.
+  vm_pop_frame(vm);
   return val;
 }
 
@@ -813,8 +816,10 @@ function rb_search_method(klass, id) {
 };
 
 function rb_vm_call(vm, klass, recv, id, oid, argc, argv, body, nosuper, blockptr) {
+  // console.log(id);
+  // console.log(blockptr);
   if (typeof body === 'function') {
-
+    
     var pcf = vm.cfp;
 
     var cfp = vm_push_frame(vm, [0,0], recv);
@@ -822,6 +827,7 @@ function rb_vm_call(vm, klass, recv, id, oid, argc, argv, body, nosuper, blockpt
     var val = call_cfunc(body, recv, body.rb_argc, argc, argv);
     
     vm_pop_frame(vm);
+    // console.log("popping from " + id);
     return val;
   }
   else {
@@ -836,6 +842,7 @@ function rb_vm_call(vm, klass, recv, id, oid, argc, argv, body, nosuper, blockpt
     
     var val = vm_exec(vm);
     vm_pop_frame(vm);
+    // console.log("popping from " + id);
     return val;
   }
 }

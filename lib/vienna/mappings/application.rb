@@ -27,6 +27,7 @@
 module Kernel
   
   def application(options={}, &block)
-    
+    # start app (use shared, but it shouldnt really be started yet)
+    # Object::VNApp = Vienna::Application.shared_application
   end
 end

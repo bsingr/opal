@@ -1,3 +1,0 @@
-== VN Bundle format
-
-Bundles are used along the same line as gems. They are self contained packages of code, that holds the ruby code, as well as resources such as images, yml, json, css etc. For efficiency, all this is encapsulated within a single file, with a .vn file extension. Bundles are not executable javascript, they are a custom format that is parsed at runtime within the browser. Their style is small to make parsing efficient as fast for mobile devices.

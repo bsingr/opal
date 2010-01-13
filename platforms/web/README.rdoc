@@ -1,0 +1,11 @@
+= Web platform
+
+Platform for running vienna within a browser
+
+== charles
+
+Essentially, this is the implementation of ruby for running in the browser. Includes runtime, parser, compiler, and core objects/modules all implemented in Javascript. Can be used standalone (see documentation).
+
+== platform
+
+Additions to vienna ruby framework to implement platform specific features. Each platform - web, osx, win, linux etc all have different platform implementations. The core lib, in /vienna/lib/**.* will plug in to the respective runtime platform. This platform implements the rendering capabilities and plugging into the browser event model etc.

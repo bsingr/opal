@@ -1,9 +1,9 @@
 /* 
  * module.js
- * vienna
+ * charles
  * 
  * Created by Adam Beynon.
- * Copyright 2009 Adam Beynon.
+ * Copyright 2010 Adam Beynon.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,6 +23,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 
 var RModule = { } ;
 

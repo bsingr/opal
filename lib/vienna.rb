@@ -33,4 +33,4 @@ end
 
 # Vienna.require_all_libs_relative_to(__FILE__)
 
-puts "ZOMG!!!"
+require 'vienna/mappings/application'

@@ -1559,6 +1559,10 @@ function rb_f_require(obj, path) {
   else if (vn_fs_path_hash['/vendor/' + path + '/lib/' + path + '.rb']) {
     correct_path = '/vendor/' + path + '/lib/' + path + '.rb';
   }
+  // try relative to local path
+  else if (vn_fs_path_hash[rb_file_s_dirname(nil, called_from_file) + '/' + path + '.rb']) {
+    correct_path = rb_file_s_dirname(nil, called_from_file) + '/' + path + '.rb';
+  }
   else {
     throw "cannot find require: " + path + ", called from " + called_from_file;
   }
@@ -5440,6 +5444,8 @@ function rb_iseq_eval(iseq) {
   var val, vm = rb_top_vm;
   vm_set_top_stack(vm, iseq);
   val = vm_run_mode_running(rb_top_vm);
+  // must pop frame when we are done with it.
+  vm_pop_frame(vm);
   return val;
 }
 
@@ -6061,8 +6067,10 @@ function rb_search_method(klass, id) {
 };
 
 function rb_vm_call(vm, klass, recv, id, oid, argc, argv, body, nosuper, blockptr) {
+  // console.log(id);
+  // console.log(blockptr);
   if (typeof body === 'function') {
-
+    
     var pcf = vm.cfp;
 
     var cfp = vm_push_frame(vm, [0,0], recv);
@@ -6070,6 +6078,7 @@ function rb_vm_call(vm, klass, recv, id, oid, argc, argv, body, nosuper, blockpt
     var val = call_cfunc(body, recv, body.rb_argc, argc, argv);
     
     vm_pop_frame(vm);
+    // console.log("popping from " + id);
     return val;
   }
   else {
@@ -6084,6 +6093,7 @@ function rb_vm_call(vm, klass, recv, id, oid, argc, argv, body, nosuper, blockpt
     
     var val = vm_exec(vm);
     vm_pop_frame(vm);
+    // console.log("popping from " + id);
     return val;
   }
 }
