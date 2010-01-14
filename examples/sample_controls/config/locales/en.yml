@@ -1,6 +1,0 @@
-# locales: en default
-
-en:
-  hello: Hello World!
-  bye: Goodbye World!
-  loaded: Application has now loaded. Get clicking!

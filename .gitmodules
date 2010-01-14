@@ -1,6 +1,6 @@
-[submodule "platforms/web/charles"]
-	path = platforms/web/charles
-	url = git://github.com/adambeynon/charles.git
 [submodule "cherry_kit"]
 	path = cherry_kit
 	url = git://github.com/adambeynon/cherry_kit.git
+[submodule "platforms/web/opal"]
+	path = platforms/web/opal
+	url = git://github.com/adambeynon/opal.git
