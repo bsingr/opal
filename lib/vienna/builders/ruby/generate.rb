@@ -223,7 +223,7 @@ module Vienna
       IGETCLASSVARIABLE       = 9
       ISETCLASSVARIABLE       = 10            
       IGETCONSTANT            = 'iGETCONSTANT'
-      ISETCONSTANT            = 12             
+      ISETCONSTANT            = 'iSETCONSTANT'             
       IGETGLOBAL              = 13
       ISETGLOBAL              = 14             
       IPUTNIL                 = 'iPUTNIL'
@@ -776,6 +776,16 @@ module Vienna
         # put val onto stack
         generate_stmt stmt[:rhs], :full_stmt => false, :last_stmt => false
         write %{[#{ISETINSTANCEVARIABLE},"#{stmt[:lhs][:name]}"]}
+      
+      # lhs is a constant
+      elsif stmt[:lhs].node == :constant
+        # value
+        generate_stmt stmt[:rhs], :full_stmt => false, :last_stmt => false
+        # klass/base
+        write %{[#{IPUTNIL}]}
+        # setconstant
+        write %{[#{ISETCONSTANT},"#{stmt[:lhs][:name]}"]}
+        
       else
         abort "unabled assign"
       end
@@ -1011,7 +1021,8 @@ module Vienna
     
     # primay::CONST
     def generate_colon2 stmt, context
-
+      generate_stmt stmt[:lhs], :full_stmt => false, :last_stmt => false
+      write %{[#{IGETCONSTANT},"#{stmt[:rhs]}"]}
     end
     
     def generate_colon3 stmt, context

@@ -88,6 +88,7 @@ class Vienna::RubyParser < Racc::Parser
   # end
 	
 	def build!
+	  puts "building #@source"
 	  do_parse
     # this will return the needed string
 	  generate_tree @parser_result unless @parser_result.nil?

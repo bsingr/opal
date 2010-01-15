@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
 require File.expand_path(
-  File.join(File.dirname(__FILE__), %w[.. tools vienna]))
+  File.join(File.dirname(__FILE__), %w[.. lib vienna]))
   
 Vienna::Tools.new :gen

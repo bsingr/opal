@@ -86,7 +86,7 @@ module Vienna
           f.puts %{<html>}
           f.puts %{ <head>}
           f.puts %{   <title>#{project_name}</title>}
-          f.puts %{   <script src="vienna.js" type="text/javascript" charset="utf-8"></script>}
+          f.puts %{   <script src="opal.js" type="text/javascript" charset="utf-8"></script>}
           f.puts %{   <script type="text/javascript" charset="utf-8">}
           f.puts %{     VN_BOOTSTRAP_APPLICATION = "#{project_name}";}
           f.puts %{     VN_BOOTSTRAP_BUNDLES = #{@project.required_bundles.inspect};}
@@ -118,15 +118,17 @@ module Vienna
       end
       
       # full path to vienna.js file
-      def vienna_js_file
-        File.join(project_root, 'build', 'web', 'vienna.js')
+      def opal_js_file
+        File.join(project_root, 'build', 'web', 'opal.js')
       end
 
       # rebuilds vienna.js file
       def rebuild_runtime
-        File.open(vienna_js_file, "wb") do |f|
+        File.open(opal_js_file, "wb") do |f|
           # hardcoded path.. fix this when moving base runtime around
-          sources = File.join(File.dirname(__FILE__), '..', '..', '..', '..', 'browser', 'lib', '**', '*.{js}')
+          
+          sources = File.join(Vienna::LIBPATH, '..', 'platforms', 'web', 'opal', 'lib', '**', '*.js')
+          
           t = ""
           Dir.glob(sources).each do |s|
             open(s).each { |l| t << l }

@@ -40,7 +40,7 @@ module Vienna
       
       # full path to the location of the output gem file
       def gem_file_path
-        File.expand_path(File.join(@project.project_root, 'build', 'web', @project.project_name) + '.vngem')
+        File.expand_path(File.join(@project.project_root, 'build', 'web', @project.project_name) + '.opal')
       end
       
       def prepare!
@@ -49,7 +49,7 @@ module Vienna
       
       # all ruby sources for app, all gems etc
       def ruby_sources
-        vienna_root = File.expand_path(File.join(Vienna::LIBPATH, '..', 'lib'))
+        vienna_root = File.expand_path(File.join(Vienna::LIBPATH, '..', 'cherry_kit', 'lib'))
         ruby_sources = {}
         # app sources
         @project.build_options['sources'].each do |a|
@@ -60,10 +60,20 @@ module Vienna
         
         # vienna sources
         Dir.glob(File.join(vienna_root, '**', '*.rb')).each do |v|
-          ruby_sources[v] = '/vendor/vienna/lib' + /^#{vienna_root}(.*)/.match(v)[1]
+          ruby_sources[v] = '/vendor/cherry_kit/lib' + /^#{vienna_root}(.*)/.match(v)[1]
         end
           
         ruby_sources
+      end
+      
+      # all js sources.. for now, hardcode cherry_kit sources
+      def js_sources
+        js_sources = {}
+        ck_root = File.expand_path(File.join(Vienna::LIBPATH, '..', 'cherry_kit'))
+        Dir.glob(File.join(ck_root, 'platforms', 'web', '**', '*.js')).each do |v|
+          js_sources[v] = '/vendor/cherry_kit' + /^#{ck_root}(.*)/.match(v)[1]
+        end
+        js_sources
       end
       
       def build!
@@ -73,16 +83,23 @@ module Vienna
         
         File.open(gem_file_path, "wb") do |f|
           # vienna app magic marker
-          f.write %{vnapp$1.0$}
+          f.write %{opal$1.0$}
           
           # list each of our 'gems' - app doesnt count
-          f.write %{g6$vienna14$/vendor/vienna}
+          f.write %{g10$cherry_kit18$/vendor/cherry_kit}
           
           # output all of our ruby sources
           ruby_sources.each_pair do |path, name|
             b = Vienna::RubyParser.new(path, project, name)
             s = b.build!
             f.write %{f#{name.length}$#{name}#{s.length}$#{s}}
+          end
+          
+          js_sources.each_pair do |path, name|
+            b = JSMin.minify(open(path)).strip
+            f.write %{f#{name.length}$#{name}#{b.length}$#{b}}
+            # puts b
+            # puts name
           end
         end        
       end
