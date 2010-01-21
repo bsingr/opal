@@ -40,7 +40,7 @@ module Vienna
       
       # full path to the location of the output gem file
       def gem_file_path
-        File.expand_path(File.join(@project.project_root, 'build', 'web', @project.project_name) + '.opal')
+        File.expand_path(File.join(@project.project_root, 'build', 'web', @project.project_name) + '.js')
       end
       
       def prepare!
@@ -76,6 +76,14 @@ module Vienna
         js_sources
       end
       
+      # all css resources
+      def css_sources
+        ck_root = ck_root = File.expand_path(File.join(Vienna::LIBPATH, '..', 'cherry_kit'))
+        Dir.glob(File.join(ck_root, 'resources', 'stylesheets', '**', '*.css')).each do |css|
+          puts "css: #{css}"
+        end
+      end
+      
       def build!
         
         # puts @project.build_options['sources']
@@ -83,23 +91,35 @@ module Vienna
         
         File.open(gem_file_path, "wb") do |f|
           # vienna app magic marker
-          f.write %{opal$1.0$}
+          # f.write %{opal$1.0$}
           
           # list each of our 'gems' - app doesnt count
-          f.write %{g10$cherry_kit18$/vendor/cherry_kit}
+          # f.write %{g10$cherry_kit18$/vendor/cherry_kit}
+          f.write %{opal_gem("cherry_kit","/vendor/cherry_kit");}
           
           # output all of our ruby sources
           ruby_sources.each_pair do |path, name|
             b = Vienna::RubyParser.new(path, project, name)
             s = b.build!
-            f.write %{f#{name.length}$#{name}#{s.length}$#{s}}
+            # f.write %{f#{name.length}$#{name}#{s.length}$#{s}}
+            f.write %{opal_file("#{name}",'#{s.gsub(/'/,"\'")}');}
           end
           
           js_sources.each_pair do |path, name|
             b = JSMin.minify(open(path)).strip
-            f.write %{f#{name.length}$#{name}#{b.length}$#{b}}
+            f.write %{opal_code("#{name}","#{b.gsub(/"/,'\"').gsub("\n",'\\n')}");}
+            # f.write %{f#{name.length}$#{name}#{b.length}$#{b}}
             # puts b
             # puts name
+          end
+          
+          # for now, output each individually: in fuiture, compile them to:
+          #   - have data/mhtml uris
+          #   - combine into single css file
+          css_sources.each do |css|
+            t = open(css).each.to_a.join("")
+            # f.write %{c#{t.length}$#{t}}
+            f.write %{opal_style("#{t.gsub(/"/,'\"').gsub("\n",'')}");}
           end
         end        
       end

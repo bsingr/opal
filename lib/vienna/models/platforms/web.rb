@@ -92,7 +92,7 @@ module Vienna
           f.puts %{     VN_BOOTSTRAP_BUNDLES = #{@project.required_bundles.inspect};}
           f.puts %{     VN_APPLICATION_PATH = "#{@project.application_path}";} if @project.application_path
           f.puts %{     VN_VENDOR_PATH = "#{@project.vendor_path}";} if @project.vendor_path
-          f.puts %{     #{js_bin_code}}
+          f.puts %{     window.onload = function() {#{js_bin_code}}}
           f.puts %{   </script>}
           f.puts %{ </head>}
           f.puts %{ <body>}

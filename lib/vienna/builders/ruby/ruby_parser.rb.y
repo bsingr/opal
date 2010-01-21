@@ -314,6 +314,9 @@ rule
             		| primary_value '.' tCONSTANT
             		| primary_value tCOLON2 tCONSTANT
             		| tCOLON3 tCONSTANT
+            		  {
+            		    result = node :colon3, :name => val[1]
+            		  }
             		| backref
 
            cname: tIDENTIFIER
@@ -641,7 +644,7 @@ rule
             		  }
             		| tCOLON3 tCONSTANT
             		  {
-            		    result = node :colon3, :rhs => val[1]
+            		    result = node :colon3, :name => val[1]
             		  }
             		| tLBRACK aref_args ']'
             		  {

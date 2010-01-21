@@ -257,7 +257,7 @@ module Vienna
       ITRACE                  = 43
       IDEFINECLASS            = 'iDEFINECLASS'             
       ISEND                   = 'iSEND'
-      IINVOKESUPER            = 46             
+      IINVOKESUPER            = 'iINVOKESUPER'             
       IINVOKEBLOCK            = 47
       ILEAVE                  = 'iLEAVE'             
       IFINISH                 = 49
@@ -354,7 +354,7 @@ module Vienna
       IDEFINEMETHOD           = 38             
       IALIAS                  = 39
       IUNDEF                  = 40             
-      IDEFINED                = 41
+      IDEFINED                = 'iDEFINED'
       IPOSTEXE                = 42             
       ITRACE                  = 43
       IDEFINECLASS            = 44             
@@ -587,7 +587,25 @@ module Vienna
     
     
     def generate_super(stmt, context)
-
+      if stmt[:call_args]
+        args = 0
+        if stmt[:call_args][:args]
+          args = args + stmt[:call_args][:args].length
+          stmt[:call_args][:args].each do |arg|
+            generate_stmt arg, :full_stmt => false, :last_stmt => false
+          end
+        end
+      else
+        # no call args, so we need to pass each arg in the local method
+        # FIXME: get local args
+        args = 0
+      end
+      
+      write %{[#{IINVOKESUPER},#{args},nil,0]}
+      
+      if context[:full_stmt]
+        context[:last_stmt] ? write(%{[#{ILEAVE}]}) : write(%{[#{IPOP}]})
+      end
     end
       
     
@@ -608,7 +626,7 @@ module Vienna
       stmt[:stmt].each do |s|
         # if the IF stmt is the last stmt, then :last_stmt should be true only
         # for the last s stmt.
-        generate_stmt s, :full_stmt => true, :last_stmt => false
+        generate_stmt s, :full_stmt => true, :last_stmt => stmt[:stmt].last == s and context[:last_stmt]
       end
       
       # write_label %{#{main_jump}}
@@ -634,7 +652,7 @@ module Vienna
             write %{[#{IBRANCHUNLESS},#{cur_jump}]}
             # stmts
             t[:stmt].each do |s|
-              generate_stmt s, :full_stmt => true, :last_stmt => false
+              generate_stmt s, :full_stmt => true, :last_stmt => t[:stmt].last == s and context[:last_stmt]
             end
             # jump to end of if/else/if
             write %{[#{IJUMP},#{global_end_jump}]}
@@ -643,7 +661,7 @@ module Vienna
           else # else node
             # if we get to here, we run the else command no matter what. 'else'
             t[:stmt].each do |s|
-              generate_stmt s, :full_stmt => true, :last_stmt => false
+              generate_stmt s, :full_stmt => true, :last_stmt => t[:stmt].last == s and context[:last_stmt]
             end
           end
         end
@@ -785,9 +803,33 @@ module Vienna
         write %{[#{IPUTNIL}]}
         # setconstant
         write %{[#{ISETCONSTANT},"#{stmt[:lhs][:name]}"]}
+      
+      # colon3 - ::Object
+      elsif stmt[:lhs].node == :colon3
+        # value
+        generate_stmt stmt[:rhs], :full_stmt => false, :last_stmt => false
+        # klass/base
+        write %{[#{IPUTOBJECT},rb_cObject]}
+        # setconstant
+        write %{[#{ISETCONSTANT},"#{stmt[:lhs][:name]}"]}
+      
+      # call - something = 
+      elsif stmt[:lhs].node == :call
+        # receiver
+        if stmt[:lhs][:recv]
+          generate_stmt stmt[:lhs][:recv], :full_stmt => false, :last_stmt => false
+        else
+          write %{[#{IPUTNIL}]}
+        end
+        
+        # value
+        generate_stmt stmt[:rhs], :full_stmt => false, :last_stmt => false
+        
+        # call
+        write %{[#{ISEND},"#{stmt[:lhs][:meth]}=",1,nil,0,nil]}
         
       else
-        abort "unabled assign"
+        abort "unabled assign #{stmt[:lhs].node}"
       end
     end
     
@@ -842,6 +884,16 @@ module Vienna
         arg_length = 0
       end
       
+      # assocs
+      if call[:call_args] and call[:call_args][:assocs]
+        arg_length = arg_length.succ
+        call[:call_args][:assocs].each do |assoc|
+          generate_stmt assoc[:key], :full_stmt => false, :last_stmt => false
+          generate_stmt assoc[:value], :full_stmt => false, :last_stmt => false
+        end
+        write %{[#{INEWHASH},#{call[:call_args][:assocs].length * 2}]}
+      end
+      
       # call
       write %{[#{ISEND},"#{call[:meth]}",#{arg_length},#{block_iseq},#{call_bit},nil]}
       
@@ -864,7 +916,14 @@ module Vienna
     # Generate a string
     # 
     def generate_string str, context
-      write %{[#{IPUTOBJECT},"#{str[:value][0][:value]}"]}
+      write %{[#{IPUTSTRING},"#{str[:value][0][:value]}"]}
+      if context[:full_stmt]
+        if context[:last_stmt]
+          write %{[#{ILEAVE}]}
+        else
+          write %{[#{IPOP}]}
+        end
+      end
     end
     
     # Generate an X-string
@@ -921,9 +980,13 @@ module Vienna
       # write "return " if context[:last_stmt] and context[:full_stmt]
       write %{[#{IPUTSYMBOL},"#{sym[:name]}"]}
       
-      # write "#{js_id_for_symbol(sym[:name])}"
-      # write "'#{sym[:name]}'"
-      # write ";" if context[:full_stmt]
+      if context[:full_stmt]
+        if context[:last_stmt]
+          write %{[#{ILEAVE}]}
+        else
+          write %{[#{IPOP}]}
+        end
+      end
     end
     
     def generate_constant const, context
@@ -947,16 +1010,27 @@ module Vienna
     
     def generate_array stmt, context
       
-      stmt[:args].each { |a| generate_stmt a, :full_stmt => false, :last_stmt => false }
+      if stmt[:args]
+        
+        stmt[:args].each { |a| generate_stmt a, :full_stmt => false, :last_stmt => false }
       
-      write %{[#{INEWARRAY},#{stmt[:args].length}]}
-      
+        write %{[#{INEWARRAY},#{stmt[:args].length}]}
+      else
+        write %{[#{INEWARRAY},0]}
+      end
     end
     
     
     def generate_ivar stmt, context
       write %{[#{IGETINSTANCEVARIABLE},"#{stmt[:name]}"]}
-
+      
+      if context[:full_stmt]
+        if context[:last_stmt]
+          write %{[#{ILEAVE}]}
+        else
+          write %{[#{IPOP}]}
+        end
+      end
     end
     
     
@@ -975,6 +1049,7 @@ module Vienna
           write %{[#{IGETDYNAMIC},#{dynamic_idx[0]},#{dynamic_idx[1]}]}
         else
           # must be a method call
+          write %{[#{IPUTNIL}]} # recv
           write %{[#{ISEND},"#{identifier[:name]}",0,nil,8,nil]}
 
           unless @iseq_current.type == ISEQ_TYPE_BLOCK
@@ -1014,7 +1089,23 @@ module Vienna
     # ||=, &&= etc - assign methods that cannot be overridden
     # 
     def generate_op_asgn stmt, context
-
+      
+      if stmt[:lhs].node == :ivar
+        # defined?
+        write %{[#{IPUTNIL}]}
+        write %{[#{IDEFINED}]}
+      else
+        abort "bad op_asgn lhs"
+      end
+      
+      if context[:full_stmt]
+        if context[:last_stmt]
+          write %{[#{ILEAVE}]}
+        else
+          write "[#{IPOP}]"
+        end
+      end
+      
     end
     
     
