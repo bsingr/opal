@@ -258,7 +258,7 @@ module Vienna
       IDEFINECLASS            = 'iDEFINECLASS'             
       ISEND                   = 'iSEND'
       IINVOKESUPER            = 'iINVOKESUPER'             
-      IINVOKEBLOCK            = 47
+      IINVOKEBLOCK            = 'iINVOKEBLOCK'
       ILEAVE                  = 'iLEAVE'             
       IFINISH                 = 49
       ITHROW                  = 50             
@@ -709,9 +709,6 @@ module Vienna
        write %{[#{IPUTNIL}]}
       end
       
-            
-      
-      
       # defineclass
       write %{[#{IDEFINECLASS},"#{klass.klass_name}",#{class_iseq},0]}    
       
@@ -719,7 +716,6 @@ module Vienna
         write %{[#{ILEAVE}]}
       end
       
-
     end
     
     # Generates a method definition statement. This can be an instance, class or
@@ -1128,7 +1124,16 @@ module Vienna
     
     # yield..
     def generate_yield stmt, context
-
+      if stmt[:call_args] and stmt[:call_args][:args] 
+        arg_length = stmt[:call_args][:args].length
+        stmt[:call_args][:args].each do |arg|
+          generate_stmt arg, :last_stmt => false, :full_stmt => false
+        end
+      else
+        arg_length = 0
+      end
+      
+      write %{[#{IINVOKEBLOCK},#{arg_length},0]}
     end
     
     

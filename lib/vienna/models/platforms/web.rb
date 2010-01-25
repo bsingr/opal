@@ -87,12 +87,13 @@ module Vienna
           f.puts %{ <head>}
           f.puts %{   <title>#{project_name}</title>}
           f.puts %{   <script src="opal.js" type="text/javascript" charset="utf-8"></script>}
+          f.puts %{   <script src="#{project_name}.js" type="text/javascript" charset="utf-8"></script>}
           f.puts %{   <script type="text/javascript" charset="utf-8">}
-          f.puts %{     VN_BOOTSTRAP_APPLICATION = "#{project_name}";}
-          f.puts %{     VN_BOOTSTRAP_BUNDLES = #{@project.required_bundles.inspect};}
-          f.puts %{     VN_APPLICATION_PATH = "#{@project.application_path}";} if @project.application_path
-          f.puts %{     VN_VENDOR_PATH = "#{@project.vendor_path}";} if @project.vendor_path
-          f.puts %{     window.onload = function() {#{js_bin_code}}}
+          # f.puts %{     VN_BOOTSTRAP_APPLICATION = "#{project_name}";}
+          # f.puts %{     VN_BOOTSTRAP_BUNDLES = #{@project.required_bundles.inspect};}
+          # f.puts %{     VN_APPLICATION_PATH = "#{@project.application_path}";} if @project.application_path
+          # f.puts %{     VN_VENDOR_PATH = "#{@project.vendor_path}";} if @project.vendor_path
+          f.puts %{     window.onload = function() {#{js_bin_code}};}
           f.puts %{   </script>}
           f.puts %{ </head>}
           f.puts %{ <body>}
@@ -105,7 +106,8 @@ module Vienna
       # js bin code for project (can be default if no file specified)
       # project_root/bin/project_name.js
       def js_bin_code
-        %{vm_bundle_main("config/environment");}
+        # %{vm_bundle_main("config/environment");}
+        %{main(0,[]);}
         # JSMin.minify(open(File.join(project_root, 'bin', project_name) + '.js'))
       end
       
@@ -127,7 +129,7 @@ module Vienna
         File.open(opal_js_file, "wb") do |f|
           # hardcoded path.. fix this when moving base runtime around
           
-          sources = File.join(Vienna::LIBPATH, '..', 'platforms', 'web', 'opal', 'lib', '**', '*.js')
+          sources = File.join(Vienna::LIBPATH, '..', 'platforms', 'web', 'opal', 'runtime', '**', '*.js')
           
           t = ""
           Dir.glob(sources).each do |s|

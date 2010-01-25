@@ -29,6 +29,6 @@ var vn_cPlatform;
 function Init_Platform() {
   // quick cheap way to get Vienna module, if it doesnt exist (or create it if
   // it doesn't)
-  var mVienna = rb_define_module("Vienna");
-  vn_cPlatform = rb_define_class_under(mVienna, "Platform", rb_cObject);
+  // var mVienna = rb_define_module("Vienna");
+  // vn_cPlatform = rb_define_class_under(mVienna, "Platform", rb_cObject);
 }
