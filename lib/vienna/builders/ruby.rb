@@ -136,9 +136,9 @@ class Vienna::RubyParser < Racc::Parser
   
 	
 	# Parse the input, and return a string as output
-	def self.parse str
+  # def self.parse str
 	  
-	end
+  # end
 	
   # def write(str)
    # @output_file.write str
@@ -670,9 +670,9 @@ class Vienna::RubyParser < Racc::Parser
         if scanner.scan(/\=/)
           self.lex_state = :EXPR_BEG
           return [:tOP_ASGN, '%']
-        end
+        else
         return ['%', '%']
-      
+      end
         if scanner.scan(/(\$_)(\w+)/)
         end
       
@@ -790,8 +790,8 @@ class Vienna::RubyParser < Racc::Parser
       else
 
         return [false, false]
-        puts 'here'
-        return [:kDEF, 'def']
+        # puts 'here'
+        # return [:kDEF, 'def']
       end # end of if/elsif/elsif... clauses
     end # end of loop
     

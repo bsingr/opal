@@ -319,9 +319,9 @@ module Vienna
     
     # Required bundles by this bundle. This is an array of absolute paths to
     # the bundle, not Bundle objects
-    def required_bundles
-      @required_bundles
-    end
+    # def required_bundles
+      # @required_bundles
+    # end
     
     # Require path. 
     # ------------

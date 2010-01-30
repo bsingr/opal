@@ -44,25 +44,25 @@ module Vienna
       
       # old...
       
-      return @project if @project
-      
-      unless File.exist? "Rakefile"
-        # no rakefile means we could be in a browser project
-        @project = Vienna::BrowserProject.new(Dir.getwd)
-        return @project
-      end
-      
-      rakefile = Rakefile.new.load!(Dir.getwd)
-      sdk = rakefile.config_for(:debug)[:sdk] || 'vienna'
-      
-      case sdk
-      when 'vienna'
-        @project = Vienna::NewProject.new(Dir.getwd)
-      when 'cappuccino'
-        @project = Vienna::CappuccinoProject.new(Dir.getwd)
-      end
-      
-      @project
+      # return @project if @project
+      # 
+      # unless File.exist? "Rakefile"
+      #   # no rakefile means we could be in a browser project
+      #   @project = Vienna::BrowserProject.new(Dir.getwd)
+      #   return @project
+      # end
+      # 
+      # rakefile = Rakefile.new.load!(Dir.getwd)
+      # sdk = rakefile.config_for(:debug)[:sdk] || 'vienna'
+      # 
+      # case sdk
+      # when 'vienna'
+      #   @project = Vienna::NewProject.new(Dir.getwd)
+      # when 'cappuccino'
+      #   @project = Vienna::CappuccinoProject.new(Dir.getwd)
+      # end
+      # 
+      # @project
     end
   end
 end

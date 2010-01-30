@@ -72,23 +72,23 @@ module Vienna
         arg_length
       end
       
-      def arg_length
+      def arg_size
         @arg ? @arg.length : 0
       end
       
-      def opt_length
+      def opt_size
         @opt ? @opt.length : 0
       end
       
-      def rest_length
+      def rest_size
         @rest ? @rest.length : 0
       end
       
-      def post_length
+      def post_size
         @post ? @post.length : 0
       end
       
-      def block_length
+      def block_size
         @block ? @block.length : 0
       end
     end
