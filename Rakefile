@@ -17,3 +17,8 @@ begin
 rescue LoadError
   puts "Jeweler not available. Install it with: sudo gem install jeweler"
 end
+
+desc "Rebuild ruby parser (using racc)"
+task :ruby_parser do
+  %x{racc -E lib/vienna/builders/ruby/ruby_parser.rb.y -o lib/vienna/builders/ruby/ruby_parser.rb}
+end

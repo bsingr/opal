@@ -24,7 +24,7 @@
 # THE SOFTWARE.
 #
 
-require 'racc/parser.rb'
+# require 'racc/parser.rb'
 require 'strscan'
 
 class Vienna::RubyParser < Racc::Parser

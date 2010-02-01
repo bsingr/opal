@@ -201,6 +201,9 @@ rule
             		  }
             		| mlhs '=' command_call
             		| var_lhs tOP_ASGN command_call
+            		  {
+            		    result = node :op_asgn, :lhs => val[0], :op => val[1], :rhs => val[2]
+            		  }
             		| primary_value '[' opt_call_args rbracket tOP_ASGN command_call
             		| primary_value '.' tIDENTIFIER tOP_ASGN command_call
             		| primary_value '.' tCONSTANT tOP_ASGN command_call
