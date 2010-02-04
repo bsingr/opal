@@ -69,7 +69,7 @@ module Vienna
       
       # for generator
       def to_s
-        arg_length
+        arg_size
       end
       
       def arg_size

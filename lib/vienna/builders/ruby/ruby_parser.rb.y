@@ -216,7 +216,13 @@ rule
 
             expr: command_call
               	| expr kAND expr
+              	  {
+              	    result = node :andop, :lhs => val[0], :rhs => val[2]
+              	  }
               	| expr kOR expr
+              	  {
+              	    result = node :orop, :lhs => val[0], :rhs => val[2]
+              	  }
               	| kNOT opt_nl expr
               	  {
               	    result = node :not, :expr => val[2]
@@ -887,7 +893,7 @@ rule
             		| primary_value tCOLON2 paren_args
             		| kSUPER paren_args
             		  {
-            		    result = node :super, :call_args => val[1]
+            		    result = node :super, :call_args => val[1], :paren => true
             		  }
             		| kSUPER
             		  {

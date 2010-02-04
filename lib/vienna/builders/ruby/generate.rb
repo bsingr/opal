@@ -497,6 +497,8 @@ module Vienna
         generate_lparen stmt, context
       when :return
         generate_return stmt, context
+      when :break
+        generate_break stmt, context
       when :colon2
         generate_colon2 stmt, context
       when :colon3

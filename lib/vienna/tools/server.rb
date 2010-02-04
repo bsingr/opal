@@ -25,7 +25,6 @@
 #
 
 require 'rubygems'
-require 'rack'
 
 module Vienna
   
@@ -37,6 +36,8 @@ module Vienna
     # index.html page. In future, this is likely to be more complex in determining
     # code builds.
     def server
+      # only load rack when needed
+      require 'rack'
       find_project!
       Vienna::Rack::AppServer.new(@project, self)
     end

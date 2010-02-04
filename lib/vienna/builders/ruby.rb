@@ -736,6 +736,12 @@ class Vienna::RubyParser < Racc::Parser
         when 'nil'
           self.lex_state = :EXPR_END
           return [:kNIL, scanner.matched]
+        when 'or'
+          self.lex_state = :EXPR_BEG
+          return [:kOR, scanner.matched]
+        when 'and'
+          self.lex_state = :EXPR_BEG
+          return [:kAND, scanner.matched]
         when 'return'
           self.lex_state = :EXPR_MID
           return [:kRETURN, scanner.matched]

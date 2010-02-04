@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{vienna}
-  s.version = "0.0.4"
+  s.version = "0.0.6"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Adam Beynon"]
-  s.date = %q{2010-01-27}
+  s.date = %q{2010-02-03}
   s.description = %q{Ruby compiler and runtime for the browser}
   s.email = %q{adam@adambeynon.com}
   s.executables = ["vienna", "vn-build", "vn-gen", "vn-server"]
@@ -27,38 +27,6 @@ Gem::Specification.new do |s|
      "bin/vn-build",
      "bin/vn-gen",
      "bin/vn-server",
-     "cappuccino/vienna/Info.plist",
-     "cappuccino/vienna/lib/base/base.j",
-     "cappuccino/vienna/lib/base/core/array.j",
-     "cappuccino/vienna/lib/base/core/enum.j",
-     "cappuccino/vienna/lib/base/core/hash.j",
-     "cappuccino/vienna/lib/base/core/module.j",
-     "cappuccino/vienna/lib/base/core/number.j",
-     "cappuccino/vienna/lib/base/core/object.j",
-     "cappuccino/vienna/lib/base/core/proc.j",
-     "cappuccino/vienna/lib/base/core/symbol.j",
-     "cappuccino/vienna/lib/base/core/top_self.j",
-     "cappuccino/vienna/lib/base/objective_j/runtime.j",
-     "cappuccino/vienna/lib/base/runtime/class.j",
-     "cappuccino/vienna/lib/base/runtime/module.j",
-     "cappuccino/vienna/lib/base/runtime/object.j",
-     "cappuccino/vienna/lib/base/runtime/runtime.j",
-     "cappuccino/vienna/lib/base/runtime/system.j",
-     "cappuccino/vienna/lib/base/runtime/variable.j",
-     "cappuccino/vienna/lib/bridge/geometry.rb",
-     "cappuccino/vienna/lib/bridge/json_object.rb",
-     "cappuccino/vienna/lib/graphics/graphics.rb",
-     "cappuccino/vienna/lib/graphics/graphics_context.rb",
-     "cappuccino/vienna/lib/graphics/render_context.rb",
-     "cappuccino/vienna/lib/mappings/button.rb",
-     "cappuccino/vienna/lib/mappings/column.rb",
-     "cappuccino/vienna/lib/mappings/control.rb",
-     "cappuccino/vienna/lib/mappings/mappings.rb",
-     "cappuccino/vienna/lib/mappings/scroll_view.rb",
-     "cappuccino/vienna/lib/mappings/table_view.rb",
-     "cappuccino/vienna/lib/mappings/view.rb",
-     "cappuccino/vienna/lib/mappings/window.rb",
-     "cappuccino/vienna/lib/vienna.rb",
      "gen/app/app.yml",
      "gen/capp/capp.yml",
      "gen/capp/capp_name/info.yml",
