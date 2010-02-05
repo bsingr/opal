@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Adam Beynon"]
-  s.date = %q{2010-02-03}
+  s.date = %q{2010-02-05}
   s.description = %q{Ruby compiler and runtime for the browser}
   s.email = %q{adam@adambeynon.com}
   s.executables = ["vienna", "vn-build", "vn-gen", "vn-server"]

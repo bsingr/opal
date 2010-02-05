@@ -529,6 +529,8 @@ module Vienna
         generate_opt_div stmt, context
       when :opt_mod
         generate_opt_mod stmt, context
+      when :block_given
+        generate_block_given stmt, context
       else
         write "\n[Unknown type for generate_stmt: #{stmt}]\n"
       end

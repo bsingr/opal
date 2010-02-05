@@ -69,7 +69,9 @@ class Vienna::RubyParser
     right    '?' ':'
     left     kRESCUE_MOD
     right    '=' tOP_ASGN
-    # nonassoc kDEFINED
+    # left     tANDOP
+    # left     tOROP
+    nonassoc kDEFINED
     right    kNOT
     left     kOR kAND
     nonassoc kIF_MOD kUNLESS_MOD kWHILE_MOD kUNTIL_MOD
@@ -519,25 +521,13 @@ rule
             		  {
             		    result = node :call, :recv => val[0], :meth => '>>', :call_args => { :args => [val[2]]}
             		  }
-          		  | arg
-          		      {
-                      # weird? unless break here, it throws an error? hmm...
-                      # we must use val[3] then as this counts as one match....
-              		  }
-              		tANDOP
-              		arg
+          		  | arg tANDOP arg
             		  {
-            		    result = node :andop, :lhs => val[0], :rhs => val[3]
+            		    result = node :andop, :lhs => val[0], :rhs => val[2]
             		  }
-            		| arg
+            		| arg tOROP arg
             		  {
-                    # weird? unless break here, it throws an error? hmm...
-                    # we must use val[3] then as this counts as one match....
-            		  }
-            		  tOROP
-            		  arg
-            		  {
-            		    result = node :orop, :lhs => val[0], :rhs => val[3]
+            		    result = node :orop, :lhs => val[0], :rhs => val[2]
             		  }
             		| kDEFined opt_nl arg
             		| arg '?' arg opt_nl ':' arg
@@ -635,8 +625,12 @@ rule
   	            | qwords
   	            | var_ref do_block
   	              {
-                    # HACK: this rule shouldnt even exist. But for now it must for "identifier do .. end"
-  	                result = node :call, :recv => nil, :meth => val[0][:name], :brace_block => val[1]
+                    # if val[0].node == :self
+                      # result = val[0]
+                    # else
+                      # HACK: this rule shouldnt even exist. But for now it must for "identifier do .. end"
+  	                  result = node :call, :recv => nil, :meth => val[0][:name], :brace_block => val[1]
+                    # end
   	              }
   	            | var_ref
   	            | backref
