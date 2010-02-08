@@ -24,6 +24,8 @@
 # THE SOFTWARE.
 #
 
+# puts "models.."
+
 module Vienna
   
   class BrowserProject

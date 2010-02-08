@@ -1,9 +1,9 @@
 # 
-# build.rb
+# ruby_builder.rb
 # vienna
 # 
 # Created by Adam Beynon.
-# Copyright 2009 Adam Beynon.
+# Copyright 2010 Adam Beynon.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -26,15 +26,14 @@
 
 module Vienna
   
-  class Tools
-  
-    # Builds a Vienna app in the current working directory.
-    # 
-    def build(args)
-      find_project!
-      # # puts "Building project."
-      # @project.prepare!
-      # @project.build!
-    end  
-  end  
+  module CappRuby
+    
+    class RubyBuilder
+      
+      def build!
+        "adam"
+      end
+      
+    end
+  end
 end

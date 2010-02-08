@@ -4,6 +4,3 @@
 [submodule "platforms/web/opal"]
 	path = platforms/web/opal
 	url = git://github.com/adambeynon/opal.git
-[submodule "cappruby"]
-	path = cappruby
-	url = git://github.com/adambeynon/cappruby.git

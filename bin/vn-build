@@ -1,6 +1,9 @@
 #!/usr/bin/env ruby
 
-require File.expand_path(
-  File.join(File.dirname(__FILE__), %w[.. lib vienna]))
+# require File.expand_path(
+  # File.join(File.dirname(__FILE__), %w[.. lib vienna]))
   
-Vienna::Tools.new :build
+# Vienna::Tools.new :build
+
+
+abort "depreceated. Use vienna build <options>"
