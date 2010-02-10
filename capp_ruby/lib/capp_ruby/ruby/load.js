@@ -62,13 +62,15 @@ function rb_find_require_path(path) {
   for (var i = 0; i < rb_loadpath.length; i++) {
     // try with .rb extension
     try_path = rb_loadpath[i] + path + '.rb';
-    if (cappruby_file_hash[try_path]) {
+    // console.log(try_path);
+    if (objj_files[try_path]) {
       return try_path;
     }
     
     // try without .rb extension
     try_path = rb_loadpath[i] + path;
-    if (cappruby_file_hash[try_path]) {
+    // console.log(try_path);
+    if (objj_files[try_path]) {
       return try_path;
     }
   }
@@ -80,20 +82,21 @@ function rb_find_require_path(path) {
   Require the known good file path, path.
 */
 function rb_require_file(path) {
-  if (rb_required_files[path]) {
+  objj_import(path, true, function(){});
+  // if (rb_required_files[path]) {
     // console.log("already required " + path);
-  }
-  else {
-    rb_required_files[path] = true;
-    cappruby_file_hash[path](cappruby_top_self);
-  }
+  // }
+  // else {
+    // rb_required_files[path] = true;
+    // cappruby_file_hash[path](cappruby_top_self);
+  // }
 };
 
 function Init_Load() {
   // loadpaths
   ruby_incpush("");
-  ruby_incpush("/lib");
-  ruby_incpush('/Frameworks/CappRuby');
+  ruby_incpush("lib/");
+  ruby_incpush('Frameworks/CappRuby/lib/');
   
   rb_define_method(rb_mKernel, "require:", rb_f_require, 1);
 };

@@ -31,7 +31,7 @@ rb_cSymbol = nil;
 // symbol is created. use ID2SYM to get instance, or make one.
 rb_sym_stack = { };
 
-function ID2SYM(id) {
+ID2SYM = function (id) {
   var s = rb_sym_stack[id];
   if (!s) {
     s = cr_send(rb_cSymbol, "alloc", [id], nil, 0);
@@ -41,7 +41,7 @@ function ID2SYM(id) {
   return s;
 };
 
-function SYM2ID(sym) {
+SYM2ID = function (sym) {
   return sym.ptr;
 };
 

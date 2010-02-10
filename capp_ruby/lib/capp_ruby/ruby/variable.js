@@ -24,19 +24,19 @@
  * THE SOFTWARE.
  */
 
-function rb_ivar_set(obj, id, val) {
+rb_ivar_set = function (obj, id, val) {
   return obj[id] = val;
 };
 
-function rb_ivar_get(obj, id) {
+rb_ivar_get = function (obj, id) {
   return obj[id];
 };
 
-function rb_const_set(klass, id, val) {
+rb_const_set = function (klass, id, val) {
   klass[id] = val;
 };
 
-function rb_const_defined(klass, id) {
+rb_const_defined = function (klass, id) {
   while (klass) {
     if (klass[id] !== undefined) return true;
     klass = klass.super_class;
@@ -46,7 +46,7 @@ function rb_const_defined(klass, id) {
   return false;
 };
 
-function rb_const_get(k, id) {
+rb_const_get = function (k, id) {
   var klass = k;
   while (klass) {
     if (klass[id] !== undefined) return klass[id];

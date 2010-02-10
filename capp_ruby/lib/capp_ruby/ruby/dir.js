@@ -62,9 +62,11 @@ function rb_dir_s_glob(dir, sel) {
   }
   
   var reg =  new RegExp('^' + result.join("") + '$');
+  // console.log(reg);
   var matching = [];
-  for (prop in cappruby_file_hash) {
+  for (prop in objj_files) {
     if (reg.exec(prop)) {
+      // throw prop
       matching.push(prop);
     }
   }

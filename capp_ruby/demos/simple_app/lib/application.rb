@@ -24,8 +24,9 @@
 # THE SOFTWARE.
 #
 
-require 'cappruby'
+require 'capp_ruby'
 
+# to get nice mappings/builder names
 include CappRuby
 
 class AppController

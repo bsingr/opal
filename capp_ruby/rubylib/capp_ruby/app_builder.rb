@@ -1,9 +1,9 @@
 # 
-# build.rb
-# vienna
+# app_builder.rb
+# cappruby
 # 
 # Created by Adam Beynon.
-# Copyright 2009 Adam Beynon.
+# Copyright 2010 Adam Beynon.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -24,17 +24,25 @@
 # THE SOFTWARE.
 #
 
-module Vienna
+module CappRuby
   
-  class Tools
-  
-    # Builds a Vienna app in the current working directory.
-    # 
-    def build(args)
-      find_project!
-      # # puts "Building project."
-      # @project.prepare!
-      @project.build!
-    end  
-  end  
+  class AppBuilder
+    
+    attr_reader :app_root, :app_name, :app_title, :build_options
+    
+    def initialize(args)
+      @app_root = Dir.getwd
+      @app_name = File.basename(@app_root)
+      @app_title = (@app_name.split('_').collect { |p| p.capitalize }).join ' '
+      
+      unless File.exist? 'config/build.yml'
+        puts "Missing config/build.yml file. Sure this is an application dir?"
+        exit
+      end
+      
+      @build_options = YAML.load_file('config/build.yml')
+    end
+    
+
+  end
 end

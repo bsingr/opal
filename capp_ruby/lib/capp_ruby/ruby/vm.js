@@ -71,7 +71,7 @@ function Init_VM() {
   
   FIXME: this should really include arity as well.. number or array for complex
 */
-cr_a = function cr_defineclass(base, super_class, name, body, flag) {
+cr_defineclass = function (base, super_class, name, body, flag) {
   var klass;
   
   // cheap hack.. it isnt a class, its an object (i.e. top self)
@@ -100,7 +100,7 @@ cr_a = function cr_defineclass(base, super_class, name, body, flag) {
 /**
   definemethod
 */
-cr_b = function cr_definemethod(base, id, body, is_singleton) {
+cr_definemethod = function (base, id, body, is_singleton) {
   // var m = new cappruby_method_t(id, body, []);
   // arity? hmm, maybe..
   if (is_singleton) {
@@ -121,7 +121,7 @@ cr_b = function cr_definemethod(base, id, body, is_singleton) {
   
   op_flag can be used to detect private calls etc
 */
-cr_b = function cr_send(recv, id, argv, blockiseq, op_flag) {
+cr_send = function(recv, id, argv, blockiseq, op_flag) {
   var imp, klass;
   // console.log(id);
   // make sure we have a reciever and a class. JSON objects, Rects etc will not
@@ -182,7 +182,7 @@ cr_b = function cr_send(recv, id, argv, blockiseq, op_flag) {
 /**
   getconstant
 */
-cr_c = function cr_getconstant(base, id) {
+cr_getconstant = function (base, id) {
   // if base is an object, then use its class (base.isa)
   if (base.isa.info & CLS_CLASS) base = base.isa;
   return rb_const_get(base, id);
@@ -191,7 +191,7 @@ cr_c = function cr_getconstant(base, id) {
 /**
   functioncall
 */
-cr_d = function cr_functioncall(id, argv) {
+cr_functioncall = function (id, argv) {
   var m = rb_global_functions_search(id);
   if (m === nil) {
     throw "functioncall: cannot find " + id
@@ -202,14 +202,14 @@ cr_d = function cr_functioncall(id, argv) {
 /**
   newhash
 */
-cr_e = function cr_newhash() {
+cr_newhash = function () {
   return rb_hash_new.apply(rb_hash_new, arguments);
 };
 
 /**
   invokesuper
 */
-cr_f = function cr_invokesuper(recv, sel) {
+cr_invokesuper = function (recv, sel) {
   var super_class = recv.isa.super_class;
   var args = Array.prototype.slice.call(arguments);
   args[0] = { receiver: recv, super_class: super_class };
@@ -219,7 +219,7 @@ cr_f = function cr_invokesuper(recv, sel) {
 /**
   optplus
 */
-cr_g = function cr_optplus(a, b) {
+cr_optplus = function (a, b) {
   if (a.isa === CPNumber && b.isa === CPNumber) {
     return a + b;
   }
@@ -229,7 +229,7 @@ cr_g = function cr_optplus(a, b) {
 /**
   optminus
 */
-cr_h = function cr_optminus(a, b) {
+cr_optminus = function (a, b) {
   if (a.isa === CPNumber && b.isa === CPNumber) {
     return a - b;
   }
@@ -239,7 +239,7 @@ cr_h = function cr_optminus(a, b) {
 /**
   optmult
 */
-cr_i = function cr_optmult(a, b) {
+cr_optmult = function (a, b) {
   if (a.isa === CPNumber && b.isa === CPNumber) {
     return a * b;
   }
@@ -249,7 +249,7 @@ cr_i = function cr_optmult(a, b) {
 /**
   optdiv
 */
-cr_j = function cr_optdiv(a, b) {
+cr_optdiv = function (a, b) {
   if (a.isa === CPNumber && b.isa === CPNumber) {
     return a / b;
   }
@@ -259,7 +259,7 @@ cr_j = function cr_optdiv(a, b) {
 /**
   break - all args in arguments
 */
-vm_h = function vm_break() {
+vm_break = function () {
   throw {
     type: 'break',
     args: Array.prototype.slice.call(arguments),
@@ -276,7 +276,7 @@ vm_h = function vm_break() {
   from a proc. if we are a proc, then we need to catch breaks/returns... this
   might/should be done in proc#call ?
 */
-cr_y = function cr_yield(block, argv) {
+cr_yield = function (block, argv) {
   if (block == nil) throw "no block given..."
   return block.apply(block, argv);
 };

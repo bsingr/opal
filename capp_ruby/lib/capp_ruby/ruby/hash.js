@@ -30,7 +30,7 @@ rb_cHash = nil;
   Create a new hash. Only called from JS. args are keys and values, so:
   key1, val1, key2, val2, .......keyN, valN.
 */
-function rb_hash_new() {
+rb_hash_new = function () {
   var k, v, h = new objj_dictionary();
   for (var i = 0; i < arguments.length; i++) {
     k = arguments[i], v = arguments[i+1];

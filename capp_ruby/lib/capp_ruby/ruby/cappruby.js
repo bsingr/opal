@@ -31,13 +31,14 @@
   args - Passed from main. We send these to CPApplicationMain
   namedArgs - ditto.
 */
-function cappruby_main(main_file, args, namedArgs) {
+cappruby_main = function(main_file, args, namedArgs) {
   cappruby_init();
   // need to require main cappruby.rb file
   // var libs = rb_dir_s_glob(rb_cDir, 'glob:', '/Frameworks/CappRuby/**/*.rb');
   // console.log(libs);
   // require main file
-  rb_require_file(main_file);
+  // rb_require_file(main_file);
+  objj_import("lib/application.rb", true, function() { });
   // cappruby_file_hash['/lib/application.rb'](cappruby_top_self);
   // cappruby_trial(cappruby_top_self);
   CPApplicationMain(args, namedArgs);
@@ -49,7 +50,7 @@ function cappruby_main(main_file, args, namedArgs) {
   
   only nil, undefined and false are false. 0, "" are both true
 */
-function RTEST(val) {
+RTEST = function(val) {
   if (val === nil || val === undefined || val === false) return false;
   return true;
 };
@@ -58,7 +59,7 @@ function RTEST(val) {
   ORTEST: both lhs and rhs are functions. eval lhs, if ruby false, then return
   result of evaling rhs
 */
-function ORTEST(lhs, rhs) {
+ORTEST = function(lhs, rhs) {
   var res = lhs();
   if (RTEST(res)) return res;
   return rhs();
@@ -67,7 +68,7 @@ function ORTEST(lhs, rhs) {
 /**
   ANDTEST
 */
-function ANDTEST(lhs, rhs) {
+ANDTEST = function(lhs, rhs) {
   var res = lhs();
   if (RTEST(res)) return rhs();
   return res;
@@ -76,7 +77,7 @@ function ANDTEST(lhs, rhs) {
 /**
   call all cappruby inits
 */
-function cappruby_init() {
+cappruby_init = function() {
   Init_Object();
   Init_Dir();
   Init_File();

@@ -6,8 +6,3 @@ require File.expand_path(
 # for now just output result to stdout. In future, check for -o option with a 
 # specified path name for output (write to file).
 # puts Vienna::CappRuby::RubyBuilder.new().build!
-
-a = File.join(File.dirname(__FILE__), '..', 'cappruby', '**', '*.rb')
-Dir.glob(a).each do |s|
-  puts s
-end
