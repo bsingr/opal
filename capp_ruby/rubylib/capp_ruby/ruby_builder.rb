@@ -445,6 +445,7 @@ module CappRuby
     
     
     def generate_call call, context
+      
       # capture objj style calls
       return generate_objj_call(call, context) if call_is_objj_call?(call)
 

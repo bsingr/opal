@@ -623,15 +623,15 @@ rule
   	            | regexp
   	            | words
   	            | qwords
-  	            | var_ref do_block
-  	              {
+                | tIDENTIFIER do_block
+                  {
                     # if val[0].node == :self
                       # result = val[0]
                     # else
                       # HACK: this rule shouldnt even exist. But for now it must for "identifier do .. end"
-  	                  result = node :call, :recv => nil, :meth => val[0][:name], :brace_block => val[1]
+                      result = node :call, :recv => nil, :meth => val[0], :brace_block => val[1]
                     # end
-  	              }
+                  }
   	            | var_ref
   	            | backref
   	            | tFID

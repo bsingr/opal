@@ -111,6 +111,7 @@ module Vienna
         # can be referecenced if declared as a method "argument". These are stored
         # as the local var _$, if present.
         def lookup_local(str)
+          return nil if str == nil
           if @local_names.has_key? str
             @local_names[str]
           elsif @arg_names.has_key? str
@@ -454,6 +455,9 @@ module Vienna
         # capture objj style calls
         return generate_objj_call(call, context) if call_is_objj_call?(call)
 
+
+        # puts call[:meth]
+        
         # capture "function calls"
         if call[:meth].match(/^[A-Z](.*)$/)
           return generate_function_call call, context

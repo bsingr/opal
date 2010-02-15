@@ -44,17 +44,7 @@ class AppController
   end
   
   def applicationDidFinishLaunching(notification)
-    # a = AppController.new(10, 20, 30)
-    # puts a
-    # r = CPURLRequest.requestWithURL "http://twitter.com/status/user_timeline/macruby.json?count=10"
-    
-    # c = CPJSONPConnection.connectionWithRequest r, 
-                                       # callback:"callback", 
-                                       # delegate:self
-  end
-  
-  def connection c, didReceiveData:data
-    puts data
+    spec
   end
   
   def on_show_about_window
@@ -63,6 +53,15 @@ class AppController
   
   def on_new
     puts "wow"
+  end
+  
+  def spec
+     describe Array do
+       it "should have length 0 for an empty array" do
+         a = []
+         a.length.should == 0
+       end
+     end
   end
   
   # return or build the main window
@@ -87,13 +86,10 @@ class AppController
       
       win << text_field(:frame => [400, 200, 80,29])
       win << label(:frame => [400, 300, 80,29])
-      
-      table = CPTableView.alloc.initWithFrame CGRectMake(400, 100, 300, 200)
-      win << table
-      
     end
+
   end
-  
+    
   def application_menu
     @application_menu ||= menu do |main|
       main.submenu :file do |file|

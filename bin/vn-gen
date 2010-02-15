@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
 
-# require File.expand_path(
-#   File.join(File.dirname(__FILE__), %w[.. lib vienna]))
-#   
-# Vienna::Tools.new :gen
+require File.expand_path(
+  File.join(File.dirname(__FILE__), %w[.. lib vienna]))
 
-abort "depreceated. Use vienna gen <options>"
+ARGV.unshift "gen"
+
+Vienna::Tools.new(ARGV)

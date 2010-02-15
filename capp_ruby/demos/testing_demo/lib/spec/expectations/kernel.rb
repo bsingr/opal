@@ -1,6 +1,6 @@
 # 
-# cappruby.rb
-# cappruby
+# kernel.rb
+# capp_ruby
 # 
 # Created by Adam Beynon.
 # Copyright 2010 Adam Beynon.
@@ -24,15 +24,14 @@
 # THE SOFTWARE.
 #
 
-module CappRuby
+module Kernel
   
-  VERSION = '0.0.1'
-  
-  def self.version
-    VERSION
+  def should()
+    
   end
-
+  
+  def should_not()
+    
+  end
+  
 end
-
-# Require all other files.
-Dir.glob(File.join(File.dirname(__FILE__), '**', '*.rb')).each { |f| require f }

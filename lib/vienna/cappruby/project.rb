@@ -52,21 +52,26 @@ module Vienna
 
       def build!
         
-        File.symlink(File.join(@project_root, 'Frameworks'), File.join(build_dir, 'Frameworks')) unless File.exist? File.join(build_dir, 'Frameworks')
+        
         
         capp_path = File.join(PATH, 'capp_ruby')
         # puts "a"
         # also rebuild CappRuby framework (for now)
-        Framework.new(capp_path, self).build!
+        
         FileUtils.mkdir_p build_dir
         FileUtils.mkdir_p File.join(build_dir, "W3C.environment")
+        
+        File.symlink(File.join(@project_root, 'Frameworks'), File.join(build_dir, 'Frameworks')) unless File.exist? File.join(build_dir, 'Frameworks')
+        
+        Framework.new(capp_path, self).build!
+        
         write_info_plist_file
         write_main_j_file
         write_index_html_file
 
         
 
-        # File.symlink(File.join(@project_root, 'Resources'), File.join(build_dir, 'Resources')) unless File.exist? File.join(build_dir, 'Resources')
+        File.symlink(File.join(@project_root, 'resources'), File.join(build_dir, 'Resources')) unless File.exist? File.join(build_dir, 'Resources')
       end
 
       def info_plist_file

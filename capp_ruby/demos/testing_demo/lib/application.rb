@@ -1,5 +1,5 @@
 # 
-# cappruby.rb
+# application.rb
 # cappruby
 # 
 # Created by Adam Beynon.
@@ -24,14 +24,29 @@
 # THE SOFTWARE.
 #
 
-module CappRuby
-  
-  VERSION = '0.0.1'
-  
-  def self.version
-    VERSION
-  end
+require 'capp_ruby'
 
+# to get nice mappings/builder names
+include CappRuby
+
+class AppController
+    
+  def applicationWillFinishLaunching(notification)
+    CPMenu.menuBarVisible = true    
+  end
+  
+  def applicationDidFinishLaunching(notification)
+    spec
+  end
+  
+  def spec
+     # describe Array do
+     #        it "should have length 0 for an empty array" do
+     #          a = []
+     #          a.length.should == 0
+     #        end
+     #      end
+  end
 end
 
 # Require all other files.

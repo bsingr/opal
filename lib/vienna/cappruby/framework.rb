@@ -49,6 +49,8 @@ module Vienna
         FileUtils.mkdir_p File.join(build_dir, "W3C.environment")
         write_info_plist_file
         write_main_j_file
+        
+        File.symlink(File.join(@framework_root, 'resources'), File.join(build_dir, 'Resources')) unless File.exist? File.join(build_dir, 'Resources')
       end
       
       def main_j_file

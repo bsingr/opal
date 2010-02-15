@@ -1,0 +1,9 @@
+require 'ftools'
+
+desc "docs"
+task :rdoc do
+
+    `rdoc lib/ doc/ README.rdoc --format=darkfish --main README.rdoc --exclude .js --exclude .css -o rdoc`
+    File.copy(File.join(File.dirname(__FILE__), 'doc', 'rdoc.css'), File.join('rdoc', 'rdoc.css'))
+
+end

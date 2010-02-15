@@ -1,29 +1,38 @@
-#	vienna: Ruby compiler/runtime for the browser
+=	vienna: Ruby compiler/runtime for the browser
 
 Vienna aims to provide the following:
 
  * A ruby compiler for ahead-of-time compiling of ruby into javascript
  * A ruby runtime, written in javascript, to support the previously generated code
  * An application framework, written in ruby, for developing high grade web applications for the web.
+ * Build tools for CappRuby: a web application framework.
 
-## Installing
+== Building latest code
+
+Download this code (master branch) and run:
+
+	rake install
+
+Vienna uses jeweler for building the gem (so go get it.)
+
+== Installing
 
     # Insall gem from gemcutter
     sudo gem install vienna
 	
-## Creating a project
+== Creating a project
 
     vn-gen app MyApplication
 
-## Building
+== Building
 
     # In root directory of project
     vn-build
 
-## Running
+== Running
 
 ... open index.html in a browser
 
-## Deploying
+== Deploying
 
 ...copy build/debug/* to any web server..
