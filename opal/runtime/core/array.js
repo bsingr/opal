@@ -49,12 +49,12 @@ function rb_ary_each(ary) {
   return ary;
 };
 
-function rb_ary_includes(ary, _, val) {
+function rb_ary_includes(ary, val) {
   if (ary.indexOf(val) != -1) return true;
   return false;
 };
 
-function rb_ary_push(ary, _, val) {
+function rb_ary_push(ary, val) {
   ary.push(val);
   return val;
 };
@@ -160,4 +160,4 @@ function Init_Array() {
   // rb_define_method(rb_cArray, "take_while", rb_ary_take_while, 0);
   // rb_define_method(rb_cArray, "drop", rb_ary_drop, 1);
   // rb_define_method(rb_cArray, "drop_while", rb_ary_drop_while, 0);
-}
+};

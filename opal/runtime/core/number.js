@@ -29,27 +29,27 @@ var rb_cNumber;
 
 function rb_num_plus(a, b) {
   return a + b;
-}
+};
 
 function rb_num_minus(a, b) {
   return a - b;
-}
+};
 
 function rb_num_mul(a, b) {
   return a * b;
-}
+};
 
 function rb_num_div(a, b) {
   return a / b;
-}
+};
 
 function rb_num_modulo(a, b) {
   return a % b;
-}
+};
 
 function rb_num_pow(a, b) {
   return Math.pow(a, b);
-}
+};
 
 
 
@@ -58,19 +58,19 @@ function rb_num_pow(a, b) {
 
 function rb_num_gt(a, b) {
   return a > b;
-}
+};
 
 function rb_num_ge(a, b) {
   return a >= b;
-}
+};
 
 function rb_num_lt(a, b) {
   return a < b;
-}
+};
 
 function rb_num_le(a, b) {
   return a <= b;
-}
+};
 
 
 function Init_Number() {
@@ -145,4 +145,4 @@ function Init_Number() {
 
   // rb_define_method(rb_cNumber, "<<", rb_num_lshift, 1);
   // rb_define_method(rb_cNumber, ">>", rb_num_rshift, 1);
-}
+};

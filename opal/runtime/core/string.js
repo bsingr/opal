@@ -196,4 +196,4 @@ function Init_String() {
   // rb_define_method(rb_cSymbol, "downcase", rb_sym_downcase, 0);
   // rb_define_method(rb_cSymbol, "capitalize", rb_sym_capitalize, 0);
   // rb_define_method(rb_cSymbol, "swapcase", rb_sym_swapcase, 0);
-}
+};

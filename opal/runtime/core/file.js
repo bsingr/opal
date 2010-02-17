@@ -127,7 +127,7 @@ function rb_file_s_expand_path(argc, args, obj) {
       res_stack.push(cur);
     }
   }
-  return "/" + res_stack.join("/");
+  return res_stack.join("/");
 }
 
 function Init_File() {

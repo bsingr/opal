@@ -24,7 +24,6 @@
  * THE SOFTWARE.
  */
 
-
 /**
   YAML support: all yml files in the browser will be pre-compiled into the vnyml
   format. They will still, however, have the .yml or .yaml extension. This library
