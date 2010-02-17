@@ -1,0 +1,381 @@
+# 
+# ruby_builder.rb
+# vienna
+# 
+# Created by Adam Beynon.
+# Copyright 2010 Adam Beynon.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+# 
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+# 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+#
+
+module Vienna
+  
+  module CherryKit
+    
+    class RubyBuilder < ::Vienna::RubyParser
+      
+      def initialize(source, project, build_name)
+        super
+      end
+      
+      class Iseq
+        
+        attr_accessor :type, :local_current
+        
+        def initialize(type)
+          @type = type
+          # names => minimized names
+          @locals = { } 
+          # arg name => minimized arg names
+          @args = { }
+          # arg types/names - these are all ordered
+          @norm_arg_names = []
+          @opt_arg_names = []
+          @rest_arg_names = []
+          @post_arg_names = []
+          @block_arg_name = nil
+          
+          @local_current = "a"
+          
+          @code = []
+        end
+        
+        # push "normal" arg name
+        def push_arg_name(name)
+          id = @local_current
+          @local_current = @local_current.next
+          @args[name] = "_#{id}"
+          @norm_arg_names.push name
+          "_#{id}"
+        end
+        
+        # push optional arg name, with the node for its default value
+        def push_opt_arg_name(name, stmt)
+          
+        end
+        
+        # push rest arg name
+        def push_rest_arg_name(name)
+          
+        end
+        
+        # post (notmal args at end) names
+        def push_post_arg_name(name)
+          
+        end
+        
+        # block.. not actually added to function
+        def push_block_arg_name(name)
+
+        end
+        
+        def lookup_local(name)
+          return nil if name == nil
+          if @locals.has_key?(name)
+            @locals[name]
+          elsif @args.has_key?(name)
+            @args[name]
+          elsif @block_arg_name == name
+            "_$"
+          elsif @type == RubyBuilder::ISEQ_TYPE_BLOCK
+            @parent_iseq.lookup_local(name)
+          else
+            nil
+          end
+        end
+        
+        def parent_iseq=(other)
+          @parent_iseq = other
+
+          if @type == RubyBuilder::ISEQ_TYPE_BLOCK
+            @local_current = other.local_current
+          end
+        end
+
+        def finalize
+          if @type == RubyBuilder::ISEQ_TYPE_BLOCK
+            @parent_iseq.local_current =  @local_current
+          end
+        end
+        
+        def write(str)
+          @code << str
+        end
+        
+        def to_s
+          r = ""
+          
+          case @type
+          when RubyBuilder::ISEQ_TYPE_TOP
+            r << "var $=opal_top_self;"
+            # locals
+            if @locals.length > 0
+              r << "var #{@locals.each_value.to_a.join(",")};"
+            end
+            r << @code.join("")
+          when RubyBuilder::ISEQ_TYPE_CLASS
+            r << "function($"
+            
+            r << "){"
+            
+            # locals
+            if @locals.length > 0
+              r << "var #{@locals.each_value.to_a.join(",")};"
+            end
+            # code
+            r << @code.join("")
+            
+            r << "}"
+            
+          when RubyBuilder::ISEQ_TYPE_METHOD
+            r << "function($,_"
+            @norm_arg_names.each do |a|
+              r << ",#{@args[a]}"
+            end
+            
+            r << "){"
+            
+            # locals
+            if @locals.length > 0
+              r << "var #{@locals.each_value.to_a.join(",")};"
+            end
+            # code
+            r << @code.join("")
+            
+            r << "}"
+            
+          when RubyBuilder::ISEQ_TYPE_BLOCK
+            r << "vm_newblock("
+            
+            r << %{,"function($,_)}
+            
+            r << %{")}
+          end
+          r
+        end
+        
+      end
+      
+      
+      def generate_tree(tree)
+        top_iseq = iseq_stack_push(ISEQ_TYPE_TOP)
+        tree.each do |stmt|
+          generate_stmt stmt, :full_stmt => true, :last_stmt => false
+        end
+        iseq_stack_pop
+      end
+      
+      def iseq_stack_push type
+        @iseq_current = Iseq.new type
+        @iseq_stack << @iseq_current
+        @iseq_current
+      end
+
+      def iseq_stack_pop
+        iseq = @iseq_stack.last
+        @iseq_stack.pop
+        @iseq_current = @iseq_stack.last
+        # finalize (var locals etc)
+        iseq.finalize
+        iseq.to_s
+      end
+      
+      def generate_class(cls, context)
+        write "return " if context[:last_stmt] and context[:full_stmt]
+        
+        current_iseq = @iseq_current
+        class_iseq = iseq_stack_push(ISEQ_TYPE_CLASS)
+        class_iseq.parent_iseq = current_iseq
+        
+        # do each bodystmt
+        cls.bodystmt.each do |b|
+          generate_stmt b, :full_stmt => true, :last_stmt => b == cls.bodystmt.last
+        end
+        
+        write "return nil;" if cls.bodystmt.length == 0
+        
+        iseq_stack_pop
+        
+        write "vm_defineclass($,"
+        # superclass
+        if cls.super_klass
+          generate_stmt cls.super_klass[:expr], :full_stmt => false
+        else
+          write "nil"
+        end
+        write %{,"#{cls.klass_name}",#{class_iseq},0)}
+        
+        write ";" if context[:full_stmt]
+      end
+      
+      def generate_def(stmt, context)
+        write "return " if context[:last_stmt] and context[:full_stmt]
+        
+        is_singleton = stmt[:singleton] ? 1 : 0
+        
+        current_iseq = @iseq_current
+        def_iseq = iseq_stack_push(ISEQ_TYPE_METHOD)
+        def_iseq.parent_iseq = current_iseq
+        
+        # normal args
+        if stmt[:arglist].arg
+          stmt[:arglist].arg.each do |arg|
+            @iseq_current.push_arg_name arg[:value]
+          end
+        end
+        
+        
+        # body statements
+        stmt[:bodystmt].each do |s|
+          generate_stmt s, :full_stmt => true, :last_stmt => stmt[:bodystmt].last == s
+        end
+        
+        iseq_stack_pop
+        
+        # define method
+        write "vm_definemethod("
+        
+        # base.. singleton or self
+        if stmt[:singleton]
+          generate_stmt stmt[:singleton], :full_stmt => false, :last_stmt => false
+        else
+          # self
+          write "$"
+        end
+        
+        write %{,"#{stmt[:fname]}",#{def_iseq},#{is_singleton})}
+        write ";" if context[:full_stmt]
+      end
+      
+      def generate_identifier(stmt, context)
+        write "return " if context[:full_stmt] and context[:last_stmt]
+        local = @iseq_current.lookup_local(stmt[:name])
+        if local
+          write local
+        else
+          write "VM_SEND"
+        end
+        
+        write ";" if context[:full_stmt]
+      end
+      
+      def generate_call(call, context)
+        write "return " if context[:full_stmt] and context[:last_stmt]
+        write "vm_send("
+        # receiver
+        if call[:recv]
+          call_bit = 0
+          generate_stmt call[:recv], :full_stmt => false, :last_stmt => false
+        else
+          call_bit = 8
+          # self as recv
+          write "$"
+        end
+        
+        # method id
+        write %{,"#{call[:meth]}",}
+        
+        # normal args
+        write "["
+        unless call[:call_args].nil? or call[:call_args][:args].nil?
+          call[:call_args][:args].each do |arg|
+            write "," unless call[:call_args][:args].first == arg
+            generate_stmt arg, :full_stmt => false
+          end
+        end
+
+        # assocs
+        if call[:call_args] and call[:call_args][:assocs]
+        write "," unless call[:call_args].nil? or call[:call_args][:args].nil?
+        write "vm_newhash("
+        call[:call_args][:assocs].each do |assoc|
+         write "," unless call[:call_args][:assocs].first == assoc
+         generate_stmt assoc[:key], :full_stmt => false, :last_stmt => false
+         write ","
+         generate_stmt assoc[:value], :full_stmt => false, :last_stmt => false
+        end
+        write ")"
+        end
+     
+        write "]"
+        write ","
+        
+        # block
+      if call[:brace_block]
+         current_iseq = @iseq_current
+         block_iseq = iseq_stack_push(ISEQ_TYPE_BLOCK)
+         block_iseq.parent_iseq = current_iseq
+
+         # block arg names
+         if call[:brace_block][:params]
+           call[:brace_block][:params].each do |p|
+             block_iseq.push_arg_name p[:value]
+           end
+         end
+
+         # block stmts
+         if call[:brace_block][:stmt]
+           call[:brace_block][:stmt].each do |a|
+             generate_stmt a, :full_stmt => true, :last_stmt => call[:brace_block][:stmt].last == a
+           end
+         end
+
+         iseq_stack_pop
+
+         write block_iseq.to_s
+       else
+         write "nil"
+       end
+        write ","
+
+        # op flag
+        write "#{call_bit})"
+        
+        
+        write ";" if context[:full_stmt]
+      end
+      
+      def generate_string(str, context)
+        write "return " if context[:last_stmt] and context[:full_stmt]
+        
+        if str[:value].length == 0
+          write %{""}
+        elsif str[:value].length == 1
+          write %{"#{str[:value][0][:value]}"}
+        else
+          write "["
+          str[:value].each do |s|
+            write "," unless str[:value].first == s
+            if s.node == :string_content
+              write %{"#{s[:value].gsub(/\"/, '\"')}"}
+            else
+              # write %{objj_msgSend(}
+              #               generate_stmt s[:value][0], :full_stmt => false, :last_stmt => false
+              #               write %{,"to_s")}
+            end
+          end
+          write "].join('')"
+        end
+        
+        write ";" if context[:full_stmt]
+      end
+            
+    end
+  end
+end

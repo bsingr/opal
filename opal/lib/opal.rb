@@ -1,9 +1,9 @@
 # 
-# tools.rb
-# vienna
+# opal.rb
+# opal
 # 
 # Created by Adam Beynon.
-# Copyright 2009 Adam Beynon.
+# Copyright 2010 Adam Beynon.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -24,47 +24,18 @@
 # THE SOFTWARE.
 #
 
-module Vienna
+require 'fileutils'
+
+module Opal
   
-  class Tools
-    
-    attr_accessor :project
+  def self.require_all_libs_relative_to( fname, dir = nil )
+    dir ||= ::File.basename(fname, '.*')
+    search_me = ::File.expand_path(
+      ::File.join(::File.dirname(fname), dir, '**', '*.rb'))
 
-    def initialize(args)
-      cmd = args.shift
-      if cmd.nil? || cmd == "-h" || cmd == "--help"
-        print_usage
-        exit
-      end
-      
-      case cmd
-      when "build"
-        build args
-      else
-        print_usage
-        exit
-      end
-    end
-
-    def print_usage
-      puts "vienna command [args]"
-    end
-    
-    def find_project!
-      return @project if @project
-      
-      # For now, cherrykitis only valid project type. Later we need to add 
-      # cherry kit, browser, cappryby etc.
-      
-      unless File.exist? "config/build.yml"
-        abort "Not in a cherrykit based project"
-      end
-      
-      @project = CherryKit::Project.new Dir.getwd
-      
-      @project
-    end
+    Dir.glob(search_me).sort.each {|rb| require rb}
   end
+  
 end
 
-Vienna.require_all_libs_relative_to(__FILE__)
+Opal.require_all_libs_relative_to(__FILE__)

@@ -1,0 +1,7 @@
+#!/usr/bin/env ruby -wKU
+
+abort "Requires project name (no spaces)" if ARGV.length != 1
+
+require File.expand_path(File.join(File.dirname(__FILE__), %w[.. lib opal]))
+  
+Opal.generate! :simple, ARGV[0]
