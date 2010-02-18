@@ -85,6 +85,13 @@ module Vienna
 
         end
         
+        def push_local_name(name)
+          id = @local_current
+          @local_current = @local_current.next
+          @locals[name] = "_#{id}"
+          "_#{id}"
+        end
+        
         def lookup_local(name)
           return nil if name == nil
           if @locals.has_key?(name)
@@ -144,7 +151,7 @@ module Vienna
             r << "}"
             
           when RubyBuilder::ISEQ_TYPE_METHOD
-            r << "function($,_"
+            r << "function($"
             @norm_arg_names.each do |a|
               r << ",#{@args[a]}"
             end
@@ -161,11 +168,13 @@ module Vienna
             r << "}"
             
           when RubyBuilder::ISEQ_TYPE_BLOCK
-            r << "vm_newblock("
+            r << %{function(}
             
-            r << %{,"function($,_)}
+            r << %{)\{}
             
-            r << %{")}
+            r << @code.join("")
+            
+            r << "}"
           end
           r
         end
@@ -224,6 +233,30 @@ module Vienna
         write ";" if context[:full_stmt]
       end
       
+      def generate_module(cls, context)
+        write "return " if context[:last_stmt] and context[:full_stmt]
+        
+        current_iseq = @iseq_current
+        class_iseq = iseq_stack_push(ISEQ_TYPE_CLASS)
+        class_iseq.parent_iseq = current_iseq
+        
+        # do each bodystmt
+        cls.bodystmt.each do |b|
+          generate_stmt b, :full_stmt => true, :last_stmt => b == cls.bodystmt.last
+        end
+        
+        write "return nil;" if cls.bodystmt.length == 0
+        
+        iseq_stack_pop
+        
+        write "vm_defineclass($,"
+        # superclass - always nil for module
+        write "nil"
+        write %{,"#{cls.klass_name}",#{class_iseq},2)}
+        
+        write ";" if context[:full_stmt]
+      end
+      
       def generate_def(stmt, context)
         write "return " if context[:last_stmt] and context[:full_stmt]
         
@@ -259,7 +292,7 @@ module Vienna
           write "$"
         end
         
-        write %{,"#{stmt[:fname]}",#{def_iseq},#{is_singleton})}
+        write %{,"#{stmt[:fname]}",#{def_iseq},#{is_singleton},#{stmt[:arglist].arg_size})}
         write ";" if context[:full_stmt]
       end
       
@@ -269,7 +302,7 @@ module Vienna
         if local
           write local
         else
-          write "VM_SEND"
+          write %{vm_send($,"#{stmt[:name]}",[],nil,8)}
         end
         
         write ";" if context[:full_stmt]
@@ -365,9 +398,9 @@ module Vienna
             if s.node == :string_content
               write %{"#{s[:value].gsub(/\"/, '\"')}"}
             else
-              # write %{objj_msgSend(}
-              #               generate_stmt s[:value][0], :full_stmt => false, :last_stmt => false
-              #               write %{,"to_s")}
+              write %{vm_send(}
+              generate_stmt s[:value][0], :full_stmt => false
+              write %{,"to_s",[],nil,8)}
             end
           end
           write "].join('')"
@@ -375,7 +408,53 @@ module Vienna
         
         write ";" if context[:full_stmt]
       end
+      
+      def generate_constant(cnst, context)
+        write "return " if context[:last_stmt] and context[:full_stmt]
+        write %{vm_getconstant($,"#{cnst[:name]}")}
+        write ";" if context[:full_stmt]
+      end
+      
+      def generate_assign(stmt, context)
+        write "return " if context[:last_stmt] and context[:full_stmt]
+        # LHS is a local identifier
+        if stmt[:lhs].node == :identifier
+          local = @iseq_current.lookup_local stmt[:lhs][:name]
+          unless local
+            local = @iseq_current.push_local_name(stmt[:lhs][:name])
+          end
+          write %{#{local}=}
+          generate_stmt stmt[:rhs], :last_stmt => false, :full_stmt => false
+        elsif stmt[:lhs].node == :ivar
+        
+        elsif stmt[:lhs].node == :constant
+          write %{vm_setconstant($,"#{stmt[:lhs][:name]}",}
+          generate_stmt stmt[:rhs], :full_stmt => false, :last_stmt => false
+          write %{)}
+        else
+          abort "bad lhs type"
+        end
+        write ";" if context[:full_stmt]
+      end
+      
+      def generate_self(stmt, context)
+        write "return " if context[:last_stmt] and context[:full_stmt]
+        write "$"
+        write ";" if context[:full_stmt]
+      end
+      
+      def generate_symbol(sym, context)
+        write "return " if context[:last_stmt] and context[:full_stmt]
+        write %{ID2SYM("#{sym[:name]}")}
+        write ";" if context[:full_stmt]
+      end
+      
+      def generate_numeric(num, context)
+        write "return " if context[:last_stmt] and context[:full_stmt]
+        write num[:value]
+        write ";" if context[:full_stmt]
+      end
             
-    end
+    end # end class
   end
 end

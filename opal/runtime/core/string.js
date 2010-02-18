@@ -61,9 +61,14 @@ function rb_sym_equal(sym1, sym2) {
   return false;
 };
 
+function rb_str_to_s(str) {
+  return new String(str);
+};
+
 function Init_String() {
   
   rb_cString = rb_define_class("String", rb_cObject);
+  String.prototype.klass = rb_cString;
   // rb_include_module(rb_cString, rb_mComparable);
   // rb_define_alloc_func(rb_cString, rb_str_alloc);
   
@@ -102,7 +107,7 @@ function Init_String() {
 
   // rb_define_method(rb_cString, "to_i", rb_str_to_i, -1);
   // rb_define_method(rb_cString, "to_f", rb_str_to_f, 0);
-  // rb_define_method(rb_cString, "to_s", rb_str_to_s, 0);
+  rb_define_method(rb_cString, "to_s", rb_str_to_s, 0);
   // rb_define_method(rb_cString, "to_str", rb_str_to_s, 0);
   // rb_define_method(rb_cString, "inspect", rb_str_inspect, 0);
   // rb_define_method(rb_cString, "dump", rb_str_dump, 0);

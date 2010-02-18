@@ -34,6 +34,56 @@ function opal_json_s_parse(cls, source) {
   
 };
 
+/*
+  Convert raw json object => ruby json object (i.e. hashes and arrays etc)
+  If root object is array, maintains array, and checks recursively
+*/
+function opal_json_2_ruby_json(json) {
+  // console.log(json);
+  // quick check if root object is an array
+  if (json.klass && json.klass === rb_cArray) {
+    // console.log("TRUE");
+    var ary = [];
+    for (var i = 0; i < json.length; i++) {
+      if (json[i].constructor === Object) {
+        ary.push(opal_json_2_ruby_json(json[i]));
+      }
+      else {
+        ary.push(json[i]);
+      }
+    }
+    return ary;
+  }
+  
+  var result = rb_hash_new();
+  
+  for (var key in json) {
+    if (!json.hasOwnProperty(key)) continue;
+    
+    var val = json[key];
+    if (val === null) {
+      val = nil;
+    }
+    else if (val.constructor === Object) {
+      val = opal_json_2_ruby_json(val);
+    }
+    else if (val.klass === rb_cArray) {
+      var ary = [];
+      for (var i = 0; i < val.length; i++) {
+        if (val[i].constructor === Object) {
+          ary.push(opal_json_2_ruby_json(val[i]));
+        }
+        else {
+          ary.push(val[i]);
+        }
+      }
+      val = ary;
+    }
+    rb_hash_aset(result, key, val);
+  }
+  return result;
+};
+
 /**
   Initialize json.
 */

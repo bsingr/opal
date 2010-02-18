@@ -27,11 +27,57 @@
 // Ajax class
 var opal_cAjax;
 
+// JSONP prefix call names
+var opal_jsonp_prefix = "opal_jsonp_";
+// JSONP prefix counter
+var opal_jsonp_counter = 0;
+
+// valid data_types for ajax
+var opal_ajax_k_data_types = ['xml', 'html', 'script', 'json', 'jsonp', 'text'];
+
+/*
+  main entry point for any ajax request. get, post etc all set custom options 
+  then pass control to this function
+*/
+function opal_ajax_request(ajax, url, options) {
+  var data_type;
+  if (rb_hash_has_key(options, ID2SYM('data_type'))) {
+    data_type = rb_hash_delete(options, ID2SYM('data_type'));
+    if (opal_ajax_k_data_types.indexOf(data_type) == -1) {
+      throw data_type + " is a bad data type for Ajax#request"
+    }
+  }
+  else {
+    // no data type, so we need to work it out ourselves
+  }
+    
+  switch (data_type) {
+    case 'jsonp':
+      var callback = opal_jsonp_prefix + (opal_jsonp_counter++);
+      url += "&callback=" + callback;
+      window[callback] = function(r) {
+        console.log("got response");
+        console.log(opal_json_2_ruby_json(r));
+        // clean up
+        delete window[callback];
+      };
+      
+      var script = document.createElement("script");
+      script.setAttribute("src", url);
+      script.setAttribute("type", "text/javascript");
+      document.body.appendChild(script);
+      break;
+    default:
+      throw "unimplemented datatype for ajax#request"
+  }
+};
+
 /**
   Ajax#get(options, &block)
 */
-function opal_ajax_s_get(ajax, options) {
-  console.log("Doing an ajax get");
+function opal_ajax_s_get(ajax, url, options) {
+  // console.log("Doing an ajax get");
+  return opal_ajax_request(ajax, url, options);
 };
 
 /**

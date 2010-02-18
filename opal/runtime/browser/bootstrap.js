@@ -19,8 +19,34 @@ function opal_define_file(name, body) {
 */
 function opal_browser_main(name) {
   ruby_init();
+  // init all browser bits and pieces
+  opal_browser_init();
   ruby_script("embedded");
   ruby_init_loadpath();
   ruby_incpush("");
   rb_loadpath(name);
+};
+
+function opal_browser_init() {
+  
+  // function to call on window.load
+  var win_on_load = function() {
+    opal_oDocument.iv_tbl.is_ready = true;
+    var a = opal_oDocument.iv_tbl.ready_blocks;
+    for (var i = 0; i < a.length; i++) {
+      a[i]();
+    }
+  };
+  
+  if (window.addEventListener) {
+    window.addEventListener('load', win_on_load, false);
+  }
+  else {
+    window.attachEvent('onload', win_on_load);
+  }
+  
+  Init_Browser_Element();
+  Init_Browser_Document();
+  Init_Browser_Json();
+  Init_Ajax();
 };

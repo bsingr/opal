@@ -25,5 +25,12 @@
 #
 
 class GitHub
+  
+  # Use a JSONP request to get a list of user repos for the given username. On
+  # completion, the block will be called with the resulting json object.
+  # 
+  def self.repos_for_user(username, &block)
 
+  end
+  
 end

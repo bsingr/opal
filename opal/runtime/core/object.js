@@ -298,7 +298,8 @@ function rb_class_new_instance(argc, argv, klass) {
   return o;
 };
 
-function rb_f_puts(argc, argv, recv) {
+function rb_f_puts(recv) {
+  var argv = Array.prototype.slice.call(arguments, 1), argc = arguments.length - 1;
   for (var i = 0; i < argc; i++) {
     console.log(argv[i]);
   }

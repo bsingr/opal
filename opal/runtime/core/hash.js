@@ -65,6 +65,13 @@ function rb_hash_has_key(hash, k) {
   return false;
 };
 
+function rb_hash_delete(hash, k) {
+  hash.keys.splice(hash.keys.indexOf(k), 1);
+  var r = hash.dict[k];
+  delete hash.dict[k];
+  return r;
+};
+
 function Init_Hash() {
   rb_cHash = rb_define_class("Hash", rb_cObject);
   // rb_include_module(rb_cHash, rb_mEnumerable);
@@ -109,7 +116,7 @@ function Init_Hash() {
   // rb_define_method(rb_cHash,"values_at", rb_hash_values_at, -1);
 
   // rb_define_method(rb_cHash,"shift", rb_hash_shift, 0);
-  // rb_define_method(rb_cHash,"delete", rb_hash_delete, 1);
+  rb_define_method(rb_cHash,"delete", rb_hash_delete, 1);
   // rb_define_method(rb_cHash,"delete_if", rb_hash_delete_if, 0);
   // rb_define_method(rb_cHash,"select", rb_hash_select, 0);
   // rb_define_method(rb_cHash,"reject", rb_hash_reject, 0);

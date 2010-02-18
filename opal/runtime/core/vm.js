@@ -29,6 +29,7 @@ function Init_VM() {
 };
 
 var opal_top_self;
+var opal_block;
 
 function opal_main_to_s() {
   return "main";
@@ -50,6 +51,8 @@ function Init_vm_eval() {
 };
 
 function rb_search_method(klass, id) {
+  // console.log("searching for id: " + id);
+  // console.log(klass);
   var f, k = klass;
   while (!(f = k.m_tbl[id])) {
     k = k.sup;
@@ -76,15 +79,21 @@ function rb_funcall2(recv, id, args) {
   if (!body) {
     throw "need to do method missing (for " + id + ")"
   }
-  var imp = body.body, len = body.argc, argc = args.length;
+  var imp = body.body, len = args.length;
   
-  if (len >= 0 && argc != len) {
-    throw "rb_eArgError: wrong number of arguments(" + argc+ " for " + len + ")"
-  }
+  // if (len >= 0 && argc != len) {
+  //   throw "rb_eArgError: wrong number of arguments(" + argc+ " for " + len + ")" + " in method: " + id
+  // }
+  
+  // console.log(args.join(",") + " : " + args.length);
+  // console.log(imp);
+  
+  // console.log("for " + id);
+  // console.log(args);
   
   switch(len) {
-    case -2: throw "-2 currently unimplemeneted: rb_funcall2"
-    case -1: return imp(argc, args, recv);
+    // case -2: throw "-2 currently unimplemeneted: rb_funcall2"
+    // case -1: return imp(argc, args, recv);
     case 0: return imp(recv);
     case 1: return imp(recv, args[0]);
     case 2: return imp(recv, args[0], args[1]);
@@ -114,6 +123,19 @@ function vm_defineclass(base, sup, id, body, type) {
         klass.parent = base;
       }
       break;
+    case 2:
+      if (base.flags & T_OBJECT) base = rb_class_real(base.klass);
+      
+      if (rb_const_defined_at(base, id)) {
+        klass = rb_const_get_at(base, id);
+      }
+      else {
+        klass = rb_define_module_id(id);
+        rb_name_class(klass, id);
+        rb_const_set(base, id, klass);
+        klass.parent = base;
+      }
+      break;
     default:
       throw "unknown vm_defineclass type: " + type
   }
@@ -122,14 +144,36 @@ function vm_defineclass(base, sup, id, body, type) {
 };
 
 function vm_definemethod(base, id, body, is_singleton) {
+  if (base.flags & T_OBJECT) base = rb_class_real(base.klass);
   if (is_singleton) {
-    return rb_define_method(rb_singleton_class(base), id, body, 0);
+    return rb_define_method(rb_singleton_class(base), id, body);
   }
   else {
-    return rb_define_method(base, id, body, 0);
+    return rb_define_method(base, id, body);
   }
 };
 
 function vm_send(obj, id, args, block, flags) {
-  return rb_funcall2(obj, id, args);
+  if (block !== nil) opal_block = block;
+  var r = rb_funcall2(obj, id, args);
+  opal_block = nil;
+  return r;
+};
+
+function vm_getconstant(base, id) {
+  if (base.flags & T_OBJECT) base = rb_class_real(base.klass);
+  return rb_const_get(base, id);
+};
+
+function vm_setconstant(base, id, val) {
+  if (base.flags & T_OBJECT) base = rb_class_real(base.klass);
+  return rb_const_set(base, id, val);
+};
+
+function vm_newhash() {
+  var ary = Array.prototype.slice.call(arguments), res = rb_hash_new();
+  for (var i = 0; i < ary.length; i += 2) {
+    rb_hash_aset(res, ary[i], ary[i + 1]);
+  }
+  return res;
 };

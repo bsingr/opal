@@ -58,15 +58,16 @@ function rb_require_file(file_path) {
   }
   else {
     f.included = true;
+    f.content();
     // console.log(f.content);
-    if (window.execScript) {
-      return window.execScript(f.content);
-    }
-    else {
-      with (window) {
-        return eval(f.content);
-      }
-    }
+    // if (window.execScript) {
+      // return window.execScript(f.content);
+    // }
+    // else {
+      // with (window) {
+        // return eval(f.content);
+      // }
+    // }
   }
 };
 
