@@ -47,6 +47,7 @@ function Init_Browser_Document() {
   opal_oDocument = new RObject();
   opal_oDocument.klass = rb_cObject;
   FL_SET(opal_oDocument, T_OBJECT);
+  // really need to inherit from Element.. in ready_q, set native to doc.body
   rb_const_set(rb_cObject, "Document", opal_oDocument);
   
   // Ivars

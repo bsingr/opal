@@ -34,7 +34,8 @@ function opal_browser_init() {
     opal_oDocument.iv_tbl.is_ready = true;
     var a = opal_oDocument.iv_tbl.ready_blocks;
     for (var i = 0; i < a.length; i++) {
-      a[i]();
+      vm_yield(a[i], []);
+      // a[i]();
     }
   };
   

@@ -168,12 +168,15 @@ module Vienna
             r << "}"
             
           when RubyBuilder::ISEQ_TYPE_BLOCK
-            r << %{function(}
+            r << %{function($$}
             
             r << %{)\{}
-            
+            # WTF? this should take "var $=$$;" but we get errors...huh!?!?
+            # r << "if($$!=nil){var$=$$;}"
+            # this seems to be the easiest way to do it, but its hela ugly 
+            r << "with($$==nil ? {} : {$:$$}){"
             r << @code.join("")
-            
+            r << "}"
             r << "}"
           end
           r

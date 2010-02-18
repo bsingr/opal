@@ -144,7 +144,7 @@ function vm_defineclass(base, sup, id, body, type) {
 };
 
 function vm_definemethod(base, id, body, is_singleton) {
-  if (base.flags & T_OBJECT) base = rb_class_real(base.klass);
+  if (base.flags & T_OBJECT) base = base.klass;
   if (is_singleton) {
     return rb_define_method(rb_singleton_class(base), id, body);
   }
@@ -176,4 +176,18 @@ function vm_newhash() {
     rb_hash_aset(res, ary[i], ary[i + 1]);
   }
   return res;
+};
+
+/**
+  yield block given by 'block'. All blocks take a '$$' as a first param, and 
+  this should always be nil unless we want to redefine self, e.g. for 
+  instance_eval and using the block to define a method. If this first param is
+  not nil, then it will be used as the self recv, and assign itselg to $. every
+  block does this itself.
+*/
+function vm_yield(block, args) {
+  console.log(block);
+  args.unshift(nil);
+  return block.apply(block, args);
+  // return block(nil);
 };
