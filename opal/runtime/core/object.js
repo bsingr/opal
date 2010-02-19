@@ -30,7 +30,7 @@
 */
 
 var rb_cBasicObject, rb_cObject, rb_cModule, rb_cClass;
-var rb_cNilClass;
+var rb_cNilClass, rb_cBoolean;
 
 
 
@@ -280,11 +280,21 @@ function rb_obj_init_copy(self) {
 function rb_any_to_s(self) {
  var c = rb_obj_classname(self);
  return "<" + c + ":0x000000>";
-}
+};
+
+function rb_obj_classname(obj) {
+  var klass;
+  if (obj.flags & T_OBJECT) 
+    klass = rb_class_real(obj.klass);
+  else
+    klass = obj.klass;
+  
+  return klass.iv_tbl.__classid__;
+};
 
 function rb_obj_inspect(self) {
  return rb_any_to_s(self);
-}
+};
 
 function rb_class_new_instance(klass) {
   var o = rb_obj_alloc(klass);
@@ -301,7 +311,7 @@ function rb_class_new_instance(klass) {
 function rb_f_puts(recv) {
   var argv = Array.prototype.slice.call(arguments, 1), argc = arguments.length - 1;
   for (var i = 0; i < argc; i++) {
-    console.log(argv[i]);
+    console.log(vm_send(argv[i], "inspect", [], nil, 8));
   }
 };
 
@@ -344,6 +354,14 @@ function rb_obj_respond_to(argc, argv, obj) {
   return false;
 };
 
+function rb_nil_to_s() {
+  return "";
+};
+
+function rb_nil_inspect() {
+  return "nil";
+};
+
 /**
   Object#instance_eval(&block)
   
@@ -359,7 +377,9 @@ function rb_obj_instance_eval(obj, str) {
   return _.call(_, obj);
 };
 
-
+function rb_bool_to_s(bool) {
+  return bool ? "true" : "false";
+};
 
 
 
@@ -459,9 +479,9 @@ function Init_Object() {
   rb_cNilClass = rb_define_class("NilClass", rb_cObject);
   // rb_define_method(rb_cNilClass, "to_i", nil_to_i, 0);
   // rb_define_method(rb_cNilClass, "to_f", nil_to_f, 0);
-  // rb_define_method(rb_cNilClass, "to_s", nil_to_s, 0);
+  rb_define_method(rb_cNilClass, "to_s", rb_nil_to_s, 0);
   // rb_define_method(rb_cNilClass, "to_a", nil_to_a, 0);
-  // rb_define_method(rb_cNilClass, "inspect", nil_inspect, 0);
+  rb_define_method(rb_cNilClass, "inspect", rb_nil_inspect, 0);
   // rb_define_method(rb_cNilClass, "&", false_and, 1);
   // rb_define_method(rb_cNilClass, "|", false_or, 1);
   // rb_define_method(rb_cNilClass, "^", false_xor, 1);
@@ -520,21 +540,14 @@ function Init_Object() {
   // rb_undef_method(rb_cClass, "extend_object");
   // rb_undef_method(rb_cClass, "append_features");
   // 
-  // rb_cTrueClass = rb_define_class("TrueClass", rb_cObject);
-  // rb_define_method(rb_cTrueClass, "to_s", true_to_s, 0);
+  rb_cBoolean = rb_define_class("Boolean", rb_cObject);
+  Boolean.prototype.klass = rb_cBoolean;
+  rb_define_method(rb_cBoolean, "to_s", rb_bool_to_s, 0);
   // rb_define_method(rb_cTrueClass, "&", true_and, 1);
   // rb_define_method(rb_cTrueClass, "|", true_or, 1);
   // rb_define_method(rb_cTrueClass, "^", true_xor, 1);
   // rb_undef_alloc_func(rb_cTrueClass);
   // rb_undef_method(rb_cTrueClass.klass, "new");
   // rb_define_global_const("TRUE", true);
-  // 
-  // rb_cFalseClass = rb_define_class("FalseClass", rb_cObject);
-  // rb_define_method(rb_cFalseClass, "to_s", false_to_s, 0);
-  // rb_define_method(rb_cFalseClass, "&", false_and, 1);
-  // rb_define_method(rb_cFalseClass, "|", false_or, 1);
-  // rb_define_method(rb_cFalseClass, "^", false_xor, 1);
-  // rb_undef_alloc_func(rb_cFalseClass);
-  // rb_undef_method(rb_cFalseClass.klass, "new");
-  // rb_define_global_const("FALSE", false);
+
 }

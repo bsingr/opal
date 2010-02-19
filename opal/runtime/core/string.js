@@ -65,6 +65,10 @@ function rb_str_to_s(str) {
   return new String(str);
 };
 
+function rb_str_inspect(str) {
+  return '"' + str + '"';
+};
+
 function rb_sym_to_sym(sym) {
   return sym;
 };
@@ -125,8 +129,8 @@ function Init_String() {
   // rb_define_method(rb_cString, "to_i", rb_str_to_i, -1);
   // rb_define_method(rb_cString, "to_f", rb_str_to_f, 0);
   rb_define_method(rb_cString, "to_s", rb_str_to_s, 0);
-  // rb_define_method(rb_cString, "to_str", rb_str_to_s, 0);
-  // rb_define_method(rb_cString, "inspect", rb_str_inspect, 0);
+  rb_define_method(rb_cString, "to_str", rb_str_to_s, 0);
+  rb_define_method(rb_cString, "inspect", rb_str_inspect, 0);
   // rb_define_method(rb_cString, "dump", rb_str_dump, 0);
 
   // rb_define_method(rb_cString, "upcase", rb_str_upcase, 0);

@@ -576,6 +576,24 @@ module Vienna
         write ")"
         write ";" if context[:full_stmt]
       end
+      
+      def generate_nil(stmt, context)
+        write "return " if context[:last_stmt] and context[:full_stmt]
+        write "nil"
+        write ";" if context[:full_stmt]
+      end
+      
+      def generate_true(stmt, context)
+        write "return " if context[:last_stmt] and context[:full_stmt]
+        write "true"
+        write ";" if context[:full_stmt]
+      end
+      
+      def generate_false(stmt, context)
+        write "return " if context[:last_stmt] and context[:full_stmt]
+        write "false"
+        write ";" if context[:full_stmt]
+      end
             
     end # end class
   end

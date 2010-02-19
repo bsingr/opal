@@ -69,6 +69,24 @@ function rb_ary_collect(ary) {
   return res;
 };
 
+function rb_ary_to_s(ary) {
+  var res = [];
+  for (var i = 0; i < ary.length; i++) {
+    res.push(vm_send(ary[i], "to_s", [], nil, 0));
+  }
+  return res.join("");
+};
+
+function rb_ary_inspect(ary) {
+  var res = ["["]
+  for (var i = 0; i < ary.length; i++) {
+    if (i > 0) res.push(", ");
+    res.push(vm_send(ary[i], "inspect", [], nil, 0));
+  }
+  res.push("]");
+  return res.join("");
+};
+
 function Init_Array() {
   
   rb_cArray = rb_define_class("Array", rb_cObject);
@@ -82,8 +100,8 @@ function Init_Array() {
   // rb_define_method(rb_cArray, "initialize", rb_ary_initialize, -1);
   // rb_define_method(rb_cArray, "initialize_copy", rb_ary_replace, 1);
 
-  // rb_define_method(rb_cArray, "to_s", rb_ary_inspect, 0);
-  // rb_define_method(rb_cArray, "inspect", rb_ary_inspect, 0);
+  rb_define_method(rb_cArray, "to_s", rb_ary_to_s, 0);
+  rb_define_method(rb_cArray, "inspect", rb_ary_inspect, 0);
   // rb_define_method(rb_cArray, "to_a", rb_ary_to_a, 0);
   // rb_define_method(rb_cArray, "to_ary", rb_ary_to_ary_m, 0);
   // rb_define_method(rb_cArray, "frozen?",  rb_ary_frozen_p, 0);

@@ -76,6 +76,10 @@ function rb_num_to_s(num) {
   return num.toString();
 };
 
+function rb_num_inspect(num) {
+  return num.toString();
+};
+
 
 function Init_Number() {
   
@@ -125,6 +129,7 @@ function Init_Number() {
   // rb_define_method(rb_cNumber, "ord", rb_num_ord, 0);
   // rb_define_method(rb_cNumber, "to_i", rb_num_to_i, 0);
   rb_define_method(rb_cNumber, "to_s", rb_num_to_s, -1);
+  rb_define_method(rb_cNumber, "inspect", rb_num_inspect, 0);
   // rb_define_method(rb_cNumber, "to_f", rb_num_to_f, 0);
 
   rb_define_method(rb_cNumber, "+", rb_num_plus, 1);

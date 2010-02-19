@@ -73,6 +73,7 @@ function rb_mod_define_method(obj, sym) {
 
 function Init_Proc() {
   rb_cProc = rb_define_class("Proc", rb_cObject);
+  Function.prototype.klass = rb_cProc;
   
   rb_define_singleton_method(rb_cProc, "new", rb_proc_s_new, 0);
   
