@@ -68,6 +68,18 @@ var kCLASS      = 0,    kMODULE     = 1,    kDEF        = 2,    kUNDEF     = 3,
     // special tokens (used for generator)
 var tCALL       = 150,  tMLHS       = 151,  tOPT_PLUS   = 152, tOPT_MINUS = 153,
     tOPT_MULT   = 154,  tOPT_DIV    = 155;
+    
+/*
+  ISeq types
+*/
+var ISEQ_TYPE_TOP = 1,
+    ISEQ_TYPE_METHOD = 2,
+    ISEQ_TYPE_BLOCK = 3,
+    ISEQ_TYPE_CLASS = 4,
+    ISEQ_TYPE_RESCUE = 5,
+    ISEQ_TYPE_ENSURE = 6,
+    ISEQ_TYPE_EVAL = 7,
+    ISEQ_TYPE_MAIN = 8;
 
 /**
   Parse the given ruby code, str, with the given filename. This allows us to
@@ -93,7 +105,7 @@ var vn_parser = function(filename, str) {
   var eval_arr = [];
   // valid types of stmt that are valid as the first cmd args (helps us identify if the
   // next statemebnt should be appeneded to the current identifer as a cmd arg )
-  var valid_cmd_args = [tIDENTIFIER, tINTEGER, tCONSTANT, tSTRING_BEG, kDO, '{', tSYMBEG];
+  var valid_cmd_args = [tIDENTIFIER, tINTEGER, tCONSTANT, tSTRING_BEG, kDO, '{', tSYMBEG, tIVAR];
   // start of command (not stmt), when on new line etc
   var cmd_start = false;
   
@@ -1474,9 +1486,8 @@ var vn_parser = function(filename, str) {
   var iseq_current = null;
   var iseq_stack = [];
   
-  function iseq_stack_push(type, name) {
-    name = name || "<compiled>";
-    iseq_current = new ISEQ(type, filename, name);
+  function iseq_stack_push(type) {
+    iseq_current = new Iseq(type);
     iseq_stack.push(iseq_current);
     return iseq_current;
   };
@@ -1485,7 +1496,8 @@ var vn_parser = function(filename, str) {
     var iseq = iseq_current;
     iseq_stack.pop();
     iseq_current = iseq_stack[iseq_stack.length - 1];
-    return iseq.toArray();
+    iseq.finalize();
+    return iseq.toString();
   };
   
   function write(opcode) {
@@ -1497,13 +1509,9 @@ var vn_parser = function(filename, str) {
   };
   
   function generate_tree(tree) {
-    
     var top_iseq = iseq_stack_push(ISEQ_TYPE_TOP);
     for (var i = 0; i < tree.length; i++) {
-      // until we start using line numbers, use 0 as a seperator to make
-      // debugging easier
-      write(0);
-      generate_stmt(tree[i], { full_stmt: true, last_stmt: (tree.length == (i + 1)) });
+      generate_stmt(tree[i], {full_stmt:true, last_stmt:false});
     }
     return iseq_stack_pop();
   };
@@ -1530,6 +1538,9 @@ var vn_parser = function(filename, str) {
         break;
       case tIDENTIFIER:
         generate_identifier(stmt, context);
+        break;
+      case tIVAR:
+        generate_ivar(stmt, context);
         break;
       case tINTEGER:
         generate_integer(stmt, context);
@@ -1561,6 +1572,12 @@ var vn_parser = function(filename, str) {
       default:
         console.log("unknown generate_stmt type: " + stmt.type + ", " + stmt.value);
     }
+  };
+  
+  function generate_ivar(stmt, context) {
+    if (context.full_stmt && context.last_stmt) write("return ");
+    write('vm_ivarget($,"' + stmt.value + '")');
+    if (context.full_stmt) write(";");
   };
   
   function generate_assoc_list(list, context) {
@@ -1701,13 +1718,9 @@ var vn_parser = function(filename, str) {
   }
   
   function generate_integer(stmt, context) {
-    write([iPUTOBJECT, parseInt(stmt.value)]);
-    // iseq_opcode_push([iPUTOBJECT, parseInt(stmt.value)]);
-    // write(parseInt(stmt.value));
-    // 
-    // if (context.last_stmt && context.full_stmt) {
-    //   iseq_opcode_push([iLEAVE]);
-    // }
+    if(context.last_stmt && context.full_stmt) write("return ");
+    write(stmt.value);
+    if (context.full_stmt) write(";");
   }
   
   function generate_constant(stmt, context) {
@@ -1756,6 +1769,42 @@ var vn_parser = function(filename, str) {
   };
   
   function generate_call(call, context) {
+    var call_bit;
+    if (context.last_stmt && context.full_stmt) write("return ");
+    write("vm_send(");
+    
+    // receiver
+    if (call.$recv) {
+      call_bit = 0;
+      generate_stmt(call.$recv, {full_stmt:false, last_stmt:false});
+    }
+    else {
+      call_bit = 8;
+      write("$");
+    }
+    
+    // method id
+    write(',"' + call.$meth + '",');
+    
+    // normal args
+    write("[")
+    if (call.$call_args && call.$call_args.args) {
+      var args = call.$call_args.args;
+      for (var i = 0; i < args.length; i++) {
+        generate_stmt(args[i], {});
+      }
+    }
+    
+    write("],nil,");
+    write(call_bit);
+    write(")");
+    
+    if (context.full_stmt) write(";");
+    return;
+    
+    
+    
+    
     var block_iseq, call_bit, arg_length;
     // if we have a block, do that first.
     if (false) {
@@ -2074,46 +2123,61 @@ var vn_parser = function(filename, str) {
 /**
   ISEQ
 */
-function ISEQ(type, filename, name) {
+function Iseq(type) {
   this.type = type;
-  this.filename = filename;
-  this.name = name;
-  this.opcodes = [];
   this.locals = [];
   this.args = [];
-  this.label_count = 0;
-  this.jumps = [];
+  this.norm_arg_names = [];
+  this.opt_arg_names = [];
+  this.rest_arg_names = [];
+  this.post_arg_names = [];
+  this.block_arg_name = nil;
+  // dont really need to use this for client side eval
+  this.local_current = "a";
+  this.code = [];
+  
   return this;
 };
 
-ISEQ.prototype = {
+Iseq.prototype = {
   
-  write: function(opcode) {
-    this.opcodes.push(opcode);
+  finalize: function() {
+    
   },
   
-  write_label: function(label) {
-    this.jumps[label] = this.opcodes.length;
+  write: function(str) {
+    this.code.push(str);
   },
   
-  toArray: function() {
-    return [
-      this.args.length,
-      this.locals.length,
-      this.name,
-      this.filename,
-      this.type,
-      // local names
-      [],
-      // arglist
-      [],
-      // catch table
-      [],
-      // jumps
-      [],
-      // opcodes
-      this.opcodes
-    ];
+  toString: function() {
+    var r = [];
+        switch (this.type) {
+             case ISEQ_TYPE_TOP:
+               r.push("function($){");
+               if (this.locals.length > 0) {
+                 r.push("var ");
+                 for (var i = 0; i < this.locals.length; i++) {
+                   if (i != 0) r.push(",");
+                   r.push(this.locals[i]);
+                 }
+                 r.push(";");
+               }
+               r.push(this.code.join(""));
+               r.push("}");
+               break;
+             case ISEQ_TYPE_CLASS:
+               
+               break;
+             case ISEQ_TYPE_METHOD:
+               
+               break;
+             case ISEQ_TYPE_BLOCK:
+               
+               break;
+             default:
+               throw "unknown iseq type in parse.js"
+           }
+        return r.join("");
   }
 };
 

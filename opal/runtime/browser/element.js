@@ -16,8 +16,28 @@ function opal_element_wrap(wrap) {
   return o;
 };
 
-
+/*
+  Element[:my_div]
+  Element.find[:my_div]
+  
+  Search the dom for the element with the given name, identifier etc.
+  
+  If a block is given, then it is instance eval'd so that self within the block
+  becomes the found element. If no block is given, then the element is simply
+  returned.
+  
+  Usage:
+    
+    Element[:my_div] do
+      # add a div with the title "My Info" as well as the class properties
+      div "My Info", :class => "my_title_div"
+    end
+    
+    a = Element.find(:my_div)
+    a.div "My Info", :class => "my_title_div"
+*/
 function opal_element_s_find(cls, str) {
+  var _ = opal_block; opal_block = nil;
   var el;
   // First case: empty string, nil, or nothing is passed: return el as it is.
   if (!str || str === nil) return el;
@@ -38,9 +58,17 @@ function opal_element_s_find(cls, str) {
       var native = document.getElementById(str);
       if (native) el = opal_element_wrap(native);
     }
-    return el;
   }
   
+  if (el) {
+    // we found it..
+    if (_ !== nil) {
+      // console.log("instance eval element..");
+      _.call(_, el);
+    }
+    return el;
+  }
+    
   throw "unknown Element#find type"
   
   // return opal_element_wrap(document.getElementById(str));
@@ -54,7 +82,7 @@ function opal_element_on_click(el) {
   var _ = opal_block; opal_block = nil;
   if (_ === nil) throw "Element#on_click no block given."
   
-  var func = function(evt) { return _(evt); };
+  var func = function(evt) { return vm_yield(_, []); };
   var native = el.native;
   
   if (native.addEventListener) {
@@ -97,6 +125,28 @@ function opal_element_css(el, styles) {
   }
 };
 
+function opal_element_m_missing(el, sym) {
+  var args = Array.prototype.slice.call(arguments, 2);
+  var tag_name = sym.ptr;
+  var native = el.native;
+  var tag = document.createElement(tag_name);
+  for (var i = 0; i < args.length; i++) {
+    var cur = args[i];
+    if (cur.klass == rb_cString) {
+      tag.appendChild(document.createTextNode(cur));
+    }
+    else if (cur.klass == rb_cHash) {
+      
+    }
+    else {
+      throw "bad param type for Element#method_missing (builder)"
+    }
+  }
+  
+  native.appendChild(tag);
+  return el;
+};
+
 /*
   Element#has_class?('foo')
 */
@@ -123,5 +173,7 @@ function Init_Browser_Element() {
   rb_define_method(opal_cElement, "css", opal_element_css, 0);
   rb_define_method(opal_cElement, "style", opal_element_css, 0);
   
-  rb_define_method(opal_cElement, "has_class?", opal_element_has_class_q, 1);
+  rb_define_method(opal_cElement, "has_class?", opal_element_has_class_q, 1)
+  
+  rb_define_method(opal_cElement, "method_missing", opal_element_m_missing, 1);
 };

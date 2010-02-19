@@ -82,7 +82,7 @@ module Vienna
         
         # block.. not actually added to function
         def push_block_arg_name(name)
-
+          @block_arg_name = name
         end
         
         def push_local_name(name)
@@ -99,7 +99,7 @@ module Vienna
           elsif @args.has_key?(name)
             @args[name]
           elsif @block_arg_name == name
-            "_$"
+            "_"
           elsif @type == RubyBuilder::ISEQ_TYPE_BLOCK
             @parent_iseq.lookup_local(name)
           else
@@ -130,12 +130,13 @@ module Vienna
           
           case @type
           when RubyBuilder::ISEQ_TYPE_TOP
-            r << "var $=opal_top_self;"
+            r << "function($){"
             # locals
             if @locals.length > 0
               r << "var #{@locals.each_value.to_a.join(",")};"
             end
             r << @code.join("")
+            r << "}"
           when RubyBuilder::ISEQ_TYPE_CLASS
             r << "function($"
             
@@ -158,6 +159,11 @@ module Vienna
             
             r << "){"
             
+            # block arg name
+            if @block_arg_name != nil
+              r << "var _ = opal_block; opal_block = nil;"
+            end
+            
             # locals
             if @locals.length > 0
               r << "var #{@locals.each_value.to_a.join(",")};"
@@ -169,7 +175,9 @@ module Vienna
             
           when RubyBuilder::ISEQ_TYPE_BLOCK
             r << %{function($$}
-            
+            @norm_arg_names.each do |a|
+              r << ",#{@args[a]}"
+            end
             r << %{)\{}
             # WTF? this should take "var $=$$;" but we get errors...huh!?!?
             # r << "if($$!=nil){var$=$$;}"
@@ -274,6 +282,11 @@ module Vienna
           stmt[:arglist].arg.each do |arg|
             @iseq_current.push_arg_name arg[:value]
           end
+        end
+        
+        # block name..
+        if stmt[:arglist].block
+          @iseq_current.push_block_arg_name(stmt[:arglist].block)
         end
         
         
@@ -429,7 +442,9 @@ module Vienna
           write %{#{local}=}
           generate_stmt stmt[:rhs], :last_stmt => false, :full_stmt => false
         elsif stmt[:lhs].node == :ivar
-        
+          write %{vm_ivarset($,"#{stmt[:lhs][:name]}",}
+          generate_stmt stmt[:rhs], :full_stmt => false, :last_stmt => false
+          write %{)}
         elsif stmt[:lhs].node == :constant
           write %{vm_setconstant($,"#{stmt[:lhs][:name]}",}
           generate_stmt stmt[:rhs], :full_stmt => false, :last_stmt => false
@@ -455,6 +470,51 @@ module Vienna
       def generate_numeric(num, context)
         write "return " if context[:last_stmt] and context[:full_stmt]
         write num[:value]
+        write ";" if context[:full_stmt]
+      end
+      
+      def generate_ivar stmt, context
+        write "return " if context[:full_stmt] and context[:last_stmt]
+        write "vm_ivarget($, '#{stmt[:name]}')"
+        write ";" if context[:full_stmt]
+      end
+      
+      def generate_yield stmt, context
+        write "return " if context[:full_stmt] and context[:last_stmt]
+        write "vm_yield(_,["
+
+        if stmt[:call_args] and stmt[:call_args][:args]
+          stmt[:call_args][:args].each do |a|
+            write "," unless stmt[:call_args][:args].first == a
+            generate_stmt a, :full_stmt => false, :last_stmt => false
+          end
+        end
+
+        write "])"
+        write ";" if context[:full_stmt]
+      end
+      
+      def generate_block_given stmt, context
+        write "return " if context[:last_stmt] and context[:full_stmt]
+        write "((_ == nil) ? false : true)"
+        write ";" if context[:full_stmt]
+      end
+      
+      def generate_if_mod(stmt, context)
+        write "return " if context[:full_stmt] and context[:last_stmt]
+        write "(function(){"
+
+        # if/unless mod
+        if stmt.node == :if_mod
+          write "if(RTEST("
+        else
+          write "if(!RTEST("
+        end
+
+        generate_stmt stmt[:expr], :full_stmt => false, :last_stmt => false
+        write ")){"
+        generate_stmt stmt[:stmt], :full_stmt => true, :last_stmt => false
+        write "}})()"
         write ";" if context[:full_stmt]
       end
             

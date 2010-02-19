@@ -286,14 +286,14 @@ function rb_obj_inspect(self) {
  return rb_any_to_s(self);
 }
 
-function rb_class_new_instance(argc, argv, klass) {
+function rb_class_new_instance(klass) {
   var o = rb_obj_alloc(klass);
-  // initialize..
-  var call_args = [o, "initialize", argc];
-  for (var i = 0; i < argc; i++) {
-    call_args.push(argv[i]);
-  }
-  rb_funcall.apply(o, call_args);
+  var argv = Array.prototype.slice.call(arguments, 1);
+  // var call_args = [o, "initialize"];
+  // for (var i = 0; i < argc; i++) {
+    // call_args.push(argv[i]);
+  // }
+  rb_funcall2(o, "initialize", argv);
 
   return o;
 };
@@ -342,6 +342,21 @@ function rb_obj_respond_to(argc, argv, obj) {
   var f = rb_search_method(obj.klass, id);
   if (f) return true;
   return false;
+};
+
+/**
+  Object#instance_eval(&block)
+  
+  Currently, only takes blocks as params. Strings will be added once eval.js is
+  finished. Throws error if string given (for now)
+*/
+function rb_obj_instance_eval(obj, str) {
+  if (str) {
+    return rb_vm_eval_str(obj, str);
+  }
+  var _ = opal_block; opal_block = nil;
+  if (_ == nil) throw "no block given for instance_eval."
+  return _.call(_, obj);
 };
 
 
@@ -407,6 +422,8 @@ function Init_Object() {
   // rb_define_method(rb_mKernel, "trust", rb_obj_trust, 0);
   // rb_define_method(rb_mKernel, "freeze", rb_obj_freeze, 0);
   // rb_define_method(rb_mKernel, "frozen?", rb_obj_frozen_p, 0);
+  
+  rb_define_method(rb_mKernel, "instance_eval", rb_obj_instance_eval, 0);
   
   rb_define_method(rb_mKernel, "respond_to?", rb_obj_respond_to, -1);
   

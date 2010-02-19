@@ -42,12 +42,27 @@ function Init_top_self() {
   rb_define_singleton_method(opal_top_self, "to_s", opal_main_to_s, 0);
 };
 
-function rb_method_missing(recv) {
-  throw "method missing"
+function rb_method_missing(recv, id, args) {
+  throw "method missing for: " + id
+};
+
+/*
+  Kernel#eval(str)
+  
+  Eval the raw string in the context of obj, the receiver: for now does it in
+  opal_top_self
+*/
+function rb_vm_eval_str(obj, str) {
+  var parser = vn_parser("<main>", str);
+  var iseq = parser.parse();
+  console.log(iseq);
+  var f = eval("(" + iseq + ")");
+  return f(obj);
 };
 
 function Init_vm_eval() {
   rb_define_private_method(rb_cBasicObject, "method_missing", rb_method_missing, -1);
+  rb_define_method(rb_mKernel, "eval", rb_vm_eval_str, 1);
 };
 
 function rb_search_method(klass, id) {
@@ -77,7 +92,8 @@ function rb_funcall(recv, id) {
 function rb_funcall2(recv, id, args) {
   var body = rb_search_method(recv.klass, id);
   if (!body) {
-    throw "need to do method missing (for " + id + ")"
+    args.unshift(ID2SYM(id));
+    return rb_funcall2(recv, "method_missing", args);
   }
   var imp = body.body, len = args.length;
   
@@ -100,7 +116,7 @@ function rb_funcall2(recv, id, args) {
     case 3: return imp(recv, args[0], args[1], args[2]);
     case 4: return imp(recv, args[0], args[1], args[2], args[3]);
     case 5: return imp(recv, args[0], args[1], args[2], args[3], args[4]);
-    default: throw "currently unsupported argc length " + argc
+    default: throw "currently unsupported argc length " + len
   } 
 };
 
@@ -186,8 +202,17 @@ function vm_newhash() {
   block does this itself.
 */
 function vm_yield(block, args) {
-  console.log(block);
+  if (block == nil) throw "vm_yield: no block given"
+  // console.log(block);
   args.unshift(nil);
   return block.apply(block, args);
   // return block(nil);
+};
+
+function vm_ivarset(obj, id, val) {
+  return rb_ivar_set(obj, id, val);
+};
+
+function vm_ivarget(obj, id) {
+  return rb_ivar_get(obj, id);
 };

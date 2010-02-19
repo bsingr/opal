@@ -40,6 +40,7 @@ var opal_ajax_k_data_types = ['xml', 'html', 'script', 'json', 'jsonp', 'text'];
   then pass control to this function
 */
 function opal_ajax_request(ajax, url, options) {
+  var _ = opal_block; opal_block = nil;
   var data_type;
   if (rb_hash_has_key(options, ID2SYM('data_type'))) {
     data_type = rb_hash_delete(options, ID2SYM('data_type'));
@@ -54,10 +55,14 @@ function opal_ajax_request(ajax, url, options) {
   switch (data_type) {
     case 'jsonp':
       var callback = opal_jsonp_prefix + (opal_jsonp_counter++);
-      url += "&callback=" + callback;
+      url += "?callback=" + callback;
       window[callback] = function(r) {
-        console.log("got response");
-        console.log(opal_json_2_ruby_json(r));
+        if (_ !== nil) {
+          // console.log("need to yield result");
+          vm_yield(_, [opal_json_2_ruby_json(r)]);
+        }
+        // console.log("got response");
+        // console.log(opal_json_2_ruby_json(r));
         // clean up
         delete window[callback];
       };

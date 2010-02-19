@@ -58,7 +58,7 @@ function rb_require_file(file_path) {
   }
   else {
     f.included = true;
-    f.content();
+    f.content(opal_top_self);
     // console.log(f.content);
     // if (window.execScript) {
       // return window.execScript(f.content);

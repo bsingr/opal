@@ -38,12 +38,13 @@ if (!Array.prototype.indexOf){
 }
 
 function rb_ary_each(ary) {
+  var _ = opal_block; opal_block = nil;
   var i;
   // if (!rb_block_given_p()) {
     // throw "return enumerator thingy"
   // }
   for (i = 0; i < ary.length; i++) {
-    rb_yield(ary[i]);
+    vm_yield(_, [ary[i]]);
     // console.log("should yield: " + ary[i]);
   }
   return ary;
