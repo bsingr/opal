@@ -216,3 +216,23 @@ function vm_ivarset(obj, id, val) {
 function vm_ivarget(obj, id) {
   return rb_ivar_get(obj, id);
 };
+
+function vm_optplus(a, b) {
+  if (typeof a == "number" && typeof b == "number") return a + b;
+  return vm_send(a, "+", [b], nil, 8);
+};
+
+function vm_optminus(a, b) {
+  if (typeof a == "number" && typeof b == "number") return a - b;
+  return vm_send(a, "-", [b], nil, 8);
+};
+
+function vm_optmult(a, b) {
+  if (typeof a == "number" && typeof b == "number") return a * b;
+  return vm_send(a, "*", [b], nil, 8);
+};
+
+function vm_optdiv(a, b) {
+  if (typeof a == "number" && typeof b == "number") return a / b;
+  return vm_send(a, "/", [b], nil, 8);
+};

@@ -536,6 +536,46 @@ module Vienna
         write "]"
         write ";" if context[:full_stmt]
       end
+      
+      def generate_opt_plus(stmt, context)
+        write "return " if context[:last_stmt] and context[:full_stmt]
+        write %{vm_optplus(}
+        generate_stmt stmt[:recv], :last_stmt => false, :full_stmt => false
+        write ","
+        generate_stmt stmt[:call_args][:args][0], :full_stmt => false
+        write ")"
+        write ";" if context[:full_stmt]
+      end
+      
+      def generate_opt_minus(stmt, context)
+        write "return " if context[:last_stmt] and context[:full_stmt]
+        write %{vm_optminus(}
+        generate_stmt stmt[:recv], :last_stmt => false, :full_stmt => false
+        write ","
+        generate_stmt stmt[:call_args][:args][0], :full_stmt => false
+        write ")"
+        write ";" if context[:full_stmt]
+      end
+      
+      def generate_opt_mult(stmt, context)
+        write "return " if context[:last_stmt] and context[:full_stmt]
+        write %{vm_optmult(}
+        generate_stmt stmt[:recv], :last_stmt => false, :full_stmt => false
+        write ","
+        generate_stmt stmt[:call_args][:args][0], :full_stmt => false
+        write ")"
+        write ";" if context[:full_stmt]
+      end
+      
+      def generate_opt_div(stmt, context)
+        write "return " if context[:last_stmt] and context[:full_stmt]
+        write %{vm_optdiv(}
+        generate_stmt stmt[:recv], :last_stmt => false, :full_stmt => false
+        write ","
+        generate_stmt stmt[:call_args][:args][0], :full_stmt => false
+        write ")"
+        write ";" if context[:full_stmt]
+      end
             
     end # end class
   end
