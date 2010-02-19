@@ -531,6 +531,8 @@ module Vienna
         generate_opt_mod stmt, context
       when :block_given
         generate_block_given stmt, context
+      when :regexp
+        generate_regexp stmt, context
       else
         write "\n[Unknown type for generate_stmt: #{stmt}]\n"
       end

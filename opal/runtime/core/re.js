@@ -27,6 +27,37 @@
 
 var rb_cRegexp, rb_eRegexpError, rb_cMatch;
 
+function rb_reg_match_m(reg, str) {
+  var m = reg.exec(str);
+  if (m == null) return nil;
+  return rb_match_new(rb_cMatch, m);
+};
+
+/**
+  Init matchdata - data is array of match results (as from js)
+*/
+function rb_match_new(match, data) {
+  var o = rb_obj_alloc(match);
+  o.iv_tbl.data = data;
+  return o;
+};
+
+function rb_match_inspect(match) {
+  return '#<MatchData "' + match.iv_tbl.data[0] + '">';
+};
+
+function rb_match_to_s(match) {
+  return match.iv_tbl.data[0];
+};
+
+function rb_match_size(match) {
+  return match.iv_tbl.data[0];
+};
+
+function rb_match_aref(match, idx) {
+  return match.iv_tbl.data[idx];
+};
+
 function Init_Regexp() {
   // rb_eRegexpError = rb_define_class("RegexpError", rb_eStandardError);
   
@@ -41,6 +72,7 @@ function Init_Regexp() {
   // rb_define_virtual_variable("$-K", rb_kcode_getter, rb_kcode_setter);
 
   rb_cRegexp = rb_define_class("Regexp", rb_cObject);
+  RegExp.prototype.klass = rb_cRegexp;
   // rb_define_alloc_func(rb_cRegexp, rb_reg_s_alloc);
   // rb_define_singleton_method(rb_cRegexp, "compile", rb_class_new_instance, -1);
   // rb_define_singleton_method(rb_cRegexp, "quote", rb_reg_s_quote, 1);
@@ -57,7 +89,7 @@ function Init_Regexp() {
   // rb_define_method(rb_cRegexp, "=~", rb_reg_match, 1);
   // rb_define_method(rb_cRegexp, "===", rb_reg_eqq, 1);
   // rb_define_method(rb_cRegexp, "~", rb_reg_match2, 0);
-  // rb_define_method(rb_cRegexp, "match", rb_reg_match_m, -1);
+  rb_define_method(rb_cRegexp, "match", rb_reg_match_m, -1);
   // rb_define_method(rb_cRegexp, "to_s", rb_reg_to_s, 0);
   // rb_define_method(rb_cRegexp, "inspect", rb_reg_inspect, 0);
   // rb_define_method(rb_cRegexp, "source", rb_reg_source, 0);
@@ -68,24 +100,24 @@ function Init_Regexp() {
   // rb_define_method(rb_cRegexp, "names", rb_reg_names, 0);
   // rb_define_method(rb_cRegexp, "named_captures", rb_reg_named_captures, 0);
  
-  rb_cMatch  = rb_define_class("MatchData", rb_cObject);
-  // rb_define_alloc_func(rb_cMatch, match_alloc);
-
+  rb_cMatch = rb_define_class("MatchData", rb_cObject);
+  // rb_define_alloc_func(rb_cMatch, rb_match_alloc);
+  rb_define_singleton_method(rb_cMatch, "new", rb_match_new, 1);
   // rb_define_method(rb_cMatch, "initialize_copy", match_init_copy, 1);
   // rb_define_method(rb_cMatch, "regexp", match_regexp, 0);
   // rb_define_method(rb_cMatch, "names", match_names, 0);
-  // rb_define_method(rb_cMatch, "size", match_size, 0);
-  // rb_define_method(rb_cMatch, "length", match_size, 0);
+  rb_define_method(rb_cMatch, "size", rb_match_size, 0);
+  rb_define_method(rb_cMatch, "length", rb_match_size, 0);
   // rb_define_method(rb_cMatch, "offset", match_offset, 1);
   // rb_define_method(rb_cMatch, "begin", match_begin, 1);
   // rb_define_method(rb_cMatch, "end", match_end, 1);
   // rb_define_method(rb_cMatch, "to_a", match_to_a, 0);
-  // rb_define_method(rb_cMatch, "[]", match_aref, -1);
+  rb_define_method(rb_cMatch, "[]", rb_match_aref, -1);
   // rb_define_method(rb_cMatch, "captures", match_captures, 0);
   // rb_define_method(rb_cMatch, "values_at", match_values_at, -1);
   // rb_define_method(rb_cMatch, "pre_match", rb_reg_match_pre, 0);
   // rb_define_method(rb_cMatch, "post_match", rb_reg_match_post, 0);
-  // rb_define_method(rb_cMatch, "to_s", match_to_s, 0);
-  // rb_define_method(rb_cMatch, "inspect", match_inspect, 0);
+  rb_define_method(rb_cMatch, "to_s", rb_match_to_s, 0);
+  rb_define_method(rb_cMatch, "inspect", rb_match_inspect, 0);
   // rb_define_method(rb_cMatch, "string", match_string, 0);
-}
+};

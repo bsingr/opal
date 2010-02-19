@@ -279,7 +279,7 @@ function rb_obj_init_copy(self) {
 
 function rb_any_to_s(self) {
  var c = rb_obj_classname(self);
- return "<" + c + ":0x000000>";
+ return "#<" + c + ":0x000000>";
 };
 
 function rb_obj_classname(obj) {

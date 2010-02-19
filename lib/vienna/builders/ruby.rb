@@ -240,7 +240,9 @@ class Vienna::RubyParser < Racc::Parser
 	      self.lex_state = :EXPR_END
 	      return [:tSTRING_END, scanner.matched]
 	    elsif string_type == :regexp
-	    
+	      self.string_parse = nil
+	      self.lex_state = :EXPR_END
+	      return [:tREGEXP_END, scanner.matched]
 	    else # assume to be an xstring
 	      self.string_parse = nil
 	      self.lex_state = :EXPR_END
@@ -530,6 +532,11 @@ class Vienna::RubyParser < Racc::Parser
         return [result, result]
       
       elsif scanner.scan(/\//)
+        if lex_state == :EXPR_BEG || lex_state == :EXPR_MID
+          self.string_parse = { :type => :regexp,:beg => '/', :content => true }
+          return [:tREGEXP_BEG, scanner.matched]
+        end
+        
         self.lex_state = :EXPR_BEG
         return ['/', scanner.matched]
       

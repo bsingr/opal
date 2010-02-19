@@ -594,6 +594,12 @@ module Vienna
         write "false"
         write ";" if context[:full_stmt]
       end
+      
+      def generate_regexp(stmt, context)
+        write "return " if context[:last_stmt] and context[:full_stmt]
+        write %{/#{stmt[:value][0][:value]}/}
+        write ";" if context[:full_stmt]
+      end
             
     end # end class
   end

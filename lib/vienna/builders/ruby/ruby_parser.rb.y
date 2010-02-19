@@ -953,6 +953,9 @@ rule
                   }
 
           regexp: tREGEXP_BEG xstring_contents tREGEXP_END
+                  {
+                    result = node :regexp, :value => val[1]
+                  }
 
            words: tWORDS_BEG ' ' tSTRING_END
             		| tWORDS_BEG word_list tSTRING_END
