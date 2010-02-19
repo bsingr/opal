@@ -1,6 +1,6 @@
 /* 
- * init.js
- * opal
+ * enumerator.js
+ * vienna
  * 
  * Created by Adam Beynon.
  * Copyright 2010 Adam Beynon.
@@ -23,41 +23,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
- 
-/**
-  Basically start opal.
-*/
-function ruby_init() {
-  rb_call_inits();
-};
 
-/**
-  embed script name/type
-*/
-function ruby_script(name) {
-  
-};
+var rb_cEnumerator;
 
-
-/**
-  Init core.
-*/
-function rb_call_inits() {
-  Init_Object();
-  Init_top_self();
-  Init_Array();
-  Init_Number();
-  Init_String();
-  Init_Hash();
-  Init_Range();
-  Init_Proc();
-  Init_Regexp();
-  Init_File();
-  Init_Dir();
-  Init_VM();
-  Init_vm_eval();
-  Init_load();
-  
-  Init_Math();
-  Init_JSON();
+function Init_Enumerator() {
+  // rb_define_method(rb_mKernel, "to_enum", rb_obj_to_enum, -1);
+  // rb_define_method(rb_mKernel, "enum_for", rb_obj_to_enum, -1);
 };

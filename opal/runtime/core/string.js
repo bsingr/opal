@@ -56,6 +56,10 @@ function rb_sym_to_s(sym) {
   return sym.ptr;
 };
 
+function rb_sym_inspect(sym) {
+  return ":" + sym.ptr;
+};
+
 function rb_sym_equal(sym1, sym2) {
   if (sym1 === sym2) return true;
   return false;
@@ -198,7 +202,7 @@ function Init_String() {
   // rb_define_singleton_method(rb_cSymbol, "all_symbols", rb_sym_all_symbols, 0);
 
   rb_define_method(rb_cSymbol, "==", rb_sym_equal, 1);
-  // rb_define_method(rb_cSymbol, "inspect", rb_sym_inspect, 0);
+  rb_define_method(rb_cSymbol, "inspect", rb_sym_inspect, 0);
   rb_define_method(rb_cSymbol, "to_s", rb_sym_to_s, 0);
   rb_define_method(rb_cSymbol, "id2name", rb_sym_to_s, 0);
   rb_define_method(rb_cSymbol, "intern", rb_sym_to_sym, 0);
