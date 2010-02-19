@@ -50,6 +50,7 @@ function rb_call_inits() {
   Init_String();
   Init_Hash();
   Init_Range();
+  Init_Proc();
   Init_Regexp();
   Init_File();
   Init_Dir();

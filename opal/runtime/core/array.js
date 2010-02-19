@@ -60,6 +60,15 @@ function rb_ary_push(ary, val) {
   return val;
 };
 
+function rb_ary_collect(ary) {
+  var _ = opal_block; opal_block = nil;
+  var i, res = [];
+  for (i = 0; i < ary.length; i++) {
+    res.push(vm_yield(_, [ary[i]]));
+  }
+  return res;
+};
+
 function Init_Array() {
   
   rb_cArray = rb_define_class("Array", rb_cObject);
@@ -110,9 +119,9 @@ function Init_Array() {
   // rb_define_method(rb_cArray, "reverse!", rb_ary_reverse_bang, 0);
   // rb_define_method(rb_cArray, "sort", rb_ary_sort, 0);
   // rb_define_method(rb_cArray, "sort!", rb_ary_sort_bang, 0);
-  // rb_define_method(rb_cArray, "collect", rb_ary_collect, 0);
+  rb_define_method(rb_cArray, "collect", rb_ary_collect, 0);
   // rb_define_method(rb_cArray, "collect!", rb_ary_collect_bang, 0);
-  // rb_define_method(rb_cArray, "map", rb_ary_collect, 0);
+  rb_define_method(rb_cArray, "map", rb_ary_collect, 0);
   // rb_define_method(rb_cArray, "map!", rb_ary_collect_bang, 0);
   // rb_define_method(rb_cArray, "select", rb_ary_select, 0);
   // rb_define_method(rb_cArray, "values_at", rb_ary_values_at, -1);

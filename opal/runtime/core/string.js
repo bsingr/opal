@@ -65,6 +65,23 @@ function rb_str_to_s(str) {
   return new String(str);
 };
 
+function rb_sym_to_sym(sym) {
+  return sym;
+};
+
+function rb_sym_to_proc(sym) {
+  var id = sym.ptr;
+  var f = function($$, o) {
+    var args = Array.prototype.slice.call(arguments, 2);
+    return vm_send(o, id, args, nil, 8);
+  };
+  return f;
+};
+
+function rb_sym_succ(sym) {
+  return sym;
+};
+
 function Init_String() {
   
   rb_cString = rb_define_class("String", rb_cObject);
@@ -180,11 +197,11 @@ function Init_String() {
   // rb_define_method(rb_cSymbol, "inspect", rb_sym_inspect, 0);
   rb_define_method(rb_cSymbol, "to_s", rb_sym_to_s, 0);
   rb_define_method(rb_cSymbol, "id2name", rb_sym_to_s, 0);
-  // rb_define_method(rb_cSymbol, "intern", rb_sym_to_sym, 0);
-  // rb_define_method(rb_cSymbol, "to_sym", rb_sym_to_sym, 0);
-  // rb_define_method(rb_cSymbol, "to_proc", rb_sym_to_proc, 0);
-  // rb_define_method(rb_cSymbol, "succ", rb_sym_succ, 0);
-  // rb_define_method(rb_cSymbol, "next", rb_sym_succ, 0);
+  rb_define_method(rb_cSymbol, "intern", rb_sym_to_sym, 0);
+  rb_define_method(rb_cSymbol, "to_sym", rb_sym_to_sym, 0);
+  rb_define_method(rb_cSymbol, "to_proc", rb_sym_to_proc, 0);
+  rb_define_method(rb_cSymbol, "succ", rb_sym_succ, 0);
+  rb_define_method(rb_cSymbol, "next", rb_sym_succ, 0);
 
   // rb_define_method(rb_cSymbol, "<=>", rb_sym_cmp, 1);
   // rb_define_method(rb_cSymbol, "casecmp", rb_sym_casecmp, 1);

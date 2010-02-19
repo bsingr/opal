@@ -940,7 +940,7 @@ var vn_parser = function(filename, str) {
   var expr = function(right_binding_power) {
     var old = token;
     next_token();
-    console.log(old);
+    // console.log(old);
     var left = old.nud();
     while (right_binding_power < token.lbp) {
       old = token;

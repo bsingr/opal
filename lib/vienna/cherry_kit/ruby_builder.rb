@@ -325,6 +325,7 @@ module Vienna
       end
       
       def generate_call(call, context)
+        
         write "return " if context[:full_stmt] and context[:last_stmt]
         write "vm_send("
         # receiver
@@ -388,6 +389,11 @@ module Vienna
          iseq_stack_pop
 
          write block_iseq.to_s
+         # map(&:name)
+       elsif call[:call_args][:block_arg]
+         write "vm_send("
+         generate_stmt call[:call_args][:block_arg][:arg], :full_stmt => false
+         write %{,"to_proc",[],nil,0)}
        else
          write "nil"
        end
@@ -515,6 +521,19 @@ module Vienna
         write ")){"
         generate_stmt stmt[:stmt], :full_stmt => true, :last_stmt => false
         write "}})()"
+        write ";" if context[:full_stmt]
+      end
+      
+      def generate_array(ary, context)
+        write "return " if context[:last_stmt] and context[:full_stmt]
+        write "["
+        if ary[:args]
+          ary[:args].each do |a|
+            write "," unless ary[:args].first == a
+            generate_stmt a, :full_stmt => false, :last_stmt => false
+          end
+        end
+        write "]"
         write ";" if context[:full_stmt]
       end
             
