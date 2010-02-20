@@ -56,8 +56,22 @@ function rb_vm_eval_str(obj, str) {
   var parser = vn_parser("<main>", str);
   var iseq = parser.parse();
   console.log(iseq);
-  var f = eval("(" + iseq + ")");
-  return f(obj);
+  if (window.execScript) {
+    window.execScript("window.opal_tmp_func = " + iseq + ";");
+    return window.opal_tmp_func(obj);
+  }
+  else {
+    with (window) {
+      return eval("(" + iseq + ")")(obj);
+    }
+  }
+  
+  // var f = eval("(" + iseq + ")");
+  // console.log("a");
+  // console.log(f);
+  // console.log("b");
+  // console.log(obj);
+  // return f(obj);
 };
 
 function Init_vm_eval() {

@@ -600,6 +600,16 @@ module Vienna
         write %{/#{stmt[:value][0][:value]}/}
         write ";" if context[:full_stmt]
       end
+      
+      def generate_dot2(stmt, context)
+        write "return " if context[:last_stmt] and context[:full_stmt]
+        write "true"
+        write ";" if context[:full_stmt]
+      end
+      
+      def generate_dot3(stmt, context)
+        
+      end
             
     end # end class
   end

@@ -64,7 +64,9 @@ function opal_ajax_request(ajax, url, options) {
         // console.log("got response");
         // console.log(opal_json_2_ruby_json(r));
         // clean up
-        delete window[callback];
+        
+        // IE throws error on delete :(
+        // delete window[callback];
       };
       
       var script = document.createElement("script");

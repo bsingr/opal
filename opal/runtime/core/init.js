@@ -46,6 +46,7 @@ function rb_call_inits() {
   Init_Object();
   Init_top_self();
   Init_Array();
+  Init_Comparable();
   Init_Number();
   Init_String();
   Init_Hash();

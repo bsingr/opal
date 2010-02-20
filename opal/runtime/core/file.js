@@ -37,7 +37,7 @@ function opal_file() {
   this.content = "";
   this.path = "";
   this.included = false;
-  this.isa = rb_cFile;
+  this.klass = rb_cFile;
 };
 
 /**

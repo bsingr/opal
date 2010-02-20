@@ -207,6 +207,22 @@ function rb_obj_respond_to(argc, argv, obj) {
   return false;
 };
 
+function rb_obj_is_instance_of(obj, c) {
+  if (rb_class_real(obj.klass) == c) {
+    return true;
+  }
+  return false;
+};
+
+function rb_obj_is_kind_of(obj, c) {
+  var k = obj.klass;
+  while (k) {
+    if (k == c) return true;
+    k = k.sup;
+  }
+  return false;
+};
+
 function rb_obj_tap(obj) {
   var _ = opal_block; opal_block = nil;
   vm_yield(_, [obj]);
@@ -351,9 +367,9 @@ function Init_Object() {
   // rb_define_method(rb_mKernel, "instance_variable_defined?", rb_obj_ivar_defined, 1);
   // rb_define_private_method(rb_mKernel, "remove_instance_variable", rb_obj_remove_instance_variable, 1);
   // 
-  // rb_define_method(rb_mKernel, "instance_of?", rb_obj_is_instance_of, 1);
-  // rb_define_method(rb_mKernel, "kind_of?", rb_obj_is_kind_of, 1);
-  // rb_define_method(rb_mKernel, "is_a?", rb_obj_is_kind_of, 1);
+  rb_define_method(rb_mKernel, "instance_of?", rb_obj_is_instance_of, 1);
+  rb_define_method(rb_mKernel, "kind_of?", rb_obj_is_kind_of, 1);
+  rb_define_method(rb_mKernel, "is_a?", rb_obj_is_kind_of, 1);
   rb_define_method(rb_mKernel, "tap", rb_obj_tap, 0);
   // 
   // rb_define_global_function("sprintf", rb_f_sprintf, -1);

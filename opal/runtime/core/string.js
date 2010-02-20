@@ -32,7 +32,7 @@ var RSymbol = function(ptr) {
   // this.$type = T_SYMBOL;
   this.toString = function() {
   // hack, for associative js arrays, we need a unique string name :(
-    return "#<Symbol:0x000000 @ptr=" + this.ptr + ">";
+    return "#<Symbol:0x000000 @ptr=\"" + this.ptr + "\">";
   };
   this.ptr = ptr;
   return this;
@@ -90,29 +90,95 @@ function rb_sym_succ(sym) {
   return sym;
 };
 
+function rb_sym_length(sym) {
+  return sym.ptr.length;
+};
+
+function rb_str_upcase(str) {
+  return str.toUpperCase();
+};
+
+function rb_sym_upcase(sym) {
+  return ID2SYM(sym.ptr.toUpperCase());
+};
+
+function rb_str_downcase(str) {
+  return str.toLowerCase();
+};
+
+function rb_sym_downcase(sym) {
+  return ID2SYM(sym.ptr.toLowerCase());
+};
+
+function rb_str_capitalize(str) {
+  return str[0].toUpperCase() + str.substr(1);
+};
+
+function rb_sym_capitalize(sym) {
+  return ID2SYM(rb_str_capitalize(sym.ptr));
+};
+
+function rb_str_equal(a, b) {
+  return a === b;
+};
+
+function rb_str_eql(a, b) {
+  return a === b;
+};
+
+function rb_str_plus(a, b) {
+  return a + b;
+};
+
+function rb_str_times(s, n) {
+  var res = [];
+  for (var i = 0; i < n; i++) {
+    res.push(s);
+  }
+  return res.join("");
+};
+
+function rb_str_length(str) {
+  return str.length;
+};
+
+function rb_str_each_line(str, s) {
+  var _ = opal_block; opal_block = nil;
+  if (s == undefined) s = "\n";
+  var parts = str.split(s);
+  for (var i = 0; i < parts.length; i++) {
+    vm_yield(_, [parts[i]]);
+  }
+  return str;
+};
+
+function rb_str_intern(str) {
+  return ID2SYM(str);
+};
+
 function Init_String() {
   
   rb_cString = rb_define_class("String", rb_cObject);
   String.prototype.klass = rb_cString;
-  // rb_include_module(rb_cString, rb_mComparable);
+  rb_include_module(rb_cString, rb_mComparable);
   // rb_define_alloc_func(rb_cString, rb_str_alloc);
   
   // rb_define_singleton_method(rb_cString, "try_convert", rb_str_s_try_convert, 1);
   //   rb_define_method(rb_cString, "initialize", rb_str_init, -1);
   //   rb_define_method(rb_cString, "initialize_copy", rb_str_replace, 1);
   //   rb_define_method(rb_cString, "<=>", rb_str_cmp_m, 1);
-  //   rb_define_method(rb_cString, "==", rb_str_equal, 1);
-  //   rb_define_method(rb_cString, "eql?", rb_str_eql, 1);
+    rb_define_method(rb_cString, "==", rb_str_equal, 1);
+    rb_define_method(rb_cString, "eql?", rb_str_eql, 1);
   //   rb_define_method(rb_cString, "hash", rb_str_hash_m, 0);
   //   rb_define_method(rb_cString, "casecmp", rb_str_casecmp, 1);
-  //   rb_define_method(rb_cString, "+", rb_str_plus, 1);
-  //   rb_define_method(rb_cString, "*", rb_str_times, 1);
+    rb_define_method(rb_cString, "+", rb_str_plus, 1);
+    rb_define_method(rb_cString, "*", rb_str_times, 1);
   //   rb_define_method(rb_cString, "%", rb_str_format_m, 1);
   //   rb_define_method(rb_cString, "[]", rb_str_aref_m, -1);
   //   rb_define_method(rb_cString, "[]=", rb_str_aset_m, -1);
   //   rb_define_method(rb_cString, "insert", rb_str_insert, 2);
-  //   rb_define_method(rb_cString, "length", rb_str_length, 0);
-  //   rb_define_method(rb_cString, "size", rb_str_length, 0);
+    rb_define_method(rb_cString, "length", rb_str_length, 0);
+    rb_define_method(rb_cString, "size", rb_str_length, 0);
   //   rb_define_method(rb_cString, "bytesize", rb_str_bytesize, 0);
   //   rb_define_method(rb_cString, "empty?", rb_str_empty, 0);
   //   rb_define_method(rb_cString, "=~", rb_str_match, 1);
@@ -137,9 +203,9 @@ function Init_String() {
   rb_define_method(rb_cString, "inspect", rb_str_inspect, 0);
   // rb_define_method(rb_cString, "dump", rb_str_dump, 0);
 
-  // rb_define_method(rb_cString, "upcase", rb_str_upcase, 0);
-  // rb_define_method(rb_cString, "downcase", rb_str_downcase, 0);
-  // rb_define_method(rb_cString, "capitalize", rb_str_capitalize, 0);
+  rb_define_method(rb_cString, "upcase", rb_str_upcase, 0);
+  rb_define_method(rb_cString, "downcase", rb_str_downcase, 0);
+  rb_define_method(rb_cString, "capitalize", rb_str_capitalize, 0);
   // rb_define_method(rb_cString, "swapcase", rb_str_swapcase, 0);
 
   // rb_define_method(rb_cString, "hex", rb_str_hex, 0);
@@ -153,8 +219,8 @@ function Init_String() {
   // rb_define_method(rb_cString, "concat", rb_str_concat, 1);
   // rb_define_method(rb_cString, "<<", rb_str_concat, 1);
   // rb_define_method(rb_cString, "crypt", rb_str_crypt, 1);
-  // rb_define_method(rb_cString, "intern", rb_str_intern, 0);
-  // rb_define_method(rb_cString, "to_sym", rb_str_intern, 0);
+  rb_define_method(rb_cString, "intern", rb_str_intern, 0);
+  rb_define_method(rb_cString, "to_sym", rb_str_intern, 0);
   // rb_define_method(rb_cString, "ord", rb_str_ord, 0);
 
   // rb_define_method(rb_cString, "include?", rb_str_include, 1);
@@ -180,8 +246,9 @@ function Init_String() {
   // rb_define_method(rb_cString, "delete", rb_str_delete, -1);
   // rb_define_method(rb_cString, "squeeze", rb_str_squeeze, -1);
   // rb_define_method(rb_cString, "count", rb_str_count, -1);
-
-  // rb_define_method(rb_cString, "each_line", rb_str_each_line, -1);
+  
+  rb_define_method(rb_cString, "each", rb_str_each_line, -1);
+  rb_define_method(rb_cString, "each_line", rb_str_each_line, -1);
   // rb_define_method(rb_cString, "each_byte", rb_str_each_byte, 0);
   // rb_define_method(rb_cString, "each_char", rb_str_each_char, 0);
   // rb_define_method(rb_cString, "each_codepoint", rb_str_each_codepoint, 0);
@@ -196,7 +263,7 @@ function Init_String() {
 
 
   rb_cSymbol = rb_define_class("Symbol", rb_cObject);
-  // rb_include_module(rb_cSymbol, rb_mComparable);
+  rb_include_module(rb_cSymbol, rb_mComparable);
   // rb_undef_alloc_func(rb_cSymbol);
   // rb_undef_method(rb_cSymbol.klass, "new");
   // rb_define_singleton_method(rb_cSymbol, "all_symbols", rb_sym_all_symbols, 0);
@@ -217,13 +284,13 @@ function Init_String() {
 
   // rb_define_method(rb_cSymbol, "[]", rb_sym_aref, -1);
   // rb_define_method(rb_cSymbol, "slice", rb_sym_aref, -1);
-  // rb_define_method(rb_cSymbol, "length", rb_sym_length, 0);
-  // rb_define_method(rb_cSymbol, "size", rb_sym_length, 0);
+  rb_define_method(rb_cSymbol, "length", rb_sym_length, 0);
+  rb_define_method(rb_cSymbol, "size", rb_sym_length, 0);
   // rb_define_method(rb_cSymbol, "empty?", rb_sym_empty, 0);
   // rb_define_method(rb_cSymbol, "match", rb_sym_match, 1);
 
-  // rb_define_method(rb_cSymbol, "upcase", rb_sym_upcase, 0);
-  // rb_define_method(rb_cSymbol, "downcase", rb_sym_downcase, 0);
-  // rb_define_method(rb_cSymbol, "capitalize", rb_sym_capitalize, 0);
+  rb_define_method(rb_cSymbol, "upcase", rb_sym_upcase, 0);
+  rb_define_method(rb_cSymbol, "downcase", rb_sym_downcase, 0);
+  rb_define_method(rb_cSymbol, "capitalize", rb_sym_capitalize, 0);
   // rb_define_method(rb_cSymbol, "swapcase", rb_sym_swapcase, 0);
 };
