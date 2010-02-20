@@ -24,13 +24,68 @@
 # THE SOFTWARE.
 #
 
-class GitHub
+module Github
   
-  # Use a JSONP request to get a list of user repos for the given username. On
-  # completion, the block will be called with the resulting json object.
+  # Returns the url for getting the users info
   # 
-  def self.repos_for_user(username, &block)
-
+  def self.user_info_url(username)
+    "http://github.com/api/v2/json/user/show/#{username}"
+  end
+  
+  def self.user(username)
+    Ajax.get user_info_url(username), :data_type => 'jsonp' do |r|
+      puts User.new(r['user'])
+    end
+  end
+  
+  # Returns the url for getting at a user's list of repos
+  def self.user_repos_url(username)
+    "http://github.com/api/v2/json/repos/show/#{username}"
+  end
+  
+  def self.user_repos(user, options, &block)
+    Ajax.get user_repos_url(user), :data_type => 'jsonp' do |r|
+      yield r['repositories'] if block_given?
+    end
+  end
+  
+  def self.user_repo_url(username, repo)
+    "http://github.com/api/v2/json/repos/show/#{username}/#{repo}"
+  end
+  
+  def self.user_repo(user, repo, &block)
+    Ajax.get user_repo_url(user, repo), :data_type => 'jsonp' do |r|
+      # puts Repository.new(r['repository'])
+    end
+  end
+  
+  # Represents a Github user
+  # 
+  class User
+    
+    def initialize(hash)
+      @name = hash['name']
+      @company = hash['company']
+      @location = hash['location']
+    end
+    
+    # Reload data from server (force reload)
+    def reload!
+      
+    end
+    
+  end
+  
+  # Represents a Github repository
+  # 
+  class Repository
+    
+    # Initialize the repository from a hash (dict)
+    def initialize(hash)
+      @name = hash['name']
+      @description = hash['description']
+    end
+    
   end
   
 end
