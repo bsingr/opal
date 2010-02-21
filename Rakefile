@@ -1,8 +1,9 @@
 require 'rubygems'
 require 'rake'
 require 'spec/rake/spectask'
-
 require 'ftools'
+
+Dir[File.join(File.dirname(__FILE__), 'lib', 'vienna', 'tasks', '**', '*.rb')].each { |t| require t }
 
 begin
   require 'jeweler'
@@ -17,6 +18,11 @@ begin
   Jeweler::GemcutterTasks.new
 rescue LoadError
   puts "Jeweler not available. Install it with: sudo gem install jeweler"
+end
+
+desc "Simple task to require vienna framework. Uses local, not installed."
+task :vienna do
+  require File.join(File.dirname(__FILE__), 'lib', 'vienna')
 end
 
 

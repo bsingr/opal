@@ -87,6 +87,64 @@ function rb_ary_inspect(ary) {
   return res.join("");
 };
 
+function rb_ary_select(ary) {
+  var _ = opal_block; opal_block = nil;
+  var res = [], v;
+  for (var i = 0; i < ary.length; i++) {
+    v = vm_yield(_, [ary[i]]);
+    if (RTEST(v)) res.push(ary[i]);
+  }
+  return res;
+};
+
+function rb_ary_aref(ary, idx) {
+  return ary[idx];
+};
+
+function rb_ary_aset(ary, idx, val) {
+  return ary[idx] = val;
+};
+
+function rb_ary_reject(ary) {
+  var _ = opal_block; opal_block = nil;
+  var res = [], v;
+  for (var i = 0; i < ary.length; i++) {
+    v = vm_yield(_, [ary[i]]);
+    if (!RTEST(v)) res.push(ary[i]);
+  }
+  return rest;
+};
+
+function rb_ary_length(ary) {
+  return ary.length;
+};
+
+function rb_ary_plus(a, b) {
+  var c = [];
+  for (var i = 0; i < a.length; i++) {
+    c.push(a[i]);
+  }
+  for (var i = 0; i < b.length; i++) {
+    c.push(b[i]);
+  }
+  return c;
+};
+
+function rb_ary_times(ary, n) {
+  if (n.klass == rb_cString) {
+    return ary.join(n);
+  }
+  else {
+    var res = [];
+    for (var i = 0; i < n; i++) {
+      for (var j = 0; j < ary.length; j++) {
+        res.push(ary[j]);
+      }
+    }
+    return res;
+  }
+};
+
 function Init_Array() {
   
   rb_cArray = rb_define_class("Array", rb_cObject);
@@ -110,8 +168,8 @@ function Init_Array() {
   // rb_define_method(rb_cArray, "eql?", rb_ary_eql, 1);
   // rb_define_method(rb_cArray, "hash", rb_ary_hash, 0);
 
-  // rb_define_method(rb_cArray, "[]", rb_ary_aref, -1);
-  // rb_define_method(rb_cArray, "[]=", rb_ary_aset, -1);
+  rb_define_method(rb_cArray, "[]", rb_ary_aref, -1);
+  rb_define_method(rb_cArray, "[]=", rb_ary_aset, -1);
   // rb_define_method(rb_cArray, "at", rb_ary_at, 1);
   // rb_define_method(rb_cArray, "fetch", rb_ary_fetch, -1);
   // rb_define_method(rb_cArray, "first", rb_ary_first, -1);
@@ -126,7 +184,8 @@ function Init_Array() {
   rb_define_method(rb_cArray, "each", rb_ary_each, 0);
   // rb_define_method(rb_cArray, "each_index", rb_ary_each_index, 0);
   // rb_define_method(rb_cArray, "reverse_each", rb_ary_reverse_each, 0);
-  // rb_define_method(rb_cArray, "length", rb_ary_length, 0);
+  rb_define_method(rb_cArray, "length", rb_ary_length, 0);
+  rb_define_method(rb_cArray, "size", rb_ary_length, 0);
   // rb_define_alias(rb_cArray,  "size", "length");
   // rb_define_method(rb_cArray, "empty?", rb_ary_empty_p, 0);
   // rb_define_method(rb_cArray, "find_index", rb_ary_index, -1);
@@ -141,12 +200,12 @@ function Init_Array() {
   // rb_define_method(rb_cArray, "collect!", rb_ary_collect_bang, 0);
   rb_define_method(rb_cArray, "map", rb_ary_collect, 0);
   // rb_define_method(rb_cArray, "map!", rb_ary_collect_bang, 0);
-  // rb_define_method(rb_cArray, "select", rb_ary_select, 0);
+  rb_define_method(rb_cArray, "select", rb_ary_select, 0);
   // rb_define_method(rb_cArray, "values_at", rb_ary_values_at, -1);
   // rb_define_method(rb_cArray, "delete", rb_ary_delete, 1);
   // rb_define_method(rb_cArray, "delete_at", rb_ary_delete_at_m, 1);
   // rb_define_method(rb_cArray, "delete_if", rb_ary_delete_if, 0);
-  // rb_define_method(rb_cArray, "reject", rb_ary_reject, 0);
+  rb_define_method(rb_cArray, "reject", rb_ary_reject, 0);
   // rb_define_method(rb_cArray, "reject!", rb_ary_reject_bang, 0);
   // rb_define_method(rb_cArray, "zip", rb_ary_zip, -1);
   // rb_define_method(rb_cArray, "transpose", rb_ary_transpose, 0);
@@ -162,8 +221,8 @@ function Init_Array() {
   // rb_define_method(rb_cArray, "assoc", rb_ary_assoc, 1);
   // rb_define_method(rb_cArray, "rassoc", rb_ary_rassoc, 1);
 
-  // rb_define_method(rb_cArray, "+", rb_ary_plus, 1);
-  // rb_define_method(rb_cArray, "*", rb_ary_times, 1);
+  rb_define_method(rb_cArray, "+", rb_ary_plus, 1);
+  rb_define_method(rb_cArray, "*", rb_ary_times, 1);
 
   // rb_define_method(rb_cArray, "-", rb_ary_diff, 1);
   // rb_define_method(rb_cArray, "&", rb_ary_and, 1);
