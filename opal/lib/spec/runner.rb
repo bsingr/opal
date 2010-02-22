@@ -1,3 +1,5 @@
+require 'spec/runner/example_group_runner'
+
 module Spec
   
   module Runner
@@ -6,7 +8,8 @@ module Spec
     # 
     def self.run
       # require all specs
-      Dir['spec/**/*.rb'].each { |spec| require spec }
+      # Dir['spec/**/*.rb'].each { |spec| require spec }
+      puts "running"
     end
     
   end # end Runner

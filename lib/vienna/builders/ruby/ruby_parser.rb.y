@@ -586,12 +586,18 @@ rule
        block_arg: tAMPER arg_value
                   {
                     # puts "here for #{val[1]}"
+                    # puts val[1]
+                    result = self.node :block_arg, :arg => val[1]
+                  }
+                | '&' arg_value
+                  {
+                    # puts val[1]
                     result = self.node :block_arg, :arg => val[1]
                   }
 
    opt_block_arg: ',' block_arg
                   {
-                    resul = val[1]
+                    result = val[1]
                   }
 		            | ','
 		            | none
@@ -602,7 +608,7 @@ rule
                   }
 		            | tSTAR arg_value
 		              {
-		                result = [val[1]]
+		                result = [node :splat, :val => val[1]]
 		              }
 		            | args ',' arg_value
 		              {
@@ -610,7 +616,7 @@ rule
 		              }
 		            | args ',' tSTAR arg_value
 		              {
-		                result = val[0] + [val[3]]
+		                result = val[0] + [node :splat, :val => val[3]]
 		              }
 
             mrhs: args ',' arg_value

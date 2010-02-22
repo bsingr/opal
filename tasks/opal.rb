@@ -17,23 +17,23 @@ namespace :opal do
       # all specs for opal
       Dir[File.join(spec_dir, '**/*.rb')].each do |spec|
         # spec looks for specs in spec/**.*rb
-        build_name = "spec/" + /^#{spec_dir}\/(.*)/.match(spec)[1]
+        build_name = "examples/" + /^#{spec_dir}\/(.*)/.match(spec)[1]
         str =  Vienna::CherryKit::RubyBuilder.new(spec, nil, build_name).build!
         f.puts %{opal_define_file("#{build_name}",#{str});}
       end
       
       # spec lib
       Dir[File.join(Vienna::Opal.libpath, 'spec', '**/*.rb'), File.join(Vienna::Opal.libpath, 'spec.rb')].each do |rb|
-        build_name = "lib/" + /^#{File.join(Vienna::Opal.libpath)}\/(.*)/.match(rb)[1]
+        build_name = /^#{File.join(Vienna::Opal.libpath)}\/(.*)/.match(rb)[1]
         str =  Vienna::CherryKit::RubyBuilder.new(rb, nil, build_name).build!
         f.puts %{opal_define_file("#{build_name}",#{str});}
       end
       
-      str = Vienna::CherryKit::RubyBuilder.new(File.join(spec_dir, 'spec'), nil, 'spec.rb').build!
-      f.puts %{opal_define_file("spec.rb",#{str});}
+      str = Vienna::CherryKit::RubyBuilder.new(File.join(spec_dir, 'spec'), nil, 'main.rb').build!
+      f.puts %{opal_define_file("main.rb",#{str});}
       
       # spec.rb is main (from resoure folder)
-      f.puts %{opal_browser_main("spec.rb");}
+      f.puts %{opal_browser_main("main.rb");}
     end
     
     File.open(opal_spec_html_file, 'w') do |f|

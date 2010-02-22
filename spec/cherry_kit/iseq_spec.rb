@@ -29,4 +29,10 @@ describe Vienna::CherryKit::RubyBuilder::Iseq do
     @top.push_arg_name("buz").should == "_ab"
   end
   
+  describe "adam" do
+    it "wayy" do
+      puts @top
+    end
+  end
+  
 end

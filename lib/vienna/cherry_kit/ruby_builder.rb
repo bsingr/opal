@@ -379,29 +379,57 @@ module Vienna
         # method id
         write %{,"#{call[:meth]}",}
         
-        # normal args
-        write "["
+        # normal args - need to check for splats
+        is_splat = false
         unless call[:call_args].nil? or call[:call_args][:args].nil?
           call[:call_args][:args].each do |arg|
-            write "," unless call[:call_args][:args].first == arg
-            generate_stmt arg, :full_stmt => false
+            is_splat = true if arg.node == :splat
           end
         end
-
-        # assocs
-        if call[:call_args] and call[:call_args][:assocs]
-        write "," unless call[:call_args].nil? or call[:call_args][:args].nil?
-        write "vm_newhash("
-        call[:call_args][:assocs].each do |assoc|
-         write "," unless call[:call_args][:assocs].first == assoc
-         generate_stmt assoc[:key], :full_stmt => false, :last_stmt => false
-         write ","
-         generate_stmt assoc[:value], :full_stmt => false, :last_stmt => false
-        end
-        write ")"
-        end
+        
+        if is_splat
+          write "(function(){"
+          write "var a=[],b=nil;"
+          call[:call_args][:args].each do |arg|
+            # puts arg
+            if arg.node == :splat
+              write "b = "
+              generate_stmt arg[:val], :full_stmt => false
+              write ";"
+              write "for(var i = 0; i < b.length; i++){"
+              write "a.push(b[i]);"
+              write "};"
+            else
+              write "a.push("
+              generate_stmt arg, :full_stmt => false
+              write ");"
+            end
+          end
+          write "return a;})()"
+        else
+          write "["
+          unless call[:call_args].nil? or call[:call_args][:args].nil?
+            call[:call_args][:args].each do |arg|
+              write "," unless call[:call_args][:args].first == arg
+              generate_stmt arg, :full_stmt => false
+            end
+          end
+  
+          # assocs
+          if call[:call_args] and call[:call_args][:assocs]
+          write "," unless call[:call_args].nil? or call[:call_args][:args].nil?
+          write "vm_newhash("
+          call[:call_args][:assocs].each do |assoc|
+           write "," unless call[:call_args][:assocs].first == assoc
+           generate_stmt assoc[:key], :full_stmt => false, :last_stmt => false
+           write ","
+           generate_stmt assoc[:value], :full_stmt => false, :last_stmt => false
+          end
+          write ")"
+          end
      
-        write "]"
+          write "]"
+        end
         write ","
         
         # block
@@ -430,6 +458,7 @@ module Vienna
          # map(&:name)
        elsif call[:call_args][:block_arg]
          write "vm_send("
+         # puts call[:call_args][:block_arg][:arg]
          generate_stmt call[:call_args][:block_arg][:arg], :full_stmt => false
          write %{,"to_proc",[],nil,0)}
        else

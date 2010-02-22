@@ -278,6 +278,12 @@ function rb_obj_instance_eval(obj, str) {
   return _.call(_, obj);
 };
 
+function rb_obj_mod_eval(obj) {
+  var _ = opal_block; opal_block = nil;
+  if (_ == nil) throw "no block given for module_eval."
+  return _.call(_, obj);
+};
+
 function rb_bool_to_s(bool) {
   return bool ? "true" : "false";
 };
@@ -291,9 +297,25 @@ function rb_mod_include(cls, mod) {
   return rb_include_module(cls, mod);
 };
 
+function rb_mod_extend(cls, mod) {
+  return rb_include_module(cls.klass, mod);
+};
+
 function rb_obj_send(recv, id) {
   var args = Array.prototype.slice.call(arguments, 2);
   return vm_send(recv, id, args, nil, 8);
+};
+
+function rb_class_initialize(cls) {
+  var sup = (arguments.length > 1) ? arguments[1] : rb_cObject;
+  cls.sup = sup;
+  rb_make_metaclass(cls, sup.klass);
+  rb_class_inherited(sup, cls);
+  return cls;
+};
+
+function rb_mod_alias_method(cls, new_name, old_name) {
+  return rb_define_alias(cls, new_name.ptr, old_name.ptr);
 };
 
 
@@ -357,6 +379,8 @@ function Init_Object() {
   // rb_define_method(rb_mKernel, "freeze", rb_obj_freeze, 0);
   // rb_define_method(rb_mKernel, "frozen?", rb_obj_frozen_p, 0);
   
+  rb_define_method(rb_mKernel, "module_eval", rb_obj_mod_eval, 0);
+  rb_define_method(rb_cModule, "module_eval", rb_obj_mod_eval, 0);
   rb_define_method(rb_mKernel, "instance_eval", rb_obj_instance_eval, 0);
   rb_define_method(rb_mKernel, "send", rb_obj_send, -1);
   rb_define_method(rb_mKernel, "__send__", rb_obj_send, -1);
@@ -417,6 +441,7 @@ function Init_Object() {
   // rb_define_method(rb_cModule, "initialize_copy", rb_mod_init_copy, 1);
   // rb_define_method(rb_cModule, "to_s", rb_mod_to_s, 0);
   // rb_define_method(rb_cModule, "included_modules", rb_mod_included_modules, 0);
+  rb_define_method(rb_cModule, "extend", rb_mod_extend, 1);
   rb_define_method(rb_cModule, "include", rb_mod_include, 1);
   // rb_define_method(rb_cModule, "include?", rb_mod_include_p, 1);
   // rb_define_method(rb_cModule, "name", rb_mod_name, 0);
@@ -434,6 +459,8 @@ function Init_Object() {
   // rb_define_method(rb_cModule, "protected_instance_methods", rb_class_protected_instance_methods, -1);
   // rb_define_method(rb_cModule, "private_instance_methods", rb_class_private_instance_methods, -1);
   // 
+  
+  rb_define_method(rb_cModule, "alias_method", rb_mod_alias_method, 2);
   // rb_define_method(rb_cModule, "constants", rb_mod_constants, -1);
   // rb_define_method(rb_cModule, "const_get", rb_mod_const_get, -1);
   rb_define_method(rb_cModule, "const_set", rb_mod_const_set, 2);
@@ -448,7 +475,7 @@ function Init_Object() {
   // 
   rb_define_method(rb_cClass, "allocate", rb_obj_alloc, 0);
   rb_define_method(rb_cClass, "new", rb_class_new_instance, -1);
-  // rb_define_method(rb_cClass, "initialize", rb_class_initialize, -1);
+  rb_define_method(rb_cClass, "initialize", rb_class_initialize, -1);
   // rb_define_method(rb_cClass, "initialize_copy", rb_class_init_copy, 1);
   // rb_define_method(rb_cClass, "superclass", rb_class_superclass, 0);
   // rb_define_alloc_func(rb_cClass, rb_class_s_alloc);

@@ -2,6 +2,12 @@
 
 # Acts as the bin/main file
 
-require "lib/spec"
+require "spec"
 
 Spec::Runner.run
+
+describe "adam" do
+  
+  it "should do something"
+  
+end
