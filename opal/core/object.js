@@ -287,6 +287,15 @@ function rb_nil_nil_q() {
 };
 
 
+function rb_mod_include(cls, mod) {
+  return rb_include_module(cls, mod);
+};
+
+function rb_obj_send(recv, id) {
+  var args = Array.prototype.slice.call(arguments, 2);
+  return vm_send(recv, id, args, nil, 8);
+};
+
 
 function Init_Object() {
   var metaclass;
@@ -349,6 +358,8 @@ function Init_Object() {
   // rb_define_method(rb_mKernel, "frozen?", rb_obj_frozen_p, 0);
   
   rb_define_method(rb_mKernel, "instance_eval", rb_obj_instance_eval, 0);
+  rb_define_method(rb_mKernel, "send", rb_obj_send, -1);
+  rb_define_method(rb_mKernel, "__send__", rb_obj_send, -1);
   
   rb_define_method(rb_mKernel, "respond_to?", rb_obj_respond_to, -1);
   
@@ -406,6 +417,7 @@ function Init_Object() {
   // rb_define_method(rb_cModule, "initialize_copy", rb_mod_init_copy, 1);
   // rb_define_method(rb_cModule, "to_s", rb_mod_to_s, 0);
   // rb_define_method(rb_cModule, "included_modules", rb_mod_included_modules, 0);
+  rb_define_method(rb_cModule, "include", rb_mod_include, 1);
   // rb_define_method(rb_cModule, "include?", rb_mod_include_p, 1);
   // rb_define_method(rb_cModule, "name", rb_mod_name, 0);
   // rb_define_method(rb_cModule, "ancestors", rb_mod_ancestors, 0);
@@ -446,6 +458,7 @@ function Init_Object() {
   rb_cBoolean = rb_define_class("Boolean", rb_cObject);
   Boolean.prototype.klass = rb_cBoolean;
   rb_define_method(rb_cBoolean, "to_s", rb_bool_to_s, 0);
+  rb_define_method(rb_cBoolean, "inspect", rb_bool_to_s, 0);
   // rb_define_method(rb_cTrueClass, "&", true_and, 1);
   // rb_define_method(rb_cTrueClass, "|", true_or, 1);
   // rb_define_method(rb_cTrueClass, "^", true_xor, 1);

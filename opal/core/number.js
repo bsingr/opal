@@ -215,7 +215,7 @@ function Init_Number() {
   
   rb_cNumber = rb_define_class("Number", rb_cObject);
   Number.prototype.klass = rb_cNumber;
-  Number.prototype.flags = T_NUMBER;
+  Number.prototype.flags = T_NUMBER | T_OBJECT;
   
   // rb_define_method(rb_cNumber, "singleton_method_added", rb_num_sadded, 1);
   rb_include_module(rb_cNumber, rb_mComparable);

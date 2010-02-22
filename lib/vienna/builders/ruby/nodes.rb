@@ -81,7 +81,7 @@ module Vienna
       end
       
       def rest_size
-        @rest ? @rest.length : 0
+        @rest ? 1 : 0
       end
       
       def post_size

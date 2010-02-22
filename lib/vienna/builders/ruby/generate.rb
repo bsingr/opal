@@ -533,8 +533,10 @@ module Vienna
         generate_block_given stmt, context
       when :regexp
         generate_regexp stmt, context
+      when :alias
+        generate_alias stmt, context
       else
-        write "\n[Unknown type for generate_stmt: #{stmt}]\n"
+        write "\n[Unknown type for generate_stmt: #{stmt.inspect}]\n"
       end
     end
     

@@ -47,7 +47,7 @@ module Vienna
           # arg types/names - these are all ordered
           @norm_arg_names = []
           @opt_arg_names = []
-          @rest_arg_names = []
+          @rest_arg_name = nil
           @post_arg_names = []
           @block_arg_name = nil
           
@@ -72,7 +72,11 @@ module Vienna
         
         # push rest arg name
         def push_rest_arg_name(name)
-          
+          id = @local_current
+          @local_current = @local_current.next
+          @args[name] = "_#{id}"
+          @rest_arg_name = name
+          "_#{id}"
         end
         
         # post (notmal args at end) names
@@ -125,6 +129,37 @@ module Vienna
           @code << str
         end
         
+        # r is array to append strings for outputting
+        def deal_with_method_args(r)
+          r << "function($"
+          
+          norm = @norm_arg_names.length
+          opt = @opt_arg_names.length
+          post = @post_arg_names.length
+          rest = @rest_arg_name
+          
+          # Case 1: no args at all (block is dealt with seperately)
+          # def a()
+          if norm == 0 && opt == 0 && post == 0 && rest.nil?
+            r << "){"
+            
+          # Case 2: just splat args
+          # def a(*args)
+          elsif norm == 0 && opt == 0 && post == 0 && rest
+            r << ",#{@args[@rest_arg_name]}"
+            r << "){"
+            r << %{#{@args[@rest_arg_name]}=Array.prototype.slice.call(arguments,1);}
+            
+          # Case 3: just normal args (any number)
+          # def a(l,m,n,o,p)
+          elsif norm > 0 && opt == 0 && post == 0 && rest.nil?
+            @norm_arg_names.each do |a|
+              r << ",#{@args[a]}"
+            end
+            r << "){"
+          end
+        end
+        
         def to_s
           r = ""
           
@@ -152,12 +187,9 @@ module Vienna
             r << "}"
             
           when RubyBuilder::ISEQ_TYPE_METHOD
-            r << "function($"
-            @norm_arg_names.each do |a|
-              r << ",#{@args[a]}"
-            end
             
-            r << "){"
+            deal_with_method_args(r)
+            
             
             # block arg name
             if @block_arg_name != nil
@@ -269,6 +301,7 @@ module Vienna
       end
       
       def generate_def(stmt, context)
+        # puts stmt
         write "return " if context[:last_stmt] and context[:full_stmt]
         
         is_singleton = stmt[:singleton] ? 1 : 0
@@ -282,6 +315,11 @@ module Vienna
           stmt[:arglist].arg.each do |arg|
             @iseq_current.push_arg_name arg[:value]
           end
+        end
+        
+        # rest args
+        if stmt[:arglist].rest
+          @iseq_current.push_rest_arg_name stmt[:arglist].rest
         end
         
         # block name..
@@ -609,6 +647,80 @@ module Vienna
       
       def generate_dot3(stmt, context)
         
+      end
+      
+      def generate_alias(stmt, context)
+        write "return " if context[:last_stmt] and context[:full_stmt]
+        write "vm_alias($,"
+        generate_stmt stmt[:lhs], :full_stmt => false
+        write ","
+        generate_stmt stmt[:rhs], :full_stmt => false
+        write ")"
+        write ";" if context[:full_stmt]
+      end
+      
+      def generate__FILE__ stmt, context
+        write "return " if context[:last_stmt] and context[:full_stmt]
+        write %{"#{@build_name}"}
+        write ";" if context[:full_stmt]
+      end
+      
+      # primay::CONST
+      def generate_colon2 stmt, context
+        write "return " if context[:last_stmt] and context[:full_stmt]
+        write %{vm_getconstant(}
+        generate_stmt stmt[:lhs], :full_stmt => false
+        write %{,"#{stmt[:rhs]}")}
+        write ";" if context[:full_stmt]
+      end
+
+      def generate_colon3 stmt, context
+
+      end
+      
+      def generate_if(stmt, context)
+        write "return " if context[:full_stmt] and context[:last_stmt]
+        write "(function(){"
+
+        # if/unless clause
+        if stmt.node == :if
+          write "if(RTEST("
+        else # must be unless
+          write "if(!RTEST("
+        end
+
+        generate_stmt stmt[:expr], :full_stmt => false, :last_stmt => false
+        write ")){"
+        stmt[:stmt].each do |s|
+          # alays return last stmt. we output inside a function context to capture
+          # the return value so that this will not return from the function itself
+          generate_stmt s, :full_stmt => true, :last_stmt => stmt[:stmt].last == s
+        end
+        write "}"
+
+        # now onto the tail (elsif, else etc)
+        if stmt[:tail]
+          stmt[:tail].each do |t|
+            if t.node == :elsif
+              write "else if(RTEST("
+              generate_stmt t[:expr], :full_stmt => false, :last_stmt => false
+              write ")){"
+              t[:stmt].each do |s|
+                generate_stmt s, :full_stmt => true, :last_stmt => t[:stmt].last==s
+              end
+              write "}"
+            else # else node
+              write "else{"
+              t[:stmt].each do |s|
+                generate_stmt s, :full_stmt => true, :last_stmt => t[:stmt].last==s
+              end
+              write "}"
+            end
+          end
+        end
+
+        write"})()"
+        write ";" if context[:full_stmt]
       end
             
     end # end class

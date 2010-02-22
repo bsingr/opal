@@ -30,12 +30,12 @@ var rb_cDir;
 // glob
 // /^\/app\/.*\/charles\/[^\/]*\.rb$/
 //   \/app\/.*\/[^\/]*\.rb
-function rb_dir_s_glob(argc, argv, dir) {
-  if (argc > 1) throw "unsupported Dir.glob.. FIXME"
+function rb_dir_s_glob(dir) {
+  if (arguments.length > 2) throw "unsupported Dir.glob.. FIXME"
   
   var result = [], eof = false;
   
-  var scanner = new vn_ruby_string_scanner(argv[0]);
+  var scanner = new vn_ruby_string_scanner(arguments[1]);
   while (!eof) {
     // ** does not HAVE to include a dir, so capture **/ to match .* which will
     // match a dir, or no dir.. allows both to work together.
@@ -66,7 +66,8 @@ function rb_dir_s_glob(argc, argv, dir) {
   
   var reg =  new RegExp('^' + result.join("") + '$');
   var matching = [];
-  for (prop in vn_fs_path_hash) {
+  // console.log(reg);
+  for (prop in opal_files) {
     if (reg.exec(prop)) {
       matching.push(prop);
     }
@@ -106,7 +107,7 @@ function Init_Dir() {
   // rb_define_singleton_method(rb_cDir,"unlink", rb_dir_s_rmdir, 1);
   // 
   rb_define_singleton_method(rb_cDir,"glob", rb_dir_s_glob, -1);
-  // rb_define_singleton_method(rb_cDir,"[]", rb_dir_s_aref, -1);
+  rb_define_singleton_method(rb_cDir,"[]", rb_dir_s_glob, -1);
   // rb_define_singleton_method(rb_cDir,"exist?", rb_file_directory_p, 1);
   // rb_define_singleton_method(rb_cDir,"exists?", rb_file_directory_p, 1);
   // 

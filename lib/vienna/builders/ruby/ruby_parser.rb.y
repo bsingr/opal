@@ -179,7 +179,7 @@ rule
                   }
                   fitem
                   {
-                    
+                    result = node :alias, :lhs => val[1], :rhs => val[3] 
                   }
             		| kALIAS tGVAR tGVAR
             		| kALIAS tGVAR tBACK_REF
@@ -1228,12 +1228,21 @@ xstring_contents:
             		| f_block_optarg ',' f_block_opt
 
         f_optarg: f_opt
+                  {
+                    result = [val[0]]
+                  }
             		| f_optarg ',' f_opt
+            		  {
+            		    result = val[0] + [val[2]]
+            		  }
 
     restarg_mark: '*'
   	            | tSTAR
 
       f_rest_arg: restarg_mark tIDENTIFIER
+                  {
+                    result = val[1]
+                  }
               	| restarg_mark
 
      blkarg_mark: '&'

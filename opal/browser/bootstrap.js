@@ -24,6 +24,7 @@ function opal_browser_main(name) {
   ruby_script("embedded");
   ruby_init_loadpath();
   ruby_incpush("");
+  ruby_incpush("vendor/");
   rb_loadpath(name);
 };
 

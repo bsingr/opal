@@ -317,35 +317,40 @@ function rb_define_method(klass, name, func, argc) {
   m.argc = argc;
   m.body = func;
   rb_add_method(klass, name, m, NOEX_PUBLIC);
-}
+};
 
 function rb_define_private_method(klass, name, func, argc) {
   var m = new rb_method_t();
   m.argc = argc;
   m.body = func;
   rb_add_method(klass, name, m, NOEX_PRIVATE);
-}
+};
 
 function rb_define_private_method(klass, name, func, argc) {
   var m = new rb_method_t();
   m.argc = argc;
   m.body = func;
   rb_add_method(klass, name, m, NOEX_PROTECTED);
-}
+};
 
 function rb_define_singleton_method(klass, name, func, argc) {
   rb_define_method(rb_singleton_class(klass), name, func, argc);
-}
+};
 
 function rb_add_method(klass, name, method) {
   klass.m_tbl[name] = method;
   // func.displayName = klass.iv_tbl.__classid__ + "#" + name;
-}
+};
 
 function rb_define_alloc_func(klass, func) {
   rb_define_method(rb_singleton_class(klass), 'allocate', func, 0);
-}
+};
 
+function rb_define_alias(cls, name, old) {
+  var m = rb_search_method(cls, old);
+  if (!m) throw "rb_define_alias: no existing method '" + old + "'"
+  return rb_define_method(cls, name, m.body, m.argc);
+};
 
 // RClass.prototype.$def = function(name, func) {
 //   this.$add_method(name, func);

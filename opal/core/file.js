@@ -100,17 +100,17 @@ function vn_fs_define_file(f, content) {
     c = c[b];
   }
   c[p[p.length - 1]] = content;
-}
+};
 
 
 function rb_file_s_dirname(cls, dirname) {
   return dirname.substr(0, dirname.lastIndexOf('/'));
   // return "/dirname";
-}
+};
 
-function rb_file_s_join(cls, args) {
-  return args.join("/");
-}
+function rb_file_s_join(cls) {
+  return Array.prototype.slice.call(arguments, 1).join("/");
+};
 
 function rb_file_s_expand_path(argc, args, obj) {
   var res_stack = [], cur;
@@ -128,7 +128,7 @@ function rb_file_s_expand_path(argc, args, obj) {
     }
   }
   return res_stack.join("/");
-}
+};
 
 function Init_File() {
   rb_cFile = rb_define_class("File", rb_cObject);

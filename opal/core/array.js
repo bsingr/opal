@@ -145,6 +145,11 @@ function rb_ary_times(ary, n) {
   }
 };
 
+function rb_ary_last(ary, num) {
+  if (ary.length == 0) return nil;
+  return ary[ary.length - 1];
+};
+
 function Init_Array() {
   
   rb_cArray = rb_define_class("Array", rb_cObject);
@@ -173,7 +178,7 @@ function Init_Array() {
   // rb_define_method(rb_cArray, "at", rb_ary_at, 1);
   // rb_define_method(rb_cArray, "fetch", rb_ary_fetch, -1);
   // rb_define_method(rb_cArray, "first", rb_ary_first, -1);
-  // rb_define_method(rb_cArray, "last", rb_ary_last, -1);
+  rb_define_method(rb_cArray, "last", rb_ary_last, -1);
   // rb_define_method(rb_cArray, "concat", rb_ary_concat, 1);
   rb_define_method(rb_cArray, "<<", rb_ary_push, 1);
   // rb_define_method(rb_cArray, "push", rb_ary_push_m, -1);
@@ -185,8 +190,8 @@ function Init_Array() {
   // rb_define_method(rb_cArray, "each_index", rb_ary_each_index, 0);
   // rb_define_method(rb_cArray, "reverse_each", rb_ary_reverse_each, 0);
   rb_define_method(rb_cArray, "length", rb_ary_length, 0);
-  rb_define_method(rb_cArray, "size", rb_ary_length, 0);
-  // rb_define_alias(rb_cArray,  "size", "length");
+  // rb_define_method(rb_cArray, "size", rb_ary_length, 0);
+  rb_define_alias(rb_cArray,  "size", "length");
   // rb_define_method(rb_cArray, "empty?", rb_ary_empty_p, 0);
   // rb_define_method(rb_cArray, "find_index", rb_ary_index, -1);
   // rb_define_method(rb_cArray, "index", rb_ary_index, -1);

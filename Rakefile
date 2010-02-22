@@ -3,7 +3,9 @@ require 'rake'
 require 'spec/rake/spectask'
 require 'ftools'
 
-Dir[File.join(File.dirname(__FILE__), 'lib', 'vienna', 'tasks', '**', '*.rb')].each { |t| require t }
+Dir[File.join(File.dirname(__FILE__), 'tasks', '**', '*.rb')].each do |t|
+  require t
+end
 
 begin
   require 'jeweler'

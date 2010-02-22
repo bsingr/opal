@@ -66,9 +66,18 @@ function rb_obj_define_method(obj) {
 
 function rb_mod_define_method(obj, sym) {
   var _ = opal_block; opal_block = nil;
+  var id;
   if (_ == nil) throw "#define_method no block given"
-  if (sym.klass !== rb_cSymbol) throw "#define_method expects a sym for name"
-  return rb_define_method(obj, sym.ptr, _, -1);
+  if (sym.klass == rb_cString) {
+    id = sym;
+  } 
+  else if (sym.klass == rb_cSymbol) {
+    id = sym.ptr;
+  }
+  else {
+    throw "#define_method expects a sym for name"
+  }
+  return rb_define_method(obj, id, _, -1);
 };
 
 function Init_Proc() {

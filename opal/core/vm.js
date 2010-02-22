@@ -35,14 +35,20 @@ function opal_main_to_s() {
   return "main";
 };
 
+function opal_main_include(top, inc) {
+  return rb_include_module(rb_cObject, inc);
+};
+
 function Init_top_self() {
   opal_top_self = new RObject();
   opal_top_self.klass = rb_cObject;
   FL_SET(opal_top_self, T_OBJECT);
   rb_define_singleton_method(opal_top_self, "to_s", opal_main_to_s, 0);
+  rb_define_singleton_method(opal_top_self, "include", opal_main_include, 1);
 };
 
 function rb_method_missing(recv, id, args) {
+  console.log(recv);
   throw "method missing for: " + id
 };
 
@@ -104,6 +110,8 @@ function rb_funcall(recv, id) {
   and quicker to call from VM, where args are given as an array
 */
 function rb_funcall2(recv, id, args) {
+  // console.log(id);
+  // console.log(recv);
   var body = rb_search_method(recv.klass, id);
   if (!body) {
     args.unshift(ID2SYM(id));
@@ -249,4 +257,8 @@ function vm_optmult(a, b) {
 function vm_optdiv(a, b) {
   if (typeof a == "number" && typeof b == "number") return a / b;
   return vm_send(a, "/", [b], nil, 8);
+};
+
+function vm_alias(cls, a, b) {
+  return rb_define_alias(cls.klass, a.ptr, b.ptr);
 };

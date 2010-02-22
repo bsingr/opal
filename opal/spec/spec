@@ -1,0 +1,7 @@
+#!/usr/bin/env ruby -wKU
+
+# Acts as the bin/main file
+
+require "lib/spec"
+
+Spec::Runner.run
