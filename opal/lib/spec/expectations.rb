@@ -1,6 +1,11 @@
+require 'spec/expectations/fail_with'
+require 'spec/expectations/handler'
+
 module Kernel
   
   def should(matcher, message, &block)
+    # puts "in should!"
+    # puts Spec::Expectations
     Spec::Expectations::PositiveExpectationHandler.handle_matcher(self, matcher, message)
   end
   

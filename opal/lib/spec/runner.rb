@@ -1,3 +1,4 @@
+require 'spec/runner/options'
 require 'spec/runner/example_group_runner'
 
 module Spec
@@ -9,7 +10,12 @@ module Spec
     def self.run
       # require all specs
       # Dir['spec/**/*.rb'].each { |spec| require spec }
-      puts "running"
+      # puts "running"
+      options.run_examples
+    end
+    
+    def self.options
+      @options ||= Options.new
     end
     
   end # end Runner

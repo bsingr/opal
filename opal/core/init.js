@@ -49,6 +49,7 @@ function rb_call_inits() {
   Init_Comparable();
   Init_Number();
   Init_String();
+  Init_Exception();
   Init_Hash();
   Init_Range();
   Init_Proc();

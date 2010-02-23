@@ -151,7 +151,12 @@ rule
 
         bodystmt: compstmt opt_rescue opt_else opt_ensure
                   {
-                    result = val[0]
+                    # puts "erm wtf?!"
+                    # puts val[1]
+                    result = self.node_bodystmt(val[0], val[1], val[2], val[3])
+                    # if val[1]
+                      # pp result
+                    # end
                   }
 
         compstmt: stmts opt_terms
@@ -642,6 +647,9 @@ rule
   	            | backref
   	            | tFID
               	| k_begin bodystmt k_end
+              	  {
+              	    result = node :begin, :stmt => val[1]
+              	  }
             		| tLPAREN_ARG expr rparen
             		| tLPAREN compstmt ')'
             		  {
@@ -926,14 +934,33 @@ rule
               	| case_body
 
       opt_rescue: kRESCUE exc_list exc_var then compstmt opt_rescue
+                  {
+                    result = node :rescue, :list => val[1], :var => val[2], :stmt => val[4], :opt_rescue => val[5]
+                    # puts result
+                  }
             		| none
 
         exc_list: arg_value
+                  {
+                    result = val[0]
+                  }
             		| mrhs
+            		  {
+            		    result = val[0]
+            		  }
             		| none
+            		  {
+            		    result = nil
+            		  }
 
          exc_var: tASSOC lhs
+                  {
+                    result = val[1]
+                  }
             		| none
+            		  {
+            		    result = nil
+            		  }
 
       opt_ensure: kENSURE compstmt
             		| none

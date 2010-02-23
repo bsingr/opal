@@ -535,6 +535,8 @@ module Vienna
         generate_regexp stmt, context
       when :alias
         generate_alias stmt, context
+      when :begin
+        generate_begin stmt, context
       else
         write "\n[Unknown type for generate_stmt: #{stmt.inspect}]\n"
       end
@@ -1093,7 +1095,6 @@ module Vienna
     # ||=, &&= etc - assign methods that cannot be overridden
     # 
     def generate_op_asgn stmt, context
-      
       if stmt[:lhs].node == :ivar
         # defined?
         write %{[#{IPUTNIL}]}

@@ -36,7 +36,13 @@ function rb_hash_alloc(klass) {
 };
 
 function rb_hash_new() {
-  return rb_hash_alloc(rb_cHash);
+  var k, v, h = rb_hash_alloc(rb_cHash);
+  for (var i = 0; i < arguments.length; i++) {
+    k = arguments[i], v = arguments[i+1];
+    i ++;
+    rb_hash_aset(h, k, v);
+  }
+  return h;
 };
 
 function rb_hash_aset(hash, k, v) {

@@ -256,8 +256,8 @@ module Vienna
         class_iseq.parent_iseq = current_iseq
         
         # do each bodystmt
-        cls.bodystmt.each do |b|
-          generate_stmt b, :full_stmt => true, :last_stmt => b == cls.bodystmt.last
+        cls.bodystmt[:compstmt].each do |b|
+          generate_stmt b, :full_stmt => true, :last_stmt => b == cls.bodystmt[:compstmt].last
         end
         
         write "return nil;" if cls.bodystmt.length == 0
@@ -284,8 +284,8 @@ module Vienna
         class_iseq.parent_iseq = current_iseq
         
         # do each bodystmt
-        cls.bodystmt.each do |b|
-          generate_stmt b, :full_stmt => true, :last_stmt => b == cls.bodystmt.last
+        cls.bodystmt[:compstmt].each do |b|
+          generate_stmt b, :full_stmt => true, :last_stmt => b == cls.bodystmt[:compstmt].last
         end
         
         write "return nil;" if cls.bodystmt.length == 0
@@ -301,6 +301,15 @@ module Vienna
       end
       
       def generate_def(stmt, context)
+        # if stmt[:bodystmt][:opt_rescue]
+          # puts "a"
+        # end
+        # if stmt[:fname] == "execute"
+          # pp stmt[:bodystmt]
+        # end
+        # if stmt[:bodystmt].vn_opt_rescue
+          # puts stmt[:bodystmt].vn_opt_rescue
+        # end
         # puts stmt
         write "return " if context[:last_stmt] and context[:full_stmt]
         
@@ -329,8 +338,8 @@ module Vienna
         
         
         # body statements
-        stmt[:bodystmt].each do |s|
-          generate_stmt s, :full_stmt => true, :last_stmt => stmt[:bodystmt].last == s
+        stmt[:bodystmt][:compstmt].each do |s|
+          generate_stmt s, :full_stmt => true, :last_stmt => stmt[:bodystmt][:compstmt].last == s
         end
         
         iseq_stack_pop
@@ -522,7 +531,25 @@ module Vienna
           write %{vm_setconstant($,"#{stmt[:lhs][:name]}",}
           generate_stmt stmt[:rhs], :full_stmt => false, :last_stmt => false
           write %{)}
+        elsif stmt[:lhs].node == :call
+          # puts stmt
+          write %{vm_send(}
+          # recv
+          generate_stmt stmt[:lhs][:recv], :full_stmt => false
+          # id
+          write %{,"#{stmt[:lhs][:meth]}=",[}
+          # args
+          if stmt[:lhs][:args] and stmt[:lhs][:args][:args]
+            stmt[:lhs][:args][:args].each do |arg|
+              generate_stmt arg, :full_stmt => false
+              write ","
+            end
+          end
+          generate_stmt stmt[:rhs], :full_stmt => false
+          write "],nil,0)"
+          
         else
+          puts stmt
           abort "bad lhs type"
         end
         write ";" if context[:full_stmt]
@@ -750,6 +777,147 @@ module Vienna
 
         write"})()"
         write ";" if context[:full_stmt]
+      end
+      
+      def generate_op_asgn(stmt, context)
+        # puts stmt
+        write "return " if context[:full_stmt] and context[:last_stmt]
+        
+        if stmt[:lhs].node == :ivar
+          if stmt[:op] == "||"
+            write "(function(){var a;"
+            write "if(!RTEST(a = vm_ivarget($,'#{stmt[:lhs][:name]}'))){"
+            write "return vm_ivarset($,'#{stmt[:lhs][:name]}',"
+            generate_stmt stmt[:rhs], :full_stmt => false
+            write ");}"
+            write "return a;"
+            write "})()"
+          elsif stmt[:op] == "+"
+            write "vm_ivarset($,'#{stmt[:lhs][:name]}',vm_optplus("
+            write "vm_ivarget($,'#{stmt[:lhs][:name]}'),"
+            generate_stmt stmt[:rhs], :full_stmt => false
+            write "))"
+          elsif stmt[:op] == "-"
+            write "vm_ivarset($,'#{stmt[:lhs][:name]}',vm_optminus("
+            write "vm_ivarget($,'#{stmt[:lhs][:name]}'),"
+            generate_stmt stmt[:rhs], :full_stmt => false
+            write "))"
+          elsif stmt[:op] == "*"
+            write "vm_ivarset($,'#{stmt[:lhs][:name]}',vm_optmult("
+            write "vm_ivarget($,'#{stmt[:lhs][:name]}'),"
+            generate_stmt stmt[:rhs], :full_stmt => false
+            write "))"
+          elsif stmt[:op] == "/"
+            write "vm_ivarset($,'#{stmt[:lhs][:name]}',vm_optdiv("
+            write "vm_ivarget($,'#{stmt[:lhs][:name]}'),"
+            generate_stmt stmt[:rhs], :full_stmt => false
+            write "))"
+          else
+            abort "bas op type for op_asgn"
+          end
+        else
+          abort "bad LHS for op_asgn"
+        end
+        
+        write ";" if context[:full_stmt]
+      end
+      
+      # yuck!
+      def generate_case stmt, context
+        write "return " if context[:full_stmt] and context[:last_stmt]
+        write "(function($c){"
+        stmt[:body].each do |c|
+          if c.node == :when
+            # clauses
+            if stmt[:body].first == c
+              write "if"
+            else
+              write "else if"
+            end
+            write "("
+            c[:args].each do |a|
+              write " || " unless c[:args].first == a
+              write "vm_send("
+              generate_stmt a, :full_stmt => false, :last_stmt => false
+              write ",'===',[$c],nil,0)"
+            end
+            write") {"
+            c[:stmt].each do |s|
+              generate_stmt s, :full_stmt => true, :last_stmt => c[:stmt].last ==s
+            end
+            write "}"
+          else # it is an else, so anything else goes
+            write "else {"
+            c[:stmt].each do |s|
+              generate_stmt s, :full_stmt => true, :last_stmt => c[:stmt].last ==s
+            end
+            write "}"
+          end
+        end
+        write "})("
+        # case switch stmt
+        if stmt[:expr]
+          generate_stmt stmt[:expr], :full_stmt => false, :last_stmt => false
+        else
+          write "true"
+        end
+        write ")"
+        write ";" if context[:full_stmt]
+      end
+      
+      def generate_orop(stmt, context)
+        write "return " if context[:full_stmt] and context[:last_stmt]
+        # we must wrap lhs and rhs in functions. we do not want to evaluate them
+        # until we need to... javascript truthyness !== ruby truthyness
+        write "ORTEST(function(){"
+        generate_stmt stmt[:lhs], :full_stmt => true, :last_stmt => true
+        write "},function(){"
+        generate_stmt stmt[:rhs], :full_stmt => true, :last_stmt => true
+        write "}"
+
+        write ")"
+        write ";" if context[:full_stmt]
+      end
+      
+      def generate_andop(stmt, context)
+        write "return " if context[:full_stmt] and context[:last_stmt]
+        write "ANDTEST(function(){"
+        generate_stmt stmt[:lhs], :full_stmt => true, :last_stmt => true
+        write "},function(){"
+        generate_stmt stmt[:rhs], :full_stmt => true, :last_stmt => true
+        write "}"
+
+        write ")"
+        write ";" if context[:full_stmt]
+      end
+      
+      def generate_assoc_list stmt, context
+        write "return " if context[:full_stmt] and context[:last_stmt]
+        write "rb_hash_new("
+        stmt[:list].each do |assoc|
+          write "," unless stmt[:list].first == assoc
+          generate_stmt assoc[:key], :full_stmt => false, :last_stmt => false
+          write ","
+          generate_stmt assoc[:value], :full_stmt => false, :last_stmt => false
+        end
+        write ")"
+        write ";" if context[:full_stmt]
+      end
+      
+      def generate_begin(stmt, context)
+        if stmt[:stmt][:opt_rescue]
+          write "try{"
+          stmt[:stmt][:compstmt].each do |s|
+            generate_stmt s, :full_stmt => true, :last_stmt => false
+          end
+          puts stmt[:stmt][:opt_rescue]
+          write "}"
+          write "catch(e) { console.log('caught error'); }"
+        else
+          stmt[:stmt][:compstmt].each do |stmt|
+            generate_stmt stmt, :full_stmt => true, :last_stmt => false
+          end
+        end
       end
             
     end # end class

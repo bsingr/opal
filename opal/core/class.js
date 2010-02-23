@@ -245,13 +245,13 @@ function rb_make_metaclass(klass, super_class) {
     }
     return meta;
   }
-}
+};
 
 function rb_singleton_class_attached(klass, obj) {
   if (FL_TEST(klass, FL_SINGLETON)) {
     rb_ivar_set(klass, '__attached__', obj);
   }
-}
+};
 
 
 // RClass.prototype.$ = function(id, args) {

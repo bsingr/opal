@@ -132,7 +132,7 @@ function rb_obj_init_copy(self) {
 
 function rb_any_to_s(self) {
  var c = rb_obj_classname(self);
- return "#<" + c + ":0x000000>";
+ return "#<" + c + ":" + self.hash + ">";
 };
 
 function rb_obj_classname(obj) {
@@ -168,8 +168,9 @@ function rb_f_puts(recv) {
   }
 };
 
-function rb_mod_attr_reader(argc, argv, recv) {
-  for (var i = 0; i < argc; i++) {
+function rb_mod_attr_reader(recv) {
+  var argv = Array.prototype.slice.call(arguments, 1);
+  for (var i = 0; i < argv.length; i++) {
     var s = argv[i].ptr;
     var f = new Function('r', 'return rb_ivar_get(r, "@' + s + '");');
     rb_define_method(recv, s, f, 0);
@@ -177,8 +178,9 @@ function rb_mod_attr_reader(argc, argv, recv) {
   return nil;
 };
 
-function rb_mod_attr_writer(argc, argv, recv) {
-  for (var i = 0; i < argc; i++) {
+function rb_mod_attr_writer(recv) {
+  var argv = Array.prototype.slice.call(arguments, 1);
+  for (var i = 0; i < argv.length; i++) {
     var s = argv[i].ptr;
     var f = new Function('r', 'v', 'return rb_ivar_set(r, "@' + s + '", v);');
     rb_define_method(recv, s + '=', f, 1);
@@ -186,9 +188,9 @@ function rb_mod_attr_writer(argc, argv, recv) {
   return nil;  
 };
 
-function rb_mod_attr_accessor(argc, argv, recv) {
-  rb_mod_attr_reader(argc, argv, recv);
-  rb_mod_attr_writer(argc, argv, recv);
+function rb_mod_attr_accessor(recv) {
+  rb_mod_attr_reader.apply(recv, arguments);
+  rb_mod_attr_writer.apply(recv, arguments);
   return nil;
 };
 
@@ -298,7 +300,8 @@ function rb_mod_include(cls, mod) {
 };
 
 function rb_mod_extend(cls, mod) {
-  return rb_include_module(cls.klass, mod);
+  // possibly fix back to (cls.klass, mod)
+  return rb_include_module(rb_singleton_class(cls), mod);
 };
 
 function rb_obj_send(recv, id) {
@@ -308,7 +311,10 @@ function rb_obj_send(recv, id) {
 
 function rb_class_initialize(cls) {
   var sup = (arguments.length > 1) ? arguments[1] : rb_cObject;
+  // console.log("setting class to " + sup.iv_tbl.__classid__);
   cls.sup = sup;
+  cls.m_tbl = { };
+  // console.log(sup);
   rb_make_metaclass(cls, sup.klass);
   rb_class_inherited(sup, cls);
   return cls;
@@ -318,6 +324,40 @@ function rb_mod_alias_method(cls, new_name, old_name) {
   return rb_define_alias(cls, new_name.ptr, old_name.ptr);
 };
 
+/*
+  raise
+  =====
+  Simply throws an error
+  
+  raise(string)
+  =============
+  simply throws an error with string as message. uses rb_eRuntimeError
+  
+  raise(exception, [string])
+  ==========================
+  throws error with the given exception as the exception class
+*/
+function rb_f_raise() {
+  var exc = rb_eRuntimeError, msg = "";
+  if (arguments.length > 1) {
+    if (arguments[1].klass == rb_cString) {
+      msg = arguments[1];
+    }
+    else {
+      exc = arguments[1];
+      if (arguments[2] && arguments[2].klass == rb_cString) {
+        msg = arguments[2];
+      }
+    }
+  }
+  throw {
+    exception: vm_send(exc, "new", [msg], nil, 0),
+    toString: function() {
+      // console.log(this);
+      return this.exception.klass.iv_tbl.__classid__ + ": " + this.exception.iv_tbl.message;
+    }
+  }
+};
 
 function Init_Object() {
   var metaclass;
@@ -369,6 +409,9 @@ function Init_Object() {
   rb_define_method(rb_mKernel, "clone", rb_obj_clone, 0);
   rb_define_method(rb_mKernel, "dup", rb_obj_dup, 0);
   rb_define_method(rb_mKernel, "initialize_copy", rb_obj_init_copy, 1);
+  
+  rb_define_method(rb_mKernel, "raise", rb_f_raise, -1);
+  rb_define_method(rb_mKernel, "fail", rb_f_raise, -1);
 
   // rb_define_method(rb_mKernel, "taint", rb_obj_taint, 0);
   // rb_define_method(rb_mKernel, "tainted?", rb_obj_tainted, 0);

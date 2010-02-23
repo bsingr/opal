@@ -773,6 +773,12 @@ class Vienna::RubyParser < Racc::Parser
         when 'alias'
           self.lex_state = :EXPR_BEG
           return [:kALIAS, scanner.matched]
+        when 'begin'
+          self.lex_state = :EXPR_BEG
+          return [:kBEGIN, scanner.matched]
+        when 'rescue'
+          self.lex_state = :EXPR_MID
+          return [:kRESCUE, scanner.matched]
         end
         
         matched = scanner.matched

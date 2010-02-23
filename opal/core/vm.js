@@ -86,8 +86,10 @@ function Init_vm_eval() {
 };
 
 function rb_search_method(klass, id) {
-  // console.log("searching for id: " + id);
+  // if (id == "initialize") {
+    // console.log("searching for id: " + id);
   // console.log(klass);
+  /// }
   var f, k = klass;
   while (!(f = k.m_tbl[id])) {
     k = k.sup;

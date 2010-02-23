@@ -1,3 +1,5 @@
+require 'spec/matchers/operator_matcher'
+
 module Spec
   
   module Matchers

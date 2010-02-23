@@ -102,6 +102,7 @@ function rb_ary_aref(ary, idx) {
 };
 
 function rb_ary_aset(ary, idx, val) {
+  // console.log("index is" + idx);
   return ary[idx] = val;
 };
 

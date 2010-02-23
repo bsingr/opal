@@ -20,13 +20,18 @@ module Spec
       # Description for example
       # 
       def description
-        
+
       end
       
       # Actually run example
       # 
       def execute(run_options, instance_variables)
-        
+        execution_error = nil
+        begin
+          instance_eval(&@_implementation)
+        rescue Exception => e
+          execution_error = "e"
+        end
       end
       
     end

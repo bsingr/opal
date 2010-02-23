@@ -24,6 +24,11 @@
  * THE SOFTWARE.
  */
 
+var opal_hash_yield = 0;
+
+function opal_yield_hash() {
+  return opal_hash_yield++
+};
  
 // temp..
 var nil;
@@ -51,29 +56,22 @@ function RTEST(val) {
 };
 
 /**
-  Performs an 'or op' with lhs and rhs
+  ORTEST: both lhs and rhs are functions. eval lhs, if ruby false, then return
+  result of evaling rhs
 */
-function ORTEST(lhs, rhs) {
-  if (lhs == null || lhs == undefined) lhs = nil;
-  if (rhs == null || rhs == undefined) rhs = nil;
-  
-  if (lhs == nil || lhs == false) {
-    return rhs;
-  }
-  return lhs;
+ORTEST = function(lhs, rhs) {
+  var res = lhs();
+  if (RTEST(res)) return res;
+  return rhs();
 };
 
 /**
-  Performs an 'and op' with lhs and rhs
+  ANDTEST
 */
-function ANDTEST(lhs, rhs) {
-  if (lhs == null || lhs == undefined) lhs = nil;
-  if (rhs == null || rhs == undefined) rhs = nil;
-  
-  if (lhs == nil || lhs == false) {
-    return nil;
-  }
-  return rhs;
+ANDTEST = function(lhs, rhs) {
+  var res = lhs();
+  if (RTEST(res)) return rhs();
+  return res;
 };
 
 function NOTTEST(expr) {
@@ -90,6 +88,8 @@ function NOTTEST(expr) {
 // }
 
 function RObject(klass, type) {
+  this.hash = opal_yield_hash();
+  this.toString = function() { return "#<" + this.klass.iv_tbl.__classid__ + ":" + this.hash + ">"; };
   this.klass = klass;
   this.flags = type;
   this.iv_tbl = { };
@@ -97,6 +97,8 @@ function RObject(klass, type) {
 };
 
 function RClass(klass, super_klass) {
+  this.hash = opal_yield_hash();
+  this.toString = function() { return "<" + this.iv_tbl.__classid__ + ":" + this.hash + ">"; };
   this.klass = klass ;
   this.sup = super_klass ;
   this.flags = T_CLASS ;
@@ -106,6 +108,8 @@ function RClass(klass, super_klass) {
 };
 
 function RHash() {
+  this.hash = opal_yield_hash();
+  this.toString = function () { return "#<Hash:" + this.hash + ">" ;};
   this.klass = nil;
   this.flags = nil;
   this.ifnone = nil;

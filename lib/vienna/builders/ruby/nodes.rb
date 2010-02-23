@@ -40,6 +40,35 @@ module Vienna
       Vienna::RubyParser::RClass.new options
     end
     
+    def node_bodystmt(compstmt, opt_rescue, opt_else, opt_ensure)
+      # puts opt_rescue
+      # # if opt_rescue
+      #   # puts opt_rescue
+      # # end
+      # 
+      # compstmt.instance_eval do
+      #   @vn_opt_rescue = opt_rescue
+      #   @vn_opt_else = opt_else
+      #   @vn_opt_ensure = opt_ensure
+      #   
+      #   def vn_opt_rescue; @vn_opt_rescue; end
+      #   def vn_opt_else; @vn_opt_else; end
+      #   def vn_opt_ensure; @vn_opt_ensure; end
+      #     
+      # end
+      # 
+      # # if compstmt.vn_opt_rescue
+      #   # puts compstmt.vn_opt_rescue
+      # end
+      
+      {
+        :compstmt => compstmt,
+        :opt_rescue => opt_rescue,
+        :opt_else => opt_else,
+        :opt_ensure => opt_ensure
+      }
+    end
+    
     # instance level def
     def node_def(*args)
     

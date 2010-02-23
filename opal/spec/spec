@@ -4,10 +4,31 @@
 
 require "spec"
 
-Spec::Runner.run
 
-describe "adam" do
+
+describe "Array#last" do
   
-  it "should do something"
+  before do
+    puts "yikes!"
+  end
+  
+  # it "should do something"
+  
+  it "is" do
+    10.should == 9
+  end
+  
+  it "should erroe!"
+  
+  # describe "something else entierely" do
+    # it "should hopefully work"
+  # end
   
 end
+
+
+# describe "bob" do
+  # example "wowoooowo"
+# end
+
+Spec::Runner.run
