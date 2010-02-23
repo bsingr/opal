@@ -15,7 +15,12 @@ describe "Array#last" do
   # it "should do something"
   
   it "is" do
-    10.should eql(9)
+    10.should eql(10)
+    10.shshshshshshs
+  end
+  
+  it "using eql" do
+    10.should == 20
   end
   
   it "should erroe!"

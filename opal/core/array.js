@@ -151,6 +151,10 @@ function rb_ary_last(ary, num) {
   return ary[ary.length - 1];
 };
 
+function rb_ary_first(ary, num) {
+  return ary[0];
+};
+
 function Init_Array() {
   
   rb_cArray = rb_define_class("Array", rb_cObject);
@@ -178,7 +182,7 @@ function Init_Array() {
   rb_define_method(rb_cArray, "[]=", rb_ary_aset, -1);
   // rb_define_method(rb_cArray, "at", rb_ary_at, 1);
   // rb_define_method(rb_cArray, "fetch", rb_ary_fetch, -1);
-  // rb_define_method(rb_cArray, "first", rb_ary_first, -1);
+  rb_define_method(rb_cArray, "first", rb_ary_first, -1);
   rb_define_method(rb_cArray, "last", rb_ary_last, -1);
   // rb_define_method(rb_cArray, "concat", rb_ary_concat, 1);
   rb_define_method(rb_cArray, "<<", rb_ary_push, 1);

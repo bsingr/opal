@@ -31,7 +31,7 @@ describe Vienna::CherryKit::RubyBuilder::Iseq do
   
   describe "adam" do
     it "wayy" do
-      puts @top
+      10.shouldwdwewewwe
     end
   end
   

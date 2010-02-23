@@ -678,8 +678,8 @@ class Vienna::RubyParser < Racc::Parser
           self.lex_state = :EXPR_BEG
           return [:tOP_ASGN, '%']
         else
-        return ['%', '%']
-      end
+          return ['%', '%']
+        end
         if scanner.scan(/(\$_)(\w+)/)
         end
       

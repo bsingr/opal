@@ -6,6 +6,7 @@ namespace :opal do
     out_dir = File.join(Dir.getwd, 'opal_spec')
     opal_spec_js_file = File.join(out_dir, 'opal_spec.js')
     opal_spec_html_file = File.join(out_dir, 'opal_spec.html')
+    opal_spec_css_file = File.join(out_dir, 'opal_spec.css')
     FileUtils.mkdir_p(out_dir)
     
     # spec source
@@ -40,6 +41,9 @@ namespace :opal do
       f.puts File.read(File.join(spec_dir, 'opal_spec.html'))
     end
     
+    File.open(opal_spec_css_file, 'w') do |f|
+      f.puts File.read(File.join(spec_dir, 'opal_spec.css'))
+    end
     
   end
 end

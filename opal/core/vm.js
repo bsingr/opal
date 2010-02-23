@@ -48,9 +48,9 @@ function Init_top_self() {
 };
 
 function rb_method_missing(recv, id, args) {
-  console.log(recv);
+  // console.log(recv);
   // console.log(args.join(","));
-  throw "method missing for: " + id
+  throw recv + ": method missing: " + id.ptr
 };
 
 /*
@@ -113,6 +113,7 @@ function rb_funcall(recv, id) {
   and quicker to call from VM, where args are given as an array
 */
 function rb_funcall2(recv, id, args) {
+  if (recv === null || recv === undefined) recv = nil;
   // console.log(id);
   // console.log(recv);
   var body = rb_search_method(recv.klass, id);

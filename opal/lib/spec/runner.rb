@@ -1,4 +1,5 @@
 require 'spec/runner/options'
+require 'spec/runner/reporter'
 require 'spec/runner/example_group_runner'
 
 module Spec

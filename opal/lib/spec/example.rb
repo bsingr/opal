@@ -1,3 +1,4 @@
+require 'spec/example/example_group_proxy'
 require 'spec/example/example_proxy'
 require 'spec/example/before_and_after_hooks'
 require 'spec/example/example_group_methods'

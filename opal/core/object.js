@@ -83,11 +83,11 @@ function rb_obj_not_equal(self, obj) {
 
 function rb_false() {
  return false;
-}
+};
 
 function rb_true() {
  return true;
-}
+};
 
 function rb_equal(self, obj) {
  var r;
@@ -286,6 +286,13 @@ function rb_obj_mod_eval(obj) {
   return _.call(_, obj);
 };
 
+function rb_obj_instance_exec(obj) {
+  var _ = opal_block; opal_block = nil;
+  if (_ == nil) throw "no block given for instance_exec"
+  var args = Array.prototype.slice.call(arguments);
+  return _.apply(_, args);
+};
+
 function rb_bool_to_s(bool) {
   return bool ? "true" : "false";
 };
@@ -446,6 +453,7 @@ function Init_Object() {
   rb_define_method(rb_mKernel, "module_eval", rb_obj_mod_eval, 0);
   rb_define_method(rb_cModule, "module_eval", rb_obj_mod_eval, 0);
   rb_define_method(rb_mKernel, "instance_eval", rb_obj_instance_eval, 0);
+  rb_define_method(rb_mKernel, "instance_exec", rb_obj_instance_exec, 0);
   rb_define_method(rb_mKernel, "send", rb_obj_send, -1);
   rb_define_method(rb_mKernel, "__send__", rb_obj_send, -1);
   

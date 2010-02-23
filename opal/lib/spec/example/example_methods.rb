@@ -20,18 +20,22 @@ module Spec
       # Description for example
       # 
       def description
-
+        @_proxy.description
       end
       
       # Actually run example
       # 
       def execute(run_options, instance_variables)
+        run_options.reporter.example_started(@_proxy)
         execution_error = nil
         begin
           instance_eval(&@_implementation)
         rescue Exception => e
           execution_error = "e"
         end
+        
+        run_options.reporter.example_finished(@_proxy.update(description), execution_error)
+        true
       end
       
     end

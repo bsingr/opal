@@ -178,6 +178,7 @@ function rb_num_equal(a, b) {
 };
 
 function rb_num_eql(a, b) {
+  // console.log("comparing " + a + " to " + b);
   return a === b;
 };
 

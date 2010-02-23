@@ -601,8 +601,9 @@ module Vienna
       end
       
       def generate_if_mod(stmt, context)
-        write "return " if context[:full_stmt] and context[:last_stmt]
-        write "(function(){"
+        write "return "  if context[:full_stmt] and context[:last_stmt]
+
+        # write "(function(){"
 
         # if/unless mod
         if stmt.node == :if_mod
@@ -614,7 +615,8 @@ module Vienna
         generate_stmt stmt[:expr], :full_stmt => false, :last_stmt => false
         write ")){"
         generate_stmt stmt[:stmt], :full_stmt => true, :last_stmt => false
-        write "}})()"
+        write "}"
+        # write "}})()"
         write ";" if context[:full_stmt]
       end
       
@@ -918,6 +920,18 @@ module Vienna
             generate_stmt stmt, :full_stmt => true, :last_stmt => false
           end
         end
+      end
+      
+      def generate_return(stmt, context)
+        write "return "
+        if stmt[:call_args][:args]
+          if stmt[:call_args][:args].length == 1
+            generate_stmt stmt[:call_args][:args].first, :full_stmt => false
+          else
+            abort "generate_return multiple args not yet done"
+          end
+        end
+        write ";" if context[:full_stmt]
       end
             
     end # end class

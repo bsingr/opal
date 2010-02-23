@@ -6,8 +6,11 @@ module Spec
       
       attr_reader :example_groups
       
+      attr_accessor :reporter
+      
       def initialize
         @example_groups = []
+        @reporter = Reporter.new(self)
       end
       
       def add_example_group(example_group)
@@ -25,6 +28,10 @@ module Spec
       def run_examples
         runner = ExampleGroupRunner.new(self)
         runner.run
+      end
+      
+      def formatters
+        []
       end
       
     end # end Options

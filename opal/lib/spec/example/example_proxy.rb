@@ -10,6 +10,11 @@ module Spec
         @description = description
       end
       
+      def update(description)
+        @description = description
+        self
+      end
+      
     end # ExampleProxy end
   end
 end

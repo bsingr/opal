@@ -7,9 +7,8 @@ module Spec
         match do |actual|
           actual.eql?(exp)
         end
-        
       end
-      puts "well.."
     end
+    
   end
 end

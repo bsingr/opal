@@ -81,6 +81,14 @@ function rb_mod_create() {
 // };
 
 function rb_include_module(klass, module) {
+  var c = klass;
+  while (module) {
+    if (module == rb_cObject) break; // hack, stop on rb_cObject for now
+    c = c.sup = rb_include_class_new(module, c);
+    module = module.sup;
+    // module = false;
+  }
+  return;
   // FIXME: need to check if already included, or its a parent etc etc.
   // console.log ("=== " + klass.iv_tbl.__classid__ + " << " + module.iv_tbl.__classid__);
   // console.log("       org sup:" + klass.sup.iv_tbl.__class_id);
@@ -100,7 +108,7 @@ function rb_include_class_new(mod, sup) {
   // console.log(mod);
   var klass = class_alloc(T_ICLASS, rb_cClass);
   // console.log();
-  if (mod.flags & T_ICLASS) throw "a"
+  if (mod.flags & T_ICLASS) mod = mod.klass;
   // console.log(mod.flags);
   
   klass.iv_tbl = mod.iv_tbl;

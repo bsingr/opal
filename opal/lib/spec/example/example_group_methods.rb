@@ -47,9 +47,24 @@ module Spec
       # 
       def run(run_options)
         examples = examples_to_run(run_options)
+        notify(run_options.reporter)
         success = true
         before_all_instance_variables = nil
         run_examples(success, before_all_instance_variables, examples, run_options)
+      end
+      
+      def set_description(*args)
+        # should be @description_args
+        @description = args.first
+        self
+      end
+      
+      def notify(reporter)
+      reporter.example_group_started(Spec::Example::ExampleGroupProxy.new(self))
+      end
+      
+      def description
+        @description ||= "PLACEHOLDER DESCRIPTION"
       end
       
       def examples_to_run(run_options)
@@ -72,6 +87,7 @@ module Spec
         @class_count ||= 0
         @class_count += 1
         klass = const_set("Subclass#{@class_count}", Class.new(self))
+        klass.set_description(*args)
         # puts klass
         Spec::Example::ExampleGroupFactory.register_example_group(klass)
         klass.module_eval(&group_block)
