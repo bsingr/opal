@@ -49,6 +49,7 @@ function Init_top_self() {
 
 function rb_method_missing(recv, id, args) {
   console.log(recv);
+  // console.log(args.join(","));
   throw "method missing for: " + id
 };
 

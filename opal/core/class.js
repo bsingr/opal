@@ -151,7 +151,7 @@ RClass.real = function(klass) {
 function class_alloc(type, klass) {
   var o = new RClass();
   o.klass = klass;
-  o.flags |= type;
+  o.flags = type;
   return o;
 }
 

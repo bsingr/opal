@@ -82,17 +82,35 @@ function rb_mod_create() {
 
 function rb_include_module(klass, module) {
   // FIXME: need to check if already included, or its a parent etc etc.
+  // console.log ("=== " + klass.iv_tbl.__classid__ + " << " + module.iv_tbl.__classid__);
+  // console.log("       org sup:" + klass.sup.iv_tbl.__class_id);
+  // console.log("       mod sup: " + module.sup.iv_tbl.__classid__);
   klass.sup = rb_include_class_new(module, klass);
-}
+  // console.log("       result sup: " + klass.sup.iv_tbl.__classid__);
+  // if (klass != rb_cObject)
+  // klass.sup.sup = module.sup;
+  // console.log("       result sup sup: " + klass.sup.sup.iv_tbl.__classid__);
+};
 
 
 function rb_include_class_new(mod, sup) {
+  // console.log("=== starting include - " + sup.iv_tbl.__classid__ + " " + sup.flags);
+  // console.log(sup);
+  // console.log(" from: " + mod.iv_tbl.__classid__ + " " + mod.flags);
+  // console.log(mod);
   var klass = class_alloc(T_ICLASS, rb_cClass);
+  // console.log();
+  if (mod.flags & T_ICLASS) throw "a"
+  // console.log(mod.flags);
+  
   klass.iv_tbl = mod.iv_tbl;
   klass.m_tbl = mod.m_tbl;
   klass.sup = sup.sup;
   klass.klass = mod;
-  // console.log('included class');
+  // console.log('included class ' + klass.iv_tbl.__classid__ + " into " + sup.iv_tbl.__classid__);
+  // console.log(sup);
+  // console.log("ok");
+  // console.log(klass.iv_tbl.__classid__);
   // console.log(klass);
   return klass;
 };

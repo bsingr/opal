@@ -311,12 +311,20 @@ function rb_obj_send(recv, id) {
 
 function rb_class_initialize(cls) {
   var sup = (arguments.length > 1) ? arguments[1] : rb_cObject;
+  // console.log("initializing from");
+  // console.log(sup);
   // console.log("setting class to " + sup.iv_tbl.__classid__);
+  // cls.klass = sup.klass;
+  cls.m_tbl = {};
   cls.sup = sup;
-  cls.m_tbl = { };
   // console.log(sup);
   rb_make_metaclass(cls, sup.klass);
   rb_class_inherited(sup, cls);
+  
+  
+  // console.log("new class");
+  // console.log(cls);
+  // console.log("done");
   return cls;
 };
 
@@ -338,25 +346,38 @@ function rb_mod_alias_method(cls, new_name, old_name) {
   throws error with the given exception as the exception class
 */
 function rb_f_raise() {
-  var exc = rb_eRuntimeError, msg = "";
+  var exc, msg = "";
   if (arguments.length > 1) {
     if (arguments[1].klass == rb_cString) {
       msg = arguments[1];
+      exc = vm_send(rb_eRuntimeError, "new", [msg], nil, 0);
+    }
+    else if (arguments[1].flags & T_OBJECT) {
+      exc = arguments[1];
     }
     else {
-      exc = arguments[1];
       if (arguments[2] && arguments[2].klass == rb_cString) {
         msg = arguments[2];
       }
+      exc = vm_send(arguments[1], "new", [msg], nil, 0);
     }
   }
   throw {
-    exception: vm_send(exc, "new", [msg], nil, 0),
+    exception: exc,
     toString: function() {
       // console.log(this);
       return this.exception.klass.iv_tbl.__classid__ + ": " + this.exception.iv_tbl.message;
     }
   }
+};
+
+function rb_mod_ancestors(cls) {
+  var a = [], k = cls;
+  while (k) {
+    a.push(k);
+    k = k.sup;
+  }
+  return a;
 };
 
 function Init_Object() {
@@ -488,7 +509,7 @@ function Init_Object() {
   rb_define_method(rb_cModule, "include", rb_mod_include, 1);
   // rb_define_method(rb_cModule, "include?", rb_mod_include_p, 1);
   // rb_define_method(rb_cModule, "name", rb_mod_name, 0);
-  // rb_define_method(rb_cModule, "ancestors", rb_mod_ancestors, 0);
+  rb_define_method(rb_cModule, "ancestors", rb_mod_ancestors, 0);
   // 
   // rb_define_private_method(rb_cModule, "attr", rb_mod_attr, -1);
   rb_define_private_method(rb_cModule, "attr_reader", rb_mod_attr_reader, -1);

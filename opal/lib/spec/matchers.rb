@@ -1,4 +1,5 @@
 require 'spec/matchers/operator_matcher'
+require 'spec/matchers/eql'
 
 module Spec
   

@@ -29,6 +29,17 @@ function rb_exc_message(exc) {
   return exc.iv_tbl.message;
 };
 
+// Generically raise an exception
+function rb_raise(exc, message) {
+  var e = rb_obj_alloc(exc);
+  rb_exc_initialize(e, message);
+  return rb_exc_raise(e);
+};
+
+function rb_exc_raise(exc) {
+  throw exc
+};
+
 function Init_Exception() {
   rb_eException = rb_define_class("Exception", rb_cObject);
   rb_define_singleton_method(rb_eException, "exception", rb_class_new_instance, -1);

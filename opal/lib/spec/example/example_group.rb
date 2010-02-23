@@ -7,6 +7,7 @@ module Spec
       include Spec::Example::ExampleMethods
       # FIXME: shouldnt need this here. Object.extend isnt behaving.
       extend Spec::Example::BeforeAndAfterHooks
+      include Spec::Matchers
     end
   end
 end

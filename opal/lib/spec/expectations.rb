@@ -1,5 +1,6 @@
 require 'spec/expectations/fail_with'
 require 'spec/expectations/handler'
+require 'spec/expectations/errors'
 
 module Kernel
   

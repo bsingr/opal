@@ -912,7 +912,7 @@ module Vienna
           end
           puts stmt[:stmt][:opt_rescue]
           write "}"
-          write "catch(e) { console.log('caught error'); }"
+          write "catch(e) {console.log(e.toString()); }"
         else
           stmt[:stmt][:compstmt].each do |stmt|
             generate_stmt stmt, :full_stmt => true, :last_stmt => false

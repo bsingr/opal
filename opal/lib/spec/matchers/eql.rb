@@ -2,7 +2,7 @@ module Spec
   
   module Matchers
     
-    def self.eql(expected)
+    def eql(expected)
       Matcher.new(:eql, expected) do |exp|
         match do |actual|
           actual.eql?(exp)
