@@ -22,11 +22,24 @@ function rb_exc_inspect(exc) {
 };
 
 function rb_exc_to_s(exc) {
-  return exc.iv_tbl.message;
+  return rb_exc_message(exc);
 };
 
 function rb_exc_message(exc) {
-  return exc.iv_tbl.message;
+  // console.log("into message");
+  // console.log(exc.toString());
+  // console.log("pfft");
+  var m;
+  if (!exc.iv_tbl.hasOwnProperty('message')) {
+    m = "NativeError: " + exc.message;
+  }
+  else {
+    m = exc.iv_tbl.message;
+  }
+  exc.iv_tbl = {message: m};
+  // console.log(exc.klass);
+  // throw exc;
+  return m;
 };
 
 // Generically raise an exception
@@ -42,6 +55,14 @@ function rb_exc_raise(exc) {
 
 function Init_Exception() {
   rb_eException = rb_define_class("Exception", rb_cObject);
+  
+  Error.prototype.klass = rb_eException;
+  Error.prototype.iv_tbl = { };
+  // Error.prototype.toString = function() { return "a" + ": " + this.message; };
+
+  // TypeError.prototype.klass = rb_eException;
+  // TypeError.prototype.iv_tbl = { };
+  
   rb_define_singleton_method(rb_eException, "exception", rb_class_new_instance, -1);
   
   // rb_define_method(rb_eException, "exception", rb_exc_exception, -1);

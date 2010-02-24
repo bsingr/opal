@@ -50,6 +50,9 @@ function rb_const_set(k, id, val) {
 }
 
 function rb_const_get(k, id) {
+  // console.log(id);
+  // console.log(k);
+  // console.log("a");
   var v, t = k;
   while (t) {
     if (v = t.iv_tbl[id]) return v;

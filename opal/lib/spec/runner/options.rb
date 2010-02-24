@@ -31,7 +31,7 @@ module Spec
       end
       
       def formatters
-        []
+        @formatters ||= [Spec::Runner::Formatter::HtmlFormatter.new(self)]
       end
       
     end # end Options

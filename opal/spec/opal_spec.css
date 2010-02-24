@@ -34,6 +34,12 @@ body {
   font-size: 1.2em;
 }
 
+#results {
+/*  position: relative;*/
+/*display: block;*/
+/*  background-color: blue;*/
+}
+
 .example_group {
   margin: 0 10px 5px;
   background: #fff;

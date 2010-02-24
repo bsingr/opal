@@ -31,8 +31,12 @@ module Spec
         begin
           instance_eval(&@_implementation)
         rescue Exception => e
-          execution_error = "e"
+          execution_error = e
         end
+        
+        # if execution_error
+          # puts "found an execution error! #{execution_error}"
+        # end
         
         run_options.reporter.example_finished(@_proxy.update(description), execution_error)
         true

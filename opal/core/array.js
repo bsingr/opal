@@ -147,7 +147,17 @@ function rb_ary_times(ary, n) {
 };
 
 function rb_ary_last(ary, num) {
-  if (ary.length == 0) return nil;
+  if (ary.length == 0) {
+    if (num != undefined) {
+      return [];
+    }
+    else {
+      return nil;
+    }
+  }
+  if (num != undefined) {
+    return ary.slice(ary.length - num, ary.length);
+  }
   return ary[ary.length - 1];
 };
 
@@ -155,10 +165,21 @@ function rb_ary_first(ary, num) {
   return ary[0];
 };
 
+function rb_ary_equal(a, b) {
+  if (a === b) return true;
+  if (b.klass !== rb_cArray) return false;
+  if (a.length !== b.length) return false;
+  for (var i = 0; i < a.length; i++) {
+    if (a[i] !== b[i]) return false;
+  }
+  return true;
+};
+
 function Init_Array() {
   
   rb_cArray = rb_define_class("Array", rb_cObject);
   Array.prototype.klass = rb_cArray;
+  Array.prototype.flags = T_ARRAY | T_OBJECT;
   
   // rb_include_module(rb_cArray, rb_mEnumerable);
   
@@ -174,7 +195,7 @@ function Init_Array() {
   // rb_define_method(rb_cArray, "to_ary", rb_ary_to_ary_m, 0);
   // rb_define_method(rb_cArray, "frozen?",  rb_ary_frozen_p, 0);
 
-  // rb_define_method(rb_cArray, "==", rb_ary_equal, 1);
+  rb_define_method(rb_cArray, "==", rb_ary_equal, 1);
   // rb_define_method(rb_cArray, "eql?", rb_ary_eql, 1);
   // rb_define_method(rb_cArray, "hash", rb_ary_hash, 0);
 

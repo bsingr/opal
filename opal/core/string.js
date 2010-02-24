@@ -161,6 +161,7 @@ function Init_String() {
   
   rb_cString = rb_define_class("String", rb_cObject);
   String.prototype.klass = rb_cString;
+  String.prototype.flags = T_OBJECT | T_STRING;
   rb_include_module(rb_cString, rb_mComparable);
   // rb_define_alloc_func(rb_cString, rb_str_alloc);
   

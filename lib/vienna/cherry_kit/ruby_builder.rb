@@ -699,7 +699,11 @@ module Vienna
       
       def generate_dot2(stmt, context)
         write "return " if context[:last_stmt] and context[:full_stmt]
-        write "true"
+        write "vm_newrange("
+        generate_stmt stmt[:start], :full_stmt => false
+        write ","
+        generate_stmt stmt[:ending], :full_stmt => false
+        write ",true)"
         write ";" if context[:full_stmt]
       end
       
@@ -914,7 +918,21 @@ module Vienna
           end
           puts stmt[:stmt][:opt_rescue]
           write "}"
-          write "catch(e) {console.log(e.toString()); }"
+          write "catch(e) {"
+          if stmt[:stmt][:opt_rescue][:var]
+            local = @iseq_current.lookup_local(stmt[:stmt][:opt_rescue][:var][:name])
+            unless local
+              local = @iseq_current.push_local_name(stmt[:stmt][:opt_rescue][:var][:name])
+            end
+            write "#{local} = e;"
+            # write "console.log(e);"
+            if stmt[:stmt][:opt_rescue][:stmt]
+              stmt[:stmt][:opt_rescue][:stmt].each do |s|
+                generate_stmt s, :full_stmt => true
+              end
+            end
+          end
+          write "}"
         else
           stmt[:stmt][:compstmt].each do |stmt|
             generate_stmt stmt, :full_stmt => true, :last_stmt => false
@@ -931,6 +949,12 @@ module Vienna
             abort "generate_return multiple args not yet done"
           end
         end
+        write ";" if context[:full_stmt]
+      end
+      
+      def generate_lparen(stmt, context)
+        write "return " if context[:last_stmt] and context[:full_stmt]
+        generate_stmt stmt[:stmt][0], :full_stmt => false
         write ";" if context[:full_stmt]
       end
             

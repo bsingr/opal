@@ -27,6 +27,25 @@
 
 var rb_cRange;
 
+var RRange = function(beg, end, inc) {
+  this.hash = opal_yield_hash();
+  this.klass = rb_cRange ;
+  this.flags = T_OBJECT;
+  this.iv_tbl = {};
+  this.beg = beg;
+  this.end = end;
+  this.inc = inc;
+  return this;
+};
+
+function rb_range_eqq(range, other) {
+  if (other.klass !== rb_cNumber) return false;
+  var beg = range.beg;
+  var end = range.inc ? range.end : range.end - 1;
+  if (other >= beg && other <= end) return true;
+  return false;
+};
+
 function Init_Range() {
   rb_cRange = rb_define_class("Range", rb_cObject);
   // rb_include_module(rb_cRange, rb_cEnumerable);
@@ -34,7 +53,7 @@ function Init_Range() {
   // rb_define_method(rb_cRange, "initialize", rb_range_initialize, -1);
   // rb_define_method(rb_cRange, "initialize_copy",rb_range_initialize_copy, 1);
   // rb_define_method(rb_cRange, "==", rb_range_eq, 1);
-  // rb_define_method(rb_cRange, "===", rb_range_eqq, 1);
+  rb_define_method(rb_cRange, "===", rb_range_eqq, 1);
   // rb_define_method(rb_cRange, "eql?", rb_range_eql, 1);
   // rb_define_method(rb_cRange, "hash", rb_range_hash, 0);
   // rb_define_method(rb_cRange, "each", rb_range_each, 0);

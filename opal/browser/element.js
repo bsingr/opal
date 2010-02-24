@@ -55,9 +55,15 @@ function opal_element_s_find(cls, str) {
       el = opal_oDocument;
     }
     else {
+      // console.log("trying " + str);
       var native = document.getElementById(str);
+      // console.log(native);
       if (native) el = opal_element_wrap(native);
     }
+  }
+  else if (str.klass === rb_cString) {
+    var native = document.getElementById(str);
+    if (native) el = opal_element_wrap(native);
   }
   
   if (el) {
@@ -118,6 +124,7 @@ function opal_element_css(el, styles) {
       if (key.klass == rb_cSymbol) key = key.ptr;
       // need to camelcase name : background_color => backgroundColor.
       console.log("setting " + val + " for " + key);
+      native.style[key] = val;
     }
   }
   else {
@@ -132,11 +139,14 @@ function opal_element_m_missing(el, sym) {
   var tag = document.createElement(tag_name);
   for (var i = 0; i < args.length; i++) {
     var cur = args[i];
+    if (cur === null || cur == undefined) continue;
     if (cur.klass == rb_cString) {
       tag.appendChild(document.createTextNode(cur));
     }
     else if (cur.klass == rb_cHash) {
-      
+      if (rb_hash_has_key(cur, ID2SYM('class'))) {
+        tag.className = rb_hash_aref(cur, ID2SYM('class'));
+      }
     }
     else {
       throw "bad param type for Element#method_missing (builder)"
@@ -144,7 +154,7 @@ function opal_element_m_missing(el, sym) {
   }
   
   native.appendChild(tag);
-  return el;
+  return opal_element_wrap(tag);
 };
 
 /*

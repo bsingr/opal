@@ -1,39 +1,10 @@
 #!/usr/bin/env ruby -wKU
 
-# Acts as the bin/main file
-
 require "spec"
 
+Dir[File.join('examples', '**', '*.rb')].each { |rb| require rb }
 
-
-describe "Array#last" do
-  
-  before do
-    puts "yikes!"
-  end
-  
-  # it "should do something"
-  
-  it "is" do
-    10.should eql(10)
-    10.shshshshshshs
-  end
-  
-  it "using eql" do
-    10.should == 20
-  end
-  
-  it "should erroe!"
-  
-  # describe "something else entierely" do
-    # it "should hopefully work"
-  # end
-  
+# We cannot run tests until document is loaded (as we write to document)
+Document.ready? do
+  Spec::Runner.run
 end
-
-
-# describe "bob" do
-  # example "wowoooowo"
-# end
-
-Spec::Runner.run

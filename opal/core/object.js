@@ -297,10 +297,22 @@ function rb_bool_to_s(bool) {
   return bool ? "true" : "false";
 };
 
+function rb_bool_and(bool, other) {
+  return bool ? RTEST(other) : false;
+};
+
+function rb_bool_or(bool, other) {
+  return bool ? true : RTEST(other);
+};
+
+function rb_bool_xor(bool, other) {
+  return bool ? !RTEST(other) : RTEST(other);
+};
+
+
 function rb_nil_nil_q() {
   return true;
 };
-
 
 function rb_mod_include(cls, mod) {
   return rb_include_module(cls, mod);
@@ -369,13 +381,12 @@ function rb_f_raise() {
       exc = vm_send(arguments[1], "new", [msg], nil, 0);
     }
   }
-  throw {
-    exception: exc,
-    toString: function() {
-      // console.log(this);
-      return this.exception.klass.iv_tbl.__classid__ + ": " + this.exception.iv_tbl.message;
-    }
-  }
+  // exc.toString = function() {
+    // return "an error string causing problems";
+    // console.log(this);
+    // return this.klass.iv_tbl.__classid__ + ": " + this.iv_tbl.message;
+  // };
+  throw exc
 };
 
 function rb_mod_ancestors(cls) {
@@ -385,6 +396,10 @@ function rb_mod_ancestors(cls) {
     k = k.sup;
   }
   return a;
+};
+
+function rb_mod_eqq(mod, arg) {
+  return rb_obj_is_kind_of(arg, mod);
 };
 
 function Init_Object() {
@@ -503,7 +518,7 @@ function Init_Object() {
   // 
   // 
   // rb_define_method(rb_cModule, "freeze", rb_mod_freeze, 0);
-  // rb_define_method(rb_cModule, "===", rb_mod_eqq, 1);
+  rb_define_method(rb_cModule, "===", rb_mod_eqq, 1);
   // rb_define_method(rb_cModule, "==", rb_obj_equal, 1);
   // rb_define_method(rb_cModule, "<=>",  rb_mod_cmp, 1);
   // rb_define_method(rb_cModule, "<",  rb_mod_lt, 1);
@@ -556,13 +571,11 @@ function Init_Object() {
   // 
   rb_cBoolean = rb_define_class("Boolean", rb_cObject);
   Boolean.prototype.klass = rb_cBoolean;
+  Boolean.prototype.flags = T_OBJECT | T_BOOLEAN;
   rb_define_method(rb_cBoolean, "to_s", rb_bool_to_s, 0);
   rb_define_method(rb_cBoolean, "inspect", rb_bool_to_s, 0);
-  // rb_define_method(rb_cTrueClass, "&", true_and, 1);
-  // rb_define_method(rb_cTrueClass, "|", true_or, 1);
-  // rb_define_method(rb_cTrueClass, "^", true_xor, 1);
-  // rb_undef_alloc_func(rb_cTrueClass);
-  // rb_undef_method(rb_cTrueClass.klass, "new");
-  // rb_define_global_const("TRUE", true);
+  rb_define_method(rb_cBoolean, "&", rb_bool_and, 1);
+  rb_define_method(rb_cBoolean, "|", rb_bool_or, 1);
+  rb_define_method(rb_cBoolean, "^", rb_bool_xor, 1);
 
 }

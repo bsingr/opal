@@ -15,7 +15,7 @@ module Spec
       end
       
       def example_group_started(example_group)
-        puts "started example group #{example_group.description.inspect}"
+        # puts "started example group #{example_group.description.inspect}"
         @example_group = example_group
         formatters.each do |f|
           f.example_group_started(example_group)
@@ -23,7 +23,7 @@ module Spec
       end
       
       def example_started(example)
-        puts "example started #{example.description.inspect}"
+        # puts "example started #{example.description.inspect}"
         formatters.each do |f|
           f.example_started(example)
         end
@@ -31,19 +31,37 @@ module Spec
       
       def example_finished(example, error)
         @example_count += 1
-        
+        # puts error
         if error.nil?
           example_passed(example)
         # need to check if error is the pending error
+        elsif Spec::Example::ExamplePendingError === error
+          example_pending(example, error.message)
         else
+          # puts error
           example_failed(example, error)
         end
       end
       
       def example_passed(example)
-        puts "example passed #{example.description.inspect}"
+        # puts "example passed #{example.description.inspect}"
         formatters.each do |f|
           f.example_passed(example)
+        end
+      end
+      
+      def example_failed(example, error)
+        failure = Failure.new(@example_group.description, example.description, error)
+        @failures << failure
+        formatters.each do |f|
+          f.example_failed(example, @failures.length, failure)
+        end
+      end
+      
+      def example_pending(example, message)
+        @pending_count += 1
+        formatters.each do |f|
+          f.example_pending(example, message)
         end
       end
       
@@ -61,6 +79,30 @@ module Spec
       def formatters
         @options.formatters
       end
+      
+      
+      class Failure
+        
+        attr_reader :exception
+        
+        def initialize(group_description, example_description, exception)
+          @example_name = "#{group_description} #{example_description}"
+          @exception = exception
+        end
+        
+        def header
+          if expectation_not_met?
+            "#{@example_name} FAILED"
+          else
+            "#{@exception.class.name} in #{@example_name}"
+          end
+        end
+        
+        def expectation_not_met?
+          true
+        end
+        
+      end # end Failure
       
     end # end Reporter
   end

@@ -52,7 +52,7 @@ function require() {
 // Boolean test. false if null, undefined, nil, or false
 function RTEST(val) {
   // console.log("val is:" + val);
-  return (val != null && val != undefined && val != nil && val != false) ? true : false;
+  return (val !== null && val !== undefined && val !== nil && val !== false) ? true : false;
 };
 
 /**

@@ -91,6 +91,10 @@ function rb_search_method(klass, id) {
     // console.log("searching for id: " + id);
   // console.log(klass);
   /// }
+  // if (!klass){ 
+    // console.log(id);
+    // console.log(klass);
+  // }
   var f, k = klass;
   while (!(f = k.m_tbl[id])) {
     k = k.sup;
@@ -113,6 +117,10 @@ function rb_funcall(recv, id) {
   and quicker to call from VM, where args are given as an array
 */
 function rb_funcall2(recv, id, args) {
+  // console.log("a");
+  // console.log(recv.constructor);
+  // if (!recv) console.log(recv);
+  // console.log(recv.klass);
   if (recv === null || recv === undefined) recv = nil;
   // console.log(id);
   // console.log(recv);
@@ -203,7 +211,10 @@ function vm_send(obj, id, args, block, flags) {
 };
 
 function vm_getconstant(base, id) {
+  // console.log("const getting" + id);
   if (base.flags & T_OBJECT) base = rb_class_real(base.klass);
+  // console.log("looking in base:");
+  // console.log(base);
   return rb_const_get(base, id);
 };
 
@@ -218,6 +229,10 @@ function vm_newhash() {
     rb_hash_aset(res, ary[i], ary[i + 1]);
   }
   return res;
+};
+
+function vm_newrange(beg, end, inc) {
+  return new RRange(beg, end, inc);
 };
 
 /**
