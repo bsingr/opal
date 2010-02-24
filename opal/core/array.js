@@ -175,6 +175,20 @@ function rb_ary_equal(a, b) {
   return true;
 };
 
+function rb_ary_pop_m(ary, num) {
+  if (num === undefined) {
+    return ary.pop();
+  }
+  else if (ary.length == 0) {
+    return [];
+  }
+  else {
+    var r = ary.slice(ary.length - num, ary.length);
+    ary.splice(ary.length - num, ary.length);
+    return r;
+  }
+};
+
 function Init_Array() {
   
   rb_cArray = rb_define_class("Array", rb_cObject);
@@ -208,7 +222,7 @@ function Init_Array() {
   // rb_define_method(rb_cArray, "concat", rb_ary_concat, 1);
   rb_define_method(rb_cArray, "<<", rb_ary_push, 1);
   // rb_define_method(rb_cArray, "push", rb_ary_push_m, -1);
-  // rb_define_method(rb_cArray, "pop", rb_ary_pop_m, -1);
+  rb_define_method(rb_cArray, "pop", rb_ary_pop_m, -1);
   // rb_define_method(rb_cArray, "shift", rb_ary_shift_m, -1);
   // rb_define_method(rb_cArray, "unshift", rb_ary_unshift_m, -1);
   // rb_define_method(rb_cArray, "insert", rb_ary_insert, -1);

@@ -98,7 +98,7 @@ function RObject(klass, type) {
 
 function RClass(klass, super_klass) {
   this.hash = opal_yield_hash();
-  this.toString = function() { return "<" + this.iv_tbl.__classid__ + ":" + this.hash + ">"; };
+  this.toString = function() { return this.iv_tbl.__classid__; };
   this.klass = klass ;
   this.sup = super_klass ;
   this.flags = T_CLASS ;
@@ -111,7 +111,7 @@ function RHash() {
   this.hash = opal_yield_hash();
   this.toString = function () { return "#<Hash:" + this.hash + ">" ;};
   this.klass = nil;
-  this.flags = nil;
+  this.flags = T_OBJECT | T_HASH;
   this.ifnone = nil;
   // ordered keys
   this.keys = [];

@@ -123,7 +123,7 @@ function opal_element_css(el, styles) {
       var key = styles.keys[i], val = styles.dict[key];
       if (key.klass == rb_cSymbol) key = key.ptr;
       // need to camelcase name : background_color => backgroundColor.
-      console.log("setting " + val + " for " + key);
+      // console.log("setting " + val + " for " + key);
       native.style[key] = val;
     }
   }

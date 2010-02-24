@@ -29,6 +29,7 @@ var rb_cString, rb_cSymbol;
 
 var RSymbol = function(ptr) {
   this.hash = opal_yield_hash();
+  this.flags = T_OBJECT | T_SYMBOL;
   this.klass = rb_cSymbol ;
   // this.$type = T_SYMBOL;
   this.toString = function() {

@@ -212,6 +212,9 @@ rule
             		    result = node :op_asgn, :lhs => val[0], :op => val[1], :rhs => val[2]
             		  }
             		| primary_value '[' opt_call_args rbracket tOP_ASGN command_call
+            		  {
+            		    puts "in here for #{val[0]}"
+            		  }
             		| primary_value '.' tIDENTIFIER tOP_ASGN command_call
             		| primary_value '.' tCONSTANT tOP_ASGN command_call
             		| primary_value tCOLON2 tIDENTIFIER tOP_ASGN command_call
@@ -409,6 +412,9 @@ rule
             		  }
             		| var_lhs tOP_ASGN arg kRESCUE_MOD arg
             		| primary_value '[' opt_call_args rbracket tOP_ASGN arg
+            		  {
+            		    result = node :aset_op_asgn, :recv => val[0], :call_args => val[2], :op => val[4], :arg => val[5]
+            		  }
             		| primary_value '.' tIDENTIFIER tOP_ASGN arg
             		  {
             		    result = node :op_asgn, :lhs => node(:call, :recv => val[0], :meth => val[2]), :op => val[3], :rhs => val[4]
@@ -691,6 +697,9 @@ rule
             		| kNOT '(' expr rparen
             		| kNOT '(' rparen
             		| operation brace_block
+            		  {
+            		    result = node :call, :recv => nil, :meth => val[0], :brace_block => val[1]
+            		  }
             		| method_call
             		  {
             		    # puts 2

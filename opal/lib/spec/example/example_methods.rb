@@ -31,6 +31,7 @@ module Spec
         begin
           instance_eval(&@_implementation)
         rescue Exception => e
+          # puts "the execution error is #{e.inspect}"
           execution_error = e
         end
         

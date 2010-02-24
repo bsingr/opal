@@ -58,6 +58,12 @@ function rb_match_aref(match, idx) {
   return match.iv_tbl.data[idx];
 };
 
+function rb_reg_eqq(reg, str) {
+  var m = reg.exec(str);
+  if (m == null) return false;
+  return true;
+};
+
 function Init_Regexp() {
   // rb_eRegexpError = rb_define_class("RegexpError", rb_eStandardError);
   
@@ -87,7 +93,7 @@ function Init_Regexp() {
   // rb_define_method(rb_cRegexp, "eql?", rb_reg_equal, 1);
   // rb_define_method(rb_cRegexp, "==", rb_reg_equal, 1);
   // rb_define_method(rb_cRegexp, "=~", rb_reg_match, 1);
-  // rb_define_method(rb_cRegexp, "===", rb_reg_eqq, 1);
+  rb_define_method(rb_cRegexp, "===", rb_reg_eqq, 1);
   // rb_define_method(rb_cRegexp, "~", rb_reg_match2, 0);
   rb_define_method(rb_cRegexp, "match", rb_reg_match_m, -1);
   // rb_define_method(rb_cRegexp, "to_s", rb_reg_to_s, 0);

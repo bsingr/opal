@@ -38,6 +38,8 @@ module Vienna
         
         attr_accessor :type, :local_current
         
+        attr_reader :block_arg_name
+        
         def initialize(type)
           @type = type
           # names => minimized names
@@ -211,6 +213,10 @@ module Vienna
               r << ",#{@args[a]}"
             end
             r << %{)\{}
+            # locals
+            if @locals.length > 0
+              r << "var #{@locals.each_value.to_a.join(",")};"
+            end
             # WTF? this should take "var $=$$;" but we get errors...huh!?!?
             # r << "if($$!=nil){var$=$$;}"
             # this seems to be the easiest way to do it, but its hela ugly 
@@ -581,6 +587,12 @@ module Vienna
       
       def generate_yield stmt, context
         write "return " if context[:full_stmt] and context[:last_stmt]
+        
+        # if we dont have the block name already, define it simply as "_"
+        unless @iseq_current.block_arg_name
+          @iseq_current.push_block_arg_name("_")
+        end
+        
         write "vm_yield(_,["
 
         if stmt[:call_args] and stmt[:call_args][:args]
@@ -925,7 +937,7 @@ module Vienna
               local = @iseq_current.push_local_name(stmt[:stmt][:opt_rescue][:var][:name])
             end
             write "#{local} = e;"
-            # write "console.log(e);"
+            # write "console.log('catch');console.log(e.klass);"
             if stmt[:stmt][:opt_rescue][:stmt]
               stmt[:stmt][:opt_rescue][:stmt].each do |s|
                 generate_stmt s, :full_stmt => true
@@ -954,7 +966,17 @@ module Vienna
       
       def generate_lparen(stmt, context)
         write "return " if context[:last_stmt] and context[:full_stmt]
-        generate_stmt stmt[:stmt][0], :full_stmt => false
+          generate_stmt stmt[:stmt][0], :full_stmt => false
+        write ";" if context[:full_stmt]
+      end
+      
+      def generate_aset_op_asgn(stmt, context)
+        write "return " if context[:full_stmt] and context[:last_stmt]
+        if stmt[:recv].node == :identifier
+          abort "unsupported. currently"
+        else
+          abort "bad recv node for aset_op_asgn (#{stmt[:recv]})"
+        end
         write ";" if context[:full_stmt]
       end
             

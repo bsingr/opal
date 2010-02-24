@@ -32,4 +32,88 @@ describe "The case statement" do
     when 1..20; true
     end.should == true
   end
+  
+  it "returns nil when no 'then' bodies are given" do
+    case "a"
+    when "a"
+    when "b"
+    end.should == nil
+  end
+  
+  it "evaluates the 'else' body when no other expression matches" do
+    case "c"
+    when "a"; 'foo'
+    when "b"; 'bar'
+    else 'zzz'
+    end.should == "zzz"
+  end
+  
+  it "returns nil when no expression matches and 'else' body is empty" do
+    case "c"
+    when "a"; "a"
+    when "b"; "b"
+    else
+    end.should == nil
+  end
+  
+  it "returns 2 when a then body is empty" do
+    case Object.new
+    when Number then
+      1
+    when String then
+      # ok
+    else
+      2
+    end.should == 2
+  end
+  
+  it "returns the statement following 'then'" do
+    case "a"
+    when "a" then "foo"
+    when "b" then "bar"
+    end.should == "foo"
+  end
+  
+  it "tests classes with case equality" do
+    case "a"
+    when String
+      "foo"
+    when Symbol
+      "bar"
+    end.should == "foo"
+  end
+  
+  it "tests with matching regexps" do
+    case "hello"
+    when /abc/; "first"
+    when /^hello/; "second"
+    end.should == "second"
+  end
+  
+  it "does not test with equality when given classes" do
+    case :symbol.class
+    when Symbol
+      "bar"
+    when String
+      "bar"
+    else
+      "foo"
+    end.should == "foo"
+  end
+  
+  it "takes a list of values" do
+    case "z"
+    when "a", "b", "c", "d"
+      "foo"
+    when "x", "y", "z"
+      "bar"
+    end.should == "bar"
+    
+    case "b"
+    when "a", "b", "c", "d"
+      "foo"
+    when "x", "y", "z"
+      "bar"
+    end.should == "foo"
+  end
 end

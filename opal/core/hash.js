@@ -30,7 +30,7 @@ var rb_cHash, rb_envtbl;
 function rb_hash_alloc(klass) {
   var hash = new RHash();
   hash.klass = klass;
-  FL_SET(hash, T_HASH);
+  // FL_SET(hash, T_HASH);
   hash.ifnone = nil;
   return hash;
 };
@@ -78,6 +78,18 @@ function rb_hash_delete(hash, k) {
   return r;
 };
 
+function rb_hash_equal(a, b) {
+  if (a === b) return true;
+  if (b.klass != rb_cHash) return false;
+  if (a.keys.length != b.keys.length) return false;
+  for (var i = 0; i < a.keys.length; i++) {
+    var k = a.keys[i];
+    var v = rb_hash_aref(a, k);
+    if (!vm_send(v, "==", [rb_hash_aref(b, b.keys[i])], nil, 0)) return false;
+  }
+  return true;
+};
+
 function Init_Hash() {
   rb_cHash = rb_define_class("Hash", rb_cObject);
   // rb_include_module(rb_cHash, rb_mEnumerable);
@@ -95,7 +107,7 @@ function Init_Hash() {
   // rb_define_method(rb_cHash,"to_s", rb_hash_inspect, 0);
   // rb_define_method(rb_cHash,"inspect", rb_hash_inspect, 0);
 
-  // rb_define_method(rb_cHash,"==", rb_hash_equal, 1);
+  rb_define_method(rb_cHash,"==", rb_hash_equal, 1);
   rb_define_method(rb_cHash,"[]", rb_hash_aref, 1);
   // rb_define_method(rb_cHash,"hash", rb_hash_hash, 0);
   // rb_define_method(rb_cHash,"eql?", rb_hash_eql, 1);

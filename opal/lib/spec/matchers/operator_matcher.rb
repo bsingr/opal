@@ -38,7 +38,7 @@ module Spec
         if actual.__send__(operator, expected)
           true
         else
-          fail_with_message("expected: #{expected.inspect}, but got #{actual.inspect}")
+          fail_with_message("expected: #{expected.inspect}, but got: #{actual.inspect} (using #{operator})")
         end
       end
     end
@@ -47,7 +47,7 @@ module Spec
       
       def __delegate_operator(actual, operator, expected)
         if actual.__send__(operator, expected)
-          fail_with_message("expected not: #{expected.inspect}, but got #{actual.inspect}")
+          fail_with_message("expected not: #{expected.inspect}, but got: #{actual.inspect} (using #{operator})")
         else
           false
         end

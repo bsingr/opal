@@ -31,6 +31,7 @@ module Spec
       
       def example_finished(example, error)
         @example_count += 1
+        # puts "error is #{error.inspect}"
         # puts error
         if error.nil?
           example_passed(example)

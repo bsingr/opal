@@ -266,6 +266,13 @@ function rb_nil_to_i() {
 };
 
 /**
+  ensure nil matches null and undefined as well as itself
+*/
+function rb_nil_eql(self, other) {
+  return (other === nil || other === null || other === undefined);
+};
+
+/**
   Object#instance_eval(&block)
   
   Currently, only takes blocks as params. Strings will be added once eval.js is
@@ -386,6 +393,7 @@ function rb_f_raise() {
     // console.log(this);
     // return this.klass.iv_tbl.__classid__ + ": " + this.iv_tbl.message;
   // };
+  // console.log("about to throw exc");
   throw exc
 };
 
@@ -400,6 +408,17 @@ function rb_mod_ancestors(cls) {
 
 function rb_mod_eqq(mod, arg) {
   return rb_obj_is_kind_of(arg, mod);
+};
+
+function rb_obj_object_id(obj) {
+  if (obj.hash != undefined) return obj.hash;
+  var hash = opal_yield_hash();
+  obj.hash = hash;
+  return hash;
+};
+
+function rb_mod_to_s(mod) {
+  return mod.iv_tbl.__classid__;
 };
 
 function Init_Object() {
@@ -465,6 +484,8 @@ function Init_Object() {
   // rb_define_method(rb_mKernel, "freeze", rb_obj_freeze, 0);
   // rb_define_method(rb_mKernel, "frozen?", rb_obj_frozen_p, 0);
   
+  rb_define_method(rb_mKernel, "object_id", rb_obj_object_id, 0);
+  
   rb_define_method(rb_mKernel, "module_eval", rb_obj_mod_eval, 0);
   rb_define_method(rb_cModule, "module_eval", rb_obj_mod_eval, 0);
   rb_define_method(rb_mKernel, "instance_eval", rb_obj_instance_eval, 0);
@@ -513,6 +534,7 @@ function Init_Object() {
   rb_define_method(rb_cNilClass, "|", rb_nil_or, 1);
   rb_define_method(rb_cNilClass, "^", rb_nil_xor, 1);
   rb_define_method(rb_cNilClass, "nil?", rb_nil_nil_q, 0);
+  rb_define_method(rb_cNilClass, "==", rb_nil_eql, 0);
   nil = { flags: T_OBJECT, klass: rb_cNilClass };
   // 
   // 
@@ -526,7 +548,7 @@ function Init_Object() {
   // rb_define_method(rb_cModule, ">",  rb_mod_gt, 1);
   // rb_define_method(rb_cModule, ">=", rb_mod_ge, 1);
   // rb_define_method(rb_cModule, "initialize_copy", rb_mod_init_copy, 1);
-  // rb_define_method(rb_cModule, "to_s", rb_mod_to_s, 0);
+  rb_define_method(rb_cModule, "to_s", rb_mod_to_s, 0);
   // rb_define_method(rb_cModule, "included_modules", rb_mod_included_modules, 0);
   rb_define_method(rb_cModule, "extend", rb_mod_extend, 1);
   rb_define_method(rb_cModule, "include", rb_mod_include, 1);
