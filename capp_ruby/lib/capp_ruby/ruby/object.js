@@ -186,6 +186,10 @@ function rb_bool_xor(self, sel, other) {
   return self ? !RTEST(other) : !RTEST(other);
 };
 
+function rb_obj_not(obj) {
+  return !RTEST(obj);
+};
+
 function Init_Object() {
   
   rb_cObject = objj_getClass("CPObject");
@@ -206,7 +210,7 @@ function Init_Object() {
   
   // rb_define_method(rb_cBasicObject, "==", rb_obj_equal, 1);
   // rb_define_method(rb_cBasicObject, "equal?", rb_obj_equal, 1);
-  // rb_define_method(rb_cBasicObject, "!", rb_obj_not, 0);
+  rb_define_method(rb_cBasicObject, "!", rb_obj_not, 0);
   // rb_define_method(rb_cBasicObject, "!=", rb_obj_not_equal, 1);
   
   rb_define_method(rb_cModule, "const_get:", rb_mod_const_get, -1);

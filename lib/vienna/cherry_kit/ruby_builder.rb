@@ -966,7 +966,13 @@ module Vienna
       
       def generate_lparen(stmt, context)
         write "return " if context[:last_stmt] and context[:full_stmt]
+        write "("
+        if stmt[:stmt] and stmt[:stmt][0]
           generate_stmt stmt[:stmt][0], :full_stmt => false
+        else
+          write "nil"
+        end
+        write ")"
         write ";" if context[:full_stmt]
       end
       
@@ -977,6 +983,14 @@ module Vienna
         else
           abort "bad recv node for aset_op_asgn (#{stmt[:recv]})"
         end
+        write ";" if context[:full_stmt]
+      end
+      
+      def generate_not(stmt, context)
+        write "return " if context[:full_stmt] and context[:last_stmt]
+        write "vm_send("
+        generate_stmt stmt[:expr], :full_stmt => false
+        write ",'!',[],nil, 8)"
         write ";" if context[:full_stmt]
       end
             

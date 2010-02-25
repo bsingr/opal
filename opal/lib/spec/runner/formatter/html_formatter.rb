@@ -67,7 +67,7 @@ module Spec
         def example_pending(example, message)
           make_yellow(Element['rspec-header']) unless @header_red
           make_yellow(@example_group_dt) unless @example_group_red
-          @example_group_dl.dd(:class => "spec not_implemented").span("example.description (PENDING: #{message})", :class => "not_implemented_spec_name")
+          @example_group_dl.dd(:class => "spec not_implemented").span("#{example.description} (PENDING: #{message})", :class => "not_implemented_spec_name")
         end
         
         def make_red(element)

@@ -113,7 +113,7 @@ function rb_sym_downcase(sym) {
 };
 
 function rb_str_capitalize(str) {
-  return str[0].toUpperCase() + str.substr(1);
+  return str[0].toUpperCase() + str.substr(1).toLowerCase();
 };
 
 function rb_sym_capitalize(sym) {

@@ -764,6 +764,9 @@ class Vienna::RubyParser < Racc::Parser
         when 'when'
           self.lex_state = :EXPR_BEG
           return [:kWHEN, scanner.matched]
+        when 'not'
+          self.lex_state == :EXPR_BEG
+          return [:kNOT, scanner.matched]
         when 'yield'
           self.lex_state = :EXPR_ARG
           return [:kYIELD, scanner.matched]

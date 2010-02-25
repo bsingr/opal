@@ -72,6 +72,9 @@ module Spec
       end
       
       def run_examples(success, instance_variables, examples, run_options)
+        # puts "#{self.inspect} #run_examples ... #{@before_each_parts.inspect}"
+        # puts @before_each_parts
+        # puts self
         examples.each do |example|
           # puts example
           # puts example_implementations[example]
@@ -100,6 +103,10 @@ module Spec
       
       def example_implementations
         @example_implementations ||= {}
+      end
+      
+      def example_group_hierarchy
+        @example_group_hierarchy ||= Spec::Example::ExampleGroupHierarchy.new(self)
       end
       
     end #end ExampleGroupMethods

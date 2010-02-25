@@ -15,7 +15,7 @@ module Spec
         match = matcher.matches?(actual)
         return match if match
         
-        Spec::Expectations.fail_with "must have failed"
+        Spec::Expectations.fail_with matcher.failure_message_for_should
         # if we have a matcher, we should not use PositiveOperator
         # if matcher
           # puts "need to use normal"
@@ -27,8 +27,13 @@ module Spec
     
     class NegativeExpectationHandler
       
-      def self.handle_matcher(actual, matcher, message)
-        Spec::Matchers::NegativeOperatorMatcher.new(actual)
+      def self.handle_matcher(actual, matcher, message, &block)
+        return Spec::Matchers::NegativeOperatorMatcher.new(actual) if matcher.nil?
+        
+        match = matcher.matches?(actual)
+        return match unless match
+        
+        Spec::Expectations.fail_with matcher.failure_message_for_should_not
       end
     end
     
