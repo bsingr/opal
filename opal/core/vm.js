@@ -55,6 +55,7 @@ function rb_method_missing(recv, id, args) {
   else if (recv.flags & T_MODULE) obj_type = ":Module";
   else obj_type = "";
   // console.log("well");
+  console.log(recv);
   return rb_raise(rb_eNameError, "undefined method `" + id.ptr + "` for " + recv + obj_type);
   
 };
@@ -105,6 +106,56 @@ function rb_search_method(klass, id) {
   while (!(f = k.m_tbl[id])) {
     k = k.sup;
     if (!k) return undefined;
+  }
+  return f;
+};
+
+
+/**
+  recv - Recveiver
+  id - method id
+  func - arguments.callee which initiated the super call. this helps us match
+  all other arguments are the actual args to pass
+*/
+function rb_super(recv, id, func) {
+  var args = Array.prototype.slice.call(arguments, 3);
+  if (recv === null || recv === undefined) recv = nil;
+  var body = rb_search_super_method(recv.klass, id, func);
+  if (!body) {
+    return rb_raise(rb_eNoMethodError, "super: no superclass method '" + id +"'");
+  }
+  
+  var imp = body.body, len = args.length;
+  
+  switch(len) {
+    // case -2: throw "-2 currently unimplemeneted: rb_funcall2"
+    // case -1: return imp(argc, args, recv);
+    case 0: return imp(recv);
+    case 1: return imp(recv, args[0]);
+    case 2: return imp(recv, args[0], args[1]);
+    case 3: return imp(recv, args[0], args[1], args[2]);
+    case 4: return imp(recv, args[0], args[1], args[2], args[3]);
+    case 5: return imp(recv, args[0], args[1], args[2], args[3], args[4]);
+    default: throw "currently unsupported argc length " + len
+  }
+  return nil;
+};
+
+function rb_search_super_method(klass, id, func) {
+  var f, k = klass;
+  // find the current method we are on:
+  // first lhs finds the right id
+  // then we need to make sure that its the current func: more than 2 supers in
+  // a row would be recursive otherwise
+  while (!((f = k.m_tbl[id]) && f != func)) {
+    if (!(k = k.sup)) return undefined;
+  }
+  // now, we can search from this point up. Any matching id is now the super for
+  // the current function. might be the Nth id in chain, but its the next one up
+  // from current.
+  if (!(k = k.sup)) return undefined;
+  while (!(f = k.m_tbl[id])) {
+    if (!(k = k.sup)) return undefined;
   }
   return f;
 };

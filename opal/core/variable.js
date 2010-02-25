@@ -64,7 +64,7 @@ function rb_const_get(k, id) {
     if (v = t.iv_tbl[id]) return v;
     t = t.parent;
   }
-  throw "NameError: uninitialized constant " + id + " in " + k.name
+  rb_raise(rb_eNameError, "uninitialized constant " + id + " in " + k.iv_tbl.__classid__);
   return nil;
 }
 

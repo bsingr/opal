@@ -57,7 +57,7 @@ function rb_ary_includes(ary, val) {
 
 function rb_ary_push(ary, val) {
   ary.push(val);
-  return val;
+  return ary;
 };
 
 function rb_ary_collect(ary) {

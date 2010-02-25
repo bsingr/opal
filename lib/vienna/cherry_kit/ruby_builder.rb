@@ -58,6 +58,20 @@ module Vienna
           @code = []
         end
         
+        def method_id=(method_id)
+          @method_id = method_id
+        end
+        
+        def method_id
+          if @method_id
+            @method_id
+          elsif @parent_iseq
+            @parent_iseq.method_id
+          else
+            nil
+          end
+        end
+        
         # push "normal" arg name
         def push_arg_name(name)
           id = @local_current
@@ -119,6 +133,10 @@ module Vienna
           if @type == RubyBuilder::ISEQ_TYPE_BLOCK
             @local_current = other.local_current
           end
+        end
+        
+        def parent_iseq
+          @parent_iseq
         end
 
         def finalize
@@ -230,6 +248,10 @@ module Vienna
         
       end
       
+      def current_method_id
+        @iseq_current.method_id
+      end
+      
       
       def generate_tree(tree)
         top_iseq = iseq_stack_push(ISEQ_TYPE_TOP)
@@ -324,6 +346,7 @@ module Vienna
         current_iseq = @iseq_current
         def_iseq = iseq_stack_push(ISEQ_TYPE_METHOD)
         def_iseq.parent_iseq = current_iseq
+        def_iseq.method_id = stmt[:fname]
         
         # normal args
         if stmt[:arglist].arg
@@ -1002,6 +1025,22 @@ module Vienna
         write "vm_send("
         generate_stmt stmt[:expr], :full_stmt => false
         write ",'!',[],nil, 8)"
+        write ";" if context[:full_stmt]
+      end
+      
+      def generate_super(stmt, context)
+        write "return " if context[:full_stmt] and context[:last_stmt]
+        write %{rb_super($,"#{current_method_id}",arguments.callee}
+        
+        # args, depends on is super has parens etc, simple for now: parens
+        if stmt[:call_args] and stmt[:call_args][:args]
+          stmt[:call_args][:args].each do |arg|
+            write ","
+            generate_stmt arg, :full_stmt => false
+          end
+        end
+        
+        write ")"
         write ";" if context[:full_stmt]
       end
             
