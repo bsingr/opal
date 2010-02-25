@@ -494,7 +494,7 @@ module Vienna
         if str[:value].length == 0
           write %{""}
         elsif str[:value].length == 1
-          write %{"#{str[:value][0][:value]}"}
+          write %{"#{str[:value][0][:value].gsub(/\"/, '\"')}"}
         else
           write "["
           str[:value].each do |s|
@@ -593,16 +593,21 @@ module Vienna
           @iseq_current.push_block_arg_name("_")
         end
         
-        write "vm_yield(_,["
+        # for now, normal args or a single *splat
+        if stmt[:call_args] and stmt[:call_args][:args][0].node == :splat
+          write "vm_yield(_,[])"
+        else          
+          write "vm_yield(_,["
 
-        if stmt[:call_args] and stmt[:call_args][:args]
-          stmt[:call_args][:args].each do |a|
-            write "," unless stmt[:call_args][:args].first == a
-            generate_stmt a, :full_stmt => false, :last_stmt => false
+          if stmt[:call_args] and stmt[:call_args][:args]
+            stmt[:call_args][:args].each do |a|
+              write "," unless stmt[:call_args][:args].first == a
+              generate_stmt a, :full_stmt => false, :last_stmt => false
+            end
           end
+          write "])"
         end
-
-        write "])"
+        
         write ";" if context[:full_stmt]
       end
       
@@ -720,7 +725,13 @@ module Vienna
       end
       
       def generate_dot3(stmt, context)
-        
+        write "return " if context[:last_stmt] and context[:full_stmt]
+        write "vm_newrange("
+        generate_stmt stmt[:start], :full_stmt => false
+        write ","
+        generate_stmt stmt[:ending], :full_stmt => false
+        write ",false)"
+        write ";" if context[:full_stmt]        
       end
       
       def generate_alias(stmt, context)

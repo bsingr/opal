@@ -15,6 +15,10 @@ function rb_exc_initialize(exc) {
   else {
     exc.iv_tbl.message = exc.klass.iv_tbl.__classid__;
   }
+  
+  exc.toString = function() { 
+    return exc.klass.iv_tbl.__classid__ + ": " + exc.iv_tbl.message;
+  };
 };
 
 function rb_exc_inspect(exc) {

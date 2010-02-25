@@ -158,6 +158,11 @@ function rb_str_intern(str) {
   return ID2SYM(str);
 };
 
+function rb_str_reverse(str) {
+  // console.log(str);
+  return str.split("").reverse().join("");
+};
+
 function Init_String() {
   
   rb_cString = rb_define_class("String", rb_cObject);
@@ -218,7 +223,7 @@ function Init_String() {
   // rb_define_method(rb_cString, "bytes", rb_str_each_byte, 0);
   // rb_define_method(rb_cString, "chars", rb_str_each_char, 0);
   // rb_define_method(rb_cString, "codepoints", rb_str_each_codepoint, 0);
-  // rb_define_method(rb_cString, "reverse", rb_str_reverse, 0);
+  rb_define_method(rb_cString, "reverse", rb_str_reverse, 0);
   // rb_define_method(rb_cString, "concat", rb_str_concat, 1);
   // rb_define_method(rb_cString, "<<", rb_str_concat, 1);
   // rb_define_method(rb_cString, "crypt", rb_str_crypt, 1);

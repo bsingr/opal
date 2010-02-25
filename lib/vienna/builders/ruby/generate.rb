@@ -517,6 +517,8 @@ module Vienna
         generate_tertiary stmt, context
       when :dot2
         generate_dot2 stmt, context
+      when :dot3
+        generate_dot3 stmt, context
       when :__FILE__
         generate__FILE__ stmt, context
       when :opt_plus

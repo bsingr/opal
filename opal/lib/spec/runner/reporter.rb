@@ -67,14 +67,19 @@ module Spec
       end
       
       def start(number_of_examples)
-        # @start_time = Time.now
-        formatters.each do |f|
-          f.start(number_of_examples)
-        end
+        @start_time = Time.now
+        # formatters.each do |f|
+          # f.start(number_of_examples)
+        # end
       end
       
       def end
-        # @end_time = Time.now
+        @end_time = Time.now
+      end
+      
+      def dump
+        time_taken = (@end_time - @start_time) / 1000
+        puts "Finished in #{time_taken} seconds"
       end
       
       def formatters

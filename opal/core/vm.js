@@ -49,10 +49,12 @@ function Init_top_self() {
 
 function rb_method_missing(recv, id, args) {
   var obj_type;
+  // console.log("eeek " + id);
   if (recv.flags & T_OBJECT) obj_type = ":Object";
   else if (recv.flags & T_CLASS) obj_type = ":Class";
   else if (recv.flags & T_MODULE) obj_type = ":Module";
   else obj_type = "";
+  // console.log("well");
   return rb_raise(rb_eNameError, "undefined method `" + id.ptr + "` for " + recv + obj_type);
   
 };
