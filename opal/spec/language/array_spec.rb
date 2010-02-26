@@ -1,4 +1,4 @@
-describe "Array lierals" do
+describe "Array literals" do
   
   it "[] should return a new array populated with the given elements" do
     array = [1, 'a', nil]

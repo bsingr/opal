@@ -17,10 +17,15 @@ module Spec
       # Do actual run
       # 
       def run
+        # puts "preparing"
         prepare
+        # puts "doing each"
         example_groups.each do |group|
+          # puts "an each"
+          # puts group
           group.run(@options)
         end
+        # puts "finishing"
         finish
       end
       

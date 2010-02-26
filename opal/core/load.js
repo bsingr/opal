@@ -74,7 +74,7 @@ function rb_require_file(file_path) {
 /**
   Main entry point for a require statement.
 */
-function rb_f_require(obj, path) {
+function rb_f_require(obj, id, _, path) {
   path = rb_file_s_expand_path(1, [path], nil);
   // the file this was called from (basically last but one sf)
   // var called_from_file = rb_top_vm.cfs[rb_top_vm.cfs.length - 2].iseq[3];

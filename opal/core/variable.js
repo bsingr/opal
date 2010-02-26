@@ -55,6 +55,8 @@ function rb_const_get(k, id) {
   // console.log("a");
   var v, t = k;
   while (t) {
+    // console.log(t.iv_tbl.__classid__);
+    // console.log(t);
     if (v = t.iv_tbl[id]) return v;
     t = t.sup;
   }
@@ -64,6 +66,7 @@ function rb_const_get(k, id) {
     if (v = t.iv_tbl[id]) return v;
     t = t.parent;
   }
+  console.log("raising name error for " + id);
   rb_raise(rb_eNameError, "uninitialized constant " + id + " in " + k.iv_tbl.__classid__);
   return nil;
 }
@@ -80,6 +83,7 @@ function rb_const_get_full(k, id) {
     if (v = t.iv_tbl[id]) return v;
     t = t.parent;
   }
+  console.log("raising name error for " + id);
   throw "NameError: uninitialized constant " + id + " in " + k.name
   return nil;
 }

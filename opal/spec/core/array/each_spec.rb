@@ -1,5 +1,5 @@
+
 describe "Array#each" do
-  
   it "yields each element to the block" do
     a = []
     x = [1, 2, 3]

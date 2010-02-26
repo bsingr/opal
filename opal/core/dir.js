@@ -30,12 +30,12 @@ var rb_cDir;
 // glob
 // /^\/app\/.*\/charles\/[^\/]*\.rb$/
 //   \/app\/.*\/[^\/]*\.rb
-function rb_dir_s_glob(dir) {
-  if (arguments.length > 2) throw "unsupported Dir.glob.. FIXME"
+function rb_dir_s_glob(dir, id, _) {
+  if (arguments.length > 4) throw "unsupported Dir.glob.. FIXME"
   
   var result = [], eof = false;
   
-  var scanner = new vn_ruby_string_scanner(arguments[1]);
+  var scanner = new vn_ruby_string_scanner(arguments[3]);
   while (!eof) {
     // ** does not HAVE to include a dir, so capture **/ to match .* which will
     // match a dir, or no dir.. allows both to work together.

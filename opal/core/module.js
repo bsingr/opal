@@ -81,6 +81,8 @@ function rb_mod_create() {
 // };
 
 function rb_include_module(klass, module) {
+  // console.log("include into " + klass.iv_tbl.__classid__);
+  // console.log(module);
   var c = klass;
   while (module) {
     if (module == rb_cObject) break; // hack, stop on rb_cObject for now
@@ -88,6 +90,7 @@ function rb_include_module(klass, module) {
     module = module.sup;
     // module = false;
   }
+  // console.log("sklass.sup is now " + klass.sup.klass);
   return;
   // FIXME: need to check if already included, or its a parent etc etc.
   // console.log ("=== " + klass.iv_tbl.__classid__ + " << " + module.iv_tbl.__classid__);
@@ -98,6 +101,7 @@ function rb_include_module(klass, module) {
   // if (klass != rb_cObject)
   // klass.sup.sup = module.sup;
   // console.log("       result sup sup: " + klass.sup.sup.iv_tbl.__classid__);
+  
 };
 
 

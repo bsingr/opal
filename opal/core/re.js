@@ -58,7 +58,7 @@ function rb_match_aref(match, idx) {
   return match.iv_tbl.data[idx];
 };
 
-function rb_reg_eqq(reg, str) {
+function rb_reg_eqq(reg, id, _, str) {
   var m = reg.exec(str);
   if (m == null) return false;
   return true;

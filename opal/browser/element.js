@@ -36,8 +36,7 @@ function opal_element_wrap(wrap) {
     a = Element.find(:my_div)
     a.div "My Info", :class => "my_title_div"
 */
-function opal_element_s_find(cls, str) {
-  var _ = opal_block; opal_block = nil;
+function opal_element_s_find(cls, id, _, str) {
   var el;
   // First case: empty string, nil, or nothing is passed: return el as it is.
   if (!str || str === nil) return el;
@@ -111,13 +110,14 @@ function opal_element_on_click(el) {
     element.css :background_color => "green"
     => element
 */
-function opal_element_css(el, styles) {
+function opal_element_css(el, id, _, styles) {
   // return self when no style
   if (!styles) return el;
   
   var native = el.native;
   
   if (styles.klass === rb_cHash) {
+    // console.log(styles);
     var style = native.style || native;
     for (var i = 0; i < styles.keys.length; i++) {
       var key = styles.keys[i], val = styles.dict[key];
@@ -128,12 +128,12 @@ function opal_element_css(el, styles) {
     }
   }
   else {
-    console.log("we are getting individual property");
+    // console.log("we are getting individual property");
   }
 };
 
-function opal_element_m_missing(el, sym) {
-  var args = Array.prototype.slice.call(arguments, 2);
+function opal_element_m_missing(el, id, _, sym) {
+  var args = Array.prototype.slice.call(arguments, 4);
   var tag_name = sym.ptr;
   var native = el.native;
   var tag = document.createElement(tag_name);
@@ -144,8 +144,8 @@ function opal_element_m_missing(el, sym) {
       tag.appendChild(document.createTextNode(cur));
     }
     else if (cur.klass == rb_cHash) {
-      if (rb_hash_has_key(cur, ID2SYM('class'))) {
-        tag.className = rb_hash_aref(cur, ID2SYM('class'));
+      if (rb_hash_has_key(cur, "", nil, ID2SYM('class'))) {
+        tag.className = rb_hash_aref(cur, "", nil, ID2SYM('class'));
       }
     }
     else {

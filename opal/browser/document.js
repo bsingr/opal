@@ -27,8 +27,8 @@ var opal_oDocument;
       puts "document is ready"
     end
 */
-function opal_document_ready_q(doc) {
-  var _ = opal_block; opal_block = nil;
+function opal_document_ready_q(doc, id, _) {
+  // var _ = opal_block; opal_block = nil;
   
   if (_ !== nil) { // block_given?
     // if doc is ready, we just execute the code (ready blocks already done)

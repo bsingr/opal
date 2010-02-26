@@ -173,11 +173,11 @@ function rb_num_even_p(a) {
   return false;
 };
 
-function rb_num_equal(a, b) {
+function rb_num_equal(a, id, _, b) {
   return a === b;
 };
 
-function rb_num_eql(a, b) {
+function rb_num_eql(a, id, _, b) {
   // console.log("comparing " + a + " to " + b);
   return a === b;
 };
@@ -215,6 +215,8 @@ function rb_num_uminus(a) {
 function Init_Number() {
   
   rb_cNumber = rb_define_class("Number", rb_cObject);
+  rb_const_set(rb_cObject, "Fixnum", rb_cNumber);
+  rb_const_set(rb_cObject, "Float", rb_cNumber);
   Number.prototype.klass = rb_cNumber;
   Number.prototype.flags = T_NUMBER | T_OBJECT;
   

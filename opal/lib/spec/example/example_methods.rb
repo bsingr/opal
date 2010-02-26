@@ -13,8 +13,11 @@ module Spec
       # it has access to Matchers, which is included
       # 
       def initialize(example_proxy, &implementation)
+        # puts "i1"
         @_proxy = example_proxy
+        # puts "i2"
         @_implementation = implementation
+        # puts @_implementation
       end
       
       def before_each_example
@@ -38,6 +41,7 @@ module Spec
       # Actually run example
       # 
       def execute(run_options, instance_variables)
+        # puts "in example_methods#execute"
         run_options.reporter.example_started(@_proxy)
         execution_error = nil
         

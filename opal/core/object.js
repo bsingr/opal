@@ -32,201 +32,180 @@
 var rb_cBasicObject, rb_cObject, rb_cModule, rb_cClass;
 var rb_cNilClass, rb_cBoolean;
 
-/**
- Call super method
-*/
-var rb_supcall = function rb_supcall(from, self, id, args) {
- var method = self.$klass.$search_super_method(from, id);
- if (!method) throw 'RObject#call cannot find super method for: ' + id ;
-
- switch(args.length) {
-   case 0: return method(self, id);
-   case 1: return method(self, id, args[0]);
-   case 2: return method(self, id, args[0], args[1]);
-   case 3: return method(self, id, args[0], args[1], args[2]);
-   case 4: return method(self, id, args[0], args[1], args[2], args[3]);
- }
-
- return method.apply(self, arguments);
-};
- 
-
-function rb_obj_alloc(klass) {
+function rb_obj_alloc(klass, id, _) {
   return rb_class_allocate_instance(klass);
- // return rb_funcall(klass, 'allocate', 0);
-}
+};
+
+function rb_class_allocate_instance(klass, id, _) {
+  var o = new RObject();
+  o.klass = klass;
+  FL_SET(o, T_OBJECT);
+  return o;
+};
 
 function rb_obj_dummy() {
- return nil;
-}
+  return nil;
+};
 
-function rb_class_allocate_instance(klass) {
- var o = new RObject();
- o.klass = klass;
- FL_SET(o, T_OBJECT);
- return o;
-}
+function rb_obj_equal($, id, _, obj) {
+  if ($ == obj) return true;
+  return false;
+};
 
-function rb_obj_equal(self, obj) {
- if (self == obj) return true;
- return false;
-}
+function rb_obj_not($, id, _) {
+  return RTEST($) ? false : true;
+};
 
-function rb_obj_not(self) {
- return RTEST(self) ? false : true;
-}
-
-function rb_obj_not_equal(self, obj) {
- var r = rb_funcall(self, "==", obj);
- return RTEST(r) ? false : true;
-}
+function rb_obj_not_equal($, id, _, obj) {
+  return RTEST(rb_funcall($, "==", obj)) ? false : true;
+};
 
 function rb_false() {
- return false;
+  return false;
 };
 
 function rb_true() {
- return true;
+  return true;
 };
 
-function rb_equal(self, obj) {
- var r;
- if (self == obj) return true;
- r = rb_funcall(self, "==", obj);
- if (RTEST(r)) return true;
- return false;
-}
+function rb_equal($, id, _, obj) {
+  var r;
+  if ($ == obj) return true;
+  r = rb_funcall($, "==", obj);
+  if (RTEST(r)) return true;
+  return false;
+};
 
 function rb_obj_match() {
- return nil;
-}
-
-function rb_obj_not_match(self, obj) {
- var r = rb_funcall(self, "=~", obj);
- return RTEST(r) ? false : true;
-}
-
-function rb_class_real(klass) {
- if (!klass) return nil;
- while (FL_TEST(klass, FL_SINGLETON) || FL_TEST(klass, T_ICLASS)) {
-   klass = klass.sup;
- }
- return klass;
-}
-
-function rb_obj_class(self) {
- return rb_class_real(self.klass);
-}
-
-function rb_obj_clone(self) {
- return self;
-}
-
-function rb_obj_dup(self) {
- return self;
-}
-
-function rb_obj_init_copy(self) {
- return self;
-}
-
-function rb_any_to_s(self) {
- var c = rb_obj_classname(self);
- return "#<" + c + ":" + self.hash + ">";
+  return nil;
 };
 
-function rb_obj_classname(obj) {
+function rb_obj_not_match($, id, _, obj) {
+  var r = rb_funcall($, "=~", obj);
+  return RTEST(r) ? false : true;
+};
+
+function rb_class_real(klass) {
+  if (!klass) return nil;
+  while (FL_TEST(klass, FL_SINGLETON) || FL_TEST(klass, T_ICLASS)) {
+    klass = klass.sup;
+  }
+  return klass;
+};
+
+function rb_obj_class(self) {
+  return rb_class_real(self.klass);
+};
+
+function rb_obj_clone(self) {
+  return self;
+};
+
+function rb_obj_dup(self) {
+  return self;
+};
+
+function rb_obj_init_copy(self) {
+  return self;
+};
+
+function rb_any_to_s(self, id, _) {
+ var c = rb_obj_classname(self);
+ if (self.flags & T_OBJECT) {
+   return "#<" + c + ":" + self.hash + ">";
+ }
+ else {
+   return c;
+ }
+ // return (self.flags & T_OBJECT ? "" : "#<") + c + ":" + self.hash + ">";
+};
+
+function rb_obj_classname(obj, id, _) {
   var klass;
   if (obj.flags & T_OBJECT) 
     klass = rb_class_real(obj.klass);
   else
-    klass = obj.klass;
-  
+    klass = obj;
+  // console.log(klass);
   return klass.iv_tbl.__classid__;
 };
 
-function rb_obj_inspect(self) {
- return rb_any_to_s(self);
+function rb_obj_inspect(self, id, _) {
+  return rb_any_to_s(self);
 };
 
-function rb_class_new_instance(klass) {
+function rb_class_new_instance(klass, id, _) {
   var o = rb_obj_alloc(klass);
-  var argv = Array.prototype.slice.call(arguments, 1);
-  // var call_args = [o, "initialize"];
-  // for (var i = 0; i < argc; i++) {
-    // call_args.push(argv[i]);
-  // }
-  rb_funcall2(o, "initialize", argv);
-
+  var argv = Array.prototype.slice.call(arguments, 3);
+  rb_funcall3(o, "initialize", _, argv);
+  // console.log("after initialize" + argv);
   return o;
 };
 
-function rb_f_puts(recv) {
-  var argv = Array.prototype.slice.call(arguments, 1), argc = arguments.length - 1;
-  for (var i = 0; i < argc; i++) {
+function rb_f_puts(recv, id, _) {
+  var argv = Array.prototype.slice.call(arguments, 3)
+  for (var i = 0; i < argv.length; i++) {
     console.log(vm_send(argv[i], "inspect", [], nil, 8));
   }
 };
 
-function rb_mod_attr_reader(recv) {
-  var argv = Array.prototype.slice.call(arguments, 1);
+function rb_mod_attr_reader(recv, id, _) {
+  var argv = Array.prototype.slice.call(arguments, 3);
   for (var i = 0; i < argv.length; i++) {
     var s = argv[i].ptr;
-    var f = new Function('r', 'return rb_ivar_get(r, "@' + s + '");');
+    var f = new Function('r','id','_','return rb_ivar_get(r, "@' + s + '");');
     rb_define_method(recv, s, f, 0);
   }
   return nil;
 };
 
-function rb_mod_attr_writer(recv) {
-  var argv = Array.prototype.slice.call(arguments, 1);
+function rb_mod_attr_writer(recv, id, _) {
+  var argv = Array.prototype.slice.call(arguments, 3);
   for (var i = 0; i < argv.length; i++) {
     var s = argv[i].ptr;
-    var f = new Function('r', 'v', 'return rb_ivar_set(r, "@' + s + '", v);');
+    var f = new Function('r','id','_','v','return rb_ivar_set(r, "@'+s+'", v);');
     rb_define_method(recv, s + '=', f, 1);
   }
   return nil;  
 };
 
-function rb_mod_attr_accessor(recv) {
+function rb_mod_attr_accessor(recv, id, _) {
   rb_mod_attr_reader.apply(recv, arguments);
   rb_mod_attr_writer.apply(recv, arguments);
   return nil;
 };
 
-function rb_mod_const_set(mod, id, val) {
+function rb_mod_const_set(mod, id, _, name, val) {
   // FIXME: should really check that id is valid... i.e. does it start with an
   // uppercase letter.
-  rb_const_set(mod, id, val);
+  rb_const_set(mod, name, val);
   return val;
 };
 
-function rb_obj_respond_to(argc, argv, obj) {
-  // first arg is a symbol to use
-  var id = argv[0].ptr;
-  var f = rb_search_method(obj.klass, id);
+function rb_obj_respond_to(obj, id, _, sym) {
+  var f = rb_search_method(obj.klass, sym.ptr);
   if (f) return true;
   return false;
 };
 
-function rb_obj_is_instance_of(obj, c) {
+function rb_obj_is_instance_of(obj, id, _, c) {
   if (rb_class_real(obj.klass) == c) {
     return true;
   }
   return false;
 };
 
-function rb_obj_is_kind_of(obj, c) {
+function rb_obj_is_kind_of(obj, id, _, c) {
   var k = obj.klass;
   while (k) {
+    
     if (k == c) return true;
     k = k.sup;
   }
   return false;
 };
 
-function rb_obj_tap(obj) {
-  var _ = opal_block; opal_block = nil;
+function rb_obj_tap(obj, id, _) {
   vm_yield(_, [obj]);
   return obj;
 };
@@ -239,16 +218,16 @@ function rb_nil_inspect() {
   return "nil";
 };
 
-function rb_nil_and(n, obj) {
+function rb_nil_and(n, id, _, obj) {
   return false;
 };
 
-function rb_nil_or(n, obj) {
+function rb_nil_or(n, id, _, obj) {
   if (obj === nil || obj === false) return false;
   return true;
 };
 
-function rb_nil_xor(n, obj) {
+function rb_nil_xor(n, id, _, obj) {
   if (obj === nil || obj === false) return false;
   return true;
 };
@@ -268,7 +247,7 @@ function rb_nil_to_i() {
 /**
   ensure nil matches null and undefined as well as itself
 */
-function rb_nil_eql(self, other) {
+function rb_nil_eql(self, id, _, other) {
   return (other === nil || other === null || other === undefined);
 };
 
@@ -278,25 +257,28 @@ function rb_nil_eql(self, other) {
   Currently, only takes blocks as params. Strings will be added once eval.js is
   finished. Throws error if string given (for now)
 */
-function rb_obj_instance_eval(obj, str) {
+function rb_obj_instance_eval(obj, id, _, str) {
   if (str) {
     return rb_vm_eval_str(obj, str);
   }
-  var _ = opal_block; opal_block = nil;
   if (_ == nil) throw "no block given for instance_eval."
-  return _.call(_, obj);
+  return _.call(_, obj, nil, nil, obj);
 };
 
-function rb_obj_mod_eval(obj) {
-  var _ = opal_block; opal_block = nil;
+function rb_obj_mod_eval(obj, id, _) {
   if (_ == nil) throw "no block given for module_eval."
   return _.call(_, obj);
 };
 
-function rb_obj_instance_exec(obj) {
-  var _ = opal_block; opal_block = nil;
+function rb_obj_instance_exec(obj, id, _) {
+  // console.log("well, here first");
   if (_ == nil) throw "no block given for instance_exec"
-  var args = Array.prototype.slice.call(arguments);
+  var args = Array.prototype.slice.call(arguments, 3);
+  args.unshift(nil);
+  args.unshift(nil);
+  // recv
+  args.unshift(obj); 
+  // console.log("this bit in exec");
   return _.apply(_, args);
 };
 
@@ -304,15 +286,15 @@ function rb_bool_to_s(bool) {
   return bool ? "true" : "false";
 };
 
-function rb_bool_and(bool, other) {
+function rb_bool_and(bool, id, _, other) {
   return bool ? RTEST(other) : false;
 };
 
-function rb_bool_or(bool, other) {
+function rb_bool_or(bool, id, _, other) {
   return bool ? true : RTEST(other);
 };
 
-function rb_bool_xor(bool, other) {
+function rb_bool_xor(bool, id, _, other) {
   return bool ? !RTEST(other) : RTEST(other);
 };
 
@@ -321,22 +303,22 @@ function rb_nil_nil_q() {
   return true;
 };
 
-function rb_mod_include(cls, mod) {
+function rb_mod_include(cls, id, _, mod) {
   return rb_include_module(cls, mod);
 };
 
-function rb_mod_extend(cls, mod) {
+function rb_mod_extend(cls, id, _, mod) {
   // possibly fix back to (cls.klass, mod)
   return rb_include_module(rb_singleton_class(cls), mod);
 };
 
-function rb_obj_send(recv, id) {
-  var args = Array.prototype.slice.call(arguments, 2);
-  return vm_send(recv, id, args, nil, 8);
+function rb_obj_send(recv, id, _, mid) {
+  var args = Array.prototype.slice.call(arguments, 4);
+  return vm_send(recv, mid, args, nil, 8);
 };
 
-function rb_class_initialize(cls) {
-  var sup = (arguments.length > 1) ? arguments[1] : rb_cObject;
+function rb_class_initialize(cls, id, _) {
+  var sup = (arguments.length > 3) ? arguments[3] : rb_cObject;
   // console.log("initializing from");
   // console.log(sup);
   // console.log("setting class to " + sup.iv_tbl.__classid__);
@@ -354,7 +336,7 @@ function rb_class_initialize(cls) {
   return cls;
 };
 
-function rb_mod_alias_method(cls, new_name, old_name) {
+function rb_mod_alias_method(cls, id, _, new_name, old_name) {
   return rb_define_alias(cls, new_name.ptr, old_name.ptr);
 };
 
@@ -371,29 +353,37 @@ function rb_mod_alias_method(cls, new_name, old_name) {
   ==========================
   throws error with the given exception as the exception class
 */
-function rb_f_raise() {
+function rb_f_raise($, id, _) {
+  // console.log("raising " + arguments[3]);
   var exc, msg = "";
-  if (arguments.length > 1) {
-    if (arguments[1].klass == rb_cString) {
-      msg = arguments[1];
+  if (arguments.length > 3) {
+    if (arguments[3].klass == rb_cString) {
+      msg = arguments[3];
+      // console.log("route a");
       exc = vm_send(rb_eRuntimeError, "new", [msg], nil, 0);
     }
-    else if (arguments[1].flags & T_OBJECT) {
-      exc = arguments[1];
+    else if (arguments[3].flags & T_OBJECT) {
+      // console.log("route b");
+      exc = arguments[3];
     }
     else {
-      if (arguments[2] && arguments[2].klass == rb_cString) {
+      if (arguments[4] && arguments[4].klass == rb_cString) {
         msg = arguments[2];
       }
-      exc = vm_send(arguments[1], "new", [msg], nil, 0);
+      // console.log("route c");
+      exc = vm_send(arguments[3], "new", [msg], nil, 0);
     }
+  }
+  else {
+    throw "rb_f_raise needs atleast 3 args!!"
   }
   // exc.toString = function() {
     // return "an error string causing problems";
     // console.log(this);
     // return this.klass.iv_tbl.__classid__ + ": " + this.iv_tbl.message;
   // };
-  // console.log("about to throw exc");
+  // console.log("about to throw exc " + arguments[3]);
+  // console.log(exc);
   throw exc
 };
 
@@ -406,8 +396,12 @@ function rb_mod_ancestors(cls) {
   return a;
 };
 
-function rb_mod_eqq(mod, arg) {
-  return rb_obj_is_kind_of(arg, mod);
+function rb_mod_eqq(mod, id, _, arg) {
+  // console.log("matching #=== " + mod);
+  // console.log(mod);
+  // console.log(" arg: " + arg);
+  // console.log(arg);
+  return rb_obj_is_kind_of(arg, "", nil, mod);
 };
 
 function rb_obj_object_id(obj) {
@@ -419,6 +413,10 @@ function rb_obj_object_id(obj) {
 
 function rb_mod_to_s(mod) {
   return mod.iv_tbl.__classid__;
+};
+
+function rb_class_superclass(klass) {
+  return klass.sup;
 };
 
 function Init_Object() {
@@ -586,7 +584,7 @@ function Init_Object() {
   rb_define_method(rb_cClass, "new", rb_class_new_instance, -1);
   rb_define_method(rb_cClass, "initialize", rb_class_initialize, -1);
   // rb_define_method(rb_cClass, "initialize_copy", rb_class_init_copy, 1);
-  // rb_define_method(rb_cClass, "superclass", rb_class_superclass, 0);
+  rb_define_method(rb_cClass, "superclass", rb_class_superclass, 0);
   // rb_define_alloc_func(rb_cClass, rb_class_s_alloc);
   // rb_undef_method(rb_cClass, "extend_object");
   // rb_undef_method(rb_cClass, "append_features");

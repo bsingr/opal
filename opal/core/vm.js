@@ -29,13 +29,13 @@ function Init_VM() {
 };
 
 var opal_top_self;
-var opal_block;
+// var opal_block;
 
 function opal_main_to_s() {
   return "main";
 };
 
-function opal_main_include(top, inc) {
+function opal_main_include(top, id, _, inc) {
   return rb_include_module(rb_cObject, inc);
 };
 
@@ -47,16 +47,16 @@ function Init_top_self() {
   rb_define_singleton_method(opal_top_self, "include", opal_main_include, 1);
 };
 
-function rb_method_missing(recv, id, args) {
+function rb_method_missing(recv, id, _, mid, args) {
   var obj_type;
   // console.log("eeek " + id);
   if (recv.flags & T_OBJECT) obj_type = ":Object";
   else if (recv.flags & T_CLASS) obj_type = ":Class";
   else if (recv.flags & T_MODULE) obj_type = ":Module";
   else obj_type = "";
-  // console.log("well");
-  console.log(recv);
-  return rb_raise(rb_eNameError, "undefined method `" + id.ptr + "` for " + recv + obj_type);
+  // console.log("well " + mid.ptr);
+  // console.log(recv);
+  return rb_raise(rb_eNameError, "undefined method `" + mid.ptr + "` for " + rb_funcall(recv, "inspect") + obj_type);
   
 };
 
@@ -130,12 +130,12 @@ function rb_super(recv, id, func) {
   switch(len) {
     // case -2: throw "-2 currently unimplemeneted: rb_funcall2"
     // case -1: return imp(argc, args, recv);
-    case 0: return imp(recv);
-    case 1: return imp(recv, args[0]);
-    case 2: return imp(recv, args[0], args[1]);
-    case 3: return imp(recv, args[0], args[1], args[2]);
-    case 4: return imp(recv, args[0], args[1], args[2], args[3]);
-    case 5: return imp(recv, args[0], args[1], args[2], args[3], args[4]);
+    case 0: return imp(recv, id, nil);
+    case 1: return imp(recv, id, nil, args[0]);
+    case 2: return imp(recv, id, nil, args[0], args[1]);
+    case 3: return imp(recv, id, nil, args[0], args[1], args[2]);
+    case 4: return imp(recv, id, nil, args[0], args[1], args[2], args[3]);
+    case 5: return imp(recv, id, nil, args[0], args[1], args[2], args[3], args[4]);
     default: throw "currently unsupported argc length " + len
   }
   return nil;
@@ -174,12 +174,8 @@ function rb_funcall(recv, id) {
   and quicker to call from VM, where args are given as an array
 */
 function rb_funcall2(recv, id, args) {
-  // console.log("a");
-  // console.log(recv.constructor);
-  // if (!recv) console.log(recv);
-  // console.log(recv.klass);
   if (recv === null || recv === undefined) recv = nil;
-  // console.log(id);
+  // console.log("searching in " + id);
   // console.log(recv);
   var body = rb_search_method(recv.klass, id);
   if (!body) {
@@ -187,28 +183,43 @@ function rb_funcall2(recv, id, args) {
     return rb_funcall2(recv, "method_missing", args);
   }
   var imp = body.body, len = args.length;
-  
-  // if (len >= 0 && argc != len) {
-  //   throw "rb_eArgError: wrong number of arguments(" + argc+ " for " + len + ")" + " in method: " + id
-  // }
-  
-  // console.log(args.join(",") + " : " + args.length);
-  // console.log(imp);
-  
-  // console.log("for " + id);
-  // console.log(args);
-  
+    
   switch(len) {
     // case -2: throw "-2 currently unimplemeneted: rb_funcall2"
     // case -1: return imp(argc, args, recv);
-    case 0: return imp(recv);
-    case 1: return imp(recv, args[0]);
-    case 2: return imp(recv, args[0], args[1]);
-    case 3: return imp(recv, args[0], args[1], args[2]);
-    case 4: return imp(recv, args[0], args[1], args[2], args[3]);
-    case 5: return imp(recv, args[0], args[1], args[2], args[3], args[4]);
+    case 0: return imp(recv, id, nil);
+    case 1: return imp(recv, id, nil, args[0]);
+    case 2: return imp(recv, id, nil, args[0], args[1]);
+    case 3: return imp(recv, id, nil, args[0], args[1], args[2]);
+    case 4: return imp(recv, id, nil, args[0], args[1], args[2], args[3]);
+    case 5: return imp(recv, id, nil, args[0], args[1], args[2], args[3], args[4]);
     default: throw "currently unsupported argc length " + len
   } 
+};
+
+function rb_funcall3(recv, id, _, args) {
+  if (recv === null || recv === undefined) recv = nil;
+  
+  var body = rb_search_method(recv.klass, id);
+  if (!body) {
+    // console.log ("method missing " + id);
+    // console.log(recv);
+    args.unshift(ID2SYM(id));
+    return rb_funcall2(recv, "method_missing", args);
+  }
+  var imp = body.body, len = args.length;
+    
+  switch(len) {
+    // case -2: throw "-2 currently unimplemeneted: rb_funcall2"
+    // case -1: return imp(argc, args, recv);
+    case 0: return imp(recv, id, _);
+    case 1: return imp(recv, id, _, args[0]);
+    case 2: return imp(recv, id, _, args[0], args[1]);
+    case 3: return imp(recv, id, _, args[0], args[1], args[2]);
+    case 4: return imp(recv, id, _, args[0], args[1], args[2], args[3]);
+    case 5: return imp(recv, id, _, args[0], args[1], args[2], args[3], args[4]);
+    default: throw "currently unsupported argc length " + len
+  }
 };
 
 function vm_defineclass(base, sup, id, body, type) {
@@ -261,9 +272,9 @@ function vm_definemethod(base, id, body, is_singleton) {
 };
 
 function vm_send(obj, id, args, block, flags) {
-  if (block !== nil) opal_block = block;
-  var r = rb_funcall2(obj, id, args);
-  opal_block = nil;
+  // if (block !== nil) opal_block = block;
+  var r = rb_funcall3(obj, id, block, args);
+  // opal_block = nil;
   return r;
 };
 
@@ -283,7 +294,7 @@ function vm_setconstant(base, id, val) {
 function vm_newhash() {
   var ary = Array.prototype.slice.call(arguments), res = rb_hash_new();
   for (var i = 0; i < ary.length; i += 2) {
-    rb_hash_aset(res, ary[i], ary[i + 1]);
+    rb_hash_aset(res, "", nil, ary[i], ary[i + 1]);
   }
   return res;
 };
@@ -300,9 +311,14 @@ function vm_newrange(beg, end, inc) {
   block does this itself.
 */
 function vm_yield(block, args) {
-  if (block == nil) throw "vm_yield: no block given"
+  if (block == nil) rb_raise(rb_eArgError, "yield: no block given");
   // console.log(block);
   args.unshift(nil);
+  args.unshift(nil);
+  args.unshift(nil);
+  // console.log(args);/
+  // args.unshift(nil);
+  // args.unshift(nil);
   return block.apply(block, args);
   // return block(nil);
 };

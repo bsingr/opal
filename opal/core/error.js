@@ -8,9 +8,9 @@
 
 var rb_eException, rb_eSystemExit, rb_eFatal, rb_eSignal, rb_eInterrupt, rb_eStandardError, rb_eTypeError, rb_eArgError, rb_eIndexError, rb_eKeyError, rb_eRangeError, rb_eScriptError, rb_eSyntaxError, rb_eLoadError, rb_eNotImpError, rb_eNameError, rb_eNoMethodError, rb_eRuntimeError;
 
-function rb_exc_initialize(exc) {
-  if (arguments[1] && arguments[1].klass == rb_cString) {
-    exc.iv_tbl.message = arguments[1];
+function rb_exc_initialize(exc, id, _) {
+  if (arguments[3] && arguments[3].klass == rb_cString) {
+    exc.iv_tbl.message = arguments[3];
   }
   else {
     exc.iv_tbl.message = exc.klass.iv_tbl.__classid__;
@@ -35,6 +35,7 @@ function rb_exc_message(exc) {
   // console.log("pfft");
   var m;
   if (!exc.iv_tbl.hasOwnProperty('message')) {
+    // throw exc.location
     m = "NativeError: " + exc.message;
   }
   else {
@@ -49,7 +50,7 @@ function rb_exc_message(exc) {
 // Generically raise an exception
 function rb_raise(exc, message) {
   var e = rb_obj_alloc(exc);
-  rb_exc_initialize(e, message);
+  rb_exc_initialize(e, "", nil, message);
   return rb_exc_raise(e);
 };
 

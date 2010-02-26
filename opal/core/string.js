@@ -62,7 +62,7 @@ function rb_sym_inspect(sym) {
   return ":" + sym.ptr;
 };
 
-function rb_sym_equal(sym1, sym2) {
+function rb_sym_equal(sym1, id, _, sym2) {
   if (sym1 === sym2) return true;
   return false;
 };
@@ -81,7 +81,7 @@ function rb_sym_to_sym(sym) {
 
 function rb_sym_to_proc(sym) {
   var id = sym.ptr;
-  var f = function($$, o) {
+  var f = function($$, id, _, o) {
     var args = Array.prototype.slice.call(arguments, 2);
     return vm_send(o, id, args, nil, 8);
   };
@@ -120,15 +120,15 @@ function rb_sym_capitalize(sym) {
   return ID2SYM(rb_str_capitalize(sym.ptr));
 };
 
-function rb_str_equal(a, b) {
+function rb_str_equal(a, id, _, b) {
   return a === b;
 };
 
-function rb_str_eql(a, b) {
+function rb_str_eql(a, id, _, b) {
   return a === b;
 };
 
-function rb_str_plus(a, b) {
+function rb_str_plus(a, id, _, b) {
   return a + b;
 };
 

@@ -41,20 +41,21 @@ function rb_proc_to_proc(proc) {
   return proc;
 };
 
-function rb_proc_call(proc) {
-  var args = Array.prototype.slice.call(arguments, 1);
+function rb_proc_call(proc, id, _) {
+  // console.log("caling proc");
+  var args = Array.prototype.slice.call(arguments, 3);
+  args.unshift(nil);
+  args.unshift(nil);
   args.unshift(nil);
   return proc.apply(proc, args);
 };
 
-function rb_proc_s_new(cls) {
-  var _ = opal_block; opal_block = nil;
+function rb_proc_s_new(cls, id, _) {
   if (_ == nil) throw "Proc#new no block given"
   return _;
 };
 
-function rb_proc_lambda(cls) {
-  var _ = opal_block; opal_block = nil;
+function rb_proc_lambda(cls, id, _) {
   if (_ == nil) throw "#lambda no block given"
   return _;
 };
@@ -64,8 +65,8 @@ function rb_obj_define_method(obj) {
   return rb_mod_define_method(obj);
 };
 
-function rb_mod_define_method(obj, sym) {
-  var _ = opal_block; opal_block = nil;
+function rb_mod_define_method(obj, id, _, sym) {
+  // var _ = opal_block; opal_block = nil;
   var id;
   if (_ == nil) throw "#define_method no block given"
   if (sym.klass == rb_cString) {
@@ -83,6 +84,7 @@ function rb_mod_define_method(obj, sym) {
 function Init_Proc() {
   rb_cProc = rb_define_class("Proc", rb_cObject);
   Function.prototype.klass = rb_cProc;
+  Function.prototype.flags = T_OBJECT | T_PROC;
   
   rb_define_singleton_method(rb_cProc, "new", rb_proc_s_new, 0);
   

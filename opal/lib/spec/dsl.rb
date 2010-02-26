@@ -7,7 +7,6 @@ module Spec
       
       def describe(*args, &block)
         Spec::Example::ExampleGroupFactory.create_example_group(*args, &block)
-        # puts args
         # instance_eval &block
         # a = Class.new
         # puts a

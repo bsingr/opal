@@ -151,7 +151,7 @@ module Vienna
         
         # r is array to append strings for outputting
         def deal_with_method_args(r)
-          r << "function($"
+          r << "function($,id,_"
           
           norm = @norm_arg_names.length
           opt = @opt_arg_names.length
@@ -168,7 +168,7 @@ module Vienna
           elsif norm == 0 && opt == 0 && post == 0 && rest
             r << ",#{@args[@rest_arg_name]}"
             r << "){"
-            r << %{#{@args[@rest_arg_name]}=Array.prototype.slice.call(arguments,1);}
+            r << %{#{@args[@rest_arg_name]}=Array.prototype.slice.call(arguments,3);}
             
           # Case 3: just normal args (any number)
           # def a(l,m,n,o,p)
@@ -186,6 +186,7 @@ module Vienna
           case @type
           when RubyBuilder::ISEQ_TYPE_TOP
             r << "function($){"
+            r << "var _ = nil;"
             # locals
             if @locals.length > 0
               r << "var #{@locals.each_value.to_a.join(",")};"
@@ -213,7 +214,7 @@ module Vienna
             
             # block arg name
             if @block_arg_name != nil
-              r << "var _ = opal_block; opal_block = nil;"
+              # r << "var _ = opal_block; opal_block = nil;"
             end
             
             # locals
@@ -226,7 +227,7 @@ module Vienna
             r << "}"
             
           when RubyBuilder::ISEQ_TYPE_BLOCK
-            r << %{function($$}
+            r << %{function($$,__,ID}
             @norm_arg_names.each do |a|
               r << ",#{@args[a]}"
             end
@@ -238,7 +239,7 @@ module Vienna
             # WTF? this should take "var $=$$;" but we get errors...huh!?!?
             # r << "if($$!=nil){var$=$$;}"
             # this seems to be the easiest way to do it, but its hela ugly 
-            r << "with($$==nil ? {} : {$:$$}){"
+            r << "with({$:($$==nil?$:$$),_:(__==nil?_:__)}){"
             r << @code.join("")
             r << "}"
             r << "}"
@@ -246,10 +247,6 @@ module Vienna
           r
         end
         
-      end
-      
-      def current_method_id
-        @iseq_current.method_id
       end
       
       
@@ -612,9 +609,9 @@ module Vienna
         write "return " if context[:full_stmt] and context[:last_stmt]
         
         # if we dont have the block name already, define it simply as "_"
-        unless @iseq_current.block_arg_name
-          @iseq_current.push_block_arg_name("_")
-        end
+        # unless @iseq_current.block_arg_name
+          # @iseq_current.push_block_arg_name("_")
+        # end
         
         # for now, normal args or a single *splat
         if stmt[:call_args] and stmt[:call_args][:args][0].node == :splat
@@ -1030,7 +1027,7 @@ module Vienna
       
       def generate_super(stmt, context)
         write "return " if context[:full_stmt] and context[:last_stmt]
-        write %{rb_super($,"#{current_method_id}",arguments.callee}
+        write %{rb_super($,id,arguments.callee}
         
         # args, depends on is super has parens etc, simple for now: parens
         if stmt[:call_args] and stmt[:call_args][:args]

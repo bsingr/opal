@@ -16,7 +16,7 @@ function rb_time_to_s(time) {
   return time.native.toString();
 };
 
-function rb_time_minus(a, b) {
+function rb_time_minus(a, id, _, b) {
   return a.native - b.native;
 };
 

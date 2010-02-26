@@ -37,8 +37,8 @@ if (!Array.prototype.indexOf){
 	}
 }
 
-function rb_ary_each(ary) {
-  var _ = opal_block; opal_block = nil;
+function rb_ary_each(ary, id, _) {
+  // var _ = opal_block; opal_block = nil;
   var i;
   // if (!rb_block_given_p()) {
     // throw "return enumerator thingy"
@@ -55,13 +55,12 @@ function rb_ary_includes(ary, val) {
   return false;
 };
 
-function rb_ary_push(ary, val) {
+function rb_ary_push(ary, id, _, val) {
   ary.push(val);
   return ary;
 };
 
-function rb_ary_collect(ary) {
-  var _ = opal_block; opal_block = nil;
+function rb_ary_collect(ary, id, _) {
   var i, res = [];
   for (i = 0; i < ary.length; i++) {
     res.push(vm_yield(_, [ary[i]]));
@@ -97,11 +96,11 @@ function rb_ary_select(ary) {
   return res;
 };
 
-function rb_ary_aref(ary, idx) {
+function rb_ary_aref(ary, id, _, idx) {
   return ary[idx];
 };
 
-function rb_ary_aset(ary, idx, val) {
+function rb_ary_aset(ary, id, _, idx, val) {
   // console.log("index is" + idx);
   return ary[idx] = val;
 };
@@ -146,7 +145,7 @@ function rb_ary_times(ary, n) {
   }
 };
 
-function rb_ary_last(ary, num) {
+function rb_ary_last(ary, id, _, num) {
   if (ary.length == 0) {
     if (num != undefined) {
       return [];
@@ -165,17 +164,17 @@ function rb_ary_first(ary, num) {
   return ary[0];
 };
 
-function rb_ary_equal(a, b) {
+function rb_ary_equal(a, id, _, b) {
   if (a === b) return true;
   if (b.klass !== rb_cArray) return false;
   if (a.length !== b.length) return false;
   for (var i = 0; i < a.length; i++) {
-    if (a[i] !== b[i]) return false;
+    if (!rb_funcall(a[i], "==", b[i])) return false;
   }
   return true;
 };
 
-function rb_ary_pop_m(ary, num) {
+function rb_ary_pop_m(ary, id, _, num) {
   if (num === undefined) {
     return ary.pop();
   }
@@ -186,6 +185,17 @@ function rb_ary_pop_m(ary, num) {
     var r = ary.slice(ary.length - num, ary.length);
     ary.splice(ary.length - num, ary.length);
     return r;
+  }
+};
+
+function rb_ary_at(ary, id, _, at) {
+  if (at >= 0) {
+    if (at > ary.length) return nil;
+    return ary[at];
+  }
+  else {
+    if (at < -ary.length) return nil;
+    return ary[ary.length + at];
   }
 };
 
@@ -215,7 +225,7 @@ function Init_Array() {
 
   rb_define_method(rb_cArray, "[]", rb_ary_aref, -1);
   rb_define_method(rb_cArray, "[]=", rb_ary_aset, -1);
-  // rb_define_method(rb_cArray, "at", rb_ary_at, 1);
+  rb_define_method(rb_cArray, "at", rb_ary_at, 1);
   // rb_define_method(rb_cArray, "fetch", rb_ary_fetch, -1);
   rb_define_method(rb_cArray, "first", rb_ary_first, -1);
   rb_define_method(rb_cArray, "last", rb_ary_last, -1);

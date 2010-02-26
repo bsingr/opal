@@ -39,7 +39,7 @@ module Spec
         elsif Spec::Example::ExamplePendingError === error
           example_pending(example, error.message)
         else
-          # puts error
+          # puts "comparing #{error} to #{Spec::Example::ExamplePendingError}"
           example_failed(example, error)
         end
       end

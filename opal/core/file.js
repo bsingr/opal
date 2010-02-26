@@ -108,8 +108,8 @@ function rb_file_s_dirname(cls, dirname) {
   // return "/dirname";
 };
 
-function rb_file_s_join(cls) {
-  return Array.prototype.slice.call(arguments, 1).join("/");
+function rb_file_s_join(cls, id, _) {
+  return Array.prototype.slice.call(arguments, 3).join("/");
 };
 
 function rb_file_s_expand_path(argc, args, obj) {

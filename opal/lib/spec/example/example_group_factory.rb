@@ -10,6 +10,7 @@ module Spec
       end
       
       def self.create_example_group(*args, &block)
+        # puts "here #{args.to_s}"
         ExampleGroup.describe(*args, &block)
       end
     end

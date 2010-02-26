@@ -38,13 +38,13 @@ var RRange = function(beg, end, exc) {
   return this;
 };
 
-function rb_range_initialize(range, beg, end, exc) {
+function rb_range_initialize(range, id, _, beg, end, exc) {
   range.beg = beg;
   range.end = end;
   range.exc = RTEST(exc);
 };
 
-function rb_range_eqq(range, other) {
+function rb_range_eqq(range, id, _, other) {
   if (other.klass !== rb_cNumber && other.klass !== rb_cString) {
     // console.log(other);
     rb_raise(rb_eArgError, "bad value for range");
@@ -55,7 +55,7 @@ function rb_range_eqq(range, other) {
   return false;
 };
 
-function rb_range_eq(range, other) {
+function rb_range_eq(range, id, _, other) {
   if (other.klass !== rb_cRange) return false;
   if (range.beg !== other.beg) return false;
   if (range.end !== other.end) return false;

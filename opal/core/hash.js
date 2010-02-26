@@ -40,12 +40,12 @@ function rb_hash_new() {
   for (var i = 0; i < arguments.length; i++) {
     k = arguments[i], v = arguments[i+1];
     i ++;
-    rb_hash_aset(h, k, v);
+    rb_hash_aset(h, "", nil, k, v);
   }
   return h;
 };
 
-function rb_hash_aset(hash, k, v) {
+function rb_hash_aset(hash, id, _, k, v) {
   if (hash.keys.indexOf(k) == -1) {
     hash.keys.push(k);
   }
@@ -53,7 +53,7 @@ function rb_hash_aset(hash, k, v) {
   return v;
 };
 
-function rb_hash_aref(hash, k) {
+function rb_hash_aref(hash, id, _, k) {
   if (hash.keys.indexOf(k) != -1) {
     return hash.dict[k];
   }
@@ -64,21 +64,21 @@ function rb_hash_size(hash) {
   return hash.keys.length;
 };
 
-function rb_hash_has_key(hash, k) {
+function rb_hash_has_key(hash, id, _, k) {
   if (hash.keys.indexOf(k) != -1) {
     return true;
   }
   return false;
 };
 
-function rb_hash_delete(hash, k) {
+function rb_hash_delete(hash, id, _, k) {
   hash.keys.splice(hash.keys.indexOf(k), 1);
   var r = hash.dict[k];
   delete hash.dict[k];
   return r;
 };
 
-function rb_hash_equal(a, b) {
+function rb_hash_equal(a, id, _, b) {
   if (a === b) return true;
   if (b.klass != rb_cHash) return false;
   if (a.keys.length != b.keys.length) return false;

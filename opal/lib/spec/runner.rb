@@ -12,7 +12,7 @@ module Spec
     def self.run
       # require all specs
       # Dir['spec/**/*.rb'].each { |spec| require spec }
-      # puts "running"
+      puts "running"
       options.run_examples
     end
     

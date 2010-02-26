@@ -26,6 +26,7 @@ module Spec
       end
       
       def run_examples
+        puts "running examples"
         runner = ExampleGroupRunner.new(self)
         runner.run
       end

@@ -47,10 +47,15 @@ module Spec
       # 
       def run(run_options)
         examples = examples_to_run(run_options)
+        # puts 2
         notify(run_options.reporter)
+        # puts 3
         success = true
+        # puts 4
         before_all_instance_variables = nil
+        # puts 5
         run_examples(success, before_all_instance_variables, examples, run_options)
+        # puts 6
       end
       
       def set_description(*args)
@@ -77,6 +82,7 @@ module Spec
         # puts self
         examples.each do |example|
           # puts example
+          # puts "e1"
           # puts example_implementations[example]
           example_group_instance = new(example, &example_implementations[example])
           example_group_instance.execute(run_options, instance_variables)

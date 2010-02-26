@@ -1,10 +1,14 @@
 #!/usr/bin/env ruby -wKU
 
+# puts "at the top"
+
 require "spec"
-
-Dir[File.join('examples', '**', '*.rb')].each { |rb| require rb }
-
-# We cannot run tests until document is loaded (as we write to document)
+# 
+Dir[File.join('examples', '**', '*.rb')].each do |rb|
+  require rb
+end
+# 
+# # We cannot run tests until document is loaded (as we write to document)
 Document.ready? do
   Spec::Runner.run
 end

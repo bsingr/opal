@@ -8,9 +8,9 @@ module Spec
       
     class NotYetImplementedError < ExamplePendingError
       MESSAGE = "Not Yet Implemented"
-      # def initialize
-        # super MESSAGE
-      # end
+      def initialize
+        super MESSAGE
+      end
     end
     
   end

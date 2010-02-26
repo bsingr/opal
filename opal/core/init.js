@@ -44,9 +44,11 @@ function ruby_script(name) {
 */
 function rb_call_inits() {
   Init_Object();
+  Init_BuiltInConstants();
   Init_top_self();
   Init_Array();
   Init_Comparable();
+  Init_Enumerable();
   Init_Number();
   Init_String();
   Init_Exception();
@@ -63,4 +65,11 @@ function rb_call_inits() {
   
   Init_Math();
   Init_JSON();
+};
+
+function Init_BuiltInConstants() {
+  rb_const_set(rb_cObject, "RUBY_VERSION", "1.9.1");
+  rb_const_set(rb_cObject, "RUBY_PATCHLEVEL", 191);
+  rb_const_set(rb_cObject, "RUBY_PLATFORM", "opal");
+  rb_const_set(rb_cObject, "RUBY_RELEASE_DATE", "2010.02.27");
 };
