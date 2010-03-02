@@ -1,0 +1,92 @@
+/* 
+ * render_context.js
+ * cherry_kit
+ * 
+ * Created by Adam Beynon.
+ * Copyright 2010 Adam Beynon.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+// var ck_cRenderContext;
+// 
+// /**
+//   RenderContext instance (object) is actually a custom struct/object.
+// */
+// function CKRenderContext() {
+//   // whether the rendercontext is rendering the first time (or not)
+//   this.first_time = true;
+//   // klass is simply RenderContext
+//   this.klass = ck_cRenderContext;
+//   // flags - will be needed in circumstances
+//   this.flags = T_OBJECT;
+//   
+//   
+//   // root_element
+//   this.root_element = nil;
+//   // drawing_context
+//   this.drawing_context = nil;
+//   // additional rendering context
+//   this.additional_context = nil;
+//   // all subviews
+//   this.subviews_context = nil;
+//   // all tracking areas associated with view
+//   this.tracking_areas = nil;
+//   
+//   
+//   return this;
+// };
+// 
+// function ck_render_context_s_new(argc, argv, klass) {
+//   console.log("making new render context " + argv.join(","));
+//   var r = new CKRenderContext();
+//   if (argc == 0) throw "CKRenderContext: 0 arguments given."
+//   // assume one argument - the tag name we need to make
+//   r.root_element = document.createElement('div');
+//   // Drawing context
+//   r.drawing_context = document.createElement(argv[0]);
+//   r.root_element.appendChild(r.drawing_context);
+//   // additional context
+//   r.additional_context = document.createElement('div');
+//   r.root_element.appendChild(r.additional_context);
+//   // subviews context
+//   r.subviews_context = document.createElement('div');
+//   r.subviews_context.className = 'ck-subviews';
+//   r.root_element.appendChild(r.subviews_context);
+//   // tracking areas
+//   r.tracking_areas = document.createElement('div');
+//   r.tracking_areas.className = 'ck-tracking-areas';
+//   r.root_element.appendChild(r.tracking_areas);
+// 
+//   return r;
+// };
+// 
+// function ck_render_context_append(ctx, child) {
+//   ctx.subviews_context.appendChild(child.root_element);
+// };
+// 
+// (function Init_CKRenderContext() {
+//   var mCK = rb_define_module("CherryKit");
+//   ck_cRenderContext = rb_define_class_under(mCK, "RenderContext", rb_cBasicObject);
+//   
+//  rb_define_singleton_method(ck_cRenderContext,"new",ck_render_context_s_new,-1);
+//  
+//  rb_define_method(ck_cRenderContext, "<<", ck_render_context_append, 1);
+//  rb_define_method(ck_cRenderContext, "append", ck_render_context_append, 1);
+// })();
