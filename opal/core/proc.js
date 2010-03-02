@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-var rb_cProc;
+var rb_cProc, rb_eLocalJumpError;
 
 /*
   Converts a javascript function to a ruby compatible proc. Essentially wraps it
@@ -99,4 +99,8 @@ function Init_Proc() {
   
   rb_define_method(rb_mKernel, "define_singleton_method", rb_obj_define_method, -1);
   rb_define_method(rb_cModule, "define_method", rb_mod_define_method, -1);
+  
+  rb_eLocalJumpError = rb_define_class("LocalJumpError", rb_eStandardError);
+  // rb_define_method(rb_eLocalJumpError, "exit_value", rb_localjump_xvalue, 0);
+  // rb_define_method(rb_eLocalJumpError, "reason", rb_localjump_reason, 0);
 };

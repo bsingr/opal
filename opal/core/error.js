@@ -54,6 +54,15 @@ function rb_raise(exc, message) {
   return rb_exc_raise(e);
 };
 
+// Generic jump raise
+function rb_jump_raise(exc, type, message, args) {
+  var e = rb_obj_alloc(exc);
+  rb_exc_initialize(e, "", nil, message);
+  e.iv_tbl.args = args;
+  e.iv_tbl.type = type;
+  return rb_exc_raise(e);
+};
+
 function rb_exc_raise(exc) {
   throw exc
 };

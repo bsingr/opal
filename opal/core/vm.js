@@ -198,27 +198,46 @@ function rb_funcall2(recv, id, args) {
 };
 
 function rb_funcall3(recv, id, _, args) {
-  if (recv === null || recv === undefined) recv = nil;
+  try {
+    if (recv === null || recv === undefined) recv = nil;
   
-  var body = rb_search_method(recv.klass, id);
-  if (!body) {
-    // console.log ("method missing " + id);
-    // console.log(recv);
-    args.unshift(ID2SYM(id));
-    return rb_funcall2(recv, "method_missing", args);
+    var body = rb_search_method(recv.klass, id);
+    if (!body) {
+      // console.log ("method missing " + id);
+      // console.log(recv);
+      args.unshift(ID2SYM(id));
+      return rb_funcall2(recv, "method_missing", args);
+    }
+    var imp = body.body, len = args.length;
+  
+    switch(len) {
+      // case -2: throw "-2 currently unimplemeneted: rb_funcall2"
+      // case -1: return imp(argc, args, recv);
+      case 0: return imp(recv, id, _);
+      case 1: return imp(recv, id, _, args[0]);
+      case 2: return imp(recv, id, _, args[0], args[1]);
+      case 3: return imp(recv, id, _, args[0], args[1], args[2]);
+      case 4: return imp(recv, id, _, args[0], args[1], args[2], args[3]);
+      case 5: return imp(recv, id, _, args[0], args[1], args[2], args[3], args[4]);
+      default: throw "currently unsupported argc length " + len
+    }
   }
-  var imp = body.body, len = args.length;
-    
-  switch(len) {
-    // case -2: throw "-2 currently unimplemeneted: rb_funcall2"
-    // case -1: return imp(argc, args, recv);
-    case 0: return imp(recv, id, _);
-    case 1: return imp(recv, id, _, args[0]);
-    case 2: return imp(recv, id, _, args[0], args[1]);
-    case 3: return imp(recv, id, _, args[0], args[1], args[2]);
-    case 4: return imp(recv, id, _, args[0], args[1], args[2], args[3]);
-    case 5: return imp(recv, id, _, args[0], args[1], args[2], args[3], args[4]);
-    default: throw "currently unsupported argc length " + len
+  catch (e) {
+    /*
+      Capture all LocalJumpErrors
+    */
+    if (e.klass === rb_eLocalJumpError) {
+      // first try and capture all return statements
+      if (e.iv_tbl.type === "return") {
+        return e.iv_tbl.args;
+      }
+      // next, try break statements
+      if (e.iv_tbl.type === "break") {
+        if (_ !== nil) return e.iv_tbl.args;
+      }
+    }
+    // rethrow if we dont find the right handler
+    throw e
   }
 };
 
@@ -301,6 +320,28 @@ function vm_newhash() {
 
 function vm_newrange(beg, end, inc) {
   return new RRange(beg, end, inc);
+};
+
+/*
+  break statement
+  
+  Basically throws an error that will be caught, if it can. If not caught then 
+  the break statement was called from an invalid location, and so an error will
+  be thrown.
+  
+  Usage:
+  
+    rb_break(arg1, arg2, arg3 ... arg)
+*/
+function rb_break(args) {
+  rb_jump_raise(rb_eLocalJumpError, "break", "unexpected break", args);
+};
+
+/*
+  return statement
+*/
+function rb_return(args) {
+  rb_jump_raise(rb_eLocalJumpError, "return", "unexpected return", args);
 };
 
 /**

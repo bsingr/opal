@@ -984,14 +984,18 @@ module Vienna
       end
       
       def generate_return(stmt, context)
-        write "return "
-        if stmt[:call_args][:args]
+        write "rb_return("
+        # puts stmt
+        if stmt[:call_args] and stmt[:call_args][:args]
           if stmt[:call_args][:args].length == 1
             generate_stmt stmt[:call_args][:args].first, :full_stmt => false
           else
             abort "generate_return multiple args not yet done"
           end
+        else
+          write "nil"
         end
+        write ")"
         write ";" if context[:full_stmt]
       end
       
@@ -1039,6 +1043,17 @@ module Vienna
         
         write ")"
         write ";" if context[:full_stmt]
+      end
+      
+      def generate_break(stmt, context)
+        write "rb_break("
+        if stmt[:call_args] and stmt[:call_args][:args]
+          stmt[:call_args][:args].each do |arg|
+            write "," unless stmt[:call_args][:args].first == arg
+            generate_stmt arg, :full_stmt => false
+          end
+        end
+        write ");"
       end
             
     end # end class

@@ -51,19 +51,19 @@ function rb_num_pow(a, b) {
   return Math.pow(a, b);
 };
 
-function rb_num_gt(a, b) {
+function rb_num_gt(a, id, _, b) {
   return a > b;
 };
 
-function rb_num_ge(a, b) {
+function rb_num_ge(a, id, _, b) {
   return a >= b;
 };
 
-function rb_num_lt(a, b) {
+function rb_num_lt(a, id, _, b) {
   return a < b;
 };
 
-function rb_num_le(a, b) {
+function rb_num_le(a, id, _, b) {
   return a <= b;
 };
 
@@ -91,9 +91,10 @@ function rb_num_downto(num, to) {
   return num;
 };
 
-function rb_num_upto(num, to) {
-  var _ = opal_block; opal_block = nil;
-  for (var i = num; i <= to; i++) {
+function rb_num_upto(num, id, _, stop) {
+  console.log("from " + num + " to " + stop);
+  if (stop < num) return num;
+  for (var i = num; i <= stop; i++) {
     vm_yield(_, [i]);
   }
   return num;
