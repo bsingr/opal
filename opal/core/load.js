@@ -83,7 +83,8 @@ function rb_f_require(obj, id, _, path) {
   // find the file..
   var found = rb_find_require_path(path);
   if (found === nil) {
-    throw "cannot find require: " + path;
+    // throw "cannot find require: " + path;
+    rb_raise(rb_eLoadError, "no such file to load -- " + path);
   }
   else {
     // console.log(found);
@@ -139,4 +140,5 @@ function rb_eval_raw(str, filename) {
 function Init_load() {
   // require
   rb_define_method(rb_cBasicObject, "require", rb_f_require, 1);
+  // rb_define_global_variable("$:", // ruby_loadpath);
 };

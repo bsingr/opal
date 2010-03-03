@@ -27,25 +27,38 @@
 module Vienna
   
   class Tools
+    
+    GEN_PATH = File.join(Vienna::PATH, 'gen')
 
-    def gen
-      if ARGV.length < 2
+    def generate(args)
+      if args.length < 2
         abort "Error: At least 2 arguments required for vn-gen"
       end
       
-      g = ARGV[0]
+      g = args[0]
       case g
       when "app"
-        gen_app(ARGV)
+        gen_app(args)
       when "capp"
-        gen_capp(ARGV)
+        gen_capp(args)
       when "browser"
-        gen_browser(ARGV)
+        gen_browser(args)
       end
     end
     
+    attr_reader :app_dir, :app_name, :app_title
+    
+    attr_reader :source_dir
+    
     def gen_app(args)
-      puts "need to generate app named #{args[1]}"
+      @app_name = args[1]
+      @app_dir = File.join(Dir.getwd, @app_name)
+      @source_dir = File.join(GEN_PATH, 'app', 'template')
+      @app_title = @app_name.split('_').collect { |p| p.capitalize }.join(' ')
+      # puts "need to generate app named #{args[1]}"
+      # @benny = 10000
+      template = File.join(GEN_PATH, 'app', 'generate.rb')
+      instance_eval File.read(template)
     end
     
     def gen_capp(args)

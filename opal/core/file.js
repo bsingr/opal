@@ -103,7 +103,7 @@ function vn_fs_define_file(f, content) {
 };
 
 
-function rb_file_s_dirname(cls, dirname) {
+function rb_file_s_dirname(cls, id, _, dirname) {
   return dirname.substr(0, dirname.lastIndexOf('/'));
   // return "/dirname";
 };

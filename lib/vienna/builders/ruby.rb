@@ -683,6 +683,10 @@ class Vienna::RubyParser < Racc::Parser
         if scanner.scan(/(\$_)(\w+)/)
         end
       
+      elsif scanner.scan(/\$\:/)
+        # puts "found dollar sign"
+        return [:tGVAR, scanner.matched]
+      
       elsif scanner.scan(/\w+[\?\!]?/)
         case scanner.matched
         when 'def'

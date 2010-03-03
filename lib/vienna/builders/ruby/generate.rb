@@ -541,6 +541,8 @@ module Vienna
         generate_begin stmt, context
       when :aset_op_asgn
         generate_aset_op_asgn stmt, context
+      when :gvar
+        generate_gvar stmt, context
       else
         write "\n[Unknown type for generate_stmt: #{stmt.inspect}]\n"
       end

@@ -47,30 +47,39 @@ module Vienna
       end
       
       def build_dir
-        @build_dir ||= File.join(@project_root, 'build', 'debug')
+        @build_dir ||= @build_options['build_dir'] || File.join(@project_root, 'build')
       end
       
       def vendor_build_dir
         @vendor_build_dir ||= File.join(build_dir, 'vendor')
       end
       
+      # Resources build dir. This is gathered from the yml file, or a default is
+      # used (build_dir/resources). All images etc are places into the resources
+      # build directory. For a rails app, Rails.root/public/images might be more
+      # ideal etc.
+      # 
       def resources_build_dir
         @resources_build_dir ||= File.join(build_dir, 'resources')
       end
       
-      # true/false can be loaded from build.yml file
+      # true/false can be loaded from build.yml file. We might not want to build
+      # the html file inside a Rails application. For example, a controller
+      # might be setup to handle the html creation with templates.
+      # 
       def write_index_html_file?
         true
       end
       
       def build!
+        puts "building project! #{build_dir}"
         FileUtils.mkdir_p(build_dir)
         FileUtils.mkdir_p(resources_build_dir)
-        FileUtils.mkdir_p(resources_build_dir)
+        # FileUtils.mkdir_p(resources_build_dir)
         
         write_index_html_file if write_index_html_file?
-        write_opal_js_file
-        # write_main_js_file
+        # write_opal_js_file
+        # write_main_js_file .. dont do
         write_project_js_file
       end
       
@@ -85,10 +94,10 @@ module Vienna
           f.puts %{<head>}
           f.puts %{  <meta http-equiv="X-UA-Compatible" content="IE-EmulateIE7" />}
           f.puts %{  <title>#{project_title}</title>}
-          f.puts %{  <script src="opal.js" type="text/javascript"></script>}
+          f.puts %{  <script src="#{project_name}.js" type="text/javascript"></script>}
           f.puts %{  <script type="text/javascript">}
-          f.puts %{    OPAL_VENDOR_NAMES = ["#{vendor_names.join('","')}"];}
-          f.puts %{    OPAL_APP_NAME = "#{project_name}";}
+          # f.puts %{    OPAL_VENDOR_NAMES = ["#{vendor_names.join('","')}"];}
+          # f.puts %{    OPAL_APP_NAME = "#{project_name}";}
           f.puts %{  </script>}
           f.puts %{  <style type = "text/css">}
           f.puts %{    body{margin:0; padding:0;}}
@@ -107,18 +116,22 @@ module Vienna
       # In future, dont do this. this will be automatically generated. We only
       # do this here during development.
       def write_opal_js_file
-        runtime_path = File.join(Vienna::PATH, 'opal', 'runtime', 'core')
-        
         File.open(opal_js_file, "w") do |f|
-          Dir.glob(File.join(runtime_path, '**', '*.js')).each do |js|
-            f.write JSMin.minify(File.read(js))
-          end
-          
-          bootstrap = File.join(Vienna::PATH, 'cherry_kit', 'platforms', 'opal', 'bootstrap.js')
-          
-          f.write JSMin.minify(File.read(bootstrap))
           
         end
+        # 
+        # runtime_path = File.join(Vienna::PATH, 'opal', 'runtime', 'core')
+        # 
+        # File.open(opal_js_file, "w") do |f|
+        #   Dir.glob(File.join(runtime_path, '**', '*.js')).each do |js|
+        #     f.write JSMin.minify(File.read(js))
+        #   end
+        #   
+        #   bootstrap = File.join(Vienna::PATH, 'cherry_kit', 'platforms', 'opal', 'bootstrap.js')
+        #   
+        #   f.write JSMin.minify(File.read(bootstrap))
+        #   
+        # end
       end
       
       def main_js_file
@@ -168,8 +181,16 @@ module Vienna
       # e.g. ["lib/**/*.rb", "platforms/web/**.*.rb"]
       # 
       # These will, in future, be loaded from build.yml
-      def ruby_sources
-        ["app/**/*.rb"]
+      def all_sources
+        sources = @build_options['sources']
+        case sources
+        when Array
+          sources
+        when String
+          [sources]
+        else
+          []
+        end
       end
       
       def project_js_file
@@ -178,23 +199,39 @@ module Vienna
       
       def write_project_js_file
         File.open(project_js_file, "w") do |f|
-          # package marker: opal file version 1.0
-          f.write %{opal;1.0;}
-          # directory this gem/bundle is located at : always "" for app dir
-          f.write %{d0;}
-          
-          # all ruby sources - build  and put in "file" marker
-          Dir.glob(File.join(project_root, ruby_sources)).each do |rb|
-            name = /^#{project_root}\/(.*)$/.match(rb)[1]
-            b = RubyBuilder.new(rb, self, name)
-            c = b.build!
-            f.write %{f#{name.length};#{name}#{c.length};#{c}}
+          # first write opal/browser bits and pieces
+          f.write Vienna::Opal.build_opal_browser(false)
+          Dir.glob(all_sources).each do |src|
+            src = File.expand_path(src)
+            build_name = /^#{project_root}\/(.*)/.match(src)[1]
+            case File.extname(src)
+            when ".rb"
+              str = Vienna::CherryKit::RubyBuilder.new(src, self, build_name).build!
+              f.puts %{opal_define_file("#{build_name}",#{str});}
+            when ".js"
+              puts "#{src} is a javascript file"
+            end
           end
-          
-          # all js sources - combine, minify and put in "code" marker
+          f.puts %{opal_browser_main("config/environment.rb")}
         end
+        # File.open(project_js_file, "w") do |f|
+        #           # package marker: opal file version 1.0
+        #           f.write %{opal;1.0;}
+        #           # directory this gem/bundle is located at : always "" for app dir
+        #           f.write %{d0;}
+        #           
+        #           # all ruby sources - build  and put in "file" marker
+        #           Dir.glob(File.join(project_root, ruby_sources)).each do |rb|
+        #             name = /^#{project_root}\/(.*)$/.match(rb)[1]
+        #             b = RubyBuilder.new(rb, self, name)
+        #             c = b.build!
+        #             f.write %{f#{name.length};#{name}#{c.length};#{c}}
+        #           end
+        #           
+        #           # all js sources - combine, minify and put in "code" marker
+        #         end
       end
       
-    end
+    end # end Class
   end
 end

@@ -40,6 +40,10 @@ module Vienna
       case cmd
       when "build"
         build args
+      when "generate", "gen"
+        generate args
+      when "server"
+        server
       else
         print_usage
         exit

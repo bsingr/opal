@@ -158,12 +158,18 @@ function FL_UNSET(x, f) {
 rb_class_tbl = { } ;  // all classes are stored here
 rb_global_tbl = { } ; // globals are stored here
 
+function rb_define_hooked_variable(id, ptr) {
+  return rb_gvar_set(id, ptr);
+};
+
 function rb_gvar_get(id) {
-  
+  // return rb_global_tbl[id];
+  if (id == "$:") return ruby_loadpath;
+  return nil;
 };
 
 function rb_gvar_set(id, val) {
-  
+  return rb_global_tbl[id] = val;
 };
 
 

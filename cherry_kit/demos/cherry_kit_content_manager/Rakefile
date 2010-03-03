@@ -1,0 +1,21 @@
+require 'rubygems'
+require 'rake'
+
+# hidden task to require vienna gem when needed
+task :vienna do
+  begin
+    require 'vienna'
+  rescue LoadError
+    puts "Vienna not available. Install it with: sudo gem install vienna"
+  end
+end
+
+desc "Spawn a server to host specs for project (hosted on 0.0.0.0:3000)"
+task :spec => :vienna do
+  
+end
+
+desc "Spawn a server to host the project. Each refresh rebuilds the project"
+task :server => :vienna do
+
+end

@@ -199,6 +199,10 @@ function rb_ary_at(ary, id, _, at) {
   }
 };
 
+function rb_ary_unshift_m(ary, id, _, val) {
+  return ary.unshift(val);
+};
+
 function Init_Array() {
   
   rb_cArray = rb_define_class("Array", rb_cObject);
@@ -234,7 +238,7 @@ function Init_Array() {
   // rb_define_method(rb_cArray, "push", rb_ary_push_m, -1);
   rb_define_method(rb_cArray, "pop", rb_ary_pop_m, -1);
   // rb_define_method(rb_cArray, "shift", rb_ary_shift_m, -1);
-  // rb_define_method(rb_cArray, "unshift", rb_ary_unshift_m, -1);
+  rb_define_method(rb_cArray, "unshift", rb_ary_unshift_m, -1);
   // rb_define_method(rb_cArray, "insert", rb_ary_insert, -1);
   rb_define_method(rb_cArray, "each", rb_ary_each, 0);
   // rb_define_method(rb_cArray, "each_index", rb_ary_each_index, 0);

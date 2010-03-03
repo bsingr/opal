@@ -24,8 +24,6 @@
 # THE SOFTWARE.
 #
 
-require 'rubygems'
-
 module Vienna
   
   class Tools
@@ -37,9 +35,10 @@ module Vienna
     # code builds.
     def server
       # only load rack when needed
+      require 'rubygems'
       require 'rack'
       find_project!
-      Vienna::Rack::AppServer.new(@project, self)
+      # Vienna::Rack::AppServer.new(@project, self)
     end
   end
 end

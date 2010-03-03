@@ -605,6 +605,12 @@ module Vienna
         write ";" if context[:full_stmt]
       end
       
+      def generate_gvar(stmt, context)
+        write "return " if context[:full_stmt] and context[:last_stmt]
+        write "rb_gvar_get('#{stmt[:name]}')"
+        write ";" if context[:full_stmt]
+      end
+      
       def generate_yield stmt, context
         write "return " if context[:full_stmt] and context[:last_stmt]
         
