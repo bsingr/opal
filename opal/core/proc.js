@@ -47,7 +47,20 @@ function rb_proc_call(proc, id, _) {
   args.unshift(nil);
   args.unshift(nil);
   args.unshift(nil);
-  return proc.apply(proc, args);
+  try {
+    return proc.apply(proc, args);
+  }
+  catch (e) {
+    console.log("trying to catch an error " + e);
+    if (e.klass === rb_eLocalJumpError) {
+      if (e.iv_tbl.type === "return") {
+        console.log("WOWOW!!! caught it!");
+        return e.iv_tbl.args;
+      }
+    }
+    // console.log("rethrowing!");
+    throw e
+  }
 };
 
 function rb_proc_s_new(cls, id, _) {

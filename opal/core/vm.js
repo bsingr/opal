@@ -193,7 +193,7 @@ function rb_funcall2(recv, id, args) {
     case 3: return imp(recv, id, nil, args[0], args[1], args[2]);
     case 4: return imp(recv, id, nil, args[0], args[1], args[2], args[3]);
     case 5: return imp(recv, id, nil, args[0], args[1], args[2], args[3], args[4]);
-    default: throw "currently unsupported argc length " + len
+    default: rb_raise(rb_eArgError, "currently unsupported argc length " + len);
   } 
 };
 
@@ -219,7 +219,7 @@ function rb_funcall3(recv, id, _, args) {
       case 3: return imp(recv, id, _, args[0], args[1], args[2]);
       case 4: return imp(recv, id, _, args[0], args[1], args[2], args[3]);
       case 5: return imp(recv, id, _, args[0], args[1], args[2], args[3], args[4]);
-      default: throw "currently unsupported argc length " + len
+      default: rb_raise(rb_eArgError, "currently unsupported argc length " + len);
     }
   }
   catch (e) {
@@ -229,6 +229,7 @@ function rb_funcall3(recv, id, _, args) {
     if (e.klass === rb_eLocalJumpError) {
       // first try and capture all return statements
       if (e.iv_tbl.type === "return") {
+        // console.log(id + ": handling return throw with args " + e.iv_tbl.args);
         return e.iv_tbl.args;
       }
       // next, try break statements
@@ -260,6 +261,9 @@ function vm_defineclass(base, sup, id, body, type) {
         klass.parent = base;
       }
       break;
+    case 1:
+      klass = rb_singleton_class(base);
+      break;
     case 2:
       if (base.flags & T_OBJECT) base = rb_class_real(base.klass);
       
@@ -281,11 +285,11 @@ function vm_defineclass(base, sup, id, body, type) {
 };
 
 function vm_definemethod(base, id, body, is_singleton) {
-  if (base.flags & T_OBJECT) base = base.klass;
   if (is_singleton) {
     return rb_define_method(rb_singleton_class(base), id, body);
   }
   else {
+    if (base.flags & T_OBJECT) base = base.klass;
     return rb_define_method(base, id, body);
   }
 };

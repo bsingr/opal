@@ -183,7 +183,7 @@ function rb_mod_const_set(mod, id, _, name, val) {
 };
 
 function rb_obj_respond_to(obj, id, _, sym) {
-  var f = rb_search_method(obj.klass, sym.ptr);
+  var f = rb_search_method(obj.klass, (sym.klass == rb_cString) ? sym :sym.ptr);
   if (f) return true;
   return false;
 };
@@ -248,6 +248,7 @@ function rb_nil_to_i() {
   ensure nil matches null and undefined as well as itself
 */
 function rb_nil_eql(self, id, _, other) {
+  // console.log("comparing nil to " + other);
   return (other === nil || other === null || other === undefined);
 };
 
@@ -533,7 +534,7 @@ function Init_Object() {
   rb_define_method(rb_cNilClass, "^", rb_nil_xor, 1);
   rb_define_method(rb_cNilClass, "nil?", rb_nil_nil_q, 0);
   rb_define_method(rb_cNilClass, "==", rb_nil_eql, 0);
-  nil = { flags: T_OBJECT, klass: rb_cNilClass };
+  nil = { flags: T_OBJECT, klass: rb_cNilClass, toString:function() {return "nil";} };
   // 
   // 
   // 

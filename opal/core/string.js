@@ -163,6 +163,10 @@ function rb_str_reverse(str) {
   return str.split("").reverse().join("");
 };
 
+function rb_str_empty(str, id, _) {
+  return str.length === 0;
+};
+
 function Init_String() {
   
   rb_cString = rb_define_class("String", rb_cObject);
@@ -188,7 +192,7 @@ function Init_String() {
     rb_define_method(rb_cString, "length", rb_str_length, 0);
     rb_define_method(rb_cString, "size", rb_str_length, 0);
   //   rb_define_method(rb_cString, "bytesize", rb_str_bytesize, 0);
-  //   rb_define_method(rb_cString, "empty?", rb_str_empty, 0);
+    rb_define_method(rb_cString, "empty?", rb_str_empty, 0);
   //   rb_define_method(rb_cString, "=~", rb_str_match, 1);
   //   rb_define_method(rb_cString, "match", rb_str_match_m, -1);
   //   rb_define_method(rb_cString, "succ", rb_str_succ, 0);

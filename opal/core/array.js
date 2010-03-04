@@ -203,6 +203,19 @@ function rb_ary_unshift_m(ary, id, _, val) {
   return ary.unshift(val);
 };
 
+function rb_ary_empty_p(ary, id, _) {
+  return (ary.length === 0);
+};
+
+function rb_ary_to_a(ary, id, _) {
+  return ary;
+};
+
+function rb_ary_join_m(ary, id, _, join) {
+  if (join === nil || join === null || join === undefined) join = '';
+  return ary.join(join);
+};
+
 function Init_Array() {
   
   rb_cArray = rb_define_class("Array", rb_cObject);
@@ -219,7 +232,7 @@ function Init_Array() {
 
   rb_define_method(rb_cArray, "to_s", rb_ary_to_s, 0);
   rb_define_method(rb_cArray, "inspect", rb_ary_inspect, 0);
-  // rb_define_method(rb_cArray, "to_a", rb_ary_to_a, 0);
+  rb_define_method(rb_cArray, "to_a", rb_ary_to_a, 0);
   // rb_define_method(rb_cArray, "to_ary", rb_ary_to_ary_m, 0);
   // rb_define_method(rb_cArray, "frozen?",  rb_ary_frozen_p, 0);
 
@@ -246,11 +259,11 @@ function Init_Array() {
   rb_define_method(rb_cArray, "length", rb_ary_length, 0);
   // rb_define_method(rb_cArray, "size", rb_ary_length, 0);
   rb_define_alias(rb_cArray,  "size", "length");
-  // rb_define_method(rb_cArray, "empty?", rb_ary_empty_p, 0);
+  rb_define_method(rb_cArray, "empty?", rb_ary_empty_p, 0);
   // rb_define_method(rb_cArray, "find_index", rb_ary_index, -1);
   // rb_define_method(rb_cArray, "index", rb_ary_index, -1);
   // rb_define_method(rb_cArray, "rindex", rb_ary_rindex, -1);
-  // rb_define_method(rb_cArray, "join", rb_ary_join_m, -1);
+  rb_define_method(rb_cArray, "join", rb_ary_join_m, -1);
   // rb_define_method(rb_cArray, "reverse", rb_ary_reverse_m, 0);
   // rb_define_method(rb_cArray, "reverse!", rb_ary_reverse_bang, 0);
   // rb_define_method(rb_cArray, "sort", rb_ary_sort, 0);

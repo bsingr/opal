@@ -325,6 +325,32 @@ module Vienna
         write ";" if context[:full_stmt]
       end
       
+      def generate_class_shift(cls, context)
+        write "return " if context[:last_stmt] and context[:full_stmt]
+        
+        current_iseq = @iseq_current
+        class_iseq = iseq_stack_push(ISEQ_TYPE_CLASS)
+        class_iseq.parent_iseq = current_iseq
+        
+        # each bodystmt
+        cls[:bodystmt][:compstmt].each do |b|
+          generate_stmt b, :full_stmt => true, :last_stmt => b == cls[:bodystmt][:compstmt].last
+        end
+        
+        write "return nil" if cls[:bodystmt][:compstmt].length == 0
+        
+        iseq_stack_pop
+        
+        write %{vm_defineclass(}
+        generate_stmt cls[:expr], :full_stmt => false
+        write ","
+        # superclass
+        write "nil"
+        write %{,"",#{class_iseq},1)}
+        
+        write ";" if context[:full_stmt]
+      end
+      
       def generate_def(stmt, context)
         # if stmt[:bodystmt][:opt_rescue]
           # puts "a"

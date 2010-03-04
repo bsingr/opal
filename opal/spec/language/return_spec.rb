@@ -17,6 +17,7 @@ describe "The return keyword" do
   it "returns nil by default" do
     def r; return; end
     r().should be_nil
+    # r().should == nil
   end
   
   describe "within a block" do

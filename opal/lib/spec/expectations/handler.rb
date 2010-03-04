@@ -13,6 +13,9 @@ module Spec
         
         # puts "must use normal matcher #{matcher.inspect}"
         match = matcher.matches?(actual)
+        
+        # puts "match is #{match}"
+        
         return match if match
         
         Spec::Expectations.fail_with matcher.failure_message_for_should

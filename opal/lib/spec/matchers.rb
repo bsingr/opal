@@ -1,6 +1,7 @@
 require 'spec/matchers/operator_matcher'
 require 'spec/matchers/generated_descriptions'
 require 'spec/matchers/eql'
+require 'spec/matchers/equal'
 require 'spec/matchers/be'
 require 'spec/matchers/be_kind_of'
 require 'spec/matchers/be_an_instance_of'
@@ -25,10 +26,14 @@ module Spec
         @actual = actual
         begin
           result = @match_block.call(actual)
-          return result
+          # returning within a begin/rescue block means an error :(
+          # return result
         rescue
+          # puts "returnign false in rescue"
           return false
         end
+        return result
+        # puts "did i get here?"
         return false
         # puts "RESULT: #{result}"
       end
