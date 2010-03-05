@@ -46,4 +46,10 @@ namespace :opal do
     end
     
   end
+  
+  desc "spawn server to host specs"
+  task :server => :spec do
+    # puts "spawn server"
+    Vienna::Opal::SpecServer.new
+  end
 end

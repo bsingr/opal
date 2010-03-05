@@ -34,11 +34,12 @@ module Vienna
     # index.html page. In future, this is likely to be more complex in determining
     # code builds.
     def server
+      # abort "start server"
       # only load rack when needed
       require 'rubygems'
       require 'rack'
       find_project!
-      # Vienna::Rack::AppServer.new(@project, self)
+      Vienna::Rack::AppServer.new(@project, self)
     end
   end
 end
