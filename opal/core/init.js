@@ -56,6 +56,7 @@ function rb_call_inits() {
   Init_Range();
   Init_Proc();
   Init_Regexp();
+  Init_IO();
   Init_File();
   Init_Dir();
   Init_Time();
@@ -65,6 +66,9 @@ function rb_call_inits() {
   
   Init_Math();
   Init_JSON();
+  
+  // additions to core library
+  Init_Net();
 };
 
 function Init_BuiltInConstants() {

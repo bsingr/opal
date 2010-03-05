@@ -92,7 +92,15 @@ function rb_define_class_under(outer, id, super_klass) {
   }
   klass = rb_define_class_id(id, super_klass);
   
-  rb_name_class(klass, id);
+  var class_name;
+  if (outer === rb_cObject) {
+    class_name = id;
+  }
+  else {
+    class_name = outer.iv_tbl.__classid__ + "::" + id;
+  }
+  
+  rb_name_class(klass, class_name);
   rb_const_set(outer, id, klass);
   rb_class_inherited(super_klass, klass);
 
@@ -200,10 +208,14 @@ function rb_singleton_class(obj) {
     klass = obj.klass;
   }
   else {
+    var class_id = obj.klass.iv_tbl.__classid__;
     // klass = RClass.make_metaclass(obj, obj.$klass);
     // console.log(obj);
     // klass = obj.$make_metaclass(obj.$klass) ;
+    // console.log("making metaclass for " + obj.klass.iv_tbl.__classid__);
+    // console.log(obj.klass);
     klass = rb_make_metaclass(obj, obj.klass);
+    obj.klass.iv_tbl.__classid__ = class_id;
   }
   // console.log("nearly done");
 
@@ -217,7 +229,7 @@ function rb_singleton_class(obj) {
     }
   }
   // console.log("completely done");
-
+  
   return klass;
 };
 

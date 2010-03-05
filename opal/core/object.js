@@ -142,13 +142,6 @@ function rb_class_new_instance(klass, id, _) {
   return o;
 };
 
-function rb_f_puts(recv, id, _) {
-  var argv = Array.prototype.slice.call(arguments, 3)
-  for (var i = 0; i < argv.length; i++) {
-    console.log(vm_send(argv[i], "inspect", [], nil, 8));
-  }
-};
-
 function rb_mod_attr_reader(recv, id, _) {
   var argv = Array.prototype.slice.call(arguments, 3);
   for (var i = 0; i < argv.length; i++) {
@@ -493,8 +486,6 @@ function Init_Object() {
   rb_define_method(rb_mKernel, "__send__", rb_obj_send, -1);
   
   rb_define_method(rb_mKernel, "respond_to?", rb_obj_respond_to, -1);
-  
-  rb_define_method(rb_mKernel, "puts", rb_f_puts, -1);
   
   rb_define_method(rb_mKernel, "to_s", rb_any_to_s, 0);
   rb_define_method(rb_mKernel, "inspect", rb_obj_inspect, 0);
