@@ -20,6 +20,24 @@ module Spec
           @header_red = nil
         end
         
+        def start(number_of_examples)
+          @start_time = Time.now
+        end
+        
+        def end
+          @end_time = Time.now
+        end
+        
+        def dump
+          # duration
+          time_taken = (@end_time - @start_time) / 1000
+          Element[:duration].text = "Finished in #{time_taken} seconds"
+          # duration
+          # puts "In Dump for #{self}"
+          # puts "results_output: #{results_output}"
+          # puts results_output.has_class?('adam')
+        end
+        
         # Results div where to append all results
         # 
         def results_output
