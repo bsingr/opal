@@ -2,6 +2,7 @@ require 'rubygems'
 require 'rake'
 require 'spec/rake/spectask'
 require 'ftools'
+require 'yard'
 
 Dir[File.join(File.dirname(__FILE__), 'tasks', '**', '*.rb')].each do |t|
   require t

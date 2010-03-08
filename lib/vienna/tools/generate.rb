@@ -31,8 +31,10 @@ module Vienna
     GEN_PATH = File.join(Vienna::PATH, 'gen')
 
     def generate(args)
-      if args.length < 2
-        abort "Error: At least 2 arguments required for vn-gen"
+      if args.length == 0
+        abort "Usage: vn-gen [opal|app|browser] project_name"
+      elsif args.length == 1
+        args.unshift('opal')
       end
       
       g = args[0]
@@ -41,8 +43,8 @@ module Vienna
         gen_app(args)
       when "capp"
         gen_capp(args)
-      when "browser"
-        gen_browser(args)
+      when "browser", "opal"
+        gen_opal(args)
       end
     end
     
@@ -61,6 +63,24 @@ module Vienna
       instance_eval File.read(template)
     end
     
+    def gen_opal(args)
+      @app_name = args[1]
+      @app_dir = File.join(Dir.getwd, @app_name)
+      @source_dir = File.join(GEN_PATH, 'opal', 'template')
+      @app_title = @app_name.split('_').collect { |p| p.capitalize }.join(' ')
+      template = File.join(GEN_PATH, 'opal', 'generate.rb')
+      instance_eval File.read(template)
+      # find_project!
+      # return puts "need to generate browser app named #{args[1]}"
+      # name = args[1]
+      # gen_dir = File.join(PATH, 'gen', 'opal')
+      # FileUtils.mkdir_p(name)
+      # Dir.chdir(name)
+      # find_project!
+      # 
+      # @project.create_or_update_runtime
+    end
+    
     def gen_capp(args)
       unless `which capp`.length > 0
         abort "Cappuccino is not available on your system."
@@ -75,20 +95,6 @@ module Vienna
       FileUtils.mkdir_p(File.join(Dir.getwd, capp_name))
       # puts "Generating Cappuccino frameworks. Might take a second..."
       # `capp gen #{capp_name} -f`
-      
-      
-    end
-    
-    def gen_browser(args)
-      # find_project!
-      # puts "need to generate browser app named #{args[1]}"
-      name = args[1]
-      gen_dir = File.join(PATH, 'gen', 'browser')
-      FileUtils.mkdir_p(name)
-      Dir.chdir(name)
-      find_project!
-      
-      @project.create_or_update_runtime
     end
     
     def show_help

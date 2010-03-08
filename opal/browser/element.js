@@ -239,12 +239,25 @@ function opal_element_text(el, id, _, text) {
   return (el.textContent !== undefined) ? el.textContent : el.innerText;
 };
 
+function opal_element_s_new(el, id, _, type, options) {
+  if (type.klass === rb_cSymbol) {
+    type = type.ptr;
+  } 
+  else if (type.klass !== rb_cString) {
+    options = type;
+    type = "div"
+  }
+  
+  return document.createElement(type);
+};
+
 function Init_Browser_Element() {
   opal_cElement = rb_define_class("Element", rb_cObject);
   
   rb_define_singleton_method(opal_cElement, "[]", opal_element_s_find, 1);
   rb_define_singleton_method(opal_cElement, "find", opal_element_s_find, 1);
   rb_define_singleton_method(opal_cElement, "body", opal_element_s_body, 1);
+  rb_define_singleton_method(opal_cElement, "new", opal_element_s_new, -1);
   
   rb_define_method(opal_cElement, "add_listener", opal_element_add_listener, 1);
   

@@ -52,4 +52,12 @@ namespace :opal do
     # puts "spawn server"
     Vienna::Opal::SpecServer.new
   end
+  
+  YARD::Rake::YardocTask.new do |t|
+    doc_root = File.join(File.dirname(__FILE__), '..', 'opal', 'docs')
+    # t.files = Dir.glob(File.join(doc_root, '**/*.rb')) + ['-'] +  Dir.glob(File.join(doc_root, '**/*.md'))
+    
+    t.files = ['opal/docs/**/*.rb', '-', 'opal/docs/**/*.md']
+    t.options = ['-oopal_docs', '-mmarkdown', '-ropal/docs/README.md']
+  end
 end

@@ -1,0 +1,35 @@
+# General options for building
+# 
+# main ruby file to include.
+# 
+# Files to be included in the build. These are not automatically required(), 
+# but will be available at runtime to include if you wish.
+# 
+# e.g. OPAL_REQUIRED_FILES = ["twitter.rb", "my_effects.rb"]
+task :options do
+  begin
+    require 'vienna'
+  rescue LoadError => e
+    abort "You need vienna installed. Go install it: gem install vienna"
+  end
+  
+  OPAL_BUILD_OPTIONS = {
+    :main => "__APPLICATION_NAME__.rb",
+    :require => []
+  }
+end
+
+desc "Update opal runtime with newest version"
+task :update => :options do
+  Vienna::Opal::Project.new.update_opal!
+end
+
+desc "Build package into single .js file"
+task :build => :options do
+  Vienna::Opal::Project.new.build!
+end
+
+desc "Spawn a rack based server to host the application"
+task :server => :options do
+  puts "Spawn server"
+end

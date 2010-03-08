@@ -33,7 +33,7 @@ function opal_document_ready_q(doc, id, _) {
   if (_ !== nil) { // block_given?
     // if doc is ready, we just execute the code (ready blocks already done)
     if (doc.iv_tbl.is_ready) {
-      _();
+      _(nil, nil, nil);
     }
     else {
       doc.iv_tbl.ready_blocks.push(_);
@@ -41,6 +41,13 @@ function opal_document_ready_q(doc, id, _) {
     
   }
   return doc.iv_tbl.is_ready;
+};
+
+/**
+  Document << (element)
+*/
+function opal_document_append(doc, id, _, other) {
+  document.body.appendChild(other);
 };
 
 function Init_Browser_Document() {
@@ -55,4 +62,5 @@ function Init_Browser_Document() {
   opal_oDocument.iv_tbl.ready_blocks = [];
   
   rb_define_singleton_method(opal_oDocument, "ready?", opal_document_ready_q,0);
+  rb_define_singleton_method(opal_oDocument, "<<", opal_document_append, 1);
 };

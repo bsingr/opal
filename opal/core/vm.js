@@ -302,6 +302,8 @@ function vm_send(obj, id, args, block, flags) {
 };
 
 function vm_getconstant(base, id) {
+  // quick hack fix:
+  if (base === undefined || base === null) base = nil;
   // console.log("const getting" + id);
   if (base.flags & T_OBJECT) base = rb_class_real(base.klass);
   // console.log("looking in base:");
