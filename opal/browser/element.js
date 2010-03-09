@@ -216,8 +216,13 @@ function opal_element_add_listener(el, id, _, type) {
     return rb_proc_call(_, "", nil, evt);
   };
   // should we save all these so they can be removed?
-  if (el.addEventListener) el.addEventListener(type, func, false);
-  else el.attachEvent('on' + type, func);
+  if (el.addEventListener) {
+    el.addEventListener(type, func, false);
+  }
+  else {
+    el.attachEvent('on' + type, func);
+  }
+  
   return el;
 };
 
@@ -251,6 +256,40 @@ function opal_element_s_new(el, id, _, type, options) {
   return document.createElement(type);
 };
 
+/*
+  valid options to pass to "set" with their relative functions. Some options
+  use the #name= syntax (e.g. class, id), while some use #name. To make things
+  easier, all possible options simply use the actual functions as listed here.
+  If a property is not here, then it is not a valid option
+*/
+var opal_element_set_options = {
+  'class': opal_element_class_e,
+  'id': opal_element_id_e,
+  'css': opal_element_css,
+  'style': opal_element_css,
+  'text': opal_element_text_e
+};
+
+/*
+  Element#set(options)
+*/
+function opal_element_set(el, id, _, options) {
+  if (!options) return el;
+  var i, k, v, f;
+  for (i = 0; i < options.keys.length; i++) {
+    k = options.keys[i];
+    v = options.dict[k];
+    // use string version
+    k = k.klass === rb_cSymbol ? k.ptr : k;
+    // silently ignore
+    if (f = opal_element_set_options[k]) {
+      console.log("need to set " + k);
+      f(el, k, nil, v);
+    }
+  }
+  return el;
+};
+
 function Init_Browser_Element() {
   opal_cElement = rb_define_class("Element", rb_cObject);
   
@@ -272,5 +311,7 @@ function Init_Browser_Element() {
   rb_define_method(opal_cElement, "method_missing", opal_element_m_missing, 1);
   rb_define_method(opal_cElement, "text=", opal_element_text_e, 1);
   rb_define_method(opal_cElement, "text", opal_element_text, 0);
+  
+  rb_define_method(opal_cElement, "set", opal_element_set, 1);
 };
 
