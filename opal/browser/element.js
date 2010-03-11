@@ -253,7 +253,7 @@ function opal_element_s_new(el, id, _, type, options) {
     type = "div"
   }
   
-  return document.createElement(type);
+  return opal_element_wrap(document.createElement(type));
 };
 
 /**

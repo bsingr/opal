@@ -1488,10 +1488,11 @@ var vn_parser = function(filename, str) {
             lex_state = EXPR_END;
             return [kEND, scanner.matched];
           case 'class':
+            console.log(lex_state);
             // catch 'class' being used as a method name. This only works when class is used
             // like object.class .. you cannot just use 'class' to call class method on self
             // without explicitly stating self as the receiver.
-            if (lex_state == EXPR_DOT) {
+            if (lex_state == EXPR_DOT || lex_state == EXPR_FNAME) {
               return [tIDENTIFIER, scanner.matched];
             }
             lex_state = EXPR_CLASS;
@@ -1706,27 +1707,18 @@ var vn_parser = function(filename, str) {
   }
   
   function generate_assign(stmt, context) {
-    
     if (context.last_stmt && context.full_stmt) write("return ");
     
-    
     if (stmt.$lhs.type == tIDENTIFIER) {
-      var idx;
-      // iseq_opcode_push([iSETLOCAL, 0]);
-      if ((idx = iseq_locals_idx(stmt.$lhs.value)) == -1) {
-        // doesnt exist, so we need a new local
-        // iseq_opcode_push([iSETLOCAL, iseq_locals_push(stmt.$lhs.value)]);
-        write('vm_setlocal(' + iseq_locals_push(stmt.$lhs.value) + ',');
-        generate_stmt(stmt.$rhs, {full_stmt: false, last_stmt: false});
-        write(')');
+      var local = iseq_current.lookup_local(stmt.$lhs.value);
+      if (local === null) {
+        local = iseq_current.push_local_name(stmt.$lhs.value);
       }
-      else {
-        // already a local, so just get the index
-        // iseq_opcode_push([iSETLOCAL, idx]);
-      }
+      write(local + "=");
+      generate_stmt(stmt.$rhs, {});
     }
     else {
-      throw "unsupported lhs, for now"
+      rb_raise(rb_eSyntaxError, "unsupported lhs, for now");
     }
     
     if (context.full_stmt) write(";");
@@ -2053,9 +2045,30 @@ var vn_parser = function(filename, str) {
     def_iseq.set_parent_iseq(current_iseq);
     def_iseq.set_method_id(definition.$fname.value);
     
-    iseq_stack_pop();
+    // normal args
     
-    write("vm_definemethod()");
+    // rest args
+    
+    // block name
+    
+    // body stmts
+    for (var i = 0; i < definition.$stmts.length; i++) {
+      generate_stmt(definition.$stmts[i], { full_stmt:true, last_stmt: (definition.$stmts.length - 1 === i) });
+    }
+    
+    iseq_stack_pop();
+        
+    write("vm_definemethod(");
+    
+    if (is_singleton) {
+      generate_stmt(definition.$sname, {});
+    }
+    else {
+      write("$");
+    }
+    
+    write(",'" + definition.$fname.value + "'," + def_iseq.toString() + ",");
+    write("" + is_singleton + "," + 0 + ")"); // last param should be arg size
     
     if (context.full_stmt) write(";");
     // var is_singleton = definition.$sname ? 1 : 0;
@@ -2195,6 +2208,13 @@ function Iseq(type) {
 
 Iseq.prototype = {
   
+  push_local_name: function(name) {
+    var id = this.local_current;
+    this.local_current = String.fromCharCode(this.local_current.charCodeAt(0) + 1);
+    this.locals[name] = "_" + id;
+    return "_" + id;
+  },
+  
   lookup_local: function(name) {
     if (name === null || name === undefined) return null;
     if (this.locals[name]) return this.locals[name];
@@ -2250,7 +2270,9 @@ Iseq.prototype = {
        r.push("}");
        break;
      case ISEQ_TYPE_METHOD:
-       
+       this.deal_with_method_args(r);
+       r.push(this.code.join(""));
+       r.push("}");
        break;
     case ISEQ_TYPE_BLOCK:
       r.push("function($$,__,ID");
@@ -2268,6 +2290,11 @@ Iseq.prototype = {
        throw "unknown iseq type in parse.js"
        }
     return r.join("");
+  },
+  
+  deal_with_method_args: function(r) {
+    r.push("function($,id,_");
+    r.push("){");
   }
 };
 

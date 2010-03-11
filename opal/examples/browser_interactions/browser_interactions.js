@@ -1,0 +1,1 @@
+opal_define_file("browser_interactions.rb",function($){var _ = nil;});opal_browser_main("browser_interactions.rb");
