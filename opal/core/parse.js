@@ -2044,33 +2044,47 @@ var vn_parser = function(filename, str) {
   };
   
   function generate_def(definition, context) {
+    if (context.full_stmt && context.last_stmt) write("return ");
+    
     var is_singleton = definition.$sname ? 1 : 0;
     
     var current_iseq = iseq_current;
-    var def_iseq = iseq_stack_push(ISEQ_TYPE_METHOD, definition.$fname.value);
-    
-    // dynamics..
-    // def_iseq.parent_iseq = current_iseq;
-    
-    // arg names
-    
-    // body
-    for (var i = 0; i < definition.$stmts.length; i++) {
-      generate_stmt(definition.$stmts[i], { last_stmt: (definition.$stmts.length -1 == i), full_stmt: true });
-    }
+    var def_iseq = iseq_stack_push(ISEQ_TYPE_METHOD);
+    def_iseq.set_parent_iseq(current_iseq);
+    def_iseq.set_method_id(definition.$fname.value);
     
     iseq_stack_pop();
     
-    // base (singleton method)
-    if (is_singleton) {
-      generate_stmt(definitions.$sname, {});
-    }
-    else {
-      write([iPUTNIL]);
-    }
+    write("vm_definemethod()");
     
-    // define method
-    write([iDEFINEMETHOD, definition.$fname.value, def_iseq.toArray(), is_singleton]);
+    if (context.full_stmt) write(";");
+    // var is_singleton = definition.$sname ? 1 : 0;
+    // 
+    // var current_iseq = iseq_current;
+    // var def_iseq = iseq_stack_push(ISEQ_TYPE_METHOD, definition.$fname.value);
+    // 
+    // // dynamics..
+    // // def_iseq.parent_iseq = current_iseq;
+    // 
+    // // arg names
+    // 
+    // // body
+    // for (var i = 0; i < definition.$stmts.length; i++) {
+    //   generate_stmt(definition.$stmts[i], { last_stmt: (definition.$stmts.length -1 == i), full_stmt: true });
+    // }
+    // 
+    // iseq_stack_pop();
+    // 
+    // // base (singleton method)
+    // if (is_singleton) {
+    //   generate_stmt(definitions.$sname, {});
+    // }
+    // else {
+    //   write([iPUTNIL]);
+    // }
+    // 
+    // // define method
+    // write([iDEFINEMETHOD, definition.$fname.value, def_iseq.toArray(), is_singleton]);
   };
   
   function generate_class(cls, context) {
@@ -2174,6 +2188,7 @@ function Iseq(type) {
   // dont really need to use this for client side eval
   this.local_current = "a";
   this.code = [];
+  this.method_id = null;
   
   return this;
 };
@@ -2186,6 +2201,10 @@ Iseq.prototype = {
     if (this.args[name]) return this.args[name];
     if (this.block_arg_name === name) return "_";
     return null;
+  },
+  
+  set_method_id: function(method_id) {
+    this.method_id = method_id;
   },
   
   push_arg_name: function(arg_name) {
