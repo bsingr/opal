@@ -1,24 +1,13 @@
 #!/usr/bin/env ruby -wKU
 
-# puts "at the top"
-
 require "spec"
 # 
 Dir[File.join('examples', '**', '*.rb')].each do |rb|
-  # require rb
+  require rb
 end
 # 
 # # We cannot run tests until document is loaded (as we write to document)
 Document.ready? do
-  # Spec::Runner.run
+  Spec::Runner.run
 end
 
-Document.ready? do
-  puts "making request:"
-  puts Net::HTTP
-  a = Net::HTTP.new("http://www.google.com")
-  # a.start do |res|
-    # puts "finished loading request!"
-    # puts res.body
-  # end
-end
