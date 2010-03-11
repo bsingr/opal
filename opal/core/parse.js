@@ -105,7 +105,7 @@ var vn_parser = function(filename, str) {
   var eval_arr = [];
   // valid types of stmt that are valid as the first cmd args (helps us identify if the
   // next statemebnt should be appeneded to the current identifer as a cmd arg )
-  var valid_cmd_args = [tIDENTIFIER, tINTEGER, tCONSTANT, tSTRING_BEG, kDO, '{', tSYMBEG, tIVAR];
+  var valid_cmd_args = [tIDENTIFIER, tINTEGER, tCONSTANT, tSTRING_BEG, kDO, '{', tSYMBEG, tIVAR, kSELF, tLBRACK];
   // start of command (not stmt), when on new line etc
   var cmd_start = false;
   
@@ -222,7 +222,8 @@ var vn_parser = function(filename, str) {
   
   var assignment = function (id) {
       return infixr(id, 10, function (left) {
-          if (left.type !== "." && left.type !== "[" && left.type !== tIDENTIFIER && left.type != tIVAR && left.type !== tMLHS && left.type !== tCONSTANT) {
+          if (left.type !== "." && left.type !== "[" && left.type !== tIDENTIFIER && left.type != tIVAR && left.type !== tMLHS && left.type !== tCONSTANT && left.type !== tCALL) {
+            console.log(left.type);
               throw 'bad lhs'
           }
           this.$lhs = left;
@@ -346,7 +347,7 @@ var vn_parser = function(filename, str) {
     // console.log(this.value + " " + token.value);
     // we need to check last_state, as lex_state (current) is overridden when parsing current token
     if ((valid_cmd_args.indexOf(token.type) != -1) && (last_state == EXPR_CMDARG)) {
-      // console.log("about to gather command args..");
+      // console.log("about to gather command args.." + token.value);
       gather_command_args(this);
       this.type = tCALL;
       this.$recv = null;
@@ -357,6 +358,83 @@ var vn_parser = function(filename, str) {
   };
   
   symbol(tCONSTANT).nud = function() {
+    // Constant.something
+    if (token.type === ".") {
+      var t = token;
+      t.type = tCALL;
+      t.$recv = this;
+      // read over dot
+      next_token();
+      
+      // for now assume no param args - method name must be an identifier
+      if (token.type !== tIDENTIFIER) {
+        rb_raise(rb_eSyntaxError, "Expecting identifier as constant method name");
+      }
+      t.$meth = token.value;
+      next_token();
+      
+      // if we are starting the arglist for this call...
+      if (token.type === '(') {
+        // read over paren
+        next_token();
+        // quick capture no args ")"
+        if (token.type === ')') {
+          next_token();
+        }
+        else {
+          gather_command_args(t);
+          // end of args..
+          // console.log('end constant args' + token.value);
+          // read over ending ')'
+          next_token(')');
+        }
+        
+      }
+      
+      // capture something.identifer = 
+      // console.log(token.type);
+      // 
+      // t.$meth = "find";
+      
+      // console.log("capture constant call!" + token.value);
+      
+      // if we have a do block..
+      if (token.type === kDO) {
+        // gather do block
+        t.$brace_block = stmt();
+      }
+      else if (token.type === '{') {
+        // gather rlcurly block
+        t.$brace_block = stmt();
+      }
+      
+      return t;
+    }
+    // Contant[....]
+    // if we are starting an aref/aset
+    else if (token.type === '[') {
+      var t = token;
+      // read over token
+      next_token();
+      
+      t.type = tCALL;
+      t.$recv = this;
+      t.$meth = '[]';
+      console.log("toekn is " + token.value);
+      // var aref_args = [expr()];
+      // console.log(expr());
+      var aref_args = [expr()];
+      // console.log("token is " + aref_args);
+      // console.log(aref_args);
+      t.$call_args = {
+        args: aref_args
+      };
+      // var aref_args = expr();
+      // make sure we now have a closing bracket
+      next_token(']');
+      return t;
+    }
+    
     return this;
   };
   
@@ -368,10 +446,24 @@ var vn_parser = function(filename, str) {
       args: []
     };
     // console.log('tIDENTIFIER "' + token.value + '" lex state: ' + lex_state + ' last state: ' + last_state + ' ,last token: ' + last_token.value);
-    if ((token.type !== kDO) && (token.type !== '{')) {
+    if ((token.type !== kDO) && (token.type !== '{') && (token.type !== ')')) {
       // dont add if next statement is kDO...
-      // console.log("getting exopr..");
-      cmd.$call_args.args.push(expr());
+      // console.log("getting exopr.." + token.value);
+      var s = expr();
+      if (token.type === tASSOC) {
+        // start tASSOC collection
+        var a_keys = [], a_values = [];
+        cmd.$assocs = { '$keys': a_keys, '$values': a_values };
+        a_keys.push(s);
+        // read ovber tassoc
+        next_token();
+        a_values.push(expr());
+      }
+      else {
+        cmd.$call_args.args.push(s);
+      }
+      
+      // console.log("finished expression " + token.value);
     }
     
     // collect remaining params
@@ -390,8 +482,11 @@ var vn_parser = function(filename, str) {
           // console.log('found tassoc');
           // should we check if we already have assoc list? having it more than once per cmd call
           // might be an error
-          var a_keys = [], a_values = [];
-          cmd.$assocs = { '$keys': a_keys, '$values': a_values };
+          if (!cmd.$assocs) {
+            var a_keys = [], a_values = [];
+            cmd.$assocs = { '$keys': a_keys, '$values': a_values };
+          }
+          
           a_keys.push(s);
           // read over tassoc
           next_token();
@@ -529,7 +624,7 @@ var vn_parser = function(filename, str) {
   
   // Dot notation
   infix(".", 80, function (left) {
-    // console.log('doing dot!')
+    // console.log('doing dot! $meth is: ' + token.value)
     this.$recv = left;
     this.$meth = token.value;
     this.type = tCALL;
@@ -537,6 +632,15 @@ var vn_parser = function(filename, str) {
     next_token();
     if ((valid_cmd_args.indexOf(token.type) != -1) && (last_state === EXPR_CMDARG)) {
       gather_command_args(this);
+    }
+    // capture something.something =
+    else if (token.type === "=") {
+      next_token();
+      // basically append "=" to method name, and set args to the given exp
+      this.$meth = this.$meth + "=";
+      var eql_expr = [expr()];
+      this.$call_args = { args: eql_expr };
+      console.log(this);
     }
     // else {
       // if not, check if we just have a block...... no args, just block..
@@ -1709,12 +1813,14 @@ var vn_parser = function(filename, str) {
   
   function generate_self(stmt, context) {
     if (context.last_stmt && context.full_stmt) write("return ");
-    write(current_self());
-    if (context.full_stmt) write(";\n");
+    write("$");
+    if (context.full_stmt) write(";");
   }
   
-  function generate_string(stmt, context) {  
-    write([iPUTSTRING, stmt.$parts[0].value]);
+  function generate_string(stmt, context) {
+    if (context.last_stmt && context.full_stmt) write("return ");
+    write('"' + stmt.$parts[0].value + '"');
+    if (context.full_stmt) write(";");
   }
   
   function generate_integer(stmt, context) {
@@ -1724,48 +1830,50 @@ var vn_parser = function(filename, str) {
   }
   
   function generate_constant(stmt, context) {
-    write([iPUTNIL]);
-    write([iGETCONSTANT, stmt.value]);
-    // iseq_opcode_push([iPUTNIL]);
-    // iseq_opcode_push([iGETCONSTANT, stmt.value]);
-    // write("vm_getconstant(nil,'" + stmt.value + "')");
+    if(context.last_stmt && context.full_stmt) write("return ");
+    write("vm_getconstant($,'" + stmt.value + "')");
+    if (context.full_stmt) write(";");
   }
   
   function generate_identifier(identifier, context) {
-    // for now, assumption is that they are all method calls. should check for local or dynamic
-    
-    // no receiver.
-    var idx;
-    if ((idx = iseq_locals_idx(identifier.value)) == -1) {
-      // not an identifier
-      iseq_opcode_push([iPUTNIL]);
-      iseq_opcode_push([iSEND, identifier.value, 0, null, 8, null]);
+    if (context.last_stmt && context.full_stmt) write("return ");
+    var local = iseq_current.lookup_local(identifier.value);
+    if (local) {
+      write(local);
     }
     else {
-      // its an identifier
-      iseq_opcode_push([iGETLOCAL, idx]);
+      write("vm_send($,'" + identifier.value + "',[],nil,8)");
     }
+    if (context.full_stmt) write(";");
     
     
-    if (context.full_stmt && context.last_stmt) {
-      iseq_opcode_push([iLEAVE]);
-    }
-    else if (context.full_stmt) {
-      iseq_opcode_push([iPOP]);
-    }
-  }
+    
+    
+    // no receiver.
+    // var idx;
+    // if ((idx = iseq_locals_idx(identifier.value)) == -1) {
+    //   // not an identifier
+    //   iseq_opcode_push([iPUTNIL]);
+    //   iseq_opcode_push([iSEND, identifier.value, 0, null, 8, null]);
+    // }
+    // else {
+    //   // its an identifier
+    //   iseq_opcode_push([iGETLOCAL, idx]);
+    // }
+    // 
+    // 
+    // if (context.full_stmt && context.last_stmt) {
+    //   iseq_opcode_push([iLEAVE]);
+    // }
+    // else if (context.full_stmt) {
+    //   iseq_opcode_push([iPOP]);
+    // }
+  };
   
   function generate_symbol(sym, context) {
-    write([iPUTSYMBOL, sym.$name.value]);
-    
-    if (context.full_stmt) {
-      if (context.last_stmt) {
-        write([iLEAVE]);
-      }
-      else {
-        write([iPOP]);
-      }
-    }
+    if (context.last_stmt && context.full_stmt) write("return ");
+    write('ID2SYM("' + sym.$name.value + '")');
+    if (context.full_stmt) write(";");
   };
   
   function generate_call(call, context) {
@@ -1791,11 +1899,40 @@ var vn_parser = function(filename, str) {
     if (call.$call_args && call.$call_args.args) {
       var args = call.$call_args.args;
       for (var i = 0; i < args.length; i++) {
+        // console.log("doing " + i + " for " + call.$meth);
+        if (i > 0) write(",");
         generate_stmt(args[i], {});
       }
     }
     
-    write("],nil,");
+    write("],");
+    
+    // block
+    if (call.$brace_block) {
+      var current_iseq = iseq_current;
+      var block_iseq = iseq_stack_push(ISEQ_TYPE_BLOCK);
+      block_iseq.set_parent_iseq(current_iseq);
+      
+      // block arg names
+       if (call.$brace_block.$args) {
+         for (var i = 0; i < call.$brace_block.$args.length; i++) {
+           block_iseq.push_arg_name(call.$brace_block.$args[i].value);
+         }
+       }
+      
+      // statements
+      for (var i = 0; i < call.$brace_block.$stmts.length; i++) {
+        generate_stmt(call.$brace_block.$stmts[i], {full_stmt:true, last_stmt:(i ===call.$brace_block.$stmts.length - 1)});
+      }
+      
+      iseq_stack_pop();
+      write(block_iseq.toString());
+    }
+    else {
+      write("nil");
+    }
+    
+    write(",");
     write(call_bit);
     write(")");
     
@@ -1804,7 +1941,7 @@ var vn_parser = function(filename, str) {
     
     
     
-    
+    // old
     var block_iseq, call_bit, arg_length;
     // if we have a block, do that first.
     if (false) {
@@ -1936,134 +2073,36 @@ var vn_parser = function(filename, str) {
     write([iDEFINEMETHOD, definition.$fname.value, def_iseq.toArray(), is_singleton]);
   };
   
-  function generate_class(stmt, context) {
+  function generate_class(cls, context) {
+    if (context.last_stmt && context.full_stmt) write("return ");
     
     var current_iseq = iseq_current;
-    var class_iseq = iseq_stack_push(ISEQ_TYPE_CLASS, "<class:" + stmt.$kname.value + ">");
-    // for dynamics
-    // class_iseq.parent_iseq = current_iseq;
+    var class_iseq = iseq_stack_push(ISEQ_TYPE_CLASS);
+    class_iseq.set_parent_iseq(current_iseq);
     
-    // generate bodystmts
-    for (var i = 0; i < stmt.$stmts.length; i++) {
-      generate_stmt(stmt.$stmts[i], {});
+    // do each bodystmt
+    if (stmt.$stmts) {
+      for (var i = 0; i < cls.$stmts.length; i++) {
+        generate_stmt(cls.$stmts[i], {full_stmt: true, last_stmt:(i === cls.$stmts.length - 1)});
+      }
     }
-    
-    // if no stmts, fake a stmt by returning nil .. not actually used..
-    if (stmt.$stmts.length == 0) {
-      write([iPUTNIL]);
-      write([iLEAVE]);
+    else {
+      // no statements? fake by returning nil
+      write("return nil;");
     }
     
     iseq_stack_pop();
     
-    // base
-    write([iPUTNIL]);
+    write("vm_defineclass($,");
     
-    // super
-    if (false) {
-      
-    }
-    else {
-      write([iPUTNIL]);
-    }
+    // superclass
+    write("nil");
+    console.log(cls);
+    write(",'" + cls.$kname.value + "'," + class_iseq.toString() + ",0)");
     
-    // define class
-    write([iDEFINECLASS, stmt.$kname.value, class_iseq.toArray(), 0]);
     
-    // if (context.full_stmt && context.last_stmt) write("return ");
-    // 
-    // write("vm_defineclass(");
-    // 
-    // // base
-    // write("vm_putnil(),");
-    // 
-    // // superclass
-    // if (stmt.$super) {
-    //   generate_stmt(stmt.$super, {full_stmt:false, last_stmt:false});
-    // }
-    // else {
-    //   write("vm_putnil()");
-    // }
-    // write(",");
-    // 
-    // // class id
-    // write("'" + stmt.$kname.value + "'");
-    // write(",");
-    // 
-    // // iseq
-    // write("function(){},")
-    // 
-    // // op_flag
-    // write(0);
-    // 
-    // write(")");
-    // 
-    // if (context.full_stmt) write(";");
-    
-    // base (for class << Ben; ...; end)
-    // iseq_opcode_push([iPUTNIL]);
-    // // superclass
-    // if (stmt.$super) {
-    //   // console.log("super..");
-    //   // console.log(stmt.$super);
-    //   generate_stmt(stmt.$super, {full_stmt: false, last_stmt:false});
-    // }
-    // else {
-    //  iseq_opcode_push([iPUTNIL]);
-    // }
-    // 
-    // var iseq = [0, 0, "<class:" + stmt.$kname.value + ">", filename, ISEQ_TYPE_CLASS, 0, [], []];
-    // var opcode = [iDEFINECLASS, stmt.$kname.value, iseq, 0];
-    // iseq_opcode_push(opcode);
-    // iseq_stack_push(iseq);
-    // 
-    // // statements.
-    // if (stmt.$stmts) {
-    //   var i, s = stmt.$stmts;
-    //   for (i = 0; i < s.length; i++) {
-    //     generate_stmt(s[i], {instance:false, full_stmt:true, last_stmt:(s[s.length - 1] == s[i] ? true : false), top_level:false});
-    //   }
-    // }
-    // 
-    // iseq_stack_pop();
-    
-    // write("(function(self) {\n");
-    // push_nametable();
-    // current_self_push("self");
-    // 
-    // if (stmt.$stmts) {
-    //   var i, m = stmt.$stmts;
-    //   for (i = 0; i < m.length; i++) {
-    //     generate_stmt(m[i], {instance: false, full_stmt: true, last_stmt: (m[m.length -1] == m[i] ? true : false), top_level: false});
-    //   }
-    // }
-    // 
-    // pop_nametable();
-    // current_self_pop();
-    // 
-    // write("})(");
-    // 
-    // if (context.top_level) {
-    //   write("rb_define_class('")
-    //   write(stmt.$kname.value);
-    //   write("',");
-    // }
-    // else {
-    //   write("rb_define_class_under(" + current_self() + ",'");
-    //   write(stmt.$kname.value);
-    //   write("',");
-    // }
-    // 
-    // // superclass
-    // if (stmt.$super) {
-    //   write("rb_const_get(self, '" + stmt.$super.value + "'))")
-    // }
-    // else {
-    //   write("rb_cObject)");
-    // }
-    // 
-    // write(");\n")
-  }
+    if (context.full_stmt) write(";");
+  };
   
   function generate_module(mod, context) {
     write("(function(self) {\n");
@@ -2125,8 +2164,8 @@ var vn_parser = function(filename, str) {
 */
 function Iseq(type) {
   this.type = type;
-  this.locals = [];
-  this.args = [];
+  this.locals = {};
+  this.args = {};
   this.norm_arg_names = [];
   this.opt_arg_names = [];
   this.rest_arg_names = [];
@@ -2141,6 +2180,26 @@ function Iseq(type) {
 
 Iseq.prototype = {
   
+  lookup_local: function(name) {
+    if (name === null || name === undefined) return null;
+    if (this.locals[name]) return this.locals[name];
+    if (this.args[name]) return this.args[name];
+    if (this.block_arg_name === name) return "_";
+    return null;
+  },
+  
+  push_arg_name: function(arg_name) {
+    var id = this.local_current;
+    this.local_current = String.fromCharCode(this.local_current.charCodeAt(0) + 1);
+    this.args[arg_name] = "_" + id;
+    this.norm_arg_names.push(arg_name);
+    return "_" + id;
+  },
+  
+  set_parent_iseq: function(parent_iseq) {
+    
+  },
+  
   finalize: function() {
     
   },
@@ -2151,33 +2210,45 @@ Iseq.prototype = {
   
   toString: function() {
     var r = [];
-        switch (this.type) {
-             case ISEQ_TYPE_TOP:
-               r.push("function($){");
-               if (this.locals.length > 0) {
-                 r.push("var ");
-                 for (var i = 0; i < this.locals.length; i++) {
-                   if (i != 0) r.push(",");
-                   r.push(this.locals[i]);
-                 }
-                 r.push(";");
-               }
-               r.push(this.code.join(""));
-               r.push("}");
-               break;
-             case ISEQ_TYPE_CLASS:
-               
-               break;
-             case ISEQ_TYPE_METHOD:
-               
-               break;
-             case ISEQ_TYPE_BLOCK:
-               
-               break;
-             default:
-               throw "unknown iseq type in parse.js"
-           }
-        return r.join("");
+    switch (this.type) {
+      case ISEQ_TYPE_TOP:
+       r.push("function($){");
+       r.push("var _ = nil;");
+       if (this.locals.length > 0) {
+         r.push("var ");
+         for (var i = 0; i < this.locals.length; i++) {
+           if (i != 0) r.push(",");
+           r.push(this.locals[i]);
+         }
+         r.push(";");
+       }
+       r.push(this.code.join(""));
+       r.push("}");
+       break;
+     case ISEQ_TYPE_CLASS:
+       r.push("function($){");
+       r.push(this.code.join(""));
+       r.push("}");
+       break;
+     case ISEQ_TYPE_METHOD:
+       
+       break;
+    case ISEQ_TYPE_BLOCK:
+      r.push("function($$,__,ID");
+      for (var i = 0; i < this.norm_arg_names.length; i++) {
+        r.push(",");
+        r.push(this.args[this.norm_arg_names[i]]);
+      }
+      r.push("){")
+      r.push("with({$:($$==nil?$:$$),_:(__==nil?_:__)}){");
+      r.push(this.code.join(""));
+      r.push("}");
+      r.push("}");
+       break;
+     default:
+       throw "unknown iseq type in parse.js"
+       }
+    return r.join("");
   }
 };
 

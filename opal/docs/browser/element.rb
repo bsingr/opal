@@ -159,6 +159,31 @@ class Element
     
   end
   
+  # Set the Element class name to <tt>class_name</tt>. This method does not
+  # append the name to the current class, but completely removes all current
+  # class names so that it is uniquely <tt>class_name</tt>.
+  # 
+  #     elem = Element.new(:div)
+  #     elem.class = "main_content"
+  # 
+  # @param [String] class_name
+  # @return [Element]
+  # 
+  def class_name=(class_name)
+    
+  end
+  
+  alias :class= :class_name=
+  
+  # Return the HTML classname of
+  # the receiver. Might be the empty string.
+  # 
+  # @return [String]
+  # 
+  def class_name
+    
+  end
+    
   # Custom method missing handler. This is used to create a builder type feature
   # where elements are created using the method name as a tag name, and then any
   # additional option arguments will be sent to the {Element#set} method. Also,

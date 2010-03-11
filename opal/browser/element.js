@@ -71,15 +71,15 @@ function opal_element_s_find(cls, id, _, str) {
     }
   }
   else if (str.klass === rb_cString) {
-    var native = document.getElementById(str);
-    if (native) el = opal_element_wrap(native);
+    var el = document.getElementById(str);
+    if (el) opal_element_wrap(el);
   }
   
   if (el) {
     // we found it..
     if (_ !== nil) {
       // console.log("instance eval element..");
-      _.call(_, el);
+      rb_obj_instance_eval(el, "instance_eval", _);
     }
     return el;
   }
@@ -256,6 +256,23 @@ function opal_element_s_new(el, id, _, type, options) {
   return document.createElement(type);
 };
 
+/**
+  Element#class=
+*/
+function opal_element_class_e(el, id, _, name) {
+  console.log("setting classname to " + name);
+  el.className = name;
+  return el;
+};
+
+/**
+  Element#id=
+*/
+function opal_element_id_e(el, id, _, name) {
+  el.id = name;
+  return el;
+};
+
 /*
   valid options to pass to "set" with their relative functions. Some options
   use the #name= syntax (e.g. class, id), while some use #name. To make things
@@ -283,10 +300,65 @@ function opal_element_set(el, id, _, options) {
     k = k.klass === rb_cSymbol ? k.ptr : k;
     // silently ignore
     if (f = opal_element_set_options[k]) {
-      console.log("need to set " + k);
+      console.log("need to set " + k + " to " + v);
       f(el, k, nil, v);
     }
   }
+  return el;
+};
+
+/**
+  Element#hide
+*/
+function opal_element_hide(el, id, _) {
+  (el.style || el).display = 'none';
+  return el;
+};
+
+/**
+  Element#show
+*/
+function opal_element_show(el, id, _) {
+  (el.style || el).display = '';
+  return el;
+};
+
+/**
+  Element#visible?
+*/
+function opal_element_visible_q(el, id, _) {
+  return (el.style || el).display != 'none';
+};
+
+/**
+  Element#toggle
+*/
+function opal_element_toggle(el, id, _) {
+  opal_element_visible_q(el) ? opal_element_hide(el) : opal_element_show(el);
+  return el;
+};
+
+/**
+  Element#remove
+*/
+function opal_element_remove(el, id, _) {
+  el.parentNode.removeChild(el);
+  return el;
+};
+
+/**
+  Element#opacity
+*/
+function opal_element_opacity(el, id, _) {
+  var o = (el.style || el).opacity;
+  return o ? parseFloat(o) : 1.0;
+};
+
+/**
+  Element#opacity=
+*/
+function opal_element_opacity_e(el, id, _, val) {
+  (el.style || el).opacity = (val === 1 || val === '') ? "" : value;
   return el;
 };
 
@@ -306,12 +378,26 @@ function Init_Browser_Element() {
   rb_define_method(opal_cElement, "css", opal_element_css, 0);
   rb_define_method(opal_cElement, "style", opal_element_css, 0);
   
-  rb_define_method(opal_cElement, "has_class?", opal_element_has_class_q, 1)
+  rb_define_method(opal_cElement, "has_class?", opal_element_has_class_q, 1);
+  rb_define_method(opal_cElement, "class=", opal_element_class_e, 1);
+  rb_define_method(opal_cElement, "class_name=", opal_element_class_e, 1);
   
   rb_define_method(opal_cElement, "method_missing", opal_element_m_missing, 1);
   rb_define_method(opal_cElement, "text=", opal_element_text_e, 1);
   rb_define_method(opal_cElement, "text", opal_element_text, 0);
   
   rb_define_method(opal_cElement, "set", opal_element_set, 1);
+  
+  // newer methods
+  
+  rb_define_method(opal_cElement, "hide", opal_element_hide, 0);
+  rb_define_method(opal_cElement, "show", opal_element_show, 0);
+  rb_define_method(opal_cElement, "toggle", opal_element_toggle, 0);
+  rb_define_method(opal_cElement, "visible?", opal_element_visible_q, 0);
+  
+  rb_define_method(opal_cElement, "remove", opal_element_remove, 0);
+  
+  rb_define_method(opal_cElement, "opacity", opal_element_opacity, 0);
+  rb_define_method(opal_cElement, "opacity=", opal_element_opacity_e, 1);
 };
 

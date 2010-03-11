@@ -23,6 +23,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+ 
+String.prototype.trim = function() { return this.replace(/^\s+|\s+$/g, ''); };
 
 
 var rb_cString, rb_cSymbol;
