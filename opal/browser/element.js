@@ -8,90 +8,6 @@
 
 var opal_cElement;
 
-/**
-  Wraps the native element with ruby goodness (a .klass and .flags property)
-*/
-function opal_element_wrap(wrap) {
-  // do not need to do this twice
-  if (wrap.klass) return wrap;
-  wrap.hash = opal_yield_hash();
-  wrap.klass = opal_cElement;
-  wrap.flags = T_OBJECT;
-  return wrap;
-};
-
-/*
-  Element[:my_div]
-  Element.find[:my_div]
-  Element.find('my_div')
-  
-  Search the dom for the element with the given name, identifier etc.
-  
-  If a block is given, then it is instance eval'd so that self within the block
-  becomes the found element. If no block is given, then the element is simply
-  returned.
-  
-  Usage:
-    
-    Element[:my_div] do
-      # add a div with the title "My Info" as well as the class properties
-      div "My Info", :class => "my_title_div"
-    end
-    
-    a = Element.find(:my_div)
-    a.div "My Info", :class => "my_title_div"
-*/
-function opal_element_s_find(cls, id, _, str) {
-  var el;
-  // First case: empty string, nil, or nothing is passed: return el as it is.
-  if (!str || str === nil) return el;
-  // if we get a symbol, we need the string version
-  if (str.klass === rb_cSymbol) str = str.ptr;
-  
-  
-  // return el;
-  
-  // Second case: a symbol is passed to the method. If :body or :document, then
-  // return these relevant items, if not, then simply return doc.getElementById
-  // for the symbol string value
-  if (str.klass === rb_cSymbol) {
-    str = str.ptr;
-    
-    if (str == "body") {
-      el = opal_element_wrap(document.body)
-    }
-    else if (str == "document") {
-      el = opal_oDocument;
-    }
-    else {
-      // console.log("trying " + str);
-      var native = document.getElementById(str);
-      // console.log(native);
-      if (native) el = opal_element_wrap(native);
-    }
-  }
-  else if (str.klass === rb_cString) {
-    var el = document.getElementById(str);
-    if (el) opal_element_wrap(el);
-  }
-  
-  if (el) {
-    // we found it..
-    if (_ !== nil) {
-      // console.log("instance eval element..");
-      rb_obj_instance_eval(el, "instance_eval", _);
-    }
-    return el;
-  }
-    
-  rb_raise(rb_eArgError, "unknown Element#find type");
-  
-  // return opal_element_wrap(document.getElementById(str));
-};
-
-function opal_element_s_body(el) {
-  return opal_element_wrap(document.body);
-};
 
 /**
   Element#css(styles)
@@ -125,57 +41,6 @@ function opal_element_css(el, id, _, styles) {
   }
 };
 
-function opal_element_m_missing(el, id, _, sym) {
-  var args = Array.prototype.slice.call(arguments, 4);
-  var tag_name = sym.ptr;
-  var tag = document.createElement(tag_name);
-  for (var i = 0; i < args.length; i++) {
-    var cur = args[i];
-    if (cur === null || cur == undefined) continue;
-    if (cur.klass == rb_cString) {
-      tag.appendChild(document.createTextNode(cur));
-    }
-    else if (cur.klass == rb_cHash) {
-      if (cur.hasKey(ID2SYM('class'))) {
-        tag.className = cur.get(ID2SYM('class'));
-      }
-    }
-    else {
-      throw "bad param type for Element#method_missing (builder)"
-    }
-  }
-  
-  el.appendChild(tag);
-  return opal_element_wrap(tag);
-};
-
-/**
-  Element#has_class?('foo')
-    => true or false
-*/
-function opal_element_has_class_q(el, id, _, name) {
-  return (" " + el.className + " ").indexOf(" " + name + " ") > -1;
-};
-
-/**
-  Element#add_class(class_name)
-    => element
-*/
-function opal_element_add_class(el, id, _, name) {
-  if (!opal_element_has_class_q(el, "", nil, name)) {
-    el.className = el.className + " " + name;
-  }
-  return el;
-};
-
-/**
-  Element#remove_class(class_name)
-    => element
-*/
-function opal_element_remove_class(el, id, _, name) {
-  rb_raise(rb_eStandardError, "Element#remove_class not implemented");
-};
-
 /**
   Element#toggle_class(class_name)
     => element
@@ -187,11 +52,6 @@ function opal_element_toggle_class(el, id, _, name) {
   else {
     return opal_element_add_class(el, "", nil, name);
   }
-};
-
-function opal_element_empty(el) {
-  while (el.firstChild) { el.removeChild(el.firstChild); }
-  return el;
 };
 
 /**
@@ -209,26 +69,6 @@ function opal_element_text_e(el, id, _, text) {
   return el;
 };
 
-function opal_element_add_listener(el, id, _, type) {
-  // make sure _ is not nil: throw error if it is? using type name
-  var func = function(evt) { 
-    // we should really wrap our native event in a rubified event.
-    return rb_proc_call(_, "", nil, evt);
-  };
-  // should we save all these so they can be removed?
-  if (el.addEventListener) {
-    el.addEventListener(type, func, false);
-  }
-  else {
-    el.attachEvent('on' + type, func);
-  }
-  
-  return el;
-};
-
-function opal_element_on_click(el, id, _) {
-  return opal_element_add_listener(el, "", _, 'click');
-};
 
 /**
   Element#text
@@ -244,17 +84,6 @@ function opal_element_text(el, id, _, text) {
   return (el.textContent !== undefined) ? el.textContent : el.innerText;
 };
 
-function opal_element_s_new(el, id, _, type, options) {
-  if (type.klass === rb_cSymbol) {
-    type = type.ptr;
-  } 
-  else if (type.klass !== rb_cString) {
-    options = type;
-    type = "div"
-  }
-  
-  return opal_element_wrap(document.createElement(type));
-};
 
 /**
   Element#class=
@@ -364,25 +193,14 @@ function opal_element_opacity_e(el, id, _, val) {
 
 function Init_Browser_Element() {
   opal_cElement = rb_define_class("Element", rb_cObject);
-  
-  rb_define_singleton_method(opal_cElement, "[]", opal_element_s_find, 1);
-  rb_define_singleton_method(opal_cElement, "find", opal_element_s_find, 1);
-  rb_define_singleton_method(opal_cElement, "body", opal_element_s_body, 1);
-  rb_define_singleton_method(opal_cElement, "new", opal_element_s_new, -1);
-  
-  rb_define_method(opal_cElement, "add_listener", opal_element_add_listener, 1);
-  
-  rb_define_method(opal_cElement, "on_click", opal_element_on_click, 0);
-  rb_define_method(opal_cElement, "empty", opal_element_empty, 0);
-  
+        
   rb_define_method(opal_cElement, "css", opal_element_css, 0);
   rb_define_method(opal_cElement, "style", opal_element_css, 0);
   
-  rb_define_method(opal_cElement, "has_class?", opal_element_has_class_q, 1);
   rb_define_method(opal_cElement, "class=", opal_element_class_e, 1);
   rb_define_method(opal_cElement, "class_name=", opal_element_class_e, 1);
   
-  rb_define_method(opal_cElement, "method_missing", opal_element_m_missing, 1);
+  // rb_define_method(opal_cElement, "method_missing", opal_element_m_missing, 1);
   rb_define_method(opal_cElement, "text=", opal_element_text_e, 1);
   rb_define_method(opal_cElement, "text", opal_element_text, 0);
   

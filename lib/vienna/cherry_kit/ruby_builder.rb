@@ -169,6 +169,15 @@ module Vienna
             r << ",#{@args[@rest_arg_name]}"
             r << "){"
             r << %{#{@args[@rest_arg_name]}=Array.prototype.slice.call(arguments,3);}
+          
+          # Case: one norm arg, rest splat args
+          # def a(name, *args)
+          elsif norm == 1 && opt == 0 && post == 0 && rest
+            r << ",#{@args[@norm_arg_names.first]}"
+            r << ",#{@args[@rest_arg_name]}"
+            r << "){"
+            r << "#{@args[@norm_arg_names.first]}=arguments[3];"
+            r << %{#{@args[@rest_arg_name]}=Array.prototype.slice.call(arguments,4);}
             
           # Case 3: just normal args (any number)
           # def a(l,m,n,o,p)

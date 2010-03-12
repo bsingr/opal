@@ -24,7 +24,7 @@ function opal_define_file(name, body) {
   File will be a function which takes top_self as a param
 */
 function opal_boot_file(file) {
-  console.log(file);
+  // console.log(file);
   opal_boot_files.push(file);
 };
 
@@ -113,25 +113,24 @@ function opal_run_tags() {
 function opal_browser_init() {
   
   // function to call on window.load
-  var win_on_load = function() {
-    opal_oDocument.iv_tbl.is_ready = true;
-    var a = opal_oDocument.iv_tbl.ready_blocks;
-    for (var i = 0; i < a.length; i++) {
-      vm_yield(a[i], []);
-      // a[i]();
-    }
-  };
   
-  if (window.addEventListener) {
-    window.addEventListener('load', win_on_load, false);
-  }
-  else {
-    window.attachEvent('onload', win_on_load);
-  }
+  // var win_on_load = function() {
+  //   opal_oDocument.iv_tbl.is_ready = true;
+  //   var a = opal_oDocument.iv_tbl.ready_blocks;
+  //   for (var i = 0; i < a.length; i++) {
+  //     vm_yield(a[i], []);
+  //     // a[i]();
+  //   }
+  // };
+  // 
+  // if (window.addEventListener) {
+  //   window.addEventListener('load', win_on_load, false);
+  // }
+  // else {
+  //   window.attachEvent('onload', win_on_load);
+  // }
   
   Init_Browser_Element();
-  Init_Browser_Document();
-  Init_Browser_Json();
   Init_Ajax();
 };
 
@@ -146,21 +145,21 @@ function opal_require(path) {
   opal_require_main(path);
 };
 
-/**
-  Capture window onload etc
-*/
-(function() {
-  var tags = document.getElementsByTagName("script");
-  for (var i = 0; i < tags.length; i++) {
-    if (tags[i].src && tags[i].text !== "") {
-      if (window.execScript) {
-        window.execScript(tags[i].text);
-      }
-      else {
-        with (window) {
-          return eval(tags[i].text);
-        }
-      }
-    }
-  }
-})();
+// /**
+//   Capture window onload etc
+// */
+// (function() {
+//   var tags = document.getElementsByTagName("script");
+//   for (var i = 0; i < tags.length; i++) {
+//     if (tags[i].src && tags[i].text !== "") {
+//       if (window.execScript) {
+//         window.execScript(tags[i].text);
+//       }
+//       else {
+//         with (window) {
+//           return eval(tags[i].text);
+//         }
+//       }
+//     }
+//   }
+// })();

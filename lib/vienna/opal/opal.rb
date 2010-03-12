@@ -57,6 +57,10 @@ module Vienna
           buffer << File.read(js)
         end
       end
+      Dir[File.join(Opal::PATH, 'browser', '**/*.rb')].each do |rb|
+        str = Vienna::CherryKit::RubyBuilder.new(rb, nil, File.basename(rb)).build!
+        buffer << %{opal_boot_file(#{str});}
+      end
       buffer.join("")
     end
     
