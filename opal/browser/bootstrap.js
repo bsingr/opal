@@ -6,12 +6,26 @@
 //  Copyright 2010 Adam Beynon. All rights reserved.
 // 
 
+
 /*
   Define a ruby file (compiled) by the name, 'name', with the file embedded in a
   string, 'body'.
 */
 function opal_define_file(name, body) {
   vn_fs_define_file(name, body);
+};
+
+
+
+/**
+  Define the given "file" as needing to be loaded upon Init (allows core libs
+  to be written in ruby).
+  
+  File will be a function which takes top_self as a param
+*/
+function opal_boot_file(file) {
+  console.log(file);
+  opal_boot_files.push(file);
 };
 
 /*

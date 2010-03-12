@@ -136,8 +136,8 @@ function opal_element_m_missing(el, id, _, sym) {
       tag.appendChild(document.createTextNode(cur));
     }
     else if (cur.klass == rb_cHash) {
-      if (rb_hash_has_key(cur, "", nil, ID2SYM('class'))) {
-        tag.className = rb_hash_aref(cur, "", nil, ID2SYM('class'));
+      if (cur.hasKey(ID2SYM('class'))) {
+        tag.className = cur.get(ID2SYM('class'));
       }
     }
     else {

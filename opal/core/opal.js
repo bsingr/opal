@@ -107,19 +107,6 @@ function RClass(klass, super_klass) {
   return this;
 };
 
-function RHash() {
-  this.hash = opal_yield_hash();
-  this.toString = function () { return "#<Hash:" + this.hash + ">" ;};
-  this.klass = nil;
-  this.flags = T_OBJECT | T_HASH;
-  this.ifnone = nil;
-  // ordered keys
-  this.keys = [];
-  // keys.to_s => values
-  this.dict = { };
-  return this;
-};
-
 function rb_method_t() {
   this.argc = 0;
   this.body = nil;

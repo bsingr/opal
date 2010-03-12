@@ -24,11 +24,17 @@
  * THE SOFTWARE.
  */
  
+ var opal_boot_files = [];
+ 
 /**
   Basically start opal.
 */
 function ruby_init() {
   rb_call_inits();
+  // console.log(opal_boot_files);
+  for (var i = 0; i < opal_boot_files.length; i++) {
+    (opal_boot_files[i])(opal_top_self);
+  }
 };
 
 /**

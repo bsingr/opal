@@ -559,6 +559,26 @@ module Vienna
         write ";" if context[:full_stmt]
       end
       
+      def generate_xstring(str, context)
+        # write "return " if context[:last_stmt] and context[:full_stmt]
+        
+        if str[:value].length == 0
+          write %{}
+        elsif str[:value].length == 1
+          write str[:value][0][:value]
+        else
+          str[:value].each do |s|
+            if s.node == :string_content
+              write s[:value]
+            else
+              generate_stmt s[:value][0], :full_stmt => false
+            end
+          end
+        end
+        
+        # write ";" if context[:full_stmt]
+      end
+      
       def generate_constant(cnst, context)
         write "return " if context[:last_stmt] and context[:full_stmt]
         write %{vm_getconstant($,"#{cnst[:name]}")}
@@ -1086,6 +1106,17 @@ module Vienna
           end
         end
         write ");"
+      end
+      
+      def generate_tertiary(stmt, context)
+        write "return " if context[:full_stmt] and context[:last_stmt]
+        write "RTEST("
+        generate_stmt stmt[:expr], :full_stmt => false
+        write ")? "
+        generate_stmt stmt[:true], :full_stmt => false
+        write " : "
+        generate_stmt stmt[:false], :full_stmt => false
+        write ";" if context[:full_stmt]
       end
             
     end # end class

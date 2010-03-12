@@ -203,48 +203,6 @@ function rb_obj_tap(obj, id, _) {
   return obj;
 };
 
-function rb_nil_to_s() {
-  return "";
-};
-
-function rb_nil_inspect() {
-  return "nil";
-};
-
-function rb_nil_and(n, id, _, obj) {
-  return false;
-};
-
-function rb_nil_or(n, id, _, obj) {
-  if (obj === nil || obj === false) return false;
-  return true;
-};
-
-function rb_nil_xor(n, id, _, obj) {
-  if (obj === nil || obj === false) return false;
-  return true;
-};
-
-function rb_nil_to_a() {
-  return [];
-};
-
-function rb_nil_to_f() {
-  return 0.0;
-};
-
-function rb_nil_to_i() {
-  return 0;
-};
-
-/**
-  ensure nil matches null and undefined as well as itself
-*/
-function rb_nil_eql(self, id, _, other) {
-  // console.log("comparing nil to " + other);
-  return (other === nil || other === null || other === undefined);
-};
-
 /**
   Object#instance_eval(&block)
   
@@ -453,8 +411,8 @@ function Init_Object() {
   rb_define_private_method(rb_cModule, "method_removed", rb_obj_dummy, 1);
   rb_define_private_method(rb_cModule, "method_undefined", rb_obj_dummy, 1);
 
-  rb_define_method(rb_mKernel, "nil?", rb_false, 0);
-  rb_define_method(rb_mKernel, "===", rb_equal, 1); 
+  // rb_define_method(rb_mKernel, "nil?", rb_false, 0);
+  // rb_define_method(rb_mKernel, "===", rb_equal, 1); 
   rb_define_method(rb_mKernel, "=~", rb_obj_match, 1);
   rb_define_method(rb_mKernel, "!~", rb_obj_not_match, 1);
   rb_define_method(rb_mKernel, "eql?", rb_obj_equal, 1);
@@ -515,20 +473,8 @@ function Init_Object() {
   // rb_define_global_function("Array", rb_f_array, 1);
    
   rb_cNilClass = rb_define_class("NilClass", rb_cObject);
-  rb_define_method(rb_cNilClass, "to_i", rb_nil_to_i, 0);
-  rb_define_method(rb_cNilClass, "to_f", rb_nil_to_f, 0);
-  rb_define_method(rb_cNilClass, "to_s", rb_nil_to_s, 0);
-  rb_define_method(rb_cNilClass, "to_a", rb_nil_to_a, 0);
-  rb_define_method(rb_cNilClass, "inspect", rb_nil_inspect, 0);
-  rb_define_method(rb_cNilClass, "&", rb_nil_and, 1);
-  rb_define_method(rb_cNilClass, "|", rb_nil_or, 1);
-  rb_define_method(rb_cNilClass, "^", rb_nil_xor, 1);
-  rb_define_method(rb_cNilClass, "nil?", rb_nil_nil_q, 0);
-  rb_define_method(rb_cNilClass, "==", rb_nil_eql, 0);
   nil = { flags: T_OBJECT, klass: rb_cNilClass, toString:function() {return "nil";} };
-  // 
-  // 
-  // 
+
   // rb_define_method(rb_cModule, "freeze", rb_mod_freeze, 0);
   rb_define_method(rb_cModule, "===", rb_mod_eqq, 1);
   // rb_define_method(rb_cModule, "==", rb_obj_equal, 1);

@@ -320,7 +320,7 @@ function vm_setconstant(base, id, val) {
 function vm_newhash() {
   var ary = Array.prototype.slice.call(arguments), res = rb_hash_new();
   for (var i = 0; i < ary.length; i += 2) {
-    rb_hash_aset(res, "", nil, ary[i], ary[i + 1]);
+    res.set(ary[i], ary[i + 1]);
   }
   return res;
 };
