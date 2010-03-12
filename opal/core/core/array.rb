@@ -140,6 +140,15 @@ class Array
     return res;`
   end
   
+  def reject(&block)
+    `var res = [], v;`
+    `for (var i = 0; i < #{self}.length; i++) {`
+      `v = vm_yield(#{block}, [#{self}[i]]);`
+      `if (!RTEST(v)) res.push(#{self}[i]);`
+    `}`
+    `return res;`
+  end
+  
   def *(num)
     `if (#{num}.klass == rb_cString) {
       return #{self}.join(#{num});
@@ -153,5 +162,16 @@ class Array
       }
       return res;
     }`
+  end
+  
+  def +(other)
+    `var c = [];`
+    `for (var i = 0; i < #{self}.length; i++) {`
+      `c.push(#{self}[i]);`
+    `}`
+    `for (var i = 0; i < #{other}.length; i++) {`
+      `c.push(#{other}[i]);`
+    `}`
+    `return c;`
   end
 end

@@ -440,6 +440,7 @@ class Vienna::RubyParser < Racc::Parser
         end
         
           self.lex_state = :EXPR_FNAME
+          # puts "here for symbeg #{scanner.peek(8)}"
           return [:tSYMBEG, ':']
         # end
       # Parse a number. 
@@ -800,6 +801,7 @@ class Vienna::RubyParser < Racc::Parser
         
         
         if self.lex_state == :EXPR_FNAME then
+          # puts "it is fname #{scanner.peek(8)}"
           if scanner.scan(/=(?:(?![~>=])|(?==>))/) then
             self.lex_state = :EXPR_END
             return [:tIDENTIFIER, matched + scanner.matched]

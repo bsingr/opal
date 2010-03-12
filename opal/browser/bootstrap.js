@@ -130,7 +130,7 @@ function opal_browser_init() {
   //   window.attachEvent('onload', win_on_load);
   // }
   
-  Init_Browser_Element();
+  
   Init_Ajax();
 };
 

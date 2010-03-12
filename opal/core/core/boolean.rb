@@ -6,7 +6,7 @@
 # class {Boolean}.
 # 
 # TrueClass and FalseClass constants are therefore missing from Opal runtime.
-# 
+#
 class Boolean
   
   # Returns a string representation of the value, 'true' for true, and 'false'
@@ -18,8 +18,9 @@ class Boolean
   #   false.to_s  # "false"
   # 
   # @return [String] string representation
+  # 
   def to_s
-    
+    self ? "true" : "false"
   end
   
   # Returns a string representation of the value. Follows the same principle as
@@ -31,8 +32,9 @@ class Boolean
   #   false.to_s  # "false"
   # 
   # @return [String] string representation
+  # 
   def inspect
-    
+    self ? "true" : "false"
   end
   
   # And: carries out a boolean logic test. 
@@ -50,15 +52,28 @@ class Boolean
   # 
   # @param [Object] other the object to compare
   # @return [Boolean] result
+  # 
   def &(other)
-    
+    if self
+      other ? true : false
+    else
+      false
+    end
   end
   
   def |(other)
-    
+    if self
+      true
+    else
+      other ? true : false
+    end
   end
   
   def ^(other)
-    
+    if self
+      other ? false : true
+    else
+      other ? true : false
+    end
   end
 end

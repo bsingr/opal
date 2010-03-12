@@ -1,5 +1,5 @@
 /* 
- * array.js
+ * number.js
  * opal
  * 
  * Created by Adam Beynon.
@@ -24,45 +24,50 @@
  * THE SOFTWARE.
  */
 
-var rb_cArray;
 
-if (!Array.prototype.indexOf) {
-  Array.prototype.indexOf = function (obj) {
-	  for (var i = 0; i< this.length; i++) {
-	    if (this[i] == obj) return i;
-	  }
-	  return -1;
-	};
-};
+var rb_cNumber;
 
-function rb_ary_reject(ary) {
+
+function rb_num_downto(num, to) {
   var _ = opal_block; opal_block = nil;
-  var res = [], v;
-  for (var i = 0; i < ary.length; i++) {
-    v = vm_yield(_, [ary[i]]);
-    if (!RTEST(v)) res.push(ary[i]);
+  for (var i = num; i >= to; i--) {
+    vm_yield(_, [i]);
   }
-  return rest;
+  return num;
 };
 
-function rb_ary_plus(a, b) {
-  var c = [];
-  for (var i = 0; i < a.length; i++) {
-    c.push(a[i]);
+function rb_num_upto(num, id, _, stop) {
+  console.log("from " + num + " to " + stop);
+  if (stop < num) return num;
+  for (var i = num; i <= stop; i++) {
+    vm_yield(_, [i]);
   }
-  for (var i = 0; i < b.length; i++) {
-    c.push(b[i]);
-  }
-  return c;
+  return num;
 };
 
 
+function rb_num_step(num, limit, step) {
+  var _ = opal_block; opal_block = nil;
+  for (var i = num; i <= limit; i+= step) {
+    vm_yield(_, [i]);
+  }
+  return num;
+};
 
-function Init_Array() {
+function Init_Number() {
   
-  rb_cArray = rb_define_class("Array", rb_cObject);
-  Array.prototype.klass = rb_cArray;
-  Array.prototype.flags = T_ARRAY | T_OBJECT;
-  rb_define_method(rb_cArray, "reject", rb_ary_reject, 0);
-  rb_define_method(rb_cArray, "+", rb_ary_plus, 1);
+  rb_cNumber = rb_define_class("Number", rb_cObject);
+  rb_const_set(rb_cObject, "Fixnum", rb_cNumber);
+  rb_const_set(rb_cObject, "Float", rb_cNumber);
+  Number.prototype.klass = rb_cNumber;
+  Number.prototype.flags = T_NUMBER | T_OBJECT;
+  
+  rb_include_module(rb_cNumber, rb_mComparable);
+
+
+  rb_define_method(rb_cNumber, "step", rb_num_step, -1);
+
+  rb_define_method(rb_cNumber, "upto", rb_num_upto, 1);
+  rb_define_method(rb_cNumber, "downto", rb_num_downto, 1);
+  
 };

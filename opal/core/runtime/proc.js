@@ -1,6 +1,6 @@
 /* 
- * init.js
- * opal
+ * proc.js
+ * vienna
  * 
  * Created by Adam Beynon.
  * Copyright 2010 Adam Beynon.
@@ -23,63 +23,37 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
- 
- var opal_boot_files = [];
- 
-/**
-  Basically start opal.
-*/
-function ruby_init() {
-  rb_call_inits();
-  // console.log(opal_boot_files);
-  for (var i = 0; i < opal_boot_files.length; i++) {
-    (opal_boot_files[i])(opal_top_self);
+
+var rb_cProc, rb_eLocalJumpError;
+
+function rb_obj_define_method(obj) {
+  var klass = rb_singleton_class(obj);
+  return rb_mod_define_method(obj);
+};
+
+function rb_mod_define_method(obj, id, _, sym) {
+  // var _ = opal_block; opal_block = nil;
+  var id;
+  if (_ == nil) throw "#define_method no block given"
+  if (sym.klass == rb_cString) {
+    id = sym;
+  } 
+  else if (sym.klass == rb_cSymbol) {
+    id = sym.ptr;
   }
+  else {
+    throw "#define_method expects a sym for name"
+  }
+  return rb_define_method(obj, id, _, -1);
 };
 
-/**
-  embed script name/type
-*/
-function ruby_script(name) {
+function Init_Proc() {
+  rb_cProc = rb_define_class("Proc", rb_cObject);
+  Function.prototype.klass = rb_cProc;
+  Function.prototype.flags = T_OBJECT | T_PROC;
   
-};
-
-
-/**
-  Init core.
-*/
-function rb_call_inits() {
-  Init_Object();
-  Init_BuiltInConstants();
-  Init_top_self();
-  Init_Array();
-  Init_Comparable();
-  Init_Enumerable();
-  Init_Number();
-  Init_String();
-  Init_Exception();
-  Init_Hash();
-  Init_Range();
-  Init_Proc();
-  Init_Regexp();
-  Init_IO();
-  Init_File();
-  Init_Dir();
-  Init_Time();
-  Init_VM();
-  Init_vm_eval();
-  Init_load();
+  rb_define_method(rb_mKernel, "define_singleton_method", rb_obj_define_method, -1);
+  rb_define_method(rb_cModule, "define_method", rb_mod_define_method, -1);
   
-  Init_Math();
-  Init_JSON();
-  
-  // additions to core library
-  Init_Net();
-};
-
-function Init_BuiltInConstants() {
-  rb_const_set(rb_cObject, "RUBY_VERSION", "1.9.1");
-  rb_const_set(rb_cObject, "RUBY_PATCHLEVEL", 191);
-  rb_const_set(rb_cObject, "RUBY_PLATFORM", "opal");
-  rb_const_set(rb_cObject, "RUBY_RELEASE_DATE", "2010.02.27");
+  rb_eLocalJumpError = rb_define_class("LocalJumpError", rb_eStandardError);
 };

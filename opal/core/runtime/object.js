@@ -234,23 +234,6 @@ function rb_obj_instance_exec(obj, id, _) {
   return _.apply(_, args);
 };
 
-function rb_bool_to_s(bool) {
-  return bool ? "true" : "false";
-};
-
-function rb_bool_and(bool, id, _, other) {
-  return bool ? RTEST(other) : false;
-};
-
-function rb_bool_or(bool, id, _, other) {
-  return bool ? true : RTEST(other);
-};
-
-function rb_bool_xor(bool, id, _, other) {
-  return bool ? !RTEST(other) : RTEST(other);
-};
-
-
 function rb_nil_nil_q() {
   return true;
 };
@@ -530,10 +513,5 @@ function Init_Object() {
   rb_cBoolean = rb_define_class("Boolean", rb_cObject);
   Boolean.prototype.klass = rb_cBoolean;
   Boolean.prototype.flags = T_OBJECT | T_BOOLEAN;
-  rb_define_method(rb_cBoolean, "to_s", rb_bool_to_s, 0);
-  rb_define_method(rb_cBoolean, "inspect", rb_bool_to_s, 0);
-  rb_define_method(rb_cBoolean, "&", rb_bool_and, 1);
-  rb_define_method(rb_cBoolean, "|", rb_bool_or, 1);
-  rb_define_method(rb_cBoolean, "^", rb_bool_xor, 1);
 
 }
