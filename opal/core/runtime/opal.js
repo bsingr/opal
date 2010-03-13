@@ -39,6 +39,87 @@ if (!Array.prototype.indexOf) {
 	};
 };
 
+String.prototype.trim = function() { return this.replace(/^\s+|\s+$/g, ''); };
+
+
+var rb_cString, rb_cSymbol;
+
+var RSymbol = function(ptr) {
+  this.hash = opal_yield_hash();
+  this.flags = T_OBJECT | T_SYMBOL;
+  this.klass = rb_cSymbol ;
+  this.toString = function() {
+    return "#<Symbol:0x000000 @ptr=\"" + this.ptr + "\">";
+  };
+  this.ptr = ptr;
+  return this;
+};
+
+var rb_sym_table = { };
+
+function ID2SYM(id) {
+ if (rb_sym_table.hasOwnProperty(id)) {
+   return rb_sym_table[id];
+ }
+ var sym = new RSymbol(id);
+ rb_sym_table[id] = sym
+ return sym;
+};
+
+var rb_cHash, rb_envtbl;
+
+function RHash() {
+  this.hash = opal_yield_hash();
+  this.klass = nil;
+  this.flags = T_OBJECT | T_HASH;
+  this.ifnone = nil;
+  // ordered keys
+  this.keys = [];
+  // keys.to_s => values
+  this.dict = { };
+  return this;
+};
+
+RHash.prototype = {
+  
+  toString: function() {
+    return "#<Hash:" + this.hash + ">";
+  },
+  
+  hasKey: function(k) {
+    return this.keys.indexOf(k) !== -1;
+  },
+  
+  set: function(k, v) {
+    if (!this.hasKey(k)) this.keys.push(k);
+    this.dict[k] = v;
+    return v;
+  },
+  
+  get: function(k) {
+    if (this.hasKey(k)) return this.dict[k];
+    return this.ifnone;
+  }
+};
+
+function rb_hash_alloc(klass) {
+  var hash = new RHash();
+  hash.klass = klass;
+  hash.ifnone = nil;
+  return hash;
+};
+
+function rb_hash_new() {
+  var k, v, h = rb_hash_alloc(rb_cHash);
+  for (var i = 0; i < arguments.length; i++) {
+    k = arguments[i], v = arguments[i+1];
+    i ++;
+    h.set(k, v);
+    // rb_hash_aset(h, "", nil, k, v);
+  }
+  return h;
+};
+
 // temp..
 var nil;
 

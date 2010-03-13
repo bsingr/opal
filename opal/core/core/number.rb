@@ -156,7 +156,27 @@ class Number
   
   def times(number)
     `for(var i=0;i<#{number};i++){`
-    yield number
+      yield `i`
     `}`
+    self
+  end
+  
+  def upto(stop)
+    return self if `#{stop}<#{self}`
+    `for(var i=#{self};i<=#{stop};i++){`
+      yield `i`
+    `}`
+    self
+  end
+  
+  def downto(stop)
+    return self if `#{stop}>#{self}`
+    `for(var i=#{self};i>=#{stop};i--){`
+      yield `i`
+    `}`
+    self
   end
 end
+
+Fixnum = Number
+Float = Number
