@@ -790,8 +790,14 @@ module Vienna
       end
       
       def generate_regexp(stmt, context)
+        # puts stmt
         write "return " if context[:last_stmt] and context[:full_stmt]
-        write %{/#{stmt[:value][0][:value]}/}
+        write "/"
+        stmt[:value].each do |part|
+          write part[:value]
+        end
+        write "/"
+        # write %{/#{stmt[:value][0][:value]}/}
         write ";" if context[:full_stmt]
       end
       

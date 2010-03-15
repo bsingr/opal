@@ -43,8 +43,8 @@ function Init_top_self() {
   opal_top_self = new RObject();
   opal_top_self.klass = rb_cObject;
   FL_SET(opal_top_self, T_OBJECT);
-  rb_define_singleton_method(opal_top_self, "to_s", opal_main_to_s, 0);
-  rb_define_singleton_method(opal_top_self, "inspect", opal_main_to_s, 0);
+  // rb_define_singleton_method(opal_top_self, "to_s", opal_main_to_s, 0);
+  // rb_define_singleton_method(opal_top_self, "inspect", opal_main_to_s, 0);
   rb_define_singleton_method(opal_top_self, "include", opal_main_include, 1);
 };
 

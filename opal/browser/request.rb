@@ -1,4 +1,9 @@
 # For all ajax etc calls (uses Net:HTTP)
+# 
+# Class does not just sit above native XMLHttpRequest. Some requests will need
+# to use jsonp, for cross domain requests etc. For this reason, the correct
+# type of request will be determined and masked from the user.
+# 
 class Request
   
   # Hash of the default options used in a {Request}. All of these can be 

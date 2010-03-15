@@ -1,5 +1,35 @@
 class Hash
   
+  def self.[](*args)
+    if args.length == 1 && args.is_a?(Hash)
+      args[1]
+    else
+      result = {}
+      raise "Hash[] not fully implemented"
+    end
+  end
+  
+  def initialize(*args, &block)
+    raise "Hash#initialize not implemented"
+  end
+  
+  # Remove all keys/values
+  # 
+  # @return [Hash] self
+  # 
+  def clear
+    `#{self}.keys=[];`
+    `#{self}.dict=[];`
+    self
+  end
+  
+  # Set the default value for the hash
+  # 
+  def default=(hash_default)
+    `#{self}.ifnone=#{hash_default};`
+    self
+  end
+  
   def []=(key, value)
     `return #{self}.set(#{key},#{value});`
   end

@@ -41,6 +41,52 @@ class Element
     `return (el.style || el).display != 'none';`
   `};`
   
+  
+  # Find an element, or elements, matching the given selector. Selectors should
+  # be valid CSS3 selectors. The [Sizzle](http://www.sizzlejs.com) library is
+  # used for searching for matching elements. The optional scope is where to 
+  # look for elements. By default, this is the document scope. {Element.find} 
+  # will use {Document} by default as the scope. {Element#find} and 
+  # {Element#[]} will use themselves as the scope to search only descendants.
+  # A symbol can be used to find elements by id. The symbol name should match 
+  # the ID that is being looked for. In this case, or the case where an ID
+  # selector string is passed, an {Element} instance will be returned. In all
+  # other cases an Array will be returned, which might contain only one result,
+  # or indeed 0 results if no elements matched. <tt>nil</tt> might be returned
+  # when search for elements by ID, and no element matches.
+  # 
+  #     elem = Element[:my_div]
+  #     Element.find_in_context(".first", elem)
+  # 
+  #     # find all h1 tags
+  #     Element.find_in_context("h1")
+  # 
+  # @param [String or Symbol] selector pattern to match
+  # @param [Element] scope optional scope to search under
+  # @return [Element or Array or nil]
+  # 
+  def self.find_in_context(selector, scope)
+    selector = `'#'+#{selector.to_s}` if selector.is_a?(Symbol)
+    
+    if scope
+      results = `Sizzle(#{selector},#{scope})`
+    else
+      results = `Sizzle(#{selector})`
+    end
+    if results
+      `for(var i=0;i<#{results}.length;i++){`
+        `opal_element_wrap(#{results}[i]);`
+      `}`
+      if /^#([a-zA-Z0-9_]*)$/.match(selector)
+        results[0]
+      else
+        results
+      end
+    else
+      nil
+    end
+  end
+  
   # Find an element, with the given id, inside the document scope. 
   # {.[]} is an alias of this method. Returns nil when not found.
   # 
@@ -52,13 +98,16 @@ class Element
   # @return [Element] the found element
   #
   def self.find(name, &block)
-    name = name.to_s if Symbol === name
-    element = `document.getElementById(#{name})`
-    `opal_element_wrap(#{element})` if element
-    
-    element.instance_eval(&block) if block_given?
-    
-    element
+    result = find_in_context(name)
+    case result
+    when Element
+      result.instance_eval(&block) if block_given?
+      result
+    when Array
+      result
+    else
+      nil
+    end
   end
   
   # Find an element, with the given id, inside the document scope. 
@@ -98,8 +147,28 @@ class Element
     `return opal_element_wrap(document.createElement(#{type}));`
   end
   
-  def find(selector)
-    
+  def inspect
+    description = []
+    description.push(" class=#{class_name.inspect}") unless class_name == ""
+    description.push(" id=#{id.inspect}") unless id == ""
+    "#<Element#{description.join}>"
+  end
+  
+  # Find the selector on the receiving {Element} instance
+  # 
+  def find(selector, &block)
+    result = Element.find_in_context(selector, self)
+    case result
+    when Element
+      result.instance_eval(&block) if block_given?
+      result
+    else
+      result
+    end
+  end
+  
+  def [](selector)
+    find(selector)
   end
   
   def ==(element)
@@ -332,6 +401,10 @@ class Element
     self
   end
   
+  def id
+    `return #{self}.id;`
+  end
+  
   # Set the Element class name to <tt>class_name</tt>. This method does not
   # append the name to the current class, but completely removes all current
   # class names so that it is uniquely <tt>class_name</tt>.
@@ -353,7 +426,7 @@ class Element
   # @return [String]
   #
   def class_name
-    `return #{self}.className`
+    `return #{self}.className;`
   end
   
   # Return the text content of the receiver. Handles cross browser issues

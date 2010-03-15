@@ -351,7 +351,7 @@ function rb_define_singleton_method(klass, name, func, argc) {
 
 function rb_add_method(klass, name, method) {
   klass.m_tbl[name] = method;
-  // func.displayName = klass.iv_tbl.__classid__ + "#" + name;
+  method.body.displayName = klass.iv_tbl.__classid__ + "#" + name;
 };
 
 function rb_define_alloc_func(klass, func) {

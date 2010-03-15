@@ -27,7 +27,7 @@
 
 var rb_cRegexp, rb_eRegexpError, rb_cMatch;
 
-function rb_reg_match_m(reg, str) {
+function rb_reg_match_m(reg, id, _, str) {
   var m = reg.exec(str);
   if (m == null) return nil;
   return rb_match_new(rb_cMatch, m);
