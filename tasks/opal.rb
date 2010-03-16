@@ -57,7 +57,7 @@ namespace :opal do
     doc_root = File.join(File.dirname(__FILE__), '..', 'opal', 'docs')
     # t.files = Dir.glob(File.join(doc_root, '**/*.rb')) + ['-'] +  Dir.glob(File.join(doc_root, '**/*.md'))
     
-    t.files = ['opal/docs/**/*.rb', 'opal/core/**/*.rb', 'opal/browser/**/*.rb', '-', 'opal/docs/**/*.md']
+    t.files = ['opal/docs/**/*.rb', 'opal/core/**/*.rb', 'opal/browser/**/*.rb', 'opal/lib/**/*.rb', '-', 'opal/docs/**/*.md']
     t.options = ['-oopal_docs', '-mmarkdown', '-ropal/docs/README.md']
   end
 end

@@ -124,6 +124,10 @@ class Element
     find(name)
   end
   
+  def self.empty(element)
+    element.empty
+  end
+  
   # Returns the body element of the document.
   # 
   # @return [Element] body
@@ -303,8 +307,8 @@ class Element
   # @return [Element]
   #
   def empty
-    `while (#{self}.firstChild) { #{self}.removeChild(#{self}.firstChild); }
-    return #{self};`
+    `while (#{self}.firstChild) { #{self}.removeChild(#{self}.firstChild); }`
+    `return #{self};`
   end
   
   # Whether or not the receiver has the given class_name.
