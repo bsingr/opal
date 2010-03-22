@@ -1,9 +1,9 @@
 # 
-# build.rb
+# jsonp.rb
 # vienna
 # 
 # Created by Adam Beynon.
-# Copyright 2009 Adam Beynon.
+# Copyright 2010 Adam Beynon.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -24,17 +24,30 @@
 # THE SOFTWARE.
 #
 
-module Vienna
+require File.join(File.dirname(__FILE__), 'http')
+
+module Net
   
-  class Tools
+  # 
+  # Base class used for accessing JSONP servers. Utility methods of the {JSON} 
+  # module will usually handle setting up these connections, but this is the
+  # underlying class that handles requests and responses.
+  class JSONP
+
+  end
   
-    # Builds a Vienna app in the current working directory.
-    # 
-    def build(args)
-      find_project!
-      # puts "Building project."
-      # @project.prepare!
-      @project.build!
-    end  
-  end  
+  # 
+  # Wrapper around info for a JSONP request
+  # 
+  class JSONPRequest
+    
+  end
+  
+  # 
+  # Wrapper for the response from a JSONP connection. Usually not used by the
+  # user as a Hash/Array etc will be yielded for the response.
+  # 
+  class JSONPResponse
+    
+  end
 end

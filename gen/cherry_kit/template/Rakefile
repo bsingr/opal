@@ -1,0 +1,20 @@
+# simple task to load vienna
+task :vienna do
+  begin
+    require 'vienna'
+  rescue LoadError => e
+    abort "You need vienna installed. Go install it: gem install vienna"
+  end
+end
+
+namespace :update do
+  desc "Update opal runtime with newest version"
+  task :opal => :vienna do
+    Vienna::CherryKit::Project.new.update_opal!
+  end
+
+  desc "Update cherry kit with newest version"
+  task :cherry_kit => :vienna do
+    Vienna::CherryKit::Project.new.update_cherry_kit!
+  end
+end

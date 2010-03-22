@@ -175,37 +175,37 @@ function rb_funcall(recv, id) {
   and quicker to call from VM, where args are given as an array
 */
 function rb_funcall2(recv, id, args) {
-  if (recv === null || recv === undefined) recv = nil;
-  // console.log("searching in " + id);
-  // console.log(recv);
-  var body = rb_search_method(recv.klass, id);
-  if (!body) {
-    args.unshift(ID2SYM(id));
-    return rb_funcall2(recv, "method_missing", args);
-  }
-  var imp = body.body, len = args.length;
-    
-  switch(len) {
-    // case -2: throw "-2 currently unimplemeneted: rb_funcall2"
-    // case -1: return imp(argc, args, recv);
-    case 0: return imp(recv, id, nil);
-    case 1: return imp(recv, id, nil, args[0]);
-    case 2: return imp(recv, id, nil, args[0], args[1]);
-    case 3: return imp(recv, id, nil, args[0], args[1], args[2]);
-    case 4: return imp(recv, id, nil, args[0], args[1], args[2], args[3]);
-    case 5: return imp(recv, id, nil, args[0], args[1], args[2], args[3], args[4]);
-    default: rb_raise(rb_eArgError, "currently unsupported argc length " + len);
-  } 
+  return rb_funcall3(recv, id, nil, args);
+  // var klass = (recv === null || recv === undefined) ? rb_cNilClass : recv.klass;
+  // // if (recv === null || recv === undefined) recv = nil;
+  // // console.log("searching in " + id);
+  // // console.log(recv);
+  // var body = rb_search_method(klass, id);
+  // if (!body) {
+  //   args.unshift(ID2SYM(id));
+  //   return rb_funcall2(recv, "method_missing", args);
+  // }
+  // var imp = body.body, len = args.length;
+  //   
+  // switch(len) {
+  //   // case -2: throw "-2 currently unimplemeneted: rb_funcall2"
+  //   // case -1: return imp(argc, args, recv);
+  //   case 0: return imp(recv, id, nil);
+  //   case 1: return imp(recv, id, nil, args[0]);
+  //   case 2: return imp(recv, id, nil, args[0], args[1]);
+  //   case 3: return imp(recv, id, nil, args[0], args[1], args[2]);
+  //   case 4: return imp(recv, id, nil, args[0], args[1], args[2], args[3]);
+  //   case 5: return imp(recv, id, nil, args[0], args[1], args[2], args[3], args[4]);
+  //   default: rb_raise(rb_eArgError, "currently unsupported argc length " + len);
+  // } 
 };
 
 function rb_funcall3(recv, id, _, args) {
-  try {
-    if (recv === null || recv === undefined) recv = nil;
+  var klass = (recv === null || recv === undefined) ? rb_cNilClass : recv.klass;
   
-    var body = rb_search_method(recv.klass, id);
+  try {
+    var body = rb_search_method(klass, id);
     if (!body) {
-      // console.log ("method missing " + id);
-      // console.log(recv);
       args.unshift(ID2SYM(id));
       return rb_funcall2(recv, "method_missing", args);
     }

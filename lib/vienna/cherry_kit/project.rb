@@ -44,6 +44,8 @@ module Vienna
         end
         
         @build_options = YAML.load_file('config/build.yml')
+        # fix for empty file:
+        @build_options ||= {}
       end
       
       def build_dir
@@ -78,7 +80,7 @@ module Vienna
         # FileUtils.mkdir_p(resources_build_dir)
         
         write_index_html_file if write_index_html_file?
-        # write_opal_js_file
+        write_opal_js_file
         # write_main_js_file .. dont do
         write_project_js_file
       end
@@ -88,50 +90,50 @@ module Vienna
       end
       
       def write_index_html_file
-        File.open(index_html_file, "w") do |f|
-          f.puts %{<!DOCTYPE html>}
-          f.puts %{<html>}
-          f.puts %{<head>}
-          f.puts %{  <meta http-equiv="X-UA-Compatible" content="IE-EmulateIE7" />}
-          f.puts %{  <title>#{project_title}</title>}
-          f.puts %{  <script src="#{project_name}.js" type="text/javascript"></script>}
-          f.puts %{  <script type="text/javascript">}
-          # f.puts %{    OPAL_VENDOR_NAMES = ["#{vendor_names.join('","')}"];}
-          # f.puts %{    OPAL_APP_NAME = "#{project_name}";}
-          f.puts %{  </script>}
-          f.puts %{  <style type = "text/css">}
-          f.puts %{    body{margin:0; padding:0;}}
-          f.puts %{  </style>}
-          f.puts %{ </head>}
-          f.puts %{<body>}
-          f.puts %{</body>}
-          f.puts %{</html>}
+        if File.exist?(File.join(@project_root, 'index.html'))
+          File.open(index_html_file, 'w') do |f|
+            f.write(File.read(File.join(@project_root, 'index.html')))
+          end
+        else
+          File.open(index_html_file, "w") do |f|
+            f.puts %{<!DOCTYPE html>}
+            f.puts %{<html>}
+            f.puts %{<head>}
+            f.puts %{  <meta http-equiv="X-UA-Compatible" content="IE-EmulateIE7" />}
+            f.puts %{  <title>#{project_title}</title>}
+            f.puts %{  <script src="#{project_name}.js" type="text/javascript"></script>}
+            f.puts %{  <script type="text/javascript">}
+            # f.puts %{    OPAL_VENDOR_NAMES = ["#{vendor_names.join('","')}"];}
+            # f.puts %{    OPAL_APP_NAME = "#{project_name}";}
+            f.puts %{  </script>}
+            f.puts %{  <style type = "text/css">}
+            f.puts %{    body{margin:0; padding:0;}}
+            f.puts %{  </style>}
+            f.puts %{ </head>}
+            f.puts %{<body>}
+            f.puts %{</body>}
+            f.puts %{</html>}
+          end
         end
       end
       
       def opal_js_file
-        File.join(build_dir, "opal.js")
+        File.join(build_dir, "opal_cherry_kit.js")
       end
       
+      # 
+      # @private
+      # 
       # In future, dont do this. this will be automatically generated. We only
       # do this here during development.
+      # 
       def write_opal_js_file
         File.open(opal_js_file, "w") do |f|
-          
+          f.write Vienna::Opal.build_opal_browser(true)
+          # we also need to write the bootstrap code for cherry_kit loading
+          bootstrap_path = File.join(Vienna::PATH, 'cherry_kit', 'opal', 'bootstrap.js')
+          f.write File.read(bootstrap_path)
         end
-        # 
-        # runtime_path = File.join(Vienna::PATH, 'opal', 'runtime', 'core')
-        # 
-        # File.open(opal_js_file, "w") do |f|
-        #   Dir.glob(File.join(runtime_path, '**', '*.js')).each do |js|
-        #     f.write JSMin.minify(File.read(js))
-        #   end
-        #   
-        #   bootstrap = File.join(Vienna::PATH, 'cherry_kit', 'platforms', 'opal', 'bootstrap.js')
-        #   
-        #   f.write JSMin.minify(File.read(bootstrap))
-        #   
-        # end
       end
       
       def main_js_file
@@ -200,7 +202,7 @@ module Vienna
       def write_project_js_file
         File.open(project_js_file, "w") do |f|
           # first write opal/browser bits and pieces
-          f.write Vienna::Opal.build_opal_browser(false)
+          
           Dir.glob(all_sources).each do |src|
             src = File.expand_path(src)
             build_name = /^#{project_root}\/(.*)/.match(src)[1]

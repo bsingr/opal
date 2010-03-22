@@ -269,7 +269,7 @@ class Vienna::RubyParser < Racc::Parser
     # scanner.scan(/(.|\s)/)
     
     # xstrings can have new lines: normal strings cant, so exlcude \n from normal strings
-    re = (string_parse[:beg] == '`') ? /[^#{Regexp.escape(string_beg)}\#\0\\]+|./ : /[^#{Regexp.escape(string_beg)}\#\0\\\n]+|./
+    re = (string_parse[:beg] == '`') ? /[^#{Regexp.escape(string_beg)}\#\0]+|./ : /[^#{Regexp.escape(string_beg)}\#\0\n]+|./
     
     # puts re
     scanner.scan(re)

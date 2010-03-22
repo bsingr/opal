@@ -1,9 +1,9 @@
 # 
-# build.rb
+# uri.rb
 # vienna
 # 
 # Created by Adam Beynon.
-# Copyright 2009 Adam Beynon.
+# Copyright 2010 Adam Beynon.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -23,18 +23,18 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 #
+# 
+# URI library is ported from Ruby with the following copyright:
+# 
+# = uri/common.rb
+#
+# Author:: Akira Yamada <akira@ruby-lang.org>
+# Revision:: $Id: common.rb 22760 2009-03-04 09:21:12Z yugui $
+# License:: 
+#   You can redistribute it and/or modify it under the same term as Ruby.
+#
 
-module Vienna
+# URI support for Ruby
+module URI
   
-  class Tools
-  
-    # Builds a Vienna app in the current working directory.
-    # 
-    def build(args)
-      find_project!
-      # puts "Building project."
-      # @project.prepare!
-      @project.build!
-    end  
-  end  
 end

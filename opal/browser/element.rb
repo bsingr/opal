@@ -1,3 +1,31 @@
+# 
+# element.rb
+# vienna
+# 
+# Created by Adam Beynon.
+# Copyright 2010 Adam Beynon.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+# 
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+# 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+#
+
+require File.join(File.dirname(__FILE__), 'browser_events')
+
 # Element class to wrap the native Element objects from the DOM.
 # 
 # Implementation
@@ -23,6 +51,21 @@
 #
 class Element
   
+  include BrowserEvents
+  
+  # All valid tags that can be used with method_missing. If the method name is
+  # not one of these tags, then super is called to rethrow a method_missing
+  # error
+  VALID_HTML_TAGS = [
+    :html, :head, :title, :base, :meta, :link, :style, :script, :body, :div, :p,
+    :ul, :ol, :li, :dl, :dt, :dd, :address, :hr, :pre, :blockquote, :ins, :del,
+    :a, :span, :bdo, :br, :em, :strong, :dfn, :code, :cite, :abbr, :acronym,
+    :q, :sub, :sup, :tt, :i, :b, :big, :small, :object, :param, :img, :map,
+    :area, :form, :label, :input, :select, :optgroup, :option, :textarea,
+    :fieldset, :legend, :button, :table, :caption, :colgroup, :col, :thead, 
+    :tfoot, :tbody, :tr, :th, :td, :h1, :h2, :h3, :h4, :h5, :h6  
+  ]
+  
   # Used to wrap a native element in an opal class embrace (sets class to 
   # Element)
   `window.opal_element_wrap=function(wrap) {`
@@ -30,6 +73,7 @@ class Element
     `wrap.hash = opal_yield_hash();`
     `wrap.klass = #{self};`
     `wrap.flags = T_OBJECT;`
+    `wrap.iv_tbl={};`
     `return wrap;`
   `};`
   
@@ -151,8 +195,13 @@ class Element
     `return opal_element_wrap(document.createElement(#{type}));`
   end
   
+  def tag_name
+    @tag_name ||= `#{self}.tagName`.downcase
+  end
+  
   def inspect
     description = []
+    description.push(" tag_name=#{tag_name.inspect}")
     description.push(" class=#{class_name.inspect}") unless class_name == ""
     description.push(" id=#{id.inspect}") unless id == ""
     "#<Element#{description.join}>"
@@ -175,6 +224,26 @@ class Element
     find(selector)
   end
   
+  # 
+  # Add <tt>other_element</tt> as a child to this element. Takes {Element} as
+  # the parameter. If a {String} is given, then the string is appended as a
+  # raw HTML string (errors might occur for malformed HTML)
+  # 
+  # @param [Element or String] other_element
+  # @return [Element] the receiver
+  # 
+  def <<(other_element)
+    case other_element
+    when Element
+      `#{self}.appendChild(#{other_element});`
+    when String
+      raise "Element#<<(String) not yet implemented"
+    else
+      raise "Bad element type for Element#<<: #{other_element.inspect}"
+    end
+    self
+  end
+  
   def ==(element)
     `return #{self}===#{element};`
   end
@@ -182,6 +251,7 @@ class Element
   alias_method :eql?, :==
   alias_method :===, :==
   
+  # 
   # Custom method missing handler. This is used to create a builder type feature
   # where elements are created using the method name as a tag name, and then any
   # additional option arguments will be sent to the {Element#set} method. Also,
@@ -268,16 +338,16 @@ class Element
   # required
   # @return [Element] self
   #
-  def add_listener(type, &block)
-    `var func = function(evt) { return rb_proc_call(#{block}, "", nil, evt); };`
-    `if (#{self}.addEventListener) {`
-      `#{self}.addEventListener(type, func, false);`
-    `}`
-    `else {`
-      `#{self}.attachEvent('on' + type, func);`
-    `}`
-    `return #{self};`
-  end
+  # def add_listener(type, &block)
+  #   `var func = function(evt) { return rb_proc_call(#{block}, "", nil, evt); };`
+  #   `if (#{self}.addEventListener) {`
+  #     `#{self}.addEventListener(type, func, false);`
+  #   `}`
+  #   `else {`
+  #     `#{self}.attachEvent('on' + type, func);`
+  #   `}`
+  #   `return #{self};`
+  # end
   
   # Calls {#add_listener} with <tt>:click</tt> as the type. Acts as a shorthand 
   # for registering
@@ -496,5 +566,5 @@ class Element
   end
   
   alias_method :style, :css
-  
+
 end

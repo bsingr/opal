@@ -38,8 +38,9 @@ module Vienna
         end
       end
       Dir[File.join(Opal::PATH, 'core', '**/*.rb')].each do |rb|
-        str = Vienna::CherryKit::RubyBuilder.new(rb, nil, File.basename(rb)).build!
-        buffer << %{opal_boot_file(#{str});}
+        basename = /^#{Opal::PATH}\/(.*)$/.match(rb)[1]
+        str = Vienna::CherryKit::RubyBuilder.new(rb, nil, basename).build!
+        buffer << %{opal_boot_file("#{basename}",#{str});}
       end
       buffer.join("")
     end
@@ -58,8 +59,9 @@ module Vienna
         end
       end
       Dir[File.join(Opal::PATH, 'browser', '**/*.rb')].each do |rb|
-        str = Vienna::CherryKit::RubyBuilder.new(rb, nil, File.basename(rb)).build!
-        buffer << %{opal_boot_file(#{str});}
+        basename = /^#{Opal::PATH}\/(.*)$/.match(rb)[1]
+        str = Vienna::CherryKit::RubyBuilder.new(rb, nil, basename).build!
+        buffer << %{opal_boot_file("#{basename}",#{str});}
       end
       buffer.join("")
     end

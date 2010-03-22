@@ -32,9 +32,6 @@
 function ruby_init() {
   rb_call_inits();
   // console.log(opal_boot_files);
-  for (var i = 0; i < opal_boot_files.length; i++) {
-    (opal_boot_files[i])(opal_top_self);
-  }
 };
 
 /**
@@ -67,7 +64,8 @@ function rb_call_inits() {
   
   // NilClass
   rb_cNilClass = rb_define_class("NilClass", rb_cObject);
-  nil = {flags:T_OBJECT,klass:rb_cNilClass, toString:function(){return "nil";}};
+  // nil = {flags:T_OBJECT,klass:rb_cNilClass, toString:function(){return "nil";}};
+  // nil = null;
   
   // Boolean
   rb_cBoolean = rb_define_class("Boolean", rb_cObject);

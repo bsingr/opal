@@ -119,7 +119,7 @@ function rb_find_require_path(path) {
 function rb_loadpath(path) {
   var found = rb_find_require_path(path);
   if (found === nil) {
-    throw "cannot find require: " + path + ", called from " + called_from_file;
+    throw "cannot find require: " + path + ", called from ";
   }
   else {
     rb_require_file(found);

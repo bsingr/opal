@@ -57,7 +57,7 @@ function rb_const_get(k, id) {
   while (t) {
     // console.log(t.iv_tbl.__classid__);
     // console.log(t);
-    if (v = t.iv_tbl[id]) return v;
+    if ((v = t.iv_tbl[id]) !== undefined) return v;
     t = t.sup;
   }
   // now try parent instead..
@@ -66,7 +66,7 @@ function rb_const_get(k, id) {
     if (v = t.iv_tbl[id]) return v;
     t = t.parent;
   }
-  console.log("raising name error for " + id);
+  // console.log("raising name error for " + id);
   rb_raise(rb_eNameError, "uninitialized constant " + id + " in " + k.iv_tbl.__classid__);
   return nil;
 }

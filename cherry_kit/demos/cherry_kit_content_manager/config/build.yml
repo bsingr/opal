@@ -1,7 +1,0 @@
-name: Cherry Kit Content Manager
-load: config/environment.rb
-resources:
-  - resources/**/*.*
-sources:
-  - app/**/*.rb
-  - config/**/*.rb

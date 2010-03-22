@@ -100,6 +100,7 @@ function vn_fs_define_file(f, content) {
     c = c[b];
   }
   c[p[p.length - 1]] = content;
+  return file;
 };
 
 

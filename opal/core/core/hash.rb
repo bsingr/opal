@@ -13,6 +13,19 @@ class Hash
     raise "Hash#initialize not implemented"
   end
   
+  def inspect
+    result = []
+    result << "{"
+    `for (var i=0;i<#{self}.keys.length;i++){`
+      `if(i>0){#{result}.push(", ")};`
+      `#{result}.push(rb_funcall(#{self}.keys[i],"inspect"));`
+      `#{result}.push("=>");`
+      `#{result}.push(rb_funcall(#{self}.dict[#{self}.keys[i]],"inspect"));`
+    `}`
+    result << "}"
+    result.join
+  end
+  
   # Remove all keys/values
   # 
   # @return [Hash] self

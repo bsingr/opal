@@ -39,11 +39,11 @@ module Vienna
       
       g = args[0]
       case g
-      when "app"
+      when 'app', 'cherry_kit'
         gen_app(args)
-      when "capp"
+      when 'capp'
         gen_capp(args)
-      when "browser", "opal"
+      when 'browser', 'opal'
         gen_opal(args)
       end
     end
@@ -55,11 +55,9 @@ module Vienna
     def gen_app(args)
       @app_name = args[1]
       @app_dir = File.join(Dir.getwd, @app_name)
-      @source_dir = File.join(GEN_PATH, 'app', 'template')
+      @source_dir = File.join(GEN_PATH, 'cherry_kit', 'template')
       @app_title = @app_name.split('_').collect { |p| p.capitalize }.join(' ')
-      # puts "need to generate app named #{args[1]}"
-      # @benny = 10000
-      template = File.join(GEN_PATH, 'app', 'generate.rb')
+      template = File.join(GEN_PATH, 'cherry_kit', 'generate.rb')
       instance_eval File.read(template)
     end
     
@@ -70,15 +68,6 @@ module Vienna
       @app_title = @app_name.split('_').collect { |p| p.capitalize }.join(' ')
       template = File.join(GEN_PATH, 'opal', 'generate.rb')
       instance_eval File.read(template)
-      # find_project!
-      # return puts "need to generate browser app named #{args[1]}"
-      # name = args[1]
-      # gen_dir = File.join(PATH, 'gen', 'opal')
-      # FileUtils.mkdir_p(name)
-      # Dir.chdir(name)
-      # find_project!
-      # 
-      # @project.create_or_update_runtime
     end
     
     def gen_capp(args)

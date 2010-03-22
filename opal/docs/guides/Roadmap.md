@@ -23,7 +23,7 @@ Target release is __20/3/2010__.
         * Incorporate [Sizzle](http://www.sizzlejs.com) library as the core 
         method of searching through DOM trees for {Element} and {Document}. 
         Sizzle will be incorporated into the Opal source so that it does not 
-        need to be an external dependency.
+        need to be an external dependency. __Partial__
         
         * Unify method of binding/unbinding event listeners for events on DOM
         elements. Incorporate changes into {Element#add_listener}.

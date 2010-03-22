@@ -1,6 +1,6 @@
 module Document
   
-  on_load_block = Proc.new do
+  on_load_block = proc do
     @ready = true
     @ready_blocks.each do |ready_block|
       ready_block.call
@@ -21,11 +21,12 @@ module Document
   
   def self.ready?(&block)
     if block_given?
-      if @ready
-        yield
-      else
-        @ready_blocks << block
-      end
+      @ready ? yield : @ready_blocks.push(block)
+      # if @ready
+      #         yield
+      #       else
+      #         @ready_blocks << block
+      #       end
     end
     @ready
   end
@@ -44,10 +45,6 @@ module Document
   
   def self.title=(title)
     `return document.title=#{title};`
-  end
-  
-  def self.window
-    Window
   end
   
   def self.body

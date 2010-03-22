@@ -39,4 +39,6 @@ module CherryKit
   
 end
 
+# Shorthand name, easier.
+CK = CherryKit
 CherryKit.require_all_libs

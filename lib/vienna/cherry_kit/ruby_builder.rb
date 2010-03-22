@@ -527,10 +527,13 @@ module Vienna
          write block_iseq.to_s
          # map(&:name)
        elsif call[:call_args][:block_arg]
+         write "("
+        generate_stmt call[:call_args][:block_arg][:arg], :full_stmt => false
+        write "===nil?nil:"
          write "vm_send("
          # puts call[:call_args][:block_arg][:arg]
          generate_stmt call[:call_args][:block_arg][:arg], :full_stmt => false
-         write %{,"to_proc",[],nil,0)}
+         write %{,"to_proc",[],nil,0))}
        else
          write "nil"
        end
@@ -656,7 +659,8 @@ module Vienna
       
       def generate_ivar stmt, context
         write "return " if context[:full_stmt] and context[:last_stmt]
-        write "vm_ivarget($, '#{stmt[:name]}')"
+        # write "vm_ivarget($, '#{stmt[:name]}')"
+        write "$.iv_tbl['#{stmt[:name]}']"
         write ";" if context[:full_stmt]
       end
       

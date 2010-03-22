@@ -23,9 +23,9 @@ function opal_define_file(name, body) {
   
   File will be a function which takes top_self as a param
 */
-function opal_boot_file(file) {
+function opal_boot_file(file, body) {
   // console.log(file);
-  opal_boot_files.push(file);
+  opal_boot_files.push(vn_fs_define_file(file, body));
 };
 
 /*
@@ -39,6 +39,10 @@ function opal_browser_main(name) {
   ruby_init_loadpath();
   ruby_incpush("");
   ruby_incpush("vendor/");
+  for (var i = 0; i < opal_boot_files.length; i++) {
+    // (opal_boot_files[i])(opal_top_self);
+    rb_require_file(opal_boot_files[i].path);
+  }
   rb_loadpath(name);
 };
 

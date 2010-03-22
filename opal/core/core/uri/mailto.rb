@@ -1,9 +1,9 @@
 # 
-# build.rb
+# mailto.rb
 # vienna
 # 
 # Created by Adam Beynon.
-# Copyright 2009 Adam Beynon.
+# Copyright 2010 Adam Beynon.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -24,17 +24,18 @@
 # THE SOFTWARE.
 #
 
-module Vienna
+require File.join(File.dirname(__FILE__), 'generic')
+
+module URI
   
-  class Tools
+  class MailTo < Generic
+    include REGEXP
+    
+    DEFAULT_PORT = nil
+    
+    COMPONENT = [:scheme, :to, :headers]
+    
+    HEADER_PATTERN = "(?:[^?=&]*=[^?=&]*)"
+  end
   
-    # Builds a Vienna app in the current working directory.
-    # 
-    def build(args)
-      find_project!
-      # puts "Building project."
-      # @project.prepare!
-      @project.build!
-    end  
-  end  
 end

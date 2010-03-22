@@ -1,9 +1,9 @@
 # 
-# build.rb
+# generic.rb
 # vienna
 # 
 # Created by Adam Beynon.
-# Copyright 2009 Adam Beynon.
+# Copyright 2010 Adam Beynon.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -24,17 +24,29 @@
 # THE SOFTWARE.
 #
 
-module Vienna
+require File.join(File.dirname(__FILE__), 'common')
+
+module URI
   
-  class Tools
+  # 
+  # Base class for all URI classes
+  # 
+  class Generic
+    include URI
+    
+    DEFAULT_PORT = nil
+    
+    def self.default_port
+      self::DEFAULT_PORT
+    end
+    
+    def default_port
+      self.class.default_port
+    end
+    
+    attr_reader :scheme, :host, :port, :registry, :path
+    attr_reader :query, :opaque, :fragment, :parser
+    
+  end
   
-    # Builds a Vienna app in the current working directory.
-    # 
-    def build(args)
-      find_project!
-      # puts "Building project."
-      # @project.prepare!
-      @project.build!
-    end  
-  end  
 end

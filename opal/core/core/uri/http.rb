@@ -1,9 +1,9 @@
 # 
-# build.rb
+# http.rb
 # vienna
 # 
 # Created by Adam Beynon.
-# Copyright 2009 Adam Beynon.
+# Copyright 2010 Adam Beynon.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -24,17 +24,37 @@
 # THE SOFTWARE.
 #
 
-module Vienna
+require File.join(File.dirname(__FILE__), 'generic')
+
+module URI
   
-  class Tools
+  class HTTP
+    
+    DEFAULT_PORT = 80
   
-    # Builds a Vienna app in the current working directory.
+    COMPONENT = [
+      :scheme,
+      :userinfo, :host, :port,
+      :path,
+      :query,
+      :fragment
+    ]
+    
     # 
-    def build(args)
-      find_project!
-      # puts "Building project."
-      # @project.prepare!
-      @project.build!
-    end  
-  end  
+    # Create a URI::HTTP object
+    # 
+    def initialize(*args)
+      # super(*args)
+    end
+    
+    # 
+    # Returns the full path for an HTTP request
+    # 
+    def request_uri
+      
+    end
+    
+  end # class HTTP
+  
+  @schemes['HTTP'] = HTTP
 end
