@@ -60,4 +60,15 @@ namespace :opal do
     t.files = ['opal/docs/**/*.rb', 'opal/core/**/*.rb', 'opal/browser/**/*.rb', 'opal/lib/**/*.rb', '-', 'opal/docs/**/*.md']
     t.options = ['-oopal_docs', '-mmarkdown', '-ropal/docs/README.md']
   end
+  
+  
+  desc "rebuild opal parser using jison"
+  task :parser do
+    # currently hardcoded
+    work = Dir.getwd
+    Dir.chdir(File.join(work, 'opal', 'core', 'runtime')) do |runtime|
+      jison = File.join(work, '..', 'jison', 'bin', 'jison')
+      `narwhal #{jison} ruby_parser.jison`
+    end
+  end
 end

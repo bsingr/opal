@@ -1,6 +1,6 @@
 /* 
- * parse.js
- * opal
+ * opal_ruby_parser.js
+ * vienna
  * 
  * Created by Adam Beynon.
  * Copyright 2010 Adam Beynon.
@@ -23,1128 +23,83 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
-
-    // lex states
+ 
+   // lex states
 var EXPR_BEG    = 0,    EXPR_END    = 1,    EXPR_ENDARG = 2,    EXPR_ARG   = 3,
     EXPR_CMDARG = 4,    EXPR_MID    = 5,    EXPR_FNAME  = 6,    EXPR_DOT   = 7,
     EXPR_CLASS  = 8,    EXPR_VALUE  = 9;
 
-    // keywords
-var kCLASS      = 0,    kMODULE     = 1,    kDEF        = 2,    kUNDEF     = 3,
-    kBEGIN      = 4,    kRESCUE     = 5,    kENSURE     = 6,    kEND       = 7,
-    kIF         = 8,    kUNLESS     = 9,    kTHEN       = 10,   kELSIF     = 11,
-    kELSE       = 12,   kCASE       = 13,   kWHEN       = 14,   kWHILE     = 15,
-    kUNTIL      = 16,   kFOR        = 17,   kBREAK      = 18,   kNEXT      = 19,
-    kREDO       = 20,   kELSIF      = 21,   kELSE       = 22,   kCASE      = 23, 
-    kWHEN       = 24,   kWHILE      = 25,   kUNTIL      = 26,   kFOR       = 27,
-    kBREAK      = 28,   kNEXT       = 29,   kREDO       = 30,   kRETRY     = 31,
-    kIN         = 32,   kDO_COND    = 33,   kDO_BLOCK   = 34,   kDO_LAMBDA = 35,
-    kRETURN     = 36,   kYIELD      = 37,   kSUPER      = 38,   kSELF      = 39,
-    kNIL        = 40,   kTRUE       = 41,   kFALSE      = 42,   kAND       = 43,
-    kOR         = 44,   kNOT        = 45,   kIF_MOD     = 46,   kUNLESS_MOD= 47,
-    kWHILE_MOD  = 48,   kUNTIL_MOD  = 49,   kRESCUE_MOD = 50,   kALIAS     = 51,
-    kDEFINED    = 52,   klBEGIN     = 53,   klEND       = 54,   k__LINE__  = 55,
-    k__FILE__   = 56,   kDO         = 57,   kDEFined    = 58,
-    // tokens
-    tIDENTIFIER = 59,   tFID        = 60,   tGVAR       = 61,   tIVAR      = 62,
-    tCONSTANT   = 63,   tCVAR       = 64,   tLABEL      = 65,   tINTEGER   = 66,
-    tFLOAT      = 67,   tSTR_CONTENT= 68,   tCHAR       = 69,   tNTH_REF   = 70,
-    tBACK_REF   = 71,   tREGEXP_END = 72,   tUPLUS      = 73,   tUMINUS    = 74,
-    tPOW        = 75,   tCMP        = 76,   tEQ         = 77,   tEQQ       = 78, 
-    tNEQ        = 79,   tGEQ        = 80,   tLEQ        = 81,   tANDOP     = 82,
-    tOROP       = 83,   tMATCH      = 84,   tNMATCH	    = 85,   tDOT2      = 86, 
-    tDOT3       = 87,   tAREF       = 88,   tASET       = 89,   tLSHFT     = 90, 
-    tRSHFT      = 91,   tCOLON2     = 92,   tCOLON3     = 93,   tOP_ASGN   = 94, 
-    tASSOC      = 95,   tLPAREN	    = 96,   tLPAREN_ARG	= 97,   tRPAREN    = 98,  
-    tLBRACK     = 99,   tLBRACE     = 100,  tLBRACE_ARG = 101, tSTAR      = 102,
-    tAMPER      = 103,  tLAMBDA     = 104,  tSYMBEG     = 105, tSTRING_BEG= 106,
-    tXSTRING_BEG= 107,  tREGEXP_BEG = 108,  tWORDS_BEG  = 109, tQWORDS_BEG= 110,
-    tSTRING_DBEG= 111,  tSTRING_DVAR= 112,  tSTRING_END = 113, tLAMBEG    = 114,
-    tUMINUS_NUM = 115,  tSTRING     = 116,  tXSTRING_END= 117,
-        
-    tPLUS       = 118,  tMINUS      = 119,  tNL         = 120, tSEMI      = 121;
+var OpalRubyParser = function OpalRubyParser(str, filename) {
+  ruby_parser.lexer = this;
+  this.scanner = new OpalStringScanner(str);
+  this.str = str;
+  this.filename = filename;
+  this.lex_state = EXPR_BEG;
+  return this;
+};
 
-    // special tokens (used for generator)
-var tCALL       = 150,  tMLHS       = 151,  tOPT_PLUS   = 152, tOPT_MINUS = 153,
-    tOPT_MULT   = 154,  tOPT_DIV    = 155;
-    
-/*
-  ISeq types
-*/
-var ISEQ_TYPE_TOP = 1,
-    ISEQ_TYPE_METHOD = 2,
-    ISEQ_TYPE_BLOCK = 3,
-    ISEQ_TYPE_CLASS = 4,
-    ISEQ_TYPE_RESCUE = 5,
-    ISEQ_TYPE_ENSURE = 6,
-    ISEQ_TYPE_EVAL = 7,
-    ISEQ_TYPE_MAIN = 8;
-
-/**
-  Parse the given ruby code, str, with the given filename. This allows us to
-  dynamically set the filename, for example, with eval()'d code. This returns
-  an Instruction sequence, with all of its sub sequences, opcodes etc.
-*/
-var vn_parser = function(filename, str) {
-  // current line number
-  var line_number = 1;
-  // current lex state
-  var lex_state = EXPR_BEG;
-  // last lexerparser state
-  var last_state;
-  // the scanner
-  var scanner; //= new vn_ruby_string_scanner(str);
-  // current token
-  var token = { type: false, value: false };
-  // last token
-  var last_token = { type: false, value: false };
-  // 
-  var sym_tbl = { };
-  // eval string..
-  var eval_arr = [];
-  // valid types of stmt that are valid as the first cmd args (helps us identify if the
-  // next statemebnt should be appeneded to the current identifer as a cmd arg )
-  var valid_cmd_args = [tIDENTIFIER, tINTEGER, tCONSTANT, tSTRING_BEG, kDO, '{', tSYMBEG, tIVAR, kSELF, tLBRACK];
-  // start of command (not stmt), when on new line etc
-  var cmd_start = false;
-  
-  // all contexts
-  var contexts = [];
-  
-  // function push_context(c) {
-  //   contexts.push(c);
-  // }
-  
+OpalRubyParser.prototype = {
   
   /**
-    String parsing
+    Lexer function: setup input etc - generally ignored as input is set else
+    where
   */
-  var string_parse_stack = [];
-  
-  var push_string_parse = function(o) {
-    string_parse_stack.push(o);
-  };
-  
-  var pop_string_parse = function() {
-    string_parse_stack.pop();
-  };
-  
-  var current_string_parse = function() {
-    if (string_parse_stack.length == 0) {
-      return null;
-    }
-    return string_parse_stack[string_parse_stack.length - 1];
-  };
-  
-  
-  // create object dup
-  var object_create = function(obj) {
-    var targ = { };
-    for (var prop in obj) {
-      targ[prop] = obj[prop];
-    }
+  setInput: function() {
     
-    return targ;
-  };
-  
-  var original_symbol = {
-      nud: function () {
-          return this;
-      },
-      led: function (left) {
-          throw 'led unimplemented';
-      }
-  };
-  
-  var symbol = function(id, binding_power) {
-    var sym = sym_tbl[id];
-    binding_power = binding_power || 0;
-    if (sym) {
-      if (binding_power >= sym.lbp) {
-        sym.lbp = binding_power;
-      }
-    }
-    else {
-      sym = object_create(original_symbol);
-      sym.type = sym.value = id;
-      sym.lbp = binding_power;
-      sym_tbl[id] = sym;
-    }
-    return sym;
-  };
-  
-  var sym_stmt = function (id, bp, block) {
-    if (!block) {
-      block = bp;
-      bp = 0;
-    }
-
-    var sym = symbol(id);
-    sym.std = block;
-    return sym;
-  };
-  
-  var infixr = function (id, bp, led) {
-      var s = symbol(id, bp);
-      s.led = led || function (left) {
-          this.first = left;
-          this.second = expr(bp - 1);
-          this.arity = "binary";
-          return this;
-      };
-      return s;
-  };
-  
-  // make a function for us that has a 'usual beahiour' (saves making a function
-  // over and over) - +/-/*// all do the same thing etc
-  var infix = function (id, bp, led) {
-      var s = symbol(id, bp);
-      s.led = led || function (left) {
-          this.$lhs = left;
-          this.$rhs = expr(bp);
-          this.type = id;
-          return this;
-      };
-      return s;
-  };
-  
-  var prefix = function (id, nud) {
-      var s = symbol(id);
-      s.nud = nud || function () {
-          scope.reserve(this);
-          this.first = expression(70);
-          this.arity = "unary";
-          return this;
-      };
-      return s;
-  };
-  
-  var assignment = function (id) {
-      return infixr(id, 10, function (left) {
-          if (left.type !== "." && left.type !== "[" && left.type !== tIDENTIFIER && left.type != tIVAR && left.type !== tMLHS && left.type !== tCONSTANT && left.type !== tCALL) {
-            console.log(left.type);
-              throw 'bad lhs'
-          }
-          this.$lhs = left;
-          this.$rhs = stmt();
-          this.assignment = true;
-          // this.type = "assignment";
-          return this;
-      });
-  };
-  
-  assignment("=");
-  
-  symbol(kDO).nud = function() {
-    if (token.type == '|') {
-      var e;
-      this.$args = [];
-      // gather block params
-      next_token();
-      e = expr();
-      this.$args.push(e);
-      while (true) {
-        if (token.type == "|") {
-          next_token();
-          break;
-        }
-        else if (token.type == ",") {
-          next_token();
-          continue;
-        }
-        else {
-          this.$args.push(expr());
-        }
-        // throw "erm.."
-      }
-    }
-    // throw token.value
-    // next_token();
-    // throw token.type
-    this.$stmts = stmts([kEND]);
-    // read over kEND
-    next_token();
-    return this;
-  };
-  
-  // alt block
-  symbol('{').nud = function() {
-    // read over {
-      this.$stmt = stmt();
-      // read over }
-      next_token('}');
-      return this;
-  };
-    
-  // self... simple, just return
-  symbol(kSELF).nud = function() {
-    return this;
-  };
-  
-  symbol(kRETURN).nud = function() {
-    return this;
-  };
-  
-  symbol(kNIL).nud = function() {
-    return this;
-  };
-  
-  symbol(kSUPER).nud = function() {
-    return this;
-  };
-  
-  symbol(kTRUE).nud = function() {
-    return this;
-  };
-  
-  symbol(kFALSE).nud = function() {
-    return this;
-  };
-  
-  symbol(tSTRING_BEG).nud = function() {
-    // console.log('in hre..');
-    // these will be string_contents mixed with actual ruby parse trees
-    this.$parts = [];
-    // next_token();
-    // throw token.value
-    while (true) {
-      if (token.type === false) {
-        throw 'Parsing string error: not expecting EOF before end of string'
-      }
-      else {
-        // console.log(token.value);
-        if (token.type === tSTRING_END) {
-          next_token();
-          break;
-        }
-        else {
-          if (token.type === tSTR_CONTENT) {
-            this.$parts.push(token)
-            next_token();
-          }
-          else if (token.type === tSTRING_DBEG) {
-            var d = token;
-            // skip over dbeg
-            next_token();
-            d.$value = stmt();
-            this.$parts.push(d);
-            // skip over '}'
-            next_token();
-          }
-          // console.log('found a part');
-          // this.$parts.push(token);
-          // next_token();
-        }
-        
-      }
-    }
-    return this;
-  };
-  
-  // when we get identifier identifier (treat first like receiver, second like arg1)
-  symbol(tIDENTIFIER).nud = function() {
-    // console.log(this.value + " " + token.value);
-    // we need to check last_state, as lex_state (current) is overridden when parsing current token
-    if ((valid_cmd_args.indexOf(token.type) != -1) && (last_state == EXPR_CMDARG)) {
-      // console.log("about to gather command args.." + token.value);
-      gather_command_args(this);
-      this.type = tCALL;
-      this.$recv = null;
-      this.$meth = this.value;
-      // this.$meth = this;
-    }
-    return this;
-  };
-  
-  symbol(tCONSTANT).nud = function() {
-    // Constant.something
-    if (token.type === ".") {
-      var t = token;
-      t.type = tCALL;
-      t.$recv = this;
-      // read over dot
-      next_token();
-      
-      // for now assume no param args - method name must be an identifier
-      if (token.type !== tIDENTIFIER) {
-        rb_raise(rb_eSyntaxError, "Expecting identifier as constant method name");
-      }
-      t.$meth = token.value;
-      next_token();
-      
-      // if we are starting the arglist for this call...
-      if (token.type === '(') {
-        // read over paren
-        next_token();
-        // quick capture no args ")"
-        if (token.type === ')') {
-          next_token();
-        }
-        else {
-          gather_command_args(t);
-          // end of args..
-          // console.log('end constant args' + token.value);
-          // read over ending ')'
-          next_token(')');
-        }
-        
-      }
-      
-      // capture something.identifer = 
-      // console.log(token.type);
-      // 
-      // t.$meth = "find";
-      
-      // console.log("capture constant call!" + token.value);
-      
-      // if we have a do block..
-      if (token.type === kDO) {
-        // gather do block
-        t.$brace_block = stmt();
-      }
-      else if (token.type === '{') {
-        // gather rlcurly block
-        t.$brace_block = stmt();
-      }
-      
-      return t;
-    }
-    // Contant[....]
-    // if we are starting an aref/aset
-    else if (token.type === '[') {
-      var t = token;
-      // read over token
-      next_token();
-      
-      t.type = tCALL;
-      t.$recv = this;
-      t.$meth = '[]';
-      console.log("toekn is " + token.value);
-      // var aref_args = [expr()];
-      // console.log(expr());
-      var aref_args = [expr()];
-      // console.log("token is " + aref_args);
-      // console.log(aref_args);
-      t.$call_args = {
-        args: aref_args
-      };
-      // var aref_args = expr();
-      // make sure we now have a closing bracket
-      next_token(']');
-      return t;
-    }
-    
-    return this;
-  };
-  
-  // the 'command' to apply the argumens to
-  // FIXME: rewrite to asume first arg is not neceserialy a arg, it could be start
-  // of assocs, or might be start of kDO
-  var gather_command_args = function(cmd) {
-    cmd.$call_args = {
-      args: []
-    };
-    // console.log('tIDENTIFIER "' + token.value + '" lex state: ' + lex_state + ' last state: ' + last_state + ' ,last token: ' + last_token.value);
-    if ((token.type !== kDO) && (token.type !== '{') && (token.type !== ')')) {
-      // dont add if next statement is kDO...
-      // console.log("getting exopr.." + token.value);
-      var s = expr();
-      if (token.type === tASSOC) {
-        // start tASSOC collection
-        var a_keys = [], a_values = [];
-        cmd.$assocs = { '$keys': a_keys, '$values': a_values };
-        a_keys.push(s);
-        // read ovber tassoc
-        next_token();
-        a_values.push(expr());
-      }
-      else {
-        cmd.$call_args.args.push(s);
-      }
-      
-      // console.log("finished expression " + token.value);
-    }
-    
-    // collect remaining params
-    if (token.type === ',') {
-      // read over initial commar
-      next_token();
-      while (true) {
-        s = expr();
-        // s = expr(80);
-        // this.$args.push(stmt());
-        // check if tok is tASSOC.. if so, , then we
-        // are beginning a hash list, so dont add stmt to $args, but push it to
-        // the hash arg list instead
-        // console.log(token.type);
-        if (token.type === tASSOC) {
-          // console.log('found tassoc');
-          // should we check if we already have assoc list? having it more than once per cmd call
-          // might be an error
-          if (!cmd.$assocs) {
-            var a_keys = [], a_values = [];
-            cmd.$assocs = { '$keys': a_keys, '$values': a_values };
-          }
-          
-          a_keys.push(s);
-          // read over tassoc
-          next_token();
-          a_values.push(expr());
-          
-          while (true) {
-            if (token.type !== ',') {
-              // end of assoc list
-              break;
-            }
-            // read over commar
-            next_token(',');
-            a_keys.push(expr());
-            next_token(tASSOC);
-            a_values.push(expr());
-          }
-          
-          // console.log(this);
-          // throw 'hash begin!'
-        }
-        else {
-          cmd.$call_args.args.push(s);
-        }
-        // CHECK HERE for do_block
-        // move this outside of loop? once we have do_block, command is over
-        
-        
-        if (token.type !== ',') {
-          break;
-        }
-        // any other case, add it as an arg
-        
-        // console.log(token.type);
-        next_token(',');
-        // check for 'wrong' token types... a def, class, module etc are NOT valid tokens
-        if ([kDEF, kCLASS, kMODULE, kIF].indexOf(token.type) !== -1) {
-          throw 'Command Args: Not expecting token "' + token.type + '". Perhaps a trailing commar?'
-        }
-      }
-    }
-    if (token.type === kDO) {
-      // gather do block
-      cmd.$brace_block = stmt();
-    }
-    else if (token.type === '{') {
-      // gather rlcurly block
-      cmd.$brace_block = stmt();
-    }
-  };
-  
-  // kDO opt_block_param compstmt kEND
-  var gather_do_block = function() {
-    var result = token;
-    // read over kDO
-    next_token();
-    // throw token.value
-    result.$stmts = stmts([kEND]);
-    // read over kEND
-    next_token();
-    return result;
-  }
-  
-  symbol(tINTEGER).nud = function() { 
-    return this; 
-  };
-  
-  symbol(tSYMBEG).nud = function() {
-    this.$name = stmt();
-    return this;
-  };
-  
-  symbol(tIVAR).nud = function() {
-    return this;
-  };
-  
-  symbol(tCVAR).nud = function() {
-    return this;
-  };
-  
-  symbol(tGVAR).nud = function() {
-    return this;
-  };
-  
-  // Catching block definitions in Def statements.
-  symbol("&").nud = function() {
-    this.$name = stmt();
-    return this;
-  }
-  
-  
-  infix(",", 80, function(left) {
-    this.type = tMLHS;
-    // check if already part of a mLHS chain
-    if (left.type == tMLHS) {
-      // add to current chain
-      throw "in here.." + token.value
-    }
-    else {
-      // start new chain
-      this.$parts = [];
-      this.$parts.push(left);
-      this.$parts.push(expr(10));
-      // dont get next_token. expr() gets it for us.
-      // next_token();
-      // this.$parts.push(next_token());
-    }
-    // throw token.value
-    // throw "in here.." + token.value
-    
-    
-    return this;
-  });
-  
+  },
   
   /**
-    Fixme!! this is going to break!!
-    
-    Argh! not sure how we are going to do mlghs, mrhs
+    Lexer function: get next token (calls nextToken essentially)
   */
-  // infix(',', 80, function(left) {
-  //   this.$lhs = left;
-  //   if (token.type === tSYMBEG) {
-  //     // throw 'we need to parse an assoc.'
-  //     next_token();
-  //     next_token();
-  //     next_token();
-  //     next_token();
-  //   }
-  //   else {
-  //     this.$rhs = stmt();
-  //   }
-  //   
-  //   return this;
-  // });
+  lex: function() {
+    if (this.done) return "";
+    var token = this.nextToken();
+    // console.log(token.join(", "));
+    if (token[0] === false) {
+      this.done = true;
+      return "EOF";
+    } 
+    console.log("yytext is " + token[1] + " for " + token[0]);
+    this.yytext = token[1];
+    return token[0];
+  },
   
-  // Dot notation
-  infix(".", 80, function (left) {
-    // console.log('doing dot! $meth is: ' + token.value)
-    this.$recv = left;
-    this.$meth = token.value;
-    this.type = tCALL;
-    // skip over dot
-    next_token();
-    if ((valid_cmd_args.indexOf(token.type) != -1) && (last_state === EXPR_CMDARG)) {
-      gather_command_args(this);
-    }
-    // capture something.something =
-    else if (token.type === "=") {
-      next_token();
-      // basically append "=" to method name, and set args to the given exp
-      this.$meth = this.$meth + "=";
-      var eql_expr = [expr()];
-      this.$call_args = { args: eql_expr };
-      console.log(this);
-    }
-    // else {
-      // if not, check if we just have a block...... no args, just block..
-      // e.g. my_array.each do ...
-      // could we just add kDO to the valid_cmd_args array...?
-      // throw token.value
-    // }
-    
-    return this;
-  });
+  /**
+    Lexer function
+  */
+  upcomingInput: function() {
+    return "";
+  },
   
-  // m - method name
-  //  b - binding power
-  // t is optinal type (instead of tCALL)
-  // used for a + a, a - a,  a << a etc. (as m)
-  function meth_call(m, b, t) {
-    return infix(m, b, function(left) {
-      this.type = t || tCALL;
-      this.$recv = left;
-      this.$meth = this;
-      this.$call_args = {
-        args: [stmt()]
-      }
-      return this;
-    });
-  }
+  /**
+    Lexer functions
+  */
+  showPosition: function() {
+    return 0;
+  },
   
-  meth_call(tPLUS, 80, tOPT_PLUS);
-  meth_call(tMINUS, 80, tOPT_MINUS);
-  meth_call("*", 80, tOPT_MULT);
-  meth_call("/", 80, tOPT_DIV);
+  /**
+    Parse the string given on initialzation and return a string representation
+    of the compiled ruby.
+  */
+  parse: function() {
+    ruby_parser.parse(this.str);
+    var res = ruby_parser.__result;
+    return OpalRubyGenerator(this, res);
+    // return this.filename;
+  },
   
-    
-  // method calls (with paranthesis)
-  infix("(", 80, function (left) {
-      var args = {
-        args: []
-      };
-      // valid left values
-      if (left.type === '.') {
-        // already a method call, so just set $args property
-        left.$call_args = args;
-      }
-      else if (left.type === tIDENTIFIER || left.type === tCONSTANT) {
-        // identifier/constant - turn them into a method call, with args
-        // as the args (and no receiver!)
-        // will identifier already be a method call? unless an actual identifier
-        left.type = tCALL;
-        left.$meth = left.value;
-        // console.log(left.value + " " + left.type);
-        left.$call_args = args;
-      }
-      else if (left.type === tCALL) {
-        // left.type = tCALL;
-        // left.$meth = left.value;
-        // console.log(left.value + " " + left.type);
-        left.$call_args = args;
-      }
-      else {
-        throw left.value + ' is not a valid receiver'
-      }
-      
-      if (token.type !== ')') {
-        while (true) {
-          // console.log("gaething..");
-          args.args.push(expr());
-          if (token.type !== ',') {
-            break;
-          }
-          next_token(',');
-        }
-      }
-      next_token(')');
-      
-      if (token.type === kDO) {
-        // gather do block
-        left.$block = stmt();
-      }
-      else if (token.type === '{') {
-        // gather rlcurly block
-        left.$block = stmt();
-      }
-      
-      return left;
-    });
-  
-  // array declarations (explicit)
-  prefix(tLBRACK, function() {
-    var arr = [];
-    // throw token.value
-    if (token.type !== ']') {
-      while (true) {
-        arr.push(expr());
-        if (token.type !== ',') {
-          break;
-        }
-        next_token(',');
-      }
-    }
-    next_token(']');
-    this.$values = arr;
-    return this;
-  });
-  
-  // hash literal
-  prefix(tLBRACE, function () {
-    this.$keys = [];
-    this.$values = [];
-    if (token.type !== '}') {
-      while (true) {
-        var t = expr();
-        // check for valid key?
-        // next_token();
-        // should this be a => ?? probbaly...
-        next_token();
-        this.$keys.push(t);
-        // console.log(token);
-        this.$values.push(expr());
-        if (token.type == '}') {
-          // console.log(token.value);
-          break;
-        }
-        else if (token.type == tNL || token.type == tSEMI) {
-          next_token();
-          break;
-        }
-        next_token(',');
-      }
-    }
-    next_token('}');
-    // console.log("finished");
-    return this;
-  });
-  
-  prefix(kCASE, function() {
-    this.$expr = stmt();
-    this.$body = [];
-    
-    if (token.type == tNL || token.type == tSEMI) next_token();
+  /**
+    Return the next token. Result should be an array, first index is token type,
+    second is lex value
+  */
+  nextToken: function() {
+    var scanner = this.scanner;
+    var space_seen = false, c = '', cmd_start = false;
     
     while (true) {
-      if (token.type == kEND) {
-        next_token();
-        break;
-      }
-      else if (token.type == kWHEN) {
-        var s, t = token;
-        t.$args = [];
-        next_token();
-        if ([tNL, tSEMI, ","].indexOf(token.type) != -1) 
-          throw "kCASE: not expecting given token type"
-        while (true) {
-          s = stmt();
-          t.$args.push(s);
-          if (token.type == ",") next_token();
-          else break;
-        }
-        t.$stmts = stmts([kEND, kELSE, kWHEN]);
-      }
-      else if (token.type == kELSE) {
-        var t = token;
-        next_token();
-        // throw "jere"
-        t.$stmts = stmts([kEND]);
-        // throw "erm"
-      }
-    }
-    return this;
-  });
-  
-  // if statment - expression, not really a statement.
-  prefix(kIF, function() {
-    this.$expr = stmt();
-    this.$tail = [];
-    
-    if (token.type == tNL || token.type == tSEMI) {
-      next_token();
-      if (token.type == kTHEN) next_token();
-    }
-    else if (token.type == kTHEN) {
-      next_token();
-    }
-    else {
-      throw "kIF: expecting either term or kTHEN"
-    }
-    
-    this.$stmts = stmts([kEND, kELSE, kELSIF]);
-    
-    while (true) {
-      if (token.type == kEND) {
-        next_token();
-        break;
-      }
-      else if (token.type == kELSIF) {
-        var t = token;
-        next_token();
-        t.$expr = stmt();
-
-        if (token.type == tNL || token.type == tSEMI) {
-          next_token();
-          if (token.type == kTHEN) next_token();
-        }
-        else if (token.type == kTHEN) {
-          next_token();
-        }
-        else {
-          throw "kIF: expecting either term or kTHEN"
-        }
-        
-        t.$stmts = stmts([kEND, kELSIF, kELSE]);
-        this.$tail.push(t);
-      }
-      else if (token.type == kELSE) {
-        var t = token;
-        next_token();
-        t.$stmts = stmts([kEND]);
-        this.$tail.push(t);
-      }
-      else {
-        throw "kIF: unexpected token: " + token.type + ", " + token.value
-      }
-    }
-
-    return this;
-  });
-  
-  // method definitions
-  sym_stmt(kDEF, function () {
-    
-    if (token.type === tIDENTIFIER || token.type === tCONSTANT || token.type === kSELF) {
-      this.$fname = token;
-    }
-    else {
-      throw 'Method Defintion: expected identifier or constant as def name.'
-    }
-    // reads over the fname
-    next_token();
-    
-    // check if singleton definition
-    if (token.type === '.' || token.type === tCOLON2) {
-      // we have a singleton, so put old $fname as singleton name
-      this.$sname = this.$fname;
-      // stype is either '.' or tCOLON2 - might help code generation
-      this.$stype = token.type;
-      // now get real fname
-      next_token();
-      this.$fname = token;
-      // read over fname
-      next_token();
-    }
-    else {
-      // check we havent shot ourself in the foot
-      if (this.$fname.type === kSELF) {
-        throw "Cannot use keyword 'self' as method name"
-      }
-    }
-    
-    // ignore arglist for the moment.
-    if (token.type === tNL || token.type === tSEMI) {
-      // we can ignore... nothing to do
-    }
-    else {
-      
-      this.$arglist = {
-        arg: [],
-        rest_arg: [],
-        opt_arg: [],
-        opt_block_arg: null
-      };
-      
-      if (token.type === '(') {
-        // params with paranthesis
-        this.$paran = true;
-        next_token();
-      }
-      while (true) {
-        if (token.type === ')') {
-          // end of params..check if we actually had start paran?
-          next_token();
-          break;
-        }
-        else {
-          // for now assume every stmt will be a regular arg. need to check actual types
-          // later
-          var s = stmt();
-          this.$arglist.arg.push(s);
-          if (token.type == ',') {
-            // read over commar
-            next_token();
-          }
-          else {
-            
-            if (token.type === ')') continue;
-            else if (token.type == tNL || token.type == tSEMI) break;
-            else throw "Error: def, unsupported param type " + token.type
-          }
-        }
-      }
-    }
-    
-    // read stmts.
-    this.$stmts = stmts([kEND]);
-    // read over kEND
-    next_token();
-    return this;
-  });
-  
-  sym_stmt(kCLASS, function() {
-    
-    if (token.type === tIDENTIFIER) {
-      throw 'Class defintion: cannot use tIDENTIFIER as a class name. Expected tCONSTANT'
-    }
-    else if(token.type === tCONSTANT) {
-      this.$kname = token;
-    }
-    else {
-      throw 'Class definition: expected constant as class name'
-    }
-    // read over kname
-    next_token();
-    
-    if (token.type == '<') {
-      next_token();
-      // for now, only constant is valid superclass. we should allow other things..except new line.
-      if (token.type == tCONSTANT) {
-        this.$super = stmt();
-        next_token();
-      }
-      else {
-        throw "Class error: supername?"
-      }
-    }
-    
-    this.$stmts = stmts([kEND]);
-    // read over kEND
-    next_token();
-    return this;
-  });
-  
-  sym_stmt(kMODULE, function() {
-    if (token.type === tIDENTIFIER) {
-      throw "Module definition: cannot use tIDENTIFIER as a module name. Expected tCONSTANT"
-    }
-    else if (token.type === tCONSTANT) {
-      this.$kname = token;
-    }
-    else {
-      throw "Module definition: Expected tCONSTANT for module name"
-    }
-    
-    // name
-    next_token();
-    
-    this.$stmts = stmts([kEND]);
-    // kend
-    next_token();
-    return this;
-  });
-  
-  
-  
-  var stmts = function(t) {
-    var s;
-    var r = [];
-    t = t || [];
-    while (true) {
-      if (token.type === false) {
-        if (t.indexOf(false) === -1) {
-          break;
-        }
-        else {
-          throw 'stmts: got to EOF before reaching end of statements'
-        }
-      }
-      else if (t.indexOf(token.type) != -1) {
-        break;
-      }
-      else {
-        if (token.type === tNL || token.type === tSEMI) {
-          next_token();
-        }
-        else {
-          s = stmt();
-          r.push(s);
-        }
-      }
-    }
-    return r;
-  };
-  
-  var stmt = function() {
-    var c = token;
-    if (c.std) {
-      next_token();
-      return c.std();
-    }
-    var e = expr(0);
-    return e;
-  };
-  
-  var expr = function(right_binding_power) {
-    var old = token;
-    next_token();
-    // console.log(old);
-    var left = old.nud();
-    while (right_binding_power < token.lbp) {
-      old = token;
-      next_token();
-      left = old.led(left);
-    }
-    return left;
-  };
-  
-  
-  
-  var get_next_string_token = function() {
-    var str_parse = current_string_parse();
-    
-    // see if we can read end of string/xstring/regexp markers
-    if (scanner.scan( new RegExp('^\\' + str_parse.beg))) {
-      pop_string_parse();
-      if (str_parse.beg == '"' || str_parse.beg == "'") {
-        lex_state = EXPR_END;
-        return [tSTRING_END, scanner.matched];
-      }
-      else {
-        // assume to be xstring
-        return [tXSTRING_END, scanner.matched]
-      }
-    }
-    
-    // not end of string, so we must be parsing contents
-    var str_buffer = [];
-    
-    if (scanner.scan(/^#(\$|\@)/)) {
-      return [tSTRING_DVAR, scanner.matched];
-    }
-    else if (scanner.scan(/^#\{/)) {
-      // we are into ruby code, so stop parsing content (for the moment)
-      str_parse.content = false;
-      return [tSTRING_DBEG, scanner.matched];
-    }
-    else if (scanner.scan(/^#/)) {
-      str_buffer.push('#');
-    }
-    
-    // content regexp (what is valid content for strings..)
-    var reg_exp = (str_parse.beg == '`') ?
-                // xstring: CAN include new lines
-                new RegExp('[^\\' + str_parse.beg + '\#\0\\]+|.') :
-                // normal string: cannot include new lines
-                new RegExp('[^\\' + str_parse.beg + '\#\0\\\n]+|.');
-    
-    scanner.scan(reg_exp);
-    str_buffer.push(scanner.matched);
-    return [tSTR_CONTENT, str_buffer.join('')];
-  };
-
-  
-  // checks id of current token to make sure it matches, only if id is defined.
-  var next_token = function(id) {
-    // last token support
-    last_token = token;
-    // capture string stuff
-    if (current_string_parse() && current_string_parse().content) {
-      // console.log('geting str token');
-      var t = get_next_string_token();
-      // console.log('string token: (' + t[0] + ' : ' + t[1] + ') lex_state: (' + lex_state + ')');
-      // token = object_create(sym_tblt);
-      token = { };
-      token.type = t[0];
-      token.value = t[1];
-      return token;
-    }    
-    
-    var t = get_next_token();
-    if (id && (id !== token.type)) {
-      throw 'Unexpected value "' + token.value + '". Expecting: ' + id
-    }
-    // console.log('token: (' + t[0] + ' : ' + t[1] + ') lex_state: (' + lex_state + ')');
-    // token = { type: t[0], value:t[1] };
-    // token = {};
-    token = object_create(sym_tbl[t[0]]);
-    token.type = t[0];
-    token.value = t[1];
-    // console.log(token.value + ', ' + last_token.value);
-    return token;
-  };
-  
-  // actually get the next token
-  var get_next_token = function() {
-    var c = '', space_seen = false;
-    
-    last_state = lex_state;
-    cmd_start = false;
-        
-      
-    while (true) {
-      // console.log(scanner.working_string);
-      // if (scanner.scan(/\ |\t|\r/)) {
-        if(scanner.scan(/^(\ |\t|\r)/)) {
+      if (scanner.scan(/^(\ |\t|\r)/)) {
         space_seen = true;
-        // console.log('found space: "' + scanner.matched + '"');
-        // console.log(scanner.working_string);
         continue;
       }
       else if (scanner.scan(/^(\n|#)/)) {
@@ -1155,25 +110,24 @@ var vn_parser = function(filename, str) {
         }
         
         // \n and #\n both mean we read one line, so..
-        line_number++;
+        // line_number++;
         
         // we can skip any more blank lines..(combine them into one..)
         scanner.scan(/^(\n+)/);
-        line_number += scanner.matched.length;
-        
-        if (lex_state == EXPR_BEG) {
+        // line_number += scanner.matched.length;
+        if (this.lex_state == EXPR_BEG) {
           continue;
         }
         cmd_start = true;
-        lex_state = EXPR_BEG;
-        return [tNL, '\n'];
+        this.lex_state = EXPR_BEG;
+        return ['\\n', '\\n'];
       }
       else if (scanner.scan(/^[+-]/)) {
-        var result = scanner.matched == '+' ? tPLUS : tMINUS;
-        var sign = (result == tPLUS) ? tUPLUS : tUMINUS;
+        var result = scanner.matched == '+' ? '+' : '-';
+        var sign = (result == '+') ? 'tUPLUS' : 'tUMINUS';
         // method name
-        if (lex_state == EXPR_FNAME || lex_state == EXPR_DOT) {
-          lex_state = EXPR_ARG;
+        if (this.lex_state == EXPR_FNAME || this.lex_state == EXPR_DOT) {
+          this.lex_state = EXPR_ARG;
           if (scanner.scan(/^@/)) {
             return [sign, result + '@'];
           }
@@ -1183,16 +137,16 @@ var vn_parser = function(filename, str) {
         }
         // += or -=
         if (scanner.scan(/^\=/)) {
-          lex_state = EXPR_BEG;
+          this.lex_state = EXPR_BEG;
           return [tOP_ASGN, result];
         }
 
-        if (lex_state == EXPR_BEG || lex_state == EXPR_MID) {
-          lex_state = EXPR_BEG;
+        if (this.lex_state == EXPR_BEG || this.lex_state == EXPR_MID) {
+          this.lex_state = EXPR_BEG;
           return [sign, result];
         }
 
-        lex_state = EXPR_BEG;
+        this.lex_state = EXPR_BEG;
         return [result, scanner.matched];
       }
       
@@ -1307,15 +261,15 @@ var vn_parser = function(filename, str) {
       
       // numbers
       else if (scanner.check(/^[0-9]/)) {
-        lex_state = EXPR_END;
+        this.lex_state = EXPR_END;
         if (scanner.scan(/^[\d_]+\.[\d_]+\b/)) {
-          return [tFLOAT, scanner.matched];
+          return ['tFLOAT', scanner.matched];
         }
         else if (scanner.scan(/^[\d_]+\b/)) {
-          return [tINTEGER, scanner.matched];
+          return ['tINTEGER', scanner.matched];
         }
         else if (scanner.scan(/^0(x|X)(\d|[a-f]|[A-F])+/)) {
-          return [tINTEGER, scanner.matched];
+          return ['tINTEGER', scanner.matched];
         }
         else {
           console.log('unexpected number type');
@@ -1406,7 +360,7 @@ var vn_parser = function(filename, str) {
       
       else if (scanner.scan(/^\;/)) {
         lex_state = EXPR_BEG;
-        return [tSEMI, ';'];
+        return [';', ';'];
       }
       // #
       else if (scanner.scan(/^\(/)) {
@@ -1447,7 +401,7 @@ var vn_parser = function(filename, str) {
       else if (scanner.scan(/^\./)) {
         // should be EXPR_DOT in ALL cases?
         // if (lex_state == EXPR_FNAME) {
-          lex_state = EXPR_DOT;
+          this.lex_state = EXPR_DOT;
         // }
         return ['.', scanner.matched];
       }
@@ -1465,8 +419,8 @@ var vn_parser = function(filename, str) {
       }
       // Instance variables
       else if (scanner.scan(/^\@\w*/)) {
-        lex_state = EXPR_END;
-        return [tIVAR, scanner.matched];
+        this.lex_state = EXPR_END;
+        return ['tIVAR', scanner.matched];
       }
       
       else if (scanner.scan(/^\=\>/)) {
@@ -1482,24 +436,24 @@ var vn_parser = function(filename, str) {
       else if (scanner.scan(/^\w+[\?\!]?/)) {
         switch (scanner.matched) {
           case 'def':
-            lex_state = EXPR_FNAME;
-            return [kDEF, scanner.matched];
+            this.lex_state = EXPR_FNAME;
+            return ['kDEF', scanner.matched];
           case 'end':
-            lex_state = EXPR_END;
-            return [kEND, scanner.matched];
+            this.lex_state = EXPR_END;
+            return ['kEND', scanner.matched];
           case 'class':
-            console.log(lex_state);
+            // console.log(lex_state);
             // catch 'class' being used as a method name. This only works when class is used
             // like object.class .. you cannot just use 'class' to call class method on self
             // without explicitly stating self as the receiver.
-            if (lex_state == EXPR_DOT || lex_state == EXPR_FNAME) {
-              return [tIDENTIFIER, scanner.matched];
+            if (this.lex_state == EXPR_DOT || this.lex_state == EXPR_FNAME) {
+              return ['tIDENTIFIER', scanner.matched];
             }
-            lex_state = EXPR_CLASS;
-            return [kCLASS, scanner.matched];
+            this.lex_state = EXPR_CLASS;
+            return ['kCLASS', scanner.matched];
           case 'module':
-            lex_state = EXPR_BEG;
-            return [kMODULE, scanner.matched];
+            this.lex_state = EXPR_BEG;
+            return ['kMODULE', scanner.matched];
           case 'do':
             if (lex_state == EXPR_ENDARG) {
               lex_state = EXPR_BEG;
@@ -1507,17 +461,17 @@ var vn_parser = function(filename, str) {
             }
             return [kDO, scanner.matched];
           case 'if':
-            if (lex_state == EXPR_BEG) {
-              return [kIF, scanner.matched];
+            if (this.lex_state == EXPR_BEG) {
+              return ['kIF', scanner.matched];
             }
-            lex_state = EXPR_BEG;
-            return [kIF_MOD, scanner.matched];
+            this.lex_state = EXPR_BEG;
+            return ['kIF_MOD', scanner.matched];
           case 'then':
-            return [kTHEN, scanner.matched];
+            return ['kTHEN', scanner.matched];
           case 'else':
-            return [kELSE, scanner.matched];
+            return ['kELSE', scanner.matched];
           case 'elsif':
-            return [kELSIF, scanner.matched];
+            return ['kELSIF', scanner.matched];
           case 'unless':
             if (lex_state == EXPR_BEG) {
               return [kUNLESS, scanner.matched];
@@ -1559,26 +513,26 @@ var vn_parser = function(filename, str) {
 
         // labels - avoid picking up a mod/class divide name
         if ((scanner.peek(2) != '::') && (scanner.scan(/^\:/))) {
-          return [tLABEL, matched + scanner.matched];
+          return ['tLABEL', matched + scanner.matched];
         }
 
-        if (lex_state == EXPR_FNAME) {
+        if (this.lex_state == EXPR_FNAME) {
           if (scanner.scan(/^=(?:(?![~>=])|(?==>))/)) {
-            lex_state = EXPR_END;
-            return [tIDENTIFIER, matched + scanner.matched];
+            this.lex_state = EXPR_END;
+            return ['tIDENTIFIER', matched + scanner.matched];
           }
         }
         
         // console.log('current state: ' + lex_state);
         
-        if ([EXPR_BEG, EXPR_DOT, EXPR_MID, EXPR_ARG, EXPR_CMDARG].indexOf(lex_state) !== -1) {
-          lex_state = EXPR_CMDARG;
+        if ([EXPR_BEG, EXPR_DOT, EXPR_MID, EXPR_ARG, EXPR_CMDARG].indexOf(this.lex_state) !== -1) {
+          this.lex_state = EXPR_CMDARG;
         }
         else {
-          lex_state = EXPR_END;
+          this.lex_state = EXPR_END;
         }
         
-        return [matched.match(/^[A-Z]/) ? tCONSTANT : tIDENTIFIER, matched];
+        return [matched.match(/^[A-Z]/) ? 'tCONSTANT' : 'tIDENTIFIER', matched];
       }
 
       else {
@@ -1586,765 +540,6 @@ var vn_parser = function(filename, str) {
         return [false, false];      
       }
     }
-  };
-  
-  var iseq_current = null;
-  var iseq_stack = [];
-  
-  function iseq_stack_push(type) {
-    iseq_current = new Iseq(type);
-    iseq_stack.push(iseq_current);
-    return iseq_current;
-  };
-  
-  function iseq_stack_pop() {
-    var iseq = iseq_current;
-    iseq_stack.pop();
-    iseq_current = iseq_stack[iseq_stack.length - 1];
-    iseq.finalize();
-    return iseq.toString();
-  };
-  
-  function write(opcode) {
-    iseq_current.write(opcode);
-  };
-  
-  function write_label(label) {
-    iseq_current.write_label(label);
-  };
-  
-  function generate_tree(tree) {
-    var top_iseq = iseq_stack_push(ISEQ_TYPE_TOP);
-    for (var i = 0; i < tree.length; i++) {
-      generate_stmt(tree[i], {full_stmt:true, last_stmt:false});
-    }
-    return iseq_stack_pop();
-  };
-  
-  function generate_stmt(stmt, context) {
-    switch (stmt.type) {
-      case kCLASS:
-        generate_class(stmt, context);
-        break;
-      case kMODULE:
-        generate_module(stmt, context);
-        break;
-      case kDEF:
-        generate_def(stmt, context);
-        break;
-      case tCALL:
-        generate_call(stmt, context);
-        break;
-      case tSYMBEG:
-        generate_symbol(stmt, context);
-        break;
-      case tCONSTANT:
-        generate_constant(stmt, context);
-        break;
-      case tIDENTIFIER:
-        generate_identifier(stmt, context);
-        break;
-      case tIVAR:
-        generate_ivar(stmt, context);
-        break;
-      case tINTEGER:
-        generate_integer(stmt, context);
-        break;
-      case tSTRING_BEG:
-        generate_string(stmt, context);
-        break;
-      case kSELF:
-        generate_self(stmt, context);
-        break;
-      case kIF:
-        generate_if(stmt, context);
-        break;
-      case '=':
-        generate_assign(stmt, context);
-        break;
-      case kFALSE:
-        generate_false(stmt, context);
-        break;
-      case kTRUE:
-        generate_true(stmt, context);
-        break;
-      case tLBRACE:
-        generate_assoc_list(stmt, context);
-        break;
-      case tLBRACK:
-        generate_array(stmt, context);
-        break;
-      default:
-        console.log("unknown generate_stmt type: " + stmt.type + ", " + stmt.value);
-    }
-  };
-  
-  function generate_ivar(stmt, context) {
-    if (context.full_stmt && context.last_stmt) write("return ");
-    write('vm_ivarget($,"' + stmt.value + '")');
-    if (context.full_stmt) write(";");
-  };
-  
-  function generate_assoc_list(list, context) {
-    for (var i = 0; i < list.$keys.length; i++) {
-      generate_stmt(list.$keys[i], {});
-      generate_stmt(list.$values[i], {});
-    }
-    write([iNEWHASH, list.$keys.length * 2]);
-  };
-  
-  function generate_array(stmt, context) {
-    write("[");
-    if (stmt.$values) {
-      var i;
-      for (i = 0; i < stmt.$values.length; i++) {
-        if (i > 0) write(",");
-        generate_stmt(stmt.$values[i], {full_stmt:false, last_stmt:false});
-      }
-    }
-    write("]");
-    // iseq_opcode_push([iNEWARRAY, stmt.$values ? stmt.$values.length : 0]);
-  }
-  
-  function generate_assign(stmt, context) {
-    if (context.last_stmt && context.full_stmt) write("return ");
     
-    if (stmt.$lhs.type == tIDENTIFIER) {
-      var local = iseq_current.lookup_local(stmt.$lhs.value);
-      if (local === null) {
-        local = iseq_current.push_local_name(stmt.$lhs.value);
-      }
-      write(local + "=");
-      generate_stmt(stmt.$rhs, {});
-    }
-    else {
-      rb_raise(rb_eSyntaxError, "unsupported lhs, for now");
-    }
-    
-    if (context.full_stmt) write(";");
-  }
-  
-  function generate_if(stmt, context) {
-    // if expression..
-    generate_stmt(stmt.$expr, {instance:context.instance, full_stmt:false, last_stmt:false});
-    var jmp_label = iseq_jump_idx();
-    iseq_opcode_push([iBRANCHUNLESS, jmp_label]);
-    
-    // stmts
-    if (stmt.$stmts) {
-      var i, s = stmt.$stmts;
-      for (i = 0; i < s.length; i++) {
-        generate_stmt(s[i], {instance:context.instance, full_stmt:true, last_stmt:false});
-      }
-    }
-    
-    iseq_opcode_push(jmp_label);
-    
-    // if (context.last_stmt && context.full_stmt) write("return ");
-    // write("(function(){");
-    // 
-    // (stmt.type == kIF) ? write("if(RTEST(") : write("if(!RTEST(");
-    // 
-    // // RTEST expression
-    // generate_stmt(stmt.$expr, {instance:context.instance, full_stmt:false, last_stmt:false});
-    // write(")){\n");
-    // 
-    // if (stmt.$stmts) {
-    //   var i, s = stmt.$stmts;
-    //   for (i = 0; i < s.length; i++) {
-    //     generate_stmt(s[i], {instance:context.instance, full_stmt:true, last_stmt:(s[s.length -1] == s[i] ? true : false)});
-    //   }
-    // }
-    // 
-    // write("}\n");
-    // 
-    // if (stmt.$tail) {
-    //   var i, t = stmt.$tail;
-    //   for (i = 0; i < t.length; i++) {
-    //     if (t[i].type == kELSIF) {
-    //       write("else if(RTEST(");
-    //       generate_stmt(t[i].$expr, {instance:context.instance, full_stmt:false, last_stmt:false});
-    //       write(")){\n");
-    //     }
-    //     else {
-    //       write("else{\n");
-    //     }
-    //     
-    //     if (t[i].$stmts) {
-    //       var j, k = t[i].$stmts;
-    //       for (j = 0; j < k.length; j++) {
-    //         // console.log("doing " + k[j].value);
-    //         generate_stmt(k[j], {instance:context.instance, full_stmt:true, last_stmt:(k[k.length - 1] == k[i] ? true : false)});
-    //       }
-    //     }
-    //     
-    //     write("}\n");
-    //   }
-    // }
-    // 
-    // write("})()");
-    // if (context.full_stmt) write(";\n");
-  }
-  
-  function generate_false(stmt, context) {
-    iseq_opcode_push([iPUTOBJECT, false]);
-    
-    if (context.last_stmt && context.full_stmt) {
-      iseq_opcode_push([iLEAVE]);
-    }
-  }
-  
-  function generate_true(stmt, context) {
-    iseq_opcode_push([iPUTOBJECT, true]);
-    
-    if (context.last_stmt && context.full_stmt) {
-      iseq_opcode_push([iLEAVE]);
-    }
-  }
-  
-  
-  function generate_self(stmt, context) {
-    if (context.last_stmt && context.full_stmt) write("return ");
-    write("$");
-    if (context.full_stmt) write(";");
-  }
-  
-  function generate_string(stmt, context) {
-    if (context.last_stmt && context.full_stmt) write("return ");
-    write('"' + stmt.$parts[0].value + '"');
-    if (context.full_stmt) write(";");
-  }
-  
-  function generate_integer(stmt, context) {
-    if(context.last_stmt && context.full_stmt) write("return ");
-    write(stmt.value);
-    if (context.full_stmt) write(";");
-  }
-  
-  function generate_constant(stmt, context) {
-    if(context.last_stmt && context.full_stmt) write("return ");
-    write("vm_getconstant($,'" + stmt.value + "')");
-    if (context.full_stmt) write(";");
-  }
-  
-  function generate_identifier(identifier, context) {
-    if (context.last_stmt && context.full_stmt) write("return ");
-    var local = iseq_current.lookup_local(identifier.value);
-    if (local) {
-      write(local);
-    }
-    else {
-      write("vm_send($,'" + identifier.value + "',[],nil,8)");
-    }
-    if (context.full_stmt) write(";");
-    
-    
-    
-    
-    // no receiver.
-    // var idx;
-    // if ((idx = iseq_locals_idx(identifier.value)) == -1) {
-    //   // not an identifier
-    //   iseq_opcode_push([iPUTNIL]);
-    //   iseq_opcode_push([iSEND, identifier.value, 0, null, 8, null]);
-    // }
-    // else {
-    //   // its an identifier
-    //   iseq_opcode_push([iGETLOCAL, idx]);
-    // }
-    // 
-    // 
-    // if (context.full_stmt && context.last_stmt) {
-    //   iseq_opcode_push([iLEAVE]);
-    // }
-    // else if (context.full_stmt) {
-    //   iseq_opcode_push([iPOP]);
-    // }
-  };
-  
-  function generate_symbol(sym, context) {
-    if (context.last_stmt && context.full_stmt) write("return ");
-    write('ID2SYM("' + sym.$name.value + '")');
-    if (context.full_stmt) write(";");
-  };
-  
-  function generate_call(call, context) {
-    var call_bit;
-    if (context.last_stmt && context.full_stmt) write("return ");
-    write("vm_send(");
-    
-    // receiver
-    if (call.$recv) {
-      call_bit = 0;
-      generate_stmt(call.$recv, {full_stmt:false, last_stmt:false});
-    }
-    else {
-      call_bit = 8;
-      write("$");
-    }
-    
-    // method id
-    write(',"' + call.$meth + '",');
-    
-    // normal args
-    write("[")
-    if (call.$call_args && call.$call_args.args) {
-      var args = call.$call_args.args;
-      for (var i = 0; i < args.length; i++) {
-        // console.log("doing " + i + " for " + call.$meth);
-        if (i > 0) write(",");
-        generate_stmt(args[i], {});
-      }
-    }
-    
-    write("],");
-    
-    // block
-    if (call.$brace_block) {
-      var current_iseq = iseq_current;
-      var block_iseq = iseq_stack_push(ISEQ_TYPE_BLOCK);
-      block_iseq.set_parent_iseq(current_iseq);
-      
-      // block arg names
-       if (call.$brace_block.$args) {
-         for (var i = 0; i < call.$brace_block.$args.length; i++) {
-           block_iseq.push_arg_name(call.$brace_block.$args[i].value);
-         }
-       }
-      
-      // statements
-      for (var i = 0; i < call.$brace_block.$stmts.length; i++) {
-        generate_stmt(call.$brace_block.$stmts[i], {full_stmt:true, last_stmt:(i ===call.$brace_block.$stmts.length - 1)});
-      }
-      
-      iseq_stack_pop();
-      write(block_iseq.toString());
-    }
-    else {
-      write("nil");
-    }
-    
-    write(",");
-    write(call_bit);
-    write(")");
-    
-    if (context.full_stmt) write(";");
-    return;
-    
-    
-    
-    // old
-    var block_iseq, call_bit, arg_length;
-    // if we have a block, do that first.
-    if (false) {
-      // # if we have a block, do the block first
-      // if call[:brace_block]
-      //   current_iseq = @iseq_current
-      //   block_iseq = iseq_stack_push(ISEQ_TYPE_BLOCK)
-      //   # for dynamics..
-      //   block_iseq.parent_iseq = current_iseq
-      //   
-      //   # block arg names
-      //   if call[:brace_block][:params]
-      //     call[:brace_block][:params].each do |p|
-      //       @iseq_current.push_local(p[:value])
-      //     end
-      //   end
-      //   
-      //   # block stmts
-      //   if call[:brace_block][:stmt]
-      //     call[:brace_block][:stmt].each do |a|
-      //       generate_stmt a, :full_stmt => true, :last_stmt => call[:brace_block][:stmt].last == a
-      //     end
-      //   end
-      //   
-      //   iseq_stack_pop      
-    }
-    else {
-      block_iseq = nil;
-    }
-    
-    // receiver
-    if (call.$recv) {
-      call_bit = 0;
-      generate_stmt(call.$recv, { full_stmt: false, last_stmt: false });
-    }
-    else {
-      call_bit = 8;
-      write([iPUTNIL]);
-    }
-    
-    // arguments
-    if (call.$call_args && call.$call_args.args) {
-      arg_length = call.$call_args.args.length;
-      var args = call.$call_args.args;
-      for (var i = 0; i < args.length; i++) {
-        generate_stmt(args[i], {});
-      }
-    }
-    else {
-      arg_length = 0;
-    }
-    
-    // assocs
-    
-    // call
-    write([iSEND, call.$meth, arg_length, block_iseq, call_bit, nil]);
-    
-    // write %{[#{ISEND},"#{call[:meth]}",#{arg_length},#{block_iseq},#{call_bit},nil]}
-    
-    // # receiver
-    // if call[:recv]
-    //   # bits
-    //   call_bit = 0
-    //   generate_stmt call[:recv], :full_stmt => false, :last_stmt => false
-    // else
-    //   call_bit = 8
-    //   write %{[#{IPUTNIL}]}
-    // end
-    // 
-    // # arguments
-    // unless call[:call_args].nil? or call[:call_args][:args].nil?
-    //   arg_length = call[:call_args][:args].length
-    //   call[:call_args][:args].each do |arg|
-    //     generate_stmt arg, :full_stmt => false
-    //   end
-    // else
-    //   arg_length = 0
-    // end
-    // 
-    // # assocs
-    // if call[:call_args] and call[:call_args][:assocs]
-    //   arg_length = arg_length.succ
-    //   call[:call_args][:assocs].each do |assoc|
-    //     generate_stmt assoc[:key], :full_stmt => false, :last_stmt => false
-    //     generate_stmt assoc[:value], :full_stmt => false, :last_stmt => false
-    //   end
-    //   write %{[#{INEWHASH},#{call[:call_args][:assocs].length * 2}]}
-    // end
-    // 
-    // # call
-    // write %{[#{ISEND},"#{call[:meth]}",#{arg_length},#{block_iseq},#{call_bit},nil]}
-    // 
-    // unless @iseq_current.type == ISEQ_TYPE_BLOCK
-    //   if context[:full_stmt] and not context[:last_stmt]
-    //     write "[#{IPOP}]"
-    //   elsif context[:full_stmt] and context[:last_stmt]
-    //     write %{[#{ILEAVE}]}
-    //   end      
-    // end
-  };
-  
-  function generate_def(definition, context) {
-    if (context.full_stmt && context.last_stmt) write("return ");
-    
-    var is_singleton = definition.$sname ? 1 : 0;
-    
-    var current_iseq = iseq_current;
-    var def_iseq = iseq_stack_push(ISEQ_TYPE_METHOD);
-    def_iseq.set_parent_iseq(current_iseq);
-    def_iseq.set_method_id(definition.$fname.value);
-    
-    // normal args
-    
-    // rest args
-    
-    // block name
-    
-    // body stmts
-    for (var i = 0; i < definition.$stmts.length; i++) {
-      generate_stmt(definition.$stmts[i], { full_stmt:true, last_stmt: (definition.$stmts.length - 1 === i) });
-    }
-    
-    iseq_stack_pop();
-        
-    write("vm_definemethod(");
-    
-    if (is_singleton) {
-      generate_stmt(definition.$sname, {});
-    }
-    else {
-      write("$");
-    }
-    
-    write(",'" + definition.$fname.value + "'," + def_iseq.toString() + ",");
-    write("" + is_singleton + "," + 0 + ")"); // last param should be arg size
-    
-    if (context.full_stmt) write(";");
-    // var is_singleton = definition.$sname ? 1 : 0;
-    // 
-    // var current_iseq = iseq_current;
-    // var def_iseq = iseq_stack_push(ISEQ_TYPE_METHOD, definition.$fname.value);
-    // 
-    // // dynamics..
-    // // def_iseq.parent_iseq = current_iseq;
-    // 
-    // // arg names
-    // 
-    // // body
-    // for (var i = 0; i < definition.$stmts.length; i++) {
-    //   generate_stmt(definition.$stmts[i], { last_stmt: (definition.$stmts.length -1 == i), full_stmt: true });
-    // }
-    // 
-    // iseq_stack_pop();
-    // 
-    // // base (singleton method)
-    // if (is_singleton) {
-    //   generate_stmt(definitions.$sname, {});
-    // }
-    // else {
-    //   write([iPUTNIL]);
-    // }
-    // 
-    // // define method
-    // write([iDEFINEMETHOD, definition.$fname.value, def_iseq.toArray(), is_singleton]);
-  };
-  
-  function generate_class(cls, context) {
-    if (context.last_stmt && context.full_stmt) write("return ");
-    
-    var current_iseq = iseq_current;
-    var class_iseq = iseq_stack_push(ISEQ_TYPE_CLASS);
-    class_iseq.set_parent_iseq(current_iseq);
-    
-    // do each bodystmt
-    if (stmt.$stmts) {
-      for (var i = 0; i < cls.$stmts.length; i++) {
-        generate_stmt(cls.$stmts[i], {full_stmt: true, last_stmt:(i === cls.$stmts.length - 1)});
-      }
-    }
-    else {
-      // no statements? fake by returning nil
-      write("return nil;");
-    }
-    
-    iseq_stack_pop();
-    
-    write("vm_defineclass($,");
-    
-    // superclass
-    write("nil");
-    console.log(cls);
-    write(",'" + cls.$kname.value + "'," + class_iseq.toString() + ",0)");
-    
-    
-    if (context.full_stmt) write(";");
-  };
-  
-  function generate_module(mod, context) {
-    write("(function(self) {\n");
-    push_nametable();
-    current_self_push("self");
-    
-    if (mod.$stmts) {
-      var i, m = mod.$stmts;
-      for (i = 0; i < m.length; i++) {
-        generate_stmt(m[i], {instance: false, full_stmt: false, last_stmt: (m[m.length -1] == m[i] ? true : false), nested: true});
-      }
-    }
-    
-    pop_nametable();
-    current_self_pop();
-    
-    write("})(");
-    
-    if (context.top_level) {
-      write("rb_define_module('");
-      write(mod.$kname.value);
-      write("'));\n");
-    }
-    else {
-      write("rb_define_module_under(" + current_self() + ",'");
-      write(mod.$kname.value);
-      write("'));\n")
-    }
-  }
-  
-  /**
-    parse returns a js iseq (array) with all the opcodes, as specified by opal.
-    This array can then be popped onto the stack and evaluated.
-  */
-  this.parse = function() {
-    scanner = new vn_ruby_string_scanner(str);
-    next_token();
-    var s = stmts();
-    return generate_tree(s);
-  }
-  
-  this.contexts = function() {
-    return contexts;
-  }
-  
-  // the parser - pass is the source to actually parse
-  // return function(parse_text) {
-  //   scanner = new vn_ruby_string_scanner(parse_text);
-  //   next_token();
-  //   var s = stmts();
-  //   generate_tree(s);
-  //   return s;
-  // }
-  return this;
-};
-
-/**
-  ISEQ
-*/
-function Iseq(type) {
-  this.type = type;
-  this.locals = {};
-  this.args = {};
-  this.norm_arg_names = [];
-  this.opt_arg_names = [];
-  this.rest_arg_names = [];
-  this.post_arg_names = [];
-  this.block_arg_name = nil;
-  // dont really need to use this for client side eval
-  this.local_current = "a";
-  this.code = [];
-  this.method_id = null;
-  
-  return this;
-};
-
-Iseq.prototype = {
-  
-  push_local_name: function(name) {
-    var id = this.local_current;
-    this.local_current = String.fromCharCode(this.local_current.charCodeAt(0) + 1);
-    this.locals[name] = "_" + id;
-    return "_" + id;
-  },
-  
-  lookup_local: function(name) {
-    if (name === null || name === undefined) return null;
-    if (this.locals[name]) return this.locals[name];
-    if (this.args[name]) return this.args[name];
-    if (this.block_arg_name === name) return "_";
-    return null;
-  },
-  
-  set_method_id: function(method_id) {
-    this.method_id = method_id;
-  },
-  
-  push_arg_name: function(arg_name) {
-    var id = this.local_current;
-    this.local_current = String.fromCharCode(this.local_current.charCodeAt(0) + 1);
-    this.args[arg_name] = "_" + id;
-    this.norm_arg_names.push(arg_name);
-    return "_" + id;
-  },
-  
-  set_parent_iseq: function(parent_iseq) {
-    
-  },
-  
-  finalize: function() {
-    
-  },
-  
-  write: function(str) {
-    this.code.push(str);
-  },
-  
-  toString: function() {
-    var r = [];
-    switch (this.type) {
-      case ISEQ_TYPE_TOP:
-       r.push("function($){");
-       r.push("var _ = nil;");
-       if (this.locals.length > 0) {
-         r.push("var ");
-         for (var i = 0; i < this.locals.length; i++) {
-           if (i != 0) r.push(",");
-           r.push(this.locals[i]);
-         }
-         r.push(";");
-       }
-       r.push(this.code.join(""));
-       r.push("}");
-       break;
-     case ISEQ_TYPE_CLASS:
-       r.push("function($){");
-       r.push(this.code.join(""));
-       r.push("}");
-       break;
-     case ISEQ_TYPE_METHOD:
-       this.deal_with_method_args(r);
-       r.push(this.code.join(""));
-       r.push("}");
-       break;
-    case ISEQ_TYPE_BLOCK:
-      r.push("function($$,__,ID");
-      for (var i = 0; i < this.norm_arg_names.length; i++) {
-        r.push(",");
-        r.push(this.args[this.norm_arg_names[i]]);
-      }
-      r.push("){")
-      r.push("with({$:($$==nil?$:$$),_:(__==nil?_:__)}){");
-      r.push(this.code.join(""));
-      r.push("}");
-      r.push("}");
-       break;
-     default:
-       throw "unknown iseq type in parse.js"
-       }
-    return r.join("");
-  },
-  
-  deal_with_method_args: function(r) {
-    r.push("function($,id,_");
-    r.push("){");
   }
 };
-
-
-/**
-  String scanner
-*/
-var vn_ruby_string_scanner = function(str) {
-  // whole string
-  this.str = str;
-  // current index
-  this.at = 0;
-  // last matched data
-  this.matched = "";
-  // working string (basically str substr'd from the 'at' index to the end)
-  this.working_string = str;
-};
-
-vn_ruby_string_scanner.prototype.scan = function(reg) {
-  // reg = this._fix_regexp_to_match_beg(reg);
-  var res = reg.exec(this.working_string);
-  if (res == null) {
-    return false;
-  }
-  else if (typeof res == "object") {
-    // array.
-    this.at += res[0].length;
-    this.working_string = this.working_string.substr(res[0].length);
-    this.matched = res[0];
-    return res;
-  }
-  else if (typeof res == "string") {
-    this.at += res.length;
-    this.working_string = this.working_string.substr(res.length);
-    return res;
-  }
-  return false;
-};
-
-vn_ruby_string_scanner.prototype.check = function(reg) {
-  // reg = this._fix_regexp_to_match_beg(reg);
-  var res = reg.exec(this.working_string);
-  return res;
-};
-
-vn_ruby_string_scanner.prototype.matched = function() {
-  
-};
-
-vn_ruby_string_scanner.prototype.peek = function(len) {
-  return this.working_string.substr(0, len);
-};
-

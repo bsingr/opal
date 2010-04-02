@@ -135,9 +135,9 @@ var NOEX_PUBLIC     = 0,
     NOEX_BASIC      = 8;
 
 
-function require() {
+// function require() {
   
-};
+// };
 
 // Boolean test. false if null, undefined, nil, or false
 function RTEST(val) {
@@ -304,4 +304,75 @@ eql = function(obj) {
 
 obj_equal = function(obj) {
   return (obj == this) ? true : false ;
+};
+
+/**
+  Handle ruby script tags for inline code
+*/
+if (document && document.getElementsByTagName) {
+  var processRuby = function() {
+    var tag, tags = document.getElementsByTagName('script');
+    console.log("==== inline tags:");
+    for (var i = 0; i < tags.length; i++) {
+      tag = tags[i];
+      if (tag.type === 'text/ruby' && !tag.getAttribute('data-src')) {
+        console.log(tag);
+      }
+    }
+  };
+  if (window.addEventListener) {
+    window.addEventListener('load', processRuby, false);
+  }
+  else {
+    window.attachEvent('onload', processRuby);
+  }
+}
+
+/**
+  Handle ruby script tags for external code (data-src='...').
+  This will only work for tags defined before opal
+*/
+setTimeout(function() {
+  // first get ruby 'running' - initialze runtime, load boot files etc.
+  opal_init();
+  // return;
+  // find all tags that might contain external ruby, and load/parse/run them
+  var tag, tags = document.getElementsByTagName('script');
+  console.log("==== external tags:");
+  for (var i = 0; i < tags.length; i++) {
+    tag = tags[i];
+    if (tag.type === 'text/ruby' && tag.getAttribute('data-src')) {
+      // tag is valid, so AJAX get the ruby file, parse and run it.
+      var r = opal_http_request_new();
+      var filename = tag.getAttribute('data-src');
+      r.open('GET', tag.getAttribute('data-src'), true);
+      r.onreadystatechange = function() {
+        if (r.readyState == 4) {
+          // console.log(r.responseText);
+          opal_eval(r.responseText, opal_top_self, filename);
+        }
+      };
+      r.send(null);
+    }
+  }
+}, 0);
+
+/**
+  Evaluate the given rubyCode in the selfContext. This will most commonly be
+  "top self"
+*/
+function opal_eval(rubyCode, selfContext, filename) {
+  var parser = new OpalRubyParser(rubyCode, filename);
+  var result = parser.parse();
+  console.log("Parser result for " + filename + ":");
+  console.log(result);
+  if (window.execScript) {
+     window.execScript("window.opal_tmp_func = " + result + ";");
+     return window.opal_tmp_func(selfContext);
+   }
+   else {
+     with (window) {
+       return eval("(" + result + ")")(selfContext);
+     }
+   }
 };

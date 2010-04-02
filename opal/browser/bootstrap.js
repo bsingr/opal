@@ -28,10 +28,10 @@ function opal_boot_file(file, body) {
   opal_boot_files.push(vn_fs_define_file(file, body));
 };
 
-/*
-  Main entry point. Rube the given file.
+/**
+  load ruby
 */
-function opal_browser_main(name) {
+function opal_init() {
   ruby_init();
   // init all browser bits and pieces
   opal_browser_init();
@@ -43,6 +43,13 @@ function opal_browser_main(name) {
     // (opal_boot_files[i])(opal_top_self);
     rb_require_file(opal_boot_files[i].path);
   }
+};
+
+/*
+  Main entry point. Rube the given file.
+*/
+function opal_browser_main(name) {
+  
   rb_loadpath(name);
 };
 
