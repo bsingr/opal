@@ -298,7 +298,7 @@ module Vienna
         
         iseq_stack_pop
         
-        write "vm_defineclass($,"
+        write "vm$e($,"
         # superclass
         if cls.super_klass
           generate_stmt cls.super_klass[:expr], :full_stmt => false
@@ -326,7 +326,7 @@ module Vienna
         
         iseq_stack_pop
         
-        write "vm_defineclass($,"
+        write "vm$e($,"
         # superclass - always nil for module
         write "nil"
         write %{,"#{cls.klass_name}",#{class_iseq},2)}
@@ -350,7 +350,7 @@ module Vienna
         
         iseq_stack_pop
         
-        write %{vm_defineclass(}
+        write %{vm$e(}
         generate_stmt cls[:expr], :full_stmt => false
         write ","
         # superclass
@@ -406,7 +406,7 @@ module Vienna
         iseq_stack_pop
         
         # define method
-        write "vm_definemethod("
+        write "vm$d("
         
         # base.. singleton or self
         if stmt[:singleton]
@@ -426,7 +426,7 @@ module Vienna
         if local
           write local
         else
-          write %{vm_send($,"#{stmt[:name]}",[],nil,8)}
+          write %{vm$a($,"#{stmt[:name]}",[],nil,8)}
         end
         
         write ";" if context[:full_stmt]
@@ -435,7 +435,7 @@ module Vienna
       def generate_call(call, context)
         
         write "return " if context[:full_stmt] and context[:last_stmt]
-        write "vm_send("
+        write "vm$a("
         # receiver
         if call[:recv]
           call_bit = 0
@@ -530,7 +530,7 @@ module Vienna
          write "("
         generate_stmt call[:call_args][:block_arg][:arg], :full_stmt => false
         write "===nil?nil:"
-         write "vm_send("
+         write "vm$a("
          # puts call[:call_args][:block_arg][:arg]
          generate_stmt call[:call_args][:block_arg][:arg], :full_stmt => false
          write %{,"to_proc",[],nil,0))}
@@ -560,7 +560,7 @@ module Vienna
             if s.node == :string_content
               write %{"#{s[:value].gsub(/\"/, '\"')}"}
             else
-              write %{vm_send(}
+              write %{vm$a(}
               generate_stmt s[:value][0], :full_stmt => false
               write %{,"to_s",[],nil,8)}
             end
@@ -593,7 +593,7 @@ module Vienna
       
       def generate_constant(cnst, context)
         write "return " if context[:last_stmt] and context[:full_stmt]
-        write %{vm_getconstant($,"#{cnst[:name]}")}
+        write %{vm$b($,"#{cnst[:name]}")}
         write ";" if context[:full_stmt]
       end
       
@@ -612,12 +612,12 @@ module Vienna
           generate_stmt stmt[:rhs], :full_stmt => false, :last_stmt => false
           write %{)}
         elsif stmt[:lhs].node == :constant
-          write %{vm_setconstant($,"#{stmt[:lhs][:name]}",}
+          write %{vm$c($,"#{stmt[:lhs][:name]}",}
           generate_stmt stmt[:rhs], :full_stmt => false, :last_stmt => false
           write %{)}
         elsif stmt[:lhs].node == :call
           # puts stmt
-          write %{vm_send(}
+          write %{vm$a(}
           # recv
           generate_stmt stmt[:lhs][:recv], :full_stmt => false
           # id
@@ -844,7 +844,7 @@ module Vienna
       # primay::CONST
       def generate_colon2 stmt, context
         write "return " if context[:last_stmt] and context[:full_stmt]
-        write %{vm_getconstant(}
+        write %{vm$b(}
         generate_stmt stmt[:lhs], :full_stmt => false
         write %{,"#{stmt[:rhs]}")}
         write ";" if context[:full_stmt]
@@ -957,7 +957,7 @@ module Vienna
             write "("
             c[:args].each do |a|
               write " || " unless c[:args].first == a
-              write "vm_send("
+              write "vm$a("
               generate_stmt a, :full_stmt => false, :last_stmt => false
               write ",'===',[$c],nil,0)"
             end
@@ -1094,7 +1094,7 @@ module Vienna
       
       def generate_not(stmt, context)
         write "return " if context[:full_stmt] and context[:last_stmt]
-        write "vm_send("
+        write "vm$a("
         generate_stmt stmt[:expr], :full_stmt => false
         write ",'!',[],nil, 8)"
         write ";" if context[:full_stmt]

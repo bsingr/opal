@@ -35,6 +35,7 @@ var OpalRubyParser = function OpalRubyParser(str, filename) {
   this.str = str;
   this.filename = filename;
   this.lex_state = EXPR_BEG;
+  this.string_parse_stack = [];
   return this;
 };
 
@@ -90,10 +91,82 @@ OpalRubyParser.prototype = {
   },
   
   /**
+    String parsing
+  */  
+  push_string_parse: function(o) {
+    this.string_parse_stack.push(o);
+  },
+  
+  pop_string_parse: function() {
+    this.string_parse_stack.pop();
+  },
+  
+  current_string_parse: function() {
+    if (this.string_parse_stack.length == 0) return null;
+    return this.string_parse_stack[this.string_parse_stack.length - 1];
+  },
+  
+  get_next_string_token: function() {
+    var str_parse = this.current_string_parse(), scanner = this.scanner;
+    
+    // see if we can read end of string/xstring/regexp markers
+    if (scanner.scan( new RegExp('^\\' + str_parse.beg))) {
+      this.pop_string_parse();
+      if (str_parse.beg == '"' || str_parse.beg == "'") {
+        this.lex_state = EXPR_END;
+        return ['tSTRING_END', scanner.matched];
+      }
+      else if (str_parse.beg == '`') {
+        // assume to be xstring
+        this.lex_state = EXPR_END;
+        return ['tXSTRING_END', scanner.matched];
+      }
+      else if (str_parse.beg == '/') {
+        this.lex_state = EXPR_END;
+        return ['tREGEXP_END', scanner.matched];
+      }
+      else {
+        throw "unknown string ending"
+      }
+    }
+    
+    // not end of string, so we must be parsing contents
+    var str_buffer = [];
+    
+    if (scanner.scan(/^#(\$|\@)/)) {
+      return ['tSTRING_DVAR', scanner.matched];
+    }
+    else if (scanner.scan(/^#\{/)) {
+      // we are into ruby code, so stop parsing content (for the moment)
+      str_parse.content = false;
+      return ['tSTRING_DBEG', scanner.matched];
+    }
+    else if (scanner.scan(/^#/)) {
+      str_buffer.push('#');
+    }
+    
+    // content regexp (what is valid content for strings..)
+    var reg_exp = (str_parse.beg == '`') ?
+                // xstring: CAN include new lines
+                new RegExp('[^\\' + str_parse.beg + '\#\0]+|.') :
+                // normal string: cannot include new lines
+                new RegExp('[^\\' + str_parse.beg + '\#\0\\\n]+|.');
+    
+    scanner.scan(reg_exp);
+    str_buffer.push(scanner.matched);
+    return ['tSTRING_CONTENT', str_buffer.join('')];
+  },
+  
+  /**
     Return the next token. Result should be an array, first index is token type,
     second is lex value
   */
   nextToken: function() {
+    var string_scanner;
+    if ((string_scanner=this.current_string_parse())&&string_scanner.content) {
+      return this.get_next_string_token();
+    }
+    
     var scanner = this.scanner;
     var space_seen = false, c = '', cmd_start = false;
     
@@ -154,10 +227,13 @@ OpalRubyParser.prototype = {
       
       
       else if (scanner.scan(/^\//)) {
-        lex_state = EXPR_BEG;
+        if (this.lex_state == EXPR_BEG || this.lex_state == EXPR_MID) {
+          this.push_string_parse({ beg: '/', content: true, end:'/' });
+          return ['tREGEXP_BEG', scanner.matched];
+        }
+        this.lex_state = EXPR_BEG;
         return ['/', scanner.matched];
       }
-      
       else if (scanner.scan(/^\*\*\=/)) {
         lex_state = EXPR_BEG;
         return [tOP_ASGN, "**"];
@@ -171,15 +247,15 @@ OpalRubyParser.prototype = {
       }
       else if (scanner.scan(/^\*/)) {
         var r;
-        if (lex_state == EXPR_FNAME) {
-          lex_state = EXPR_BEG;
+        if (this.lex_state == EXPR_FNAME) {
+          this.lex_state = EXPR_BEG;
           r = "*";
         }
-        else if (lex_state == EXPR_BEG || lex_state == EXPR_MID) {
-          r = tSTAR;
+        else if (this.lex_state == EXPR_BEG || this.lex_state == EXPR_MID) {
+          r = 'tSTAR';
         }
         else {
-          lex_state = EXPR_BEG;
+          this.lex_state = 'EXPR_BEG';
           r = "*"
         }
         return [r, scanner.matched];
@@ -247,16 +323,16 @@ OpalRubyParser.prototype = {
       
       // strings.. in order: double, single, xstring
       else if (scanner.scan(/^\"/)) {
-        push_string_parse({ beg: '"', content: true });
-        return [tSTRING_BEG, scanner.matched];
+        this.push_string_parse({ beg: '"', content: true, end:'"' });
+        return ['tSTRING_BEG', scanner.matched];
       }
       else if (scanner.scan(/^\'/)) {
-        push_string_parse({ beg: "'", content: true });
-        return [tSTRING_BEG, scanner.matched];
+        this.push_string_parse({ beg: "'", content: true, end:"'" });
+        return ['tSTRING_BEG', scanner.matched];
       }
       else if (scanner.scan(/^\`/)) {
-        push_string_parse({ beg: "`", content: true });
-        return [tXSTRING_BEG, scanner.matched];
+        this.push_string_parse({ beg: "`", content: true, end:'`' });
+        return ['tXSTRING_BEG', scanner.matched];
       }
       
       // numbers
@@ -294,33 +370,40 @@ OpalRubyParser.prototype = {
         lex_state = EXPR_BEG;
         return ["|", scanner.matched];
       }
-          
+      else if (scanner.scan(/^\:\:/)) {
+        if (this.lex_state == EXPR_BEG || this.lex_state == EXPR_MID || this.lex_state == EXPR_CLASS) {
+          this.lex_state = EXPR_BEG;
+          return ['tCOLON3', scanner.matched];
+        }
+        this.lex_state = EXPR_DOT;
+        return ['tCOLON2', scanner.matched];
+      }
       else if (scanner.scan(/^\:/)) {
         // console.log ("HERE " + lex_state);
-        if (lex_state === EXPR_END || lex_state === EXPR_ENDARG || scanner.check(/^\s/)) {
+        if (this.lex_state === EXPR_END || this.lex_state === EXPR_ENDARG || scanner.check(/^\s/)) {
           // FIXME: hack for tertiary statements
           if (!scanner.check(/^\w/)) {
             return [':', scanner.matched];
           }
           
-          lex_state = EXPR_BEG;
-          return [tSYMBEG, scanner.matched];
+          this.lex_state = EXPR_BEG;
+          return ['tSYMBEG', scanner.matched];
         }
         
-        lex_state = EXPR_FNAME;
-        return [tSYMBEG, ':'];
+        this.lex_state = EXPR_FNAME;
+        return ['tSYMBEG', ':'];
       }
       
       else if (scanner.scan(/^\[/)) {
-        result = scanner.matched;
+        var result = scanner.matched;
         
-        if (lex_state == EXPR_FNAME || lex_state == EXPR_DOT) {
-          lex_state = EXPR_ARG
+        if (this.lex_state == EXPR_FNAME || this.lex_state == EXPR_DOT) {
+          this.lex_state = EXPR_ARG
           if (scanner.scan(/^\]\=/)) {
-            return [tASET, '[]='];
+            return ['tASET', '[]='];
           }
-          else if (scanner.scan(/^\]/)) {
-            return [tAREF, '[]'];
+          else if (this.scanner.scan(/^\]/)) {
+            return ['tAREF', '[]'];
           }
           else {
             throw "error, unexpecrted '[]' token"
@@ -328,8 +411,8 @@ OpalRubyParser.prototype = {
         }
         // space seen allows for method calls with array as first param
         // otherwise it thinks its calling the '[]' method
-        else if (lex_state == EXPR_BEG || lex_state == EXPR_MID || space_seen) {
-          return [tLBRACK, scanner.matched]
+        else if (this.lex_state == EXPR_BEG || this.lex_state == EXPR_MID || space_seen) {
+          return ['tLBRACK', scanner.matched]
         }
         // hmm?
         return ['[', scanner.matched]
@@ -365,24 +448,24 @@ OpalRubyParser.prototype = {
       // #
       else if (scanner.scan(/^\(/)) {
         var result = '(';
-        if (lex_state == EXPR_BEG || lex_state == EXPR_MID) {
-          result = tLPAREN;
+        if (this.lex_state == EXPR_BEG || this.lex_state == EXPR_MID) {
+          result = 'tLPAREN';
         }
         else if (space_seen) {
-          if (lex_state == EXPR_CMDARG) {
-            result = tLPAREN_ARG;
+          if (this.lex_state == EXPR_CMDARG) {
+            result = 'tLPAREN_ARG';
           }
-          else if(lex_state == EXPR_ARG) {
+          else if(this.lex_state == EXPR_ARG) {
             // dont put space before arys
-            result = tLPAREN2;
+            result = 'tLPAREN2';
           }
         }
-        lex_state = EXPR_BEG;
+        this.lex_state = EXPR_BEG;
         return [result, scanner.matched];
       }
       // )
       else if (scanner.scan(/^\)/)) {
-        lex_state = EXPR_END;
+        this.lex_state = EXPR_END;
         return [')', scanner.matched];
       }
       
@@ -390,14 +473,22 @@ OpalRubyParser.prototype = {
       else if (scanner.scan(/^\}/)) {
         lex_state = EXPR_END;
         // throw 'got to end of string'
-        if (current_string_parse()) {
-          current_string_parse().content = true
+        if (this.current_string_parse()) {
+          this.current_string_parse().content = true
         }
         // check if parsing string...
         return ['}', scanner.matched];
       }
       
       // .
+      else if (scanner.scan(/^\.\.\./)) {
+        this.lex_state = EXPR_BEG;
+        return ['tDOT3', scanner.matched];
+      }
+      else if (scanner.scan(/^\.\./)) {
+        this.lex_state = EXPR_BEG;
+        return ['tDOT2', scanner.matched];
+      }
       else if (scanner.scan(/^\./)) {
         // should be EXPR_DOT in ALL cases?
         // if (lex_state == EXPR_FNAME) {
@@ -429,7 +520,7 @@ OpalRubyParser.prototype = {
       }
       
       else if (scanner.scan(/^\=/)) {
-        lex_state = EXPR_BEG;
+        this.lex_state = EXPR_BEG;
         return ['=', scanner.matched];
       }
               
@@ -455,11 +546,11 @@ OpalRubyParser.prototype = {
             this.lex_state = EXPR_BEG;
             return ['kMODULE', scanner.matched];
           case 'do':
-            if (lex_state == EXPR_ENDARG) {
-              lex_state = EXPR_BEG;
-              return [kDO_BLOCK, scanner.matched];
+            if (this.lex_state == EXPR_ENDARG) {
+              this.lex_state = EXPR_BEG;
+              return ['kDO_BLOCK', scanner.matched];
             }
-            return [kDO, scanner.matched];
+            return ['kDO', scanner.matched];
           case 'if':
             if (this.lex_state == EXPR_BEG) {
               return ['kIF', scanner.matched];
@@ -473,40 +564,46 @@ OpalRubyParser.prototype = {
           case 'elsif':
             return ['kELSIF', scanner.matched];
           case 'unless':
-            if (lex_state == EXPR_BEG) {
-              return [kUNLESS, scanner.matched];
+            if (this.lex_state == EXPR_BEG) {
+              return ['kUNLESS', scanner.matched];
             }
-            lex_state = EXPR_BEG;
-            return [kUNLESS_MOD, scanner.matched];
+            this.lex_state = EXPR_BEG;
+            return ['kUNLESS_MOD', scanner.matched];
           case 'self':
-            if (lex_state != EXPR_FNAME) {
-              lex_state = EXPR_END;
+            if (this.lex_state != EXPR_FNAME) {
+              this.lex_state = EXPR_END;
             }
-            return [kSELF, scanner.matched];
+            return ['kSELF', scanner.matched];
           case 'super':
             lex_state = EXPR_ARG;
             return [kSUPER, scanner.matched];
           case 'true':
-            lex_state = EXPR_END;
-            return [kTRUE, scanner.matched];
+            this.lex_state = EXPR_END;
+            return ['kTRUE', scanner.matched];
+          case 'block_given?':
+            this.lex_state = EXPR_END;
+            return ['kBLOCK_GIVEN', scanner.matched];
           case 'false':
-            lex_state = EXPR_END;
-            return [kFALSE, scanner.matched];
+            this.lex_state = EXPR_END;
+            return ['kFALSE', scanner.matched];
           case 'nil':
-            lex_state = EXPR_END;
-            return [kNIL, scanner.matched];
+            this.lex_state = EXPR_END;
+            return ['kNIL', scanner.matched];
           case 'return':
             lex_state = EXPR_MID;
             return [kRETURN, scanner.matched];
           case 'case':
-            lex_state = EXPR_BEG;
-            return [kCASE, scanner.matched];
+            this.lex_state = EXPR_BEG;
+            return ['kCASE', scanner.matched];
           case 'when':
-            lex_state = EXPR_BEG;
-            return [kWHEN, scanner.matched];
+            this.lex_state = EXPR_BEG;
+            return ['kWHEN', scanner.matched];
           case 'yield':
-            lex_state = EXPR_ARG;
-            return [kYIELD, scanner.matched];
+            this.lex_state = EXPR_ARG;
+            return ['kYIELD', scanner.matched];
+          case '__FILE__':
+            this.lex_state = EXPR_END;
+            return ['k__FILE__', scanner.matched];
         }
 
         var matched = scanner.matched;

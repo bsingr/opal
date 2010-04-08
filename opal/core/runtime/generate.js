@@ -24,129 +24,129 @@
  * THE SOFTWARE.
  */
 
-/*
+/**
  ISeq types
 */
-var ISEQ_TYPE_TOP = 1,
-   ISEQ_TYPE_METHOD = 2,
-   ISEQ_TYPE_BLOCK = 3,
-   ISEQ_TYPE_CLASS = 4,
-   ISEQ_TYPE_RESCUE = 5,
-   ISEQ_TYPE_ENSURE = 6,
-   ISEQ_TYPE_EVAL = 7,
-   ISEQ_TYPE_MAIN = 8;
+var ISEQ_TYPE_TOP     = 1,
+    ISEQ_TYPE_METHOD  = 2,
+    ISEQ_TYPE_BLOCK   = 3,
+    ISEQ_TYPE_CLASS   = 4,
+    ISEQ_TYPE_RESCUE  = 5,
+    ISEQ_TYPE_ENSURE  = 6,
+    ISEQ_TYPE_EVAL    = 7,
+    ISEQ_TYPE_MAIN    = 8;
    
-   /**
-     ISEQ
-   */
-   function Iseq(type) {
-     this.type = type;
-     this.locals = {};
-     this.args = {};
-     this.norm_arg_names = [];
-     this.opt_arg_names = [];
-     this.rest_arg_names = [];
-     this.post_arg_names = [];
-     this.block_arg_name = nil;
-     // dont really need to use this for client side eval
-     this.local_current = "a";
-     this.code = [];
-     this.method_id = null;
+/**
+ ISEQ
+*/
+function Iseq(type) {
+  this.type = type;
+  this.locals = {};
+  this.args = {};
+  this.norm_arg_names = [];
+  this.opt_arg_names = [];
+  this.rest_arg_names = [];
+  this.post_arg_names = [];
+  this.block_arg_name = nil;
+  // dont really need to use this for client side eval
+  this.local_current = "a";
+  this.code = [];
+  this.method_id = null;
 
-     return this;
-   };
+  return this;
+};
 
-   Iseq.prototype = {
+Iseq.prototype = {
 
-     push_local_name: function(name) {
-       var id = this.local_current;
-       this.local_current = String.fromCharCode(this.local_current.charCodeAt(0) + 1);
-       this.locals[name] = "_" + id;
-       return "_" + id;
-     },
+  push_local_name: function(name) {
+    var id = this.local_current;
+    this.local_current = String.fromCharCode(this.local_current.charCodeAt(0) + 1);
+    this.locals[name] = "_" + id;
+    return "_" + id;
+  },
 
-     lookup_local: function(name) {
-       if (name === null || name === undefined) return null;
-       if (this.locals[name]) return this.locals[name];
-       if (this.args[name]) return this.args[name];
-       if (this.block_arg_name === name) return "_";
-       return null;
-     },
+   lookup_local: function(name) {
+   if (name === null || name === undefined) return null;
+   if (this.locals[name]) return this.locals[name];
+   if (this.args[name]) return this.args[name];
+   if (this.block_arg_name === name) return "_";
+   return null;
+  },
 
-     set_method_id: function(method_id) {
-       this.method_id = method_id;
-     },
+  set_method_id: function(method_id) {
+   this.method_id = method_id;
+  },
 
-     push_arg_name: function(arg_name) {
-       var id = this.local_current;
-       this.local_current = String.fromCharCode(this.local_current.charCodeAt(0) + 1);
-       this.args[arg_name] = "_" + id;
-       this.norm_arg_names.push(arg_name);
-       return "_" + id;
-     },
+  push_arg_name: function(arg_name) {
+   var id = this.local_current;
+   this.local_current = String.fromCharCode(this.local_current.charCodeAt(0) + 1);
+   this.args[arg_name] = "_" + id;
+   this.norm_arg_names.push(arg_name);
+   return "_" + id;
+  },
 
-     set_parent_iseq: function(parent_iseq) {
+  set_parent_iseq: function(parent_iseq) {
 
-     },
+  },
 
-     finalize: function() {
+  finalize: function() {
 
-     },
+  },
 
-     write: function(str) {
-       this.code.push(str);
-     },
+  write: function(str) {
+   this.code.push(str);
+  },
 
-     toString: function() {
-       var r = [];
-       switch (this.type) {
-         case ISEQ_TYPE_TOP:
-          r.push("function($){");
-          r.push("var _ = nil;");
-          if (this.locals.length > 0) {
-            r.push("var ");
-            for (var i = 0; i < this.locals.length; i++) {
-              if (i != 0) r.push(",");
-              r.push(this.locals[i]);
-            }
-            r.push(";");
-          }
-          r.push(this.code.join(""));
-          r.push("}");
-          break;
-        case ISEQ_TYPE_CLASS:
-          r.push("function($){");
-          r.push(this.code.join(""));
-          r.push("}");
-          break;
-        case ISEQ_TYPE_METHOD:
-          this.deal_with_method_args(r);
-          r.push(this.code.join(""));
-          r.push("}");
-          break;
-       case ISEQ_TYPE_BLOCK:
-         r.push("function($$,__,ID");
-         for (var i = 0; i < this.norm_arg_names.length; i++) {
-           r.push(",");
-           r.push(this.args[this.norm_arg_names[i]]);
-         }
-         r.push("){")
-         r.push("with({$:($$==nil?$:$$),_:(__==nil?_:__)}){");
-         r.push(this.code.join(""));
-         r.push("}");
-         r.push("}");
-          break;
-        default:
-          throw "unknown iseq type in parse.js"
-          }
-       return r.join("");
-     },
-
-     deal_with_method_args: function(r) {
-       r.push("function($,id,_");
-       r.push("){");
+  toString: function() {
+   var r = [];
+   switch (this.type) {
+     case ISEQ_TYPE_TOP:
+      r.push("function($){");
+      r.push("var _ = nil;");
+      if (this.locals.length > 0) {
+        r.push("var ");
+        for (var i = 0; i < this.locals.length; i++) {
+          if (i != 0) r.push(",");
+          r.push(this.locals[i]);
+        }
+        r.push(";");
+      }
+      r.push(this.code.join(""));
+      r.push("}");
+      break;
+    case ISEQ_TYPE_CLASS:
+      r.push("function($){");
+      r.push(this.code.join(""));
+      r.push("}");
+      break;
+    case ISEQ_TYPE_METHOD:
+      this.deal_with_method_args(r);
+      r.push(this.code.join(""));
+      r.push("}");
+      break;
+   case ISEQ_TYPE_BLOCK:
+     r.push("function($$,__,ID");
+     for (var i = 0; i < this.norm_arg_names.length; i++) {
+       r.push(",");
+       r.push(this.args[this.norm_arg_names[i]]);
      }
-   };
+     r.push("){")
+     r.push("with({$:($$==nil?$:$$),_:(__==nil?_:__)}){");
+     r.push(this.code.join(""));
+     r.push("}");
+     r.push("}");
+      break;
+    default:
+      throw "unknown iseq type in parse.js"
+      }
+   return r.join("");
+  },
+
+  deal_with_method_args: function(r) {
+   r.push("function($,id,_");
+   r.push("){");
+  }
+};
 
 
 /**
@@ -189,12 +189,107 @@ var OpalRubyGenerator = function OpalRubyGenerator(rubyParser, nodeTree) {
   
   function generate_stmt(stmt, context) {
     switch (stmt.type) {
-      case 'class':
-        generate_class(stmt, context);
-        break;
-      default:
-        console.log("unknown generate_stmt type: " + stmt.type + ", " + stmt.value);
+      case 'class':       generate_class(stmt, context);        break;
+      case 'module':      generate_module(stmt, context);       break;
+      case 'assign':      generate_assign(stmt, context);       break;
+      case 'constant':    generate_constant(stmt, context);     break;
+      case 'self':        generate_self(stmt, context);         break;
+      case 'numeric':     generate_numeric(stmt, context);      break;
+      case 'call':        generate_call(stmt, context);         break;
+      case 'string':      generate_string(stmt, context);       break;
+      case 'xstring':     generate_xstring(stmt, context);      break;
+      case 'identifier':  generate_identifier(stmt, context);   break;
+      case 'symbol':      generate_symbol(stmt, context);       break;
+      case 'ivar':        generate_ivar(stmt, context);         break;
+      case 'def':         generate_def(stmt, context);          break;
+      case 'yield':       generate_yield(stmt, context);        break;
+      case 'block_given': generate_block_given(stmt, context);  break;
+      case 'if_mod':      generate_if_mod(stmt, context);       break;
+      case 'unless_mod':  generate_if_mod(stmt, context);       break;
+      case 'array':       generate_array(stmt, context);        break;
+      case 'opt_plus':    generate_opt_plus(stmt, context);     break;
+      case 'opt_minus':   generate_opt_minus(stmt, context);    break;
+      case 'opt_mult':    generate_opt_mult(stmt, context);     break;
+      case 'opt_div':     generate_opt_div(stmt, context);      break;
+      case 'nil':         generate_nil(stmt, context);          break;
+      case 'true':        generate_true(stmt, context);         break;
+      case 'false':       generate_false(stmt, context);        break;
+      case 'regexp':      generate_regexp(stmt, context);       break;
+      case 'dot2':        generate_dot2(stmt, context);         break;
+      case 'dot3':        generate_dot3(stmt, context);         break;
+      case '__FILE__':    generate__FILE__(stmt, context);      break;
+      case 'colon2':      generate_colon2(stmt, context);       break;
+      case 'colon3':      generate_colon3(stmt, context);       break;
+      case 'if':          generate_if(stmt, context);           break;
+      default: console.log("unknown generate_stmt type: " + stmt.type);
     }
+  };
+  
+  function generate_identifier(stmt, context) {
+    if (context.last_stmt && context.full_stmt) write("return ");
+    
+    var local = iseq_current.lookup_local(stmt.name);
+    if (local) {
+      write(local);
+    }
+    else {
+      write("vm$a($,'" + stmt.name + "',[],nil,8)")
+    }
+    
+    if (context.full_stmt) write(";");
+  };
+  
+  function generate_string(str, context) {
+    if (context.last_stmt && context.full_stmt) write("return ");
+    
+    if (str.value.length == 0) {
+      write('""');
+    }
+    else if (str.value.length == 1) {
+      write('"' + str.value[0].value.replace('"', '\\"') + '"');
+    }
+    else {
+      write("[");
+      for (var i = 0; i < str.value.length; i++) {
+        var s = str.value[i];
+        if (i > 0) write(",");
+        if (s.type === 'string_content') {
+          write('"' + s.value.replace('"', '\\"') + '"');
+        }
+        else {
+          write("vm$a(");
+          generate_stmt(s.value[0], {});
+          write(",'to_s',[],nil,8)");
+        }
+      }
+      write("].join('')");
+    }
+        
+    if (context.full_stmt) write(";");
+  };
+  
+  function generate_xstring(str, context) {
+    if (context.last_stmt && context.full_stmt) write("return ");
+    
+    if (str.value.length == 0) {
+      write('');
+    }
+    else if (str.value.length == 1) {
+      write(str.value[0].value);
+    }
+    else {
+      for (var i = 0; i < str.value.length; i++) {
+        var s = str.value[i];
+        if (s.type === 'string_content') {
+          write(s.value);
+        }
+        else {
+          generate_stmt(s.value[0], {});
+        }
+      }
+    }
+        
+    if (context.full_stmt) write(";");
   };
     
   function generate_class(cls, context) {
@@ -205,13 +300,12 @@ var OpalRubyGenerator = function OpalRubyGenerator(rubyParser, nodeTree) {
     class_iseq.set_parent_iseq(current_iseq);
     
     // do each bodystmt
-    if (cls.$stmts) {
-      for (var i = 0; i < cls.$stmts.length; i++) {
-        generate_stmt(cls.$stmts[i], {full_stmt: true, last_stmt:(i === cls.$stmts.length - 1)});
+    if (cls.bodystmt.stmt.length != 0) {
+      for (var i = 0; i < cls.bodystmt.stmt.length; i++) {
+        generate_stmt(cls.bodystmt.stmt[i], { full_stmt:true, last_stmt:(cls.bodystmt.stmt.length-1 == i) });
       }
     }
     else {
-      // no statements? fake by returning nil
       write("return nil;");
     }
     
@@ -220,11 +314,367 @@ var OpalRubyGenerator = function OpalRubyGenerator(rubyParser, nodeTree) {
     write("vm_defineclass($,");
     
     // superclass
-    write("nil");
-    console.log(cls);
+    if (cls.superclass) {
+      generate_stmt(cls.superclass, {});
+    }
+    else {
+      write("nil");
+    }
+
     write(",'" + cls.cpath + "'," + class_iseq.toString() + ",0)");
     
     
+    if (context.full_stmt) write(";");
+  };
+  
+  function generate_module(cls, context) {
+    if (context.full_stmt && context.last_stmt) write("return ");
+    
+    var current_iseq = iseq_current;
+    var class_iseq = iseq_stack_push(ISEQ_TYPE_CLASS);
+    class_iseq.set_parent_iseq(current_iseq);
+    
+    if (cls.bodystmt.stmt.length != 0) {
+      for (var i = 0; i < cls.bodystmt.stmt.length; i++) {
+        generate_stmt(cls.bodystmt.stmt[i], { full_stmt:true, last_stmt:(cls.bodystmt.stmt.length-1 == i) });
+      }
+    }
+    else {
+      write("return nil;");
+    }
+    
+    iseq_stack_pop();
+    
+    write("vm_defineclass($,nil");
+    
+    write(",'" + cls.cpath + "'," + class_iseq.toString() + ",2)");
+    
+    if (context.full_stmt) write(";");
+  };
+  
+  function generate_def(stmt, context) {
+    if (context.full_stmt && context.last_stmt) write("return ");
+    
+    var is_singleton = stmt.singleton ? 1 : 0;
+    
+    // console.log("is_singleton: " + stmt.singleton);
+    
+    var current_iseq = iseq_current;
+    var def_iseq = iseq_stack_push(ISEQ_TYPE_METHOD);
+    def_iseq.set_parent_iseq(current_iseq);
+    def_iseq.method_id = stmt.fname;
+    
+    // normal args
+    
+    // rest args
+    
+    // block name
+    
+    // body stmts
+    
+    iseq_stack_pop();
+    
+    write("vm_definemethod(");
+    (stmt.singleton) ? generate_stmt(stmt.singleton, {}) : write("$");
+    
+    write(",'"+stmt.fname+"'," + def_iseq.toString()+","+is_singleton+ ",0)");
+    
+    if (context.full_stmt) write(";");
+  };
+  
+  function generate_assign(stmt, context) {
+    if (context.last_stmt && context.full_stmt) write("return ");
+    
+    if (stmt.lhs.type === 'identifier') {
+      var local = iseq_current.lookup_local(stmt.lhs.name);
+      if (!local) {
+        local = iseq_current.push_local_name(stmt.lhs.name);
+      }
+      write(local + "=");
+      generate_stmt(stmt.rhs, {});
+    }
+    else if (stmt.lhs.type === 'ivar') {
+      write("$.iv_tbl['" + stmt.lhs.name + "']=");
+      generate_stmt(stmt.rhs, {});
+    }
+    else if (stmt.lhs.type === 'constant') {
+      write("vm$c($,'" + stmt.lhs.name + "',");
+      generate_stmt(stmt.rhs, {});
+      write(")");
+    }
+    else {
+      throw "parse: bad assign type for lhs: " + stmt.lhs.type
+    }
+    
+    // console.log("have assign:");
+    // console.log(stmt);
+
+    if (context.full_stmt) write(";");
+  };
+  
+  function generate_call(call, context) {
+    if (context.last_stmt && context.full_stmt) write("return ");
+    
+    // console.log("call:");
+    // console.log(call);
+    
+    write("vm$a(");
+    
+    var call_bit;
+    
+    if (call.recv) {
+      call_bit = 0;
+      generate_stmt(call.recv, {});
+    }
+    else {
+      call_bit = 8;
+      write("$");
+    }
+    
+    write(",'" + call.meth.name + "',");
+    var is_splat = false;
+    
+    if (is_splat) {
+      throw "Generate_call: splat not yet implemented";
+    }
+    else {
+      // console.log("in call:");
+      // console.log(call);
+      write("[]");
+      write(",");
+    }
+    
+    // block
+    write("nil");
+    write(",");
+    
+    write(call_bit);
+    
+    write(")");
+        
+    if (context.full_stmt) write(";");
+  };
+  
+  function generate_constant(stmt, context) {
+    if (context.last_stmt && context.full_stmt) write("return ");
+    write("vm$b($,'" + stmt.name + "')");
+    if (context.full_stmt) write(";");
+  };
+  
+  function generate_numeric(stmt, context) {
+    if (context.last_stmt && context.full_stmt) write("return ");
+    write(stmt.value);
+    if (context.full_stmt) write(";");
+  };
+  
+  function generate_self(stmt, context) {
+    if (context.last_stmt && context.full_stmt) write("return ");
+    write("$");
+    if (context.full_stmt) write(";");
+  };
+  
+  function generate_symbol(stmt, context) {
+    if (context.last_stmt && context.full_stmt) write("return ");
+    write("ID2SYM('" + stmt.name + "')");
+    if (context.full_stmt) write(";");
+  };
+  
+  function generate_ivar(stmt, context) {
+    if (context.last_stmt && context.full_stmt) write("return ");
+    write("$.iv_tbl['" + stmt.name + "']");
+    if (context.full_stmt) write(";");
+  };
+  
+  function generate_yield(stmt, context) {
+    if (context.last_stmt && context.full_stmt) write("return ");
+    if (stmt.call_args && stmt.call_args.args[0].type == 'splat') {
+      throw "yield splat not yet implemented"
+    }
+    else {
+      write('vm_yield(_,[');
+      if (stmt.call_args && stmt.call_args.args) {
+        for (var i = 0; i < stmt.call_args.args.length; i++) {
+          if (i > 0) write(',');
+          generate_stmt(stmt.call_args.args[i], {});
+        }
+      }
+      write('])');
+    }
+    if (context.full_stmt) write(";");
+  };
+  
+  function generate_block_given(stmt, context) {
+    if (context.last_stmt && context.full_stmt) write("return ");
+    write("((_ == nil) ? false : true)");
+    if (context.full_stmt) write(";");
+  };
+  
+  function generate_if_mod(stmt, context) {
+    if (context.last_stmt && context.full_stmt) write("return ");
+    write((stmt.type == 'if_mod') ? "if(RTEST(" : "if(!RTEST(");
+    generate_stmt(stmt.expr, {});
+    write(")){");
+    generate_stmt(stmt.stmt, { full_stmt:true });
+    write("}");
+    if (context.full_stmt) write(";");
+  };
+  
+  function generate_array(stmt, context) {
+    if (context.last_stmt && context.full_stmt) write("return ");
+    write("[");
+    if (stmt.args) {
+      for (var i = 0; i < stmt.args.length; i++) {
+        if (i > 0) write(",");
+        generate_stmt(stmt.args[i], {});
+      }
+    }
+    write("]");
+    if (context.full_stmt) write(";");
+  };
+  
+  function generate_opt_plus(stmt, context) {
+    if (context.last_stmt && context.full_stmt) write("return ");
+    write("vm_optplus(");
+    generate_stmt(stmt.lhs, {});
+    write(",");
+    generate_stmt(stmt.rhs, {});
+    write(")");
+    if (context.full_stmt) write(";");
+  };
+  
+  function generate_opt_minus(stmt, context) {
+    if (context.last_stmt && context.full_stmt) write("return ");
+    write("vm_optminus(");
+    generate_stmt(stmt.lhs, {});
+    write(",");
+    generate_stmt(stmt.rhs, {});
+    write(")");
+    if (context.full_stmt) write(";");
+  };
+  
+  function generate_opt_mult(stmt, context) {
+    if (context.last_stmt && context.full_stmt) write("return ");
+    write("vm_optmult(");
+    generate_stmt(stmt.lhs, {});
+    write(",");
+    generate_stmt(stmt.rhs, {});
+    write(")");
+    if (context.full_stmt) write(";");
+  };
+  
+  function generate_opt_div(stmt, context) {
+    if (context.last_stmt && context.full_stmt) write("return ");
+    write("vm_optdiv(");
+    generate_stmt(stmt.lhs, {});
+    write(",");
+    generate_stmt(stmt.rhs, {});
+    write(")");
+    if (context.full_stmt) write(";");
+  };
+  
+  function generate_nil(stmt, context) {
+    if (context.last_stmt && context.full_stmt) write("return ");
+    write("nil");
+    if (context.full_stmt) write(";");
+  };
+  
+  function generate_true(stmt, context) {
+    if (context.last_stmt && context.full_stmt) write("return ");
+    write("true");
+    if (context.full_stmt) write(";");
+  };
+  
+  function generate_false(stmt, context) {
+    if (context.last_stmt && context.full_stmt) write("return ");
+    write("false");
+    if (context.full_stmt) write(";");
+  };
+  
+  function generate_regexp(stmt, context) {
+    if (context.last_stmt && context.full_stmt) write("return ");
+    write("/");
+    for (var i = 0; i < stmt.value.length; i++) {
+      write(stmt.value[i].value);
+    }
+    write("/");
+    if (context.full_stmt) write(";");
+  };
+  
+  function generate_dot2(stmt, context) {
+    if (context.last_stmt && context.full_stmt) write("return ");
+    write("vm_newrange(");
+    generate_stmt(stmt.start, {});
+    write(",");
+    generate_stmt(stmt.ending, {});
+    write(",true)");
+    if (context.full_stmt) write(";");
+  };
+  
+  function generate_dot3(stmt, context) {
+    if (context.last_stmt && context.full_stmt) write("return ");
+    write("vm_newrange(");
+    generate_stmt(stmt.start, {});
+    write(",");
+    generate_stmt(stmt.ending, {});
+    write(",false)");
+    if (context.full_stmt) write(";");
+  };
+  
+  function generate__FILE__(stmt, context) {
+    if (context.last_stmt && context.full_stmt) write("return ");
+    write('"' + rubyParser.filename + '"');
+    if (context.full_stmt) write(";");
+  };
+  
+  function generate_colon2(stmt, context) {
+    if (context.last_stmt && context.full_stmt) write("return ");
+    write('vm$b(');
+    generate_stmt(stmt.lhs, {});
+    write(',"' + stmt.rhs + '")');
+    if (context.full_stmt) write(";");
+  };
+  
+  function generate_colon3(stmt, context) {
+    if (context.last_stmt && context.full_stmt) write("return ");
+    write('vm$b(rb_cObject,"' + stmt.name + '")');
+    if (context.full_stmt) write(";");
+  };
+  
+  function generate_if(stmt, context) {
+    if (context.last_stmt && context.full_stmt) write("return ");
+    write('(function(){');
+    // if/unless clause
+    write((stmt.type == 'if') ? 'if(RTEST(' : 'if(!RTEST(');
+    generate_stmt(stmt.expr, {});
+    write(')){');
+    for (var i = 0; i < stmt.stmt.length; i++) {
+      generate_stmt(stmt.stmt[i], {full_stmt:true, last_stmt:(i == stmt.stmt.length - 1)});
+    }
+    write('}');
+    // tail
+    if (stmt.tail) {
+      for (var i = 0; i < stmt.tail.length; i++) {
+        var t = stmt.tail[i];
+        if (t.type == 'elsif') {
+          write('else if(RTEST(');
+          generate_stmt(t.expr, {});
+          write(')){');
+          for (var j = 0; j < t.stmt.length; j++) {
+            generate_stmt(t.stmt[j], {full_stmt:true, last_stmt:(j == t.stmt.length - 1)});
+          }
+          write('}');
+        }
+        else {
+          write('else{');
+          for (var j = 0; j < t.stmt.length; j++) {
+            generate_stmt(t.stmt[j], {full_stmt:true, last_stmt:(j == t.stmt.length - 1)});
+          }
+          write('}');
+        }
+      }
+    }
+    
+    write('})()');
     if (context.full_stmt) write(";");
   };
   

@@ -243,7 +243,7 @@ function rb_funcall3(recv, id, _, args) {
   }
 };
 
-function vm_defineclass(base, sup, id, body, type) {
+var vm$e = vm_defineclass = function(base, sup, id, body, type) {
   var klass;
   switch (type) {
     case 0:
@@ -285,24 +285,14 @@ function vm_defineclass(base, sup, id, body, type) {
   return body(klass);
 };
 
-function vm_definemethod(base, id, body, is_singleton) {
-  if (is_singleton) {
-    return rb_define_method(rb_singleton_class(base), id, body);
-  }
-  else {
-    if (base.flags & T_OBJECT) base = base.klass;
-    return rb_define_method(base, id, body);
-  }
-};
-
-function vm_send(obj, id, args, block, flags) {
+var vm$a = vm_send = function vm_send(obj, id, args, block, flags) {
   // if (block !== nil) opal_block = block;
   var r = rb_funcall3(obj, id, block, args);
   // opal_block = nil;
   return r;
 };
 
-function vm_getconstant(base, id) {
+var vm$b = vm_getconstant = function vm_getconstant(base, id) {
   // quick hack fix:
   if (base === undefined || base === null) base = nil;
   // console.log("const getting" + id);
@@ -312,9 +302,19 @@ function vm_getconstant(base, id) {
   return rb_const_get(base, id);
 };
 
-function vm_setconstant(base, id, val) {
+var vm$c = vm_setconstant = function vm_setconstant(base, id, val) {
   if (base.flags & T_OBJECT) base = rb_class_real(base.klass);
   return rb_const_set(base, id, val);
+};
+
+var vm$d = vm_definemethod = function(base, id, body, is_singleton) {
+  if (is_singleton) {
+    return rb_define_method(rb_singleton_class(base), id, body);
+  }
+  else {
+    if (base.flags & T_OBJECT) base = base.klass;
+    return rb_define_method(base, id, body);
+  }
 };
 
 function vm_newhash() {
