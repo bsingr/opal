@@ -151,7 +151,7 @@ module Vienna
         
         # r is array to append strings for outputting
         def deal_with_method_args(r)
-          r << "function($,id,_"
+          r << "function("
           
           norm = @norm_arg_names.length
           opt = @opt_arg_names.length
@@ -166,14 +166,14 @@ module Vienna
           # Case 2: just splat args
           # def a(*args)
           elsif norm == 0 && opt == 0 && post == 0 && rest
-            r << ",#{@args[@rest_arg_name]}"
+            r << "#{@args[@rest_arg_name]}"
             r << "){"
             r << %{#{@args[@rest_arg_name]}=Array.prototype.slice.call(arguments,3);}
           
           # Case: one norm arg, rest splat args
           # def a(name, *args)
           elsif norm == 1 && opt == 0 && post == 0 && rest
-            r << ",#{@args[@norm_arg_names.first]}"
+            r << "#{@args[@norm_arg_names.first]}"
             r << ",#{@args[@rest_arg_name]}"
             r << "){"
             r << "#{@args[@norm_arg_names.first]}=arguments[3];"
@@ -183,7 +183,8 @@ module Vienna
           # def a(l,m,n,o,p)
           elsif norm > 0 && opt == 0 && post == 0 && rest.nil?
             @norm_arg_names.each do |a|
-              r << ",#{@args[a]}"
+              r << "," unless a == @norm_arg_names.first
+              r << "#{@args[a]}"
             end
             r << "){"
           end
@@ -258,7 +259,10 @@ module Vienna
       
       # convert ruby style id to js property id - everything is prepended a '$'
       def mid_to_jsid(mid)
-        "$#{mid}"
+        "$#{mid}".
+        gsub(/\!/, "$b").
+        gsub(/\=/, "$e").
+        gsub(/\?/, "$q")
       end
       
       def generate_tree(tree)
@@ -300,7 +304,7 @@ module Vienna
         
         iseq_stack_pop
         
-        write "vienna.define_class(this,"
+        write "this.define_class("
         # superclass
         if cls.super_klass
           generate_stmt cls.super_klass[:expr], :full_stmt => false
@@ -437,7 +441,7 @@ module Vienna
       def generate_call(call, context)
         
         write "return " if context[:full_stmt] and context[:last_stmt]
-        write "vm$a("
+        # write "vm$a("
         # receiver
         if call[:recv]
           call_bit = 0
@@ -445,11 +449,11 @@ module Vienna
         else
           call_bit = 8
           # self as recv
-          write "$"
+          write "this"
         end
         
         # method id
-        write %{,"#{call[:meth]}",}
+        write %{.#{mid_to_jsid(call[:meth])}(}
         
         # normal args - need to check for splats
         is_splat = false
@@ -479,7 +483,7 @@ module Vienna
           end
           write "return a;})()"
         else
-          write "["
+          # write "["
           unless call[:call_args].nil? or call[:call_args][:args].nil?
             call[:call_args][:args].each do |arg|
               write "," unless call[:call_args][:args].first == arg
@@ -500,12 +504,13 @@ module Vienna
           write ")"
           end
      
-          write "]"
+          # write "]"
         end
-        write ","
+        # write ","
         
         # block
       if call[:brace_block]
+        write ","
          current_iseq = @iseq_current
          block_iseq = iseq_stack_push(ISEQ_TYPE_BLOCK)
          block_iseq.parent_iseq = current_iseq
@@ -537,13 +542,14 @@ module Vienna
          generate_stmt call[:call_args][:block_arg][:arg], :full_stmt => false
          write %{,"to_proc",[],nil,0))}
        else
-         write "nil"
+         # write "nil"
        end
-        write ","
+        # write ","
 
         # op flag
-        write "#{call_bit})"
+        # write "#{call_bit})"
         
+        write ")"
         
         write ";" if context[:full_stmt]
       end
@@ -552,11 +558,11 @@ module Vienna
         write "return " if context[:last_stmt] and context[:full_stmt]
         
         if str[:value].length == 0
-          write %{""}
+          write %{vnS("")}
         elsif str[:value].length == 1
-          write %{"#{str[:value][0][:value].gsub(/\"/, '\"')}"}
+          write %{vnS("#{str[:value][0][:value].gsub(/\"/, '\"')}")}
         else
-          write "["
+          write "vnS(["
           str[:value].each do |s|
             write "," unless str[:value].first == s
             if s.node == :string_content
@@ -567,7 +573,7 @@ module Vienna
               write %{,"to_s",[],nil,8)}
             end
           end
-          write "].join('')"
+          write "].join(''))"
         end
         
         write ";" if context[:full_stmt]
@@ -643,7 +649,7 @@ module Vienna
       
       def generate_self(stmt, context)
         write "return " if context[:last_stmt] and context[:full_stmt]
-        write "$"
+        write "this"
         write ";" if context[:full_stmt]
       end
       
