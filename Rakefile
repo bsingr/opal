@@ -39,3 +39,33 @@ desc "Rebuild ruby parser (using racc)"
 task :ruby_parser do
   %x{racc -E lib/vienna/builders/ruby/ruby_parser.rb.y -o lib/vienna/builders/ruby/ruby_parser.rb}
 end
+
+
+desc "Rebuild vienna.js runtime file"
+task :vienna do
+  File.open('build/vienna.js', 'w') do |out|
+    # pre
+    out.puts "var vienna = { };"
+    out.puts "(function(global, exports) {"
+    
+    # runtime
+    out.puts File.read('runtime/vienna.js')
+    
+    # post
+    out.puts "})(window, vienna);"
+    
+    # Core library
+    Dir.glob('core/**/*.rb').each do |rb|
+      builder = Vienna::CherryKit::RubyBuilder.new(rb, nil, nil)
+      out.puts "// #{rb}"
+      out.puts "#{builder.build!}.apply(vienna.top_self);"
+    end
+  end
+  # puts "need to rebuild vienna.js"
+end
+
+desc "Testing compiler etc"
+task :test => :vienna do
+  test = Vienna::CherryKit::RubyBuilder.new('test/test_vienna.rb', nil, nil)
+  puts test.build!
+end

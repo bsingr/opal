@@ -194,18 +194,15 @@ module Vienna
           
           case @type
           when RubyBuilder::ISEQ_TYPE_TOP
-            r << "function($){"
-            r << "var _ = nil;"
+            r << "(function(){"
             # locals
             if @locals.length > 0
               r << "var #{@locals.each_value.to_a.join(",")};"
             end
             r << @code.join("")
-            r << "}"
+            r << "})"
           when RubyBuilder::ISEQ_TYPE_CLASS
-            r << "function($"
-            
-            r << "){"
+            r << "function(){"
             
             # locals
             if @locals.length > 0
@@ -259,6 +256,11 @@ module Vienna
       end
       
       
+      # convert ruby style id to js property id - everything is prepended a '$'
+      def mid_to_jsid(mid)
+        "$#{mid}"
+      end
+      
       def generate_tree(tree)
         top_iseq = iseq_stack_push(ISEQ_TYPE_TOP)
         tree.each do |stmt|
@@ -298,12 +300,12 @@ module Vienna
         
         iseq_stack_pop
         
-        write "vm$e($,"
+        write "vienna.define_class(this,"
         # superclass
         if cls.super_klass
           generate_stmt cls.super_klass[:expr], :full_stmt => false
         else
-          write "nil"
+          write "vnNil"
         end
         write %{,"#{cls.klass_name}",#{class_iseq},0)}
         
@@ -373,7 +375,7 @@ module Vienna
         # puts stmt
         write "return " if context[:last_stmt] and context[:full_stmt]
         
-        is_singleton = stmt[:singleton] ? 1 : 0
+        is_singleton = stmt[:singleton] ? 'true' : 'false'
         
         current_iseq = @iseq_current
         def_iseq = iseq_stack_push(ISEQ_TYPE_METHOD)
@@ -406,17 +408,17 @@ module Vienna
         iseq_stack_pop
         
         # define method
-        write "vm$d("
+        write "this.add_method("
         
         # base.. singleton or self
         if stmt[:singleton]
           generate_stmt stmt[:singleton], :full_stmt => false, :last_stmt => false
         else
           # self
-          write "$"
+          # write "$"
         end
         
-        write %{,"#{stmt[:fname]}",#{def_iseq},#{is_singleton},#{stmt[:arglist].arg_size})}
+        write %{"#{stmt[:fname]}","#{mid_to_jsid(stmt[:fname])}",#{def_iseq},#{is_singleton})}
         write ";" if context[:full_stmt]
       end
       
