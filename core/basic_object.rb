@@ -26,6 +26,10 @@
 
 class BasicObject
   
+  def self.new
+    
+  end
+  
   def initialize
     
   end

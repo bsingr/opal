@@ -22,8 +22,11 @@ class String
   
 end
 
+`console.log("===== Constant");`
+`console.log(#{String});`
 
-string_test = "string testing string"
-`console.log(#{string_test});`
+class CKView < String
+  
+end
 
-string_test.upcase!
+CKView.new

@@ -234,9 +234,10 @@ module Vienna
             r << "}"
             
           when RubyBuilder::ISEQ_TYPE_BLOCK
-            r << %{function($$,__,ID}
+            r << %{vnP(function(}
             @norm_arg_names.each do |a|
-              r << ",#{@args[a]}"
+              r << "," unless @norm_arg_names.first == a
+              r << "#{@args[a]}"
             end
             r << %{)\{}
             # locals
@@ -246,10 +247,10 @@ module Vienna
             # WTF? this should take "var $=$$;" but we get errors...huh!?!?
             # r << "if($$!=nil){var$=$$;}"
             # this seems to be the easiest way to do it, but its hela ugly 
-            r << "with({$:($$==nil?$:$$),_:(__==nil?_:__)}){"
+            # r << "with({$:($$==nil?$:$$),_:(__==nil?_:__)}){"
             r << @code.join("")
-            r << "}"
-            r << "}"
+            # r << "}"
+            r << "})"
           end
           r
         end
@@ -412,14 +413,14 @@ module Vienna
         iseq_stack_pop
         
         # define method
-        write "this.add_method("
+        
         
         # base.. singleton or self
         if stmt[:singleton]
           generate_stmt stmt[:singleton], :full_stmt => false, :last_stmt => false
+          write ".add_method("
         else
-          # self
-          # write "$"
+          write "this.add_method("
         end
         
         write %{"#{stmt[:fname]}","#{mid_to_jsid(stmt[:fname])}",#{def_iseq},#{is_singleton})}
@@ -439,7 +440,7 @@ module Vienna
       end
       
       def generate_call(call, context)
-        
+        used_param = false
         write "return " if context[:full_stmt] and context[:last_stmt]
         # write "vm$a("
         # receiver
@@ -486,6 +487,7 @@ module Vienna
           # write "["
           unless call[:call_args].nil? or call[:call_args][:args].nil?
             call[:call_args][:args].each do |arg|
+              used_param = true
               write "," unless call[:call_args][:args].first == arg
               generate_stmt arg, :full_stmt => false
             end
@@ -493,6 +495,7 @@ module Vienna
   
           # assocs
           if call[:call_args] and call[:call_args][:assocs]
+          used_param = true
           write "," unless call[:call_args].nil? or call[:call_args][:args].nil?
           write "vm_newhash("
           call[:call_args][:assocs].each do |assoc|
@@ -510,7 +513,7 @@ module Vienna
         
         # block
       if call[:brace_block]
-        write ","
+        write "," if used_param
          current_iseq = @iseq_current
          block_iseq = iseq_stack_push(ISEQ_TYPE_BLOCK)
          block_iseq.parent_iseq = current_iseq
@@ -601,7 +604,8 @@ module Vienna
       
       def generate_constant(cnst, context)
         write "return " if context[:last_stmt] and context[:full_stmt]
-        write %{vm$b($,"#{cnst[:name]}")}
+        write "this.const_get('#{cnst[:name]}')"
+        # write %{vm$b($,"#{cnst[:name]}")}
         write ";" if context[:full_stmt]
       end
       
@@ -655,13 +659,13 @@ module Vienna
       
       def generate_symbol(sym, context)
         write "return " if context[:last_stmt] and context[:full_stmt]
-        write %{ID2SYM("#{sym[:name]}")}
+        write %{vnY("#{sym[:name]}")}
         write ";" if context[:full_stmt]
       end
       
       def generate_numeric(num, context)
         write "return " if context[:last_stmt] and context[:full_stmt]
-        write num[:value]
+        write "vnN(#{num[:value]})"
         write ";" if context[:full_stmt]
       end
       
@@ -732,14 +736,14 @@ module Vienna
       
       def generate_array(ary, context)
         write "return " if context[:last_stmt] and context[:full_stmt]
-        write "["
+        write "vnA("
         if ary[:args]
           ary[:args].each do |a|
             write "," unless ary[:args].first == a
             generate_stmt a, :full_stmt => false, :last_stmt => false
           end
         end
-        write "]"
+        write ")"
         write ";" if context[:full_stmt]
       end
       
@@ -785,19 +789,19 @@ module Vienna
       
       def generate_nil(stmt, context)
         write "return " if context[:last_stmt] and context[:full_stmt]
-        write "nil"
+        write "vnNil"
         write ";" if context[:full_stmt]
       end
       
       def generate_true(stmt, context)
         write "return " if context[:last_stmt] and context[:full_stmt]
-        write "true"
+        write "vnTrue"
         write ";" if context[:full_stmt]
       end
       
       def generate_false(stmt, context)
         write "return " if context[:last_stmt] and context[:full_stmt]
-        write "false"
+        write "vnFalse"
         write ";" if context[:full_stmt]
       end
       
@@ -1021,7 +1025,7 @@ module Vienna
       
       def generate_assoc_list stmt, context
         write "return " if context[:full_stmt] and context[:last_stmt]
-        write "rb_hash_new("
+        write "vnH("
         stmt[:list].each do |assoc|
           write "," unless stmt[:list].first == assoc
           generate_stmt assoc[:key], :full_stmt => false, :last_stmt => false

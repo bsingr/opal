@@ -36,6 +36,8 @@ var c_basic_object      = null,
         c_nil_class     = null,
         c_proc          = null,
         c_string        = null,
+        c_array         = null,
+        c_hash          = null,
         c_numeric       = null;
 
 // top self
@@ -100,10 +102,25 @@ global.vnY = function(str) {
   return res;
 };
 
-// create a ruby array from a javascript array.
-global.vnA = function(arr) {
+// create a ruby array from arguments..
+// vnA(arr1, arr2....arr3);
+global.vnA = function() {
   var res = new c_array.allocator();
-  res.__arr__ = arr;
+  res.__arr__ = Array.prototype.slice.call(arguments);
+  return res;
+};
+
+// hash from arguments vnH(key1, val1, key2, val2...)
+global.vnH = function() {
+  var k, v, res = new c_hash.allocator();
+  res.__keys__ = [];
+  res.__assocs__ = {};
+  for (var i = 0; i < arguments.length; i++) {
+    k = arguments[i], v = arguments[i+1];
+    i++;
+    res.__keys__.push(k);
+    res.__assocs__[k.hash()] = v;
+  }
   return res;
 };
 
@@ -202,6 +219,7 @@ var define_class_under = function(base, id, super_class) {
     super_class = exports.c_object;
     
   klass = boot_class(super_class, id);
+  base.const_set(id, klass);  
   
   return klass;
 };
@@ -233,6 +251,15 @@ function boot_class(super_class, name) {
   e.g. my_rb_obj.add_method(...)
 */
 var runtime_methods = {
+  
+  /**
+    primarily useful for hashes. default returns the id, but some classes like
+    string, number etc return their actual value so multiple strings do not 
+    appear more than once as keys
+  */
+  hash: function() {
+    return this.id;
+  },
   
   define_class: function(super_class, id, body, flag) {
 
@@ -314,7 +341,13 @@ var runtime_methods = {
   */
   const_get: function(id) {
     // FIXME: check if base is class or instance
-    return this.constants[id];
+    if (this.flags & T_OBJECT)
+      return this.isa.const_get(id);
+    
+    if (this.constants[id])
+      return this.constants[id];
+    
+    throw "NameError: uninitialized constant: " + id
   },
 
   /*
@@ -351,5 +384,23 @@ c_numeric.allocator.prototype.flags = T_OBJECT | T_NUMBER;
 
 c_symbol = boot_defclass('Symbol', exports.c_object);
 c_symbol.allocator.prototype.flags = T_OBJECT | T_SYMBOL;
+
+c_array = boot_defclass('Array', exports.c_object);
+c_array.allocator.prototype.flags = T_OBJECT | T_ARRAY;
+
+c_hash = boot_defclass('Hash', exports.c_object);
+c_hash.allocator.prototype.flags = T_OBJECT | T_HASH;
+
+c_proc = boot_defclass('Proc', exports.c_object);
+c_proc.allocator.prototype.flags = T_OBJECT | T_PROC;
+
+c_nil_class = boot_defclass('NilClass', exports.c_object);
+vnNil = new c_nil_class.allocator();
+
+c_true_class = boot_defclass('TrueClass', exports.c_object);
+vnTrue = new c_true_class.allocator();
+
+c_false_class = boot_defclass('FalseClass', exports.c_object);
+vnFalse = new c_false_class.allocator();
 
 exports.top_self = new exports.c_object.allocator();
