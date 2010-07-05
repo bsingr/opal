@@ -22,11 +22,6 @@ class String
   
 end
 
-`console.log("===== Constant");`
-`console.log(#{String});`
-
-class CKView < String
-  
-end
-
-CKView.new
+`console.log("===== String test");`
+string_test = "hey there"
+`console.log(#{string_test});`

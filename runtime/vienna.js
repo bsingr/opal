@@ -29,16 +29,16 @@ exports.c_object        = null;
 var c_basic_object      = null,
         c_module        = null,
         c_class         = null,
-        c_kernel        = null,
+        module_kernel        = null,
         c_symbol        = null,
         c_true_class    = null,
         c_false_class   = null,
         c_nil_class     = null,
-        c_proc          = null,
-        c_string        = null,
+        class_proc          = null,
+        class_string        = null,
         c_array         = null,
         c_hash          = null,
-        c_numeric       = null;
+        class_number       = null;
 
 // top self
 exports.top_self        = null;
@@ -71,21 +71,21 @@ var T_CLASS             = 1,
 //  => {RubyString}
 // 
 global.vnS = function(str) {
-  var res = new c_string.allocator();
+  var res = new class_string.allocator();
   res.__str__ = str;
   return res;
 };
 
 // Create ruby number from javascript number
 global.vnN = function(num) {
-  var res = new c_numeric.allocator();
+  var res = new class_number.allocator();
   res.__num__ = num;
   return res;
 };
 
 // create a ruby proc from javascript func
 global.vnP = function(fun) {
-  var res = new c_proc.allocator();
+  var res = new class_proc.allocator();
   res.__fun__ = fun;
   return res;
 };
@@ -142,142 +142,6 @@ if (!Array.prototype.indexOf) {
  };
 };
  
-// var class_alloc = function(id, super_class) {
-//   var meta = function() {};
-//   meta.prototype = new super_class.meta();
-//   
-//   var cls = new meta();
-//   cls.meta = meta;
-//   
-//   cls.super_class = super_class;
-//   cls.name = id;
-//   cls.flags = T_CLASS;
-//   cls.id = yield_hash();
-//   
-//   return cls;
-// };
-// 
-// global.class_alloc = class_alloc;
-// 
-// var ruby_class = function(id, super_class) {
-//   this.super_class = super_class;
-//   
-//   this.name = id;
-//   
-//   this.flags = T_CLASS;
-//   
-//   this.id = yield_hash();
-//   
-//   if (super_class) {
-//     this.allocator = function() {
-//       this.id = yield_hash();
-//     };
-//     
-//     this.allocator.prototype = new super_class.allocator();
-//     
-//     this.constants = new super_class.constants_alloc();
-//     this.constants_alloc = function() {};
-//     this.constants_alloc.prototype = this.constants;
-//   } else {
-//     // default empty constants and default ruby_class allocator
-//     this.constants_alloc = function() { };
-//     this.constants = this.constants_alloc.prototype;
-//   }
-//   
-//   this.allocator.prototype.flags = T_OBJECT;
-//   this.allocator.prototype.name = id;
-//   this.allocator.prototype.super_class = super_class;
-//   this.allocator.prototype.isa = this;
-//   
-//   // this.isa = exports.c_class;
-//   
-//   return this;
-// };
-// 
-// // Default allocator for top level obect: BasicObject
-// ruby_class.prototype.allocator = function() {
-//   this.id = yield_hash();
-// };
-// 
-// // =========
-// // = Class =
-// // =========
-// 
-// /*
-//     Get the singleton class - the meta for classes, or real class for objects
-// */
-// var singleton_class = function(klass) {
-//   
-// };
-// 
-// /**
-//   Get the "real class".
-//   
-//   Singleton classes are kept for singleton objects, so we must get the real
-//   class
-// */
-// var class_real = function(klass) {
-//   while (klass.flags & FL_SINGLETON)
-//     klass = klass.super_class;
-//   
-//   return klass
-// };
-// 
-// 
-// 
-// var define_class_under = function(base, id, super_class) {
-//   
-//   if (base.const_defined(id))
-//     return base.const_get(id);
-//   
-//   var klass;
-//   
-//   if (!super_class)
-//     super_class = exports.c_object;
-//     
-//   klass = boot_class(super_class, id);
-//   base.const_set(id, klass);  
-//   
-//   return klass;
-// };
-
-// // =============
-// // = Bootstrap =
-// // =============
-// 
-// function boot_defclass(id, super_class) {
-//   var o = boot_class(super_class, id);
-//   (exports.c_object ? exports.c_object : o).const_set(id, o);
-//   // exports.const_set((exports.c_object ? exports.c_object : o), id, o);
-//   return o;
-// };
-// 
-// function boot_class(super_class, name) {
-//   var c = new ruby_class(name, super_class);
-//   return c;
-// };
-// 
-// // ===================
-// // = Runtime methods =
-// // ===================
-// 
-// /**
-//   Runtime methods for control etc will be added to each class and each class 
-//   instance.
-//   
-//   e.g. my_rb_obj.add_method(...)
-// */
-// var runtime_methods = {
-//   
-//   /**
-//     primarily useful for hashes. default returns the id, but some classes like
-//     string, number etc return their actual value so multiple strings do not 
-//     appear more than once as keys
-//   */
-//   hash: function() {
-//     return this.id;
-//   },
-//   
 //   define_class: function(super_class, id, body, flag) {
 // 
 //     var klass, base = this;
@@ -312,15 +176,8 @@ if (!Array.prototype.indexOf) {
 //     return klass;
 //   },
 //   
-//   /**
-//     define a method on the receiver. 
-//     
-//     @m_id - actual method id as seen from ruby
-//     
-//     @param js_id - js version .. starts with '$' and all non characters are
-//                   replaces with relevant alternatives
-// 
-//   */
+
+
 //   add_method: function(m_id, js_id, body, singleton) {
 //     
 //     // if singleton... only works for class level (at the moment)
@@ -339,95 +196,7 @@ if (!Array.prototype.indexOf) {
 //     // if module, then could use callback to add to all classes this has been
 //     // included in
 //   },
-//   
-//   /**
-//     Set the constant named id on the receiver. Should check to make sure
-//     we are setting it on a class, and not an instance.
-// 
-//     @return val the value of the constant set
-//   */
-//   const_set: function(id, val) {
-//     // FIXME: should check if base is class or object. if object, use class
-//     this.constants[id] = val;
-//     
-//     return val;
-//   },
-//   
-//   /**
-//     Get the value of a constant on the base/receiver. For now just returns nil if
-//     the id is not found, should really throw error
-// 
-//     @return returns the value of the constant
-//   */
-//   const_get: function(id) {
-//     // FIXME: check if base is class or instance
-//     if (this.flags & T_OBJECT)
-//       return this.isa.const_get(id);
-//     
-//     if (this.constants[id])
-//       return this.constants[id];
-//     
-//     throw "NameError: uninitialized constant: " + id
-//   },
-// 
-//   /*
-//     Check if a constant with the given id is defined on the receicer
-//     
-//     @return true/false
-//   */
-//   const_defined: function(id) {
-//     if (this.constants[id])
-//       return true;
-// 
-//     return false;
-//   }
-// };
-// 
-// for (prop in runtime_methods) {
-//   ruby_class.prototype.allocator.prototype[prop] = runtime_methods[prop];
-//   ruby_class.prototype[prop] = runtime_methods[prop];
-// }
 
-// ==============
-// = Initialize =
-// ==============
-
-// c_basic_object = boot_defclass('BasicObject', null);
-// exports.c_object = boot_defclass('Object', c_basic_object);
-// exports.c_object.const_set('BasicObject', c_basic_object);
-// 
-// c_string = boot_defclass('String', exports.c_object);
-// c_string.allocator.prototype.flags = T_OBJECT | T_STRING;
-// 
-// c_numeric = boot_defclass('Numeric', exports.c_object);
-// c_numeric.allocator.prototype.flags = T_OBJECT | T_NUMBER;
-// 
-// c_symbol = boot_defclass('Symbol', exports.c_object);
-// c_symbol.allocator.prototype.flags = T_OBJECT | T_SYMBOL;
-// 
-// c_array = boot_defclass('Array', exports.c_object);
-// c_array.allocator.prototype.flags = T_OBJECT | T_ARRAY;
-// 
-// c_hash = boot_defclass('Hash', exports.c_object);
-// c_hash.allocator.prototype.flags = T_OBJECT | T_HASH;
-// 
-// c_proc = boot_defclass('Proc', exports.c_object);
-// c_proc.allocator.prototype.flags = T_OBJECT | T_PROC;
-// 
-// c_nil_class = boot_defclass('NilClass', exports.c_object);
-// vnNil = new c_nil_class.allocator();
-// 
-// c_true_class = boot_defclass('TrueClass', exports.c_object);
-// vnTrue = new c_true_class.allocator();
-// 
-// c_false_class = boot_defclass('FalseClass', exports.c_object);
-// vnFalse = new c_false_class.allocator();
-// 
-// exports.top_self = new exports.c_object.allocator();
-
-// ==================
-// = New Initialize =
-// ==================
 
 // Base of every object or class object in vienna. Every object, string, number,
 // class, module, regexp, proc etc will be an instance of this, so const_set etc
@@ -441,9 +210,57 @@ __boot_base_class.prototype.hash = function() {
 };
 
 
-__boot_base_class.prototype.define_class = function() {
-  console.log("need to define class on:");
-  console.log(this);
+__boot_base_class.prototype.define_class = function(sup, id, body, flag) {
+  
+  var klass, base = this;
+  
+  if (base.flags & T_OBJECT)
+    base = base.isa;
+  
+  switch (flag) {
+    // normal class
+    case 0:
+      if (sup === vnNil)
+        sup = class_object;
+      
+      klass = define_class_under(base, id, sup);
+      break;
+    case 2:
+      klass = define_module_under(base, id);
+      break;
+    default:
+      throw "define_class: unknown flag: " + flag
+  }
+  
+  body.apply(klass);
+  
+  return klass;
+};
+
+__boot_base_class.prototype.add_method =function(m_id, js_id, body, singleton) {
+  
+  body.method_id = m_id;
+  body.displayName = m_id;
+  
+  if (singleton) {
+    if ((this.info & T_CLASS) || (this.info & T_MODULE)) {
+      this.constructor.prototype[js_id] = body;
+      this.constructor.prototype.method_table[js_id] = body;
+    }
+    else {
+      throw "need to add_method to singleton object"
+    }
+  }
+  else {
+    if ((this.info & T_CLASS) || (this.info & T_MODULE)) {
+      this.allocator.prototype[js_id] = body;
+      this.allocator.prototype.method_table[js_id] = body;
+    }
+    else {
+      throw "need to add_method to  object"
+    }
+  }
+  return;
 };
 
 __boot_base_class.prototype.const_set = function(id, val) {
@@ -452,15 +269,21 @@ __boot_base_class.prototype.const_set = function(id, val) {
   
   if (base.info & T_OBJECT)
     base = base.isa;
-    
-  // console.log("going to set const on base: " + id);
-  // console.log(base);
-  // console.log("from..");
-  // console.log(this);
-  
-  // need to check if object
+
   base.constants[id] = val;
   return val;
+};
+
+__boot_base_class.prototype.const_defined = function(id) {
+  var base = this;
+  
+  if (base.info & T_OBJECT)
+    base = base.isa;
+    
+  if (base.constants[id])
+    return true;
+    
+  return false;
 };
 
 __boot_base_class.prototype.const_get = function(id) {
@@ -473,32 +296,39 @@ __boot_base_class.prototype.const_get = function(id) {
   if (base.constants[id])
     return base.constants[id];
   
-  console.log("const_get error in this:");
-  console.log(this);
-  
   throw "NameError: uninitialized constant: " + id;
 };
 
-//   const_get: function(id) {
-//     // FIXME: check if base is class or instance
-//     if (this.flags & T_OBJECT)
-//       return this.isa.const_get(id);
-//     
-//     if (this.constants[id])
-//       return this.constants[id];
-//     
-//     throw "NameError: uninitialized constant: " + id
-//   },
+__boot_base_class.prototype.include = function(module) {
+  
+  if (!this.included_modules)
+    this.included_modules = [];
+  
+  if (this.included_modules.indexOf(module) != -1)
+    return; // already included
+  
+  this.included_modules.push(module);
+  module.included_in.push(this);
+  
+  for (method in module.method_table) {
+    console.log("need to add:" + method);
+  }
+};
 
-
-var define_class = function(id, super_class) {
+var define_class_under = function(base, id, super_class) {
+  
+  if (base.const_defined(id))
+    return base.const_get(id);
+  
+  if (!super_class)
+    super_class = class_object;
   
   var cls = function() {
     this.id = yield_hash();
   };
   
   cls.prototype = new super_class.allocator();
-  
+  cls.prototype.method_table = {};
   cls.prototype.constructor = cls;
   cls.prototype.class_name = id;
   cls.prototype.super_class = super_class;
@@ -509,10 +339,12 @@ var define_class = function(id, super_class) {
   }
   
   meta.prototype = new super_class.constructor();
+  meta.prototype.method_table = {};
   meta.prototype.allocator = cls;
   meta.prototype.class_name = id;
   meta.prototype.super_class = super_class.constructor;
   meta.prototype.info = T_CLASS;
+  meta.prototype.constructor = meta;
   
   // constants
   meta.prototype.constants = new super_class.constants_alloc();
@@ -520,8 +352,22 @@ var define_class = function(id, super_class) {
   meta.prototype.constants_alloc.prototype = meta.prototype.constants;
   
   cls.prototype.isa = meta.prototype;
+  
+  var res = new meta();
+  base.const_set(id, res);
+  return res;
+};
 
-  return new meta();
+var define_module_under = function(base, id) {
+  
+  if (base.const_defined(id))
+    return base.const_get(id);
+    
+  var mod = define_class_under(base, id, class_module);
+  mod.included_in = [];
+  mod.info = T_MODULE | FL_SINGLETON;
+  mod.allocator.prototype.info = T_MODULE;
+  return mod;
 };
 
 var __boot_defclass = function(id, super_class) {
@@ -535,6 +381,7 @@ var __boot_defclass = function(id, super_class) {
   else
     cls.prototype = new __boot_base_class();
   
+  cls.prototype.method_table = {};
   cls.prototype.constructor = cls;
   cls.prototype.class_name = id;
   cls.prototype.super_class = super_class;
@@ -550,6 +397,7 @@ var __boot_makemeta = function(klass, super_class) {
   
   meta.prototype = new super_class();
   
+  meta.prototype.method_table = {};
   meta.prototype.allocator = klass;
   meta.prototype.constructor = meta;
   meta.prototype.class_name = klass.prototype.class_name;
@@ -557,7 +405,6 @@ var __boot_makemeta = function(klass, super_class) {
   meta.prototype.info = T_CLASS;
   
   klass.prototype.isa = meta.prototype;
-  
   
   // constants etc
   if (klass === boot_basic_object) {
@@ -575,6 +422,10 @@ var __boot_makemeta = function(klass, super_class) {
 var __boot_defmetameta = function(klass, meta) {
   klass.isa = meta;
 };
+
+// ==============
+// = Initialize =
+// ==============
 
 var metaclass;
 
@@ -598,7 +449,50 @@ class_object.const_set("Object", class_object);
 class_object.const_set("Class", class_class);
 class_object.const_set("Module", class_module);
 
+// Custom methods for modules to handle includes properly
+class_module.constructor.prototype.add_method = function(m_id,js_id,body, sing){
+    
+  // super
+  __boot_base_class.prototype.add_method.apply(this, arguments);
+    
+  // go through each class we are included in and add new method to that as well
+  for (var i = 0; i < this.included_in.length; i++) {
+    this.included_in[i].allocator.prototype[js_id] = body;
+  }
+};
+
+
+exports.Object = class_object;
 exports.top_self = new class_object.allocator();
 
-var class_string = define_class("String", class_object);
-class_object.const_set("String", class_string);
+// Kernel module
+module_kernel = define_module_under(class_object, "Kernel");
+class_object.include(module_kernel);
+
+// String class
+class_string = define_class_under(class_object, "String", class_object);
+class_string.allocator.prototype.info = T_OBJECT | T_STRING;
+
+class_string.allocator.prototype.hash = function() {
+  return '$$str$$' + this.__str__;
+};
+
+class_string.allocator.prototype.toString = function() {
+  return this.__str__;
+};
+
+// Number class
+class_number = define_class_under(class_object, "Number", class_object);
+class_number.allocator.prototype.info = T_OBJECT | T_NUMBER;
+
+class_number.allocator.prototype.hash = function() {
+  return '$$num$$' + this.__num__;
+};
+
+class_number.allocator.prototype.toString = function() {
+  return this.__num__;
+};
+
+// Proc class
+class_proc = define_class_under(class_object, "Proc", class_object);
+class_proc.allocator.prototype.info = T_OBJECT | T_PROC;

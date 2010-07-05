@@ -333,10 +333,12 @@ module Vienna
         
         iseq_stack_pop
         
-        write "vm$e($,"
+        write "this.define_class(vnNil,'#{cls.klass_name}',#{class_iseq},2)"
+        
+        # write "vm$e($,"
         # superclass - always nil for module
-        write "nil"
-        write %{,"#{cls.klass_name}",#{class_iseq},2)}
+        # write "nil"
+        # write %{,"#{cls.klass_name}",#{class_iseq},2)}
         
         write ";" if context[:full_stmt]
       end

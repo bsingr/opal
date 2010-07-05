@@ -1,6 +1,16 @@
 #!/usr/bin/env ruby -wKU
 
+# Simply compile a ruby input file path (as first arg) to js (stdout)
+
 require File.expand_path(
   File.join(File.dirname(__FILE__), %w[.. lib vienna]))
 
-Vienna::CherryKit::RubyBuilder.new
+# puts ARGV.length
+
+# catch bad args setup
+if ARGV.length == 0
+  puts "(function() {})"
+else
+  builder = Vienna::CherryKit::RubyBuilder.new(ARGV[0], nil, nil)
+  puts builder.build!
+end
