@@ -28,7 +28,6 @@ task :vienna do
   require File.join(File.dirname(__FILE__), 'lib', 'vienna')
 end
 
-
 desc "Run all specs"
 Spec::Rake::SpecTask.new('spec') do |t|
   t.spec_files = FileList['spec/**/*.rb']
@@ -64,6 +63,18 @@ task :vienna do
   end
   # puts "need to rebuild vienna.js"
 end
+
+YARD::Rake::YardocTask.new do |t|
+  YARD::Templates::Engine.register_template_path(File.join(Dir.getwd, 'yard_templates'))
+  t.files   = ['core/**/*.rb']               # optional
+  # t.options = ['--any', '--extra', '--opts'] # optional
+  t.options = ['-o./doc/vienna', '-tvienna']
+end
+
+# YARD::Rake::YardocTask.new(:cherry_kit) do |t|
+#   t.files   = ['lib/**/*.rb', OTHER_PATHS]   # optional
+#   t.options = ['--any', '--extra', '--opts'] # optional
+# end
 
 desc "Testing compiler etc"
 task :test => :vienna do
