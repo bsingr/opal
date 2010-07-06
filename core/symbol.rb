@@ -1,5 +1,5 @@
 # 
-# kernel.rb
+# symbol.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,31 +24,9 @@
 # THE SOFTWARE.
 #
 
-module Kernel
-  
-  def nil?
-    false
-  end
-  
-  def proc &block
-    if block_given?
-      block
-    else
-      raise "ArgumentError: tried to create Proc object without a block"
-    end
-  end
-  
-  def puts str
-    `console.log(#{str}.toString());`
-  end
-  
-  def to_s
-    # "#<#{`self`}:#{self}.id>"
-    `return vnS("#<" + #{self}.class_name + ":" + #{self}.id + ">");`
-  end
+class Symbol
   
   def inspect
-    to_s
+    `return vnS(":" + #{self}.__ptr__);`
   end
-  
 end

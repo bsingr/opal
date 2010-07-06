@@ -54,8 +54,9 @@ task :vienna do
     # post
     out.puts "})(window, vienna);"
     
-    # Core library
-    Dir.glob('core/**/*.rb').each do |rb|
+    # Core library - use all rb files in core dir, but ensure kerenl.rb and     
+    # module.rb are first in line as most other things rely on them
+    ['core/kernel.rb', 'core/module.rb'].concat(Dir.glob('core/**/*.rb')).uniq!.each do |rb|
       builder = Vienna::CherryKit::RubyBuilder.new(rb, nil, nil)
       out.puts "// #{rb}"
       out.puts "#{builder.build!}.apply(vienna.top_self);"

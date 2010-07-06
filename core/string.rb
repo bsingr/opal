@@ -20,6 +20,10 @@ class String
     `return #{self}.__str__ = #{self}.__str__.toUpperCase();`
   end
   
+  def to_s
+    self
+  end
+  
 end
 
 `console.log("===== String test");`

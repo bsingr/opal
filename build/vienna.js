@@ -27,20 +27,22 @@ var vienna = { };
  */
  
 // Core classes
-exports.c_object        = null;
-var c_basic_object      = null,
-        c_module        = null,
-        c_class         = null,
-        module_kernel        = null,
-        c_symbol        = null,
-        c_true_class    = null,
-        c_false_class   = null,
-        c_nil_class     = null,
-        class_proc          = null,
-        class_string        = null,
-        c_array         = null,
-        c_hash          = null,
-        class_number       = null;
+// exports.c_object        = null;
+var class_basic_object  = null,
+    class_module        = null,
+    class_class         = null,
+    class_object        = null,
+    module_kernel       = null,
+    class_symbol        = null,
+    class_true_class    = null,
+    class_false_class   = null,
+    class_nil_class     = null,
+    class_proc          = null,
+    class_string        = null,
+    class_array         = null,
+    class_hash          = null,
+    class_number        = null,
+    class_regexp        = null;
 
 // top self
 exports.top_self        = null;
@@ -98,7 +100,7 @@ global.vnY = function(str) {
   if (symbol_table.hasOwnProperty(str))
     return symbol_table[str];
     
-  var res = new c_symbol.allocator();
+  var res = new class_symbol.allocator();
   res.__ptr__ = str;
   symbol_table[str] = res;
   return res;
@@ -107,7 +109,7 @@ global.vnY = function(str) {
 // create a ruby array from arguments..
 // vnA(arr1, arr2....arr3);
 global.vnA = function() {
-  var res = new c_array.allocator();
+  var res = new class_array.allocator();
   res.__arr__ = Array.prototype.slice.call(arguments);
   return res;
 };
@@ -123,6 +125,13 @@ global.vnH = function() {
     res.__keys__.push(k);
     res.__assocs__[k.hash()] = v;
   }
+  return res;
+};
+
+// Regexp
+global.vnR = function(reg) {
+  var res = new class_regexp.allocator();
+  res.__reg__ = reg;
   return res;
 };
 
@@ -143,62 +152,6 @@ if (!Array.prototype.indexOf) {
    return -1;
  };
 };
- 
-//   define_class: function(super_class, id, body, flag) {
-// 
-//     var klass, base = this;
-// 
-//     // need to check if base is object or class. if object, use its class
-//     if (base.flags & T_OBJECT)
-//       base = class_real(base.isa);
-// 
-//     switch (flag) {
-//       // normal class
-//       case 0:
-//         if (super_class === vnNil)
-//           super_class = exports.c_object;
-// 
-//         klass = define_class_under(base, id, super_class);
-//         break;
-//       // class shift
-//       case 1:
-//         throw "define_class: class shift is currently unimplemented"
-//         break;
-//       // module
-//       case 2:
-//         throw "define_class: module is currently unimplemented"
-//         break;
-//       default:
-//         throw "unknown define_class flag: " + flag
-//     }
-// 
-//     // for each case call the body using our klass as the receiver (self/this)
-//     body.apply(klass);
-// 
-//     return klass;
-//   },
-//   
-
-
-//   add_method: function(m_id, js_id, body, singleton) {
-//     
-//     // if singleton... only works for class level (at the moment)
-//         
-//     
-//     if (this.flags & T_CLASS) {
-//       this.allocator.prototype[js_id] = body;
-//     } else {
-//       this[js_id] = body;
-//     }
-//     
-//     
-//     body.method_id = m_id;
-//     body.displayName = m_id;
-//   
-//     // if module, then could use callback to add to all classes this has been
-//     // included in
-//   },
-
 
 // Base of every object or class object in vienna. Every object, string, number,
 // class, module, regexp, proc etc will be an instance of this, so const_set etc
@@ -317,6 +270,10 @@ __boot_base_class.prototype.include = function(module) {
   }
 };
 
+__boot_base_class.prototype.toString = function() {
+  return this.$inspect().__str__;
+};
+
 var define_class_under = function(base, id, super_class) {
   
   if (base.const_defined(id))
@@ -399,6 +356,7 @@ var __boot_makemeta = function(klass, super_class) {
   
   meta.prototype = new super_class();
   
+  meta.prototype.included_in = [];
   meta.prototype.method_table = {};
   meta.prototype.allocator = klass;
   meta.prototype.constructor = meta;
@@ -436,10 +394,10 @@ var boot_object = __boot_defclass("Object", boot_basic_object);
 var boot_module = __boot_defclass("Module", boot_object);
 var boot_class = __boot_defclass("Class", boot_module);
 
-var class_basic_object = __boot_makemeta(boot_basic_object, boot_class);
-var class_object = __boot_makemeta(boot_object, class_basic_object.constructor);
-var class_module = __boot_makemeta(boot_module, class_object.constructor);
-var class_class = __boot_makemeta(boot_class, class_module.constructor);
+class_basic_object = __boot_makemeta(boot_basic_object, boot_class);
+class_object = __boot_makemeta(boot_object, class_basic_object.constructor);
+class_module = __boot_makemeta(boot_module, class_object.constructor);
+class_class = __boot_makemeta(boot_class, class_module.constructor);
 
 __boot_defmetameta(class_basic_object, class_class);
 __boot_defmetameta(class_object, class_class);
@@ -463,6 +421,9 @@ class_module.constructor.prototype.add_method = function(m_id,js_id,body, sing){
   }
 };
 
+// and then fix again for class
+class_class.constructor.prototype.add_method = class_object.constructor.prototype.add_method;
+
 
 exports.Object = class_object;
 exports.top_self = new class_object.allocator();
@@ -480,7 +441,7 @@ class_string.allocator.prototype.hash = function() {
 };
 
 class_string.allocator.prototype.toString = function() {
-  return this.__str__;
+  return this.$inspect().__str__;
 };
 
 // Number class
@@ -498,10 +459,49 @@ class_number.allocator.prototype.toString = function() {
 // Proc class
 class_proc = define_class_under(class_object, "Proc", class_object);
 class_proc.allocator.prototype.info = T_OBJECT | T_PROC;
+
+// True class
+class_true_class = define_class_under(class_object, "TrueClass", class_object);
+vnTrue = new class_true_class.allocator();
+
+// False class
+class_false_class = define_class_under(class_object, "FalseClass",class_object);
+vnFalse = new class_false_class.allocator();
+
+// Nil class
+class_nil_class = define_class_under(class_object, "NilClass", class_object);
+vnNil = new class_nil_class.allocator();
+
+// Array class
+class_array = define_class_under(class_object, "Array", class_object);
+class_array.allocator.prototype.info = T_OBJECT | T_ARRAY;
+
+// Symbol class
+class_symbol = define_class_under(class_object, "Symbol", class_object);
+
+// Regexp
+class_regexp = define_class_under(class_object, "Regexp", class_object);
 })(window, vienna);
-// core/basic_object.rb
-(function(){this.define_class(vnNil,"BasicObject",function(){this.add_method("new","$new",function(){},true);this.add_method("initialize","$initialize",function(){},false);this.add_method("==","$$e$e",function(_a){},false);this.add_method("equal?","$equal$q",function(_a){},false);this.add_method("!","$$b",function(){},false);return this.add_method("!=","$$b$e",function(_a){},false);},0);}).apply(vienna.top_self);
 // core/kernel.rb
-(function(){this.define_class(vnNil,'Kernel',function(){this.add_method("nil?","$nil$q",function(){return vnFalse;},false);return this.add_method("proc","$proc",function(){return (function(){if(RTEST(((_ == nil) ? false : true))){return _;}else{return this.$raise(vnS("ArgumentError: tried to create Proc object without a block"));}})();},false);},2);}).apply(vienna.top_self);
+(function(){this.define_class(vnNil,'Kernel',function(){this.add_method("nil?","$nil$q",function(){return vnFalse;},false);this.add_method("proc","$proc",function(){return (function(){if(RTEST(((_ == nil) ? false : true))){return _;}else{return this.$raise(vnS("ArgumentError: tried to create Proc object without a block"));}})();},false);this.add_method("puts","$puts",function(_a){console.log(_a.toString());},false);this.add_method("to_s","$to_s",function(){return vnS("#<" + this.class_name + ":" + this.id + ">");},false);return this.add_method("inspect","$inspect",function(){return this.$to_s();},false);},2);}).apply(vienna.top_self);
+// core/module.rb
+(function(){this.define_class(vnNil,"Module",function(){this.add_method("undef_method","$undef_method",function(_a){return this.$puts(vnS(["need to undefine method: ",_a].join('')));},false);return this.add_method("attr_reader","$attr_reader",function(_a){_a=vnA(Array.prototype.slice.call(arguments));},false);},0);}).apply(vienna.top_self);
+// core/basic_object.rb
+(function(){this.define_class(vnNil,"BasicObject",function(){this.add_method("initialize","$initialize",function(){return this.$puts(vnS("in basicobject initialize"));},false);this.add_method("==","$$e$e",function(_a){},false);this.add_method("equal?","$equal$q",function(_a){},false);this.add_method("!","$$b",function(){},false);return this.add_method("!=","$$b$e",function(_a){},false);},0);}).apply(vienna.top_self);
+// core/class.rb
+(function(){this.define_class(vnNil,"Class",function(){this.add_method("allocate","$allocate",function(){return new this.allocator();},false);this.add_method("new","$new",function(){var _a;_a=this.$allocate();_a.$initialize.apply(_a, arguments);return _a;},false);return this.add_method("initialize","$initialize",function(){return this.$puts(vnS("in Class.new initialize"));},false);},0);}).apply(vienna.top_self);
+// core/nil_class.rb
+(function(){this.define_class(vnNil,"NilClass",function(){this.add_method("nil?","$nil$q",function(){return vnTrue;},false);this.add_method("to_i","$to_i",function(){return vnN(0);},false);this.add_method("to_f","$to_f",function(){return vnN(0.0);},false);this.add_method("to_s","$to_s",function(){return vnS("");},false);this.add_method("to_a","$to_a",function(){return vnA();},false);this.add_method("inspect","$inspect",function(){return vnS("nil");},false);this.add_method("&","$&",function(_a){return vnFalse;},false);this.add_method("|","$|",function(_a){return RTEST(_a)? vnTrue : vnFalse;},false);return this.add_method("^","$^",function(_a){return RTEST(_a)? vnTrue : vnFalse;},false);},0);}).apply(vienna.top_self);
+// core/number.rb
+(function(){this.define_class(vnNil,"Number",function(){return this.add_method("+","$$p",function(_a){if (_a.info & 64)
+      return this.__num__ + _a.__num__;
+
+    throw "cannot convert " + _a + " into Number"},false);},0);this.$puts(vnS("===== Number test"));this.$puts(vnN(100).$$p(vnN(200)));}).apply(vienna.top_self);
+// core/regexp.rb
+(function(){this.define_class(vnNil,"Regexp",function(){},0);}).apply(vienna.top_self);
 // core/string.rb
-(function(){var _a;this.define_class(vnNil,"String",function(){this.add_method("initialize","$initialize",function(){this.__str__ = vm$a($,"string",[],nil,8);},false);this.add_method("==","$$e$e",function(_a){return this.__str__ === _a.__str__;},false);return this.add_method("upcase!","$upcase$b",function(){return this.__str__ = this.__str__.toUpperCase();},false);},0);console.log("===== String test");_a=vnS("hey there");console.log(_a);}).apply(vienna.top_self);
+(function(){var _a;this.define_class(vnNil,"String",function(){this.add_method("initialize","$initialize",function(){this.__str__ = this.$string();},false);this.add_method("==","$$e$e",function(_a){return this.__str__ === _a.__str__;},false);this.add_method("upcase!","$upcase$b",function(){return this.__str__ = this.__str__.toUpperCase();},false);return this.add_method("to_s","$to_s",function(){return this;},false);},0);console.log("===== String test");_a=vnS("hey there");console.log(_a);}).apply(vienna.top_self);
+// core/symbol.rb
+(function(){this.define_class(vnNil,"Symbol",function(){return this.add_method("inspect","$inspect",function(){return vnS(":" + this.__ptr__);},false);},0);}).apply(vienna.top_self);
+// core/true_class.rb
+(function(){this.define_class(vnNil,"TrueClass",function(){this.add_method("to_s","$to_s",function(){return vnS("true");},false);this.add_method("&","$&",function(_a){return RTEST(_a)? vnTrue : vnFalse;},false);this.add_method("|","$|",function(_a){return vnTrue;},false);return this.add_method("^","$^",function(_a){return RTEST(_a)? vnFalse : vnTrue;},false);},0);}).apply(vienna.top_self);

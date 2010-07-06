@@ -25,13 +25,9 @@
 #
 
 class BasicObject
-  
-  def self.new
     
-  end
-  
   def initialize
-    
+    puts "in basicobject initialize"
   end
   
   def == other

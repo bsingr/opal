@@ -1,5 +1,5 @@
 # 
-# kernel.rb
+# regexp.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,31 +24,8 @@
 # THE SOFTWARE.
 #
 
-module Kernel
+class Regexp
   
-  def nil?
-    false
-  end
   
-  def proc &block
-    if block_given?
-      block
-    else
-      raise "ArgumentError: tried to create Proc object without a block"
-    end
-  end
-  
-  def puts str
-    `console.log(#{str}.toString());`
-  end
-  
-  def to_s
-    # "#<#{`self`}:#{self}.id>"
-    `return vnS("#<" + #{self}.class_name + ":" + #{self}.id + ">");`
-  end
-  
-  def inspect
-    to_s
-  end
   
 end

@@ -158,29 +158,25 @@ module Vienna
           post = @post_arg_names.length
           rest = @rest_arg_name
           
-          # Case 1: no args at all (block is dealt with seperately)
-          # def a()
+          # Case 1: no args at all (block is dealt with seperately) - def a()
           if norm == 0 && opt == 0 && post == 0 && rest.nil?
             r << "){"
             
-          # Case 2: just splat args
-          # def a(*args)
+          # Case 2: just splat args - def a(*args)
           elsif norm == 0 && opt == 0 && post == 0 && rest
             r << "#{@args[@rest_arg_name]}"
             r << "){"
-            r << %{#{@args[@rest_arg_name]}=Array.prototype.slice.call(arguments,3);}
+            r << %{#{@args[@rest_arg_name]}=vnA(Array.prototype.slice.call(arguments));}
           
-          # Case: one norm arg, rest splat args
-          # def a(name, *args)
+          # Case: one norm arg, rest splat args - def a(name, *args)
           elsif norm == 1 && opt == 0 && post == 0 && rest
             r << "#{@args[@norm_arg_names.first]}"
             r << ",#{@args[@rest_arg_name]}"
             r << "){"
-            r << "#{@args[@norm_arg_names.first]}=arguments[3];"
-            r << %{#{@args[@rest_arg_name]}=Array.prototype.slice.call(arguments,4);}
+            r << "#{@args[@norm_arg_names.first]}=arguments[0];"
+            r << %{#{@args[@rest_arg_name]}=vnA(Array.prototype.slice.call(arguments,1));}
             
-          # Case 3: just normal args (any number)
-          # def a(l,m,n,o,p)
+          # Case 3: just normal args (any number) - def a(l,m,n,o,p)
           elsif norm > 0 && opt == 0 && post == 0 && rest.nil?
             @norm_arg_names.each do |a|
               r << "," unless a == @norm_arg_names.first
@@ -263,7 +259,9 @@ module Vienna
         "$#{mid}".
         gsub(/\!/, "$b").
         gsub(/\=/, "$e").
-        gsub(/\?/, "$q")
+        gsub(/\?/, "$q").
+        gsub(/\+/, "$p").
+        gsub(/\-/, "$m")
       end
       
       def generate_tree(tree)
@@ -435,7 +433,8 @@ module Vienna
         if local
           write local
         else
-          write %{vm$a($,"#{stmt[:name]}",[],nil,8)}
+          # write %{vm$a($,"#{stmt[:name]}",[],nil,8)}
+          write "this.#{mid_to_jsid(stmt[:name])}()"
         end
         
         write ";" if context[:full_stmt]
@@ -573,9 +572,9 @@ module Vienna
             if s.node == :string_content
               write %{"#{s[:value].gsub(/\"/, '\"')}"}
             else
-              write %{vm$a(}
+              # write %{vm$a(}
               generate_stmt s[:value][0], :full_stmt => false
-              write %{,"to_s",[],nil,8)}
+              # write %{,"to_s",[],nil,8)}
             end
           end
           write "].join(''))"
@@ -751,9 +750,9 @@ module Vienna
       
       def generate_opt_plus(stmt, context)
         write "return " if context[:last_stmt] and context[:full_stmt]
-        write %{vm_optplus(}
+        # write %{vm_optplus(}
         generate_stmt stmt[:recv], :last_stmt => false, :full_stmt => false
-        write ","
+        write ".#{mid_to_jsid('+')}("
         generate_stmt stmt[:call_args][:args][0], :full_stmt => false
         write ")"
         write ";" if context[:full_stmt]

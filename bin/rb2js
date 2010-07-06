@@ -5,12 +5,9 @@
 require File.expand_path(
   File.join(File.dirname(__FILE__), %w[.. lib vienna]))
 
-# puts ARGV.length
-
-# catch bad args setup
-if ARGV.length == 0
-  puts "(function() {})"
-else
-  builder = Vienna::CherryKit::RubyBuilder.new(ARGV[0], nil, nil)
+if ARGV.empty?
+  builder = Vienna::CherryKit::RubyBuilder.new(STDIN.read, nil, nil)
   puts builder.build!
+else
+  puts "(function() {})"
 end

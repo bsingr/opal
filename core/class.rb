@@ -1,5 +1,5 @@
 # 
-# kernel.rb
+# class.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,31 +24,19 @@
 # THE SOFTWARE.
 #
 
-module Kernel
+class Class
   
-  def nil?
-    false
+  def allocate
+    `return new #{self}.allocator();`
   end
   
-  def proc &block
-    if block_given?
-      block
-    else
-      raise "ArgumentError: tried to create Proc object without a block"
-    end
+  def new
+    obj = allocate
+    `#{obj}.$initialize.apply(#{obj}, arguments);`
+    obj
   end
   
-  def puts str
-    `console.log(#{str}.toString());`
+  def initialize
+    puts "in Class.new initialize"
   end
-  
-  def to_s
-    # "#<#{`self`}:#{self}.id>"
-    `return vnS("#<" + #{self}.class_name + ":" + #{self}.id + ">");`
-  end
-  
-  def inspect
-    to_s
-  end
-  
 end

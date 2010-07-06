@@ -1,5 +1,5 @@
 # 
-# kernel.rb
+# true_class.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,31 +24,22 @@
 # THE SOFTWARE.
 #
 
-module Kernel
-  
-  def nil?
-    false
-  end
-  
-  def proc &block
-    if block_given?
-      block
-    else
-      raise "ArgumentError: tried to create Proc object without a block"
-    end
-  end
-  
-  def puts str
-    `console.log(#{str}.toString());`
-  end
+class TrueClass
   
   def to_s
-    # "#<#{`self`}:#{self}.id>"
-    `return vnS("#<" + #{self}.class_name + ":" + #{self}.id + ">");`
+    "true"
   end
   
-  def inspect
-    to_s
+  def & other
+    other ? true : false
+  end
+  
+  def | other
+    true
+  end
+  
+  def ^ other
+    other ? false : true
   end
   
 end

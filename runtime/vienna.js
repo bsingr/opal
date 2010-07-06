@@ -25,20 +25,22 @@
  */
  
 // Core classes
-exports.c_object        = null;
-var c_basic_object      = null,
-        c_module        = null,
-        c_class         = null,
-        module_kernel        = null,
-        c_symbol        = null,
-        c_true_class    = null,
-        c_false_class   = null,
-        c_nil_class     = null,
-        class_proc          = null,
-        class_string        = null,
-        c_array         = null,
-        c_hash          = null,
-        class_number       = null;
+// exports.c_object        = null;
+var class_basic_object  = null,
+    class_module        = null,
+    class_class         = null,
+    class_object        = null,
+    module_kernel       = null,
+    class_symbol        = null,
+    class_true_class    = null,
+    class_false_class   = null,
+    class_nil_class     = null,
+    class_proc          = null,
+    class_string        = null,
+    class_array         = null,
+    class_hash          = null,
+    class_number        = null,
+    class_regexp        = null;
 
 // top self
 exports.top_self        = null;
@@ -96,7 +98,7 @@ global.vnY = function(str) {
   if (symbol_table.hasOwnProperty(str))
     return symbol_table[str];
     
-  var res = new c_symbol.allocator();
+  var res = new class_symbol.allocator();
   res.__ptr__ = str;
   symbol_table[str] = res;
   return res;
@@ -105,7 +107,7 @@ global.vnY = function(str) {
 // create a ruby array from arguments..
 // vnA(arr1, arr2....arr3);
 global.vnA = function() {
-  var res = new c_array.allocator();
+  var res = new class_array.allocator();
   res.__arr__ = Array.prototype.slice.call(arguments);
   return res;
 };
@@ -121,6 +123,13 @@ global.vnH = function() {
     res.__keys__.push(k);
     res.__assocs__[k.hash()] = v;
   }
+  return res;
+};
+
+// Regexp
+global.vnR = function(reg) {
+  var res = new class_regexp.allocator();
+  res.__reg__ = reg;
   return res;
 };
 
@@ -141,62 +150,6 @@ if (!Array.prototype.indexOf) {
    return -1;
  };
 };
- 
-//   define_class: function(super_class, id, body, flag) {
-// 
-//     var klass, base = this;
-// 
-//     // need to check if base is object or class. if object, use its class
-//     if (base.flags & T_OBJECT)
-//       base = class_real(base.isa);
-// 
-//     switch (flag) {
-//       // normal class
-//       case 0:
-//         if (super_class === vnNil)
-//           super_class = exports.c_object;
-// 
-//         klass = define_class_under(base, id, super_class);
-//         break;
-//       // class shift
-//       case 1:
-//         throw "define_class: class shift is currently unimplemented"
-//         break;
-//       // module
-//       case 2:
-//         throw "define_class: module is currently unimplemented"
-//         break;
-//       default:
-//         throw "unknown define_class flag: " + flag
-//     }
-// 
-//     // for each case call the body using our klass as the receiver (self/this)
-//     body.apply(klass);
-// 
-//     return klass;
-//   },
-//   
-
-
-//   add_method: function(m_id, js_id, body, singleton) {
-//     
-//     // if singleton... only works for class level (at the moment)
-//         
-//     
-//     if (this.flags & T_CLASS) {
-//       this.allocator.prototype[js_id] = body;
-//     } else {
-//       this[js_id] = body;
-//     }
-//     
-//     
-//     body.method_id = m_id;
-//     body.displayName = m_id;
-//   
-//     // if module, then could use callback to add to all classes this has been
-//     // included in
-//   },
-
 
 // Base of every object or class object in vienna. Every object, string, number,
 // class, module, regexp, proc etc will be an instance of this, so const_set etc
@@ -315,6 +268,10 @@ __boot_base_class.prototype.include = function(module) {
   }
 };
 
+__boot_base_class.prototype.toString = function() {
+  return this.$inspect().__str__;
+};
+
 var define_class_under = function(base, id, super_class) {
   
   if (base.const_defined(id))
@@ -397,6 +354,7 @@ var __boot_makemeta = function(klass, super_class) {
   
   meta.prototype = new super_class();
   
+  meta.prototype.included_in = [];
   meta.prototype.method_table = {};
   meta.prototype.allocator = klass;
   meta.prototype.constructor = meta;
@@ -434,10 +392,10 @@ var boot_object = __boot_defclass("Object", boot_basic_object);
 var boot_module = __boot_defclass("Module", boot_object);
 var boot_class = __boot_defclass("Class", boot_module);
 
-var class_basic_object = __boot_makemeta(boot_basic_object, boot_class);
-var class_object = __boot_makemeta(boot_object, class_basic_object.constructor);
-var class_module = __boot_makemeta(boot_module, class_object.constructor);
-var class_class = __boot_makemeta(boot_class, class_module.constructor);
+class_basic_object = __boot_makemeta(boot_basic_object, boot_class);
+class_object = __boot_makemeta(boot_object, class_basic_object.constructor);
+class_module = __boot_makemeta(boot_module, class_object.constructor);
+class_class = __boot_makemeta(boot_class, class_module.constructor);
 
 __boot_defmetameta(class_basic_object, class_class);
 __boot_defmetameta(class_object, class_class);
@@ -461,6 +419,9 @@ class_module.constructor.prototype.add_method = function(m_id,js_id,body, sing){
   }
 };
 
+// and then fix again for class
+class_class.constructor.prototype.add_method = class_object.constructor.prototype.add_method;
+
 
 exports.Object = class_object;
 exports.top_self = new class_object.allocator();
@@ -478,7 +439,7 @@ class_string.allocator.prototype.hash = function() {
 };
 
 class_string.allocator.prototype.toString = function() {
-  return this.__str__;
+  return this.$inspect().__str__;
 };
 
 // Number class
@@ -496,3 +457,25 @@ class_number.allocator.prototype.toString = function() {
 // Proc class
 class_proc = define_class_under(class_object, "Proc", class_object);
 class_proc.allocator.prototype.info = T_OBJECT | T_PROC;
+
+// True class
+class_true_class = define_class_under(class_object, "TrueClass", class_object);
+vnTrue = new class_true_class.allocator();
+
+// False class
+class_false_class = define_class_under(class_object, "FalseClass",class_object);
+vnFalse = new class_false_class.allocator();
+
+// Nil class
+class_nil_class = define_class_under(class_object, "NilClass", class_object);
+vnNil = new class_nil_class.allocator();
+
+// Array class
+class_array = define_class_under(class_object, "Array", class_object);
+class_array.allocator.prototype.info = T_OBJECT | T_ARRAY;
+
+// Symbol class
+class_symbol = define_class_under(class_object, "Symbol", class_object);
+
+// Regexp
+class_regexp = define_class_under(class_object, "Regexp", class_object);

@@ -1,5 +1,5 @@
 # 
-# kernel.rb
+# nil_class.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,31 +24,42 @@
 # THE SOFTWARE.
 #
 
-module Kernel
-  
+class NilClass
+      
   def nil?
-    false
+    true
   end
   
-  def proc &block
-    if block_given?
-      block
-    else
-      raise "ArgumentError: tried to create Proc object without a block"
-    end
+  def to_i
+    0
   end
   
-  def puts str
-    `console.log(#{str}.toString());`
+  def to_f
+    0.0
   end
   
   def to_s
-    # "#<#{`self`}:#{self}.id>"
-    `return vnS("#<" + #{self}.class_name + ":" + #{self}.id + ">");`
+    ""
+  end
+  
+  def to_a
+    []
   end
   
   def inspect
-    to_s
+    "nil"
+  end
+  
+  def & other
+    false
+  end
+  
+  def | other
+    other ? true : false
+  end
+  
+  def ^ other
+    other ? true : false
   end
   
 end

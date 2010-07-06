@@ -1,5 +1,5 @@
 # 
-# kernel.rb
+# number.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,31 +24,18 @@
 # THE SOFTWARE.
 #
 
-module Kernel
+class Number
   
-  def nil?
-    false
-  end
-  
-  def proc &block
-    if block_given?
-      block
-    else
-      raise "ArgumentError: tried to create Proc object without a block"
-    end
-  end
-  
-  def puts str
-    `console.log(#{str}.toString());`
-  end
-  
-  def to_s
-    # "#<#{`self`}:#{self}.id>"
-    `return vnS("#<" + #{self}.class_name + ":" + #{self}.id + ">");`
-  end
-  
-  def inspect
-    to_s
+  def + other
+    # T_NUMBER = 64
+   `if (#{other}.info & 64)
+      return #{self}.__num__ + #{other}.__num__;
+
+    throw "cannot convert " + #{other} + " into Number"`
   end
   
 end
+
+# `console.log("===== Number test");`
+puts "===== Number test"
+puts 100 + 200
