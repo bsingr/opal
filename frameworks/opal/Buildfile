@@ -1,0 +1,34 @@
+
+build_process = proc {
+  puts "running the build process!"
+}
+
+
+config :all,
+  
+  :build_process => build_process
+  
+#   
+#   File.open('build/vienna.js', 'w') do |out|
+#     # pre
+#     out.puts "var vienna = { };"
+#     out.puts "(function(global, exports) {"
+#     
+#     # runtime
+#     out.puts File.read('runtime/vienna.js')
+#     
+#     # post
+#     out.puts "})(window, vienna);"
+#     
+#     # Core library - use all rb files in core dir, but ensure kerenl.rb and     
+#     # module.rb are first in line as most other things rely on them
+#     ['core/kernel.rb', 'core/module.rb'].concat(Dir.glob('core/**/*.rb')).uniq!.each do |rb|
+#       builder = Vienna::CherryKit::RubyBuilder.new(rb, nil, nil)
+#       out.puts "// #{rb}"
+#       out.puts "#{builder.build!}.apply(vienna.top_self);"
+#     end
+#   end
+#   # puts "need to rebuild vienna.js"
+#   
+# config :spec,
+#   :require => 'spec'

@@ -155,7 +155,36 @@ if (!Array.prototype.indexOf) {
 
 // Base of every object or class object in vienna. Every object, string, number,
 // class, module, regexp, proc etc will be an instance of this, so const_set etc
-// are all on the prototype of this.
+// are all on the prototype of this. This keeps a lot from needing to go into
+// global namespace, and keeps vienna export nice and clean.
+// 
+// prototype definitions
+// =====================
+// 
+// .t - true literal
+// .f - false literal
+// .n - nil literal
+// 
+// .r - ruby truthiness - default is true. false and nil override to false
+// 
+// .a() - and test - takes a functiion as single param to perform and test
+// .o() - or test - takes a functiin as single param to perform or test
+// 
+// .A() - make a ruby array from a js array passed in as single param
+// .S() - make ruby string from js string passed in as single param
+// .Y() - make ruby symbol from js string passed in as single param
+// .N() - make ruby number from js number passed in as single param
+// .H() - make ruby hash
+// .R() - make ruby regexp from js regexp passed in as single param
+// 
+// .TO - T_OBJECT
+// .TC - T_CLASS
+// .TM - T_MODULE
+// .TA - T_ARRAY
+// 
+// .dc() - define class
+// .dm() - define method
+// 
 var __boot_base_class = function() {
   this.id = yield_hash();
 };
@@ -192,8 +221,8 @@ __boot_base_class.prototype.define_class = function(sup, id, body, flag) {
   return klass;
 };
 
-__boot_base_class.prototype.add_method =function(m_id, js_id, body, singleton) {
-  
+__boot_base_class.prototype.dm =function(m_id, js_id, body, singleton) {
+  console.log(m_id);
   body.method_id = m_id;
   body.displayName = m_id;
   
@@ -212,7 +241,8 @@ __boot_base_class.prototype.add_method =function(m_id, js_id, body, singleton) {
       this.allocator.prototype.method_table[js_id] = body;
     }
     else {
-      throw "need to add_method to  object"
+      console.log(this);
+      throw "need to add_method to  object " + m_id
     }
   }
   return;
@@ -272,6 +302,30 @@ __boot_base_class.prototype.include = function(module) {
 
 __boot_base_class.prototype.toString = function() {
   return this.$inspect().__str__;
+};
+
+__boot_base_class.prototype.rtest = function() {
+  return true;
+};
+
+__boot_base_class.prototype.a = function(rhs) {
+  if (this.rtest())
+    return rhs();
+  
+  return this;
+};
+
+__boot_base_class.prototype.ortest = function(rhs) {
+  if (this.rtest())
+    return this;
+  
+  return rhs();
+};
+
+__boot_base_class.prototype.S = function(str) {
+  var res = new class_string.allocator();
+  res.__str__ = str;
+  return res;
 };
 
 var define_class_under = function(base, id, super_class) {
@@ -410,10 +464,10 @@ class_object.const_set("Class", class_class);
 class_object.const_set("Module", class_module);
 
 // Custom methods for modules to handle includes properly
-class_module.constructor.prototype.add_method = function(m_id,js_id,body, sing){
+class_module.constructor.prototype.dm = function(m_id,js_id,body, sing){
     
   // super
-  __boot_base_class.prototype.add_method.apply(this, arguments);
+  __boot_base_class.prototype.dm.apply(this, arguments);
     
   // go through each class we are included in and add new method to that as well
   for (var i = 0; i < this.included_in.length; i++) {
@@ -422,7 +476,7 @@ class_module.constructor.prototype.add_method = function(m_id,js_id,body, sing){
 };
 
 // and then fix again for class
-class_class.constructor.prototype.add_method = class_object.constructor.prototype.add_method;
+class_class.constructor.prototype.dm = class_object.constructor.prototype.dm;
 
 
 exports.Object = class_object;
@@ -453,7 +507,7 @@ class_number.allocator.prototype.hash = function() {
 };
 
 class_number.allocator.prototype.toString = function() {
-  return this.__num__;
+  return this.__num__.toString();
 };
 
 // Proc class
@@ -463,14 +517,24 @@ class_proc.allocator.prototype.info = T_OBJECT | T_PROC;
 // True class
 class_true_class = define_class_under(class_object, "TrueClass", class_object);
 vnTrue = new class_true_class.allocator();
+__boot_base_class.prototype.t = vnTrue;
 
 // False class
 class_false_class = define_class_under(class_object, "FalseClass",class_object);
 vnFalse = new class_false_class.allocator();
 
+vnFalse.rtest = function() {
+  return false;
+};
+
 // Nil class
 class_nil_class = define_class_under(class_object, "NilClass", class_object);
 vnNil = new class_nil_class.allocator();
+__boot_base_class.prototype.n = vnNil;
+
+vnNil.rtest = function() {
+  return false;
+};
 
 // Array class
 class_array = define_class_under(class_object, "Array", class_object);
@@ -483,25 +547,27 @@ class_symbol = define_class_under(class_object, "Symbol", class_object);
 class_regexp = define_class_under(class_object, "Regexp", class_object);
 })(window, vienna);
 // core/kernel.rb
-(function(){this.define_class(vnNil,'Kernel',function(){this.add_method("nil?","$nil$q",function(){return vnFalse;},false);this.add_method("proc","$proc",function(){return (function(){if(RTEST(((_ == nil) ? false : true))){return _;}else{return this.$raise(vnS("ArgumentError: tried to create Proc object without a block"));}})();},false);this.add_method("puts","$puts",function(_a){console.log(_a.toString());},false);this.add_method("to_s","$to_s",function(){return vnS("#<" + this.class_name + ":" + this.id + ">");},false);return this.add_method("inspect","$inspect",function(){return this.$to_s();},false);},2);}).apply(vienna.top_self);
+(function(){var $ = this;$.define_class($.n,'Kernel',function(){var $ = this;$.dm("nil?","$nil$q",function(){var $ = this;return vnFalse;},false);$.dm("proc","$proc",function(){var $ = this;return (function(){if(((_ == nil) ? false : true).rtest()){return _;}else{return $.$raise($.S("ArgumentError: tried to create Proc object without a block"));}}).apply(this);},false);$.dm("puts","$puts",function(_a){var $ = this;console.log(_a.toString());},false);$.dm("to_s","$to_s",function(){var $ = this;return vnS("#<" + $.class_name + ":" + $.id + ">");},false);return $.dm("inspect","$inspect",function(){var $ = this;return $.$to_s();},false);},2);}).apply(vienna.top_self);
 // core/module.rb
-(function(){this.define_class(vnNil,"Module",function(){this.add_method("undef_method","$undef_method",function(_a){return this.$puts(vnS(["need to undefine method: ",_a].join('')));},false);return this.add_method("attr_reader","$attr_reader",function(_a){_a=vnA(Array.prototype.slice.call(arguments));},false);},0);}).apply(vienna.top_self);
+(function(){var $ = this;$.define_class($.n,"Module",function(){var $ = this;$.dm("undef_method","$undef_method",function(_a){var $ = this;return $.$puts($.S(["need to undefine method: ",_a].join('')));},false);return $.dm("attr_reader","$attr_reader",function(_a){var $ = this;_a=vnA(Array.prototype.slice.call(arguments));},false);},0);}).apply(vienna.top_self);
 // core/basic_object.rb
-(function(){this.define_class(vnNil,"BasicObject",function(){this.add_method("initialize","$initialize",function(){return this.$puts(vnS("in basicobject initialize"));},false);this.add_method("==","$$e$e",function(_a){},false);this.add_method("equal?","$equal$q",function(_a){},false);this.add_method("!","$$b",function(){},false);return this.add_method("!=","$$b$e",function(_a){},false);},0);}).apply(vienna.top_self);
+(function(){var $ = this;$.define_class($.n,"BasicObject",function(){var $ = this;$.dm("initialize","$initialize",function(){var $ = this;return $.$puts($.S("in basicobject initialize"));},false);$.dm("==","$$e$e",function(_a){var $ = this;},false);$.dm("equal?","$equal$q",function(_a){var $ = this;},false);$.dm("!","$$b",function(){var $ = this;},false);return $.dm("!=","$$b$e",function(_a){var $ = this;},false);},0);}).apply(vienna.top_self);
 // core/class.rb
-(function(){this.define_class(vnNil,"Class",function(){this.add_method("allocate","$allocate",function(){return new this.allocator();},false);this.add_method("new","$new",function(){var _a;_a=this.$allocate();_a.$initialize.apply(_a, arguments);return _a;},false);return this.add_method("initialize","$initialize",function(){return this.$puts(vnS("in Class.new initialize"));},false);},0);}).apply(vienna.top_self);
+(function(){var $ = this;$.define_class($.n,"Class",function(){var $ = this;$.dm("allocate","$allocate",function(){var $ = this;return new $.allocator();},false);$.dm("new","$new",function(){var $ = this;var _a;_a=$.$allocate();_a.$initialize.apply(_a, arguments);return _a;},false);return $.dm("initialize","$initialize",function(){var $ = this;return $.$puts($.S("in Class.new initialize"));},false);},0);}).apply(vienna.top_self);
 // core/nil_class.rb
-(function(){this.define_class(vnNil,"NilClass",function(){this.add_method("nil?","$nil$q",function(){return vnTrue;},false);this.add_method("to_i","$to_i",function(){return vnN(0);},false);this.add_method("to_f","$to_f",function(){return vnN(0.0);},false);this.add_method("to_s","$to_s",function(){return vnS("");},false);this.add_method("to_a","$to_a",function(){return vnA();},false);this.add_method("inspect","$inspect",function(){return vnS("nil");},false);this.add_method("&","$&",function(_a){return vnFalse;},false);this.add_method("|","$|",function(_a){return RTEST(_a)? vnTrue : vnFalse;},false);return this.add_method("^","$^",function(_a){return RTEST(_a)? vnTrue : vnFalse;},false);},0);}).apply(vienna.top_self);
+(function(){var $ = this;$.define_class($.n,"NilClass",function(){var $ = this;$.dm("nil?","$nil$q",function(){var $ = this;return $.t;},false);$.dm("to_i","$to_i",function(){var $ = this;return vnN(0);},false);$.dm("to_f","$to_f",function(){var $ = this;return vnN(0.0);},false);$.dm("to_s","$to_s",function(){var $ = this;return $.S("");},false);$.dm("to_a","$to_a",function(){var $ = this;return vnA();},false);$.dm("inspect","$inspect",function(){var $ = this;return $.S("nil");},false);$.dm("&","$$a",function(_a){var $ = this;return vnFalse;},false);$.dm("|","$$r",function(_a){var $ = this;return RTEST(_a)? $.t : vnFalse;},false);return $.dm("^","$^",function(_a){var $ = this;return RTEST(_a)? $.t : vnFalse;},false);},0);}).apply(vienna.top_self);
 // core/number.rb
-(function(){this.define_class(vnNil,"Number",function(){return this.add_method("+","$$p",function(_a){if (_a.info & 64)
-      return this.__num__ + _a.__num__;
+(function(){var $ = this;$.define_class($.n,"Number",function(){var $ = this;return $.dm("+","$$p",function(_a){var $ = this;if (_a.info & 64)
+      return $.__num__ + _a.__num__;
 
-    throw "cannot convert " + _a + " into Number"},false);},0);this.$puts(vnS("===== Number test"));this.$puts(vnN(100).$$p(vnN(200)));}).apply(vienna.top_self);
+    throw "cannot convert " + _a + " into Number"},false);},0);$.$puts($.S("===== Number test"));$.$puts(vnN(100).$$p(vnN(200)));}).apply(vienna.top_self);
 // core/regexp.rb
-(function(){this.define_class(vnNil,"Regexp",function(){},0);}).apply(vienna.top_self);
+(function(){var $ = this;$.define_class($.n,"Regexp",function(){var $ = this;},0);}).apply(vienna.top_self);
 // core/string.rb
-(function(){var _a;this.define_class(vnNil,"String",function(){this.add_method("initialize","$initialize",function(){this.__str__ = this.$string();},false);this.add_method("==","$$e$e",function(_a){return this.__str__ === _a.__str__;},false);this.add_method("upcase!","$upcase$b",function(){return this.__str__ = this.__str__.toUpperCase();},false);return this.add_method("to_s","$to_s",function(){return this;},false);},0);console.log("===== String test");_a=vnS("hey there");console.log(_a);}).apply(vienna.top_self);
+(function(){var $ = this;$.define_class($.n,"String",function(){var $ = this;$.dm("initialize","$initialize",function(){var $ = this;$.__str__ = $.$string();},false);$.dm("==","$$e$e",function(_a){var $ = this;return $.__str__ === _a.__str__;},false);$.dm("upcase!","$upcase$b",function(){var $ = this;return $.__str__ = $.__str__.toUpperCase();},false);return $.dm("to_s","$to_s",function(){var $ = this;return $;},false);},0);}).apply(vienna.top_self);
 // core/symbol.rb
-(function(){this.define_class(vnNil,"Symbol",function(){return this.add_method("inspect","$inspect",function(){return vnS(":" + this.__ptr__);},false);},0);}).apply(vienna.top_self);
+(function(){var $ = this;$.define_class($.n,"Symbol",function(){var $ = this;return $.dm("inspect","$inspect",function(){var $ = this;return vnS(":" + $.__ptr__);},false);},0);}).apply(vienna.top_self);
 // core/true_class.rb
-(function(){this.define_class(vnNil,"TrueClass",function(){this.add_method("to_s","$to_s",function(){return vnS("true");},false);this.add_method("&","$&",function(_a){return RTEST(_a)? vnTrue : vnFalse;},false);this.add_method("|","$|",function(_a){return vnTrue;},false);return this.add_method("^","$^",function(_a){return RTEST(_a)? vnFalse : vnTrue;},false);},0);}).apply(vienna.top_self);
+(function(){var $ = this;$.define_class($.n,"TrueClass",function(){var $ = this;$.dm("to_s","$to_s",function(){var $ = this;return $.S("true");},false);$.dm("&","$$a",function(_a){var $ = this;return RTEST(_a)? $.t : vnFalse;},false);$.dm("|","$$r",function(_a){var $ = this;return $.t;},false);return $.dm("^","$^",function(_a){var $ = this;return RTEST(_a)? vnFalse : $.t;},false);},0);}).apply(vienna.top_self);
+// core/zz_testing.rb
+(function(){var $ = this;$.$puts($.S("==================== Starting testing"));$.$puts($.S("============= and testing"));$.$puts($.S("true && false - should be false"));$.$puts($.t.a((function(){return vnFalse;})));$.$puts($.S("true && nil - should be nil"));$.$puts($.t.a((function(){return $.n;})));$.$puts($.S("true && nol && false - should be nil"));$.$puts($.t.a((function(){return $.n;})).a((function(){return vnFalse;})));$.$puts($.S("true && 10 && false - should be false"));$.$puts($.t.a((function(){return vnN(10);})).a((function(){return vnFalse;})));$.$puts($.S("true && true - should be true"));$.$puts($.t.a((function(){return $.t;})));$.$puts($.S("true && 'hello' - should be hello"));$.$puts($.t.a((function(){return $.S("hello");})));$.$puts($.S("hello && 10 && 5 - should be 5"));$.$puts($.S("hello").a((function(){return vnN(10);})).a((function(){return vnN(5);})));$.$puts($.S("=============== or testing"));$.$puts($.S("true || true - should be true"));$.$puts($.t.ortest((function(){return $.t;})));$.$puts($.S("true || false - should be true"));$.$puts($.t.ortest((function(){return vnFalse;})));$.$puts($.S("true || nil - should be true"));$.$puts($.t.ortest((function(){return $.n;})));}).apply(vienna.top_self);

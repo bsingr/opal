@@ -1,12 +1,12 @@
 require 'rubygems'
 require 'rake'
-require 'spec/rake/spectask'
-require 'ftools'
+# require 'spec/rake/spectask'
+# require 'ftools'
 require 'yard'
-
-Dir[File.join(File.dirname(__FILE__), 'tasks', '**', '*.rb')].each do |t|
-  require t
-end
+# 
+# Dir[File.join(File.dirname(__FILE__), 'tasks', '**', '*.rb')].each do |t|
+#   require t
+# end
 
 begin
   require 'jeweler'
@@ -28,10 +28,10 @@ task :vienna do
   require File.join(File.dirname(__FILE__), 'lib', 'vienna')
 end
 
-desc "Run all specs"
-Spec::Rake::SpecTask.new('spec') do |t|
-  t.spec_files = FileList['spec/**/*.rb']
-end
+# desc "Run all specs"
+# Spec::Rake::SpecTask.new('spec') do |t|
+#   t.spec_files = FileList['spec/**/*.rb']
+# end
 
 
 desc "Rebuild ruby parser (using racc)"
@@ -40,28 +40,34 @@ task :ruby_parser do
 end
 
 
-desc "Rebuild vienna.js runtime file"
-task :vienna do
-  File.open('build/vienna.js', 'w') do |out|
-    # pre
-    out.puts "var vienna = { };"
-    out.puts "(function(global, exports) {"
-    
-    # runtime
-    out.puts File.read('runtime/vienna.js')
-    
-    # post
-    out.puts "})(window, vienna);"
-    
-    # Core library - use all rb files in core dir, but ensure kerenl.rb and     
-    # module.rb are first in line as most other things rely on them
-    ['core/kernel.rb', 'core/module.rb'].concat(Dir.glob('core/**/*.rb')).uniq!.each do |rb|
-      builder = Vienna::CherryKit::RubyBuilder.new(rb, nil, nil)
-      out.puts "// #{rb}"
-      out.puts "#{builder.build!}.apply(vienna.top_self);"
-    end
-  end
-  # puts "need to rebuild vienna.js"
+# desc "Rebuild vienna.js runtime file"
+# task :vienna do
+#   File.open('build/vienna.js', 'w') do |out|
+#     # pre
+#     out.puts "var vienna = { };"
+#     out.puts "(function(global, exports) {"
+#     
+#     # runtime
+#     out.puts File.read('runtime/vienna.js')
+#     
+#     # post
+#     out.puts "})(window, vienna);"
+#     
+#     # Core library - use all rb files in core dir, but ensure kerenl.rb and     
+#     # module.rb are first in line as most other things rely on them
+#     ['core/kernel.rb', 'core/module.rb'].concat(Dir.glob('core/**/*.rb')).uniq!.each do |rb|
+#       builder = Vienna::CherryKit::RubyBuilder.new(rb, nil, nil)
+#       out.puts "// #{rb}"
+#       out.puts "#{builder.build!}.apply(vienna.top_self);"
+#     end
+#   end
+#   # puts "need to rebuild vienna.js"
+# end
+
+desc "build opal"
+task :opal => :vienna do
+  opal = Vienna::Framework.new File.join(File.dirname(__FILE__), 'frameworks', 'opal')
+  opal.build! :build_dir => File.join(File.dirname(__FILE__), 'build')
 end
 
 YARD::Rake::YardocTask.new do |t|
@@ -69,6 +75,7 @@ YARD::Rake::YardocTask.new do |t|
   t.files   = ['core/**/*.rb']               # optional
   # t.options = ['--any', '--extra', '--opts'] # optional
   t.options = ['-o./doc/vienna', '-tvienna']
+  t.options += ['--title', 'Vienna Documentation']
 end
 
 # YARD::Rake::YardocTask.new(:cherry_kit) do |t|

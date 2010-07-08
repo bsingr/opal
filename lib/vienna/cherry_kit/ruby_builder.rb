@@ -160,19 +160,19 @@ module Vienna
           
           # Case 1: no args at all (block is dealt with seperately) - def a()
           if norm == 0 && opt == 0 && post == 0 && rest.nil?
-            r << "){"
+            r << "){var $ = this;"
             
           # Case 2: just splat args - def a(*args)
           elsif norm == 0 && opt == 0 && post == 0 && rest
             r << "#{@args[@rest_arg_name]}"
-            r << "){"
+            r << "){var $ = this;"
             r << %{#{@args[@rest_arg_name]}=vnA(Array.prototype.slice.call(arguments));}
           
           # Case: one norm arg, rest splat args - def a(name, *args)
           elsif norm == 1 && opt == 0 && post == 0 && rest
             r << "#{@args[@norm_arg_names.first]}"
             r << ",#{@args[@rest_arg_name]}"
-            r << "){"
+            r << "){var $ = this;"
             r << "#{@args[@norm_arg_names.first]}=arguments[0];"
             r << %{#{@args[@rest_arg_name]}=vnA(Array.prototype.slice.call(arguments,1));}
             
@@ -182,7 +182,7 @@ module Vienna
               r << "," unless a == @norm_arg_names.first
               r << "#{@args[a]}"
             end
-            r << "){"
+            r << "){var $ = this;"
           end
         end
         
@@ -191,7 +191,7 @@ module Vienna
           
           case @type
           when RubyBuilder::ISEQ_TYPE_TOP
-            r << "(function(){"
+            r << "(function(){var $ = this;"
             # locals
             if @locals.length > 0
               r << "var #{@locals.each_value.to_a.join(",")};"
@@ -199,7 +199,7 @@ module Vienna
             r << @code.join("")
             r << "})"
           when RubyBuilder::ISEQ_TYPE_CLASS
-            r << "function(){"
+            r << "function(){var $ = this;"
             
             # locals
             if @locals.length > 0
@@ -261,7 +261,9 @@ module Vienna
         gsub(/\=/, "$e").
         gsub(/\?/, "$q").
         gsub(/\+/, "$p").
-        gsub(/\-/, "$m")
+        gsub(/\-/, "$m").
+        gsub(/\|/, '$r').
+        gsub(/\&/, "$a")
       end
       
       def generate_tree(tree)
@@ -303,12 +305,12 @@ module Vienna
         
         iseq_stack_pop
         
-        write "this.define_class("
+        write "#{SELF}.define_class("
         # superclass
         if cls.super_klass
           generate_stmt cls.super_klass[:expr], :full_stmt => false
         else
-          write "vnNil"
+          write "#{NIL}"
         end
         write %{,"#{cls.klass_name}",#{class_iseq},0)}
         
@@ -331,7 +333,7 @@ module Vienna
         
         iseq_stack_pop
         
-        write "this.define_class(vnNil,'#{cls.klass_name}',#{class_iseq},2)"
+        write "#{SELF}.define_class(#{NIL},'#{cls.klass_name}',#{class_iseq},2)"
         
         # write "vm$e($,"
         # superclass - always nil for module
@@ -418,9 +420,9 @@ module Vienna
         # base.. singleton or self
         if stmt[:singleton]
           generate_stmt stmt[:singleton], :full_stmt => false, :last_stmt => false
-          write ".add_method("
+          write ".dm("
         else
-          write "this.add_method("
+          write "#{SELF}.dm("
         end
         
         write %{"#{stmt[:fname]}","#{mid_to_jsid(stmt[:fname])}",#{def_iseq},#{is_singleton})}
@@ -434,7 +436,7 @@ module Vienna
           write local
         else
           # write %{vm$a($,"#{stmt[:name]}",[],nil,8)}
-          write "this.#{mid_to_jsid(stmt[:name])}()"
+          write "#{SELF}.#{mid_to_jsid(stmt[:name])}()"
         end
         
         write ";" if context[:full_stmt]
@@ -451,7 +453,7 @@ module Vienna
         else
           call_bit = 8
           # self as recv
-          write "this"
+          write "#{SELF}"
         end
         
         # method id
@@ -562,11 +564,11 @@ module Vienna
         write "return " if context[:last_stmt] and context[:full_stmt]
         
         if str[:value].length == 0
-          write %{vnS("")}
+          write %{#{SELF}.S("")}
         elsif str[:value].length == 1
-          write %{vnS("#{str[:value][0][:value].gsub(/\"/, '\"')}")}
+          write %{#{SELF}.S("#{str[:value][0][:value].gsub(/\"/, '\"')}")}
         else
-          write "vnS(["
+          write "#{SELF}.S(["
           str[:value].each do |s|
             write "," unless str[:value].first == s
             if s.node == :string_content
@@ -605,7 +607,7 @@ module Vienna
       
       def generate_constant(cnst, context)
         write "return " if context[:last_stmt] and context[:full_stmt]
-        write "this.const_get('#{cnst[:name]}')"
+        write "#{SELF}.const_get('#{cnst[:name]}')"
         # write %{vm$b($,"#{cnst[:name]}")}
         write ";" if context[:full_stmt]
       end
@@ -652,9 +654,14 @@ module Vienna
         write ";" if context[:full_stmt]
       end
       
+      # how we replace "self/this"
+      SELF = "$"
+      # how we replace nil
+      NIL = "#{SELF}.n"
+      
       def generate_self(stmt, context)
         write "return " if context[:last_stmt] and context[:full_stmt]
-        write "this"
+        write "#{SELF}"
         write ";" if context[:full_stmt]
       end
       
@@ -790,13 +797,13 @@ module Vienna
       
       def generate_nil(stmt, context)
         write "return " if context[:last_stmt] and context[:full_stmt]
-        write "vnNil"
+        write NIL
         write ";" if context[:full_stmt]
       end
       
       def generate_true(stmt, context)
         write "return " if context[:last_stmt] and context[:full_stmt]
-        write "vnTrue"
+        write "#{SELF}.t"
         write ";" if context[:full_stmt]
       end
       
@@ -873,13 +880,13 @@ module Vienna
 
         # if/unless clause
         if stmt.node == :if
-          write "if(RTEST("
+          write "if("
         else # must be unless
-          write "if(!RTEST("
+          write "if(!"
         end
 
         generate_stmt stmt[:expr], :full_stmt => false, :last_stmt => false
-        write ")){"
+        write ".rtest()){"
         stmt[:stmt].each do |s|
           # alays return last stmt. we output inside a function context to capture
           # the return value so that this will not return from the function itself
@@ -908,7 +915,7 @@ module Vienna
           end
         end
 
-        write"})()"
+        write"}).apply(this)"
         write ";" if context[:full_stmt]
       end
       
@@ -1000,13 +1007,11 @@ module Vienna
       
       def generate_orop(stmt, context)
         write "return " if context[:full_stmt] and context[:last_stmt]
-        # we must wrap lhs and rhs in functions. we do not want to evaluate them
-        # until we need to... javascript truthyness !== ruby truthyness
-        write "ORTEST(function(){"
-        generate_stmt stmt[:lhs], :full_stmt => true, :last_stmt => true
-        write "},function(){"
+        generate_stmt stmt[:lhs], :full_stmt => false, :last_stmt => true
+        write ".ortest("
+        write "(function(){"
         generate_stmt stmt[:rhs], :full_stmt => true, :last_stmt => true
-        write "}"
+        write "})"
 
         write ")"
         write ";" if context[:full_stmt]
@@ -1014,11 +1019,11 @@ module Vienna
       
       def generate_andop(stmt, context)
         write "return " if context[:full_stmt] and context[:last_stmt]
-        write "ANDTEST(function(){"
-        generate_stmt stmt[:lhs], :full_stmt => true, :last_stmt => true
-        write "},function(){"
+        generate_stmt stmt[:lhs], :full_stmt => false, :last_stmt => true
+        write ".a("
+        write "(function(){"
         generate_stmt stmt[:rhs], :full_stmt => true, :last_stmt => true
-        write "}"
+        write "})"
 
         write ")"
         write ";" if context[:full_stmt]

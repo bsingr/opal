@@ -25,7 +25,3 @@ class String
   end
   
 end
-
-`console.log("===== String test");`
-string_test = "hey there"
-`console.log(#{string_test});`

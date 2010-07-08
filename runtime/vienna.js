@@ -153,7 +153,36 @@ if (!Array.prototype.indexOf) {
 
 // Base of every object or class object in vienna. Every object, string, number,
 // class, module, regexp, proc etc will be an instance of this, so const_set etc
-// are all on the prototype of this.
+// are all on the prototype of this. This keeps a lot from needing to go into
+// global namespace, and keeps vienna export nice and clean.
+// 
+// prototype definitions
+// =====================
+// 
+// .t - true literal
+// .f - false literal
+// .n - nil literal
+// 
+// .r - ruby truthiness - default is true. false and nil override to false
+// 
+// .a() - and test - takes a functiion as single param to perform and test
+// .o() - or test - takes a functiin as single param to perform or test
+// 
+// .A() - make a ruby array from a js array passed in as single param
+// .S() - make ruby string from js string passed in as single param
+// .Y() - make ruby symbol from js string passed in as single param
+// .N() - make ruby number from js number passed in as single param
+// .H() - make ruby hash
+// .R() - make ruby regexp from js regexp passed in as single param
+// 
+// .TO - T_OBJECT
+// .TC - T_CLASS
+// .TM - T_MODULE
+// .TA - T_ARRAY
+// 
+// .dc() - define class
+// .dm() - define method
+// 
 var __boot_base_class = function() {
   this.id = yield_hash();
 };
@@ -190,8 +219,8 @@ __boot_base_class.prototype.define_class = function(sup, id, body, flag) {
   return klass;
 };
 
-__boot_base_class.prototype.add_method =function(m_id, js_id, body, singleton) {
-  
+__boot_base_class.prototype.dm =function(m_id, js_id, body, singleton) {
+  console.log(m_id);
   body.method_id = m_id;
   body.displayName = m_id;
   
@@ -210,7 +239,8 @@ __boot_base_class.prototype.add_method =function(m_id, js_id, body, singleton) {
       this.allocator.prototype.method_table[js_id] = body;
     }
     else {
-      throw "need to add_method to  object"
+      console.log(this);
+      throw "need to add_method to  object " + m_id
     }
   }
   return;
@@ -270,6 +300,30 @@ __boot_base_class.prototype.include = function(module) {
 
 __boot_base_class.prototype.toString = function() {
   return this.$inspect().__str__;
+};
+
+__boot_base_class.prototype.rtest = function() {
+  return true;
+};
+
+__boot_base_class.prototype.a = function(rhs) {
+  if (this.rtest())
+    return rhs();
+  
+  return this;
+};
+
+__boot_base_class.prototype.ortest = function(rhs) {
+  if (this.rtest())
+    return this;
+  
+  return rhs();
+};
+
+__boot_base_class.prototype.S = function(str) {
+  var res = new class_string.allocator();
+  res.__str__ = str;
+  return res;
 };
 
 var define_class_under = function(base, id, super_class) {
@@ -408,10 +462,10 @@ class_object.const_set("Class", class_class);
 class_object.const_set("Module", class_module);
 
 // Custom methods for modules to handle includes properly
-class_module.constructor.prototype.add_method = function(m_id,js_id,body, sing){
+class_module.constructor.prototype.dm = function(m_id,js_id,body, sing){
     
   // super
-  __boot_base_class.prototype.add_method.apply(this, arguments);
+  __boot_base_class.prototype.dm.apply(this, arguments);
     
   // go through each class we are included in and add new method to that as well
   for (var i = 0; i < this.included_in.length; i++) {
@@ -420,7 +474,7 @@ class_module.constructor.prototype.add_method = function(m_id,js_id,body, sing){
 };
 
 // and then fix again for class
-class_class.constructor.prototype.add_method = class_object.constructor.prototype.add_method;
+class_class.constructor.prototype.dm = class_object.constructor.prototype.dm;
 
 
 exports.Object = class_object;
@@ -451,7 +505,7 @@ class_number.allocator.prototype.hash = function() {
 };
 
 class_number.allocator.prototype.toString = function() {
-  return this.__num__;
+  return this.__num__.toString();
 };
 
 // Proc class
@@ -461,14 +515,24 @@ class_proc.allocator.prototype.info = T_OBJECT | T_PROC;
 // True class
 class_true_class = define_class_under(class_object, "TrueClass", class_object);
 vnTrue = new class_true_class.allocator();
+__boot_base_class.prototype.t = vnTrue;
 
 // False class
 class_false_class = define_class_under(class_object, "FalseClass",class_object);
 vnFalse = new class_false_class.allocator();
 
+vnFalse.rtest = function() {
+  return false;
+};
+
 // Nil class
 class_nil_class = define_class_under(class_object, "NilClass", class_object);
 vnNil = new class_nil_class.allocator();
+__boot_base_class.prototype.n = vnNil;
+
+vnNil.rtest = function() {
+  return false;
+};
 
 // Array class
 class_array = define_class_under(class_object, "Array", class_object);

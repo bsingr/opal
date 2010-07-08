@@ -25,7 +25,7 @@
 #
 
 require 'fileutils'
-require 'ftools'
+# require 'ftools'
 require 'base64'
 
 module Vienna
