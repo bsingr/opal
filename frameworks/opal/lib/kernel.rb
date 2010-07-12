@@ -30,6 +30,11 @@ module Kernel
     false
   end
   
+  def require require_path
+    `opal.require(#{require_path}.__str__);`
+    require_path
+  end
+  
   def proc &block
     if block_given?
       block

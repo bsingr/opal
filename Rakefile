@@ -24,7 +24,7 @@ rescue LoadError
 end
 
 desc "Simple task to require vienna framework. Uses local, not installed."
-task :vienna do
+task :vienna_gem do
   require File.join(File.dirname(__FILE__), 'lib', 'vienna')
 end
 
@@ -65,10 +65,11 @@ end
 # end
 
 desc "build opal"
-task :opal => :vienna do
+task :opal => :vienna_gem do
   opal = Vienna::Framework.new File.join(File.dirname(__FILE__), 'frameworks', 'opal')
   opal.build! :build_dir => File.join(File.dirname(__FILE__), 'build')
 end
+
 
 YARD::Rake::YardocTask.new do |t|
   YARD::Templates::Engine.register_template_path(File.join(Dir.getwd, 'yard_templates'))

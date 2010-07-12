@@ -1,6 +1,28 @@
-
+# Custom build action
 build_process = proc {
   puts "running the build process!"
+  File.open(js_build_path, 'w') do |out|
+    # pre
+    out.puts "var opal = {};"
+    out.puts "(function(global, exports) {"
+    
+    # runtime
+    out.puts read_file("runtime/opal.js")
+    
+    # post
+    out.puts "})(window, opal);"
+    
+    # core library - use all ruby sources in core dir but ensure kernel and 
+    # module and first in line as most other things rely on them
+    rb_sources = [file('lib/kernel.rb'), file('lib/module.rb')]
+    rb_sources.concat(Dir.glob(File.join(framework_root, 'lib/**/*.rb'))).uniq!
+    
+    rb_sources.each do |rb|
+      builder = Vienna::CherryKit::RubyBuilder.new(rb, nil, nil)
+      out.puts "// #{rb}"
+      out.puts "#{builder.build!}.apply(opal.top_self);"
+    end
+  end
 }
 
 
@@ -8,27 +30,5 @@ config :all,
   
   :build_process => build_process
   
-#   
-#   File.open('build/vienna.js', 'w') do |out|
-#     # pre
-#     out.puts "var vienna = { };"
-#     out.puts "(function(global, exports) {"
-#     
-#     # runtime
-#     out.puts File.read('runtime/vienna.js')
-#     
-#     # post
-#     out.puts "})(window, vienna);"
-#     
-#     # Core library - use all rb files in core dir, but ensure kerenl.rb and     
-#     # module.rb are first in line as most other things rely on them
-#     ['core/kernel.rb', 'core/module.rb'].concat(Dir.glob('core/**/*.rb')).uniq!.each do |rb|
-#       builder = Vienna::CherryKit::RubyBuilder.new(rb, nil, nil)
-#       out.puts "// #{rb}"
-#       out.puts "#{builder.build!}.apply(vienna.top_self);"
-#     end
-#   end
-#   # puts "need to rebuild vienna.js"
-#   
-# config :spec,
-#   :require => 'spec'
+config :spec,
+  :require => 'spec'
