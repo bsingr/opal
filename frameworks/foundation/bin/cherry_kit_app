@@ -1,0 +1,8 @@
+
+# require 'desktop'
+
+# basically:
+#   require cherry_kit etc
+#   require "application.rb" file in cwd/lib/application.rb
+#   ... enjoy the app running! woop!
+

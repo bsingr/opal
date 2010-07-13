@@ -222,7 +222,7 @@ __boot_base_class.prototype.define_class = function(sup, id, body, flag) {
 };
 
 __boot_base_class.prototype.dm =function(m_id, js_id, body, singleton) {
-  console.log(m_id);
+  // console.log(m_id);
   body.method_id = m_id;
   body.displayName = m_id;
   
@@ -608,16 +608,19 @@ exports.register = function(specification) {
 
 // same as above but register this as the default application sequence. will
 // look in this opal for a bin file with same name to be used for running
-exports.register_application = function(specification) {
-  exports.register(specification);
-  bin_file = '/' + specification.name + '/bin/' + specification.name;
-};
+// exports.register_application = function(specification) {
+//   exports.register(specification);
+//   bin_file = '/' + specification.name + '/bin/' + specification.name;
+// };
 
 // array of loadpaths used in "require" .. each opal listed etc
 var load_paths = [];
 
 // to load on window.load
 var bin_file = null;
+
+// cwd for application
+var opal_cwd = null;
 
 // list of all opals: name to specification json object
 var opal_list = {};
@@ -634,9 +637,13 @@ var file_list = {};
 // =======================================================
 // = Temp launching - should be done via window.onload.. =
 // =======================================================
-exports.run = function() {
-  console.log('now ready to run: ' + bin_file);
-  file_require_path(bin_file);
+// Run is our main file to run. usually app path, sometimes spec path etc
+// 
+// @param [String] path - the main executable file
+// @param [String] path - the working directory
+exports.run = function(path, cwd) {
+  bin_file = path;
+  opal_cwd = cwd;
 };
 
 // require the file at the given path: we have already checked it exists - mark
@@ -649,32 +656,88 @@ var file_require_path = function(path) {
 
 // require the js string path.. might come from ruby, might come from js
 exports.require = function(path) {
-  console.log("native require: " + path);
-  console.log(load_paths);
+  // console.log("native require: " + path);
+  // console.log(load_paths);
+  
+  // basically loop through each of the load paths looking for a match
+  if (path.substr(path.length - 3) != '.rb') {
+    // console.log("need to add .rb");
+    path += '.rb'
+  }
+  
+  for (var i = 0; i < load_paths.length; i++) {
+    var try_path = load_paths[i] + path;
+    // console.log("does exist? " + try_path);
+    if (file_list.hasOwnProperty(try_path)) {
+      if (file_list[try_path].opal_required) {
+        console.log("already required " + path);
+        return;
+      }
+      // console.log("shit son!!!!");
+      // console.log(file_list[try_path]);
+      return file_require_path(try_path);
+    }
+  }
+  
+  throw "could not find require: " + path;
 };
+
+// ================
+// = On ready etc =
+// ================
+var on_ready = function() {
+  console.log("===== on_ready");
+  console.log('now ready to run: ' + bin_file + ' with working directory ' + opal_cwd);
+  file_require_path(bin_file);
+};
+
+// attach ready function
+(function(){
+  console.log("getting DOMContentLoaded setep");
+  // w3c
+  if (document.addEventListener) {
+    document.addEventListener("DOMContentLoaded", on_ready, false);
+  }
+})();
+
+// =========================
+// = Browser bits and bobs =
+// =========================
+
+exports.browser = (function() {
+  var agent = navigator.userAgent.toLowerCase();
+  var version = 1;
+  var browser = {
+    version: 0,
+    safari: (/webkit/).test(agent) ? version : 0,
+    opera: (/opera/).test(agent) ? version : 0
+  };
+  
+  return browser;
+})();
 })(window, opal);
-// /Users/adambeynon/Development/vienna/frameworks/opal/lib/kernel.rb
+// /Users/adam/Development/vienna/frameworks/opal/lib/kernel.rb
 (function(){var $ = this;$.define_class($.n,'Kernel',function(){var $ = this;$.dm("nil?","$nil$q",function(){var $ = this;return vnFalse;},false);$.dm("require","$require",function(_a){var $ = this;opal.require(_a.__str__);return _a;},false);$.dm("proc","$proc",function(){var $ = this;return (function(){if(((_ == nil) ? false : true).rtest()){return _;}else{return $.$raise($.S("ArgumentError: tried to create Proc object without a block"));}}).apply(this);},false);$.dm("puts","$puts",function(_a){var $ = this;console.log(_a.toString());},false);$.dm("to_s","$to_s",function(){var $ = this;return vnS("#<" + $.class_name + ":" + $.id + ">");},false);return $.dm("inspect","$inspect",function(){var $ = this;return $.$to_s();},false);},2);}).apply(opal.top_self);
-// /Users/adambeynon/Development/vienna/frameworks/opal/lib/module.rb
+// /Users/adam/Development/vienna/frameworks/opal/lib/module.rb
 (function(){var $ = this;$.define_class($.n,"Module",function(){var $ = this;$.dm("undef_method","$undef_method",function(_a){var $ = this;return $.$puts($.S(["need to undefine method: ",_a].join('')));},false);return $.dm("attr_reader","$attr_reader",function(_a){var $ = this;_a=vnA(Array.prototype.slice.call(arguments));},false);},0);}).apply(opal.top_self);
-// /Users/adambeynon/Development/vienna/frameworks/opal/lib/basic_object.rb
+// /Users/adam/Development/vienna/frameworks/opal/lib/basic_object.rb
 (function(){var $ = this;$.define_class($.n,"BasicObject",function(){var $ = this;$.dm("initialize","$initialize",function(){var $ = this;return $.$puts($.S("in basicobject initialize"));},false);$.dm("==","$$e$e",function(_a){var $ = this;},false);$.dm("equal?","$equal$q",function(_a){var $ = this;},false);$.dm("!","$$b",function(){var $ = this;},false);return $.dm("!=","$$b$e",function(_a){var $ = this;},false);},0);}).apply(opal.top_self);
-// /Users/adambeynon/Development/vienna/frameworks/opal/lib/class.rb
+// /Users/adam/Development/vienna/frameworks/opal/lib/class.rb
 (function(){var $ = this;$.define_class($.n,"Class",function(){var $ = this;$.dm("allocate","$allocate",function(){var $ = this;return new $.allocator();},false);$.dm("new","$new",function(){var $ = this;var _a;_a=$.$allocate();_a.$initialize.apply(_a, arguments);return _a;},false);return $.dm("initialize","$initialize",function(){var $ = this;return $.$puts($.S("in Class.new initialize"));},false);},0);}).apply(opal.top_self);
-// /Users/adambeynon/Development/vienna/frameworks/opal/lib/nil_class.rb
+// /Users/adam/Development/vienna/frameworks/opal/lib/nil_class.rb
 (function(){var $ = this;$.define_class($.n,"NilClass",function(){var $ = this;$.dm("nil?","$nil$q",function(){var $ = this;return $.t;},false);$.dm("to_i","$to_i",function(){var $ = this;return vnN(0);},false);$.dm("to_f","$to_f",function(){var $ = this;return vnN(0.0);},false);$.dm("to_s","$to_s",function(){var $ = this;return $.S("");},false);$.dm("to_a","$to_a",function(){var $ = this;return vnA();},false);$.dm("inspect","$inspect",function(){var $ = this;return $.S("nil");},false);$.dm("&","$$a",function(_a){var $ = this;return vnFalse;},false);$.dm("|","$$r",function(_a){var $ = this;return RTEST(_a)? $.t : vnFalse;},false);return $.dm("^","$^",function(_a){var $ = this;return RTEST(_a)? $.t : vnFalse;},false);},0);}).apply(opal.top_self);
-// /Users/adambeynon/Development/vienna/frameworks/opal/lib/number.rb
+// /Users/adam/Development/vienna/frameworks/opal/lib/number.rb
 (function(){var $ = this;$.define_class($.n,"Number",function(){var $ = this;return $.dm("+","$$p",function(_a){var $ = this;if (_a.info & 64)
       return $.__num__ + _a.__num__;
 
     throw "cannot convert " + _a + " into Number"},false);},0);$.$puts($.S("===== Number test"));$.$puts(vnN(100).$$p(vnN(200)));}).apply(opal.top_self);
-// /Users/adambeynon/Development/vienna/frameworks/opal/lib/regexp.rb
+// /Users/adam/Development/vienna/frameworks/opal/lib/regexp.rb
 (function(){var $ = this;$.define_class($.n,"Regexp",function(){var $ = this;},0);}).apply(opal.top_self);
-// /Users/adambeynon/Development/vienna/frameworks/opal/lib/string.rb
+// /Users/adam/Development/vienna/frameworks/opal/lib/string.rb
 (function(){var $ = this;$.define_class($.n,"String",function(){var $ = this;$.dm("initialize","$initialize",function(){var $ = this;$.__str__ = $.$string();},false);$.dm("==","$$e$e",function(_a){var $ = this;return $.__str__ === _a.__str__;},false);$.dm("upcase!","$upcase$b",function(){var $ = this;return $.__str__ = $.__str__.toUpperCase();},false);return $.dm("to_s","$to_s",function(){var $ = this;return $;},false);},0);}).apply(opal.top_self);
-// /Users/adambeynon/Development/vienna/frameworks/opal/lib/symbol.rb
+// /Users/adam/Development/vienna/frameworks/opal/lib/symbol.rb
 (function(){var $ = this;$.define_class($.n,"Symbol",function(){var $ = this;return $.dm("inspect","$inspect",function(){var $ = this;return vnS(":" + $.__ptr__);},false);},0);}).apply(opal.top_self);
-// /Users/adambeynon/Development/vienna/frameworks/opal/lib/true_class.rb
+// /Users/adam/Development/vienna/frameworks/opal/lib/true_class.rb
 (function(){var $ = this;$.define_class($.n,"TrueClass",function(){var $ = this;$.dm("to_s","$to_s",function(){var $ = this;return $.S("true");},false);$.dm("&","$$a",function(_a){var $ = this;return RTEST(_a)? $.t : vnFalse;},false);$.dm("|","$$r",function(_a){var $ = this;return $.t;},false);return $.dm("^","$^",function(_a){var $ = this;return RTEST(_a)? vnFalse : $.t;},false);},0);}).apply(opal.top_self);
-// /Users/adambeynon/Development/vienna/frameworks/opal/lib/zz_testing.rb
-(function(){var $ = this;$.$puts($.S("==================== Starting testing"));$.$puts($.S("============= and testing"));$.$puts($.S("true && false - should be false"));$.$puts($.t.a((function(){return vnFalse;})));$.$puts($.S("true && nil - should be nil"));$.$puts($.t.a((function(){return $.n;})));$.$puts($.S("true && nol && false - should be nil"));$.$puts($.t.a((function(){return $.n;})).a((function(){return vnFalse;})));$.$puts($.S("true && 10 && false - should be false"));$.$puts($.t.a((function(){return vnN(10);})).a((function(){return vnFalse;})));$.$puts($.S("true && true - should be true"));$.$puts($.t.a((function(){return $.t;})));$.$puts($.S("true && 'hello' - should be hello"));$.$puts($.t.a((function(){return $.S("hello");})));$.$puts($.S("hello && 10 && 5 - should be 5"));$.$puts($.S("hello").a((function(){return vnN(10);})).a((function(){return vnN(5);})));$.$puts($.S("=============== or testing"));$.$puts($.S("true || true - should be true"));$.$puts($.t.ortest((function(){return $.t;})));$.$puts($.S("true || false - should be true"));$.$puts($.t.ortest((function(){return vnFalse;})));$.$puts($.S("true || nil - should be true"));$.$puts($.t.ortest((function(){return $.n;})));}).apply(opal.top_self);
+// /Users/adam/Development/vienna/frameworks/opal/lib/zz_testing.rb
+(function(){var $ = this;}).apply(opal.top_self);

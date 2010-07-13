@@ -220,7 +220,7 @@ __boot_base_class.prototype.define_class = function(sup, id, body, flag) {
 };
 
 __boot_base_class.prototype.dm =function(m_id, js_id, body, singleton) {
-  console.log(m_id);
+  // console.log(m_id);
   body.method_id = m_id;
   body.displayName = m_id;
   
@@ -606,16 +606,19 @@ exports.register = function(specification) {
 
 // same as above but register this as the default application sequence. will
 // look in this opal for a bin file with same name to be used for running
-exports.register_application = function(specification) {
-  exports.register(specification);
-  bin_file = '/' + specification.name + '/bin/' + specification.name;
-};
+// exports.register_application = function(specification) {
+//   exports.register(specification);
+//   bin_file = '/' + specification.name + '/bin/' + specification.name;
+// };
 
 // array of loadpaths used in "require" .. each opal listed etc
 var load_paths = [];
 
 // to load on window.load
 var bin_file = null;
+
+// cwd for application
+var opal_cwd = null;
 
 // list of all opals: name to specification json object
 var opal_list = {};
@@ -632,9 +635,13 @@ var file_list = {};
 // =======================================================
 // = Temp launching - should be done via window.onload.. =
 // =======================================================
-exports.run = function() {
-  console.log('now ready to run: ' + bin_file);
-  file_require_path(bin_file);
+// Run is our main file to run. usually app path, sometimes spec path etc
+// 
+// @param [String] path - the main executable file
+// @param [String] path - the working directory
+exports.run = function(path, cwd) {
+  bin_file = path;
+  opal_cwd = cwd;
 };
 
 // require the file at the given path: we have already checked it exists - mark
@@ -647,6 +654,62 @@ var file_require_path = function(path) {
 
 // require the js string path.. might come from ruby, might come from js
 exports.require = function(path) {
-  console.log("native require: " + path);
-  console.log(load_paths);
+  // console.log("native require: " + path);
+  // console.log(load_paths);
+  
+  // basically loop through each of the load paths looking for a match
+  if (path.substr(path.length - 3) != '.rb') {
+    // console.log("need to add .rb");
+    path += '.rb'
+  }
+  
+  for (var i = 0; i < load_paths.length; i++) {
+    var try_path = load_paths[i] + path;
+    // console.log("does exist? " + try_path);
+    if (file_list.hasOwnProperty(try_path)) {
+      if (file_list[try_path].opal_required) {
+        console.log("already required " + path);
+        return;
+      }
+      // console.log("shit son!!!!");
+      // console.log(file_list[try_path]);
+      return file_require_path(try_path);
+    }
+  }
+  
+  throw "could not find require: " + path;
 };
+
+// ================
+// = On ready etc =
+// ================
+var on_ready = function() {
+  console.log("===== on_ready");
+  console.log('now ready to run: ' + bin_file + ' with working directory ' + opal_cwd);
+  file_require_path(bin_file);
+};
+
+// attach ready function
+(function(){
+  console.log("getting DOMContentLoaded setep");
+  // w3c
+  if (document.addEventListener) {
+    document.addEventListener("DOMContentLoaded", on_ready, false);
+  }
+})();
+
+// =========================
+// = Browser bits and bobs =
+// =========================
+
+exports.browser = (function() {
+  var agent = navigator.userAgent.toLowerCase();
+  var version = 1;
+  var browser = {
+    version: 0,
+    safari: (/webkit/).test(agent) ? version : 0,
+    opera: (/opera/).test(agent) ? version : 0
+  };
+  
+  return browser;
+})();

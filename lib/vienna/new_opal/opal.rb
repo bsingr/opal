@@ -1,6 +1,6 @@
 module Vienna
   
-  class Framework
+  class Opal
     
     # Framework root. This is a dir. e.g. (..)/frameworks/opal
     attr_reader :framework_root
@@ -65,7 +65,7 @@ module Vienna
     end
     
     def to_s
-      "#<Framework name=#{framework_name}>"
+      "#<Opal name=#{framework_name}>"
     end
   end
 end

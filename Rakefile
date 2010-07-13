@@ -66,7 +66,7 @@ end
 
 desc "build opal"
 task :opal => :vienna_gem do
-  opal = Vienna::Framework.new File.join(File.dirname(__FILE__), 'frameworks', 'opal')
+  opal = Vienna::Opal.new File.join(File.dirname(__FILE__),'frameworks', 'opal')
   opal.build! :build_dir => File.join(File.dirname(__FILE__), 'build')
 end
 
