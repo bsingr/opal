@@ -1,0 +1,120 @@
+config :all
+
+# Building targets - each opal (app, framework, theme etc) are a single target
+namespace :target do
+  
+  desc "Preparing the target"
+  task :prepare do
+    # no imp by default
+  end
+  
+  desc "Building the target"
+  task :build => [:catalog, :hide_opalfiles, :'prepare_build_tasks:all']
+  
+  desc "catalog"
+  task :catalog do
+    puts "shit! in catalog!"
+    target_root = @target.target_root
+    Dir[File.join(target_root, '**', '*')].each do |source|
+      next if !File.exist?(source) || File.directory?(source)
+      # should check if its another target
+      
+      relative_path = source.sub /^#{Regexp.escape target_root}\//, ""
+      relative_path = relative_path.split(::File::SEPARATOR).join('/')
+      @target.add_build_item relative_path
+    end
+  end
+  
+  desc "Hide opalfiles etc"
+  task :hide_opalfiles => [:catalog] do
+    puts "running hide_opalfiles"
+    # remove all non build files.. for example, if target is not main target, 
+    # then remove any bin files.. only want lib files, also remove spec folders
+    # really... the only ruby, for example, we want is in the lib folder
+  end
+end
+
+namespace :prepare_build_tasks do
+  
+  desc "This should invoke all needed tasks"
+  task :all => [:css, :ruby, :combine, :opal]
+  
+  desc "setup"
+  task :setup => [:'target:prepare']
+  
+  desc "Ruby sources"
+  task :ruby => [:setup] do
+    puts "running ruby tasks for #{@target}"
+    # make sure we only grab the ruby files
+    build_items = @target.build_items.select do |item|
+      item.ext == 'rb'
+    end
+    
+    build_items.each do |item|
+      p "item.filename is #{item.filename}"
+      item = @target.add_transform item, 
+        :filename   => item.filename,
+        :build_task => 'build:ruby',
+        :resource   => :ruby
+        # :build_path => File.join(@target.build_root, item.filename)
+    end
+  end
+  
+  desc "CSS"
+  task :css => [:setup] do
+    
+  end
+  
+  desc "combined ruby etc"
+  task :combine => [:css, :ruby] do
+    ruby_items = []
+    @target.build_items.each do |item|
+      # all resouurce (ruby, css etc) types will have a .resource property
+      next if item.resource.nil?
+      # lookup specific ruby, css etc
+      case item.resource
+      when :ruby
+        ruby_items << item
+      else
+        puts "found NON ruby #{item.inspect}"
+      end
+      
+      # combined ruby entry
+      # @target.add_composite
+    end
+  end
+  
+  desc "Build a final opal file (javascript)"
+  task :opal => [:combine, :ruby, :css] do
+    puts "building final opal file"
+  end
+end
+
+namespace :build_item do
+  
+  task :prepare do
+    filename =  @build_item.filename
+    raise "All build items must have a filename." unless filename
+    
+    # default build task for a build item
+    @build_item.build_task ||= 'build:copy'
+    
+    # make sure we have an extension set
+    @build_item.ext = File.extname(filename)[1..-1]
+  end
+end
+
+namespace :build do
+  
+  task :copy do
+    puts "need to do simple copy task for #{@entry.inspect}"
+  end
+  
+  task :ruby do
+    puts "building ruby at #{@filename}"
+  end
+  
+  task :css do
+    
+  end
+end

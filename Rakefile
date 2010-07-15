@@ -66,8 +66,26 @@ end
 
 desc "build opal"
 task :opal => :vienna_gem do
+  raise "currently disabled. use simple_opal"
   opal = Vienna::Opal.new File.join(File.dirname(__FILE__),'frameworks', 'opal')
   opal.build! :build_dir => File.join(File.dirname(__FILE__), 'build')
+end
+
+desc "build simple_opal test opal purely for testing opal etc"
+task :simple_opal => :vienna_gem do
+  project = Vienna::Project.new File.join(File.dirname(__FILE__), 'apps', 'simple_opal')
+   p project
+   p project.targets
+   project.build! :config => :debug
+  # root = File.join(File.dirname(__FILE__), 'apps', 'simple_opal')
+  # Vienna::Tools.new(root).build :simple_opal
+end
+
+task :completely_custom => :vienna_gem do
+  project = Vienna::Project.new File.join(File.dirname(__FILE__), 'apps', 'completely_custom')
+   p project
+   p project.targets
+   project.build! :config => :debug
 end
 
 

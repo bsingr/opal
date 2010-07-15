@@ -27,116 +27,93 @@
 module Vienna
   
   class Project
-  
-    attr_accessor :project_root
     
-    attr_writer :project_name
+    # full path to project
+    attr_reader :project_root
     
-    attr_reader :required_bundles
-    
-    # Hash. bundle_name => Vienna::Bundle instance. These are only for bundles/gems required
-    # by the application. The app itself does not have a bundle. The project class
-    # is used for building the bundle
-    attr_reader :bundles
-    
-    # defaults are nil. only do something if these are not nil, i.e. use custom location
-    attr_reader :application_path, :vendor_path
-    
-    # build_options from config/build.yml
+    # build options
     attr_reader :build_options
-  
+    
+    def self.load project_path
+      if File.exists? File.join(project_path, 'Opalfile')
+        return new(project_path)
+      end
+      nil
+    end
+    
     def initialize(project_root)
       @project_root = project_root
-      @required_bundles = ['vienna']
-      @bundles = {}
+    end
+    
+    def inspect
+      "#<Vienna::Project #{File.basename(project_root)}>"
+    end
+    
+    # Opalfile is a build task setup for each bundle, app, opal or theme. It 
+    # allows the developer to setup custom build options and processes which
+    # can depend on the environment etc. Inspired by Buildfiles in Sproutcore.
+    def opalfile
+      @opalfile ||= Opalfile.new.load!(project_root)
+    end
+    
+    def config
+      @config
+      # ...
+    end
+    
+    # Every target. A target is a opal, theme, or application. Recursively find
+    # if needed.
+    def targets
+      # If we have already found them, just return them
+      return @targets if @targets
+      # hash of targets: target name to target instance
+      @targets = {}
+      # first we must add ourselves as a target - default is opal type 
+      # application
+      puts "need to add self as target"
+      add_target :target_name => File.basename(project_root),
+                 :target_type => :opal,
+                 :target_root => project_root,
+                 :project     => self
+      # find all targets for this project_root with given config
+      find_targets_for project_root, config
+      # targets
+      @targets
+    end
+    
+    # Find all targets relative to the given root_path with the given config
+    def find_targets_for target_root, config
+      puts "looking for targets"
+    end
+    
+    # add a target
+    def add_target(options)
+      targets[options[:target_name]] = Target.new options
+    end
+    
+    def build!(options)
       
-      @build_options = YAML.load_file(File.join(project_root, 'config', 'build.yml'))
+      # first: get all targets
       
-      unless File.exist?(File.join(project_root, 'config', 'environment.rb'))
-        abort 'Cannot find base environment file for project'
-      end
       
-      f = open(File.join(project_root, 'config', 'environment.rb')).map {|l| l.rstrip}.join("\n")
-      # instance_eval f
+      # second: should really clean
+      @build_options = options
       
-      # loaded environment.rb file. Now we can build each required gem/bundle.
-      @required_bundles.each do |bundle|
-        # find bundle
-        if bundle == 'vienna'
-          # if vienna, then use hardcoded path to vienna bundle
-          @bundles['vienna'] = Vienna::GemBundle.new(File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '..', 'lib', 'vienna')))
-        else
-          # find it in vendor path. if not exist, then error: we can't find it.
-          abort "vendor gems currently not supported (#{bundle})"
+      # build each build_item in each target
+      @targets.each do |target_name, target|
+        # prepare
+        target.prepare!
+        # go through and build each to get list of build_items
+        target.build!
+        # go through each build item now and build it
+        puts "----- Actualy building #{target}"
+        build_items = target.build_items
+        
+        build_items.each do |item|
+          p item
+          item.build!
         end
       end
-    end
-    
-    def project_name
-      @project_name ||= File.basename(project_root)
-    end
-    
-    # Setup build directory:
-     # 
-     # project_root/
-     #   build/
-     #     tmp         # staging area
-     #     web         # html based build
-     #     osx         # mac osx compatible build
-     #     win32       # win32 compatible build
-     #     linux       # linux compatible build
-     # 
-     # For now, only 'web' is made (plus tmp for staging)
-     # 
-     def prepare!
-       # should we "clean" the build directory?
-       FileUtils.mkdir_p(File.join(project_root, 'build', 'tmp'))
-       FileUtils.mkdir_p(File.join(project_root, 'build', 'web'))
-     end
-
-     def build!
-       
-
-       # hardcoded web build
-       @web_platform = Vienna::Platforms::Web.new(self)
-       @web_platform.prepare!
-       @web_platform.build!
-       
-       # hardcoded osx build
-       # @osx_platform = Vienna::Platforms::OSX.new(self)
-       # @osx_platform.prepare!
-       # @osx_platform.build!
-
-     end
-    
-    # Used for evaling in the environment.rb file
-    def application(options={}, &block)
-      block.call(self)
-    end
-    
-    # Used for evaling in environemtn.rb file. 
-    # Specifies a required gem for the application.
-    # 
-    # For now, the gem must be in the vendor directory, or an error will be
-    # thrown. 'vienna' is the only exception, as this is already added by 
-    # default.
-    def gem(name, options={})
-      @required_bundles.push(name) unless @required_bundles.include?(name)
-    end
-    
-    # Catch require statements. These should not be done until runtime.
-    def require(*paths)
-      # puts "require capture: #{paths}"
-    end
-    
-    # set where the application bundle should be placed (web only)
-    def application_path=(path)
-      @application_path = path
-    end
-    
-    # set where bundles should be placed - web only?
-    def vendor_path=(path)
-      @vendor_path = path
     end
   end
 end

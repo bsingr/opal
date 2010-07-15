@@ -28,7 +28,33 @@ build_process = proc {
 
 config :all,
   
-  :build_process => build_process
+  :build_process => proc {
+    puts "doing output"
+    sources.unshift file('lib/kernel.rb')
+    sources.unshift file('lib/module.rb')
+    sources.uniq!
+    
+    # executable_file.puts
+  },
   
+  :build_ruby => proc {
+    Vienna::CherryKit::RubyBuilder.build entry, dst_path
+  },
+  # default is just the normal "lib" folder
+  :sources => ['lib/**/*.rb']
+
 config :spec,
-  :require => 'spec'
+  # we require the spec lib also
+  :require => 'spec',
+  # we want our default lib folder, plus all the specs in spec folder
+  :sources => ['lib/**/*.rb', 'spec/**/*.rb'],
+  
+  :wow => proc {
+    
+  },
+  
+  :tom => 100,
+  
+  :tommy => proc {
+    
+  }

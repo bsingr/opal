@@ -25,12 +25,13 @@
 #
 
 require 'fileutils'
+# require 'ftools'
 require 'base64'
 
 module Vienna
-  
+
   # :stopdoc:
-  VERSION = '0.2.0'
+  VERSION = '0.0.1'
   LIBPATH = ::File.expand_path(::File.dirname(__FILE__)) + ::File::SEPARATOR
   PATH = ::File.dirname(LIBPATH) + ::File::SEPARATOR
   # :startdoc:
@@ -69,6 +70,18 @@ module Vienna
 
     Dir.glob(search_me).sort.each {|rb| require rb}
   end
-end
+  
+  def self.underscore(str)
+    str.gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2').gsub(/([a-z\d])([A-Z])/,'\1_\2').tr("-", "_").downcase
+  end
+  
+  def self.camelize(str)
+    str.split(/[^a-z0-9]/i).map{|w| w.capitalize}.join
+  end
+
+end  # module Vienna
 
 Vienna.require_all_libs_relative_to(__FILE__)
+# require File.join(File.dirname(__FILE__), 'vienna', 'tools')
+
+# EOF

@@ -1,0 +1,10 @@
+namespace :target do
+  
+  task :prepare do
+    puts "preparing"
+  end
+  
+  task :build do
+    puts "building"
+  end
+end

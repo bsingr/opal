@@ -42,6 +42,11 @@ module Vienna
       end
     end
     
+    # Alll sources to build (ruby and js files)
+    def sources
+      @sources ||= []
+    end
+    
     # Our default build procedure. The vast majority of times this will be used.
     # Certain frameworks, e.g. vienna core uses a custom build_process as the
     # loading system is implemented in vienna itself.
