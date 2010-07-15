@@ -33,12 +33,17 @@ module Vienna
     # array of TaskScope instances
     attr_reader :task_scope_stack
     
+    BASE_OPALFILE = File.join(Vienna::PATH, 'Opalfile')
+    
     def initialize(root)
       @configs = {}
       @namespace_scope = []
       @tasks = {}
       # stack of TaskScope instanced for instance_evaling context
       @task_scope_stack = []
+      # every opalfile must use the base opalfile aswell, so join that in first
+      instance_eval File.read(BASE_OPALFILE)
+      # then add the opalfile at the given route
       instance_eval File.read(File.join(root,'Opalfile'))
     end
     
@@ -48,7 +53,7 @@ module Vienna
     
     # force invoke the given task name with the given options
     def invoke(task_name, options={})
-      puts "need to invoke #{task_name}"
+      # puts "need to invoke #{task_name}"
       @task_scope_stack << (ctx = Vienna::TaskScope.new)
       ctx.task_variables = options
       @tasks[task_name].invoke(ctx)

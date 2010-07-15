@@ -51,17 +51,34 @@ module Vienna
       @opalfile ||= Opalfile.new target_root
     end
     
+    # An array of the required items from the opal file
+    def required
+      return @required if @required
+      
+      req = opalfile.config_for(target_name.to_sym)[:required]
+      
+      @required = case req
+      when Array
+        req
+      when Symbol
+        [req]
+      else
+        []
+      end
+    end
+    
     def config
       {}
     end
     
     def prepare!
       return @self if @is_prepared
+      puts "===== preparing #{target_name}"
       @is_prepared = true
       if opalfile.has_task? 'target:prepare'
         opalfile.invoke 'target:prepare', :target   => self, 
-                                           :project => project,
-                                           :config  => config
+                                          :project  => project,
+                                          :config   => config
       end
       self
     end
@@ -72,6 +89,15 @@ module Vienna
         opalfile.invoke 'target:build', :target   => self,
                                         :project  => project,
                                         :config   => config
+      end
+      
+      puts "################################################ build_items"
+      
+      # at this point we will have a list of all our actual build items.. so go
+      # build them
+      build_items.each do |item|
+        # p item
+        item.build!
       end
       self
     end

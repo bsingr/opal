@@ -1,60 +1,41 @@
-# Custom build action
-build_process = proc {
-  puts "running the build process!"
-  File.open(js_build_path, 'w') do |out|
-    # pre
-    out.puts "var opal = {};"
-    out.puts "(function(global, exports) {"
-    
-    # runtime
-    out.puts read_file("runtime/opal.js")
-    
-    # post
-    out.puts "})(window, opal);"
-    
-    # core library - use all ruby sources in core dir but ensure kernel and 
-    # module and first in line as most other things rely on them
-    rb_sources = [file('lib/kernel.rb'), file('lib/module.rb')]
-    rb_sources.concat(Dir.glob(File.join(framework_root, 'lib/**/*.rb'))).uniq!
-    
-    rb_sources.each do |rb|
-      builder = Vienna::CherryKit::RubyBuilder.new(rb, nil, nil)
-      out.puts "// #{rb}"
-      out.puts "#{builder.build!}.apply(opal.top_self);"
-    end
+# For opal, our root opal/framework/bundle, we have a completely different
+# build process. This is because opal defines the opal loading system, so we
+# cannot rely on it at runtime untill all these files exist.
+
+namespace :target do
+  
+  task :prepare do
+    puts "opal preparing"
   end
-}
-
-
-config :all,
   
-  :build_process => proc {
-    puts "doing output"
-    sources.unshift file('lib/kernel.rb')
-    sources.unshift file('lib/module.rb')
-    sources.uniq!
-    
-    # executable_file.puts
-  },
+  # task :build do
+  #   puts "opal building"
+  # end
   
-  :build_ruby => proc {
-    Vienna::CherryKit::RubyBuilder.build entry, dst_path
-  },
-  # default is just the normal "lib" folder
-  :sources => ['lib/**/*.rb']
-
-config :spec,
-  # we require the spec lib also
-  :require => 'spec',
-  # we want our default lib folder, plus all the specs in spec folder
-  :sources => ['lib/**/*.rb', 'spec/**/*.rb'],
-  
-  :wow => proc {
-    
-  },
-  
-  :tom => 100,
-  
-  :tommy => proc {
-    
-  }
+end
+# 
+# build_process = proc {
+#   puts "running the build process!"
+#   File.open(js_build_path, 'w') do |out|
+#     # pre
+#     out.puts "var opal = {};"
+#     out.puts "(function(global, exports) {"
+#     
+#     # runtime
+#     out.puts read_file("runtime/opal.js")
+#     
+#     # post
+#     out.puts "})(window, opal);"
+#     
+#     # core library - use all ruby sources in core dir but ensure kernel and 
+#     # module and first in line as most other things rely on them
+#     rb_sources = [file('lib/kernel.rb'), file('lib/module.rb')]
+#     rb_sources.concat(Dir.glob(File.join(framework_root, 'lib/**/*.rb'))).uniq!
+#     
+#     rb_sources.each do |rb|
+#       builder = Vienna::CherryKit::RubyBuilder.new(rb, nil, nil)
+#       out.puts "// #{rb}"
+#       out.puts "#{builder.build!}.apply(opal.top_self);"
+#     end
+#   end
+# }

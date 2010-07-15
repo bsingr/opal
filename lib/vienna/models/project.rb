@@ -61,6 +61,13 @@ module Vienna
       # ...
     end
     
+    # Add a new referenced target (target_name) from the given target. The given
+    # target is used as it might have a sub-vendor or sub-theme where the given
+    # target is actually stored.
+    def require_target(target_name, from_target)
+      
+    end
+    
     # Every target. A target is a opal, theme, or application. Recursively find
     # if needed.
     def targets
@@ -71,19 +78,38 @@ module Vienna
       # first we must add ourselves as a target - default is opal type 
       # application
       puts "need to add self as target"
-      add_target :target_name => File.basename(project_root),
+      target = add_target :target_name => File.basename(project_root),
                  :target_type => :opal,
                  :target_root => project_root,
                  :project     => self
       # find all targets for this project_root with given config
-      find_targets_for project_root, config
+      find_targets_for target, config
       # targets
       @targets
     end
     
     # Find all targets relative to the given root_path with the given config
-    def find_targets_for target_root, config
-      puts "looking for targets"
+    def find_targets_for the_target, config
+      puts "looking for targets..... #{the_target.target_name}"
+      # p the_target.opalfile
+      the_target.required.each do |target|
+        # if we already know about the target, skip it
+        next if @targets.has_key?(target)
+        # currently only look in our own frameworks/ root
+        try_path = File.join(Vienna::PATH, 'frameworks', target.to_s)
+        
+        if File.exist?(try_path) and File.directory?(try_path)
+          # found target, so add it
+          target = add_target :target_name  => target.to_s,
+                              :target_type  => :opal,
+                              :target_root  => try_path,
+                              :project      => self
+          # search this target for all dependencies
+          find_targets_for target, config
+        else
+          raise "Could not find required opal #{target}. (Required in #{the_target.target_name})"
+        end
+      end
     end
     
     # add a target
@@ -94,6 +120,11 @@ module Vienna
     def build!(options)
       
       # first: get all targets
+      # ======================
+      targets
+      
+      puts "all targets:"
+      puts @targets
       
       
       # second: should really clean
@@ -101,18 +132,14 @@ module Vienna
       
       # build each build_item in each target
       @targets.each do |target_name, target|
+        
+        puts "\n############################################################"
+        puts "# #{target_name}"
+        puts "############################################################\n"
         # prepare
         target.prepare!
         # go through and build each to get list of build_items
         target.build!
-        # go through each build item now and build it
-        puts "----- Actualy building #{target}"
-        build_items = target.build_items
-        
-        build_items.each do |item|
-          p item
-          item.build!
-        end
       end
     end
   end

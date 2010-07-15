@@ -45,7 +45,7 @@ module Vienna
       @task_scope = task_scope_instance
       # puts "\n##### #@task_name #{self}\n"
       unless invocation_array.include? @task_name
-        puts "||||| #{@task_name} actually running"
+        # puts "||||| #{@task_name} actually running"
         invocation_array << @task_name
         
         invocation_array = invoke_prerequisites invocation_array

@@ -89,7 +89,7 @@ module Vienna
       end
       
       opalfile.invoke build_task,
-        :entry      => self,
+        :build_item => self,
         :target     => target,
         :config     => target.config,
         :project    => target.project,
