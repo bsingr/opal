@@ -37,7 +37,7 @@ end
 namespace :prepare_build_tasks do
   
   desc "This should invoke all needed tasks"
-  task :all => [:css, :ruby, :combine, :opal]
+  task :all => [:css, :ruby, :javascript, :combine, :opal]
   
   desc "setup"
   task :setup => [:'target:prepare']
@@ -55,6 +55,18 @@ namespace :prepare_build_tasks do
         :build_task => 'build:ruby',
         :resource   => :ruby
         # :build_path => File.join(@target.build_root, item.filename)
+    end
+  end
+  
+  desc "Any javascript sources - not likely to be many"
+  task :javascript => [:setup] do
+    build_items = @target.build_items.select { |item| item.ext == 'js' }
+    
+    build_items.each do |item|
+      item = @target.add_transform item,
+        :filename   => item.filename,
+        :build_task => 'build:javascript',
+        :resource   => :javascript
     end
   end
   
@@ -109,6 +121,10 @@ namespace :build do
   
   task :ruby do
     puts "building ruby at #{@build_item.filename}"
+  end
+  
+  task :javascript do
+    puts "building javascript at #{@build_item.filename}"
   end
   
   task :css do
