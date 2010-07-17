@@ -24,9 +24,11 @@
 # THE SOFTWARE.
 #
 
+require File.join(File.dirname(__FILE__), 'ruby_parser.rb')
+
 module Vienna
   
-  class RubyParser
+  class RubyParser < ::Racc::Parser
     
     def node_args(arg, opt, rest, post, block)
       Vienna::RubyParser::RArgsNode.new arg, opt, rest, post, block

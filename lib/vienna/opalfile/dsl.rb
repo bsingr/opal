@@ -28,11 +28,22 @@ module Vienna
   
   class Opalfile
     
+    # enter the new mode (:debug, :all, :spec, :release, etc.)
+    def mode(mode_name, &block)
+      @current_mode = mode_name
+      # make sure our global env has this mode
+      self.class.env[mode_name] ||= Hash.new
+      # configure all configs within
+      instance_eval &block
+      # always go back to :all when outside a mode - modes cannot be nested
+      @current_mode = :all
+    end
+    
     def config(config_name, opts={})
-      config_name = config_name.to_sym
-      config = {}
-      config.merge! opts
-      @configs[config_name] = config
+      # ensure we have a configuration setting for config_name in current mode
+      self.class.env[@current_mode][config_name] ||= Hash.new
+      # merge in new options with already existing options
+      self.class.env[@current_mode][config_name].merge! opts
     end
     
     def desc(description)

@@ -33,18 +33,62 @@ module Vienna
     # array of TaskScope instances
     attr_reader :task_scope_stack
     
-    BASE_OPALFILE = File.join(Vienna::PATH, 'Opalfile')
+    attr_reader :opalfile_path
+    
+    # Access the global modes and configs
+    def self.env
+      @opalfile_env ||= {:all => {}}
+    end
+    
+    # Access the global mode/config
+    def self.config_for(mode, config)
+      res = {}
+      # First: merge in all configs that apply to all modes
+      if env.has_key?(:all) and env[:all].has_key?(:all)
+        res.merge!(env[:all][:all]) 
+      end
+      # Second: merge in all configs that apply to current mode
+      if env.has_key?(mode) and env[mode].has_key?(:all)
+        res.merge!(env[mode][:all])
+      end
+      # Third: merge in target configs that apply to all modes
+      if env.has_key?(:all) and env[:all].has_key?(config)
+        res.merge!(env[:all][config])
+      end
+      # Forth: merge in target configs that apply to current mode
+      if env.has_key?(mode) and env[mode].has_key?(config)
+        res.merge!(env[mode][config])
+      end
+      # return our full config
+      res
+    end
+    
+    # set the root opalfile
+    def self.root_opalfile=(path_to_root)
+      @root_opalfile = new(path_to_root)
+    end
+    
+    def self.root_opalfile
+      @root_opalfile
+    end
     
     def initialize(root)
+      @opalfile_path = root
+      # default mode is :all
+      @current_mode = :all
       @configs = {}
       @namespace_scope = []
-      @tasks = {}
       # stack of TaskScope instanced for instance_evaling context
       @task_scope_stack = []
-      # every opalfile must use the base opalfile aswell, so join that in first
-      instance_eval File.read(BASE_OPALFILE)
-      # then add the opalfile at the given route
-      instance_eval File.read(File.join(root,'Opalfile'))
+      @tasks = {}
+      
+      # firstly copy tasks etc from root, if it exists?
+      root_opalfile = self.class.root_opalfile
+      # merge unless root_opalfile.nil?
+      @tasks = root_opalfile.tasks.dup unless root_opalfile.nil?
+      
+      instance_eval File.read(root)
+
     end
     
     def has_task?(task_name)
@@ -56,6 +100,7 @@ module Vienna
       # puts "need to invoke #{task_name}"
       @task_scope_stack << (ctx = Vienna::TaskScope.new)
       ctx.task_variables = options
+      ctx.opalfile = self
       @tasks[task_name].invoke(ctx)
       @task_scope_stack.pop
     end

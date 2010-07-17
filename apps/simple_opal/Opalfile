@@ -1,3 +1,21 @@
-config :simple_opal,
-  :required => [:foundation]
 
+# for all modes, set the bin to foundation (will be cherry_kit)
+mode :all do
+  
+  config :all,
+    # tell foundation we want to use it's bin files
+    :bin => :foundation
+    
+  config :simple_opal,
+    :required => [:foundation]
+end
+
+# for soec mode, set the bin to spec, and also require the spec opal itself
+mode :spec do
+    
+  config :all, 
+    :bin => :spec
+  
+  config :simple_opal, 
+    :required => [:foundation, :spec]
+end

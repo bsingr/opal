@@ -1,5 +1,5 @@
 # 
-# task_scope.rb
+# hash_struct.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,29 +24,17 @@
 # THE SOFTWARE.
 #
 
+require File.join(File.dirname(__FILE__), 'struct_accessors')
+
 module Vienna
   
-  # When we call each task, we instance_eval it into a scope so we can set
-  # various constants on that scope without effecing anything else....
-  # TaskScope is that context
-  class TaskScope
+  class HashStruct
     
-    # access the task variables: hash of names => values
-    attr_reader :task_variables
+    include StructAccessors
     
-    # to maintain the righe opalfile for the current scope. The Task's actual
-    # opalfile might have some taks soverridden, so we cannot rely on using that
-    # opalfile to get prerequirement tasks. This task scope keeps us in the 
-    # correct scope.
-    attr_accessor :opalfile
-    
-    # custom setter. Actually set all variables in scope also
-    def task_variables=(task_variables)
-      @task_variables = task_variables
-      
-      task_variables.each do |key, value|
-        instance_variable_set "@#{key}", value
-      end
+    def initialize(hash)
+      merge! hash
     end
+    
   end
 end

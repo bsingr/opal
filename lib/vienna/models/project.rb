@@ -34,6 +34,9 @@ module Vienna
     # build options
     attr_reader :build_options
     
+    # the main target
+    attr_reader :main_target
+    
     def self.load project_path
       if File.exists? File.join(project_path, 'Opalfile')
         return new(project_path)
@@ -41,8 +44,20 @@ module Vienna
       nil
     end
     
-    def initialize(project_root)
+    BASE_OPALFILE = File.join(Vienna::PATH, 'Opalfile')
+    
+    def initialize(project_root, build_options)
+      @build_options = build_options
       @project_root = project_root
+      @targets = nil
+      # lets begin by loading our root opalfile
+      # @opalfile = Opalfile.new(BASE_OPALFILE)
+      opalfile
+      puts "\n\n\n\n######################################## ENV"
+      p Opalfile.env
+      puts "######################################## TASKS"
+      puts @opalfile.tasks.each_key.map { |key| key }
+      puts "######################################## DONE\n\n\n\n"
     end
     
     def inspect
@@ -53,7 +68,9 @@ module Vienna
     # allows the developer to setup custom build options and processes which
     # can depend on the environment etc. Inspired by Buildfiles in Sproutcore.
     def opalfile
-      @opalfile ||= Opalfile.new.load!(project_root)
+      return @opalfile if @opalfile
+      Opalfile.root_opalfile = BASE_OPALFILE
+      @opalfile = Opalfile.root_opalfile
     end
     
     def config
@@ -82,6 +99,8 @@ module Vienna
                  :target_type => :opal,
                  :target_root => project_root,
                  :project     => self
+                 
+      @main_target = target
       # find all targets for this project_root with given config
       find_targets_for target, config
       # targets
@@ -117,30 +136,32 @@ module Vienna
       targets[options[:target_name]] = Target.new options
     end
     
-    def build!(options)
-      
-      # first: get all targets
-      # ======================
-      targets
-      
-      puts "all targets:"
-      puts @targets
-      
-      
-      # second: should really clean
-      @build_options = options
-      
-      # build each build_item in each target
-      @targets.each do |target_name, target|
+    def build!()
+      # get main target and put it at the end
+      all_targets = targets.each_value.to_a
+
+      all_targets.push all_targets.slice!(all_targets.index @main_target)
+      all_targets.each do |target|
         
         puts "\n############################################################"
-        puts "# #{target_name}"
+        puts "# #{target.target_name}"
         puts "############################################################\n"
         # prepare
         target.prepare!
         # go through and build each to get list of build_items
         target.build!
       end
+    end
+    
+    # def get the build mode
+    def build_mode
+      @build_options[:build_mode] || :debug
+    end
+    
+    # build root. by default this is the root of the main target, but can be 
+    # custom
+    def build_root
+      @build_options[:build_root] || @main_target.target_root
     end
   end
 end

@@ -39,7 +39,9 @@ module Vienna
       
       full_name = @namespace_scope.dup.push(name) * ":"
       
-      task = (@tasks[full_name] ||= Task.new full_name, self)
+      # musrt assign new task to avoid overriding task meaning in other 
+      # opalfiles
+      task = (@tasks[full_name] = Task.new full_name, self)
       task.action = block
       task.prerequisites = dep
       

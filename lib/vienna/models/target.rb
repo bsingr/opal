@@ -24,9 +24,13 @@
 # THE SOFTWARE.
 #
 
+require File.join(File.dirname(__FILE__), 'struct_accessors')
+
 module Vienna
   
   class Target
+    
+    include StructAccessors
     
     attr_reader :target_name, :target_type, :target_root, :project
     
@@ -36,6 +40,16 @@ module Vienna
       @target_type = opts.delete :target_type
       @project = opts.delete :project
       @build_items = []
+      
+      merge! opts
+      
+      # get opalfile all setup
+      opalfile
+      # puts "\n\n\n\n######################################## ENV"
+      # p Opalfile.env
+      # puts "######################################## TASKS"
+      # puts @opalfile.tasks.each_key.map { |key| key }
+      # puts "######################################## DONE\n\n\n\n"
     end
     
     # builditems.. on;y those that are not hidden
@@ -43,20 +57,25 @@ module Vienna
       @build_items.reject { |e| e.hidden? }
     end
     
+    # is this the main target
+    def main_target?
+      project.main_target == self
+    end
+    
     def inspect
       "#<Target name=#{target_name}, type=#{target_type}>"
     end
     
     def opalfile
-      @opalfile ||= Opalfile.new target_root
+      @opalfile ||= Opalfile.new File.join(target_root, 'Opalfile')
     end
     
     # An array of the required items from the opal file
     def required
       return @required if @required
       
-      req = opalfile.config_for(target_name.to_sym)[:required]
-      
+      req = config[:required]
+
       @required = case req
       when Array
         req
@@ -68,10 +87,11 @@ module Vienna
     end
     
     def config
-      {}
+      @config ||= HashStruct.new(Opalfile.config_for(project.build_mode, target_name.to_sym))
     end
     
     def prepare!
+      # return
       return @self if @is_prepared
       puts "===== preparing #{target_name}"
       @is_prepared = true
@@ -84,6 +104,7 @@ module Vienna
     end
     
     def build!
+      # return
       puts "===== building this target"
       if opalfile.has_task? 'target:build'
         opalfile.invoke 'target:build', :target   => self,
@@ -112,9 +133,25 @@ module Vienna
     # add transform (i.e. not just a copy file stage, but we need to compile it
     # etc)
     def add_transform(build_item, options={})
-      puts "adding transform"
+      # puts "adding transform"
       @build_items << (res = BuildItem.new(self, options)).prepare!
       build_item.hide!
+    end
+    
+    def add_composite(filename, options={})
+      options[:filename] = filename
+      options[:source_items] ||= []
+      options[:composite] = true
+      
+      options[:build_path] ||= File.join(build_root, filename)
+      options[:staging_path] ||= File.join(staging_root, filename)
+      
+      options[:target] ||= self
+      options[:project] ||= self
+      
+      @build_items << (res = BuildItem.new(self, options)).prepare!
+      res.source_items.each { |item| item.hide! }
+      res
     end
   end
 end

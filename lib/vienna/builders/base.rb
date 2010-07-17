@@ -1,9 +1,9 @@
 # 
-# file.rb
+# base.rb
 # vienna
 # 
 # Created by Adam Beynon.
-# Copyright 2009 Adam Beynon.
+# Copyright 2010 Adam Beynon.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -26,29 +26,25 @@
 
 module Vienna
   
-  class RubyParser
+  module Builders
     
-    # Represents an actual .rb file needing parsing
-    # class File
-    #       
-    #       # full path of the file
-    #       attr_accessor :path
-    #       
-    #       # stringscanner used for scanning the file
-    #       attr_accessor :scanner
-    #       
-    #       def initialize(path)
-    #         @path = path
-    #         File.open(path) do |f|
-    #           @scanner = StringScanner.new(f.read)
-    #         end
-    #       end
-    #       
-    #       # require statement within file. 
-    #       def require_file(name)
-    #         
-    #       end
-    #       
-    #     end
+    class Base
+      
+      attr_reader :build_item
+      
+      def initialize(build_item, dst)
+        @build_item = build_item
+        @dst_path = dst
+      end
+      
+      # build the item
+      def build
+      end
+      
+      def self.build(build_item, dst)
+        new(build_item, dst).build
+      end
+      
+    end
   end
 end

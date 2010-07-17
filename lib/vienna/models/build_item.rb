@@ -37,7 +37,7 @@ module Vienna
     attr_reader :target
     
     def initialize(target, options={})
-      puts "making a new build item with filename: #{options[:filename]}"
+      # puts "making a new build item with filename: #{options[:filename]}"
       @target = target
       merge! options
     end
@@ -79,7 +79,7 @@ module Vienna
       build_to staging_path
     end
     
-    def build_to(out_path)
+    def build_to(dst_path)
       raise "no build task defined for #{filename}" if build_task.nil?
       
       # find build task

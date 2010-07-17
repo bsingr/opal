@@ -1,41 +1,65 @@
-# For opal, our root opal/framework/bundle, we have a completely different
-# build process. This is because opal defines the opal loading system, so we
-# cannot rely on it at runtime untill all these files exist.
-
-namespace :target do
-  
-  task :prepare do
-    puts "opal preparing"
-  end
-  
-  # task :build do
-  #   puts "opal building"
-  # end
-  
+# For spec..
+mode :spec do
+  # opal must require the spec opal itself. Also, we are the main target, so we
+  # can set the bin file aswell (to use the spec's bin ruby file)
+  config :opal,
+    :required => [:spec],
+    :bin_file => :spec
+    
+  # Configure :spec to include its bin file, so opal can use it
+  config :spec,
+    :include_bin  => true
 end
-# 
-# build_process = proc {
-#   puts "running the build process!"
-#   File.open(js_build_path, 'w') do |out|
-#     # pre
-#     out.puts "var opal = {};"
-#     out.puts "(function(global, exports) {"
-#     
-#     # runtime
-#     out.puts read_file("runtime/opal.js")
-#     
-#     # post
-#     out.puts "})(window, opal);"
-#     
-#     # core library - use all ruby sources in core dir but ensure kernel and 
-#     # module and first in line as most other things rely on them
-#     rb_sources = [file('lib/kernel.rb'), file('lib/module.rb')]
-#     rb_sources.concat(Dir.glob(File.join(framework_root, 'lib/**/*.rb'))).uniq!
-#     
-#     rb_sources.each do |rb|
-#       builder = Vienna::CherryKit::RubyBuilder.new(rb, nil, nil)
-#       out.puts "// #{rb}"
-#       out.puts "#{builder.build!}.apply(opal.top_self);"
-#     end
-#   end
-# }
+
+mode :all do
+  config :opal, 
+    
+    # In all build modes we want to include our runtime (js sources) directory
+    # as well as our lib (ruby sources) directory
+    :lib_directories  => ['lib', 'runtime']
+    
+end
+
+namespace :build do
+  
+  # opal needs a completely custom opal (gem) builder as its not actually an
+  # opal..ish...kinda
+  task :opal do
+    # puts "1"
+    FileUtils.mkdir_p File.dirname(@dst_path)
+    # puts "2"
+    # Get all javascript sources, then sort them
+    js_sources = @build_item.source_items.select do |item|
+      item.resource == :javascript
+    end
+    # puts "3"
+    # Get all ruby sources, then sort them (kernel.rb then module.rb then any)
+    rb_sources = @build_item.source_items.select do |item|
+      item.resource == :ruby
+    end
+    # p rb_sources
+    # make sure these two are at the start
+    ['lib/kernel.rb', 'lib/module.rb'].reverse.each do |order|
+      rb_sources.unshift rb_sources.select { |item|
+        puts item.inspect
+        item.filename == order
+      }.first
+    end
+    # make sure we remove the duplicates left over
+    rb_sources.uniq!
+    # puts "5"
+    File.open(@dst_path, 'w') do |out|
+      out.puts "var opal = {};"
+      out.puts "(function(global, exports) {"
+      js_sources.each do |js|
+        puts js.filename
+        out.puts File.read(js.stage!.staging_path)
+      end
+      out.puts "})(window, opal);"
+      rb_sources.each do |rb|
+        out.puts "// ##################### #{rb.filename} #####################"
+        out.puts File.read(rb.stage!.staging_path) + ".apply(opal.top_self);"
+      end
+    end
+  end
+end

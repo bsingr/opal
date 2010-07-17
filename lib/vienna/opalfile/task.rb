@@ -64,12 +64,16 @@ module Vienna
     end
     
     def invoke_prerequisites(invocation_array)
-      # puts "--- prerequisites: #{@prerequisites}"
       @prerequisites.each do |pre|
-        task = @opalfile[pre, @scope]
-        @opalfile.task_scope_stack << (ctx = Vienna::TaskScope.new)
-        # puts "#{pre} task: #{task}"
+        
+        ctx = Vienna::TaskScope.new
+        ctx.opalfile = @task_scope.opalfile
         ctx.task_variables = @task_scope.task_variables
+        
+        task = @task_scope.opalfile[pre, @scope]
+        
+        @opalfile.task_scope_stack << ctx
+        
         invocation_array = task.invoke_with_call_array(invocation_array, ctx)
       end
       invocation_array

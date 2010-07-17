@@ -1,3 +1,22 @@
+mode :all do
+  
+  config :all,
+    :build_prefix   => 'tmp/build',
+    :staging_prefix => 'tmp/staging',
+    
+    # where our libs are kept - i.e. what should be a valid build item
+    :lib_directories  => ['lib']
+    
+end
+
+mode :debug do
+  config :all,
+  
+    :build_prefix   => 'tmp/debug/build',
+    :staging_prefix => 'tmp/debug/staging'
+    
+end
+
 # This is the root opalfile. It is used as the basis for every target. These can
 # all be overridden by each opalfile, and so provide "defaults".
 
@@ -6,11 +25,14 @@ namespace :target do
   
   desc "Preparing the target"
   task :prepare do
-    # no imp by default
+    # set the build root
+    @target.build_root = File.join(@project.build_root, @config.build_prefix, 'opals', @target.target_name)
+    # set the staging root
+    @target.staging_root = File.join(@project.build_root, @config.staging_prefix, @target.target_name)
   end
   
   desc "Building the target"
-  task :build => [:catalog, :hide_opalfiles, :'prepare_build_tasks:all']
+  task :build => [:catalog, :hide_non_build_files, :'prepare_build_tasks:all']
   
   desc "catalog"
   task :catalog do
@@ -26,8 +48,26 @@ namespace :target do
   end
   
   desc "Hide opalfiles etc"
-  task :hide_opalfiles => [:catalog] do
-    puts "running hide_opalfiles"
+  task :hide_non_build_files => [:catalog] do
+    # puts "checking for extra files"
+    @target.build_items.each do |item|
+      
+      can_skip = false
+      # skip if item is in our lib directory(s)
+      can_skip = @config.lib_directories.each do |dir|
+        break true if item.filename =~ /^#{dir}.+$/
+      end
+      
+      next if can_skip == true
+
+      # if we have a bin item, and our config says we should include the bin
+      # file...
+      next if item.filename =~ /^bin.+$/ and @config.include_bin
+            
+      # hide any other file
+      item.hide!
+    end
+    # puts "running hide_opalfiles with #{@target.build_items}"
     # remove all non build files.. for example, if target is not main target, 
     # then remove any bin files.. only want lib files, also remove spec folders
     # really... the only ruby, for example, we want is in the lib folder
@@ -37,7 +77,7 @@ end
 namespace :prepare_build_tasks do
   
   desc "This should invoke all needed tasks"
-  task :all => [:css, :ruby, :javascript, :combine, :opal]
+  task :all => [:css, :ruby, :javascript, :combine, :opal, :package]
   
   desc "setup"
   task :setup => [:'target:prepare']
@@ -51,22 +91,27 @@ namespace :prepare_build_tasks do
     build_items.each do |item|
       # p "item.filename is #{item.filename}"
       item = @target.add_transform item, 
-        :filename   => item.filename,
-        :build_task => 'build:ruby',
-        :resource   => :ruby
-        # :build_path => File.join(@target.build_root, item.filename)
+        :filename     => item.filename,
+        :build_task   => 'build:ruby',
+        :resource     => :ruby,
+        # give our ruby a name.rb.js extension to make it clearer what it is
+        :build_path   => File.join(@target.build_root, item.filename) + '.js',
+        :staging_path => File.join(@target.staging_root, item.filename) + '.js'
     end
   end
   
   desc "Any javascript sources - not likely to be many"
   task :javascript => [:setup] do
+    # puts @target.build_items.map { |a| a.filename }
     build_items = @target.build_items.select { |item| item.ext == 'js' }
-    
+    # puts "found some javascript items: #{build_items}"
     build_items.each do |item|
       item = @target.add_transform item,
-        :filename   => item.filename,
-        :build_task => 'build:javascript',
-        :resource   => :javascript
+        :filename     => item.filename,
+        :build_task   => 'build:javascript',
+        :resource     => :javascript,
+        :build_path   => File.join(@target.build_root, item.filename),
+        :staging_path => File.join(@target.staging_root, item.filename)
     end
   end
   
@@ -76,8 +121,9 @@ namespace :prepare_build_tasks do
   end
   
   desc "combined ruby etc"
-  task :combine => [:css, :ruby] do
+  task :combine => [:css, :ruby, :javascript] do
     ruby_items = []
+    javascript_items = []
     @target.build_items.each do |item|
       # all resouurce (ruby, css etc) types will have a .resource property
       next if item.resource.nil?
@@ -85,18 +131,29 @@ namespace :prepare_build_tasks do
       case item.resource
       when :ruby
         ruby_items << item
+      when :javascript
+        javascript_items << item
       else
-        puts "found NON ruby #{item.inspect}"
+        # puts "found NON ruby #{item.inspect}"
       end
-      
-      # combined ruby entry
-      # @target.add_composite
     end
+    
+    target_name = @target.target_name + '.js'
+    
+    @target.add_composite target_name,
+      :build_task   => 'build:opal',
+      :source_items => ruby_items + javascript_items
   end
   
   desc "Build a final opal file (javascript)"
   task :opal => [:combine, :ruby, :css] do
     puts "building final opal file"
+  end
+  
+  desc "Final package to combine all opals"
+  task :package => [:setup, :opal] do
+    puts "running package task"
+    puts @target.main_target?
   end
 end
 
@@ -110,24 +167,39 @@ namespace :build_item do
     @build_item.build_task ||= 'build:copy'
     # make sure we have an extension set
     @build_item.ext = File.extname(filename)[1..-1]
+    # make sure our full source path is ready
+    @build_item.source_path ||= File.join(@target.target_root, filename)
   end
 end
 
 namespace :build do
   
   task :copy do
-    puts "need to do simple copy task for #{@build_item.filename}"
+    puts "building simple copy task for #{@build_item.filename}"
   end
   
   task :ruby do
-    puts "building ruby at #{@build_item.filename}"
+    Vienna::Builders::Ruby.build @build_item, @dst_path
+    # puts "building ruby at #{@build_item.filename} from #{@build_item.source_path} to #{@build_item.build_path}"
   end
   
   task :javascript do
-    puts "building javascript at #{@build_item.filename}"
+    Vienna::Builders::Javascript.build @build_item, @dst_path
   end
   
   task :css do
     
+  end
+  
+  desc "Build the opal itself (as javascript)"
+  task :opal do
+    Vienna::Builders::Opal.build @build_item, @dst_path
+    # puts "packaging opal"
+    #     items = @build_item.source_items
+    #     
+    #     items.each do |item|
+    #       puts item.stage!.staging_path
+    #     end
+    #     puts @build_item.source_path
   end
 end
