@@ -72,6 +72,7 @@ module Vienna
       @root_opalfile
     end
     
+    
     def initialize(root)
       @opalfile_path = root
       # default mode is :all

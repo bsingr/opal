@@ -17,6 +17,14 @@ mode :debug do
     
 end
 
+mode :spec do
+  config :all,
+  
+    :build_prefix   => 'tmp/spec/build',
+    :staging_prefix => 'tmp/spec/staging'
+    
+end
+
 # This is the root opalfile. It is used as the basis for every target. These can
 # all be overridden by each opalfile, and so provide "defaults".
 
@@ -77,7 +85,7 @@ end
 namespace :prepare_build_tasks do
   
   desc "This should invoke all needed tasks"
-  task :all => [:css, :ruby, :javascript, :combine, :opal, :package]
+  task :all => [:css, :ruby, :javascript, :combine]
   
   desc "setup"
   task :setup => [:'target:prepare']
@@ -122,6 +130,7 @@ namespace :prepare_build_tasks do
   
   desc "combined ruby etc"
   task :combine => [:css, :ruby, :javascript] do
+    puts "combining for #{@target.target_name}"
     ruby_items = []
     javascript_items = []
     @target.build_items.each do |item|
@@ -145,16 +154,6 @@ namespace :prepare_build_tasks do
       :source_items => ruby_items + javascript_items
   end
   
-  desc "Build a final opal file (javascript)"
-  task :opal => [:combine, :ruby, :css] do
-    puts "building final opal file"
-  end
-  
-  desc "Final package to combine all opals"
-  task :package => [:setup, :opal] do
-    puts "running package task"
-    puts @target.main_target?
-  end
 end
 
 namespace :build_item do
@@ -180,7 +179,6 @@ namespace :build do
   
   task :ruby do
     Vienna::Builders::Ruby.build @build_item, @dst_path
-    # puts "building ruby at #{@build_item.filename} from #{@build_item.source_path} to #{@build_item.build_path}"
   end
   
   task :javascript do
@@ -194,12 +192,34 @@ namespace :build do
   desc "Build the opal itself (as javascript)"
   task :opal do
     Vienna::Builders::Opal.build @build_item, @dst_path
-    # puts "packaging opal"
-    #     items = @build_item.source_items
-    #     
-    #     items.each do |item|
-    #       puts item.stage!.staging_path
-    #     end
-    #     puts @build_item.source_path
+  end
+  
+  desc "Final package to combine all opals"
+  task :package do
+    puts "running package task!"
+    # only run package task if we are the main target
+     if @target.main_target?
+           puts @target.target_name
+           opals = @project.targets.each_value.to_a.dup
+           # order is more-a-less irrelevant, but we MUST have opal first
+           opals.unshift(opals.find { |o| o.target_name.to_sym == :runtime }).uniq!
+           # path is the "packaged" build path
+           path = File.join @project.build_root,@config.build_prefix,'javascript.js'
+           
+           File.open(path, 'w') do |out|
+             # each opal must be output into the package file. We look for the build
+             # item named (opal_name).js and use that.
+             opals.each do |opal|
+               out.puts File.read(opal.build_item_for("#{opal.target_name}.js").build_path)
+             end
+             # Also, we must include the bin file we want to use, and set the working
+             # directory (which is in the base folder of the main_target)
+             bin_file = @config.bin_file || ""
+             working_dir = @target.target_name.to_s
+             out.puts "opal.run('#{bin_file}','#{working_dir}');"
+           end
+           
+           
+         end
   end
 end

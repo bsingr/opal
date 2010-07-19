@@ -81,6 +81,16 @@ task :simple_opal => :vienna_gem do
   # Vienna::Tools.new(root).build :simple_opal
 end
 
+desc "build simple_opal test opal purely for testing opal etc"
+task :simple_opal_spec => :vienna_gem do
+  project = Vienna::Project.new(File.join(File.dirname(__FILE__), 'apps', 'simple_opal'), :build_mode => :spec)
+   p project
+   p project.targets
+   project.build!
+  # root = File.join(File.dirname(__FILE__), 'apps', 'simple_opal')
+  # V
+end
+
 desc "rebuild opal_spec package"
 task :opal_spec => :vienna_gem do
   # opal framework root

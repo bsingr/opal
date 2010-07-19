@@ -30,274 +30,6 @@ module Vienna
   
   class RubyParser < ::Racc::Parser
     
-    # class ISEQ
-    #   
-    #   # some iseqs can have a dynamic frame pointer that point to a parent iseq.
-    #   # for example, blocks can reference locals from their parent, so this will
-    #   # let us get to them. Might be nil if this tyope cannot reference parent,
-    #   # i.e. is not a block.
-    #   # 
-    #   # Depreceated
-    #   # attr_accessor :dynamic_frame_pointer
-    #   
-    #   # store a list of locals
-    #   # Array, where index is the local position (reference 0, or 1 etc) and
-    #   # the value
-    #   attr_reader :locals
-    #   # stores the args for iseq
-    #   attr_reader :args
-    #   # for dynamics
-    #   attr_accessor :parent_iseq
-    #   
-    #   attr_reader :type
-    #   
-    #   attr_writer :args_list
-    #   
-    #   def initialize(type, filename, name)
-    #     @type = type
-    #     @filename = filename
-    #     @name = name
-    #     @opcodes = []
-    #     @locals = []
-    #     @args = []
-    #     @label_count = 0
-    #     @jumps = []
-    #   end
-    #   
-    #   # gets the next jump label string
-    #   def create_jump_label
-    #     r = @label_count
-    #     @label_count += 1
-    #     @jumps[r] = 0
-    #     r
-    #   end
-    #   
-    #   # total required arg length for iseq
-    #   def args_length
-    #     @args.length
-    #   end
-    #   
-    #   # total required locals length
-    #   def locals_length
-    #     @locals.length
-    #   end
-    #   
-    #   # push the given string as an opcode onto the opcodes
-    #   def write(opcode)
-    #     @opcodes << opcode
-    #   end
-    #   
-    #   # write a abel to this line. this opcode will be marked by the given label
-    #   # so that any jumps to this label will change the pc to point to this op
-    #   # code
-    #   def write_label(label)
-    #     @jumps[label] = @opcodes.length
-    #   end
-    #   
-    #   # to_s: ready for spitting out to javascript.
-    #   def to_s
-    #     s = "["
-    #     s << %{#{@args.length},}
-    #     s << %{#{@locals.length},}
-    #     s << %{"#{@name}",}
-    #     s << %{"#{@filename}",}
-    #     s << %{#{@type},}
-    #     # local names
-    #     s << "["
-    #     s << @locals.map { |l| %{"#{l}"} }.join(",")
-    #     s << "],"
-    #     # argslist
-    #     s << (@args_list ? %{#{@args_list.to_s},} : %{0,})
-    #     # catch table
-    #     s << %{[],}
-    #     # jumps
-    #     s << "["
-    #     # s << @jumps.to_a.map { |e| %{"#{e[0]}":#{e[1]}} }.join(",")
-    #     s << @jumps.map { |e| "#{e}" }.join(",")
-    #     s << "],"
-    #     # opcodes
-    #     s << %{[#{@opcodes.join(",")}]}
-    #     s << %{]}
-    #     s
-    #   end
-    #   
-    #   # returns the idx of a local arg or local var. returns nil if one does not
-    #   # exist. Blocks cannot have locals, so return nil always if a block
-    #   def local_variable(name)
-    #     if [ISEQ_TYPE_TOP, ISEQ_TYPE_METHOD, ISEQ_TYPE_CLASS].include? @type and @locals.include?(name)
-    #       @locals.index(name)
-    #     else
-    #       nil
-    #     end
-    #   end
-    #   
-    #   # returns an array if a dynamic var of name exists. If a block, then this
-    #   # will be the case. Blocks do not reference locals, they use dynamics. The
-    #   # array has the idx as the first param, and the level as the second param.
-    #   # A level of 0 is the current frame, 1 is the parent of the current frame
-    #   # etc.
-    #   def dynamic_variable(name)
-    #     if @type == ISEQ_TYPE_BLOCK and @locals.include?(name)
-    #       [@locals.index(name), 0]
-    #     else
-    #       search_dynamic(name, 0)
-    #     end
-    #   end
-    #   
-    #   # boolean: has a local (can include dynamic...)
-    #   def has_local?(name)
-    #     @locals.include?(name) || @args.include?(name)
-    #   end
-    #   
-    #   # returns idx of new local
-    #   def push_local(name)
-    #     r = @locals.length
-    #     @locals << (name)
-    #     r
-    #   end
-    #   
-    #   # returns [idx, fp]
-    #   # fp = 0 for local, > 1 for dynamic
-    #   def local_index(name)
-    #     if @args.include?(name)
-    #       return [@args.index(name), 0]
-    #     elsif @locals.include?(name)
-    #       return [@locals.index(name), 0]
-    #     else
-    #       raise "not implemeneted.. look up dynamic"
-    #     end
-    #   end
-    #   
-    #   def search_dynamic(name, level)
-    #     if @locals.include?(name)
-    #       # if we have it, return array - [idx, level]
-    #       [@locals.index(name), level]
-    #     elsif @parent_iseq
-    #       # if we have a parent, try there and increment level
-    #       @parent_iseq.search_dynamic(name, level.succ)
-    #     else
-    #       # no parent, so it isnt in chain. return nil
-    #       nil
-    #     end
-    #   end
-    # end
-    # 
-    # # Set debug mode for generator. Debug mode on makes the opcode output nicer
-    # # to read using full opcode names, rather that integers, and also using full
-    # # label jump names, instead of abbreviated strings.
-    # @debug_mode = true
-    # 
-    # def self.debug_mode?
-    #   @debug_mode
-    # end
-    # 
-    # def debug_mode?
-    #   self.class.debug_mode?
-    # end
-    # 
-    # if @debug_mode
-    #   
-    #   # ISEQ types
-    #   ISEQ_TYPE_TOP           = 'ISEQ_TYPE_TOP'
-    #   ISEQ_TYPE_METHOD        = 'ISEQ_TYPE_METHOD'
-    #   ISEQ_TYPE_BLOCK         = 'ISEQ_TYPE_BLOCK'
-    #   ISEQ_TYPE_CLASS         = 'ISEQ_TYPE_CLASS'
-    #   ISEQ_TYPE_RESCUE        = 'ISEQ_TYPE_RESCUE'
-    #   ISEQ_TYPE_ENSURE        = 'ISEQ_TYPE_ENSURE'
-    #   ISEQ_TYPE_EVAL          = 'ISEQ_TYPE_EVAL'
-    #   ISEQ_TYPE_MAIN          = 'ISEQ_TYPE_MAIN'
-    # 
-    #   # DEFINECLASS types
-    #   DEFINECLASS_CLASS       = 'DEFINECLASS_CLASS'
-    #   DEFINECLASS_OTHER       = 'DEFINECLASS_OTHER'
-    #   DEFINECLASS_MODULE      = 'DEFINECLASS_MODULE'
-    #   
-    #   # for debugging..
-    #   INOP                    = 'iNOOP'
-    #   IGETLOCAL               = 'iGETLOCAL'
-    #   ISETLOCAL               = 'iSETLOCAL'
-    #   IGETSPECIAL             = 3
-    #   ISETSPECIAL             = 4          
-    #   IGETDYNAMIC             = 'iGETDYNAMIC'
-    #   ISETDYNAMIC             = 6              
-    #   IGETINSTANCEVARIABLE    = 'iGETINSTANCEVARIABLE'
-    #   ISETINSTANCEVARIABLE    = 'iSETINSTANCEVARIABLE'             
-    #   IGETCLASSVARIABLE       = 9
-    #   ISETCLASSVARIABLE       = 10            
-    #   IGETCONSTANT            = 'iGETCONSTANT'
-    #   ISETCONSTANT            = 'iSETCONSTANT'             
-    #   IGETGLOBAL              = 13
-    #   ISETGLOBAL              = 14             
-    #   IPUTNIL                 = 'iPUTNIL'
-    #   IPUTSELF                = 'iPUTSELF'             
-    #   IPUTOBJECT              = 'iPUTOBJECT'
-    #   IPUTSTRING              = 'iPUTSTRING'             
-    #   ICONCATSTRINGS          = 19
-    #   ITOSTRING               = 20             
-    #   ITOREGEXP               = 21
-    #   INEWARRAY               = 'iNEWARRAY'             
-    #   IDUPARRAY               = 23
-    #   IEXPANDARRAY            = 24             
-    #   ICONCATARRAY            = 25
-    #   ISPLATARRAY             = 26             
-    #   ICHECKINCLUDEARRAY      = 27
-    #   INEWHASH                = 'iNEWHASH'             
-    #   INEWRANGE               = 29
-    #   IPOP                    = 'iPOP'             
-    #   IDUP                    = 'iDUP'
-    #   IDUPN                   = 32             
-    #   ISWAP                   = 33
-    #   IREPUT                  = 34             
-    #   ITOPN                   = 35
-    #   ISETN                   = 36             
-    #   IADJUSTSTACK            = 37
-    #   IDEFINEMETHOD           = 'iDEFINEMETHOD'             
-    #   IALIAS                  = 39
-    #   IUNDEF                  = 40             
-    #   IDEFINED                = 41
-    #   IPOSTEXE                = 42             
-    #   ITRACE                  = 43
-    #   IDEFINECLASS            = 'iDEFINECLASS'             
-    #   ISEND                   = 'iSEND'
-    #   IINVOKESUPER            = 'iINVOKESUPER'             
-    #   IINVOKEBLOCK            = 'iINVOKEBLOCK'
-    #   ILEAVE                  = 'iLEAVE'             
-    #   IFINISH                 = 49
-    #   ITHROW                  = 50             
-    #   IJUMP                   = 'iJUMP'
-    #   IBRANCHIF               = 'iBRANCHIF'             
-    #   IBRANCHUNLESS           = 'iBRANCHUNLESS'
-    #   IGETINLINECACHE         = 54             
-    #   IONCEINLINECACHE        = 55
-    #   ISETINLINECACHE         = 56             
-    #   IOPT_CASE_DISPATCH      = 57
-    #   IOPT_CHECKENV           = 58             
-    #   IOPT_PLUS               = 'iOPT_PLUS'
-    #   IOPT_MINUS              = 60             
-    #   IOPT_MULT               = 61
-    #   IOPT_DIV                = 62             
-    #   IOPT_MOD                = 63
-    #   IOPT_EQ                 = 64             
-    #   IOPT_NEQ                = 65
-    #   IOPT_LT                 = 66             
-    #   IOPT_LE                 = 67
-    #   IOPT_GT                 = 68             
-    #   IOPT_GE                 = 69
-    #   IOPT_LTLT               = 70             
-    #   IOPT_AREF               = 71
-    #   IOPT_ASET               = 72             
-    #   IOPT_LENGTH             = 73
-    #   IOPT_SUCC               = 74             
-    #   IOPT_NOT                = 75
-    #   IOPT_REGEXPMATCH1       = 76             
-    #   IOPT_REGEXPMATCH2       = 77
-    #   IOPT_CALL_C_FUNCTION    = 78             
-    #   IBITBLT                 = 79
-    #   IANSWER                 = 80
-    #   # JARV additions to YARV
-    #   IPUTSYMBOL              = 'iPUTSYMBOL'
-    # 
-    # else # normal mode
       
       # ISEQ types
       ISEQ_TYPE_TOP    = 1
@@ -309,134 +41,7 @@ module Vienna
       ISEQ_TYPE_EVAL   = 7
       ISEQ_TYPE_MAIN   = 8
     
-    #   # DEFINECLASS types
-    #   DEFINECLASS_CLASS = 0
-    #   DEFINECLASS_OTHER = 1
-    #   DEFINECLASS_MODULE = 2
-    # 
-    #   # opcodes => opcode id
-    #   INOP                    = 0
-    #   IGETLOCAL               = 1
-    #   ISETLOCAL               = 2
-    #   IGETSPECIAL             = 3
-    #   ISETSPECIAL             = 4          
-    #   IGETDYNAMIC             = 5
-    #   ISETDYNAMIC             = 6              
-    #   IGETINSTANCEVARIABLE    = 7
-    #   ISETINSTANCEVARIABLE    = 8,             
-    #   IGETCLASSVARIABLE       = 9
-    #   ISETCLASSVARIABLE       = 10            
-    #   IGETCONSTANT            = 11
-    #   ISETCONSTANT            = 12             
-    #   IGETGLOBAL              = 13
-    #   ISETGLOBAL              = 14             
-    #   IPUTNIL                 = 15
-    #   IPUTSELF                = 16             
-    #   IPUTOBJECT              = 17
-    #   IPUTSTRING              = 18             
-    #   ICONCATSTRINGS          = 19
-    #   ITOSTRING               = 20             
-    #   ITOREGEXP               = 21
-    #   INEWARRAY               = 22             
-    #   IDUPARRAY               = 23
-    #   IEXPANDARRAY            = 24             
-    #   ICONCATARRAY            = 25
-    #   ISPLATARRAY             = 26             
-    #   ICHECKINCLUDEARRAY      = 27
-    #   INEWHASH                = 28             
-    #   INEWRANGE               = 29
-    #   IPOP                    = 30             
-    #   IDUP                    = 31
-    #   IDUPN                   = 32             
-    #   ISWAP                   = 33
-    #   IREPUT                  = 34             
-    #   ITOPN                   = 35
-    #   ISETN                   = 36             
-    #   IADJUSTSTACK            = 37
-    #   IDEFINEMETHOD           = 38             
-    #   IALIAS                  = 39
-    #   IUNDEF                  = 40             
-    #   IDEFINED                = 'iDEFINED'
-    #   IPOSTEXE                = 42             
-    #   ITRACE                  = 43
-    #   IDEFINECLASS            = 44             
-    #   ISEND                   = 45
-    #   IINVOKESUPER            = 46             
-    #   IINVOKEBLOCK            = 47
-    #   ILEAVE                  = 48             
-    #   IFINISH                 = 49
-    #   ITHROW                  = 50             
-    #   IJUMP                   = 51
-    #   IBRANCHIF               = 52             
-    #   IBRANCHUNLESS           = 53
-    #   IGETINLINECACHE         = 54             
-    #   IONCEINLINECACHE        = 55
-    #   ISETINLINECACHE         = 56             
-    #   IOPT_CASE_DISPATCH      = 57
-    #   IOPT_CHECKENV           = 58             
-    #   IOPT_PLUS               = 59
-    #   IOPT_MINUS              = 60             
-    #   IOPT_MULT               = 61
-    #   IOPT_DIV                = 62             
-    #   IOPT_MOD                = 63
-    #   IOPT_EQ                 = 64             
-    #   IOPT_NEQ                = 65
-    #   IOPT_LT                 = 66             
-    #   IOPT_LE                 = 67
-    #   IOPT_GT                 = 68             
-    #   IOPT_GE                 = 69
-    #   IOPT_LTLT               = 70             
-    #   IOPT_AREF               = 71
-    #   IOPT_ASET               = 72             
-    #   IOPT_LENGTH             = 73
-    #   IOPT_SUCC               = 74             
-    #   IOPT_NOT                = 75
-    #   IOPT_REGEXPMATCH1       = 76             
-    #   IOPT_REGEXPMATCH2       = 77
-    #   IOPT_CALL_C_FUNCTION    = 78             
-    #   IBITBLT                 = 79
-    #   IANSWER                 = 80
-    #   # JARV additions to YARV
-    #   IPUTSYMBOL              = 81
-    # end
-    # 
-    # 
-    # 
-    # # iseq is a ruby array containing iseq structure
-    # def iseq_stack_push(type,name="<compiled>")
-    #   @iseq_current = ISEQ.new(type, @build_name, name)
-    #   @iseq_stack << @iseq_current
-    #   @iseq_current
-    # end
-    # 
-    # # returns full string representation of iseq
-    # def iseq_stack_pop
-    #   iseq = @iseq_stack.last
-    #   @iseq_stack.pop
-    #   @iseq_current = @iseq_stack.last
-    #   iseq.to_s
-    # end
-    # 
-    # # write the opcode to the current iseq
-    # def write(str)
-    #   @iseq_current.write(str)
-    # end
-    # 
-    # # write label
-    # def write_label(label)
-    #   @iseq_current.write_label(label)      
-    # end
-    # 
-    # def generate_tree tree
-    #   
-    #   top_iseq = iseq_stack_push(ISEQ_TYPE_TOP)
-    #   tree.each do |stmt|
-    #     # until we have line numbers, between each stmt fake at line number '0'
-    #     write "0"
-    #     generate_stmt stmt, :full_stmt => true, :last_stmt => tree.last == stmt
-    #   end
-    #   iseq_stack_pop
-    # end
+
     
     # Generate any type of statement with the given options
     # 
@@ -591,11 +196,14 @@ module Vienna
       
       # push "normal" arg name
       def push_arg_name(name)
-        id = @local_current
-        @local_current = @local_current.next
-        @args[name] = "_#{id}"
+        # id = @local_current
+        # @local_current = @local_current.next
+        # @args[name] = "_#{id}"
+        # @norm_arg_names.push name
+        # "_#{id}"
+        @args[name] = name
         @norm_arg_names.push name
-        "_#{id}"
+        name
       end
       
       # push optional arg name, with the node for its default value
@@ -605,11 +213,11 @@ module Vienna
       
       # push rest arg name
       def push_rest_arg_name(name)
-        id = @local_current
-        @local_current = @local_current.next
-        @args[name] = "_#{id}"
+        # id = @local_current
+        # @local_current = @local_current.next
+        @args[name] = name
         @rest_arg_name = name
-        "_#{id}"
+        name
       end
       
       # post (notmal args at end) names
@@ -623,10 +231,12 @@ module Vienna
       end
       
       def push_local_name(name)
-        id = @local_current
-        @local_current = @local_current.next
-        @locals[name] = "_#{id}"
-        "_#{id}"
+        # id = @local_current
+        # @local_current = @local_current.next
+        # @locals[name] = "_#{id}"
+        # "_#{id}"
+        @locals[name] = name
+        name
       end
       
       def lookup_local(name)
@@ -636,7 +246,7 @@ module Vienna
         elsif @args.has_key?(name)
           @args[name]
         elsif @block_arg_name == name
-          "_"
+          "__block__"
         elsif @type == RubyParser::ISEQ_TYPE_BLOCK
           @parent_iseq.lookup_local(name)
         else
@@ -677,21 +287,51 @@ module Vienna
         
         # Case 1: no args at all (block is dealt with seperately) - def a()
         if norm == 0 && opt == 0 && post == 0 && rest.nil?
-          r << "){var $ = this;"
+          r << "){"
+          
+          if RubyParser::ISEQ_TYPE_METHOD === @type
+            r << "var self = this;"
+          end
+          # block..
+          if @block_arg_name != nil
+            r << "if (arguments.length > 0 && arguments[0].info & self.TP) {"
+            r << "  var __block__ = arguments[0];"
+            r << "}"
+          end
           
         # Case 2: just splat args - def a(*args)
         elsif norm == 0 && opt == 0 && post == 0 && rest
           r << "#{@args[@rest_arg_name]}"
-          r << "){var $ = this;"
-          r << %{#{@args[@rest_arg_name]}=vnA(Array.prototype.slice.call(arguments));}
+          r << "){"
+          if RubyParser::ISEQ_TYPE_METHOD === @type
+            r << "var self = this;"
+          end
+          # block..
+          if @block_arg_name
+            r << %Q|
+            if (arguments.length > 0 && arguments[0].info & self.TP) {
+              var __block__ = arguments[arguments.length - 1];
+              #{@args[@rest_arg_name]} = vnA.apply(self,
+                Array.prototype.slice.call(arguments, arguments.length -1));
+            }
+            else {
+              #{@args[@rest_arg_name]} = vnA.apply(self,
+                Array.prototype.slice.call(arguments));
+            }|
+          else
+            r << %{#{@args[@rest_arg_name]}=vnA.apply(#{SELF},Array.prototype.slice.call(arguments));}
+          end
         
         # Case: one norm arg, rest splat args - def a(name, *args)
         elsif norm == 1 && opt == 0 && post == 0 && rest
           r << "#{@args[@norm_arg_names.first]}"
           r << ",#{@args[@rest_arg_name]}"
-          r << "){var $ = this;"
+          r << "){"
+          if RubyParser::ISEQ_TYPE_METHOD === @type
+            r << "var self = this;"
+          end
           r << "#{@args[@norm_arg_names.first]}=arguments[0];"
-          r << %{#{@args[@rest_arg_name]}=vnA(Array.prototype.slice.call(arguments,1));}
+          r << %{#{@args[@rest_arg_name]}=vnA.apply(self, Array.prototype.slice.call(arguments,1));}
           
         # Case 3: just normal args (any number) - def a(l,m,n,o,p)
         elsif norm > 0 && opt == 0 && post == 0 && rest.nil?
@@ -699,7 +339,17 @@ module Vienna
             r << "," unless a == @norm_arg_names.first
             r << "#{@args[a]}"
           end
-          r << "){var $ = this;"
+          r << "){"
+          if RubyParser::ISEQ_TYPE_METHOD === @type
+            r << "var self = this;"
+          end
+          # block..
+          if @block_arg_name
+            length = @norm_arg_names.length
+            r << %Q|var __block__ = 
+              (arguments[#{length}] && arguments[#{length}].info & self.TP)
+              ? arguments[#{length}] : self.n;|
+          end
         end
       end
       
@@ -708,7 +358,7 @@ module Vienna
         
         case @type
         when RubyParser::ISEQ_TYPE_TOP
-          r << "(function(){var $ = this;"
+          r << "(function(){var self = this;"
           # locals
           if @locals.length > 0
             r << "var #{@locals.each_value.to_a.join(",")};"
@@ -716,7 +366,7 @@ module Vienna
           r << @code.join("")
           r << "})"
         when RubyParser::ISEQ_TYPE_CLASS
-          r << "function(){var $ = this;"
+          r << "function(){var self = this;"
           
           # locals
           if @locals.length > 0
@@ -730,7 +380,6 @@ module Vienna
         when RubyParser::ISEQ_TYPE_METHOD
           
           deal_with_method_args(r)
-          
           
           # block arg name
           if @block_arg_name != nil
@@ -747,12 +396,16 @@ module Vienna
           r << "}"
           
         when RubyParser::ISEQ_TYPE_BLOCK
-          r << %{vnP(function(}
-          @norm_arg_names.each do |a|
-            r << "," unless @norm_arg_names.first == a
-            r << "#{@args[a]}"
-          end
-          r << %{)\{}
+          r << "self.P("
+          deal_with_method_args(r)
+          
+          r << "if (arguments.callee.opal_self) {"
+          r << "  var __old_self__ = self;"
+          r << "  self = this;"
+          r << "}"
+          
+          r << "var res = (function() {"
+
           # locals
           if @locals.length > 0
             r << "var #{@locals.each_value.to_a.join(",")};"
@@ -762,7 +415,15 @@ module Vienna
           # this seems to be the easiest way to do it, but its hela ugly 
           # r << "with({$:($$==nil?$:$$),_:(__==nil?_:__)}){"
           r << @code.join("")
-          # r << "}"
+          
+          r << "})();"
+          
+          r << "if (arguments.callee.opal_self) {"
+          r << "  self = __old_self__;"
+          r << "}"
+          
+          r << "return res;"
+          
           r << "})"
         end
         r
@@ -784,7 +445,10 @@ module Vienna
       gsub(/\+/, "$p").
       gsub(/\-/, "$m").
       gsub(/\|/, '$r').
-      gsub(/\&/, "$a")
+      gsub(/\&/, "$a").
+      gsub(/\</, "$l").
+      gsub(/\[/, "$z").
+      gsub(/\]/, "$x")
     end
     
     def generate_tree(tree)
@@ -880,12 +544,10 @@ module Vienna
       
       iseq_stack_pop
       
-      write %{vm$e(}
+      write "#{SELF}.define_class(#{NIL},"
+
       generate_stmt cls[:expr], :full_stmt => false
-      write ","
-      # superclass
-      write "nil"
-      write %{,"",#{class_iseq},1)}
+      write ",#{class_iseq},1)"
       
       write ";" if context[:full_stmt]
     end
@@ -929,10 +591,14 @@ module Vienna
       
       
       # body statements
-      stmt[:bodystmt][:compstmt].each do |s|
-        generate_stmt s, :full_stmt => true, :last_stmt => stmt[:bodystmt][:compstmt].last == s
+      if stmt[:bodystmt][:compstmt].length > 0
+        stmt[:bodystmt][:compstmt].each do |s|
+          generate_stmt s, :full_stmt => true, :last_stmt => stmt[:bodystmt][:compstmt].last == s
+        end
+      else
+        # no bodystmts, return nil be default
+        write "return #{NIL};"
       end
-      
       iseq_stack_pop
       
       # define method
@@ -1061,13 +727,16 @@ module Vienna
        write block_iseq.to_s
        # map(&:name)
      elsif call[:call_args][:block_arg]
-       write "("
-      generate_stmt call[:call_args][:block_arg][:arg], :full_stmt => false
-      write "===nil?nil:"
-       write "vm$a("
-       # puts call[:call_args][:block_arg][:arg]
+       if used_param
+         write ","
+        else
+          used_param = true
+        end
        generate_stmt call[:call_args][:block_arg][:arg], :full_stmt => false
-       write %{,"to_proc",[],nil,0))}
+       write "==#{SELF}.n ? #{SELF}.n : "
+
+       generate_stmt call[:call_args][:block_arg][:arg], :full_stmt => false
+       write %{.$to_proc()}
      else
        # write "nil"
      end
@@ -1097,6 +766,7 @@ module Vienna
           else
             # write %{vm$a(}
             generate_stmt s[:value][0], :full_stmt => false
+            write ".$to_s()"
             # write %{,"to_s",[],nil,8)}
           end
         end
@@ -1135,6 +805,7 @@ module Vienna
     
     def generate_assign(stmt, context)
       write "return " if context[:last_stmt] and context[:full_stmt]
+      param_seen = false
       # LHS is a local identifier
       if stmt[:lhs].node == :identifier
         local = @iseq_current.lookup_local stmt[:lhs][:name]
@@ -1144,7 +815,7 @@ module Vienna
         write %{#{local}=}
         generate_stmt stmt[:rhs], :last_stmt => false, :full_stmt => false
       elsif stmt[:lhs].node == :ivar
-        write %{vm_ivarset($,"#{stmt[:lhs][:name]}",}
+        write %{#{SELF}.is("#{stmt[:lhs][:name]}",}
         generate_stmt stmt[:rhs], :full_stmt => false, :last_stmt => false
         write %{)}
       elsif stmt[:lhs].node == :constant
@@ -1153,20 +824,23 @@ module Vienna
         write %{)}
       elsif stmt[:lhs].node == :call
         # puts stmt
-        write %{vm$a(}
+        # write %{vm$a(}
         # recv
         generate_stmt stmt[:lhs][:recv], :full_stmt => false
         # id
-        write %{,"#{stmt[:lhs][:meth]}=",[}
+        write %{.#{mid_to_jsid(stmt[:lhs][:meth] +'=')}(}
         # args
         if stmt[:lhs][:args] and stmt[:lhs][:args][:args]
           stmt[:lhs][:args][:args].each do |arg|
+            param_seen = true
+            write "," unless stmt[:lhs][:args][:args].first == arg
             generate_stmt arg, :full_stmt => false
-            write ","
+            # write ","
           end
         end
+        write "," if param_seen
         generate_stmt stmt[:rhs], :full_stmt => false
-        write "],nil,0)"
+        write ")"
         
       else
         puts stmt
@@ -1176,7 +850,7 @@ module Vienna
     end
     
     # how we replace "self/this"
-    SELF = "$"
+    SELF = "self"
     # how we replace nil
     NIL = "#{SELF}.n"
     
@@ -1194,14 +868,14 @@ module Vienna
     
     def generate_numeric(num, context)
       write "return " if context[:last_stmt] and context[:full_stmt]
-      write "vnN(#{num[:value]})"
+      write "#{SELF}.N(#{num[:value]})"
       write ";" if context[:full_stmt]
     end
     
     def generate_ivar stmt, context
       write "return " if context[:full_stmt] and context[:last_stmt]
       # write "vm_ivarget($, '#{stmt[:name]}')"
-      write "$.iv_tbl['#{stmt[:name]}']"
+      write "#{SELF}.ig('#{stmt[:name]}')"
       write ";" if context[:full_stmt]
     end
     
@@ -1239,27 +913,28 @@ module Vienna
     
     def generate_block_given stmt, context
       write "return " if context[:last_stmt] and context[:full_stmt]
-      write "((_ == nil) ? false : true)"
+      write "((!__block__ || !__block__.r) ? #{SELF}.f : #{SELF}.t)"
       write ";" if context[:full_stmt]
     end
     
     def generate_if_mod(stmt, context)
       write "return "  if context[:full_stmt] and context[:last_stmt]
 
-      # write "(function(){"
+      write "(function(){"
 
       # if/unless mod
       if stmt.node == :if_mod
-        write "if(RTEST("
+        write "if("
       else
-        write "if(!RTEST("
+        write "if(!"
       end
 
       generate_stmt stmt[:expr], :full_stmt => false, :last_stmt => false
-      write ")){"
+      write ".r){"
       generate_stmt stmt[:stmt], :full_stmt => true, :last_stmt => false
       write "}"
-      # write "}})()"
+      # return nil as safety value
+      write "return #{NIL};})()"
       write ";" if context[:full_stmt]
     end
     
@@ -1330,7 +1005,7 @@ module Vienna
     
     def generate_false(stmt, context)
       write "return " if context[:last_stmt] and context[:full_stmt]
-      write "vnFalse"
+      write "#{SELF}.f"
       write ";" if context[:full_stmt]
     end
     
@@ -1385,9 +1060,9 @@ module Vienna
     # primay::CONST
     def generate_colon2 stmt, context
       write "return " if context[:last_stmt] and context[:full_stmt]
-      write %{vm$b(}
+      # write %{vm$b(}
       generate_stmt stmt[:lhs], :full_stmt => false
-      write %{,"#{stmt[:rhs]}")}
+      write %{.const_get("#{stmt[:rhs]}")}
       write ";" if context[:full_stmt]
     end
 
@@ -1396,9 +1071,11 @@ module Vienna
     end
     
     def generate_if(stmt, context)
-      write "return " if context[:full_stmt] and context[:last_stmt]
-      write "(function(){"
-
+      if context[:full_stmt] and context[:last_stmt]
+        write "return " 
+        write "(function(){"
+      end
+      
       # if/unless clause
       if stmt.node == :if
         write "if("
@@ -1407,11 +1084,11 @@ module Vienna
       end
 
       generate_stmt stmt[:expr], :full_stmt => false, :last_stmt => false
-      write ".rtest()){"
+      write ".r){"
       stmt[:stmt].each do |s|
         # alays return last stmt. we output inside a function context to capture
         # the return value so that this will not return from the function itself
-        generate_stmt s, :full_stmt => true, :last_stmt => stmt[:stmt].last == s
+        generate_stmt s, :full_stmt => true, :last_stmt => ((stmt[:stmt].last == s) && context[:last_stmt])
       end
       write "}"
 
@@ -1419,25 +1096,36 @@ module Vienna
       if stmt[:tail]
         stmt[:tail].each do |t|
           if t.node == :elsif
-            write "else if(RTEST("
+            write "else if("
             generate_stmt t[:expr], :full_stmt => false, :last_stmt => false
-            write ")){"
+            write ".r){"
             t[:stmt].each do |s|
-              generate_stmt s, :full_stmt => true, :last_stmt => t[:stmt].last==s
+              generate_stmt s, :full_stmt => true, :last_stmt =>((stmt[:stmt].last == s) && context[:last_stmt])
             end
             write "}"
           else # else node
             write "else{"
             t[:stmt].each do |s|
-              generate_stmt s, :full_stmt => true, :last_stmt => t[:stmt].last==s
+              generate_stmt s, :full_stmt => true, :last_stmt =>((stmt[:stmt].last == s) && context[:last_stmt])
             end
             write "}"
           end
         end
       end
-
-      write"}).apply(this)"
-      write ";" if context[:full_stmt]
+      
+      # return nil be default if we have empty clauses, or no else etc... 
+      # basically worst case scenario: return nil
+      if context[:full_stmt] and context[:last_stmt]
+        write "return #{NIL};"
+      end
+      
+      # write"}"
+      
+      if context[:full_stmt] and context[:last_stmt]
+        write "})();"
+      elsif context[:full_stmt]
+        write ";" 
+      end
     end
     
     def generate_op_asgn(stmt, context)
@@ -1446,13 +1134,15 @@ module Vienna
       
       if stmt[:lhs].node == :ivar
         if stmt[:op] == "||"
-          write "(function(){var a;"
-          write "if(!RTEST(a = vm_ivarget($,'#{stmt[:lhs][:name]}'))){"
-          write "return vm_ivarset($,'#{stmt[:lhs][:name]}',"
-          generate_stmt stmt[:rhs], :full_stmt => false
-          write ");}"
-          write "return a;"
-          write "})()"
+          rhs = node(:assign, :lhs => stmt[:lhs], :rhs => stmt[:rhs])
+          generate_stmt(node(:orop, :lhs => stmt[:lhs], :rhs => rhs), {})
+          # write "(function(){var a;"
+          #          write "if(!RTEST(a = vm_ivarget($,'#{stmt[:lhs][:name]}'))){"
+          #          write "return vm_ivarset($,'#{stmt[:lhs][:name]}',"
+          #          generate_stmt stmt[:rhs], :full_stmt => false
+          #          write ");}"
+          #          write "return a;"
+          #          write "})()"
         elsif stmt[:op] == "+"
           write "vm_ivarset($,'#{stmt[:lhs][:name]}',vm_optplus("
           write "vm_ivarget($,'#{stmt[:lhs][:name]}'),"
@@ -1529,12 +1219,11 @@ module Vienna
     def generate_orop(stmt, context)
       write "return " if context[:full_stmt] and context[:last_stmt]
       generate_stmt stmt[:lhs], :full_stmt => false, :last_stmt => true
-      write ".ortest("
-      write "(function(){"
+      write ".o("
+      write "function(){"
       generate_stmt stmt[:rhs], :full_stmt => true, :last_stmt => true
       write "})"
 
-      write ")"
       write ";" if context[:full_stmt]
     end
     
@@ -1542,11 +1231,9 @@ module Vienna
       write "return " if context[:full_stmt] and context[:last_stmt]
       generate_stmt stmt[:lhs], :full_stmt => false, :last_stmt => true
       write ".a("
-      write "(function(){"
+      write "function(){"
       generate_stmt stmt[:rhs], :full_stmt => true, :last_stmt => true
       write "})"
-
-      write ")"
       write ";" if context[:full_stmt]
     end
     
@@ -1577,7 +1264,15 @@ module Vienna
           unless local
             local = @iseq_current.push_local_name(stmt[:stmt][:opt_rescue][:var][:name])
           end
-          write "#{local} = e;"
+          # write "#{local} = e;"
+          # make sure we are using a opal error
+          write %Q|
+            if (e.mid2jsid) {
+              #{local} = e;
+            } else {
+              #{local} = #{SELF}.native_error(e);
+            }
+          |
           # write "console.log('catch');console.log(e.klass);"
           if stmt[:stmt][:opt_rescue][:stmt]
             stmt[:stmt][:opt_rescue][:stmt].each do |s|
@@ -1594,7 +1289,7 @@ module Vienna
     end
     
     def generate_return(stmt, context)
-      write "rb_return("
+      write "return "
       # puts stmt
       if stmt[:call_args] and stmt[:call_args][:args]
         if stmt[:call_args][:args].length == 1
@@ -1605,7 +1300,7 @@ module Vienna
       else
         write "nil"
       end
-      write ")"
+
       write ";" if context[:full_stmt]
     end
     

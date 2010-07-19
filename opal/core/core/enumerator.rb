@@ -1,3 +1,0 @@
-class Enumerator
-  
-end

@@ -1,9 +1,0 @@
-= OS X Platform
-
-lib contains c/m sources for bundling ruby into an application and loading cherry kit and your app code into the protable executable. Since ruby now comes as a Framework on macs 10.5 >, we just use the Framework version, which as of 10.6 is ruby 1.8.7. This is fine as CherryKit is targeted for 1.8.6 >.
-
-build dir simple contains the Mac OS executable that will be pushed into a built OS X app dir. Info.plist, resources etc are all made on the fly. At build time, when using this gem, build/cherry_kit_app will already exist and is delivered precompiled.
-
-== Building
-
-Use the provided rake file. Vienna gem is required, which contains the actual build tools.

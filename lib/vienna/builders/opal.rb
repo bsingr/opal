@@ -48,14 +48,14 @@ module Vienna
           out.puts %Q|opal.register({|
           out.puts %Q|  "name": "#{@build_item.target.target_name}",|
           # executable sources
-          out.puts %Q|  "files": [|
+          out.puts %Q|  "files": {|
           exec_sources.each_with_index do |item, index|
             out.puts(",") if index > 0
             contents = File.read(item.stage!.staging_path)
-            contents = "__"
+            # contents = "__"
             out.write %Q|    "#{item.filename}": #{contents}|
           end
-          out.puts "\n  ],"
+          out.puts "\n  }"
           
           
           # 

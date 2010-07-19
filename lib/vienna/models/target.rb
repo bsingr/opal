@@ -40,6 +40,7 @@ module Vienna
       @target_type = opts.delete :target_type
       @project = opts.delete :project
       @build_items = []
+      @main_target = opts.delete(:main_target) || false
       
       merge! opts
       
@@ -59,7 +60,7 @@ module Vienna
     
     # is this the main target
     def main_target?
-      project.main_target == self
+      @main_target
     end
     
     def inspect
@@ -121,6 +122,13 @@ module Vienna
         item.build!
       end
       self
+    end
+    
+    # find the build item with the given filename
+    def build_item_for(filename)
+      @build_items.find do |item|
+        item.filename == filename
+      end
     end
     
     # Add an item to be built. The path is relative to the target root.

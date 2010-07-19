@@ -98,7 +98,8 @@ module Vienna
       target = add_target :target_name => File.basename(project_root),
                  :target_type => :opal,
                  :target_root => project_root,
-                 :project     => self
+                 :project     => self,
+                 :main_target => true
                  
       @main_target = target
       # find all targets for this project_root with given config
@@ -151,6 +152,15 @@ module Vienna
         # go through and build each to get list of build_items
         target.build!
       end
+      
+      # only once we have built all our targets do we run the pacakge command
+      # because some reliances will mean opal etc are not available until every
+      # opal is built
+      puts "main target.."
+      main_target.opalfile.invoke 'build:package', 
+        :project  => self,
+        :target   => main_target,
+        :config   => main_target.config
     end
     
     # def get the build mode
