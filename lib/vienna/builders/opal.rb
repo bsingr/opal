@@ -62,12 +62,12 @@ module Vienna
           out.puts "});"
         end
         
-        source_items.each do |item|
-          staged_path = item.stage!.staging_path
-          
-          puts staged_path
-          puts item.ext
-        end
+        # source_items.each do |item|
+        #   staged_path = item.stage!.staging_path
+        #   
+        #   puts staged_path
+        #   puts item.ext
+        # end
       end
       
     end

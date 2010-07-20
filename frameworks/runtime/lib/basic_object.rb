@@ -31,9 +31,6 @@ class BasicObject
   end
   
   def ==(obj)
-    `console.log("yeah, calling this");
-    console.log(#{self});
-    console.log(#{obj});`
     `return #{self} === #{obj} ? #{self}.t : #{self}.f;`
   end
   

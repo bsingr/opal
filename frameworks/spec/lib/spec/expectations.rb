@@ -36,9 +36,6 @@ module Kernel
     r = Spec::Expectations::PositiveExpectationHandler.handle_matcher self, 
                                                                   matcher, 
                                                                   message
-    puts "r is //"
-    `console.log(#{r});`
-    r
   end
   
   def should_not(matcher, message, &block)

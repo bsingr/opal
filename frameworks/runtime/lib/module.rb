@@ -26,6 +26,10 @@
 
 class Module
   
+  def ===(object)
+    object.is_a? self
+  end
+  
   def undef_method symbol
     puts "need to undefine method: #{symbol}"
   end

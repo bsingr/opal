@@ -1,5 +1,5 @@
 # 
-# runner.rb
+# css.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,25 +24,23 @@
 # THE SOFTWARE.
 #
 
-require 'spec/runner/options'
-require 'spec/runner/reporter'
-require 'spec/runner/example_group_runner'
+require File.join(File.dirname(__FILE__), 'base')
 
-require 'spec/runner/formatter/html_formatter'
-
-module Spec
+module Vienna
   
-  module Runner
-  
-    # Main entry point for spec runner.
-    def self.run
-      puts "running"
-      options.run_examples
-    end
-  
-    def self.options
-      @options ||= Options.new
-    end
+  module Builders
     
-  end # Runner
+    class CSS < Base
+      
+      def build
+        FileUtils.mkdir_p(File.dirname(@dst_path))
+        
+        puts "building to #{@dst_path}"
+        
+        File.open(@dst_path, 'w') do |out|
+          out.write File.read(@build_item.source_path)
+        end
+      end
+    end
+  end
 end

@@ -47,9 +47,9 @@ module Kernel
   
   def __send__(method, *args)
     `var res= #{self}[#{self}.mid2jsid(#{method.to_s}.__str__)].apply(#{self}, #{args}.__arr__);
-    console.log("res is: for " + #{method.to_s}.__str__);
-    console.log(#{args});
-    console.log(res);
+    //console.log("res is: for " + #{method.to_s}.__str__);
+    //console.log(#{args});
+    //console.log(res);
     return res;
     `
   end
@@ -84,7 +84,7 @@ module Kernel
   end
   
   def raise(exception, string)
-    puts "need to raise"
+    # puts "need to raise"
     msg = nil
     if exception.is_a? String
       msg = exception
@@ -95,7 +95,7 @@ module Kernel
       `if (#{string}) { #{msg = string} }`
       exc = exception.new msg
     end
-    puts "really about to raise"
+    # puts "really about to raise"
     `#{exc}.raise();`
   end
   

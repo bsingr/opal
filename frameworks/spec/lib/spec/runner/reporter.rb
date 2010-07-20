@@ -61,17 +61,19 @@ module Spec
       end
       
       def example_started(example)
-        puts "example_started #{example}"
+        # puts "example_started #{example}"
       end
       
       def example_finished(example, error)
         # @example_count += 1
         
         if error.nil?
-          puts "error was nil"
+          puts "============================== error was nil"
+        elsif Spec::Example::ExamplePendingError === error
+          puts "============================== error was pending"
         else
-          puts "error was not nil"
-          puts error
+          puts "============================== error was not nil"
+          # puts error
         end
       end
       

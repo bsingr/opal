@@ -1,0 +1,4 @@
+mode :all do
+  config :spec,
+    :required => [:browser]
+end

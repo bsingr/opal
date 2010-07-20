@@ -36,7 +36,7 @@ module Spec
       
       [:==, :===, :=~, :>, :<, :>=, :<=].each do |op|
         define_method(op) do |exp|
-          puts "about to call eval_match"
+          # puts "about to call eval_match"
           eval_match @actual, op, exp
         end
       end

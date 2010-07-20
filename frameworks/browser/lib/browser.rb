@@ -1,5 +1,5 @@
 # 
-# runner.rb
+# browser.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,25 +24,24 @@
 # THE SOFTWARE.
 #
 
-require 'spec/runner/options'
-require 'spec/runner/reporter'
-require 'spec/runner/example_group_runner'
-
-require 'spec/runner/formatter/html_formatter'
-
-module Spec
+# Browser holds all things browser related.
+module Browser
   
-  module Runner
+  # Returns true/false if the browser is opera.
+  # 
+  # @returns true or false
+  # 
+  def self.opera?
+    @__is_opera__ ||= `(opal.browser.opera ? #{self}.t : #{self}.f)`
+  end
   
-    # Main entry point for spec runner.
-    def self.run
-      puts "running"
-      options.run_examples
-    end
-  
-    def self.options
-      @options ||= Options.new
-    end
-    
-  end # Runner
+  # Returns true/false if the browser is safari.
+  # 
+  # @returns true or false
+  # 
+  def self.safari?
+    @__is_safari__ ||= `(opal.browser.safari ? #{self}.t : #{self}.f)`
+  end
 end
+
+require 'browser/element'

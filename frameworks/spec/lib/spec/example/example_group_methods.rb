@@ -31,7 +31,7 @@ module Spec
     module ExampleGroupMethods
       
       def describe group_name, &group_block
-        puts "describing in her instead!"
+        # puts "describing in her instead!"
         puts group_block
         subclass group_name, &group_block
       end
@@ -86,7 +86,7 @@ module Spec
       
       def run_examples(success, instance_variables, examples, run_options)
         examples.each do |example|
-          puts "running #{example}"
+          # puts "running #{example}"
           example_group_instance = new example, 
                                        &example_implementations[example]
           

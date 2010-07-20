@@ -687,7 +687,7 @@ module Vienna
         if call[:call_args] and call[:call_args][:assocs]
         used_param = true
         write "," unless call[:call_args].nil? or call[:call_args][:args].nil?
-        write "vm_newhash("
+        write "vnH("
         call[:call_args][:assocs].each do |assoc|
          write "," unless call[:call_args][:assocs].first == assoc
          generate_stmt assoc[:key], :full_stmt => false, :last_stmt => false

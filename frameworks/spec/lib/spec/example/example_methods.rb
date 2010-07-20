@@ -62,11 +62,11 @@ module Spec
           # instance_eval &@implementation
           instance_eval &@implementation
         rescue Exception => e
-          puts "ExampleMethods#execute rescuing"
+          # puts "ExampleMethods#execute rescuing"
           execution_error = e
         end
         
-        run_options.reporter.example_finished @example_proxy.update(description),  execution_error
+        run_options.reporter.example_finished @example_proxy.update(description), execution_error
       end
     end
   end
