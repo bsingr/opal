@@ -44,4 +44,5 @@ module Browser
   end
 end
 
+require 'browser/sizzle.js'
 require 'browser/element'

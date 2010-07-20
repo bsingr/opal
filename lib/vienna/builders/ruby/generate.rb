@@ -819,7 +819,7 @@ module Vienna
         generate_stmt stmt[:rhs], :full_stmt => false, :last_stmt => false
         write %{)}
       elsif stmt[:lhs].node == :constant
-        write %{vm$c($,"#{stmt[:lhs][:name]}",}
+        write %{#{SELF}.const_set("#{stmt[:lhs][:name]}",}
         generate_stmt stmt[:rhs], :full_stmt => false, :last_stmt => false
         write %{)}
       elsif stmt[:lhs].node == :call

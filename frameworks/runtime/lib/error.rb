@@ -27,6 +27,10 @@
 
 class Exception
   
+  def message
+    @message
+  end
+  
   def initialize(message)
     `if (!#{message}) {
       #{message} = #{nil};

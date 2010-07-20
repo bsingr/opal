@@ -45,10 +45,72 @@ module Browser
     #     element2 = Element.new :div, :class_name => 'my_class', :id => 'main'
     # 
     def initialize(type, options)
-      puts "creating new element #{type}"
+      `if (!#{options}) { #{options} = vnH()}`
+      # puts "creating new element #{type}"
       `#{self}.__element__ = document.createElement(#{type.to_s});`
+      @tag_name = type.to_s
       set options
     end
+    
+    # Return an instance with the passed native element as the instance's own
+    # element. This is used to return the body element, for instance
+    # 
+    #     Element.from_native(..some native element pointer..)
+    #     # => element
+    # 
+    # @param [Native Element] element
+    # @return [Element]
+    # 
+    def self.from_native(native_element)
+      element = allocate
+      `#{element}.__element__ = #{native_element};`
+      element
+    end
+    
+    # Return the body element for the document. The body element is an instance
+    # of this class, with some singleton methods defined, such as inspect so
+    # that it gets some nicer inspect properties.
+    # 
+    # @return [Element] body element
+    # 
+    def self.body
+      return @body_element if @body_element
+      
+      @body_element = from_native(`document.body`)
+      def @body_element.inspect
+        "#<Element body>"
+      end
+      
+      @body_element
+    end
+    
+    # Find the DOM selector in the given context. Context should always be 
+    # given. 
+    # 
+    #     Element.find_in_context('.first', Element.body)
+    # 
+    # @param [String|Synbol] selector
+    # @param [Element] context
+    # @returns Array
+    # 
+    def self.find_in_context(selector, context)
+      selector = `'#' + #{selector.to_s}` if selector.is_a? Symbol
+    end
+    
+    def inspect
+      description = "#<Element tag_name=#{@tag_name}"
+      description << " class_name=''" unless true
+      description << " id=''" unless true
+      description << ">"
+      description
+    end
+    
+    # What to do with each option
+    SET_OPTIONS = {
+      :class_name => :class_name=,
+      :content    => :text=,
+      :id         => :id=
+    }
     
     # Set some options on the element
     # 
@@ -59,32 +121,68 @@ module Browser
     # 
     def set(options)
       options.each do |key, value|
-        puts "setting #{key} with #{value}"
+        method = SET_OPTIONS[key]
+        raise "Bad Element.set key #{key}" unless method
+        __send__ SET_OPTIONS[key], value
       end
+    end
+    
+    # Set the class name. Here we do not append, just rewrite the entire class
+    # name
+    # 
+    def class_name=(class_name)
+      `#{self}.__element__.className = #{class_name}.toString();`
+      self
+    end
+    
+    # Set the inner text content of the receiver
+    def text=(text_content)
+      `var element = #{self}.__element__;
+      if (element.textContent !== undefined) {
+        element.textContent = #{text_content}.toString();
+      }
+      else {
+        element.innerText = #{text_content}.toString();
+      }`
+      self
+    end
+    
+    # Set the id of the element
+    def id=(id)
+      `#{self}.__element__.id = #{id}.toString();`
+      self
+    end
+    
+    # Append the element. If string passed, then add as html content
+    # 
+    def <<(append)
+      if append.is_a? Element
+        `#{self}.__element__.appendChild(#{append}.__element__);`
+      else
+        raise "bad Element <<"
+      end
+      
+      self
     end
     
     # All valid html tags. These are looped over so each element instance has
     # an instance method of the same name to construct an element of that type
     # with some given options
     VALID_HTML_TAGS = [
-      :html, :head, :title, :base, :meta, :link, :style, :script, :body, :div
+      :html, :head, :title, :base, :meta, :link, :style, :script, :body, :div,
+      :dl, :dt, :dd, :span, :pre
     ]
     
     VALID_HTML_TAGS.each do |tag_name|
       define_method(tag_name) do |options|
+        puts "in VALID_HTML_TAGS builder"
         # options are the options to se
         e = Element.new tag_name, options
         # now add to self
         self << e
+        
+        e
       end
     end
   end
 end
-
-puts "am i running opera?"
-puts Browser.opera?
-
-puts "am i running sfari?"
-puts Browser.safari?
-
-Browser::Element.new :div, :class => "some_class", :id => "some_title"

@@ -34,4 +34,8 @@ class Number
     throw "cannot convert " + #{other} + " into Number"`
   end
   
+  def inspect
+    `return vnS(#{self}.__num__.toString());`
+  end
+  
 end

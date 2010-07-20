@@ -112,7 +112,7 @@ exports.require = function(orig_path) {
   // console.log(load_paths);
   var path = orig_path;
   // basically loop through each of the load paths looking for a match
-  if (path.substr(path.length - 3) != '.rb') {
+  if ((path.substr(path.length - 3) != '.rb') && (path.substr(path.length -3) != '.js')) {
     // console.log("need to add .rb");
     path += '.rb'
   }

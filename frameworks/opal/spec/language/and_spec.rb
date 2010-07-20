@@ -2,7 +2,7 @@ describe "The '&&' statement" do |adam|
   
   it "short-circuits evaluation at the first condition to be false" do
     puts "running FIRST && spec"
-    raise "shit"
+    nil.should == 100
   end
   
   it "no error" do

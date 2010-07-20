@@ -43,4 +43,8 @@ class Array
   def <<(obj)
     `return #{self}.__arr__.push(#{obj});`
   end
+  
+  def length
+    `return #{self}.N(#{self}.__arr__.length);`
+  end
 end

@@ -50,7 +50,7 @@ module Spec
       end
       
       def description
-        @description
+        @example_proxy.description
       end
       
       def execute(run_options, instance_variables)

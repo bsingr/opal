@@ -20,6 +20,11 @@ class String
     `return #{self}.__str__ = #{self}.__str__.toUpperCase();`
   end
   
+  def <<(string)
+    `#{self}.__str__ += #{string.to_s}.__str__;`
+    self
+  end
+  
   def to_s
     self
   end

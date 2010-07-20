@@ -52,8 +52,12 @@ module Vienna
           exec_sources.each_with_index do |item, index|
             out.puts(",") if index > 0
             contents = File.read(item.stage!.staging_path)
-            # contents = "__"
-            out.write %Q|    "#{item.filename}": #{contents}|
+            if item.ext == "rb"
+              out.write %Q|    "#{item.filename}": #{contents}|
+            else
+              # must wrap javascript in function closure
+              out.write %Q|    "#{item.filename}": function() {#{contents}}|
+            end
           end
           out.puts "\n  }"
           
