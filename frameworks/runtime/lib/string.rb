@@ -13,7 +13,7 @@ class String
   end
   
   def == other
-    `return #{self}.__str__ === #{other}.__str__;`
+    `return (#{self}.__str__ === #{other}.__str__) ? #{true} : #{false};`
   end
   
   def upcase!

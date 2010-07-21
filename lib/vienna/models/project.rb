@@ -110,11 +110,11 @@ module Vienna
     
     # Find all targets relative to the given root_path with the given config
     def find_targets_for the_target, config
-      puts "looking for targets..... #{the_target.target_name}"
+      # puts "looking for targets..... #{the_target.target_name} .. #{@targets.inspect}"
       # p the_target.opalfile
       the_target.required.each do |target|
         # if we already know about the target, skip it
-        next if @targets.has_key?(target)
+        next if @targets.has_key?(target.to_s)
         # currently only look in our own frameworks/ root
         try_path = File.join(Vienna::PATH, 'frameworks', target.to_s)
         

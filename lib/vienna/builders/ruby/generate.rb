@@ -1310,7 +1310,7 @@ module Vienna
       if stmt[:stmt] and stmt[:stmt][0]
         generate_stmt stmt[:stmt][0], :full_stmt => false
       else
-        write "nil"
+        write "#{NIL}"
       end
       write ")"
       write ";" if context[:full_stmt]

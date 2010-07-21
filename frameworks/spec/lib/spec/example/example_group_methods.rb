@@ -32,7 +32,7 @@ module Spec
       
       def describe group_name, &group_block
         # puts "describing in her instead!"
-        puts group_block
+        # puts group_block
         subclass group_name, &group_block
       end
       
@@ -75,7 +75,7 @@ module Spec
       end
       
       def run(run_options)
-        puts "need to run group: #{description}"
+        # puts "need to run group: #{description}"
         examples = examples_to_run run_options
         notify run_options.reporter
         success = true

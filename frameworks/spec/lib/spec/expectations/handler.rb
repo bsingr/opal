@@ -34,14 +34,14 @@ module Spec
         Spec::Matchers.last_should = :should
         Spec::Matchers.last_matcher = matcher
         
-        puts "looking at matcher"
+        # puts "looking at matcher"
         
         if matcher.nil?
-          puts "matcher is nil"
+          # puts "matcher is nil"
           return Spec::Matchers::PositiveOperatorMatcher.new actual
         end
         
-        puts "matcher was not nil"
+        # puts "matcher was not nil"
       end
     end
   end

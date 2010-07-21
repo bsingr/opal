@@ -175,7 +175,7 @@ module Browser
     
     VALID_HTML_TAGS.each do |tag_name|
       define_method(tag_name) do |options|
-        puts "in VALID_HTML_TAGS builder"
+        # puts "in VALID_HTML_TAGS builder"
         # options are the options to se
         e = Element.new tag_name, options
         # now add to self

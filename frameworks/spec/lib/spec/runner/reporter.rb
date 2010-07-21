@@ -72,8 +72,8 @@ module Spec
         if error.nil?
           example_passed example
         elsif Spec::Example::ExamplePendingError === error
-          puts error
-          `console.log(#{error});`
+          # puts error
+          # `console.log(#{error});`
           example_pending example, error.message
         else
           example_failed example, error

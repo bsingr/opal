@@ -38,4 +38,8 @@ class Number
     `return vnS(#{self}.__num__.toString());`
   end
   
+  def ==(other)
+    `return (#{self}.__num__ === #{other}.__num__) ? #{true} : #{false};`
+  end
+  
 end

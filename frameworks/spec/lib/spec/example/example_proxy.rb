@@ -33,12 +33,12 @@ module Spec
       attr_reader :description
       
       def initialize(description, options, location)
-        puts "initialize description is #{description}"
+        # puts "initialize description is #{description}"
         @description = description
       end
       
       def update(description)
-        puts "update description is #{description}"
+        # puts "update description is #{description}"
         @description = description
         self
       end

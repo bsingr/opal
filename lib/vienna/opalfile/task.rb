@@ -42,6 +42,7 @@ module Vienna
     end
     
     def invoke_with_call_array(invocation_array, task_scope_instance)
+      # puts "invoking #{@task_name}"
       @task_scope = task_scope_instance
       # puts "\n##### #@task_name #{self}\n"
       unless invocation_array.include? @task_name

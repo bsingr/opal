@@ -406,6 +406,7 @@ __boot_base_class.prototype.native_error = function(err) {
 };
 
 __boot_base_class.prototype.TP = T_PROC;
+__boot_base_class.prototype.TA = T_ARRAY;
 
 var define_class_under = function(base, id, super_class) {
   

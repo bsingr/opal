@@ -235,9 +235,16 @@ namespace :build do
       build_path = File.join @project.build_root, @config.build_prefix
 
       opals = @project.targets.each_value.to_a.dup
+      
+      puts "opals are:"
+      p opals
+      
       # order is more-a-less irrelevant, but we MUST have opal first
       opals.unshift(opals.find { |o| o.target_name.to_sym == :runtime }).uniq!
        
+      puts "opals are now:"
+      p opals 
+      
       # build the final javascript.js package
       File.open(File.join(build_path, 'javascript.js'), 'w') do |out|
         opals.each do |opal|

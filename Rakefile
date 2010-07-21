@@ -104,6 +104,18 @@ task :opal_spec => :vienna_gem do
   project.build!
 end
 
+desc "Browser Specs"
+task :browser_spec => :vienna_gem do
+  browser_root = File.join(File.dirname(__FILE__), 'frameworks', 'browser')
+  
+  tmp_root = File.join(File.dirname(__FILE__), 'tmp', 'browser_spec')
+  
+  project = Vienna::Project.new browser_root, :build_mode => :spec,
+                                              :build_root => tmp_root
+  
+  project.build!
+end
+
 
 YARD::Rake::YardocTask.new do |t|
   YARD::Templates::Engine.register_template_path(File.join(Dir.getwd, 'yard_templates'))

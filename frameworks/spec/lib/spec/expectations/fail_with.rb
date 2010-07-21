@@ -29,9 +29,9 @@ module Spec
   module Expectations
     
     def self.fail_with(message, expected, target)
-      puts "going to raise"
+      # puts "going to raise"
       raise Spec::Expectations::ExpectationNotMetError.new(message)
-      puts "did raise"
+      # puts "did raise"
     end
   end
 end

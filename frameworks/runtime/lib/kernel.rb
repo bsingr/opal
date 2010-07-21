@@ -83,6 +83,10 @@ module Kernel
     to_s
   end
   
+  def object_id
+    `return vnN(#{self}.id);`
+  end
+  
   def raise(exception, string)
     # puts "need to raise"
     msg = nil
