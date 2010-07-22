@@ -1100,13 +1100,13 @@ module Vienna
             generate_stmt t[:expr], :full_stmt => false, :last_stmt => false
             write ".r){"
             t[:stmt].each do |s|
-              generate_stmt s, :full_stmt => true, :last_stmt =>((stmt[:stmt].last == s) && context[:last_stmt])
+              generate_stmt s, :full_stmt => true, :last_stmt =>((t[:stmt].last == s) && context[:last_stmt])
             end
             write "}"
           else # else node
             write "else{"
             t[:stmt].each do |s|
-              generate_stmt s, :full_stmt => true, :last_stmt =>((stmt[:stmt].last == s) && context[:last_stmt])
+              generate_stmt s, :full_stmt => true, :last_stmt =>((t[:stmt].last == s) && context[:last_stmt])
             end
             write "}"
           end

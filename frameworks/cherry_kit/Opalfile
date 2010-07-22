@@ -1,0 +1,6 @@
+mode :all do
+  config :cherry_kit,
+  
+    :required => [:foundation]
+
+end

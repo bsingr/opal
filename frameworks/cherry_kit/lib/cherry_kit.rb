@@ -1,5 +1,5 @@
 # 
-# array.rb
+# cherry_kit.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,45 +24,6 @@
 # THE SOFTWARE.
 #
 
-class Array
-  
-  def each &block
-    `var actual_array = #{self}.__arr__;
-    //console.log(" for " + actual_array + " do " + actual_array.length);
-    for (var i = 0; i < actual_array.length; i++) {
-      #{block}.__fun__(actual_array[i]);
-    }`
-    self
-  end
-  
-  def join(separator)
-    `return vnS(#{self}.__arr__.join(#{separator}.__str__));`
-  end
-  
-  def <<(obj)
-    `return #{self}.__arr__.push(#{obj});`
-  end
-  
-  def length
-    `return #{self}.N(#{self}.__arr__.length);`
-  end
-  
-  def inspect
-    description = "["
-    self.each do |item|
-      description << item.inspect
-    end
-    description << "]"
-    description
-  end
-  
-  def ==(other)
-    `if (#{self} === #{other}) return #{true};
-    if (!(#{other}.info & #{self}.TA)) return #{false};
-    if (#{self}.__arr__.length !== #{other}.__arr__.length) return #{false};
-    for (var i = 0; i < #{self}.__arr__.length; i++) {
-      if (!#{self}.__arr__[i].$$e$e(#{other}.__arr__[i].r)) return #{false};
-    }`
-    true
-  end
-end
+require 'foundation'
+
+puts "well, cherry kut"

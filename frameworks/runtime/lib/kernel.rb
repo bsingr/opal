@@ -45,6 +45,28 @@ module Kernel
     false
   end
   
+  def respond_to?(method)
+    `var method_id = #{method.to_s}.toString();
+    method_id = #{self}.mid2jsid(method_id);
+    if (#{self}[method_id]) {
+      return #{true};
+    }`
+    false
+  end
+  
+  def instance_variable_defined?(variable_name)
+    `return (#{self}[#{variable_name.to_s}.toString()]) ? #{true} : #{false};`
+  end
+  
+  def instance_variable_get(variable_name)
+    `return #{self}.ig(#{variable_name.to_s}.toString());`
+  end
+  
+  def instance_variable_set(variable_name, value)
+    `#{self}.is(#{variable_name.to_s}.toString(), #{value});`
+    value
+  end
+  
   def __send__(method, *args)
     `var res= #{self}[#{self}.mid2jsid(#{method.to_s}.__str__)].apply(#{self}, #{args}.__arr__);
     //console.log("res is: for " + #{method.to_s}.__str__);

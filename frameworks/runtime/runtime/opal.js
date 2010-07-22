@@ -194,7 +194,7 @@ __boot_base_class.prototype.hash = function() {
 
 // convert ruby id to jsid - for methods
 __boot_base_class.prototype.mid2jsid = function(mid) {
-  return ("$" + mid).replace(/=/g, '$e');
+  return ("$" + mid).replace(/=/g, '$e').replace(/\?/g, '$q');
 };
 
 
