@@ -27,7 +27,7 @@
 class Number
     
   def inspect
-    `return vnS(#{self}.toString());`
+    `return #{self}.toString();`
   end
   
   def ==(other)
@@ -35,7 +35,7 @@ class Number
   end
   
   def to_s
-    `return vnS(#{self}.toString());`
+    `return #{self}.toString();`
   end
   
   def +(other)

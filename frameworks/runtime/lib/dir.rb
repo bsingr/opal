@@ -27,7 +27,7 @@
 class Dir
   
   def self.getwd
-    `return vnS(opal.getwd);`
+    `return opal.getwd;`
   end
   
   def self.glob(glob)
@@ -36,7 +36,7 @@ class Dir
     var reg = new RegExp('^' + working + '$');
     for (var prop in opal.files) {
       if (reg.exec(prop)) {
-        result.push(vnS(prop));
+        result.push(prop);
       }
     }
     return result;`

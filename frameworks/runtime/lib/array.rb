@@ -34,7 +34,7 @@ class Array
   end
   
   def join(separator)
-    `return vnS(#{self}.join(#{separator}));`
+    `return #{self}.join(#{separator});`
   end
   
   def <<(obj)

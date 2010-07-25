@@ -21,7 +21,7 @@ class String
   end
   
   def slice(start, finish)
-    `return vnS(#{self}.substr(#{start}, #{finish}));`
+    `return #{self}.substr(#{start}, #{finish});`
   end
   
   def == other

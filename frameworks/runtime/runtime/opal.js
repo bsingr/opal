@@ -73,12 +73,12 @@ var T_CLASS             = 1,
 //  vnS("some string goes here")
 //  => {RubyString}
 // 
-global.vnS = function(str) {
-  return str;
-  var res = new class_string.allocator();
-  res.__str__ = str;
-  return res;
-};
+// global.vnS = function(str) {
+//   return str;
+//   var res = new class_string.allocator();
+//   res.__str__ = str;
+//   return res;
+// };
 
 // Create ruby number from javascript number
 global.vnN = function(num) {
@@ -400,7 +400,7 @@ __boot_base_class.prototype.o = function(rhs) {
 };
 
 // Create ruby string from js string
-__boot_base_class.prototype.S = vnS;
+// __boot_base_class.prototype.S = vnS;
 
 // creatr ruby number from js number
 __boot_base_class.prototype.N = vnN;
@@ -415,7 +415,7 @@ __boot_base_class.prototype.P = function(fun) {
 // ruby error from native error
 __boot_base_class.prototype.native_error = function(err) {
   var res = class_exception.$new();
-  res.is('@message', vnS(err.toString()));
+  res.is('@message', err.toString());
   return res;
 };
 

@@ -27,10 +27,10 @@
 class Symbol
   
   def inspect
-    `return vnS(":" + #{self}.__ptr__);`
+    `return ":" + #{self}.__ptr__;`
   end
   
   def to_s
-    `return vnS(#{self}.__ptr__);`
+    `return #{self}.__ptr__;`
   end
 end

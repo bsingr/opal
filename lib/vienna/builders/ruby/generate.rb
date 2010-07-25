@@ -752,11 +752,11 @@ module Vienna
       write "return " if context[:last_stmt] and context[:full_stmt]
       
       if str[:value].length == 0
-        write %{#{SELF}.S("")}
+        write %{""}
       elsif str[:value].length == 1
-        write %{#{SELF}.S("#{str[:value][0][:value].gsub(/\"/, '\"')}")}
+        write %{"#{str[:value][0][:value].gsub(/\"/, '\"')}"}
       else
-        write "#{SELF}.S(["
+        write "["
         str[:value].each do |s|
           write "," unless str[:value].first == s
           if s.node == :string_content
@@ -768,7 +768,7 @@ module Vienna
             # write %{,"to_s",[],nil,8)}
           end
         end
-        write "].join(''))"
+        write "].join('')"
       end
       
       write ";" if context[:full_stmt]
@@ -866,7 +866,7 @@ module Vienna
     
     def generate_numeric(num, context)
       write "return " if context[:last_stmt] and context[:full_stmt]
-      write "#{SELF}.N(#{num[:value]})"
+      write "#{num[:value]}"
       write ";" if context[:full_stmt]
     end
     

@@ -98,7 +98,7 @@ module Kernel
   end
   
   def to_s
-    `return vnS("#<" + #{self}.class_name + ":" + #{self}.id + ">");`
+    `return "#<" + #{self}.class_name + ":" + #{self}.id + ">";`
   end
   
   def inspect
