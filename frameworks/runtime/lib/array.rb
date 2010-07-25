@@ -65,4 +65,19 @@ class Array
     }`
     true
   end
+  
+  def [](index)
+    `return #{self}.__arr__[#{index}.__num__] || #{nil};`
+  end
+  
+  def include?(member)
+    false
+  end
+  
+  def pop
+    `if (#{self}.__arr__.length) {
+      return #{self}.__arr__.pop();
+    }
+    return #{nil};`
+  end
 end

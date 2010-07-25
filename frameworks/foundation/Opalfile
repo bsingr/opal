@@ -1,2 +1,11 @@
 config :foundation,
   :required => [:opal, :browser]
+  
+mode :spec do
+  config :foundation,
+
+    :lib_directories    => ['lib', 'spec'],
+    :bin_file           => :spec
+
+end
+

@@ -635,10 +635,23 @@ class_hash.allocator.prototype.hash_store = function(key, value) {
   var hash = key.hash();
   // if we dont have the hashed key, add it
   if (!this.__assocs__[hash]) {
-    this.__keys__.push(value);
+    this.__keys__.push(key);
   }
   // then in both cases reset the assoc
   return this.__assocs__[hash] = value;
+};
+
+class_hash.allocator.prototype.hash_delete = function(key) {
+  var hash = key.hash();
+  
+  if (this.__assocs__[hash]) {
+    var ret = this.__assocs__[hash];
+    delete this.__assocs__[hash];
+    this.__keys__.splice(this.__keys__.indexOf(key), 1);
+    return ret;
+  }
+  
+  return this.n;
 };
 
 class_hash.allocator.prototype.hash_fetch = function(key) {

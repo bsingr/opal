@@ -963,9 +963,8 @@ module Vienna
     
     def generate_opt_minus(stmt, context)
       write "return " if context[:last_stmt] and context[:full_stmt]
-      write %{vm_optminus(}
       generate_stmt stmt[:recv], :last_stmt => false, :full_stmt => false
-      write ","
+      write ".#{mid_to_jsid('-')}("
       generate_stmt stmt[:call_args][:args][0], :full_stmt => false
       write ")"
       write ";" if context[:full_stmt]

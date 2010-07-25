@@ -71,6 +71,7 @@ class Module
       var mid2 = mid + "=";
       var jsid = #{self}.mid2jsid(mid2);
       #{self}.dm(mid2, jsid, function(val) {
+        var #{self} = this;
         return #{self}.is('@' + mid, val);
       }, false);`
     end

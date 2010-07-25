@@ -5,10 +5,10 @@ mode :all do
 
 end
 
-mode :spec do
-  config :opal,
-    
-    :lib_directories  => ['spec'],
-    :bin_file         => :spec
-  
-end
+# mode :spec do
+#   config :opal,
+#     
+#     :lib_directories  => ['spec'],
+#     :bin_file         => :spec
+#   
+# end

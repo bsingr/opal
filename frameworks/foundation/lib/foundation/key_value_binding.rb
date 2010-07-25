@@ -1,5 +1,5 @@
 # 
-# hash.rb
+# key_value_binding.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,28 +24,11 @@
 # THE SOFTWARE.
 #
 
-class Hash
+module CherryKit
   
-  def []=(key, value)
-    # `console.log("need to store " + #{value} + " for key " + #{key});`
-    `return #{self}.hash_store(#{key}, #{value});`
-  end
-  
-  def delete(key)
-    `return #{self}.hash_delete(#{key});`
-  end
-  
-  def [](key)
-    `return #{self}.hash_fetch(#{key});`
-  end
-  
-  def each(&block)
-    `var key, value;
-    for (var i = 0; i < #{self}.__keys__.length; i++) {
-      key = #{self}.__keys__[i];
-      value = #{self}.__assocs__[key.hash()];
-      #{block}.__fun__(key, value);
-    }`
-    self
+  module KeyValueBinding
+    
+    
+    
   end
 end

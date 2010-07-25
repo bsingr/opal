@@ -42,4 +42,16 @@ class Number
     `return (#{self}.__num__ === #{other}.__num__) ? #{true} : #{false};`
   end
   
+  def to_s
+    `return vnS(#{self}.__num__.toString());`
+  end
+  
+  def +(other)
+    `return vnN(#{self}.__num__ + #{other}.__num__);`
+  end
+  
+  def -(other)
+    `return vnN(#{self}.__num__ - #{other}.__num__);`
+  end
+  
 end

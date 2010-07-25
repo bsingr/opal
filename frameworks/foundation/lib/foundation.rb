@@ -25,6 +25,6 @@
 #
  puts "well, foundation here init"
 
-Dir.glob('foundation/**/*.rb').each do |rb|
+Dir.glob('foundation/lib/**/*.rb').each do |rb|
   require rb
 end

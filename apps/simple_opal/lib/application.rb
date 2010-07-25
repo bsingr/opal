@@ -42,6 +42,6 @@ end
 
 a = KVCTest.new
 a.first_name = "adam"
-a.add_observer_for_key_path self, 'first_name'
+a.add_observer self, :path => 'first_name'
 `console.log(#{a});`
 a.first_name = "wowow"
