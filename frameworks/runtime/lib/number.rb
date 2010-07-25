@@ -25,33 +25,25 @@
 #
 
 class Number
-  
-  def + other
-    # T_NUMBER = 64
-   `if (#{other}.info & 64)
-      return #{self}.__num__ + #{other}.__num__;
-
-    throw "cannot convert " + #{other} + " into Number"`
-  end
-  
+    
   def inspect
-    `return vnS(#{self}.__num__.toString());`
+    `return vnS(#{self}.toString());`
   end
   
   def ==(other)
-    `return (#{self}.__num__ === #{other}.__num__) ? #{true} : #{false};`
+    `return (#{self} == #{other}) ? #{true} : #{false};`
   end
   
   def to_s
-    `return vnS(#{self}.__num__.toString());`
+    `return vnS(#{self}.toString());`
   end
   
   def +(other)
-    `return vnN(#{self}.__num__ + #{other}.__num__);`
+    `return #{self} + #{other};`
   end
   
   def -(other)
-    `return vnN(#{self}.__num__ - #{other}.__num__);`
+    `return #{self} - #{other};`
   end
   
 end

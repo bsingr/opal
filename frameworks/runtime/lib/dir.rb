@@ -31,12 +31,12 @@ class Dir
   end
   
   def self.glob(glob)
-    `var working = #{glob}.__str__.replace(/\*\*\//g, '.*').replace(/\*\*/g, '.*').replace(/\//g, '\\/');
-    var result = vnA();
+    `var working = #{glob}.replace(/\*\*\//g, '.*').replace(/\*\*/g, '.*').replace(/\//g, '\\/');
+    var result = [];
     var reg = new RegExp('^' + working + '$');
     for (var prop in opal.files) {
       if (reg.exec(prop)) {
-        result.__arr__.push(vnS(prop));
+        result.push(vnS(prop));
       }
     }
     return result;`

@@ -74,6 +74,7 @@ var T_CLASS             = 1,
 //  => {RubyString}
 // 
 global.vnS = function(str) {
+  return str;
   var res = new class_string.allocator();
   res.__str__ = str;
   return res;
@@ -81,9 +82,10 @@ global.vnS = function(str) {
 
 // Create ruby number from javascript number
 global.vnN = function(num) {
-  var res = new class_number.allocator();
-  res.__num__ = num;
-  return res;
+  return num;
+  // var res = new class_number.allocator();
+  // res.__num__ = num;
+  // return res;
 };
 
 // create a ruby proc from javascript func
@@ -107,7 +109,8 @@ global.vnY = function(str) {
 
 // create a ruby array from arguments..
 // vnA(arr1, arr2....arr3);
-global.vnA = function() {
+global.vnA = function(arr) {
+  return arr;
   var res = new class_array.allocator();
   res.__arr__ = Array.prototype.slice.call(arguments);
   return res;
@@ -183,6 +186,25 @@ if (!Array.prototype.indexOf) {
 // 
 // .dc() - define class
 // .dm() - define method
+// 
+// Update/Renaming scheme
+// ======================
+// 
+// We are now going to use the native String/Number/Array prototypes, so we need
+// to make sure we avoid clashes. All ruby methods start with $, so all
+// definitions/usage functions will end with $. No
+// generated methods can end with $, so we avoid clashes. For example, the 
+// methods/properties above become...
+// 
+// .t$ - true literal
+// .f$ - false literal
+// .n$ - nil literal
+// 
+// .r$ - ruby truthiness
+// 
+// .a$() - and test, takes a function as single param to make test
+// .o$() - or test, takes a function as single param to make test
+// 
 // 
 var __boot_base_class = function() {
   this.id = yield_hash();
@@ -354,9 +376,9 @@ __boot_base_class.prototype.extend = function(module) {
   }
 };
 
-__boot_base_class.prototype.toString = function() {
-  return this.$inspect().__str__;
-};
+// __boot_base_class.prototype.toString = function() {
+//   return this.$inspect().__str__;
+// };
 
 // RTEST - true. false and nil override this
 __boot_base_class.prototype.r = true;
@@ -378,18 +400,10 @@ __boot_base_class.prototype.o = function(rhs) {
 };
 
 // Create ruby string from js string
-__boot_base_class.prototype.S = function(str) {
-  var res = new class_string.allocator();
-  res.__str__ = str;
-  return res;
-};
+__boot_base_class.prototype.S = vnS;
 
 // creatr ruby number from js number
-__boot_base_class.prototype.N = function(num) {
-  var res = new class_number.allocator();
-  res.__num__ = num;
-  return res;
-};
+__boot_base_class.prototype.N = vnN;
 
 // ruby proc from function
 __boot_base_class.prototype.P = function(fun) {
@@ -420,6 +434,31 @@ var define_class_under = function(base, id, super_class) {
   // parent relationship
   res.constructor.prototype.opal_parent = base;
   base.const_set(id, res);
+  return res;
+};
+
+// Define a toll-free bridged ruby class. This is used for mixing native JS
+// strings, arrays etc with ruby versions.
+// 
+// Usage
+// =====
+// 
+//    class_string = define_bridged_class("String", String);
+// 
+// This uses the String constructor. For now, every toll free will inherit from
+// object, and will be set as a constant in the Object:: namespace
+// 
+var define_bridged_class = function(id, native) {
+  var res = __subclass(id, class_object);
+  
+  var old_allocator = res.allocator.prototype;
+  res.allocator = native;
+  
+  for (var prop in old_allocator) {
+    native.prototype[prop] = old_allocator[prop];
+  }
+  
+  class_object.const_set(id, res);
   return res;
 };
 
@@ -568,32 +607,36 @@ class_class.constructor.prototype.dm = class_object.constructor.prototype.dm;
 exports.Object = class_object;
 exports.top_self = new class_object.allocator();
 
-// Kernel module
-module_kernel = define_module_under(class_object, "Kernel");
-class_object.include(module_kernel);
-
-// String class
-class_string = define_class_under(class_object, "String", class_object);
-class_string.allocator.prototype.info = T_OBJECT | T_STRING;
-
-class_string.allocator.prototype.hash = function() {
-  return '$$str$$' + this.__str__;
+// Override Object.include so that we can also include each module into our
+// Natives String, Array, Number etc.
+class_object.include = function(module) {
+  // super
+  var res = __boot_base_class.prototype.include.apply(class_object, [module]);
+    
+  var natives = [class_string, class_number, class_array];
+  
+  // return res;
+  for (var i = 0; i < natives.length; i++) {
+    natives[i].include(module);
+  }
+  
+  return res;
 };
 
-class_string.allocator.prototype.toString = function() {
-  return this.__str__;
-};
-
-// Number class
-class_number = define_class_under(class_object, "Number", class_object);
-class_number.allocator.prototype.info = T_OBJECT | T_NUMBER;
-
-class_number.allocator.prototype.hash = function() {
-  return '$$num$$' + this.__num__;
-};
-
-class_number.allocator.prototype.toString = function() {
-  return this.__num__.toString();
+// When we define a method on object itself, we need to also set it on our 
+// natives.
+class_object.dm = function() {
+  // super
+  var res = __boot_base_class.prototype.dm.apply(class_object, arguments);
+  
+  var natives = [class_string, class_number, class_array];
+  
+  // return res;
+  for (var i = 0; i < natives.length; i++) {
+    natives[i].dm.apply(natives[i], arguments);
+  }
+  
+  return res;
 };
 
 // Proc class
@@ -618,14 +661,6 @@ vnNil = new class_nil_class.allocator();
 __boot_base_class.prototype.n = vnNil;
 
 vnNil.r = false;
-
-// Array class
-class_array = define_class_under(class_object, "Array", class_object);
-class_array.allocator.prototype.info = T_OBJECT | T_ARRAY;
-
-class_array.allocator.prototype.toString = function() {
-  return this.__arr__;
-};
 
 // Hash
 class_hash = define_class_under(class_object, "Hash", class_object);
@@ -689,3 +724,44 @@ class_exception.allocator.prototype.toString = function() {
 class_exception.allocator.prototype.raise = function() {
   throw this;
 };
+
+// Special Classes: We do these three (Array, String, Number) last so that we
+// have all our special runtime methods setup so we can add them to 
+// Array.prototype, String.prototype and Number.prototype. Note: we could also
+// do RegExp....?
+
+// Number class
+class_number = define_bridged_class("Number", Number);
+
+class_number.allocator.prototype.info = T_OBJECT | T_NUMBER;
+ 
+class_number.allocator.prototype.hash = function() {
+  return '$$num$$' + this;
+};
+
+// class_number.allocator.prototype.toString = function() {
+//   return this;
+// };
+
+// String class
+class_string = define_bridged_class("String", String);
+
+class_string.allocator.prototype.info = T_OBJECT | T_NUMBER;
+
+class_string.allocator.prototype.hash = function() {
+  return this;
+};
+
+// Array class
+class_array = define_bridged_class("Array", Array);
+// class_array = define_class_under(class_object, "Array", class_object);
+class_array.allocator.prototype.info = T_OBJECT | T_ARRAY;
+
+// class_array.allocator.prototype.toString = function() {
+  // return this.__arr__;
+// };
+
+
+// Kernel module
+module_kernel = define_module_under(class_object, "Kernel");
+class_object.include(module_kernel);

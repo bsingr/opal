@@ -311,15 +311,13 @@ module Vienna
             r << %Q|
             if (arguments.length > 0 && arguments[0].info & self.TP) {
               var __block__ = arguments[arguments.length - 1];
-              #{@args[@rest_arg_name]} = vnA.apply(self,
-                Array.prototype.slice.call(arguments, arguments.length -1));
+              #{@args[@rest_arg_name]} =                 Array.prototype.slice.call(arguments, arguments.length -1);
             }
             else {
-              #{@args[@rest_arg_name]} = vnA.apply(self,
-                Array.prototype.slice.call(arguments));
+              #{@args[@rest_arg_name]} =                 Array.prototype.slice.call(arguments);
             }|
           else
-            r << %{#{@args[@rest_arg_name]}=vnA.apply(#{SELF},Array.prototype.slice.call(arguments));}
+            r << %{#{@args[@rest_arg_name]}=Array.prototype.slice.call(arguments);}
           end
         
         # Case: one norm arg, rest splat args - def a(name, *args)
@@ -331,7 +329,7 @@ module Vienna
             r << "var self = this;"
           end
           r << "#{@args[@norm_arg_names.first]}=arguments[0];"
-          r << %{#{@args[@rest_arg_name]}=vnA.apply(self, Array.prototype.slice.call(arguments,1));}
+          r << %{#{@args[@rest_arg_name]}=Array.prototype.slice.call(arguments,1);}
           
         # Case 3: just normal args (any number) - def a(l,m,n,o,p)
         elsif norm > 0 && opt == 0 && post == 0 && rest.nil?
@@ -940,14 +938,14 @@ module Vienna
     
     def generate_array(ary, context)
       write "return " if context[:last_stmt] and context[:full_stmt]
-      write "vnA("
+      write "["
       if ary[:args]
         ary[:args].each do |a|
           write "," unless ary[:args].first == a
           generate_stmt a, :full_stmt => false, :last_stmt => false
         end
       end
-      write ")"
+      write "]"
       write ";" if context[:full_stmt]
     end
     

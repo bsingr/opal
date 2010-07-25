@@ -37,7 +37,7 @@ class Module
   def define_method(method, &implementation)
     # we are defining a method, so always use opal_self to reclaim self
     `#{implementation}.__fun__.opal_self = true;
-    var mid = #{method.to_s}.__str__;
+    var mid = #{method.to_s};
     var jsid = #{self}.mid2jsid(mid);
     #{self}.dm(mid, jsid, #{implementation}.__fun__, false);`
     self
@@ -45,8 +45,8 @@ class Module
   
   def attr_accessor(*attributes)
     # puts "in attr_accessor"
-    `#{self}.$attr_reader.apply(#{self}, #{attributes}.__arr__);`
-    `#{self}.$attr_writer.apply(#{self}, #{attributes}.__arr__);`
+    `#{self}.$attr_reader.apply(#{self}, #{attributes});`
+    `#{self}.$attr_writer.apply(#{self}, #{attributes});`
     self
   end
   
@@ -54,7 +54,7 @@ class Module
   
   def attr_reader(*attributes)
     attributes.each do |attribute|
-      `var mid = #{attribute.to_s}.__str__;
+      `var mid = #{attribute.to_s};
       var jsid = #{self}.mid2jsid(mid);
       #{self}.dm(mid, jsid, function() {
         var #{self} = this;
@@ -67,7 +67,7 @@ class Module
   
   def attr_writer(*attributes)
     attributes.each do |attribute|
-      `var mid = #{attribute.to_s}.__str__;
+      `var mid = #{attribute.to_s};
       var mid2 = mid + "=";
       var jsid = #{self}.mid2jsid(mid2);
       #{self}.dm(mid2, jsid, function(val) {

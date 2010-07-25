@@ -9,11 +9,11 @@
 class String
   
   def initialize(string="")
-    `#{self}.__str__ = #{string};`
+    `#{self} = #{string};`
   end
   
   def index(string)
-    `var res = #{self}.__str__.indexOf(#{string}.__str__);
+    `var res = #{self}.indexOf(#{string});
     if (res != -1) {
       return vnN(res);
     }
@@ -21,19 +21,19 @@ class String
   end
   
   def slice(start, finish)
-    `return vnS(#{self}.__str__.substr(#{start}.__num__, #{finish}.__num__));`
+    `return vnS(#{self}.substr(#{start}, #{finish}));`
   end
   
   def == other
-    `return (#{self}.__str__ === #{other}.__str__) ? #{true} : #{false};`
+    `return (#{self} == #{other}) ? #{true} : #{false};`
   end
   
   def upcase!
-    `return #{self}.__str__ = #{self}.__str__.toUpperCase();`
+    `return #{self} = #{self}.toUpperCase();`
   end
   
   def <<(string)
-    `#{self}.__str__ += #{string.to_s}.__str__;`
+    `#{self} += #{string.to_s};`
     self
   end
   
@@ -42,15 +42,11 @@ class String
   end
   
   def length
-    `return vnN(#{self}.__str__.length);`
+    `return vnN(#{self}.length);`
   end
   
   def split(str)
-    `var res = #{self}.__str__.split(#{str}.__str__);
-    for (var i = 0; i < res.length; i++) {
-      res[i] = vnS(res[i]);
-    };
-    return vnA.apply(res, res);`
+    `return #{self}.split(#{str});`
   end
   
 end

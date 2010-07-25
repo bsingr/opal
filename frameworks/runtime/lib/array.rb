@@ -27,24 +27,22 @@
 class Array
   
   def each &block
-    `var actual_array = #{self}.__arr__;
-    //console.log(" for " + actual_array + " do " + actual_array.length);
-    for (var i = 0; i < actual_array.length; i++) {
-      #{block}.__fun__(actual_array[i]);
+    `for (var i = 0; i < #{self}.length; i++) {
+      #{block}.__fun__(#{self}[i]);
     }`
     self
   end
   
   def join(separator)
-    `return vnS(#{self}.__arr__.join(#{separator}.__str__));`
+    `return vnS(#{self}.join(#{separator}));`
   end
   
   def <<(obj)
-    `return #{self}.__arr__.push(#{obj});`
+    `return #{self}.push(#{obj});`
   end
   
   def length
-    `return #{self}.N(#{self}.__arr__.length);`
+    `return #{self}.N(#{self}.length);`
   end
   
   def inspect
@@ -59,15 +57,15 @@ class Array
   def ==(other)
     `if (#{self} === #{other}) return #{true};
     if (!(#{other}.info & #{self}.TA)) return #{false};
-    if (#{self}.__arr__.length !== #{other}.__arr__.length) return #{false};
-    for (var i = 0; i < #{self}.__arr__.length; i++) {
-      if (!#{self}.__arr__[i].$$e$e(#{other}.__arr__[i].r)) return #{false};
+    if (#{self}.length !== #{other}.length) return #{false};
+    for (var i = 0; i < #{self}.length; i++) {
+      if (!#{self}[i].$$e$e(#{other}[i].r)) return #{false};
     }`
     true
   end
   
   def [](index)
-    `return #{self}.__arr__[#{index}.__num__] || #{nil};`
+    `return #{self}[#{index}] || #{nil};`
   end
   
   def include?(member)
@@ -75,8 +73,8 @@ class Array
   end
   
   def pop
-    `if (#{self}.__arr__.length) {
-      return #{self}.__arr__.pop();
+    `if (#{self}.length) {
+      return #{self}.pop();
     }
     return #{nil};`
   end

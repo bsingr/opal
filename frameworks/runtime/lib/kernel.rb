@@ -68,8 +68,8 @@ module Kernel
   end
   
   def __send__(method, *args)
-    `var res= #{self}[#{self}.mid2jsid(#{method.to_s}.__str__)].apply(#{self}, #{args}.__arr__);
-    //console.log("res is: for " + #{method.to_s}.__str__);
+    `var res= #{self}[#{self}.mid2jsid(#{method.to_s})].apply(#{self}, #{args});
+    //console.log("res is: for " + #{method.to_s});
     //console.log(#{args});
     //console.log(res);
     return res;
@@ -81,7 +81,7 @@ module Kernel
   end
   
   def require require_path
-    `opal.require(#{require_path}.__str__);`
+    `opal.require(#{require_path});`
     require_path
   end
   
