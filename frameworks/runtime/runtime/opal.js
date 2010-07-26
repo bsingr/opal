@@ -64,29 +64,7 @@ var T_CLASS             = 1,
     T_HASH              = 512, 
     T_ICLASS            = 1024,
     FL_SINGLETON        = 2056;
-    
-// literal construction functions etc
 
-// Create a ruby string from a javascript string
-// 
-// Usage:
-//  vnS("some string goes here")
-//  => {RubyString}
-// 
-// global.vnS = function(str) {
-//   return str;
-//   var res = new class_string.allocator();
-//   res.__str__ = str;
-//   return res;
-// };
-
-// Create ruby number from javascript number
-global.vnN = function(num) {
-  return num;
-  // var res = new class_number.allocator();
-  // res.__num__ = num;
-  // return res;
-};
 
 // create a ruby proc from javascript func
 global.vnP = function(fun) {
@@ -104,15 +82,6 @@ global.vnY = function(str) {
   var res = new class_symbol.allocator();
   res.__ptr__ = str;
   symbol_table[str] = res;
-  return res;
-};
-
-// create a ruby array from arguments..
-// vnA(arr1, arr2....arr3);
-global.vnA = function(arr) {
-  return arr;
-  var res = new class_array.allocator();
-  res.__arr__ = Array.prototype.slice.call(arguments);
   return res;
 };
 
@@ -160,33 +129,6 @@ if (!Array.prototype.indexOf) {
 // are all on the prototype of this. This keeps a lot from needing to go into
 // global namespace, and keeps vienna export nice and clean.
 // 
-// prototype definitions
-// =====================
-// 
-// .t - true literal
-// .f - false literal
-// .n - nil literal
-// 
-// .r - ruby truthiness - default is true. false and nil override to false
-// 
-// .a() - and test - takes a functiion as single param to perform and test
-// .o() - or test - takes a functiin as single param to perform or test
-// 
-// .A() - make a ruby array from a js array passed in as single param
-// .S() - make ruby string from js string passed in as single param
-// .Y() - make ruby symbol from js string passed in as single param
-// .N() - make ruby number from js number passed in as single param
-// .H() - make ruby hash
-// .R() - make ruby regexp from js regexp passed in as single param
-// 
-// .TO - T_OBJECT
-// .TC - T_CLASS
-// .TM - T_MODULE
-// .TA - T_ARRAY
-// 
-// .dc() - define class
-// .dm() - define method
-// 
 // Update/Renaming scheme
 // ======================
 // 
@@ -202,9 +144,19 @@ if (!Array.prototype.indexOf) {
 // 
 // .r$ - ruby truthiness
 // 
+// .h$() - make hash from args
+// .y$() - make symbol if not already exists
+// 
 // .a$() - and test, takes a function as single param to make test
 // .o$() - or test, takes a function as single param to make test
 // 
+// .O$ - T_OBJECT
+// .C$ - T_CLASS
+// .M$ - T_MODULE
+// .A$ - T_ARRAY
+// 
+// .dc$() - define class
+// .dm$() - define method
 // 
 var __boot_base_class = function() {
   this.id = yield_hash();
@@ -361,24 +313,22 @@ __boot_base_class.prototype.include = function(module) {
 
     this.allocator.prototype[method] = module.allocator.prototype.method_table[method];
   }
+  
+  // console.log("checking include constants from " + module.class_name + " into " + this.class_name);
+  for (var prop in module.constants) {
+    if (module.constants.hasOwnProperty(prop) && !this.constants[prop]) {
+      this.constants[prop] = module.constants[prop];
+    }
+  }
 };
 
 __boot_base_class.prototype.extend = function(module) {
-  // console.log("want to extend:");
-  // console.log(module);
-  // console.log("into:");
-  // console.log(this.class_name);
-  // console.log(this.allocator);  
   // add each method from module into class's prototype
   for (method in module.allocator.prototype.method_table) {
     // console.log("adding " +method);
     this.constructor.prototype[method] = module.allocator.prototype.method_table[method];
   }
 };
-
-// __boot_base_class.prototype.toString = function() {
-//   return this.$inspect().__str__;
-// };
 
 // RTEST - true. false and nil override this
 __boot_base_class.prototype.r = true;
@@ -398,12 +348,6 @@ __boot_base_class.prototype.o = function(rhs) {
   
   return rhs();
 };
-
-// Create ruby string from js string
-// __boot_base_class.prototype.S = vnS;
-
-// creatr ruby number from js number
-__boot_base_class.prototype.N = vnN;
 
 // ruby proc from function
 __boot_base_class.prototype.P = function(fun) {
@@ -732,34 +676,25 @@ class_exception.allocator.prototype.raise = function() {
 
 // Number class
 class_number = define_bridged_class("Number", Number);
-
 class_number.allocator.prototype.info = T_OBJECT | T_NUMBER;
  
 class_number.allocator.prototype.hash = function() {
   return '$$num$$' + this;
 };
 
-// class_number.allocator.prototype.toString = function() {
-//   return this;
-// };
 
 // String class
 class_string = define_bridged_class("String", String);
-
 class_string.allocator.prototype.info = T_OBJECT | T_NUMBER;
 
 class_string.allocator.prototype.hash = function() {
   return this;
 };
 
+
 // Array class
 class_array = define_bridged_class("Array", Array);
-// class_array = define_class_under(class_object, "Array", class_object);
 class_array.allocator.prototype.info = T_OBJECT | T_ARRAY;
-
-// class_array.allocator.prototype.toString = function() {
-  // return this.__arr__;
-// };
 
 
 // Kernel module

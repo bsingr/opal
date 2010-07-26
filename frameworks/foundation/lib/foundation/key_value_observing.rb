@@ -57,11 +57,15 @@ module CherryKit
   module KeyValueObserving
     
     def will_change_value_for_key(key)
-      __send_change_notifications key, true, :kind => :setting 
+      if @__kvo_replaced_keys
+        __send_change_notifications key, true, :kind => :setting 
+      end
     end
     
     def did_change_value_for_key(key)
-      __send_change_notifications key, false, nil
+      if @__kvo_replaced_keys
+        __send_change_notifications key, false, nil
+      end
     end
   
     def add_observer(an_observer, path, options, context)

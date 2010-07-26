@@ -15,7 +15,7 @@ class String
   def index(string)
     `var res = #{self}.indexOf(#{string});
     if (res != -1) {
-      return vnN(res);
+      return res;
     }
     return #{nil};`
   end
@@ -42,7 +42,7 @@ class String
   end
   
   def length
-    `return vnN(#{self}.length);`
+    `return #{self}.length;`
   end
   
   def split(str)

@@ -94,7 +94,7 @@ module Kernel
   end
   
   def puts str
-    `console.log(#{str}.toString());`
+    `console.log(#{str}.$inspect().toString());`
   end
   
   def to_s

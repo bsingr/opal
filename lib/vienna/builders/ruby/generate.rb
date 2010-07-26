@@ -1295,7 +1295,7 @@ module Vienna
           abort "generate_return multiple args not yet done"
         end
       else
-        write "nil"
+        write "#{NIL}"
       end
 
       write ";" if context[:full_stmt]

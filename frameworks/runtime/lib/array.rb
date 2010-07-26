@@ -42,7 +42,7 @@ class Array
   end
   
   def length
-    `return #{self}.N(#{self}.length);`
+    `return #{self}.length;`
   end
   
   def inspect
