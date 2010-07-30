@@ -25,6 +25,8 @@
 #
  puts "well, foundation here init"
 
+require 'browser'
+
 Dir.glob('foundation/lib/**/*.rb').each do |rb|
   require rb
 end

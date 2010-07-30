@@ -1,5 +1,5 @@
 # 
-# browser.rb
+# root_theme.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,54 +24,26 @@
 # THE SOFTWARE.
 #
 
-# Browser holds all things browser related.
-module Browser
-  
-  # Returns true/false if the browser is opera.
-  # 
-  # @returns true or false
-  # 
-  def self.opera?
-    @__is_opera__ ||= `(opal.browser.opera ? #{self}.t : #{self}.f)`
-  end
-  
-  # Returns true/false if the browser is safari.
-  # 
-  # @returns true or false
-  # 
-  def self.safari?
-    @__is_safari__ ||= `(opal.browser.safari ? #{self}.t : #{self}.f)`
-  end
-  
-  def self.msie?
-    @__is_msie__ ||= `(opal.browser.msie ? #{self}.t : #{self}.f)`
-  end
-  
-  # Returns the document element
-  def self.document
-    return @document_element if @document_element
-    
-    @document_element = Element.from_native(`document`)
-    def @document_element.inspect
-      "#<Element document>"
-    end
-    
-    @document_element
-  end
-  
-  # Returns the window element
-  def self.window
-    return @window_element if @window_element
-    
-    @window_element = Element.from_native(`window`)
-    def @window_element.inspect
-      "#<Element window>"
-    end
-    
-    @window_element
-  end
-end
+require "foundation/rendering/theme"
 
-require 'browser/sizzle.js'
-require 'browser/element'
-require 'browser/event'
+module CherryKit
+  
+  # The RootTheme is the base theme for all cherry kit and cherry touch 
+  # applications. Other themes should probbaly inherit from this theme.
+  class RootTheme < Theme
+    
+    # Return a new view renderer for this theme. The view renderer takes control
+    # of the basics, such as setting up class names, setting the element DOM id
+    # and setting a basic background color.
+    # 
+    # @param {CherryKit::View} view the view owner
+    # @returns {CherryKit::Renderer} the view renderer
+    # 
+    def self.view(view)
+      RootTheme::View.new view
+    end
+    
+  end
+  
+  # RootTheme.register :root_theme
+end

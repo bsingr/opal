@@ -666,6 +666,7 @@ class_exception.allocator.prototype.toString = function() {
 };
 
 class_exception.allocator.prototype.raise = function() {
+  console.log(this);
   throw this;
 };
 

@@ -93,8 +93,9 @@ module Kernel
     end
   end
   
-  def puts str
+  def puts(str)
     `console.log(#{str}.$inspect().toString());`
+    nil
   end
   
   def to_s

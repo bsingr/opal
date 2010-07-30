@@ -1,5 +1,5 @@
 # 
-# application.rb
+# responder.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,24 +24,9 @@
 # THE SOFTWARE.
 #
 
-puts "in application"
-
-class KVCTest
+module CherryKit
   
-  def initialize
-    @first_name = "Adam"
-    @second_name = 100
+  class Responder
+    
   end
-  
-  def first_name=(first_name)
-    puts "in first_name= original"
-    @first_name = first_name
-  end
-  
 end
-
-a = KVCTest.new
-a.first_name = "adam"
-a.add_observer self, :path => 'first_name'
-`console.log(#{a});`
-a.first_name = "wowow"

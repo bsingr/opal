@@ -134,6 +134,23 @@ exports.require = function(orig_path) {
   throw "could not find require: " + orig_path;
 };
 
+// =========================
+// = Browser bits and bobs =
+// =========================
+
+exports.browser = (function() {
+  var agent = navigator.userAgent.toLowerCase();
+  var version = 1;
+  var browser = {
+    version: 0,
+    safari: (/webkit/).test(agent) ? version : 0,
+    opera: (/opera/).test(agent) ? version : 0,
+    msie: (/msie/).test(agent) && !(/opera/).test(agent) ? version : 0
+  };
+  
+  return browser;
+})();
+
 // ================
 // = On ready etc =
 // ================
@@ -148,25 +165,22 @@ var on_ready = function() {
 
 // attach ready function
 (function(){
-  console.log("getting DOMContentLoaded setep");
-  // w3c
+  // w3c - firefox, safari, opera
   if (document.addEventListener) {
     document.addEventListener("DOMContentLoaded", on_ready, false);
   }
-})();
-
-// =========================
-// = Browser bits and bobs =
-// =========================
-
-exports.browser = (function() {
-  var agent = navigator.userAgent.toLowerCase();
-  var version = 1;
-  var browser = {
-    version: 0,
-    safari: (/webkit/).test(agent) ? version : 0,
-    opera: (/opera/).test(agent) ? version : 0
-  };
+  // internet explorer
+  if (exports.browser.msie) {
+    (function() {
+      try {
+        document.documentElement.doScroll('left');
+      }
+      catch (e) {
+        setTimeout(arguments.callee, 0);
+        return;
+      }
+      on_ready();
+    })();
+  }
   
-  return browser;
 })();

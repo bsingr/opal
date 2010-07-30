@@ -50,6 +50,10 @@ class Module
     self
   end
   
+  def to_s
+    `return #{self}.class_name;`
+  end
+  
   
   
   def attr_reader(*attributes)

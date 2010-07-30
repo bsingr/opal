@@ -6,16 +6,7 @@
 #  Copyright 2010 Adam Beynon. All rights reserved.
 # 
 
-puts "running in foundation!"
-
-require 'opal'
-
-# require all our framework stuff
-Dir.glob('foundation/**/*.rb').each do |rb|
-  puts rb
-end
+require 'foundation'
 
 # require our main application.rb file
-require File.join(Dir.getwd, 'lib', 'application')
-
-
+require File.join(Dir.getwd, 'lib', 'app_controller')

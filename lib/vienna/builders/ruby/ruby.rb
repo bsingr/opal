@@ -583,6 +583,7 @@ class Vienna::RubyParser < Racc::Parser
         return [:tOP_ASGN, '<<']
       elsif scanner.scan(/\<\</)
         if (! [:EXPR_END, :EXPR_DOT, :EXPR_ENDARG, :EXPR_CLASS].include?(lex_state) && space_seen)
+          self.lex_state = :EXPR_BEG
           return [:tLSHFT, '<<']
         end
         # self.lex_state = :EXPR_BEG

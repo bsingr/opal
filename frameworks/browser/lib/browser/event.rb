@@ -1,5 +1,5 @@
 # 
-# browser.rb
+# event.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,54 +24,43 @@
 # THE SOFTWARE.
 #
 
-# Browser holds all things browser related.
 module Browser
   
-  # Returns true/false if the browser is opera.
-  # 
-  # @returns true or false
-  # 
-  def self.opera?
-    @__is_opera__ ||= `(opal.browser.opera ? #{self}.t : #{self}.f)`
-  end
-  
-  # Returns true/false if the browser is safari.
-  # 
-  # @returns true or false
-  # 
-  def self.safari?
-    @__is_safari__ ||= `(opal.browser.safari ? #{self}.t : #{self}.f)`
-  end
-  
-  def self.msie?
-    @__is_msie__ ||= `(opal.browser.msie ? #{self}.t : #{self}.f)`
-  end
-  
-  # Returns the document element
-  def self.document
-    return @document_element if @document_element
+  # Event class
+  class Event
     
-    @document_element = Element.from_native(`document`)
-    def @document_element.inspect
-      "#<Element document>"
+    # Add an event listener to the given element
+    # 
+    # @param [Browser::Element] element to attach to
+    # @param [String] event_name to listen to (e.g. mousedown)
+    # @param [Object] object to send the response to
+    # @param [String] action name to respond with
+    def self.add(element, event_name, target, action)
+      
+      unless target.respond_to? action
+        raise "#{target} does not respond to '#{action}' for event '#{event_name}'"
+      end
+      
+      `var eventName = #{event_name.to_s};
+      var elem = #{element}.__element__;
+      
+      var listener = function(evt) {
+        console.log("sending " + eventName + " on");
+        //return #{target.__send__(action)}.r;
+        #{target.__send__(action)}
+      };
+      
+      if (elem.addEventListener) {
+        elem.addEventListener(eventName, listener, false);
+      }
+      else if (elem.attachEvent) {
+        elem.attachEvent("on" + eventName, listener)
+      }
+      else {
+        throw "Unknown elem attach type for #{element}";
+      }`
+      
+      self
     end
-    
-    @document_element
-  end
-  
-  # Returns the window element
-  def self.window
-    return @window_element if @window_element
-    
-    @window_element = Element.from_native(`window`)
-    def @window_element.inspect
-      "#<Element window>"
-    end
-    
-    @window_element
   end
 end
-
-require 'browser/sizzle.js'
-require 'browser/element'
-require 'browser/event'

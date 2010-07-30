@@ -1,5 +1,5 @@
 # 
-# browser.rb
+# application.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,54 +24,23 @@
 # THE SOFTWARE.
 #
 
-# Browser holds all things browser related.
-module Browser
+include CherryKit
+
+class AppController
   
-  # Returns true/false if the browser is opera.
-  # 
-  # @returns true or false
-  # 
-  def self.opera?
-    @__is_opera__ ||= `(opal.browser.opera ? #{self}.t : #{self}.f)`
+  def initialize
+    puts "Aright, in AppController.initialize"
   end
   
-  # Returns true/false if the browser is safari.
-  # 
-  # @returns true or false
-  # 
-  def self.safari?
-    @__is_safari__ ||= `(opal.browser.safari ? #{self}.t : #{self}.f)`
+  def application_will_finish_launching
+    puts "my window is:"
+    # puts window(:something => 10)
   end
   
-  def self.msie?
-    @__is_msie__ ||= `(opal.browser.msie ? #{self}.t : #{self}.f)`
-  end
-  
-  # Returns the document element
-  def self.document
-    return @document_element if @document_element
+  def application_did_finish_launching(notification)
+    @main_window = window({})
     
-    @document_element = Element.from_native(`document`)
-    def @document_element.inspect
-      "#<Element document>"
-    end
-    
-    @document_element
-  end
-  
-  # Returns the window element
-  def self.window
-    return @window_element if @window_element
-    
-    @window_element = Element.from_native(`window`)
-    def @window_element.inspect
-      "#<Element window>"
-    end
-    
-    @window_element
+    @main_window.show
   end
 end
 
-require 'browser/sizzle.js'
-require 'browser/element'
-require 'browser/event'

@@ -17,7 +17,7 @@ end
 
 describe "KeyValueBinding#bind_to" do
   
-  it "should allow values to be bound together using KevValueObserving" do
+  it "should propogate KVC compliant chnages to bound objects" do
     a = KVBTesterA.new
     b = KVBTesterB.new
     

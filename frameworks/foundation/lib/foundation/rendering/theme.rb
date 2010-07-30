@@ -1,5 +1,5 @@
 # 
-# browser.rb
+# theme.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,54 +24,15 @@
 # THE SOFTWARE.
 #
 
-# Browser holds all things browser related.
-module Browser
+module CherryKit
   
-  # Returns true/false if the browser is opera.
-  # 
-  # @returns true or false
-  # 
-  def self.opera?
-    @__is_opera__ ||= `(opal.browser.opera ? #{self}.t : #{self}.f)`
-  end
-  
-  # Returns true/false if the browser is safari.
-  # 
-  # @returns true or false
-  # 
-  def self.safari?
-    @__is_safari__ ||= `(opal.browser.safari ? #{self}.t : #{self}.f)`
-  end
-  
-  def self.msie?
-    @__is_msie__ ||= `(opal.browser.msie ? #{self}.t : #{self}.f)`
-  end
-  
-  # Returns the document element
-  def self.document
-    return @document_element if @document_element
+  class Theme
     
-    @document_element = Element.from_native(`document`)
-    def @document_element.inspect
-      "#<Element document>"
+    # Get the theme class itself for the given theme name
+    def self.find_theme(theme_name)
+      # for now hardcode root_theme
+      RootTheme
     end
     
-    @document_element
-  end
-  
-  # Returns the window element
-  def self.window
-    return @window_element if @window_element
-    
-    @window_element = Element.from_native(`window`)
-    def @window_element.inspect
-      "#<Element window>"
-    end
-    
-    @window_element
   end
 end
-
-require 'browser/sizzle.js'
-require 'browser/element'
-require 'browser/event'

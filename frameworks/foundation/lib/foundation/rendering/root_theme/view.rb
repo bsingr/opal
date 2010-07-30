@@ -1,5 +1,5 @@
 # 
-# browser.rb
+# view.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,54 +24,30 @@
 # THE SOFTWARE.
 #
 
-# Browser holds all things browser related.
-module Browser
-  
-  # Returns true/false if the browser is opera.
-  # 
-  # @returns true or false
-  # 
-  def self.opera?
-    @__is_opera__ ||= `(opal.browser.opera ? #{self}.t : #{self}.f)`
-  end
-  
-  # Returns true/false if the browser is safari.
-  # 
-  # @returns true or false
-  # 
-  def self.safari?
-    @__is_safari__ ||= `(opal.browser.safari ? #{self}.t : #{self}.f)`
-  end
-  
-  def self.msie?
-    @__is_msie__ ||= `(opal.browser.msie ? #{self}.t : #{self}.f)`
-  end
-  
-  # Returns the document element
-  def self.document
-    return @document_element if @document_element
-    
-    @document_element = Element.from_native(`document`)
-    def @document_element.inspect
-      "#<Element document>"
-    end
-    
-    @document_element
-  end
-  
-  # Returns the window element
-  def self.window
-    return @window_element if @window_element
-    
-    @window_element = Element.from_native(`window`)
-    def @window_element.inspect
-      "#<Element window>"
-    end
-    
-    @window_element
-  end
-end
+require 'foundation/rendering/root_theme'
 
-require 'browser/sizzle.js'
-require 'browser/element'
-require 'browser/event'
+module CherryKit
+  
+  class RootTheme
+    
+    # View renderer that is in charge of rendering most basic settings. Every 
+    # view, including windows, will have a view renderer, so any settings in
+    # here must be generic enough for every view/window. For this reason, we
+    # only set basic element id, element classname and any generic background
+    # color we need for the element.
+    class View < Renderer
+      
+      # Initial render
+      def render(render_context)
+        puts "rendering view to #{render_context}"
+        render_context.class_name = "ck-view"
+      end
+      
+      # update render
+      def update(render_context)
+        
+      end
+      
+    end # View
+  end # RootTheme
+end
