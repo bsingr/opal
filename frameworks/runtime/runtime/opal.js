@@ -207,7 +207,10 @@ __boot_base_class.prototype.dm =function(m_id, js_id, body, singleton) {
   // console.log(m_id + " for ");
   // console.log(this.class_name);
   body.method_id = m_id;
+  body.jsid = js_id;
   body.displayName = m_id;
+  // register self as the current class for body (for super calls)
+  body.opal_class = this;
   
   if (singleton) {
     if ((this.info & T_CLASS) || (this.info & T_MODULE)) {
@@ -353,6 +356,43 @@ __boot_base_class.prototype.o = function(rhs) {
 __boot_base_class.prototype.P = function(fun) {
   var res = new class_proc.allocator();
   res.__fun__ = fun;
+  return res;
+};
+
+// calling super
+// 
+// @param {Function} func of current func calling super
+// @param {Array} args to pass to super implementation
+// @return {Object} return value from super call
+// 
+// CURRENTLY ONLY SUPPORTS INSTANCE CLASSES
+// 
+__boot_base_class.prototype.opal_super = function(func, args) {
+  // get current imp's implementation
+  var cur_class = func.opal_class;
+  // for super, we just need the imp of the superclass's method. This will work
+  // up the chain as opal_class is set to the class on which the method was
+  // defines, so any method put in as a super class to this will have our super
+  // method.
+  var sup_class = cur_class.super_class;
+  
+  if (!sup_class) {
+    throw "NativeError: no super class found from " + cur_class
+  }
+  
+  var sup_func = sup_class.allocator.prototype[func.jsid];
+  
+  if (!sup_func) {
+    throw "NativeError: no superclass method found for " + func.method_id;
+  }
+  
+  // console.log("ok, going to call it");
+  // console.log(sup_func);
+  // console.log(args);
+  // if all ok, call it
+  var res = sup_func.apply(this, args);
+  // console.log("res is:");
+  // console.log(res);
   return res;
 };
 
@@ -613,7 +653,7 @@ class_hash.allocator.prototype.info = T_OBJECT | T_HASH;
 class_hash.allocator.prototype.hash_store = function(key, value) {
   var hash = key.hash();
   // if we dont have the hashed key, add it
-  if (!this.__assocs__[hash]) {
+  if (!this.__assocs__.hasOwnProperty(hash)) {
     this.__keys__.push(key);
   }
   // then in both cases reset the assoc
@@ -636,7 +676,7 @@ class_hash.allocator.prototype.hash_delete = function(key) {
 class_hash.allocator.prototype.hash_fetch = function(key) {
   var hash = key.hash();
   
-  if (this.__assocs__[hash])
+  if (this.__assocs__.hasOwnProperty(hash))
     return this.__assocs__[hash];
   
   // default return nil (should be overrideable)

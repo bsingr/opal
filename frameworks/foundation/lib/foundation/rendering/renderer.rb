@@ -38,8 +38,11 @@ module CherryKit
     # the view to get updates needed for display, such as the current title etc
     # 
     # @param {CherryKit::View} view renderer owner
-    def initialize(view)
+    # @param {CherryKit::Theme} theme that this renderer belongs to
+    # 
+    def initialize(view, theme)
       @view = view
+      @theme = theme
       @class_names = []
     end
     

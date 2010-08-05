@@ -39,7 +39,7 @@ class BasicObject
   end
   
   def !()
-    
+    false
   end
   
   def != other

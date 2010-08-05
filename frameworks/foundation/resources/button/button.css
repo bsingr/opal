@@ -1,0 +1,14 @@
+.ck-button {
+  border: 1px #545454 solid;
+  border-radius: 5px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  vertical-align: middle;
+}
+
+.ck-button .label {
+  text-align: center;
+  position: relative;
+  display: block;
+  line-height: 22px;
+}

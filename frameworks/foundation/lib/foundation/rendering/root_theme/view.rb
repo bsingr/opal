@@ -39,13 +39,35 @@ module CherryKit
       
       # Initial render
       def render(render_context)
-        puts "rendering view to #{render_context}"
-        render_context.class_name = "ck-view"
+        # view id
+        render_context.id = "ck-view-#{@view.object_id}"
+        # general class names
+        render_context.add_class_name('ck-view ' + @view.class_names.join(" "))
+        render_context.set_class_names calculate_class_names
+        # special style names (for layout)
+        render_context.css calculate_layout_style
       end
       
-      # update render
-      def update(render_context)
-        
+      def calculate_class_names
+        {
+          'hidden'  => !@view.visible?,
+          'focus'   => @view.first_responder?
+        }
+      end
+      
+      # Calcultae a hash of layout styles for the view
+      # 
+      # @returns {Hash}
+      # 
+      def calculate_layout_style
+        layout = @view.layout
+        {
+          :left   => "#{layout[:left]}px",
+          :top    => "#{layout[:top]}px",
+          :right  => "#{layout[:right]}px",
+          :bottom => "#{layout[:bottom]}px",
+          :height => "#{layout[:height]}px"
+        }
       end
       
     end # View

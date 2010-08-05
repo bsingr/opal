@@ -35,11 +35,60 @@ module CherryKit
       @element = Browser::Element.new tag_name
     end
     
-    def class_name=(class_name)
-      puts "setting class_name to #{class_name}"
-      @element.class_name = class_name
-      `console.log(#{@element});`
+    def add_class_name(class_name)
+      if @element.class_name == ""
+        @element.class_name = class_name
+      else
+        @element.class_name = [@element.class_name, class_name].join(" ")
+      end
+    end
+    
+    def id=(id)
+      @element.id = id
       self
+    end
+    
+    def class_name=(class_name)
+      @element.class_name = class_name
+      self
+    end
+    
+    def <<(string)
+      `#{@element}.__element__.innerHTML += #{string};`
+    end
+    
+    def label(&block)
+      label_context = RenderContext.new :label
+       `#{block}.__fun__(#{label_context});`
+      @element << label_context.element
+    end
+    
+    # hash of class names to true/false values. if true, make sure it is set, if
+    # false unset it
+    # 
+    # @param {Hash} class_names to set/unset
+    # 
+    def set_class_names(class_names)
+      current = @element.class_name.split ' '
+      puts "need to set_class_names for #{current.inspect}"
+      
+      class_names.each do |class_name, flag|
+        if current.include? class_name.to_s
+          unless flag
+            # need to remove class_name from current array
+          end
+        else
+          if flag
+            current << class_name
+          end
+        end
+      end
+      
+      @element.class_name = current.join ' '
+    end
+    
+    def css(styles)
+      @element.css styles
     end
     
     def element

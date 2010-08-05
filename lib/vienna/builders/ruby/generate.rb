@@ -434,7 +434,18 @@ module Vienna
     end
     
     
-    # convert ruby style id to js property id - everything is prepended a '$'
+    # Convert ruby style id to js property id - everything is prepended a '$'
+    # This method is used also for generating call method strings. For this 
+    # reason, the method looks at the method name for any non a-z characters
+    # which will mean that we cannot use a safe js name. For example, setter
+    # methods need to be wrapped =>
+    # 
+    #     self.something = 10
+    #     # => self['$something='](10).
+    # 
+    # We no longer just replace '=' with '$e' etc as this slows down the runtime
+    # when looking through methods, and using __send__() etc. 
+    # 
     def mid_to_jsid(mid)
       "$#{mid}".
       gsub(/\!/, "$b").
@@ -1325,25 +1336,24 @@ module Vienna
     
     def generate_not(stmt, context)
       write "return " if context[:full_stmt] and context[:last_stmt]
-      write "vm$a("
       generate_stmt stmt[:expr], :full_stmt => false
-      write ",'!',[],nil, 8)"
+      write ".#{mid_to_jsid('!')}()"
       write ";" if context[:full_stmt]
     end
     
     def generate_super(stmt, context)
       write "return " if context[:full_stmt] and context[:last_stmt]
-      write %{rb_super($,id,arguments.callee}
+      write %{#{SELF}.opal_super(arguments.callee, [}
       
       # args, depends on is super has parens etc, simple for now: parens
       if stmt[:call_args] and stmt[:call_args][:args]
         stmt[:call_args][:args].each do |arg|
-          write ","
+          write "," unless arg == stmt[:call_args][:args].first
           generate_stmt arg, :full_stmt => false
         end
       end
       
-      write ")"
+      write "])"
       write ";" if context[:full_stmt]
     end
     

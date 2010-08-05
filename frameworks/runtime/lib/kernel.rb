@@ -107,7 +107,7 @@ module Kernel
   end
   
   def object_id
-    `return vnN(#{self}.id);`
+    `return #{self}.id;`
   end
   
   def raise(exception, string)

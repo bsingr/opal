@@ -38,7 +38,8 @@ class Array
   end
   
   def <<(obj)
-    `return #{self}.push(#{obj});`
+    `#{self}.push(#{obj});`
+    self
   end
   
   def length
@@ -46,12 +47,12 @@ class Array
   end
   
   def inspect
-    description = "["
+    description = ["["]
     self.each do |item|
       description << item.inspect
     end
     description << "]"
-    description
+    description.join ""
   end
   
   def ==(other)
@@ -69,7 +70,7 @@ class Array
   end
   
   def include?(member)
-    false
+    `return #{self}.indexOf(#{member}) == -1 ? #{false} : #{true};`
   end
   
   def pop

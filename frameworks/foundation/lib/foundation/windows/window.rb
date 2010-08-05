@@ -35,30 +35,26 @@ module CherryKit
   # 
   class Window < View
     
-    register_builder :window,
-      :title  => "Window"
-    
-    # Initialize from builder
-    def initialize_from_builder(builder_options)
-      puts "initialzing in window!! builder style"
-      initialize
-    end
-    
-    
     def initialize(layout)
+      super
+      # an array of all the views which require displaying
+      @views_needing_display = []
+      # a window's window is always itself
+      @window = self
       puts "normal initializer for window!"
     end
     
-    # show the window.
     def show
-      append_to Browser::Element.body
+      # mark ourself as needing display
+      self.needs_display = true
+      
+      # append_to Browser::Element.body
     end
     
     # class name for window
     def class_names
       ['ck-window']
     end
-    
     
     # Insert the window into the given element
     # 
@@ -74,5 +70,57 @@ module CherryKit
       
       puts "now need to make all subviews"
     end
-  end
+    
+    # Mark the given view as needing display. This view should be in this
+    # window's hierarchy. The view will be displayed at the end of the next
+    # event loop. If a view is marked as needing display more than once during
+    # an event loop, it will be only actually rendererd once.
+    # 
+    # @param {CherryKit::View} view that requires display
+    # 
+    def mark_view_for_display(view)
+      puts "mark_view_for_display(#{view})"
+      # do not re-add it if we already have it as needing display
+      unless @views_needing_display.include? view
+        puts "yeap, adding it"
+        @views_needing_display << view
+        `console.log(#{ @views_needing_display});`
+      end
+    end
+    
+    # NEVER invoke this method directly
+    def display
+      # make sure we have a render context
+      unless render_context
+        append_to Browser::Element.body
+      end
+      
+      puts "need to go through each view"
+      `console.log(#{@views_needing_display});`
+      # now go through all our views that are marked for display (should be
+      # all subviews if we just had to create a render context, otherwise it is
+      # any view that has been updated)
+      @views_needing_display.each do |view|
+        puts "need to display view: #{view}"
+      end
+      
+      @subviews.each do |view|
+        view.display
+      end
+    end
+    
+    # ===============================
+    # = Builder methods and support =
+    # ===============================
+    
+    register_builder :window,
+      :title  => "Window"
+    
+    # Initialize from builder
+    def initialize_from_builder(builder_options)
+      puts "initialzing in window!! builder style"
+      initialize
+    end
+    
+  end # Window
 end

@@ -91,7 +91,7 @@ module CherryKit
     
     # Run the application.
     def run
-      
+            
       center = NotificationCenter.default_center
       
       center.post_notification :name => :application_will_finish_launching, :sender => self

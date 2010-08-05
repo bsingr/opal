@@ -63,7 +63,7 @@ module CherryKit
           puts "some code here"
           puts builder_options
           puts "builder class is #{builder_class}"
-          
+          options = {}
           builder_class.build options
         end
       end
@@ -71,7 +71,9 @@ module CherryKit
       # Create an instance from the receiver class
       def build(builder_options)
         object = allocate
+ 
         object.initialize_from_builder builder_options
+        
         # now go through each builder_option that is left in hash
         builder_options.each do |key, value|
           object.set_value_for_key value, key

@@ -29,4 +29,8 @@ class FalseClass
   def inspect
     "false"
   end
+  
+  def !()
+    true
+  end
 end

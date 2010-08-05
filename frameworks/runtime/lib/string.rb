@@ -28,6 +28,10 @@ class String
     `return (#{self} == #{other}) ? #{true} : #{false};`
   end
   
+  def +(other)
+    `return #{self} + #{other};`
+  end
+  
   def upcase!
     `return #{self} = #{self}.toUpperCase();`
   end

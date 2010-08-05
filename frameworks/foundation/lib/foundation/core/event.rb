@@ -1,5 +1,5 @@
 # 
-# root_theme.rb
+# event.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,38 +24,25 @@
 # THE SOFTWARE.
 #
 
-require "foundation/rendering/theme"
-
 module CherryKit
   
-  # The RootTheme is the base theme for all cherry kit and cherry touch 
-  # applications. Other themes should probbaly inherit from this theme.
-  class RootTheme < Theme
+  # Module to hold cherry kit additions to the event class. These additions are
+  # used for custom handling of events within cherry kit applications.
+  # 
+  module EventAdditions
     
-    # Return a new view renderer for this theme. The view renderer takes control
-    # of the basics, such as setting up class names, setting the element DOM id
-    # and setting a basic background color.
+    # Returns the View instance that the event originated from. Basically, the
+    # native target property is retreieved, and then that element is compared to
+    # CherryKits hash of elements => views. The element's parentNode is
+    # recursively got until the node has an id (which is used to lookup in the
+    # hash table)
     # 
-    # @param {CherryKit::View} view the view owner
-    # @returns {CherryKit::Renderer} the view renderer
+    # @returns {CherryKit::View} the view
     # 
-    def self.view(view)
-      RootTheme::View.new view, self
+    def view_for_event
+      raise "Event#view_for_event not implemented"
     end
-    
-    def self.button(view)
-      RootTheme::Button.new view, self
-    end
-    
-    def self.control(view)
-      RootTheme::Control.new view, self
-    end
-    
-    def self.title(view)
-      RootTheme::Title.new view, self
-    end
-    
   end
-  
-  # RootTheme.register :root_theme
 end
+
+Browser::Event.include CherryKit::EventAdditions

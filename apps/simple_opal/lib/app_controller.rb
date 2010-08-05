@@ -41,6 +41,16 @@ class AppController
     @main_window = window({})
     
     @main_window.show
+    
+    b = button({})
+    
+    # b.instance_variable_set :@layout, { :left => 20, :right => 20, :top => 100, :bottom => 200 }
+    
+    @main_window << b
+    
+    @main_window.display
+    
+    `console.log(#{@main_window});`
   end
 end
 

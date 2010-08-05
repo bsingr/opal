@@ -1,5 +1,5 @@
 # 
-# root_theme.rb
+# button.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,38 +24,37 @@
 # THE SOFTWARE.
 #
 
-require "foundation/rendering/theme"
+require 'foundation/views/control'
 
 module CherryKit
   
-  # The RootTheme is the base theme for all cherry kit and cherry touch 
-  # applications. Other themes should probbaly inherit from this theme.
-  class RootTheme < Theme
+  class Button < Control
     
-    # Return a new view renderer for this theme. The view renderer takes control
-    # of the basics, such as setting up class names, setting the element DOM id
-    # and setting a basic background color.
-    # 
-    # @param {CherryKit::View} view the view owner
-    # @returns {CherryKit::Renderer} the view renderer
-    # 
-    def self.view(view)
-      RootTheme::View.new view, self
+    register_builder :button,
+      :title  => "Button"
+    
+    def initialize
+      super
+      @layout = {
+        :left => 200,
+        :top  => 20,
+        :right  => 250,
+        :bottom => 100,
+        :height => 24
+      }
     end
     
-    def self.button(view)
-      RootTheme::Button.new view, self
+    def title
+      "Click me!"
+    end  
+  
+    def create_renderer(theme)
+      theme.button self
     end
     
-    def self.control(view)
-      RootTheme::Control.new view, self
-    end
-    
-    def self.title(view)
-      RootTheme::Title.new view, self
+    def class_names
+      ['ck-button']
     end
     
   end
-  
-  # RootTheme.register :root_theme
 end

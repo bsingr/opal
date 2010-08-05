@@ -26,7 +26,13 @@
 
 module CherryKit
   
+  attr_accessor :next_responder
+  
   class Responder
+    
+    def first_responder?
+      false
+    end
     
   end
 end

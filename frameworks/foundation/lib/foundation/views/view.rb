@@ -31,8 +31,20 @@ module CherryKit
   
   class View < Responder
     
+    # Get the layout hash from the receiver (Hash)
+    attr_reader :layout
+    
     def initialize(frame)
       # initialize
+      # default layout
+      @layout = {
+        :left   => 0,
+        :top    => 0,
+        :right  => 0,
+        :bottom => 0
+      }
+      # all of our subviews
+      @subviews = []
     end
     
     # Return the theme name to use for the view. In all systems, root_theme is
@@ -75,6 +87,18 @@ module CherryKit
       if @renderer
         @renderer.render render_context
       end
+      
+      # We immeditaely call update on both the view_renderer and the main
+      # renderer, again, if it exists
+      @view_renderer.update render_context
+      
+      if @renderer
+        @renderer.update render_context
+      end
+    end
+    
+    def visible?
+      true
     end
     
     # Update the renderer. We assume we have our render context, so we just need
@@ -102,7 +126,6 @@ module CherryKit
       # view for example does not create a renderer, so do not always assume
       # that one will exist
       @renderer = create_renderer theme
-
     end
     
     # create the renderer just for this view. By default this implementation is
@@ -134,5 +157,136 @@ module CherryKit
       ['ck-view']
     end
     
+    # NEVER EVER call this method directly. This will create and / or update
+    # the rendering context as needed
+    # 
+    def display
+      puts "Displaying init"
+      if @render_context
+        # if we already have our render context, just update it
+        puts "need to update render context"
+      else
+        puts "need to create render context"
+        render_context = create_render_context
+        @superview.render_context.element << render_context.element
+      end
+    end
+    
+    # Add subview
+    # 
+    # @param {CherryKit::View} view to append as subview
+    # @returns {self}
+    # 
+    def <<(subview)
+      # inform subview that it must first remove itself from its superview
+      subview.remove_from_superview
+      # privately set the window to our current window
+      subview._window = @window
+      # notify subview that it is soon to move to this view
+      subview.will_move_to_superview self
+      # set private superview variable on subview
+      subview.instance_variable_set :@superview, self
+      # do DOM manipulation here
+      @subviews << subview
+      # reset responder chain for subview
+      subview.next_responder = self
+      # alert subview that its move is complete
+      subview.did_move_to_superview self
+      # any callbacks that might be ndded
+      did_add_subview subview
+    end
+    
+    # Remove the receiver from its current superview
+    # 
+    def remove_from_superview
+      
+    end
+    
+    # Perform additonal actions once the subview has been added to the 
+    # receiver
+    # 
+    # @param {CherryKit::View} subview that was added
+    # @returns {nil}
+    # 
+    def did_add_subview(subview)
+      # nothing by default
+    end
+    
+    # Called when the receiver is about to move to the given superview
+    # 
+    # @param {CherryKit::View} view to move to
+    # 
+    def will_move_to_superview(superview)
+      # nothing by default
+    end
+    
+    # Called when the receiver has just moved to the given superview. Default 
+    # action is to simply call self.needs_display which marks this view as 
+    # needing display. This should always be called in a custom overridden
+    # method, or just use super().
+    # 
+    # @param {CherryKit::View} view that is now the superview
+    # 
+    def did_move_to_superview(superview)
+      self.needs_display = true
+    end
+    
+    # Marks the receiver as needing displaying (rendering). Windows are in
+    # charge of calling renderers etc as needed, so this method simply
+    # registers itself with its window as needing display.
+    # 
+    # @param {true|false} needs_displaying
+    # 
+    def needs_display=(needs_displaying)
+      # we should only mark ourself as needing display if we have a window
+      if @window
+        window.mark_view_for_display self
+      end
+    end
+    
+    # Sets the window for the view. This method should never be directly called.
+    # Instead, use <tt><<</tt> to add the view to another view within the window
+    # hierarchy.
+    # 
+    # @private
+    # 
+    # @param {CherryKit::Window} window to set
+    # 
+    def _window=(window)
+      puts "setting window to #{window} for #{self}"
+      # if we already belong to the window, just return
+      return if @window == window
+      # callback
+      will_move_to_window window
+      
+      @window = window
+      
+      # mark ourselves as needing redisplay (before our subviews are)
+      self.needs_display = true
+      
+      # inform each subview that we are all moving
+      @subviews.each do |subview|
+        subview._window = window
+      end
+      
+      # second callback
+      did_move_to_window window
+    end
+    
+    # Callback informing the receiver that it is about to join the new window
+    # 
+    # @param {CherryKit::Window} window to join
+    # 
+    def will_move_to_window(window)
+      # do nothing by default
+    end
+    
+    # Inform the receiver that it has joined the new window
+    # 
+    # @param {CherryKit::Window} window just joint
+    # 
+    def did_move_to_window(window)
+      # do nothing by default
+    end
   end
 end

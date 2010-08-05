@@ -135,6 +135,13 @@ module Browser
       self
     end
     
+    def class_name
+      `return #{self}.__element__.className || "";`
+    end
+    
+    def id=(id)
+      `return #{self}.__element__.id = #{id};`
+    end
     # Set the inner text content of the receiver
     def text=(text_content)
       `var element = #{self}.__element__;
@@ -145,6 +152,17 @@ module Browser
         element.innerText = #{text_content}.toString();
       }`
       self
+    end
+    
+    # 
+    # @param {Hash} styles
+    # 
+    def css(styles)
+      puts "about to style.."
+      styles.each do |style, value|
+        puts "setting #{style} as #{value}"
+        `#{self}.__element__.style[#{style.to_s}] = #{value};`
+      end
     end
     
     # Set the id of the element
