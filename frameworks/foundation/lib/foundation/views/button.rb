@@ -32,6 +32,8 @@ module CherryKit
     
     register_builder :button,
       :title  => "Button"
+      
+    display_properties :title
     
     def initialize
       super
@@ -42,11 +44,11 @@ module CherryKit
         :bottom => 100,
         :height => 24
       }
+      
+      @title = "Click me!"
     end
     
-    def title
-      "Click me!"
-    end  
+    attr_accessor :title
   
     def create_renderer(theme)
       theme.button self
@@ -54,7 +56,6 @@ module CherryKit
     
     def class_names
       ['ck-button']
-    end
-    
+    end    
   end
 end

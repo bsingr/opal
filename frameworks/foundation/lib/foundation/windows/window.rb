@@ -41,6 +41,8 @@ module CherryKit
       @views_needing_display = []
       # a window's window is always itself
       @window = self
+      # default first responder is the window itself
+      @first_responder = self
       puts "normal initializer for window!"
     end
     
@@ -107,6 +109,47 @@ module CherryKit
       @subviews.each do |view|
         view.display
       end
+    end
+    
+    # =================================
+    # = Event delegation and handling =
+    # =================================
+    
+    # Send event on
+    # 
+    # @param {Browser::Event} event
+    # 
+    def send_event(event)
+      # case :mousedown
+      
+      event.view.mouse_down event
+    end
+    
+    # Returns the first responder for the window
+    def first_responder
+      @first_responder
+    end
+    
+    # Attempt to make the given responder the first responder.
+    # 
+    # @param {CherryKit::Responder} responder to make first responder
+    # @returns {true|false}
+    # 
+    def make_first_responder?(responder)
+      # return true if responder is already first responder
+      return true if responder == @first_responder
+      # return false if current first responder will not resign
+      return false unless @first_responder.resign_first_responder?
+      # set window as first respionder if the responder will not accept first
+      # responder status
+      if !responder.accepts_first_responder? || !responder.become_first_responder?
+        @first_responder = self
+        return false
+      end
+      
+      # if all was ok, set first responder, and return true
+      @first_responder = responder
+      true
     end
     
     # ===============================

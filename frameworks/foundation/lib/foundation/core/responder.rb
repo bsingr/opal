@@ -26,12 +26,29 @@
 
 module CherryKit
   
-  attr_accessor :next_responder
-  
+  # Should not be directly instantiated. Subclasses of CherryKit::Responder can
+  # become part of the responder chain (for events etc)
+  # 
   class Responder
+    
+    # Getter/setter for the next_responder in the responder chain
+    attr_accessor :next_responder
     
     def first_responder?
       false
+    end
+    
+    # Returns true if the receiver can become the first responder, false
+    # otherwise. Default implementation always returns false.
+    # 
+    # @returns {true|false}
+    # 
+    def accepts_first_responder?
+      false
+    end
+    
+    def mouse_down(event)
+      @next_responder.mouse_down event
     end
     
   end

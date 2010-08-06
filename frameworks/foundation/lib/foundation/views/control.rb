@@ -37,5 +37,32 @@ module CherryKit
     def selected?
       false
     end
+    
+    # ==================
+    # = Event handling =
+    # ==================
+    
+    def mouse_down(event)
+      # do nothing unless we are enabled
+      return unless enabled?
+      # start tracking mouse otherwise
+      track_mouse event
+    end
+    
+    def track_mouse(event)
+      CKApp.handle_events([:mouse_up, :mouse_dragged]) do |event|
+        puts "handling event: #{event}"
+        
+        case event.type
+        when :mouse_up
+          stop_tracking
+        when :mouse_down
+          
+        when :mouse_dragged
+          
+        end
+      end
+    end
+    
   end
 end

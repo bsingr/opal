@@ -29,6 +29,29 @@ module Browser
   # Event class
   class Event
     
+    def self.listen(element, event_name, &block)
+      `var eventName = #{event_name.to_s};
+      var elem = #{element}.__element__;
+      
+      var listener = function(evt) {
+        var native = #{self}.$from_native(evt);
+        
+        #{block}.__fun__(native);
+      };
+      
+      if (elem.addEventListener) {
+        elem.addEventListener(eventName, listener, false);
+      }
+      else if (elem.attachEvent) {
+        elem.attachEvent("on" + eventName, listener)
+      }
+      else {
+        throw "Unknown elem attach type for #{element}";
+      }`
+      
+      self
+    end
+    
     # Add an event listener to the given element
     # 
     # @param [Browser::Element] element to attach to
@@ -45,9 +68,10 @@ module Browser
       var elem = #{element}.__element__;
       
       var listener = function(evt) {
-        console.log("sending " + eventName + " on");
-        //return #{target.__send__(action)}.r;
-        #{target.__send__(action)}
+        var native = #{self}.$from_native(evt);
+        //console.log("sending " + eventName + " on");
+
+        #{target}.$__send__(#{action}, native);
       };
       
       if (elem.addEventListener) {
@@ -62,5 +86,17 @@ module Browser
       
       self
     end
+    
+    # Create an Event instance from the given native_event.
+    # 
+    # @param {Native} native_event
+    # @returns {Event} event
+    # 
+    def self.from_native(native_event)
+      event = allocate
+      `#{event}.__event__ = #{native_event};`
+      event
+    end
+    
   end
 end

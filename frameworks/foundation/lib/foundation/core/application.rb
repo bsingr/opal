@@ -61,7 +61,12 @@ module CherryKit
     attr_reader :delegate
     
     def initialize
-      puts "creating application"
+      @windows = []
+    end
+    
+    # Register the window for the application
+    def register_window(window)
+      @windows << window
     end
     
     # Set the application delegate. This method will register the delegate for
@@ -91,46 +96,106 @@ module CherryKit
     
     # Run the application.
     def run
-            
-      center = NotificationCenter.default_center
-      
-      center.post_notification :name => :application_will_finish_launching, :sender => self
-      
-      
-      listen_on Browser.document, :mousedown, :mouseup
-      
-      listen_on Browser.window, :resize
-      
-      if Browser.msie?
-        listen_on Browser.document, :focusin, :focusout
-      else
-        listen_on Browser.window, :focus, :blur
+      RunLoop.run do
+        # global application
+        Object.const_set('CKApp', self)      
+        # get the system notification center
+        center = NotificationCenter.default_center
+        # will finish launching notification before we attach all events etc
+        center.post_notification :name   => :application_will_finish_launching,         
+                                 :sender => self
+
+
+        # notify :application_will_finish_launching
+
+        # setup/create all event handlers
+        setup_event_handlers
+
+        # notify :application_did_finish_launching
+
+        # we can post our did finish launching once we have all our events setup
+        center.post_notification :name   => :application_did_finish_launching, 
+                                 :sender => self
       end
-      
-      center.post_notification :name => :application_did_finish_launching, :sender => self
     end
     
-    # Register self to become the event handler for each of the given event
-    # names, on the given element.
-    # 
-    #     self.listen_on Browser.body, :mousedown, :mouseup
-    # 
-    # Callbacks are named 'on_event_name', so for example, the receiver for
-    # the mousedown event must respond to "on_mousedown". Note, these events
-    # purely match the browser event names, and are not parallel to cherrykit
-    # view event names (which would be mouse_down for example.)
-    # 
-    # @param [Browser::Element] element
-    # @param [Array] events
-    # @returns self
-    # 
-    def listen_on(element, *events)
-      # add events for each passed event name
-      events.each do |event|
-        Browser::Event.add element, event, self, "on_#{event}"
-      end
+    def setup_event_handlers
+      # standard mouse events
+      event_handler Browser.document, :mousedown, &mousedown_handler
+      event_handler Browser.document, :mouseup, &mouseup_handler
       
-      self
+      # browser window resizing
+      event_handler Browser.window, :resize, &resize_handler
+      
+      # browser dependant focus/blur events
+      if Browser.msie?
+        # event_handler Browser.document, :focusin
+        # event_handler Browser.document, :focusout
+      else
+        # event_handler Browser.window, :focus
+        # event_handler Browser.window, :blur
+      end
+    end
+    
+    def event_handler(target, event, &handler)
+      Browser::Event.listen target, event, &handler
+    end
+    
+    # Dispatch the event
+    # 
+    # @param {CherryKit::Event} event to send
+    # @returns nil
+    # 
+    def send_event(event)
+      # keep track of our current event
+      @current_event = event
+      # if we have an event handler registered, delegate events to that
+      if @event_handler
+        `#{@event_handler}.__fun__(#{event});`
+      else
+        # send event within a runloop block so that all action calls etc are
+        # caught, as well as view display requests, so we can run them on
+        # completion of sending the event
+        RunLoop.run do
+          puts "============= sending event on within runloop!"
+          # # `console.log(#{event});`
+          # puts "view for event is: #{event.view}"
+          # puts "window for event is: #{event.window}"
+          event.window.send_event event
+        end
+      end
+    end
+    
+    # Set a block delegate for dealing with all events matching the given event
+    # array. Any other event will simply be ignored until the removal of this
+    # block.
+    # 
+    # Note
+    # ----
+    # This method will also pass the current event to the block, so in the
+    # following example, the mouse_down event will be passed as well.
+    # 
+    # Usage
+    # -----
+    # 
+    #     app.handle_events([:mouse_down, :mouse_dragged]) do |event|
+    #       puts "got new event #{event}"
+    #     end
+    # 
+    # @param {Proc} block
+    # 
+    def handle_events(events, &block)
+      @event_handler = block
+      @event_handler_events = events
+      # resend current event
+      `#{@event_handler}.__fun__(#{@current_event});`
+    end
+    
+    # Discard event capture.
+    # 
+    def finish_handling_events
+      @event_handler = nil
+      @event_handler_events = nil
     end
     
     # Handles the window's 'resize' event. This method simply posts out 
@@ -141,9 +206,10 @@ module CherryKit
     # @param {Browser::Event} event from browser
     # @returns self
     # 
-    def on_resize(event)
-      puts "Browser did resize"
-      false
+    def resize_handler
+      proc do |event|
+        
+      end
     end
     
     # Handles raw events from the browser for mousedown
@@ -151,8 +217,24 @@ module CherryKit
     # @param [Browser::Event] event received
     # @returns self
     # 
-    def on_mousedown(event)
-      puts "Application received mousedown event!"
+    def mousedown_handler
+      proc do |event|
+        begin
+          @mouse_down_view = view = event.view
+          window = view.window
+          # get current first responder
+          first_responder = window.first_responder
+          # make the view the first responder (if it accepts it)
+          if view != first_responder && view.accepts_first_responder?
+            window.make_first_responder? view
+          end
+        
+          send_event event
+        rescue Exception => e
+          puts "exception occured within Application#on_mousedown"
+          raise e
+        end
+      end
     end
     
     # Handles raw mouseup events from browser
@@ -160,36 +242,11 @@ module CherryKit
     # @para, [Browser::Event] event received
     # @returns self
     # 
-    def on_mouseup(event)
-      puts "Application received mouseup event!"
+    def mouseup_handler
+      proc do |event|
+        
+      end
     end
-    
-    # Handles raw events from browser when the browser window comes into focus
-    # 
-    # @param [Browser::Event] event received
-    # @returns self
-    # 
-    def on_focus(event)
-      puts "Window now in focus"
-    end
-    
-    # Internet Explorer's version of on_focus
-    # 
-    # @param [Browser::Event] event received
-    # @returns self
-    # 
-    def on_focusin(event)
-      on_focus event
-    end
-    
-    def on_blur(event)
-      
-    end
-    
-    # Internet Explorer's on_blur
-    # 
-    def on_focusout(event)
-      on_blur event
-    end
+
   end
 end

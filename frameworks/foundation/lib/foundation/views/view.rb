@@ -34,6 +34,9 @@ module CherryKit
     # Get the layout hash from the receiver (Hash)
     attr_reader :layout
     
+    # the view's window
+    attr_reader :window
+    
     def initialize(frame)
       # initialize
       # default layout
@@ -45,7 +48,37 @@ module CherryKit
       }
       # all of our subviews
       @subviews = []
+      
+      # for every display property defined, we add an observer when it changes,
+      # so we can tell the view that it needs a redisplay
+      self.class.all_display_properties.each do |property|
+        self.observe(property) do |oldvalue, newvalue|
+          puts "#{property} chnage to #{newvalue} means we need to redisplay"
+        end
+      end
     end
+    
+    # ======================
+    # = Display attributes =
+    # ======================
+    
+    def self.all_display_properties
+      if CherryKit::View == self
+        return @display_properties ||= []
+      else
+        @display_properties ||= []
+        return @display_properties + superclass.all_display_properties
+      end
+    end
+    
+    # Add each of the given display properties to the array of properties for
+    # this class
+    def self.display_properties(*properties)
+      @display_properties ||= []
+      @display_properties = @display_properties + properties
+    end
+    
+    display_properties :visible
     
     # Return the theme name to use for the view. In all systems, root_theme is
     # used as the default. To use another theme, set the theme_name property for
@@ -238,9 +271,10 @@ module CherryKit
     # @param {true|false} needs_displaying
     # 
     def needs_display=(needs_displaying)
+      puts "======= needs_display"
       # we should only mark ourself as needing display if we have a window
       if @window
-        window.mark_view_for_display self
+        RunLoop.current_run_loop.add_task self, :display
       end
     end
     
@@ -287,6 +321,30 @@ module CherryKit
     # 
     def did_move_to_window(window)
       # do nothing by default
+    end
+    
+    # ===================
+    # = Handling events =
+    # ===================
+    
+    # Handle mouse down. Default implementation simply calls super(), which 
+    # passes the event back up to CK::Responders implementation which passes the
+    # event onto the next_responder
+    # 
+    # @param {Browser::Event}
+    # 
+    def mouse_down(event)
+      super
+    end
+    # ==================================
+    # = Register views to DOM id names =
+    # ==================================
+    def self.[]=(id, view)
+      (@view_ids ||= {})[id] = view
+    end
+    
+    def self.[](id)
+      @view_ids[id]
     end
   end
 end

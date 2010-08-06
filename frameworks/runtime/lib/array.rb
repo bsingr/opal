@@ -79,4 +79,15 @@ class Array
     }
     return #{nil};`
   end
+  
+  def +(other)
+    `for (var i = 0; i < #{other}.length; i++) {
+      #{self}.push(#{other}[i]);
+    }`
+    self
+  end
+  
+  def unshift(object)
+    `return #{self}.unshift(#{object});`
+  end
 end

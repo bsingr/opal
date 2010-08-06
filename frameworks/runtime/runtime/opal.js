@@ -313,7 +313,8 @@ __boot_base_class.prototype.include = function(module) {
   
   // add each method from module into class's prototype
   for (method in module.allocator.prototype.method_table) {
-
+    // if (!this.allocator.prototype.method_table[method])
+    // if (!this.allocator.prototype.hasOwnProperty(method))
     this.allocator.prototype[method] = module.allocator.prototype.method_table[method];
   }
   

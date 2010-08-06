@@ -40,7 +40,10 @@ module CherryKit
       # Initial render
       def render(render_context)
         # view id
-        render_context.id = "ck-view-#{@view.object_id}"
+        view_id = "ck-view-#{@view.object_id}"
+        render_context.id = view_id
+        # also register the view to receive events
+        CherryKit::View[view_id] = @view
         # general class names
         render_context.add_class_name('ck-view ' + @view.class_names.join(" "))
         render_context.set_class_names calculate_class_names

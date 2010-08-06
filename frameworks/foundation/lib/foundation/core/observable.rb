@@ -27,78 +27,72 @@
 module CherryKit
   
   # KeyValueObserving
-  # =================
-  # 
-  # Options
-  # -------
-  # 
-  # :new
-  # :old
-  # :initial
-  # :prior
-  # 
-  # Change Keys
-  # -----------
-  # 
-  # :kind
-  # :new
-  # :old
-  # :indexes
-  # :prior_notification
-  # 
-  # Change Types
-  # ------------
-  # 
-  # :setting
-  # :insertion
-  # :removal
-  # :replacement
-  # 
+  #
   module KeyValueObserving
     
     def will_change_value_for_key(key)
-      if @__kvo_replaced_keys
+      if @__observer_replaced_keys
         __send_change_notifications key, true, :kind => :setting 
       end
     end
     
     def did_change_value_for_key(key)
-      if @__kvo_replaced_keys
+      if @__observer_replaced_keys
         __send_change_notifications key, false, nil
       end
     end
-  
-    def add_observer(an_observer, path, options, context)
-      options = options || []
-      # ensure we have our replaced keys hash
-      @__kvo_replaced_keys ||= {}
-      # ensure we have observers for key hash
-      @__kvo_observers_for_key ||= {}
-      # ensure we have our chnages for key hash
-      @__kvo_changes_for_key ||= {}
-      # we should check here if we are looking at a key_path, or just a normal
-      # path. For now, we assume normal path
+    
+    # New
+    def observe(path, &action)
+      @__observer_replaced_keys ||= {}
+      @__observers_for_key ||= {}
+      @__observer_changes_for_key ||= {}
+      
+      path = path.to_s
+      
       __replace_setter_for_key path
       
-      observers = @__kvo_observers_for_key[path]
+      observers = @__observers_for_key[path]
       
       unless observers
-        @__kvo_observers_for_key[path] = observers = {}
+        @__observers_for_key[path] = observers = []
       end
       
-      # puts "=========== setting observer info"
-      observers[an_observer] = {
-        :observer => an_observer,
-        :options  => options,
-        :context  => context
-      }
-      
-      # If our options require an :initial notification, send it now
-      if options.include? :initial
-        puts "add_observer needs to send initial notification"
-      end
-    
+      observers << action
     end
+    
+    # depreceated
+    # def add_observer(an_observer, path, options, context)
+    #   options = options || []
+    #   # ensure we have our replaced keys hash
+    #   @__kvo_replaced_keys ||= {}
+    #   # ensure we have observers for key hash
+    #   @__kvo_observers_for_key ||= {}
+    #   # ensure we have our chnages for key hash
+    #   @__kvo_changes_for_key ||= {}
+    #   # we should check here if we are looking at a key_path, or just a normal
+    #   # path. For now, we assume normal path
+    #   __replace_setter_for_key path
+    #   
+    #   observers = @__kvo_observers_for_key[path]
+    #   
+    #   unless observers
+    #     @__kvo_observers_for_key[path] = observers = {}
+    #   end
+    #   
+    #   # puts "=========== setting observer info"
+    #   observers[an_observer] = {
+    #     :observer => an_observer,
+    #     :options  => options,
+    #     :context  => context
+    #   }
+    #   
+    #   # If our options require an :initial notification, send it now
+    #   if options.include? :initial
+    #     puts "add_observer needs to send initial notification"
+    #   end
+    # 
+    # end
     
     # Remove an observing object for the given key path
     def remove_observer(observer, path)
@@ -118,7 +112,7 @@ module CherryKit
     # 
     def __replace_setter_for_key(key)
       # if we have already done this key, skip
-      return if @__kvo_replaced_keys[key]
+      return if @__observer_replaced_keys[key]
     
       # puts "replacing methods for #{key}"
     
@@ -150,34 +144,24 @@ module CherryKit
   
     # Notifications that we are about to change the key, did change etc
     def __send_change_notifications(key, before, options)
+      puts "sending notification for key #{key}"
       options = options || {}
-      # puts "need to send notifications for #{key}, is before: #{before}, options: #{options}"
-      changes = @__kvo_changes_for_key[key]
-      
+     
       # if we are sending a notification before we change the value
       # (will_change_value_for_key)
       if before
-        changes = options
         old = value_for_key key
-        
-        changes[:old] = old
-        changes[:prior] = true
-        @__kvo_changes_for_key[key] = changes
-      
+        @__observer_changes_for_key[key] = old
       else
         # after..
-        changes = changes || {}
-        changes[:new] = value_for_key(key)
+        old_value = @__observer_changes_for_key[key]
+        new_value = value_for_key key
       end
       
-      # puts "need to loop over observers"
-      @__kvo_observers_for_key[key].each do |observer, observer_info|
-        if before
-          if observer_info[:prior]
-            # puts "need to send observe_value_for_key_path for before"
-          end
-        else
-          observer.observe_value key, self, changes, observer_info[:context]
+      puts "need to loop over observers"
+      @__observers_for_key[key].each do |block_callback|
+        unless before
+          `#{block_callback}.__fun__(#{old_value}, #{new_value});`
         end
       end
     end

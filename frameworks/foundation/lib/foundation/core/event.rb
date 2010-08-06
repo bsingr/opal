@@ -39,8 +39,24 @@ module CherryKit
     # 
     # @returns {CherryKit::View} the view
     # 
-    def view_for_event
-      raise "Event#view_for_event not implemented"
+    def view
+      return @view if @view
+      
+      element = `#{self}.__event__.target;`
+      `while (element) {
+        if (!element.id) {
+          element = element.parentNode; 
+        } else {
+          break;
+        }
+      }`
+      @view = CherryKit::View[`#{element}.id`]
+    end
+    
+    # CherryKit window for the event
+    # 
+    def window
+      @window ||= view.window
     end
   end
 end

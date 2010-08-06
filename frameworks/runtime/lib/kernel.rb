@@ -80,6 +80,10 @@ module Kernel
     `return #{self}.isa;`
   end
   
+  def superclass
+    `return #{self}.super_class;`
+  end
+  
   def require require_path
     `opal.require(#{require_path});`
     require_path
@@ -131,6 +135,10 @@ module Kernel
       `#{block}.__fun__.opal_self = true;`
       `#{block}.__fun__.apply(#{self});`
     end
+  end
+  
+  def const_set(const_name, const_value)
+    `return #{self}.const_set(#{const_name}, #{const_value});`
   end
   
 end
