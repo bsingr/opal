@@ -32,7 +32,7 @@ module CherryKit
   class View < Responder
     
     # Get the layout hash from the receiver (Hash)
-    attr_reader :layout
+    attr_accessor :layout
     
     # the view's window
     attr_reader :window
@@ -53,7 +53,7 @@ module CherryKit
       # so we can tell the view that it needs a redisplay
       self.class.all_display_properties.each do |property|
         self.observe(property) do |oldvalue, newvalue|
-          puts "#{property} chnage to #{newvalue} means we need to redisplay"
+          self.needs_display = true
         end
       end
     end
@@ -173,7 +173,8 @@ module CherryKit
     end
     
     def update_renderer
-      # do we actually need this?
+      # do we actually need this? maybe for canvas/vml drawing...? or put that
+      # in renderer as well?
     end
     
     # Root element tag_name used for building the responder context. Should be a
@@ -197,7 +198,11 @@ module CherryKit
       puts "Displaying init"
       if @render_context
         # if we already have our render context, just update it
-        puts "need to update render context"
+        @view_renderer.update render_context
+
+        if @renderer
+          @renderer.update render_context
+        end
       else
         puts "need to create render context"
         render_context = create_render_context
@@ -336,6 +341,7 @@ module CherryKit
     def mouse_down(event)
       super
     end
+    
     # ==================================
     # = Register views to DOM id names =
     # ==================================

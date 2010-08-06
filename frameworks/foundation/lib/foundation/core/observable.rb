@@ -144,7 +144,7 @@ module CherryKit
   
     # Notifications that we are about to change the key, did change etc
     def __send_change_notifications(key, before, options)
-      puts "sending notification for key #{key}"
+      # puts "sending notification for key #{key}"
       options = options || {}
      
       # if we are sending a notification before we change the value
@@ -158,7 +158,7 @@ module CherryKit
         new_value = value_for_key key
       end
       
-      puts "need to loop over observers"
+      # puts "need to loop over observers"
       @__observers_for_key[key].each do |block_callback|
         unless before
           `#{block_callback}.__fun__(#{old_value}, #{new_value});`

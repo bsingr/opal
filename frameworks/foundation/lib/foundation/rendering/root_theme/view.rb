@@ -39,6 +39,8 @@ module CherryKit
       
       # Initial render
       def render(render_context)
+        # get this later instead through .element
+        @element = render_context
         # view id
         view_id = "ck-view-#{@view.object_id}"
         render_context.id = view_id
@@ -64,13 +66,14 @@ module CherryKit
       # 
       def calculate_layout_style
         layout = @view.layout
-        {
-          :left   => "#{layout[:left]}px",
-          :top    => "#{layout[:top]}px",
-          :right  => "#{layout[:right]}px",
-          :bottom => "#{layout[:bottom]}px",
-          :height => "#{layout[:height]}px"
-        }
+        res = {}
+        res[:left] = "#{layout[:left]}px" if layout[:left]
+        res[:right] = "#{layout[:right]}px" if layout[:right]
+        res[:top] = "#{layout[:top]}px" if layout[:top]
+        res[:bottom] = "#{layout[:bottom]}px" if layout[:bottom]
+        res[:width] = "#{layout[:width]}px" if layout[:width]
+        res[:height] = "#{layout[:height]}px" if layout[:height]
+        res
       end
       
     end # View

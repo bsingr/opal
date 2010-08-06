@@ -33,13 +33,14 @@ module CherryKit
     class Button < Renderer
       
       def initialize(view, theme)
-        super
+        super view, theme
         @control_renderer = theme.control view
         @title_renderer = theme.title view
       end
       
       # Initial render
       def render(render_context)
+        @element = render_context.element
         # first render our control
         @control_renderer.render render_context
         # title etc
@@ -49,6 +50,10 @@ module CherryKit
         end
       end
       
+      def update
+        label = element.find('.label')
+        label.text = @view.title
+      end
     end # View
   end # RootTheme
 end

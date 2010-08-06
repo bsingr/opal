@@ -41,9 +41,14 @@ module CherryKit
     # @param {CherryKit::Theme} theme that this renderer belongs to
     # 
     def initialize(view, theme)
+      puts "in base renderer with view: #{view}"
       @view = view
       @theme = theme
       @class_names = []
+    end
+    
+    def element
+      @element
     end
     
     # Core method to render to the given context. Default action is to do

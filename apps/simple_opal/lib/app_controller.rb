@@ -42,12 +42,30 @@ class AppController
     
     @main_window.show
     
-    b = button({})
+    test_button = button(:layout => {
+        :left => 200,
+        :top  => 20,
+        :right  => 250,
+        :bottom => 100,
+        :height => 24
+      },
+      :enabled  => true
+    )
     
-    # b.instance_variable_set :@layout, { :left => 20, :right => 20, :top => 100, :bottom => 200 }
+    @main_window << test_button
     
-    @main_window << b
-    @main_window.display
+    @main_window << button(:layout => {
+      :left   => 200,
+      :top    => 300,
+      :width  => 250,
+      :bottom => 100,
+      :height => 24
+    }, 
+    :enabled => false)
+    
+    # `window.test_button = #{b};`
+    # 
+    # b2.title = "shit son!"
     
   end
 end

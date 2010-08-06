@@ -30,6 +30,10 @@ class NilClass
     true
   end
   
+  def !()
+    true
+  end
+  
   def to_i
     0
   end

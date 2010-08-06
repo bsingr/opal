@@ -121,11 +121,10 @@ module CherryKit
     
     def setup_event_handlers
       # standard mouse events
-      event_handler Browser.document, :mousedown, &mousedown_handler
-      event_handler Browser.document, :mouseup, &mouseup_handler
+      listen_for Browser.document, :mousedown, :mouseup
       
       # browser window resizing
-      event_handler Browser.window, :resize, &resize_handler
+      listen_for Browser.window, :resize
       
       # browser dependant focus/blur events
       if Browser.msie?
@@ -137,8 +136,10 @@ module CherryKit
       end
     end
     
-    def event_handler(target, event, &handler)
-      Browser::Event.listen target, event, &handler
+    def listen_for(target, *events)
+      events.each do |event|
+        Browser::Event.listen target, event, __send__("#{event}_handler")
+      end
     end
     
     # Dispatch the event

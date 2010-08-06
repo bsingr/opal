@@ -4,6 +4,11 @@
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
   vertical-align: middle;
+  background-color: rgb(230,230,230);
+}
+
+.ck-button.disabled {
+  background-color: rgb(190,190,190);
 }
 
 .ck-button .label {

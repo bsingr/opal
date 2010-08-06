@@ -95,6 +95,17 @@ module Browser
     # 
     def self.find_in_context(selector, context)
       selector = `'#' + #{selector.to_s}` if selector.is_a? Symbol
+      elements = `Sizzle(#{selector}, #{context}.__element__);`
+      if elements.length == 1
+        return `#{Element}.$from_native(#{elements}[0]);`
+      else
+        `console.log(#{elements});`
+        raise "need to handle find_in_context array"
+      end
+    end
+    
+    def find(selector)
+      self.class.find_in_context selector, self
     end
     
     def inspect
@@ -158,10 +169,11 @@ module Browser
     # @param {Hash} styles
     # 
     def css(styles)
-      puts "about to style.."
+      native_element = `#{self}.__element__`
+      # puts "about to style.."
       styles.each do |style, value|
         puts "setting #{style} as #{value}"
-        `#{self}.__element__.style[#{style.to_s}] = #{value};`
+        `(#{native_element}.style || #{native_element})[#{style.to_s}] = #{value};`
       end
     end
     

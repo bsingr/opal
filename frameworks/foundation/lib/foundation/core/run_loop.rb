@@ -59,9 +59,10 @@ module CherryKit
     end
     
     # add the action for the given target
+    # we could splat some args as well to take unlimited args...
     def add_task(target, action)
       
-      puts "adding task for #{target} as #{action}"
+      # puts "adding task for #{target} as #{action}"
       
       object_tasks = (@tasks_to_perform[target] || @tasks_to_perform[target] = [])
       # only do it once..
@@ -76,8 +77,10 @@ module CherryKit
     # flush the queue
     def flush_queue
       `while ((#{task = @ordered_tasks.pop}).r){`
-        
+        task[0].__send__ task[1]
       `}`
+      
+      @tasks_to_perform = {}
     end
   end
 end

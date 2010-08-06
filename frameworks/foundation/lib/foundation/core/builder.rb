@@ -63,7 +63,7 @@ module CherryKit
           puts "some code here"
           puts builder_options
           puts "builder class is #{builder_class}"
-          options = {}
+          # options = {}
           builder_class.build options
         end
       end
@@ -76,6 +76,7 @@ module CherryKit
         
         # now go through each builder_option that is left in hash
         builder_options.each do |key, value|
+          puts "builder setting #{key} to #{value}"
           object.set_value_for_key value, key
         end
         # simply return our object

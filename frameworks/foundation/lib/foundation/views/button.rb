@@ -37,13 +37,7 @@ module CherryKit
     
     def initialize
       super
-      @layout = {
-        :left => 200,
-        :top  => 20,
-        :right  => 250,
-        :bottom => 100,
-        :height => 24
-      }
+      # @layout = 
       
       @title = "Click me!"
     end
@@ -56,6 +50,11 @@ module CherryKit
     
     def class_names
       ['ck-button']
-    end    
+    end
+    
+    def mouse_down(event)
+      puts "mouse down in button!"
+      self.needs_display = true
+    end 
   end
 end

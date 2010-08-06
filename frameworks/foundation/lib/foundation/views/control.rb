@@ -30,8 +30,12 @@ module CherryKit
   
   class Control < View
     
+    display_properties :enabled, :selected, :highlighted
+    
+    attr_writer :enabled
+    
     def enabled?
-      true
+      @enabled
     end
     
     def selected?
