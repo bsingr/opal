@@ -30,9 +30,19 @@ module CherryKit
   
   class Control < View
     
-    display_properties :enabled, :selected, :highlighted
+    display_properties :enabled, :selected, :highlighted, :control_size
     
-    attr_writer :enabled
+    attr_writer :enabled, :highlighted, :selected
+    
+    # Managing the control size. Valid values are
+    # 
+    # :mini, :small, :regular, :large
+    # 
+    attr_accessor :control_size
+    
+    def highlighted?
+      @highlighted
+    end
     
     def enabled?
       @enabled
@@ -40,6 +50,14 @@ module CherryKit
     
     def selected?
       false
+    end
+    
+    def initialize
+      super
+      
+      @selected = false
+      @highlighted = false
+      @control_size = :regular
     end
     
     # ==================
@@ -53,19 +71,53 @@ module CherryKit
       track_mouse event
     end
     
+    # Track the mouse within the control beginning with the given event (which
+    # will more than likely be a :mouse_down event)
+    # 
+    # @param {Event} event to start tracking
+    # @returns nil
+    # 
     def track_mouse(event)
+      # puts "tracking mouse!"
       CKApp.handle_events([:mouse_up, :mouse_dragged]) do |event|
-        puts "handling event: #{event}"
+        type = event.type
+        location = event.location_in_view
+        within_frame = bounds.contains_point? location
         
-        case event.type
-        when :mouse_up
-          stop_tracking
-        when :mouse_down
+        # puts "event #{type.inspect}, #{location.x}, #{location.y}"
+        
+        if type == :mouse_down
+          # puts type
+          start_tracking? location
+        
+        elsif type == :mouse_up
+          # when mouse is up, just stop tracking and post that we wish to stop
+          # receiving events. simples.
+          stop_tracking location
+          CKApp.finish_handling_events
           
-        when :mouse_dragged
-          
+        elsif type == :mouse_moved || type == :mouse_dragged
+          # we should only actually get mouse dragged events. fixc this later.
+          continue_tracking? location
         end
       end
+    end
+    
+    # Should start tracking?
+    # 
+    # @param {Point} location (:left, :top)
+    # @returns {true|false}
+    # 
+    def start_tracking?(location)
+      # puts "start tracking.."
+    end
+    
+    def stop_tracking(location)
+      # puts "stop trackinhg.."
+    end
+    
+    def continue_tracking?(location)
+      # puts "continue tracking.."
     end
     
   end

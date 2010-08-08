@@ -40,9 +40,10 @@ module CherryKit
     # @returns {CherryKit::View} the view
     # 
     def view
-      return @view if @view
-      
-      element = `#{self}.__event__.target;`
+      if @view
+        return @view
+      else
+      element = `#{self}.__event__.target || #{self}.__event__.srcElement;`
       `while (element) {
         if (!element.id) {
           element = element.parentNode; 
@@ -50,7 +51,37 @@ module CherryKit
           break;
         }
       }`
-      @view = CherryKit::View[`#{element}.id`]
+      return @view = CherryKit::View[`#{element}.id`]
+      end
+    end
+    
+    # manually set view
+    def view=(view)
+      @view = view
+    end
+    
+    # location in clinet (browser)
+    # 
+    # @returns {CherryKit::Point} location
+    # 
+    def location_in_client
+      return @location_in_client if @location_in_client
+      # if we have not cached it, now do it
+      event = `#{self}.__event__;`
+      
+      # @location_in_client = { :left => `#{event}.clientX`,
+                              # :top  => `#{event}.clientY` }
+                              
+      @location_in_client = Browser::Point.new `#{event}.clientX`, `#{event}.clientY`
+    end
+    
+    # location of event within designated view
+    # 
+    def location_in_view
+      offset = view.render_context.element.element_offset
+      client = location_in_client
+      
+      Browser::Point.new(client.x - offset.x, client.y - offset.y)
     end
     
     # CherryKit window for the event

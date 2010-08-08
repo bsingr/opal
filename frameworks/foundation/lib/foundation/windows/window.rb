@@ -43,7 +43,7 @@ module CherryKit
       @window = self
       # default first responder is the window itself
       @first_responder = self
-      puts "normal initializer for window!"
+      # puts "normal initializer for window!"
     end
     
     def show
@@ -53,10 +53,7 @@ module CherryKit
       # append_to Browser::Element.body
     end
     
-    # class name for window
-    def class_names
-      ['ck-window']
-    end
+    class_names 'ck-window'
     
     # Insert the window into the given element
     # 
@@ -67,10 +64,10 @@ module CherryKit
       # make sure our render context is already created
       render_context = create_render_context
       
-      puts "finished create_render_context:"
+      # puts "finished create_render_context:"
       base_element << render_context.element
       
-      puts "now need to make all subviews"
+      # puts "now need to make all subviews"
     end
     
     # Mark the given view as needing display. This view should be in this
@@ -81,10 +78,10 @@ module CherryKit
     # @param {CherryKit::View} view that requires display
     # 
     def mark_view_for_display(view)
-      puts "mark_view_for_display(#{view})"
+      # puts "mark_view_for_display(#{view})"
       # do not re-add it if we already have it as needing display
       unless @views_needing_display.include? view
-        puts "yeap, adding it"
+        # puts "yeap, adding it"
         @views_needing_display << view
         `console.log(#{ @views_needing_display});`
       end
@@ -97,13 +94,13 @@ module CherryKit
         append_to Browser::Element.body
       end
       
-      puts "need to go through each view"
-      `console.log(#{@views_needing_display});`
+      # puts "need to go through each view"
+      # `console.log(#{@views_needing_display});`
       # now go through all our views that are marked for display (should be
       # all subviews if we just had to create a render context, otherwise it is
       # any view that has been updated)
       @views_needing_display.each do |view|
-        puts "need to display view: #{view}"
+        # puts "need to display view: #{view}"
       end
       
       @subviews.each do |view|
@@ -120,9 +117,16 @@ module CherryKit
     # @param {Browser::Event} event
     # 
     def send_event(event)
+      
+      if event.type == :mouse_down
+        # puts "need to send on mousedown from window"
+        event.view.mouse_down event
+      elsif event.type == :mouse_up
+        # puts "need to "
+      end
       # case :mousedown
       
-      event.view.mouse_down event
+      # event.view.mouse_down event
     end
     
     # Returns the first responder for the window
@@ -161,7 +165,7 @@ module CherryKit
     
     # Initialize from builder
     def initialize_from_builder(builder_options)
-      puts "initialzing in window!! builder style"
+      # puts "initialzing in window!! builder style"
       initialize
     end
     

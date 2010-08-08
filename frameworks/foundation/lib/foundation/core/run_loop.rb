@@ -40,7 +40,7 @@ module CherryKit
       # 3. now run all rendering etc for the runloop
       @current_run_loop.flush_queue
       
-      puts "======= finished run loop"
+      # puts "======= finished run loop"
       
       # make sure we destroy our current run loop ready for a new one
       @current_run_loop = nil

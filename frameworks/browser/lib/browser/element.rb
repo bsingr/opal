@@ -150,6 +150,25 @@ module Browser
       `return #{self}.__element__.className || "";`
     end
     
+    # set class names from hash
+    def set_class_names(class_names)
+      current = self.class_name.split ' '
+      
+      class_names.each do |name, flag|
+        if current.include? name
+          unless flag
+            current.delete name 
+          end
+        else
+          if flag
+            current << name
+          end
+        end
+      end
+      
+      self.class_name = current.join(" ")
+    end
+    
     def id=(id)
       `return #{self}.__element__.id = #{id};`
     end
@@ -172,7 +191,7 @@ module Browser
       native_element = `#{self}.__element__`
       # puts "about to style.."
       styles.each do |style, value|
-        puts "setting #{style} as #{value}"
+        # puts "setting #{style} as #{value}"
         `(#{native_element}.style || #{native_element})[#{style.to_s}] = #{value};`
       end
     end
@@ -193,6 +212,26 @@ module Browser
       end
       
       self
+    end
+    
+    # Returns the offset of the element, taking into account the parents, scroll
+    # values, etc etc. needs improving, not 100% for all browsers
+    # 
+    # @returns {Hash} :left/:top => Number
+    # 
+    def element_offset
+      left = 0
+      top = 0
+      
+      `var element = #{self}.__element__;
+      var parent = element;
+      while (parent) {
+        #{left} += parent.offsetLeft;
+        #{top} += parent.offsetTop;
+        parent = parent.offsetParent;
+      }
+      `
+      Point.new left, top
     end
     
     # All valid html tags. These are looped over so each element instance has

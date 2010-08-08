@@ -46,4 +46,12 @@ class Number
     `return #{self} - #{other};`
   end
   
+  def /(other)
+    `return #{self} / #{other};`
+  end
+  
+  def *(other)
+    `return #{self} * #{other};`
+  end
+  
 end

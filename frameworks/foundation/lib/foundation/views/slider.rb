@@ -1,5 +1,5 @@
 # 
-# button.rb
+# slider.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -28,33 +28,54 @@ require 'foundation/views/control'
 
 module CherryKit
   
-  class Button < Control
+  class Slider < Control
     
-    register_builder :button,
-      :title  => "Button"
-      
-    display_properties :title
+    register_builder :slider, {}
     
-    class_names 'ck-button'
+    class_names 'ck-slider'
     
-    attr_accessor :title
+    display_properties :value, :min, :max
+    
+    attr_accessor :value, :min, :max
     
     def initialize
       super
-      
-      @title = "Button!"
+      @value = 0
+      @min = 0
+      @max = 100      
     end
-  
+    
     def create_renderer(theme)
-      theme.button self
+      theme.slider self
+    end
+    
+    # slider value for the given location (point)
+    # 
+    def value_for_location(location)
+      # 14/7 should be got from the renderer.. each theme/control size may
+      # define a different indent
+      
+      # our width is less 2x the track indent
+      width = bounds.width - 14
+      # our location is the track indent less than what it actually is
+      x = location.x - 7
+      
+      (x / width) * 100
     end
     
     def start_tracking?(location)
+      self.value = value_for_location location
       self.highlighted = true
     end
 
     def stop_tracking(location)
+      self.value = value_for_location location
       self.highlighted = false
+    end
+
+    def continue_tracking?(location)
+      # puts "value should be #{value_for_location(location)}"
+      self.value = value_for_location location
     end
   end
 end

@@ -1,5 +1,5 @@
 # 
-# button.rb
+# slider.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -28,35 +28,45 @@ require 'foundation/rendering/root_theme/control'
 
 module CherryKit
   
-  class RootTheme
+  module RootTheme
     
-    class Button < Control
-      
-      # theme_renderer :button, RootTheme
-      
+    class Slider < Control
+
+      # Initial render
       def render(render_context)
+        # render super (Control)
         super render_context
-        # title etc
-        render_contents render_context
+        # inners
+        render_slider render_context
       end
       
-      def render_contents(render_context)
-        render_context.label do |label|
-          label.class_name = 'label'
-          label << @view.title
-        end
+      def render_slider(render_context)
+        render_context << ["<span class='inner'>",
+          "<span class='left'></span>",
+          "<span class='middle'></span>",
+          "<span class='right'></span>",
+          "<span class='handle' style='left:50%'></span>",
+          "</span>"].join("")
       end
       
       def update
+        # keep control updated
         super
-        update_contents
+        # puts "view.value is #{@view.value}"
+        @element.find('.handle').css :left  => "#{@view.value}%"
       end
       
-      def update_contents
-        label = element.find('.label')
-        label.text = @view.title
-      end
+      # Our track indent is theme dependant, and it depends on the control size.
+      # When calculating the value for a given mouse location, the track indent
+      # is required, and used, to calculate a more specific value. If a custom
+      # theme indents the track by more (or less) than the following amounts,
+      # then redefine this attribute in a subclass (subtheme).
+      # 
+      theme_attribute :track_indent, 
+        :small    => 5,
+        :regular  => 7,
+        :large    => 9
       
-    end # View
-  end # RootTheme
+    end
+  end
 end

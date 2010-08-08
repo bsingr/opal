@@ -63,7 +63,24 @@ class AppController
     }, 
     :enabled => false)
     
-    # `window.test_button = #{b};`
+    @main_window << slider(:layout => {
+        :left   => 200,
+        :top    => 180,
+        :width  => 250,
+        :bottom => 100,
+        :height => 16
+      })
+      
+      @main_window << slider(:layout => {
+          :left   => 500,
+          :top    => 180,
+          :width  => 250,
+          :bottom => 100,
+          :height => 14
+        },
+        :control_size => :small)
+    
+    `window.test_button = #{test_button};`
     # 
     # b2.title = "shit son!"
     

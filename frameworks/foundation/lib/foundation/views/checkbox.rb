@@ -1,5 +1,5 @@
 # 
-# title.rb
+# checkbox.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,20 +24,5 @@
 # THE SOFTWARE.
 #
 
-
-require 'foundation/rendering/root_theme'
-
-module CherryKit
-  
-  class RootTheme
-    
-    class Title < Renderer
-      
-      # Initial render
-      def render(render_context)
-        render_context << @view.title
-      end
-      
-    end # View
-  end # RootTheme
-end
+# checbox should just be a button.. register_builder(:checkbox) with extra
+# defaults

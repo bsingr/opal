@@ -78,7 +78,28 @@ module CherryKit
       @display_properties = @display_properties + properties
     end
     
+    # Set each of the given class names (strings) to the array of class names
+    # which will all be added together with superclass' to build up the full
+    # class name. (e.g. CK::Control will be 'ck-view ck-control')
+    # 
+    def self.class_names(*names)
+      # puts "setting class names to #{names.inspect} for #{self}"
+      @css_class_names = names
+    end
+    
+    def self.all_class_names
+      # puts "looking for #{self} with #{@css_class_names.inspect}"
+      if CherryKit::View == self
+        return @css_class_names ||= []
+      else
+        @css_class_names ||= []
+        return ([] + superclass.all_class_names) + @css_class_names
+      end
+    end
+    
     display_properties :visible
+    
+    class_names 'ck-view'
     
     # Return the theme name to use for the view. In all systems, root_theme is
     # used as the default. To use another theme, set the theme_name property for
@@ -113,20 +134,14 @@ module CherryKit
     
     def render_with_render_context(render_context)
       __update_renderer
-      
-      @view_renderer.render render_context
-      
+            
       # if we have set renderer.. might not always be set (root view etc)
       if @renderer
         @renderer.render render_context
       end
       
-      # We immeditaely call update on both the view_renderer and the main
-      # renderer, again, if it exists
-      @view_renderer.update render_context
-      
       if @renderer
-        @renderer.update render_context
+        @renderer.update
       end
     end
     
@@ -134,11 +149,19 @@ module CherryKit
       true
     end
     
+    # Bounds of the view. This often needs to be recalculated based on css
+    # layout etc.
+    # 
+    # @returns {Browser::Rect} rect bounds
+    def bounds
+      Browser::Rect.new 0, 0, `#{render_context.element}.__element__.clientWidth`, `#{render_context.element}.__element__.clientHeight`
+    end
+    
     # Update the renderer. We assume we have our render context, so we just need
     # to make sure we have our actual renderer available (usually from a theme)
     def __update_renderer
-      if @view_renderer
-        puts "need to call on renderer to update"
+      if @renderer
+        # puts "need to call on renderer to update"
       else
         __create_renderer
       end
@@ -153,23 +176,19 @@ module CherryKit
         raise "Cannot find theme named #{theme_name}"
       end
       
-      # every view will have a view_renderer that handles the basics
-      @view_renderer = theme.view self
       # the renderer for our custom view. Our renderer might be nil. The base
       # view for example does not create a renderer, so do not always assume
       # that one will exist
       @renderer = create_renderer theme
     end
     
-    # create the renderer just for this view. By default this implementation is
-    # empty, but this should be overridden to create the necessary rendererer
-    # from the given theme for your view.
+    # create the renderer just for this view.
     # 
     # @param {CherryKit::Theme} theme to create renderer from
     # @returns {CherryKit::Renderer} renderer
     # 
     def create_renderer(theme)
-      # do nothing by default
+      theme.view self
     end
     
     def update_renderer
@@ -185,26 +204,20 @@ module CherryKit
     def tag_name
       :div
     end
-    
-    # Default class name for views. Override this method
-    def class_names
-      ['ck-view']
-    end
+  
     
     # NEVER EVER call this method directly. This will create and / or update
     # the rendering context as needed
     # 
     def display
-      puts "Displaying init"
+      # puts "Displaying init"
       if @render_context
         # if we already have our render context, just update it
-        @view_renderer.update render_context
-
         if @renderer
-          @renderer.update render_context
+          @renderer.update
         end
       else
-        puts "need to create render context"
+        # puts "need to create render context"
         render_context = create_render_context
         @superview.render_context.element << render_context.element
       end
@@ -276,7 +289,7 @@ module CherryKit
     # @param {true|false} needs_displaying
     # 
     def needs_display=(needs_displaying)
-      puts "======= needs_display"
+      # puts "======= needs_display"
       # we should only mark ourself as needing display if we have a window
       if @window
         RunLoop.current_run_loop.add_task self, :display
@@ -292,7 +305,7 @@ module CherryKit
     # @param {CherryKit::Window} window to set
     # 
     def _window=(window)
-      puts "setting window to #{window} for #{self}"
+      # puts "setting window to #{window} for #{self}"
       # if we already belong to the window, just return
       return if @window == window
       # callback

@@ -105,7 +105,6 @@ module CherryKit
         center.post_notification :name   => :application_will_finish_launching,         
                                  :sender => self
 
-
         # notify :application_will_finish_launching
 
         # setup/create all event handlers
@@ -121,7 +120,7 @@ module CherryKit
     
     def setup_event_handlers
       # standard mouse events
-      listen_for Browser.document, :mousedown, :mouseup
+      listen_for Browser.document, :mousedown, :mouseup, :mousemove
       
       # browser window resizing
       listen_for Browser.window, :resize
@@ -152,13 +151,18 @@ module CherryKit
       @current_event = event
       # if we have an event handler registered, delegate events to that
       if @event_handler
-        `#{@event_handler}.__fun__(#{event});`
+        event.view = @event_handler_view
+        RunLoop.run do
+          `#{@event_handler}.__fun__(#{event});`
+        end
       else
         # send event within a runloop block so that all action calls etc are
         # caught, as well as view display requests, so we can run them on
         # completion of sending the event
         RunLoop.run do
-          puts "============= sending event on within runloop!"
+          # puts "============= sending event on within runloop!"
+          # puts event.type
+          # return
           # # `console.log(#{event});`
           # puts "view for event is: #{event.view}"
           # puts "window for event is: #{event.window}"
@@ -188,6 +192,7 @@ module CherryKit
     def handle_events(events, &block)
       @event_handler = block
       @event_handler_events = events
+      @event_handler_view = @current_event.view
       # resend current event
       `#{@event_handler}.__fun__(#{@current_event});`
     end
@@ -197,6 +202,7 @@ module CherryKit
     def finish_handling_events
       @event_handler = nil
       @event_handler_events = nil
+      @event_handler_view = nil
     end
     
     # Handles the window's 'resize' event. This method simply posts out 
@@ -213,6 +219,15 @@ module CherryKit
       end
     end
     
+    def mousemove_handler
+      proc do |event|
+        # must make ruby friendly name - should check if mouse_dragged
+        event.type = :mouse_moved
+        # puts "mouse moved!"
+        send_event event
+      end
+    end
+    
     # Handles raw events from the browser for mousedown
     # 
     # @param [Browser::Event] event received
@@ -220,7 +235,9 @@ module CherryKit
     # 
     def mousedown_handler
       proc do |event|
-        begin
+        # begin
+        # first we rename the event to our ruby friendly name
+          event.type = :mouse_down
           @mouse_down_view = view = event.view
           window = view.window
           # get current first responder
@@ -231,10 +248,10 @@ module CherryKit
           end
         
           send_event event
-        rescue Exception => e
-          puts "exception occured within Application#on_mousedown"
-          raise e
-        end
+        # rescue Exception => e
+          # puts "exception occured within Application#on_mousedown"
+          # raise e
+        # end
       end
     end
     
@@ -245,7 +262,8 @@ module CherryKit
     # 
     def mouseup_handler
       proc do |event|
-        
+        event.type = :mouse_up
+        send_event event
       end
     end
 

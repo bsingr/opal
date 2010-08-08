@@ -98,5 +98,25 @@ module Browser
       event
     end
     
+    # Type of event, as a symbol. Here we convert the actual event type into a 
+    # symbol, and also rename some ie only events into more w3c friendly events.
+    # 
+    def type
+      if @type
+        return @type
+      else
+        @type = `vnY(#{self}.__event__.type)`
+        return @type
+      end
+    end
+    
+    # Allow event type to be overridden. This only sets the type for our
+    # abstraction: the native event type is not altered
+    # 
+    # @param {Symbol} event_type for the event
+    # 
+    def type=(event_type)
+      @type = event_type
+    end
   end
 end

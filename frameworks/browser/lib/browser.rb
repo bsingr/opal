@@ -75,3 +75,6 @@ end
 require 'browser/sizzle.js'
 require 'browser/element'
 require 'browser/event'
+require 'browser/graphics'
+
+# include Browser

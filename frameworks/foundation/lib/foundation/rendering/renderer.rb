@@ -41,7 +41,7 @@ module CherryKit
     # @param {CherryKit::Theme} theme that this renderer belongs to
     # 
     def initialize(view, theme)
-      puts "in base renderer with view: #{view}"
+      # puts "in base renderer with view: #{view}"
       @view = view
       @theme = theme
       @class_names = []
@@ -68,6 +68,37 @@ module CherryKit
     # use a render context when first making the view, i.e. in render()
     # 
     def update()
+      
+    end
+    
+    # Theme attribute.
+    # 
+    # This method is used to define some theme values that the views might need
+    # access to for calculating various proerpties. For example, a slider will
+    # need to know how much the track is indented from the boundry of the view,
+    # and so this method will allow a simple and easy customization for that
+    # property to make theme independant values.
+    # 
+    # values can either be a hash:
+    # 
+    #     theme_attribute :control_size,
+    #       :small    => 10,
+    #       :regular  => 20,
+    #       :large    => 30
+    # 
+    # or a single value
+    #   
+    #     theme_attribute :min_size, 100
+    # 
+    # These will be accessed by the views using either
+    # 
+    #     renderer.theme_attribute_for :control_size, :regular
+    # 
+    # or..
+    # 
+    #     renderer.theme_attribute_for :min_size
+    # 
+    def self.theme_attribute(attribute_name, values)
       
     end
 

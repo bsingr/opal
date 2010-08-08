@@ -457,7 +457,9 @@ module Vienna
       gsub(/\&/, "$a").
       gsub(/\</, "$l").
       gsub(/\[/, "$z").
-      gsub(/\]/, "$x")
+      gsub(/\]/, "$x").
+      gsub(/\//, "$d").
+      gsub(/\*/, "$t")
     end
     
     def generate_tree(tree)
@@ -981,9 +983,8 @@ module Vienna
     
     def generate_opt_mult(stmt, context)
       write "return " if context[:last_stmt] and context[:full_stmt]
-      write %{vm_optmult(}
       generate_stmt stmt[:recv], :last_stmt => false, :full_stmt => false
-      write ","
+      write ".#{mid_to_jsid('*')}("
       generate_stmt stmt[:call_args][:args][0], :full_stmt => false
       write ")"
       write ";" if context[:full_stmt]
@@ -991,9 +992,8 @@ module Vienna
     
     def generate_opt_div(stmt, context)
       write "return " if context[:last_stmt] and context[:full_stmt]
-      write %{vm_optdiv(}
       generate_stmt stmt[:recv], :last_stmt => false, :full_stmt => false
-      write ","
+      write ".#{mid_to_jsid('/')}("
       generate_stmt stmt[:call_args][:args][0], :full_stmt => false
       write ")"
       write ";" if context[:full_stmt]

@@ -1,5 +1,5 @@
 # 
-# button.rb
+# graphics.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,37 +24,57 @@
 # THE SOFTWARE.
 #
 
-require 'foundation/views/control'
-
-module CherryKit
+module Browser
   
-  class Button < Control
+  class Point
     
-    register_builder :button,
-      :title  => "Button"
-      
-    display_properties :title
+    attr_accessor :x, :y
     
-    class_names 'ck-button'
-    
-    attr_accessor :title
-    
-    def initialize
-      super
-      
-      @title = "Button!"
-    end
-  
-    def create_renderer(theme)
-      theme.button self
-    end
-    
-    def start_tracking?(location)
-      self.highlighted = true
-    end
-
-    def stop_tracking(location)
-      self.highlighted = false
+    def initialize(x, y)
+      @x = x
+      @y = y
     end
   end
+  
+  class Size
+    
+    attr_accessor :height, :width
+    
+    def initialize(w, h)
+      @width = w
+      @height = h
+    end
+  end
+  
+  class Rect
+    
+    attr_accessor :size, :origin
+    
+    def initialize(x, y, w, h)
+      @origin = Point.new x, y
+      @size = Size.new w, h
+    end
+    
+    def x
+      origin.x
+    end
+    
+    def y
+      origin.y
+    end
+    
+    def width
+      size.width
+    end
+    
+    def height
+      size.height
+    end
+    
+    def contains_point?(point)
+      true
+    end
+  end
+  
+  
 end

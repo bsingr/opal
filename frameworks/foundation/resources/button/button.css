@@ -11,6 +11,10 @@
   background-color: rgb(190,190,190);
 }
 
+.ck-button.highlighted {
+  background-color: rgb(200, 200, 200);
+}
+
 .ck-button .label {
   text-align: center;
   position: relative;

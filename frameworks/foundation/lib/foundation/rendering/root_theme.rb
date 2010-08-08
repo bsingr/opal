@@ -51,8 +51,8 @@ module CherryKit
       RootTheme::Control.new view, self
     end
     
-    def self.title(view)
-      RootTheme::Title.new view, self
+    def self.slider(view)
+      RootTheme::Slider.new view, self
     end
     
   end

@@ -52,11 +52,11 @@ module CherryKit
     # @returns self
     # 
     def add_observer(observer, action, name, object)
-      puts "in add observers"
+      # puts "in add observers"
       observers = (@dispatch_table[object] || @dispatch_table[object] = [])
       
-      puts 'observers is #{observers}'
-      `console.log(#{observers});`
+      # puts 'observers is #{observers}'
+      # `console.log(#{observers});`
       
       observers << {
         :observer => observer,
@@ -88,8 +88,8 @@ module CherryKit
     def post_notification(options)
       observers = @dispatch_table[options[:sender]]
       
-      puts "all observers: #{observers}"
-      `console.log(#{@dispatch_table});`
+      # puts "all observers: #{observers}"
+      # `console.log(#{@dispatch_table});`
       
       if observers
         observers.each do |observer|

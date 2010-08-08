@@ -122,7 +122,7 @@ exports.require = function(orig_path) {
     // console.log("does exist? " + try_path);
     if (file_list.hasOwnProperty(try_path)) {
       if (file_list[try_path].opal_required) {
-        console.log("already required " + path);
+        // console.log("already required " + path);
         return;
       }
       // console.log("shit son!!!!");

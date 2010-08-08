@@ -73,6 +73,14 @@ class Array
     `return #{self}.indexOf(#{member}) == -1 ? #{false} : #{true};`
   end
   
+  def delete(object)
+    `var index = #{self}.indexOf(object);
+    if (index !== -1) {
+      #{self}.splice(index, 1);
+    }`
+    self
+  end
+  
   def pop
     `if (#{self}.length) {
       return #{self}.pop();

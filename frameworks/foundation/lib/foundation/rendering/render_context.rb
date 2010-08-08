@@ -70,7 +70,7 @@ module CherryKit
     # 
     def set_class_names(class_names)
       current = @element.class_name.split ' '
-      puts "need to set_class_names for #{current.inspect}"
+      # puts "need to set_class_names for #{current.inspect}"
       
       class_names.each do |class_name, flag|
         if current.include? class_name.to_s

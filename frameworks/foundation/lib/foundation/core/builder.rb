@@ -55,14 +55,14 @@ module CherryKit
       # @returns {Class} self
       # 
       def register_builder(builder_name, builder_options)
-        puts "registering builder #{builder_name}"
+        # puts "registering builder #{builder_name}"
 
         builder_class = self
 
         CherryKit.define_method(builder_name) do |options, &block|
-          puts "some code here"
-          puts builder_options
-          puts "builder class is #{builder_class}"
+          # puts "some code here"
+          # puts builder_options
+          # puts "builder class is #{builder_class}"
           # options = {}
           builder_class.build options
         end
@@ -76,7 +76,7 @@ module CherryKit
         
         # now go through each builder_option that is left in hash
         builder_options.each do |key, value|
-          puts "builder setting #{key} to #{value}"
+          # puts "builder setting #{key} to #{value}"
           object.set_value_for_key value, key
         end
         # simply return our object

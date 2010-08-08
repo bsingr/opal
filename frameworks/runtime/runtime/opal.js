@@ -289,7 +289,7 @@ __boot_base_class.prototype.const_get = function(id) {
 
 // ivar get
 __boot_base_class.prototype.ig = function(id) {
-  if (this[id])
+  if (this.hasOwnProperty(id))
     return this[id];
   
   return vnNil;
