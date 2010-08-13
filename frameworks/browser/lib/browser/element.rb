@@ -99,7 +99,7 @@ module Browser
       if elements.length == 1
         return `#{Element}.$from_native(#{elements}[0]);`
       else
-        `console.log(#{elements});`
+        # `console.log(#{elements});`
         raise "need to handle find_in_context array"
       end
     end
@@ -190,6 +190,7 @@ module Browser
     def css(styles)
       native_element = `#{self}.__element__`
       # puts "about to style.."
+      # `console.log(#{native_element});`
       styles.each do |style, value|
         # puts "setting #{style} as #{value}"
         `(#{native_element}.style || #{native_element})[#{style.to_s}] = #{value};`

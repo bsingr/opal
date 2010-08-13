@@ -55,6 +55,14 @@ module CherryKit
       RootTheme::Slider.new view, self
     end
     
+    def self.scroller(view)
+      RootTheme::Scroller.new view, self
+    end
+    
+    def self.label(view)
+      RootTheme::Label.new view, self
+    end
+    
   end
   
   # RootTheme.register :root_theme

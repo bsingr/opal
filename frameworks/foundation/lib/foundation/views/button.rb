@@ -33,9 +33,11 @@ module CherryKit
     register_builder :button,
       :title  => "Button"
       
-    display_properties :title
+    display_attributes :title
     
     class_names 'ck-button'
+    
+    attr_accessor :value
     
     attr_accessor :title
     

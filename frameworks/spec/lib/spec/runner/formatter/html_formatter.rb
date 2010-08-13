@@ -81,7 +81,7 @@ module Spec
                   :class_name => "failed_spec_name"
           
           failure_div = dd.div :class_name => "failure"
-          `console.log(#{failure.exception});`
+          # `console.log(#{failure.exception});`
           failure_div.div(:class_name => "message").pre(:content => failure.exception.message)
         end
         

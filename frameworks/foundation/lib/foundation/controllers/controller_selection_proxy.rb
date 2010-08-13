@@ -1,5 +1,5 @@
 # 
-# slider.rb
+# controller_selection_proxy.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,49 +24,44 @@
 # THE SOFTWARE.
 #
 
-require 'foundation/rendering/root_theme/control'
-
 module CherryKit
   
-  module RootTheme
+  class ControllerSelectionProxy
     
-    class Slider < Control
+    def initialize(controller)
+      @controller = controller
+      @values = {}
+      @proxies = []
+    end
+    
+    def controller_will_change
+      puts "controller_will_change"
+    end
+    
+    def controller_did_change
+      puts "controller_did_change"
+    end
+    
+    def get_attribute(attribute)
+      attribute = attribute.to_s
+      value = @values[attribute]
+      return value if value
       
-      theme_attribute :track_indent, 
-        :small    => 5,
-        :regular  => 7,
-        :large    => 9
+      values = @controller.selected_objects.get_path attribute
+      length = values.length
       
-      # Initial render
-      def render(render_context)
-        # render super (Control)
-        super render_context
-        # inners
-        render_slider render_context
+      if length == 0
+        value = :no_selection
+      elsif length == 1
+        value = values[0]
+      else
+        value = :selected_objects_many
       end
       
-      def render_slider(render_context)
-        render_context << ["<span class='inner'>",
-          "<span class='left'></span>",
-          "<span class='middle'></span>",
-          "<span class='right'></span>",
-          "<span class='handle' style='left:50%'></span>",
-          "</span>"].join("")
-      end
+      @values[attribute] = value
       
-      def update
-        # keep control updated
-        super
-        # puts "view.value is #{@view.value}"
-        # puts "looking for handle"
-        e= @element.find('.handle')
-        # `console.log(#{e}.__element__);`
-        # puts "--------------------- slider update value is"
-        # `console.log(#{@view.value}.class_name);`
-        # `console.log(#{@view}.class_name);`
-        @element.find('.handle').css :left  => "#{@view.value}%"
-      end
-      
+      value
+      # puts "values: #{values.inspect}"
     end
   end
 end

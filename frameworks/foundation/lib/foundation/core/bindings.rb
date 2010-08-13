@@ -24,23 +24,60 @@
 # THE SOFTWARE.
 #
 
+require 'foundation/core/observable'
+
+class Object
+  
+  # Exposes the given binding_name on the receiving class. This also defines a
+  # method 'key_binding=' for the given key so that its binding information can
+  # be set with a hash dynamically. This is more useful for builder when making
+  # GUIs, but it can be used from anywhere. It is esentially a shortcut for
+  # the more normal Kernel#bind method.
+  # 
+  # @param {Symbol} binding_name to expose
+  # 
+  def self.expose_binding(binding_name)
+    define_method("#{binding_name}_binding=") do |binding_options|
+      bind binding_name, binding_options
+    end
+  end
+end
+
 module CherryKit
   
-  module KeyValueBinding
+  module Bindings
     
-    def bind(binding, object, key_path, options)
-      # first make sure we unbind the binding if it currently exists
+    # Usage:
+    # 
+    #     bind :value, :to => some_controller, :path => 'some_key_name'
+    # 
+    # Keys
+    # ----
+    # 
+    # Required keys:
+    #   :to - the object to bind to
+    #   :path - the path on the given object to bind to
+    # 
+    # Optional keys:
+    #   
+    # 
+    # @param {Symbol} binding
+    # @param {Hash} binding_options
+    # 
+    def bind(binding, binding_options)
+      to = binding_options[:to] or raise "binding options must have a :to key"
+      key = binding_options[:path].to_s or raise "binding options must have :path key"
+      # first make sure we unbind any existing binding
       unbind binding
       
-      @__kvb_bindings[binding] = KVBBindingProxy.new(binding, object, key_path, options, self)
-
+      @__ck_bindings[binding] = KVBBindingProxy.new(binding, to, key, nil, self)
     end
     
     def unbind(the_binding)
       # incase this is our first binding for this object
-      @__kvb_bindings ||= {}
+      @__ck_bindings ||= {}
       
-      binding = @__kvb_bindings[the_binding]
+      binding = @__ck_bindings[the_binding]
 
       return unless binding
       # raise "should not get to here yet. need to implement"
@@ -51,32 +88,38 @@ module CherryKit
     # performant binding system
     class KVBBindingProxy
       
-      def initialize(binding, observed, key_path, options, source)
+      def initialize(binding, observed, path, options, source)
         @binding = binding
         @observed = observed
-        @key_path = key_path
+        @path = path
         @options = options
         @source = source
         
-        observed.add_observer self, key_path, [:new], binding
-
+        # observed.add_observer self, key_path, [:new], binding
+        
+        observed.observe(path) do |info|
+          update_value_for binding
+        end
+        
+        # only if initial?
         update_value_for binding
-      end
-      
-      
-      def observe_value(path, object, changes, context)
-        update_value_for context
       end
       
       # Send updates values
       def update_value_for(context)
-        new_value = @observed.value_for_key_path @key_path
-        # transform values..?
-        @source.set_value_for_key new_value, context
+        new_value = @observed.get_path @path
+        # transform values
+        # new_value = transform_value new_value, @options
+        
+        @source.set_attribute context, new_value
+      end
+      
+      def transform_value(value, options)
+        
       end
       
     end    
   end
 end
 
-Object.include CherryKit::KeyValueBinding
+Object.include CherryKit::Bindings

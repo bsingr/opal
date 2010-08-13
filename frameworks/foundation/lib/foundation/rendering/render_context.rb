@@ -76,6 +76,7 @@ module CherryKit
         if current.include? class_name.to_s
           unless flag
             # need to remove class_name from current array
+            current.delete class_name
           end
         else
           if flag

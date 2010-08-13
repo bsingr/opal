@@ -1,5 +1,5 @@
 # 
-# number.rb
+# label.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,41 +24,31 @@
 # THE SOFTWARE.
 #
 
-class Number
+module CherryKit
+  
+  class Label < Control
     
-  def inspect
-    `return #{self}.toString();`
+    class_names 'ck-label'
+    
+    display_attributes :title
+    
+    attr_accessor :title
+    
+    def initialize(layout)
+      super layout
+      @title = "Label"
+    end
+    
+    def value=(value)
+      self.title = value
+    end
+    
+    def create_renderer(theme)
+      theme.label self
+    end
+    
+    def mouse_down(event)
+      @next_responder.mouse_down event
+    end
   end
-  
-  def ==(other)
-    `return (#{self} == #{other}) ? #{true} : #{false};`
-  end
-  
-  def to_s
-    `return #{self}.toString();`
-  end
-  
-  def +(other)
-    `return #{self} + #{other};`
-  end
-  
-  def -(other)
-    `return #{self} - #{other};`
-  end
-  
-  def /(other)
-    `return #{self} / #{other};`
-  end
-  
-  def *(other)
-    `return #{self} * #{other};`
-  end
-  
-  def upto(finish, &block)
-    `for (var i = #{self}; i <= #{finish}; i++) {
-      #{block}.__fun__(i);
-    }`
-    self
-  end
-  
 end

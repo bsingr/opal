@@ -1,5 +1,5 @@
 # 
-# slider.rb
+# scroller.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -30,41 +30,27 @@ module CherryKit
   
   module RootTheme
     
-    class Slider < Control
-      
-      theme_attribute :track_indent, 
-        :small    => 5,
-        :regular  => 7,
-        :large    => 9
+    class Scroller < Control
       
       # Initial render
       def render(render_context)
         # render super (Control)
         super render_context
         # inners
-        render_slider render_context
+        render_scroller render_context
       end
       
-      def render_slider(render_context)
-        render_context << ["<span class='inner'>",
-          "<span class='left'></span>",
-          "<span class='middle'></span>",
-          "<span class='right'></span>",
-          "<span class='handle' style='left:50%'></span>",
-          "</span>"].join("")
+      def render_scroller(render_context)
+
       end
       
       def update
         # keep control updated
         super
-        # puts "view.value is #{@view.value}"
-        # puts "looking for handle"
-        e= @element.find('.handle')
-        # `console.log(#{e}.__element__);`
-        # puts "--------------------- slider update value is"
-        # `console.log(#{@view.value}.class_name);`
-        # `console.log(#{@view}.class_name);`
-        @element.find('.handle').css :left  => "#{@view.value}%"
+        @element.set_class_names({
+          'horizontal'  => !@view.vertical?,
+          'vertical'    => @view.vertical?
+        })
       end
       
     end

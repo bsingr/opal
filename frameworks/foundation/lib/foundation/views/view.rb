@@ -51,31 +51,42 @@ module CherryKit
       
       # for every display property defined, we add an observer when it changes,
       # so we can tell the view that it needs a redisplay
-      self.class.all_display_properties.each do |property|
+      self.class.all_display_attributes.each do |property|
         self.observe(property) do |oldvalue, newvalue|
           self.needs_display = true
         end
       end
     end
     
+    # For duplicating views. This will duplicate all relevant properties.
+    # Subclasses should do their own behaviour. Does NOT copy subviews,
+    # superview or window
+    # 
+    def dup
+      result = self.class.new
+      result.layout = layout
+      
+      result
+    end
+    
     # ======================
     # = Display attributes =
     # ======================
     
-    def self.all_display_properties
+    def self.all_display_attributes
       if CherryKit::View == self
-        return @display_properties ||= []
+        return @display_attributes ||= []
       else
-        @display_properties ||= []
-        return @display_properties + superclass.all_display_properties
+        @display_attributes ||= []
+        return @display_attributes + superclass.all_display_attributes
       end
     end
     
     # Add each of the given display properties to the array of properties for
     # this class
-    def self.display_properties(*properties)
-      @display_properties ||= []
-      @display_properties = @display_properties + properties
+    def self.display_attributes(*properties)
+      @display_attributes ||= []
+      @display_attributes = @display_attributes + properties
     end
     
     # Set each of the given class names (strings) to the array of class names
@@ -97,7 +108,7 @@ module CherryKit
       end
     end
     
-    display_properties :visible
+    display_attributes :visible, :layout
     
     class_names 'ck-view'
     
@@ -141,7 +152,7 @@ module CherryKit
       end
       
       if @renderer
-        @renderer.update
+        update_renderer
       end
     end
     
@@ -192,8 +203,10 @@ module CherryKit
     end
     
     def update_renderer
-      # do we actually need this? maybe for canvas/vml drawing...? or put that
-      # in renderer as well?
+      # puts "updating"
+      if @renderer
+        @renderer.update
+      end
     end
     
     # Root element tag_name used for building the responder context. Should be a
@@ -213,9 +226,10 @@ module CherryKit
       # puts "Displaying init"
       if @render_context
         # if we already have our render context, just update it
-        if @renderer
-          @renderer.update
-        end
+        # if @renderer
+          # @renderer.update
+        # end
+        update_renderer
       else
         # puts "need to create render context"
         render_context = create_render_context
@@ -223,12 +237,16 @@ module CherryKit
       end
     end
     
+    def <<(subview)
+      add_subview subview
+    end
+    
     # Add subview
     # 
     # @param {CherryKit::View} view to append as subview
     # @returns {self}
     # 
-    def <<(subview)
+    def add_subview(subview)
       # inform subview that it must first remove itself from its superview
       subview.remove_from_superview
       # privately set the window to our current window

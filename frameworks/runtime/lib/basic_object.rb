@@ -27,7 +27,7 @@
 class BasicObject
     
   def initialize
-    puts "in basicobject initialize"
+    # puts "in basicobject initialize"
   end
   
   def ==(obj)

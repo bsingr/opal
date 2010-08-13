@@ -24,6 +24,13 @@
 # THE SOFTWARE.
 #
 
+module Kernel
+  
+  def notify(notification_name)
+    CherryKit::NotificationCenter.default_center.post_notification :name => notification_name, :sender => self
+  end
+end
+
 module CherryKit
   
   class NotificationCenter

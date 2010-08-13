@@ -391,6 +391,8 @@ module Vienna
           # code
           r << @code.join("")
           
+          # always return nil as worst case scenario (should never get here?)
+          r << "return #{NIL};"
           r << "}"
           
         when RubyParser::ISEQ_TYPE_BLOCK
@@ -929,9 +931,9 @@ module Vienna
     end
     
     def generate_if_mod(stmt, context)
-      write "return "  if context[:full_stmt] and context[:last_stmt]
+      # write "return "  if context[:full_stmt] and context[:last_stmt]
 
-      write "(function(){"
+      # write "(function(){"
 
       # if/unless mod
       if stmt.node == :if_mod
@@ -945,7 +947,7 @@ module Vienna
       generate_stmt stmt[:stmt], :full_stmt => true, :last_stmt => false
       write "}"
       # return nil as safety value
-      write "return #{NIL};})()"
+      # write "return #{NIL};})()"
       write ";" if context[:full_stmt]
     end
     
@@ -1086,13 +1088,13 @@ module Vienna
       
       # if/unless clause
       if stmt.node == :if
-        write "if("
+        write "if(("
       else # must be unless
-        write "if(!"
+        write "if(!("
       end
 
       generate_stmt stmt[:expr], :full_stmt => false, :last_stmt => false
-      write ".r){"
+      write ").r){"
       stmt[:stmt].each do |s|
         # alays return last stmt. we output inside a function context to capture
         # the return value so that this will not return from the function itself

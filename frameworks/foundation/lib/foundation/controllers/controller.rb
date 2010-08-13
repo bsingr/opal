@@ -24,6 +24,8 @@
 # THE SOFTWARE.
 #
 
+require 'foundation/core/bindings'
+
 module CherryKit
   
   class Controller
@@ -38,6 +40,34 @@ module CherryKit
     # 
     def editing?
       @editors.length > 0
+    end
+    
+    def commit_editing?
+      return true if @editors.length == 0
+      
+      result = true
+      
+      @editors.each do |editor|
+        unless editor.commit_editing?
+          result = false 
+        end
+      end
+      
+      result
+    end
+    
+    def discard_editing
+      @editors.each do |editor|
+        editor.discard_editing
+      end
+    end
+    
+    def object_did_begin_editing(editor)
+      @editors << editor
+    end
+    
+    def object_did_end_editing(editor)
+      @editors.delete editor
     end
     
   end

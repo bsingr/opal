@@ -34,15 +34,17 @@ module CherryKit
     
     class_names 'ck-slider'
     
-    display_properties :value, :min, :max
+    display_attributes :value, :min, :max
     
     attr_accessor :value, :min, :max
     
     def initialize
       super
+      # puts "====================================== setting value to 0"
       @value = 0
       @min = 0
-      @max = 100      
+      @max = 100
+      # puts @value 
     end
     
     def create_renderer(theme)

@@ -26,64 +26,33 @@
 
 include CherryKit
 
+require 'main_window'
+
 class AppController
   
   def initialize
-    puts "Aright, in AppController.initialize"
+    # puts "Aright, in AppController.initialize"
+    @test_value = 0
   end
   
   def application_will_finish_launching
-    puts "my window is:"
-    # puts window(:something => 10)
+    # puts "application will finish launching from notify"
   end
   
   def application_did_finish_launching(notification)
-    @main_window = window({})
-    
-    @main_window.show
-    
-    test_button = button(:layout => {
-        :left => 200,
-        :top  => 20,
-        :right  => 250,
-        :bottom => 100,
-        :height => 24
-      },
-      :enabled  => true
-    )
-    
-    @main_window << test_button
-    
-    @main_window << button(:layout => {
-      :left   => 200,
-      :top    => 300,
-      :width  => 250,
-      :bottom => 100,
-      :height => 24
-    }, 
-    :enabled => false)
-    
-    @main_window << slider(:layout => {
-        :left   => 200,
-        :top    => 180,
-        :width  => 250,
-        :bottom => 100,
-        :height => 16
-      })
-      
-      @main_window << slider(:layout => {
-          :left   => 500,
-          :top    => 180,
-          :width  => 250,
-          :bottom => 100,
-          :height => 14
-        },
-        :control_size => :small)
-    
-    `window.test_button = #{test_button};`
-    # 
-    # b2.title = "shit son!"
-    
+    main_window
   end
+  
+  def number_of_rows_in_table_view(table_view)
+    4
+  end
+  
+  def value_for_table_view_at(row, column)
+    54
+  end
+  
+  attr_reader :test_value
+  
+  attr_writer :test_value
 end
 

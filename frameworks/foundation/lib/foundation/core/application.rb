@@ -90,7 +90,7 @@ module CherryKit
           center.add_observer delegate, notification, notification, self
         end
       end
-      
+    
       delegate      
     end
     
@@ -99,22 +99,12 @@ module CherryKit
       RunLoop.run do
         # global application
         Object.const_set('CKApp', self)      
-        # get the system notification center
-        center = NotificationCenter.default_center
-        # will finish launching notification before we attach all events etc
-        center.post_notification :name   => :application_will_finish_launching,         
-                                 :sender => self
-
-        # notify :application_will_finish_launching
-
+        # initial notification that we will finish launching (before events)
+        notify :application_will_finish_launching
         # setup/create all event handlers
         setup_event_handlers
-
-        # notify :application_did_finish_launching
-
         # we can post our did finish launching once we have all our events setup
-        center.post_notification :name   => :application_did_finish_launching, 
-                                 :sender => self
+        notify :application_did_finish_launching
       end
     end
     
@@ -137,7 +127,7 @@ module CherryKit
     
     def listen_for(target, *events)
       events.each do |event|
-        Browser::Event.listen target, event, __send__("#{event}_handler")
+        Browser::Event.listen target, event, __send__("on_#{event}")
       end
     end
     
@@ -213,13 +203,13 @@ module CherryKit
     # @param {Browser::Event} event from browser
     # @returns self
     # 
-    def resize_handler
+    def on_resize
       proc do |event|
         
       end
     end
     
-    def mousemove_handler
+    def on_mousemove
       proc do |event|
         # must make ruby friendly name - should check if mouse_dragged
         event.type = :mouse_moved
@@ -233,7 +223,7 @@ module CherryKit
     # @param [Browser::Event] event received
     # @returns self
     # 
-    def mousedown_handler
+    def on_mousedown
       proc do |event|
         # begin
         # first we rename the event to our ruby friendly name
@@ -260,7 +250,7 @@ module CherryKit
     # @para, [Browser::Event] event received
     # @returns self
     # 
-    def mouseup_handler
+    def on_mouseup
       proc do |event|
         event.type = :mouse_up
         send_event event

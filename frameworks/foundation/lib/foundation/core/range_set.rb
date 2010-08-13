@@ -1,5 +1,5 @@
 # 
-# number.rb
+# range_set.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,41 +24,9 @@
 # THE SOFTWARE.
 #
 
-class Number
+module CherryKit
+  
+  class RangeSet
     
-  def inspect
-    `return #{self}.toString();`
   end
-  
-  def ==(other)
-    `return (#{self} == #{other}) ? #{true} : #{false};`
-  end
-  
-  def to_s
-    `return #{self}.toString();`
-  end
-  
-  def +(other)
-    `return #{self} + #{other};`
-  end
-  
-  def -(other)
-    `return #{self} - #{other};`
-  end
-  
-  def /(other)
-    `return #{self} / #{other};`
-  end
-  
-  def *(other)
-    `return #{self} * #{other};`
-  end
-  
-  def upto(finish, &block)
-    `for (var i = #{self}; i <= #{finish}; i++) {
-      #{block}.__fun__(i);
-    }`
-    self
-  end
-  
 end

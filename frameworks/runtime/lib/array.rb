@@ -26,11 +26,19 @@
 
 class Array
   
-  def each &block
+  def each(&block)
     `for (var i = 0; i < #{self}.length; i++) {
       #{block}.__fun__(#{self}[i]);
     }`
     self
+  end
+  
+  def map(&block)
+    result = []
+    `for (var i = 0; i < #{self}.length; i++) {
+      #{result}.push(#{block}.__fun__(#{self}[i]));
+    }`
+    result
   end
   
   def join(separator)
@@ -67,6 +75,10 @@ class Array
   
   def [](index)
     `return #{self}[#{index}] || #{nil};`
+  end
+  
+  def index(object)
+    `return #{self}.indexOf(#{object});`
   end
   
   def include?(member)

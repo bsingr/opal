@@ -26,84 +26,58 @@
 
 module CherryKit
   
-  # KeyValueObserving
+  # Observer pattern
+  # 
+  # Observers via callback, all keys:
+  # 
+  #   :old  => old value
+  #   :new  => new value
+  #   :path => attribute path
   #
-  module KeyValueObserving
+  module Observable
     
-    def will_change_value_for_key(key)
-      if @__observer_replaced_keys
-        __send_change_notifications key, true, :kind => :setting 
+    def will_change_attribute(attribute)
+      if @__observer_info
+        __send_change_notifications attribute.to_s, true, :kind => :setting 
       end
     end
     
-    def did_change_value_for_key(key)
-      if @__observer_replaced_keys
-        __send_change_notifications key, false, nil
+    def did_change_attribute(attribute)
+      if @__observer_info
+        __send_change_notifications attribute.to_s, false, nil
       end
     end
+    
     
     # New
-    def observe(path, &action)
-      @__observer_replaced_keys ||= {}
-      @__observers_for_key ||= {}
-      @__observer_changes_for_key ||= {}
-      
-      path = path.to_s
-      
-      __replace_setter_for_key path
-      
-      observers = @__observers_for_key[path]
-      
-      unless observers
-        @__observers_for_key[path] = observers = []
-      end
-      
-      observers << action
-    end
-    
-    # depreceated
-    # def add_observer(an_observer, path, options, context)
-    #   options = options || []
-    #   # ensure we have our replaced keys hash
-    #   @__kvo_replaced_keys ||= {}
-    #   # ensure we have observers for key hash
-    #   @__kvo_observers_for_key ||= {}
-    #   # ensure we have our chnages for key hash
-    #   @__kvo_changes_for_key ||= {}
-    #   # we should check here if we are looking at a key_path, or just a normal
-    #   # path. For now, we assume normal path
-    #   __replace_setter_for_key path
-    #   
-    #   observers = @__kvo_observers_for_key[path]
-    #   
-    #   unless observers
-    #     @__kvo_observers_for_key[path] = observers = {}
-    #   end
-    #   
-    #   # puts "=========== setting observer info"
-    #   observers[an_observer] = {
-    #     :observer => an_observer,
-    #     :options  => options,
-    #     :context  => context
-    #   }
-    #   
-    #   # If our options require an :initial notification, send it now
-    #   if options.include? :initial
-    #     puts "add_observer needs to send initial notification"
-    #   end
     # 
-    # end
-    
-    # Remove an observing object for the given key path
-    def remove_observer(observer, path)
-      observers = @__kvo_observers_for_key[path]
+    # @returns {Proc} action the observer
+    # 
+    def observe(path, &action)
+      # always deal with strings for path names (not symbols)
+      path = path.to_s
+      # ensure we have our observer dictionary
+      @__observer_info ||= {}
       
-      observers.delete(observer)
+      
+      if path.index '.'
+        # puts "looking up observer info"
+        # puts self
+        ForwardingObserver.new(self, path, &action)
+      # else
+      end
+        __replace_setter_for_key path
+      # end
+      
+      observer_info = @__observer_info[path]
+      
+      # add the observer
+      observer_info[:observers] << action
+      
+      action
     end
     
-    def observe_value(path, object, changes, context)
-      
-    end
+    
   
     # Private method to replace the setter methods for the given key.
     # 
@@ -111,10 +85,22 @@ module CherryKit
     # @returns nil
     # 
     def __replace_setter_for_key(key)
+      key = key.to_s
+      
+      # puts "replacing setter for #{key}"
+      
       # if we have already done this key, skip
-      return if @__observer_replaced_keys[key]
-    
-      # puts "replacing methods for #{key}"
+      return if @__observer_info[key]
+      
+      # mark key as being replaced
+      @__observer_info[key] = observer_info = {
+          # an array of procs. These are what we notify when we change
+          :observers  => [],
+          # change. This is usually the old value, which we store (will_change)
+          :change     => nil,
+          # dependants - the keys which depend on this key
+          :dependants => []
+        }
     
       methods_to_replace = {
         "#{key}=" => proc do |key, original_method|
@@ -122,9 +108,9 @@ module CherryKit
           # gather the key for sending will_change_value_for_key(), and keep our
           # original method so we can call it between notifications
           proc do |value|
-            will_change_value_for_key(key)
+            will_change_attribute(key)
             `#{original_method}.apply(#{self}, [#{value}]);`
-            did_change_value_for_key(key)
+            did_change_attribute(key)
           end
         end
       }
@@ -138,35 +124,152 @@ module CherryKit
           `#{self}[js_id] = #{implementation}.__fun__(#{key}, #{original}).__fun__;`
         end
       end
+      
+      # puts "looking up dependencies for #{key}"
+      # puts self.class.lookup_affecting_keys_for(key)
+      # go through all dependencies (keys affecting)
+      self.class.lookup_affecting_keys_for(key).each do |affecting_key|
+        __replace_setter_for_key affecting_key
+        @__observer_info[affecting_key.to_s][:dependants] << key
+      end
     
-      # puts "need to look for affecting keys for #{key}"
     end
   
     # Notifications that we are about to change the key, did change etc
     def __send_change_notifications(key, before, options)
+      key = key.to_s
       # puts "sending notification for key #{key}"
       options = options || {}
      
       # if we are sending a notification before we change the value
       # (will_change_value_for_key)
       if before
-        old = value_for_key key
-        @__observer_changes_for_key[key] = old
+        # puts "will_change: #{key}"
+        # notify dependants
+        @__observer_info[key][:dependants].each do |dependee|
+          __send_change_notifications(dependee, true, {})
+        end
+        
+        old_value = get_attribute key
+        @__observer_info[key][:change] = old_value
       else
         # after..
-        old_value = @__observer_changes_for_key[key]
-        new_value = value_for_key key
-      end
-      
-      # puts "need to loop over observers"
-      @__observers_for_key[key].each do |block_callback|
-        unless before
-          `#{block_callback}.__fun__(#{old_value}, #{new_value});`
+        old_value = @__observer_info[key][:change]
+        new_value = get_attribute key
+        
+        changes = {}
+        changes[:old] = old_value
+        changes[:new] = new_value
+        changes[:path] = key
+        changes[:object] = self
+
+        # notify every observer that we have changed
+        # puts "did_change: #{key}"
+        @__observer_info[key][:observers].each do |block_callback|
+          `#{block_callback}.__fun__(#{changes});`
+        end
+  
+        # puts "dependee keys for #{key} are:"
+        # `console.log(#{@__observer_info[key][:dependants]});`
+        @__observer_info[key][:dependants].each do |dependee|
+          __send_change_notifications(dependee, false, {})
         end
       end
     end
+    
+    # Remove an observing object for the given key path
+    def remove_observer(observer, path)
+      observers = @__observer_info[path.to_s][:observers]
+      
+      observers.delete(observer)
+    end
 
+    
+  end
+  
+  
+  
+end
+
+# Forward observer calls for multipart observer paths
+class ForwardingObserver
+  
+  def initialize(object, path, action)
+    
+    @object = object
+    @path = path
+    @action = action
+    
+    index = path.index '.'
+    
+    unless index
+      raise "ForwardingObserver must be given a multipart attr string"
+    end
+    
+    @first_part = path.slice 0, index
+    @second_part = path.slice index + 1, path.length - index
+        
+    # Observe the first part of the key. When it changes we must notify the
+    # observer of the change. Also, as it has changed we must remove our 
+    # observer for the second part, and readd ourself as an observer of the
+    # second part.
+    # 
+    @observer = object.observe(@first_part) do |changes|
+      # puts "notifying for #{@first_part} from #{changes[:path]}"
+      `#{action}.__fun__(#{changes});`
+    end
+    
+    # current value of getting the first part
+    @value = object.get_attribute @first_part
+    
+    # Observe the second part
+    @value.observe(@second_part) do |changes|
+      dict = {
+        :new    => changes[:new],
+        :old    => changes[:old],
+        :path   => "#{@first_part}.#{changes[:path]}",
+        :object => object
+      }
+      `#{@observer}.__fun__(#{dict});`
+    end
   end
 end
 
-Object.include CherryKit::KeyValueObserving
+class Object
+  
+  # Define that the given affectors will affect the result of the key_name.
+  # When key_name is observed, then all the affectors must also be observed so
+  # that if they change, we know that key_name might also change
+  # 
+  # @param {Hash} affectors
+  # 
+  def self.keys_affecting(affectors)
+    # make sure this exists
+    @__kvo_affecting_keys ||= {}
+    
+    affectors.each do |key_name, affecting_keys|
+      # puts "setting affectors for #{key_name}"
+      @__kvo_affecting_keys[key_name.to_s] = affecting_keys
+    end
+  end
+  
+  # Lookup the keys affecting the given key.
+  # 
+  # @param {Symbol} key_name
+  # @returns {Array} affecting keys
+  # 
+  def self.lookup_affecting_keys_for(key_name)
+    key_name = key_name.to_s
+    @__kvo_affecting_keys ||= {}
+    # puts "in looking up for #{key_name.to_s}"
+    if @__kvo_affecting_keys[key_name]
+      return @__kvo_affecting_keys[key_name]
+    else
+      return @__kvo_affecting_keys[key_name] = []
+    end
+  end
+end
+
+Object.include CherryKit::Observable
+
+require 'foundation/core/observable_array'

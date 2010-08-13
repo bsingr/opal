@@ -1,5 +1,5 @@
 # 
-# slider.rb
+# clip_view.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,49 +24,24 @@
 # THE SOFTWARE.
 #
 
-require 'foundation/rendering/root_theme/control'
+require 'foundation/views/view'
 
 module CherryKit
   
-  module RootTheme
+  class ClipView < View
     
-    class Slider < Control
+    class_names 'ck-clip-view'
+    
+    attr_reader :document_view
+    
+    def document_view=(document_view)
+      return if @document_view == document_view
       
-      theme_attribute :track_indent, 
-        :small    => 5,
-        :regular  => 7,
-        :large    => 9
+      # need to observe...
       
-      # Initial render
-      def render(render_context)
-        # render super (Control)
-        super render_context
-        # inners
-        render_slider render_context
-      end
+      @document_view = document_view
       
-      def render_slider(render_context)
-        render_context << ["<span class='inner'>",
-          "<span class='left'></span>",
-          "<span class='middle'></span>",
-          "<span class='right'></span>",
-          "<span class='handle' style='left:50%'></span>",
-          "</span>"].join("")
-      end
-      
-      def update
-        # keep control updated
-        super
-        # puts "view.value is #{@view.value}"
-        # puts "looking for handle"
-        e= @element.find('.handle')
-        # `console.log(#{e}.__element__);`
-        # puts "--------------------- slider update value is"
-        # `console.log(#{@view.value}.class_name);`
-        # `console.log(#{@view}.class_name);`
-        @element.find('.handle').css :left  => "#{@view.value}%"
-      end
-      
+      self << document_view
     end
   end
 end

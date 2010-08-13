@@ -86,9 +86,25 @@ module CherryKit
     #       :regular  => 20,
     #       :large    => 30
     # 
+    # which will define the following methods:
+    # 
+    #     def theme_attribute_for_control_size_small
+    #       10
+    #     end
+    # 
+    #     def theme_attribute_for_control_size_regular
+    #       20
+    #     end
+    # 
     # or a single value
     #   
     #     theme_attribute :min_size, 100
+    # 
+    # which will define the following method
+    # 
+    #     def theme_attribute_for_min_size
+    #       100
+    #     end
     # 
     # These will be accessed by the views using either
     # 
@@ -98,8 +114,23 @@ module CherryKit
     # 
     #     renderer.theme_attribute_for :min_size
     # 
+    # Any method which you need custom code to calculate values, simply just
+    # create a method matching the previous formats so that it will be called
+    # instead.
+    # 
     def self.theme_attribute(attribute_name, values)
       
+    end
+    
+    # get theme attribute
+    def theme_attribute_for(name, second)
+      `if (!#{second}) #{second} = #{nil};`
+      
+      if second
+        __send__ "theme_attribute_for_#{name}_#{second}"
+      else
+        __send__ "theme_attribute_for_#{name}"
+      end
     end
 
   end

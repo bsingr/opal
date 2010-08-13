@@ -30,7 +30,7 @@ module CherryKit
   
   class Control < View
     
-    display_properties :enabled, :selected, :highlighted, :control_size
+    display_attributes :enabled, :selected, :highlighted, :control_size
     
     attr_writer :enabled, :highlighted, :selected
     
@@ -39,6 +39,14 @@ module CherryKit
     # :mini, :small, :regular, :large
     # 
     attr_accessor :control_size
+    
+    # Expose our value binding
+    # 
+    expose_binding :value
+    
+    # Expose our enabled binding
+    # 
+    expose_binding :enabled
     
     def highlighted?
       @highlighted
@@ -58,6 +66,14 @@ module CherryKit
       @selected = false
       @highlighted = false
       @control_size = :regular
+      @enabled = true
+    end
+    
+    def dup
+      result = super
+      result.enabled = enabled?
+      
+      result
     end
     
     # ==================

@@ -284,7 +284,9 @@ __boot_base_class.prototype.const_get = function(id) {
   // console.log(base.opal_parent);
   // console.log(base.opal_parent.constants.Reporter);
   
-  throw "NameError: uninitialized constant: " + id;
+  throw { toString: function() {
+    return "NameError: uninitialized constant: " + id;
+  }};
 };
 
 // ivar get

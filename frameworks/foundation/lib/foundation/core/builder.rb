@@ -77,7 +77,8 @@ module CherryKit
         # now go through each builder_option that is left in hash
         builder_options.each do |key, value|
           # puts "builder setting #{key} to #{value}"
-          object.set_value_for_key value, key
+          # object.set_value_for_key value, key
+          object.set_attribute key, value
         end
         # simply return our object
         object

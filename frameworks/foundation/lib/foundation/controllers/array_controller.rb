@@ -1,5 +1,5 @@
 # 
-# slider.rb
+# array_controller.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,49 +24,31 @@
 # THE SOFTWARE.
 #
 
-require 'foundation/rendering/root_theme/control'
+require 'foundation/controllers/object_controller'
 
 module CherryKit
   
-  module RootTheme
+  class ArrayController < ObjectController
     
-    class Slider < Control
+    expose_binding :content_array
+    
+    attr_accessor :content_array
+    
+    attr_writer :preserves_selection
+    
+    def preserves_selection?
+      @preserves_selection
+    end
+    
+    def content=(content)
+      # make sure content is an array
+      # unless content.is_a? Array
+        # content = [content]
+      # end
       
-      theme_attribute :track_indent, 
-        :small    => 5,
-        :regular  => 7,
-        :large    => 9
-      
-      # Initial render
-      def render(render_context)
-        # render super (Control)
-        super render_context
-        # inners
-        render_slider render_context
-      end
-      
-      def render_slider(render_context)
-        render_context << ["<span class='inner'>",
-          "<span class='left'></span>",
-          "<span class='middle'></span>",
-          "<span class='right'></span>",
-          "<span class='handle' style='left:50%'></span>",
-          "</span>"].join("")
-      end
-      
-      def update
-        # keep control updated
-        super
-        # puts "view.value is #{@view.value}"
-        # puts "looking for handle"
-        e= @element.find('.handle')
-        # `console.log(#{e}.__element__);`
-        # puts "--------------------- slider update value is"
-        # `console.log(#{@view.value}.class_name);`
-        # `console.log(#{@view}.class_name);`
-        @element.find('.handle').css :left  => "#{@view.value}%"
-      end
       
     end
+    
+    
   end
 end

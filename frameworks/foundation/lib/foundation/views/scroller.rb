@@ -1,5 +1,5 @@
 # 
-# number.rb
+# scroller.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,41 +24,31 @@
 # THE SOFTWARE.
 #
 
-class Number
+require 'foundation/views/control'
+
+module CherryKit
+  
+  class Scroller < Control
     
-  def inspect
-    `return #{self}.toString();`
+    class_names 'ck-scroller'
+    
+    attr_writer :vertical
+    
+    def initialize
+      super
+      @vertical = false
+    end
+    
+    def create_renderer(theme)
+      theme.scroller self
+    end
+    
+    def vertical?
+      @vertical
+    end
+    
+    def horizontal?
+      !@vertical
+    end
   end
-  
-  def ==(other)
-    `return (#{self} == #{other}) ? #{true} : #{false};`
-  end
-  
-  def to_s
-    `return #{self}.toString();`
-  end
-  
-  def +(other)
-    `return #{self} + #{other};`
-  end
-  
-  def -(other)
-    `return #{self} - #{other};`
-  end
-  
-  def /(other)
-    `return #{self} / #{other};`
-  end
-  
-  def *(other)
-    `return #{self} * #{other};`
-  end
-  
-  def upto(finish, &block)
-    `for (var i = #{self}; i <= #{finish}; i++) {
-      #{block}.__fun__(i);
-    }`
-    self
-  end
-  
 end
