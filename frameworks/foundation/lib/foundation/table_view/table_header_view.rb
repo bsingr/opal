@@ -1,5 +1,5 @@
 # 
-# graphics.rb
+# table_header_view.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,59 +24,11 @@
 # THE SOFTWARE.
 #
 
-module Browser
+require 'foundation/table_view/table_view'
+
+module CherryKit
   
-  class Point
+  class TableHeaderView < View
     
-    attr_accessor :x, :y
-    
-    def initialize(x, y)
-      @x = x
-      @y = y
-    end
   end
-  
-  class Size
-    
-    attr_accessor :height, :width
-    
-    def initialize(w, h)
-      @width = w
-      @height = h
-    end
-  end
-  
-  class Rect
-    
-    attr_accessor :size, :origin
-    
-    def initialize(x, y, w, h)
-      @origin = Point.new x, y
-      @size = Size.new w, h
-    end
-    
-    def x
-      origin.x
-    end
-    
-    def y
-      origin.y
-    end
-    
-    def width
-      size.width
-    end
-    
-    def height
-      size.height
-    end
-    
-    def contains_point?(point)
-      `var res = (#{self.x} < #{point.x}) && (#{self.y} < #{point.y}) && ((#{self.x} + #{self.width}) > #{point.x}) && ((#{self.y} + #{self.height}) > #{point.y});
-      return res ? #{true} : #{false};
-      `
-    end
-  end
-  
-  
 end

@@ -48,15 +48,15 @@ module CherryKit
         CherryKit::View[view_id] = @view
         # general class names
         render_context.add_class_name(@view.class.all_class_names.join(" "))
-        render_context.set_class_names calculate_class_names
+        # render_context.set_class_names calculate_class_names
         # special style names (for layout)
         render_context.css calculate_layout_style
       end
       
       def calculate_class_names
         {
-          'hidden'  => !@view.visible?,
-          'focus'   => @view.first_responder?
+          'hidden'    => !@view.visible?,
+          'focus'     => @view.first_responder?
         }
       end
       

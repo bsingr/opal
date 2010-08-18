@@ -61,4 +61,32 @@ class Number
     self
   end
   
+  def times(&block)
+    `for (var i = 0; i < #{self}; i++) {
+      #{block}.__fun__(i);
+    }`
+    self
+  end
+  
+  def to_i
+    `return parseInt(#{self});`
+  end
+  
+  def >(other)
+    puts "checking with #{other} from #{self}"
+    `return #{self} > #{other} ? #{true} : #{false};`
+  end
+  
+  def <(other)
+    `return #{self} < #{other} ? #{true} : #{false};`
+  end
+  
+  def >=(other)
+    `return #{self} >= #{other} ? #{true} : #{false};`
+  end
+  
+  def <=(other)
+    `return #{self} <= #{other} ? #{true} : #{false};`
+  end
+  
 end

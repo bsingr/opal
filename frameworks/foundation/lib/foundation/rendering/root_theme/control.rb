@@ -47,7 +47,8 @@ module CherryKit
         # view renderer
         super render_context
         # @element = render_context.element
-        render_context.set_class_names calculate_class_names
+        # as we call update straight away, no need to do this here?
+        # render_context.set_class_names calculate_class_names
         render_context.add_class_name @view.control_size.to_s
       end
       

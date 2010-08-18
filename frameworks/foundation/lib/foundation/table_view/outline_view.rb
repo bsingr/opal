@@ -1,5 +1,5 @@
 # 
-# graphics.rb
+# outline_view.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,59 +24,34 @@
 # THE SOFTWARE.
 #
 
-module Browser
+require 'foundation/table_view/table_view'
+
+module CherryKit
   
-  class Point
+  class OutlineView < TableView
     
-    attr_accessor :x, :y
+    register_builder :outline_view, {}
     
-    def initialize(x, y)
-      @x = x
-      @y = y
+    class_names 'ck-outline-view'
+    
+    def initialize(layout)
+      super layout
+    end
+    
+    def outline_table_column=(table_column)
+      return if @table_column == table_column
+      
+      @table_column = table_column
+      
+      reload_data
+    end
+    
+    def reload_data
+      reload_item nil, true
+    end
+    
+    def reload_item(item, children)
+      
     end
   end
-  
-  class Size
-    
-    attr_accessor :height, :width
-    
-    def initialize(w, h)
-      @width = w
-      @height = h
-    end
-  end
-  
-  class Rect
-    
-    attr_accessor :size, :origin
-    
-    def initialize(x, y, w, h)
-      @origin = Point.new x, y
-      @size = Size.new w, h
-    end
-    
-    def x
-      origin.x
-    end
-    
-    def y
-      origin.y
-    end
-    
-    def width
-      size.width
-    end
-    
-    def height
-      size.height
-    end
-    
-    def contains_point?(point)
-      `var res = (#{self.x} < #{point.x}) && (#{self.y} < #{point.y}) && ((#{self.x} + #{self.width}) > #{point.x}) && ((#{self.y} + #{self.height}) > #{point.y});
-      return res ? #{true} : #{false};
-      `
-    end
-  end
-  
-  
 end

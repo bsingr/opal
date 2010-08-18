@@ -1,5 +1,5 @@
 # 
-# graphics.rb
+# label.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,59 +24,32 @@
 # THE SOFTWARE.
 #
 
-module Browser
+require 'foundation/rendering/root_theme/control'
+
+module CherryKit
   
-  class Point
+  module RootTheme
     
-    attr_accessor :x, :y
-    
-    def initialize(x, y)
-      @x = x
-      @y = y
+    class TextField < Control
+
+      # Initial render
+      def render(render_context)
+        super render_context
+        # inners
+        render_inner render_context
+      end
+      
+      def render_inner(render_context)
+        render_context << "<span class='border'></span><span class='padding'><input type='text' class='field'></span>"
+      end
+      
+      def update
+        # keep control updated
+        super
+        # @element.find('.title').text = @view.title
+        @element.set_class_names @view.bezel.to_s => true
+      end
+      
     end
   end
-  
-  class Size
-    
-    attr_accessor :height, :width
-    
-    def initialize(w, h)
-      @width = w
-      @height = h
-    end
-  end
-  
-  class Rect
-    
-    attr_accessor :size, :origin
-    
-    def initialize(x, y, w, h)
-      @origin = Point.new x, y
-      @size = Size.new w, h
-    end
-    
-    def x
-      origin.x
-    end
-    
-    def y
-      origin.y
-    end
-    
-    def width
-      size.width
-    end
-    
-    def height
-      size.height
-    end
-    
-    def contains_point?(point)
-      `var res = (#{self.x} < #{point.x}) && (#{self.y} < #{point.y}) && ((#{self.x} + #{self.width}) > #{point.x}) && ((#{self.y} + #{self.height}) > #{point.y});
-      return res ? #{true} : #{false};
-      `
-    end
-  end
-  
-  
 end

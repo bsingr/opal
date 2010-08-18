@@ -36,7 +36,12 @@ module Browser
       var listener = function(evt) {
         var native = #{self}.$from_native(evt);
         
-        #{block}.__fun__(native);
+        var result = #{block}.__fun__(native);
+        
+        if (!result.r) {
+          evt.preventDefault();
+          evt.stopPropagation();
+        }
       };
       
       if (elem.addEventListener) {
@@ -51,41 +56,7 @@ module Browser
       
       self
     end
-    
-    # Add an event listener to the given element
-    # 
-    # @param [Browser::Element] element to attach to
-    # @param [String] event_name to listen to (e.g. mousedown)
-    # @param [Object] object to send the response to
-    # @param [String] action name to respond with
-    def self.add(element, event_name, target, action)
-      
-      unless target.respond_to? action
-        raise "#{target} does not respond to '#{action}' for event '#{event_name}'"
-      end
-      
-      `var eventName = #{event_name.to_s};
-      var elem = #{element}.__element__;
-      
-      var listener = function(evt) {
-        var native = #{self}.$from_native(evt);
-        //console.log("sending " + eventName + " on");
-
-        #{target}.$__send__(#{action}, native);
-      };
-      
-      if (elem.addEventListener) {
-        elem.addEventListener(eventName, listener, false);
-      }
-      else if (elem.attachEvent) {
-        elem.attachEvent("on" + eventName, listener)
-      }
-      else {
-        throw "Unknown elem attach type for #{element}";
-      }`
-      
-      self
-    end
+  
     
     # Create an Event instance from the given native_event.
     # 
@@ -117,6 +88,26 @@ module Browser
     # 
     def type=(event_type)
       @type = event_type
+    end
+    
+    KEY_CODES = {
+      8   => :delete,
+      9   => :tab,
+      13  => :return
+    }
+    
+    # Return the key representation of the keycode
+    # 
+    # @returns {Symbol} key
+    # 
+    def key
+      return @key if @key
+      @key = KEY_CODES[key_code]
+    end
+    
+    def key_code
+      event = `#{self}.__event__`
+      `return #{event}.keyCode || #{event}.which;`
     end
   end
 end

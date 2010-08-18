@@ -1,5 +1,5 @@
 # 
-# graphics.rb
+# text_field.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,59 +24,60 @@
 # THE SOFTWARE.
 #
 
-module Browser
+require 'foundation/views/control'
+
+module CherryKit
   
-  class Point
+  class TextField < Control
     
-    attr_accessor :x, :y
+    register_builder :text_field, {}
     
-    def initialize(x, y)
-      @x = x
-      @y = y
+    class_names 'ck-text-field'
+    
+    display_attributes :bezel
+    
+    # Set the bezel style. May be :rounded or :square
+    #
+    attr_accessor :bezel
+    
+    def initialize(layout)
+      super layout
+      @value = ""
+      @bezel = :square
     end
+    
+    def create_renderer(theme)
+      theme.text_field self
+    end
+    
+    def key_down(event)
+      if event.key == :return
+        false
+      elsif event.key == :tab
+        false
+      else
+        true
+      end
+    end
+    
+    def key_up(event)
+      puts "key up event!"
+      old_value = self.value
+      
+      unless old_value == "some old valye...s.s.s"
+        
+        unless @editing
+          @editing = true
+        end
+        
+      end
+      
+      true
+    end
+    
+    def _string_value=(value)
+      
+    end
+    
   end
-  
-  class Size
-    
-    attr_accessor :height, :width
-    
-    def initialize(w, h)
-      @width = w
-      @height = h
-    end
-  end
-  
-  class Rect
-    
-    attr_accessor :size, :origin
-    
-    def initialize(x, y, w, h)
-      @origin = Point.new x, y
-      @size = Size.new w, h
-    end
-    
-    def x
-      origin.x
-    end
-    
-    def y
-      origin.y
-    end
-    
-    def width
-      size.width
-    end
-    
-    def height
-      size.height
-    end
-    
-    def contains_point?(point)
-      `var res = (#{self.x} < #{point.x}) && (#{self.y} < #{point.y}) && ((#{self.x} + #{self.width}) > #{point.x}) && ((#{self.y} + #{self.height}) > #{point.y});
-      return res ? #{true} : #{false};
-      `
-    end
-  end
-  
-  
 end

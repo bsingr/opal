@@ -123,6 +123,13 @@ module CherryKit
         event.view.mouse_down event
       elsif event.type == :mouse_up
         # puts "need to "
+      elsif event.type == :key_down
+        # puts "about to send key_down"
+        res = event.view.key_down event
+        # puts "result is #{res}"
+        return res
+      elsif event.type == :key_up
+        event.view.key_up event
       end
       # case :mousedown
       

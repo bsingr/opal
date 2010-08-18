@@ -51,6 +51,10 @@ class AppController
     54
   end
   
+  # def table_view_write_rows_to_pasteboard(table, rows, pasteboard)
+    
+  # end
+  
   attr_reader :test_value
   
   attr_writer :test_value

@@ -142,7 +142,7 @@ namespace :prepare_build_tasks do
   
   desc "combined ruby etc"
   task :combine => [:css, :ruby, :javascript] do
-    puts "combining for #{@target.target_name}"
+    # puts "combining for #{@target.target_name}"
     code_items = []
     css_items = []
     @target.build_items.each do |item|
@@ -155,7 +155,7 @@ namespace :prepare_build_tasks do
       when :css
         css_items << item
       else
-        puts "found NON ruby #{item.inspect}"
+        # puts "found NON ruby #{item.inspect}"
       end
     end
     
@@ -229,21 +229,21 @@ namespace :build do
   
   desc "Final package to combine all opals"
   task :package do
-    puts "running package task!"
+    # puts "running package task!"
     # only run package task if we are the main target
     if @target.main_target?
       build_path = File.join @project.build_root, @config.build_prefix
 
       opals = @project.targets.each_value.to_a.dup
       
-      puts "opals are:"
-      p opals
+      # puts "opals are:"
+      # p opals
       
       # order is more-a-less irrelevant, but we MUST have opal first
       opals.unshift(opals.find { |o| o.target_name.to_sym == :runtime }).uniq!
        
-      puts "opals are now:"
-      p opals 
+      # puts "opals are now:"
+      # p opals 
       
       # build the final javascript.js package
       File.open(File.join(build_path, 'javascript.js'), 'w') do |out|

@@ -63,6 +63,14 @@ module CherryKit
       RootTheme::Label.new view, self
     end
     
+    def self.table_view(view)
+      RootTheme::TableView.new view, self
+    end
+    
+    def self.text_field(view)
+      RootTheme::TextField.new view, self
+    end
+    
   end
   
   # RootTheme.register :root_theme

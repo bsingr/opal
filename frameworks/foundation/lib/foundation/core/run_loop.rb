@@ -35,7 +35,7 @@ module CherryKit
       run_loop = current_run_loop
       
       # 2. run the event/trigger
-      `#{block}.__fun__();`
+      res = `#{block}.__fun__();`
       
       # 3. now run all rendering etc for the runloop
       @current_run_loop.flush_queue
@@ -44,6 +44,9 @@ module CherryKit
       
       # make sure we destroy our current run loop ready for a new one
       @current_run_loop = nil
+      
+      # return result of our event handler
+      res
     end
     
     def self.current_run_loop

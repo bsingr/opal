@@ -94,7 +94,7 @@ module Vienna
     def prepare!
       # return
       return @self if @is_prepared
-      puts "===== preparing #{target_name}"
+      # puts "===== preparing #{target_name}"
       @is_prepared = true
       if opalfile.has_task? 'target:prepare'
         opalfile.invoke 'target:prepare', :target   => self, 
@@ -106,14 +106,14 @@ module Vienna
     
     def build!
       # return
-      puts "===== building this target"
+      # puts "===== building this target"
       if opalfile.has_task? 'target:build'
         opalfile.invoke 'target:build', :target   => self,
                                         :project  => project,
                                         :config   => config
       end
       
-      puts "################################################ build_items"
+      # puts "################################################ build_items"
       
       # at this point we will have a list of all our actual build items.. so go
       # build them

@@ -370,8 +370,28 @@ module CherryKit
     # @param {Browser::Event}
     # 
     def mouse_down(event)
-      super
+      super event
     end
+    
+    # ================
+    # = Touch Events =
+    # ================
+    def touches_began(touches, event)
+      puts "in #{self} with touches_began!"
+    end
+    
+    # def touches_ended(touches, event)
+    #   
+    # end
+    # 
+    # def touches_moved(touches, event)
+    #   
+    # end
+    # 
+    # def touched_cancelled(touches, event)
+    #   
+    # end
+    
     
     # ==================================
     # = Register views to DOM id names =

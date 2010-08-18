@@ -1,5 +1,5 @@
 # 
-# graphics.rb
+# range.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,59 +24,36 @@
 # THE SOFTWARE.
 #
 
-module Browser
+class Range
   
-  class Point
-    
-    attr_accessor :x, :y
-    
-    def initialize(x, y)
-      @x = x
-      @y = y
-    end
+  def self.new(start, ending, exclusive)
+    `if (!#{exclusive}) {
+      #{exclusive} = #{false};
+    }`
+    `return #{self}.R(#{start}, #{ending}, #{exclusive}.r);`
   end
   
-  class Size
-    
-    attr_accessor :height, :width
-    
-    def initialize(w, h)
-      @width = w
-      @height = h
-    end
+  def length
+    `return #{self}.__end__ - #{self}.__start__;`
   end
   
-  class Rect
-    
-    attr_accessor :size, :origin
-    
-    def initialize(x, y, w, h)
-      @origin = Point.new x, y
-      @size = Size.new w, h
-    end
-    
-    def x
-      origin.x
-    end
-    
-    def y
-      origin.y
-    end
-    
-    def width
-      size.width
-    end
-    
-    def height
-      size.height
-    end
-    
-    def contains_point?(point)
-      `var res = (#{self.x} < #{point.x}) && (#{self.y} < #{point.y}) && ((#{self.x} + #{self.width}) > #{point.x}) && ((#{self.y} + #{self.height}) > #{point.y});
-      return res ? #{true} : #{false};
-      `
-    end
+  def begin
+    `return #{self}.__start__;`
   end
   
+  def end
+    `return #{self}.__end__;`
+  end
   
+  def cover?(val)
+    include? val
+  end
+  
+  def include?(val)
+    `return (#{self}.__start__ <= #{val} && #{val} <= #{self}.__real_end__) ? #{true} : #{false};`
+  end
+  
+  def exclude_end?
+    `return #{self}.__exclusive__ ? #{true} : #{false};`
+  end
 end

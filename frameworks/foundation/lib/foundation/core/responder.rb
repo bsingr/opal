@@ -47,9 +47,39 @@ module CherryKit
       false
     end
     
+    # ========================
+    # = Mouse event handling =
+    # ========================
+    
     def mouse_down(event)
       @next_responder.mouse_down event
     end
     
+    # ========================
+    # = Touch event handling =
+    # ========================
+    
+    
+    # Informs the receiver that one or more touches occured within the view
+    # or window.
+    # 
+    # @param {Array} touches array of Touch instances representing the event
+    # @param {Event} event encapsulating all the given touch events
+    # 
+    def touches_began(touches, event)
+      puts "in responder with touches_began!"
+    end
+    
+    def touches_ended(touches, event)
+      
+    end
+    
+    def touches_moved(touches, event)
+      
+    end
+    
+    def touched_cancelled(touches, event)
+      
+    end
   end
 end

@@ -33,7 +33,7 @@ module Vienna
     class Opal < Base
       
       def build
-        puts "building opal to #{@build_item.build_path}"
+        # puts "building opal to #{@build_item.build_path}"
         source_items = @build_item.source_items
         build_path = @build_item.build_path
         

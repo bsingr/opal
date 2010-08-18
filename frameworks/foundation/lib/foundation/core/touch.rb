@@ -1,5 +1,5 @@
 # 
-# range_set.rb
+# touch.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -26,7 +26,24 @@
 
 module CherryKit
   
-  class RangeSet
+  class Touch
     
+    attr_accessor :event
+    
+    # Create a touch object from the native touch object, that will most
+    # probably be gathered straight from the event which created it
+    def self.from_native(native_touch_object)
+      `var result = #{allocate};
+      result.__identifier__ = #{native_touch_object}.identifier;
+      result.__target__ = #{native_touch_object}.target;
+      result.__pageX__ = #{native_touch_object}.pageX;
+      result.__pageY__ = #{native_touch_object}.pageY;
+      
+      return result;`
+    end
+    
+    def identifier
+      `return #{self}.__identifier__;`
+    end
   end
 end

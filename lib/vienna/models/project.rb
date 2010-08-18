@@ -53,11 +53,11 @@ module Vienna
       # lets begin by loading our root opalfile
       # @opalfile = Opalfile.new(BASE_OPALFILE)
       opalfile
-      puts "\n\n\n\n######################################## ENV"
-      p Opalfile.env
-      puts "######################################## TASKS"
-      puts @opalfile.tasks.each_key.map { |key| key }
-      puts "######################################## DONE\n\n\n\n"
+      # puts "\n\n\n\n######################################## ENV"
+      # p Opalfile.env
+      # puts "######################################## TASKS"
+      # puts @opalfile.tasks.each_key.map { |key| key }
+      # puts "######################################## DONE\n\n\n\n"
     end
     
     def inspect
@@ -94,7 +94,7 @@ module Vienna
       @targets = {}
       # first we must add ourselves as a target - default is opal type 
       # application
-      puts "need to add self as target"
+      # puts "need to add self as target"
       target = add_target :target_name => File.basename(project_root),
                  :target_type => :opal,
                  :target_root => project_root,
@@ -144,9 +144,9 @@ module Vienna
       all_targets.push all_targets.slice!(all_targets.index @main_target)
       all_targets.each do |target|
         
-        puts "\n############################################################"
-        puts "# #{target.target_name}"
-        puts "############################################################\n"
+        # puts "\n############################################################"
+        # puts "# #{target.target_name}"
+        # puts "############################################################\n"
         # prepare
         target.prepare!
         # go through and build each to get list of build_items
@@ -156,7 +156,7 @@ module Vienna
       # only once we have built all our targets do we run the pacakge command
       # because some reliances will mean opal etc are not available until every
       # opal is built
-      puts "main target.."
+      # puts "main target.."
       main_target.opalfile.invoke 'build:package', 
         :project  => self,
         :target   => main_target,

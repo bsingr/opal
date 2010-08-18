@@ -35,7 +35,7 @@ module Vienna
       def build
         FileUtils.mkdir_p(File.dirname(@dst_path))
         
-        puts "building to #{@dst_path}"
+        # puts "building to #{@dst_path}"
         
         File.open(@dst_path, 'w') do |out|
           out.write File.read(@build_item.source_path)

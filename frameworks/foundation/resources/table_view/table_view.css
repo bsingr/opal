@@ -1,0 +1,15 @@
+/*.ck-view.ck-table-view .ck-view.selected {*/
+/*  color: white;*/
+/*}*/
+
+/* Selected rows background */
+.ck-view.ck-table-view .rows .row.selected {
+  background: rgb(127, 150, 185);
+}
+
+/* Grid lines */
+/*.ck-view.ck-table-view .rows .row {
+  margin-top: -1px;
+  border-bottom: 1px solid #999;
+}
+*/

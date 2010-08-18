@@ -43,73 +43,103 @@ class AppController
     
     @main_window << test_button
     
-    @main_window << button(:layout => {
+    @main_window << text_field(:layout => {
       :left   => 30,
-      :top    => 300,
-      :width  => 250,
-      :bottom => 100,
+      :top    => 20,
+      :width  => 150,
       :height => 24
-    }, 
-    :enabled => false)
-    
-        
-          
-          slider2 = slider(:layout => {
-              :left   => 30,
-              :top    => 220,
-              :width  => 250,
-              :bottom => 100,
-              :height => 14
-            },
-            :control_size   => :small,
-            :value_binding  => {
-              :to   => self,
-              :path  => :test_value
-            }
-          )
-          
-          @main_window << slider2
-          
-                  @main_window << slider(:layout => {
-                      :left   => 30,
-                      :top    => 120,
-                      :width  => 250,
-                      :bottom => 100,
-                      :height => 16
-                    },
-                    :value_binding => {
-                      :to => slider2,
-                      :path => :value
-                    })
-    
-    scroll_view = scroll_view(:layout => {
-      :left   => 320,
-      :top    => 120,
-      :width  => 500,
-      :height => 300
     })
     
-    @main_window << scroll_view
-    scroll_view.document_view = TableView.build({
-      :table_columns => [
-        TableColumn.build({
-          :identifier => :first_name,
-          :data_view => Slider.build({})
-        }),
-        TableColumn.build({
-          :identifier => :second_name,
-          :data_view  => Label.build({})
-        })
-      ],
-      :data_source  => self
-    })
+    @main_window << text_field(:layout => {
+      :left   => 30,
+      :top    => 100,
+      :width  => 150,
+      :height => 24
+    },
+    :bezel => :rounded)
     
-    `window.app_controller = #{self};`
+    # @main_window << button(:layout => {
+    #    :left   => 30,
+    #    :top    => 300,
+    #    :width  => 250,
+    #    :bottom => 100,
+    #    :height => 24
+    #  }, 
+    #  :enabled => false)
+    #  
+    #      
+    #        
+    #        slider2 = slider(:layout => {
+    #            :left   => 30,
+    #            :top    => 220,
+    #            :width  => 250,
+    #            :bottom => 100,
+    #            :height => 14
+    #          },
+    #          :control_size   => :small,
+    #          :value_binding  => {
+    #            :to   => self,
+    #            :path  => :test_value
+    #          }
+    #        )
+    #        
+    #        @main_window << slider2
+    #        
+    #                @main_window << slider(:layout => {
+    #                    :left   => 30,
+    #                    :top    => 120,
+    #                    :width  => 250,
+    #                    :bottom => 100,
+    #                    :height => 16
+    #                  },
+    #                  :value_binding => {
+    #                    :to => slider2,
+    #                    :path => :value
+    #                  })
     
-    # slider2.bind :value, :to => self, :key => :test_value
-    
-    # slider2.bind 'value', self, 'test_value', nil
-    
+    # scroll_view = scroll_view(:layout => {
+    #    :left   => 320,
+    #    :top    => 120,
+    #    :width  => 500,
+    #    :height => 300
+    #  })
+    #  
+    #  @main_window << scroll_view
+    #  scroll_view.document_view = TableView.build({
+    #    :table_columns => [
+    #      TableColumn.build({
+    #        :identifier => :first_name,
+    #        :data_view => Slider.build({})
+    #      }),
+    #      TableColumn.build({
+    #        :identifier => :second_name,
+    #        :data_view  => Label.build({})
+    #      })
+    #    ],
+    #    :data_source  => self
+    #  })
+    #  
+    # 
+    # # 
+    # # Outline view
+    # # 
+    # 
+    # scroll_view2 = scroll_view(:layout => {
+    #   :left   => 20,
+    #   :top    => 120,
+    #   :width  => 250,
+    #   :height => 300
+    # })
+    # 
+    # @main_window << scroll_view2
+    # scroll_view2.document_view = OutlineView.build({
+    #   :outline_table_column => TableColumn.build({
+    #     :identifier => :first_name,
+    #     :data_view => Label.build({})
+    #    }),
+    #   :data_source  => self
+    # })
+   
     @main_window
   end
   

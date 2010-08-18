@@ -41,6 +41,7 @@ var class_basic_object  = null,
     class_hash          = null,
     class_number        = null,
     class_regexp        = null,
+    class_range         = null,
     class_exception     = null;
 
 // top self
@@ -61,9 +62,10 @@ var T_CLASS             = 1,
     T_NUMBER            = 64, 
     T_PROC              = 128,  
     T_SYMBOL            = 256,  
-    T_HASH              = 512, 
-    T_ICLASS            = 1024,
-    FL_SINGLETON        = 2056;
+    T_HASH              = 512,
+    T_RANGE             = 1024, 
+    T_ICLASS            = 2048,
+    FL_SINGLETON        = 4096;
 
 
 // create a ruby proc from javascript func
@@ -362,6 +364,16 @@ __boot_base_class.prototype.P = function(fun) {
   return res;
 };
 
+// ruby range
+__boot_base_class.prototype.R = function(start, end, exclusive) {
+  var res = new class_range.allocator();
+  res.__start__ = start;
+  res.__end__ = end;
+  res.__exclusive__ = exclusive;
+  res.__real_end__ = exclusive ? end - 1 : end;
+  return res; 
+};
+
 // calling super
 // 
 // @param {Function} func of current func calling super
@@ -629,6 +641,10 @@ class_object.dm = function() {
 // Proc class
 class_proc = define_class_under(class_object, "Proc", class_object);
 class_proc.allocator.prototype.info = T_OBJECT | T_PROC;
+
+// Range class
+class_range = define_class_under(class_object, "Range", class_object);
+class_range.allocator.prototype.info = T_OBJECT | T_RANGE;
 
 // True class
 class_true_class = define_class_under(class_object, "TrueClass", class_object);

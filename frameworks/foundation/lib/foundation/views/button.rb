@@ -56,6 +56,7 @@ module CherryKit
     end
 
     def stop_tracking(location)
+      puts "button stop tracking"
       self.highlighted = false
     end
   end

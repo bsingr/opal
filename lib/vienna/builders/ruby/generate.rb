@@ -458,6 +458,7 @@ module Vienna
       gsub(/\|/, '$r').
       gsub(/\&/, "$a").
       gsub(/\</, "$l").
+      gsub(/\>/, "$g").
       gsub(/\[/, "$z").
       gsub(/\]/, "$x").
       gsub(/\//, "$d").

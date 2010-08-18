@@ -77,7 +77,7 @@ module CherryKit
     
     # location of event within designated view
     # 
-    def location_in_view
+    def location_in_view(view)
       offset = view.render_context.element.element_offset
       client = location_in_client
       
@@ -89,6 +89,23 @@ module CherryKit
     def window
       @window ||= view.window
     end
+    
+    
+    # =================
+    # = Touch support =
+    # =================
+    
+    def changed_touches
+      return @changed_touches if @changed_touches
+      @changed_touches = []
+      `var event = #{self}.__event__;
+      var changed = event.changedTouches;
+      for (var i = 0; i < changed.length; i++) {
+        #{@changed_touches}.push(#{Touch}.$from_native(changed[i]));
+      }`
+      @changed_touches
+    end
+    
   end
 end
 

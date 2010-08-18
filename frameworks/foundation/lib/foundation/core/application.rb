@@ -61,7 +61,10 @@ module CherryKit
     attr_reader :delegate
     
     def initialize
+      # an array of all our windows
       @windows = []
+      # hash of our touch identifiers to the touches themselves.
+      @touches = {}
     end
     
     # Register the window for the application
@@ -97,6 +100,8 @@ module CherryKit
     # Run the application.
     def run
       RunLoop.run do
+        # body class names for css etc
+        setup_body_class_names
         # global application
         Object.const_set('CKApp', self)      
         # initial notification that we will finish launching (before events)
@@ -108,9 +113,25 @@ module CherryKit
       end
     end
     
+    def setup_body_class_names
+      body = Browser::Element.body
+      if Browser.safari?
+        body.class_name = 'safari'
+      elsif Browser.opera?
+        body.class_name = 'opera'
+      elsif Browser.msie?
+        # also set ie7, ie6, ie8 respectively?
+        body.class_name = 'msie'
+      end
+    end
+    
     def setup_event_handlers
+      # touch based events..
+      listen_for Browser.document, :touchstart, :touchmove, :touchend, :touchcancel
       # standard mouse events
       listen_for Browser.document, :mousedown, :mouseup, :mousemove
+      
+      listen_for Browser.document, :keydown, :keyup, :keypress
       
       # browser window resizing
       listen_for Browser.window, :resize
@@ -156,7 +177,9 @@ module CherryKit
           # # `console.log(#{event});`
           # puts "view for event is: #{event.view}"
           # puts "window for event is: #{event.window}"
-          event.window.send_event event
+          res = event.window.send_event event
+          # puts "res is #{res}"
+          res
         end
       end
     end
@@ -195,6 +218,75 @@ module CherryKit
       @event_handler_view = nil
     end
     
+    # When the user touches their finger on the document.
+    def on_touchstart
+      proc do |event|
+        RunLoop.run do
+          puts "touchstart!"
+          touches = event.changed_touches
+          touches.each do |touch|
+            puts "our touch is #{touch}"
+            # keep track of this touch (with identifier)
+            @touches[touch.identifier] = touch
+            # assign the event for the touch
+            touch.event = event
+            # event.view.touches_began(touches, event)
+          end
+
+          # puts event.changed_touches
+          # puts event.view
+          
+          true
+        end
+      end
+    end
+    
+    def on_touchend
+      proc do |event|
+        # puts "touchend!"
+        true
+      end
+    end
+    
+    def on_touchmove
+      proc do |event|
+        RunLoop.run do
+          # hash of views => touches for that view
+          view_touches = {}
+          touches = event.changed_touches
+          touches.each do |touch|
+            entry = @touches[touch.identifier]
+            
+            unless entry
+              raise "Application: touchmove: unknown touch #{touch.identifier}"
+            end
+            
+            entry.event = event
+            
+            view_array = view_touches[entry.view]
+            
+            unless view_array
+              view_array = view_touches[entry.view] = []
+            end
+            
+            view_array << touch
+            
+            
+            
+          end
+        end
+
+        false
+      end
+    end
+    
+    def on_touchcancel
+      proc do |event|
+        puts "touchcancel!"
+        true
+      end
+    end
+    
     # Handles the window's 'resize' event. This method simply posts out 
     # notifications to alert receivers that the browser window, i.e. screen
     # space is being adjusted. By default, every window will listen for these
@@ -209,12 +301,40 @@ module CherryKit
       end
     end
     
+    def on_keydown
+      proc do |event|
+        event.type = :key_down
+        # puts "sending keydown event for #{event.key_code} for #{event.key}"
+        res = send_event event
+        # puts "on_keydown handler result is #{res}"
+        res
+      end
+    end
+    
+    def on_keyup
+       proc do |event|
+         event.type = :key_up
+         # puts "sending keyup event for #{event.key_code} for #{event.key}"
+         send_event event
+       end
+     end
+    
+    def on_keypress
+       proc do |event|
+         event.type = :key_down
+         # puts "sending keypress event for #{event.key_code} for #{event.key}"
+         return true
+       end
+     end
+    
     def on_mousemove
       proc do |event|
         # must make ruby friendly name - should check if mouse_dragged
         event.type = :mouse_moved
         # puts "mouse moved!"
         send_event event
+        
+        true
       end
     end
     
@@ -242,6 +362,8 @@ module CherryKit
           # puts "exception occured within Application#on_mousedown"
           # raise e
         # end
+        
+        true
       end
     end
     
@@ -254,6 +376,8 @@ module CherryKit
       proc do |event|
         event.type = :mouse_up
         send_event event
+        
+        true
       end
     end
 

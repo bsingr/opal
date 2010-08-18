@@ -34,6 +34,8 @@ module CherryKit
     
     attr_writer :enabled, :highlighted, :selected
     
+    attr_accessor :value
+    
     # Managing the control size. Valid values are
     # 
     # :mini, :small, :regular, :large
@@ -57,7 +59,7 @@ module CherryKit
     end
     
     def selected?
-      false
+      @selected
     end
     
     def initialize
@@ -97,9 +99,11 @@ module CherryKit
       # puts "tracking mouse!"
       CKApp.handle_events([:mouse_up, :mouse_dragged]) do |event|
         type = event.type
-        location = event.location_in_view
+        location = event.location_in_view self
         within_frame = bounds.contains_point? location
-        
+        puts "within frame: #{location.x}, #{location.y}"
+        puts "#{bounds.x}, #{bounds.y}, #{bounds.width}, #{bounds.height}"
+        puts "witjing frame.....? #{within_frame}"
         # puts "event #{type.inspect}, #{location.x}, #{location.y}"
         
         if type == :mouse_down
@@ -114,8 +118,20 @@ module CherryKit
           
         elsif type == :mouse_moved || type == :mouse_dragged
           # we should only actually get mouse dragged events. fixc this later.
-          continue_tracking? location
+          if within_frame
+            if !@tracking_was_within_frame
+              start_tracking? location
+            else
+              continue_tracking? location
+            end
+          else
+            stop_tracking location, false
+          end
+          
+          # continue_tracking? location
         end
+        
+        @tracking_was_within_frame = within_frame
       end
     end
     
@@ -128,7 +144,7 @@ module CherryKit
       # puts "start tracking.."
     end
     
-    def stop_tracking(location)
+    def stop_tracking(location, mouse_up)
       # puts "stop trackinhg.."
     end
     
@@ -136,5 +152,25 @@ module CherryKit
       # puts "continue tracking.."
     end
     
+    
+    # ========================
+    # = Touch event tracking =
+    # ========================
+    
+    def begin_tracking_with_touch?(touch, event)
+      
+    end
+    
+    def continue_tracking_with_touch?(touch, event)
+      
+    end
+    
+    def end_tracking_with_touch(touch, event)
+      
+    end
+    
+    def cancel_tracking_with_event(event)
+      
+    end
   end
 end

@@ -33,6 +33,13 @@ class Array
     self
   end
   
+  def each_with_index(&block)
+    `for (var i = 0; i < #{self}.length; i++) {
+      #{block}.__fun__(#{self}[i], i);
+    }`
+    self
+  end
+  
   def map(&block)
     result = []
     `for (var i = 0; i < #{self}.length; i++) {
