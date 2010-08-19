@@ -836,7 +836,7 @@ class Vienna::RubyParser < Racc::Parser
     # token_name.downcase!
 		token = error_value.to_s.inspect
 
-		str = 'parse error on '
+		str = "#{@source} - parse error on "
 		str << token_name << ' ' unless token_name == token
 		str << token
     # @tokens.error(str)

@@ -28,7 +28,7 @@ require 'foundation/views/view'
 
 module CherryKit
   
-  class ScrollView < View
+  class ScrollViewDesktop < View
     
     register_builder :scroll_view,
       {}

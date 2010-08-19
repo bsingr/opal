@@ -218,19 +218,54 @@ module CherryKit
       @event_handler_view = nil
     end
     
+    def setup_touch_began(touch, event)
+      touch_hierarchy = []
+      view = touch.view
+      # get all views in hierarchy
+      `while(#{view}.r) {
+        #{touch_hierarchy}.unshift(#{view});
+        #{view} = #{view.superview};
+      }`
+      
+      capturing_view = nil
+      to_try = nil
+      
+      # find first view that will capture_touches? .. if any
+      `for (var i = 0; i < #{touch_hierarchy}.length; i++) {
+        #{to_try} = #{touch_hierarchy}[i];
+        if (#{to_try.capture_touches?}.r) {
+          #{capturing_view} = #{to_try};
+          break;
+        }
+      }`
+      
+      if capturing_view
+        touch.view = capturing_view
+      else
+        touch.view = event.view
+      end
+      
+      # puts "touch hierarchy is #{touch_hierarchy.inspect}"
+      # puts "capturing view is #{capturing_view}"
+    end
+    
     # When the user touches their finger on the document.
     def on_touchstart
       proc do |event|
         RunLoop.run do
-          puts "touchstart!"
+          # puts "touchstart!"
           touches = event.changed_touches
           touches.each do |touch|
-            puts "our touch is #{touch}"
+            # puts "our touch is #{touch}"
             # keep track of this touch (with identifier)
             @touches[touch.identifier] = touch
             # assign the event for the touch
             touch.event = event
-            # event.view.touches_began(touches, event)
+            # touch.view = event.view
+            puts "going to touch began"
+            setup_touch_began touch, event
+            # 
+            touch.view.touches_began(touches, event)
           end
 
           # puts event.changed_touches
@@ -243,7 +278,16 @@ module CherryKit
     
     def on_touchend
       proc do |event|
-        # puts "touchend!"
+        
+        RunLoop.run do
+          touches = event.changed_touches
+          touches.each do |touch|
+            entry = @touches[touch.identifier]
+            entry.event = event
+            entry.view.touches_ended(touches, event)
+          end
+        end
+        
         true
       end
     end
@@ -271,7 +315,7 @@ module CherryKit
             
             view_array << touch
             
-            
+            entry.view.touches_moved(touches, event)
             
           end
         end

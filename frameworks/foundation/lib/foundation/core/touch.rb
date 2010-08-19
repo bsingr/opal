@@ -30,20 +30,65 @@ module CherryKit
     
     attr_accessor :event
     
+    attr_accessor :view
+    
+    attr_writer :window
+    
     # Create a touch object from the native touch object, that will most
     # probably be gathered straight from the event which created it
     def self.from_native(native_touch_object)
       `var result = #{allocate};
+      result.__touch__ = #{native_touch_object};
       result.__identifier__ = #{native_touch_object}.identifier;
-      result.__target__ = #{native_touch_object}.target;
+      var target = #{native_touch_object}.target;
+      
+      while (target) {
+        if (!target.id) {
+          target = target.parentNode; 
+        } else {
+          break;
+        }
+      }
+      
+      target.style.webkitTransform = "translate3d(0px, 0px, 0px)";
+      
+      result.__target__ = target;
+      
       result.__pageX__ = #{native_touch_object}.pageX;
       result.__pageY__ = #{native_touch_object}.pageY;
-      
+            
       return result;`
     end
     
     def identifier
       `return #{self}.__identifier__;`
+    end
+    
+    def view
+      return @view if @view
+      element = `#{self}.__target__`
+      @view = CherryKit::View[`#{element}.id`]
+    end
+    
+    def window      
+      @window = view.window
+    end
+    
+    def location_in_client
+      return @location_in_client if @location_in_client
+      
+      @location_in_client = Browser::Point.new `#{self}.__touch__.pageX`, `#{self}.__touch__.pageY`
+    end
+    
+    def location_in_view(view)
+      offset = view.render_context.element.element_offset
+      client = location_in_client
+      
+      Browser::Point.new(client.x - offset.x, client.y - offset.y)
+    end
+    
+    def location_in_window(window)
+      
     end
   end
 end

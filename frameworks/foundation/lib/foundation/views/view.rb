@@ -359,6 +359,17 @@ module CherryKit
       # do nothing by default
     end
     
+    # ==========
+    # = Events =
+    # ==========
+    
+    # IF the view should capture all touches (instead of allowing subviews to),
+    # then return true. Default is false. ScrollView, for example, returns true
+    # 
+    def capture_touches?
+      false
+    end
+    
     # ===================
     # = Handling events =
     # ===================
@@ -377,16 +388,16 @@ module CherryKit
     # = Touch Events =
     # ================
     def touches_began(touches, event)
-      puts "in #{self} with touches_began!"
+      puts "#{self}#touches_began"
     end
     
-    # def touches_ended(touches, event)
-    #   
-    # end
-    # 
-    # def touches_moved(touches, event)
-    #   
-    # end
+    def touches_ended(touches, event)
+      puts "#{self}#touches_ended"
+    end
+    
+    def touches_moved(touches, event)
+      puts "#{self}#touches_moved"
+    end
     # 
     # def touched_cancelled(touches, event)
     #   

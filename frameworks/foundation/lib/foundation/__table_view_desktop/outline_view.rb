@@ -1,5 +1,5 @@
 # 
-# table_header_view.rb
+# outline_view.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,11 +24,34 @@
 # THE SOFTWARE.
 #
 
-require 'foundation/table_view/table_view'
-
-module CherryKit
-  
-  class TableHeaderView < View
-    
-  end
-end
+# require 'foundation/table_view/table_view'
+# 
+# module CherryKit
+#   
+#   class OutlineView < TableView
+#     
+#     register_builder :outline_view, {}
+#     
+#     class_names 'ck-outline-view'
+#     
+#     def initialize(layout)
+#       super layout
+#     end
+#     
+#     def outline_table_column=(table_column)
+#       return if @table_column == table_column
+#       
+#       @table_column = table_column
+#       
+#       reload_data
+#     end
+#     
+#     def reload_data
+#       reload_item nil, true
+#     end
+#     
+#     def reload_item(item, children)
+#       
+#     end
+#   end
+# end

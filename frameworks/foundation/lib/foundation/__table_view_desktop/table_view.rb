@@ -28,7 +28,7 @@ require 'foundation/views/control'
 
 module CherryKit
   
-  class TableView < Control
+  class TableViewDesktop < Control
     
     class_names 'ck-table-view'
     

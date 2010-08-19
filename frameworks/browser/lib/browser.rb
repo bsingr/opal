@@ -47,6 +47,12 @@ module Browser
     @__is_msie__ ||= `(opal.browser.msie ? #{self}.t : #{self}.f)`
   end
   
+  # Returns true or false to indicate whether this browser is on a touch
+  # platform or not
+  def self.touch?
+    @__is_touch__ ||= `(('createTouch' in document) ? #{true} : #{false})`
+  end
+  
   # Returns the document element
   def self.document
     return @document_element if @document_element

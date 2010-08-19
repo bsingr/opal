@@ -79,5 +79,15 @@ module CherryKit
       # puts "value should be #{value_for_location(location)}"
       self.value = value_for_location location
     end
+    
+    def value=(value)
+      if value < @min
+        @value = @min
+      elsif @max < value
+        @value = @max
+      else
+        @value = value
+      end
+    end
   end
 end

@@ -44,11 +44,11 @@ module CherryKit
     
     # Expose our value binding
     # 
-    expose_binding :value
+    # expose_binding :value
     
     # Expose our enabled binding
     # 
-    expose_binding :enabled
+    # expose_binding :enabled
     
     def highlighted?
       @highlighted
@@ -157,16 +157,39 @@ module CherryKit
     # = Touch event tracking =
     # ========================
     
+    def touches_began(touches, event)
+      touch = touches[0]
+      location = touch.location_in_view self
+      begin_tracking_with_touch? touch, event
+    end
+    
+    def touches_ended(touches, event)
+      touch = touches[0]
+      location = touch.location_in_view self
+      end_tracking_with_touch touch, event
+    end
+    
+    def touches_moved(touches, event)
+      touch = touches[0]
+      location = touch.location_in_view self
+      continue_tracking_with_touch? touch, event
+    end
+    
+    # =========================
+    # = Tracking touch events =
+    # =========================
+    
     def begin_tracking_with_touch?(touch, event)
-      
+      # puts "Control#begin_tracking_with_touch?(#{touch}, #{event})"
+      start_tracking? touch.location_in_view(self)
     end
     
     def continue_tracking_with_touch?(touch, event)
-      
+      continue_tracking? touch.location_in_view(self)
     end
     
     def end_tracking_with_touch(touch, event)
-      
+      stop_tracking touch.location_in_view(self)
     end
     
     def cancel_tracking_with_event(event)
