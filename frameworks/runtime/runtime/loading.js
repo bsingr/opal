@@ -46,7 +46,7 @@
 // autoloading of css etc
 // 
 exports.register = function(specification) {
-  console.log("registering new opal: " + specification.name);
+  // console.log("registering new opal: " + specification.name);
   opal_list[specification.name] = specification;
   
   load_paths.push(specification.name + "/lib/");
@@ -155,7 +155,7 @@ exports.browser = (function() {
 // = On ready etc =
 // ================
 var on_ready = function() {
-  console.log("===== on_ready");
+  // console.log("===== on_ready");
   if (!bin_file)
     throw "Opal: no bin file defined."
     

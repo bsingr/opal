@@ -462,7 +462,8 @@ module Vienna
       gsub(/\[/, "$z").
       gsub(/\]/, "$x").
       gsub(/\//, "$d").
-      gsub(/\*/, "$t")
+      gsub(/\*/, "$t").
+      gsub(/\@/, "$a")
     end
     
     def generate_tree(tree)

@@ -37,6 +37,17 @@ module CherryKit
     # the view's window
     attr_reader :window
     
+    # Boolean whether or not the view can receive multi-touch events. Default
+    # is false. If false (default), then the view is only sent details of the
+    # first touch in the view, all other touches will be ignored within CKApp
+    # and not passed to this view.
+    # 
+    # @getter multiple_touch_enabled?
+    # 
+    # @attribute {true|false} multiple_touch_enabled
+    # 
+    attr_writer :multiple_touch_enabled
+    
     def initialize(frame)
       # initialize
       # default layout
@@ -48,6 +59,9 @@ module CherryKit
       }
       # all of our subviews
       @subviews = []
+      
+      # by default only receive single touches
+      @multiple_touch_enabled = false
       
       # for every display property defined, we add an observer when it changes,
       # so we can tell the view that it needs a redisplay
@@ -134,27 +148,75 @@ module CherryKit
       @render_context
     end
     
+    # NEVER EVER call this method directly. This will create and / or update
+    # the rendering context as needed
+    # 
+    def display
+      if @render_context
+        update
+      else
+        render_context = create_render_context
+        # first call .render(), then immediately update() it
+        render render_context
+        update
+        # add to super
+        @superview.render_context.element << render_context.element
+      end
+    end
+    
+    # Create the render_context based on the theme and create_renderer()
     def create_render_context
       return @render_context if @render_context
       
-      render_context = RenderContext.new tag_name      
-      render_with_render_context render_context
+      render_context = RenderContext.new tag_name            
+      theme = Theme.find_theme theme_name
+      # unless we could find the theme, throw an error - theme must exist
+      theme or raise "Cannot find theme named #{theme_name}"
+      # get our renderer. unless overridden, this will be theme::View renderer
+      @renderer = create_renderer theme
       
       @render_context = render_context
     end
     
-    def render_with_render_context(render_context)
-      __update_renderer
-            
-      # if we have set renderer.. might not always be set (root view etc)
-      if @renderer
-        @renderer.render render_context
-      end
-      
-      if @renderer
-        update_renderer
-      end
+    # Create the renderer just for this view. The default action is to create
+    # a simple view renderer. In this case, the most likely behaviour is that
+    # .render() and .update() of this view should be overridden for rendering
+    # custom views/data etc
+    # 
+    # @param {CherryKit::Theme} theme to create renderer from
+    # @returns {CherryKit::Renderer} renderer
+    # 
+    def create_renderer(theme)
+      theme.view self
     end
+    
+    # Core method for the initial render of the view. This method is passed the
+    # render context that we render to. The default behaviour is to simply call
+    # on the @renderer to render itself in the given context. Any view that does
+    # not have a themed renderer should use this method instead and MUST call
+    # super()
+    # 
+    # @param {CherryKit::RenderContext} render_context to render to
+    # @returns nil
+    # 
+    def render(render_context)
+      @renderer.render render_context
+    end
+    
+    # Core method for updating the view. This is called immediately after render
+    # and also everytime the view needs an update (self.needs_display=true).
+    # Again the default behaviour is to simply call .update() on the @renderer,
+    # but non themed views may simply have their own code here for updating, 
+    # but as before, MUST call super() to allow the default ViewRenderer do its
+    # business
+    # 
+    # @returns nil
+    # 
+    def update
+      @renderer.update
+    end
+    
+    
     
     def visible?
       true
@@ -167,47 +229,7 @@ module CherryKit
     def bounds
       Browser::Rect.new 0, 0, `#{render_context.element}.__element__.clientWidth`, `#{render_context.element}.__element__.clientHeight`
     end
-    
-    # Update the renderer. We assume we have our render context, so we just need
-    # to make sure we have our actual renderer available (usually from a theme)
-    def __update_renderer
-      if @renderer
-        # puts "need to call on renderer to update"
-      else
-        __create_renderer
-      end
-    end
-    
-    # create the renderer - private method that calls actual create_renderer
-    def __create_renderer
-      # find the right theme
-      theme = Theme.find_theme theme_name
-      
-      unless theme
-        raise "Cannot find theme named #{theme_name}"
-      end
-      
-      # the renderer for our custom view. Our renderer might be nil. The base
-      # view for example does not create a renderer, so do not always assume
-      # that one will exist
-      @renderer = create_renderer theme
-    end
-    
-    # create the renderer just for this view.
-    # 
-    # @param {CherryKit::Theme} theme to create renderer from
-    # @returns {CherryKit::Renderer} renderer
-    # 
-    def create_renderer(theme)
-      theme.view self
-    end
-    
-    def update_renderer
-      # puts "updating"
-      if @renderer
-        @renderer.update
-      end
-    end
+
     
     # Root element tag_name used for building the responder context. Should be a
     # Symbol. Default is <tt>:div</tt>
@@ -216,25 +238,6 @@ module CherryKit
     # 
     def tag_name
       :div
-    end
-  
-    
-    # NEVER EVER call this method directly. This will create and / or update
-    # the rendering context as needed
-    # 
-    def display
-      # puts "Displaying init"
-      if @render_context
-        # if we already have our render context, just update it
-        # if @renderer
-          # @renderer.update
-        # end
-        update_renderer
-      else
-        # puts "need to create render context"
-        render_context = create_render_context
-        @superview.render_context.element << render_context.element
-      end
     end
     
     def <<(subview)
@@ -368,6 +371,11 @@ module CherryKit
     # 
     def capture_touches?
       false
+    end
+    
+    # Can the view receive multiple touches: true or false
+    def multiple_touch_enabled?
+      @multiple_touch_enabled
     end
     
     # ===================

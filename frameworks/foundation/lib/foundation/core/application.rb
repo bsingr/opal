@@ -65,6 +65,8 @@ module CherryKit
       @windows = []
       # hash of our touch identifiers to the touches themselves.
       @touches = {}
+      # hash of views to an array of touch identifiers
+      @touches_for_views = {}
     end
     
     # Register the window for the application
@@ -218,6 +220,15 @@ module CherryKit
       @event_handler_view = nil
     end
     
+    # Get the array for the view, or make it if it does not exist
+    def touches_for_view(view)
+      if @touches_for_views[view]
+        @touches_for_views[view]
+      else
+        @touches_for_views[view] = []
+      end
+    end
+    
     def setup_touch_began(touch, event)
       touch_hierarchy = []
       view = touch.view
@@ -256,22 +267,40 @@ module CherryKit
           # puts "touchstart!"
           touches = event.changed_touches
           touches.each do |touch|
-            # puts "our touch is #{touch}"
             # keep track of this touch (with identifier)
             @touches[touch.identifier] = touch
             # assign the event for the touch
             touch.event = event
             # touch.view = event.view
-            puts "going to touch began"
+            # puts "touch began #{touch.identifier}"
             setup_touch_began touch, event
-            # 
-            touch.view.touches_began(touches, event)
+            # we have our right view, so make sure that we can send events to it
+            # i.e. is it multi touch enabled? cannot send more than one touch
+            # to non multi touch views
+            view = touch.view
+            view_touches = touches_for_view(view)
+            
+            if view.multiple_touch_enabled?
+              puts "can send event!"
+              view_touches << touch.identifier
+              touch.view.touches_began(touches, event)
+            else
+              # puts "#{view} is not multi touch friendly"
+              if view_touches.length > 0
+                # puts "need to drop touch: multitouch not enabled for view"
+                puts "touch_start: #{touch.identifier} being dropped"
+              else
+                view_touches << touch.identifier
+                puts "touch_start: #{touch.identifier} sending!"
+                touch.view.touches_began(touches, event)
+              end
+            end
           end
 
           # puts event.changed_touches
           # puts event.view
           
-          true
+          false
         end
       end
     end
@@ -283,12 +312,20 @@ module CherryKit
           touches = event.changed_touches
           touches.each do |touch|
             entry = @touches[touch.identifier]
-            entry.event = event
-            entry.view.touches_ended(touches, event)
+            
+            if @touches_for_views[entry.view].include? touch.identifier
+              puts "sending touchend for #{entry.identifier}"
+              entry.event = event
+              entry.view.touches_ended(touches, event)
+              @touches_for_views[entry.view].delete touch.identifier
+            else
+              # drop event otherwise
+              # puts "dropping touch end for #{entry.identifier}"
+            end
           end
         end
         
-        true
+        false
       end
     end
     
@@ -305,17 +342,21 @@ module CherryKit
               raise "Application: touchmove: unknown touch #{touch.identifier}"
             end
             
-            entry.event = event
-            
-            view_array = view_touches[entry.view]
-            
-            unless view_array
-              view_array = view_touches[entry.view] = []
+            if @touches_for_views[entry.view].include? touch.identifier
+              entry.event = event
+
+              view_array = view_touches[entry.view]
+
+              unless view_array
+                view_array = view_touches[entry.view] = []
+              end
+
+              view_array << touch
+
+              entry.view.touches_moved(touches, event)
+            else
+              # puts "dropping move event for touch #{touch.identifier}"
             end
-            
-            view_array << touch
-            
-            entry.view.touches_moved(touches, event)
             
           end
         end

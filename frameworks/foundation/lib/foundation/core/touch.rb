@@ -41,7 +41,8 @@ module CherryKit
       result.__touch__ = #{native_touch_object};
       result.__identifier__ = #{native_touch_object}.identifier;
       var target = #{native_touch_object}.target;
-      
+      //console.log("original target:");
+      //console.log(target.className);
       while (target) {
         if (!target.id) {
           target = target.parentNode; 
@@ -50,7 +51,7 @@ module CherryKit
         }
       }
       
-      target.style.webkitTransform = "translate3d(0px, 0px, 0px)";
+      //target.style.webkitTransform = "translate3d(0px, 0px, 0px)";
       
       result.__target__ = target;
       

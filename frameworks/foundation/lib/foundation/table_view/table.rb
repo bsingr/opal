@@ -34,13 +34,45 @@ module CherryKit
     
     class_names 'ck-table-view'
     
-    def initialize(layout)
+    def initialize(layout, style)
       # scrollview initialization
       super layout
+      # :plain or :grouped
+      @style = :plain
       # default row height - ideal for touch
       @row_height = 44
       # we never want a horizontal scroller - ever
       self.has_horizontal_scroller = false
     end
+    
+    def data_source=(data_source)
+      return if @data_source == data_source
+      
+      required = [:table_view_number_of_rows_in_section,
+                  :table_view_cell_for_row_at_index_path]
+      
+      required.each do |method|
+        unless data_source.respond_to? method
+          raise "TableView: delegate does not respond to '#{method}'"
+        end
+      end
+
+      @data_source = data_source
+      
+      reload_data
+    end
+    
+    def reload_data
+      @reload_all_data = true
+    end
+    
+    # ==========================
+    # = Configuring table view =
+    # ==========================
+    
+    def dequeue_reusable_cell_with_identifier(identifier)
+      
+    end
+  
   end
 end

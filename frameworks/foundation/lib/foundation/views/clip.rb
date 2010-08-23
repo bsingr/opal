@@ -1,5 +1,5 @@
 # 
-# number.rb
+# clip.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,73 +24,24 @@
 # THE SOFTWARE.
 #
 
-class Number
+require 'foundation/views/view'
+
+module CherryKit
+  
+  class ClipView < View
     
-  def inspect
-    `return #{self}.toString();`
+    class_names 'ck-clip-view'
+    
+    attr_reader :document_view
+    
+    def document_view=(document_view)
+      return if @document_view == document_view
+      
+      # need to observe...
+      
+      @document_view = document_view
+      
+      self << document_view
+    end
   end
-  
-  def ==(other)
-    `return (#{self} == #{other}) ? #{true} : #{false};`
-  end
-  
-  def to_s
-    `return #{self}.toString();`
-  end
-  
-  def +(other)
-    `return #{self} + #{other};`
-  end
-  
-  def -(other)
-    `return #{self} - #{other};`
-  end
-  
-  def -@()
-    `return -#{self};`
-  end
-  
-  def /(other)
-    `return #{self} / #{other};`
-  end
-  
-  def *(other)
-    `return #{self} * #{other};`
-  end
-  
-  def upto(finish, &block)
-    `for (var i = #{self}; i <= #{finish}; i++) {
-      #{block}.__fun__(i);
-    }`
-    self
-  end
-  
-  def times(&block)
-    `for (var i = 0; i < #{self}; i++) {
-      #{block}.__fun__(i);
-    }`
-    self
-  end
-  
-  def to_i
-    `return parseInt(#{self});`
-  end
-  
-  def >(other)
-    puts "checking with #{other} from #{self}"
-    `return #{self} > #{other} ? #{true} : #{false};`
-  end
-  
-  def <(other)
-    `return #{self} < #{other} ? #{true} : #{false};`
-  end
-  
-  def >=(other)
-    `return #{self} >= #{other} ? #{true} : #{false};`
-  end
-  
-  def <=(other)
-    `return #{self} <= #{other} ? #{true} : #{false};`
-  end
-  
 end

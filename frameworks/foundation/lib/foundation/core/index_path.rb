@@ -1,5 +1,5 @@
 # 
-# clip_view.rb
+# index_path.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,24 +24,26 @@
 # THE SOFTWARE.
 #
 
-require 'foundation/views/view'
-
 module CherryKit
   
-  class ClipView < View
+  class IndexPath
     
-    class_names 'ck-clip-view'
+    def initialize(path)
+      if path.is_a? Number
+        @path = [path]
+      elsif path.is_a? Array
+        @path = path
+      else
+        @path = []
+      end
+    end
     
-    attr_reader :document_view
+    def length
+      @path.length
+    end
     
-    def document_view=(document_view)
-      return if @document_view == document_view
-      
-      # need to observe...
-      
-      @document_view = document_view
-      
-      self << document_view
+    def [](index)
+      @path[index]
     end
   end
 end

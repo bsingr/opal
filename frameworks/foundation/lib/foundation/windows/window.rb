@@ -89,19 +89,30 @@ module CherryKit
     
     # NEVER invoke this method directly
     def display
-      # make sure we have a render context
-      unless render_context
+      # super
+      if @render_context
+        update
+      else
+        render_context = create_render_context
+        # first call .render(), then immediately update() it
+        render render_context
+        update
+        # add to super
         append_to Browser::Element.body
       end
+      # make sure we have a render context
+      # unless render_context
+        # append_to Browser::Element.body
+      # end
       
       # puts "need to go through each view"
       # `console.log(#{@views_needing_display});`
       # now go through all our views that are marked for display (should be
       # all subviews if we just had to create a render context, otherwise it is
       # any view that has been updated)
-      @views_needing_display.each do |view|
+      # @views_needing_display.each do |view|
         # puts "need to display view: #{view}"
-      end
+      # end
       
       @subviews.each do |view|
         view.display

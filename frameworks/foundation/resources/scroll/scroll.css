@@ -1,0 +1,22 @@
+
+.ck-scroll-view .horizontal {
+  left: 5px;
+  right: 5px;
+  bottom: 5px;
+  height: 5px;
+  
+  position: absolute;
+  z-index: 2;
+  
+}
+
+.ck-scroll-view .horizontal .scroller {
+  width: 100%;
+  left: 0%;
+  height: 100%;
+  background: black;
+  border-radius: 4px;
+  -webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	position: absolute;
+}
