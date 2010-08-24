@@ -84,6 +84,10 @@ class Array
     `return #{self}[#{index}] || #{nil};`
   end
   
+  def []=(index, value)
+    `return #{self}[#{index}] = #{value};`
+  end
+  
   def index(object)
     `return #{self}.indexOf(#{object});`
   end

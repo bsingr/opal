@@ -105,7 +105,13 @@ module CherryKit
         # body class names for css etc
         setup_body_class_names
         # global application
-        Object.const_set('CKApp', self)      
+        Object.const_set('CKApp', self)
+        #  our main application window that we create ourselves and give (for
+        # free to AppController)
+        window = CherryKit::Window.build({})
+        window.show
+        @delegate.window = window
+        # puts "need to add window to #{@delegate}"
         # initial notification that we will finish launching (before events)
         notify :application_will_finish_launching
         # setup/create all event handlers

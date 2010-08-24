@@ -64,11 +64,104 @@ module CherryKit
     
     def reload_data
       @reload_all_data = true
+      # force a reload
+      @number_of_sections = nil
+      @number_of_rows_in_section = []
+      number_of_sections
+      
+      puts "our table view has #{number_of_sections} sections"
+      
+      self.needs_display = true
+    end
+    
+    def update
+      super
+      _update_table_render
+    end
+    
+    def _update_table_render
+      if @reload_all_data
+        number_of_sections.times do |section|
+          _render_section section
+        end
+        @reload_all_data = false
+      else
+        
+      end
+    end
+    
+    def _render_section(section)
+      puts "need to render section #{section}"
+      rows = number_of_rows_in_section(section)
+      
+      puts "need to render #{rows} row(s)"
+      
+      rows.times do |row|
+        path = IndexPath.new [section, row]
+        view = @data_source.table_view_cell_for_row_at_index_path self,  path
+        puts "view for #{row} is #{view}"
+        
+        add_subview(view) unless view.superview == self
+      end
+    end
+    
+    # ==============================
+    # = Drawing areas of the table =
+    # ==============================
+    
+    def rect_for_section(section)
+      # if we have already calculated it, just return it
+      return @rect_for_section[section] if @rect_for_section[section]
+      # otherwise rect for section is the sections header, plus all the rows
+      # within that section, plus the section footer
+      rect = Browser::Rect.new 0, 0, 0, 0
+      
+      rect
+    end
+    
+    def rect_for_row_at_index_path(index_path)
+      
+    end
+    
+    def rect_for_header_in_section(section)
+      # no headers yet, so default is 0, 0, 0, 0
+      Browser::Rect.new 0, 0, 0, 0
+    end
+    
+    def rect_for_footer_in_section(section)
+      # default 0, 0, 0, 0 rect as we dont have footers.. yet
+      Browser::Rect.new 0, 0, 0, 0
     end
     
     # ==========================
     # = Configuring table view =
     # ==========================
+    
+    def number_of_sections
+      return @number_of_sections if @number_of_sections
+      
+      # assume data source, not binding (for now)
+      if @data_source.respond_to? :number_of_sections_in_table_view
+        num = @data_source.number_of_sections_in_table_view self
+      else
+        num = 1
+      end
+      
+      @number_of_sections = num
+    end
+    
+    # Gets the number of rows in the given section
+    # 
+    # @param {Number} section number
+    # @returns number of rows
+    # 
+    def number_of_rows_in_section(section)
+      @number_of_rows_in_section[section] if @number_of_rows_in_section[section]
+      
+      rows = @data_source.table_view_number_of_rows_in_section self, section
+      
+      @number_of_rows_in_section[section] = rows
+    end
     
     def dequeue_reusable_cell_with_identifier(identifier)
       
