@@ -27,11 +27,9 @@
 class Array
   
   def each(&block)
-    i = 0
-    `for (i = 0; i < #{self}.length; i++) {`
-      #{block}.apply(#{block}.__self__, [#{self}[i]]);
-      yield self[i]
-    `}`
+    `for (var i = 0; i < #{self}.length; i++) {
+      #{block}.__fun__(#{self}[i]);
+    }`
     self
   end
   

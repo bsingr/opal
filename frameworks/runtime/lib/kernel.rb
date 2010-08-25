@@ -90,15 +90,15 @@ module Kernel
   end
   
   def proc &block
-    # if block_given?
-    #   block
-    # else
-    #   raise "ArgumentError: tried to create Proc object without a block"
-    # end
+    if block_given?
+      block
+    else
+      raise "ArgumentError: tried to create Proc object without a block"
+    end
   end
   
   def puts(str)
-    `console.log(#{str});`
+    `console.log(#{str}.$inspect().toString());`
     nil
   end
   

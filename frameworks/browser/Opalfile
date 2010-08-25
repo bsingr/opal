@@ -1,8 +1,6 @@
 mode :all do
   config :browser,
-    :required => [:opal],
-    :bin_file => :browser,
-    :include_bin => true
+    :required => [:opal]
 end
 
 mode :spec do

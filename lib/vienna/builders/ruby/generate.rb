@@ -151,14 +151,6 @@ module Vienna
         generate_aset_op_asgn stmt, context
       when :gvar
         generate_gvar stmt, context
-      when :operator
-        generate_operator stmt, context
-      when :tCOLON2call
-        generate_tCOLON2call stmt, context
-      when :colon3identifier
-        generate_colon3identifier stmt, context
-      when :aref
-        generate_aref stmt, context
       else
         write "\n[Unknown type for generate_stmt: #{stmt.inspect}]\n"
       end
@@ -297,15 +289,13 @@ module Vienna
         if norm == 0 && opt == 0 && post == 0 && rest.nil?
           r << "){"
           
-          # if RubyParser::ISEQ_TYPE_METHOD === @type
-          #   r << "var self = this;"
-          # end
+          if RubyParser::ISEQ_TYPE_METHOD === @type
+            r << "var self = this;"
+          end
           # block..
           if @block_arg_name != nil
-            r << "if (arguments.length > 0 && arguments[0].__self__) {"
+            r << "if (arguments.length > 0 && arguments[0].info & self.TP) {"
             r << "  var __block__ = arguments[0];"
-            r << "} else {"
-            r << " var __block__ = function(){};"
             r << "}"
           end
           
@@ -314,7 +304,7 @@ module Vienna
           r << "#{@args[@rest_arg_name]}"
           r << "){"
           if RubyParser::ISEQ_TYPE_METHOD === @type
-            # r << "var self = this;"
+            r << "var self = this;"
           end
           # block..
           if @block_arg_name
@@ -336,7 +326,7 @@ module Vienna
           r << ",#{@args[@rest_arg_name]}"
           r << "){"
           if RubyParser::ISEQ_TYPE_METHOD === @type
-            # r << "var self = this;"
+            r << "var self = this;"
           end
           r << "#{@args[@norm_arg_names.first]}=arguments[0];"
           r << %{#{@args[@rest_arg_name]}=Array.prototype.slice.call(arguments,1);}
@@ -349,7 +339,7 @@ module Vienna
           end
           r << "){"
           if RubyParser::ISEQ_TYPE_METHOD === @type
-            # r << "var self = this;"
+            r << "var self = this;"
           end
           # block..
           if @block_arg_name
@@ -366,7 +356,7 @@ module Vienna
         
         case @type
         when RubyParser::ISEQ_TYPE_TOP
-          r << "(function(){"
+          r << "(function(){var self = this;"
           # locals
           if @locals.length > 0
             r << "var #{@locals.each_value.to_a.join(",")};"
@@ -402,23 +392,19 @@ module Vienna
           r << @code.join("")
           
           # always return nil as worst case scenario (should never get here?)
-          # r << "return #{NIL};"
+          r << "return #{NIL};"
           r << "}"
           
         when RubyParser::ISEQ_TYPE_BLOCK
-          r << "(function(self, fun) {"
-          r << "fun.__self__ = self;"
-          r << "return fun;"
-          r << "})(this, "
-          # r << "self.P("
+          r << "self.P("
           deal_with_method_args(r)
           
-          # r << "if (arguments.callee.opal_self) {"
-          # r << "  var __old_self__ = self;"
-          # r << "  self = this;"
-          # r << "}"
+          r << "if (arguments.callee.opal_self) {"
+          r << "  var __old_self__ = self;"
+          r << "  self = this;"
+          r << "}"
           
-          # r << "var res = (function() {"
+          r << "var res = (function() {"
 
           # locals
           if @locals.length > 0
@@ -430,15 +416,15 @@ module Vienna
           # r << "with({$:($$==nil?$:$$),_:(__==nil?_:__)}){"
           r << @code.join("")
           
+          r << "})();"
+          
+          r << "if (arguments.callee.opal_self) {"
+          r << "  self = __old_self__;"
+          r << "}"
+          
+          r << "return res;"
+          
           r << "})"
-          
-          # r << "if (arguments.callee.opal_self) {"
-          # r << "  self = __old_self__;"
-          # r << "}"
-          
-          # r << "return res;"
-          
-          # r << "})"
         end
         r
       end
@@ -714,24 +700,18 @@ module Vienna
 
         # assocs
         if call[:call_args] and call[:call_args][:assocs]
-          if call[:call_args][:assocs].first &&call[:call_args][:assocs].first.node == :label_assoc
-            used_param = true
-            write "," unless call[:call_args].nil? or call[:call_args][:args].nil?
-            # puts "label assoc!"
-            generate_label_assoc_list_call call[:call_args][:assocs], context
-          else
-            used_param = true
-            write "," unless call[:call_args].nil? or call[:call_args][:args].nil?
-            write "vnH("
-            call[:call_args][:assocs].each do |assoc|
-             write "," unless call[:call_args][:assocs].first == assoc
-             generate_stmt assoc[:key], :full_stmt => false, :last_stmt => false
-             write ","
-             generate_stmt assoc[:value], :full_stmt => false, :last_stmt => false
-            end
-            write ")"
-            end
-          end
+        used_param = true
+        write "," unless call[:call_args].nil? or call[:call_args][:args].nil?
+        write "vnH("
+        call[:call_args][:assocs].each do |assoc|
+         write "," unless call[:call_args][:assocs].first == assoc
+         generate_stmt assoc[:key], :full_stmt => false, :last_stmt => false
+         write ","
+         generate_stmt assoc[:value], :full_stmt => false, :last_stmt => false
+        end
+        write ")"
+        end
+   
         # write "]"
       end
       # write ","
@@ -850,18 +830,13 @@ module Vienna
         write %{#{local}=}
         generate_stmt stmt[:rhs], :last_stmt => false, :full_stmt => false
       elsif stmt[:lhs].node == :ivar
-        # write %{#{SELF}.is("#{stmt[:lhs][:name]}",}
-        write "#{SELF}['#{stmt[:lhs][:name]}'] = "
+        write %{#{SELF}.is("#{stmt[:lhs][:name]}",}
         generate_stmt stmt[:rhs], :full_stmt => false, :last_stmt => false
-        # write %{}
+        write %{)}
       elsif stmt[:lhs].node == :constant
         write %{#{SELF}.const_set("#{stmt[:lhs][:name]}",}
         generate_stmt stmt[:rhs], :full_stmt => false, :last_stmt => false
         write %{)}
-      elsif stmt[:lhs].node == :tCOLON2call
-        generate_stmt stmt[:lhs], {}
-        write " = "
-        generate_stmt stmt[:rhs], {}
       elsif stmt[:lhs].node == :call
         # puts stmt
         # write %{vm$a(}
@@ -890,9 +865,9 @@ module Vienna
     end
     
     # how we replace "self/this"
-    SELF = "this"
+    SELF = "self"
     # how we replace nil
-    NIL = "null"
+    NIL = "#{SELF}.n"
     
     def generate_self(stmt, context)
       write "return " if context[:last_stmt] and context[:full_stmt]
@@ -915,8 +890,7 @@ module Vienna
     def generate_ivar stmt, context
       write "return " if context[:full_stmt] and context[:last_stmt]
       # write "vm_ivarget($, '#{stmt[:name]}')"
-      # write "#{SELF}.ig('#{stmt[:name]}')"
-      write "#{SELF}['#{stmt[:name]}']"
+      write "#{SELF}.ig('#{stmt[:name]}')"
       write ";" if context[:full_stmt]
     end
     
@@ -938,7 +912,7 @@ module Vienna
       if stmt[:call_args] and stmt[:call_args][:args][0].node == :splat
         write "vm_yield(_,[])"
       else          
-        write "__block__.apply(__block__.__self__,["
+        write "vm_yield(_,["
 
         if stmt[:call_args] and stmt[:call_args][:args]
           stmt[:call_args][:args].each do |a|
@@ -954,7 +928,7 @@ module Vienna
     
     def generate_block_given stmt, context
       write "return " if context[:last_stmt] and context[:full_stmt]
-      write "(__block__ ? true : false)"
+      write "((!__block__ || !__block__.r) ? #{SELF}.f : #{SELF}.t)"
       write ";" if context[:full_stmt]
     end
     
@@ -971,7 +945,7 @@ module Vienna
       end
 
       generate_stmt stmt[:expr], :full_stmt => false, :last_stmt => false
-      write "){"
+      write ".r){"
       generate_stmt stmt[:stmt], :full_stmt => true, :last_stmt => false
       write "}"
       # return nil as safety value
@@ -996,37 +970,36 @@ module Vienna
       write "return " if context[:last_stmt] and context[:full_stmt]
       # write %{vm_optplus(}
       generate_stmt stmt[:recv], :last_stmt => false, :full_stmt => false
-      # write ".#{mid_to_jsid('+')}("
-      write " + "
+      write ".#{mid_to_jsid('+')}("
       generate_stmt stmt[:call_args][:args][0], :full_stmt => false
-      # write ")"
+      write ")"
       write ";" if context[:full_stmt]
     end
     
     def generate_opt_minus(stmt, context)
       write "return " if context[:last_stmt] and context[:full_stmt]
       generate_stmt stmt[:recv], :last_stmt => false, :full_stmt => false
-      write " - "
+      write ".#{mid_to_jsid('-')}("
       generate_stmt stmt[:call_args][:args][0], :full_stmt => false
-      # write ")"
+      write ")"
       write ";" if context[:full_stmt]
     end
     
     def generate_opt_mult(stmt, context)
       write "return " if context[:last_stmt] and context[:full_stmt]
       generate_stmt stmt[:recv], :last_stmt => false, :full_stmt => false
-      write " * "
+      write ".#{mid_to_jsid('*')}("
       generate_stmt stmt[:call_args][:args][0], :full_stmt => false
-      # write ")"
+      write ")"
       write ";" if context[:full_stmt]
     end
     
     def generate_opt_div(stmt, context)
       write "return " if context[:last_stmt] and context[:full_stmt]
       generate_stmt stmt[:recv], :last_stmt => false, :full_stmt => false
-      write " / "
+      write ".#{mid_to_jsid('/')}("
       generate_stmt stmt[:call_args][:args][0], :full_stmt => false
-      # write ")"
+      write ")"
       write ";" if context[:full_stmt]
     end
     
@@ -1038,13 +1011,13 @@ module Vienna
     
     def generate_true(stmt, context)
       write "return " if context[:last_stmt] and context[:full_stmt]
-      write "true"
+      write "#{SELF}.t"
       write ";" if context[:full_stmt]
     end
     
     def generate_false(stmt, context)
       write "return " if context[:last_stmt] and context[:full_stmt]
-      write "false"
+      write "#{SELF}.f"
       write ";" if context[:full_stmt]
     end
     
@@ -1117,14 +1090,13 @@ module Vienna
       
       # if/unless clause
       if stmt.node == :if
-        write "if("
+        write "if(("
       else # must be unless
         write "if(!("
       end
 
       generate_stmt stmt[:expr], :full_stmt => false, :last_stmt => false
-      write ")" if stmt.node == :unless
-      write "){"
+      write ").r){"
       stmt[:stmt].each do |s|
         # alays return last stmt. we output inside a function context to capture
         # the return value so that this will not return from the function itself
@@ -1138,7 +1110,7 @@ module Vienna
           if t.node == :elsif
             write "else if("
             generate_stmt t[:expr], :full_stmt => false, :last_stmt => false
-            write "){"
+            write ".r){"
             t[:stmt].each do |s|
               generate_stmt s, :full_stmt => true, :last_stmt =>((t[:stmt].last == s) && context[:last_stmt])
             end
@@ -1278,11 +1250,6 @@ module Vienna
     end
     
     def generate_assoc_list stmt, context
-      if stmt[:list].first && stmt[:list].first.node == :label_assoc
-        # puts "label assoc!"
-        return generate_label_assoc_list stmt, context
-      end
-      
       write "return " if context[:full_stmt] and context[:last_stmt]
       write "vnH("
       stmt[:list].each do |assoc|
@@ -1292,36 +1259,6 @@ module Vienna
         generate_stmt assoc[:value], :full_stmt => false, :last_stmt => false
       end
       write ")"
-      write ";" if context[:full_stmt]
-    end
-    
-    def generate_label_assoc_list_call(stmt, context)
-      write "{"
-      
-      stmt.each do |assoc|
-        # generate_stmt assoc[:key], :full_stmt => false, :last_stmt => false
-        write assoc[:key]
-        # write ","
-        generate_stmt assoc[:value], :full_stmt => false, :last_stmt => false
-        write "," unless stmt.last == assoc
-      end
-      
-      write "}"
-    end
-    
-    def generate_label_assoc_list(stmt, context)
-      write "return " if context[:full_stmt] and context[:last_stmt]
-      write "{"
-      
-      stmt[:list].each do |assoc|
-        # generate_stmt assoc[:key], :full_stmt => false, :last_stmt => false
-        write assoc[:key]
-        # write ","
-        generate_stmt assoc[:value], :full_stmt => false, :last_stmt => false
-        write "," unless stmt[:list].last == assoc
-      end
-      
-      write "}"
       write ";" if context[:full_stmt]
     end
     
@@ -1403,9 +1340,8 @@ module Vienna
     
     def generate_not(stmt, context)
       write "return " if context[:full_stmt] and context[:last_stmt]
-      write "!"
       generate_stmt stmt[:expr], :full_stmt => false
-      # write ".#{mid_to_jsid('!')}()"
+      write ".#{mid_to_jsid('!')}()"
       write ";" if context[:full_stmt]
     end
     
@@ -1444,69 +1380,6 @@ module Vienna
       generate_stmt stmt[:true], :full_stmt => false
       write " : "
       generate_stmt stmt[:false], :full_stmt => false
-      write ";" if context[:full_stmt]
-    end
-    
-    def generate_operator(stmt, context)
-      write "return " if context[:full_stmt] and context[:last_stmt]
-      generate_stmt stmt[:lhs], {}
-      write stmt[:meth]
-      generate_stmt stmt[:rhs], {}
-      write ";" if context[:full_stmt]
-    end
-    
-    def generate_tCOLON2call(stmt, context)
-      write "return " if context[:full_stmt] and context[:last_stmt]
-      generate_stmt stmt[:recv], {}
-      write ".#{stmt[:meth]}"
-      # generate_stmt stmt[:rhs], {}
-      
-      if stmt[:args]
-        # propety access call
-        # document::getElementsById 'first_name'
-        #   => document.getElementsById('first_name')
-        write "("
-        
-        stmt[:args][:args].each do |arg|
-          generate_stmt arg, {}
-          write "," unless stmt[:args][:args].last == arg
-        end
-        
-        write ")"
-      else
-        # just a property access
-        # my_array::length
-        #   => my_array.length
-      end
-      write ";" if context[:full_stmt]
-    end
-    
-    def generate_colon3identifier(stmt, context)
-      write "return " if context[:full_stmt] and context[:last_stmt]
-      write stmt[:name]
-      write ";" if context[:full_stmt]
-    end
-    
-    def generate_aref(stmt, context)
-      write "return " if context[:full_stmt] and context[:last_stmt]
-      generate_stmt stmt[:recv], {}
-      
-      args = stmt[:args][:args]
-      
-      if args.nil?
-        # no args, blank access? seems silly.
-        # This will cause a syntax error, so fix with empty string access?
-        write "['']"
-      elsif args.length == 1
-        # one property, just treat as regular aref
-        write "["
-        generate_stmt args.first, {}
-        write "]"
-      else
-        # more than one... split or slice..?
-        raise "need to implement generate_aref for multiple args"
-      end
-        
       write ";" if context[:full_stmt]
     end
   end
