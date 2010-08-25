@@ -30,5 +30,11 @@ module CherryKit
   
   class ViewController
     
+    attr_reader :first_name
+    
+    def initialize
+      
+      end
+    
   end
 end
