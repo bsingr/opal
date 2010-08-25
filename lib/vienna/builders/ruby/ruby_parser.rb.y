@@ -330,6 +330,9 @@ rule
           		      result = node :call, :recv => val[0], :meth => val[2]
                   }
             		| primary_value tCOLON2 tIDENTIFIER
+            		  {
+            		    result = node :tCOLON2call, :recv => val[0], :meth => val[2]
+            		  }
             		| primary_value '.' tCONSTANT
             		| primary_value tCOLON2 tCONSTANT
             		| tCOLON3 tCONSTANT
@@ -482,31 +485,31 @@ rule
             		  }
             		| arg '>' arg
             		  {
-            		    result = node :call, :recv => val[0], :meth => '>', :call_args => { :args => [val[2]]}
+            		    result = node :operator, :lhs => val[0], :rhs => val[2], :meth => '>'
             		  }
             		| arg tGEQ arg
             		  {
-            		    result = node :call, :recv => val[0], :meth => '>=', :call_args => { :args => [val[2]]}
+            		    result = node :operator, :lhs => val[0], :rhs => val[2], :meth => '>='
             		  }
             		| arg '<' arg
             		  {
-            		    result = node :call, :recv => val[0], :meth => '<', :call_args => { :args => [val[2]]}
+            		    result = node :operator, :lhs => val[0], :rhs => val[2], :meth => '<'
             		  }
             		| arg tLEQ arg
             		  {
-            		    result = node :call, :recv => val[0], :meth => '<=', :call_args => { :args => [val[2]]}
+            		    result = node :operator, :lhs => val[0], :rhs => val[2], :meth => '<='
             		  }
             		| arg tEQ arg
             		  {
-            		    result = node :call, :recv => val[0], :meth => '==', :call_args => { :args => [val[2]]}
+            		    result = node :operator, :lhs => val[0], :rhs => val[2], :meth => '==='
             		  }
             		| arg tEQQ arg
             		  {
-            		    result = node :call, :recv => val[0], :meth => '===', :call_args => { :args => [val[2]]}
+            		    result = node :operator, :lhs => val[0], :rhs => val[2], :meth => '==='
             		  }
             		| arg tNEQ arg
             		  {
-            		    result = node :call, :recv => val[0], :meth => '!=', :call_args => { :args => [val[2]]}
+            		    result = node :operator, :lhs => val[0], :rhs => val[2], :meth => '!=='
             		  }
             		| arg tMATCH arg
             		  {
@@ -668,6 +671,11 @@ rule
             		| tCOLON3 tCONSTANT
             		  {
             		    result = node :colon3, :name => val[1]
+            		  }
+            		| tCOLON3 tIDENTIFIER
+            		  {
+                    # added for ::document => document
+            		    result = node :colon3identifier, :name => val[1]
             		  }
             		| tLBRACK aref_args ']'
             		  {
@@ -899,12 +907,12 @@ rule
               	| primary_value tCOLON2 operation2 paren_args
               	  {
               	    result = node :tCOLON2call, :recv => val[0], :meth => val[2], :args => val[3]
-              	    puts "tCOLON2call"
+                    # puts "tCOLON2call"
               	  }
             		| primary_value tCOLON2 operation3
             		  {
               	    result = node :tCOLON2call, :recv => val[0], :meth => val[2]
-              	    puts "tCOLON2call.noargs."
+                    # puts "tCOLON2call.noargs."
               	  }
             		| primary_value '.' paren_args
             		| primary_value tCOLON2 paren_args
@@ -918,7 +926,7 @@ rule
             		  }
             		| primary_value '[' opt_call_args rbracket
             		  {
-                    result = node :call, :recv => val[0], :meth => '[]', :call_args => val[2]
+                    result = node :aref, :recv => val[0], :args => val[2]
                   }
 
 

@@ -61,7 +61,7 @@ class Module
       `var mid = #{attribute.to_s};
       var jsid = #{self}.mid2jsid(mid);
       #{self}.dm(mid, jsid, function() {
-        var #{self} = this;
+        //var #{self} = this;
         return #{self}.ig('@' + mid);
       }, false);`
     end
@@ -75,7 +75,7 @@ class Module
       var mid2 = mid + "=";
       var jsid = #{self}.mid2jsid(mid2);
       #{self}.dm(mid2, jsid, function(val) {
-        var #{self} = this;
+        //var #{self} = this;
         return #{self}.is('@' + mid, val);
       }, false);`
     end

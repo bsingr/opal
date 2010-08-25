@@ -104,6 +104,18 @@ task :opal_spec => :vienna_gem do
   project.build!
 end
 
+desc "Browser"
+task :browser => :vienna_gem do
+  browser_root = File.join(File.dirname(__FILE__), 'frameworks', 'browser')
+  
+  tmp_root = File.join(File.dirname(__FILE__), 'tmp', 'browser')
+  
+  project = Vienna::Project.new browser_root, :build_mode => :debug,
+                                              :build_root => tmp_root
+  
+  project.build!
+end
+
 desc "Browser Specs"
 task :browser_spec => :vienna_gem do
   browser_root = File.join(File.dirname(__FILE__), 'frameworks', 'browser')
