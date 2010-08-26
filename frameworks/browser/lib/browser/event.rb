@@ -30,13 +30,14 @@ module Browser
   class Event
     
     def self.listen(element, event_name, &block)
+      event_class = self
       `var eventName = #{event_name.to_s};
       var elem = #{element}.__element__;
       
       var listener = function(evt) {
-        var native = #{self}.$from_native(evt);
+        var native = #{event_class}.$from_native(evt);
         
-        var result = #{block}.__fun__(native);
+        var result = #{block}.apply(#{block}.__self__, [native]);
         
         if (!result.r) {
           evt.preventDefault();

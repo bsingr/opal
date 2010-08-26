@@ -69,23 +69,8 @@ var T_CLASS             = 1,
 
 
 // create a ruby proc from javascript func
-global.vnP = function(fun) {
-  var res = new class_proc.allocator();
-  res.__fun__ = fun;
-  return res;
-};
 
-// create a ruby symbol from javascript str. This checks the global sym table
-// first to make sure we only create one symbol per name (id).
-global.vnY = function(str) {
-  if (symbol_table.hasOwnProperty(str))
-    return symbol_table[str];
-    
-  var res = new class_symbol.allocator();
-  res.__ptr__ = str;
-  symbol_table[str] = res;
-  return res;
-};
+
 
 // hash from arguments vnH(key1, val1, key2, val2...)
 global.vnH = function() {
@@ -342,25 +327,82 @@ __boot_base_class.prototype.extend = function(module) {
 __boot_base_class.prototype.r = true;
 
 // ANDTEST
-__boot_base_class.prototype.a = function(rhs) {
-  if (this.r)
-    return rhs();
+__boot_base_class.prototype.a = function(lhs, rhs) {
+  if (lhs.r)
+    return rhs.apply(this);
   
-  return this;
+  return lhs;
 };
 
 // ORTEST
-__boot_base_class.prototype.o = function(rhs) {
-  if (this.r)
-    return this;
+__boot_base_class.prototype.o = function(lhs, rhs) {
+  if (lhs.r)
+    return lhs;
   
-  return rhs();
+  return rhs.apply(this);
+};
+
+
+
+// break keyword (with possible args?)
+__boot_base_class.prototype.rbBreak = function(value) {
+  throw {
+    toString: function() {
+      return "uncaught break";
+    },
+    opal_type: 'break',
+    opal_value: value || this.n
+  };
+};
+
+// return keyword (only within a block) with args..
+__boot_base_class.prototype.rbReturn = function(value) {
+  throw  {
+    toString: function() {
+      return "uncaught rbReturn";
+    },
+    opal_type: 'return',
+    opal_value: value || this.n
+  };
 };
 
 // ruby proc from function
-__boot_base_class.prototype.P = function(fun) {
-  var res = new class_proc.allocator();
-  res.__fun__ = fun;
+// 
+// A proc/block/llambda are simply javascript functions. Everytime a block is
+// created in ruby, its current self, as in the self which the block should use
+// for evaluating, is stored by the function onto the property .__self__, so 
+// that whenever the block is call()'d or yield()'d, it is apply()'d using this
+// self so that it evaluates in that given context. To evaluate the block in
+// another context, with, for exampke, instance_eval, we just apply() with our
+// own custom self. We never need to replace __self__, we just apply uysing a
+// different context.
+// 
+// @param {Object} self - the current self scope for the block
+// @param {Function} fun - the block implementation
+__boot_base_class.prototype.P = function(self, fun) {
+  fun.__self__ = self;
+  return fun;
+  // var res = new class_proc.allocator();
+  // res.__fun__ = fun;
+  // return res;
+};
+
+// same as above, but lambda
+__boot_base_class.prototype.L = function(self, fun) {
+  fun.__self__ = self;
+  fun.__lambda__ = true;
+  return fun;
+};
+
+// create a ruby symbol from javascript str. This checks the global sym table
+// first to make sure we only create one symbol per name (id).
+__boot_base_class.prototype.Y = function(str) {
+  if (symbol_table.hasOwnProperty(str))
+    return symbol_table[str];
+    
+  var res = new class_symbol.allocator();
+  res.__ptr__ = str;
+  symbol_table[str] = res;
   return res;
 };
 
@@ -639,8 +681,15 @@ class_object.dm = function() {
 };
 
 // Proc class
-class_proc = define_class_under(class_object, "Proc", class_object);
+// class_proc = define_class_under(class_object, "Proc", class_object);
+// class_proc.allocator.prototype.info = T_OBJECT | T_PROC;
+
+class_proc = define_bridged_class("Proc", Function);
 class_proc.allocator.prototype.info = T_OBJECT | T_PROC;
+// Fix for Object's super_class being a proc and causing inifite recusrion in
+// super class chain Object->Proc->Object...etc
+class_object.allocator.prototype.super_class = undefined;
+class_object.super_class = undefined;
 
 // Range class
 class_range = define_class_under(class_object, "Range", class_object);

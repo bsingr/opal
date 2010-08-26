@@ -172,7 +172,7 @@ module CherryKit
       if @event_handler
         event.view = @event_handler_view
         RunLoop.run do
-          `#{@event_handler}.__fun__(#{event});`
+          `#{@event_handler}.apply(#{@event_handler}.__self__, [#{event}]);`
         end
       else
         # send event within a runloop block so that all action calls etc are
@@ -215,7 +215,7 @@ module CherryKit
       @event_handler_events = events
       @event_handler_view = @current_event.view
       # resend current event
-      `#{@event_handler}.__fun__(#{@current_event});`
+      `#{@event_handler}.apply(#{@event_handler}.__self__, [#{@current_event}]);`
     end
     
     # Discard event capture.

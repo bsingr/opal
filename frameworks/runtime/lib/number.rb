@@ -60,14 +60,14 @@ class Number
   
   def upto(finish, &block)
     `for (var i = #{self}; i <= #{finish}; i++) {
-      #{block}.__fun__(i);
+      #{block}.apply(#{block}.__self__, [i]);
     }`
     self
   end
   
   def times(&block)
     `for (var i = 0; i < #{self}; i++) {
-      #{block}.__fun__(i);
+       #{block}.apply(#{block}.__self__, [i]);
     }`
     self
   end
@@ -77,7 +77,6 @@ class Number
   end
   
   def >(other)
-    puts "checking with #{other} from #{self}"
     `return #{self} > #{other} ? #{true} : #{false};`
   end
   

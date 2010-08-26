@@ -28,7 +28,10 @@ class Array
   
   def each(&block)
     `for (var i = 0; i < #{self}.length; i++) {
-      #{block}.__fun__(#{self}[i]);
+      //#{block}.__fun__(#{self}[i]);
+      //console.log(arguments[0]);
+      //console.log(#{self});
+      #{block}.apply(#{block}.__self__, [#{self}[i]]);
     }`
     self
   end
@@ -75,13 +78,13 @@ class Array
     if (!(#{other}.info & #{self}.TA)) return #{false};
     if (#{self}.length !== #{other}.length) return #{false};
     for (var i = 0; i < #{self}.length; i++) {
-      if (!#{self}[i].$$e$e(#{other}[i].r)) return #{false};
+      if (!#{self}[i].$$e$e(#{other}[i]).r) return #{false};
     }`
     true
   end
   
   def [](index)
-    `return #{self}[#{index}] || #{nil};`
+    `return #{self}[#{index}];`
   end
   
   def []=(index, value)

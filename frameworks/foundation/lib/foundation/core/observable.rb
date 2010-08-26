@@ -121,7 +121,7 @@ module CherryKit
         if respond_to? method_id
           original = `#{self}[js_id];`
           # define new method as result of calling the closure
-          `#{self}[js_id] = #{implementation}.__fun__(#{key}, #{original}).__fun__;`
+          `#{self}[js_id] = #{implementation}.apply(#{implementation}.__self__, [#{key}, #{original}]);`
         end
       end
       
@@ -166,7 +166,7 @@ module CherryKit
         # notify every observer that we have changed
         # puts "did_change: #{key}"
         @__observer_info[key][:observers].each do |block_callback|
-          `#{block_callback}.__fun__(#{changes});`
+          `#{block_callback}.apply(#{block_callback}.__self__, [#{changes}]);`
         end
   
         # puts "dependee keys for #{key} are:"

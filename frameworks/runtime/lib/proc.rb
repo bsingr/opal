@@ -29,4 +29,30 @@ class Proc
   def to_proc
     self
   end
+  
+  def call
+    `if (#{self}.__lambda__) {
+      try {
+        return #{self}.apply(#{self}.__self__, []);
+      }
+      catch (e) {
+        // first try and catch a break (from the lambda proc)
+        if (e.opal_type == 'break') {
+          //console.log("break!");
+          return e.opal_value;
+        }
+        
+        // next try and catch return error statement (simply return it)
+        if (e.opal_type == 'return') {
+          return e.opal_value;
+        }
+        
+        // worst case, rethrow error
+        throw e;
+      }
+    }
+    else {
+      throw "cannot .call for non lambda block.. yet"
+    }`
+  end
 end

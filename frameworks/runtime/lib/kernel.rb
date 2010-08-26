@@ -27,6 +27,12 @@
 module Kernel
   
   def is_a?(klass)
+    # `console.log("chjecking isa for:")
+    # console.log(#{self});
+    # console.log(#{klass});
+    # throw "";
+    # `
+    
     `var search = #{self}.isa;
     
     while (search) {
@@ -52,6 +58,10 @@ module Kernel
       return #{true};
     }`
     false
+  end
+  
+  def ===(other)
+    self == other
   end
   
   def instance_variable_defined?(variable_name)
@@ -132,8 +142,8 @@ module Kernel
   
   def instance_eval(&block)
     if block_given?
-      `#{block}.__fun__.opal_self = true;`
-      `#{block}.__fun__.apply(#{self});`
+      # `#{block}.__fun__.opal_self = true;`
+      `#{block}.apply(#{self});`
     end
   end
   

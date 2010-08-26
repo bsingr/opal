@@ -35,7 +35,7 @@ module CherryKit
       run_loop = current_run_loop
       
       # 2. run the event/trigger
-      res = `#{block}.__fun__();`
+      res = `#{block}.apply(#{block}.__self__);`
       
       # 3. now run all rendering etc for the runloop
       @current_run_loop.flush_queue

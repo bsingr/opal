@@ -97,7 +97,7 @@ module Browser
       selector = `'#' + #{selector.to_s}` if selector.is_a? Symbol
       elements = `Sizzle(#{selector}, #{context}.__element__);`
       if elements.length == 1
-        return `#{Element}.$from_native(#{elements}[0]);`
+        `return #{Element}.$from_native(#{elements}[0]);`
       else
         # `console.log(#{elements});`
         raise "need to handle find_in_context array"

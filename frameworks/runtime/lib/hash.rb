@@ -44,7 +44,7 @@ class Hash
     for (var i = 0; i < #{self}.__keys__.length; i++) {
       key = #{self}.__keys__[i];
       value = #{self}.__assocs__[key.hash()];
-      #{block}.__fun__(key, value);
+      #{block}.apply(#{block}.__self__, [key, value]);
     }`
     self
   end

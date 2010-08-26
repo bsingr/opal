@@ -36,10 +36,10 @@ class Module
   
   def define_method(method, &implementation)
     # we are defining a method, so always use opal_self to reclaim self
-    `#{implementation}.__fun__.opal_self = true;
-    var mid = #{method.to_s};
+    # `#{implementation}.__fun__.opal_self = true;
+    `var mid = #{method.to_s};
     var jsid = #{self}.mid2jsid(mid);
-    #{self}.dm(mid, jsid, #{implementation}.__fun__, false);`
+    #{self}.dm(mid, jsid, #{implementation}, false);`
     self
   end
   
@@ -61,7 +61,6 @@ class Module
       `var mid = #{attribute.to_s};
       var jsid = #{self}.mid2jsid(mid);
       #{self}.dm(mid, jsid, function() {
-        var #{self} = this;
         return #{self}.ig('@' + mid);
       }, false);`
     end
@@ -75,7 +74,6 @@ class Module
       var mid2 = mid + "=";
       var jsid = #{self}.mid2jsid(mid2);
       #{self}.dm(mid2, jsid, function(val) {
-        var #{self} = this;
         return #{self}.is('@' + mid, val);
       }, false);`
     end
@@ -93,8 +91,8 @@ class Module
     if block_given?
       # puts "block was given.."
       # `console.log(#{self});`
-      `#{block}.__fun__.opal_self = true;`
-      `#{block}.__fun__.apply(#{self});`
+      # `#{block}.__fun__.opal_self = true;`
+      `#{block}.apply(#{self});`
     end
   end
   

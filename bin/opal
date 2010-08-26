@@ -1,3 +1,19 @@
 #!/usr/bin/env node
 
-require('sys');
+var PATH = require('path');
+var FS = require('fs');
+var lib_path = PATH.join(PATH.dirname(PATH.join(__filename)), '../lib_node');
+
+// require(lib_path + '/command').run();
+
+// for now, just rebuild parser
+var parser = require('../src/parser').Parser;
+var output = parser.generate();
+
+// console.log(output);
+var dest = PATH.join(PATH.dirname(PATH.join(__filename)), '../lib_node/parser.js');
+require('fs').writeFile(dest, output);
+
+console.log("done");
+
+parser.parse("hey");

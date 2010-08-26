@@ -234,9 +234,16 @@ class Vienna::RubyParser < Racc::Parser
 	  string_type = string_parse[:type]
 	  string_beg = string_parse[:beg]
 	  
+	  allow_new_lines = [:words, :xstring].include? string_type
+	  interpolate = !(string_type == :squote)
+	  
     # Read end of string/xstring/regexp markers
 	  if scanner.scan(/#{Regexp.escape string_beg}/)
 	    if string_type == :dquote or string_type == :squote
+	      self.string_parse = nil
+	      self.lex_state = :EXPR_END
+	      return [:tSTRING_END, scanner.matched]
+	    elsif string_type == :words
 	      self.string_parse = nil
 	      self.lex_state = :EXPR_END
 	      return [:tSTRING_END, scanner.matched]
@@ -257,10 +264,18 @@ class Vienna::RubyParser < Racc::Parser
     
     case
     when scanner.scan(/#(\$|\@)/)
-      return [:tSTRING_DVAR, scanner.matched]
+      if interpolate
+        return [:tSTRING_DVAR, scanner.matched]
+      else
+        str_buffer << scanner.matched
+      end
     when scanner.scan(/#\{/)
-      string_parse[:content] = false
-      return [:tSTRING_DBEG, scanner.matched]
+      if interpolate
+        string_parse[:content] = false
+        return [:tSTRING_DBEG, scanner.matched]
+      else
+        str_buffer << scanner.matched
+      end
     when scanner.scan(/#/)
       str_buffer << '#'
     end
@@ -270,7 +285,7 @@ class Vienna::RubyParser < Racc::Parser
     # scanner.scan(/(.|\s)/)
     
     # xstrings can have new lines: normal strings cant, so exlcude \n from normal strings
-    re = (string_parse[:beg] == '`') ? /[^#{Regexp.escape(string_beg)}\#\0]+|./ : /[^#{Regexp.escape(string_beg)}\#\0\n]+|./
+    re = (allow_new_lines) ? /[^#{Regexp.escape(string_beg)}\#\0]+|./ : /[^#{Regexp.escape(string_beg)}\#\0\n]+|./
     
     # puts re
     scanner.scan(re)
@@ -400,7 +415,13 @@ class Vienna::RubyParser < Racc::Parser
         self.string_parse = { :type => :xstring, :beg => '`', :content => true } 
         return [:tXSTRING_BEG, scanner.matched]
       
-      
+      elsif scanner.scan(/\%W/)
+        start_word = scanner.scan(/./)
+        end_start_word = {'(' => ')', '[' => ']', '{' => '}'}[start_word]
+        end_start_word ||= start_word
+                
+        self.string_parse = { :type => :words, :beg => end_start_word, :content => true}
+        return [:tWORDS_BEG, scanner.matched]
       
       
       elsif scanner.scan(/\=/)
@@ -721,6 +742,15 @@ class Vienna::RubyParser < Racc::Parser
           return [:kIF, scanner.matched] if lex_state == :EXPR_BEG
           self.lex_state = :EXPR_BEG
           return [:kIF_MOD, scanner.matched]
+        when 'while'
+          self.lex_state = :EXPR_BEG
+          return [:kWHILE, scanner.matched]
+        when 'until'
+          self.lex_state = :EXPR_BEG
+          return [:kUNTIL, scanner.matched]
+        when 'lambda'
+          self.lex_state = :EXPR_BEG
+          return [:tLAMBDA, scanner.matched]
         when 'then'
           # self.lex_state = 
           return [:kTHEN, scanner.matched]

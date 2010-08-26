@@ -710,6 +710,9 @@ rule
             		    result = val[0]
             		  }
             		| tLAMBDA lambda
+            		  {
+            		    result = node :lambda, :args => val[1][:args], :body => val[1][:body]
+            		  }
             		| k_if expr_value then compstmt if_tail k_end
             		  {
             		    result = self.node :if, :expr => val[1], :stmt => val[3], :tail => val[4]
@@ -719,7 +722,14 @@ rule
             		    result = self.node :unless, :expr => val[1], :stmt => val[3], :tail => val[4]
             		  }
             		| k_while expr_value do compstmt k_end
+            		  {
+                    # puts "in node while"
+            		    result = node :while, :expr => val[1], :stmt => val[3]
+            		  }
             		| k_until expr_value do compstmt k_end
+            		  {
+            		    result = node :until, :expr => val[1], :stmt => val[3]
+            		  }
             		| k_case expr_value opt_terms case_body k_end
             		  {
             		    result = node :case, :expr => val[1], :body => val[3]
@@ -867,12 +877,21 @@ rule
             		| f_bad_arg
 
           lambda: f_larglist lambda_body
+                  {
+                    result = {:args => val[0], :body => val[1]}
+                  }
 
       f_larglist: '(' f_args opt_bv_decl rparen
 		            | f_args
 
-     lambda_body: tLAMBEG compstmt '}'
+     lambda_body: tLBRACE compstmt '}'
+                  {
+                    result = val[1]
+                  }
             		| kDO_LAMBDA compstmt kEND
+            		  {
+            		    result = val[1]
+            		  }
 
         do_block: kDO_BLOCK opt_block_param compstmt kEND
                 | kDO opt_block_param compstmt kEND
@@ -1001,13 +1020,28 @@ rule
 
            words: tWORDS_BEG ' ' tSTRING_END
             		| tWORDS_BEG word_list tSTRING_END
+            		  {
+            		    result = node :words, :list => val[1]
+            		  }
 
        word_list: /* none */
-            		| word_list word ' '
+                  {
+                    result = []
+                  }
+            		| word_list word
+            		  {
+            		    result = val[0] + [val[1]]
+            		  }
 
             word: string_content
+                  {
+                    result = [val[0]]
+                  }
             		| word string_content
-
+                  {
+                    result = val[0] + [val[1]]
+                  }
+                  
           qwords: tQWORDS_BEG ' ' tSTRING_END
             		| tQWORDS_BEG qword_list tSTRING_END
 

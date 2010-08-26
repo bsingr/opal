@@ -1,5 +1,5 @@
+# 
 # describe "The if expression" do
-#   
 #   it "evaluates body if expression is true" do
 #     a = []
 #     if true
@@ -24,7 +24,7 @@
 #     a.should == []
 #   end
 #   
-#   it "does not evaluate else-body if expression is true" do
+#   it "does not evaluate else body if expression is true" do
 #     a = []
 #     if true
 #       a << 123
@@ -45,10 +45,10 @@
 #   end
 #   
 #   it "returns result of then-body evaluation if expression is true" do
-#     if true
-#       'foo'
-#       'bar'
-#       'baz'
-#     end.should == 'baz'
+#     # raise "this causes error: return is injected before if = javascript error"
+#     # if true
+#       # 123
+#     # end.should == 456
 #   end
 # end
+
