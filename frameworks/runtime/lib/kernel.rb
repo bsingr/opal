@@ -26,6 +26,26 @@
 
 module Kernel
   
+  def !=(other)
+    `return #{self == other}.r ? #{false} : #{true};`
+  end
+  
+  def loop(&block)
+    `try {
+      while (true) {
+        #{block}.apply(#{block}.__self__, []);
+      }
+    } catch (e) {
+      // capture break statements
+      if (e.opal_type == 'break') {
+        return e.opal_value;
+      }
+      
+      // rethrow everything else
+      throw e;
+    }`
+  end
+  
   def is_a?(klass)
     # `console.log("chjecking isa for:")
     # console.log(#{self});

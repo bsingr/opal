@@ -26,9 +26,9 @@
 
 class File
   
-  class << self
+  # class << self
     
-  end
+  # end
   
   def self.join(*parts)
     parts.join '/'

@@ -795,6 +795,9 @@ class Vienna::RubyParser < Racc::Parser
         when 'next'
           self.lex_state = :EXPR_MID
           return [:kNEXT, scanner.matched]
+        when 'redo'
+          self.lex_state = :EXPR_MID
+          return [:kREDO, scanner.matched]
         when 'case'
           self.lex_state = :EXPR_BEG
           return [:kCASE, scanner.matched]

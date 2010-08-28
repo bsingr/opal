@@ -768,6 +768,9 @@ rule
             		    result = node :next, :call_args => nil
             		  }
             		| kREDO
+            		  {
+            		    result = node :redo
+            		  }
             		| kRETRY
 
    primary_value: primary
@@ -800,6 +803,7 @@ rule
 
               do: term
 		            | kDO_COND
+		            | kDO
 
          if_tail: opt_else
                   {

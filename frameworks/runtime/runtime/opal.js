@@ -175,8 +175,9 @@ __boot_base_class.prototype.define_class = function(sup, id, body, flag) {
       klass = define_class_under(base, id, sup);
       break;
     case 1:
-      // throw "running class shift"
-      return;
+      // throw "running class shift for " + id.class_name
+      klass = id.isa;
+      // return;
       break;
     case 2:
       klass = define_module_under(base, id);
@@ -185,9 +186,9 @@ __boot_base_class.prototype.define_class = function(sup, id, body, flag) {
       throw "define_class: unknown flag: " + flag
   }
   
-  body.apply(klass);
+  return body.apply(klass);
   
-  return klass;
+  // return klass;
 };
 
 __boot_base_class.prototype.dm =function(m_id, js_id, body, singleton) {
@@ -342,7 +343,68 @@ __boot_base_class.prototype.o = function(lhs, rhs) {
   return rhs.apply(this);
 };
 
+// Handle while loops.
+// 
+// @param {Function} expression wrapped in function to evaluate before each pass
+// @param {Function} body wrapped in function to evaluate as eash pass
+// @param {Boolean} should_redo - call the body once without reevaluating the
+//        expression. This allows for 'redo' support. Default is false, we set
+//        it to true ourselves by repplaying() the method.
+// 
+// Example
+// 
+//    while true
+//      puts 10
+//    end
+// 
+//    self.rbWhile(function() {
+//      return self.t;
+//    }), function() {
+//      self.puts(10);
+// };
+// })
+__boot_base_class.prototype.rbWhile = function(expression, body, should_redo) {
+  try {
+    // are we in a redo()? if so, apply body once first, then carry on
+    if (should_redo) {
+      body.apply(this);
+    }
+    
+    while (expression.apply(this)) {
+      body.apply(this);
+    }
+    // while_loop.apply(this);
+    // default return nil if everything was ok
+    return this.n;
+  } catch (e) {
+    // try and catch a break statement
+    if (e.opal_type ==  'break') {
+      return e.opal_value || this.n;
+    }
+    
+    // testing next.. this might not work too well...
+    if (e.opal_type == 'next') {
+      return arguments.callee.apply(this, [expression, body]);
+    }
+    
+    if (e.opal_type == 'redo') {
+      return arguments.callee.apply(this, [expression, body, true]);
+    }
+    
+    // anything else, rethrow
+    throw e;
+  };
+};
 
+// redo keyword - no args ever
+__boot_base_class.prototype.rbRedo = function() {
+  throw {
+    toString: function() {
+      return "uncaught redo";
+    },
+    opal_type: 'redo'
+  };
+};
 
 // break keyword (with possible args?)
 __boot_base_class.prototype.rbBreak = function(value) {
@@ -351,6 +413,17 @@ __boot_base_class.prototype.rbBreak = function(value) {
       return "uncaught break";
     },
     opal_type: 'break',
+    opal_value: value || this.n
+  };
+};
+
+// next keyword
+__boot_base_class.prototype.rbNext = function(value) {
+  throw {
+    toString: function() {
+      return "uncaught next";
+    },
+    opal_type: 'next',
     opal_value: value || this.n
   };
 };
@@ -489,14 +562,14 @@ var define_class_under = function(base, id, super_class) {
 // This uses the String constructor. For now, every toll free will inherit from
 // object, and will be set as a constant in the Object:: namespace
 // 
-var define_bridged_class = function(id, native) {
+var define_bridged_class = function(id, native_class) {
   var res = __subclass(id, class_object);
   
   var old_allocator = res.allocator.prototype;
-  res.allocator = native;
+  res.allocator = native_class;
   
   for (var prop in old_allocator) {
-    native.prototype[prop] = old_allocator[prop];
+    native_class.prototype[prop] = old_allocator[prop];
   }
   
   class_object.const_set(id, res);

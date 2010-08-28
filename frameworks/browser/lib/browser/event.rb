@@ -35,9 +35,9 @@ module Browser
       var elem = #{element}.__element__;
       
       var listener = function(evt) {
-        var native = #{event_class}.$from_native(evt);
+        var native_event = #{event_class}.$from_native(evt);
         
-        var result = #{block}.apply(#{block}.__self__, [native]);
+        var result = #{block}.apply(#{block}.__self__, [native_event]);
         
         if (!result.r) {
           evt.preventDefault();

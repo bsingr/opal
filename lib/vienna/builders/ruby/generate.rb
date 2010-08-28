@@ -159,6 +159,10 @@ module Vienna
         generate_lambda stmt, context
       when :words
         generate_words stmt, context
+      when :next
+        generate_next stmt, context
+      when :redo
+        generate_redo stmt, context
       else
         write "\n[Unknown type for generate_stmt: #{stmt.inspect}]\n"
       end
@@ -1508,6 +1512,17 @@ module Vienna
       write ");"
     end
     
+    def generate_next(stmt, context)
+      write "#{SELF}.rbNext("
+      if stmt[:call_args] and stmt[:call_args][:args]
+        stmt[:call_args][:args].each do |arg|
+          write "," unless stmt[:call_args][:args].first == arg
+          generate_stmt arg, :full_stmt => false
+        end
+      end
+      write ");"
+    end
+    
     def generate_tertiary(stmt, context)
       write "return " if context[:full_stmt] and context[:last_stmt]
       write "RTEST("
@@ -1521,29 +1536,42 @@ module Vienna
     
     def generate_while(stmt, context)
       
-      
+    
+    
+      write "#{SELF}.rbWhile(function(){"
       if stmt.node == :while
-        write "while ("
+        write "return ("
       else
         # until..
-        write "while (!("
+        write "return (!("
       end
       
       generate_stmt stmt[:expr], {}
       
       if stmt.node == :while
-        write ".r) {"
+        write ".r);"
       else
         # until..
-        write ".r)) {"
+        write ".r));"
       end
+      
+      # generate_stmt stmt[:expr], {}
+      
+      write "}, function() {"
       
       stmt[:stmt].each do |stmt|
         generate_stmt stmt, :full_stmt => true
       end
       
-      write "}"
+      # write "}"
+      
+      write "})"
+      
+      write ";\n" if context[:full_stmt]
     end
+    
+    
+    
     
     def generate_lambda(stmt, context)
       write "return " if context[:last_stmt] && context[:full_stmt]
@@ -1591,6 +1619,11 @@ module Vienna
       
       write "]"
       write ";\n" if context[:full_stmt]
+    end
+    
+    
+    def generate_redo(stmt, context)
+      write "#{SELF}.rbRedo();"
     end
   end
 end

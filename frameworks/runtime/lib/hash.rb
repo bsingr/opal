@@ -48,4 +48,19 @@ class Hash
     }`
     self
   end
+  
+  def size
+    `return #{self}.__keys__.length;`
+  end
+  
+  def ==(other)
+    `if (#{self} === #{other}) return #{true};
+    if (!(#{other}.info & #{self}.TH)) return #{false}
+    if (#{self}.__keys__.length !== #{other}.__keys__.length) return #{false};
+    for (var i = 0; i < #{self}.__keys__.length; i++) {
+      var key = #{self}.__keys__[i].hash();
+      if (!(#{self}.__assocs__[key].$$e$e(#{other}.__assocs__[key]).r)) return #{false};
+    }`
+    true
+  end  
 end

@@ -42,6 +42,11 @@ class Proc
           return e.opal_value;
         }
         
+        // look for next statements
+        if (e.opal_type == 'next') {
+          return e.opal_value;
+        }
+        
         // next try and catch return error statement (simply return it)
         if (e.opal_type == 'return') {
           return e.opal_value;

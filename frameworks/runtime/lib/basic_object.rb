@@ -42,8 +42,8 @@ class BasicObject
     false
   end
   
-  def != other
-    
+  def !=(other)
+    `return #{self == other}.r ? #{false} : #{true};`
   end
   
 end
