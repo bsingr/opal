@@ -413,7 +413,7 @@ __boot_base_class.prototype.rbBreak = function(value) {
       return "uncaught break";
     },
     __keyword__: 'break',
-    opal_value: value || this.n
+    opal_value: value == undefined ? this.n : value
   };
 };
 

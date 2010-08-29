@@ -55,7 +55,15 @@ class Array
   def map(&block)
     result = []
     `for (var i = 0; i < #{self}.length; i++) {
-      #{result}.push(#{block}.__fun__(#{self}[i]));
+      try {
+        #{result}.push(#{block}.apply(#{block}.__self__, [#{self}[i]]));
+      } catch (e) {
+        if (e.__keyword__ == 'break') {
+          return e.opal_value;
+        }
+        
+        throw e;
+      }
     }`
     result
   end
@@ -67,6 +75,17 @@ class Array
   def <<(obj)
     `#{self}.push(#{obj});`
     self
+  end
+  
+  def first(count=nil)
+    if count
+      `return #{self}.slice(0, #{count});`
+    else
+      `if (#{self}.length == 0) {
+        return #{nil};
+      }
+      return #{self}[0];`
+    end
   end
   
   def length
