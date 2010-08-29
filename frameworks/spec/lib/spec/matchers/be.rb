@@ -1,5 +1,5 @@
 # 
-# proc.rb
+# be.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,45 +24,3 @@
 # THE SOFTWARE.
 #
 
-class Proc
-  
-  def to_proc
-    self
-  end
-  
-  def call
-    `if (#{self}.__lambda__) {
-      try {
-        return #{self}.apply(#{self}.__self__, []);
-      }
-      catch (e) {
-        // first try and catch a break (from the lambda proc)
-        if (e.__keyword__ == 'break') {
-          //console.log("break!");
-          return e.opal_value;
-        }
-        
-        // look for next statements
-        if (e.__keyword__ == 'next') {
-          return e.opal_value;
-        }
-        
-        // next try and catch return error statement (simply return it)
-        if (e.__keyword__ == 'return') {
-          return e.opal_value;
-        }
-        
-        // redo - simply recall block?
-        if (e.__keyword__ == 'redo') {
-          return arguments.callee.apply(#{self});
-        }
-        
-        // worst case, rethrow error
-        throw e;
-      }
-    }
-    else {
-      throw "cannot .call for non lambda block.. yet"
-    }`
-  end
-end

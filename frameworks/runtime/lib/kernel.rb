@@ -37,7 +37,7 @@ module Kernel
       }
     } catch (e) {
       // capture break statements
-      if (e.opal_type == 'break') {
+      if (e.__keyword__ == 'break') {
         return e.opal_value;
       }
       

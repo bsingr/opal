@@ -199,6 +199,9 @@ rule
             		    result = node :unless_mod, :stmt => val[0], :expr => val[2]
             		  }
             		| stmt kWHILE_MOD expr_value
+            		  {
+            		    result = node :while, :expr => val[2], :stmt => [val[0]]
+            		  }
             		| stmt kUNTIL_MOD expr_value
             		| stmt kRESCUE_MOD stmt
                 | klEND '{' compstmt '}'
@@ -1301,6 +1304,9 @@ xstring_contents:
             		  }
 
            f_opt: tIDENTIFIER '=' arg_value
+                  {
+                    result = [val[0], val[2]]
+                  }
 
      f_block_opt: tIDENTIFIER '=' primary_value
 

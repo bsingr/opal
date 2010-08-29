@@ -743,8 +743,9 @@ class Vienna::RubyParser < Racc::Parser
           self.lex_state = :EXPR_BEG
           return [:kIF_MOD, scanner.matched]
         when 'while'
+          return [:kWHILE, scanner.matched] if lex_state == :EXPR_BEG
           self.lex_state = :EXPR_BEG
-          return [:kWHILE, scanner.matched]
+          return [:kWHILE_MOD, scanner.matched]
         when 'until'
           self.lex_state = :EXPR_BEG
           return [:kUNTIL, scanner.matched]

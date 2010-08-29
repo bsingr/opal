@@ -30,7 +30,23 @@ class FalseClass
     "false"
   end
   
+  def to_s
+    "false"
+  end
+  
   def !()
     true
+  end
+  
+  def &(other)
+    false
+  end
+  
+  def |(other)
+    other ? true : false
+  end
+  
+  def ^(other)
+    other ? true : false
   end
 end

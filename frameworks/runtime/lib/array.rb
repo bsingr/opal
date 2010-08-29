@@ -28,10 +28,19 @@ class Array
   
   def each(&block)
     `for (var i = 0; i < #{self}.length; i++) {
-      //#{block}.__fun__(#{self}[i]);
-      //console.log(arguments[0]);
-      //console.log(#{self});
-      #{block}.apply(#{block}.__self__, [#{self}[i]]);
+      try {
+        #{block}.apply(#{block}.__self__, [#{self}[i]]);
+      } catch (e) {
+        if (e.__keyword__ == 'redo') {
+          i--;
+        }
+        else if (e.__keyword__ == 'break') {
+          return e.opal_value;
+        }
+        else {
+          throw e;
+        }
+      }
     }`
     self
   end
@@ -61,6 +70,10 @@ class Array
   end
   
   def length
+    `return #{self}.length;`
+  end
+  
+  def size
     `return #{self}.length;`
   end
   

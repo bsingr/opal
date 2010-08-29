@@ -8,9 +8,9 @@
 
 class String
   
-  def initialize(string="")
-    `#{self} = #{string};`
-  end
+  # def initialize(string="")
+    # `#{self} = #{string};`
+  # end
   
   def index(string)
     `var res = #{self}.indexOf(#{string});

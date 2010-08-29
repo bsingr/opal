@@ -25,6 +25,7 @@
 #
 
 require 'spec/matchers/operator_matcher'
+require 'spec/matchers/be'
 require 'spec/matchers/generated_descriptions'
 
 

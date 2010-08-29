@@ -40,6 +40,8 @@ module Vienna
       ISEQ_TYPE_ENSURE = 6
       ISEQ_TYPE_EVAL   = 7
       ISEQ_TYPE_MAIN   = 8
+      # opt args etc use this
+      ISEQ_TYPE_TEMP = 9
     
 
     
@@ -187,6 +189,8 @@ module Vienna
         @post_arg_names = []
         @block_arg_name = nil
         
+        @opt_arg_str = {}
+        
         @local_current = "a"
         
         @code = []
@@ -226,8 +230,14 @@ module Vienna
       end
       
       # push optional arg name, with the node for its default value
-      def push_opt_arg_name(name, stmt)
-        
+      # 
+      #  ['a', ""] <- for example
+      def push_opt_arg(name, str)
+        # name = arg[0]
+        @args[name] = name
+        @opt_arg_names.push name
+        @opt_arg_str[name] = str
+        name
       end
       
       # push rest arg name
@@ -377,6 +387,39 @@ module Vienna
               (arguments[#{length}] && arguments[#{length}].info & this.TP)
               ? arguments[#{length}] : this.n;|
           end
+        
+        # Case: optional args, nothing else; def (a=1); end
+        elsif norm == 0 && opt > 0 && post == 0 && rest.nil?
+          @opt_arg_names.each do |arg|
+            r << arg
+            r << ", " unless @opt_arg_names.last == arg
+          end
+          r << "){"
+          @opt_arg_names.each do |arg|
+            r << "if (#{arg} == undefined) {"
+            r << "  #{arg} = #{@opt_arg_str[arg]};"
+            r << "}"
+          end
+        
+        # Case: some normal args, some optional, nothing else
+        elsif norm > 0 && opt > 0 && post == 0 && rest.nil?
+          @norm_arg_names.each do |a|
+            r << ', ' unless a == @norm_arg_names.first
+            r << @args[a]
+          end
+          
+          @opt_arg_names.each do |arg|
+            r << ", "
+            r << arg
+            # write ", " unless
+          end
+          r << "){"
+          @opt_arg_names.each do |arg|
+            r << "if (#{arg} == undefined) {"
+            r << "  #{arg} = #{@opt_arg_str[arg]};"
+            r << "}"
+          end
+          
         end
       end
       
@@ -432,7 +475,7 @@ module Vienna
           # we need)
           if @should_handle_return
             r << "} catch(e) {"
-            r << "if (e.opal_type == 'return') {"
+            r << "if (e.__keyword__ == 'return') {"
             r << "  return e.opal_value;"
             r << "}"
             r << "throw e;"
@@ -474,9 +517,20 @@ module Vienna
           # r << "return res;"
           
           r << "})"
+        
+        when RubyParser::ISEQ_TYPE_TEMP
+          r << @code.join("")
         end
         r
       end
+      
+    end
+    
+    # An optional argument iseq used for generating just the code for an optioan
+    # argument. This code is stored, then later used as/if needed. Basically,
+    # has a write method that self contains the code.
+    # 
+    class OptionalArgumentIseq
       
     end
     
@@ -512,7 +566,8 @@ module Vienna
       gsub(/\]/, "$x").
       gsub(/\//, "$d").
       gsub(/\*/, "$t").
-      gsub(/\@/, "$a")
+      gsub(/\@/, "$a").
+      gsub(/\^/, "$o")
     end
     
     def generate_tree(tree)
@@ -641,6 +696,21 @@ module Vienna
         stmt[:arglist].arg.each do |arg|
           @iseq_current.push_arg_name arg[:value]
         end
+      end
+      
+      # opt args
+      if stmt[:arglist].opt
+        stmt[:arglist].opt.each do |opt|
+          opt_current_iseq = @iseq_current
+          opt_iseq = iseq_stack_push(ISEQ_TYPE_TEMP)
+          generate_stmt opt[1], {}
+          iseq_stack_pop
+          # puts "need to generate op: #{opt}"
+          @iseq_current.push_opt_arg opt[0], opt_iseq.to_s
+        end
+        # puts "opt args:"
+        # puts stmt[:arglist].opt
+        # puts "---------"
       end
       
       # rest args
@@ -1520,14 +1590,16 @@ module Vienna
           generate_stmt arg, :full_stmt => false
         end
       end
-      write ");"
+      write ")"
+      
+      write ";" if context[:full_stmt]
     end
     
     def generate_tertiary(stmt, context)
       write "return " if context[:full_stmt] and context[:last_stmt]
-      write "RTEST("
+      write "("
       generate_stmt stmt[:expr], :full_stmt => false
-      write ")? "
+      write ").r ? "
       generate_stmt stmt[:true], :full_stmt => false
       write " : "
       generate_stmt stmt[:false], :full_stmt => false
@@ -1623,7 +1695,8 @@ module Vienna
     
     
     def generate_redo(stmt, context)
-      write "#{SELF}.rbRedo();"
+      write "#{SELF}.rbRedo()"
+      write ";" if context[:full_stmt]
     end
   end
 end

@@ -378,16 +378,16 @@ __boot_base_class.prototype.rbWhile = function(expression, body, should_redo) {
     return this.n;
   } catch (e) {
     // try and catch a break statement
-    if (e.opal_type ==  'break') {
+    if (e.__keyword__ ==  'break') {
       return e.opal_value || this.n;
     }
     
     // testing next.. this might not work too well...
-    if (e.opal_type == 'next') {
+    if (e.__keyword__ == 'next') {
       return arguments.callee.apply(this, [expression, body]);
     }
     
-    if (e.opal_type == 'redo') {
+    if (e.__keyword__ == 'redo') {
       return arguments.callee.apply(this, [expression, body, true]);
     }
     
@@ -402,7 +402,7 @@ __boot_base_class.prototype.rbRedo = function() {
     toString: function() {
       return "uncaught redo";
     },
-    opal_type: 'redo'
+    __keyword__: 'redo'
   };
 };
 
@@ -412,7 +412,7 @@ __boot_base_class.prototype.rbBreak = function(value) {
     toString: function() {
       return "uncaught break";
     },
-    opal_type: 'break',
+    __keyword__: 'break',
     opal_value: value || this.n
   };
 };
@@ -423,7 +423,7 @@ __boot_base_class.prototype.rbNext = function(value) {
     toString: function() {
       return "uncaught next";
     },
-    opal_type: 'next',
+    __keyword__: 'next',
     opal_value: value || this.n
   };
 };
@@ -434,7 +434,7 @@ __boot_base_class.prototype.rbReturn = function(value) {
     toString: function() {
       return "uncaught rbReturn";
     },
-    opal_type: 'return',
+    __keyword__: 'return',
     opal_value: value || this.n
   };
 };
