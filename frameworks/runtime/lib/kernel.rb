@@ -98,12 +98,8 @@ module Kernel
   end
   
   def __send__(method, *args)
-    `var res= #{self}[#{self}.mid2jsid(#{method.to_s})].apply(#{self}, #{args});
-    //console.log("res is: for " + #{method.to_s});
-    //console.log(#{args});
-    //console.log(res);
-    return res;
-    `
+    `var res= #{self}['$' + #{method.to_s}].apply(#{self}, #{args});
+    return res;`
   end
   
   def class

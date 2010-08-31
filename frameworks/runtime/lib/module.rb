@@ -38,8 +38,7 @@ class Module
     # we are defining a method, so always use opal_self to reclaim self
     # `#{implementation}.__fun__.opal_self = true;
     `var mid = #{method.to_s};
-    var jsid = #{self}.mid2jsid(mid);
-    #{self}.dm(mid, jsid, #{implementation}, false);`
+    #{self}.dm(mid, #{implementation}, false);`
     self
   end
   
@@ -59,8 +58,7 @@ class Module
   def attr_reader(*attributes)
     attributes.each do |attribute|
       `var mid = #{attribute.to_s};
-      var jsid = #{self}.mid2jsid(mid);
-      #{self}.dm(mid, jsid, function() {
+      #{self}.dm(mid, function() {
         return #{self}.ig('@' + mid);
       }, false);`
     end
@@ -72,8 +70,7 @@ class Module
     attributes.each do |attribute|
       `var mid = #{attribute.to_s};
       var mid2 = mid + "=";
-      var jsid = #{self}.mid2jsid(mid2);
-      #{self}.dm(mid2, jsid, function(val) {
+      #{self}.dm(mid2, function(val) {
         return #{self}.is('@' + mid, val);
       }, false);`
     end

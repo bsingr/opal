@@ -815,6 +815,9 @@ class Vienna::RubyParser < Racc::Parser
         when '__FILE__'
           self.lex_state = :EXPR_END
           return [:k__FILE__, scanner.matched]
+        when '__LINE__'
+          self.lex_state = :EXPR_END
+          return [:k__LINE__, scanner.matched]
         when 'alias'
           self.lex_state = :EXPR_BEG
           return [:kALIAS, scanner.matched]

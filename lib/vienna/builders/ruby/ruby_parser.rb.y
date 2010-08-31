@@ -192,11 +192,11 @@ rule
             		| kUNDEF undef_list
             		| stmt kIF_MOD expr_value
             		  {
-            		    result = node :if_mod, :stmt => val[0], :expr => val[2]
+                    result = node :if, :expr => val[2], :stmt => [val[0]], :tail => []
             		  }
             		| stmt kUNLESS_MOD expr_value
             		  {
-            		    result = node :unless_mod, :stmt => val[0], :expr => val[2]
+            		    result = node :unless, :expr => val[2], :stmt => [val[0]], :tail => []
             		  }
             		| stmt kWHILE_MOD expr_value
             		  {
@@ -977,6 +977,9 @@ rule
                     # puts result
                   }
             		| none
+            		  {
+            		    result = nil
+            		  }
 
         exc_list: arg_value
                   {
@@ -1002,7 +1005,7 @@ rule
 
       opt_ensure: kENSURE compstmt
                   {
-                    result = compstmt
+                    result = val[1]
                   }
             		| none
             		  {

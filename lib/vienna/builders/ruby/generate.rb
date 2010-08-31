@@ -87,10 +87,10 @@ module Vienna
         generate_if stmt, context
       when :unless
         generate_if stmt, context
-      when :if_mod
-        generate_if_mod stmt, context
-      when :unless_mod
-        generate_if_mod stmt, context  
+      # when :if_mod
+      #        generate_if_mod stmt, context
+      #      when :unless_mod
+      #        generate_if_mod stmt, context  
       when :string
         generate_string stmt, context
       when :xstring
@@ -131,6 +131,8 @@ module Vienna
         generate_dot3 stmt, context
       when :__FILE__
         generate__FILE__ stmt, context
+      when :__LINE__
+        generate__LINE__ stmt, context
       when :opt_plus
         generate_opt_plus stmt, context
       when :opt_minus
@@ -432,7 +434,7 @@ module Vienna
         
         case @type
         when RubyParser::ISEQ_TYPE_TOP
-          r << "(function(){"
+          r << "(function(__FILE__){"
           # locals
           if @locals.length > 0
             r << "var #{@locals.each_value.to_a.join(" = this.n,")} = this.n;"
@@ -556,22 +558,32 @@ module Vienna
     # when looking through methods, and using __send__() etc. 
     # 
     def mid_to_jsid(mid)
-      "$#{mid}".
-      gsub(/\!/, "$b").
-      gsub(/\=/, "$e").
-      gsub(/\?/, "$q").
-      gsub(/\+/, "$p").
-      gsub(/\-/, "$m").
-      gsub(/\|/, '$r').
-      gsub(/\&/, "$a").
-      gsub(/\</, "$l").
-      gsub(/\>/, "$g").
-      gsub(/\[/, "$z").
-      gsub(/\]/, "$x").
-      gsub(/\//, "$d").
-      gsub(/\*/, "$t").
-      gsub(/\@/, "$a").
-      gsub(/\^/, "$o")
+      # everything needs to be prepended with '$'
+      mid = "$#{mid}"
+      
+      if /[\!\=\?\+\-\*\/\^\&\%\@\|\[\]\<\>\~]/.match mid
+        # special characters, so we must wrap in []
+        "['#{mid}']"
+      else
+        # no special characters, so we can just return .mid
+        ".#{mid}"
+      end
+      # "$#{mid}".
+      # gsub(/\!/, "$b").
+      # gsub(/\=/, "$e").
+      # gsub(/\?/, "$q").
+      # gsub(/\+/, "$p").
+      # gsub(/\-/, "$m").
+      # gsub(/\|/, '$r').
+      # gsub(/\&/, "$a").
+      # gsub(/\</, "$l").
+      # gsub(/\>/, "$g").
+      # gsub(/\[/, "$z").
+      # gsub(/\]/, "$x").
+      # gsub(/\//, "$d").
+      # gsub(/\*/, "$t").
+      # gsub(/\@/, "$a").
+      # gsub(/\^/, "$o")
     end
     
     def generate_tree(tree)
@@ -750,7 +762,7 @@ module Vienna
         write "#{SELF}.dm("
       end
       
-      write %{"#{stmt[:fname]}","#{mid_to_jsid(stmt[:fname])}",#{def_iseq},#{is_singleton})}
+      write %{"#{stmt[:fname]}",#{def_iseq},#{is_singleton})}
       write ";\n" if context[:full_stmt]
     end
     
@@ -761,7 +773,7 @@ module Vienna
         write local
       else
         # write %{vm$a($,"#{stmt[:name]}",[],nil,8)}
-        write "#{SELF}.#{mid_to_jsid(stmt[:name])}()"
+        write "#{SELF}#{mid_to_jsid(stmt[:name])}()"
       end
       
       write ";\n" if context[:full_stmt]
@@ -782,7 +794,7 @@ module Vienna
       end
       
       # method id
-      write %{.#{mid_to_jsid(call[:meth])}(}
+      write %{#{mid_to_jsid(call[:meth])}(}
       
       # normal args - need to check for splats
       is_splat = false
@@ -981,7 +993,7 @@ module Vienna
         # recv
         generate_stmt stmt[:lhs][:recv], :full_stmt => false
         # id
-        write %{.#{mid_to_jsid(stmt[:lhs][:meth] +'=')}(}
+        write %{#{mid_to_jsid(stmt[:lhs][:meth] +'=')}(}
         # args
         if stmt[:lhs][:args] and stmt[:lhs][:args][:args]
           stmt[:lhs][:args][:args].each do |arg|
@@ -1069,26 +1081,26 @@ module Vienna
       write ";\n" if context[:full_stmt]
     end
     
-    def generate_if_mod(stmt, context)
-      # write "return "  if context[:full_stmt] and context[:last_stmt]
-
-      # write "(function(){"
-
-      # if/unless mod
-      if stmt.node == :if_mod
-        write "if("
-      else
-        write "if(!"
-      end
-
-      generate_stmt stmt[:expr], :full_stmt => false, :last_stmt => false
-      write ".r){"
-      generate_stmt stmt[:stmt], :full_stmt => true, :last_stmt => false
-      write "}"
-      # return nil as safety value
-      # write "return #{NIL};})()"
-      write ";\n" if context[:full_stmt]
-    end
+    # def generate_if_mod(stmt, context)
+    #   # write "return "  if context[:full_stmt] and context[:last_stmt]
+    # 
+    #   # write "(function(){"
+    # 
+    #   # if/unless mod
+    #   if stmt.node == :if_mod
+    #     write "if("
+    #   else
+    #     write "if(!"
+    #   end
+    # 
+    #   generate_stmt stmt[:expr], :full_stmt => false, :last_stmt => false
+    #   write ".r){"
+    #   generate_stmt stmt[:stmt], :full_stmt => true, :last_stmt => false
+    #   write "}"
+    #   # return nil as safety value
+    #   # write "return #{NIL};})()"
+    #   write ";\n" if context[:full_stmt]
+    # end
     
     def generate_array(ary, context)
       write "return " if context[:last_stmt] and context[:full_stmt]
@@ -1107,7 +1119,7 @@ module Vienna
       write "return " if context[:last_stmt] and context[:full_stmt]
       # write %{vm_optplus(}
       generate_stmt stmt[:recv], :recv => true
-      write ".#{mid_to_jsid('+')}("
+      write "#{mid_to_jsid('+')}("
       generate_stmt stmt[:call_args][:args][0], :full_stmt => false
       write ")"
       write ";\n" if context[:full_stmt]
@@ -1116,7 +1128,7 @@ module Vienna
     def generate_opt_minus(stmt, context)
       write "return " if context[:last_stmt] and context[:full_stmt]
       generate_stmt stmt[:recv], :last_stmt => false, :full_stmt => false
-      write ".#{mid_to_jsid('-')}("
+      write "#{mid_to_jsid('-')}("
       generate_stmt stmt[:call_args][:args][0], :full_stmt => false
       write ")"
       write ";\n" if context[:full_stmt]
@@ -1125,7 +1137,7 @@ module Vienna
     def generate_opt_mult(stmt, context)
       write "return " if context[:last_stmt] and context[:full_stmt]
       generate_stmt stmt[:recv], :last_stmt => false, :full_stmt => false
-      write ".#{mid_to_jsid('*')}("
+      write "#{mid_to_jsid('*')}("
       generate_stmt stmt[:call_args][:args][0], :full_stmt => false
       write ")"
       write ";\n" if context[:full_stmt]
@@ -1134,7 +1146,7 @@ module Vienna
     def generate_opt_div(stmt, context)
       write "return " if context[:last_stmt] and context[:full_stmt]
       generate_stmt stmt[:recv], :last_stmt => false, :full_stmt => false
-      write ".#{mid_to_jsid('/')}("
+      write "#{mid_to_jsid('/')}("
       generate_stmt stmt[:call_args][:args][0], :full_stmt => false
       write ")"
       write ";\n" if context[:full_stmt]
@@ -1171,8 +1183,9 @@ module Vienna
     end
     
     def generate_dot2(stmt, context)
+      # return #{self}.R(#{start}, #{ending}, #{exclusive}.r);
       write "return " if context[:last_stmt] and context[:full_stmt]
-      write "vm_newrange("
+      write "#{SELF}.R("
       generate_stmt stmt[:start], :full_stmt => false
       write ","
       generate_stmt stmt[:ending], :full_stmt => false
@@ -1182,7 +1195,7 @@ module Vienna
     
     def generate_dot3(stmt, context)
       write "return " if context[:last_stmt] and context[:full_stmt]
-      write "vm_newrange("
+      write "#{SELF}.R("
       generate_stmt stmt[:start], :full_stmt => false
       write ","
       generate_stmt stmt[:ending], :full_stmt => false
@@ -1202,10 +1215,15 @@ module Vienna
     
     def generate__FILE__ stmt, context
       write "return " if context[:last_stmt] and context[:full_stmt]
-      write %{"#{@build_name}"}
+      write %{__FILE__}
       write ";\n" if context[:full_stmt]
     end
     
+    def generate__LINE__ stmt, context
+      write "return " if context[:last_stmt] and context[:full_stmt]
+      write %{0}
+      write ";\n" if context[:full_stmt]
+    end
     # primay::CONST
     def generate_colon2 stmt, context
       write "return " if context[:last_stmt] and context[:full_stmt]
@@ -1441,7 +1459,7 @@ module Vienna
             
             generate_stmt a, :recv => true
             # ruby truthiness test to make sure result is truthy
-            write ".#{mid_to_jsid('===')}(#{case_var_name}).r"
+            write "#{mid_to_jsid('===')}(#{case_var_name}).r"
             # write ",'===',[$c],nil,0)"
           end
           write") {"
@@ -1500,9 +1518,9 @@ module Vienna
       if stmt[:stmt][:opt_rescue]
         write "try{"
         stmt[:stmt][:compstmt].each do |s|
-          generate_stmt s, :full_stmt => true, :last_stmt => false
+          generate_stmt s, :full_stmt => true, :last_stmt => (context[:last_stmt] && stmt[:stmt][:compstmt].last == s)
         end
-        puts stmt[:stmt][:opt_rescue]
+        # puts stmt[:stmt][:opt_rescue]
         write "}"
         write "catch(e) {"
         if stmt[:stmt][:opt_rescue][:var]
@@ -1601,7 +1619,7 @@ module Vienna
     def generate_not(stmt, context)
       write "return " if context[:full_stmt] and context[:last_stmt]
       generate_stmt stmt[:expr], :full_stmt => false
-      write ".#{mid_to_jsid('!')}()"
+      write "#{mid_to_jsid('!')}()"
       write ";\n" if context[:full_stmt]
     end
     
@@ -1733,7 +1751,7 @@ module Vienna
           else
             done_first = true
           end
-          puts list
+          # puts list
           generate_stmt list[:value].first, {} 
           write '.$to_s()'
         end

@@ -1,11 +1,5 @@
+# testing remove need for mid_to_jsid client side
+# adam = nil
 
-def begin_rescue_test
-  begin
-    
-  rescue Exception => e
-    
-  ensure
-    puts "ensuring"
-  end
-  
-end
+# adam.beynon
+# adam.beynon = 10

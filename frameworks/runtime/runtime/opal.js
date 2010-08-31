@@ -191,9 +191,13 @@ __boot_base_class.prototype.define_class = function(sup, id, body, flag) {
   // return klass;
 };
 
-__boot_base_class.prototype.dm =function(m_id, js_id, body, singleton) {
+__boot_base_class.prototype.dm =function(m_id, body, singleton) {
   // console.log(m_id + " for ");
   // console.log(this.class_name);
+  
+  // hack for replacing mid_to_jsid
+  var js_id = '$' + m_id;
+  
   body.method_id = m_id;
   body.jsid = js_id;
   body.displayName = m_id;
@@ -723,8 +727,10 @@ class_object.const_set("Class", class_class);
 class_object.const_set("Module", class_module);
 
 // Custom methods for modules to handle includes properly
-class_module.constructor.prototype.dm = function(m_id,js_id,body, sing){
+class_module.constructor.prototype.dm = function(m_id, body, sing){
     
+  js_id = '$' + m_id;  
+  
   // super
   __boot_base_class.prototype.dm.apply(this, arguments);
     

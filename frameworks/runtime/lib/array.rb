@@ -110,7 +110,7 @@ class Array
     if (!(#{other}.info & #{self}.TA)) return #{false};
     if (#{self}.length !== #{other}.length) return #{false};
     for (var i = 0; i < #{self}.length; i++) {
-      if (!#{self}[i].$$e$e(#{other}[i]).r) return #{false};
+      if (!#{self}[i]['$=='](#{other}[i]).r) return #{false};
     }`
     true
   end

@@ -99,11 +99,13 @@ exports.run = function(path, cwd) {
 
 // require the file at the given path: we have already checked it exists - mark
 // as being required - execute in context of top_self
+// 
+// params function(__FILE__) { .. }
 var file_require_path = function(path) {
   // console.log("requiring " + path);
   var f = file_list[path];
   f.opal_required = true;
-  return f.apply(exports.top_self);
+  return f.apply(exports.top_self, [path]);
 };
 
 // require the js string path.. might come from ruby, might come from js
