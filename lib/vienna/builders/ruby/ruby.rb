@@ -747,8 +747,9 @@ class Vienna::RubyParser < Racc::Parser
           self.lex_state = :EXPR_BEG
           return [:kWHILE_MOD, scanner.matched]
         when 'until'
+          return [:kUNTIL, scanner.matched] if lex_state == :EXPR_BEG
           self.lex_state = :EXPR_BEG
-          return [:kUNTIL, scanner.matched]
+          return [:kUNTIL_MOD, scanner.matched]
         when 'lambda'
           self.lex_state = :EXPR_BEG
           return [:tLAMBDA, scanner.matched]
@@ -823,6 +824,9 @@ class Vienna::RubyParser < Racc::Parser
         when 'rescue'
           self.lex_state = :EXPR_MID
           return [:kRESCUE, scanner.matched]
+        when 'ensure'
+          self.lex_state = :EXPR_BEG
+          return [:kENSURE, scanner.matched]
         end
         
         matched = scanner.matched

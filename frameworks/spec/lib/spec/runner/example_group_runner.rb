@@ -45,7 +45,7 @@ module Spec
       end
       
       def example_groups
-        puts @options.example_groups
+        # puts @options.example_groups
         @options.example_groups
       end
       
@@ -54,7 +54,7 @@ module Spec
       end
       
       def finish
-        puts "finishing"
+        # puts "finishing"
       end
       
       def reporter

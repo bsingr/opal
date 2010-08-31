@@ -1,5 +1,5 @@
 # 
-# dsl.rb
+# io.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,19 +24,16 @@
 # THE SOFTWARE.
 #
 
-module Spec
+class IO
   
-  module DSL
-    
-    module Main
-      
-      def describe(name, &block)
-        # puts "in DSL describe"
-        Spec::Example::ExampleGroupFactory.create_example_group name, &block
+  def puts(*objects)
+    if objects.length == 0
+      # print new line only
+    else
+      objects.each do |object|
+        # print each one on a new line
       end
-      
-    end # Main
+    end
+    nil
   end
 end
-
-include Spec::DSL::Main

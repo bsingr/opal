@@ -36,7 +36,7 @@ module Spec
   
     # Main entry point for spec runner.
     def self.run
-      puts "running"
+      # puts "running"
       options.run_examples
     end
   

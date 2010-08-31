@@ -343,6 +343,25 @@ __boot_base_class.prototype.o = function(lhs, rhs) {
   return rhs.apply(this);
 };
 
+// Handle yielding
+// 
+// @param {Function} proc to yield
+// @param {Array} params to yield to proc
+// 
+__boot_base_class.prototype.rbYield = function(proc, params) {
+  // if we tried to yield, and we were not given a block..
+  if (!proc) {
+    throw {
+      toString: function() {
+        return "Yield: no block given";
+      }
+    };
+  }
+  
+  // otherwise, yield it in the 'self' context it was created in.
+  return proc.apply(proc.__self__, params);
+};
+
 // Handle while loops.
 // 
 // @param {Function} expression wrapped in function to evaluate before each pass
@@ -527,7 +546,7 @@ __boot_base_class.prototype.opal_super = function(func, args) {
 };
 
 // ruby error from native error
-__boot_base_class.prototype.native_error = function(err) {
+__boot_base_class.prototype.rbNativeError = function(err) {
   var res = class_exception.$new();
   res.is('@message', err.toString());
   return res;
@@ -535,6 +554,7 @@ __boot_base_class.prototype.native_error = function(err) {
 
 __boot_base_class.prototype.TP = T_PROC;
 __boot_base_class.prototype.TA = T_ARRAY;
+__boot_base_class.prototype.TH = T_HASH;
 
 var define_class_under = function(base, id, super_class) {
   
@@ -847,7 +867,7 @@ class_exception.allocator.prototype.toString = function() {
 };
 
 class_exception.allocator.prototype.raise = function() {
-  console.log(this);
+  // console.log(this);
   throw this;
 };
 

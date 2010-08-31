@@ -1,13 +1,6 @@
 #!/usr/bin/env ruby -wKU
 
-# Simply compile a ruby input file path (as first arg) to js (stdout)
-
 require File.expand_path(
   File.join(File.dirname(__FILE__), %w[.. lib vienna]))
 
-if ARGV.empty?
-  builder = Vienna::CherryKit::RubyBuilder.new(STDIN.read, nil, nil)
-  puts builder.build!
-else
-  puts "(function() {})"
-end
+# Vienna::RubyParser.new(# @build_item.source_path, @dst_path, "").build!

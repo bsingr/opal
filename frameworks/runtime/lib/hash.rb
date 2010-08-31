@@ -35,6 +35,18 @@ class Hash
     `return #{self}.hash_delete(#{key});`
   end
   
+  def keys
+    `return #{self}.__keys__;`
+  end
+  
+  def values
+    `var result = [];
+    for (var i = 0; i < #{self}.__keys__.length; i++) {
+      result.push(#{self}.__assocs__[#{self}.__keys__[i].hash()]);
+    }
+    return result;`
+  end
+  
   def [](key)
     `return #{self}.hash_fetch(#{key});`
   end

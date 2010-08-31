@@ -259,6 +259,10 @@ module Vienna
         @block_arg_name = name
       end
       
+      def block_arg_name
+        @block_arg_name ||= '__block__'
+      end
+      
       def push_local_name(name)
         # id = @local_current
         # @local_current = @local_current.next
@@ -1039,16 +1043,13 @@ module Vienna
     def generate_yield stmt, context
       write "return " if context[:full_stmt] and context[:last_stmt]
       
-      # if we dont have the block name already, define it simply as "_"
-      # unless @iseq_current.block_arg_name
-        # @iseq_current.push_block_arg_name("_")
-      # end
+      block_name = @iseq_current.block_arg_name
       
       # for now, normal args or a single *splat
       if stmt[:call_args] and stmt[:call_args][:args][0].node == :splat
-        write "vm_yield(_,[])"
+        write "#{SELF}.rbYield(#{block_name},[])"
       else
-        write "vm_yield(_,["
+        write "#{SELF}.rbYield(#{block_name},["
 
         if stmt[:call_args] and stmt[:call_args][:args]
           stmt[:call_args][:args].each do |a|
@@ -1317,48 +1318,97 @@ module Vienna
     end
     
     def generate_op_asgn(stmt, context)
-      # puts stmt
-      write "return " if context[:full_stmt] and context[:last_stmt]
+      # resulting stmt
+      result = nil
+      # if || or &&, then treat differently... everything else is simply a call
+      # node :call, :recv => val[1], :meth => '-@', :call_args => { :args => []}
       
-      if stmt[:lhs].node == :ivar
-        if stmt[:op] == "||"
-          rhs = node(:assign, :lhs => stmt[:lhs], :rhs => stmt[:rhs])
-          generate_stmt(node(:orop, :lhs => stmt[:lhs], :rhs => rhs), {})
-          # write "(function(){var a;"
-          #          write "if(!RTEST(a = vm_ivarget($,'#{stmt[:lhs][:name]}'))){"
-          #          write "return vm_ivarset($,'#{stmt[:lhs][:name]}',"
-          #          generate_stmt stmt[:rhs], :full_stmt => false
-          #          write ");}"
-          #          write "return a;"
-          #          write "})()"
-        elsif stmt[:op] == "+"
-          write "vm_ivarset($,'#{stmt[:lhs][:name]}',vm_optplus("
-          write "vm_ivarget($,'#{stmt[:lhs][:name]}'),"
-          generate_stmt stmt[:rhs], :full_stmt => false
-          write "))"
-        elsif stmt[:op] == "-"
-          write "vm_ivarset($,'#{stmt[:lhs][:name]}',vm_optminus("
-          write "vm_ivarget($,'#{stmt[:lhs][:name]}'),"
-          generate_stmt stmt[:rhs], :full_stmt => false
-          write "))"
-        elsif stmt[:op] == "*"
-          write "vm_ivarset($,'#{stmt[:lhs][:name]}',vm_optmult("
-          write "vm_ivarget($,'#{stmt[:lhs][:name]}'),"
-          generate_stmt stmt[:rhs], :full_stmt => false
-          write "))"
-        elsif stmt[:op] == "/"
-          write "vm_ivarset($,'#{stmt[:lhs][:name]}',vm_optdiv("
-          write "vm_ivarget($,'#{stmt[:lhs][:name]}'),"
-          generate_stmt stmt[:rhs], :full_stmt => false
-          write "))"
-        else
-          abort "bas op type for op_asgn"
-        end
-      else
-        abort "bad LHS for op_asgn"
+      if stmt[:lhs].node == :identifier
+        # adam += 20
+        # => adam = adam + 20
+        name = stmt[:lhs][:name]
+        recv = node(:identifier, :name => name)
+        lhs = node(:identifier, :name => name)
+      
+      elsif stmt[:lhs].node == :ivar
+        
+        name = stmt[:lhs][:name]
+        recv = node(:ivar, :name => name)
+        lhs = node(:ivar, :name => name)
+        
+      elsif stmt[:lhs].node == :call
+        
+        recv = stmt[:lhs]
+        lhs = stmt[:lhs]
+        
       end
       
-      write ";\n" if context[:full_stmt]
+      if stmt[:op] == '||'
+        rhs = node(:assign, :lhs => lhs, :rhs => stmt[:rhs])
+        result = node(:orop, :lhs => lhs, :rhs => rhs)
+      else
+        # should be generic
+        rhs = node(:call, :recv => recv, :meth => stmt[:op], :call_args => { :args => [stmt[:rhs]]})
+        # rhs = node(:call, :recv => node(:identifier, :name => name), :meth => stmt[:op], :call_args => { :args => [stmt[:rhs]]})
+        result = node(:assign, :lhs => lhs, :rhs => rhs)
+      end
+      
+      
+      generate_stmt result, context
+      
+      
+      
+      # end new
+      
+      
+      
+      # puts result
+      # generate_stmt result, {}
+      
+      # if stmt[:lhs].node == :ivarpa
+      
+      # puts stmt
+      # write "return " if context[:full_stmt] and context[:last_stmt]
+      
+      # if stmt[:lhs].node == :ivar
+      #   if stmt[:op] == "||"
+      #     rhs = node(:assign, :lhs => stmt[:lhs], :rhs => stmt[:rhs])
+      #     generate_stmt(node(:orop, :lhs => stmt[:lhs], :rhs => rhs), {})
+      #     # write "(function(){var a;"
+      #     #          write "if(!RTEST(a = vm_ivarget($,'#{stmt[:lhs][:name]}'))){"
+      #     #          write "return vm_ivarset($,'#{stmt[:lhs][:name]}',"
+      #     #          generate_stmt stmt[:rhs], :full_stmt => false
+      #     #          write ");}"
+      #     #          write "return a;"
+      #     #          write "})()"
+      #   elsif stmt[:op] == "+"
+      #     write "vm_ivarset($,'#{stmt[:lhs][:name]}',vm_optplus("
+      #     write "vm_ivarget($,'#{stmt[:lhs][:name]}'),"
+      #     generate_stmt stmt[:rhs], :full_stmt => false
+      #     write "))"
+      #   elsif stmt[:op] == "-"
+      #     write "vm_ivarset($,'#{stmt[:lhs][:name]}',vm_optminus("
+      #     write "vm_ivarget($,'#{stmt[:lhs][:name]}'),"
+      #     generate_stmt stmt[:rhs], :full_stmt => false
+      #     write "))"
+      #   elsif stmt[:op] == "*"
+      #     write "vm_ivarset($,'#{stmt[:lhs][:name]}',vm_optmult("
+      #     write "vm_ivarget($,'#{stmt[:lhs][:name]}'),"
+      #     generate_stmt stmt[:rhs], :full_stmt => false
+      #     write "))"
+      #   elsif stmt[:op] == "/"
+      #     write "vm_ivarset($,'#{stmt[:lhs][:name]}',vm_optdiv("
+      #     write "vm_ivarget($,'#{stmt[:lhs][:name]}'),"
+      #     generate_stmt stmt[:rhs], :full_stmt => false
+      #     write "))"
+      #   else
+      #     abort "bas op type for op_asgn"
+      #   end
+      # else
+      #   abort "bad LHS for op_asgn"
+      # end
+      
+      # write ";\n" if context[:full_stmt]
     end
     
     # yuck!
@@ -1466,7 +1516,7 @@ module Vienna
             if (e.mid2jsid) {
               #{local} = e;
             } else {
-              #{local} = #{SELF}.native_error(e);
+              #{local} = #{SELF}.rbNativeError(e);
             }
           |
           # write "console.log('catch');console.log(e.klass);"

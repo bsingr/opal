@@ -37,6 +37,7 @@ module Spec
       end
       
       def subclass group_name, &group_block
+        # @class_count = @class_count || 0
         @class_count ||= 0
         # @class_count += 1
         klass = const_set "Subclass#{@class_count}", Class.new(self)

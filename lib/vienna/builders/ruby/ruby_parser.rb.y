@@ -203,6 +203,9 @@ rule
             		    result = node :while, :expr => val[2], :stmt => [val[0]]
             		  }
             		| stmt kUNTIL_MOD expr_value
+            		  {
+            		    result = node :until, :expr => val[2], :stmt => [val[0]]
+            		  }
             		| stmt kRESCUE_MOD stmt
                 | klEND '{' compstmt '}'
             		| lhs '=' command_call
@@ -330,7 +333,7 @@ rule
 		              }
             		| primary_value '.' tIDENTIFIER
             		  {
-          		      result = node :call, :recv => val[0], :meth => val[2]
+          		      result = node :call, :recv => val[0], :meth => val[2], :call_args => {}
                   }
             		| primary_value tCOLON2 tIDENTIFIER
             		| primary_value '.' tCONSTANT
@@ -420,7 +423,7 @@ rule
             		  }
             		| primary_value '.' tIDENTIFIER tOP_ASGN arg
             		  {
-            		    result = node :op_asgn, :lhs => node(:call, :recv => val[0], :meth => val[2]), :op => val[3], :rhs => val[4]
+            		    result = node :op_asgn, :lhs => node(:call, :recv => val[0], :meth => val[2], :call_args => {}), :op => val[3], :rhs => val[4]
                     # result = node :dot_identifier_op_asgn, :lhs => node(:call, :recv => val[0], :meth => val[2]), :op => val[3], :rhs => val[4]
             		  }
             		| primary_value '.' tCONSTANT tOP_ASGN arg
@@ -998,7 +1001,13 @@ rule
             		  }
 
       opt_ensure: kENSURE compstmt
+                  {
+                    result = compstmt
+                  }
             		| none
+            		  {
+            		    result = nil
+            		  }
 
          literal: numeric
               	| symbol
