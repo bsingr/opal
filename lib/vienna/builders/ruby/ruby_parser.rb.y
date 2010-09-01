@@ -943,7 +943,7 @@ rule
             		  }
             		| kSUPER
             		  {
-            		    result = node :super, :call_args => nil
+            		    result = node :super, :call_args => nil, :inherit => true
             		  }
             		| primary_value '[' opt_call_args rbracket
             		  {

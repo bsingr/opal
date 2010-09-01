@@ -16,16 +16,45 @@ describe "self in an eigenclass body (class << obj)" do
     mock = Object.new
     cls = class << mock; self; end
     cls.is_a?(Class).should == true
-    puts cls
-    `console.log(#{cls});`
+    # puts cls
+    # `console.log(#{cls});`
+  end
+  
+  it "is a Class for classes"
+  
+  it "inherits from Class for classes" do
+    temp = []
+    cls = class << Object; self; end
+    sc = cls
+    until sc.nil? || sc.superclass == sc
+      temp << sc
+      sc = sc.superclass
+    end
+    temp.should include(Class)
   end
 end
 
-class Object
-  
-  class << self
-    
-    def shit_son; end
-  end
-  
-end
+
+# puts "testing eigenclass etc"
+# 
+# class EigenclassSpecTest
+#   
+#   def something=(something)
+#     puts "setting something to #{something}"
+#   end
+# end
+# 
+# a = EigenclassSpecTest.new
+# a.something = 100
+# 
+# a_class = class << a; self; end
+# 
+# a_class.define_method(:something=) do |value|
+#   puts "setting something.."
+#   super value
+#   puts "did set something"
+# end
+# 
+# # `console.log(#{a}['$something=']);`
+# 
+# a.something = 200

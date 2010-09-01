@@ -1687,17 +1687,24 @@ module Vienna
     
     def generate_super(stmt, context)
       write "return " if context[:full_stmt] and context[:last_stmt]
-      write %{#{SELF}.opal_super(arguments.callee, [}
+      write %{#{SELF}.opal_super(arguments.callee, }
       
       # args, depends on is super has parens etc, simple for now: parens
       if stmt[:call_args] and stmt[:call_args][:args]
+        write "["
         stmt[:call_args][:args].each do |arg|
           write "," unless arg == stmt[:call_args][:args].first
           generate_stmt arg, :full_stmt => false
         end
+        write "]"
+        
+      elsif stmt[:inherit]
+        write "Array.prototype.slice.call(arguments)"
+      else
+        write "[]"
       end
       
-      write "])"
+      write ")"
       write ";\n" if context[:full_stmt]
     end
     

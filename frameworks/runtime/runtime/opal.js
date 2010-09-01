@@ -216,11 +216,22 @@ __boot_base_class.prototype.singleton_class = function() {
         return meta;
       }
     }
+    else {
+      // object
+      // console.log("need to make singleton class for: " + this.class_name);
+      
+      this.info = this.info | FL_SINGLETON;
+      var meta = __subclass(this.class_name, this.isa);
+      meta.info = meta.info | T_ICLASS;
+      var old_super = this.isa;
+      klass = this.isa = meta;
+      meta.__instance__ = this;
+      meta.constants = old_super.constants;
+      // klass = this.isa;
+      // var class_name = this.isa.class_name;
+      // klass = make_metaclass(this, this.isa);
+    }
     
-    console.log("need to make singleton class for: " + this.class_name);
-    klass = this.isa;
-    // var class_name = this.isa.class_name;
-    // klass = make_metaclass(this, this.isa);
   }
   
   return klass;
@@ -261,9 +272,22 @@ __boot_base_class.prototype.dm = function(m_id, body, singleton) {
         this.allocator.prototype[js_id] = body;
         this.allocator.prototype.method_table[js_id] = body;
       }
+      
+      if (this.info & T_ICLASS) {
+        this.__instance__[js_id] = body;
+        console.log("adding method " + m_id + " which is " + js_id);
+        // console.log(this.__instance__);
+      }
     }
     else {
-      console.log("need to make into singleton object for: " + this.$inspect() + " with method " + m_id);
+      // console.log("need to make into singleton object for: " + this.$inspect() + " with method " + m_id);
+      var cls = this.singleton_class();
+      cls.allocator.prototype[js_id] = body;
+      cls.allocator.prototype.method_table[js_id] = body;
+      // i_class singleton will only ever have one instance: this.
+      // cls.__instance__ = this;
+      body.opal_class = cls;
+      // cls.dm(m_id, body, singleton);
       // add method to singleton object
       this[js_id] = body;
       // console.log(this);

@@ -3,3 +3,10 @@
 
 # adam.beynon
 # adam.beynon = 10
+
+def testing_super(a, b, c)
+  super
+  super()
+  super a, b
+  super a
+end
