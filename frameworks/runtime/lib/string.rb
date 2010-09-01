@@ -45,6 +45,10 @@ class String
     self
   end
   
+  def inspect
+    self
+  end
+  
   def length
     `return #{self}.length;`
   end

@@ -1,5 +1,5 @@
 # 
-# regexp.rb
+# match_data.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,17 +24,13 @@
 # THE SOFTWARE.
 #
 
-class Regexp
+class MatchData
   
-  def match(string)
-    m = nil
-    `if (#{m} = #{self}.exec(#{string})) {
-      return #{MatchData.new m};
-    } else {
-      return #{nil};
-    }`
+  def initialize(data)
+    @data = data
   end
   
+  def inspect
+    "#<MatchData '#{@data[0]}'>"
+  end
 end
-
-puts(/adam/.match "adqwsam")
