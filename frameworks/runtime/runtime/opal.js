@@ -820,7 +820,7 @@ class_object.include = function(module) {
   // super
   var res = __boot_base_class.prototype.include.apply(class_object, [module]);
     
-  var natives = [class_string, class_number, class_array];
+  var natives = [class_string, class_number, class_array, class_regexp];
   
   // return res;
   for (var i = 0; i < natives.length; i++) {
@@ -836,7 +836,7 @@ class_object.dm = function() {
   // super
   var res = __boot_base_class.prototype.dm.apply(class_object, arguments);
   
-  var natives = [class_string, class_number, class_array];
+  var natives = [class_string, class_number, class_array, class_regexp];
   
   // return res;
   for (var i = 0; i < natives.length; i++) {
@@ -973,6 +973,10 @@ class_string.allocator.prototype.hash = function() {
 // Array class
 class_array = define_bridged_class("Array", Array);
 class_array.allocator.prototype.info = T_OBJECT | T_ARRAY;
+
+// Regexp class
+class_regexp = define_bridged_class("Regexp", RegExp);
+class_regexp.allocator.prototype.info = T_OBJECT;
 
 
 // Kernel module
