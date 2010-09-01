@@ -176,7 +176,7 @@ __boot_base_class.prototype.define_class = function(sup, id, body, flag) {
       break;
     case 1:
       // throw "running class shift for " + id.class_name
-      klass = id.isa;
+      klass = id.singleton_class();
       // return;
       break;
     case 2:
@@ -191,7 +191,42 @@ __boot_base_class.prototype.define_class = function(sup, id, body, flag) {
   // return klass;
 };
 
-__boot_base_class.prototype.dm =function(m_id, body, singleton) {
+// get singleton class
+__boot_base_class.prototype.singleton_class = function() {
+  var klass;
+  
+  // if (this.info & )
+  
+  if (this.info & FL_SINGLETON) {
+    klass = this.isa;
+  }
+  else {
+    // if we a re a class or module..
+    if ((this.info & T_CLASS) || (this.info & T_MODULE)) {
+      // if we have an __attached__, use it
+      if (this.__attached__) {
+        return this.__attached__;
+      }
+      // otherwise, create it
+      else {
+        var meta = __subclass(this.class_name, this.isa);
+        meta.info = meta.info | FL_SINGLETON;
+        this.__attached__ = this.isa = meta;
+        meta.__attached__ = this;
+        return meta;
+      }
+    }
+    
+    console.log("need to make singleton class for: " + this.class_name);
+    klass = this.isa;
+    // var class_name = this.isa.class_name;
+    // klass = make_metaclass(this, this.isa);
+  }
+  
+  return klass;
+};
+
+__boot_base_class.prototype.dm = function(m_id, body, singleton) {
   // console.log(m_id + " for ");
   // console.log(this.class_name);
   
@@ -217,10 +252,18 @@ __boot_base_class.prototype.dm =function(m_id, body, singleton) {
   }
   else {
     if ((this.info & T_CLASS) || (this.info & T_MODULE)) {
-      this.allocator.prototype[js_id] = body;
-      this.allocator.prototype.method_table[js_id] = body;
+      if (this.info & FL_SINGLETON) {
+        // console.log("need to define method for singleton.. " + m_id);
+        this.__attached__.constructor.prototype[js_id] = body;
+        this.__attached__.constructor.prototype.method_table[js_id] = body;
+      }
+      else {
+        this.allocator.prototype[js_id] = body;
+        this.allocator.prototype.method_table[js_id] = body;
+      }
     }
     else {
+      console.log("need to make into singleton object for: " + this.$inspect() + " with method " + m_id);
       // add method to singleton object
       this[js_id] = body;
       // console.log(this);
@@ -641,7 +684,7 @@ var define_module_under = function(base, id) {
     
   var mod = define_class_under(base, id, class_module);
   mod.included_in = [];
-  mod.info = T_MODULE | FL_SINGLETON;
+  mod.info = T_MODULE;
   mod.allocator.prototype.info = T_MODULE;
   return mod;
 };
@@ -797,11 +840,13 @@ class_range.allocator.prototype.info = T_OBJECT | T_RANGE;
 // True class
 class_true_class = define_class_under(class_object, "TrueClass", class_object);
 vnTrue = new class_true_class.allocator();
+vnTrue.info = vnTrue.info | FL_SINGLETON;
 __boot_base_class.prototype.t = vnTrue;
 
 // False class
 class_false_class = define_class_under(class_object, "FalseClass",class_object);
 vnFalse = new class_false_class.allocator();
+vnFalse.info = vnFalse.info | FL_SINGLETON;
 __boot_base_class.prototype.f = vnFalse;
 
 vnFalse.r = false;
@@ -809,6 +854,7 @@ vnFalse.r = false;
 // Nil class
 class_nil_class = define_class_under(class_object, "NilClass", class_object);
 vnNil = new class_nil_class.allocator();
+vnNil.info = vnNil.info | FL_SINGLETON;
 __boot_base_class.prototype.n = vnNil;
 
 vnNil.r = false;

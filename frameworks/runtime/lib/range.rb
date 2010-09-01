@@ -45,6 +45,10 @@ class Range
     `return #{self}.__end__;`
   end
   
+  def ===(val)
+    include? val
+  end
+  
   def cover?(val)
     include? val
   end

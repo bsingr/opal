@@ -781,7 +781,24 @@ module Vienna
     
     def generate_call(call, context)
       used_param = false
-      write "return " if context[:full_stmt] and context[:last_stmt]
+      
+      if context[:full_stmt] and context[:last_stmt]
+        # go all the way back to original recv
+        original_recv = call
+        
+        while original_recv[:recv]
+          original_recv = original_recv[:recv] 
+        end
+        
+        # should we "donate" the return statement (need to for case, if, unless)
+        
+        if [:case, :if, :unless].include? original_recv.node
+          original_recv[:donate_recv] = true
+        else
+          write "return "
+        end
+      end
+      
       # write "vm$a("
       # receiver
       if call[:recv]
@@ -1431,9 +1448,22 @@ module Vienna
     
     # yuck!
     def generate_case stmt, context
+      # if stmt[:donate_recv]
+        # write "DONATABLE RECV"
+      # end
+      
       # first get our case value (if method call, we dont want to call it for
       # every comparison, so store it ina  temp variable for later use)
       case_var_name = @iseq_current.new_temp_variable
+      
+      # if we are not a full stmt, then we might need to store return value
+      case_result = context[:full_stmt] ? nil : @iseq_current.new_temp_variable
+      
+      # if we simply return the last stmt..
+      is_last = context[:last_stmt] && context[:full_stmt]
+      
+      # make sure we do the else part
+      done_else = false
       
       write "#{case_var_name} = "
       
@@ -1464,16 +1494,48 @@ module Vienna
           end
           write") {"
           c[:stmt].each do |s|
-            generate_stmt s, :full_stmt => true, :last_stmt => c[:stmt].last ==s
+            # assign to variable? (for non full stmts)
+            if c[:stmt].last == s && case_result
+              write "#{case_result} = "
+            end
+            
+            generate_stmt s, :full_stmt => true, :last_stmt => is_last
           end
           write "}"
         else # it is an else, so anything else goes
+          done_else = true
+          
           write "else {"
           c[:stmt].each do |s|
-            generate_stmt s, :full_stmt => true, :last_stmt => c[:stmt].last ==s
+            if c[:stmt].last == s && case_result
+              write "#{case_result} = "
+            end
+            generate_stmt s, :full_stmt => true, :last_stmt => is_last
           end
           write "}"
         end
+      end
+      
+      unless done_else
+        write "else {"
+        
+        if case_result
+          write "#{case_result} = "
+        else
+          write "return " if is_last
+        end
+        
+        write NIL
+        write ";"
+        write "}"
+      end
+      
+      # do we need to return for a call stmt later on?
+      write "return " if stmt[:donate_recv]
+      
+      # if we need to return our result...
+      if case_result
+        write case_result
       end
     end
     
