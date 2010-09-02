@@ -540,10 +540,9 @@ __boot_base_class.prototype.rbReturn = function(value) {
 // own custom self. We never need to replace __self__, we just apply uysing a
 // different context.
 // 
-// @param {Object} self - the current self scope for the block
 // @param {Function} fun - the block implementation
-__boot_base_class.prototype.P = function(self, fun) {
-  fun.__self__ = self;
+__boot_base_class.prototype.P = function(fun) {
+  fun.__self__ = this;
   return fun;
   // var res = new class_proc.allocator();
   // res.__fun__ = fun;
@@ -551,8 +550,8 @@ __boot_base_class.prototype.P = function(self, fun) {
 };
 
 // same as above, but lambda
-__boot_base_class.prototype.L = function(self, fun) {
-  fun.__self__ = self;
+__boot_base_class.prototype.L = function(fun) {
+  fun.__self__ = this;
   fun.__lambda__ = true;
   return fun;
 };

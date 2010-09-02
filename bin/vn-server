@@ -1,8 +1,15 @@
 #!/usr/bin/env ruby
 
-# require File.expand_path(
-#   File.join(File.dirname(__FILE__), %w[.. lib vienna]))
-#   
+require File.expand_path(
+  File.join(File.dirname(__FILE__), %w[.. lib vienna]))
+  
+  
 # Vienna::Tools.new :server
 
-abort "depreceated. Use vienna server <options>"
+puts "running server"
+
+project = Vienna::Project.new Dir.getwd, {}
+
+puts "project: #{project}"
+
+server = Vienna::AppServer.new project

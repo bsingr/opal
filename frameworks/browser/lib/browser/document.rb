@@ -1,5 +1,5 @@
 # 
-# proc.rb
+# document.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,46 +24,38 @@
 # THE SOFTWARE.
 #
 
-class Proc
+module Document
   
-  def to_proc
-    self
+  @on_ready_actions = []
+  @__ready__ = false
+  
+  def self.ready?(&proc)
+    if block_given?
+      if @__ready__
+        yield
+      else
+        @on_ready_actions << proc
+      end
+    end
+    
+    @__ready__
   end
   
-  def call
-    `if (#{self}.__lambda__) {
-      try {
-        return #{self}.apply(#{self}.__self__, []);
-      }
-      catch (e) {
-        // first try and catch a break (from the lambda proc)
-        if (e.__keyword__ == 'break') {
-          //console.log("break!");
-          return e.opal_value;
-        }
-        
-        // look for next statements
-        if (e.__keyword__ == 'next') {
-          return e.opal_value;
-        }
-        
-        // next try and catch return error statement (simply return it)
-        if (e.__keyword__ == 'return') {
-          return e.opal_value;
-        }
-        
-        // redo - simply recall block?
-        if (e.__keyword__ == 'redo') {
-          return arguments.callee.apply(#{self});
-        }
-        
-        // worst case, rethrow error
-        throw e;
-      }
-    }
-    else {
-      //throw "cannot .call for non lambda block.. yet"
-      return #{self}.apply(#{self}.__self__);
-    }`
+  # private method for when we are now ready to go! (Document is ready)
+  # 
+  # @private
+  # 
+  def self.__make_ready
+    @__ready__ = true
+    
+    @on_ready_actions.each do |action|
+      action.call
+    end
   end
+  
 end
+
+# Quick hack/snippet to make document ready when opal receives triggers
+`opal.setDocumentReadyListener(function() {
+  #{Document.__make_ready};
+});`

@@ -5,14 +5,32 @@ mode :all do
     :staging_prefix => 'tmp/staging',
     
     # where our libs are kept - i.e. what should be a valid build item
-    :lib_directories  => ['lib']
+    :lib_directories  => ['lib'],
     
+    
+    # which sub directory do our javascripts go into
+    :javascripts_prefix => 'javascripts',
+    
+    # which sub dir do our built stylesheets go into
+    :stylesheets_prefix  => 'stylesheets',
+    
+    # final name for our js built file (:project_name for name of project, 
+    # other wise to_s is called on it)
+    :javascript_name  => :project_name,
+    
+    # same as above
+    :stylehseet_name  => :project_name,
+    
+    # default bin file to run.. if none given, then it defaults to :project_name
+    # which is replaced by the actual project name. This will then mean either
+    # a bin file of the given name, or lib/project_name will be loaded
+    :bin_file         => :project_name
 end
 
 mode :debug do
   config :all,
   
-    :build_prefix   => 'tmp/debug/build',
+    :build_prefix   => '',
     :staging_prefix => 'tmp/debug/staging'
     
 end
@@ -20,7 +38,7 @@ end
 mode :spec do
   config :all,
   
-    :build_prefix   => 'tmp/spec/build',
+    :build_prefix   => 'tmp/built_specs',
     :staging_prefix => 'tmp/spec/staging'
     
 end
@@ -34,7 +52,7 @@ namespace :target do
   desc "Preparing the target"
   task :prepare do
     # set the build root
-    @target.build_root = File.join(@project.build_root, @config.build_prefix, 'opals', @target.target_name)
+    @target.build_root = File.join(@project.build_root, @config.staging_prefix, 'opals', @target.target_name)
     # set the staging root
     @target.staging_root = File.join(@project.build_root, @config.staging_prefix, @target.target_name)
   end
@@ -232,8 +250,27 @@ namespace :build do
     # puts "running package task!"
     # only run package task if we are the main target
     if @target.main_target?
-      build_path = File.join @project.build_root, @config.build_prefix
-
+      js_build_path = File.join @project.build_root, @config.build_prefix, @config.javascripts_prefix
+      
+      FileUtils.mkdir_p js_build_path
+      
+      js_name = @config.javascript_name
+      
+      if js_name == :project_name
+        js_name = "#{@project.project_name}.js"
+      end
+      
+      css_build_path = File.join @project.build_root, @config.build_prefix, @config.stylesheets_prefix
+      
+      FileUtils.mkdir_p css_build_path
+      
+      css_name = @config.stylehseet_name
+      
+      if css_name == :project_name
+        css_name = "#{@project.project_name}.css"
+      end
+      
+# javascripts_prefix
       opals = @project.targets.each_value.to_a.dup
       
       # puts "opals are:"
@@ -246,20 +283,21 @@ namespace :build do
       # p opals 
       
       # build the final javascript.js package
-      File.open(File.join(build_path, 'javascript.js'), 'w') do |out|
+      File.open(File.join(js_build_path, js_name), 'w') do |out|
         opals.each do |opal|
           item = opal.build_item_for("#{opal.target_name}.js")
           out.puts File.read(item.build_path)
         end
         # Also, we must include the bin file we want to use, and set the working
         # directory (which is in the base folder of the main_target)
-        bin_file = @config.bin_file || ""
+        bin_file = @config.bin_file
+        bin_file = @project.project_name if bin_file == :project_name
         working_dir = @target.target_name.to_s
         out.puts "opal.run('#{bin_file}','#{working_dir}');"
       end
       
       # build the final stylesheet.css package
-      File.open(File.join(build_path, 'stylesheet.css'), 'w') do |out|
+      File.open(File.join(css_build_path, css_name), 'w') do |out|
         opals.each do |opal|
           item = opal.build_item_for("#{opal.target_name}.css")
           out.puts File.read(item.build_path)

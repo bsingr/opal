@@ -78,6 +78,7 @@ module Browser
   end
 end
 
+require 'browser/document'
 require 'browser/sizzle.js'
 require 'browser/element'
 require 'browser/event'

@@ -74,16 +74,26 @@ module Vienna
     # An array of the required items from the opal file
     def required
       return @required if @required
-      
+      # puts "checking required"
       req = config[:required]
-
+      # puts "did check rrquired"
+      # also make sure we include opal: bad things will happen if we dont
       @required = case req
       when Array
+        unless req.include? :opal
+          req << :opal
+        end
+        
         req
       when Symbol
-        [req]
+        if req == :opal
+          [req]
+        else
+          [req, :opal]
+        end
       else
-        []
+        # browser if we do not specify anything..
+        [:opal, :browser]
       end
     end
     
@@ -93,9 +103,11 @@ module Vienna
     
     def prepare!
       # return
-      return @self if @is_prepared
+      # return @self if @is_prepared
       # puts "===== preparing #{target_name}"
-      @is_prepared = true
+      # @is_prepared = true
+      # reset build items
+      @build_items = []
       if opalfile.has_task? 'target:prepare'
         opalfile.invoke 'target:prepare', :target   => self, 
                                           :project  => project,

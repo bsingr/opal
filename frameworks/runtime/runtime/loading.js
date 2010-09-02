@@ -95,6 +95,18 @@ var file_list = exports.files = {};
 exports.run = function(path, cwd) {
   bin_file = path;
   exports.getwd = opal_cwd = cwd;
+  
+  if (!bin_file)
+    throw "Opal: no bin file defined."
+    
+  var bin_path = bin_file + "/bin/" + bin_file + ".rb";
+  
+  if (exports.files[bin_path])
+    exports.require(bin_path);
+  else {
+    bin_path = bin_file + "/lib/" + bin_file + ".rb";
+    exports.require(bin_path);
+  }
 };
 
 // require the file at the given path: we have already checked it exists - mark
@@ -153,36 +165,41 @@ exports.browser = (function() {
   return browser;
 })();
 
+// set callback for when opal/document is ready to go!
+exports.setDocumentReadyListener = function(callback) {
+  // run it in the context of top self
+  var on_ready = function() {
+    callback.apply(opal.top_self);
+  };
+  // attach ready function
+  (function(){
+    // w3c - firefox, safari, opera
+    if (document.addEventListener) {
+      document.addEventListener("DOMContentLoaded", on_ready, false);
+    }
+    // internet explorer
+    if (exports.browser.msie) {
+      (function() {
+        try {
+          document.documentElement.doScroll('left');
+        }
+        catch (e) {
+          setTimeout(arguments.callee, 0);
+          return;
+        }
+        on_ready();
+      })();
+    }
+
+  })();
+};
+
 // ================
 // = On ready etc =
 // ================
-var on_ready = function() {
+// var on_ready = function() {
   // console.log("===== on_ready");
-  if (!bin_file)
-    throw "Opal: no bin file defined."
-    
-  var bin_path = bin_file + "/bin/" + bin_file + ".rb";
-  exports.require(bin_path);
-};
 
-// attach ready function
-(function(){
-  // w3c - firefox, safari, opera
-  if (document.addEventListener) {
-    document.addEventListener("DOMContentLoaded", on_ready, false);
-  }
-  // internet explorer
-  if (exports.browser.msie) {
-    (function() {
-      try {
-        document.documentElement.doScroll('left');
-      }
-      catch (e) {
-        setTimeout(arguments.callee, 0);
-        return;
-      }
-      on_ready();
-    })();
-  }
-  
-})();
+// };
+
+

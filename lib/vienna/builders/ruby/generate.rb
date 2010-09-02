@@ -494,7 +494,7 @@ module Vienna
           r << "}"
           
         when RubyParser::ISEQ_TYPE_BLOCK
-          r << "this.P(this, "
+          r << "this.P("
           deal_with_method_args(r)
           
           # r << "if (arguments.callee.opal_self) {"
@@ -1072,7 +1072,8 @@ module Vienna
     def generate_yield stmt, context
       write "return " if context[:full_stmt] and context[:last_stmt]
       
-      block_name = @iseq_current.block_arg_name
+      # block_name = @iseq_current.block_arg_name
+      block_name = '__block__'
       
       # for now, normal args or a single *splat
       if stmt[:call_args] and stmt[:call_args][:args][0].node == :splat
@@ -1785,7 +1786,7 @@ module Vienna
     def generate_lambda(stmt, context)
       write "return " if context[:last_stmt] && context[:full_stmt]
       
-      write "#{SELF}.L(#{SELF}, function() {"
+      write "#{SELF}.L(function() {"
       
       stmt[:body].each do |stmt|
         generate_stmt stmt, :full_stmt => true

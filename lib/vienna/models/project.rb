@@ -47,6 +47,11 @@ module Vienna
     BASE_OPALFILE = File.join(Vienna::PATH, 'Opalfile')
     
     def initialize(project_root, build_options)
+      
+      unless File.exists? File.join(project_root, 'Opalfile')
+        raise "Not a valid project (no Opalfile)"
+      end
+      
       @build_options = build_options
       @project_root = project_root
       @targets = nil
@@ -58,6 +63,10 @@ module Vienna
       # puts "######################################## TASKS"
       # puts @opalfile.tasks.each_key.map { |key| key }
       # puts "######################################## DONE\n\n\n\n"
+    end
+    
+    def project_name
+      @project_name ||= File.basename @project_root
     end
     
     def inspect
@@ -104,6 +113,8 @@ module Vienna
       @main_target = target
       # find all targets for this project_root with given config
       find_targets_for target, config
+      
+      # puts "finished finding targets"
       # targets
       @targets
     end
@@ -112,6 +123,9 @@ module Vienna
     def find_targets_for the_target, config
       # puts "looking for targets..... #{the_target.target_name} .. #{@targets.inspect}"
       # p the_target.opalfile
+      # puts "looking for targets"
+      # puts the_target.required.inspect
+      # puts "down to here"
       the_target.required.each do |target|
         # if we already know about the target, skip it
         next if @targets.has_key?(target.to_s)
@@ -130,6 +144,9 @@ module Vienna
           raise "Could not find required opal #{target}. (Required in #{the_target.target_name})"
         end
       end
+      
+      # puts "and all the way to here"
+      
     end
     
     # add a target
@@ -140,6 +157,10 @@ module Vienna
     def build!()
       # get main target and put it at the end
       all_targets = targets.each_value.to_a
+      
+      # puts "all of our targets:"
+      
+      # puts all_targets
 
       all_targets.push all_targets.slice!(all_targets.index @main_target)
       all_targets.each do |target|
