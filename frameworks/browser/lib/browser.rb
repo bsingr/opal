@@ -78,6 +78,8 @@ module Browser
   end
 end
 
+require 'browser/string'
+require 'browser/window'
 require 'browser/document'
 require 'browser/sizzle.js'
 require 'browser/element'

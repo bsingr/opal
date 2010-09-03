@@ -23,236 +23,321 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 #
-
-module Browser
   
-  # Represents a DOM element in the browser.
+# Represents a DOM element in the browser.
+# 
+# Native Elements are not extended due to cross browser issues. Instead, 
+# instances of this class will have an instance property '__element__' which
+# is the native javascript element. Extensions to this class should access
+# the element in this way for modification etc. In future, this class will
+# cache some information on the element, such as class name etc in an aim to
+# speed up performance by reducing hits to the DOM.
+# 
+class Element
+  
+  # Creates a new element of the specified type.
   # 
-  # Native Elements are not extended due to cross browser issues. Instead, 
-  # instances of this class will have an instance property '__element__' which
-  # is the native javascript element. Extensions to this class should access
-  # the element in this way for modification etc. In future, this class will
-  # cache some information on the element, such as class name etc in an aim to
-  # speed up performance by reducing hits to the DOM.
+  #     # create a simple div. String/Symbols are accepted
+  #     element = Element.new 'div'
+  #     # create a simple div with some additional class and id options
+  #     element2 = Element.new :div, :class_name => 'my_class', :id => 'main'
   # 
-  class Element
+  def initialize(type, options)
+    `if (!#{options}) { #{options} = vnH()}`
+    # puts "creating new element #{type}"
+    `#{self}.__element__ = document.createElement(#{type.to_s});`
+    @tag_name = type.to_s
+    set options
+  end
+  
+  # Return an instance with the passed native element as the instance's own
+  # element. This is used to return the body element, for instance
+  # 
+  #     Element.from_native(..some native element pointer..)
+  #     # => element
+  # 
+  # @param [Native Element] element
+  # @return [Element]
+  # 
+  def self.from_native(native_element)
+    `console.log("loogking up for "  + #{native_element});`
+    `if(!#{native_element}) return #{nil};`
+    element = allocate
+    `#{element}.__element__ = #{native_element};`
+    element
+  end
+  
+  # Return the body element for the document. The body element is an instance
+  # of this class, with some singleton methods defined, such as inspect so
+  # that it gets some nicer inspect properties.
+  # 
+  # @return [Element] body element
+  # 
+  def self.body
+    return @body_element if @body_element
     
-    # Creates a new element of the specified type.
-    # 
-    #     # create a simple div. String/Symbols are accepted
-    #     element = Element.new 'div'
-    #     # create a simple div with some additional class and id options
-    #     element2 = Element.new :div, :class_name => 'my_class', :id => 'main'
-    # 
-    def initialize(type, options)
-      `if (!#{options}) { #{options} = vnH()}`
-      # puts "creating new element #{type}"
-      `#{self}.__element__ = document.createElement(#{type.to_s});`
-      @tag_name = type.to_s
-      set options
+    @body_element = from_native(`document.body`)
+    def @body_element.inspect
+      "#<Element body>"
     end
     
-    # Return an instance with the passed native element as the instance's own
-    # element. This is used to return the body element, for instance
-    # 
-    #     Element.from_native(..some native element pointer..)
-    #     # => element
-    # 
-    # @param [Native Element] element
-    # @return [Element]
-    # 
-    def self.from_native(native_element)
-      element = allocate
-      `#{element}.__element__ = #{native_element};`
-      element
-    end
+    @body_element
+  end
+  
+  # Find the DOM selector in the given context. Context should always be 
+  # given. 
+  # 
+  #     Element.find_in_context('.first', Element.body)
+  # 
+  # @param [String|Synbol] selector
+  # @param [Element] context
+  # @returns Array
+  # 
+  def self.find_in_context(selector, context)
+    selector = `'#' + #{selector.to_s}` if selector.is_a? Symbol
+    elements = `Sizzle(#{selector}, #{context}.__element__);`
+    # if elements.length == 1
+      # `return #{Element}.$from_native(#{elements}[0]);`
+    # else
+      # `console.log(#{elements});`
+      # raise "need to handle find_in_context array"
+    # end
     
-    # Return the body element for the document. The body element is an instance
-    # of this class, with some singleton methods defined, such as inspect so
-    # that it gets some nicer inspect properties.
-    # 
-    # @return [Element] body element
-    # 
-    def self.body
-      return @body_element if @body_element
-      
-      @body_element = from_native(`document.body`)
-      def @body_element.inspect
-        "#<Element body>"
-      end
-      
-      @body_element
+    elements.map do |e|
+      from_native e
     end
+  end
+  
+  def find(selector)
+    self.class.find_in_context selector, self
+  end
+  
+  def tag_name
+    @tag_name ||= `#{self}.__element__.tagName`
+  end
+  
+  def id
+    `return #{self}.__element__.id || #{nil};`
+  end
+  
+  def inspect
+    description = ["#<Element tag_name=#{tag_name}"]
+    description << " class_name='#{class_name}'" unless class_name == ""
+    description << " id='#{id}'" unless id == ""
+    description << ">"
+    description.join ""
+  end
+  
+  # What to do with each option
+  SET_OPTIONS = {
+    :class_name => :class_name=,
+    :content    => :text=,
+    :id         => :id=
+  }
+  
+  # Set some options on the element
+  # 
+  #     element.set :class_name => "adam", :id => "beynon"
+  # 
+  # @param [Hash] options
+  # @returns self
+  # 
+  def set(options)
+    options.each do |key, value|
+      method = SET_OPTIONS[key]
+      raise "Bad Element.set key #{key}" unless method
+      __send__ SET_OPTIONS[key], value
+    end
+  end
+  
+  # 
+  # classname
+  # 
+  
+  # Checks whether the receiver has the passed in class_name
+  # 
+  # @example Checking for classes
+  #   # Assuming the following HTML
+  #   # <div id="some_id" class="first second"></div>
+  #   
+  #   elem = Document['some_id']
+  #   
+  #   elem.has_class? 'first'
+  #   # => true
+  # 
+  #   elem.has_class? 'third'
+  #   # => false
+  # 
+  # @param [String, Symbol] class_name the class_name to check
+  # @return [true, false] if the element has the given class_name
+  def has_class?(class_name)
+    self.class_name.__contains__ class_name.to_s, " "
+  end
+  
+  # Adds the given class_name to the receivers' classes, unless the class 
+  # already have the class
+  # 
+  # @param [String, Symbol] class_name the class_name to add
+  # @return [Element] returns the receiver
+  def add_class(class_name)
+    self.class_name += " #{class_name}" unless has_class? class_name
+    self
+  end
+  
+  # Adds each of the given class_names using {#add_class}.
+  # 
+  # @param [Array<String, Symbol>] class_names the list of class_names
+  # @return [Element] returns the receiver
+  def add_classes(*class_names)
+    class_names.each do |class_name|
+      add_class class_name
+    end
+    self
+  end
+  
+  # Remove the given class_name from the element, if it has the class_name
+  # 
+  # @param [String, Symbol] class_name the class_name to remove
+  # @return [Element] returns the receiver
+  def remove_class(class_name)
+    class_name = class_name.to_s
+    `#{self}.__element__.className = #{self.class_name}.replace(new RegExp('(^|\\s)' + #{class_name} + '(?:\\s|$)'), '$1');`
+    self
+  end
+  
+  # Adds the given class_name to the receiver if it does not already have the 
+  # class_name, otherwise removes it.
+  # 
+  # @param [String, Symbol] class_name the class_name to toggle
+  # @return [Element] returns the receiver
+  def toggle_class(class_name)
+    class_name = class_name.to_s
+    has_class?(class_name) ? remove_class(class_name) : add_class(class_name)
+    self
+  end
+  
+  # Set the class name. Here we do not append, just rewrite the entire class
+  # name
+  # 
+  def class_name=(class_name)
+    `#{self}.__element__.className = #{class_name}.toString();`
+    self
+  end
+  
+  def class_name
+    `return #{self}.__element__.className || "";`
+  end
+  
+  # set class names from hash
+  def set_class_names(class_names)
+    current = self.class_name.split ' '
     
-    # Find the DOM selector in the given context. Context should always be 
-    # given. 
-    # 
-    #     Element.find_in_context('.first', Element.body)
-    # 
-    # @param [String|Synbol] selector
-    # @param [Element] context
-    # @returns Array
-    # 
-    def self.find_in_context(selector, context)
-      selector = `'#' + #{selector.to_s}` if selector.is_a? Symbol
-      elements = `Sizzle(#{selector}, #{context}.__element__);`
-      if elements.length == 1
-        `return #{Element}.$from_native(#{elements}[0]);`
+    class_names.each do |name, flag|
+      if current.include? name
+        unless flag
+          current.delete name 
+        end
       else
-        # `console.log(#{elements});`
-        raise "need to handle find_in_context array"
-      end
-    end
-    
-    def find(selector)
-      self.class.find_in_context selector, self
-    end
-    
-    def inspect
-      description = "#<Element tag_name=#{@tag_name}"
-      description << " class_name=''" unless true
-      description << " id=''" unless true
-      description << ">"
-      description
-    end
-    
-    # What to do with each option
-    SET_OPTIONS = {
-      :class_name => :class_name=,
-      :content    => :text=,
-      :id         => :id=
-    }
-    
-    # Set some options on the element
-    # 
-    #     element.set :class_name => "adam", :id => "beynon"
-    # 
-    # @param [Hash] options
-    # @returns self
-    # 
-    def set(options)
-      options.each do |key, value|
-        method = SET_OPTIONS[key]
-        raise "Bad Element.set key #{key}" unless method
-        __send__ SET_OPTIONS[key], value
-      end
-    end
-    
-    # Set the class name. Here we do not append, just rewrite the entire class
-    # name
-    # 
-    def class_name=(class_name)
-      `#{self}.__element__.className = #{class_name}.toString();`
-      self
-    end
-    
-    def class_name
-      `return #{self}.__element__.className || "";`
-    end
-    
-    # set class names from hash
-    def set_class_names(class_names)
-      current = self.class_name.split ' '
-      
-      class_names.each do |name, flag|
-        if current.include? name
-          unless flag
-            current.delete name 
-          end
-        else
-          if flag
-            current << name
-          end
+        if flag
+          current << name
         end
       end
-      
-      self.class_name = current.join(" ")
     end
     
-    def id=(id)
-      `return #{self}.__element__.id = #{id};`
+    self.class_name = current.join(" ")
+  end
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  def id=(id)
+    `return #{self}.__element__.id = #{id};`
+  end
+  # Set the inner text content of the receiver
+  def text=(text_content)
+    `var element = #{self}.__element__;
+    if (element.textContent !== undefined) {
+      element.textContent = #{text_content}.toString();
+    }
+    else {
+      element.innerText = #{text_content}.toString();
+    }`
+    self
+  end
+  
+  # 
+  # @param {Hash} styles
+  # 
+  def css(styles)
+    native_element = `#{self}.__element__`
+    # puts "about to style.."
+    # `console.log(#{native_element});`
+    styles.each do |style, value|
+      # puts "setting #{style} as #{value}"
+      `(#{native_element}.style || #{native_element})[#{style.to_s}] = #{value};`
     end
-    # Set the inner text content of the receiver
-    def text=(text_content)
-      `var element = #{self}.__element__;
-      if (element.textContent !== undefined) {
-        element.textContent = #{text_content}.toString();
-      }
-      else {
-        element.innerText = #{text_content}.toString();
-      }`
-      self
-    end
-    
-    # 
-    # @param {Hash} styles
-    # 
-    def css(styles)
-      native_element = `#{self}.__element__`
-      # puts "about to style.."
-      # `console.log(#{native_element});`
-      styles.each do |style, value|
-        # puts "setting #{style} as #{value}"
-        `(#{native_element}.style || #{native_element})[#{style.to_s}] = #{value};`
-      end
-    end
-    
-    # Set the id of the element
-    def id=(id)
-      `#{self}.__element__.id = #{id}.toString();`
-      self
-    end
-    
-    # Append the element. If string passed, then add as html content
-    # 
-    def <<(append)
-      if append.is_a? Element
-        `#{self}.__element__.appendChild(#{append}.__element__);`
-      else
-        raise "bad Element <<"
-      end
-      
-      self
-    end
-    
-    # Returns the offset of the element, taking into account the parents, scroll
-    # values, etc etc. needs improving, not 100% for all browsers
-    # 
-    # @returns {Hash} :left/:top => Number
-    # 
-    def element_offset
-      left = 0
-      top = 0
-      
-      `var element = #{self}.__element__;
-      var parent = element;
-      while (parent) {
-        #{left} += parent.offsetLeft;
-        #{top} += parent.offsetTop;
-        parent = parent.offsetParent;
-      }
-      `
-      Point.new left, top
+  end
+  
+  # Set the id of the element
+  def id=(id)
+    `#{self}.__element__.id = #{id}.toString();`
+    self
+  end
+  
+  # Append the element. If string passed, then add as html content
+  # 
+  def <<(append)
+    if append.is_a? Element
+      `#{self}.__element__.appendChild(#{append}.__element__);`
+    else
+      raise "bad Element <<"
     end
     
-    # All valid html tags. These are looped over so each element instance has
-    # an instance method of the same name to construct an element of that type
-    # with some given options
-    VALID_HTML_TAGS = [
-      :html, :head, :title, :base, :meta, :link, :style, :script, :body, :div,
-      :dl, :dt, :dd, :span, :pre
-    ]
+    self
+  end
+  
+  # Returns the offset of the element, taking into account the parents, scroll
+  # values, etc etc. needs improving, not 100% for all browsers
+  # 
+  # @returns {Hash} :left/:top => Number
+  # 
+  def element_offset
+    left = 0
+    top = 0
     
-    VALID_HTML_TAGS.each do |tag_name|
-      define_method(tag_name) do |options|
-        # puts "in VALID_HTML_TAGS builder"
-        # options are the options to se
-        e = Element.new tag_name, options
-        # now add to self
-        self << e
-        
-        e
-      end
+    `var element = #{self}.__element__;
+    var parent = element;
+    while (parent) {
+      #{left} += parent.offsetLeft;
+      #{top} += parent.offsetTop;
+      parent = parent.offsetParent;
+    }
+    `
+    Point.new left, top
+  end
+  
+  # All valid html tags. These are looped over so each element instance has
+  # an instance method of the same name to construct an element of that type
+  # with some given options
+  VALID_HTML_TAGS = [
+    :html, :head, :title, :base, :meta, :link, :style, :script, :body, :div,
+    :dl, :dt, :dd, :span, :pre
+  ]
+  
+  VALID_HTML_TAGS.each do |tag_name|
+    define_method(tag_name) do |options|
+      # options are the options to se
+      e = Element.new tag_name, options
+      # now add to self
+      self << e
+      # return new element (for chaining)
+      e
     end
   end
 end

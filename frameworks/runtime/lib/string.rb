@@ -20,6 +20,14 @@ class String
     return #{nil};`
   end
   
+  def include?(str)
+    `var res = #{self}.indexOf(#{str});
+    if (res != -1) {
+      return #{true};
+    }
+    return #{false};`
+  end
+  
   def slice(start, finish)
     `return #{self}.substr(#{start}, #{finish});`
   end
@@ -37,7 +45,7 @@ class String
   end
   
   def <<(string)
-    `#{self} += #{string.to_s};`
+    # `#{self} += #{string.to_s};`
     self
   end
   

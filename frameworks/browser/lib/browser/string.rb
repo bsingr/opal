@@ -1,5 +1,5 @@
 # 
-# regexp.rb
+# string.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,21 +24,19 @@
 # THE SOFTWARE.
 #
 
-class Regexp
+# Additions useful to browser
+class String
   
-  def match(string)
-    m = nil
-    `if (#{m} = #{self}.exec(#{string})) {
-      return #{MatchData.new m};
+  # does the string contain the given string, with possible separator. This 
+  # method checks against itsefl with the separator added to begin and ending
+  # of the string. Useful for checking strings in class_names (that are padded
+  # with " ", but not at start or end)
+  # 
+  def __contains__(str, sep="")
+    `if ((#{sep} + #{self} + #{sep}).indexOf(#{sep} + #{str} + #{sep}) > -1) {
+      return #{true};
     } else {
-      return #{nil};
+      return #{false};
     }`
   end
-  
-  def ===(string)
-    match string
-  end
-  
 end
-
-# puts(/adam/.match "adqwsam")

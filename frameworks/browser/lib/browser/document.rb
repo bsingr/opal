@@ -24,7 +24,28 @@
 # THE SOFTWARE.
 #
 
+# The [Document] module.
 module Document
+  
+  def self.[](selector)
+    case selector
+    when Symbol
+      puts "need to find symbol #{selector}"
+      find_by_id selector
+      # puts "and here"
+    when /^#/
+      puts "need to find id"
+      find_by_id selector
+    else
+      puts "need to find array of things"
+      Element.find_in_context selector, self
+    end
+  end
+  
+  def self.find_by_id(id)
+    puts "finding by id"
+    Element.from_native `document.getElementById(#{id.to_s})`
+  end
   
   @on_ready_actions = []
   @__ready__ = false
@@ -53,9 +74,19 @@ module Document
     end
   end
   
-end
+  # The body element of the page
+  # 
+  # @returns [Element] body element of document
+  def self.body
+    Element.from_native `document.body`
+  end
+  
+  # Quick hack/snippet to make document ready when opal receives triggers
+  `opal.setDocumentReadyListener(function() {
+    #{Document.__make_ready};
+  });`
 
-# Quick hack/snippet to make document ready when opal receives triggers
-`opal.setDocumentReadyListener(function() {
-  #{Document.__make_ready};
-});`
+  # Document should represen the native 'document'
+  `#{self}.__element__ = document;`
+  
+end

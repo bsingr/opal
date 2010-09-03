@@ -1,5 +1,5 @@
 # 
-# regexp.rb
+# window.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,21 +24,13 @@
 # THE SOFTWARE.
 #
 
-class Regexp
+class Window
   
-  def match(string)
-    m = nil
-    `if (#{m} = #{self}.exec(#{string})) {
-      return #{MatchData.new m};
-    } else {
-      return #{nil};
-    }`
+  def self.window
+    self
   end
   
-  def ===(string)
-    match string
+  def self.document
+    Document
   end
-  
 end
-
-# puts(/adam/.match "adqwsam")

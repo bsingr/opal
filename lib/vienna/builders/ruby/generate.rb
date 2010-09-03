@@ -1500,7 +1500,7 @@ module Vienna
               write "#{case_result} = "
             end
             
-            generate_stmt s, :full_stmt => true, :last_stmt => is_last
+            generate_stmt s, :full_stmt => true, :last_stmt => is_last && c[:stmt].last == s
           end
           write "}"
         else # it is an else, so anything else goes
@@ -1511,7 +1511,7 @@ module Vienna
             if c[:stmt].last == s && case_result
               write "#{case_result} = "
             end
-            generate_stmt s, :full_stmt => true, :last_stmt => is_last
+            generate_stmt s, :full_stmt => true, :last_stmt => is_last && c[:stmt].last == s
           end
           write "}"
         end

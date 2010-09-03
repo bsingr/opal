@@ -154,7 +154,7 @@ exports.require = function(orig_path) {
 // = Browser bits and bobs =
 // =========================
 
-exports.browser = (function() {
+var browser = exports.browser = (function() {
   var agent = navigator.userAgent.toLowerCase();
   var version = 1;
   var browser = {
@@ -231,6 +231,14 @@ exports.setDocumentReadyListener = function(callback) {
  * THE SOFTWARE.
  */
  
+ 
+// lets just do this straight away, out of the way. Still need a way to log from
+// IE, Opera etc etc etc
+if (typeof console === 'undefined') {
+  window.console = {} ;
+  console.info = console.warn = console.error = console.log = function(){};
+}
+
 // Core classes
 // exports.c_object        = null;
 var class_basic_object  = null,
@@ -1569,14 +1577,15 @@ return this.dm("exclude_end?",function(){return this.__exclusive__ ? this.t : th
 },0);
 }).apply(opal.top_self);
 // ##################### lib/regexp.rb #####################
-(function(__FILE__){this.define_class(this.n,"Regexp",function(){return this.dm("match",function(string){var m = this.n;m=this.n;
+(function(__FILE__){this.define_class(this.n,"Regexp",function(){this.dm("match",function(string){var m = this.n;m=this.n;
 if (m = this.exec(string)) {
       return this.const_get('MatchData').$new(m);
     } else {
       return this.n;
     }},false);
+return this.dm("===",function(string){return this.$match(string);
+},false);
 },0);
-this.$puts(/adam/.$match("adqwsam"));
 }).apply(opal.top_self);
 // ##################### lib/string.rb #####################
 (function(__FILE__){this.define_class(this.n,"String",function(){this.dm("index",function(string){var res = this.indexOf(string);
@@ -1584,11 +1593,16 @@ this.$puts(/adam/.$match("adqwsam"));
       return res;
     }
     return this.n;},false);
+this.dm("include?",function(str){var res = this.indexOf(str);
+    if (res != -1) {
+      return this.t;
+    }
+    return this.f;},false);
 this.dm("slice",function(start,finish){return this.substr(start, finish);},false);
 this.dm("==",function(other){return (this == other) ? this.t : this.f;},false);
 this.dm("+",function(other){return this + other;},false);
 this.dm("upcase!",function(){return this = this.toUpperCase();},false);
-this.dm("<<",function(string){this += string.$to_s();return this;
+this.dm("<<",function(string){return this;
 },false);
 this.dm("to_s",function(){return this;
 },false);
@@ -1629,24 +1643,36 @@ opal.register({
 opal.register({
   "name": "browser",
   "files": {
-    "lib/browser/document.rb": (function(__FILE__){this.define_class(this.n,'Document',function(){this.is("@on_ready_actions",[]);
+    "lib/browser/document.rb": (function(__FILE__){this.define_class(this.n,'Document',function(){this.dm("[]",function(selector){var $a = this.n;$a = selector;if(this.const_get('Symbol')['$===']($a).r) {this.$puts(["need to find symbol ",selector.$to_s()].join(''));
+return this.$find_by_id(selector);
+}else if(/^#/['$===']($a).r) {this.$puts("need to find id");
+return this.$find_by_id(selector);
+}else {this.$puts("need to find array of things");
+return this.const_get('Element').$find_in_context(selector,this);
+}},true);
+this.dm("find_by_id",function(id){this.$puts("finding by id");
+return this.const_get('Element').$from_native(document.getElementById(id.$to_s()));
+},true);
+this.is("@on_ready_actions",[]);
 this.is("@__ready__",this.f);
 this.dm("ready?",function(){if (arguments.length > 0 && arguments[0].info & this.TP) {  var __block__ = arguments[0];}if(((!__block__ || !__block__.r) ? this.f : this.t).r){if(this.ig('@__ready__').r){this.rbYield(__block__,[]);
 }else{this.ig('@on_ready_actions')['$<<'](__block__);
 }}else{this.n;}return this.ig('@__ready__');
 },true);
-return this.dm("__make_ready",function(){this.is("@__ready__",this.t);
+this.dm("__make_ready",function(){this.is("@__ready__",this.t);
 return this.ig('@on_ready_actions').$each(this.P(function(action){return action.$call();
 }));
 },true);
-},2);
+this.dm("body",function(){return this.const_get('Element').$from_native(document.body);
+},true);
 opal.setDocumentReadyListener(function() {
-  this.const_get('Document').$__make_ready();
-});}),
-    "lib/browser/element.rb": (function(__FILE__){this.define_class(this.n,'Browser',function(){return this.define_class(this.n,"Element",function(){this.dm("initialize",function(type,options){if (!options) { options = vnH()}this.__element__ = document.createElement(type.$to_s());this.is("@tag_name",type.$to_s());
+    this.const_get('Document').$__make_ready();
+  });this.__element__ = document;},2);
+}),
+    "lib/browser/element.rb": (function(__FILE__){this.define_class(this.n,"Element",function(){this.dm("initialize",function(type,options){if (!options) { options = vnH()}this.__element__ = document.createElement(type.$to_s());this.is("@tag_name",type.$to_s());
 return this.$set(options);
 },false);
-this.dm("from_native",function(native_element){var element = this.n;element=this.$allocate();
+this.dm("from_native",function(native_element){var element = this.n;console.log("loogking up for "  + native_element);if(!native_element) return this.n;element=this.$allocate();
 element.__element__ = native_element;return element;
 },true);
 this.dm("body",function(){if(this.ig('@body_element').r){return this.ig('@body_element');
@@ -1657,21 +1683,42 @@ return this.ig('@body_element');
 },true);
 this.dm("find_in_context",function(selector,context){var elements = this.n;if(selector['$is_a?'](this.const_get('Symbol')).r){selector='#' + selector.$to_s();
 }else{this.n;}elements=Sizzle(selector, context.__element__);;
-if(elements.$length()['$=='](1).r){return this.const_get('Element').$from_native(elements[0]);}else{return this.$raise("need to handle find_in_context array");
-}},true);
+return elements.$map(this.P(function(e){return this.$from_native(e);
+}));
+},true);
 this.dm("find",function(selector){return this.$class().$find_in_context(selector,this);
 },false);
-this.dm("inspect",function(){var description = this.n;description=["#<Element tag_name=",this.ig('@tag_name').$to_s()].join('');
-if(!this.t.r){description['$<<'](" class_name=''");
-}else{this.n;}if(!this.t.r){description['$<<'](" id=''");
+this.dm("tag_name",function(){return this.o(this.ig('@tag_name'),function(){return this.is("@tag_name",this.__element__.tagName);
+});
+},false);
+this.dm("id",function(){return this.__element__.id || this.n;},false);
+this.dm("inspect",function(){var description = this.n;description=[["#<Element tag_name=",this.$tag_name().$to_s()].join('')];
+if(!this.$class_name()['$==']("").r){description['$<<']([" class_name='",this.$class_name().$to_s(),"'"].join(''));
+}else{this.n;}if(!this.$id()['$==']("").r){description['$<<']([" id='",this.$id().$to_s(),"'"].join(''));
 }else{this.n;}description['$<<'](">");
-return description;
+return description.$join("");
 },false);
 this.const_set("SET_OPTIONS",vnH(this.Y("class_name"),this.Y("class_name="),this.Y("content"),this.Y("text="),this.Y("id"),this.Y("id=")));
 this.dm("set",function(options){return options.$each(this.P(function(key,value){var method = this.n;method=this.const_get('SET_OPTIONS')['$[]'](key);
 if(!method.r){this.$raise(["Bad Element.set key ",key.$to_s()].join(''));
 }else{this.n;}return this.$__send__(this.const_get('SET_OPTIONS')['$[]'](key),value);
 }));
+},false);
+this.dm("has_class?",function(class_name){return this.$class_name().$__contains__(class_name.$to_s()," ");
+},false);
+this.dm("add_class",function(class_name){if(!this['$has_class?'](class_name).r){this['$class_name='](this.$class_name()['$+']([" ",class_name.$to_s()].join('')));
+}else{this.n;}return this;
+},false);
+this.dm("add_classes",function(class_names){class_names=Array.prototype.slice.call(arguments);class_names.$each(this.P(function(class_name){return this.$add_class(class_name);
+}));
+return this;
+},false);
+this.dm("remove_class",function(class_name){class_name=class_name.$to_s();
+this.__element__.className = this.$class_name().replace(new RegExp('(^|\\s)' + class_name + '(?:\\s|$)'), '$1');return this;
+},false);
+this.dm("toggle_class",function(class_name){class_name=class_name.$to_s();
+(this['$has_class?'](class_name)).r ? this.$remove_class(class_name) : this.$add_class(class_name);
+return this;
 },false);
 this.dm("class_name=",function(class_name){this.__element__.className = class_name.toString();return this;
 },false);
@@ -1684,12 +1731,12 @@ return this['$class_name='](current.$join(" "));
 },false);
 this.dm("id=",function(id){return this.__element__.id = id;},false);
 this.dm("text=",function(text_content){var element = this.__element__;
-      if (element.textContent !== undefined) {
-        element.textContent = text_content.toString();
-      }
-      else {
-        element.innerText = text_content.toString();
-      }return this;
+    if (element.textContent !== undefined) {
+      element.textContent = text_content.toString();
+    }
+    else {
+      element.innerText = text_content.toString();
+    }return this;
 },false);
 this.dm("css",function(styles){var native_element = this.n;native_element=this.__element__;
 return styles.$each(this.P(function(style,value){(native_element.style || native_element)[style.$to_s()] = value;}));
@@ -1702,13 +1749,13 @@ this.dm("<<",function(append){if(append['$is_a?'](this.const_get('Element')).r){
 this.dm("element_offset",function(){var left = this.n,top = this.n;left=0;
 top=0;
 var element = this.__element__;
-      var parent = element;
-      while (parent) {
-        left += parent.offsetLeft;
-        top += parent.offsetTop;
-        parent = parent.offsetParent;
-      }
-      return this.const_get('Point').$new(left,top);
+    var parent = element;
+    while (parent) {
+      left += parent.offsetLeft;
+      top += parent.offsetTop;
+      parent = parent.offsetParent;
+    }
+    return this.const_get('Point').$new(left,top);
 },false);
 this.const_set("VALID_HTML_TAGS",[this.Y("html"),this.Y("head"),this.Y("title"),this.Y("base"),this.Y("meta"),this.Y("link"),this.Y("style"),this.Y("script"),this.Y("body"),this.Y("div"),this.Y("dl"),this.Y("dt"),this.Y("dd"),this.Y("span"),this.Y("pre")]);
 return this.const_get('VALID_HTML_TAGS').$each(this.P(function(tag_name){return this.$define_method(tag_name,this.P(function(options){var e = this.n;e=this.const_get('Element').$new(tag_name,options);
@@ -1717,7 +1764,6 @@ return e;
 }));
 }));
 },0);
-},2);
 }),
     "lib/browser/event.rb": (function(__FILE__){this.define_class(this.n,'Browser',function(){return this.define_class(this.n,"Event",function(){this.dm("listen",function(element,event_name){var __block__ = 
               (arguments[2] && arguments[2].info & this.TP)
@@ -1792,6 +1838,19 @@ return this.dm("contains_point?",function(point){var res = (this.$x() < point.$x
 },0);
 },2);
 }),
+    "lib/browser/string.rb": (function(__FILE__){this.define_class(this.n,"String",function(){return this.dm("__contains__",function(str, sep){if (sep == undefined) {  sep = "";}if ((sep + this + sep).indexOf(sep + str + sep) > -1) {
+      return this.t;
+    } else {
+      return this.f;
+    }},false);
+},0);
+}),
+    "lib/browser/window.rb": (function(__FILE__){this.define_class(this.n,"Window",function(){this.dm("window",function(){return this;
+},true);
+return this.dm("document",function(){return this.const_get('Document');
+},true);
+},0);
+}),
     "lib/browser.rb": (function(__FILE__){this.define_class(this.n,'Browser',function(){this.dm("opera?",function(){return this.o(this.ig('@__is_opera__'),function(){return this.is("@__is_opera__",(opal.browser.opera ? this.t : this.f));
 });
 },true);
@@ -1817,6 +1876,8 @@ this.ig('@window_element').dm("inspect",function(){return "#<Element window>";
 return this.ig('@window_element');
 },true);
 },2);
+this.$require("browser/string");
+this.$require("browser/window");
 this.$require("browser/document");
 this.$require("browser/sizzle.js");
 this.$require("browser/element");
@@ -2898,13 +2959,38 @@ opal.register({
   "name": "browser_demo",
   "files": {
     "lib/browser_demo.rb": (function(__FILE__){this.$require("browser");
-this.$puts("browser demo, eeek!");
-this.$puts(["is doc ready? ",this.const_get('Document')['$ready?']().$to_s()].join(''));
-this.const_get('Document')['$ready?'](this.P(function(){this.$puts("doc is ready!");
-this.$puts(["is Document ready/? ",this.const_get('Document')['$ready?']().$to_s()].join(''));
-this.const_get('Document')['$ready?'](this.P(function(){return this.$puts("doing first");
+this.const_get('Document')['$ready?'](this.P(function(){var testers = this.n,a = this.n,wow = this.n;this.$puts("doc is now ready");
+this.$puts(this.const_get('Document'));
+this.$puts(this.const_get('Document')['$[]']("#wow"));
+this.$puts(this.const_get('Document')['$[]'](".typess"));
+this.$puts(this.const_get('Document')['$[]']("div"));
+wow=this.const_get('Document')['$[]'](this.Y("wow"));
+this.$puts("does wow have class names...");
+testers=["typess",this.Y("typess"),"types"];
+testers.$each(this.P(function(test){this.$puts(["does 'wow' have ",test.$inspect().$to_s(),"?"].join(''));
+return this.$puts(wow['$has_class?'](test));
 }));
-return this.$puts("doing second");
+this.$puts("ytesting add class");
+wow.$add_class("shit");
+wow.$add_class("types");
+wow.$add_class("typess");
+this.$puts("testing remove class");
+wow.$remove_class("benny");
+wow.$remove_class(this.Y("shit"));
+wow.$remove_class("types");
+this.$puts("testing toggle_clas");
+wow.$toggle_class("adam");
+wow.$toggle_class("beynon");
+wow.$toggle_class("adam");
+this.$puts("testing window..");
+this.$puts(this.const_get('Window'));
+this.$puts("document:");
+this.$puts(this.const_get('Window').$document());
+this.$puts("window:");
+this.$puts(this.const_get('Window').$window());
+this.$puts(["testing Element","#new etc"].join(''));
+a=this.const_get('Element').$new(this.Y("div"));
+return wow['$<<'](a);
 }));
 })
   }

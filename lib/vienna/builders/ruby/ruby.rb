@@ -278,6 +278,12 @@ class Vienna::RubyParser < Racc::Parser
       end
     when scanner.scan(/#/)
       str_buffer << '#'
+      
+      # catch regecp error..
+      if string_type == :regexp && scanner.peek(1) == '/'
+        # raise "error catching!"
+        return [:tSTRING_CONTENT, str_buffer.join]
+      end
     end
     
     # add string content here

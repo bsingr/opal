@@ -24,6 +24,14 @@
  * THE SOFTWARE.
  */
  
+ 
+// lets just do this straight away, out of the way. Still need a way to log from
+// IE, Opera etc etc etc
+if (typeof console === 'undefined') {
+  window.console = {} ;
+  console.info = console.warn = console.error = console.log = function(){};
+}
+
 // Core classes
 // exports.c_object        = null;
 var class_basic_object  = null,

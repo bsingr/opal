@@ -152,7 +152,7 @@ exports.require = function(orig_path) {
 // = Browser bits and bobs =
 // =========================
 
-exports.browser = (function() {
+var browser = exports.browser = (function() {
   var agent = navigator.userAgent.toLowerCase();
   var version = 1;
   var browser = {
