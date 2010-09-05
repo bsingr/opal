@@ -136,8 +136,8 @@ module Vienna
       the_target.required.each do |target|
         # if we already know about the target, skip it
         next if @targets.has_key?(target.to_s)
-        # currently only look in our own frameworks/ root
-        try_path = File.join(Vienna::PATH, 'frameworks', target.to_s)
+        # currently only look in our own opals/ root
+        try_path = File.join(Vienna::PATH, 'opals', target.to_s)
         
         if File.exist?(try_path) and File.directory?(try_path)
           # found target, so add it
