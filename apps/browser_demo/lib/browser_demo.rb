@@ -1,68 +1,31 @@
 
 require 'browser'
 
-# puts "browser demo, eeek!"
-
-# puts "is doc ready? #{Document.ready?}"
-
-
 Document.ready? do
-  puts "doc is now ready"
-  puts Document
   
-  # puts "wow element is:"
-  puts Document['#wow']
-  # puts Document[:wow].on :click do |event|
-  #   
-  # end
-  puts Document['.typess']
-  puts Document['div']
-  
-  # puts "wow.."
-  wow = Document[:wow]
-  
-  puts "does wow have class names..."
-  testers = [
-    'typess',
-    :typess,
-    'types'
-  ]
-  
-  testers.each do |test|
-    puts "does 'wow' have #{test.inspect}?"
-    puts wow.has_class? test
+  puts "testing events"
+  Document.add_listener :click do |evt|
+    puts "in listener"
+    puts evt
   end
   
+  puts "testing Request"
+  req = Request.new
+  puts req
   
-  puts "ytesting add class"
-  wow.add_class 'shsit'
-  wow.add_class 'types'
-  wow.add_class 'typess'
+  req.on :success do
+    puts "handler success!"
+  end
   
-  puts "testing remove class"
-  wow.remove_class 'benny'
-  wow.remove_class :shsit
-  wow.remove_class 'types'
+  req.on :failure do
+    puts "handler failure!"
+  end
   
-  puts "testing toggle_clas"
-  wow.toggle_class 'adam'
-  wow.toggle_class 'beynon'
-  wow.toggle_class 'adam'
+  req.on :complete do
+    puts "handler complete!"
+  end
   
+  req.send :url       => "javascripts/browser_demo.js"
   
-  puts "testing window.."
-  puts Window
-  
-  puts "document:"
-  puts Window.document
-  
-  puts "window:"
-  puts Window.window
-  
-  puts "testing Element#new etc"
-  a = Element.new :div
-  
-  wow << a
 end
-
 

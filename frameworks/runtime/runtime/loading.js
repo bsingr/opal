@@ -92,7 +92,8 @@ var file_list = exports.files = {};
 // 
 // @param [String] path - the main executable file
 // @param [String] path - the working directory
-exports.run = function(path, cwd) {
+// @param [String] lib_path - the lib dir for the main target (default is "lib"), but could well be "ruby" or "opal" or indeed "" 
+exports.run = function(path, cwd, lib_path) {
   bin_file = path;
   exports.getwd = opal_cwd = cwd;
   
@@ -103,9 +104,16 @@ exports.run = function(path, cwd) {
   
   if (exports.files[bin_path])
     exports.require(bin_path);
-  else {
-    bin_path = bin_file + "/lib/" + bin_file + ".rb";
+  else if (exports.files[bin_path = path + '/lib/' + path + '.rb']) {
+    // bin_path = bin_file + "/lib/" + bin_file + ".rb";
     exports.require(bin_path);
+  }
+  else if (exports.files[bin_path = path + '/' + path + '.rb']) {
+    // bin_path = bin_file + "/lib/" + bin_file + ".rb";
+    exports.require(bin_path);
+  }
+  else {
+    throw "cannot find bin file"
   }
 };
 

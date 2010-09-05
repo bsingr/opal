@@ -1,5 +1,5 @@
 # 
-# symbol.rb
+# dimensions.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,17 +24,21 @@
 # THE SOFTWARE.
 #
 
-class Symbol
+
+class Element
   
-  def inspect
-    `return ":" + #{self}.__ptr__;`
+  # Gets the size of the receiver.
+  # 
+  # @return [Size] size of the receiver
+  def size
+    elem = `#{self}.__element__`
+    Size.new `#{elem}.offsetWidth`, `#{elem}.offsetHeight`
   end
   
-  def to_s
-    `return #{self}.__ptr__;`
-  end
-  
-  def to_sym
-    self
+  # Position of the element
+  # 
+  # @return [Point] receiver's position
+  def position
+    
   end
 end

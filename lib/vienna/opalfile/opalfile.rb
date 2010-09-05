@@ -88,7 +88,7 @@ module Vienna
       # merge unless root_opalfile.nil?
       @tasks = root_opalfile.tasks.dup unless root_opalfile.nil?
       
-      instance_eval File.read(root)
+      instance_eval File.read(root) if File.exist? root
 
     end
     

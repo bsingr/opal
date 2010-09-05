@@ -37,16 +37,13 @@ class Element
   
   # Creates a new element of the specified type.
   # 
-  #     # create a simple div. String/Symbols are accepted
-  #     element = Element.new 'div'
-  #     # create a simple div with some additional class and id options
-  #     element2 = Element.new :div, :class_name => 'my_class', :id => 'main'
-  # 
-  def initialize(type, options)
+  # @param [Symbol, String] type the tag name for the +Element+ to have
+  # @param [Hash] options a set of options given to {#set}
+  # @return [Element] returns the new element
+  def initialize(type, options = {})
     `if (!#{options}) { #{options} = vnH()}`
     # puts "creating new element #{type}"
     `#{self}.__element__ = document.createElement(#{type.to_s});`
-    @tag_name = type.to_s
     set options
   end
   
@@ -60,7 +57,7 @@ class Element
   # @return [Element]
   # 
   def self.from_native(native_element)
-    `console.log("loogking up for "  + #{native_element});`
+    #`console.log("loogking up for "  + #{native_element});`
     `if(!#{native_element}) return #{nil};`
     element = allocate
     `#{element}.__element__ = #{native_element};`
@@ -112,16 +109,124 @@ class Element
     self.class.find_in_context selector, self
   end
   
-  def tag_name
-    @tag_name ||= `#{self}.__element__.tagName`
+  # Returns the tag name of the Element as a symbol, in lower case.
+  # 
+  # @example HTML
+  #     <div id="my_div"></div>
+  # 
+  # @example Ruby
+  #     Document[:my_div].tag
+  #     # => :div
+  # 
+  # @return [Symbol] tag name of the element
+  def tag
+    @tag ||= `#{self}.Y(#{self}.__element__.tagName.toLowerCase())`
   end
   
+  # Sets the innerHTML of the receiver.
+  #
+  # @example HTML
+  #     <div id="foo"></foo>
+  # 
+  # @example Ruby
+  #     Document[:foo].html = "<div></div>"
+  # 
+  # @example Result
+  #     <div id="foo">
+  #       <div></div>
+  #     </div>
+  # 
+  # @param [String] html the html string to set
+  # @return [Elements] returns the receiver
+  def html=(html)
+    `#{self}.__element__.innerHTML = #{html};`
+    self
+  end
+  
+  # Returns the text content of the receiver.
+  # 
+  # @example HTML
+  #     <div id="foo">bar</div>
+  # 
+  # @example Ruby
+  #     Document[:foo].text   # => "bar"
+  # 
+  # @return [String] the receivers text content
+  def text
+    `var e = #{self}.__element__;
+    return e.innerText == null ? e.textContent : e.innerText;`
+  end
+  
+  # Set the inner text content of the receiver.
+  # 
+  # @example HTML
+  #     <div id="foo"></div>
+  # 
+  # @example Ruby
+  #     Document[:foo].text = "bar"
+  # 
+  # @example Result
+  #     <div id="foo">bar</div>
+  # 
+  # @param [String] text the text content to set
+  # @return [Element] returns the receiver
+  def text=(text)
+    `var e = #{self}.__element__;
+    if (e.textContent !== undefined) {
+      e.textContent = #{text}.toString();
+    }
+    else {
+      e.innerText = #{text}.toString();
+    }`
+    self
+  end
+  
+  # Set the id of the receiver
+  # 
+  # @example HTML
+  #     <div class="foo"></div>
+  # 
+  # @example Ruby
+  #     Document['.foo'].first.id = "bar"
+  # 
+  # @example Result
+  #     <div class="foo" id="bar"></div>
+  # 
+  # @param [String, Symbol] id the id to set on the element
+  # @return [Element] returns the receiver
+  def id=(id)
+    `#{self}.__element__.id = #{id.to_s};`
+    self
+  end
+  
+  # Returns the id of the receiver as a +Symbol+, or +nil+ if no id is defined.
+  # 
+  # @example HTML
+  #     <div id="foo" class="bar"><div>
+  #     <div class="baz"</div>
+  # 
+  # @example Ruby
+  #     Document['.bar'].first.id     # => :foo
+  #     Document['.baz'].first.id     # => nil
+  # 
+  # @return [Symbol, nil] returns the id of the receiver
   def id
     `return #{self}.__element__.id || #{nil};`
   end
   
+  # Returns +true+ if the receiver is the body element, +false+ otherwise
+  # 
+  # @example Testing Elements
+  #     Document[:foo].body?    # => false
+  #     Document.body.body?     # => true
+  # 
+  # @return [true, false] whether the receiver is the body element
+  def body?
+    false
+  end
+  
   def inspect
-    description = ["#<Element tag_name=#{tag_name}"]
+    description = ["#<Element #{tag}"]
     description << " class_name='#{class_name}'" unless class_name == ""
     description << " id='#{id}'" unless id == ""
     description << ">"
@@ -139,9 +244,8 @@ class Element
   # 
   #     element.set :class_name => "adam", :id => "beynon"
   # 
-  # @param [Hash] options
-  # @returns self
-  # 
+  # @param [Hash] options to set
+  # @return [Element] returns the receiver
   def set(options)
     options.each do |key, value|
       method = SET_OPTIONS[key]
@@ -150,155 +254,157 @@ class Element
     end
   end
   
-  # 
-  # classname
-  # 
+  # =========================================
+  # = Inserting/appending/removing children =
+  # =========================================
   
-  # Checks whether the receiver has the passed in class_name
+  # Insert the given element in location :bottom
   # 
-  # @example Checking for classes
-  #   # Assuming the following HTML
-  #   # <div id="some_id" class="first second"></div>
-  #   
-  #   elem = Document['some_id']
-  #   
-  #   elem.has_class? 'first'
-  #   # => true
-  # 
-  #   elem.has_class? 'third'
-  #   # => false
-  # 
-  # @param [String, Symbol] class_name the class_name to check
-  # @return [true, false] if the element has the given class_name
-  def has_class?(class_name)
-    self.class_name.__contains__ class_name.to_s, " "
-  end
-  
-  # Adds the given class_name to the receivers' classes, unless the class 
-  # already have the class
-  # 
-  # @param [String, Symbol] class_name the class_name to add
+  # @param [Element] element the element to insert
   # @return [Element] returns the receiver
-  def add_class(class_name)
-    self.class_name += " #{class_name}" unless has_class? class_name
-    self
+  def <<(element)
+    append element
   end
   
-  # Adds each of the given class_names using {#add_class}.
+  # Insert the given +element+ at the bottom of the receiver
   # 
-  # @param [Array<String, Symbol>] class_names the list of class_names
+  # @param [Element] element the element to append
   # @return [Element] returns the receiver
-  def add_classes(*class_names)
-    class_names.each do |class_name|
-      add_class class_name
-    end
+  def append(element)
+    `#{self}.__element__.appendChild(#{element}.__element__);`
     self
   end
   
-  # Remove the given class_name from the element, if it has the class_name
+  # Insert the given +element+ before the receiver
   # 
-  # @param [String, Symbol] class_name the class_name to remove
+  # @param [Element] element the element to insert
   # @return [Element] returns the receiver
-  def remove_class(class_name)
-    class_name = class_name.to_s
-    `#{self}.__element__.className = #{self.class_name}.replace(new RegExp('(^|\\s)' + #{class_name} + '(?:\\s|$)'), '$1');`
-    self
-  end
-  
-  # Adds the given class_name to the receiver if it does not already have the 
-  # class_name, otherwise removes it.
-  # 
-  # @param [String, Symbol] class_name the class_name to toggle
-  # @return [Element] returns the receiver
-  def toggle_class(class_name)
-    class_name = class_name.to_s
-    has_class?(class_name) ? remove_class(class_name) : add_class(class_name)
-    self
-  end
-  
-  # Set the class name. Here we do not append, just rewrite the entire class
-  # name
-  # 
-  def class_name=(class_name)
-    `#{self}.__element__.className = #{class_name}.toString();`
-    self
-  end
-  
-  def class_name
-    `return #{self}.__element__.className || "";`
-  end
-  
-  # set class names from hash
-  def set_class_names(class_names)
-    current = self.class_name.split ' '
-    
-    class_names.each do |name, flag|
-      if current.include? name
-        unless flag
-          current.delete name 
-        end
-      else
-        if flag
-          current << name
-        end
-      end
-    end
-    
-    self.class_name = current.join(" ")
-  end
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  def id=(id)
-    `return #{self}.__element__.id = #{id};`
-  end
-  # Set the inner text content of the receiver
-  def text=(text_content)
-    `var element = #{self}.__element__;
-    if (element.textContent !== undefined) {
-      element.textContent = #{text_content}.toString();
-    }
-    else {
-      element.innerText = #{text_content}.toString();
+  def before(element)
+    `var parent = #{self}.__element__.parentNode;
+    if (parent) {
+      parent.insertBefore(#{element}.__element__, #{self}.__element__);
     }`
     self
   end
   
+  # Insert the given +element+ after the receiver, but before the next sibling
   # 
-  # @param {Hash} styles
-  # 
-  def css(styles)
-    native_element = `#{self}.__element__`
-    # puts "about to style.."
-    # `console.log(#{native_element});`
-    styles.each do |style, value|
-      # puts "setting #{style} as #{value}"
-      `(#{native_element}.style || #{native_element})[#{style.to_s}] = #{value};`
-    end
-  end
-  
-  # Set the id of the element
-  def id=(id)
-    `#{self}.__element__.id = #{id}.toString();`
+  # @param [Element] element the element to insert
+  # @return [Element] returns the receiver
+  def after(element)
+    `var parent = #{self}.__element__.parentNode;
+    if (parent) {
+      parent.insertBefore(#{element}.__element__, #{self}.__element__.nextSibling);
+    }`
     self
   end
   
+  # Removes the receiver from the DOM
+  # 
+  # @example HTML
+  #     <div id="foo"></div>
+  #     <div id="bar"></div>
+  # 
+  # @example Ruby
+  #     Document[:foo].dispose
+  # 
+  # @example Result
+  #     <div id="bar"></div>
+  # 
+  # @return [Element] returns the receiver.
+  # 
+  def dispose
+    `var e = #{self}.__element__;
+    if (e.parentNode) {
+      e.parentNode.removeChild(e);
+    }`
+    self
+  end
+  
+  # Removes all child elements from the receiver
+  # 
+  # @example HTML
+  #     <div id="foo">
+  #       <span class="bar"></span>
+  #       <div class="baz"></div>
+  #     </div>
+  # 
+  # @example Ruby
+  #     Document[:foo].empty
+  # 
+  # @example Result
+  #     <div id="foo"></div>
+  # 
+  # @return [Element] returns receiver
+  def empty
+    `var e = #{self}.__element__;
+    for (var children = e.childNodes, i = children.length; i > 0;) {
+      var child = children[--i];
+      if (child.parentNode) {
+        child.parentNode.removeChild(child);
+      }
+    }`
+    self
+  end
+  
+  # Removes all children from the receiver and then removes the receiver itself
+  # from the DOM tree
+  # 
+  # @return [nil] returns nil
+  def destroy
+    # FIXME: we do not do this properly.
+    dispose
+  end
+  
+  
+  # Return the graphics context of the receiver, which will be an instance of
+  # [CanvasContext] or a subclass (for VML browsers). Everytime this method is
+  # called, the native 'getContext' method is applied for complaince with its
+  # side effects (clearing context etc)
+  # 
+  # @return [CanvasContext] the canvas context for the receiver
+  def context
+    CanvasContext.new self
+  end
+
+  
+  # ========================
+  # = Parent, children etc =
+  # ========================
+  
+  
+  # Get the parent of the receiver
+  # 
+  # @return [Element] the parent
+  def parent(selector=nil)
+    Document.traverse self, 'parentNode', nil, false
+  end
+  
+  def parents(selector=nil)
+    Document.traverse self, 'parentNode', nil, true
+  end
+  
+  def next(selector=nil)
+    Document.traverse self, 'nextSibling', nil, false
+  end
+  
+  def prev(selector=nil)
+    Document.traverse self, 'previousSibling', nil, false
+  end
+  
+  def first(selector=nil)
+    Document.traverse self, 'firstChild', nil, false
+  end
+  
+  def last(selector=nil)
+    Document.traverse self, 'lastChild', nil, false
+  end
+  
+  
   # Append the element. If string passed, then add as html content
   # 
-  def <<(append)
-    if append.is_a? Element
-      `#{self}.__element__.appendChild(#{append}.__element__);`
-    else
-      raise "bad Element <<"
-    end
-    
+  def <<(elem)
+    append elem
     self
   end
   

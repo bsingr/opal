@@ -801,6 +801,7 @@ class Vienna::RubyParser < Racc::Parser
           self.lex_state = :EXPR_MID
           return [:kBREAK, scanner.matched]
         when 'next'
+          return [:tIDENTIFIER, scanner.matched] if self.lex_state == :EXPR_DOT
           self.lex_state = :EXPR_MID
           return [:kNEXT, scanner.matched]
         when 'redo'

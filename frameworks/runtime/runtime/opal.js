@@ -32,6 +32,37 @@ if (typeof console === 'undefined') {
   console.info = console.warn = console.error = console.log = function(){};
 }
 
+// native xml http request
+exports.request = (function() {
+  try {
+    new XMLHttpRequest();
+    return function() {
+      return new XMLHttpRequest();
+    };
+  }
+  catch (e) {
+    try {
+      new ActiveXObject('MSXML2.XMLHTTP');
+      return function() {
+        return new ActiveXObject('MSXML2.XMLHTTP');
+      };
+    }
+    catch (e) {
+      try {
+        new ActiveXObject('Microsoft.XMLHTTP');
+        return function() {
+          return new ActiveXObject('Microsoft.XMLHTTP');
+        };
+      }
+      catch (e) {
+        return function() {
+          console.log("cannot create a native XMLHttpRequest");
+        }
+      }
+    }
+  }
+})();
+
 // Core classes
 // exports.c_object        = null;
 var class_basic_object  = null,

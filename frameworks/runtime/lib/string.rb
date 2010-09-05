@@ -40,10 +40,6 @@ class String
     `return #{self} + #{other};`
   end
   
-  def upcase!
-    `return #{self} = #{self}.toUpperCase();`
-  end
-  
   def <<(string)
     # `#{self} += #{string.to_s};`
     self
@@ -51,6 +47,10 @@ class String
   
   def to_s
     self
+  end
+  
+  def to_sym
+    `return #{self}.Y(#{self});`
   end
   
   def inspect

@@ -94,7 +94,8 @@ var file_list = exports.files = {};
 // 
 // @param [String] path - the main executable file
 // @param [String] path - the working directory
-exports.run = function(path, cwd) {
+// @param [String] lib_path - the lib dir for the main target (default is "lib"), but could well be "ruby" or "opal" or indeed "" 
+exports.run = function(path, cwd, lib_path) {
   bin_file = path;
   exports.getwd = opal_cwd = cwd;
   
@@ -105,9 +106,16 @@ exports.run = function(path, cwd) {
   
   if (exports.files[bin_path])
     exports.require(bin_path);
-  else {
-    bin_path = bin_file + "/lib/" + bin_file + ".rb";
+  else if (exports.files[bin_path = path + '/lib/' + path + '.rb']) {
+    // bin_path = bin_file + "/lib/" + bin_file + ".rb";
     exports.require(bin_path);
+  }
+  else if (exports.files[bin_path = path + '/' + path + '.rb']) {
+    // bin_path = bin_file + "/lib/" + bin_file + ".rb";
+    exports.require(bin_path);
+  }
+  else {
+    throw "cannot find bin file"
   }
 };
 
@@ -238,6 +246,37 @@ if (typeof console === 'undefined') {
   window.console = {} ;
   console.info = console.warn = console.error = console.log = function(){};
 }
+
+// native xml http request
+exports.request = (function() {
+  try {
+    new XMLHttpRequest();
+    return function() {
+      return new XMLHttpRequest();
+    };
+  }
+  catch (e) {
+    try {
+      new ActiveXObject('MSXML2.XMLHTTP');
+      return function() {
+        return new ActiveXObject('MSXML2.XMLHTTP');
+      };
+    }
+    catch (e) {
+      try {
+        new ActiveXObject('Microsoft.XMLHTTP');
+        return function() {
+          return new ActiveXObject('Microsoft.XMLHTTP');
+        };
+      }
+      catch (e) {
+        return function() {
+          console.log("cannot create a native XMLHttpRequest");
+        }
+      }
+    }
+  }
+})();
 
 // Core classes
 // exports.c_object        = null;
@@ -1441,6 +1480,13 @@ this.dm("values",function(){var result = [];
       result.push(this.__assocs__[this.__keys__[i].hash()]);
     }
     return result;},false);
+this.dm("merge",function(other){var result = this.n;result=vnH();
+this.$each(this.P(function(key,value){return result['$[]='](key,value);
+}));
+other.$each(this.P(function(key,value){return result['$[]='](key,value);
+}));
+return result;
+},false);
 this.dm("[]",function(key){return this.hash_fetch(key);},false);
 this.dm("each",function(){if (arguments.length > 0 && arguments[0].info & this.TP) {  var __block__ = arguments[0];}var key, value;
     for (var i = 0; i < this.__keys__.length; i++) {
@@ -1601,11 +1647,11 @@ this.dm("include?",function(str){var res = this.indexOf(str);
 this.dm("slice",function(start,finish){return this.substr(start, finish);},false);
 this.dm("==",function(other){return (this == other) ? this.t : this.f;},false);
 this.dm("+",function(other){return this + other;},false);
-this.dm("upcase!",function(){return this = this.toUpperCase();},false);
 this.dm("<<",function(string){return this;
 },false);
 this.dm("to_s",function(){return this;
 },false);
+this.dm("to_sym",function(){return this.Y(this);},false);
 this.dm("inspect",function(){return this;
 },false);
 this.dm("length",function(){return this.length;},false);
@@ -1614,7 +1660,9 @@ return this.dm("split",function(str){return this.split(str);},false);
 }).apply(opal.top_self);
 // ##################### lib/symbol.rb #####################
 (function(__FILE__){this.define_class(this.n,"Symbol",function(){this.dm("inspect",function(){return ":" + this.__ptr__;},false);
-return this.dm("to_s",function(){return this.__ptr__;},false);
+this.dm("to_s",function(){return this.__ptr__;},false);
+return this.dm("to_sym",function(){return this;
+},false);
 },0);
 }).apply(opal.top_self);
 // ##################### lib/top_self.rb #####################
@@ -1643,67 +1691,53 @@ opal.register({
 opal.register({
   "name": "browser",
   "files": {
-    "lib/browser/document.rb": (function(__FILE__){this.define_class(this.n,'Document',function(){this.dm("[]",function(selector){var $a = this.n;$a = selector;if(this.const_get('Symbol')['$===']($a).r) {this.$puts(["need to find symbol ",selector.$to_s()].join(''));
-return this.$find_by_id(selector);
-}else if(/^#/['$===']($a).r) {this.$puts("need to find id");
-return this.$find_by_id(selector);
-}else {this.$puts("need to find array of things");
-return this.const_get('Element').$find_in_context(selector,this);
-}},true);
-this.dm("find_by_id",function(id){this.$puts("finding by id");
-return this.const_get('Element').$from_native(document.getElementById(id.$to_s()));
-},true);
-this.is("@on_ready_actions",[]);
-this.is("@__ready__",this.f);
-this.dm("ready?",function(){if (arguments.length > 0 && arguments[0].info & this.TP) {  var __block__ = arguments[0];}if(((!__block__ || !__block__.r) ? this.f : this.t).r){if(this.ig('@__ready__').r){this.rbYield(__block__,[]);
-}else{this.ig('@on_ready_actions')['$<<'](__block__);
-}}else{this.n;}return this.ig('@__ready__');
-},true);
-this.dm("__make_ready",function(){this.is("@__ready__",this.t);
-return this.ig('@on_ready_actions').$each(this.P(function(action){return action.$call();
-}));
-},true);
-this.dm("body",function(){return this.const_get('Element').$from_native(document.body);
-},true);
-opal.setDocumentReadyListener(function() {
-    this.const_get('Document').$__make_ready();
-  });this.__element__ = document;},2);
+    "lib/browser/builder.rb": (function(__FILE__){this.define_class(this.n,"Element",function(){return this.define_class(this.n,"Builder",function(){},0);
+},0);
 }),
-    "lib/browser/element.rb": (function(__FILE__){this.define_class(this.n,"Element",function(){this.dm("initialize",function(type,options){if (!options) { options = vnH()}this.__element__ = document.createElement(type.$to_s());this.is("@tag_name",type.$to_s());
-return this.$set(options);
+    "lib/browser/canvas_context.rb": (function(__FILE__){this.define_class(this.n,"Element",function(){return this.define_class(this.n,"CanvasContext",function(){this.dm("initialize",function(element){this.__ctx__ = element.__element__.getContext('2d');var ctx = this.__ctx__;this.$begin_path();
+this.$move_to(30,30);
+this.$line_to(150,150);
+this.$bezier_curve_to(60,70,60,70,70,150);
+this.$line_to(30,30);
+return this.$fill(vnH(this.Y("fill_style"),"blue"));
 },false);
-this.dm("from_native",function(native_element){var element = this.n;console.log("loogking up for "  + native_element);if(!native_element) return this.n;element=this.$allocate();
-element.__element__ = native_element;return element;
-},true);
-this.dm("body",function(){if(this.ig('@body_element').r){return this.ig('@body_element');
-}else{this.n;}this.is("@body_element",this.$from_native(document.body));
-this.ig('@body_element').dm("inspect",function(){return "#<Element body>";
-},true);
-return this.ig('@body_element');
-},true);
-this.dm("find_in_context",function(selector,context){var elements = this.n;if(selector['$is_a?'](this.const_get('Symbol')).r){selector='#' + selector.$to_s();
-}else{this.n;}elements=Sizzle(selector, context.__element__);;
-return elements.$map(this.P(function(e){return this.$from_native(e);
+this.dm("fill_style=",function(style){this.__ctx__.fillStyle = style;return this;
+},false);
+this.dm("begin_path",function(){this.__ctx__.beginPath();return this;
+},false);
+this.dm("move_to",function(x,y){this.__ctx__.moveTo(x, y);return this;
+},false);
+this.dm("line_to",function(x,y){this.__ctx__.lineTo(x, y);return this;
+},false);
+this.dm("bezier_curve_to",function(a,b,c,d,e,f){this.__ctx__.bezierCurveTo(a, b, c, d, e, f);return this;
+},false);
+this.dm("fill",function(attributes){if (attributes == undefined) {  attributes = vnH();}this.$save();
+this.$set(attributes);
+this.__ctx__.fill();this.$restore();
+return this;
+},false);
+this.dm("save",function(){this.__ctx__.save();return this;
+},false);
+this.dm("restore",function(){this.__ctx__.restore();return this;
+},false);
+return this.dm("set",function(attributes){if (attributes == undefined) {  attributes = vnH();}attributes.$each(this.P(function(key,value){this.$puts(["sending ",key.$to_s(),"="].join(''));
+return this.$__send__([key.$to_s(),"="].join(''),value);
 }));
-},true);
-this.dm("find",function(selector){return this.$class().$find_in_context(selector,this);
+return this;
 },false);
-this.dm("tag_name",function(){return this.o(this.ig('@tag_name'),function(){return this.is("@tag_name",this.__element__.tagName);
-});
-},false);
-this.dm("id",function(){return this.__element__.id || this.n;},false);
-this.dm("inspect",function(){var description = this.n;description=[["#<Element tag_name=",this.$tag_name().$to_s()].join('')];
-if(!this.$class_name()['$==']("").r){description['$<<']([" class_name='",this.$class_name().$to_s(),"'"].join(''));
-}else{this.n;}if(!this.$id()['$==']("").r){description['$<<']([" id='",this.$id().$to_s(),"'"].join(''));
-}else{this.n;}description['$<<'](">");
-return description.$join("");
-},false);
-this.const_set("SET_OPTIONS",vnH(this.Y("class_name"),this.Y("class_name="),this.Y("content"),this.Y("text="),this.Y("id"),this.Y("id=")));
-this.dm("set",function(options){return options.$each(this.P(function(key,value){var method = this.n;method=this.const_get('SET_OPTIONS')['$[]'](key);
-if(!method.r){this.$raise(["Bad Element.set key ",key.$to_s()].join(''));
-}else{this.n;}return this.$__send__(this.const_get('SET_OPTIONS')['$[]'](key),value);
+},0);
+},0);
+}),
+    "lib/browser/css.rb": (function(__FILE__){this.define_class(this.n,"Element",function(){this.dm("css",function(element, name, value){if (value == undefined) {  value = this.f;}var style = this.n;name=name.$to_s();
+style=element.__element__.style || element.__element__;
+name=name.replace(/[_-]\D/g, function(res) {
+      return res.charAt(1).toUpperCase();
+    });;
+if(value['$=='](this.f).r){return style[name];}else{return style[name] = value;}},true);
+this.dm("css",function(styles){var $a = this.n;$a = styles;if(this.const_get('Hash')['$===']($a).r) {return styles.$each(this.P(function(style,value){return this.const_get('Element').$css(this,style,value);
 }));
-},false);
+}else if(this.const_get('String')['$===']($a).r || this.const_get('Symbol')['$===']($a).r) {return this.const_get('Element').$css(this,styles);
+}else {return this.n;}},false);
 this.dm("has_class?",function(class_name){return this.$class_name().$__contains__(class_name.$to_s()," ");
 },false);
 this.dm("add_class",function(class_name){if(!this['$has_class?'](class_name).r){this['$class_name='](this.$class_name()['$+']([" ",class_name.$to_s()].join('')));
@@ -1729,22 +1763,150 @@ class_names.$each(this.P(function(name,flag){if(current['$include?'](name).r){if
 }else{return this.n;}}}));
 return this['$class_name='](current.$join(" "));
 },false);
-this.dm("id=",function(id){return this.__element__.id = id;},false);
-this.dm("text=",function(text_content){var element = this.__element__;
-    if (element.textContent !== undefined) {
-      element.textContent = text_content.toString();
+return this.dm("opacity=",function(opacity){return this.$raise("not implemented");
+},false);
+},0);
+}),
+    "lib/browser/dimensions.rb": (function(__FILE__){this.define_class(this.n,"Element",function(){this.dm("size",function(){var elem = this.n;elem=this.__element__;
+return this.const_get('Size').$new(elem.offsetWidth,elem.offsetHeight);
+},false);
+return this.dm("position",function(){return this.n;},false);
+},0);
+}),
+    "lib/browser/document.rb": (function(__FILE__){this.define_class(this.n,'Document',function(){this.dm("[]",function(selector){var $a = this.n;$a = selector;if(this.const_get('Symbol')['$===']($a).r) {this.$puts(["need to find symbol ",selector.$to_s()].join(''));
+return this.$find_by_id(selector);
+}else if(/^#/['$===']($a).r) {this.$puts("need to find id");
+return this.$find_by_id(selector);
+}else {this.$puts("need to find array of things");
+return this.const_get('Element').$find_in_context(selector,this);
+}},true);
+this.dm("find_by_id",function(id){this.$puts("finding by id");
+return this.const_get('Element').$from_native(document.getElementById(id.$to_s()));
+},true);
+this.is("@on_ready_actions",[]);
+this.is("@__ready__",this.f);
+this.dm("ready?",function(){if (arguments.length > 0 && arguments[0].info & this.TP) {  var __block__ = arguments[0];}if(((!__block__ || !__block__.r) ? this.f : this.t).r){if(this.ig('@__ready__').r){this.rbYield(__block__,[]);
+}else{this.ig('@on_ready_actions')['$<<'](__block__);
+}}else{this.n;}return this.ig('@__ready__');
+},true);
+this.dm("__make_ready",function(){this.is("@__ready__",this.t);
+return this.ig('@on_ready_actions').$each(this.P(function(action){return action.$call();
+}));
+},true);
+this.dm("body",function(){return this.const_get('Element').$from_native(document.body);
+},true);
+this.dm("traverse",function(element,path,stop_state,all){var result = [];
+    var working = element.__element__[path];
+    while (working && (working.nodeType == 1)) {
+      //console.log("working is:");
+      //console.log(working);
+      if (!all.r) {
+        return this.const_get('Element').$from_native(working);
+      } else {
+        result.push(this.const_get('Element').$from_native(working));
+      }
+      working = working[path];
+    }
+    return result},true);
+opal.setDocumentReadyListener(function() {
+    this.const_get('Document').$__make_ready();
+  });this.__element__ = document;},2);
+}),
+    "lib/browser/element.rb": (function(__FILE__){this.define_class(this.n,"Element",function(){this.dm("initialize",function(type, options){if (options == undefined) {  options = vnH();}if (!options) { options = vnH()}this.__element__ = document.createElement(type.$to_s());return this.$set(options);
+},false);
+this.dm("from_native",function(native_element){var element = this.n;if(!native_element) return this.n;element=this.$allocate();
+element.__element__ = native_element;return element;
+},true);
+this.dm("body",function(){if(this.ig('@body_element').r){return this.ig('@body_element');
+}else{this.n;}this.is("@body_element",this.$from_native(document.body));
+this.ig('@body_element').dm("inspect",function(){return "#<Element body>";
+},true);
+return this.ig('@body_element');
+},true);
+this.dm("find_in_context",function(selector,context){var elements = this.n;if(selector['$is_a?'](this.const_get('Symbol')).r){selector='#' + selector.$to_s();
+}else{this.n;}elements=Sizzle(selector, context.__element__);;
+return elements.$map(this.P(function(e){return this.$from_native(e);
+}));
+},true);
+this.dm("find",function(selector){return this.$class().$find_in_context(selector,this);
+},false);
+this.dm("tag",function(){return this.o(this.ig('@tag'),function(){return this.is("@tag",this.Y(this.__element__.tagName.toLowerCase()));
+});
+},false);
+this.dm("html=",function(html){this.__element__.innerHTML = html;return this;
+},false);
+this.dm("text",function(){var e = this.__element__;
+    return e.innerText == null ? e.textContent : e.innerText;},false);
+this.dm("text=",function(text){var e = this.__element__;
+    if (e.textContent !== undefined) {
+      e.textContent = text.toString();
     }
     else {
-      element.innerText = text_content.toString();
+      e.innerText = text.toString();
     }return this;
 },false);
-this.dm("css",function(styles){var native_element = this.n;native_element=this.__element__;
-return styles.$each(this.P(function(style,value){(native_element.style || native_element)[style.$to_s()] = value;}));
+this.dm("id=",function(id){this.__element__.id = id.$to_s();return this;
 },false);
-this.dm("id=",function(id){this.__element__.id = id.toString();return this;
+this.dm("id",function(){return this.__element__.id || this.n;},false);
+this.dm("body?",function(){return this.f;
 },false);
-this.dm("<<",function(append){if(append['$is_a?'](this.const_get('Element')).r){this.__element__.appendChild(append.__element__);}else{this.$raise("bad Element <<");
-}return this;
+this.dm("inspect",function(){var description = this.n;description=[["#<Element ",this.$tag().$to_s()].join('')];
+if(!this.$class_name()['$==']("").r){description['$<<']([" class_name='",this.$class_name().$to_s(),"'"].join(''));
+}else{this.n;}if(!this.$id()['$==']("").r){description['$<<']([" id='",this.$id().$to_s(),"'"].join(''));
+}else{this.n;}description['$<<'](">");
+return description.$join("");
+},false);
+this.const_set("SET_OPTIONS",vnH(this.Y("class_name"),this.Y("class_name="),this.Y("content"),this.Y("text="),this.Y("id"),this.Y("id=")));
+this.dm("set",function(options){return options.$each(this.P(function(key,value){var method = this.n;method=this.const_get('SET_OPTIONS')['$[]'](key);
+if(!method.r){this.$raise(["Bad Element.set key ",key.$to_s()].join(''));
+}else{this.n;}return this.$__send__(this.const_get('SET_OPTIONS')['$[]'](key),value);
+}));
+},false);
+this.dm("<<",function(element){return this.$append(element);
+},false);
+this.dm("append",function(element){this.__element__.appendChild(element.__element__);return this;
+},false);
+this.dm("before",function(element){var parent = this.__element__.parentNode;
+    if (parent) {
+      parent.insertBefore(element.__element__, this.__element__);
+    }return this;
+},false);
+this.dm("after",function(element){var parent = this.__element__.parentNode;
+    if (parent) {
+      parent.insertBefore(element.__element__, this.__element__.nextSibling);
+    }return this;
+},false);
+this.dm("dispose",function(){var e = this.__element__;
+    if (e.parentNode) {
+      e.parentNode.removeChild(e);
+    }return this;
+},false);
+this.dm("empty",function(){var e = this.__element__;
+    for (var children = e.childNodes, i = children.length; i > 0;) {
+      var child = children[--i];
+      if (child.parentNode) {
+        child.parentNode.removeChild(child);
+      }
+    }return this;
+},false);
+this.dm("destroy",function(){return this.$dispose();
+},false);
+this.dm("context",function(){return this.const_get('CanvasContext').$new(this);
+},false);
+this.dm("parent",function(selector){if (selector == undefined) {  selector = this.n;}return this.const_get('Document').$traverse(this,"parentNode",this.n,this.f);
+},false);
+this.dm("parents",function(selector){if (selector == undefined) {  selector = this.n;}return this.const_get('Document').$traverse(this,"parentNode",this.n,this.t);
+},false);
+this.dm("next",function(selector){if (selector == undefined) {  selector = this.n;}return this.const_get('Document').$traverse(this,"nextSibling",this.n,this.f);
+},false);
+this.dm("prev",function(selector){if (selector == undefined) {  selector = this.n;}return this.const_get('Document').$traverse(this,"previousSibling",this.n,this.f);
+},false);
+this.dm("first",function(selector){if (selector == undefined) {  selector = this.n;}return this.const_get('Document').$traverse(this,"firstChild",this.n,this.f);
+},false);
+this.dm("last",function(selector){if (selector == undefined) {  selector = this.n;}return this.const_get('Document').$traverse(this,"lastChild",this.n,this.f);
+},false);
+this.dm("<<",function(elem){this.$append(elem);
+return this;
 },false);
 this.dm("element_offset",function(){var left = this.n,top = this.n;left=0;
 top=0;
@@ -1765,84 +1927,209 @@ return e;
 }));
 },0);
 }),
-    "lib/browser/event.rb": (function(__FILE__){this.define_class(this.n,'Browser',function(){return this.define_class(this.n,"Event",function(){this.dm("listen",function(element,event_name){var __block__ = 
-              (arguments[2] && arguments[2].info & this.TP)
-              ? arguments[2] : this.n;var event_class = this.n;event_class=this;
-var eventName = event_name.$to_s();
-      var elem = element.__element__;
-      
-      var listener = function(evt) {
-        var native_event = event_class.$from_native(evt);
-        
-        var result = __block__.apply(__block__.__self__, [native_event]);
-        
-        if (!result.r) {
-          evt.preventDefault();
-          evt.stopPropagation();
-        }
+    "lib/browser/event/dom_events.rb": (function(__FILE__){this.define_class(this.n,"Event",function(){return this.define_class(this.n,'DOMEvents',function(){this.dm("listen",function(event_name){var __block__ = 
+              (arguments[1] && arguments[1].info & this.TP)
+              ? arguments[1] : this.n;return this.$add_listener(event_name,__block__==this.n ? this.n : __block__.$to_proc());
+},false);
+this.dm("on",function(event_name){var __block__ = 
+              (arguments[1] && arguments[1].info & this.TP)
+              ? arguments[1] : this.n;return this.$add_listener(event_name,__block__==this.n ? this.n : __block__.$to_proc());
+},false);
+return this.dm("add_listener",function(event_name){var __block__ = 
+              (arguments[1] && arguments[1].info & this.TP)
+              ? arguments[1] : this.n;var event_class = this.n;event_class=this.const_get('Event');
+var func = function(evt) {
+        //console.log(event_class);
+        evt = event_class.$from_native(evt);
+        var res = __block__.apply(__block__.__self__, [evt]);
+        return (res !==undefined && res.r);
       };
       
-      if (elem.addEventListener) {
-        elem.addEventListener(eventName, listener, false);
-      }
-      else if (elem.attachEvent) {
-        elem.attachEvent("on" + eventName, listener)
-      }
-      else {
-        throw "Unknown elem attach type for element";
+      var element = this.__element__;
+      if (element.addEventListener) {
+        element.addEventListener(event_name.$to_s(), func, false);
+      } else {
+        element.attachEvent('on' + event_name.$to_s(), func);
       }return this;
+},false);
+},2);
+},0);
+this.const_get('Element').$include(this.const_get('Event').const_get("DOMEvents"));
+this.const_get('Document').$extend(this.const_get('Event').const_get("DOMEvents"));
+}),
+    "lib/browser/event/event.rb": (function(__FILE__){this.define_class(this.n,"Event",function(){this.dm("from_native",function(event){var result = this.n;result=this.$allocate();
+event = event || window.event;
+    
+    var type = event.type,
+        target = event.target || event.srcElement,
+        code = event.which || event.keyCode,
+        key = this.const_get('Event').const_get("KEYS")['$[]'](code);
+    
+    if (!key.r) {
+      key = this.Y(String.fromCharCode(code).toLowerCase());
+    }
+    
+    while (target && target.nodeType == 3) {
+      target = target.parentNode;
+    }
+    
+    result.__shift__ = event.shiftKey ? this.t : this.f;
+    result.__alt__ = event.altKey ? this.t : this.f;
+    result.__ctrl__ = event.ctrlKey ? this.t : this.f;
+    result.__meta__ = event.metaKey ? this.t : this.f;
+    
+    result.__code__ = code;
+    result.__key__ = key;
+    result.__event__ = event;
+    result.__type__ = type;return result;
 },true);
-this.dm("from_native",function(native_event){var event = this.n;event=this.$allocate();
-event.__event__ = native_event;return event;
-},true);
+this.dm("stop_propagation",function(){var evt = this.__event__;
+    if (evt.stopPropagation) {
+      evt.stopPropagation();
+    } else {
+      evt.cancelBubble = true;
+    }return this;
+},false);
+this.dm("prevent_default",function(){var evt = this.__event__;
+    if (evt.preventDefault) {
+      evt.preventDefault();
+    } else {
+      evt.returnValue = false;
+    }return this;
+},false);
+this.dm("stop!",function(){this.$stop_propagation();
+return this.$prevent_default();
+},false);
 this.dm("type",function(){if(this.ig('@type').r){return this.ig('@type');
 }else{this.is("@type",vnY(this.__event__.type));
 return this.ig('@type');
 }},false);
 this.dm("type=",function(event_type){return this.is("@type",event_type);
 },false);
-this.const_set("KEY_CODES",vnH(8,this.Y("delete"),9,this.Y("tab"),13,this.Y("return")));
-this.dm("key",function(){if(this.ig('@key').r){return this.ig('@key');
-}else{this.n;}return this.is("@key",this.const_get('KEY_CODES')['$[]'](this.$key_code()));
-},false);
-return this.dm("key_code",function(){var event = this.n;event=this.__event__;
-return event.keyCode || event.which;},false);
+this.const_set("KEYS",vnH(8,this.Y("backspace"),9,this.Y("tab"),13,this.Y("enter"),27,this.Y("escape"),32,this.Y("space"),37,this.Y("left"),38,this.Y("up"),39,this.Y("right"),40,this.Y("down"),46,this.Y("delete")));
+this.dm("key",function(){return this.__key__ || this.n;},false);
+this.dm("shift?",function(){return this.__shift__;},false);
+this.dm("alt?",function(){return this.__alt__;},false);
+this.dm("ctrl?",function(){return this.__ctrl__;},false);
+return this.dm("meta?",function(){return this.__meta__;},false);
 },0);
-},2);
+this.$require("browser/event/trigger_events");
+this.$require("browser/event/dom_events");
 }),
-    "lib/browser/graphics.rb": (function(__FILE__){this.define_class(this.n,'Browser',function(){this.define_class(this.n,"Point",function(){this.$attr_accessor(this.Y("x"),this.Y("y"));
+    "lib/browser/event/trigger_events.rb": (function(__FILE__){this.define_class(this.n,"Event",function(){return this.define_class(this.n,'TriggerEvents',function(){this.dm("on",function(name){var __block__ = 
+              (arguments[1] && arguments[1].info & this.TP)
+              ? arguments[1] : this.n;name=name.$to_sym();
+this.is("@trigger_events",this.o(this.ig('@trigger_events'),function(){return vnH();
+}));
+this.o(this.ig('@trigger_events')['$[]'](name),function(){return this.ig('@trigger_events')['$[]='](name,[__block__]);
+});
+return this;
+},false);
+return this.dm("trigger",function(name,args){name=arguments[0];args=Array.prototype.slice.call(arguments,1);var listeners = this.n;this.$puts(["triggering ",name.$to_s()].join(''));
+name=name.$to_sym();
+if(this.a(this.ig('@trigger_events'),function(){return listeners=this.ig('@trigger_events')['$[]'](name);
+}).r){listeners.$each(this.P(function(listener){return listener.$call(args['$[]'](0),args['$[]'](1),args['$[]'](2));
+}));
+}else{this.n;}return this;
+},false);
+},2);
+},0);
+}),
+    "lib/browser/geometry.rb": (function(__FILE__){this.define_class(this.n,"Point",function(){this.$attr_accessor(this.Y("x"),this.Y("y"));
 return this.dm("initialize",function(x,y){this.is("@x",x);
 return this.is("@y",y);
 },false);
 },0);
 this.define_class(this.n,"Size",function(){this.$attr_accessor(this.Y("height"),this.Y("width"));
-return this.dm("initialize",function(w,h){this.is("@width",w);
+this.dm("initialize",function(w,h){this.is("@width",w);
 return this.is("@height",h);
 },false);
+return this.dm("inspect",function(){return ["#<Size ",this.ig('@width').$to_s(),", ",this.ig('@height').$to_s(),">"].join('');
+},false);
 },0);
-return this.define_class(this.n,"Rect",function(){this.$attr_accessor(this.Y("size"),this.Y("origin"));
+this.define_class(this.n,"Rect",function(){this.$attr_accessor(this.Y("size"),this.Y("origin"));
 this.dm("initialize",function(x,y,w,h){this.is("@origin",this.const_get('Point').$new(x,y));
 return this.is("@size",this.const_get('Size').$new(w,h));
 },false);
 this.dm("x",function(){return this.$origin().$x();
 },false);
+this.dm("x=",function(x){return this.$origin()['$x='](x);
+},false);
 this.dm("y",function(){return this.$origin().$y();
+},false);
+this.dm("y=",function(y){return this.$origin()['$y='](y);
 },false);
 this.dm("width",function(){return this.$size().$width();
 },false);
+this.dm("width=",function(width){return this.$size()['$width='](width);
+},false);
 this.dm("height",function(){return this.$size().$height();
 },false);
+this.dm("height=",function(height){return this.$size()['$height='](height);
+},false);
 return this.dm("contains_point?",function(point){var res = (this.$x() < point.$x()) && (this.$y() < point.$y()) && ((this.$x() + this.$width()) > point.$x()) && ((this.$y() + this.$height()) > point.$y());
-      return res ? this.t : this.f;
-      },false);
+    return res ? this.t : this.f;
+    },false);
 },0);
+}),
+    "lib/browser/json.rb": (function(__FILE__){this.define_class(this.n,'JSON',function(){return this.dm("parse",function(text){if (text == undefined) {  text = "";}if(text['$==']("").r){return this.$raise("JSON.parse empty string");
+}else{return this.n;}},true);
 },2);
+}),
+    "lib/browser/request/request.rb": (function(__FILE__){this.$require("browser/event/trigger_events");
+this.define_class(this.n,"Request",function(){this.$include(this.const_get('Event').const_get("TriggerEvents"));
+this.const_set("OPTIONS",vnH(this.Y("url"),"",this.Y("data"),vnH(),this.Y("async"),this.t,this.Y("format"),this.n,this.Y("method"),"POST",this.Y("link"),"ignore",this.Y("is_success"),this.n,this.Y("emulation"),this.t,this.Y("url_encoded"),this.t,this.Y("encoding"),"utf-8",this.Y("eval_scripts"),this.f,this.Y("eval_response"),this.f,this.Y("timeout"),0,this.Y("no_cache"),this.f));
+this.dm("initialize",function(options){if (options == undefined) {  options = vnH();}this.is("@xhr",opal.request());
+this.is("@options",this.const_get('OPTIONS').$merge(options));
+this.is("@headers",this.ig('@options')['$[]'](this.Y("headers")));
+this.is("@running",this.f);
+this.is("@status",0);
+return this.is("@text","");
+},false);
+['get', 'post', 'put', 'delete', 'GET', 'POST', 'PUT', 'DELETE'].$each(this.P(function(method){return this.$define_method(method,this.P(function(data){return this.$send(vnH(this.Y("data"),data,this.Y("method"),method));
+}));
+}));
+this.dm("send",function(options){if (options == undefined) {  options = vnH();}var method = this.n,url = this.n,request = this.n;this.is("@running",this.t);
+method=this.Y("post");
+url=options['$[]'](this.Y("url"));
+request=this;
+this.ig('@xhr').onreadystatechange = function() {
+      request.$state_change();
+    };this.ig('@xhr').open(method.$to_s().toUpperCase(), url, true);this.$trigger(this.Y("request"),this);
+this.ig('@xhr').send(null);},false);
+this.dm("running?",function(){return this.ig('@running');
+},false);
+this.dm("success?",function(){return (this.ig('@status') >= 200 && this.ig('@status') < 300) ? this.t : this.f;},false);
+this.dm("failed?",function(){return this['$success?']()['$!']();
+},false);
+return this.dm("state_change",function(){var e = this.n;if (this.ig('@xhr').readyState !== 4 || !this.ig('@running').r) return;this.ig('@xhr').onreadystatechange = function() { };this.is("@running",this.f);
+this.is("@status",0);
+try{this.is("@status",this.ig('@xhr').status);
+}catch(e) {
+            if (e.mid2jsid) {
+              e = e;
+            } else {
+              e = this.rbNativeError(e);
+            }
+          }if(this['$success?']().r){this.is("@text",this.ig('@xhr').responseText || '');
+this.$trigger(this.Y("success"),this);
+return this.$trigger(this.Y("complete"),this);
+}else{this.$puts(["aww :( ",this.ig('@status').$to_s()].join(''));
+this.$trigger(this.Y("failure"),this);
+return this.$trigger(this.Y("complete"),this);
+}},false);
+},0);
 }),
     "lib/browser/string.rb": (function(__FILE__){this.define_class(this.n,"String",function(){return this.dm("__contains__",function(str, sep){if (sep == undefined) {  sep = "";}if ((sep + this + sep).indexOf(sep + str + sep) > -1) {
       return this.t;
     } else {
       return this.f;
     }},false);
+},0);
+}),
+    "lib/browser/touch.rb": (function(__FILE__){this.define_class(this.n,"Event",function(){return this.dm("changed_touches",function(){if(this.ig('@changed_touches').r){return this.ig('@changed_touches');
+}else{this.n;}return this.is("@changed_touches",this.__event__.changedTouches.$map(this.P(function(touch){this.const_get('Touch').$from_native(touch);})));
+},false);
 },0);
 }),
     "lib/browser/window.rb": (function(__FILE__){this.define_class(this.n,"Window",function(){this.dm("window",function(){return this;
@@ -1869,22 +2156,350 @@ this.ig('@document_element').dm("inspect",function(){return "#<Element document>
 },true);
 return this.ig('@document_element');
 },true);
-return this.dm("window",function(){if(this.ig('@window_element').r){return this.ig('@window_element');
+this.dm("window",function(){if(this.ig('@window_element').r){return this.ig('@window_element');
 }else{this.n;}this.is("@window_element",this.const_get('Element').$from_native(window));
 this.ig('@window_element').dm("inspect",function(){return "#<Element window>";
 },true);
 return this.ig('@window_element');
 },true);
+return this.dm("alert",function(message){if (message == undefined) {  message = "";}return alert(message);},true);
 },2);
 this.$require("browser/string");
 this.$require("browser/window");
 this.$require("browser/document");
 this.$require("browser/sizzle.js");
 this.$require("browser/element");
-this.$require("browser/event");
-this.$require("browser/graphics");
-this.$include(this.const_get('Browser'));
+this.$require("browser/css");
+this.$require("browser/event/event");
+this.$require("browser/geometry");
+this.$require("browser/request/request");
+this.$require("browser/builder");
+this.$require("browser/canvas_context");
+this.$require("browser/vml_context.js");
+this.$require("browser/dimensions");
+this.$require("browser/touch");
 }),
+    "lib/browser/json_parse.js": function() {if (!this.JSON) {
+    this.JSON = {};
+}
+
+(function () {
+
+    function f(n) {
+        // Format integers to have at least two digits.
+        return n < 10 ? '0' + n : n;
+    }
+
+    if (typeof Date.prototype.toJSON !== 'function') {
+
+        Date.prototype.toJSON = function (key) {
+
+            return isFinite(this.valueOf()) ?
+                   this.getUTCFullYear()   + '-' +
+                 f(this.getUTCMonth() + 1) + '-' +
+                 f(this.getUTCDate())      + 'T' +
+                 f(this.getUTCHours())     + ':' +
+                 f(this.getUTCMinutes())   + ':' +
+                 f(this.getUTCSeconds())   + 'Z' : null;
+        };
+
+        String.prototype.toJSON =
+        Number.prototype.toJSON =
+        Boolean.prototype.toJSON = function (key) {
+            return this.valueOf();
+        };
+    }
+
+    var cx = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
+        escapable = /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
+        gap,
+        indent,
+        meta = {    // table of character substitutions
+            '\b': '\\b',
+            '\t': '\\t',
+            '\n': '\\n',
+            '\f': '\\f',
+            '\r': '\\r',
+            '"' : '\\"',
+            '\\': '\\\\'
+        },
+        rep;
+
+
+    function quote(string) {
+
+// If the string contains no control characters, no quote characters, and no
+// backslash characters, then we can safely slap some quotes around it.
+// Otherwise we must also replace the offending characters with safe escape
+// sequences.
+
+        escapable.lastIndex = 0;
+        return escapable.test(string) ?
+            '"' + string.replace(escapable, function (a) {
+                var c = meta[a];
+                return typeof c === 'string' ? c :
+                    '\\u' + ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
+            }) + '"' :
+            '"' + string + '"';
+    }
+
+
+    function str(key, holder) {
+
+// Produce a string from holder[key].
+
+        var i,          // The loop counter.
+            k,          // The member key.
+            v,          // The member value.
+            length,
+            mind = gap,
+            partial,
+            value = holder[key];
+
+// If the value has a toJSON method, call it to obtain a replacement value.
+
+        if (value && typeof value === 'object' &&
+                typeof value.toJSON === 'function') {
+            value = value.toJSON(key);
+        }
+
+// If we were called with a replacer function, then call the replacer to
+// obtain a replacement value.
+
+        if (typeof rep === 'function') {
+            value = rep.call(holder, key, value);
+        }
+
+// What happens next depends on the value's type.
+
+        switch (typeof value) {
+        case 'string':
+            return quote(value);
+
+        case 'number':
+
+// JSON numbers must be finite. Encode non-finite numbers as null.
+
+            return isFinite(value) ? String(value) : 'null';
+
+        case 'boolean':
+        case 'null':
+
+// If the value is a boolean or null, convert it to a string. Note:
+// typeof null does not produce 'null'. The case is included here in
+// the remote chance that this gets fixed someday.
+
+            return String(value);
+
+// If the type is 'object', we might be dealing with an object or an array or
+// null.
+
+        case 'object':
+
+// Due to a specification blunder in ECMAScript, typeof null is 'object',
+// so watch out for that case.
+
+            if (!value) {
+                return 'null';
+            }
+
+// Make an array to hold the partial results of stringifying this object value.
+
+            gap += indent;
+            partial = [];
+
+// Is the value an array?
+
+            if (Object.prototype.toString.apply(value) === '[object Array]') {
+
+// The value is an array. Stringify every element. Use null as a placeholder
+// for non-JSON values.
+
+                length = value.length;
+                for (i = 0; i < length; i += 1) {
+                    partial[i] = str(i, value) || 'null';
+                }
+
+// Join all of the elements together, separated with commas, and wrap them in
+// brackets.
+
+                v = partial.length === 0 ? '[]' :
+                    gap ? '[\n' + gap +
+                            partial.join(',\n' + gap) + '\n' +
+                                mind + ']' :
+                          '[' + partial.join(',') + ']';
+                gap = mind;
+                return v;
+            }
+
+// If the replacer is an array, use it to select the members to be stringified.
+
+            if (rep && typeof rep === 'object') {
+                length = rep.length;
+                for (i = 0; i < length; i += 1) {
+                    k = rep[i];
+                    if (typeof k === 'string') {
+                        v = str(k, value);
+                        if (v) {
+                            partial.push(quote(k) + (gap ? ': ' : ':') + v);
+                        }
+                    }
+                }
+            } else {
+
+// Otherwise, iterate through all of the keys in the object.
+
+                for (k in value) {
+                    if (Object.hasOwnProperty.call(value, k)) {
+                        v = str(k, value);
+                        if (v) {
+                            partial.push(quote(k) + (gap ? ': ' : ':') + v);
+                        }
+                    }
+                }
+            }
+
+// Join all of the member texts together, separated with commas,
+// and wrap them in braces.
+
+            v = partial.length === 0 ? '{}' :
+                gap ? '{\n' + gap + partial.join(',\n' + gap) + '\n' +
+                        mind + '}' : '{' + partial.join(',') + '}';
+            gap = mind;
+            return v;
+        }
+    }
+
+// If the JSON object does not yet have a stringify method, give it one.
+
+    if (typeof JSON.stringify !== 'function') {
+        JSON.stringify = function (value, replacer, space) {
+
+// The stringify method takes a value and an optional replacer, and an optional
+// space parameter, and returns a JSON text. The replacer can be a function
+// that can replace values, or an array of strings that will select the keys.
+// A default replacer method can be provided. Use of the space parameter can
+// produce text that is more easily readable.
+
+            var i;
+            gap = '';
+            indent = '';
+
+// If the space parameter is a number, make an indent string containing that
+// many spaces.
+
+            if (typeof space === 'number') {
+                for (i = 0; i < space; i += 1) {
+                    indent += ' ';
+                }
+
+// If the space parameter is a string, it will be used as the indent string.
+
+            } else if (typeof space === 'string') {
+                indent = space;
+            }
+
+// If there is a replacer, it must be a function or an array.
+// Otherwise, throw an error.
+
+            rep = replacer;
+            if (replacer && typeof replacer !== 'function' &&
+                    (typeof replacer !== 'object' ||
+                     typeof replacer.length !== 'number')) {
+                throw new Error('JSON.stringify');
+            }
+
+// Make a fake root object containing our value under the key of ''.
+// Return the result of stringifying the value.
+
+            return str('', {'': value});
+        };
+    }
+
+
+// If the JSON object does not yet have a parse method, give it one.
+
+    if (typeof JSON.parse !== 'function') {
+        JSON.parse = function (text, reviver) {
+
+// The parse method takes a text and an optional reviver function, and returns
+// a JavaScript value if the text is a valid JSON text.
+
+            var j;
+
+            function walk(holder, key) {
+
+// The walk method is used to recursively walk the resulting structure so
+// that modifications can be made.
+
+                var k, v, value = holder[key];
+                if (value && typeof value === 'object') {
+                    for (k in value) {
+                        if (Object.hasOwnProperty.call(value, k)) {
+                            v = walk(value, k);
+                            if (v !== undefined) {
+                                value[k] = v;
+                            } else {
+                                delete value[k];
+                            }
+                        }
+                    }
+                }
+                return reviver.call(holder, key, value);
+            }
+
+
+// Parsing happens in four stages. In the first stage, we replace certain
+// Unicode characters with escape sequences. JavaScript handles many characters
+// incorrectly, either silently deleting them, or treating them as line endings.
+
+            text = String(text);
+            cx.lastIndex = 0;
+            if (cx.test(text)) {
+                text = text.replace(cx, function (a) {
+                    return '\\u' +
+                        ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
+                });
+            }
+
+// In the second stage, we run the text against regular expressions that look
+// for non-JSON patterns. We are especially concerned with '()' and 'new'
+// because they can cause invocation, and '=' because it can cause mutation.
+// But just to be safe, we want to reject all unexpected forms.
+
+// We split the second stage into 4 regexp operations in order to work around
+// crippling inefficiencies in IE's and Safari's regexp engines. First we
+// replace the JSON backslash pairs with '@' (a non-JSON character). Second, we
+// replace all simple value tokens with ']' characters. Third, we delete all
+// open brackets that follow a colon or comma or that begin the text. Finally,
+// we look to see that the remaining characters are only whitespace or ']' or
+// ',' or ':' or '{' or '}'. If that is so, then the text is safe for eval.
+
+            if (/^[\],:{}\s]*$/
+.test(text.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g, '@')
+.replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']')
+.replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
+
+// In the third stage we use the eval function to compile the text into a
+// JavaScript structure. The '{' operator is subject to a syntactic ambiguity
+// in JavaScript: it can begin a block or an object literal. We wrap the text
+// in parens to eliminate the ambiguity.
+
+                j = eval('(' + text + ')');
+
+// In the optional fourth stage, we recursively walk the new structure, passing
+// each name/value pair to a reviver function for possible transformation.
+
+                return typeof reviver === 'function' ?
+                    walk({'': j}, '') : j;
+            }
+
+// If the text is not JSON parseable, then a SyntaxError is thrown.
+
+            throw new SyntaxError('JSON.parse');
+        };
+    }
+}());},
     "lib/browser/sizzle.js": function() {/*!
  * Sizzle CSS Selector Engine - v1.0
  *  Copyright 2009, The Dojo Foundation
@@ -2952,45 +3567,61 @@ var posProcess = function(selector, context){
 
 window.Sizzle = Sizzle;
 
-})();}
+})();},
+    "lib/browser/vml_context.js": function() {/* 
+ * vml_context.js
+ * vienna
+ * 
+ * Created by Adam Beynon.
+ * Copyright 2010 Adam Beynon.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+
+if (!document.createElement('canvas').getContext) {
+  document.namespaces.add("v", "urn:schemas-microsoft-com:vml", "#default#VML");
+  var css = document.createStyleSheet();
+  css.cssText = 'canvas { overflow:hidden; display:inline-block; width: 300px; height: 150px }';
+  
+}
+}
   }
 });
 opal.register({
   "name": "browser_demo",
   "files": {
     "lib/browser_demo.rb": (function(__FILE__){this.$require("browser");
-this.const_get('Document')['$ready?'](this.P(function(){var testers = this.n,a = this.n,wow = this.n;this.$puts("doc is now ready");
-this.$puts(this.const_get('Document'));
-this.$puts(this.const_get('Document')['$[]']("#wow"));
-this.$puts(this.const_get('Document')['$[]'](".typess"));
-this.$puts(this.const_get('Document')['$[]']("div"));
-wow=this.const_get('Document')['$[]'](this.Y("wow"));
-this.$puts("does wow have class names...");
-testers=["typess",this.Y("typess"),"types"];
-testers.$each(this.P(function(test){this.$puts(["does 'wow' have ",test.$inspect().$to_s(),"?"].join(''));
-return this.$puts(wow['$has_class?'](test));
+this.const_get('Document')['$ready?'](this.P(function(){var req = this.n;this.$puts("testing events");
+this.const_get('Document').$add_listener(this.Y("click"),this.P(function(evt){this.$puts("in listener");
+return this.$puts(evt);
 }));
-this.$puts("ytesting add class");
-wow.$add_class("shit");
-wow.$add_class("types");
-wow.$add_class("typess");
-this.$puts("testing remove class");
-wow.$remove_class("benny");
-wow.$remove_class(this.Y("shit"));
-wow.$remove_class("types");
-this.$puts("testing toggle_clas");
-wow.$toggle_class("adam");
-wow.$toggle_class("beynon");
-wow.$toggle_class("adam");
-this.$puts("testing window..");
-this.$puts(this.const_get('Window'));
-this.$puts("document:");
-this.$puts(this.const_get('Window').$document());
-this.$puts("window:");
-this.$puts(this.const_get('Window').$window());
-this.$puts(["testing Element","#new etc"].join(''));
-a=this.const_get('Element').$new(this.Y("div"));
-return wow['$<<'](a);
+this.$puts("testing Request");
+req=this.const_get('Request').$new();
+this.$puts(req);
+req.$on(this.Y("success"),this.P(function(){return this.$puts("handler success!");
+}));
+req.$on(this.Y("failure"),this.P(function(){return this.$puts("handler failure!");
+}));
+req.$on(this.Y("complete"),this.P(function(){return this.$puts("handler complete!");
+}));
+return req.$send(vnH(this.Y("url"),"javascripts/browser_demo.js"));
 }));
 })
   }

@@ -1,5 +1,5 @@
 # 
-# symbol.rb
+# builder.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,17 +24,18 @@
 # THE SOFTWARE.
 #
 
-class Symbol
+
+class Element
   
-  def inspect
-    `return ":" + #{self}.__ptr__;`
-  end
-  
-  def to_s
-    `return #{self}.__ptr__;`
-  end
-  
-  def to_sym
-    self
+  # +ElementBuilder+ is used for creating an element tree without touching the 
+  # DOM. Only when {#element} is called is the actual DOM created. Until that
+  # point, a text/string representation is kept, appended to, and changed. This
+  # makes everything more efficient as touching the DOM is slow.
+  # 
+  # +Builder+ implementes most of the methods found on +Element+ to allow it to
+  # be (somewhat) interchangeable with an +Element+ instance for building
+  # complex DOM trees in a more efficient manner
+  class Builder
+    
   end
 end

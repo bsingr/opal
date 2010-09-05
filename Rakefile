@@ -146,3 +146,42 @@ task :test => :vienna do
   test = Vienna::CherryKit::RubyBuilder.new('test/test_vienna.rb', nil, nil)
   puts test.build!
 end
+
+namespace :docs do
+  
+  # rebuild demos
+  desc "Rebuild demos"
+  task :demos => :vienna_gem do
+    # every demo uses an index.html file inside of the demos folder
+    base = File.join(File.dirname(__FILE__), 'demos')
+    demos = File.join(base, '**', 'index.html')
+    # we build all demos to vienna/doc/demos
+    Dir.glob(demos).each do |demo|
+      puts "building demo: #{demo}"
+      # path will be (demos/)path(/index.html)
+      path = /^#{Regexp.escape base}\/(.*)\/index\.html$/.match(demo)[1]
+      
+      build_root = File.join(File.dirname(__FILE__), 'doc', 'demos', path)
+      
+      puts build_root
+      project = Vienna::Project.new File.dirname(demo),
+        :build_root => build_root
+        
+      project.options :lib_directories    => [""],
+                      :javascripts_prefix => "",
+                      :copy_html          => true
+      project.build!
+      project.clean!
+      # puts project
+    end
+  end
+  
+  # browser docs
+  YARD::Rake::YardocTask.new(:browser) do |t|
+    # YARD::Templates::Engine.register_template_path(File.join(Dir.getwd, 'yard_templates'))
+    t.files   = ['frameworks/browser/**/*.rb']               # optional
+    # t.options = ['--any', '--extra', '--opts'] # optional
+    t.options = ['-o./doc/browser/']
+    # t.options += ['--title', 'Vienna Documentation']
+  end
+end

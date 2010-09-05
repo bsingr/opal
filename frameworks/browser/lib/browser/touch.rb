@@ -1,5 +1,5 @@
 # 
-# symbol.rb
+# touch.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,17 +24,14 @@
 # THE SOFTWARE.
 #
 
-class Symbol
+
+class Event
   
-  def inspect
-    `return ":" + #{self}.__ptr__;`
-  end
-  
-  def to_s
-    `return #{self}.__ptr__;`
-  end
-  
-  def to_sym
-    self
+  def changed_touches
+    return @changed_touches if @changed_touches
+    # map them to Ruby touches (from JS touches)
+    @changed_touches = `#{self}.__event__.changedTouches`.map do |touch|
+      `#{Touch}.$from_native(#{touch});`
+    end
   end
 end

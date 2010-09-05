@@ -1,5 +1,5 @@
 # 
-# symbol.rb
+# json.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,17 +24,9 @@
 # THE SOFTWARE.
 #
 
-class Symbol
+module JSON
   
-  def inspect
-    `return ":" + #{self}.__ptr__;`
-  end
-  
-  def to_s
-    `return #{self}.__ptr__;`
-  end
-  
-  def to_sym
-    self
+  def self.parse(text = "")
+    raise "JSON.parse empty string" if text == ""
   end
 end

@@ -81,6 +81,30 @@ module Document
     Element.from_native `document.body`
   end
   
+  # traverse the document looking for elements matching the given conditions.
+  # This is mostly a private method? - uses js node names instead of opal/ruby
+  # 
+  # @param [Element] element the element to begin with
+  # @param [String] path the path to lookup
+  # @param [String] stop_state
+  # @param [true, false] all boolean whether we want all results, or just first
+  # @return [Element, Array<Element>] single element, or all results (all?)
+  def self.traverse(element, path, stop_state, all)
+    `var result = [];
+    var working = #{element}.__element__[#{path}];
+    while (working && (working.nodeType == 1)) {
+      //console.log("working is:");
+      //console.log(working);
+      if (!#{all}.r) {
+        return #{Element}.$from_native(working);
+      } else {
+        result.push(#{Element}.$from_native(working));
+      }
+      working = working[path];
+    }
+    return result`
+  end
+  
   # Quick hack/snippet to make document ready when opal receives triggers
   `opal.setDocumentReadyListener(function() {
     #{Document.__make_ready};

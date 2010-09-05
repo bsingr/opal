@@ -46,11 +46,11 @@ module Vienna
     
     BASE_OPALFILE = File.join(Vienna::PATH, 'Opalfile')
     
-    def initialize(project_root, build_options)
+    def initialize(project_root, build_options={})
       
-      unless File.exists? File.join(project_root, 'Opalfile')
-        raise "Not a valid project (no Opalfile)"
-      end
+      # unless File.exists? File.join(project_root, 'Opalfile')
+      #   raise "Not a valid project (no Opalfile)"
+      # end
       
       @build_options = build_options
       @project_root = project_root
@@ -85,6 +85,13 @@ module Vienna
     def config
       @config
       # ...
+    end
+    
+    # Add some options to main config
+    def options(options={})
+      # options.each do |key, value|
+        opalfile.config project_name.to_sym, options
+      # end
     end
     
     # Add a new referenced target (target_name) from the given target. The given
@@ -152,6 +159,13 @@ module Vienna
     # add a target
     def add_target(options)
       targets[options[:target_name]] = Target.new options
+    end
+    
+    def clean!
+      main_target.opalfile.invoke 'build:clean',
+        :project  => self,
+        :target   => main_target,
+        :config   => main_target.config
     end
     
     def build!()

@@ -76,14 +76,26 @@ module Browser
     
     @window_element
   end
+  
+  def self.alert(message = "")
+    `return alert(#{message});`
+  end
 end
+
+# Browser.extend Browser
+# include Browser
 
 require 'browser/string'
 require 'browser/window'
 require 'browser/document'
 require 'browser/sizzle.js'
 require 'browser/element'
-require 'browser/event'
-require 'browser/graphics'
-
-# include Browser
+require 'browser/css'
+require 'browser/event/event'
+require 'browser/geometry'
+require 'browser/request/request'
+require 'browser/builder'
+require 'browser/canvas_context'
+require 'browser/vml_context.js'
+require 'browser/dimensions'
+require 'browser/touch'

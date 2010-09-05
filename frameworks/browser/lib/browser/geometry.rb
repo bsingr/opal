@@ -1,5 +1,5 @@
 # 
-# symbol.rb
+# graphics.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,17 +24,74 @@
 # THE SOFTWARE.
 #
 
-class Symbol
+class Point
+  
+  attr_accessor :x, :y
+  
+  def initialize(x, y)
+    @x = x
+    @y = y
+  end
+end
+
+class Size
+  
+  attr_accessor :height, :width
+  
+  def initialize(w, h)
+    @width = w
+    @height = h
+  end
   
   def inspect
-    `return ":" + #{self}.__ptr__;`
+    "#<Size #{@width}, #{@height}>"
+  end
+end
+
+class Rect
+  
+  attr_accessor :size, :origin
+  
+  def initialize(x, y, w, h)
+    @origin = Point.new x, y
+    @size = Size.new w, h
   end
   
-  def to_s
-    `return #{self}.__ptr__;`
+  def x
+    origin.x
   end
   
-  def to_sym
-    self
+  def x=(x)
+    origin.x = x
+  end
+  
+  def y
+    origin.y
+  end
+  
+  def y=(y)
+    origin.y = y
+  end
+  
+  def width
+    size.width
+  end
+  
+  def width=(width)
+    size.width = width
+  end
+  
+  def height
+    size.height
+  end
+  
+  def height=(height)
+    size.height = height
+  end
+  
+  def contains_point?(point)
+    `var res = (#{self.x} < #{point.x}) && (#{self.y} < #{point.y}) && ((#{self.x} + #{self.width}) > #{point.x}) && ((#{self.y} + #{self.height}) > #{point.y});
+    return res ? #{true} : #{false};
+    `
   end
 end

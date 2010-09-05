@@ -47,6 +47,20 @@ class Hash
     return result;`
   end
   
+  def merge(other)
+    result = {}
+    
+    self.each do |key, value|
+      result[key] = value
+    end
+    
+    other.each do |key, value|
+      result[key] = value
+    end
+    
+    result
+  end
+  
   def [](key)
     `return #{self}.hash_fetch(#{key});`
   end

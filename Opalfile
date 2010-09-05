@@ -1,30 +1,38 @@
 mode :all do
   
   config :all,
-    :build_prefix   => 'tmp/build',
-    :staging_prefix => 'tmp/staging',
+    :build_prefix       => 'tmp/build',
+    :staging_prefix     => 'tmp/staging',
+    :tmp_root           => 'tmp',
     
     # where our libs are kept - i.e. what should be a valid build item
-    :lib_directories  => ['lib'],
+    :lib_directories    => ['lib'],
     
     
     # which sub directory do our javascripts go into
     :javascripts_prefix => 'javascripts',
     
     # which sub dir do our built stylesheets go into
-    :stylesheets_prefix  => 'stylesheets',
+    :stylesheets_prefix => 'stylesheets',
     
     # final name for our js built file (:project_name for name of project, 
     # other wise to_s is called on it)
-    :javascript_name  => :project_name,
+    :javascript_name    => :project_name,
     
     # same as above
-    :stylehseet_name  => :project_name,
+    :stylehseet_name    => :project_name,
     
     # default bin file to run.. if none given, then it defaults to :project_name
     # which is replaced by the actual project name. This will then mean either
     # a bin file of the given name, or lib/project_name will be loaded
-    :bin_file         => :project_name
+    :bin_file           => :project_name,
+    
+    # by default do NOT build stylesheets.. only cherrykit/spec wants this, so 
+    # for browsers etc, do not do this.
+    :build_stylesheets  => false,
+    
+    # should we copy the html files (if found?)
+    :copy_html          => false
 end
 
 mode :debug do
@@ -81,18 +89,29 @@ namespace :target do
       can_skip = false
       # skip if item is in our lib directory(s)
       can_skip = @config.lib_directories.each do |dir|
-        break true if item.filename =~ /^#{dir}.+$/
+        break true if item.filename =~ /^#{dir}.+(rb|js)$/
+      end
+      
+      # puts "trying #{item.filename}"
+      
+      if @config.copy_html && item.filename =~ /\.html$/
+        # allow html files if we have said so
+        next
       end
       
       next if can_skip == true
       
       # skip all resources
-      next if item.filename =~ /^resources.+$/
-
+      if @config.build_stylesheets
+        next if item.filename =~ /^resources.+$/
+      end
+      
       # if we have a bin item, and our config says we should include the bin
       # file...
       next if item.filename =~ /^bin.+$/ and @config.include_bin
-            
+      
+      # puts "hiding #{item.filename}"
+        
       # hide any other file
       item.hide!
     end
@@ -146,15 +165,17 @@ namespace :prepare_build_tasks do
   
   desc "Collect all css resources"
   task :css => [:setup] do
-    build_items = @target.build_items.select { |item| item.ext == "css" }
+    if @config.build_stylesheets
+      build_items = @target.build_items.select { |item| item.ext == "css" }
     
-    build_items.each do |item|
-      item = @target.add_transform item,
-        :filename     => item.filename,
-        :build_task   => 'build:css',
-        :resource     => :css,
-        :build_path   => File.join(@target.build_root, item.filename),
-        :staging_path => File.join(@target.staging_root, item.filename)
+      build_items.each do |item|
+        item = @target.add_transform item,
+          :filename     => item.filename,
+          :build_task   => 'build:css',
+          :resource     => :css,
+          :build_path   => File.join(@target.build_root, item.filename),
+          :staging_path => File.join(@target.staging_root, item.filename)
+      end
     end
   end
   
@@ -184,12 +205,14 @@ namespace :prepare_build_tasks do
       :build_task   => 'build:opal',
       :source_items => code_items
     
-    # css target is all the css resources (less, css, sass)
-    css_target_name = @target.target_name + '.css'
+    if @config.build_stylesheets
+      # css target is all the css resources (less, css, sass)
+      css_target_name = @target.target_name + '.css'
     
-    @target.add_composite css_target_name,
-      :build_task   => 'build:opal_css',
-      :source_items => css_items
+      @target.add_composite css_target_name,
+        :build_task   => 'build:opal_css',
+        :source_items => css_items
+    end
   end
   
 end
@@ -211,8 +234,19 @@ end
 
 namespace :build do
   
+  task :clean do
+    # clean.. remove only tmps etc, leave final build as it is
+    staging = File.join @project.build_root, @config.tmp_root
+    FileUtils.rm_rf staging
+  end
+  
   task :copy do
-    puts "building simple copy task for #{@build_item.filename}"
+    # puts "building simple copy task for #{@build_item.filename}"
+    from = File.join(@project.project_root, @build_item.filename)
+    to = File.join(@project.build_root, @config.build_prefix,  @build_item.filename)
+    # puts from
+    # puts to
+    FileUtils.copy_file from, to
   end
   
   task :ruby do
@@ -260,16 +294,17 @@ namespace :build do
         js_name = "#{@project.project_name}.js"
       end
       
-      css_build_path = File.join @project.build_root, @config.build_prefix, @config.stylesheets_prefix
+      if @config.build_stylesheets
+        css_build_path = File.join @project.build_root, @config.build_prefix, @config.stylesheets_prefix
       
-      FileUtils.mkdir_p css_build_path
+        FileUtils.mkdir_p css_build_path
       
-      css_name = @config.stylehseet_name
+        css_name = @config.stylehseet_name
       
-      if css_name == :project_name
-        css_name = "#{@project.project_name}.css"
+        if css_name == :project_name
+          css_name = "#{@project.project_name}.css"
+        end
       end
-      
 # javascripts_prefix
       opals = @project.targets.each_value.to_a.dup
       
@@ -296,11 +331,13 @@ namespace :build do
         out.puts "opal.run('#{bin_file}','#{working_dir}');"
       end
       
-      # build the final stylesheet.css package
-      File.open(File.join(css_build_path, css_name), 'w') do |out|
-        opals.each do |opal|
-          item = opal.build_item_for("#{opal.target_name}.css")
-          out.puts File.read(item.build_path)
+      if @config.build_stylesheets
+        # build the final stylesheet.css package
+        File.open(File.join(css_build_path, css_name), 'w') do |out|
+          opals.each do |opal|
+            item = opal.build_item_for("#{opal.target_name}.css")
+            out.puts File.read(item.build_path)
+          end
         end
       end
       
