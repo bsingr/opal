@@ -1,6 +1,0 @@
-CPBundleIdentifier: <%= bundle_identifier %>
-CPBundleInfoDictionaryVersion: 6
-CPBundleName: <%= project_name %>
-CPBundlePackageType: FMWK
-CPBundleVersion: 0.1
-CPBundleEnvironments: ["ObjJ"]
