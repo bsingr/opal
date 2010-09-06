@@ -63,6 +63,7 @@ Gem::Specification.new do |s|
      "lib/vienna/rack/app_server.rb",
      "opals/aristo/README.md",
      "opals/browser/Opalfile",
+     "opals/browser/README.md",
      "opals/browser/SIZZLE_LICESNSE.txt",
      "opals/browser/lib/browser.rb",
      "opals/browser/lib/browser/builder.rb",
