@@ -30,7 +30,7 @@ class Event
   # Create an Event instance from the given native_event.
   # 
   # @param {Native} native_event
-  # @returns {Event} event
+  # @return {Event} event
   # 
   def self.from_native(event)
     result = allocate
@@ -76,7 +76,7 @@ class Event
   
   # Stop the default behaviour from the event
   # 
-  # @returns [Event] returns the receiver
+  # @return [Event] returns the receiver
   def prevent_default
     `var evt = #{self}.__event__;
     if (evt.preventDefault) {

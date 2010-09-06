@@ -29,7 +29,7 @@ module Browser
   
   # Returns true/false if the browser is opera.
   # 
-  # @returns true or false
+  # @return [true, false]
   # 
   def self.opera?
     @__is_opera__ ||= `(opal.browser.opera ? #{self}.t : #{self}.f)`
@@ -37,7 +37,7 @@ module Browser
   
   # Returns true/false if the browser is safari.
   # 
-  # @returns true or false
+  # @return [true, false]
   # 
   def self.safari?
     @__is_safari__ ||= `(opal.browser.safari ? #{self}.t : #{self}.f)`
@@ -58,9 +58,9 @@ module Browser
     return @document_element if @document_element
     
     @document_element = Element.from_native(`document`)
-    def @document_element.inspect
-      "#<Element document>"
-    end
+    # def @document_element.inspect
+      # "#<Element document>"
+    # end
     
     @document_element
   end
@@ -70,9 +70,9 @@ module Browser
     return @window_element if @window_element
     
     @window_element = Element.from_native(`window`)
-    def @window_element.inspect
-      "#<Element window>"
-    end
+    # def @window_element.inspect
+      # "#<Element window>"
+    # end
     
     @window_element
   end

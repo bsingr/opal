@@ -76,8 +76,13 @@ class Request
     :no_cache       => false
   }
   
+  # Get the current status of the request
+  attr_reader :status
+  
+  attr_reader :text
+  
   def initialize(options = {})
-    @xhr = `opal.request()`
+    `#{self}.__xhr__ = opal.request();`
     @options = OPTIONS.merge options
     @headers = @options[:headers]
     @running = false
@@ -85,6 +90,7 @@ class Request
     @text = ""
   end
   
+  # FIXME: Do we want lowercase? good practice to use uppercase?
   %W{get post put delete GET POST PUT DELETE}.each do |method|
     define_method(method) do |data|
       send :data => data, :method => method
@@ -105,18 +111,18 @@ class Request
     
     method = :post
     
-    url = options[:url]
+    url = options[:url] || ""
     
     request = self
-    `#{@xhr}.onreadystatechange = function() {
+    `#{self}.__xhr__.onreadystatechange = function() {
       #{request}.$state_change();
     };`
     
-    `#{@xhr}.open(#{method.to_s}.toUpperCase(), #{url}, true);`
+    `#{self}.__xhr__.open(#{method.to_s}.toUpperCase(), #{url}, true);`
     
     trigger :request, self
     
-    `#{@xhr}.send(null);`
+    `#{self}.__xhr__.send(null);`
   end
   
   # Returns +true+ if the +Request+ is running, +false+ otherwise
@@ -148,33 +154,48 @@ class Request
   
   def state_change
     # only handle state change when request is done (state 4)
-    `if (#{@xhr}.readyState !== 4 || !#{@running}.r) return;`
+    `if (#{self}.__xhr__.readyState !== 4 || !#{@running}.r) return;`
     
-    `#{@xhr}.onreadystatechange = function() { };`
+    `#{self}.__xhr__.onreadystatechange = function() { };`
     
     @running = false
     @status = 0
     
     begin
-      @status = `#{@xhr}.status`
+      @status = `#{self}.__xhr__.status`
     rescue Exception => e
       # warning?
+      puts "warning"
     end
+    
+    puts "our status is now #{@status}"
     
     # should be:
     # @status = `#{@xhr}.status` rescue nil
     
     if success?
       # puts "success #{@status}"
-      @text = `#{@xhr}.responseText || ''`
+      @text = `#{self}.__xhr__.responseText || ''`
       
       trigger :success, self
       trigger :complete, self
     else
+      `console.log(#{@status});`
       puts "aww :( #{@status}"
     
       trigger :failure, self
       trigger :complete, self
     end
   end
+  
+  def cancel
+    return self unless @running
+    @running = false
+    `#{self}.__xhr__.abort();`
+    `#{self}.__xhr__.onreadystatechange = function() {};`
+    `#{self}.__xhr__ = opal.request();`
+    trigger :cancel
+    self
+  end
+  
 end

@@ -4578,7 +4578,7 @@ module_eval(<<'.,.,', 'ruby_parser.rb.y', 623)
 
 module_eval(<<'.,.,', 'ruby_parser.rb.y', 627)
   def _reduce_254(val, _values, result)
-    		                result = [node :splat, :val => val[1]]
+    		                result = [node(:splat, :val => val[1])]
 		              
     result
   end
@@ -4594,7 +4594,7 @@ module_eval(<<'.,.,', 'ruby_parser.rb.y', 631)
 
 module_eval(<<'.,.,', 'ruby_parser.rb.y', 635)
   def _reduce_256(val, _values, result)
-    		                result = val[0] + [node :splat, :val => val[3]]
+    		                result = val[0] + [node(:splat, :val => val[3])]
 		              
     result
   end

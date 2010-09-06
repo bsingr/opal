@@ -76,7 +76,7 @@ module Document
   
   # The body element of the page
   # 
-  # @returns [Element] body element of document
+  # @return [Element] body element of document
   def self.body
     Element.from_native `document.body`
   end

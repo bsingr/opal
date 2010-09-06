@@ -166,7 +166,9 @@ namespace :docs do
       puts build_root
       project = Vienna::Project.new File.dirname(demo),
         :build_root => build_root
-        
+      
+      # FIXME: maybe only set options if no Opalfile... some of the CherryKit
+      # apps may want to include some css etc etc, so dont overwrite them?
       project.options :lib_directories    => [""],
                       :javascripts_prefix => "",
                       :copy_html          => true
@@ -178,10 +180,9 @@ namespace :docs do
   
   # browser docs
   YARD::Rake::YardocTask.new(:browser) do |t|
-    # YARD::Templates::Engine.register_template_path(File.join(Dir.getwd, 'yard_templates'))
-    t.files   = ['frameworks/browser/**/*.rb']               # optional
-    # t.options = ['--any', '--extra', '--opts'] # optional
+    t.files   = ['opals/browser/**/*.rb']
     t.options = ['-o./doc/browser/']
-    # t.options += ['--title', 'Vienna Documentation']
+    t.options += ['-r./opals/browser/README.md']
+    t.options += ['--title', 'Browser Documentation']
   end
 end

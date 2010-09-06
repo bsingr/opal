@@ -50,8 +50,8 @@ class Element
   # Return an instance with the passed native element as the instance's own
   # element. This is used to return the body element, for instance
   # 
-  #     Element.from_native(..some native element pointer..)
-  #     # => element
+  #   Element.from_native(..some native element pointer..)
+  #   # => element
   # 
   # @param [Native Element] element
   # @return [Element]
@@ -74,9 +74,9 @@ class Element
     return @body_element if @body_element
     
     @body_element = from_native(`document.body`)
-    def @body_element.inspect
-      "#<Element body>"
-    end
+    # def @body_element.inspect
+      # "#<Element body>"
+    # end
     
     @body_element
   end
@@ -88,7 +88,7 @@ class Element
   # 
   # @param [String|Synbol] selector
   # @param [Element] context
-  # @returns Array
+  # @return [Array]
   # 
   def self.find_in_context(selector, context)
     selector = `'#' + #{selector.to_s}` if selector.is_a? Symbol
@@ -411,7 +411,7 @@ class Element
   # Returns the offset of the element, taking into account the parents, scroll
   # values, etc etc. needs improving, not 100% for all browsers
   # 
-  # @returns {Hash} :left/:top => Number
+  # @return [Hash] :left/:top => Number
   # 
   def element_offset
     left = 0

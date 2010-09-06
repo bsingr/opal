@@ -1,11 +1,7 @@
 
 require 'browser'
 
-puts "and in here"
-
 Document.ready? do
-  
-  puts "this bit?"
   
   req = Request.new :url => 'good_request.txt'
   
@@ -15,6 +11,8 @@ Document.ready? do
   
   req.on :failure do
     Document[:result].text = "The request didn't go so well."
+    puts req.status
+    puts req.text
   end
   
   Document[:good_request].on :click do

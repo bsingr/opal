@@ -625,7 +625,7 @@ rule
                   }
 		            | tSTAR arg_value
 		              {
-		                result = [node :splat, :val => val[1]]
+		                result = [node(:splat, :val => val[1])]
 		              }
 		            | args ',' arg_value
 		              {
@@ -633,7 +633,7 @@ rule
 		              }
 		            | args ',' tSTAR arg_value
 		              {
-		                result = val[0] + [node :splat, :val => val[3]]
+		                result = val[0] + [node(:splat, :val => val[3])]
 		              }
 
             mrhs: args ',' arg_value
