@@ -26,6 +26,8 @@
 
 class Element
   
+  # @group Styling of the Element
+  
   # Set the given style property +name+ to the given +value+ for +element+. 
   # Name should/can be ruby case, or css-property or camelcase. Every property
   # will be converted to the correct format within this method.

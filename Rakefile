@@ -147,7 +147,7 @@ task :test => :vienna do
   puts test.build!
 end
 
-namespace :docs do
+namespace :doc do
   
   # rebuild demos
   desc "Rebuild demos"
@@ -178,11 +178,36 @@ namespace :docs do
     end
   end
   
+  # opal/runtime docs
+  YARD::Rake::YardocTask.new(:opal) do |t|
+    t.files   = ['opals/runtime/**/*.rb']
+    t.options = ['-o./doc/opal/']
+    # t.options += ['-r./opals/browser/README.md']
+    t.options += ['--title', 'Opal Documentation']
+  end
+  
   # browser docs
   YARD::Rake::YardocTask.new(:browser) do |t|
     t.files   = ['opals/browser/**/*.rb']
     t.options = ['-o./doc/browser/']
     t.options += ['-r./opals/browser/README.md']
+    t.options += ['-mmarkdown']
     t.options += ['--title', 'Browser Documentation']
+  end
+end
+
+task :doc => ['doc:browser', 'doc:opal', 'doc:demos'] do
+  # go through each set of generated docs, and replace the style.css file
+  %w{browser opal}.each do |opal|
+    from = File.join(File.dirname(__FILE__), 'yard', 'style.css')
+    to = File.join(File.dirname(__FILE__), 'doc', opal, 'css', 'style.css')
+    FileUtils.copy from, to
+  end
+  
+  # copy our index.html and its necessary css files
+  %w{index.html style.css}.each do |resource|
+    from = File.join File.dirname(__FILE__), 'yard', resource
+    to = File.join(File.dirname(__FILE__), 'doc')
+    FileUtils.copy from, to
   end
 end

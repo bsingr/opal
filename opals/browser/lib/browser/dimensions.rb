@@ -27,7 +27,11 @@
 
 class Element
   
+  # @group Element Gemometry
+  
   # Gets the size of the receiver.
+  # 
+  # @todo This should consider scroll placement
   # 
   # @return [Size] size of the receiver
   def size
@@ -36,6 +40,8 @@ class Element
   end
   
   # Position of the element
+  # 
+  # @todo This does not yet work
   # 
   # @return [Point] receiver's position
   def position

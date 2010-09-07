@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta name="Content-Type" content="text/html; charset=utf-8" />
+    <title>
+      Vienna/Opal Documentation
+    </title>
+    <link rel="stylesheet" href="style.css" type="text/css" media="screen" charset="utf-8" />
+  </head>
+  <body>
+    <div id="content">
+      <div id='filecontents'>
+        <h1>
+          Opal: Ruby runtime for the browser
+        </h1>
+        <p>
+          Opal is a ruby runtime and core library implementation written in Javascript. It is intended, but not limited to, running in the Browser. It has been tested IE6+, as well as Safari, Firefox, Chrome, Opera, as well as various mobile browsers (iOS, Android, webOS etc).
+        </p>
+        <p>
+          The project consists of two parts, the runtime and core libraries being the first, and the "server side" build tools.
+        </p>
+        <h2>Build tools: "Vienna"</h2>
+        <p>Vienna is a gem that once installed provides the build tools needed for compiling the ruby into opal compatible javascript. The build tools also come with server functionality, allowing dynamic project building for easier development needs.</p>
+        <h2>Runtime/core libraries: "Opal"</h2>
+        <p>
+          Opal is a ruby implementation written in Javascript. It aims to be as syntactically compatible as possible. It also aims to be as efficient as possible. The core ruby libraries (Array, String, Hash etc) are all written in ruby. Opal, at its core, has the idea of an "opal". An opal is the same idea as a gem in vanilla Ruby. An opal can be required into a project at runtime, and is a self contained directory with all the relevant lib, bin etc files that make it up. The core library itself is an opal, and is always required into a project before any user code runs. All other code, as well as the user's project itself, is treated as an opal. The main opals distributed with vienna are outlined below.
+        </p>
+        <h3>opal (runtime)</h3>
+        <p>Opal contains an implementation of the ruby core library. It is written in Ruby. See <a href="opal/index.html">Opal documentation</a>.</p>
+        <h3>browser</h3>
+        <p>The browser opal provides an API for DOM access and manipulation, as well as various classes for interacting with browser features such as XMLHttpRequest, storage, cookies, Elements etc. It is written from the ground up to wrap around native, cross browser DOM access. It is loosely based on MooTools, but focusses on allowing small, clean code for the browser. See <a href="browser/index.html">Browser documentation</a> for more information.</p>
+        <h3>spec</h3>
+        <p>The spec opal is an implementation of RSpec, in ruby, that is used for all spec testing within vienna. Opal, Browser and CherryKit all have spec tests in their spec/ directories. To run specs, see the <a href="spec/index.html">Spec documentation</a>.</p>
+        <h3>cherry_kit</h3>
+        <p>cherry_kit, or "CherryKit" is an opal designed for developing rich web applications that run within the browser. It is loosely based on Cocoa/CocoaTouch, but has more of a ruby "daz". It has been built from the ground up to target IE6+, as well as touch platforms (iOS, Android etc). It features KeyValueCoding, KeyValueObserving, Delegates, Bindings, Views, Responder Chain and Controllers, all found in Cocoa(Touch). It is only partially implemented, so see <a href="cherry_kit/index.html">the documentation</a> for examples and how to work with what is already there.</p>
+      </div>
+    </div>
+    <div id="footer">
+      Documentation by <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>.
+    </div>
+  </body>
+</html>

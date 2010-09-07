@@ -35,6 +35,8 @@
 # 
 class Element
   
+  # @group Managing Elements in the Document
+  
   # Creates a new element of the specified type.
   # 
   # @param [Symbol, String] type the tag name for the +Element+ to have
@@ -52,6 +54,8 @@ class Element
   # 
   #   Element.from_native(..some native element pointer..)
   #   # => element
+  # 
+  # @note The given element MUST be a Javascript element, not an Opal one.
   # 
   # @param [Native Element] element
   # @return [Element]
