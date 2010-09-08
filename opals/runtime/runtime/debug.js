@@ -90,6 +90,10 @@ if (STACK_TRACE) {
         // we want to print the error (or throw it) and then print the stack. We
         // must set a timeout to print the stack and all will be well.
         setTimeout(function() {
+          // IE doesnt print the right error, so lets do it here
+          if (exports.browser.msie) {
+            console.log(e.toString());
+          }
           stack_tracer.backtrace();
         }, 0);
         throw e;
