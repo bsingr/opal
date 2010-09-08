@@ -1,5 +1,5 @@
 # 
-# example.rb
+# before_and_after_hooks.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,12 +24,58 @@
 # THE SOFTWARE.
 #
 
-require 'spec/example/before_and_after_hooks'
-require 'spec/example/example_group_proxy'
-require 'spec/example/example_proxy'
-require 'spec/example/example_group_methods'
-require 'spec/example/example_group_factory'
-require 'spec/example/example_group_hierarchy'
-require 'spec/example/example_methods'
-require 'spec/example/example_group'
-require 'spec/example/errors'
+module Spec
+  module Example
+    
+    module BeforeAndAfterHooks
+      
+      def before(scope = :each, &block)
+        # `console.log(#{block});`
+        # puts "we got a block! #{block}"
+        before_parts(scope) << block
+      end
+      
+      # alias_method :append_before, :before
+      
+      def before_each_parts
+        @before_each_parts ||= []
+      end
+      
+      def before_all_parts
+        @before_all_parts ||= []
+      end
+      
+      def before_parts(scope)
+        case scope
+        when :each
+          before_each_parts
+        when :all
+          before_all_parts
+        end
+      end
+      
+      
+      def after(scope = :each, &block)
+        after_parts(scope) << block
+      end
+      
+      def after_each_parts
+        @after_each_parts ||= []
+      end
+      
+      def after_all_parts
+        @after_all_parts ||= []
+      end
+      
+      def after_parts(scope)
+        case scope
+        when :each
+          after_each_parts
+        when :all
+          after_all_parts
+        end
+      end
+      
+    end
+  end
+end

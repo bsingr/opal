@@ -182,7 +182,8 @@ namespace :doc do
   YARD::Rake::YardocTask.new(:opal) do |t|
     t.files   = ['opals/runtime/**/*.rb']
     t.options = ['-o./doc/opal/']
-    # t.options += ['-r./opals/browser/README.md']
+    t.options += ['-r./opals/runtime/README.md']
+    t.options += ['-mmarkdown']
     t.options += ['--title', 'Opal Documentation']
   end
   
@@ -193,6 +194,45 @@ namespace :doc do
     t.options += ['-r./opals/browser/README.md']
     t.options += ['-mmarkdown']
     t.options += ['--title', 'Browser Documentation']
+  end
+  
+  # all specs
+  namespace :spec do
+    
+    %w{opal browser}.each do |opal|
+      desc "rebuild spec for #{opal}"
+      task opal.to_sym => :vienna_gem do
+        opal_root = File.join(File.dirname(__FILE__), 'opals', opal)
+        build_root = File.join(File.dirname(__FILE__), 'doc', opal, 'spec')
+        project = Vienna::Project.new opal_root, :build_root => build_root, :build_mode => :spec
+        
+        project.options :javascript_name    => "spec.js",
+                        :stylesheet_name    => "spec.css",
+                        :build_prefix       => ""
+        
+        project.build!
+        project.clean!
+        
+        # spec html file
+        from = File.join(File.dirname(__FILE__), 'opals', 'spec', 'resources', 'index.html')
+        
+        FileUtils.copy from, File.join(build_root, 'index.html')
+      end
+    end
+    
+    # desc "rebuild opal_spec package"
+    # task :opal_spec => :vienna_gem do
+    #   # opal framework root
+    #   opal_root = File.join(File.dirname(__FILE__), 'frameworks', 'opal')
+    #   # custom build root
+    #   tmp_root = File.join(File.dirname(__FILE__), 'tmp', 'opal_spec')
+    #   # our project
+    #   project = Vienna::Project.new opal_root, :build_mode => :spec, 
+    #                                            :build_root => tmp_root
+    # 
+    #   project.build!
+    # end
+    
   end
 end
 

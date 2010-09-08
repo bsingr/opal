@@ -103,6 +103,7 @@ namespace :target do
       
       # skip all resources
       if @config.build_stylesheets
+        # puts "can build styleheets for #{item.filename}"
         next if item.filename =~ /^resources.+$/
       end
       
@@ -241,11 +242,12 @@ namespace :build do
   end
   
   task :copy do
-    # puts "building simple copy task for #{@build_item.filename}"
-    from = File.join(@project.project_root, @build_item.filename)
+    # puts "building simple copy task for #{@build_item.source_path}"
+    from = @build_item.source_path
     to = File.join(@project.build_root, @config.build_prefix,  @build_item.filename)
     # puts from
     # puts to
+    FileUtils.mkdir_p File.dirname(to)
     FileUtils.copy_file from, to
   end
   
@@ -294,17 +296,17 @@ namespace :build do
         js_name = "#{@project.project_name}.js"
       end
       
-      if @config.build_stylesheets
+      # if @config.build_stylesheets
         css_build_path = File.join @project.build_root, @config.build_prefix, @config.stylesheets_prefix
       
-        FileUtils.mkdir_p css_build_path
+        # FileUtils.mkdir_p css_build_path
       
-        css_name = @config.stylehseet_name
+        css_name = @config.stylesheet_name
       
         if css_name == :project_name
           css_name = "#{@project.project_name}.css"
         end
-      end
+      # end
 # javascripts_prefix
       opals = @project.targets.each_value.to_a.dup
       
@@ -331,15 +333,38 @@ namespace :build do
         out.puts "opal.run('#{bin_file}','#{working_dir}');"
       end
       
-      if @config.build_stylesheets
-        # build the final stylesheet.css package
-        File.open(File.join(css_build_path, css_name), 'w') do |out|
-          opals.each do |opal|
-            item = opal.build_item_for("#{opal.target_name}.css")
-            out.puts File.read(item.build_path)
+      # if @config.build_stylesheets
+        # puts "in a"
+        # puts css_build_path
+        # puts css_name
+        
+        all_css_targets = []
+        opals.each do |opal|
+          item = opal.build_item_for("#{opal.target_name}.css")
+          # puts item
+          (all_css_targets << item) if item
+        end
+        
+        if all_css_targets.length > 0
+          FileUtils.mkdir_p css_build_path
+          File.open(File.join(css_build_path, css_name), 'w') do |out|
+            all_css_targets.each do |item|
+              out.puts File.read(item.build_path)
+            end
           end
         end
-      end
+        # FileUtils.mkdir_p css_build_path
+        
+        # build the final stylesheet.css package
+        # File.open(File.join(css_build_path, css_name), 'w') do |out|
+          # opals.each do |opal|
+            # puts opal.target_name
+            # item = /opal.build_item_for("#{opal.target_name}.css")
+            # puts item
+            # out.puts(File.read(item.build_path)) if item
+          # end
+        # end
+      # end
       
     end
   end

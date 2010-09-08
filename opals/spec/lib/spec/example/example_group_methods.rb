@@ -30,6 +30,9 @@ module Spec
     
     module ExampleGroupMethods
       
+      puts "including before and after hooks"
+      include Spec::Example::BeforeAndAfterHooks
+      
       def describe group_name, &group_block
         # puts "describing in her instead!"
         # puts group_block
@@ -82,7 +85,11 @@ module Spec
         success = true
         before_all_instance_variables = nil
         
+        run_before_all run_options
+        
         run_examples success, before_all_instance_variables, examples, run_options
+        
+        run_after_all run_options
       end
       
       def run_examples(success, instance_variables, examples, run_options)
@@ -92,6 +99,22 @@ module Spec
                                        &example_implementations[example]
           
           example_group_instance.execute run_options, instance_variables
+        end
+      end
+      
+      def run_before_all(run_options)
+        # puts "running before all for #{description}"
+        # puts before_all_parts
+        
+        # for now just run.. worry about scope later
+        before_all_parts.each do |part|
+          part.call
+        end
+      end
+      
+      def run_after_all(run_options)
+        after_all_parts.each do |part|
+          part.call
         end
       end
       

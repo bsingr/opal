@@ -451,3 +451,5 @@ class Element
     end
   end
 end
+
+require 'browser/element/attributes'

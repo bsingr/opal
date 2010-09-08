@@ -102,6 +102,28 @@ The above example would produce the following results:
 
 The returned element is an instance of the {Element} class.
 
+The second case, for a string, either returns a single element if the selector is for an id, or returns an array for any other selector type. Looking for an id will take the form `#element_id`. The hash indicates an id. As above, if the elements cannot be found, then `nil` is returned.
+
+HTML:
+
+    !!!plain
+    <div id="foo" class="a"></div>
+    <div class="b"></div>
+    <div class="a"></div>
+
+Ruby:
+    
+    Document['#foo']
+    # => #<Element div, id="foo", class="a">
+    Document['#bar']
+    # => nil
+    Document['.a']
+    # => [#<Element div, id="foo", class="a">, #<Element div, class="a">]
+    Document['.b']
+    # => [#<Element div, class="b">]
+    Document['.c']
+    # => nil
+
 ## Implementation
 
 This section discusses the low level implementation details for dealing with the opal runtime. Every class in the browser opal uses pure opal class instances and object instances. No native objects (elements, xmlhttprequests) are accessible from the ruby. Due to cross browser differences, relying on adding opal methods to these natives causes issues, so all references to object's native counterparts are stored purely as an instance variable on the ruby object, so that no addition properties can affect different browser implementations.

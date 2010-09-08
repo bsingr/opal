@@ -27,7 +27,37 @@
 # The [Document] module.
 module Document
   
+  # Search the DOM using the given CSS3 `selector`. This will return a single 
+  # element when used with a symbol or a string representing an id, or an array 
+  # otherwise.
+  # 
+  # @example HTML
+  #   !!!plain
+  #   <div id="foo" class="a"></div>
+  #   <div class="b"></div>
+  #   <div class="a"></div>
+  # 
+  # @example Ruby
+  #   Document[:foo]
+  #   # => #<Element div, id="foo">
+  #   Document [:baz]
+  #   # => nil
+  # 
+  #   Document['#foo']
+  #   # => #<Element div, id="foo", class="a">
+  #   Document['#bar']
+  #   # => nil
+  #   Document['.a']
+  #   # => [#<Element div, id="foo", class="a">, #<Element div, class="a">]
+  #   Document['.b']
+  #   # => [#<Element div, class="b">]
+  #   Document['.c']
+  #   # => nil
+  # 
+  # @param [String, Symbol] selector the selector to search
+  # @return [Array, Element] the result
   def self.[](selector)
+    puts "checking #{selector}"
     case selector
     when Symbol
       puts "need to find symbol #{selector}"
@@ -35,7 +65,7 @@ module Document
       # puts "and here"
     when /^#/
       puts "need to find id"
-      find_by_id selector
+      find_by_id selector.slice(1, selector.length)
     else
       puts "need to find array of things"
       Element.find_in_context selector, self
@@ -43,7 +73,7 @@ module Document
   end
   
   def self.find_by_id(id)
-    puts "finding by id"
+    # puts "finding by id #{id}"
     Element.from_native `document.getElementById(#{id.to_s})`
   end
   

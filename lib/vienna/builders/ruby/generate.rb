@@ -406,6 +406,13 @@ module Vienna
             r << "  #{arg} = #{@opt_arg_str[arg]};"
             r << "}"
           end
+          
+          if @block_arg_name
+            length = @opt_arg_names.length
+            r << %Q|var __block__ = 
+              (arguments[#{length}] && arguments[#{length}].info & this.TP)
+              ? arguments[#{length}] : this.n;|
+          end
         
         # Case: some normal args, some optional, nothing else
         elsif norm > 0 && opt > 0 && post == 0 && rest.nil?

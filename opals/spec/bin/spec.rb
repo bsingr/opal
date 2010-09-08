@@ -22,4 +22,7 @@ Dir.glob(File.join(Dir.getwd, 'spec/**/*.rb')).each do |rb|
 end
 
 # 5
-Spec::Runner.run
+Document.ready? do
+  # puts "running in ready"
+  Spec::Runner.run
+end

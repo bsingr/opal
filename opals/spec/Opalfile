@@ -1,4 +1,5 @@
 mode :all do
   config :spec,
-    :required => [:browser]
+    :required => [:browser],
+    :build_stylesheets => true
 end
