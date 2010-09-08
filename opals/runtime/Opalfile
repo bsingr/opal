@@ -54,12 +54,13 @@ namespace :build do
       out.puts "var opal = {};"
       out.puts "(function(global, exports) {"
       js_sources.each do |js|
-        puts js.filename
+        # puts js.filename
         out.puts File.read(js.stage!.staging_path)
       end
       out.puts "})(this.window || global, opal);"
       rb_sources.each do |rb|
         out.puts "// ##################### #{rb.filename} #####################"
+        out.puts "opal.current_file = 'opal/#{rb.filename}';"
         out.puts File.read(rb.stage!.staging_path) + ".apply(opal.top_self);"
       end
     end

@@ -96,6 +96,7 @@ var file_list = exports.files = {};
 exports.run = function(path, cwd, lib_path) {
   bin_file = path;
   exports.getwd = opal_cwd = cwd;
+  var require_path;
   
   if (!bin_file)
     throw "Opal: no bin file defined."
@@ -103,18 +104,25 @@ exports.run = function(path, cwd, lib_path) {
   var bin_path = bin_file + "/bin/" + bin_file + ".rb";
   
   if (exports.files[bin_path])
-    exports.require(bin_path);
+    require_path = bin_path;
+    // exports.require(bin_path);
   else if (exports.files[bin_path = path + '/lib/' + path + '.rb']) {
     // bin_path = bin_file + "/lib/" + bin_file + ".rb";
-    exports.require(bin_path);
+    // exports.require(bin_path);
+    require_path = bin_path;
   }
   else if (exports.files[bin_path = path + '/' + path + '.rb']) {
     // bin_path = bin_file + "/lib/" + bin_file + ".rb";
-    exports.require(bin_path);
+    // exports.require(bin_path);
+    require_path = bin_path;
   }
   else {
     throw "cannot find bin file"
   }
+  
+  opal.entry_point(function() {
+    return exports.require(require_path);
+  });
 };
 
 // require the file at the given path: we have already checked it exists - mark
@@ -122,6 +130,9 @@ exports.run = function(path, cwd, lib_path) {
 // 
 // params function(__FILE__) { .. }
 var file_require_path = function(path) {
+  if (STACK_TRACE) {
+    exports.current_file = path;
+  }
   // console.log("requiring " + path);
   var f = file_list[path];
   f.opal_required = true;
@@ -177,7 +188,9 @@ var browser = exports.browser = (function() {
 exports.setDocumentReadyListener = function(callback) {
   // run it in the context of top self
   var on_ready = function() {
-    callback.apply(opal.top_self);
+    opal.entry_point(function() {
+      callback.apply(opal.top_self);
+    });
   };
   // attach ready function
   (function(){
