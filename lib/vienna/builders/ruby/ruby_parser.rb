@@ -4835,7 +4835,7 @@ module_eval(<<'.,.,', 'ruby_parser.rb.y', 757)
 
 module_eval(<<'.,.,', 'ruby_parser.rb.y', 761)
   def _reduce_298(val, _values, result)
-                		    result = self.node :def, :fname => val[1], :arglist => val[2], :bodystmt => val[3]
+                		    result = self.node :def, :fname => val[1], :arglist => val[2], :bodystmt => val[3], :line_number => @current_def_linenumber
             		  
     result
   end
@@ -4843,7 +4843,7 @@ module_eval(<<'.,.,', 'ruby_parser.rb.y', 761)
 
 module_eval(<<'.,.,', 'ruby_parser.rb.y', 765)
   def _reduce_299(val, _values, result)
-                		    result = self.node :def, :singleton => val[1], :fname => val[3], :arglist => val[4], :bodystmt => val[5]
+                		    result = self.node :def, :singleton => val[1], :fname => val[3], :arglist => val[4], :bodystmt => val[5], :line_number => @current_def_linenumber
             		  
     result
   end

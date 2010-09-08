@@ -759,11 +759,11 @@ rule
             		  }
             		| k_def fname f_arglist bodystmt k_end
             		  {
-            		    result = self.node :def, :fname => val[1], :arglist => val[2], :bodystmt => val[3]
+            		    result = self.node :def, :fname => val[1], :arglist => val[2], :bodystmt => val[3], :line_number => @current_def_linenumber
             		  }
             		| k_def singleton dot_or_colon fname f_arglist bodystmt k_end
             		  {
-            		    result = self.node :def, :singleton => val[1], :fname => val[3], :arglist => val[4], :bodystmt => val[5]
+            		    result = self.node :def, :singleton => val[1], :fname => val[3], :arglist => val[4], :bodystmt => val[5], :line_number => @current_def_linenumber
             		  }
             		| kBREAK
             		  {

@@ -67,6 +67,10 @@ class Vienna::RubyParser < Racc::Parser
     @build_name = build_name
     File.open(@source) { |f| @scanner = StringScanner.new(f.read) }
     
+    # in debug mode we tell def's what their linenumber is
+    @line_number = 1
+    # current def's linenumber
+    @current_def_linenumber = 0
     # For generate:
     @iseq_stack = []
   end
@@ -297,8 +301,13 @@ class Vienna::RubyParser < Racc::Parser
     scanner.scan(re)
     # puts scanner.matched
     # abort @source
+  
+    
     str_buffer << scanner.matched
-    return [:tSTRING_CONTENT, str_buffer.join]
+    full_buffer = str_buffer.join
+    @line_number += full_buffer.count("\n")
+    
+    return [:tSTRING_CONTENT, full_buffer]
 	  
 	end
 	
@@ -323,8 +332,14 @@ class Vienna::RubyParser < Racc::Parser
         scanner.scan(/.*\n/) if c == '#'
         # puts self.lex_state
         scanner.scan(/\n+/)
+        
+        @line_number += 1
+        
+        @line_number += scanner.matched.length if scanner.matched
+        
         if [:EXPR_BEG, :EXPR_FNAME, :EXPR_DOT, :EXPR_CLASS].include? lex_state then
           # puts 'hell yeah!'
+          # @line_number += scanner.matched.length
           next
         else
           # puts 'well, i dnno'
@@ -720,6 +735,8 @@ class Vienna::RubyParser < Racc::Parser
       elsif scanner.scan(/\w+[\?\!]?/)
         case scanner.matched
         when 'def'
+          # puts "#{@source} def on line #{@line_number}"
+          @current_def_linenumber = @line_number
           self.lex_state = :EXPR_FNAME
           return [:kDEF, scanner.matched]
         when 'end'

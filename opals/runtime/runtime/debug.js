@@ -32,7 +32,7 @@ if (STACK_TRACE) {
 
       push: function(m_id, obj, body) {
         // console.log("calling " + m_id + " on " + obj.class_name);
-        this.stack.push([m_id, obj, body.__opal_file__]);
+        this.stack.push([m_id, obj, body.__opal_file__, body.__opal_line__]);
       },
 
       pop: function(m_id, obj) {
@@ -45,8 +45,11 @@ if (STACK_TRACE) {
        var trace,  i = this.stack.length;
        while (i--) {
          trace = this.stack[i];
-         // console.log(trace[0] + " from " + trace[1].class_name + " in " + trace[2]);
-         console.log(trace[2] + ':0:in ' + trace[1].class_name + (trace[1].info & T_OBJECT ? '#' : '.') + trace[0]);
+         // print object + method name..
+         // console.log(trace[2] + ':0:in ' + trace[1].class_name + (trace[1].info & T_OBJECT ? '#' : '.') + trace[0]);
+         // print just method name (and file..)
+         console.log(trace[2] + ':' + trace[3] + ':in `' + trace[0] + '`');
+          // print just method name (and file..)
        } 
       }
     };
@@ -84,8 +87,11 @@ if (STACK_TRACE) {
         return func();
       }
       catch (e) {
-        console.error(e.toString());
-        opal.stack_trace.backtrace();
+        // we want to print the error (or throw it) and then print the stack. We
+        // must set a timeout to print the stack and all will be well.
+        setTimeout(function() {
+          stack_tracer.backtrace();
+        }, 0);
         throw e;
       }
     };
@@ -93,12 +99,14 @@ if (STACK_TRACE) {
     // Replace the define method function. The new implementation replaces the
     // given body with a custom body that marks when the method is called, and
     // then when it leaves. This is pushed/popped to the stack so we can keep
-    // track of the call chain
+    // track of the call chain. The generatr actually gives us our line number
+    // for each egneerated method, so in debug mode lets actuqllly use it
     var old_dm = __boot_base_class.prototype.dm;
     // wrap the given function so we can log traces
-    var wrap = function(mid, body, singleton) {
+    var wrap = function(mid, body, singleton, line_number) {
       // keep track of what was defined where
       body.__opal_file__  = stack_tracer.current_file();
+      body.__opal_line__ = line_number;
       // new implementation
       return function() {
         // console.log("calling " + mid);
@@ -110,9 +118,9 @@ if (STACK_TRACE) {
       };
     };
 
-    __boot_base_class.prototype.dm = function(m_id, body, singleton) {
+    __boot_base_class.prototype.dm = function(m_id, body, singleton, line) {
       // console.log("adding " + m_id);
-      body = wrap(m_id, body, singleton);
+      body = wrap(m_id, body, singleton, line);
       return old_dm.apply(this, [m_id, body, singleton]);
     };
 

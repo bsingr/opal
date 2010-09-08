@@ -25,7 +25,7 @@
  */
  
  
-var STACK_TRACE = false;
+var STACK_TRACE = true;
  
 // lets just do this straight away, out of the way. Still need a way to log from
 // IE, Opera etc etc etc

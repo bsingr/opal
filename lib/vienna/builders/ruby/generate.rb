@@ -759,8 +759,7 @@ module Vienna
       iseq_stack_pop
       
       # define method
-      
-      
+          
       # base.. singleton or self
       if stmt[:singleton]
         generate_stmt stmt[:singleton], :full_stmt => false, :last_stmt => false
@@ -769,7 +768,8 @@ module Vienna
         write "#{SELF}.dm("
       end
       
-      write %{"#{stmt[:fname]}",#{def_iseq},#{is_singleton})}
+      # FIXME: only write line in debug mode!
+      write %{"#{stmt[:fname]}",#{def_iseq},#{is_singleton}, #{stmt[:line_number]})}
       write ";\n" if context[:full_stmt]
     end
     
