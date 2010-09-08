@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Adam Beynon"]
-  s.date = %q{2010-09-06}
+  s.date = %q{2010-09-08}
   s.description = %q{Ruby compiler and runtime for the browser.}
   s.email = %q{adam@adambeynon.com}
   s.executables = ["opal", "rb2js", "vienna", "vn-build", "vn-gen", "vn-server", "vrb"]
@@ -39,6 +39,8 @@ Gem::Specification.new do |s|
      "demos/apps/simple_opal/lib/main_window.rb",
      "demos/browser/request/index.html",
      "demos/browser/request/request.rb",
+     "gen/browser/__PROJECT_NAME__/index.html",
+     "gen/browser/__PROJECT_NAME__/lib/__PROJECT_NAME__.rb",
      "lib/vienna.rb",
      "lib/vienna/builders/base.rb",
      "lib/vienna/builders/css.rb",
@@ -72,6 +74,7 @@ Gem::Specification.new do |s|
      "opals/browser/lib/browser/dimensions.rb",
      "opals/browser/lib/browser/document.rb",
      "opals/browser/lib/browser/element.rb",
+     "opals/browser/lib/browser/element/attributes.rb",
      "opals/browser/lib/browser/event/dom_events.rb",
      "opals/browser/lib/browser/event/event.rb",
      "opals/browser/lib/browser/event/trigger_events.rb",
@@ -84,7 +87,11 @@ Gem::Specification.new do |s|
      "opals/browser/lib/browser/touch.rb",
      "opals/browser/lib/browser/vml_context.js",
      "opals/browser/lib/browser/window.rb",
+     "opals/browser/spec/browser/browser_detection_spec.rb",
+     "opals/browser/spec/document/aref_spec.rb",
+     "opals/browser/spec/document/ready_spec.rb",
      "opals/browser/spec/element/body_spec.rb",
+     "opals/browser/spec/element/has_class_spec.rb",
      "opals/browser/spec/spec_helper.rb",
      "opals/cherry_kit/Opalfile",
      "opals/cherry_kit/bin/cherry_kit.rb",
@@ -163,7 +170,9 @@ Gem::Specification.new do |s|
      "opals/foundation/spec/system/observable/remove_observer_spec.rb",
      "opals/opal/Opalfile",
      "opals/opal/spec/core/array/each_spec.rb",
+     "opals/opal/spec/core/array/element_reference_spec.rb",
      "opals/opal/spec/core/array/first_spec.rb",
+     "opals/opal/spec/core/array/include_spec.rb",
      "opals/opal/spec/core/array/map_spec.rb",
      "opals/opal/spec/core/builtin_constants/builtin_constants_spec.rb",
      "opals/opal/spec/core/false/and_spec.rb",
@@ -207,6 +216,8 @@ Gem::Specification.new do |s|
      "opals/opal/spec/language/while_spec.rb",
      "opals/opal/spec/spec_helper.rb",
      "opals/runtime/Opalfile",
+     "opals/runtime/README.md",
+     "opals/runtime/docs/debugging.md",
      "opals/runtime/lib/array.rb",
      "opals/runtime/lib/basic_object.rb",
      "opals/runtime/lib/class.rb",
@@ -228,6 +239,7 @@ Gem::Specification.new do |s|
      "opals/runtime/lib/symbol.rb",
      "opals/runtime/lib/top_self.rb",
      "opals/runtime/lib/true_class.rb",
+     "opals/runtime/runtime/debug.js",
      "opals/runtime/runtime/loading.js",
      "opals/runtime/runtime/opal.js",
      "opals/spec/LICENSE.txt",
@@ -236,6 +248,7 @@ Gem::Specification.new do |s|
      "opals/spec/lib/spec.rb",
      "opals/spec/lib/spec/dsl.rb",
      "opals/spec/lib/spec/example.rb",
+     "opals/spec/lib/spec/example/before_and_after_hooks.rb",
      "opals/spec/lib/spec/example/errors.rb",
      "opals/spec/lib/spec/example/example_group.rb",
      "opals/spec/lib/spec/example/example_group_factory.rb",
@@ -262,7 +275,9 @@ Gem::Specification.new do |s|
      "spec/cherry_kit/iseq_spec.rb",
      "spec/spec_helper.rb",
      "spec/vienna_spec.rb",
-     "vienna.gemspec"
+     "vienna.gemspec",
+     "yard/index.html",
+     "yard/style.css"
   ]
   s.homepage = %q{http://github.com/adambeynon/vienna}
   s.rdoc_options = ["--charset=UTF-8"]
