@@ -130,9 +130,6 @@ exports.run = function(path, cwd, lib_path) {
 // 
 // params function(__FILE__) { .. }
 var file_require_path = function(path) {
-  if (STACK_TRACE) {
-    exports.current_file = path;
-  }
   // console.log("requiring " + path);
   var f = file_list[path];
   f.opal_required = true;
@@ -166,6 +163,15 @@ exports.require = function(orig_path) {
   
   throw "could not find require: " + orig_path;
 };
+
+// load the raw file, given as a function imolementation as the given filename
+// 
+// @param [String] filename
+// @param [Function] implementation
+exports.load_raw_file = function(filename, implementation) {
+  return implementation.apply(exports.top_self);
+};
+
 
 // =========================
 // = Browser bits and bobs =

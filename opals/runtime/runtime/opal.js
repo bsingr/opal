@@ -25,7 +25,7 @@
  */
  
  
-var STACK_TRACE = true;
+var STACK_TRACE = false;
  
 // lets just do this straight away, out of the way. Still need a way to log from
 // IE, Opera etc etc etc
@@ -161,15 +161,7 @@ if (!Array.prototype.indexOf) {
 // @return [Object] returns the result of the function
 // 
 exports.entry_point = function(func) {
-  try {
-    return func();
-  }
-  catch (e) {
-    console.error(e.toString());
-    opal.stack_trace.backtrace();
-    throw e;
-  }
-  // console.log("running in entry point!");
+  return func();
 };
 
 // Base of every object or class object in vienna. Every object, string, number,
@@ -357,64 +349,6 @@ __boot_base_class.prototype.dm = function(m_id, body, singleton) {
   }
   return;
 };
-
-// Our stack trace class - js prototpye based class
-var StackTracer = function() {
-  this.stack = [];
-  return this;
-};
-
-StackTracer.prototype = {
-  push: function(m_id, obj, body) {
-    // console.log("calling " + m_id + " on " + obj.class_name);
-    this.stack.push([m_id, obj, body.__opal_file__]);
-  },
-  
-  pop: function(m_id, obj) {
-    this.stack.pop();
-  },
-  
-  backtrace: function() {
-    // console.log("stack is:");
-    // console.log(this.stack);
-   var trace,  i = this.stack.length;
-   while (i--) {
-     trace = this.stack[i];
-     // console.log(trace[0] + " from " + trace[1].class_name + " in " + trace[2]);
-     console.log(trace[2] + ':0:in ' + trace[1].class_name + '#' + trace[0]);
-   } 
-  }
-};
-
-// Stack trace support ... need to replace .dm
-(function() {
-  if (STACK_TRACE) {
-    // our global stack tracking object
-    var stack_tracer = exports.stack_trace = new StackTracer();
-    // our old proper implementation
-    var old = __boot_base_class.prototype.dm;
-    // wrap the given function so we can log traces
-    var wrap = function(mid, body, singleton) {
-      // keep track of what was defined where
-      body.__opal_file__  = opal.current_file;
-      // new implementation
-      return function() {
-        // console.log("calling " + mid);
-        stack_tracer.push(mid, this, body);
-        var result = body.apply(this, arguments);
-        stack_tracer.pop();
-        // console.log("finished calling " + mid);
-        return result;
-      };
-    };
-    
-    __boot_base_class.prototype.dm = function(m_id, body, singleton) {
-      // console.log("adding " + m_id);
-      body = wrap(m_id, body, singleton);
-      return old.apply(this, [m_id, body, singleton]);
-    };
-  }
-})();
 
 __boot_base_class.prototype.const_set = function(id, val) {
   
