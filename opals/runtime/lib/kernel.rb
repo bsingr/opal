@@ -24,12 +24,39 @@
 # THE SOFTWARE.
 #
 
+# The kernel module is included directly into {Object}, making all of these 
+# methods globally accessible from any Object.
 module Kernel
+  
+  # Returns `true` if `yield` would execute a block in the current context, 
+  # `false` otherwise. 
+  # 
+  # @note In Opal this is kind of a fake method. The compiler treats 
+  # `block_given?` as a keyword to make its use easier to deal with in 
+  # javascript (keep things nice and efficient). Its use is the same to the end
+  # programmer, apart from it should not be overriden - it is never actually
+  # called.
+  # 
+  # @return [Boolean] was a block given
+  def block_given?
+    false
+  end
   
   def !=(other)
     `return #{self == other}.r ? #{false} : #{true};`
   end
   
+  # Repeatedly executes the block.
+  # 
+  # @note Method does not return an enumerator if no block given(yet).
+  # 
+  # @example
+  #   loop do
+  #     puts "this will infinetly print"
+  #   end
+  # 
+  # @param [Proc] block
+  # @return [Object] returns the receiver
   def loop(&block)
     `try {
       while (true) {
@@ -110,11 +137,28 @@ module Kernel
     `return #{self}.super_class;`
   end
   
+  # Try to load the library or file named `require_path`. Causes an error to be
+  # thrown if required path cannot be found.
+  # 
+  # @todo Loading relative paths does not work. Paths need to be full. To load
+  # element from Browser, do require('browser/element/element'). The .rb
+  # extension can be ommited.
+  # 
+  # @param [String] require_path
+  # @return [Boolean] success
   def require require_path
     `opal.require(#{require_path});`
-    require_path
+    true
   end
   
+  # Simple equivalent to `Proc.new`. Returns a {Proc} instance.
+  # 
+  # @example
+  #   proc { puts "a" }
+  #   # => #<Proc 0x2828283>
+  # 
+  # @param [Proc] block
+  # @return [Proc]
   def proc &block
     if block_given?
       block
@@ -123,9 +167,36 @@ module Kernel
     end
   end
   
-  def puts(str)
-    `console.log(#{str}.$inspect().toString());`
+  # Prints each argument in turn to the browser console. Currently there is no
+  # use of `$stdout`, so it is hardcoded into this method to write to the 
+  # console directly.
+  # 
+  # @param [Object] args objects to print using `inspect`
+  # @return [nil]
+  def puts(args)
+    # args.each do |arg|
+      `console.log(#{args}.$inspect().toString());`
+    # end
     nil
+  end
+  
+  # Returns a random number. If `max` is `nil` then the result is 0. Otherwise
+  # returns a random number from `0` to `max`.
+  # 
+  # @example
+  #   rand      # => 0.192272821917329
+  #   rand      # => 0.972628272363732
+  #   rand 10   # => 8
+  #   rand 10   # => 4
+  # 
+  # @param [Number] max max number to use
+  # @return [Number] random number
+  def rand(max = nil)
+    if max
+      `return Math.floor(Math.random() * #{max})`
+    else
+      `return Math.random();`
+    end
   end
   
   def to_s
@@ -140,6 +211,23 @@ module Kernel
     `return #{self}.id;`
   end
   
+  # Raises an exception. If given a {String} argument, this method will raise a
+  # {RuntimeError} with the given `string` as a message. Otherwise, if the first
+  # parameter is a subclass of {Exception}, then the method will raise a new 
+  # instance of the given `exception` class with the `string` as a method, if it
+  # exists, or a default message otherwise`
+  # 
+  # @example String message
+  #   raise "some error"
+  #   # => RuntimeError: some error
+  # 
+  # @example Exception subclass
+  #   raise StandardError, "something went wrong"
+  #   # => StandardError: something went wrong
+  # 
+  # @param [Exception, String] exception exception class or string to throw
+  # @param [String] string to pass as message for exception
+  # @return [nil]
   def raise(exception, string)
     # puts "need to raise"
     msg = nil
@@ -156,6 +244,15 @@ module Kernel
     `#{exc}.raise();`
   end
   
+  # An alias of {#raise}
+  # 
+  # @param [Exception, String] exception exception class or string to throw
+  # @param [String] string to pass as message for exception
+  # @return [nil]
+  def fail(exception = nil, string = nil)
+    raise exception, string
+  end
+  
   def instance_eval(&block)
     if block_given?
       # `#{block}.__fun__.opal_self = true;`
@@ -167,4 +264,25 @@ module Kernel
     `return #{self}.const_set(#{const_name}, #{const_value});`
   end
   
+end
+
+# ============================================================================
+# = Argh - these need to be here early for method in core lib that use alias =
+# ============================================================================
+
+class String
+  
+  def to_s
+    self
+  end
+  
+  def inspect
+    `return '"' + #{self} + '"';`
+  end
+end
+
+class Symbol
+  def to_s
+     `return #{self}.__ptr__;`
+  end
 end

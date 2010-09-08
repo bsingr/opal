@@ -405,7 +405,7 @@ rule
             		| kSELF              | kSUPER             | kTHEN 
             		| kTRUE    	         | kUNDEF             | kWHEN 
             		| kYIELD 	           | kIF                | kUNLESS
-            		| kWHILE             | kUNTIL
+            		| kWHILE             | kUNTIL             | kBLOCK_GIVEN
 
              arg: lhs '=' arg
                   {
@@ -1187,7 +1187,7 @@ xstring_contents:
                 | kBLOCK_GIVEN
                   {
                     # added for block_given? support.. :D
-                    result = node :block_given
+                    result = node :block_given, :name => val[0]
                   }
 
          var_ref: variable

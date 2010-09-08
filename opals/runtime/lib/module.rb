@@ -42,6 +42,18 @@ class Module
     self
   end
   
+  def alias_method(new_name, old_name)
+    new_name = new_name.to_s
+    old_name = old_name.to_s
+    # puts "alias #{new_name} from #{old_name}"
+    # `console.log(#{self}.allocator.prototype);`
+    # `var body = function() {
+      # return #{self}['$' + #{old_name}].apply(this, arguments);
+    # };`
+  `#{self}.dm(#{new_name}, #{self}.allocator.prototype['$' + #{old_name}], false);`
+    self
+  end
+  
   def attr_accessor(*attributes)
     # puts "in attr_accessor"
     `#{self}.$attr_reader.apply(#{self}, #{attributes});`

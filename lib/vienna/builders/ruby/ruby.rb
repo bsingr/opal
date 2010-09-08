@@ -515,10 +515,12 @@ class Vienna::RubyParser < Racc::Parser
         # space_seen allows for method calls with an array as first param - otherwise it
         # thinks its calling the method []
         elsif lex_state == :EXPR_BEG || lex_state == :EXPR_MID || space_seen
+          self.lex_state = :EXPR_BEG
           return [:tLBRACK, scanner.matched]
         end
         # puts 'HMHMHMHMHMHMHMHMHH'
         # puts lex_state
+        self.lex_state = :EXPR_BEG
         return ['[', scanner.matched]
       elsif scanner.scan(/\'(\\.|[^\'])*\'/)
         self.lex_state = :EXPR_END
@@ -901,7 +903,7 @@ class Vienna::RubyParser < Racc::Parser
     # token_name.downcase!
 		token = error_value.to_s.inspect
 
-		str = "#{@source} - parse error on "
+		str = "#{@source}:#{@line_number}: - parse error on "
 		str << token_name << ' ' unless token_name == token
 		str << token
     # @tokens.error(str)
