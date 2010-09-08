@@ -2,7 +2,7 @@
 require 'browser'
 
 Document.ready? do
-  raise "somehgin"
+
   req = Request.new :url => 'good_request.txt'
   
   req.on :success do
