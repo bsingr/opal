@@ -66,4 +66,12 @@ class Proc
       return #{self}.apply(#{self}.__self__);
     }`
   end
+  
+  def to_s
+    `return "#<" + #{self}.class_name + ":" + #{self}.id + ">";`
+  end
+  
+  def inspect
+    to_s
+  end
 end

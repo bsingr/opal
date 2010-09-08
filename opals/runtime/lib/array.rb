@@ -46,9 +46,21 @@ class Array
   end
   
   def each_with_index(&block)
-    `for (var i = 0; i < #{self}.length; i++) {
-      #{block}.__fun__(#{self}[i], i);
-    }`
+     `for (var i = 0; i < #{self}.length; i++) {
+        try {
+          #{block}.apply(#{block}.__self__, [#{self}[i], i]);
+        } catch (e) {
+          if (e.__keyword__ == 'redo') {
+            i--;
+          }
+          else if (e.__keyword__ == 'break') {
+            return e.opal_value;
+          }
+          else {
+            throw e;
+          }
+        }
+      }`
     self
   end
   
@@ -98,7 +110,8 @@ class Array
   
   def inspect
     description = ["["]
-    self.each do |item|
+    self.each_with_index do |item, index|
+      description << ", " if index > 0
       description << item.inspect
     end
     description << "]"

@@ -2,7 +2,9 @@
 require 'browser'
 
 Document.ready? do
-
+  
+  # raise "100"
+  
   req = Request.new :url => 'good_request.txt'
   
   req.on :success do
@@ -23,4 +25,15 @@ Document.ready? do
     req.send :url => 'bad_request.txt'
   end
 end
+
+def something(a, b)
+  raise a
+end
+
+def something_a(a, b, c)
+  something "adam", [a, b, c]
+end
+
+something_a 100, 200, 400
+
 

@@ -30,9 +30,9 @@ if (STACK_TRACE) {
         return this.file_stack[this.file_stack.length - 1];
       },
 
-      push: function(m_id, obj, body) {
+      push: function(frame) {
         // console.log("calling " + m_id + " on " + obj.class_name);
-        this.stack.push([m_id, obj, body.__opal_file__, body.__opal_line__]);
+        this.stack.push(frame);
       },
 
       pop: function(m_id, obj) {
@@ -40,16 +40,54 @@ if (STACK_TRACE) {
       },
 
       backtrace: function() {
+        
+        // did we find null or undefined (mark as warning)
+        var found_warning = false;
+        
+        // call $inspect on recv, but catches errors.. when we get an error we
+        // return <undefined> or <null> to indicate we probably have null (or 
+          // undefined where it should not be
+        var inspect = function(recv) {
+          try {
+            return recv.$inspect();
+          } catch (e) {
+            found_warning = true;
+            if (recv === undefined) 
+              return "<undefined>";
+            else if (recv === null)
+              return "<null>";
+            else
+              return "<error>";
+          }
+        };
         // console.log("stack is:");
         // console.log(this.stack);
-       var trace,  i = this.stack.length;
+       var frame, str,  i = this.stack.length;
        while (i--) {
-         trace = this.stack[i];
-         // print object + method name..
-         // console.log(trace[2] + ':0:in ' + trace[1].class_name + (trace[1].info & T_OBJECT ? '#' : '.') + trace[0]);
-         // print just method name (and file..)
-         console.log(trace[2] + ':' + trace[3] + ':in `' + trace[0] + '`');
-          // print just method name (and file..)
+         // reset warning
+         found_warning = false
+         
+         frame = this.stack[i];
+         // console.log(frame);
+         var args = frame.args;
+         
+         var str = '  from ' + frame.body.__opal_file__ + ':' + frame.body.__opal_line__ + ':in ' + inspect(frame.recv) + '.' + frame.mid;
+         
+         // console.log(frame.recv.$inspect());
+         
+         if (args.length > 0) {
+           str += '(';
+           for (var j = 0; j < args.length; j++) {
+             if (j > 0) str += ', ';
+             str += inspect(args[j]);
+           }
+           str += ')';
+         } else {
+           str += '()';
+         }
+         
+         
+         found_warning ? console.warn(str) : console.log(str);
        } 
       }
     };
@@ -87,16 +125,8 @@ if (STACK_TRACE) {
         return func();
       }
       catch (e) {
-        // we want to print the error (or throw it) and then print the stack. We
-        // must set a timeout to print the stack and all will be well.
-        setTimeout(function() {
-          // IE doesnt print the right error, so lets do it here
-          if (exports.browser.msie) {
-            console.log(e.toString());
-          }
-          stack_tracer.backtrace();
-        }, 0);
-        throw e;
+        console.error(e.toString());
+        stack_tracer.backtrace();
       }
     };
     
@@ -114,7 +144,13 @@ if (STACK_TRACE) {
       // new implementation
       return function() {
         // console.log("calling " + mid);
-        stack_tracer.push(mid, this, body);
+        // stack_tracer.push(mid, this, body);
+        stack_tracer.push({
+          mid: mid,
+          recv: this,
+          body: body,
+          args: Array.prototype.slice.call(arguments)
+        });
         var result = body.apply(this, arguments);
         stack_tracer.pop();
         // console.log("finished calling " + mid);
@@ -127,7 +163,20 @@ if (STACK_TRACE) {
       body = wrap(m_id, body, singleton, line);
       return old_dm.apply(this, [m_id, body, singleton]);
     };
-
+    
+    
+    // In debug mode we support method_missing. This is ONLY FOR DEBUG mode.
+    // This is not to be used for metaprgramming. Basically method_missing 
+    // allows us to have nicer output from our method missing calls instead of
+    // "this.ig("@adam").$do_something(....etc....)" we get normal ruby
+    // formatted message. (ms = message_send)
+    __boot_base_class.prototype.ms = function(mid) {
+      // args are all the args after initial mid
+      var args = Array.prototype.slice.call(arguments);
+      // we could really do all the stack tracing in here..?
+      
+      //FIXME: incompletet
+    };
     
   })();
 };

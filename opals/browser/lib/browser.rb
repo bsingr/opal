@@ -27,24 +27,35 @@
 # Browser holds all things browser related.
 module Browser
   
-  # Returns true/false if the browser is opera.
+  # @group Browser and feature detection
+  
+  # Returns `true` if the current browser is Opera, `false` otherwise.
   # 
-  # @return [true, false]
-  # 
+  # @return [Boolean]
   def self.opera?
-    @__is_opera__ ||= `(opal.browser.opera ? #{self}.t : #{self}.f)`
+    @__is_opera__ ||= `(opal.browser.opera ? #{true} : #{false})`
   end
   
-  # Returns true/false if the browser is safari.
+  # Returns `true` if the current browser is Safari, `false` otherwise.
   # 
-  # @return [true, false]
-  # 
+  # @return [Boolean]
   def self.safari?
-    @__is_safari__ ||= `(opal.browser.safari ? #{self}.t : #{self}.f)`
+    @__is_safari__ ||= `(opal.browser.safari ? #{true} : #{false})`
   end
   
+  # Returns `true` if the current browser is Internet Explorer, `false` 
+  # otherwise.
+  # 
+  # @return [Boolean]
   def self.msie?
-    @__is_msie__ ||= `(opal.browser.msie ? #{self}.t : #{self}.f)`
+    @__is_msie__ ||= `(opal.browser.msie ? #{true} : #{false})`
+  end
+  
+  # Returns `true` if the current browser is Firefox, `false` otherwise.
+  # 
+  # @return [Boolean]
+  def self.firefox?
+    @__is_firefox__ ||= `(opal.browser.firefox ? #{true} : #{false})`
   end
   
   # Returns true or false to indicate whether this browser is on a touch
@@ -52,6 +63,13 @@ module Browser
   def self.touch?
     @__is_touch__ ||= `(('createTouch' in document) ? #{true} : #{false})`
   end
+  
+  # @endgroup
+  
+  # @group Platform detection
+  
+  
+  # @endgroup
   
   # Returns the document element
   def self.document

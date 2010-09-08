@@ -54,7 +54,7 @@ class String
   end
   
   def inspect
-    self
+    `return '"' + #{self} + '"';`
   end
   
   def length
