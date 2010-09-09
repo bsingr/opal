@@ -1,5 +1,5 @@
 # 
-# ruby.rb
+# object.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,27 +24,23 @@
 # THE SOFTWARE.
 #
 
-require File.join(File.dirname(__FILE__), 'base')
-
-module Vienna
+module Opal
   
-  module Builders
+  module ENV
     
-    class Ruby < Base
+    class Object
       
-      # Build the ruby file.. here we actually cheat and use a completely
-      # differently parser/compiler
-      def build
-        # puts "building to #{@build_item.source_path}"
-        # Vienna::RubyParser.new(@build_item.source_path, @dst_path, "").build!
-        res = Vienna::RubyParser.new(@build_item.source_path, File.read(@build_item.source_path)).build!
-        
-        FileUtils.mkdir_p(File.dirname(@dst_path))
-        File.open(@dst_path, 'w') do |out|
-          out.write res
-        end
+      def initialize
+        @properties = {}
       end
       
+      def [](key)
+        @properties[key]
+      end
+      
+      def []=(key, value)
+        @properties[key] = value
+      end
     end
   end
 end

@@ -1,3 +1,12 @@
+
+// All functionality here is not run in the browser.. it is just loaded in the 
+// ruby env (in opal etc), so replicates all the methods from browser.js
+
+
+// All methods in here are just for the browser. This file will not be loaded
+// by the "server side" opal tool. A lot of methods defined here need to have
+// duplicate definitions for use by the server side tool.
+
 // =======================
 // = Opal loading system =
 // =======================
@@ -169,64 +178,11 @@ exports.require = function(orig_path) {
 // @param [String] filename
 // @param [Function] implementation
 exports.load_raw_file = function(filename, implementation) {
+  // console.log("running " + filename);
   return implementation.apply(exports.top_self);
 };
 
-
-// =========================
-// = Browser bits and bobs =
-// =========================
-
-var browser = exports.browser = (function() {
-  var agent = navigator.userAgent.toLowerCase();
-  var version = 1;
-  var browser = {
-    version: 0,
-    safari: (/webkit/).test(agent) ? version : 0,
-    opera: (/opera/).test(agent) ? version : 0,
-    msie: (/msie/).test(agent) && !(/opera/).test(agent) ? version : 0
-  };
-  
-  return browser;
-})();
-
-// set callback for when opal/document is ready to go!
+// Are we ever going to load browser opal? in case we do
 exports.setDocumentReadyListener = function(callback) {
-  // run it in the context of top self
-  var on_ready = function() {
-    opal.entry_point(function() {
-      callback.apply(opal.top_self);
-    });
-  };
-  // attach ready function
-  (function(){
-    // w3c - firefox, safari, opera
-    if (document.addEventListener) {
-      document.addEventListener("DOMContentLoaded", on_ready, false);
-    }
-    // internet explorer
-    if (exports.browser.msie) {
-      (function() {
-        try {
-          document.documentElement.doScroll('left');
-        }
-        catch (e) {
-          setTimeout(arguments.callee, 0);
-          return;
-        }
-        on_ready();
-      })();
-    }
 
-  })();
 };
-
-// ================
-// = On ready etc =
-// ================
-// var on_ready = function() {
-  // console.log("===== on_ready");
-
-// };
-
-

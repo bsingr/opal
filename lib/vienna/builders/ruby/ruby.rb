@@ -61,11 +61,12 @@ class Vienna::RubyParser < Racc::Parser
 	
   # Rewrite to simply return the "compiled" source as a string. This will make
   # testing incredibly easy.
-  def initialize(source, build_path, build_name)
-    @source = source
-    @build_path = build_path
+  def initialize(build_name, str, options = {})
+    @iseq_type = options[:iseq_type] || :top
+    @source = build_name
+    @build_path = build_name
     @build_name = build_name
-    File.open(@source) { |f| @scanner = StringScanner.new(f.read) }
+    @scanner = StringScanner.new str
     
     # in debug mode we tell def's what their linenumber is
     @line_number = 1
@@ -98,10 +99,7 @@ class Vienna::RubyParser < Racc::Parser
 	  do_parse
     # this will return the needed string
 	  res = generate_tree @parser_result unless @parser_result.nil?
-    FileUtils.mkdir_p(File.dirname(@build_path))
-    File.open(@build_path, 'w') do |out|
-      out.write res
-    end
+    res
 	end
 	
   # This should simpy parse the given string, and return a syntax tree.

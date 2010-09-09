@@ -4,21 +4,11 @@ mode :spec do
   # can set the bin file aswell (to use the spec's bin ruby file)
   config :runtime,
     :required         => [:spec],
-    :bin_file         => :spec,
-    :lib_directories  => ['lib', 'runtime']
+    :bin_file         => :spec
     
   # Configure :spec to include its bin file, so opal can use it
   config :spec,
     :include_bin  => true
-end
-
-mode :all do
-  config :runtime, 
-    
-    # In all build modes we want to include our runtime (js sources) directory
-    # as well as our lib (ruby sources) directory
-    :lib_directories  => ['lib', 'runtime']
-    
 end
 
 namespace :build do
@@ -30,18 +20,6 @@ namespace :build do
     # puts "building opal for opal"
     
     FileUtils.mkdir_p File.dirname(@dst_path)
-
-    # Get all javascript sources, then sort them
-    js_sources = @build_item.source_items.select do |item|
-      item.resource == :javascript
-    end
-    
-    # we need to make sure debug is last in..
-    # opals.unshift(opals.find { |o| o.target_name.to_sym == :runtime }).uniq!
-    found = js_sources.find { |o| o.filename == 'runtime/debug.js'}
-    js_sources.delete found
-    js_sources.push found
-    # js_sources.push(js_sources.find { |o| o.filename == 'runtime/debug.js'})
 
     # Get all ruby sources, then sort them (kernel.rb then module.rb then any)
     rb_sources = @build_item.source_items.select do |item|
@@ -58,13 +36,27 @@ namespace :build do
     rb_sources.uniq!
 
     File.open(@dst_path, 'w') do |out|
-      out.puts "var opal = {};"
-      out.puts "(function(global, exports) {"
-      js_sources.each do |js|
-        puts js.filename
-        out.puts File.read(js.stage!.staging_path)
+      js_sources = %w(pre_opal opal browser debug post_opal)
+      js_str = []
+      
+      js_sources.each do |src|
+        # puts @target.target_root, 'runtime', 
+        js_str << File.read(File.join(@target.target_root, 'runtime', "#{src}.js"))
       end
-      out.puts "})(this.window || global, opal);"
+      
+      out.puts js_str.join
+      
+      # out.puts "var opal = {};"
+      # out.puts "(function(global, exports) {"
+      # js_sources.each do |js|
+      #   puts js.filename
+      #   out.puts File.read(js.stage!.staging_path)
+      # end
+      # out.puts "})(this.window || global, opal);"
+      
+      
+      
+      
       rb_sources.each do |rb|
         out.puts "// ##################### #{rb.filename} #####################"
         out.puts "opal.load_raw_file('opal/#{rb.filename}', "

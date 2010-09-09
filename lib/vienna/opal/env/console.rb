@@ -1,5 +1,5 @@
 # 
-# ruby.rb
+# console.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,27 +24,43 @@
 # THE SOFTWARE.
 #
 
-require File.join(File.dirname(__FILE__), 'base')
+require File.join(File.dirname(__FILE__), 'object')
 
-module Vienna
+module Opal
   
-  module Builders
+  module ENV
     
-    class Ruby < Base
+    # Used to represent the usual javascript console found in most browsers.
+    class Console < Object
       
-      # Build the ruby file.. here we actually cheat and use a completely
-      # differently parser/compiler
-      def build
-        # puts "building to #{@build_item.source_path}"
-        # Vienna::RubyParser.new(@build_item.source_path, @dst_path, "").build!
-        res = Vienna::RubyParser.new(@build_item.source_path, File.read(@build_item.source_path)).build!
-        
-        FileUtils.mkdir_p(File.dirname(@dst_path))
-        File.open(@dst_path, 'w') do |out|
-          out.write res
-        end
+      def initialize
+        super
+        self['log'] = proc { |msg| log(msg) }
+        self['error'] = proc { |msg| error(msg) }
+        self['info'] = proc { |msg| info(msg) }
+        self['warn'] = proc { |msg| warn(msg) }
       end
       
+      # Log a regular message to the console.
+      # 
+      # @example
+      #   console.log "something"
+      # 
+      def log(str = "")
+        puts str
+      end
+      
+      def error(str = "")
+        puts str
+      end
+      
+      def info(str = "")
+        puts str
+      end
+      
+      def warn(str = "")
+        puts str
+      end
     end
   end
 end

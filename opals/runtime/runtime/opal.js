@@ -30,40 +30,9 @@ var STACK_TRACE = true;
 // lets just do this straight away, out of the way. Still need a way to log from
 // IE, Opera etc etc etc
 if (typeof console === 'undefined') {
-  window.console = {} ;
-  console.info = console.warn = console.error = console.log = function(){};
+  global.console = {} ;
+  // console.info = console.warn = console.error = console.log = function(){};
 }
-
-// native xml http request
-exports.request = (function() {
-  try {
-    new XMLHttpRequest();
-    return function() {
-      return new XMLHttpRequest();
-    };
-  }
-  catch (e) {
-    try {
-      new ActiveXObject('MSXML2.XMLHTTP');
-      return function() {
-        return new ActiveXObject('MSXML2.XMLHTTP');
-      };
-    }
-    catch (e) {
-      try {
-        new ActiveXObject('Microsoft.XMLHTTP');
-        return function() {
-          return new ActiveXObject('Microsoft.XMLHTTP');
-        };
-      }
-      catch (e) {
-        return function() {
-          console.log("cannot create a native XMLHttpRequest");
-        }
-      }
-    }
-  }
-})();
 
 // Core classes
 // exports.c_object        = null;
@@ -347,7 +316,7 @@ __boot_base_class.prototype.dm = function(m_id, body, singleton) {
       // throw "need to add_method to  object " + m_id
     }
   }
-  return;
+  return this.n;
 };
 
 __boot_base_class.prototype.const_set = function(id, val) {

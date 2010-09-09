@@ -196,6 +196,9 @@ module Vienna
         @local_current = "a"
         
         @code = []
+        
+        
+        @should_handle_return = false
       end
       
       def method_id=(method_id)
@@ -596,7 +599,7 @@ module Vienna
     def generate_tree(tree)
       top_iseq = iseq_stack_push(ISEQ_TYPE_TOP)
       tree.each do |stmt|
-        generate_stmt stmt, :full_stmt => true, :last_stmt => false
+        generate_stmt stmt, :full_stmt => true, :last_stmt => tree.last == stmt
       end
       iseq_stack_pop
     end
