@@ -647,6 +647,7 @@ __boot_base_class.prototype.rbNativeError = function(err) {
 };
 
 __boot_base_class.prototype.TN = T_NUMBER;
+__boot_base_class.prototype.TS = T_STRING;
 __boot_base_class.prototype.TP = T_PROC;
 __boot_base_class.prototype.TA = T_ARRAY;
 __boot_base_class.prototype.TH = T_HASH;
@@ -987,7 +988,7 @@ class_number.allocator.prototype.hash = function() {
 
 // String class
 class_string = define_bridged_class("String", String);
-class_string.allocator.prototype.info = T_OBJECT | T_NUMBER;
+class_string.allocator.prototype.info = T_OBJECT | T_STRING;
 
 class_string.allocator.prototype.hash = function() {
   return this;
