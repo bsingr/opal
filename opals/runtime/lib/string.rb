@@ -102,7 +102,7 @@ class String
   # @param [String] other string to compare
   # @return [Boolean] result
   def ==(other)
-    `return (#{self} == #{other}) ? #{true} : #{false};`
+    `return (#{self}.valueOf() === #{other}.valueOf()) ? #{true} : #{false};`
   end
   
   # Returns a copy of `self` with the first character converted to uppercase and

@@ -82,7 +82,7 @@ module Vienna
     
     def execute(task_scope_instance)
       if @action
-        task_scope_instance.instance_eval &@action
+        task_scope_instance.instance_eval(&@action)
       else
         # puts "no action to run."
       end

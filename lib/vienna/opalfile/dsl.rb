@@ -34,7 +34,7 @@ module Vienna
       # make sure our global env has this mode
       self.class.env[mode_name] ||= Hash.new
       # configure all configs within
-      instance_eval &block
+      instance_eval(&block)
       # always go back to :all when outside a mode - modes cannot be nested
       @current_mode = :all
     end

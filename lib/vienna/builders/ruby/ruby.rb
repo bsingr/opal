@@ -27,7 +27,7 @@
 require File.join(File.dirname(__FILE__), 'ruby_parser.rb')
 require 'strscan'
 
-puts Vienna::RubyParser
+# puts Vienna::RubyParser
 
 class Vienna::RubyParser < Racc::Parser
   

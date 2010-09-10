@@ -175,7 +175,7 @@ class Number
   # @param [Number] other number to compare
   # @return [Boolean] true or false
   def ==(other)
-    `return (#{self} == #{other}) ? #{true} : #{false};`
+    `return (#{self}.valueOf() === #{other}.valueOf()) ? #{true} : #{false};`
   end
   
   # Bitwise EXCLUSIVE OR.

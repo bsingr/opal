@@ -87,6 +87,7 @@ global.vnH = function() {
   var k, v, res = new class_hash.allocator();
   res.__keys__ = [];
   res.__assocs__ = {};
+  res.__default__ = vnNil;
   for (var i = 0; i < arguments.length; i++) {
     k = arguments[i], v = arguments[i+1];
     i++;
@@ -932,7 +933,7 @@ class_hash.allocator.prototype.hash_delete = function(key) {
     return ret;
   }
   
-  return this.n;
+  return this.__default__;
 };
 
 class_hash.allocator.prototype.hash_fetch = function(key) {
@@ -942,7 +943,7 @@ class_hash.allocator.prototype.hash_fetch = function(key) {
     return this.__assocs__[hash];
   
   // default return nil (should be overrideable)
-  return this.n;
+  return this.__default__;
 };
 
 // Symbol class

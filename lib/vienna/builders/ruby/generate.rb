@@ -175,9 +175,7 @@ module Vienna
     class Iseq
       
       attr_accessor :type, :local_current
-      
-      attr_reader :block_arg_name
-      
+            
       def initialize(type)
         @type = type
         # names => minimized names
