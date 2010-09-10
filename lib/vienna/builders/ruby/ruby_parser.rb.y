@@ -457,7 +457,7 @@ rule
             		  }
             		| arg '%' arg
             		  {
-            		    result = node :opt_mod, :recv => val[0], :meth => '%', :call_args => { :args => [val[2]]}
+            		    result = node :call, :recv => val[0], :meth => '%', :call_args => { :args => [val[2]]}
             		  }
             		| arg tPOW arg
             		  {
@@ -466,6 +466,9 @@ rule
             		| tUMINUS_NUM tINTEGER tPOW arg
             		| tUMINUS_NUM tFLOAT tPOW arg
             		| tUPLUS arg
+            		  {
+            		    result = node :call, :recv => val[1], :meth => '+@', :call_args => { :args => []}
+            		  }
             		| tUMINUS arg
             		  {
             		    result = node :call, :recv => val[1], :meth => '-@', :call_args => { :args => []}
@@ -528,7 +531,7 @@ rule
               	  }
             		| '~' arg
             		  {
-            		    result = node :call, :recv => val[1], :meth => '~', :call_args => { :args => [val[2]]}
+            		    result = node :call, :recv => val[1], :meth => '~', :call_args => { :args => []}
             		  }
             		| arg tLSHFT arg
             		  {

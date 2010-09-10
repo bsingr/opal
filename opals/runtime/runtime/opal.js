@@ -646,6 +646,7 @@ __boot_base_class.prototype.rbNativeError = function(err) {
   return res;
 };
 
+__boot_base_class.prototype.TN = T_NUMBER;
 __boot_base_class.prototype.TP = T_PROC;
 __boot_base_class.prototype.TA = T_ARRAY;
 __boot_base_class.prototype.TH = T_HASH;
