@@ -26,12 +26,14 @@
 
 module Opal
   
-  module ENV
+  class Environment
     
     class Object
       
-      def initialize
+      # @param [Opal::Environment] env
+      def initialize(env)
         @properties = {}
+        @environment = env
       end
       
       def [](key)

@@ -24,7 +24,7 @@
 # THE SOFTWARE.
 #
 
-require 'browser'
+# require 'browser'
 
 require 'spec/matchers'
 require 'spec/expectations'

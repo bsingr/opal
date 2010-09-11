@@ -175,7 +175,7 @@ module Kernel
   # @return [nil]
   def puts(args)
     # args.each do |arg|
-      `console.log(#{args}.$inspect().toString());`
+      `console.log(#{args}.$to_s().toString());`
     # end
     nil
   end

@@ -35,6 +35,9 @@ module Opal
     # we must remove all args from argv before running repl to stop args being
     # passed on as ruby code to execute (into js)
     ARGV.clear
-    Opal::REPL.run
+    
+    # make a new environment
+    Opal::Environment.new
+    # Opal::REPL.run
   end
 end

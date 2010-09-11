@@ -28,12 +28,12 @@ require File.join(File.dirname(__FILE__), 'object')
 
 module Opal
   
-  module ENV
+  class Environment
     
     # Used to represent the usual javascript console found in most browsers.
     class Console < Object
       
-      def initialize
+      def initialize(env)
         super
         self['log'] = proc { |msg| log(msg) }
         self['error'] = proc { |msg| error(msg) }
