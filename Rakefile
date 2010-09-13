@@ -181,7 +181,7 @@ namespace :doc do
   # opal/runtime docs
   YARD::Rake::YardocTask.new(:opal) do |t|
     t.files   = ['opals/runtime/**/*.rb']
-    # t.files += ['opals/opal/spec/core/**/*.rb']
+    t.files += ['opals/opal/spec/core/**/*.rb']
     t.files += ['-', 'opals/runtime/docs/**/*.md']
     t.options = ['-o./doc/opal/']
     t.options += ['-r./opals/runtime/README.md']

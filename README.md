@@ -31,3 +31,7 @@ Next steps
 
 Opal has many of the libraries built. Check out the documentation (more coming soon), ask me questions on freenode (adambeynon): usually in #ruby, #ruby-lang, #javascript etc, or email me: adam.beynon@me.com.
 
+Command line tools / v8
+-----------------------
+
+I am playing with experimental support for therubyracer. Essentially, this gem allows you to embed the v8 javascript engine into ruby applications. Vienna has support for this allowing, firstly, a REPL system for trying out commands, but more importantly/interestingly, can run an entire opal application through the engine. The compilation step is not necessary as ruby files are compiled as they are required. For now, all specs are by default run through this system. Node, *nix (unix/linux) only, no windows support for opal command line.

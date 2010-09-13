@@ -23,14 +23,14 @@ describe "The break statement" do
   end
 end
 
-describe "Executing break from within a block" do
-  
-  it "returns from the invoking singleton method" do
-    obj = Object.new
-    def obj.meth_with_block
-      yield
-      raise "break didn't break from the singleton method"
-    end
-    obj.meth_with_block { break :value }.should == :value
-  end
-end
+# describe "Executing break from within a block" do
+#   
+#   it "returns from the invoking singleton method" do
+#     obj = Object.new
+#     def obj.meth_with_block
+#       yield
+#       raise "break didn't break from the singleton method"
+#     end
+#     obj.meth_with_block { break :value }.should == :value
+#   end
+# end

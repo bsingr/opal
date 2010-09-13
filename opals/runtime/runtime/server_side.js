@@ -41,4 +41,10 @@ exports.glob_files = function(glob) {
   return __opal_fs_access.glob(glob);
 };
 
+// When "server side", our RUBY_PLATFORM is just 'opal'.. browser sets it to
+// 'browser'.
 exports.ruby_platform = "opal";
+
+// Should we keep in line with mri? we support some 1.9 features, but not all..
+// ... hmmm.
+exports.ruby_version = "1.9.0";

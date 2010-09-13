@@ -424,7 +424,8 @@ class Array
   # @param [Array] other_ary array to concat
   # @return [Array] returns receiver
   def concat(other_ary)
-    `for (var i = 0; i < #{other_ary}.length; i++) {
+    `var length = #{other_ary}.length;
+    for (var i = 0; i < length; i++) {
       #{self}.push(#{other_ary}[i]);
     }`
     self

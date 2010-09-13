@@ -228,7 +228,7 @@ exports.setDocumentReadyListener = function(callback) {
 
 
 exports.glob_files = function(glob) {
-  var working = #{glob}.replace(/\*\*\//g, '.*').replace(/\*\*/g, '.*').replace(/\//g, '\\/');
+  var working = glob.replace(/\*\*\//g, '.*').replace(/\*\*/g, '.*').replace(/\//g, '\\/');
   var result = [];
   var reg = new RegExp('^' + working + '$');
   for (var prop in opal.files) {
