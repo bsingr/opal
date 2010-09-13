@@ -55,6 +55,13 @@ module Opal
         end
         # current dir is also in the load path..
         @load_paths << Dir.getwd
+        @load_paths << ""
+      end
+      
+      def glob
+        proc do |glob|
+          Dir.glob(glob)
+        end
       end
       
       def getwd
@@ -64,19 +71,25 @@ module Opal
       end
       
       # Require function from opal
-      def require
+      def require        
         proc do |path|
+          # no extension? add .rb
+          path = "#{path}.rb" unless /.*\.(rb|js)$/.match(path)
           # puts "need to require: #{path}"
           file_path = nil
           @load_paths.each do |load_path|
             proposed = File.join load_path, path
-            # puts "trying: #{proposed}"
-            if File.exist? "#{proposed}.rb"
-              file_path = "#{proposed}.rb"
+            # puts "trying: #{propos/ed}"
+            if File.exist? proposed
+              file_path = proposed
+              unless @required_files[file_path]
+                @required_files[file_path] = true
+                @environment.load_required_file file_path
+              end
               break
             end
           end
-          return @environment.load_required_file file_path if file_path
+          return true if file_path
           false
         end
       end

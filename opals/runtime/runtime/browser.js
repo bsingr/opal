@@ -226,6 +226,19 @@ exports.setDocumentReadyListener = function(callback) {
   })();
 };
 
+
+exports.glob_files = function(glob) {
+  var working = #{glob}.replace(/\*\*\//g, '.*').replace(/\*\*/g, '.*').replace(/\//g, '\\/');
+  var result = [];
+  var reg = new RegExp('^' + working + '$');
+  for (var prop in opal.files) {
+    if (reg.exec(prop)) {
+      result.push(prop);
+    }
+  }
+  return result;
+};
+
 // ================
 // = On ready etc =
 // ================

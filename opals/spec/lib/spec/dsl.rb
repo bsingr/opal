@@ -31,7 +31,6 @@ module Spec
     module Main
       
       def describe(name, &block)
-        # puts "in DSL describe"
         Spec::Example::ExampleGroupFactory.create_example_group name, &block
       end
       

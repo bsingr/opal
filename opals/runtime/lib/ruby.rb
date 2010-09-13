@@ -1,5 +1,5 @@
 # 
-# example_group_runner.rb
+# ruby.rb
 # vienna
 # 
 # Created by Adam Beynon.
@@ -24,48 +24,7 @@
 # THE SOFTWARE.
 #
 
-module Spec
-  
-  module Runner
-    
-    class ExampleGroupRunner
-      
-      def initialize(options)
-        @options = options
-      end
-      
-      def run
-        prepare
-        
-        example_groups.each do |group|
-          group.run @options
-        end
-        
-        finish
-      end
-      
-      def example_groups
-        # puts @options.example_groups
-        @options.example_groups
-      end
-      
-      def prepare
-        reporter.start number_of_examples
-      end
-      
-      def finish
-        # puts "finishing"
-        # reporter.end
-      end
-      
-      def reporter
-        @options.reporter
-      end
-      
-      def number_of_examples
-        0
-      end
-      
-    end # ExampleGroupRunner
-  end
-end
+# This file simply maintains "everything" else.. runtime constants etc.
+
+# This depends on the platform.
+RUBY_PLATFORM = `opal.ruby_platform`

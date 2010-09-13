@@ -37,12 +37,29 @@ module Opal
     # Path to system opals
     OPALS_PATH = File.join Vienna::PATH, 'opals'
     
-    def initialize
+    def initialize(args)
+      
       # puts "making new environment"
       @context = V8::Context.new
       load_runtime
-      start
+      
+      # puts "args are: #{args.inspect}"
+      
+      if args.length == 1
+        file = args[0]
+        # puts "need to run #{file}"
+        # puts File.read(file)
+        if File.exist? file
+          load_required_file file
+          args.clear
+        else
+          abort "Cannot find opal file #{args[0]}"
+        end
+      else
+        start
+      end
     end
+    
     
     def load_runtime
       @context['console'] = Opal::Environment::Console.new self

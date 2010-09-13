@@ -29,15 +29,15 @@ module Opal
   
   # main entry point into Opal. If no args, files, etc, then simply just run the
   # REPL? for now, always run the repl
-  def self.run
+  def self.run(args)
     # puts "runnign repl"
     # puts ARGV
     # we must remove all args from argv before running repl to stop args being
     # passed on as ruby code to execute (into js)
-    ARGV.clear
+    # ARGV.clear
     
     # make a new environment
-    Opal::Environment.new
+    Opal::Environment.new args
     # Opal::REPL.run
   end
 end

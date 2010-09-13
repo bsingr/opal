@@ -30,7 +30,7 @@ module Spec
     
     module ExampleGroupMethods
       
-      puts "including before and after hooks"
+      # puts "including before and after hooks"
       include Spec::Example::BeforeAndAfterHooks
       
       def describe group_name, &group_block

@@ -45,7 +45,8 @@ module Spec
       end
       
       def formatters
-        @formatters ||= [Spec::Runner::Formatter::HtmlFormatter.new(self)]
+        # @formatters ||= [Spec::Runner::Formatter::HtmlFormatter.new(self)]
+        @formatters ||= [Spec::Runner::Formatter::TerminalFormatter.new(self)]
       end
       
       def add_example_group(example_group)

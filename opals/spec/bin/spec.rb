@@ -21,8 +21,23 @@ Dir.glob(File.join(Dir.getwd, 'spec/**/*.rb')).each do |rb|
   require rb
 end
 
-# 5
-Document.ready? do
-  # puts "running in ready"
+
+# if we run in the browser, we really want to wait until the document is ready
+# before we start running..
+if RUBY_PLATFORM == "browser"
+  Document.ready? do
+    # puts "running in ready"
+    Spec::Runner.run
+  end
+else
   Spec::Runner.run
 end
+
+# require "spec"
+# 
+# Dir.glob(File.join(Dir.getwd, 'opals', 'opal', 'spec/**/*.rb')).each do |rb|
+#   puts "requiring #{rb}"
+#   require rb
+# end
+# 
+# Spec::Runner.run

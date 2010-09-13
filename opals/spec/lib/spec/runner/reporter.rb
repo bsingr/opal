@@ -49,6 +49,12 @@ module Spec
         end
       end
       
+      # def end
+      #   formatters.each do |f|
+      #     f.end
+      #   end
+      # end
+      
       def formatters
         @options.formatters
       end

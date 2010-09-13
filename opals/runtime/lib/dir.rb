@@ -31,14 +31,6 @@ class Dir
   end
   
   def self.glob(glob)
-    `var working = #{glob}.replace(/\*\*\//g, '.*').replace(/\*\*/g, '.*').replace(/\//g, '\\/');
-    var result = [];
-    var reg = new RegExp('^' + working + '$');
-    for (var prop in opal.files) {
-      if (reg.exec(prop)) {
-        result.push(prop);
-      }
-    }
-    return result;`
+    `return opal.glob_files(#{glob});`
   end
 end

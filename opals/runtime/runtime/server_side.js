@@ -36,3 +36,9 @@ exports.require = function(orig_path) {
     throw "cannot find require: " + orig_path;
   };
 };
+
+exports.glob_files = function(glob) {
+  return __opal_fs_access.glob(glob);
+};
+
+exports.ruby_platform = "opal";

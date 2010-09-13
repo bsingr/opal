@@ -9,10 +9,10 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Adam Beynon"]
-  s.date = %q{2010-09-08}
+  s.date = %q{2010-09-13}
   s.description = %q{Ruby compiler and runtime for the browser.}
   s.email = %q{adam@adambeynon.com}
-  s.executables = ["opal", "rb2js", "vienna", "vn-build", "vn-gen", "vn-server", "vrb"]
+  s.executables = ["opal", "opalspec", "rb2js", "vienna", "vn-build", "vn-gen", "vn-server", "vrb"]
   s.extra_rdoc_files = [
     "README.md"
   ]
@@ -25,6 +25,7 @@ Gem::Specification.new do |s|
      "VERSION",
      "bin/.DS_Store",
      "bin/opal",
+     "bin/opalspec",
      "bin/rb2js",
      "bin/vienna",
      "bin/vn-build",
@@ -57,6 +58,12 @@ Gem::Specification.new do |s|
      "lib/vienna/models/project.rb",
      "lib/vienna/models/struct_accessors.rb",
      "lib/vienna/models/target.rb",
+     "lib/vienna/opal/env/console.rb",
+     "lib/vienna/opal/env/fs.rb",
+     "lib/vienna/opal/env/object.rb",
+     "lib/vienna/opal/environment.rb",
+     "lib/vienna/opal/opal.rb",
+     "lib/vienna/opal/repl.rb",
      "lib/vienna/opalfile/dsl.rb",
      "lib/vienna/opalfile/opalfile.rb",
      "lib/vienna/opalfile/task.rb",
@@ -239,9 +246,12 @@ Gem::Specification.new do |s|
      "opals/runtime/lib/symbol.rb",
      "opals/runtime/lib/top_self.rb",
      "opals/runtime/lib/true_class.rb",
+     "opals/runtime/runtime/browser.js",
      "opals/runtime/runtime/debug.js",
-     "opals/runtime/runtime/loading.js",
      "opals/runtime/runtime/opal.js",
+     "opals/runtime/runtime/post_opal.js",
+     "opals/runtime/runtime/pre_opal.js",
+     "opals/runtime/runtime/server_side.js",
      "opals/spec/LICENSE.txt",
      "opals/spec/Opalfile",
      "opals/spec/bin/spec.rb",

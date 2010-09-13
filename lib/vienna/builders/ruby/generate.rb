@@ -189,6 +189,8 @@ module Vienna
         @post_arg_names = []
         @block_arg_name = nil
         
+        @parent_iseq = nil
+        
         @opt_arg_str = {}
         
         @local_current = "a"
