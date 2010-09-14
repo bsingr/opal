@@ -57,17 +57,17 @@ module Document
   # @param [String, Symbol] selector the selector to search
   # @return [Array, Element] the result
   def self.[](selector)
-    puts "checking #{selector}"
+    # puts "checking #{selector}"
     case selector
     when Symbol
-      puts "need to find symbol #{selector}"
+      # puts "need to find symbol #{selector}"
       find_by_id selector
       # puts "and here"
     when /^#/
-      puts "need to find id"
+      # puts "need to find id"
       find_by_id selector.slice(1, selector.length)
     else
-      puts "need to find array of things"
+      # puts "need to find array of things"
       Element.find_in_context selector, self
     end
   end

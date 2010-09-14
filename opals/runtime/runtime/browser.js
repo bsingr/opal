@@ -126,6 +126,9 @@ exports.run = function(path, cwd, lib_path) {
   }
   
   opal.entry_point(function() {
+    // require our main "browser" spec as well - seems silly making the user
+    // have to do this when we know for a fact we are in the browser.
+    exports.require('browser');
     return exports.require(require_path);
   });
 };
@@ -247,6 +250,8 @@ exports.glob_files = function(glob) {
 
 // };
 
+
+exports.ruby_platform = "browser";
 
 
 

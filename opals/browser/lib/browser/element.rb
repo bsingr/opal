@@ -26,13 +26,14 @@
   
 # Represents a DOM element in the browser.
 # 
+# ## Implementation Details
+# 
 # Native Elements are not extended due to cross browser issues. Instead, 
 # instances of this class will have an instance property '__element__' which
 # is the native javascript element. Extensions to this class should access
 # the element in this way for modification etc. In future, this class will
 # cache some information on the element, such as class name etc in an aim to
 # speed up performance by reducing hits to the DOM.
-# 
 class Element
   
   # @group Managing Elements in the Document
@@ -185,6 +186,8 @@ class Element
     self
   end
   
+  alias_method :content=, :text=
+  
   # Set the id of the receiver
   # 
   # @example HTML
@@ -236,25 +239,24 @@ class Element
     description << ">"
     description.join ""
   end
-  
-  # What to do with each option
-  SET_OPTIONS = {
-    :class_name => :class_name=,
-    :content    => :text=,
-    :id         => :id=
-  }
-  
+    
   # Set some options on the element
   # 
-  #     element.set :class_name => "adam", :id => "beynon"
+  # @example
+  #   element.set :class_name => "adam", :id => "beynon"
+  # 
+  # ## Valid keys:
+  # 
+  # - class / class_name
+  # - id
+  # - text /content
+  # - html
   # 
   # @param [Hash] options to set
   # @return [Element] returns the receiver
   def set(options)
     options.each do |key, value|
-      method = SET_OPTIONS[key]
-      raise "Bad Element.set key #{key}" unless method
-      __send__ SET_OPTIONS[key], value
+      __send__ "#{key}=", value
     end
   end
   
@@ -303,50 +305,27 @@ class Element
     self
   end
   
-  # Removes the receiver from the DOM
+  
+  
+  # Removes the receiver from the DOM, and then returns it.
   # 
   # @example HTML
-  #     <div id="foo"></div>
-  #     <div id="bar"></div>
+  #   !!!plain
+  #   <div id="foo"></div>
+  #   <div id="bar"></div>
   # 
   # @example Ruby
-  #     Document[:foo].dispose
+  #   Document[:foo].dispose
   # 
   # @example Result
-  #     <div id="bar"></div>
+  #   !!!plain
+  #   <div id="bar"></div>
   # 
   # @return [Element] returns the receiver.
-  # 
-  def dispose
+  def remove
     `var e = #{self}.__element__;
     if (e.parentNode) {
       e.parentNode.removeChild(e);
-    }`
-    self
-  end
-  
-  # Removes all child elements from the receiver
-  # 
-  # @example HTML
-  #     <div id="foo">
-  #       <span class="bar"></span>
-  #       <div class="baz"></div>
-  #     </div>
-  # 
-  # @example Ruby
-  #     Document[:foo].empty
-  # 
-  # @example Result
-  #     <div id="foo"></div>
-  # 
-  # @return [Element] returns receiver
-  def empty
-    `var e = #{self}.__element__;
-    for (var children = e.childNodes, i = children.length; i > 0;) {
-      var child = children[--i];
-      if (child.parentNode) {
-        child.parentNode.removeChild(child);
-      }
     }`
     self
   end
@@ -357,9 +336,60 @@ class Element
   # @return [nil] returns nil
   def destroy
     # FIXME: we do not do this properly.
-    dispose
+    remove
   end
   
+  
+  # Returns `true` if the receiver is empty (contains only whitespace), `false`
+  # otherwise.
+  # 
+  # @example HTML
+  #   !!!plain
+  #   <div id="foo"></div>
+  #   <div id="bar"><p></p></div>
+  #   <div id="baz">   </baz>
+  # 
+  # @example Ruby
+  #   Document[:foo].empty?
+  #   # => true
+  #   Document[:bar].empty?
+  #   # => false
+  #   Document[:baz].empty?
+  #   # => true
+  # 
+  # @return [Boolean]
+  def empty?
+    `return /^\s*$/.test(#{self}.__element__.innerHTML) ? #{true} : #{false};`
+  end
+  
+  # Removes all child elements from the receiver, and then returns self.
+  # 
+  # @example HTML
+  #   !!!plain
+  #   <div id="foo">
+  #     <span class="bar"></span>
+  #     <div class="baz"></div>
+  #   </div>
+  # 
+  # @example Ruby
+  #   Document[:foo].empty
+  #   # => #<Element div, id='foo'>
+  # 
+  # @example Result
+  #   !!!plain
+  #   <div id="foo"></div>
+  # 
+  # @return [Element] returns receiver 
+  def clear
+    `var e = #{self}.__element__;
+    for (var children = e.childNodes, i = children.length; i > 0;) {
+      var child = children[--i];
+      if (child.parentNode) {
+        child.parentNode.removeChild(child);
+      }
+    }`
+    self
+  end
   
   # Return the graphics context of the receiver, which will be an instance of
   # [CanvasContext] or a subclass (for VML browsers). Everytime this method is
@@ -453,3 +483,5 @@ class Element
 end
 
 require 'browser/element/attributes'
+require 'browser/element/css'
+require 'browser/element/form'

@@ -35,6 +35,6 @@ describe "Element#has_class?" do
   
   after :all do
     # puts "running in after all"
-    Document[:element_has_class_spec].dispose
+    Document[:element_has_class_spec].remove
   end
 end

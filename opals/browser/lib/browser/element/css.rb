@@ -24,6 +24,7 @@
 # THE SOFTWARE.
 #
 
+
 class Element
   
   # @group Styling of the Element
@@ -59,11 +60,13 @@ class Element
   # 
   # @param {Hash} styles
   # 
-  def css(styles)
+  def css(styles = nil)
     # element = `#{self}.__element__`
     # element_style = `#{element}.style || #{element}`
     
     case styles
+    when nil
+      @style ||= StyleDeclaration.new self
     when Hash
       # we want to set some properties
       styles.each { |style, value| Element.css self, style, value }
@@ -74,6 +77,8 @@ class Element
       
     end
   end
+  
+  alias_method :style, :css
   
   # Checks whether the receiver has the passed in class_name
   # 
@@ -137,17 +142,30 @@ class Element
     self
   end
   
+  # As we overwrite #class, this allows us to still access its functionality
+  alias_method :__class__, :class
+  
   # Set the class name. Here we do not append, just rewrite the entire class
-  # name
+  # name.
   # 
+  # @param [String] class_name the class to set
+  # @return [Elements] returns the receiver
   def class_name=(class_name)
     `#{self}.__element__.className = #{class_name}.toString();`
     self
   end
   
-  def class_name
+  alias_method `#{self}.Y('class=')`, :class_name=
+  
+  # Returns the CSS class name for the receiver. See {#__class__} for default
+  # access.
+  # 
+  # @return [String] returns class name
+  def class
     `return #{self}.__element__.className || "";`
   end
+  
+  alias_method :class_name, :class
   
   # set class names from hash
   def set_class_names(class_names)
@@ -168,10 +186,111 @@ class Element
     self.class_name = current.join(" ")
   end
   
+  # Returns `true` if the receiver is visible, or `false` otherwise.
+  # 
+  # @example HTML
+  #   !!!plain
+  #   <div id="foo" style="display: none;"></div>
+  #   <div id="bar"></div>
+  # 
+  # @example Ruby
+  #   Document[:foo].visible?
+  #   # => false
+  #   Document[:bar].visible?
+  #   # => true
+  # 
+  # @return [Boolean]
+  def visible?
+    Element.css(self, 'display') != "none"
+  end
+  
+  # Returns `true` if the receiver is hidden, `false` otherwise.
+  # 
+  # @example HTML
+  #   !!!plain
+  #   <div id="foo" style="display: none;"></div>
+  #   <div id="bar"></div>
+  # 
+  # @example Ruby
+  #   Document[:foo].hidden?
+  #   # => true
+  #   Document[:bar].hidden?
+  #   # => false
+  # 
+  # @return [Boolean]
+  def hidden?
+    Element.css(self, 'display') == "none"
+  end
+  
+  # Hides the receiver in the DOM using the `display = none;` property. Returns
+  # the receiver for chaining.
+  # 
+  # @example HTML
+  #   !!!plain
+  #   <div id='foo'></div>
+  # 
+  # @example Ruby
+  #   Document[:foo].hide
+  #   # => #<Element div, id='foo'> (and is now hidden)
+  # 
+  # @return [Element] returns the receiver
+  def hide
+    Element.css self, :display, 'none'
+    self
+  end
+  
+  # Shows the receiver in the DOM using the `display = ''` property. Returns the
+  # receiver for chaining.
+  # 
+  # @example HTML
+  #   !!!plain
+  #   <div id='foo' style='display:none'></div>
+  # 
+  # @example Ruby
+  #   Document[:foo].show
+  #   # => #<Element div, id='foo'> (and is now visible)
+  # 
+  # @return [Element] returns the receiver
+  def show
+    Element.css self, :display, ''
+    self
+  end
+  
+  # Toggles the visible state of the receiver by checking its current 
+  # {#visible?} state. If currently visible, the element will become hidden, or
+  # if currently hidden, the element will become visible.
+  # 
+  # @return [Element] returns the receiver
+  def toggle
+    visible? ? hide : show
+    self
+  end
+  
   # Set the opacity of the receiver
   # 
   # @return [Element] returns the receiver
   def opacity=(opacity)
     raise "not implemented"
+  end
+  
+  # A hash like interface for setting and retreiving CSS properties for the
+  # dom element it represents.
+  class StyleDeclaration
+    
+    # Initialize witht he given {Element} instance.
+    # 
+    # @param [Element] element
+    def initialize(element)
+      `#{self}.__element__ = #{element}.__element__;`
+      `#{self}.__style__ = #{element}.__element__.style || #{element}.__element__;`
+    end
+    
+    def [](style_name)
+      Element.css self, style_name
+    end
+    
+    def []=(style_name, value)
+      Element.css self, style_name, value
+    end
   end
 end

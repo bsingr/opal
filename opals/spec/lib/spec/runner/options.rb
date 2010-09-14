@@ -45,8 +45,13 @@ module Spec
       end
       
       def formatters
-        # @formatters ||= [Spec::Runner::Formatter::HtmlFormatter.new(self)]
-        @formatters ||= [Spec::Runner::Formatter::TerminalFormatter.new(self)]
+        return @formatters if @formatters
+        
+        if RUBY_PLATFORM == "browser"
+          @formatters ||= [Spec::Runner::Formatter::HtmlFormatter.new(self)]
+        else
+          @formatters ||= [Spec::Runner::Formatter::TerminalFormatter.new(self)]
+        end
       end
       
       def add_example_group(example_group)
