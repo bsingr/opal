@@ -51,30 +51,24 @@ class Element
     
     if value == false
       # no value, so retrieve (nil is a good value: set to :none)
-      `return #{style}[#{name}];`
+      `return #{style}[#{name}] || "";`
     else
       # set style property
       `return #{style}[#{name}] = #{value};`
     end
   end
+  
   # 
   # @param {Hash} styles
   # 
   def css(styles = nil)
-    # element = `#{self}.__element__`
-    # element_style = `#{element}.style || #{element}`
-    
     case styles
     when nil
       @style ||= StyleDeclaration.new self
     when Hash
-      # we want to set some properties
       styles.each { |style, value| Element.css self, style, value }
-
     when String, Symbol
-      # we want to retrieve a property
       Element.css self, styles
-      
     end
   end
   

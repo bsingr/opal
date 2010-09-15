@@ -35,22 +35,7 @@ class Event
     # @param [String, Symbol] event_name the event type to listen for
     # @param [Proc] listener the proc to deal with the event
     # @return [Element, Document] returns the receiver
-    def listen(event_name, &listener)
-      add_listener event_name, &listener
-    end
-    
     def on(event_name, &listener)
-      add_listener event_name, &listener
-    end
-    
-    # Add the given +listener+ as the ONLY listener for the +event_type+ given.
-    # Adding a new listener will remove the old listener. Usually it is best to
-    # use {#listen} instead of this method.
-    # 
-    # @param [String, Symbol] event_name the event type to listen for
-    # @param [Proc] listener the proc to deal with the event
-    # @return [Element, Document] returns the receiver
-    def add_listener(event_name, &listener)
       event_class = Event
       `var func = function(evt) {
         //console.log(#{event_class});
@@ -67,6 +52,28 @@ class Event
       }`
       self
     end
+    
+    # Add methods for our core event names
+    %W(mousedown mouseup mousemove).each do |event_name|
+      define_method(event_name) do |&block|
+        # on event_name, &`arguments[0]`
+        # this should be:
+        # 
+        # if block_given?
+        #   self.on event_name, &block
+        # else
+        #   self.fire event_name
+        # end
+        # 
+        # to allow us to fire events (pretend they fired for testing???!)
+        `if (arguments[0] && arguments[0].info & #{self}.TP) {
+          return this.$on(#{event_name}, arguments[0]);
+        } else {
+          return console.log("need to fire event: " + #{event_name});
+        }`
+      end
+    end
+    
   end
 end
 

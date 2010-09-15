@@ -170,7 +170,7 @@ class Event
   def meta?
     `return #{self}.__meta__;`
   end
- 
+  
 end
 
 require 'browser/event/trigger_events'

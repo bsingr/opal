@@ -84,5 +84,63 @@ class Element
     self
   end
   
+  def value=(value)
+    `var elem = #{self}.__element__, tag = elem.tagName.toLowerCase();
+    if (tag === 'input') {
+      var type = #{self}.__element__.type.toLowerCase();
+      if (type == 'checkbox' || type == 'radio') {
+        throw "need to handle checkbox/radio";
+      } else {
+        #{self}.__element__.value = #{value};
+      }
+    } else if (tag == 'textarea') {
+      elem.value = #{value};
+    }`
+    value
+  end
+  
+  # Returns the value of the receiver, whose type will depend on the receiver.
+  # Text inputs and textareas will return a string, checkboxes and radio buttons
+  # will return a boolean.
+  # 
+  # @return [Object] value of receiver
+  def value
+    `var elem = #{self}.__element__, tag = elem.tagName.toLowerCase();
+    if (tag == 'input') {
+      var type = elem.type.toLowerCase();
+      if (type == 'checkbox' || type == 'radio') {
+        throw "need to handle checkbox.radio"
+      } else {
+        return elem.value;
+      }
+    } else if (tag == 'textarea') {
+      return elem.value;
+    }
+    `
+  end
+  
+  # Checkboxes and radio buttons can be checked, and this returns their state. 
+  # The result of this method is undetermined for normal input elements that do
+  # not have a checked state.
+  # 
+  # @return [Boolean]
+  def checked?
+    `return #{self}.__element__.checked ? #{true} : #{false};`
+  end
+  
+  # Same as above
+  def on?
+    checked?
+  end
+  
+  # see above
+  def off?
+    !checked?
+  end
+  
+  def checked=(flag)
+    # ...
+  end
+  
   # @endgroup
 end
