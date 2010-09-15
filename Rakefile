@@ -11,11 +11,11 @@ require 'yard'
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |gemspec|
-    gemspec.name = "vienna"
+    gemspec.name = "opal"
     gemspec.summary = "Ruby compiler and runtime for the browser"
     gemspec.description = "Ruby compiler and runtime for the browser."
     gemspec.email = "adam@adambeynon.com"
-    gemspec.homepage = "http://github.com/adambeynon/vienna"
+    gemspec.homepage = "http://opalscript.org"
     gemspec.authors = ["Adam Beynon"]
   end
   Jeweler::GemcutterTasks.new
@@ -24,8 +24,8 @@ rescue LoadError
 end
 
 desc "Simple task to require vienna framework. Uses local, not installed."
-task :vienna_gem do
-  require File.join(File.dirname(__FILE__), 'lib', 'vienna')
+task :opal_gem do
+  require File.join(File.dirname(__FILE__), 'lib', 'opal')
 end
 
 # desc "Run all specs"
@@ -65,14 +65,14 @@ end
 # end
 
 desc "build opal"
-task :opal => :vienna_gem do
+task :opal => :opal_gem do
   raise "currently disabled. use simple_opal"
   opal = Vienna::Opal.new File.join(File.dirname(__FILE__),'frameworks', 'opal')
   opal.build! :build_dir => File.join(File.dirname(__FILE__), 'build')
 end
 
 desc "build simple_opal test opal purely for testing opal etc"
-task :simple_opal => :vienna_gem do
+task :simple_opal => :opal_gem do
   project = Vienna::Project.new(File.join(File.dirname(__FILE__), 'apps', 'simple_opal'), :build_mode => :debug)
    p project
    p project.targets
@@ -82,7 +82,7 @@ task :simple_opal => :vienna_gem do
 end
 
 desc "build simple_opal test opal purely for testing opal etc"
-task :simple_opal_spec => :vienna_gem do
+task :simple_opal_spec => :opal_gem do
   project = Vienna::Project.new(File.join(File.dirname(__FILE__), 'apps', 'simple_opal'), :build_mode => :spec)
    p project
    p project.targets
@@ -92,7 +92,7 @@ task :simple_opal_spec => :vienna_gem do
 end
 
 desc "rebuild opal_spec package"
-task :opal_spec => :vienna_gem do
+task :opal_spec => :opal_gem do
   # opal framework root
   opal_root = File.join(File.dirname(__FILE__), 'frameworks', 'opal')
   # custom build root
@@ -105,7 +105,7 @@ task :opal_spec => :vienna_gem do
 end
 
 desc "Browser Specs"
-task :browser_spec => :vienna_gem do
+task :browser_spec => :opal_gem do
   browser_root = File.join(File.dirname(__FILE__), 'frameworks', 'browser')
   
   tmp_root = File.join(File.dirname(__FILE__), 'tmp', 'browser_spec')
@@ -117,7 +117,7 @@ task :browser_spec => :vienna_gem do
 end
 
 desc "Foundation Specs"
-task :foundation_spec => :vienna_gem do
+task :foundation_spec => :opal_gem do
   browser_root = File.join(File.dirname(__FILE__), 'frameworks', 'foundation')
   
   tmp_root = File.join(File.dirname(__FILE__), 'tmp', 'foundation_spec')
@@ -151,7 +151,7 @@ namespace :doc do
   
   # rebuild demos
   desc "Rebuild demos"
-  task :demos => :vienna_gem do
+  task :demos => :opal_gem do
     # every demo uses an index.html file inside of the demos folder
     base = File.join(File.dirname(__FILE__), 'demos')
     demos = File.join(base, '**', 'index.html')
@@ -203,7 +203,7 @@ namespace :doc do
     
     %w{opal browser}.each do |opal|
       desc "rebuild spec for #{opal}"
-      task opal.to_sym => :vienna_gem do
+      task opal.to_sym => :opal_gem do
         opal_root = File.join(File.dirname(__FILE__), 'opals', opal)
         build_root = File.join(File.dirname(__FILE__), 'doc', opal, 'spec')
         project = Vienna::Project.new opal_root, :build_root => build_root, :build_mode => :spec
@@ -223,7 +223,7 @@ namespace :doc do
     end
     
     # desc "rebuild opal_spec package"
-    # task :opal_spec => :vienna_gem do
+    # task :opal_spec => :opal_gem do
     #   # opal framework root
     #   opal_root = File.join(File.dirname(__FILE__), 'frameworks', 'opal')
     #   # custom build root

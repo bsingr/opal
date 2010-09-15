@@ -52,6 +52,9 @@ module Vienna
       #   raise "Not a valid project (no Opalfile)"
       # end
       
+      @opalfile = nil
+      @config = nil
+      
       @build_options = build_options
       @project_root = project_root
       @targets = nil

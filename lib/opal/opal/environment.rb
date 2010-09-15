@@ -39,6 +39,13 @@ module Opal
     
     def initialize(args)
       
+      begin
+        require 'rubygems'
+        require 'v8'
+      rescue Exception
+        abort "therubyracer not available. Install it with: sudo gem install therubyracer"
+      end
+      
       # puts "making new environment"
       @context = V8::Context.new
       load_runtime

@@ -75,7 +75,7 @@ namespace :target do
       next if !File.exist?(source) || File.directory?(source)
       # should check if its another target
       
-      relative_path = source.sub /^#{Regexp.escape target_root}\//, ""
+      relative_path = source.sub(/^#{Regexp.escape target_root}\//, "")
       relative_path = relative_path.split(::File::SEPARATOR).join('/')
       @target.add_build_item relative_path
     end

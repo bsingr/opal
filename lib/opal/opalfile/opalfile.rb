@@ -28,6 +28,8 @@ module Vienna
   
   class Opalfile
     
+    @root_opalfile = nil
+    
     attr_reader :tasks
     
     # array of TaskScope instances

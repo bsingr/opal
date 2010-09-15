@@ -1,13 +1,13 @@
 #!/usr/bin/env ruby -wKU
 
-begin
-  require 'rubygems'
-  require 'v8'
-rescue Exception
-  abort "therubyracer not available. Install it with: sudo gem install therubyracer"
-end
-
 require File.expand_path(
-  File.join(File.dirname(__FILE__), %w[.. lib vienna]))
-  
-Opal.run ARGV
+  File.join(File.dirname(__FILE__), %w[.. lib opal]))
+
+Opal.run
+
+# begin
+#   require 'rubygems'
+#   require 'v8'
+# rescue Exception
+#   abort "therubyracer not available. Install it with: sudo gem install therubyracer"
+# end

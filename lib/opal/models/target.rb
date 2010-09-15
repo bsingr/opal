@@ -41,7 +41,7 @@ module Vienna
       @project = opts.delete :project
       @build_items = []
       @main_target = opts.delete(:main_target) || false
-      
+      @required = nil
       merge! opts
       
       # get opalfile all setup
@@ -118,7 +118,6 @@ module Vienna
     
     def build!
       # return
-      # puts "===== building this target"
       if opalfile.has_task? 'target:build'
         opalfile.invoke 'target:build', :target   => self,
                                         :project  => project,

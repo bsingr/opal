@@ -888,7 +888,8 @@ module Vienna
        # block arg names
        if call[:brace_block][:params]
          call[:brace_block][:params].each do |p|
-           block_iseq.push_arg_name p[:value]
+           # puts p
+           block_iseq.push_arg_name(p[:value]) unless p.is_a?(String)
          end
        end
 

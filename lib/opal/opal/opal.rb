@@ -29,7 +29,26 @@ module Opal
   
   # main entry point into Opal. If no args, files, etc, then simply just run the
   # REPL? for now, always run the repl
-  def self.run(args)
+  def self.run
+    command = ARGV.first
+    case command
+    when 'new'
+      gen
+    when 'repl'
+      puts "need to start REPL session"
+      ARGV.clear
+      Opal::Environment.new ARGV
+    when 'build'
+      # puts "need to do build"
+      p = Vienna::Project.new Dir.getwd, {}
+      p.build!
+    when 'server'
+      # puts "need to do server"
+      p = Vienna::Project.new Dir.getwd, {}
+      s = Vienna::AppServer.new p
+    else
+      print_usage
+    end
     # puts "runnign repl"
     # puts ARGV
     # we must remove all args from argv before running repl to stop args being
@@ -37,7 +56,13 @@ module Opal
     # ARGV.clear
     
     # make a new environment
-    Opal::Environment.new args
-    # Opal::REPL.run
+    # Opal::Environment.new args
+  end
+  
+  def self.print_usage
+    puts %Q{
+Usage:
+  opal new PROJECT_PATH
+}
   end
 end
