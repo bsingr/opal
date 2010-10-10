@@ -1,0 +1,81 @@
+# 
+# before_and_after_hooks.rb
+# vienna
+# 
+# Created by Adam Beynon.
+# Copyright 2010 Adam Beynon.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+# 
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+# 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+#
+
+module Spec
+  module Example
+    
+    module BeforeAndAfterHooks
+      
+      def before(scope = :each, &block)
+        # `console.log(#{block});`
+        # puts "we got a block! #{block}"
+        before_parts(scope) << block
+      end
+      
+      # alias_method :append_before, :before
+      
+      def before_each_parts
+        @before_each_parts ||= []
+      end
+      
+      def before_all_parts
+        @before_all_parts ||= []
+      end
+      
+      def before_parts(scope)
+        case scope
+        when :each
+          before_each_parts
+        when :all
+          before_all_parts
+        end
+      end
+      
+      
+      def after(scope = :each, &block)
+        after_parts(scope) << block
+      end
+      
+      def after_each_parts
+        @after_each_parts ||= []
+      end
+      
+      def after_all_parts
+        @after_all_parts ||= []
+      end
+      
+      def after_parts(scope)
+        case scope
+        when :each
+          after_each_parts
+        when :all
+          after_all_parts
+        end
+      end
+      
+    end
+  end
+end

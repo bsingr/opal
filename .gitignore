@@ -1,1 +1,6 @@
 .DS_Store
+doc
+pkg
+tmp
+.gem
+.yardoc

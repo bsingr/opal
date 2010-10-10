@@ -1,0 +1,11 @@
+mode :all do
+  config :browser,
+    :required => [:opal]
+end
+
+mode :spec do
+  config :browser,
+    
+    :lib_directories    => ['lib', 'spec'],
+    :bin_file           => :spec
+end
