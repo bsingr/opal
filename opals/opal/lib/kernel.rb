@@ -192,9 +192,9 @@ module Kernel
   # @return [Number] random number
   def rand(max = nil)
     if max
-      `return Math.floor(Math.random() * #{max})`
+      `Math.floor(Math.random() * #{max})`
     else
-      `return Math.random();`
+      `Math.random()`
     end
   end
   
@@ -236,11 +236,14 @@ module Kernel
     elsif exception.is_a? Exception
       exc = exception
     else
-      `if (#{string}) { #{msg = string} }`
+      if string
+        msg = string
+      end
+      # `(#{string}) ? (#{msg = string}) :()`
       exc = exception.new msg
     end
     # puts "really about to raise"
-    `#{exc}.raise();`
+    `#{exc}.raise()`
   end
   
   # An alias of {#raise}
@@ -255,7 +258,7 @@ module Kernel
   def instance_eval(&block)
     if block_given?
       # `#{block}.__fun__.opal_self = true;`
-      `#{block}.apply(#{self});`
+      `#{block}.apply(#{self})`
     end
   end
   

@@ -105,7 +105,7 @@ class Module
       # puts "block was given.."
       # `console.log(#{self});`
       # `#{block}.__fun__.opal_self = true;`
-      `#{block}.apply(#{self});`
+      `#{block}.apply(#{self})`
     end
   end
   

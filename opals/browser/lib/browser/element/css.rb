@@ -24,10 +24,10 @@ class Element
     
     if value == false
       # no value, so retrieve (nil is a good value: set to :none)
-      `return #{style}[#{name}] || "";`
+      `#{style}[#{name}] || ""`
     else
       # set style property
-      `return #{style}[#{name}] = #{value};`
+      `#{style}[#{name}] = #{value}`
     end
   end
   
@@ -75,7 +75,7 @@ class Element
   # @param [String, Symbol] class_name the class_name to add
   # @return [Element] returns the receiver
   def add_class(class_name)
-    self.class_name += " #{class_name}" unless has_class? class_name
+    # self.class_name += " #{class_name}" unless has_class? class_name
     self
   end
   

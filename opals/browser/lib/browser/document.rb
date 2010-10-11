@@ -57,7 +57,7 @@ module Document
     if block_given?
       if @__ready__
         # yield
-        `#{proc}.call(#{proc}.__self__, #{nil});`
+        `#{proc}.call(#{proc}.__self__, #{nil})`
       else
         @on_ready_actions << proc
       end

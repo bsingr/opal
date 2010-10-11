@@ -99,15 +99,15 @@ class Array
   # @param [String, Number] num string or number used for joining/concat
   # @result [String, Array] depending on argument
   def *(arg)
-    if arg.is_a? String
-      join arg
-    else # number
-      `var result = [];
+    `if (#{arg.is_a? String}) {
+      return #{join arg};
+    } else {
+      var result = [];
       for (var i = 0; i < parseInt(#{arg}); i++) {
         result = result.concat(#{self});
       }
-      return result;`
-    end
+      return result;
+    }`
   end
   
   # Concatenation - returns a new array built by concatenating the two arrays
@@ -230,21 +230,22 @@ class Array
   # @param [Number] length last index
   # @return [Array, nil] result
   def [](index, length = nil)
-    size = `#{self}.length;`
+    `var size = #{self}.length;
     
-    if index.is_a? Range
-      raise "need to implement range"
-    else
-      `if (#{index} < 0) #{index} += #{size};`
-    end
-    `if (#{index} >= #{size} || #{index} < 0) return #{nil};`
+    if (#{index.is_a? Range}) {
+      #{raise "need to implement range"};
+    } else {
+      if (#{index} < 0) #{index} += #{size};
+    }
     
-    if length
-      `if (#{length} <= 0) return [];`
-      `return #{self}.slice(#{index}, #{index} + #{length});`
-    else
-      `return #{self}[#{index}];`
-    end
+    if (#{index} >= #{size} || #{index} < 0) return #{nil};
+      
+    if (#{length}) {
+      if (#{length} <= 0) return [];
+      return #{self}.slice(#{index}, #{index} + #{length});
+    } else {
+      return #{self}[#{index}];
+    }`
   end
   
   alias_method :slice, :[]
@@ -489,7 +490,7 @@ class Array
     }`
     `return size == #{self}.length ? #{nil} : #{obj};`
   end
-
+  
   # Deletes the element at the specified index, returning that element, or `nil`
   # if the index is out of range. See also Array#slice!.
   # 
@@ -765,14 +766,15 @@ class Array
   # @param [Number] n number of elements
   # @return [Object, Array] object or array of objects
   def first(count=nil)
-    if count
-      `return #{self}.slice(0, #{count});`
-    else
-      `if (#{self}.length == 0) {
+    `if (#{count} != #{nil}) {
+      return #{self}.slice(0, #{count});
+    }
+    else {
+      if (#{self}.length == 0) {
         return #{nil};
       }
-      return #{self}[0];`
-    end
+      return #{self}[0];
+    }`
   end
   
   # Returns a new array that is a one-dimensional flattening of this array
@@ -966,14 +968,15 @@ class Array
   # @param [Number] n number of items to get
   # @return [Object, Array] result
   def last(n = nil)
-    if n
-      `return #{self}.slice(#{self}.length - #{n}, #{self}.length);`
-    else
-      `if (#{self}.length == 0) {
+    `if (#{n} != #{nil}) {
+      return #{self}.slice(#{self}.length - #{n}, #{self}.length);
+    }
+    else {
+      if (#{self}.length == 0) {
         return #{nil};
       }
-      return #{self}[#{self}.length - 1];`
-    end
+      return #{self}[#{self}.length - 1];
+    }`
   end
   
   # Returns the number of elements in `self`. May be zero.
@@ -1007,14 +1010,14 @@ class Array
   # @param [Number] n number to pop
   # @return [Array] returns receiver
   def pop(n = nil)
-    if n
-      `return #{self}.splice(#{self}.length - #{n}, #{self}.length);`
-    else
-      `if (#{self}.length) {
+    `if (#{n} != #{nil}) {
+      return #{self}.splice(#{self}.length - #{n}, #{self}.length);
+    } else {
+      if (#{self}.length) {
         return #{self}.pop();
       }
-      return #{nil};`
-    end
+      return #{nil};
+    }`
   end
   
   # Append - Pushes the given object(s) on to the end of this array. This 
@@ -1301,14 +1304,14 @@ class Array
   # @param [Number] n elements to shift
   # @return [Array] result
   def shift(n = nil)
-    if n
-      `return #{self}.splice(0, #{n});`
-    else
-      `if (#{self}.length) {
+    `if (#{n} != #{nil}) {
+      return #{self}.splice(0, #{n});
+    } else {
+      if (#{self}.length) {
         return #{self}.shift();
       }
-      return #{nil};`
-    end
+      return #{nil};
+    }`
   end
   
   # Deletes the element(s) given by an `index` (optionally with a length) or by
@@ -1336,21 +1339,22 @@ class Array
   # @param [Number] length last index
   # @return [Array, nil] result
   def slice!(index, length = nil)
-    size = `#{self}.length;`
+    `var size = #{self}.length;
     
-    if index.is_a? Range
-      raise "need to implement range"
-    else
-      `if (#{index} < 0) #{index} += #{size};`
-    end
-    `if (#{index} >= #{size} || #{index} < 0) return #{nil};`
+    if (#{index.is_a? Range}) {
+      #{raise "need to implement range"};
+    } else {
+      if (#{index} < 0) #{index} += #{size};
+    }
     
-    if length
-      `if (#{length} <= 0 || #{length} > #{self}.length) return #{nil};`
-      `return #{self}.splice(#{index}, #{index} + #{length});`
-    else
-      `return #{self}.splice(#{index}, 1)[0];`
-    end
+    if (#{index} >= #{size} || #{index} < 0) return #{nil};
+      
+    if (#{length} != #{nil}) {
+      if (#{length} <= 0 || #{length} > #{self}.length) return #{nil};
+      return #{self}.splice(#{index}, #{index} + #{length});
+    } else {
+      return #{self}.splice(#{index}, 1)[0];
+    }`
   end
   
   # Returns first `n` elements from ary.

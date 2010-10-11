@@ -10,12 +10,12 @@ class Element
   # @return [Object] new/current attr value
   def self.attr(element, name, value = false)
     # convert all _ to - to make our name DOM accessible
-    name = `#{name.to_s}.replace(/\_/g, '-');`
+    name = `#{name.to_s}.replace(/\_/g, '-')`
     # either get or set...
     if value == false
-      `return #{element}['@element'].getAttribute(#{name}) || #{nil};`
+      `#{element}['@element'].getAttribute(#{name}) || #{nil}`
     else
-      `return #{element}['@element'].setAttribute(#{name}, #{value.to_s});`
+      `#{element}['@element'].setAttribute(#{name}, #{value.to_s})`
     end
   end
   

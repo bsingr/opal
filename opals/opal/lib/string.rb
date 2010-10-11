@@ -117,9 +117,10 @@ class String
   def =~(obj)
     obj.match self
     if $&
-      return `#{self}.indexOf(#{$&})`
+      `#{self}.indexOf(#{$&})`
+    else
+      nil
     end
-    nil
   end
   
   # Returns a copy of `self` with the first character converted to uppercase and

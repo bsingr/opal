@@ -29,9 +29,11 @@ class IO
   def puts(*objects)
     if objects.length == 0
       # print new line only
+      nil
     else
       objects.each do |object|
         # print each one on a new line
+        nil
       end
     end
     nil
