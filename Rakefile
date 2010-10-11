@@ -162,3 +162,14 @@ task :doc => ['doc:browser', 'doc:opal', 'doc:demos'] do
     FileUtils.copy from, to
   end
 end
+
+desc "Closure compile opal.js and opal_dev.js (into same filenames)"
+task :browser do
+  require 'closure-compiler'
+  %w{tmp/opal.js tmp/opal_dev.js}.each do |src|
+    puts "Compressing #{src}..."
+    code = Closure::Compiler.new.compress(File.read(src))
+    File.open(src, 'w') { |out| out.write code }
+  end
+end
+

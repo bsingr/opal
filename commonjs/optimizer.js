@@ -272,7 +272,7 @@ Optimizer.prototype.find_command_args_old = function() {
       if (stack[stack.length -1] !== 4) {
         // print("next is " + next.join(','));
         if (VALID_CMD_BEGIN.indexOf(next[0]) !== -1) {
-          if (!last || (last[0] !== '.' && last[0] !== 'COLON2')) {
+          if (!last || (last[0] !== '.' && last[0] !== 'COLON2' && last[0] !== 'SYMBEG')) {
             token[0] = 'IDENTIFIER2';
           }
           // print("valid cmd arg: " + next.join(","));
@@ -280,7 +280,7 @@ Optimizer.prototype.find_command_args_old = function() {
           cmd_stack.push(idx);
           stack.push(0);
         }
-        else if (next && (next[0] == 'DO' || next[0] == 'CURLY_BEGIN') && last && last[0] !== '.' && last[0] !== 'COLON2') {
+        else if (next && (next[0] == 'DO' || next[0] == 'CURLY_BEGIN') && last && last[0] !== '.' && last[0] !== 'COLON2' && last[0] !== 'SYMBEG') {
           token[0] = 'IDENTIFIER2';
           this._tokens.splice(idx + 1, 0, ['CALL_END', ')']);
           this._tokens.splice(idx + 1, 0, ['CALL_BEGIN', '(']);

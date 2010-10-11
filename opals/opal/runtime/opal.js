@@ -40,8 +40,7 @@ var class_basic_object  = null,
     class_object        = null,
     module_kernel       = null,
     class_symbol        = null,
-    class_true_class    = null,
-    class_false_class   = null,
+    class_boolean       = null,
     class_nil_class     = null,
     class_proc          = null,
     class_string        = null,
@@ -437,23 +436,23 @@ __boot_base_class.prototype.extend = function(module) {
 };
 
 // RTEST - true. false and nil override this
-__boot_base_class.prototype.r = true;
+// __boot_base_class.prototype.r = true;
 
 // ANDTEST
-__boot_base_class.prototype.a = function(lhs, rhs) {
-  if (lhs.r)
-    return rhs.apply(this);
+// __boot_base_class.prototype.a = function(lhs, rhs) {
+  // if (lhs.r)
+    // return rhs.apply(this);
   
-  return lhs;
-};
+  // return lhs;
+// };
 
 // ORTEST
-__boot_base_class.prototype.o = function(lhs, rhs) {
-  if (lhs.r)
-    return lhs;
+// __boot_base_class.prototype.o = function(lhs, rhs) {
+  // if (lhs.r)
+    // return lhs;
   
-  return rhs.apply(this);
-};
+  // return rhs.apply(this);
+// };
 
 // Handle yielding
 // 
@@ -864,7 +863,7 @@ class_object.include = function(module) {
   // super
   var res = __boot_base_class.prototype.include.apply(class_object, [module]);
     
-  var natives = [class_string, class_number, class_array, class_regexp];
+  var natives = [class_string, class_number, class_array, class_regexp, class_boolean];
   
   // return res;
   for (var i = 0; i < natives.length; i++) {
@@ -880,7 +879,7 @@ class_object.dm = function() {
   // super
   var res = __boot_base_class.prototype.dm.apply(class_object, arguments);
   
-  var natives = [class_string, class_number, class_array, class_regexp];
+  var natives = [class_string, class_number, class_array, class_regexp, class_boolean];
   
   // return res;
   for (var i = 0; i < natives.length; i++) {
@@ -905,20 +904,6 @@ class_object.super_class = undefined;
 // Range class
 class_range = define_class_under(class_object, "Range", class_object);
 class_range.allocator.prototype.info = T_OBJECT | T_RANGE;
-
-// True class
-class_true_class = define_class_under(class_object, "TrueClass", class_object);
-vnTrue = new class_true_class.allocator();
-vnTrue.info = vnTrue.info | FL_SINGLETON;
-__boot_base_class.prototype.t = vnTrue;
-
-// False class
-class_false_class = define_class_under(class_object, "FalseClass",class_object);
-vnFalse = new class_false_class.allocator();
-vnFalse.info = vnFalse.info | FL_SINGLETON;
-__boot_base_class.prototype.f = vnFalse;
-
-vnFalse.r = false;
 
 // Nil class
 class_nil_class = define_class_under(class_object, "NilClass", class_object);
@@ -1014,6 +999,10 @@ class_string.allocator.prototype.hash = function() {
   return this;
 };
 
+// Boolean class
+class_boolean = define_bridged_class("Boolean", Boolean);
+class_boolean.allocator.prototype.info = T_OBJECT | T_BOOLEAN;
+
 
 // Array class
 class_array = define_bridged_class("Array", Array);
@@ -1031,6 +1020,4 @@ class_object.include(module_kernel);
 
 
 // argh, another fix needed:
-class_proc.allocator.prototype.t = vnTrue;
-class_proc.allocator.prototype.f = vnFalse;
 class_proc.allocator.prototype.n = opalnil;

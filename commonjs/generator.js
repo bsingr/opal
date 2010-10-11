@@ -677,6 +677,21 @@ RubyGenerator.prototype = {
     this.write('}\n');
   },
   
+  generate_ternary: function(stmt, o) {
+    if (o.full && o.last) this.write('return ');
+    this.write('((');
+    var tmp_assign = this.iseq_current.temp_local();
+    this.write(tmp_assign + ' = ');
+    this.generate(stmt[1], {});
+    this.write(', ' + tmp_assign + ' !== ' + this.NIL + ' && ' + tmp_assign + ' !== false) ? ');
+    this.generate(stmt[2], {});
+    this.write(' : ');
+    this.generate(stmt[3], {});
+    this.write(')');
+    this.iseq_current.queue_temp(tmp_assign);
+    if (o.full) this.write(';\n');
+  },
+  
   // ['unary', type, arg]
   // type: '+', '-', '!'
   generate_unary: function(stmt, o) {

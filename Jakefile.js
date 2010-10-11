@@ -15,19 +15,18 @@ task('parser', [], function() {
 desc("Compile");
 task('compile', [], function() {
   var compile = require('./commonjs/opal').compile;
-  var source = FS.readFileSync(require('path').join(process.cwd(), 'test/ruby.rb'), "utf8");
+  var source = FS.readFileSync(require('path').join(process.cwd(), 'tmp/ruby.rb'), "utf8");
   // compile("class Adam; 34; end; ::Adam == 100; Adam::Beynon; Adam::Beynon = 10");
   var res = compile(source);
   console.log(res);
 });
 
 desc('Build an tmp/opal.js for use in web browser');
-task('build', [], function() {
+task('opal', [], function() {
   var pre     = 'var Opal = {};\n(function(global, exports, print) {\n',
       post    = '\n})(window, Opal, function(){});\n',
-      sources = ['commonjs/ruby_parser.js', 'commonjs/generator.js', 'commonjs/lexer.js', 'commonjs/optimizer.js', 'commonjs/parser.js', 'commonjs/string_scanner.js', 'commonjs/opal.js'],
       runtime = ['opal.js', 'browser.js'],
-      corelib = ['kernel', 'module', 'array', 'basic_object', 'class', 'dir', 'error', 'false_class', 'file', 'hash', 'io', 'match_data', 'nil_class', 'number', 'opal', 'proc', 'range', 'regexp', 'ruby', 'string', 'symbol', 'top_self', 'true_class'],
+      corelib = ['kernel', 'module', 'array', 'basic_object', 'class', 'dir', 'error', 'boolean', 'file', 'hash', 'io', 'match_data', 'nil_class', 'number', 'opal', 'proc', 'range', 'regexp', 'ruby', 'string', 'symbol', 'top_self'],
       result  = [];
 
   result.push(pre);
@@ -37,13 +36,6 @@ task('build', [], function() {
     var p = require('path').join(process.cwd(), 'opals', 'opal', 'runtime', runtime[i]);
     result.push(FS.readFileSync(p, 'utf8'));
   }
-  
-  // compiler, parser etc sources
-  for (var i = 0; i < sources.length; i++) {
-    result.push(FS.readFileSync(require('path').join(process.cwd(), sources[i]), 'utf8'));
-  }
-  
-  
   
   // core ruby libs
   for (var i = 0; i < corelib.length; i++) {
@@ -86,4 +78,26 @@ task('build', [], function() {
   // brower run
   FS.writeFileSync(require('path').join(process.cwd(), 'tmp/opal.js'), result.join(''), 'utf8');
 });
+
+desc("Build tmp/opal_dev.js for compiling javascript in the browser.");
+task("dev", [], function() {
+  var pre     = '(function(global, exports, print) {\n',
+      post    = '\n})(window, Opal, function(){});\n',
+      sources = ['commonjs/ruby_parser.js', 'commonjs/generator.js', 'commonjs/lexer.js', 'commonjs/optimizer.js', 'commonjs/parser.js', 'commonjs/string_scanner.js', 'commonjs/opal.js'],
+      result  = [];
+
+  result.push(pre);
+  
+  // compiler, parser etc sources
+  for (var i = 0; i < sources.length; i++) {
+    result.push(FS.readFileSync(require('path').join(process.cwd(), sources[i]), 'utf8'));
+  }
+  
+  result.push(post);
+  
+  FS.writeFileSync(require('path').join(process.cwd(), 'tmp/opal_dev.js'), result.join(''), 'utf8');
+});
+
+desc("Build both opal and opal dev ready for browser");
+task("browser", ["dev", "opal"], function() { });
 

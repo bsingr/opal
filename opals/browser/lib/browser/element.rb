@@ -52,7 +52,8 @@ class Element
   # @return [Element]
   def self.from_native(native_element = nil)
     element = allocate
-    element.instance_variable_set '@element', native_element
+    # element.instance_variable_set '@element', native_element
+    `#{element}.i$element = #{native_element};`
     element
   end
   
