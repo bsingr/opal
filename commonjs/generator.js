@@ -579,6 +579,21 @@ RubyGenerator.prototype = {
     return res.join("");
   },
   
+  // ['case', expr, body]
+  generate_case: function(stmt, o) {
+    var res = [];
+    var tmp_case = this.iseq_current.temp_local();
+    var done_else = false;
+    var ternary_count = 1;
+    res.push("((" + tmp_case + " = ");
+    res.push(this.generate(stmt[1]));
+    res.push(', true) ? ');
+    
+    res.push('nil : nil')
+    res.push(")");
+    return res.join("");
+  },
+  
   // ['if'/'unless', expr, stmt, tail]
   generate_if: function(stmt, o) {
     var res = [];
@@ -979,10 +994,6 @@ RubyGenerator.prototype = {
   
   generate_colon2: function(stmt) {
     return this.generate(stmt[1]) + '.cg("' + stmt[2] + '")';
-  },
-  
-  generate_case: function(stmt, o) {
-    
   },
   
   generate_return: function(stmt) {

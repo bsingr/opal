@@ -111,9 +111,9 @@ case 50:
 break;
 case 51:this.$ = ['begin', $$[$0-3+2-1]];
 break;
-case 52:this.$ = ['case'];
+case 52:this.$ = ['case', $$[$0-5+2-1]];
 break;
-case 53:this.$ = ['case'];
+case 53:this.$ = ['case', null];
 break;
 case 54:
 break;
