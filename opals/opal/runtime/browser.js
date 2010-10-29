@@ -141,7 +141,7 @@ var file_require_path = function(path) {
   // console.log("requiring " + path);
   var f = file_list[path];
   f.opal_required = true;
-  return f.apply(exports.top_self, [path]);
+  return f(exports.top_self, path);
 };
 
 // require the js string path.. might come from ruby, might come from js
@@ -243,7 +243,7 @@ var run_script_tags = function() {
           var res = exports.compile(script.innerHTML);
           console.log(res);
           // console.log(new Function('return ' + res + ';'));
-          (new Function('return ' + res + ';'))().apply(exports.top_self);
+          (new Function('return ' + res + ';'))()(exports.top_self, "(main)");
           // console.log(exports.compile(script.innerHTML));
         }, 0);
     }

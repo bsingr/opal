@@ -28,7 +28,7 @@ BaseIseq.prototype = {
     this.ensure_ivars = [];
   },
   
-  SELF: 'this',
+  SELF: 'self',
   NIL: 'nil',
   
   push_code: function(code) {
@@ -37,7 +37,7 @@ BaseIseq.prototype = {
   
   join: function() {
     var res = [];
-    res.push('function(__FILE__) {\n');
+    res.push('function(self, __FILE__) {\n');
     
     // inner code
     this.join_variables(res);
@@ -125,6 +125,10 @@ var DefIseq = (function() {
   return result;
 })();
 
+DefIseq.prototype.uses_block = function() {
+  this._uses_block = true;
+};
+
 DefIseq.prototype.push_arg = function(name) {
   this.args.push(name);
   this.norm_args.push(name);
@@ -165,6 +169,9 @@ DefIseq.prototype.method_args = function(res) {
   var norm = this.norm_args.length,
       opt  = this.opt_args.length,
       rest = this.rest_args;
+      
+  // always need a self reference
+  res.push(this.SELF + ', ');
   
   // always need a block arg
   res.push(this.block_arg);
@@ -200,7 +207,7 @@ DefIseq.prototype.method_fixing = function(res) {
   }
   // handle rest args
   if (rest) {
-    var rest_offset = norm + opt + 1; // should take into account opt.. we add one to skip block
+    var rest_offset = norm + opt + 2; // should take into account opt.. we add one to skip block
     res.push(rest + ' = Array.prototype.slice.call(arguments, ' + rest_offset + ');\n');
   }
 };
@@ -223,7 +230,7 @@ var ClassIseq = (function() {
 
 ClassIseq.prototype.join = function() {
   var res = [];
-  res.push('function() {\n');
+  res.push('function(self) {\n');
   this.join_inner(res);
   res.push('}');
   return res.join('');
@@ -232,7 +239,7 @@ ClassIseq.prototype.join = function() {
 
 RubyGenerator.prototype = {
   // constn
-  SELF: 'this',
+  SELF: 'self',
   NIL: 'nil',
   
   // clear the generator ready for action
@@ -374,22 +381,32 @@ RubyGenerator.prototype = {
   generate_call: function(stmt) {
     var res = [];
     // receiver
-    if (stmt[1])
+    if (stmt[1]) {
+      var tmp_recv = this.iseq_current.temp_local();
+      res.push('(' + tmp_recv + ' = ');
       res.push(this.generate(stmt[1]));
-    else
-      res.push(this.SELF);
+      res.push(', ' + tmp_recv + this.mid_to_jsid(stmt[2]) + ' || ' + tmp_recv);
+      res.push('.m$("' + stmt[2] + '"))(');
+      res.push(tmp_recv + ', ');
+      this.iseq_current.queue_temp(tmp_recv);
+    }
+    else { // no recv
+      res.push('(' + this.SELF + this.mid_to_jsid(stmt[2]) + ' || ' + this.SELF);
+      res.push('.m$("' + stmt[2] + '"))(');
+      res.push(this.SELF + ', ');
+    }
+    
     // method
-    res.push(this.mid_to_jsid(stmt[2]));
+    // res.push(this.mid_to_jsid(stmt[2]));
     // args - splat not yet handled
-    res.push('(');
+    // res.push('(');
     // block
     if (stmt[4]) {
-      res.push('(function(__proc__, __self__) {\n');
-      res.push('__proc__.__self__ = __self__;');
-      res.push('return __proc__;\n');
-      res.push('})(');
+      var tmp_block = this.iseq_current.temp_local();
+      res.push('(' + tmp_block + ' = ');
       res.push(this.generate_block(stmt[4]));
-      res.push(', ' + this.SELF + ')');
+      res.push(', ' + tmp_block + '.__self__ = ' + this.SELF + ', ' + tmp_block + ')');
+      this.iseq_current.queue_temp(tmp_block);
     }
     else {
       res.push(this.NIL);
@@ -470,7 +487,8 @@ RubyGenerator.prototype = {
     if (local)
       return local;
     else
-      return this.SELF + this.mid_to_jsid(stmt[1]) + '(' + this.NIL + ')';
+      return '(' + this.SELF + this.mid_to_jsid(stmt[1]) + ' || ' + this.SELF + '.m$("' + stmt[1] + '"))(' + this.SELF + ', ' + this.NIL + ')';
+      // return this.SELF + this.mid_to_jsid(stmt[1]) + '(' + this.NIL + ')';
   },
   
   generate_constant: function(stmt, o) {
@@ -1071,9 +1089,18 @@ RubyGenerator.prototype = {
   },
   
   generate_yield: function(stmt, o) {
-    if (o.last && o.full) this.write('return ');
-    this.write('(' + this.iseq_current.block_arg + ' !== ' + this.NIL + ' ? ' + this.iseq_current.block_arg + ' : this.rb_yield' + ')');
-    if (o.full) this.write(';\n');
+    this.iseq_current.uses_block();
+    var block = this.iseq_current.block_arg;
+    var res = [block + "(" + block + ".__self__, ''"];
+    // args
+    if (stmt[1]) {
+      for (var i = 0; i < stmt[1][0].length; i++) {
+        res.push(', ');
+        res.push(this.generate(stmt[1][0][i]));
+      }
+    }
+    res.push(')');
+    return res.join("");
   },
   
   generate_rescue_mod: function(stmt, o) {

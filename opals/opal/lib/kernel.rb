@@ -46,6 +46,10 @@ module Kernel
     `return #{self == other}.r ? #{false} : #{true};`
   end
   
+  def method_missing(sym, *args)
+     `(function(){throw"MethodMissing: " + #{self} + " does not respond to " + #{sym};}).call(this);`
+  end
+  
   # Repeatedly executes the block.
   # 
   # @note Method does not return an enumerator if no block given(yet).

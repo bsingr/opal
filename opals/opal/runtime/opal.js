@@ -212,7 +212,9 @@ __boot_base_class.prototype.dc = function(sup, id, body, flag) {
       throw "define_class: unknown flag: " + flag
   }
   
-  return body.apply(klass);
+  // console.log("executing " + id + " with " + klass);
+  // console.log(klass);
+  return body(klass);
   
   // return klass;
 };
@@ -434,6 +436,20 @@ __boot_base_class.prototype.extend = function(module) {
     this.constructor.prototype[method] = module.allocator.prototype.method_table[method];
   }
 };
+
+// method missing support - we recv the selector name, and we then create a 
+// closure that acts as a temp method which in turn calls method_missing with the
+// given arguments. sel is a string
+__boot_base_class.prototype.m$ = function(sel) {
+  var self = this;
+  return function() {
+    // [block, sel, args..]
+    var args = [arguments[0], sel].concat(Array.prototype.slice.call(arguments, 1));
+    // throw "method_missing: " + args.join(", ");
+    return self.$method_missing.apply(self, args);
+  };
+};
+
 
 // RTEST - true. false and nil override this
 // __boot_base_class.prototype.r = true;

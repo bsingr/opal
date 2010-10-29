@@ -42,7 +42,7 @@ task('opal', [], function() {
     var p = FS.readFileSync(require('path').join(process.cwd(), 'opals', 'opal', 'lib', corelib[i] + '.rb'));
     console.log("##### Compiling " + corelib[i]);
     var r = Opal.compile(p);
-    result.push('(' + r + ').apply(exports.top_self);');
+    result.push('(' + r + ')(exports.top_self);');
   }
   
   result.push(post);

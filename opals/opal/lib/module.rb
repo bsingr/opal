@@ -47,6 +47,8 @@ class Module
   end
   
   def alias_method(new_name, old_name)
+    # `console.log("in here " + this);`
+    # `console.log(this);`
     new_name = new_name.to_s
     old_name = old_name.to_s
     # puts "alias #{new_name} from #{old_name}"
@@ -60,8 +62,8 @@ class Module
   
   def attr_accessor(*attributes)
     # puts "in attr_accessor"
-    `#{self}.$attr_reader.apply(#{self}, #{attributes});`
-    `#{self}.$attr_writer.apply(#{self}, #{attributes});`
+    `#{self}.$attr_reader.apply(#{self}, [#{self}, #{nil}].concat(#{attributes}));`
+     `#{self}.$attr_writer.apply(#{self}, [#{self}, #{nil}].concat(#{attributes}));`
     self
   end
   
@@ -72,8 +74,14 @@ class Module
   
   
   def attr_reader(*attributes)
+    # `console.log("outer self is: " + self);
+    # console.log(self);
+    # console.log(arguments);
+    # `
     attributes.each do |attribute|
       `var mid = #{attribute.to_s};
+      //console.log("self is: " + self);
+      //console.log(self);
       #{self}.dm(mid, function() {
         return #{self}.ig('@' + mid);
       }, false);`

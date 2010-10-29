@@ -248,6 +248,10 @@ class Array
     }`
   end
   
+  # `console.log("about to call alias with " + this);`
+  # `console.log(this);`
+  # `console.log(this.$alias_method);`
+  # `(this.$alias_method)(nil, opalsym('a'), opalsym('b'));`
   alias_method :slice, :[]
   
   # @todo Need to expand functionality
@@ -608,7 +612,8 @@ class Array
   def each(&block)
     `for (var i = 0; i < #{self}.length; i++) {
       try {
-        #{block}.apply(#{block}.__self__, [#{nil}, #{self}[i]]);
+        #{yield `#{self}[i]`};
+        //#{block}.apply(#{block}.__self__, [#{nil}, #{self}[i]]);
       } catch (e) {
         if (e.__keyword__ == 'redo') {
           i--;
