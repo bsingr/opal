@@ -1,29 +1,3 @@
-# 
-# hash.rb
-# vienna
-# 
-# Created by Adam Beynon.
-# Copyright 2010 Adam Beynon.
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-# 
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-# 
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-#
-
 # A {Hash} is a collection of key-value pairs. It is similar to an {Array}, 
 # except that indexing is done via arbitrary keys of any object type, not an
 # integer index. Hashes enumerate their values in the order that the 
@@ -32,7 +6,6 @@
 # Hashes have a default value that is returned when accessing keys that do not
 # exist in the hash. By default, that value is `nil`.
 class Hash
-  
   # Creates a new hash populated with the given objects. Equivalent to the 
   # literal `{ key => value, ... }`. 
   # 
@@ -70,8 +43,8 @@ class Hash
     for (var i = 0; i < #{self}.__keys__.length; i++) {
       var key = #{self}.__keys__[i].hash();
       if (!(#{self}.__assocs__[key]['$=='](#{other}.__assocs__[key]).r)) return #{false};
-    }`
-    true
+    }
+    return #{true};`
   end
   
   alias_method :eql?, :==
@@ -134,8 +107,8 @@ class Hash
       if (key['$=='](#{obj}).r) {
         return [key, #{self}.__assocs__[key.hash()]];
       }
-    }`
-    nil
+    }
+    return #{nil};`
   end
   
   # Removes all key-value pairs from `self`.
@@ -148,8 +121,8 @@ class Hash
   # @return [Hash] returns receiver
   def clear
     `#{self}.__keys__ = [];
-    #{self}.__assocs__ = {};`
-    self
+    #{self}.__assocs__ = {};
+    return #{self};`
   end
   
   # Returns the default value, the value that would be returned by hsh[key] if
@@ -232,8 +205,8 @@ class Hash
         #{self}.hash_delete(key);
         i--;
       };
-    }`
-    self
+    }
+    return #{self};`
   end
   
   # Calls `block` once for each key in `self`, passing the key-value pair as
@@ -256,8 +229,8 @@ class Hash
       key = #{self}.__keys__[i];
       value = #{self}.__assocs__[key.hash()];
       #{block}.apply(#{block}.__self__, [key, value]);
-    }`
-    self
+    }
+    return #{self};`
   end
   
   alias_method :each_pair, :each
@@ -276,8 +249,8 @@ class Hash
     for (var i = 0; i < #{self}.__keys__.length; i++) {
       key = #{self}.__keys__[i];
       #{block}.apply(#{block}.__self__, [key]);
-    }`
-    self
+    }
+    return #{self};`
   end
   
   # Calls `block` once for each key in `hsh`, passing the value as a parameter.
@@ -295,8 +268,8 @@ class Hash
       key = #{self}.__keys__[i];
       value = #{self}.__assocs__[key.hash()];
       #{block}.apply(#{block}.__self__, [value]);
-    }`
-    self
+    }
+    return #{self};`
   end
   
   # Returns true if `self` contains no key-value pairs.
@@ -416,8 +389,8 @@ class Hash
       if (value['$=='](val).r) {
         return #{true};
       };
-    }`
-    false
+    }
+    return #{false};`
   end
   
   alias_method :value?, :has_value?
@@ -438,8 +411,8 @@ class Hash
       key = #{other_hash}.__keys__[i];
       val = #{other_hash}.__assocs__[key.hash()];
       #{self}.hash_store(key, val)
-    }`
-    self
+    }
+    return #{self};`
   end
   
   # Returns the contents of this hash as a string.
@@ -506,8 +479,8 @@ class Hash
         #{self}.hash_delete(key);
         i--;
       };
-    }`
-    self
+    }
+    return #{self};`
   end
   
   # Returns the key for a given value. If not found, returns `nil`.
@@ -529,8 +502,8 @@ class Hash
       if (value['$=='](val).r) {
         return key;
       };
-    }`
-    nil
+    }
+    return #{nil};`
   end
   
   # Returns a new array populated with the keys from this hash. See also
@@ -647,8 +620,8 @@ class Hash
       if (val['$=='](#{obj}).r) {
         return [key, val];
       }
-    }`
-    nil
+    }
+    return #{nil};`
   end
   
   # Same as {Hash#delete_if}, but it works on (and returns) a copy of the hash.
@@ -787,5 +760,4 @@ class Hash
     }
     return result;`
   end
-
 end

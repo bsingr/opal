@@ -925,9 +925,11 @@ class_range.allocator.prototype.info = T_OBJECT | T_RANGE;
 class_nil_class = define_class_under(class_object, "NilClass", class_object);
 opalnil = new class_nil_class.allocator();
 opalnil.info = opalnil.info | FL_SINGLETON;
-__boot_base_class.prototype.n = opalnil;
+__boot_base_class.prototype.nil = opalnil;
 
 opalnil.r = false;
+
+// __boot_base_class.prototype.nil = opalnil;
 
 // Hash
 class_hash = define_class_under(class_object, "Hash", class_object);
@@ -1036,4 +1038,4 @@ class_object.include(module_kernel);
 
 
 // argh, another fix needed:
-class_proc.allocator.prototype.n = opalnil;
+class_proc.allocator.prototype.nil = opalnil;

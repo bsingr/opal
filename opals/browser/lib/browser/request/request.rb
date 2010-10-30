@@ -58,7 +58,8 @@ class Request
   attr_reader :status
   
   def initialize(options = {})
-    `#{self}.__xhr__ = opal.request();`
+    @xhr = `#{self}.opal.request()`
+    # `#{self}.__xhr__ = opal.request();`
     @options = OPTIONS.merge options
     @headers = @options[:headers]
     @running = false
@@ -84,21 +85,20 @@ class Request
   def send(options = {}, &block)
     @running = true
     
-    
     method = 'POST'
     
     url = options[:url] || ""
     
     request = self
-    `#{self}.__xhr__.onreadystatechange = function() {
-      #{request}.$state_change();
-    };`
+    `#{@xhr}.onreadystatechange = function() {
+      #{request.state_change};
+    }`
     
-    `#{self}.__xhr__.open(#{method.to_s}.toUpperCase(), #{url}, true);`
+    `#{@xhr}.open(#{method.to_s}.toUpperCase(), #{url}, true)`
     
     trigger :request, self
     
-    `#{self}.__xhr__.send(null);`
+    `#{@xhr}.send(null)`
   end
   
   # Returns +true+ if the +Request+ is running, +false+ otherwise
@@ -122,7 +122,7 @@ class Request
     
     return true if @status >= 200 && @status < 300
     
-    `return status === 0 && #{self}.__xhr__.responseText && #{self}.__xhr__.responseText.length ? #{true} : #{false};`
+    `(status === 0 && #{self}.__xhr__.responseText && #{self}.__xhr__.responseText.length ? #{true} : #{false})`
   end
   
   # Returns +true+ if the request failed, +false+ otherwise
@@ -134,15 +134,15 @@ class Request
   
   def state_change
     # only handle state change when request is done (state 4)
-    `if (#{self}.__xhr__.readyState !== 4 || !#{@running}.r) return;`
+    # `if (#{self}.__xhr__.readyState !== 4 || !#{@running}.r) #{return}`
     
-    `#{self}.__xhr__.onreadystatechange = function() { };`
+    `#{@xhr}.onreadystatechange = function() { }`
     
     @running = false
     @status = 0
     
     begin
-      @status = `#{self}.__xhr__.status`
+      @status = `#{@xhr}.status`
     rescue Exception => e
       # warning?
       puts "warning"
@@ -155,7 +155,7 @@ class Request
     
     if success?
       # puts "success #{@status}"
-      @text = `#{self}.__xhr__.responseText || ''`
+      @text = `#{@xhr}.responseText || ''`
       
       trigger :success, self
       trigger :complete, self
@@ -194,9 +194,9 @@ class Request
   def cancel
     return self unless @running
     @running = false
-    `#{self}.__xhr__.abort();`
-    `#{self}.__xhr__.onreadystatechange = function() {};`
-    `#{self}.__xhr__ = opal.request();`
+    `#{self}.__xhr__.abort()`
+    `#{self}.__xhr__.onreadystatechange = function() {}`
+    `#{self}.__xhr__ = opal.request()`
     trigger :cancel
     self
   end  

@@ -44,7 +44,8 @@ class Class
   
   def new
     obj = allocate
-    `#{obj}.$initialize.apply(#{obj}, arguments);`
+    `arguments[0] = #{obj}`
+    `#{obj}.$initialize.apply(#{obj}, arguments)`
     obj
   end
   

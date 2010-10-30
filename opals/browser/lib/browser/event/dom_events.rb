@@ -13,9 +13,9 @@ class Event
     # @param [Proc] listener the proc to deal with the event
     # @return [Element, Document] returns the receiver
     def on(event_name, &listener)
-      event_class = Event
-      event_name = `#{event_name.to_s}.replace(/_/g, '');`
-      `var func = function(evt) {
+      `#{event_class = Event};
+      #{event_name} = #{event_name.to_s}.replace(/_/g, '');
+      var func = function(evt) {
         //console.log(#{event_class});
         evt = #{event_class}.$from_native(evt);
         var res = #{listener}.apply(#{listener}.__self__, [evt]);
@@ -26,8 +26,8 @@ class Event
         element.addEventListener(#{event_name}, func, false);
       } else {
         element.attachEvent('on' + #{event_name}, func);
-      }`
-      self
+      }
+      return #{self};`
     end
     
     # A hash of opal event names to the browser event names. If an event is not

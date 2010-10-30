@@ -13,17 +13,17 @@ case 1:return $$[$0-2+1-1];
 break;
 case 2:this.$ = ['bodystmt', $$[$0-4+1-1], $$[$0-4+2-1], $$[$0-4+3-1], $$[$0-4+4-1]];
 break;
-case 3:
+case 3:this.$ = [];
 break;
-case 4:
+case 4:this.$ = [['rescue', $$[$0-6+2-1], $$[$0-6+3-1], $$[$0-6+5-1]]].concat($$[$0-6+6-1]);
 break;
 case 5:
 break;
 case 6:
 break;
-case 7:
+case 7:this.$ = null;
 break;
-case 8:
+case 8:this.$ = $$[$0-2+2-1];
 break;
 case 9:this.$ = [];
 break;
@@ -111,9 +111,9 @@ case 50:
 break;
 case 51:this.$ = ['begin', $$[$0-3+2-1]];
 break;
-case 52:this.$ = ['case', $$[$0-5+2-1]];
+case 52:this.$ = ['case', $$[$0-5+2-1], $$[$0-5+4-1]];
 break;
-case 53:this.$ = ['case', null];
+case 53:this.$ = ['case', null, $$[$0-4+3-1]];
 break;
 case 54:
 break;
@@ -463,11 +463,11 @@ case 226:this.$ = $$[$0-1+1-1];
 break;
 case 227:this.$ = [['elsif', $$[$0-5+2-1], $$[$0-5+4-1]]].concat($$[$0-5+5-1]);
 break;
-case 228:
+case 228:this.$ = [['when', $$[$0-5+2-1], $$[$0-5+4-1]]].concat($$[$0-5+5-1]);
 break;
-case 229:
+case 229:this.$ = $$[$0-1+1-1];
 break;
-case 230:
+case 230:this.$ = $$[$0-1+1-1];
 break;
 case 231:this.$ = [[]];
 break;

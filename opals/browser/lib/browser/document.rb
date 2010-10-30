@@ -36,7 +36,7 @@ module Document
       # puts "need to find symbol #{selector}"
       find_by_id selector
       # puts "and here"
-    when /^#/
+    when a #/^#/
       # puts "need to find id"
       find_by_id selector.slice(1, selector.length)
     else
@@ -46,7 +46,7 @@ module Document
   end
   
   def self.find_by_id(id)
-    # puts "finding by id #{id}"
+    puts "finding by id #{id}"
     Element.from_native `document.getElementById(#{id.to_s})`
   end
   
@@ -125,7 +125,7 @@ module Document
   # Quick hack/snippet to make document ready when opal receives triggers
   `#{self}.opal.setDocumentReadyListener(function() {
     #{Document.__make_ready};
-  });`
+  })`
 
   # Document should represen the native 'document'
   @element = `document`

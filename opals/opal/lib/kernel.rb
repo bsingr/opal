@@ -1,28 +1,3 @@
-# 
-# kernel.rb
-# vienna
-# 
-# Created by Adam Beynon.
-# Copyright 2010 Adam Beynon.
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-# 
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-# 
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-#
 
 # The kernel module is included directly into {Object}, making all of these 
 # methods globally accessible from any Object.
@@ -106,8 +81,8 @@ module Kernel
     `var method_id = #{method.to_s}.toString();
     if (#{self}['$' + method_id]) {
       return #{true};
-    }`
-    false
+    }
+    return #{false};`
   end
   
   def ===(other)
@@ -123,8 +98,8 @@ module Kernel
   end
   
   def instance_variable_set(variable_name, value)
-    `#{self}.is(#{variable_name.to_s}.toString(), #{value});`
-    value
+    `#{self}.is(#{variable_name.to_s}.toString(), #{value});
+    return #{value};`
   end
   
   def __send__(method, *args)
@@ -149,9 +124,9 @@ module Kernel
   # 
   # @param [String] require_path
   # @return [Boolean] success
-  def require require_path
-    `#{self}.opal.require(#{require_path});`
-    true
+  def require(require_path)
+    `#{self}.opal.require(#{require_path});
+    return #{true};`
   end
   
   # Simple equivalent to `Proc.new`. Returns a {Proc} instance.
@@ -162,7 +137,7 @@ module Kernel
   # 
   # @param [Proc] block
   # @return [Proc]
-  def proc &block
+  def proc(&block)
     if block_given?
       block
     else
@@ -178,9 +153,9 @@ module Kernel
   # @return [nil]
   def puts(args)
     # args.each do |arg|
-      `console.log(#{args}.$to_s().toString());`
+      `console.log(#{args}.$to_s(#{args}).toString());
+      return #{nil};`
     # end
-    nil
   end
   
   # Returns a random number. If `max` is `nil` then the result is 0. Otherwise

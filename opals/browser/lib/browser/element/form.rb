@@ -33,8 +33,8 @@ class Element
   # 
   # @return [Element] returns self
   def disable
-    `#{self}.__element__.disabled = true;`
-    self
+    `#{self}.__element__.disabled = true;
+    return #{self};`
   end
   
   # Enables the receiver. The status of this property can be checked with
@@ -42,8 +42,8 @@ class Element
   # 
   # @return [Element] returns self
   def enable
-    `#{self}.__element__.disabled = false;`
-    self
+    `#{self}.__element__.disabled = false;
+    return #{self};`
   end
   
   # Enables or disables the receiver as appropriate. This is a generic method
@@ -72,7 +72,7 @@ class Element
   # 
   # @return [Element] returns receiver
   def focus
-    `#{@element}.focus();`
+    `#{@element}.focus()`
     self
   end
   
@@ -80,7 +80,7 @@ class Element
   # 
   # @return [Element] returns receiver
   def select
-    `#{self}.__element__.select();`
+    `#{self}.__element__.select()`
     self
   end
   
@@ -95,8 +95,8 @@ class Element
       }
     } else if (tag == 'textarea') {
       elem.value = #{value};
-    }`
-    value
+    }
+    return #{value};`
   end
   
   # Returns the value of the receiver, whose type will depend on the receiver.
@@ -115,8 +115,7 @@ class Element
       }
     } else if (tag == 'textarea') {
       return elem.value;
-    }
-    `
+    }`
   end
   
   # Checkboxes and radio buttons can be checked, and this returns their state. 

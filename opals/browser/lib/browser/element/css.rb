@@ -20,7 +20,7 @@ class Element
     # convert to camelCaseStyle
     name = `#{name}.replace(/[_-]\D/g, function(res) {
       return res.charAt(1).toUpperCase();
-    });`
+    })`
     
     if value == false
       # no value, so retrieve (nil is a good value: set to :none)
@@ -96,7 +96,7 @@ class Element
   # @return [Element] returns the receiver
   def remove_class(class_name)
     class_name = class_name.to_s
-    `#{@element}.className = #{self.class_name}.replace(new RegExp('(^|\\s)' + #{class_name} + '(?:\\s|$)'), '$1');`
+    `#{@element}.className = #{self.class_name}.replace(new RegExp('(^|\\s)' + #{class_name} + '(?:\\s|$)'), '$1')`
     self
   end
   
@@ -120,7 +120,7 @@ class Element
   # @param [String] class_name the class to set
   # @return [Elements] returns the receiver
   def class_name=(class_name)
-    `#{@element}.className = #{class_name}.toString();`
+    `#{@element}.className = #{class_name}.toString()`
     self
   end
   

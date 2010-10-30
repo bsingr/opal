@@ -49,7 +49,7 @@ BaseIseq.prototype = {
   },
   
   join_variables: function(res) {
-    res.push('var ' + this.NIL + ' = this.nil;\n');
+    res.push('var ' + this.NIL + ' = ' + this.SELF + '.nil;\n');
 
     for (var i = 0; i < this.ensure_ivars.length; i++) {
       res.push('if (' + this.SELF + '.i$' + this.ensure_ivars[i] + ' === undefined) ' + this.SELF + '.i$' + this.ensure_ivars[i] + ' = ' + this.NIL + ';\n');
@@ -328,50 +328,32 @@ RubyGenerator.prototype = {
     return 'false';
   },
   
-  // generic compstmt for ifs, cases etc where we may want to return the last
-  // stmt, or assign our last stmt to an ivar. Split is the spliter. If inside
-  // a ternary (ifs, etc), then we will split using ',', otherwise, in a iseq
-  // directly, then we split with ';' and return last stmt
   generate_compstmt: function(stmt, split) {
-    if (split == ',') {
-      // for now, this only works for ',' statements
-      var s, res = [];
-      for (var i = 0; i < stmt.length; i++) {
-        res.push(this.generate(stmt[i]));
-      }
-      return '(' + res.join(', ') + ')';
+    var s, res = [];
+      
+    if (stmt.length == 0) {
+      return '(' + this.NIL + ')';
     }
-    else if (split == ';') {
-      var s, res = [];
-      for (var i = 0; i < stmt.length - 1; i++) {
-        res.push(this.generate(stmt[i]));
-        if (stmt[i][0] !== 'xstring') res.push(';\n')
-      }
-      // last, return nil if no last
-      if (stmt.length) {
-        if (stmt[stmt.length - 1][0] == 'xstring') {
-          res.push(this.generate(stmt[stmt.length - 1]) + '\n');
-        } else {
-          res.push('return ' + this.generate(stmt[stmt.length - 1]) + ';\n');
-        }
-        
-        return res.join('');
-      }
-      else {
-        return 'return ' + this.NIL + ';\n';
-      }
+      
+    for (var i = 0; i < stmt.length; i++) {
+      res.push(this.generate(stmt[i]));
     }
-    else {
-      throw "bad egenerate_stmt split: " + split
-    }
+    return '(' + res.join(', ') + ')';
   },
   
   // like above but bodystmts
   // 
   // ['bodystmt', compstmt, operescue, optelse, optensure]
   generate_bodystmt: function(stmt) {
-    // console.log(stmt);
-    return this.generate_compstmt(stmt[1][1], ';');
+    var s = stmt[1][1];
+    
+    if (s.length == 1 && s[0][0] == 'xstring') {
+      return this.generate(s[0]);
+    }
+    // if (s.length == 1)
+      // print(s[0]);
+    
+    return 'return ' + this.generate_compstmt(stmt[1][1]) + ';';
   },
   
   // stmt:
@@ -471,7 +453,7 @@ RubyGenerator.prototype = {
       // this.iseq_current.push_arg(stmt[3][0][i]);
     // }
     
-    this.iseq_current.push_code(this.generate_compstmt(stmt[1][1], ';'));
+    this.iseq_current.push_code('return ' + this.generate_compstmt(stmt[1][1]) + ';');
     // this.write(this.generate_compstmt(stmt[1][1], ';'));
     
     var result = this.pop_iseq();
@@ -558,7 +540,7 @@ RubyGenerator.prototype = {
       console.log( "op asgn, bad OP");
       throw "op asgn, bad OP"
     }
-    this.generate(assign, o);
+    return this.generate(assign);
   },
   
   // ['or', lhs, rhs]
@@ -598,22 +580,53 @@ RubyGenerator.prototype = {
   },
   
   // ['case', expr, body]
-  generate_case: function(stmt, o) {
+  generate_case: function(stmt) {
     var res = [];
     var tmp_case = this.iseq_current.temp_local();
     var done_else = false;
-    var ternary_count = 1;
+    var ternary_count = 0;
+    // console.log(stmt);
     res.push("((" + tmp_case + " = ");
     res.push(this.generate(stmt[1]));
     res.push(', true) ? ');
     
-    res.push('nil : nil')
-    res.push(")");
+    var when_tmp, when_part;
+    for (var i = 0; i < stmt[2].length; i++) {
+      when_part = stmt[2][i];
+      if (when_part[0] == 'when') {
+        ternary_count++;
+        res.push('((');
+        when_tmp = this.iseq_current.temp_local();
+        res.push(when_tmp + ' = ' +  this.generate(when_part[1][0]));
+        res.push(', ' + when_tmp + ' !== ' + this.NIL + ' && ');
+        res.push(when_tmp + ' !== false) ? ');
+        res.push(this.generate_compstmt(when_part[2][1], ','));
+        // res.push('("")');
+        res.push(' : ');
+        this.iseq_current.queue_temp(when_tmp);
+        // ') ? ("") : ');
+      }
+      else {
+        done_else = true;
+        // do else
+        // console.log(when_part);
+        // res.push(this.NIL);
+        res.push(this.generate_compstmt(when_part[1][1], ','));
+      }
+    }
+    if (!done_else) {
+      res.push(this.NIL);
+    }
+    // res.push('nil : nil')
+    for (var i = 0; i < ternary_count; i ++) res.push(")");
+    // for case, the falsy of first stmt never gets applied, so:
+    res.push(': ' + this.NIL + ')');
+    this.iseq_current.queue_temp(tmp_case);
     return res.join("");
   },
   
   // ['if'/'unless', expr, stmt, tail]
-  generate_if: function(stmt, o) {
+  generate_if: function(stmt) {
     var res = [];
     var tmp_assign = this.iseq_current.temp_local();
     var done_else = false;
@@ -724,9 +737,17 @@ RubyGenerator.prototype = {
   // ['aref', recv, arefs]
   generate_aref: function(stmt, o) {
     var res = [];
+    var tmp_mm = this.iseq_current.temp_local();
+    res.push('(' + tmp_mm + ' = ');
     res.push(this.generate(stmt[1]));
+    res.push(', ' + tmp_mm);
     res.push(this.mid_to_jsid('[]'));
+    res.push(' || ' + tmp_mm + '.m$("[]"))');
     res.push('(');
+    // self
+    res.push(tmp_mm);
+    res.push(', ');
+    // block
     res.push(this.NIL);
     if (stmt[2]) {
       for (var i = 0; i < stmt[2].length; i++) {
@@ -736,6 +757,7 @@ RubyGenerator.prototype = {
       }
     }
     res.push(')');
+    this.iseq_current.queue_temp(tmp_mm);
     return res.join('');
   },
   
@@ -946,11 +968,15 @@ RubyGenerator.prototype = {
         res.push('"' + stmt[1][0][1] + '"');
       }
       else if (stmt[1][0][0] == 'string_dbegin') {
+        var tmp_to_s = this.iseq_current.temp_local();
+        res.push('(' + tmp_to_s + ' = ');
         res.push(this.generate(stmt[1][0][1][1][0]));
-        res.push(this.mid_to_jsid('to_s') + '()');
+        res.push(', ' + tmp_to_s);
+        res.push(this.mid_to_jsid('to_s') + '(' + tmp_to_s + '))');
+        this.iseq_current.queue_temp(tmp_to_s);
       }
       else {
-        res.push(this.SELF + '.i$' + stmt[1][0][1] + '.$to_s()');
+        res.push(this.SELF + '.i$' + stmt[1][0][1] + '.$to_s(self)');
       }
     }
     else {
@@ -963,11 +989,15 @@ RubyGenerator.prototype = {
           res.push('"' + part[1] + '"');
         }
         else if (part[0] == 'string_dbegin') {
+          var tmp_to_s = this.iseq_current.temp_local();
+          res.push('(' + tmp_to_s + ' = ');
           res.push(this.generate(part[1][1][0]));
-          res.push(this.mid_to_jsid('to_s') + '()');
+          res.push(', ' + tmp_to_s);
+          res.push(this.mid_to_jsid('to_s') + '(' + tmp_to_s + '))');
+          this.iseq_current.queue_temp(tmp_to_s);
         }
         else {
-          res.push(this.SELF + '.i$' + part[1] + '.$to_s()');
+          res.push(this.SELF + '.i$' + part[1] + '.$to_s(self)');
         }
       }
       res.push(')');
@@ -1002,8 +1032,34 @@ RubyGenerator.prototype = {
     return res.join("");
   },
   
-  generate_begin: function(stmt, o) {
-    
+  generate_begin: function(stmt) {
+    var res = [];
+    var local;
+    res.push('(function(){');
+    res.push('try{');
+    res.push('return ' + this.generate_compstmt(stmt[1][1][1]) + ';');
+    res.push('}catch(__err__){');
+    for (var i = 0; i < stmt[1][2].length; i++) {
+      var rescue = stmt[1][2][i];
+      res.push('if (__err__){');
+      // console.log(rescue);
+      // if we have a var, then assign error to it:
+      if (rescue[2]) {
+        if (!(local = this.iseq_current.lookup_local(rescue[2]))) {
+          local = this.iseq_current.push_local(rescue[2]);
+        }
+        res.push(local + ' = __err__;');
+      }
+      res.push('return ' + this.generate_compstmt(rescue[3][1]) + ';');
+      res.push('}');
+    }
+    // console.log(stmt[1][2]);
+    // res.push(this.generate(stmt[1][2]));
+    // console.log(re)
+    res.push('}');
+    console.log(stmt);
+    res.push('})()')
+    return res.join('');
   },
   
   generate_gvar: function(stmt) {
@@ -1017,7 +1073,7 @@ RubyGenerator.prototype = {
   generate_return: function(stmt) {
     var res = [];
     // for now assume not in block
-    res.push(this.SELF + '.opal_return(');
+    res.push(this.SELF + '.rbReturn(');
     if (stmt[1]) {
       var arg, args = stmt[1][0];
       // norm args

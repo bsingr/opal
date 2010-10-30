@@ -1,29 +1,3 @@
-# 
-# array.rb
-# vienna
-# 
-# Created by Adam Beynon.
-# Copyright 2010 Adam Beynon.
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-# 
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-# 
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-#
-
 # Arrays are ordered, indexed by integers starting at 0.
 # 
 # ## Implementation details
@@ -67,8 +41,8 @@ class Array
   # @param [Array] other another array to intersect.
   # @return [Array] intersected array
   def &(other)
-    result = []
-    `var seen = [];
+    `var result = [];
+    var seen = [];
     for (var i = 0; i < #{self}.length; i++) {
       var test = #{self}[i], hash = test.hash();
       if (seen.indexOf(hash) == -1) {
@@ -80,8 +54,8 @@ class Array
           }
         }
       }
-    }`
-    result
+    }
+    return result;`
   end
   
   # Repitition - When given a string argument, acts the same as {#join}. 
@@ -147,7 +121,7 @@ class Array
   # @param [Object] obj object to append
   # @return [Array] returns the receiver
   def <<(obj)
-    `#{self}.push(#{obj});`
+    `#{self}.push(#{obj})`
     self
   end
   
@@ -165,8 +139,8 @@ class Array
   def push(*objs)
     `for (var i = 0; i < #{objs}.length; i++) {
       #{self}.push(#{objs}[i]);
-    }`
-    self
+    }
+    return #{self};`
   end
   
   # Equality - Two arrays are equal if they contain the same number of elements
@@ -189,10 +163,12 @@ class Array
     `if (#{self} === #{other}) return #{true};
     if (!(#{other}.info & #{self}.TA)) return #{false};
     if (#{self}.length !== #{other}.length) return #{false};
+    var __a;
     for (var i = 0; i < #{self}.length; i++) {
-      if (!#{self}[i]['$=='](#{other}[i]).r) return #{false};
-    }`
-    true
+    // if ((__a = #{`#{self}`}))
+    // if (!#{self}[i]['$=='](#{other}[i]).r) return #{false};
+    }
+    return #{true};`
   end
   
   # Element Reference - Returns the element at `index`, or returns a subarray at
@@ -279,8 +255,8 @@ class Array
       if (test.info & #{self}.TA && test[0] !== undefined && test[0]===#{obj}) {
         return test;
       }
-    }`
-    nil
+    }
+    return #{nil};`
   end
   
   # Returns the element at `index`. A negative index count from the end of the
@@ -333,8 +309,8 @@ class Array
   #  
   # @return [Array] new array
   def collect(&block)
-    result = []
-    `for (var i = 0; i < #{self}.length; i++) {
+    `var result = [];
+    for (var i = 0; i < #{self}.length; i++) {
       try {
         #{result}.push(#{block}.apply(#{block}.__self__, [#{self}[i]]));
       } catch (e) {
@@ -344,8 +320,8 @@ class Array
         
         throw e;
       }
-    }`
-    result
+    }
+    return result;`
   end
   
   alias_method :map, :collect
@@ -376,8 +352,8 @@ class Array
         
         throw e;
       }
-    }`
-    self
+    }
+    return #{self};`
   end
   
   alias_method :map!, :collect!
@@ -390,12 +366,12 @@ class Array
   # 
   # @return [Array] new array
   def compact
-    result = []
-    `for (var i = 0; i < #{self}.length; i++) {
+    `var result = [];
+    for (var i = 0; i < #{self}.length; i++) {
       if (#{self}[i] !== #{nil})
         #{result}.push(#{self}[i]);
-    }`
-    result
+    }
+    return result;`
   end
   
   # Removes nil elements from the array. Returns nil if no changes were made,
@@ -416,8 +392,8 @@ class Array
         #{self}.splice(i, 1);
         i--;
       }
-    }`
-    `return size == #{self}.length ? #{nil} : #{self};`
+    }
+    return size == #{self}.length ? #{nil} : #{self};`
   end
   
   # Appends the elements of `other_ary` to `self`
@@ -432,8 +408,8 @@ class Array
     `var length = #{other_ary}.length;
     for (var i = 0; i < length; i++) {
       #{self}.push(#{other_ary}[i]);
-    }`
-    self
+    }
+    return #{self};`
   end
   
   # Returns the number of elements. If an argument is given, counts the number
@@ -491,8 +467,8 @@ class Array
         #{self}.splice(i, 1);
         i--;
       }
-    }`
-    `return size == #{self}.length ? #{nil} : #{obj};`
+    }
+    return size == #{self}.length ? #{nil} : #{obj};`
   end
   
   # Deletes the element at the specified index, returning that element, or `nil`
@@ -541,8 +517,8 @@ class Array
       catch (e) {
         throw "Array#delete_if catch not implemented yet"
       }
-    }`
-    self
+    }
+    return #{self};`
   end
   
   # Drop first `n` elements from receiver, and returns rest elements in array.
@@ -555,12 +531,12 @@ class Array
   # @param [Number] n number to drop
   # @return [Array] returns a new array
   def drop(n)
-    `if (#{n} > #{self}.length) return [];`
-    `var result = [];`
-    `for (var i = #{n}; i < (#{self}.length); i++) {
+    `if (#{n} > #{self}.length) return [];
+    var result = [];
+    for (var i = #{n}; i < (#{self}.length); i++) {
       result.push(#{self}[i]);
-    }`
-    `return result;`
+    }
+    return result;`
   end
   
   # Drop elements up to, but not including, the first element for which block
@@ -625,8 +601,8 @@ class Array
           throw e;
         }
       }
-    }`
-    self
+    }
+    return #{self};`
   end
   
   # Same as {Array#each}, but passes the index of the element instead of the
@@ -659,8 +635,8 @@ class Array
           throw e;
         }
       }
-    }`
-    self
+    }
+    return #{self};`
   end
   
   # Returns `true` if `self` contains no elements, `false` otherwise
@@ -842,14 +818,14 @@ class Array
   # @param [Number] level to flatten to
   # @return [Array] returns receiver
   def flatten!(level)
-    length = `#{self}.length`
-    result = flatten level
-    clear
-    concat result
-    `if (#{self}.length == #{length}) {
+    `var length = #{self}.length;
+    #{result = flatten level};
+    #{clear};
+    #{concat result};
+    if (#{self}.length == #{length}) {
       return #{nil};
-    }`
-    self
+    }
+    return self;`
   end
   
   # Returns `true` if the given object is present in `self`, `false` otherwise.
@@ -865,8 +841,8 @@ class Array
       if (#{member}['$=='](#{self}[i]).r) {
         return #{true};
       }
-    }`
-    false
+    }
+    return #{false};`
   end
   
   # Replaces the contents of `self` with the contents of `other_ary`, truncating
@@ -885,8 +861,8 @@ class Array
     `#{self}.splice(0, #{self}.length);
     for (var i = 0; i < #{other_ary}.length; i++) {
       #{self}.push(#{other_ary}[i]);
-    }`
-    self
+    }
+    return #{self};`
   end
   
   # Inserts the given values before the element with the given index (which may
@@ -908,8 +884,8 @@ class Array
     if (#{index} < 0 || #{index} >= #{self}.length) {
       throw "IndexError... out of range"
     }
-    #{self}.splice.apply(#{self}, [#{index}, 0].concat(#{obj}));`
-    self
+    #{self}.splice.apply(#{self}, [#{index}, 0].concat(#{obj}));
+    return #{self};`
   end
   
   # Returns a string created by converting each element of the array to a string
@@ -926,7 +902,7 @@ class Array
   def join(sep = "")
     `var result = [];
     for (var i = 0; i < #{self}.length; i++) {
-      result.push(#{self}[i].$to_s());
+      result.push(#{`#{self}[i]`.to_s});
     }
     return result.join(#{sep});`
   end
@@ -956,8 +932,8 @@ class Array
       catch (e) {
         throw "Array#keep_if catch not implemented yet"
       }
-    }`
-    self
+    }
+    return #{self};`
   end
   
   # Return the last element(s) of `self`. If the array is empty, the first form
@@ -1039,8 +1015,8 @@ class Array
   def push(*obj)
     `for (var i = 0; i < #{obj}.length; i++) {
       #{self}.push(#{obj}[i]);
-    }`
-    self
+    }
+    return #{self};`
   end
   
   # Searches tthrough the array whose elements are also arrays. Comapres `obj`
@@ -1062,8 +1038,8 @@ class Array
       if (test.info & #{self}.TA && test[1] !== undefined && test[1]===#{obj}) {
         return test;
       }
-    }`
-    nil
+    }
+    return #{nil};`
   end
   
   # Returns a new array containing the items in `self` for which the block is
@@ -1188,8 +1164,8 @@ class Array
           throw e;
         }
       }
-    }`
-    self
+    }
+    return #{self};`
   end
   
   # Returns the index of the last object in `self` == to `object`. If a block is
@@ -1490,8 +1466,8 @@ class Array
   def unshift(*object)
     `for (var i = #{object}.length - 1; i >= 0 ; i--) {
       #{self}.unshift(#{object}[i]);
-    }`
-    self
+    }
+    return #{self};`
   end
   
   def each_with_index(&block)
@@ -1509,8 +1485,8 @@ class Array
             throw e;
           }
         }
-      }`
-    self
+      }
+      return #{self};`
   end
   
   def inspect

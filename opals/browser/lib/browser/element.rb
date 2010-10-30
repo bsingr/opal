@@ -53,7 +53,7 @@ class Element
   def self.from_native(native_element = nil)
     element = allocate
     # element.instance_variable_set '@element', native_element
-    `#{element}.i$element = #{native_element};`
+    `#{element}.i$element = #{native_element}`
     element
   end
   
@@ -68,7 +68,7 @@ class Element
   # @return [Array]
   def self.find_in_context(selector, context)
     selector = `'#' + #{selector.to_s}` if selector.is_a? Symbol
-    elements = `Sizzle(#{selector}, #{context}['@element']);`
+    elements = `Sizzle(#{selector}, #{context}['@element'])`
     # if elements.length == 1
       # `return #{Element}.$from_native(#{elements}[0]);`
     # else
@@ -115,7 +115,7 @@ class Element
   # @param [String] html the html string to set
   # @return [Elements] returns the receiver
   def html=(html)
-    `#{@element}.innerHTML = #{html};`
+    `#{@element}.innerHTML = #{html}`
     self
   end
   
@@ -153,8 +153,8 @@ class Element
     }
     else {
       e.innerText = #{text}.toString();
-    }`
-    self
+    }
+    return #{self};`
   end
   
   alias_method :content=, :text=
@@ -176,6 +176,8 @@ class Element
     description << " id='#{id}'" if id
     description << ">"
     description.join ""
+    # "#Element #{tag}"
+    # description
   end
     
   # Set some options on the element
@@ -304,7 +306,7 @@ class Element
   # @return [Element] returns the receiver
   def append(element)
     e = element.is_a?(String) ? fragment_from_string(element) : element.element
-    `#{@element}.appendChild(#{e});`
+    `#{@element}.appendChild(#{e})`
     self
   end
   
@@ -364,7 +366,7 @@ class Element
   # @return [Element] returns the receiver
   def prepend(element)
     e = element.is_a?(String) ? fragment_from_string(element) : element.element
-    `{#{@element}.insertBefore(#{e}, #{@element}.firstChild)};`
+    `#{@element}.insertBefore(#{e}, #{@element}.firstChild)`
     self
   end
   
@@ -422,10 +424,11 @@ class Element
   # @return [Element] returns the receiver
   def before(element)
     e = element.is_a?(String) ? fragment_from_string(element) : element.element
-    `var parent = #{@element}.parentNode;
-    if (parent) {
-      parent.insertBefore(#{e}, #{@element});
-    }`
+    parent = `#{@element}.parentNode`
+    `#{parent} && #{parent}.insertBefore(#{e}, #{@element})`
+    # if (parent) {
+      # parent.insertBefore(#{e}, #{@element});
+    # }`
     self
   end
   
@@ -483,10 +486,8 @@ class Element
   # @return [Element] returns the receiver
   def after(element)
      e = element.is_a?(String) ? fragment_from_string(element) : element.element
-    `var parent = #{@element}.parentNode;
-    if (parent) {
-      parent.insertBefore(#{e}, #{@element}.nextSibling);
-    }`
+    parent = `#{@element}.parentNode`
+    `#{parent} && #{parent}.insertBefore(#{e}, #{@element}.nextSibling)`
     self
   end
   
@@ -517,8 +518,8 @@ class Element
     `var e = #{@element};
     if (e.parentNode) {
       e.parentNode.removeChild(e);
-    }`
-    self
+    }
+    return #{self};`
   end
   
   alias_method :detach, :remove
@@ -551,8 +552,8 @@ class Element
       if (child.parentNode) {
         child.parentNode.removeChild(child);
       }
-    }`
-    self
+    }
+    return #{self};`
   end
   
   alias_method :empty, :clear
@@ -722,18 +723,16 @@ class Element
   # @return [Hash] :left/:top => Number
   # 
   def element_offset
-    left = 0
-    top = 0
-    
     `var element = #{@element};
+    #{left = 0};
+    #{top = 0};
     var parent = element;
     while (parent) {
       #{left} += parent.offsetLeft;
       #{top} += parent.offsetTop;
       parent = parent.offsetParent;
     }
-    `
-    Point.new left, top
+    return #{Point.new left, top};`
   end
   
   # All valid html tags. These are looped over so each element instance has

@@ -14,8 +14,8 @@ class Event
   # @param [Native] native_event
   # @return [Event] event
   def self.from_native(event)
-    result = allocate
-    `#{event} = #{event} || window.event;
+    `#{result = allocate};
+    #{event} = #{event} || window.event;
     
     var type = #{event}.type,
         target = #{event}.target || #{event}.srcElement,
@@ -40,9 +40,9 @@ class Event
     #{result}.__event__ = #{event};
     #{result}.__type__ = type;
     
-    #{result}.__target__ = target;`
+    #{result}.__target__ = target;
     
-    result
+    return #{result};`
   end
   
   # Returns the {Element} that initiated the receiver.
@@ -60,14 +60,14 @@ class Event
   # 
   # @return [Event] returns receiver
   def stop_propagation
-    @propagation_stopped = true
-    `var evt = #{self}.__event__;
+    `#{@propagation_stopped = true};
+    var evt = #{self}.__event__;
     if (evt.stopPropagation) {
       evt.stopPropagation();
     } else {
       evt.cancelBubble = true;
-    }`
-    self
+    }
+    return #{self};`
   end
   
   # Returns `true` if {#stop_propagation} was called on the receiver, `false`
@@ -82,7 +82,7 @@ class Event
   # 
   # @return [Boolean]
   def propagation_stopped?
-    @propagation_sopped ? true : false
+    @propagation_stopped ? true : false
   end 
   
   # Calling this method will prevent the default of the action being triggered.
@@ -102,14 +102,14 @@ class Event
   # 
   # @return [Event] returns the receiver
   def prevent_default
-    @default_prevented = true
-    `var evt = #{self}.__event__;
+    `#{@default_prevented = true};
+    var evt = #{self}.__event__;
     if (evt.preventDefault) {
       evt.preventDefault();
     } else {
       evt.returnValue = false;
-    }`
-    self
+    }
+    return #{self};`
   end
   
   # Returns `true` if {#prevent_default} was called on the receiver, `false`
@@ -155,12 +155,12 @@ class Event
   # 
   # @return [Symbol]
   def type
-    return @type if @type
-    `var match, type = #{self}.__event__.type;
+    `if (#{@type} !== #{nil}) return #{@type};
+    var match, type = #{self}.__event__.type;
     if (match = type.match(/^(mouse|key|touch)(.*)$/)) {
       type = match[1] + "_" + match[2];
-    }`
-    @type = `#{self}.Y(type)`
+    }
+    return #{@type = `#{self}.Y(type)`};`
   end
   
   # Allow event type to be overridden. This only sets the type for our

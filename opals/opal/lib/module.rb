@@ -42,8 +42,8 @@ class Module
     # we are defining a method, so always use opal_self to reclaim self
     # `#{implementation}.__fun__.opal_self = true;
     `var mid = #{method.to_s};
-    #{self}.dm(mid, #{implementation}, false);`
-    self
+    #{self}.dm(mid, #{implementation}, false);
+    return #{self};`
   end
   
   def alias_method(new_name, old_name)
@@ -56,14 +56,14 @@ class Module
     # `var body = function() {
       # return #{self}['$' + #{old_name}].apply(this, arguments);
     # };`
-  `#{self}.dm(#{new_name}, #{self}.allocator.prototype['$' + #{old_name}], false);`
+  `#{self}.dm(#{new_name}, #{self}.allocator.prototype['$' + #{old_name}], false)`
     self
   end
   
   def attr_accessor(*attributes)
     # puts "in attr_accessor"
-    `#{self}.$attr_reader.apply(#{self}, [#{self}, #{nil}].concat(#{attributes}));`
-     `#{self}.$attr_writer.apply(#{self}, [#{self}, #{nil}].concat(#{attributes}));`
+    `#{self}.$attr_reader.apply(#{self}, [#{self}, #{nil}].concat(#{attributes}))`
+     `#{self}.$attr_writer.apply(#{self}, [#{self}, #{nil}].concat(#{attributes}))`
     self
   end
   
@@ -79,12 +79,10 @@ class Module
     # console.log(arguments);
     # `
     attributes.each do |attribute|
-      `var mid = #{attribute.to_s};
-      //console.log("self is: " + self);
-      //console.log(self);
-      #{self}.dm(mid, function() {
+      mid = attribute.to_s
+      `#{self}.dm(mid, function() {
         return #{self}.ig('@' + mid);
-      }, false);`
+      }, false)`
     end
     
     self
@@ -92,11 +90,11 @@ class Module
   
   def attr_writer(*attributes)
     attributes.each do |attribute|
-      `var mid = #{attribute.to_s};
-      var mid2 = mid + "=";
-      #{self}.dm(mid2, function(val) {
-        return #{self}.is('@' + mid, val);
-      }, false);`
+      mid = attribute.to_s
+      mid2 = `#{mid} + "="`
+      `#{self}.dm(#{mid2}, function(val) {
+        return #{self}.is('@' + #{mid}, val);
+      }, false)`
     end
     
     self

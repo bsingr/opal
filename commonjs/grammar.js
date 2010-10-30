@@ -32,8 +32,8 @@ var Grammar = {
   ],
   
   OptRescue: [
-    ["",                                                                        ""],
-    ["RESCUE ExcList ExcVar Then CompStatements OptRescue",                     ""]
+    ["",                                                                        "$$ = [];"],
+    ["RESCUE ExcList ExcVar Then CompStatements OptRescue",                     "$$ = [['rescue', $2, $3, $5]].concat($6);"]
   ],
   
   ExcList: [
@@ -42,8 +42,8 @@ var Grammar = {
   ],
   
   ExcVar: [
-    ["",                                                                        ""],
-    ["=> IDENTIFIER",                                                           ""]
+    ["",                                                                        "$$ = null;"],
+    ["=> IDENTIFIER",                                                           "$$ = $2;"]
   ],
   
   OptElse: [
@@ -116,8 +116,8 @@ var Grammar = {
     ["UNLESS Expression Then CompStatements OptElse END",                       "$$ = ['unless', $2, $4, $5];"],
     ["WHILE Expression CompStatements END",                                     ""],
     ["BEGIN BodyStatements END",                                                "$$ = ['begin', $2];"],
-    ["CASE Expression OptTerms CaseBody END",                                   "$$ = ['case', $2];"],
-    ["CASE OptTerms CaseBody END",                                              "$$ = ['case', null];"],
+    ["CASE Expression OptTerms CaseBody END",                                   "$$ = ['case', $2, $4];"],
+    ["CASE OptTerms CaseBody END",                                              "$$ = ['case', null, $3];"],
     ["Class",                                                                   ""],
     ["Def",                                                                     ""],
     ["MethodCall",                                                              "$$ = $1;"],
@@ -408,12 +408,12 @@ var Grammar = {
   ],
   
   CaseBody: [
-    ["WHEN Args Then CompStatements Cases",                                     ""]
+    ["WHEN Args Then CompStatements Cases",                                     "$$ = [['when', $2, $4]].concat($5);"]
   ],
   
   Cases: [
-    ["OptElse",                                                                 ""],
-    ["CaseBody",                                                                ""]
+    ["OptElse",                                                                 "$$ = $1;"],
+    ["CaseBody",                                                                "$$ = $1;"]
   ],
   
   ParenArgs: [

@@ -31,10 +31,7 @@ class Exception
     @message
   end
   
-  def initialize(message)
-    `if (!#{message}) {
-      #{message} = #{nil};
-    }`
+  def initialize(message=nil)
     @message = message
   end
   
