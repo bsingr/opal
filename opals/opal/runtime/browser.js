@@ -1,63 +1,36 @@
-
-// All methods in here are just for the browser. This file will not be loaded
-// by the "server side" opal tool. A lot of methods defined here need to have
-// duplicate definitions for use by the server side tool.
-
-// =======================
-// = Opal loading system =
-// =======================
-
-// "Opals" are similar to gems in vanilla ruby. An opal is like a framework of
-// code and other resources.
-
-// Register an opal with the given specification, which is a json literal with
-// name, description, dependencies etc.
+// register a package. specification should be the equivalent of a package.json
+// 
+// Format
+// ======
+// 
+// Main format is simply json - like package.json
 // 
 // Example
 // =======
 // 
-// opal.register({
-//  name: "browser",
-//  version: "0.1.0",
-//  files: {
-//    "bin/browser", function() { ... bin imp ... },
-//    "lib/browser.rb": function() { ... browser.rb imp ... },
-//    "lib/browser/element.rb": function() { ... element.rb imp ... }
+//  {
+//    "name": "browser",
+//    "version": "0.1.0"
+// 
+//    // opal specific 
+//    "opal": {
+//      "files": [
+//        // [filename, [dependencies], code]
+//        ["element.rb", [], "function() { print('in element'); }"]
+//      ]
+//    }
 //  }
-// });
 // 
-// Notes
-// =====
-// 
-// We then add the lib/ path in browser to our load path, so require('browser')
-// will load lib/browser.rb, and require('browser/element') will load
-// lib/browser/element.rb
-// 
-// All opals are stores with their name as a prefix, so lib/browser.rb as above
-// will actually have a full path url of "/browser/lib/browser.rb"
-// 
-// Applications are initialized by calling their "bin" file, which by default is
-// named identically to their opal name, so to start our "sample_controls"
-// application, we initialize "/sample_controls/bin/sample_controls" which will
-// probably require "/sample_controls/lib/sample_controls.rb" which will itself
-// load cherry_kit etc etc. the main bin file most often than not will simply
-// call something like CKApplication.start()
-// 
-// Resources like css could be added here, as well as auto loading for them, so
-// when the main lib file is loaded, then they are automatically required.. 
-// might work.
-// 
-// require('browser') will first search all opals, so we can carry out potential
-// autoloading of css etc
-// 
-exports.register = function(specification) {
+exports.register = function(pkg) {
   // console.log("registering new opal: " + specification.name);
-  opal_list[specification.name] = specification;
+  opal_list[pkg.name] = pkg;
   
-  load_paths.push(specification.name + "/lib/");
+  load_paths.push(pkg.name + "/lib/");
   
-  for (var file_name in specification.files) {
-    file_list[specification.name + "/" + file_name] = specification.files[file_name];
+  if (pkg.opal) {
+    for (var file_name in pkg.opal.files) {
+      file_list[pkg.name + "/" + file_name] = pkg.opal.files[file_name];
+    }
   }
 };
 
@@ -198,8 +171,12 @@ var browser = exports.browser = (function() {
   return browser;
 })();
 
+var document_now_ready = false;
+
 // set callback for when opal/document is ready to go!
 exports.setDocumentReadyListener = function(callback) {
+  // if already loaded:
+  if (document_now_ready) return callback();
   // run it in the context of top self
   var on_ready = function() {
     // opal.entry_point(function() {
@@ -250,6 +227,10 @@ var run_script_tags = function() {
   }
 };
 
+exports.setDocumentReadyListener(function() {
+  document_now_ready = true;
+});
+
 exports.setDocumentReadyListener(run_script_tags);
 
 
@@ -278,33 +259,20 @@ exports.ruby_platform = "browser";
 
 
 
-// native xml http request
-exports.request = (function() {
-  try {
-    new XMLHttpRequest();
-    return function() {
-      return new XMLHttpRequest();
-    };
-  }
-  catch (e) {
-    try {
-      new ActiveXObject('MSXML2.XMLHTTP');
-      return function() {
-        return new ActiveXObject('MSXML2.XMLHTTP');
-      };
-    }
-    catch (e) {
-      try {
-        new ActiveXObject('Microsoft.XMLHTTP');
-        return function() {
-          return new ActiveXObject('Microsoft.XMLHTTP');
-        };
-      }
-      catch (e) {
-        return function() {
-          console.log("cannot create a native XMLHttpRequest");
-        }
-      }
-    }
-  }
-})();
+
+
+// ================
+// = Boot n' load =
+// ================
+
+exports.setDocumentReadyListener(function() {
+  var href_uri = new OpalURI(window.location.href);
+  console.log("href is  " + href_uri);
+  
+  var root_package_uri = new OpalURI(href_uri);
+
+  var root_package = new OpalPackage(href_uri);
+  console.log(root_package);
+  root_package.load();
+});
+

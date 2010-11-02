@@ -25,7 +25,7 @@ desc('Build an tmp/opal.js for use in web browser');
 task('opal', [], function() {
   var pre     = 'var Opal = {};\n(function(global, exports, print) {\n',
       post    = '\n})(window, Opal, function(){});\n',
-      runtime = ['opal.js', 'browser.js'],
+      runtime = ['opal.js', 'browser.js', 'package.js', 'uri.js', 'request.js'],
       corelib = ['kernel', 'module', 'array', 'basic_object', 'class', 'dir', 'error', 'boolean', 'file', 'hash', 'io', 'match_data', 'nil_class', 'number', 'opal', 'proc', 'range', 'regexp', 'ruby', 'string', 'symbol', 'top_self'],
       result  = [];
 
@@ -55,7 +55,7 @@ task('opal', [], function() {
   browser_globs = browser_globs.concat(Glob.globSync(Path.join(browser_path, '*.rb')));
   // console.log(browser_globs);
   
-  result.push('Opal.register({\n  name:"browser",\n  files: {\n');
+  result.push('Opal.register({\n  "name": "browser",\n "opal": {\n  "files": {\n');
   
   for (var i = 0; i < browser_globs.length; i++) {
     var b = browser_globs[i];
@@ -72,7 +72,7 @@ task('opal', [], function() {
     }
   }
   
-  result.push('}\n});');
+  result.push('}\n}\n});');
   result.push('\nOpal.run("browser", "browser");\n');
   
   // brower run
