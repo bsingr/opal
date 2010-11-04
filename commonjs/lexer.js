@@ -692,6 +692,9 @@ Lexer.prototype.next_token = function() {
         case 'yield':
           this.lex_state = EXPR_ARG;
           return ["YIELD", scanner.matched];
+        case 'require':
+          this.lex_state = EXPR_MID;
+          return ['REQUIRE', scanner.matched];
       }
       
       var matched = scanner.matched;

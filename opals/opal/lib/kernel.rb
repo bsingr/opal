@@ -124,10 +124,10 @@ module Kernel
   # 
   # @param [String] require_path
   # @return [Boolean] success
-  def require(require_path)
-    `#{self}.opal.require(#{require_path});
-    return #{true};`
-  end
+  # def require(require_path)
+  #   `#{self}.opal.require(#{require_path});
+  #   return #{true};`
+  # end
   
   # Simple equivalent to `Proc.new`. Returns a {Proc} instance.
   # 

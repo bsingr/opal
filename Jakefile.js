@@ -25,7 +25,7 @@ desc('Build an tmp/opal.js for use in web browser');
 task('opal', [], function() {
   var pre     = 'var Opal = {};\n(function(global, exports, print) {\n',
       post    = '\n})(window, Opal, function(){});\n',
-      runtime = ['opal.js', 'browser.js', 'package.js', 'uri.js', 'request.js'],
+      runtime = ['opal.js', 'browser.js', 'package.js', 'uri.js', 'request.js', 'json.js', 'async_resource.js'],
       corelib = ['kernel', 'module', 'array', 'basic_object', 'class', 'dir', 'error', 'boolean', 'file', 'hash', 'io', 'match_data', 'nil_class', 'number', 'opal', 'proc', 'range', 'regexp', 'ruby', 'string', 'symbol', 'top_self'],
       result  = [];
 
@@ -41,7 +41,7 @@ task('opal', [], function() {
   for (var i = 0; i < corelib.length; i++) {
     var p = FS.readFileSync(require('path').join(process.cwd(), 'opals', 'opal', 'lib', corelib[i] + '.rb'));
     console.log("##### Compiling " + corelib[i]);
-    var r = Opal.compile(p);
+    var r = Opal.compile(p)[0];
     result.push('(' + r + ')(exports.top_self);');
   }
   
@@ -55,7 +55,7 @@ task('opal', [], function() {
   browser_globs = browser_globs.concat(Glob.globSync(Path.join(browser_path, '*.rb')));
   // console.log(browser_globs);
   
-  result.push('Opal.register({\n  "name": "browser",\n "opal": {\n  "files": {\n');
+  result.push('Opal.register({\n  "name": "browser",\n "opal_files": [\n');
   
   for (var i = 0; i < browser_globs.length; i++) {
     var b = browser_globs[i];
@@ -63,17 +63,23 @@ task('opal', [], function() {
     if (i > 0) result.push(',\n');
     var name = (new RegExp('^' + browser_path + '(.*)$')).exec(b)[1];
     // console.log(name);
-    result.push('"lib' + name + '": ');
+    result.push('["lib' + name + '", ');
     if (name.substr(name.length - 2) == 'rb') {
-      result.push(Opal.compile(FS.readFileSync(b)));
+      var tmp_rb = Opal.compile(FS.readFileSync(b));
+      // dependencies
+      result.push('[], ');
+      // code
+      result.push(tmp_rb[0]);
+      result.push(']');
     }
     else {
+      result.push('[], ');
       result.push('function() {\n' + FS.readFileSync(b) + '\n}');
+      result.push(']');
     }
   }
   
-  result.push('}\n}\n});');
-  result.push('\nOpal.run("browser", "browser");\n');
+  result.push(']\n});');
   
   // brower run
   FS.writeFileSync(require('path').join(process.cwd(), 'tmp/opal.js'), result.join(''), 'utf8');

@@ -224,7 +224,8 @@ var Grammar = {
     ["BREAK ParenArgs",                                                         "$$ = ['break', $2];"],
     ["BREAK",                                                                   "$$ = ['break', null];"],
     ["YIELD ParenArgs",                                                         "$$ = ['yield', $2];"],
-    ["YIELD",                                                                   "$$ = ['yield', null];"]
+    ["YIELD",                                                                   "$$ = ['yield', null];"],
+    ["REQUIRE STRING_BEGIN STRING_CONTENT STRING_END",                          "$$ = ['require', $3];"]
   ],
   
   Operation: [

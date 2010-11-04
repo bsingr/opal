@@ -37,7 +37,8 @@ BaseIseq.prototype = {
   
   join: function() {
     var res = [];
-    res.push('function(self, __FILE__) {\n');
+    res.push('function(self, __FILE__, require) {\n');
+    // res.push('function(require, exports, module, self, __FILE__) {\n');
     
     // inner code
     this.join_variables(res);
@@ -246,6 +247,7 @@ RubyGenerator.prototype = {
   clear: function() {
     this.iseq_current = null;
     this.iseq_stack = [];
+    this._dependencies = [];
   },
   
   // push new iseq onto stack
@@ -268,7 +270,7 @@ RubyGenerator.prototype = {
   // main generate..
   generate_top_context: function() {
     this.clear();
-    return this.generate_top(this._tree);
+    return [this.generate_top(this._tree), this._dependencies];
   },
   
   generate: function(iseq, options) {
@@ -1167,6 +1169,11 @@ RubyGenerator.prototype = {
     this.generate(stmt[2], { full:true, last:o.last });
     this.write('}\n');
     this.iseq_current.queue_temp(tmp_error);
+  },
+  
+  generate_require: function(stmt) {
+    this._dependencies.push(stmt[1]);
+    return "require('" + stmt[1] + "')";
   }
 };
 
