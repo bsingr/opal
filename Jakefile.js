@@ -32,20 +32,40 @@ task('opal', [], function() {
   result.push(pre);
   
   // runtime sources
+  
+  
+  
   for (var i = 0; i < runtime.length; i++) {
     var p = require('path').join(process.cwd(), 'opals', 'opal', 'runtime', runtime[i]);
     result.push(FS.readFileSync(p, 'utf8'));
   }
+    
+  result.push(post);
   
-  // core ruby libs
-  for (var i = 0; i < corelib.length; i++) {
-    var p = FS.readFileSync(require('path').join(process.cwd(), 'opals', 'opal', 'lib', corelib[i] + '.rb'));
-    console.log("##### Compiling " + corelib[i]);
-    var r = Opal.compile(p)[0];
-    result.push('(' + r + ')(exports.top_self);');
+  // core lib
+  
+  var core_path = Path.join(process.cwd(), 'opals', 'opal', 'lib');
+  var core_globs = Glob.globSync(Path.join(core_path, '**/*.rb'));
+  core_globs = core_globs.concat(Glob.globSync(Path.join(core_path, '*.rb')));
+  
+  result.push('Opal.register({\n  "name": "opal",\n "modules": [\n');
+  
+  for (var i = 0; i < core_globs.length; i++) {
+    var name = (new RegExp('^' + core_path + '(.*)$')).exec(core_globs[i])[1];
+    console.log("##### Compiling " + core_globs[i]);
+    if (i > 0) result.push(',\n');
+    var r = Opal.compile(FS.readFileSync(core_globs[i]));
+    
+    result.push('["lib' + name + '", ');
+    // dependencies
+    result.push('[], ');
+    
+    result.push("'" + r[0].replace(/\'/g, "\\'").replace(/\n/g, "\\n") + "'");
+    result.push(']');
+    // result.push('(' + r + ')();');
   }
   
-  result.push(post);
+  result.push(']\n});');
   
   // browser opal
   var browser_path = Path.join(process.cwd(), 'opals', 'browser', 'lib');
@@ -55,7 +75,7 @@ task('opal', [], function() {
   browser_globs = browser_globs.concat(Glob.globSync(Path.join(browser_path, '*.rb')));
   // console.log(browser_globs);
   
-  result.push('Opal.register({\n  "name": "browser",\n "opal_files": [\n');
+  result.push('Opal.register({\n  "name": "browser",\n "modules": [\n');
   
   for (var i = 0; i < browser_globs.length; i++) {
     var b = browser_globs[i];
@@ -69,12 +89,12 @@ task('opal', [], function() {
       // dependencies
       result.push('[], ');
       // code
-      result.push(tmp_rb[0]);
+      result.push("'" + tmp_rb[0].replace(/\'/g, "\\'").replace(/\n/g, "\\n") + "'");
       result.push(']');
     }
     else {
       result.push('[], ');
-      result.push('function() {\n' + FS.readFileSync(b) + '\n}');
+      result.push("'function() {" + "}'");//(FS.readFileSync(b) + "").replace(/\'/g, "\\'").replace(/\n/g, "\\n") + "}'");
       result.push(']');
     }
   }

@@ -871,7 +871,7 @@ class_class.constructor.prototype.dm = class_object.constructor.prototype.dm;
 
 
 exports.Object = class_object;
-exports.top_self = new class_object.allocator();
+opal_top_self = exports.top_self = new class_object.allocator();
 
 // Override Object.include so that we can also include each module into our
 // Natives String, Array, Number etc.

@@ -37,7 +37,9 @@ BaseIseq.prototype = {
   
   join: function() {
     var res = [];
-    res.push('function(self, __FILE__, require) {\n');
+    res.push('function(require, exports, module) {\n');
+    res.push('var self = opal_top_self;\n');
+    // res.push('function(self, __FILE__, require) {\n');
     // res.push('function(require, exports, module, self, __FILE__) {\n');
     
     // inner code
@@ -366,6 +368,8 @@ RubyGenerator.prototype = {
     var res = [];
     // receiver
     if (stmt[1]) {
+      // res.push(this.generate(stmt[1]));
+      // res.push(this.mid_to_jsid(stmt[2]))
       var tmp_recv = this.iseq_current.temp_local();
       res.push('(' + tmp_recv + ' = ');
       res.push(this.generate(stmt[1]));

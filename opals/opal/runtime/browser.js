@@ -265,6 +265,20 @@ exports.setDocumentReadyListener(function() {
     // 2. Run all script tags of type ruby
     if (ruby_tags.length > 0) {
       console.log("need to run script tags");
+      for (var i = 0; i < ruby_tags.length; i++) {
+        var tag = ruby_tags[i];
+        if (tag.src) {
+          var resource = new OpalAsyncFile(OpalURI.parse(tag.src));
+          resource.add_event_listener('load', function() {
+            console.log("complete!");
+            opal_require_uri(tag.src);
+          })
+          resource.resolve();
+        }
+        else {
+          console.log("need to execute script tag inner source");
+        }
+      }
     }
     // 3. Must look for our package.json and load from there
     else {
@@ -273,9 +287,9 @@ exports.setDocumentReadyListener(function() {
   }
 });
 
-// uri => files preloaded (in packages). the file (value) will be a string
-// representation of the actual file (ready to be evald())
-OPAL_FILES = {};
+
+// load paths added here. each package registers its lib/ folder as a load path
+OPAL_LOAD_PATHS = [];
 
 // Get an array of all script tags that are of type text/ruby
 var ruby_script_tags = function() {
@@ -292,15 +306,85 @@ var ruby_script_tags = function() {
 // initialize opal - basically load core library, then browser (if exists)
 var opal_init = function() {
   console.log("init opal..");
-  // opal_require('opal');
+  opal_require('opal');
   opal_require('browser');
 };
 
 // require the given path with no context. Here we can load any file with no
 // assumed context. Used to load 'browser' for example (as well as core opal)
-var opal_require = function(path) {
+var opal_require = function(orig_path) {
+  console.log("need to require " + orig_path);
   
+  var path = orig_path;
+  // basically loop through each of the load paths looking for a match
+  if ((path.substr(path.length - 3) != '.rb') && (path.substr(path.length -3) != '.js')) {
+    // console.log("need to add .rb");
+    path += '.rb'
+  }
+  
+  for (var i = 0; i < OPAL_LOAD_PATHS.length; i++) {
+    var try_path = OPAL_LOAD_PATHS[i] + path;
+    // console.log("trying: " + try_path);
+    if (OPAL_FACTORIES[try_path]) {
+      // console.log("we found: " + try_path);
+      return opal_require_uri(try_path);
+    }
+  }
+  
+  // console.log("actual try path.." + path);
+  
+  throw "cannot find require: " + orig_path;
 };
+
+// require the file at the full uri path, path. (we know it exists)
+var opal_require_uri = function(uri) {
+  var module = OPAL_MODULES[uri];
+  // if we have already made module, simply return it..
+  if (module) {
+    return module;
+  }
+  // if we dont have a facotry, error.
+  if (!OPAL_FACTORIES[uri]) {
+    throw new Error("LoadError: cannot find uri '" + uri + "'");
+  }
+  // get actual factory
+  var factory = OPAL_FACTORIES[uri];
+  // exports will be the exports for our factory..
+  var exports = OPAL_MODULES[uri] = {};
+  // module contains our exports and id
+  var module = {
+    "exports": exports,
+    "id": uri
+  };
+  // require. need to make closure
+  var require = function(path) {
+    // console.log("need to require " + path + " from " + uri);
+    // relative uris..
+    return opal_require(path);
+  };
+  
+  // save our module
+  OPAL_MODULES[uri] = exports;
+  
+  // console.log("now need to execute : " + uri);
+  // console.log(factory);
+  // we actually return the function that is our implementation
+  var func = new Function('return ' + factory + ';')();
+  func.apply(window, [require, exports, module]);
+  // console.log(code);
+  
+  // finally return our exports object (only js uses this)
+  return exports;
+};
+
+// fully qualified uris => string of implementation (eval as needed). we store
+// files etc in here as they are eval'd or registered
+OPAL_FACTORIES = {};
+
+// we store all modules in here. modules are only created as they are required().
+// if we require a module, we first look in here. if it exists, we dont need to
+// reeval it, we just return it.
+OPAL_MODULES = {};
 
 // register a package. specification should be the equivalent of a package.json
 // 

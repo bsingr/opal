@@ -83,13 +83,16 @@ OpalPackage.prototype.process_package = function() {
   OpalPackage.all_names[json.name] = this;
   
   // do we have files built in
-  if (json.opal_files) {
-    for (var i = 0; i < json.opal_files.length; i++) {
-      var file = json.opal_files[i];
+  if (json.modules) {
+    for (var i = 0; i < json.modules.length; i++) {
+      var file = json.modules[i];
       var file_uri = this._uri.merge(file[0]).to_s();
-      OPAL_FILES[file_uri] = file[2];
+      OPAL_FACTORIES[file_uri] = file[2];
     }
   }
+  
+  // load path registering
+  OPAL_LOAD_PATHS.push(this._uri.merge('lib/').to_s());
 };
 
 // we have our json, so load package_name.rb from our lib directory
