@@ -102,6 +102,7 @@ task('opal', [], function() {
   result.push(']\n});');
   
   // brower run
+
   FS.writeFileSync(require('path').join(process.cwd(), 'tmp/opal.js'), result.join(''), 'utf8');
 });
 
@@ -126,4 +127,3 @@ task("dev", [], function() {
 
 desc("Build both opal and opal dev ready for browser");
 task("browser", ["dev", "opal"], function() { });
-

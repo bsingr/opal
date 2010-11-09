@@ -138,7 +138,11 @@ var OpalAsyncResource = function(uri) {
   this._uri = uri;
   this._event_listeners = {};
   this._loading = false;
-
+  // all dependencies
+  this._dependencies = [];
+  // active (yet to complete) dependencies
+  this._active_dependencies = [];
+  
   return this;
 };
 
@@ -149,14 +153,16 @@ OpalAsyncResource.prototype.resolve = function() {
   
   var on_success = function(request) {
     // self._file_content = request.responseText();
-    
+    self._loaded = true;
     self.handle_content(request.responseText());
     self.dispatch_event('load');
-    console.log("on success!");
+    console.log("on success! for " + self._uri);
+    self.check_complete_status();
   };
   
   var on_failure = function(request) {
-    throw "on failure :(";
+    // throw "on failure :(";
+    throw "Could not find resource " + self._uri;
   };
   
   new OpalRequest.file(this._uri, on_success, on_failure);
@@ -189,11 +195,27 @@ OpalAsyncResource.prototype.handle_content = function(content) {
   console.log(content);
 };
 
+// check to see if we have completed ourself AND all of our dependencies
+OpalAsyncResource.prototype.check_complete_status = function() {
+  console.log("checking complete status for " + this._uri);
+  console.log("dependencies: " + this._dependencies.length);
+  if (this._loaded && this._active_dependencies.length == 0) {
+    console.log("IT IS LOADED!");
+    this.dispatch_event('complete');
+  }
+};
+
 OpalAsyncResource.prototype.add_file_dependency = function(uri) {
   var file = new OpalAsyncFile(uri);
   
+  this._dependencies.push(file);
+  this._active_dependencies.push(file);
+  
+  var self = this;
   file.add_event_listener('complete', function() {
-    console.log("file is complete!");
+    console.log("file is complete! " + file._uri);
+    self._active_dependencies.splice(self._active_dependencies.indexOf(file),1);
+    self.check_complete_status();
   });
   
   file.add_event_listener('error', function() {
@@ -274,12 +296,17 @@ OpalAsyncFile.prototype.handle_content = function(content) {
       console.log(uri_for_require_path(dependencies[i], this._uri));
       this.add_file_dependency(uri_for_require_path(dependencies[i], this._uri));
     }
+    
+    // need to register our self as a factory
+    OPAL_FACTORIES[this._uri.to_s()] = parsed[0];
   }
-  else
+  else {
     console.log("regular js code:" + content);
   // console.log("File content:");
   // console.log(content);
   // console.log("extension " + this._uri.extension());
+  }
+  
 };
 
 var uri_for_require_path = function(path, current) {

@@ -22,7 +22,7 @@ module Kernel
   end
   
   def method_missing(sym, *args)
-     `(function(){throw"MethodMissing: " + #{self} + " does not respond to " + #{sym};}).call(this);`
+     `(function(){throw"MethodMissing: " + #{self.to_s} + " does not respond to " + #{sym.to_s};}).call(this);`
   end
   
   # Repeatedly executes the block.

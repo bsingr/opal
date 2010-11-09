@@ -452,6 +452,30 @@ RubyGenerator.prototype = {
         this.iseq_current.push_arg(args[0][i]);
       }
     }
+    
+    // opt arg
+    if (stmt[0] && stmt[0][1]) {
+    for (var i = 0; i < stmt[0][1].length; i++) {
+      // console.log(stmt[3][1][i]);
+      var gen_opt_iseq = this.generate(stmt[0][1][i][1]);
+      this.iseq_current.push_opt_arg(stmt[0][1][i][0], gen_opt_iseq);
+    }
+  }
+    
+    // rest arg
+    if (stmt[0] && stmt[0][2]) {
+    if (stmt[0][2]) {
+      this.iseq_current.push_rest_arg(stmt[0][2]);
+    }
+  }
+    
+    // block arg
+    if (stmt[0] && stmt[0][3]) {
+    if (stmt[0][3]) {
+      // console.log("Block arf: " + stmt[3][3]);
+      this.iseq_current.push_block_arg(stmt[0][3]);
+    }
+  }
     // var args = stmt[3];
     
     // var stmts = stmt[1];
@@ -596,20 +620,27 @@ RubyGenerator.prototype = {
     res.push(this.generate(stmt[1]));
     res.push(', true) ? ');
     
-    var when_tmp, when_part;
+    var when_tmp, when_part, when_part_tmp;
     for (var i = 0; i < stmt[2].length; i++) {
       when_part = stmt[2][i];
       if (when_part[0] == 'when') {
         ternary_count++;
         res.push('((');
         when_tmp = this.iseq_current.temp_local();
-        res.push(when_tmp + ' = ' +  this.generate(when_part[1][0]));
+        when_part_tmp = this.iseq_current.temp_local();
+        res.push(when_part_tmp + ' = ' + this.generate(when_part[1][0]));
+        res.push(', '+when_tmp+' = ' + when_part_tmp + this.mid_to_jsid('==='));
+        res.push('(' + when_part_tmp + ', ' + this.NIL + ', ');
+        res.push(tmp_case + ')');
+        // res.push(when_tmp + ' = ' +  );
+        // res.push(this.mid_to_jsid('===') + '')
         res.push(', ' + when_tmp + ' !== ' + this.NIL + ' && ');
         res.push(when_tmp + ' !== false) ? ');
         res.push(this.generate_compstmt(when_part[2][1], ','));
         // res.push('("")');
         res.push(' : ');
         this.iseq_current.queue_temp(when_tmp);
+        this.iseq_current.queue_temp(when_part_tmp);
         // ') ? ("") : ');
       }
       else {
@@ -1059,6 +1090,9 @@ RubyGenerator.prototype = {
       res.push('return ' + this.generate_compstmt(rescue[3][1]) + ';');
       res.push('}');
     }
+    
+    // worst case, rethrow (if nothing else catches it)
+    res.push('throw __err__;');
     // console.log(stmt[1][2]);
     // res.push(this.generate(stmt[1][2]));
     // console.log(re)

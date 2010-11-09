@@ -259,6 +259,7 @@ exports.setDocumentReadyListener(function() {
   // 1. run prebuilt code (was Opal.run() called).
   if (OPAL_PACKAGE_TO_RUN) {
     console.log("we need to run: " + OPAL_PACKAGE_TO_RUN);
+    opal_require(OPAL_PACKAGE_TO_RUN);
   }
   else {
     var ruby_tags = ruby_script_tags();
@@ -277,19 +278,46 @@ exports.setDocumentReadyListener(function() {
         }
         else {
           console.log("need to execute script tag inner source");
+          console.log(tag.innerHTML);
+          var res = exports.compile(tag.innerHTML);
+          console.log(res);
+          (new Function('return ' + res[0] + ';')())();
         }
       }
     }
     // 3. Must look for our package.json and load from there
     else {
       console.log("looking for package.json");
+      var href_uri = window.location.href;
+      var page_uri = OpalURI.parse(href_uri);
+      console.log("page_uri: ");
+      console.log(page_uri);
+        
+      var root_package_uri = page_uri.merge('.');
+      console.log("root_package_uri: ");
+      console.log(root_package_uri);
+      var resource = new OpalAsyncPackage(root_package_uri);
+      
+      resource.add_event_listener('complete', function() {
+        // if we get here, we know we can run (load root_package)
+        console.log("COMPLETE!!!!!!!!!!!!!!!!!!!");
+        opal_require('simple');
+      });
+      
+      resource.add_event_listener('error', function() {
+        // we couldnt find something..
+        console.log("ERRRORRORORORORR  :(")
+      });
+      
+      resource.resolve();
     }
   }
 });
 
 
-// load paths added here. each package registers its lib/ folder as a load path
-OPAL_LOAD_PATHS = [];
+// load paths added here. each package registers its lib/ folder as a load path.
+// default empty string load path is so that full uris can just be loaded.
+OPAL_LOAD_PATHS = [""];
 
 // Get an array of all script tags that are of type text/ruby
 var ruby_script_tags = function() {
@@ -313,7 +341,7 @@ var opal_init = function() {
 // require the given path with no context. Here we can load any file with no
 // assumed context. Used to load 'browser' for example (as well as core opal)
 var opal_require = function(orig_path) {
-  console.log("need to require " + orig_path);
+  // console.log("need to require " + orig_path);
   
   var path = orig_path;
   // basically loop through each of the load paths looking for a match
@@ -359,7 +387,13 @@ var opal_require_uri = function(uri) {
   // require. need to make closure
   var require = function(path) {
     // console.log("need to require " + path + " from " + uri);
-    // relative uris..
+    // relative uris..?
+    if (path.charAt(0) == '.') {
+      path = OpalURI.parse(uri).merge(path).to_s();
+      // console.log(relative_uri.to_s());
+      // throw "cannot yet require relative path: " + path;
+    }
+    
     return opal_require(path);
   };
   

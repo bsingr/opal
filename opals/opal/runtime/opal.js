@@ -444,7 +444,7 @@ __boot_base_class.prototype.m$ = function(sel) {
   var self = this;
   return function() {
     // [block, sel, args..]
-    var args = [arguments[0], sel].concat(Array.prototype.slice.call(arguments, 1));
+    var args = [self, arguments[0], sel].concat(Array.prototype.slice.call(arguments, 1));
     // throw "method_missing: " + args.join(", ");
     return self.$method_missing.apply(self, args);
   };
