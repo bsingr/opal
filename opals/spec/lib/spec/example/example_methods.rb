@@ -60,7 +60,7 @@ module Spec
         begin
           before_each_example
           # instance_eval &@implementation
-          instance_eval &@implementation
+          instance_eval(&@implementation)
         rescue Exception => e
           # puts "ExampleMethods#execute rescuing"
           execution_error = e

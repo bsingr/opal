@@ -30,9 +30,9 @@ require 'spec/expectations/errors'
 
 module Kernel
   
-  def should(matcher, message, &block)
-    `if (!#{matcher}) {#{matcher} = #{nil};}`
-    `if (!#{message}) {#{message} = #{nil};}`
+  def should(matcher = nil, message = nil, &block)
+    # `if (!#{matcher}) {#{matcher} = #{nil};}`
+    # `if (!#{message}) {#{message} = #{nil};}`
     r = Spec::Expectations::PositiveExpectationHandler.handle_matcher self, 
                                                                   matcher, 
                                                                   message

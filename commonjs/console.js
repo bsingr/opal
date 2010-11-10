@@ -19,7 +19,16 @@ repl.on('close', function() {
 });
 
 repl.on('line', function(b) {
-  console.log('=> ' + b.toString());
+  try {
+  // console.log('=> ' + b.toString());
+  // console.log((Opal.compile_main(b.toString())[0]));
+  var result_obj = (new Function(Opal.compile_main(b.toString())[0]))();
+  var inspect_obj = result_obj.$inspect(result_obj);
+  console.log(inspect_obj);
+  }
+  catch (e) {
+    console.log(e.toString());
+  }
   repl.prompt();
 });
 

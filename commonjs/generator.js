@@ -26,6 +26,8 @@ BaseIseq.prototype = {
     this.temp_queue = [];
     
     this.ensure_ivars = [];
+    
+    this._ensure_return = false;
   },
   
   SELF: 'self',
@@ -74,6 +76,26 @@ BaseIseq.prototype = {
       this.ensure_ivars.push(name);
   },
   
+  // this iseq has a return, so if we are a block find our parent def, or if we
+  // are a def, we need to makr our selves to handle return (which is a throw)
+  ensure_return: function() {
+    var iseq = this;
+    
+    while (iseq && iseq instanceof BlockIseq) {
+      iseq = iseq.parent_iseq();
+    }
+    
+    if (iseq instanceof DefIseq) {
+      // console.log("found ensure iseq def");
+      iseq._ensure_return = true;
+      // make sure we handle errors
+      iseq._handle_errors = true;
+    }
+    else {
+      // error? or just leave generated code to find it..
+    }
+  },
+  
   // write: function(str) {
     // this.code.push(str);
   // },
@@ -99,6 +121,10 @@ BaseIseq.prototype = {
     else if (this.args.indexOf(str) !== -1) {
       return str;
     }
+    else if (this.parent_iseq && this instanceof BlockIseq) {
+      // console.log("looking up: "  + str);
+      return this.parent_iseq.lookup_local(str);
+    }
     return null;
   },
   
@@ -106,6 +132,31 @@ BaseIseq.prototype = {
     this.locals.push(str);
     return str;
   }
+};
+
+
+var MainIseq = (function() {
+  var ctor = function() {};
+  ctor.prototype = BaseIseq.prototype;
+  var result = function() { this.initialize(); return this; };
+  result.prototype = new ctor();
+  return result;
+})();
+
+MainIseq.prototype.join = function() {
+  var res = [];
+  res.push('var self = opal_top_self;\n');
+  // res.push('function(self, __FILE__, require) {\n');
+  // res.push('function(require, exports, module, self, __FILE__) {\n');
+  
+  // inner code
+  this.join_variables(res);
+  res.push('return ');
+  this.join_inner(res);
+  res.push(';');
+  // end inner code
+
+  return res.join('');
 };
 
 var TempIseq = (function() {
@@ -255,6 +306,8 @@ RubyGenerator.prototype = {
   // push new iseq onto stack
   push_iseq: function(klass) {
     var iseq = new klass();
+    var cur = this.iseq_current;
+    if (cur) iseq.parent_iseq = cur;
     this.iseq_stack.push(iseq);
     this.iseq_current = iseq;
     return iseq;
@@ -273,6 +326,11 @@ RubyGenerator.prototype = {
   generate_top_context: function() {
     this.clear();
     return [this.generate_top(this._tree), this._dependencies];
+  },
+  
+  generate_main_context: function() {
+    this.clear();
+    return [this.generate_main(this._tree), this._dependencies];
   },
   
   generate: function(iseq, options) {
@@ -309,7 +367,9 @@ RubyGenerator.prototype = {
 
   // Generate some main statement - usually in a REPL scenario
   generate_main: function(stmt, options) {
-    
+    this.push_iseq(MainIseq);
+    this.iseq_current.push_code(this.generate_compstmt(stmt[1], ';'));
+    return this.pop_iseq();
   },
   
   generate_numeric: function(stmt) {
@@ -396,9 +456,18 @@ RubyGenerator.prototype = {
       res.push(', ' + tmp_block + '.__self__ = ' + this.SELF + ', ' + tmp_block + ')');
       this.iseq_current.queue_temp(tmp_block);
     }
+    // check for &block syntax (proc to block or symbol to block)
+    else if (stmt[3][3]) {
+      // console.log("found stmt 3, 3")
+      // console.log(stmt[3][3]);
+      res.push(this.generate(stmt[3][3]));
+    }
     else {
       res.push(this.NIL);
     }    
+    
+    // console.log("ARGS are:");
+    // console.log(stmt[3]);
     
     
     var arg, args = stmt[3][0];
@@ -538,12 +607,20 @@ RubyGenerator.prototype = {
       res.push(')');
       return res.join("");
     }
+    // a.b = c
     else if (type == 'call') {
-      res.push(this.generate(stmt[1][1]));
+      var tmp_assign = this.iseq_current.temp_local();
+      res.push('((' + tmp_assign + ' = ' + this.generate(stmt[1][1]));
+      res.push(')')
       res.push(this.mid_to_jsid(stmt[1][2] + '='));
-      res.push('(');
+      res.push(' || ' + tmp_assign + '.m$("' + stmt[1][2] + '=' + '"');
+      res.push('))(');
+      // recv
+      res.push(tmp_assign + ', ' + this.NIL + ', ');
+      // block
       res.push(this.generate(stmt[2]));
       res.push(')');
+      this.iseq_current.queue_temp(tmp_assign);
       return res.join("");
     }
     else if (type == 'aref'){
@@ -801,10 +878,17 @@ RubyGenerator.prototype = {
   // [arefs, aset]
   generate_aset: function(aref, arg) {
     var res = [];
+    var tmp_mm = this.iseq_current.temp_local();
     // console.log(aref);
+    res.push('(' + tmp_mm + ' = ')
     res.push(this.generate(aref[1]));
+    res.push(', ('+ tmp_mm);
     res.push(this.mid_to_jsid('[]='));
+    res.push(' || ' + tmp_mm + '.m$(');
+    res.push('"[]="))');
     res.push('(');
+    res.push(tmp_mm);
+    res.push(',');
     res.push(this.NIL);
     if (aref[2]) {
       for (var i = 0; i < aref[2].length; i++) {
@@ -815,7 +899,8 @@ RubyGenerator.prototype = {
     }
     res.push(', ');
     res.push(this.generate(arg));
-    res.push(')');
+    res.push('))');
+    this.iseq_current.queue_temp(tmp_mm);
     return res.join("");
   },
   
@@ -894,7 +979,30 @@ RubyGenerator.prototype = {
     // for (var i = 0; i < stmt[1].length; i++) {
       // this.generate(stmt[1][i], { full: true, last:(stmt[1].length - 1 == i) });
     // }
-    this.iseq_current.push_code(this.generate_bodystmt(stmt[4]));
+    var def_code = this.generate_bodystmt(stmt[4]);
+    
+    // if we need to potentially catch returns etc, do it here.
+    if (this.iseq_current._handle_errors) {
+      var code = ['try {\n'];
+      code.push(def_code);
+      code.push('} catch(__err__) {\n');
+      // code.push("console.log('caught..' + __err__);");
+      
+      // try our ensure return
+      if (this.iseq_current._ensure_return) {
+        code.push('if (__err__.__keyword__ == "return") {\n');
+        // code.push("console.log('ENSURE RETURN');");
+        code.push("return __err__.opal_value;")
+        code.push("\n}");
+      }
+      
+      // worst case, just rethrown
+      code.push("throw __err__;");
+      code.push("}");
+      def_code = code.join("");
+      // console.log("need to handle errors " + stmt[2]);
+    }
+    this.iseq_current.push_code(def_code);
     
     var result = this.pop_iseq();
     
@@ -925,8 +1033,8 @@ RubyGenerator.prototype = {
     
     res.push('.dc(');
     // superclass
-    if (false) {
-      
+    if (stmt[2]) {
+      res.push(this.generate(stmt[2]));
     }
     else {
       res.push(this.NIL);
@@ -1112,6 +1220,7 @@ RubyGenerator.prototype = {
   
   generate_return: function(stmt) {
     var res = [];
+    this.iseq_current.ensure_return();
     // for now assume not in block
     res.push(this.SELF + '.rbReturn(');
     if (stmt[1]) {

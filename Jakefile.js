@@ -12,14 +12,22 @@ task('parser', [], function() {
   FS.writeFile('commonjs/ruby_parser.js', gen);
 });
 
-desc("Compile");
-task('compile', [], function() {
+desc("Full Parser");
+task('full_parser', [], function() {
+  require('jison');
+  var parser = require('./commonjs/full_ruby.jison').Parser;
+  var gen = parser.generate();
+  FS.writeFile('commonjs/ruby_parser.js', gen);
+});
+
+task('full_parser_test', [], function() {
   var compile = require('./commonjs/opal').compile;
   var source = FS.readFileSync(require('path').join(process.cwd(), 'tmp/ruby.rb'), "utf8");
   // compile("class Adam; 34; end; ::Adam == 100; Adam::Beynon; Adam::Beynon = 10");
   var res = compile(source);
   console.log(res);
 });
+
 
 desc('Build an tmp/opal.js for use in web browser');
 task('opal', [], function() {

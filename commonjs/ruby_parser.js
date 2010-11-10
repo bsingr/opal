@@ -269,9 +269,9 @@ case 129:this.$ = ['constant', $$[$0-1+1-1]];
 break;
 case 130:
 break;
-case 131:
+case 131:this.$ = null;
 break;
-case 132:
+case 132:this.$ = $$[$0-3+2-1];
 break;
 case 133:this.$ = ['def', null, $$[$0-5+2-1], $$[$0-5+3-1], $$[$0-5+4-1]];
 break;
@@ -479,7 +479,7 @@ case 234:this.$ = [[]];
 break;
 case 235:this.$ = $$[$0-1+1-1];
 break;
-case 236:this.$ = [$$[$0-2+1-1], null, null, $$[$0-2+5-1]];
+case 236:this.$ = [$$[$0-2+1-1], null, null, $$[$0-2+2-1]];
 break;
 case 237:this.$ = [$$[$0-5+1-1], $$[$0-5+4-1], null, $$[$0-5+5-1]];
 break;

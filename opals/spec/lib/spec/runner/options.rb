@@ -30,9 +30,19 @@ module Spec
     
     class Options
       
-      attr_accessor :reporter
+      # attr_accessor :reporter
+      def reporter
+        @reporter
+      end
       
-      attr_reader :example_groups
+      def reporter=(reporter)
+        @reporter = reporter
+      end
+      
+      # attr_reader :example_groups
+      def example_groups
+        @example_groups
+      end
       
       def initialize
         @example_groups = []

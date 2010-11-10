@@ -101,17 +101,19 @@ class Module
   end
   
   def const_set(id, value)
-    `return #{self}.const_set(#{id}, #{value});`
+    `return #{self}.cs(#{id}, #{value});`
   end
   
   def module_eval(&block)
-    # puts "about to module eval"
+    puts "about to module eval"
     # `console.log(#{self});`
     if block_given?
-      # puts "block was given.."
+      puts "block was given.."
       # `console.log(#{self});`
       # `#{block}.__fun__.opal_self = true;`
-      `#{block}.apply(#{self})`
+      # `#{block}.apply(#{self})`
+      `#{block}(#{self}, #{nil})`
+      # `#{}`
     end
   end
   

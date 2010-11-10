@@ -31,6 +31,8 @@ module Spec
     module Main
       
       def describe(name, &block)
+        puts "describing with:"
+        puts block.inspect
         Spec::Example::ExampleGroupFactory.create_example_group name, &block
       end
       

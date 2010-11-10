@@ -92,7 +92,7 @@ global.vnH = function() {
   return res;
 };
 
-global.opalhash = vnH;
+global.opalhash = global.vnH;
 
 // Regexp
 global.vnR = function(reg) {
@@ -361,7 +361,7 @@ __boot_base_class.prototype.cg = function(id) {
   // need to go up through hierarchy
   var search = base.opal_parent, res;
   while (search) {
-    res = search.const_get(id);
+    res = search.cg(id);
     if (res) {
       return res;
     }
@@ -578,10 +578,10 @@ __boot_base_class.prototype.rbNext = function(value) {
 __boot_base_class.prototype.rbReturn = function(value) {
   throw  {
     toString: function() {
-      return "uncaught rbReturn";
+      return "uncaught rbReturn: " + this.opal_value;
     },
     __keyword__: 'return',
-    opal_value: value || this.n
+    opal_value: value || this.nil
   };
 };
 
@@ -698,6 +698,8 @@ var define_class_under = function(base, id, super_class) {
   // parent relationship
   res.constructor.prototype.opal_parent = base;
   base.cs(id, res);
+
+  
   return res;
 };
 
@@ -735,6 +737,7 @@ var __subclass = exports.__subclass = function(id, super_class) {
   cls.prototype.method_table = {};
   cls.prototype.constructor = cls;
   cls.prototype.class_name = id;
+  cls.prototype.class_path = id;
   cls.prototype.super_class = super_class;
   cls.prototype.info = T_OBJECT;
   
@@ -746,6 +749,7 @@ var __subclass = exports.__subclass = function(id, super_class) {
   meta.prototype.method_table = {};
   meta.prototype.allocator = cls;
   meta.prototype.class_name = id;
+  meta.prototype.class_path = id;
   meta.prototype.super_class = super_class;
   meta.prototype.info = T_CLASS;
   meta.prototype.constructor = meta;
@@ -786,6 +790,7 @@ var __boot_defclass = function(id, super_class) {
   cls.prototype.method_table = {};
   cls.prototype.constructor = cls;
   cls.prototype.class_name = id;
+  cls.prototype.class_path = id;
   cls.prototype.super_class = super_class;
   cls.prototype.info = T_OBJECT;
   return cls;
@@ -804,6 +809,7 @@ var __boot_makemeta = function(klass, super_class) {
   meta.prototype.allocator = klass;
   meta.prototype.constructor = meta;
   meta.prototype.class_name = klass.prototype.class_name;
+  meta.prototype.class_path = klass.prototype.class_path;
   meta.prototype.super_class = super_class;
   meta.prototype.info = T_CLASS;
   
@@ -1039,3 +1045,16 @@ class_object.include(module_kernel);
 
 // argh, another fix needed:
 class_proc.allocator.prototype.nil = opalnil;
+
+
+
+
+// ==================
+// = Exceptions etc =
+// ==================
+
+rb_raise = function(exception) {
+  var msg = exception.i$message || "";
+  
+  throw exception + ": " + msg;
+};

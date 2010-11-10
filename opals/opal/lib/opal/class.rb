@@ -39,12 +39,15 @@ class Class
   end
   
   def self.new(super_class)
-    `return opal.__subclass("", #{super_class});`
+    `return #{self}.opal.__subclass("", #{super_class});`
   end
   
   def new
     obj = allocate
+    # recv
     `arguments[0] = #{obj}`
+    # block
+    `arguments[1] = #{nil}`
     `#{obj}.$initialize.apply(#{obj}, arguments)`
     obj
   end

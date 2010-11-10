@@ -24,7 +24,7 @@
 # THE SOFTWARE.
 #
 
-module Opal
+module Vienna
   
   # Env is an opal environment. An instance of the ruby "virtual machine" that
   # holds the context for running ruby (through javascript). An ENV loads the
@@ -37,7 +37,7 @@ module Opal
     # Path to system opals
     OPALS_PATH = File.join Vienna::PATH, 'opals'
     
-    def initialize(args)
+    def initialize(*args)
       
       begin
         require 'rubygems'

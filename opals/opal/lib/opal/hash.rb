@@ -228,7 +228,8 @@ class Hash
     for (var i = 0; i < #{self}.__keys__.length; i++) {
       key = #{self}.__keys__[i];
       value = #{self}.__assocs__[key.hash()];
-      #{block}.apply(#{block}.__self__, [key, value]);
+      //#{block}.apply(#{block}.__self__, [key, value]);
+      #{yield `key`, `value`};
     }
     return #{self};`
   end
@@ -423,20 +424,24 @@ class Hash
   # 
   # @return [String]
   def inspect
-    `var result = ['{'], key, value;
-    for (var i = 0; i < #{self}.__keys__.length; i++) {
-      key = #{self}.__keys__[i];
-      value = #{self}.__assocs__[key.hash()];
-      if (i > 0) result.push(', ');
-      result.push(key.$inspect());
-      result.push('=>');
-      result.push(value.$inspect());
-    }
-    result.push('}');
-    return result.join('');`
+    description = []
+    self.each do |key, value|
+      description << "#{key.inspect} => #{value.inspect}"
+    end
+    "{#{description.join ", "}}"
   end
   
-  alias_method :to_s, :inspect
+  # Returns a string representation of the hash's keys and values
+  # 
+  # @return [String]
+  def to_s
+    description = []
+    self.each do |key, value|
+      description << key.to_s
+      description << value.to_s
+    end
+    description.join ""
+  end
   
   # Returns a new hash created by using `self`'s values as keys, and the keys as
   # values.

@@ -25,7 +25,7 @@
 #
 
 # Opal is the ruby runtime available from the command line. 
-module Opal
+module Vienna
   
   # main entry point into Opal. If no args, files, etc, then simply just run the
   # REPL? for now, always run the repl
@@ -37,11 +37,11 @@ module Opal
     when 'repl', 'console'
       # puts "need to start REPL session"
       ARGV.clear
-      Opal::Environment.new(ARGV).repl!
+      Vienna::Environment.new(ARGV).repl!
     when 'spec'
       puts "sytarting specs.."
       ARGV.clear
-      Opal::Environment.new(ARGV).spec!
+      Vienna::Environment.new(ARGV).spec!
     when 'build'
       ARGV.shift
       # when building, if we have an Opalfile, build using a project, otherwise

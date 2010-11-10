@@ -17,12 +17,13 @@ module Kernel
     false
   end
   
+  # @fixme: this should not be here.
   def !=(other)
     `return #{self == other}.r ? #{false} : #{true};`
   end
   
   def method_missing(sym, *args)
-     `(function(){throw"MethodMissing: " + #{self.to_s} + " does not respond to " + #{sym.to_s};}).call(this);`
+    raise "MethodMissing: #{self.inspect} doest not respond to '#{sym}'"
   end
   
   # Repeatedly executes the block.
@@ -222,7 +223,7 @@ module Kernel
       exc = exception.new msg
     end
     # puts "really about to raise"
-    `#{exc}.raise()`
+    `rb_raise(#{exc})`
   end
   
   # An alias of {#raise}

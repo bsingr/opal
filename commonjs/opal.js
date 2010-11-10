@@ -23,3 +23,11 @@ exports.compile = function compile(source) {
   // console.log("\n## Result:\n");
   // console.log(res);
 };
+
+// compile main (no function wrapper etc)
+exports.compile_main = function compile_main(source) {
+  var nodes = Parser.parse(source);
+  var g = new Generator(nodes, {});
+  var res = g.generate_main_context();
+  return res;
+};

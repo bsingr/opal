@@ -284,8 +284,13 @@ var Grammar = {
   ],
   
   SuperClass: [
-    ["Term",                                                                    ""],
-    ["< Expression Term",                                                       ""]
+    ["Term",
+        
+        "$$ = null;"],
+        
+    ["< Expression Term",
+      
+        "$$ = $2;"]
   ],
   
   Def: [
@@ -428,7 +433,7 @@ var Grammar = {
   ],
   
   CallArgs: [
-    ["Args OptBlockArg",                                                        "$$ = [$1, null, null, $5];"],
+    ["Args OptBlockArg",                                                        "$$ = [$1, null, null, $2];"],
     ["Args , STAR ArgValue OptBlockArg",                                        "$$ = [$1, $4, null, $5];"],
     ["Assocs OptBlockArg",                                                      "$$ = [null, null, $1, $2];"],
     ["Args , Assocs OptBlockArg",                                               "$$ = [$1, null, $3, $4];"],

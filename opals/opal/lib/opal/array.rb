@@ -1473,7 +1473,7 @@ class Array
   def each_with_index(&block)
      `for (var i = 0; i < #{self}.length; i++) {
         try {
-          #{block}.apply(#{block}.__self__, [#{self}[i], i]);
+          #{yield `#{self}[i]`, `i`};
         } catch (e) {
           if (e.__keyword__ == 'redo') {
             i--;
@@ -1490,12 +1490,18 @@ class Array
   end
   
   def inspect
-    description = ["["]
-    self.each_with_index do |item, index|
-      description << ", " if index > 0
+    description = []
+    self.each do |item|
       description << item.inspect
     end
-    description << "]"
+    "[#{description.join ", "}]"
+  end
+  
+  def to_s
+    description = []
+    self.each do |item|
+      description << item.to_s
+    end
     description.join ""
   end
 end
