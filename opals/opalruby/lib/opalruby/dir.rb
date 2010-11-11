@@ -31,7 +31,7 @@ class Dir
   end
   
   def self.glob(glob)
-    `return opal.glob_files(#{glob});`
+    `return #{self}.opal.IO.glob(#{glob});`
   end
   
   def self.[](globs)

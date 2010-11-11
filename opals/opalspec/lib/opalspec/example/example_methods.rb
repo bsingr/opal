@@ -44,7 +44,7 @@ module Spec
           # puts @implementation.inspect
           instance_eval(&@implementation)
         rescue Exception => e
-          puts "ExampleMethods#execute rescuing"
+          # puts "ExampleMethods#execute rescuing"
           execution_error = e
         end
         

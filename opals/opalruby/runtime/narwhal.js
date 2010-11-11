@@ -6,6 +6,14 @@ exports.IO = {
   
   getwd: function() {
     return narwhal_fs.cwd();
+  },
+  
+  glob: function(glob) {
+    return narwhal_fs.glob(glob);
+  },
+  
+  join: function() {
+    return narwhal_fs.join.apply(this, arguments);
   }
 };
 
@@ -17,4 +25,10 @@ exports.ruby_version = "1.9.0";
 // self.log from ruby. All ruby objects will be able to access this (for puts).
 var OpalLog = exports.log = function(str) {
   print(str);  
+};
+
+// native require..
+exports.require = function(path) {
+  // OpalLog("need to require: " + path);
+  require(path);
 };

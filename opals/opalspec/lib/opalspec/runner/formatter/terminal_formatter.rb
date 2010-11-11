@@ -44,12 +44,12 @@ module Spec
         
         def start(number_of_examples)
           # 
-          puts "STARTING SOME SPECS"
+          # puts "STARTING SOME SPECS"
         end
         
         def end
           # @end_time = Time.now
-          puts "Completed #{@example_number} specs."
+          # puts "Completed #{@example_number} specs."
         end
         
         def example_group_started(example_group)

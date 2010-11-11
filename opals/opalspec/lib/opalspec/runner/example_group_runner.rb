@@ -35,14 +35,14 @@ module Spec
       end
       
       def run
-        puts "preparing"
+        # puts "# preparing"
         prepare
-        puts "example group each"
-        puts example_groups
+        # puts "example group each"
+        # puts example_groups
         example_groups.each do |group|
           group.run @options
         end
-        puts "finish.."
+        # puts "finish.."
         finish
       end
       

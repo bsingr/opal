@@ -1,4 +1,4 @@
-require 'spec'
+require 'opalspec'
 
 Dir.glob(File.join(Dir.getwd, 'spec/**/*.rb')).each do |rb|
   require rb

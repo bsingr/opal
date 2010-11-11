@@ -31,7 +31,7 @@ class File
   # end
   
   def self.join(*parts)
-    `return #{parts}.join("/");`
+    `return #{self}.opal.IO.join.apply(this, #{parts});`
   end
   
   # Returns all components of the filename given in `file_name` except the last

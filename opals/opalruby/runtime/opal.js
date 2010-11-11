@@ -94,6 +94,15 @@ global.vnH = function() {
 
 global.opalhash = global.vnH;
 
+global.opalrange = function(start, end, exclusive) {
+  var res = new class_range.allocator();
+  res.__start__ = start;
+  res.__end__ = end;
+  res.__exclusive__ = exclusive;
+  res.__real_end__ = exclusive ? end - 1 : end;
+  return res; 
+};
+
 // Regexp
 global.vnR = function(reg) {
   var res = new class_regexp.allocator();
@@ -627,14 +636,14 @@ __boot_base_class.prototype.Y = opalsym = function(str) {
 };
 
 // ruby range
-__boot_base_class.prototype.R = function(start, end, exclusive) {
-  var res = new class_range.allocator();
-  res.__start__ = start;
-  res.__end__ = end;
-  res.__exclusive__ = exclusive;
-  res.__real_end__ = exclusive ? end - 1 : end;
-  return res; 
-};
+// __boot_base_class.prototype.R = function(start, end, exclusive) {
+//   var res = new class_range.allocator();
+//   res.__start__ = start;
+//   res.__end__ = end;
+//   res.__exclusive__ = exclusive;
+//   res.__real_end__ = exclusive ? end - 1 : end;
+//   return res; 
+// };
 
 // calling super
 // 

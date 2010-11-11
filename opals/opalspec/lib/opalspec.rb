@@ -4,16 +4,12 @@ require 'opalspec/example'
 require 'opalspec/runner'
 require 'opalspec/dsl'
 
-describe "First Describe" do
-  
-  it "should do something first" do
-    1.should == 2
-  end
-  
-  it "should do something second" do
-    1.should == 1
-  end
+Dir.glob(File.join(Dir.getwd, 'opals', 'opalruby', 'spec/**/*.rb')).each do |rb|
+  puts rb
+  require rb
 end
+
+
 # 
 # describe "Second Describe" do
 #     
@@ -25,8 +21,5 @@ end
 #     
 #   #end
 # end
-
-
-puts "OK, running"
 
 Spec::Runner.run

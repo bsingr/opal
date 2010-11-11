@@ -122,20 +122,6 @@ module Kernel
     `return #{self}.super_class;`
   end
   
-  # Try to load the library or file named `require_path`. Causes an error to be
-  # thrown if required path cannot be found.
-  # 
-  # @todo Loading relative paths does not work. Paths need to be full. To load
-  # element from Browser, do require('browser/element/element'). The .rb
-  # extension can be ommited.
-  # 
-  # @param [String] require_path
-  # @return [Boolean] success
-  # def require(require_path)
-  #   `#{self}.opal.require(#{require_path});
-  #   return #{true};`
-  # end
-  
   # Simple equivalent to `Proc.new`. Returns a {Proc} instance.
   # 
   # @example
@@ -262,25 +248,4 @@ module Kernel
     `return #{self}.const_set(#{const_name}, #{const_value});`
   end
   
-end
-
-# ============================================================================
-# = Argh - these need to be here early for method in core lib that use alias =
-# ============================================================================
-
-class String
-  
-  def to_s
-    self
-  end
-  
-  def inspect
-    `return '"' + #{self} + '"';`
-  end
-end
-
-class Symbol
-  def to_s
-     `return #{self}.__ptr__;`
-  end
 end
