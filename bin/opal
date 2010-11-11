@@ -1,7 +1,15 @@
-#!/usr/bin/env node
+#!/usr/bin/env narwhal
 
-var path = require('path');
-var fs   = require('fs');
-require(path.join(path.dirname(fs.realpathSync(__filename)), '../commonjs', 'command')).run();
+// var path = require('path');
+// var fs   = require('fs');
+// require(path.join(path.dirname(fs.realpathSync(__filename)), '../commonjs', 'command')).run();
 
 // require(lib + '/command').run();
+
+// var opal_io = require('opal/opal_io');
+// 
+// print(opal_io);
+
+// console.log(require.paths);
+
+require('../lib/opal/command').run();
