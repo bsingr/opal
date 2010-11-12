@@ -568,7 +568,7 @@ __boot_base_class.prototype.rbBreak = function(value) {
       return "uncaught break";
     },
     __keyword__: 'break',
-    opal_value: value == undefined ? this.n : value
+    opal_value: value == undefined ? opalnil : value
   };
 };
 
@@ -590,7 +590,7 @@ __boot_base_class.prototype.rbReturn = function(value) {
       return "uncaught rbReturn: " + this.opal_value;
     },
     __keyword__: 'return',
-    opal_value: value || this.nil
+    opal_value: value == undefined ? opalnil : value
   };
 };
 
@@ -1062,10 +1062,18 @@ class_proc.allocator.prototype.nil = opalnil;
 // = Exceptions etc =
 // ==================
 
+// raise the given exception - no alterations
 rb_raise = function(exception) {
   if (exception.$message) throw exception;
   
   var msg = exception.i$message || "";
   
   throw exception + ": " + msg;
+};
+
+// make the givern native (js) error into a ruby error (runtimeerror for now)
+rb_make_exception = function(exception) {
+  var err = new class_exception.allocator();
+  err.i$message = exception.toString();
+  return err;
 };

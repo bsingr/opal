@@ -344,7 +344,8 @@ class Array
   def collect!(&block)
     `for (var i = 0; i < #{self}.length; i++) {
       try {
-        #{self}[i] = #{block}.apply(#{block}.__self__, [#{self}[i]]);
+        //#{self}[i] = #{block}.apply(#{block}.__self__, [#{self}[i]]);
+        #{self}[i] = #{yield `#{self}[i]`};
       } catch (e) {
         if (e.__keyword__ == 'break') {
           return e.opal_value;
@@ -837,8 +838,9 @@ class Array
   #   a.include? "z"
   #   # => false
   def include?(member)
-    `for (var i = 0; i < #{self}.length; i++) {
-      if (#{member}['$=='](#{self}[i]).r) {
+    `var tmp;
+    for (var i = 0; i < #{self}.length; i++) {
+      if ((tmp = #{member == `#{self}[i]`},tmp !== #{nil} && tmp !== #{false})){
         return #{true};
       }
     }

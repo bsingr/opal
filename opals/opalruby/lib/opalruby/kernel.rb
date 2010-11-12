@@ -40,7 +40,8 @@ module Kernel
   def loop(&block)
     `try {
       while (true) {
-        #{block}.apply(#{block}.__self__, []);
+        //#{block}.apply(#{block}.__self__, []);
+        #{yield};
       }
     } catch (e) {
       // capture break statements

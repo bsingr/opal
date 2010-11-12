@@ -73,19 +73,23 @@ module Spec
       end
       
       def example_finished(example, error)
-        puts "example finished"
+        # puts "example finished"
+        # puts "a"
         # @example_count += 1
+        # `print(#{error})`
+        # `print(#{error}.isa)`
+        # puts "ok"
         
         if error.nil?
-          puts "example_passsed"
+          # puts "example_passsed"
           example_passed example
         elsif Spec::Example::ExamplePendingError === error
-          puts "example pending"
+          # puts "example pending"
           # puts error
           # `console.log(#{error}.class_name)`
           example_pending example, error.message
         else
-          puts "example failed"
+          # puts "example failed"
           example_failed example, error
           # puts error
         end
