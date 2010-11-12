@@ -74,14 +74,17 @@ class Module
   
   
   def attr_reader(*attributes)
-    # `console.log("outer self is: " + self);
+    # `console.log("outer self is: " + self)`
     # console.log(self);
     # console.log(arguments);
     # `
+    # puts "yeah, doing #{attributes}"
     attributes.each do |attribute|
+      # puts "doing #{attribute}"
       mid = attribute.to_s
-      `#{self}.dm(mid, function() {
-        return #{self}.ig('@' + mid);
+      `#{self}.dm(mid, function(recv) {
+        if (recv['@' + mid] === undefined) recv['@' + mid] = #{nil};
+        return recv.ig('@' + mid);
       }, false)`
     end
     
@@ -92,8 +95,8 @@ class Module
     attributes.each do |attribute|
       mid = attribute.to_s
       mid2 = `#{mid} + "="`
-      `#{self}.dm(#{mid2}, function(val) {
-        return #{self}.is('@' + #{mid}, val);
+      `#{self}.dm(#{mid2}, function(recv, block, val) {
+        return recv.is('@' + #{mid}, val);
       }, false)`
     end
     

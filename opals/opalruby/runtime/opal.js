@@ -1064,9 +1064,9 @@ class_proc.allocator.prototype.nil = opalnil;
 
 // raise the given exception - no alterations
 rb_raise = function(exception) {
-  if (exception.$message) throw exception;
+  if (exception['@message']) throw exception;
   
-  var msg = exception.i$message || "";
+  var msg = exception['@message'] || "";
   
   throw exception + ": " + msg;
 };
@@ -1074,6 +1074,6 @@ rb_raise = function(exception) {
 // make the givern native (js) error into a ruby error (runtimeerror for now)
 rb_make_exception = function(exception) {
   var err = new class_exception.allocator();
-  err.i$message = exception.toString();
+  err['@message'] = exception.toString();
   return err;
 };

@@ -216,7 +216,7 @@ class Array
     
     if (#{index} >= #{size} || #{index} < 0) return #{nil};
       
-    if (#{length}) {
+    if (#{length} != #{nil}) {
       if (#{length} <= 0) return [];
       return #{self}.slice(#{index}, #{index} + #{length});
     } else {
@@ -312,7 +312,8 @@ class Array
     `var result = [];
     for (var i = 0; i < #{self}.length; i++) {
       try {
-        #{result}.push(#{block}.apply(#{block}.__self__, [#{self}[i]]));
+        result.push(#{yield `#{self}[i]`});
+        //#{result}.push(#{block}.apply(#{block}.__self__, [#{self}[i]]));
       } catch (e) {
         if (e.__keyword__ == 'break') {
           return e.opal_value;
@@ -370,7 +371,7 @@ class Array
     `var result = [];
     for (var i = 0; i < #{self}.length; i++) {
       if (#{self}[i] !== #{nil})
-        #{result}.push(#{self}[i]);
+        result.push(#{self}[i]);
     }
     return result;`
   end

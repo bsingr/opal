@@ -78,7 +78,7 @@ module Spec
         end
         
         def example_pending(example, message)
-          puts "  PENDING: #{example.description}"
+          puts "\033[0;33m#{@example_group.description}: #{example.description}\033[m"
         end
         
       end

@@ -9,3 +9,13 @@ describe "Redefining a method" do
     barFoo.should == 200
   end
 end
+
+describe "A singleton method definition" do
+  it "can be declared for a local variable" do
+    a = Object.new
+    def a.foo
+      5
+    end
+    a.foo.should == 5
+  end
+end
