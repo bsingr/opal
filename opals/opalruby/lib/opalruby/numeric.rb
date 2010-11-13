@@ -1,5 +1,9 @@
+require 'opalruby/comparable'
 
-class Number  
+class Numeric
+  # FIXME: fix this.
+  # include Comparable
+  
   # Unary Plus - Returns the receiver's value.
   # 
   # @example
@@ -19,7 +23,7 @@ class Number
   # 
   # @return [Number] result
   def -@()
-    `return -#{self};`
+    0 - self
   end
   
   # Returns `self` modulo `other`. See {Number#divmod} for more information.

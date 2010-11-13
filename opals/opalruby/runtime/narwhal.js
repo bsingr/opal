@@ -24,6 +24,7 @@ exports.ruby_version = "1.9.0";
 // our main method for simply logging to the console. OpalLog from core, or
 // self.log from ruby. All ruby objects will be able to access this (for puts).
 var OpalLog = exports.log = function(str) {
+  print("printing string here, actually");
   print(str);  
 };
 

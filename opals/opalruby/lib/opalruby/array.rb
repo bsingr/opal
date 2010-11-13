@@ -3,18 +3,78 @@
 # ## Implementation details
 # 
 # For efficiency, an array instance is simply a native javascript array. There
-# is no wrapping or referencing, it is simply a toll-free class. All the core
-# runtime methods are applied to `Array.prototype` in opal, so it is fully
-# functional as a ruby object. All methods, as standard, are prefixed with a 
-# `$`. This means the following ruby:
-# 
-#     [1, 2, 3].length
-# 
-# is converted to the following javascript:
-# 
-#     [1, 2, 3].$length();
-# 
+# is no wrapping or referencing, it is simply a toll-free class.
 class Array
+  # Returns a formatted, printable version of the array. #inspect is called on
+  # each of the elements and appended to the string.
+  def inspect
+    description = []
+    each { |obj| description.push obj.inspect }
+    "[#{description.join ', '}]"
+  end
+  
+  # Returns a simple string version of the array. #to_s is applied to each of
+  # the child elements with no seperator.
+  def to_s
+    description = []
+    each { |obj| description.push obj.to_s }
+    description.join ""
+  end
+  
+  # Calls block once for each element in `self`, passing that element as a 
+  # parameter.
+  # 
+  # If no block is given, an enumerator is returned instead.
+  # 
+  # @note enumerator functionality not yet implemented
+  # 
+  # @example
+  #   a = ["a", "b", "c"]
+  #   a.each { |x| puts x }
+  #   # => "a"
+  #   # => "b"
+  #   # => "c"
+  # 
+  # @return [Array] returns the receiver
+  def each
+    # FIXME: return enum if no block
+    return self unless block_given?
+    array_length = length
+    i = 0
+    while i < length
+      yield at(i)
+      i += 1
+    end
+    self
+  end
+  
+  # Same as {Array#each}, but passes the index of the element instead of the
+  # element itself.
+  # 
+  # If no block given, an enumerator is returned instead.
+  # 
+  # @note enumerator functionality not yet implemented.
+  # 
+  # @example
+  #   a = ["a", "b", "c"]
+  #   a.each_index { |x| puts x }
+  #   # => 0
+  #   # => 1
+  #   # => 2
+  # 
+  # @return [Array] returns receiver
+  def each_index
+    # FIXME: return enum if no block
+    return self unless block_given?
+    i = 0
+    array_length = length
+    while i < array_length
+      yield i
+      i += 1
+    end
+    self
+  end
+  
   
   # Returns a new array populated with the given objects.
   # 
@@ -137,10 +197,7 @@ class Array
   # @param [Object] obj the object(s) to push on to the array
   # @return [Array] returns the receiver
   def push(*objs)
-    `for (var i = 0; i < #{objs}.length; i++) {
-      #{self}.push(#{objs}[i]);
-    }
-    return #{self};`
+    concat objs
   end
   
   # Equality - Two arrays are equal if they contain the same number of elements
@@ -224,6 +281,11 @@ class Array
     }`
   end
   
+  # `print('absout to call alias with ' + self)`
+  # `print(self.$i.__classid__)`
+  # `print(self.$m['$alias_method'])`
+  # `print('module')`
+  # `(function() { for (var prop in rb_module.$m) print(prop);})()`
   # `console.log("about to call alias with " + this);`
   # `console.log(this);`
   # `console.log(this.$alias_method);`
@@ -572,74 +634,7 @@ class Array
     return result;`
   end
   
-  # Calls block once for each element in `self`, passing that element as a 
-  # parameter.
-  # 
-  # If no block is given, an enumerator is returned instead.
-  # 
-  # @note enumerator functionality not yet implemented
-  # 
-  # @example
-  #   a = ["a", "b", "c"]
-  #   a.each { |x| puts x }
-  #   # => "a"
-  #   # => "b"
-  #   # => "c"
-  # 
-  # @return [Array] returns the receiver
-  def each(&block)
-    `for (var i = 0; i < #{self}.length; i++) {
-      try {
-        #{yield `#{self}[i]`};
-        //#{block}.apply(#{block}.__self__, [#{nil}, #{self}[i]]);
-      } catch (e) {
-        if (e.__keyword__ == 'redo') {
-          i--;
-        }
-        else if (e.__keyword__ == 'break') {
-          return e.opal_value;
-        }
-        else {
-          throw e;
-        }
-      }
-    }
-    return #{self};`
-  end
   
-  # Same as {Array#each}, but passes the index of the element instead of the
-  # element itself.
-  # 
-  # If no block given, an enumerator is returned instead.
-  # 
-  # @note enumerator functionality not yet implemented.
-  # 
-  # @example
-  #   a = ["a", "b", "c"]
-  #   a.each_index { |x| puts x }
-  #   # => 0
-  #   # => 1
-  #   # => 2
-  # 
-  # @return [Array] returns receiver
-  def each_index(&block)
-    `for (var i = 0; i < #{self}.length; i++) {
-      try {
-        #{block}.apply(#{nil}, #{block}.__self__, [i]);
-      } catch (e) {
-        if (e.__keyword__ == 'redo') {
-          i--;
-        }
-        else if (e.__keyword__ == 'break') {
-          return e.opal_value;
-        }
-        else {
-          throw e;
-        }
-      }
-    }
-    return #{self};`
-  end
   
   # Returns `true` if `self` contains no elements, `false` otherwise
   # 
@@ -1490,21 +1485,5 @@ class Array
         }
       }
       return #{self};`
-  end
-  
-  def inspect
-    description = []
-    self.each do |item|
-      description << item.inspect
-    end
-    "[#{description.join ", "}]"
-  end
-  
-  def to_s
-    description = []
-    self.each do |item|
-      description << item.to_s
-    end
-    description.join ""
   end
 end

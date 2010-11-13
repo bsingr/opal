@@ -1,7 +1,15 @@
-
 # The kernel module is included directly into {Object}, making all of these 
 # methods globally accessible from any Object.
 module Kernel
+  
+  def to_a
+    [self]
+  end
+  
+  def tap
+    yield self
+    self
+  end
   
   # Returns `true` if `yield` would execute a block in the current context, 
   # `false` otherwise. 
@@ -116,12 +124,9 @@ module Kernel
   end
   
   def class
-    `return #{self}.isa;`
+    `return rb_class_real(#{self}.$k);`
   end
   
-  def superclass
-    `return #{self}.super_class;`
-  end
   
   # Simple equivalent to `Proc.new`. Returns a {Proc} instance.
   # 
@@ -150,7 +155,7 @@ module Kernel
       # `console.log(#{args}.$to_s(#{args}).toString());
       # return #{nil};`
     # end
-    `#{self}.opal.log(#{args.to_s});
+    `#{self}.$opal.log(#{args.to_s});
     return #{nil};`
   end
   
@@ -173,8 +178,12 @@ module Kernel
     end
   end
   
+  def __id__
+    `return #{self}.$h;`
+  end
+  
   def to_s
-    `return "#<" + #{self}.class_name + ":" + #{self}.id + ">";`
+    "#<#{self.class}:#{self.__id__}>"
   end
   
   def inspect

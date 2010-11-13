@@ -35,7 +35,8 @@ class Class
   end
   
   def allocate
-    `return new #{self}.allocator();`
+    # `return new #{self}.allocator();`
+    `return rb_obj_alloc(#{self});`
   end
   
   def self.new(super_class)
@@ -48,7 +49,7 @@ class Class
     `arguments[0] = #{obj}`
     # block - keep as same
     # dont need this...`arguments[1] = #{nil}`
-    `#{obj}.$initialize.apply(#{obj}, arguments)`
+    # `#{obj}.$initialize.apply(#{obj}, arguments)`
     obj
   end
   

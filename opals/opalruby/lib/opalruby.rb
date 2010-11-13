@@ -10,7 +10,7 @@ module Kernel
   # @param [String] require_path
   # @return [Boolean] success
   def require(require_path)
-    `#{self}.opal.require(#{require_path});
+    `#{self}.$opal.require(#{require_path});
     return #{true};`
   end
 end
@@ -35,16 +35,16 @@ require 'opalruby/module'
 require 'opalruby/kernel'
 require 'opalruby/array'
 require 'opalruby/basic_object'
-require 'opalruby/boolean'
 require 'opalruby/class'
 require 'opalruby/dir'
 require 'opalruby/error'
+require 'opalruby/false_class'
 require 'opalruby/file'
 require 'opalruby/hash'
 require 'opalruby/io'
 require 'opalruby/match_data'
 require 'opalruby/nil_class'
-require 'opalruby/number'
+require 'opalruby/numeric'
 require 'opalruby/proc'
 require 'opalruby/range'
 require 'opalruby/regexp'
@@ -52,3 +52,4 @@ require 'opalruby/ruby'
 require 'opalruby/string'
 require 'opalruby/symbol'
 require 'opalruby/top_self'
+require 'opalruby/true_class'
