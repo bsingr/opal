@@ -1,3 +1,4 @@
+require 'opalruby/enumerable'
 # Arrays are ordered, indexed by integers starting at 0.
 # 
 # ## Implementation details
@@ -5,6 +6,7 @@
 # For efficiency, an array instance is simply a native javascript array. There
 # is no wrapping or referencing, it is simply a toll-free class.
 class Array
+  # include Enumerable
   # Returns a formatted, printable version of the array. #inspect is called on
   # each of the elements and appended to the string.
   def inspect
@@ -73,6 +75,80 @@ class Array
       i += 1
     end
     self
+  end
+  
+  # Append - Pushes the given object on to the end of this array. This 
+  # expression returns the array itself, so several appends may be chained
+  # together.
+  # 
+  # @example
+  #   [1, 2] << "c" << "d" << [3, 4]
+  #   # => [1, 2, "c", "d", [3, 4]]
+  # 
+  # @param [Object] obj object to append
+  # @return [Array] returns the receiver
+  def <<(obj)
+    push obj
+    self
+  end
+  
+  # Append - Pushes the given object(s) on to the end of this array. This 
+  # expression returns the array itself, so several appends may be chained
+  # together
+  # 
+  # @example
+  #   a = ["a", "b", "c"]
+  #   a.push("d", "e", "f")
+  #   # => ["a", "b", "c", "d", "e", "f"]
+  # 
+  # @param [Object] obj the object(s) to push on to the array
+  # @return [Array] returns the receiver
+  def push(*objs)
+    concat objs
+  end
+  
+  # Returns the index of the first object in `self` such that it is `==` to 
+  # `obj`. If a block is given instead of an argument, returns first object for
+  # which `block` is true. Returns `nil` if no match is found. See also
+  # Array#rindex.
+  # 
+  # If neither a block nor an argument is given, an enumerator is returned 
+  # instead.
+  # 
+  # @note enumerator functionality not yet implemented.
+  # 
+  # @example
+  #   a = ["a", "b", "c"]
+  #   a.index("b")
+  #   # => 1
+  #   a.index("z")
+  #   # => nil
+  #   a.index { |x| x == "b" }
+  #   # => 1
+  # 
+  # @param [Object] object to look for
+  # @return [Number, nil] result
+  def index(object)
+    # assume objecy and no block, for now
+    i = 0
+    array_length = length
+    while i < array_length
+      return i if at(i) == object
+      i = i + 1
+    end
+    nil
+  end
+  
+  def map
+    return self unless block_given?
+    result = []
+    i = 0
+    length = self.length
+    while i < length
+      result[i] = yield at(i)
+      i += 1
+    end
+    result
   end
   
   
@@ -170,35 +246,7 @@ class Array
     raise "Array#- not implemented"
   end
   
-  # Append - Pushes the given object on to the end of this array. This 
-  # expression returns the array itself, so several appends may be chained
-  # together.
-  # 
-  # @example
-  #   [1, 2] << "c" << "d" << [3, 4]
-  #   # => [1, 2, "c", "d", [3, 4]]
-  # 
-  # @param [Object] obj object to append
-  # @return [Array] returns the receiver
-  def <<(obj)
-    `#{self}.push(#{obj})`
-    self
-  end
-  
-  # Append - Pushes the given object(s) on to the end of this array. This 
-  # expression returns the array itself, so several appends may be chained
-  # together
-  # 
-  # @example
-  #   a = ["a", "b", "c"]
-  #   a.push("d", "e", "f")
-  #   # => ["a", "b", "c", "d", "e", "f"]
-  # 
-  # @param [Object] obj the object(s) to push on to the array
-  # @return [Array] returns the receiver
-  def push(*objs)
-    concat objs
-  end
+
   
   # Equality - Two arrays are equal if they contain the same number of elements
   # and if each element is equal to (according to {Object#==}) the corresponding
@@ -281,15 +329,6 @@ class Array
     }`
   end
   
-  # `print('absout to call alias with ' + self)`
-  # `print(self.$i.__classid__)`
-  # `print(self.$m['$alias_method'])`
-  # `print('module')`
-  # `(function() { for (var prop in rb_module.$m) print(prop);})()`
-  # `console.log("about to call alias with " + this);`
-  # `console.log(this);`
-  # `console.log(this.$alias_method);`
-  # `(this.$alias_method)(nil, opalsym('a'), opalsym('b'));`
   alias_method :slice, :[]
   
   # @todo Need to expand functionality
@@ -387,7 +426,7 @@ class Array
     return result;`
   end
   
-  alias_method :map, :collect
+  # alias_method :map, :collect
   
   # Invokes the `block` once for each element of `self`, replacing the element 
   # with the value returned by `block`. See also Enumerable#collect.
@@ -690,46 +729,6 @@ class Array
     return #{self}[#{index}];`
   end
   
-  # Returns the index of the first object in `self` such that it is `==` to 
-  # `obj`. If a block is given instead of an argument, returns first object for
-  # which `block` is true. Returns `nil` if no match is found. See also
-  # Array#rindex.
-  # 
-  # If neither a block nor an argument is given, an enumerator is returned 
-  # instead.
-  # 
-  # @note enumerator functionality not yet implemented.
-  # 
-  # @example
-  #   a = ["a", "b", "c"]
-  #   a.index("b")
-  #   # => 1
-  #   a.index("z")
-  #   # => nil
-  #   a.index { |x| x == "b" }
-  #   # => 1
-  # 
-  # @param [Object] object to look for
-  # @return [Number, nil] result
-  def index(object)
-    `if (#{object} === undefined) {
-      throw "need to return enumerator"
-    } else if (#{object}.info & #{self}.TP) {
-      for (var i = 0; i < #{self}.length; i++) {
-        if (#{object}.apply(#{nil}, #{object}.__self__, [#{self}[i]]).r) {
-          return i;
-        }
-      }
-    } else {
-      for (var i = 0; i < #{self}.length; i++) {
-        if (#{self}[i]['$=='](#{object}).r) {
-          return i;
-        }
-      }
-    }
-    return #{nil};`
-  end
-  
   # Returns the first element, or the first `n` elements, of the array. If the
   # array is empty, the first form returns `nil`, and the second form returns an
   # empty array.
@@ -997,24 +996,6 @@ class Array
       }
       return #{nil};
     }`
-  end
-  
-  # Append - Pushes the given object(s) on to the end of this array. This 
-  # expression returns the array itself, so several appends may be chained
-  # together.
-  # 
-  # @example
-  #   a = ["a", "b", "c"]
-  #   a.push("d", "e", "f")
-  #   # => ["a", "b", "c", "d", "e", "f"]
-  # 
-  # @param [Object] obj object(s) to push
-  # @retrun [Array] returns receiver
-  def push(*obj)
-    `for (var i = 0; i < #{obj}.length; i++) {
-      #{self}.push(#{obj}[i]);
-    }
-    return #{self};`
   end
   
   # Searches tthrough the array whose elements are also arrays. Comapres `obj`

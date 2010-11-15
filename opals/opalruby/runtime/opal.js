@@ -14,13 +14,13 @@ var T_CLASS       = 1,
     FL_SINGLETON  = 2056;
     
 // Core boot classes
-rb_basic_object = null,
-    rb_object = null,
+rb_cBasicObject = null,
+    rb_cObject = null,
     rb_module = null,
     rb_class = null;
 
 // Other core classes/modules
-var rb_kernel,
+var rb_mKernel,
     rb_nil_class,
     rb_symbol,
     rb_string,
@@ -28,6 +28,14 @@ var rb_kernel,
     rb_number,
     rb_true_class,
     rb_false_class;
+    
+// Exception classes
+var rb_eException,
+    rb_eStandardError,
+    rb_eLocalJumpError,
+    rb_eNameError,
+    rb_eNoMethodError,
+    rb_eArgError;
 
 // @global Top self context within ruby 
 rb_top_self = null;
@@ -64,7 +72,7 @@ var rb_vm_methods = {
       // normal class
       case 0:
         if (sup === rb_nil)
-          sup = rb_object;
+          sup = rb_cObject;
 
         klass = rb_define_class_under(base, id, sup);
         break;
@@ -101,15 +109,21 @@ var rb_vm_methods = {
   
   // used for method missing.. need to cerate a closure to call MM
   $M: function(m_id) {
-    throw "Error: self does not respond to " + m_id
+    return function(self, block) {
+      var args = [self, block, m_id].concat(Array.prototype.slice.call(2));
+      return self.$m.$method_missing.apply(self, args);
+    };
+    // throw "Error: self does not respond to " + m_id
   },
   
   // const get
   $cg: function(id) {
+    // print("getting const: " + id);
     var base = this;
     if (base.$f & T_OBJECT)
       base = rb_class_real(base.$k);
     
+    // print("about to:");
     return rb_const_get(base, id);
   },
   
@@ -134,8 +148,8 @@ exports.log = function(str) {
 var RClass = function(klass, super_klass) {
   // Hash. immediately give the class a hash/object_id
   this.$h = opal_yield_hash();
-  // Ivars. All ivars etc stored in here
-  this.$i = {};
+  // Ivars. All ivars etc stored in here - no longer?
+  // this.$i = {};
   // Constants. All constants belonging to class stored here.
   this.$c = {};
   // SuperClass.
@@ -177,8 +191,8 @@ RClass.prototype.$r = true;
 var RObject = function(klass) {
   // Hash. get out object_id
   this.$h = opal_yield_hash();
-  // Ivars.
-  this.$i = {};
+  // Ivars. no longer?
+  // this.$i = {};
   // klass of the object becomes klass
   this.$k = klass;
   // from the class, we set our local methods property (in sync with our class)
@@ -229,13 +243,15 @@ for (var prop in rb_vm_methods) {
   }
 }
 
+
+
 // rb_vm_methods
 
 // Boot a base class (only use for very core object classes)
 var boot_defclass = function(id, super_klass) {
   var result = rb_class_boot(super_klass);
   rb_name_class(result, id);
-  rb_const_set((rb_object || result), id, result);
+  rb_const_set((rb_cObject || result), id, result);
   return result;
 };
 
@@ -245,7 +261,7 @@ var boot_defrootclass = function(id) {
   // FIXME: set flags - do we need this. already done for us?
   result.$f = T_CLASS;
   rb_name_class(result, id);
-  rb_const_set((rb_object || result), id, result);
+  rb_const_set((rb_cObject || result), id, result);
   return result;
 }
 
@@ -308,20 +324,21 @@ var boot_defmetametaclass = function(klass, metametaclass) {
 
 // define a top level module with the given id
 var rb_define_module = function(id) {
-  return rb_define_module_under(rb_object, id);
+  return rb_define_module_under(rb_cObject, id);
 };
 
 var rb_define_module_under = function(base, id) {
   var module;
-  
+  // print("defining module " + id);
   // if module already exists..
   if (rb_const_defined(base, id)) {
+    // print("already defined");
     // make sure it is a module, otherwise error (trying to change class)
     module = rb_const_get(base, id);
     if (module.$f & T_MODULE) {
       return module;
     }
-    
+
     throw id + " is not a module."
   }
   
@@ -331,13 +348,14 @@ var rb_define_module_under = function(base, id) {
 };
 
 var rb_define_module_id = function(id) {
-  var module = rb_mod_create();
+  var module = rb_define_class_id(id, rb_module);
   module.$f = T_MODULE;
   rb_name_class(module, id);
   return module;
 };
 
 var rb_mod_create = function() {
+  // return // rb_define_class_id()
   return rb_class_boot(rb_module);
 };
 
@@ -362,11 +380,11 @@ var rb_include_module = function(klass, module) {
   }
   
   // print("are we kernel?");
-  // print(rb_kernel.$h);
+  // print(rb_mKernel.$h);
   // print(module.$h);
   
   module.$included_in.push(klass);
-  // print(rb_kernel.$included_in);
+  // print(rb_mKernel.$included_in);
   // print(module.method_table);
   for (var method in module.$method_table) {
     // print("adding method: " + method);
@@ -380,7 +398,7 @@ var rb_include_module = function(klass, module) {
 // define a new class (normal way), with the given id and superclass. Will be
 // top level.
 var rb_define_class = function(id, super_klass) {
-  return rb_define_class_under(rb_object, id, super_klass);
+  return rb_define_class_under(rb_cObject, id, super_klass);
 };
 
 var rb_define_class_under = function(base, id, super_klass) {
@@ -407,7 +425,7 @@ var rb_define_class_id = function(id, super_klass) {
   var klass;
   
   if (!super_klass)
-    super_klass = rb_object;
+    super_klass = rb_cObject;
     // console.log("A");
   klass = rb_class_create(super_klass);
   // console.log("B " + id);
@@ -426,8 +444,8 @@ var rb_class_create = function(super_klass) {
 var rb_singleton_class = function(obj) {
   var obj;
   // console.log("checking for id: " + obj.$h);
-  if (obj == rb_object) {
-    // console.log("right. cchecking rb_object");
+  if (obj == rb_cObject) {
+    // console.log("right. cchecking rb_cObject");
   }
   // check if number, string etc.. and throw error?
   if ((obj.$k.$f & FL_SINGLETON)&& rb_ivar_get(obj.$k, '__attached__') == obj) {
@@ -468,12 +486,12 @@ var rb_const_defined = function(klass, id) {
 
 // set ivar
 var rb_ivar_set = function(obj, id, val) {
-  obj.$i[id] = val;
+  obj[id] = val;
   return val;
 };
 
 var rb_ivar_get = function(obj, id) {
-  return obj.$i[id];
+  return obj[id];
 };
 
 // define method
@@ -525,39 +543,39 @@ rb_obj_alloc = function(klass) {
 // ========
 var tmp_metaclass;
 
-rb_basic_object = boot_defrootclass('BasicObject');
-rb_object = boot_defclass('Object', rb_basic_object);
-rb_module = boot_defclass('Module', rb_object);
+rb_cBasicObject = boot_defrootclass('BasicObject');
+rb_cObject = boot_defclass('Object', rb_cBasicObject);
+rb_module = boot_defclass('Module', rb_cObject);
 rb_class = boot_defclass('Class', rb_module);
 
-rb_const_set(rb_object, 'BasicObject', rb_basic_object);
+rb_const_set(rb_cObject, 'BasicObject', rb_cBasicObject);
 
-tmp_metaclass = rb_make_metaclass(rb_basic_object, rb_class);
-tmp_metaclass = rb_make_metaclass(rb_object, tmp_metaclass);
+tmp_metaclass = rb_make_metaclass(rb_cBasicObject, rb_class);
+tmp_metaclass = rb_make_metaclass(rb_cObject, tmp_metaclass);
 tmp_metaclass = rb_make_metaclass(rb_module, tmp_metaclass);
 tmp_metaclass = rb_make_metaclass(rb_class, tmp_metaclass);
 
 boot_defmetametaclass(rb_module, tmp_metaclass);
-boot_defmetametaclass(rb_object, tmp_metaclass);
-boot_defmetametaclass(rb_basic_object, tmp_metaclass);
+boot_defmetametaclass(rb_cObject, tmp_metaclass);
+boot_defmetametaclass(rb_cBasicObject, tmp_metaclass);
 
-rb_kernel = rb_define_module('Kernel');
+rb_mKernel = rb_define_module('Kernel');
 
-// rb_define_method(rb_kernel, 'require', function(recv, block, path){
+// rb_define_method(rb_mKernel, 'require', function(recv, block, path){
   // print("need to require " + path);
 // });
 
-rb_include_module(rb_object, rb_kernel);
+rb_include_module(rb_cObject, rb_mKernel);
 
 rb_define_method(rb_class, 'allocate', rb_obj_alloc);
 rb_define_method(rb_class, 'new', rb_class_new_instance);
 rb_define_method(rb_class, 'initialize', function() {});
 
 // @class Symbol
-rb_symbol = rb_define_class('Symbol', rb_object);
+rb_symbol = rb_define_class('Symbol', rb_cObject);
 
 // @class String
-rb_string = rb_define_class('String', rb_object);
+rb_string = rb_define_class('String', rb_cObject);
 // native string toll free bridging
 String.prototype.$k = rb_string;
 String.prototype.$m = rb_string.$m_tbl;
@@ -567,7 +585,7 @@ String.prototype.$f = T_OBJECT | T_STRING;
 String.prototype.$r = true;
 
 // @class Array
-rb_array = rb_define_class('Array', rb_object);
+rb_array = rb_define_class('Array', rb_cObject);
 // native array toll free bridging
 Array.prototype.$k = rb_array;
 Array.prototype.$m = rb_array.$m_tbl;
@@ -577,7 +595,7 @@ Array.prototype.$f = T_OBJECT | T_ARRAY;
 Array.prototype.$r = true;
 
 // @class Number
-rb_number = rb_define_class('Numeric', rb_object);
+rb_number = rb_define_class('Numeric', rb_cObject);
 // toll free bridging
 Number.prototype.$k = rb_number;
 Number.prototype.$m = rb_number.$m_tbl;
@@ -587,26 +605,26 @@ Number.prototype.$f = T_OBJECT | T_NUMBER;
 Number.prototype.$r = true;
 
 // @class TrueClass
-rb_true_class = rb_define_class('TrueClass', rb_object);
+rb_true_class = rb_define_class('TrueClass', rb_cObject);
 // true literal
 rb_true = rb_obj_alloc(rb_true_class);
 
 // @class FalseClass
-rb_false_class = rb_define_class('FalseClass', rb_object);
+rb_false_class = rb_define_class('FalseClass', rb_cObject);
 // false literal
 rb_false = rb_obj_alloc(rb_false_class);
 // false is false for truthiness
 rb_false.$r = false;
 
 // @class NilClass
-rb_nil_class = rb_define_class('NilClass', rb_object);
+rb_nil_class = rb_define_class('NilClass', rb_cObject);
 // nil literal
 rb_nil = rb_obj_alloc(rb_nil_class);
 // nil is false for truthiness
 rb_nil.$r = false;
 
 // Top self
-rb_top_self = new RObject(rb_object, T_OBJECT);
+rb_top_self = new RObject(rb_cObject, T_OBJECT);
 
 var rb_main_include = function() {
   // console.log("main include, should error..");
@@ -614,4 +632,73 @@ var rb_main_include = function() {
 
 rb_define_singleton_method(rb_top_self, 'include', rb_main_include);
 
-// rb_define_singleton_method(rb_object, 'inspect', function(){});
+// Exception classes
+rb_eException = rb_define_class("Exception", rb_cObject);
+rb_eStandardError = rb_define_class("StandardError", rb_eException);
+rb_eLocalJumpError = rb_define_class("LocalJumpError", rb_eStandardError);
+rb_eNameError = rb_define_class("NameError", rb_eStandardError);
+rb_eNoMethodError = rb_define_class('NoMethodError', rb_eNameError);
+rb_eArgError = rb_define_class('ArgumentError', rb_eStandardError);
+
+// VM Methods
+// ==========
+// 
+
+// jump error literals. We keep a singular instance to avoid recreating each
+// error every time (expensive).
+var rb_vm_return_instance = new RObject(rb_eLocalJumpError, T_OBJECT);
+rb_ivar_set(rb_vm_return_instance, '@message', 'unexpected return');
+rb_vm_return_instance.$keyword = 0;
+
+var rb_vm_loop_return_instance = new RObject(rb_eLocalJumpError, T_OBJECT);
+rb_ivar_set(rb_vm_loop_return_instance, '@message', 'unexpected return');
+rb_vm_loop_return_instance.$keyword = 1;
+
+// disgard this? yes we can!
+var rb_vm_block_return_instance = new RObject(rb_eLocalJumpError, T_OBJECT);
+rb_ivar_set(rb_vm_block_return_instance, '@message', 'unexpected return');
+rb_vm_block_return_instance.$keyword = 0;
+
+// normal return called in normal context? (should just be the same as block???)
+// @global
+rb_vm_return = function(value) {
+  rb_ivar_set(rb_vm_return_instance, '@exit_value', value);
+  throw rb_vm_return_instance;
+};
+
+// called (thrown) when returning inside a while loop
+// @global
+rb_vm_loop_return = function(value) {
+  rb_ivar_set(rb_vm_loop_return_instance, '@exit_value', value);
+  throw rb_vm_loop_return_instance;
+};
+
+// called (thrown) when returning inside a block (that might be called by a 
+// while loop
+// @global
+rb_vm_block_return = function(value) {
+  rb_ivar_set(rb_vm_block_return_instance, '@exit_value', value);
+  throw rb_vm_block_return_instance;
+};
+
+
+
+
+// need fixing:
+
+// global
+rb_break = function(value) {
+  throw {
+    toString: function() {
+      return "uncaught break";
+    },
+    __keyword__: 'break',
+    opal_value: value == undefined ? rb_nil : value
+  };
+};
+
+
+// raise an exception instance (DO NOT pass strings to this)
+rb_vm_raise = function(exc) {
+  throw exc;
+};

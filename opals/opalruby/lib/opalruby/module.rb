@@ -2,7 +2,7 @@
 class Module
   
   def name
-    `return #{self}.class_name;`
+    `return #{self}.__classid__;`
   end
   
   def ===(object)
@@ -49,9 +49,18 @@ class Module
   end
   
   def to_s
-    `return #{self}.$i.__classid__;`
+    `return #{self}.__classid__;`
   end
   
+  
+  # def attr_reader(*attributes)
+    # attributes.each do |attribute|
+      # m_id = attribute.to_s
+      # Opal.define_method(m_id) do
+        # instance_variable_get "@#{m_id}"
+      # end
+    # end
+  # end
   
   
   def attr_reader(*attributes)

@@ -1,20 +1,22 @@
-
 class Exception
   
+  def initialize(message = nil)
+    @message = message
+  end
+
   def message
     @message
   end
   
-  def initialize(message=nil)
-    @message = message
-  end
-  
   def inspect
-    "#<#{self.class.name}: #{@message}>"
+    "#<#{self.class.name}: #{self.to_s}>"
+    # puts "in inspect: message is:"
+    # puts @message.inspect
+    # @message
   end
   
   def to_s
-    @message
+    @message || self.class.to_s
   end
 end
 

@@ -37,6 +37,7 @@ require 'opalruby/array'
 require 'opalruby/basic_object'
 require 'opalruby/class'
 require 'opalruby/dir'
+require 'opalruby/enumerator'
 require 'opalruby/error'
 require 'opalruby/false_class'
 require 'opalruby/file'
@@ -53,3 +54,20 @@ require 'opalruby/string'
 require 'opalruby/symbol'
 require 'opalruby/top_self'
 require 'opalruby/true_class'
+
+
+# =================================
+# = Testing stuff goes below here =
+# =================================
+
+puts "=====\n Testing\n=====\n"
+
+def do_something
+  while true
+    return 500
+  end
+end
+
+puts do_something
+
+puts "=====\nTesting Finished."

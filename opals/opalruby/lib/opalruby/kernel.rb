@@ -1,6 +1,52 @@
 # The kernel module is included directly into {Object}, making all of these 
 # methods globally accessible from any Object.
 module Kernel
+  # Repeatedly executes the block.
+  # 
+  # @note Method does not return an enumerator if no block given(yet).
+  # 
+  # @example
+  #   loop do
+  #     puts "this will infinetly print"
+  #   end
+  # 
+  # @param [Proc] block
+  # @return [Object] returns the receiver
+  def loop
+    raise LocalJumpError, "no block given" unless block_given?
+    
+    while true
+      yield
+    end
+  end
+  
+  # Simple equivalent to `Proc.new`. Returns a {Proc} instance.
+  # 
+  # @example
+  #   proc { puts "a" }
+  #   # => #<Proc 0x2828283>
+  # 
+  # @param [Proc] block
+  # @return [Proc]
+  def proc(&block)
+    raise ArgumentError, "block required" unless block_given?
+    # make block know its a proc/lambda style?
+    block
+  end
+  
+  # Prints each argument in turn to the browser console. Currently there is no
+  # use of `$stdout`, so it is hardcoded into this method to write to the 
+  # console directly.
+  # 
+  # @param [Object] args objects to print using `inspect`
+  # @return [nil]
+  def puts(*args)
+    args.each do |arg|
+      Opal.puts arg.to_s
+    end
+    
+    nil
+  end
   
   def to_a
     [self]
@@ -31,51 +77,20 @@ module Kernel
   end
   
   def method_missing(sym, *args)
-    raise "MethodMissing: #{self.inspect} doest not respond to '#{sym}'"
+    raise NoMethodError, "undefined method `#{sym}` for #{self.inspect}"
+    # raise "MethodMissing: #{self.inspect} doest not respond to '#{sym}'"
   end
   
-  # Repeatedly executes the block.
-  # 
-  # @note Method does not return an enumerator if no block given(yet).
-  # 
-  # @example
-  #   loop do
-  #     puts "this will infinetly print"
-  #   end
-  # 
-  # @param [Proc] block
-  # @return [Object] returns the receiver
-  def loop(&block)
-    `try {
-      while (true) {
-        //#{block}.apply(#{block}.__self__, []);
-        #{yield};
-      }
-    } catch (e) {
-      // capture break statements
-      if (e.__keyword__ == 'break') {
-        return e.opal_value;
-      }
-      
-      // rethrow everything else
-      throw e;
-    }`
-  end
+
   
   def is_a?(klass)
-    # `console.log("chjecking isa for:")
-    # console.log(#{self});
-    # console.log(#{klass});
-    # throw "";
-    # `
-    
-    `var search = #{self}.isa;
+   `var search = #{self}.$k;
     
     while (search) {
       if (search == #{klass})
         return #{true};
       
-      search = search.super_class;
+      search = search.$sup;
     }
     
     return #{false};`
@@ -125,38 +140,6 @@ module Kernel
   
   def class
     `return rb_class_real(#{self}.$k);`
-  end
-  
-  
-  # Simple equivalent to `Proc.new`. Returns a {Proc} instance.
-  # 
-  # @example
-  #   proc { puts "a" }
-  #   # => #<Proc 0x2828283>
-  # 
-  # @param [Proc] block
-  # @return [Proc]
-  def proc(&block)
-    if block_given?
-      block
-    else
-      raise "ArgumentError: tried to create Proc object without a block"
-    end
-  end
-  
-  # Prints each argument in turn to the browser console. Currently there is no
-  # use of `$stdout`, so it is hardcoded into this method to write to the 
-  # console directly.
-  # 
-  # @param [Object] args objects to print using `inspect`
-  # @return [nil]
-  def puts(args)
-    # args.each do |arg|
-      # `console.log(#{args}.$to_s(#{args}).toString());
-      # return #{nil};`
-    # end
-    `#{self}.$opal.log(#{args.to_s});
-    return #{nil};`
   end
   
   # Returns a random number. If `max` is `nil` then the result is 0. Otherwise
@@ -212,27 +195,27 @@ module Kernel
   # @param [String] string to pass as message for exception
   # @return [nil]
   def raise(exception, string = nil)
-    # puts "need to raise"
+    puts "need to raise"
     # `console.log(#{exception})`
     # `console.log(#{string})`
     msg = nil
     if exception.is_a? String
-      # puts "is a string"
+      puts "is a string"
       msg = exception
       exc = RuntimeError.new msg
     elsif exception.is_a? Exception
-      # puts "is a exception"
+      puts "is a exception"
       exc = exception
     else
-      # puts "is a else"
+      puts "is a else"
       if string
         msg = string
       end
       # `(#{string}) ? (#{msg = string}) :()`
       exc = exception.new msg
     end
-    # puts "really about to raise"
-    `rb_raise(#{exc})`
+    puts "really about to raise"
+    `rb_vm_raise(#{exc})`
   end
   
   # An alias of {#raise}

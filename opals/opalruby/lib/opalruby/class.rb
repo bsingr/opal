@@ -44,9 +44,11 @@ class Class
   end
   
   def new
+    # puts "allocating: #{self}"
     obj = allocate
     # recv
     `arguments[0] = #{obj}`
+    `#{obj}.$m.$initialize.apply(#{obj}, arguments)`
     # block - keep as same
     # dont need this...`arguments[1] = #{nil}`
     # `#{obj}.$initialize.apply(#{obj}, arguments)`
