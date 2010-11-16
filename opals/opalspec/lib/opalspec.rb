@@ -4,10 +4,17 @@ require 'opalspec/example'
 require 'opalspec/runner'
 require 'opalspec/dsl'
 
-Dir.glob(File.join(Dir.getwd, 'opals', 'opalruby', 'spec/**/def_spec.rb')).each do |rb|
-  puts rb
-  require rb
+module Spec
+  
 end
+
+puts "down here!"
+
+puts Spec
+# Dir.glob(File.join(Dir.getwd, 'opals', 'opalruby', 'spec/**/def_spec.rb')).each do |rb|
+  # puts rb
+  # require rb
+# end
 
 
 # 
@@ -22,4 +29,4 @@ end
 #   #end
 # end
 
-Spec::Runner.run
+# Spec::Runner.run

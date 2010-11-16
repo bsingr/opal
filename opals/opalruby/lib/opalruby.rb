@@ -10,8 +10,7 @@ module Kernel
   # @param [String] require_path
   # @return [Boolean] success
   def require(require_path)
-    `#{self}.$opal.require(#{require_path});
-    return #{true};`
+    OpalVM.require_path require_path
   end
 end
 
@@ -33,6 +32,8 @@ end
 
 require 'opalruby/module'
 require 'opalruby/kernel'
+require 'opalruby/symbol'
+require 'opalruby/string'
 require 'opalruby/array'
 require 'opalruby/basic_object'
 require 'opalruby/class'
@@ -50,8 +51,8 @@ require 'opalruby/proc'
 require 'opalruby/range'
 require 'opalruby/regexp'
 require 'opalruby/ruby'
-require 'opalruby/string'
-require 'opalruby/symbol'
+# require 'opalruby/string'
+# require 'opalruby/symbol'
 require 'opalruby/top_self'
 require 'opalruby/true_class'
 
@@ -62,12 +63,10 @@ require 'opalruby/true_class'
 
 puts "=====\n Testing\n=====\n"
 
-def do_something
-  while true
-    return 500
+class A
+  class B
+    
   end
 end
-
-puts do_something
 
 puts "=====\nTesting Finished."

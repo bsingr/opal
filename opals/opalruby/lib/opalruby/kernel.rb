@@ -42,19 +42,57 @@ module Kernel
   # @return [nil]
   def puts(*args)
     args.each do |arg|
-      Opal.puts arg.to_s
+      OpalVM.puts arg.to_s
     end
     
     nil
   end
   
-  def to_a
-    [self]
+  # Raises an exception. If given a {String} argument, this method will raise a
+  # {RuntimeError} with the given `string` as a message. Otherwise, if the first
+  # parameter is a subclass of {Exception}, then the method will raise a new 
+  # instance of the given `exception` class with the `string` as a method, if it
+  # exists, or a default message otherwise`
+  # 
+  # @example String message
+  #   raise "some error"
+  #   # => RuntimeError: some error
+  # 
+  # @example Exception subclass
+  #   raise StandardError, "something went wrong"
+  #   # => StandardError: something went wrong
+  # 
+  # @param [Exception, String] exception exception class or string to throw
+  # @param [String] string to pass as message for exception
+  # @return [nil]
+  def raise(exception, string = nil)
+    msg = nil
+    if exception.is_a? String
+      msg = exception
+      exc = RuntimeError.new msg
+    elsif exception.is_a? Exception
+      exc = exception
+    else
+      if string
+        msg = string
+      end
+      exc = exception.new msg
+    end
+    `rb_vm_raise(#{exc})`
+    # OpalVM.raise exc
   end
   
-  def tap
-    yield self
-    self
+  # FIXME: wtf?!?! not working..
+  def instance_variable_defined?(variable_name)
+    `return (rb_ivar_defined(#{variable_name.to_s}) ? #{true} : #{false});`
+  end
+  
+  def instance_variable_get(variable_name)
+    `return rb_ivar_get(#{self}, #{variable_name.to_s});`
+  end
+  
+  def instance_variable_set(variable_name, value)
+    `return rb_ivar_set(#{self}, #{variable_name.to_s}, #{value});`
   end
   
   # Returns `true` if `yield` would execute a block in the current context, 
@@ -71,14 +109,24 @@ module Kernel
     false
   end
   
+  def method_missing(sym, *args)
+    raise NoMethodError, "undefined method `#{sym}` for #{self.inspect}"
+  end
+  
+  def to_a
+    [self]
+  end
+  
+  def tap
+    yield self
+    self
+  end
+  
+  
+  
   # @fixme: this should not be here.
   def !=(other)
     `return #{self == other}.r ? #{false} : #{true};`
-  end
-  
-  def method_missing(sym, *args)
-    raise NoMethodError, "undefined method `#{sym}` for #{self.inspect}"
-    # raise "MethodMissing: #{self.inspect} doest not respond to '#{sym}'"
   end
   
 
@@ -114,18 +162,7 @@ module Kernel
     self == other
   end
   
-  def instance_variable_defined?(variable_name)
-    `return (#{self}[#{variable_name.to_s}.toString()] !== undefined) ? #{true} : #{false};`
-  end
   
-  def instance_variable_get(variable_name)
-    `return #{self}.ig(#{variable_name.to_s}.toString());`
-  end
-  
-  def instance_variable_set(variable_name, value)
-    `#{self}.is(#{variable_name.to_s}.toString(), #{value});
-    return #{value};`
-  end
   
   def __send__(method, *args)
     `var m_id = #{method.to_s};
@@ -177,46 +214,7 @@ module Kernel
     `return #{self}.id;`
   end
   
-  # Raises an exception. If given a {String} argument, this method will raise a
-  # {RuntimeError} with the given `string` as a message. Otherwise, if the first
-  # parameter is a subclass of {Exception}, then the method will raise a new 
-  # instance of the given `exception` class with the `string` as a method, if it
-  # exists, or a default message otherwise`
-  # 
-  # @example String message
-  #   raise "some error"
-  #   # => RuntimeError: some error
-  # 
-  # @example Exception subclass
-  #   raise StandardError, "something went wrong"
-  #   # => StandardError: something went wrong
-  # 
-  # @param [Exception, String] exception exception class or string to throw
-  # @param [String] string to pass as message for exception
-  # @return [nil]
-  def raise(exception, string = nil)
-    puts "need to raise"
-    # `console.log(#{exception})`
-    # `console.log(#{string})`
-    msg = nil
-    if exception.is_a? String
-      puts "is a string"
-      msg = exception
-      exc = RuntimeError.new msg
-    elsif exception.is_a? Exception
-      puts "is a exception"
-      exc = exception
-    else
-      puts "is a else"
-      if string
-        msg = string
-      end
-      # `(#{string}) ? (#{msg = string}) :()`
-      exc = exception.new msg
-    end
-    puts "really about to raise"
-    `rb_vm_raise(#{exc})`
-  end
+
   
   # An alias of {#raise}
   # 

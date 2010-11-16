@@ -198,6 +198,10 @@ class String
     `return (#{suffix} != '' && #{self}.lastIndexOf(#{suffix}) == (#{self}.length - #{suffix}.length)) ? #{true} : #{false};`
   end
   
+  def to_s
+    self
+  end
+  
   # Two strings are equal if they have the same length and content.
   # 
   # @param [String] other string to comapre
@@ -357,9 +361,7 @@ class String
   
   alias_method :[], :slice
   
-  def to_s
-    self
-  end
+
   
   def split(str)
     `return #{self}.split(#{str});`

@@ -55,88 +55,7 @@ var opal_yield_hash = function() {
 };
 
 // VM Methods. These need to be added to all objects/classes
-var rb_vm_methods = {
-  // define a class/module
-  $dc: function(sup, id, body, flag) {
-    // print("defining class " + id + ", " + flag);
-    var klass, base = this;
-    // print("original base is " )
-    // if base is an object, use its class.
-    if (base.$f & T_OBJECT)
-      base = rb_class_real(base.$k);
-    
-    // print("base is now: " + base.$h);
-    // for (var prop in base.$c) print(base.$c[prop]);
-    
-    switch (flag) {
-      // normal class
-      case 0:
-        if (sup === rb_nil)
-          sup = rb_cObject;
 
-        klass = rb_define_class_under(base, id, sup);
-        break;
-      case 1:
-        // throw "running class shift for " + id.class_name
-        klass = id.singleton_class();
-        // return;
-        break;
-      case 2:
-        klass = rb_define_module_under(base, id);
-        break;
-      default:
-        throw "define_class: unknown flag: " + flag
-    }
-    
-      return body(klass);
-  },
-  
-  // define method (normal or singleton)
-  $dm: function(m_id, body, singleton) {
-    var base = this;
-    // print("in define method for: " + m_id);
-    if (singleton) {
-      // return rb_define_singleton_method(rb_singleton_class(base), m_id, body);
-    }
-    else {
-      if (base.$f & T_OBJECT) base = base.$k;
-      return rb_define_method(base, m_id, body);
-    }
-  },
-  
-  // every ruby object can reference back to opal through this.
-  $opal: exports,
-  
-  // used for method missing.. need to cerate a closure to call MM
-  $M: function(m_id) {
-    return function(self, block) {
-      var args = [self, block, m_id].concat(Array.prototype.slice.call(2));
-      return self.$m.$method_missing.apply(self, args);
-    };
-    // throw "Error: self does not respond to " + m_id
-  },
-  
-  // const get
-  $cg: function(id) {
-    // print("getting const: " + id);
-    var base = this;
-    if (base.$f & T_OBJECT)
-      base = rb_class_real(base.$k);
-    
-    // print("about to:");
-    return rb_const_get(base, id);
-  },
-  
-  // const set
-  $cs: function(id, val) {
-    
-    var base = this;
-    if (base.$f & T_OBJECT) base = base.$k;
-    
-    return rb_const_set(base, id, val);
-  }
-  
-};
 
 exports.log = function(str) {
   // print("need to print string:");
@@ -151,7 +70,7 @@ var RClass = function(klass, super_klass) {
   // Ivars. All ivars etc stored in here - no longer?
   // this.$i = {};
   // Constants. All constants belonging to class stored here.
-  this.$c = {};
+  // this.$c = {};
   // SuperClass.
   this.$s = super_klass;
   // Method_table - all methods are stored here. This is prototype based so that
@@ -168,6 +87,14 @@ var RClass = function(klass, super_klass) {
     m_ctor.prototype = new ctor();
     this.$m_tbl = new m_ctor();
     this.$m_prototype_tbl = m_ctor.prototype;
+    
+    // constants..
+    var cctor = function() {};
+    cctor.prototype = super_klass.$c_prototype;
+    var c_ctor = function() {};
+    c_ctor.prototype = new cctor();
+    this.$c = new c_ctor();
+    this.$c_prototype = c_ctor.prototype;
   }
   else {
     // console.log("making fresh");
@@ -175,6 +102,10 @@ var RClass = function(klass, super_klass) {
     var m_ctor = function() {};
     this.$m_tbl = new m_ctor();
     this.$m_prototype_tbl = m_ctor.prototype;
+    // constants..
+    var c_ctor = function() {};
+    this.$c = new c_ctor();
+    this.$c_prototype = c_ctor.prototype;
   }
   // methods added to this actual class instance
   this.$method_table = {};
@@ -233,15 +164,7 @@ opalsym = function(str) {
 };
 
 
-var rb_core_vm_objects = [RClass.prototype, RObject.prototype, Array.prototype, Number.prototype, String.prototype, Function.prototype];
 
-for (var prop in rb_vm_methods) {
-  if (rb_vm_methods.hasOwnProperty(prop)) {
-    for (var i = 0; i < rb_core_vm_objects.length; i++) {
-      rb_core_vm_objects[i][prop] = rb_vm_methods[prop];
-    }
-  }
-}
 
 
 
@@ -267,12 +190,23 @@ var boot_defrootclass = function(id) {
 
 // Create a new subclass of the given superclass. We do not name it yet.
 var rb_class_boot = function(super_class) {
+  // print("rb_class_boot with: " + super_class);
+  if (super_class) {
+    var ctor = function() {};
+    ctor.prototype = super_class.constructor.prototype;
+    var result = function() {
+       RClass.call(this, null, super_class); return this;
+    };
+    result.prototype = new ctor();
+    var klass = new result();
+    klass.$k = rb_class;
+    return klass;
+  }
+  else {
+    var result = new RClass(null, null);
+    return result;
+    }
   
-  var ctor = function() {};
-  ctor.prototype = super_class.constructor.prototype;
-  var result = function() { RClass.call(this, null, super_class); return this; };
-  result.prototype = new ctor();
-  return new result();
 };
 
 // @global
@@ -288,10 +222,12 @@ var rb_name_class = function(klass, id) {
 
 // make metaclass for the given class
 var rb_make_metaclass = function(klass, super_class) {
+  // print("making metaclass for " + klass.__classid__);
   // if klass is a class, and it is a singleton..
   if ((klass.$f & T_CLASS) && (klass.$f & FL_SINGLETON)) {
     // console.log("ok");
-    throw "need to implement in rb_make_metaclass"
+    // throw "need to implement in rb_make_metaclass"
+    return make_metametaclass(klass);
   }
   else {
     // our meta is a 'subclass' of the superclass
@@ -302,6 +238,8 @@ var rb_make_metaclass = function(klass, super_class) {
     klass.$k = meta;
     // fix method table
     klass.$m = meta.$m_tbl;
+    // fix const table
+    meta.$c = klass.$c;
     // attach the meta to the klass (so we can refer to it later)
     rb_singleton_class_attached(meta, klass);
     
@@ -315,6 +253,31 @@ var rb_singleton_class_attached = function(klass, obj) {
     // console.log("setting attacjed..");
     rb_ivar_set(klass, '__attached__', obj);
   }
+};
+
+var make_metametaclass = function(metaclass) {
+  var metametaclass, super_of_metaclass;
+  
+  if (metaclass.$k == metaclass) {
+    metametaclass = rb_class_boot(null);
+    metametaclass.$k = metametaclass;
+  }
+  else {
+    metametaclass = rb_class_boot(null);
+    metametaclass.$k = metaclass.$k.$k == metaclass.$k ? make_metametaclass(metaclass.$k) : metaclass.$k.$k;
+  }
+  
+  metametaclass.$f |= FL_SINGLETON;
+  
+  rb_singleton_class_attached(metametaclass, metaclass);
+  metaclass.$k = metametaclass;
+  metaclass.$m = metametaclass.$m_tbl;
+  super_of_metaclass = metaclass.$s;
+  
+  // while (super_of_metaclass)
+  
+  metametaclass.$s = rb_ivar_get(super_of_metaclass.$k, '__attached__') == super_of_metaclass ? super_of_metaclass.$k : make_metametaclass(super_of_metaclass);
+  return metametaclass;
 };
 
 // 
@@ -395,6 +358,19 @@ var rb_include_module = function(klass, module) {
   
 };
 
+// define toll free bridged class
+// @local
+var rb_define_toll_free_class = function(prototype, flags, id, super_klass) {
+  var klass = rb_define_class(id, super_klass);
+  
+  prototype.$k = klass;
+  prototype.$m = klass.$m_tbl;
+  prototype.$f = flags;
+  prototype.$r = true;
+    
+  return klass;
+};
+
 // define a new class (normal way), with the given id and superclass. Will be
 // top level.
 var rb_define_class = function(id, super_klass) {
@@ -428,6 +404,7 @@ var rb_define_class_id = function(id, super_klass) {
     super_klass = rb_cObject;
     // console.log("A");
   klass = rb_class_create(super_klass);
+  rb_name_class(klass, id);
   // console.log("B " + id);
   rb_make_metaclass(klass, super_klass.$k);
   return klass;
@@ -443,6 +420,7 @@ var rb_class_create = function(super_klass) {
 // get singleton class of obj
 var rb_singleton_class = function(obj) {
   var obj;
+  print('finding singleton class for ' + obj.__classid__);
   // console.log("checking for id: " + obj.$h);
   if (obj == rb_cObject) {
     // console.log("right. cchecking rb_cObject");
@@ -450,6 +428,8 @@ var rb_singleton_class = function(obj) {
   // check if number, string etc.. and throw error?
   if ((obj.$k.$f & FL_SINGLETON)&& rb_ivar_get(obj.$k, '__attached__') == obj) {
     // console.log("returning on attacked");
+    print("returning on attached");
+    // for (var prop in obj.$k) {print (prop); print(obj.$k[prop]);}
     klass = obj.$k;
   }
   else {
@@ -465,15 +445,18 @@ var rb_singleton_class = function(obj) {
 // set the constant on the given class
 var rb_const_set = function(klass, id, val) {
   // klass.$i[id] = val;
-  klass.$c[id] = val;
+  klass.$c_prototype[id] = val;
   return val;
 };
 
 var rb_const_get = function(klass, id) {
   if (klass.$c[id])
     return (klass.$c[id]);
-    
-  throw "Cannot find constant: " + id;
+  
+  // print("trying from " + klass.__classid__);
+  // for (var prop in klass.$c) print(prop);
+  // print("Cannot find constant: " + id);
+  rb_raise(rb_eNameError, 'uninitialized constant ' + id);
 };
 
 // is const defined
@@ -485,13 +468,20 @@ var rb_const_defined = function(klass, id) {
 };
 
 // set ivar
-var rb_ivar_set = function(obj, id, val) {
+// @global
+rb_ivar_set = function(obj, id, val) {
   obj[id] = val;
   return val;
 };
 
-var rb_ivar_get = function(obj, id) {
-  return obj[id];
+// @global
+rb_ivar_get = function(obj, id) {
+  return obj.hasOwnProperty(id) ? obj[id] : rb_nil;
+};
+
+// @global
+rb_ivar_defined = function(obj, id) {
+  return obj.hasOwnProperty(id) ? true : false;
 };
 
 // define method
@@ -575,34 +565,13 @@ rb_define_method(rb_class, 'initialize', function() {});
 rb_symbol = rb_define_class('Symbol', rb_cObject);
 
 // @class String
-rb_string = rb_define_class('String', rb_cObject);
-// native string toll free bridging
-String.prototype.$k = rb_string;
-String.prototype.$m = rb_string.$m_tbl;
-// Flags - every native String instance is T_OBJECT and a T_STRING.
-String.prototype.$f = T_OBJECT | T_STRING;
-// RTest - every string instance is true.
-String.prototype.$r = true;
+rb_string = rb_define_toll_free_class(String.prototype, T_OBJECT | T_STRING, 'String', rb_cObject);
 
 // @class Array
-rb_array = rb_define_class('Array', rb_cObject);
-// native array toll free bridging
-Array.prototype.$k = rb_array;
-Array.prototype.$m = rb_array.$m_tbl;
-// flags
-Array.prototype.$f = T_OBJECT | T_ARRAY;
-// Rtest
-Array.prototype.$r = true;
+rb_array = rb_define_toll_free_class(Array.prototype, T_OBJECT | T_ARRAY, 'Array', rb_cObject);
 
-// @class Number
-rb_number = rb_define_class('Numeric', rb_cObject);
-// toll free bridging
-Number.prototype.$k = rb_number;
-Number.prototype.$m = rb_number.$m_tbl;
-// flags
-Number.prototype.$f = T_OBJECT | T_NUMBER;
-// RTest
-Number.prototype.$r = true;
+// @class Numeric
+rb_number = rb_define_toll_free_class(Number.prototype, T_OBJECT | T_NUMBER, 'Numeric', rb_cObject);
 
 // @class TrueClass
 rb_true_class = rb_define_class('TrueClass', rb_cObject);
@@ -697,6 +666,13 @@ rb_break = function(value) {
   };
 };
 
+
+// raise exception class with our given string
+rb_raise = function(exc, str) {
+  var exception = new RObject(exc, T_OBJECT);
+  rb_ivar_set(exception, '@message', str);
+  rb_vm_raise(exception);
+};
 
 // raise an exception instance (DO NOT pass strings to this)
 rb_vm_raise = function(exc) {

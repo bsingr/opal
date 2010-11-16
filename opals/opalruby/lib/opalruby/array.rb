@@ -328,7 +328,7 @@ class Array
       return #{self}[#{index}];
     }`
   end
-  
+
   alias_method :slice, :[]
   
   # @todo Need to expand functionality
