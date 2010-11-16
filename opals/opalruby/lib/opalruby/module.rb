@@ -49,7 +49,6 @@ class Module
   end
     
   def alias_method(new_name, old_name)
-    # OpalVM
     OpalVM.alias_method self, new_name.to_s, old_name.to_s
     self
   end
@@ -59,21 +58,14 @@ class Module
   end
     
   def const_set(id, value)
-    `return #{self}.cs(#{id}, #{value});`
+    `return rb_vm_cs(#{self}, #{id.to_s}, #{value});`
   end
   
   def module_eval(&block)
-    # puts "about to module eval"
-    # `console.log(#{self});`
     if block_given?
-      # puts "block was given.."
-      # `console.log(#{self});`
-      # `#{block}.__fun__.opal_self = true;`
-      # `#{block}.apply(#{self})`
       `#{block}(#{self}, #{nil})`
-      # `#{}`
     end
   end
   
-  # alias_method :class_eval, :module_eval
+  alias_method :class_eval, :module_eval
 end

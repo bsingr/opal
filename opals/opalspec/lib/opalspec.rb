@@ -4,29 +4,15 @@ require 'opalspec/example'
 require 'opalspec/runner'
 require 'opalspec/dsl'
 
-module Spec
+puts "==================== OK defining"
+
+describe "Adam" do
   
+  it "beynon" do
+    
+  end
 end
 
-puts "down here!"
+puts "===================== OK running"
 
-puts Spec
-# Dir.glob(File.join(Dir.getwd, 'opals', 'opalruby', 'spec/**/def_spec.rb')).each do |rb|
-  # puts rb
-  # require rb
-# end
-
-
-# 
-# describe "Second Describe" do
-#     
-#   it "secondly should do this first" do
-#     raise "shit son, this went badly"
-#   end
-#   
-#   it "secondly should do this second" #do
-#     
-#   #end
-# end
-
-# Spec::Runner.run
+Spec::Runner.run

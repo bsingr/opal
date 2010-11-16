@@ -10,9 +10,6 @@ class Exception
   
   def inspect
     "#<#{self.class.name}: #{self.to_s}>"
-    # puts "in inspect: message is:"
-    # puts @message.inspect
-    # @message
   end
   
   def to_s

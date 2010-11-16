@@ -15,8 +15,66 @@ class Hash
   # 
   # @return [Hash]
   def self.[](*all)
+    # FIXME: this doesnt work..
     `return vnH.apply(#{self}, #{all});`
   end
+  
+  # Returns the contents of this hash as a string.
+  # 
+  # @example
+  #   h = { "a" => 100, "b" => 200 }
+  #   # => "{ \"a\" => 100, \"b\" => 200 }"
+  # 
+  # @return [String]
+  def inspect
+    description = []
+    self.each do |key, value|
+      description << "#{key.inspect}=>#{value.inspect}"
+    end
+    "{#{description.join ", "}}"
+  end
+  
+  # Returns a string representation of the hash's keys and values
+  # 
+  # @return [String]
+  def to_s
+    description = []
+    self.each do |key, value|
+      description << key.to_s
+      description << value.to_s
+    end
+    description.join ""
+  end
+  
+  # Calls `block` once for each key in `self`, passing the key-value pair as
+  # parameters.
+  # 
+  # If no block is given, an enumerator is returned instead.
+  # 
+  # @todo Enumerator functionality not yet implemented.
+  # 
+  # @example
+  #   h = { "a" => 100, "b" => 200 }
+  #   h.each { |k, v| puts "#{k} is #{v}" }
+  #   # => "a is 100"
+  #   # => "b is 200"
+  # 
+  # @return [Hash] returns reciever
+  def each(&block)
+    keys = @keys
+    length = keys.length
+    i = 0
+    
+    while i < length
+      key = keys[i]
+      yield key, __fetch__(key)
+      i+= 1
+    end
+    
+    self
+  end
+  
+  alias_method :each_pair, :each
   
   # Equality - Two hashes are equal if they each contain the same number of keys
   # and if each key-value pair is equal to (according to {Object#==}) the
@@ -62,7 +120,7 @@ class Hash
   # @param [Object] key key to look for
   # @return [Object] result or default value
   def [](key)
-    `return #{self}.hash_fetch(#{key});`
+    __fetch__ key
   end
   
   # Element Assignment - Associates the value give by `value` with the key given
@@ -82,7 +140,7 @@ class Hash
   # @param [Object] value value for key
   # @return [Object] returns the value
   def []=(key, value)
-    `return #{self}.hash_store(#{key}, #{value});`
+    `#{self}.hash_store(#{key}, #{value})`
   end
   
   alias_method :store, :[]=
@@ -105,7 +163,7 @@ class Hash
     for (var i = 0; i < #{self}.__keys__.length; i++) {
       key = #{self}.__keys__[i];
       if (key['$=='](#{obj}).r) {
-        return [key, #{self}.__assocs__[key.hash()]];
+        return [key, #{self}.__assocs__[key.$hash()]];
       }
     }
     return #{nil};`
@@ -200,7 +258,7 @@ class Hash
     `var key, value;
     for (var i = 0; i < #{self}.__keys__.length; i++) {
       key = #{self}.__keys__[i];
-      value = #{self}.__assocs__[key.hash()];
+      value = #{self}.__assocs__[key.$hash()];
       if (#{block}.apply(#{block}.__self__, [key, value]).r) {
         #{self}.hash_delete(key);
         i--;
@@ -209,32 +267,7 @@ class Hash
     return #{self};`
   end
   
-  # Calls `block` once for each key in `self`, passing the key-value pair as
-  # parameters.
-  # 
-  # If no block is given, an enumerator is returned instead.
-  # 
-  # @todo Enumerator functionality not yet implemented.
-  # 
-  # @example
-  #   h = { "a" => 100, "b" => 200 }
-  #   h.each { |k, v| puts "#{k} is #{v}" }
-  #   # => "a is 100"
-  #   # => "b is 200"
-  # 
-  # @return [Hash] returns reciever
-  def each(&block)
-    `var key, value;
-    for (var i = 0; i < #{self}.__keys__.length; i++) {
-      key = #{self}.__keys__[i];
-      value = #{self}.__assocs__[key.hash()];
-      //#{block}.apply(#{block}.__self__, [key, value]);
-      #{yield `key`, `value`};
-    }
-    return #{self};`
-  end
-  
-  alias_method :each_pair, :each
+
   
   # Calls block once for each key in `self`, passing key as a parameter.
   # 
@@ -267,7 +300,7 @@ class Hash
     `var key, value;
     for (var i = 0; i < #{self}.__keys__.length; i++) {
       key = #{self}.__keys__[i];
-      value = #{self}.__assocs__[key.hash()];
+      value = #{self}.__assocs__[key.$hash()];
       #{block}.apply(#{block}.__self__, [value]);
     }
     return #{self};`
@@ -336,7 +369,7 @@ class Hash
     `var result = [], key, value;
     for (var i = 0; i < #{self}.__keys__.length; i++) {
       key = #{self}.__keys__[i];
-      value = #{self}.__assocs__[key.hash()];
+      value = #{self}.__assocs__[key.$hash()];
       result.push(key);
       if (value.info & #{self}.TA) {
         if (#{level} == 1) {
@@ -386,7 +419,7 @@ class Hash
     `var key, val;
     for (var i = 0; i < #{self}.__keys__.length; i++) {
       key = #{self}.__keys__[i];
-      val = #{self}.__assocs__[key.hash()];
+      val = #{self}.__assocs__[key.$hash()];
       if (value['$=='](val).r) {
         return #{true};
       };
@@ -410,38 +443,13 @@ class Hash
     #{self}.__assocs__ = {};
     for (var i = 0; i < #{other_hash}.__keys__.length; i++) {
       key = #{other_hash}.__keys__[i];
-      val = #{other_hash}.__assocs__[key.hash()];
+      val = #{other_hash}.__assocs__[key.$hash()];
       #{self}.hash_store(key, val)
     }
     return #{self};`
   end
   
-  # Returns the contents of this hash as a string.
-  # 
-  # @example
-  #   h = { "a" => 100, "b" => 200 }
-  #   # => "{ \"a\" => 100, \"b\" => 200 }"
-  # 
-  # @return [String]
-  def inspect
-    description = []
-    self.each do |key, value|
-      description << "#{key.inspect} => #{value.inspect}"
-    end
-    "{#{description.join ", "}}"
-  end
-  
-  # Returns a string representation of the hash's keys and values
-  # 
-  # @return [String]
-  def to_s
-    description = []
-    self.each do |key, value|
-      description << key.to_s
-      description << value.to_s
-    end
-    description.join ""
-  end
+
   
   # Returns a new hash created by using `self`'s values as keys, and the keys as
   # values.
@@ -456,7 +464,7 @@ class Hash
     `var res = vnH();
     for (var i = 0; i < #{self}.__keys__.length; i++) {
       key = #{self}.__keys__[i];
-      value = #{self}.__assocs__[key.hash()];
+      value = #{self}.__assocs__[key.$hash()];
       res.hash_store(value, key);
     }
     return res;`
@@ -479,7 +487,7 @@ class Hash
     `var key, value;
     for (var i = 0; i < #{self}.__keys__.length; i++) {
       key = #{self}.__keys__[i];
-      value = #{self}.__assocs__[key.hash()];
+      value = #{self}.__assocs__[key.$hash()];
       if (!#{block}.apply(#{block}.__self__, [key, value]).r) {
         #{self}.hash_delete(key);
         i--;
@@ -503,7 +511,7 @@ class Hash
     `var key, val;
     for (var i = 0; i < #{self}.__keys__.length; i++) {
       key = #{self}.__keys__[i];
-      val = #{self}.__assocs__[key.hash()];
+      val = #{self}.__assocs__[key.$hash()];
       if (value['$=='](val).r) {
         return key;
       };
@@ -563,12 +571,12 @@ class Hash
     `var result = vnH(), key, val;
     for (var i = 0; i < #{self}.__keys__.length; i++) {
       key = #{self}.__keys__[i];
-      val = #{self}.__assocs__[key.hash()];
+      val = #{self}.__assocs__[key.$hash()];
       result.hash_store(key, val)
     }
     for (var i = 0; i < #{other_hash}.__keys__.length; i++) {
       key = #{other_hash}.__keys__[i];
-      val = #{other_hash}.__assocs__[key.hash()];
+      val = #{other_hash}.__assocs__[key.$hash()];
       result.hash_store(key, val)
     }
     return result;`
@@ -596,7 +604,7 @@ class Hash
     `var key, val;
     for (var i = 0; i < #{other_hash}.__keys__.length; i++) {
       key = #{other_hash}.__keys__[i];
-      val = #{other_hash}.__assocs__[key.hash()];
+      val = #{other_hash}.__assocs__[key.$hash()];
       #{self}.hash_store(key, val)
     }
     return #{self};`
@@ -621,7 +629,7 @@ class Hash
     `var key, val;
     for (var i = 0; i < #{self}.__keys__.length; i++) {
       key = #{self}.__keys__[i];
-      val = #{self}.__assocs__[key.hash()];
+      val = #{self}.__assocs__[key.$hash()];
       if (val['$=='](#{obj}).r) {
         return [key, val];
       }
@@ -636,7 +644,7 @@ class Hash
     `var result = vnH(), key, value;
     for (var i = 0; i < #{self}.__keys__.length; i++) {
       key = #{self}.__keys__[i];
-      value = #{self}.__assocs__[key.hash()];
+      value = #{self}.__assocs__[key.$hash()];
       if (!#{block}.apply(#{block}.__self__, [key, value]).r) {
         result.hash_store(key, value);
       };
@@ -651,7 +659,7 @@ class Hash
     `var key, value, size = #{self}.__keys__.length;
     for (var i = 0; i < #{self}.__keys__.length; i++) {
       key = #{self}.__keys__[i];
-      value = #{self}.__assocs__[key.hash()];
+      value = #{self}.__assocs__[key.$hash()];
       if (#{block}.apply(#{block}.__self__, [key, value]).r) {
         #{self}.hash_delete(key);
         i--;
@@ -676,7 +684,7 @@ class Hash
     `var result = vnH(), key, value;
     for (var i = 0; i < #{self}.__keys__.length; i++) {
       key = #{self}.__keys__[i];
-      value = #{self}.__assocs__[key.hash()];
+      value = #{self}.__assocs__[key.$hash()];
       if (#{block}.apply(#{block}.__self__, [key, value]).r) {
         result.hash_store(key, value);
       };
@@ -691,7 +699,7 @@ class Hash
     `var key, value, size = #{self}.__keys__.length;
     for (var i = 0; i < #{self}.__keys__.length; i++) {
       key = #{self}.__keys__[i];
-      value = #{self}.__assocs__[key.hash()];
+      value = #{self}.__assocs__[key.$hash()];
       if (!#{block}.apply(#{block}.__self__, [key, value]).r) {
         #{self}.hash_delete(key);
         i--;
@@ -717,7 +725,7 @@ class Hash
     `var key, value;
     if (#{self}.__keys__.length > 0) {
       key = #{self}.__keys__[0];
-      value = #{self}.__assocs__[key.hash()];
+      value = #{self}.__assocs__[key.$hash()];
       #{self}.hash_delete(key);
       return [key, value];
     } else {
@@ -737,7 +745,7 @@ class Hash
     `var result = [], key, value;
     for (var i = 0; i < #{self}.__keys__.length; i++) {
       key = #{self}.__keys__[i];
-      value = #{self}.__assocs__[key.hash()];
+      value = #{self}.__assocs__[key.$hash()];
       result.push([key, value]);
     }
     return result;`

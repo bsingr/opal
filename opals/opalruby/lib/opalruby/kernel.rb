@@ -226,11 +226,7 @@ module Kernel
   end
   
   def instance_eval(&block)
-    # puts "in instance eval"
     if block_given?
-      # puts "block was given.."
-      # `#{block}.__fun__.opal_self = true;`
-      # `#{block}.apply(#{self})`
       `#{block}(#{self}, #{nil})`
     end
   end

@@ -27,7 +27,8 @@ var rb_mKernel,
     rb_array,
     rb_number,
     rb_true_class,
-    rb_false_class;
+    rb_false_class,
+    rb_hash;
     
 // Exception classes
 var rb_eException,
@@ -164,6 +165,32 @@ opalsym = function(str) {
 };
 
 
+var RHash = function(args) {
+  var k, v;
+  this.$h = opal_yield_hash();
+  this['@keys'] = [];
+  this['@assocs'] = {};
+  this['@default'] = rb_nil;
+  for (var i = 0; i < args.length; i++) {
+    k = args[i], v = args[i+1];
+    i++;
+    this['@keys'].push(k);
+    this['@assocs'][k.$hash()] = v;
+  }
+  return this;
+};
+
+// hash
+// @global
+opalhash = function() {
+  return new RHash(Array.prototype.slice.call(arguments));
+};
+
+
+
+RObject.prototype.$hash = RClass.prototype.$hash = function() {
+  return this.$h;
+};
 
 
 
@@ -307,6 +334,7 @@ var rb_define_module_under = function(base, id) {
   
   module = rb_define_module_id(id);
   rb_const_set(base, id, module);
+  module.$parent = base;
   return module;
 };
 
@@ -353,9 +381,34 @@ var rb_include_module = function(klass, module) {
     // print("adding method: " + method);
     // check to make sure we are not overriding? if so, add it to the superclass
     // of klass.
-    klass.$m_prototype_tbl[method] = module.$method_table[method];
+    // klass.$m_prototype_tbl[method] = module.$method_table[method];
+    rb_define_method(klass, method.substr(1), module.$method_table[method]);
   }
   
+};
+
+var rb_extend_module = function(klass, module) {
+  if (!klass.$extended_modules)
+    klass.$extended_modules = [];
+  
+  if (klass.$extended_modules.indexOf(module) != -1)
+    return;
+  
+  klass.$extended_modules.push(module);
+  
+  if (!module.$extended_in)
+    module.$extended_in = [];
+    
+  module.$extended_in.push(klass);
+  
+  // for (var prop in klass.$k) {
+    // print(prop);
+    // print(klass.$k[prop]);
+  // }
+  
+  for (var method in module.$method_table) {
+    klass.$k.$m_prototype_tbl[method] = module.$method_table[method];
+  }
 };
 
 // define toll free bridged class
@@ -367,6 +420,11 @@ var rb_define_toll_free_class = function(prototype, flags, id, super_klass) {
   prototype.$m = klass.$m_tbl;
   prototype.$f = flags;
   prototype.$r = true;
+  
+  // default hashing behaviour
+  prototype.$hash = function() {
+    return '$$' + this + '$$';
+  };
     
   return klass;
 };
@@ -392,6 +450,8 @@ var rb_define_class_under = function(base, id, super_klass) {
   
   rb_name_class(klass, id);
   rb_const_set(base, id, klass);
+  // if (klass !== rb_object)
+  klass.$parent = base;
   // rb_class_inherited(super_klass, klass);
   return klass;
 };
@@ -453,6 +513,14 @@ var rb_const_get = function(klass, id) {
   if (klass.$c[id])
     return (klass.$c[id]);
   
+  var parent = klass.$parent;
+  
+  while (parent) {
+    if (parent.$c[id])
+      return parent.$c[id];
+    
+    parent = klass.$parent;
+  }
   // print("trying from " + klass.__classid__);
   // for (var prop in klass.$c) print(prop);
   // print("Cannot find constant: " + id);
@@ -499,7 +567,8 @@ var rb_define_method = function(klass, name, body) {
     // for (var prop in klass) print(prop);
     if (klass.$included_in) {
       for (var i = 0; i < klass.$included_in.length; i++) {
-        klass.$included_in[i].$m_prototype_tbl['$' + name] = body;
+        // klass.$included_in[i].$m_prototype_tbl['$' + name] = body;
+        rb_define_method(klass.$included_in[i], name, body);
       }
       // for (var recv_klass in klass.$included_i)
       // print("need to include in: " + klass.$i.__classid__);
@@ -562,13 +631,59 @@ rb_define_method(rb_class, 'new', rb_class_new_instance);
 rb_define_method(rb_class, 'initialize', function() {});
 
 // @class Symbol
-rb_symbol = rb_define_class('Symbol', rb_cObject);
+// rb_symbol = rb_define_class('Symbol', rb_cObject);
+rb_symbol = rb_define_toll_free_class(RSymbol.prototype, T_OBJECT | T_SYMBOL, 'Symbol', rb_cObject);
 
 // @class String
 rb_string = rb_define_toll_free_class(String.prototype, T_OBJECT | T_STRING, 'String', rb_cObject);
 
 // @class Array
 rb_array = rb_define_toll_free_class(Array.prototype, T_OBJECT | T_ARRAY, 'Array', rb_cObject);
+
+// @class Hash
+rb_hash = rb_define_toll_free_class(RHash.prototype, T_OBJECT | T_HASH, 'Hash', rb_cObject);
+
+rb_define_method(rb_hash, '__store__', function(self, blk, key, value) {
+  print("hashing: " + key);
+  print(key.$k.__classid__);
+  var hash = key.$hash();
+  // if we dont have hashed key, add it
+  if (!self['@assocs'].hasOwnProperty(hash)) {
+    self['@keys'].push(key);
+  }
+  
+  return self['@assocs'][hash] = value;
+});
+
+rb_define_method(rb_hash, '__fetch__', function(self, blk, key) {
+  var hash = key.$hash();
+  
+  // print("looking for " + hash);
+  
+  // for (var prop in self['@assocs']){
+    // print(prop);
+    // print(self['@assocs'][prop]);
+  // }
+
+  if (self['@assocs'].hasOwnProperty(hash)) {
+    return self['@assocs'][hash];
+  }
+  
+  return self['@default'];
+});
+
+rb_define_method(rb_hash, '__delete__', function(self, blk, key) {
+  var hash = key.$hash();
+
+  if (!self['@assocs'].hasOwnProperty(hash)) {
+    var ret = self['@assocs'][hash];
+    delete self['@assocs'][hash];
+    self['@keys'].splice(self['@keys'].indexOf(key), 1);
+    return ret;
+  }
+  
+  return self['@default'];
+});
 
 // @class Numeric
 rb_number = rb_define_toll_free_class(Number.prototype, T_OBJECT | T_NUMBER, 'Numeric', rb_cObject);

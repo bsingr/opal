@@ -35,14 +35,14 @@ module Spec
       end
       
       def run
-        # puts "# preparing"
+        puts "preparing"
         prepare
-        # puts "example group each"
-        # puts example_groups
+        puts "example group each"
+        puts example_groups.inspect
         example_groups.each do |group|
           group.run @options
         end
-        # puts "finish.."
+        puts "finish.."
         finish
       end
       
@@ -52,7 +52,9 @@ module Spec
       end
       
       def prepare
-        reporter.start number_of_examples
+        rep = reporter
+        puts rep
+        rep.start number_of_examples
       end
       
       def finish

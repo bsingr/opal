@@ -51,22 +51,5 @@ require 'opalruby/proc'
 require 'opalruby/range'
 require 'opalruby/regexp'
 require 'opalruby/ruby'
-# require 'opalruby/string'
-# require 'opalruby/symbol'
 require 'opalruby/top_self'
 require 'opalruby/true_class'
-
-
-# =================================
-# = Testing stuff goes below here =
-# =================================
-
-puts "=====\n Testing\n=====\n"
-
-class A
-  class B
-    
-  end
-end
-
-puts "=====\nTesting Finished."

@@ -313,7 +313,7 @@ class Array
   def [](index, length = nil)
     `var size = #{self}.length;
     
-    if (#{index.is_a? Range}) {
+    if (#{index.is_a? Range}.$r) {
       #{raise "need to implement range"};
     } else {
       if (#{index} < 0) #{index} += #{size};

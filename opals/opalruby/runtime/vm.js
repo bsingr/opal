@@ -115,14 +115,22 @@ var opal_alias_method = function(self, block, base, new_name, old_name) {
 // @
 var opal_include = function(self, block, klass, module) {
   print("including module: " + module.__classid__);
+  rb_include_module(klass, module);
   return rb_nil;
 };
 
 // Extend module into class
 var opal_extend = function(self, block, klass, module) {
   print("extending module: " + module.__classid__);
+  rb_extend_module(klass, module);
   return rb_nil;
-}
+};
+
+// create a subclass of the given class
+var opal_subclass = function(self, block, super_klass) {
+  var klass = rb_define_class_id('', super_klass);
+  return klass;
+};
 
 rb_mOpalVM = rb_define_module('OpalVM');
 rb_define_singleton_method(rb_mOpalVM, 'puts', opal_puts);
@@ -131,3 +139,4 @@ rb_define_singleton_method(rb_mOpalVM, 'define_method', opal_define_method);
 rb_define_singleton_method(rb_mOpalVM, 'alias_method', opal_alias_method);
 rb_define_singleton_method(rb_mOpalVM, 'include', opal_include);
 rb_define_singleton_method(rb_mOpalVM, 'extend', opal_extend);
+rb_define_singleton_method(rb_mOpalVM, 'subclass', opal_subclass);

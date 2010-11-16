@@ -9,8 +9,6 @@ module Spec
       # include Spec::Matchers
       
       def initialize(example_proxy, &implementation)
-        # puts "initialize imp:"
-        # puts implementation.inspect
         @example_proxy = example_proxy
         @implementation = implementation
       end
@@ -35,16 +33,10 @@ module Spec
         run_options.reporter.example_started @example_proxy
         execution_error = nil
         
-        # puts "executing.."
         begin
-          # puts "befote"
           before_each_example
-          # instance_eval &@implementation
-          # puts "instance eval.."
-          # puts @implementation.inspect
           instance_eval(&@implementation)
         rescue Exception => e
-          # puts "ExampleMethods#execute rescuing"
           execution_error = e
         end
         
