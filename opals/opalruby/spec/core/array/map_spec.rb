@@ -4,6 +4,8 @@ describe "Array#map" do
     a = ['a', 'b', 'c', 'd']
     b = a.map { |i| i + '!' }
     b.should == ['a!', 'b!', 'c!', 'd!']
+    
+    # ignore
     # b.object_id.should_not == a.object_id
   end
   

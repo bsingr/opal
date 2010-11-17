@@ -53,3 +53,7 @@ require 'opalruby/regexp'
 require 'opalruby/ruby'
 require 'opalruby/top_self'
 require 'opalruby/true_class'
+
+def test_a
+  return 400
+end

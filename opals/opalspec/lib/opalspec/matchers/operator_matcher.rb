@@ -6,6 +6,7 @@ module Spec
     class OperatorMatcher
       
       def initialize(actual)
+        # puts "initializing"
         @actual = actual
       end
       
@@ -40,5 +41,18 @@ module Spec
         end
       end
     end
+    
+    class NegativeOperatorMatcher < OperatorMatcher
+      
+      def __delegate_operator(actual, operator, expected)
+        # puts "and in here.."
+        if actual.__send__ operator, expected
+          fail_with_message "expected not: #{expected.inspect}, and got: #{actual.inspect} (using #{operator})"
+        else
+          true
+        end
+      end
+    end
+    
   end
 end

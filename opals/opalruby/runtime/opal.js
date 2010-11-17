@@ -512,22 +512,26 @@ var rb_const_set = function(klass, id, val) {
 
 var rb_const_get = function(klass, id) {
   // print("finding id: " + id);
+  // io_puts('finding id ' + id);
+  // io_puts(klass.__classid__);
+  // io_puts(klass.$f);
   if (klass.$c[id])
     return (klass.$c[id]);
   
   var parent = klass.$parent;
+  // io_puts(parent.__classid__);
   // stop infinite loop (objects object is object??)
   while (parent && parent != rb_cObject) {
-    // print(parent.__classid__);
+    // io_puts(parent.__classid__);
     // print(parent == rb_cObject);
     if (parent.$c[id])
       return parent.$c[id];
     
-    parent = klass.$parent;
+    parent = parent.$parent;
   }
   // print("trying from " + klass.__classid__);
   // for (var prop in klass.$c) print(prop);
-  // print("Cannot find constant: " + id);
+  io_puts("Cannot find constant: " + id);
   rb_raise(rb_eNameError, 'uninitialized constant ' + id);
 };
 
@@ -724,6 +728,7 @@ rb_vm_next_instance.$keyword = 3;
 // normal return called in normal context? (should just be the same as block???)
 // @global
 rb_vm_return = function(value) {
+  console.log("throwing rb_vm_return");
   rb_ivar_set(rb_vm_return_instance, '@exit_value', value);
   throw rb_vm_return_instance;
 };
@@ -731,6 +736,7 @@ rb_vm_return = function(value) {
 // called (thrown) when returning inside a while loop
 // @global
 rb_vm_loop_return = function(value) {
+  console.log("throwing rb_vm_loop_return");
   rb_ivar_set(rb_vm_loop_return_instance, '@exit_value', value);
   throw rb_vm_loop_return_instance;
 };
@@ -738,8 +744,10 @@ rb_vm_loop_return = function(value) {
 // called (thrown) when returning inside a block (that might be called by a 
 // while loop
 // @global
-rb_vm_block_return = function(value) {
+rb_vm_block_return = function(value, jump_function) {
+  // console.log("throwing rb_vm_block_return");
   rb_ivar_set(rb_vm_block_return_instance, '@exit_value', value);
+  rb_ivar_set(rb_vm_block_return_instance, '@jump_function', jump_function);
   throw rb_vm_block_return_instance;
 };
 

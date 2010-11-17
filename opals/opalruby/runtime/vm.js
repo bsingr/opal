@@ -83,7 +83,7 @@ rb_vm_cs = function(base, id, val) {
 // method.
 var opal_puts = function(self, block, arg) {
   // print(arg);
-  console.log(arg);
+  io_puts(arg);
   return rb_nil;
 };
 

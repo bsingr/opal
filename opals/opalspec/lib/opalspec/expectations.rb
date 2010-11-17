@@ -13,7 +13,7 @@ module Kernel
                                                                   message
   end
   
-  def should_not(matcher, message, &block)
+  def should_not(matcher = nil, message = nil, &block)
     Spec::Expectations::NegativeExpectationHandler.handle_matcher self,
                                                                   matcher,
                                                                   message

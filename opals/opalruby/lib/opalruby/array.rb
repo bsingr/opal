@@ -50,6 +50,17 @@ class Array
     self
   end
   
+  def each_with_index(&block)
+     return self unless block_given?
+     array_length = length
+     i = 0
+     while i < length
+       yield at(i), i
+       i += 1
+     end
+     self
+  end
+  
   # Same as {Array#each}, but passes the index of the element instead of the
   # element itself.
   # 
@@ -265,15 +276,33 @@ class Array
   # @param [Array] other array to compare
   # @return [Boolean] are arrays equal
   def ==(other)
-    `if (#{self} === #{other}) return #{true};
-    if (!(#{other}.info & #{self}.TA)) return #{false};
-    if (#{self}.length !== #{other}.length) return #{false};
-    var __a;
-    for (var i = 0; i < #{self}.length; i++) {
-    // if ((__a = #{`#{self}`}))
-    // if (!#{self}[i]['$=='](#{other}[i]).r) return #{false};
-    }
-    return #{true};`
+    # puts "a"
+    return true if object_id == other.object_id
+    # puts "b"
+    return false unless other.is_a? Array
+    # puts "c"
+    return false unless length == other.length
+    # puts "d"
+    self.each_with_index do |obj, idx|
+      # puts "e"
+      if obj != other[idx]
+        # puts "1"
+        return false 
+      end
+      # puts "2"
+    end
+    # puts "f"
+    
+    true
+    # `if (#{self} === #{other}) return #{true};
+    # if (!(#{other}.info & #{self}.TA)) return #{false};
+    # if (#{self}.length !== #{other}.length) return #{false};
+    # var __a;
+    # for (var i = 0; i < #{self}.length; i++) {
+    # // if ((__a = #{`#{self}`}))
+    # // if (!#{self}[i]['$=='](#{other}[i]).r) return #{false};
+    # }
+    # return #{true};`
   end
   
   # Element Reference - Returns the element at `index`, or returns a subarray at
@@ -1450,22 +1479,5 @@ class Array
     return #{self};`
   end
   
-  def each_with_index(&block)
-     `for (var i = 0; i < #{self}.length; i++) {
-        try {
-          #{yield `#{self}[i]`, `i`};
-        } catch (e) {
-          if (e.__keyword__ == 'redo') {
-            i--;
-          }
-          else if (e.__keyword__ == 'break') {
-            return e.opal_value;
-          }
-          else {
-            throw e;
-          }
-        }
-      }
-      return #{self};`
-  end
+
 end

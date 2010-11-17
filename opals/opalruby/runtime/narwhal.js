@@ -22,6 +22,10 @@ var io_require = function(path) {
   require(path);
 };
 
+var io_puts = function(str) {
+  print(str);
+};
+
 
 exports.ruby_platform = "opal";
 
