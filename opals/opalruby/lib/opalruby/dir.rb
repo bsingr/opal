@@ -1,11 +1,10 @@
 class Dir
-  
   def self.getwd
-    `return #{self}.opal.IO.getwd();`
+    OpalVM.getwd
   end
   
   def self.glob(glob)
-    `return #{self}.opal.IO.glob(#{glob});`
+    OpalVM.glob glob
   end
   
   def self.[](globs)

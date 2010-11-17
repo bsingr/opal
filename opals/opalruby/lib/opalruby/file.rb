@@ -7,7 +7,8 @@ class File
   # end
   
   def self.join(*parts)
-    `return #{self}.opal.IO.join.apply(this, #{parts});`
+    # Fixme: use splat
+    OpalVM.join parts
   end
   
   # Returns all components of the filename given in `file_name` except the last

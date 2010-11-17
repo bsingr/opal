@@ -41,10 +41,10 @@ module Spec
       end
       
       def start(number_of_examples)
-        puts "starting"
+        # puts "starting"
         # @start_time = Time.now
         @start_time = 0
-        puts formatters
+        # puts formatters
         formatters.each do |f|
           f.start number_of_examples
         end

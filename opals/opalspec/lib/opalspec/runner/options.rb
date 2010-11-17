@@ -50,18 +50,18 @@ module Spec
       end
       
       def run_examples
-        puts "run_examples"
+        # puts "run_examples"
         runner = ExampleGroupRunner.new self
-        puts "run"
+        # puts "run"
         runner.run
       end
       
       def formatters
-        puts "looking at formatters"
+        # puts "looking at formatters"
         return @formatters if @formatters
-        puts "looking at ruby platform"
-        puts RUBY_PLATFORM
-        puts "www"
+        # puts "looking at ruby platform"
+        # puts RUBY_PLATFORM
+        # puts "www"
         if RUBY_PLATFORM == "browser"
           @formatters ||= [Spec::Runner::Formatter::HtmlFormatter.new(self)]
         else

@@ -3,7 +3,7 @@ describe "Array#clear" do
   it "removes all elements" do
     a = [1, 2, 3, 4]
     a.clear
-    # a.clear.should == a
+    #      # a.clear.should == a
     a.should == []
   end
   

@@ -11,15 +11,15 @@ module Spec
   
     # Main entry point for spec runner.
     def self.run
-      puts "running"
+      # puts "running"
       options.run_examples
     end
   
     def self.options
-      puts "getting options"
+      # puts "getting options"
       @options ||= Options.new
       
-      puts "got options"
+      # puts "got options"
       @options
     end
     

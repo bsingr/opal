@@ -391,7 +391,8 @@ class Array
   # 
   # @return [Array] returns receiver
   def clear
-    `return #{self}.splice(0, #{self}.length);`
+    # `return #{self}.splice(0, #{self}.length);`
+    self
   end
   
   # Invokes `block` once for each element of `self`. Creates a new array

@@ -126,7 +126,8 @@ module Kernel
   
   # @fixme: this should not be here.
   def !=(other)
-    `return #{self == other}.r ? #{false} : #{true};`
+    # `return #{self == other}.r ? #{false} : #{true};`
+    self == other ? false : true
   end
   
 
@@ -138,7 +139,7 @@ module Kernel
       if (search == #{klass})
         return #{true};
       
-      search = search.$sup;
+      search = search.$s;
     }
     
     return #{false};`
@@ -172,8 +173,10 @@ module Kernel
     // recv
     args_to_send.unshift(#{self});
     
-    return (#{self}['$' + m_id] || #{self}.m$(m_id)).apply(#{self}, args_to_send);`
+    return (#{self}.$m['$' + m_id] || rb_vm_meth_m(m_id)).apply(#{self}, args_to_send);`
   end
+  
+  alias_method :send, :__send__
   
   def class
     `return rb_class_real(#{self}.$k);`
@@ -199,7 +202,7 @@ module Kernel
   end
   
   def __id__
-    `return #{self}.$h;`
+    `return #{self}.$hash();`
   end
   
   def to_s
@@ -211,7 +214,7 @@ module Kernel
   end
   
   def object_id
-    `return #{self}.id;`
+    `return #{self}.$hash();`
   end
   
 

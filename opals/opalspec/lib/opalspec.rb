@@ -4,15 +4,9 @@ require 'opalspec/example'
 require 'opalspec/runner'
 require 'opalspec/dsl'
 
-puts "==================== OK defining"
-
-describe "Adam" do
-  
-  it "beynon" do
-    
-  end
+Dir.glob(File.join(Dir.getwd, 'opals/opalruby/spec/**/*.rb')).each do |rb|
+  `console.log("requiring: " + rb)`
+  require rb
 end
-
-puts "===================== OK running"
 
 Spec::Runner.run

@@ -62,7 +62,10 @@ class Module
   end
   
   def module_eval(&block)
+    # puts "block given.."
     if block_given?
+      # puts "ok, module evaling from"
+      # puts self
       `#{block}(#{self}, #{nil})`
     end
   end

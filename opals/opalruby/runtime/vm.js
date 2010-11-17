@@ -41,7 +41,7 @@ rb_vm_class = function(base, super_class, id, body, flag) {
 rb_vm_defn = function(base, m_id, body, singleton) {
   // print("defining: " + m_id);
   if (singleton) {
-    print("defining singleton method: " + m_id);
+    // print("defining singleton method: " + m_id);
     return rb_define_singleton_method(base, m_id, body);
   }
   else {
@@ -82,7 +82,8 @@ rb_vm_cs = function(base, id, val) {
 // Print the given string to the default console. Currelty Kernel#puts uses this
 // method.
 var opal_puts = function(self, block, arg) {
-  print(arg);
+  // print(arg);
+  console.log(arg);
   return rb_nil;
 };
 
@@ -90,7 +91,7 @@ var opal_puts = function(self, block, arg) {
 // paths etc, but will in future use just a ruby load path.. maybe?
 var opal_require = function(self, block, arg) {
   // print('need to require: ' + arg);
-  require(arg);
+  io_require(arg);
   return rb_true;
 };
 
@@ -114,14 +115,14 @@ var opal_alias_method = function(self, block, base, new_name, old_name) {
 // Include module into the class klass
 // @
 var opal_include = function(self, block, klass, module) {
-  print("including module: " + module.__classid__);
+  // print("including module: " + module.__classid__);
   rb_include_module(klass, module);
   return rb_nil;
 };
 
 // Extend module into class
 var opal_extend = function(self, block, klass, module) {
-  print("extending module: " + module.__classid__);
+  // print("extending module: " + module.__classid__);
   rb_extend_module(klass, module);
   return rb_nil;
 };
@@ -132,6 +133,21 @@ var opal_subclass = function(self, block, super_klass) {
   return klass;
 };
 
+// get current working directory - platform dependant
+var opal_getwd = function(self, block) {
+  return io_getwd();
+};
+
+var opal_glob = function(self, block, glob) {
+  // print("globbing: " + glob);
+  return io_glob(glob);
+};
+
+var opal_join = function(self, block, parts) {
+  // var parts = Array.prototype.slice.call(arguments, 2);
+  return io_join.apply(this, parts);
+};
+
 rb_mOpalVM = rb_define_module('OpalVM');
 rb_define_singleton_method(rb_mOpalVM, 'puts', opal_puts);
 rb_define_singleton_method(rb_mOpalVM, 'require_path', opal_require);
@@ -140,3 +156,6 @@ rb_define_singleton_method(rb_mOpalVM, 'alias_method', opal_alias_method);
 rb_define_singleton_method(rb_mOpalVM, 'include', opal_include);
 rb_define_singleton_method(rb_mOpalVM, 'extend', opal_extend);
 rb_define_singleton_method(rb_mOpalVM, 'subclass', opal_subclass);
+rb_define_singleton_method(rb_mOpalVM, 'getwd', opal_getwd);
+rb_define_singleton_method(rb_mOpalVM, 'glob', opal_glob);
+rb_define_singleton_method(rb_mOpalVM, 'join', opal_join);

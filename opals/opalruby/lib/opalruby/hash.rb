@@ -15,8 +15,7 @@ class Hash
   # 
   # @return [Hash]
   def self.[](*all)
-    # FIXME: this doesnt work..
-    `return vnH.apply(#{self}, #{all});`
+    `return opalhash.apply(null, #{all});`
   end
   
   # Returns the contents of this hash as a string.
@@ -140,7 +139,8 @@ class Hash
   # @param [Object] value value for key
   # @return [Object] returns the value
   def []=(key, value)
-    `#{self}.hash_store(#{key}, #{value})`
+    # `#{self}.hash_store(#{key}, #{value})`
+    __store__ key, value
   end
   
   alias_method :store, :[]=
@@ -238,7 +238,8 @@ class Hash
   # @param [Object] key to delete
   # @return [Object] returns value or default value
   def delete(key)
-    `return #{self}.hash_delete(#{key});`
+    # `return #{self}.hash_delete(#{key});`
+    __delete__ key
   end
   
   # Deletes every key-pair value from `self` for which block evaluates to   
@@ -314,7 +315,7 @@ class Hash
   # 
   # @return [Boolean]
   def empty?
-    `return #{self}.__keys__.length == 0 ? #{true} : #{false};`
+    @keys.length == 0
   end
   
   # Returns a value from the hash for the given key. If the key can't be found,
@@ -529,7 +530,8 @@ class Hash
   # 
   # @return [Array] keys
   def keys
-    `return #{self}.__keys__.slice();`
+    # FIXME: return copy..
+    @keys
   end
   
   # Returns the number of key-value pairs in the hash.
@@ -544,7 +546,7 @@ class Hash
   # 
   # @return [Number] length
   def length
-    `return #{self}.__keys__.length;`
+    @keys.length
   end
   
   alias_method :size, :length
@@ -767,10 +769,50 @@ class Hash
   # 
   # @return [Array]
   def values
-    `var result = [];
-    for (var i = 0; i < #{self}.__keys__.length; i++) {
-      result.push(#{self}.__assocs__[#{self}.__keys__[i].hash()]);
+    result = []
+    i = 0
+    length = @keys.length
+    keys = @keys
+    
+    while i < length
+      result.push __fetch__(keys[i])
+      i += 1
+    end
+   
+    result
+  end
+  
+  # Core method to store value for key.
+  # @private
+  def __store__(key, value)
+    `var hash = key.$hash();
+    if (!self['@assocs'].hasOwnProperty(hash)) {
+      self['@keys'].push(key);
     }
-    return result;`
+    
+    return self['@assocs'][hash] = value;`
+  end
+  
+  def __fetch__(key)
+    `var hash = key.$hash();
+    
+    if (self['@assocs'].hasOwnProperty(hash)) {
+      return self['@assocs'][hash];
+    }
+    
+    return self['@default'];`
+  end
+  
+  def __delete__(key)
+    `var hash = key.$hash();
+    
+    if (self['@assocs'].hasOwnProperty(hash)) {
+      var ret = self['@assocs'][hash];
+      delete self['@assocs'][hash];
+      self['@keys'].splice(self['@keys'].indexOf(key), 1);
+      return ret;
+    }
+    
+    return self['@default'];`
   end
 end

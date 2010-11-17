@@ -28,7 +28,8 @@ var rb_mKernel,
     rb_number,
     rb_true_class,
     rb_false_class,
-    rb_hash;
+    rb_hash,
+    rb_proc;
     
 // Exception classes
 var rb_eException,
@@ -480,7 +481,7 @@ var rb_class_create = function(super_klass) {
 // get singleton class of obj
 var rb_singleton_class = function(obj) {
   var obj;
-  print('finding singleton class for ' + obj.__classid__);
+  // print('finding singleton class for ' + obj.__classid__);
   // console.log("checking for id: " + obj.$h);
   if (obj == rb_cObject) {
     // console.log("right. cchecking rb_cObject");
@@ -488,7 +489,7 @@ var rb_singleton_class = function(obj) {
   // check if number, string etc.. and throw error?
   if ((obj.$k.$f & FL_SINGLETON)&& rb_ivar_get(obj.$k, '__attached__') == obj) {
     // console.log("returning on attacked");
-    print("returning on attached");
+    // print("returning on attached");
     // for (var prop in obj.$k) {print (prop); print(obj.$k[prop]);}
     klass = obj.$k;
   }
@@ -510,12 +511,15 @@ var rb_const_set = function(klass, id, val) {
 };
 
 var rb_const_get = function(klass, id) {
+  // print("finding id: " + id);
   if (klass.$c[id])
     return (klass.$c[id]);
   
   var parent = klass.$parent;
-  
-  while (parent) {
+  // stop infinite loop (objects object is object??)
+  while (parent && parent != rb_cObject) {
+    // print(parent.__classid__);
+    // print(parent == rb_cObject);
     if (parent.$c[id])
       return parent.$c[id];
     
@@ -640,53 +644,23 @@ rb_string = rb_define_toll_free_class(String.prototype, T_OBJECT | T_STRING, 'St
 // @class Array
 rb_array = rb_define_toll_free_class(Array.prototype, T_OBJECT | T_ARRAY, 'Array', rb_cObject);
 
+// fix for array hash. create it if not already created..
+Array.prototype.$hash = function() {
+  if (this.$h) return this.$h;
+  
+  return this.$h = opal_yield_hash();
+};
+
 // @class Hash
 rb_hash = rb_define_toll_free_class(RHash.prototype, T_OBJECT | T_HASH, 'Hash', rb_cObject);
 
-rb_define_method(rb_hash, '__store__', function(self, blk, key, value) {
-  print("hashing: " + key);
-  print(key.$k.__classid__);
-  var hash = key.$hash();
-  // if we dont have hashed key, add it
-  if (!self['@assocs'].hasOwnProperty(hash)) {
-    self['@keys'].push(key);
-  }
-  
-  return self['@assocs'][hash] = value;
-});
-
-rb_define_method(rb_hash, '__fetch__', function(self, blk, key) {
-  var hash = key.$hash();
-  
-  // print("looking for " + hash);
-  
-  // for (var prop in self['@assocs']){
-    // print(prop);
-    // print(self['@assocs'][prop]);
-  // }
-
-  if (self['@assocs'].hasOwnProperty(hash)) {
-    return self['@assocs'][hash];
-  }
-  
-  return self['@default'];
-});
-
-rb_define_method(rb_hash, '__delete__', function(self, blk, key) {
-  var hash = key.$hash();
-
-  if (!self['@assocs'].hasOwnProperty(hash)) {
-    var ret = self['@assocs'][hash];
-    delete self['@assocs'][hash];
-    self['@keys'].splice(self['@keys'].indexOf(key), 1);
-    return ret;
-  }
-  
-  return self['@default'];
-});
 
 // @class Numeric
 rb_number = rb_define_toll_free_class(Number.prototype, T_OBJECT | T_NUMBER, 'Numeric', rb_cObject);
+
+
+// @class Proc
+rb_proc = rb_define_toll_free_class(Function.prototype, T_OBJECT | T_PROC, 'Proc', rb_cObject);
 
 // @class TrueClass
 rb_true_class = rb_define_class('TrueClass', rb_cObject);
@@ -743,6 +717,10 @@ var rb_vm_block_return_instance = new RObject(rb_eLocalJumpError, T_OBJECT);
 rb_ivar_set(rb_vm_block_return_instance, '@message', 'unexpected return');
 rb_vm_block_return_instance.$keyword = 0;
 
+var rb_vm_next_instance = new RObject(rb_eLocalJumpError, T_OBJECT);
+rb_ivar_set(rb_vm_next_instance, '@message', 'unexpected break');
+rb_vm_next_instance.$keyword = 3;
+
 // normal return called in normal context? (should just be the same as block???)
 // @global
 rb_vm_return = function(value) {
@@ -765,6 +743,11 @@ rb_vm_block_return = function(value) {
   throw rb_vm_block_return_instance;
 };
 
+// called for next keyword
+rb_vm_next = function(value) {
+  rb_ivar_set(rb_vm_next_instance, '@exit_value', value);
+  throw rb_vm_next_instance;
+};
 
 
 
@@ -781,12 +764,22 @@ rb_break = function(value) {
   };
 };
 
-
 // raise exception class with our given string
+// @global
 rb_raise = function(exc, str) {
+  if (str == undefined) {
+    str = exc;
+    exc = rb_eException;
+  }
   var exception = new RObject(exc, T_OBJECT);
   rb_ivar_set(exception, '@message', str);
   rb_vm_raise(exception);
+};
+// convert natiuve error into proper error
+rb_vm_make_exception = function(native_error) {
+  var exc = new RObject(rb_eException, T_OBJECT);
+  rb_ivar_set(exc, '@message', new String(native_error));
+  return exc;
 };
 
 // raise an exception instance (DO NOT pass strings to this)

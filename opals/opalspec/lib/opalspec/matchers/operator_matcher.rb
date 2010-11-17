@@ -30,9 +30,12 @@ module Spec
     class PositiveOperatorMatcher < OperatorMatcher
       
       def __delegate_operator(actual, operator, expected)
+        # puts "sending"
         if actual.__send__ operator, expected
+          # puts "was true"
           true
         else
+          # puts "was false"
           fail_with_message "expected: #{expected.inspect}, but got: #{actual.inspect} (using #{operator})"
         end
       end

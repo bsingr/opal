@@ -2,20 +2,26 @@
 
 var narwhal_fs = require('file');
 
-exports.IO = {
-  
-  getwd: function() {
-    return narwhal_fs.cwd();
-  },
-  
-  glob: function(glob) {
-    return narwhal_fs.glob(glob);
-  },
-  
-  join: function() {
-    return narwhal_fs.join.apply(this, arguments);
-  }
+// Dir.getwd
+var io_getwd = function() {
+  return narwhal_fs.cwd();
 };
+
+// Dir.glob
+var io_glob = function(glob) {
+  return narwhal_fs.glob(glob);
+};
+
+// File.join
+var io_join = function() {
+  return narwhal_fs.join.apply(this, arguments);
+};
+
+// require
+var io_require = function(path) {
+  require(path);
+};
+
 
 exports.ruby_platform = "opal";
 
@@ -28,8 +34,8 @@ var OpalLog = exports.log = function(str) {
   print(str);  
 };
 
-// native require..
-exports.require = function(path) {
-  // OpalLog("need to require: " + path);
-  require(path);
-};
+// // native require..
+// exports.require = function(path) {
+//   // OpalLog("need to require: " + path);
+//   require(path);
+// };

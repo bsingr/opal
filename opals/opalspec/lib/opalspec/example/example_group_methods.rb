@@ -22,7 +22,7 @@ module Spec
         klass
       end
       
-      def it(example_name, &implementation)
+      def example(example_name, &implementation)
         example_proxy = Spec::Example::ExampleProxy.new example_name
         example_proxies << example_proxy
         example_implementations[example_proxy] = implementation || pending_implementation
