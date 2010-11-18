@@ -1,23 +1,3 @@
-describe "Single assignment" do
-  it "Assignment does not modify the lhs, it reassigns its reference" do
-    a = 'Foobar'
-    b = a
-    b = 'Bazquux'
-    a.should == 'Foobar'
-    b.should == 'Bazquux'
-  end
-  
-  it "Assignment does not copy the object being assigned, just creates a new reference to it" do
-    a = []
-    b = a
-    b << 1
-    a.should == [1]
-  end
-  
-  it "If rhs has multiple arguments, lhs becomes an Array of them" do
-    a = 1, 2, 3
-  end
-end
 
 describe "Operator assignment 'var op= expr'" do
   it "is equivalent to 'var = var op expr'" do
@@ -101,6 +81,75 @@ describe "Operator assignment 'obj[idx] op= expr'" do
     x = [17, 6]
     (x[0] -= 11).should == 6
     x.should == [6, 6]
+  end
+end
+
+describe "Single assignment" do
+  it "Assignment does not modify the lhs, it reassigns its reference" do
+    a = 'Foobar'
+    b = a
+    b = 'Bazquux'
+    a.should == 'Foobar'
+    b.should == 'Bazquux'
+  end
+  
+  it "Assignment does not copy the object being assigned, just creates a new reference to it" do
+    a = []
+    b = a
+    b << 1
+    a.should == [1]
+  end
+  
+  it "If rhs has multiple arguments, lhs becomes an Array of them" do
+    a = 1, 2, 3
+    a.should == [1, 2, 3]
+    
+    a = 1, (), 3
+    a.should == [1, nil, 3]
+  end
+end
+
+describe "Multiple assignment without grouping or splatting" do
+  it "an equal number of arguments on lhs and rhs assigns positionally" do
+    a, b, c, d = 1, 2, 3, 4
+    a.should == 1
+    b.should == 2
+    c.should == 3
+    d.should == 4
+  end
+  
+  it "If rhs has too few arguments, the missing ones on lhs are assigned nil" do
+    a, b, c = 1, 2
+    a.should == 1
+    b.should == 2
+    c.should == nil
+  end
+  
+  it "If rhs has too many arguments, the extra ones are silently not assigned anywhere" do
+    a, b = 1, 2, 3
+    a.should == 1
+    b.should == 2
+  end
+end
+
+describe "Multiple assignments with splats" do
+  it "* on the lhs collects all parameters from its position onwards as an Array or an empty array" do
+    a, *b = 1, 2
+    c, *d = 1
+    e, *f = 1, 2, 3
+    g, *h = 1, [2, 3]
+    # i
+    # j
+    # k
+    
+    a.should == 1
+    b.should == [2]
+    c.should == 1
+    d.should == []
+    e.should == 1
+    f.should == [2, 3]
+    g.should == 1
+    h.should == [[2, 3]]
   end
 end
 

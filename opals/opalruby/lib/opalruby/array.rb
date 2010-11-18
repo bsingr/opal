@@ -1412,6 +1412,7 @@ class Array
   # @return [Array] returns the receiver
   def to_ary
     self
+    # []
   end
   
   # Returns a new array by removing duplicate values in `self`.
