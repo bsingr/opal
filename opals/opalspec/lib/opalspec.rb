@@ -11,3 +11,4 @@ Dir.glob(File.join(Dir.getwd, 'opals/opalruby/spec/**/file_spec.rb')).each do |r
 end
 
 Spec::Runner.run
+
