@@ -61,4 +61,64 @@ describe "Calling a method" do
     def foo(a); a; end
     foo(()).should == nil
   end
+  
+  it "with block as block argument is ok" do
+    def foo(a, &b); [a, yield(b)] end
+    
+    foo(10) do 200 end.should == [10, 200]
+    foo(10) { 200 }.should == [10, 200]
+  end
+  
+  it "with block argument converts the block to proc" do
+    def makeproc(&b) b end
+      makeproc { "hello" }.call.should == "hello"
+      makeproc { "hello" }.class.should == Proc
+      
+      def proc_caller(&b) b.call end
+      def enclosing_method
+        proc_caller { return :break_return_value }
+        :method_return_value
+      end
+      
+      enclosing_method.should == :break_return_value
+  end
+  
+  it "with same names as existing variables is ok" do
+    foobar = 100
+    
+    def foobar; 200; end
+    
+    foobar.should == 100
+    foobar().should == 200
+  end
+  
+  it "with splat operator * and literal array unpacks params" do
+    def fooP3(a, b, c); [a, b, c]; end
+    
+    fooP3(*[1, 2, 3]).should == [1, 2, 3]
+  end
+  
+  it "with splat operator * and references array unpacks params" do
+    def fooP3(a,b,c); [a,b,c] end
+    
+    a = [1,2,3]
+    fooP3(*a).should == [1,2,3]
+  end
+  
+  it "without parentheses works" do
+    def fooP3(a,b,c); [a,b,c] end
+    
+    (fooP3 1,2,3).should == [1,2,3]
+  end
+  
+  it "with a space separating method name and parenthesis treats expression in parenthesis as first argument" do
+    def myfoo(x); x * 2 end
+    def mybar
+      # means myfoo((5).to_s)
+      # NOT   (myfoo(5)).to_s
+      # myfoo (5).to_s
+    end
+    
+    # mybar().should == "55"
+  end
 end

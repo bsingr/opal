@@ -50,3 +50,19 @@ describe "Bareword array literal" do
   # end
   
 end
+
+describe "The unpacking splat operator (*)" do
+  it "when applied to a literal nested array, unpacks its elements into the containing array" do
+    [1, 2, *[3, 4, 5]].should == [1, 2, 3, 4, 5]
+  end
+  
+  it "when applied to a nested referenced array, unpacks its elements into the containing array" do
+    splatted_array = [3, 4, 5]
+    [1, 2, *splatted_array].should == [1, 2, 3, 4, 5]
+  end
+  
+  it "when applied to a value with no other items in the containing array, coerces the passed value to an array and returns it unchanged" do
+    splatted_array = [3, 4, 5]
+    [*splatted_array].should == splatted_array
+  end
+end

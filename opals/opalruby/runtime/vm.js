@@ -42,14 +42,16 @@ rb_vm_defn = function(base, m_id, body, singleton) {
   // print("defining: " + m_id);
   if (singleton) {
     // print("defining singleton method: " + m_id);
-    return rb_define_singleton_method(base, m_id, body);
+    rb_define_singleton_method(base, m_id, body);
   }
   else {
     if (base.$f & T_OBJECT)
       base = base.$k;
     
-    return rb_define_method(base, m_id, body);
+    rb_define_method(base, m_id, body);
   }
+  // always return nil
+  return rb_nil;
 };
 
 // Return method missing closure.
