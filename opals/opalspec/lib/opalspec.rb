@@ -4,7 +4,7 @@ require 'opalspec/example'
 require 'opalspec/runner'
 require 'opalspec/dsl'
 
-Dir.glob(File.join(Dir.getwd, 'opals/opalruby/spec/**/array_spec.rb')).each do |rb|
+Dir.glob(File.join(Dir.getwd, 'opals/opalruby/spec/**/file_spec.rb')).each do |rb|
   # `console.log("requiring: " + rb)`
   puts "requiring #{rb}"
   require rb

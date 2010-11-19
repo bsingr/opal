@@ -2,4 +2,4 @@
 # included.
 # require File.join(File.dirname(__FILE__), '..', 'lib', 'opal.rb')
 
-# puts "in spec helper"
+puts "in spec helper"

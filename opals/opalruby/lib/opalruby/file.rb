@@ -6,6 +6,10 @@ class File
     
   # end
   
+  def self.basename(path)
+    OpalVM.basename path
+  end
+  
   def self.join(*parts)
     # Fixme: use splat
     OpalVM.join parts

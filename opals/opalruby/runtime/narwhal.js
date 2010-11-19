@@ -26,6 +26,10 @@ var io_puts = function(str) {
   print(str);
 };
 
+var io_basename = function(str) {
+  return narwhal_fs.basename(str);
+};
+
 
 exports.ruby_platform = "opal";
 

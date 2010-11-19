@@ -150,6 +150,10 @@ var opal_join = function(self, block, parts) {
   return io_join.apply(this, parts);
 };
 
+var opal_basename = function(self, block, name) {
+  return io_basename(name);
+};
+
 rb_mOpalVM = rb_define_module('OpalVM');
 rb_define_singleton_method(rb_mOpalVM, 'puts', opal_puts);
 rb_define_singleton_method(rb_mOpalVM, 'require_path', opal_require);
@@ -161,3 +165,4 @@ rb_define_singleton_method(rb_mOpalVM, 'subclass', opal_subclass);
 rb_define_singleton_method(rb_mOpalVM, 'getwd', opal_getwd);
 rb_define_singleton_method(rb_mOpalVM, 'glob', opal_glob);
 rb_define_singleton_method(rb_mOpalVM, 'join', opal_join);
+rb_define_singleton_method(rb_mOpalVM, 'basename', opal_basename);
