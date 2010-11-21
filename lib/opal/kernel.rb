@@ -238,4 +238,8 @@ module Kernel
     `return #{self}.const_set(#{const_name}, #{const_value});`
   end
   
+  def const_defined?(name)
+    false
+  end
+  
 end

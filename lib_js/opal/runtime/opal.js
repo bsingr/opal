@@ -37,7 +37,9 @@ var rb_eException,
     rb_eLocalJumpError,
     rb_eNameError,
     rb_eNoMethodError,
-    rb_eArgError;
+    rb_eArgError,
+    rb_eScriptError,
+    rb_eLoadError;
 
 // @global Top self context within ruby 
 rb_top_self = null;
@@ -701,6 +703,8 @@ rb_eLocalJumpError = rb_define_class("LocalJumpError", rb_eStandardError);
 rb_eNameError = rb_define_class("NameError", rb_eStandardError);
 rb_eNoMethodError = rb_define_class('NoMethodError', rb_eNameError);
 rb_eArgError = rb_define_class('ArgumentError', rb_eStandardError);
+rb_eScriptError = rb_define_class('ScriptError', rb_eException);
+rb_eLoadError = rb_define_class('LoadError', rb_eScriptError);
 
 // VM Methods
 // ==========
@@ -793,4 +797,27 @@ rb_vm_make_exception = function(native_error) {
 // raise an exception instance (DO NOT pass strings to this)
 rb_vm_raise = function(exc) {
   throw exc;
+};
+
+// Run a function - this should be used as an entry point for anything that 
+// calls ruby code or may throw an error.
+// 
+// This is only an entry point, so system events, ruby_init() etc should use
+// this. Browser wraps every DOM event in this, for instance.
+// 
+// @global
+rb_run = function(func) {
+  try {
+    return func();
+  }
+  catch(err) {
+    // should check if err is native or ruby error (.$k)
+    if (err.$k) {
+      print('caught error: ');
+      print(err.$k.__classid__ + ': ' + err['@message'])
+    }
+    else {
+      print('NativeError: ' + err);
+    }
+  }
 };

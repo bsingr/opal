@@ -172,7 +172,7 @@ Lexer.prototype.next_token = function() {
       scanner.scan(/^(\n+)/);
       this._line_number += scanner.matched.length;
       
-      if (this.lex_state == EXPR_BEG) {
+      if ([EXPR_BEG, EXPR_DOT].indexOf(this.lex_state) !== -1) {
         continue;
       }
       cmd_start = true;
@@ -204,6 +204,14 @@ Lexer.prototype.next_token = function() {
       
       this.push_string_parse({ beg: start_word, content: true, end: end_word });
       return ["WORDS_BEGIN", scanner.matched]; 
+    }
+    else if (scanner.scan(/^\%[Qq]/)) {
+      var start_word = scanner.scan(/^./),
+          end_word   = { '(': ')', '[': ']', '{': '}'}[start_word],
+          end_word   = end_word || start_word;
+      
+      this.push_string_parse({ beg: start_word, content: true, end: end_word });
+      return ["STRING_BEGIN", scanner.matched];
     }
     
     else if (scanner.scan(/^\//)) {
@@ -343,11 +351,19 @@ Lexer.prototype.next_token = function() {
     else if (scanner.scan(/^\:/)) {
       if (this.lex_state == EXPR_END || this.lex_state == EXPR_ENDARG || scanner.check(/^\s/)) {
         if (!scanner.check(/^\w/)) {
+          this.lex_state = EXPR_BEG;
           return [":", scanner.matched];
         }
         
         this.lex_state = EXPR_FNAME;
         return ["SYMBEG", scanner.matched];
+      }
+      
+      if (scanner.scan(/^\'/)) {
+        this.push_string_parse({ beg: "'", content: true, end: "'" });
+      }
+      else if (scanner.scan(/^\"/)) {
+        this.push_string_parse({ beg: '"', content: true, end: '"' });
       }
       
       this.lex_state = EXPR_FNAME;
@@ -563,8 +579,23 @@ Lexer.prototype.next_token = function() {
       return ["UNARY", "~"];
     }
     
-    
-    else if (scanner.scan(/^\$[!@\&\`\'\"\+~*$?\/\\:;=.,<>_]/)) {
+    // FIXME: do we really need to differentiate between these. generates the
+    // same code. our checks will be in the gvar getters (for the relative 
+    // parts..)
+    // 
+    // else if (scanner.scan(/^\$([1-9]\d*)/)) {
+    //   this.lex_state = EXPR_END;
+    //   return ["NTH_REF", scanner.matched];
+    // }
+    // else if (scanner.scan(/^\$([\+\'\&\`])/)) {
+    //   this.lex_state = EXPR_END;
+    //   return ["BACK_REF", scanner.matched];
+    // }
+    // else if (scanner.scan(/^\$[!@\"~*$?\/\\:;=.,<>_]/)) {
+    //   this.lex_state = EXPR_END;
+    //   return ["GVAR", scanner.matched];
+    // }
+    else if (scanner.scan(/^\$[\+\'\`\&!@\"~*$?\/\\:;=.,<>_]/)) {
       this.lex_state = EXPR_END;
       return ["GVAR", scanner.matched];
     }
@@ -677,6 +708,7 @@ Lexer.prototype.next_token = function() {
           this.lex_state = EXPR_BEG;
           return ["BEGIN", scanner.matched];
         case 'rescue':
+        if (this.lex_state == EXPR_DOT || this.lex_state == EXPR_FNAME) return ["IDENTIFIER", scanner.matched];
           if (this.lex_state == EXPR_BEG) return ["RESCUE", scanner.matched];
           this.lex_state = EXPR_BEG;
           return ["RESCUE_MOD", scanner.matched];

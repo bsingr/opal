@@ -81,6 +81,18 @@ rb_vm_cs = function(base, id, val) {
   return rb_const_set(base, id, val);
 };
 
+// get global by id
+// @global
+rb_vm_gg = function(id) {
+  return rb_gvar_get(id);
+};
+
+// set global by id
+// @global
+rb_vm_gs = function(id, value) {
+  return rb_gvar_set(id, value);
+};
+
 // Print the given string to the default console. Currelty Kernel#puts uses this
 // method.
 var opal_puts = function(self, block, arg) {
@@ -91,10 +103,9 @@ var opal_puts = function(self, block, arg) {
 
 // Raw require - require the 'path'. Currently uses commonjs paths and load
 // paths etc, but will in future use just a ruby load path.. maybe?
-var opal_require = function(self, block, arg) {
+var opal_require = function(self, block, fname) {
   // print('need to require: ' + arg);
-  io_require(arg);
-  return rb_true;
+  return rb_require(fname);
 };
 
 // Raw define method. our method (name) will be a string here.

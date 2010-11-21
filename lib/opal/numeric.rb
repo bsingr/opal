@@ -1,4 +1,4 @@
-require 'opalruby/comparable'
+require 'opal/comparable'
 
 class Numeric
   # FIXME: fix this.

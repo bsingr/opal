@@ -48,3 +48,5 @@ class TrueClass
     end
   end
 end
+
+TRUE = true

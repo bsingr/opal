@@ -15,6 +15,13 @@ if (typeof process !== 'undefined') {
       system = require('sys'),
       path   = require('path');
 
+  // print(..)
+  exports.print = function() {
+    for (var i = 0; i < arguments.length; i++) {
+      console.log(arguments[i]);
+    }
+  };
+
   // IO.join(...)
   exports.join = path.join;
   // IO.read(path)
@@ -43,6 +50,9 @@ else {
 
   var file   = require('file'),
       system = require('system');
+  
+  // print()
+  exports.print = print;
   
   // IO.join(...)
   exports.join = file.join;

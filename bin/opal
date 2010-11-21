@@ -12,4 +12,4 @@
 
 // console.log(require.paths);
 
-require('../lib/opal/command').run();
+require('../lib_js/opal').run();

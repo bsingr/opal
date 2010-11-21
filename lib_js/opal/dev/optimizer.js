@@ -11,7 +11,7 @@ var VALID_CMD_BEGIN = ['IDENTIFIER', 'IDENTIFIER2', 'CONSTANT', 'STRING_BEGIN', 
 var VALID_CMD_END = [';', '\\n', ''];
 
 // VALID cmd end unless prev was a commar
-var VALID_CMD_END_COMMAR = ['DO', 'CURLY_BEGIN', 'FOR_MOD', 'IF_MOD', 'UNLESS_MOD', 'WHILE_MOD', 'UNTIL_MOD', 'CATCH_MOD'];
+var VALID_CMD_END_COMMAR = ['DO', 'CURLY_BEGIN', 'FOR_MOD', 'IF_MOD', 'UNLESS_MOD', 'WHILE_MOD', 'UNTIL_MOD', 'CATCH_MOD', 'AND_OR_OP'];
 
 // when we get one of these, skip to the next new line - def: param names could appear to be commanf args
 var CMD_SKIP_LINE = ['DEF'];
@@ -126,12 +126,44 @@ Optimizer.prototype.find_command_args = function() {
       
       // potential mlhs nodes - '|' check is quick hack to make sure we are not
       // in block args..
-      else if (stack.length == 0 && (!last || (['|', '=', 'MRHS=', ','].indexOf(last[0]) == -1)) && next && next[0] == ',') {
+      // else if (stack.length == 0 && (!last || (['|', '=', 'MRHS=', ',', 'SYMBEG'].indexOf(last[0]) == -1)) && next && next[0] == ',') {
         // print("MLHS potential " + token[1] + " .. " + token[2]);
         // print((last && last[1]) + ".........." + next[1]);
-        stack.push('MLHS_BEGIN');
-        this._tokens.splice(idx, 0, ['MLHS_BEGIN', 'MLHS_BEGIN', 0]);
-        return 2;
+        // stack.push('MLHS_BEGIN');
+        // this._tokens.splice(idx, 0, ['MLHS_BEGIN', 'MLHS_BEGIN', 0]);
+        // return 2;
+      // }
+      
+      // basically check until we get to a new line, semi colon or =
+      else if (stack.length == 0 && (!last || (['|', '=', 'MRHS=', ',', 'SYMBEG'].indexOf(last[0]) == -1)) && next) {
+        var working_idx = idx;
+        var working_token = this._tokens[working_idx];
+        var seen_commar = false;
+        // if we have a '=' quickly after, we know we are not in mlhs..
+        // if (this._tokens[working_idx + 1][0] == '=') return 1;
+        
+        while (working_token) {
+          // should really check top stack is still mlhs.. we shouldnt allow
+          // commars inside [] for instance when indexing
+          if (working_token[0] == ',') seen_commar = true;
+          
+          if (VALID_CMD_END_COMMAR.indexOf(working_token[0]) != -1 || VALID_CMD_END.indexOf(working_token[0]) != -1) {
+            // got to end without hitting equals
+            return 1;
+          }
+          if (working_token[0] == '=') {
+            // if no commar, lhs only!
+            if (!seen_commar) return 1;
+            
+            stack.push('MLHS_BEGIN');
+            this._tokens.splice(idx, 0, ['MLHS_BEGIN', 'MLHS_BEGIN', 0]);
+            return 2;
+          }
+          working_token = this._tokens[working_idx++];
+        }
+        // print("MLHS potential " + token[1] + " .. " + token[2]);
+        // print((last && last[1]) + ".........." + next[1]);
+        return 1;
       }
     }
     // if we reach a callend, parenend, string_dbeg_end, index_end, array_end or
@@ -184,7 +216,8 @@ Optimizer.prototype.find_command_args = function() {
     // skip. A commar implies that even though we could end here, we expect more
     // args. This will be a syntax error for some items (like DO and CURLY), but
     // the parser can pick these up.
-    else if (stack[stack.length - 1] == 'CMD_BEGIN' && last[0] !== ',' && last[0] !== 'CALL_END' && VALID_CMD_END_COMMAR.indexOf(token[0]) !== -1) {      
+    else if (stack[stack.length - 1] == 'CMD_BEGIN' && last[0] !== ','  && VALID_CMD_END_COMMAR.indexOf(token[0]) !== -1) { // && last[0] !== 'CALL_END'
+      
       var cmd_begin = cmd_stack[cmd_stack.length - 1];
       this._tokens.splice(cmd_begin + 1, 0, ['CALL_BEGIN', '(']);
       this._tokens.splice(idx + 1, 0, ['CALL_END', ')']);

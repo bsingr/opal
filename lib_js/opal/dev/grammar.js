@@ -38,7 +38,9 @@ var Grammar = {
   
   ExcList: [
     ["",                                                                        ""],
-    ["ArgValue",                                                                ""]
+    ["ArgValue",                                                                ""],
+    
+    ["ExcList , ArgValue", ""]
   ],
   
   ExcVar: [
@@ -51,7 +53,11 @@ var Grammar = {
   ],
   
   OptEnsure: [
-    ["",                                                                        ""]
+    ["ENSURE CompStatements",
+    
+        ""],
+    
+    ["", ""]
   ],
   
   CompStatements: [
@@ -117,6 +123,8 @@ var Grammar = {
     ["Literal", ""],
     
     ["VarRef", ""],
+    
+    ["BackRef", ""],
     
     ["ARRAY_BEGIN ArefArgs ARRAY_END",
     
@@ -240,9 +248,21 @@ var Grammar = {
   ],
   
   MlhsItem: [
-    ["Variable",  
+    ["Assignable",
+    
+        "$$ = $1;"],
+    
+    // TODO: renamed to varref from variable for mlhs rewrite..
+    ["VarRef",  
         
         "$$ = $1;"]
+    
+    // ["COLON3 CONSTANT", ""],
+    // ["IDENTIFIER INDEX_BEGIN ArefArgs INDEX_END", "$$ = ['aref', ['identifier', $1], $3];"]
+    // ["IDENTIFIER", ""]
+    
+    // TODO: ADDED thuis for MLHS rewrite..
+    
   ],
   
   Mrhs: [    
@@ -287,6 +307,16 @@ var Grammar = {
     ["String",  ""],
     ["Words",   ""],
     ["Regexp",  ""]
+  ],
+  
+  BackRef: [
+    ["NTH_REF",
+    
+        "$$ = ['nth_ref', $1];"],
+    
+    ["BACK_REF",
+    
+        "$$ = ['back_ref', $1];"]
   ],
   
   Regexp: [
@@ -339,7 +369,13 @@ var Grammar = {
   ],
   
   Symbol: [
-    ["SYMBEG Sym",                                                              "$$ = ['symbol', $2];"]
+    ["SYMBEG Sym",
+    
+        "$$ = ['symbol', $2];"],
+    
+    ["SYMBEG XStringContents STRING_END",
+    
+        ""]
   ],
   
   Sym: [
@@ -350,7 +386,7 @@ var Grammar = {
   ],
   
   DSym: [
-    ["SYMBEG XStringContents STRING_END",                                       ""]
+    ["SYMBEG XStringContents STRING_END", ""]
   ],
   
   MethodCall: [

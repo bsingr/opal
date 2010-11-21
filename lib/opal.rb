@@ -12,6 +12,12 @@ module Kernel
   def require(require_path)
     OpalVM.require_path require_path
   end
+  
+  # remove this!!!!!!!
+  def puts(a)
+    `console.log(#{a})`
+    nil
+  end
 end
 
 class String
@@ -30,30 +36,26 @@ class Symbol
   end
 end
 
-require 'opalruby/module'
-require 'opalruby/kernel'
-require 'opalruby/symbol'
-require 'opalruby/string'
-require 'opalruby/array'
-require 'opalruby/basic_object'
-require 'opalruby/class'
-require 'opalruby/dir'
-require 'opalruby/enumerator'
-require 'opalruby/error'
-require 'opalruby/false_class'
-require 'opalruby/file'
-require 'opalruby/hash'
-require 'opalruby/io'
-require 'opalruby/match_data'
-require 'opalruby/nil_class'
-require 'opalruby/numeric'
-require 'opalruby/proc'
-require 'opalruby/range'
-require 'opalruby/regexp'
-require 'opalruby/ruby'
-require 'opalruby/top_self'
-require 'opalruby/true_class'
-
-def test_a
-  return 400
-end
+require 'opal/module'
+require 'opal/kernel'
+require 'opal/symbol'
+require 'opal/string'
+require 'opal/array'
+require 'opal/basic_object'
+require 'opal/class'
+require 'opal/dir'
+require 'opal/enumerator'
+require 'opal/error'
+require 'opal/false_class'
+require 'opal/file'
+require 'opal/hash'
+require 'opal/io'
+require 'opal/match_data'
+require 'opal/nil_class'
+require 'opal/numeric'
+require 'opal/proc'
+require 'opal/range'
+require 'opal/regexp'
+require 'opal/ruby'
+require 'opal/top_self'
+require 'opal/true_class'

@@ -678,6 +678,12 @@ RubyGenerator.prototype = {
     else if (type == 'aref'){
       return this.generate_aset(stmt[1], stmt[2]);
     }
+    else if (type == 'gvar') {
+      return "rb_vm_gs('" + stmt[1][1].replace('\\', '\\\\')  + "', " + this.generate(stmt[2]) + ")";
+    }
+    else {
+      throw "Bad lhs: " + type;
+    }
   },
   
   // ['op_asgn', op, lhs, rhs]
@@ -1360,7 +1366,7 @@ RubyGenerator.prototype = {
     }
     else if (stmt[1].length == 1) {
       if (stmt[1][0][0] == 'string_content') {
-        res.push('"' + stmt[1][0][1] + '"');
+        res.push(JSON.stringify(stmt[1][0][1]));
       }
       else if (stmt[1][0][0] == 'string_dbegin') {
         var tmp_to_s = this.iseq_current.temp_local();
@@ -1381,7 +1387,7 @@ RubyGenerator.prototype = {
         if (i > 0) res.push(' + ');
         part = stmt[1][i];
         if (part[0] == 'string_content') {
-          res.push('"' + part[1] + '"');
+          res.push(JSON.stringify(part[1]));
         }
         else if (part[0] == 'string_dbegin') {
           var tmp_to_s = this.iseq_current.temp_local();
@@ -1399,6 +1405,58 @@ RubyGenerator.prototype = {
     }
     
     return res.join("");
+  },
+  
+  generate_regexp: function(stmt) {
+    var res = ['(new RegExp('];
+    
+    if (stmt[1].length == 0) {
+      // empty regexp in js = error
+      return '/^$/';
+    }
+    else if (stmt[1].length == 1) {
+      if (stmt[1][0][0] == 'string_content') {
+        res.push(JSON.stringify(stmt[1][0][1]));
+      }
+      else if (stmt[1][0][0] == 'string_dbegin') {
+        var tmp_to_s = this.iseq_current.temp_local();
+        res.push('(' + tmp_to_s + ' = ');
+        res.push(this.generate(stmt[1][0][1][1][0]));
+        res.push(', ' + tmp_to_s + '.$m');
+        res.push(this.mid_to_jsid('to_s') + '(' + tmp_to_s + '))');
+        this.iseq_current.queue_temp(tmp_to_s);
+      }
+      else {
+        res.push(this.SELF + '.i$' + stmt[1][0][1] + '.$to_s(self)');
+      }
+    }
+    else {
+      res.push('(');
+      var part;
+      for (var i = 0; i < stmt[1].length; i++) {
+        if (i > 0) res.push(' + ');
+        part = stmt[1][i];
+        if (part[0] == 'string_content') {
+          res.push(JSON.stringify(part[1]));
+        }
+        else if (part[0] == 'string_dbegin') {
+          var tmp_to_s = this.iseq_current.temp_local();
+          res.push('(' + tmp_to_s + ' = ');
+          res.push(this.generate(part[1][1][0]));
+          res.push(', ' + tmp_to_s + '.$m');
+          res.push(this.mid_to_jsid('to_s') + '(' + tmp_to_s + '))');
+          this.iseq_current.queue_temp(tmp_to_s);
+        }
+        else {
+          res.push(this.SELF + '.i$' + part[1] + '.$to_s(self)');
+        }
+      }
+      res.push(')');
+    }
+    res.push(', ');
+    res.push('"' + stmt[2] + '"');
+    res.push('))');
+    return res.join('');
   },
   
   generate_words: function(stmt, o) {
@@ -1465,7 +1523,15 @@ RubyGenerator.prototype = {
   },
   
   generate_gvar: function(stmt) {
-    return ("'gvar'");
+    return "rb_vm_gg('" + stmt[1].replace('\\', '\\\\') + "')";
+  },
+  
+  generate_nth_ref: function(stmt) {
+    return "rb_vm_gg('" + stmt[1] + "')";
+  },
+  
+  generate_back_ref: function(stmt) {
+    return "rb_vm_gg('" + stmt[1] + "')";
   },
   
   generate_colon2: function(stmt) {
@@ -1618,23 +1684,6 @@ RubyGenerator.prototype = {
   
   generate_paren: function(stmt) {
     return this.generate_compstmt(stmt[1][1]);
-  },
-  
-  generate_regexp: function(stmt) {
-    var code = ['/'];
-    
-    if (stmt[1].length == 0) {
-      // empty regexp in js = error
-      code.push('^$');
-    }
-    else {
-      for (var i = 0; i < stmt[1].length; i++) {
-        code.push(stmt[1][i][1]);
-      }
-    }
-    code.push('/');
-    code.push(stmt[2]);
-    return code.join('');
   },
   
   generate_range: function(stmt) {

@@ -2,6 +2,7 @@
 
 var node_path = require('path');
 var node_glob = require('glob');
+var node_fs = require('fs');
 
 // Dir.getwd
 var io_getwd = function() {
@@ -60,6 +61,38 @@ var io_require = function(path) {
 // puts
 var io_puts = function(str) {
   console.log(str);
+};
+
+// normal puts
+var puts = function(str) {
+  console.log(str);
+};
+
+// file exists? true/false
+var io_file_exists = function(path) {
+  var stats;
+  
+  try {
+    stats = node_fs.statSync(path);
+  }
+  catch (e) {
+    return false;
+  }
+  
+  if (stats && !stats.isDirectory()) 
+    return true;
+  
+  return false;
+};
+
+// extension name of given file
+var io_extname = function(fname) {
+  return node_path.extname(fname);
+};
+
+// read file into string
+var io_read = function(fname) {
+  return node_fs.readFileSync(fname);
 };
 
 

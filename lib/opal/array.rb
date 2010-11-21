@@ -1,4 +1,4 @@
-require 'opalruby/enumerable'
+require 'opal/enumerable'
 # Arrays are ordered, indexed by integers starting at 0.
 # 
 # ## Implementation details
@@ -156,6 +156,7 @@ class Array
     i = 0
     length = self.length
     while i < length
+      # a, ::WOW, result[i] = yield at(i)
       result[i] = yield at(i)
       i += 1
     end
