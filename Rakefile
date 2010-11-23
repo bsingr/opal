@@ -40,7 +40,7 @@ task :opal_dev => :vienna do
   # end
 end
 
-desc "compile ruby.rb to ruby.js in tmp/ (testing compiler functionality)"
-task :compile => :vienna do
-  puts "compiling.."
+desc "Rebuild the javascript parser (ruby_parser)"
+task :parser do
+  exec './tools/racc2js/racc2js.rb ./lib_js/opal/dev/ruby_parser.y'
 end

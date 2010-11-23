@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src='ruby_parser.js'></script>
+    <script type = "text/javascript">
+      // var test_tokens = [
+      //   ['NUMBER', '100'],
+      //   ['+', '+'],
+      //   ['TOM', '292'],
+      //   ['*', '*'],
+      //   ['BEYNON', 'a'],
+      //   [false, false]
+      // ];
+
+      var test_tokens = [
+        ['IDENTIFIER', '100'],
+        ['+', '+'],
+        ['INTEGER', '200'],
+        ['-', '-'],
+        ['INTEGER', '900'],
+        ['INTEGER', '0198282'],
+        [false, false]
+      ];
+
+      var p = new RubyParser();
+      p.next_token = function() {
+        return test_tokens.shift();
+      };
+      p.do_parse();
+    </script>
+  </head>
+</html>

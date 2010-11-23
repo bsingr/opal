@@ -6,7 +6,7 @@ exports.init = function() {
   rb_run(function() {
     print('require opal');
     rb_require('opal');
-    rb_require('mspec');
+    // rb_require('mspec');
   });
   
 };

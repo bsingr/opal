@@ -383,10 +383,11 @@ RubyGenerator.prototype = {
     // print(iseq);
     var name = iseq[0];
     if (this['generate_' + name]) {
+      print('doing ' + name);
       return this['generate_' + name](iseq, {});
     }
     
-    print("Unknwon iseq type: " + iseq);
+    print("Unknwon iseq type: " + iseq + " (" + iseq[0] + ")");
     throw "Unknwon iseq type: " + iseq;
   },
   
