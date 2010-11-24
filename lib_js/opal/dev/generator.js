@@ -57,7 +57,7 @@ BaseIseq.prototype = {
     res.push('var ' + this.NIL + ' = rb_nil;\n');
 
     for (var i = 0; i < this.ensure_ivars.length; i++) {
-      res.push('if (' + this.SELF + '["@' + this.ensure_ivars[i] + '"] === undefined) ' + this.SELF + '["@' + this.ensure_ivars[i] + '"] = ' + this.NIL + ';\n');
+      res.push('if (' + this.SELF + '["' + this.ensure_ivars[i] + '"] === undefined) ' + this.SELF + '["' + this.ensure_ivars[i] + '"] = ' + this.NIL + ';\n');
     }
     if (this.locals.length > 0) {
       res.push('var ');
@@ -383,7 +383,7 @@ RubyGenerator.prototype = {
     // print(iseq);
     var name = iseq[0];
     if (this['generate_' + name]) {
-      print('doing ' + name);
+      print('doing ' + name + ': ' + iseq.join(','));
       return this['generate_' + name](iseq, {});
     }
     
@@ -633,7 +633,7 @@ RubyGenerator.prototype = {
 
   generate_ivar: function(stmt, o) {
     this.iseq_current.ensure_ivar(stmt[1]);
-    return this.SELF + '["@' + stmt[1] + '"]';
+    return this.SELF + '["' + stmt[1] + '"]';
   },
   
   // ['assign', lhs, rhs]
@@ -648,7 +648,7 @@ RubyGenerator.prototype = {
       return local + ' = ' + this.generate(stmt[2]);
     }
     else if (type == 'ivar') {
-      return (this.SELF + '["@' + stmt[1][1] + '"] = ' + this.generate(stmt[2]));
+      return (this.SELF + '["' + stmt[1][1] + '"] = ' + this.generate(stmt[2]));
     }
     else if (type == 'constant') {
       
@@ -878,7 +878,13 @@ RubyGenerator.prototype = {
     var ternary_count = 0;
     // print(stmt);
     res.push("((" + tmp_case + " = ");
-    res.push(this.generate(stmt[1]));
+    
+    if (stmt[1]) {
+      res.push(this.generate(stmt[1]));
+    }
+    else {
+      res.push('rb_true');
+    }
     res.push(', true) ? ');
     
     var when_tmp, when_part, when_part_tmp;
@@ -1171,9 +1177,12 @@ RubyGenerator.prototype = {
     // return "opalhash()";
   },
   
-  // ['symbol', part]
-  // part: identifier, ivar, gvar or cvar
-  generate_symbol: function(stmt, o) {    
+  // ['symbol', name]
+  generate_symbol: function(stmt) {
+    return 'opal_sym("' + stmt[1] + '")';
+  },
+  
+  generate_dsym: function(stmt, o) {    
     if (stmt[1][0] == 'identifier') {
       return 'opalsym("' + stmt[1][1] + '")';
     }
@@ -1290,7 +1299,19 @@ RubyGenerator.prototype = {
     // if path is ::CONST then we use opal.top_self as base
     // res.push(this.SELF);
     
-    res.push('rb_vm_class(' + this.SELF + ', ');
+    var base;
+    
+    if (stmt[1][0] == null) {
+      base = this.SELF;
+    }
+    else if (stmt[1][0] == '::') {
+      base = 'rb_cObject';
+    }
+    else {
+      base = this.generate(stmt[1][0]);
+    }
+    
+    res.push('rb_vm_class(' + base + ', ');
     // superclass
     if (stmt[2]) {
       res.push(this.generate(stmt[2]));
@@ -1299,6 +1320,27 @@ RubyGenerator.prototype = {
       res.push(this.NIL);
     }
     res.push(', "' + stmt[1][1] + '", ' + result + ', 0)');
+    
+    return res.join("");
+  },
+  
+  generate_class_shift: function(stmt) {
+    var res = [];
+    
+    this.push_iseq(ClassIseq);
+    
+    this.iseq_current.push_code(this.generate_bodystmt(stmt[2]));
+    
+    var result = this.pop_iseq();
+    // if path is ::CONST then we use opal.top_self as base
+    // res.push(this.SELF);
+    
+    res.push('rb_vm_class(' + this.generate(stmt[1]) + ', ');
+    
+    res.push(this.NIL);
+    
+    
+    res.push(', ' + this.NIL + ', ' + result + ', 0)');
     
     return res.join("");
   },
@@ -1314,7 +1356,22 @@ RubyGenerator.prototype = {
     // if path is ::CONST then we use opal.top_self as base
     // res.push(this.SELF);
     
-    res.push('rb_vm_class(' + this.SELF + ', ');
+    // base is where we define module. basically, its module cpath upto the
+    // actual name. An exception is just '::' which means we define it in the
+    // top context under object.
+    var base;
+    
+    if (stmt[1][0] == null) {
+      base = this.SELF;
+    }
+    else if (stmt[1][0] == '::') {
+      base = 'rb_cObject';
+    }
+    else {
+      base = this.generate(stmt[1][0]);
+    }
+    
+    res.push('rb_vm_class(' + base + ', ');
     // superclass
     if (false) {
       
@@ -1338,6 +1395,7 @@ RubyGenerator.prototype = {
   },
   
   generate_xstring: function(stmt, o) {
+    print(stmt);
     var res = [];
     if (stmt[1].length == 0) {
       return '';

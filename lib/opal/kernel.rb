@@ -122,16 +122,6 @@ module Kernel
     self
   end
   
-  
-  
-  # @fixme: this should not be here.
-  def !=(other)
-    # `return #{self == other}.r ? #{false} : #{true};`
-    self == other ? false : true
-  end
-  
-
-  
   def is_a?(klass)
    `var search = #{self}.$k;
     

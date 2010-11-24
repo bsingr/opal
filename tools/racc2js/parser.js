@@ -204,8 +204,13 @@ parser.prototype.do_parse_js = function(arg, in_debug) {
   }  
 };
 
+// default next token implementation
 parser.prototype.next_token = function() {
   throw "next_token is not defined for parser."
+};
+
+parser.prototype.yyerror = function(err) {
+  throw "yyerror: " + err;
 };
 
 parser.prototype._reduce_none = function(val, result) {

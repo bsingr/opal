@@ -60,7 +60,7 @@ RubyParser.prototype.parse = function(source) {
 
 RubyParser.prototype.next_token = function() {
   var token = this.get_next_token();
-  // print('[' + token.join(', ') + ']');
+  print('[' + token.join(', ') + ']');
   return token;
 };
 
@@ -334,10 +334,10 @@ RubyParser.prototype.get_next_token = function() {
       if (this.lex_state == EXPR_FNAME || this.lex_state == EXPR_DOT) {
         this.lex_state = EXPR_ARG;
         if (scanner.scan(/^\]\=/)) {
-          return ["ASET", "[]="];
+          return ["[]=", "[]="];
         }
         else if (scanner.scan(/^\]/)) {
-          return ["AREF", "[]"];
+          return ["[]", "[]"];
         }
         else {
           throw "error - unexpected '[' token"
@@ -406,11 +406,11 @@ RubyParser.prototype.get_next_token = function() {
       }
       else if (space_seen && scanner.check(/^\S/)) {
         this.lex_state = EXPR_BEG;
-        return ["STAR", scanner.matched];
+        return ["SPLAT", scanner.matched];
       }
       else if (this.lex_state == EXPR_BEG || this.lex_state == EXPR_MID) {
         this.lex_state = EXPR_BEG;
-        return ["STAR", scanner.matched];
+        return ["SPLAT", scanner.matched];
       }
       else {
         this.lex_state = EXPR_BEG;
@@ -493,16 +493,12 @@ RubyParser.prototype.get_next_token = function() {
       return ["OP_ASGN", "&"];
     }
     else if (scanner.scan(/^\&/)) {
-      if (space_seen && !scanner.check(/^\s/)) {
-        if (this.lex_state == EXPR_CMDARG) {
-          return ["AMPER", scanner.matched];
-        }
-        else {
-          return ["&", scanner.matched];
-        }
+      print(this.lex_state);
+      if (space_seen && !scanner.check(/^\s/) && this.lex_state == EXPR_CMDARG){
+        return ["&@", scanner.matched];
       }
       else if (this.lex_state == EXPR_BEG || this.lex_state == EXPR_MID) {
-        return ["AMPER", scanner.matched];
+        return ["&@", scanner.matched];
       }
       else {
         return ["&", scanner.matched];
@@ -687,8 +683,7 @@ RubyParser.prototype.get_next_token = function() {
     }
     else if (scanner.scan(/^\@\w*/)) {
       this.lex_state = EXPR_END;
-      var result = scanner.matched.substr(1);
-      return ["IVAR", result];
+      return ["IVAR", scanner.matched];
     }
     
     else if (scanner.scan(/^\,/)) {
@@ -780,7 +775,7 @@ RubyParser.prototype.get_next_token = function() {
         case 'unless':
           if (this.lex_state == EXPR_BEG) return ["UNLESS", scanner.matched];
           this.lex_state = EXPR_BEG;
-          return ["IF_MOD", scanner.matched];
+          return ["UNLESS_MOD", scanner.matched];
         case 'else':
           return ["ELSE", scanner.matched];
         case 'elsif':

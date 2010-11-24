@@ -14,7 +14,7 @@ token CLASS MODULE DEF UNDEF BEGIN RESCUE ENSURE END IF UNLESS
       '~' '%' '/' '+' '-' '<' '>' '|' '!' '^'
       '{@' '}' BACK_REF2 SYMBOL_BEG STRING_BEG XSTRING_BEG REGEXP_BEG
       tWORDS_BEG tAWORDS_BEG STRING_DBEG STRING_DVAR STRING_END STRING
-      SYMBOL '\\n' '?' ':' ',' SPACE ';'
+      SYMBOL '\\n' '?' ':' ',' SPACE ';' BLOCK_GIVEN
 
 prechigh
   right    '!' '~' '+@'
@@ -49,7 +49,11 @@ rule
                     }
          
         bodystmt: compstmt opt_rescue opt_else opt_ensure
-
+                    {
+                      result = "result =
+                                ['bodystmt', val[0], val[1], val[2], val[3]];"
+                    }
+                    
         compstmt: stmts opt_terms
                     {
                       result = "result = ['compstmt', val[0]];"
@@ -74,7 +78,13 @@ rule
                 | ALIAS GVAR NTH_REF
                 | UNDEF undef_list
                 | stmt IF_MOD expr_value
+                    {
+                      result = "result = ['if_mod', val[1], val[2], val[0]];"
+                    }
                 | stmt UNLESS_MOD expr_value
+                    {
+                      result = "result = ['if_mod', val[1], val[2], val[0]];"
+                    }
                 | stmt WHILE_MOD expr_value
                 | stmt UNTIL_MOD expr_value
                 | stmt RESCUE_MOD stmt
@@ -95,9 +105,21 @@ rule
 
             expr: command_call
                 | expr AND expr
+                    {
+                      result = "result = [val[1], val[0], val[2]];"
+                    }
                 | expr OR expr
+                    {
+                      result = "result = [val[1], val[0], val[2]];"
+                    }
                 | NOT expr
+                    {
+                      result = "result = ['unary', '!', val[1]];"
+                    }
                 | '!' command_call
+                    {
+                      result = "result = ['unary', '!', val[1]];"
+                    }
                 | arg
 
       expr_value: expr
@@ -105,9 +127,18 @@ rule
     command_call: command
                 | block_command
                 | RETURN call_args
+                    {
+                      result = "result = ['return', val[1]];"
+                    }
                 | BREAK call_args
+                    {
+                      result = "result = ['break', val[1]];"
+                    }
                 | NEXT call_args
-
+                    {
+                      result = "result = ['next', val[1]];"
+                    }
+                    
    block_command: block_call
                 | block_call '.' operation2 command_args
                 | block_call '::' operation2 command_args
@@ -125,6 +156,9 @@ rule
                 | primary_value '::' operation2 command_args cmd_brace_block
                 | SUPER command_args
                 | YIELD command_args
+                    {
+                      result = "result = ['yield', val[1]];"
+                    }
 
             mlhs: mlhs_basic
                 | PAREN_BEG mlhs_entry ')'
@@ -157,6 +191,9 @@ rule
              lhs: variable
                 | primary_value '[@' aref_args ']'
                 | primary_value '.' IDENTIFIER
+                    {
+                      result = "result = ['call', val[0], val[2], [[]]];"
+                    }
                 | primary_value '::' IDENTIFIER
                 | primary_value '.' CONSTANT
                 | primary_value '::' CONSTANT
@@ -166,6 +203,9 @@ rule
            cname: CONSTANT
 
            cpath: '::@' cname
+                    {
+                      result = "result = ['::', val[1]];"
+                    }
                 | cname
                     {
                       result = "result = [null, val[0]];"
@@ -187,21 +227,25 @@ rule
       undef_list: fitem
                 | undef_list ',' fitem
 
-              op: '|'    | '^'     | '&' | '<=>'   | '=='    | '==='
-                | '=~'   | '>'        | '>='    | '<'    | '<='    | '<<'
-                | '>>'   | '+'      | '-'  | '*' | SPLAT   | '/'
-                | '%' | '**'       | '~'  | '+@' | '-@' | '[]'
-                | '[]='    | BACK_REF2
+              op: '|'    | '^'     | '&'    | '<=>'  | '=='    | '==='
+                | '=~'   | '>'     | '>='   | '<'    | '<='    | '<<'
+                | '>>'   | '+'     | '-'    | '*'    | SPLAT   | '/'
+                | '%'    | '**'    | '~'    | '+@'   | '-@'    | '[]'
+                | '[]='  | BACK_REF2
 
-        reswords: LINE | FILE   | klBEGIN | klEND  | ALIAS  | AND
-                | BEGIN    | BREAK      | CASE   | CLASS | DEF    | DEFINED
-                | DO       | ELSE       | ELSIF  | END   | ENSURE | FALSE
-                | FOR      | IN         | MODULE | NEXT  | NIL    | NOT
-                | OR       | REDO       | RESCUE | RETRY | RETURN | SELF
-                | SUPER    | THEN       | TRUE   | UNDEF | WHEN   | YIELD
+        reswords: LINE     | FILE       | klBEGIN   | klEND    | ALIAS  | AND
+                | BEGIN    | BREAK      | CASE      | CLASS    | DEF  | DEFINED
+                | DO       | ELSE       | ELSIF     | END      | ENSURE | FALSE
+                | FOR      | IN         | MODULE    | NEXT     | NIL    | NOT
+                | OR       | REDO       | RESCUE    | RETRY    | RETURN | SELF
+                | SUPER    | THEN       | TRUE      | UNDEF    | WHEN   | YIELD
                 | IF_MOD   | UNLESS_MOD | WHILE_MOD | UNTIL_MOD | RESCUE_MOD
+                | BLOCK_GIVEN
 
              arg: lhs '=' arg
+                    {
+                      result = "result = ['assign', val[0], val[2]];"
+                    }
                 | lhs '=' arg RESCUE_MOD arg
                 | var_lhs OP_ASGN arg
                 | primary_value '[@' aref_args ']' OP_ASGN arg
@@ -240,7 +284,13 @@ rule
                 | '-@NUM' INTEGER '**' arg
                 | '-@NUM' FLOAT '**' arg
                 | '+@' arg
+                    {
+                      result = "result = ['call', val[1], '+@', [[]]];"
+                    }
                 | '-@' arg
+                    {
+                      result = "result = ['call', val[1], '-@', [[]]];"
+                    }
                 | arg '|' arg
                     {
                       result = "result = ['call', val[0], val[1], [[val[2]]]];"
@@ -321,13 +371,22 @@ rule
                     }
                 | DEFINED opt_nl arg
                 | arg '?' arg ':' arg
+                    {
+                      result = "result = ['ternary', val[0], val[2], val[4]];"
+                    }
                 | primary
 
        arg_value: arg
 
        aref_args: none
+                    {
+                      result = "result = [null, null];"
+                    }
                 | command opt_nl
                 | args trailer
+                    {
+                      result = "result = [val[0], null];"
+                    }
                 | args ',' SPLAT arg opt_nl
                 | assocs trailer
                 | SPLAT arg opt_nl
@@ -344,6 +403,9 @@ rule
                 | '(' args ',' block_call opt_nl ')'
 
   opt_paren_args: none
+                    {
+                      result = "result = [];"
+                    }
                 | paren_args
 
        call_args: command
@@ -402,7 +464,7 @@ rule
                     }
                   open_args
                     {
-                      result = "this.cmdarg_pop();"
+                      result = "this.cmdarg_pop(); result = val[1];"
                     }
                     
        open_args: call_args
@@ -416,7 +478,7 @@ rule
                     }
 
        block_arg: '&@' arg_value
-
+                
    opt_block_arg: ',' block_arg
                 | none_block_pass
 
@@ -445,21 +507,51 @@ rule
                 | BEGIN bodystmt END
                 | tLPAREN_ARG expr opt_nl ')'
                 | PAREN_BEG compstmt ')'
+                    {
+                      result = "result = ['paren', val[1]];"
+                    }
                 | primary_value '::' CONSTANT
                 | '::@' CONSTANT
                 | primary_value '[@' aref_args ']'
                 | '[' aref_args ']'
+                    {
+                      result = "result = ['array', val[1]];"
+                    }
                 | '{' assoc_list '}'
+                    {
+                      result = "result = ['hash', val[1]];"
+                    }
                 | RETURN
+                    {
+                      result = "result = ['return', [[]]];"
+                    }
                 | YIELD '(' call_args ')'
+                    {
+                      result = "result = ['yield', val[2]];"
+                    }
                 | YIELD '(' ')'
+                    {
+                      result = "result = ['yield', [[]]];"
+                    }
                 | YIELD
+                    {
+                      result = "result = ['yield', [[]]];"
+                    }
                 | DEFINED opt_nl '(' expr ')'
                 | operation brace_block
+                    {
+                      result = "result = ['call', null, val[0], [[]]];"
+                    }
                 | method_call
                 | method_call brace_block
                 | IF expr_value then compstmt if_tail END
+                    {
+                      result = "result = ['if', val[1], val[3], val[4]];"
+                    }
                 | UNLESS expr_value then compstmt opt_else END
+                    {
+                      result = "result = ['unless', val[1], val[3], val[4]];"
+                    }
                 | WHILE
                     {
                       result = "this.cond_push(1);"
@@ -469,6 +561,9 @@ rule
                       result = "this.cond_pop();"
                     }
                   compstmt END
+                    {
+                      result = "result = ['while', val[0], val[2], val[5]];"
+                    }
                 | UNTIL
                     {
                       result = "this.cond_push(1);"
@@ -478,8 +573,17 @@ rule
                       result = "this.cond_pop();"
                     }
                   compstmt END
+                    {
+                      result = "result = ['while', val[0], val[2], val[5]];"
+                    }
                 | CASE expr_value opt_terms case_body END
+                    {
+                      result = "result = ['case', val[1], val[3]];"
+                    }
                 | CASE opt_terms case_body END
+                    {
+                      result = "result = ['case', null, val[2]];"
+                    }
                 | CASE opt_terms ELSE compstmt END
                 | FOR block_var IN
                     {
@@ -491,15 +595,34 @@ rule
                     }
                   compstmt END
                 | CLASS cpath superclass bodystmt END
+                    {
+                      result = "result = ['class', val[1], val[2], val[3]];"
+                    }
                 | CLASS '<<' expr term bodystmt END
+                    {
+                      result = "result = ['class_shift', val[2], val[4]];"
+                    }
                 | MODULE cpath bodystmt END
                     {
                       result = "result = ['module', val[1], val[2]];"
                     }
                 | DEF fname f_arglist bodystmt END
+                    {
+                      result = "result = ['def', null, val[1], val[2], val[3]];"
+                    }
                 | DEF singleton dot_or_colon fname f_arglist bodystmt END
+                    {
+                      result = "result = 
+                                ['def', val[1], val[3], val[4], val[5]];"
+                    }
                 | BREAK
+                    {
+                      result = "result = ['break', null];"
+                    }
                 | NEXT
+                    {
+                      result = "result = ['next', null];"
+                    }
                 | REDO
                 | RETRY
 
@@ -515,10 +638,23 @@ rule
                 | DO_COND
 
          if_tail: opt_else
+                    {
+                      result = "result = val[0];"
+                    }
                 | ELSIF expr_value then compstmt if_tail
+                    {
+                      result = "result = 
+                                  [['elsif', val[1], val[3]]].concat(val[4]);"
+                    }
 
         opt_else: none
+                    {
+                      result = "result = [];"
+                    }
                 | ELSE compstmt
+                    {
+                      result = "result = [['else', val[1]]];"
+                    }
 
        # block_var: lhs
                 # | mlhs
@@ -558,6 +694,9 @@ rule
                       result = "result = ['call', null, val[0], val[1]];"
                     }
                 | primary_value '.' operation2 opt_paren_args
+                    {
+                      result = "result = ['call', val[0], val[2], val[3]];"
+                    }
                 | primary_value '::' operation2 paren_args
                 | primary_value '::' operation3
                 | SUPER paren_args
@@ -567,10 +706,23 @@ rule
                 | DO opt_block_var compstmt END
 
        case_body: WHEN when_args then compstmt cases
-
+                    {
+                      result = 
+                        "result = [['when', val[1], val[3]]].concat(val[4]);"
+                    }
+                    
        when_args: args
+                    {
+                      result = "result = val[0];"
+                    }
                 | args ',' SPLAT arg_value
+                    {
+                      result = "result = val[0];"
+                    }
                 | SPLAT arg_value
+                    {
+                      result = "result = [];"
+                    }
 
            cases: opt_else 
                 | case_body
@@ -598,12 +750,21 @@ rule
                 | string string1
 
          string1: STRING_BEG string_contents STRING_END
+                    {
+                      result = "result = ['string', val[1], val[2]];"
+                    }
                 | STRING
 
          xstring: XSTRING_BEG xstring_contents STRING_END
-
+                    {
+                      result = "result = ['xstring', val[1]];"
+                    }
+                    
           regexp: REGEXP_BEG xstring_contents REGEXP_END
-
+                    {
+                      result = "result = ['regexp', val[1], val[2]];"
+                    }
+                    
            words: tWORDS_BEG SPACE STRING_END
                 | tWORDS_BEG word_list STRING_END
 
@@ -619,20 +780,39 @@ rule
                 | qword_list STRING_CONTENT SPACE
 
  string_contents: none
+                    {
+                      result = "result = [];"
+                    }
                 | string_contents string_content
-
+                    {
+                      result = "result = val[0].concat([val[1]]);"
+                    }
+                    
 xstring_contents: none
+                    {
+                      result = "result = [];"
+                    }
                 | xstring_contents string_content
-
+                    {
+                      result = "result = val[0].concat([val[1]]);"
+                    }
+                    
   string_content: STRING_CONTENT
+                    {
+                      result = "result = ['string_content', val[0]];"
+                    }
                 | STRING_DVAR string_dvar
+                    {
+                      result = "result = ['string_dvar', val[1]];"
+                    }
                 | STRING_DBEG 
                     {
                       result = "this.cond_push(0); this.cmdarg_push(0);"
                     }
                 compstmt '}'
                     {
-                      result = "this.cond_lexpop(); this.cmdarg_lexpop();"
+                      result = "this.cond_lexpop(); this.cmdarg_lexpop();
+                        result = ['string_dbegin', val[2]];"
                     }
 
      string_dvar: GVAR
@@ -642,6 +822,9 @@ xstring_contents: none
 
 
           symbol: SYMBOL_BEG sym
+                    {
+                      result = "result = ['symbol', val[1]];"
+                    }
                 | SYMBOL
 
              sym: fname
@@ -663,16 +846,53 @@ xstring_contents: none
                 | '-@NUM' FLOAT   =LOWEST
 
         variable: IDENTIFIER
+                    {
+                      result = "result = ['identifier', val[0]];"
+                    }
                 | IVAR
+                    {
+                      result = "result = ['ivar', val[0]];"
+                    }
                 | GVAR
+                    {
+                      result = "result = ['gvar', val[0]];"
+                    }
                 | CONSTANT
+                    {
+                      result = "result = ['constant', val[0]];"
+                    }
                 | CVAR
+                    {
+                      result = "result = ['cvar', val[0]];"
+                    }
                 | NIL
+                    {
+                      result = "result = ['nil'];"
+                    }
                 | SELF
+                    {
+                      result = "result = ['self'];"
+                    }
                 | TRUE
+                    {
+                      result = "result = ['true'];"
+                    }
                 | FALSE
+                    {
+                      result = "result = ['false'];"
+                    }
                 | FILE
+                    {
+                      result = "result = ['file'];"
+                    }
                 | LINE
+                    {
+                      result = "result = ['line'];"
+                    }
+                | BLOCK_GIVEN
+                    {
+                      result = "result = ['block_given'];"
+                    }
 
          var_ref: variable
 
@@ -682,60 +902,173 @@ xstring_contents: none
                 | BACK_REF
 
       superclass: term
+                    {
+                      result = "result = null;"
+                    }
                 | '<' expr_value term
+                    {
+                      result = "result = val[1];"
+                    }
                 | error term
+                    {
+                      result = "result = null;"
+                    }
 
        f_arglist: '(' f_args opt_nl ')'
+                    {
+                      result = "result = val[1];"
+                    }
                 | f_args term
+                    {
+                      result = "result = val[0];"
+                    }
 
           f_args: f_arg ',' f_optarg ',' f_rest_arg opt_f_block_arg
-                | f_arg ',' f_optarg                opt_f_block_arg
-                | f_arg ','              f_rest_arg opt_f_block_arg
-                | f_arg                             opt_f_block_arg
-                |           f_optarg ',' f_rest_arg opt_f_block_arg
-                |           f_optarg                opt_f_block_arg
-                |                        f_rest_arg opt_f_block_arg
-                |                                       f_block_arg
+                    {
+                      result = "result = [val[0], val[2], val[4], val[5]];"
+                    }
+                | f_arg ',' f_optarg opt_f_block_arg
+                    {
+                      result = "result = [val[0], val[2], null, val[3]];"
+                    }
+                | f_arg ',' f_rest_arg opt_f_block_arg
+                    {
+                      result = "result = [val[0], [], val[2], val[3]];"
+                    }
+                | f_arg opt_f_block_arg
+                    {
+                      result = "result = [val[0], [], null, val[1]];"
+                    }
+                | f_optarg ',' f_rest_arg opt_f_block_arg
+                    {
+                      result = "result = [[], val[0], val[2], val[3]];"
+                    }
+                | f_optarg opt_f_block_arg
+                    {
+                      result = "result = [[], val[0], null, val[1]];"
+                    }
+                | f_rest_arg opt_f_block_arg
+                    {
+                      result = "result = [[], [], val[0], val[1]];"
+                    }
+                | f_block_arg
+                    {
+                      result = "result = [[], [], null, val[0]];"
+                    }
                 |
+                    {
+                      result = "result = [[], [], null, null];"
+                    }
 
       f_norm_arg: CONSTANT
+                    {
+                      result = "this.yyerror(
+                        'formal argument cannot be a constant');"
+                    }
                 | IVAR
+                    {
+                      result = "this.yyerror(
+                        'formal argument cannot be an instance variable');"
+                    }
                 | CVAR
+                    {
+                      result = "this.yyerror(
+                        'formal argument cannot be a class variable');"
+                    }
+                | GVAR
+                    {
+                      result = "this.yyerror(
+                        'formal argument cannot be a global variable');"
+                    }
                 | IDENTIFIER
 
            f_arg: f_norm_arg
+                    {
+                      result = "result = [val[0]];"
+                    }
                 | f_arg ',' f_norm_arg
+                    {
+                      result = "result = val[0].concat([val[2]]);"
+                    }
 
            f_opt: IDENTIFIER '=' arg_value
+                    {
+                      result = "result = [val[0], val[2]];"
+                    }
 
         f_optarg: f_opt
+                    {
+                      result = "result = [val[0]];"
+                    }
                 | f_optarg ',' f_opt
+                    {
+                      result = "result = val[0].concat([val[2]]);"
+                    }
 
     restarg_mark: '*' 
                 | SPLAT
 
       f_rest_arg: restarg_mark IDENTIFIER
+                    {
+                      result = "result = val[1];"
+                    }
                 | restarg_mark
+                    {
+                      result = "result = '__unamed_splat__';"
+                    }
 
      blkarg_mark: '&'
                 | '&@'
 
      f_block_arg: blkarg_mark IDENTIFIER
+                    {
+                      result = "result = val[1];"
+                    }
 
  opt_f_block_arg: ',' f_block_arg
+                    {
+                      result = "result = val[1];"
+                    }
                 |
+                    {
+                      result = "result = null;"
+                    }
 
        singleton: var_ref
+                    {
+                      result = "result = val[0];"
+                    }
                 | '(' expr opt_nl ')'
+                    {
+                      result = "result = val[1];"
+                    }
 
       assoc_list: none
+                    {
+                      result = "result = [];"
+                    }
                 | assocs trailer
+                    {
+                      result = "result = val[0];"
+                    }
                 | args trailer
+                    {
+                      result = "this.yyerror('unsupported assoc list type');"
+                    }
 
           assocs: assoc
+                    {
+                      result = "result = [val[0]];"
+                    }
                 | assocs ',' assoc
+                    {
+                      result = "result = val[0].concat([val[2]]);"
+                    }
 
            assoc: arg_value '=>' arg_value
+                    {
+                      result = "result = [val[0], val[2]];"
+                    }
 
        operation: IDENTIFIER
                 | CONSTANT
