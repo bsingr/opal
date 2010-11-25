@@ -32,7 +32,7 @@ extensions['.rb'] = function(fname) {
   // function prototype. we only pass filename as argument.
   var func = new Function('__FILE__', code);
   // execute function (code)
-  func(fname);
+  func(io_expand_path(fname));
 };
 
 // Javascript loader.

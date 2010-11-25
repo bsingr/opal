@@ -7,6 +7,11 @@ var io_getwd = function() {
   return narwhal_fs.cwd();
 };
 
+// expand_path
+var io_expand_path = function(path) {
+  return narwhal_fs.absolute(path);
+};
+
 // Dir.glob
 var io_glob = function(glob) {
   return narwhal_fs.glob(glob);

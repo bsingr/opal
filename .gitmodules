@@ -1,3 +1,0 @@
-[submodule "mspec"]
-	path = mspec
-	url = git://github.com/rubyspec/mspec.git

@@ -10,12 +10,15 @@ var print = IO.print;
 var Parser, Generator;
 // our filename
 var opal_fname = is_node ? __filename : module.path;
+// argv support
+var opal_argv = [];
 
 // simply compile a string of ruby into javascript
 exports.compile = function(source) {
   var nodes = Parser.parse(source);
-  // print('nodes:');
+  // print('nodes are:');
   // print(nodes);
+  // print('generating:');
   var g = new Generator(nodes, {});
   var res = g.generate_main_context();
   // print("GOT RESULT");
@@ -25,10 +28,12 @@ exports.compile = function(source) {
 };
 
 // run opal..
-exports.run = function() {
+exports.run = function(switches, program_file, argv) {
   // print('need to run opal');
   // load runtime
   load_runtime();
+  // main..
+  exports.OPAL_RUNTIME.main(switches, program_file, argv);
   // print('done loading runtime');
   require('./opal/console');
 };
@@ -84,7 +89,10 @@ exports.OPAL_RUNTIME = {
   compile: exports.compile,
   
   // remove this
-  hack_mspec: IO.join(IO.dirname(opal_fname), '..', 'mspec', 'lib')
+  hack_mspec: IO.join(IO.dirname(opal_fname), '..', 'mspec', 'lib'),
+  
+  // argv support
+  argv: opal_argv
 };
 
 

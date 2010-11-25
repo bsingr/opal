@@ -71,4 +71,16 @@ class Module
   end
   
   alias_method :class_eval, :module_eval
+  
+  def private(*methods)
+    # do nothing
+  end
+  
+  def public(*methods)
+    # do nothing
+  end
+  
+  def protected(*methods)
+    # do nothing
+  end
 end

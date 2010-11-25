@@ -11,7 +11,7 @@ var EXPR_BEG    = 0,    EXPR_END    = 1,    EXPR_ENDARG = 2,    EXPR_ARG   = 3,
     EXPR_CLASS  = 8,    EXPR_VALUE  = 9;
 
 RubyParser.prototype.parse = function(source) {
-  print('1. Lexing...');
+  // print('1. Lexing...');
   var token;
   
   this._string = source;
@@ -45,14 +45,14 @@ RubyParser.prototype.parse = function(source) {
   // return this._tokens;
   // print('parsing some codeeeeez');
   
-  print('1. lexing');
+  // print('1. lexing');
   // this._lexer = new Lexer();
   // this._tokens = this._lexer.tokenize(source + '\n');
   // add [false, false] to singnify EOF
   // this._tokens.push([false, false]);
   // print(this._tokens);
   
-  print('2. parsing');
+  // print('2. parsing');
   var result = this.do_parse();
   // print(result);
   return result;
@@ -60,7 +60,7 @@ RubyParser.prototype.parse = function(source) {
 
 RubyParser.prototype.next_token = function() {
   var token = this.get_next_token();
-  print('[' + token.join(', ') + ']');
+  // print('[' + token.join(', ') + '] - ' + this._line_number);
   return token;
 };
 
@@ -276,6 +276,14 @@ RubyParser.prototype.get_next_token = function() {
       
       this.push_string_parse({ beg: start_word, content: true, end: end_word });
       return ["STRING_BEG", scanner.matched];
+    }
+    else if (scanner.scan(/^\%[Rr]/)) {
+      var start_word = scanner.scan(/^./),
+          end_word   = { '(': ')', '{': '}', '[': ']' }[start_word],
+          end_word   = end_word || start_word;
+      
+      this.push_string_parse({ beg: '/', content: true, end: end_word });
+      return ['REGEXP_BEG', scanner.matched];
     }
     
     else if (scanner.scan(/^\//)) {
@@ -493,7 +501,7 @@ RubyParser.prototype.get_next_token = function() {
       return ["OP_ASGN", "&"];
     }
     else if (scanner.scan(/^\&/)) {
-      print(this.lex_state);
+      // print(this.lex_state);
       if (space_seen && !scanner.check(/^\s/) && this.lex_state == EXPR_CMDARG){
         return ["&@", scanner.matched];
       }
@@ -693,7 +701,7 @@ RubyParser.prototype.get_next_token = function() {
     
     else if (scanner.scan(/^\{/)) {
       var result;
-      print(this.lex_state);
+      // print(this.lex_state);
       if (this.lex_state == EXPR_END || this.lex_state == EXPR_CMDARG) {
         result = '{@';
       }

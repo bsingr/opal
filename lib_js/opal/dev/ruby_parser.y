@@ -202,6 +202,9 @@ rule
 
              lhs: variable
                 | primary_value '[@' aref_args ']'
+                    {
+                      result = "result = ['aref', val[0], val[2]];"
+                    }
                 | primary_value '.' IDENTIFIER
                     {
                       result = "result = ['call', val[0], val[2], [[]]];"
@@ -529,6 +532,9 @@ rule
                 | backref
                 | FID
                 | BEGIN bodystmt END
+                    {
+                      result = "result = ['begin', val[1]];"
+                    }
                 | tLPAREN_ARG expr opt_nl ')'
                 | PAREN_BEG compstmt ')'
                     {
@@ -547,7 +553,7 @@ rule
                     }
                 | RETURN
                     {
-                      result = "result = ['return', [[]]];"
+                      result = "result = ['return', null];"
                     }
                 | YIELD '(' call_args ')'
                     {
@@ -816,14 +822,27 @@ rule
                 | case_body
 
       opt_rescue: RESCUE exc_list exc_var then compstmt opt_rescue
+                    {
+                      result = "result = 
+                        [['rescue', val[1], val[2], val[4]]].concat(val[5]);"
+                    }
                 |
-
+                    {
+                      result = "result = [];"
+                    }
+                    
         exc_list: arg_value
                 | mrhs
                 | none
 
          exc_var: '=>' lhs
+                    {
+                      result = "result = val[1];"
+                    }
                 | none
+                    {
+                      result = "result = null;"
+                    }
 
       opt_ensure: ENSURE compstmt
                 | none
@@ -921,6 +940,9 @@ xstring_contents: none
                 | CVAR
 
             dsym: SYMBOL_BEG xstring_contents STRING_END
+                    {
+                      result = "result = ['dsym', val[1]];"
+                    }
 
          numeric: INTEGER
                     {

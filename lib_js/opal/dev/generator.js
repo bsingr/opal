@@ -383,7 +383,7 @@ RubyGenerator.prototype = {
     // print(iseq);
     var name = iseq[0];
     if (this['generate_' + name]) {
-      print('doing ' + name + ': ' + iseq.join(','));
+      // print('doing ' + name + ': ' + iseq.join(','));
       return this['generate_' + name](iseq, {});
     }
     
@@ -1035,7 +1035,7 @@ RubyGenerator.prototype = {
     if (stmt[2][0] == 'numeric')
       recv = '(' + recv + ')';
     
-    return '(' + prefix + recv + '.$r ? ' + this.generate(stmt[3]) + ':' + 
+    return '(' + prefix + '('+ recv + '.$r) ? ' + this.generate(stmt[3]) + ':' + 
               this.NIL + ')';
   },
   
@@ -1173,14 +1173,31 @@ RubyGenerator.prototype = {
     return 'opalsym("' + stmt[1] + '")';
   },
   
-  generate_dsym: function(stmt, o) {    
-    if (stmt[1][0] == 'identifier') {
-      return 'opalsym("' + stmt[1][1] + '")';
+  generate_dsym: function(stmt, o) { 
+    var res = ['opalsym'];
+    res.push('(');
+    var part;
+    for (var i = 0; i < stmt[1].length; i++) {
+      if (i > 0) res.push(' + ');
+      part = stmt[1][i];
+      if (part[0] == 'string_content') {
+        res.push(JSON.stringify(part[1]));
+      }
+      else if (part[0] == 'string_dbegin') {
+        var tmp_to_s = this.iseq_current.temp_local();
+        res.push('(' + tmp_to_s + ' = ');
+        res.push(this.generate(part[1][1][0]));
+        res.push(', ' + tmp_to_s + '.$m');
+        res.push(this.mid_to_jsid('to_s') + '(' + tmp_to_s + '))');
+        this.iseq_current.queue_temp(tmp_to_s);
+      }
+      else {
+        res.push(this.SELF + '.i$' + part[1] + '.$to_s(self)');
+      }
     }
-    else {
-      throw "bad symbol part: "  + stmt[1][0]
-      this.write("Bad Symbol Part: " + stmt[1][0]);
-    }
+    res.push(')');
+    
+    return res.join('');
   },
   
   // ['def', singleton, def_name, arglist, bodystmts]
@@ -1454,7 +1471,7 @@ RubyGenerator.prototype = {
       res.push(')');
     }
     
-    print('done in string');
+    // print('done in string');
     return res.join("");
   },
   

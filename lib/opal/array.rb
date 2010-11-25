@@ -22,7 +22,7 @@ class Array
     each { |obj| description.push obj.to_s }
     description.join ""
   end
-  
+    
   # Calls block once for each element in `self`, passing that element as a 
   # parameter.
   # 

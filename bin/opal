@@ -1,15 +1,15 @@
 #!/usr/bin/env narwhal
 
-// var path = require('path');
-// var fs   = require('fs');
-// require(path.join(path.dirname(fs.realpathSync(__filename)), '../commonjs', 'command')).run();
+var is_node = (typeof process !== 'undefined');
+var switches, program_file, opal_argv;
 
-// require(lib + '/command').run();
+if (is_node) {
+  throw "need to implement bin for node";
+}
+else {
+  switches = [];
+  program_file = system.args[1] || "";
+  opal_argv = system.args.slice(2);
+}
 
-// var opal_io = require('opal/opal_io');
-// 
-// print(opal_io);
-
-// console.log(require.paths);
-
-require('../lib_js/opal').run();
+require('../lib_js/opal').run(switches, program_file, opal_argv);
