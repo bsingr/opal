@@ -78,8 +78,7 @@ module Kernel
       end
       exc = exception.new msg
     end
-    `rb_vm_raise(#{exc})`
-    # OpalVM.raise exc
+    OpalVM.raise exc
   end
   
   # FIXME: wtf?!?! not working..

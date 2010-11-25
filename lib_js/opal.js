@@ -14,18 +14,23 @@ var opal_fname = is_node ? __filename : module.path;
 // simply compile a string of ruby into javascript
 exports.compile = function(source) {
   var nodes = Parser.parse(source);
-  print('nodes:');
-  print(nodes);
+  // print('nodes:');
+  // print(nodes);
   var g = new Generator(nodes, {});
   var res = g.generate_main_context();
+  // print("GOT RESULT");
+  // print(res[0]);
+  // print('WOWOWOWOWOWOWOW');
   return res[0];
 };
 
 // run opal..
 exports.run = function() {
-  print('need to run opal');
+  // print('need to run opal');
   // load runtime
   load_runtime();
+  // print('done loading runtime');
+  require('./opal/console');
 };
 
 var development_loaded = false;

@@ -11,12 +11,12 @@ class BasicObject
     
   end
   
-  def !()
-    false
-  end
+  # def !()
+    # false
+  # end
   
-  def !=(other)
-    `return #{self == other}.r ? #{false} : #{true};`
-  end
+  # def !=(other)
+    # `return #{self == other}.r ? #{false} : #{true};`
+  # end
   
 end

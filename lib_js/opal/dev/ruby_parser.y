@@ -91,8 +91,14 @@ rule
                 | klBEGIN '{@' compstmt '}'
                 | klEND '{@' compstmt '}'
                 | lhs '=' command_call
+                    {
+                      result = "result = ['assign', val[0], val[2]];"
+                    }
                 | mlhs '=' command_call
                 | var_lhs OP_ASGN command_call
+                    {
+                      result = "result = ['op_asgn', val[1], val[0], val[2]];"
+                    }
                 | primary_value '[@' aref_args ']' OP_ASGN command_call
                 | primary_value '.' IDENTIFIER OP_ASGN command_call
                 | primary_value '.' CONSTANT OP_ASGN command_call
@@ -151,8 +157,14 @@ rule
                     }
                 | operation command_args cmd_brace_block
                 | primary_value '.' operation2 command_args =LOWEST
+                    {
+                      result = "result = ['call', val[0], val[2], val[3]];"
+                    }
                 | primary_value '.' operation2 command_args cmd_brace_block
                 | primary_value '::' operation2 command_args =LOWEST
+                    {
+                      result = "result = ['call', val[0], val[2], val[3]];"
+                    }
                 | primary_value '::' operation2 command_args cmd_brace_block
                 | SUPER command_args
                 | YIELD command_args
@@ -248,6 +260,9 @@ rule
                     }
                 | lhs '=' arg RESCUE_MOD arg
                 | var_lhs OP_ASGN arg
+                    {
+                      result = "result = ['op_asgn', val[1], val[0], val[2]];"
+                    }
                 | primary_value '[@' aref_args ']' OP_ASGN arg
                 | primary_value '.' IDENTIFIER OP_ASGN arg
                 | primary_value '.' CONSTANT OP_ASGN arg
@@ -478,9 +493,18 @@ rule
                     }
 
        block_arg: '&@' arg_value
+                    {
+                      result = "result = val[1];"
+                    }
                 
    opt_block_arg: ',' block_arg
+                    {
+                      result = "result = val[1];"
+                    }
                 | none_block_pass
+                    {
+                      result = "result = null;"
+                    }
 
             args: arg_value
                     {
@@ -540,10 +564,13 @@ rule
                 | DEFINED opt_nl '(' expr ')'
                 | operation brace_block
                     {
-                      result = "result = ['call', null, val[0], [[]]];"
+                      result = "result = ['call', null, val[0], [[]], val[1]];"
                     }
                 | method_call
                 | method_call brace_block
+                    {
+                      result = "val[0][4] = val[1]; result = val[0];"
+                    }
                 | IF expr_value then compstmt if_tail END
                     {
                       result = "result = ['if', val[1], val[3], val[4]];"
@@ -644,7 +671,7 @@ rule
                 | ELSIF expr_value then compstmt if_tail
                     {
                       result = "result = 
-                                  [['elsif', val[1], val[3]]].concat(val[4]);"
+                        [['elsif', val[1], val[3]]].concat(val[4]);"
                     }
 
         opt_else: none
@@ -659,33 +686,88 @@ rule
        # block_var: lhs
                 # | mlhs
       
-       block_var: f_arg ',' f_block_optarg ',' f_rest_arg opt_f_block_arg
+       block_var: block_var_args
+                    {
+                      result = 'result = [val[0], null];'
+                    }
+    
+  block_var_args: f_arg ',' f_block_optarg ',' f_rest_arg opt_f_block_arg
+                    {
+                      result = "result = [val[0], val[2], val[4], val[5]];"
+                    }
                 | f_arg ',' f_block_optarg opt_f_block_arg
+                    {
+                      result = "result = [val[0], val[2], null, val[3]];"
+                    }
                 | f_arg ',' f_rest_arg opt_f_block_arg
+                    {
+                      result = "result = [val[0], null, val[2], val[3]];"
+                    }
                 | f_arg opt_f_block_arg
+                    {
+                      result = "result = [val[0], null, null, val[1]];"
+                    }
                 | f_block_optarg ',' f_rest_arg opt_f_block_arg
+                    {
+                      result = "result = [null, val[0], val[2], val[3]];"
+                    }
                 | f_block_optarg opt_f_block_arg
+                    {
+                      result = "result = [null, val[0], null, val[1]];"
+                    }
                 | f_rest_arg opt_f_block_arg
+                    {
+                      result = "result = [null, null, val[0], val[1]];"
+                    }
                 | f_block_arg
+                    {
+                      result = "result = [null, null, null, val[0]];"
+                    }
                 
   f_block_optarg: f_block_opt
+                    {
+                      result = "result = [val[0]];"
+                    }
                 | f_block_optarg ',' f_block_opt
+                    {
+                      result = "result = val[0].concat([val[2]]);"
+                    }
         
      f_block_opt: IDENTIFIER '=' primary_value
+                    {
+                      result = "result = [val[0], val[2]];"
+                    }
 
    opt_block_var: none
+                    {
+                      result = "result = null;"
+                    }
                 | '|' '|'
+                    {
+                      result = "result = null;"
+                    }
                 | '||'
+                    {
+                      result = "result = null;"
+                    }
                 | '|' block_var '|'
+                    {
+                      result = "result = val[1];"
+                    }
 
         do_block: DO_BLOCK
                     {
                       result = "print('doing half command');"
                     }
-                  
                   opt_block_var compstmt END
+                    {
+                      result = "result = [val[2], val[3]];"
+                    }
 
       block_call: command do_block
+                    {
+                      result = "val[0][4] = val[1]; result = val[0];"
+                    }
                 | block_call '.' operation2 opt_paren_args
                 | block_call '::' operation2 opt_paren_args
 
@@ -703,7 +785,13 @@ rule
                 | SUPER
 
      brace_block: '{@' opt_block_var compstmt '}'
+                    {
+                      result = "result = [val[1], val[2]];"
+                    }
                 | DO opt_block_var compstmt END
+                    {
+                      result = "result = [val[1], val[2]];"
+                    }
 
        case_body: WHEN when_args then compstmt cases
                     {

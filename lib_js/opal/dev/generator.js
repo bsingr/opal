@@ -1029,33 +1029,24 @@ RubyGenerator.prototype = {
     return this.generate_if(stmt);
   },
   
-  generate_if_mod: function(stmt) {
-    var res = [];
-    // var tmp_assign = this.iseq_current.temp_local();
-    // res.push('((' + tmp_assign + ' = ');
+  generate_if_mod: function(stmt) {    
+    var recv = this.generate(stmt[2]), prefix = (stmt[1] == 'if' ? '' : '!');
     
-    res.push('(' + (stmt[1] == 'if' ? "" : "!") + this.generate(stmt[2]) + '.$r ? ');
-    // if (stmt[1] == 'if') {
-      // res.push(', ' + tmp_assign + ' !== ' + this.NIL + ' && ' + tmp_assign + ' !== false) ? ');
-    // }
-    // else {
-      // res.push(', ' + tmp_assign + ' === ' + this.NIL + ' || ' + tmp_assign + ' === false) ? ');
-    // }
-    // this.iseq_current.queue_temp(tmp_assign);
-    res.push(this.generate(stmt[3]));
-    res.push(' : ' + this.NIL + ')');
-    // this.write('}\n');
-    return res.join('');
+    if (stmt[2][0] == 'numeric')
+      recv = '(' + recv + ')';
+    
+    return '(' + prefix + recv + '.$r ? ' + this.generate(stmt[3]) + ':' + 
+              this.NIL + ')';
   },
   
   generate_ternary: function(stmt) {
-    var res = [];
-    res.push('(' + this.generate(stmt[1]) + '.$r ? ');
-    res.push(this.generate(stmt[2]));
-    res.push(' : ');
-    res.push(this.generate(stmt[3]));
-    res.push(')');
-    return res.join("");
+    var recv = this.generate(stmt[1]);
+    
+    if (stmt[1][0] == 'numeric')
+      recv = '(' + recv + ')';
+      
+    return '(' + recv + '.$r ? ' + this.generate(stmt[2]) + ' : ' +   
+              this.generate(stmt[3]) + ')';
   },
   
   // ['unary', type, arg]
@@ -1179,7 +1170,7 @@ RubyGenerator.prototype = {
   
   // ['symbol', name]
   generate_symbol: function(stmt) {
-    return 'opal_sym("' + stmt[1] + '")';
+    return 'opalsym("' + stmt[1] + '")';
   },
   
   generate_dsym: function(stmt, o) {    
@@ -1232,7 +1223,7 @@ RubyGenerator.prototype = {
     // if we need to potentially catch returns etc, do it here.
     if (this.iseq_current._handle_errors) {
       var code = ['try {\n'];
-      code.push('var rb_vm_jump_function = arguments.callee;');
+      code.push('var __vm_jump_function__ = arguments.callee;');
       code.push(def_code);
       code.push('} catch(__err__) {\n');
       // code.push("print('caught..' + __err__.$keyword);");
@@ -1247,7 +1238,7 @@ RubyGenerator.prototype = {
       
       // try our ensure return
       if (this.iseq_current._ensure_block_return) {
-        code.push('if (__err__.$keyword == 0 && __err__["@jump_function"] == rb_vm_jump_function) {\n');
+        code.push('if (__err__.$keyword == 0 && __err__["@jump_function"] == __vm_jump_function__) {\n');
         // code.push("print('ENSURE RETURN');");
         code.push("return __err__['@exit_value'];")
         code.push("\n}");
@@ -1395,7 +1386,7 @@ RubyGenerator.prototype = {
   },
   
   generate_xstring: function(stmt, o) {
-    print(stmt);
+    // print(stmt);
     var res = [];
     if (stmt[1].length == 0) {
       return '';
@@ -1463,6 +1454,7 @@ RubyGenerator.prototype = {
       res.push(')');
     }
     
+    print('done in string');
     return res.join("");
   },
   
@@ -1628,7 +1620,7 @@ RubyGenerator.prototype = {
     // if we are in block (part of an iteration for example..)
     if (this.iseq_current instanceof BlockIseq && !this.iseq_current._in_while_loop) {
       this.iseq_current.ensure_block_return();
-      return 'rb_vm_block_return(' + return_arg + ', rb_vm_jump_function)';
+      return 'rb_vm_block_return(' + return_arg + ', __vm_jump_function__)';
     }
     // if we are in a while loop itself. We return out of while loop and into
     // the method containing the while loop itself. We do not return back into
@@ -1643,7 +1635,7 @@ RubyGenerator.prototype = {
     else {
       // inform current iseq to capture thrown return
       this.iseq_current.ensure_block_return();
-      return 'rb_vm_block_return(' + return_arg + ', rb_vm_jump_function)';
+      return 'rb_vm_block_return(' + return_arg + ', __vm_jump_function__)';
     }
     return return_arg + "aaaaa";
   },

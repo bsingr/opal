@@ -647,10 +647,10 @@ RubyParser.prototype.get_next_token = function() {
     else if (scanner.scan(/^\~/)) {
       if (this.lex_state == EXPR_FNAME) {
         this.lex_state = EXPR_END;
-        return ["UNARY", "~"];
+        return ["~", "~"];
       }
       this.lex_state = EXPR_BEG;
-      return ["UNARY", "~"];
+      return ["~", "~"];
     }
     
     // FIXME: do we really need to differentiate between these. generates the

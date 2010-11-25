@@ -165,8 +165,16 @@ var opal_basename = function(self, block, name) {
   return io_basename(name);
 };
 
+// raise exception
+var opal_raise = function(self, block, exc) {
+  rb_vm_raise(exc);
+  // we never actually end up returning anything
+  return rb_nil;
+};
+
 rb_mOpalVM = rb_define_module('OpalVM');
 rb_define_singleton_method(rb_mOpalVM, 'puts', opal_puts);
+rb_define_singleton_method(rb_mOpalVM, 'raise', opal_raise);
 rb_define_singleton_method(rb_mOpalVM, 'require_path', opal_require);
 rb_define_singleton_method(rb_mOpalVM, 'define_method', opal_define_method);
 rb_define_singleton_method(rb_mOpalVM, 'alias_method', opal_alias_method);

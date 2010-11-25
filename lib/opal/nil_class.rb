@@ -35,9 +35,9 @@ class NilClass
     other ? true : false
   end
   
-  def !()
-    true
-  end
+  # def !()
+    # true
+  # end
 end
 
 NIL = nil

@@ -26,6 +26,18 @@ var io_puts = function(str) {
   print(str);
 };
 
+var io_file_exists = function(path) {
+  return narwhal_fs.exists(path);
+};
+
+var io_extname = function(fname) {
+  return narwhal_fs.extension(fname);
+};
+
+var io_read = function(fname) {
+  return narwhal_fs.read(fname);
+};
+
 var io_basename = function(str) {
   return narwhal_fs.basename(str);
 };

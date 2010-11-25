@@ -156,7 +156,6 @@ class Array
     i = 0
     length = self.length
     while i < length
-      # a, ::WOW, result[i] = yield at(i)
       result[i] = yield at(i)
       i += 1
     end

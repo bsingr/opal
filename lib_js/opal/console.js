@@ -26,7 +26,7 @@ if (typeof process !== 'undefined') {
     try {
     // console.log('=> ' + b.toString());
     // console.log((Opal.compile_main(b.toString())[0]));
-    var result_obj = (new Function(Opal.compile_main(b.toString())[0]))();
+    var result_obj = (new Function(Opal.compile(b.toString())))();
     var inspect_obj = result_obj.$m.$inspect(result_obj);
     console.log('=> ' + inspect_obj);
     }
@@ -56,8 +56,8 @@ else {
        try {
          system.stdout.write('>> ').flush();
          var line = Readline.readline();
-         var code = Opal.compile_main(line)[0];
-         // print(code);
+         var code = Opal.compile(line);
+         print(code);
          var result_obj = (new Function(code))();
          
          var inspect_obj = result_obj.$m.$inspect(result_obj);
