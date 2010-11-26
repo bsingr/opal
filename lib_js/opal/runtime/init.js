@@ -15,6 +15,7 @@ exports.main = function(switches, program_file, argv) {
   print("ok, need to run " + program_file);
   if (io_file_exists(program_file)) {
     print("it exists!");
+    rb_const_set(rb_cObject, 'ARGV', argv);
     rb_run(function() {
       extensions['.rb'](program_file);
     });

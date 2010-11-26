@@ -5,12 +5,12 @@ module Spec
     class PositiveExpectationHandler
       
       def self.handle_matcher(actual, matcher, message, &block)
-        Spec::Matchers.last_should = :should
-        Spec::Matchers.last_matcher = matcher
+        # Spec::Matchers.last_should = :should
+        # Spec::Matchers.last_matcher = matcher
                 
-        if matcher.nil?
-          return Spec::Matchers::PositiveOperatorMatcher.new actual
-        end        
+        # if matcher.nil?
+          # return Spec::Matchers::PositiveOperatorMatcher.new actual
+        # end 
       end
     end
     

@@ -384,7 +384,9 @@ RubyGenerator.prototype = {
     var name = iseq[0];
     if (this['generate_' + name]) {
       // print('doing ' + name + ': ' + iseq.join(','));
-      return this['generate_' + name](iseq, {});
+      var res = this['generate_' + name](iseq, {});
+      // print('-- done ' + name);
+      return res;
     }
     
     print("Unknwon iseq type: " + iseq + " (" + iseq[0] + ")");
@@ -472,6 +474,7 @@ RubyGenerator.prototype = {
   // args:
   //  [norm, opt, rest, block]
   generate_call: function(stmt) {
+    // print(stmt);
     // final result
     var res = [];
     // all args (inc self, block)
@@ -1283,7 +1286,7 @@ RubyGenerator.prototype = {
     if (is_singleton) {
       // need to fix:
       // res.push(this.SELF + '.$dm(');
-      res.push('rb_vm_defn(' + this.SELF + ', ');
+      res.push('rb_vm_defn(' + this.generate(stmt[1]) + ', ');
     }
     else {
       // res.push(this.SELF + '.$dm(');
@@ -1348,7 +1351,7 @@ RubyGenerator.prototype = {
     res.push(this.NIL);
     
     
-    res.push(', ' + this.NIL + ', ' + result + ', 0)');
+    res.push(', ' + this.NIL + ', ' + result + ', 1)');
     
     return res.join("");
   },
@@ -1433,7 +1436,8 @@ RubyGenerator.prototype = {
     }
     else if (stmt[1].length == 1) {
       if (stmt[1][0][0] == 'string_content') {
-        res.push(JSON.stringify(stmt[1][0][1]));
+        // res.push(JSON.stringify(stmt[1][0][1]));
+        res.push(stmt[2] + stmt[1][0][1].replace(stmt[2], '\\' + stmt[2]) + stmt[2]);
       }
       else if (stmt[1][0][0] == 'string_dbegin') {
         var tmp_to_s = this.iseq_current.temp_local();
@@ -1454,7 +1458,8 @@ RubyGenerator.prototype = {
         if (i > 0) res.push(' + ');
         part = stmt[1][i];
         if (part[0] == 'string_content') {
-          res.push(JSON.stringify(part[1]));
+          // res.push(JSON.stringify(part[1]));
+          res.push(stmt[2] + part[1].replace(stmt[2], '\\' + stmt[2]) + stmt[2]);
         }
         else if (part[0] == 'string_dbegin') {
           var tmp_to_s = this.iseq_current.temp_local();
@@ -1570,8 +1575,8 @@ RubyGenerator.prototype = {
       // print(rescue);
       // if we have a var, then assign error to it:
       if (rescue[2]) {
-        if (!(local = this.iseq_current.lookup_local(rescue[2]))) {
-          local = this.iseq_current.push_local(rescue[2]);
+        if (!(local = this.iseq_current.lookup_local(rescue[2][1]))) {
+          local = this.iseq_current.push_local(rescue[2][1]);
         }
         res.push(local + ' = __err__;');
       }
@@ -1616,6 +1621,9 @@ RubyGenerator.prototype = {
     if (stmt[1]) {
       var arg, args = stmt[1][0];
       // norm args
+      // print('norm args:');
+      // print(args);
+      // print(args.length);
       if (args && args.length > 0) {
         if (args.length == 1) {
           return_arg.push(this.generate(args[0]));

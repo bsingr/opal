@@ -88,9 +88,6 @@ exports.OPAL_RUNTIME = {
   // inherited by the browser by opal_dev.js
   compile: exports.compile,
   
-  // remove this
-  hack_mspec: IO.join(IO.dirname(opal_fname), '..', 'mspec', 'lib'),
-  
   // argv support
   argv: opal_argv
 };

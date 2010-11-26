@@ -13,7 +13,7 @@ token CLASS MODULE DEF UNDEF BEGIN RESCUE ENSURE END IF UNLESS
       ARRAY_BEG ']' tLBRACE tLBRACE_ARG SPLAT '*' '&@' '&'
       '~' '%' '/' '+' '-' '<' '>' '|' '!' '^'
       '{@' '}' BACK_REF2 SYMBOL_BEG STRING_BEG XSTRING_BEG REGEXP_BEG
-      tWORDS_BEG tAWORDS_BEG STRING_DBEG STRING_DVAR STRING_END STRING
+      WORDS_BEG tAWORDS_BEG STRING_DBEG STRING_DVAR STRING_END STRING
       SYMBOL '\\n' '?' ':' ',' SPACE ';' BLOCK_GIVEN
 
 prechigh
@@ -167,6 +167,9 @@ rule
                     }
                 | primary_value '::' operation2 command_args cmd_brace_block
                 | SUPER command_args
+                    {
+                      result = "result = ['super', val[1]];"
+                    }
                 | YIELD command_args
                     {
                       result = "result = ['yield', val[1]];"
@@ -406,12 +409,18 @@ rule
                       result = "result = [val[0], null];"
                     }
                 | args ',' SPLAT arg opt_nl
+                    {
+                      result = "result = [val[0], val[3]];"
+                    }
                 | assocs trailer
                 | SPLAT arg opt_nl
+                    {
+                      result = "result = [null, val[1]];"
+                    }
 
       paren_args: '(' none ')'
                     {
-                      result = "result = [];"
+                      result = "result = [[]];"
                     }
                 | '(' call_args opt_nl ')'
                     {
@@ -428,7 +437,7 @@ rule
 
        call_args: command
                     {
-                      result = "result = [val[0], null, null, null];"
+                      result = "result = [[val[0]], null, null, null];"
                     }
                 | args opt_block_arg
                     {
@@ -460,7 +469,7 @@ rule
                     }
                 | block_arg
                     {
-                      result = "result = [null, null, null, val[1]];"
+                      result = "result = [null, null, null, val[0]];"
                     }
 
       call_args2: arg_value ',' args opt_block_arg
@@ -541,8 +550,14 @@ rule
                       result = "result = ['paren', val[1]];"
                     }
                 | primary_value '::' CONSTANT
+                    {
+                      result = "result = ['colon2', val[0], val[2]];"
+                    }
                 | '::@' CONSTANT
                 | primary_value '[@' aref_args ']'
+                    {
+                      result = "result = ['aref', val[0], val[2]];"
+                    }
                 | '[' aref_args ']'
                     {
                       result = "result = ['array', val[1]];"
@@ -715,19 +730,19 @@ rule
                     }
                 | f_block_optarg ',' f_rest_arg opt_f_block_arg
                     {
-                      result = "result = [null, val[0], val[2], val[3]];"
+                      result = "result = [[], val[0], val[2], val[3]];"
                     }
                 | f_block_optarg opt_f_block_arg
                     {
-                      result = "result = [null, val[0], null, val[1]];"
+                      result = "result = [[], val[0], null, val[1]];"
                     }
                 | f_rest_arg opt_f_block_arg
                     {
-                      result = "result = [null, null, val[0], val[1]];"
+                      result = "result = [[], null, val[0], val[1]];"
                     }
                 | f_block_arg
                     {
-                      result = "result = [null, null, null, val[0]];"
+                      result = "result = [[], null, null, val[0]];"
                     }
                 
   f_block_optarg: f_block_opt
@@ -763,7 +778,7 @@ rule
 
         do_block: DO_BLOCK
                     {
-                      result = "print('doing half command');"
+                      # result = "print('doing half command');"
                     }
                   opt_block_var compstmt END
                     {
@@ -788,7 +803,13 @@ rule
                 | primary_value '::' operation2 paren_args
                 | primary_value '::' operation3
                 | SUPER paren_args
+                    {
+                      result = "result = ['super', val[1]];"
+                    }
                 | SUPER
+                    {
+                      result = "result = ['super', [[]]];"
+                    }
 
      brace_block: '{@' opt_block_var compstmt '}'
                     {
@@ -872,8 +893,8 @@ rule
                       result = "result = ['regexp', val[1], val[2]];"
                     }
                     
-           words: tWORDS_BEG SPACE STRING_END
-                | tWORDS_BEG word_list STRING_END
+           words: WORDS_BEG SPACE STRING_END
+                | WORDS_BEG word_list STRING_END
 
        word_list: none
                 | word_list word SPACE

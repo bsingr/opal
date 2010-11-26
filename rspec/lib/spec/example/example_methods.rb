@@ -32,11 +32,16 @@ module Spec
       def execute(run_options, instance_variables)
         run_options.reporter.example_started @example_proxy
         execution_error = nil
-        
+        # puts "trying............"
         begin
           before_each_example
+          # puts "implementation is: #{@implementation}"
           instance_eval(&@implementation)
         rescue Exception => e
+          # puts "got exception......."
+          # `print(__err__)`
+          # puts "e is:"
+          # puts e
           execution_error = e
         end
         

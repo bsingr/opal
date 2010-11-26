@@ -34,6 +34,8 @@ module Kernel
     block
   end
   
+  alias_method :lambda, :proc
+  
   # Prints each argument in turn to the browser console. Currently there is no
   # use of `$stdout`, so it is hardcoded into this method to write to the 
   # console directly.

@@ -1,7 +1,7 @@
 
-require 'opalspec/expectations/fail_with'
-require 'opalspec/expectations/handler'
-require 'opalspec/expectations/errors'
+require 'spec/expectations/fail_with'
+require 'spec/expectations/handler'
+require 'spec/expectations/errors'
 
 module Kernel
   

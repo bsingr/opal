@@ -1,9 +1,9 @@
-require 'opalspec/runner/options'
-require 'opalspec/runner/reporter'
-require 'opalspec/runner/example_group_runner'
+require 'spec/runner/options'
+require 'spec/runner/reporter'
+require 'spec/runner/example_group_runner'
 
-require 'opalspec/runner/formatter/html_formatter'
-require 'opalspec/runner/formatter/terminal_formatter'
+require 'spec/runner/formatter/html_formatter'
+require 'spec/runner/formatter/terminal_formatter'
 
 module Spec
   

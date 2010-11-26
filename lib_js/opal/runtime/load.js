@@ -18,9 +18,6 @@ var load_paths = [];
 // add core libs to load_paths
 load_paths.unshift(exports.opal_libs);
 
-// quick hack, need to remove
-load_paths.unshift(exports.hack_mspec);
-
 // Ruby loader.
 extensions['.rb'] = function(fname) {
   // get file content
@@ -89,18 +86,51 @@ var resolve_require_filename = function(fname) {
 // and with each registered extension, using the given fname.
 var find_require_filename = function(fname) {
   // current path to lookup
-  var cur_path;
+  var cur_path, given_ext = io_extname(fname);
   // loop over each load_path
   for (var path_idx = 0; path_idx < load_paths.length; path_idx++) {
-    // loop over each extension
-    for (var ext_name in extensions) {
+    // if we were given an extension, dont loop through, just use that
+    if (given_ext) {
       cur_path = io_join(load_paths[path_idx], fname + ext_name);
+      
+      if (io_file_exists(cur_path)) {
+        return [cur_path, cur_path];
+      }
+    }
+    else {
+      // loop over each extension
+      for (var ext_name in extensions) {
+        cur_path = io_join(load_paths[path_idx], fname + ext_name);
 
-      if (io_file_exists(cur_path))
-        // cur_path is our file to load!!
-        return [cur_path, fname + ext_name];
+        if (io_file_exists(cur_path))
+          // cur_path is our file to load!!
+          return [cur_path, fname + ext_name];
+      }
     }
   }
+  
+  // try full path..
+  // FIXME: this doesnt support windows paths, and doesnt check the extension
+  // name!!
+  if (fname[0] === '/') {
+    // if we have an extension..
+    if (given_ext) {
+      if (io_file_exists(fname)) {
+        return [fname, fname];
+      }
+    }
+    // otherwise loop over all extensions..
+    else {
+      for (var ext_name in extensions) {
+        cur_path = fname + ext_name;
+        
+        if (io_file_exists(cur_path)) {
+          return [cur_path, cur_path];
+        }
+      }
+    }
+  }
+  
   // could not find a path to load
   return false;
 };
@@ -111,4 +141,10 @@ var load_path_getter = function(id) {
   return load_paths;
 };
 
+// gets laoded features
+var loaded_feature_getter = function(id) {
+  return loaded_features;
+};
+
 rb_define_hooked_variable('$:', load_path_getter, rb_gvar_readonly_setter);
+rb_define_hooked_variable('$"', loaded_feature_getter, rb_gvar_readonly_setter);

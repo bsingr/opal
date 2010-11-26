@@ -1,6 +1,6 @@
-require 'opalspec/matchers/operator_matcher'
-require 'opalspec/matchers/be'
-require 'opalspec/matchers/generated_descriptions'
+require 'spec/matchers/operator_matcher'
+require 'spec/matchers/be'
+require 'spec/matchers/generated_descriptions'
 
 
 module Spec

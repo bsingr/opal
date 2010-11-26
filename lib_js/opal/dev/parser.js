@@ -267,7 +267,7 @@ RubyParser.prototype.get_next_token = function() {
           end_word   = end_word || start_word;
       
       this.push_string_parse({ beg: start_word, content: true, end: end_word });
-      return ["WORDS_BEGIN", scanner.matched]; 
+      return ["WORDS_BEG", scanner.matched]; 
     }
     else if (scanner.scan(/^\%[Qq]/)) {
       var start_word = scanner.scan(/^./),
@@ -882,8 +882,8 @@ RubyParser.prototype.get_next_token = function() {
           return ["IDENTIFIER", matched + scanner.matched];
         }
         
-        this.lex_state = EXPR_END;
-        return ["IDENTIFIER", matched];
+        // this.lex_state = EXPR_END;
+        // return ["IDENTIFIER", matched];
       }
       
       // IDENTIFIER2, when we have identifer() .. when we dont preceed identifier

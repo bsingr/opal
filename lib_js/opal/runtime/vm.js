@@ -6,13 +6,14 @@ var rb_mOpalVM;
 // @global
 rb_vm_class = function(base, super_class, id, body, flag) {
   var klass;
-  // if we are dealing with an object, lets use its class instead.
-  if (base.$f & T_OBJECT)
-    base = rb_class_real(base.$k);
+  
   
   switch (flag) {
     // normal class
     case 0:
+      // if we are dealing with an object, lets use its class instead.
+      if (base.$f & T_OBJECT)
+        base = rb_class_real(base.$k);
       // If no superclass specified, use Object.
       if (super_class == rb_nil)
         super_class = rb_cObject;
@@ -25,6 +26,9 @@ rb_vm_class = function(base, super_class, id, body, flag) {
       break;
     // module
     case 2:
+      // if we are dealing with an object, lets use its class instead.
+      if (base.$f & T_OBJECT)
+        base = rb_class_real(base.$k);
       klass = rb_define_module_under(base, id);
       break;
     // If default, something has gone wrong (in compiler).
@@ -172,6 +176,24 @@ var opal_raise = function(self, block, exc) {
   return rb_nil;
 };
 
+// get env variable denoted by name
+var opal_getenv = function(self, block, name) {
+  if (system.env.hasOwnProperty(name)) {
+    return system.env[name];
+  }
+  
+  return rb_nil;
+};
+
+// get all env variables [[name1, value1], [name2, value2]]
+var opal_getallenv = function(self, block, name) {
+  var result = [];
+  for (var key in system.env)
+    result.push([key, system.env[key]])
+  
+  return result;
+};
+
 rb_mOpalVM = rb_define_module('OpalVM');
 rb_define_singleton_method(rb_mOpalVM, 'puts', opal_puts);
 rb_define_singleton_method(rb_mOpalVM, 'raise', opal_raise);
@@ -185,3 +207,6 @@ rb_define_singleton_method(rb_mOpalVM, 'getwd', opal_getwd);
 rb_define_singleton_method(rb_mOpalVM, 'glob', opal_glob);
 rb_define_singleton_method(rb_mOpalVM, 'join', opal_join);
 rb_define_singleton_method(rb_mOpalVM, 'basename', opal_basename);
+rb_define_singleton_method(rb_mOpalVM, 'getenv', opal_getenv);
+rb_define_singleton_method(rb_mOpalVM, 'getallenv', opal_getallenv);
+

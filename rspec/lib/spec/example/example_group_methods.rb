@@ -14,10 +14,8 @@ module Spec
       def subclass group_name, &group_block
         @class_count ||= 0
         klass = const_set "Subclass#{@class_count}", Class.new(self)
-
         klass.description = group_name
         Spec::Example::ExampleGroupFactory.register_example_group klass
-
         klass.module_eval(&group_block)
         klass
       end
@@ -61,8 +59,9 @@ module Spec
       end
       
       def run_examples(success, instance_variables, examples, run_options)
+        # puts "running in run_examples"
         examples.each do |example|
-
+          # puts "running example: #{example.description}"
           example_group_instance = new example, 
                                        &example_implementations[example]
 
