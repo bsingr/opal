@@ -4,3 +4,6 @@ pkg
 tmp
 .gem
 .yardoc
+bin
+.dblite
+runtime
