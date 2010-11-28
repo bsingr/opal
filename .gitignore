@@ -5,5 +5,5 @@ tmp
 .gem
 .yardoc
 bin
-.dblite
+.sconsign.dblite
 runtime
