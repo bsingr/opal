@@ -1,10 +1,23 @@
-if (typeof require !== 'undefined') {
-  var RubyParser    = require('./ruby_parser').RubyParser,
-      // Lexer         = require('./lexer').Lexer,
-      StringScanner = require('./string_scanner').StringScanner;
-} else {
-  // var RubyParser = parser;
-}
+// if (typeof require !== 'undefined') {
+//   var RubyParser    = require('./ruby_parser').RubyParser,
+//       // Lexer         = require('./lexer').Lexer,
+//       StringScanner = require('./string_scanner').StringScanner;
+// } else {
+//   // var RubyParser = parser;
+// }
+
+exports.compile = function(source) {
+  var nodes = exports.RubyParser.parse(source);
+  // print('nodes are:');
+  // print(nodes);
+  // print('generating:');
+  var g = new RubyGenerator(nodes, {});
+  var res = g.generate_main_context();
+  // print("GOT RESULT");
+  // print(res[0]);
+  // print('WOWOWOWOWOWOWOW');
+  return res[0];
+};
 
 var EXPR_BEG    = 0,    EXPR_END    = 1,    EXPR_ENDARG = 2,    EXPR_ARG   = 3,
     EXPR_CMDARG = 4,    EXPR_MID    = 5,    EXPR_FNAME  = 6,    EXPR_DOT   = 7,

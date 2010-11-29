@@ -1,9 +1,9 @@
 .DS_Store
-doc
-pkg
-tmp
+/doc
+/pkg
+/tmp
 .gem
 .yardoc
-bin
+/bin
 .sconsign.dblite
-runtime
+/runtime

@@ -1,0 +1,3 @@
+#!/usr/bin/env ruby -wKU
+
+exec "./bin/opal", "rspec/bin/spec", *ARGV

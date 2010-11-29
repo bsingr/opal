@@ -4,10 +4,16 @@
 #include "v8.h"
 
 namespace opal {
+  
+  int ExecutablePath(char* buffer, size_t* size);
+  void LoadRuntime(void);
+  
   void InitFile();
+  void InitIO();
 }
 
 void RunShell(v8::Handle<v8::Context> context);
+v8::Handle<v8::String> ReadFile(const char* name);
 bool ExecuteString(v8::Handle<v8::String> source,
 									 v8::Handle<v8::String> name,
 									 bool print_result,
@@ -22,6 +28,7 @@ void ReportException(v8::TryCatch* handler);
 #define JS_FUNC(func)           v8::FunctionTemplate::New(func)
 
 #define JS_TRUE                 v8::Boolean::New(1)
+#define JS_FALSE                v8::Boolean::New(0)
 
 #define JS_GLOBAL               v8::Context::GetCurrent()->Global()
 
