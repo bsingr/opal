@@ -162,11 +162,15 @@ var opal_glob = function(self, block, glob) {
 
 var opal_join = function(self, block, parts) {
   // var parts = Array.prototype.slice.call(arguments, 2);
-  return io_join.apply(this, parts);
+  return opal_file_join.apply(this, parts);
 };
 
 var opal_basename = function(self, block, name) {
   return io_basename(name);
+};
+
+var opal_expand_path = function(self, block, path) {
+	return io_expand_path(path);
 };
 
 // raise exception
@@ -194,19 +198,21 @@ var opal_getallenv = function(self, block, name) {
   return result;
 };
 
-rb_mOpalVM = rb_define_module('OpalVM');
-rb_define_singleton_method(rb_mOpalVM, 'puts', opal_puts);
-rb_define_singleton_method(rb_mOpalVM, 'raise', opal_raise);
-rb_define_singleton_method(rb_mOpalVM, 'require_path', opal_require);
-rb_define_singleton_method(rb_mOpalVM, 'define_method', opal_define_method);
-rb_define_singleton_method(rb_mOpalVM, 'alias_method', opal_alias_method);
-rb_define_singleton_method(rb_mOpalVM, 'include', opal_include);
-rb_define_singleton_method(rb_mOpalVM, 'extend', opal_extend);
-rb_define_singleton_method(rb_mOpalVM, 'subclass', opal_subclass);
-rb_define_singleton_method(rb_mOpalVM, 'getwd', opal_getwd);
-rb_define_singleton_method(rb_mOpalVM, 'glob', opal_glob);
-rb_define_singleton_method(rb_mOpalVM, 'join', opal_join);
-rb_define_singleton_method(rb_mOpalVM, 'basename', opal_basename);
-rb_define_singleton_method(rb_mOpalVM, 'getenv', opal_getenv);
-rb_define_singleton_method(rb_mOpalVM, 'getallenv', opal_getallenv);
-
+var InitVM = function() {
+	rb_mOpalVM = rb_define_module('OpalVM');
+	rb_define_singleton_method(rb_mOpalVM, 'puts', opal_puts);
+	rb_define_singleton_method(rb_mOpalVM, 'raise', opal_raise);
+	rb_define_singleton_method(rb_mOpalVM, 'require_path', opal_require);
+	rb_define_singleton_method(rb_mOpalVM, 'define_method', opal_define_method);
+	rb_define_singleton_method(rb_mOpalVM, 'alias_method', opal_alias_method);
+	rb_define_singleton_method(rb_mOpalVM, 'include', opal_include);
+	rb_define_singleton_method(rb_mOpalVM, 'extend', opal_extend);
+	rb_define_singleton_method(rb_mOpalVM, 'subclass', opal_subclass);
+	rb_define_singleton_method(rb_mOpalVM, 'getwd', opal_getwd);
+	// rb_define_singleton_method(rb_mOpalVM, 'expand_path', opal_expand_path);
+	rb_define_singleton_method(rb_mOpalVM, 'glob', opal_glob);
+	// rb_define_singleton_method(rb_mOpalVM, 'join', opal_join);
+	rb_define_singleton_method(rb_mOpalVM, 'basename', opal_basename);
+	rb_define_singleton_method(rb_mOpalVM, 'getenv', opal_getenv);
+	rb_define_singleton_method(rb_mOpalVM, 'getallenv', opal_getallenv);
+};

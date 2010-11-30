@@ -26,6 +26,38 @@ namespace opal {
 		return (res != -1) ? JS_TRUE : JS_FALSE;
 	}
 	
+	v8::Handle<v8::Value> IsDirectory(const v8::Arguments& args) {
+		v8::String::Utf8Value path(args[0]->ToString());
+		
+		struct stat stat_info;
+		int res = stat(*path, &stat_info);
+		return (res != -1 && S_ISDIR(stat_info.st_mode)) ? JS_TRUE : JS_FALSE;
+	}
+	
+	v8::Handle<v8::Value> IsFile(const v8::Arguments& args) {
+		v8::String::Utf8Value path(args[0]->ToString());
+		
+		struct stat stat_info;
+		int res = stat(*path, &stat_info);
+		return (res != -1 && S_ISREG(stat_info.st_mode)) ? JS_TRUE : JS_FALSE;
+	}
+	
+	v8::Handle<v8::Value> Size(const v8::Arguments& args) {
+		v8::String::Utf8Value path(args[0]->ToString());
+		
+		struct stat stat_info;
+		int res = stat(*path, &stat_info);
+		return v8::Integer::New(stat_info.st_size);
+	}
+	
+	v8::Handle<v8::Value> Mtime(const v8::Arguments& args) {
+		v8::String::Utf8Value path(args[0]->ToString());
+		
+		struct stat stat_info;
+		int res = stat(*path, &stat_info);
+		return v8::Integer::New(stat_info.st_mtime);
+	}
+	
 	v8::Handle<v8::Value> Cwd(const v8::Arguments& args) {
     v8::HandleScope handle_scope;
 
@@ -123,5 +155,9 @@ namespace opal {
 		JS_SET(opal_file, "read", JS_FUNC(Read)->GetFunction());
 		JS_SET(opal_file, "close", JS_FUNC(Close)->GetFunction());
 		JS_SET(opal_file, "exists", JS_FUNC(Exists)->GetFunction());
+		JS_SET(opal_file, "is_directory", JS_FUNC(IsDirectory)->GetFunction());
+		JS_SET(opal_file, "is_file", JS_FUNC(IsFile)->GetFunction());
+		JS_SET(opal_file, "size", JS_FUNC(Size)->GetFunction());
+		JS_SET(opal_file, "mtime", JS_FUNC(Mtime)->GetFunction());
 	}
 }

@@ -27,6 +27,10 @@ namespace opal {
 	static char *opal_home_path;
 	// full path to lib dir, for all rubies etc
 	static char *opal_lib_path;
+	// all argv
+	static char** opal_argv;
+	// all argv
+	static int opal_argc;
 
 	int Main(int argc, char *argv[]) {
 		v8::V8::SetFlagsFromCommandLine(&argc, argv, true);
@@ -41,6 +45,10 @@ namespace opal {
 		v8::Handle<v8::Context> context = v8::Context::New(NULL, global);
 		// Enter the newly created execution environment
 		v8::Context::Scope context_scope(context);
+
+		opal_argv = argv;
+		opal_argc = argc;
+
 
 		InitFile();
 		InitIO();
@@ -80,11 +88,23 @@ namespace opal {
 		JS_SET(JS_GLOBAL, "Opal", opal_global);
 		JS_SET(opal_global, "executable_path", JS_STR(executable_path));
 		JS_SET(opal_global, "opal_lib_path", JS_STR(opal_lib_path));
+		
+		// argv
+		v8::Handle<v8::Array> argv_array = v8::Array::New(opal_argc);
+		
+		for (int i = 0; i < opal_argc; i++) {
+			// printf("argument: %s\n", opal_argv[i]);
+			argv_array->Set(v8::Integer::New(i), JS_STR(opal_argv[i]));
+		}
+		
+		JS_SET(opal_global, "argv", argv_array);
 	
 		printf("opal js is: %s\n", opal_js);
 		v8::Handle<v8::String> opal_source = ReadFile(opal_js);
 
 		ExecuteString(opal_source, JS_STR(opal_js), true, true);
+		
+		ExecuteString(JS_STR("Opal.main()"), JS_STR("(main)"), true, true);
 	}
 
 	// executable path of opal (follow symlinks etc)
@@ -101,19 +121,19 @@ namespace opal {
 		return 0;
 	}
 
-	} /* opal */
+} /* opal */
 
-	int main (int argc, char *argv[]) {
+int main (int argc, char *argv[]) {
 	int result = opal::Main(argc, argv);
 	v8::V8::Dispose();
 	return result;
-	}
+}
 
-	const char* ToCString(const v8::String::Utf8Value& value) {
+const char* ToCString(const v8::String::Utf8Value& value) {
 	return *value ? *value : "<string conversion failed>";
-	}
+}
 
-	void RunShell(v8::Handle<v8::Context> context) {
+void RunShell(v8::Handle<v8::Context> context) {
 	printf("V8 Version %s\n", v8::V8::GetVersion());
 	static const int kBufferSize = 256;
 	while	(true) {
@@ -125,27 +145,27 @@ namespace opal {
 		ExecuteString(JS_STR(str), JS_STR("(shell)"), true, true);
 	}
 	printf("\n");
-	}
+}
 
-	v8::Handle<v8::String> ReadFile(const char* name) {
-	 FILE* file = fopen(name, "rb");
-	 if (file == NULL) return v8::Handle<v8::String>();
+v8::Handle<v8::String> ReadFile(const char* name) {
+	FILE* file = fopen(name, "rb");
+	if (file == NULL) return v8::Handle<v8::String>();
 
-	 fseek(file, 0, SEEK_END);
-	 int size = ftell(file);
-	 rewind(file);
+	fseek(file, 0, SEEK_END);
+	int size = ftell(file);
+	rewind(file);
 
-	 char* chars = new char[size + 1];
-	 chars[size] = '\0';
-	 for (int i = 0; i < size;) {
-	   int read = fread(&chars[i], 1, size - i, file);
-	   i += read;
-	 }
-	 fclose(file);
+	char* chars = new char[size + 1];
+	chars[size] = '\0';
+		for (int i = 0; i < size;) {
+	   	int read = fread(&chars[i], 1, size - i, file);
+	   	i += read;
+	 	}
+	 	fclose(file);
 	 v8::Handle<v8::String> result = v8::String::New(chars, size);
 	 delete[] chars;
 	 return result;
-	}
+}
 
 	bool ExecuteString(v8::Handle<v8::String> source,
 									 v8::Handle<v8::String> name,

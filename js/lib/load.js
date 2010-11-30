@@ -91,7 +91,7 @@ var find_require_filename = function(fname) {
   for (var path_idx = 0; path_idx < load_paths.length; path_idx++) {
     // if we were given an extension, dont loop through, just use that
     if (given_ext) {
-      cur_path = io_join(load_paths[path_idx], fname + ext_name);
+      cur_path = file_join(load_paths[path_idx], fname + ext_name);
       
       if (io_file_exists(cur_path)) {
         return [cur_path, cur_path];
@@ -100,7 +100,7 @@ var find_require_filename = function(fname) {
     else {
       // loop over each extension
       for (var ext_name in extensions) {
-        cur_path = io_join(load_paths[path_idx], fname + ext_name);
+        cur_path = file_join(load_paths[path_idx], fname + ext_name);
 
         if (io_file_exists(cur_path))
           // cur_path is our file to load!!
@@ -146,5 +146,7 @@ var loaded_feature_getter = function(id) {
   return loaded_features;
 };
 
+var InitLoad = function() {
 rb_define_hooked_variable('$:', load_path_getter, rb_gvar_readonly_setter);
 rb_define_hooked_variable('$"', loaded_feature_getter, rb_gvar_readonly_setter);
+};

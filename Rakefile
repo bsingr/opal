@@ -23,8 +23,13 @@ task :runtime => "runtime/opal.js"
 desc "Rebuild runtime/opal.js for VM etc. (opal v8 context)"
 task "runtime/opal.js" do
   FileUtils.mkdir_p 'runtime'
-  sources = %w[platform_opal variable ruby vm load init]
-  # dev files which is included
+  # core runtime files 
+  sources = %w[platform_opal file class module]
+  # core classes/objects/modules
+  sources += %w[object error string]
+  # extra runtime files
+  sources += %w[variable ruby vm load init]
+  # dev files which are included
   sources += %w[ruby_parser parser string_scanner generator]
   
   inner = sources.map do |source|
