@@ -91,7 +91,7 @@ var rb_cArray_aref = function(self, block, index) {
 		index += self.length;
 	
 	if (index < 0 || index >= self.length)
-		return rb_nil;
+		return Qnil;
 	
 	return self[index];
 };
@@ -123,10 +123,10 @@ var rb_cArray_dup = function(self, block) {
 var rb_cArray_compact = function(self, block) {
 	var length = self.length;
 	for (var i = 0; i < length; i++) {
-		if (self[i] === rb_nil) {
+		if (self[i] === Qnil) {
 			self.splice(i, 1);
 			i--;
 		}
 	}
-	return length == self.length ? rb_nil : self;
+	return length == self.length ? Qnil : self;
 };

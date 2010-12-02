@@ -19,7 +19,7 @@ var rb_cMatch;
 
 // Regexp#__match__
 var rb_cRegexp_match = function(regexp, block, string) {
-	var test, match = rb_nil;
+	var test, match = Qnil;
 	
 	if (test = regexp.exec(string)) {
 		match = rb_cMatch_alloc();

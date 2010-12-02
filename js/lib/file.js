@@ -192,7 +192,7 @@ var rb_cFile_expand_path = function(self, block, path, dir_string) {
 
 // File.__exists__
 var rb_cFile_exists = function(self, block, path) {
-	return file_exists(path) ? rb_true : rb_false;
+	return file_exists(path) ? Qtrue : Qfalse;
 };
 
 // File.__read__

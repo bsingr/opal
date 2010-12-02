@@ -74,14 +74,14 @@ var InitObject = function() {
 	// @class TrueClass
 	rb_true_class = rb_define_class('TrueClass', rb_cObject);
 	// true literal
-	rb_true = rb_obj_alloc(rb_true_class);
+	Qtrue = rb_obj_alloc(rb_true_class);
 
 	// @class FalseClass
 	rb_false_class = rb_define_class('FalseClass', rb_cObject);
 	// false literal
-	rb_false = rb_obj_alloc(rb_false_class);
+	Qfalse = rb_obj_alloc(rb_false_class);
 	// false is false for truthiness
-	rb_false.$r = false;
+	Qfalse.$r = false;
 
 	// @class NilClass
 	rb_nil_class = rb_define_class('NilClass', rb_cObject);

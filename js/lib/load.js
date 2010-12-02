@@ -60,7 +60,7 @@ var rb_require = function(fname) {
   var resolved = resolve_require_filename(fname);
   
   // if we have already loaded the file, return false.. (no error)
-  if (loaded_filenames[resolved[0]]) return rb_false;
+  if (loaded_filenames[resolved[0]]) return Qfalse;
   // we have not loaded the file, so load it
   loaded_filenames[resolved[0]] = resolved[1];
   loaded_features.push(resolved[1]);
@@ -70,7 +70,7 @@ var rb_require = function(fname) {
 
   extensions[ext_name](resolved[0]);
   
-  return rb_true;
+  return Qtrue;
 };
 
 // Find correct filename for the given fname path

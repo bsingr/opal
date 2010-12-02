@@ -15,7 +15,7 @@ rb_vm_class = function(base, super_class, id, body, flag) {
       if (base.$f & T_OBJECT)
         base = rb_class_real(base.$k);
       // If no superclass specified, use Object.
-      if (super_class == rb_nil)
+      if (super_class == Qnil)
         super_class = rb_cObject;
       
       klass = rb_define_class_under(base, id, super_class);
@@ -55,7 +55,7 @@ rb_vm_defn = function(base, m_id, body, singleton) {
     rb_define_method(base, m_id, body);
   }
   // always return nil
-  return rb_nil;
+  return Qnil;
 };
 
 // Return method missing closure.
@@ -102,7 +102,7 @@ rb_vm_gs = function(id, value) {
 var opal_puts = function(self, block, arg) {
   // print(arg);
   io_puts(arg);
-  return rb_nil;
+  return Qnil;
 };
 
 // Raw require - require the 'path'. Currently uses commonjs paths and load
@@ -120,13 +120,13 @@ var opal_require = function(self, block, fname) {
 // @returns nil
 var opal_define_method = function(self, block, base, method) {
   rb_define_method(base, method, block);
-  return rb_nil;
+  return Qnil;
 };
 
 // Alias a method. names here will be strings.
 var opal_alias_method = function(self, block, base, new_name, old_name) {
   rb_define_method(base, new_name, base.$m_tbl['$' + old_name]);
-  return rb_nil;
+  return Qnil;
 };
 
 // Include module into the class klass
@@ -134,14 +134,14 @@ var opal_alias_method = function(self, block, base, new_name, old_name) {
 var opal_include = function(self, block, klass, module) {
   // print("including module: " + module.__classid__);
   rb_include_module(klass, module);
-  return rb_nil;
+  return Qnil;
 };
 
 // Extend module into class
 var opal_extend = function(self, block, klass, module) {
   // print("extending module: " + module.__classid__);
   rb_extend_module(klass, module);
-  return rb_nil;
+  return Qnil;
 };
 
 // create a subclass of the given class
@@ -177,7 +177,7 @@ var opal_expand_path = function(self, block, path) {
 var opal_raise = function(self, block, exc) {
   rb_vm_raise(exc);
   // we never actually end up returning anything
-  return rb_nil;
+  return Qnil;
 };
 
 // get env variable denoted by name
@@ -186,7 +186,7 @@ var opal_getenv = function(self, block, name) {
     return system.env[name];
   }
   
-  return rb_nil;
+  return Qnil;
 };
 
 // get all env variables [[name1, value1], [name2, value2]]

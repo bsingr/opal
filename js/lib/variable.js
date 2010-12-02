@@ -17,7 +17,7 @@ var rb_global_tbl = {};
 var rb_define_hooked_variable = function(name, getter, setter) {
   var entry = {
     "name": name,
-    "value": rb_nil,
+    "value": Qnil,
     "getter": getter,
     "setter": setter
   };
@@ -37,7 +37,7 @@ var rb_gvar_readonly_setter = function(id, value) {
 // @local
 var rb_gvar_get = function(id) {
   var entry = rb_global_tbl[id];
-  if (!entry) return rb_nil;
+  if (!entry) return Qnil;
   return entry.getter(id);
 };
 

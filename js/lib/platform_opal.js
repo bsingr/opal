@@ -18,7 +18,7 @@ global.OpalIRB = function() {
 
 		rb_run(function() {
 
-	  	print((obj = func(rb_top_self, '(irb)'), obj.$m.$inspect(obj, rb_nil)));
+	  	print((obj = func(rb_top_self, '(irb)'), obj.$m.$inspect(obj, Qnil)));
 		});
 	}
 	catch (e) {
@@ -116,7 +116,7 @@ var io_getwd = function() {
 
 var io_puts = function(str) {
 	print(str);
-	return rb_nil;
+	return Qnil;
 };
 
 var file_is_directory = OpalFile.is_directory;

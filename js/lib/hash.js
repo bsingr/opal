@@ -6,7 +6,7 @@ var RHash = function(args) {
   this.$h = opal_yield_hash();
   this['@keys'] = [];
   this['@assocs'] = {};
-  this['@default'] = rb_nil;
+  this['@default'] = Qnil;
   for (var i = 0; i < args.length; i++) {
     k = args[i], v = args[i+1];
     i++;

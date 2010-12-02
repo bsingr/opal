@@ -158,7 +158,7 @@ rb_ivar_set = function(obj, id, val) {
 
 // @global
 rb_ivar_get = function(obj, id) {
-  return obj.hasOwnProperty(id) ? obj[id] : rb_nil;
+  return obj.hasOwnProperty(id) ? obj[id] : Qnil;
 };
 
 // @global
@@ -198,7 +198,7 @@ var rb_define_singleton_method = function(klass, name, body) {
 
 var rb_define_alias = function(base, new_name, old_name) {
   rb_define_method(base, new_name, base.$m_tbl['$' + old_name]);
-  return rb_nil;
+  return Qnil;
 };
 
 // Class#new
@@ -220,7 +220,7 @@ function rb_call(recv, mid) {
 	// all args are just from our arguments
 	var args = Array.prototype.slice.call(arguments);
 	// simply replace mid with our block (nil)
-	args[1] = rb_nil;
+	args[1] = Qnil;
 	// check method exists
 	return (recv.$m['$' + mid] || recv.$M(mid)).apply(null, args);
 }
@@ -270,7 +270,7 @@ rb_break = function(value) {
       return "uncaught break";
     },
     __keyword__: 'break',
-    opal_value: value == undefined ? rb_nil : value
+    opal_value: value == undefined ? Qnil : value
   };
 };
 

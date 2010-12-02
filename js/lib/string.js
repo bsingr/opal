@@ -206,7 +206,7 @@ function rb_str_split(str, block, split) {
 // @param [String] other_str string to compare
 // @return [-1, 0, 1, nil] result
 function rb_str_cmp_m(str, block, other) {
-  if (!(other.info & TS)) return rb_nil;
+  if (!(other.info & TS)) return Qnil;
   else if (str > other) return 1;
   else if (str < other) return -1;
   return 0;
@@ -218,7 +218,7 @@ function rb_str_cmp_m(str, block, other) {
 // @param [String] other string to compare
 // @return [Boolean] result
 function rb_str_equal(str, block, other) {
-	return str.valueOf() == other.valueOf() ? rb_true : rb_false;
+	return str.valueOf() == other.valueOf() ? Qtrue : Qfalse;
 }
 
 // Match - If obj is a {Regexp}, then uses it to match against self, returning
@@ -232,7 +232,7 @@ function rb_str_equal(str, block, other) {
 // @return [Number, nil]
 function rb_str_match(str, block, obj) {
 	rb_call(obj, "match", self);
-	return rb_nil;
+	return Qnil;
 }
 
 // Case-inseneitive version of {String#<=>}.
@@ -251,7 +251,7 @@ function rb_str_match(str, block, obj) {
 // @return [-1, 0, 1, nil] result
 function rb_str_casecmp(str, block, other) {
 	var a = str.toLowerCase(), b = other.toLowerCase();
-	if (!(b.info & TS)) return rb_nil;
+	if (!(b.info & TS)) return Qnil;
 	else if (a > b) return 1;
 	else if (a < b) return -1;
 	return 0;
@@ -267,7 +267,7 @@ function rb_str_casecmp(str, block, other) {
 // 
 // @return [Boolean]
 function rb_str_empty(str) {
-	return str == "" ? rb_true : rb_false;
+	return str == "" ? Qtrue : Qfalse;
 }
 
 // Returns `true` if `self` ends with a `suffix` given.
@@ -282,9 +282,9 @@ function rb_str_end_with(str, block, suffix) {
 	if (!suffix) return false;
 	
 	if (str.lastIndexOf(suffix) == str.length - suffix.length)
-		return rb_true;
+		return Qtrue;
 	
-	return rb_false;
+	return Qfalse;
 }
 
 // Two strings are equal if they have the same length and content.
@@ -292,7 +292,7 @@ function rb_str_end_with(str, block, suffix) {
 // @param [String] other string to comapre
 // @return [Boolean]
 function rb_str_eql(str, block, other) {
-	return str == other ? rb_true : rb_false;	
+	return str == other ? Qtrue : Qfalse;	
 }
 
 // Returns true if `self` contains the given `other_str`.
@@ -310,7 +310,7 @@ function rb_str_eql(str, block, other) {
 function rb_str_include(str, block, other) {
 	var res = str.indexOf(other);
 	
-	return res == -1 ? rb_false : rb_true;
+	return res == -1 ? Qfalse : Qtrue;
 }
 
 // Returns the index of the first occurrence of the given `substring` or
@@ -333,7 +333,7 @@ function rb_str_include(str, block, other) {
 function rb_str_index(str, block, substr) {
 	var res = str.indexOf(substr);
 	
-	return res == -1 ? rb_nil : res;	
+	return res == -1 ? Qnil : res;	
 }
 
 // Returns a copy of `self` with leading whitespace removed. See also
