@@ -12,8 +12,8 @@ rb_vm_class = function(base, super_class, id, body, flag) {
     // normal class
     case 0:
       // if we are dealing with an object, lets use its class instead.
-      if (base.$f & T_OBJECT)
-        base = rb_class_real(base.$k);
+      if (base.$flags & T_OBJECT)
+        base = rb_class_real(base.$klass);
       // If no superclass specified, use Object.
       if (super_class == Qnil)
         super_class = rb_cObject;
@@ -27,8 +27,8 @@ rb_vm_class = function(base, super_class, id, body, flag) {
     // module
     case 2:
       // if we are dealing with an object, lets use its class instead.
-      if (base.$f & T_OBJECT)
-        base = rb_class_real(base.$k);
+      if (base.$flags & T_OBJECT)
+        base = rb_class_real(base.$klass);
       klass = rb_define_module_under(base, id);
       break;
     // If default, something has gone wrong (in compiler).
@@ -49,8 +49,8 @@ rb_vm_defn = function(base, m_id, body, singleton) {
     rb_define_singleton_method(base, m_id, body);
   }
   else {
-    if (base.$f & T_OBJECT)
-      base = base.$k;
+    if (base.$flags & T_OBJECT)
+      base = base.$klass;
     
     rb_define_method(base, m_id, body);
   }
@@ -70,8 +70,8 @@ rb_vm_meth_m = function(m_id) {
 // Get constant from base
 // @global
 rb_vm_cg = function(base, id) {
-  if (base.$f & T_OBJECT)
-    base = rb_class_real(base.$k);
+  if (base.$flags & T_OBJECT)
+    base = rb_class_real(base.$klass);
   
   return rb_const_get(base, id);
 };
@@ -79,8 +79,8 @@ rb_vm_cg = function(base, id) {
 // Set constant in base
 // @global
 rb_vm_cs = function(base, id, val) {
-  if (base.$f & T_OBJECT)
-    base = rb_class_real(base.$k);
+  if (base.$flags & T_OBJECT)
+    base = rb_class_real(base.$klass);
   
   return rb_const_set(base, id, val);
 };

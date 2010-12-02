@@ -10,7 +10,7 @@ var boot_defclass = function(id, super_klass) {
 var boot_defrootclass = function(id) {
   var result = new RClass(null, null);
   // FIXME: set flags - do we need this. already done for us?
-  result.$f = T_CLASS;
+  result.$flags = T_CLASS;
   rb_name_class(result, id);
   rb_const_set((rb_cObject || result), id, result);
   return result;
@@ -28,19 +28,18 @@ var rb_class_boot = function(super_class) {
     };
     result.prototype = new ctor();
     var klass = new result();
-    klass.$k = rb_class;
+    klass.$klass = rb_class;
     return klass;
   }
   else {
     var result = new RClass(null, null);
     return result;
-    }
-  
+  }
 };
 
 // @global
 rb_class_real = function(klass) {
-  while (klass.$f & FL_SINGLETON) klass = klass.$s;
+  while (klass.$flags & FL_SINGLETON) klass = klass.$super;
   return klass;
 };
 
@@ -53,7 +52,7 @@ var rb_name_class = function(klass, id) {
 var rb_make_metaclass = function(klass, super_class) {
   // print("making metaclass for " + klass.__classid__);
   // if klass is a class, and it is a singleton..
-  if ((klass.$f & T_CLASS) && (klass.$f & FL_SINGLETON)) {
+  if ((klass.$flags & T_CLASS) && (klass.$flags & FL_SINGLETON)) {
     // console.log("ok");
     // throw "need to implement in rb_make_metaclass"
     return make_metametaclass(klass);
@@ -62,9 +61,9 @@ var rb_make_metaclass = function(klass, super_class) {
     // our meta is a 'subclass' of the superclass
     var meta = rb_class_boot(super_class);
     // meta is now also a singleton (as well as class)
-    meta.$f |= FL_SINGLETON;
+    meta.$flags |= FL_SINGLETON;
     // the class of a class is its meta
-    klass.$k = meta;
+    klass.$klass = meta;
     // fix method table
     klass.$m = meta.$m_tbl;
     // fix const table
@@ -78,7 +77,7 @@ var rb_make_metaclass = function(klass, super_class) {
 
 var rb_singleton_class_attached = function(klass, obj) {
   // make sure klass is a singleton
-  if (klass.$f & FL_SINGLETON) {
+  if (klass.$flags & FL_SINGLETON) {
     // console.log("setting attacjed..");
     rb_ivar_set(klass, '__attached__', obj);
   }
@@ -87,31 +86,37 @@ var rb_singleton_class_attached = function(klass, obj) {
 var make_metametaclass = function(metaclass) {
   var metametaclass, super_of_metaclass;
   
-  if (metaclass.$k == metaclass) {
+  if (metaclass.$klass == metaclass) {
     metametaclass = rb_class_boot(null);
-    metametaclass.$k = metametaclass;
+    metametaclass.$klass = metametaclass;
   }
   else {
     metametaclass = rb_class_boot(null);
-    metametaclass.$k = metaclass.$k.$k == metaclass.$k ? make_metametaclass(metaclass.$k) : metaclass.$k.$k;
+    metametaclass.$klass = metaclass.$klass.$klass == metaclass.$klass ? 
+				make_metametaclass(metaclass.$klass) : 
+				metaclass.$klass.$klass;
   }
   
-  metametaclass.$f |= FL_SINGLETON;
+  metametaclass.$flags |= FL_SINGLETON;
   
   rb_singleton_class_attached(metametaclass, metaclass);
-  metaclass.$k = metametaclass;
+  metaclass.$klass = metametaclass;
   metaclass.$m = metametaclass.$m_tbl;
-  super_of_metaclass = metaclass.$s;
+  super_of_metaclass = metaclass.$super;
   
   // while (super_of_metaclass)
   
-  metametaclass.$s = rb_ivar_get(super_of_metaclass.$k, '__attached__') == super_of_metaclass ? super_of_metaclass.$k : make_metametaclass(super_of_metaclass);
-  return metametaclass;
+  metametaclass.$super = rb_ivar_get(super_of_metaclass.$klass, '__attached__') 
+				== super_of_metaclass
+				? super_of_metaclass.$klass
+				: make_metametaclass(super_of_metaclass);
+  
+return metametaclass;
 };
 
 // 
 var boot_defmetametaclass = function(klass, metametaclass) {
-  klass.$k.$k = metametaclass;
+  klass.$klass.$klass = metametaclass;
 };
 
 // define toll free bridged class
@@ -119,14 +124,15 @@ var boot_defmetametaclass = function(klass, metametaclass) {
 var rb_define_toll_free_class = function(prototype, flags, id, super_klass) {
   var klass = rb_define_class(id, super_klass);
   
-  prototype.$k = klass;
+  prototype.$klass = klass;
   prototype.$m = klass.$m_tbl;
-  prototype.$f = flags;
+  prototype.$flags = flags;
   prototype.$r = true;
   
   // default hashing behaviour
   prototype.$hash = function() {
-    return '$$' + this + '$$';
+    // return '$$' + this + '$$';
+		return flags + '_' + this;
   };
     
   return klass;
@@ -169,7 +175,7 @@ var rb_define_class_id = function(id, super_klass) {
   klass = rb_class_create(super_klass);
   rb_name_class(klass, id);
   // console.log("B " + id);
-  rb_make_metaclass(klass, super_klass.$k);
+  rb_make_metaclass(klass, super_klass.$klass);
   return klass;
 };
 
@@ -189,15 +195,15 @@ var rb_singleton_class = function(obj) {
     // console.log("right. cchecking rb_cObject");
   }
   // check if number, string etc.. and throw error?
-  if ((obj.$k.$f & FL_SINGLETON)&& rb_ivar_get(obj.$k, '__attached__') == obj) {
+  if ((obj.$klass.$flags & FL_SINGLETON)&& rb_ivar_get(obj.$klass, '__attached__') == obj) {
     // console.log("returning on attacked");
     // print("returning on attached");
     // for (var prop in obj.$k) {print (prop); print(obj.$k[prop]);}
-    klass = obj.$k;
+    klass = obj.$klass;
   }
   else {
-    var class_id = rb_ivar_get(obj.$k, '__classid__');
-    klass = rb_make_metaclass(obj, obj.$k);
+    var class_id = rb_ivar_get(obj.$klass, '__classid__');
+    klass = rb_make_metaclass(obj, obj.$klass);
     // obj
     // klass = obj.$k;
   }

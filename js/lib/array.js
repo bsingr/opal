@@ -60,9 +60,9 @@ var Init_Array = function() {
 
 	// fix for array hash. create it if not already created..
 	Array.prototype.$hash = function() {
-	  if (this.$h) return this.$h;
+	  if (this.$id) return this.$id;
 
-	  return this.$h = opal_yield_hash();
+	  return this.$id = opal_yield_hash();
 	};
 	
 	rb_define_method(rb_cArray, "inspect", rb_ary_inspect);
@@ -73,12 +73,8 @@ var Init_Array = function() {
 	rb_define_method(rb_cArray, "<<", rb_ary_push);
 	
 	
-	
-	
-	
-	
-	
-	
+
+	// remove?!
 	rb_define_method(rb_cArray, '__aref__', rb_cArray_aref);
 	rb_define_method(rb_cArray, '__aset__', rb_cArray_aset);
 	rb_define_method(rb_cArray, 'dup', rb_cArray_dup);

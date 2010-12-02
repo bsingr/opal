@@ -16,7 +16,7 @@ var rb_cSymbol;
 // Symbol instance
 var RSymbol = function(ptr) {
   // hash
-  this.$h = opal_yield_hash();
+  this.$id = opal_yield_hash();
   // ptr
   this.__ptr__ = ptr;
   // Class is rb_symbol

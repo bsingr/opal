@@ -11,7 +11,7 @@ var rb_define_module_under = function(base, id) {
     // print("already defined");
     // make sure it is a module, otherwise error (trying to change class)
     module = rb_const_get(base, id);
-    if (module.$f & T_MODULE) {
+    if (module.$flags & T_MODULE) {
       return module;
     }
 
@@ -26,7 +26,7 @@ var rb_define_module_under = function(base, id) {
 
 var rb_define_module_id = function(id) {
   var module = rb_define_class_id(id, rb_module);
-  module.$f = T_MODULE;
+  module.$flags = T_MODULE;
   rb_name_class(module, id);
   return module;
 };
@@ -93,6 +93,6 @@ var rb_extend_module = function(klass, module) {
   // }
   
   for (var method in module.$method_table) {
-    klass.$k.$m_prototype_tbl[method] = module.$method_table[method];
+    klass.$klass.$m_prototype_tbl[method] = module.$method_table[method];
   }
 };

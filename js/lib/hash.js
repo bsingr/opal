@@ -58,6 +58,12 @@ var Init_Hash = function() {
 	rb_cHash = rb_define_toll_free_class(RHash.prototype, T_OBJECT | T_HASH,
 																			'Hash', rb_cObject);
 																			
+	RHash.prototype.$hash = function() {
+	  if (this.$id) return this.$id;
+
+	  return this.$id = opal_yield_hash();
+	};
+																			
 	rb_define_method(rb_cHash, '__store__', rb_cHash_store);
 	rb_define_method(rb_cHash, '__fetch__', rb_cHash_fetch);
 	rb_define_method(rb_cHash, '__delete__', rb_cHash_delete);

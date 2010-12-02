@@ -9,25 +9,16 @@ var opal_yield_hash = function() {
   return opal_hash_yield++;
 };
 
-// VM Methods. These need to be added to all objects/classes
-
-
-exports.log = function(str) {
-  // print("need to print string:");
-  
-  print(str);
-};
-
 // The root class. Every class in opal is an instance of RClass.
 var RClass = function(klass, super_klass) {
   // Hash. immediately give the class a hash/object_id
-  this.$h = opal_yield_hash();
+  this.$id = opal_yield_hash();
   // Ivars. All ivars etc stored in here - no longer?
   // this.$i = {};
   // Constants. All constants belonging to class stored here.
   // this.$c = {};
   // SuperClass.
-  this.$s = super_klass;
+  this.$super = super_klass;
   // Method_table - all methods are stored here. This is prototype based so that
   // methods are inherited between subclasses etc.
   // 
@@ -68,7 +59,7 @@ var RClass = function(klass, super_klass) {
 };
 
 // Flags. Every RClass instance is simply a T_CLASS, so mark as so.
-RClass.prototype.$f = T_CLASS;
+RClass.prototype.$flags = T_CLASS;
 // RTest/truthiness - every RClass instance is true.
 RClass.prototype.$r = true;
 
@@ -76,11 +67,11 @@ RClass.prototype.$r = true;
 // like array, string etc) are an instance of RObject.
 var RObject = function(klass) {
   // Hash. get out object_id
-  this.$h = opal_yield_hash();
+  this.$id = opal_yield_hash();
   // Ivars. no longer?
   // this.$i = {};
   // klass of the object becomes klass
-  this.$k = klass;
+  this.$klass = klass;
   // from the class, we set our local methods property (in sync with our class)
   this.$m = klass.$m_tbl;
   // return object.
@@ -88,83 +79,15 @@ var RObject = function(klass) {
 };
 
 // Flags - every RObject instance is simply a T_OBJECT
-RObject.prototype.$f = T_OBJECT;
+RObject.prototype.$flags = T_OBJECT;
 // RTest - every RObject instance is true.
 RObject.prototype.$r = true;
 
-
-
 RObject.prototype.$hash = RClass.prototype.$hash = function() {
-  return this.$h;
+  return this.$id;
 };
 
 
-
-
-// rb_vm_methods
-
-
-
-
-
-
-
-// set the constant on the given class
-var rb_const_set = function(klass, id, val) {
-  // klass.$i[id] = val;
-  klass.$c_prototype[id] = val;
-  return val;
-};
-
-var rb_const_get = function(klass, id) {
-  // print("finding id: " + id);
-  // io_puts('finding id ' + id);
-  // io_puts(klass.__classid__);
-  // io_puts(klass.$f);
-  if (klass.$c[id])
-    return (klass.$c[id]);
-  
-  var parent = klass.$parent;
-  // io_puts(parent.__classid__);
-  // stop infinite loop (objects object is object??)
-  while (parent && parent != rb_cObject) {
-    // io_puts(parent.__classid__);
-    // print(parent == rb_cObject);
-    if (parent.$c[id])
-      return parent.$c[id];
-    
-    parent = parent.$parent;
-  }
-  // print("trying from " + klass.__classid__);
-  // for (var prop in klass.$c) print(prop);
-  io_puts("Cannot find constant: " + id);
-  rb_raise(rb_eNameError, 'uninitialized constant ' + id);
-};
-
-// is const defined
-var rb_const_defined = function(klass, id) {
-  if (klass.$c[id])
-    return true;
-  
-  return false;
-};
-
-// set ivar
-// @global
-rb_ivar_set = function(obj, id, val) {
-  obj[id] = val;
-  return val;
-};
-
-// @global
-rb_ivar_get = function(obj, id) {
-  return obj.hasOwnProperty(id) ? obj[id] : Qnil;
-};
-
-// @global
-rb_ivar_defined = function(obj, id) {
-  return obj.hasOwnProperty(id) ? true : false;
-};
 
 // define method
 var rb_define_method = function(klass, name, body) {
@@ -175,7 +98,7 @@ var rb_define_method = function(klass, name, body) {
   
   // if we are adding to a module, then check to see if mdethod needs to be
   // included into "included_in" classes
-  if (klass.$f & T_MODULE) {
+  if (klass.$flags & T_MODULE) {
     // print("in module for: " + name);
     // print(klass.$h);
     // for (var prop in klass) print(prop);
@@ -310,9 +233,9 @@ rb_run = function(func) {
   }
   catch(err) {
     // should check if err is native or ruby error (.$k)
-    if (err.$k) {
+    if (err.$klass) {
       print('caught error: ');
-      print(err.$k.__classid__ + ': ' + err['@message'])
+      print(err.$klass.__classid__ + ': ' + err['@message'])
     }
     else {
       print('NativeError: ' + err);

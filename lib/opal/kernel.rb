@@ -124,13 +124,13 @@ module Kernel
   end
   
   def is_a?(klass)
-   `var search = #{self}.$k;
+   `var search = #{self}.$klass;
     
     while (search) {
       if (search == #{klass})
         return #{true};
       
-      search = search.$s;
+      search = search.$super;
     }
     
     return #{false};`
@@ -170,7 +170,7 @@ module Kernel
   alias_method :send, :__send__
   
   def class
-    `return rb_class_real(#{self}.$k);`
+    `return rb_class_real(#{self}.$klass);`
   end
   
   # Returns a random number. If `max` is `nil` then the result is 0. Otherwise
@@ -196,16 +196,14 @@ module Kernel
     `return #{self}.$hash();`
   end
   
+  alias_method :object_id, :__id__
+  
   def to_s
     "#<#{self.class}:#{self.__id__}>"
   end
   
   def inspect
     to_s
-  end
-  
-  def object_id
-    `return #{self}.$hash();`
   end
   
 
