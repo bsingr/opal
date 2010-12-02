@@ -65,9 +65,20 @@ var io_read = function(path) {
 };
 
 var io_expand_path = function(path, dir_string) {
+	// print("path is: " + path);
+	// print("cwd is: " + io_getwd());
+	// print("dir string is: " + dir_string);
+	
 	var start_slash = (path[0] === "/");
-	if (dir_string) path = file_join(dir_string, path);
-  var parts = path.split("/");
+	
+	if (dir_string) 
+		path = file_join(dir_string, path);
+  else if (!start_slash)
+		path = file_join(io_getwd(), path);
+
+	// print("NEW PATH: " + path);
+
+	var parts = path.split("/");
   var result = [];
   var part;
   for (var i = 0; i < parts.length; i++) {
@@ -85,13 +96,15 @@ var io_expand_path = function(path, dir_string) {
     }
   }
   
-  if (start_slash) {
+	// print("result is: " + result.join('/'));
+
+  if (result[0] != "") {
     // if we started with a slash, use that
     return "/" + result.join("/");
   } else {
     // otherwise join with our current working dir
-    return file_join(io_getwd(), result.join("/"));
-		// return result.join("/");
+    // return file_join(io_getwd(), result.join("/"));
+		return result.join("/");
   }
 	// return path;
 };

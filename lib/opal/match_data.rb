@@ -1,9 +1,5 @@
 class MatchData
   
-  def initialize(data)
-    @data = data
-  end
-  
   def to_a
     @data
   end

@@ -11,6 +11,14 @@ module Opalite
       
       Opalite::Gem.class_eval gemspec, args[1]
       
+      # by default, build just the main opal.
+      spec = $opalite_defined_spec
+      
+      raise "Error constructing Gem Specification" unless spec
+      
+      builder = Opalite::Builder.new spec
+      builder.build
+      
       
       # puts "running with: #{args.inspect}"
       # puts "need to read #{args[1]}"

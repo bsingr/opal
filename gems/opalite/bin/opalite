@@ -1,6 +1,12 @@
 #!/usr/bin/env ruby -wKU
 
+puts "1"
+puts File.dirname(__FILE__)
+puts "2"
+puts File.join(File.dirname(__FILE__), '..', 'lib')
+
 opalite_dir = File.expand_path(File.join(File.dirname(__FILE__), '..', 'lib'))
+puts "opalite dir: #{opalite_dir}"
 $LOAD_PATH.unshift(opalite_dir) unless $LOAD_PATH.include?(opalite_dir)
 require 'opalite'
 

@@ -25,7 +25,6 @@ var rb_mKernel,
     rb_true_class,
     rb_false_class,
     rb_proc,
-		
 		rb_cFile,
 		rb_cDir;
 
@@ -64,9 +63,6 @@ var InitObject = function() {
 	rb_define_method(rb_class, 'allocate', rb_obj_alloc);
 	rb_define_method(rb_class, 'new', rb_class_new_instance);
 	rb_define_method(rb_class, 'initialize', function() {});
-
-
-
 
 	// @class Numeric
 	rb_number = rb_define_toll_free_class(Number.prototype, T_OBJECT | T_NUMBER, 'Numeric', rb_cObject);

@@ -196,6 +196,10 @@ var rb_define_singleton_method = function(klass, name, body) {
   rb_define_method(rb_singleton_class(klass), name, body);
 };
 
+var rb_define_alias = function(base, new_name, old_name) {
+  rb_define_method(base, new_name, base.$m_tbl['$' + old_name]);
+  return rb_nil;
+};
 
 // Class#new
 var rb_class_new_instance = function(klass) {
@@ -210,6 +214,16 @@ rb_obj_alloc = function(klass) {
   var result = new RObject(klass, T_OBJECT);
   return result;
 };
+
+// call from js
+function rb_call(recv, mid) {
+	// all args are just from our arguments
+	var args = Array.prototype.slice.call(arguments);
+	// simply replace mid with our block (nil)
+	args[1] = rb_nil;
+	// check method exists
+	return (recv.$m['$' + mid] || recv.$M(mid)).apply(null, args);
+}
 
 
 

@@ -34,3 +34,10 @@ Each output file is located within the opal_name-1.0.0.opal/ directory (by defau
 
 Minimisation is off by default for generated Javascript, so once minimised (an 
 optional step), it is up to the developer to pass minimise flag as appropriate.
+
+Opalite running prereqs
+=======================
+
+If running in opal, opalite can easily access the opal compiler and parser etc.
+If running in another VM, opalite requires therubyracer gem which embeds a v8
+engine so that it can run the Opal compiler (which is 100% javascript now.)

@@ -61,7 +61,8 @@ file_list_tree = function(path) {
 	return result;
 };
 
-file_glob = function(pattern, flags) {
+// FIXME: this is slow and very hacky
+var file_glob = function(pattern, flags) {
 	var parts = pattern.split(new RegExp(FILE_SEPARATOR + '+'));
 	var glob_paths;
 		
@@ -128,7 +129,23 @@ file_glob = function(pattern, flags) {
 			}
 		}
 		
-		return glob_paths;
+		var seen = {}, result = [], current, current_parts;
+		
+		for (var i = 0; i < glob_paths.length; i++) {
+			current = glob_paths[i];
+			
+			if (seen[current]) continue;
+			
+			current_parts = current.split(FILE_SEPARATOR);
+			
+			if (current_parts[0] == '.') current_parts.shift();
+			
+			result.push(current_parts.join(FILE_SEPARATOR));
+			// push original!!
+			seen[current] = current;
+		}
+		
+		return result;
 };
 
 var file_glob_build_regexp = function(pattern, flags) {

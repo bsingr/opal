@@ -29,6 +29,11 @@ extensions['.rb'] = function(fname) {
   // function prototype. we only pass filename as argument.
   var func = new Function('self', '__FILE__', code);
   // execute function (code)
+	
+	// print("===== loading at " + fname);
+	print(io_expand_path(fname));
+	// print("!!!!!");
+
   func(rb_top_self, io_expand_path(fname));
 };
 

@@ -39,7 +39,6 @@ end
 require 'opal/module'
 require 'opal/kernel'
 require 'opal/symbol'
-require 'opal/string'
 require 'opal/array'
 require 'opal/basic_object'
 require 'opal/class'

@@ -1,4 +1,10 @@
 module Opalite
+  
+  ##
+  # Main opal builder. The file built by this opal will be named in the format
+  # opal_name-1.0.0.js and will contain the gem name, version, etc, as well as
+  # all the lib and bin files. Test files will not be included
+  # 
   class Builder
     
     def initialize(spec)
@@ -9,11 +15,13 @@ module Opalite
     # Build the opalite in JSON format
     # 
     def build
-      result = ["{"]
-      # result << %Q{"name": "opal"}
+      result = ["{\n"]
+      result << "\"name\": #{@spec.name.inspect},\n"
+      result << "\"version\": #{@spec.version.inspect}\n"
       result << "}"
       
       puts result.join('')
+      puts success
     end
     
     ##

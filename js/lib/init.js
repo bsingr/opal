@@ -17,6 +17,7 @@ exports.init = function() {
 	InitObject();
 	Init_Array();
 	Init_Hash();
+	Init_Regexp();
 	InitLoad();
 	InitFile();
 	InitVM();

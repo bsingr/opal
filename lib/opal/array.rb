@@ -7,21 +7,8 @@ require 'opal/enumerable'
 # is no wrapping or referencing, it is simply a toll-free class.
 class Array
   # include Enumerable
-  # Returns a formatted, printable version of the array. #inspect is called on
-  # each of the elements and appended to the string.
-  def inspect
-    description = []
-    each { |obj| description.push obj.inspect }
-    "[#{description.join ', '}]"
-  end
   
-  # Returns a simple string version of the array. #to_s is applied to each of
-  # the child elements with no seperator.
-  def to_s
-    description = []
-    each { |obj| description.push obj.to_s }
-    description.join ""
-  end
+
     
   # Calls block once for each element in `self`, passing that element as a 
   # parameter.
@@ -88,20 +75,7 @@ class Array
     self
   end
   
-  # Append - Pushes the given object on to the end of this array. This 
-  # expression returns the array itself, so several appends may be chained
-  # together.
-  # 
-  # @example
-  #   [1, 2] << "c" << "d" << [3, 4]
-  #   # => [1, 2, "c", "d", [3, 4]]
-  # 
-  # @param [Object] obj object to append
-  # @return [Array] returns the receiver
-  def <<(obj)
-    push obj
-    self
-  end
+
   
   # Append - Pushes the given object(s) on to the end of this array. This 
   # expression returns the array itself, so several appends may be chained
@@ -150,15 +124,7 @@ class Array
     nil
   end
   
-  # Returns the number of elements in `self`. May be zero.
-  # 
-  # @example
-  #   [1, 2, 3, 4, 5].length
-  #   # => 5
-  # 
-  # @return [Number] length
-  alias_method :length, :__length__
-  alias_method :size, :__length__
+
   
   # Returns a new array populated with the given objects.
   # 
@@ -277,6 +243,30 @@ class Array
   def clear
     # `return #{self}.splice(0, #{self}.length);`
     self
+  end
+  
+  # Invokes the block passing in successive elements from `self`, returning an
+  # array containing those elements for which the block returns a true value.
+  # 
+  # @note enumerator functionality is not yet implemented.
+  # 
+  # @example
+  #   a = [1, 2, 3, 4, 5, 6]
+  #   a.select { |x| x > 4 }
+  #   # => [5, 6]
+  # 
+  # @return [Array] returns array
+  def select(&block)
+    return self unless block_given?
+    result = []
+    i = 0
+    length = self.length
+    
+    while i < length
+      result.push(at(i)) if yield at(i)
+      i += 1
+    end
+    result
   end
   
   # Invokes `block` once for each element of `self`. Creates a new array
@@ -1029,32 +1019,6 @@ class Array
     return #{nil};`
   end
   
-  # Invokes the block passing in successive elements from `self`, returning an
-  # array containing those elements for which the block returns a true value.
-  # 
-  # @note enumerator functionality is not yet implemented.
-  # 
-  # @example
-  #   a = [1, 2, 3, 4, 5, 6]
-  #   a.select { |x| x > 4 }
-  #   # => [5, 6]
-  # 
-  # @return [Array] returns array
-  def select(&block)
-    `var result = [];
-    for (var i = 0; i < #{self}.length; i++) {
-      try {
-        var res = #{block}.apply(#{block}.__self__, [#{self}[i]]);
-        if (res.r) {
-          result.push(#{self}[i]);
-        }
-      }
-      catch (e) {
-        throw "Array#select catch not implemented yet"
-      }
-    }
-    return result;`
-  end
   
   # Invokes the block passing in successive elements from `self`, deleting the
   # elements for which the block returns a false value. It returns `self` if

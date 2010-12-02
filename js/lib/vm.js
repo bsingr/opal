@@ -201,7 +201,7 @@ var opal_getallenv = function(self, block, name) {
 var opal_context_eval = function(opal, block, self, string, filename, lineno) {
 	var code = exports.compile(string);
   var func = new Function('self', '__FILE__', code);
-  return func(self, filename);
+  return func(self, io_expand_path(filename));
 };
 
 var InitVM = function() {

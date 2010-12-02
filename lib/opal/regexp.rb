@@ -69,17 +69,6 @@ class Regexp
   # @param [Sring] string to match against
   # @return [MatchData, nil] result or nil
   def match(string)
-    `#{m = nil}
-    var test;
-    if (test = #{self}.exec(#{string})) {
-      #{m} = #{MatchData.new(`test`)};
-      #{self}.gs('$&', test[0]);
-      for (var i = 1; i < test.length; i++) {
-        #{self}.gs('$' + i, test[i]);
-      }
-    } else {
-      #{m = nil};
-    }
-    return #{$~ = m};`
+    __match__ string
   end
 end
