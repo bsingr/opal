@@ -32,9 +32,9 @@ var rb_mKernel,
 rb_top_self = null;
 
 // some top level objects
-rb_nil = null;
-rb_false = null;
-rb_true = null;
+Qnil = null;
+Qfalse = null;
+Qtrue = null;
 
 // Init core Object classes with some bootstrap methods
 var InitObject = function() {
@@ -86,9 +86,9 @@ var InitObject = function() {
 	// @class NilClass
 	rb_nil_class = rb_define_class('NilClass', rb_cObject);
 	// nil literal
-	rb_nil = rb_obj_alloc(rb_nil_class);
+	Qnil = rb_obj_alloc(rb_nil_class);
 	// nil is false for truthiness
-	rb_nil.$r = false;
+	Qnil.$r = false;
 
 	// Top self
 	rb_top_self = new RObject(rb_cObject, T_OBJECT);

@@ -54,7 +54,7 @@ BaseIseq.prototype = {
   },
   
   join_variables: function(res) {
-    res.push('var ' + this.NIL + ' = rb_nil;\n');
+    res.push('var ' + this.NIL + ' = Qnil;\n');
 
     for (var i = 0; i < this.ensure_ivars.length; i++) {
       res.push('if (' + this.SELF + '["' + this.ensure_ivars[i] + '"] === undefined) ' + this.SELF + '["' + this.ensure_ivars[i] + '"] = ' + this.NIL + ';\n');
@@ -434,11 +434,11 @@ RubyGenerator.prototype = {
   },
   
   generate_true: function(stmt) {
-    return 'rb_true';
+    return 'Qtrue';
   },
   
   generate_false: function(stmt) {
-    return 'rb_false';
+    return 'Qfalse';
   },
   
   generate_compstmt: function(stmt, split) {
@@ -886,7 +886,7 @@ RubyGenerator.prototype = {
       res.push(this.generate(stmt[1]));
     }
     else {
-      res.push('rb_true');
+      res.push('Qtrue');
     }
     res.push(', true) ? ');
     
@@ -1717,7 +1717,7 @@ RubyGenerator.prototype = {
   
   generate_block_given: function(stmt) {
     var name = this.iseq_current.block_arg;
-    return '(' + name + ' !== ' + this.NIL + ' ? rb_true : rb_false)';
+    return '(' + name + ' !== ' + this.NIL + ' ? Qtrue : Qfalse)';
   },
   
   generate_yield: function(stmt) {
