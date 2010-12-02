@@ -10,7 +10,7 @@ module Kernel
   # @param [String] require_path
   # @return [Boolean] success
   def require(require_path)
-    OpalVM.require_path require_path
+    Opal.require_path require_path
   end
   
   # remove this!!!!!!!

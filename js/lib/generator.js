@@ -190,7 +190,7 @@ var MainIseq = (function() {
 
 MainIseq.prototype.join = function() {
   var res = [];
-  res.push('var self = rb_top_self;\n');
+  // res.push('var self = rb_top_self;\n');
   // res.push('function(self, __FILE__, require) {\n');
   // res.push('function(require, exports, module, self, __FILE__) {\n');
   

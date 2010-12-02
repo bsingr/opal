@@ -26,7 +26,7 @@ task "runtime/opal.js" do
   # core runtime files 
   sources = %w[platform_opal file class module]
   # core classes/objects/modules
-  sources += %w[object error string]
+  sources += %w[object error string array hash]
   # extra runtime files
   sources += %w[variable ruby vm load init]
   # dev files which are included

@@ -18,6 +18,28 @@ class Hash
     `return opalhash.apply(null, #{all});`
   end
   
+  # Returns a new array populated with the values from `self`.
+  # 
+  # @example
+  #   h = { :a => 1, :b => 2 }
+  #   h.values
+  #   # => [1, 2]
+  # 
+  # @return [Array]
+  def values
+    result = []
+    i = 0
+    length = @keys.length
+    keys = @keys
+    
+    while i < length
+      result.push __fetch__(keys[i])
+      i += 1
+    end
+   
+    result
+  end
+  
   # Returns the contents of this hash as a string.
   # 
   # @example
@@ -759,60 +781,5 @@ class Hash
   def to_hash
     self
   end
-  
-  # Returns a new array populated with the values from `self`.
-  # 
-  # @example
-  #   h = { :a => 1, :b => 2 }
-  #   h.values
-  #   # => [1, 2]
-  # 
-  # @return [Array]
-  def values
-    result = []
-    i = 0
-    length = @keys.length
-    keys = @keys
-    
-    while i < length
-      result.push __fetch__(keys[i])
-      i += 1
-    end
-   
-    result
-  end
-  
-  # Core method to store value for key.
-  # @private
-  def __store__(key, value)
-    `var hash = key.$hash();
-    if (!self['@assocs'].hasOwnProperty(hash)) {
-      self['@keys'].push(key);
-    }
-    
-    return self['@assocs'][hash] = value;`
-  end
-  
-  def __fetch__(key)
-    `var hash = key.$hash();
-    
-    if (self['@assocs'].hasOwnProperty(hash)) {
-      return self['@assocs'][hash];
-    }
-    
-    return self['@default'];`
-  end
-  
-  def __delete__(key)
-    `var hash = key.$hash();
-    
-    if (self['@assocs'].hasOwnProperty(hash)) {
-      var ret = self['@assocs'][hash];
-      delete self['@assocs'][hash];
-      self['@keys'].splice(self['@keys'].indexOf(key), 1);
-      return ret;
-    }
-    
-    return self['@default'];`
-  end
+
 end

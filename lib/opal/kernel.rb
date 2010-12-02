@@ -44,7 +44,7 @@ module Kernel
   # @return [nil]
   def puts(*args)
     args.each do |arg|
-      OpalVM.puts arg.to_s
+      Opal.puts arg.to_s
     end
     
     nil
@@ -80,7 +80,7 @@ module Kernel
       end
       exc = exception.new msg
     end
-    OpalVM.raise exc
+    Opal.raise exc
   end
   
   # FIXME: wtf?!?! not working..

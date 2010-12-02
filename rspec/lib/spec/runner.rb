@@ -23,6 +23,21 @@ module Spec
       @options
     end
     
+    def self.autorun
+      puts "autorunning!"
+      ARGV.each do |spec|
+        puts "need to load spec #{spec}"
+        if File.exists? spec
+          puts "it exists! #{File.expand_path(spec)}"
+          require File.expand_path(spec)
+        else
+          puts "Bad spec to load (does not exist): #{spec}"
+        end
+      end
+      
+      Spec::Runner.run
+    end
+    
   end # Runner
 end
 

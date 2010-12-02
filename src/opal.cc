@@ -142,7 +142,18 @@ void RunShell(v8::Handle<v8::Context> context) {
 		char *str = fgets(buffer, kBufferSize, stdin);
 		if (str == NULL) break;
 		v8::HandleScope handle_scope;
-		ExecuteString(JS_STR(str), JS_STR("(shell)"), true, true);
+		if (0) {
+			// javascript
+			ExecuteString(JS_STR(str), JS_STR("(shell)"), true, true);
+		} else {
+			// ruby
+			char irb_str[1024];
+			
+			JS_SET(JS_GLOBAL, "IRBString", JS_STR(str));
+			
+			ExecuteString(JS_STR("OpalIRB()"), JS_STR("(shell)"), true, true);
+		}
+		
 	}
 	printf("\n");
 }

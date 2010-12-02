@@ -27,9 +27,9 @@ extensions['.rb'] = function(fname) {
   // print('#################################################################');
   // print(code);
   // function prototype. we only pass filename as argument.
-  var func = new Function('__FILE__', code);
+  var func = new Function('self', '__FILE__', code);
   // execute function (code)
-  func(io_expand_path(fname));
+  func(rb_top_self, io_expand_path(fname));
 };
 
 // Javascript loader.
@@ -149,4 +149,6 @@ var loaded_feature_getter = function(id) {
 var InitLoad = function() {
 rb_define_hooked_variable('$:', load_path_getter, rb_gvar_readonly_setter);
 rb_define_hooked_variable('$"', loaded_feature_getter, rb_gvar_readonly_setter);
+
+	rb_const_set(rb_cObject, 'ARGV', init_argv);
 };

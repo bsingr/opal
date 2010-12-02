@@ -21,11 +21,9 @@ rb_cBasicObject = null,
 // Other core classes/modules
 var rb_mKernel,
     rb_nil_class,
-    rb_array,
     rb_number,
     rb_true_class,
     rb_false_class,
-    rb_hash,
     rb_proc,
 		
 		rb_cFile,
@@ -67,18 +65,7 @@ var InitObject = function() {
 	rb_define_method(rb_class, 'new', rb_class_new_instance);
 	rb_define_method(rb_class, 'initialize', function() {});
 
-	// @class Array
-	rb_array = rb_define_toll_free_class(Array.prototype, T_OBJECT | T_ARRAY, 'Array', rb_cObject);
 
-	// fix for array hash. create it if not already created..
-	Array.prototype.$hash = function() {
-	  if (this.$h) return this.$h;
-
-	  return this.$h = opal_yield_hash();
-	};
-
-	// @class Hash
-	rb_hash = rb_define_toll_free_class(RHash.prototype, T_OBJECT | T_HASH, 'Hash', rb_cObject);
 
 
 	// @class Numeric

@@ -58,6 +58,43 @@ namespace opal {
 		return v8::Integer::New(stat_info.st_mtime);
 	}
 	
+	v8::Handle<v8::Value> List(const v8::Arguments& args) {
+		v8::String::Utf8Value path(args[0]->ToString());
+		
+		DIR *dir;
+		struct dirent *dir_info;
+		
+		if ((dir = opendir(*path)) == NULL) {
+			printf("not a directory: %s\n", *path);
+		}
+		
+		v8::Handle<v8::Array> result = v8::Array::New(0);
+		
+		int idx = 0;
+		
+		while ((dir_info = readdir(dir)) != NULL) {
+			if (strcmp("..", dir_info->d_name) && strcmp(".", dir_info->d_name)) {
+				result->Set(v8::Integer::New(idx++), JS_STR(dir_info->d_name));
+			}
+		}
+		
+		closedir(dir);
+		
+		return result;
+	}
+	
+	v8::Handle<v8::Value> Mkdir(const v8::Arguments& args) {
+		v8::String::Utf8Value path(args[0]->ToString());
+		
+		int res = mkdir(*path, 0777);
+		
+		if (res < 0) {
+			printf("could not make directory %s\n", *path);
+		}
+		
+		return v8::Integer::New(res);
+	}
+	
 	v8::Handle<v8::Value> Cwd(const v8::Arguments& args) {
     v8::HandleScope handle_scope;
 
@@ -159,5 +196,7 @@ namespace opal {
 		JS_SET(opal_file, "is_file", JS_FUNC(IsFile)->GetFunction());
 		JS_SET(opal_file, "size", JS_FUNC(Size)->GetFunction());
 		JS_SET(opal_file, "mtime", JS_FUNC(Mtime)->GetFunction());
+		JS_SET(opal_file, "list", JS_FUNC(List)->GetFunction());
+		JS_SET(opal_file, "mkdir", JS_FUNC(Mkdir)->GetFunction());
 	}
 }

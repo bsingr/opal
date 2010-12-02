@@ -4,6 +4,9 @@
 // make sure init/main are only called once.
 var rb_opal_done_init = false,
 		rb_opal_done_main = false;
+		
+// where we can save our global argv once calculated
+var init_argv = [];
 
 exports.init = function() {
 	if (rb_opal_done_init) return;
@@ -12,6 +15,8 @@ exports.init = function() {
 	print("about to init");
 	// core inits.
 	InitObject();
+	Init_Array();
+	Init_Hash();
 	InitLoad();
 	InitFile();
 	InitVM();
@@ -44,8 +49,6 @@ exports.main = function() {
 	var all_flags = [];
 	// program name..
 	var program_name = null;
-	// all ruby args
-	var all_args = [];
 	
 	for (var i = 1; i < argv.length; i++) {
 		if (argv[i][0] === '-' && !finished_flags) {
@@ -59,7 +62,7 @@ exports.main = function() {
 				program_name = argv[i];
 			}
 			else {
-				all_args.push(argv[i]);
+				init_argv.push(argv[i]);
 			}
 		}
 	}
@@ -67,7 +70,7 @@ exports.main = function() {
 	print("done parsing...");
 	
 	print("program name is: " + program_name);
-	print("args: [" + all_args.join(", ") + "]");
+	print("args: [" + init_argv.join(", ") + "]");
 	
 	// if we have a program name, then lets run it. if not, print help
 	if (program_name) {

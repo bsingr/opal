@@ -8,21 +8,16 @@
 
 rspec_dir = File.expand_path(File.join(File.dirname(__FILE__), '..', 'lib'))
 $LOAD_PATH.unshift(rspec_dir) unless $LOAD_PATH.include?(rspec_dir)
+require 'spec/autorun'
 
 
 
-
-puts "ok, load path is:"
-puts $:.inspect
-a = File.join(Dir.getwd, 'opals/opalruby/spec/**/*.rb')
-puts a
-puts Dir.glob(a)
-
-# require 'opalspec'
-
-# Dir.glob(File.join(Dir.getwd, 'opals/opalruby/spec/**/*.rb')).each do |rb|
-  # puts "globbing over: #{rb}"
-  # require rb
+# puts "ok, load path is:"
+# puts $:.inspect
+# a = File.join(Dir.getwd, 'spec/**/*.rb')
+# puts a
+# # puts Dir.glob(a).inspect
+# 
+# Dir.glob(a).each do |rb|
+#   puts "doing: #{rb}"
 # end
-
-# Spec::Runner.run

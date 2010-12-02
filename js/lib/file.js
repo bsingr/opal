@@ -39,6 +39,102 @@ var file_dirname = function(path) {
 	return file_join.apply(this, parts) || '.';
 };
 
+file_list_tree = function(path) {
+	var result = [];
+	var children = file_list(path);
+	
+	for (var i = 0; i < children.length; i++) {
+		var child_path = file_join(path, children[i]);
+		// print("child_path: " + child_path);
+		result.push(child_path);
+		if (file_is_directory(child_path)) {
+			// print("-- directory");
+			var child_tree = file_list_tree(child_path);
+			for (var j = 0; j <  child_tree.length; j++) {
+				// print("child_tree_path: " + child_tree[j]);
+				// result.push(file_join(child_path, child_tree[j]));
+				result.push(child_tree[j]);
+			}
+		}
+	}
+	
+	return result;
+};
+
+file_glob = function(pattern, flags) {
+	var parts = pattern.split(new RegExp(FILE_SEPARATOR + '+'));
+	var glob_paths;
+		
+	if (file_is_absolute(pattern)) {
+			glob_paths = ['/'];
+			parts.shift();
+		} else {
+			glob_paths = ['.'];
+		}
+		
+		for (var i = 0; i < parts.length; i++) {
+			var part = parts[i];
+			// print("doing " + part);
+			
+			if (part == '**') {
+				var new_path = [];
+				for (var idx = 0; idx < glob_paths.length; idx++) {
+					if (file_is_directory(glob_paths[idx])) {
+						var new_path_candidate = file_list_tree(glob_paths[idx]);
+						// print("new path cdidiate is: " + new_path_candidate.join(', '));
+						// new_path.push(file_join())
+						for (var j = 0; j < new_path_candidate.length; j++) {
+							new_path.push(new_path_candidate[j]);
+						}
+					}
+				}
+				
+				glob_paths = new_path;
+			} else if(/\*/.test(part)) {
+				var new_path = [], regexp = file_glob_build_regexp(part);
+				// print('using regexp: ' + regexp);
+				for (var idx = 0; idx < glob_paths.length; idx++) {
+					if (file_is_directory(glob_paths[idx])) {
+						// need to do list..
+						var children = file_list(glob_paths[idx]);
+						for (var j = 0; j < children.length; j++) {
+							if (regexp.test(children[j])) {
+								new_path.push(file_join(glob_paths[idx], children[j]));
+							}
+						}
+					} else {
+						if (regexp.test(glob_paths[idx])) {
+							new_path.push(glob_paths[idx]);
+						}
+					}
+					// print('testing: ' + glob_paths[idx]);
+					// if (regexp.test(glob_paths[idx])) {
+						// new_path.push(glob_paths[idx]);
+					// }
+				}
+				glob_paths = new_path;
+				// print("testing part.. " + part);
+				// print("regexp is: " + file_glob_build_regexp(part));
+			} else {
+				var new_path = [];
+				for (var idx = 0; idx < glob_paths.length; idx ++) {
+					var new_path_candidate = file_join(glob_paths[idx], part);
+					if (file_exists(new_path_candidate)) {
+						new_path.push(new_path_candidate);
+					}
+				}
+				// print("new paths: " + new_path.join(', '));
+				glob_paths = new_path;
+			}
+		}
+		
+		return glob_paths;
+};
+
+var file_glob_build_regexp = function(pattern, flags) {
+	return new RegExp('^' + pattern.replace('.', '\\.').split('*').join('.*') + '$');
+};
+
 // Initialize core File (and Dir) classes with some bootstrap methods.
 var InitFile = function() {
 	// @class File
@@ -48,6 +144,8 @@ var InitFile = function() {
 	rb_define_singleton_method(rb_cFile, '__join__', rb_cFile_join);
 	rb_define_singleton_method(rb_cFile, '__dirname__', rb_cFile_dirname);
 	rb_define_singleton_method(rb_cFile, '__expand_path__', rb_cFile_expand_path);
+	rb_define_singleton_method(rb_cFile, '__exists__', rb_cFile_exists);
+	rb_define_singleton_method(rb_cFile, '__read__', rb_cFile_read);
 	
 	// @class Dir
 	rb_cDir = rb_define_class('Dir', rb_cObject);
@@ -71,9 +169,24 @@ var rb_cFile_dirname = function(self, block, path) {
 };
 
 // File#__expand_path__
-var rb_cFile_expand_path = function(self, block, path) {
-	return io_expand_path(path);
+var rb_cFile_expand_path = function(self, block, path, dir_string) {
+	return io_expand_path(path, dir_string);
 };
+
+// File.__exists__
+var rb_cFile_exists = function(self, block, path) {
+	return file_exists(path) ? rb_true : rb_false;
+};
+
+// File.__read__
+var rb_cFile_read = function(self, block, path) {
+	if (file_exists(path)) {
+		return opal_file_read(path);
+	}
+	else {
+		rb_raise(rb_eRuntimeError, "No such file to load - " + path);
+	}
+}
 
 // Dir#__getwd__
 var rb_cDir_getwd = function(self, block) {
@@ -81,6 +194,7 @@ var rb_cDir_getwd = function(self, block) {
 };
 
 // Dir.__glob__
-var rb_cDir_glob = function(self, block) {
-	return [];
+var rb_cDir_glob = function(self, block, glob) {
+	return file_glob(glob);
 };
+

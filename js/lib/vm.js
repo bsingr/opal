@@ -1,6 +1,6 @@
 // Opal module within ruby
 // @local
-var rb_mOpalVM;
+var rb_mOpal;
 
 // define class/module
 // @global
@@ -198,21 +198,29 @@ var opal_getallenv = function(self, block, name) {
   return result;
 };
 
+var opal_context_eval = function(opal, block, self, string, filename, lineno) {
+	var code = exports.compile(string);
+  var func = new Function('self', '__FILE__', code);
+  return func(self, filename);
+};
+
 var InitVM = function() {
-	rb_mOpalVM = rb_define_module('OpalVM');
-	rb_define_singleton_method(rb_mOpalVM, 'puts', opal_puts);
-	rb_define_singleton_method(rb_mOpalVM, 'raise', opal_raise);
-	rb_define_singleton_method(rb_mOpalVM, 'require_path', opal_require);
-	rb_define_singleton_method(rb_mOpalVM, 'define_method', opal_define_method);
-	rb_define_singleton_method(rb_mOpalVM, 'alias_method', opal_alias_method);
-	rb_define_singleton_method(rb_mOpalVM, 'include', opal_include);
-	rb_define_singleton_method(rb_mOpalVM, 'extend', opal_extend);
-	rb_define_singleton_method(rb_mOpalVM, 'subclass', opal_subclass);
-	rb_define_singleton_method(rb_mOpalVM, 'getwd', opal_getwd);
+	rb_mOpal = rb_define_module('Opal');
+	rb_define_singleton_method(rb_mOpal, 'puts', opal_puts);
+	rb_define_singleton_method(rb_mOpal, 'raise', opal_raise);
+	rb_define_singleton_method(rb_mOpal, 'require_path', opal_require);
+	rb_define_singleton_method(rb_mOpal, 'define_method', opal_define_method);
+	rb_define_singleton_method(rb_mOpal, 'alias_method', opal_alias_method);
+	rb_define_singleton_method(rb_mOpal, 'include', opal_include);
+	rb_define_singleton_method(rb_mOpal, 'extend', opal_extend);
+	rb_define_singleton_method(rb_mOpal, 'subclass', opal_subclass);
+	rb_define_singleton_method(rb_mOpal, 'getwd', opal_getwd);
 	// rb_define_singleton_method(rb_mOpalVM, 'expand_path', opal_expand_path);
-	rb_define_singleton_method(rb_mOpalVM, 'glob', opal_glob);
+	rb_define_singleton_method(rb_mOpal, 'glob', opal_glob);
 	// rb_define_singleton_method(rb_mOpalVM, 'join', opal_join);
-	rb_define_singleton_method(rb_mOpalVM, 'basename', opal_basename);
-	rb_define_singleton_method(rb_mOpalVM, 'getenv', opal_getenv);
-	rb_define_singleton_method(rb_mOpalVM, 'getallenv', opal_getallenv);
+	rb_define_singleton_method(rb_mOpal, 'basename', opal_basename);
+	rb_define_singleton_method(rb_mOpal, 'getenv', opal_getenv);
+	rb_define_singleton_method(rb_mOpal, 'getallenv', opal_getallenv);
+	
+	rb_define_singleton_method(rb_mOpal, 'context_eval', opal_context_eval);
 };

@@ -150,18 +150,15 @@ class Array
     nil
   end
   
-  def map
-    return self unless block_given?
-    result = []
-    i = 0
-    length = self.length
-    while i < length
-      result[i] = yield at(i)
-      i += 1
-    end
-    result
-  end
-  
+  # Returns the number of elements in `self`. May be zero.
+  # 
+  # @example
+  #   [1, 2, 3, 4, 5].length
+  #   # => 5
+  # 
+  # @return [Number] length
+  alias_method :length, :__length__
+  alias_method :size, :__length__
   
   # Returns a new array populated with the given objects.
   # 
@@ -175,60 +172,8 @@ class Array
   # @param [Object] objs all objects to add to the array
   # @return [Array] returns a new array instance
   def self.[](*objs)
-    `return #{objs};`
-  end
-  
-  # Set Intersection - Returns a new array containing elements common to the two 
-  # arrays, with no duplicates.
-  # 
-  # @example
-  #   [1, 1, 3, 5] & [1, 2, 3]
-  #   # => [1, 3]
-  # 
-  # @param [Array] other another array to intersect.
-  # @return [Array] intersected array
-  def &(other)
-    `var result = [];
-    var seen = [];
-    for (var i = 0; i < #{self}.length; i++) {
-      var test = #{self}[i], hash = test.hash();
-      if (seen.indexOf(hash) == -1) {
-        for (var j = 0; j < #{other}.length; j++) {
-          var test_b = #{other}[j], hash_b = test_b.hash();
-          if ((hash == hash_b) && seen.indexOf(hash) == -1) {
-            seen.push(hash);
-            #{result}.push(test);
-          }
-        }
-      }
-    }
-    return result;`
-  end
-  
-  # Repitition - When given a string argument, acts the same as {#join}. 
-  # Otherwise, returns a new array built by concatenating the `num` copies of
-  # `self`.
-  # 
-  # @example With Number
-  #   [1, 2, 3] * 3
-  #   # => [1, 2, 3, 1, 2, 3, 1, 2, 3]
-  # 
-  # @example With String
-  #   [1, 2, 3] * ','
-  #   # => "1,2,3"
-  # 
-  # @param [String, Number] num string or number used for joining/concat
-  # @result [String, Array] depending on argument
-  def *(arg)
-    `if (#{arg.is_a? String}) {
-      return #{join arg};
-    } else {
-      var result = [];
-      for (var i = 0; i < parseInt(#{arg}); i++) {
-        result = result.concat(#{self});
-      }
-      return result;
-    }`
+    # `return #{objs};`
+    []
   end
   
   # Concatenation - returns a new array built by concatenating the two arrays
@@ -241,7 +186,8 @@ class Array
   # @param [Array] other_ary the array to concat with
   # @return [Array] returns new concatenated array
   def +(other_ary)
-    `return #{self}.concat(#{other_ary});`
+    # `return #{self}.concat(#{other_ary});`
+    raise "Array#+ not implemented"
   end
   
   # Array difference. Removes a new array that is a copy of the original array,
@@ -276,93 +222,14 @@ class Array
   # @param [Array] other array to compare
   # @return [Boolean] are arrays equal
   def ==(other)
-    # puts "a"
     return true if object_id == other.object_id
-    # puts "b"
+        
     return false unless other.is_a? Array
-    # puts "c"
     return false unless length == other.length
-    # puts "d"
-    self.each_with_index do |obj, idx|
-      # puts "e"
-      if obj != other[idx]
-        # puts "1"
-        return false 
-      end
-      # puts "2"
-    end
-    # puts "f"
+    
+    each_with_index { |obj, idx| return false unless obj == other[idx] }
     
     true
-    # `if (#{self} === #{other}) return #{true};
-    # if (!(#{other}.info & #{self}.TA)) return #{false};
-    # if (#{self}.length !== #{other}.length) return #{false};
-    # var __a;
-    # for (var i = 0; i < #{self}.length; i++) {
-    # // if ((__a = #{`#{self}`}))
-    # // if (!#{self}[i]['$=='](#{other}[i]).r) return #{false};
-    # }
-    # return #{true};`
-  end
-  
-  # Element Reference - Returns the element at `index`, or returns a subarray at
-  # `index` and continuing for `length` elements, or returns a subarray if 
-  # `index` is a range. Negative indices count backward from the end of the 
-  # array (`-1` is the last element). Returns `nil` if the index (or starting
-  # index) are out of range.
-  # 
-  # @example
-  #   a = ["a", "b", "c", "d", "e"]
-  #   a[2] + a[0] + a[1]
-  #   # => "cab"
-  #   a[6]
-  #   # => nil
-  #   a[1, 2]
-  #   # => ["b", c""]
-  #   a[1..3]
-  #   # => ["b", "c", "d"]
-  #   a[4..7]
-  #   # => ["e"]
-  #   a[6..10]
-  #   # => nil
-  #   a[-3, 3]
-  #   # => ["c", "d", "e"]
-  #   a[5]
-  #   # => nil
-  #   a[5, 1]
-  #   # => []
-  #   a[5..10]
-  #   # => []
-  # 
-  # @todo Does not yet work with ranges.
-  # 
-  # @param [Range, Number] index to begin with
-  # @param [Number] length last index
-  # @return [Array, nil] result
-  def [](index, length = nil)
-    `var size = #{self}.length;
-    
-    if (#{index.is_a? Range}.$r) {
-      #{raise "need to implement range"};
-    } else {
-      if (#{index} < 0) #{index} += #{size};
-    }
-    
-    if (#{index} >= #{size} || #{index} < 0) return #{nil};
-      
-    if (#{length} != #{nil}) {
-      if (#{length} <= 0) return [];
-      return #{self}.slice(#{index}, #{index} + #{length});
-    } else {
-      return #{self}[#{index}];
-    }`
-  end
-
-  alias_method :slice, :[]
-  
-  # @todo Need to expand functionality
-  def []=(index, value)
-    `return #{self}[#{index}] = #{value};`
   end
   
   # Searches through an array whose elements are also arrays comparing `obj`
@@ -380,13 +247,9 @@ class Array
   #   a.assoc "foo"
   #   # => nil
   def assoc(obj)
-    `for (var i = 0; i < #{self}.length; i++) {
-      var test = #{self}[i];
-      if (test.info & #{self}.TA && test[0] !== undefined && test[0]===#{obj}) {
-        return test;
-      }
-    }
-    return #{nil};`
+    each { |arg| return arg if arg.is_a? Array and arg.first == obj }
+    
+    nil
   end
   
   # Returns the element at `index`. A negative index count from the end of the
@@ -401,15 +264,7 @@ class Array
   # 
   # @param [Number] index index to get
   # @return [Object, nil] returns nil or the result
-  def at(index)
-    `if (#{index} < 0) {
-      #{index} += #{self}.length;
-    }
-    if (#{index} < 0 || #{index} >= #{self}.length) {
-      return #{nil};
-    }
-    return #{self}[#{index}];`
-  end
+  alias_method :at, :__aref__
   
   # Removes all elements from `self`.
   # 
@@ -439,24 +294,19 @@ class Array
   #   # => ["a", "b", "c", "d"]
   #  
   # @return [Array] new array
-  def collect(&block)
-    `var result = [];
-    for (var i = 0; i < #{self}.length; i++) {
-      try {
-        result.push(#{yield `#{self}[i]`});
-        //#{result}.push(#{block}.apply(#{block}.__self__, [#{self}[i]]));
-      } catch (e) {
-        if (e.__keyword__ == 'break') {
-          return e.opal_value;
-        }
-        
-        throw e;
-      }
-    }
-    return result;`
+  def collect
+    return self unless block_given?
+    result = []
+    i = 0
+    length = self.length
+    while i < length
+      result[i] = yield at(i)
+      i += 1
+    end
+    result
   end
   
-  # alias_method :map, :collect
+  alias_method :map, :collect
   
   # Invokes the `block` once for each element of `self`, replacing the element 
   # with the value returned by `block`. See also Enumerable#collect.
@@ -474,19 +324,11 @@ class Array
   # 
   # @return [Array] returns receiver
   def collect!(&block)
-    `for (var i = 0; i < #{self}.length; i++) {
-      try {
-        //#{self}[i] = #{block}.apply(#{block}.__self__, [#{self}[i]]);
-        #{self}[i] = #{yield `#{self}[i]`};
-      } catch (e) {
-        if (e.__keyword__ == 'break') {
-          return e.opal_value;
-        }
-        
-        throw e;
-      }
-    }
-    return #{self};`
+    return self unless block_given?
+    
+    each_with_index { |arg, idx| self[idx] = yield(arg) }
+    
+    self
   end
   
   alias_method :map!, :collect!
@@ -499,12 +341,8 @@ class Array
   # 
   # @return [Array] new array
   def compact
-    `var result = [];
-    for (var i = 0; i < #{self}.length; i++) {
-      if (#{self}[i] !== #{nil})
-        result.push(#{self}[i]);
-    }
-    return result;`
+    result = dup
+    result.compact!
   end
   
   # Removes nil elements from the array. Returns nil if no changes were made,
@@ -519,14 +357,7 @@ class Array
   # 
   # @return [Array, nil] returns either the receiver or nil
   def compact!
-    `var size = #{self}.length;
-    for (var i = 0; i < #{self}.length; i++) {
-      if (#{self}[i] == #{nil}) {
-        #{self}.splice(i, 1);
-        i--;
-      }
-    }
-    return size == #{self}.length ? #{nil} : #{self};`
+    __compact__
   end
   
   # Appends the elements of `other_ary` to `self`
@@ -713,7 +544,7 @@ class Array
   # 
   # @return [Boolean] empty or not
   def empty?
-    `return #{self}.length == 0 ? #{true} : #{false};`
+    length == 0
   end
   
   alias_method :eql?, :==
@@ -986,19 +817,6 @@ class Array
       return #{self}[#{self}.length - 1];
     }`
   end
-  
-  # Returns the number of elements in `self`. May be zero.
-  # 
-  # @example
-  #   [1, 2, 3, 4, 5].length
-  #   # => 5
-  # 
-  # @return [Number] length
-  def length
-    `return #{self}.length;`
-  end
-  
-  alias_method :size, :length
   
   # Removes the last element from `self` and returns it, or `nil` if array is
   # empty.
@@ -1478,6 +1296,119 @@ class Array
       #{self}.unshift(#{object}[i]);
     }
     return #{self};`
+  end
+  
+  # Set Intersection - Returns a new array containing elements common to the two 
+  # arrays, with no duplicates.
+  # 
+  # @example
+  #   [1, 1, 3, 5] & [1, 2, 3]
+  #   # => [1, 3]
+  # 
+  # @param [Array] other another array to intersect.
+  # @return [Array] intersected array
+  def &(other)
+    `var result = [];
+    var seen = [];
+    for (var i = 0; i < #{self}.length; i++) {
+      var test = #{self}[i], hash = test.hash();
+      if (seen.indexOf(hash) == -1) {
+        for (var j = 0; j < #{other}.length; j++) {
+          var test_b = #{other}[j], hash_b = test_b.hash();
+          if ((hash == hash_b) && seen.indexOf(hash) == -1) {
+            seen.push(hash);
+            #{result}.push(test);
+          }
+        }
+      }
+    }
+    return result;`
+  end
+  
+  # Repitition - When given a string argument, acts the same as {#join}. 
+  # Otherwise, returns a new array built by concatenating the `num` copies of
+  # `self`.
+  # 
+  # @example With Number
+  #   [1, 2, 3] * 3
+  #   # => [1, 2, 3, 1, 2, 3, 1, 2, 3]
+  # 
+  # @example With String
+  #   [1, 2, 3] * ','
+  #   # => "1,2,3"
+  # 
+  # @param [String, Number] num string or number used for joining/concat
+  # @result [String, Array] depending on argument
+  def *(arg)
+    `if (#{arg.is_a? String}) {
+      return #{join arg};
+    } else {
+      var result = [];
+      for (var i = 0; i < parseInt(#{arg}); i++) {
+        result = result.concat(#{self});
+      }
+      return result;
+    }`
+  end
+  
+  # Element Reference - Returns the element at `index`, or returns a subarray at
+  # `index` and continuing for `length` elements, or returns a subarray if 
+  # `index` is a range. Negative indices count backward from the end of the 
+  # array (`-1` is the last element). Returns `nil` if the index (or starting
+  # index) are out of range.
+  # 
+  # @example
+  #   a = ["a", "b", "c", "d", "e"]
+  #   a[2] + a[0] + a[1]
+  #   # => "cab"
+  #   a[6]
+  #   # => nil
+  #   a[1, 2]
+  #   # => ["b", c""]
+  #   a[1..3]
+  #   # => ["b", "c", "d"]
+  #   a[4..7]
+  #   # => ["e"]
+  #   a[6..10]
+  #   # => nil
+  #   a[-3, 3]
+  #   # => ["c", "d", "e"]
+  #   a[5]
+  #   # => nil
+  #   a[5, 1]
+  #   # => []
+  #   a[5..10]
+  #   # => []
+  # 
+  # @todo Does not yet work with ranges.
+  # 
+  # @param [Range, Number] index to begin with
+  # @param [Number] length last index
+  # @return [Array, nil] result
+  def [](index, length = nil)
+    `var size = #{self}.length;
+    
+    if (#{index.is_a? Range}.$r) {
+      #{raise "need to implement range"};
+    } else {
+      if (#{index} < 0) #{index} += #{size};
+    }
+    
+    if (#{index} >= #{size} || #{index} < 0) return #{nil};
+      
+    if (#{length} != #{nil}) {
+      if (#{length} <= 0) return [];
+      return #{self}.slice(#{index}, #{index} + #{length});
+    } else {
+      return #{self}[#{index}];
+    }`
+  end
+
+  alias_method :slice, :[]
+  
+  # @todo Need to expand functionality
+  def []=(index, value)
+    `return #{self}[#{index}] = #{value};`
   end
   
 

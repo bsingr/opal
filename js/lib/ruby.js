@@ -94,30 +94,6 @@ RObject.prototype.$r = true;
 
 
 
-
-var RHash = function(args) {
-  var k, v;
-  this.$h = opal_yield_hash();
-  this['@keys'] = [];
-  this['@assocs'] = {};
-  this['@default'] = rb_nil;
-  for (var i = 0; i < args.length; i++) {
-    k = args[i], v = args[i+1];
-    i++;
-    this['@keys'].push(k);
-    this['@assocs'][k.$hash()] = v;
-  }
-  return this;
-};
-
-// hash
-// @global
-opalhash = function() {
-  return new RHash(Array.prototype.slice.call(arguments));
-};
-
-
-
 RObject.prototype.$hash = RClass.prototype.$hash = function() {
   return this.$h;
 };

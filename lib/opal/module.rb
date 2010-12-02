@@ -14,7 +14,7 @@ class Module
   end
   
   def define_method(method, &implementation)
-    OpalVM.define_method self, method.to_s, &implementation
+    Opal.define_method self, method.to_s, &implementation
   end
   
   def attr_accessor(*attributes)
@@ -49,7 +49,7 @@ class Module
   end
     
   def alias_method(new_name, old_name)
-    OpalVM.alias_method self, new_name.to_s, old_name.to_s
+    Opal.alias_method self, new_name.to_s, old_name.to_s
     self
   end
   
@@ -61,13 +61,12 @@ class Module
     `return rb_vm_cs(#{self}, #{id.to_s}, #{value});`
   end
   
-  def module_eval(&block)
-    # puts "block is: #{block.inspect}"
-    # puts "block given..? + #{block_given?}"
+  def module_eval(string = nil, filename = nil, lineno = nil, &block)
     if block_given?
-      # puts "ok, module evaling from"
-      # puts self
       `#{block}(#{self}, #{nil})`
+    elsif string
+      # puts "module eval with some code....#{string.length}"
+      Opal.context_eval self, string, filename, lineno
     end
   end
   

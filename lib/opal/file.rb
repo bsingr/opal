@@ -21,13 +21,23 @@ class File
     # @param [String] path
     # @return [String]
     def dirname(path)
-      # `return #{file_name}.substr(0, #{file_name}.lastIndexOf('/'));`
       __dirname__ path
     end
 
-    def expand_path(path = "")
-      # OpalVM.expand_path path
-      __expand_path__ path
+    def expand_path(path = "", dir_string = "")
+      __expand_path__ path, dir_string
+    end
+    
+    def exists?(path)
+      __exists__ path
+    end
+    
+    def read(path)
+      if exists? path
+        __read__ path
+      else
+        raise "No such file or directory - #{path}"
+      end
     end
     
   end
