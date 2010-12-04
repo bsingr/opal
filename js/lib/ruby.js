@@ -225,6 +225,44 @@ rb_vm_raise = function(exc) {
   throw exc;
 };
 
+/**
+	Throw an argument error when the wrong number of arguments were given to a 
+	method
+	
+	@param [Number] given the number of arguments actually given
+	@param [Number] expected the number of arguments we expected to have
+*/
+function rb_arg_error(given, expected) {
+	rb_raise(rb_eArgError,
+		"wrong number of arguments(" + given + " for " + expected + ")");
+}
+
+
+/**
+	Convert the given object into a number using #to_int. DO NOT check whether it
+	is already a number (it has already been checked).
+	
+	This may raise a TypeError if number cannot be converted
+*/
+function to_num(obj) {
+	if (obj.$m.$to_int) {
+		var result = obj.$m.$to_int(obj, Qnil);
+		// make sure result is actually a number..
+		if (IS_NUMBER(result)) return result;
+		
+		rb_raise(rb_eTypeError, 
+			"can't convert Object to Integer (Object#to_int gives String)");
+	}
+	rb_raise(rb_eTypeError, "can't convert Object into Integer");
+}
+
+/**
+	Convert the given object to an array using #to_ary.
+*/
+function to_ary(obj) {
+	rb_raise(rb_eTypeError, "can't convert Object into Array");
+}
+
 // Run a function - this should be used as an entry point for anything that 
 // calls ruby code or may throw an error.
 // 
@@ -239,7 +277,8 @@ rb_run = function(func) {
   catch(err) {
     // should check if err is native or ruby error (.$k)
     if (err.$klass) {
-      print('caught error: ');
+      print('caught error: ' + err.__classid__);
+			
       print(err.$klass.__classid__ + ': ' + err['@message'])
     }
     else {

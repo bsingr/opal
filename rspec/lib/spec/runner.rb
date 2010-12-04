@@ -11,7 +11,7 @@ module Spec
   
     # Main entry point for spec runner.
     def self.run
-      # puts "running"
+      puts "running"
       options.run_examples
     end
   
@@ -34,6 +34,8 @@ module Spec
           puts "Bad spec to load (does not exist): #{spec}"
         end
       end
+      
+      puts "dealt with ARGV"
       
       Spec::Runner.run
     end

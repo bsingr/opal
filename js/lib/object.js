@@ -1,17 +1,4 @@
 // Root Types/Flags
-var T_CLASS       = 1,
-    T_MODULE      = 2,
-    T_OBJECT      = 4,
-    T_BOOLEAN     = 8,
-    T_STRING      = 16,
-    T_ARRAY       = 32,
-    T_NUMBER      = 64,
-    T_PROC        = 128,
-    T_SYMBOL      = 256,
-    T_HASH        = 512,
-		T_RANGE				= 1024,
-    T_ICLASS      = 2056,
-    FL_SINGLETON  = 4112;
     
 // Core boot classes
 rb_cBasicObject = null,
@@ -137,6 +124,11 @@ function mod_extend(cla, block, mod) {
 	return Qnil;
 }
 
+function class_s_new(clas, block, sup) {
+	var klass = rb_define_class_id("AnonClass", sup || rb_cObject);
+	return klass;
+};
+
 function class_new_instance(cla, block) {
 	var obj = cla.$m.$allocate(cla, Qnil);
 	var args = Array.prototype.slice.call(arguments);
@@ -250,6 +242,7 @@ var InitObject = function() {
 	rb_define_method(rb_cClass, "new", class_new_instance);
 	rb_define_method(rb_cClass, "initialize", class_initialize);
 	rb_define_method(rb_cClass, "superclass", class_superclass);
+	rb_define_singleton_method(rb_cClass, "new", class_s_new);
 	
 	rb_define_method(rb_cModule, "name", mod_name);
 	rb_define_method(rb_cModule, "===", mod_eqq);

@@ -23,25 +23,11 @@ task :runtime => "runtime/opal.js"
 desc "Rebuild runtime/opal.js for VM etc. (opal v8 context)"
 task "runtime/opal.js" do
   FileUtils.mkdir_p 'runtime'
-  # core runtime files 
-  sources = %w[platform_opal file class module]
-  # core classes/objects/modules
-  sources += %w[object error string numeric io array hash regexp]
-  # extra runtime files
-  sources += %w[variable ruby vm load init]
-  # dev files which are included
-  sources += %w[ruby_parser parser string_scanner generator]
+
+  in_file = "js/lib/opal.js"
+  out_file = "runtime/opal.js"
   
-  inner = sources.map do |source|
-    File.read File.join(Dir.getwd, %w[js lib], source + '.js')
-  end.join ''
-  
-  pre = "(function(global, exports) {"
-  post = "})(this, Opal);"
-  
-  File.open('runtime/opal.js', 'w') do |out|
-    out.puts pre, inner, post
-  end
+  system "gcc -E -x c -P -C #{in_file} -o #{out_file}"
 end
 
 # all build steps specific for building ready for node

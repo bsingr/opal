@@ -50,9 +50,9 @@ module Spec
       end
       
       def run_examples
-        # puts "run_examples"
+        puts "run_examples"
         runner = ExampleGroupRunner.new self
-        # puts "run"
+        puts "run"
         runner.run
       end
       
