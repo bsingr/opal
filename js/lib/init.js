@@ -16,9 +16,11 @@ exports.init = function() {
 	// core inits.
 	InitObject();
 	Init_Array();
+	Init_Numeric();
 	Init_Hash();
 	Init_Regexp();
 	InitLoad();
+	Init_IO();
 	InitFile();
 	InitVM();
 	Init_Exception();

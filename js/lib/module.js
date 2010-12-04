@@ -25,7 +25,7 @@ var rb_define_module_under = function(base, id) {
 };
 
 var rb_define_module_id = function(id) {
-  var module = rb_define_class_id(id, rb_module);
+  var module = rb_define_class_id(id, rb_cModule);
   module.$flags = T_MODULE;
   rb_name_class(module, id);
   return module;
@@ -33,7 +33,7 @@ var rb_define_module_id = function(id) {
 
 var rb_mod_create = function() {
   // return // rb_define_class_id()
-  return rb_class_boot(rb_module);
+  return rb_class_boot(rb_cModule);
 };
 
 var rb_include_module = function(klass, module) {

@@ -6,7 +6,8 @@ var rb_eException,
     rb_eNoMethodError,
     rb_eArgError,
     rb_eScriptError,
-    rb_eLoadError;
+    rb_eLoadError,
+		rb_eRuntimeError;
 
 // Standard jump exceptions to save re-creating them everytime they are needed
 var rb_vm_return_instance,
@@ -15,10 +16,34 @@ var rb_vm_return_instance,
 		rb_vm_block_return_instance,
 		rb_vm_next_instance;
 
+function exc_initialize(exc, block, message) {
+	if (message != Qnil)	
+		rb_ivar_set(exc, "@message", message);
+}
+
+function exc_message(exc) {
+	return rb_ivar_get(exc, "@message");
+}
+
+function exc_inspect(exc) {
+	return "#<" + exc.$klass.__classid__ + ": " + rb_call(exc, "to_s") + ">";
+}
+
+function exc_to_s(exc) {
+	return rb_ivar_get(exc, "@message");
+}
+
 var Init_Exception = function() {
 	// Exception classes
 	rb_eException = rb_define_class("Exception", rb_cObject);
+	
+	rb_define_method(rb_eException, "initialize", exc_initialize);
+	rb_define_method(rb_eException, "message", exc_message);
+	rb_define_method(rb_eException, "inspect", exc_inspect);
+	rb_define_method(rb_eException, "to_s", exc_to_s);
+	
 	rb_eStandardError = rb_define_class("StandardError", rb_eException);
+	rb_eRuntimeError = rb_define_class("RuntimeError", rb_eException);
 	rb_eLocalJumpError = rb_define_class("LocalJumpError", rb_eStandardError);
 	rb_eNameError = rb_define_class("NameError", rb_eStandardError);
 	rb_eNoMethodError = rb_define_class('NoMethodError', rb_eNameError);

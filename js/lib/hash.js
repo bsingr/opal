@@ -1,5 +1,7 @@
-
+// @class Hash
 var rb_cHash;
+// @object ENV
+var envtbl;
 
 var RHash = function(args) {
   var k, v;
@@ -53,6 +55,17 @@ var rb_cHash_delete = function(self, block, key) {
   return self['@default'];
 };
 
+function env_to_s(env) {
+	return "ENV";
+}
+
+function env_inspect(env) {
+	return "ENV";
+}
+
+function env_aref(env, block, key) {
+	return Qnil;
+}
 
 var Init_Hash = function() {
 	rb_cHash = rb_define_toll_free_class(RHash.prototype, T_OBJECT | T_HASH,
@@ -67,5 +80,12 @@ var Init_Hash = function() {
 	rb_define_method(rb_cHash, '__store__', rb_cHash_store);
 	rb_define_method(rb_cHash, '__fetch__', rb_cHash_fetch);
 	rb_define_method(rb_cHash, '__delete__', rb_cHash_delete);
+	
+	envtbl = rb_obj_alloc(rb_cObject);
+	
+	rb_const_set(rb_cObject, "ENV", envtbl);
+	rb_define_singleton_method(envtbl, "[]", env_aref);
+	rb_define_singleton_method(envtbl, "to_s", env_to_s);
+	rb_define_singleton_method(envtbl, "inspect", env_inspect);
 };
 

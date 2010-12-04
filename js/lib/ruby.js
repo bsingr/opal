@@ -114,6 +114,11 @@ var rb_define_method = function(klass, name, body) {
   }
 };
 
+function rb_define_global_function(name, body) {
+	rb_define_method(rb_mKernel, name, body);
+	rb_define_singleton_method(rb_mKernel, name, body);
+};
+
 // singleton method
 var rb_define_singleton_method = function(klass, name, body) {
   rb_define_method(rb_singleton_class(klass), name, body);

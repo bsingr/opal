@@ -44,7 +44,7 @@ opalsym = function(str) {
 // 
 // @param [String] str string to copy
 // @return [String] result
-function rb_str_s_new(str, block, text) {
+function str_s_new(str, block, text) {
 	return new String(text || "");
 };
 
@@ -56,7 +56,7 @@ function rb_str_s_new(str, block, text) {
 // 
 // @param [Number] num number of copies
 // @return [String] result
-function rb_str_times(str, block, times) {
+function str_times(str, block, times) {
 	var res = [];
 	
 	for (var i = 0; i < times; i++) {
@@ -75,7 +75,7 @@ function rb_str_times(str, block, times) {
 // 
 // @param [String] other_str string to concatenate
 // @return [String] result
-function rb_str_plus(str, block, other) {
+function str_plus(str, block, other) {
 	return str + other;
 };
 
@@ -91,7 +91,7 @@ function rb_str_plus(str, block, other) {
 //   # => "123abc"
 // 
 // @return [String]
-function rb_str_capitalize(str) {
+function str_capitalize(str) {
 	return str[0].toUpperCase() + str.substr(1).toLowerCase();
 }
 
@@ -103,11 +103,11 @@ function rb_str_capitalize(str) {
 //   # => "hello"
 // 
 // @return [String] result
-function rb_str_downcase(str) {
+function str_downcase(str) {
 	return str.toLowerCase();
 }
 
-function rb_str_to_s(str) {
+function str_to_s(str) {
 	return str;
 }
 
@@ -122,14 +122,14 @@ function rb_str_to_s(str) {
 //   # => "\"hello\""
 // 
 // @return [String]
-function rb_str_inspect(str) {
+function str_inspect(str) {
 	return '"' + str + '"';
 }
 
 // Returns the character length of `str`.
 // 
 // @return [Number] length of string
-function rb_str_length(str) {
+function str_length(str) {
 	return str.length;
 }
 
@@ -156,7 +156,7 @@ function rb_str_length(str) {
 //   # => :"cat and dog"
 // 
 // @return [Symbol]
-function rb_str_intern(str) {
+function str_intern(str) {
 	return opalsym(str);
 }
 
@@ -167,26 +167,26 @@ function rb_str_intern(str) {
 //   # => "desserts"
 // 
 // @return [String]
-function rb_str_reverse(str) {
+function str_reverse(str) {
 	return str.split("").reverse().join("");
 }
 
-function rb_str_sub(str, block, pattern) {
+function str_sub(str, block, pattern) {
 	return str.replace(pattern, block);
 }
 
-function rb_str_gsub(str, block, pattern) {
+function str_gsub(str, block, pattern) {
 	var r = pattern.toString();
 	r = r.substr(1, r.lastIndexOf('/') - 1);
 	r = new RegExp(r, 'g');
 	return str.replace(r, block);
 }
 
-function rb_str_slice(str, block, start, finish) {
+function str_slice(str, block, start, finish) {
 	return str.substr(start, finish);
 }
 
-function rb_str_split(str, block, split) {
+function str_split(str, block, split) {
 	return str.split(split);
 }
 
@@ -205,7 +205,7 @@ function rb_str_split(str, block, split) {
 // 
 // @param [String] other_str string to compare
 // @return [-1, 0, 1, nil] result
-function rb_str_cmp_m(str, block, other) {
+function str_cmp_m(str, block, other) {
   if (!(other.info & TS)) return Qnil;
   else if (str > other) return 1;
   else if (str < other) return -1;
@@ -217,7 +217,7 @@ function rb_str_cmp_m(str, block, other) {
 // 
 // @param [String] other string to compare
 // @return [Boolean] result
-function rb_str_equal(str, block, other) {
+function str_equal(str, block, other) {
 	return str.valueOf() == other.valueOf() ? Qtrue : Qfalse;
 }
 
@@ -230,7 +230,7 @@ function rb_str_equal(str, block, other) {
 // 
 // @param [Regexp, Object] obj
 // @return [Number, nil]
-function rb_str_match(str, block, obj) {
+function str_match(str, block, obj) {
 	rb_call(obj, "match", self);
 	return Qnil;
 }
@@ -249,7 +249,7 @@ function rb_str_match(str, block, obj) {
 // 
 // @param [String] other_str string to compare
 // @return [-1, 0, 1, nil] result
-function rb_str_casecmp(str, block, other) {
+function str_casecmp(str, block, other) {
 	var a = str.toLowerCase(), b = other.toLowerCase();
 	if (!(b.info & TS)) return Qnil;
 	else if (a > b) return 1;
@@ -266,7 +266,7 @@ function rb_str_casecmp(str, block, other) {
 //   # => true
 // 
 // @return [Boolean]
-function rb_str_empty(str) {
+function str_empty(str) {
 	return str == "" ? Qtrue : Qfalse;
 }
 
@@ -278,7 +278,7 @@ function rb_str_empty(str) {
 // 
 // @param [String] suffix suffix to check
 // @return [Boolean]
-function rb_str_end_with(str, block, suffix) {
+function str_end_with(str, block, suffix) {
 	if (!suffix) return false;
 	
 	if (str.lastIndexOf(suffix) == str.length - suffix.length)
@@ -291,7 +291,7 @@ function rb_str_end_with(str, block, suffix) {
 // 
 // @param [String] other string to comapre
 // @return [Boolean]
-function rb_str_eql(str, block, other) {
+function str_eql(str, block, other) {
 	return str == other ? Qtrue : Qfalse;	
 }
 
@@ -307,7 +307,7 @@ function rb_str_eql(str, block, other) {
 // 
 // @param [String] other_str string to check for
 // @return [Boolean]
-function rb_str_include(str, block, other) {
+function str_include(str, block, other) {
 	var res = str.indexOf(other);
 	
 	return res == -1 ? Qfalse : Qtrue;
@@ -330,7 +330,7 @@ function rb_str_include(str, block, other) {
 // 
 // @param [String] substring string to look for
 // @return [Number, nil] result
-function rb_str_index(str, block, substr) {
+function str_index(str, block, substr) {
 	var res = str.indexOf(substr);
 	
 	return res == -1 ? Qnil : res;	
@@ -346,7 +346,7 @@ function rb_str_index(str, block, substr) {
 //   # => "hello"
 // 
 // @return [String]
-function rb_str_lstrip(str) {
+function str_lstrip(str) {
 	return str.replace(/^\s*/, "");
 }
 
@@ -355,47 +355,61 @@ function rb_str_lstrip(str) {
 // 
 // @param [Regexp] pattern
 // @return [MatchData, nil]
-function rb_str_match_m(str, block, pattern) {
+function str_match_m(str, block, pattern) {
 	return rb_call(pattern, "match", str);
 }
 
+function sym_inspect(sym) {
+	return ":" + sym.__ptr__;
+}
+
+function sym_to_s(sym) {
+	return sym.__ptr__;
+}
+
+function sym_to_sym(sym) {
+	return sym;
+}
 
 var Init_String = function() {
 	// @class String
 	rb_cString = rb_define_toll_free_class(String.prototype, T_OBJECT | T_STRING, 
 																				'String', rb_cObject);
 	
-	rb_define_singleton_method(rb_cString, "new", rb_str_s_new);
-	rb_define_method(rb_cString, "*", rb_str_times);
-	rb_define_method(rb_cString, "+", rb_str_plus);
-	rb_define_method(rb_cString, "capitalize", rb_str_capitalize);
-	rb_define_method(rb_cString, "downcase", rb_str_downcase);
-	rb_define_method(rb_cString, "to_s", rb_str_to_s);
-	rb_define_method(rb_cString, "inspect", rb_str_inspect);
-	rb_define_method(rb_cString, "length", rb_str_length);
-	rb_define_method(rb_cString, "size", rb_str_length);
-	rb_define_method(rb_cString, "intern", rb_str_intern);
-	rb_define_method(rb_cString, "to_sym", rb_str_intern);
-	rb_define_method(rb_cString, "reverse", rb_str_reverse);
-	rb_define_method(rb_cString, "sub", rb_str_sub);
-	rb_define_method(rb_cString, "gsub", rb_str_gsub);
-	rb_define_method(rb_cString, "slice", rb_str_slice);
-	rb_define_method(rb_cString, "[]", rb_str_slice);
-	rb_define_method(rb_cString, "split", rb_str_split);
-	rb_define_method(rb_cString, "<=>", rb_str_cmp_m);
-	rb_define_method(rb_cString, "==", rb_str_equal);
-	rb_define_method(rb_cString, "=~", rb_str_match);
-	rb_define_method(rb_cString, "casecmp", rb_str_casecmp);
-	rb_define_method(rb_cString, "empty?", rb_str_empty);
-	rb_define_method(rb_cString, "end_with?", rb_str_end_with);
-	rb_define_method(rb_cString, "eql?", rb_str_eql);
-	rb_define_method(rb_cString, "include?", rb_str_include);
-	rb_define_method(rb_cString, "index", rb_str_index);
-	rb_define_method(rb_cString, "lstrip", rb_str_lstrip);
-	rb_define_method(rb_cString, "match", rb_str_match_m);
+	rb_define_singleton_method(rb_cString, "new", str_s_new);
+	rb_define_method(rb_cString, "*", str_times);
+	rb_define_method(rb_cString, "+", str_plus);
+	rb_define_method(rb_cString, "capitalize", str_capitalize);
+	rb_define_method(rb_cString, "downcase", str_downcase);
+	rb_define_method(rb_cString, "to_s", str_to_s);
+	rb_define_method(rb_cString, "inspect", str_inspect);
+	rb_define_method(rb_cString, "length", str_length);
+	rb_define_method(rb_cString, "size", str_length);
+	rb_define_method(rb_cString, "intern", str_intern);
+	rb_define_method(rb_cString, "to_sym", str_intern);
+	rb_define_method(rb_cString, "reverse", str_reverse);
+	rb_define_method(rb_cString, "sub", str_sub);
+	rb_define_method(rb_cString, "gsub", str_gsub);
+	rb_define_method(rb_cString, "slice", str_slice);
+	rb_define_method(rb_cString, "[]", str_slice);
+	rb_define_method(rb_cString, "split", str_split);
+	rb_define_method(rb_cString, "<=>", str_cmp_m);
+	rb_define_method(rb_cString, "==", str_equal);
+	rb_define_method(rb_cString, "=~", str_match);
+	rb_define_method(rb_cString, "casecmp", str_casecmp);
+	rb_define_method(rb_cString, "empty?", str_empty);
+	rb_define_method(rb_cString, "end_with?", str_end_with);
+	rb_define_method(rb_cString, "eql?", str_eql);
+	rb_define_method(rb_cString, "include?", str_include);
+	rb_define_method(rb_cString, "index", str_index);
+	rb_define_method(rb_cString, "lstrip", str_lstrip);
+	rb_define_method(rb_cString, "match", str_match_m);
 	
 	// @class Symbol
 	rb_cSymbol = rb_define_toll_free_class(RSymbol.prototype, T_OBJECT | T_SYMBOL, 
 																				'Symbol', rb_cObject);
 	
+	rb_define_method(rb_cSymbol, "inspect", sym_inspect);
+	rb_define_method(rb_cSymbol, "to_s", sym_to_s);
+	rb_define_method(rb_cSymbol, "to_sym", sym_to_sym);
 };

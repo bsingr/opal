@@ -28,7 +28,7 @@ var rb_class_boot = function(super_class) {
     };
     result.prototype = new ctor();
     var klass = new result();
-    klass.$klass = rb_class;
+    klass.$klass = rb_cClass;
     return klass;
   }
   else {
