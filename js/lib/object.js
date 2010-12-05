@@ -214,6 +214,286 @@ function nil_inspect() {
 	return "nil";
 }
 
+/**
+	Repeatedly executes the block.
+
+	@note Method does not return an enumerator if no block given(yet).
+
+	@example
+	  loop do
+	    puts "this will infinetly print"
+	  end
+
+	@param [Proc] block
+	@return [Object] returns the receiver
+*/
+function obj_loop(obj, block) {
+	ARG_COUNT(0);
+	
+	if (!BLOCK_GIVEN(block))
+		rb_raise(rb_eLocalJumpError, "no block given");
+	
+	while (true) {
+		PRE_LOOP
+		BLOCK_CALL(block);
+		POST_LOOP
+	}
+	
+	return obj;
+}
+
+/**
+	Simple equivalent to `Proc.new`. Returns a {Proc} instance.
+
+	@example
+	  proc { puts "a" }
+	  # => #<Proc 0x2828283>
+
+	@param [Proc] block
+	@return [Proc]
+*/
+function obj_proc(obj, block) {
+	ARG_COUNT(0)
+	
+	if (!BLOCK_GIVEN(block))
+		rb_raise(rb_eArgError, "block required");
+	
+	return block;
+}
+
+/**
+	Prints each argument in turn to the browser console. Currently there is no
+	use of `$stdout`, so it is hardcoded into this method to write to the 
+	console directly.
+
+	@param [Object] args objects to print using `inspect`
+	@return [nil]
+*/
+function obj_puts(obj, block) {
+	var args = Array.prototype.slice.call(arguments, 2);
+	
+	for (var i = 0; i < args.length; i++) {
+		io_puts(rb_call(args[i], "to_s"));
+	}
+	
+	return Qnil
+}
+
+/**
+	Raises an exception. If given a {String} argument, this method will raise a
+	{RuntimeError} with the given `string` as a message. Otherwise, if the first
+	parameter is a subclass of {Exception}, then the method will raise a new 
+	instance of the given `exception` class with the `string` as a method, if it
+	exists, or a default message otherwise`
+
+	@example String message
+	  raise "some error"
+	  # => RuntimeError: some error
+
+	@example Exception subclass
+	  raise StandardError, "something went wrong"
+	  # => StandardError: something went wrong
+
+	@param [Exception, String] exception exception class or string to throw
+	@param [String] string to pass as message for exception
+	@return [nil]
+*/
+function obj_raise(obj, block, exception, string) {
+	ARG_MIN(1)
+	
+	var msg = Qnil, exc;
+	
+	if (IS_STRING(exception)) {
+		msg = exception;
+		exc = rb_call(rb_eRuntimeError, "new", msg);
+	} else if (false && obj_is_kind_of(exception, Qnil, rb_eException)) {
+		exc = exception;
+	} else {
+		if (string != undefined)
+			msg = string;
+		
+		exc = rb_call(exception, "new", msg);
+	}
+	
+	rb_vm_raise(exc);
+}
+
+function obj_instance_variable_defined_p(obj, block, name) {
+	ARG_COUNT(1)
+	TO_STRING(name)
+	return rb_ivar_defined(obj, name) ? Qtrue : Qfalse;
+}
+
+function obj_instance_variable_get(obj, block, name) {
+	ARG_COUNT(1)
+	TO_STRING(name)
+	return rb_ivar_get(obj, name);
+}
+
+function obj_instance_variable_set(obj, block, name, value) {
+	ARG_COUNT(2)
+	TO_STRING(name)
+	return rb_ivar_set(obj, name, value);
+}
+
+/**
+	Returns `true` if `yield` would execute a block in the current context, 
+	`false` otherwise. 
+
+	@note In Opal this is kind of a fake method. The compiler treats 
+	`block_given?` as a keyword to make its use easier to deal with in 
+	javascript (keep things nice and efficient). Its use is the same to the end
+	programmer, apart from it should not be overriden - it is never actually
+	called.
+
+	@return [Boolean] was a block given
+*/
+function obj_block_given_p() {
+	return Qfalse;
+}
+
+function obj_method_missing(obj, block, sym) {
+	ARG_MIN(1)
+	TO_STRING(sym)
+	
+	var str = "undefined method `" + sym + "` for " + rb_call(obj, "inspect");
+	
+	rb_raise(rb_eNoMethodError, str);
+}
+
+function obj_to_a(obj) {
+	ARG_COUNT(0)
+	return [obj];
+}
+
+function obj_tap(obj, block) {
+	ARG_COUNT(0)
+	if (!BLOCK_GIVEN(block))
+		rb_raise(rb_eLocalJumpError, "no block given");
+	
+	BLOCK_CALL(block, obj);
+	
+	return obj;
+}
+
+function obj_is_kind_of(obj, block, klass) {
+	ARG_COUNT(1)
+	
+	var search = obj.$klass;
+	
+	while (search) {
+		if (search == klass)
+			return Qtrue;
+		
+		search = search.$super;
+	}
+	
+	return Qfalse;
+}
+
+function obj_nil_p(obj) {
+	ARG_COUNT(0)
+	
+	return Qfalse;
+}
+
+function obj_respond_to_p(obj, block, method) {
+	ARG_COUNT(1)
+	
+	TO_STRING(method)
+	
+	if (obj.$m['$' + method])
+		return Qtrue;
+	
+	return Qfalse;
+}
+
+function obj_eqq(obj, block, other) {
+	ARG_COUNT(1)
+	
+	return rb_call(obj, "==", other);
+}
+
+function obj_send(obj, block, method) {
+	ARG_COUNT(1)
+	
+	TO_STRING(method)
+	
+	var args = Array.prototype.slice.call(arguments, 3);
+	// block
+	args.unshift(Qnil);
+	// recv
+	args.unshift(obj);
+	
+	return (obj.$m['$' + method] || rb_vm_meth_m(m_id)).apply(null, args);
+}
+
+function obj_class(obj) {
+	ARG_COUNT(0)
+	
+	return rb_class_real(obj.$klass);
+}
+
+
+/**
+	Returns a random number. If `max` is `nil` then the result is 0. Otherwise
+	returns a random number from `0` to `max`.
+
+	@example
+	  rand      # => 0.192272821917329
+	  rand      # => 0.972628272363732
+	  rand 10   # => 8
+	  rand 10   # => 4
+
+	@param [Number] max max number to use
+	@return [Number] random number
+*/
+function obj_rand(obj, block, max) {
+	if (max != undefined)
+		return Math.floor(Math.random() * max);
+	else
+		return Math.random();
+}
+
+function obj_object_id(obj) {
+	ARG_COUNT(0)
+	
+	return obj.$hash();
+}
+
+function obj_to_s(obj) {
+	ARG_COUNT(0)
+	
+	return "#<" + rb_call(rb_class_real(obj.$klass), "to_s") + ":" + obj.$hash() +
+	 ">";
+}
+
+function obj_instance_eval(obj, block) {
+	ARG_COUNT(0)
+	
+	if (BLOCK_GIVEN(block))
+		// we use obj as the self instead of block's self
+		return block(obj, Qnil);
+	
+	return obj;
+}
+
+function obj_const_set(obj, block, name, value) {
+	ARG_COUNT(2)
+	
+	TO_STRING(name)
+	
+	return rb_const_set(obj, name, value);
+}
+
+function obj_const_defined_p(obj, block, name) {
+	ARG_COUNT(1)
+	
+	TO_STRING(name)
+	
+	return Qfalse;
+}
+
 // Init core Object classes with some bootstrap methods
 var InitObject = function() {
 	var tmp_metaclass;
@@ -260,6 +540,39 @@ var InitObject = function() {
 	rb_define_method(rb_cModule, "protected", mod_protected);
 	rb_define_method(rb_cModule, "include", mod_include);
 	rb_define_method(rb_cModule, "extend", mod_extend);
+	
+	rb_define_method(rb_mKernel, "loop", obj_loop);
+	rb_define_method(rb_mKernel, "proc", obj_proc);
+	rb_define_method(rb_mKernel, "lambda", obj_proc);
+	rb_define_method(rb_mKernel, "puts", obj_puts);
+	rb_define_method(rb_mKernel, "raise", obj_raise);
+	rb_define_method(rb_mKernel, "fail", obj_raise);
+	rb_define_method(rb_mKernel, "instance_variable_defined?", 
+																obj_instance_variable_defined_p);
+	rb_define_method(rb_mKernel, "instance_variable_get", 
+																obj_instance_variable_get);
+	rb_define_method(rb_mKernel, "instance_variable_set", 
+																obj_instance_variable_set);
+	rb_define_method(rb_mKernel, "block_given?", obj_block_given_p);
+	rb_define_method(rb_mKernel, "method_missing", obj_method_missing);
+	rb_define_method(rb_mKernel, "to_a", obj_to_a);
+	rb_define_method(rb_mKernel, "tap", obj_tap);
+	rb_define_method(rb_mKernel, "kind_of?", obj_is_kind_of);
+	rb_define_method(rb_mKernel, "is_a?", obj_is_kind_of);
+	rb_define_method(rb_mKernel, "nil?", obj_nil_p);
+	rb_define_method(rb_mKernel, "respond_to?", obj_respond_to_p);
+	rb_define_method(rb_mKernel, "===", obj_eqq);
+	rb_define_method(rb_mKernel, "send", obj_send);
+	rb_define_method(rb_mKernel, "__send__", obj_send);
+	rb_define_method(rb_mKernel, "class", obj_class);
+	rb_define_method(rb_mKernel, "rand", obj_rand);
+	rb_define_method(rb_mKernel, "object_id", obj_object_id);
+	rb_define_method(rb_mKernel, "__id__", obj_object_id);
+	rb_define_method(rb_mKernel, "to_s", obj_to_s);
+	rb_define_method(rb_mKernel, "inspect", obj_to_s);
+	rb_define_method(rb_mKernel, "instance_eval", obj_instance_eval);
+	rb_define_method(rb_mKernel, "const_set", obj_const_set);
+	rb_define_method(rb_mKernel, "const_defined?", obj_const_defined_p);
 	
 	// @class NilClass
 	rb_cNilClass = rb_define_class('NilClass', rb_cObject);

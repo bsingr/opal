@@ -4,6 +4,9 @@
 
 #define BLOCK_CALL(block, ...) \
 	block(block.__self__, Qnil, ##__VA_ARGS__)
+	
+#define BLOCK_GIVEN(block) \
+  (block != Qnil)
 
 #define RB_CALL(recv, mid, ...) \
 	recv.$m[#mid](recv, Qnil, ##__VA_ARGS__)
@@ -52,7 +55,8 @@
 #define IS_CLASS(value)		(value.$flags & T_CLASS)
 
 #define IS_NUMBER(value)  (value.$flags & T_NUMBER)
-#define IS_ARRAY(value)  (value.$flags & T_ARRAY)
+#define IS_ARRAY(value)   (value.$flags & T_ARRAY)
+#define IS_STRING(value)  (value.$flags & T_STRING)
 
 
 #define TO_NUMBER(value) \
@@ -63,4 +67,9 @@
 #define TO_ARRAY(value) \
   if (!IS_ARRAY(value)) { \
     value = to_ary(value); \
+  }
+
+#define TO_STRING(value) \
+  if (!IS_STRING(value)) { \
+    value = to_str(value); \
   }

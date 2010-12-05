@@ -55,6 +55,113 @@ var rb_cHash_delete = function(self, block, key) {
   return self['@default'];
 };
 
+/**
+	Creates a new hash populated with the given objects. Equivalent to the 
+	literal `{ key => value, ... }`. 
+
+	@example
+	  Hash["a", 100, "b", 200]
+	  # => {"a" =>100, "b"=>200}
+
+	@return [Hash]
+*/
+function hash_s_create(obj, block) {
+	return opalhash.apply(null, Array.prototype.slice.call(arguments, 2));
+}
+
+/**
+	Returns a new array populated with the values from `self`.
+
+	@example
+	  h = { :a => 1, :b => 2 }
+	  h.values
+	  # => [1, 2]
+
+	@return [Array]
+*/
+function hash_values(hash, block) {
+	ARG_COUNT(0)
+	
+	var result = [];
+	
+	for (var i = 0; i < hash['@keys'].length; i++) {
+		result.push(hash['@assocs'][hash['@keys'][i].$hash()]);
+	}
+	
+	return result;
+}
+
+/**
+	Returns the contents of this hash as a string.
+
+	@example
+	  h = { "a" => 100, "b" => 200 }
+	  # => "{ \"a\" => 100, \"b\" => 200 }"
+
+	@return [String]
+*/
+function hash_inspect(hash) {
+	ARG_COUNT(0)
+	
+	var description = [], key, value;
+	
+	for (var i = 0; i < hash['@keys'].length; i++) {
+		key = hash['@keys'][i];
+		value = hash['@assocs'][key.$hash()];
+		description.push(rb_call(key, "inspect") + "=>" + rb_call(value,"inspect"));
+	}
+	
+	return "{" + description.join(", ") + "}";
+}
+
+/**
+	Returns a string representation of the hash's keys and values
+
+	@return [String]
+*/
+function hash_to_s(hash) {
+	ARG_COUNT(0)
+	
+	var description = [], key, value;
+	
+	for (var i = 0; i < hash['@keys'].length; i++) {
+		key = hash['@keys'][i];
+		value = hash['@assocs'][key.$hash()];
+		description.push(rb_call(key, "to_s") + rb_call(value, "to_s"));
+	}
+	
+	return description.join("");
+}
+
+/**
+	Calls `block` once for each key in `self`, passing the key-value pair as
+	parameters.
+
+	If no block is given, an enumerator is returned instead.
+
+	@todo Enumerator functionality not yet implemented.
+
+	@example
+	  h = { "a" => 100, "b" => 200 }
+	  h.each { |k, v| puts "#{k} is #{v}" }
+	  # => "a is 100"
+	  # => "b is 200"
+
+	@return [Hash] returns reciever
+*/
+function hash_each(hash, block) {
+	ARG_COUNT(0)
+	
+	var keys = hash['@keys'], length = keys.length, key;
+	
+	for (var i = 0; i < length; i++) {
+		key = keys[i];
+		BLOCK_CALL(block, key, hash['@assocs'][key.$hash()]);
+	}
+	
+	return hash;
+}
+
 function env_to_s(env) {
 	return "ENV";
 }
@@ -76,6 +183,13 @@ var Init_Hash = function() {
 
 	  return this.$id = opal_yield_hash();
 	};
+	
+	rb_define_singleton_method(rb_cHash, "[]", hash_s_create);
+	rb_define_method(rb_cHash, "values", hash_values);
+	rb_define_method(rb_cHash, "inspect", hash_inspect);
+	rb_define_method(rb_cHash, "to_s", hash_to_s);
+	rb_define_method(rb_cHash, "each", hash_each);
+	rb_define_method(rb_cHash, "each_pair", hash_each);
 																			
 	rb_define_method(rb_cHash, '__store__', rb_cHash_store);
 	rb_define_method(rb_cHash, '__fetch__', rb_cHash_fetch);

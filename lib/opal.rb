@@ -13,11 +13,11 @@ module Kernel
     Opal.require_path require_path
   end
   
-  # remove this!!!!!!!
-  def puts(a)
-    `console.log(#{a})`
-    nil
-  end
+  # # remove this!!!!!!!
+  #  def puts(a)
+  #    `console.log(#{a})`
+  #    nil
+  #  end
 end
 
 class String
@@ -36,7 +36,6 @@ class Symbol
   end
 end
 
-require 'opal/kernel'
 require 'opal/basic_object'
 require 'opal/dir'
 require 'opal/enumerator'

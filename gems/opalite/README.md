@@ -25,7 +25,7 @@ libs are built ready.
 Output
 ======
 
-Each output file is located within the opal_name-1.0.0.opal/ directory (by default) from the base of the gem. The generated files include:
+Each output file is located within the opal_name-1.0.0.opalite/ directory (by default) from the base of the gem. The generated files include:
 
 * opal_name-1.0.0.js - opalite with all code etc in JSON format (wrapped)
 * opal_name-1.0.0-test.js - all test files (taken from gemspec)
