@@ -49,34 +49,35 @@ function mod_attr_accessor(mod) {
 }
 
 function mod_attr_reader(mod) {
-	var mid				 = null,
-			attribute	 = null,
+	var attribute	 = null,
 			attributes = Array.prototype.slice.call(arguments, 1);
 	
 	for (var i = 0; i < attributes.length; i++) {
-		attribute = attributes[i];
-		mid = rb_call(attribute, "to_s");
-
-		rb_define_method(mod, mid, function(self) {
-			return rb_ivar_get(self, "@" + mid);
-		});
+		var attribute = attributes[i];
+		var mid = rb_call(attribute, "to_s");
+		
+    // print("defining for: " + mid);
+		
+		rb_define_method(mod, mid,
+		  new Function('self', 'return rb_ivar_get(self, "@' + mid + '");'));
 	}
 	
 	return Qnil;
 }
 
 function mod_attr_writer(mod) {
-	var mid				 = null,
-			attribute	 = null,
+	var attribute	 = null,
 			attributes = Array.prototype.slice.call(arguments, 1);
 	
 	for (var i = 0; i < attributes.length; i++) {
-		attribute = attributes[i];
-		mid = rb_call(attribute, "to_s");
+		var attribute = attributes[i];
+		var mid = rb_call(attribute, "to_s");
 		
-		rb_define_method(mod, mid + "=", function(self, val) {
-			return rb_ivar_set(self, "@" + mid, val);
-		});
+		rb_define_method(mod, mid + "=", new Function('self', 'val',
+		  'return rb_ivar_set(self, "@' + mid + '", val);'));
+    // rb_define_method(mod, mid + "=", function(self, val) {
+      // return rb_ivar_set(self, "@" + mid, val);
+    // });
 	}
 	
 	return Qnil;
@@ -85,7 +86,8 @@ function mod_attr_writer(mod) {
 function mod_alias_method(mod, new_name, old_name) {
 	new_name = rb_call(new_name, "to_s");
 	old_name = rb_call(old_name, "to_s");
-	rb_define_method(mod, new_name, mod.$m_tbl['$' + old_name]);
+  // method might be wrapped, so use raw.
+	rb_define_method_raw(mod, new_name, mod.$m_tbl['$' + old_name]);
 	return mod;
 }
 
@@ -98,7 +100,10 @@ function mod_const_set(mod, id, value) {
 }
 
 function mod_class_eval(mod, string, filename, lineno) {
+  // print("global block is: " + rb_block_proc);
 	USES_BLOCK
+	
+  // print("block is: " + __block__.$m.$inspect(__block__));
 	
 	if (!BLOCK_GIVEN) {
 		var code = exports.compile(string);
@@ -137,11 +142,19 @@ function class_s_new(clas, sup) {
 };
 
 function class_new_instance(cla) {
+
 	var obj = cla.$m.$allocate(cla, Qnil);
 	var args = Array.prototype.slice.call(arguments);
 	args[0] = obj;
-	obj.$m.$initialize.apply(null, args);
-	return obj;
+	
+	// if given a block, we need to reroute it to initialize
+  if (rb_block_func == arguments.callee) {
+    rb_block_call.apply(null, [rb_block_proc, "initialize", obj].concat(
+      Array.prototype.slice.call(arguments, 1)));
+  } else {
+    obj.$m.$initialize.apply(null, args);
+  }
+  return obj;
 };
 
 function class_initialize(cla, sup) {
@@ -260,12 +273,14 @@ function obj_loop(obj, block) {
 	@return [Proc]
 */
 function obj_proc(obj, block) {
-	ARG_COUNT(0)
 	
-	if (!BLOCK_GIVEN(block))
+	ARG_COUNT(0)
+	USES_BLOCK
+	
+	if (!BLOCK_GIVEN)
 		rb_raise(rb_eArgError, "block required");
 	
-	return block;
+	return __block__;
 }
 
 /**
@@ -313,7 +328,7 @@ function obj_raise(obj, exception, string) {
 	if (IS_STRING(exception)) {
 		msg = exception;
 		exc = rb_call(rb_eRuntimeError, "new", msg);
-	} else if (false && obj_is_kind_of(exception, rb_eException)) {
+	} else if (obj_is_kind_of(exception, rb_eException)) {
 		exc = exception;
 	} else {
 		if (string != undefined)
@@ -422,16 +437,15 @@ function obj_eqq(obj, other) {
 }
 
 function obj_send(obj, method) {
-	ARG_COUNT(1)
-	
+  // print("sending message: " + method);
+	ARG_MIN(1)
+  // print("a");
 	TO_STRING(method)
-	
-	var args = Array.prototype.slice.call(arguments, 3);
-	// block
-	args.unshift(Qnil);
+  // print("b");
+	var args = Array.prototype.slice.call(arguments, 2);
 	// recv
 	args.unshift(obj);
-	
+  // print("args: " + args.join(", "));
 	return (obj.$m['$' + method] || rb_vm_meth_m(m_id)).apply(null, args);
 }
 
@@ -479,18 +493,21 @@ function obj_inspect(obj) {
 	return rb_call(obj, "to_s");
 }
 
-function obj_instance_eval(obj, block) {
+function obj_instance_eval(obj) {
 	USES_BLOCK
 	
+  // print("about to instance eval..");
 	// if (!BLOCK_GIVEN)
 	// 	rb_raise(rb_eLocalJumpError, "no block given");
 	// ARG_COUNT(0)
 	
-	if (BLOCK_GIVEN)
+	if (BLOCK_GIVEN) {
+    // print("instance evaling with a block!!!");
+    // print(__block__);
 		// we use obj as the self instead of block's self
 		// return block(obj, Qnil);
 		return YIELD_USING(obj);
-	
+	}
 	return obj;
 }
 

@@ -1,8 +1,6 @@
 
 module Spec
-  
   module Example
-    
     class ExampleGroupProxy
       
       attr_reader :description, :examples

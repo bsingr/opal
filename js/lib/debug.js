@@ -1,7 +1,13 @@
 /**
 	Debug stack is used as a stack of all method calls. Wrapper methods push the
 	method onto the stack, and then pop it off once it has returned. This will be
-	an empty array for non debug environments (no backtrace available..)
+	an empty array for non debug environments (no backtrace available..).
+	
+	Items on the stack will be an array:
+	  
+	  [body, arguments]
+	  
+	For now arguments will also include the receiver (incase it is needed)
 */
 debug_stack = []; // need to make local var once finished writing.
 
@@ -21,8 +27,29 @@ function debug_stack_push(body) {
 	returned by debug_stack_push. This allows for correct handling of throw/raise.
 */
 function debug_stack_pop(idx) {
-	// debug_stack.splice(idx, debug_stack.length);
+	debug_stack.splice(idx, debug_stack.length);
 	return idx;
+}
+
+/**
+  Print backtrace. The given array of items from the stack need to be printed to
+  the console.
+*/
+function debug_print_backtrace(items) {
+  var item, line = "";
+  
+  for (var i = items.length - 1; i >= 0; i--) {
+    item = items[i];
+    line = "\tfrom " + item[0].displayName; 
+    
+    // args.. 
+    
+    // filename + linenumber.
+    if (item[0].displayFileName)
+      line += " at " + item[0].displayFileName;
+    
+    print(line);
+  }
 }
 
 /**
@@ -30,17 +57,19 @@ function debug_stack_pop(idx) {
 	some modifications. A wrapper is essentially placed around every method which
 	logs when a method is called, and when it is left.
 */
-function debug_define_method(klass, name, body) {
-	print("Debug define method.");
+function debug_define_method(klass, name, body, filename, lineno) {
+  // print("Debug define method.");
 	
 	var args = Array.prototype.slice.call(arguments);
 	
 	// wrapper function used to log actual calls
 	var wrapper = function() {
+    // arguments we need to forward on to body
+    var args = Array.prototype.slice.call(arguments);
 		// stack index
-		var idx = debug_stack_push(name);
+		var idx = debug_stack_push([body]);
 		// result from method call
-		var res = body.apply(null, Array.prototype.slice.call(arguments));
+		var res = body.apply(null, args);
 		// pop stack
 		debug_stack_pop(idx);
 		// finally return our result
@@ -50,17 +79,50 @@ function debug_define_method(klass, name, body) {
 	// wrapper needs to be able to reference original (for rb_super etc)
 	wrapper.$wrapped = body;
 	
+	// displayName for debugger and "pretty printing". Also, do not do it on 
+  // methods that have already have it set on (rb_alias_method etc).
+	if (!body.displayName) {
+    body.displayName = rb_class_real(klass).__classid__ + '#' + name;
+    body.displayFileName = filename;
+  }
+	
 	// replace body in args with our wraper
 	args[2] = wrapper;
 	
-	debug_original_define_method.apply(null, args);
-	
+	return debug_original_define_method.apply(null, args);
 }
+
 
 /**
 	Where to save the original rb_define_method
 */
 var debug_original_define_method;
+
+/**
+	Replacement method for rb_block_call. Here we need to correct the
+	rb_block_func variable to point to the .$wrapped function instead of the outer
+	wrapping function. The $wrapped function always checks itself against this var
+	to ensure it is correctly getting the block (make sure the block was not given 
+	to someone else)
+*/
+function debug_block_call(block, mid, self) {
+  // print("calling block for " + mid);
+  // print("block is: " + block.$m.$inspect(block));
+	rb_block_proc = block;
+	var func = self.$m['$' + mid];
+	
+	if (func) {
+		// method exists..
+		rb_block_func = func.$wrapped;
+    // print("SETTING rb_block_func to " + rb_block_func);
+		
+		return func.apply(null, Array.prototype.slice.call(arguments, 2));
+	} else {
+		// method_missing
+		func = self.$m['$method_missing'];
+		throw "need to forward rb_block_call to method missing"
+	}
+}
 
 /**
 	Initialize debug mode. This MUST be called before any Init'ing takes place as
@@ -69,6 +131,10 @@ var debug_original_define_method;
 */
 function Init_Debug_Mode() {
 	print("Initializing debug mode.");
+	// rb_define_method
 	debug_original_define_method = rb_define_method;
 	rb_define_method = debug_define_method;
+	// rb_block_call
+	var original_block_call = rb_block_call;
+	global.rb_block_call = rb_block_call = debug_block_call;
 }

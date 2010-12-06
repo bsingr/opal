@@ -5,8 +5,6 @@ module Spec
     module BeforeAndAfterHooks
       
       def before(scope = :each, &block)
-        # `console.log(#{block});`
-        # puts "we got a block! #{block}"
         before_parts(scope) << block
       end
       

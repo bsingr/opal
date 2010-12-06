@@ -26,7 +26,7 @@ function num_uminus(num) {
 // 
 // @param [Number] other number to use for modulo
 // @return [Number]
-function num_mod(num, block, other) {
+function num_mod(num, other) {
 	return num % other;
 }
 
@@ -34,7 +34,7 @@ function num_mod(num, block, other) {
 // 
 // @param [Number] other number to AND with.
 // @return [Number] result
-function num_and(num, block, other) {
+function num_and(num, other) {
 	return num & other;
 }
 
@@ -42,7 +42,7 @@ function num_and(num, block, other) {
 // 
 // @param [Number] other number to multiply with
 // @return [Number] result
-function num_mul(num, block, other) {
+function num_mul(num, other) {
 	return num * other;
 }
 
@@ -50,7 +50,7 @@ function num_mul(num, block, other) {
 // 
 // @param [Number] other number to raise to
 // @return [Number] result
-function num_pow(num, block, other) {
+function num_pow(num, other) {
 	return Math.pow(num, other);
 }
 
@@ -58,7 +58,7 @@ function num_pow(num, block, other) {
 // 
 // @param [Number] other number to add
 // @result [Number] result
-function num_plus(num, block, other) {
+function num_plus(num, other) {
 	return num + other;
 }
 
@@ -66,7 +66,7 @@ function num_plus(num, block, other) {
 // 
 // @param [Number] other number to subtract
 // @result [Number] result
-function num_minus(num, block, other) {
+function num_minus(num, other) {
 	return num - other;
 }
 
@@ -74,7 +74,7 @@ function num_minus(num, block, other) {
 // 
 // @param [Number] other number to divide by.
 // @return [Number] result
-function num_div(num, block, other) {
+function num_div(num, other) {
 	return num / other;
 }
 
@@ -83,7 +83,7 @@ function num_div(num, block, other) {
 // 
 // @param [Number] other number to compare
 // @return [Boolean] result
-function num_lt(num, block, other) {
+function num_lt(num, other) {
 	return num < other ? Qtrue : Qfalse;
 }
 
@@ -92,7 +92,7 @@ function num_lt(num, block, other) {
 // 
 // @param [Number] other number to compare
 // @return [Number] result
-function num_le(num, block, other) {
+function num_le(num, other) {
 	return num <= other ? Qtrue : Qfalse;
 }
 
@@ -101,7 +101,7 @@ function num_le(num, block, other) {
 // 
 // @param [Number] other number to compare
 // @return [Boolean] result
-function num_gt(num, block, other) {
+function num_gt(num, other) {
 	return num > other ? Qtrue : Qfalse;
 }
 
@@ -110,7 +110,7 @@ function num_gt(num, block, other) {
 // 
 // @param [Number] other number to compare
 // @return [Number] result
-function num_ge(num, block, other) {
+function num_ge(num, other) {
 	return num >= other ? Qtrue : Qfalse;
 }
 
@@ -118,7 +118,7 @@ function num_ge(num, block, other) {
 // 
 // @param [Number] count number to shift
 // @return [Number] result
-function num_lshift(num, block, count) {
+function num_lshift(num, count) {
 	return num << count;
 }
 
@@ -126,7 +126,7 @@ function num_lshift(num, block, count) {
 // 
 // @param [Number] count number to shift
 // @return [Number] result
-function num_rshift(num, block, count) {
+function num_rshift(num, count) {
 	return num >> count;
 }
 
@@ -135,7 +135,7 @@ function num_rshift(num, block, count) {
 // 
 // @param [Number] other number to compare
 // @return [Number, nil] result
-function num_cmp(num, block, other) {
+function num_cmp(num, other) {
 	if (!other.$info & T_NUMBER) return Qnil;
 	else if (num < other) return -1;
 	else if (num > other) return 1;
@@ -146,7 +146,7 @@ function num_cmp(num, block, other) {
 // 
 // @param [Number] other number to compare
 // @return [Boolean] true or false
-function num_equal(num, block, other) {
+function num_equal(num, other) {
 	return num.valueOf() === other.valueOf() ? Qtrue : Qfalse;
 }
 
@@ -154,7 +154,7 @@ function num_equal(num, block, other) {
 // 
 // @param [Number] other number to XOR
 // @return [Number] result
-function num_xor(num, block, other) {
+function num_xor(num, other) {
 	return num & other;
 }
 
@@ -229,7 +229,7 @@ function num_pred(num) {
 // 
 // @param [Number] finish where to stop iteration
 // @return [Number] returns receiver
-function num_upto(num, block, finish) {
+function num_upto(num, finish) {
 	for (var i = num; i <= finish; i++) {
 		block(block.__self__, Qnil, i);
 	}
@@ -253,7 +253,7 @@ function num_upto(num, block, finish) {
 // 
 // @param [Number] finish where to stop iteration
 // @return [Number] returns receiver
-function num_downto(num, block, finish) {
+function num_downto(num, finish) {
 	for (var i = num; i >= finish; i--) {
 		block(block.__self__, Qnil, i);
 	}
@@ -275,7 +275,7 @@ function num_downto(num, block, finish) {
 //   # => 4
 // 
 // @return [Number] returns receiver
-function num_dotimes(num, block) {
+function num_dotimes(num) {
 	for (var i = 0; i < num; i++) {
 		block(block.__self__, Qnil, i);
 	}
@@ -286,7 +286,7 @@ function num_dotimes(num, block) {
 // 
 // @param [Number] other number to OR with.
 // @return [Number] result
-function num_or(num, block, other) {
+function num_or(num, other) {
 	return num | other;
 }
 

@@ -1,7 +1,4 @@
-
-
-module Spec
-  
+module Spec  
   module Matchers
     
     def self.last_matcher

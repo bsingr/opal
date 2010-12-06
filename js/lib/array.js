@@ -81,16 +81,10 @@ function ary_length(ary) {
 
 	@return [Array] returns the receiver
 */
-function ary_each(ary) {
-	// if (rb_block_func == arguments.callee) {
-		// print("block func is me!!");
-	// }
-	
+function ary_each(ary) {	
 	ARG_COUNT(0)
 	RETURN_ENUMERATOR(ary, each)
-	
-	print("ary_each: block must be okay!");
-	
+		
 	for (var i = 0; i < ary.length; i++) {
 		PRE_LOOP
 		YIELD(ary[i]);
@@ -106,7 +100,7 @@ function ary_each_with_index(ary, block) {
 	
 	for (var i = 0; i < ary.length; i++) {
 		PRE_LOOP
-		BLOCK_CALL(block, ary[i])
+		YIELD(ary[i])
 		POST_LOOP
 	}
 	
@@ -136,7 +130,7 @@ function ary_each_index(ary, block) {
 	
 	for (var i = 0; i < ary.length; i++) {
 		PRE_LOOP
-		BLOCK_CALL(block, i)
+		YIELD(i)
 		POST_LOOP
 	}
 	
@@ -393,7 +387,7 @@ function ary_select(ary, block) {
 		PRE_LOOP
 		arg = ary[i];
 			
-		if (RTEST(BLOCK_CALL(block, arg)))
+		if (RTEST(YIELD(arg)))
 			result.push(arg);
 		
 		POST_LOOP
@@ -427,7 +421,7 @@ function ary_collect(ary, block) {
 	
 	for (var i = 0; i < ary.length; i++) {
 		PRE_LOOP
-		result.push(BLOCK_CALL(block, ary[i]));
+		result.push(YIELD(ary[i]));
 		POST_LOOP
 	}
 	
@@ -457,7 +451,7 @@ function ary_collect_bang(ary, block) {
 	
 	for (var i = 0; i < ary.length; i++) {
 		PRE_LOOP
-		ary[i] = BLOCK_CALL(block, ary[i])
+		ary[i] = YIELD(ary[i])
 		POST_LOOP
 	}
 	
@@ -483,7 +477,7 @@ function ary_dup(ary, block) {
 function ary_compact(ary) {
 	ARG_COUNT(0)
 	var result = ary_dup(ary);
-	return ary_compact_bang(result, "compact!");
+	return ary_compact_bang(result);
 }
 
 /**
@@ -649,7 +643,7 @@ function ary_delete_if(ary, block) {
 	
 	for (var i = 0; i < ary.length; i++) {
 		PRE_LOOP
-		if (RTEST(BLOCK_CALL(block, ary[i]))) {
+		if (RTEST(YIELD(ary[i]))) {
 			ary.splice(i, 1);
 			i--;
 		}
@@ -754,7 +748,7 @@ function ary_fetch(ary, index, defaults) {
 		if (defaults == undefined) {
 			rb_raise(rb_eIndexError, "Array#fetch");
 		} else if (block != Qnil) {
-			return BLOCK_CALL(block, original);
+			return YIELD(original);
 		} else {
 			return defaults;
 		}
@@ -1191,7 +1185,7 @@ function ary_reverse_each(ary, block) {
 	
 	for (var i = ary.length - 1; i >= 0; i--) {
 		PRE_LOOP
-		BLOCK_CALL(block, ary[i]);
+		YIELD(ary[i]);
 		POST_LOOP
 	}
 	
@@ -1255,7 +1249,7 @@ function ary_select_bang(ary, block) {
 	var length = ary.length;
 	
 	for (var i = 0; i < ary.length; i++) {
-		if (!RTEST(BLOCK_CALL(block, ary[i]))) {
+		if (!RTEST(YIELD(ary[i]))) {
 			ary.splice(i, 1);
 			i--;
 		}
@@ -1617,6 +1611,9 @@ function ary_aset(ary, index, value) {
 // For efficiency, an array instance is simply a native javascript array. There
 // is no wrapping or referencing, it is simply a toll-free class.
 var Init_Array = function() {
+  
+  // debug support for filename
+	var filename = "opal/runtime/object.js";
 	// @class Array
 	rb_cArray = rb_define_toll_free_class(Array.prototype, T_OBJECT | T_ARRAY,
 		 																	 'Array', rb_cObject);
@@ -1629,74 +1626,74 @@ var Init_Array = function() {
 	};
 	
 	rb_define_singleton_method(rb_cArray, "[]", ary_s_create);
-	rb_define_singleton_method(rb_cArray, "allocate", ary_alloc);
-	rb_define_method(rb_cArray, "initialize", ary_initialize);
+	rb_define_singleton_method(rb_cArray, "allocate", ary_alloc, filename);
+	rb_define_method(rb_cArray, "initialize", ary_initialize, filename);
 	
-	rb_define_method(rb_cArray, "inspect", ary_inspect);
-	rb_define_method(rb_cArray, "to_s", ary_to_s);
+	rb_define_method(rb_cArray, "inspect", ary_inspect, filename);
+	rb_define_method(rb_cArray, "to_s", ary_to_s, filename);
 	
-	rb_define_method(rb_cArray, "length", ary_length);
-	rb_define_alias(rb_cArray, "size", "length");
-	rb_define_method(rb_cArray, "<<", ary_push);
+	rb_define_method(rb_cArray, "length", ary_length, filename);
+	rb_define_alias(rb_cArray, "size", "length", filename);
+	rb_define_method(rb_cArray, "<<", ary_push, filename);
 	
-	rb_define_method(rb_cArray, "each", ary_each);
-	rb_define_method(rb_cArray, "each_with_index", ary_each_with_index);
-	rb_define_method(rb_cArray, "each_index", ary_each_index);
-	rb_define_method(rb_cArray, "push", ary_push_m);
-	rb_define_method(rb_cArray, "index", ary_index);
-	rb_define_method(rb_cArray, "+", ary_plus);
-	rb_define_method(rb_cArray, "-", ary_diff);
-	rb_define_method(rb_cArray, "==", ary_equal);
-	rb_define_method(rb_cArray, "assoc", ary_assoc);
-	rb_define_method(rb_cArray, "at", ary_at);
-	rb_define_method(rb_cArray, "clear", ary_clear);
-	rb_define_method(rb_cArray, "select", ary_select);
-	rb_define_method(rb_cArray, "collect", ary_collect);
-	rb_define_method(rb_cArray, "map", ary_collect);
-	rb_define_method(rb_cArray, "collect!", ary_collect_bang);
-	rb_define_method(rb_cArray, "map!", ary_collect_bang);
-	rb_define_method(rb_cArray, "dup", ary_dup);
-	rb_define_method(rb_cArray, "compact", ary_compact);
-	rb_define_method(rb_cArray, "compact!", ary_compact_bang);
-	rb_define_method(rb_cArray, "concat", ary_concat);
-	rb_define_method(rb_cArray, "count", ary_count);
-	rb_define_method(rb_cArray, "delete", ary_delete);
-	rb_define_method(rb_cArray, "delete_at", ary_delete_at_m);
-	rb_define_method(rb_cArray, "delete_if", ary_delete_if);
-	rb_define_method(rb_cArray, "drop", ary_drop);
-	rb_define_method(rb_cArray, "drop_while", ary_drop_while);
-	rb_define_method(rb_cArray, "empty?", ary_empty_p);
-	rb_define_method(rb_cArray, "fetch", ary_fetch);
-	rb_define_method(rb_cArray, "first", ary_first);
-	rb_define_method(rb_cArray, "flatten", ary_flatten);
-	rb_define_method(rb_cArray, "flatten!", ary_flatten_bang);
-	rb_define_method(rb_cArray, "include?", ary_include_p);
-	rb_define_method(rb_cArray, "replace", ary_replace);
-	rb_define_method(rb_cArray, "insert", ary_insert);
-	rb_define_method(rb_cArray, "join", ary_join);
-	rb_define_method(rb_cArray, "keep_if", ary_keep_if);
-	rb_define_method(rb_cArray, "last", ary_last);
-	rb_define_method(rb_cArray, "pop", ary_pop);
-	rb_define_method(rb_cArray, "rassoc", ary_rassoc);
-	rb_define_method(rb_cArray, "reject", ary_reject);
-	rb_define_method(rb_cArray, "reject!", ary_reject_bang);
-	rb_define_method(rb_cArray, "reverse", ary_reverse);
-	rb_define_method(rb_cArray, "reverse!", ary_reverse_bang);
-	rb_define_method(rb_cArray, "reverse_each", ary_reverse_each);
-	rb_define_method(rb_cArray, "rindex", ary_rindex);
-	rb_define_method(rb_cArray, "select!", ary_select_bang);
-	rb_define_method(rb_cArray, "shift", ary_shift);
-	rb_define_method(rb_cArray, "slice!", ary_slice_bang);
-	rb_define_method(rb_cArray, "take", ary_take);
-	rb_define_method(rb_cArray, "take_while", ary_take_while);
-	rb_define_method(rb_cArray, "to_a", ary_to_a);
-	rb_define_method(rb_cArray, "to_ary", ary_to_a);
-	rb_define_method(rb_cArray, "uniq", ary_uniq);
-	rb_define_method(rb_cArray, "uniq!", ary_uniq_bang);
-	rb_define_method(rb_cArray, "unshift", ary_unshift);
-	rb_define_method(rb_cArray, "&", ary_and);
-	rb_define_method(rb_cArray, "*", ary_times);
-	rb_define_method(rb_cArray, "[]", ary_aref);
-	rb_define_method(rb_cArray, "slice", ary_aref);
-	rb_define_method(rb_cArray, "[]=", ary_aset);
+	rb_define_method(rb_cArray, "each", ary_each, filename);
+	rb_define_method(rb_cArray, "each_with_index", ary_each_with_index, filename);
+	rb_define_method(rb_cArray, "each_index", ary_each_index, filename);
+	rb_define_method(rb_cArray, "push", ary_push_m, filename);
+	rb_define_method(rb_cArray, "index", ary_index, filename);
+	rb_define_method(rb_cArray, "+", ary_plus, filename);
+	rb_define_method(rb_cArray, "-", ary_diff, filename);
+	rb_define_method(rb_cArray, "==", ary_equal, filename);
+	rb_define_method(rb_cArray, "assoc", ary_assoc, filename);
+	rb_define_method(rb_cArray, "at", ary_at, filename);
+	rb_define_method(rb_cArray, "clear", ary_clear, filename);
+	rb_define_method(rb_cArray, "select", ary_select, filename);
+	rb_define_method(rb_cArray, "collect", ary_collect, filename);
+	rb_define_method(rb_cArray, "map", ary_collect, filename);
+	rb_define_method(rb_cArray, "collect!", ary_collect_bang, filename);
+	rb_define_method(rb_cArray, "map!", ary_collect_bang, filename);
+	rb_define_method(rb_cArray, "dup", ary_dup, filename);
+	rb_define_method(rb_cArray, "compact", ary_compact, filename);
+	rb_define_method(rb_cArray, "compact!", ary_compact_bang, filename);
+	rb_define_method(rb_cArray, "concat", ary_concat, filename);
+	rb_define_method(rb_cArray, "count", ary_count, filename);
+	rb_define_method(rb_cArray, "delete", ary_delete, filename);
+	rb_define_method(rb_cArray, "delete_at", ary_delete_at_m, filename);
+	rb_define_method(rb_cArray, "delete_if", ary_delete_if, filename);
+	rb_define_method(rb_cArray, "drop", ary_drop, filename);
+	rb_define_method(rb_cArray, "drop_while", ary_drop_while, filename);
+	rb_define_method(rb_cArray, "empty?", ary_empty_p, filename);
+	rb_define_method(rb_cArray, "fetch", ary_fetch, filename);
+	rb_define_method(rb_cArray, "first", ary_first, filename);
+	rb_define_method(rb_cArray, "flatten", ary_flatten, filename);
+	rb_define_method(rb_cArray, "flatten!", ary_flatten_bang, filename);
+	rb_define_method(rb_cArray, "include?", ary_include_p, filename);
+	rb_define_method(rb_cArray, "replace", ary_replace, filename);
+	rb_define_method(rb_cArray, "insert", ary_insert, filename);
+	rb_define_method(rb_cArray, "join", ary_join, filename);
+	rb_define_method(rb_cArray, "keep_if", ary_keep_if, filename);
+	rb_define_method(rb_cArray, "last", ary_last, filename);
+	rb_define_method(rb_cArray, "pop", ary_pop, filename);
+	rb_define_method(rb_cArray, "rassoc", ary_rassoc, filename);
+	rb_define_method(rb_cArray, "reject", ary_reject, filename);
+	rb_define_method(rb_cArray, "reject!", ary_reject_bang, filename);
+	rb_define_method(rb_cArray, "reverse", ary_reverse, filename);
+	rb_define_method(rb_cArray, "reverse!", ary_reverse_bang, filename);
+	rb_define_method(rb_cArray, "reverse_each", ary_reverse_each, filename);
+	rb_define_method(rb_cArray, "rindex", ary_rindex, filename);
+	rb_define_method(rb_cArray, "select!", ary_select_bang, filename);
+	rb_define_method(rb_cArray, "shift", ary_shift, filename);
+	rb_define_method(rb_cArray, "slice!", ary_slice_bang, filename);
+	rb_define_method(rb_cArray, "take", ary_take, filename);
+	rb_define_method(rb_cArray, "take_while", ary_take_while, filename);
+	rb_define_method(rb_cArray, "to_a", ary_to_a, filename);
+	rb_define_method(rb_cArray, "to_ary", ary_to_a, filename);
+	rb_define_method(rb_cArray, "uniq", ary_uniq, filename);
+	rb_define_method(rb_cArray, "uniq!", ary_uniq_bang, filename);
+	rb_define_method(rb_cArray, "unshift", ary_unshift, filename);
+	rb_define_method(rb_cArray, "&", ary_and, filename);
+	rb_define_method(rb_cArray, "*", ary_times, filename);
+	rb_define_method(rb_cArray, "[]", ary_aref, filename);
+	rb_define_method(rb_cArray, "slice", ary_aref, filename);
+	rb_define_method(rb_cArray, "[]=", ary_aset, filename);
 };

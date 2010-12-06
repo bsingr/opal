@@ -64,11 +64,21 @@ var rb_include_module = function(klass, module) {
   // print(rb_mKernel.$included_in);
   // print(module.method_table);
   for (var method in module.$method_table) {
+    // already potentially wrapped, so use define_raw
+    rb_define_method_raw(klass, method.substr(1), module.$method_table[method]);
     // print("adding method: " + method);
     // check to make sure we are not overriding? if so, add it to the superclass
     // of klass.
     // klass.$m_prototype_tbl[method] = module.$method_table[method];
-    rb_define_method(klass, method.substr(1), module.$method_table[method]);
+    
+	// delted...
+		// rb_define_method(klass, method.substr(1), module.$method_table[method]);
+		// replaces
+    // klass.$m_prototype_tbl[method] = module.$method_table[method];
+    // klass.$method_table[method] = module.$method_table[method];
+		// $method_table['$' + name] = body;
+		
+		
   }
   
 };
@@ -93,6 +103,8 @@ var rb_extend_module = function(klass, module) {
   // }
   
   for (var method in module.$method_table) {
-    klass.$klass.$m_prototype_tbl[method] = module.$method_table[method];
+    // klass.$klass.$m_prototype_tbl[method] = module.$method_table[method];
+    rb_define_method_raw(klass.$klass, method.substr(1), 
+      module.$method_table[method]);
   }
 };

@@ -1,8 +1,5 @@
-
 module Spec
-  
   module Example
-    
     module ExampleGroupMethods
       
       include Spec::Example::BeforeAndAfterHooks
@@ -41,7 +38,7 @@ module Spec
       
       def pending_implementation
         proc {
-          raise Spec::Example::NotYetImplementedError
+          raise Spec::Example::NotYetImplementedError.new
         }
       end
       
@@ -59,9 +56,7 @@ module Spec
       end
       
       def run_examples(success, instance_variables, examples, run_options)
-        # puts "running in run_examples"
         examples.each do |example|
-          # puts "running example: #{example.description}"
           example_group_instance = new example, 
                                        &example_implementations[example]
 

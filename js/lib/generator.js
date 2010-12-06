@@ -1595,7 +1595,7 @@ RubyGenerator.prototype = {
     res.push('}catch(__err__){');
     // if we are dealing with a native error (non opal/ruby error, then lets)
     // wrap it.
-    res.push('if (!__err__.$k) { __err__ = rb_vm_make_exception(__err__);}');
+    res.push('if (!__err__.$klass){ __err__ = rb_vm_make_exception(__err__);}');
     
     for (var i = 0; i < stmt[1][2].length; i++) {
       var rescue = stmt[1][2][i];

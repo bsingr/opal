@@ -87,41 +87,68 @@ RObject.prototype.$hash = RClass.prototype.$hash = function() {
   return this.$id;
 };
 
-
-
 // define method
 var rb_define_method = function(klass, name, body, file_name, line_number) {
-  // console.log("defininf " + name + " on:");
-  // console.log(klass);
+  
+  rb_define_method_raw(klass, name, body);
+  
+  return Qnil;
+  
+  // // console.log("defininf " + name + " on:");
+  //   // console.log(klass);
+  //   klass.$m_prototype_tbl['$' + name] = body;
+  //   klass.$method_table['$' + name] = body;
+  //  // only define method name if not already set (alias, include etc)
+  //  if (!body.displayName) {
+  //    body.displayName = klass.__classid__ + "#" + name;
+  //    // if we have a filename:
+  //    if (file_name) {
+  //      body.displayName += " at " + file_name;
+  //    }
+  //    
+  //  }
+  //  
+  //   // if we are adding to a module, then check to see if mdethod needs to be
+  //   // included into "included_in" classes
+  //   if (klass.$flags & T_MODULE) {
+  //     // print("in module for: " + name);
+  //     // print(klass.$h);
+  //     // for (var prop in klass) print(prop);
+  //     if (klass.$included_in) {
+  //       for (var i = 0; i < klass.$included_in.length; i++) {
+  //         // deleted this..
+  //        // rb_define_method(klass.$included_in[i], name, body);
+  //        // replaced with this..
+  //        klass.$included_in[i].$m_prototype_tbl['$' + name] = body;
+  //        klass.$included_in[i].$method_table['$' + name] = body;
+  //       }
+  //       // for (var recv_klass in klass.$included_i)
+  //       // print("need to include in: " + klass.$i.__classid__);
+  //       // klass.$m_prototype_tbl['$' + name] = body;
+  //     }
+  //   }
+};
+
+/**
+  The raw functionality of rb_define_method. Seeing as rb_define_method can be
+  overriden in debug mode, this is the raw functionlaity used to actually define
+  a method. Any wrapper functions are assumed to have been already applied, so
+  calling this will apply the method to the receiver directly.
+*/
+function rb_define_method_raw(klass, name, body) {
+  // insert raw method into prototype chain
   klass.$m_prototype_tbl['$' + name] = body;
+  // insert method into singular method table (methods defined ON this class)
   klass.$method_table['$' + name] = body;
-	// only define method name if not already set (alias, include etc)
-	if (!body.displayName) {
-		body.displayName = klass.__classid__ + "#" + name;
-		// if we have a filename:
-		if (file_name) {
-			body.displayName += " at " + file_name;
-		}
-		
-	}
-	
-  // if we are adding to a module, then check to see if mdethod needs to be
-  // included into "included_in" classes
-  if (klass.$flags & T_MODULE) {
-    // print("in module for: " + name);
-    // print(klass.$h);
-    // for (var prop in klass) print(prop);
-    if (klass.$included_in) {
-      for (var i = 0; i < klass.$included_in.length; i++) {
-        // klass.$included_in[i].$m_prototype_tbl['$' + name] = body;
-        rb_define_method(klass.$included_in[i], name, body);
-      }
-      // for (var recv_klass in klass.$included_i)
-      // print("need to include in: " + klass.$i.__classid__);
-      // klass.$m_prototype_tbl['$' + name] = body;
+  // if in module, apply method to all classes we are included in
+  if (klass.$included_in) {
+    for (var i = 0; i < klass.$included_in.length; i++) {
+      // insert method into both prototype and singular chain.
+      klass.$included_in[i].$m_prototype_tbl['$' + name] = body;
+			klass.$included_in[i].$method_table['$' + name] = body;
     }
   }
-};
+}
 
 function rb_define_global_function(name, body) {
 	rb_define_method(rb_mKernel, name, body);
@@ -161,7 +188,7 @@ function rb_call(recv, mid) {
 	// simply replace mid with our block (nil)
 	// args[1] = Qnil;
 	// check method exists
-	return (recv.$m['$' + mid] || recv.$M(mid)).apply(null, args);
+	return (recv.$m['$' + mid] || rb_vm_meth_m(mid)).apply(null, args);
 }
 
 
@@ -234,6 +261,8 @@ rb_vm_make_exception = function(native_error) {
 
 // raise an exception instance (DO NOT pass strings to this)
 rb_vm_raise = function(exc) {
+  // backtrace
+  rb_ivar_set(exc, '@backtrace', debug_stack.slice(0, debug_stack.length));
   throw exc;
 };
 
@@ -275,6 +304,13 @@ function to_ary(obj) {
 	rb_raise(rb_eTypeError, "can't convert Object into Array");
 }
 
+/**
+  Convert the given object into a string
+*/
+function to_str(obj) {
+  return obj.$m.$to_s(obj);
+}
+
 // Run a function - this should be used as an entry point for anything that 
 // calls ruby code or may throw an error.
 // 
@@ -283,16 +319,21 @@ function to_ary(obj) {
 // 
 // @global
 rb_run = function(func) {
+  // always clear backtrace
+  debug_stack.length = 0;
   try {
+    debug_stack_push([rb_run], [rb_top_self]);
     return func();
   }
   catch(err) {
     // should check if err is native or ruby error (.$k)
     if (err.$klass) {
-      print('caught error: ' + err.__classid__);
+      // print('caught error: ' + err.__classid__);
 			
       print(err.$klass.__classid__ + ': ' + err['@message']);
-			print(err.stack);
+			if (err['@backtrace']) {
+			  debug_print_backtrace(err['@backtrace']);
+			}
     }
     else {
       print('NativeError: ' + err);
@@ -302,5 +343,6 @@ rb_run = function(func) {
 };
 
 // Stack trace support
-rb_run.displayName = "main at (irb)";
+rb_run.displayName = "main";
+rb_run.displayFileName = "(main)";
 

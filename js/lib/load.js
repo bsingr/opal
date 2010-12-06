@@ -56,7 +56,7 @@ var loaded_features = [];
 // 
 // @local
 var rb_require = function(fname) {
-  print('trying to require ' + fname);
+  // print('trying to require ' + fname);
   var resolved = resolve_require_filename(fname);
   
   // if we have already loaded the file, return false.. (no error)

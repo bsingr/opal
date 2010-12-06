@@ -34,7 +34,7 @@ var opal_file_read = function(path) {
 	var str = OpalFile.read(fd, 0, 4048);
 	OpalFile.close(fd);
 	
-	print("read file :" + path);
+  // print("read file :" + path);
 	// return "path fd is: " + fd;
 	return str;
 };
