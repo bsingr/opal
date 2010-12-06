@@ -250,6 +250,7 @@ DefIseq.prototype.push_opt_arg = function(name, stmt) {
 DefIseq.prototype.push_block_arg = function(name) {
   this.args.push(name);
   this.block_arg = name;
+	this.__uses_block__ = true;
   return name;
 };
 
@@ -270,10 +271,7 @@ DefIseq.prototype.method_args = function(res) {
       rest = this.rest_args;
       
   // always need a self reference
-  res.push(this.SELF + ', ');
-  
-  // always need a block arg
-  res.push(this.block_arg);
+  res.push(this.SELF);
   
   // norm
   for (var i = 0; i < norm; i++) {
@@ -306,9 +304,16 @@ DefIseq.prototype.method_fixing = function(res) {
   }
   // handle rest args
   if (rest) {
-    var rest_offset = norm + opt + 2; // should take into account opt.. we add one to skip block
+    var rest_offset = norm + opt + 1; // should take into account opt.. we add one to skip self
     res.push(rest + ' = Array.prototype.slice.call(arguments, ' + rest_offset + ');\n');
   }
+
+	// block. if we got/has/used a block, then lets set it/create it here.
+	if (this.__uses_block__) {
+		res.push('var '+ this.block_arg + ' = (rb_block_func == arguments.callee)');
+		res.push('? rb_block_proc : Qnil;');
+		res.push('rb_block_proc = rb_block_func = Qnil;');
+	}
 };
 
 var BlockIseq = (function() {
@@ -474,46 +479,75 @@ RubyGenerator.prototype = {
   // args:
   //  [norm, opt, rest, block]
   generate_call: function(stmt) {
-    // print(stmt);
-    // final result
-    var res = [];
+    var pre = [];
     // all args (inc self, block)
     var arg_res = [];
-    // receiver
-    if (stmt[1]) {
-      // res.push(this.generate(stmt[1]));
-      // res.push(this.mid_to_jsid(stmt[2]))
-      var tmp_recv = this.iseq_current.temp_local();
-      res.push('(' + tmp_recv + ' = ');
-      res.push(this.generate(stmt[1]));
-      res.push(', ' + tmp_recv + '.$m' + this.mid_to_jsid(stmt[2]) + ' || ');
-      res.push('rb_vm_meth_m("' + stmt[2] + '"))');
-      // res.push('.$M("' + stmt[2] + '"))(');
-      arg_res.push(tmp_recv + ', ');
-      this.iseq_current.queue_temp(tmp_recv);
-    }
-    else { // no recv
-      res.push('(' + this.SELF + '.$m' + this.mid_to_jsid(stmt[2]) + ' || ');
-      // res.push('.$M("' + stmt[2] + '"))(');
-      res.push('rb_vm_meth_m("' + stmt[2] + '"))');
-      arg_res.push(this.SELF + ', ');
-    }
+		// recv
+		var recv = "";
+		// if given a block literal, or a &to_proc block arg, then use rb_block_call
+		if (stmt[4] || stmt[3][3]) {
+			if (stmt[4]) { // regular block
+				pre.push('rb_block_call');
+				var tmp_block = this.iseq_current.temp_local();
+				arg_res.push('(' + tmp_block + ' = ' + this.generate_block(stmt[4]));
+				arg_res.push(', ' + tmp_block + '.__self__ = ' + this.SELF + ', ');
+				arg_res.push(tmp_block + '), "' + stmt[2] + '", ');
+				arg_res.push(stmt[1] ? this.generate(stmt[1]) : this.SELF);
+				this.iseq_current.queue_temp(tmp_block);
+			} else { // &to_proc mark
+				pre.push('rb_block_call');
+				arg_res.push(this.generate(stmt[3][3]) + ', "' + stmt[2] + '", ');
+				arg_res.push(stmt[1] ? this.generate(stmt[1]) : this.SELF);
+			}
+		} else {
+			// no block arg literal or reference.
+			if (stmt[1]) { // recv
+				var tmp_recv = this.iseq_current.temp_local();
+				pre.push('(' + tmp_recv + ' = ' + this.generate(stmt[1]) + ', ');
+				pre.push(tmp_recv + '.$m' + this.mid_to_jsid(stmt[2]) + '||');
+				pre.push('rb_vm_meth_m("' + stmt[2] + '"))');
+				arg_res.push(tmp_recv);
+				this.iseq_current.queue_temp(tmp_recv);
+			} else { // no recv
+				pre.push('(' + this.SELF + '.$m' + this.mid_to_jsid(stmt[2]) + ' || ');
+				pre.push('rb_vm_meth_m("' + stmt[2] + '"))');
+				arg_res.push(this.SELF);
+			}
+		}
+		
+    // // receiver
+    // if (stmt[1]) {
+    //   var tmp_recv = this.iseq_current.temp_local();
+    //   res.push('(' + tmp_recv + ' = ');
+    //   res.push(this.generate(stmt[1]));
+    //   res.push(', ' + tmp_recv + '.$m' + this.mid_to_jsid(stmt[2]) + ' || ');
+    //   res.push('rb_vm_meth_m("' + stmt[2] + '"))');
+    //   // res.push('.$M("' + stmt[2] + '"))(');
+    //   arg_res.push(tmp_recv + ', ');
+    //   this.iseq_current.queue_temp(tmp_recv);
+    // }
+    // else { // no recv
+    //   res.push('(' + this.SELF + '.$m' + this.mid_to_jsid(stmt[2]) + ' || ');
+    //   // res.push('.$M("' + stmt[2] + '"))(');
+    //   res.push('rb_vm_meth_m("' + stmt[2] + '"))');
+    //   arg_res.push(this.SELF + ', ');
+    // }
     
-    // block
-    if (stmt[4]) {
-      var tmp_block = this.iseq_current.temp_local();
-      arg_res.push('(' + tmp_block + ' = ');
-      arg_res.push(this.generate_block(stmt[4]));
-      arg_res.push(', ' + tmp_block + '.__self__ = ' + this.SELF + ', ' + tmp_block + ')');
-      this.iseq_current.queue_temp(tmp_block);
-    }
-    // check for &block syntax (proc to block or symbol to block)
-    else if (stmt[3][3]) {
-      arg_res.push(this.generate(stmt[3][3]));
-    }
-    else {
-      arg_res.push(this.NIL);
-    }    
+    // // block
+    // if (stmt[4]) {
+    //   var tmp_block = this.iseq_current.temp_local();
+    //   arg_res.push('(' + tmp_block + ' = ');
+    //   arg_res.push(this.generate_block(stmt[4]));
+    //   arg_res.push(', ' + tmp_block + '.__self__ = ' + this.SELF + ', ' + tmp_block + ')');
+    //   this.iseq_current.queue_temp(tmp_block);
+    // }
+    // // check for &block syntax (proc to block or symbol to block)
+    // else if (stmt[3][3]) {
+    //   arg_res.push(this.generate(stmt[3][3]));
+    // }
+    // else {
+    //   arg_res.push(this.NIL);
+    // }    
     
     var arg, args = stmt[3][0];
     // norm args
@@ -538,14 +572,14 @@ RubyGenerator.prototype = {
     // used)
     if (stmt[3][1]) {
       var pre_splat_arg = '[' + arg_res.join("") + ']';
-      res.push('.apply(' + this.NIL + ', ' + pre_splat_arg);
-      res.push('.concat(' + this.generate(stmt[3][1]) + '))');
-      return res.join('');
+      pre.push('.apply(' + this.NIL + ', ' + pre_splat_arg);
+      pre.push('.concat(' + this.generate(stmt[3][1]) + '))');
+      return pre.join('');
     }
     // normal..
     else {  
-      res.push('(' + arg_res.join("") + ')');
-      return res.join('');
+      pre.push('(' + arg_res.join("") + ')');
+      return pre.join('');
     }
   },
   
@@ -623,7 +657,7 @@ RubyGenerator.prototype = {
     if (local)
       return local;
     else
-      return '(' + this.SELF + '.$m' + this.mid_to_jsid(stmt[1]) + ' || ' + 'rb_vm_meth_m("' + stmt[1] + '"))(' + this.SELF + ', ' + this.NIL + ')';
+      return '(' + this.SELF + '.$m' + this.mid_to_jsid(stmt[1]) + ' || ' + 'rb_vm_meth_m("' + stmt[1] + '"))(' + this.SELF + ')';
       // return this.SELF + this.mid_to_jsid(stmt[1]) + '(' + this.NIL + ')';
   },
   
@@ -672,8 +706,7 @@ RubyGenerator.prototype = {
       res.push(' || rb_vm_meth_m("' + stmt[1][2] + '=' + '"');
       res.push('))(');
       // recv
-      res.push(tmp_assign + ', ' + this.NIL + ', ');
-      // block
+      res.push(tmp_assign + ', ');
       res.push(this.generate(stmt[2]));
       res.push(')');
       this.iseq_current.queue_temp(tmp_assign);
@@ -1064,7 +1097,7 @@ RubyGenerator.prototype = {
     
     var code = "(" + tmp_recv + ' = ' + this.generate(stmt[2]) + ', ' + tmp_recv
               + '.$m' + this.mid_to_jsid(meth) + ' || rb_vm_meth_m("' + meth + 
-              '"))(' + tmp_recv + ', ' + this.NIL + ')';
+              '"))(' + tmp_recv + ', ' + ')';
     this.iseq_current.queue_temp(tmp_recv);
     // return this.generate(stmt[2]) + this.mid_to_jsid(meth) + '()';
     return code;
@@ -1085,9 +1118,6 @@ RubyGenerator.prototype = {
     res.push('(');
     // self
     res.push(tmp_mm);
-    res.push(', ');
-    // block
-    res.push(this.NIL);
     if (stmt[2][0]) {
       for (var i = 0; i < stmt[2][0].length; i++) {
         var s = stmt[2][0][i];
@@ -1113,8 +1143,6 @@ RubyGenerator.prototype = {
     res.push('"[]="))');
     res.push('(');
     res.push(tmp_mm);
-    res.push(',');
-    res.push(this.NIL);
     if (aref[2][0]) {
       for (var i = 0; i < aref[2][0].length; i++) {
         var s = aref[2][0][i];

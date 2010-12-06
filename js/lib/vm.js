@@ -2,6 +2,40 @@
 // @local
 var rb_mOpal;
 
+
+/**
+	A method call (from the VM) with a block must use this method. This method 
+	sets the block and ensures the right method can receive it. To do this, the
+	following varoables are set (globally):
+	
+	* rb_block_proc - the actual proc object (function). This is the proc that
+										yield should use.
+										
+	* rb_block_func - the function prototype that the block was sent to. This will
+										be ary_each, for Array#each (for example). ary_each must
+										then check the global func is itself to ensure the right
+										method is capturing the block (and then set it to Qnil)
+	
+	At this point, there is no guarantee that the method even exists, so we need
+	to check first. Also, if it doesnt, we dispatch to method_missing and we must
+	then fix the rb_block_func global to point to the method_missing instead.
+*/
+global.rb_block_call = function rb_block_call(block, mid, self) {
+	// print("block is: " + block);
+	rb_block_proc = block;
+	var func = self.$m['$' + mid];
+	
+	if (func) {
+		// method exists..
+		rb_block_func = func;
+		return func.apply(null, Array.prototype.slice.call(arguments, 2));
+	} else {
+		// method_missing
+		func = self.$m['$method_missing'];
+		throw "need to forward rb_block_call to method missing"
+	}
+}
+
 // define class/module
 // @global
 rb_vm_class = function(base, super_class, id, body, flag) {
@@ -61,8 +95,8 @@ rb_vm_defn = function(base, m_id, body, singleton) {
 // Return method missing closure.
 // @global
 rb_vm_meth_m = function(m_id) {
-  return function(self, blk) {
-    var args = [self,blk,m_id].concat(Array.prototype.slice.call(arguments, 2));
+  return function(self) {
+    var args = [self,m_id].concat(Array.prototype.slice.call(arguments, 1));
     return self.$m.$method_missing.apply(self, args);
   };
 };
@@ -107,7 +141,7 @@ var opal_puts = function(self, block, arg) {
 
 // Raw require - require the 'path'. Currently uses commonjs paths and load
 // paths etc, but will in future use just a ruby load path.. maybe?
-var opal_require = function(self, block, fname) {
+var opal_require = function(self, fname) {
   // print('need to require: ' + arg);
   return rb_require(fname);
 };

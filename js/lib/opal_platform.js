@@ -18,7 +18,7 @@ global.OpalIRB = function() {
 
 		rb_run(function() {
 
-	  	print((obj = func(rb_top_self, '(irb)'), obj.$m.$inspect(obj, Qnil)));
+	  	print((obj = func(rb_top_self, '(irb)'), obj.$m.$inspect(obj)));
 		});
 	}
 	catch (e) {

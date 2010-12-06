@@ -43,7 +43,7 @@ function ary_to_s(ary) {
 	@param [Object] obj object to append
 	@return [Array] returns the receiver
 */
-function ary_push(ary, block, val) {
+function ary_push(ary, val) {
 	ARG_COUNT(1)
 	ary.push(val);
 	return ary;
@@ -81,13 +81,19 @@ function ary_length(ary) {
 
 	@return [Array] returns the receiver
 */
-function ary_each(ary, block) {
+function ary_each(ary) {
+	// if (rb_block_func == arguments.callee) {
+		// print("block func is me!!");
+	// }
+	
 	ARG_COUNT(0)
 	RETURN_ENUMERATOR(ary, each)
 	
+	print("ary_each: block must be okay!");
+	
 	for (var i = 0; i < ary.length; i++) {
 		PRE_LOOP
-		BLOCK_CALL(block, ary[i]);
+		YIELD(ary[i]);
 		POST_LOOP
 	}
 	
@@ -181,7 +187,7 @@ function ary_push_m(ary, block) {
 	@param [Object] object to look for
 	@return [Number, nil] result
 */
-function ary_index(ary, block, object) {
+function ary_index(ary, object) {
 	// assume object, not block (for now)
 	for (var i = 0; i < ary.length; i++) {
 		if (rb_call(ary[i], "==", object).$r)
@@ -205,7 +211,7 @@ function ary_index(ary, block, object) {
 	@return [Array] returns a new array instance
 */
 function ary_s_create() {
-	return Array.prototype.slice.call(arguments, 2);
+	return Array.prototype.slice.call(arguments, 1);
 }
 
 function ary_alloc() {
@@ -231,7 +237,7 @@ function ary_initialize(ary) {
 	@param [Array] other_ary the array to concat with
 	@return [Array] returns new concatenated array
 */
-function ary_plus(ary, block, other) {
+function ary_plus(ary, other) {
 	ARG_COUNT(1)
 	return ary.concat(other);
 }
@@ -247,7 +253,7 @@ function ary_plus(ary, block, other) {
 	@param [Array] other_ary array to use for difference
 	@return [Array] new array
 */
-function ary_diff(ary, block, other) {
+function ary_diff(ary, other) {
 	rb_raise(rb_eException, "Array#- not implemented");
 }
 
@@ -269,7 +275,7 @@ function ary_diff(ary, block, other) {
 	@param [Array] other array to compare
 	@return [Boolean] are arrays equal
 */
-function ary_equal(ary, block, other) {
+function ary_equal(ary, other) {
 	ARG_COUNT(1)
 	
 	if (ary.$hash() == other.$hash()) return Qtrue;
@@ -300,7 +306,7 @@ function ary_equal(ary, block, other) {
 	  a.assoc "foo"
 	  # => nil
 */
-function ary_assoc(ary, block, obj) {
+function ary_assoc(ary, obj) {
 	ARG_COUNT(1)
 	var arg;
 	
@@ -328,7 +334,7 @@ function ary_assoc(ary, block, obj) {
 	@param [Number] index index to get
 	@return [Object, nil] returns nil or the result
 */
-function ary_at(ary, block, idx) {
+function ary_at(ary, idx) {
 	ARG_COUNT(1)
 	// make sure idx is a number. Try to use #to_int
 	if (!IS_NUMBER(idx.$flags)) {
@@ -517,7 +523,7 @@ function ary_compact_bang(ary) {
 	@param [Array] other_ary array to concat
 	@return [Array] returns receiver
 */
-function ary_concat(ary, block, other) {
+function ary_concat(ary, other) {
 	ARG_COUNT(1)
 	var length = other.length;
 	
@@ -545,7 +551,7 @@ function ary_concat(ary, block, other) {
 	@param [Object] obj object to check
 	@return [Number] count or count of obj
 */
-function ary_count(ary, block, obj) {
+function ary_count(ary, obj) {
 	if (obj != undefined) {
 		var total = 0;
 		
@@ -582,7 +588,7 @@ function ary_count(ary, block, obj) {
 	@param [Object] obj object to delete
 	@return [Object, nil] returns obj or nil
 */
-function ary_delete(ary, block, obj) {
+function ary_delete(ary, obj) {
 	ARG_COUNT(1)
 	var length = ary.length;
 	
@@ -612,7 +618,7 @@ function ary_delete(ary, block, obj) {
 	@param [Number] index the index to delete
 	@return [Object, nil] returns obj at index or nil
 */
-function ary_delete_at_m(ary, block, index) {
+function ary_delete_at_m(ary, index) {
 	ARG_COUNT(1)
 	TO_NUMBER(index)
 	
@@ -664,7 +670,7 @@ function ary_delete_if(ary, block) {
 	@param [Number] n number to drop
 	@return [Array] returns a new array
 */
-function ary_drop(ary, block, n) {
+function ary_drop(ary, n) {
 	ARG_COUNT(1)
 	TO_NUMBER(n)
 	
@@ -740,7 +746,7 @@ function ary_empty_p(ary) {
 	@param [Object] defaults
 	@return [Object] returns result
 */
-function ary_fetch(ary, block, index, defaults) {
+function ary_fetch(ary, index, defaults) {
 	var original = index;
 	
 	if (index < 0) index += ary.length;
@@ -772,7 +778,7 @@ function ary_fetch(ary, block, index, defaults) {
 	@param [Number] n number of elements
 	@return [Object, Array] object or array of objects
 */
-function ary_first(ary, block, count) {
+function ary_first(ary, count) {
 	if (count == undefined) {
 		if (ary.length == 0) return Qnil;
 		return ary[0];
@@ -802,7 +808,7 @@ function ary_first(ary, block, count) {
 	@param [Number] level the level to flatten
 	@return [Array] returns new array
 */
-function ary_flatten(ary, block, level) {
+function ary_flatten(ary, level) {
 	var result = [], item;
 	
 	for (var i = 0; i < ary.length; i++) {
@@ -842,7 +848,7 @@ function ary_flatten(ary, block, level) {
 	@param [Number] level to flatten to
 	@return [Array] returns receiver
 */
-function ary_flatten_bang(ary, block, level) {
+function ary_flatten_bang(ary, level) {
 	var length = ary.length;
 	var result = rb_call(ary, "flatten", level);
 	ary.splice(0);
@@ -865,7 +871,7 @@ function ary_flatten_bang(ary, block, level) {
 	  a.include? "z"
 	  # => false
 */
-function ary_include_p(ary, block, member) {
+function ary_include_p(ary, member) {
 	ARG_COUNT(1)
 	
 	for (var i = 0; i < ary.length; i++) {
@@ -890,7 +896,7 @@ function ary_include_p(ary, block, member) {
 	@param [Array] other_ary array to replace with
 	@return [Array] returns receiver
 */
-function ary_replace(ary, block, other) {
+function ary_replace(ary, other) {
 	ARG_COUNT(1)
 	TO_ARRAY(other)
 	
@@ -916,8 +922,8 @@ function ary_replace(ary, block, other) {
 	@param [Object] obj objects to insert
 	@return [Array] returns the receiver
 */
-function ary_insert(ary, block, index, obj) {
-	obj = Array.prototype.slice.call(3);
+function ary_insert(ary, index, obj) {
+	obj = Array.prototype.slice.call(2);
 	if (index < 0) index += self.length;
 	if (index < 0 || index >= self.length)
 		rb_raise(rb_eIndexError, "out of range");
@@ -939,7 +945,7 @@ function ary_insert(ary, block, index, obj) {
 	@param [String] sep the separator
 	@return [String] joined string
 */
-function ary_join(ary, block, sep) {
+function ary_join(ary, sep) {
 	if (sep == undefined) sep = "";
 	var result = []
 	
@@ -991,7 +997,7 @@ function ary_keep_if(ary, block) {
 	@param [Number] n number of items to get
 	@return [Object, Array] result
 */
-function ary_last(ary, block, n) {
+function ary_last(ary, n) {
 	if (n == undefined) {
 		if (ary.length == 0) return Qnil;
 		return ary[ary.length - 1];
@@ -1019,7 +1025,7 @@ function ary_last(ary, block, n) {
 	@param [Number] n number to pop
 	@return [Array] returns receiver
 */
-function ary_pop(ary, block, n) {
+function ary_pop(ary, n) {
 	if (n == undefined) {
 		if (ary.length) return ary.pop();
 		return Qnil;
@@ -1043,7 +1049,7 @@ function ary_pop(ary, block, n) {
 	@param [Object] obj object to search for
 	@return [Object, nil] result or nil
 */
-function ary_rassoc(ary, block, obj) {
+function ary_rassoc(ary, obj) {
 	ARG_COUNT(1)
 	var test;
 	for (var i = 0; i < ary.length; i++) {
@@ -1209,7 +1215,7 @@ function ary_reverse_each(ary, block) {
 
 	@return [Object, nil] returns result or nil
 */
-function ary_rindex(ary, block, object) {
+function ary_rindex(ary, object) {
 	if (object != undefined) {
 		for (var i = ary.length - 1; i > 0; i--) {
 			if (rb_call(ary[i], "==", object).$r)
@@ -1280,7 +1286,7 @@ function ary_select_bang(ary, block) {
 	@param [Number] n elements to shift
 	@return [Array] result
 */
-function ary_shift(ary, block, n) {
+function ary_shift(ary, n) {
 	if (n != undefined)
 		return ary.splice(0, n);
 	
@@ -1316,7 +1322,7 @@ function ary_shift(ary, block, n) {
 	@param [Number] length last index
 	@return [Array, nil] result
 */
-function ary_slice_bang(ary, block, index, length) {
+function ary_slice_bang(ary, index, length) {
 	var size = ary.length;
 	
 	if (index.$flags & T_RANGE) {
@@ -1345,7 +1351,7 @@ function ary_slice_bang(ary, block, index, length) {
 
 	@return [Array] array of elements
 */
-function ary_take(ary, block, n) {
+function ary_take(ary, n) {
 	ARG_COUNT(1)
 	return ary.slice(0, n);
 }
@@ -1468,8 +1474,8 @@ function ary_uniq_bang(ary) {
 	@param [Object] object objects to add
 	@return [Array] returns receiver
 */
-function ary_unshift(ary, block) {
-	var obj = Array.prototype.slice.call(arguments, 2);
+function ary_unshift(ary) {
+	var obj = Array.prototype.slice.call(arguments, 1);
 	
 	for (var i = obj.length - 1; i >= 0; i--) {
 		ary.unshift(obj[i]);
@@ -1490,7 +1496,7 @@ function ary_unshift(ary, block) {
 	@param [Array] other another array to intersect.
 	@return [Array] intersected array
 */
-function ary_and(ary, block, other) {
+function ary_and(ary, other) {
 	ARG_COUNT(1)
 	var result = [], seen = [];
 	
@@ -1530,7 +1536,7 @@ function ary_and(ary, block, other) {
 	@param [String, Number] num string or number used for joining/concat
 	@result [String, Array] depending on argument
 */
-function ary_times(ary, block, arg) {
+function ary_times(ary, arg) {
 	ARG_COUNT(1)
 	if (arg.$flags & T_STRING) {
 		return ary_join(ary, Qnil, arg);
@@ -1579,7 +1585,7 @@ function ary_times(ary, block, arg) {
 	@param [Number] length last index
 	@return [Array, nil] result
 */
-function ary_aref(ary, block, index, length) {
+function ary_aref(ary, index, length) {
 	var size = ary.length;
 	
 	if (index.$flags & T_RANGE)
@@ -1600,7 +1606,7 @@ function ary_aref(ary, block, index, length) {
 /**
 	Todo: need to expand functionality
 */
-function ary_aset(ary, block, index, value) {
+function ary_aset(ary, index, value) {
 	return ary[index] = value;
 }
 

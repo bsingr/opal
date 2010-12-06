@@ -6,8 +6,9 @@ module Spec
     module Main
       
       def describe(name, &block)
-        # puts Spec::Example::ExampleGroupFactory.create_example_group
-        # raise "in descrube"
+        puts "describing..#{name}"
+        `print(block)`
+        puts "err, yeah"
         Spec::Example::ExampleGroupFactory.create_example_group name, &block
       end
       

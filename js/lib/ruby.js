@@ -90,12 +90,21 @@ RObject.prototype.$hash = RClass.prototype.$hash = function() {
 
 
 // define method
-var rb_define_method = function(klass, name, body) {
+var rb_define_method = function(klass, name, body, file_name, line_number) {
   // console.log("defininf " + name + " on:");
   // console.log(klass);
   klass.$m_prototype_tbl['$' + name] = body;
   klass.$method_table['$' + name] = body;
-  
+	// only define method name if not already set (alias, include etc)
+	if (!body.displayName) {
+		body.displayName = klass.__classid__ + "#" + name;
+		// if we have a filename:
+		if (file_name) {
+			body.displayName += " at " + file_name;
+		}
+		
+	}
+	
   // if we are adding to a module, then check to see if mdethod needs to be
   // included into "included_in" classes
   if (klass.$flags & T_MODULE) {
@@ -146,9 +155,11 @@ rb_obj_alloc = function(klass) {
 // call from js
 function rb_call(recv, mid) {
 	// all args are just from our arguments
-	var args = Array.prototype.slice.call(arguments);
+	var args = Array.prototype.slice.call(arguments, 2);
+	// recv
+	args.unshift(recv);
 	// simply replace mid with our block (nil)
-	args[1] = Qnil;
+	// args[1] = Qnil;
 	// check method exists
 	return (recv.$m['$' + mid] || recv.$M(mid)).apply(null, args);
 }
@@ -210,6 +221,7 @@ rb_raise = function(exc, str) {
     exc = rb_eException;
   }
   var exception = new RObject(exc, T_OBJECT);
+	// var exception = exc_new_instance(exc);
   rb_ivar_set(exception, '@message', str);
   rb_vm_raise(exception);
 };
@@ -279,10 +291,16 @@ rb_run = function(func) {
     if (err.$klass) {
       print('caught error: ' + err.__classid__);
 			
-      print(err.$klass.__classid__ + ': ' + err['@message'])
+      print(err.$klass.__classid__ + ': ' + err['@message']);
+			print(err.stack);
     }
     else {
       print('NativeError: ' + err);
+			print(err.stack);
     }
   }
 };
+
+// Stack trace support
+rb_run.displayName = "main at (irb)";
+

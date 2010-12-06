@@ -10,6 +10,7 @@
 #include "file.js"
 #include "class.js"
 #include "module.js"
+#include "debug.js"
 
 // core classes/objects/modules
 #include "object.js"

@@ -24,7 +24,7 @@ opalhash = function() {
   return new RHash(Array.prototype.slice.call(arguments));
 };
 
-var rb_cHash_store = function(self, block, key, val) {
+var rb_cHash_store = function(self, key, val) {
 	var hash = key.$hash();
 	
 	if (!self['@assocs'].hasOwnProperty(hash))
@@ -33,7 +33,7 @@ var rb_cHash_store = function(self, block, key, val) {
 	return self['@assocs'][hash] = val;
 };
 
-var rb_cHash_fetch = function(self, block, key) {
+var rb_cHash_fetch = function(self, key) {
 	var hash = key.$hash();
 	
 	if (self['@assocs'].hasOwnProperty(hash))
@@ -42,7 +42,7 @@ var rb_cHash_fetch = function(self, block, key) {
 	return self['@default'];
 };
 
-var rb_cHash_delete = function(self, block, key) {
+var rb_cHash_delete = function(self, key) {
 	var hash = key.$hash();
   
   if (self['@assocs'].hasOwnProperty(hash)) {
@@ -65,8 +65,8 @@ var rb_cHash_delete = function(self, block, key) {
 
 	@return [Hash]
 */
-function hash_s_create(obj, block) {
-	return opalhash.apply(null, Array.prototype.slice.call(arguments, 2));
+function hash_s_create(obj) {
+	return opalhash.apply(null, Array.prototype.slice.call(arguments, 1));
 }
 
 /**
@@ -79,7 +79,7 @@ function hash_s_create(obj, block) {
 
 	@return [Array]
 */
-function hash_values(hash, block) {
+function hash_values(hash) {
 	ARG_COUNT(0)
 	
 	var result = [];
@@ -149,7 +149,7 @@ function hash_to_s(hash) {
 
 	@return [Hash] returns reciever
 */
-function hash_each(hash, block) {
+function hash_each(hash) {
 	ARG_COUNT(0)
 	
 	var keys = hash['@keys'], length = keys.length, key;
@@ -170,7 +170,7 @@ function env_inspect(env) {
 	return "ENV";
 }
 
-function env_aref(env, block, key) {
+function env_aref(env, key) {
 	return Qnil;
 }
 

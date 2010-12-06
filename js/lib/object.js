@@ -28,25 +28,30 @@ function mod_name(mod) {
 	return rb_ivar_get(mod, "__classid__");
 }
 
-function mod_eqq(mod, block, obj) {
-	return obj_is_kind_of(obj, Qnil, mod);
+function mod_eqq(mod, obj) {
+	return obj_is_kind_of(obj, mod);
 }
 
-function mod_define_method(mod, block, mid) {
-	rb_define_method(mod, rb_call(mid, "to_s"), block);
+function mod_define_method(mod, mid) {
+	USES_BLOCK
+	
+	if (!BLOCK_GIVEN)
+		rb_raise(rb_eLocalJumpError, "no block given");
+	
+	rb_define_method(mod, rb_call(mid, "to_s"), __block__);
   return Qnil;
 }
 
-function mod_attr_accessor(mod, block) {
+function mod_attr_accessor(mod) {
 	mod_attr_reader.apply(null, arguments);
 	mod_attr_writer.apply(null, arguments);
 	return Qnil;
 }
 
-function mod_attr_reader(mod, block) {
+function mod_attr_reader(mod) {
 	var mid				 = null,
 			attribute	 = null,
-			attributes = Array.prototype.slice.call(arguments, 2);
+			attributes = Array.prototype.slice.call(arguments, 1);
 	
 	for (var i = 0; i < attributes.length; i++) {
 		attribute = attributes[i];
@@ -60,16 +65,16 @@ function mod_attr_reader(mod, block) {
 	return Qnil;
 }
 
-function mod_attr_writer(mod, block) {
+function mod_attr_writer(mod) {
 	var mid				 = null,
 			attribute	 = null,
-			attributes = Array.prototype.slice.call(arguments, 2);
+			attributes = Array.prototype.slice.call(arguments, 1);
 	
 	for (var i = 0; i < attributes.length; i++) {
 		attribute = attributes[i];
 		mid = rb_call(attribute, "to_s");
 		
-		rb_define_method(mod, mid + "=", function(self, block, val) {
+		rb_define_method(mod, mid + "=", function(self, val) {
 			return rb_ivar_set(self, "@" + mid, val);
 		});
 	}
@@ -77,7 +82,7 @@ function mod_attr_writer(mod, block) {
 	return Qnil;
 }
 
-function mod_alias_method(mod, block, new_name, old_name) {
+function mod_alias_method(mod, new_name, old_name) {
 	new_name = rb_call(new_name, "to_s");
 	old_name = rb_call(old_name, "to_s");
 	rb_define_method(mod, new_name, mod.$m_tbl['$' + old_name]);
@@ -88,17 +93,19 @@ function mod_to_s(mod) {
 	return rb_ivar_get(mod, "__classid__");
 }
 
-function mod_const_set(mod, block, id, value) {
+function mod_const_set(mod, id, value) {
 	return rb_vm_cs(mod, rb_call(id, "to_s"), value);
 }
 
-function mod_class_eval(mod, block, string, filename, lineno) {
-	if (block != Qnil) {
-		return block(mod, Qnil);
-	} else {
+function mod_class_eval(mod, string, filename, lineno) {
+	USES_BLOCK
+	
+	if (!BLOCK_GIVEN) {
 		var code = exports.compile(string);
 	  var func = new Function('self', '__FILE__', code);
 	  return func(mod, io_expand_path(filename));
+	} else {
+		return YIELD_USING(mod);
 	}
 }
 
@@ -114,22 +121,22 @@ function mod_protected(mod) {
 	return mod;
 }
 
-function mod_include(cla, block, mod) {
+function mod_include(cla, mod) {
 	rb_include_module(cla, mod);
   return Qnil;
 }
 
-function mod_extend(cla, block, mod) {
+function mod_extend(cla, mod) {
 	rb_extend_module(cla, mod);
 	return Qnil;
 }
 
-function class_s_new(clas, block, sup) {
+function class_s_new(clas, sup) {
 	var klass = rb_define_class_id("AnonClass", sup || rb_cObject);
 	return klass;
 };
 
-function class_new_instance(cla, block) {
+function class_new_instance(cla) {
 	var obj = cla.$m.$allocate(cla, Qnil);
 	var args = Array.prototype.slice.call(arguments);
 	args[0] = obj;
@@ -137,7 +144,7 @@ function class_new_instance(cla, block) {
 	return obj;
 };
 
-function class_initialize(cla, block, sup) {
+function class_initialize(cla, sup) {
 	// print("in Class.new initialize");
 	var klass = rb_define_class_id('', sup || rb_cObject);
 	return klass;
@@ -158,15 +165,15 @@ function false_to_s() {
 	return "false";
 }
 
-function false_and(self, block, other) {
+function false_and(self, other) {
 	return Qfalse;
 }
 
-function false_or(self, block, other) {
+function false_or(self, other) {
 	return other.$r ? Qtrue : Qfalse;
 }
 
-function false_xor(self, block, other) {
+function false_xor(self, other) {
 	return other.$r ? Qtrue : Qfalse;
 }
 
@@ -174,7 +181,7 @@ function true_to_s() {
 	return "true";
 }
 
-function true_and(self, block, other) {
+function true_and(self, other) {
 	return other.$r ? Qtrue : Qfalse;
 }
 
@@ -182,7 +189,7 @@ function true_or() {
 	return Qtrue;
 }
 
-function true_xor(self, block, other) {
+function true_xor(self, other) {
 	return other.$r ? Qfalse : Qtrue;
 }
 
@@ -269,8 +276,8 @@ function obj_proc(obj, block) {
 	@param [Object] args objects to print using `inspect`
 	@return [nil]
 */
-function obj_puts(obj, block) {
-	var args = Array.prototype.slice.call(arguments, 2);
+function obj_puts(obj) {
+	var args = Array.prototype.slice.call(arguments, 1);
 	
 	for (var i = 0; i < args.length; i++) {
 		io_puts(rb_call(args[i], "to_s"));
@@ -298,7 +305,7 @@ function obj_puts(obj, block) {
 	@param [String] string to pass as message for exception
 	@return [nil]
 */
-function obj_raise(obj, block, exception, string) {
+function obj_raise(obj, exception, string) {
 	ARG_MIN(1)
 	
 	var msg = Qnil, exc;
@@ -306,7 +313,7 @@ function obj_raise(obj, block, exception, string) {
 	if (IS_STRING(exception)) {
 		msg = exception;
 		exc = rb_call(rb_eRuntimeError, "new", msg);
-	} else if (false && obj_is_kind_of(exception, Qnil, rb_eException)) {
+	} else if (false && obj_is_kind_of(exception, rb_eException)) {
 		exc = exception;
 	} else {
 		if (string != undefined)
@@ -318,19 +325,19 @@ function obj_raise(obj, block, exception, string) {
 	rb_vm_raise(exc);
 }
 
-function obj_instance_variable_defined_p(obj, block, name) {
+function obj_instance_variable_defined_p(obj, name) {
 	ARG_COUNT(1)
 	TO_STRING(name)
 	return rb_ivar_defined(obj, name) ? Qtrue : Qfalse;
 }
 
-function obj_instance_variable_get(obj, block, name) {
+function obj_instance_variable_get(obj, name) {
 	ARG_COUNT(1)
 	TO_STRING(name)
 	return rb_ivar_get(obj, name);
 }
 
-function obj_instance_variable_set(obj, block, name, value) {
+function obj_instance_variable_set(obj, name, value) {
 	ARG_COUNT(2)
 	TO_STRING(name)
 	return rb_ivar_set(obj, name, value);
@@ -352,7 +359,7 @@ function obj_block_given_p() {
 	return Qfalse;
 }
 
-function obj_method_missing(obj, block, sym) {
+function obj_method_missing(obj, sym) {
 	ARG_MIN(1)
 	TO_STRING(sym)
 	
@@ -376,7 +383,7 @@ function obj_tap(obj, block) {
 	return obj;
 }
 
-function obj_is_kind_of(obj, block, klass) {
+function obj_is_kind_of(obj, klass) {
 	ARG_COUNT(1)
 	
 	var search = obj.$klass;
@@ -397,7 +404,7 @@ function obj_nil_p(obj) {
 	return Qfalse;
 }
 
-function obj_respond_to_p(obj, block, method) {
+function obj_respond_to_p(obj, method) {
 	ARG_COUNT(1)
 	
 	TO_STRING(method)
@@ -408,13 +415,13 @@ function obj_respond_to_p(obj, block, method) {
 	return Qfalse;
 }
 
-function obj_eqq(obj, block, other) {
+function obj_eqq(obj, other) {
 	ARG_COUNT(1)
 	
 	return rb_call(obj, "==", other);
 }
 
-function obj_send(obj, block, method) {
+function obj_send(obj, method) {
 	ARG_COUNT(1)
 	
 	TO_STRING(method)
@@ -448,7 +455,7 @@ function obj_class(obj) {
 	@param [Number] max max number to use
 	@return [Number] random number
 */
-function obj_rand(obj, block, max) {
+function obj_rand(obj, max) {
 	if (max != undefined)
 		return Math.floor(Math.random() * max);
 	else
@@ -468,17 +475,26 @@ function obj_to_s(obj) {
 	 ">";
 }
 
+function obj_inspect(obj) {
+	return rb_call(obj, "to_s");
+}
+
 function obj_instance_eval(obj, block) {
-	ARG_COUNT(0)
+	USES_BLOCK
 	
-	if (BLOCK_GIVEN(block))
+	// if (!BLOCK_GIVEN)
+	// 	rb_raise(rb_eLocalJumpError, "no block given");
+	// ARG_COUNT(0)
+	
+	if (BLOCK_GIVEN)
 		// we use obj as the self instead of block's self
-		return block(obj, Qnil);
+		// return block(obj, Qnil);
+		return YIELD_USING(obj);
 	
 	return obj;
 }
 
-function obj_const_set(obj, block, name, value) {
+function obj_const_set(obj, name, value) {
 	ARG_COUNT(2)
 	
 	TO_STRING(name)
@@ -486,7 +502,7 @@ function obj_const_set(obj, block, name, value) {
 	return rb_const_set(obj, name, value);
 }
 
-function obj_const_defined_p(obj, block, name) {
+function obj_const_defined_p(obj, name) {
 	ARG_COUNT(1)
 	
 	TO_STRING(name)
@@ -497,6 +513,9 @@ function obj_const_defined_p(obj, block, name) {
 // Init core Object classes with some bootstrap methods
 var InitObject = function() {
 	var tmp_metaclass;
+	
+	// debug support for filename
+	var filename = "opal/runtime/object.js";
 
 	rb_cBasicObject = boot_defrootclass('BasicObject');
 	rb_cObject = boot_defclass('Object', rb_cBasicObject);
@@ -554,7 +573,7 @@ var InitObject = function() {
 	rb_define_method(rb_mKernel, "instance_variable_set", 
 																obj_instance_variable_set);
 	rb_define_method(rb_mKernel, "block_given?", obj_block_given_p);
-	rb_define_method(rb_mKernel, "method_missing", obj_method_missing);
+	rb_define_method(rb_mKernel, "method_missing", obj_method_missing, filename);
 	rb_define_method(rb_mKernel, "to_a", obj_to_a);
 	rb_define_method(rb_mKernel, "tap", obj_tap);
 	rb_define_method(rb_mKernel, "kind_of?", obj_is_kind_of);
@@ -569,7 +588,7 @@ var InitObject = function() {
 	rb_define_method(rb_mKernel, "object_id", obj_object_id);
 	rb_define_method(rb_mKernel, "__id__", obj_object_id);
 	rb_define_method(rb_mKernel, "to_s", obj_to_s);
-	rb_define_method(rb_mKernel, "inspect", obj_to_s);
+	rb_define_method(rb_mKernel, "inspect", obj_inspect);
 	rb_define_method(rb_mKernel, "instance_eval", obj_instance_eval);
 	rb_define_method(rb_mKernel, "const_set", obj_const_set);
 	rb_define_method(rb_mKernel, "const_defined?", obj_const_defined_p);

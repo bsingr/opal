@@ -11,7 +11,7 @@ var init_argv = [];
 exports.init = function() {
 	if (rb_opal_done_init) return;
 	rb_opal_done_init = true;
-	
+	Init_Debug_Mode();
 	print("about to init");
 	// core inits.
 	InitObject();

@@ -175,28 +175,28 @@ var InitFile = function() {
 // All methods used from here are methods for the File class to use directly
 
 // File#__join__
-var rb_cFile_join = function(self, block) {
-	var parts = Array.prototype.slice.call(arguments, 2);
+var rb_cFile_join = function(self) {
+	var parts = Array.prototype.slice.call(arguments, 1);
 	return file_join.apply(null, parts);
 };
 
 // File#__dirname__
-var rb_cFile_dirname = function(self, block, path) {
+var rb_cFile_dirname = function(self, path) {
 	return file_dirname(path);
 };
 
 // File#__expand_path__
-var rb_cFile_expand_path = function(self, block, path, dir_string) {
+var rb_cFile_expand_path = function(self, path, dir_string) {
 	return io_expand_path(path, dir_string);
 };
 
 // File.__exists__
-var rb_cFile_exists = function(self, block, path) {
+var rb_cFile_exists = function(self, path) {
 	return file_exists(path) ? Qtrue : Qfalse;
 };
 
 // File.__read__
-var rb_cFile_read = function(self, block, path) {
+var rb_cFile_read = function(self, path) {
 	if (file_exists(path)) {
 		return opal_file_read(path);
 	}
@@ -206,12 +206,12 @@ var rb_cFile_read = function(self, block, path) {
 }
 
 // Dir#__getwd__
-var rb_cDir_getwd = function(self, block) {
+var rb_cDir_getwd = function(self) {
 	return io_getwd();
 };
 
 // Dir.__glob__
-var rb_cDir_glob = function(self, block, glob) {
+var rb_cDir_glob = function(self, glob) {
 	return file_glob(glob);
 };
 

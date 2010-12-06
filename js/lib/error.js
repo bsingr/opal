@@ -17,9 +17,36 @@ var rb_vm_return_instance,
 		rb_vm_block_return_instance,
 		rb_vm_next_instance;
 
-function exc_initialize(exc, block, message) {
-	if (message != Qnil)	
-		rb_ivar_set(exc, "@message", message);
+// Error.prepareStackTrace = function(error, structuredStackTrace) {
+// 	var result = [], func;
+// 	
+// 	for (var i = 0; i < structuredStackTrace.length; i++) {
+// 		func = structuredStackTrace[i].getFunction();
+// 		
+// 		if (func.displayName)
+// 			result.push("from " + func.displayName);
+// 		// else
+// 			// result.push("from " + structuredStackTrace[i].getFunctionName());
+// 	}
+// 	// print(structuredStackTrace.length);
+// 	// return ["STACK TRACE"];
+// 	return "\t" + result.join("\n\t");
+// };
+
+// function exc_new_instance(cla) {
+// 	var result = new Error();
+// 	result.$m = cla.$m_tbl;
+// 	result.$klass = cla;
+// 	return result;
+// }
+		
+// function exc_s_allocate(cla) {
+	// return exc_new_instance(cla);
+// }
+
+function exc_initialize(exc, message) {
+	// if (message != Qnil)	
+		rb_ivar_set(exc, "@message", (message == undefined) ? "" : message);
 }
 
 function exc_message(exc) {
@@ -35,7 +62,12 @@ function exc_to_s(exc) {
 }
 
 var Init_Exception = function() {
-	// Exception classes
+	// Exception classes	
+	// rb_eException = rb_define_toll_free_class(Error.prototype, T_OBJECT, 
+																				// 'Exception', rb_cObject);
+	
+	// rb_define_singleton_method(rb_eException, "allocate", exc_s_allocate);
+	
 	rb_eException = rb_define_class("Exception", rb_cObject);
 	
 	rb_define_method(rb_eException, "initialize", exc_initialize);

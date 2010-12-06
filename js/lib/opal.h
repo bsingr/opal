@@ -1,29 +1,62 @@
+/*
+  Set a local variable __block__ to either Qnil or the block. Here basically we
+  check if the block was intended for us, and then set it to Qnil regardless.
+*/
+#define USES_BLOCK \
+  var __block__ = (rb_block_func == arguments.callee) ? rb_block_proc : Qnil; \
+  rb_block_func = rb_block_proc = Qnil;
+    
+
+/*
+  If no block was given, return an enumerator. This automatically calls 
+  USES_BLOCK, so manually calling that is not neceessary.
+*/
 #define RETURN_ENUMERATOR(obj, mid)	\
-	if (block == Qnil) \
+  USES_BLOCK \
+	if (__block__ == Qnil) \
 		rb_raise(rb_eArgError, # mid + " needs to return an enumerator");
 
-#define BLOCK_CALL(block, ...) \
-	block(block.__self__, Qnil, ##__VA_ARGS__)
-	
-#define BLOCK_GIVEN(block) \
-  (block != Qnil)
+/*
+  Yields the block. This assumes the block is stored locally as __block__, as it
+  will be set using USES_BLOCK
+*/
+#define YIELD(...) \
+  __block__(__block__.__self__, ##__VA_ARGS__)
 
-#define RB_CALL(recv, mid, ...) \
-	recv.$m[#mid](recv, Qnil, ##__VA_ARGS__)
+/*
+  Like above, but yield using the given self:
+*/
+#define YIELD_USING(self, ...) \
+ __block__(self, ##__VA_ARGS__) 
+
+/*
+  Evaluates to true or false whether a block was given or not. again, relies on
+  a variable named __block__ which is given by USES_BLOCK
+*/
+#define BLOCK_GIVEN \
+  (__block__ != Qnil)
+
+/*
+  Simply call a method on the receiver. Method MUST exist
+*/
+#define CALL(recv, mid, ...) \
+	recv.$m["$" + mid](recv, ##__VA_ARGS__)
 
 /**
 	Ensure that the args given to a js function exactly equals the given count.
 */
 #define ARG_COUNT(argc) \
-	if ((arguments.length - 2) != argc) \
-		rb_arg_error(arguments.length - 2, argc);
+	if ((arguments.length - 1) != argc) {\
+    print(arguments.callee);\
+		rb_arg_error(arguments.length - 1, argc); }
 
 /**
 	Ensure that the args given to a js function is atleast the given num
 */
 #define ARG_MIN(argmin) \
-	if ((arguments.length - 2) < argmin) \
-		rb_arg_error(arguments.length - 2, argmin);
+	if ((arguments.length - 1) < argmin)  {\
+    print(arguments.callee);\
+		rb_arg_error(arguments.length - 1, argmin); }
 		
 #define PRE_LOOP \
 	try {
