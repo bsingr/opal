@@ -57,13 +57,27 @@
 	if ((arguments.length - 1) < argmin)  {\
     print(arguments.callee);\
 		rb_arg_error(arguments.length - 1, argmin); }
-		
+
+/*
+  For loops in JS that take the place of while loops in ruby, we need to 
+  capture all the break, next and return throws and deal with them appropriately
+*/		
 #define PRE_LOOP \
 	try {
 
+/*
+  Keywords:
+    0 (return) -
+    1 (return) - 
+    2 (break)  - simply return the break value back to the method it was called
+                 from.
+    3 (next)   - 
+*/
 #define POST_LOOP \
 	} catch(e) { \
 		switch (e.$keyword) { \
+		  case 2: \
+        return e["@exit_value"]; \
 			default: \
 				throw e; \
 		} \

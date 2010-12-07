@@ -231,13 +231,8 @@ rb_vm_next = function(value) {
 
 // global
 rb_break = function(value) {
-  throw {
-    toString: function() {
-      return "uncaught break";
-    },
-    __keyword__: 'break',
-    opal_value: value == undefined ? Qnil : value
-  };
+  rb_ivar_set(rb_vm_break_instance, "@exit_value", value);
+  throw rb_vm_break_instance;
 };
 
 // raise exception class with our given string

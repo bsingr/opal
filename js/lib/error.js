@@ -15,34 +15,8 @@ var rb_vm_return_instance,
 		rb_vm_loop_return_instance,
 		// disgard this? yes we can!
 		rb_vm_block_return_instance,
-		rb_vm_next_instance;
-
-// Error.prepareStackTrace = function(error, structuredStackTrace) {
-// 	var result = [], func;
-// 	
-// 	for (var i = 0; i < structuredStackTrace.length; i++) {
-// 		func = structuredStackTrace[i].getFunction();
-// 		
-// 		if (func.displayName)
-// 			result.push("from " + func.displayName);
-// 		// else
-// 			// result.push("from " + structuredStackTrace[i].getFunctionName());
-// 	}
-// 	// print(structuredStackTrace.length);
-// 	// return ["STACK TRACE"];
-// 	return "\t" + result.join("\n\t");
-// };
-
-// function exc_new_instance(cla) {
-// 	var result = new Error();
-// 	result.$m = cla.$m_tbl;
-// 	result.$klass = cla;
-// 	return result;
-// }
-		
-// function exc_s_allocate(cla) {
-	// return exc_new_instance(cla);
-// }
+		rb_vm_next_instance,
+		rb_vm_break_instance;
 
 function exc_initialize(exc, message) {
 	// if (message != Qnil)	
@@ -62,11 +36,6 @@ function exc_to_s(exc) {
 }
 
 var Init_Exception = function() {
-	// Exception classes	
-	// rb_eException = rb_define_toll_free_class(Error.prototype, T_OBJECT, 
-																				// 'Exception', rb_cObject);
-	
-	// rb_define_singleton_method(rb_eException, "allocate", exc_s_allocate);
 	
 	rb_eException = rb_define_class("Exception", rb_cObject);
 	
@@ -99,8 +68,12 @@ var Init_Exception = function() {
 	rb_vm_block_return_instance = new RObject(rb_eLocalJumpError, T_OBJECT);
 	rb_ivar_set(rb_vm_block_return_instance, '@message', 'unexpected return');
 	rb_vm_block_return_instance.$keyword = 0;
+	
+	rb_vm_break_instance = new RObject(rb_eLocalJumpError, T_OBJECT);
+	rb_ivar_set(rb_vm_break_instance, "@message", "unexpected break");
+	rb_vm_break_instance.$keyword = 2;
 
 	rb_vm_next_instance = new RObject(rb_eLocalJumpError, T_OBJECT);
-	rb_ivar_set(rb_vm_next_instance, '@message', 'unexpected break');
+	rb_ivar_set(rb_vm_next_instance, '@message', 'unexpected next');
 	rb_vm_next_instance.$keyword = 3;
 };

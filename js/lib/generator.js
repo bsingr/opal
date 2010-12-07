@@ -1237,6 +1237,7 @@ RubyGenerator.prototype = {
     var is_singleton = stmt[1];
     
     this.push_iseq(DefIseq);
+    this.iseq_current._method_id = stmt[2];
     
     var args = stmt[3];
     
@@ -1727,9 +1728,10 @@ RubyGenerator.prototype = {
   
   generate_super: function(stmt) {
     var res = [];
-    res.push(this.SELF + '.opal_super(arguments.callee, ');
+    var mid = this.iseq_current._method_id;
+    res.push('rb_super(arguments.callee, "' + mid + '", ' + this.SELF + ',');
     if (!stmt[1]) {
-      res.push("Array.prototype.slice.call(arguments)");
+      res.push("Array.prototype.slice.call(arguments, 1)");
     }
     else {
       res.push('[');

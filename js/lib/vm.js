@@ -36,6 +36,59 @@ global.rb_block_call = function rb_block_call(block, mid, self) {
 	}
 }
 
+/**
+  Call a super method.
+  
+  callee is the function that actually called super(). We use this to find the
+  right place in the tree to find the method that actually called super. This is
+  actually done in rb_super_find, 
+*/
+global.rb_super = function(callee, mid, self, args) {
+  // print("looking for super " + callee);
+  var func = rb_super_find(self.$klass, callee, mid);
+  
+  if (!func)
+    rb_raise(rb_eNoMethodError, "super: no super class method `" + mid + "`" +
+      " for " + CALL(self, "inspect"));
+  
+  var args_to_send = [self].concat(args);
+  return func.apply(null, args_to_send);
+};
+
+/**
+  Actually find super impl to call.  Returns null if cannot find it.
+  This is the debug version!!!!!!!!!!!!!!!!!!!!. also need non debug version
+*/
+function rb_super_find(klass, callee, mid) {
+  var mid = '$' + mid;
+  var cur_method;
+  // find current method
+  while (klass) {
+    if (klass.$method_table[mid]) {
+      if (klass.$method_table[mid].$wrapped == callee) {
+        // cur_method = klass.$method_table[mid];
+        break;
+      }
+    }
+    klass = klass.$super;
+  }
+  
+  if (!klass) return null;
+  
+  // find super() from klass up
+  klass = klass.$super;
+  
+  while (klass) {
+    if (klass.$method_table[mid]) {
+      return klass.$method_table[mid];
+    }
+    
+    klass = klass.$super;
+  }
+  
+  return null;
+}
+
 // define class/module
 // @global
 rb_vm_class = function(base, super_class, id, body, flag) {

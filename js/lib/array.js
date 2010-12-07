@@ -476,8 +476,15 @@ function ary_dup(ary, block) {
 */
 function ary_compact(ary) {
 	ARG_COUNT(0)
-	var result = ary_dup(ary);
-	return ary_compact_bang(result);
+	var result = [], length = ary.length;
+	
+	for (var i = 0; i < length; i++) {
+	  if (ary[i] != Qnil) {
+	    result.push(ary[i]);
+	  }
+	}
+	
+	return result;
 }
 
 /**
@@ -996,6 +1003,7 @@ function ary_last(ary, n) {
 		if (ary.length == 0) return Qnil;
 		return ary[ary.length - 1];
 	} else {
+	  if (n > ary.length) n = ary.length;
 		return ary.slice(ary.length - n, ary.length);
 	}
 }

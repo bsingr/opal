@@ -27,8 +27,4 @@ describe "Array#<<" do
     a.should == [:foo]
     
   end
-  
-  it "should fail inside this one" do
-    1.should == 2
-  end
 end
