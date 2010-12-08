@@ -1720,11 +1720,12 @@ RubyGenerator.prototype = {
   
   generate_block_given: function(stmt) {
     var name = this.iseq_current.block_arg;
+    this.iseq_current.__uses_block__ = true;
     return '(' + name + ' !== ' + this.NIL + ' ? Qtrue : Qfalse)';
   },
   
   generate_yield: function(stmt) {
-    this.iseq_current.uses_block();
+    this.iseq_current.__uses_block__ = true;
     var block = this.iseq_current.block_arg;
     var args_res = [block + '.$self, ' + this.NIL];
     // args

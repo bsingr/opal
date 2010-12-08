@@ -21,7 +21,7 @@ load_paths.unshift(exports.opal_lib_path);
 // Ruby loader.
 extensions['.rb'] = function(fname) {
   // get file content
-  var content = io_read(fname).toString();
+  var content = opal_read(fname).toString();
   // compile ruby
   var code = exports.compile(content);
   // print('#################################################################');

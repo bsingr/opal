@@ -16,6 +16,60 @@
 #include "../runtime.js"
 #include "../dev.js"
 
+
+/**
+  Open the file at the given path. This will return a fd if successfull. The fd
+  should then be saved for accessing the file in future.
+  
+  @example
+  
+    opal_file_open("some/path/to/file.txt")
+    # => 4
+*/
+function opal_file_open(path) {
+  var fd = OpalFile.open(path, 0, 0666);
+  return fd;
+}
+
+/**
+  Close the file with the given fd. This will then stop the given file from 
+  being read/write/access able. Returns file descriptor.
+  
+  @example
+  
+    opal_file_close(5)
+    # => 5
+*/
+function opal_file_close(fd) {
+  OpalFile.close(fd);
+  return fd;
+}
+
+/**
+  Checks if the given file/dir exists. Returns true or false.
+*/
+function opal_file_exists(path) {
+  return OpalFile.exists(path);
+}
+
+/**
+  Read the entire file at the given fd
+*/
+function opal_file_read(fd) {
+	var str = OpalFile.read(fd, 0, 4048);
+	return str;
+};
+
+/**
+  Raw read given filename path
+*/
+function opal_read(path) {
+  var fd = opal_file_open(path);
+  var str = opal_file_read(fd);
+  opal_file_close(fd);
+  return str;
+}
+
 // FIXME: remove this! used for tmp readline
 global.OpalIRB = function() {
 	try {
@@ -34,17 +88,6 @@ global.OpalIRB = function() {
 		// for (var prop in e.stack) print(prop);
 		// print(e.toString)
 	}
-};
-
-// var opal_file_read
-var opal_file_read = function(path) {
-	var fd = OpalFile.open(path, 0, 0666);
-	var str = OpalFile.read(fd, 0, 4048);
-	OpalFile.close(fd);
-	
-  // print("read file :" + path);
-	// return "path fd is: " + fd;
-	return str;
 };
 
 // Returns the extension name of the given path. The extension must be in the
@@ -66,11 +109,6 @@ var io_extname = function(path) {
 // Returns true if the given fname exists, false otherwise. Use native bridge.
 // FIXME: remove this just in favor of file_exists below.
 var io_file_exists = OpalFile.exists;
-
-// Simple read of the given file
-var io_read = function(path) {
-	return opal_file_read(path);
-};
 
 var io_expand_path = function(path, dir_string) {
 	// print("path is: " + path);

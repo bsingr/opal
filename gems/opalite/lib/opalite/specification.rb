@@ -7,7 +7,7 @@ module Opalite
       # 
       attr_accessor :name, :version, :date, :summary, :require_paths
       attr_accessor :email, :homepage, :description, :authors, :files
-      attr_accessor :executables
+      attr_accessor :executables, :test_files, :require_path
       
       ##
       # Capture RubyGems definition which simply takes a block

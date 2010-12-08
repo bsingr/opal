@@ -9,6 +9,7 @@ module Opalite
     
     def initialize(spec)
       @spec = spec
+      @out_dir = "#{@spec.name}-#{@spec.version}.opal"
     end
     
     ##
@@ -22,6 +23,56 @@ module Opalite
       
       puts result.join('')
       puts success
+      
+      puts "=== test files"
+      build_test_files
+    end
+    
+    ##
+    # Build just the test files for opal into the file: (replacing correct 
+    # version and name) opal_name-1.0.0.opal/opal_name-1.0.0-test.js 
+    # 
+    # Format:
+    # =======
+    # 
+    # Assuming name: opal, version: 1.0.0, and 2 spec files.
+    # 
+    # Opal.register_gem({
+    #   "name": "opal",
+    #   "version": "1.0.0",
+    #   "files": {
+    #     "spec/spec_helper.rb": "...code...",
+    #     "spec/core/some_method.rb": "...code...",
+    #     "spec/core/some_method2.rb": "...code..."
+    #   }
+    # });
+    # 
+    # Where "...code..." will be the compiled ruby code (as javascript). We use
+    # register_gem because thats the type of input the files were originally. We
+    # can, and do, register the same name more than once (once for core libs, 
+    # again for specs, and maybe again for resources (datauri and mhtml)). To
+    # register normal libs, we use register_lib.
+    # 
+    def build_test_files
+      out = File.join @out_dir, "#{@spec.name}-#{@spec.version}-test.js"
+      puts "out is: #{out}"
+      files = {}
+      
+      @spec.test_files.each do |test_file|
+        puts test_file
+        files[test_file] = Opal.compile(File.read(test_file))
+      end
+      
+      result = []
+      result << "Opal.register_gem({"
+      result << "\"name\": \"#{@spec.name}\","
+      result << "\"version\": \"#{@spec.version}\","
+      result << "\"files\": {"
+      
+      result << "}"
+      result << "});"
+      
+      puts result.join
     end
     
     ##
@@ -38,7 +89,7 @@ module Opalite
       ["  Successfully build Opalite",
        "  Name: #{@spec.name}",
        "  Version: #{@spec.version}",
-       "  File: #{@spec.name}.gem"].join("\n")
+       "  File: #{@spec.name}-#{@spec.version}.opal"].join("\n")
     end
   end
 end

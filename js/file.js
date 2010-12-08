@@ -153,9 +153,9 @@ var file_glob_build_regexp = function(pattern, flags) {
 };
 
 // Initialize core File (and Dir) classes with some bootstrap methods.
-var InitFile = function() {
+function Init_File() {
 	// @class File
-	rb_cFile = rb_define_class('File', rb_cObject);
+	rb_cFile = rb_define_class("File", rb_cIO);
 	
 	// VM methods for core file access.
 	rb_define_singleton_method(rb_cFile, '__join__', rb_cFile_join);
@@ -198,7 +198,7 @@ var rb_cFile_exists = function(self, mid, path) {
 // File.__read__
 var rb_cFile_read = function(self, mid, path) {
 	if (file_exists(path)) {
-		return opal_file_read(path);
+		return opal_read(path);
 	}
 	else {
 		rb_raise(rb_eRuntimeError, "No such file to load - " + path);

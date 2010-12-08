@@ -21,7 +21,6 @@ exports.init = function() {
 	Init_Regexp();
 	InitLoad();
 	Init_IO();
-	InitFile();
 	InitVM();
 	Init_Exception();
 	Init_String();

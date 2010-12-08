@@ -32,13 +32,14 @@ class File
       __exists__ path
     end
     
-    def read(path)
-      if exists? path
-        __read__ path
-      else
-        raise "No such file or directory - #{path}"
-      end
-    end
+    # def read(path)
+      # puts "reading with File.read for #{path}"
+      # if exists? path
+        # __read__ path
+      # else
+        # raise "No such file or directory - #{path}"
+      # end
+    # end
     
   end
 end

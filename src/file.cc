@@ -114,10 +114,13 @@ namespace opal {
 	v8::Handle<v8::Value> Open(const v8::Arguments& args) {
 		v8::String::Utf8Value path(args[0]->ToString());
 		
-		int fd = open(*path, 0, 0777);
+		int fd = open(*path, 0, 0644);
 		
 		if (fd < 0) {
-			printf("bad file path: does not exist: %d\n", fd);
+      // printf("bad file path: does not exist: %d\n", fd);
+      char err[1024];
+      snprintf(err, 1024, "bad file path: %d", fd);
+      v8::ThrowException(JS_STR(err));
 		}
 		// printf("need to open %s\n", *path);
 		return v8::Integer::New(fd);

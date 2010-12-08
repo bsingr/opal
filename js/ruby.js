@@ -321,8 +321,8 @@ rb_run = function(func) {
     return func();
   }
   catch(err) {
-    // should check if err is native or ruby error (.$k)
-    if (err.$klass) {
+    // should check if err is native or ruby error (.$k) also check not string
+    if (err.$klass && typeof err != "string") {
       // print('caught error: ' + err.__classid__);
 			
       print(err.$klass.__classid__ + ': ' + err['@message']);
@@ -332,7 +332,7 @@ rb_run = function(func) {
     }
     else {
       print('NativeError: ' + err);
-			print(err.stack);
+			debug_print_backtrace(debug_stack);
     }
   }
 };
