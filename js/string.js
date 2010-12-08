@@ -44,7 +44,7 @@ opalsym = function(str) {
 // 
 // @param [String] str string to copy
 // @return [String] result
-function str_s_new(str, text) {
+function str_s_new(str, mid, text) {
 	return new String(text || "");
 };
 
@@ -56,7 +56,7 @@ function str_s_new(str, text) {
 // 
 // @param [Number] num number of copies
 // @return [String] result
-function str_times(str, times) {
+function str_times(str, mid, times) {
 	var res = [];
 	
 	for (var i = 0; i < times; i++) {
@@ -75,7 +75,7 @@ function str_times(str, times) {
 // 
 // @param [String] other_str string to concatenate
 // @return [String] result
-function str_plus(str, other) {
+function str_plus(str, mid, other) {
 	return str + other;
 };
 
@@ -91,7 +91,7 @@ function str_plus(str, other) {
 //   # => "123abc"
 // 
 // @return [String]
-function str_capitalize(str) {
+function str_capitalize(str, mid) {
 	return str[0].toUpperCase() + str.substr(1).toLowerCase();
 }
 
@@ -103,11 +103,11 @@ function str_capitalize(str) {
 //   # => "hello"
 // 
 // @return [String] result
-function str_downcase(str) {
+function str_downcase(str, mid) {
 	return str.toLowerCase();
 }
 
-function str_to_s(str) {
+function str_to_s(str, mid) {
 	return str;
 }
 
@@ -122,14 +122,14 @@ function str_to_s(str) {
 //   # => "\"hello\""
 // 
 // @return [String]
-function str_inspect(str) {
+function str_inspect(str, mid) {
 	return '"' + str + '"';
 }
 
 // Returns the character length of `str`.
 // 
 // @return [Number] length of string
-function str_length(str) {
+function str_length(str, mid) {
 	return str.length;
 }
 
@@ -156,7 +156,7 @@ function str_length(str) {
 //   # => :"cat and dog"
 // 
 // @return [Symbol]
-function str_intern(str) {
+function str_intern(str, mid) {
 	return opalsym(str);
 }
 
@@ -167,26 +167,26 @@ function str_intern(str) {
 //   # => "desserts"
 // 
 // @return [String]
-function str_reverse(str) {
+function str_reverse(str, mid) {
 	return str.split("").reverse().join("");
 }
 
-function str_sub(str, pattern) {
+function str_sub(str, mid, pattern) {
 	return str.replace(pattern, block);
 }
 
-function str_gsub(str, pattern) {
+function str_gsub(str, mid, pattern) {
 	var r = pattern.toString();
 	r = r.substr(1, r.lastIndexOf('/') - 1);
 	r = new RegExp(r, 'g');
 	return str.replace(r, block);
 }
 
-function str_slice(str, start, finish) {
+function str_slice(str, mid, start, finish) {
 	return str.substr(start, finish);
 }
 
-function str_split(str, split) {
+function str_split(str, mid, split) {
 	return str.split(split);
 }
 
@@ -205,7 +205,7 @@ function str_split(str, split) {
 // 
 // @param [String] other_str string to compare
 // @return [-1, 0, 1, nil] result
-function str_cmp_m(str, other) {
+function str_cmp_m(str, mid, other) {
   if (!(other.info & TS)) return Qnil;
   else if (str > other) return 1;
   else if (str < other) return -1;
@@ -217,7 +217,7 @@ function str_cmp_m(str, other) {
 // 
 // @param [String] other string to compare
 // @return [Boolean] result
-function str_equal(str, other) {
+function str_equal(str, mid, other) {
 	return str.valueOf() == other.valueOf() ? Qtrue : Qfalse;
 }
 
@@ -230,7 +230,7 @@ function str_equal(str, other) {
 // 
 // @param [Regexp, Object] obj
 // @return [Number, nil]
-function str_match(str, obj) {
+function str_match(str, mid, obj) {
 	rb_call(obj, "match", self);
 	return Qnil;
 }
@@ -249,7 +249,7 @@ function str_match(str, obj) {
 // 
 // @param [String] other_str string to compare
 // @return [-1, 0, 1, nil] result
-function str_casecmp(str, other) {
+function str_casecmp(str, mid, other) {
 	var a = str.toLowerCase(), b = other.toLowerCase();
 	if (!(b.info & TS)) return Qnil;
 	else if (a > b) return 1;
@@ -266,7 +266,7 @@ function str_casecmp(str, other) {
 //   # => true
 // 
 // @return [Boolean]
-function str_empty(str) {
+function str_empty(str, mid) {
 	return str == "" ? Qtrue : Qfalse;
 }
 
@@ -278,7 +278,7 @@ function str_empty(str) {
 // 
 // @param [String] suffix suffix to check
 // @return [Boolean]
-function str_end_with(str, suffix) {
+function str_end_with(str, mid, suffix) {
 	if (!suffix) return false;
 	
 	if (str.lastIndexOf(suffix) == str.length - suffix.length)
@@ -291,7 +291,7 @@ function str_end_with(str, suffix) {
 // 
 // @param [String] other string to comapre
 // @return [Boolean]
-function str_eql(str, other) {
+function str_eql(str, mid, other) {
 	return str == other ? Qtrue : Qfalse;	
 }
 
@@ -307,7 +307,7 @@ function str_eql(str, other) {
 // 
 // @param [String] other_str string to check for
 // @return [Boolean]
-function str_include(str, other) {
+function str_include(str, mid, other) {
 	var res = str.indexOf(other);
 	
 	return res == -1 ? Qfalse : Qtrue;
@@ -330,7 +330,7 @@ function str_include(str, other) {
 // 
 // @param [String] substring string to look for
 // @return [Number, nil] result
-function str_index(str, substr) {
+function str_index(str, mid, substr) {
 	var res = str.indexOf(substr);
 	
 	return res == -1 ? Qnil : res;	
@@ -346,7 +346,7 @@ function str_index(str, substr) {
 //   # => "hello"
 // 
 // @return [String]
-function str_lstrip(str) {
+function str_lstrip(str, mid) {
 	return str.replace(/^\s*/, "");
 }
 
@@ -355,7 +355,7 @@ function str_lstrip(str) {
 // 
 // @param [Regexp] pattern
 // @return [MatchData, nil]
-function str_match_m(str, pattern) {
+function str_match_m(str, mid, pattern) {
 	return rb_call(pattern, "match", str);
 }
 

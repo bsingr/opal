@@ -21,13 +21,13 @@
   will be set using USES_BLOCK
 */
 #define YIELD(...) \
-  __block__(__block__.__self__, ##__VA_ARGS__)
+  __block__(__block__.$self, __block__.$mid, ##__VA_ARGS__)
 
 /*
   Like above, but yield using the given self:
 */
 #define YIELD_USING(self, ...) \
- __block__(self, ##__VA_ARGS__) 
+ __block__(self, __block__.$mid, ##__VA_ARGS__) 
 
 /*
   Evaluates to true or false whether a block was given or not. again, relies on
@@ -40,23 +40,23 @@
   Simply call a method on the receiver. Method MUST exist
 */
 #define CALL(recv, mid, ...) \
-	recv.$m["$" + mid](recv, ##__VA_ARGS__)
+	recv.$m["$" + mid](recv, mid, ##__VA_ARGS__)
 
 /**
 	Ensure that the args given to a js function exactly equals the given count.
 */
 #define ARG_COUNT(argc) \
-	if ((arguments.length - 1) != argc) {\
+	if ((arguments.length - 2) != argc) {\
     print(arguments.callee);\
-		rb_arg_error(arguments.length - 1, argc); }
+		rb_arg_error(arguments.length - 2, argc); }
 
 /**
 	Ensure that the args given to a js function is atleast the given num
 */
 #define ARG_MIN(argmin) \
-	if ((arguments.length - 1) < argmin)  {\
+	if ((arguments.length - 2) < argmin)  {\
     print(arguments.callee);\
-		rb_arg_error(arguments.length - 1, argmin); }
+		rb_arg_error(arguments.length - 2, argmin); }
 
 /*
   For loops in JS that take the place of while loops in ruby, we need to 

@@ -26,6 +26,10 @@ exports.init = function() {
 	Init_Exception();
 	Init_String();
 	
+#ifdef OPAL_BROWSER
+  Init_Browser();
+#endif
+	
   print("init in ruby");
   // require core libs
   rb_run(function() {

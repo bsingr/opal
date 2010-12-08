@@ -20,7 +20,7 @@ var rb_mOpal;
 	to check first. Also, if it doesnt, we dispatch to method_missing and we must
 	then fix the rb_block_func global to point to the method_missing instead.
 */
-global.rb_block_call = function rb_block_call(block, mid, self) {
+global.rb_block_call = function rb_block_call(block, self, mid) {
 	// print("block is: " + block);
 	rb_block_proc = block;
 	var func = self.$m['$' + mid];
@@ -51,7 +51,8 @@ global.rb_super = function(callee, mid, self, args) {
     rb_raise(rb_eNoMethodError, "super: no super class method `" + mid + "`" +
       " for " + CALL(self, "inspect"));
   
-  var args_to_send = [self].concat(args);
+  // print("found the super!" + func);
+  var args_to_send = [self, mid].concat(args);
   return func.apply(null, args_to_send);
 };
 
@@ -147,12 +148,20 @@ rb_vm_defn = function(base, m_id, body, singleton) {
 
 // Return method missing closure.
 // @global
-rb_vm_meth_m = function(m_id) {
-  return function(self) {
-    var args = [self,m_id].concat(Array.prototype.slice.call(arguments, 1));
-    return self.$m.$method_missing.apply(self, args);
-  };
-};
+// @old
+// rb_vm_meth_m = function(m_id, mid) {
+//   return function(self) {
+//     var args = [self,m_id].concat(Array.prototype.slice.call(arguments, 1));
+//     return self.$m.$method_missing.apply(self, args);
+//   };
+// };
+
+global.rb_vm_meth_m = function(recv, mid) {
+  var args = [recv, 'method_missing'].concat(
+    Array.prototype.slice.call(arguments, 1));
+    
+    return recv.$m.$method_missing.apply(null, args);
+}
 
 // Get constant from base
 // @global
@@ -186,7 +195,7 @@ rb_vm_gs = function(id, value) {
 
 // Print the given string to the default console. Currelty Kernel#puts uses this
 // method.
-var opal_puts = function(self, block, arg) {
+var opal_puts = function(self, mid, arg) {
   // print(arg);
   io_puts(arg);
   return Qnil;
@@ -194,7 +203,7 @@ var opal_puts = function(self, block, arg) {
 
 // Raw require - require the 'path'. Currently uses commonjs paths and load
 // paths etc, but will in future use just a ruby load path.. maybe?
-var opal_require = function(self, fname) {
+var opal_require = function(self, mid, fname) {
   // print('need to require: ' + arg);
   return rb_require(fname);
 };
@@ -238,37 +247,37 @@ var opal_subclass = function(self, block, super_klass) {
 };
 
 // get current working directory - platform dependant
-var opal_getwd = function(self, block) {
+var opal_getwd = function(self, mid) {
   return io_getwd();
 };
 
-var opal_glob = function(self, block, glob) {
+var opal_glob = function(self, mid, glob) {
   // print("globbing: " + glob);
   return io_glob(glob);
 };
 
-var opal_join = function(self, block, parts) {
+var opal_join = function(self, mid, parts) {
   // var parts = Array.prototype.slice.call(arguments, 2);
   return opal_file_join.apply(this, parts);
 };
 
-var opal_basename = function(self, block, name) {
+var opal_basename = function(self, mdi, name) {
   return io_basename(name);
 };
 
-var opal_expand_path = function(self, block, path) {
+var opal_expand_path = function(self, mid, path) {
 	return io_expand_path(path);
 };
 
 // raise exception
-var opal_raise = function(self, block, exc) {
+var opal_raise = function(self, mid, exc) {
   rb_vm_raise(exc);
   // we never actually end up returning anything
   return Qnil;
 };
 
 // get env variable denoted by name
-var opal_getenv = function(self, block, name) {
+var opal_getenv = function(self, mid, name) {
   if (system.env.hasOwnProperty(name)) {
     return system.env[name];
   }
@@ -277,7 +286,7 @@ var opal_getenv = function(self, block, name) {
 };
 
 // get all env variables [[name1, value1], [name2, value2]]
-var opal_getallenv = function(self, block, name) {
+var opal_getallenv = function(self, mid, name) {
   var result = [];
   for (var key in system.env)
     result.push([key, system.env[key]])
@@ -285,7 +294,7 @@ var opal_getallenv = function(self, block, name) {
   return result;
 };
 
-var opal_context_eval = function(opal, block, self, string, filename, lineno) {
+var opal_context_eval = function(opal, mid, block, self, string, filename, lineno) {
 	var code = exports.compile(string);
   var func = new Function('self', '__FILE__', code);
   return func(self, io_expand_path(filename));

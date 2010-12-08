@@ -175,28 +175,28 @@ var InitFile = function() {
 // All methods used from here are methods for the File class to use directly
 
 // File#__join__
-var rb_cFile_join = function(self) {
-	var parts = Array.prototype.slice.call(arguments, 1);
+var rb_cFile_join = function(self, mid) {
+	var parts = Array.prototype.slice.call(arguments, 2);
 	return file_join.apply(null, parts);
 };
 
 // File#__dirname__
-var rb_cFile_dirname = function(self, path) {
+var rb_cFile_dirname = function(self, mid, path) {
 	return file_dirname(path);
 };
 
 // File#__expand_path__
-var rb_cFile_expand_path = function(self, path, dir_string) {
+var rb_cFile_expand_path = function(self, mid, path, dir_string) {
 	return io_expand_path(path, dir_string);
 };
 
 // File.__exists__
-var rb_cFile_exists = function(self, path) {
+var rb_cFile_exists = function(self, mid, path) {
 	return file_exists(path) ? Qtrue : Qfalse;
 };
 
 // File.__read__
-var rb_cFile_read = function(self, path) {
+var rb_cFile_read = function(self, mid, path) {
 	if (file_exists(path)) {
 		return opal_file_read(path);
 	}
@@ -211,7 +211,7 @@ var rb_cDir_getwd = function(self) {
 };
 
 // Dir.__glob__
-var rb_cDir_glob = function(self, glob) {
+var rb_cDir_glob = function(self, mid, glob) {
 	return file_glob(glob);
 };
 

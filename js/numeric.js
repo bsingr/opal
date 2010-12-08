@@ -7,7 +7,7 @@ var rb_cNumeric;
 //   # => 5
 // 
 // @return [Number] receiver
-function num_uplus(num) {
+function num_uplus(num, mid) {
 	return num;
 }
 
@@ -18,7 +18,7 @@ function num_uplus(num) {
 //   # => -5
 // 
 // @return [Number] result
-function num_uminus(num) {
+function num_uminus(num, mid) {
 	return 0 - num;
 }
 
@@ -26,7 +26,7 @@ function num_uminus(num) {
 // 
 // @param [Number] other number to use for modulo
 // @return [Number]
-function num_mod(num, other) {
+function num_mod(num, mid, other) {
 	return num % other;
 }
 
@@ -34,7 +34,7 @@ function num_mod(num, other) {
 // 
 // @param [Number] other number to AND with.
 // @return [Number] result
-function num_and(num, other) {
+function num_and(num, mid, other) {
 	return num & other;
 }
 
@@ -42,7 +42,7 @@ function num_and(num, other) {
 // 
 // @param [Number] other number to multiply with
 // @return [Number] result
-function num_mul(num, other) {
+function num_mul(num, mid, other) {
 	return num * other;
 }
 
@@ -50,7 +50,7 @@ function num_mul(num, other) {
 // 
 // @param [Number] other number to raise to
 // @return [Number] result
-function num_pow(num, other) {
+function num_pow(num, mid, other) {
 	return Math.pow(num, other);
 }
 
@@ -58,7 +58,7 @@ function num_pow(num, other) {
 // 
 // @param [Number] other number to add
 // @result [Number] result
-function num_plus(num, other) {
+function num_plus(num, mid, other) {
 	return num + other;
 }
 
@@ -66,7 +66,7 @@ function num_plus(num, other) {
 // 
 // @param [Number] other number to subtract
 // @result [Number] result
-function num_minus(num, other) {
+function num_minus(num, mid, other) {
 	return num - other;
 }
 
@@ -74,7 +74,7 @@ function num_minus(num, other) {
 // 
 // @param [Number] other number to divide by.
 // @return [Number] result
-function num_div(num, other) {
+function num_div(num, mid, other) {
 	return num / other;
 }
 
@@ -83,7 +83,7 @@ function num_div(num, other) {
 // 
 // @param [Number] other number to compare
 // @return [Boolean] result
-function num_lt(num, other) {
+function num_lt(num, mid, other) {
 	return num < other ? Qtrue : Qfalse;
 }
 
@@ -92,7 +92,7 @@ function num_lt(num, other) {
 // 
 // @param [Number] other number to compare
 // @return [Number] result
-function num_le(num, other) {
+function num_le(num, mid, other) {
 	return num <= other ? Qtrue : Qfalse;
 }
 
@@ -101,7 +101,7 @@ function num_le(num, other) {
 // 
 // @param [Number] other number to compare
 // @return [Boolean] result
-function num_gt(num, other) {
+function num_gt(num, mid, other) {
 	return num > other ? Qtrue : Qfalse;
 }
 
@@ -110,7 +110,7 @@ function num_gt(num, other) {
 // 
 // @param [Number] other number to compare
 // @return [Number] result
-function num_ge(num, other) {
+function num_ge(num, mid, other) {
 	return num >= other ? Qtrue : Qfalse;
 }
 
@@ -118,7 +118,7 @@ function num_ge(num, other) {
 // 
 // @param [Number] count number to shift
 // @return [Number] result
-function num_lshift(num, count) {
+function num_lshift(num, mid, count) {
 	return num << count;
 }
 
@@ -126,7 +126,7 @@ function num_lshift(num, count) {
 // 
 // @param [Number] count number to shift
 // @return [Number] result
-function num_rshift(num, count) {
+function num_rshift(num, mid, count) {
 	return num >> count;
 }
 
@@ -135,7 +135,7 @@ function num_rshift(num, count) {
 // 
 // @param [Number] other number to compare
 // @return [Number, nil] result
-function num_cmp(num, other) {
+function num_cmp(num, mid, other) {
 	if (!other.$info & T_NUMBER) return Qnil;
 	else if (num < other) return -1;
 	else if (num > other) return 1;
@@ -146,7 +146,7 @@ function num_cmp(num, other) {
 // 
 // @param [Number] other number to compare
 // @return [Boolean] true or false
-function num_equal(num, other) {
+function num_equal(num, mid, other) {
 	return num.valueOf() === other.valueOf() ? Qtrue : Qfalse;
 }
 
@@ -154,7 +154,7 @@ function num_equal(num, other) {
 // 
 // @param [Number] other number to XOR
 // @return [Number] result
-function num_xor(num, other) {
+function num_xor(num, mid, other) {
 	return num & other;
 }
 
@@ -167,21 +167,21 @@ function num_xor(num, other) {
 //   # => 1234
 // 
 // @return [Number] absolute value
-function num_abs(num) {
+function num_abs(num, mid) {
 	return Math.abs(num);
 }
 
 // Returns `true` if `self` is even, `false` otherwise.
 // 
 // @return [Boolean]
-function num_even_p(num) {
+function num_even_p(num, mid) {
 	return (num % 2 == 0) ? Qtrue : Qfalse;
 }
 
 // Returns `true` if `self` is odd, `false` otherwise.
 // 
 // @return [Boolean]
-function num_odd_p(num) {
+function num_odd_p(num, mid) {
 	return (num %2 == 0) ? Qfalse : Qtrue;
 }
 
@@ -194,7 +194,7 @@ function num_odd_p(num) {
 //   # => 0
 // 
 // @return [Number] result
-function num_succ(num) {
+function num_succ(num, mid) {
 	return parseInt(num) + 1;
 }
 
@@ -207,7 +207,7 @@ function num_succ(num) {
 //   # => -2
 // 
 // @return [Number] result
-function num_pred(num) {
+function num_pred(num, mid) {
 	return parseInt(num) - 1;
 }
 
@@ -229,9 +229,9 @@ function num_pred(num) {
 // 
 // @param [Number] finish where to stop iteration
 // @return [Number] returns receiver
-function num_upto(num, finish) {
+function num_upto(num, mid, finish) {
 	for (var i = num; i <= finish; i++) {
-		block(block.__self__, Qnil, i);
+		block(block.$self, Qnil, i);
 	}
 	return num;
 }
@@ -253,9 +253,9 @@ function num_upto(num, finish) {
 // 
 // @param [Number] finish where to stop iteration
 // @return [Number] returns receiver
-function num_downto(num, finish) {
+function num_downto(num, mid, finish) {
 	for (var i = num; i >= finish; i--) {
-		block(block.__self__, Qnil, i);
+		block(block.$self, Qnil, i);
 	}
 	return num;
 }
@@ -275,9 +275,9 @@ function num_downto(num, finish) {
 //   # => 4
 // 
 // @return [Number] returns receiver
-function num_dotimes(num) {
+function num_dotimes(num, mid) {
 	for (var i = 0; i < num; i++) {
-		block(block.__self__, Qnil, i);
+		block(block.$self, Qnil, i);
 	}
 	return num;
 }
@@ -286,28 +286,28 @@ function num_dotimes(num) {
 // 
 // @param [Number] other number to OR with.
 // @return [Number] result
-function num_or(num, other) {
+function num_or(num, mid, other) {
 	return num | other;
 }
 
 // Returns `true` if `self` is zero, `false` otherwise.
 // 
 // @return [Boolean] result
-function num_zero_p(num) {
+function num_zero_p(num, mid) {
 	return num.valueOf() === 0 ? Qtrue : Qfalse;
 }
 
 // Returns the receiver if it is not zero, `nil` otherwise.
 // 
 // @return [Number, nil] receiver or nil
-function num_nonzero_p(num) {
+function num_nonzero_p(num, mid) {
 	return num.valueOf() === 0 ? Qfalse : Qtrue;
 }
 
 // One's complement: returns a number where each bit is flipped.
 // 
 // @return [Number] result
-function num_rev(num) {
+function num_rev(num, mid) {
 	return ~num;
 }
 
@@ -324,7 +324,7 @@ function num_rev(num) {
 //   # => -1
 // 
 // @return [Number] result
-function num_ceil(num) {
+function num_ceil(num, mid) {
 	return Math.ceil(num);
 }
 
@@ -337,22 +337,22 @@ function num_ceil(num) {
 //   -1
 // 
 // @return [Number] result
-function num_floor(num) {
+function num_floor(num, mid) {
 	return Math.floor(num);
 }
 
 // Returns `true` if `self` is an integer.
 // 
 // @return [Boolean]
-function num_int_p(num) {
+function num_int_p(num, mid) {
 	return num % 1 === 0 ? Qtrue : Qfalse;
 }
 
-function num_inspect(num) {
+function num_inspect(num, mid) {
 	return num.toString();
 }
 
-function num_to_i(num) {
+function num_to_i(num, mid) {
 	return parseInt(num);
 }
 

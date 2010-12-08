@@ -11,7 +11,7 @@ class Proc
   def call(*args)
     `if (#{self}.__lambda__) {
       try {
-        return #{self}.apply(#{self}.__self__, #{args});
+        return #{self}.apply(#{self}.$self, #{args});
       }
       catch (e) {
         // first try and catch a break (from the lambda proc)
@@ -41,7 +41,7 @@ class Proc
     }
     else {
       //throw "cannot .call for non lambda block.. yet"
-      return #{self}.apply(#{self}.__self__, #{args});
+      return #{self}.apply(#{self}.$self, #{args});
     }`
   end
   

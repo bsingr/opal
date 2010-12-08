@@ -18,7 +18,7 @@ var rb_vm_return_instance,
 		rb_vm_next_instance,
 		rb_vm_break_instance;
 
-function exc_initialize(exc, message) {
+function exc_initialize(exc, mid, message) {
 	// if (message != Qnil)	
 		rb_ivar_set(exc, "@message", (message == undefined) ? "" : message);
 }

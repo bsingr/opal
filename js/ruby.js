@@ -182,13 +182,13 @@ rb_obj_alloc = function(klass) {
 // call from js
 function rb_call(recv, mid) {
 	// all args are just from our arguments
-	var args = Array.prototype.slice.call(arguments, 2);
+	var args = Array.prototype.slice.call(arguments, 0);
 	// recv
-	args.unshift(recv);
+  // args.unshift(recv);
 	// simply replace mid with our block (nil)
 	// args[1] = Qnil;
 	// check method exists
-	return (recv.$m['$' + mid] || rb_vm_meth_m(mid)).apply(null, args);
+	return (recv.$m['$' + mid] || rb_vm_meth_m).apply(null, args);
 }
 
 

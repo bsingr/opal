@@ -78,29 +78,7 @@ class Hash
   
   alias_method :store, :[]=
   
-  # Searches through the hash comparing `obj` with the key using ==. Returns the
-  # key-value pair (two elements array) or nil if no match is found. See
-  # {Array#assoc}.
-  # 
-  # @example
-  #   h = { "a" => [1, 2, 3], "b" => [4, 5, 6] }
-  #   h["a"]
-  #   # => ["a", [1, 2, 3]]
-  #   h["c"]
-  #   # => nil
-  # 
-  # @param [Object] obj key to search for
-  # @return [Array<Object, Object>, nil] result or nil
-  def assoc(obj)
-    `var key;
-    for (var i = 0; i < #{self}.__keys__.length; i++) {
-      key = #{self}.__keys__[i];
-      if (key['$=='](#{obj}).r) {
-        return [key, #{self}.__assocs__[key.$hash()]];
-      }
-    }
-    return #{nil};`
-  end
+
   
   # Removes all key-value pairs from `self`.
   # 
@@ -193,7 +171,7 @@ class Hash
     for (var i = 0; i < #{self}.__keys__.length; i++) {
       key = #{self}.__keys__[i];
       value = #{self}.__assocs__[key.$hash()];
-      if (#{block}.apply(#{block}.__self__, [key, value]).r) {
+      if (#{block}.apply(#{block}.$self, [key, value]).r) {
         #{self}.hash_delete(key);
         i--;
       };
@@ -216,7 +194,7 @@ class Hash
     `var key;
     for (var i = 0; i < #{self}.__keys__.length; i++) {
       key = #{self}.__keys__[i];
-      #{block}.apply(#{block}.__self__, [key]);
+      #{block}.apply(#{block}.$self, [key]);
     }
     return #{self};`
   end
@@ -235,7 +213,7 @@ class Hash
     for (var i = 0; i < #{self}.__keys__.length; i++) {
       key = #{self}.__keys__[i];
       value = #{self}.__assocs__[key.$hash()];
-      #{block}.apply(#{block}.__self__, [value]);
+      #{block}.apply(#{block}.$self, [value]);
     }
     return #{self};`
   end
@@ -278,7 +256,7 @@ class Hash
     } else if (#{defaults} === undefined) {
       throw "KeyError: key not found";
     } else if (#{defaults}.info & #{self}.TP) {
-      return #{defaults}.apply(#{defaults}.__self__, [#{key}]);
+      return #{defaults}.apply(#{defaults}.$self, [#{key}]);
     } else {
       return #{defaults};
     }`
@@ -422,7 +400,7 @@ class Hash
     for (var i = 0; i < #{self}.__keys__.length; i++) {
       key = #{self}.__keys__[i];
       value = #{self}.__assocs__[key.$hash()];
-      if (!#{block}.apply(#{block}.__self__, [key, value]).r) {
+      if (!#{block}.apply(#{block}.$self, [key, value]).r) {
         #{self}.hash_delete(key);
         i--;
       };
@@ -580,7 +558,7 @@ class Hash
     for (var i = 0; i < #{self}.__keys__.length; i++) {
       key = #{self}.__keys__[i];
       value = #{self}.__assocs__[key.$hash()];
-      if (!#{block}.apply(#{block}.__self__, [key, value]).r) {
+      if (!#{block}.apply(#{block}.$self, [key, value]).r) {
         result.hash_store(key, value);
       };
     }
@@ -595,7 +573,7 @@ class Hash
     for (var i = 0; i < #{self}.__keys__.length; i++) {
       key = #{self}.__keys__[i];
       value = #{self}.__assocs__[key.$hash()];
-      if (#{block}.apply(#{block}.__self__, [key, value]).r) {
+      if (#{block}.apply(#{block}.$self, [key, value]).r) {
         #{self}.hash_delete(key);
         i--;
       };
@@ -620,7 +598,7 @@ class Hash
     for (var i = 0; i < #{self}.__keys__.length; i++) {
       key = #{self}.__keys__[i];
       value = #{self}.__assocs__[key.$hash()];
-      if (#{block}.apply(#{block}.__self__, [key, value]).r) {
+      if (#{block}.apply(#{block}.$self, [key, value]).r) {
         result.hash_store(key, value);
       };
     }
@@ -635,7 +613,7 @@ class Hash
     for (var i = 0; i < #{self}.__keys__.length; i++) {
       key = #{self}.__keys__[i];
       value = #{self}.__assocs__[key.$hash()];
-      if (!#{block}.apply(#{block}.__self__, [key, value]).r) {
+      if (!#{block}.apply(#{block}.$self, [key, value]).r) {
         #{self}.hash_delete(key);
         i--;
       };

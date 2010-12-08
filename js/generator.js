@@ -273,6 +273,9 @@ DefIseq.prototype.method_args = function(res) {
   // always need a self reference
   res.push(this.SELF);
   
+  // method id reference
+  res.push(', $mid');
+  
   // norm
   for (var i = 0; i < norm; i++) {
     res.push(', ');
@@ -304,7 +307,7 @@ DefIseq.prototype.method_fixing = function(res) {
   }
   // handle rest args
   if (rest) {
-    var rest_offset = norm + opt + 1; // should take into account opt.. we add one to skip self
+    var rest_offset = norm + opt + 2; // should take into account opt.. we add one to skip self
     res.push(rest + ' = Array.prototype.slice.call(arguments, ' + rest_offset + ');\n');
   }
 
@@ -490,14 +493,16 @@ RubyGenerator.prototype = {
 				pre.push('rb_block_call');
 				var tmp_block = this.iseq_current.temp_local();
 				arg_res.push('(' + tmp_block + ' = ' + this.generate_block(stmt[4]));
-				arg_res.push(', ' + tmp_block + '.__self__ = ' + this.SELF + ', ');
-				arg_res.push(tmp_block + '), "' + stmt[2] + '", ');
+				arg_res.push(', ' + tmp_block + '.$self = ' + this.SELF + ', ');
+				arg_res.push(tmp_block + '), ');
 				arg_res.push(stmt[1] ? this.generate(stmt[1]) : this.SELF);
+				arg_res.push(', "' + stmt[2] + '"');
 				this.iseq_current.queue_temp(tmp_block);
 			} else { // &to_proc mark
 				pre.push('rb_block_call');
-				arg_res.push(this.generate(stmt[3][3]) + ', "' + stmt[2] + '", ');
+				arg_res.push(this.generate(stmt[3][3]) + ', ');
 				arg_res.push(stmt[1] ? this.generate(stmt[1]) : this.SELF);
+				arg_res.push(', "' + stmt[2] + '"');
 			}
 		} else {
 			// no block arg literal or reference.
@@ -505,49 +510,15 @@ RubyGenerator.prototype = {
 				var tmp_recv = this.iseq_current.temp_local();
 				pre.push('(' + tmp_recv + ' = ' + this.generate(stmt[1]) + ', ');
 				pre.push(tmp_recv + '.$m' + this.mid_to_jsid(stmt[2]) + '||');
-				pre.push('rb_vm_meth_m("' + stmt[2] + '"))');
-				arg_res.push(tmp_recv);
+				pre.push('rb_vm_meth_m)');//'("' + stmt[2] + '"))');
+				arg_res.push(tmp_recv + ', "' + stmt[2] + '"');
 				this.iseq_current.queue_temp(tmp_recv);
 			} else { // no recv
 				pre.push('(' + this.SELF + '.$m' + this.mid_to_jsid(stmt[2]) + ' || ');
-				pre.push('rb_vm_meth_m("' + stmt[2] + '"))');
-				arg_res.push(this.SELF);
+				pre.push('rb_vm_meth_m)');//'("' + stmt[2] + '"))');
+				arg_res.push(this.SELF + ', "' + stmt[2] + '"');
 			}
-		}
-		
-    // // receiver
-    // if (stmt[1]) {
-    //   var tmp_recv = this.iseq_current.temp_local();
-    //   res.push('(' + tmp_recv + ' = ');
-    //   res.push(this.generate(stmt[1]));
-    //   res.push(', ' + tmp_recv + '.$m' + this.mid_to_jsid(stmt[2]) + ' || ');
-    //   res.push('rb_vm_meth_m("' + stmt[2] + '"))');
-    //   // res.push('.$M("' + stmt[2] + '"))(');
-    //   arg_res.push(tmp_recv + ', ');
-    //   this.iseq_current.queue_temp(tmp_recv);
-    // }
-    // else { // no recv
-    //   res.push('(' + this.SELF + '.$m' + this.mid_to_jsid(stmt[2]) + ' || ');
-    //   // res.push('.$M("' + stmt[2] + '"))(');
-    //   res.push('rb_vm_meth_m("' + stmt[2] + '"))');
-    //   arg_res.push(this.SELF + ', ');
-    // }
-    
-    // // block
-    // if (stmt[4]) {
-    //   var tmp_block = this.iseq_current.temp_local();
-    //   arg_res.push('(' + tmp_block + ' = ');
-    //   arg_res.push(this.generate_block(stmt[4]));
-    //   arg_res.push(', ' + tmp_block + '.__self__ = ' + this.SELF + ', ' + tmp_block + ')');
-    //   this.iseq_current.queue_temp(tmp_block);
-    // }
-    // // check for &block syntax (proc to block or symbol to block)
-    // else if (stmt[3][3]) {
-    //   arg_res.push(this.generate(stmt[3][3]));
-    // }
-    // else {
-    //   arg_res.push(this.NIL);
-    // }    
+		}  
     
     var arg, args = stmt[3][0];
     // norm args
@@ -657,7 +628,7 @@ RubyGenerator.prototype = {
     if (local)
       return local;
     else
-      return '(' + this.SELF + '.$m' + this.mid_to_jsid(stmt[1]) + ' || ' + 'rb_vm_meth_m("' + stmt[1] + '"))(' + this.SELF + ')';
+      return '(' + this.SELF + '.$m' + this.mid_to_jsid(stmt[1]) + ' || ' + 'rb_vm_meth_m)(' + this.SELF + ', "' + stmt[1] + '")';
       // return this.SELF + this.mid_to_jsid(stmt[1]) + '(' + this.NIL + ')';
   },
   
@@ -703,11 +674,11 @@ RubyGenerator.prototype = {
       res.push('), ' + tmp_assign + '.$m');
       res.push(this.mid_to_jsid(stmt[1][2] + '='));
       // res.push(' || ' + tmp_assign + '.$M("' + stmt[1][2] + '=' + '"');
-      res.push(' || rb_vm_meth_m("' + stmt[1][2] + '=' + '"');
-      res.push('))(');
+      res.push(' || rb_vm_meth_m');//'("' + stmt[1][2] + '=' + '"');
+      res.push(')(');
       // recv
       res.push(tmp_assign + ', ');
-      res.push(this.generate(stmt[2]));
+      res.push('"' + stmt[1][2] + '=", ' + this.generate(stmt[2]));
       res.push(')');
       this.iseq_current.queue_temp(tmp_assign);
       return res.join("");
@@ -1096,8 +1067,7 @@ RubyGenerator.prototype = {
     if (meth == '-') meth = '-@';
     
     var code = "(" + tmp_recv + ' = ' + this.generate(stmt[2]) + ', ' + tmp_recv
-              + '.$m' + this.mid_to_jsid(meth) + ' || rb_vm_meth_m("' + meth + 
-              '"))(' + tmp_recv + ', ' + ')';
+              + '.$m' + this.mid_to_jsid(meth) + ' || rb_vm_meth_m)(' + tmp_recv + ', "' + meth + '")';
     this.iseq_current.queue_temp(tmp_recv);
     // return this.generate(stmt[2]) + this.mid_to_jsid(meth) + '()';
     return code;
@@ -1114,10 +1084,12 @@ RubyGenerator.prototype = {
     res.push(this.generate(stmt[1]));
     res.push(', ' + tmp_mm + '.$m');
     res.push(this.mid_to_jsid('[]'));
-    res.push(' || rb_vm_meth_m("[]"))');
+    res.push(' || rb_vm_meth_m)');
     res.push('(');
     // self
     res.push(tmp_mm);
+    // mid
+    res.push(", '[]'");
     if (stmt[2][0]) {
       for (var i = 0; i < stmt[2][0].length; i++) {
         var s = stmt[2][0][i];
@@ -1139,10 +1111,11 @@ RubyGenerator.prototype = {
     res.push(this.generate(aref[1]));
     res.push(', ('+ tmp_mm + '.$m');
     res.push(this.mid_to_jsid('[]='));
-    res.push(' || rb_vm_meth_m(');
-    res.push('"[]="))');
+    res.push(' || rb_vm_meth_m');
+    res.push(')');
     res.push('(');
     res.push(tmp_mm);
+    res.push(', "[]="');
     if (aref[2][0]) {
       for (var i = 0; i < aref[2][0].length; i++) {
         var s = aref[2][0][i];
@@ -1729,7 +1702,7 @@ RubyGenerator.prototype = {
   generate_super: function(stmt) {
     var res = [];
     var mid = this.iseq_current._method_id;
-    res.push('rb_super(arguments.callee, "' + mid + '", ' + this.SELF + ',');
+    res.push('rb_super(arguments.callee, $mid, ' + this.SELF + ',');
     if (!stmt[1]) {
       res.push("Array.prototype.slice.call(arguments, 1)");
     }
@@ -1753,7 +1726,7 @@ RubyGenerator.prototype = {
   generate_yield: function(stmt) {
     this.iseq_current.uses_block();
     var block = this.iseq_current.block_arg;
-    var args_res = [block + '.__self__, ' + this.NIL];
+    var args_res = [block + '.$self, ' + this.NIL];
     // args
     // print(stmt[1]);
     if (stmt[1][0]) {

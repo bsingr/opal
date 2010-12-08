@@ -1,12 +1,7 @@
 /**
-	File to build for opal running in v8/stand alone context.
+  All files needed for the runtime (platform independant)
 */
-
-(function(global, exports) {
-// defines etc
-#include "opal.h"
 // core runtime files
-#include "opal_platform.js"
 #include "file.js"
 #include "class.js"
 #include "module.js"
@@ -28,11 +23,3 @@
 #include "vm.js"
 #include "load.js"
 #include "init.js"
-
-// dev files needed
-#include "ruby_parser.js"
-#include "parser.js"
-#include "string_scanner.js"
-#include "generator.js"
-
-})(this, Opal);

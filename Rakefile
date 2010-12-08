@@ -24,7 +24,7 @@ desc "Rebuild runtime/opal.js for VM etc. (opal v8 context)"
 task "runtime/opal.js" do
   FileUtils.mkdir_p 'runtime'
 
-  in_file = "js/lib/opal.js"
+  in_file = "js/opal/opal.js"
   out_file = "runtime/opal.js"
   
   system "gcc -E -x c -P -C #{in_file} -o #{out_file}"
@@ -45,6 +45,15 @@ namespace :browser do
   # build into tmp/browser
   desc "Build opal.js (runtime) and opal_dev.js (compiler) into tmp/browser"
   task :runtime do
+    FileUtils.mkdir_p 'tmp/browser'
     
+    build_manifests = {
+      'js/browser/opal.js'      => 'tmp/browser/opal.js',
+      'js/browser/opal_dev.js'  => 'tmp/browser/opal_dev.js'
+    }
+    
+    build_manifests.each do |source, target|
+      system "gcc -E -x c -P -C #{source} -o #{target}"
+    end
   end
 end

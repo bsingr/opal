@@ -24,15 +24,15 @@ Qfalse = null;
 Qtrue = null;
 
 
-function mod_name(mod) {
+function mod_name(mod, mid) {
 	return rb_ivar_get(mod, "__classid__");
 }
 
-function mod_eqq(mod, obj) {
-	return obj_is_kind_of(obj, mod);
+function mod_eqq(mod, mid, obj) {
+	return obj_is_kind_of(obj, "kind_of?", mod);
 }
 
-function mod_define_method(mod, mid) {
+function mod_define_method(mod, _cmd, mid) {
 	USES_BLOCK
 	
 	if (!BLOCK_GIVEN)
@@ -42,15 +42,15 @@ function mod_define_method(mod, mid) {
   return Qnil;
 }
 
-function mod_attr_accessor(mod) {
+function mod_attr_accessor(mod, mid) {
 	mod_attr_reader.apply(null, arguments);
 	mod_attr_writer.apply(null, arguments);
 	return Qnil;
 }
 
-function mod_attr_reader(mod) {
+function mod_attr_reader(mod, cmd) {
 	var attribute	 = null,
-			attributes = Array.prototype.slice.call(arguments, 1);
+			attributes = Array.prototype.slice.call(arguments, 2);
 	
 	for (var i = 0; i < attributes.length; i++) {
 		var attribute = attributes[i];
@@ -59,21 +59,21 @@ function mod_attr_reader(mod) {
     // print("defining for: " + mid);
 		
 		rb_define_method(mod, mid,
-		  new Function('self', 'return rb_ivar_get(self, "@' + mid + '");'));
+		  new Function('self', 'cmd', 'return rb_ivar_get(self, "@' + mid + '");'));
 	}
 	
 	return Qnil;
 }
 
-function mod_attr_writer(mod) {
+function mod_attr_writer(mod, cmd) {
 	var attribute	 = null,
-			attributes = Array.prototype.slice.call(arguments, 1);
+			attributes = Array.prototype.slice.call(arguments, 2);
 	
 	for (var i = 0; i < attributes.length; i++) {
 		var attribute = attributes[i];
 		var mid = rb_call(attribute, "to_s");
 		
-		rb_define_method(mod, mid + "=", new Function('self', 'val',
+		rb_define_method(mod, mid + "=", new Function('self', 'cmd', 'val',
 		  'return rb_ivar_set(self, "@' + mid + '", val);'));
     // rb_define_method(mod, mid + "=", function(self, val) {
       // return rb_ivar_set(self, "@" + mid, val);
@@ -83,7 +83,7 @@ function mod_attr_writer(mod) {
 	return Qnil;
 }
 
-function mod_alias_method(mod, new_name, old_name) {
+function mod_alias_method(mod, mid, new_name, old_name) {
 	new_name = rb_call(new_name, "to_s");
 	old_name = rb_call(old_name, "to_s");
   // method might be wrapped, so use raw.
@@ -91,15 +91,15 @@ function mod_alias_method(mod, new_name, old_name) {
 	return mod;
 }
 
-function mod_to_s(mod) {
+function mod_to_s(mod, mid) {
 	return rb_ivar_get(mod, "__classid__");
 }
 
-function mod_const_set(mod, id, value) {
+function mod_const_set(mod, mid, id, value) {
 	return rb_vm_cs(mod, rb_call(id, "to_s"), value);
 }
 
-function mod_class_eval(mod, string, filename, lineno) {
+function mod_class_eval(mod, mid, string, filename, lineno) {
   // print("global block is: " + rb_block_proc);
 	USES_BLOCK
 	
@@ -114,34 +114,34 @@ function mod_class_eval(mod, string, filename, lineno) {
 	}
 }
 
-function mod_private(mod) {
+function mod_private(mod, mid) {
 	return mod;
 }
 
-function mod_public(mod) {
+function mod_public(mod, mid) {
 	return mod;
 }
 
-function mod_protected(mod) {
+function mod_protected(mod, mid) {
 	return mod;
 }
 
-function mod_include(cla, mod) {
+function mod_include(cla, mid, mod) {
 	rb_include_module(cla, mod);
   return Qnil;
 }
 
-function mod_extend(cla, mod) {
+function mod_extend(cla, mid, mod) {
 	rb_extend_module(cla, mod);
 	return Qnil;
 }
 
-function class_s_new(clas, sup) {
+function class_s_new(clas, mid, sup) {
 	var klass = rb_define_class_id("AnonClass", sup || rb_cObject);
 	return klass;
 };
 
-function class_new_instance(cla) {
+function class_new_instance(cla, mid) {
 
 	var obj = cla.$m.$allocate(cla, Qnil);
 	var args = Array.prototype.slice.call(arguments);
@@ -149,21 +149,21 @@ function class_new_instance(cla) {
 	
 	// if given a block, we need to reroute it to initialize
   if (rb_block_func == arguments.callee) {
-    rb_block_call.apply(null, [rb_block_proc, "initialize", obj].concat(
-      Array.prototype.slice.call(arguments, 1)));
+    rb_block_call.apply(null, [rb_block_proc, obj, "initialize"].concat(
+      Array.prototype.slice.call(arguments, 2)));
   } else {
     obj.$m.$initialize.apply(null, args);
   }
   return obj;
 };
 
-function class_initialize(cla, sup) {
+function class_initialize(cla, mid, sup) {
 	// print("in Class.new initialize");
 	var klass = rb_define_class_id('', sup || rb_cObject);
 	return klass;
 }
 
-function class_superclass(cla) {
+function class_superclass(cla, mid) {
 	var sup = cla.$super;
 	
 	if (!sup) {
@@ -178,15 +178,15 @@ function false_to_s() {
 	return "false";
 }
 
-function false_and(self, other) {
+function false_and(self, mid, other) {
 	return Qfalse;
 }
 
-function false_or(self, other) {
+function false_or(self, mid, other) {
 	return other.$r ? Qtrue : Qfalse;
 }
 
-function false_xor(self, other) {
+function false_xor(self, mid, other) {
 	return other.$r ? Qtrue : Qfalse;
 }
 
@@ -194,7 +194,7 @@ function true_to_s() {
 	return "true";
 }
 
-function true_and(self, other) {
+function true_and(self, mid, other) {
 	return other.$r ? Qtrue : Qfalse;
 }
 
@@ -202,7 +202,7 @@ function true_or() {
 	return Qtrue;
 }
 
-function true_xor(self, other) {
+function true_xor(self, mid, other) {
 	return other.$r ? Qfalse : Qtrue;
 }
 
@@ -247,7 +247,7 @@ function nil_inspect() {
 	@param [Proc] block
 	@return [Object] returns the receiver
 */
-function obj_loop(obj, block) {
+function obj_loop(obj, mid, block) {
 	ARG_COUNT(0);
 	
 	if (!BLOCK_GIVEN(block))
@@ -272,7 +272,7 @@ function obj_loop(obj, block) {
 	@param [Proc] block
 	@return [Proc]
 */
-function obj_proc(obj, block) {
+function obj_proc(obj, mid, block) {
 	
 	ARG_COUNT(0)
 	USES_BLOCK
@@ -291,14 +291,31 @@ function obj_proc(obj, block) {
 	@param [Object] args objects to print using `inspect`
 	@return [nil]
 */
-function obj_puts(obj) {
-	var args = Array.prototype.slice.call(arguments, 1);
+function obj_puts(obj, mid) {
+	var args = Array.prototype.slice.call(arguments, 2);
 	
 	for (var i = 0; i < args.length; i++) {
 		io_puts(rb_call(args[i], "to_s"));
 	}
 	
 	return Qnil
+}
+
+/**
+  Try to load the library or file named `require_path`. Causes an error to be
+  thrown if required path cannot be found.
+
+  For in browser async loading, only use string paths. String paths must use 
+  their base package name as well (e.g. 'cherry_kit/views/view'). Non string
+  names will and cannot be async loaded. (for example, File.join... etc will
+  not be async loaded
+
+  @param [String] require_path
+  @return [Boolean] success
+*/
+function obj_require(obj, mid, path) {
+  ARG_COUNT(1)
+  return rb_require(path);
 }
 
 /**
@@ -320,7 +337,7 @@ function obj_puts(obj) {
 	@param [String] string to pass as message for exception
 	@return [nil]
 */
-function obj_raise(obj, exception, string) {
+function obj_raise(obj, mid, exception, string) {
 	ARG_MIN(1)
 	
 	var msg = Qnil, exc;
@@ -328,7 +345,7 @@ function obj_raise(obj, exception, string) {
 	if (IS_STRING(exception)) {
 		msg = exception;
 		exc = rb_call(rb_eRuntimeError, "new", msg);
-	} else if (obj_is_kind_of(exception, rb_eException)) {
+	} else if (obj_is_kind_of(exception, "kind_of?", rb_eException)) {
 		exc = exception;
 	} else {
 		if (string != undefined)
@@ -340,19 +357,19 @@ function obj_raise(obj, exception, string) {
 	rb_vm_raise(exc);
 }
 
-function obj_instance_variable_defined_p(obj, name) {
+function obj_instance_variable_defined_p(obj, mid, name) {
 	ARG_COUNT(1)
 	TO_STRING(name)
 	return rb_ivar_defined(obj, name) ? Qtrue : Qfalse;
 }
 
-function obj_instance_variable_get(obj, name) {
+function obj_instance_variable_get(obj, mid, name) {
 	ARG_COUNT(1)
 	TO_STRING(name)
 	return rb_ivar_get(obj, name);
 }
 
-function obj_instance_variable_set(obj, name, value) {
+function obj_instance_variable_set(obj, mid, name, value) {
 	ARG_COUNT(2)
 	TO_STRING(name)
 	return rb_ivar_set(obj, name, value);
@@ -374,7 +391,7 @@ function obj_block_given_p() {
 	return Qfalse;
 }
 
-function obj_method_missing(obj, sym) {
+function obj_method_missing(obj, mid, sym) {
 	ARG_MIN(1)
 	TO_STRING(sym)
 	
@@ -383,12 +400,12 @@ function obj_method_missing(obj, sym) {
 	rb_raise(rb_eNoMethodError, str);
 }
 
-function obj_to_a(obj) {
+function obj_to_a(obj, mid) {
 	ARG_COUNT(0)
 	return [obj];
 }
 
-function obj_tap(obj, block) {
+function obj_tap(obj, mid, block) {
 	ARG_COUNT(0)
 	if (!BLOCK_GIVEN(block))
 		rb_raise(rb_eLocalJumpError, "no block given");
@@ -398,7 +415,7 @@ function obj_tap(obj, block) {
 	return obj;
 }
 
-function obj_is_kind_of(obj, klass) {
+function obj_is_kind_of(obj, mid, klass) {
 	ARG_COUNT(1)
 	
 	var search = obj.$klass;
@@ -419,7 +436,7 @@ function obj_nil_p(obj) {
 	return Qfalse;
 }
 
-function obj_respond_to_p(obj, method) {
+function obj_respond_to_p(obj, mid, method) {
 	ARG_COUNT(1)
 	
 	TO_STRING(method)
@@ -430,26 +447,28 @@ function obj_respond_to_p(obj, method) {
 	return Qfalse;
 }
 
-function obj_eqq(obj, other) {
+function obj_eqq(obj, mid, other) {
 	ARG_COUNT(1)
 	
 	return rb_call(obj, "==", other);
 }
 
-function obj_send(obj, method) {
+function obj_send(obj, mid, method) {
   // print("sending message: " + method);
 	ARG_MIN(1)
   // print("a");
 	TO_STRING(method)
   // print("b");
-	var args = Array.prototype.slice.call(arguments, 2);
+	var args = Array.prototype.slice.call(arguments, 3);
+	// method
+  args.unshift(method);
 	// recv
 	args.unshift(obj);
   // print("args: " + args.join(", "));
-	return (obj.$m['$' + method] || rb_vm_meth_m(m_id)).apply(null, args);
+	return (obj.$m['$' + method] || rb_vm_meth_m).apply(null, args);
 }
 
-function obj_class(obj) {
+function obj_class(obj, mid) {
 	ARG_COUNT(0)
 	
 	return rb_class_real(obj.$klass);
@@ -469,31 +488,31 @@ function obj_class(obj) {
 	@param [Number] max max number to use
 	@return [Number] random number
 */
-function obj_rand(obj, max) {
+function obj_rand(obj, mid, max) {
 	if (max != undefined)
 		return Math.floor(Math.random() * max);
 	else
 		return Math.random();
 }
 
-function obj_object_id(obj) {
+function obj_object_id(obj, mid) {
 	ARG_COUNT(0)
 	
 	return obj.$hash();
 }
 
-function obj_to_s(obj) {
+function obj_to_s(obj, mid) {
 	ARG_COUNT(0)
 	
 	return "#<" + rb_call(rb_class_real(obj.$klass), "to_s") + ":" + obj.$hash() +
 	 ">";
 }
 
-function obj_inspect(obj) {
+function obj_inspect(obj, mid) {
 	return rb_call(obj, "to_s");
 }
 
-function obj_instance_eval(obj) {
+function obj_instance_eval(obj, mid) {
 	USES_BLOCK
 	
   // print("about to instance eval..");
@@ -511,7 +530,7 @@ function obj_instance_eval(obj) {
 	return obj;
 }
 
-function obj_const_set(obj, name, value) {
+function obj_const_set(obj, mid, name, value) {
 	ARG_COUNT(2)
 	
 	TO_STRING(name)
@@ -519,7 +538,7 @@ function obj_const_set(obj, name, value) {
 	return rb_const_set(obj, name, value);
 }
 
-function obj_const_defined_p(obj, name) {
+function obj_const_defined_p(obj, mid, name) {
 	ARG_COUNT(1)
 	
 	TO_STRING(name)
@@ -577,6 +596,7 @@ var InitObject = function() {
 	rb_define_method(rb_cModule, "include", mod_include);
 	rb_define_method(rb_cModule, "extend", mod_extend);
 	
+	rb_define_method(rb_mKernel, "require", obj_require);
 	rb_define_method(rb_mKernel, "loop", obj_loop);
 	rb_define_method(rb_mKernel, "proc", obj_proc);
 	rb_define_method(rb_mKernel, "lambda", obj_proc);

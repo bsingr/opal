@@ -105,7 +105,7 @@ var debug_original_define_method;
 	to ensure it is correctly getting the block (make sure the block was not given 
 	to someone else)
 */
-function debug_block_call(block, mid, self) {
+function debug_block_call(block, self, mid) {
   // print("calling block for " + mid);
   // print("block is: " + block.$m.$inspect(block));
 	rb_block_proc = block;
@@ -116,7 +116,7 @@ function debug_block_call(block, mid, self) {
 		rb_block_func = func.$wrapped;
     // print("SETTING rb_block_func to " + rb_block_func);
 		
-		return func.apply(null, Array.prototype.slice.call(arguments, 2));
+		return func.apply(null, Array.prototype.slice.call(arguments, 1));
 	} else {
 		// method_missing
 		func = self.$m['$method_missing'];

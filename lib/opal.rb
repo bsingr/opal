@@ -1,17 +1,8 @@
 module Kernel
-  # Try to load the library or file named `require_path`. Causes an error to be
-  # thrown if required path cannot be found.
-  # 
-  # For in browser async loading, only use string paths. String paths must use 
-  # their base package name as well (e.g. 'cherry_kit/views/view'). Non string
-  # names will and cannot be async loaded. (for example, File.join... etc will
-  # not be async loaded
-  # 
-  # @param [String] require_path
-  # @return [Boolean] success
-  def require(require_path)
-    Opal.require_path require_path
-  end
+
+  # def require(require_path)
+    # Opal.require_path require_path
+  # end
   
   # # remove this!!!!!!!
   #  def puts(a)

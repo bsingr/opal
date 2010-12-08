@@ -6,14 +6,14 @@ var envtbl;
 var RHash = function(args) {
   var k, v;
   this.$h = opal_yield_hash();
-  this['@keys'] = [];
-  this['@assocs'] = {};
-  this['@default'] = Qnil;
+  this.$keys = [];
+  this.$assocs = {};
+  this.$default = Qnil;
   for (var i = 0; i < args.length; i++) {
     k = args[i], v = args[i+1];
     i++;
-    this['@keys'].push(k);
-    this['@assocs'][k.$hash()] = v;
+    this.$keys.push(k);
+    this.$assocs[k.$hash()] = v;
   }
   return this;
 };
@@ -24,35 +24,35 @@ opalhash = function() {
   return new RHash(Array.prototype.slice.call(arguments));
 };
 
-var rb_cHash_store = function(self, key, val) {
+var rb_cHash_store = function(self, mid, key, val) {
 	var hash = key.$hash();
 	
-	if (!self['@assocs'].hasOwnProperty(hash))
-		self['@keys'].push(key);
+	if (!self.$assocs.hasOwnProperty(hash))
+		self.$keys.push(key);
 	
-	return self['@assocs'][hash] = val;
+	return self.$assocs[hash] = val;
 };
 
-var rb_cHash_fetch = function(self, key) {
+var rb_cHash_fetch = function(self, mid, key) {
 	var hash = key.$hash();
 	
-	if (self['@assocs'].hasOwnProperty(hash))
-		return self['@assocs'][hash];
+	if (self.$assocs.hasOwnProperty(hash))
+		return self.$assocs[hash];
 	
-	return self['@default'];
+	return self.$default;
 };
 
-var rb_cHash_delete = function(self, key) {
+var rb_cHash_delete = function(self, mid, key) {
 	var hash = key.$hash();
   
-  if (self['@assocs'].hasOwnProperty(hash)) {
-    var ret = self['@assocs'][hash];
-    delete self['@assocs'][hash];
-    self['@keys'].splice(self['@keys'].indexOf(key), 1);
+  if (self.$assocs.hasOwnProperty(hash)) {
+    var ret = self.$assocs[hash];
+    delete self.$assocs[hash];
+    self.$keys.splice(self.$keys.indexOf(key), 1);
     return ret;
   }
   
-  return self['@default'];
+  return self.$default;
 };
 
 /**
@@ -65,8 +65,8 @@ var rb_cHash_delete = function(self, key) {
 
 	@return [Hash]
 */
-function hash_s_create(obj) {
-	return opalhash.apply(null, Array.prototype.slice.call(arguments, 1));
+function hash_s_create(obj, mid) {
+	return opalhash.apply(null, Array.prototype.slice.call(arguments, 2));
 }
 
 /**
@@ -79,13 +79,13 @@ function hash_s_create(obj) {
 
 	@return [Array]
 */
-function hash_values(hash) {
+function hash_values(hash, mid) {
 	ARG_COUNT(0)
 	
 	var result = [];
 	
-	for (var i = 0; i < hash['@keys'].length; i++) {
-		result.push(hash['@assocs'][hash['@keys'][i].$hash()]);
+	for (var i = 0; i < hash.$keys.length; i++) {
+		result.push(hash.$assocs[hash.$keys[i].$hash()]);
 	}
 	
 	return result;
@@ -100,14 +100,14 @@ function hash_values(hash) {
 
 	@return [String]
 */
-function hash_inspect(hash) {
+function hash_inspect(hash, mid) {
 	ARG_COUNT(0)
 	
 	var description = [], key, value;
 	
-	for (var i = 0; i < hash['@keys'].length; i++) {
-		key = hash['@keys'][i];
-		value = hash['@assocs'][key.$hash()];
+	for (var i = 0; i < hash.$keys.length; i++) {
+		key = hash.$keys[i];
+		value = hash.$assocs[key.$hash()];
 		description.push(rb_call(key, "inspect") + "=>" + rb_call(value,"inspect"));
 	}
 	
@@ -119,14 +119,14 @@ function hash_inspect(hash) {
 
 	@return [String]
 */
-function hash_to_s(hash) {
+function hash_to_s(hash, mid) {
 	ARG_COUNT(0)
 	
 	var description = [], key, value;
 	
-	for (var i = 0; i < hash['@keys'].length; i++) {
-		key = hash['@keys'][i];
-		value = hash['@assocs'][key.$hash()];
+	for (var i = 0; i < hash.$keys.length; i++) {
+		key = hash.$keys[i];
+		value = hash.$assocs[key.$hash()];
 		description.push(rb_call(key, "to_s") + rb_call(value, "to_s"));
 	}
 	
@@ -149,17 +149,45 @@ function hash_to_s(hash) {
 
 	@return [Hash] returns reciever
 */
-function hash_each(hash) {
+function hash_each(hash, mid) {
 	ARG_COUNT(0)
 	
-	var keys = hash['@keys'], length = keys.length, key;
+	var keys = hash.$keys, length = keys.length, key;
 	
 	for (var i = 0; i < length; i++) {
 		key = keys[i];
-		BLOCK_CALL(block, key, hash['@assocs'][key.$hash()]);
+		BLOCK_CALL(block, key, hash.$assocs[key.$hash()]);
 	}
 	
 	return hash;
+}
+
+/**
+  Searches through the hash comparing `obj` with the key using ==. Returns the
+  key-value pair (two elements array) or nil if no match is found. See
+  {Array#assoc}.
+
+  @example
+    h = { "a" => [1, 2, 3], "b" => [4, 5, 6] }
+    h["a"]
+    # => ["a", [1, 2, 3]]
+    h["c"]
+    # => nil
+
+  @param [Object] obj key to search for
+  @return [Array<Object, Object>, nil] result or nil
+*/
+function hash_assoc(hash, mid, obj) {
+  ARG_COUNT(1)
+  var key;
+  
+  for (var i = 0; i < hash.$keys.length; i++) {
+    key = hash.$keys[i];
+    if (RTEST(rb_call(key, "==", obj)))
+      return [key, hash.$assocs[key.$hash()]];
+  }
+  
+  return Qnil;
 }
 
 function env_to_s(env) {
@@ -190,6 +218,7 @@ var Init_Hash = function() {
 	rb_define_method(rb_cHash, "to_s", hash_to_s);
 	rb_define_method(rb_cHash, "each", hash_each);
 	rb_define_method(rb_cHash, "each_pair", hash_each);
+	rb_define_method(rb_cHash, "assoc", hash_assoc);
 																			
 	rb_define_method(rb_cHash, '__store__', rb_cHash_store);
 	rb_define_method(rb_cHash, '__fetch__', rb_cHash_fetch);

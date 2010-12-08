@@ -1,12 +1,20 @@
-// v8 compatibiloity for running opalv8
+/**
+  opal platform - stand alone runtime for node.
+  =============================================
+  
+  A single JS file is built for this runtime, and both the runtime and dev files
+  are bundled.
+*/
 
-// c++ API gives us:
-// 	OpalFile
-// 		.open(path, flags, perms)
-// 
-// 	OpalIO
-// 
-
+(function(global, exports) {
+  
+/**
+  Import all Opal defines, and bundle in runtime as well as development 
+  (compiler, parser etc).
+*/
+#include "../opal.h"
+#include "../runtime.js"
+#include "../dev.js"
 
 // FIXME: remove this! used for tmp readline
 global.OpalIRB = function() {
@@ -18,7 +26,7 @@ global.OpalIRB = function() {
 
 		rb_run(function() {
 
-	  	print((obj = func(rb_top_self, '(irb)'), obj.$m.$inspect(obj)));
+	  print((obj = func(rb_top_self, '(irb)'), obj.$m.$inspect(obj, "inspect")));
 		});
 	}
 	catch (e) {
@@ -130,3 +138,5 @@ var file_mtime = OpalFile.mtime;
 var file_list = OpalFile.list;
 
 var file_exists = OpalFile.exists;
+
+})(this, Opal);
