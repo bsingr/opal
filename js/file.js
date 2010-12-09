@@ -1,10 +1,3 @@
-// file.js
-// =======
-// 
-// Dealing with files etc. Used for ALL environments (opal, narwhal, node,
-// browser). Also some dir methods (as appropriate).
-// 
-
 // FIXME: these three should depend on whether we are running on windows or not.
 // Windows uses backslashes instead..
 var FILE_SEPARATOR 		= '/',
@@ -29,14 +22,59 @@ var file_is_relative = function(fname) {
 	return !file_is_absolute(fname);
 };
 
-var file_join = function() {
+/**
+  Internel mathod for joining parts of a path by system separator.
+*/
+function rb_file_join() {
 	return Array.prototype.slice.call(arguments).join(FILE_SEPARATOR);
 };
 
-var file_dirname = function(path) {
+/**
+  Internal method for getting dirname of the given path
+*/
+function rb_file_dirname(path) {
 	var parts = file_split(path);
 	parts.pop();
-	return file_join.apply(this, parts) || '.';
+	return rb_file_join.apply(this, parts) || '.';
+};
+
+/**
+  Internel method for expanding paths
+*/
+function rb_expand_path(path, dir_string) {
+	var start_slash = (path[0] === "/");
+	
+	if (dir_string) 
+		path = rb_file_join(dir_string, path);
+  else if (!start_slash)
+		path = rb_file_join(opal_getwd(), path);
+
+	var parts = path.split("/");
+  var result = [];
+  var part;
+  for (var i = 0; i < parts.length; i++) {
+    part = parts[i];
+    switch (part) {
+      case '..':
+        result.pop();
+        break;
+      case '.':
+        break;
+      case '':
+        break;
+      default:
+        result.push(part);
+    }
+  }
+  
+
+  if (result[0] != "") {
+    // if we started with a slash, use that
+    return "/" + result.join("/");
+  } else {
+    // otherwise join with our current working dir
+		return result.join("/");
+  }
 };
 
 file_list_tree = function(path) {
@@ -44,7 +82,7 @@ file_list_tree = function(path) {
 	var children = file_list(path);
 	
 	for (var i = 0; i < children.length; i++) {
-		var child_path = file_join(path, children[i]);
+		var child_path = rb_file_join(path, children[i]);
 		// print("child_path: " + child_path);
 		result.push(child_path);
 		if (file_is_directory(child_path)) {
@@ -100,7 +138,7 @@ var file_glob = function(pattern, flags) {
 						var children = file_list(glob_paths[idx]);
 						for (var j = 0; j < children.length; j++) {
 							if (regexp.test(children[j])) {
-								new_path.push(file_join(glob_paths[idx], children[j]));
+								new_path.push(rb_file_join(glob_paths[idx], children[j]));
 							}
 						}
 					} else {
@@ -119,8 +157,8 @@ var file_glob = function(pattern, flags) {
 			} else {
 				var new_path = [];
 				for (var idx = 0; idx < glob_paths.length; idx ++) {
-					var new_path_candidate = file_join(glob_paths[idx], part);
-					if (file_exists(new_path_candidate)) {
+					var new_path_candidate = rb_file_join(glob_paths[idx], part);
+					if (opal_file_exists(new_path_candidate)) {
 						new_path.push(new_path_candidate);
 					}
 				}
@@ -152,66 +190,54 @@ var file_glob_build_regexp = function(pattern, flags) {
 	return new RegExp('^' + pattern.replace('.', '\\.').split('*').join('.*') + '$');
 };
 
+/**
+  File.join(string, ...)    # => path
+  
+  Returns a new string formed by joining all arguments using SEPARATOR.
+*/
+function file_s_join(self, mid) {
+	var parts = Array.prototype.slice.call(arguments, 2);
+	return rb_file_join.apply(null, parts);
+};
+
+/**
+  Returns all components of the filename given in `file_name` except last
+  one. The filename must be formed using forward slashed ("/") regardless of
+  the separator used on the local filesystem.
+
+  @example
+    File.dirname "home/adam/work/ruby.rb"
+    # => "/home/adam/work"
+
+  @param [String] path
+  @return [String]
+*/
+function file_s_dirname(klass, mid, path) {
+  return rb_file_dirname(path);
+}
+
+/**
+  Expand the given path
+*/
+function file_s_expand_path(klass, mid, path, dir_string) {
+  return rb_expand_path(path, dir_string);
+}
+
+// File.__exists__
+function file_s_exists_p(self, mid, path) {
+	return opal_file_exists(path) ? Qtrue : Qfalse;
+};
+
 // Initialize core File (and Dir) classes with some bootstrap methods.
 function Init_File() {
 	// @class File
 	rb_cFile = rb_define_class("File", rb_cIO);
 	
 	// VM methods for core file access.
-	rb_define_singleton_method(rb_cFile, '__join__', rb_cFile_join);
-	rb_define_singleton_method(rb_cFile, '__dirname__', rb_cFile_dirname);
-	rb_define_singleton_method(rb_cFile, '__expand_path__', rb_cFile_expand_path);
-	rb_define_singleton_method(rb_cFile, '__exists__', rb_cFile_exists);
-	rb_define_singleton_method(rb_cFile, '__read__', rb_cFile_read);
+	rb_define_singleton_method(rb_cFile, 'join', file_s_join);
+	rb_define_singleton_method(rb_cFile, 'dirname', file_s_dirname);
+	rb_define_singleton_method(rb_cFile, 'expand_path', file_s_expand_path);
+	rb_define_singleton_method(rb_cFile, "exists?", file_s_exists_p);
 	
-	// @class Dir
-	rb_cDir = rb_define_class('Dir', rb_cObject);
-	
-	// VM methods for Dir access
-	rb_define_singleton_method(rb_cDir, '__getwd__', rb_cDir_getwd);
-	rb_define_singleton_method(rb_cDir, '__glob__', rb_cDir_glob);
-};
-
-// All methods used from here are methods for the File class to use directly
-
-// File#__join__
-var rb_cFile_join = function(self, mid) {
-	var parts = Array.prototype.slice.call(arguments, 2);
-	return file_join.apply(null, parts);
-};
-
-// File#__dirname__
-var rb_cFile_dirname = function(self, mid, path) {
-	return file_dirname(path);
-};
-
-// File#__expand_path__
-var rb_cFile_expand_path = function(self, mid, path, dir_string) {
-	return io_expand_path(path, dir_string);
-};
-
-// File.__exists__
-var rb_cFile_exists = function(self, mid, path) {
-	return file_exists(path) ? Qtrue : Qfalse;
-};
-
-// File.__read__
-var rb_cFile_read = function(self, mid, path) {
-	if (file_exists(path)) {
-		return opal_read(path);
-	}
-	else {
-		rb_raise(rb_eRuntimeError, "No such file to load - " + path);
-	}
-}
-
-// Dir#__getwd__
-var rb_cDir_getwd = function(self) {
-	return io_getwd();
-};
-
-// Dir.__glob__
-var rb_cDir_glob = function(self, mid, glob) {
-	return file_glob(glob);
 };
 

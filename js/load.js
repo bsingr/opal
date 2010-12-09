@@ -21,7 +21,7 @@ load_paths.unshift(exports.opal_lib_path);
 // Ruby loader.
 extensions['.rb'] = function(fname) {
   // get file content
-  var content = opal_read(fname).toString();
+  var content = rb_read_file(fname).toString();
   // compile ruby
   var code = exports.compile(content);
   // print('#################################################################');
@@ -31,10 +31,10 @@ extensions['.rb'] = function(fname) {
   // execute function (code)
 	
 	// print("===== loading at " + fname);
-	print(io_expand_path(fname));
+	print(rb_expand_path(fname));
 	// print("!!!!!");
 
-  func(rb_top_self, io_expand_path(fname));
+  func(rb_top_self, rb_expand_path(fname));
 };
 
 // Javascript loader.
@@ -96,18 +96,18 @@ var find_require_filename = function(fname) {
   for (var path_idx = 0; path_idx < load_paths.length; path_idx++) {
     // if we were given an extension, dont loop through, just use that
     if (given_ext) {
-      cur_path = file_join(load_paths[path_idx], fname + ext_name);
+      cur_path = rb_file_join(load_paths[path_idx], fname + ext_name);
       
-      if (io_file_exists(cur_path)) {
+      if (opal_file_exists(cur_path)) {
         return [cur_path, cur_path];
       }
     }
     else {
       // loop over each extension
       for (var ext_name in extensions) {
-        cur_path = file_join(load_paths[path_idx], fname + ext_name);
+        cur_path = rb_file_join(load_paths[path_idx], fname + ext_name);
 
-        if (io_file_exists(cur_path))
+        if (opal_file_exists(cur_path))
           // cur_path is our file to load!!
           return [cur_path, fname + ext_name];
       }
@@ -120,7 +120,7 @@ var find_require_filename = function(fname) {
   if (fname[0] === '/') {
     // if we have an extension..
     if (given_ext) {
-      if (io_file_exists(fname)) {
+      if (opal_file_exists(fname)) {
         return [fname, fname];
       }
     }
@@ -129,7 +129,7 @@ var find_require_filename = function(fname) {
       for (var ext_name in extensions) {
         cur_path = fname + ext_name;
         
-        if (io_file_exists(cur_path)) {
+        if (opal_file_exists(cur_path)) {
           return [cur_path, cur_path];
         }
       }

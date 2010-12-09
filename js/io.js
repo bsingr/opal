@@ -49,7 +49,7 @@ function io_s_open(klass, mid) {
   Opens the file named +name+, reads all its contents, then closes the file.
 */
 function io_s_read(io, mid, name) {
-  print("doing this read for " + name);
+  // print("doing this read for " + name);
   // rb_raise(rb_eException, "IO.read not yet implemented");
   
   var fd = opal_file_open(name);
@@ -57,7 +57,8 @@ function io_s_read(io, mid, name) {
   // if file does not exist
   if (fd < 0) rb_raise(rb_eIOError, "No such file or directory - " + name);
   
-  var str = opal_file_read(fd);
+  // var str = opal_file_read(fd);
+  var str = rb_io_read_all(fd);
   opal_file_close(fd);
   return str;
 }
@@ -88,11 +89,13 @@ function file_initialize(io, mid, filename, mode, perm, options) {
   io.$fp = fp;
   
   fp.pathv = filename;
-  fp.fd = opal_file_open(filename);
+  fp.fd = opal_file_open(filename, mode);
   return io;
 }
 
 /**
+  IO#read(length)     # => string
+  
   Reads at most +length+ bytes from the I/O stream, or to EOF if length is not
   given. Returns string
   
@@ -100,12 +103,32 @@ function file_initialize(io, mid, filename, mode, perm, options) {
     
     f = File.new("some_file")
     f.read()    # => "Some file content"
-  
-  @todo For now, length is ignored and whole file is read
 */
 function io_read(io, mid, length) {
   var fd = io.$fp.fd;
-  return opal_file_read(fd);
+  
+  if (length == undefined) {
+    return rb_io_read_all(fd);
+  } else {
+    return opal_file_read(fd, 0, length, null)
+  }
+}
+
+/**
+  IO#write(str)     # => integer
+  
+  Writes the given string to the receiver io. Stream must be open for writing
+  otherwise error thrown. 
+*/
+function io_write(io, mid, str) {
+  var fd = io.$fp.fd;
+  
+  if (!str) {
+    print("no string given, so using 'demo'");
+    str = "demo";
+  }
+  
+  return opal_file_write(fd, str, 0, str.length, null);
 }
 
 /**
@@ -117,8 +140,9 @@ function io_read(io, mid, length) {
     f = File.new("some_file")
     f.close()   # => nil
 */
-function io_close(io) {
-  print("closing IO");
+function io_close(io, mid) {
+  var fd = io.$fp.fd;
+  opal_file_close(fd);
   return Qnil;
 }
 
@@ -154,10 +178,51 @@ function io_fileno(io, mid) {
   automatically be called when needed (this is not a ruby method). A closed file
   will have a fd of -1.
 */
-function io_check_closed(io) {
-  if (io.$fd < 0)
+function rb_io_check_closed(io) {
+  if (io.$fp.fd < 0)
     rb_raise(rb_eIOError, "closed stream");
 }
+
+/**
+  Read the entire contents of the given open file. It will be closed somewhere
+  else, so basically just read all the contents.
+*/
+function rb_io_read_all(fd) {
+  // all read parts (need to join them once done)
+  var parts = [];
+  // total read length so far
+  var total_read_length = 0;
+  // length of our last/current read
+  var last_read_length = 0;
+  // the last string we actually read
+  var last_read_str = "";
+  // how much to read at a time
+  var READ_LENGTH = 4048;
+  
+  do {
+    if (last_read_length > 0) {
+      total_read_length += last_read_length;
+      parts.push(last_read_str);
+    }
+    last_read_str = opal_file_read(fd, 0, READ_LENGTH, null);
+    last_read_length = last_read_str.length;
+  } while (last_read_length > 0);
+  
+  return parts.join("");
+}
+
+/**
+  Quickly read the given filename/path. It has already been checked and exists.
+  This is used for loading files for require(), etc.
+*/
+function rb_read_file(path) {
+  var fd = opal_file_open(path, 'r');
+  var str = rb_io_read_all(fd);
+  opal_file_close(fd);
+  return str;
+}
+
+global.rb_read_file = rb_read_file;
 
 function Init_IO() {
   
@@ -172,8 +237,10 @@ function Init_IO() {
 	
 	rb_define_method(rb_cIO, "initialize", io_initialize);
 	rb_define_method(rb_cIO, "read", io_read);
+  rb_define_method(rb_cIO, "write", io_write);
 	rb_define_method(rb_cIO, "inspect", io_inspect);
 	rb_define_method(rb_cIO, "fileno", io_fileno);
+	rb_define_method(rb_cIO, "close", io_close);
 	
 	Init_File();
 	

@@ -12,9 +12,7 @@ var rb_mKernel,
     rb_cTrueClass,
     rb_cFalseClass,
     rb_proc,
-		rb_cFile,
-		rb_cDir;
-
+		rb_cFile;
 // @global Top self context within ruby 
 rb_top_self = null;
 
@@ -108,7 +106,7 @@ function mod_class_eval(mod, mid, string, filename, lineno) {
 	if (!BLOCK_GIVEN) {
 		var code = exports.compile(string);
 	  var func = new Function('self', '__FILE__', code);
-	  return func(mod, io_expand_path(filename));
+	  return func(mod, rb_expand_path(filename));
 	} else {
 		return YIELD_USING(mod);
 	}

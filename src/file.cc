@@ -114,7 +114,9 @@ namespace opal {
 	v8::Handle<v8::Value> Open(const v8::Arguments& args) {
 		v8::String::Utf8Value path(args[0]->ToString());
 		
-		int fd = open(*path, 0, 0644);
+    int flags = args[1]->Int32Value();
+    // printf("Opening %s with flags %d\n", *path, flags);
+		int fd = open(*path, flags, 0644);
 		
 		if (fd < 0) {
       // printf("bad file path: does not exist: %d\n", fd);
@@ -136,55 +138,72 @@ namespace opal {
 	
 	v8::Handle<v8::Value> Read(const v8::Arguments& args) {
 		
-		size_t buffer_size = 4048;
-		size_t buffer_used = 0;
-		
 		int fd = args[0]->Int32Value();
-		size_t len = args[2]->Int32Value();
-		char *buf = (char *)malloc(buffer_size);
-		size_t res;
-		
-		while (true) {
-			
-			if (buffer_used >= buffer_size) {
-				// printf("buffer may not be bis enough!!\n");
-				buffer_size += 4048;
-				
-				buf = (char *)realloc(buf, buffer_size);
-			}
-			
-			res = read(fd, buf + buffer_used, len);
-			// printf("read:\n%s\n", buf);
-			// printf("res length: %d\n", (int)res);
-			
-			if (res <= 0) {
-				// printf("done reading.\n");
-				break;
-			}
-			else {
-				// printf("read %d on this loop\n", (int)res);
-				buffer_used += res;
-			}
-		}
-		
-		// printf("buffer: %s\n", buf);
-		// res = read(fd, buf, len);
-		
-		if (res < 0)
-			printf("exception to be raised in Read (< 0)\n");
-		
-		// return JS_STR(buf);
-		v8::Handle<v8::String> result = v8::String::New(buf, buffer_used);
-		free(buf);
+    size_t offset = args[1]->Int32Value();
+		size_t length = args[2]->Int32Value();
+		char *buffer = (char *)malloc(length);
+	
+    size_t res;
+    
+    res = read(fd, buffer, length);
+    // printf("read: %s\n", buffer);
+    
+    v8::Handle<v8::String> result = v8::String::New(buffer, res);
+		free(buffer);
 		return result;
 		
-		// printf("%d - %d: %s\n",fd, (int)res, buf);
-		// printf("%d\n", errno);
-		// return JS_STR("wow");
+	  // while (true) {
+	 //    
+	 //    if (buffer_used >= buffer_size) {
+	 //      // printf("buffer may not be bis enough!!\n");
+	 //      buffer_size += 4048;
+	 //      
+	 //      buf = (char *)realloc(buf, buffer_size);
+	 //    }
+	 //    
+	 //    res = read(fd, buf + buffer_used, len);
+	 //    // printf("read:\n%s\n", buf);
+	 //    // printf("res length: %d\n", (int)res);
+	 //    
+	 //    if (res <= 0) {
+	 //      // printf("done reading.\n");
+	 //      break;
+	 //    }
+	 //    else {
+	 //      // printf("read %d on this loop\n", (int)res);
+	 //      buffer_used += res;
+	 //    }
+	 //  }
+	 //  
+	 //  // printf("buffer: %s\n", buf);
+	 //  // res = read(fd, buf, len);
+	 //  
+	 //  if (res < 0)
+	 //    printf("exception to be raised in Read (< 0)\n");
+	 //  
+	 //  // return JS_STR(buf);
+	 //  v8::Handle<v8::String> result = v8::String::New(buf, buffer_used);
+	 //  free(buf);
+	 //  return result;
+	 //  
+	 //  // printf("%d - %d: %s\n",fd, (int)res, buf);
+	 //  // printf("%d\n", errno);
+	 //  // return JS_STR("wow");
+	}
+	
+	v8::Handle<v8::Value> Write(const v8::Arguments& args) {
+    int fd = args[0]->Int32Value();
+    v8::String::Utf8Value str(args[1]->ToString());
+    size_t offset = args[2]->Int32Value();
+    size_t length = args[3]->Int32Value();
+    // position
+    
+    size_t res = write(fd, *str, length);
+    return JS_INT(res);
 	}
 	
 	void InitFile() {
-		printf("init file!\n");
+    // printf("init file!\n");
 		
 		v8::Handle<v8::Object> opal_file = v8::Object::New();
 		JS_SET(JS_GLOBAL, "OpalFile", opal_file);
@@ -193,6 +212,7 @@ namespace opal {
 		JS_SET(opal_file, "cwd", JS_FUNC(Cwd)->GetFunction());
 		JS_SET(opal_file, "open", JS_FUNC(Open)->GetFunction());
 		JS_SET(opal_file, "read", JS_FUNC(Read)->GetFunction());
+    JS_SET(opal_file, "write", JS_FUNC(Write)->GetFunction());
 		JS_SET(opal_file, "close", JS_FUNC(Close)->GetFunction());
 		JS_SET(opal_file, "exists", JS_FUNC(Exists)->GetFunction());
 		JS_SET(opal_file, "is_directory", JS_FUNC(IsDirectory)->GetFunction());
@@ -201,5 +221,14 @@ namespace opal {
 		JS_SET(opal_file, "mtime", JS_FUNC(Mtime)->GetFunction());
 		JS_SET(opal_file, "list", JS_FUNC(List)->GetFunction());
 		JS_SET(opal_file, "mkdir", JS_FUNC(Mkdir)->GetFunction());
+		
+    // file modes
+    JS_SET(opal_file, "O_RDONLY", JS_INT(O_RDONLY));
+    JS_SET(opal_file, "O_WRONLY", JS_INT(O_WRONLY));
+    JS_SET(opal_file, "O_RDWR", JS_INT(O_RDWR));
+    
+    JS_SET(opal_file, "O_CREAT", JS_INT(O_CREAT));
+    JS_SET(opal_file, "O_APPEND", JS_INT(O_APPEND));
+    JS_SET(opal_file, "O_TRUNC", JS_INT(O_TRUNC));
 	}
 }

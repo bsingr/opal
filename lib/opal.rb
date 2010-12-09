@@ -28,11 +28,8 @@ class Symbol
 end
 
 require 'opal/basic_object'
-require 'opal/dir'
 require 'opal/enumerator'
-require 'opal/file'
 require 'opal/hash'
-require 'opal/io'
 require 'opal/match_data'
 require 'opal/proc'
 require 'opal/range'

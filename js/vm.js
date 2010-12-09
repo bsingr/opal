@@ -298,7 +298,7 @@ rb_vm_gs = function(id, value) {
 var opal_context_eval = function(opal, mid, block, self, string, filename, lineno) {
 	var code = exports.compile(string);
   var func = new Function('self', '__FILE__', code);
-  return func(self, io_expand_path(filename));
+  return func(self, rb_expand_path(filename));
 };
 
 var opal_s_compile = function(opal, mid, string) {

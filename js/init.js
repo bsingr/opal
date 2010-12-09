@@ -21,6 +21,7 @@ exports.init = function() {
 	Init_Regexp();
 	InitLoad();
 	Init_IO();
+	Init_Dir();
 	InitVM();
 	Init_Exception();
 	Init_String();
@@ -77,6 +78,8 @@ exports.main = function() {
 	
 	print("program name is: " + program_name);
 	print("args: [" + init_argv.join(", ") + "]");
+	
+  // return;
 	
 	// if we have a program name, then lets run it. if not, print help
 	if (program_name) {

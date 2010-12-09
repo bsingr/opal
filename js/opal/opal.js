@@ -16,6 +16,30 @@
 #include "../runtime.js"
 #include "../dev.js"
 
+/**
+  File mode flags
+*/
+#define FMODE_READABLE  OpalFile.O_RDONLY
+#define FMODE_READWRITE OpalFile.O_RDWR
+#define FMODE_WRITABLE  OpalFile.O_WRONLY
+#define FMODE_CREATE    OpalFile.O_CREAT
+#define FMODE_APPEND    OpalFile.O_APPEND
+#define FMODE_TRUNC     OpalFile.O_TRUNC
+
+/**
+  Convert mode flags (strings) to their correct numerical values
+*/
+function opal_mode_flag_for(mode) {
+  if (typeof mode != 'string') return mode;
+  
+  switch (mode) {
+    case "r":   return FMODE_READABLE;
+    case "r+":  return FMODE_READWRITE;
+    case "w":   return FMODE_WRITABLE | FMODE_CREATE | FMODE_TRUNC;
+    case "w+":  return FMODE_READWRITE | FMODE_CREATE | FMORE_TRUNC;
+    default: throw "Bad file mode flags (" + mode + ")";
+  }
+}
 
 /**
   Open the file at the given path. This will return a fd if successfull. The fd
@@ -26,8 +50,10 @@
     opal_file_open("some/path/to/file.txt")
     # => 4
 */
-function opal_file_open(path) {
-  var fd = OpalFile.open(path, 0, 0666);
+function opal_file_open(path, flags, mode) {
+  flags = opal_mode_flag_for(flags == undefined ? 'r' : flags);
+  
+  var fd = OpalFile.open(path, flags, 0666);
   return fd;
 }
 
@@ -53,21 +79,19 @@ function opal_file_exists(path) {
 }
 
 /**
-  Read the entire file at the given fd
+  Read from the file at the given fd
 */
-function opal_file_read(fd) {
-	var str = OpalFile.read(fd, 0, 4048);
+function opal_file_read(fd, offset, length, position) {
+	var str = OpalFile.read(fd, offset, length, position);
 	return str;
 };
 
 /**
-  Raw read given filename path
+  Write to the given fd
 */
-function opal_read(path) {
-  var fd = opal_file_open(path);
-  var str = opal_file_read(fd);
-  opal_file_close(fd);
-  return str;
+function opal_file_write(fd, str, offset, length, position) {
+  var len = OpalFile.write(fd, str, offset, length, position);
+  return len;
 }
 
 // FIXME: remove this! used for tmp readline
@@ -101,61 +125,7 @@ var io_extname = function(path) {
 		return path.substring(idx);
 };
 
-// Join the given path components
-// var io_join = function() {
-	// return Array.prototype.slice.call(arguments).join('/');
-// };
-
-// Returns true if the given fname exists, false otherwise. Use native bridge.
-// FIXME: remove this just in favor of file_exists below.
-var io_file_exists = OpalFile.exists;
-
-var io_expand_path = function(path, dir_string) {
-	// print("path is: " + path);
-	// print("cwd is: " + io_getwd());
-	// print("dir string is: " + dir_string);
-	
-	var start_slash = (path[0] === "/");
-	
-	if (dir_string) 
-		path = file_join(dir_string, path);
-  else if (!start_slash)
-		path = file_join(io_getwd(), path);
-
-	// print("NEW PATH: " + path);
-
-	var parts = path.split("/");
-  var result = [];
-  var part;
-  for (var i = 0; i < parts.length; i++) {
-    part = parts[i];
-    switch (part) {
-      case '..':
-        result.pop();
-        break;
-      case '.':
-        break;
-      case '':
-        break;
-      default:
-        result.push(part);
-    }
-  }
-  
-	// print("result is: " + result.join('/'));
-
-  if (result[0] != "") {
-    // if we started with a slash, use that
-    return "/" + result.join("/");
-  } else {
-    // otherwise join with our current working dir
-    // return file_join(io_getwd(), result.join("/"));
-		return result.join("/");
-  }
-	// return path;
-};
-
-var io_getwd = function() {
+function opal_getwd() {
 	return OpalFile.cwd();
 };
 
@@ -174,7 +144,5 @@ var file_size = OpalFile.size;
 var file_mtime = OpalFile.mtime;
 
 var file_list = OpalFile.list;
-
-var file_exists = OpalFile.exists;
 
 })(this, Opal);

@@ -26,6 +26,7 @@ void ReportException(v8::TryCatch* handler);
 
 #define JS_STR(str)             v8::String::New(str)
 #define JS_FUNC(func)           v8::FunctionTemplate::New(func)
+#define JS_INT(num)             v8::Integer::New(num)
 
 #define JS_TRUE                 v8::Boolean::New(1)
 #define JS_FALSE                v8::Boolean::New(0)
