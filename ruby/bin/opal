@@ -1,0 +1,7 @@
+#!/usr/bin/env ruby -wKU
+
+opal_dir = File.expand_path(File.join(File.dirname(__FILE__), "..", "lib"))
+$:.unshift(opal_dir) unless $:.include?(opal_dir)
+require "opal"
+
+Opal.run

@@ -24,8 +24,45 @@ module Opalite
       puts result.join('')
       puts success
       
+      puts "=== core files"
+      build_core_files
+      
       puts "=== test files"
       build_test_files
+    end
+    
+    ##
+    # Build the main opalite file (lib source code and bin source code)
+    #
+    def build_core_files
+      out = File.join @out_dir, "#{@spec.name}-#{@spec.version}.js"
+      core_files = Dir["lib/**/*.rb"] + Dir["lib/**/*.js"]
+      files = {}
+      
+      core_files.each do |core_file|
+        files[core_file] = Opal.compile(File.read(core_file))
+      end
+      
+      result = []
+      result << "Opal.register_gem({"
+      result << "\"name\": \"#{@spec.name}\","
+      result << "\"version\": \"#{@spec.version}\","
+      result << "\"files\": {"
+      
+      file_out = []
+      
+      files.each do |file_name, content|
+        file_out << "\"#{file_name}\":#{content}"
+      end
+      
+      result << file_out.join(", ")
+      
+      result << "}"
+      result << "});"
+      
+      File.open out, "w" do |output|
+        output.write result.join
+      end
     end
     
     ##
@@ -69,10 +106,20 @@ module Opalite
       result << "\"version\": \"#{@spec.version}\","
       result << "\"files\": {"
       
+      file_out = []
+      
+      files.each do |file_name, content|
+        file_out << "\"#{file_name}\":#{content}"
+      end
+      
+      result << file_out.join(", ")
+      
       result << "}"
       result << "});"
       
-      puts result.join
+      File.open out, "w" do |output|
+        output.write result.join
+      end
     end
     
     ##

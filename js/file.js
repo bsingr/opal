@@ -77,6 +77,19 @@ function rb_expand_path(path, dir_string) {
   }
 };
 
+/**
+  Returns the extension name of the given path. The extension must be in the
+  last path component (i.e. so it is not found in ./bin/opal, for example)
+*/
+function rb_file_extname(path) {
+	var idx = path.lastIndexOf('.');
+	
+	if (idx <= path.lastIndexOf('/'))
+		return "";
+	else
+		return path.substring(idx);
+};
+
 file_list_tree = function(path) {
 	var result = [];
 	var children = file_list(path);

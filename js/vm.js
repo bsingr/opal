@@ -147,15 +147,6 @@ rb_vm_defn = function(base, m_id, body, singleton) {
   return Qnil;
 };
 
-// Return method missing closure.
-// @global
-// @old
-// rb_vm_meth_m = function(m_id, mid) {
-//   return function(self) {
-//     var args = [self,m_id].concat(Array.prototype.slice.call(arguments, 1));
-//     return self.$m.$method_missing.apply(self, args);
-//   };
-// };
 
 global.rb_vm_meth_m = function(recv, mid) {
   var args = [recv, 'method_missing'].concat(
@@ -194,107 +185,6 @@ rb_vm_gs = function(id, value) {
   return rb_gvar_set(id, value);
 };
 
-// // Print the given string to the default console. Currelty Kernel#puts uses this
-// // method.
-// var opal_puts = function(self, mid, arg) {
-//   // print(arg);
-//   io_puts(arg);
-//   return Qnil;
-// };
-
-// // Raw require - require the 'path'. Currently uses commonjs paths and load
-// // paths etc, but will in future use just a ruby load path.. maybe?
-// var opal_require = function(self, mid, fname) {
-//   // print('need to require: ' + arg);
-//   return rb_require(fname);
-// };
-// 
-// // Raw define method. our method (name) will be a string here.
-// // 
-// // @param base - base class to define on
-// // @param method - string name of the method
-// // @param block - the proc implementation (passed in as a block)
-// // @returns nil
-// var opal_define_method = function(self, block, base, method) {
-//   rb_define_method(base, method, block);
-//   return Qnil;
-// };
-// 
-// // Alias a method. names here will be strings.
-// var opal_alias_method = function(self, block, base, new_name, old_name) {
-//   rb_define_method(base, new_name, base.$m_tbl['$' + old_name]);
-//   return Qnil;
-// };
-// 
-// // Include module into the class klass
-// // @
-// var opal_include = function(self, block, klass, module) {
-//   // print("including module: " + module.__classid__);
-//   rb_include_module(klass, module);
-//   return Qnil;
-// };
-// 
-// // Extend module into class
-// var opal_extend = function(self, block, klass, module) {
-//   // print("extending module: " + module.__classid__);
-//   rb_extend_module(klass, module);
-//   return Qnil;
-// };
-// 
-// // create a subclass of the given class
-// var opal_subclass = function(self, block, super_klass) {
-//   var klass = rb_define_class_id('', super_klass);
-//   return klass;
-// };
-// 
-// // get current working directory - platform dependant
-// var opal_getwd = function(self, mid) {
-//   return io_getwd();
-// };
-// 
-// var opal_glob = function(self, mid, glob) {
-//   // print("globbing: " + glob);
-//   return io_glob(glob);
-// };
-// 
-// var opal_join = function(self, mid, parts) {
-//   // var parts = Array.prototype.slice.call(arguments, 2);
-//   return opal_file_join.apply(this, parts);
-// };
-// 
-// var opal_basename = function(self, mdi, name) {
-//   return io_basename(name);
-// };
-// 
-// var opal_expand_path = function(self, mid, path) {
-//  return io_expand_path(path);
-// };
-// 
-// // raise exception
-// var opal_raise = function(self, mid, exc) {
-//   rb_vm_raise(exc);
-//   // we never actually end up returning anything
-//   return Qnil;
-// };
-// 
-// // get env variable denoted by name
-// var opal_getenv = function(self, mid, name) {
-//   if (system.env.hasOwnProperty(name)) {
-//     return system.env[name];
-//   }
-//   
-//   return Qnil;
-// };
-// 
-// // get all env variables [[name1, value1], [name2, value2]]
-// var opal_getallenv = function(self, mid, name) {
-//   var result = [];
-//   for (var key in system.env)
-//     result.push([key, system.env[key]])
-//   
-//   return result;
-// };
-
 var opal_context_eval = function(opal, mid, block, self, string, filename, lineno) {
 	var code = exports.compile(string);
   var func = new Function('self', '__FILE__', code);
@@ -303,26 +193,11 @@ var opal_context_eval = function(opal, mid, block, self, string, filename, linen
 
 var opal_s_compile = function(opal, mid, string) {
   var code = exports.compile(string);
-  return code;
+  return "function(self, __FILE__) {" + code + "}";
 }
 
 var InitVM = function() {
 	rb_mOpal = rb_define_module('Opal');
-  // rb_define_singleton_method(rb_mOpal, 'puts', opal_puts);
-  // rb_define_singleton_method(rb_mOpal, 'raise', opal_raise);
-  // rb_define_singleton_method(rb_mOpal, 'require_path', opal_require);
-  // rb_define_singleton_method(rb_mOpal, 'define_method', opal_define_method);
-  // rb_define_singleton_method(rb_mOpal, 'alias_method', opal_alias_method);
-  // rb_define_singleton_method(rb_mOpal, 'include', opal_include);
-  // rb_define_singleton_method(rb_mOpal, 'extend', opal_extend);
-  // rb_define_singleton_method(rb_mOpal, 'subclass', opal_subclass);
-  // rb_define_singleton_method(rb_mOpal, 'getwd', opal_getwd);
-	// rb_define_singleton_method(rb_mOpalVM, 'expand_path', opal_expand_path);
-  // rb_define_singleton_method(rb_mOpal, 'glob', opal_glob);
-	// rb_define_singleton_method(rb_mOpalVM, 'join', opal_join);
-  // rb_define_singleton_method(rb_mOpal, 'basename', opal_basename);
-  // rb_define_singleton_method(rb_mOpal, 'getenv', opal_getenv);
-  // rb_define_singleton_method(rb_mOpal, 'getallenv', opal_getallenv);
 	
 	rb_define_singleton_method(rb_mOpal, 'context_eval', opal_context_eval);
 	rb_define_singleton_method(rb_mOpal, 'compile', opal_s_compile);

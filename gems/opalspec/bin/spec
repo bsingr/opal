@@ -2,5 +2,6 @@
 
 rspec_dir = File.expand_path(File.join(File.dirname(__FILE__), '..', 'lib'))
 puts "rspec dir is: #{rspec_dir}"
-$LOAD_PATH.unshift(rspec_dir) unless $LOAD_PATH.include?(rspec_dir)
+$:.unshift(rspec_dir) unless $:.include?(rspec_dir)
+puts $:.inspect
 require 'spec/autorun'

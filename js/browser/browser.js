@@ -1,7 +1,3 @@
-
-#import "element.js"
-// #import "document.js"
-
 /**
   Top level Browser module holds all things browser related.
 */

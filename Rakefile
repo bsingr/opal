@@ -1,5 +1,6 @@
 require 'fileutils'
 
+Dir.glob("tasks/*.rake").each { |rake| import rake }
 
 desc "Rebuild the javascript parser (ruby_parser)"
 task :parser do
@@ -28,11 +29,6 @@ task "runtime/opal.js" do
   out_file = "runtime/opal.js"
   
   system "gcc -E -x c -P -C #{in_file} -o #{out_file}"
-end
-
-# all build steps specific for building ready for node
-namespace :node do
-  
 end
 
 # all build steps specific for building ready for narwhal/commonjs

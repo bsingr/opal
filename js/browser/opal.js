@@ -135,4 +135,6 @@ if (typeof Opal == 'undefined')
 #import "../opal.h"
 #import "../runtime.js"
 #import "browser.js"
+#import "element.js"
+#import "fs.js"
 })(this, Opal);

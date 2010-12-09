@@ -100,6 +100,7 @@
 #define FL_SINGLETON	4112
 
 #define IS_CLASS(value)		(value.$flags & T_CLASS)
+#define IS_OBJECT(value)		(value.$flags & T_OBJECT)
 
 #define IS_NUMBER(value)  (value.$flags & T_NUMBER)
 #define IS_ARRAY(value)   (value.$flags & T_ARRAY)

@@ -151,12 +151,15 @@ function hash_to_s(hash, mid) {
 */
 function hash_each(hash, mid) {
 	ARG_COUNT(0)
+	RETURN_ENUMERATOR(hash, each)
 	
 	var keys = hash.$keys, length = keys.length, key;
 	
 	for (var i = 0; i < length; i++) {
+	  PRE_LOOP
 		key = keys[i];
-		BLOCK_CALL(block, key, hash.$assocs[key.$hash()]);
+		YIELD(key, hash.$assocs[key.$hash()]);
+		POST_LOOP
 	}
 	
 	return hash;

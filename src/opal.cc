@@ -54,6 +54,11 @@ namespace opal {
 		InitIO();
 	
 		printf("all done initing\n");
+    printf("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+    system("pwd");
+    system("cd /Users/adam && pwd");
+    system("pwd");
+    printf("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
 	
 		size_t size = 1024;
 		char path[size];

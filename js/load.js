@@ -15,8 +15,6 @@ var extensions = {};
 // @local
 var load_paths = [];
 
-// add core libs to load_paths
-load_paths.unshift(exports.opal_lib_path);
 
 // Ruby loader.
 extensions['.rb'] = function(fname) {
@@ -56,7 +54,6 @@ var loaded_features = [];
 // 
 // @local
 var rb_require = function(fname) {
-  // print('trying to require ' + fname);
   var resolved = resolve_require_filename(fname);
   
   // if we have already loaded the file, return false.. (no error)
@@ -64,12 +61,9 @@ var rb_require = function(fname) {
   // we have not loaded the file, so load it
   loaded_filenames[resolved[0]] = resolved[1];
   loaded_features.push(resolved[1]);
-
   // get the correct extension
-  var ext_name = io_extname(resolved[0]);
-
+  var ext_name = rb_file_extname(resolved[0]);
   extensions[ext_name](resolved[0]);
-  
   return Qtrue;
 };
 
@@ -91,7 +85,7 @@ var resolve_require_filename = function(fname) {
 // and with each registered extension, using the given fname.
 var find_require_filename = function(fname) {
   // current path to lookup
-  var cur_path, given_ext = io_extname(fname);
+  var cur_path, given_ext = rb_file_extname(fname);
   // loop over each load_path
   for (var path_idx = 0; path_idx < load_paths.length; path_idx++) {
     // if we were given an extension, dont loop through, just use that
@@ -152,6 +146,10 @@ var loaded_feature_getter = function(id) {
 };
 
 var InitLoad = function() {
+  print("adding load path:" + exports.opal_lib_path);
+  // add core libs to load_paths
+  load_paths.unshift(exports.opal_lib_path);
+  
 rb_define_hooked_variable('$:', load_path_getter, rb_gvar_readonly_setter);
 rb_define_hooked_variable('$"', loaded_feature_getter, rb_gvar_readonly_setter);
 
