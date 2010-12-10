@@ -8,4 +8,7 @@
 .sconsign.dblite
 /runtime
 *.opal
-
+/node
+/narwhal
+/gem
+/browser

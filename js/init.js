@@ -12,7 +12,6 @@ exports.init = function() {
 	if (rb_opal_done_init) return;
 	rb_opal_done_init = true;
   Init_Debug_Mode();
-	print("about to init");
 	// core inits.
 	InitObject();
 	Init_Array();
@@ -25,18 +24,12 @@ exports.init = function() {
 	InitVM();
 	Init_Exception();
 	Init_String();
+	Init_Proc();
+	Init_Range();
 	
 #ifdef OPAL_BROWSER
   Init_Browser();
 #endif
-	
-  print("init in ruby");
-  // require core libs
-  rb_run(function() {
-    print('require opal');
-    rb_require('opal');
-    print("done opal");
-  });
 };
 
 // main.. we might or might not call this.. more likely we will...
@@ -48,7 +41,6 @@ exports.main = function() {
 	// make sure we are init()ed
 	exports.init();
 	
-	print("ok in main, need to run!");
 	// deal with argv. argv is from native, so includes program name at [0]
 	var argv = exports.argv;
 	// have we finished with flags ('-')
@@ -74,14 +66,7 @@ exports.main = function() {
 			}
 		}
 	}
-	
-	print("done parsing...");
-	
-	print("program name is: " + program_name);
-	print("args: [" + init_argv.join(", ") + "]");
-	
-  // return;
-	
+		
 	// if we have a program name, then lets run it. if not, print help
 	if (program_name) {
 		rb_run(function() {
@@ -89,26 +74,8 @@ exports.main = function() {
 		});
 	}
 	else {
-		exports.print_help();
+    exports.start_repl();
 	}
-	
-	// print('[' + exports.argv.join(', ') + ']');
-	
-  // print("ok, need to run " + program_file);
-  // if (io_file_exists(program_file)) {
-    // print("it exists!");
-    // rb_const_set(rb_cObject, 'ARGV', argv);
-		// print("ok");
-    // rb_run(function() {
-			// print("running");
-      // extensions['.rb'](program_file);
-			// print("hmm");
-    // });
-  // }
-  // else {
-    // print ("errr, cannot find it!");
-    // throw {};
-  // }
 };
 
 exports.print_help = function() {

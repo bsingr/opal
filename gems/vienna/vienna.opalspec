@@ -3,6 +3,9 @@
 $LOAD_PATH.unshift File.expand_path("../lib", __FILE__)
 require "vienna/version"
  
+##
+# Based on gem specification, but adds some opal specific building options
+# 
 Gem::Specification.new do |s|
   s.name        = "vienna"
   s.version     = Vienna::VERSION

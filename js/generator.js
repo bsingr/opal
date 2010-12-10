@@ -1766,9 +1766,10 @@ RubyGenerator.prototype = {
     return this.generate_compstmt(stmt[1][1]);
   },
   
+  // ['range', '..' or '...', beg, end]
   generate_range: function(stmt) {
-    return "opalrange(" + this.generate(stmt[2]) + ", " + this.generate(stmt[3]) 
-            + ", " + (stmt[4] == '...') + ")";
+    return "rb_vm_range(" + this.generate(stmt[2]) + ", " + this.generate(stmt[3]) 
+            + ", " + (stmt[1] == '...') + ")";
   },
   
   generate_require: function(stmt) {

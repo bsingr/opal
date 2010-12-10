@@ -1,4 +1,4 @@
-Opalite
+Opalite - v8 based runtime. (opal is runtime gem).
 =======
 
 Ruby build tools for opal. Runs on any ruby engine, but requires access to opal
@@ -25,9 +25,9 @@ libs are built ready.
 Output
 ======
 
-Each output file is located within the opal_name-1.0.0.opalite/ directory (by default) from the base of the gem. The generated files include:
+Each output file is located within the opal_name-1.0.0.opal/ directory (by default) from the base of the gem. The generated files include:
 
-* opal_name-1.0.0.js - opalite with all code etc in JSON format (wrapped)
+* opal_name-1.0.0.js - opal with all code etc in JSON format (wrapped)
 * opal_name-1.0.0-test.js - all test files (taken from gemspec)
 * opal_name-1.0.0-resources.js - all resources (images) in w3c datauri format
 * opal_name-1.0.0-resources-mhtml.js - all resources in mhtml (ie7) format
@@ -41,3 +41,10 @@ Opalite running prereqs
 If running in opal, opalite can easily access the opal compiler and parser etc.
 If running in another VM, opalite requires therubyracer gem which embeds a v8
 engine so that it can run the Opal compiler (which is 100% javascript now.)
+
+Preprocessed
+============
+
+my_file.rb => my_file.rbjs
+
+Always look for .rbjs as priority (saves expensive compiling each time.)

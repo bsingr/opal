@@ -8,7 +8,10 @@ var rb_eException,
     rb_eScriptError,
     rb_eLoadError,
 		rb_eRuntimeError,
-		rb_eTypeError;
+		rb_eTypeError,
+		rb_eIndexError,
+		rb_eKeyError,
+		rb_eRangeError;
 
 // Standard jump exceptions to save re-creating them everytime they are needed
 var rb_vm_return_instance,
@@ -53,6 +56,10 @@ var Init_Exception = function() {
 	rb_eArgError = rb_define_class('ArgumentError', rb_eStandardError);
 	rb_eScriptError = rb_define_class('ScriptError', rb_eException);
 	rb_eLoadError = rb_define_class('LoadError', rb_eScriptError);
+	
+	rb_eIndexError = rb_define_class("IndexError", rb_eStandardError);
+	rb_eKeyError = rb_define_class("KeyError", rb_eIndexError);
+	rb_eRangeError = rb_define_class("RangeError", rb_eStandardError);
 
 	// jump error literals. We keep a singular instance to avoid recreating each
 	// error every time (expensive).

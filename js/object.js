@@ -11,7 +11,6 @@ var rb_mKernel,
     rb_cNilClass,
     rb_cTrueClass,
     rb_cFalseClass,
-    rb_proc,
 		rb_cFile;
 // @global Top self context within ruby 
 rb_top_self = null;
@@ -544,6 +543,40 @@ function obj_const_defined_p(obj, mid, name) {
 	return Qfalse;
 }
 
+/**
+  Equality for basic objects.
+*/
+function obj_equal(obj1, mid, obj2) {
+  if (obj1 == obj2) return Qtrue;
+  return Qfalse;
+}
+
+/**
+  @example
+  
+    !obj  # => true or false
+*/
+function obj_not(obj, mid) {
+  return RTEST(obj) ? Qfalse : Qtrue;
+}
+
+/**
+  @example
+  
+    obj != obj2  # => true or false
+*/
+function obj_not_equal(obj1, mid, obj2) {
+  var res = CALL(obj1, "==", obj2);
+  return RTEST(res) ? Qfalse : Qtrue;
+}
+
+/**
+  Basic object initialize
+*/
+function obj_initialize(obj, mid) {
+  // no imp
+}
+
 // Init core Object classes with some bootstrap methods
 var InitObject = function() {
 	var tmp_metaclass;
@@ -566,6 +599,12 @@ var InitObject = function() {
 	boot_defmetametaclass(rb_cModule, tmp_metaclass);
 	boot_defmetametaclass(rb_cObject, tmp_metaclass);
 	boot_defmetametaclass(rb_cBasicObject, tmp_metaclass);
+	
+	rb_define_method(rb_cBasicObject, "initialize", obj_initialize);
+	rb_define_method(rb_cBasicObject, "==", obj_equal);
+	rb_define_method(rb_cBasicObject, "equal?", obj_equal);
+	rb_define_method(rb_cBasicObject, "!", obj_not);
+	rb_define_method(rb_cBasicObject, "!=", obj_not_equal);
 
 	rb_mKernel = rb_define_module('Kernel');
 
@@ -669,17 +708,4 @@ var InitObject = function() {
 	rb_define_method(rb_cFalseClass, "|", false_or);
 	rb_define_method(rb_cFalseClass, "^", false_xor);
 	rb_const_set(rb_cObject, "FALSE", Qfalse);
-	
-	// @class Proc
-	rb_proc = rb_define_toll_free_class(Function.prototype, T_OBJECT | T_PROC, 'Proc', rb_cObject);
-
-	// Top self
-	rb_top_self = new RObject(rb_cObject, T_OBJECT);
-
-	var rb_main_include = function() {
-	  // console.log("main include, should error..");
-	};
-
-	rb_define_singleton_method(rb_top_self, 'include', rb_main_include);
-	
 };

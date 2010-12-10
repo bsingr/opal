@@ -17,6 +17,8 @@
 #include "io.js"
 #include "file.js"
 #include "dir.js"
+#include "proc.js"
+#include "range.js"
 
 // extra runtime files
 #include "variable.js"

@@ -277,7 +277,13 @@ rule
                 | '::@' CONSTANT OP_ASGN arg
                 | backref OP_ASGN arg
                 | arg '..' arg
+                    {
+                      result = "result = ['range', val[1], val[0], val[2]];"
+                    }
                 | arg '...' arg
+                    {
+                      result = "result = ['range', val[1], val[0], val[2]];"
+                    }
                 | arg '+' arg
                     {
                       result = "result = ['call', val[0], val[1], [[val[2]]]];"

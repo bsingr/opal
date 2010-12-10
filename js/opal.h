@@ -105,7 +105,7 @@
 #define IS_NUMBER(value)  (value.$flags & T_NUMBER)
 #define IS_ARRAY(value)   (value.$flags & T_ARRAY)
 #define IS_STRING(value)  (value.$flags & T_STRING)
-
+#define IS_HASH(value)    (value.$flags & T_HASH)
 
 #define TO_NUMBER(value) \
   if (!IS_NUMBER(value)) { \

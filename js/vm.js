@@ -196,9 +196,32 @@ var opal_s_compile = function(opal, mid, string) {
   return "function(self, __FILE__) {" + code + "}";
 }
 
+/**
+  top self #to_s
+*/
+function top_self_to_s(self, mid) {
+  ARG_COUNT(0)
+  return "main";
+}
+
+/**
+  top self #include(mod)
+*/
+function top_self_include(self, mid, mod) {
+  rb_include_module(rb_cObject, mod);
+}
+
 var InitVM = function() {
 	rb_mOpal = rb_define_module('Opal');
 	
 	rb_define_singleton_method(rb_mOpal, 'context_eval', opal_context_eval);
 	rb_define_singleton_method(rb_mOpal, 'compile', opal_s_compile);
+	
+  // Top self
+	rb_top_self = new RObject(rb_cObject, T_OBJECT);
+	
+  rb_define_singleton_method(rb_top_self, "to_s", top_self_to_s);
+  rb_define_singleton_method(rb_top_self, "include", top_self_include);
+	
+	rb_const_set(rb_cObject, "RUBY_PLATFORM", opal_ruby_platform);
 };

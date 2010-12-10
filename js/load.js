@@ -151,6 +151,7 @@ var InitLoad = function() {
   load_paths.unshift(exports.opal_lib_path);
   
 rb_define_hooked_variable('$:', load_path_getter, rb_gvar_readonly_setter);
+rb_define_hooked_variable("$LOAD_PATH", load_path_getter, rb_gvar_readonly_setter);
 rb_define_hooked_variable('$"', loaded_feature_getter, rb_gvar_readonly_setter);
 
 	rb_const_set(rb_cObject, 'ARGV', init_argv);

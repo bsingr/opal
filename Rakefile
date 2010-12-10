@@ -4,7 +4,7 @@ Dir.glob("tasks/*.rake").each { |rake| import rake }
 
 desc "Rebuild the javascript parser (ruby_parser)"
 task :parser do
-  system "./tools/racc2js/racc2js.rb ./js/lib/opal/dev/ruby_parser.y"
+  system "./tools/racc2js/racc2js.rb ./js/ruby_parser.y"
 end
 
 desc "Build V8 into tmp/"
