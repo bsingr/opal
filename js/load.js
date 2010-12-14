@@ -15,6 +15,8 @@ var extensions = {};
 // @local
 var load_paths = [];
 
+rb_load_paths = load_paths;
+
 /**
   Ruby loader. This will load raw ruby code (compile => run)
 */

@@ -90,6 +90,10 @@ function rb_file_extname(path) {
 		return path.substring(idx);
 };
 
+function file_extname(klass, mid, path) {
+  return rb_file_extname(path);
+}
+
 file_list_tree = function(path) {
 	var result = [];
 	var children = opal_file_list(path);
@@ -255,6 +259,6 @@ function Init_File() {
 	rb_define_singleton_method(rb_cFile, 'dirname', file_s_dirname);
 	rb_define_singleton_method(rb_cFile, 'expand_path', file_s_expand_path);
 	rb_define_singleton_method(rb_cFile, "exists?", file_s_exists_p);
-	
+	rb_define_singleton_method(rb_cFile, "extname", file_extname);
 };
 

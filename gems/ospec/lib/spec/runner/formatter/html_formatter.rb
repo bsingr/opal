@@ -10,6 +10,33 @@ module Spec
           @example_group_number = 0
           @example_number = 0
           @header_red = nil
+          
+          setup_page_dom
+        end
+        
+        ##
+        # Get the DOM ready for output
+        #
+        def setup_page_dom
+          content = [
+            '<div class="rspec-report">',
+              '<div id="rspec-header">',
+                '<div id="label">',
+                  '<h1>Rspec Code Examples</h1>',
+                '<div>',
+                
+                '<div id="summary">',
+                  '<p id="totals">0</p>',
+                  '<p id="duration">0</p>',
+                '</div>',
+              '</div>',
+              '<div id="results">',
+              '</div>',
+            '</div>'
+          ].join ''
+          
+          puts "content is: "
+          puts content
         end
         
         def start(number_of_examples)

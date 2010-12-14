@@ -107,7 +107,6 @@ browser_register_ready_listener(function() {
 */
 browser_register_ready_listener(function() {
     
-  if (OPAL_RUN_BIN) { // path 1
     var bin_file = OPAL_RUN_BIN;
     var argv = [];
     
@@ -137,6 +136,10 @@ browser_register_ready_listener(function() {
           FS_BIN_FILES[bin_file] = rb_file_join(opal_path, "bin", bin_file);
         }
       }
+      
+      // lib path
+      load_paths.push(rb_file_join(opal_path, 'lib'));
+      print("---- " + rb_file_join(opal_path, 'lib'));
     }
 
     // replace ruby loader
@@ -159,6 +162,7 @@ browser_register_ready_listener(function() {
     
     exports.opal_lib_path = FS_LIB_PATH;
     
+  if (OPAL_RUN_BIN) { // path 1  
     exports.main();
   }
   else { // path 2
@@ -206,7 +210,7 @@ function io_puts(str) {
 /**
   Platform
 */
-var opal_ruby_platform = "opal-browser";
+var opal_ruby_platform = "browser";
 
   
 /**

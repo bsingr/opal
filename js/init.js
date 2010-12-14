@@ -26,10 +26,6 @@ exports.init = function() {
 	Init_String();
 	Init_Proc();
 	Init_Range();
-	
-#ifdef OPAL_BROWSER
-  Init_Browser();
-#endif
 };
 
 // main.. we might or might not call this.. more likely we will...

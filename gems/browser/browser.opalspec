@@ -8,7 +8,7 @@ Opal::Specification.new do |s|
   s.summary       = "Browser gem"
   s.description   = "Browser lib for DOM manipulations for opal environment" 
   
-  s.files         = Dir['lib/**/*.*']
+  s.files         = Dir['lib/**/*.rb'] + Dir['lib/**/*.js']
   s.test_files    = Dir['spec/**/*.rb']
   s.require_path  = 'lib'
   s.executables   = []

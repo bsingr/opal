@@ -17,7 +17,7 @@ class Element
   # @param [Hash] options a set of options given to {#set}
   # @return [Element] returns the new element
   def initialize(type, options = {})
-    @element = `document.createElement(#{type.to_s})`
+    `#{self}.$element = document.createElement(#{type.to_s})`
     set options
   end
   
@@ -37,7 +37,7 @@ class Element
   # 
   # @return [Boolean]
   def ==(other)
-    `return #{@element} === #{other.element} ?  #{true} : #{false};`
+    `return #{self}.$element === #{other.element} ?  #{true} : #{false};`
   end
 
   # Return an instance with the passed native element as the instance's own
@@ -53,7 +53,7 @@ class Element
   def self.from_native(native_element = nil)
     element = allocate
     # element.instance_variable_set '@element', native_element
-    `#{element}.i$element = #{native_element}`
+    `#{element}.$element = #{native_element}`
     element
   end
   
@@ -96,7 +96,7 @@ class Element
   # 
   # @return [Symbol] tag name of the element
   def tag
-    @tag ||= `#{self}.Y(#{@element}.tagName.toLowerCase())`
+    @tag ||= `#{self}.$element.tagName.toLowerCase()`.to_sym
   end
   
   # Sets the innerHTML of the receiver.
@@ -115,7 +115,7 @@ class Element
   # @param [String] html the html string to set
   # @return [Elements] returns the receiver
   def html=(html)
-    `#{@element}.innerHTML = #{html}`
+    `#{self}.$element.innerHTML = #{html}`
     self
   end
   
@@ -129,7 +129,7 @@ class Element
   # 
   # @return [String] the receivers text content
   def text
-    `var e = #{@element};
+    `var e = #{self}.$element;
     return e.innerText == null ? e.textContent : e.innerText;`
   end
   
@@ -147,7 +147,7 @@ class Element
   # @param [String] text the text content to set
   # @return [Element] returns the receiver
   def text=(text)
-    `var e = #{@element};
+    `var e = #{self}.$element;
     if (e.textContent !== undefined) {
       e.textContent = #{text}.toString();
     }
@@ -219,7 +219,7 @@ class Element
   # 
   # @return [Boolean]
   def empty?
-    `return /^\s*$/.test(#{@element}.innerHTML) ? #{true} : #{false};`
+    `return /^\s*$/.test(#{self}.$element.innerHTML) ? #{true} : #{false};`
   end
   
   # Return the graphics context of the receiver, which will be an instance of
@@ -306,7 +306,7 @@ class Element
   # @return [Element] returns the receiver
   def append(element)
     e = element.is_a?(String) ? fragment_from_string(element) : element.element
-    `#{@element}.appendChild(#{e})`
+    `#{self}.$element.appendChild(#{e})`
     self
   end
   
@@ -366,7 +366,7 @@ class Element
   # @return [Element] returns the receiver
   def prepend(element)
     e = element.is_a?(String) ? fragment_from_string(element) : element.element
-    `#{@element}.insertBefore(#{e}, #{@element}.firstChild)`
+    `#{self}.$element.insertBefore(#{e}, #{self}.$element.firstChild)`
     self
   end
   
@@ -424,10 +424,10 @@ class Element
   # @return [Element] returns the receiver
   def before(element)
     e = element.is_a?(String) ? fragment_from_string(element) : element.element
-    parent = `#{@element}.parentNode`
-    `#{parent} && #{parent}.insertBefore(#{e}, #{@element})`
+    parent = `#{self}.$element.parentNode`
+    `#{parent} && #{parent}.insertBefore(#{e}, #{self}.$element)`
     # if (parent) {
-      # parent.insertBefore(#{e}, #{@element});
+      # parent.insertBefore(#{e}, #{self}.$element);
     # }`
     self
   end
@@ -486,8 +486,8 @@ class Element
   # @return [Element] returns the receiver
   def after(element)
      e = element.is_a?(String) ? fragment_from_string(element) : element.element
-    parent = `#{@element}.parentNode`
-    `#{parent} && #{parent}.insertBefore(#{e}, #{@element}.nextSibling)`
+    parent = `#{self}.$element.parentNode`
+    `#{parent} && #{parent}.insertBefore(#{e}, #{self}.$element.nextSibling)`
     self
   end
   
@@ -515,7 +515,7 @@ class Element
   # 
   # @return [Element] returns the receiver.
   def remove
-    `var e = #{@element};
+    `var e = #{self}.$element;
     if (e.parentNode) {
       e.parentNode.removeChild(e);
     }
@@ -546,7 +546,7 @@ class Element
   # 
   # @return [Element] returns receiver 
   def clear
-    `var e = #{@element};
+    `var e = #{self}.$element;
     for (var children = e.childNodes, i = children.length; i > 0;) {
       var child = children[--i];
       if (child.parentNode) {
@@ -723,7 +723,7 @@ class Element
   # @return [Hash] :left/:top => Number
   # 
   def element_offset
-    `var element = #{@element};
+    `var element = #{self}.$element;
     #{left = 0};
     #{top = 0};
     var parent = element;

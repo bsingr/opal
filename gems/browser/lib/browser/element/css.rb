@@ -124,7 +124,7 @@ class Element
     self
   end
   
-  alias_method `#{self}.Y('class=')`, :class_name=
+  # alias_method `#{self}.Y('class=')`, :class_name=
   
   # Returns the CSS class name for the receiver. See {#__class__} for default
   # access.

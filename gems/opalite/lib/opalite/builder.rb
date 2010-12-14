@@ -52,13 +52,19 @@ module Opal
     #
     def build_core_files
       out = File.join @out_dir, "#{@spec.name}-#{@spec.version}.js"
-      core_files = Dir["lib/**/*.rb"] + Dir["lib/**/*.js"]
+      core_files = @spec.files
       core_files += Dir["bin/*"]
       
       files = {}
       
       core_files.each do |core_file|
-        files[core_file] = Opal.compile(File.read(core_file))
+        if File.extname(core_file) == ".rb"
+          puts "ruby: #{core_file}"
+          files[core_file] = Opal.compile(File.read(core_file))
+        elsif File.extname(core_file) == ".js"
+          puts "js: #{core_file}"
+          files[core_file] = "function() {" + File.read(core_file) + "}"
+        end
       end
       
       result = []
