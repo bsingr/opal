@@ -15,9 +15,10 @@ var extensions = {};
 // @local
 var load_paths = [];
 
-
-// Ruby loader.
-extensions['.rb'] = function(fname) {
+/**
+  Ruby loader. This will load raw ruby code (compile => run)
+*/
+extensions[".rb"] = function(fname) {
   // get file content
   var content = rb_read_file(fname).toString();
   // compile ruby
@@ -35,8 +36,11 @@ extensions['.rb'] = function(fname) {
   func(rb_top_self, rb_expand_path(fname));
 };
 
-// Javascript loader.
-extensions['.js'] = function(fname) {
+/**
+  Javascript loader. This will just raw eval the given javascript (wrapped in a
+  closure).
+*/
+extensions[".js"] = function(fname) {
   
 };
 

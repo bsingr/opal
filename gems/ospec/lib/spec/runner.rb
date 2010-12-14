@@ -18,11 +18,16 @@ module Spec
     end
     
     def self.autorun
+      if ARGV.length == 0
+        puts "Spec: no input files given"
+        return
+      end
+      
       ARGV.each do |spec|
         if File.exists? spec
           require File.expand_path(spec)
         else
-          puts "Bad spec to load (does not exist): #{spec}"
+          raise "Bad spec to load (does not exist): #{spec}"
         end
       end
             

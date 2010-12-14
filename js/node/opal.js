@@ -96,6 +96,15 @@ function opal_file_read(fd, offset, length, position) {
 };
 
 /**
+  Write data to the given fd
+*/
+function opal_file_write(fd, str, offset, length, position) {
+  var buffer = new node_buffer.Buffer(str);
+  var write = node_fs.writeSync(fd, buffer, offset, length, position || null);
+  return write;
+}
+
+/**
   Close the file with the given fd. This will then stop the given file from 
   being read/write/access able. Returns file descriptor.
   
@@ -115,6 +124,31 @@ function opal_file_close(fd) {
 function opal_getwd() {
 	return process.cwd();
 };
+
+/**
+  IS the given file path a directory? true or false
+*/
+function opal_file_is_directory(path) {
+  try {
+    return node_fs.statSync(path).isDirectory();
+  } catch (e) {
+    return false;
+  }
+}
+
+/**
+  Mkdir
+*/
+function opal_file_mkdir(path) {
+  return node_fs.mkdirSync(path, 0777);
+}
+
+/**
+  Array of all files in given dir
+*/
+function opal_file_list(path) {
+  return node_fs.readdirSync(path);
+}
 
 /**
   need to remove.

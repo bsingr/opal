@@ -1,4 +1,4 @@
-module Opalite
+module Opal
   
   ##
   # Main opal builder. The file built by this opal will be named in the format
@@ -24,6 +24,9 @@ module Opalite
       puts result.join('')
       puts success
       
+      # make sure output dir exists
+      Dir.mkdir @out_dir unless File.exists? @out_dir
+      
       puts "=== core files"
       build_core_files
       
@@ -32,11 +35,26 @@ module Opalite
     end
     
     ##
+    # Build a given source file (string path). Returns a two item array:
+    # 
+    #   [path_name, compiled_source]
+    # 
+    # Where path name MIGHT differ from the original. For example, ruby sources
+    # are compiled into javascript, so gain the extname .rbjs instead of .rb.
+    # The compiled source is a string.
+    #
+    def build_source(path)
+      
+    end
+    
+    ##
     # Build the main opalite file (lib source code and bin source code)
     #
     def build_core_files
       out = File.join @out_dir, "#{@spec.name}-#{@spec.version}.js"
       core_files = Dir["lib/**/*.rb"] + Dir["lib/**/*.js"]
+      core_files += Dir["bin/*"]
+      
       files = {}
       
       core_files.each do |core_file|
@@ -44,7 +62,7 @@ module Opalite
       end
       
       result = []
-      result << "Opal.register_gem({"
+      result << "Opal.register_opal({"
       result << "\"name\": \"#{@spec.name}\","
       result << "\"version\": \"#{@spec.version}\","
       result << "\"files\": {"
@@ -57,7 +75,12 @@ module Opalite
       
       result << file_out.join(", ")
       
-      result << "}"
+      result << "},"
+      
+      # executables
+      executables = @spec.executables.map { |a| a.inspect }
+      result << "\"executables\": [#{executables.join ', '}]"
+      
       result << "});"
       
       File.open out, "w" do |output|
@@ -74,7 +97,7 @@ module Opalite
     # 
     # Assuming name: opal, version: 1.0.0, and 2 spec files.
     # 
-    # Opal.register_gem({
+    # Opal.register_opal({
     #   "name": "opal",
     #   "version": "1.0.0",
     #   "files": {
@@ -101,7 +124,7 @@ module Opalite
       end
       
       result = []
-      result << "Opal.register_gem({"
+      result << "Opal.register_opal({"
       result << "\"name\": \"#{@spec.name}\","
       result << "\"version\": \"#{@spec.version}\","
       result << "\"files\": {"

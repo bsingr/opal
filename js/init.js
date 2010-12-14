@@ -51,6 +51,7 @@ exports.main = function() {
 	var program_name = null;
 	
 	for (var i = 1; i < argv.length; i++) {
+    // print(argv);
 		if (argv[i][0] === '-' && !finished_flags) {
 			all_flags.push(argv[i]);
 		}
@@ -70,7 +71,10 @@ exports.main = function() {
 	// if we have a program name, then lets run it. if not, print help
 	if (program_name) {
 		rb_run(function() {
-			extensions['.rb'](program_name);
+		  if (opal_file_exists(program_name))
+			  extensions['.rb'](program_name);
+			else
+			  rb_raise(rb_eLoadError, "Cannot find bin file: " + program_name);
 		});
 	}
 	else {

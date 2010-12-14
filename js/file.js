@@ -92,13 +92,13 @@ function rb_file_extname(path) {
 
 file_list_tree = function(path) {
 	var result = [];
-	var children = file_list(path);
+	var children = opal_file_list(path);
 	
 	for (var i = 0; i < children.length; i++) {
 		var child_path = rb_file_join(path, children[i]);
 		// print("child_path: " + child_path);
 		result.push(child_path);
-		if (file_is_directory(child_path)) {
+		if (opal_file_is_directory(child_path)) {
 			// print("-- directory");
 			var child_tree = file_list_tree(child_path);
 			for (var j = 0; j <  child_tree.length; j++) {
@@ -108,6 +108,8 @@ file_list_tree = function(path) {
 			}
 		}
 	}
+	
+  // print("listing " + path);
 	
 	return result;
 };
@@ -126,14 +128,14 @@ var file_glob = function(pattern, flags) {
 		
 		for (var i = 0; i < parts.length; i++) {
 			var part = parts[i];
-			// print("doing " + part);
+      // print("doing " + part);
 			
 			if (part == '**') {
 				var new_path = [];
 				for (var idx = 0; idx < glob_paths.length; idx++) {
-					if (file_is_directory(glob_paths[idx])) {
+					if (opal_file_is_directory(glob_paths[idx])) {
 						var new_path_candidate = file_list_tree(glob_paths[idx]);
-						// print("new path cdidiate is: " + new_path_candidate.join(', '));
+            // print("new path cdidiate is: " + new_path_candidate.join(', '));
 						// new_path.push(file_join())
 						for (var j = 0; j < new_path_candidate.length; j++) {
 							new_path.push(new_path_candidate[j]);
@@ -144,11 +146,13 @@ var file_glob = function(pattern, flags) {
 				glob_paths = new_path;
 			} else if(/\*/.test(part)) {
 				var new_path = [], regexp = file_glob_build_regexp(part);
-				// print('using regexp: ' + regexp);
+        // print('using regexp: ' + regexp);
 				for (var idx = 0; idx < glob_paths.length; idx++) {
-					if (file_is_directory(glob_paths[idx])) {
+          // print("trying " + glob_paths[idx]);
+					if (opal_file_is_directory(glob_paths[idx])) {
+            // print("it is a directory");
 						// need to do list..
-						var children = file_list(glob_paths[idx]);
+						var children = opal_file_list(glob_paths[idx]);
 						for (var j = 0; j < children.length; j++) {
 							if (regexp.test(children[j])) {
 								new_path.push(rb_file_join(glob_paths[idx], children[j]));
@@ -159,7 +163,7 @@ var file_glob = function(pattern, flags) {
 							new_path.push(glob_paths[idx]);
 						}
 					}
-					// print('testing: ' + glob_paths[idx]);
+          // print('testing: ' + glob_paths[idx]);
 					// if (regexp.test(glob_paths[idx])) {
 						// new_path.push(glob_paths[idx]);
 					// }

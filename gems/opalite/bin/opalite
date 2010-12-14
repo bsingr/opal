@@ -1,13 +1,7 @@
-// #!/usr/bin/env ruby -wKU
-
-puts "1"
-puts File.dirname(__FILE__)
-puts "2"
-puts File.join(File.dirname(__FILE__), '..', 'lib')
+#!/usr/bin/env ruby -wKU
 
 opalite_dir = File.expand_path(File.join(File.dirname(__FILE__), '..', 'lib'))
-puts "opalite dir: #{opalite_dir}"
 $:.unshift(opalite_dir) unless $:.include?(opalite_dir)
 require 'opalite'
 
-Opalite::Runner.run ARGV
+Opal::Runner.run ARGV

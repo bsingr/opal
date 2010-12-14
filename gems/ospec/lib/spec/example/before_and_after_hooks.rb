@@ -5,7 +5,7 @@ module Spec
     module BeforeAndAfterHooks
       
       def before(scope = :each, &block)
-        before_parts(scope) << block
+        # before_parts(scope) << block
       end
       
       # alias_method :append_before, :before

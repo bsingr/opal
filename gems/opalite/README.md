@@ -32,6 +32,12 @@ Each output file is located within the opal_name-1.0.0.opal/ directory (by defau
 * opal_name-1.0.0-resources.js - all resources (images) in w3c datauri format
 * opal_name-1.0.0-resources-mhtml.js - all resources in mhtml (ie7) format
 
+
+Debug mode
+==========
+
+* opal_name-1.0.0-debug.js - keeps right line number etc?!?! is this needed?
+
 Minimisation is off by default for generated Javascript, so once minimised (an 
 optional step), it is up to the developer to pass minimise flag as appropriate.
 

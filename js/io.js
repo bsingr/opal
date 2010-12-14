@@ -49,14 +49,9 @@ function io_s_open(klass, mid) {
   Opens the file named +name+, reads all its contents, then closes the file.
 */
 function io_s_read(io, mid, name) {
-  // print("doing this read for " + name);
-  // rb_raise(rb_eException, "IO.read not yet implemented");
-  
-  var fd = opal_file_open(name);
-  
+  var fd = opal_file_open(name, "r");
   // if file does not exist
   if (fd < 0) rb_raise(rb_eIOError, "No such file or directory - " + name);
-  
   // var str = opal_file_read(fd);
   var str = rb_io_read_all(fd);
   opal_file_close(fd);
