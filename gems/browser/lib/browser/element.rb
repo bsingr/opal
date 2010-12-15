@@ -305,7 +305,7 @@ class Element
   # @param [Element, String] element the element or string to append
   # @return [Element] returns the receiver
   def append(element)
-    e = element.is_a?(String) ? fragment_from_string(element) : element.element
+    e = element.is_a?(String) ? fragment_from_string(element) : `#{element}.$element`
     `#{self}.$element.appendChild(#{e})`
     self
   end

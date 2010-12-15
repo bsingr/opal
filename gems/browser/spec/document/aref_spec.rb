@@ -5,6 +5,8 @@ describe "Document#[]" do
     # add some test elements
     elem = Element.new :div, :id => "document_aref_test"
     
+    puts "down c"
+    
     elem.html = [
       # id selectors
       "<div id='a'></div>",
@@ -34,7 +36,11 @@ describe "Document#[]" do
       "</div>"
     ].join("")
     
+    puts "down d"
+    
     Document.body << elem
+    
+    puts "down e"
   end
   
   it "should return single elements when the selector is a symbol" do

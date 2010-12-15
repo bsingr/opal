@@ -33,7 +33,8 @@ global.rb_block_call = function rb_block_call(block, self, mid) {
 	} else {
 		// method_missing
 		func = self.$m['$method_missing'];
-		throw "need to forward rb_block_call to method missing"
+		rb_raise(rb_eRuntimeError,
+		  "need to forward rb_block_call to method missing");
 	}
 }
 

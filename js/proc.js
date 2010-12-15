@@ -5,7 +5,12 @@ function proc_to_proc(proc, mid) {
 }
 
 function proc_call(proc, mid) {
-  rb_raise(rb_eArgError, "proc#call not yet implemented");
+  var args = Array.prototype.slice.call(arguments, 2);
+  // mid
+  args.unshift('');
+  // self
+  args.unshift(proc.$self);
+  return proc.apply(null, args);
 }
 
 function Init_Proc() {

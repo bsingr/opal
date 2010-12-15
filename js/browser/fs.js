@@ -11,7 +11,7 @@
 */
 var fs_replaced_ruby_loader = function(fname) {
   // get file content
-  print("need to execute ruby loader for " + fname);
+  // print("need to execute ruby loader for " + fname);
   FS_FILES[fname](rb_top_self, fname);
 };
 
@@ -67,6 +67,28 @@ function opal_getwd() {
 }
 
 /**
+  Replacement file_glob
+*/
+function browser_file_glob(pattern, flags) {
+  // print("original is " + pattern);
+  var working = pattern.replace(/\*\*/g, '.*').replace(/\*/g, '.*');
+  
+  if (working[0] != '/') working = rb_expand_path(rb_file_join(opal_getwd(), working));
+  // print("glob is: " + working);
+  
+  var reg = new RegExp('^' + working + '$'), result = [];
+  
+  for (var file in FS_FILES) {
+    if (reg.exec(file))
+      result.push(file);
+  }
+  
+  // print(result);
+  
+  return result;
+}
+
+/**
   Check file exists.
   
   For the browser we manually need to check the exact given path, and then need
@@ -75,12 +97,12 @@ function opal_getwd() {
   @returns true or false
 */
 function opal_file_exists(file) {
-  print("checking file exists: " + file);
+  // print("checking file exists: " + file);
   if (FS_FILES.hasOwnProperty(file)) { // absolute
     return true
   } else { // relative
     var try_path = rb_file_join(opal_getwd(), file);
-    print("cjhecking " + try_path);
+    // print("cjhecking " + try_path);
     if (FS_FILES.hasOwnProperty(try_path))
       return true;
     

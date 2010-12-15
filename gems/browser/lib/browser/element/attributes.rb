@@ -13,9 +13,9 @@ class Element
     name = `#{name.to_s}.replace(/\_/g, '-')`
     # either get or set...
     if value == false
-      `#{element}['@element'].getAttribute(#{name}) || #{nil}`
+      `#{element}.$element.getAttribute(#{name}) || #{nil}`
     else
-      `#{element}['@element'].setAttribute(#{name}, #{value.to_s})`
+      `#{element}.$element.setAttribute(#{name}, #{value.to_s})`
     end
   end
   

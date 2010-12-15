@@ -5,10 +5,10 @@ module Spec
     module BeforeAndAfterHooks
       
       def before(scope = :each, &block)
-        # before_parts(scope) << block
+        before_parts(scope) << block
       end
       
-      # alias_method :append_before, :before
+      alias_method :append_before, :before
       
       def before_each_parts
         @before_each_parts ||= []
@@ -19,11 +19,12 @@ module Spec
       end
       
       def before_parts(scope)
-        case scope
-        when :each
+        if scope == :each
           before_each_parts
-        when :all
+        elsif scope == :all
           before_all_parts
+        else
+          []
         end
       end
       
@@ -41,11 +42,12 @@ module Spec
       end
       
       def after_parts(scope)
-        case scope
-        when :each
+        if scope == :each
           after_each_parts
-        when :all
+        elsif scope == :all
           after_all_parts
+        else
+          []
         end
       end
       

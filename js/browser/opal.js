@@ -107,6 +107,9 @@ browser_register_ready_listener(function() {
 */
 browser_register_ready_listener(function() {
     
+    // hardcoded for now:
+    OPAL_RUN_DIR = "browser";
+    
     var bin_file = OPAL_RUN_BIN;
     var argv = [];
     
@@ -122,6 +125,8 @@ browser_register_ready_listener(function() {
     
     // go through all registered opals and "boot" them
     for (var i = 0; i < FS_REGISTERED_OPALS.length; i++) {
+      print("registering: " + FS_REGISTERED_OPALS[i].name);
+      
       var opal_spec = FS_REGISTERED_OPALS[i];
       var opal_path = rb_file_join(FS_OPALS_PATH, opal_spec.name);
       // all files
@@ -144,6 +149,9 @@ browser_register_ready_listener(function() {
 
     // replace ruby loader
     extensions[".rb"] = fs_replaced_ruby_loader;
+    
+    // replace our file glob function
+    file_glob = browser_file_glob;
     
     // argv 0 is simply opal..
     argv[0] = "opal";
@@ -206,11 +214,12 @@ function browser_run_ruby_tags() {
 function io_puts(str) {
   print(str);
 }
+
   
 /**
   Platform
 */
-var opal_ruby_platform = "browser";
+var opal_ruby_platform = "browser-opal";
 
   
 /**
