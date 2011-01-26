@@ -4,32 +4,54 @@ var rb_define_module = function(id) {
 };
 
 var rb_define_module_under = function(base, id) {
-  var module;
+  
+  if (base.$cd(id))
+    return base.$cg(id);
+
+  var mod = rb_define_class_under(base, id, rb_cModule);
+  mod.$included_in = [];
+  mod.$info = T_MODULE;
+  mod.$isa = rb_cModule
+  mod.allocator.prototype.$info = T_MODULE;
+  return mod;
+};
+
+
+  //if (base.$cd(id)) 
+  //  return base.$cg(id);
+
+  //var mod = define_class_under(base, id, rb_cModule
+
+  //var module;
   // print("defining module " + id);
   // if module already exists..
-  if (rb_const_defined(base, id)) {
+  //if (rb_const_defined(base, id)) {
+  //if (base.$cd(id)) {
     // print("already defined");
     // make sure it is a module, otherwise error (trying to change class)
-    module = rb_const_get(base, id);
-    if (module.$flags & T_MODULE) {
-      return module;
-    }
+    //module = rb_const_get(base, id);
+    //module = base.$cg(id);
+    //if (module.$flags & T_MODULE) {
+    //  return module;
+    //}
 
-    throw id + " is not a module."
-  }
+    //throw id + " is not a module."
+ // }
   
-  module = rb_define_module_id(id);
-  rb_const_set(base, id, module);
-  module.$parent = base;
-  return module;
-};
+  //module = rb_define_module_id(id);
+  //base.$cs(id, module);
+  //rb_const_set(base, id, module);
+  //module.$parent = base;
+  //return module;
+//};
 
-var rb_define_module_id = function(id) {
-  var module = rb_define_class_id(id, rb_cModule);
-  module.$flags = T_MODULE;
-  rb_name_class(module, id);
-  return module;
-};
+
+//var rb_define_module_id = function(id) {
+//  var module = rb_define_class_id(id, rb_cModule);
+//  module.$flags = T_MODULE;
+//  rb_name_class(module, id);
+//  return module;
+//};
 
 var rb_mod_create = function() {
   // return // rb_define_class_id()

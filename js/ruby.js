@@ -9,7 +9,8 @@ var opal_yield_hash = function() {
   return opal_hash_yield++;
 };
 
-// The root class. Every class in opal is an instance of RClass.
+// Class creator - simply returns a new class. (dont use new RClass - this is simply
+// a static function
 var RClass = function(klass, super_klass) {
   // Hash. immediately give the class a hash/object_id
   this.$id = opal_yield_hash();
@@ -90,8 +91,8 @@ RObject.prototype.$hash = RClass.prototype.$hash = function() {
 // define method
 var rb_define_method = function(klass, name, body, file_name, line_number) {
   
-  rb_define_method_raw(klass, name, body);
-  
+  //rb_define_method_raw(klass, name, body);
+  klass.$dm(name, body);
   return Qnil;
   
   // // console.log("defininf " + name + " on:");
@@ -175,7 +176,8 @@ var rb_class_new_instance = function(klass) {
 // Class#allocate
 // @global
 rb_obj_alloc = function(klass) {
-  var result = new RObject(klass, T_OBJECT);
+  var result = new klass.allocator();
+  //var result = new RObject(klass, T_OBJECT);
   return result;
 };
 
@@ -242,10 +244,13 @@ rb_raise = function(exc, str) {
     str = exc;
     exc = rb_eException;
   }
-  var exception = new RObject(exc, T_OBJECT);
+
+  throw new Error(str);
+
+  //var exception = new RObject(exc, T_OBJECT);
 	// var exception = exc_new_instance(exc);
-  rb_ivar_set(exception, '@message', str);
-  rb_vm_raise(exception);
+  //rb_ivar_set(exception, '@message', str);
+  //rb_vm_raise(exception);
 };
 // convert natiuve error into proper error
 rb_vm_make_exception = function(native_error) {
@@ -331,8 +336,11 @@ rb_run = function(func) {
 			}
     }
     else {
-      print('NativeError: ' + err);
-			debug_print_backtrace(debug_stack);
+      //print('NativeError: ' + err);
+			//debug_print_backtrace(debug_stack);
+      //
+      // override http://code.google.com/p/v8/wiki/JavaScriptStackTraceApi
+      console.log(err.stack);
     }
   }
 };

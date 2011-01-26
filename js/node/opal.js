@@ -49,7 +49,8 @@ exports.start_repl = function() {
     rb_run(function() {
       var code = exports.compile(b.toString());
       var func = new Function("self", "__FILE__", code);
-      var result = func(rb_top_self, "(irb)");
+      //var result = func(rb_top_self, "(irb)");
+      var result = func.call(rb_top_self, '(irb)');
       print("=> " + CALL(result, "inspect"));
     });
     

@@ -5,12 +5,11 @@ var rb_cArray;
 	Returns a formatted, printable version of the array. #inspect is called on
 	each of the elements and appended to the string.
 */
-function ary_inspect(ary, mid) {
-	ARG_COUNT(0)
+var ary_inspect = function() {
 	var description = [];
 
-	for (var i = 0; i < ary.length; i++) {
-		description.push(rb_call(ary[i], "inspect"));
+	for (var i = 0; i < this.length; i++) {
+		description.push(CALL(this[i], "inspect"));
 	}
 	
 	return "[" + description.join(", ") + "]";
@@ -20,16 +19,16 @@ function ary_inspect(ary, mid) {
 	Returns a simple string version of the array. #to_s is applied to each of
 	the child elements with no seperator.
 */
-function ary_to_s(ary, mid) {
+var ary_to_s = function() {
 	// ARG_COUNT(0)
 	var description = [];
 	
-	for (var i = 0; i < ary.length; i++) {
-		description.push(rb_call(ary[i], "to_s"));
+	for (var i = 0; i < this.length; i++) {
+		description.push(CALL(this[i], "to_s"));
 	}
 	
 	return description.join("");
-}
+};
 
 /**
 	Append - Pushes the given object on to the end of this array. This 
@@ -43,11 +42,11 @@ function ary_to_s(ary, mid) {
 	@param [Object] obj object to append
 	@return [Array] returns the receiver
 */
-function ary_push(ary, mid, val) {
+var ary_push = function(val) {
 	ARG_COUNT(1)
-	ary.push(val);
-	return ary;
-}
+	this.push(val);
+	return this;
+};
 
 
 /**
@@ -59,9 +58,9 @@ function ary_push(ary, mid, val) {
 
 	@return [Number] length
 */
-function ary_length(ary, mid) {
+var ary_length = function() {
 	ARG_COUNT(0)
-	return ary.length;
+	return this.length;
 };
 
 /**
@@ -81,17 +80,17 @@ function ary_length(ary, mid) {
 
 	@return [Array] returns the receiver
 */
-function ary_each(ary, mid) {	
+var ary_each = function() {
 	ARG_COUNT(0)
-	RETURN_ENUMERATOR(ary, each)
+	RETURN_ENUMERATOR(this, each)
 		
-	for (var i = 0; i < ary.length; i++) {
+	for (var i = 0; i < this.length; i++) {
 		PRE_LOOP
-		YIELD(ary[i]);
+		YIELD(this[i]);
 		POST_LOOP
 	}
 	
-	return ary;
+	return this;
 }
 
 function ary_each_with_index(ary, mid, block) {
@@ -1612,13 +1611,36 @@ function ary_aset(ary, mid, index, value) {
 	return ary[index] = value;
 }
 
+var Init_Array = function() {
+  rb_cArray = define_bridged_class('Array', Array);
+  rb_cArray.allocator.prototype.$info = T_OBJECT | T_ARRAY;
+
+  rb_cArray.allocator.prototype.$hash = function() {
+    return this.$id || (this.$id = 100);
+  };
+
+  rb_cArray.$dm('[]', ary_s_create, 1);
+  rb_cArray.$dm('allocate', ary_alloc, 1);
+  rb_cArray.$dm('initialize', ary_initialize);
+
+  rb_cArray.$dm('inspect', ary_inspect);
+  rb_cArray.$dm('to_s', ary_to_s);
+  rb_cArray.$dm('length', ary_length);
+  rb_cArray.$dm('size', ary_length);
+  rb_cArray.$dm('<<', ary_push);
+
+  rb_cArray.$dm('each', ary_each);
+  rb_cArray.$dm('each_with_index', ary_each_with_index);
+};
+
+
 // Arrays are ordered, indexed by integers starting at 0.
 // 
 // ## Implementation details
 // 
 // For efficiency, an array instance is simply a native javascript array. There
 // is no wrapping or referencing, it is simply a toll-free class.
-var Init_Array = function() {
+var Init_Array_Legacy = function() {
   
   // debug support for filename
 	var filename = "opal/runtime/object.js";

@@ -1,3 +1,33 @@
+// NEW - we piggy back nodejs loading system....yay!
+
+// basically just wrap require(). should we try/catch to make a nicer ruby
+// error? probably..
+//
+// Also, this will return Qtrue or Qfalse - it will not return the exports
+// as we cant do anything with them...maybe obj_require should return true
+// and this should retunr the exports so that opal libraries can use them.
+// ..
+var rb_require = function(fname) {
+  console.log("trying to require: " + fname);
+  require(fname);
+  return Qtrue;
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+// OLD
+
+
 // All extensions that are loadable. Currently only 'rb' and 'js' are supported.
 // Loaders register their extension and their factory function which should take
 // a single argument: fname. This is the filename (already assured to exist),
@@ -26,16 +56,16 @@ extensions[".rb"] = function(fname) {
   // compile ruby
   var code = exports.compile(content);
   // print('#################################################################');
-  // print(code);
+  console.log(code);
   // function prototype. we only pass filename as argument.
-  var func = new Function('self', '__FILE__', code);
+  var func = new Function(code);
   // execute function (code)
 	
 	// print("===== loading at " + fname);
 	print(rb_expand_path(fname));
 	// print("!!!!!");
 
-  func(rb_top_self, rb_expand_path(fname));
+  func.call(rb_top_self);  
 };
 
 /**
@@ -59,19 +89,19 @@ var loaded_features = [];
 // from javascript directly.
 // 
 // @local
-var rb_require = function(fname) {
-  var resolved = resolve_require_filename(fname);
+//var rb_require = function(fname) {
+//  var resolved = resolve_require_filename(fname);
   
   // if we have already loaded the file, return false.. (no error)
-  if (loaded_filenames[resolved[0]]) return Qfalse;
+//  if (loaded_filenames[resolved[0]]) return Qfalse;
   // we have not loaded the file, so load it
-  loaded_filenames[resolved[0]] = resolved[1];
-  loaded_features.push(resolved[1]);
+//  loaded_filenames[resolved[0]] = resolved[1];
+//  loaded_features.push(resolved[1]);
   // get the correct extension
-  var ext_name = rb_file_extname(resolved[0]);
-  extensions[ext_name](resolved[0]);
-  return Qtrue;
-};
+//  var ext_name = rb_file_extname(resolved[0]);
+//  extensions[ext_name](resolved[0]);
+//  return Qtrue;
+//};
 
 // Find correct filename for the given fname path
 // 
@@ -151,8 +181,8 @@ var loaded_feature_getter = function(id) {
   return loaded_features;
 };
 
-var InitLoad = function() {
-  print("adding load path:" + exports.opal_lib_path);
+var Init_Load = function() {
+  //print("adding load path:" + exports.opal_lib_path);
   // add core libs to load_paths
   load_paths.unshift(exports.opal_lib_path);
   
@@ -160,5 +190,5 @@ rb_define_hooked_variable('$:', load_path_getter, rb_gvar_readonly_setter);
 rb_define_hooked_variable("$LOAD_PATH", load_path_getter, rb_gvar_readonly_setter);
 rb_define_hooked_variable('$"', loaded_feature_getter, rb_gvar_readonly_setter);
 
-	rb_const_set(rb_cObject, 'ARGV', init_argv);
+	//rb_const_set(rb_cObject, 'ARGV', init_argv);
 };

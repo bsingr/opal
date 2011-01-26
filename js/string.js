@@ -56,11 +56,11 @@ function str_s_new(str, mid, text) {
 // 
 // @param [Number] num number of copies
 // @return [String] result
-function str_times(str, mid, times) {
+var str_times = function(times) {
 	var res = [];
 	
 	for (var i = 0; i < times; i++) {
-		res.push(str);
+		res.push(this);
 	}
 	
 	return res.join("");
@@ -75,8 +75,8 @@ function str_times(str, mid, times) {
 // 
 // @param [String] other_str string to concatenate
 // @return [String] result
-function str_plus(str, mid, other) {
-	return str + other;
+var str_plus = function(other) {
+	return this + other;
 };
 
 // Returns a copy of `self` with the first character converted to uppercase and
@@ -91,8 +91,8 @@ function str_plus(str, mid, other) {
 //   # => "123abc"
 // 
 // @return [String]
-function str_capitalize(str, mid) {
-	return str[0].toUpperCase() + str.substr(1).toLowerCase();
+var str_capitalize = function() {
+	return this[0].toUpperCase() + this.substr(1).toLowerCase();
 }
 
 // Returns a copy of `self` with all uppercase letters replaced with their 
@@ -103,13 +103,13 @@ function str_capitalize(str, mid) {
 //   # => "hello"
 // 
 // @return [String] result
-function str_downcase(str, mid) {
-	return str.toLowerCase();
-}
+var str_downcase = function() {
+	return this.toLowerCase();
+};
 
-function str_to_s(str, mid) {
-	return str;
-}
+var str_to_s = function() {
+	return this;
+};
 
 // Returns a printable version of `self`, surrounded by quote marks, with 
 // special characters escaped.
@@ -122,16 +122,16 @@ function str_to_s(str, mid) {
 //   # => "\"hello\""
 // 
 // @return [String]
-function str_inspect(str, mid) {
-	return '"' + str + '"';
-}
+var str_inspect = function() {
+	return '"' + this + '"';
+};
 
 // Returns the character length of `str`.
 // 
 // @return [Number] length of string
-function str_length(str, mid) {
-	return str.length;
-}
+var str_length = function() {
+	return this.length;
+};
 
 // Returns the {Symbol} corresponding to `self`, creating the symbol if it did
 // not previously exist.
@@ -156,9 +156,9 @@ function str_length(str, mid) {
 //   # => :"cat and dog"
 // 
 // @return [Symbol]
-function str_intern(str, mid) {
-	return opalsym(str);
-}
+var str_intern = function() {
+	return opalsym(this);
+};
 
 // Returns a new string with the characters from `self` in reverse order.
 // 
@@ -167,28 +167,28 @@ function str_intern(str, mid) {
 //   # => "desserts"
 // 
 // @return [String]
-function str_reverse(str, mid) {
-	return str.split("").reverse().join("");
-}
+var str_reverse = function() {
+	return this.split("").reverse().join("");
+};
 
-function str_sub(str, mid, pattern) {
-	return str.replace(pattern, block);
-}
+var str_sub = function(pattern) {
+	return this.replace(pattern, block);
+};
 
-function str_gsub(str, mid, pattern) {
+var str_gsub = function(pattern) {
 	var r = pattern.toString();
 	r = r.substr(1, r.lastIndexOf('/') - 1);
 	r = new RegExp(r, 'g');
-	return str.replace(r, block);
-}
+	return this.replace(r, block);
+};
 
-function str_slice(str, mid, start, finish) {
-	return str.substr(start, finish);
-}
+var str_slice = function(start, finish) {
+	return this.substr(start, finish);
+};
 
-function str_split(str, mid, split) {
-	return str.split(split);
-}
+var str_split = function(split) {
+	return this.split(split);
+};
 
 // Comparison - returns -1 if `other_str` is greater than, 0 if `other_str` is
 // equal to, and 1 if `other_str` is less than `self`.
@@ -205,21 +205,21 @@ function str_split(str, mid, split) {
 // 
 // @param [String] other_str string to compare
 // @return [-1, 0, 1, nil] result
-function str_cmp_m(str, mid, other) {
+var str_cmp_m = function(other) {
   if (!(other.info & TS)) return Qnil;
-  else if (str > other) return 1;
-  else if (str < other) return -1;
+  else if (this > other) return 1;
+  else if (this < other) return -1;
   return 0;
-}
+};
 
 // Equality - if `other` is not a {String} return `false`. Otherwise, returns
 // `true` if `self` <=> `other` returns zero.
 // 
 // @param [String] other string to compare
 // @return [Boolean] result
-function str_equal(str, mid, other) {
-	return str.valueOf() == other.valueOf() ? Qtrue : Qfalse;
-}
+var str_equal = function(other) {
+	return this.valueOf() == other.valueOf() ? Qtrue : Qfalse;
+};
 
 // Match - If obj is a {Regexp}, then uses it to match against self, returning
 // `nil` if there is no match, or the index of the match location otherwise. If
@@ -230,10 +230,10 @@ function str_equal(str, mid, other) {
 // 
 // @param [Regexp, Object] obj
 // @return [Number, nil]
-function str_match(str, mid, obj) {
-	rb_call(obj, "match", self);
+var str_match = function(obj) {
+	rb_call(obj, "match", this);
 	return Qnil;
-}
+};
 
 // Case-inseneitive version of {String#<=>}.
 // 
@@ -249,13 +249,13 @@ function str_match(str, mid, obj) {
 // 
 // @param [String] other_str string to compare
 // @return [-1, 0, 1, nil] result
-function str_casecmp(str, mid, other) {
-	var a = str.toLowerCase(), b = other.toLowerCase();
+var str_casecmp = function(other) {
+	var a = this.toLowerCase(), b = other.toLowerCase();
 	if (!(b.info & TS)) return Qnil;
 	else if (a > b) return 1;
 	else if (a < b) return -1;
 	return 0;
-}
+};
 
 // Returns `true` if `self` has a length of zero.
 // 
@@ -266,9 +266,9 @@ function str_casecmp(str, mid, other) {
 //   # => true
 // 
 // @return [Boolean]
-function str_empty(str, mid) {
-	return str == "" ? Qtrue : Qfalse;
-}
+var str_empty = function() {
+	return this == "" ? Qtrue : Qfalse;
+};
 
 // Returns `true` if `self` ends with a `suffix` given.
 // 
@@ -278,22 +278,22 @@ function str_empty(str, mid) {
 // 
 // @param [String] suffix suffix to check
 // @return [Boolean]
-function str_end_with(str, mid, suffix) {
+var str_end_with = function(suffix) {
 	if (!suffix) return false;
 	
-	if (str.lastIndexOf(suffix) == str.length - suffix.length)
+	if (this.lastIndexOf(suffix) == this.length - suffix.length)
 		return Qtrue;
 	
 	return Qfalse;
-}
+};
 
 // Two strings are equal if they have the same length and content.
 // 
 // @param [String] other string to comapre
 // @return [Boolean]
-function str_eql(str, mid, other) {
-	return str == other ? Qtrue : Qfalse;	
-}
+var str_eql = function(other) {
+	return this == other ? Qtrue : Qfalse;	
+};
 
 // Returns true if `self` contains the given `other_str`.
 // 
@@ -307,11 +307,11 @@ function str_eql(str, mid, other) {
 // 
 // @param [String] other_str string to check for
 // @return [Boolean]
-function str_include(str, mid, other) {
-	var res = str.indexOf(other);
+var str_include = function(other) {
+	var res = this.indexOf(other);
 	
 	return res == -1 ? Qfalse : Qtrue;
-}
+};
 
 // Returns the index of the first occurrence of the given `substring` or
 // pattern (regexp) in `self`. Returns `nil` if not found. If the second
@@ -330,11 +330,11 @@ function str_include(str, mid, other) {
 // 
 // @param [String] substring string to look for
 // @return [Number, nil] result
-function str_index(str, mid, substr) {
-	var res = str.indexOf(substr);
+var str_index = function(substr) {
+	var res = this.indexOf(substr);
 	
 	return res == -1 ? Qnil : res;	
-}
+};
 
 // Returns a copy of `self` with leading whitespace removed. See also
 // {String#rstrip} and {String#strip}.
@@ -346,22 +346,22 @@ function str_index(str, mid, substr) {
 //   # => "hello"
 // 
 // @return [String]
-function str_lstrip(str, mid) {
-	return str.replace(/^\s*/, "");
-}
+var str_lstrip = function() {
+	return this.replace(/^\s*/, "");
+};
 
 // Converts `pattern` to a match, if it isnt alrady one, then invokes its 
 // `match` method on the receiver. 
 // 
 // @param [Regexp] pattern
 // @return [MatchData, nil]
-function str_match_m(str, mid, pattern) {
-	return rb_call(pattern, "match", str);
-}
+var str_match_m = function(pattern) {
+	return rb_call(pattern, "match", this);
+};
 
-function sym_inspect(sym) {
-	return ":" + sym.__ptr__;
-}
+var sym_inspect = function() {
+	return ":" + this.__ptr__;
+};
 
 function sym_to_s(sym) {
 	return sym.__ptr__;
@@ -372,6 +372,51 @@ function sym_to_sym(sym) {
 }
 
 var Init_String = function() {
+  rb_cString = define_bridged_class('String', String);
+  rb_cString.allocator.prototype.$info = T_OBJECT | T_STRING;
+
+  rb_cString.allocator.prototype.$hash = function() {
+    return '$$str$$' + this;
+  };
+
+  rb_cString.$dm('*', str_times, 0);
+  rb_cString.$dm('+', str_plus, 0);
+  rb_cString.$dm('capitalize', str_capitalize);
+  rb_cString.$dm('downcase', str_downcase);
+  rb_cString.$dm('to_s', str_to_s, 0);
+  rb_cString.$dm('inspect', str_inspect, 0);
+  rb_cString.$dm('length', str_length, 0);
+  rb_cString.$dm('size', str_length, 0);
+  rb_cString.$dm('intern', str_intern, 0);
+  rb_cString.$dm('to_sym', str_intern, 0);
+  rb_cString.$dm('reverse', str_reverse, 0);
+  rb_cString.$dm('sub', str_sub, 0);
+  rb_cString.$dm('gsub', str_gsub, 0);
+  rb_cString.$dm('slice', str_slice, 0);
+  rb_cString.$dm('[]', str_slice, 0);
+  rb_cString.$dm('split', str_split, 0);
+  rb_cString.$dm('<=>', str_cmp_m, 0);
+  rb_cString.$dm('==', str_equal, 0);
+  rb_cString.$dm('=~', str_match, 0);
+  rb_cString.$dm('casecmp', str_casecmp, 0);
+  rb_cString.$dm('empty?', str_empty, 0);
+  rb_cString.$dm('end_with?', str_end_with, 0);
+  rb_cString.$dm('eql?', str_eql, 0);
+  rb_cString.$dm('include?', str_include, 0);
+  rb_cString.$dm('index', str_index, 0);
+  rb_cString.$dm('lstrip', str_lstrip, 0);
+  rb_cString.$dm('match', str_match_m, 0);
+
+  // @class Symbol
+  rb_cSymbol = define_bridged_class('Symbol', RSymbol);
+
+  rb_cSymbol.$dm('inspect', sym_inspect);
+  rb_cSymbol.$dm('to_s', sym_to_s);
+  rb_cSymbol.$dm('to_sym', sym_to_sym);
+
+};
+
+var Init_String_Legacy = function() {
 	// @class String
 	rb_cString = rb_define_toll_free_class(String.prototype, T_OBJECT | T_STRING, 
 																				'String', rb_cObject);

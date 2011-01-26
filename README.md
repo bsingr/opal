@@ -1,8 +1,5 @@
 Opal
 ====
-Opal is the commonjs implementation
+Ruby implementation on commonjs
 
-Vienna
-======
-Vienna is a ruby gem port of commonjs system
-(see also vienna\_on\_rails)
+Currently works directly on node, and a custom browser implementation

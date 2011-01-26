@@ -1,59 +1,59 @@
 // set the constant on the given class
-var rb_const_set = function(klass, id, val) {
+//var rb_const_set = function(klass, id, val) {
   // klass.$i[id] = val;
-  klass.$c_prototype[id] = val;
-  return val;
-};
+//  klass.$constants[id] = val;
+//  return val;
+//};
 
-var rb_const_get = function(klass, id) {
+//var rb_const_get = function(klass, id) {
   // print("finding id: " + id);
   // io_puts('finding id ' + id);
   // io_puts(klass.__classid__);
   // io_puts(klass.$f);
-  if (klass.$c[id])
-    return (klass.$c[id]);
+  //if (klass.$c[id])
+    //return (klass.$c[id]);
   
-  var parent = klass.$parent;
+  //var parent = klass.$parent;
   // io_puts(parent.__classid__);
   // stop infinite loop (objects object is object??)
-  while (parent && parent != rb_cObject) {
+ // while (parent && parent != rb_cObject) {
     // io_puts(parent.__classid__);
     // print(parent == rb_cObject);
-    if (parent.$c[id])
-      return parent.$c[id];
+  //  if (parent.$c[id])
+  //    return parent.$c[id];
     
-    parent = parent.$parent;
-  }
+  //  parent = parent.$parent;
+  //}
   // print("trying from " + klass.__classid__);
   // for (var prop in klass.$c) print(prop);
-  io_puts("Cannot find constant: " + id);
-  rb_raise(rb_eNameError, 'uninitialized constant ' + id);
-};
+  //io_puts("Cannot find constant: " + id);
+  //rb_raise(rb_eNameError, 'uninitialized constant ' + id);
+//};
 
 // is const defined
-var rb_const_defined = function(klass, id) {
-  if (klass.$c[id])
-    return true;
+//var rb_const_defined = function(klass, id) {
+ // if (klass.$constants[id])
+ //   return true;
   
-  return false;
-};
+ // return false;
+//};
 
 // set ivar
 // @global
-rb_ivar_set = function(obj, id, val) {
-  obj[id] = val;
-  return val;
-};
+//rb_ivar_set = function(obj, id, val) {
+//  obj[id] = val;
+//  return val;
+//};
 
 // @global
-rb_ivar_get = function(obj, id) {
-  return obj.hasOwnProperty(id) ? obj[id] : Qnil;
-};
+//rb_ivar_get = function(obj, id) {
+//  return obj.hasOwnProperty(id) ? obj[id] : Qnil;
+//};
 
 // @global
-rb_ivar_defined = function(obj, id) {
-  return obj.hasOwnProperty(id) ? true : false;
-};
+//rb_ivar_defined = function(obj, id) {
+//  return obj.hasOwnProperty(id) ? true : false;
+//};
 
 // global id table
 // @local

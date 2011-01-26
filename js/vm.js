@@ -24,7 +24,7 @@ global.rb_block_func = global.rb_block_proc = Qnil;
 global.rb_block_call = function rb_block_call(block, self, mid) {
 	// print("block is: " + block);
 	rb_block_proc = block;
-	var func = self.$m['$' + mid];
+	var func = self.$m['m$' + mid];
 	
 	if (func) {
 		// method exists..
@@ -201,7 +201,7 @@ var opal_s_compile = function(opal, mid, string) {
   top self #to_s
 */
 function top_self_to_s(self, mid) {
-  ARG_COUNT(0)
+  //ARG_COUNT(0)
   return "main";
 }
 
@@ -212,17 +212,19 @@ function top_self_include(self, mid, mod) {
   rb_include_module(rb_cObject, mod);
 }
 
-var InitVM = function() {
-	rb_mOpal = rb_define_module('Opal');
+var Init_VM = function() {
+	//rb_mOpal = rb_define_module('Opal');
 	
-	rb_define_singleton_method(rb_mOpal, 'context_eval', opal_context_eval);
-	rb_define_singleton_method(rb_mOpal, 'compile', opal_s_compile);
+	//rb_define_singleton_method(rb_mOpal, 'context_eval', opal_context_eval);
+	//rb_define_singleton_method(rb_mOpal, 'compile', opal_s_compile);
 	
   // Top self
-	rb_top_self = new RObject(rb_cObject, T_OBJECT);
+	rb_top_self = rb_obj_alloc(rb_cObject);
+
+  rb_top_self.$dm('to_s', top_self_to_s, 1);
 	
-  rb_define_singleton_method(rb_top_self, "to_s", top_self_to_s);
-  rb_define_singleton_method(rb_top_self, "include", top_self_include);
+  //rb_define_singleton_method(rb_top_self, "to_s", top_self_to_s);
+  //rb_define_singleton_method(rb_top_self, "include", top_self_include);
 	
-	rb_const_set(rb_cObject, "RUBY_PLATFORM", opal_ruby_platform);
+	//rb_const_set(rb_cObject, "RUBY_PLATFORM", opal_ruby_platform);
 };

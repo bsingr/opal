@@ -204,7 +204,8 @@ function browser_run_ruby_tags() {
           var res = exports.compile(tag.innerHTML);
           print(res);
           var func = new Function('self', '__FILE__', res);
-          func(rb_top_self, "");
+          func.call(rb_top_self);
+          //func(rb_top_self, "");
         });
       }
     }

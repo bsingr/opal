@@ -11,21 +11,24 @@ var init_argv = [];
 exports.init = function() {
 	if (rb_opal_done_init) return;
 	rb_opal_done_init = true;
-  Init_Debug_Mode();
+  //Init_Debug_Mode();
 	// core inits.
-	InitObject();
+	Init_Object();
 	Init_Array();
 	Init_Numeric();
-	Init_Hash();
-	Init_Regexp();
-	InitLoad();
-	Init_IO();
-	Init_Dir();
-	InitVM();
-	Init_Exception();
+	//Init_Hash();
+	//Init_Regexp();
+	Init_Load();
+	//Init_IO();
+	//Init_Dir();
+	Init_VM();
+	//Init_Exception();
 	Init_String();
-	Init_Proc();
-	Init_Range();
+	//Init_Proc();
+	//Init_Range();
+
+  // if running in browser, init it
+  if (typeof Init_Browser != 'undefined') Init_Browser();
 };
 
 // main.. we might or might not call this.. more likely we will...
