@@ -1,5 +1,0 @@
-
-desc "Build opal with opalite"
-task :opal do
-  system "../../bin/opal ../../gems/opalite/bin/opalite build browser.gemspec"
-end

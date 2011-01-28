@@ -1,0 +1,17 @@
+{
+  "name": "opal",
+  "version": "0.0.1",
+  "description": "ruby compiler and vm runtime for commonjs and browser",
+  "keywords": ["ruby", "javascript", "compiler", "syntax"],
+  "author": "Adam Beynon",
+  "bin": {
+    "opal": "./bin/opal",
+    "opalspec": "./bin/opalspec"
+  },
+  "directories": {
+    "lib": "./lib"
+  },
+  "repository": "http://github.com/adambeynon/opal",
+  "main": "./lib/opal"
+}
+

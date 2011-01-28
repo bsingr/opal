@@ -1,7 +1,0 @@
-{
-  "name": "opal",
-  "main": "lib/opal",
-  "directories": {
-    "lib": "lib"
-  }
-}
