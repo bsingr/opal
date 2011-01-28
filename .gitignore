@@ -4,11 +4,6 @@
 /tmp
 .gem
 .yardoc
-/bin
-.sconsign.dblite
 /runtime
 *.opal
-/node
-/narwhal
-/gem
-/browser
+

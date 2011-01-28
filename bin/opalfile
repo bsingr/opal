@@ -1,0 +1,5 @@
+#!/usr/bin/env node
+
+/**
+  opalfile = opal rake. Uses an "Opalfile" file
+*/
