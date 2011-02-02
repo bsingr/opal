@@ -69,6 +69,39 @@ RClass.prototype.$M = function(method_id) {
   };
 };
 
+// hash literals
+RClass.prototype.$H = function() {
+  return new RHash(Array.prototype.slice.call(arguments));
+};
+
+// block call
+RClass.prototype.$B = function(mid, block) {
+  var args = [].slice.call(arguments, 2), self = this;
+
+  //console.log("in $B for " + self + "    " + mid);
+  //console.log(self);
+
+  args.unshift(self);
+  //console.log(1);
+  rb_block_proc = block;
+	var func = self.$m['$' + mid];
+	//console.log(2);
+	if (func) {
+    
+		// method exists..
+		rb_block_func = func;
+		return func.apply(null,args);
+	} else {
+		// method_missing
+    console.log("method missing for block call " + mid);
+		func = self.$m['$method_missing'];
+		rb_raise(rb_eRuntimeError,
+		  "need to forward rb_block_call to method missing");
+	}
+
+  return Qnil;
+}; 
+
 // The root object. Every object in opal (apart from toll free bridged classes 
 // like array, string etc) are an instance of RObject.
 var RObject = function(klass) {
@@ -91,14 +124,22 @@ RObject.prototype.$r = true;
 // method missing
 RObject.prototype.$M = RClass.prototype.$M;
 
+RObject.prototype.$H = RClass.prototype.$H;
+
+RObject.prototype.$B = RClass.prototype.$B;
+
 RObject.prototype.$hash = RClass.prototype.$hash = function() {
   return this.$id;
 };
 
 // define method
-var rb_define_method = function(klass, name, body, file_name, line_number) {
+rb_define_method = function(klass, name, body, file_name, line_number) {
   
   rb_define_method_raw(klass, name, body);
+
+  if (!body.$rbName) {
+    body.$rbName = name;
+  }
   
   return Qnil;
   
@@ -164,7 +205,7 @@ function rb_define_global_function(name, body) {
 };
 
 // singleton method
-var rb_define_singleton_method = function(klass, name, body) {
+rb_define_singleton_method = function(klass, name, body) {
   rb_define_method(rb_singleton_class(klass), name, body);
 };
 
@@ -350,6 +391,7 @@ rb_run = function(func) {
 };
 
 // Stack trace support
-rb_run.displayName = "main";
-rb_run.displayFileName = "(main)";
+rb_run.$rbName = "<main>"
+
+exports.rb_run = rb_run;
 

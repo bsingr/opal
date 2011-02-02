@@ -22,6 +22,8 @@ var node_buffer = require('buffer');
 
 var Init_Platform = function() {
   console.log("Initing platform");
+
+  rb_const_set(rb_cObject, 'RUBY_PLATFORM', opal_ruby_platform);
 };
 
 /**
@@ -40,42 +42,6 @@ var load_paths = require.paths;
   Our platform
 */
 var opal_ruby_platform = "opal";
-
-/**
-  start REPL session (node specific)
-*/
-exports.start_repl = function() {
-  var Readline = require("readline");
-  var read_stream = process.openStdin();
- 
-  var repl = Readline.createInterface(read_stream, process.stdout);
-  repl.setPrompt(">> ");
-  
-  if (Readline.createInterface.length < 3) {
-    read_stream.on("data", function(b) {
-      repl.write(b);
-    });
-  }
-  
-  repl.on("close", function() {
-    read_stream.destroy();
-  });
-  
-  repl.on("line", function(b) {
-    rb_run(function() {
-      var code = exports.compile(b.toString());
-      var func = new Function("self", "__FILE__", code);
-      //var result = func(rb_top_self, "(irb)");
-      var result = func(rb_top_self, '(irb)');
-      
-      print("=> " + CALL(result, "inspect"));
-    });
-    
-    repl.prompt();
-  });
-  
-  repl.prompt();
-}
 
 /**
   Check file exists

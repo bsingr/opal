@@ -42,9 +42,9 @@ var ary_to_s = function() {
 	@param [Object] obj object to append
 	@return [Array] returns the receiver
 */
-var ary_push = function(val) {
+var ary_push = function(ary, val) {
 	ARG_COUNT(1)
-	this.push(val);
+	ary.push(val);
 	return this;
 };
 
@@ -80,17 +80,19 @@ var ary_length = function(ary) {
 
 	@return [Array] returns the receiver
 */
-var ary_each = function() {
+var ary_each = function(ary) {
 	ARG_COUNT(0)
-	RETURN_ENUMERATOR(this, each)
-		
-	for (var i = 0; i < this.length; i++) {
+	RETURN_ENUMERATOR(ary, each)
+  
+  //console.log("array is: " + ary);  
+
+	for (var i = 0; i < ary.length; i++) {
 		PRE_LOOP
-		YIELD(this[i]);
+		YIELD(ary[i]);
 		POST_LOOP
 	}
 	
-	return this;
+	return ary;
 }
 
 function ary_each_with_index(ary, mid, block) {

@@ -231,7 +231,7 @@ function hash_equal(hash1, mid, hash2) {
   @param [Object] key key to look for
   @return [Object] result or default value
 */
-function hash_aref(hash, mid, key) {
+function hash_aref(hash, key) {
   ARG_COUNT(1)
   
   var assoc = key.$hash();
@@ -260,7 +260,7 @@ function hash_aref(hash, mid, key) {
   @param [Object] value value for key
   @return [Object] returns the value
 */
-function hash_aset(hash, mid, key, value) {
+function hash_aset(hash, key, value) {
   ARG_COUNT(2)
   
   var assoc = key.$hash();

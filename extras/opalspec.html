@@ -4,19 +4,11 @@
     <script src="opal.js" type="text/javascript" charset="utf-8"></script>
     <script src="opalite.js" type="text/javascript" charset="utf-8"></script>
     <script src="opal_dev.js" type="text/javascript"></script>
-    <script type="text/ruby">
-      a = Element.new
-      puts a.inspect
-    </script>
-
+    <script src="opalspec.js" type="text/javascript" charset="utf-8"></script>
+    <!-- booting -->
     <script type="text/javascript">
-      Opal.module('opalspec', function() {
-        
-      });
-
-      Opal.module('opalspec/mappings', function() {
-
-      });
+      Opal.require('opalspec/autoload');
     </script>
   </head>
 </html>
+

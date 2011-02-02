@@ -1,5 +1,5 @@
 // define a top level module with the given id
-var rb_define_module = function(id) {
+rb_define_module = function(id) {
   return rb_define_module_under(rb_cObject, id);
 };
 

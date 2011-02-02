@@ -123,7 +123,7 @@ rb_vm_class = function(base, super_class, id, body, flag) {
       break;
     // If default, something has gone wrong (in compiler).
     default:
-      rb_raise(rb_eException, "define_class got a unknown flag " + flag);
+      rb_raise(rb_eException, "define_class got a unknown flag " + flag);    
   }
   
   // evaluate and return class body using class as the self
@@ -208,7 +208,7 @@ function top_self_to_s(self, mid) {
 /**
   top self #include(mod)
 */
-function top_self_include(self, mid, mod) {
+function top_self_include(self, mod) {
   rb_include_module(rb_cObject, mod);
 }
 
@@ -226,7 +226,7 @@ var Init_VM = function() {
   //rb_top_self.$dm('to_s', top_self_to_s, 1);
 	
   rb_define_singleton_method(rb_top_self, "to_s", top_self_to_s);
-  //rb_define_singleton_method(rb_top_self, "include", top_self_include);
+  rb_define_singleton_method(rb_top_self, "include", top_self_include);
 	
 	//rb_const_set(rb_cObject, "RUBY_PLATFORM", opal_ruby_platform);
 };

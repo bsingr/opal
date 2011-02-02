@@ -272,28 +272,28 @@ DefIseq.prototype.method_args = function(res) {
       rest = this.rest_args,
       done_arg = false;      
   // always need a self reference
-  //res.push(this.SELF);
+  res.push(this.SELF);
   
   // method id reference
   //res.push(', $mid');
   
   // norm
   for (var i = 0; i < norm; i++) {
-    if (done_arg) res.push(', ');
-    done_arg = true;
-    res.push(this.norm_args[i]);
+  //  if (done_arg) res.push(', ');
+    //done_arg = true;
+    res.push(', ' + this.norm_args[i]);
   }
   // opt
   for (var i = 0; i < opt; i++) {
-    if (done_arg) res.push(', ');
-    done_arg = true;
-    res.push(this.opt_args[i]);
+    //if (done_arg) res.push(', ');
+    //done_arg = true;
+    res.push( ', ' + this.opt_args[i]);
   }
   // rest
   if (rest) {
-    if (done_arg) res.push(', ');
-    done_arg = true;
-    res.push(rest);
+    //if (done_arg) res.push(', ');
+    //done_arg = true;
+    res.push(', ' + rest);
   }
   // end args
   res.push(') {\n');
@@ -341,7 +341,7 @@ var ClassIseq = (function() {
 
 ClassIseq.prototype.join = function() {
   var res = [];
-  res.push('function() {\n');
+  res.push('function(self) {\n');
   this.join_inner(res);
   res.push('}');
   return res.join('');
@@ -705,7 +705,8 @@ RubyGenerator.prototype = {
     // this.write(this.SELF + '.cg("' + stmt[1] + '")');
     // if (o.full) this.write(';\n');
     //return 'rb_vm_cg(' + this.SELF + ', "' + stmt[1] + '")';
-    return this.SELF + '.$cg("' + stmt[1] + '")';
+    //return this.SELF + '.$cg("' + stmt[1] + '")';
+    return 'rb_vm_cg(' + this.SELF + ', "' + stmt[1] + '")';
   },
 
   generate_ivar: function(stmt, o) {
@@ -738,24 +739,26 @@ RubyGenerator.prototype = {
     }
     // a.b = c
     else if (type == 'call') {
-      //var tmp_assign = this.iseq_current.temp_local();
-      //res.push('((' + tmp_assign + ' = ' + this.generate(stmt[1][1]));
-      //res.push('), ' + tmp_assign + '.$m');
-      //res.push(this.mid_to_jsid(stmt[1][2] + '='));
-      // res.push(' || ' + tmp_assign + '.$M("' + stmt[1][2] + '=' + '"');
+      var tmp_assign = this.iseq_current.temp_local();
+      res.push('((' + tmp_assign + ' = ' + this.generate(stmt[1][1]));
+      res.push('), ' + tmp_assign + '.$m');
+      res.push(this.mid_to_jsid(stmt[1][2] + '='));
+       res.push(' || ' + tmp_assign + '.$M("' + stmt[1][2] + '=' + '"');
       //res.push(' || rb_vm_meth_m');//'("' + stmt[1][2] + '=' + '"');
-      //res.push(')(');
+      res.push('))(');
       // recv
-      //res.push(tmp_assign + ', ');
+      res.push(tmp_assign + ', ');
       //res.push('"' + stmt[1][2] + '=", ' + this.generate(stmt[2]));
-      //res.push(')');
-      //this.iseq_current.queue_temp(tmp_assign);
-      //return res.join("");
+      res.push(this.generate(stmt[2]));
+      res.push(')');
+      this.iseq_current.queue_temp(tmp_assign);
+      return res.join("");
 
-      res.push(this.generate(stmt[1][1]) + this.mid_to_jsid(stmt[1][2] + '='));
-      res.push('(' + this.generate(stmt[2]) + ')');
-      return res.join('');
-
+      //res.push(this.generate(stmt[1][1]) + this.mid_to_jsid(stmt[1][2] + '='));
+      //res.push('(' + this.generate(stmt[2]) + ')');
+      //return res.join('');
+      
+      //var tmp_assign = this.iseq_current.temp_local();
     }
     else if (type == 'aref'){
       return this.generate_aset(stmt[1], stmt[2]);
@@ -1189,7 +1192,7 @@ RubyGenerator.prototype = {
     res.push(')');
     res.push('(');
     res.push(tmp_mm);
-    res.push(', "[]="');
+    //res.push(', ');
     if (aref[2][0]) {
       for (var i = 0; i < aref[2][0].length; i++) {
         var s = aref[2][0][i];
@@ -1398,8 +1401,8 @@ RubyGenerator.prototype = {
       base = this.generate(stmt[1][0]);
     }
    
-    res.push(base + '.$dc('); 
-    //res.push('rb_vm_class(' + base + ', ');
+    //res.push(base + '.$dc('); 
+    res.push('rb_vm_class(' + base + ', ');
     // superclass
     if (stmt[2]) {
       res.push(this.generate(stmt[2]));
@@ -1459,7 +1462,9 @@ RubyGenerator.prototype = {
       base = this.generate(stmt[1][0]);
     }
     
-    res.push(base + '.$dc(');
+    //res.push(base + '.$dc(');
+    res.push('rb_vm_class(' + base + ', ');
+        
     // superclass
     if (false) {
       

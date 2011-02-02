@@ -16,15 +16,15 @@ exports.init = function() {
 	Init_Object();
 	Init_Array();
 	Init_Numeric();
-	//Init_Hash();
+	Init_Hash();
 	//Init_Regexp();
-	//Init_Load();
+	Init_Load();
 	//Init_IO();
 	//Init_Dir();
 	Init_VM();
 	Init_Exception();
 	Init_String();
-	//Init_Proc();
+	Init_Proc();
 	//Init_Range();
 
   // if running in browser, init it

@@ -8,7 +8,11 @@ module Spec
       
       def run
         prepare
+        puts "RUNNING"
+        #`console.log(#{example_groups})`
         example_groups.each do |group|
+          puts "running group!"
+          #puts group
           group.run @options
         end
         finish

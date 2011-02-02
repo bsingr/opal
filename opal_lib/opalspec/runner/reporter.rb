@@ -37,6 +37,7 @@ module Spec
       end
       
       def example_finished(example, error)
+        puts "== example finished"
         if error.nil?
           example_passed example
         elsif Spec::Example::ExamplePendingError === error

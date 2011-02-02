@@ -7,8 +7,9 @@ rb_cBasicObject = null,
     rb_cClass = null;
 
 // Other core classes/modules
-var rb_mKernel,
-    rb_cNilClass,
+rb_mKernel = null;
+
+  var    rb_cNilClass,
     rb_cTrueClass,
     rb_cFalseClass,
 		rb_cFile;
@@ -25,29 +26,29 @@ function mod_name(mod, mid) {
 	return rb_ivar_get(mod, "__classid__");
 }
 
-function mod_eqq(mod, mid, obj) {
-	return obj_is_kind_of(obj, "kind_of?", mod);
+function mod_eqq(mod, obj) {
+	return obj_is_kind_of(obj, mod);
 }
 
-function mod_define_method(mod, _cmd, mid) {
+function mod_define_method(mod, mid) {
 	USES_BLOCK
 	
 	if (!BLOCK_GIVEN)
 		rb_raise(rb_eLocalJumpError, "no block given");
 	
-	rb_define_method(mod, rb_call(mid, "to_s"), __block__);
+	rb_define_method(mod, CALL(mid, "to_s"), __block__);
   return Qnil;
 }
 
-function mod_attr_accessor(mod, mid) {
+function mod_attr_accessor(mod) {
 	mod_attr_reader.apply(null, arguments);
 	mod_attr_writer.apply(null, arguments);
 	return Qnil;
 }
 
-function mod_attr_reader(mod, cmd) {
+function mod_attr_reader(mod) {
 	var attribute	 = null,
-			attributes = Array.prototype.slice.call(arguments, 2);
+			attributes = Array.prototype.slice.call(arguments, 1);
 	
 	for (var i = 0; i < attributes.length; i++) {
 		var attribute = attributes[i];
@@ -56,21 +57,21 @@ function mod_attr_reader(mod, cmd) {
     // print("defining for: " + mid);
 		
 		rb_define_method(mod, mid,
-		  new Function('self', 'cmd', 'return rb_ivar_get(self, "@' + mid + '");'));
+		  new Function('self', 'return rb_ivar_get(self, "@' + mid + '");'));
 	}
 	
 	return Qnil;
 }
 
-function mod_attr_writer(mod, cmd) {
+function mod_attr_writer(mod) {
 	var attribute	 = null,
-			attributes = Array.prototype.slice.call(arguments, 2);
+			attributes = Array.prototype.slice.call(arguments, 1);
 	
 	for (var i = 0; i < attributes.length; i++) {
 		var attribute = attributes[i];
-		var mid = rb_call(attribute, "to_s");
+		var mid = CALL(attribute, "to_s");
 		
-		rb_define_method(mod, mid + "=", new Function('self', 'cmd', 'val',
+		rb_define_method(mod, mid + "=", new Function('self', 'val',
 		  'return rb_ivar_set(self, "@' + mid + '", val);'));
     // rb_define_method(mod, mid + "=", function(self, val) {
       // return rb_ivar_set(self, "@" + mid, val);
@@ -80,7 +81,7 @@ function mod_attr_writer(mod, cmd) {
 	return Qnil;
 }
 
-function mod_alias_method(mod, mid, new_name, old_name) {
+function mod_alias_method(mod, new_name, old_name) {
 	new_name = rb_call(new_name, "to_s");
 	old_name = rb_call(old_name, "to_s");
   // method might be wrapped, so use raw.
@@ -92,8 +93,8 @@ function mod_to_s(mod, mid) {
 	return rb_ivar_get(mod, "__classid__");
 }
 
-function mod_const_set(mod, mid, id, value) {
-	return rb_vm_cs(mod, rb_call(id, "to_s"), value);
+function mod_const_set(mod, id, value) {
+	return rb_vm_cs(mod, CALL(id, "to_s"), value);
 }
 
 function mod_class_eval(mod, mid, string, filename, lineno) {
@@ -123,22 +124,22 @@ function mod_protected(mod, mid) {
 	return mod;
 }
 
-function mod_include(cla, mid, mod) {
+function mod_include(cla, mod) {
 	rb_include_module(cla, mod);
   return Qnil;
 }
 
-function mod_extend(cla, mid, mod) {
+function mod_extend(cla, mod) {
 	rb_extend_module(cla, mod);
 	return Qnil;
 }
 
-function class_s_new(clas, mid, sup) {
-	var klass = rb_define_class_id("AnonClass", sup || rb_cObject);
+function class_s_new(clas, sup) {
+	var klass = rb_define_class_id("AnonClass", sup || rb_cObject);              
 	return klass;
 };
 
-function class_new_instance(cla, mid) {
+function class_new_instance(cla) {
 
 	var obj = cla.$m.$allocate(cla, Qnil);
 	var args = Array.prototype.slice.call(arguments);
@@ -146,8 +147,8 @@ function class_new_instance(cla, mid) {
 	
 	// if given a block, we need to reroute it to initialize
   if (rb_block_func == arguments.callee) {
-    rb_block_call.apply(null, [rb_block_proc, obj, "initialize"].concat(
-      Array.prototype.slice.call(arguments, 2)));
+    obj.$B.apply(obj, ['initialize', rb_block_proc].concat(
+      Array.prototype.slice.call(arguments, 1)));
   } else {
     obj.$m.$initialize.apply(null, args);
   }
@@ -288,14 +289,14 @@ function obj_proc(obj, mid, block) {
 	@param [Object] args objects to print using `inspect`
 	@return [nil]
 */
-function obj_puts(obj, mid) {
-	var args = Array.prototype.slice.call(arguments, 2);
+function obj_puts(ob) {
+	var args = Array.prototype.slice.call(arguments, 1);
 	
 	for (var i = 0; i < args.length; i++) {
-		io_puts(rb_call(args[i], "to_s"));
+		console.log(CALL(args[i], "to_s"));
 	}
 	
-	return Qnil
+	return Qnil;
 }
 
 /**
@@ -310,7 +311,7 @@ function obj_puts(obj, mid) {
   @param [String] require_path
   @return [Boolean] success
 */
-function obj_require(obj, mid, path) {
+function obj_require(obj, path) {
   ARG_COUNT(1)
   return rb_require(path);
 }
@@ -334,23 +335,24 @@ function obj_require(obj, mid, path) {
 	@param [String] string to pass as message for exception
 	@return [nil]
 */
-function obj_raise(obj, mid, exception, string) {
-	ARG_MIN(1)
+function obj_raise(obj, exception, string) {
+	//ARG___MIN(1)
 	
 	var msg = Qnil, exc;
 	
 	if (IS_STRING(exception)) {
 		msg = exception;
-		exc = rb_call(rb_eRuntimeError, "new", msg);
+		exc = CALL(rb_eRuntimeError, "new", msg);
 	} else if (obj_is_kind_of(exception, "kind_of?", rb_eException)) {
 		exc = exception;
 	} else {
 		if (string != undefined)
 			msg = string;
 		
-		exc = rb_call(exception, "new", msg);
+		exc = CALL(exception, "new", msg);
 	}
-	
+  //console.log("ready to raise:");
+//console.log(exc);  
 	rb_vm_raise(exc);
 }
 
@@ -412,7 +414,7 @@ function obj_tap(obj, mid, block) {
 	return obj;
 }
 
-function obj_is_kind_of(obj, mid, klass) {
+function obj_is_kind_of(obj, klass) {
 	ARG_COUNT(1)
 	
 	var search = obj.$klass;
@@ -527,12 +529,12 @@ function obj_instance_eval(obj, mid) {
 	return obj;
 }
 
-function obj_const_set(obj, mid, name, value) {
+function obj_const_set(obj, name, value) {
 	ARG_COUNT(2)
 	
 	TO_STRING(name)
 	
-	return rb_const_set(obj, name, value);
+	return rb_const_set(rb_class_real(obj.$klass), name, value);
 }
 
 function obj_const_defined_p(obj, mid, name) {

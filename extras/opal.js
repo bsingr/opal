@@ -111,110 +111,111 @@ browser_register_ready_listener(function() {
 */
 browser_register_ready_listener(function() {
 
-    // hardcoded for now:
-    OPAL_RUN_DIR = "browser";
-
-    var bin_file = OPAL_RUN_BIN;
-    var argv = [];
-
-    var href_uri = window.location.href;
-    var page_uri = OpalURI.parse(href_uri);
-    var page_dir = rb_file_dirname(page_uri.path);
-
-    // file system paths
-    FS_PAGE_URI = page_uri;
-    FS_OPALS_PATH = rb_file_join(page_dir, "opals");
-    FS_LIB_PATH = rb_file_join(page_dir, "lib");
-    FS_CWD = rb_file_join(FS_OPALS_PATH, OPAL_RUN_DIR);
-
-    // go through all registered opals and "boot" them
-    for (var i = 0; i < FS_REGISTERED_OPALS.length; i++) {
-      print("registering: " + FS_REGISTERED_OPALS[i].name);
-
-      var opal_spec = FS_REGISTERED_OPALS[i];
-      var opal_path = rb_file_join(FS_OPALS_PATH, opal_spec.name);
-      // all files
-      for (var opal_file in opal_spec.files) {
-        var file_path = rb_file_join(opal_path, opal_file);
-        FS_FILES[file_path] = opal_spec.files[opal_file];
-      }
-      // executables
-      if (opal_spec.executables) {
-        for (var j = 0; j < opal_spec.executables.length; j++) {
-          var bin_file = opal_spec.executables[j];
-          FS_BIN_FILES[bin_file] = rb_file_join(opal_path, "bin", bin_file);
-        }
-      }
-
-      // lib path
-      load_paths.push(rb_file_join(opal_path, 'lib'));
-      print("---- " + rb_file_join(opal_path, 'lib'));
-    }
-
-    // replace ruby loader
-    extensions[".rb"] = fs_replaced_ruby_loader;
-
-    // replace our file glob function
-    file_glob = browser_file_glob;
-
-    // argv 0 is simply opal..
-    argv[0] = "opal";
-    // replace bin file with its full path
-    argv[1] = FS_BIN_FILES[bin_file];
-
-    // actual arguments we get from hash:
-    var hash_args = window.location.hash.substr(1).split("&");
-
-    for (var i = 0; i < hash_args.length; i++) {
-      // decide uri?
-      argv.push(hash_args[i]);
-    }
-
-    exports.argv = argv;
-
-    exports.opal_lib_path = FS_LIB_PATH;
-
-  if (OPAL_RUN_BIN) { // path 1  
-    exports.main();
-  }
-  else { // path 2
-    exports.init();
-    browser_run_ruby_tags();
-  }
 });
 
-/**
-  Returns an array of all script tags in DOM page that have the mime type
-  text/ruby. Should only be called once dom content has loaded.
-*/
-function browser_run_ruby_tags() {
-  // init ruby
-  exports.init();
-  var tags = document.getElementsByTagName('script'), tag;
+//browser_register_ready_listener(function() {
+//    
+//    // hardcoded for now:
+//    OPAL_RUN_DIR = "browser";
+//    
+//    var bin_file = OPAL_RUN_BIN;
+//    var argv = [];
+//    
+//    var href_uri = window.location.href;
+//    var page_uri = OpalURI.parse(href_uri);
+//    var page_dir = rb_file_dirname(page_uri.path);
+//
+//    // file system paths
+//    FS_PAGE_URI = page_uri;
+//    FS_OPALS_PATH = rb_file_join(page_dir, "opals");
+//    FS_LIB_PATH = rb_file_join(page_dir, "lib");
+//    FS_CWD = rb_file_join(FS_OPALS_PATH, OPAL_RUN_DIR);
+//    
+//    // go through all registered opals and "boot" them
+//    for (var i = 0; i < FS_REGISTERED_OPALS.length; i++) {
+//      print("registering: " + FS_REGISTERED_OPALS[i].name);
+//      
+//      var opal_spec = FS_REGISTERED_OPALS[i];
+//      var opal_path = rb_file_join(FS_OPALS_PATH, opal_spec.name);
+//      // all files
+//      for (var opal_file in opal_spec.files) {
+//        var file_path = rb_file_join(opal_path, opal_file);
+//        FS_FILES[file_path] = opal_spec.files[opal_file];
+//      }
+//      // executables
+//      if (opal_spec.executables) {
+//        for (var j = 0; j < opal_spec.executables.length; j++) {
+//          var bin_file = opal_spec.executables[j];
+//          FS_BIN_FILES[bin_file] = rb_file_join(opal_path, "bin", bin_file);
+//        }
+//      }
+//      
+//      // lib path
+//      load_paths.push(rb_file_join(opal_path, 'lib'));
+//      print("---- " + rb_file_join(opal_path, 'lib'));
+//    }
+//
+//    // replace ruby loader
+//    extensions[".rb"] = fs_replaced_ruby_loader;
+//    
+//    // replace our file glob function
+//    file_glob = browser_file_glob;
+//    
+//    // argv 0 is simply opal..
+//    argv[0] = "opal";
+//    // replace bin file with its full path
+//    argv[1] = FS_BIN_FILES[bin_file];
+//    
+//    // actual arguments we get from hash:
+//    var hash_args = window.location.hash.substr(1).split("&");
+//    
+//    for (var i = 0; i < hash_args.length; i++) {
+//      // decide uri?
+//      argv.push(hash_args[i]);
+//    }
+//    
+//    exports.argv = argv;
+//    
+//    exports.opal_lib_path = FS_LIB_PATH;
+//    
+//  if (OPAL_RUN_BIN) { // path 1  
+//    exports.main();
+//  }
+//  else { // path 2
+//    exports.init();
+//    browser_run_ruby_tags();
+//  }
+//});
 
-  for (var i = 0; i < tags.length; i++) {
-    tag = tags[i];
+// this should be moved over to opalite?! or opal_dev????
+//function browser_run_ruby_tags() {
+//  // init ruby
+//  exports.init();
+//  var tags = document.getElementsByTagName('script'), tag;
 
-    if (tag.type == "text/ruby") {
+//  for (var i = 0; i < tags.length; i++) {
+//    tag = tags[i];
+
+//    if (tag.type == "text/ruby") {
       // src property - Ajax load file, then run it
-      if (tag.src) {
+//      if (tag.src) {
 
-      }
+//      }
       // just run the inner content
-      else {
-        print("run content:");
-        print(tag.innerHTML);
-        rb_run(function() {
-          var res = exports.compile(tag.innerHTML);
-          print(res);
-          var func = new Function('self', '__FILE__', res);
-          func.call(rb_top_self);
-          //func(rb_top_self, "");
-        });
-      }
-    }
-  }
-}
+//      else {
+//        print("run content:");
+//        print(tag.innerHTML);
+//        rb_run(function() {
+//          var res = exports.compile(tag.innerHTML);
+//          print(res);
+//          var func = new Function('self', '__FILE__', res);
+//          func.call(rb_top_self);
+//          //func(rb_top_self, "");
+//        });
+//      }
+//    }
+//  }
+//}
 
 function io_puts(str) {
   print(str);
@@ -394,6 +395,7 @@ var rb_define_toll_free_class = function(prototype, flags, id, super_klass) {
   prototype.$flags = flags;
   prototype.$r = true;
   prototype.$M = RClass.prototype.$M;
+  prototype.$B = RClass.prototype.$B;
   prototype.$Y = opalsym;
   // default hashing behaviour
   prototype.$hash = function() {
@@ -404,7 +406,7 @@ var rb_define_toll_free_class = function(prototype, flags, id, super_klass) {
 };
 // define a new class (normal way), with the given id and superclass. Will be
 // top level.
-var rb_define_class = function(id, super_klass) {
+rb_define_class = function(id, super_klass) {
   return rb_define_class_under(rb_cObject, id, super_klass);
 };
 var rb_define_class_under = function(base, id, super_klass) {
@@ -466,7 +468,7 @@ var rb_singleton_class = function(obj) {
   return klass;
 };
 // define a top level module with the given id
-var rb_define_module = function(id) {
+rb_define_module = function(id) {
   return rb_define_module_under(rb_cObject, id);
 };
 var rb_define_module_under = function(base, id) {
@@ -686,8 +688,8 @@ rb_cBasicObject = null,
     rb_cModule = null,
     rb_cClass = null;
 // Other core classes/modules
-var rb_mKernel,
-    rb_cNilClass,
+rb_mKernel = null;
+  var rb_cNilClass,
     rb_cTrueClass,
     rb_cFalseClass,
   rb_cFile;
@@ -703,37 +705,37 @@ function mod_name(mod, mid) {
 function mod_eqq(mod, mid, obj) {
  return obj_is_kind_of(obj, "kind_of?", mod);
 }
-function mod_define_method(mod, _cmd, mid) {
+function mod_define_method(mod, mid) {
  var __block__ = (rb_block_func == arguments.callee) ? rb_block_proc : Qnil; rb_block_func = rb_block_proc = Qnil;
  if (!(__block__ != Qnil))
   rb_raise(rb_eLocalJumpError, "no block given");
- rb_define_method(mod, rb_call(mid, "to_s"), __block__);
+ rb_define_method(mod, mid.$m["$" + "to_s"](mid), __block__);
   return Qnil;
 }
-function mod_attr_accessor(mod, mid) {
+function mod_attr_accessor(mod) {
  mod_attr_reader.apply(null, arguments);
  mod_attr_writer.apply(null, arguments);
  return Qnil;
 }
-function mod_attr_reader(mod, cmd) {
+function mod_attr_reader(mod) {
  var attribute = null,
-   attributes = Array.prototype.slice.call(arguments, 2);
+   attributes = Array.prototype.slice.call(arguments, 1);
  for (var i = 0; i < attributes.length; i++) {
   var attribute = attributes[i];
   var mid = rb_call(attribute, "to_s");
     // print("defining for: " + mid);
   rb_define_method(mod, mid,
-    new Function('self', 'cmd', 'return rb_ivar_get(self, "@' + mid + '");'));
+    new Function('self', 'return rb_ivar_get(self, "@' + mid + '");'));
  }
  return Qnil;
 }
-function mod_attr_writer(mod, cmd) {
+function mod_attr_writer(mod) {
  var attribute = null,
-   attributes = Array.prototype.slice.call(arguments, 2);
+   attributes = Array.prototype.slice.call(arguments, 1);
  for (var i = 0; i < attributes.length; i++) {
   var attribute = attributes[i];
-  var mid = rb_call(attribute, "to_s");
-  rb_define_method(mod, mid + "=", new Function('self', 'cmd', 'val',
+  var mid = attribute.$m["$" + "to_s"](attribute);
+  rb_define_method(mod, mid + "=", new Function('self', 'val',
     'return rb_ivar_set(self, "@' + mid + '", val);'));
     // rb_define_method(mod, mid + "=", function(self, val) {
       // return rb_ivar_set(self, "@" + mid, val);
@@ -741,7 +743,7 @@ function mod_attr_writer(mod, cmd) {
  }
  return Qnil;
 }
-function mod_alias_method(mod, mid, new_name, old_name) {
+function mod_alias_method(mod, new_name, old_name) {
  new_name = rb_call(new_name, "to_s");
  old_name = rb_call(old_name, "to_s");
   // method might be wrapped, so use raw.
@@ -751,8 +753,8 @@ function mod_alias_method(mod, mid, new_name, old_name) {
 function mod_to_s(mod, mid) {
  return rb_ivar_get(mod, "__classid__");
 }
-function mod_const_set(mod, mid, id, value) {
- return rb_vm_cs(mod, rb_call(id, "to_s"), value);
+function mod_const_set(mod, id, value) {
+ return rb_vm_cs(mod, id.$m["$" + "to_s"](id), value);
 }
 function mod_class_eval(mod, mid, string, filename, lineno) {
   // print("global block is: " + rb_block_proc);
@@ -775,19 +777,19 @@ function mod_public(mod, mid) {
 function mod_protected(mod, mid) {
  return mod;
 }
-function mod_include(cla, mid, mod) {
+function mod_include(cla, mod) {
  rb_include_module(cla, mod);
   return Qnil;
 }
-function mod_extend(cla, mid, mod) {
+function mod_extend(cla, mod) {
  rb_extend_module(cla, mod);
  return Qnil;
 }
-function class_s_new(clas, mid, sup) {
+function class_s_new(clas, sup) {
  var klass = rb_define_class_id("AnonClass", sup || rb_cObject);
  return klass;
 };
-function class_new_instance(cla, mid) {
+function class_new_instance(cla) {
  var obj = cla.$m.$allocate(cla, Qnil);
  var args = Array.prototype.slice.call(arguments);
  args[0] = obj;
@@ -907,12 +909,12 @@ function obj_proc(obj, mid, block) {
 	@param [Object] args objects to print using `inspect`
 	@return [nil]
 */
-function obj_puts(obj, mid) {
- var args = Array.prototype.slice.call(arguments, 2);
+function obj_puts(ob) {
+ var args = Array.prototype.slice.call(arguments, 1);
  for (var i = 0; i < args.length; i++) {
-  io_puts(rb_call(args[i], "to_s"));
+  console.log(args[i].$m["$" + "to_s"](args[i]));
  }
- return Qnil
+ return Qnil;
 }
 /**
   Try to load the library or file named `require_path`. Causes an error to be
@@ -926,7 +928,7 @@ function obj_puts(obj, mid) {
   @param [String] require_path
   @return [Boolean] success
 */
-function obj_require(obj, mid, path) {
+function obj_require(obj, path) {
   if ((arguments.length - 1) != 1) { print(arguments.callee); rb_arg_error(arguments.length, 1); }
   return rb_require(path);
 }
@@ -949,19 +951,21 @@ function obj_require(obj, mid, path) {
 	@param [String] string to pass as message for exception
 	@return [nil]
 */
-function obj_raise(obj, mid, exception, string) {
- if ((arguments.length - 2) < 1) { print(arguments.callee); rb_arg_error(arguments.length - 2, 1); }
+function obj_raise(obj, exception, string) {
+ //ARG___MIN(1)
  var msg = Qnil, exc;
  if ((exception.$flags & 16)) {
   msg = exception;
-  exc = rb_call(rb_eRuntimeError, "new", msg);
+  exc = rb_eRuntimeError.$m["$" + "new"](rb_eRuntimeError, msg);
  } else if (obj_is_kind_of(exception, "kind_of?", rb_eException)) {
   exc = exception;
  } else {
   if (string != undefined)
    msg = string;
-  exc = rb_call(exception, "new", msg);
+  exc = exception.$m["$" + "new"](exception, msg);
  }
+  //console.log("ready to raise:");
+//console.log(exc);  
  rb_vm_raise(exc);
 }
 function obj_instance_variable_defined_p(obj, mid, name) {
@@ -1100,10 +1104,10 @@ function obj_instance_eval(obj, mid) {
  }
  return obj;
 }
-function obj_const_set(obj, mid, name, value) {
+function obj_const_set(obj, name, value) {
  if ((arguments.length - 1) != 2) { print(arguments.callee); rb_arg_error(arguments.length, 2); }
  if (!(name.$flags & 16)) { name = to_str(name); }
- return rb_const_set(obj, name, value);
+ return rb_const_set(rb_class_real(obj.$klass), name, value);
 }
 function obj_const_defined_p(obj, mid, name) {
  if ((arguments.length - 1) != 1) { print(arguments.callee); rb_arg_error(arguments.length, 1); }
@@ -1276,9 +1280,10 @@ var rb_vm_return_instance,
   rb_vm_block_return_instance,
   rb_vm_next_instance,
   rb_vm_break_instance;
-function exc_initialize(exc, mid, message) {
+function exc_initialize(exc, message) {
  // if (message != Qnil)	
   rb_ivar_set(exc, "@message", (message == undefined) ? "" : message);
+  exc.message = message;
 }
 function exc_message(exc) {
  return rb_ivar_get(exc, "@message");
@@ -1289,9 +1294,28 @@ function exc_inspect(exc) {
 function exc_to_s(exc) {
  return rb_ivar_get(exc, "@message");
 }
+var exc_s_allocate = function(klass) {
+  var err = new Error();
+  err.$klass = klass;
+  return err;
+};
+Error.prepareStackTrace = function(error, stack) {
+  var parts = [];
+  // actual error
+  parts.push(error.$klass.__classid__ + ': ' + error.message);
+  for (var i = 0; i < stack.length; i++) {
+    var part = stack[i], func = part.getFunction();
+    // we are only interested in ruby methods..
+    if (func.$rbName) {
+      parts.push('\tfrom ' + (part.getFileName() || '(irb)') + ':' + part.getLineNumber() + ':in `' + func.$rbName + '\'');
+    }
+  }
+  return parts.join('\n');
+};
 var Init_Exception = function() {
  //rb_eException = rb_define_class("Exception", rb_cObject);
   rb_eException = rb_define_toll_free_class(Error.prototype, 4, 'Exception', rb_cObject);
+  rb_define_singleton_method(rb_eException, 'allocate', exc_s_allocate);
  rb_define_method(rb_eException, "initialize", exc_initialize);
  rb_define_method(rb_eException, "message", exc_message);
  rb_define_method(rb_eException, "inspect", exc_inspect);
@@ -1708,9 +1732,9 @@ var rb_cNumeric;
 //   # => 5
 // 
 // @return [Number] receiver
-function num_uplus(num, mid) {
+var num_uplus = function(num) {
  return num;
-}
+};
 // Unary Minus - Returns the receiver's value, negated.
 // 
 // @example
@@ -1718,129 +1742,129 @@ function num_uplus(num, mid) {
 //   # => -5
 // 
 // @return [Number] result
-function num_uminus(num, mid) {
+var num_uminus = function(num) {
  return 0 - num;
-}
+};
 // Returns `self` modulo `other`. See {Number#divmod} for more information.
 // 
 // @param [Number] other number to use for modulo
 // @return [Number]
-function num_mod(num, mid, other) {
- return num % other;
-}
+var num_mod = function(num, num2) {
+ return num % num2;
+};
 // Bitwise AND.
 // 
 // @param [Number] other number to AND with.
 // @return [Number] result
-function num_and(num, mid, other) {
- return num & other;
-}
+var num_and = function(num, num2) {
+ return num & num2;
+};
 // Performs multiplication.
 // 
 // @param [Number] other number to multiply with
 // @return [Number] result
-function num_mul(num, mid, other) {
- return num * other;
-}
+var num_mul = function(num, num2) {
+ return num * num2;
+};
 // Raises `self` to the `other` power.
 // 
 // @param [Number] other number to raise to
 // @return [Number] result
-function num_pow(num, mid, other) {
+var num_pow = function(num, other) {
  return Math.pow(num, other);
-}
+};
 // Performs addition.
 // 
 // @param [Number] other number to add
 // @result [Number] result
-function num_plus(num, mid, other) {
+var num_plus = function(num, other) {
  return num + other;
-}
+};
 // Performs subtraction.
 // 
 // @param [Number] other number to subtract
 // @result [Number] result
-function num_minus(num, mid, other) {
+var num_minus = function(num, other) {
  return num - other;
-}
+};
 // Performs division.
 // 
 // @param [Number] other number to divide by.
 // @return [Number] result
-function num_div(num, mid, other) {
+var num_div = function(num, other) {
  return num / other;
-}
+};
 // Returns `true` if the value of `self` is less than that of `other`, `false`
 // otherwise.
 // 
 // @param [Number] other number to compare
 // @return [Boolean] result
-function num_lt(num, mid, other) {
+var num_lt = function(num, other) {
  return num < other ? Qtrue : Qfalse;
-}
+};
 // Returns `true` if the value of `self` is less than or equal to `other`, 
 // `false` otherwise.
 // 
 // @param [Number] other number to compare
 // @return [Number] result
-function num_le(num, mid, other) {
+var num_le = function(num, other) {
  return num <= other ? Qtrue : Qfalse;
-}
+};
 // Returns `true` if the value of `self` is greater than that of `other`, 
 // `false` otherwise.
 // 
 // @param [Number] other number to compare
 // @return [Boolean] result
-function num_gt(num, mid, other) {
+var num_gt = function(num, other) {
  return num > other ? Qtrue : Qfalse;
-}
+};
 // Returns `true` if the value of `self` is greater than or equal to `other`, 
 // `false` otherwise.
 // 
 // @param [Number] other number to compare
 // @return [Number] result
-function num_ge(num, mid, other) {
+var num_ge = function(num, other) {
  return num >= other ? Qtrue : Qfalse;
-}
+};
 // Shifts `self` left `count` positions.
 // 
 // @param [Number] count number to shift
 // @return [Number] result
-function num_lshift(num, mid, count) {
+var num_lshift = function(num, count) {
  return num << count;
-}
+};
 // Shifts `self` right `count` positions.
 // 
 // @param [Number] count number to shift
 // @return [Number] result
-function num_rshift(num, mid, count) {
+var num_rshift = function(num, count) {
  return num >> count;
-}
+};
 // Comparison - Returns `-1`, `0`, `1` or `nil` depending on whether `self` is
 // less than, equal to or greater than `other`.
 // 
 // @param [Number] other number to compare
 // @return [Number, nil] result
-function num_cmp(num, mid, other) {
+var num_cmp = function(num, other) {
  if (!other.$info & 64) return Qnil;
  else if (num < other) return -1;
  else if (num > other) return 1;
  return 0;
-}
+};
 // Returns `true` if `self` equals `other` numerically, `false` otherwise.
 // 
 // @param [Number] other number to compare
 // @return [Boolean] true or false
-function num_equal(num, mid, other) {
+var num_equal = function(num, other) {
  return num.valueOf() === other.valueOf() ? Qtrue : Qfalse;
-}
+};
 // Bitwise EXCLUSIVE OR.
 // 
 // @param [Number] other number to XOR
 // @return [Number] result
-function num_xor(num, mid, other) {
+var num_xor = function(num, other) {
  return num & other;
-}
+};
 // Returns the absolute value of `self`.
 // 
 // @example
@@ -1850,21 +1874,21 @@ function num_xor(num, mid, other) {
 //   # => 1234
 // 
 // @return [Number] absolute value
-function num_abs(num, mid) {
+var num_abs = function(num) {
  return Math.abs(num);
-}
+};
 // Returns `true` if `self` is even, `false` otherwise.
 // 
 // @return [Boolean]
-function num_even_p(num, mid) {
+var num_even_p = function(num) {
  return (num % 2 == 0) ? Qtrue : Qfalse;
-}
+};
 // Returns `true` if `self` is odd, `false` otherwise.
 // 
 // @return [Boolean]
-function num_odd_p(num, mid) {
+var num_odd_p = function(num) {
  return (num %2 == 0) ? Qfalse : Qtrue;
-}
+};
 // Returns the number equal to `self` + 1.
 // 
 // @example
@@ -1874,9 +1898,9 @@ function num_odd_p(num, mid) {
 //   # => 0
 // 
 // @return [Number] result
-function num_succ(num, mid) {
+var num_succ = function(num) {
  return parseInt(num) + 1;
-}
+};
 // Returns the number equal to `self` - 1.
 // 
 // @example
@@ -1886,9 +1910,9 @@ function num_succ(num, mid) {
 //   # => -2
 // 
 // @return [Number] result
-function num_pred(num, mid) {
+var num_pred = function(num) {
  return parseInt(num) - 1;
-}
+};
 // Iterates `block`, passing in integer values from `self` up to and including
 // `finish`.
 // 
@@ -1907,12 +1931,12 @@ function num_pred(num, mid) {
 // 
 // @param [Number] finish where to stop iteration
 // @return [Number] returns receiver
-function num_upto(num, mid, finish) {
+var num_upto = function(num, finish) {
  for (var i = num; i <= finish; i++) {
   block(block.$self, Qnil, i);
  }
  return num;
-}
+};
 // Iterates `block`, passing decreasing values from `self` down to and 
 // including `finish`.
 // 
@@ -1930,12 +1954,12 @@ function num_upto(num, mid, finish) {
 // 
 // @param [Number] finish where to stop iteration
 // @return [Number] returns receiver
-function num_downto(num, mid, finish) {
+var num_downto = function(num, finish) {
  for (var i = num; i >= finish; i--) {
   block(block.$self, Qnil, i);
  }
  return num;
-}
+};
 // Iterates `block` `self` times, passing in values from zero to `self` - 1.
 // 
 // If no block is given, an enumerator is returned instead.
@@ -1951,19 +1975,19 @@ function num_downto(num, mid, finish) {
 //   # => 4
 // 
 // @return [Number] returns receiver
-function num_dotimes(num, mid) {
+var num_dotimes = function(num) {
  for (var i = 0; i < num; i++) {
   block(block.$self, Qnil, i);
  }
  return num;
-}
+};
 // Bitwise OR.
 // 
 // @param [Number] other number to OR with.
 // @return [Number] result
-function num_or(num, mid, other) {
+var num_or = function(num, other) {
  return num | other;
-}
+};
 // Returns `true` if `self` is zero, `false` otherwise.
 // 
 // @return [Boolean] result
@@ -2103,9 +2127,9 @@ var ary_to_s = function() {
 	@param [Object] obj object to append
 	@return [Array] returns the receiver
 */
-var ary_push = function(val) {
+var ary_push = function(ary, val) {
  if ((arguments.length - 1) != 1) { print(arguments.callee); rb_arg_error(arguments.length, 1); }
- this.push(val);
+ ary.push(val);
  return this;
 };
 /**
@@ -2138,22 +2162,23 @@ var ary_length = function(ary) {
 
 	@return [Array] returns the receiver
 */
-var ary_each = function() {
+var ary_each = function(ary) {
  if ((arguments.length - 1) != 0) { print(arguments.callee); rb_arg_error(arguments.length, 0); }
  var __block__ = (rb_block_func == arguments.callee) ? rb_block_proc : Qnil; rb_block_func = rb_block_proc = Qnil; if (__block__ == Qnil) rb_raise(rb_eArgError, "each" + " needs to return an enumerator");
- for (var i = 0; i < this.length; i++) {
+  //console.log("array is: " + ary);  
+ for (var i = 0; i < ary.length; i++) {
   try {
-  __block__.call(__block__.$self,this[i]);
+  __block__(__block__.$self,ary[i]);
   } catch(e) { switch (e.$keyword) { case 2: return e["@exit_value"]; default: throw e; } }
  }
- return this;
+ return ary;
 }
 function ary_each_with_index(ary, mid, block) {
  if ((arguments.length - 1) != 0) { print(arguments.callee); rb_arg_error(arguments.length, 0); }
  var __block__ = (rb_block_func == arguments.callee) ? rb_block_proc : Qnil; rb_block_func = rb_block_proc = Qnil; if (__block__ == Qnil) rb_raise(rb_eArgError, "each_with_index" + " needs to return an enumerator");
  for (var i = 0; i < ary.length; i++) {
   try {
-  __block__.call(__block__.$self,ary[i])
+  __block__(__block__.$self,ary[i])
   } catch(e) { switch (e.$keyword) { case 2: return e["@exit_value"]; default: throw e; } }
  }
  return ary;
@@ -2180,7 +2205,7 @@ function ary_each_index(ary, mid, block) {
  var __block__ = (rb_block_func == arguments.callee) ? rb_block_proc : Qnil; rb_block_func = rb_block_proc = Qnil; if (__block__ == Qnil) rb_raise(rb_eArgError, "each_index" + " needs to return an enumerator");
  for (var i = 0; i < ary.length; i++) {
   try {
-  __block__.call(__block__.$self,i)
+  __block__(__block__.$self,i)
   } catch(e) { switch (e.$keyword) { case 2: return e["@exit_value"]; default: throw e; } }
  }
  return ary;
@@ -2409,7 +2434,7 @@ function ary_select(ary, mid, block) {
  for (var i = 0; i < ary.length; i++) {
   try {
   arg = ary[i];
-  if ((__block__.call(__block__.$self,arg)).$r)
+  if ((__block__(__block__.$self,arg)).$r)
    result.push(arg);
   } catch(e) { switch (e.$keyword) { case 2: return e["@exit_value"]; default: throw e; } }
  }
@@ -2438,7 +2463,7 @@ function ary_collect(ary, mid, block) {
  var result = [];
  for (var i = 0; i < ary.length; i++) {
   try {
-  result.push(__block__.call(__block__.$self,ary[i]));
+  result.push(__block__(__block__.$self,ary[i]));
   } catch(e) { switch (e.$keyword) { case 2: return e["@exit_value"]; default: throw e; } }
  }
  return result;
@@ -2465,7 +2490,7 @@ function ary_collect_bang(ary, mid, block) {
  var __block__ = (rb_block_func == arguments.callee) ? rb_block_proc : Qnil; rb_block_func = rb_block_proc = Qnil; if (__block__ == Qnil) rb_raise(rb_eArgError, "collect!" + " needs to return an enumerator");
  for (var i = 0; i < ary.length; i++) {
   try {
-  ary[i] = __block__.call(__block__.$self,ary[i])
+  ary[i] = __block__(__block__.$self,ary[i])
   } catch(e) { switch (e.$keyword) { case 2: return e["@exit_value"]; default: throw e; } }
  }
  return ary;
@@ -2643,7 +2668,7 @@ function ary_delete_if(ary, mid, block) {
  if ((arguments.length - 1) != 0) { print(arguments.callee); rb_arg_error(arguments.length, 0); }
  for (var i = 0; i < ary.length; i++) {
   try {
-  if ((__block__.call(__block__.$self,ary[i])).$r) {
+  if ((__block__(__block__.$self,ary[i])).$r) {
    ary.splice(i, 1);
    i--;
   }
@@ -2739,7 +2764,7 @@ function ary_fetch(ary, mid, index, defaults) {
   if (defaults == undefined) {
    rb_raise(rb_eIndexError, "Array#fetch");
   } else if (block != Qnil) {
-   return __block__.call(__block__.$self,original);
+   return __block__(__block__.$self,original);
   } else {
    return defaults;
   }
@@ -3138,7 +3163,7 @@ function ary_reverse_each(ary, mid, block) {
  var __block__ = (rb_block_func == arguments.callee) ? rb_block_proc : Qnil; rb_block_func = rb_block_proc = Qnil; if (__block__ == Qnil) rb_raise(rb_eArgError, "reverse_each" + " needs to return an enumerator");
  for (var i = ary.length - 1; i >= 0; i--) {
   try {
-  __block__.call(__block__.$self,ary[i]);
+  __block__(__block__.$self,ary[i]);
   } catch(e) { switch (e.$keyword) { case 2: return e["@exit_value"]; default: throw e; } }
  }
  return ary;
@@ -3196,7 +3221,7 @@ function ary_select_bang(ary, mid, block) {
  var __block__ = (rb_block_func == arguments.callee) ? rb_block_proc : Qnil; rb_block_func = rb_block_proc = Qnil; if (__block__ == Qnil) rb_raise(rb_eArgError, "select!" + " needs to return an enumerator");
  var length = ary.length;
  for (var i = 0; i < ary.length; i++) {
-  if (!(__block__.call(__block__.$self,ary[i])).$r) {
+  if (!(__block__(__block__.$self,ary[i])).$r) {
    ary.splice(i, 1);
    i--;
   }
@@ -3722,7 +3747,7 @@ function hash_each(hash, mid) {
  for (var i = 0; i < length; i++) {
    try {
   key = keys[i];
-  __block__.call(__block__.$self,key, hash.$assocs[key.$hash()]);
+  __block__(__block__.$self,key, hash.$assocs[key.$hash()]);
   } catch(e) { switch (e.$keyword) { case 2: return e["@exit_value"]; default: throw e; } }
  }
  return hash;
@@ -3802,7 +3827,7 @@ function hash_equal(hash1, mid, hash2) {
   @param [Object] key key to look for
   @return [Object] result or default value
 */
-function hash_aref(hash, mid, key) {
+function hash_aref(hash, key) {
   if ((arguments.length - 1) != 1) { print(arguments.callee); rb_arg_error(arguments.length, 1); }
   var assoc = key.$hash();
  if (hash.$assocs.hasOwnProperty(assoc))
@@ -3827,7 +3852,7 @@ function hash_aref(hash, mid, key) {
   @param [Object] value value for key
   @return [Object] returns the value
 */
-function hash_aset(hash, mid, key, value) {
+function hash_aset(hash, key, value) {
   if ((arguments.length - 1) != 2) { print(arguments.callee); rb_arg_error(arguments.length, 2); }
   var assoc = key.$hash();
   if (!hash.$assocs.hasOwnProperty(assoc))
@@ -3943,7 +3968,7 @@ function hash_delete_if(hash, mid) {
     try {
     key = hash.$keys[i];
     value = hash.$assocs[key.$hash()];
-    if ((__block__.call(__block__.$self,key, value)).$r) {
+    if ((__block__(__block__.$self,key, value)).$r) {
       hash_delete(hash, "delete", key);
       i--;
     }
@@ -3969,7 +3994,7 @@ function hash_each_key(hash, mid) {
   for (var i = 0; i < hash.$keys.length; i++) {
     try {
     key = hash.$keys[i];
-    __block__.call(__block__.$self,key);
+    __block__(__block__.$self,key);
     } catch(e) { switch (e.$keyword) { case 2: return e["@exit_value"]; default: throw e; } }
   }
   return hash;
@@ -3992,7 +4017,7 @@ function hash_each_value(hash, mid) {
   for (var i = 0; i < hash.$keys.length; i++) {
     key = hash.$keys[i];
     value = hash.$assocs[key.$hash()];
-    __block__.call(__block__.$self,value);
+    __block__(__block__.$self,value);
   }
   return hash;
 }
@@ -4758,6 +4783,32 @@ RClass.prototype.$M = function(method_id) {
     throw new Error(recv + " method_missing for: " + method_id);
   };
 };
+// hash literals
+RClass.prototype.$H = function() {
+  return new RHash(Array.prototype.slice.call(arguments));
+};
+// block call
+RClass.prototype.$B = function(mid, block) {
+  var args = [].slice.call(arguments, 2), self = this;
+  //console.log("in $B for " + self + "    " + mid);
+  //console.log(self);
+  args.unshift(self);
+  //console.log(1);
+  rb_block_proc = block;
+ var func = self.$m['$' + mid];
+ //console.log(2);
+ if (func) {
+  // method exists..
+  rb_block_func = func;
+  return func.apply(null,args);
+ } else {
+  // method_missing
+  func = self.$m['$method_missing'];
+  rb_raise(rb_eRuntimeError,
+    "need to forward rb_block_call to method missing");
+ }
+  return Qnil;
+};
 // The root object. Every object in opal (apart from toll free bridged classes 
 // like array, string etc) are an instance of RObject.
 var RObject = function(klass) {
@@ -4778,12 +4829,17 @@ RObject.prototype.$flags = 4;
 RObject.prototype.$r = true;
 // method missing
 RObject.prototype.$M = RClass.prototype.$M;
+RObject.prototype.$H = RClass.prototype.$H;
+RObject.prototype.$B = RClass.prototype.$B;
 RObject.prototype.$hash = RClass.prototype.$hash = function() {
   return this.$id;
 };
 // define method
-var rb_define_method = function(klass, name, body, file_name, line_number) {
+rb_define_method = function(klass, name, body, file_name, line_number) {
   rb_define_method_raw(klass, name, body);
+  if (!body.$rbName) {
+    body.$rbName = name;
+  }
   return Qnil;
   // // console.log("defininf " + name + " on:");
   //   // console.log(klass);
@@ -4844,7 +4900,7 @@ function rb_define_global_function(name, body) {
  rb_define_singleton_method(rb_mKernel, name, body);
 };
 // singleton method
-var rb_define_singleton_method = function(klass, name, body) {
+rb_define_singleton_method = function(klass, name, body) {
   rb_define_method(rb_singleton_class(klass), name, body);
 };
 var rb_define_alias = function(base, new_name, old_name) {
@@ -5005,8 +5061,7 @@ rb_run = function(func) {
   }
 };
 // Stack trace support
-rb_run.displayName = "main";
-rb_run.displayFileName = "(main)";
+rb_run.$rbName = "<main>"
 // Opal module within ruby
 // @local
 var rb_mOpal;
@@ -5185,7 +5240,7 @@ function top_self_to_s(self, mid) {
 /**
   top self #include(mod)
 */
-function top_self_include(self, mid, mod) {
+function top_self_include(self, mod) {
   rb_include_module(rb_cObject, mod);
 }
 var Init_VM = function() {
@@ -5197,7 +5252,7 @@ var Init_VM = function() {
  rb_top_self = rb_obj_alloc(rb_cObject);
   //rb_top_self.$dm('to_s', top_self_to_s, 1);
   rb_define_singleton_method(rb_top_self, "to_s", top_self_to_s);
-  //rb_define_singleton_method(rb_top_self, "include", top_self_include);
+  rb_define_singleton_method(rb_top_self, "include", top_self_include);
  //rb_const_set(rb_cObject, "RUBY_PLATFORM", opal_ruby_platform);
 };
 // NEW - we piggy back nodejs loading system....yay!
@@ -5363,9 +5418,9 @@ exports.init = function() {
  Init_Object();
  Init_Array();
  Init_Numeric();
- //Init_Hash();
+ Init_Hash();
  //Init_Regexp();
- //Init_Load();
+ Init_Load();
  //Init_IO();
  //Init_Dir();
  Init_VM();
@@ -5433,298 +5488,19 @@ exports.print_help = function() {
   print(help[i]);
  }
 };
-/**
-  Top level Browser module holds all things browser related.
-*/
-var rb_mBrowser;
-/**
-  Browser engine/platform and version
-*/
-var browser_platform = (function() {
-  var agent = navigator.userAgent.toLowerCase();
-  var version = 1;
-  var browser = {
-    version: 0,
-    safari: /webkit/.test(agent) ? version : 0,
-    opera: /opera/.test(agent) ? version : 0,
-    msie: /msie/.test(agent) && !(/opera/).test(agent) ? version : 0
-  };
-  return browser;
-})();
-/**
-  Returns `true` if the current browser is Opera, `false` otherwise.
- 
-  @return [Boolean]
-*/
-var browser_opera_p = function() {
-  if ((arguments.length - 1) != 0) { print(arguments.callee); rb_arg_error(arguments.length, 0); }
-  return browser_platform.opera ? Qtrue : Qfalse;
+// Hash of module names to their implementation.
+var MODULES = {};
+// Used to register a single module
+exports.module = function(module_name, module_body) {
+  console.log('defining module ' + module_name);
 };
-/**
-  Returns `true` if the current browser is Safari, `false` otherwise.
-
-  @return [Boolean]
-*/
-var browser_safari_p = function() {
-  if ((arguments.length - 1) != 0) { print(arguments.callee); rb_arg_error(arguments.length, 0); }
-  return browser_platform.safari ? Qtrue : Qfalse;
+// Used to register a package
+exports.package = function() {
 };
-/**
-  Returns `true` if the current browser is Internet Explorer, `false` 
-  otherwise.
-
-  @return [Boolean]
-*/
-var browser_msie_p = function() {
-  if ((arguments.length - 1) != 0) { print(arguments.callee); rb_arg_error(arguments.length, 0); }
-  return browser_platform.msie ? Qtrue : Qfalse;
+// External interface to require/run a module. This simply uses the internal
+// require system, so a module will only ever be called once as per commonjs.
+exports.require = function(module_name) {
 };
-/**
-  Returns `true` if the current browser is Firefox, `false` otherwise.
-
-  @return [Boolean]
-*/
-function browser_firefox_p(self, mid) {
-  if ((arguments.length - 1) != 0) { print(arguments.callee); rb_arg_error(arguments.length, 0); }
-  return browser_platform.firefox ? Qtrue : Qfalse;
-}
-/**
-  Returns true or false to indicate whether this browser is on a touch
-  platform or not
-*/
-function browser_touch_p(self, mid) {
-  if ((arguments.length - 1) != 0) { print(arguments.callee); rb_arg_error(arguments.length, 0); }
-  return ('createTouch' in document) ? Qtrue : Qfalse;
-}
-/**
- * Alert the giben string
- *
- * @example
- *
- *    alert "boom"
- */
-var browser_alert = function(str) {
-  alert(str);
-  return Qnil;
-};
-// function Init_Browser() {
-//   rb_mBrowser = rb_define_module("Browser");
-//   
-//   rb_define_singleton_method(rb_mBrowser, "opera?", browser_opera_p);
-//   
-//   // Init all other browser classes/modules
-//   Init_Element();
-//   // Init_Document();
-// }
-var Init_Browser = function() {
-  rb_mBrowser = rb_define_module('Browser');
-  rb_mBrowser.$dm('opera?', browser_opera_p, 1);
-  rb_mBrowser.$dm('msie?', browser_msie_p, 1);
-  rb_mKernel.$dm('alert', browser_alert, 0);
-};
-// /**
-//   Represents a DOM element in the browser.
-// 
-//   ## Implementation Details
-// 
-//   Native Elements are not extended due to cross browser issues. Instead, 
-//   instances of this class will have an instance variable '@element' which
-//   is the native javascript element. Extensions to this class should access
-//   the element in this way for modification etc. In future, this class will
-//   cache some information on the element, such as class name etc in an aim to
-//   speed up performance by reducing hits to the DOM.
-// */
-// var rb_cElement;
-// 
-// /**
-//   Return an instance with the passed native element as the instance's own
-//   element. This is used to return the body element, for instance
-// 
-//     Element.from_native(..some native element pointer..)
-//     # => element
-// 
-//   @note The given element MUST be a Javascript element, not an Opal one.
-// 
-//   @param [NativeElement] element
-//   @return [Element]
-// */
-// function elem_from_native(native_element) {
-//   var elm = rb_obj_alloc(rb_cElement);
-//   elm.$element = native_element;
-//   return elm;
-// }
-// 
-// /**
-//   Creates a new element of the specified type.
-// 
-//   @param [Symbol, String] type the tag name for the +Element+ to have
-//   @param [Hash] options a set of options given to {#set}
-//   @return [Element] returns the new element
-// */
-// function elem_initialize(self, mid, type, options) {
-//   if (type) {
-//     TO_STRING(type)
-//   } else {
-//     type = "div";
-//   }
-//   self.$element = document.createElement(type);
-//   // need to deal with options
-// }
-// 
-// function elem_inspect(elem, mid) {
-//   ARG_COUNT(0)
-//   
-//   var description = ["#<Element " + rb_call(elem, "tag") + ">"];
-//   // class
-//   // id
-//   return description.join("");
-// }
-// 
-// /**
-//   Returns the tag name of the Element as a symbol, in lower case.
-// 
-//   @example HTML
-//       <div id="my_div"></div>
-// 
-//   @example Ruby
-//       Document[:my_div].tag
-//       # => :div
-// 
-//   @return [Symbol] tag name of the element
-// */
-// function elem_tag(elem, mid) {
-//   ARG_COUNT(0)
-//   return elem.$element.tagName.toLowerCase();
-// }
-// 
-// /**
-//   Sets the innerHTML of the receiver.
-// 
-//   @example HTML
-//       <div id="foo"></foo>
-// 
-//   @example Ruby
-//       Document[:foo].html = "<div></div>"
-// 
-//   @example Result
-//       <div id="foo">
-//         <div></div>
-//       </div>
-// 
-//   @param [String] html the html string to set
-//   @return [Elements] returns the receiver
-// */
-// function elem_html_e(elem, mid, html) {
-//   ARG_COUNT(1)
-//   TO_STRING(html)
-//   elem.$element.innerHTML = html;
-//   return elem;
-// }
-// 
-// function Init_Element() {
-//   rb_cElement = rb_define_class("Element", rb_cObject);
-//   rb_define_method(rb_cElement, "initialize", elem_initialize);
-//   rb_define_method(rb_cElement, "inspect", elem_inspect);
-//   rb_define_method(rb_cElement, "tag", elem_tag);
-//   
-//   rb_define_method(rb_cElement, "html=", elem_html_e);
-// }
-/**
-  Loading libs and gems etc. This is where loading and registering takes place
-  to "pretend" that we can load files. We refer to this as our filesystem, fake
-  it may be
-*/
-/**
-  Replaced ruby loader. In the browser our ruby loader will be loading a
-  precompiled set of ruby code, so we can just load it as a regular piece of
-  javascript
-*/
-var fs_replaced_ruby_loader = function(fname) {
-  // get file content
-  // print("need to execute ruby loader for " + fname);
-  FS_FILES[fname](rb_top_self, fname);
-};
-/**
-  Init_BrowserFS will set these. These will all act as file paths (i.e. http etc
-  will not be included in path as expand_path etc will just remove them anyway)
-*/
-var FS_PAGE_URI = null; // OpalURI object for web page
-var FS_OPALS_PATH = null; // String path to opals (page_dir/opals)
-var FS_LIB_PATH = null; // String path to libs (page_dir/lib)
-var FS_CWD = null; // String path to cwd (page_dir/main_opal)
-/**
-  All bin files (defined within opals/gems). Keys are the bin name, and the
-  value is the full path to bin name. This full path is calculated given the url
-  etc, e.g.:
-  
-  {
-    "spec": "http://localhost/my_app/opals/ospec/bin/spec",
-    "vienna": "http://localhost/my_app/opals/vienna/bin/vienna"
-  }
-*/
-FS_BIN_FILES = {};
-/**
-  All opals we get given (save them)
-*/
-var FS_REGISTERED_OPALS = [];
-/**
-  All files. Keys are full file path, value are files content (might be function
-  depending on content).
-*/
-FS_FILES = {};
-/**
-  Register a gem. Might be called more than once per gem (e.g. register core
-  gem, then register test files, then register image resources etc)
-  
-  @param [JSONObject] opal_specification
-*/
-exports.register_opal = function(opal_specification) {
-  // we just save each defined opal, in order, and they are dealt with on page
-  // load
-  FS_REGISTERED_OPALS.push(opal_specification);
-}
-/**
-  Working directory
-*/
-function opal_getwd() {
-  return FS_CWD;
-}
-/**
-  Replacement file_glob
-*/
-function browser_file_glob(pattern, flags) {
-  // print("original is " + pattern);
-  var working = pattern.replace(/\*\*/g, '.*').replace(/\*/g, '.*');
-  if (working[0] != '/') working = rb_expand_path(rb_file_join(opal_getwd(), working));
-  // print("glob is: " + working);
-  var reg = new RegExp('^' + working + '$'), result = [];
-  for (var file in FS_FILES) {
-    if (reg.exec(file))
-      result.push(file);
-  }
-  // print(result);
-  return result;
-}
-/**
-  Check file exists.
-  
-  For the browser we manually need to check the exact given path, and then need
-  to check the file by joining it to the working directory (for relative path)
-  
-  @returns true or false
-*/
-function opal_file_exists(file) {
-  // print("checking file exists: " + file);
-  if (FS_FILES.hasOwnProperty(file)) { // absolute
-    return true
-  } else { // relative
-    var try_path = rb_file_join(opal_getwd(), file);
-    // print("cjhecking " + try_path);
-    if (FS_FILES.hasOwnProperty(try_path))
-      return true;
-    return false;
-  }
-}
 // regexp for matching uri. will match as:
 // 
 // [
@@ -5877,4 +5653,8 @@ OpalURI.prototype.merge_path = function(base, rel) {
   // console.log(working);
   return base.join("/");
 };
+// does browser really have a platofrm??
+var Init_Platform = function() { };
+// init ruby asap
+exports.init();
 })(this, Opal);

@@ -21,7 +21,7 @@
   will be set using USES_BLOCK
 */
 #define YIELD(...) \
-  __block__.call(__block__.$self, ##__VA_ARGS__)
+  __block__(__block__.$self, ##__VA_ARGS__)
 
 /*
   Like above, but yield using the given self:

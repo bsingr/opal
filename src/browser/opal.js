@@ -108,111 +108,112 @@ browser_register_ready_listener(function() {
   1 to avoid manual recompilation between steps.
 */
 browser_register_ready_listener(function() {
-    
-    // hardcoded for now:
-    OPAL_RUN_DIR = "browser";
-    
-    var bin_file = OPAL_RUN_BIN;
-    var argv = [];
-    
-    var href_uri = window.location.href;
-    var page_uri = OpalURI.parse(href_uri);
-    var page_dir = rb_file_dirname(page_uri.path);
 
-    // file system paths
-    FS_PAGE_URI = page_uri;
-    FS_OPALS_PATH = rb_file_join(page_dir, "opals");
-    FS_LIB_PATH = rb_file_join(page_dir, "lib");
-    FS_CWD = rb_file_join(FS_OPALS_PATH, OPAL_RUN_DIR);
-    
-    // go through all registered opals and "boot" them
-    for (var i = 0; i < FS_REGISTERED_OPALS.length; i++) {
-      print("registering: " + FS_REGISTERED_OPALS[i].name);
-      
-      var opal_spec = FS_REGISTERED_OPALS[i];
-      var opal_path = rb_file_join(FS_OPALS_PATH, opal_spec.name);
-      // all files
-      for (var opal_file in opal_spec.files) {
-        var file_path = rb_file_join(opal_path, opal_file);
-        FS_FILES[file_path] = opal_spec.files[opal_file];
-      }
-      // executables
-      if (opal_spec.executables) {
-        for (var j = 0; j < opal_spec.executables.length; j++) {
-          var bin_file = opal_spec.executables[j];
-          FS_BIN_FILES[bin_file] = rb_file_join(opal_path, "bin", bin_file);
-        }
-      }
-      
-      // lib path
-      load_paths.push(rb_file_join(opal_path, 'lib'));
-      print("---- " + rb_file_join(opal_path, 'lib'));
-    }
-
-    // replace ruby loader
-    extensions[".rb"] = fs_replaced_ruby_loader;
-    
-    // replace our file glob function
-    file_glob = browser_file_glob;
-    
-    // argv 0 is simply opal..
-    argv[0] = "opal";
-    // replace bin file with its full path
-    argv[1] = FS_BIN_FILES[bin_file];
-    
-    // actual arguments we get from hash:
-    var hash_args = window.location.hash.substr(1).split("&");
-    
-    for (var i = 0; i < hash_args.length; i++) {
-      // decide uri?
-      argv.push(hash_args[i]);
-    }
-    
-    exports.argv = argv;
-    
-    exports.opal_lib_path = FS_LIB_PATH;
-    
-  if (OPAL_RUN_BIN) { // path 1  
-    exports.main();
-  }
-  else { // path 2
-    exports.init();
-    browser_run_ruby_tags();
-  }
 });
 
-/**
-  Returns an array of all script tags in DOM page that have the mime type
-  text/ruby. Should only be called once dom content has loaded.
-*/
-function browser_run_ruby_tags() {
-  // init ruby
-  exports.init();
-  var tags = document.getElementsByTagName('script'), tag;
+//browser_register_ready_listener(function() {
+//    
+//    // hardcoded for now:
+//    OPAL_RUN_DIR = "browser";
+//    
+//    var bin_file = OPAL_RUN_BIN;
+//    var argv = [];
+//    
+//    var href_uri = window.location.href;
+//    var page_uri = OpalURI.parse(href_uri);
+//    var page_dir = rb_file_dirname(page_uri.path);
+//
+//    // file system paths
+//    FS_PAGE_URI = page_uri;
+//    FS_OPALS_PATH = rb_file_join(page_dir, "opals");
+//    FS_LIB_PATH = rb_file_join(page_dir, "lib");
+//    FS_CWD = rb_file_join(FS_OPALS_PATH, OPAL_RUN_DIR);
+//    
+//    // go through all registered opals and "boot" them
+//    for (var i = 0; i < FS_REGISTERED_OPALS.length; i++) {
+//      print("registering: " + FS_REGISTERED_OPALS[i].name);
+//      
+//      var opal_spec = FS_REGISTERED_OPALS[i];
+//      var opal_path = rb_file_join(FS_OPALS_PATH, opal_spec.name);
+//      // all files
+//      for (var opal_file in opal_spec.files) {
+//        var file_path = rb_file_join(opal_path, opal_file);
+//        FS_FILES[file_path] = opal_spec.files[opal_file];
+//      }
+//      // executables
+//      if (opal_spec.executables) {
+//        for (var j = 0; j < opal_spec.executables.length; j++) {
+//          var bin_file = opal_spec.executables[j];
+//          FS_BIN_FILES[bin_file] = rb_file_join(opal_path, "bin", bin_file);
+//        }
+//      }
+//      
+//      // lib path
+//      load_paths.push(rb_file_join(opal_path, 'lib'));
+//      print("---- " + rb_file_join(opal_path, 'lib'));
+//    }
+//
+//    // replace ruby loader
+//    extensions[".rb"] = fs_replaced_ruby_loader;
+//    
+//    // replace our file glob function
+//    file_glob = browser_file_glob;
+//    
+//    // argv 0 is simply opal..
+//    argv[0] = "opal";
+//    // replace bin file with its full path
+//    argv[1] = FS_BIN_FILES[bin_file];
+//    
+//    // actual arguments we get from hash:
+//    var hash_args = window.location.hash.substr(1).split("&");
+//    
+//    for (var i = 0; i < hash_args.length; i++) {
+//      // decide uri?
+//      argv.push(hash_args[i]);
+//    }
+//    
+//    exports.argv = argv;
+//    
+//    exports.opal_lib_path = FS_LIB_PATH;
+//    
+//  if (OPAL_RUN_BIN) { // path 1  
+//    exports.main();
+//  }
+//  else { // path 2
+//    exports.init();
+//    browser_run_ruby_tags();
+//  }
+//});
+
+// this should be moved over to opalite?! or opal_dev????
+//function browser_run_ruby_tags() {
+//  // init ruby
+//  exports.init();
+//  var tags = document.getElementsByTagName('script'), tag;
   
-  for (var i = 0; i < tags.length; i++) {
-    tag = tags[i];
+//  for (var i = 0; i < tags.length; i++) {
+//    tag = tags[i];
     
-    if (tag.type == "text/ruby") {
+//    if (tag.type == "text/ruby") {
       // src property - Ajax load file, then run it
-      if (tag.src) {
+//      if (tag.src) {
         
-      }
+//      }
       // just run the inner content
-      else {
-        print("run content:");
-        print(tag.innerHTML);
-        rb_run(function() {
-          var res = exports.compile(tag.innerHTML);
-          print(res);
-          var func = new Function('self', '__FILE__', res);
-          func.call(rb_top_self);
-          //func(rb_top_self, "");
-        });
-      }
-    }
-  }
-}
+//      else {
+//        print("run content:");
+//        print(tag.innerHTML);
+//        rb_run(function() {
+//          var res = exports.compile(tag.innerHTML);
+//          print(res);
+//          var func = new Function('self', '__FILE__', res);
+//          func.call(rb_top_self);
+//          //func(rb_top_self, "");
+//        });
+//      }
+//    }
+//  }
+//}
 
 function io_puts(str) {
   print(str);
@@ -231,8 +232,13 @@ var opal_ruby_platform = "browser-opal";
 #include "browser.h"
 #include "../opal.h"
 #include "../runtime.js"
-#include "browser.js"
-#include "element.js"
-#include "fs.js"
+#include "modules.js"
 #include "uri.js"
+
+// does browser really have a platofrm??
+var Init_Platform = function() { };
+
+// init ruby asap
+exports.init();
+
 })(this, Opal);

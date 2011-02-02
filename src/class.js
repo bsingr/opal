@@ -130,6 +130,7 @@ var rb_define_toll_free_class = function(prototype, flags, id, super_klass) {
   prototype.$flags = flags;
   prototype.$r = true;
   prototype.$M = RClass.prototype.$M;
+  prototype.$B = RClass.prototype.$B;
   prototype.$Y = opalsym;
 
   // default hashing behaviour
@@ -143,7 +144,7 @@ var rb_define_toll_free_class = function(prototype, flags, id, super_klass) {
 
 // define a new class (normal way), with the given id and superclass. Will be
 // top level.
-var rb_define_class = function(id, super_klass) {
+rb_define_class = function(id, super_klass) {
   return rb_define_class_under(rb_cObject, id, super_klass);
 };
 

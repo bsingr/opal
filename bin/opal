@@ -5,10 +5,9 @@
 */
 var path  = require('path'),
     fs    = require('fs'),
-    sys   = require('sys'),
-    print = function(str) { console.log(str); };
+    sys   = require('sys');
 
 var lib = path.join(path.dirname(fs.realpathSync(__filename)), '..', 'lib');
-print("lib path is: " + lib);
 
-require(lib + '/opal').main();
+require(lib + '/command').run(process.argv.slice(2));
+

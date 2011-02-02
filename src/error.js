@@ -21,9 +21,10 @@ var rb_vm_return_instance,
 		rb_vm_next_instance,
 		rb_vm_break_instance;
 
-function exc_initialize(exc, mid, message) {
+function exc_initialize(exc, message) {
 	// if (message != Qnil)	
 		rb_ivar_set(exc, "@message", (message == undefined) ? "" : message);
+  exc.message = message;
 }
 
 function exc_message(exc) {
@@ -38,11 +39,36 @@ function exc_to_s(exc) {
 	return rb_ivar_get(exc, "@message");
 }
 
+var exc_s_allocate = function(klass) {
+  var err = new Error();
+  err.$klass = klass;
+  return err;
+};
+
+Error.prepareStackTrace = function(error, stack) {
+  var parts = [];
+  // actual error
+  parts.push(error.$klass.__classid__ + ': ' + error.message);
+
+  for (var i = 0; i < stack.length; i++) {
+    var part = stack[i], func = part.getFunction();
+
+    // we are only interested in ruby methods..
+    if (func.$rbName) {
+      parts.push('\tfrom ' + (part.getFileName() || '(irb)') + ':' + part.getLineNumber() + ':in `' + func.$rbName + '\'');
+    }
+  }
+
+  return parts.join('\n');
+};
+
 var Init_Exception = function() {
 	
 	//rb_eException = rb_define_class("Exception", rb_cObject);
   rb_eException = rb_define_toll_free_class(Error.prototype, T_OBJECT, 'Exception', rb_cObject);
-	
+
+  rb_define_singleton_method(rb_eException, 'allocate', exc_s_allocate);
+
 	rb_define_method(rb_eException, "initialize", exc_initialize);
 	rb_define_method(rb_eException, "message", exc_message);
 	rb_define_method(rb_eException, "inspect", exc_inspect);
