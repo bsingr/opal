@@ -8,8 +8,14 @@ task('test', [], function() {
   console.log(Opal.compile('a'));
 });
 
-task('ruby', [], function() {
-  console.log(ruby_sources('spec'));
+desc('rebuild core .rb libraries from src/ into lib/');
+task('core', [], function() {
+  var sources = ['array', 'numeric', 'string', 'symbol', 'hash', 'top_self', 'nil_class', 'true_class', 'false_class', 'kernel', 'module'];
+
+  sources.forEach(function(source) {
+    var code = Opal.compile(fs.readFileSync('src/' + source + '.rb').toString());
+    fs.writeFileSync('lib/' + source + '.js', '(function(self) {' + code + '})(rb_top_self);');
+  });
 });
 
 desc('build opalspec.js into extras/');

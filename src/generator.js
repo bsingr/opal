@@ -24,6 +24,9 @@ BaseIseq.prototype = {
     // tmp stuff
     this.temp_current = 'a';
     this.temp_queue = [];
+
+
+    this.using_method_ids = [];
     
     this.ensure_ivars = [];
     
@@ -172,6 +175,14 @@ BaseIseq.prototype = {
     }
     return null;
   },
+
+  use_method_id: function(id) {
+    if (this.parent_iseq) return this.parent_iseq.use_method_id(id);
+    
+    if (this.using_method_ids && (this.using_method_ids.indexOf(id) == -1)) {
+      this.using_method_ids.push(id);
+    }
+  },
   
   push_local: function(str) {
     this.locals.push(str);
@@ -194,6 +205,17 @@ MainIseq.prototype.join = function() {
   // res.push('function(self, __FILE__, require) {\n');
   //res.push('function(require, exports, module, self, __FILE__) {\n');
     
+  
+  // method ids
+  res.push(this.SELF + '.$M([');
+  for (var i = 0; i < this.using_method_ids.length; i++) {
+    if (i > 0) res.push(', ');
+    res.push("'" + this.using_method_ids[i] + "'");
+  }
+  res.push(']);\n');
+
+
+
   // inner code
 
   this.join_variables(res);
@@ -311,7 +333,7 @@ DefIseq.prototype.method_fixing = function(res) {
   }
   // handle rest args
   if (rest) {
-    var rest_offset = norm + opt + 2; // should take into account opt.. we add one to skip self
+    var rest_offset = norm + opt + 1; // should take into account opt.. we add one to skip self
     res.push(rest + ' = Array.prototype.slice.call(arguments, ' + rest_offset + ');\n');
   }
 
@@ -406,7 +428,8 @@ RubyGenerator.prototype = {
   },
   
   mid_to_jsid: function(id) {
-    id = '$' + id;
+    // '$' is not needed!?
+    //id = '$' + id;
     
     if(/[\!\=\?\+\-\*\/\^\&\%\@\|\[\]\<\>\~]/.exec(id)) {
       return '["' + id + '"]';
@@ -515,13 +538,13 @@ RubyGenerator.prototype = {
           pre.push(this.SELF + '.$B');
         }
         // mid
-        arg_res.push('"' + stmt[2] + '", ');
+        arg_res.push('"' + stmt[2] + '"');
 
         // block
         var tmp_block = this.iseq_current.temp_local();
-        arg_res.push('(' + tmp_block + ' = ' + this.generate_block(stmt[4]));
-        arg_res.push(', ' + tmp_block + '.$self = ' + this.SELF + ', ');
-        arg_res.push(tmp_block + ')');
+        arg_res.push('(' + tmp_block + ' = ' + this.generate_block(stmt[4]) +
+        ', ' + tmp_block + '.$self = ' + this.SELF + ', ' +
+        tmp_block + ')');
         this.iseq_current.queue_temp(tmp_block);
         done_arg = true;
 
@@ -540,7 +563,7 @@ RubyGenerator.prototype = {
         }
 
         // mid
-        arg_res.push('"' + stmt[2] + '", ');
+        arg_res.push('"' + stmt[2] + '"');
         // this should be generated as stmt[3][3].to_proc
         arg_res.push(this.generate(stmt[3][3]));
         done_arg = true;
@@ -560,14 +583,21 @@ RubyGenerator.prototype = {
         //if (stmt[1][0] == 'numeric') recv = '(' + recv + ')';
         //pre.push(recv + this.mid_to_jsid(stmt[2]));
 
+        //var tmp_recv = this.iseq_current.temp_local();
+        //pre.push('(' + tmp_recv + ' = ' + this.generate(stmt[1]) + ', ');
+        //pre.push(tmp_recv + '.$m' + this.mid_to_jsid(stmt[2]) + ' || ');
+        //pre.push(tmp_recv + '.$M("' + stmt[2] + '"))');
+        //arg_res.push(tmp_recv);
+        //this.iseq_current.queue_temp(tmp_recv);
+
+        this.iseq_current.use_method_id(stmt[2]);
+        //pre.push(this.generate(stmt[1]) + '.$m' + this.mid_to_jsid(stmt[2]));
+
         var tmp_recv = this.iseq_current.temp_local();
         pre.push('(' + tmp_recv + ' = ' + this.generate(stmt[1]) + ', ');
-        pre.push(tmp_recv + '.$m' + this.mid_to_jsid(stmt[2]) + ' || ');
-        pre.push(tmp_recv + '.$M("' + stmt[2] + '"))');
+        pre.push(tmp_recv + '.$m' + this.mid_to_jsid(stmt[2]) + ')');
         arg_res.push(tmp_recv);
         this.iseq_current.queue_temp(tmp_recv);
-
-
 
 			} else { // no recv
 				//pre.push('(' + this.SELF + '.$m' + this.mid_to_jsid(stmt[2]) + ' || ');
@@ -577,9 +607,13 @@ RubyGenerator.prototype = {
         //pre.push(this.SELF + '.$m' + this.mid_to_jsid(stmt[2]));
         //pre.push(this.SELF + this.mid_to_jsid(stmt[2]));
 
-        pre.push('(' + this.SELF + '.$m' + this.mid_to_jsid(stmt[2]) + ' || ');
-        pre.push(this.SELF + '.$M("' + stmt[2] + '"))');
+        //this.iseq_current.use_method_id(stmt[1]);
+        this.iseq_current.use_method_id(stmt[2]); 
+        pre.push(this.SELF + '.$m' + this.mid_to_jsid(stmt[2]));
         arg_res.push(this.SELF);
+        //pre.push('(' + this.SELF + '.$m' + this.mid_to_jsid(stmt[2]) + ' || ');
+        //pre.push(this.SELF + '.$M("' + stmt[2] + '"))');
+        //arg_res.push(this.SELF);
       }
 		}  
     
@@ -587,21 +621,19 @@ RubyGenerator.prototype = {
     // norm args
     if (args && args.length > 0) {
       for (var i = 0; i < args.length; i++) {
-        //if (done_arg) arg_res.push(', ');
-        //done_arg = true;
-        arg_res.push(', ');
         arg_res.push(this.generate(args[i]));
       }
     }
     // hash/assocs arg
     args = stmt[3][2];
     if (args) {
-      arg_res.push(', opalhash(');
+      var hash_res = [];
+      hash_res.push('opalhash(');
       for (var i = 0; i < args.length; i++) {
-        if (i > 0) arg_res.push(', ');
-        arg_res.push(this.generate(args[i][0]) + ', ' + this.generate(args[i][1]));
+        if (i > 0) hash_res.push(', ');
+        hash_res.push(this.generate(args[i][0]) + ', ' + this.generate(args[i][1]));
       }
-      arg_res.push(')');
+      arg_res.push(hash_res.join('') + ')');
     }
     
     // if splat.. we concat splat args into array of normal args, then need to
@@ -615,7 +647,7 @@ RubyGenerator.prototype = {
     }
     // normal..
     else {  
-      pre.push('(' + arg_res.join("") + ')');
+      pre.push('(' + arg_res.join(', ') + ')');
       return pre.join('');
     }
   },
@@ -691,10 +723,17 @@ RubyGenerator.prototype = {
   generate_identifier: function(stmt, o) {
     var local = this.iseq_current.lookup_local(stmt[1]);
 
-    if (local)
+    if (local) {
       return local;
-    else
-      return '(' + this.SELF + '.$m' + this.mid_to_jsid(stmt[1]) + ' || ' + this.SELF + '.$M("' + stmt[1] + '"))(' + this.SELF + ')';
+    } else {
+      //return '(' + this.SELF + '.$m' + this.mid_to_jsid(stmt[1]) + ' || ' + this.SELF + '.$M("' + stmt[1] + '"))(' + this.SELF + ')';
+      
+      this.iseq_current.use_method_id(stmt[1]);
+      return this.SELF + '.$m' + this.mid_to_jsid(stmt[1]) + '(' + this.SELF + ')';
+    }
+
+
+          
       //return this.SELF + this.mid_to_jsid(stmt[1]) + '()';
       //return '(' + this.SELF + '.$m' + this.mid_to_jsid(stmt[1]) + ' || ' + 'rb_vm_meth_m)(' + this.SELF + ', "' + stmt[1] + '")';
       // return this.SELF + this.mid_to_jsid(stmt[1]) + '(' + this.NIL + ')';
@@ -1807,7 +1846,7 @@ RubyGenerator.prototype = {
   generate_yield: function(stmt) {
     this.iseq_current.__uses_block__ = true;
     var block = this.iseq_current.block_arg;
-    var args_res = [block + '.$self, ' + this.NIL];
+    var args_res = [block + '.$self'];
     // args
     // print(stmt[1]);
     if (stmt[1][0]) {

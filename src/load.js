@@ -7,7 +7,7 @@
 // as we cant do anything with them...maybe obj_require should return true
 // and this should retunr the exports so that opal libraries can use them.
 // ..
-var rb_require = function(fname) {
+rb_require = function(fname) {
   console.log("trying to require: " + fname);
   require(fname);
   return Qtrue;

@@ -2029,6 +2029,7 @@ BaseIseq.prototype = {
     // tmp stuff
     this.temp_current = 'a';
     this.temp_queue = [];
+    this.using_method_ids = [];
     this.ensure_ivars = [];
     this._ensure_return = false;
   },
@@ -2152,6 +2153,12 @@ BaseIseq.prototype = {
     }
     return null;
   },
+  use_method_id: function(id) {
+    if (this.parent_iseq) return this.parent_iseq.use_method_id(id);
+    if (this.using_method_ids && (this.using_method_ids.indexOf(id) == -1)) {
+      this.using_method_ids.push(id);
+    }
+  },
   push_local: function(str) {
     this.locals.push(str);
     return str;
@@ -2169,6 +2176,13 @@ MainIseq.prototype.join = function() {
   // res.push('var self = rb_top_self;\n');
   // res.push('function(self, __FILE__, require) {\n');
   //res.push('function(require, exports, module, self, __FILE__) {\n');
+  // method ids
+  res.push(this.SELF + '.$M([');
+  for (var i = 0; i < this.using_method_ids.length; i++) {
+    if (i > 0) res.push(', ');
+    res.push("'" + this.using_method_ids[i] + "'");
+  }
+  res.push(']);\n');
   // inner code
   this.join_variables(res);
   res.push('return ');
@@ -2351,7 +2365,8 @@ RubyGenerator.prototype = {
     throw "Unknwon iseq type: " + iseq;
   },
   mid_to_jsid: function(id) {
-    id = '$' + id;
+    // '$' is not needed!?
+    //id = '$' + id;
     if(/[\!\=\?\+\-\*\/\^\&\%\@\|\[\]\<\>\~]/.exec(id)) {
       return '["' + id + '"]';
     }
@@ -2480,10 +2495,17 @@ RubyGenerator.prototype = {
         //recv = this.generate(stmt[1]);
         //if (stmt[1][0] == 'numeric') recv = '(' + recv + ')';
         //pre.push(recv + this.mid_to_jsid(stmt[2]));
+        //var tmp_recv = this.iseq_current.temp_local();
+        //pre.push('(' + tmp_recv + ' = ' + this.generate(stmt[1]) + ', ');
+        //pre.push(tmp_recv + '.$m' + this.mid_to_jsid(stmt[2]) + ' || ');
+        //pre.push(tmp_recv + '.$M("' + stmt[2] + '"))');
+        //arg_res.push(tmp_recv);
+        //this.iseq_current.queue_temp(tmp_recv);
+        this.iseq_current.use_method_id(stmt[2]);
+        //pre.push(this.generate(stmt[1]) + '.$m' + this.mid_to_jsid(stmt[2]));
         var tmp_recv = this.iseq_current.temp_local();
         pre.push('(' + tmp_recv + ' = ' + this.generate(stmt[1]) + ', ');
-        pre.push(tmp_recv + '.$m' + this.mid_to_jsid(stmt[2]) + ' || ');
-        pre.push(tmp_recv + '.$M("' + stmt[2] + '"))');
+        pre.push(tmp_recv + '.$m' + this.mid_to_jsid(stmt[2]) + ')');
         arg_res.push(tmp_recv);
         this.iseq_current.queue_temp(tmp_recv);
    } else { // no recv
@@ -2492,18 +2514,19 @@ RubyGenerator.prototype = {
     //arg_res.push(this.SELF + ', "' + stmt[2] + '"');
         //pre.push(this.SELF + '.$m' + this.mid_to_jsid(stmt[2]));
         //pre.push(this.SELF + this.mid_to_jsid(stmt[2]));
-        pre.push('(' + this.SELF + '.$m' + this.mid_to_jsid(stmt[2]) + ' || ');
-        pre.push(this.SELF + '.$M("' + stmt[2] + '"))');
+        //this.iseq_current.use_method_id(stmt[1]);
+        this.iseq_current.use_method_id(stmt[2]);
+        pre.push(this.SELF + '.$m' + this.mid_to_jsid(stmt[2]));
         arg_res.push(this.SELF);
+        //pre.push('(' + this.SELF + '.$m' + this.mid_to_jsid(stmt[2]) + ' || ');
+        //pre.push(this.SELF + '.$M("' + stmt[2] + '"))');
+        //arg_res.push(this.SELF);
       }
   }
     var arg, args = stmt[3][0];
     // norm args
     if (args && args.length > 0) {
       for (var i = 0; i < args.length; i++) {
-        //if (done_arg) arg_res.push(', ');
-        //done_arg = true;
-        arg_res.push(', ');
         arg_res.push(this.generate(args[i]));
       }
     }
@@ -2528,7 +2551,7 @@ RubyGenerator.prototype = {
     }
     // normal..
     else {
-      pre.push('(' + arg_res.join("") + ')');
+      pre.push('(' + arg_res.join(', ') + ')');
       return pre.join('');
     }
   },
@@ -2590,10 +2613,13 @@ RubyGenerator.prototype = {
   // ['identifier', name]
   generate_identifier: function(stmt, o) {
     var local = this.iseq_current.lookup_local(stmt[1]);
-    if (local)
+    if (local) {
       return local;
-    else
-      return '(' + this.SELF + '.$m' + this.mid_to_jsid(stmt[1]) + ' || ' + this.SELF + '.$M("' + stmt[1] + '"))(' + this.SELF + ')';
+    } else {
+      //return '(' + this.SELF + '.$m' + this.mid_to_jsid(stmt[1]) + ' || ' + this.SELF + '.$M("' + stmt[1] + '"))(' + this.SELF + ')';
+      this.iseq_current.use_method_id(stmt[1]);
+      return this.SELF + '.$m' + this.mid_to_jsid(stmt[1]) + '(' + this.SELF + ')';
+    }
       //return this.SELF + this.mid_to_jsid(stmt[1]) + '()';
       //return '(' + this.SELF + '.$m' + this.mid_to_jsid(stmt[1]) + ' || ' + 'rb_vm_meth_m)(' + this.SELF + ', "' + stmt[1] + '")';
       // return this.SELF + this.mid_to_jsid(stmt[1]) + '(' + this.NIL + ')';

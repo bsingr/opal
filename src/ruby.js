@@ -62,11 +62,25 @@ var RClass = function(klass, super_klass) {
 RClass.prototype.$flags = T_CLASS;
 // RTest/truthiness - every RClass instance is true.
 RClass.prototype.$r = true;
-// method missing support
-RClass.prototype.$M = function(method_id) {
-  return function(recv) {
-    throw new Error(recv + " method_missing for: " + method_id);
-  };
+
+// method missing support - these are methods called, so we need to register them for method
+// missing on rb_cBasicObject.
+//
+// All added method names should set $isMM to true so that respond_to? can determine if it is
+// a method, or just a MM shortcut. normal methods dont have $isMM.
+RClass.prototype.$M = function(method_ids) {
+  return;
+  for (var i = 0; i < method_ids.length; i++) {
+    // only add if not already defined..
+    if (!rb_cBasicObject.$m_prototype_tbl[method_ids[i]]) {
+      rb_cBasicObject.$m_prototype_tbl[method_ids[i]] = (function(id) {
+       return function() {
+         // should call self.$m.method_missing..
+         throw new Error(id + " is needed for method_missing");
+        };
+     })(method_ids[i]); 
+    }
+  }
 };
 
 // hash literals
@@ -84,10 +98,10 @@ RClass.prototype.$B = function(mid, block) {
   args.unshift(self);
   //console.log(1);
   rb_block_proc = block;
-	var func = self.$m['$' + mid];
+	var func = self.$m[mid];
 	//console.log(2);
 	if (func) {
-    
+    console.log("block calling " + mid); 
 		// method exists..
 		rb_block_func = func;
 		return func.apply(null,args);
@@ -184,17 +198,17 @@ rb_define_method = function(klass, name, body, file_name, line_number) {
   a method. Any wrapper functions are assumed to have been already applied, so
   calling this will apply the method to the receiver directly.
 */
-function rb_define_method_raw(klass, name, body) {
+rb_define_method_raw = function(klass, name, body) {
   // insert raw method into prototype chain
-  klass.$m_prototype_tbl['$' + name] = body;
+  klass.$m_prototype_tbl[name] = body;
   // insert method into singular method table (methods defined ON this class)
-  klass.$method_table['$' + name] = body;
+  klass.$method_table[name] = body;
   // if in module, apply method to all classes we are included in
   if (klass.$included_in) {
     for (var i = 0; i < klass.$included_in.length; i++) {
       // insert method into both prototype and singular chain.
-      klass.$included_in[i].$m_prototype_tbl['$' + name] = body;
-			klass.$included_in[i].$method_table['$' + name] = body;
+      klass.$included_in[i].$m_prototype_tbl[name] = body;
+			klass.$included_in[i].$method_table[name] = body;
     }
   }
 }
@@ -210,7 +224,7 @@ rb_define_singleton_method = function(klass, name, body) {
 };
 
 var rb_define_alias = function(base, new_name, old_name) {
-  rb_define_method(base, new_name, base.$m_tbl['$' + old_name]);
+  rb_define_method(base, new_name, base.$m_tbl[old_name]);
   return Qnil;
 };
 
@@ -237,7 +251,7 @@ function rb_call(recv, mid) {
 	// simply replace mid with our block (nil)
 	// args[1] = Qnil;
 	// check method exists
-	return (recv.$m['$' + mid] || rb_vm_meth_m).apply(null, args);
+	return (recv.$m[mid] || rb_vm_meth_m).apply(null, args);
 }
 
 
@@ -291,7 +305,8 @@ rb_raise = function(exc, str) {
     str = exc;
     exc = rb_eException;
   }
-  var exception = new RObject(exc, T_OBJECT);
+  //var exception = new RObject(exc, T_OBJECT);
+  var exception = exc.$m.allocate(exc);
 	// var exception = exc_new_instance(exc);
   rb_ivar_set(exception, '@message', str);
   rb_vm_raise(exception);
@@ -373,7 +388,16 @@ rb_run = function(func) {
     if (err['@message']) {
       err.message = err['@message'];
     }
-    console.log(err.stack);
+    
+    if (err.stack)
+      console.log(err.stack);
+    else
+      console.log(err);
+
+
+    //console.log("ERROR:");
+    //console.log(err.stack);
+    //console.log('eeeee');
     // should check if err is native or ruby error (.$k) also check not string
     //if (err.$klass && typeof err != "string") {
       // print('caught error: ' + err.__classid__);

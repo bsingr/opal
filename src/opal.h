@@ -40,13 +40,13 @@
   Simply call a method on the receiver. Method MUST exist
 */
 #define CALL(recv, mid, ...) \
-	recv.$m["$" + mid](recv, ##__VA_ARGS__)
+	recv.$m[mid](recv, ##__VA_ARGS__)
 
 /*
  * try calling method that might not exist - supports method_missing
  */
 #define MSG_SEND(recv, mid, ...) \
-  (recv.$m["$" + mid] || recv.$M(mid))(recv, ##__VA_ARGS__)
+  (recv.$m[mid] || recv.$M(mid))(recv, ##__VA_ARGS__)
 
 /**
 	Ensure that the args given to a js function exactly equals the given count.

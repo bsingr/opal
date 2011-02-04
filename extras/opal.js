@@ -702,14 +702,14 @@ Qtrue = null;
 function mod_name(mod, mid) {
  return rb_ivar_get(mod, "__classid__");
 }
-function mod_eqq(mod, mid, obj) {
- return obj_is_kind_of(obj, "kind_of?", mod);
+function mod_eqq(mod, obj) {
+ return obj_is_kind_of(obj, mod);
 }
 function mod_define_method(mod, mid) {
  var __block__ = (rb_block_func == arguments.callee) ? rb_block_proc : Qnil; rb_block_func = rb_block_proc = Qnil;
  if (!(__block__ != Qnil))
   rb_raise(rb_eLocalJumpError, "no block given");
- rb_define_method(mod, mid.$m["$" + "to_s"](mid), __block__);
+ rb_define_method(mod, mid.$m["to_s"](mid), __block__);
   return Qnil;
 }
 function mod_attr_accessor(mod) {
@@ -734,7 +734,7 @@ function mod_attr_writer(mod) {
    attributes = Array.prototype.slice.call(arguments, 1);
  for (var i = 0; i < attributes.length; i++) {
   var attribute = attributes[i];
-  var mid = attribute.$m["$" + "to_s"](attribute);
+  var mid = attribute.$m["to_s"](attribute);
   rb_define_method(mod, mid + "=", new Function('self', 'val',
     'return rb_ivar_set(self, "@' + mid + '", val);'));
     // rb_define_method(mod, mid + "=", function(self, val) {
@@ -747,14 +747,14 @@ function mod_alias_method(mod, new_name, old_name) {
  new_name = rb_call(new_name, "to_s");
  old_name = rb_call(old_name, "to_s");
   // method might be wrapped, so use raw.
- rb_define_method_raw(mod, new_name, mod.$m_tbl['$' + old_name]);
+ rb_define_method_raw(mod, new_name, mod.$m_tbl[old_name]);
  return mod;
 }
 function mod_to_s(mod, mid) {
  return rb_ivar_get(mod, "__classid__");
 }
 function mod_const_set(mod, id, value) {
- return rb_vm_cs(mod, id.$m["$" + "to_s"](id), value);
+ return rb_vm_cs(mod, id.$m["to_s"](id), value);
 }
 function mod_class_eval(mod, mid, string, filename, lineno) {
   // print("global block is: " + rb_block_proc);
@@ -795,8 +795,8 @@ function class_new_instance(cla) {
  args[0] = obj;
  // if given a block, we need to reroute it to initialize
   if (rb_block_func == arguments.callee) {
-    rb_block_call.apply(null, [rb_block_proc, obj, "initialize"].concat(
-      Array.prototype.slice.call(arguments, 2)));
+    obj.$B.apply(obj, ['initialize', rb_block_proc].concat(
+      Array.prototype.slice.call(arguments, 1)));
   } else {
     obj.$m.$initialize.apply(null, args);
   }
@@ -912,7 +912,7 @@ function obj_proc(obj, mid, block) {
 function obj_puts(ob) {
  var args = Array.prototype.slice.call(arguments, 1);
  for (var i = 0; i < args.length; i++) {
-  console.log(args[i].$m["$" + "to_s"](args[i]));
+  console.log(args[i].$m["to_s"](args[i]));
  }
  return Qnil;
 }
@@ -956,13 +956,13 @@ function obj_raise(obj, exception, string) {
  var msg = Qnil, exc;
  if ((exception.$flags & 16)) {
   msg = exception;
-  exc = rb_eRuntimeError.$m["$" + "new"](rb_eRuntimeError, msg);
+  exc = rb_eRuntimeError.$m["new"](rb_eRuntimeError, msg);
  } else if (obj_is_kind_of(exception, "kind_of?", rb_eException)) {
   exc = exception;
  } else {
   if (string != undefined)
    msg = string;
-  exc = exception.$m["$" + "new"](exception, msg);
+  exc = exception.$m["new"](exception, msg);
  }
   //console.log("ready to raise:");
 //console.log(exc);  
@@ -1015,7 +1015,7 @@ function obj_tap(obj, mid, block) {
  BLOCK_CALL(block, obj);
  return obj;
 }
-function obj_is_kind_of(obj, mid, klass) {
+function obj_is_kind_of(obj, klass) {
  if ((arguments.length - 1) != 1) { print(arguments.callee); rb_arg_error(arguments.length, 1); }
  var search = obj.$klass;
  while (search) {
@@ -1135,7 +1135,7 @@ function obj_not(obj, mid) {
     obj != obj2  # => true or false
 */
 function obj_not_equal(obj1, mid, obj2) {
-  var res = obj1.$m["$" + "=="](obj1, obj2);
+  var res = obj1.$m["=="](obj1, obj2);
   return (res).$r ? Qfalse : Qtrue;
 }
 /**
@@ -1166,6 +1166,7 @@ var Init_Object = function() {
  rb_define_method(rb_cBasicObject, "equal?", obj_equal);
  rb_define_method(rb_cBasicObject, "!", obj_not);
  rb_define_method(rb_cBasicObject, "!=", obj_not_equal);
+  rb_define_method(rb_cBasicObject, 'zomg', function(){});
  rb_mKernel = rb_define_module('Kernel');
  rb_include_module(rb_cObject, rb_mKernel);
  rb_define_method(rb_cClass, "allocate", rb_obj_alloc);
@@ -1306,7 +1307,7 @@ Error.prepareStackTrace = function(error, stack) {
   for (var i = 0; i < stack.length; i++) {
     var part = stack[i], func = part.getFunction();
     // we are only interested in ruby methods..
-    if (func.$rbName) {
+    if (func.$rbName || true) {
       parts.push('\tfrom ' + (part.getFileName() || '(irb)') + ':' + part.getLineNumber() + ':in `' + func.$rbName + '\'');
     }
   }
@@ -2099,7 +2100,7 @@ var rb_cArray;
 var ary_inspect = function(ary) {
  var description = [];
  for (var i = 0; i < ary.length; i++) {
-  description.push(ary[i].$m["$" + "inspect"](ary[i]));
+  description.push(ary[i].$m["inspect"](ary[i]));
  }
  return "[" + description.join(", ") + "]";
 };
@@ -2111,7 +2112,7 @@ var ary_to_s = function() {
  // ARG_COUNT(0)
  var description = [];
  for (var i = 0; i < this.length; i++) {
-  description.push(this[i].$m["$" + "to_s"](this[i]));
+  description.push(this[i].$m["to_s"](this[i]));
  }
  return description.join("");
 };
@@ -3808,7 +3809,7 @@ function hash_equal(hash1, mid, hash2) {
     if (!hash2.$assocs.hasOwnProperty(assoc1))
       return Qfalse;
     var assoc2 = hash2.$assocs[assoc1];
-    if (!(hash1.$assocs[assoc1].$m["$" + "=="](hash1.$assocs[assoc1], assoc2)).$r)
+    if (!(hash1.$assocs[assoc1].$m["=="](hash1.$assocs[assoc1], assoc2)).$r)
       return Qfalse;
   }
   return Qtrue;
@@ -4062,7 +4063,7 @@ function hash_fetch(hash, mid, key, defaults) {
   if (value != undefined)
     return value
   else if (defaults == undefined)
-    rb_raise(rb_eKeyError, "key not found: " + key.$m["$" + "inspect"](key));
+    rb_raise(rb_eKeyError, "key not found: " + key.$m["inspect"](key));
   else
     return defaults;
 }
@@ -4094,7 +4095,7 @@ function hash_flatten(hash, mid, level) {
       if (level == 1) {
         result.push(value);
       } else {
-        var temp = value.$m["$" + "flatten"](value, level - 1);
+        var temp = value.$m["flatten"](value, level - 1);
         result = result.concat(temp);
       }
     } else {
@@ -4141,7 +4142,7 @@ function hash_has_value(hash, mid, value) {
   for (var i = 0; i < hash.$keys.length; i++) {
     key = hash.$keys[i];
     val = hash.$assocs[key.$hash()];
-    if ((value.$m["$" + "=="](value, val)).$r)
+    if ((value.$m["=="](value, val)).$r)
       return Qtrue;
   }
   return Qfalse;
@@ -4210,7 +4211,7 @@ function hash_key(hash, mid, value) {
   for (var i = 0; i < hash.$keys.length; i++) {
     key = hash.$keys[i];
     val = hash.$assocs[key.$hash()];
-    if ((value.$m["$" + "=="](value, val)).$r)
+    if ((value.$m["=="](value, val)).$r)
       return key;
   }
   return Qnil
@@ -4333,7 +4334,7 @@ function hash_rassoc(hash, mid, obj) {
   for (var i = 0; i < hash.$keys.length; i++) {
     key = hash.$keys[i];
     val = hash.$assocs[key.$hash()];
-    if ((val.$m["$" + "=="](val, obj)).$r)
+    if ((val.$m["=="](val, obj)).$r)
       return [key, val];
   }
   return Qnil;
@@ -4592,14 +4593,14 @@ function RRange(beg, end, exclude_end) {
   return this;
 }
 function range_to_s(range, mid) {
-  var str = range.$beg.$m["$" + "to_s"](range.$beg);
-  var str2 = range.$end.$m["$" + "to_s"](range.$end);
+  var str = range.$beg.$m["to_s"](range.$beg);
+  var str2 = range.$end.$m["to_s"](range.$end);
   var join = range.$exc ? "..." : "..";
   return str + join + str2;
 }
 function range_inspect(range, mid) {
-  var str = range.$beg.$m["$" + "inspect"](range.$beg);
-  var str2 = range.$end.$m["$" + "inspect"](range.$end);
+  var str = range.$beg.$m["inspect"](range.$beg);
+  var str2 = range.$end.$m["inspect"](range.$end);
   var join = range.$exc ? "..." : "..";
   return str + join + str2;
 }
@@ -4777,11 +4778,23 @@ var RClass = function(klass, super_klass) {
 RClass.prototype.$flags = 1;
 // RTest/truthiness - every RClass instance is true.
 RClass.prototype.$r = true;
-// method missing support
-RClass.prototype.$M = function(method_id) {
-  return function(recv) {
-    throw new Error(recv + " method_missing for: " + method_id);
-  };
+// method missing support - these are methods called, so we need to register them for method
+// missing on rb_cBasicObject.
+//
+// All added method names should set $isMM to true so that respond_to? can determine if it is
+// a method, or just a MM shortcut. normal methods dont have $isMM.
+RClass.prototype.$M = function(method_ids) {
+  for (var i = 0; i < method_ids.length; i++) {
+    // only add if not already defined..
+    if (!rb_cBasicObject.$m_prototype_tbl[method_ids[i]]) {
+      rb_cBasicObject.$m_prototype_tbl[method_ids[i]] = (function(id) {
+       return function() {
+         // should call self.$m.method_missing..
+         throw new Error(id + " is needed for method_missing");
+        };
+     })(method_ids[i]);
+    }
+  }
 };
 // hash literals
 RClass.prototype.$H = function() {
@@ -4803,6 +4816,7 @@ RClass.prototype.$B = function(mid, block) {
   return func.apply(null,args);
  } else {
   // method_missing
+    console.log("method missing for block call " + mid);
   func = self.$m['$method_missing'];
   rb_raise(rb_eRuntimeError,
     "need to forward rb_block_call to method missing");
@@ -4883,15 +4897,15 @@ rb_define_method = function(klass, name, body, file_name, line_number) {
 */
 function rb_define_method_raw(klass, name, body) {
   // insert raw method into prototype chain
-  klass.$m_prototype_tbl['$' + name] = body;
+  klass.$m_prototype_tbl[name] = body;
   // insert method into singular method table (methods defined ON this class)
-  klass.$method_table['$' + name] = body;
+  klass.$method_table[name] = body;
   // if in module, apply method to all classes we are included in
   if (klass.$included_in) {
     for (var i = 0; i < klass.$included_in.length; i++) {
       // insert method into both prototype and singular chain.
-      klass.$included_in[i].$m_prototype_tbl['$' + name] = body;
-   klass.$included_in[i].$method_table['$' + name] = body;
+      klass.$included_in[i].$m_prototype_tbl[name] = body;
+   klass.$included_in[i].$method_table[name] = body;
     }
   }
 }
@@ -4904,7 +4918,7 @@ rb_define_singleton_method = function(klass, name, body) {
   rb_define_method(rb_singleton_class(klass), name, body);
 };
 var rb_define_alias = function(base, new_name, old_name) {
-  rb_define_method(base, new_name, base.$m_tbl['$' + old_name]);
+  rb_define_method(base, new_name, base.$m_tbl[old_name]);
   return Qnil;
 };
 // Class#new
@@ -4928,7 +4942,7 @@ function rb_call(recv, mid) {
  // simply replace mid with our block (nil)
  // args[1] = Qnil;
  // check method exists
- return (recv.$m['$' + mid] || rb_vm_meth_m).apply(null, args);
+ return (recv.$m[mid] || rb_vm_meth_m).apply(null, args);
 }
 // normal return called in normal context? (should just be the same as block???)
 // @global
@@ -5062,6 +5076,7 @@ rb_run = function(func) {
 };
 // Stack trace support
 rb_run.$rbName = "<main>"
+exports.rb_run = rb_run;
 // Opal module within ruby
 // @local
 var rb_mOpal;
@@ -5110,7 +5125,7 @@ global.rb_super = function(callee, mid, self, args) {
   var func = rb_super_find(self.$klass, callee, mid);
   if (!func)
     rb_raise(rb_eNoMethodError, "super: no super class method `" + mid + "`" +
-      " for " + self.$m["$" + "inspect"](self));
+      " for " + self.$m["inspect"](self));
   // print("found the super!" + func);
   var args_to_send = [self, mid].concat(args);
   return func.apply(null, args_to_send);
@@ -5426,7 +5441,7 @@ exports.init = function() {
  Init_VM();
  Init_Exception();
  Init_String();
- //Init_Proc();
+ Init_Proc();
  //Init_Range();
   // if running in browser, init it
   //if (typeof Init_Browser != 'undefined') Init_Browser();

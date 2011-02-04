@@ -197,20 +197,6 @@ var opal_s_compile = function(opal, mid, string) {
   return "function(self, __FILE__) {" + code + "}";
 }
 
-/**
-  top self #to_s
-*/
-function top_self_to_s(self, mid) {
-  //ARG_COUNT(0)
-  return "main";
-}
-
-/**
-  top self #include(mod)
-*/
-function top_self_include(self, mod) {
-  rb_include_module(rb_cObject, mod);
-}
 
 var Init_VM = function() {
 	//rb_mOpal = rb_define_module('Opal');
@@ -218,15 +204,6 @@ var Init_VM = function() {
 	//rb_define_singleton_method(rb_mOpal, 'context_eval', opal_context_eval);
 	//rb_define_singleton_method(rb_mOpal, 'compile', opal_s_compile);
 	
-  // Top self
-  console.log("init top self");
-	rb_top_self = rb_obj_alloc(rb_cObject);
-
-  
-  //rb_top_self.$dm('to_s', top_self_to_s, 1);
-	
-  rb_define_singleton_method(rb_top_self, "to_s", top_self_to_s);
-  rb_define_singleton_method(rb_top_self, "include", top_self_include);
-	
+  	
 	//rb_const_set(rb_cObject, "RUBY_PLATFORM", opal_ruby_platform);
 };

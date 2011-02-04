@@ -14,9 +14,18 @@ exports.init = function() {
   //Init_Debug_Mode();
 	// core inits.
 	Init_Object();
+  require('./module');
+  require('./kernel');
+  require('./top_self');
+  require('./nil_class');
+  require('./true_class');
+  require('./false_class');
 	Init_Array();
+  require('./array');
 	Init_Numeric();
+  require('./numeric');
 	Init_Hash();
+  require('./hash');
 	//Init_Regexp();
 	Init_Load();
 	//Init_IO();
@@ -24,12 +33,11 @@ exports.init = function() {
 	Init_VM();
 	Init_Exception();
 	Init_String();
+  require('./string');
+  require('./symbol');
 	Init_Proc();
 	//Init_Range();
 
-  // if running in browser, init it
-  //if (typeof Init_Browser != 'undefined') Init_Browser();
-  
   // Instead of init_browser, each platform will have its own Init_Platform
   // method; node uses this to init FS module etc, and all the File and Dir
   // methods; while browser uses this to Init Browser, Element, Document etc.

@@ -36,7 +36,7 @@ var rb_mod_create = function() {
   return rb_class_boot(rb_cModule);
 };
 
-var rb_include_module = function(klass, module) {
+rb_include_module = function(klass, module) {
   // print("YEAH");
   // console.log("including " + module.$i.__classid__);
   // make sure our klass has the included modules array
@@ -65,7 +65,7 @@ var rb_include_module = function(klass, module) {
   // print(module.method_table);
   for (var method in module.$method_table) {
     // already potentially wrapped, so use define_raw
-    rb_define_method_raw(klass, method.substr(1), module.$method_table[method]);
+    rb_define_method_raw(klass, method, module.$method_table[method]);
     // print("adding method: " + method);
     // check to make sure we are not overriding? if so, add it to the superclass
     // of klass.
@@ -83,7 +83,7 @@ var rb_include_module = function(klass, module) {
   
 };
 
-var rb_extend_module = function(klass, module) {
+rb_extend_module = function(klass, module) {
   if (!klass.$extended_modules)
     klass.$extended_modules = [];
   
@@ -104,8 +104,7 @@ var rb_extend_module = function(klass, module) {
   
   for (var method in module.$method_table) {
     // klass.$klass.$m_prototype_tbl[method] = module.$method_table[method];
-    rb_define_method_raw(klass.$klass, method.substr(1), 
-      module.$method_table[method]);
+    rb_define_method_raw(klass.$klass, method, module.$method_table[method]);
   }
 };
 

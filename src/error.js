@@ -48,13 +48,17 @@ var exc_s_allocate = function(klass) {
 Error.prepareStackTrace = function(error, stack) {
   var parts = [];
   // actual error
-  parts.push(error.$klass.__classid__ + ': ' + error.message);
+  //console.log("about to raise");
+  if (error.$klass)
+    parts.push(error.$klass.__classid__ + ': ' + error.message);
+  else
+    parts.push(error.toString());
 
   for (var i = 0; i < stack.length; i++) {
     var part = stack[i], func = part.getFunction();
 
     // we are only interested in ruby methods..
-    if (func.$rbName) {
+    if (func.$rbName || true) {
       parts.push('\tfrom ' + (part.getFileName() || '(irb)') + ':' + part.getLineNumber() + ':in `' + func.$rbName + '\'');
     }
   }
