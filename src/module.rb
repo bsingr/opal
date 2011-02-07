@@ -61,6 +61,8 @@ class Module
   end
 
   def class_eval(str, &block)
+    #puts "block for class eval:"
+    #puts block
     if block_given?
       `block(self)`
     else

@@ -6,6 +6,34 @@
 # For efficiency, an array instance is simply a native javascript array. There
 # is no wrapping, it is simply a toll-free class
 class Array
+  # Returns a new array populated with the given objects.
+  #
+  # @example
+  #
+  #     Array['a', 'b', 'c']
+  #     # => ['a', 'b', 'c']
+  #
+  # FIXME should support custom subclasses
+  #
+  # @param [Object] objs
+  # @return [Array]
+  def self.[](*objs)
+    objs
+  end
+
+  # FIXME should support custom subclasses
+  def self.allocate
+    []
+  end
+
+  def initialize(*objs)
+    `for (var i = 0; i < objs.length; i++) {
+      self.push(objs[i]);
+    }
+
+    return self;`
+  end
+
   # Returns a formatted, printable version of the array. {#inspect} is called
   # on each of the elements and appended to the string.
   #
@@ -13,8 +41,8 @@ class Array
   def inspect
     `var description = [];
   
-    for (var i = 0; i < #{self}.length; i++) {
-      description.push(#{self}[i].$m.inspect(#{self}[i]));
+    for (var i = 0; i < self.length; i++) {
+      description.push(self[i].$m.inspect(self[i]));
     }
   
     return '[' + description.join(', ') + ']';`
@@ -25,8 +53,8 @@ class Array
   def to_s
     `var description = [];
 
-    for (var i = 0; i < #{self}.length; i++) {
-      description.push(#{self}[i].$m.to_s(#{self}[i]));
+    for (var i = 0; i < self.length; i++) {
+      description.push(self[i].$m.to_s(self[i]));
     }
 
     return description.join('');`
@@ -44,7 +72,7 @@ class Array
   # @param [Object] obj the object to append
   # @return [Array] returns the receiver
   def <<(obj)
-    `#{self}.push(#{obj})`
+    `self.push(obj)`
     self
   end
 
@@ -57,11 +85,11 @@ class Array
   #
   # @return [Numeric] length
   def length
-    `return #{self}.length;`
+    `return self.length;`
   end
 
   def size
-    `return #{self}.length;`
+    `return self.length;`
   end
 
   # Yields the block once for each element in `self`, passing that element as
@@ -77,43 +105,43 @@ class Array
   #     # => 'b'
   #     # => 'c'
   #
-  # @TODO: needs to return enumerator for no block.
+  # TODO: needs to return enumerator for no block.
   #
   # @return [Array] returns the receiver
   def each   
-    `for (var i = 0; i < #{self}.length; i++) {
+    `for (var i = 0; i < self.length; i++) {
       try {
-        #{yield `#{self}[i]`};
+        #{yield `self[i]`};
       } catch (e) {
         switch (e.$keyword) {
           case 2:
-            return e['@exit_value'];
+            return e.$value;
           default:
             throw e;
         }
       }
     }
 
-    return #{self};`
+    return self;`
   end
 
   # Similar to {#each}, but also passes in the current element index to the
   # block.
   def each_with_index
-    `for (var i = 0; i < #{self}.length; i++) {
+    `for (var i = 0; i < self.length; i++) {
       try {
-        #{yield `#{self}[i]`, `i`};
+        #{yield `self[i]`, `i`};
       } catch (e) {
         switch (e.$keyword) {
           case 2:
-            return e['@exit_value'];
+            return e.$value;
           default:
             throw e;
         }
       }
     }
 
-    return #{self};`
+    return self;`
   end
 
   # Same as {#each}, but passes the index of the element instead of the 
@@ -121,7 +149,7 @@ class Array
   #
   # If no block given, an enumerator is returned instead.
   #
-  # @TODO: enumerator functionality not yet implemented.
+  # TODO: enumerator functionality not yet implemented.
   #
   # @example
   #   
@@ -133,20 +161,20 @@ class Array
   #
   # @return [Array] returns receiver
   def each_index
-    `for (var i = 0; i < #{self}.length; i++) {
+    `for (var i = 0; i < self.length; i++) {
       try {
         #{yield `i`};
       } catch (e) {
         switch (e.$keyword) {
           case 2:
-            return e['@exit_value'];
+            return e.$value;
           default:
             throw e;
         }
       }
     }
 
-    return #{self};`
+    return self;`
   end
 
 
@@ -163,11 +191,11 @@ class Array
   # @param [Object] obj the object(s) to push onto the array
   # @return [Array] returns the receiver
   def push(*objs)
-    `for (var i = 0; i < #{objs}.length; i++) {
-      #{self}.push(#{objs}[i]);
+    `for (var i = 0; i < objs.length; i++) {
+      self.push(objs[i]);
     }
 
-    return #{self};`
+    return self;`
   end
 
   # Returns the index of the first object in `self` such that it is `==` to
@@ -185,13 +213,13 @@ class Array
   # @param [Object] obj the object to look for
   # @return [Numeric, nil] result
   def index(obj)
-    `for (var i = 0; i < #{self}.length; i++) {
-      if (#{`#{self}[i]` == obj}.$r) {
+    `for (var i = 0; i < self.length; i++) {
+      if (#{`self[i]` == obj}.$r) {
         return i;
       }
     }
 
-    return #{nil};`
+    return nil;`
   end
 
   # Concatenation - returns a new array built by concatenating the two arrays
@@ -205,7 +233,7 @@ class Array
   # @param [Array] other the array to concat with
   # @return [Array] returns new concatenated array
   def +(other)
-    `return #{self}.concat(#{other});`
+    `return self.concat(other);`
   end
 
   # Difference. Creates a new array that is a copy of the original array,
@@ -235,11 +263,11 @@ class Array
   # @param [Array] other array to compare self with
   # @return [Boolean] if the arrays are equal
   def ==(other)
-    `if (#{self}.$hash() == #{other}.$hash()) return #{true};
-    if (#{self}.length != #{other}.length) return #{false};
+    `if (self.$hash() == other.$hash()) return Qtrue;
+    if (self.length != other.length) return Qfalse;
 
-    for (var i = 0; i < #{self}.length; i++) {
-      if (!#{`#{self}[i]` == `#{other}[i]`}.$r) {
+    for (var i = 0; i < self.length; i++) {
+      if (!#{`self[i]` == `other[i]`}.$r) {
         return Qfalse;
       }
     }
@@ -264,17 +292,16 @@ class Array
   def assoc(obj)
     `var arg;
 
-    for (var i = 0; i < #{self}.length; i++) {
-      arg = #{self}[i];
+    for (var i = 0; i < self.length; i++) {
+      arg = self[i];
 
       if (arg.length && #{`arg[0]` == obj}.$r) {
         return arg;
       }
     }
 
-    return #{nil};`
+    return nil;`
   end
-
 
   # Returns the element at `index`. A negative index counts from the end of the
   # receiver. Returns `nil` if the given index is out of range. See also {#[]}.
@@ -289,10 +316,10 @@ class Array
   # @param [Numeric] index the index to get
   # @return [Object, nil] returns nil or the result
   def at(idx)
-    `if (#{idx} < 0) #{idx} += #{self}.length;
+    `if (idx < 0) idx += self.length;
 
-    if (#{idx} < 0 || #{idx} >= #{self}.length) return #{nil};
-    return #{self}[#{idx}];`
+    if (idx < 0 || idx >= self.length) return nil;
+    return self[idx];`
   end
 
   # Removes all elements from the receiver.
@@ -304,8 +331,8 @@ class Array
   #
   # @return [Array] returns the receiver
   def clear
-    `#{self}.splice(0);
-    return #{self};`
+    `self.splice(0);
+    return self;`
   end
 
   # Yields the block, passing in successive elements from the receiver, 
@@ -322,16 +349,16 @@ class Array
   def select
     `var result = [], arg;
 
-    for (var i = 0; i < #{self}.length; i++) {
+    for (var i = 0; i < self.length; i++) {
       try {
-        arg = #{self}[i];
+        arg = self[i];
         if (#{yield `arg`}.$r) {
           result.push(arg);
         }
       } catch (e) {
         switch (e.$keyword) {
           case 2:
-            return e['@exit_value'];
+            return e.$value;
           default:
             throw e;
         }
@@ -354,13 +381,13 @@ class Array
   def collect
     `var result = [];
 
-    for (var i = 0; i < #{self}.length; i++) {
+    for (var i = 0; i < self.length; i++) {
       try {
-        result.push(#{yield `#{self}[i]`});
+        result.push(#{yield `self[i]`});
       } catch (e) {
         switch (e.$keyword) {
           case 2:
-            return e['@exit_value'];
+            return e.$value;
           default:
             throw e;
         }
@@ -383,25 +410,25 @@ class Array
   #
   # @return [Array] returns the receiver
   def collect!
-    `for (var i = 0; i < #{self}.length; i++) {
+    `for (var i = 0; i < self.length; i++) {
       try {
-        #{self}[i] = #{yield `#{self}[i]`};
+        self[i] = #{yield `self[i]`};
       } catch (e) {
         switch (e.$keyword) {
           case 2:
-            return e['@exit_value'];
+            return e.$value;
           default:
             throw e;
         }
       }
     }
 
-    return #{self};`
+    return self;`
   end
 
   # Duplicate.
   def dup
-    `return #{self}.slice(0);`
+    `return self.slice(0);`
   end
 
   # Returns a copy of the receiver with all nil elements removed
@@ -413,11 +440,11 @@ class Array
   #
   # @return [Array] new Array
   def compact
-    `var result = [], length = #{self}.length;
+    `var result = [], length = self.length;
 
     for (var i = 0; i < length; i++) {
-      if (#{self}[i] != #{nil}) {
-        result.push(#{self}[i]);
+      if (self[i] != nil) {
+        result.push(self[i]);
       }
     }
 
@@ -437,16 +464,16 @@ class Array
   #
   # @return [Array, nil] returns either the receiver or nil
   def compact!
-    `var length = #{self}.length;
+    `var length = self.length;
 
     for (var i = 0; i < length; i++) {
-      if (#{self}[i] == #{nil}) {
-        #{self}.splice(i, 1);
+      if (self[i] == nil) {
+        self.splice(i, 1);
         i--;
       }
     }
 
-    return length == #{self}.length ? #{nil} : #{self};`
+    return length == self.length ? nil : self;`
   end
 
   # Appends the elements of `other` to `self`.
@@ -459,13 +486,13 @@ class Array
   # @param [Array] other array to concat
   # @return [Array] returns the receiver
   def concat(other)
-    `var length = #{other}.length;
+    `var length = other.length;
 
     for (var i = 0; i < length; i++) {
-      #{self}.push(#{other}[i]);
+      self.push(other[i]);
     }
 
-    return #{self};`
+    return self;`
   end
 
   # Returns the number of elements. If an argument is given, counts the number
@@ -481,18 +508,18 @@ class Array
   # @param [Object] obj object to check
   # @return [Numeric] count or count of obj
   def count(obj)
-    `if (#{obj} != undefined) {
+    `if (obj != undefined) {
       var total = 0;
 
-      for (var i = 0; i < #{self}.length; i++) {
-        if (#{`#{self}[i]` == obj}.$r) {
+      for (var i = 0; i < self.length; i++) {
+        if (#{`self[i]` == obj}.$r) {
           total++;
         }
       }
 
       return total;
     } else {
-      return #{self}.length;
+      return self.length;
     }`
   end
 
@@ -515,16 +542,16 @@ class Array
   # @param [Object] obj object to delete
   # @return [Object, nil] returns obj or nil
   def delete(obj)
-    `var length = #{self}.length;
+    `var length = self.length;
 
-    for (var i = 0; i < #{self}.length; i++) {
-      if (#{`#{self}[i]` == obj}.$r) {
-        #{self}.splice(i, 1);
+    for (var i = 0; i < self.length; i++) {
+      if (#{`self[i]` == obj}.$r) {
+        self.splice(i, 1);
         i--;
       }
     }
 
-    return length == #{self}.length ? #{nil} : #{obj};`
+    return length == self.length ? nil : obj;`
   end
 
   # Deletes the element at the specified index, returning that element, or nil
@@ -543,11 +570,11 @@ class Array
   # @param [Numeric] idx the index to delete
   # @return [Object, nil] returns the deleted object or nil
   def delete_at(idx)
-    `if (#{idx} < 0) #{idx} += #{self}.length;
-    if (#{idx} < 0 || #{idx} >= #{self}.length) return #{nil};
-    var res = #{self}[#{idx}];
-    #{self}.splice(#{idx}, 1);
-    return #{self};`
+    `if (idx < 0) idx += self.length;
+    if (idx < 0 || idx >= self.length) return nil;
+    var res = self[idx];
+    self.splice(idx, 1);
+    return self;`
   end
 
   # Deletes every element of `self` for which `block` evaluates to true.
@@ -560,23 +587,23 @@ class Array
   #
   # @return [Array] returns amended receiver
   def delete_if
-    `for (var i = 0; i < #{self}.length; i++) {
+    `for (var i = 0; i < self.length; i++) {
       try {
-        if (#{yield `#{self}[i]`}.$r) {
-          #{self}.splice(i, 1);
+        if (#{yield `self[i]`}.$r) {
+          self.splice(i, 1);
           i--;
         }
       } catch (e) {
         switch(e.$keyword) {
           case 2:
-            return e['@exit_value'];
+            return e.$value;
           default:
             throw e;
         }
       }
     }
 
-    return #{self};`
+    return self;`
   end
 
   # Drop first `n` elements from receiver, and returns remaining elements in
@@ -591,8 +618,8 @@ class Array
   # @param [Number] n number of elements to drop
   # @return [Array] returns new array
   def drop(n)
-    `if (#{n} > #{self}.length) return [];
-    return #{self}.slice(#{n});`
+    `if (n > self.length) return [];
+    return self.slice(n);`
   end
 
   # Drop elements up to, but not including, the first element for which the
@@ -607,9 +634,9 @@ class Array
   #
   # @return [Array] returns a new array
   def drop_while
-    `for (var i = 0; i < #{self}.length; i++) {
-      if (!#{yield `#{self}[i]`}.$r) {
-        return #{self}.slice(i);
+    `for (var i = 0; i < self.length; i++) {
+      if (!#{yield `self[i]`}.$r) {
+        return self.slice(i);
       }
     }
 
@@ -625,7 +652,7 @@ class Array
   #
   # @return [false, true] empty or not
   def empty?
-    `return #{self}.length == 0 ? #{true} : #{false};`
+    `return self.length == 0 ? Qtrue : Qfalse;`
   end
 
   # Tries to return the element as position `index`. If the index lies outside
@@ -656,19 +683,19 @@ class Array
   # @param [Object] defaults
   # @return [Object] returns result
   def fetch(idx, defaults)
-    `var original = #{idx};
+    `var original = idx;
 
-    if (#{idx} < 0) #{idx} += #{self}.length;
-    if (#{idx} < 0 || #{idx} >= #{self}.length) {
-      if (#{defaults} == undefined)
+    if (idx < 0) idx += self.length;
+    if (idx < 0 || idx >= self.length) {
+      if (defaults == undefined)
         return rb_raise("Index Error: Array#fetch");
       else if (__block__)
         return #{yield `original`};
       else
-        return #{defaults};
+        return defaults;
     }
 
-    return #{self}[#{idx}];`
+    return self[idx];`
   end
 
   # Returns the first element, or the first `n` elements, of the array. If the
@@ -776,7 +803,7 @@ class Array
   #     # => false
   def include?(member)
     `for (var i = 0; i < self.length; i++) {
-      if (#{`#{self}[i]` == member}.$r) {
+      if (#{`self[i]` == member}.$r) {
         return #{true};
       }
     }

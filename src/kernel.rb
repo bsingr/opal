@@ -77,7 +77,7 @@ module Kernel
     if (typeof exception == 'string') {
       msg = exception;
       exc = #{RuntimeError.new `msg`};
-    } else if (#{`exception`.kind_of? Exception}) {
+    } else if (#{`exception`.kind_of? Exception}.$r) {
       exc = exception;
     } else {
       if (string != nil) msg = string;
@@ -119,6 +119,7 @@ module Kernel
   end
 
   def method_missing(sym, *args)
+    #raise "undefined method `#{sym}` for #{self.inspect}"
     raise NoMethodError, "undefined method `#{sym}` for #{self.inspect}"
   end
 

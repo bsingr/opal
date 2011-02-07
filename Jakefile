@@ -10,11 +10,11 @@ task('test', [], function() {
 
 desc('rebuild core .rb libraries from src/ into lib/');
 task('core', [], function() {
-  var sources = ['array', 'numeric', 'string', 'symbol', 'hash', 'top_self', 'nil_class', 'true_class', 'false_class', 'kernel', 'module'];
+  var sources = ['array', 'numeric', 'string', 'symbol', 'hash', 'top_self', 'nil_class', 'true_class', 'false_class', 'kernel', 'module', 'proc'];
 
   sources.forEach(function(source) {
     var code = Opal.compile(fs.readFileSync('src/' + source + '.rb').toString());
-    fs.writeFileSync('lib/' + source + '.js', '(function(self) {' + code + '})(rb_top_self);');
+    fs.writeFileSync('lib/' + source + '.js', code);
   });
 });
 

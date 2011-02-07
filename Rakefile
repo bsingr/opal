@@ -21,8 +21,8 @@ NODE_PKG  = File.join NODE_SRC, 'package'
 
 desc "build runtime/opal.js into node root"
 task :node do
-  in_file = File.join NODE_SRC, 'opal.js'
-  out_file = File.join NODE_ROOT, 'lib', 'opal_runtime.js'
+  in_file = File.join NODE_SRC, '..', 'dev.js'
+  out_file = File.join NODE_ROOT, 'lib', 'dev.js'
   FileUtils.mkdir_p File.dirname(out_file)
     
   gcc in_file, out_file
