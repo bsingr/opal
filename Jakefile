@@ -8,6 +8,53 @@ task('test', [], function() {
   console.log(Opal.compile('a'));
 });
 
+desc('Rebuild extras/opal.js - ready for browser');
+task('browser', [], function() {
+  var out_file = 'extras/opal.js';
+
+  // pre code here
+  var result = fs.readFileSync('src/browser_pre.js').toString(); 
+
+
+  var sources = [
+    'array', 'numeric', 'string', 'symbol', 'hash', 'top_self', 'nil_class',
+    'true_class', 'false_class', 'kernel', 'module', 'proc',
+    'runtime', 'browser'
+  ];
+
+  sources.forEach(function(source) {
+    result += 'modules["./' + source + '"] = function(exports) {\n';
+    result += fs.readFileSync('lib/' + source + '.js').toString();
+    result += '\n};\n';
+  });
+
+  // post code
+  result += fs.readFileSync('src/browser_post.js').toString();
+
+  fs.writeFileSync(out_file, result);
+});
+
+desc('Rebuild extras/opal_dev.js - ready for in browser development');
+task('browser_dev', [], function() {
+  var out_file = 'extras/opal_dev.js';
+
+  // pre code - reuse browser pre
+  var result = fs.readFileSync('src/browser_pre.js').toString();
+
+  var sources = ['parser', 'ruby_parser', 'string_scanner', 'generator', 'browser_dev'];
+
+  sources.forEach(function(source) {
+    result += 'modules["./' + source + '"] = function(exports, module) {\n';
+    result += fs.readFileSync('lib/' + source + '.js').toString();
+    result += '\n};\n';
+  });
+
+  // post code - different from browser
+  result += fs.readFileSync('src/browser_dev_post.js').toString();
+
+  fs.writeFileSync(out_file, result);
+});
+
 desc('rebuild core .rb libraries from src/ into lib/');
 task('core', [], function() {
   var sources = ['array', 'numeric', 'string', 'symbol', 'hash', 'top_self', 'nil_class', 'true_class', 'false_class', 'kernel', 'module', 'proc'];
@@ -61,4 +108,29 @@ var ruby_sources = function(dir) {
 var javascript_sources = function(dir) {
 
 };
+
+desc('Rebuild rquery.js into extras/');
+task('rquery', [], function() {
+  var sources = ruby_sources('rquery/lib');
+  var result = [];
+
+  sources.forEach(function(orig_source) {
+    var source = /^rquery\/lib\/(.*)\.rb$/.exec(orig_source)[1];
+    console.log('doing source: ' + source);
+    var compiled = Opal.compile(fs.readFileSync(orig_source).toString());
+    result.push('Opal.module("' + source + '", function() {\n');
+    result.push(compiled);
+    result.push('\n});\n');
+  });
+
+  // In addition to ruby sources, rquery also loads jquery.js as a sole js source.
+  result.push('Opal.module("rquery/jquery", function() {\n');
+  result.push(fs.readFileSync('rquery/lib/rquery/jquery.js').toString());
+  result.push('\n});\n');
+
+  // rquery self loads..
+  result.push('Opal.require("rquery");\n');
+
+  fs.writeFileSync('extras/rquery.js', result.join(''));
+});
 

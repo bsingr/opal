@@ -2,21 +2,107 @@
 <html>
   <head>
     <script src="opal.js" type="text/javascript" charset="utf-8"></script>
-    <script src="opalite.js" type="text/javascript" charset="utf-8"></script>
-    <script src="opal_dev.js" type="text/javascript"></script>
+    <script src="opal_dev.js" type="text/javascript" charset="utf-8"></script>
+    <script src="rquery.js"></script>
     <script type="text/ruby">
-      a = Element.new
-      puts a.inspect
-    </script>
+      puts "wow"
 
-    <script type="text/javascript">
-      Opal.module('opalspec', function() {
+      Document.ready? do
+        puts "Document is now ready!"
+      end
+      
+      puts "running this.."
+      #a = Element.find 'div'
+      a = Element.from_native `$(document.getElementById('some_div'))`
+      `console.log(a)`
+      puts "original selector was:"
+      puts a.selector.inspect
+
+      puts "and length is:"
+      puts a.length
+
+      a.each do |elem|
+        puts "looping"
+        `console.log(elem)`
+        `console.log(elem.$m)`
+      end
+
+      puts "and the indexes..."
+      puts "index 0"
+      puts a[0]
+
+      puts "index 1"
+      puts a[1]
+
+      puts "index -1"
+      puts a[-1]
+
+      puts "try setting some attributes"
+      a.attr 'title', 'wow, hey there'
+
+      puts "and the attr is now: #{a.attr 'title'}"
+      puts "and the src: #{a.attr 'src'}"
+
+      puts "setting new id to 'ssssssss'"
+      a.id 'ssssssssssssss'
+
+      puts a.id
+
+      a.id = 'yep yep yep'
+
+
+      puts "current content:"
+      puts a.html
+
+      puts "setting content"
+      a.html = "wowowowowowowowoww"
+      puts a.html
+
+      puts "adding some classes"
+      a.add_class 'wow fobo'
+  
+      puts "testing remove_class"
+      a.remove_class 'wow'
+
+      puts "And now remove alll"
+      a.remove_class
+
+      puts "and now testing has class"
+      a.add_class 'foo bar baz'
+      puts a.has_class? 'foo'
+      puts a.has_class? 'jsjsjs'
+
+      puts "testing Element.new"
+      b = Element.new
+      puts b
+      `console.log(b)`
+      `window.b = b`
+
+      puts "Testing events"
+      a.mouse_down do |event|
+        puts "mouse down son!"
+        puts event
+        `console.log(event)`
+        puts event.class
+      end
+    </script>
+    <body>
+      <div id="some_div">
         
-      });
+      </div>
 
-      Opal.module('opalspec/mappings', function() {
+      <div id="foo">
+        
+      </div>
 
-      });
-    </script>
+      <div id="bar">
+        
+      </div>
+        
+      <div id="baz">
+        
+      </div>
+    </body>
   </head>
 </html>
+

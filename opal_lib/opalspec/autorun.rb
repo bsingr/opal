@@ -1,3 +1,3 @@
-require 'spec'
+require 'opalspec'
 
 Spec::Runner.autorun

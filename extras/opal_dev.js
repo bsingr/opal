@@ -1,121 +1,1002 @@
-
-
-/**
-  Developer side of opal (compiler, parser, generator etc). Only needs to be 
-  used for development, it is not needed for runtime use.
-*/
-
-// Make sure opal exists
 if (typeof Opal == 'undefined')
   Opal = {};
 
-(function(global, exports) {
+(function(global, exports, undefined) {
+  var modules = {};
 
-/**
-  Import just development (and header)
-*/
-/*
-  Browser specific
-*/
-/*
-  Set a local variable __block__ to either Qnil or the block. Here basically we
-  check if the block was intended for us, and then set it to Qnil regardless.
-*/
-/*
-  If no block was given, return an enumerator. This automatically calls 
-  USES_BLOCK, so manually calling that is not neceessary.
-*/
-/*
-  Yields the block. This assumes the block is stored locally as __block__, as it
-  will be set using USES_BLOCK
-*/
-/*
-  Like above, but yield using the given self:
-*/
-/*
-  Evaluates to true or false whether a block was given or not. again, relies on
-  a variable named __block__ which is given by USES_BLOCK
-*/
+  var require = function(name) {
+    if (require[name]) return require[name];
+    var exports = {};
+    modules[name](exports, modules[name]);
+    require[name] = exports;
+    return exports;
+  };
+
+  //global.modules = modules;
+  //global.require = require;
+
+modules["./parser"] = function(exports, module) {
+// if (typeof require !== 'undefined') {
+//   var RubyParser    = require('./ruby_parser').RubyParser,
+//       // Lexer         = require('./lexer').Lexer,
+//       StringScanner = require('./string_scanner').StringScanner;
+// } else {
+//   // var RubyParser = parser;
+// }
+
+var RubyParser = require('./ruby_parser').RubyParser;
+var StringScanner = require('./string_scanner').StringScanner;
+var RubyGenerator = require('./generator').Generator;
+
+exports.compile = function(source) {
+  var nodes = exports.RubyParser.parse(source);
+  // print('nodes are:');
+  // print(nodes);
+  // print('generating:');
+  var g = new RubyGenerator(nodes, {});
+  var res = g.generate_main_context();
+  // print("GOT RESULT");
+  // print(res[0]);
+  // print('WOWOWOWOWOWOWOW');
+  return res[0];
+};
+
+var EXPR_BEG    = 0,    EXPR_END    = 1,    EXPR_ENDARG = 2,    EXPR_ARG   = 3,
+    EXPR_CMDARG = 4,    EXPR_MID    = 5,    EXPR_FNAME  = 6,    EXPR_DOT   = 7,
+    EXPR_CLASS  = 8,    EXPR_VALUE  = 9;
+
+RubyParser.prototype.parse = function(source) {
+  // print('1. Lexing...');
+  var token;
+  
+  this._string = source;
+  this._scanner = new StringScanner(source);
+  this.lex_state = EXPR_BEG;
+  this._tokens = [];
+  this._string_parse_stack = [];
+  this._line_number = 1;
+  
+  // cond stack
+  this._cond = 0;
+  // cmd arg stack
+  this._cmdarg = 0;
+  
+  // while ((token = this.next_token()) && token[0] !== false) {
+    // token[2] = this._line_number;
+    // this._tokens.push(token);
+  // } 
+  
+  // console.log("## Pre Optimize:\n");
+  // for (var i = 0; i < this._tokens.length; i++) {
+  //   console.log(this._tokens[i]);
+  // }
+  // 
+  // this._tokens = new Optimizer(this._tokens).optimize();
+  // console.log("\n## Post Optimize:\n")
+  // for (var i = 0; i < this._tokens.length; i++) {
+    // console.log(this._tokens[i]);
+  // }
+  // console.log("\n");
+  // return this._tokens;
+  // print('parsing some codeeeeez');
+  
+  // print('1. lexing');
+  // this._lexer = new Lexer();
+  // this._tokens = this._lexer.tokenize(source + '\n');
+  // add [false, false] to singnify EOF
+  // this._tokens.push([false, false]);
+  // print(this._tokens);
+  
+  // print('2. parsing');
+  var result = this.do_parse();
+  // print(result);
+  return result;
+};
+
+RubyParser.prototype.next_token = function() {
+  var token = this.get_next_token();
+  // print('[' + token.join(', ') + '] - ' + this._line_number);
+  return token;
+};
+
+RubyParser.prototype.cond_push = function(n) {
+  // print('cond_push ' + n);
+  return this._cond = (this._cond << 1) | ((n) & 1);
+};
+
+RubyParser.prototype.cond_pop = function() {
+  // print('cond_pop');
+  return this._cond = this._cond >> 1;
+};
+
+RubyParser.prototype.cond_lexpop = function() {
+  // print('cond_lexpop');
+  return this._cond = (this._cond >> 1) | (this._cond & 1);
+};
+
+RubyParser.prototype.cond_p = function() {
+  // print('cond_p');
+  return this._cond & 1;
+};
+
+RubyParser.prototype.cmdarg_push = function(n) {
+  // print('cmdarg_push ' + n);
+  return this._cmdarg = (this._cmdarg << 1) | ((n) & 1);
+};
+
+RubyParser.prototype.cmdarg_pop = function() {
+  // print('cmdarg_pop');
+  return this._cmdarg = this._cmdarg >> 1;
+};
+
+RubyParser.prototype.cmdarg_lexpop = function() {
+  // print('cmdarg_lexpop');
+  return this._cmdarg = (this._cmdarg >> 1) | (this._cmdarg & 1);
+};
+
+RubyParser.prototype.cmdarg_p = function() {
+  // print('cmdarg_p');
+  return this._cmdarg & 1;
+};
+
+RubyParser.prototype.current_string_parse = function() {
+  if (this._string_parse_stack.length == 0) return null;
+  return this._string_parse_stack[this._string_parse_stack.length - 1];
+};
+
+RubyParser.prototype.push_string_parse = function(o) {
+  this._string_parse_stack.push(o);
+};
+
+RubyParser.prototype.pop_string_parse = function() {
+  this._string_parse_stack.pop();
+};
+
+RubyParser.prototype.next_string_token = function() {
+  var str_parse = this.current_string_parse(), scanner = this._scanner;
+  
+  var interpolate = (str_parse.beg !== "'");
+  
+  // print("string end is " + str_parse.end);
+  // see if we can read end of string/xstring/regexp markers
+  if (scanner.scan( new RegExp('^\\' + str_parse.end))) {
+    this.pop_string_parse();
+    if (str_parse.beg == '"' || str_parse.beg == "'") {
+      this.lex_state = EXPR_END;
+      return ['STRING_END', scanner.matched];
+    }
+    else if (str_parse.beg == '`') {
+      // assume to be xstring
+      this.lex_state = EXPR_END;
+      return ['STRING_END', scanner.matched];
+    }
+    else if (str_parse.beg == '/') {
+      var result = "";
+      if (scanner.scan(/^\w+/)) {
+        result = scanner.matched;
+      }
+      this.lex_state = EXPR_END;
+      return ['REGEXP_END', result];
+    }
+    // else if (str_parse.end == '}') {
+    else { // words?
+      this.lex_state = EXPR_END;
+      return ['STRING_END', scanner.matched];
+    }
+    // else {
+      // throw "unknown string ending"
+    // }
+  }
+  
+  // not end of string, so we must be parsing contents
+  var str_buffer = [];
+  
+  if (scanner.scan(/^#(\$|\@)\w+/)) {
+    if (interpolate) {
+      return ['STRING_DVAR', scanner.matched.substr(2)];
+    }
+    else {
+      str_buffer.push(scanner.matched);
+    }
+  }
+  else if (scanner.scan(/^#\{/)) {
+    if (interpolate) {
+      // we are into ruby code, so stop parsing content (for the moment)
+      str_parse.content = false;
+      return ['STRING_DBEG', scanner.matched];
+    }
+    else {
+      str_buffer.push(scanner.matched);
+    }
+  }
+  // causes error, so we will just collect it later on with other text
+  // else if (scanner.scan(/^#/)) {
+  //   str_buffer.push('#');
+  // }
+  
+  // content regexp (what is valid content for strings..)
+  var reg_exp = (str_parse.beg == '`') ?
+              // xstring: CAN include new lines
+              new RegExp('[^\\' + str_parse.end + '\#\0]+|.') :
+              // normal string: cannot include new lines
+              new RegExp('[^\\' + '\\' + str_parse.end + '\#\0\\\n]+|.');
+  
+  scanner.scan(reg_exp);
+  var temp_slash = scanner.matched;
+  
+  if (scanner.matched === '\\') {
+    // console.log("matched backs;ash!");
+    if (scanner.scan(new RegExp('^' + str_parse.end))) {
+      str_buffer.push(str_parse.end);
+      // console.log("finsihed backslash append");
+    }
+    else {
+      scanner.scan(reg_exp);
+      str_buffer.push(temp_slash + scanner.matched);
+    }
+  }
+  else {
+    str_buffer.push(scanner.matched);
+  }
+  
+  return ['STRING_CONTENT', str_buffer.join('')];
+};
+
+RubyParser.prototype.get_next_token = function() {
+  var string_scanner;
+  if ((string_scanner = this.current_string_parse()) && string_scanner.content){
+    return this.next_string_token();
+  }
+  
+  var scanner    = this._scanner,
+      space_seen = false,
+      c          = '',
+      cmd_start  = false;
+      
+  
+  while (true) {
+    if (scanner.scan(/^(\ |\t|\r)/)) {
+      space_seen = true;
+      continue;
+    }
+    else if (scanner.scan(/^(\n|#)/)) {
+      c = scanner.matched;
+      if (c == '#') {
+        scanner.scan(/^(.*)/);
+      }
+      else {
+        this._line_number++;
+      }
+      
+      scanner.scan(/^(\n+)/);
+      this._line_number += scanner.matched.length;
+      
+      if ([EXPR_BEG, EXPR_DOT].indexOf(this.lex_state) !== -1) {
+        continue;
+      }
+      cmd_start = true;
+      this.lex_state = EXPR_BEG;
+      return ["\\n", "\\n"];
+    }
+    
+    else if (scanner.scan(/^\;/)) {
+      this.lex_state = EXPR_BEG;
+      return [";", ";"];
+    }
+    
+    else if (scanner.scan(/^\"/)) {
+      this.push_string_parse({ beg: '"', content: true, end:'"' });
+      return ['STRING_BEG', scanner.matched];
+    }
+    else if (scanner.scan(/^\'/)) {
+      this.push_string_parse({ beg: "'", content: true, end:"'" });
+      return ['STRING_BEG', scanner.matched];
+    }
+    else if (scanner.scan(/^\`/)) {
+      this.push_string_parse({ beg: "`", content: true, end: "`" });
+      return ["XSTRING_BEG", scanner.matched];
+    }
+    else if (scanner.scan(/^\%[Ww]/)) {
+      var start_word = scanner.scan(/^./),
+          end_word   = { '(': ')', '[': ']', '{': '}'}[start_word],
+          end_word   = end_word || start_word;
+      
+      this.push_string_parse({ beg: start_word, content: true, end: end_word });
+      return ["WORDS_BEG", scanner.matched]; 
+    }
+    else if (scanner.scan(/^\%[Qq]/)) {
+      var start_word = scanner.scan(/^./),
+          end_word   = { '(': ')', '[': ']', '{': '}'}[start_word],
+          end_word   = end_word || start_word;
+      
+      this.push_string_parse({ beg: start_word, content: true, end: end_word });
+      return ["STRING_BEG", scanner.matched];
+    }
+    else if (scanner.scan(/^\%[Rr]/)) {
+      var start_word = scanner.scan(/^./),
+          end_word   = { '(': ')', '{': '}', '[': ']' }[start_word],
+          end_word   = end_word || start_word;
+      
+      this.push_string_parse({ beg: '/', content: true, end: end_word });
+      return ['REGEXP_BEG', scanner.matched];
+    }
+    
+    else if (scanner.scan(/^\//)) {
+      if (this.lex_state == EXPR_BEG || this.lex_state == EXPR_MID) {
+        this.push_string_parse({ beg: "/", content: true, end: "/" });
+        return ["REGEXP_BEG", scanner.matched];
+      }
+      else if (scanner.scan(/^\=/)) {
+        this.lex_state = EXPR_BEG;
+        return ["OP_ASGN", "/"];
+      }
+      else if (this.lex_state == EXPR_FNAME) {
+        this.lex_state = EXPR_END;
+      }
+      return ["/", scanner.matched];
+    }
+    
+    else if (scanner.scan(/^\%/)) {
+      // if (scanner.scan(/^\=/)) {
+        // this.lex_state = EXPR_BEG;
+        // return ["OP_ASGN", "%"];
+      // }
+      if (this.lex_state == EXPR_FNAME) {
+        this.lex_state = EXPR_END;
+      }
+      else {
+        this.lex_state = EXPR_BEG;
+      }
+      return ["%", '%'];
+    }
+    
+    else if (scanner.scan(/^\(/)) {
+      var result = '(';
+      if (this.lex_state == EXPR_BEG || this.lex_state == EXPR_MID) {
+        result = 'PAREN_BEG';
+      }
+      else if (space_seen) {
+        result = '(';
+      }
+      this.lex_state = EXPR_BEG;
+      this.cond_push(0);
+      this.cmdarg_push(0);
+      return [result, scanner.matched];
+    }
+    
+    else if (scanner.scan(/^\)/)) {
+      this.cond_lexpop();
+      this.cmdarg_lexpop();
+      this.lex_state = EXPR_END;
+      return [")", scanner.matched];
+    }
+    
+    else if (scanner.scan(/^\[/)) {
+      var result = scanner.matched;
+      
+      if (this.lex_state == EXPR_FNAME || this.lex_state == EXPR_DOT) {
+        this.lex_state = EXPR_ARG;
+        if (scanner.scan(/^\]\=/)) {
+          return ["[]=", "[]="];
+        }
+        else if (scanner.scan(/^\]/)) {
+          return ["[]", "[]"];
+        }
+        else {
+          throw "error - unexpected '[' token"
+        }
+      }
+      else if (this.lex_state == EXPR_BEG || this.lex_state == EXPR_MID || space_seen) {
+        this.lex_state = EXPR_BEG;
+        this.cond_push(0);
+        this.cmdarg_push(0);
+        return ["[", scanner.matched];
+      }
+      else {
+        this.lex_state = EXPR_BEG;
+        this.cond_push(0);
+        this.cmdarg_push(0);
+        return ["[@", scanner.matched];
+      }
+    }
+    
+    else if (scanner.scan(/^\]/)) {
+      this.cond_lexpop();
+      this.cmdarg_lexpop();
+      this.lex_state = EXPR_END;
+      return ["]", scanner.matched];
+    }
+    else if (scanner.scan(/^\}/)) {
+      this.cond_lexpop();
+      this.cmdarg_lexpop();
+      this.lex_state = EXPR_END;
+      
+      if (this.current_string_parse()) {
+        this.current_string_parse().content = true
+      }
+      // if (string_parse) string_parse.content = true;
+      return ["}", scanner.matched];
+    }
+    
+    else if (scanner.scan(/^\.\.\./)) {
+      this.lex_state = EXPR_BEG;
+      return ["...", scanner.matched];
+    }
+    else if (scanner.scan(/^\.\./)) {
+      this.lex_state = EXPR_BEG;
+      return ["..", scanner.matched];
+    }
+    else if (scanner.scan(/^\./)) {
+      if (this.lex_state !== EXPR_FNAME) this.lex_state = EXPR_DOT;
+      return [".", scanner.matched];
+    }
+    
+    else if (scanner.scan(/^\*\*\=/)) {
+      this.lex_state = EXPR_BEG;
+      return ["OP_ASGN", "**"];
+    }
+    else if (scanner.scan(/^\*\*/)) {
+      return ["**", "**"];
+    }
+    else if (scanner.scan(/^\*\=/)) {
+      this.lex_state = EXPR_BEG;
+      return ["OP_ASGN", "*"];
+    }
+    else if (scanner.scan(/^\*/)) {
+      if (this.lex_state == EXPR_FNAME) {
+        this.lex_state = EXPR_END;
+        return ["*", scanner.matched];
+      }
+      else if (space_seen && scanner.check(/^\S/)) {
+        this.lex_state = EXPR_BEG;
+        return ["SPLAT", scanner.matched];
+      }
+      else if (this.lex_state == EXPR_BEG || this.lex_state == EXPR_MID) {
+        this.lex_state = EXPR_BEG;
+        return ["SPLAT", scanner.matched];
+      }
+      else {
+        this.lex_state = EXPR_BEG;
+        return ["*", scanner.matched];
+      }
+    }
+    
+    else if (scanner.scan(/^\:\:/)) {
+      if ([EXPR_BEG, EXPR_MID, EXPR_CLASS].indexOf(this.lex_state) !== -1) {
+        this.lex_state = EXPR_BEG;
+        return ["::@", scanner.matched];
+      }
+      this.lex_state = EXPR_DOT;
+      return ["::", scanner.matched];
+    }
+    else if (scanner.scan(/^\:/)) {
+      if (this.lex_state == EXPR_END || this.lex_state == EXPR_ENDARG || scanner.check(/^\s/)) {
+        if (!scanner.check(/^\w/)) {
+          this.lex_state = EXPR_BEG;
+          return [":", scanner.matched];
+        }
+        
+        this.lex_state = EXPR_FNAME;
+        return ["SYMBOL_BEG", scanner.matched];
+      }
+      
+      if (scanner.scan(/^\'/)) {
+        this.push_string_parse({ beg: "'", content: true, end: "'" });
+      }
+      else if (scanner.scan(/^\"/)) {
+        this.push_string_parse({ beg: '"', content: true, end: '"' });
+      }
+      
+      this.lex_state = EXPR_FNAME;
+      return ["SYMBOL_BEG", scanner.matched];
+    }
+    
+    else if (scanner.check(/^\|/)) {
+      if (scanner.scan(/^\|\|\=/)) {
+        this.lex_state = EXPR_BEG;
+        return ["OP_ASGN", "||"];
+      }
+      else if (scanner.scan(/^\|\|/)) {
+        this.lex_state = EXPR_BEG;
+        return ["||", scanner.matched];
+      }
+      else if (scanner.scan(/^\|\=/)) {
+        this.lex_state = EXPR_BEG;
+        return ["OP_ASGN", "|"];
+      }
+      else if (scanner.scan(/^\|/)) {
+        if (this.lex_state == EXPR_FNAME) {
+          this.lex_state = EXPR_END;
+          return ["|", scanner.matched];
+        }
+        this.lex_state = EXPR_BEG;
+        return ["|", scanner.matched];
+      }
+    }
+    
+    else if (scanner.scan(/^\^/)) {
+      if (this.lex_state == EXPR_FNAME) {
+        this.lex_state = EXPR_END;
+        return ["^", scanner.matched];
+      }
+      this.lex_state = EXPR_BEG;
+      return ["^", scanner.matched];
+    }
+    
+    else if (scanner.scan(/^\&\&\=/)) {
+      this.lex_state = EXPR_BEG;
+      return ["OP_ASGN", "&&"];
+    }
+    else if (scanner.scan(/^\&\&/)) {
+      this.lex_state = EXPR_BEG;
+      return ["&&", scanner.matched];
+    }
+    else if (scanner.scan(/^\&\=/)) {
+      this.lex_state = EXPR_BEG;
+      return ["OP_ASGN", "&"];
+    }
+    else if (scanner.scan(/^\&/)) {
+      // print(this.lex_state);
+      if (space_seen && !scanner.check(/^\s/) && this.lex_state == EXPR_CMDARG){
+        return ["&@", scanner.matched];
+      }
+      else if (this.lex_state == EXPR_BEG || this.lex_state == EXPR_MID) {
+        return ["&@", scanner.matched];
+      }
+      else {
+        return ["&", scanner.matched];
+      }
+    }
+    
+    else if (scanner.scan(/^\<\<\=/)) {
+      this.lex_state = EXPR_BEG;
+      return ["OP_ASGN", "<<"];
+    }
+    else if (scanner.scan(/^\<\</)) {
+      if (this.lex_state == EXPR_FNAME) {
+        this.lex_state = EXPR_END;
+        return ["<<", "<<"];
+      }
+      if ([EXPR_END, EXPR_DOT, EXPR_ENDARG, EXPR_CLASS].indexOf(this.lex_state) == -1 && space_seen) {
+        this.lex_state = EXPR_BEG;
+        return ["<<", "<<"];
+      }
+      this.lex_state = EXPR_BEG;
+      return ["<<", "<<"];
+    }
+    else if (scanner.scan(/^\<\=\>/)) {
+      if (this.lex_state == EXPR_FNAME) this.lex_state = EXPR_END
+      else this.lex_state = EXPR_BEG;
+      return ["<=>", "<=>"];
+    }
+    else if (scanner.scan(/^\<\=/)) {
+      if (this.lex_state == EXPR_FNAME) this.lex_state = EXPR_END
+      else this.lex_state = EXPR_BEG;
+      return ["<=", "<="];
+    }
+    else if (scanner.scan(/^\</)) {
+      if (this.lex_state == EXPR_FNAME) this.lex_state = EXPR_END
+      else this.lex_state = EXPR_BEG;
+      return ["<", "<"];
+    }
+    
+    else if (scanner.scan(/^\>\=/)) {
+      if (this.lex_state == EXPR_FNAME) this.lex_state = EXPR_END
+      else this.lex_state = EXPR_BEG;
+      return [">=", scanner.matched];
+    }
+    else if (scanner.scan(/^\>\>\=/)) {
+      return ["OP_ASGN", ">>"];
+    }
+    else if (scanner.scan(/^\>\>/)) {
+      return [">>", scanner.matched];
+    }
+    else if (scanner.scan(/^\>/)) {
+      if (this.lex_state == EXPR_FNAME) this.lex_state = EXPR_END
+      else this.lex_state = EXPR_BEG;
+      return [">", ">"];
+    }
+
+    else if (scanner.scan(/^[+-]/)) {
+      var result = scanner.matched;
+      // var sign = (result == '+') ? 'UPLUS' : 'UMINUS';
+      var sign = result + '@';
+      
+      if (this.lex_state == EXPR_BEG || this.lex_state == EXPR_MID) {
+        this.lex_state = EXPR_BEG;
+        return [sign, result];
+      }
+      else if (this.lex_state == EXPR_FNAME) {
+        this.lex_state = EXPR_END;
+        if (scanner.scan(/^@/)) {
+          return ['IDENTIFIER', result + scanner.matched];
+        }
+        return [result, result];
+      }
+      
+      if (scanner.scan(/^\=/)) {
+        this.lex_state = EXPR_BEG;
+        return ["OP_ASGN", result];
+      }
+      this.lex_state = EXPR_BEG;
+      return [result, result];
+    }
+    
+    else if (scanner.scan(/^\?/)) {
+      if (this.lex_state = EXPR_END || this.lex_state == EXPR_ENDARG) {
+        this.lex_state = EXPR_BEG;
+      }
+      return ["?", scanner.matched];
+    }
+    
+    else if (scanner.scan(/^\=\=\=/)) {
+      if (this.lex_state == EXPR_FNAME) {
+        this.lex_state = EXPR_END;
+        return ["===", "==="];
+      }
+      this.lex_state = EXPR_BEG;
+      return ["===", "==="];
+    }
+    else if (scanner.scan(/^\=\=/)) {
+      if (this.lex_state == EXPR_FNAME) {
+        this.lex_state = EXPR_END;
+        return ["==", "=="];
+      }
+      this.lex_state = EXPR_BEG;
+      return ["==", "=="];
+    }
+    else if (scanner.scan(/^\=\~/)) {
+      if (this.lex_state == EXPR_FNAME) {
+        this.lex_state = EXPR_END;
+        return ["=~", "=~"];
+      }
+      this.lex_state = EXPR_BEG;
+      return ["=~", "=~"];
+    }
+    else if (scanner.scan(/^\=\>/)) {
+      this.lex_state = EXPR_BEG;
+      return ["=>", scanner.matched];
+    }
+    else if (scanner.scan(/^\=/)) {
+      this.lex_state = EXPR_BEG;
+      return ["=", "="];
+    }
+    
+    else if (scanner.scan(/^\!\=/)) {
+      if (this.lex_state == EXPR_FNAME) {
+        this.lex_state = EXPR_END;
+        return ["!=", "!="];
+      }
+      this.lex_state = EXPR_BEG;
+      return ["!=", scanner.matched];
+    }
+    else if (scanner.scan(/^\!\~/)) {
+      if (this.lex_state == EXPR_FNAME) {
+        this.lex_state = EXPR_END;
+        return ["!~", "!~"];
+      }
+      this.lex_state = EXPR_BEG;
+      return ["!~", "!~"];
+    }
+    else if (scanner.scan(/^\!/)) {
+      if (this.lex_state == EXPR_FNAME) {
+        this.lex_state = EXPR_END;
+        return ["!", "!"];
+      }
+      this.lex_state = EXPR_BEG;
+      return ["!", "!"];
+    }
+    
+    else if (scanner.scan(/^\~/)) {
+      if (this.lex_state == EXPR_FNAME) {
+        this.lex_state = EXPR_END;
+        return ["~", "~"];
+      }
+      this.lex_state = EXPR_BEG;
+      return ["~", "~"];
+    }
+    
+    // FIXME: do we really need to differentiate between these. generates the
+    // same code. our checks will be in the gvar getters (for the relative 
+    // parts..)
+    // 
+    // else if (scanner.scan(/^\$([1-9]\d*)/)) {
+    //   this.lex_state = EXPR_END;
+    //   return ["NTH_REF", scanner.matched];
+    // }
+    // else if (scanner.scan(/^\$([\+\'\&\`])/)) {
+    //   this.lex_state = EXPR_END;
+    //   return ["BACK_REF", scanner.matched];
+    // }
+    // else if (scanner.scan(/^\$[!@\"~*$?\/\\:;=.,<>_]/)) {
+    //   this.lex_state = EXPR_END;
+    //   return ["GVAR", scanner.matched];
+    // }
+    else if (scanner.scan(/^\$[\+\'\`\&!@\"~*$?\/\\:;=.,<>_]/)) {
+      this.lex_state = EXPR_END;
+      return ["GVAR", scanner.matched];
+    }
+    else if (scanner.scan(/^\$\w+/)) {
+      this.lex_state = EXPR_END;
+      return ["GVAR", scanner.matched];
+    }
+    else if (scanner.scan(/^\@\@\w*/)) {
+      this.lex_state = EXPR_END;
+      return ["CVAR", scanner.matched];
+    }
+    else if (scanner.scan(/^\@\w*/)) {
+      this.lex_state = EXPR_END;
+      return ["IVAR", scanner.matched];
+    }
+    
+    else if (scanner.scan(/^\,/)) {
+      this.lex_state = EXPR_BEG;
+      return [",", scanner.matched];
+    }
+    
+    else if (scanner.scan(/^\{/)) {
+      var result;
+      // print(this.lex_state);
+      if (this.lex_state == EXPR_END || this.lex_state == EXPR_CMDARG) {
+        result = '{@';
+      }
+      else if (this.lex_state == EXPR_ENDARG) {
+        result = 'LBRACE_ARG';
+      }
+      else {
+        result = '{';
+      }
+      
+      this.lex_state = EXPR_BEG;
+      this.cond_push(0);
+      this.cmdarg_push(0);
+      
+      return [result, scanner.matched];
+    }
+    
+    else if (scanner.check(/^[0-9]/)) {
+      this.lex_state = EXPR_END;
+      if (scanner.scan(/^[\d_]+\.[\d_]+\b/)) {
+        return ['FLOAT', scanner.matched.replace(/_/g, '')];
+      }
+      else if (scanner.scan(/^[\d_]+\b/)) {
+        return ['INTEGER', scanner.matched.replace(/_/g, '')];
+      }
+      else if (scanner.scan(/^0(x|X)(\d|[a-f]|[A-F])+/)) {
+        return ['INTEGER', scanner.matched.replace(/_/g, '')];
+      }
+      else {
+        // console.log('unexpected number type');
+        return [false, false];
+      }
+    }
+    
+    else if (scanner.scan(/^(\w)+[\?\!]?/)) {
+      switch (scanner.matched) {
+        case 'class':
+          if (this.lex_state == EXPR_DOT) return ["IDENTIFIER", scanner.matched];
+          this.lex_state = EXPR_CLASS;
+          return ["CLASS", scanner.matched];
+        case 'module':
+          if (this.lex_state == EXPR_DOT) return ["IDENITFIER", scanner.matched];
+          this.lex_state = EXPR_CLASS;
+          return ["MODULE", scanner.matched];
+        case 'def':
+          this.lex_state = EXPR_FNAME;
+          return ["DEF", scanner.matched];
+        case 'end':
+          this.lex_state = EXPR_END;
+          return ["END", scanner.matched];
+        
+        case 'do':
+          if (this.cond_p()) {
+            this.lex_state = EXPR_BEG;
+            return ["DO_COND", scanner.matched];
+          }
+          else if (this.cmdarg_p() && this.lex_state != EXPR_CMDARG) {
+            this.lex_state = EXPR_BEG;
+            return ["DO_BLOCK", scanner.matched];
+          }
+
+          else if (this.lex_state == EXPR_ENDARG) {
+            return ["DO_BLOCK", scanner.matched];
+          }
+          else {
+            this.lex_state = EXPR_BEG;
+            return ["DO", scanner.matched];
+          }
+            
+            // this.lex_state = EXPR_BEG;
+            // return ["DO", scanner.matched];
+          // }
+          // this.lex_state = EXPR_BEG;
+          // return ["DO_BLOCK", scanner.matched];
+        case 'if':
+          if (this.lex_state == EXPR_BEG) return ["IF", scanner.matched];
+          this.lex_state = EXPR_BEG;
+          return ["IF_MOD", scanner.matched];
+        case 'unless':
+          if (this.lex_state == EXPR_BEG) return ["UNLESS", scanner.matched];
+          this.lex_state = EXPR_BEG;
+          return ["UNLESS_MOD", scanner.matched];
+        case 'else':
+          return ["ELSE", scanner.matched];
+        case 'elsif':
+          return ["ELSIF", scanner.matched];
+        case 'self':
+          if (this.lex_state !== EXPR_FNAME) this.lex_state = EXPR_END;
+          return ["SELF", scanner.matched];
+        case 'true':
+          this.lex_state = EXPR_END;
+          return ["TRUE", scanner.matched];
+        case 'false':
+          this.lex_state = EXPR_END;
+          return ["FALSE", scanner.matched];
+        case 'nil':
+          this.lex_state = EXPR_END;
+          return ["NIL", scanner.matched];
+        case '__LINE__':
+          this.lex_state = EXPR_END;
+          return ["LINE", this._line_number.toString()];
+        case '__FILE__':
+          this.lex_state = EXPR_END;
+          return ["FILE", scanner.matched];
+        case 'begin':
+          this.lex_state = EXPR_BEG;
+          return ["BEGIN", scanner.matched];
+        case 'rescue':
+        if (this.lex_state == EXPR_DOT || this.lex_state == EXPR_FNAME) return ["IDENTIFIER", scanner.matched];
+          if (this.lex_state == EXPR_BEG) return ["RESCUE", scanner.matched];
+          this.lex_state = EXPR_BEG;
+          return ["RESCUE_MOD", scanner.matched];
+        case 'ensure':
+          this.lex_state = EXPR_BEG;
+          return ["ENSURE", scanner.matched];
+        case 'case':
+          this.lex_state = EXPR_BEG;
+          return ["CASE", scanner.matched];
+        case 'when':
+          this.lex_state = EXPR_BEG;
+          return ["WHEN", scanner.matched];
+        case 'or':
+          this.lex_state = EXPR_BEG;
+          return ["OR", scanner.matched];
+        case 'and':
+          this.lex_state = EXPR_BEG;
+          return ["AND", scanner.matched];
+        case 'not':
+          this.lex_state = EXPR_BEG;
+          return ["NOT", scanner.matched];
+        case 'return':
+          this.lex_state = EXPR_MID;
+          return ["RETURN", scanner.matched];
+        case 'next':
+          if (this.lex_state == EXPR_DOT) return ["IDENTIFIER", scanner.matched];
+          this.lex_state = EXPR_MID;
+          return ["NEXT", scanner.matched];
+        case 'break':
+          this.lex_state = EXPR_MID;
+          return ["BREAK", scanner.matched];
+        case 'super':
+          this.lex_state = EXPR_ARG;
+          return ["SUPER", scanner.matched];
+        case 'then':
+          return ["THEN", scanner.matched];
+        case 'while':
+          if (this.lex_state == EXPR_BEG) return ["WHILE", scanner.matched];
+          this.lex_state = EXPR_BEG;
+          return ["WHILE_MOD", scanner.matched];
+        case 'until':
+          // generator determines between while and until (mod)
+          if (this.lex_state == EXPR_BEG) return ["WHILE", scanner.matched];
+          this.lex_state = EXPR_BEG;
+          return ["WHILE_MOD", scanner.matched];
+        case 'block_given?':
+          this.lex_state = EXPR_END;
+          return ["BLOCK_GIVEN", scanner.matched];
+        case 'yield':
+          this.lex_state = EXPR_ARG;
+          return ["YIELD", scanner.matched];
+        // case 'require':
+          // if (this.lex_state == EXPR_DOT || this.lex_state == EXPR_FNAME) {
+            // return ["IDENTIFIER", scanner.matched];
+          // }
+          // this.lex_state = EXPR_MID;
+          // return ['REQUIRE', scanner.matched];
+      }
+      
+      var matched = scanner.matched;
+      
+      if (scanner.peek(2) !== '::' && scanner.scan(/^\:/)) {
+        return["LABEL", matched];
+      }
+      
+      if (this.lex_state == EXPR_FNAME) {
+        if (scanner.scan(/^=/)) {
+          this.lex_state = EXPR_END;
+          return ["IDENTIFIER", matched + scanner.matched];
+        }
+        
+        // this.lex_state = EXPR_END;
+        // return ["IDENTIFIER", matched];
+      }
+      
+      // IDENTIFIER2, when we have identifer() .. when we dont preceed identifier
+      // with :: or .
+      // this makes our parser easier and removes conflicts
+      // if (this.lex_state !== EXPR_DOT && scanner.peek(1) == '(') {
+        // this.lex_state = EXPR_CMDARG;
+        // return ["IDENTIFIER2", matched];
+      // }
+      
+      if ([EXPR_BEG, EXPR_DOT, EXPR_MID, EXPR_ARG, EXPR_CMDARG].indexOf(this.lex_state) !== -1) {
+        this.lex_state = EXPR_CMDARG;
+      }
+      else {
+        this.lex_state = EXPR_END;
+      }
+      
+      return [/^[A-Z]/.exec(matched) ? "CONSTANT" : "IDENTIFIER", matched];
+    }
+    
+    else {
+      
+      return [false, false];
+    }
+    
+    return [false, false];
+  }
+};
 
 
-/*
-  Simply call a method on the receiver. Method MUST exist
-*/
 
+exports.RubyParser = new RubyParser();
 
-
-/*
- * try calling method that might not exist - supports method_missing
- */
-
-
-
-/**
-	Ensure that the args given to a js function exactly equals the given count.
-*/
-
-
-
-
-
-/**
-	Ensure that the args given to a js function is atleast the given num
-*/
-
-
-
-
-
-/*
-  For loops in JS that take the place of while loops in ruby, we need to 
-  capture all the break, next and return throws and deal with them appropriately
-*/
-
-
-
-/*
-  Keywords:
-    0 (return) -
-    1 (return) - 
-    2 (break)  - simply return the break value back to the method it was called
-                 from.
-    3 (next)   - 
-*/
-/**
-  All files needed for development (platform independant)
-*/
+};
+modules["./ruby_parser"] = function(exports, module) {
 var RubyParser = (function() {
 var parser = function() {
+  
 };
+
 parser.prototype.do_parse = function() {
   return this.do_parse_js(parser.Racc_arg, false);
 };
+
 parser.prototype.do_parse_js = function(arg, in_debug) {
-  var action_table = arg[0],
-      action_check = arg[1],
-      action_default = arg[2],
-      action_pointer = arg[3],
-      goto_table = arg[4],
-      goto_check = arg[5],
-      goto_default = arg[6],
-      goto_pointer = arg[7],
-      nt_base = arg[8],
-      reduce_table = arg[9],
-      token_table = arg[10],
-      shift_n = arg[11],
-      reduce_n = arg[12],
-      use_result = arg[13];
+  var action_table    = arg[0],
+      action_check    = arg[1],
+      action_default  = arg[2],
+      action_pointer  = arg[3],
+      
+      goto_table      = arg[4],
+      goto_check      = arg[5],
+      goto_default    = arg[6],
+      goto_pointer    = arg[7],
+      
+      nt_base         = arg[8],
+      reduce_table    = arg[9],
+      token_table     = arg[10],
+      shift_n         = arg[11],
+      reduce_n        = arg[12],
+      
+      use_result      = arg[13];
+  
   // racc sys vars
-  var racc_state = [0],
-      racc_tstack = [],
-      racc_vstack = [],
-      racc_t = null,
-      racc_tok = null,
-      racc_val = null,
-      racc_read_next = true,
+  var racc_state      = [0],
+      racc_tstack     = [],
+      racc_vstack     = [],
+      
+      racc_t          = null,
+      racc_tok        = null,
+      racc_val        = null,
+      racc_read_next  = true,
+      
       racc_user_yyerror = false,
       racc_error_status = 0;
+  
   var token = null, act = null, i = null, nerr = 0, curstate = null;
+  
   while (true) {
   //  console.log('looping');
     if ((i = action_pointer[racc_state[racc_state.length - 1]]) !== null) {
@@ -125,7 +1006,9 @@ parser.prototype.do_parse_js = function(arg, in_debug) {
           token = this.next_token();
           racc_tok = token[0];
           racc_val = token[1];
+          
         //  console.log('token is: ' + token.join(','));
+          
           if (!racc_tok) { // EOF
             racc_t = 0;
           }
@@ -133,12 +1016,17 @@ parser.prototype.do_parse_js = function(arg, in_debug) {
             racc_t = token_table[racc_tok];
             if (racc_t === undefined) racc_t = 1;
           }
+          
         //  console.log('racc_t: ' + racc_t);
+          
           racc_read_next = false;
         }
       }
+            
       i += racc_t;
+      
     //  console.log('i is now ' + i);
+      
       if ((i < 0) || ((act = action_table[i]) === null) || (action_check[i] !== racc_state[racc_state.length - 1])) {
         act = action_default[racc_state[racc_state.length - 1]];
       }
@@ -146,10 +1034,13 @@ parser.prototype.do_parse_js = function(arg, in_debug) {
     else {
       act = action_default[racc_state[racc_state.length - 1]];
     }
+    
   //  console.log('act is: ' + act);
+    
     // ================
     // = racc_evalact =
     // ================
+    
     if (act > 0 && act < shift_n) {
     //  console.log('shift on ' + act);
       // 
@@ -163,6 +1054,7 @@ parser.prototype.do_parse_js = function(arg, in_debug) {
           racc_error_status -= 1;
         }
       }
+      
       racc_vstack.push(racc_val);
       curstate = act;
       racc_state.push(act);
@@ -173,13 +1065,15 @@ parser.prototype.do_parse_js = function(arg, in_debug) {
       // 
       // reduce
       // 
-      var reduce_i = act * -3,
-          reduce_len = reduce_table[reduce_i],
-          reduce_to = reduce_table[reduce_i + 1],
-          method_id = reduce_table[reduce_i + 2];
+      var reduce_i    = act * -3,
+          reduce_len  = reduce_table[reduce_i],
+          reduce_to   = reduce_table[reduce_i + 1],
+          method_id   = reduce_table[reduce_i + 2];
+      
       var tmp_v = racc_vstack.slice(racc_vstack.length - reduce_len);
     //  console.log('reduce len is: ' + reduce_len);
     //  console.log('tmp_v is: ' + tmp_v.join(', '));
+      
       // pop for number of reductions
       while(reduce_len--) {
       //  console.log('popping: ' + reduce_len);
@@ -187,6 +1081,7 @@ parser.prototype.do_parse_js = function(arg, in_debug) {
         racc_vstack.pop();
         racc_tstack.pop();
       }
+      
       if (use_result) {
         // msgsend..we push on result of method call..?
       //  console.log('reducing: ' + method_id);
@@ -202,12 +1097,16 @@ parser.prototype.do_parse_js = function(arg, in_debug) {
       else {
         throw "not using result?!?!?!?!?!";
       }
+      
       racc_tstack.push(reduce_to);
+      
     //  console.log('VSTACK: [' + racc_vstack.join(', ') + ']');
+      
       var k1 = reduce_to - nt_base;
     //  console.log('k1 is ' +k1);
     //  console.log("goto pointer is: " + goto_pointer[k1]);
       if ((reduce_i = goto_pointer[k1]) !== null) {
+        
         reduce_i += racc_state[racc_state.length - 1];
       //  console.log("reduce_i is now: " + reduce_i);
       //  console.log("-- potential curstate is: " + goto_table[reduce_i]);
@@ -226,11 +1125,13 @@ parser.prototype.do_parse_js = function(arg, in_debug) {
         }
         // tmp_v is return value from stack
         // racc_vstack.push(tmp_v[0]);
+        
       }
       else {
       //  console.log('GOTO default down here init!!!!!!!!!!!');
         racc_state.push(goto_default[k1]);
       }
+      
       // return;
     }
     else if (act === shift_n) {
@@ -255,16 +1156,20 @@ parser.prototype.do_parse_js = function(arg, in_debug) {
     else {
       throw "Racc - unknown action: " + act;
     }
+    
     // return;
-  }
+  }  
 };
+
 // default next token implementation
 parser.prototype.next_token = function() {
   throw "next_token is not defined for parser."
 };
+
 parser.prototype.yyerror = function(err) {
   throw "yyerror: " + err;
 };
+
 parser.prototype._reduce_none = function(val, result) {
   return result;
 };
@@ -275,7 +1180,7 @@ parser.Racc_arg = [
           return result;
         };
         parser.prototype._reduce_2 = function(val, result) {
-          result = ['bodystmt', val[0], val[1], val[2], val[3]];
+          result =                                ['bodystmt', val[0], val[1], val[2], val[3]];
           return result;
         };
         parser.prototype._reduce_3 = function(val, result) {
@@ -719,7 +1624,7 @@ parser.Racc_arg = [
           return result;
         };
         parser.prototype._reduce_300 = function(val, result) {
-          result = ['def', val[1], val[3], val[4], val[5]];
+          result =                                 ['def', val[1], val[3], val[4], val[5]];
           return result;
         };
         parser.prototype._reduce_301 = function(val, result) {
@@ -735,7 +1640,7 @@ parser.Racc_arg = [
           return result;
         };
         parser.prototype._reduce_314 = function(val, result) {
-          result = [['elsif', val[1], val[3]]].concat(val[4]);
+          result =                         [['elsif', val[1], val[3]]].concat(val[4]);
           return result;
         };
         parser.prototype._reduce_315 = function(val, result) {
@@ -811,6 +1716,7 @@ parser.Racc_arg = [
           return result;
         };
         parser.prototype._reduce_333 = function(val, result) {
+          
           return result;
         };
         parser.prototype._reduce_334 = function(val, result) {
@@ -862,7 +1768,7 @@ parser.Racc_arg = [
           return result;
         };
         parser.prototype._reduce_352 = function(val, result) {
-          result = [['rescue', val[1], val[2], val[4]]].concat(val[5]);
+          result =                         [['rescue', val[1], val[2], val[4]]].concat(val[5]);
           return result;
         };
         parser.prototype._reduce_353 = function(val, result) {
@@ -918,7 +1824,7 @@ parser.Racc_arg = [
           return result;
         };
         parser.prototype._reduce_388 = function(val, result) {
-          this.cond_lexpop(); this.cmdarg_lexpop(); result = ['string_dbegin', val[2]];
+          this.cond_lexpop(); this.cmdarg_lexpop();                        result = ['string_dbegin', val[2]];
           return result;
         };
         parser.prototype._reduce_393 = function(val, result) {
@@ -1042,19 +1948,19 @@ parser.Racc_arg = [
           return result;
         };
         parser.prototype._reduce_434 = function(val, result) {
-          this.yyerror( 'formal argument cannot be a constant');
+          this.yyerror(                        'formal argument cannot be a constant');
           return result;
         };
         parser.prototype._reduce_435 = function(val, result) {
-          this.yyerror( 'formal argument cannot be an instance variable');
+          this.yyerror(                        'formal argument cannot be an instance variable');
           return result;
         };
         parser.prototype._reduce_436 = function(val, result) {
-          this.yyerror( 'formal argument cannot be a class variable');
+          this.yyerror(                        'formal argument cannot be a class variable');
           return result;
         };
         parser.prototype._reduce_437 = function(val, result) {
-          this.yyerror( 'formal argument cannot be a global variable');
+          this.yyerror(                        'formal argument cannot be a global variable');
           return result;
         };
         parser.prototype._reduce_439 = function(val, result) {
@@ -1131,850 +2037,14 @@ parser.Racc_arg = [
         };
    return parser;
       })();
+      
       if (typeof require !== 'undefined' && typeof module !== 'undefined') {
         exports.RubyParser = RubyParser;
       }
-// if (typeof require !== 'undefined') {
-//   var RubyParser    = require('./ruby_parser').RubyParser,
-//       // Lexer         = require('./lexer').Lexer,
-//       StringScanner = require('./string_scanner').StringScanner;
-// } else {
-//   // var RubyParser = parser;
-// }
-exports.compile = function(source) {
-  var nodes = exports.RubyParser.parse(source);
-  // print('nodes are:');
-  // print(nodes);
-  // print('generating:');
-  var g = new RubyGenerator(nodes, {});
-  var res = g.generate_main_context();
-  // print("GOT RESULT");
-  // print(res[0]);
-  // print('WOWOWOWOWOWOWOW');
-  return res[0];
+    
+
 };
-var EXPR_BEG = 0, EXPR_END = 1, EXPR_ENDARG = 2, EXPR_ARG = 3,
-    EXPR_CMDARG = 4, EXPR_MID = 5, EXPR_FNAME = 6, EXPR_DOT = 7,
-    EXPR_CLASS = 8, EXPR_VALUE = 9;
-RubyParser.prototype.parse = function(source) {
-  // print('1. Lexing...');
-  var token;
-  this._string = source;
-  this._scanner = new StringScanner(source);
-  this.lex_state = EXPR_BEG;
-  this._tokens = [];
-  this._string_parse_stack = [];
-  this._line_number = 1;
-  // cond stack
-  this._cond = 0;
-  // cmd arg stack
-  this._cmdarg = 0;
-  // while ((token = this.next_token()) && token[0] !== false) {
-    // token[2] = this._line_number;
-    // this._tokens.push(token);
-  // } 
-  // console.log("## Pre Optimize:\n");
-  // for (var i = 0; i < this._tokens.length; i++) {
-  //   console.log(this._tokens[i]);
-  // }
-  // 
-  // this._tokens = new Optimizer(this._tokens).optimize();
-  // console.log("\n## Post Optimize:\n")
-  // for (var i = 0; i < this._tokens.length; i++) {
-    // console.log(this._tokens[i]);
-  // }
-  // console.log("\n");
-  // return this._tokens;
-  // print('parsing some codeeeeez');
-  // print('1. lexing');
-  // this._lexer = new Lexer();
-  // this._tokens = this._lexer.tokenize(source + '\n');
-  // add [false, false] to singnify EOF
-  // this._tokens.push([false, false]);
-  // print(this._tokens);
-  // print('2. parsing');
-  var result = this.do_parse();
-  // print(result);
-  return result;
-};
-RubyParser.prototype.next_token = function() {
-  var token = this.get_next_token();
-  // print('[' + token.join(', ') + '] - ' + this._line_number);
-  return token;
-};
-RubyParser.prototype.cond_push = function(n) {
-  // print('cond_push ' + n);
-  return this._cond = (this._cond << 1) | ((n) & 1);
-};
-RubyParser.prototype.cond_pop = function() {
-  // print('cond_pop');
-  return this._cond = this._cond >> 1;
-};
-RubyParser.prototype.cond_lexpop = function() {
-  // print('cond_lexpop');
-  return this._cond = (this._cond >> 1) | (this._cond & 1);
-};
-RubyParser.prototype.cond_p = function() {
-  // print('cond_p');
-  return this._cond & 1;
-};
-RubyParser.prototype.cmdarg_push = function(n) {
-  // print('cmdarg_push ' + n);
-  return this._cmdarg = (this._cmdarg << 1) | ((n) & 1);
-};
-RubyParser.prototype.cmdarg_pop = function() {
-  // print('cmdarg_pop');
-  return this._cmdarg = this._cmdarg >> 1;
-};
-RubyParser.prototype.cmdarg_lexpop = function() {
-  // print('cmdarg_lexpop');
-  return this._cmdarg = (this._cmdarg >> 1) | (this._cmdarg & 1);
-};
-RubyParser.prototype.cmdarg_p = function() {
-  // print('cmdarg_p');
-  return this._cmdarg & 1;
-};
-RubyParser.prototype.current_string_parse = function() {
-  if (this._string_parse_stack.length == 0) return null;
-  return this._string_parse_stack[this._string_parse_stack.length - 1];
-};
-RubyParser.prototype.push_string_parse = function(o) {
-  this._string_parse_stack.push(o);
-};
-RubyParser.prototype.pop_string_parse = function() {
-  this._string_parse_stack.pop();
-};
-RubyParser.prototype.next_string_token = function() {
-  var str_parse = this.current_string_parse(), scanner = this._scanner;
-  var interpolate = (str_parse.beg !== "'");
-  // print("string end is " + str_parse.end);
-  // see if we can read end of string/xstring/regexp markers
-  if (scanner.scan( new RegExp('^\\' + str_parse.end))) {
-    this.pop_string_parse();
-    if (str_parse.beg == '"' || str_parse.beg == "'") {
-      this.lex_state = EXPR_END;
-      return ['STRING_END', scanner.matched];
-    }
-    else if (str_parse.beg == '`') {
-      // assume to be xstring
-      this.lex_state = EXPR_END;
-      return ['STRING_END', scanner.matched];
-    }
-    else if (str_parse.beg == '/') {
-      var result = "";
-      if (scanner.scan(/^\w+/)) {
-        result = scanner.matched;
-      }
-      this.lex_state = EXPR_END;
-      return ['REGEXP_END', result];
-    }
-    // else if (str_parse.end == '}') {
-    else { // words?
-      this.lex_state = EXPR_END;
-      return ['STRING_END', scanner.matched];
-    }
-    // else {
-      // throw "unknown string ending"
-    // }
-  }
-  // not end of string, so we must be parsing contents
-  var str_buffer = [];
-  if (scanner.scan(/^#(\$|\@)\w+/)) {
-    if (interpolate) {
-      return ['STRING_DVAR', scanner.matched.substr(2)];
-    }
-    else {
-      str_buffer.push(scanner.matched);
-    }
-  }
-  else if (scanner.scan(/^#\{/)) {
-    if (interpolate) {
-      // we are into ruby code, so stop parsing content (for the moment)
-      str_parse.content = false;
-      return ['STRING_DBEG', scanner.matched];
-    }
-    else {
-      str_buffer.push(scanner.matched);
-    }
-  }
-  // causes error, so we will just collect it later on with other text
-  // else if (scanner.scan(/^#/)) {
-  //   str_buffer.push('#');
-  // }
-  // content regexp (what is valid content for strings..)
-  var reg_exp = (str_parse.beg == '`') ?
-              // xstring: CAN include new lines
-              new RegExp('[^\\' + str_parse.end + '\#\0]+|.') :
-              // normal string: cannot include new lines
-              new RegExp('[^\\' + '\\' + str_parse.end + '\#\0\\\n]+|.');
-  scanner.scan(reg_exp);
-  var temp_slash = scanner.matched;
-  if (scanner.matched === '\\') {
-    // console.log("matched backs;ash!");
-    if (scanner.scan(new RegExp('^' + str_parse.end))) {
-      str_buffer.push(str_parse.end);
-      // console.log("finsihed backslash append");
-    }
-    else {
-      scanner.scan(reg_exp);
-      str_buffer.push(temp_slash + scanner.matched);
-    }
-  }
-  else {
-    str_buffer.push(scanner.matched);
-  }
-  return ['STRING_CONTENT', str_buffer.join('')];
-};
-RubyParser.prototype.get_next_token = function() {
-  var string_scanner;
-  if ((string_scanner = this.current_string_parse()) && string_scanner.content){
-    return this.next_string_token();
-  }
-  var scanner = this._scanner,
-      space_seen = false,
-      c = '',
-      cmd_start = false;
-  while (true) {
-    if (scanner.scan(/^(\ |\t|\r)/)) {
-      space_seen = true;
-      continue;
-    }
-    else if (scanner.scan(/^(\n|#)/)) {
-      c = scanner.matched;
-      if (c == '#') {
-        scanner.scan(/^(.*)/);
-      }
-      else {
-        this._line_number++;
-      }
-      scanner.scan(/^(\n+)/);
-      this._line_number += scanner.matched.length;
-      if ([EXPR_BEG, EXPR_DOT].indexOf(this.lex_state) !== -1) {
-        continue;
-      }
-      cmd_start = true;
-      this.lex_state = EXPR_BEG;
-      return ["\\n", "\\n"];
-    }
-    else if (scanner.scan(/^\;/)) {
-      this.lex_state = EXPR_BEG;
-      return [";", ";"];
-    }
-    else if (scanner.scan(/^\"/)) {
-      this.push_string_parse({ beg: '"', content: true, end:'"' });
-      return ['STRING_BEG', scanner.matched];
-    }
-    else if (scanner.scan(/^\'/)) {
-      this.push_string_parse({ beg: "'", content: true, end:"'" });
-      return ['STRING_BEG', scanner.matched];
-    }
-    else if (scanner.scan(/^\`/)) {
-      this.push_string_parse({ beg: "`", content: true, end: "`" });
-      return ["XSTRING_BEG", scanner.matched];
-    }
-    else if (scanner.scan(/^\%[Ww]/)) {
-      var start_word = scanner.scan(/^./),
-          end_word = { '(': ')', '[': ']', '{': '}'}[start_word],
-          end_word = end_word || start_word;
-      this.push_string_parse({ beg: start_word, content: true, end: end_word });
-      return ["WORDS_BEG", scanner.matched];
-    }
-    else if (scanner.scan(/^\%[Qq]/)) {
-      var start_word = scanner.scan(/^./),
-          end_word = { '(': ')', '[': ']', '{': '}'}[start_word],
-          end_word = end_word || start_word;
-      this.push_string_parse({ beg: start_word, content: true, end: end_word });
-      return ["STRING_BEG", scanner.matched];
-    }
-    else if (scanner.scan(/^\%[Rr]/)) {
-      var start_word = scanner.scan(/^./),
-          end_word = { '(': ')', '{': '}', '[': ']' }[start_word],
-          end_word = end_word || start_word;
-      this.push_string_parse({ beg: '/', content: true, end: end_word });
-      return ['REGEXP_BEG', scanner.matched];
-    }
-    else if (scanner.scan(/^\//)) {
-      if (this.lex_state == EXPR_BEG || this.lex_state == EXPR_MID) {
-        this.push_string_parse({ beg: "/", content: true, end: "/" });
-        return ["REGEXP_BEG", scanner.matched];
-      }
-      else if (scanner.scan(/^\=/)) {
-        this.lex_state = EXPR_BEG;
-        return ["OP_ASGN", "/"];
-      }
-      else if (this.lex_state == EXPR_FNAME) {
-        this.lex_state = EXPR_END;
-      }
-      return ["/", scanner.matched];
-    }
-    else if (scanner.scan(/^\%/)) {
-      // if (scanner.scan(/^\=/)) {
-        // this.lex_state = EXPR_BEG;
-        // return ["OP_ASGN", "%"];
-      // }
-      if (this.lex_state == EXPR_FNAME) {
-        this.lex_state = EXPR_END;
-      }
-      else {
-        this.lex_state = EXPR_BEG;
-      }
-      return ["%", '%'];
-    }
-    else if (scanner.scan(/^\(/)) {
-      var result = '(';
-      if (this.lex_state == EXPR_BEG || this.lex_state == EXPR_MID) {
-        result = 'PAREN_BEG';
-      }
-      else if (space_seen) {
-        result = '(';
-      }
-      this.lex_state = EXPR_BEG;
-      this.cond_push(0);
-      this.cmdarg_push(0);
-      return [result, scanner.matched];
-    }
-    else if (scanner.scan(/^\)/)) {
-      this.cond_lexpop();
-      this.cmdarg_lexpop();
-      this.lex_state = EXPR_END;
-      return [")", scanner.matched];
-    }
-    else if (scanner.scan(/^\[/)) {
-      var result = scanner.matched;
-      if (this.lex_state == EXPR_FNAME || this.lex_state == EXPR_DOT) {
-        this.lex_state = EXPR_ARG;
-        if (scanner.scan(/^\]\=/)) {
-          return ["[]=", "[]="];
-        }
-        else if (scanner.scan(/^\]/)) {
-          return ["[]", "[]"];
-        }
-        else {
-          throw "error - unexpected '[' token"
-        }
-      }
-      else if (this.lex_state == EXPR_BEG || this.lex_state == EXPR_MID || space_seen) {
-        this.lex_state = EXPR_BEG;
-        this.cond_push(0);
-        this.cmdarg_push(0);
-        return ["[", scanner.matched];
-      }
-      else {
-        this.lex_state = EXPR_BEG;
-        this.cond_push(0);
-        this.cmdarg_push(0);
-        return ["[@", scanner.matched];
-      }
-    }
-    else if (scanner.scan(/^\]/)) {
-      this.cond_lexpop();
-      this.cmdarg_lexpop();
-      this.lex_state = EXPR_END;
-      return ["]", scanner.matched];
-    }
-    else if (scanner.scan(/^\}/)) {
-      this.cond_lexpop();
-      this.cmdarg_lexpop();
-      this.lex_state = EXPR_END;
-      if (this.current_string_parse()) {
-        this.current_string_parse().content = true
-      }
-      // if (string_parse) string_parse.content = true;
-      return ["}", scanner.matched];
-    }
-    else if (scanner.scan(/^\.\.\./)) {
-      this.lex_state = EXPR_BEG;
-      return ["...", scanner.matched];
-    }
-    else if (scanner.scan(/^\.\./)) {
-      this.lex_state = EXPR_BEG;
-      return ["..", scanner.matched];
-    }
-    else if (scanner.scan(/^\./)) {
-      if (this.lex_state !== EXPR_FNAME) this.lex_state = EXPR_DOT;
-      return [".", scanner.matched];
-    }
-    else if (scanner.scan(/^\*\*\=/)) {
-      this.lex_state = EXPR_BEG;
-      return ["OP_ASGN", "**"];
-    }
-    else if (scanner.scan(/^\*\*/)) {
-      return ["**", "**"];
-    }
-    else if (scanner.scan(/^\*\=/)) {
-      this.lex_state = EXPR_BEG;
-      return ["OP_ASGN", "*"];
-    }
-    else if (scanner.scan(/^\*/)) {
-      if (this.lex_state == EXPR_FNAME) {
-        this.lex_state = EXPR_END;
-        return ["*", scanner.matched];
-      }
-      else if (space_seen && scanner.check(/^\S/)) {
-        this.lex_state = EXPR_BEG;
-        return ["SPLAT", scanner.matched];
-      }
-      else if (this.lex_state == EXPR_BEG || this.lex_state == EXPR_MID) {
-        this.lex_state = EXPR_BEG;
-        return ["SPLAT", scanner.matched];
-      }
-      else {
-        this.lex_state = EXPR_BEG;
-        return ["*", scanner.matched];
-      }
-    }
-    else if (scanner.scan(/^\:\:/)) {
-      if ([EXPR_BEG, EXPR_MID, EXPR_CLASS].indexOf(this.lex_state) !== -1) {
-        this.lex_state = EXPR_BEG;
-        return ["::@", scanner.matched];
-      }
-      this.lex_state = EXPR_DOT;
-      return ["::", scanner.matched];
-    }
-    else if (scanner.scan(/^\:/)) {
-      if (this.lex_state == EXPR_END || this.lex_state == EXPR_ENDARG || scanner.check(/^\s/)) {
-        if (!scanner.check(/^\w/)) {
-          this.lex_state = EXPR_BEG;
-          return [":", scanner.matched];
-        }
-        this.lex_state = EXPR_FNAME;
-        return ["SYMBOL_BEG", scanner.matched];
-      }
-      if (scanner.scan(/^\'/)) {
-        this.push_string_parse({ beg: "'", content: true, end: "'" });
-      }
-      else if (scanner.scan(/^\"/)) {
-        this.push_string_parse({ beg: '"', content: true, end: '"' });
-      }
-      this.lex_state = EXPR_FNAME;
-      return ["SYMBOL_BEG", scanner.matched];
-    }
-    else if (scanner.check(/^\|/)) {
-      if (scanner.scan(/^\|\|\=/)) {
-        this.lex_state = EXPR_BEG;
-        return ["OP_ASGN", "||"];
-      }
-      else if (scanner.scan(/^\|\|/)) {
-        this.lex_state = EXPR_BEG;
-        return ["||", scanner.matched];
-      }
-      else if (scanner.scan(/^\|\=/)) {
-        this.lex_state = EXPR_BEG;
-        return ["OP_ASGN", "|"];
-      }
-      else if (scanner.scan(/^\|/)) {
-        if (this.lex_state == EXPR_FNAME) {
-          this.lex_state = EXPR_END;
-          return ["|", scanner.matched];
-        }
-        this.lex_state = EXPR_BEG;
-        return ["|", scanner.matched];
-      }
-    }
-    else if (scanner.scan(/^\^/)) {
-      if (this.lex_state == EXPR_FNAME) {
-        this.lex_state = EXPR_END;
-        return ["^", scanner.matched];
-      }
-      this.lex_state = EXPR_BEG;
-      return ["^", scanner.matched];
-    }
-    else if (scanner.scan(/^\&\&\=/)) {
-      this.lex_state = EXPR_BEG;
-      return ["OP_ASGN", "&&"];
-    }
-    else if (scanner.scan(/^\&\&/)) {
-      this.lex_state = EXPR_BEG;
-      return ["&&", scanner.matched];
-    }
-    else if (scanner.scan(/^\&\=/)) {
-      this.lex_state = EXPR_BEG;
-      return ["OP_ASGN", "&"];
-    }
-    else if (scanner.scan(/^\&/)) {
-      // print(this.lex_state);
-      if (space_seen && !scanner.check(/^\s/) && this.lex_state == EXPR_CMDARG){
-        return ["&@", scanner.matched];
-      }
-      else if (this.lex_state == EXPR_BEG || this.lex_state == EXPR_MID) {
-        return ["&@", scanner.matched];
-      }
-      else {
-        return ["&", scanner.matched];
-      }
-    }
-    else if (scanner.scan(/^\<\<\=/)) {
-      this.lex_state = EXPR_BEG;
-      return ["OP_ASGN", "<<"];
-    }
-    else if (scanner.scan(/^\<\</)) {
-      if (this.lex_state == EXPR_FNAME) {
-        this.lex_state = EXPR_END;
-        return ["<<", "<<"];
-      }
-      if ([EXPR_END, EXPR_DOT, EXPR_ENDARG, EXPR_CLASS].indexOf(this.lex_state) == -1 && space_seen) {
-        this.lex_state = EXPR_BEG;
-        return ["<<", "<<"];
-      }
-      this.lex_state = EXPR_BEG;
-      return ["<<", "<<"];
-    }
-    else if (scanner.scan(/^\<\=\>/)) {
-      if (this.lex_state == EXPR_FNAME) this.lex_state = EXPR_END
-      else this.lex_state = EXPR_BEG;
-      return ["<=>", "<=>"];
-    }
-    else if (scanner.scan(/^\<\=/)) {
-      if (this.lex_state == EXPR_FNAME) this.lex_state = EXPR_END
-      else this.lex_state = EXPR_BEG;
-      return ["<=", "<="];
-    }
-    else if (scanner.scan(/^\</)) {
-      if (this.lex_state == EXPR_FNAME) this.lex_state = EXPR_END
-      else this.lex_state = EXPR_BEG;
-      return ["<", "<"];
-    }
-    else if (scanner.scan(/^\>\=/)) {
-      if (this.lex_state == EXPR_FNAME) this.lex_state = EXPR_END
-      else this.lex_state = EXPR_BEG;
-      return [">=", scanner.matched];
-    }
-    else if (scanner.scan(/^\>\>\=/)) {
-      return ["OP_ASGN", ">>"];
-    }
-    else if (scanner.scan(/^\>\>/)) {
-      return [">>", scanner.matched];
-    }
-    else if (scanner.scan(/^\>/)) {
-      if (this.lex_state == EXPR_FNAME) this.lex_state = EXPR_END
-      else this.lex_state = EXPR_BEG;
-      return [">", ">"];
-    }
-    else if (scanner.scan(/^[+-]/)) {
-      var result = scanner.matched;
-      // var sign = (result == '+') ? 'UPLUS' : 'UMINUS';
-      var sign = result + '@';
-      if (this.lex_state == EXPR_BEG || this.lex_state == EXPR_MID) {
-        this.lex_state = EXPR_BEG;
-        return [sign, result];
-      }
-      else if (this.lex_state == EXPR_FNAME) {
-        this.lex_state = EXPR_END;
-        if (scanner.scan(/^@/)) {
-          return ['IDENTIFIER', result + scanner.matched];
-        }
-        return [result, result];
-      }
-      if (scanner.scan(/^\=/)) {
-        this.lex_state = EXPR_BEG;
-        return ["OP_ASGN", result];
-      }
-      this.lex_state = EXPR_BEG;
-      return [result, result];
-    }
-    else if (scanner.scan(/^\?/)) {
-      if (this.lex_state = EXPR_END || this.lex_state == EXPR_ENDARG) {
-        this.lex_state = EXPR_BEG;
-      }
-      return ["?", scanner.matched];
-    }
-    else if (scanner.scan(/^\=\=\=/)) {
-      if (this.lex_state == EXPR_FNAME) {
-        this.lex_state = EXPR_END;
-        return ["===", "==="];
-      }
-      this.lex_state = EXPR_BEG;
-      return ["===", "==="];
-    }
-    else if (scanner.scan(/^\=\=/)) {
-      if (this.lex_state == EXPR_FNAME) {
-        this.lex_state = EXPR_END;
-        return ["==", "=="];
-      }
-      this.lex_state = EXPR_BEG;
-      return ["==", "=="];
-    }
-    else if (scanner.scan(/^\=\~/)) {
-      if (this.lex_state == EXPR_FNAME) {
-        this.lex_state = EXPR_END;
-        return ["=~", "=~"];
-      }
-      this.lex_state = EXPR_BEG;
-      return ["=~", "=~"];
-    }
-    else if (scanner.scan(/^\=\>/)) {
-      this.lex_state = EXPR_BEG;
-      return ["=>", scanner.matched];
-    }
-    else if (scanner.scan(/^\=/)) {
-      this.lex_state = EXPR_BEG;
-      return ["=", "="];
-    }
-    else if (scanner.scan(/^\!\=/)) {
-      if (this.lex_state == EXPR_FNAME) {
-        this.lex_state = EXPR_END;
-        return ["!=", "!="];
-      }
-      this.lex_state = EXPR_BEG;
-      return ["!=", scanner.matched];
-    }
-    else if (scanner.scan(/^\!\~/)) {
-      if (this.lex_state == EXPR_FNAME) {
-        this.lex_state = EXPR_END;
-        return ["!~", "!~"];
-      }
-      this.lex_state = EXPR_BEG;
-      return ["!~", "!~"];
-    }
-    else if (scanner.scan(/^\!/)) {
-      if (this.lex_state == EXPR_FNAME) {
-        this.lex_state = EXPR_END;
-        return ["!", "!"];
-      }
-      this.lex_state = EXPR_BEG;
-      return ["!", "!"];
-    }
-    else if (scanner.scan(/^\~/)) {
-      if (this.lex_state == EXPR_FNAME) {
-        this.lex_state = EXPR_END;
-        return ["~", "~"];
-      }
-      this.lex_state = EXPR_BEG;
-      return ["~", "~"];
-    }
-    // FIXME: do we really need to differentiate between these. generates the
-    // same code. our checks will be in the gvar getters (for the relative 
-    // parts..)
-    // 
-    // else if (scanner.scan(/^\$([1-9]\d*)/)) {
-    //   this.lex_state = EXPR_END;
-    //   return ["NTH_REF", scanner.matched];
-    // }
-    // else if (scanner.scan(/^\$([\+\'\&\`])/)) {
-    //   this.lex_state = EXPR_END;
-    //   return ["BACK_REF", scanner.matched];
-    // }
-    // else if (scanner.scan(/^\$[!@\"~*$?\/\\:;=.,<>_]/)) {
-    //   this.lex_state = EXPR_END;
-    //   return ["GVAR", scanner.matched];
-    // }
-    else if (scanner.scan(/^\$[\+\'\`\&!@\"~*$?\/\\:;=.,<>_]/)) {
-      this.lex_state = EXPR_END;
-      return ["GVAR", scanner.matched];
-    }
-    else if (scanner.scan(/^\$\w+/)) {
-      this.lex_state = EXPR_END;
-      return ["GVAR", scanner.matched];
-    }
-    else if (scanner.scan(/^\@\@\w*/)) {
-      this.lex_state = EXPR_END;
-      return ["CVAR", scanner.matched];
-    }
-    else if (scanner.scan(/^\@\w*/)) {
-      this.lex_state = EXPR_END;
-      return ["IVAR", scanner.matched];
-    }
-    else if (scanner.scan(/^\,/)) {
-      this.lex_state = EXPR_BEG;
-      return [",", scanner.matched];
-    }
-    else if (scanner.scan(/^\{/)) {
-      var result;
-      // print(this.lex_state);
-      if (this.lex_state == EXPR_END || this.lex_state == EXPR_CMDARG) {
-        result = '{@';
-      }
-      else if (this.lex_state == EXPR_ENDARG) {
-        result = 'LBRACE_ARG';
-      }
-      else {
-        result = '{';
-      }
-      this.lex_state = EXPR_BEG;
-      this.cond_push(0);
-      this.cmdarg_push(0);
-      return [result, scanner.matched];
-    }
-    else if (scanner.check(/^[0-9]/)) {
-      this.lex_state = EXPR_END;
-      if (scanner.scan(/^[\d_]+\.[\d_]+\b/)) {
-        return ['FLOAT', scanner.matched.replace(/_/g, '')];
-      }
-      else if (scanner.scan(/^[\d_]+\b/)) {
-        return ['INTEGER', scanner.matched.replace(/_/g, '')];
-      }
-      else if (scanner.scan(/^0(x|X)(\d|[a-f]|[A-F])+/)) {
-        return ['INTEGER', scanner.matched.replace(/_/g, '')];
-      }
-      else {
-        // console.log('unexpected number type');
-        return [false, false];
-      }
-    }
-    else if (scanner.scan(/^(\w)+[\?\!]?/)) {
-      switch (scanner.matched) {
-        case 'class':
-          if (this.lex_state == EXPR_DOT) return ["IDENTIFIER", scanner.matched];
-          this.lex_state = EXPR_CLASS;
-          return ["CLASS", scanner.matched];
-        case 'module':
-          if (this.lex_state == EXPR_DOT) return ["IDENITFIER", scanner.matched];
-          this.lex_state = EXPR_CLASS;
-          return ["MODULE", scanner.matched];
-        case 'def':
-          this.lex_state = EXPR_FNAME;
-          return ["DEF", scanner.matched];
-        case 'end':
-          this.lex_state = EXPR_END;
-          return ["END", scanner.matched];
-        case 'do':
-          if (this.cond_p()) {
-            this.lex_state = EXPR_BEG;
-            return ["DO_COND", scanner.matched];
-          }
-          else if (this.cmdarg_p() && this.lex_state != EXPR_CMDARG) {
-            this.lex_state = EXPR_BEG;
-            return ["DO_BLOCK", scanner.matched];
-          }
-          else if (this.lex_state == EXPR_ENDARG) {
-            return ["DO_BLOCK", scanner.matched];
-          }
-          else {
-            this.lex_state = EXPR_BEG;
-            return ["DO", scanner.matched];
-          }
-            // this.lex_state = EXPR_BEG;
-            // return ["DO", scanner.matched];
-          // }
-          // this.lex_state = EXPR_BEG;
-          // return ["DO_BLOCK", scanner.matched];
-        case 'if':
-          if (this.lex_state == EXPR_BEG) return ["IF", scanner.matched];
-          this.lex_state = EXPR_BEG;
-          return ["IF_MOD", scanner.matched];
-        case 'unless':
-          if (this.lex_state == EXPR_BEG) return ["UNLESS", scanner.matched];
-          this.lex_state = EXPR_BEG;
-          return ["UNLESS_MOD", scanner.matched];
-        case 'else':
-          return ["ELSE", scanner.matched];
-        case 'elsif':
-          return ["ELSIF", scanner.matched];
-        case 'self':
-          if (this.lex_state !== EXPR_FNAME) this.lex_state = EXPR_END;
-          return ["SELF", scanner.matched];
-        case 'true':
-          this.lex_state = EXPR_END;
-          return ["TRUE", scanner.matched];
-        case 'false':
-          this.lex_state = EXPR_END;
-          return ["FALSE", scanner.matched];
-        case 'nil':
-          this.lex_state = EXPR_END;
-          return ["NIL", scanner.matched];
-        case '__LINE__':
-          this.lex_state = EXPR_END;
-          return ["LINE", this._line_number.toString()];
-        case '__FILE__':
-          this.lex_state = EXPR_END;
-          return ["FILE", scanner.matched];
-        case 'begin':
-          this.lex_state = EXPR_BEG;
-          return ["BEGIN", scanner.matched];
-        case 'rescue':
-        if (this.lex_state == EXPR_DOT || this.lex_state == EXPR_FNAME) return ["IDENTIFIER", scanner.matched];
-          if (this.lex_state == EXPR_BEG) return ["RESCUE", scanner.matched];
-          this.lex_state = EXPR_BEG;
-          return ["RESCUE_MOD", scanner.matched];
-        case 'ensure':
-          this.lex_state = EXPR_BEG;
-          return ["ENSURE", scanner.matched];
-        case 'case':
-          this.lex_state = EXPR_BEG;
-          return ["CASE", scanner.matched];
-        case 'when':
-          this.lex_state = EXPR_BEG;
-          return ["WHEN", scanner.matched];
-        case 'or':
-          this.lex_state = EXPR_BEG;
-          return ["OR", scanner.matched];
-        case 'and':
-          this.lex_state = EXPR_BEG;
-          return ["AND", scanner.matched];
-        case 'not':
-          this.lex_state = EXPR_BEG;
-          return ["NOT", scanner.matched];
-        case 'return':
-          this.lex_state = EXPR_MID;
-          return ["RETURN", scanner.matched];
-        case 'next':
-          if (this.lex_state == EXPR_DOT) return ["IDENTIFIER", scanner.matched];
-          this.lex_state = EXPR_MID;
-          return ["NEXT", scanner.matched];
-        case 'break':
-          this.lex_state = EXPR_MID;
-          return ["BREAK", scanner.matched];
-        case 'super':
-          this.lex_state = EXPR_ARG;
-          return ["SUPER", scanner.matched];
-        case 'then':
-          return ["THEN", scanner.matched];
-        case 'while':
-          if (this.lex_state == EXPR_BEG) return ["WHILE", scanner.matched];
-          this.lex_state = EXPR_BEG;
-          return ["WHILE_MOD", scanner.matched];
-        case 'until':
-          // generator determines between while and until (mod)
-          if (this.lex_state == EXPR_BEG) return ["WHILE", scanner.matched];
-          this.lex_state = EXPR_BEG;
-          return ["WHILE_MOD", scanner.matched];
-        case 'block_given?':
-          this.lex_state = EXPR_END;
-          return ["BLOCK_GIVEN", scanner.matched];
-        case 'yield':
-          this.lex_state = EXPR_ARG;
-          return ["YIELD", scanner.matched];
-        // case 'require':
-          // if (this.lex_state == EXPR_DOT || this.lex_state == EXPR_FNAME) {
-            // return ["IDENTIFIER", scanner.matched];
-          // }
-          // this.lex_state = EXPR_MID;
-          // return ['REQUIRE', scanner.matched];
-      }
-      var matched = scanner.matched;
-      if (scanner.peek(2) !== '::' && scanner.scan(/^\:/)) {
-        return["LABEL", matched];
-      }
-      if (this.lex_state == EXPR_FNAME) {
-        if (scanner.scan(/^=/)) {
-          this.lex_state = EXPR_END;
-          return ["IDENTIFIER", matched + scanner.matched];
-        }
-        // this.lex_state = EXPR_END;
-        // return ["IDENTIFIER", matched];
-      }
-      // IDENTIFIER2, when we have identifer() .. when we dont preceed identifier
-      // with :: or .
-      // this makes our parser easier and removes conflicts
-      // if (this.lex_state !== EXPR_DOT && scanner.peek(1) == '(') {
-        // this.lex_state = EXPR_CMDARG;
-        // return ["IDENTIFIER2", matched];
-      // }
-      if ([EXPR_BEG, EXPR_DOT, EXPR_MID, EXPR_ARG, EXPR_CMDARG].indexOf(this.lex_state) !== -1) {
-        this.lex_state = EXPR_CMDARG;
-      }
-      else {
-        this.lex_state = EXPR_END;
-      }
-      return [/^[A-Z]/.exec(matched) ? "CONSTANT" : "IDENTIFIER", matched];
-    }
-    else {
-      return [false, false];
-    }
-    return [false, false];
-  }
-};
-exports.RubyParser = new RubyParser();
+modules["./string_scanner"] = function(exports, module) {
 var StringScanner = function(str) {
     this._str = str;
     this._at = 0;
@@ -2000,27 +2070,36 @@ StringScanner.prototype.scan = function(reg) {
         return false;
     };
 };
+
 StringScanner.prototype.check = function(reg) {
     return reg.exec(this._workingString);
 };
 StringScanner.prototype.peek = function(len) {
     return this._workingString.substr(0, len);
 };
+
 exports.StringScanner = StringScanner;
+
+};
+modules["./generator"] = function(exports, module) {
+
 var RubyGenerator = function(tree, options) {
   this._tree = tree;
   // print(tree.constructor);
 };
+
 var BaseIseq = function() {
   this.initialize();
   return this;
 };
+
 BaseIseq.prototype = {
   initialize: function() {
     this.code = "";
     // all our temps go into locals as well....
     this.locals = [];
     this.args = [];
+    
     this.norm_args = [];
     this.opt_args = [];
     this.opt_args_stmt = [];
@@ -2029,30 +2108,41 @@ BaseIseq.prototype = {
     // tmp stuff
     this.temp_current = 'a';
     this.temp_queue = [];
+
+
     this.using_method_ids = [];
+    
     this.ensure_ivars = [];
+    
     this._ensure_return = false;
   },
+  
   SELF: 'self',
   NIL: 'nil',
+  
   push_code: function(code) {
     this.code = code;
   },
+  
   join: function() {
     var res = [];
     res.push('function(require, exports, module) {\n');
     res.push('var self = rb_top_self;\n');
     // res.push('function(self, __FILE__, require) {\n');
     // res.push('function(require, exports, module, self, __FILE__) {\n');
+    
     // inner code
     this.join_variables(res);
     this.join_inner(res);
     // end inner code
+    
     res.push('}');
     return res.join('');
   },
+  
   join_variables: function(res) {
-    res.push('var ' + this.NIL + ' = Qnil;\n');
+    //res.push('var ' + this.NIL + ' = Qnil;\n');
+
     for (var i = 0; i < this.ensure_ivars.length; i++) {
       res.push('if (' + this.SELF + '["' + this.ensure_ivars[i] + '"] === undefined) ' + this.SELF + '["' + this.ensure_ivars[i] + '"] = ' + this.NIL + ';\n');
     }
@@ -2062,21 +2152,26 @@ BaseIseq.prototype = {
       res.push(';\n');
     }
   },
+  
   join_inner: function(res) {
     res.push(this.code);
   },
+  
   // ensures an ivar is not null or undefined at top of current iseq
   ensure_ivar: function(name) {
     if (this.ensure_ivars.indexOf(name) == -1)
       this.ensure_ivars.push(name);
   },
+  
   // this iseq has a return, so if we are a block find our parent def, or if we
   // are a def, we need to makr our selves to handle return (which is a throw)
   ensure_return: function() {
     var iseq = this;
+    
     while (iseq && iseq instanceof BlockIseq) {
       iseq = iseq.parent_iseq;
     }
+    
     if (iseq instanceof DefIseq) {
       // print("found ensure iseq def");
       iseq._ensure_return = true;
@@ -2087,18 +2182,22 @@ BaseIseq.prototype = {
       // error? or just leave generated code to find it..
     }
   },
+  
   // return out of a while loop
   ensure_loop_return: function() {
     this._ensure_loop_return = true;
     this._handle_errors = true;
   },
+  
   // return out of a block/iter - we need to pass error up to our outer def ..if
   // it exists..
   ensure_block_return: function() {
     var iseq = this;
+    
     while (iseq && iseq instanceof BlockIseq) {
       iseq = iseq.parent_iseq;
     }
+    
     if (iseq instanceof DefIseq) {
       // print("found ensure iseq def");
       iseq._ensure_block_return = true;
@@ -2109,12 +2208,15 @@ BaseIseq.prototype = {
       // error? or just leave generated code to find it..
     }
   },
+  
   // similar to above, but .....?
   ensure_return: function() {
     var iseq = this;
+    
     while (iseq && iseq instanceof BlockIseq) {
       iseq = iseq.parent_iseq;
     }
+    
     if (iseq instanceof DefIseq) {
       // print("found ensure iseq def");
       iseq._ensure_return = true;
@@ -2125,9 +2227,11 @@ BaseIseq.prototype = {
       // error? or just leave generated code to find it..
     }
   },
+  
   // write: function(str) {
     // this.code.push(str);
   // },
+  
   temp_local: function() {
     if (this.temp_queue.length) {
       return this.temp_queue.pop();
@@ -2137,9 +2241,11 @@ BaseIseq.prototype = {
     this.temp_current = String.fromCharCode(this.temp_current.charCodeAt(0) + 1);
     return name;
   },
+  
   queue_temp: function(temp) {
     this.temp_queue.push(temp);
   },
+  
   lookup_local: function(str) {
     if (this.locals.indexOf(str) !== -1) {
       return str;
@@ -2153,17 +2259,22 @@ BaseIseq.prototype = {
     }
     return null;
   },
+
   use_method_id: function(id) {
     if (this.parent_iseq) return this.parent_iseq.use_method_id(id);
+    
     if (this.using_method_ids && (this.using_method_ids.indexOf(id) == -1)) {
       this.using_method_ids.push(id);
     }
   },
+  
   push_local: function(str) {
     this.locals.push(str);
     return str;
   }
 };
+
+
 var MainIseq = (function() {
   var ctor = function() {};
   ctor.prototype = BaseIseq.prototype;
@@ -2171,26 +2282,39 @@ var MainIseq = (function() {
   result.prototype = new ctor();
   return result;
 })();
+
 MainIseq.prototype.join = function() {
   var res = [];
-  // res.push('var self = rb_top_self;\n');
-  // res.push('function(self, __FILE__, require) {\n');
-  //res.push('function(require, exports, module, self, __FILE__) {\n');
+  
+  // FIXME really we should only add these VM shortcuts to files that actually 
+  // use them. Minimizers will remove them, but non minimized code gets filled 
+  // up quickly with non used methods. 
+  res.push('\nvar Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, ');
+  res.push('nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, ');
+  res.push('$range = Opal.G, $block = Opal.P;\n');
+ 
+ 
   // method ids
-  res.push(this.SELF + '.$M([');
+  res.push('Opal.mm([');
   for (var i = 0; i < this.using_method_ids.length; i++) {
     if (i > 0) res.push(', ');
     res.push("'" + this.using_method_ids[i] + "'");
   }
   res.push(']);\n');
+
+
+
   // inner code
+
   this.join_variables(res);
   res.push('return ');
   this.join_inner(res);
   res.push(';');
   // end inner code
-  return res.join('');
+
+  return '(function(undefined) {' + res.join('') + '})();';
 };
+
 var TempIseq = (function() {
   var ctor = function() {};
   ctor.prototype = BaseIseq.prototype;
@@ -2198,9 +2322,11 @@ var TempIseq = (function() {
   result.prototype = new ctor();
   return result;
 })();
+
 TempIseq.prototype.join = function() {
   return this.code.join("");
 };
+
 var DefIseq = (function() {
   var ctor = function() {};
   ctor.prototype = BaseIseq.prototype;
@@ -2208,31 +2334,37 @@ var DefIseq = (function() {
   result.prototype = new ctor();
   return result;
 })();
+
 DefIseq.prototype.uses_block = function() {
   this._uses_block = true;
 };
+
 DefIseq.prototype.push_arg = function(name) {
   this.args.push(name);
   this.norm_args.push(name);
   return name;
 };
+
 DefIseq.prototype.push_rest_arg = function(name) {
   this.args.push(name);
   this.rest_args = name;
   return name;
 };
+
 DefIseq.prototype.push_opt_arg = function(name, stmt) {
   this.args.push(name);
   this.opt_args.push(name);
   this.opt_args_stmt.push(stmt);
   return name;
 };
+
 DefIseq.prototype.push_block_arg = function(name) {
   this.args.push(name);
   this.block_arg = name;
- this.__uses_block__ = true;
+	this.__uses_block__ = true;
   return name;
 };
+
 DefIseq.prototype.join = function() {
   var res = [];
   res.push('function(');
@@ -2243,15 +2375,18 @@ DefIseq.prototype.join = function() {
   res.push('}');
   return res.join('');
 };
+
 DefIseq.prototype.method_args = function(res) {
   var norm = this.norm_args.length,
-      opt = this.opt_args.length,
+      opt  = this.opt_args.length,
       rest = this.rest_args,
-      done_arg = false;
+      done_arg = false;      
   // always need a self reference
   res.push(this.SELF);
+  
   // method id reference
   //res.push(', $mid');
+  
   // norm
   for (var i = 0; i < norm; i++) {
   //  if (done_arg) res.push(', ');
@@ -2273,10 +2408,12 @@ DefIseq.prototype.method_args = function(res) {
   // end args
   res.push(') {\n');
 };
+
 DefIseq.prototype.method_fixing = function(res) {
   var norm = this.norm_args.length,
-      opt = this.opt_args.length,
+      opt  = this.opt_args.length,
       rest = this.rest_args;
+  
   // handle opt args
   for (var i = 0; i < opt; i++) {
     res.push('if (' + this.opt_args[i] + ' === undefined) ' + this.opt_args[i] + ' = ' + this.opt_args_stmt[i] + ';\n');
@@ -2284,16 +2421,18 @@ DefIseq.prototype.method_fixing = function(res) {
   }
   // handle rest args
   if (rest) {
-    var rest_offset = norm + opt + 2; // should take into account opt.. we add one to skip self
+    var rest_offset = norm + opt + 1; // should take into account opt.. we add one to skip self
     res.push(rest + ' = Array.prototype.slice.call(arguments, ' + rest_offset + ');\n');
   }
- // block. if we got/has/used a block, then lets set it/create it here.
- if (this.__uses_block__) {
-  res.push('var '+ this.block_arg + ' = (rb_block_func == arguments.callee)');
-  res.push('? rb_block_proc : Qnil;');
-  res.push('rb_block_proc = rb_block_func = Qnil;');
- }
+
+	// block. if we got/has/used a block, then lets set it/create it here.
+	if (this.__uses_block__) {
+		res.push('var '+ this.block_arg + ' = ($block.f == arguments.callee)');
+		res.push('? $block.p : nil;');
+		res.push('$block.p = $block.f = nil;');
+	}
 };
+
 var BlockIseq = (function() {
   var ctor = function() {};
   ctor.prototype = DefIseq.prototype;
@@ -2301,6 +2440,7 @@ var BlockIseq = (function() {
   result.prototype = new ctor();
   return result;
 })();
+
 var ClassIseq = (function() {
   var ctor = function() {};
   ctor.prototype = BaseIseq.prototype;
@@ -2308,6 +2448,7 @@ var ClassIseq = (function() {
   result.prototype = new ctor();
   return result;
 })();
+
 ClassIseq.prototype.join = function() {
   var res = [];
   res.push('function(self) {\n');
@@ -2315,16 +2456,20 @@ ClassIseq.prototype.join = function() {
   res.push('}');
   return res.join('');
 };
+
+
 RubyGenerator.prototype = {
   // constn
   SELF: 'self',
   NIL: 'nil',
+  
   // clear the generator ready for action
   clear: function() {
     this.iseq_current = null;
     this.iseq_stack = [];
     this._dependencies = [];
   },
+  
   // push new iseq onto stack
   push_iseq: function(klass) {
     var iseq = new klass();
@@ -2334,6 +2479,7 @@ RubyGenerator.prototype = {
     this.iseq_current = iseq;
     return iseq;
   },
+  
   // pop iseq, this will return a join of the strings
   pop_iseq: function() {
     var iseq = this.iseq_current;
@@ -2342,15 +2488,18 @@ RubyGenerator.prototype = {
     // print(iseq);
     return iseq.join();
   },
+  
   // main generate..
   generate_top_context: function() {
     this.clear();
     return [this.generate_top(this._tree), this._dependencies];
   },
+  
   generate_main_context: function() {
     this.clear();
     return [this.generate_main(this._tree), this._dependencies];
   },
+  
   generate: function(iseq, options) {
     // print(iseq);
     // print(iseq);
@@ -2361,70 +2510,88 @@ RubyGenerator.prototype = {
       // print('-- done ' + name);
       return res;
     }
+    
     print("Unknwon iseq type: " + iseq + " (" + iseq[0] + ")");
     throw "Unknwon iseq type: " + iseq;
   },
+  
   mid_to_jsid: function(id) {
     // '$' is not needed!?
     //id = '$' + id;
+    
     if(/[\!\=\?\+\-\*\/\^\&\%\@\|\[\]\<\>\~]/.exec(id)) {
       return '["' + id + '"]';
     }
     return '.' + id;
   },
+
   // Generate some top level statements - this will clear everything else
   generate_top: function(stmt, options) {
     this.push_iseq(BaseIseq);
     // print(stmt);
     // for (var i = 0; i < stmt[1].length; i++) {
       // this.generate(stmt[1][i], { full: true, last:(stmt[1].length - 1 == i) });
+      
     // }
     this.iseq_current.push_code(this.generate_compstmt(stmt[1], ';'));
     return this.pop_iseq();
   },
+
   // Generate some main statement - usually in a REPL scenario
   generate_main: function(stmt, options) {
     this.push_iseq(MainIseq);
     this.iseq_current.push_code(this.generate_compstmt(stmt[1], ';'));
     return this.pop_iseq();
   },
+  
   generate_numeric: function(stmt) {
     return stmt[1];
   },
+  
   generate_self: function(stmt) {
     return this.SELF;
   },
+  
   generate_nil: function(stmt) {
     return this.NIL;
   },
+  
   generate_true: function(stmt) {
     return 'Qtrue';
   },
+  
   generate_false: function(stmt) {
     return 'Qfalse';
   },
+  
   generate_compstmt: function(stmt, split) {
     var s, res = [];
+      
     if (stmt.length == 0) {
       return '(' + this.NIL + ')';
     }
+      
     for (var i = 0; i < stmt.length; i++) {
       res.push(this.generate(stmt[i]));
     }
     return '(' + res.join(', ') + ')';
   },
+  
   // like above but bodystmts
   // 
   // ['bodystmt', compstmt, operescue, optelse, optensure]
   generate_bodystmt: function(stmt) {
     var s = stmt[1][1];
+    
     if (s.length == 1 && s[0][0] == 'xstring') {
       return this.generate(s[0]);
     }
     // if (s.length == 1)
       // print(s[0]);
+    
     return 'return ' + this.generate_compstmt(stmt[1][1]) + ';';
   },
+  
   // stmt:
   //  ['call', recv, meth, args, block]
   // args:
@@ -2433,96 +2600,61 @@ RubyGenerator.prototype = {
     var pre = [];
     // all args (inc self, block)
     var arg_res = [];
+
     var done_arg = false;
-  // recv
-  var recv = "";
-  // if given a block literal, or a &to_proc block arg, then use rb_block_call
-  if (stmt[4] || stmt[3][3]) {
-   if (stmt[4]) { // regular block
-    //pre.push('rb_block_call');
-    //var tmp_block = this.iseq_current.temp_local();
-    //arg_res.push('(' + tmp_block + ' = ' + this.generate_block(stmt[4]));
-    //arg_res.push(', ' + tmp_block + '.$self = ' + this.SELF + ', ');
-    //arg_res.push(tmp_block + '), ');
-    //arg_res.push(stmt[1] ? this.generate(stmt[1]) : this.SELF);
-    //arg_res.push(', "' + stmt[2] + '"');
-    //this.iseq_current.queue_temp(tmp_block);
-        //pre.push('rb_block_call');
-        //recv?
-        if (stmt[1]) {
-          var recv = this.generate(stmt[1]);
-          if (stmt[1][0] == 'numeric') recv = '(' + recv + ')';
-          pre.push(recv + '.$B');
-        } else {
-          pre.push(this.SELF + '.$B');
-        }
-        // mid
-        arg_res.push('"' + stmt[2] + '", ');
-        // block
-        var tmp_block = this.iseq_current.temp_local();
-        arg_res.push('(' + tmp_block + ' = ' + this.generate_block(stmt[4]));
-        arg_res.push(', ' + tmp_block + '.$self = ' + this.SELF + ', ');
-        arg_res.push(tmp_block + ')');
-        this.iseq_current.queue_temp(tmp_block);
-        done_arg = true;
-   } else { // &to_proc mark
-    //pre.push('rb_block_call');
-    //arg_res.push(this.generate(stmt[3][3]) + ', ');
-    //arg_res.push(stmt[1] ? this.generate(stmt[1]) : this.SELF);
-    //arg_res.push(', "' + stmt[2] + '"');
-        if (stmt[1]) {
-          var recv = this.generate(stmt[1]);
-          if (stmt[1][0] == 'numeric') recv = '(' + recv + ')';
-          pre.push(recv + '.$B');
-        } else {
-          pre.push(this.SELF + '.$B');
-        }
-        // mid
-        arg_res.push('"' + stmt[2] + '", ');
-        // this should be generated as stmt[3][3].to_proc
-        arg_res.push(this.generate(stmt[3][3]));
-        done_arg = true;
-   }
-  } else {
-   // no block arg literal or reference.
-   if (stmt[1]) { // recv
-    //var tmp_recv = this.iseq_current.temp_local();
-    //pre.push('(' + tmp_recv + ' = ' + this.generate(stmt[1]) + ', ');
-    //pre.push(tmp_recv + '.$m' + this.mid_to_jsid(stmt[2]) + '||');
-    //pre.push('rb_vm_meth_m)');//'("' + stmt[2] + '"))');
-    //arg_res.push(tmp_recv + ', "' + stmt[2] + '"');
-    //this.iseq_current.queue_temp(tmp_recv);
-        //recv = this.generate(stmt[1]);
-        //if (stmt[1][0] == 'numeric') recv = '(' + recv + ')';
-        //pre.push(recv + this.mid_to_jsid(stmt[2]));
-        //var tmp_recv = this.iseq_current.temp_local();
-        //pre.push('(' + tmp_recv + ' = ' + this.generate(stmt[1]) + ', ');
-        //pre.push(tmp_recv + '.$m' + this.mid_to_jsid(stmt[2]) + ' || ');
-        //pre.push(tmp_recv + '.$M("' + stmt[2] + '"))');
-        //arg_res.push(tmp_recv);
-        //this.iseq_current.queue_temp(tmp_recv);
+		// recv
+		var recv = "";
+			
+    if (stmt[1]) { // recv
+
         this.iseq_current.use_method_id(stmt[2]);
-        //pre.push(this.generate(stmt[1]) + '.$m' + this.mid_to_jsid(stmt[2]));
+
         var tmp_recv = this.iseq_current.temp_local();
-        pre.push('(' + tmp_recv + ' = ' + this.generate(stmt[1]) + ', ');
-        pre.push(tmp_recv + '.$m' + this.mid_to_jsid(stmt[2]) + ')');
+        pre.push('(' + tmp_recv + ' = ' + this.generate(stmt[1]));
+        
+
+        // block support
+        if (stmt[4]) {
+          pre.push(', ($block.p = ' + this.generate_block(stmt[4]) + ').$self = ' + this.SELF + ', ');
+          pre.push('$block.f = ' + tmp_recv + '.$m' + this.mid_to_jsid(stmt[2]) + ')');
+        } 
+        // &to_proc
+        else if (stmt[3][3]) {
+          // &to_proc MUST NOT redefine the $self for the proc
+          pre.push(', ($block.p = ' + this.generate(stmt[3][3]) + '), ');
+          pre.push('$block.f = ' + tmp_recv + '.$m' + this.mid_to_jsid(stmt[2]) + ')');
+        }
+        // no block
+        else {
+          pre.push(')' + '.$m' + this.mid_to_jsid(stmt[2]));
+        }
+
+        //pre.push(tmp_recv + '.$m' + this.mid_to_jsid(stmt[2]) + ')');
         arg_res.push(tmp_recv);
         this.iseq_current.queue_temp(tmp_recv);
-   } else { // no recv
-    //pre.push('(' + this.SELF + '.$m' + this.mid_to_jsid(stmt[2]) + ' || ');
-    //pre.push('rb_vm_meth_m)');//'("' + stmt[2] + '"))');
-    //arg_res.push(this.SELF + ', "' + stmt[2] + '"');
-        //pre.push(this.SELF + '.$m' + this.mid_to_jsid(stmt[2]));
-        //pre.push(this.SELF + this.mid_to_jsid(stmt[2]));
+
+			} else { // no recv
         //this.iseq_current.use_method_id(stmt[1]);
         this.iseq_current.use_method_id(stmt[2]);
-        pre.push(this.SELF + '.$m' + this.mid_to_jsid(stmt[2]));
+
+        // block support
+        if (stmt[4]) {
+          pre.push('(($block.p = ' + this.generate_block(stmt[4]) + ').$self = ' + this.SELF + ', ');
+          pre.push('$block.f = ' + this.SELF + '.$m' + this.mid_to_jsid(stmt[2]) + ')');
+        }
+        // &to_proc
+        else if (stmt[3][3]) {
+          // &to_proc MUST NOT reassign $self
+          pre.push('($block.p = ' + this.generate(stmt[3][3]) + ', ');
+          pre.push('$block.f = ' + this.SELF + '.$m' + this.mid_to_jsid(stmt[2]) + ')');
+        }
+        else {
+          pre.push(this.SELF + '.$m' + this.mid_to_jsid(stmt[2]));
+        }
         arg_res.push(this.SELF);
-        //pre.push('(' + this.SELF + '.$m' + this.mid_to_jsid(stmt[2]) + ' || ');
-        //pre.push(this.SELF + '.$M("' + stmt[2] + '"))');
-        //arg_res.push(this.SELF);
       }
-  }
+		//}  
+    
     var arg, args = stmt[3][0];
     // norm args
     if (args && args.length > 0) {
@@ -2533,13 +2665,15 @@ RubyGenerator.prototype = {
     // hash/assocs arg
     args = stmt[3][2];
     if (args) {
-      arg_res.push(', opalhash(');
+      var hash_res = [];
+      hash_res.push('opalhash(');
       for (var i = 0; i < args.length; i++) {
-        if (i > 0) arg_res.push(', ');
-        arg_res.push(this.generate(args[i][0]) + ', ' + this.generate(args[i][1]));
+        if (i > 0) hash_res.push(', ');
+        hash_res.push(this.generate(args[i][0]) + ', ' + this.generate(args[i][1]));
       }
-      arg_res.push(')');
+      arg_res.push(hash_res.join('') + ')');
     }
+    
     // if splat.. we concat splat args into array of normal args, then need to
     // apply() them to recv using recv (optional, but nothing else needs to be
     // used)
@@ -2550,11 +2684,12 @@ RubyGenerator.prototype = {
       return pre.join('');
     }
     // normal..
-    else {
+    else {  
       pre.push('(' + arg_res.join(', ') + ')');
       return pre.join('');
     }
   },
+  
   // ['method_call', callable, args, block]
   generate_method_call: function(stmt, o) {
     stmt[1][3] = stmt[2];
@@ -2562,21 +2697,26 @@ RubyGenerator.prototype = {
     // print(stmt[2]);
     return this.generate(stmt[1], o);
   },
+  
   // ['brace_cell', method_call, braceblock]
   generate_brace_call: function(stmt, o) {
     stmt[1][3] = stmt[2];
     return this.generate(stmt[1], o);
   },
+  
   // special generate block
   // ['blockvar', compstmts] 
   generate_block: function(stmt, o) {
     this.push_iseq(BlockIseq);
+    
     if (stmt[0] && stmt[0][0]) {
       var args = stmt[0][0];
+      
       for (var i = 0; i < args[0].length; i++) {
         this.iseq_current.push_arg(args[0][i]);
       }
     }
+    
     // opt arg
     if (stmt[0] && stmt[0][1]) {
     for (var i = 0; i < stmt[0][1].length; i++) {
@@ -2585,6 +2725,7 @@ RubyGenerator.prototype = {
       this.iseq_current.push_opt_arg(stmt[0][1][i][0], gen_opt_iseq);
     }
   }
+    
     // rest arg
     if (stmt[0] && stmt[0][0]) {
     if (stmt[0][0][2]) {
@@ -2592,6 +2733,7 @@ RubyGenerator.prototype = {
       this.iseq_current.push_rest_arg(stmt[0][0][2]);
     }
   }
+    
     // block arg
     if (stmt[0] && stmt[0][3]) {
     if (stmt[0][3]) {
@@ -2600,30 +2742,41 @@ RubyGenerator.prototype = {
     }
   }
     // var args = stmt[3];
+    
     // var stmts = stmt[1];
     // for (var i = 0; i < stmt[3][0].length; i++) {
       // this.iseq_current.push_arg(stmt[3][0][i]);
     // }
+    
     this.iseq_current.push_code('return ' + this.generate_compstmt(stmt[1][1]) + ';');
     // this.write(this.generate_compstmt(stmt[1][1], ';'));
+    
     var result = this.pop_iseq();
+    
     // this.write(result);
     return result;
   },
+  
   // ['identifier', name]
   generate_identifier: function(stmt, o) {
     var local = this.iseq_current.lookup_local(stmt[1]);
+
     if (local) {
       return local;
     } else {
       //return '(' + this.SELF + '.$m' + this.mid_to_jsid(stmt[1]) + ' || ' + this.SELF + '.$M("' + stmt[1] + '"))(' + this.SELF + ')';
+      
       this.iseq_current.use_method_id(stmt[1]);
       return this.SELF + '.$m' + this.mid_to_jsid(stmt[1]) + '(' + this.SELF + ')';
     }
+
+
+          
       //return this.SELF + this.mid_to_jsid(stmt[1]) + '()';
       //return '(' + this.SELF + '.$m' + this.mid_to_jsid(stmt[1]) + ' || ' + 'rb_vm_meth_m)(' + this.SELF + ', "' + stmt[1] + '")';
       // return this.SELF + this.mid_to_jsid(stmt[1]) + '(' + this.NIL + ')';
   },
+  
   generate_constant: function(stmt, o) {
     // if (o.full && o.last) this.write('return ');
     // this.write(this.SELF + '.cg("' + stmt[1] + '")');
@@ -2632,14 +2785,17 @@ RubyGenerator.prototype = {
     //return this.SELF + '.$cg("' + stmt[1] + '")';
     return 'rb_vm_cg(' + this.SELF + ', "' + stmt[1] + '")';
   },
+
   generate_ivar: function(stmt, o) {
     this.iseq_current.ensure_ivar(stmt[1]);
     return this.SELF + '["' + stmt[1] + '"]';
   },
+  
   // ['assign', lhs, rhs]
   generate_assign: function(stmt, o) {
-    var type = stmt[1][0];
+    var type  = stmt[1][0];
     var res = [];
+    
     if (type == 'identifier') {
       if (!(local = this.iseq_current.lookup_local(stmt[1][1]))) {
         local = this.iseq_current.push_local(stmt[1][1]);
@@ -2650,6 +2806,7 @@ RubyGenerator.prototype = {
       return (this.SELF + '["' + stmt[1][1] + '"] = ' + this.generate(stmt[2]));
     }
     else if (type == 'constant') {
+      
       res.push('rb_vm_cs(' + this.SELF + ', "');
       res.push(stmt[1][1]);
       res.push('", ');
@@ -2673,21 +2830,24 @@ RubyGenerator.prototype = {
       res.push(')');
       this.iseq_current.queue_temp(tmp_assign);
       return res.join("");
+
       //res.push(this.generate(stmt[1][1]) + this.mid_to_jsid(stmt[1][2] + '='));
       //res.push('(' + this.generate(stmt[2]) + ')');
       //return res.join('');
+      
       //var tmp_assign = this.iseq_current.temp_local();
     }
     else if (type == 'aref'){
       return this.generate_aset(stmt[1], stmt[2]);
     }
     else if (type == 'gvar') {
-      return "rb_vm_gs('" + stmt[1][1].replace('\\', '\\\\') + "', " + this.generate(stmt[2]) + ")";
+      return "rb_vm_gs('" + stmt[1][1].replace('\\', '\\\\')  + "', " + this.generate(stmt[2]) + ")";
     }
     else {
       throw "Bad lhs: " + type;
     }
   },
+  
   // ['op_asgn', op, lhs, rhs]
   generate_op_asgn: function(stmt, o) {
     var new_left = stmt[2];
@@ -2709,11 +2869,13 @@ RubyGenerator.prototype = {
     }
     return this.generate(assign);
   },
+  
   // kind of a fake node.. here we can pass a raw string to anythign else that
   // can use this to egnerate something. assign uses this a lot
   generate_temp_local: function(stmt) {
     return stmt[1]
   },
+  
   // [massign, lhs, rhs]
   // lhs is an array 
   // idx 0 - array of mitems (variables, ivars etc) or null if there are none
@@ -2724,19 +2886,24 @@ RubyGenerator.prototype = {
     var result = [];
     // rhs, which will be an array. fixme, need to ensure! (might be single arg)
     var tmp_rhs = this.iseq_current.temp_local();
+    
     var rhs = stmt[2][0] == 'mrhs' ? this.generate(stmt[2]) : '[' + this.generate(stmt[2]) + ']';
+    
     // rhs length.. so we know how many vars we are dealing with
     var tmp_rhs_len = this.iseq_current.temp_local();
     // tmp idx of where we are
     var tmp_idx = this.iseq_current.temp_local();
     // start splat at..
     var splat_start = 0;
+    
     result.push('(' + tmp_rhs + ' = ' + rhs + ', ');
     result.push(tmp_rhs_len + ' = ' + tmp_rhs + '.length');
+    
     // norm mitems
     if (stmt[1][0]) {
       // amend splat start
       splat_start = stmt[1][0].length;
+      
       for (var i = 0; i < stmt[1][0].length; i++) {
         result.push(', (' + tmp_idx + ' = ' + i + ', ');
         // if our idx is less than our total count, then we can assign next, 
@@ -2745,10 +2912,13 @@ RubyGenerator.prototype = {
         // generate assign..
         var asgn_node = ['assign', stmt[1][0][i],
             ['temp_local', tmp_rhs + '[' + tmp_idx + ']']];
+        
         result.push(this.generate(asgn_node));
+        
         // if out of idx..
         asgn_node[2] = ['temp_local', this.NIL];
         result.push(' : ' + this.generate(asgn_node));
+        
         result.push('))');
       }
     }
@@ -2770,19 +2940,25 @@ RubyGenerator.prototype = {
       // generate assign..
       var asgn_node = ['assign', stmt[1][1],
           ['temp_local', tmp_rhs + '.slice(' + splat_start + ')']];
+      
       result.push(this.generate(asgn_node));
+      
       // if out of idx..
       asgn_node[2] = ['temp_local', '[]'];
       result.push(' : ' + this.generate(asgn_node));
+      
       result.push('))');
     }
+    
     // finally return our rhs
     result.push(', ' + tmp_rhs + ')');
+    
     this.iseq_current.queue_temp(tmp_rhs);
     this.iseq_current.queue_temp(tmp_rhs_len);
     this.iseq_current.queue_temp(tmp_idx);
     return result.join("");
   },
+  
   // multiple rhs - this, fortunately, is completely independant of lhs.. we end
   // up returning an array of items that we leave to lhs to deal with.
   // 
@@ -2815,8 +2991,10 @@ RubyGenerator.prototype = {
     else {
       code.push('[' + res.join(", ") + ']');
     }
+    
     return code.join("");
   },
+  
   // ['or', lhs, rhs]
   generate_or: function(stmt) {
     var res = [];
@@ -2834,6 +3012,7 @@ RubyGenerator.prototype = {
     this.iseq_current.queue_temp(tmp_assign);
     return res.join("");
   },
+  
   // ['and', lhs, rhs]
   generate_and: function(stmt, o) {
     var res = [];
@@ -2851,6 +3030,7 @@ RubyGenerator.prototype = {
     this.iseq_current.queue_temp(tmp_assign);
     return res.join("");
   },
+  
   // ['case', expr, body]
   generate_case: function(stmt) {
     var res = [];
@@ -2859,6 +3039,7 @@ RubyGenerator.prototype = {
     var ternary_count = 0;
     // print(stmt);
     res.push("((" + tmp_case + " = ");
+    
     if (stmt[1]) {
       res.push(this.generate(stmt[1]));
     }
@@ -2866,6 +3047,7 @@ RubyGenerator.prototype = {
       res.push('Qtrue');
     }
     res.push(', true) ? ');
+    
     var when_tmp, when_part, when_part_tmp;
     for (var i = 0; i < stmt[2].length; i++) {
       when_part = stmt[2][i];
@@ -2907,10 +3089,12 @@ RubyGenerator.prototype = {
     this.iseq_current.queue_temp(tmp_case);
     return res.join("");
   },
+  
   generate_while_mod: function(stmt) {
     // FIXME: second param should be while/until dependant on while_mod/untilmod
     return this.generate_while(['while', 'while', stmt[2], ['compstmt', [stmt[3]]]]);
   },
+  
   // ['while', 'while/until', expr, compstmt]
   // While is the only actual native looping system..
   generate_while: function(stmt) {
@@ -2935,6 +3119,7 @@ RubyGenerator.prototype = {
     res.push('if (__err__.$keyword == 3) {');
     res.push('continue;');
     res.push('}');
+    
     // first, break. - should check we are right to catch it?? if break fired
     // in while loop, then catch it. if fired in a block that was yielded from
     // while loop then we should return out of while loop and return that break?
@@ -2945,37 +3130,52 @@ RubyGenerator.prototype = {
     // res.push("print('rethrow..');");
     // rethrow on other errors:
     res.push('throw __err__;')
+    
     res.push('}');
+    
     res.push("}");
     // while returns nil (unless break returns nil, etc)
     res.push("return " + this.NIL + ";");
+    
     res.push("})()");
     this.iseq_current.queue_temp(skip_eval);
+    
     // we are now finished in while loop.. restore state..
     this.iseq_current._in_while_loop = old_while_loop_state;
+    
     return res.join("");
   },
+  
   // ['if'/'unless', expr, stmt, tail]
   generate_if: function(stmt) {
     var res = [];
     var done_else = false;
     var ternary_count = 1;
+    
     // FIXME: if unless, then we need !$r (not true)
     res.push('(' + this.generate(stmt[1]) + '.$r ? ');
+    
+    
     var c = stmt[2][1], s;
     res.push(this.generate_compstmt(c));
     res.push(' : ');
+   
     for (var i = 0; i < stmt[3].length; i++) {
       var t = stmt[3][i];
+
       if (t[0] == 'elsif') {
         ternary_count++;
+        
         res.push('(' + this.generate(t[1]) + '.$r ? ');
+
         res.push(this.generate_compstmt(t[2][1]));
         res.push(' : ');
+        
       }
       else {
         done_else = true;
         res.push(this.generate_compstmt(t[1][1]));
+        
       }
     }
     // if we didnt have an else, do it ourselves:
@@ -2985,30 +3185,41 @@ RubyGenerator.prototype = {
     for (var i = 0; i < ternary_count; i ++) res.push(')');
     return res.join('');
   },
+  
   generate_unless: function(stmt) {
     return this.generate_if(stmt);
   },
-  generate_if_mod: function(stmt) {
+  
+  generate_if_mod: function(stmt) {    
     var recv = this.generate(stmt[2]), prefix = (stmt[1] == 'if' ? '' : '!');
+    
     if (stmt[2][0] == 'numeric')
       recv = '(' + recv + ')';
-    return '(' + prefix + '('+ recv + '.$r) ? ' + this.generate(stmt[3]) + ':' +
+    
+    return '(' + prefix + '('+ recv + '.$r) ? ' + this.generate(stmt[3]) + ':' + 
               this.NIL + ')';
   },
+  
   generate_ternary: function(stmt) {
     var recv = this.generate(stmt[1]);
+    
     if (stmt[1][0] == 'numeric')
       recv = '(' + recv + ')';
-    return '(' + recv + '.$r ? ' + this.generate(stmt[2]) + ' : ' +
+      
+    return '(' + recv + '.$r ? ' + this.generate(stmt[2]) + ' : ' +   
               this.generate(stmt[3]) + ')';
   },
+  
   // ['unary', type, arg]
   // type: '+', '-', '!'
   generate_unary: function(stmt, o) {
     var meth = stmt[1];
+    
     var tmp_recv = this.iseq_current.temp_local();
+    
     if (meth == '+') meth = '+@';
     if (meth == '-') meth = '-@';
+    
     var code = "(" + tmp_recv + ' = ' + this.generate(stmt[2]) + ', ' + tmp_recv
               + '.$m' + this.mid_to_jsid(meth) + ' || rb_vm_meth_m)(' + tmp_recv + ', "' + meth + '")';
     this.iseq_current.queue_temp(tmp_recv);
@@ -3018,6 +3229,7 @@ RubyGenerator.prototype = {
     // this.write(this.mid_to_jsid(meth));
     // this.write('()');
   },
+  
   // ['aref', recv, [arefs, splat]]
   generate_aref: function(stmt, o) {
     var res = [];
@@ -3043,6 +3255,7 @@ RubyGenerator.prototype = {
     this.iseq_current.queue_temp(tmp_mm);
     return res.join('');
   },
+  
   // [arefs, aset]
   generate_aset: function(aref, arg) {
     var res = [];
@@ -3070,6 +3283,7 @@ RubyGenerator.prototype = {
     this.iseq_current.queue_temp(tmp_mm);
     return res.join("");
   },
+  
   // ['array', [arefs, splat]]
   generate_array: function(stmt) {
     var res = [];
@@ -3092,27 +3306,32 @@ RubyGenerator.prototype = {
       return '[' + res.join(", ") + ']';
     }
   },
+  
   // ['hash', assocs]
   // assocs - [[lhs, rhs], [lhs, rhs]]
   generate_hash: function(stmt, o) {
     var res = [];
     res.push(this.SELF + '.$H(');
+    
     for (var i = 0; i < stmt[1].length; i++) {
       if (i > 0) res.push(', ');
       res.push(this.generate(stmt[1][i][0]));
       res.push(', ');
       res.push(this.generate(stmt[1][i][1]));
     }
+    
     res.push(')');
     // print(res.join(""));
     return res.join("");
     // return "opalhash()";
   },
+  
   // ['symbol', name]
   generate_symbol: function(stmt) {
-    return this.SELF + '.$Y("' + stmt[1] + '")';
+    return '$symbol("' + stmt[1] + '")';
   },
-  generate_dsym: function(stmt, o) {
+  
+  generate_dsym: function(stmt, o) { 
     var res = ['opalsym'];
     res.push('(');
     var part;
@@ -3135,38 +3354,48 @@ RubyGenerator.prototype = {
       }
     }
     res.push(')');
+    
     return res.join('');
   },
+  
   // ['def', singleton, def_name, arglist, bodystmts]
   generate_def: function(stmt, o) {
     var res = [];
     var is_singleton = stmt[1];
+    
     this.push_iseq(DefIseq);
     this.iseq_current._method_id = stmt[2];
+    
     var args = stmt[3];
+    
     // norm arg
     for (var i = 0; i < stmt[3][0].length; i++) {
       this.iseq_current.push_arg(stmt[3][0][i]);
     }
+    
     // opt arg
     for (var i = 0; i < stmt[3][1].length; i++) {
       // print(stmt[3][1][i]);
       var gen_opt_iseq = this.generate(stmt[3][1][i][1]);
       this.iseq_current.push_opt_arg(stmt[3][1][i][0], gen_opt_iseq);
     }
+    
     // rest arg
     if (stmt[3][2]) {
       this.iseq_current.push_rest_arg(stmt[3][2]);
     }
+    
     // block arg
     if (stmt[3][3]) {
       // print("Block arf: " + stmt[3][3]);
       this.iseq_current.push_block_arg(stmt[3][3]);
     }
+    
     // for (var i = 0; i < stmt[1].length; i++) {
       // this.generate(stmt[1][i], { full: true, last:(stmt[1].length - 1 == i) });
     // }
     var def_code = this.generate_bodystmt(stmt[4]);
+    
     // if we need to potentially catch returns etc, do it here.
     if (this.iseq_current._handle_errors) {
       var code = ['try {\n'];
@@ -3174,6 +3403,7 @@ RubyGenerator.prototype = {
       code.push(def_code);
       code.push('} catch(__err__) {\n');
       // code.push("print('caught..' + __err__.$keyword);");
+      
       // loop return: returning from a while loop (or until loop)
       if (this.iseq_current._ensure_loop_return) {
         code.push('if (__err__.$keyword == 1) {\n');
@@ -3181,6 +3411,7 @@ RubyGenerator.prototype = {
         code.push('return __err__["@exit_value"];');
         code.push('\n}');
       }
+      
       // try our ensure return
       if (this.iseq_current._ensure_block_return) {
         code.push('if (__err__.$keyword == 0 && __err__["@jump_function"] == __vm_jump_function__) {\n');
@@ -3188,6 +3419,7 @@ RubyGenerator.prototype = {
         code.push("return __err__['@exit_value'];")
         code.push("\n}");
       }
+      
       // try our ensure return
       // if (this.iseq_current._ensure_return) {
         // code.push('if (__err__.$keyword == 0) {\n');
@@ -3195,6 +3427,7 @@ RubyGenerator.prototype = {
         // code.push("return __err__['@exit_value'];")
         // code.push("\n}");
       // }
+      
       // worst case, just rethrown
       // code.push("print('def rethrow');")
       code.push("throw __err__;");
@@ -3203,28 +3436,38 @@ RubyGenerator.prototype = {
       // print("need to handle errors " + stmt[2]);
     }
     this.iseq_current.push_code(def_code);
+    
     var result = this.pop_iseq();
+    
     if (is_singleton) {
       // need to fix:
       // res.push(this.SELF + '.$dm(');
-      res.push('rb_vm_defn(' + this.generate(stmt[1]) + ', ');
+      res.push('$def(' + this.generate(stmt[1]) + ', ');
     }
     else {
       // res.push(this.SELF + '.$dm(');
-      res.push('rb_vm_defn(' + this.SELF + ', ');
+      res.push('$def(' + this.SELF + ', ');
     }
+    
     res.push('"' + stmt[2] + '", ' + result + ', ' + (is_singleton ? '1' : '0') + ')');
+    
     return res.join('');
   },
+  
   // ['class', path, super, body]
   generate_class: function(stmt, o) {
     var res = [];
+    
     this.push_iseq(ClassIseq);
+    
     this.iseq_current.push_code(this.generate_bodystmt(stmt[3]));
+    
     var result = this.pop_iseq();
     // if path is ::CONST then we use opal.top_self as base
     // res.push(this.SELF);
+    
     var base;
+    
     if (stmt[1][0] == null) {
       base = this.SELF;
     }
@@ -3234,8 +3477,9 @@ RubyGenerator.prototype = {
     else {
       base = this.generate(stmt[1][0]);
     }
+   
     //res.push(base + '.$dc('); 
-    res.push('rb_vm_class(' + base + ', ');
+    res.push('$class(' + base + ', ');
     // superclass
     if (stmt[2]) {
       res.push(this.generate(stmt[2]));
@@ -3244,31 +3488,47 @@ RubyGenerator.prototype = {
       res.push(this.NIL);
     }
     res.push(', "' + stmt[1][1] + '", ' + result + ', 0)');
+    
     return res.join("");
   },
+  
   generate_class_shift: function(stmt) {
     var res = [];
+    
     this.push_iseq(ClassIseq);
+    
     this.iseq_current.push_code(this.generate_bodystmt(stmt[2]));
+    
     var result = this.pop_iseq();
     // if path is ::CONST then we use opal.top_self as base
     // res.push(this.SELF);
-    res.push('rb_vm_class(' + this.generate(stmt[1]) + ', ');
+    
+    res.push('$class(' + this.generate(stmt[1]) + ', ');
+    
     res.push(this.NIL);
+    
+    
     res.push(', ' + this.NIL + ', ' + result + ', 1)');
+    
     return res.join("");
   },
+  
   generate_module: function(stmt, o) {
     var res = [];
+    
     this.push_iseq(ClassIseq);
+    
     this.iseq_current.push_code(this.generate_bodystmt(stmt[2]));
+    
     var result = this.pop_iseq();
     // if path is ::CONST then we use opal.top_self as base
     // res.push(this.SELF);
+    
     // base is where we define module. basically, its module cpath upto the
     // actual name. An exception is just '::' which means we define it in the
     // top context under object.
     var base;
+    
     if (stmt[1][0] == null) {
       base = this.SELF;
     }
@@ -3278,25 +3538,32 @@ RubyGenerator.prototype = {
     else {
       base = this.generate(stmt[1][0]);
     }
+    
     //res.push(base + '.$dc(');
-    res.push('rb_vm_class(' + base + ', ');
+    res.push('$class(' + base + ', ');
+        
     // superclass
     if (false) {
+      
     }
     else {
       res.push(this.NIL);
     }
     res.push(', "' + stmt[1][1] + '", ' + result + ', 2)');
+    
     return res.join("");
   },
+  
   generate_line: function(stmt, o) {
     if (o.last && o.full) this.write('return ');
     this.write(stmt[1]);
     if (o.full) this.write(';\n');
   },
+  
   generate_file: function(stmt, o) {
     return "__FILE__";
   },
+  
   generate_xstring: function(stmt, o) {
     // print(stmt);
     var res = [];
@@ -3318,9 +3585,11 @@ RubyGenerator.prototype = {
     }
     return res.join("");
   },
+  
   // ['string', parts, beg] - beg " or '
   generate_string: function(stmt, o) {
     var res = [];
+    
     if (stmt[1].length == 0) {
       return '""';
     }
@@ -3365,11 +3634,14 @@ RubyGenerator.prototype = {
       }
       res.push(')');
     }
+    
     // print('done in string');
     return res.join("");
   },
+  
   generate_regexp: function(stmt) {
     var res = ['(new RegExp('];
+    
     if (stmt[1].length == 0) {
       // empty regexp in js = error
       return '/^$/';
@@ -3418,10 +3690,13 @@ RubyGenerator.prototype = {
     res.push('))');
     return res.join('');
   },
+  
   generate_words: function(stmt, o) {
     var res = [];
+    
     var done_first = false;
     res.push('[');
+    
     for (var i = 0; i < stmt[1][0].length; i++) {
       var part = stmt[1][0][i];
       if (part[0] == 'string_content') {
@@ -3437,9 +3712,11 @@ RubyGenerator.prototype = {
         }
       }
     }
+    
     res.push(']');
     return res.join("");
   },
+  
   generate_begin: function(stmt) {
     var res = [];
     var local;
@@ -3450,6 +3727,7 @@ RubyGenerator.prototype = {
     // if we are dealing with a native error (non opal/ruby error, then lets)
     // wrap it.
     res.push('if (!__err__.$klass){ __err__ = rb_vm_make_exception(__err__);}');
+    
     for (var i = 0; i < stmt[1][2].length; i++) {
       var rescue = stmt[1][2][i];
       res.push('if (__err__){');
@@ -3464,6 +3742,7 @@ RubyGenerator.prototype = {
       res.push('return ' + this.generate_compstmt(rescue[3][1]) + ';');
       res.push('}');
     }
+    
     // worst case, rethrow (if nothing else catches it)
     res.push('throw __err__;');
     // print(stmt[1][2]);
@@ -3474,18 +3753,23 @@ RubyGenerator.prototype = {
     res.push('})()')
     return res.join('');
   },
+  
   generate_gvar: function(stmt) {
     return "rb_vm_gg('" + stmt[1].replace('\\', '\\\\') + "')";
   },
+  
   generate_nth_ref: function(stmt) {
     return "rb_vm_gg('" + stmt[1] + "')";
   },
+  
   generate_back_ref: function(stmt) {
     return "rb_vm_gg('" + stmt[1] + "')";
   },
+  
   generate_colon2: function(stmt) {
     return 'rb_vm_cg(' + this.generate(stmt[1]) + ', "' + stmt[2] + '")';
   },
+  
   generate_return: function(stmt) {
     // print("ensuring return in " + this.iseq_current.constructor);
     var return_arg = [];
@@ -3516,6 +3800,7 @@ RubyGenerator.prototype = {
       return_arg.push(this.NIL);
     }
     return_arg = return_arg.join("");
+    
     // if we are in block (part of an iteration for example..)
     if (this.iseq_current instanceof BlockIseq && !this.iseq_current._in_while_loop) {
       this.iseq_current.ensure_block_return();
@@ -3538,6 +3823,7 @@ RubyGenerator.prototype = {
     }
     return return_arg + "aaaaa";
   },
+  
   generate_next: function(stmt, o) {
     var res = [];
     res.push('rb_vm_next(');
@@ -3553,9 +3839,10 @@ RubyGenerator.prototype = {
     res.push(')');
     return res.join("");
   },
+  
   generate_break: function(stmt) {
     var res = [];
-    res.push('rb_break(');
+    res.push('$break(');
     if (stmt[1]) {
       for (var i = 0; i < stmt[1][0].length; i++) {
         if (i > 0) res.push(', ');
@@ -3568,6 +3855,7 @@ RubyGenerator.prototype = {
     res.push(')');
     return res.join('');
   },
+  
   generate_super: function(stmt) {
     var res = [];
     var mid = this.iseq_current._method_id;
@@ -3586,15 +3874,17 @@ RubyGenerator.prototype = {
     res.push(')');
     return res.join('');
   },
+  
   generate_block_given: function(stmt) {
     var name = this.iseq_current.block_arg;
     this.iseq_current.__uses_block__ = true;
     return '(' + name + ' !== ' + this.NIL + ' ? Qtrue : Qfalse)';
   },
+  
   generate_yield: function(stmt) {
     this.iseq_current.__uses_block__ = true;
     var block = this.iseq_current.block_arg;
-    var args_res = [block + '.$self, ' + this.NIL];
+    var args_res = [block + '.$self'];
     // args
     // print(stmt[1]);
     if (stmt[1][0]) {
@@ -3618,6 +3908,7 @@ RubyGenerator.prototype = {
     // res.push(')');
     // return args_res.join("");
   },
+  
   generate_rescue_mod: function(stmt, o) {
     this.write('try {\n');
     this.generate(stmt[1], { full:true, last:o.last });
@@ -3627,14 +3918,17 @@ RubyGenerator.prototype = {
     this.write('}\n');
     this.iseq_current.queue_temp(tmp_error);
   },
+  
   generate_paren: function(stmt) {
     return this.generate_compstmt(stmt[1][1]);
   },
+  
   // ['range', '..' or '...', beg, end]
   generate_range: function(stmt) {
-    return "rb_vm_range(" + this.generate(stmt[2]) + ", " + this.generate(stmt[3])
+    return "$range(" + this.generate(stmt[2]) + ", " + this.generate(stmt[3]) 
             + ", " + (stmt[1] == '...') + ")";
   },
+  
   generate_require: function(stmt) {
     // this._dependencies.push(stmt[1]);
     // return "require('" + stmt[1] + "')";
@@ -3643,5 +3937,92 @@ RubyGenerator.prototype = {
       this.generate(stmt[1]) + ')';
   }
 };
+
+
+
 exports.Generator = RubyGenerator;
+
+};
+modules["./browser_dev"] = function(exports, module) {
+/*
+ * Browser dev wraps all the dev tools, for compiling etc, but adds some functionality
+ * in-browser. It will automatically pick out text/ruby script tags and execute their
+ * content. opal.js does not do this as the compiler is required. opal_dev.js should
+ * only be used in development mode, so overhead in checking/compiling ruby code
+ * in the browser will not affect production level environments.
+ */
+
+var dev_tools = require('./parser');
+
+for (var prop in dev_tools) {
+  exports[prop] = dev_tools[prop];
+};
+
+/*
+ * Document ready listener can take callbacks that are fired when the document
+ * and/or window are ready to run. If already loaded then the callback is just
+ * called immediately.
+ */
+var browser_register_ready_listener = function(callback) {
+  if (browser_is_ready) return callback();
+
+  (function() {
+    // w3c - chrome, safari, ff
+    if (document.addEventListener) {
+      document.addEventListener('DOMContentLoaded', callback, false);
+    }
+    // IE
+    else {
+      (function() {
+        try {
+          document.documentElement.doScroll('left');
+        } catch (e) {
+          setTimeout(arguments.callee, 0);
+          return;
+        }
+        callback();
+      })();
+    }
+  })();
+};
+
+/*
+ * Document is not ready yet...
+ */
+var browser_is_ready = false;
+
+/*
+ * Find all script tags and run them.
+ */
+browser_register_ready_listener(function() {
+  var tags = document.getElementsByTagName('script'), tag;
+
+  for (var i = 0; i < tags.length; i++) {
+    tag = tags[i];
+
+    if (tag.type == 'text/ruby') {
+      // src property - load by ajax, then run
+      if (tag.src) {
+
+      }
+      // no src, so just run inner contents
+      else {
+        console.log('need to run content:');
+        console.log(tag.innerHTML);
+        var result = Opal.compile(tag.innerHTML);
+        console.log(result);
+        eval(result);
+      }
+    }
+  }
+});
+
+
+};
+  var dev_exports = require('./browser_dev');
+
+  for (var prop in dev_exports) {
+     Opal[prop] = dev_exports[prop];
+  }
 })(this, Opal);
+

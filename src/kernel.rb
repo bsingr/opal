@@ -5,7 +5,7 @@ module Kernel
   # @param [String] path
   # @return [true, false] 
   def require(path)
-    `return rb_require(path);`
+    `return $opal.require(path);`
   end
 
   # Repeatedly executes the given block.
