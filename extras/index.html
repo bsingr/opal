@@ -84,7 +84,22 @@
         puts event
         `console.log(event)`
         puts event.class
+        puts "current target:"
+        puts event.current
+        
+        puts "alt: #{event.alt?}"
+        puts "ctrl: #{event.ctrl?}"
+        puts "meta: #{event.meta?}"
+        puts "shift: #{event.shift?}"
       end
+
+      puts "style!"
+      puts a
+      
+      puts a.style
+      `console.log(#{a.style})`
+     a.style.backgroundColor = 'blue'
+      a.style.background_color
     </script>
     <body>
       <div id="some_div">

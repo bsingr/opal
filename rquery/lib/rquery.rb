@@ -11,3 +11,5 @@ require 'rquery/document'
 require 'rquery/element'
 require 'rquery/css'
 require 'rquery/event'
+require 'rquery/ajax'
+

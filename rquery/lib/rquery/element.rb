@@ -202,6 +202,30 @@ class Element
     `return self.first();`
   end
 
+  # Remove all the child nodes from each of the matched elements in the
+  # receiver. This method will remove all text contents of the receiver
+  # as well, as they are also text nodes belonging to the receiver. By
+  # using jQuery underpinnings, all event listeners of all children are
+  # also removed first to avoid memory leaks.
+  #
+  # @return [Element] returns the receiver
+  def clear
+    `return self.empty();`
+  end
+
+  alias_method :empty, :clear
+
+  # Removes the set of matched elements from the DOM. This method works 
+  # similarly to {#clear}, but the matched element is also removed, as well
+  # as its children. Also, like {#clear}, all event handlers are removed
+  # first. An optional selector may be passed which removes those children
+  # of the matched elements that match the given selector.
+  #
+  # @return [Element] returns the receiver
+  def remove
+    `return self.remove();`
+  end
+
   # @group Events
     
   def mouse_down

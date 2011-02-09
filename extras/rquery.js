@@ -1,13 +1,43 @@
-Opal.module("rquery/css", function() {
+Opal.module("rquery/ajax", function() {
 (function(undefined) {
 var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P;
 Opal.mm([]);
+return ($class(self, nil, "Ajax", function(self) {
+return (nil);}, 0));})();
+});
+Opal.module("rquery/css", function() {
+(function(undefined) {
+var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P;
+Opal.mm(['nil?', 'new', 'raise', 'alias_method', 'to_s', '+', 'inspect', 'puts']);
 return ($class(self, nil, "Element", function(self) {
 return ($def(self, "add_class", function(self, name) {
 return self.addClass(name);}, 0), $def(self, "remove_class", function(self, name) {
 if (name === undefined) name = nil;
 return ((name.$r ? (self.removeClass(name)) : (self.removeClass())));}, 0), $def(self, "has_class?", function(self, name) {
-return self.hasClass(name) ? Qtrue : Qfalse;}, 0));}, 0));})();
+return self.hasClass(name) ? Qtrue : Qfalse;}, 0), $def(self, "style", function(self, key, value) {
+if (self["@style_hash"] === undefined) self["@style_hash"] = nil;
+var __a, __b;
+if (key === undefined) key = nil;
+if (value === undefined) value = nil;
+return (((__a = key).$m["nil?"](__a).$r ? (((__a = self["@style_hash"], __a.$r) ? __a : self["@style_hash"] = (__b = rb_vm_cg(self, "StyleHash")).$m.new(__b, self))) : ((__a = value).$m["nil?"](__a).$r ? (self.$m.raise(self, "need to use getter for key")) : (self.$m.raise(self, "need to use setter")))));}, 0), self.$m.alias_method(self, $symbol("css"), $symbol("style")), $class(self, rb_vm_cg(self, "BasicObject"), "StyleHash", function(self) {
+return ($def(self, "initialize", function(self, element) {
+return self.$element = element;}, 0), $def(self, "method_missing", function(self, css_property, css_value) {
+var __a;
+if (css_value === undefined) css_value = nil;
+var name = (__a = css_property).$m.to_s(__a);
+      console.log("===== " + name);
+      if (css_value == nil) {
+        console.log("getting property!");
+        return self.$element.css(css_property);
+      } else {
+        console.log("setting property!");
+        return self.$element.css(css_property, css_value);
+      }}, 0), $def(self, "to_s", function(self) {
+var __a, __b;
+return ((__a = (__b = ("#" + "<StyleHash element: ")).$m["+"](__b, (__b = self.$element).$m.inspect(__b))).$m["+"](__a, ">"));}, 0), $def(self, "inspect", function(self) {
+return (self.$m.to_s(self));}, 0), $def(self, "puts", function(self, str) {
+var __a;
+return ((__a = rb_vm_cg(self, "Object")).$m.puts(__a, str));}, 0));}, 0));}, 0));})();
 });
 Opal.module("rquery/document", function() {
 (function(undefined) {
@@ -57,7 +87,9 @@ return (self.attr('id', value), value);}, 0), $def(self, "html", function(self, 
 if (content === undefined) content = nil;
 return ((content.$r ? (self.html(content)) : (self.html())));}, 0), $def(self, "html=", function(self, content) {
 return self.html(content);}, 0), $def(self, "first", function(self) {
-return self.first();}, 0), $def(self, "mouse_down", function(self) {
+return self.first();}, 0), $def(self, "clear", function(self) {
+return self.empty();}, 0), self.$m.alias_method(self, $symbol("empty"), $symbol("clear")), $def(self, "remove", function(self) {
+return self.remove();}, 0), $def(self, "mouse_down", function(self) {
 var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;return self.mousedown(function(event) {
       __block__(__block__.$self, event);
     });}, 0));}, 0));})();
@@ -67,13 +99,24 @@ Opal.module("rquery/event", function() {
 var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P;
 Opal.mm([]);
 return ($opal.bridged_class($.Event.prototype, null, 'Event', $opal.Object), $class(self, nil, "Event", function(self) {
-return (nil);}, 0));})();
+return ($def(self, "target", function(self) {
+return $(self.target);}, 0), $def(self, "current", function(self) {
+return $(self.currentTarget);}, 0), $def(self, "type", function(self) {
+return self.type;}, 0), $def(self, "default_prevented?", function(self) {
+return self.isDefaultPrevented() ? Qtrue : Qfalse;}, 0), $def(self, "prevent_default", function(self) {
+return (self.preventDefault(), self);}, 0), $def(self, "alt?", function(self) {
+return self.altKey ? Qtrue : Qfalse;}, 0), $def(self, "ctrl?", function(self) {
+return self.ctrlKey ? Qtrue : Qfalse;}, 0), $def(self, "shift?", function(self) {
+return self.shiftKey ? Qtrue : Qfalse;}, 0), $def(self, "meta?", function(self) {
+return self.metaKey ? Qtrue : Qfalse;}, 0), $def(self, "stop_propagation", function(self) {
+return (self.stopPropagation(), self);}, 0), $def(self, "propagation_stopped?", function(self) {
+return self.isPropagationStopped() ? Qtrue : Qfalse;}, 0));}, 0));})();
 });
 Opal.module("rquery", function() {
 (function(undefined) {
 var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P;
 Opal.mm(['require']);
-return (self.$m.require(self, 'rquery/jquery'), self.$m.require(self, 'rquery/document'), self.$m.require(self, 'rquery/element'), self.$m.require(self, 'rquery/css'), self.$m.require(self, 'rquery/event'));})();
+return (self.$m.require(self, 'rquery/jquery'), self.$m.require(self, 'rquery/document'), self.$m.require(self, 'rquery/element'), self.$m.require(self, 'rquery/css'), self.$m.require(self, 'rquery/event'), self.$m.require(self, 'rquery/ajax'));})();
 });
 Opal.module("rquery/jquery", function() {
 /*
