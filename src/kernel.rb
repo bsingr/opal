@@ -177,7 +177,8 @@ module Kernel
   end
 
   def class
-    `return rb_class_real(self.$klass);`
+    #`return rb_class_real(self.$klass);`
+    `return self.$isa;`
   end
 
   # Returns a random number. If max is `nil`, then the result is 0. Otherwise
@@ -208,7 +209,8 @@ module Kernel
   end
 
   def to_s
-    "#<#{`rb_class_real(self.$klass)`.to_s}:#{`self.$hash()`}>"
+    #"#<#{`rb_class_real(self.$klass)`.to_s}:#{`self.$hash()`}>"
+    "#<#{`self.$isa`}:#{`self.$hash()`}>"
   end 
 
   def inspect

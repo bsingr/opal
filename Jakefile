@@ -57,7 +57,7 @@ task('browser_dev', [], function() {
 
 desc('rebuild core .rb libraries from src/ into lib/');
 task('core', [], function() {
-  var sources = ['array', 'numeric', 'string', 'symbol', 'hash', 'top_self', 'nil_class', 'true_class', 'false_class', 'kernel', 'module', 'proc'];
+  var sources = ['array', 'numeric', 'string', 'symbol', 'hash', 'top_self', 'nil_class', 'true_class', 'false_class', 'kernel', 'module', 'class', 'proc', 'basic_object', 'error'];
 
   sources.forEach(function(source) {
     var code = Opal.compile(fs.readFileSync('src/' + source + '.rb').toString());

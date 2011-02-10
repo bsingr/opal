@@ -11,6 +11,7 @@ module Spec
       def subclass group_name, &group_block
         #puts "in subclass"
         @class_count ||= 0
+        `console.log("ssss")`
         #puts "1"
         klass = const_set "Subclass#{@class_count}", Class.new(self)
         #puts "2"

@@ -17,5 +17,5 @@ class FalseClass
   end
 end
 
-FALSE = false
+#FALSE = false
 

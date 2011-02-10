@@ -1,6 +1,9 @@
+
+var exports = {}, global = this;
+ 
 // Core classes
 var rb_cBasicObject     = null,
-    rb_cModule          = null,
+    class_module        = null,
     class_class         = null,
     rb_cObject          = null,
     module_kernel       = null,
@@ -40,9 +43,6 @@ var T_CLASS             = 1,
     T_ICLASS            = 2048,
     FL_SINGLETON        = 4096;
 
-// our global $opal object for the runtime
-$opal = {};
-
 // hash from arguments vnH(key1, val1, key2, val2...)
 global.vnH = function() {
   var k, v, res = new class_hash.allocator();
@@ -59,16 +59,6 @@ global.vnH = function() {
 };
 
 var symbol_table = { };
-
-$opal.Y = function(str) {
-  if (symbol_table.hasOwnProperty(str)) {
-    return symbol_table[str];
-  }
-
-  var res = new class_symbol.allocator();
-  symbol_table[res.$ptr = str] = res;
-  return res;
-};
 
 // For object_id's .. each object/class will get an object_id
 var hash_yield = 0;
@@ -378,12 +368,12 @@ __boot_base_class.prototype.$r = true;
 
 var define_class_under = function(base, id, super_class) {
   
-  //console.log("looking for class id: " + id);
-  //console.log(base);
+  console.log("looking for class id: " + id);
+  console.log(base);
   if (base.const_defined(id))
     return base.const_get(id);
 
-  //console.log("made it down to here");
+  console.log("made it down to here");
   
   if (!super_class)
     super_class = rb_cObject;
@@ -424,7 +414,6 @@ var define_bridged_class = function(id, native_class) {
   native_class.$r = old_allocator.$r;
   native_class.$isa = old_allocator.$isa;
   native_class.$info = old_allocator.$info
-  native_class.method_table = old_allocator.method_table;
  
  bridged_classes.push(res);
 
@@ -468,22 +457,14 @@ var __subclass = exports.__subclass = function(id, super_class) {
 
 var define_module_under = function(base, id) {
   
-  if (base.const_defined(id))
-    return base.const_get(id);
+  //if (base.const_defined(id))
+   // return base.const_get(id);
     
-  //var mod = __subclass(id, rb_cModule);
- // mod.constructor.prototype.$parent = base;
-  ///base.const_set(id, mod);
- // mod.included_in = [];
- // mod.$info = T_MODULE;
- // mod.allocator.prototype.$info = T_MODULE;
-  //return mod;
-
-  var mod = define_class_under(base, id, rb_cModule);
+  var mod = define_class_under(base, id, class_module);
   mod.included_in = [];
- mod.$info = T_MODULE;
- mod.allocator.prototype.$info = T_MODULE;
- return mod;
+  mod.$info = T_MODULE;
+  mod.allocator.prototype.$info = T_MODULE;
+  return mod;
 };
 
 // makes the core instances objects - this will be basic_object, object etc instances.
@@ -553,21 +534,16 @@ var boot_object = __boot_defclass("Object", boot_basic_object);
 var boot_module = __boot_defclass("Module", boot_object);
 var boot_class = __boot_defclass("Class", boot_module);
 
-$opal.BasicObject = rb_cBasicObject = __boot_makemeta(boot_basic_object, boot_class);
-$opal.Object = rb_cObject = __boot_makemeta(boot_object, rb_cBasicObject.constructor);
-$opal.Module = rb_cModule = __boot_makemeta(boot_module, rb_cObject.constructor);
-$opal.Class = class_class = __boot_makemeta(boot_class, rb_cModule.constructor);
+rb_cBasicObject = __boot_makemeta(boot_basic_object, boot_class);
+rb_cObject = __boot_makemeta(boot_object, rb_cBasicObject.constructor);
+class_module = __boot_makemeta(boot_module, rb_cObject.constructor);
+class_class = __boot_makemeta(boot_class, class_module.constructor);
 
 __boot_defmetameta(rb_cBasicObject, class_class);
 __boot_defmetameta(rb_cObject, class_class);
-__boot_defmetameta(rb_cModule, class_class);
+__boot_defmetameta(class_module, class_class);
 __boot_defmetameta(class_class, class_class);
 
-// finally ensure correct superclass trees
-rb_cObject.$super = rb_cBasicObject;
-rb_cBasicObject.$super = null;
-class_class.$super = rb_cModule;
-rb_cModule.$super = rb_cObject;
 
 // Now need to add all class/module methods here..
 rb_cBasicObject.constructor.prototype.define_method = function(method_id, method_body, singleton) {
@@ -589,20 +565,17 @@ rb_cBasicObject.constructor.prototype.define_method = function(method_id, method
         this.__attached__.constructor.prototype.method_table[js_id] = method_body;
       } else {
         this.allocator.prototype[js_id] = method_body;
-        this.allocator.prototype.method_table[js_id] = method_body;
+        //this.allocator.prototype.method_table[js_id] = method_body;
       }
 
       if (this.$info & T_ICLASS) {
         this.__instance__[js_id] = method_body;
       }
     } else {
-      this.$info = this.$info | FL_SINGLETON;
-      this[js_id] = method_body;
+      console.log("need to make singleton object");
     }
   }
 };
-
-rb_cBasicObject.allocator.prototype.define_method = rb_cBasicObject.constructor.prototype.define_method;
 
 rb_cBasicObject.constructor.prototype.const_set = function(id, val) {
   var base = this;
@@ -643,71 +616,21 @@ rb_cBasicObject.constructor.prototype.const_get = function(id) {
   return null;
 };
 
-//__boot_base_class.prototype.extend = function(module) {
-//  // add each method from module into class's prototype
-//  for (method in module.allocator.prototype.method_table) {
-//    // console.log("adding " +method);
-//    this.constructor.prototype.method_table[method] = module.allocator.prototype.method_table[method];
-//    this.constructor.prototype[method] = module.allocator.prototype.method_table[method];
-//  }
-//};
 
-rb_cBasicObject.constructor.prototype.extend = function(module) {
-  for (var method in module.allocator.prototype.method_table) {
-    this.constructor.prototype.method_table[method] = module.allocator.prototype.method_table[method];
-    this.constructor.prototype[method] = module.allocator.prototype.method_table[method];
-  }
-};
-
-rb_cBasicObject.constructor.prototype.include = function(module) {
-  console.log("native include for ---- " + this.__classid__);
-  console.log(module);
-  
-  if (!this.included_modules)
-    this.included_modules = [];
-  
-  if (this.included_modules.indexOf(module) != -1)
-    return; // already included
-  
-  console.log("ading module:");
-  console.log(module == module_kernel);
-  this.included_modules.push(module);
-  module.included_in.push(this);
-  console.log(module.included_in);
-
-  console.log(module.allocator.prototype.method_table);
-  
-  // add each method from module into class's prototype
-  for (method in module.allocator.prototype.method_table) {
-    console.log("ADDING METHOD: " + method);
-    // if (!this.allocator.prototype.method_table[method])
-    // if (!this.allocator.prototype.hasOwnProperty(method))
-    this.allocator.prototype.method_table[method] = module.allocator.prototype.method_table[method];
-    this.allocator.prototype[method] = module.allocator.prototype.method_table[method];
-  }
-  
-  // console.log("checking include constants from " + module.class_name + " into " + this.class_name);
-  for (var prop in module.constants) {
-    if (module.constants.hasOwnProperty(prop) && !this.constants[prop]) {
-      this.constants[prop] = module.constants[prop];
-    }
-  }
-};
 
 rb_cObject.const_set("BasicObject", rb_cBasicObject);
 rb_cObject.const_set("Object", rb_cObject);
 rb_cObject.const_set("Class", class_class);
-rb_cObject.const_set("Module", rb_cModule);
+rb_cObject.const_set("Module", class_module);
 
 
 // Custom methods for modules to handle includes properly
-rb_cModule.constructor.prototype.define_method = function(m_id, body, sing){
-  console.log("module defininf method " + m_id);
+class_module.constructor.prototype.dm = function(m_id, body, sing){
     
-  var js_id = 'm$' + m_id;  
+  js_id = '$' + m_id;  
   
   // super
-  rb_cBasicObject.define_method.apply(this, arguments);
+  __boot_base_class.prototype.dm.apply(this, arguments);
     
   // go through each class we are included in and add new method to that as well
   for (var i = 0; i < this.included_in.length; i++) {
@@ -725,10 +648,9 @@ exports.top_self = new rb_cObject.allocator();
 // Override Object.include so that we can also include each module into our
 // Natives String, Array, Number etc.
 rb_cObject.include = function(module) {
-  console.log("including into object!");
-  console.log(module);
+  return;
   // super
-  var res = rb_cBasicObject.include.apply(rb_cObject, [module]);
+  var res = __boot_base_class.prototype.include.apply(rb_cObject, [module]);
     
   var natives = bridged_classes;
 
@@ -765,7 +687,8 @@ class_proc = define_bridged_class("Proc", Function.prototype);
 class_proc.allocator.prototype.$info = T_OBJECT | T_PROC;
 // Fix for Object's super_class being a proc and causing inifite recusrion in
 // super class chain Object->Proc->Object...etc
-//rb_cObject.allocator.prototype.$super = undefined;
+rb_cObject.allocator.prototype.$super = undefined;
+rb_cObject.$super = undefined;
 
 
 // Range class
@@ -774,19 +697,19 @@ class_range.allocator.prototype.info = T_OBJECT | T_RANGE;
 
 // True class
 class_true_class = define_class_under(rb_cObject, "TrueClass", rb_cObject);
-$opal.Qtrue = Qtrue = new class_true_class.allocator();
-Qtrue.info = Qtrue.info | FL_SINGLETON;
+vnTrue = new class_true_class.allocator();
+vnTrue.info = vnTrue.info | FL_SINGLETON;
 
 // False class
 class_false_class = define_class_under(rb_cObject, "FalseClass",rb_cObject);
-$opal.Qfalse = Qfalse = new class_false_class.allocator();
-Qfalse.info = Qfalse.info | FL_SINGLETON;
+vnFalse = new class_false_class.allocator();
+vnFalse.info = vnFalse.info | FL_SINGLETON;
 
-Qfalse.$r = false;
+vnFalse.$r = false;
 
 // Nil class
 class_nil_class = define_class_under(rb_cObject, "NilClass", rb_cObject);
-$opal.Qnil = Qnil = new class_nil_class.allocator();
+Qnil = new class_nil_class.allocator();
 Qnil.info = Qnil.$info | FL_SINGLETON;
 
 Qnil.$r = false;
@@ -861,8 +784,8 @@ class_exception.allocator.prototype.raise = function() {
 // do RegExp....?
 
 // Number class
-class_number = define_bridged_class("Numeric", Number.prototype);
-class_number.allocator.prototype.$info = T_OBJECT | T_NUMBER;
+class_number = define_bridged_class("Number", Number.prototype);
+class_number.allocator.prototype.info = T_OBJECT | T_NUMBER;
  
 class_number.allocator.prototype.$hash = function() {
   return '$$num$$' + this;
@@ -873,8 +796,8 @@ class_number.allocator.prototype.$hash = function() {
 class_string = define_bridged_class("String", String.prototype);
 class_string.allocator.prototype.$info = T_OBJECT | T_STRING;
 
-class_string.allocator.prototype.$hash = function() {
-  return this.toString();
+class_string.allocator.prototype.hash = function() {
+  return this;
 };
 
 
@@ -888,26 +811,20 @@ class_regexp.allocator.prototype.info = T_OBJECT;
 
 
 // Kernel module
-$opal.Kernel = module_kernel = define_module_under(rb_cObject, "Kernel");
+module_kernel = define_module_under(rb_cObject, "Kernel");
 rb_cObject.include(module_kernel);
 
 // ####################################
 // VM Methods
 // ####################################
 
+var $opal = {};
+
 $opal.dm = function(base, method_id, method_body, singleton) {
-  //console.log("defininf method: " + method_id);
-  //if (base.$info & T_OBJECT)
-  //console.log("base:");
-  //console.log(base);
+  console.log("defininf method: " + method_id);
 
-  // basically, if base doesnt have .define_method defined, then we cannot
-  // define a method on that object; it may be a string for instance
-  if (!base.define_method) {
-    console.log(base);
-    throw new Error("can't define singleton method `" + method_id + "` for " + base);
-  }
-
+  console.log("base:");
+  console.log(base);
   base.define_method(method_id, method_body, singleton);
 };
 
@@ -945,86 +862,3 @@ $opal.top = exports.top_self;
 
 // we no longer use method missing, so ignore for now
 $opal.mm = function() {};
-
-// run in ruby context
-$opal.run = function(f) {
-  return f();
-};
-
-// require
-$opal.require = function(path) {
-  console.log("Requiring: " + path);
-  require(path);
-  return Qtrue;
-};
-
-$opal.P = {
-  // function
-  f: null,
-  // block
-  p: null,
-  // yield error
-  y: function() {
-    throw new Error('LocalJumpError - $opal.P.y - no block given');
-  }
-};
-
-$opal.cg = function(base, id) {
-  if (base.$info & T_OBJECT) base = base.$isa;
-
-  var res = rb_cBasicObject.constructor.prototype.const_get.call(base, id);
-
-  if (res) return res;
-  throw new Error("constget: cant find " + id);
-};
-
-$opal.am = function(self, new_name, old_name) {
-  var old = self['m$' + old_name];
-
-  if (old) {
-    throw new Error("alias method: does not exist: " + old_name);
-  }
-
-  self.define_method(new_name, old, 0);
-
-  return Qnil;
-};
-
-// do we still need this?
-exports.init = function() {
-
-};
-
-// INIT - load all runtime files..
-console.log("loading basic_object");
-require('./basic_object');
-
-console.log("loading - kernel");
-require('./kernel');
-console.log("loading - array");
-require('./array');
-
-console.log("loading numeric");
-require('./numeric');
-console.log("loading - top self");
-require('./top_self');
-
-console.log("loading class");
-require('./class');
-
-console.log("loading module");
-require('./module');
-
-console.log("loading string");
-require('./string');
-
-console.log("requiring symbol");
-require('./symbol')
-
-console.log("requiring true, false, nil");
-require('./true_class');
-require('./false_class');
-require('./nil_class');
-
-console.log("requriring error");
-require('./error');

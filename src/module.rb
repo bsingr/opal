@@ -10,7 +10,9 @@ class Module
 
   def define_method(method_id, &block)
     raise LocalJumpError, "no block given" unless block_given?
-    `rb_define_method(self, #{method_id.to_s}, block)`
+    `console.log("self is:")`
+    `console.log(self)`
+    `$def(self, #{method_id.to_s}, block)`
     nil
   end
 
@@ -24,7 +26,7 @@ class Module
       var attr = attrs[i];
       var method_id = #{`attr`.to_s};
 
-      rb_define_method(self, method_id, 
+      $def(self, method_id, 
             new Function('self', 'return rb_ivar_get(self, "@' + method_id + '");'));
 
     }
@@ -37,7 +39,7 @@ class Module
       var attr = attrs[i];
       var method_id = #{`attr`.to_s};
 
-      rb_define_method(self, method_id + '=', 
+      $def(self, method_id + '=', 
         new Function('self', 'val', 'return rb_ivar_set(self, "@' + method_id + '", val);'));
 
     }
@@ -48,7 +50,8 @@ class Module
   def alias_method(new_name, old_name)
     new_name = new_name.to_s
     old_name = old_name.to_s
-    `rb_define_method_raw(self, new_name, self.$m_tbl[old_name])`
+#    `rb_define_method_raw(self, new_name, self.$m_tbl[old_name])`
+    `$opal.am(self, new_name, old_name)`
     self
   end
 
@@ -87,12 +90,12 @@ class Module
   end
 
   def include(mod)
-    `rb_include_module(self, mod)`
+    `self.include(mod)`
     nil
   end
 
   def extend(mod)
-    `rb_extend_module(self, mod)`
+    `self.extend(mod)`
     nil
   end
 end

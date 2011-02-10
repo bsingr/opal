@@ -37,5 +37,5 @@ class NilClass
   end
 end
 
-NIL = nil
+#NIL = nil
 
