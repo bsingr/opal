@@ -42,7 +42,7 @@ class Array
     `var description = [];
   
     for (var i = 0; i < self.length; i++) {
-      description.push(self[i].$m.inspect(self[i]));
+      description.push(#{`self[i]`.inspect});
     }
   
     return '[' + description.join(', ') + ']';`
