@@ -8,6 +8,11 @@ module Kernel
     `return $opal.require(path);`
   end
 
+  def puts(str)
+    `console.log(#{str.to_s}.toString())`
+    nil
+  end
+
   # Repeatedly executes the given block.
   #
   # @example

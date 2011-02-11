@@ -54,7 +54,7 @@ class Array
     `var description = [];
 
     for (var i = 0; i < self.length; i++) {
-      description.push(self[i].$m.to_s(self[i]));
+      description.push(#{`self[i]`.to_s});
     }
 
     return description.join('');`
@@ -88,9 +88,7 @@ class Array
     `return self.length;`
   end
 
-  def size
-    `return self.length;`
-  end
+  alias_method :size, :length
 
   # Yields the block once for each element in `self`, passing that element as
   # a parameter.
