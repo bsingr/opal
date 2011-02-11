@@ -1,11 +1,11 @@
 class Symbol
 
   def inspect
-    `return ':' + self.__ptr__;`
+    `return ':' + self;`
   end
 
   def to_s
-    `return self.__ptr__;`
+    `return self;`
   end
 
   def to_sym

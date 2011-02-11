@@ -9,16 +9,10 @@ module Spec
       end
       
       def subclass group_name, &group_block
-        #puts "in subclass"
         @class_count ||= 0
-        #puts "1"
         klass = const_set "Subclass#{@class_count}", Class.new(self)
-        #puts "2"
-        #`console.log(klass)`
         klass.description = group_name
-        #puts "3"
         Spec::Example::ExampleGroupFactory.register_example_group klass
-        #puts "4"
         klass.module_eval(&group_block)
         klass
       end
@@ -120,3 +114,4 @@ module Spec
     end
   end
 end
+

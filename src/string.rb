@@ -10,6 +10,11 @@
 # of the string methods that end in '!' are therefore not implemented, but their
 # counterparts are: 'upase' exists, but 'upcase!' does not, for example.
 class String
+
+  def self.new(str = "")
+    `return new String(str);`
+  end
+
   # Copy - returns a new string containing `count` copies of the receiver.
   #
   # @example
