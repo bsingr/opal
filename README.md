@@ -14,7 +14,7 @@ Installation
 Once opal reaches 0.1.0, it will be added to npm. For now just clone
 from github and hack away.
 
-    git clone git://github.com/adambeynon/opal.git
+    git clone https://github.com/adambeynon/opal.git
 
 Usage
 -----
