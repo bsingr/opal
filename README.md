@@ -11,16 +11,17 @@ Node
 Installation
 ------------
 
-Opal can be installed from npm:
+Once opal reaches 0.1.0, it will be added to npm. For now just clone
+from github and hack away.
 
-    npm install opal
+    git clone git://github.com/adambeynon/opal.git
 
 Usage
 -----
 
 For now, start up the REPL as following, and use as any regular ruby:
 
-    opal
+    node bin/opal
 
 Browser
 =======
@@ -35,9 +36,9 @@ opal_dev.js
 -----------
 Opal development tools; compiler, parser, generator etc. This is needed for evaluating ruby code in script tags.
 
-opalite.js
+rquery.js
 ----------
-The default opal DOM interaction library
+A ruby DOM library that wraps jquery.
 
 opalspec.js
 -----------
