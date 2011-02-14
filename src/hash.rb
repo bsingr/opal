@@ -585,7 +585,7 @@ class Hash
   # @param [Hash] other hash to merge with
   # #return [Hash] returns new hash
   def merge(other)
-    `var result = opalhash() , key, val;
+    `var result = $opal.H() , key, val;
     
     for (var i = 0; i < self.$keys.length; i++) {
       key = self.$keys[i], val = self.$assocs[key.$hash()];

@@ -396,7 +396,7 @@ class Array
 
     return result;`
   end
-
+  
   # Yields the block once for each element of `self`, replacing the element with
   # the value returned by the block. See also {Enumerable#collect}.
   #

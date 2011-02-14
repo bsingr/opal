@@ -17,7 +17,7 @@ if (typeof Opal == 'undefined')
 
 modules["./array"] = function(exports) {
 (function(undefined) {
-var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P;
+var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P, $return = Opal.R, $super = Opal.S;
 Opal.mm(['==', 'raise', 'flatten', 'to_s', 'join']);
 return ($class(self, nil, "Array", function(self) {
 return ($def(self, "[]", function(self, objs) {
@@ -579,7 +579,7 @@ return self[index] = value;}, 0));}, 0));})();
 };
 modules["./numeric"] = function(exports) {
 (function(undefined) {
-var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P;
+var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P, $return = Opal.R, $super = Opal.S;
 Opal.mm([]);
 return ($class(self, nil, "Numeric", function(self) {
 return ($def(self, "+@", function(self) {
@@ -640,10 +640,12 @@ return parseInt(self);}, 0));}, 0));})();
 };
 modules["./string"] = function(exports) {
 (function(undefined) {
-var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P;
+var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P, $return = Opal.R, $super = Opal.S;
 Opal.mm(['match']);
 return ($class(self, nil, "String", function(self) {
-return ($def(self, "*", function(self, count) {
+return ($def(self, "new", function(self, str) {
+if (str === undefined) str = "";
+return new String(str);}, 1), $def(self, "*", function(self, count) {
 var result = [];
 
     for (var i = 0; i < count; i++) {
@@ -699,17 +701,17 @@ return self.replace(/^\s*/, '');}, 0));}, 0));})();
 };
 modules["./symbol"] = function(exports) {
 (function(undefined) {
-var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P;
+var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P, $return = Opal.R, $super = Opal.S;
 Opal.mm([]);
 return ($class(self, nil, "Symbol", function(self) {
 return ($def(self, "inspect", function(self) {
-return ':' + self.__ptr__;}, 0), $def(self, "to_s", function(self) {
-return self.__ptr__;}, 0), $def(self, "to_sym", function(self) {
+return ':' + self;}, 0), $def(self, "to_s", function(self) {
+return self;}, 0), $def(self, "to_sym", function(self) {
 return (self);}, 0));}, 0));})();
 };
 modules["./hash"] = function(exports) {
 (function(undefined) {
-var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P;
+var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P, $return = Opal.R, $super = Opal.S;
 Opal.mm(['inspect', '==', 'flatten']);
 return ($class(self, nil, "Hash", function(self) {
 return ($def(self, "values", function(self) {
@@ -945,7 +947,7 @@ var key, val;
     return nil;}, 0), $def(self, "keys", function(self) {
 return self.$keys.slice(0);}, 0), $def(self, "length", function(self) {
 return self.$keys.length;}, 0), $def(self, "merge", function(self, other) {
-var result = opalhash() , key, val;
+var result = $opal.H() , key, val;
     
     for (var i = 0; i < self.$keys.length; i++) {
       key = self.$keys[i], val = self.$assocs[key.$hash()];
@@ -1016,7 +1018,7 @@ return (self);}, 0));}, 0));})();
 };
 modules["./top_self"] = function(exports) {
 (function(undefined) {
-var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P;
+var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P, $return = Opal.R, $super = Opal.S;
 Opal.mm(['include']);
 return ($def(self, "to_s", function(self) {
 return ("main");}, 1), $def(self, "include", function(self, mod) {
@@ -1025,7 +1027,7 @@ return ((__a = rb_vm_cg(self, "Object")).$m.include(__a, mod));}, 1));})();
 };
 modules["./nil_class"] = function(exports) {
 (function(undefined) {
-var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P;
+var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P, $return = Opal.R, $super = Opal.S;
 Opal.mm([]);
 return ($class(self, nil, "NilClass", function(self) {
 return ($def(self, "to_i", function(self) {
@@ -1041,7 +1043,7 @@ return other.$r ? Qtrue : Qfalse;}, 0));}, 0), rb_vm_cs(self, "NIL", nil));})();
 };
 modules["./true_class"] = function(exports) {
 (function(undefined) {
-var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P;
+var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P, $return = Opal.R, $super = Opal.S;
 Opal.mm([]);
 return ($class(self, nil, "TrueClass", function(self) {
 return ($def(self, "to_s", function(self) {
@@ -1052,7 +1054,7 @@ return other.$r ? Qfalse : Qtrue;}, 0));}, 0), rb_vm_cs(self, "TRUE", Qtrue));})
 };
 modules["./false_class"] = function(exports) {
 (function(undefined) {
-var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P;
+var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P, $return = Opal.R, $super = Opal.S;
 Opal.mm([]);
 return ($class(self, nil, "FalseClass", function(self) {
 return ($def(self, "to_s", function(self) {
@@ -1063,7 +1065,7 @@ return other.$r ? Qtrue : Qfalse;}, 0));}, 0), rb_vm_cs(self, "FALSE", Qfalse));
 };
 modules["./kernel"] = function(exports) {
 (function(undefined) {
-var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P;
+var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P, $return = Opal.R, $super = Opal.S;
 Opal.mm(['raise', 'new', 'kind_of?', 'to_s', 'inspect', '==', '__send__']);
 return ($class(self, nil, "Kernel", function(self) {
 return ($def(self, "require", function(self, path) {
@@ -1153,7 +1155,7 @@ if (max != undefined)
 return self.$hash();}, 0), $def(self, "object_id", function(self) {
 return self.$hash();}, 0), $def(self, "to_s", function(self) {
 var __a, __b;
-return (("#" + "<" + (__a = (__b = rb_class_real(self.$klass)).$m.to_s(__b), __a.$m.to_s(__a)) + ":" + (__a = self.$hash(), __a.$m.to_s(__a)) + ">"));}, 0), $def(self, "inspect", function(self) {
+return (("#" + "<" + (__a = (__b = rb_class_real(self.$klass)).$m.to_s(__b), __a.$m.to_s(__a)) + ":0x" + (__a = (self.$hash() * 4000487).toString(16), __a.$m.to_s(__a)) + ">"));}, 0), $def(self, "inspect", function(self) {
 return (self.$m.to_s(self));}, 0), $def(self, "instance_eval", function(self) {
 var block = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;return ((((block !== nil ? Qtrue : Qfalse).$r) ? block(self):nil), self);}, 0), $def(self, "const_set", function(self, name, value) {
 return rb_const_set(rb_class_real(self.$klass), name, value);}, 0), $def(self, "const_defined?", function(self, name) {
@@ -1161,7 +1163,7 @@ return (Qfalse);}, 0));}, 2));})();
 };
 modules["./module"] = function(exports) {
 (function(undefined) {
-var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P;
+var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P, $return = Opal.R, $super = Opal.S;
 Opal.mm(['kind_of?', 'raise', 'to_s', 'attr_reader', 'attr_writer', 'class_eval']);
 return ($class(self, nil, "Module", function(self) {
 return ($def(self, "name", function(self) {
@@ -1211,7 +1213,7 @@ return (rb_extend_module(self, mod), nil);}, 0));}, 0));})();
 };
 modules["./proc"] = function(exports) {
 (function(undefined) {
-var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P;
+var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P, $return = Opal.R, $super = Opal.S;
 Opal.mm([]);
 return ($class(self, nil, "Proc", function(self) {
 return ($def(self, "to_proc", function(self) {
@@ -1221,201 +1223,8 @@ args.unshift(self.$self);
     return self.apply(null, args);}, 0));}, 0));})();
 };
 modules["./runtime"] = function(exports) {
-/*
- * Opal Runtime
- * ============
- *
- * The exports of this module are used in two places; one, as the .runtime
- * property of require('opal'), and secondly as the .$opal property of all
- * core objects and classes. It exposes functionality for creating classes,
- * defining methods, creating symbols, registering method names, etc. It
- * is an ecapsulation of most of the old global variables, which can now be
- * easily accessed. It is also pointed to by the global $opal, which
- * is accessed at the top of every generated ruby file (by default), to, at
- * minimum, access the top self property. The following is a list of all 
- * properties set on this. This makes $opal the only global variable from
- * opal.
- *
- * init()
- * ------
- *
- * Used to initialize opal. Should only be called once, but has protection 
- * to ensure so. It boots opal; loads the core classes and initializes the
- * runtime. Trying to run ruby files before this has been called will yield
- * a load of errors. It is automatically called in the browser env, and by
- * all bin files in node env.
- *
- * top
- * ---
- *
- * Represents the rb_top_self object which all ruby files are run as. It is
- * created by init(). To run any code outside the regular stream, you should
- * pass this object as the first argument to a function which uses it as its
- * 'self' parameter.
- *
- * define_class() and dc()
- * -----------------------
- *
- * Used to define a ruby class. This requires init() to have been called. The
- * latter exists just as a shorter name for generated ruby code.
- *
- * define_method() and dm()
- * ------------------------
- *
- * Used for setting ruby methods. Again, the latter is just useful as a
- * shorter name for generated code.
- *
- * const_get() and cg()
- * --------------------
- *
- * Used for getting a constant. Again, VM uses cg() as a shorter name.
- *
- * const_at() and ca()
- * -------------------
- *
- * Constant as given scope.
- *
- * const_defined() and cd()
- * ------------------------
- *
- * const_set() and cs()
- * --------------------
- *
- * mm()
- * ----
- *
- * Opal achieves method missing by registering all called methods onto the 
- * root core prototype for all ruby objects, so that unless a method is 
- * explicitly defined, then all methods are by default just calls to a 
- * special method_missing callback. This adds a little overhead to the load
- * stage of files, but works out a lot more efficient than making every 
- * method call check for method_missing requirements. At the top of every
- * ruby file, mm is called with an array of all called methods. Optimizations
- * are underway for entire libraries to concat and uniqify all their called
- * methods into a simpler call, to have package based registering rather then
- * each module independantely. Not registering methods will result in calls
- * that yield native javascript errors for 'undefined is not a function'.
- *
- * Qtrue, Qfalse and Qnil
- * ----------------------
- *
- * Each of these objects point to their respective ruby object literals, as
- * native js true, false and null are not used. Again, these are created by
- * init(). Each file will make a local reference to these so that accessing
- * them is more optimized than a property reference each time, and generated
- * code is smaller as their variable names may be minimized.
- *
- * T_OBJECT, T_MODULE, T_CLASS, T_STRING, T_ARRAY, T_PROC, T_HASH, etc
- * -------------------------------------------------------------------
- *
- * Core types. These are used mainly by the core classes to more efficiently
- * determine argument types. They are not added to the top of each file, but
- * are added by the core classes to the local scope as needed. Extension
- * libraries should use these to check again core object $flag properties as
- * the recomended way to determine object types.
- *
- * H()
- * ---
- *
- * Returns a new RHash instance created with the arguments passed to the
- * function.
- *
- * Y()
- * ---
- *
- * Creates a new symbol with the given string. Used exclusively by the VM
- * within Opal.
- *
- * G()
- * ---
- *
- * Returns a new RRange
- *
- * B()
- * ---
- *
- * Triggers a break statement with the given break value. Uses the javascript
- * throw system to pass break values back to original context.
- *
- * P
- * -
- *
- * An object that holds the VM current block function, and the current block
- * proc. The block function, accessed with .f is the current javascript
- * function representing the method that the block was sent to. This allows
- * functions to check that they are the designated receiver. The proc is
- * accessed with .p, and is the block literal which can be yielded. finally,
- * the .y property is a function that will throw a yield error, when the 
- * code tries to yield when no block was given. This simply raises a 
- * LocalJumpError. 
- *
- * Example Generated source
- * ========================
- *
- * (function() {
- *    var Opal   = $opal,
- *        self   = Opal.top,
- *        nil    = Opal.Qnil,
- *        Qtrue  = Opal.Qtrue,
- *        Qfalse = Opal.Qfalse,
- *        $dm    = Opal.dm,
- *        $dc    = Opal.dc;
- *   
- *    // register all calls - we only need to do this once, so its silly
- *    // making a local variable for it
- *    Opal.mm(['puts']);
- *
- *    // simple method call
- *    self.$m.puts(self, "hello world");
- *
- *    // define a class
- *    $dc(...);
- *    
- *    // define a method
- *    $dm(...);
- * })();
- *
- * Additions to native prototypes
- * ==============================
- *
- * To support opal, there are a couple of properties that are added to
- * String, Array, Function, Number and Error prototypes. These are all
- * prepended with $ to avoid name conflicts. The complete list of additions
- * are:
- *
- * $m
- * --
- *
- * Pointer to the method table for the receiver. For efficiency, methods are
- * stored in a prototype table.
- *
- * $klass
- * ------
- *
- * A pointer to the RClass instance which is the class of the instance.
- *
- * $flags
- * ------
- *
- * Object flags used by the runtime for managing objects.
- *
- * $hash()
- * -------
- *
- * Function that is used for object_id and storing objects in the hash table.
- *
- * $id
- * ---
- *
- * Used to store the object id. This is only for Function and Array; String
- * and Number prototypes do not have this property.
- *
- * $r
- * --
- *
- * Ruby truthiness of the object. Needed for more efficient logic operations
- * in opal.
- */
+// our global $opal object that is also exported.
+$opal = {};
 
 // Core runtime classes and objects
 var rb_cBasicObject,
@@ -1426,38 +1235,40 @@ var rb_cBasicObject,
     rb_cNilClass,
     rb_cTrueClass,
     rb_cFalseClass,
-		rb_cFile,
+    rb_cFile,
     rb_cProc,
     rb_cNumeric,
     rb_cArray,
     rb_cHash,
+    rb_cString,
+    rb_cSymbol,
     rb_top_self,
     Qnil,
     Qfalse,
     Qtrue;
 
 // Core object types flags
-var T_CLASS       = 1,
-    T_MODULE      = 2,
-    T_OBJECT      = 4,
-    T_BOOLEAN     = 8,
-    T_STRING      = 16,
-    T_ARRAY       = 32,
-    T_NUMBER      = 64,
-    T_PROC        = 128,
-    T_SYMBOL      = 256,
-    T_HASH        = 512,
-    T_RANGE       = 1024,
-    T_ICLASS      = 2056,
-    FL_SINGLETON  = 4112;
+var T_CLASS       = $opal.T_CLASS       = 1,
+    T_MODULE      = $opal.T_MODULE      = 2,
+    T_OBJECT      = $opal.T_OBJECT      = 4,
+    T_BOOLEAN     = $opal.T_BOOLEAN     = 8,
+    T_STRING      = $opal.T_STRING      = 16,
+    T_ARRAY       = $opal.T_ARRAY       = 32,
+    T_NUMBER      = $opal.T_NUMBER      = 64,
+    T_PROC        = $opal.T_PROC        = 128,
+    T_SYMBOL      = $opal.T_SYMBOL      = 256,
+    T_HASH        = $opal.T_HASH        = 512,
+    T_RANGE       = $opal.T_RANGE       = 1024,
+    T_ICLASS      = $opal.T_ICLASS      = 2056,
+    FL_SINGLETON  = $opal.FL_SINGLETON  = 4112;
 
 // load paths - these will be reset in init(). If not set, then just use default.
 // In node we set these to require.paths, and in the browser we use a temporary
 // fake namespace.
+//
+// FIXME: node v.0.4 introduces the idea that require.paths will be depreceated.
+// Should we start to look at an alternative solution?
 var load_paths = [];
-
-// our global $opal object that is also exported.
-$opal = {};
 
 // setting mm methods
 $opal.mm = function(method_ids) {
@@ -1466,7 +1277,6 @@ $opal.mm = function(method_ids) {
     var method_id = method_ids[i];
     // only add if there isnt already a method there
     if (!prototype.hasOwnProperty(method_id)) {
-      console.log("adding method: " + method_id);
 
         var func = (function(method_id) {
           return function(self) {
@@ -1474,7 +1284,7 @@ $opal.mm = function(method_ids) {
             var args = [].slice.call(arguments, 1);
             args.unshift(method_id);
             args.unshift(self);
-            console.log(self.$m.method_missing);
+        //    console.log(self.$m.method_missing);
             return self.$m.method_missing.apply(null, args);
           };
         })(method_id);
@@ -1483,7 +1293,6 @@ $opal.mm = function(method_ids) {
       prototype[method_id] = func;
 
     } else {
-      console.log("not adding: " + method_id);
     }
   }
 };
@@ -1494,8 +1303,9 @@ $opal.dm = function(base, method_id, body, singleton) {
     rb_define_singleton_method(base, method_id, body);
   } else {
     // should this instead do a rb_singleton_method?? probably..
-    if (base.$flags & T_OBJECT)
+    if (base.$flags & T_OBJECT) {
       base = base.$klass;
+    }
 
     rb_define_method(base, method_id, body);
   }
@@ -1507,16 +1317,17 @@ $opal.dm = function(base, method_id, body, singleton) {
 $opal.dc = function(base, super_class, id, body, flag) {
   var klass;
   
-  
   switch (flag) {
     // normal class
     case 0:
       // if we are dealing with an object, lets use its class instead.
-      if (base.$flags & T_OBJECT)
+      if (base.$flags & T_OBJECT) {
         base = rb_class_real(base.$klass);
+      }
       // If no superclass specified, use Object.
-      if (super_class == Qnil)
+      if (super_class == Qnil) {
         super_class = rb_cObject;
+      }
       
       klass = rb_define_class_under(base, id, super_class);
       break;
@@ -1527,8 +1338,9 @@ $opal.dc = function(base, super_class, id, body, flag) {
     // module
     case 2:
       // if we are dealing with an object, lets use its class instead.
-      if (base.$flags & T_OBJECT)
+      if (base.$flags & T_OBJECT) {
         base = rb_class_real(base.$klass);
+      } 
       klass = rb_define_module_under(base, id);
       break;
     // If default, something has gone wrong (in compiler).
@@ -1538,7 +1350,6 @@ $opal.dc = function(base, super_class, id, body, flag) {
   
   // evaluate and return class body using class as the self
   return body(klass);
-
 };
 
 // Return a new hash with given keys and values
@@ -1547,24 +1358,42 @@ $opal.H = function() {
 };
 
 // Returns a new symbol with the given ptr
+//
+// FIXME: make new symbols just javascript strings. If we use new String('sym name'),
+// we can reset the .$m and $.isa and $.klass on the string directly. It makes a lot
+// of the core library more efficient to save having to call obj.to_s constantly as
+// we are unsure whether the receiver is a string or symbol, we can just use its
+// literal value directly.
 $opal.Y = function(str) {
-  if (symbol_table.hasOwnProperty(str))
+  if (symbol_table.hasOwnProperty(str)) {
     return symbol_table[str];
+  }
 
-  var res = new RSymbol(str);
+  var res = new String(str);
+
+  res.$klass = rb_cSymbol;
+  res.$m = rb_cSymbol.$m_tbl;
   symbol_table[str] = res;
   return res;
 };
 
 // Returns a new range
+// G for ranGe ... yeah.
 $opal.G = function(beg, end, exclude_end) {
-  return new RRange(beg, end, exclude_end)
+  return new RRange(beg, end, exclude_end);
 };
 
 // break with the given value
 $opal.B = function(value) {
   rb_vm_break_instance.$value = value;
   throw rb_vm_break_instance;
+};
+
+// return with given value
+$opal.R = function(value, func) {
+  rb_vm_return_instance.$value = value;
+  rb_vm_return_instance.$func = func;
+  throw rb_vm_return_instance;
 };
 
 // Block passing - by default we keep both values set to null/nil
@@ -1590,8 +1419,6 @@ $opal.bridged_class = function(prototype, flags, id, super_klass) {
   return rb_define_toll_free_class(prototype, flags || T_OBJECT, id, super_klass);
 };
 
-//
-
 // Set a constant `val` on the given `klass`.
 var rb_const_set = function(klass, id, val) {
   klass.$c_prototype[id] = val;
@@ -1601,16 +1428,18 @@ var rb_const_set = function(klass, id, val) {
 // Look for the given constant on the given klass.
 var rb_const_get = function(klass, id) {
 
-  if (klass.$c[id])
+  if (klass.$c[id]) {
     return (klass.$c[id]);
-  
+  }
+
   var parent = klass.$parent;
 
   while (parent && parent != rb_cObject) {
 
-    if (parent.$c[id])
+    if (parent.$c[id]) {
       return parent.$c[id];
-    
+    }
+
     parent = parent.$parent;
   }
 
@@ -1619,8 +1448,9 @@ var rb_const_get = function(klass, id) {
 
 // is const defined
 var rb_const_defined = function(klass, id) {
-  if (klass.$c[id])
+  if (klass.$c[id]) {
     return true;
+  }
   
   return false;
 };
@@ -1681,7 +1511,7 @@ var rb_gvar_readonly_setter = function(id, value) {
 // @local
 var rb_gvar_get = function(id) {
   var entry = rb_global_tbl[id];
-  if (!entry) return Qnil;
+  if (!entry) { return Qnil; }
   return entry.getter(id);
 };
 
@@ -1690,7 +1520,7 @@ var rb_gvar_get = function(id) {
 // @local
 var rb_gvar_set = function(id, value) {
   var entry = rb_global_tbl[id];
-  if (entry) return entry.setter(id, value);
+  if (entry)  { return entry.setter(id, value); }
   
   // make a new default..
   rb_define_hooked_variable(id, 
@@ -1700,7 +1530,7 @@ var rb_gvar_set = function(id, value) {
     },
     // setter
     function(id, value) {
-      return rb_global_tbl[id].value = value;
+      return (rb_global_tbl[id].value = value);
     }
   );
   
@@ -1719,13 +1549,9 @@ var opal_yield_hash = function() {
 };
 
 // The root class. Every class in opal is an instance of RClass.
-var RClass = function(klass, super_klass) {
+var RClass = $opal.RClass = function(klass, super_klass) {
   // Hash. immediately give the class a hash/object_id
   this.$id = opal_yield_hash();
-  // Ivars. All ivars etc stored in here - no longer?
-  // this.$i = {};
-  // Constants. All constants belonging to class stored here.
-  // this.$c = {};
   // SuperClass.
   this.$super = super_klass;
   // Method_table - all methods are stored here. This is prototype based so that
@@ -1772,62 +1598,9 @@ RClass.prototype.$flags = T_CLASS;
 // RTest/truthiness - every RClass instance is true.
 RClass.prototype.$r = true;
 
-// method missing support - these are methods called, so we need to register them for method
-// missing on rb_cBasicObject.
-//
-// All added method names should set $isMM to true so that respond_to? can determine if it is
-// a method, or just a MM shortcut. normal methods dont have $isMM.
-RClass.prototype.$M = function(method_ids) {
-  return;
-  for (var i = 0; i < method_ids.length; i++) {
-    // only add if not already defined..
-    if (!rb_cBasicObject.$m_prototype_tbl[method_ids[i]]) {
-      rb_cBasicObject.$m_prototype_tbl[method_ids[i]] = (function(id) {
-       return function() {
-         // should call self.$m.method_missing..
-         throw new Error(id + " is needed for method_missing");
-        };
-     })(method_ids[i]); 
-    }
-  }
-};
-
-// hash literals
-RClass.prototype.$H = function() {
-  return new RHash(Array.prototype.slice.call(arguments));
-};
-
-// block call
-RClass.prototype.$B = function(mid, block) {
-  var args = [].slice.call(arguments, 2), self = this;
-
-  //console.log("in $B for " + self + "    " + mid);
-  //console.log(self);
-
-  args.unshift(self);
-  //console.log(1);
-  rb_block_proc = block;
-	var func = self.$m[mid];
-	//console.log(2);
-	if (func) {
-    console.log("block calling " + mid); 
-		// method exists..
-		rb_block_func = func;
-		return func.apply(null,args);
-	} else {
-		// method_missing
-    console.log("method missing for block call " + mid);
-		func = self.$m['$method_missing'];
-		rb_raise(rb_eRuntimeError,
-		  "need to forward rb_block_call to method missing");
-	}
-
-  return Qnil;
-}; 
-
 // The root object. Every object in opal (apart from toll free bridged classes 
 // like array, string etc) are an instance of RObject.
-var RObject = function(klass) {
+var RObject = $opal.RObject = function(klass) {
   // Hash. get out object_id
   this.$id = opal_yield_hash();
   // Ivars. no longer?
@@ -1844,12 +1617,6 @@ var RObject = function(klass) {
 RObject.prototype.$flags = T_OBJECT;
 // RTest - every RObject instance is true.
 RObject.prototype.$r = true;
-// method missing
-RObject.prototype.$M = RClass.prototype.$M;
-
-RObject.prototype.$H = RClass.prototype.$H;
-
-RObject.prototype.$B = RClass.prototype.$B;
 
 RObject.prototype.$hash = RClass.prototype.$hash = function() {
   return this.$id;
@@ -1883,9 +1650,9 @@ rb_define_method_raw = function(klass, name, body) {
 			klass.$included_in[i].$method_table[name] = body;
     }
   }
-}
+};
 
-function rb_define_global_function(name, body) {
+rb_define_global_function = function(name, body) {
 	rb_define_method(rb_mKernel, name, body);
 	rb_define_singleton_method(rb_mKernel, name, body);
 };
@@ -1914,43 +1681,10 @@ rb_obj_alloc = function(klass) {
   return result;
 };
 
-// normal return called in normal context? (should just be the same as block???)
-// @global
-rb_vm_return = function(value) {
-  console.log("throwing rb_vm_return");
-  rb_ivar_set(rb_vm_return_instance, '@exit_value', value);
-  throw rb_vm_return_instance;
-};
-
-// called (thrown) when returning inside a while loop
-// @global
-rb_vm_loop_return = function(value) {
-  console.log("throwing rb_vm_loop_return");
-  rb_ivar_set(rb_vm_loop_return_instance, '@exit_value', value);
-  throw rb_vm_loop_return_instance;
-};
-
-// called (thrown) when returning inside a block (that might be called by a 
-// while loop
-// @global
-rb_vm_block_return = function(value, jump_function) {
-  // console.log("throwing rb_vm_block_return");
-  rb_ivar_set(rb_vm_block_return_instance, '@exit_value', value);
-  rb_ivar_set(rb_vm_block_return_instance, '@jump_function', jump_function);
-  throw rb_vm_block_return_instance;
-};
-
-// called for next keyword
-rb_vm_next = function(value) {
-  rb_ivar_set(rb_vm_next_instance, '@exit_value', value);
-  throw rb_vm_next_instance;
-};
-
-
 // raise exception class with our given string
 // @global
 rb_raise = function(exc, str) {
-  if (str == undefined) {
+  if (str === undefined) {
     str = exc;
     exc = rb_eException;
   }
@@ -1959,12 +1693,6 @@ rb_raise = function(exc, str) {
 	// var exception = exc_new_instance(exc);
   rb_ivar_set(exception, '@message', str);
   rb_vm_raise(exception);
-};
-// convert natiuve error into proper error
-rb_vm_make_exception = function(native_error) {
-  var exc = new RObject(rb_eException, T_OBJECT);
-  rb_ivar_set(exc, '@message', new String(native_error));
-  return exc;
 };
 
 // raise an exception instance (DO NOT pass strings to this)
@@ -1975,48 +1703,15 @@ rb_vm_raise = function(exc) {
 };
 
 /**
-	Throw an argument error when the wrong number of arguments were given to a 
-	method
-	
-	@param [Number] given the number of arguments actually given
-	@param [Number] expected the number of arguments we expected to have
+ * Throw an argument error when the wrong number of arguments were given to a 
+ * method
+ * 
+ * @param [Number] given the number of arguments actually given
+ * @param [Number] expected the number of arguments we expected to have
 */
 function rb_arg_error(given, expected) {
-	rb_raise(rb_eArgError,
-		"wrong number of arguments(" + given + " for " + expected + ")");
-}
-
-
-/**
-	Convert the given object into a number using #to_int. DO NOT check whether it
-	is already a number (it has already been checked).
-	
-	This may raise a TypeError if number cannot be converted
-*/
-function to_num(obj) {
-	if (obj.$m.$to_int) {
-		var result = obj.$m.$to_int(obj, Qnil);
-		// make sure result is actually a number..
-		if (IS_NUMBER(result)) return result;
-		
-		rb_raise(rb_eTypeError, 
-			"can't convert Object to Integer (Object#to_int gives String)");
-	}
-	rb_raise(rb_eTypeError, "can't convert Object into Integer");
-}
-
-/**
-	Convert the given object to an array using #to_ary.
-*/
-function to_ary(obj) {
-	rb_raise(rb_eTypeError, "can't convert Object into Array");
-}
-
-/**
-  Convert the given object into a string
-*/
-function to_str(obj) {
-  return obj.$m.$to_s(obj);
+  rb_raise(rb_eArgError,
+    "wrong number of arguments(" + given + " for " + expected + ")");
 }
 
 // Run a function - this should be used as an entry point for anything that 
@@ -2042,61 +1737,21 @@ $opal.rb_run = rb_run = function(func) {
     // external library may also modify that function, so seeing as we know
     // when we are going to log the stack, we can just temporarily replace
     // that function with our own, then set it back to the original.
-    console.log('about to throw');
-    throw err;
+    //console.log('about to throw');
+    //throw err;
 
-    if (err.stack)
+    if (err.stack) {
       console.log(err.stack);
-    else
+    } else {
       console.log(err);
+    }
   }
 };
 
 // Stack trace support
-rb_run.$rbName = "<main>"
+rb_run.$rbName = "<main>";
 
 exports.rb_run = rb_run;
-
-
-// Opal module within ruby
-// @local
-var rb_mOpal;
-
-global.rb_block_func = global.rb_block_proc = Qnil;
-
-/**
-	A method call (from the VM) with a block must use this method. This method 
-	sets the block and ensures the right method can receive it. To do this, the
-	following varoables are set (globally):
-	
-	* rb_block_proc - the actual proc object (function). This is the proc that
-										yield should use.
-										
-	* rb_block_func - the function prototype that the block was sent to. This will
-										be ary_each, for Array#each (for example). ary_each must
-										then check the global func is itself to ensure the right
-										method is capturing the block (and then set it to Qnil)
-	
-	At this point, there is no guarantee that the method even exists, so we need
-	to check first. Also, if it doesnt, we dispatch to method_missing and we must
-	then fix the rb_block_func global to point to the method_missing instead.
-*/
-global.rb_block_call = function rb_block_call(block, self, mid) {
-	// print("block is: " + block);
-	rb_block_proc = block;
-	var func = self.$m['m$' + mid];
-	
-	if (func) {
-		// method exists..
-		rb_block_func = func;
-		return func.apply(null, Array.prototype.slice.call(arguments, 2));
-	} else {
-		// method_missing
-		func = self.$m['$method_missing'];
-		rb_raise(rb_eRuntimeError,
-		  "need to forward rb_block_call to method missing");
-	}
-}
 
 /**
   Call a super method.
@@ -2105,14 +1760,16 @@ global.rb_block_call = function rb_block_call(block, self, mid) {
   right place in the tree to find the method that actually called super. This is
   actually done in rb_super_find, 
 */
-global.rb_super = function(callee, mid, self, args) {
+$opal.S = function(callee, self, args) {
+  var mid = callee.$rbName;
   // print("looking for super " + callee);
-  var func = rb_super_find(self.$klass, callee, mid);
+  var func = rb_super_find(self.$klass, callee, callee.$rbName);
   
-  if (!func)
+  if (!func) {
+    rb_raise(rb_eNoMethodError, "super: no superclass method for " + mid);
     rb_raise(rb_eNoMethodError, "super: no super class method `" + mid + "`" +
-      " for " + CALL(self, "inspect"));
-  
+      " for " + self.$m.inspect(self));
+  }
   // print("found the super!" + func);
   var args_to_send = [self, mid].concat(args);
   return func.apply(null, args_to_send);
@@ -2122,13 +1779,12 @@ global.rb_super = function(callee, mid, self, args) {
   Actually find super impl to call.  Returns null if cannot find it.
   This is the debug version!!!!!!!!!!!!!!!!!!!!. also need non debug version
 */
-function rb_super_find(klass, callee, mid) {
-  var mid = '$' + mid;
+rb_super_find = function(klass, callee, mid) {
   var cur_method;
   // find current method
   while (klass) {
     if (klass.$method_table[mid]) {
-      if (klass.$method_table[mid].$wrapped == callee) {
+      if (klass.$method_table[mid] == callee) {
         // cur_method = klass.$method_table[mid];
         break;
       }
@@ -2136,7 +1792,7 @@ function rb_super_find(klass, callee, mid) {
     klass = klass.$super;
   }
   
-  if (!klass) return null;
+  if (!klass) { return null; }
   
   // find super() from klass up
   klass = klass.$super;
@@ -2150,50 +1806,23 @@ function rb_super_find(klass, callee, mid) {
   }
   
   return null;
-}
-
-
-// define method (normal or singleton)
-// @global
-rb_vm_defn = function(base, m_id, body, singleton) {
-  // print("defining: " + m_id);
-  if (singleton) {
-    // print("defining singleton method: " + m_id);
-    rb_define_singleton_method(base, m_id, body);
-  }
-  else {
-    if (base.$flags & T_OBJECT)
-      base = base.$klass;
-    
-    rb_define_method(base, m_id, body);
-  }
-  // always return nil
-  return Qnil;
 };
-
-
-global.rb_vm_meth_m = function(recv, mid) {
-  var args = [recv, 'method_missing'].concat(
-    Array.prototype.slice.call(arguments, 1));
-    
-    return recv.$m.$method_missing.apply(null, args);
-}
 
 // Get constant from base
 // @global
 rb_vm_cg = function(base, id) {
-  if (base.$flags & T_OBJECT)
+  if (base.$flags & T_OBJECT) {
     base = rb_class_real(base.$klass);
-  
+  }
   return rb_const_get(base, id);
 };
 
 // Set constant in base
 // @global
 rb_vm_cs = function(base, id, val) {
-  if (base.$flags & T_OBJECT)
+  if (base.$flags & T_OBJECT) {
     base = rb_class_real(base.$klass);
-  
+  }
   return rb_const_set(base, id, val);
 };
 
@@ -2209,23 +1838,6 @@ rb_vm_gs = function(id, value) {
   return rb_gvar_set(id, value);
 };
 
-var opal_context_eval = function(opal, mid, block, self, string, filename, lineno) {
-	var code = exports.compile(string);
-  var func = new Function('self', '__FILE__', code);
-  return func(self, rb_expand_path(filename));
-};
-
-var opal_s_compile = function(opal, mid, string) {
-  var code = exports.compile(string);
-  return "function(self, __FILE__) {" + code + "}";
-}
-
-
-
-
-
-
-
 
 // gets the load path
 // @local
@@ -2238,10 +1850,6 @@ var loaded_feature_getter = function(id) {
   return loaded_features;
 };
 
-
-// Initialize ruby/opal. This should really get passed ARGV, but we will do this
-// later.
-
 // make sure init/main are only called once.
 var rb_opal_done_init = false;
 
@@ -2249,14 +1857,11 @@ var rb_opal_done_init = false;
 var init_argv = [];
 
 $opal.init = function(options) {
-	if (rb_opal_done_init) return;
-	rb_opal_done_init = true;
+  if (rb_opal_done_init) { return; }
+  rb_opal_done_init = true;
 
-  options || (options = {});
+  if (!options) { options = {}; }
 
-	// core inits.
-	//Init_Object();
-  
   var metaclass;
 
   $opal.BasicObject = rb_cBasicObject = boot_defrootclass('BasicObject');
@@ -2275,9 +1880,6 @@ $opal.init = function(options) {
   boot_defmetametaclass(rb_cObject, metaclass);
   boot_defmetametaclass(rb_cBasicObject, metaclass);
 
-  rb_define_method(rb_cBasicObject, "initialize", obj_initialize);
-	rb_define_method(rb_cBasicObject, "==", obj_equal);
-	rb_define_method(rb_cBasicObject, "equal?", obj_equal);
 	rb_define_method(rb_cBasicObject, "!", obj_not);
 	rb_define_method(rb_cBasicObject, "!=", obj_not_equal);
 
@@ -2288,7 +1890,6 @@ $opal.init = function(options) {
 	rb_define_method(rb_cClass, "allocate", rb_obj_alloc);
 	rb_define_method(rb_cClass, "new", class_new_instance);
 	rb_define_method(rb_cClass, "initialize", class_initialize);
-	rb_define_method(rb_cClass, "superclass", class_superclass);
 	rb_define_singleton_method(rb_cClass, "new", class_s_new);
 	
   // good idea to keep puts here.. we probably need it nice and early.
@@ -2312,14 +1913,16 @@ $opal.init = function(options) {
 	global.Qfalse = Qfalse = rb_obj_alloc(rb_cFalseClass);
 	Qfalse.$r = false;
 
+  require('./basic_object');
   require('./module');
+  require('./class');
   require('./kernel');
   require('./top_self');
   require('./nil_class');
   require('./true_class');
   require('./false_class');
 
-  // @class Array	
+  // @class Array
   rb_cArray = rb_define_toll_free_class(Array.prototype,
       T_OBJECT | T_ARRAY, 'Array', rb_cObject);
 
@@ -2337,7 +1940,7 @@ $opal.init = function(options) {
   require('./numeric');
 
   // @class Hash
-	
+
   rb_cHash = rb_define_toll_free_class(RHash.prototype,
       T_OBJECT | T_HASH, 'Hash', rb_cObject);
 
@@ -2355,90 +1958,64 @@ $opal.init = function(options) {
       'Regexp', rb_cObject);
   
   rb_define_method(rb_cRegexp, "inspect", reg_inspect);
-	rb_define_method(rb_cRegexp, "==", reg_equal);
-	rb_define_method(rb_cRegexp, "eql?", reg_equal);
-	rb_define_method(rb_cRegexp, "match", reg_match);
-		
-	rb_cMatch = rb_define_class("MatchData", rb_cObject);
-	rb_define_method(rb_cMatch, "to_a", match_to_a);
-	rb_define_method(rb_cMatch, "inspect", match_inspect);
-	rb_define_method(rb_cMatch, "aref", match_aref);
+  rb_define_method(rb_cRegexp, "==", reg_equal);
+  rb_define_method(rb_cRegexp, "eql?", reg_equal);
+  rb_define_method(rb_cRegexp, "match", reg_match);
 
+  rb_cMatch = rb_define_class("MatchData", rb_cObject);
+  rb_define_method(rb_cMatch, "to_a", match_to_a);
+  rb_define_method(rb_cMatch, "inspect", match_inspect);
+  rb_define_method(rb_cMatch, "aref", match_aref);
 
-	// load
+  // load
   
-  if (options.load_paths) load_paths = options.load_paths;
+  if (options.load_paths) { load_paths = options.load_paths; }
 
   //load_paths.unshift(exports.opal_lib_path);
   rb_define_hooked_variable('$:', load_path_getter, rb_gvar_readonly_setter);
   rb_define_hooked_variable('$LOAD_PATH', load_path_getter, rb_gvar_readonly_setter);
-	
+
   // @class Exception
   rb_eException = rb_define_toll_free_class(Error.prototype, T_OBJECT, 'Exception', rb_cObject);
 
-  rb_define_singleton_method(rb_eException, 'allocate', exc_s_allocate);
+  rb_eStandardError = rb_define_class("StandardError", rb_eException);
+  rb_eRuntimeError = rb_define_class("RuntimeError", rb_eException);
+  rb_eLocalJumpError = rb_define_class("LocalJumpError", rb_eStandardError);
+  rb_eTypeError = rb_define_class("TypeError", rb_eStandardError);
+  rb_eNameError = rb_define_class("NameError", rb_eStandardError);
+  rb_eNoMethodError = rb_define_class('NoMethodError', rb_eNameError);
+  rb_eArgError = rb_define_class('ArgumentError', rb_eStandardError);
+  rb_eScriptError = rb_define_class('ScriptError', rb_eException);
+  rb_eLoadError = rb_define_class('LoadError', rb_eScriptError);
 
-	rb_define_method(rb_eException, "initialize", exc_initialize);
-	rb_define_method(rb_eException, "message", exc_message);
-	rb_define_method(rb_eException, "inspect", exc_inspect);
-	rb_define_method(rb_eException, "to_s", exc_to_s);
-	
-	rb_eStandardError = rb_define_class("StandardError", rb_eException);
-	rb_eRuntimeError = rb_define_class("RuntimeError", rb_eException);
-	rb_eLocalJumpError = rb_define_class("LocalJumpError", rb_eStandardError);
-	rb_eTypeError = rb_define_class("TypeError", rb_eStandardError);
-	rb_eNameError = rb_define_class("NameError", rb_eStandardError);
-	rb_eNoMethodError = rb_define_class('NoMethodError', rb_eNameError);
-	rb_eArgError = rb_define_class('ArgumentError', rb_eStandardError);
-	rb_eScriptError = rb_define_class('ScriptError', rb_eException);
-	rb_eLoadError = rb_define_class('LoadError', rb_eScriptError);
-	
-	rb_eIndexError = rb_define_class("IndexError", rb_eStandardError);
-	rb_eKeyError = rb_define_class("KeyError", rb_eIndexError);
-	rb_eRangeError = rb_define_class("RangeError", rb_eStandardError);
+  rb_eIndexError = rb_define_class("IndexError", rb_eStandardError);
+  rb_eKeyError = rb_define_class("KeyError", rb_eIndexError);
+  rb_eRangeError = rb_define_class("RangeError", rb_eStandardError);
 
-	// jump error literals. We keep a singular instance to avoid recreating each
-	// error every time (expensive).
-	rb_vm_return_instance = new RObject(rb_eLocalJumpError, T_OBJECT);
-	rb_ivar_set(rb_vm_return_instance, '@message', 'unexpected return');
-	rb_vm_return_instance.$keyword = 0;
+  require('./error');
 
-	rb_vm_loop_return_instance = new RObject(rb_eLocalJumpError, T_OBJECT);
-	rb_ivar_set(rb_vm_loop_return_instance, '@message', 'unexpected return');
-	rb_vm_loop_return_instance.$keyword = 1;
-
-	// disgard this? yes we can!
-	rb_vm_block_return_instance = new RObject(rb_eLocalJumpError, T_OBJECT);
-	rb_ivar_set(rb_vm_block_return_instance, '@message', 'unexpected return');
-	rb_vm_block_return_instance.$keyword = 0;
-
+  // jump error literals. We keep a singular instance to avoid recreating each
+  // error every time (expensive). 
   rb_vm_break_instance = new Error('unexpected break');
   rb_vm_break_instance.$klass = rb_eLocalJumpError;  
-	rb_vm_break_instance.$keyword = 2;
+  rb_vm_break_instance.$keyword = 2;
 
-	rb_vm_next_instance = new RObject(rb_eLocalJumpError, T_OBJECT);
-	rb_ivar_set(rb_vm_next_instance, '@message', 'unexpected next');
-	rb_vm_next_instance.$keyword = 3;
+  rb_vm_return_instance = new Error('unexpected return');
+  rb_vm_return_instance.$klass = rb_eLocalJumpError;
+  rb_vm_return_instance.$keyword = 1;
 
-
+  rb_vm_next_instance = new Error('unexpected next');
+  rb_vm_next_instance.$klass = rb_eLocalJumpError;
+  rb_vm_next_instance.$keyword = 3;
 
   // @class String
-
   rb_cString = rb_define_toll_free_class(String.prototype,
       T_OBJECT | T_STRING, 'String', rb_cObject);
-
-  rb_define_singleton_method(rb_cString, 'new', rb_cObject);
 
   require('./string');
 
   // @class Symbol
-
-  rb_cSymbol = rb_define_toll_free_class(RSymbol.prototype,
-      T_OBJECT | T_SYMBOL, 'Symbol', rb_cObject);
-
-  RClass.prototype.$Y = RObject.prototype.$Y = opalsym;
-
-
+  rb_cSymbol = rb_define_class('Symbol', rb_cObject);
   require('./symbol');
 
   // @class Proc
@@ -2452,8 +2029,7 @@ $opal.init = function(options) {
 
   require('./proc');
 
-	// @class Range
-  
+  // @class Range
   rb_cRange = rb_define_toll_free_class(RRange.prototype, T_OBJECT | T_RANGE,
       'Range', rb_cObject);
 
@@ -2461,16 +2037,9 @@ $opal.init = function(options) {
     return (this.$id || (this.$id = opal_yield_hash()));
   };
 
-  rb_define_method(rb_cRange, 'to_s', range_to_s);
-  rb_define_method(rb_cRange, 'inspect', range_inspect);
-
+  require('./range');
 
   rb_const_set(rb_cObject, 'RUBY_PLATFORM', 'opal');
-
-  // Instead of init_browser, each platform will have its own Init_Platform
-  // method; node uses this to init FS module etc, and all the File and Dir
-  // methods; while browser uses this to Init Browser, Element, Document etc.
-  //Init_Platform();
 };
 
 // define a top level module with the given id
@@ -2480,7 +2049,6 @@ rb_define_module = function(id) {
 
 var rb_define_module_under = function(base, id) {
   var module;
-  // print("defining module " + id);
   // if module already exists..
   if (rb_const_defined(base, id)) {
     // print("already defined");
@@ -2490,7 +2058,7 @@ var rb_define_module_under = function(base, id) {
       return module;
     }
 
-    throw id + " is not a module."
+    throw id + " is not a module.";
   }
   
   module = rb_define_module_id(id);
@@ -2512,78 +2080,47 @@ var rb_mod_create = function() {
 };
 
 rb_include_module = function(klass, module) {
-  // print("YEAH");
-  // console.log("including " + module.$i.__classid__);
-  // make sure our klass has the included modules array
-  if (!klass.$included_modules)
+
+  if (!klass.$included_modules) {
     klass.$included_modules = [];
-  
-  // if we already have the module included, just return
-  if (klass.$included_modules.indexOf(module) != -1)
+  }
+
+  if (klass.$included_modules.indexOf(module) != -1) {
     return;
-    
-  // make a note of the included module
+  }
   klass.$included_modules.push(module);
-  // make a note in module that its been included in here? yes we do.
-  // print("do we have included_in");
+  
   if (!module.$included_in) {
-    // print ("adding inclided in");
     module.$included_in = [];
   }
   
-  // print("are we kernel?");
-  // print(rb_mKernel.$h);
-  // print(module.$h);
-  
   module.$included_in.push(klass);
-  // print(rb_mKernel.$included_in);
-  // print(module.method_table);
+
   for (var method in module.$method_table) {
-    // already potentially wrapped, so use define_raw
     rb_define_method_raw(klass, method, module.$method_table[method]);
-    // print("adding method: " + method);
-    // check to make sure we are not overriding? if so, add it to the superclass
-    // of klass.
-    // klass.$m_prototype_tbl[method] = module.$method_table[method];
-    
-	// delted...
-		// rb_define_method(klass, method.substr(1), module.$method_table[method]);
-		// replaces
-    // klass.$m_prototype_tbl[method] = module.$method_table[method];
-    // klass.$method_table[method] = module.$method_table[method];
-		// $method_table['$' + name] = body;
-		
-		
   }
-  
 };
 
 rb_extend_module = function(klass, module) {
-  if (!klass.$extended_modules)
+  if (!klass.$extended_modules) {
     klass.$extended_modules = [];
-  
-  if (klass.$extended_modules.indexOf(module) != -1)
+  }
+
+  if (klass.$extended_modules.indexOf(module) != -1) {
     return;
-  
+  }
   klass.$extended_modules.push(module);
   
-  if (!module.$extended_in)
+  if (!module.$extended_in) {
     module.$extended_in = [];
-    
+  }
+
   module.$extended_in.push(klass);
   
-  // for (var prop in klass.$k) {
-    // print(prop);
-    // print(klass.$k[prop]);
-  // }
-  
   for (var method in module.$method_table) {
-    // klass.$klass.$m_prototype_tbl[method] = module.$method_table[method];
     rb_define_method_raw(klass.$klass, method, module.$method_table[method]);
   }
 };
-
-
 
 // Boot a base class (only use for very core object classes)
 var boot_defclass = function(id, super_klass) {
@@ -2601,12 +2138,11 @@ var boot_defrootclass = function(id) {
   rb_name_class(result, id);
   rb_const_set((rb_cObject || result), id, result);
   return result;
-}
+};
 
 
 // Create a new subclass of the given superclass. We do not name it yet.
 var rb_class_boot = function(super_class) {
-  // print("rb_class_boot with: " + super_class);
   if (super_class) {
     var ctor = function() {};
     ctor.prototype = super_class.constructor.prototype;
@@ -2626,14 +2162,13 @@ var rb_class_boot = function(super_class) {
 
 // @global
 rb_class_real = function(klass) {
-  while (klass.$flags & FL_SINGLETON) klass = klass.$super;
+  while (klass.$flags & FL_SINGLETON) { klass = klass.$super; }
   return klass;
 };
 
 // Name the class with the given id.
 var rb_name_class = function(klass, id) {
-  klass['__classid__'] = id;
-  //rb_ivar_set(klass, '__classid__', id);
+  klass.__classid__ = id;
 };
 
 // make metaclass for the given class
@@ -2681,8 +2216,8 @@ var make_metametaclass = function(metaclass) {
   else {
     metametaclass = rb_class_boot(null);
     metametaclass.$klass = metaclass.$klass.$klass == metaclass.$klass ? 
-				make_metametaclass(metaclass.$klass) : 
-				metaclass.$klass.$klass;
+        make_metametaclass(metaclass.$klass) : 
+        metaclass.$klass.$klass;
   }
   
   metametaclass.$flags |= FL_SINGLETON;
@@ -2695,11 +2230,11 @@ var make_metametaclass = function(metaclass) {
   // while (super_of_metaclass)
   
   metametaclass.$super = rb_ivar_get(super_of_metaclass.$klass, '__attached__') 
-				== super_of_metaclass
-				? super_of_metaclass.$klass
-				: make_metametaclass(super_of_metaclass);
+        == super_of_metaclass
+        ? super_of_metaclass.$klass
+        : make_metametaclass(super_of_metaclass);
   
-return metametaclass;
+  return metametaclass;
 };
 
 // 
@@ -2718,12 +2253,11 @@ var rb_define_toll_free_class = function(prototype, flags, id, super_klass) {
   prototype.$r = true;
   prototype.$M = RClass.prototype.$M;
   prototype.$B = RClass.prototype.$B;
-  prototype.$Y = opalsym;
 
   // default hashing behaviour
   prototype.$hash = function() {
     // return '$$' + this + '$$';
-		return flags + '_' + this;
+    return flags + '_' + this;
   };
     
   return klass;
@@ -2739,8 +2273,6 @@ var rb_define_class_under = function(base, id, super_klass) {
   var klass;
   // if already defined, just ensure right type then return the existing class
   if (rb_const_defined(base, id)) {
-    // print("already defined..");
-    // console.log(id + " alreayd defined");
     // check its a class?
     return rb_const_get(base, id);
   }
@@ -2771,9 +2303,6 @@ var rb_define_class_id = function(id, super_klass) {
 };
 
 var rb_class_create = function(super_klass) {
-  
-  // check inheritable
-  // check not rb_class .. error
   return rb_class_boot(super_klass);
 };
 
@@ -2802,16 +2331,14 @@ var rb_singleton_class = function(obj) {
   return klass;
 };
 
-
-
-
 var RHash = function(args) {
   var k, v;
   this.$keys = [];
   this.$assocs = {};
   this.$default = Qnil;
   for (var i = 0; i < args.length; i++) {
-    k = args[i], v = args[i+1];
+    k = args[i];
+    v = args[i+1];
     i++;
     this.$keys.push(k);
     this.$assocs[k.$hash()] = v;
@@ -2819,42 +2346,8 @@ var RHash = function(args) {
   return this;
 };
 
-// hash
-// @global
-opalhash = function() {
-  return new RHash(Array.prototype.slice.call(arguments));
-};
-
-var rb_cString;
-
-var rb_cSymbol;
-		
-// Symbol instance
-var RSymbol = function(ptr) {
-  // hash
-  this.$id = opal_yield_hash();
-  // ptr
-  this.__ptr__ = ptr;
-  // Class is rb_symbol
-  this.$k = rb_cSymbol;
-  // get methods from class
-  this.$m = rb_cSymbol.$m_tbl;
-  // return new sym
-  return this;
-};
-
 // Symbol table
 var symbol_table = { };
-
-// @global - return/create a symbol
-opalsym = function(str) {
-  if (symbol_table.hasOwnProperty(str))
-    return symbol_table[str];
-
-  var res = new RSymbol(str);
-  symbol_table[str] = res;
-  return res;
-};
 
 var rb_cRange;
 
@@ -2864,7 +2357,7 @@ var rb_cRange;
   FIXME: This should be placed in vm.js
 */
 global.rb_vm_range = function(beg, end, exclude_end) {
-  return new RRange(beg, end, exclude_end)
+  return new RRange(beg, end, exclude_end);
 };
 
 /**
@@ -2880,31 +2373,7 @@ function RRange(beg, end, exclude_end) {
   return this;
 }
 
-function range_to_s(range, mid) {
-  var str = CALL(range.$beg, "to_s");
-  var str2 = CALL(range.$end, "to_s");
-  var join = range.$exc ? "..." : "..";
-  return str + join + str2;
-}
 
-function range_inspect(range, mid) {
-  var str = CALL(range.$beg, "inspect");
-  var str2 = CALL(range.$end, "inspect");
-  var join = range.$exc ? "..." : "..";
-  return str + join + str2;
-}
-
-/**
-  @class Regexp
-
-  A Regexp holds a regular expression, used to match a pattern against strings.
-  Regexps are created using the `/.../` and `%r{...}` literals, and by the
-  {Regexp.new} constructor.
-
-  ## Implementation
-
-  Toll free bridged with native regexp object.
-*/
 var rb_cRegexp;
 
 // @class MatchData
@@ -3004,30 +2473,6 @@ var rb_vm_return_instance,
 		rb_vm_next_instance,
 		rb_vm_break_instance;
 
-function exc_initialize(exc, message) {
-	// if (message != Qnil)	
-		rb_ivar_set(exc, "@message", (message == undefined) ? "" : message);
-  exc.message = message;
-}
-
-function exc_message(exc) {
-	return rb_ivar_get(exc, "@message");
-}
-
-function exc_inspect(exc) {
-	return "#<" + exc.$klass.__classid__ + ": " + ">";
-}
-
-function exc_to_s(exc) {
-	return rb_ivar_get(exc, "@message");
-}
-
-var exc_s_allocate = function(klass) {
-  var err = new Error();
-  err.$klass = klass;
-  return err;
-};
-
 Error.prepareStackTrace = function(error, stack) {
   var parts = [];
   // actual error
@@ -3088,12 +2533,12 @@ function class_new_instance(cla) {
 	args[0] = obj;
 	
 	// if given a block, we need to reroute it to initialize
-  if (rb_block_func == arguments.callee) {
-    obj.$B.apply(obj, ['initialize', rb_block_proc].concat(
-      Array.prototype.slice.call(arguments, 1)));
-  } else {
+  // if (rb_block_func == arguments.callee) {
+    // obj.$B.apply(obj, ['initialize', rb_block_proc].concat(
+      // Array.prototype.slice.call(arguments, 1)));
+  // } else {
     obj.$m.initialize.apply(null, args);
-  }
+  // }
   return obj;
 };
 
@@ -3101,26 +2546,6 @@ function class_initialize(cla, mid, sup) {
 	// print("in Class.new initialize");
 	var klass = rb_define_class_id('', sup || rb_cObject);
 	return klass;
-}
-
-function class_superclass(cla, mid) {
-	var sup = cla.$super;
-	
-	if (!sup) {
-		if (cla == rb_cBasicObject) return Qnil;
-		rb_raise(rb_eRuntimeError, "uninitialized class");
-	}
-	
-	return sup;
-}
-
-
-function rb_true() {
-	return Qtrue;
-}
-
-function rb_false() {
-	return Qfalse;
 }
 
 
@@ -3136,18 +2561,10 @@ function obj_puts(ob) {
 	var args = Array.prototype.slice.call(arguments, 1);
 	
 	for (var i = 0; i < args.length; i++) {
-		console.log((args[i].$m.to_s(args[i])));
+		console.log((args[i].$m.to_s(args[i])).toString());
 	}
 	
 	return Qnil;
-}
-
-/**
-  Equality for basic objects.
-*/
-function obj_equal(obj1, mid, obj2) {
-  if (obj1 == obj2) return Qtrue;
-  return Qfalse;
 }
 
 /**
@@ -3156,7 +2573,7 @@ function obj_equal(obj1, mid, obj2) {
     !obj  # => true or false
 */
 function obj_not(obj, mid) {
-  return RTEST(obj) ? Qfalse : Qtrue;
+  return obj.$r ? Qfalse : Qtrue;
 }
 
 /**
@@ -3165,19 +2582,9 @@ function obj_not(obj, mid) {
     obj != obj2  # => true or false
 */
 function obj_not_equal(obj1, mid, obj2) {
-  var res = CALL(obj1, "==", obj2);
-  return RTEST(res) ? Qfalse : Qtrue;
+  var res = obj1.$m['=='](obj1, obj2);
+  return res.$r ? Qfalse : Qtrue;
 }
-
-/**
-  Basic object initialize
-*/
-function obj_initialize(obj, mid) {
-  // no imp
-}
-
-
-
 
 // exports become our runtime $opal object
 //module.exports = $opal;
@@ -3255,6 +2662,77 @@ var do_require = function(module_id) {
 init();
 
 
+};
+modules["./basic_object"] = function(exports) {
+(function(undefined) {
+var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P, $return = Opal.R, $super = Opal.S;
+Opal.mm(['==']);
+return ($class(self, nil, "BasicObject", function(self) {
+return ($def(self, "initialize", function(self) {
+return (nil);}, 0), $def(self, "==", function(self, other) {
+if (self == other) return Qtrue;
+    return Qfalse;}, 0), $def(self, "equal?", function(self, other) {
+var __a;
+return ((__a = self).$m["=="](__a, other));}, 0));}, 0));})();
+};
+modules["./class"] = function(exports) {
+(function(undefined) {
+var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P, $return = Opal.R, $super = Opal.S;
+Opal.mm([]);
+return ($class(self, nil, "Class", function(self) {
+return ($def(self, "superclass", function(self) {
+var sup = self.$super;
+
+    if (!sup) {
+      if (self == $opal.BasicObject) return Qnil;
+      throw new Error('RuntimeError: uninitialized class');
+    }
+
+    return sup;}, 0));}, 0));})();
+};
+modules["./error"] = function(exports) {
+(function(undefined) {
+var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P, $return = Opal.R, $super = Opal.S;
+Opal.mm([]);
+return ($class(self, nil, "Exception", function(self) {
+return ($def(self, "allocate", function(self) {
+var err = new Error();
+    err.$klass = self;
+    return err;}, 1), $def(self, "initialize", function(self, message) {
+if (message === undefined) message = "";
+return self.message = message;}, 0), $def(self, "message", function(self) {
+return self.message;}, 0), $def(self, "inspect", function(self) {
+return "#<" + self.$klass.__classid__ + ": '" + self.message + "'>";}, 0), $def(self, "to_s", function(self) {
+return self.message;}, 0));}, 0), $class(self, rb_vm_cg(self, "Exception"), "StandardError", function(self) {
+return (nil);}, 0), $class(self, rb_vm_cg(self, "Exception"), "RuntimeError", function(self) {
+return (nil);}, 0), $class(self, rb_vm_cg(self, "StandardError"), "LocalJumpError", function(self) {
+return (nil);}, 0), $class(self, rb_vm_cg(self, "StandardError"), "TypeError", function(self) {
+return (nil);}, 0), $class(self, rb_vm_cg(self, "StandardError"), "NameError", function(self) {
+return (nil);}, 0), $class(self, rb_vm_cg(self, "NameError"), "NoMethodError", function(self) {
+return (nil);}, 0), $class(self, rb_vm_cg(self, "StandardError"), "ArgumentError", function(self) {
+return (nil);}, 0), $class(self, rb_vm_cg(self, "Exception"), "ScriptError", function(self) {
+return (nil);}, 0), $class(self, rb_vm_cg(self, "ScriptError"), "LoadError", function(self) {
+return (nil);}, 0), $class(self, rb_vm_cg(self, "StandardError"), "IndexError", function(self) {
+return (nil);}, 0), $class(self, rb_vm_cg(self, "IndexError"), "KeyError", function(self) {
+return (nil);}, 0), $class(self, rb_vm_cg(self, "StandardError"), "RangeError", function(self) {
+return (nil);}, 0));})();
+};
+modules["./range"] = function(exports) {
+(function(undefined) {
+var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P, $return = Opal.R, $super = Opal.S;
+Opal.mm(['to_s', 'inspect']);
+return ($class(self, nil, "Range", function(self) {
+return ($def(self, "to_s", function(self) {
+var __a;
+var str = (__a = self.$beg).$m.to_s(__a);
+    var str2 = (__a = self.$end).$m.to_s(__a);
+    var join = self.$exc ? '...' : '..';
+    return str + join + str2;}, 0), $def(self, "inspect", function(self) {
+var __a;
+var str = (__a = self.$beg).$m.inspect(__a);
+    var str2 = (__a = self.$end).$m.inspect(__a);
+    var join = self.$exc ? '...' : '..';
+    return str + join + str2;}, 0));}, 0));})();
 };
   var browser_exports = require('./browser');
 

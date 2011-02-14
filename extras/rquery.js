@@ -1,13 +1,13 @@
 Opal.module("rquery/ajax", function() {
 (function(undefined) {
-var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P;
+var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P, $return = Opal.R, $super = Opal.S;
 Opal.mm([]);
 return ($class(self, nil, "Ajax", function(self) {
 return (nil);}, 0));})();
 });
 Opal.module("rquery/css", function() {
 (function(undefined) {
-var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P;
+var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P, $return = Opal.R, $super = Opal.S;
 Opal.mm(['nil?', 'new', 'raise', 'alias_method', 'to_s', '+', 'inspect', 'puts']);
 return ($class(self, nil, "Element", function(self) {
 return ($def(self, "add_class", function(self, name) {
@@ -30,6 +30,7 @@ var name = (__a = css_property).$m.to_s(__a);
         console.log("getting property!");
         return self.$element.css(css_property);
       } else {
+        console.log("need to remove = from css_property name");
         console.log("setting property!");
         return self.$element.css(css_property, css_value);
       }}, 0), $def(self, "to_s", function(self) {
@@ -41,7 +42,7 @@ return ((__a = rb_vm_cg(self, "Object")).$m.puts(__a, str));}, 0));}, 0));}, 0))
 });
 Opal.module("rquery/document", function() {
 (function(undefined) {
-var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P;
+var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P, $return = Opal.R, $super = Opal.S;
 Opal.mm([]);
 return ($class(self, nil, "Document", function(self) {
 return ($def(self, "ready?", function(self) {
@@ -49,7 +50,7 @@ var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block
 });
 Opal.module("rquery/element", function() {
 (function(undefined) {
-var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P;
+var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P, $return = Opal.R, $super = Opal.S;
 Opal.mm(['from_native', 'alias_method', 'nil?', 'to_s']);
 return ($opal.bridged_class($.fn, null, 'Element', $opal.Object), $class(self, nil, "Element", function(self) {
 return ($def(self, "find", function(self, selector) {
@@ -89,14 +90,17 @@ return ((content.$r ? (self.html(content)) : (self.html())));}, 0), $def(self, "
 return self.html(content);}, 0), $def(self, "first", function(self) {
 return self.first();}, 0), $def(self, "clear", function(self) {
 return self.empty();}, 0), self.$m.alias_method(self, $symbol("empty"), $symbol("clear")), $def(self, "remove", function(self) {
-return self.remove();}, 0), $def(self, "mouse_down", function(self) {
+return self.remove();}, 0), $def(self, "append", function(self, content) {
+return self.append(content);}, 0), $def(self, "before", function(self, content) {
+return self.before(content);}, 0), $def(self, "after", function(self, content) {
+return self.after(content);}, 0), $def(self, "mouse_down", function(self) {
 var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;return self.mousedown(function(event) {
       __block__(__block__.$self, event);
     });}, 0));}, 0));})();
 });
 Opal.module("rquery/event", function() {
 (function(undefined) {
-var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P;
+var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P, $return = Opal.R, $super = Opal.S;
 Opal.mm([]);
 return ($opal.bridged_class($.Event.prototype, null, 'Event', $opal.Object), $class(self, nil, "Event", function(self) {
 return ($def(self, "target", function(self) {
@@ -112,11 +116,120 @@ return self.metaKey ? Qtrue : Qfalse;}, 0), $def(self, "stop_propagation", funct
 return (self.stopPropagation(), self);}, 0), $def(self, "propagation_stopped?", function(self) {
 return self.isPropagationStopped() ? Qtrue : Qfalse;}, 0));}, 0));})();
 });
+Opal.module("rquery/json", function() {
+(function(undefined) {
+var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P, $return = Opal.R, $super = Opal.S;
+Opal.mm(['inspect', 'to_s', 'each', '<<', 'to_json', '+', 'join', 'collect']);
+return ($class(self, nil, "JSON", function(self) {
+return ($def(self, "parse", function(self, source, options) {
+if (options === undefined) options = $hash();
+return (nil);}, 1));}, 2), $class(self, nil, "String", function(self) {
+return ($def(self, "to_json", function(self) {
+var __a;
+return ((__a = self).$m.inspect(__a));}, 0));}, 0), $class(self, nil, "Symbol", function(self) {
+return ($def(self, "to_json", function(self) {
+var __a, __b;
+return ((__a = (__b = self).$m.to_s(__b)).$m.inspect(__a));}, 0));}, 0), $class(self, nil, "Numeric", function(self) {
+return ($def(self, "to_json", function(self) {
+var __a;
+return ((__a = self).$m.to_s(__a));}, 0));}, 0), $class(self, nil, "Hash", function(self) {
+return ($def(self, "to_json", function(self) {
+var parts, __a, __b;
+return (parts = [], (($block.p = function(self, key, value) {
+var __a, __b, __c;
+return ((__a = parts).$m["<<"](__a, ((__a = (__b = (__c = key).$m.to_s(__c)).$m.to_json(__b), __a.$m.to_s(__a)) + ": " + (__a = (__b = value).$m.to_json(__b), __a.$m.to_s(__a)))));}).$self = self, $block.f = self.$m.each)(self), (__a = (__b = "{").$m["+"](__b, (__b = parts).$m.join(__b, ', '))).$m["+"](__a, "}"));}, 0));}, 0), $class(self, nil, "Array", function(self) {
+return ($def(self, "to_json", function(self) {
+var parts, __a, __b;
+return (parts = (($block.p = function(self, i) {
+var __a;
+return ((__a = i).$m.to_json(__a));}).$self = self, $block.f = self.$m.collect)(self), (__a = (__b = "[").$m["+"](__b, (__b = parts).$m.join(__b, ', '))).$m["+"](__a, "]"));}, 0));}, 0), $class(self, nil, "TrueClass", function(self) {
+return ($def(self, "to_json", function(self) {
+return ("true");}, 0));}, 0), $class(self, nil, "FalseClass", function(self) {
+return ($def(self, "to_json", function(self) {
+return ("false");}, 0));}, 0), $class(self, nil, "NilClass", function(self) {
+return ($def(self, "to_json", function(self) {
+return ("nil");}, 0));}, 0));})();
+});
+Opal.module("rquery/request", function() {
+(function(undefined) {
+var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P, $return = Opal.R, $super = Opal.S;
+Opal.mm(['merge', 'each', 'define_method', 'option_accessor', 'new', 'call', 'send']);
+return ($class(self, nil, "Request", function(self) {
+return (rb_vm_cs(self, "DEFAULT_OPTIONS", $hash($symbol("url"), "", $symbol("type"), 'GET')), $def(self, "initialize", function(self, options) {
+var __a;
+if (options === undefined) options = $hash();
+return (self["@options"] = (__a = rb_vm_cg(self, "DEFAULT_OPTIONS")).$m.merge(__a, options), self["@complete_action"] = nil, self["@failure_action"] = nil, self["@success_action"] = nil);}, 0), $def(self, "option_accessor", function(self, names) {
+var __a;
+names = Array.prototype.slice.call(arguments, 1);
+return ((__a = names, ($block.p = function(self, name) {
+var __a;
+return ((($block.p = function(self) {
+if (self["@options"] === undefined) self["@options"] = nil;
+var __a;
+return ((__a = self["@options"], __a.$m["[]"] || __a.$M("[]"))(__a, name));}).$self = self, $block.f = self.$m.define_method)(self, name), (($block.p = function(self, value) {
+if (self["@options"] === undefined) self["@options"] = nil;
+var __a;
+return ((__a = self["@options"], (__a.$m["[]="])(__a, name, value)));}).$self = self, $block.f = self.$m.define_method)(self, ((__a = name, __a.$m.to_s(__a)) + "=")));}).$self = self, $block.f = __a.$m.each)(__a));}, 1), self.$m.option_accessor(self, $symbol("async")), self.$m.option_accessor(self, $symbol("type")), self.$m.option_accessor(self, $symbol("url")), self.$m.option_accessor(self, $symbol("username")), self.$m.option_accessor(self, $symbol("password")), $def(self, "send", function(self, options) {
+if (self["@options"] === undefined) self["@options"] = nil;
+if (self["@success_action"] === undefined) self["@success_action"] = nil;
+var __a;
+if (options === undefined) options = $hash();
+options = (__a = self["@options"]).$m.merge(__a, options);
+    
+    // native options object
+    var opts = {};
+    
+    // we must have a url
+    opts.url = (__a = options, __a.$m["[]"] || __a.$M("[]"))(__a, $symbol("url"))
+   
+    // request type
+    opts.type = (__a = options, __a.$m["[]"] || __a.$M("[]"))(__a, $symbol("type"))
+
+    // success callback
+    if (self["@success_action"] != nil) {
+      opts.success = function(data, textStatus, jqXHR) {
+        var response = (__a = rb_vm_cg(self, "Response")).$m.new(__a, jqXHR);
+        (__a = self["@success_action"]).$m.call(__a, response);
+      };
+    }
+
+    $.ajax(opts);
+
+    return self;}, 0), $def(self, "get", function(self, options) {
+var __a;
+if (options === undefined) options = $hash();
+return ((__a = options, (__a.$m["[]="])(__a, $symbol("type"), 'GET')), self.$m.send(self, options));}, 0), $def(self, "post", function(self, options) {
+var __a;
+if (options === undefined) options = $hash();
+return ((__a = options, (__a.$m["[]="])(__a, $symbol("type"), 'POST')), self.$m.send(self, options));}, 0), $def(self, "put", function(self, options) {
+var __a;
+if (options === undefined) options = $hash();
+return ((__a = options, (__a.$m["[]="])(__a, $symbol("type"), 'PUT')), self.$m.send(self, options));}, 0), $def(self, "delete", function(self, options) {
+var __a;
+if (options === undefined) options = $hash();
+return ((__a = options, (__a.$m["[]="])(__a, $symbol("type"), 'DELETE')), self.$m.send(self, options));}, 0), $def(self, "success", function(self) {
+var block = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;return (self["@success_action"] = block);}, 0), $def(self, "failure", function(self) {
+var block = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;return (self["@failure_action"] = block);}, 0));}, 0));})();
+});
+Opal.module("rquery/response", function() {
+(function(undefined) {
+var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P, $return = Opal.R, $super = Opal.S;
+Opal.mm(['!', 'success?']);
+return ($class(self, nil, "Response", function(self) {
+return ($def(self, "initialize", function(self, request) {
+self.$xhr = request}, 0), $def(self, "status", function(self) {
+return self.$xhr.status;}, 0), $def(self, "status_text", function(self) {
+return self.$xhr.statusText;}, 0), $def(self, "text", function(self) {
+return self.$xhr.responseText;}, 0), $def(self, "success?", function(self) {
+return (self.$xhr.status >= 200 && self.$xhr.status < 300) ? Qtrue : Qfalse;}, 0), $def(self, "failure?", function(self) {
+var __a;
+return ((__a = self.$m["success?"](self)).$m["!"](__a));}, 0));}, 0));})();
+});
 Opal.module("rquery", function() {
 (function(undefined) {
-var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P;
+var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P, $return = Opal.R, $super = Opal.S;
 Opal.mm(['require']);
-return (self.$m.require(self, 'rquery/jquery'), self.$m.require(self, 'rquery/document'), self.$m.require(self, 'rquery/element'), self.$m.require(self, 'rquery/css'), self.$m.require(self, 'rquery/event'), self.$m.require(self, 'rquery/ajax'));})();
+return (self.$m.require(self, 'rquery/jquery'), self.$m.require(self, 'rquery/document'), self.$m.require(self, 'rquery/element'), self.$m.require(self, 'rquery/css'), self.$m.require(self, 'rquery/event'), self.$m.require(self, 'rquery/request'), self.$m.require(self, 'rquery/response'), self.$m.require(self, 'rquery/json'));})();
 });
 Opal.module("rquery/jquery", function() {
 /*

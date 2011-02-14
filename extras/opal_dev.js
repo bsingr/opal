@@ -2227,6 +2227,22 @@ BaseIseq.prototype = {
       // error? or just leave generated code to find it..
     }
   },
+
+  handle_method_return: function() {
+    var iseq = this;
+
+    while (iseq && iseq instanceof BlockIseq) {
+      iseq = iseq.parent_iseq;
+    }
+
+    if (iseq instanceof DefIseq) {
+      this._ensure_return = true;
+      this._handle_errors = true;
+    } else {
+      // error? no, we need top level iseq to generate fake var just to avoid
+      // undefined error.
+    }
+  },
   
   // write: function(str) {
     // this.code.push(str);
@@ -2291,8 +2307,10 @@ MainIseq.prototype.join = function() {
   // up quickly with non used methods. 
   res.push('\nvar Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, ');
   res.push('nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, ');
-  res.push('$range = Opal.G, $block = Opal.P;\n');
- 
+  res.push('$range = Opal.G, $block = Opal.P, $return = Opal.R, $super = Opal.S;\n');
+
+
+  
  
   // method ids
   res.push('Opal.mm([');
@@ -3267,7 +3285,6 @@ RubyGenerator.prototype = {
     res.push(this.generate(aref[1]));
     res.push(', ('+ tmp_mm + '.$m');
     res.push(this.mid_to_jsid('[]='));
-    res.push(' || rb_vm_meth_m');
     res.push(')');
     res.push('(');
     res.push(tmp_mm);
@@ -3313,7 +3330,7 @@ RubyGenerator.prototype = {
   // assocs - [[lhs, rhs], [lhs, rhs]]
   generate_hash: function(stmt, o) {
     var res = [];
-    res.push(this.SELF + '.$H(');
+    res.push('$hash(');
     
     for (var i = 0; i < stmt[1].length; i++) {
       if (i > 0) res.push(', ');
@@ -3401,11 +3418,18 @@ RubyGenerator.prototype = {
     // if we need to potentially catch returns etc, do it here.
     if (this.iseq_current._handle_errors) {
       var code = ['try {\n'];
-      code.push('var __vm_jump_function__ = arguments.callee;');
+      code.push('var $vm_return_func = arguments.callee;');
       code.push(def_code);
       code.push('} catch(__err__) {\n');
       // code.push("print('caught..' + __err__.$keyword);");
-      
+     
+      // new return: this handles all return situations
+      if (this.iseq_current._ensure_return) {
+        code.push('if (__err__.$keyword == 1 && __err__.$func == $vm_return_func) {\n');
+        code.push('return __err__.$value;');
+        code.push('\n}');
+      }
+
       // loop return: returning from a while loop (or until loop)
       if (this.iseq_current._ensure_loop_return) {
         code.push('if (__err__.$keyword == 1) {\n');
@@ -3802,28 +3826,40 @@ RubyGenerator.prototype = {
       return_arg.push(this.NIL);
     }
     return_arg = return_arg.join("");
-    
+  
+    // return always defines out of the method is was defined in. If in a block, then it
+    // returns out the the method that the block is in. So this works nicely, as in the
+    // method we define our var: $vm_return_func, and through javascript scope, we pass
+    // that into the block return vm function. If a return propogates all the way to the
+    // top scope, then it just throws as a regular error, and our mainiseq will output a 
+    // correct var to avoid undefined errors... this will work, trust me ;)
+
+    // find nearest method, and make sure it block returns
+    this.iseq_current.handle_method_return();
+    return '$return(' + return_arg + ', $vm_return_func)'; 
+  
+
     // if we are in block (part of an iteration for example..)
-    if (this.iseq_current instanceof BlockIseq && !this.iseq_current._in_while_loop) {
-      this.iseq_current.ensure_block_return();
-      return 'rb_vm_block_return(' + return_arg + ', __vm_jump_function__)';
-    }
-    // if we are in a while loop itself. We return out of while loop and into
-    // the method containing the while loop itself. We do not return back into
-    // calling method (this is handled above: "block" part)
-    else if (this.iseq_current._in_while_loop) {
-      // inform the method containing the while loop that we need to handle it
-      this.iseq_current.ensure_loop_return();
-      // throw a loop return statement..
-      return 'rb_vm_loop_return(' + return_arg + ')';
-    }
-    // normal return in a normal method context
-    else {
-      // inform current iseq to capture thrown return
-      this.iseq_current.ensure_block_return();
-      return 'rb_vm_block_return(' + return_arg + ', __vm_jump_function__)';
-    }
-    return return_arg + "aaaaa";
+    // if (this.iseq_current instanceof BlockIseq && !this.iseq_current._in_while_loop) {
+    //   this.iseq_current.ensure_block_return();
+    //   return 'rb_vm_block_return(' + return_arg + ', __vm_jump_function__)';
+    // }
+    // // if we are in a while loop itself. We return out of while loop and into
+    // // the method containing the while loop itself. We do not return back into
+    // // calling method (this is handled above: "block" part)
+    // else if (this.iseq_current._in_while_loop) {
+    //   // inform the method containing the while loop that we need to handle it
+    //   this.iseq_current.ensure_loop_return();
+    //   // throw a loop return statement..
+    //   return 'rb_vm_loop_return(' + return_arg + ')';
+    // }
+    // // normal return in a normal method context
+    // else {
+    //   // inform current iseq to capture thrown return
+    //   this.iseq_current.ensure_block_return();
+    //   return 'rb_vm_block_return(' + return_arg + ', __vm_jump_function__)';
+    // }
+    // return return_arg + "aaaaa";
   },
   
   generate_next: function(stmt, o) {
@@ -3860,8 +3896,7 @@ RubyGenerator.prototype = {
   
   generate_super: function(stmt) {
     var res = [];
-    var mid = this.iseq_current._method_id;
-    res.push('rb_super(arguments.callee, $mid, ' + this.SELF + ',');
+    res.push('$super(arguments.callee, ' + this.SELF + ',');
     if (!stmt[1]) {
       res.push("Array.prototype.slice.call(arguments, 1)");
     }

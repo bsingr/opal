@@ -208,7 +208,7 @@ module Kernel
   end
 
   def to_s
-    "#<#{`rb_class_real(self.$klass)`.to_s}:#{`self.$hash()`}>"
+    "#<#{`rb_class_real(self.$klass)`.to_s}:0x#{`(self.$hash() * 4000487).toString(16)`}>"
   end 
 
   def inspect

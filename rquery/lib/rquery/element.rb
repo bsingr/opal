@@ -226,6 +226,33 @@ class Element
     `return self.remove();`
   end
 
+  # Inserts the given content to the end of each element in the set
+  # represented by the receiver.
+  #
+  # @param [String, Element] content content to insert
+  # @return [Element] returns the receiver
+  def append(content)
+    `return self.append(content);`
+  end
+
+  # Inserts the given `content` before each member in the receiver. The
+  # content may be a string, or an element.
+  #
+  # @param [String, Element] content the content to insert
+  # @return [Element] returns the receiver
+  def before(content)
+    `return self.before(content);`
+  end
+
+  # Inserts the `content` before each member in the receiver. Content
+  # may be a string or an Element instance.
+  #
+  # @param [String, Element] content content to insert
+  # @return [Element] returns the receiver
+  def after(content)
+    `return self.after(content);`
+  end
+
   # @group Events
     
   def mouse_down

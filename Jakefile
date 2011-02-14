@@ -19,7 +19,7 @@ task('browser', [], function() {
   var sources = [
     'array', 'numeric', 'string', 'symbol', 'hash', 'top_self', 'nil_class',
     'true_class', 'false_class', 'kernel', 'module', 'proc',
-    'runtime', 'browser'
+    'runtime', 'browser', 'basic_object', 'class', 'error', 'range'
   ];
 
   sources.forEach(function(source) {

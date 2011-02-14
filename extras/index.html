@@ -5,101 +5,40 @@
     <script src="opal_dev.js" type="text/javascript" charset="utf-8"></script>
     <script src="rquery.js"></script>
     <script type="text/ruby">
-      puts "wow"
 
       Document.ready? do
-        puts "Document is now ready!"
-      end
-      
-      puts "running this.."
-      #a = Element.find 'div'
-      a = Element.from_native `$(document.getElementById('some_div'))`
-      `console.log(a)`
-      puts "original selector was:"
-      puts a.selector.inspect
 
-      puts "and length is:"
-      puts a.length
+      puts "TESTING AJAX!!!"
+      req = Request.new
+      puts req
 
-      a.each do |elem|
-        puts "looping"
-        `console.log(elem)`
-        `console.log(elem.$m)`
-      end
+      req.success do |response|
+        puts "req qas a success!"
+        puts response.inspect
+        puts "status is: #{response.status}"
+        puts "status text is: #{response.status_text}"
 
-      puts "and the indexes..."
-      puts "index 0"
-      puts a[0]
+        puts "response text:"
+        puts response.text
 
-      puts "index 1"
-      puts a[1]
+        puts "was it a success"
+        puts response.success?
 
-      puts "index -1"
-      puts a[-1]
-
-      puts "try setting some attributes"
-      a.attr 'title', 'wow, hey there'
-
-      puts "and the attr is now: #{a.attr 'title'}"
-      puts "and the src: #{a.attr 'src'}"
-
-      puts "setting new id to 'ssssssss'"
-      a.id 'ssssssssssssss'
-
-      puts a.id
-
-      a.id = 'yep yep yep'
-
-
-      puts "current content:"
-      puts a.html
-
-      puts "setting content"
-      a.html = "wowowowowowowowoww"
-      puts a.html
-
-      puts "adding some classes"
-      a.add_class 'wow fobo'
-  
-      puts "testing remove_class"
-      a.remove_class 'wow'
-
-      puts "And now remove alll"
-      a.remove_class
-
-      puts "and now testing has class"
-      a.add_class 'foo bar baz'
-      puts a.has_class? 'foo'
-      puts a.has_class? 'jsjsjs'
-
-      puts "testing Element.new"
-      b = Element.new
-      puts b
-      `console.log(b)`
-      `window.b = b`
-
-      puts "Testing events"
-      a.mouse_down do |event|
-        puts "mouse down son!"
-        puts event
-        `console.log(event)`
-        puts event.class
-        puts "current target:"
-        puts event.current
-        
-        puts "alt: #{event.alt?}"
-        puts "ctrl: #{event.ctrl?}"
-        puts "meta: #{event.meta?}"
-        puts "shift: #{event.shift?}"
+        puts "was it a failure"
+        puts response.failure?
       end
 
-      puts "style!"
-      puts a
-      
-      puts a.style
-      `console.log(#{a.style})`
-     a.style.backgroundColor = 'blue'
-      a.style.background_color
+      req.type = 'POST'
+
+      #req.send
+
+
+      puts "testing json"
+      a = { "wow" => "foo", "bar" => "baz", 23 => 34, true => true,
+        false => false, nil => [1, 2, 3, "w"] } 
+      puts a.to_json
+
+      end
     </script>
     <body>
       <div id="some_div">
