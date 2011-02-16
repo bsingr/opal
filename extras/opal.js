@@ -1333,6 +1333,7 @@ $opal.dc = function(base, super_class, id, body, flag) {
       break;
     // class shift (<<)
     case 1:
+      console.log("need to get singleton class");
       klass = rb_singleton_class(base);
       break;
     // module
@@ -2142,7 +2143,7 @@ var boot_defrootclass = function(id) {
 
 
 // Create a new subclass of the given superclass. We do not name it yet.
-var rb_class_boot = function(super_class) {
+var rb_class_boot = $opal.class_boot = function(super_class) {
   if (super_class) {
     var ctor = function() {};
     ctor.prototype = super_class.constructor.prototype;
@@ -2309,26 +2310,54 @@ var rb_class_create = function(super_klass) {
 // get singleton class of obj
 var rb_singleton_class = function(obj) {
   var obj;
+  console.log("rb_singleton_class:");
+  console.log(obj);
   // print('finding singleton class for ' + obj.__classid__);
   // console.log("checking for id: " + obj.$h);
   if (obj == rb_cObject) {
-    // console.log("right. cchecking rb_cObject");
+    //console.log("right. cchecking rb_cObject");
   }
   // check if number, string etc.. and throw error?
   if ((obj.$klass.$flags & FL_SINGLETON)&& rb_ivar_get(obj.$klass, '__attached__') == obj) {
-    // console.log("returning on attacked");
+    console.log("returning on attacked");
     // print("returning on attached");
     // for (var prop in obj.$k) {print (prop); print(obj.$k[prop]);}
     klass = obj.$klass;
   }
   else {
-    var class_id = rb_ivar_get(obj.$klass, '__classid__');
-    klass = rb_make_metaclass(obj, obj.$klass);
-    // obj
-    // klass = obj.$k;
+    // OLD
+    // making an object into a singleton object..
+    //console.log("!!!!!!!!!!!!! getting this way");
+    //var class_id = rb_ivar_get(obj.$klass, '__classid__');
+    //klass = rb_make_metaclass(obj, obj.$klass);
+ 
+    console.log("MAKING NEWWWWW");
+   console.log(obj); 
+    // NEW
+    var orig_klass = obj.$klass;
+    klass = rb_class_boot(orig_klass);
+
+    klass.$flags = klass.$flags | FL_SINGLETON;
+    obj.$klass = klass;
+    klass.__attached__ = obj;
+
+    // might be done in singleton_class_attached
+    obj.$m = klass.$m_tbl;
+    
+    console.log(klass);
+    // rb_singleton_class_attached(klass, obj);
+    // meta of klass = meta of rb_class_real(orig_klass);
+    
+    klass.$klass = rb_class_real(orig_klass).$klass;
+    klass.$m = klass.$klass.$m_tbl;
   }
   
   return klass;
+};
+
+// obj must be an obj
+var make_singleton_class = function(obj) {
+
 };
 
 var RHash = function(args) {

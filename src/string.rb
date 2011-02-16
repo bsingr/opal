@@ -116,11 +116,11 @@ class String
   #
   # @return [Symbol]
   def to_sym
-    `return opalsym(self);`
+    `return $opal.Y(self);`
   end
 
   def intern
-    `return opalsym(self);`
+    `return $opal.Y(self);`
   end
 
   # Returns a new string with the characters from `self` in reverse order.

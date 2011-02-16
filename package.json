@@ -5,8 +5,7 @@
   "keywords": ["ruby", "javascript", "compiler", "syntax"],
   "author": "Adam Beynon",
   "bin": {
-    "opal": "./bin/opal",
-    "opalspec": "./bin/opalspec"
+    "opal": "./bin/opal"
   },
   "directories": {
     "lib": "./lib"
