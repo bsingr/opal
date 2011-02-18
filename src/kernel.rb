@@ -193,7 +193,7 @@ module Kernel
   # @param [Numeric] max
   # @return [Numeric]
   def rand(max = `undefined`)
-    `if (max != undefined) 
+    `if (max != undefined)
         return Math.floor(Math.random() * max);
     else
       return Math.random();`
@@ -207,9 +207,14 @@ module Kernel
     `return self.$hash();`
   end
 
+  # Returns a simple string representation of the receiver object. The id shown in the string
+  # is not just the object_id, but it is mangled to resemble the format output by ruby, which
+  # is basically a hex number.
+  #
+  # FIXME: proper hex output needed
   def to_s
     "#<#{`rb_class_real(self.$klass)`.to_s}:0x#{`(self.$hash() * 4000487).toString(16)`}>"
-  end 
+  end
 
   def inspect
     to_s

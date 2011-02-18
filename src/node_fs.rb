@@ -1,4 +1,3 @@
-
 # erm, a better way to do this would be nice...
 node_fs = `require('fs')`
 node_path = `require('path')`
@@ -6,8 +5,13 @@ node_path = `require('path')`
 # ruby File class
 class File
 
-  def self.expand_path(path)
-    `return node_path.normalize(path);`
+  def self.expand_path(path, dir)
+    `if (dir == undefined) dir = process.cwd();
+    if(path.charAt(0) == '/') {
+      return node_path.normalize(path);
+    } else {
+      return node_path.normalize(node_path.join(dir, path));
+    }`
   end
 
   def self.join(*parts)
