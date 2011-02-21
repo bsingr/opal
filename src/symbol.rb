@@ -1,16 +1,15 @@
 class Symbol
 
   def inspect
-    `return ':' + self.toString();`
+    `return ':' + self.$ptr;`
   end
 
   def to_s
-    `return self.toString();`
+    `return self.$ptr;`
   end
 
   def to_sym
     self
   end
-
 end
 

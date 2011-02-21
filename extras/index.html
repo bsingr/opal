@@ -3,43 +3,43 @@
   <head>
     <script src="opal.js" type="text/javascript" charset="utf-8"></script>
     <script src="opal_dev.js" type="text/javascript" charset="utf-8"></script>
-    <script src="rquery.js"></script>
-    <script type="text/ruby">
+    <!-- <script src="rquery.js"></script>-->
+    <!-- <script type="text/ruby">-->
 
-      Document.ready? do
+    <!--   Document.ready? do-->
 
-      puts "TESTING AJAX!!!"
-      req = Request.new
-      puts req
+    <!--   puts "TESTING AJAX!!!"-->
+    <!--   req = Request.new-->
+    <!--   puts req-->
 
-      req.success do |response|
-        puts "req qas a success!"
-        puts response.inspect
-        puts "status is: #{response.status}"
-        puts "status text is: #{response.status_text}"
+    <!--   req.success do |response|-->
+    <!--     puts "req qas a success!"-->
+    <!--     puts response.inspect-->
+    <!--     puts "status is: #{response.status}"-->
+    <!--     puts "status text is: #{response.status_text}"-->
 
-        puts "response text:"
-        puts response.text
+    <!--     puts "response text:"-->
+    <!--     puts response.text-->
 
-        puts "was it a success"
-        puts response.success?
+    <!--     puts "was it a success"-->
+    <!--     puts response.success?-->
 
-        puts "was it a failure"
-        puts response.failure?
-      end
+    <!--     puts "was it a failure"-->
+    <!--     puts response.failure?-->
+    <!--   end-->
 
-      req.type = 'POST'
+    <!--   req.type = 'POST'-->
 
-      #req.send
+    <!--   #req.send-->
 
 
-      puts "testing json"
-      a = { "wow" => "foo", "bar" => "baz", 23 => 34, true => true,
-        false => false, nil => [1, 2, 3, "w"] } 
-      puts a.to_json
+    <!--   puts "testing json"-->
+    <!--   a = { "wow" => "foo", "bar" => "baz", 23 => 34, true => true,-->
+    <!--     false => false, nil => [1, 2, 3, "w"] } -->
+    <!--   puts a.to_json-->
 
-      end
-    </script>
+    <!--   end-->
+    <!-- </script>-->
     <body>
       <div id="some_div">
         

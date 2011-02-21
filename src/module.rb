@@ -25,7 +25,7 @@ class Module
       var method_id = #{`attr`.to_s};
 
       rb_define_method(self, method_id, 
-            new Function('self', 'return rb_ivar_get(self, "@' + method_id + '");'));
+            new Function('return rb_ivar_get(this, "@' + method_id + '");'));
 
     }
 
@@ -38,7 +38,7 @@ class Module
       var method_id = #{`attr`.to_s};
 
       rb_define_method(self, method_id + '=', 
-        new Function('self', 'val', 'return rb_ivar_set(self, "@' + method_id + '", val);'));
+        new Function('val', 'return rb_ivar_set(this, "@' + method_id + '", val);'));
 
     }
 
@@ -48,7 +48,7 @@ class Module
   def alias_method(new_name, old_name)
     new_name = new_name.to_s
     old_name = old_name.to_s
-    `rb_define_method_raw(self, new_name, self.$m_tbl[old_name])`
+    `rb_define_method(self, new_name, self.$method_table[old_name])`
     self
   end
 
@@ -64,7 +64,7 @@ class Module
     #puts "block for class eval:"
     #puts block
     if block_given?
-      `block(self)`
+      `block.call(self)`
     else
       raise "need to compile str"
     end

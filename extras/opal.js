@@ -18,38 +18,37 @@ if (typeof Opal == 'undefined')
 modules["./array"] = function(exports) {
 (function(undefined) {
 var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P, $return = Opal.R, $super = Opal.S;
-Opal.mm(['==', 'raise', 'flatten', 'to_s', 'join']);
 return ($class(self, nil, "Array", function(self) {
-return ($def(self, "[]", function(self, objs) {
-objs = Array.prototype.slice.call(arguments, 1);
-return (objs);}, 1), $def(self, "allocate", function(self) {
-return ([]);}, 1), $def(self, "initialize", function(self, objs) {
-objs = Array.prototype.slice.call(arguments, 1);
+return ($def(self, "[]", function(objs) {
+var self = this;objs = Array.prototype.slice.call(arguments, 0);
+return (objs);}, 1), $def(self, "allocate", function() {
+var self = this;return ([]);}, 1), $def(self, "initialize", function(objs) {
+var self = this;objs = Array.prototype.slice.call(arguments, 0);
 for (var i = 0; i < objs.length; i++) {
       self.push(objs[i]);
     }
 
-    return self;}, 0), $def(self, "inspect", function(self) {
-var description = [];
-  
+    return self;}, 0), $def(self, "inspect", function() {
+var self = this;var description = [];
+
     for (var i = 0; i < self.length; i++) {
-      description.push(self[i].$m.inspect(self[i]));
+      description.push(self[i].m$inspect());
     }
-  
-    return '[' + description.join(', ') + ']';}, 0), $def(self, "to_s", function(self) {
-var description = [];
+
+    return '[' + description.join(', ') + ']';}, 0), $def(self, "to_s", function() {
+var self = this;var description = [];
 
     for (var i = 0; i < self.length; i++) {
       description.push(self[i].$m.to_s(self[i]));
     }
 
-    return description.join('');}, 0), $def(self, "<<", function(self, obj) {
-return (self.push(obj), self);}, 0), $def(self, "length", function(self) {
-return self.length;}, 0), $def(self, "size", function(self) {
-return self.length;}, 0), $def(self, "each", function(self) {
-var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;for (var i = 0; i < self.length; i++) {
+    return description.join('');}, 0), $def(self, "<<", function(obj) {
+var self = this;return (self.push(obj), self);}, 0), $def(self, "length", function() {
+var self = this;return self.length;}, 0), $def(self, "size", function() {
+var self = this;return self.length;}, 0), $def(self, "each", function() {
+var self = this;var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;for (var i = 0; i < self.length; i++) {
       try {
-        __block__(__block__.$self, self[i]);
+        __block__.call(__block__.$self, self[i]);
       } catch (e) {
         switch (e.$keyword) {
           case 2:
@@ -60,10 +59,10 @@ var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block
       }
     }
 
-    return self;}, 0), $def(self, "each_with_index", function(self) {
-var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;for (var i = 0; i < self.length; i++) {
+    return self;}, 0), $def(self, "each_with_index", function() {
+var self = this;var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;for (var i = 0; i < self.length; i++) {
       try {
-        __block__(__block__.$self, self[i], i);
+        __block__.call(__block__.$self, self[i], i);
       } catch (e) {
         switch (e.$keyword) {
           case 2:
@@ -74,10 +73,10 @@ var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block
       }
     }
 
-    return self;}, 0), $def(self, "each_index", function(self) {
-var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;for (var i = 0; i < self.length; i++) {
+    return self;}, 0), $def(self, "each_index", function() {
+var self = this;var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;for (var i = 0; i < self.length; i++) {
       try {
-        __block__(__block__.$self, i);
+        __block__.call(__block__.$self, i);
       } catch (e) {
         switch (e.$keyword) {
           case 2:
@@ -88,58 +87,55 @@ var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block
       }
     }
 
-    return self;}, 0), $def(self, "push", function(self, objs) {
-objs = Array.prototype.slice.call(arguments, 1);
+    return self;}, 0), $def(self, "push", function(objs) {
+var self = this;objs = Array.prototype.slice.call(arguments, 0);
 for (var i = 0; i < objs.length; i++) {
       self.push(objs[i]);
     }
 
-    return self;}, 0), $def(self, "index", function(self, obj) {
-var __a;
-for (var i = 0; i < self.length; i++) {
-      if ((__a = self[i]).$m["=="](__a, obj).$r) {
+    return self;}, 0), $def(self, "index", function(obj) {
+var self = this;for (var i = 0; i < self.length; i++) {
+      if (self[i]["m$=="](obj).$r) {
         return i;
       }
     }
 
-    return nil;}, 0), $def(self, "+", function(self, other) {
-return self.concat(other);}, 0), $def(self, "-", function(self, other) {
-return (self.$m.raise(self, ("Array" + "#" + "- not yet implemented")));}, 0), $def(self, "==", function(self, other) {
-var __a;
-if (self.$hash() == other.$hash()) return Qtrue;
+    return nil;}, 0), $def(self, "+", function(other) {
+var self = this;return self.concat(other);}, 0), $def(self, "-", function(other) {
+var self = this;return (self.m$raise(("Array" + "#" + "- not yet implemented")));}, 0), $def(self, "==", function(other) {
+var self = this;if (self.$hash() == other.$hash()) return Qtrue;
     if (self.length != other.length) return Qfalse;
 
     for (var i = 0; i < self.length; i++) {
-      if (!(__a = self[i]).$m["=="](__a, other[i]).$r) {
+      if (!self[i]["m$=="](other[i]).$r) {
         return Qfalse;
       }
     }
 
-    return Qtrue;}, 0), $def(self, "assoc", function(self, obj) {
-var __a;
-var arg;
+    return Qtrue;}, 0), $def(self, "assoc", function(obj) {
+var self = this;var arg;
 
     for (var i = 0; i < self.length; i++) {
       arg = self[i];
 
-      if (arg.length && (__a = arg[0]).$m["=="](__a, obj).$r) {
+      if (arg.length && arg[0]["m$=="](obj).$r) {
         return arg;
       }
     }
 
-    return nil;}, 0), $def(self, "at", function(self, idx) {
-if (idx < 0) idx += self.length;
+    return nil;}, 0), $def(self, "at", function(idx) {
+var self = this;if (idx < 0) idx += self.length;
 
     if (idx < 0 || idx >= self.length) return nil;
-    return self[idx];}, 0), $def(self, "clear", function(self) {
-self.splice(0);
-    return self;}, 0), $def(self, "select", function(self) {
-var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;var result = [], arg;
+    return self[idx];}, 0), $def(self, "clear", function() {
+var self = this;self.splice(0);
+    return self;}, 0), $def(self, "select", function() {
+var self = this;var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;var result = [], arg;
 
     for (var i = 0; i < self.length; i++) {
       try {
         arg = self[i];
-        if (__block__(__block__.$self, arg).$r) {
+        if (__block__.call(__block__.$self, arg).$r) {
           result.push(arg);
         }
       } catch (e) {
@@ -152,12 +148,12 @@ var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block
       }
     }
 
-    return result;}, 0), $def(self, "collect", function(self) {
-var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;var result = [];
+    return result;}, 0), $def(self, "collect", function() {
+var self = this;var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;var result = [];
 
     for (var i = 0; i < self.length; i++) {
       try {
-        result.push(__block__(__block__.$self, self[i]));
+        result.push(__block__.call(__block__.$self, self[i]));
       } catch (e) {
         switch (e.$keyword) {
           case 2:
@@ -168,10 +164,10 @@ var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block
       }
     }
 
-    return result;}, 0), $def(self, "collect!", function(self) {
-var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;for (var i = 0; i < self.length; i++) {
+    return result;}, 0), $def(self, "collect!", function() {
+var self = this;var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;for (var i = 0; i < self.length; i++) {
       try {
-        self[i] = __block__(__block__.$self, self[i]);
+        self[i] = __block__.call(__block__.$self, self[i]);
       } catch (e) {
         switch (e.$keyword) {
           case 2:
@@ -182,9 +178,9 @@ var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block
       }
     }
 
-    return self;}, 0), $def(self, "dup", function(self) {
-return self.slice(0);}, 0), $def(self, "compact", function(self) {
-var result = [], length = self.length;
+    return self;}, 0), $def(self, "dup", function() {
+var self = this;return self.slice(0);}, 0), $def(self, "compact", function() {
+var self = this;var result = [], length = self.length;
 
     for (var i = 0; i < length; i++) {
       if (self[i] != nil) {
@@ -192,8 +188,8 @@ var result = [], length = self.length;
       }
     }
 
-    return result;}, 0), $def(self, "compact!", function(self) {
-var length = self.length;
+    return result;}, 0), $def(self, "compact!", function() {
+var self = this;var length = self.length;
 
     for (var i = 0; i < length; i++) {
       if (self[i] == nil) {
@@ -202,20 +198,19 @@ var length = self.length;
       }
     }
 
-    return length == self.length ? nil : self;}, 0), $def(self, "concat", function(self, other) {
-var length = other.length;
+    return length == self.length ? nil : self;}, 0), $def(self, "concat", function(other) {
+var self = this;var length = other.length;
 
     for (var i = 0; i < length; i++) {
       self.push(other[i]);
     }
 
-    return self;}, 0), $def(self, "count", function(self, obj) {
-var __a;
-if (obj != undefined) {
+    return self;}, 0), $def(self, "count", function(obj) {
+var self = this;if (obj != undefined) {
       var total = 0;
 
       for (var i = 0; i < self.length; i++) {
-        if ((__a = self[i]).$m["=="](__a, obj).$r) {
+        if (self[i]["m$=="](obj).$r) {
           total++;
         }
       }
@@ -223,26 +218,25 @@ if (obj != undefined) {
       return total;
     } else {
       return self.length;
-    }}, 0), $def(self, "delete", function(self, obj) {
-var __a;
-var length = self.length;
+    }}, 0), $def(self, "delete", function(obj) {
+var self = this;var length = self.length;
 
     for (var i = 0; i < self.length; i++) {
-      if ((__a = self[i]).$m["=="](__a, obj).$r) {
+      if (self[i]["m$=="](obj).$r) {
         self.splice(i, 1);
         i--;
       }
     }
 
-    return length == self.length ? nil : obj;}, 0), $def(self, "delete_at", function(self, idx) {
-if (idx < 0) idx += self.length;
+    return length == self.length ? nil : obj;}, 0), $def(self, "delete_at", function(idx) {
+var self = this;if (idx < 0) idx += self.length;
     if (idx < 0 || idx >= self.length) return nil;
     var res = self[idx];
     self.splice(idx, 1);
-    return self;}, 0), $def(self, "delete_if", function(self) {
-var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;for (var i = 0; i < self.length; i++) {
+    return self;}, 0), $def(self, "delete_if", function() {
+var self = this;var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;for (var i = 0; i < self.length; i++) {
       try {
-        if (__block__(__block__.$self, self[i]).$r) {
+        if (__block__.call(__block__.$self, self[i]).$r) {
           self.splice(i, 1);
           i--;
         }
@@ -256,38 +250,37 @@ var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block
       }
     }
 
-    return self;}, 0), $def(self, "drop", function(self, n) {
-if (n > self.length) return [];
-    return self.slice(n);}, 0), $def(self, "drop_while", function(self) {
-var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;for (var i = 0; i < self.length; i++) {
-      if (!__block__(__block__.$self, self[i]).$r) {
+    return self;}, 0), $def(self, "drop", function(n) {
+var self = this;if (n > self.length) return [];
+    return self.slice(n);}, 0), $def(self, "drop_while", function() {
+var self = this;var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;for (var i = 0; i < self.length; i++) {
+      if (!__block__.call(__block__.$self, self[i]).$r) {
         return self.slice(i);
       }
     }
 
-    return [];}, 0), $def(self, "empty?", function(self) {
-return self.length == 0 ? Qtrue : Qfalse;}, 0), $def(self, "fetch", function(self, idx, defaults) {
-var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;var original = idx;
+    return [];}, 0), $def(self, "empty?", function() {
+var self = this;return self.length == 0 ? Qtrue : Qfalse;}, 0), $def(self, "fetch", function(idx, defaults) {
+var self = this;var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;var original = idx;
 
     if (idx < 0) idx += self.length;
     if (idx < 0 || idx >= self.length) {
       if (defaults == undefined)
         return rb_raise("Index Error: Array#fetch");
       else if (__block__)
-        return __block__(__block__.$self, original);
+        return __block__.call(__block__.$self, original);
       else
         return defaults;
     }
 
-    return self[idx];}, 0), $def(self, "first", function(self, count) {
-if (count === undefined) count = nil;
+    return self[idx];}, 0), $def(self, "first", function(count) {
+var self = this;if (count === undefined) count = nil;
 if (count == nil) {
       if (self.length == 0) return nil;
       return self[0];
     }
-    return self.slice(0, count);}, 0), $def(self, "flatten", function(self, level) {
-var __a;
-if (level === undefined) level = nil;
+    return self.slice(0, count);}, 0), $def(self, "flatten", function(level) {
+var self = this;if (level === undefined) level = nil;
 var result = [], item;
 
     for (var i = 0; i < self.length; i++) {
@@ -295,125 +288,121 @@ var result = [], item;
 
       if (item.hasOwnProperty('length')) {
         if (level == nil)
-          result = result.concat((__a = item).$m.flatten(__a));
+          result = result.concat(item.m$flatten());
         else if (level == 0)
           result.push(item);
         else
-          result = result.concat((__a = item).$m.flatten(__a, level - 1));
+          result = result.concat(item.m$flatten(level - 1));
       } else {
         result.push(item);
       }
     }
 
-    return result;}, 0), $def(self, "flatten!", function(self, level) {
-var __a;
-if (level === undefined) level = nil;
+    return result;}, 0), $def(self, "flatten!", function(level) {
+var self = this;if (level === undefined) level = nil;
 var length = self.length;
-    var result = (__a = self).$m.flatten(__a, level);
+    var result = self.m$flatten(level);
     self.splice(0);
-    
+
     for (var i = 0; i < result.length; i++) {
       self.push(result[i]);
     }
-    
+
     if (self.length == length)
       return nil;
-    
-    return self;}, 0), $def(self, "include?", function(self, member) {
-var __a;
-for (var i = 0; i < self.length; i++) {
-      if ((__a = self[i]).$m["=="](__a, member).$r) {
+
+    return self;}, 0), $def(self, "include?", function(member) {
+var self = this;for (var i = 0; i < self.length; i++) {
+      if (self[i]["m$=="](member).$r) {
         return Qtrue;
       }
     }
 
-    return Qfalse;}, 0), $def(self, "replace", function(self, other) {
-self.splice(0);
+    return Qfalse;}, 0), $def(self, "replace", function(other) {
+var self = this;self.splice(0);
 
     for (var i = 0; i < other.length; i++) {
       self.push(other[i]);
     }
 
-    return self;}, 0), $def(self, "insert", function(self, idx, objs) {
-objs = Array.prototype.slice.call(arguments, 2);
+    return self;}, 0), $def(self, "insert", function(idx, objs) {
+var self = this;objs = Array.prototype.slice.call(arguments, 1);
 if (idx < 0) idx += self.length;
-    
+
     if (idx < 0 || idx >= self.length)
       rb_raise("IndexError: out of range");
 
     self.splice.apply(self, [idx, 0].concat(objs));
-    return self;}, 0), $def(self, "join", function(self, sep) {
-var __a;
-if (sep === undefined) sep = "";
+    return self;}, 0), $def(self, "join", function(sep) {
+var self = this;if (sep === undefined) sep = "";
 var result = [];
 
     for (var i = 0; i < self.length; i++) {
-      result.push((__a = self[i]).$m.to_s(__a));
+      result.push(self[i].m$to_s());
     }
 
-    return result.join(sep);}, 0), $def(self, "keep_if", function(self) {
-var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;for (var i = 0; i < self.length; i++) {
-      if (!__block__(__block__.$self, self[i]).$r) {
+    return result.join(sep);}, 0), $def(self, "keep_if", function() {
+var self = this;var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;for (var i = 0; i < self.length; i++) {
+      if (!__block__.call(__block__.$self, self[i]).$r) {
         self.splice(i, 1);
         i--;
       }
     }
 
-    return self;}, 0), $def(self, "last", function(self, count) {
-if (count === undefined) count = nil;
+    return self;}, 0), $def(self, "last", function(count) {
+var self = this;if (count === undefined) count = nil;
 if (count == nil) {
       if (self.length == 0) return nil;
       return self[self.length - 1];
     } else {
       if (count > self.length) count = self.length;
       return self.slice(self.length - count, self.length);
-    }}, 0), $def(self, "pop", function(self, count) {
-if (count === undefined) count = nil;
+    }}, 0), $def(self, "pop", function(count) {
+var self = this;if (count === undefined) count = nil;
 if (count == nil) {
       if (self.length) return self.pop();
       return nil;
     } else {
       return self.splice(self.length - count, self.length);
-    }}, 0), $def(self, "rassoc", function(self, obj) {
-var __a;
-var test;
+    }}, 0), $def(self, "rassoc", function(obj) {
+var self = this;var test;
 
     for (var i = 0; i < self.length; i++) {
       test = self[i];
       if (test.hasOwnProperty('length') && test[1] != undefined) {
         console.log("trying " + i);
-        if ((__a = test[1]).$m["=="](__a, obj).$r) return test;
+        if (test[1]["m$=="](obj).$r) return test;
       }
     }
 
-    return nil;}, 0), $def(self, "reject", function(self) {
-var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;var result = [];
+    return nil;}, 0), $def(self, "reject", function() {
+var self = this;var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;var result = [];
 
     for (var i = 0; i < self.length; i++) {
-      if (!__block__(__block__.$self, self[i]).$r) {
+      if (!__block__.call(__block__.$self, self[i]).$r) {
         result.push(self[i]);
       }
     }
 
-    return result;}, 0), $def(self, "reject!", function(self) {
-var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;var length = self.length;
+    return result;}, 0), $def(self, "reject!", function() {
+var self = this;var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;var length = self.length;
 
     for (var i = 0; i < self.length; i++) {
-      if (__block__(__block__.$self, self[i]).$r) {
+      if (__block__.call(__block__.$self, self[i]).$r) {
         self.splice(i, 1);
         i--;
       }
     }
 
-    return self.length == length ? nil : self;}, 0), $def(self, "reverse", function(self) {
-var result = [];
+    return self.length == length ? nil : self;}, 0), $def(self, "reverse", function() {
+var self = this;var result = [];
 
     for (var i = self.length - 1; i >= 0; i--) {
       result.push(self[i]);
     }
 
-    return result;}, 0), $def(self, "reverse!", function(self) {
-var length = self.length / 2, tmp;
+    return result;}, 0), $def(self, "reverse!", function() {
+var self = this;var length = self.length / 2, tmp;
 
     for (var i = 0; i < length; i++) {
       tmp = self[i];
@@ -421,10 +410,10 @@ var length = self.length / 2, tmp;
       self[self.length - (i + 1)] = tmp;
     }
 
-    return self;}, 0), $def(self, "reverse_each", function(self) {
-var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;for (var i = self.length - 1; i >= 0; i--) {
+    return self;}, 0), $def(self, "reverse_each", function() {
+var self = this;var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;for (var i = self.length - 1; i >= 0; i--) {
       try {
-        __block__(__block__.$self, self[i]);
+        __block__.call(__block__.$self, self[i]);
       } catch (e) {
         switch (e.$keyword) {
           case 2:
@@ -435,12 +424,11 @@ var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block
       }
     }
 
-    return self;}, 0), $def(self, "rindex", function(self, obj) {
-var __a;
-if (obj === undefined) obj = undefined;
+    return self;}, 0), $def(self, "rindex", function(obj) {
+var self = this;if (obj === undefined) obj = undefined;
 if (obj != undefined) {
       for (var i = self.length - 1; i >=0; i--) {
-        if ((__a = self[i]).$m["=="](__a, obj).$r) {
+        if (self[i]["m$=="](obj).$r) {
           return i;
         }
       }
@@ -448,26 +436,26 @@ if (obj != undefined) {
       rb_raise("array#rindex needs to do block action");
     }
 
-    return nil;}, 0), $def(self, "select!", function(self) {
-var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;var length = self.length;
+    return nil;}, 0), $def(self, "select!", function() {
+var self = this;var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;var length = self.length;
 
     for (var i = 0; i < self.length; i++) {
-      if (!__block__(__block__.$self, self[i]).$r) {
+      if (!__block__.call(__block__.$self, self[i]).$r) {
         self.splice(i, 1);
         i--;
       }
     }
 
-    return self.length == length ? nil : self;}, 0), $def(self, "shift", function(self, count) {
-if (count === undefined) count = nil;
+    return self.length == length ? nil : self;}, 0), $def(self, "shift", function(count) {
+var self = this;if (count === undefined) count = nil;
 if (count != nil)
       return self.splice(0, count);
 
     if (self.length) 
       return self.shift();
 
-    return nil;}, 0), $def(self, "slice!", function(self, index, length) {
-if (length === undefined) length = nil;
+    return nil;}, 0), $def(self, "slice!", function(index, length) {
+var self = this;if (length === undefined) length = nil;
 var size = self.length;
 
     if (index < 0) index += size;
@@ -479,13 +467,13 @@ var size = self.length;
       return self.splice(index, index + length);
     } else {
       return self.splice(index, 1)[0];
-    }}, 0), $def(self, "take", function(self, count) {
-return self.slice(0, count);}, 0), $def(self, "take_while", function(self) {
-var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;var result = [];
+    }}, 0), $def(self, "take", function(count) {
+var self = this;return self.slice(0, count);}, 0), $def(self, "take_while", function() {
+var self = this;var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;var result = [];
 
     for (var i = 0; i < self.length; i++) {
       try {
-        if (__block__(__block__.$self, self[i]).$r) {
+        if (__block__.call(__block__.$self, self[i]).$r) {
           result.push(self[i]);
         } else {
           break;
@@ -501,9 +489,9 @@ var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block
       }
     }
 
-    return result;}, 0), $def(self, "to_a", function(self) {
-return (self);}, 0), $def(self, "uniq", function(self) {
-var result = [], seen = [];
+    return result;}, 0), $def(self, "to_a", function() {
+var self = this;return (self);}, 0), $def(self, "uniq", function() {
+var self = this;var result = [], seen = [];
 
     for (var i = 0; i < self.length; i++) {
       var test = self[i], hash = test.$hash();
@@ -513,8 +501,8 @@ var result = [], seen = [];
       }
     }
 
-    return result;}, 0), $def(self, "uniq!", function(self) {
-var seen = [], length = self.length;
+    return result;}, 0), $def(self, "uniq!", function() {
+var self = this;var seen = [], length = self.length;
 
     for (var i = 0; i < self.length; i++) {
       var test = self[i], hash = test.$hash();
@@ -526,14 +514,14 @@ var seen = [], length = self.length;
       }
     }
 
-    return self.length == length ? nil : self;}, 0), $def(self, "unshift", function(self, objs) {
-objs = Array.prototype.slice.call(arguments, 1);
+    return self.length == length ? nil : self;}, 0), $def(self, "unshift", function(objs) {
+var self = this;objs = Array.prototype.slice.call(arguments, 0);
 for (var i = objs.length - 1; i >= 0; i--) {
       self.unshift(objs[i]);
     }
 
-    return self;}, 0), $def(self, "&", function(self, other) {
-var result = [], seen = [];
+    return self;}, 0), $def(self, "&", function(other) {
+var self = this;var result = [], seen = [];
 
     for (var i = 0; i < self.length; i++) {
       var test = self[i], hash = test.$hash();
@@ -550,10 +538,9 @@ var result = [], seen = [];
       }
     }
 
-    return result;}, 0), $def(self, "*", function(self, arg) {
-var __a;
-if (typeof arg == 'string') {
-      return (__a = self).$m.join(__a, arg);
+    return result;}, 0), $def(self, "*", function(arg) {
+var self = this;if (typeof arg == 'string') {
+      return self.m$join(arg);
     } else {
       var result = [];
       for (var i = 0; i < parseInt(arg); i++) {
@@ -561,8 +548,8 @@ if (typeof arg == 'string') {
       }
 
       return result;
-    }}, 0), $def(self, "[]", function(self, index, length) {
-if (length === undefined) length = nil;
+    }}, 0), $def(self, "[]", function(index, length) {
+var self = this;if (length === undefined) length = nil;
 var size = self.length;
 
     if (index < 0) index += size;
@@ -574,180 +561,173 @@ var size = self.length;
       return self.slice(index, index + length);
     } else {
       return self[index];
-    }}, 0), $def(self, "[]=", function(self, index, value) {
-return self[index] = value;}, 0));}, 0));})();
+    }}, 0), $def(self, "[]=", function(index, value) {
+var self = this;return self[index] = value;}, 0));}, 0));})();
 };
 modules["./numeric"] = function(exports) {
 (function(undefined) {
 var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P, $return = Opal.R, $super = Opal.S;
-Opal.mm([]);
 return ($class(self, nil, "Numeric", function(self) {
-return ($def(self, "+@", function(self) {
-return self;}, 0), $def(self, "-@", function(self) {
-return -self;}, 0), $def(self, "%", function(self, other) {
-return self % other;}, 0), $def(self, "modulo", function(self, other) {
-return self % other;}, 0), $def(self, "&", function(self, num2) {
-return self & num2;}, 0), $def(self, "*", function(self, other) {
-return self * other;}, 0), $def(self, "**", function(self, other) {
-return Math.pow(self, other);}, 0), $def(self, "+", function(self, other) {
-return self + other;}, 0), $def(self, "-", function(self, other) {
-return self - other;}, 0), $def(self, "", function(self, other) {
-return self / other;}, 0), $def(self, "<", function(self, other) {
-return self < other ? Qtrue : Qfalse;}, 0), $def(self, "<=", function(self, other) {
-return self <= other ? Qtrue : Qfalse;}, 0), $def(self, ">", function(self, other) {
-return self > other ? Qtrue : Qfalse;}, 0), $def(self, ">=", function(self, other) {
-return self >= other ? Qtrue : Qfalse;}, 0), $def(self, "<<", function(self, count) {
-return self << count;}, 0), $def(self, ">>", function(self, count) {
-return self >> count;}, 0), $def(self, "<=>", function(self, other) {
-if (typeof other != 'number') return nil;
+return ($def(self, "+@", function() {
+var self = this;return self;}, 0), $def(self, "-@", function() {
+var self = this;return -self;}, 0), $def(self, "%", function(other) {
+var self = this;return self % other;}, 0), $def(self, "modulo", function(other) {
+var self = this;return self % other;}, 0), $def(self, "&", function(num2) {
+var self = this;return self & num2;}, 0), $def(self, "*", function(other) {
+var self = this;return self * other;}, 0), $def(self, "**", function(other) {
+var self = this;return Math.pow(self, other);}, 0), $def(self, "+", function(other) {
+var self = this;return self + other;}, 0), $def(self, "-", function(other) {
+var self = this;return self - other;}, 0), $def(self, "", function(other) {
+var self = this;return self / other;}, 0), $def(self, "<", function(other) {
+var self = this;return self < other ? Qtrue : Qfalse;}, 0), $def(self, "<=", function(other) {
+var self = this;return self <= other ? Qtrue : Qfalse;}, 0), $def(self, ">", function(other) {
+var self = this;return self > other ? Qtrue : Qfalse;}, 0), $def(self, ">=", function(other) {
+var self = this;return self >= other ? Qtrue : Qfalse;}, 0), $def(self, "<<", function(count) {
+var self = this;return self << count;}, 0), $def(self, ">>", function(count) {
+var self = this;return self >> count;}, 0), $def(self, "<=>", function(other) {
+var self = this;if (typeof other != 'number') return nil;
     else if (self < other) return -1;
     else if (self > other) return 1;
-    return 0;}, 0), $def(self, "==", function(self, other) {
-return self.valueOf() === other.valueOf() ? Qtrue : Qfalse;}, 0), $def(self, "^", function(self, other) {
-return self ^ other;}, 0), $def(self, "abs", function(self) {
-return Math.abs(self);}, 0), $def(self, "magnitude", function(self) {
-return Math.abs(self);}, 0), $def(self, "even?", function(self) {
-return (self % 2 == 0) ? Qtrue : Qfalse;}, 0), $def(self, "odd?", function(self) {
-return (self % 2 == 0) ? Qfalse : Qtrue;}, 0), $def(self, "succ", function(self) {
-return self + 1;}, 0), $def(self, "next", function(self) {
-return self + 1;}, 0), $def(self, "pred", function(self) {
-return self - 1;}, 0), $def(self, "upto", function(self, finish) {
-var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;for (var i = self; i <= finish; i++) {
-      __block__(__block__.$self, i);
+    return 0;}, 0), $def(self, "==", function(other) {
+var self = this;return self.valueOf() === other.valueOf() ? Qtrue : Qfalse;}, 0), $def(self, "^", function(other) {
+var self = this;return self ^ other;}, 0), $def(self, "abs", function() {
+var self = this;return Math.abs(self);}, 0), $def(self, "magnitude", function() {
+var self = this;return Math.abs(self);}, 0), $def(self, "even?", function() {
+var self = this;return (self % 2 == 0) ? Qtrue : Qfalse;}, 0), $def(self, "odd?", function() {
+var self = this;return (self % 2 == 0) ? Qfalse : Qtrue;}, 0), $def(self, "succ", function() {
+var self = this;return self + 1;}, 0), $def(self, "next", function() {
+var self = this;return self + 1;}, 0), $def(self, "pred", function() {
+var self = this;return self - 1;}, 0), $def(self, "upto", function(finish) {
+var self = this;var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;for (var i = self; i <= finish; i++) {
+      __block__.call(__block__.$self, i);
     }
 
-    return self;}, 0), $def(self, "downto", function(self, finish) {
-var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;for (var i = self; i >= finish; i--) {
-      __block__(__block__.$self, i);
+    return self;}, 0), $def(self, "downto", function(finish) {
+var self = this;var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;for (var i = self; i >= finish; i--) {
+      __block__.call(__block__.$self, i);
     }
 
-    return self;}, 0), $def(self, "times", function(self) {
-var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;for (var i = 0; i < self; i++) {
-      __block__(__block__.$self, i);
+    return self;}, 0), $def(self, "times", function() {
+var self = this;var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;for (var i = 0; i < self; i++) {
+      __block__.call(__block__.$self, i);
     }
 
-    return self;}, 0), $def(self, "|", function(self, other) {
-return self | other;}, 0), $def(self, "zero?", function(self) {
-return self == 0 ? Qtrue : Qfalse;}, 0), $def(self, "nonzero?", function(self) {
-return self == 0 ? nil : self;}, 0), $def(self, "~", function(self) {
-return ~self;}, 0), $def(self, "ceil", function(self) {
-return Math.ceil(self);}, 0), $def(self, "floor", function(self) {
-return Math.floor(self);}, 0), $def(self, "integer?", function(self) {
-return self % 1 == 0 ? Qtrue : Qfalse;}, 0), $def(self, "inspect", function(self) {
-return self.toString();}, 0), $def(self, "to_s", function(self) {
-return self.toString();}, 0), $def(self, "to_i", function(self) {
-return parseInt(self);}, 0));}, 0));})();
+    return self;}, 0), $def(self, "|", function(other) {
+var self = this;return self | other;}, 0), $def(self, "zero?", function() {
+var self = this;return self == 0 ? Qtrue : Qfalse;}, 0), $def(self, "nonzero?", function() {
+var self = this;return self == 0 ? nil : self;}, 0), $def(self, "~", function() {
+var self = this;return ~self;}, 0), $def(self, "ceil", function() {
+var self = this;return Math.ceil(self);}, 0), $def(self, "floor", function() {
+var self = this;return Math.floor(self);}, 0), $def(self, "integer?", function() {
+var self = this;return self % 1 == 0 ? Qtrue : Qfalse;}, 0), $def(self, "inspect", function() {
+var self = this;return self.toString();}, 0), $def(self, "to_s", function() {
+var self = this;return self.toString();}, 0), $def(self, "to_i", function() {
+var self = this;return parseInt(self);}, 0));}, 0));})();
 };
 modules["./string"] = function(exports) {
 (function(undefined) {
 var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P, $return = Opal.R, $super = Opal.S;
-Opal.mm(['match']);
 return ($class(self, nil, "String", function(self) {
-return ($def(self, "new", function(self, str) {
-if (str === undefined) str = "";
-return new String(str);}, 1), $def(self, "*", function(self, count) {
-var result = [];
+return ($def(self, "new", function(str) {
+var self = this;if (str === undefined) str = "";
+return new String(str);}, 1), $def(self, "*", function(count) {
+var self = this;var result = [];
 
     for (var i = 0; i < count; i++) {
       result.push(self);
     }
 
-    return result.join('');}, 0), $def(self, "+", function(self, other) {
-return self + other;}, 0), $def(self, "capitalize", function(self) {
-return self.charAt(0).toUpperCase() + self.substr(1).toLowerCase();}, 0), $def(self, "downcase", function(self) {
-return self.toLowerCase();}, 0), $def(self, "to_s", function(self) {
-return (self);}, 0), $def(self, "inspect", function(self) {
-return '"' + self + '"';}, 0), $def(self, "length", function(self) {
-return self.length;}, 0), $def(self, "to_sym", function(self) {
-return opalsym(self);}, 0), $def(self, "intern", function(self) {
-return opalsym(self);}, 0), $def(self, "reverse", function(self) {
-return self.split('').reverse().join('');}, 0), $def(self, "sub", function(self, pattern) {
-var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;return self.replace(pattern, function(str) {
-      return __block__(__block__.$self, str);
-    });}, 0), $def(self, "gsub", function(self, pattern) {
-var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;var r = pattern.toString();
+    return result.join('');}, 0), $def(self, "+", function(other) {
+var self = this;return self + other;}, 0), $def(self, "capitalize", function() {
+var self = this;return self.charAt(0).toUpperCase() + self.substr(1).toLowerCase();}, 0), $def(self, "downcase", function() {
+var self = this;return self.toLowerCase();}, 0), $def(self, "to_s", function() {
+var self = this;return (self);}, 0), $def(self, "inspect", function() {
+var self = this;return '"' + self + '"';}, 0), $def(self, "length", function() {
+var self = this;return self.length;}, 0), $def(self, "to_sym", function() {
+var self = this;return $opal.Y(self);}, 0), $def(self, "intern", function() {
+var self = this;return $opal.Y(self);}, 0), $def(self, "reverse", function() {
+var self = this;return self.split('').reverse().join('');}, 0), $def(self, "sub", function(pattern) {
+var self = this;var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;return self.replace(pattern, function(str) {
+      return __block__.call(__block__.$self, str);
+    });}, 0), $def(self, "gsub", function(pattern) {
+var self = this;var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;var r = pattern.toString();
     r = r.substr(1, r.lastIndexOf('/') - 1);
     r = new RegExp(r, 'g');
     return self.replace(pattern, function(str) {
-      return __block__(__block__.$self, str);
-    });}, 0), $def(self, "slice", function(self, start, finish) {
-if (finish === undefined) finish = nil;
-return self.substr(start, finish);}, 0), $def(self, "split", function(self, split) {
-return self.split(split);}, 0), $def(self, "<=>", function(self, other) {
-if (typeof other != 'string') return nil;
+      return __block__.call(__block__.$self, str);
+    });}, 0), $def(self, "slice", function(start, finish) {
+var self = this;if (finish === undefined) finish = nil;
+return self.substr(start, finish);}, 0), $def(self, "split", function(split) {
+var self = this;return self.split(split);}, 0), $def(self, "<=>", function(other) {
+var self = this;if (typeof other != 'string') return nil;
     else if (self > other) return 1;
     else if (self < other) return -1;
-    return 0;}, 0), $def(self, "==", function(self, other) {
-return self.valueOf() === other.valueOf() ? Qtrue : Qfalse;}, 0), $def(self, "=~", function(self, obj) {
-var __a;
-return ((__a = obj).$m.match(__a, self), nil);}, 0), $def(self, "casecmp", function(self, other) {
-if (typeof other != 'string') return nil;
+    return 0;}, 0), $def(self, "==", function(other) {
+var self = this;return self.valueOf() === other.valueOf() ? Qtrue : Qfalse;}, 0), $def(self, "=~", function(obj) {
+var self = this;return (obj.m$match(self), nil);}, 0), $def(self, "casecmp", function(other) {
+var self = this;if (typeof other != 'string') return nil;
     var a = self.toLowerCase(), b = other.toLowerCase();
     if (a > b) return 1;
     else if (a < b) return -1;
-    return 0;}, 0), $def(self, "empty?", function(self) {
-return self.length == 0 ? Qtrue : Qfalse;}, 0), $def(self, "end_with?", function(self, suffix) {
-if (self.lastIndexOf(suffix) == self.length - suffix.length) {
+    return 0;}, 0), $def(self, "empty?", function() {
+var self = this;return self.length == 0 ? Qtrue : Qfalse;}, 0), $def(self, "end_with?", function(suffix) {
+var self = this;if (self.lastIndexOf(suffix) == self.length - suffix.length) {
       return Qtrue;
     }
 
-    return Qfalse;}, 0), $def(self, "eql?", function(self, other) {
-return self == other ? Qtrue : Qfalse;}, 0), $def(self, "include?", function(self, other) {
-return self.indexOf(other) == -1 ? Qfalse : Qtrue;}, 0), $def(self, "index", function(self, substr) {
-var res = self.indexOf(substr);
+    return Qfalse;}, 0), $def(self, "eql?", function(other) {
+var self = this;return self == other ? Qtrue : Qfalse;}, 0), $def(self, "include?", function(other) {
+var self = this;return self.indexOf(other) == -1 ? Qfalse : Qtrue;}, 0), $def(self, "index", function(substr) {
+var self = this;var res = self.indexOf(substr);
 
-    return res == -1 ? nil : res;}, 0), $def(self, "lstrip", function(self) {
-return self.replace(/^\s*/, '');}, 0));}, 0));})();
+    return res == -1 ? nil : res;}, 0), $def(self, "lstrip", function() {
+var self = this;return self.replace(/^\s*/, '');}, 0));}, 0));})();
 };
 modules["./symbol"] = function(exports) {
 (function(undefined) {
 var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P, $return = Opal.R, $super = Opal.S;
-Opal.mm([]);
 return ($class(self, nil, "Symbol", function(self) {
-return ($def(self, "inspect", function(self) {
-return ':' + self;}, 0), $def(self, "to_s", function(self) {
-return self;}, 0), $def(self, "to_sym", function(self) {
-return (self);}, 0));}, 0));})();
+return ($def(self, "inspect", function() {
+var self = this;return ':' + self.$ptr;}, 0), $def(self, "to_s", function() {
+var self = this;return self.$ptr;}, 0), $def(self, "to_sym", function() {
+var self = this;return (self);}, 0));}, 0));})();
 };
 modules["./hash"] = function(exports) {
 (function(undefined) {
 var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P, $return = Opal.R, $super = Opal.S;
-Opal.mm(['inspect', '==', 'flatten']);
 return ($class(self, nil, "Hash", function(self) {
-return ($def(self, "values", function(self) {
-var result = [], length = self.$keys.length;
+return ($def(self, "values", function() {
+var self = this;var result = [], length = self.$keys.length;
 
     for (var i = 0; i < length; i++) {
       result.push(self.$assocs[self.$keys[i].$hash()]);
     }
 
-    return result;}, 0), $def(self, "inspect", function(self) {
-var __a;
-var description = [], key, value;
+    return result;}, 0), $def(self, "inspect", function() {
+var self = this;var description = [], key, value;
 
     for (var i = 0; i < self.$keys.length; i++) {
       key = self.$keys[i];
       value = self.$assocs[key.$hash()];
-      description.push((__a = key).$m.inspect(__a) + '=>' + (__a = value).$m.inspect(__a));
+      description.push(key.m$inspect() + '=>' + value.m$inspect());
     }
 
-    return '{' + description.join(', ') + '}';}, 0), $def(self, "to_s", function(self) {
-var __a;
-var description = [], key, value;
+    return '{' + description.join(', ') + '}';}, 0), $def(self, "to_s", function() {
+var self = this;var description = [], key, value;
 
     for (var i = 0; i < self.$keys.length; i++) {
       key = self.$keys[i];
       value = self.$assocs[key.$hash()];
-      description.push((__a = key).$m.inspect(__a) + (__a = value).$m.inspect(__a));
+      description.push(key.m$inspect() + value.m$inspect());
     }
 
-    return description.join('');}, 0), $def(self, "each", function(self) {
-var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;var keys = self.$keys, values = self.$assocs, length = keys.length, key;
+    return description.join('');}, 0), $def(self, "each", function() {
+var self = this;var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;var keys = self.$keys, values = self.$assocs, length = keys.length, key;
 
     for (var i = 0; i < length; i++) {
       try {
         key = keys[i];
-        __block__(__block__.$self, key, values[key.$hash()]);
+        __block__.call(__block__.$self, key, values[key.$hash()]);
       } catch (e) {
         switch (e.$keyword) {
           case 2:
@@ -758,20 +738,18 @@ var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block
       }
     }
 
-    return self;}, 0), $def(self, "assoc", function(self, obj) {
-var __a;
-var key, keys = self.$keys, length = keys.length;
+    return self;}, 0), $def(self, "assoc", function(obj) {
+var self = this;var key, keys = self.$keys, length = keys.length;
 
     for (var i = 0; i < length; i++) {
       key = keys[i];
-      if ((__a = key).$m["=="](__a, obj).$r) {
+      if (key["m$=="](obj).$r) {
         return [key, self.$assocs[key.$hash()]];
       }
     }
 
-    return nil;}, 0), $def(self, "==", function(self, other) {
-var __a;
-if (self === other) return Qtrue;
+    return nil;}, 0), $def(self, "==", function(other) {
+var self = this;if (self === other) return Qtrue;
     if (!other.$keys || !other.$assocs) return Qfalse;
     if (self.$keys.length != other.$keys.length) return Qfalse;
 
@@ -783,30 +761,30 @@ if (self === other) return Qtrue;
 
       var assoc2 = other.$assocs[assoc1];
 
-      if (!(__a = self.$assocs[assoc1]).$m["=="](__a, assoc2).$r)
+      if (!self.$assocs[assoc1]["m$=="](assoc2).$r)
         return Qfalse;
     }
 
-    return Qtrue;}, 0), $def(self, "[]", function(self, key) {
-var assoc = key.$hash();
+    return Qtrue;}, 0), $def(self, "[]", function(key) {
+var self = this;var assoc = key.$hash();
 
     if (self.$assocs.hasOwnProperty(assoc))
       return self.$assocs[assoc];
 
-    return self.$default;}, 0), $def(self, "[]=", function(self, key, value) {
-var assoc = key.$hash();
+    return self.$default;}, 0), $def(self, "[]=", function(key, value) {
+var self = this;var assoc = key.$hash();
 
     if (!self.$assocs.hasOwnProperty(assoc))
       self.$keys.push(key);
 
-    return self.$assocs[assoc] = value;}, 0), $def(self, "clear", function(self) {
-self.$keys = [];
+    return self.$assocs[assoc] = value;}, 0), $def(self, "clear", function() {
+var self = this;self.$keys = [];
     self.$assocs = {};
     
-    return self;}, 0), $def(self, "default", function(self) {
-return self.$default;}, 0), $def(self, "default=", function(self, obj) {
-return self.$default = obj;}, 0), $def(self, "delete", function(self, key) {
-var assoc = key.$hash();
+    return self;}, 0), $def(self, "default", function() {
+var self = this;return self.$default;}, 0), $def(self, "default=", function(obj) {
+var self = this;return self.$default = obj;}, 0), $def(self, "delete", function(key) {
+var self = this;var assoc = key.$hash();
 
     if (self.$assocs.hasOwnProperty(assoc)) {
       var ret = self.$assocs[assoc];
@@ -815,15 +793,15 @@ var assoc = key.$hash();
       return ret;
     }
 
-    return self.$default;}, 0), $def(self, "delete_if", function(self) {
-var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;var key, value;
+    return self.$default;}, 0), $def(self, "delete_if", function() {
+var self = this;var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;var key, value;
 
     for (var i = 0; i < self.$keys.length; i++) {
       try {
         key = self.$keys[i];
         value = self.$assocs[key.$hash()];
 
-        if (__block__(__block__.$self, key, value).$r) {
+        if (__block__.call(__block__.$self, key, value).$r) {
           delete self.$assocs[key.$hash()];
           self.$keys.splice(i, 1);
           i--;
@@ -838,13 +816,13 @@ var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block
       }
     }
 
-    return self;}, 0), $def(self, "each_key", function(self) {
-var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;var key;
+    return self;}, 0), $def(self, "each_key", function() {
+var self = this;var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;var key;
 
     for (var i = 0; i < self.$keys.length; i++) {
       try {
         key = self.$keys[i];
-        __block__(__block__.$self, key);
+        __block__.call(__block__.$self, key);
       } catch (e) {
         switch (e.$keyword) {
           case 2:
@@ -855,13 +833,13 @@ var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block
       }
     }
 
-    return self;}, 0), $def(self, "each_value", function(self) {
-var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;var val;
+    return self;}, 0), $def(self, "each_value", function() {
+var self = this;var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;var val;
 
     for (var i = 0; i < self.$keys.length; i++) {
       try {
         val = self.$assocs[self.$keys[i].$hash()];
-        __block__(__block__.$self, val);
+        __block__.call(__block__.$self, val);
       } catch (e) {
         switch (e.$keyword) {
           case 2:
@@ -872,9 +850,9 @@ var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block
       }
     }
 
-    return self;}, 0), $def(self, "empty?", function(self) {
-return self.$keys.length == 0 ? Qtrue : Qfalse;}, 0), $def(self, "fetch", function(self, key, defaults) {
-if (defaults === undefined) defaults = undefined;
+    return self;}, 0), $def(self, "empty?", function() {
+var self = this;return self.$keys.length == 0 ? Qtrue : Qfalse;}, 0), $def(self, "fetch", function(key, defaults) {
+var self = this;if (defaults === undefined) defaults = undefined;
 var value = self.$assocs[key.$hash()];
 
     if (value != undefined)
@@ -882,9 +860,8 @@ var value = self.$assocs[key.$hash()];
     else if (defaults == undefined)
       rb_raise('KeyError: key not found');
     else
-      return defaults;}, 0), $def(self, "flatten", function(self, level) {
-var __a;
-if (level === undefined) level = 1;
+      return defaults;}, 0), $def(self, "flatten", function(level) {
+var self = this;if (level === undefined) level = 1;
 var result = [], key, value;
     
     for (var i = 0; i < self.$keys.length; i++) {
@@ -896,7 +873,7 @@ var result = [], key, value;
         if (level == 1) {
           result.push(value);
         } else {
-          var tmp = (__a = value).$m.flatten(__a, level - 1);
+          var tmp = value.m$flatten(level - 1);
           result = result.concat(tmp);
         }
       } else {
@@ -904,24 +881,23 @@ var result = [], key, value;
       }
     }
 
-    return result;}, 0), $def(self, "has_key?", function(self, key) {
-if (self.$assocs.hasOwnProperty(key.$hash()))
+    return result;}, 0), $def(self, "has_key?", function(key) {
+var self = this;if (self.$assocs.hasOwnProperty(key.$hash()))
       return Qtrue;
 
-    return Qfalse;}, 0), $def(self, "has_value?", function(self, value) {
-var __a;
-var key, value;
+    return Qfalse;}, 0), $def(self, "has_value?", function(value) {
+var self = this;var key, value;
 
     for (var i = 0; i < self.$keys.length; i++) {
       key = self.$keys[i];
       val = self.$assocs[key.$hash()];
 
-      if ((__a = value).$m["=="](__a, val).$r)
+      if (value["m$=="](val).$r)
         return Qtrue;
     }
 
-    return Qfalse;}, 0), $def(self, "replace", function(self, other) {
-self.$keys = []; self.$assocs = {};
+    return Qfalse;}, 0), $def(self, "replace", function(other) {
+var self = this;self.$keys = []; self.$assocs = {};
 
     for (var i = 0; i < other.$keys.length; i++) {
       var key = other.$keys[i];
@@ -930,24 +906,23 @@ self.$keys = []; self.$assocs = {};
       self.$assocs[key.$hash()] = val;
     }
 
-    return self;}, 0), $def(self, "invert", function(self) {
-return (nil);}, 0), $def(self, "key", function(self, value) {
-var __a;
-var key, val;
+    return self;}, 0), $def(self, "invert", function() {
+var self = this;return (nil);}, 0), $def(self, "key", function(value) {
+var self = this;var key, val;
 
     for (var i = 0; i < self.$keys.length; i++) {
       key = self.$keys[i];
       val = self.$assocs[key.$hash()];
 
-      if ((__a = value).$m["=="](__a, val).$r) {
+      if (value["m$=="](val).$r) {
         return key;
       }
     }
 
-    return nil;}, 0), $def(self, "keys", function(self) {
-return self.$keys.slice(0);}, 0), $def(self, "length", function(self) {
-return self.$keys.length;}, 0), $def(self, "merge", function(self, other) {
-var result = $opal.H() , key, val;
+    return nil;}, 0), $def(self, "keys", function() {
+var self = this;return self.$keys.slice(0);}, 0), $def(self, "length", function() {
+var self = this;return self.$keys.length;}, 0), $def(self, "merge", function(other) {
+var self = this;var result = $opal.H() , key, val;
     
     for (var i = 0; i < self.$keys.length; i++) {
       key = self.$keys[i], val = self.$assocs[key.$hash()];
@@ -966,8 +941,8 @@ var result = $opal.H() , key, val;
       result.$assocs[key.$hash()] = val;
     }
 
-    return result;}, 0), $def(self, "merge!", function(self, other) {
-var key, val;
+    return result;}, 0), $def(self, "merge!", function(other) {
+var self = this;var key, val;
 
     for (var i = 0; i < other.$keys.length; i++) {
       key = other.$keys[i];
@@ -980,20 +955,19 @@ var key, val;
       self.$assocs[key.$hash()] = val;
     }
 
-    return self;}, 0), $def(self, "rassoc", function(self, obj) {
-var __a;
-var key, val;
+    return self;}, 0), $def(self, "rassoc", function(obj) {
+var self = this;var key, val;
 
     for (var i = 0; i < self.$keys.length; i++) {
       key = self.$keys[i];
       val = self.$assocs[key.$hash()];
 
-      if ((__a = val).$m["=="](__a, obj).$r)
+      if (val["m$=="](obj).$r)
         return [key, val];
     }
 
-    return nil;}, 0), $def(self, "shift", function(self) {
-var key, val;
+    return nil;}, 0), $def(self, "shift", function() {
+var self = this;var key, val;
 
     if (self.$keys.length > 0) {
       key = self.$keys[0];
@@ -1004,8 +978,8 @@ var key, val;
       return [key, val];
     }
 
-    return self.$default;}, 0), $def(self, "to_a", function(self) {
-var result = [], key, value;
+    return self.$default;}, 0), $def(self, "to_a", function() {
+var self = this;var result = [], key, value;
 
     for (var i = 0; i < self.$keys.length; i++) {
       key = self.$keys[i];
@@ -1013,66 +987,60 @@ var result = [], key, value;
       result.push([key, value]);
     }
 
-    return result;}, 0), $def(self, "to_hash", function(self) {
-return (self);}, 0));}, 0));})();
+    return result;}, 0), $def(self, "to_hash", function() {
+var self = this;return (self);}, 0));}, 0));})();
 };
 modules["./top_self"] = function(exports) {
 (function(undefined) {
 var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P, $return = Opal.R, $super = Opal.S;
-Opal.mm(['include']);
-return ($def(self, "to_s", function(self) {
-return ("main");}, 1), $def(self, "include", function(self, mod) {
-var __a;
-return ((__a = rb_vm_cg(self, "Object")).$m.include(__a, mod));}, 1));})();
+return ($def(self, "to_s", function() {
+var self = this;return ("main");}, 1), $def(self, "include", function(mod) {
+var self = this;return (rb_vm_cg(self, "Object").m$include(mod));}, 1));})();
 };
 modules["./nil_class"] = function(exports) {
 (function(undefined) {
 var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P, $return = Opal.R, $super = Opal.S;
-Opal.mm([]);
 return ($class(self, nil, "NilClass", function(self) {
-return ($def(self, "to_i", function(self) {
-return (0);}, 0), $def(self, "to_f", function(self) {
-return (0.0);}, 0), $def(self, "to_s", function(self) {
-return ("");}, 0), $def(self, "to_a", function(self) {
-return ([]);}, 0), $def(self, "inspect", function(self) {
-return ("nil");}, 0), $def(self, "nil?", function(self) {
-return (Qtrue);}, 0), $def(self, "&", function(self, other) {
-return (Qfalse);}, 0), $def(self, "|", function(self, other) {
-return other.$r ? Qtrue : Qfalse;}, 0), $def(self, "^", function(self, other) {
-return other.$r ? Qtrue : Qfalse;}, 0));}, 0), rb_vm_cs(self, "NIL", nil));})();
+return ($def(self, "to_i", function() {
+var self = this;return (0);}, 0), $def(self, "to_f", function() {
+var self = this;return (0.0);}, 0), $def(self, "to_s", function() {
+var self = this;return ("");}, 0), $def(self, "to_a", function() {
+var self = this;return ([]);}, 0), $def(self, "inspect", function() {
+var self = this;return ("nil");}, 0), $def(self, "nil?", function() {
+var self = this;return (Qtrue);}, 0), $def(self, "&", function(other) {
+var self = this;return (Qfalse);}, 0), $def(self, "|", function(other) {
+var self = this;return other.$r ? Qtrue : Qfalse;}, 0), $def(self, "^", function(other) {
+var self = this;return other.$r ? Qtrue : Qfalse;}, 0));}, 0), rb_vm_cs(self, "NIL", nil));})();
 };
 modules["./true_class"] = function(exports) {
 (function(undefined) {
 var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P, $return = Opal.R, $super = Opal.S;
-Opal.mm([]);
 return ($class(self, nil, "TrueClass", function(self) {
-return ($def(self, "to_s", function(self) {
-return ("true");}, 0), $def(self, "&", function(self, other) {
-return other.$r ? Qtrue : Qfalse;}, 0), $def(self, "|", function(self, other) {
-return (Qtrue);}, 0), $def(self, "^", function(self, other) {
-return other.$r ? Qfalse : Qtrue;}, 0));}, 0), rb_vm_cs(self, "TRUE", Qtrue));})();
+return ($def(self, "to_s", function() {
+var self = this;return ("true");}, 0), $def(self, "&", function(other) {
+var self = this;return other.$r ? Qtrue : Qfalse;}, 0), $def(self, "|", function(other) {
+var self = this;return (Qtrue);}, 0), $def(self, "^", function(other) {
+var self = this;return other.$r ? Qfalse : Qtrue;}, 0));}, 0), rb_vm_cs(self, "TRUE", Qtrue));})();
 };
 modules["./false_class"] = function(exports) {
 (function(undefined) {
 var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P, $return = Opal.R, $super = Opal.S;
-Opal.mm([]);
 return ($class(self, nil, "FalseClass", function(self) {
-return ($def(self, "to_s", function(self) {
-return ("false");}, 0), $def(self, "&", function(self, other) {
-return (Qfalse);}, 0), $def(self, "|", function(self, other) {
-return other.$r ? Qtrue : Qfalse;}, 0), $def(self, "^", function(self, other) {
-return other.$r ? Qtrue : Qfalse;}, 0));}, 0), rb_vm_cs(self, "FALSE", Qfalse));})();
+return ($def(self, "to_s", function() {
+var self = this;return ("false");}, 0), $def(self, "&", function(other) {
+var self = this;return (Qfalse);}, 0), $def(self, "|", function(other) {
+var self = this;return other.$r ? Qtrue : Qfalse;}, 0), $def(self, "^", function(other) {
+var self = this;return other.$r ? Qtrue : Qfalse;}, 0));}, 0), rb_vm_cs(self, "FALSE", Qfalse));})();
 };
 modules["./kernel"] = function(exports) {
 (function(undefined) {
 var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P, $return = Opal.R, $super = Opal.S;
-Opal.mm(['raise', 'new', 'kind_of?', 'to_s', 'inspect', '==', '__send__']);
 return ($class(self, nil, "Kernel", function(self) {
-return ($def(self, "require", function(self, path) {
-return $opal.require(path);}, 0), $def(self, "loop", function(self) {
-var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;while (true) {
+return ($def(self, "require", function(path) {
+var self = this;return $opal.require(path);}, 0), $def(self, "loop", function() {
+var self = this;var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;while (true) {
       try {
-        __block__(__block__.$self);
+        __block__.call(__block__.$self);
       } catch (e) {
         switch (e.$keyword) {
           case 2:
@@ -1083,43 +1051,36 @@ var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block
       }
     }
 
-    return self;}, 0), $def(self, "proc", function(self) {
-var block = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;return ((!((block !== nil ? Qtrue : Qfalse).$r) ? self.$m.raise(self, rb_vm_cg(self, "ArgumentError"), "block required"):nil), block);}, 0), $def(self, "lambda", function(self) {
-var block = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;return ((!((block !== nil ? Qtrue : Qfalse).$r) ? self.$m.raise(self, rb_vm_cg(self, "ArgumentError"), "block required"):nil), block);}, 0), $def(self, "raise", function(self, exception, string) {
-var __a;
-if (string === undefined) string = nil;
+    return self;}, 0), $def(self, "proc", function() {
+var self = this;var block = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;return ((!((block !== nil ? Qtrue : Qfalse).$r) ? self.m$raise(rb_vm_cg(self, "ArgumentError"), "block required"):nil), block);}, 0), $def(self, "lambda", function() {
+var self = this;var block = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;return ((!((block !== nil ? Qtrue : Qfalse).$r) ? self.m$raise(rb_vm_cg(self, "ArgumentError"), "block required"):nil), block);}, 0), $def(self, "raise", function(exception, string) {
+var self = this;if (string === undefined) string = nil;
 var msg = nil, exc;
 
     if (typeof exception == 'string') {
       msg = exception;
-      exc = (__a = rb_vm_cg(self, "RuntimeError")).$m.new(__a, msg);
-    } else if ((__a = exception).$m["kind_of?"](__a, rb_vm_cg(self, "Exception")).$r) {
+      exc = rb_vm_cg(self, "RuntimeError").m$new(msg);
+    } else if (exception["m$kind_of?"](rb_vm_cg(self, "Exception")).$r) {
       exc = exception;
     } else {
       if (string != nil) msg = string;
-
-      exc = (__a = exception).$m.new(__a, msg);
+      exc = exception.m$new(msg);
     }
-
-    rb_vm_raise(exc);}, 0), $def(self, "fail", function(self, exception, string) {
-if (string === undefined) string = nil;
-return (self.$m.raise(self, exception, string));}, 0), $def(self, "instance_variable_defined?", function(self, name) {
-var __a;
-name = (__a = name).$m.to_s(__a);
-    return self[name] == undefined ? Qfalse : Qtrue;}, 0), $def(self, "instance_variable_get", function(self, name) {
-var __a;
-name = (__a = name).$m.to_s(__a);
-    return self[name] == undefined ? nil : self[name];}, 0), $def(self, "instance_variable_set", function(self, name, value) {
-var __a;
-name = (__a = name).$m.to_s(__a);
-    return self[name] = value;}, 0), $def(self, "block_given?", function(self) {
-return (Qfalse);}, 0), $def(self, "method_missing", function(self, sym, args) {
-var __a, __b;
-args = Array.prototype.slice.call(arguments, 2);
-return (self.$m.raise(self, rb_vm_cg(self, "NoMethodError"), ("undefined method `" + (__a = sym, __a.$m.to_s(__a)) + "` for " + (__a = (__b = self).$m.inspect(__b), __a.$m.to_s(__a)))));}, 0), $def(self, "to_a", function(self) {
-return ([self]);}, 0), $def(self, "tap", function(self) {
-var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;return ((!((__block__ !== nil ? Qtrue : Qfalse).$r) ? self.$m.raise(self, rb_vm_cg(self, "LocalJumpError"), "no block given"):nil), __block__(__block__.$self, self), self);}, 0), $def(self, "kind_of?", function(self, klass) {
-var search = self.$klass;
+    rb_vm_raise(exc);}, 0), $def(self, "fail", function(exception, string) {
+var self = this;if (string === undefined) string = nil;
+return (self.m$raise(exception, string));}, 0), $def(self, "instance_variable_defined?", function(name) {
+var self = this;name = name.m$to_s();
+    return self[name] == undefined ? Qfalse : Qtrue;}, 0), $def(self, "instance_variable_get", function(name) {
+var self = this;name = name.m$to_s();
+    return self[name] == undefined ? nil : self[name];}, 0), $def(self, "instance_variable_set", function(name, value) {
+var self = this;name = name.m$to_s();
+    return self[name] = value;}, 0), $def(self, "block_given?", function() {
+var self = this;return (Qfalse);}, 0), $def(self, "method_missing", function(sym, args) {
+var self = this;args = Array.prototype.slice.call(arguments, 1);
+return (self.m$raise(rb_vm_cg(self, "NoMethodError"), ("undefined method `" + sym.m$to_s() + "` for " + self.m$inspect().m$to_s())));}, 0), $def(self, "to_a", function() {
+var self = this;return ([self]);}, 0), $def(self, "tap", function() {
+var self = this;var __block__ = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;return ((!((__block__ !== nil ? Qtrue : Qfalse).$r) ? self.m$raise(rb_vm_cg(self, "LocalJumpError"), "no block given"):nil), __block__.call(__block__.$self, self), self);}, 0), $def(self, "kind_of?", function(klass) {
+var self = this;var search = self.$klass;
 
     while (search) {
       if (search == klass) {
@@ -1129,96 +1090,85 @@ var search = self.$klass;
       search = search.$super;
     }
 
-    return Qfalse;}, 0), $def(self, "is_a?", function(self, klass) {
-return (self.$m["kind_of?"](self, klass));}, 0), $def(self, "nil?", function(self) {
-return (Qfalse);}, 0), $def(self, "respond_to?", function(self, method_id) {
-var __a;
-if (self.$m[(__a = method_id).$m.to_s(__a)]) {
+    return Qfalse;}, 0), $def(self, "is_a?", function(klass) {
+var self = this;return (self["m$kind_of?"](klass));}, 0), $def(self, "nil?", function() {
+var self = this;return (Qfalse);}, 0), $def(self, "respond_to?", function(method_id) {
+var self = this;if (self.$m[method_id.m$to_s()]) {
       return Qtrue;
     }
 
-    return Qfalse;}, 0), $def(self, "===", function(self, other) {
-var __a;
-return ((__a = self).$m["=="](__a, other));}, 0), $def(self, "__send__", function(self, method_id, args) {
-var __a;
-args = Array.prototype.slice.call(arguments, 2);
+    return Qfalse;}, 0), $def(self, "===", function(other) {
+var self = this;return (self["m$=="](other));}, 0), $def(self, "__send__", function(method_id, args) {
+var self = this;args = Array.prototype.slice.call(arguments, 1);
 args.unshift(self);
-    return self.$m[(__a = method_id).$m.to_s(__a)].apply(null, args);}, 0), $def(self, "send", function(self, method_id, args) {
-args = Array.prototype.slice.call(arguments, 2);
-return (self.$m.__send__.apply(nil, [selfmethod_id].concat(args)));}, 0), $def(self, "class", function(self) {
-return rb_class_real(self.$klass);}, 0), $def(self, "rand", function(self, max) {
-if (max === undefined) max = undefined;
-if (max != undefined) 
+    return self.$m[method_id.m$to_s()].apply(null, args);}, 0), $def(self, "send", function(method_id, args) {
+var self = this;args = Array.prototype.slice.call(arguments, 1);
+return (self.m$__send__.apply(self, [method_id].concat(args)));}, 0), $def(self, "class", function() {
+var self = this;return rb_class_real(self.$klass);}, 0), $def(self, "rand", function(max) {
+var self = this;if (max === undefined) max = undefined;
+if (max != undefined)
         return Math.floor(Math.random() * max);
     else
-      return Math.random();}, 0), $def(self, "__id__", function(self) {
-return self.$hash();}, 0), $def(self, "object_id", function(self) {
-return self.$hash();}, 0), $def(self, "to_s", function(self) {
-var __a, __b;
-return (("#" + "<" + (__a = (__b = rb_class_real(self.$klass)).$m.to_s(__b), __a.$m.to_s(__a)) + ":0x" + (__a = (self.$hash() * 4000487).toString(16), __a.$m.to_s(__a)) + ">"));}, 0), $def(self, "inspect", function(self) {
-return (self.$m.to_s(self));}, 0), $def(self, "instance_eval", function(self) {
-var block = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;return ((((block !== nil ? Qtrue : Qfalse).$r) ? block(self):nil), self);}, 0), $def(self, "const_set", function(self, name, value) {
-return rb_const_set(rb_class_real(self.$klass), name, value);}, 0), $def(self, "const_defined?", function(self, name) {
-return (Qfalse);}, 0));}, 2));})();
+      return Math.random();}, 0), $def(self, "__id__", function() {
+var self = this;return self.$hash();}, 0), $def(self, "object_id", function() {
+var self = this;return self.$hash();}, 0), $def(self, "to_s", function() {
+var self = this;return (("#" + "<" + rb_class_real(self.$klass).m$to_s() + ":0x" + (self.$hash() * 400487).toString(16).m$to_s() + ">"));}, 0), $def(self, "inspect", function() {
+var self = this;return (self.m$to_s());}, 0), $def(self, "instance_eval", function() {
+var self = this;var block = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;return ((((block !== nil ? Qtrue : Qfalse).$r) ? block(self):nil), self);}, 0), $def(self, "const_set", function(name, value) {
+var self = this;return rb_const_set(rb_class_real(self.$klass), name, value);}, 0), $def(self, "const_defined?", function(name) {
+var self = this;return (Qfalse);}, 0));}, 2));})();
 };
 modules["./module"] = function(exports) {
 (function(undefined) {
 var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P, $return = Opal.R, $super = Opal.S;
-Opal.mm(['kind_of?', 'raise', 'to_s', 'attr_reader', 'attr_writer', 'class_eval']);
 return ($class(self, nil, "Module", function(self) {
-return ($def(self, "name", function(self) {
-return self['__classid__'];}, 0), $def(self, "===", function(self, obj) {
-var __a;
-return ((__a = obj).$m["kind_of?"](__a, self));}, 0), $def(self, "define_method", function(self, method_id) {
-var __a;
-var block = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;return ((!((block !== nil ? Qtrue : Qfalse).$r) ? self.$m.raise(self, rb_vm_cg(self, "LocalJumpError"), "no block given"):nil), rb_define_method(self, (__a = method_id).$m.to_s(__a), block), nil);}, 0), $def(self, "attr_accessor", function(self, attrs) {
-attrs = Array.prototype.slice.call(arguments, 1);
-return (self.$m.attr_reader.apply(nil, [self].concat(attrs)), self.$m.attr_writer.apply(nil, [self].concat(attrs)));}, 0), $def(self, "attr_reader", function(self, attrs) {
-var __a;
-attrs = Array.prototype.slice.call(arguments, 1);
+return ($def(self, "name", function() {
+var self = this;return self['__classid__'];}, 0), $def(self, "===", function(obj) {
+var self = this;return (obj["m$kind_of?"](self));}, 0), $def(self, "define_method", function(method_id) {
+var self = this;var block = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;return ((!((block !== nil ? Qtrue : Qfalse).$r) ? self.m$raise(rb_vm_cg(self, "LocalJumpError"), "no block given"):nil), rb_define_method(self, method_id.m$to_s(), block), nil);}, 0), $def(self, "attr_accessor", function(attrs) {
+var self = this;attrs = Array.prototype.slice.call(arguments, 0);
+return (self.m$attr_reader.apply(self, [].concat(attrs)), self.m$attr_writer.apply(self, [].concat(attrs)));}, 0), $def(self, "attr_reader", function(attrs) {
+var self = this;attrs = Array.prototype.slice.call(arguments, 0);
 for (var i = 0; i < attrs.length; i++) {
       var attr = attrs[i];
-      var method_id = (__a = attr).$m.to_s(__a);
+      var method_id = attr.m$to_s();
 
       rb_define_method(self, method_id, 
-            new Function('self', 'return rb_ivar_get(self, "@' + method_id + '");'));
+            new Function('return rb_ivar_get(this, "@' + method_id + '");'));
 
     }
 
-    return nil;}, 0), $def(self, "attr_writer", function(self, attrs) {
-var __a;
-attrs = Array.prototype.slice.call(arguments, 1);
+    return nil;}, 0), $def(self, "attr_writer", function(attrs) {
+var self = this;attrs = Array.prototype.slice.call(arguments, 0);
 for (var i = 0; i < attrs.length; i++) {
       var attr = attrs[i];
-      var method_id = (__a = attr).$m.to_s(__a);
+      var method_id = attr.m$to_s();
 
       rb_define_method(self, method_id + '=', 
-        new Function('self', 'val', 'return rb_ivar_set(self, "@' + method_id + '", val);'));
+        new Function('val', 'return rb_ivar_set(this, "@' + method_id + '", val);'));
 
     }
 
-    return nil;}, 0), $def(self, "alias_method", function(self, new_name, old_name) {
-var __a;
-return (new_name = (__a = new_name).$m.to_s(__a), old_name = (__a = old_name).$m.to_s(__a), rb_define_method_raw(self, new_name, self.$m_tbl[old_name]), self);}, 0), $def(self, "to_s", function(self) {
-return self['__classid__'];}, 0), $def(self, "const_set", function(self, id, value) {
-var __a;
-return rb_vm_cs(self, (__a = id).$m.to_s(__a), value);}, 0), $def(self, "class_eval", function(self, str) {
-var block = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;return (((block !== nil ? Qtrue : Qfalse).$r ? (block(self)) : (self.$m.raise(self, "need to compile str"))));}, 0), $def(self, "module_eval", function(self, str) {
-var block = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;return (($block.p = block, $block.f = self.$m.class_eval)(self, str));}, 0), $def(self, "private", function(self) {
-return (self);}, 0), $def(self, "public", function(self) {
-return (self);}, 0), $def(self, "protected", function(self) {
-return (self);}, 0), $def(self, "include", function(self, mod) {
-return (rb_include_module(self, mod), nil);}, 0), $def(self, "extend", function(self, mod) {
-return (rb_extend_module(self, mod), nil);}, 0));}, 0));})();
+    return nil;}, 0), $def(self, "alias_method", function(new_name, old_name) {
+var self = this;return (new_name = new_name.m$to_s(), old_name = old_name.m$to_s(), rb_define_method(self, new_name, self.$method_table[old_name]), self);}, 0), $def(self, "to_s", function() {
+var self = this;return self['__classid__'];}, 0), $def(self, "const_set", function(id, value) {
+var self = this;return rb_vm_cs(self, id.m$to_s(), value);}, 0), $def(self, "class_eval", function(str) {
+var self = this;var block = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;return (((block !== nil ? Qtrue : Qfalse).$r ? (block.call(self)) : (self.m$raise("need to compile str"))));}, 0), $def(self, "module_eval", function(str) {
+var self = this;var __a;
+var block = ($block.f == arguments.callee)? $block.p : nil;$block.p = $block.f = nil;return ((($block.p = block), $block.f = (__a = self).m$class_eval).call(__a, str));}, 0), $def(self, "private", function() {
+var self = this;return (self);}, 0), $def(self, "public", function() {
+var self = this;return (self);}, 0), $def(self, "protected", function() {
+var self = this;return (self);}, 0), $def(self, "include", function(mod) {
+var self = this;return (rb_include_module(self, mod), nil);}, 0), $def(self, "extend", function(mod) {
+var self = this;return (rb_extend_module(self, mod), nil);}, 0));}, 0));})();
 };
 modules["./proc"] = function(exports) {
 (function(undefined) {
 var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P, $return = Opal.R, $super = Opal.S;
-Opal.mm([]);
 return ($class(self, nil, "Proc", function(self) {
-return ($def(self, "to_proc", function(self) {
-return (self);}, 0), $def(self, "call", function(self, args) {
-args = Array.prototype.slice.call(arguments, 1);
+return ($def(self, "to_proc", function() {
+var self = this;return (self);}, 0), $def(self, "call", function(args) {
+var self = this;args = Array.prototype.slice.call(arguments, 0);
 args.unshift(self.$self);
     return self.apply(null, args);}, 0));}, 0));})();
 };
@@ -1272,29 +1222,29 @@ var load_paths = [];
 
 // setting mm methods
 $opal.mm = function(method_ids) {
-  var prototype = rb_cBasicObject.$m_prototype_tbl;
-  for (var i = 0; i < method_ids.length; i++) {
-    var method_id = method_ids[i];
-    // only add if there isnt already a method there
-    if (!prototype.hasOwnProperty(method_id)) {
+  // var prototype = rb_cBasicObject.$m_prototype_tbl;
+  // for (var i = 0; i < method_ids.length; i++) {
+  //   var method_id = method_ids[i];
+  //   // only add if there isnt already a method there
+  //   if (!prototype.hasOwnProperty(method_id)) {
 
-        var func = (function(method_id) {
-          return function(self) {
-            //throw new Error("method_missing for: " + method_id);
-            var args = [].slice.call(arguments, 1);
-            args.unshift(method_id);
-            args.unshift(self);
-        //    console.log(self.$m.method_missing);
-            return self.$m.method_missing.apply(null, args);
-          };
-        })(method_id);
-      // mark as a method missing, to help repond_to? and send etc.
-      func.$rbMM = true;
-      prototype[method_id] = func;
+  //       var func = (function(method_id) {
+  //         return function(self) {
+  //           //throw new Error("method_missing for: " + method_id);
+  //           var args = [].slice.call(arguments, 1);
+  //           args.unshift(method_id);
+  //           args.unshift(self);
+        //console.log(self.$m.method_missing);
+  //           return self.$m.method_missing.apply(null, args);
+  //         };
+  //       })(method_id);
+  //     // mark as a method missing, to help repond_to? and send etc.
+  //     func.$rbMM = true;
+  //     prototype[method_id] = func;
 
-    } else {
-    }
-  }
+  //   } else {
+  //   }
+  // }
 };
 
 // defining methods
@@ -1333,7 +1283,7 @@ $opal.dc = function(base, super_class, id, body, flag) {
       break;
     // class shift (<<)
     case 1:
-      console.log("need to get singleton class");
+      //console.log("need to get singleton class");
       klass = rb_singleton_class(base);
       break;
     // module
@@ -1370,11 +1320,13 @@ $opal.Y = function(str) {
     return symbol_table[str];
   }
 
-  var res = new String(str);
+  var res = new rb_cSymbol.allocator();
+  symbol_table[res.$ptr = str] = res;
+  // var res = new String(str);
 
-  res.$klass = rb_cSymbol;
-  res.$m = rb_cSymbol.$m_tbl;
-  symbol_table[str] = res;
+  // res.$klass = rb_cSymbol;
+  // res.$m = rb_cSymbol.$m_tbl;
+  // symbol_table[str] = res;
   return res;
 };
 
@@ -1422,23 +1374,24 @@ $opal.bridged_class = function(prototype, flags, id, super_klass) {
 
 // Set a constant `val` on the given `klass`.
 var rb_const_set = function(klass, id, val) {
-  klass.$c_prototype[id] = val;
+  // return false;
+  klass.$constants[id] = val;
   return val;
 };
 
 // Look for the given constant on the given klass.
 var rb_const_get = function(klass, id) {
-
-  if (klass.$c[id]) {
-    return (klass.$c[id]);
+  // return false;
+  if (klass.$constants[id]) {
+    return (klass.$constants[id]);
   }
 
   var parent = klass.$parent;
 
   while (parent && parent != rb_cObject) {
 
-    if (parent.$c[id]) {
-      return parent.$c[id];
+    if (parent.$constants[id]) {
+      return parent.$constants[id];
     }
 
     parent = parent.$parent;
@@ -1449,7 +1402,8 @@ var rb_const_get = function(klass, id) {
 
 // is const defined
 var rb_const_defined = function(klass, id) {
-  if (klass.$c[id]) {
+  // return false;
+  if (klass.$constants[id]) {
     return true;
   }
   
@@ -1624,34 +1578,33 @@ RObject.prototype.$hash = RClass.prototype.$hash = function() {
 };
 
 // define method
-rb_define_method = function(klass, name, body, file_name, line_number) {
-  
-  rb_define_method_raw(klass, name, body);
+rb_define_method = function(klass, js_id, body) {
+  // console.log("defining " + js_id);
+  // console.log(klass);
+  // console.log(klass);
+  // the literal method names on objects become prefixed with 'm$' to avoid
+  // clashing with native methods. We keep js_id in the method table so that
+  // we have literal method names for various runtime methods etc
+  var rb_id = 'm$' + js_id;
+
+  klass.allocator.prototype[rb_id] = body;
+  klass.$method_table[js_id] = body;
+
+  if (klass.$included_in) {
+    for (var i = 0; i < klass.$included_in.length; i++) {
+      // klass.$included_in[i].allocator.prototype... =  ... etc
+      // console.log("need to add " + js_id);
+      rb_define_method(klass.$included_in[i], js_id, body);
+    }
+  }
 
   if (!body.$rbName) {
-    body.$rbName = name;
+    body.$rbName = js_id;
   }
   
   return Qnil;
 };
 
-// This can be removed, and functionality moved back to rb_define_method
-//
-// @TODO merge back into rb_define_method
-rb_define_method_raw = function(klass, name, body) {
-  // insert raw method into prototype chain
-  klass.$m_prototype_tbl[name] = body;
-  // insert method into singular method table (methods defined ON this class)
-  klass.$method_table[name] = body;
-  // if in module, apply method to all classes we are included in
-  if (klass.$included_in) {
-    for (var i = 0; i < klass.$included_in.length; i++) {
-      // insert method into both prototype and singular chain.
-      klass.$included_in[i].$m_prototype_tbl[name] = body;
-			klass.$included_in[i].$method_table[name] = body;
-    }
-  }
-};
 
 rb_define_global_function = function(name, body) {
 	rb_define_method(rb_mKernel, name, body);
@@ -1677,8 +1630,11 @@ var rb_class_new_instance = function(klass) {
 
 // Class#allocate
 // @global
-rb_obj_alloc = function(klass) {
-  var result = new RObject(klass, T_OBJECT);
+rb_obj_alloc = function() {
+  // var result = new RObject(klass, T_OBJECT);
+  var result = new this.allocator();
+  // console.log("result is:");
+  // console.log(result);
   return result;
 };
 
@@ -1690,9 +1646,11 @@ rb_raise = function(exc, str) {
     exc = rb_eException;
   }
   //var exception = new RObject(exc, T_OBJECT);
-  var exception = exc.$m.allocate(exc);
+  // var exception = exc.$m.allocate(exc);
+  var exception = exc.m$allocate();
 	// var exception = exc_new_instance(exc);
-  rb_ivar_set(exception, '@message', str);
+  exception.message = str;
+  // rb_ivar_set(exception, '@message', str);
   rb_vm_raise(exception);
 };
 
@@ -1744,6 +1702,7 @@ $opal.rb_run = rb_run = function(func) {
     if (err.stack) {
       console.log(err.stack);
     } else {
+      console.log("no stack :(");
       console.log(err);
     }
   }
@@ -1857,7 +1816,253 @@ var rb_opal_done_init = false;
 // where we can save our global argv once calculated
 var init_argv = [];
 
+// boot of all (except bridged) classes and objects
+var __boot_base_class = function() {};
+
+__boot_base_class.prototype.$hash = function() {
+  return this.$id;
+};
+
+__boot_base_class.prototype.$r = true;
+
+// makes the core instances objects - these are what will be the basic object, object
+// instances etc.
+var __boot_defclass = function(id, superklass) {
+  var cls = function() {
+    this.$id = opal_yield_hash();
+  };
+
+  if (superklass) {
+    var tmp_ctor = function() {};
+    tmp_ctor.prototype = superklass.prototype;
+    cls.prototype = new tmp_ctor();
+  } else {
+    cls.prototype = new __boot_base_class();
+  }
+
+  cls.prototype.constructor = cls;
+  cls.prototype.$flags = T_OBJECT;
+  // cls.prototype.$method_table = {};
+  return cls;
+};
+
+// makes the actual class objects themselbes - basicobject,object etc.
+var __boot_makemeta = function(id, klass, superklass) {
+  var meta = function() {
+    this.$id = opal_yield_hash();
+  };
+
+  var tmp_ctor = function(){};
+  tmp_ctor.prototype = superklass.prototype;
+  meta.prototype = new tmp_ctor();
+  
+  var prototype = meta.prototype;
+  prototype.included_in = [];
+  prototype.method_table = {};
+  prototype.allocator = klass;
+  prototype.constructor = meta;
+  prototype.__classid__ = id;
+  prototype.$super = superklass;
+  prototype.$flags = T_CLASS;
+  prototype.$method_table = {};
+
+  // constants
+  if (superklass.prototype.$constants_alloc) {
+    prototype.$constants = new superklass.prototype.$constants_alloc();
+    prototype.$constants_alloc = function() {};
+    prototype.$constants_alloc.prototype = prototype.$constants;
+  } else {
+    prototype.$constants_alloc = function() {};
+    prototype.$constants = prototype.$constants_alloc.prototype;
+  }
+
+  var result = new meta();
+  klass.prototype.$klass = result;
+  return result;
+};
+
+var __boot_defmetameta = function(klass, meta) {
+  klass.$klass = meta;
+};
+
 $opal.init = function(options) {
+  if (rb_opal_done_init) { return; }
+  rb_opal_done_init = true;
+
+  if (!options) { options = {}; }
+
+  var metaclass;
+  // these all represent the instances of what will be basicobject, object, etc
+  var boot_cBasicObject = $opal.boot_cBasicObject = __boot_defclass('BasicObject', null);
+  var boot_cObject = $opal.boot_cObject = __boot_defclass('Object', boot_cBasicObject);
+  var boot_cModule = $opal.boot_cModule = __boot_defclass('Module', boot_cObject);
+  var boot_cClass = $opal.boot_cClass = __boot_defclass('Class', boot_cModule);
+
+  // classes themselves
+  rb_cBasicObject = $opal.BasicObject = __boot_makemeta('BasicObject', boot_cBasicObject, boot_cClass);
+  rb_cObject = $opal.Object = __boot_makemeta('Object', boot_cObject, rb_cBasicObject.constructor);
+  rb_cModule = $opal.Module = __boot_makemeta('Module', boot_cModule, rb_cObject.constructor);
+  rb_cClass = $opal.Class = __boot_makemeta('Class', boot_cClass, rb_cModule.constructor);
+
+  __boot_defmetameta(rb_cBasicObject, rb_cClass);
+  __boot_defmetameta(rb_cObject, rb_cClass);
+  __boot_defmetameta(rb_cModule, rb_cClass);
+  __boot_defmetameta(rb_cClass, rb_cClass);
+
+  // fix superclasses
+  rb_cBasicObject.$super = null;
+  rb_cObject.$super = rb_cBasicObject;
+  rb_cModule.$super = rb_cObject;
+  rb_cClass.$super = rb_cModule;
+
+  rb_const_set(rb_cObject, 'BasicObject', rb_cBasicObject);
+  rb_const_set(rb_cObject, 'Object', rb_cObject);
+  rb_const_set(rb_cObject, 'Module', rb_cModule);
+  rb_const_set(rb_cObject, 'Class', rb_cClass);
+
+  rb_define_method(rb_cBasicObject, '!', obj_not);
+  rb_define_method(rb_cBasicObject, '!=', obj_not_equal);
+
+  rb_mKernel = $opal.Kernel = rb_define_module('Kernel');
+  rb_include_module(rb_cObject, rb_mKernel);
+
+  rb_define_method(rb_mKernel, "puts", obj_puts);
+
+  rb_define_method(rb_cClass, "allocate", rb_obj_alloc);
+  rb_define_method(rb_cClass, "new", class_new_instance);
+  rb_define_method(rb_cClass, "initialize", class_initialize);
+  rb_define_singleton_method(rb_cClass, "new", class_s_new);
+
+  // Top self
+  global.rb_top_self = rb_top_self = $opal.top = new rb_cObject.allocator();
+
+  // NilClass
+  rb_cNilClass = rb_define_class('NilClass', rb_cObject);
+  $opal.NilClass = rb_cNilClass;
+  global.Qnil = $opal.Qnil = Qnil = new rb_cNilClass.allocator();
+  Qnil.$r = false;
+
+  // TrueClass
+  rb_cTrueClass = rb_define_class('TrueClass', rb_cObject);
+  global.Qtrue = Qtrue = new rb_cTrueClass.allocator();
+
+  // FalseClass
+  rb_cFalseClass = rb_define_class('FalseClass', rb_cObject);
+  global.Qfalse = Qfalse = new rb_cFalseClass.allocator();
+  Qfalse.$r = false;
+
+  // console.log("REQUIRE BASICOBJECT============================");
+  require('./basic_object');
+  require('./module');
+  require('./class');
+  require('./kernel');
+  require('./top_self');
+  require('./nil_class');
+  require('./true_class');
+  require('./false_class');
+
+  // String
+  rb_cString = $opal.String = rb_define_toll_free_class(String,
+      T_OBJECT | T_STRING, 'String', rb_cObject);
+
+  require('./string');
+
+  // Symbol
+  rb_cSymbol = $opal.Symbol = rb_define_class('Symbol', rb_cObject);
+  rb_cSymbol.allocator.prototype.$flags = T_OBJECT | T_SYMBOL;
+
+  require('./symbol');
+
+  // Array
+  rb_cArray = $opal.Array = rb_define_toll_free_class(Array,
+      T_OBJECT | T_ARRAY, 'Array', rb_cObject);
+
+  require('./array');
+
+  // Numeric
+  rb_cNumeric = $opal.Numeric = rb_define_toll_free_class(Number,
+      T_OBJECT | T_NUMBER, 'Numeric', rb_cObject);
+
+  Number.prototype.$hash = function() {
+    return '$num_' + this;
+  };
+
+  require('./numeric');
+
+  // Hash
+  rb_cHash = $opal.Hash = rb_define_toll_free_class(RHash,
+      T_OBJECT | T_HASH, 'Hash', rb_cObject);
+
+  rb_define_singleton_method(rb_cHash, '[]', hash_s_create);
+
+  require('./hash');
+
+  // Regexp
+
+  rb_cRegexp = $opal.Regexp = rb_define_toll_free_class(RegExp,
+      T_OBJECT, 'Regexp', rb_cObject);
+
+  require('./regexp');
+
+  // MatchData
+  rb_cMatch = rb_define_class('MatchData', rb_cObject);
+  rb_define_method(rb_cMatch, 'to_a', match_to_a);
+  rb_define_method(rb_cMatch, 'inspect', match_inspect);
+  rb_define_method(rb_cMatch, 'aref', match_inspect);
+
+  // load
+  if (options.load_paths) { load_paths = options.load_paths; }
+
+  rb_define_hooked_variable('$:', load_path_getter, rb_gvar_readonly_setter);
+  rb_define_hooked_variable('$LOAD_PATH', load_path_getter, rb_gvar_readonly_setter);
+
+  if (!options.argv) { options.argv = []; }
+
+  rb_const_set(rb_cObject, 'ARGV', options.argv);
+
+  // Exception
+  rb_eException = rb_define_toll_free_class(Error, T_OBJECT, 'Exception', rb_cObject);
+
+  rb_eStandardError = rb_define_class("StandardError", rb_eException);
+  rb_eRuntimeError = rb_define_class("RuntimeError", rb_eException);
+  rb_eLocalJumpError = rb_define_class("LocalJumpError", rb_eStandardError);
+  rb_eTypeError = rb_define_class("TypeError", rb_eStandardError);
+  rb_eNameError = rb_define_class("NameError", rb_eStandardError);
+  rb_eNoMethodError = rb_define_class('NoMethodError', rb_eNameError);
+  rb_eArgError = rb_define_class('ArgumentError', rb_eStandardError);
+  rb_eScriptError = rb_define_class('ScriptError', rb_eException);
+  rb_eLoadError = rb_define_class('LoadError', rb_eScriptError);
+
+  rb_eIndexError = rb_define_class("IndexError", rb_eStandardError);
+  rb_eKeyError = rb_define_class("KeyError", rb_eIndexError);
+  rb_eRangeError = rb_define_class("RangeError", rb_eStandardError);
+
+  require('./error');
+
+  // jump error literals. We keep a singular instance to avoid recreating each
+  // error every time (which would be expensive).
+  rb_vm_break_instance = new Error('unexpected break');
+  rb_vm_break_instance.$klass = rb_eLocalJumpError;  
+  rb_vm_break_instance.$keyword = 2;
+
+  rb_vm_return_instance = new Error('unexpected return');
+  rb_vm_return_instance.$klass = rb_eLocalJumpError;
+  rb_vm_return_instance.$keyword = 1;
+
+  rb_vm_next_instance = new Error('unexpected next');
+  rb_vm_next_instance.$klass = rb_eLocalJumpError;
+  rb_vm_next_instance.$keyword = 3;
+
+  // Proc
+  rb_cProc = rb_define_toll_free_class(Function, T_OBJECT | T_PROC, 'Proc', rb_cObject);
+
+  require('./proc');
+
+
+  rb_const_set(rb_cObject, 'RUBY_PLATFORM', 'opal');
+};
+
+$opal.init_old_legacy = function(options) {
   if (rb_opal_done_init) { return; }
   rb_opal_done_init = true;
 
@@ -1976,6 +2181,10 @@ $opal.init = function(options) {
   rb_define_hooked_variable('$:', load_path_getter, rb_gvar_readonly_setter);
   rb_define_hooked_variable('$LOAD_PATH', load_path_getter, rb_gvar_readonly_setter);
 
+  if (!options.argv) { options.argv = []; }
+
+  rb_const_set(rb_cObject, 'ARGV', options.argv);
+
   // @class Exception
   rb_eException = rb_define_toll_free_class(Error.prototype, T_OBJECT, 'Exception', rb_cObject);
 
@@ -2082,6 +2291,7 @@ var rb_mod_create = function() {
 
 rb_include_module = function(klass, module) {
 
+  // console.log("including " + module.__classid__ + " into " + klass.__classid__);
   if (!klass.$included_modules) {
     klass.$included_modules = [];
   }
@@ -2096,9 +2306,14 @@ rb_include_module = function(klass, module) {
   }
   
   module.$included_in.push(klass);
-
+  // console.log("about to loop");
   for (var method in module.$method_table) {
-    rb_define_method_raw(klass, method, module.$method_table[method]);
+    // console.log("checking " + method);
+    // rb_define_method_raw(klass, method, module.$method_table[method]);
+    if (module.$method_table.hasOwnProperty(method)) {
+      // console.log(" ... and adding " + method);
+      rb_define_method(klass, method, module.$method_table[method]);
+    }
   }
 };
 
@@ -2117,9 +2332,14 @@ rb_extend_module = function(klass, module) {
   }
 
   module.$extended_in.push(klass);
+
+  var meta = klass.$klass;
   
   for (var method in module.$method_table) {
-    rb_define_method_raw(klass.$klass, method, module.$method_table[method]);
+    // rb_define_method_raw(klass.$klass, method, module.$method_table[method]);
+    if (module.$method_table.hasOwnProperty(method)) {
+      rb_define_method(meta, method, module.$method_table[method]);
+    }
   }
 };
 
@@ -2143,22 +2363,64 @@ var boot_defrootclass = function(id) {
 
 
 // Create a new subclass of the given superclass. We do not name it yet.
-var rb_class_boot = $opal.class_boot = function(super_class) {
-  if (super_class) {
-    var ctor = function() {};
-    ctor.prototype = super_class.constructor.prototype;
-    var result = function() {
-       RClass.call(this, null, super_class); return this;
-    };
-    result.prototype = new ctor();
-    var klass = new result();
-    klass.$klass = rb_cClass;
-    return klass;
-  }
-  else {
-    var result = new RClass(null, null);
-    return result;
-  }
+var rb_class_boot = $opal.class_boot = function(superklass) {
+  // instances of the new class..
+  var cls = function() {
+    this.$id = opal_yield_hash();
+  };
+
+  var tmp_cls = function() {};
+  tmp_cls.prototype = superklass.allocator.prototype;
+  cls.prototype = new tmp_cls();
+
+  var prototype = cls.prototype;
+  prototype.constructor = cls;
+  prototype.$flags = T_OBJECT;
+  //prototype.$method_table = {};
+
+  // the class object itself
+  var meta = function() {
+    this.$id = opal_yield_hash();
+  };
+
+  var tmp_meta = function() {};
+  tmp_meta.prototype = superklass.constructor.prototype;
+  meta.prototype = new tmp_meta();
+
+  prototype = meta.prototype;
+  prototype.allocator = cls;
+  prototype.$flags = T_CLASS;
+  prototype.$method_table = {};
+  prototype.constructor = meta;
+  prototype.$super = superklass;
+
+  // constants
+  prototype.$constants = new superklass.$constants_alloc();
+  prototype.$constants_alloc = function() {};
+  prototype.$constants_alloc.prototype = prototype.$constants;
+
+  var result = new meta();
+  cls.prototype.$klass = result;
+  return result;
+
+  // console.log("calling rb_class_boot for super:");
+  // console.log(superklass);
+  // throw "a";
+  // if (super_class) {
+  //   var ctor = function() {};
+  //   ctor.prototype = super_class.constructor.prototype;
+  //   var result = function() {
+  //      RClass.call(this, null, super_class); return this;
+  //   };
+  //   result.prototype = new ctor();
+  //   var klass = new result();
+  //   klass.$klass = rb_cClass;
+  //   return klass;
+  // }
+  // else {
+  //   var result = new RClass(null, null);
+  //   return result;
+  // }
 };
 
 // @global
@@ -2174,7 +2436,7 @@ var rb_name_class = function(klass, id) {
 
 // make metaclass for the given class
 var rb_make_metaclass = function(klass, super_class) {
-  // print("making metaclass for " + klass.__classid__);
+  // console.log("making metaclass for " + klass.__classid__);
   // if klass is a class, and it is a singleton..
   if ((klass.$flags & T_CLASS) && (klass.$flags & FL_SINGLETON)) {
     // console.log("ok");
@@ -2182,6 +2444,8 @@ var rb_make_metaclass = function(klass, super_class) {
     return make_metametaclass(klass);
   }
   else {
+    // console.log("using else");
+    // console.log(super_class);
     // our meta is a 'subclass' of the superclass
     var meta = rb_class_boot(super_class);
     // meta is now also a singleton (as well as class)
@@ -2189,9 +2453,11 @@ var rb_make_metaclass = function(klass, super_class) {
     // the class of a class is its meta
     klass.$klass = meta;
     // fix method table
-    klass.$m = meta.$m_tbl;
+    // klass.$m = meta.$m_tbl;
     // fix const table
-    meta.$c = klass.$c;
+    // meta.$c = klass.$c;
+    // console.log("meta is:");
+    // console.log(meta);
     // attach the meta to the klass (so we can refer to it later)
     rb_singleton_class_attached(meta, klass);
     
@@ -2202,8 +2468,10 @@ var rb_make_metaclass = function(klass, super_class) {
 var rb_singleton_class_attached = function(klass, obj) {
   // make sure klass is a singleton
   if (klass.$flags & FL_SINGLETON) {
+    
     // console.log("setting attacjed..");
     rb_ivar_set(klass, '__attached__', obj);
+    klass.allocator.prototype = obj.constructor.prototype;
   }
 };
 
@@ -2245,22 +2513,30 @@ var boot_defmetametaclass = function(klass, metametaclass) {
 
 // define toll free bridged class
 // @local
-var rb_define_toll_free_class = function(prototype, flags, id, super_klass) {
-  var klass = rb_define_class(id, super_klass);
+var rb_define_toll_free_class = function(constructor, flags, id, superklass) {
+  var klass = rb_define_class(id, superklass);
   
-  prototype.$klass = klass;
-  prototype.$m = klass.$m_tbl;
-  prototype.$flags = flags;
-  prototype.$r = true;
-  prototype.$M = RClass.prototype.$M;
-  prototype.$B = RClass.prototype.$B;
+  
+  var old_allocator = klass.allocator.prototype;
 
-  // default hashing behaviour
+  klass.allocator = constructor;
+  var prototype = constructor.prototype;
+
+  prototype.$flags = flags;
+  prototype.$klass = klass;
+  prototype.$r = true;
   prototype.$hash = function() {
-    // return '$$' + this + '$$';
-    return flags + '_' + this;
+    return (this.$id || (this.$id = opal_yield_hash()));
   };
-    
+
+  // We introduce a MASSIVE hack here. We secretly include Object into all
+  // bridged classes so that any method defined on Object, or any module
+  // included into Object will also be included into our natives like 
+  // Array, String etc. BIG hack, but it works. We do this even though
+  // Object isnt  a module.. ka pessh ka pow.
+  rb_include_module(klass, rb_cObject);
+
+  rb_const_set(rb_cObject, id, klass);
   return klass;
 };
 
@@ -2271,9 +2547,11 @@ rb_define_class = function(id, super_klass) {
 };
 
 var rb_define_class_under = function(base, id, super_klass) {
+  // console.log("DEFINING " + id);
   var klass;
   // if already defined, just ensure right type then return the existing class
   if (rb_const_defined(base, id)) {
+    // console.log("CONST DEFINED");
     // check its a class?
     return rb_const_get(base, id);
   }
@@ -2309,9 +2587,11 @@ var rb_class_create = function(super_klass) {
 
 // get singleton class of obj
 var rb_singleton_class = function(obj) {
+  // console.log("getting singleton class for " + obj.__classid__);
+  // console.log(obj);
   var obj;
-  console.log("rb_singleton_class:");
-  console.log(obj);
+  //console.log("rb_singleton_class:");
+  //console.log(obj);
   // print('finding singleton class for ' + obj.__classid__);
   // console.log("checking for id: " + obj.$h);
   if (obj == rb_cObject) {
@@ -2319,21 +2599,13 @@ var rb_singleton_class = function(obj) {
   }
   // check if number, string etc.. and throw error?
   if ((obj.$klass.$flags & FL_SINGLETON)&& rb_ivar_get(obj.$klass, '__attached__') == obj) {
-    console.log("returning on attacked");
+    // console.log("returning on attacked");
     // print("returning on attached");
     // for (var prop in obj.$k) {print (prop); print(obj.$k[prop]);}
     klass = obj.$klass;
   }
   else {
-    // OLD
-    // making an object into a singleton object..
-    //console.log("!!!!!!!!!!!!! getting this way");
-    //var class_id = rb_ivar_get(obj.$klass, '__classid__');
-    //klass = rb_make_metaclass(obj, obj.$klass);
- 
-    console.log("MAKING NEWWWWW");
-   console.log(obj); 
-    // NEW
+
     var orig_klass = obj.$klass;
     klass = rb_class_boot(orig_klass);
 
@@ -2341,19 +2613,26 @@ var rb_singleton_class = function(obj) {
     obj.$klass = klass;
     klass.__attached__ = obj;
 
-    // might be done in singleton_class_attached
-    obj.$m = klass.$m_tbl;
-    
-    console.log(klass);
-    // rb_singleton_class_attached(klass, obj);
-    // meta of klass = meta of rb_class_real(orig_klass);
-    
+    // basically, to keep right chain, when making singleton for a class, we want new methods
+    // to be set on the constructor for the object so that subclasses inherit these new methods.
+    // When setting on an object instance, we do not want to set it on the constructor, otherwise
+    // Object will inherit methods set on top_self etc, and this goes for all singleton objects. 
+    //
+    // FIXME: we could reset the constructor on the obj to our new singleton class and then do
+    // rb_singleton_class_attached... makes sure if we create a new instance of our singleton then
+    // that will also get the methods (say we do (class << self; self; end).new)
+    if (obj.$flags & T_OBJECT) {
+      klass.allocator.prototype = obj;
+    } else {
+      rb_singleton_class_attached(klass, obj);
+    }
     klass.$klass = rb_class_real(orig_klass).$klass;
-    klass.$m = klass.$klass.$m_tbl;
   }
   
   return klass;
 };
+
+$opal.rb_singleton_class = rb_singleton_class;
 
 // obj must be an obj
 var make_singleton_class = function(obj) {
@@ -2407,65 +2686,6 @@ var rb_cRegexp;
 
 // @class MatchData
 var rb_cMatch;
-
-/**
-  Produce a nicely formatted string-version of `self`.
-
-  @example
-    /^abc/.inspect
-    # => "/^abc/"
-
-  @return [String] string
-*/
-function reg_inspect(reg, mid) {
-  return reg.toString();
-}
-
-/**
-  Equality - Two regexps are equal if their patterns are identical, they have
-  the same character set code, and their {#casefold?} values are the same.
-
-  @example
-    /abc/ == /abc/x     # => false
-    /abc/ == /abc/i     # => false
-    /abc/ == /abc/n     # => false
-    /abc/u == /abc/n    # => false
-
-  @param [Regexp] other_regexp another regexp to comapre
-  @return [Boolean]
-*/
-function reg_equal(reg, mid, reg2) {
-  ARG_COUNT(1)
-  return reg.toString() === reg2.toString() ? Qtrue : Qfalse;
-}
-
-/**
-  Returns a {MatchData} object describing the match, or `nil` if there was no
-  match. This is equivalent to retrieving the value of the special variable
-  $~ following a normal match. If the second parameter is present, it 
-  specifies the position in the string to begin the search.
-
-  @example
-    /(.)(.)(.)/.match("abc")[2]
-    # => "b"
-    /(.)(.)/.match("abc")[2]
-    # => "c"
-
-  @todo Passing a block is not yet supported.
-
-  @param [Sring] string to match against
-  @return [MatchData, nil] result or nil
-*/
-function reg_match(reg, mid, str) {
-  var test, match = Qnil;
-	
-	if (test = reg.exec(str)) {
-		match = rb_obj_alloc(rb_cMatch);
-		rb_ivar_set(match, '@data', []);
-	}
-	
-	return match;
-}
 
 function match_to_a(match, mid) {
   return rb_ivar_get(match, "@data");
@@ -2550,24 +2770,22 @@ function hash_s_create(obj, mid) {
 	return opalhash.apply(null, Array.prototype.slice.call(arguments, 2));
 }
 
-function class_s_new(clas, sup) {
-	var klass = rb_define_class_id("AnonClass", sup || rb_cObject);              
-	return klass;
+function class_s_new(sup) {
+  var klass = rb_define_class_id("AnonClass", sup || rb_cObject);
+  return klass;
 };
 
-function class_new_instance(cla) {
+function class_new_instance() {
 
-	var obj = cla.$m.allocate(cla, Qnil);
-	var args = Array.prototype.slice.call(arguments);
-	args[0] = obj;
-	
-	// if given a block, we need to reroute it to initialize
-  // if (rb_block_func == arguments.callee) {
-    // obj.$B.apply(obj, ['initialize', rb_block_proc].concat(
-      // Array.prototype.slice.call(arguments, 1)));
-  // } else {
-    obj.$m.initialize.apply(null, args);
-  // }
+  var obj = this.m$allocate();
+  var args = Array.prototype.slice.call(arguments);
+  // args[0] = obj;
+
+  if ($opal.P.f == arguments.callee) {
+    $opal.P.f = obj.m$initialize;
+  }
+
+  obj.m$initialize.apply(obj, args);
   return obj;
 };
 
@@ -2587,10 +2805,11 @@ function class_initialize(cla, mid, sup) {
 	@return [nil]
 */
 function obj_puts(ob) {
-	var args = Array.prototype.slice.call(arguments, 1);
+	var args = Array.prototype.slice.call(arguments, 0);
 	
 	for (var i = 0; i < args.length; i++) {
-		console.log((args[i].$m.to_s(args[i])).toString());
+		// console.log((args[i].$m.to_s(args[i])).toString());
+    console.log(args[i].m$to_s().toString());
 	}
 	
 	return Qnil;
@@ -2695,22 +2914,19 @@ init();
 modules["./basic_object"] = function(exports) {
 (function(undefined) {
 var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P, $return = Opal.R, $super = Opal.S;
-Opal.mm(['==']);
 return ($class(self, nil, "BasicObject", function(self) {
-return ($def(self, "initialize", function(self) {
-return (nil);}, 0), $def(self, "==", function(self, other) {
-if (self == other) return Qtrue;
-    return Qfalse;}, 0), $def(self, "equal?", function(self, other) {
-var __a;
-return ((__a = self).$m["=="](__a, other));}, 0));}, 0));})();
+return ($def(self, "initialize", function() {
+var self = this;return (nil);}, 0), $def(self, "==", function(other) {
+var self = this;if (self == other) return Qtrue;
+    return Qfalse;}, 0), $def(self, "equal?", function(other) {
+var self = this;return (self["m$=="](other));}, 0));}, 0));})();
 };
 modules["./class"] = function(exports) {
 (function(undefined) {
 var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P, $return = Opal.R, $super = Opal.S;
-Opal.mm([]);
 return ($class(self, nil, "Class", function(self) {
-return ($def(self, "superclass", function(self) {
-var sup = self.$super;
+return ($def(self, "superclass", function() {
+var self = this;var sup = self.$super;
 
     if (!sup) {
       if (self == $opal.BasicObject) return Qnil;
@@ -2722,17 +2938,16 @@ var sup = self.$super;
 modules["./error"] = function(exports) {
 (function(undefined) {
 var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P, $return = Opal.R, $super = Opal.S;
-Opal.mm([]);
 return ($class(self, nil, "Exception", function(self) {
-return ($def(self, "allocate", function(self) {
-var err = new Error();
+return ($def(self, "allocate", function() {
+var self = this;var err = new Error();
     err.$klass = self;
-    return err;}, 1), $def(self, "initialize", function(self, message) {
-if (message === undefined) message = "";
-return self.message = message;}, 0), $def(self, "message", function(self) {
-return self.message;}, 0), $def(self, "inspect", function(self) {
-return "#<" + self.$klass.__classid__ + ": '" + self.message + "'>";}, 0), $def(self, "to_s", function(self) {
-return self.message;}, 0));}, 0), $class(self, rb_vm_cg(self, "Exception"), "StandardError", function(self) {
+    return err;}, 1), $def(self, "initialize", function(message) {
+var self = this;if (message === undefined) message = "";
+return self.message = message;}, 0), $def(self, "message", function() {
+var self = this;return self.message;}, 0), $def(self, "inspect", function() {
+var self = this;return "#<" + self.$klass.__classid__ + ": '" + self.message + "'>";}, 0), $def(self, "to_s", function() {
+var self = this;return self.message;}, 0));}, 0), $class(self, rb_vm_cg(self, "Exception"), "StandardError", function(self) {
 return (nil);}, 0), $class(self, rb_vm_cg(self, "Exception"), "RuntimeError", function(self) {
 return (nil);}, 0), $class(self, rb_vm_cg(self, "StandardError"), "LocalJumpError", function(self) {
 return (nil);}, 0), $class(self, rb_vm_cg(self, "StandardError"), "TypeError", function(self) {
@@ -2749,19 +2964,26 @@ return (nil);}, 0));})();
 modules["./range"] = function(exports) {
 (function(undefined) {
 var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P, $return = Opal.R, $super = Opal.S;
-Opal.mm(['to_s', 'inspect']);
 return ($class(self, nil, "Range", function(self) {
-return ($def(self, "to_s", function(self) {
-var __a;
-var str = (__a = self.$beg).$m.to_s(__a);
-    var str2 = (__a = self.$end).$m.to_s(__a);
+return ($def(self, "to_s", function() {
+var self = this;var str = self.$beg.m$to_s();
+    var str2 = self.$end.m$to_s();
     var join = self.$exc ? '...' : '..';
-    return str + join + str2;}, 0), $def(self, "inspect", function(self) {
-var __a;
-var str = (__a = self.$beg).$m.inspect(__a);
-    var str2 = (__a = self.$end).$m.inspect(__a);
+    return str + join + str2;}, 0), $def(self, "inspect", function() {
+var self = this;var str = self.$beg.m$inspect();
+    var str2 = self.$end.m$inspect();
     var join = self.$exc ? '...' : '..';
     return str + join + str2;}, 0));}, 0));})();
+};
+modules["./regexp"] = function(exports) {
+(function(undefined) {
+var Opal = $opal, self = Opal.top, $def = Opal.dm, $class = Opal.dc, nil = Opal.Qnil, $hash = Opal.H, $symbol = Opal.Y, $break = Opal.B, $range = Opal.G, $block = Opal.P, $return = Opal.R, $super = Opal.S;
+return ($class(self, nil, "Regexp", function(self) {
+return ($def(self, "inspect", function() {
+var self = this;return self.toString();}, 0), $def(self, "==", function(other) {
+var self = this;return self.toString() === other.toString() ? Qtrue : Qfalse;}, 0), $def(self, "eql?", function(other) {
+var self = this;return (self["m$=="](other));}, 0), $def(self, "match", function(pattern) {
+var self = this;return (nil);}, 0));}, 0));})();
 };
   var browser_exports = require('./browser');
 

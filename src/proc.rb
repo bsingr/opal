@@ -5,7 +5,7 @@ class Proc
   end
 
   def call(*args)
-    `args.unshift(self.$self);
-    return self.apply(null, args);`
+    # `args.unshift(self.$self);
+    `return self.apply(self.$self, args);`
   end
 end

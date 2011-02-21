@@ -40,11 +40,11 @@ class Array
   # @return [String] string representation of the receiver
   def inspect
     `var description = [];
-  
+
     for (var i = 0; i < self.length; i++) {
-      description.push(self[i].$m.inspect(self[i]));
+      description.push(self[i].m$inspect());
     }
-  
+
     return '[' + description.join(', ') + ']';`
   end
 
@@ -108,7 +108,7 @@ class Array
   # TODO: needs to return enumerator for no block.
   #
   # @return [Array] returns the receiver
-  def each   
+  def each
     `for (var i = 0; i < self.length; i++) {
       try {
         #{yield `self[i]`};
@@ -152,7 +152,7 @@ class Array
   # TODO: enumerator functionality not yet implemented.
   #
   # @example
-  #   
+  #
   #     a = [1, 2, 3]
   #     a.each_index { |x| puts x }
   #     # => 0
@@ -396,7 +396,9 @@ class Array
 
     return result;`
   end
-  
+
+  # alias_method 'map', 'collect'
+
   # Yields the block once for each element of `self`, replacing the element with
   # the value returned by the block. See also {Enumerable#collect}.
   #
@@ -781,14 +783,14 @@ class Array
     `var length = self.length;
     var result = #{self.flatten level};
     self.splice(0);
-    
+
     for (var i = 0; i < result.length; i++) {
       self.push(result[i]);
     }
-    
+
     if (self.length == length)
       return nil;
-    
+
     return self;`
   end
 
@@ -850,7 +852,7 @@ class Array
   # @return [Array] returns the receiver
   def insert(idx, *objs)
     `if (idx < 0) idx += self.length;
-    
+
     if (idx < 0 || idx >= self.length)
       rb_raise("IndexError: out of range");
 
@@ -1073,7 +1075,7 @@ class Array
   # Same as {#each}, but traverses the receiver in reverse order
   #
   # @example
-  #   
+  #
   #     a = ['a', 'b', 'c']
   #     a.reverse_each { |x| puts x }
   #     # => 'c'
@@ -1238,7 +1240,7 @@ class Array
     `return self.slice(0, count);`
   end
 
-  
+
   # Passes elements to the block until the block returns a false value, then
   # stops iterating and returns an array of all prior elements.
   #

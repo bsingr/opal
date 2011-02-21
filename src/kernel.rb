@@ -81,10 +81,8 @@ module Kernel
       exc = exception;
     } else {
       if (string != nil) msg = string;
-
       exc = #{`exception`.new `msg`};
     }
-
     rb_vm_raise(exc);`
   end
 
@@ -156,7 +154,7 @@ module Kernel
   end
 
   def respond_to?(method_id)
-    `if (self.$m[#{`method_id`.to_s}]) {
+    `if (self['m$' + #{`method_id`.to_s}]) {
       return Qtrue;
     }
 
@@ -168,8 +166,8 @@ module Kernel
   end
 
   def __send__(method_id, *args)
-    `args.unshift(self);
-    return self.$m[#{method_id.to_s}].apply(null, args);`
+    # `args.unshift(self);
+    `return self['m$' + #{method_id.to_s}].apply(self, args);`
   end
 
   def send(method_id, *args)
@@ -213,7 +211,7 @@ module Kernel
   #
   # FIXME: proper hex output needed
   def to_s
-    "#<#{`rb_class_real(self.$klass)`.to_s}:0x#{`(self.$hash() * 4000487).toString(16)`}>"
+    "#<#{`rb_class_real(self.$klass)`}:0x#{`(self.$hash() * 400487).toString(16)`}>"
   end
 
   def inspect
@@ -221,7 +219,7 @@ module Kernel
   end
 
   def instance_eval(&block)
-    `block(self)` if block_given?
+    `block.call(self)` if block_given?
     self
   end
 
