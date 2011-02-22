@@ -11,7 +11,7 @@ end
 
 desc "Rebuild the javascript parser (ruby_parser)"
 task :parser do
-  system "./tools/racc2js/racc2js.rb ./js/ruby_parser.y"
+  system "./tools/racc2js/racc2js.rb ./lib/ruby_parser.y"
 end
 
 # root directory to build node to

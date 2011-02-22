@@ -43,34 +43,38 @@ preclow
 
 rule
 
-         target: compstmt 
-                    {
-                      result = "result = val[0];"
-                    }
-         
-        bodystmt: compstmt opt_rescue opt_else opt_ensure
-                    {
-                      result = "result =
-                                ['bodystmt', val[0], val[1], val[2], val[3]];"
-                    }
-                    
-        compstmt: stmts opt_terms
-                    {
-                      result = "result = ['compstmt', val[0]];"
-                    }
+target:
+    compstmt
+    {
+      result = "result = val[0];"
+      # <D-/>result = "result = 100;"
+    }
 
-           stmts: none
-                    {
-                      result = "result = [];"
-                    }
-                | stmt
-                    {
-                      result = "result = [val[0]];"
-                    }
-                | stmts terms stmt
-                    {
-                      result = "result = val[0].concat([val[2]]);"
-                    }
+bodystmt:
+    compstmt opt_rescue opt_else opt_ensure
+    {
+      result = "result = new this.BodyStatementsNode(val[0], val[1], val[2], val[3]);"
+    }
+
+compstmt:
+    stmts opt_terms
+    {
+      result = "result = val[0];"
+    }
+
+stmts:
+    none
+    {
+      result = "result = new this.StatementsNode([]);"
+    }
+  | stmt
+    {
+      result = "result = new this.StatementsNode([val[0]]);"
+    }
+  | stmts terms stmt
+    {
+      result = "val[0].push(val[2]); result = val[0];"
+    }
 
             stmt: ALIAS fitem fitem
                 | ALIAS GVAR GVAR
@@ -92,7 +96,7 @@ rule
                 | klEND '{@' compstmt '}'
                 | lhs '=' command_call
                     {
-                      result = "result = ['assign', val[0], val[2]];"
+                      result = "result = new this.AssignNode(val[0], val[2], val[1]);"
                     }
                 | mlhs '=' command_call
                 | var_lhs OP_ASGN command_call
@@ -153,12 +157,12 @@ rule
 
          command: operation command_args =LOWEST
                     {
-                      result = "result = ['call', null, val[0], val[1]];"
+                      result = "result = new this.CallNode(null, val[0], val[1]);"
                     }
                 | operation command_args cmd_brace_block
                 | primary_value '.' operation2 command_args =LOWEST
                     {
-                      result = "result = ['call', val[0], val[2], val[3]];"
+                      result = "result = new this.CallNode(val[0], val[2], val[3]);"
                     }
                 | primary_value '.' operation2 command_args cmd_brace_block
                 | primary_value '::' operation2 command_args =LOWEST
@@ -210,7 +214,8 @@ rule
                     }
                 | primary_value '.' IDENTIFIER
                     {
-                      result = "result = ['call', val[0], val[2], [[]]];"
+                      # result = "result = ['call', val[0], val[2], [[]]];"
+                      result = "result = new this.CallNode(val[0], val[2], [[]]);"
                     }
                 | primary_value '::' IDENTIFIER
                 | primary_value '.' CONSTANT
@@ -260,14 +265,15 @@ rule
                 | IF_MOD   | UNLESS_MOD | WHILE_MOD | UNTIL_MOD | RESCUE_MOD
                 | BLOCK_GIVEN
 
-             arg: lhs '=' arg
-                    {
-                      result = "result = ['assign', val[0], val[2]];"
-                    }
+arg:
+    lhs '=' arg
+    {
+      result = "result = new this.AssignNode(val[0], val[2], val[1]);"
+    }
                 | lhs '=' arg RESCUE_MOD arg
                 | var_lhs OP_ASGN arg
                     {
-                      result = "result = ['op_asgn', val[1], val[0], val[2]];"
+                      result = "result = new this.OpAsgnNode(val[1], val[0], val[2]);"
                     }
                 | primary_value '[@' aref_args ']' OP_ASGN arg
                 | primary_value '.' IDENTIFIER OP_ASGN arg
@@ -284,118 +290,116 @@ rule
                     {
                       result = "result = ['range', val[1], val[0], val[2]];"
                     }
-                | arg '+' arg
-                    {
-                      result = "result = ['call', val[0], val[1], [[val[2]]]];"
-                    }
-                | arg '-' arg
-                    {
-                      result = "result = ['call', val[0], val[1], [[val[2]]]];"
-                    }
-                | arg '*' arg
-                    {
-                      result = "result = ['call', val[0], val[1], [[val[2]]]];"
-                    }
-                | arg '/' arg
-                    {
-                      result = "result = ['call', val[0], val[1], [[val[2]]]];"
-                    }
-                | arg '%' arg
-                    {
-                      result = "result = ['call', val[0], val[1], [[val[2]]]];"
-                    }
-                | arg '**' arg
-                    {
-                      result = "result = ['call', val[0], val[1], [[val[2]]]];"
-                    }
+  | arg '+' arg
+    {
+      result = "result = new this.CallNode(val[0], val[1], [[val[2]]]);"
+    }
+  | arg '-' arg
+    {
+      result = "result = new this.CallNode(val[0], val[1], [[val[2]]]);"
+    }
+  | arg '*' arg
+    {
+      result = "result = new this.CallNode(val[0], val[1], [[val[2]]]);"
+    }
+  | arg '/' arg
+    {
+      result = "result = new this.CallNode(val[0], val[1], [[val[2]]]);"
+    }
+  | arg '%' arg
+    {
+      result = "result = new this.CallNode(val[0], val[1], [[val[2]]]);"
+    }
+  | arg '**' arg
+    {
+      result = "result = new this.CallNode(val[0], val[1], [[val[2]]]);"
+    }
                 | '-@NUM' INTEGER '**' arg
                 | '-@NUM' FLOAT '**' arg
-                | '+@' arg
-                    {
-                      result = "result = ['call', val[1], '+@', [[]]];"
-                    }
-                | '-@' arg
-                    {
-                      result = "result = ['call', val[1], '-@', [[]]];"
-                    }
-                | arg '|' arg
-                    {
-                      result = "result = ['call', val[0], val[1], [[val[2]]]];"
-                    }
-                | arg '^' arg
-                    {
-                      result = "result = ['call', val[0], val[1], [[val[2]]]];"
-                    }
-                | arg '&' arg
-                    {
-                      result = "result = ['call', val[0], val[1], [[val[2]]]];"
-                    }
-                | arg '<=>' arg
-                    {
-                      result = "result = ['call', val[0], val[1], [[val[2]]]];"
-                    }
-                | arg '>' arg
-                    {
-                      result = "result = ['call', val[0], val[1], [[val[2]]]];"
-                    }
-                | arg '>=' arg
-                    {
-                      result = "result = ['call', val[0], val[1], [[val[2]]]];"
-                    }
-                | arg '<' arg
-                    {
-                      result = "result = ['call', val[0], val[1], [[val[2]]]];"
-                    }
-                | arg '<=' arg
-                    {
-                      result = "result = ['call', val[0], val[1], [[val[2]]]];"
-                    }
-                | arg '==' arg
-                    {
-                      result = "result = ['call', val[0], val[1], [[val[2]]]];"
-                    }
-                | arg '===' arg
-                    {
-                      result = "result = ['call', val[0], val[1], [[val[2]]]];"
-                    }
-                | arg '!=' arg  
-                    {
-                      # FIXME: this isnt actually a call, its a ! of a call
-                      result = "result = ['call', val[0], val[1], [[val[2]]]];"
-                    }
-                | arg '=~' arg
-                    {
-                      result = "result = ['call', val[0], val[1], [[val[2]]]];"
-                    }
-                | arg '!~' arg
-                    {
-                      # FIXME: same as above, not actually a call
-                      result = "result = ['call', val[0], val[1], [[val[2]]]];"
-                    }
-                | '!' arg
-                    {
-                      result = "result = ['call', val[1], val[0], [[]]];"
-                    }
-                | '~' arg
-                    {
-                      result = "result = ['call', val[1], val[0], [[]]];"
-                    }
-                | arg '<<' arg
-                    {
-                      result = "result = ['call', val[0], val[1], [[val[2]]]];"
-                    }
-                | arg '>>' arg
-                    {
-                      result = "result = ['call', val[0], val[1], [[val[2]]]];"
-                    }
-                | arg '&&' arg
-                    {
-                      result = "result = ['and', val[0], val[2]];"
-                    }
-                | arg '||' arg
-                    {
-                      result = "result = ['or', val[0], val[2]];"
-                    }
+  | '+@' arg
+    {
+      result = "result = new this.CallNode(val[1], val[0], [[]]);"
+    }
+  | '-@' arg
+    {
+      result = "result = new this.CallNode(val[1], val[0], [[]]);"
+    }
+  | arg '|' arg
+    {
+      result = "result = new this.CallNode(val[0], val[1], [[val[2]]]);"
+    }
+  | arg '^' arg
+    {
+      result = "result = new this.CallNode(val[0], val[1], [[val[2]]]);"
+    }
+  | arg '&' arg
+    {
+      result = "result = new this.CallNode(val[0], val[1], [[val[2]]]);"
+    }
+  | arg '<=>' arg
+    {
+      result = "result = new this.CallNode(val[0], val[1], [[val[2]]]);"
+    }
+  | arg '>' arg
+    {
+      result = "result = new this.CallNode(val[0], val[1], [[val[2]]]);"
+    }
+  | arg '>=' arg
+    {
+      result = "result = new this.CallNode(val[0], val[1], [[val[2]]]);"
+    }
+  | arg '<' arg
+    {
+      result = "result = new this.CallNode(val[0], val[1], [[val[2]]]);"
+    }
+  | arg '<=' arg
+    {
+      result = "result = new this.CallNode(val[0], val[1], [[val[2]]]);"
+    }
+  | arg '==' arg
+    {
+      result = "result = new this.CallNode(val[0], val[1], [[val[2]]]);"
+    }
+  | arg '===' arg
+    {
+      result = "result = new this.CallNode(val[0], val[1], [[val[2]]]);"
+    }
+  | arg '!=' arg  
+    {
+      result = "result = new this.CallNode(val[0], val[1], [[val[2]]]);"
+    }
+  | arg '=~' arg
+    {
+      result = "result = new this.CallNode(val[0], val[1], [[val[2]]]);"
+    }
+  | arg '!~' arg
+    {
+      result = "result = new this.CallNode(val[0], val[1], [[val[2]]]);"
+    }
+  | '!' arg
+    {
+      result = "result = new this.CallNode(val[1], val[0], [[]]);"
+    }
+  | '~' arg
+    {
+      result = "result = new this.CallNode(val[1], val[0], [[]]);"
+    }
+  | arg '<<' arg
+    {
+      result = "result = new this.CallNode(val[0], val[1], [[val[2]]]);"
+    }
+  | arg '>>' arg
+    {
+      result = "result = new this.CallNode(val[0], val[1], [[val[2]]]);"
+    }
+  | arg '&&' arg
+    {
+      result = "result = new this.AndNode(val[1], val[0], val[2]);"
+    }
+  | arg '||' arg
+    {
+      result = "result = new this.OrNode(val[1], val[0], val[2]);"
+    }
                 | DEFINED opt_nl arg
                 | arg '?' arg ':' arg
                     {
@@ -407,7 +411,7 @@ rule
 
        aref_args: none
                     {
-                      result = "result = [null, null];"
+                      result = "result = [[], null];"
                     }
                 | command opt_nl
                 | args trailer
@@ -421,7 +425,7 @@ rule
                 | assocs trailer
                 | SPLAT arg opt_nl
                     {
-                      result = "result = [null, val[1]];"
+                      result = "result = [[], val[1]];"
                     }
 
       paren_args: '(' none ')'
@@ -546,32 +550,33 @@ rule
                 | var_ref
                 | backref
                 | FID
-                | BEGIN bodystmt END
-                    {
-                      result = "result = ['begin', val[1]];"
-                    }
+  | BEGIN bodystmt END
+    {
+      result = "result = new this.BeginNode(val[0], val[1], val[2]);"
+    }
                 | tLPAREN_ARG expr opt_nl ')'
                 | PAREN_BEG compstmt ')'
                     {
                       result = "result = ['paren', val[1]];"
                     }
-                | primary_value '::' CONSTANT
-                    {
-                      result = "result = ['colon2', val[0], val[2]];"
-                    }
+  | primary_value '::' CONSTANT
+    {
+      result = "result = new this.Colon2Node(val[0], val[2]);"
+    }
                 | '::@' CONSTANT
-                | primary_value '[@' aref_args ']'
-                    {
-                      result = "result = ['aref', val[0], val[2]];"
-                    }
-                | '[' aref_args ']'
-                    {
-                      result = "result = ['array', val[1]];"
-                    }
-                | '{' assoc_list '}'
-                    {
-                      result = "result = ['hash', val[1]];"
-                    }
+  | primary_value '[@' aref_args ']'
+    {
+      result = "result = new this.CallNode(val[0], { line: val[1].line, value: '[]' }, val[2]);"
+      # result = "result = ['aref', val[0], val[2]];"<D-/>
+    }
+  | '[' aref_args ']'
+    {
+      result = "result = new this.ArrayNode(val[1], val[0], val[2]);"
+    }
+  | '{' assoc_list '}'
+    {
+      result = "result = new this.HashNode(val[1], val[0], val[2]);"
+    }
                 | RETURN
                     {
                       result = "result = ['return', null];"
@@ -598,10 +603,10 @@ rule
                     {
                       result = "val[0][4] = val[1]; result = val[0];"
                     }
-                | IF expr_value then compstmt if_tail END
-                    {
-                      result = "result = ['if', val[1], val[3], val[4]];"
-                    }
+  | IF expr_value then compstmt if_tail END
+    {
+      result = "result = new this.IfNode(val[0], val[1], val[3], val[4], val[5]);"
+    }
                 | UNLESS expr_value then compstmt opt_else END
                     {
                       result = "result = ['unless', val[1], val[3], val[4]];"
@@ -648,22 +653,23 @@ rule
                       result = "this.cond_pop();"
                     }
                   compstmt END
-                | CLASS cpath superclass bodystmt END
-                    {
-                      result = "result = ['class', val[1], val[2], val[3]];"
-                    }
-                | CLASS '<<' expr term bodystmt END
-                    {
-                      result = "result = ['class_shift', val[2], val[4]];"
-                    }
-                | MODULE cpath bodystmt END
-                    {
-                      result = "result = ['module', val[1], val[2]];"
-                    }
-                | DEF fname f_arglist bodystmt END
-                    {
-                      result = "result = ['def', null, val[1], val[2], val[3]];"
-                    }
+  | CLASS cpath superclass bodystmt END
+    {
+      # result = "result = ['class', val[1], val[2], val[3]];"
+      result = "result = new this.ClassNode(val[0], val[1], val[2], val[3], val[4]);"
+    }
+  | CLASS '<<' expr term bodystmt END
+    {
+      result = "result = ['class_shift', val[2], val[4]];"
+    }
+  | MODULE cpath bodystmt END
+    {
+      result = "result = new this.ModuleNode(val[0], val[1], val[2], val[3]);"
+    }
+  | DEF fname f_arglist bodystmt END
+    {
+      result = "result = new this.DefNode(val[0], null, val[1], val[2], val[3], val[4]);"
+    }
                 | DEF singleton dot_or_colon fname f_arglist bodystmt END
                     {
                       result = "result = 
@@ -691,24 +697,26 @@ rule
                 | ':'
                 | DO_COND
 
-         if_tail: opt_else
-                    {
-                      result = "result = val[0];"
-                    }
-                | ELSIF expr_value then compstmt if_tail
-                    {
-                      result = "result = 
-                        [['elsif', val[1], val[3]]].concat(val[4]);"
-                    }
+if_tail:
+    opt_else
+    {
+      result = "result = val[0];"
+    }
+  | ELSIF expr_value then compstmt if_tail
+    {
+      result = "result = 
+            [[val[0], val[1], val[3]]].concat(val[4]);"
+    }
 
-        opt_else: none
-                    {
-                      result = "result = [];"
-                    }
-                | ELSE compstmt
-                    {
-                      result = "result = [['else', val[1]]];"
-                    }
+opt_else:
+    none
+    {
+      result = "result = [];"
+    }
+  | ELSE compstmt
+    {
+      result = "result = [[val[0], val[1]]];"
+    }
 
        # block_var: lhs
                 # | mlhs
@@ -800,11 +808,13 @@ rule
 
      method_call: operation paren_args
                     {
-                      result = "result = ['call', null, val[0], val[1]];"
+                      # result = "result = ['call', null, val[0], val[1]];"
+                      result = "result = new this.CallNode(null, val[0], val[1]);"
                     }
                 | primary_value '.' operation2 opt_paren_args
                     {
-                      result = "result = ['call', val[0], val[2], val[3]];"
+                      # result = "result = ['call', val[0], val[2], val[3]];"
+                      result = "result = new this.CallNode(val[0], val[2], val[3]);"
                     }
                 | primary_value '::' operation2 paren_args
                 | primary_value '::' operation3
@@ -848,16 +858,16 @@ rule
            cases: opt_else 
                 | case_body
 
-      opt_rescue: RESCUE exc_list exc_var then compstmt opt_rescue
-                    {
-                      result = "result = 
-                        [['rescue', val[1], val[2], val[4]]].concat(val[5]);"
-                    }
-                |
-                    {
-                      result = "result = [];"
-                    }
-                    
+opt_rescue:
+    RESCUE exc_list exc_var then compstmt opt_rescue
+    {
+      result = "result = [[val[0], val[1], val[2], val[4]]].concat(val[5]);"
+    }
+  |
+    {
+      result = "result = [];"
+    }
+
         exc_list: arg_value
                 | mrhs
                 | none
@@ -886,6 +896,7 @@ rule
          string1: STRING_BEG string_contents STRING_END
                     {
                       result = "result = ['string', val[1], val[2]];"
+                      result = "result = new this.StringNode(val[1], val[2]);"
                     }
                 | STRING
 
@@ -955,10 +966,11 @@ xstring_contents: none
                 | backref
 
 
-          symbol: SYMBOL_BEG sym
-                    {
-                      result = "result = ['symbol', val[1]];"
-                    }
+symbol:
+    SYMBOL_BEG sym
+    {
+      result = "result = new this.SymbolNode(val[1]);"
+    }
                 | SYMBOL
 
              sym: fname
@@ -971,10 +983,12 @@ xstring_contents: none
                       result = "result = ['dsym', val[1]];"
                     }
 
-         numeric: INTEGER
-                    {
-                      result = "result = ['numeric', val[0]];"
-                    }
+numeric:
+    INTEGER
+    {
+      # result = "result = ['numeric', val[0]];"
+      result = "result = new this.NumericNode(val[0]);"            
+    }
                 | FLOAT
                     {
                       result = "result = ['numeric', val[0]];"
@@ -984,31 +998,32 @@ xstring_contents: none
 
         variable: IDENTIFIER
                     {
-                      result = "result = ['identifier', val[0]];"
+                      result = "result = new this.IdentifierNode(val[0]);"
                     }
                 | IVAR
                     {
-                      result = "result = ['ivar', val[0]];"
+                      result = "result = new this.IvarNode(val[0]);"
                     }
                 | GVAR
                     {
                       result = "result = ['gvar', val[0]];"
                     }
-                | CONSTANT
-                    {
-                      result = "result = ['constant', val[0]];"
-                    }
+  | CONSTANT
+    {
+      result = "result = new this.ConstantNode(val[0]);"
+    }
                 | CVAR
                     {
                       result = "result = ['cvar', val[0]];"
                     }
                 | NIL
                     {
-                      result = "result = ['nil'];"
+                      result = "result = new this.NilNode(val[0]);"
                     }
                 | SELF
                     {
-                      result = "result = ['self'];"
+                      # result = "result = ['self'];"
+                      result = "result = new this.SelfNode(val[0]);"
                     }
                 | TRUE
                     {

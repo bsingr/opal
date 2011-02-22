@@ -3,9 +3,10 @@ var fs = require('fs');
 var path = require('path');
 
 task('test', [], function() {
-  //console.log(Opal);
-  //console.log(Opal.compile(require('fs').readFileSync('tmp/test.rb').toString()));
-  console.log(Opal.compile('a'));
+  // var s = "23\nclass Adam\n\nself.attr_reader\n\nself\n\nend\n23.class";
+  // s = "23";
+  // console.log(Opal.compile('100;200\n300\n\n\n;;;400\n500 +\n 600\n100\nself.class\nself;self\n10.to_s\n'));
+  console.log(Opal.compile(fs.readFileSync('extras/test.rb').toString()));
 });
 
 desc('Rebuild extras/opal.js - ready for browser');
