@@ -596,7 +596,7 @@ arg:
                 | DEFINED opt_nl '(' expr ')'
                 | operation brace_block
                     {
-                      result = "result = ['call', null, val[0], [[]], val[1]];"
+                      result = "result = new this.CallNode(null, val[0], [[]]); result.block = val[1];"
                     }
                 | method_call
                 | method_call brace_block
@@ -827,14 +827,15 @@ opt_else:
                       result = "result = ['super', [[]]];"
                     }
 
-     brace_block: '{@' opt_block_var compstmt '}'
-                    {
-                      result = "result = [val[1], val[2]];"
-                    }
-                | DO opt_block_var compstmt END
-                    {
-                      result = "result = [val[1], val[2]];"
-                    }
+brace_block:
+    '{@' opt_block_var compstmt '}'
+    {
+      result = "result = new this.BlockNode(val[0], val[1], val[2], val[3]);"
+    }
+  | DO opt_block_var compstmt END
+    {
+      result = "result = [val[1], val[2]];"
+    }
 
        case_body: WHEN when_args then compstmt cases
                     {
@@ -1027,7 +1028,7 @@ numeric:
                     }
                 | TRUE
                     {
-                      result = "result = ['true'];"
+                      result = "result = new this.TrueNode(val[0]);"
                     }
                 | FALSE
                     {

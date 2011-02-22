@@ -41,28 +41,28 @@ module Spec
           raise Spec::Example::NotYetImplementedError.new
         }
       end
-      
+
       def run(run_options)
-        # examples = examples_to_run run_options
-        # notify run_options.reporter
-        # success = true
-        # before_all_instance_variables = nil
-        
-        # run_before_all run_options
-        # run_examples success, before_all_instance_variables, examples, run_options
-        # run_after_all run_options
+        examples = examples_to_run run_options
+        notify run_options.reporter
+        success = true
+        before_all_instance_variables = nil
+
+        run_before_all run_options
+        run_examples success, before_all_instance_variables, examples, run_options
+        run_after_all run_options
       end
-      
+
       def run_examples(success, instance_variables, examples, run_options)
-        # examples.each do |example|
+        examples.each do |example|
 
           # example_group_instance = new example, 
                                        # &example_implementations[example]
 
           # example_group_instance.execute run_options, instance_variables
-        # end
+        end
       end
-      
+
       def run_before_all(run_options)
         # before_all_parts.each do |part|
           # part.call
