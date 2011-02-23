@@ -174,10 +174,10 @@ stmts:
                     {
                       result = "result = ['super', val[1]];"
                     }
-                | YIELD command_args
-                    {
-                      result = "result = ['yield', val[1]];"
-                    }
+  | YIELD command_args
+    {
+      result = "result = new this.YieldNode(val[0], val[1]);"
+    }
 
             mlhs: mlhs_basic
                 | PAREN_BEG mlhs_entry ')'
@@ -583,11 +583,11 @@ arg:
                     }
                 | YIELD '(' call_args ')'
                     {
-                      result = "result = ['yield', val[2]];"
+                      result = "result = new this.YieldNode(val[0], val[2]);"
                     }
                 | YIELD '(' ')'
                     {
-                      result = "result = ['yield', [[]]];"
+                      result = "result = new this.YieldNode(val[0], [[]]);"
                     }
                 | YIELD
                     {
@@ -601,7 +601,8 @@ arg:
                 | method_call
                 | method_call brace_block
                     {
-                      result = "val[0][4] = val[1]; result = val[0];"
+                      # result = "val[0][4] = val[1]; result = val[0];"
+                      result = "result = val[0]; result.block = val[1];"
                     }
   | IF expr_value then compstmt if_tail END
     {
@@ -670,11 +671,10 @@ arg:
     {
       result = "result = new this.DefNode(val[0], null, val[1], val[2], val[3], val[4]);"
     }
-                | DEF singleton dot_or_colon fname f_arglist bodystmt END
-                    {
-                      result = "result = 
-                                ['def', val[1], val[3], val[4], val[5]];"
-                    }
+  | DEF singleton dot_or_colon fname f_arglist bodystmt END
+    {
+      result = "result = new this.DefNode(val[0], val[1], val[3], val[4], val[5], val[6]);"
+    }
                 | BREAK
                     {
                       result = "result = ['break', null];"
@@ -834,7 +834,7 @@ brace_block:
     }
   | DO opt_block_var compstmt END
     {
-      result = "result = [val[1], val[2]];"
+      result = "result = new this.BlockNode(val[0], val[1], val[2], val[3]);"
     }
 
        case_body: WHEN when_args then compstmt cases
@@ -896,15 +896,15 @@ opt_rescue:
 
          string1: STRING_BEG string_contents STRING_END
                     {
-                      result = "result = ['string', val[1], val[2]];"
                       result = "result = new this.StringNode(val[1], val[2]);"
                     }
                 | STRING
 
-         xstring: XSTRING_BEG xstring_contents STRING_END
-                    {
-                      result = "result = ['xstring', val[1]];"
-                    }
+xstring:
+    XSTRING_BEG xstring_contents STRING_END
+    {
+      result = "result = new this.XStringNode(val[0], val[1], val[2]);"
+    }
                     
           regexp: REGEXP_BEG xstring_contents REGEXP_END
                     {
@@ -1032,7 +1032,7 @@ numeric:
                     }
                 | FALSE
                     {
-                      result = "result = ['false'];"
+                      result = "result = new this.FalseNode(val[0]);"
                     }
                 | FILE
                     {
