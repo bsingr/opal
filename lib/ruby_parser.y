@@ -81,14 +81,14 @@ stmts:
                 | ALIAS GVAR BACK_REF
                 | ALIAS GVAR NTH_REF
                 | UNDEF undef_list
-                | stmt IF_MOD expr_value
-                    {
-                      result = "result = ['if_mod', val[1], val[2], val[0]];"
-                    }
-                | stmt UNLESS_MOD expr_value
-                    {
-                      result = "result = ['if_mod', val[1], val[2], val[0]];"
-                    }
+  | stmt IF_MOD expr_value
+    {
+      result = "result = new this.IfModNode(val[1], val[2], val[0]);"
+    }
+  | stmt UNLESS_MOD expr_value
+    {
+      result = "result = new this.IfModNode(val[1], val[2], val[0]);"
+    }
                 | stmt WHILE_MOD expr_value
                 | stmt UNTIL_MOD expr_value
                 | stmt RESCUE_MOD stmt
@@ -138,7 +138,7 @@ stmts:
                 | block_command
                 | RETURN call_args
                     {
-                      result = "result = ['return', val[1]];"
+                      result = "result = new this.ReturnNode(val[0], val[1]);"
                     }
                 | BREAK call_args
                     {
@@ -581,17 +581,17 @@ arg:
                     {
                       result = "result = ['return', null];"
                     }
-                | YIELD '(' call_args ')'
-                    {
-                      result = "result = new this.YieldNode(val[0], val[2]);"
-                    }
+  | YIELD '(' call_args ')'
+    {
+      result = "result = new this.YieldNode(val[0], val[2]);"
+    }
                 | YIELD '(' ')'
                     {
                       result = "result = new this.YieldNode(val[0], [[]]);"
                     }
                 | YIELD
                     {
-                      result = "result = ['yield', [[]]];"
+                      result = "result = new this.YieldNode(val[0], [[]]);"
                     }
                 | DEFINED opt_nl '(' expr ')'
                 | operation brace_block
@@ -987,13 +987,12 @@ symbol:
 numeric:
     INTEGER
     {
-      # result = "result = ['numeric', val[0]];"
-      result = "result = new this.NumericNode(val[0]);"            
+      result = "result = new this.NumericNode(val[0]);"
     }
-                | FLOAT
-                    {
-                      result = "result = ['numeric', val[0]];"
-                    }
+  | FLOAT
+    {
+      result = "result = new this.NumericNode(val[0]);"
+    }
                 | '-@NUM' INTEGER =LOWEST
                 | '-@NUM' FLOAT   =LOWEST
 
@@ -1044,7 +1043,7 @@ numeric:
                     }
                 | BLOCK_GIVEN
                     {
-                      result = "result = ['block_given'];"
+                      result = "result = new this.BlockGivenNode(val[0]);"
                     }
 
          var_ref: variable

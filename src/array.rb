@@ -27,7 +27,7 @@ class Array
   end
 
   def initialize(*objs)
-    `for (var i = 0; i < objs.length; i++) {
+    `for (var i = 0, length = objs.length; i < length; i++) {
       self.push(objs[i]);
     }
 
@@ -41,8 +41,8 @@ class Array
   def inspect
     `var description = [];
 
-    for (var i = 0; i < self.length; i++) {
-      description.push(self[i].m$inspect());
+    for (var i = 0, length = self.length; i < length; i++) {
+      description.push(#{`self[i]`.inspect});
     }
 
     return '[' + description.join(', ') + ']';`
@@ -53,8 +53,8 @@ class Array
   def to_s
     `var description = [];
 
-    for (var i = 0; i < self.length; i++) {
-      description.push(self[i].$m.to_s(self[i]));
+    for (var i = 0, length = self.length; i < length; i++) {
+      description.push(#{`self[i]`.to_s});
     }
 
     return description.join('');`
@@ -72,7 +72,7 @@ class Array
   # @param [Object] obj the object to append
   # @return [Array] returns the receiver
   def <<(obj)
-    `self.push(obj)`
+    `self.push(obj);`
     self
   end
 
@@ -109,7 +109,7 @@ class Array
   #
   # @return [Array] returns the receiver
   def each
-    `for (var i = 0; i < self.length; i++) {
+    `for (var i = 0, length = self.length; i < length; i++) {
       try {
         #{yield `self[i]`};
       } catch (e) {
@@ -128,7 +128,7 @@ class Array
   # Similar to {#each}, but also passes in the current element index to the
   # block.
   def each_with_index
-    `for (var i = 0; i < self.length; i++) {
+    `for (var i = 0, length = self.length; i < length; i++) {
       try {
         #{yield `self[i]`, `i`};
       } catch (e) {
@@ -161,7 +161,7 @@ class Array
   #
   # @return [Array] returns receiver
   def each_index
-    `for (var i = 0; i < self.length; i++) {
+    `for (var i = 0, length = self.length; i < length; i++) {
       try {
         #{yield `i`};
       } catch (e) {
@@ -191,7 +191,7 @@ class Array
   # @param [Object] obj the object(s) to push onto the array
   # @return [Array] returns the receiver
   def push(*objs)
-    `for (var i = 0; i < objs.length; i++) {
+    `for (var i = 0, length = objs.length; i < length; i++) {
       self.push(objs[i]);
     }
 
@@ -213,7 +213,7 @@ class Array
   # @param [Object] obj the object to look for
   # @return [Numeric, nil] result
   def index(obj)
-    `for (var i = 0; i < self.length; i++) {
+    `for (var i = 0, length = self.length; i < length; i++) {
       if (#{`self[i]` == obj}.$r) {
         return i;
       }
@@ -1468,4 +1468,6 @@ class Array
     `return self[index] = value;`
   end
 end
+
+
 

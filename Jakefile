@@ -64,6 +64,7 @@ task('core', [], function() {
                 'node_fs'];
 
   sources.forEach(function(source) {
+    console.log("compiling: " + source);
     var code = Opal.compile(fs.readFileSync('src/' + source + '.rb').toString());
     fs.writeFileSync('lib/' + source + '.js', code);
   });
